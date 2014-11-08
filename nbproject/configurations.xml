@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configurationDescriptor version="95">
+  <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
+    <df root="." name="0">
+      <df name="3dlite">
+        <df name="src">
+          <df name="7zdec">
+            <in>7zAlloc.c</in>
+            <in>7zBuf.c</in>
+            <in>7zBuf2.c</in>
+            <in>7zCrc.c</in>
+            <in>7zCrcOpt.c</in>
+            <in>7zDec.c</in>
+            <in>7zFile.c</in>
+            <in>7zIn.c</in>
+            <in>7zStream.c</in>
+            <in>Bcj2.c</in>
+            <in>Bra.c</in>
+            <in>Bra86.c</in>
+            <in>CpuArch.c</in>
+            <in>Lzma2Dec.c</in>
+            <in>LzmaDec.c</in>
+            <in>Ppmd7.c</in>
+            <in>Ppmd7Dec.c</in>
+          </df>
+          <df name="glew">
+            <in>glew.c</in>
+          </df>
+        </df>
+      </df>
+    </df>
+    <logicalFolder name="ExternalFiles"
+                   displayName="Важные файлы"
+                   projectFiles="false"
+                   kind="IMPORTANT_FILES_FOLDER">
+      <itemPath>CMakeLists.txt</itemPath>
+      <itemPath>Makefile</itemPath>
+    </logicalFolder>
+  </logicalFolder>
+  <sourceFolderFilter>^(nbproject)$</sourceFolderFilter>
+  <sourceRootList>
+    <Elem>.</Elem>
+  </sourceRootList>
+  <projectmakefile>Makefile</projectmakefile>
+  <confs>
+    <conf name="Default" type="0">
+      <toolsSet>
+        <compilerSet>GNU|GNU</compilerSet>
+        <dependencyChecking>false</dependencyChecking>
+        <rebuildPropChanged>false</rebuildPropChanged>
+      </toolsSet>
+      <codeAssistance>
+      </codeAssistance>
+      <makefileType>
+        <makeTool>
+          <buildCommandWorkingDir>.</buildCommandWorkingDir>
+          <buildCommand>${MAKE} -f Makefile</buildCommand>
+          <cleanCommand>${MAKE} -f Makefile clean</cleanCommand>
+          <executablePath></executablePath>
+        </makeTool>
+      </makefileType>
+      <item path="3dlite/src/7zdec/7zAlloc.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="3dlite/src/7zdec/7zBuf.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="3dlite/src/7zdec/7zBuf2.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="3dlite/src/7zdec/7zCrc.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="3dlite/src/7zdec/7zCrcOpt.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="3dlite/src/7zdec/7zDec.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="3dlite/src/7zdec/7zFile.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="3dlite/src/7zdec/7zIn.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="3dlite/src/7zdec/7zStream.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="3dlite/src/7zdec/Bcj2.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="3dlite/src/7zdec/Bra.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="3dlite/src/7zdec/Bra86.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="3dlite/src/7zdec/CpuArch.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="3dlite/src/7zdec/Lzma2Dec.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="3dlite/src/7zdec/LzmaDec.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="3dlite/src/7zdec/Ppmd7.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="3dlite/src/7zdec/Ppmd7Dec.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="3dlite/src/glew/glew.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <folder path="0/3dlite/src/7zdec">
+        <cTool>
+          <incDir>
+            <pElem>3dlite/include/7zdec</pElem>
+            <pElem>3dlite</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>_7ZIP_PPMD_SUPPPORT</Elem>
+          </preprocessorList>
+        </cTool>
+      </folder>
+      <folder path="0/3dlite/src/glew">
+        <cTool>
+          <incDir>
+            <pElem>3dlite/include</pElem>
+            <pElem>3dlite</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>GLEW_NO_GLU</Elem>
+            <Elem>GLEW_STATIC</Elem>
+          </preprocessorList>
+        </cTool>
+      </folder>
+    </conf>
+  </confs>
+</configurationDescriptor>
