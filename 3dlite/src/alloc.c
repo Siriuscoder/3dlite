@@ -16,21 +16,24 @@
 *	along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
 #include <stdlib.h>
+#include <assert.h>
 
 #include <3dlite/alloc.h>
 #include <3dlite/nedmalloc.h>
 
-lite3d_alloca_f gAlloca_f = { NULL, NULL };
-nedpool *globalMemPool = NULL;
+lite3d_alloca_f gAlloca_f = 
+    { NULL, NULL };
+nedpool *globalMemPools[LITE3D_POOL_MAX] = 
+    { NULL, NULL, NULL, NULL, NULL, NULL };
 
 static void *nedpool_malloc_global(size_t size)
 {
-    return nedpmalloc(globalMemPool, size);
+    return lite3d_malloc_pooled(LITE3D_POOL_COMMON, size);
 }
 
 static void nedpool_free_global(void *p)
 {
-    nedpfree(globalMemPool, p);
+    lite3d_free_pooled(LITE3D_POOL_COMMON, p);
 }
 
 void lite3d_init_memory(int32_t flags)
@@ -39,7 +42,10 @@ void lite3d_init_memory(int32_t flags)
     {
         if(flags & LITE3D_MEMMODEL_NEDPOOL)
         {
-            globalMemPool = nedcreatepool(0x500000, 1);
+            globalMemPools[0] = nedcreatepool(0x500000, 1);
+            for(int i = 1; i < LITE3D_POOL_MAX; ++i)
+                globalMemPools[i] = nedcreatepool(0, 1);
+            
             gAlloca_f.mallocf = nedpool_malloc_global;
             gAlloca_f.freef = nedpool_free_global;
         }
@@ -53,8 +59,11 @@ void lite3d_init_memory(int32_t flags)
 
 void lite3d_cleanup_memory()
 {
-    if(globalMemPool != NULL)
-        neddestroypool(globalMemPool);
+    for(int i = 0; i < LITE3D_POOL_MAX; ++i)
+    {
+        if(globalMemPools[i])
+           neddestroypool(globalMemPools[i]); 
+    }
 }
 
 void *lite3d_malloc(size_t size)
@@ -69,4 +78,19 @@ void lite3d_free(void *p)
 {
     if(gAlloca_f.freef)
         gAlloca_f.freef(p);
+}
+
+void *lite3d_malloc_pooled(uint8_t pollNo, size_t size)
+{
+    if(pollNo < LITE3D_POOL_MAX)
+        return nedpmalloc(globalMemPools[pollNo], size);
+    
+    return NULL;
+}
+
+void lite3d_free_pooled(uint8_t pollNo, void *p)
+{
+    if(pollNo < LITE3D_POOL_MAX)
+        nedpfree(globalMemPools[pollNo], p);
+
 }

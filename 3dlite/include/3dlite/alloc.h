@@ -24,6 +24,14 @@
 #define LITE3D_MEMMODEL_MALLOC      0x01
 #define LITE3D_MEMMODEL_NEDPOOL     0x02
 
+#define LITE3D_POOL_MAX             0x06
+#define LITE3D_POOL_COMMON          0x00
+#define LITE3D_POOL_NO1             0x01
+#define LITE3D_POOL_NO2             0x02
+#define LITE3D_POOL_NO3             0x03
+#define LITE3D_POOL_NO4             0x04
+#define LITE3D_POOL_NO5             0x05
+
 typedef void *(*lite3d_mallocf)(size_t size);
 typedef void (*lite3d_freef)(void *);
 typedef struct __lite3d_alloca_f
@@ -33,9 +41,12 @@ typedef struct __lite3d_alloca_f
 } lite3d_alloca_f;
 
 
-LITE3D_EXTERN void lite3d_set_allocator(lite3d_alloca_f *alloca);
-LITE3D_EXTERN void *lite3d_malloc(size_t size);
-LITE3D_EXTERN void lite3d_free(void *p);
+LITE3D_CEXPORT void lite3d_set_allocator(lite3d_alloca_f *alloca);
+LITE3D_CEXPORT void *lite3d_malloc(size_t size);
+LITE3D_CEXPORT void lite3d_free(void *p);
+
+LITE3D_CEXPORT void *lite3d_malloc_pooled(uint8_t pollNo, size_t size);
+LITE3D_CEXPORT void lite3d_free_pooled(uint8_t pollNo, void *p);
 
 void lite3d_init_memory(int32_t flags);
 void lite3d_cleanup_memory();

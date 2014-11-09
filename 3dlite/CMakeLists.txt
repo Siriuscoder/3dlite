@@ -3,7 +3,7 @@ project(7zdec)
 project(glewc)
 project(3dlite)
 
-set(CMAKE_C_FLAGS "-Wall")
+set(CMAKE_C_FLAGS "-std=c99 -Wall")
 
 #############################################
 # 7zdec sources
@@ -50,7 +50,7 @@ target_include_directories(3dlite PRIVATE
 "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include/>")
 
 target_compile_definitions(3dlite PRIVATE
-"$<BUILD_INTERFACE:PLATFORM=${CMAKE_SYSTEM_NAME}>")
+"$<BUILD_INTERFACE:PLATFORM_${CMAKE_SYSTEM_NAME}>")
 
 
 
