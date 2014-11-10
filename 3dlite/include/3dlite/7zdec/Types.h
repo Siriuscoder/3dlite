@@ -10,18 +10,6 @@
 #include <windows.h>
 #endif
 
-#ifndef EXTERN_C_BEGIN
-#ifdef __cplusplus
-#define EXTERN_C_BEGIN extern "C" {
-#define EXTERN_C_END }
-#else
-#define EXTERN_C_BEGIN
-#define EXTERN_C_END
-#endif
-#endif
-
-EXTERN_C_BEGIN
-
 #define SZ_OK 0
 
 #define SZ_ERROR_DATA 1
@@ -248,7 +236,5 @@ typedef struct
 #define WSTRING_PATH_SEPARATOR L"/"
 
 #endif
-
-EXTERN_C_END
 
 #endif

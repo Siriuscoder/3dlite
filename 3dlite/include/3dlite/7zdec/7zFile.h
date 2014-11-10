@@ -16,8 +16,6 @@
 
 #include "Types.h"
 
-EXTERN_C_BEGIN
-
 /* ---------- File ---------- */
 
 typedef struct
@@ -77,7 +75,5 @@ typedef struct
 } CFileOutStream;
 
 void FileOutStream_CreateVTable(CFileOutStream *p);
-
-EXTERN_C_END
 
 #endif

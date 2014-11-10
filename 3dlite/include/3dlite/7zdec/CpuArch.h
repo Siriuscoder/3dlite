@@ -6,8 +6,6 @@
 
 #include "Types.h"
 
-EXTERN_C_BEGIN
-
 /*
 MY_CPU_LE means that CPU is LITTLE ENDIAN.
 If MY_CPU_LE is not defined, we don't know about that property of platform (it can be LITTLE ENDIAN).
@@ -149,7 +147,5 @@ Bool CPU_Is_InOrder();
 Bool CPU_Is_Aes_Supported();
 
 #endif
-
-EXTERN_C_END
 
 #endif

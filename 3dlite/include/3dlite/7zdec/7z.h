@@ -6,8 +6,6 @@
 
 #include "7zBuf.h"
 
-EXTERN_C_BEGIN
-
 #define k7zStartHeaderSize 0x20
 #define k7zSignatureSize 6
 extern Byte k7zSignature[k7zSignatureSize];
@@ -197,7 +195,5 @@ SZ_ERROR_FAIL
 */
 
 SRes SzArEx_Open(CSzArEx *p, ILookInStream *inStream, ISzAlloc *allocMain, ISzAlloc *allocTemp);
-
-EXTERN_C_END
 
 #endif

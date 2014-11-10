@@ -6,10 +6,6 @@
 
 #include "Types.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 /*
 Conditions:
   outSize <= FullOutputSize,
@@ -30,9 +26,5 @@ int Bcj2_Decode(
     const Byte *buf2, SizeT size2,
     const Byte *buf3, SizeT size3,
     Byte *outBuf, SizeT outSize);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif

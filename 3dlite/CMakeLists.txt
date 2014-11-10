@@ -7,8 +7,7 @@ set(CMAKE_C_FLAGS "-std=c99 -Wall")
 
 #############################################
 # 7zdec sources
-set(7ZDEC_SOURCES src/7zdec/7zAlloc.c
-src/7zdec/7zBuf2.c
+set(7ZDEC_SOURCES src/7zdec/7zBuf2.c
 src/7zdec/7zBuf.c
 src/7zdec/7zCrc.c
 src/7zdec/7zCrcOpt.c
@@ -43,7 +42,8 @@ target_compile_definitions(glewc PRIVATE
 #############################################
 # 3dlite sources
 set(3DLITE_SOURCES src/nedmalloc.c
-src/alloc.c)
+src/alloc.c
+src/rb_tree.c)
 
 add_library(3dlite ${3DLITE_SOURCES})
 target_include_directories(3dlite PRIVATE 

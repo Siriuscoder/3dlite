@@ -7,7 +7,6 @@
           <df name="3dlite">
             <df name="7zdec">
               <in>7z.h</in>
-              <in>7zAlloc.h</in>
               <in>7zBuf.h</in>
               <in>7zCrc.h</in>
               <in>7zFile.h</in>
@@ -29,11 +28,11 @@
             <in>alloc.h</in>
             <in>common.h</in>
             <in>nedmalloc.h</in>
+            <in>rb_tree.h</in>
           </df>
         </df>
         <df name="src">
           <df name="7zdec">
-            <in>7zAlloc.c</in>
             <in>7zBuf.c</in>
             <in>7zBuf2.c</in>
             <in>7zCrc.c</in>
@@ -57,6 +56,7 @@
           <in>alloc.c</in>
           <in>malloc.c.h</in>
           <in>nedmalloc.c</in>
+          <in>rb_tree.c</in>
         </df>
       </df>
       <df name="CMakeFiles">
@@ -103,8 +103,6 @@
           <executablePath></executablePath>
         </makeTool>
       </makefileType>
-      <item path="3dlite/src/7zdec/7zAlloc.c" ex="false" tool="0" flavor2="2">
-      </item>
       <item path="3dlite/src/7zdec/7zBuf.c" ex="false" tool="0" flavor2="2">
       </item>
       <item path="3dlite/src/7zdec/7zBuf2.c" ex="false" tool="0" flavor2="2">
@@ -161,6 +159,17 @@
           </preprocessorList>
         </cTool>
       </item>
+      <item path="3dlite/src/rb_tree.c" ex="false" tool="0" flavor2="3">
+        <cTool flags="0">
+          <incDir>
+            <pElem>3dlite/include</pElem>
+            <pElem>3dlite</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>PLATFORM_Linux</Elem>
+          </preprocessorList>
+        </cTool>
+      </item>
       <folder path="0/3dlite/src/7zdec">
         <cTool>
           <incDir>
@@ -202,11 +211,6 @@
         </makeTool>
       </makefileType>
       <item path="3dlite/include/3dlite/7zdec/7z.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="3dlite/include/3dlite/7zdec/7zAlloc.h"
-            ex="false"
-            tool="3"
-            flavor2="0">
       </item>
       <item path="3dlite/include/3dlite/7zdec/7zBuf.h"
             ex="false"
@@ -271,7 +275,7 @@
       </item>
       <item path="3dlite/include/3dlite/nedmalloc.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="3dlite/src/7zdec/7zAlloc.c" ex="false" tool="0" flavor2="0">
+      <item path="3dlite/include/3dlite/rb_tree.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="3dlite/src/7zdec/7zBuf.c" ex="false" tool="0" flavor2="0">
       </item>
@@ -312,6 +316,8 @@
       <item path="3dlite/src/malloc.c.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="3dlite/src/nedmalloc.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="3dlite/src/rb_tree.c" ex="false" tool="0" flavor2="0">
       </item>
       <item path="CMakeFiles/2.8.12.2/CompilerIdC/CMakeCCompilerId.c"
             ex="false"

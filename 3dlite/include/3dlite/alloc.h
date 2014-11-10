@@ -15,7 +15,6 @@
 *	You should have received a copy of the GNU General Public License
 *	along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
-
 #ifndef ALLOC_H
 #define	ALLOC_H
 
@@ -34,7 +33,7 @@
 
 typedef void *(*lite3d_mallocf)(size_t size);
 typedef void (*lite3d_freef)(void *);
-typedef struct __lite3d_alloca_f
+typedef struct lite3d_alloca_f
 {
     lite3d_mallocf mallocf;
     lite3d_freef freef;
