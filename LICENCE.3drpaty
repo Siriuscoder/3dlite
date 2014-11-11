@@ -90,4 +90,23 @@ MATERIALS OR THE USE OR OTHER DEALINGS IN THE MATERIALS.
   The GNU LGPL + unRAR restriction means that you must follow both 
   GNU LGPL rules and unRAR restriction rules.
 
-============================================================================
+============================ NedMalloc =====================================
+nedalloc, an alternative malloc implementation for multiple threads without
+lock contention based on dlmalloc v2.8.3. (C) 2005 Niall Douglas
+
+Boost Software License - Version 1.0 - August 17th, 2003
+
+============================ dlmalloc ======================================
+  This is a version (aka dlmalloc) of malloc/free/realloc written by
+  Doug Lea and released to the public domain, as explained at
+  http://creativecommons.org/licenses/publicdomain.  Send questions,
+  comments, complaints, performance data, etc to dl@cs.oswego.edu
+
+  ** Modified by OGRE to support MinGW 5 Jan 2009
+
+* Version pre-2.8.4 Mon Nov 27 11:22:37 2006    (dl at gee)
+
+   Note: There may be an updated version of this malloc obtainable at
+           ftp://gee.cs.oswego.edu/pub/misc/malloc.c
+         Check before installing!
+
