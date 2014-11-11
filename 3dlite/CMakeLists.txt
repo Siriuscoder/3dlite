@@ -3,9 +3,7 @@ project(7zdec)
 project(glewc)
 project(3dlite)
 
-set(CMAKE_C_FLAGS "-std=c99 -Wall")
-
-#############################################
+################################################################
 # 7zdec sources
 set(7ZDEC_SOURCES src/7zdec/7zBuf2.c
 src/7zdec/7zBuf.c
@@ -24,34 +22,56 @@ src/7zdec/LzmaDec.c
 src/7zdec/Ppmd7.c
 src/7zdec/Ppmd7Dec.c)
 
-add_library(7zdec ${7ZDEC_SOURCES})
+set(7ZDEC_HEADERS include/3dlite/7zdec/7z.h
+include/3dlite/7zdec/7zBuf.h
+include/3dlite/7zdec/7zCrc.h
+include/3dlite/7zdec/7zFile.h
+include/3dlite/7zdec/7zVersion.h
+include/3dlite/7zdec/Bcj2.h
+include/3dlite/7zdec/Bra.h
+include/3dlite/7zdec/CpuArch.h
+include/3dlite/7zdec/Lzma2Dec.h
+include/3dlite/7zdec/LzmaDec.h
+include/3dlite/7zdec/Ppmd.h
+include/3dlite/7zdec/Ppmd7.h
+include/3dlite/7zdec/Types.h)
+
+add_library(7zdec ${7ZDEC_SOURCES} ${7ZDEC_HEADERS})
 target_include_directories(7zdec PRIVATE 
 "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include/3dlite/7zdec>")
 target_compile_definitions(7zdec PRIVATE
 "$<BUILD_INTERFACE:_7ZIP_PPMD_SUPPPORT>")
-#############################################
+################################################################
 # glew sources
 set(GLEWC_SOURCES src/glew/glew.c)
 
-add_library(glewc ${GLEWC_SOURCES})
+set(GLEWC_HEADERS include/3dlite/GL/glew.h
+include/3dlite/GL/glxew.h
+include/3dlite/GL/wglew.h)
+
+add_library(glewc ${GLEWC_SOURCES} ${GLEWC_HEADERS})
 target_include_directories(glewc PRIVATE 
 "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include/3dlite/>")
 target_compile_definitions(glewc PRIVATE
 "$<BUILD_INTERFACE:GLEW_NO_GLU>"
 "$<BUILD_INTERFACE:GLEW_STATIC>")
-#############################################
+################################################################
 # 3dlite sources
 set(3DLITE_SOURCES src/nedmalloc.c
 src/alloc.c
 src/rb_tree.c)
 
-add_library(3dlite ${3DLITE_SOURCES})
-target_include_directories(3dlite PRIVATE 
-"$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include/>")
+set(3DLITE_HEADERS include/3dlite/alloc.h
+include/3dlite/common.h
+include/3dlite/nedmalloc.h
+include/3dlite/rb_tree.h)
+
+add_library(3dlite ${3DLITE_SOURCES} ${3DLITE_HEADERS})
+
+if(WIN32 AND MSVC)
+target_compile_definitions(3dlite PRIVATE
+"$<BUILD_INTERFACE:_WINDLL>")
+endif()
 
 target_compile_definitions(3dlite PRIVATE
 "$<BUILD_INTERFACE:PLATFORM_${CMAKE_SYSTEM_NAME}>")
-
-
-
-

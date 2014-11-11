@@ -518,6 +518,12 @@ MAX_RELEASE_CHECK_RATE   default: 4095 unless not HAVE_MMAP
 #else
 #define MMAP_CLEARS 1
 #endif /* _WIN32_WCE */
+
+#ifdef _MSC_VER
+#pragma warning(disable:4127)
+#pragma warning(disable:4100)
+#pragma warning(disable:4706)
+#endif
 #endif  /* WIN32 */
 
 #if defined(DARWIN) || defined(_DARWIN)

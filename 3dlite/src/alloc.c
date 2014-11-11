@@ -42,8 +42,10 @@ void lite3d_init_memory(int32_t flags)
     {
         if(flags & LITE3D_MEMMODEL_NEDPOOL)
         {
+            int i;
             globalMemPools[0] = nedcreatepool(0x500000, 1);
-            for(int i = 1; i < LITE3D_POOL_MAX; ++i)
+
+            for(i = 1; i < LITE3D_POOL_MAX; ++i)
                 globalMemPools[i] = nedcreatepool(0, 1);
             
             gAlloca_f.mallocf = nedpool_malloc_global;
@@ -57,9 +59,10 @@ void lite3d_init_memory(int32_t flags)
     }
 }
 
-void lite3d_cleanup_memory()
+void lite3d_cleanup_memory(void)
 {
-    for(int i = 0; i < LITE3D_POOL_MAX; ++i)
+    int i;
+    for(i = 0; i < LITE3D_POOL_MAX; ++i)
     {
         if(globalMemPools[i])
            neddestroypool(globalMemPools[i]); 
@@ -92,5 +95,4 @@ void lite3d_free_pooled(uint8_t pollNo, void *p)
 {
     if(pollNo < LITE3D_POOL_MAX)
         nedpfree(globalMemPools[pollNo], p);
-
 }

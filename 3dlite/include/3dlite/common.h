@@ -32,29 +32,39 @@
 
 #ifdef PLATFORM_Windows
 
+#   if !defined(_MSC_VER) && !defined(__GNUC__)
+#       error "GCC or MSVC compiller requred.."
+#   endif
+
 // Stuff for Visual C++ only
 #   if defined(_MSC_VER)
 // Disable whining about using 'this' as a member initializer on VC++.
-#		pragma warning(disable: 4355)
+#       pragma warning(disable: 4355)
 #   endif
 
 
 #   ifdef _WINDLL
-		// When making the DLL, export tagged symbols, so they appear
-		// in the import library.
+// When making the DLL, export tagged symbols, so they appear
+// in the import library.
 #	define LITE3D_EXPORT __declspec(dllexport)
 #   elif !defined(_WINDLL)
-		// We must be _using_ the DLL, so import symbols instead.
-#	define LITE3D_EXPORT __declspec(dllimport)
+        // We must be _using_ the DLL, so import symbols instead.
+#   define LITE3D_EXPORT __declspec(dllimport)
 #   endif
 
+#   define STRUCT_PACKED(x) __declspec(align(x))
+
 #elif PLATFORM_Linux
-	// If not Windows, we assume some sort of Unixy build environment,
-	// where autotools is used.  (This includes Cygwin!)  #include the
-	// config.h file only if this file was included from a non-header
-	// file, because headers must not be dependent on config.h.
+    // If not Windows, we assume some sort of Unixy build environment,
+    // where autotools is used.  (This includes Cygwin!)  #include the
+    // config.h file only if this file was included from a non-header
+    // file, because headers must not be dependent on config.h.
+#   if !defined(__GNUC__)
+#       error "GCC compiller requred.."
+#   endif
 
 #   define LITE3D_EXPORT
+#   define STRUCT_PACKED(x) __attribute__ ((aligned(x)));
 #endif
 
 #ifdef __GNUC__
