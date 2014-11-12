@@ -15,8 +15,8 @@
  *	You should have received a copy of the GNU General Public License
  *	along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
-#ifndef RB_TREE_H
-#define	RB_TREE_H
+#ifndef LIGHT3D_RB_TREE_H
+#define	LIGHT3D_RB_TREE_H
 
 #include <3dlite/common.h>
 
@@ -30,7 +30,6 @@ typedef struct lite3d_rb_node {
 
 typedef int (*lite3d_rb_tree_comparator)(const void* a, const void* b);
 typedef void (*lite3d_rb_node_free)(lite3d_rb_node *x);
-
 
 /* Compare(a,b) should return 1 if *a > *b, -1 if *a < *b, and 0 otherwise */
 
@@ -147,6 +146,9 @@ lite3d_rb_node* lite3d_rb_tree_successor(lite3d_rb_tree *tree, lite3d_rb_node *x
 /**/
 /***********************************************************************/
 lite3d_rb_node* lite3d_rb_tree_exact_query(lite3d_rb_tree*, void *q);
+
+typedef void (*lite3d_rb_node_iter)(lite3d_rb_tree* tree, lite3d_rb_node *x);
+void lite3d_rb_tree_iterate(lite3d_rb_tree *tree, lite3d_rb_node_iter func);
 
 int lite3d_rb_tree_c_string_comparator(const void *a, const void *b);
 

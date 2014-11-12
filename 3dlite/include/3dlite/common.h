@@ -15,8 +15,8 @@
 *	You should have received a copy of the GNU General Public License
 *	along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
-#ifndef COMMON_H
-#define	COMMON_H
+#ifndef LITE3D_COMMON_H
+#define	LITE3D_COMMON_H
 
 #include <stdint.h>
 #include <stddef.h>

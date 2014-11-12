@@ -524,3 +524,20 @@ void lite3d_rb_tree_delete(lite3d_rb_tree* tree, lite3d_rb_node* z)
         tree->free(z);
     }
 }
+
+static void lite3d_rb_tree_iterate_help(lite3d_rb_tree* tree, 
+    lite3d_rb_node* x, lite3d_rb_node_iter func)
+{
+    lite3d_rb_node* nil = tree->nil;
+    if (x != nil)
+    {
+        lite3d_rb_tree_destroy_help(tree, x->left);
+        lite3d_rb_tree_destroy_help(tree, x->right);
+        func(tree, x);
+    }
+}
+
+void lite3d_rb_tree_iterate(lite3d_rb_tree *tree, lite3d_rb_node_iter func)
+{
+    lite3d_rb_tree_iterate_help(tree, tree->root, func);   
+}

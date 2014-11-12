@@ -15,10 +15,22 @@
 *	You should have received a copy of the GNU General Public License
 *	along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
-#ifndef ALLOC_H
-#define	ALLOC_H
+#ifndef LITE3D_ALLOC_H
+#define	LITE3D_ALLOC_H
 
 #include <3dlite/common.h>
+
+#ifdef OFFSETOF
+#undef OFFSETOF
+#endif
+
+#ifdef MEMBERCAST
+#undef MEMBERCAST
+#endif
+
+#define OFFSETOF(tstruct, field)            ((size_t) &((tstruct*)0x0)->field)
+#define MEMBERCAST(tstruct, pfield, field)  ((tstruct*)((size_t)pfield - \
+    OFFSETOF(tstruct, field)))
 
 #define LITE3D_MEMMODEL_MALLOC      0x01
 #define LITE3D_MEMMODEL_NEDPOOL     0x02

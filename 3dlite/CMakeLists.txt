@@ -59,7 +59,8 @@ target_compile_definitions(glewc PRIVATE
 # 3dlite sources
 set(3DLITE_SOURCES src/nedmalloc.c
 src/alloc.c
-src/rb_tree.c)
+src/rb_tree.c
+src/list.c)
 
 set(3DLITE_HEADERS include/3dlite/alloc.h
 include/3dlite/common.h

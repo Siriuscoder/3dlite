@@ -27,6 +27,7 @@
             </df>
             <in>alloc.h</in>
             <in>common.h</in>
+            <in>list.h</in>
             <in>nedmalloc.h</in>
             <in>rb_tree.h</in>
           </df>
@@ -54,6 +55,7 @@
             <in>glew.c</in>
           </df>
           <in>alloc.c</in>
+          <in>list.c</in>
           <in>malloc.c.h</in>
           <in>nedmalloc.c</in>
           <in>rb_tree.c</in>
@@ -90,6 +92,9 @@
         <dependencyChecking>false</dependencyChecking>
         <rebuildPropChanged>false</rebuildPropChanged>
       </toolsSet>
+      <flagsDictionary>
+        <element flagsID="0" commonFlags="-std=c99 -fstack-protector-all -fPIC"/>
+      </flagsDictionary>
       <codeAssistance>
       </codeAssistance>
       <makefileType>
@@ -148,6 +153,16 @@
         </cTool>
       </item>
       <item path="3dlite/src/glew/glew.c" ex="false" tool="0" flavor2="2">
+      </item>
+      <item path="3dlite/src/list.c" ex="false" tool="0" flavor2="3">
+        <cTool flags="0">
+          <incDir>
+            <pElem>3dlite</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>PLATFORM_Linux</Elem>
+          </preprocessorList>
+        </cTool>
       </item>
       <item path="3dlite/src/nedmalloc.c" ex="false" tool="0" flavor2="3">
         <cTool>
@@ -272,6 +287,8 @@
       </item>
       <item path="3dlite/include/3dlite/common.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="3dlite/include/3dlite/list.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="3dlite/include/3dlite/nedmalloc.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="3dlite/include/3dlite/rb_tree.h" ex="false" tool="3" flavor2="0">
@@ -311,6 +328,8 @@
       <item path="3dlite/src/alloc.c" ex="false" tool="0" flavor2="0">
       </item>
       <item path="3dlite/src/glew/glew.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="3dlite/src/list.c" ex="false" tool="0" flavor2="0">
       </item>
       <item path="3dlite/src/malloc.c.h" ex="false" tool="3" flavor2="0">
       </item>
