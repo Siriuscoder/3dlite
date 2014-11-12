@@ -19,8 +19,6 @@
 #include <3dlite/alloc.h>
 
 #define __list_check(expr) (expr)
-#define __LIST_POISON       0x0f00
-#define __LIST_LINK_POISON  0x0b0b
 
 static inline void
 __list_bind(struct lite3d_list_node *prev, struct lite3d_list_node *next)
@@ -59,8 +57,6 @@ __list_insert_link(struct lite3d_list_node *link, struct lite3d_list_node *prev,
 struct lite3d_list_node *
 lite3d_list_link_init(struct lite3d_list_node *link)
 {
-    link->poison = __LIST_LINK_POISON;
-    link->lite3d_list = NULL;
     __list_link_init(link);
 
     return link;

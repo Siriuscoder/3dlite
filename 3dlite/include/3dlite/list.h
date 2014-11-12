@@ -20,17 +20,15 @@
 
 #include <3dlite/common.h>
 
-struct lite3d_list_node
+typedef struct lite3d_list_node
 {
-    unsigned int poison;
-    struct lite3d_list *lite3d_list;
     struct lite3d_list_node *next, *prev;
-};
+} lite3d_list_node;
 
-struct lite3d_list
+typedef struct lite3d_list
 {
     struct lite3d_list_node l;
-};
+} lite3d_list;
 
 /**
  * Type of functions, returning true or false for given tree_link with some argument.
