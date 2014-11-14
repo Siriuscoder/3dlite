@@ -53,6 +53,7 @@
 #   endif
 
 #   define STRUCT_PACKED(x) __declspec(align(x))
+#   define INLINE __inline
 
 #elif PLATFORM_Linux
     // If not Windows, we assume some sort of Unixy build environment,
@@ -65,6 +66,7 @@
 
 #   define LITE3D_EXPORT
 #   define STRUCT_PACKED(x) __attribute__ ((aligned(x)));
+#   define INLINE inline
 #endif
 
 #ifdef __GNUC__

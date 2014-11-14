@@ -60,12 +60,15 @@ target_compile_definitions(glewc PRIVATE
 set(3DLITE_SOURCES src/nedmalloc.c
 src/alloc.c
 src/rb_tree.c
-src/list.c)
+src/list.c
+src/filepack.c)
 
 set(3DLITE_HEADERS include/3dlite/alloc.h
 include/3dlite/common.h
 include/3dlite/nedmalloc.h
-include/3dlite/rb_tree.h)
+include/3dlite/rb_tree.h
+include/3dlite/list.h
+include/3dlite/filepack.h)
 
 add_library(3dlite ${3DLITE_SOURCES} ${3DLITE_HEADERS})
 
