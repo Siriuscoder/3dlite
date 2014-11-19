@@ -17,3 +17,14 @@
 *******************************************************************************/
 
 #include <3dlite/filepack.h>
+
+lite3d_resource_pack *lite3d_open_pack(const char *path, uint8_t compressed, 
+    size_t memoryLimit)
+{
+    
+}
+
+void lite3d_close_pack(lite3d_resource_pack *pack)
+{
+    
+}

@@ -75,6 +75,9 @@ add_library(3dlite ${3DLITE_SOURCES} ${3DLITE_HEADERS})
 if(WIN32 AND MSVC)
 target_compile_definitions(3dlite PRIVATE
 "$<BUILD_INTERFACE:_WINDLL>")
+else()
+target_compile_options(3dlite PRIVATE 
+"$<BUILD_INTERFACE:${SDL2_CFLAGS}>")
 endif()
 
 target_compile_definitions(3dlite PRIVATE
