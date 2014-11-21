@@ -61,14 +61,16 @@ set(3DLITE_SOURCES src/nedmalloc.c
 src/alloc.c
 src/rb_tree.c
 src/list.c
-src/filepack.c)
+src/file_cache.c
+src/7zloader.c)
 
 set(3DLITE_HEADERS include/3dlite/alloc.h
 include/3dlite/common.h
 include/3dlite/nedmalloc.h
 include/3dlite/rb_tree.h
 include/3dlite/list.h
-include/3dlite/filepack.h)
+include/3dlite/file_cache.h
+include/3dlite/7zloader.h)
 
 add_library(3dlite ${3DLITE_SOURCES} ${3DLITE_HEADERS})
 
