@@ -1,7 +1,10 @@
 cmake_minimum_required(VERSION 2.8.10)
 project(3dlite)
 
+if(UNIX)
 include(FindPkgConfig)
+endif()
+
 
 set(CMAKE_CONFIGURATION_TYPES Debug Release)
 message(STATUS "Build configuration (${PROJECT_NAME}): ${CMAKE_BUILD_TYPE}")
@@ -22,15 +25,20 @@ if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)
     set(CMAKE_CXX_FLAGS_RELEASE ${RELEASE_COMPILER_FLAGS})
     add_definitions(-fPIC -pedantic)
 elseif(MSVC)
-    add_definitions(/fp:fast /W4)
+    add_definitions(/fp:fast /W4 /D_CRT_SECURE_NO_WARNINGS)
 endif()
 
 if(UNIX)
 pkg_search_module(SDL2 REQUIRED sdl2)
     if(NOT SDL2_FOUND)
         message(FATAL_ERROR "SDL2 Required")
-    endif(NOT SDL2_FOUND)
-endif(UNIX)
+    endif()
+else()
+include(${PROJECT_SOURCE_DIR}/CMake/FindSDL2.cmake)
+    if(NOT SDL2_FOUND)
+        message(FATAL_ERROR "SDL2 Required")
+    endif()
+endif()
 
 include_directories("${PROJECT_SOURCE_DIR}/3dlite/include")
 

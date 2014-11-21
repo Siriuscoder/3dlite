@@ -22,7 +22,7 @@
 #include <3dlite/rb_tree.h>
 #include <3dlite/list.h>
 
-#define LITE3D_MAX_FILE_PATH    512
+#define LITE3D_MAX_FILE_PATH    1024
 
 typedef struct lite3d_resource_file
 {
@@ -39,7 +39,7 @@ typedef lite3d_resource_file* (*lite3d_load_resource)(const char *path, struct l
 
 typedef struct lite3d_resource_pack
 {
-    lite3d_rb_tree fileCache;
+    lite3d_rb_tree *fileCache;
     lite3d_list priorityList;
     uint8_t isCompressed;
     size_t memoryLimit;

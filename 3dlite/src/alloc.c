@@ -26,36 +26,23 @@ lite3d_alloca_f gAlloca_f =
 nedpool *globalMemPools[LITE3D_POOL_MAX] = 
     { NULL, NULL, NULL, NULL, NULL, NULL };
 
-static void *nedpool_malloc_global(size_t size)
+void lite3d_init_memory(lite3d_alloca_f *allocator)
 {
-    return lite3d_malloc_pooled(LITE3D_POOL_COMMON, size);
-}
-
-static void nedpool_free_global(void *p)
-{
-    lite3d_free_pooled(LITE3D_POOL_COMMON, p);
-}
-
-void lite3d_init_memory(int32_t flags)
-{
-    if(gAlloca_f.mallocf == NULL && gAlloca_f.freef == NULL)
+    int i;
+    if(allocator && allocator->mallocf != NULL && allocator->freef != NULL)
     {
-        if(flags & LITE3D_MEMMODEL_NEDPOOL)
-        {
-            int i;
-            globalMemPools[0] = nedcreatepool(0x500000, 1);
+        gAlloca_f = *allocator;
+    }
+    else
+    {
+        gAlloca_f.mallocf = malloc;
+        gAlloca_f.freef = free;
+    }
 
-            for(i = 1; i < LITE3D_POOL_MAX; ++i)
-                globalMemPools[i] = nedcreatepool(0, 1);
-            
-            gAlloca_f.mallocf = nedpool_malloc_global;
-            gAlloca_f.freef = nedpool_free_global;
-        }
-        else if(flags & LITE3D_MEMMODEL_MALLOC)
-        {
-            gAlloca_f.mallocf = malloc;
-            gAlloca_f.freef = free;                
-        }
+    for(i = 0; i < LITE3D_POOL_MAX; ++i)
+    {
+        if(!globalMemPools[i])
+            globalMemPools[i] = nedcreatepool(0, 1);
     }
 }
 

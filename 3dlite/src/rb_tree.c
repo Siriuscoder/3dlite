@@ -358,7 +358,7 @@ void lite3d_rb_tree_destroy(lite3d_rb_tree* tree)
     lite3d_free(tree);
 }
 
-lite3d_rb_node* lite3d_rb_tree_exact_query(lite3d_rb_tree* tree, void* q)
+lite3d_rb_node* lite3d_rb_tree_exact_query(lite3d_rb_tree* tree, const void* q)
 {
     lite3d_rb_node* x = tree->root->left;
     lite3d_rb_node* nil = tree->nil;

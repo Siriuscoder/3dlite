@@ -145,7 +145,7 @@ lite3d_rb_node* lite3d_rb_tree_successor(lite3d_rb_tree *tree, lite3d_rb_node *x
 /*    Modifies Input: none */
 /**/
 /***********************************************************************/
-lite3d_rb_node* lite3d_rb_tree_exact_query(lite3d_rb_tree*, void *q);
+lite3d_rb_node* lite3d_rb_tree_exact_query(lite3d_rb_tree*, const void *q);
 
 typedef void (*lite3d_rb_node_iter)(lite3d_rb_tree* tree, lite3d_rb_node *x);
 void lite3d_rb_tree_iterate(lite3d_rb_tree *tree, lite3d_rb_node_iter func);
