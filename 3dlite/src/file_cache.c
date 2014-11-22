@@ -23,6 +23,7 @@
 
 #include <3dlite/file_cache.h>
 #include <3dlite/alloc.h>
+#include <3dlite/7zloader.h>
 
 static lite3d_resource_file *lookup_resource_index(lite3d_resource_pack *pack, const char *key)
 {
@@ -79,15 +80,51 @@ static void resource_purge_iter(lite3d_rb_tree* tree, lite3d_rb_node *x)
     lite3d_purge_resource_file(resource);
 }
 
+static void pack_7z_iterator(lite3d_7z_pack *pack,
+    const char *path, int32_t index, void *userdata)
+{
+    lite3d_resource_pack *rpack = (lite3d_resource_pack *)userdata;
+    lite3d_resource_file *resource = create_resource_index(rpack, path);
+    
+    if(resource)
+        resource->dbIndex = index;
+}
+
+static int checkPackMemoryLimit(lite3d_resource_pack *pack, size_t size,
+    const char *name)
+{
+    if (size > 0x6400000)
+    {
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+            "lite3d_load_resource_file: file %s too big: %d bytes (limit 100M)",
+            name, (int) size);
+        return 0;
+    }
+
+memValidate:
+    /* validate memory limit */
+    if ((pack->memoryUsed + size) > pack->memoryLimit)
+    {
+        SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
+            "lite3d_load_resource_file: memory limit is reached..cleanup old data..");
+        lite3d_cleanup_out_of_use(pack);
+        goto memValidate;
+    }
+
+    return 1;
+}
+
 lite3d_resource_pack *lite3d_open_pack(const char *path, uint8_t compressed, 
     size_t memoryLimit)
 {
     lite3d_resource_pack *pack = NULL;
+    lite3d_7z_pack *pack7z;
 
     /* compressed packs case */
     if(compressed)
     {
-
+        if((pack7z = lite3d_7z_pack_open(path)) == NULL)
+            return NULL;
     }
 
     pack = (lite3d_resource_pack *)lite3d_malloc(sizeof(lite3d_resource_pack));
@@ -103,6 +140,13 @@ lite3d_resource_pack *lite3d_open_pack(const char *path, uint8_t compressed,
     SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, 
         "lite3d_open_pack: '%s' pack opened (%s) limit %d",
         path, compressed ? "compressed" : "", (int)memoryLimit);
+    
+    /* begin indexing 7z pack */
+    if(compressed)
+    {
+        pack->internal7z = pack7z;
+        lite3d_7z_pack_iterate(pack7z, pack_7z_iterator, pack);
+    }
 
     return pack;
 }
@@ -118,7 +162,8 @@ void lite3d_close_pack(lite3d_resource_pack *pack)
     /* release compressed pack logic */
     if(pack->isCompressed)
     {
-
+        lite3d_7z_pack *pack7z = (lite3d_7z_pack *)pack->internal7z;
+        lite3d_7z_pack_close(pack7z);
     }
     
     SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, 
@@ -178,23 +223,11 @@ lite3d_resource_file *lite3d_load_resource_file(lite3d_resource_pack *pack, cons
 
         /* get file size */
         fileSize = SDL_RWsize(desc);
-        if(fileSize > 0x6400000)
+
+        if(!checkPackMemoryLimit(pack, fileSize, fullPath))
         {
-            SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, 
-                "lite3d_load_resource_file: file %s too big: %d bytes (limit 100M)",
-                fullPath, (int)fileSize);
             SDL_RWclose(desc);
             return NULL;
-        }
-        
-memValidate:
-        /* validate memory limit */
-        if((pack->memoryUsed + fileSize) > pack->memoryLimit)
-        {
-            SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION, 
-                "lite3d_load_resource_file: memory limit is reached..cleanup old data..");
-            lite3d_cleanup_out_of_use(pack);
-            goto memValidate;
         }
         
         fileBuffer = lite3d_malloc(fileSize);
@@ -212,6 +245,24 @@ memValidate:
             "lite3d_load_resource_file: '%s' loaded (size: %d, chunks %d)",
             file, (int)fileSize, (int)chunks);
         SDL_RWclose(desc);
+    }
+    else
+    {
+        if(!resource)
+        {
+            SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, 
+               "lite3d_load_resource_file: file %s not found..",
+               file);
+            return NULL;
+        }
+        
+        lite3d_7z_pack *pack7z = (lite3d_7z_pack *)pack->internal7z;
+        fileSize = lite3d_7z_pack_file_size(pack7z, resource->dbIndex);
+        if(!checkPackMemoryLimit(pack, fileSize, file))
+            return NULL;
+
+        fileBuffer = lite3d_7z_pack_file_extract(pack7z, 
+            resource->dbIndex, &fileSize);
     }
     
     if(!resource)

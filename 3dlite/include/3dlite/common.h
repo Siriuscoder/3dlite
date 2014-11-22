@@ -92,5 +92,8 @@
     (((uint32_t)VERSION_MIN) << 8) | ((uint32_t)VERSION_PCH))
 
 
+#define LITE3D_MAX_FILE_PATH    1024
+#define LITE3D_MAX_FILE_NAME    128
+
 #endif	/* COMMON_H */
 
