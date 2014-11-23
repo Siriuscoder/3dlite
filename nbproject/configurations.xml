@@ -143,72 +143,38 @@
             ex="false"
             tool="0"
             flavor2="3">
-        <cTool flags="1">
-        </cTool>
       </item>
       <item path="3dlite/src/7zdec/7zBuf.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="2">
-        </cTool>
       </item>
       <item path="3dlite/src/7zdec/7zBuf2.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="2">
-        </cTool>
       </item>
       <item path="3dlite/src/7zdec/7zCrc.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="2">
-        </cTool>
       </item>
       <item path="3dlite/src/7zdec/7zCrcOpt.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="2">
-        </cTool>
       </item>
       <item path="3dlite/src/7zdec/7zDec.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="2">
-        </cTool>
       </item>
       <item path="3dlite/src/7zdec/7zFile.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="2">
-        </cTool>
       </item>
       <item path="3dlite/src/7zdec/7zIn.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="2">
-        </cTool>
       </item>
       <item path="3dlite/src/7zdec/7zStream.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="2">
-        </cTool>
       </item>
       <item path="3dlite/src/7zdec/Bcj2.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="2">
-        </cTool>
       </item>
       <item path="3dlite/src/7zdec/Bra.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="2">
-        </cTool>
       </item>
       <item path="3dlite/src/7zdec/Bra86.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="2">
-        </cTool>
       </item>
       <item path="3dlite/src/7zdec/CpuArch.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="2">
-        </cTool>
       </item>
       <item path="3dlite/src/7zdec/Lzma2Dec.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="2">
-        </cTool>
       </item>
       <item path="3dlite/src/7zdec/LzmaDec.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="2">
-        </cTool>
       </item>
       <item path="3dlite/src/7zdec/Ppmd7.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="2">
-        </cTool>
       </item>
       <item path="3dlite/src/7zdec/Ppmd7Dec.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="2">
-        </cTool>
       </item>
       <item path="3dlite/src/7zloader.c" ex="false" tool="0" flavor2="3">
         <cTool flags="3">
@@ -247,8 +213,6 @@
         </cTool>
       </item>
       <item path="3dlite/src/glew/glew.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="2">
-        </cTool>
       </item>
       <item path="3dlite/src/list.c" ex="false" tool="0" flavor2="3">
         <cTool flags="3">
@@ -364,16 +328,10 @@
             ex="false"
             tool="1"
             flavor2="8">
-        <ccTool flags="0">
-        </ccTool>
       </item>
       <item path="tests/gtest/src/gtest-all.cc" ex="false" tool="1" flavor2="8">
-        <ccTool flags="0">
-        </ccTool>
       </item>
       <item path="tests/gtest/src/gtest_main.cc" ex="false" tool="1" flavor2="8">
-        <ccTool flags="0">
-        </ccTool>
       </item>
     </conf>
     <conf name="Release" type="0">

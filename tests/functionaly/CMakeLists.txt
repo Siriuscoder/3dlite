@@ -23,3 +23,8 @@ endif()
 target_link_libraries(3dlite_tests 
 gtest
 3dlite)
+
+add_custom_command(TARGET 3dlite_tests POST_BUILD 
+	COMMAND ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/3dlite_tests
+	WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/media/
+	COMMENT "Self-testing...")
