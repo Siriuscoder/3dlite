@@ -75,7 +75,24 @@
           </df>
         </df>
       </df>
+      <df name="tests">
+        <df name="functionaly">
+          <in>file_cache_test.cpp</in>
+        </df>
+        <df name="gtest">
+          <df name="src">
+            <in>gtest-all.cc</in>
+            <in>gtest_main.cc</in>
+          </df>
+        </df>
+      </df>
     </df>
+    <logicalFolder name="Modules"
+                   displayName="Modules"
+                   projectFiles="true"
+                   root="/usr/share/cmake-2.8/Modules">
+      <itemPath>/usr/share/cmake-2.8/Modules/CheckFunctionExists.c</itemPath>
+    </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Важные файлы"
                    projectFiles="false"
@@ -97,7 +114,10 @@
         <rebuildPropChanged>false</rebuildPropChanged>
       </toolsSet>
       <flagsDictionary>
-        <element flagsID="0" commonFlags="-std=c99 -fPIC"/>
+        <element flagsID="0" commonFlags="-std=c++11 -fstack-protector-all -fPIC"/>
+        <element flagsID="1" commonFlags="-std=c99"/>
+        <element flagsID="2" commonFlags="-std=c99 -fPIC"/>
+        <element flagsID="3" commonFlags="-std=c99 -fstack-protector-all -fPIC"/>
       </flagsDictionary>
       <codeAssistance>
       </codeAssistance>
@@ -107,131 +127,179 @@
           <buildCommand>${MAKE} -f Makefile</buildCommand>
           <cleanCommand>${MAKE} -f Makefile clean</cleanCommand>
           <executablePath></executablePath>
-          <cTool>
+          <ccTool>
             <incDir>
               <pElem>3dlite/include</pElem>
+              <pElem>tests/gtest</pElem>
             </incDir>
-          </cTool>
+            <preprocessorList>
+              <Elem>PLATFORM_Linux</Elem>
+            </preprocessorList>
+          </ccTool>
         </makeTool>
       </makefileType>
+      <item path="/usr/share/cmake-2.8/Modules/CheckFunctionExists.c"
+            ex="false"
+            tool="0"
+            flavor2="3">
+        <cTool flags="1">
+        </cTool>
+      </item>
       <item path="3dlite/src/7zdec/7zBuf.c" ex="false" tool="0" flavor2="3">
+        <cTool flags="3">
+        </cTool>
       </item>
       <item path="3dlite/src/7zdec/7zBuf2.c" ex="false" tool="0" flavor2="3">
+        <cTool flags="3">
+        </cTool>
       </item>
       <item path="3dlite/src/7zdec/7zCrc.c" ex="false" tool="0" flavor2="3">
+        <cTool flags="3">
+        </cTool>
       </item>
       <item path="3dlite/src/7zdec/7zCrcOpt.c" ex="false" tool="0" flavor2="3">
+        <cTool flags="3">
+        </cTool>
       </item>
       <item path="3dlite/src/7zdec/7zDec.c" ex="false" tool="0" flavor2="3">
+        <cTool flags="3">
+        </cTool>
       </item>
       <item path="3dlite/src/7zdec/7zFile.c" ex="false" tool="0" flavor2="3">
+        <cTool flags="3">
+        </cTool>
       </item>
       <item path="3dlite/src/7zdec/7zIn.c" ex="false" tool="0" flavor2="3">
+        <cTool flags="3">
+        </cTool>
       </item>
       <item path="3dlite/src/7zdec/7zStream.c" ex="false" tool="0" flavor2="3">
+        <cTool flags="3">
+        </cTool>
       </item>
       <item path="3dlite/src/7zdec/Bcj2.c" ex="false" tool="0" flavor2="3">
+        <cTool flags="3">
+        </cTool>
       </item>
       <item path="3dlite/src/7zdec/Bra.c" ex="false" tool="0" flavor2="3">
+        <cTool flags="3">
+        </cTool>
       </item>
       <item path="3dlite/src/7zdec/Bra86.c" ex="false" tool="0" flavor2="3">
+        <cTool flags="3">
+        </cTool>
       </item>
       <item path="3dlite/src/7zdec/CpuArch.c" ex="false" tool="0" flavor2="3">
+        <cTool flags="3">
+        </cTool>
       </item>
       <item path="3dlite/src/7zdec/Lzma2Dec.c" ex="false" tool="0" flavor2="3">
+        <cTool flags="3">
+        </cTool>
       </item>
       <item path="3dlite/src/7zdec/LzmaDec.c" ex="false" tool="0" flavor2="3">
+        <cTool flags="3">
+        </cTool>
       </item>
       <item path="3dlite/src/7zdec/Ppmd7.c" ex="false" tool="0" flavor2="3">
+        <cTool flags="3">
+        </cTool>
       </item>
       <item path="3dlite/src/7zdec/Ppmd7Dec.c" ex="false" tool="0" flavor2="3">
+        <cTool flags="3">
+        </cTool>
       </item>
       <item path="3dlite/src/7zloader.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="0">
+        <cTool flags="2">
           <incDir>
             <pElem>/usr/include/SDL2</pElem>
             <pElem>build/3dlite</pElem>
           </incDir>
           <preprocessorList>
-            <Elem>PLATFORM_Linux</Elem>
             <Elem>_REENTRANT</Elem>
           </preprocessorList>
         </cTool>
       </item>
       <item path="3dlite/src/alloc.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="0">
+        <cTool flags="2">
           <incDir>
             <pElem>/usr/include/SDL2</pElem>
             <pElem>build/3dlite</pElem>
           </incDir>
           <preprocessorList>
-            <Elem>PLATFORM_Linux</Elem>
             <Elem>_REENTRANT</Elem>
           </preprocessorList>
         </cTool>
       </item>
       <item path="3dlite/src/file_cache.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="0">
+        <cTool flags="2">
           <incDir>
             <pElem>/usr/include/SDL2</pElem>
             <pElem>build/3dlite</pElem>
           </incDir>
           <preprocessorList>
-            <Elem>PLATFORM_Linux</Elem>
             <Elem>_REENTRANT</Elem>
           </preprocessorList>
         </cTool>
       </item>
       <item path="3dlite/src/filepack.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="0">
+        <cTool flags="2">
           <incDir>
             <pElem>/usr/include/SDL2</pElem>
             <pElem>build/3dlite</pElem>
           </incDir>
           <preprocessorList>
-            <Elem>PLATFORM_Linux</Elem>
             <Elem>_REENTRANT</Elem>
           </preprocessorList>
         </cTool>
       </item>
       <item path="3dlite/src/glew/glew.c" ex="false" tool="0" flavor2="3">
+        <cTool flags="3">
+        </cTool>
       </item>
       <item path="3dlite/src/list.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="0">
+        <cTool flags="2">
           <incDir>
             <pElem>/usr/include/SDL2</pElem>
             <pElem>build/3dlite</pElem>
           </incDir>
           <preprocessorList>
-            <Elem>PLATFORM_Linux</Elem>
             <Elem>_REENTRANT</Elem>
           </preprocessorList>
         </cTool>
       </item>
       <item path="3dlite/src/nedmalloc.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="0">
+        <cTool flags="2">
           <incDir>
             <pElem>/usr/include/SDL2</pElem>
             <pElem>build/3dlite</pElem>
           </incDir>
           <preprocessorList>
-            <Elem>PLATFORM_Linux</Elem>
             <Elem>_REENTRANT</Elem>
           </preprocessorList>
         </cTool>
       </item>
       <item path="3dlite/src/rb_tree.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="0">
+        <cTool flags="2">
           <incDir>
             <pElem>/usr/include/SDL2</pElem>
             <pElem>build/3dlite</pElem>
           </incDir>
           <preprocessorList>
-            <Elem>PLATFORM_Linux</Elem>
             <Elem>_REENTRANT</Elem>
           </preprocessorList>
         </cTool>
       </item>
+      <folder path="0">
+        <cTool>
+          <incDir>
+            <pElem>3dlite/include</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>PLATFORM_Linux</Elem>
+          </preprocessorList>
+        </cTool>
+      </folder>
       <folder path="0/3dlite/src/7zdec">
         <cTool>
           <incDir>
@@ -255,6 +323,50 @@
           </preprocessorList>
         </cTool>
       </folder>
+      <folder path="0/tests/functionaly">
+        <ccTool>
+          <incDir>
+            <pElem>3dlite++/include</pElem>
+            <pElem>/usr/include/SDL2</pElem>
+            <pElem>build/tests/functionaly</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>_REENTRANT</Elem>
+          </preprocessorList>
+        </ccTool>
+      </folder>
+      <folder path="0/tests/gtest">
+        <ccTool>
+          <incDir>
+            <pElem>build/tests</pElem>
+          </incDir>
+        </ccTool>
+      </folder>
+      <folder path="Modules">
+        <cTool>
+          <incDir>
+            <pElem>build/CMakeFiles/CMakeTmp</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>CHECK_FUNCTION_EXISTS=pthread_create</Elem>
+          </preprocessorList>
+        </cTool>
+      </folder>
+      <item path="tests/functionaly/file_cache_test.cpp"
+            ex="false"
+            tool="1"
+            flavor2="8">
+        <ccTool flags="0">
+        </ccTool>
+      </item>
+      <item path="tests/gtest/src/gtest-all.cc" ex="false" tool="1" flavor2="8">
+        <ccTool flags="0">
+        </ccTool>
+      </item>
+      <item path="tests/gtest/src/gtest_main.cc" ex="false" tool="1" flavor2="8">
+        <ccTool flags="0">
+        </ccTool>
+      </item>
     </conf>
     <conf name="Release" type="0">
       <toolsSet>
@@ -395,6 +507,11 @@
             flavor2="0">
       </item>
       <item path="CMakeFiles/2.8.12.2/CompilerIdCXX/CMakeCXXCompilerId.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="tests/functionaly/file_cache_test.cpp"
             ex="false"
             tool="1"
             flavor2="0">

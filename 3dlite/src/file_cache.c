@@ -90,14 +90,10 @@ static void pack_7z_iterator(lite3d_7z_pack *pack,
         resource->dbIndex = index;
 }
 
-static int checkPackMemoryLimit(lite3d_resource_pack *pack, size_t size,
-    const char *name)
+static int check_pack_memory_limit(lite3d_resource_pack *pack, size_t size)
 {
     if (size > 0x6400000)
     {
-        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
-            "lite3d_load_resource_file: file %s too big: %d bytes (limit 100M)",
-            name, (int) size);
         return 0;
     }
 
@@ -223,9 +219,11 @@ lite3d_resource_file *lite3d_load_resource_file(lite3d_resource_pack *pack, cons
 
         /* get file size */
         fileSize = SDL_RWsize(desc);
-
-        if(!checkPackMemoryLimit(pack, fileSize, fullPath))
+        if(!check_pack_memory_limit(pack, fileSize))
         {
+            SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+                "lite3d_load_resource_file: file %s too big: %d bytes (limit 100M)",
+                fullPath, (int) fileSize);
             SDL_RWclose(desc);
             return NULL;
         }
@@ -258,11 +256,21 @@ lite3d_resource_file *lite3d_load_resource_file(lite3d_resource_pack *pack, cons
         
         lite3d_7z_pack *pack7z = (lite3d_7z_pack *)pack->internal7z;
         fileSize = lite3d_7z_pack_file_size(pack7z, resource->dbIndex);
-        if(!checkPackMemoryLimit(pack, fileSize, file))
+        if(!check_pack_memory_limit(pack, fileSize))
+        {
+            SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+                "lite3d_load_resource_file: file %s too big: %d bytes (limit 100M)",
+                file, (int) fileSize);
             return NULL;
+        }
 
         fileBuffer = lite3d_7z_pack_file_extract(pack7z, 
             resource->dbIndex, &fileSize);
+        
+        if(fileBuffer == NULL || fileSize == 0)
+        {
+            return NULL;
+        }
     }
     
     if(!resource)

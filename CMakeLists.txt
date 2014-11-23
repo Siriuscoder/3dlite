@@ -7,6 +7,11 @@ endif()
 
 
 set(CMAKE_CONFIGURATION_TYPES Debug Release)
+
+if(NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE Debug)
+endif()
+
 message(STATUS "Build configuration (${PROJECT_NAME}): ${CMAKE_BUILD_TYPE}")
 
 # Specify build paths
@@ -28,13 +33,16 @@ elseif(MSVC)
     add_definitions(/fp:fast /W4 /D_CRT_SECURE_NO_WARNINGS)
 endif()
 
+add_definitions(-DPLATFORM_${CMAKE_SYSTEM_NAME})
+
 if(UNIX)
 pkg_search_module(SDL2 REQUIRED sdl2)
     if(NOT SDL2_FOUND)
         message(FATAL_ERROR "SDL2 Required")
     endif()
+find_package(Threads)
 else()
-include(${PROJECT_SOURCE_DIR}/CMake/FindSDL2.cmake)
+include(${CMAKE_SOURCE_DIR}/CMake/FindSDL2.cmake)
     if(NOT SDL2_FOUND)
         message(FATAL_ERROR "SDL2 Required")
     endif()
@@ -43,3 +51,4 @@ endif()
 include_directories("${PROJECT_SOURCE_DIR}/3dlite/include")
 
 add_subdirectory("${PROJECT_SOURCE_DIR}/3dlite/")
+add_subdirectory("${PROJECT_SOURCE_DIR}/tests/")

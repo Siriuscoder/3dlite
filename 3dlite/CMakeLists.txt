@@ -83,6 +83,3 @@ else()
 target_compile_options(3dlite PRIVATE 
 "$<BUILD_INTERFACE:${SDL2_CFLAGS}>")
 endif()
-
-target_compile_definitions(3dlite PRIVATE
-"$<BUILD_INTERFACE:PLATFORM_${CMAKE_SYSTEM_NAME}>")
