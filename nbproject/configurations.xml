@@ -29,6 +29,7 @@
             <in>alloc.h</in>
             <in>common.h</in>
             <in>list.h</in>
+            <in>logger.h</in>
             <in>nedmalloc.h</in>
             <in>rb_tree.h</in>
           </df>
@@ -58,8 +59,8 @@
           <in>7zloader.c</in>
           <in>alloc.c</in>
           <in>file_cache.c</in>
-          <in>filepack.c</in>
           <in>list.c</in>
+          <in>logger.c</in>
           <in>malloc.c.h</in>
           <in>nedmalloc.c</in>
           <in>rb_tree.c</in>
@@ -116,8 +117,8 @@
       <flagsDictionary>
         <element flagsID="0" commonFlags="-std=c++11 -fstack-protector-all -fPIC"/>
         <element flagsID="1" commonFlags="-std=c99"/>
-        <element flagsID="2" commonFlags="-std=c99 -fPIC"/>
-        <element flagsID="3" commonFlags="-std=c99 -fstack-protector-all -fPIC"/>
+        <element flagsID="2" commonFlags="-std=c99 -fstack-protector-all -fPIC"/>
+        <element flagsID="3" commonFlags="-std=c99 -fstack-protector-all -fPIC -fPIC"/>
       </flagsDictionary>
       <codeAssistance>
       </codeAssistance>
@@ -126,7 +127,7 @@
           <buildCommandWorkingDir>build</buildCommandWorkingDir>
           <buildCommand>${MAKE} -f Makefile</buildCommand>
           <cleanCommand>${MAKE} -f Makefile clean</cleanCommand>
-          <executablePath></executablePath>
+          <executablePath>build/bin/Debug/3dlite_tests</executablePath>
           <ccTool>
             <incDir>
               <pElem>3dlite/include</pElem>
@@ -146,146 +147,153 @@
         </cTool>
       </item>
       <item path="3dlite/src/7zdec/7zBuf.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="3">
+        <cTool flags="2">
         </cTool>
       </item>
       <item path="3dlite/src/7zdec/7zBuf2.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="3">
+        <cTool flags="2">
         </cTool>
       </item>
       <item path="3dlite/src/7zdec/7zCrc.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="3">
+        <cTool flags="2">
         </cTool>
       </item>
       <item path="3dlite/src/7zdec/7zCrcOpt.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="3">
+        <cTool flags="2">
         </cTool>
       </item>
       <item path="3dlite/src/7zdec/7zDec.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="3">
+        <cTool flags="2">
         </cTool>
       </item>
       <item path="3dlite/src/7zdec/7zFile.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="3">
+        <cTool flags="2">
         </cTool>
       </item>
       <item path="3dlite/src/7zdec/7zIn.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="3">
+        <cTool flags="2">
         </cTool>
       </item>
       <item path="3dlite/src/7zdec/7zStream.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="3">
+        <cTool flags="2">
         </cTool>
       </item>
       <item path="3dlite/src/7zdec/Bcj2.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="3">
+        <cTool flags="2">
         </cTool>
       </item>
       <item path="3dlite/src/7zdec/Bra.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="3">
+        <cTool flags="2">
         </cTool>
       </item>
       <item path="3dlite/src/7zdec/Bra86.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="3">
+        <cTool flags="2">
         </cTool>
       </item>
       <item path="3dlite/src/7zdec/CpuArch.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="3">
+        <cTool flags="2">
         </cTool>
       </item>
       <item path="3dlite/src/7zdec/Lzma2Dec.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="3">
+        <cTool flags="2">
         </cTool>
       </item>
       <item path="3dlite/src/7zdec/LzmaDec.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="3">
+        <cTool flags="2">
         </cTool>
       </item>
       <item path="3dlite/src/7zdec/Ppmd7.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="3">
+        <cTool flags="2">
         </cTool>
       </item>
       <item path="3dlite/src/7zdec/Ppmd7Dec.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="3">
+        <cTool flags="2">
         </cTool>
       </item>
       <item path="3dlite/src/7zloader.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="2">
+        <cTool flags="3">
           <incDir>
             <pElem>/usr/include/SDL2</pElem>
             <pElem>build/3dlite</pElem>
           </incDir>
           <preprocessorList>
+            <Elem>_3dlite_EXPORTS</Elem>
             <Elem>_REENTRANT</Elem>
           </preprocessorList>
         </cTool>
       </item>
       <item path="3dlite/src/alloc.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="2">
+        <cTool flags="3">
           <incDir>
             <pElem>/usr/include/SDL2</pElem>
             <pElem>build/3dlite</pElem>
           </incDir>
           <preprocessorList>
+            <Elem>_3dlite_EXPORTS</Elem>
             <Elem>_REENTRANT</Elem>
           </preprocessorList>
         </cTool>
       </item>
       <item path="3dlite/src/file_cache.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="2">
+        <cTool flags="3">
           <incDir>
             <pElem>/usr/include/SDL2</pElem>
             <pElem>build/3dlite</pElem>
           </incDir>
           <preprocessorList>
-            <Elem>_REENTRANT</Elem>
-          </preprocessorList>
-        </cTool>
-      </item>
-      <item path="3dlite/src/filepack.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="2">
-          <incDir>
-            <pElem>/usr/include/SDL2</pElem>
-            <pElem>build/3dlite</pElem>
-          </incDir>
-          <preprocessorList>
+            <Elem>_3dlite_EXPORTS</Elem>
             <Elem>_REENTRANT</Elem>
           </preprocessorList>
         </cTool>
       </item>
       <item path="3dlite/src/glew/glew.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="3">
+        <cTool flags="2">
         </cTool>
       </item>
       <item path="3dlite/src/list.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="2">
+        <cTool flags="3">
           <incDir>
             <pElem>/usr/include/SDL2</pElem>
             <pElem>build/3dlite</pElem>
           </incDir>
           <preprocessorList>
+            <Elem>_3dlite_EXPORTS</Elem>
+            <Elem>_REENTRANT</Elem>
+          </preprocessorList>
+        </cTool>
+      </item>
+      <item path="3dlite/src/logger.c" ex="false" tool="0" flavor2="3">
+        <cTool flags="3">
+          <incDir>
+            <pElem>/usr/include/SDL2</pElem>
+            <pElem>build/3dlite</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>_3dlite_EXPORTS</Elem>
             <Elem>_REENTRANT</Elem>
           </preprocessorList>
         </cTool>
       </item>
       <item path="3dlite/src/nedmalloc.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="2">
+        <cTool flags="3">
           <incDir>
             <pElem>/usr/include/SDL2</pElem>
             <pElem>build/3dlite</pElem>
           </incDir>
           <preprocessorList>
+            <Elem>_3dlite_EXPORTS</Elem>
             <Elem>_REENTRANT</Elem>
           </preprocessorList>
         </cTool>
       </item>
       <item path="3dlite/src/rb_tree.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="2">
+        <cTool flags="3">
           <incDir>
             <pElem>/usr/include/SDL2</pElem>
             <pElem>build/3dlite</pElem>
           </incDir>
           <preprocessorList>
+            <Elem>_3dlite_EXPORTS</Elem>
             <Elem>_REENTRANT</Elem>
           </preprocessorList>
         </cTool>
@@ -451,6 +459,8 @@
       </item>
       <item path="3dlite/include/3dlite/list.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="3dlite/include/3dlite/logger.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="3dlite/include/3dlite/nedmalloc.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="3dlite/include/3dlite/rb_tree.h" ex="false" tool="3" flavor2="0">
@@ -494,6 +504,8 @@
       <item path="3dlite/src/glew/glew.c" ex="false" tool="0" flavor2="0">
       </item>
       <item path="3dlite/src/list.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="3dlite/src/logger.c" ex="false" tool="0" flavor2="0">
       </item>
       <item path="3dlite/src/malloc.c.h" ex="false" tool="3" flavor2="0">
       </item>

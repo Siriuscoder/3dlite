@@ -59,8 +59,8 @@ LITE3D_CEXPORT void lite3d_free(void *p);
 LITE3D_CEXPORT void *lite3d_malloc_pooled(uint8_t pollNo, size_t size);
 LITE3D_CEXPORT void lite3d_free_pooled(uint8_t pollNo, void *p);
 
-void lite3d_init_memory(lite3d_alloca_f *allocator);
-void lite3d_cleanup_memory(void);
+LITE3D_CEXPORT void lite3d_init_memory(lite3d_alloca_f *allocator);
+LITE3D_CEXPORT void lite3d_cleanup_memory(void);
 
 #endif	/* ALLOC_H */
 

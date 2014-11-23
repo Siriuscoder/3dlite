@@ -33,10 +33,6 @@ static lite3d_resource_file *lookup_resource_index(lite3d_resource_pack *pack, c
     {
         /* OK, found */
         resource = MEMBERCAST(lite3d_resource_file, index, cached);
-        
-        /* move resource to the head of priority queue */
-        lite3d_list_unlink_link(&resource->priority);
-        lite3d_list_add_first_link(&resource->priority, &pack->priorityList);
     }
     
     return resource;
@@ -55,9 +51,8 @@ static lite3d_resource_file *create_resource_index(lite3d_resource_pack *pack, c
     
     /* put index into cache tree */
     lite3d_rb_tree_insert(pack->fileCache, &resource->cached);
-    /* put resource on priority queue */
+    /* init priority queue link */
     lite3d_list_link_init(&resource->priority);
-    lite3d_list_add_first_link(&resource->priority, &pack->priorityList);
     return resource;
 }
 
@@ -68,6 +63,10 @@ static void resource_index_delete(lite3d_rb_node *x)
 
     lite3d_purge_resource_file(resource);
     lite3d_list_unlink_link(&resource->priority);
+    
+    SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, 
+        "resource_index_delete: '%s' unindexed",    
+        resource->name);
     /* for fast resources alloc/free operations use NO1 memory pool */
     lite3d_free_pooled(LITE3D_POOL_NO1, resource);
 }
@@ -102,7 +101,9 @@ memValidate:
     if ((pack->memoryUsed + size) > pack->memoryLimit)
     {
         SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
-            "lite3d_load_resource_file: memory limit is reached..cleanup old data..");
+            "lite3d_load_resource_file: memory limit is reached "
+            "(%d bytes vs %d bytes limit) cleanup old data..",
+            (int)(pack->memoryUsed + size), (int)pack->memoryLimit);
         lite3d_cleanup_out_of_use(pack);
         goto memValidate;
     }
@@ -128,14 +129,15 @@ lite3d_resource_pack *lite3d_open_pack(const char *path, uint8_t compressed,
     
     pack->isCompressed = compressed;
     pack->memoryLimit = memoryLimit;
+    pack->memoryUsed = 0;
     pack->fileCache = lite3d_rb_tree_create(lite3d_rb_tree_c_string_comparator,
         resource_index_delete);
     
     lite3d_list_init(&pack->priorityList);
     strncpy(pack->pathto, path, sizeof(pack->pathto)-1);
     SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, 
-        "lite3d_open_pack: '%s' pack opened (%s) limit %d",
-        path, compressed ? "compressed" : "", (int)memoryLimit);
+        "lite3d_open_pack: '%s' pack opened (%s) limit %d bytes",
+        path, compressed ? "compressed" : "filesystem", (int)memoryLimit);
     
     /* begin indexing 7z pack */
     if(compressed)
@@ -150,6 +152,11 @@ lite3d_resource_pack *lite3d_open_pack(const char *path, uint8_t compressed,
 void lite3d_close_pack(lite3d_resource_pack *pack)
 {
     SDL_assert(pack);
+    
+    SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION,
+        "lite3d_close_pack: begin to closing pack '%s' (%s)",
+        pack->pathto, pack->isCompressed ? "compressed" : "filesystem");
+    
     /* empty list */
     lite3d_list_init(&pack->priorityList);
     /* release all resources and release resource index */
@@ -163,7 +170,8 @@ void lite3d_close_pack(lite3d_resource_pack *pack)
     }
     
     SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, 
-        "lite3d_close_pack: '%s' pack closed ", pack->pathto);
+        "lite3d_close_pack: '%s' pack (%s) closed ", pack->pathto,
+        pack->isCompressed ? "compressed" : "filesystem");
     lite3d_free(pack);
 }
 
@@ -187,8 +195,12 @@ lite3d_resource_file *lite3d_load_resource_file(lite3d_resource_pack *pack, cons
     if(resource && resource->isLoaded)
     {
         SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, 
-            "lite3d_load_resource_file: '%s' loaded from index (size: %d)",
-            file, (int)resource->fileSize);      
+            "lite3d_load_resource_file: '%s' loaded from index (size: %d bytes)",
+            file, (int)resource->fileSize);
+            
+        /* move resource to the head of priority queue */
+        lite3d_list_unlink_link(&resource->priority);
+        lite3d_list_add_first_link(&resource->priority, &pack->priorityList);
         return resource;
     }
 
@@ -240,7 +252,7 @@ lite3d_resource_file *lite3d_load_resource_file(lite3d_resource_pack *pack, cons
         }
         
         SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, 
-            "lite3d_load_resource_file: '%s' loaded (size: %d, chunks %d)",
+            "lite3d_load_resource_file: '%s' loaded (size: %d bytes, chunks %d)",
             file, (int)fileSize, (int)chunks);
         SDL_RWclose(desc);
     }
@@ -271,6 +283,10 @@ lite3d_resource_file *lite3d_load_resource_file(lite3d_resource_pack *pack, cons
         {
             return NULL;
         }
+        
+        SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, 
+            "lite3d_load_resource_file: '%s' uncompressed (size: %d bytes)",
+            file, (int)fileSize);
     }
     
     if(!resource)
@@ -281,6 +297,10 @@ lite3d_resource_file *lite3d_load_resource_file(lite3d_resource_pack *pack, cons
     resource->fileBuff = fileBuffer;
     resource->fileSize = fileSize;
     resource->isLoaded = 1;
+    /* move resource to the head of priority queue */
+    lite3d_list_unlink_link(&resource->priority);
+    lite3d_list_add_first_link(&resource->priority, &pack->priorityList);
+    
     pack->memoryUsed += fileSize;
     return resource;
 }
@@ -294,11 +314,13 @@ void lite3d_purge_resource_file(lite3d_resource_file *resource)
         resource->fileBuff = NULL;     
         resource->packer->memoryUsed -= resource->fileSize;
         resource->fileSize = 0;
+        lite3d_list_unlink_link(&resource->priority);
+        
+        SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, 
+            "lite3d_purge_resource_file: '%s' unloaded",    
+            resource->name);
     }
     
-    SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, 
-        "lite3d_load_resource_file: '%s' unloaded",    
-        resource->name);
     resource->isLoaded = 0;
 }
 

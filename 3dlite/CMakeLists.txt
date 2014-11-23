@@ -62,7 +62,8 @@ src/alloc.c
 src/rb_tree.c
 src/list.c
 src/file_cache.c
-src/7zloader.c)
+src/7zloader.c
+src/logger.c)
 
 set(3DLITE_HEADERS include/3dlite/alloc.h
 include/3dlite/common.h
@@ -70,9 +71,10 @@ include/3dlite/nedmalloc.h
 include/3dlite/rb_tree.h
 include/3dlite/list.h
 include/3dlite/file_cache.h
-include/3dlite/7zloader.h)
+include/3dlite/7zloader.h
+include/3dlite/logger.h)
 
-add_library(3dlite ${3DLITE_SOURCES} ${3DLITE_HEADERS})
+add_library(3dlite SHARED ${3DLITE_SOURCES} ${3DLITE_HEADERS})
 
 if(WIN32 AND MSVC)
 target_compile_definitions(3dlite PRIVATE
@@ -83,3 +85,9 @@ else()
 target_compile_options(3dlite PRIVATE 
 "$<BUILD_INTERFACE:${SDL2_CFLAGS}>")
 endif()
+
+target_link_libraries(3dlite
+7zdec
+glewc
+${SDL2_LIBRARIES}
+${CMAKE_THREAD_LIBS_INIT})

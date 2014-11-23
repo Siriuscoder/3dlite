@@ -23,7 +23,13 @@
 
 int lite3d_rb_tree_c_string_comparator(const void* a, const void* b)
 {
-    return strcmp((const char *) a, (const char *) b);
+    int ret = strcmp((const char *) a, (const char *) b);
+    if(ret > 0)
+        return 1;
+    else if(ret < 0)
+        return -1;
+    
+    return 0; 
 }
 
 lite3d_rb_tree* lite3d_rb_tree_create(lite3d_rb_tree_comparator comparator,
@@ -354,7 +360,7 @@ static void lite3d_rb_tree_destroy_help(lite3d_rb_tree* tree, lite3d_rb_node* x)
 
 void lite3d_rb_tree_destroy(lite3d_rb_tree* tree)
 {
-    lite3d_rb_tree_destroy_help(tree, tree->root);
+    lite3d_rb_tree_destroy_help(tree, tree->root->left);
     lite3d_free(tree);
 }
 

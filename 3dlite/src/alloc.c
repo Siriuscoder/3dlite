@@ -16,7 +16,6 @@
 *	along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
 #include <stdlib.h>
-#include <assert.h>
 
 #include <3dlite/alloc.h>
 #include <3dlite/nedmalloc.h>
@@ -42,7 +41,7 @@ void lite3d_init_memory(lite3d_alloca_f *allocator)
     for(i = 0; i < LITE3D_POOL_MAX; ++i)
     {
         if(!globalMemPools[i])
-            globalMemPools[i] = nedcreatepool(0, 1);
+            globalMemPools[i] = nedcreatepool(0x100000, 1);
     }
 }
 
@@ -52,7 +51,10 @@ void lite3d_cleanup_memory(void)
     for(i = 0; i < LITE3D_POOL_MAX; ++i)
     {
         if(globalMemPools[i])
-           neddestroypool(globalMemPools[i]); 
+        {
+           neddestroypool(globalMemPools[i]);
+           globalMemPools[i] = NULL;
+        }
     }
 }
 

@@ -18,12 +18,13 @@
 #ifndef LITE3D_7ZLOADER_H
 #define	LITE3D_7ZLOADER_H
 
+#include <3dlite/common.h>
+
 #include <3dlite/7zdec/7z.h>
 #include <3dlite/7zdec/7zCrc.h>
 #include <3dlite/7zdec/7zFile.h>
 #include <3dlite/7zdec/7zVersion.h>
 
-#include <3dlite/common.h>
 
 typedef struct lite3d_7z_pack
 {

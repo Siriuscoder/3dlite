@@ -1,20 +1,175 @@
 /******************************************************************************
-*	This file is part of 3dlite (Light-weight 3d engine).
-*	Copyright (C) 2014  Sirius (Korolev Nikita)
-*
-*	Foobar is free software: you can redistribute it and/or modify
-*	it under the terms of the GNU General Public License as published by
-*	the Free Software Foundation, either version 3 of the License, or
-*	(at your option) any later version.
-*
-*	Foobar is distributed in the hope that it will be useful,
-*	but WITHOUT ANY WARRANTY; without even the implied warranty of
-*	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-*	GNU General Public License for more details.
-*
-*	You should have received a copy of the GNU General Public License
-*	along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
-*******************************************************************************/
+ *	This file is part of 3dlite (Light-weight 3d engine).
+ *	Copyright (C) 2014  Sirius (Korolev Nikita)
+ *
+ *	Foobar is free software: you can redistribute it and/or modify
+ *	it under the terms of the GNU General Public License as published by
+ *	the Free Software Foundation, either version 3 of the License, or
+ *	(at your option) any later version.
+ *
+ *	Foobar is distributed in the hope that it will be useful,
+ *	but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *	GNU General Public License for more details.
+ *
+ *	You should have received a copy of the GNU General Public License
+ *	along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
+ *******************************************************************************/
 #include <gtest/gtest.h>
 
 #include <3dlite/file_cache.h>
+#include <3dlite/alloc.h>
+#include <3dlite/logger.h>
+
+static void TestCommon(lite3d_resource_pack *pack)
+{
+    lite3d_resource_file *resource1 = lite3d_load_resource_file(pack,
+        "pack/eev.jpg");
+
+    ASSERT_TRUE(resource1);
+    EXPECT_TRUE(resource1->isLoaded == 1);
+    EXPECT_TRUE(resource1->fileBuff != NULL);
+    EXPECT_EQ(resource1->fileSize, 89149);
+
+    lite3d_resource_file *resource2 = lite3d_load_resource_file(pack,
+        "pack/normandy/ref.jpg");
+
+    ASSERT_TRUE(resource2);
+    EXPECT_TRUE(resource2->isLoaded == 1);
+    EXPECT_TRUE(resource2->fileBuff != NULL);
+    EXPECT_EQ(resource2->fileSize, 229837);
+
+    EXPECT_EQ(pack->memoryUsed, 89149 + 229837);
+
+    lite3d_purge_resource_file(resource1);
+
+    EXPECT_TRUE(resource1->isLoaded == 0);
+    EXPECT_TRUE(resource1->fileBuff == NULL);
+    EXPECT_EQ(resource1->fileSize, 0);
+    EXPECT_EQ(pack->memoryUsed, 229837);
+
+    lite3d_resource_file *resource3 = lite3d_load_resource_file(pack,
+        "pack/pack.0");
+
+    ASSERT_TRUE(resource3);
+    EXPECT_TRUE(resource3->isLoaded == 1);
+    EXPECT_TRUE(resource3->fileBuff != NULL);
+    EXPECT_EQ(resource3->fileSize, 380065);
+
+    lite3d_resource_file *resource4 = lite3d_load_resource_file(pack,
+        "pack/normandy/ref.jpg");
+
+    ASSERT_TRUE(resource4);
+    EXPECT_TRUE(resource4->isLoaded == 1);
+    EXPECT_TRUE(resource4->fileBuff != NULL);
+    EXPECT_EQ(resource4->fileSize, 229837);
+    EXPECT_EQ((size_t) resource2, (size_t) resource4);
+    EXPECT_EQ(pack->memoryUsed, 380065 + 229837);
+
+    /* memory limit reached in this point */
+    /* expecting purged tail resource */
+    lite3d_resource_file *resource5 = lite3d_load_resource_file(pack,
+        "pack/normandy/t1.jpg");
+
+    ASSERT_TRUE(resource5);
+    EXPECT_TRUE(resource5->isLoaded == 1);
+    EXPECT_TRUE(resource5->fileBuff != NULL);
+    EXPECT_EQ(resource5->fileSize, 122167);
+    EXPECT_EQ(pack->memoryUsed, 229837 + 122167);
+}
+
+class FileSysCache_Test : public ::testing::Test
+{
+protected:
+
+    // Per-test-case set-up.
+    // Called before the first test in this test case.
+    // Can be omitted if not needed.
+
+    static void SetUpTestCase()
+    {
+        /* setup memory */
+        lite3d_init_memory(NULL);
+        lite3d_setup_stdout_logger();
+        lite3d_verbose_logger();
+    }
+
+    // Per-test-case tear-down.
+    // Called after the last test in this test case.
+    // Can be omitted if not needed.
+
+    static void TearDownTestCase()
+    {
+        /* clean memory */
+        lite3d_cleanup_memory();
+    }
+
+public:
+
+    virtual void SetUp()
+    {
+        mFileSysPack = lite3d_open_pack("tests/", 0, 700000);
+        ASSERT_TRUE(mFileSysPack);
+    }
+
+    virtual void TearDown()
+    {
+        lite3d_close_pack(mFileSysPack);
+    }
+
+protected:
+    lite3d_resource_pack *mFileSysPack;
+};
+
+TEST_F(FileSysCache_Test, testCommon)
+{
+    TestCommon(mFileSysPack);
+}
+
+class File7zCache_Test : public ::testing::Test
+{
+protected:
+
+    // Per-test-case set-up.
+    // Called before the first test in this test case.
+    // Can be omitted if not needed.
+
+    static void SetUpTestCase()
+    {
+        /* setup memory */
+        lite3d_init_memory(NULL);
+        lite3d_setup_stdout_logger();
+        lite3d_verbose_logger();
+    }
+
+    // Per-test-case tear-down.
+    // Called after the last test in this test case.
+    // Can be omitted if not needed.
+
+    static void TearDownTestCase()
+    {
+        /* clean memory */
+        lite3d_cleanup_memory();
+    }
+
+public:
+
+    virtual void SetUp()
+    {
+        mFile7zPack = lite3d_open_pack("tests/pack.1", 1, 700000);
+        ASSERT_TRUE(mFile7zPack);
+    }
+
+    virtual void TearDown()
+    {
+        lite3d_close_pack(mFile7zPack);
+    }
+
+protected:
+    lite3d_resource_pack *mFile7zPack;
+};
+
+TEST_F(File7zCache_Test, testCommon)
+{
+    TestCommon(mFile7zPack);
+}

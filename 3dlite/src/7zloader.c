@@ -37,7 +37,7 @@ static void free7z(void *p, void *addr)
 static int utf16_to_utf8(Byte *dest, size_t *destLen, const UInt16 *src)
 {
     size_t destPos = 0, srcPos = 0, srcLen = 0;
-    for (; src[srcLen] != '\0'; srcLen++);
+    for (; src[srcLen] != '\0'; srcLen++); srcLen++;
     
     for (;;)
     {
@@ -180,6 +180,7 @@ void lite3d_7z_pack_iterate(lite3d_7z_pack *pack, lite3d_7z_iterator iter, void 
         }
         
         SzArEx_GetFileNameUtf16(&pack->db, index, utf16name);
+        utf16name[nameLen] = 0;
         /* encode name */
         if(!utf16_to_utf8(utf8name, &destPos, utf16name))
         {

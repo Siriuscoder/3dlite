@@ -22,8 +22,4 @@ endif()
 
 target_link_libraries(3dlite_tests 
 gtest
-7zdec
-glewc 
-3dlite
-${SDL2_LIBRARIES}
-${CMAKE_THREAD_LIBS_INIT})
+3dlite)
