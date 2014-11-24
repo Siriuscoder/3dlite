@@ -110,3 +110,24 @@ Boost Software License - Version 1.0 - August 17th, 2003
            ftp://gee.cs.oswego.edu/pub/misc/malloc.c
          Check before installing!
 
+============================ Google C++ Testing Framework ===================
+Author: wan@google.com (Zhanyong Wan)
+
+The Google C++ Testing Framework (Google Test)
+
+This header file defines the public API for Google Test.  It should be
+included by any test program that uses Google Test.
+
+IMPORTANT NOTE: Due to limitation of the C++ language, we have to
+leave some internal implementation details in this header file.
+They are clearly marked by comments like this:
+
+  // INTERNAL IMPLEMENTATION - DO NOT USE IN A USER PROGRAM.
+
+Such code is NOT meant to be used by a user directly, and is subject
+to CHANGE WITHOUT NOTICE.  Therefore DO NOT DEPEND ON IT in a user
+program!
+
+Acknowledgment: Google Test borrowed the idea of automatic test
+registration from Barthelemy Dagenais' (barthelemy@prologique.com)
+easyUnit framework.
