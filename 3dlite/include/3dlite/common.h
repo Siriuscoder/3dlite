@@ -40,16 +40,19 @@
 #   if defined(_MSC_VER)
 // Disable whining about using 'this' as a member initializer on VC++.
 #       pragma warning(disable: 4355)
+#       pragma warning(disable: 4127)
 #   endif
 
 
 #   ifdef _WINDLL
 // When making the DLL, export tagged symbols, so they appear
 // in the import library.
-#	define LITE3D_EXPORT __declspec(dllexport)
+#   define LITE3D_EXPORT __declspec(dllexport)
+#   define LITE3D_CLASS_EXPORT LITE3D_EXPORT
 #   elif !defined(_WINDLL)
         // We must be _using_ the DLL, so import symbols instead.
-#   define LITE3D_EXPORT __declspec(dllimport)
+#   define LITE3D_EXPORT
+#   define LITE3D_CLASS_EXPORT __declspec(dllimport)
 #   endif
 
 #   define STRUCT_PACKED(x) __declspec(align(x))
@@ -65,6 +68,7 @@
 #   endif
 
 #   define LITE3D_EXPORT
+#   define LITE3D_CLASS_EXPORT
 #   define STRUCT_PACKED(x) __attribute__ ((aligned(x)));
 #   define INLINE inline
 #endif
@@ -79,6 +83,7 @@
 #endif
 
 #define LITE3D_CEXPORT  LITE3D_EXPORT LITE3D_EXTERN
+#define LITE3D_CPPEXPORT  LITE3D_CLASS_EXPORT LITE3D_EXTERN
 
 #define VERSION_MAJ         0
 #define VERSION_MIN         0

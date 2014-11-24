@@ -48,7 +48,7 @@ typedef void (*lite3d_7z_iterator)(lite3d_7z_pack *pack,
 LITE3D_CEXPORT lite3d_7z_pack *lite3d_7z_pack_open(const char *path);
 LITE3D_CEXPORT void lite3d_7z_pack_close(lite3d_7z_pack *pack);
 LITE3D_CEXPORT void lite3d_7z_pack_iterate(lite3d_7z_pack *pack, lite3d_7z_iterator iter, void *userdata);
-LITE3D_CEXPORT void *lite3d_7z_pack_file_extract(lite3d_7z_pack *pack, int index, size_t *outSize);
-LITE3D_CEXPORT int32_t lite3d_7z_pack_file_size(lite3d_7z_pack *pack, int index);
+LITE3D_CEXPORT void *lite3d_7z_pack_file_extract(lite3d_7z_pack *pack, uint32_t index, size_t *outSize);
+LITE3D_CEXPORT size_t lite3d_7z_pack_file_size(lite3d_7z_pack *pack, uint32_t index);
 
 #endif

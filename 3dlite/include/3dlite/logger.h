@@ -23,6 +23,8 @@
 
 LITE3D_CEXPORT void lite3d_setup_stdout_logger(void);
 LITE3D_CEXPORT void lite3d_verbose_logger(void);
+LITE3D_CEXPORT void lite3d_normal_logger(void);
+LITE3D_CEXPORT void lite3d_errors_only_logger(void);
 
 #endif	/* LOGGER_H */
 

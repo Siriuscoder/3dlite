@@ -23,12 +23,13 @@
 static void log_to_file(FILE *desc, int category, 
     SDL_LogPriority priority, const char* message)
 {
-    fprintf(desc, "%s: %s\n", (priority == SDL_LOG_PRIORITY_VERBOSE ? "note" :
+    fprintf(desc, "%s(%s): %s\n", (priority == SDL_LOG_PRIORITY_VERBOSE ? "note" :
         (priority == SDL_LOG_PRIORITY_DEBUG ? "debug" : 
         (priority == SDL_LOG_PRIORITY_INFO ? "info" :
         (priority == SDL_LOG_PRIORITY_WARN ? "warn" :
         (priority == SDL_LOG_PRIORITY_ERROR ? "error" : "critical"))))),
-        message);    
+        category == SDL_LOG_CATEGORY_APPLICATION ? "app" : "sdl",
+        message);
 }
 
 static void std_output_function(void* userdata, int category, 
@@ -56,6 +57,16 @@ void lite3d_setup_stdout_logger(void)
 void lite3d_verbose_logger(void)
 {
     SDL_LogSetAllPriority(SDL_LOG_PRIORITY_VERBOSE);
+}
+
+void lite3d_normal_logger(void)
+{
+    SDL_LogSetAllPriority(SDL_LOG_PRIORITY_INFO);
+}
+
+void lite3d_errors_only_logger(void)
+{
+    SDL_LogSetAllPriority(SDL_LOG_PRIORITY_ERROR);
 }
 
 

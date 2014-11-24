@@ -34,10 +34,12 @@ DEALINGS IN THE SOFTWARE.
 /*#define FULLSANITYCHECKS*/
 
 #include <3dlite/nedmalloc.h>
-#include <alloca.h>
+
 
 #ifdef WIN32
  #include <malloc.h>
+#else
+#include <alloca.h>
 #endif
 #define MSPACES 1
 #define ONLY_MSPACES 1

@@ -26,7 +26,7 @@ static void TestCommon(lite3d_resource_pack *pack)
     lite3d_resource_file *resource1 = lite3d_load_resource_file(pack,
         "pack/eev.jpg");
 
-    ASSERT_TRUE(resource1);
+    ASSERT_TRUE(resource1 != NULL);
     EXPECT_TRUE(resource1->isLoaded == 1);
     EXPECT_TRUE(resource1->fileBuff != NULL);
     EXPECT_EQ(resource1->fileSize, 89149);
@@ -34,7 +34,7 @@ static void TestCommon(lite3d_resource_pack *pack)
     lite3d_resource_file *resource2 = lite3d_load_resource_file(pack,
         "pack/normandy/ref.jpg");
 
-    ASSERT_TRUE(resource2);
+    ASSERT_TRUE(resource2 != NULL);
     EXPECT_TRUE(resource2->isLoaded == 1);
     EXPECT_TRUE(resource2->fileBuff != NULL);
     EXPECT_EQ(resource2->fileSize, 229837);
@@ -51,7 +51,7 @@ static void TestCommon(lite3d_resource_pack *pack)
     lite3d_resource_file *resource3 = lite3d_load_resource_file(pack,
         "pack/pack.0");
 
-    ASSERT_TRUE(resource3);
+    ASSERT_TRUE(resource3 != NULL);
     EXPECT_TRUE(resource3->isLoaded == 1);
     EXPECT_TRUE(resource3->fileBuff != NULL);
     EXPECT_EQ(resource3->fileSize, 380065);
@@ -59,7 +59,7 @@ static void TestCommon(lite3d_resource_pack *pack)
     lite3d_resource_file *resource4 = lite3d_load_resource_file(pack,
         "pack/normandy/ref.jpg");
 
-    ASSERT_TRUE(resource4);
+    ASSERT_TRUE(resource4 != NULL);
     EXPECT_TRUE(resource4->isLoaded == 1);
     EXPECT_TRUE(resource4->fileBuff != NULL);
     EXPECT_EQ(resource4->fileSize, 229837);
@@ -71,11 +71,53 @@ static void TestCommon(lite3d_resource_pack *pack)
     lite3d_resource_file *resource5 = lite3d_load_resource_file(pack,
         "pack/normandy/t1.jpg");
 
-    ASSERT_TRUE(resource5);
+    ASSERT_TRUE(resource5 != NULL);
     EXPECT_TRUE(resource5->isLoaded == 1);
     EXPECT_TRUE(resource5->fileBuff != NULL);
     EXPECT_EQ(resource5->fileSize, 122167);
     EXPECT_EQ(pack->memoryUsed, 229837 + 122167);
+}
+
+static void TestPerfomanceIndex(lite3d_resource_pack *pack)
+{
+    for(int i = 0; i < 10000; i++)
+    {
+        lite3d_resource_file *resource = lite3d_load_resource_file(pack,
+            "pack/pack.0");
+    
+        ASSERT_TRUE(resource != NULL);
+        EXPECT_TRUE(resource->isLoaded == 1);
+        EXPECT_TRUE(resource->fileBuff != NULL);
+        EXPECT_EQ(resource->fileSize, 380065);
+    
+        lite3d_resource_file *resource2 = lite3d_load_resource_file(pack,
+            "pack/normandy/ref.jpg");
+    
+        ASSERT_TRUE(resource2 != NULL);
+        EXPECT_TRUE(resource2->isLoaded == 1);
+        EXPECT_TRUE(resource2->fileBuff != NULL);
+        EXPECT_EQ(resource2->fileSize, 229837);
+    }
+}
+
+static void TestPerfomanceLoad(lite3d_resource_pack *pack)
+{
+    for(int i = 0; i < 10; i++)
+    {
+        lite3d_resource_file *resource = lite3d_load_resource_file(pack,
+            i % 2 ? "pack/pack.0" : "pack/normandy/ref.jpg");
+    
+        ASSERT_TRUE(resource != NULL);
+        EXPECT_TRUE(resource->isLoaded == 1);
+        EXPECT_TRUE(resource->fileBuff != NULL);
+        EXPECT_EQ(resource->fileSize, i % 2 ? 380065 : 229837);
+
+        lite3d_purge_resource_file(resource);
+
+        EXPECT_TRUE(resource->isLoaded == 0);
+        EXPECT_TRUE(resource->fileBuff == NULL);
+        EXPECT_EQ(resource->fileSize, 0);
+    }
 }
 
 class FileSysCache_Test : public ::testing::Test
@@ -91,7 +133,7 @@ protected:
         /* setup memory */
         lite3d_init_memory(NULL);
         lite3d_setup_stdout_logger();
-        lite3d_verbose_logger();
+        lite3d_errors_only_logger();
     }
 
     // Per-test-case tear-down.
@@ -109,7 +151,7 @@ public:
     virtual void SetUp()
     {
         mFileSysPack = lite3d_open_pack("tests/", 0, 700000);
-        ASSERT_TRUE(mFileSysPack);
+        ASSERT_TRUE(mFileSysPack != NULL);
     }
 
     virtual void TearDown()
@@ -126,6 +168,16 @@ TEST_F(FileSysCache_Test, testCommon)
     TestCommon(mFileSysPack);
 }
 
+TEST_F(FileSysCache_Test, testPerfomanceIndex)
+{
+    TestPerfomanceIndex(mFileSysPack);
+}
+
+TEST_F(FileSysCache_Test, testPerfomanceLoad)
+{
+    TestPerfomanceLoad(mFileSysPack);
+}
+
 class File7zCache_Test : public ::testing::Test
 {
 protected:
@@ -139,7 +191,7 @@ protected:
         /* setup memory */
         lite3d_init_memory(NULL);
         lite3d_setup_stdout_logger();
-        lite3d_verbose_logger();
+        lite3d_errors_only_logger();
     }
 
     // Per-test-case tear-down.
@@ -157,7 +209,7 @@ public:
     virtual void SetUp()
     {
         mFile7zPack = lite3d_open_pack("tests/pack.1", 1, 700000);
-        ASSERT_TRUE(mFile7zPack);
+        ASSERT_TRUE(mFile7zPack != NULL);
     }
 
     virtual void TearDown()
@@ -172,4 +224,14 @@ protected:
 TEST_F(File7zCache_Test, testCommon)
 {
     TestCommon(mFile7zPack);
+}
+
+TEST_F(File7zCache_Test, testPerfomanceIndex)
+{
+    TestPerfomanceIndex(mFile7zPack);
+}
+
+TEST_F(File7zCache_Test, testPerfomanceUncompress)
+{
+    TestPerfomanceLoad(mFile7zPack);
 }

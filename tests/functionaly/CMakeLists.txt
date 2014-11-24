@@ -10,7 +10,7 @@ target_include_directories(3dlite_tests PRIVATE
 "$<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/3dlite/include>"
 "$<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/3dlite++/include>")
 
-if(WIN32 AND MSVC)
+if(MSVC)
 target_compile_definitions(3dlite_tests PRIVATE
 "$<BUILD_INTERFACE:_WINEXE>")
 target_include_directories(3dlite_tests PRIVATE 
@@ -24,7 +24,10 @@ target_link_libraries(3dlite_tests
 gtest
 3dlite)
 
+if(NOT MSVC)
+# how to know output executable file path in MSVC compilation case?
 add_custom_command(TARGET 3dlite_tests POST_BUILD 
 	COMMAND ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/3dlite_tests
 	WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/media/
 	COMMENT "Self-testing...")
+endif()

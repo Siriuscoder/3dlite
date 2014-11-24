@@ -87,10 +87,10 @@ static int utf16_to_utf8(Byte *dest, size_t *destLen, const UInt16 *src)
 
 lite3d_7z_pack *lite3d_7z_pack_open(const char *path)
 {
-    SDL_assert(path);
-    
     lite3d_7z_pack *pack;
     CSzFile zFile;
+
+    SDL_assert(path);
     
     if(!gCRC_gen)
     {
@@ -156,13 +156,14 @@ void lite3d_7z_pack_close(lite3d_7z_pack *pack)
 
 void lite3d_7z_pack_iterate(lite3d_7z_pack *pack, lite3d_7z_iterator iter, void *userdata)
 {
-    SDL_assert(pack);
-    int index;
+    UInt32 index;
     const CSzFileItem *f;
     size_t nameLen;
     size_t destPos;
     Byte utf8name[LITE3D_MAX_FILE_NAME];
     UInt16 utf16name[LITE3D_MAX_FILE_NAME];
+
+    SDL_assert(pack);
     
     for(index = 0; index < pack->db.db.NumFiles; ++index)
     {
@@ -198,14 +199,13 @@ void lite3d_7z_pack_iterate(lite3d_7z_pack *pack, lite3d_7z_iterator iter, void 
     }
 }
 
-void *lite3d_7z_pack_file_extract(lite3d_7z_pack *pack, int index, size_t *outSize)
+void *lite3d_7z_pack_file_extract(lite3d_7z_pack *pack, uint32_t index, size_t *outSize)
 {
-    SDL_assert(pack);
     void *fileMem;
-    
     size_t offset = 0;
     size_t outSizeProcessed = 0;
-        
+    SDL_assert(pack);
+
     if(SzArEx_Extract(&pack->db, &pack->lookStream.s, index,
         &pack->blockIndex, &pack->outBuffer, &pack->outBufferSize,
         &offset, &outSizeProcessed,
@@ -223,14 +223,15 @@ void *lite3d_7z_pack_file_extract(lite3d_7z_pack *pack, int index, size_t *outSi
     return fileMem;
 }
 
-int32_t lite3d_7z_pack_file_size(lite3d_7z_pack *pack, int index)
+size_t lite3d_7z_pack_file_size(lite3d_7z_pack *pack, uint32_t index)
 {
+    const CSzFileItem *f;
     SDL_assert(pack);
     
     if(index >= pack->db.db.NumFiles)
         return 0;
     
-    const CSzFileItem *f = pack->db.db.Files + index;
+    f = pack->db.db.Files + index;
     
     if(f->IsDir)
         return 0;

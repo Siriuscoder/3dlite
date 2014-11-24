@@ -76,18 +76,20 @@ include/3dlite/logger.h)
 
 add_library(3dlite SHARED ${3DLITE_SOURCES} ${3DLITE_HEADERS})
 
-if(WIN32 AND MSVC)
+if(MSVC)
 target_compile_definitions(3dlite PRIVATE
 "$<BUILD_INTERFACE:_WINDLL>")
 target_include_directories(3dlite PRIVATE 
 "$<BUILD_INTERFACE:${SDL2_INCLUDE_DIR}>")
+set(SDL2_LIBS ${SDL2_LIBRARY})
 else()
 target_compile_options(3dlite PRIVATE 
 "$<BUILD_INTERFACE:${SDL2_CFLAGS}>")
+set(SDL2_LIBS ${SDL2_LIBRARIES})
 endif()
 
 target_link_libraries(3dlite
 7zdec
 glewc
-${SDL2_LIBRARIES}
+${SDL2_LIBS}
 ${CMAKE_THREAD_LIBS_INIT})

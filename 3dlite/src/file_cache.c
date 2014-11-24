@@ -115,7 +115,7 @@ lite3d_resource_pack *lite3d_open_pack(const char *path, uint8_t compressed,
     size_t memoryLimit)
 {
     lite3d_resource_pack *pack = NULL;
-    lite3d_7z_pack *pack7z;
+    lite3d_7z_pack *pack7z = NULL;
 
     /* compressed packs case */
     if(compressed)
@@ -177,20 +177,22 @@ void lite3d_close_pack(lite3d_resource_pack *pack)
 
 lite3d_resource_file *lite3d_load_resource_file(lite3d_resource_pack *pack, const char *file)
 {
-    SDL_assert(pack);
-    SDL_assert(file);
     void *fileBuffer = NULL;
     size_t fileSize = 0, chunks = 0;
     char *pIt;
+    lite3d_resource_file *resource;
+
+    SDL_assert(pack);
+    SDL_assert(file);
     
     if(strlen(file) >= LITE3D_MAX_FILE_NAME)
     {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, 
             "create_resource_index: '%s' file name too long..", file);
         return NULL;
-    }   
+    }
     
-    lite3d_resource_file *resource = lookup_resource_index(pack, file);
+    resource = lookup_resource_index(pack, file);
     
     if(resource && resource->isLoaded)
     {
@@ -208,6 +210,7 @@ lite3d_resource_file *lite3d_load_resource_file(lite3d_resource_pack *pack, cons
     if(!pack->isCompressed)
     {
         char fullPath[LITE3D_MAX_FILE_PATH];
+        SDL_RWops *desc;
 
         if((strlen(file) + strlen(pack->pathto)) >= LITE3D_MAX_FILE_PATH)
         {
@@ -220,7 +223,7 @@ lite3d_resource_file *lite3d_load_resource_file(lite3d_resource_pack *pack, cons
         strcat(fullPath, file);
 
         /* check open file */
-        SDL_RWops *desc = SDL_RWFromFile(fullPath, "rb");
+        desc = SDL_RWFromFile(fullPath, "rb");
         if(!desc)
         {
             SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, 
@@ -258,6 +261,7 @@ lite3d_resource_file *lite3d_load_resource_file(lite3d_resource_pack *pack, cons
     }
     else
     {
+        lite3d_7z_pack *pack7z;
         if(!resource)
         {
             SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, 
@@ -266,7 +270,7 @@ lite3d_resource_file *lite3d_load_resource_file(lite3d_resource_pack *pack, cons
             return NULL;
         }
         
-        lite3d_7z_pack *pack7z = (lite3d_7z_pack *)pack->internal7z;
+        pack7z = (lite3d_7z_pack *)pack->internal7z;
         fileSize = lite3d_7z_pack_file_size(pack7z, resource->dbIndex);
         if(!check_pack_memory_limit(pack, fileSize))
         {
@@ -331,13 +335,15 @@ void lite3d_purge_resources(lite3d_resource_pack *pack)
 
 void lite3d_cleanup_out_of_use(lite3d_resource_pack *pack)
 {
+    lite3d_list_node *last;
+    lite3d_resource_file *resource;
     SDL_assert(pack);
+
     if(lite3d_list_is_empty(&pack->priorityList))
         return;
     
-    lite3d_list_node *last = lite3d_list_last_link(&pack->priorityList);
-    lite3d_resource_file *resource = 
-        MEMBERCAST(lite3d_resource_file, last, priority);
+    last = lite3d_list_last_link(&pack->priorityList);
+    resource = MEMBERCAST(lite3d_resource_file, last, priority);
     
     lite3d_purge_resource_file(resource);
 }
