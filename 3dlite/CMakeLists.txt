@@ -63,7 +63,8 @@ src/rb_tree.c
 src/list.c
 src/file_cache.c
 src/7zloader.c
-src/logger.c)
+src/logger.c
+src/gl_texture_unit.c)
 
 set(3DLITE_HEADERS include/3dlite/alloc.h
 include/3dlite/common.h
@@ -72,7 +73,8 @@ include/3dlite/rb_tree.h
 include/3dlite/list.h
 include/3dlite/file_cache.h
 include/3dlite/7zloader.h
-include/3dlite/logger.h)
+include/3dlite/logger.h
+include/3dlite/gl_texture_unit.h)
 
 add_library(3dlite SHARED ${3DLITE_SOURCES} ${3DLITE_HEADERS})
 
