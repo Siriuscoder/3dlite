@@ -99,6 +99,7 @@
 
 #define LITE3D_MAX_FILE_PATH    1024
 #define LITE3D_MAX_FILE_NAME    128
+#define LITE3D_MAX_NAME         LITE3D_MAX_FILE_NAME
 
 #endif	/* COMMON_H */
 

@@ -93,5 +93,8 @@ endif()
 target_link_libraries(3dlite
 7zdec
 glewc
+${OPENGL_LIBRARIES}
+${IL_LIBRARIES}
+${ILU_LIBRARIES}
 ${SDL2_LIBS}
 ${CMAKE_THREAD_LIBS_INIT})

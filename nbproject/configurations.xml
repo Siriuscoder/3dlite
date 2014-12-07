@@ -59,6 +59,7 @@
           <in>7zloader.c</in>
           <in>alloc.c</in>
           <in>file_cache.c</in>
+          <in>gl_texture_unit.c</in>
           <in>list.c</in>
           <in>logger.c</in>
           <in>malloc.c.h</in>
@@ -180,7 +181,7 @@
         <cTool flags="3">
           <incDir>
             <pElem>/usr/include/SDL2</pElem>
-            <pElem>build/3dlite</pElem>
+            <pElem>/mnt/work/sirius/workwork/source/repos/3dlite/build/3dlite</pElem>
           </incDir>
           <preprocessorList>
             <Elem>_3dlite_EXPORTS</Elem>
@@ -192,7 +193,7 @@
         <cTool flags="3">
           <incDir>
             <pElem>/usr/include/SDL2</pElem>
-            <pElem>build/3dlite</pElem>
+            <pElem>/mnt/work/sirius/workwork/source/repos/3dlite/build/3dlite</pElem>
           </incDir>
           <preprocessorList>
             <Elem>_3dlite_EXPORTS</Elem>
@@ -204,7 +205,19 @@
         <cTool flags="3">
           <incDir>
             <pElem>/usr/include/SDL2</pElem>
-            <pElem>build/3dlite</pElem>
+            <pElem>/mnt/work/sirius/workwork/source/repos/3dlite/build/3dlite</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>_3dlite_EXPORTS</Elem>
+            <Elem>_REENTRANT</Elem>
+          </preprocessorList>
+        </cTool>
+      </item>
+      <item path="3dlite/src/gl_texture_unit.c" ex="false" tool="0" flavor2="3">
+        <cTool flags="3">
+          <incDir>
+            <pElem>/usr/include/SDL2</pElem>
+            <pElem>/mnt/work/sirius/workwork/source/repos/3dlite/build/3dlite</pElem>
           </incDir>
           <preprocessorList>
             <Elem>_3dlite_EXPORTS</Elem>
@@ -218,7 +231,7 @@
         <cTool flags="3">
           <incDir>
             <pElem>/usr/include/SDL2</pElem>
-            <pElem>build/3dlite</pElem>
+            <pElem>/mnt/work/sirius/workwork/source/repos/3dlite/build/3dlite</pElem>
           </incDir>
           <preprocessorList>
             <Elem>_3dlite_EXPORTS</Elem>
@@ -230,7 +243,7 @@
         <cTool flags="3">
           <incDir>
             <pElem>/usr/include/SDL2</pElem>
-            <pElem>build/3dlite</pElem>
+            <pElem>/mnt/work/sirius/workwork/source/repos/3dlite/build/3dlite</pElem>
           </incDir>
           <preprocessorList>
             <Elem>_3dlite_EXPORTS</Elem>
@@ -242,7 +255,7 @@
         <cTool flags="3">
           <incDir>
             <pElem>/usr/include/SDL2</pElem>
-            <pElem>build/3dlite</pElem>
+            <pElem>/mnt/work/sirius/workwork/source/repos/3dlite/build/3dlite</pElem>
           </incDir>
           <preprocessorList>
             <Elem>_3dlite_EXPORTS</Elem>
@@ -254,7 +267,7 @@
         <cTool flags="3">
           <incDir>
             <pElem>/usr/include/SDL2</pElem>
-            <pElem>build/3dlite</pElem>
+            <pElem>/mnt/work/sirius/workwork/source/repos/3dlite/build/3dlite</pElem>
           </incDir>
           <preprocessorList>
             <Elem>_3dlite_EXPORTS</Elem>
@@ -276,7 +289,7 @@
         <cTool>
           <incDir>
             <pElem>3dlite/include/3dlite/7zdec</pElem>
-            <pElem>build/3dlite</pElem>
+            <pElem>/mnt/work/sirius/workwork/source/repos/3dlite/build/3dlite</pElem>
           </incDir>
           <preprocessorList>
             <Elem>_7ZIP_PPMD_SUPPPORT</Elem>
@@ -287,7 +300,7 @@
         <cTool>
           <incDir>
             <pElem>3dlite/include/3dlite</pElem>
-            <pElem>build/3dlite</pElem>
+            <pElem>/mnt/work/sirius/workwork/source/repos/3dlite/build/3dlite</pElem>
           </incDir>
           <preprocessorList>
             <Elem>GLEW_NO_GLU</Elem>
@@ -300,7 +313,7 @@
           <incDir>
             <pElem>3dlite++/include</pElem>
             <pElem>/usr/include/SDL2</pElem>
-            <pElem>build/tests/functionaly</pElem>
+            <pElem>/mnt/work/sirius/workwork/source/repos/3dlite/build/tests/functionaly</pElem>
           </incDir>
           <preprocessorList>
             <Elem>_REENTRANT</Elem>
@@ -310,17 +323,17 @@
       <folder path="0/tests/gtest">
         <ccTool>
           <incDir>
-            <pElem>build/tests</pElem>
+            <pElem>/mnt/work/sirius/workwork/source/repos/3dlite/build/tests</pElem>
           </incDir>
         </ccTool>
       </folder>
       <folder path="Modules">
         <cTool>
           <incDir>
-            <pElem>build/CMakeFiles/CMakeTmp</pElem>
+            <pElem>/mnt/work/sirius/workwork/source/repos/3dlite/build/CMakeFiles/CMakeTmp</pElem>
           </incDir>
           <preprocessorList>
-            <Elem>CHECK_FUNCTION_EXISTS=pthread_create</Elem>
+            <Elem>CHECK_FUNCTION_EXISTS=XOpenDisplay</Elem>
           </preprocessorList>
         </cTool>
       </folder>

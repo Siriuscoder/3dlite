@@ -54,6 +54,16 @@ include(${CMAKE_SOURCE_DIR}/CMake/FindSDL2.cmake)
     endif()
 endif()
 
+find_package(OpenGL)
+if(NOT OPENGL_FOUND)
+    message(FATAL_ERROR "OpenGL library not found..")
+endif()
+
+include(FindDevIL)
+if(NOT IL_FOUND)
+    message(FATAL_ERROR "DevIL library not found..")
+endif()
+
 include_directories("${PROJECT_SOURCE_DIR}/3dlite/include")
 
 add_subdirectory("${PROJECT_SOURCE_DIR}/3dlite/")
