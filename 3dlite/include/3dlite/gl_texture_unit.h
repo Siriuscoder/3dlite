@@ -38,10 +38,34 @@
 #define LITE3D_TEXTURE_1D         0x0DE0
 #define LITE3D_TEXTURE_2D         0x0DE1
 #define LITE3D_TEXTURE_3D         0x806F
+/* pre-loading texture manipulation */
+#define LITE3D_ALIENIFY_FILTER      0x0001
+#define LITE3D_BLURAVG_FILTER       0x0002
+#define LITE3D_BLURGAUSSIAN_FILTER  0x0003
+#define LITE3D_CONTRAST_FILTER      0x0004
+#define LITE3D_GAMMACORRECT_FILTER  0x0005
+#define LITE3D_MIRROR_FILTER        0x0006
+#define LITE3D_NEGATIVE_FILTER      0x0007
+#define LITE3D_NOISIFY_FILTER       0x0008
+#define LITE3D_PIXELIZE_FILTER      0x0009
+#define LITE3D_WAVE_FILTER          0x000A
+#define LITE3D_SHARPEN_FILTER       0x000B
+
+#define LITE3D_MAX_FILTERS          10
+
+typedef struct lite3d_image_filter
+{
+    uint32_t filterID;
+    union
+    {
+        int32_t intVal;
+        float floatVal;
+    } param1, param2;
+} lite3d_image_filter;
 
 typedef struct lite3d_texture_technique_settings
 {
-    uint8_t anisotropic;
+    int32_t anisotropic;
     int32_t maxAnisotropic;
     uint8_t useGLCompression;
 } lite3d_texture_technique_settings;
@@ -51,22 +75,26 @@ typedef struct lite3d_texture_unit
     uint32_t textureID;
     int16_t textureTarget;
     char textureName[LITE3D_MAX_NAME];
-    int16_t imageType;
-    int16_t imageGLFormat;
-    int16_t imageHeight;
-    int16_t imageWidth;
-    int16_t imageDepth;
+    int32_t imageType;
+    int32_t imageGLFormat;
+    int32_t imageHeight;
+    int32_t imageWidth;
+    int32_t imageDepth;
     size_t imageSize;
     int8_t imageBPP;
-    int8_t numMipmaps;
+    int8_t loadedMipmaps;
     int16_t minFilter;
     int16_t magFilter;
 } lite3d_texture_unit;
 
+LITE3D_CEXPORT void lite3d_texture_technique_add_image_filter(lite3d_image_filter *filter);
+LITE3D_CEXPORT void lite3d_texture_technique_reset_filters(void);
+
 LITE3D_CEXPORT int lite3d_texture_technique_init(const lite3d_texture_technique_settings *settings);
 LITE3D_CEXPORT lite3d_texture_unit *lite3d_texture_unit_from_resource(const lite3d_resource_file *resource, 
-    uint16_t imageType, uint32_t textureTarget);
+    uint32_t imageType, uint32_t textureTarget);
 LITE3D_CEXPORT lite3d_texture_unit *lite3d_texture_unit_from_memory(const char *textureName, 
-    const void *buffer, size_t size, uint16_t imageType, uint32_t textureTarget);
+    const void *buffer, size_t size, uint32_t imageType, uint32_t textureTarget);
+LITE3D_CEXPORT void lite3d_texture_unit_purge(lite3d_texture_unit *texture);
 
 #endif

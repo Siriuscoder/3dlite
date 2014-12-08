@@ -82,13 +82,17 @@ if(MSVC)
 target_compile_definitions(3dlite PRIVATE
 "$<BUILD_INTERFACE:_WINDLL>")
 target_include_directories(3dlite PRIVATE 
-"$<BUILD_INTERFACE:${SDL2_INCLUDE_DIR}>")
+"$<BUILD_INTERFACE:${SDL2_INCLUDE_DIR}>"
+"$<BUILD_INTERFACE:${IL_INCLUDE_DIR}>")
 set(SDL2_LIBS ${SDL2_LIBRARY})
 else()
 target_compile_options(3dlite PRIVATE 
 "$<BUILD_INTERFACE:${SDL2_CFLAGS}>")
 set(SDL2_LIBS ${SDL2_LIBRARIES})
 endif()
+
+target_compile_definitions(3dlite PRIVATE
+"$<BUILD_INTERFACE:GLEW_STATIC>")
 
 target_link_libraries(3dlite
 7zdec

@@ -57,6 +57,7 @@
 
 #   define STRUCT_PACKED(x) __declspec(align(x))
 #   define INLINE __inline
+#   define DEVIL_CALL   __stdcall
 
 #elif PLATFORM_Linux
     // If not Windows, we assume some sort of Unixy build environment,
@@ -71,6 +72,7 @@
 #   define LITE3D_CLASS_EXPORT
 #   define STRUCT_PACKED(x) __attribute__ ((aligned(x)));
 #   define INLINE inline
+#   define DEVIL_CALL
 #endif
 
 #ifdef __GNUC__
