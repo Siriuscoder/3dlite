@@ -189,7 +189,7 @@ int lite3d_texture_technique_init(const lite3d_texture_technique_settings *setti
 }
 
 lite3d_texture_unit *lite3d_texture_unit_from_resource(const lite3d_resource_file *resource,
-    uint32_t imageType, uint32_t textureTarget)
+    uint32_t imageType, uint32_t textureTarget, int8_t filtering)
 {
     SDL_assert(resource);
 
@@ -197,11 +197,12 @@ lite3d_texture_unit *lite3d_texture_unit_from_resource(const lite3d_resource_fil
         return NULL;
 
     return lite3d_texture_unit_from_memory(resource->name, resource->fileBuff,
-        resource->fileSize, imageType, textureTarget);
+        resource->fileSize, imageType, textureTarget, filtering);
 }
 
 lite3d_texture_unit *lite3d_texture_unit_from_memory(const char *textureName,
-    const void *buffer, size_t size, uint32_t imageType, uint32_t textureTarget)
+    const void *buffer, size_t size, uint32_t imageType, uint32_t textureTarget,
+    int8_t filtering)
 {
     ILuint imageDesc, imageFormat, internalFormat;
     GLint mipLevel = 0;
@@ -289,9 +290,13 @@ lite3d_texture_unit *lite3d_texture_unit_from_memory(const char *textureName,
 
     /* make texture active */
     glBindTexture(textureTarget, textureUnit->textureID);
-    /* set trilinear filtration */
-    textureUnit->minFilter = GL_LINEAR_MIPMAP_LINEAR;
-    textureUnit->magFilter = GL_LINEAR;
+
+    textureUnit->minFilter = (filtering == LITE3D_TEXTURE_FILTERING_NICEST ? 
+        GL_LINEAR_MIPMAP_LINEAR : (filtering == LITE3D_TEXTURE_FILTERING_NEAREST ? 
+        GL_NEAREST : GL_LINEAR));
+
+    textureUnit->magFilter = (filtering == LITE3D_TEXTURE_FILTERING_NEAREST ? 
+        GL_NEAREST : GL_LINEAR);
 
     glTexParameteri(textureTarget, GL_TEXTURE_MIN_FILTER, textureUnit->minFilter);
     glTexParameteri(textureTarget, GL_TEXTURE_MAG_FILTER, textureUnit->magFilter);
@@ -299,15 +304,19 @@ lite3d_texture_unit *lite3d_texture_unit_from_memory(const char *textureName,
     /* calc saved mipmaps in image */
     while (ilActiveMipmap(textureUnit->loadedMipmaps))
         textureUnit->loadedMipmaps++;
+
     /* if were no saved mipmaps - generate it */
     if (textureUnit->loadedMipmaps == 1)
         glTexParameteri(textureTarget, GL_GENERATE_MIPMAP_SGIS, GL_TRUE);
     else
         glTexParameteri(textureTarget, GL_GENERATE_MIPMAP_SGIS, GL_FALSE);
 
-    /* set anisotropic angle */
-    glTexParameteri(textureTarget, GL_TEXTURE_MAX_ANISOTROPY_EXT,
-        gTextureSettings.anisotropic);
+    if(filtering == LITE3D_TEXTURE_FILTERING_NICEST)
+    {
+        /* set anisotropic angle */
+        glTexParameteri(textureTarget, GL_TEXTURE_MAX_ANISOTROPY_EXT,
+            gTextureSettings.anisotropic);
+    }
 
     for (mipLevel = 0; ilActiveMipmap(mipLevel) == IL_TRUE; ++mipLevel)
     {
