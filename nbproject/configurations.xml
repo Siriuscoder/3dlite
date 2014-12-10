@@ -347,8 +347,6 @@
             ex="false"
             tool="1"
             flavor2="8">
-        <ccTool flags="0">
-        </ccTool>
       </item>
       <item path="tests/gtest/src/gtest-all.cc" ex="false" tool="1" flavor2="8">
       </item>

@@ -53,6 +53,10 @@
 
 #define LITE3D_MAX_FILTERS          10
 
+#define LITE3D_TEXTURE_FILTERING_NICEST   0x0001
+#define LITE3D_TEXTURE_FILTERING_NEAREST  0x0002
+#define LITE3D_TEXTURE_FILTERING_LINEAR   0x0003
+
 typedef struct lite3d_image_filter
 {
     uint32_t filterID;
@@ -92,9 +96,9 @@ LITE3D_CEXPORT void lite3d_texture_technique_reset_filters(void);
 
 LITE3D_CEXPORT int lite3d_texture_technique_init(const lite3d_texture_technique_settings *settings);
 LITE3D_CEXPORT lite3d_texture_unit *lite3d_texture_unit_from_resource(const lite3d_resource_file *resource, 
-    uint32_t imageType, uint32_t textureTarget);
+    uint32_t imageType, uint32_t textureTarget, int8_t filtering);
 LITE3D_CEXPORT lite3d_texture_unit *lite3d_texture_unit_from_memory(const char *textureName, 
-    const void *buffer, size_t size, uint32_t imageType, uint32_t textureTarget);
+    const void *buffer, size_t size, uint32_t imageType, uint32_t textureTarget, int8_t filtering);
 LITE3D_CEXPORT void lite3d_texture_unit_purge(lite3d_texture_unit *texture);
 
 #endif
