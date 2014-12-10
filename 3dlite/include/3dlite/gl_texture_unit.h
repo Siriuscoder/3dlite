@@ -65,8 +65,8 @@ typedef struct lite3d_image_filter
 
 typedef struct lite3d_texture_technique_settings
 {
-    int32_t anisotropic;
-    int32_t maxAnisotropic;
+    int32_t anisotropy;
+    int32_t maxAnisotropy;
     uint8_t useGLCompression;
 } lite3d_texture_technique_settings;
 

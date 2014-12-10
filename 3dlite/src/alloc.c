@@ -16,6 +16,7 @@
 *	along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
 #include <stdlib.h>
+#include <string.h>
 
 #include <3dlite/alloc.h>
 #include <3dlite/nedmalloc.h>
@@ -64,6 +65,15 @@ void *lite3d_malloc(size_t size)
         return gAlloca_f.mallocf(size);
     
     return NULL;
+}
+
+void *lite3d_calloc(size_t size)
+{
+    void *block = lite3d_malloc(size);
+    if(block)
+        memset(block, 0, size);
+    
+    return block;
 }
 
 void lite3d_free(void *p)

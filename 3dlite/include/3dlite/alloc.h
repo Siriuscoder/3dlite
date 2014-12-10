@@ -54,6 +54,7 @@ typedef struct lite3d_alloca_f
 
 LITE3D_CEXPORT void lite3d_set_allocator(lite3d_alloca_f *alloca);
 LITE3D_CEXPORT void *lite3d_malloc(size_t size);
+LITE3D_CEXPORT void *lite3d_calloc(size_t size);
 LITE3D_CEXPORT void lite3d_free(void *p);
 
 LITE3D_CEXPORT void *lite3d_malloc_pooled(uint8_t pollNo, size_t size);

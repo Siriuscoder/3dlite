@@ -172,9 +172,9 @@ int lite3d_texture_technique_init(const lite3d_texture_technique_settings *setti
     else
     {
         glGetIntegerv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT,
-            &gTextureSettings.maxAnisotropic);
-        if (gTextureSettings.anisotropic > gTextureSettings.maxAnisotropic)
-            gTextureSettings.anisotropic = gTextureSettings.maxAnisotropic;
+            &gTextureSettings.maxAnisotropy);
+        if (gTextureSettings.anisotropy > gTextureSettings.maxAnisotropy)
+            gTextureSettings.anisotropy = gTextureSettings.maxAnisotropy;
     }
 
     ilSetMemory(ilAlloc, ilFree);
@@ -246,7 +246,7 @@ lite3d_texture_unit *lite3d_texture_unit_from_memory(const char *textureName,
     }
 
     textureUnit =
-        (lite3d_texture_unit *) lite3d_malloc(sizeof (lite3d_texture_unit));
+        (lite3d_texture_unit *) lite3d_calloc(sizeof (lite3d_texture_unit));
     SDL_assert_release(textureUnit);
 
     strcpy(textureUnit->textureName, textureName);
@@ -300,14 +300,15 @@ lite3d_texture_unit *lite3d_texture_unit_from_memory(const char *textureName,
     while (ilActiveMipmap(textureUnit->loadedMipmaps))
         textureUnit->loadedMipmaps++;
     /* if were no saved mipmaps - generate it */
-    if (textureUnit->loadedMipmaps == 1)
-        glTexParameteri(textureTarget, GL_GENERATE_MIPMAP_SGIS, GL_TRUE);
-    else
-        glTexParameteri(textureTarget, GL_GENERATE_MIPMAP_SGIS, GL_FALSE);
+    glTexParameteri(textureTarget, GL_GENERATE_MIPMAP_SGIS, 
+        textureUnit->loadedMipmaps == 1 ? GL_TRUE : GL_FALSE);
 
     /* set anisotropic angle */
     glTexParameteri(textureTarget, GL_TEXTURE_MAX_ANISOTROPY_EXT,
-        gTextureSettings.anisotropic);
+        gTextureSettings.anisotropy);
+    /* Specifies the alignment requirements 
+     * for the start of each pixel row in memory.*/
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
     for (mipLevel = 0; ilActiveMipmap(mipLevel) == IL_TRUE; ++mipLevel)
     {
@@ -331,6 +332,8 @@ lite3d_texture_unit *lite3d_texture_unit_from_memory(const char *textureName,
                 break;
         }
     }
+    
+    glTexParameteri(textureTarget, GL_GENERATE_MIPMAP_SGIS, GL_FALSE);
 
     if ((errNo = glGetError()) != GL_NO_ERROR)
     {

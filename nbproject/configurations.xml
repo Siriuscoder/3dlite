@@ -117,9 +117,7 @@
       </toolsSet>
       <flagsDictionary>
         <element flagsID="0" commonFlags="-std=c++11 -fstack-protector-all -fPIC"/>
-        <element flagsID="1" commonFlags="-std=c99"/>
-        <element flagsID="2" commonFlags="-std=c99 -fstack-protector-all -fPIC"/>
-        <element flagsID="3" commonFlags="-std=c99 -fstack-protector-all -fPIC -fPIC"/>
+        <element flagsID="1" commonFlags="-std=c99 -fstack-protector-all -fPIC -fPIC"/>
       </flagsDictionary>
       <codeAssistance>
       </codeAssistance>
@@ -178,48 +176,52 @@
       <item path="3dlite/src/7zdec/Ppmd7Dec.c" ex="false" tool="0" flavor2="3">
       </item>
       <item path="3dlite/src/7zloader.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="3">
+        <cTool flags="1">
           <incDir>
             <pElem>/usr/include/SDL2</pElem>
             <pElem>/mnt/work/sirius/workwork/source/repos/3dlite/build/3dlite</pElem>
           </incDir>
           <preprocessorList>
+            <Elem>GLEW_STATIC</Elem>
             <Elem>_3dlite_EXPORTS</Elem>
             <Elem>_REENTRANT</Elem>
           </preprocessorList>
         </cTool>
       </item>
       <item path="3dlite/src/alloc.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="3">
+        <cTool flags="1">
           <incDir>
             <pElem>/usr/include/SDL2</pElem>
             <pElem>/mnt/work/sirius/workwork/source/repos/3dlite/build/3dlite</pElem>
           </incDir>
           <preprocessorList>
+            <Elem>GLEW_STATIC</Elem>
             <Elem>_3dlite_EXPORTS</Elem>
             <Elem>_REENTRANT</Elem>
           </preprocessorList>
         </cTool>
       </item>
       <item path="3dlite/src/file_cache.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="3">
+        <cTool flags="1">
           <incDir>
             <pElem>/usr/include/SDL2</pElem>
             <pElem>/mnt/work/sirius/workwork/source/repos/3dlite/build/3dlite</pElem>
           </incDir>
           <preprocessorList>
+            <Elem>GLEW_STATIC</Elem>
             <Elem>_3dlite_EXPORTS</Elem>
             <Elem>_REENTRANT</Elem>
           </preprocessorList>
         </cTool>
       </item>
       <item path="3dlite/src/gl_texture_unit.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="3">
+        <cTool flags="1">
           <incDir>
             <pElem>/usr/include/SDL2</pElem>
             <pElem>/mnt/work/sirius/workwork/source/repos/3dlite/build/3dlite</pElem>
           </incDir>
           <preprocessorList>
+            <Elem>GLEW_STATIC</Elem>
             <Elem>_3dlite_EXPORTS</Elem>
             <Elem>_REENTRANT</Elem>
           </preprocessorList>
@@ -228,48 +230,52 @@
       <item path="3dlite/src/glew/glew.c" ex="false" tool="0" flavor2="3">
       </item>
       <item path="3dlite/src/list.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="3">
+        <cTool flags="1">
           <incDir>
             <pElem>/usr/include/SDL2</pElem>
             <pElem>/mnt/work/sirius/workwork/source/repos/3dlite/build/3dlite</pElem>
           </incDir>
           <preprocessorList>
+            <Elem>GLEW_STATIC</Elem>
             <Elem>_3dlite_EXPORTS</Elem>
             <Elem>_REENTRANT</Elem>
           </preprocessorList>
         </cTool>
       </item>
       <item path="3dlite/src/logger.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="3">
+        <cTool flags="1">
           <incDir>
             <pElem>/usr/include/SDL2</pElem>
             <pElem>/mnt/work/sirius/workwork/source/repos/3dlite/build/3dlite</pElem>
           </incDir>
           <preprocessorList>
+            <Elem>GLEW_STATIC</Elem>
             <Elem>_3dlite_EXPORTS</Elem>
             <Elem>_REENTRANT</Elem>
           </preprocessorList>
         </cTool>
       </item>
       <item path="3dlite/src/nedmalloc.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="3">
+        <cTool flags="1">
           <incDir>
             <pElem>/usr/include/SDL2</pElem>
             <pElem>/mnt/work/sirius/workwork/source/repos/3dlite/build/3dlite</pElem>
           </incDir>
           <preprocessorList>
+            <Elem>GLEW_STATIC</Elem>
             <Elem>_3dlite_EXPORTS</Elem>
             <Elem>_REENTRANT</Elem>
           </preprocessorList>
         </cTool>
       </item>
       <item path="3dlite/src/rb_tree.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="3">
+        <cTool flags="1">
           <incDir>
             <pElem>/usr/include/SDL2</pElem>
             <pElem>/mnt/work/sirius/workwork/source/repos/3dlite/build/3dlite</pElem>
           </incDir>
           <preprocessorList>
+            <Elem>GLEW_STATIC</Elem>
             <Elem>_3dlite_EXPORTS</Elem>
             <Elem>_REENTRANT</Elem>
           </preprocessorList>
@@ -341,6 +347,8 @@
             ex="false"
             tool="1"
             flavor2="8">
+        <ccTool flags="0">
+        </ccTool>
       </item>
       <item path="tests/gtest/src/gtest-all.cc" ex="false" tool="1" flavor2="8">
       </item>
