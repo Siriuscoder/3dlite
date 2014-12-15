@@ -18,7 +18,7 @@
 #ifndef LITE3D_LIST_H
 #define	LITE3D_LIST_H
 
-#include <3dlite/common.h>
+#include <3dlite/3dlite_common.h>
 
 typedef struct lite3d_list_node
 {

@@ -57,24 +57,24 @@ target_compile_definitions(glewc PRIVATE
 "$<BUILD_INTERFACE:GLEW_STATIC>")
 ################################################################
 # 3dlite sources
-set(3DLITE_SOURCES src/nedmalloc.c
-src/alloc.c
-src/rb_tree.c
-src/list.c
-src/file_cache.c
-src/7zloader.c
-src/logger.c
-src/gl_texture_unit.c)
+set(3DLITE_SOURCES src/3dlite_nedmalloc.c
+src/3dlite_alloc.c
+src/3dlite_rb_tree.c
+src/3dlite_list.c
+src/3dlite_file_cache.c
+src/3dlite_7zloader.c
+src/3dlite_logger.c
+src/3dlite_gl_texture_unit.c)
 
-set(3DLITE_HEADERS include/3dlite/alloc.h
-include/3dlite/common.h
-include/3dlite/nedmalloc.h
-include/3dlite/rb_tree.h
-include/3dlite/list.h
-include/3dlite/file_cache.h
-include/3dlite/7zloader.h
-include/3dlite/logger.h
-include/3dlite/gl_texture_unit.h)
+set(3DLITE_HEADERS include/3dlite/3dlite_alloc.h
+include/3dlite/3dlite_common.h
+include/3dlite/3dlite_nedmalloc.h
+include/3dlite/3dlite_rb_tree.h
+include/3dlite/3dlite_list.h
+include/3dlite/3dlite_file_cache.h
+include/3dlite/3dlite_7zloader.h
+include/3dlite/3dlite_logger.h
+include/3dlite/3dlite_gl_texture_unit.h)
 
 add_library(3dlite SHARED ${3DLITE_SOURCES} ${3DLITE_HEADERS})
 

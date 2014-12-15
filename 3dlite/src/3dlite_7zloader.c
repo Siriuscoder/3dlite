@@ -18,8 +18,8 @@
 #include <SDL_log.h>
 #include <SDL_assert.h>
 
-#include <3dlite/7zloader.h>
-#include <3dlite/alloc.h>
+#include <3dlite/3dlite_7zloader.h>
+#include <3dlite/3dlite_alloc.h>
 
 static uint8_t gCRC_gen = 0;
 static Byte kUtf8Limits[5] = { 0xC0, 0xE0, 0xF0, 0xF8, 0xFC };

@@ -18,7 +18,7 @@
 #ifndef LIGHT3D_RB_TREE_H
 #define	LIGHT3D_RB_TREE_H
 
-#include <3dlite/common.h>
+#include <3dlite/3dlite_common.h>
 
 typedef struct lite3d_rb_node {
     void* key;

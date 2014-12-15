@@ -18,7 +18,7 @@
 #ifndef LITE3D_LOGGER_H
 #define	LITE3D_LOGGER_H
 
-#include <3dlite/common.h>
+#include <3dlite/3dlite_common.h>
 
 
 LITE3D_CEXPORT void lite3d_setup_stdout_logger(void);

@@ -18,7 +18,7 @@
 #ifndef LITE3D_ALLOC_H
 #define	LITE3D_ALLOC_H
 
-#include <3dlite/common.h>
+#include <3dlite/3dlite_common.h>
 
 #ifdef OFFSETOF
 #undef OFFSETOF

@@ -18,10 +18,8 @@
 #ifndef LITE3D_GL_TEXTURE_UNIT_H
 #define	LITE3D_GL_TEXTURE_UNIT_H
 
-#include <3dlite/common.h>
-#include <3dlite/file_cache.h>
-
-#include "GL/glew.h"
+#include <3dlite/3dlite_common.h>
+#include <3dlite/3dlite_file_cache.h>
 
 // Image types (IL enum compatible)
 #define LITE3D_IMAGE_ANY          0x0000

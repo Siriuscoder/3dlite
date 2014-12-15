@@ -18,7 +18,7 @@
 #include <stdio.h>
 #include <SDL_log.h>
 
-#include <3dlite/logger.h>
+#include <3dlite/3dlite_logger.h>
 
 static void log_to_file(FILE *desc, int category, 
     SDL_LogPriority priority, const char* message)

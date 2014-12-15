@@ -25,8 +25,8 @@
 
 #include <3dlite/GL/glew.h>
 
-#include <3dlite/alloc.h>
-#include <3dlite/gl_texture_unit.h>
+#include <3dlite/3dlite_alloc.h>
+#include <3dlite/3dlite_gl_texture_unit.h>
 
 static lite3d_texture_technique_settings gTextureSettings;
 
@@ -83,44 +83,44 @@ static const char *glFormatString(GLenum format)
 static void apply_image_filters(void)
 {
     int8_t i;
-    for(i = 0; i < gFiltersCount; ++i)
+    for (i = 0; i < gFiltersCount; ++i)
     {
-        switch(gFilters[i].filterID)
+        switch (gFilters[i].filterID)
         {
-        case LITE3D_ALIENIFY_FILTER:
-            iluAlienify();
-            break;
-        case LITE3D_BLURAVG_FILTER:
-            iluBlurAvg(gFilters[i].param1.intVal);
-            break;
-        case LITE3D_BLURGAUSSIAN_FILTER:
-            iluBlurGaussian(gFilters[i].param1.intVal);
-            break;
-        case LITE3D_CONTRAST_FILTER:
-            iluContrast(gFilters[i].param1.floatVal);
-            break;
-        case LITE3D_GAMMACORRECT_FILTER:
-            iluGammaCorrect(gFilters[i].param1.floatVal);
-            break;
-        case LITE3D_MIRROR_FILTER:
-            iluMirror();
-            break;
-        case LITE3D_NEGATIVE_FILTER:
-            iluNegative();
-            break;
-        case LITE3D_NOISIFY_FILTER:
-            iluNoisify(gFilters[i].param1.floatVal);
-            break;
-        case LITE3D_PIXELIZE_FILTER:
-            iluPixelize(gFilters[i].param1.intVal);
-            break;
-        case LITE3D_WAVE_FILTER:
-            iluWave(gFilters[i].param1.floatVal);
-            break;
-        case LITE3D_SHARPEN_FILTER:
-            iluSharpen(gFilters[i].param1.floatVal,
-                gFilters[i].param2.intVal);
-            break;
+            case LITE3D_ALIENIFY_FILTER:
+                iluAlienify();
+                break;
+            case LITE3D_BLURAVG_FILTER:
+                iluBlurAvg(gFilters[i].param1.intVal);
+                break;
+            case LITE3D_BLURGAUSSIAN_FILTER:
+                iluBlurGaussian(gFilters[i].param1.intVal);
+                break;
+            case LITE3D_CONTRAST_FILTER:
+                iluContrast(gFilters[i].param1.floatVal);
+                break;
+            case LITE3D_GAMMACORRECT_FILTER:
+                iluGammaCorrect(gFilters[i].param1.floatVal);
+                break;
+            case LITE3D_MIRROR_FILTER:
+                iluMirror();
+                break;
+            case LITE3D_NEGATIVE_FILTER:
+                iluNegative();
+                break;
+            case LITE3D_NOISIFY_FILTER:
+                iluNoisify(gFilters[i].param1.floatVal);
+                break;
+            case LITE3D_PIXELIZE_FILTER:
+                iluPixelize(gFilters[i].param1.intVal);
+                break;
+            case LITE3D_WAVE_FILTER:
+                iluWave(gFilters[i].param1.floatVal);
+                break;
+            case LITE3D_SHARPEN_FILTER:
+                iluSharpen(gFilters[i].param1.floatVal,
+                    gFilters[i].param2.intVal);
+                break;
         }
     }
 }
@@ -129,7 +129,7 @@ void lite3d_texture_technique_add_image_filter(lite3d_image_filter *filter)
 {
     SDL_assert(filter);
 
-    if(gFiltersCount >= LITE3D_MAX_FILTERS)
+    if (gFiltersCount >= LITE3D_MAX_FILTERS)
         lite3d_texture_technique_reset_filters();
 
     gFilters[gFiltersCount] = *filter;
@@ -249,7 +249,7 @@ lite3d_texture_unit *lite3d_texture_unit_from_memory(const char *textureName,
     textureUnit->imageWidth = imageWidth = ilGetInteger(IL_IMAGE_WIDTH);
     textureUnit->imageHeight = imageHeight = ilGetInteger(IL_IMAGE_HEIGHT);
     textureUnit->imageDepth = imageDepth = ilGetInteger(IL_IMAGE_DEPTH);
-    textureUnit->imageBPP = (int8_t)ilGetInteger(IL_IMAGE_BYTES_PER_PIXEL);
+    textureUnit->imageBPP = (int8_t) ilGetInteger(IL_IMAGE_BYTES_PER_PIXEL);
     /* first mipmap size */
     textureUnit->imageSize = ilGetInteger(IL_IMAGE_SIZE_OF_DATA);
     textureUnit->loadedMipmaps = 0;
@@ -285,11 +285,11 @@ lite3d_texture_unit *lite3d_texture_unit_from_memory(const char *textureName,
     /* make texture active */
     glBindTexture(textureTarget, textureUnit->textureID);
 
-    textureUnit->minFilter = (filtering == LITE3D_TEXTURE_FILTERING_NICEST ? 
-        GL_LINEAR_MIPMAP_LINEAR : (filtering == LITE3D_TEXTURE_FILTERING_NEAREST ? 
+    textureUnit->minFilter = (filtering == LITE3D_TEXTURE_FILTERING_NICEST ?
+        GL_LINEAR_MIPMAP_LINEAR : (filtering == LITE3D_TEXTURE_FILTERING_NEAREST ?
         GL_NEAREST : GL_LINEAR));
 
-    textureUnit->magFilter = (filtering == LITE3D_TEXTURE_FILTERING_NEAREST ? 
+    textureUnit->magFilter = (filtering == LITE3D_TEXTURE_FILTERING_NEAREST ?
         GL_NEAREST : GL_LINEAR);
 
     glTexParameteri(textureTarget, GL_TEXTURE_MIN_FILTER, textureUnit->minFilter);
@@ -300,14 +300,14 @@ lite3d_texture_unit *lite3d_texture_unit_from_memory(const char *textureName,
         textureUnit->loadedMipmaps++;
 
     /* if were no saved mipmaps - generate it */
-    glTexParameteri(textureTarget, GL_GENERATE_MIPMAP_SGIS, 
+    glTexParameteri(textureTarget, GL_GENERATE_MIPMAP_SGIS,
         textureUnit->loadedMipmaps == 1 ? GL_TRUE : GL_FALSE);
 
     /* Specifies the alignment requirements 
      * for the start of each pixel row in memory.*/
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
-    if(filtering == LITE3D_TEXTURE_FILTERING_NICEST)
+    if (filtering == LITE3D_TEXTURE_FILTERING_NICEST)
     {
         /* set anisotropic angle */
         glTexParameteri(textureTarget, GL_TEXTURE_MAX_ANISOTROPY_EXT,
@@ -336,7 +336,7 @@ lite3d_texture_unit *lite3d_texture_unit_from_memory(const char *textureName,
                 break;
         }
     }
-    
+
     glTexParameteri(textureTarget, GL_GENERATE_MIPMAP_SGIS, GL_FALSE);
 
     if ((errNo = glGetError()) != GL_NO_ERROR)

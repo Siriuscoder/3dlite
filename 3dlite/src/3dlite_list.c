@@ -15,8 +15,8 @@
  *	You should have received a copy of the GNU General Public License
  *	along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
-#include <3dlite/list.h>
-#include <3dlite/alloc.h>
+#include <3dlite/3dlite_list.h>
+#include <3dlite/3dlite_alloc.h>
 
 #define __list_check(expr) (expr)
 

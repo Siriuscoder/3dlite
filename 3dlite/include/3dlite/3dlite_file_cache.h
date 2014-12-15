@@ -18,9 +18,9 @@
 #ifndef LITE3D_FILEPACK_H
 #define	LITE3D_FILEPACK_H
 
-#include <3dlite/common.h>
-#include <3dlite/rb_tree.h>
-#include <3dlite/list.h>
+#include <3dlite/3dlite_common.h>
+#include <3dlite/3dlite_rb_tree.h>
+#include <3dlite/3dlite_list.h>
 
 typedef struct lite3d_resource_pack
 {

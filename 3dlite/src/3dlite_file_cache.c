@@ -21,9 +21,9 @@
 #include <SDL_log.h>
 #include <SDL_rwops.h>
 
-#include <3dlite/file_cache.h>
-#include <3dlite/alloc.h>
-#include <3dlite/7zloader.h>
+#include <3dlite/3dlite_file_cache.h>
+#include <3dlite/3dlite_alloc.h>
+#include <3dlite/3dlite_7zloader.h>
 
 static lite3d_resource_file *lookup_resource_index(lite3d_resource_pack *pack, const char *key)
 {

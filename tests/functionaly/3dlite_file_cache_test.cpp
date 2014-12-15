@@ -17,9 +17,9 @@
  *******************************************************************************/
 #include <gtest/gtest.h>
 
-#include <3dlite/file_cache.h>
-#include <3dlite/alloc.h>
-#include <3dlite/logger.h>
+#include <3dlite/3dlite_file_cache.h>
+#include <3dlite/3dlite_alloc.h>
+#include <3dlite/3dlite_logger.h>
 
 static void TestCommon(lite3d_resource_pack *pack)
 {

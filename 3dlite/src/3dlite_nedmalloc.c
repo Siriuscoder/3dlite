@@ -33,7 +33,7 @@ DEALINGS IN THE SOFTWARE.
 
 /*#define FULLSANITYCHECKS*/
 
-#include <3dlite/nedmalloc.h>
+#include <3dlite/3dlite_nedmalloc.h>
 
 
 #ifdef WIN32
@@ -64,7 +64,7 @@ DEALINGS IN THE SOFTWARE.
 
 
 /*#define FORCEINLINE*/
-#include "malloc.c.h"
+#include "3dlite_malloc.c.h"
 #ifdef NDEBUG               /* Disable assert checking on release builds */
  #undef DEBUG
 #endif

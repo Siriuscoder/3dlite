@@ -18,8 +18,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <3dlite/alloc.h>
-#include <3dlite/nedmalloc.h>
+#include <3dlite/3dlite_alloc.h>
+#include <3dlite/3dlite_nedmalloc.h>
 
 lite3d_alloca_f gAlloca_f = 
     { NULL, NULL };

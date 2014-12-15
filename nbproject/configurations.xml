@@ -25,13 +25,6 @@
               <in>glxew.h</in>
               <in>wglew.h</in>
             </df>
-            <in>7zloader.h</in>
-            <in>alloc.h</in>
-            <in>common.h</in>
-            <in>list.h</in>
-            <in>logger.h</in>
-            <in>nedmalloc.h</in>
-            <in>rb_tree.h</in>
           </df>
         </df>
         <df name="src">
@@ -56,15 +49,14 @@
           <df name="glew">
             <in>glew.c</in>
           </df>
-          <in>7zloader.c</in>
-          <in>alloc.c</in>
-          <in>file_cache.c</in>
-          <in>gl_texture_unit.c</in>
-          <in>list.c</in>
-          <in>logger.c</in>
-          <in>malloc.c.h</in>
-          <in>nedmalloc.c</in>
-          <in>rb_tree.c</in>
+          <in>3dlite_7zloader.c</in>
+          <in>3dlite_alloc.c</in>
+          <in>3dlite_file_cache.c</in>
+          <in>3dlite_gl_texture_unit.c</in>
+          <in>3dlite_list.c</in>
+          <in>3dlite_logger.c</in>
+          <in>3dlite_nedmalloc.c</in>
+          <in>3dlite_rb_tree.c</in>
         </df>
       </df>
       <df name="CMakeFiles">
@@ -79,7 +71,7 @@
       </df>
       <df name="tests">
         <df name="functionaly">
-          <in>file_cache_test.cpp</in>
+          <in>3dlite_file_cache_test.cpp</in>
         </df>
         <df name="gtest">
           <df name="src">
@@ -143,6 +135,113 @@
             tool="0"
             flavor2="3">
       </item>
+      <item path="3dlite/src/3dlite_7zloader.c" ex="false" tool="0" flavor2="3">
+        <cTool flags="1">
+          <incDir>
+            <pElem>/usr/include/SDL2</pElem>
+            <pElem>build/3dlite</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>GLEW_STATIC</Elem>
+            <Elem>_3dlite_EXPORTS</Elem>
+            <Elem>_REENTRANT</Elem>
+          </preprocessorList>
+        </cTool>
+      </item>
+      <item path="3dlite/src/3dlite_alloc.c" ex="false" tool="0" flavor2="3">
+        <cTool flags="1">
+          <incDir>
+            <pElem>/usr/include/SDL2</pElem>
+            <pElem>build/3dlite</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>GLEW_STATIC</Elem>
+            <Elem>_3dlite_EXPORTS</Elem>
+            <Elem>_REENTRANT</Elem>
+          </preprocessorList>
+        </cTool>
+      </item>
+      <item path="3dlite/src/3dlite_file_cache.c" ex="false" tool="0" flavor2="3">
+        <cTool flags="1">
+          <incDir>
+            <pElem>/usr/include/SDL2</pElem>
+            <pElem>build/3dlite</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>GLEW_STATIC</Elem>
+            <Elem>_3dlite_EXPORTS</Elem>
+            <Elem>_REENTRANT</Elem>
+          </preprocessorList>
+        </cTool>
+      </item>
+      <item path="3dlite/src/3dlite_gl_texture_unit.c"
+            ex="false"
+            tool="0"
+            flavor2="3">
+        <cTool flags="1">
+          <incDir>
+            <pElem>/usr/include/SDL2</pElem>
+            <pElem>build/3dlite</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>GLEW_STATIC</Elem>
+            <Elem>_3dlite_EXPORTS</Elem>
+            <Elem>_REENTRANT</Elem>
+          </preprocessorList>
+        </cTool>
+      </item>
+      <item path="3dlite/src/3dlite_list.c" ex="false" tool="0" flavor2="3">
+        <cTool flags="1">
+          <incDir>
+            <pElem>/usr/include/SDL2</pElem>
+            <pElem>build/3dlite</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>GLEW_STATIC</Elem>
+            <Elem>_3dlite_EXPORTS</Elem>
+            <Elem>_REENTRANT</Elem>
+          </preprocessorList>
+        </cTool>
+      </item>
+      <item path="3dlite/src/3dlite_logger.c" ex="false" tool="0" flavor2="3">
+        <cTool flags="1">
+          <incDir>
+            <pElem>/usr/include/SDL2</pElem>
+            <pElem>build/3dlite</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>GLEW_STATIC</Elem>
+            <Elem>_3dlite_EXPORTS</Elem>
+            <Elem>_REENTRANT</Elem>
+          </preprocessorList>
+        </cTool>
+      </item>
+      <item path="3dlite/src/3dlite_nedmalloc.c" ex="false" tool="0" flavor2="3">
+        <cTool flags="1">
+          <incDir>
+            <pElem>/usr/include/SDL2</pElem>
+            <pElem>build/3dlite</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>GLEW_STATIC</Elem>
+            <Elem>_3dlite_EXPORTS</Elem>
+            <Elem>_REENTRANT</Elem>
+          </preprocessorList>
+        </cTool>
+      </item>
+      <item path="3dlite/src/3dlite_rb_tree.c" ex="false" tool="0" flavor2="3">
+        <cTool flags="1">
+          <incDir>
+            <pElem>/usr/include/SDL2</pElem>
+            <pElem>build/3dlite</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>GLEW_STATIC</Elem>
+            <Elem>_3dlite_EXPORTS</Elem>
+            <Elem>_REENTRANT</Elem>
+          </preprocessorList>
+        </cTool>
+      </item>
       <item path="3dlite/src/7zdec/7zBuf.c" ex="false" tool="0" flavor2="3">
       </item>
       <item path="3dlite/src/7zdec/7zBuf2.c" ex="false" tool="0" flavor2="3">
@@ -175,111 +274,7 @@
       </item>
       <item path="3dlite/src/7zdec/Ppmd7Dec.c" ex="false" tool="0" flavor2="3">
       </item>
-      <item path="3dlite/src/7zloader.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
-          <incDir>
-            <pElem>/usr/include/SDL2</pElem>
-            <pElem>/mnt/work/sirius/workwork/source/repos/3dlite/build/3dlite</pElem>
-          </incDir>
-          <preprocessorList>
-            <Elem>GLEW_STATIC</Elem>
-            <Elem>_3dlite_EXPORTS</Elem>
-            <Elem>_REENTRANT</Elem>
-          </preprocessorList>
-        </cTool>
-      </item>
-      <item path="3dlite/src/alloc.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
-          <incDir>
-            <pElem>/usr/include/SDL2</pElem>
-            <pElem>/mnt/work/sirius/workwork/source/repos/3dlite/build/3dlite</pElem>
-          </incDir>
-          <preprocessorList>
-            <Elem>GLEW_STATIC</Elem>
-            <Elem>_3dlite_EXPORTS</Elem>
-            <Elem>_REENTRANT</Elem>
-          </preprocessorList>
-        </cTool>
-      </item>
-      <item path="3dlite/src/file_cache.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
-          <incDir>
-            <pElem>/usr/include/SDL2</pElem>
-            <pElem>/mnt/work/sirius/workwork/source/repos/3dlite/build/3dlite</pElem>
-          </incDir>
-          <preprocessorList>
-            <Elem>GLEW_STATIC</Elem>
-            <Elem>_3dlite_EXPORTS</Elem>
-            <Elem>_REENTRANT</Elem>
-          </preprocessorList>
-        </cTool>
-      </item>
-      <item path="3dlite/src/gl_texture_unit.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
-          <incDir>
-            <pElem>/usr/include/SDL2</pElem>
-            <pElem>/mnt/work/sirius/workwork/source/repos/3dlite/build/3dlite</pElem>
-          </incDir>
-          <preprocessorList>
-            <Elem>GLEW_STATIC</Elem>
-            <Elem>_3dlite_EXPORTS</Elem>
-            <Elem>_REENTRANT</Elem>
-          </preprocessorList>
-        </cTool>
-      </item>
       <item path="3dlite/src/glew/glew.c" ex="false" tool="0" flavor2="3">
-      </item>
-      <item path="3dlite/src/list.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
-          <incDir>
-            <pElem>/usr/include/SDL2</pElem>
-            <pElem>/mnt/work/sirius/workwork/source/repos/3dlite/build/3dlite</pElem>
-          </incDir>
-          <preprocessorList>
-            <Elem>GLEW_STATIC</Elem>
-            <Elem>_3dlite_EXPORTS</Elem>
-            <Elem>_REENTRANT</Elem>
-          </preprocessorList>
-        </cTool>
-      </item>
-      <item path="3dlite/src/logger.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
-          <incDir>
-            <pElem>/usr/include/SDL2</pElem>
-            <pElem>/mnt/work/sirius/workwork/source/repos/3dlite/build/3dlite</pElem>
-          </incDir>
-          <preprocessorList>
-            <Elem>GLEW_STATIC</Elem>
-            <Elem>_3dlite_EXPORTS</Elem>
-            <Elem>_REENTRANT</Elem>
-          </preprocessorList>
-        </cTool>
-      </item>
-      <item path="3dlite/src/nedmalloc.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
-          <incDir>
-            <pElem>/usr/include/SDL2</pElem>
-            <pElem>/mnt/work/sirius/workwork/source/repos/3dlite/build/3dlite</pElem>
-          </incDir>
-          <preprocessorList>
-            <Elem>GLEW_STATIC</Elem>
-            <Elem>_3dlite_EXPORTS</Elem>
-            <Elem>_REENTRANT</Elem>
-          </preprocessorList>
-        </cTool>
-      </item>
-      <item path="3dlite/src/rb_tree.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
-          <incDir>
-            <pElem>/usr/include/SDL2</pElem>
-            <pElem>/mnt/work/sirius/workwork/source/repos/3dlite/build/3dlite</pElem>
-          </incDir>
-          <preprocessorList>
-            <Elem>GLEW_STATIC</Elem>
-            <Elem>_3dlite_EXPORTS</Elem>
-            <Elem>_REENTRANT</Elem>
-          </preprocessorList>
-        </cTool>
       </item>
       <folder path="0">
         <cTool>
@@ -295,7 +290,7 @@
         <cTool>
           <incDir>
             <pElem>3dlite/include/3dlite/7zdec</pElem>
-            <pElem>/mnt/work/sirius/workwork/source/repos/3dlite/build/3dlite</pElem>
+            <pElem>build/3dlite</pElem>
           </incDir>
           <preprocessorList>
             <Elem>_7ZIP_PPMD_SUPPPORT</Elem>
@@ -306,7 +301,7 @@
         <cTool>
           <incDir>
             <pElem>3dlite/include/3dlite</pElem>
-            <pElem>/mnt/work/sirius/workwork/source/repos/3dlite/build/3dlite</pElem>
+            <pElem>build/3dlite</pElem>
           </incDir>
           <preprocessorList>
             <Elem>GLEW_NO_GLU</Elem>
@@ -319,7 +314,7 @@
           <incDir>
             <pElem>3dlite++/include</pElem>
             <pElem>/usr/include/SDL2</pElem>
-            <pElem>/mnt/work/sirius/workwork/source/repos/3dlite/build/tests/functionaly</pElem>
+            <pElem>build/tests/functionaly</pElem>
           </incDir>
           <preprocessorList>
             <Elem>_REENTRANT</Elem>
@@ -329,24 +324,26 @@
       <folder path="0/tests/gtest">
         <ccTool>
           <incDir>
-            <pElem>/mnt/work/sirius/workwork/source/repos/3dlite/build/tests</pElem>
+            <pElem>build/tests</pElem>
           </incDir>
         </ccTool>
       </folder>
       <folder path="Modules">
         <cTool>
           <incDir>
-            <pElem>/mnt/work/sirius/workwork/source/repos/3dlite/build/CMakeFiles/CMakeTmp</pElem>
+            <pElem>build/CMakeFiles/CMakeTmp</pElem>
           </incDir>
           <preprocessorList>
             <Elem>CHECK_FUNCTION_EXISTS=XOpenDisplay</Elem>
           </preprocessorList>
         </cTool>
       </folder>
-      <item path="tests/functionaly/file_cache_test.cpp"
+      <item path="tests/functionaly/3dlite_file_cache_test.cpp"
             ex="false"
             tool="1"
             flavor2="8">
+        <ccTool flags="0">
+        </ccTool>
       </item>
       <item path="tests/gtest/src/gtest-all.cc" ex="false" tool="1" flavor2="8">
       </item>
@@ -422,25 +419,11 @@
             tool="3"
             flavor2="0">
       </item>
-      <item path="3dlite/include/3dlite/7zloader.h" ex="false" tool="3" flavor2="0">
-      </item>
       <item path="3dlite/include/3dlite/GL/glew.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="3dlite/include/3dlite/GL/glxew.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="3dlite/include/3dlite/GL/wglew.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="3dlite/include/3dlite/alloc.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="3dlite/include/3dlite/common.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="3dlite/include/3dlite/list.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="3dlite/include/3dlite/logger.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="3dlite/include/3dlite/nedmalloc.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="3dlite/include/3dlite/rb_tree.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="3dlite/src/7zdec/7zBuf.c" ex="false" tool="0" flavor2="0">
       </item>
@@ -474,21 +457,7 @@
       </item>
       <item path="3dlite/src/7zdec/Ppmd7Dec.c" ex="false" tool="0" flavor2="0">
       </item>
-      <item path="3dlite/src/7zloader.c" ex="false" tool="0" flavor2="0">
-      </item>
-      <item path="3dlite/src/alloc.c" ex="false" tool="0" flavor2="0">
-      </item>
       <item path="3dlite/src/glew/glew.c" ex="false" tool="0" flavor2="0">
-      </item>
-      <item path="3dlite/src/list.c" ex="false" tool="0" flavor2="0">
-      </item>
-      <item path="3dlite/src/logger.c" ex="false" tool="0" flavor2="0">
-      </item>
-      <item path="3dlite/src/malloc.c.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="3dlite/src/nedmalloc.c" ex="false" tool="0" flavor2="0">
-      </item>
-      <item path="3dlite/src/rb_tree.c" ex="false" tool="0" flavor2="0">
       </item>
       <item path="CMakeFiles/2.8.12.2/CompilerIdC/CMakeCCompilerId.c"
             ex="false"
@@ -496,11 +465,6 @@
             flavor2="0">
       </item>
       <item path="CMakeFiles/2.8.12.2/CompilerIdCXX/CMakeCXXCompilerId.cpp"
-            ex="false"
-            tool="1"
-            flavor2="0">
-      </item>
-      <item path="tests/functionaly/file_cache_test.cpp"
             ex="false"
             tool="1"
             flavor2="0">
