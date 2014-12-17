@@ -15,17 +15,32 @@
 *	You should have received a copy of the GNU General Public License
 *	along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
-#ifndef LITE3D_LOGGER_H
-#define	LITE3D_LOGGER_H
+#ifndef LITE3D_MAIN_H
+#define	LITE3D_MAIN_H
 
 #include <3dlite/3dlite_common.h>
+#include <3dlite/3dlite_video.h>
+#include <3dlite/3dlite_gl_texture_unit.h>
+#include <3dlite/3dlite_alloc.h>
+#include <3dlite/3dlite_logger.h>
 
-#define LITE3D_LOGLEVEL_ERROR           0x1
-#define LITE3D_LOGLEVEL_INFO            0x2
-#define LITE3D_LOGLEVEL_VERBOSE         0x3
+typedef int (*lite3d_user_init_completed_t)(void *userdata);
+typedef int (*lite3d_user_pre_shut_t)(void *userdata);
 
-LITE3D_CEXPORT void lite3d_setup_stdout_logger(void);
-LITE3D_CEXPORT void lite3d_set_loglevel(int8_t level);
+typedef struct lite3d_global_settings
+{
+    lite3d_video_settings videoSettings;
+    lite3d_texture_technique_settings textureSettings;
+    lite3d_alloca_f userAllocator;
 
-#endif	/* LOGGER_H */
+    lite3d_user_init_completed_t initCompleted;
+    lite3d_user_pre_shut_t preShut;
+    int8_t logLevel;
+} lite3d_global_settings;
+
+LITE3D_CEXPORT int lite3d_main(const lite3d_global_settings *settings);
+LITE3D_CEXPORT const lite3d_global_settings *lite3d_get_global_settings(void);
+
+
+#endif	/* MAIN_H */
 

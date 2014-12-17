@@ -103,5 +103,8 @@
 #define LITE3D_MAX_FILE_NAME    128
 #define LITE3D_MAX_NAME         LITE3D_MAX_FILE_NAME
 
+#define LITE3D_TRUE         1
+#define LITE3D_FALSE        0
+
 #endif	/* COMMON_H */
 

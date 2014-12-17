@@ -64,7 +64,10 @@ src/3dlite_list.c
 src/3dlite_file_cache.c
 src/3dlite_7zloader.c
 src/3dlite_logger.c
-src/3dlite_gl_texture_unit.c)
+src/3dlite_gl_texture_unit.c
+src/3dlite_video.c
+src/3dlite_render.c
+src/3dlite_main.c)
 
 set(3DLITE_HEADERS include/3dlite/3dlite_alloc.h
 include/3dlite/3dlite_common.h
@@ -74,7 +77,10 @@ include/3dlite/3dlite_list.h
 include/3dlite/3dlite_file_cache.h
 include/3dlite/3dlite_7zloader.h
 include/3dlite/3dlite_logger.h
-include/3dlite/3dlite_gl_texture_unit.h)
+include/3dlite/3dlite_gl_texture_unit.h
+include/3dlite/3dlite_video.h
+include/3dlite/3dlite_render.h
+include/3dlite/3dlite_main.h)
 
 add_library(3dlite SHARED ${3DLITE_SOURCES} ${3DLITE_HEADERS})
 

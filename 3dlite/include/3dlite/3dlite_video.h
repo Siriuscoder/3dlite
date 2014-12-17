@@ -15,17 +15,28 @@
 *	You should have received a copy of the GNU General Public License
 *	along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
-#ifndef LITE3D_LOGGER_H
-#define	LITE3D_LOGGER_H
+#ifndef LITE3D_VIDEO_H
+#define	LITE3D_VIDEO_H
 
 #include <3dlite/3dlite_common.h>
 
-#define LITE3D_LOGLEVEL_ERROR           0x1
-#define LITE3D_LOGLEVEL_INFO            0x2
-#define LITE3D_LOGLEVEL_VERBOSE         0x3
+#define LITE3D_CAPTION_MAX 50
 
-LITE3D_CEXPORT void lite3d_setup_stdout_logger(void);
-LITE3D_CEXPORT void lite3d_set_loglevel(int8_t level);
+typedef struct lite3d_video_settings
+{
+    int32_t screenHeight;
+    int32_t screenWidth;
+    int8_t FSAA;
+    int8_t fullscreen;
+    char caption[LITE3D_CAPTION_MAX];
+    int8_t vsync;
+    int32_t vsyncInterval;
+} lite3d_video_settings;
 
-#endif	/* LOGGER_H */
+LITE3D_CEXPORT int lite3d_setup_video(const lite3d_video_settings *settings);
+LITE3D_CEXPORT const lite3d_video_settings *lite3d_get_video_settings(void);
+LITE3D_CEXPORT int lite3d_close_video(void);
+
+
+#endif	/* VIDEO_H */
 

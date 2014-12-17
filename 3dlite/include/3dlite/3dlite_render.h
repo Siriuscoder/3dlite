@@ -15,17 +15,11 @@
 *	You should have received a copy of the GNU General Public License
 *	along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
-#ifndef LITE3D_LOGGER_H
-#define	LITE3D_LOGGER_H
+#ifndef LITE3D_RENDER_H
+#define	LITE3D_RENDER_H
 
 #include <3dlite/3dlite_common.h>
 
-#define LITE3D_LOGLEVEL_ERROR           0x1
-#define LITE3D_LOGLEVEL_INFO            0x2
-#define LITE3D_LOGLEVEL_VERBOSE         0x3
 
-LITE3D_CEXPORT void lite3d_setup_stdout_logger(void);
-LITE3D_CEXPORT void lite3d_set_loglevel(int8_t level);
-
-#endif	/* LOGGER_H */
+#endif	/* RENDER_H */
 
