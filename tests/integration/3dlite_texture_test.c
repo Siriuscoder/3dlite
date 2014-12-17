@@ -15,5 +15,23 @@
  *	You should have received a copy of the GNU General Public License
  *	along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
-#include <3dlite/3dlite_render.h>
+#include <string.h>
 
+#include <3dlite/3dlite_main.h>
+
+int main(int argc, char *args[])
+{
+    lite3d_global_settings settings;
+    memset(&settings, 0, sizeof(settings));
+    
+    settings.logLevel = LITE3D_LOGLEVEL_VERBOSE;
+    settings.videoSettings.FSAA = 4;
+    strcpy(settings.videoSettings.caption, "TEST window");
+    settings.videoSettings.colorBits = 32;
+    settings.videoSettings.fullscreen = LITE3D_FALSE;
+    settings.videoSettings.screenWidth = 800;
+    settings.videoSettings.screenHeight = 600;
+    settings.videoSettings.vsync = LITE3D_FALSE;
+    
+    return !lite3d_main(&settings);
+}

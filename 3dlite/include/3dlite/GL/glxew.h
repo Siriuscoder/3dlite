@@ -98,7 +98,7 @@
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 #include <X11/Xmd.h>
-#include <GL/glew.h>
+#include <3dlite/GL/glew.h>
 
 #ifdef __cplusplus
 extern "C" {

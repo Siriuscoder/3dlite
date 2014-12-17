@@ -22,30 +22,69 @@
 
 static lite3d_global_settings gGlobalSettings;
 
+static int sdl_init(void)
+{
+    uint32_t subSystems = SDL_INIT_VIDEO |
+        SDL_INIT_TIMER |
+        SDL_INIT_EVENTS |
+        SDL_INIT_JOYSTICK |
+        SDL_INIT_GAMECONTROLLER;
+
+    SDL_version compiledVers, linkedVers;
+
+    if (SDL_WasInit(subSystems) != subSystems)
+    {
+        if (SDL_Init(subSystems) != 0)
+        {
+            SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION,
+                "%s: SDL startup error..", __FUNCTION__);
+            return LITE3D_FALSE;
+        }
+    }
+
+    SDL_VERSION(&compiledVers);
+    SDL_GetVersion(&linkedVers);
+
+    if (compiledVers.major != linkedVers.major)
+    {
+        SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION,
+            "SDL version mismatch..");
+
+        SDL_Quit();
+        return LITE3D_FALSE;
+    }
+
+    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
+        "SDL Version %d.%d.%d", (int) linkedVers.major,
+        (int) linkedVers.minor, (int) linkedVers.patch);
+
+    return LITE3D_TRUE;
+}
+
 int lite3d_main(const lite3d_global_settings *settings)
 {
-    SDL_version sdlVers;
     gGlobalSettings = *settings;
     /* begin 3dlite initialization */
     /* setup memory */
     lite3d_init_memory(&gGlobalSettings.userAllocator);
-    /* setup SDL */
-    SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_EVENTS);
     /* setup logger */
     lite3d_setup_stdout_logger();
     lite3d_set_loglevel(gGlobalSettings.logLevel);
 
-    SDL_GetVersion(&sdlVers);
     SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
-        "===== 3dlite started ======");
-    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
-        "SDL Version %d:%d:%d", (int)sdlVers.major, (int)sdlVers.minor, (int)sdlVers.patch);
+        "====== 3dlite started ======");
+    /* setup SDL */
+    if (!sdl_init())
+        return LITE3D_FALSE;
+
     /* setup video */
-    if(!lite3d_setup_video(&gGlobalSettings.videoSettings))
+    if (!lite3d_setup_video(&gGlobalSettings.videoSettings))
     {
         lite3d_cleanup_memory();
         return LITE3D_FALSE;
     }
+    
+    while(1) SDL_PumpEvents();
 
     return LITE3D_TRUE;
 }
