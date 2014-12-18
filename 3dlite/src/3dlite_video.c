@@ -16,7 +16,9 @@
  *	along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
 #include <SDL.h>
+#include <SDL_syswm.h>
 
+#include <3dlite/GL/glew.h>
 #include <3dlite/3dlite_video.h>
 
 #ifdef PLATFORM_Windows
@@ -27,52 +29,23 @@
 
 static lite3d_video_settings gVideoSettings;
 
-static struct
-{
-    int32_t format;
-    char descr[35];
-} gBuiltInScreenPixelFormats[] = {
-    {SDL_PIXELFORMAT_UNKNOWN, "SDL_PIXELFORMAT_UNKNOWN"},
-    {SDL_PIXELFORMAT_INDEX1LSB, "SDL_PIXELFORMAT_INDEX1LSB"},
-    {SDL_PIXELFORMAT_INDEX1MSB, "SDL_PIXELFORMAT_INDEX1MSB"},
-    {SDL_PIXELFORMAT_INDEX4LSB, "SDL_PIXELFORMAT_INDEX4LSB"},
-    {SDL_PIXELFORMAT_INDEX4MSB, "SDL_PIXELFORMAT_INDEX4MSB"},
-    {SDL_PIXELFORMAT_INDEX8, "SDL_PIXELFORMAT_INDEX8"},
-    {SDL_PIXELFORMAT_RGB332, "SDL_PIXELFORMAT_RGB332"},
-    {SDL_PIXELFORMAT_RGB444, "SDL_PIXELFORMAT_RGB444"},
-    {SDL_PIXELFORMAT_RGB555, "SDL_PIXELFORMAT_RGB555"},
-    {SDL_PIXELFORMAT_BGR555, "SDL_PIXELFORMAT_BGR555"},
-    {SDL_PIXELFORMAT_ARGB4444, "SDL_PIXELFORMAT_ARGB4444"},
-    {SDL_PIXELFORMAT_RGBA4444, "SDL_PIXELFORMAT_RGBA4444"},
-    {SDL_PIXELFORMAT_ABGR4444, "SDL_PIXELFORMAT_ABGR4444"},
-    {SDL_PIXELFORMAT_BGRA4444, "SDL_PIXELFORMAT_BGRA4444"},
-    {SDL_PIXELFORMAT_ARGB1555, "SDL_PIXELFORMAT_ARGB1555"},
-    {SDL_PIXELFORMAT_RGBA5551, "SDL_PIXELFORMAT_RGBA5551"},
-    {SDL_PIXELFORMAT_ABGR1555, "SDL_PIXELFORMAT_ABGR1555"},
-    {SDL_PIXELFORMAT_BGRA5551, "SDL_PIXELFORMAT_BGRA5551"},
-    {SDL_PIXELFORMAT_RGB565, "SDL_PIXELFORMAT_RGB565"},
-    {SDL_PIXELFORMAT_RGB565, "SDL_PIXELFORMAT_RGB565"},
-    {SDL_PIXELFORMAT_BGR565, "SDL_PIXELFORMAT_BGR565"},
-    {SDL_PIXELFORMAT_RGB24, "SDL_PIXELFORMAT_RGB24"},
-    {SDL_PIXELFORMAT_BGR24, "SDL_PIXELFORMAT_BGR24"},
-    {SDL_PIXELFORMAT_RGB888, "SDL_PIXELFORMAT_RGB888"},
-    {SDL_PIXELFORMAT_RGBX8888, "SDL_PIXELFORMAT_RGBX8888"},
-    {SDL_PIXELFORMAT_BGR888, "SDL_PIXELFORMAT_BGR888"},
-    {SDL_PIXELFORMAT_BGRX8888, "SDL_PIXELFORMAT_BGRX8888"},
-    {SDL_PIXELFORMAT_ARGB8888, "SDL_PIXELFORMAT_ARGB8888"},
-    {SDL_PIXELFORMAT_RGBA8888, "SDL_PIXELFORMAT_RGBA8888"},
-    {SDL_PIXELFORMAT_ABGR8888, "SDL_PIXELFORMAT_ABGR8888"},
-    {SDL_PIXELFORMAT_BGRA8888, "SDL_PIXELFORMAT_BGRA8888"},
-    {SDL_PIXELFORMAT_ARGB2101010, "SDL_PIXELFORMAT_ARGB2101010"},
-    {0, ""}
-};
-
 static SDL_Window *gRenderWindow = NULL;
 static SDL_GLContext gGLContext = NULL;
 
 static int init_platform_gl_extensions(void)
 {
+    SDL_SysWMinfo wminfo;
+    SDL_VERSION(&wminfo.version);
+    if(!SDL_GetWindowWMInfo(gRenderWindow, &wminfo))
+        return LITE3D_FALSE;
+
 #ifdef PLATFORM_Windows
+    if(!WGLEW_ARB_extensions_string)
+        return LITE3D_FALSE;
+
+    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
+        "%s: GL WGL Extensions %s", __FUNCTION__, 
+        (char *)wglGetExtensionsStringARB(GetDC(wminfo.info.win.window)));
 
 #elif defined PLATFORM_Linux
 
@@ -83,6 +56,29 @@ static int init_platform_gl_extensions(void)
 
 static int init_gl_extensions(void)
 {
+    GLenum err = glewInit();
+    if (GLEW_OK != err)
+    {
+        /* Problem: glewInit failed, something is seriously wrong. */
+        SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION,
+            "%s: Glew failed.. %s\n", __FUNCTION__, glewGetErrorString(err));
+    }
+
+    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
+        "%s: GL Version %s", __FUNCTION__, (char *)glGetString(GL_VERSION));
+    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
+        "%s: GL Vendor %s", __FUNCTION__, (char *)glGetString(GL_VENDOR));
+    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
+        "%s: GL Renderer %s", __FUNCTION__, (char *)glGetString(GL_RENDERER));
+    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
+        "%s: GL Extensions %s", __FUNCTION__, (char *)glGetString(GL_EXTENSIONS));
+    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
+        "%s: GL Shading Lang %s", __FUNCTION__, (char *)glGetString(GL_SHADING_LANGUAGE_VERSION));
+
+    /* enable multisample buffers */
+    if (gVideoSettings.FSAA > 1 && GLEW_ARB_multisample)
+        glEnable(GL_MULTISAMPLE_ARB);
+
 
     return init_platform_gl_extensions();
 }
@@ -91,7 +87,6 @@ int lite3d_setup_video(const lite3d_video_settings *settings)
 {
     uint32_t windowFlags;
     SDL_DisplayMode displayMode;
-    int i;
 
     gVideoSettings = *settings;
 
@@ -159,22 +154,11 @@ int lite3d_setup_video(const lite3d_video_settings *settings)
     SDL_GL_MakeCurrent(gRenderWindow, gGLContext);
 
     SDL_GetWindowDisplayMode(gRenderWindow, &displayMode);
-    for (i = 0; gBuiltInScreenPixelFormats[i].format != 0; ++i)
-    {
-        if (displayMode.format == gBuiltInScreenPixelFormats[i].format)
-        {
-            SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
-                "%s: closest pixel format is %s", __FUNCTION__,
-                gBuiltInScreenPixelFormats[i].descr);
-            break;
-        }
-    }
+    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
+        "%s: selected pixel format: %d bpp, %s", __FUNCTION__,
+        SDL_BITSPERPIXEL(displayMode.format), SDL_GetPixelFormatName(displayMode.format));
 
     SDL_GL_SetSwapInterval(gVideoSettings.vsync ? 1 : 0);
-
-    /* enable multisample buffers */
-    if (gVideoSettings.FSAA > 1 && GLEW_ARB_multisample)
-        glEnable(GL_MULTISAMPLE_ARB);
 
     if (!init_gl_extensions())
     {
@@ -193,6 +177,7 @@ const lite3d_video_settings *lite3d_get_video_settings(void)
 
 int lite3d_close_video(void)
 {
-
+    SDL_GL_DeleteContext(gGLContext);
+    SDL_DestroyWindow(gRenderWindow);
     return LITE3D_TRUE;
 }
