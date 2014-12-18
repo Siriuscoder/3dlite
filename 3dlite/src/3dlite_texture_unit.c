@@ -26,7 +26,7 @@
 #include <3dlite/GL/glew.h>
 
 #include <3dlite/3dlite_alloc.h>
-#include <3dlite/3dlite_gl_texture_unit.h>
+#include <3dlite/3dlite_texture_unit.h>
 
 static lite3d_texture_technique_settings gTextureSettings;
 

@@ -64,7 +64,7 @@ src/3dlite_list.c
 src/3dlite_file_cache.c
 src/3dlite_7zloader.c
 src/3dlite_logger.c
-src/3dlite_gl_texture_unit.c
+src/3dlite_texture_unit.c
 src/3dlite_video.c
 src/3dlite_render.c
 src/3dlite_main.c)
@@ -77,7 +77,7 @@ include/3dlite/3dlite_list.h
 include/3dlite/3dlite_file_cache.h
 include/3dlite/3dlite_7zloader.h
 include/3dlite/3dlite_logger.h
-include/3dlite/3dlite_gl_texture_unit.h
+include/3dlite/3dlite_texture_unit.h
 include/3dlite/3dlite_video.h
 include/3dlite/3dlite_render.h
 include/3dlite/3dlite_main.h)

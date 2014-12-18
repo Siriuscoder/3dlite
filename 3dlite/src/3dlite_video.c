@@ -36,19 +36,34 @@ static int init_platform_gl_extensions(void)
 {
     SDL_SysWMinfo wminfo;
     SDL_VERSION(&wminfo.version);
-    if(!SDL_GetWindowWMInfo(gRenderWindow, &wminfo))
+    if (!SDL_GetWindowWMInfo(gRenderWindow, &wminfo))
         return LITE3D_FALSE;
 
 #ifdef PLATFORM_Windows
-    if(!WGLEW_ARB_extensions_string)
+    if (!WGLEW_ARB_extensions_string)
         return LITE3D_FALSE;
 
     SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
-        "%s: GL WGL Extensions %s", __FUNCTION__, 
-        (char *)wglGetExtensionsStringARB(GetDC(wminfo.info.win.window)));
+        "%s: WGL Extensions %s", __FUNCTION__,
+        (char *) wglGetExtensionsStringARB(GetDC(wminfo.info.win.window)));
 
 #elif defined PLATFORM_Linux
+    if (!GLXEW_VERSION_1_3)
+    {
+        SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION,
+            "%s: GLX v1.3 not supported..", __FUNCTION__);
+        return LITE3D_FALSE;
+    }
 
+    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
+        "%s: GLX Client %s", __FUNCTION__,
+        (char *) glXGetClientString(wminfo.info.x11.display, 1));
+    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
+        "%s: GLX Server %s", __FUNCTION__,
+        (char *) glXQueryServerString(wminfo.info.x11.display, 0, 1));
+    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
+        "%s: GLX Extensions %s", __FUNCTION__,
+        (char *) glXQueryExtensionsString(wminfo.info.x11.display, 0));
 #endif
 
     return LITE3D_TRUE;
@@ -63,17 +78,24 @@ static int init_gl_extensions(void)
         SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION,
             "%s: Glew failed.. %s\n", __FUNCTION__, glewGetErrorString(err));
     }
+    
+    if (!GL_VERSION_3_0)
+    {
+        SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION,
+            "%s: GL v4.0 minimum required..", __FUNCTION__);
+        return LITE3D_FALSE;
+    }
 
     SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
-        "%s: GL Version %s", __FUNCTION__, (char *)glGetString(GL_VERSION));
+        "%s: GL Version %s", __FUNCTION__, (char *) glGetString(GL_VERSION));
     SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
-        "%s: GL Vendor %s", __FUNCTION__, (char *)glGetString(GL_VENDOR));
+        "%s: GL Vendor %s", __FUNCTION__, (char *) glGetString(GL_VENDOR));
     SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
-        "%s: GL Renderer %s", __FUNCTION__, (char *)glGetString(GL_RENDERER));
+        "%s: GL Renderer %s", __FUNCTION__, (char *) glGetString(GL_RENDERER));
     SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
-        "%s: GL Extensions %s", __FUNCTION__, (char *)glGetString(GL_EXTENSIONS));
+        "%s: GL Extensions %s", __FUNCTION__, (char *) glGetString(GL_EXTENSIONS));
     SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
-        "%s: GL Shading Lang %s", __FUNCTION__, (char *)glGetString(GL_SHADING_LANGUAGE_VERSION));
+        "%s: GL Shading Lang %s", __FUNCTION__, (char *) glGetString(GL_SHADING_LANGUAGE_VERSION));
 
     /* enable multisample buffers */
     if (gVideoSettings.FSAA > 1 && GLEW_ARB_multisample)

@@ -80,11 +80,23 @@ int lite3d_main(const lite3d_global_settings *settings)
     /* setup video */
     if (!lite3d_setup_video(&gGlobalSettings.videoSettings))
     {
+        SDL_Quit();
         lite3d_cleanup_memory();
         return LITE3D_FALSE;
     }
-    
-    while(1) SDL_PumpEvents();
+
+    /* setup textures technique */
+    if (!lite3d_texture_technique_init(&gGlobalSettings.textureSettings))
+    {
+        lite3d_close_video();
+        lite3d_cleanup_memory();
+        return LITE3D_FALSE;
+    }
+
+    if (gGlobalSettings.initCompleted)
+        gGlobalSettings.initCompleted(gGlobalSettings.userdata);
+
+    while (1) SDL_PumpEvents();
 
     return LITE3D_TRUE;
 }
