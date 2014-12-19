@@ -18,7 +18,30 @@
 #ifndef LITE3D_RENDER_H
 #define	LITE3D_RENDER_H
 
+#include <SDL_events.h>
 #include <3dlite/3dlite_common.h>
+
+typedef int (*lite3d_pre_render_t)(void *userdata);
+typedef int (*lite3d_post_render_t)(void *userdata);
+typedef int (*lite3d_pre_frame_t)(void *userdata);
+typedef int (*lite3d_post_frame_t)(void *userdata);
+typedef int (*lite3d_render_frame_t)(void *userdata);
+typedef int (*lite3d_process_event_t)(SDL_Event *levent, void *userdata);
+
+typedef struct lite3d_render_listeners
+{
+    lite3d_pre_render_t preRender;
+    lite3d_post_render_t postRender;
+    lite3d_pre_frame_t preFrame;
+    lite3d_post_frame_t postFrame;
+    lite3d_render_frame_t renderFrame;
+    lite3d_process_event_t processEvent;
+    void *userdata;
+} lite3d_render_listeners;
+
+
+LITE3D_CEXPORT void lite3d_render_loop(lite3d_render_listeners *callbacks);
+
 
 
 #endif	/* RENDER_H */

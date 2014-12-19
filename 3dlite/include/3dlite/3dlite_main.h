@@ -23,18 +23,20 @@
 #include <3dlite/3dlite_texture_unit.h>
 #include <3dlite/3dlite_alloc.h>
 #include <3dlite/3dlite_logger.h>
+#include <3dlite/3dlite_render.h>
 
 typedef int (*lite3d_user_init_completed_t)(void *userdata);
-typedef int (*lite3d_user_pre_shut_t)(void *userdata);
+typedef int (*lite3d_user_shut_t)(void *userdata);
 
 typedef struct lite3d_global_settings
 {
     lite3d_video_settings videoSettings;
     lite3d_texture_technique_settings textureSettings;
     lite3d_alloca_f userAllocator;
+    lite3d_render_listeners renderLisneters;
 
     lite3d_user_init_completed_t initCompleted;
-    lite3d_user_pre_shut_t preShut;
+    lite3d_user_shut_t preShut;
     int8_t logLevel;
     void *userdata;
 } lite3d_global_settings;

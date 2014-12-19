@@ -17,3 +17,35 @@
  *******************************************************************************/
 #include <3dlite/3dlite_render.h>
 
+static lite3d_render_listeners gRenderCallbacks;
+
+void lite3d_render_loop(lite3d_render_listeners *callbacks)
+{
+    SDL_Event wevent;
+    uint8_t starting = LITE3D_TRUE;
+    gRenderCallbacks = *callbacks;
+
+    if(gRenderCallbacks.preRender && !gRenderCallbacks.preRender(gRenderCallbacks.userdata))
+        return;
+
+    while(starting)
+    {
+        if(gRenderCallbacks.preFrame && !gRenderCallbacks.preFrame(gRenderCallbacks.userdata))
+            break;
+        if(gRenderCallbacks.renderFrame && !gRenderCallbacks.renderFrame(gRenderCallbacks.userdata))
+            break;
+        if(gRenderCallbacks.postRender && !gRenderCallbacks.postRender(gRenderCallbacks.userdata))
+            break;
+
+        while(SDL_PollEvent(&wevent))
+        {
+            if(gRenderCallbacks.processEvent && !gRenderCallbacks.processEvent(&wevent, gRenderCallbacks.userdata))
+            {
+                starting = LITE3D_FALSE;
+                break;
+            }
+        }
+    }
+
+    gRenderCallbacks.postRender && !gRenderCallbacks.postRender(gRenderCallbacks.userdata);
+}
