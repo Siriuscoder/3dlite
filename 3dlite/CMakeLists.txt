@@ -57,7 +57,18 @@ target_compile_definitions(glewc PRIVATE
 "$<BUILD_INTERFACE:GLEW_STATIC>")
 ################################################################
 # 3dlite sources
-set(3DLITE_SOURCES src/3dlite_nedmalloc.c
+set(3DLITE_SOURCES src/kazmath/aabb.c
+src/kazmath/mat3.c
+src/kazmath/mat4.c
+src/kazmath/plane.c
+src/kazmath/quaternion.c
+src/kazmath/ray2.c
+src/kazmath/ray3.c
+src/kazmath/utility.c
+src/kazmath/vec2.c
+src/kazmath/vec3.c
+src/kazmath/vec4.c
+src/3dlite_nedmalloc.c
 src/3dlite_alloc.c
 src/3dlite_rb_tree.c
 src/3dlite_list.c
@@ -69,7 +80,18 @@ src/3dlite_video.c
 src/3dlite_render.c
 src/3dlite_main.c)
 
-set(3DLITE_HEADERS include/3dlite/3dlite_alloc.h
+set(3DLITE_HEADERS include/3dlite/kazmath/aabb.h
+include/3dlite/kazmath/mat3.h
+include/3dlite/kazmath/mat4.h
+include/3dlite/kazmath/plane.h
+include/3dlite/kazmath/quaternion.h
+include/3dlite/kazmath/ray2.h
+include/3dlite/kazmath/ray3.h
+include/3dlite/kazmath/utility.h
+include/3dlite/kazmath/vec2.h
+include/3dlite/kazmath/vec3.h
+include/3dlite/kazmath/vec4.h
+include/3dlite/3dlite_alloc.h
 include/3dlite/3dlite_common.h
 include/3dlite/3dlite_nedmalloc.h
 include/3dlite/3dlite_rb_tree.h
@@ -99,6 +121,8 @@ endif()
 
 target_compile_definitions(3dlite PRIVATE
 "$<BUILD_INTERFACE:GLEW_STATIC>")
+target_include_directories(3dlite PRIVATE 
+"$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include/3dlite/kazmath/>")
 
 target_link_libraries(3dlite
 7zdec
@@ -108,3 +132,4 @@ ${IL_LIBRARIES}
 ${ILU_LIBRARIES}
 ${SDL2_LIBS}
 ${CMAKE_THREAD_LIBS_INIT})
+

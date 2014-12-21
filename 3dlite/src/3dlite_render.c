@@ -24,7 +24,7 @@
 static uint64_t gLastMark = 0;
 static uint64_t gPerfFreq = 0;
 static int32_t gFPSCounter = 0;
-static lite3d_render_listeners gRenderCallbacks;
+static lite3d_render_listeners gRenderListeners;
 static lite3d_render_stats gRenderStats = {
     0, 0, 0, 0, 0.0, 0.0, 0.0, 0.0
 };
@@ -72,26 +72,31 @@ static void calc_render_stats(uint64_t beginFrame, uint64_t endFrame)
     }
 }
 
+static void update_render_targets(void)
+{
+    
+}
+
 void lite3d_render_loop(lite3d_render_listeners *callbacks)
 {
     SDL_Event wevent;
     uint64_t beginFrameMark;
     gPerfFreq = SDL_GetPerformanceFrequency();
     uint8_t starting = LITE3D_TRUE;
-    gRenderCallbacks = *callbacks;
+    gRenderListeners = *callbacks;
     memset(&gRenderStats, 0, sizeof (gRenderStats));
 
-    if (gRenderCallbacks.preRender && !gRenderCallbacks.preRender(gRenderCallbacks.userdata))
+    if (gRenderListeners.preRender && !gRenderListeners.preRender(gRenderListeners.userdata))
         return;
 
     while (starting)
     {
         beginFrameMark = SDL_GetPerformanceCounter();
-        if (gRenderCallbacks.preFrame && !gRenderCallbacks.preFrame(gRenderCallbacks.userdata))
+        if (gRenderListeners.preFrame && !gRenderListeners.preFrame(gRenderListeners.userdata))
             break;
-        if (gRenderCallbacks.renderFrame && !gRenderCallbacks.renderFrame(gRenderCallbacks.userdata))
+        if (gRenderListeners.renderFrame && !gRenderListeners.renderFrame(gRenderListeners.userdata))
             break;
-        if (gRenderCallbacks.postFrame && !gRenderCallbacks.postFrame(gRenderCallbacks.userdata))
+        if (gRenderListeners.postFrame && !gRenderListeners.postFrame(gRenderListeners.userdata))
             break;
 
         lite3d_swap_buffers();
@@ -99,7 +104,7 @@ void lite3d_render_loop(lite3d_render_listeners *callbacks)
 
         while (SDL_PollEvent(&wevent))
         {
-            if (gRenderCallbacks.processEvent && !gRenderCallbacks.processEvent(&wevent, gRenderCallbacks.userdata))
+            if (gRenderListeners.processEvent && !gRenderListeners.processEvent(&wevent, gRenderListeners.userdata))
             {
                 starting = LITE3D_FALSE;
                 break;
@@ -107,8 +112,8 @@ void lite3d_render_loop(lite3d_render_listeners *callbacks)
         }
     }
 
-    if (gRenderCallbacks.postRender)
-        gRenderCallbacks.postRender(gRenderCallbacks.userdata);
+    if (gRenderListeners.postRender)
+        gRenderListeners.postRender(gRenderListeners.userdata);
 }
 
 lite3d_render_stats *lite3d_get_render_stats(void)
