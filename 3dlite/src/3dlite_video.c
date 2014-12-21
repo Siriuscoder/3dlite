@@ -203,3 +203,8 @@ int lite3d_close_video(void)
     SDL_DestroyWindow(gRenderWindow);
     return LITE3D_TRUE;
 }
+
+void lite3d_swap_buffers(void)
+{
+    SDL_GL_SwapWindow(gRenderWindow);
+}

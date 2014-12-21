@@ -35,8 +35,6 @@ typedef struct lite3d_global_settings
     lite3d_alloca_f userAllocator;
     lite3d_render_listeners renderLisneters;
 
-    lite3d_user_init_completed_t initCompleted;
-    lite3d_user_shut_t preShut;
     int8_t logLevel;
     void *userdata;
 } lite3d_global_settings;

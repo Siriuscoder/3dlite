@@ -15,31 +15,36 @@
  *	You should have received a copy of the GNU General Public License
  *	along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
+#include <string.h>
 #include <3dlite/3dlite_render.h>
+#include <3dlite/3dlite_video.h>
 
 static lite3d_render_listeners gRenderCallbacks;
+static lite3d_render_stats gRenderStats;
 
 void lite3d_render_loop(lite3d_render_listeners *callbacks)
 {
     SDL_Event wevent;
     uint8_t starting = LITE3D_TRUE;
     gRenderCallbacks = *callbacks;
+    memset(&gRenderStats, 0, sizeof (gRenderStats));
 
-    if(gRenderCallbacks.preRender && !gRenderCallbacks.preRender(gRenderCallbacks.userdata))
+    if (gRenderCallbacks.preRender && !gRenderCallbacks.preRender(gRenderCallbacks.userdata))
         return;
 
-    while(starting)
+    while (starting)
     {
-        if(gRenderCallbacks.preFrame && !gRenderCallbacks.preFrame(gRenderCallbacks.userdata))
+        if (gRenderCallbacks.preFrame && !gRenderCallbacks.preFrame(gRenderCallbacks.userdata))
             break;
-        if(gRenderCallbacks.renderFrame && !gRenderCallbacks.renderFrame(gRenderCallbacks.userdata))
+        if (gRenderCallbacks.renderFrame && !gRenderCallbacks.renderFrame(gRenderCallbacks.userdata))
             break;
-        if(gRenderCallbacks.postRender && !gRenderCallbacks.postRender(gRenderCallbacks.userdata))
+        if (gRenderCallbacks.postFrame && !gRenderCallbacks.postFrame(gRenderCallbacks.userdata))
             break;
 
-        while(SDL_PollEvent(&wevent))
+        lite3d_swap_buffers();
+        while (SDL_PollEvent(&wevent))
         {
-            if(gRenderCallbacks.processEvent && !gRenderCallbacks.processEvent(&wevent, gRenderCallbacks.userdata))
+            if (gRenderCallbacks.processEvent && !gRenderCallbacks.processEvent(&wevent, gRenderCallbacks.userdata))
             {
                 starting = LITE3D_FALSE;
                 break;
@@ -47,5 +52,11 @@ void lite3d_render_loop(lite3d_render_listeners *callbacks)
         }
     }
 
-    gRenderCallbacks.postRender && !gRenderCallbacks.postRender(gRenderCallbacks.userdata);
+    if (gRenderCallbacks.postRender)
+        gRenderCallbacks.postRender(gRenderCallbacks.userdata);
+}
+
+lite3d_render_stats *lite3d_get_render_stats(void)
+{
+    return &gRenderStats;
 }

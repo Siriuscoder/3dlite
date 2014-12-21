@@ -39,9 +39,15 @@ typedef struct lite3d_render_listeners
     void *userdata;
 } lite3d_render_listeners;
 
+typedef struct lite3d_render_stats
+{
+    int32_t FPS;
+    float frameTimeMs;
+} lite3d_render_stats;
+
 
 LITE3D_CEXPORT void lite3d_render_loop(lite3d_render_listeners *callbacks);
-
+LITE3D_CEXPORT lite3d_render_stats *lite3d_get_render_stats(void);
 
 
 #endif	/* RENDER_H */

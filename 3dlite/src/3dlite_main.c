@@ -93,10 +93,9 @@ int lite3d_main(const lite3d_global_settings *settings)
         return LITE3D_FALSE;
     }
 
-    if (gGlobalSettings.initCompleted)
-        gGlobalSettings.initCompleted(gGlobalSettings.userdata);
-
     lite3d_render_loop(&gGlobalSettings.renderLisneters);
+
+    lite3d_texture_technique_shut();
     lite3d_close_video();
     lite3d_cleanup_memory();
     SDL_Quit();

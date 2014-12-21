@@ -52,7 +52,6 @@
           <in>3dlite_7zloader.c</in>
           <in>3dlite_alloc.c</in>
           <in>3dlite_file_cache.c</in>
-          <in>3dlite_gl_texture_unit.c</in>
           <in>3dlite_list.c</in>
           <in>3dlite_logger.c</in>
           <in>3dlite_main.c</in>
@@ -124,7 +123,7 @@
           <buildCommandWorkingDir>build</buildCommandWorkingDir>
           <buildCommand>${MAKE} -f Makefile</buildCommand>
           <cleanCommand>${MAKE} -f Makefile clean</cleanCommand>
-          <executablePath>build/bin/Debug/3dlite_tests</executablePath>
+          <executablePath>build/bin/Debug/3dlite_texture_test</executablePath>
           <ccTool>
             <incDir>
               <pElem>3dlite/include</pElem>
@@ -168,22 +167,6 @@
         </cTool>
       </item>
       <item path="3dlite/src/3dlite_file_cache.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="0">
-          <incDir>
-            <pElem>/usr/include/SDL2</pElem>
-            <pElem>build/3dlite</pElem>
-          </incDir>
-          <preprocessorList>
-            <Elem>GLEW_STATIC</Elem>
-            <Elem>_3dlite_EXPORTS</Elem>
-            <Elem>_REENTRANT</Elem>
-          </preprocessorList>
-        </cTool>
-      </item>
-      <item path="3dlite/src/3dlite_gl_texture_unit.c"
-            ex="false"
-            tool="0"
-            flavor2="3">
         <cTool flags="0">
           <incDir>
             <pElem>/usr/include/SDL2</pElem>

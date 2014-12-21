@@ -36,6 +36,7 @@ typedef struct lite3d_video_settings
 LITE3D_CEXPORT int lite3d_setup_video(const lite3d_video_settings *settings);
 LITE3D_CEXPORT const lite3d_video_settings *lite3d_get_video_settings(void);
 LITE3D_CEXPORT int lite3d_close_video(void);
+LITE3D_CEXPORT void lite3d_swap_buffers(void);
 
 
 #endif	/* VIDEO_H */

@@ -51,9 +51,9 @@
 
 #define LITE3D_MAX_FILTERS          10
 
-#define LITE3D_TEXTURE_FILTERING_NICEST   0x0001
-#define LITE3D_TEXTURE_FILTERING_NEAREST  0x0002
-#define LITE3D_TEXTURE_FILTERING_LINEAR   0x0003
+#define LITE3D_TEXTURE_QL_NICEST    0x0001
+#define LITE3D_TEXTURE_QL_LOW       0x0002
+#define LITE3D_TEXTURE_QL_MIDDLE    0x0003
 
 typedef struct lite3d_image_filter
 {
@@ -75,7 +75,7 @@ typedef struct lite3d_texture_technique_settings
 typedef struct lite3d_texture_unit
 {
     uint32_t textureID;
-    int16_t textureTarget;
+    uint32_t textureTarget;
     char textureName[LITE3D_MAX_NAME];
     int32_t imageType;
     int32_t imageGLFormat;
@@ -93,10 +93,17 @@ LITE3D_CEXPORT void lite3d_texture_technique_add_image_filter(lite3d_image_filte
 LITE3D_CEXPORT void lite3d_texture_technique_reset_filters(void);
 
 LITE3D_CEXPORT int lite3d_texture_technique_init(const lite3d_texture_technique_settings *settings);
+LITE3D_CEXPORT void lite3d_texture_technique_shut(void);
+
+LITE3D_CEXPORT lite3d_texture_unit *lite3d_texture_unit_from_resource_pack(lite3d_resource_pack *pack, 
+    const char *name, uint32_t imageType, uint32_t textureTarget, int8_t quality);
+
 LITE3D_CEXPORT lite3d_texture_unit *lite3d_texture_unit_from_resource(const lite3d_resource_file *resource, 
-    uint32_t imageType, uint32_t textureTarget, int8_t filtering);
+    uint32_t imageType, uint32_t textureTarget, int8_t quality);
 LITE3D_CEXPORT lite3d_texture_unit *lite3d_texture_unit_from_memory(const char *textureName, 
-    const void *buffer, size_t size, uint32_t imageType, uint32_t textureTarget, int8_t filtering);
+    const void *buffer, size_t size, uint32_t imageType, uint32_t textureTarget, int8_t quality);
 LITE3D_CEXPORT void lite3d_texture_unit_purge(lite3d_texture_unit *texture);
+LITE3D_CEXPORT void lite3d_texture_unit_bind(lite3d_texture_unit *texture);
+LITE3D_CEXPORT void lite3d_texture_unit_unbind(lite3d_texture_unit *texture);
 
 #endif
