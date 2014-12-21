@@ -41,8 +41,14 @@ typedef struct lite3d_render_listeners
 
 typedef struct lite3d_render_stats
 {
-    int32_t FPS;
-    float frameTimeMs;
+    int32_t lastFPS;
+    int32_t avrFPS;
+    int32_t bestFPS;
+    int32_t worstFPS;
+    float lastFrameMs;
+    float avrFrameMs;
+    float bestFrameMs;
+    float worstFrameMs;
 } lite3d_render_stats;
 
 

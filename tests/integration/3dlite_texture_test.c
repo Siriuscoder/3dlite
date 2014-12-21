@@ -17,6 +17,7 @@
  *******************************************************************************/
 #include <string.h>
 
+#include <SDL_log.h>
 #include <3dlite/GL/glew.h>
 #include <3dlite/3dlite_main.h>
 
@@ -33,11 +34,24 @@ static lite3d_texture_unit *mNormandy = NULL, *mMinigun = NULL;
 
 static int process_events(SDL_Event *levent, void *userdata)
 {
-    if (levent->key.keysym.sym == SDLK_ESCAPE &&
-        levent->key.type == SDL_KEYUP)
+    if (levent->type == SDL_KEYDOWN)
     {
-        /* mean exit */
-        return LITE3D_FALSE;
+        /* exit */
+        if (levent->key.keysym.sym == SDLK_ESCAPE)
+            return LITE3D_FALSE;
+            /* print render stats */
+        else if (levent->key.keysym.sym == SDLK_F1)
+        {
+            lite3d_render_stats *stats = lite3d_get_render_stats();
+            SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
+                "==== Render statistics ========\n"
+                "last FPS\tavr FPS\t\tbest FPS\tworst FPS\n"
+                "%d\t\t%d\t\t%d\t\t%d\n"
+                "last frame ms\tavr frame ms\tbest frame ms\tworst frame ms\n"
+                "%f\t%f\t%f\t%f",
+                stats->lastFPS, stats->avrFPS, stats->bestFPS, stats->worstFPS,
+                stats->lastFrameMs, stats->avrFrameMs, stats->bestFrameMs, stats->worstFrameMs);
+        }
     }
 
     return LITE3D_TRUE;
@@ -47,9 +61,9 @@ static int init(void *userdata)
 {
     if (!(mFileSysPack = lite3d_open_pack("tests/", LITE3D_FALSE, 700000)))
         return LITE3D_FALSE;
-    if(!(m7zPack = lite3d_open_pack("tests/pack.1", LITE3D_TRUE, 700000)))
+    if (!(m7zPack = lite3d_open_pack("tests/pack.1", LITE3D_TRUE, 700000)))
         return LITE3D_FALSE;
-    
+
     if (!(mNormandy = lite3d_texture_unit_from_resource_pack(m7zPack,
         "pack/normandy/t1.jpg", LITE3D_IMAGE_JPG, LITE3D_TEXTURE_2D,
         LITE3D_TEXTURE_QL_NICEST)))
@@ -177,7 +191,7 @@ int main(int argc, char *args[])
 
     settings.logLevel = LITE3D_LOGLEVEL_VERBOSE;
     settings.textureSettings.anisotropy = 8;
-    settings.textureSettings.useGLCompression = LITE3D_FALSE;
+    settings.textureSettings.useGLCompression = LITE3D_TRUE;
     settings.videoSettings.FSAA = 4;
     strcpy(settings.videoSettings.caption, "TEST window");
     settings.videoSettings.colorBits = 32;

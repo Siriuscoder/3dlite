@@ -16,15 +16,67 @@
  *	along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
 #include <string.h>
+#include <SDL_timer.h>
+
 #include <3dlite/3dlite_render.h>
 #include <3dlite/3dlite_video.h>
 
+static uint64_t gLastMark = 0;
+static uint64_t gPerfFreq = 0;
+static int32_t gFPSCounter = 0;
 static lite3d_render_listeners gRenderCallbacks;
-static lite3d_render_stats gRenderStats;
+static lite3d_render_stats gRenderStats = {
+    0, 0, 0, 0, 0.0, 0.0, 0.0, 0.0
+};
+
+static void calc_render_stats(uint64_t beginFrame, uint64_t endFrame)
+{
+    gFPSCounter++;
+    gRenderStats.lastFrameMs = ((float) (endFrame - beginFrame) / (float) gPerfFreq) * 1000.0;
+
+    if (gRenderStats.bestFrameMs == 0)
+        gRenderStats.bestFrameMs = gRenderStats.lastFrameMs;
+    if (gRenderStats.worstFrameMs == 0)
+        gRenderStats.worstFrameMs = gRenderStats.lastFrameMs;
+    if (gRenderStats.avrFrameMs == 0)
+        gRenderStats.avrFrameMs = gRenderStats.lastFrameMs;
+
+    if (gRenderStats.bestFrameMs > gRenderStats.lastFrameMs)
+        gRenderStats.bestFrameMs = gRenderStats.lastFrameMs;
+
+    if (gRenderStats.worstFrameMs < gRenderStats.lastFrameMs)
+        gRenderStats.worstFrameMs = gRenderStats.lastFrameMs;
+
+    gRenderStats.avrFrameMs = (gRenderStats.lastFrameMs + gRenderStats.avrFrameMs) / 2;
+
+    /* second elapsed */
+    if ((endFrame - gLastMark) > gPerfFreq)
+    {
+        gLastMark = endFrame;
+        gRenderStats.lastFPS = gFPSCounter;
+        gFPSCounter = 0;
+
+        if (gRenderStats.avrFPS == 0)
+            gRenderStats.avrFPS = gRenderStats.lastFPS;
+        if (gRenderStats.bestFPS == 0)
+            gRenderStats.bestFPS = gRenderStats.lastFPS;
+        if (gRenderStats.worstFPS == 0)
+            gRenderStats.worstFPS = gRenderStats.lastFPS;
+
+        if (gRenderStats.bestFPS < gRenderStats.lastFPS)
+            gRenderStats.bestFPS = gRenderStats.lastFPS;
+        if (gRenderStats.worstFPS > gRenderStats.lastFPS)
+            gRenderStats.worstFPS = gRenderStats.worstFPS;
+
+        gRenderStats.avrFPS = (gRenderStats.avrFPS + gRenderStats.lastFPS) / 2;
+    }
+}
 
 void lite3d_render_loop(lite3d_render_listeners *callbacks)
 {
     SDL_Event wevent;
+    uint64_t beginFrameMark;
+    gPerfFreq = SDL_GetPerformanceFrequency();
     uint8_t starting = LITE3D_TRUE;
     gRenderCallbacks = *callbacks;
     memset(&gRenderStats, 0, sizeof (gRenderStats));
@@ -34,6 +86,7 @@ void lite3d_render_loop(lite3d_render_listeners *callbacks)
 
     while (starting)
     {
+        beginFrameMark = SDL_GetPerformanceCounter();
         if (gRenderCallbacks.preFrame && !gRenderCallbacks.preFrame(gRenderCallbacks.userdata))
             break;
         if (gRenderCallbacks.renderFrame && !gRenderCallbacks.renderFrame(gRenderCallbacks.userdata))
@@ -42,6 +95,8 @@ void lite3d_render_loop(lite3d_render_listeners *callbacks)
             break;
 
         lite3d_swap_buffers();
+        calc_render_stats(beginFrameMark, SDL_GetPerformanceCounter());
+
         while (SDL_PollEvent(&wevent))
         {
             if (gRenderCallbacks.processEvent && !gRenderCallbacks.processEvent(&wevent, gRenderCallbacks.userdata))
