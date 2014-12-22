@@ -104,9 +104,10 @@ static int update_render_targets(void)
 void lite3d_render_loop(lite3d_render_listeners *callbacks)
 {
     SDL_Event wevent;
-    uint64_t beginFrameMark;
-    gPerfFreq = SDL_GetPerformanceFrequency();
+    uint64_t beginFrameMark;    
     uint8_t starting = LITE3D_TRUE;
+    gPerfFreq = SDL_GetPerformanceFrequency();
+
     gRenderListeners = *callbacks;
     memset(&gRenderStats, 0, sizeof (gRenderStats));
     lite3d_list_init(&gRenderTargets);
@@ -123,6 +124,7 @@ void lite3d_render_loop(lite3d_render_listeners *callbacks)
             break;
         if (gRenderListeners.postFrame && !gRenderListeners.postFrame(gRenderListeners.userdata))
             break;
+        lite3d_swap_buffers();
 
         calc_render_stats(beginFrameMark, SDL_GetPerformanceCounter());
 

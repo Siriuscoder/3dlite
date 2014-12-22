@@ -61,12 +61,14 @@ kmVec2* kmVec2Lerp(kmVec2* pOut, const kmVec2* pV1, const kmVec2* pV2, kmScalar 
 
 kmVec2* kmVec2Normalize(kmVec2* pOut, const kmVec2* pIn)
 {
-        if (!pIn->x && !pIn->y)
-                return kmVec2Assign(pOut, pIn);
+    kmScalar l;
+    kmVec2 v;
 
-	kmScalar l = 1.0f / kmVec2Length(pIn);
+    if (!pIn->x && !pIn->y)
+        return kmVec2Assign(pOut, pIn);
 
-	kmVec2 v;
+    l = 1.0f / kmVec2Length(pIn);
+
 	v.x = pIn->x * l;
 	v.y = pIn->y * l;
     
@@ -195,16 +197,18 @@ kmVec2* kmVec2RotateBy(kmVec2* pOut, const kmVec2* pIn,
  * 	Returns the angle in degrees between the two vectors
  */
 kmScalar kmVec2DegreesBetween(const kmVec2* v1, const kmVec2* v2) {
+	kmVec2 t1, t2;
+    kmScalar cross, dot;
+
 	if(kmVec2AreEqual(v1, v2)) {
 		return 0.0;
 	}
 	
-	kmVec2 t1, t2;
 	kmVec2Normalize(&t1, v1);
 	kmVec2Normalize(&t2, v2);
 	
-	kmScalar cross = kmVec2Cross(&t1, &t2);
-	kmScalar dot = kmVec2Dot(&t1, &t2);
+	cross = kmVec2Cross(&t1, &t2);
+	dot = kmVec2Dot(&t1, &t2);
 
 	/*
 	 * acos is only defined for -1 to 1. Outside the range we 

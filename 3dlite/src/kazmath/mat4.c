@@ -69,7 +69,7 @@ kmMat4* kmMat4Identity(kmMat4* pOut)
  */
 kmMat4* kmMat4Inverse(kmMat4* pOut, const kmMat4* pM) {
     kmMat4 tmp;
-    double det;
+    kmScalar det;
     int i;
 
     tmp.mat[0] = pM->mat[5]  * pM->mat[10] * pM->mat[15] -
@@ -444,14 +444,12 @@ kmMat4* kmMat4RotationZ(kmMat4* pOut, const kmScalar radians)
  */
 kmMat4* kmMat4RotationYawPitchRoll(kmMat4* pOut, const kmScalar pitch, const kmScalar yaw, const kmScalar roll)
 {
-
     kmMat4 yaw_matrix;
-    kmMat4RotationY(&yaw_matrix, yaw);
-
     kmMat4 pitch_matrix;
-    kmMat4RotationX(&pitch_matrix, pitch);
-
     kmMat4 roll_matrix;
+
+    kmMat4RotationY(&yaw_matrix, yaw);
+    kmMat4RotationX(&pitch_matrix, pitch);
     kmMat4RotationZ(&roll_matrix, roll);
 
     kmMat4Multiply(pOut, &pitch_matrix, &roll_matrix);
@@ -465,17 +463,17 @@ kmMat4* kmMat4RotationYawPitchRoll(kmMat4* pOut, const kmScalar pitch, const kmS
  */
 kmMat4* kmMat4RotationQuaternion(kmMat4* pOut, const kmQuaternion* pQ)
 {    
-    double xx = pQ->x * pQ->x;
-    double xy = pQ->x * pQ->y;
-    double xz = pQ->x * pQ->z;
-    double xw = pQ->x * pQ->w;
+    kmScalar xx = pQ->x * pQ->x;
+    kmScalar xy = pQ->x * pQ->y;
+    kmScalar xz = pQ->x * pQ->z;
+    kmScalar xw = pQ->x * pQ->w;
 
-    double yy = pQ->y * pQ->y;
-    double yz = pQ->y * pQ->z;
-    double yw = pQ->y * pQ->w;
+    kmScalar yy = pQ->y * pQ->y;
+    kmScalar yz = pQ->y * pQ->z;
+    kmScalar yw = pQ->y * pQ->w;
 
-    double zz = pQ->z * pQ->z;
-    double zw = pQ->z * pQ->w;
+    kmScalar zz = pQ->z * pQ->z;
+    kmScalar zw = pQ->z * pQ->w;
 
     pOut->mat[0] = 1 - 2 * (yy + zz);
     pOut->mat[1] = 2 * (xy + zw);
@@ -502,7 +500,7 @@ kmMat4* kmMat4RotationQuaternion(kmMat4* pOut, const kmQuaternion* pQ)
 
 /** Builds a scaling matrix */
 kmMat4* kmMat4Scaling(kmMat4* pOut, const kmScalar x, const kmScalar y,
-                      kmScalar z)
+                      const kmScalar z)
 {
 	memset(pOut->mat, 0, sizeof(kmScalar) * 16);
 	pOut->mat[0] = x;
@@ -518,7 +516,7 @@ kmMat4* kmMat4Scaling(kmMat4* pOut, const kmScalar x, const kmScalar y,
  * will be set to zero except for the diagonal which is set to 1.0
  */
 kmMat4* kmMat4Translation(kmMat4* pOut, const kmScalar x,
-                          kmScalar y, const kmScalar z)
+                          const kmScalar y, const kmScalar z)
 {
     /*FIXME: Write a test for this*/
     memset(pOut->mat, 0, sizeof(kmScalar) * 16);

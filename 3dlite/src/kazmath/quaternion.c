@@ -146,12 +146,13 @@ kmQuaternion* kmQuaternionMultiply(kmQuaternion* pOut,
                                  const kmQuaternion* qu2)
 {
     kmQuaternion tmp1, tmp2;
-    kmQuaternionAssign(&tmp1, qu1);
-    kmQuaternionAssign(&tmp2, qu2);
-
     /*Just aliasing*/
     kmQuaternion* q1 = &tmp1;
     kmQuaternion* q2 = &tmp2;
+
+    kmQuaternionAssign(&tmp1, qu1);
+    kmQuaternionAssign(&tmp2, qu2);
+
 
 	pOut->x = q1->w * q2->x + q1->x * q2->w + q1->y * q2->z - q1->z * q2->y;
 	pOut->y = q1->w * q2->y + q1->y * q2->w + q1->z * q2->x - q1->x * q2->z;
@@ -282,7 +283,7 @@ taken from the Matrix and Quaternion FAQ
 		/* If the first element of the diagonal is the greatest value*/
 		if ( pMatrix[0] > pMatrix[5] && pMatrix[0] > pMatrix[10] )
 		{
-			/* Find the scale according to the first element, and double that value*/
+			/* Find the scale according to the first element, and kmScalar that value*/
 			scale = (kmScalar)sqrt( 1.0f + pMatrix[0] - pMatrix[5] - pMatrix[10] ) * 2.0f;
 
 			/* Calculate the x, y, x and w of the quaternion through the respective equation*/
@@ -294,7 +295,7 @@ taken from the Matrix and Quaternion FAQ
 		/* Else if the second element of the diagonal is the greatest value*/
 		else if (pMatrix[5] > pMatrix[10])
 		{
-			/* Find the scale according to the second element, and double that value*/
+			/* Find the scale according to the second element, and kmScalar that value*/
 			scale = (kmScalar)sqrt( 1.0f + pMatrix[5] - pMatrix[0] - pMatrix[10] ) * 2.0f;
 
 			/* Calculate the x, y, x and w of the quaternion through the respective equation*/
@@ -306,7 +307,7 @@ taken from the Matrix and Quaternion FAQ
 		/* Else the third element of the diagonal is the greatest value*/
 		else
 		{
-			/* Find the scale according to the third element, and double that value*/
+			/* Find the scale according to the third element, and kmScalar that value*/
 			scale  = (kmScalar)sqrt( 1.0f + pMatrix[10] - pMatrix[0] - pMatrix[5] ) * 2.0f;
 
 			/* Calculate the x, y, x and w of the quaternion through the respective equation*/
@@ -331,17 +332,24 @@ kmQuaternion* kmQuaternionRotationPitchYawRoll(kmQuaternion* pOut,
                                                 kmScalar yaw,
 												kmScalar roll)
 {
+    kmScalar sY;
+    kmScalar cY;
+    kmScalar sZ;
+    kmScalar cZ;
+    kmScalar sX;
+    kmScalar cX;
+
     assert(pitch <= 2*kmPI);
     assert(yaw <= 2*kmPI);
     assert(roll <= 2*kmPI);
 
     /* Finds the Sin and Cosin for each half angles.*/
-    float sY = sinf(yaw * 0.5);
-    float cY = cosf(yaw * 0.5);
-    float sZ = sinf(roll * 0.5);
-    float cZ = cosf(roll * 0.5);
-    float sX = sinf(pitch * 0.5);
-    float cX = cosf(pitch * 0.5);
+    sY = sinf(yaw * 0.5);
+    cY = cosf(yaw * 0.5);
+    sZ = sinf(roll * 0.5);
+    cZ = cosf(roll * 0.5);
+    sX = sinf(pitch * 0.5);
+    cX = cosf(pitch * 0.5);
 
     /* Formula to construct a new Quaternion based on Euler Angles.*/
     pOut->w = cY * cZ * cX - sY * sZ * sX;
@@ -360,7 +368,9 @@ kmQuaternion* kmQuaternionSlerp(kmQuaternion* pOut,
 {
 
     kmScalar dot = kmQuaternionDot(q1, q2);
-    const double DOT_THRESHOLD = 0.9995;
+    kmScalar theta_0, theta;
+    kmQuaternion tmp, t1, t2;
+    const kmScalar DOT_THRESHOLD = 0.9995;
 
     if (dot > DOT_THRESHOLD) {
         kmQuaternion diff;
@@ -374,15 +384,13 @@ kmQuaternion* kmQuaternionSlerp(kmQuaternion* pOut,
 
     dot = kmClamp(dot, -1, 1);
 
-    kmScalar theta_0 = acos(dot);
-    kmScalar theta = theta_0 * t;
+    theta_0 = acos(dot);
+    theta = theta_0 * t;
 
-    kmQuaternion tmp;
     kmQuaternionScale(&tmp, q1, dot);
     kmQuaternionSubtract(&tmp, q2, &tmp);
     kmQuaternionNormalize(&tmp, &tmp);
 
-    kmQuaternion t1, t2;
     kmQuaternionScale(&t1, q1, cos(theta));
     kmQuaternionScale(&t2, &tmp, sin(theta));
 
@@ -571,17 +579,17 @@ kmVec3* kmQuaternionGetForwardVec3LH(kmVec3* pOut, const kmQuaternion* pIn) {
 }
 
 kmScalar kmQuaternionGetPitch(const kmQuaternion* q) {
-    float result = atan2(2 * (q->y * q->z + q->w * q->x), q->w * q->w - q->x * q->x - q->y * q->y + q->z * q->z);
+    kmScalar result = atan2(2 * (q->y * q->z + q->w * q->x), q->w * q->w - q->x * q->x - q->y * q->y + q->z * q->z);
     return result;
 }
 
 kmScalar kmQuaternionGetYaw(const kmQuaternion* q) {
-    float result = asin(-2 * (q->x * q->z - q->w * q->y));
+    kmScalar result = asin(-2 * (q->x * q->z - q->w * q->y));
     return result;
 }
 
 kmScalar kmQuaternionGetRoll(const kmQuaternion* q) {
-    float result = atan2(2 * (q->x * q->y + q->w * q->z), q->w * q->w + q->x * q->x - q->y * q->y - q->z * q->z);
+    kmScalar result = atan2(2 * (q->x * q->y + q->w * q->z), q->w * q->w + q->x * q->x - q->y * q->y - q->z * q->z);
     return result;
 }
 
@@ -599,7 +607,7 @@ kmQuaternion* kmQuaternionLookRotation(kmQuaternion* pOut, const kmVec3* directi
 
     pOut->w = sqrtf(1.0f + right.x + up->y + direction->z) * 0.5f;
 
-    float w4_recip = 1.0f / (4.0f * pOut->w);
+    kmScalar w4_recip = 1.0f / (4.0f * pOut->w);
 
     pOut->x = (up->z - direction->y) * w4_recip;
     pOut->y = (direction->x - right.z) * w4_recip;

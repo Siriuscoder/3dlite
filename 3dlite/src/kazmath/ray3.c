@@ -24,14 +24,15 @@ kmBool kmRay3IntersectPlane(kmVec3* pOut, const kmRay3* ray, const kmPlane* plan
 
     kmScalar d = (plane->a * ray->dir.x +
                   plane->b * ray->dir.y +
-                  plane->c * ray->dir.z);
+                  plane->c * ray->dir.z), t;
+    kmVec3 scaled_dir;
 
     if(d == 0)
     {
       return KM_FALSE;
     }
 
-    kmScalar t = -(plane->a * ray->start.x +
+    t = -(plane->a * ray->start.x +
                    plane->b * ray->start.y +
                    plane->c * ray->start.z + plane->d) / d;
 
@@ -40,7 +41,6 @@ kmBool kmRay3IntersectPlane(kmVec3* pOut, const kmRay3* ray, const kmPlane* plan
       return KM_FALSE;
     }
 
-    kmVec3 scaled_dir;
     kmVec3Scale(&scaled_dir, &ray->dir, t);
     kmVec3Add(pOut, &ray->start, &scaled_dir);
     return KM_TRUE;

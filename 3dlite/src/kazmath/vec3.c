@@ -89,12 +89,14 @@ kmVec3* kmVec3Lerp(kmVec3* pOut, const kmVec3* pV1, const kmVec3* pV2, kmScalar 
   */
 kmVec3* kmVec3Normalize(kmVec3* pOut, const kmVec3* pIn)
 {
-        if (!pIn->x && !pIn->y && !pIn->z)
-                return kmVec3Assign(pOut, pIn);
+    kmScalar l;
+    kmVec3 v;
 
-        kmScalar l = 1.0f / kmVec3Length(pIn);
+    if (!pIn->x && !pIn->y && !pIn->z)
+            return kmVec3Assign(pOut, pIn);
+    
+    l = 1.0f / kmVec3Length(pIn);
 
-	kmVec3 v;
 	v.x = pIn->x * l;
 	v.y = pIn->y * l;
 	v.z = pIn->z * l;
