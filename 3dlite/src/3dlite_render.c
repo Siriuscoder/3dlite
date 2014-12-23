@@ -96,23 +96,23 @@ static int update_render_targets(void)
     for (node = gRenderTargets.l.next; node != &gRenderTargets.l; node = lite3d_list_next(node))
     {
         target = MEMBERCAST(lite3d_render_target, node, node);
-        if(!target->enabled)
+        if (!target->enabled)
             continue;
 
-        if(target->preUpdate)
+        if (target->preUpdate)
             target->preUpdate(target->userdata);
 
         update_render_target(target);
 
-        if(target->postUpdate)
+        if (target->postUpdate)
             target->postUpdate(target->userdata);
 
-        if(target->isRoot)
+        if (target->isRoot)
             lite3d_swap_buffers();
-        
+
         targetsCount++;
     }
-    
+
     gRenderStats.renderTargets = targetsCount;
     return targetsCount ? LITE3D_TRUE : LITE3D_FALSE;
 }
@@ -120,7 +120,7 @@ static int update_render_targets(void)
 void lite3d_render_loop(lite3d_render_listeners *callbacks)
 {
     SDL_Event wevent;
-    uint64_t beginFrameMark;    
+    uint64_t beginFrameMark;
     gRenderListeners = *callbacks;
 
     if (gRenderListeners.preRender && !gRenderListeners.preRender(gRenderListeners.userdata))
@@ -130,11 +130,11 @@ void lite3d_render_loop(lite3d_render_listeners *callbacks)
     {
         beginFrameMark = SDL_GetPerformanceCounter();
 
-        if(gRenderActive)
+        if (gRenderActive)
         {
             if (gRenderListeners.preFrame && !gRenderListeners.preFrame(gRenderListeners.userdata))
                 break;
-            if(!update_render_targets())
+            if (!update_render_targets())
                 break;
             if (gRenderListeners.postFrame && !gRenderListeners.postFrame(gRenderListeners.userdata))
                 break;
@@ -153,7 +153,7 @@ void lite3d_render_loop(lite3d_render_listeners *callbacks)
     }
 
     if (gRenderListeners.postRender)
-        gRenderListeners.postRender(gRenderListeners.userdata);  
+        gRenderListeners.postRender(gRenderListeners.userdata);
 
     lite3d_erase_all_render_targets();
 }

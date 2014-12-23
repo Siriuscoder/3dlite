@@ -64,6 +64,7 @@
           </df>
           <in>3dlite_7zloader.c</in>
           <in>3dlite_alloc.c</in>
+          <in>3dlite_camera.c</in>
           <in>3dlite_file_cache.c</in>
           <in>3dlite_list.c</in>
           <in>3dlite_logger.c</in>
@@ -182,6 +183,19 @@
           </preprocessorList>
         </cTool>
       </item>
+      <item path="3dlite/src/3dlite_camera.c" ex="false" tool="0" flavor2="3">
+        <cTool flags="1">
+          <incDir>
+            <pElem>/usr/include/SDL2</pElem>
+            <pElem>build/3dlite</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>GLEW_STATIC</Elem>
+            <Elem>_3dlite_EXPORTS</Elem>
+            <Elem>_REENTRANT</Elem>
+          </preprocessorList>
+        </cTool>
+      </item>
       <item path="3dlite/src/3dlite_file_cache.c" ex="false" tool="0" flavor2="3">
         <cTool flags="1">
           <incDir>
@@ -227,7 +241,6 @@
       <item path="3dlite/src/3dlite_main.c" ex="false" tool="0" flavor2="3">
         <cTool flags="1">
           <incDir>
-            <pElem>3dlite/include/3dlite/kazmath</pElem>
             <pElem>/usr/include/SDL2</pElem>
             <pElem>build/3dlite</pElem>
           </incDir>
@@ -269,7 +282,6 @@
       <item path="3dlite/src/3dlite_render.c" ex="false" tool="0" flavor2="3">
         <cTool flags="1">
           <incDir>
-            <pElem>3dlite/include/3dlite/kazmath</pElem>
             <pElem>/usr/include/SDL2</pElem>
             <pElem>build/3dlite</pElem>
           </incDir>
@@ -343,48 +355,26 @@
       <item path="3dlite/src/glew/glew.c" ex="false" tool="0" flavor2="3">
       </item>
       <item path="3dlite/src/kazmath/aabb.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
-        </cTool>
       </item>
       <item path="3dlite/src/kazmath/mat3.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
-        </cTool>
       </item>
       <item path="3dlite/src/kazmath/mat4.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
-        </cTool>
       </item>
       <item path="3dlite/src/kazmath/plane.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
-        </cTool>
       </item>
       <item path="3dlite/src/kazmath/quaternion.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
-        </cTool>
       </item>
       <item path="3dlite/src/kazmath/ray2.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
-        </cTool>
       </item>
       <item path="3dlite/src/kazmath/ray3.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
-        </cTool>
       </item>
       <item path="3dlite/src/kazmath/utility.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
-        </cTool>
       </item>
       <item path="3dlite/src/kazmath/vec2.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
-        </cTool>
       </item>
       <item path="3dlite/src/kazmath/vec3.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
-        </cTool>
       </item>
       <item path="3dlite/src/kazmath/vec4.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
-        </cTool>
       </item>
       <folder path="0">
         <cTool>
@@ -488,8 +478,6 @@
             ex="false"
             tool="0"
             flavor2="3">
-        <cTool flags="0">
-        </cTool>
       </item>
     </conf>
     <conf name="Release" type="0">

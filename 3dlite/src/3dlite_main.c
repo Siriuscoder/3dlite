@@ -94,7 +94,7 @@ int lite3d_main(const lite3d_global_settings *settings)
     }
 
     /* init render */
-    if(!lite3d_render_init())
+    if (!lite3d_render_init())
     {
         lite3d_close_video();
         lite3d_cleanup_memory();
