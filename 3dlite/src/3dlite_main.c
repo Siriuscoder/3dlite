@@ -93,6 +93,18 @@ int lite3d_main(const lite3d_global_settings *settings)
         return LITE3D_FALSE;
     }
 
+    /* init render */
+    if(!lite3d_render_init())
+    {
+        lite3d_close_video();
+        lite3d_cleanup_memory();
+        return LITE3D_FALSE;
+    }
+
+    /* setup main render target (after render init!!!)*/
+    lite3d_register_root_render_target();
+
+    /* start main loop */
     lite3d_render_loop(&gGlobalSettings.renderLisneters);
 
     lite3d_texture_technique_shut();

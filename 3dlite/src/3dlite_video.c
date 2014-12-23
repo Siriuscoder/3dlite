@@ -20,6 +20,7 @@
 
 #include <3dlite/GL/glew.h>
 #include <3dlite/3dlite_video.h>
+#include <3dlite/3dlite_render.h>
 
 #ifdef PLATFORM_Windows
 #include <3dlite/GL/wglew.h>
@@ -202,6 +203,12 @@ int lite3d_close_video(void)
     SDL_GL_DeleteContext(gGLContext);
     SDL_DestroyWindow(gRenderWindow);
     return LITE3D_TRUE;
+}
+
+void lite3d_register_root_render_target(void)
+{
+    lite3d_add_render_target("root", gVideoSettings.screenWidth, 
+        gVideoSettings.screenHeight, LITE3D_TRUE, NULL);
 }
 
 void lite3d_swap_buffers(void)

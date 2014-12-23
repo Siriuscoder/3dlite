@@ -39,10 +39,6 @@ typedef struct kmVec3 {
 	kmScalar z;
 } kmVec3;
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 kmVec3* kmVec3Fill(kmVec3* pOut, kmScalar x, kmScalar y, kmScalar z);
 kmScalar kmVec3Length(const kmVec3* pIn); /** Returns the length of the vector */
 kmScalar kmVec3LengthSq(const kmVec3* pIn); /** Returns the square of the length of the vector */
@@ -81,7 +77,4 @@ extern const kmVec3 KM_VEC3_NEG_X;
 extern const kmVec3 KM_VEC3_POS_X;
 extern const kmVec3 KM_VEC3_ZERO;
 
-#ifdef __cplusplus
-}
-#endif
 #endif /* VEC3_H_INCLUDED */

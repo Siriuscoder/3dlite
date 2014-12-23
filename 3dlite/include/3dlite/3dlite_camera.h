@@ -15,30 +15,25 @@
 *	You should have received a copy of the GNU General Public License
 *	along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
-#ifndef LITE3D_VIDEO_H
-#define	LITE3D_VIDEO_H
+#ifndef LITE3D_CAMERA_H
+#define	LITE3D_CAMERA_H
 
 #include <3dlite/3dlite_common.h>
 
-#define LITE3D_CAPTION_MAX 50
+#include <3dlite/kazmath/mat4.h>
+#include <3dlite/kazmath/vec4.h>
 
-typedef struct lite3d_video_settings
+/* compatible with GL */
+#define LITE3D_POLYMODE_POINT        0x1B00
+#define LITE3D_POLYMODE_LINE         0x1B01
+#define LITE3D_POLYMODE_FILL         0x1B02
+
+typedef struct lite3d_camera
 {
-    int8_t colorBits; /* 24 or 32 valid */
-    int32_t screenHeight;
-    int32_t screenWidth;
-    int8_t FSAA;
-    int8_t fullscreen;
-    char caption[LITE3D_CAPTION_MAX];
-    int8_t vsync;
-} lite3d_video_settings;
+    uint8_t cullBackFaces;
+    uint16_t polygonMode;
 
-LITE3D_CEXPORT int lite3d_setup_video(const lite3d_video_settings *settings);
-LITE3D_CEXPORT const lite3d_video_settings *lite3d_get_video_settings(void);
-LITE3D_CEXPORT int lite3d_close_video(void);
-LITE3D_CEXPORT void lite3d_swap_buffers(void);
-LITE3D_CEXPORT void lite3d_register_root_render_target(void);
+} lite3d_camera;
 
-
-#endif	/* VIDEO_H */
+#endif	/* LITE3D_CAMERA_H */
 

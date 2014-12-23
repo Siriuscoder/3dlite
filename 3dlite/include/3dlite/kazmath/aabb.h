@@ -29,10 +29,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "vec3.h"
 #include "utility.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 /**
  * A struture that represents an axis-aligned
  * bounding box.
@@ -54,9 +50,5 @@ kmScalar kmAABBDiameterY(const kmAABB* aabb);
 kmScalar kmAABBDiameterZ(const kmAABB* aabb);
 kmVec3* kmAABBCentre(const kmAABB* aabb, kmVec3* pOut);
 kmAABB* kmAABBExpandToContain(kmAABB* pOut, const kmAABB* pIn, const kmAABB* other);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif

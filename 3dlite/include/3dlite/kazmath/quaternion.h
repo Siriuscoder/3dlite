@@ -26,10 +26,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #ifndef QUATERNION_H_INCLUDED
 #define QUATERNION_H_INCLUDED
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 #include "utility.h"
 
 struct kmMat4;
@@ -117,9 +113,5 @@ kmScalar kmQuaternionGetYaw(const kmQuaternion* q);
 kmScalar kmQuaternionGetRoll(const kmQuaternion* q);
 
 kmQuaternion* kmQuaternionLookRotation(kmQuaternion* pOut, const kmVec3* direction, const kmVec3* up);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif

@@ -28,6 +28,8 @@ static uint64_t gPerfFreq = 0;
 static int32_t gFPSCounter = 0;
 static lite3d_list gRenderTargets;
 static lite3d_render_listeners gRenderListeners;
+static uint8_t gRenderStarted = LITE3D_TRUE;
+static uint8_t gRenderActive = LITE3D_TRUE;
 static lite3d_render_stats gRenderStats = {
     0, 0, 0, 0, 0.0, 0.0, 0.0, 0.0, 0
 };
@@ -77,7 +79,12 @@ static void calc_render_stats(uint64_t beginFrame, uint64_t endFrame)
 
 static void update_render_target(lite3d_render_target *target)
 {
-
+    /* TODO: switch target framebuffer */
+    /* set viewport */
+    /* clear target */
+    /* do paint on current camera */
+    if (gRenderListeners.renderFrame)
+        gRenderListeners.renderFrame(gRenderListeners.userdata);
 }
 
 static int update_render_targets(void)
@@ -86,12 +93,21 @@ static int update_render_targets(void)
     lite3d_list_node *node;
     lite3d_render_target *target;
 
-    for (node = &gRenderTargets.l; node != &gRenderTargets.l; node = lite3d_list_next(node))
+    for (node = gRenderTargets.l.next; node != &gRenderTargets.l; node = lite3d_list_next(node))
     {
         target = MEMBERCAST(lite3d_render_target, node, node);
+        if(!target->enabled)
+            continue;
+
+        if(target->preUpdate)
+            target->preUpdate(target->userdata);
+
         update_render_target(target);
 
-        if (target->isRootWindow)
+        if(target->postUpdate)
+            target->postUpdate(target->userdata);
+
+        if(target->isRoot)
             lite3d_swap_buffers();
         
         targetsCount++;
@@ -105,26 +121,24 @@ void lite3d_render_loop(lite3d_render_listeners *callbacks)
 {
     SDL_Event wevent;
     uint64_t beginFrameMark;    
-    uint8_t starting = LITE3D_TRUE;
-    gPerfFreq = SDL_GetPerformanceFrequency();
-
     gRenderListeners = *callbacks;
-    memset(&gRenderStats, 0, sizeof (gRenderStats));
-    lite3d_list_init(&gRenderTargets);
 
     if (gRenderListeners.preRender && !gRenderListeners.preRender(gRenderListeners.userdata))
         return;
 
-    while (starting)
+    while (gRenderStarted)
     {
         beginFrameMark = SDL_GetPerformanceCounter();
-        if (gRenderListeners.preFrame && !gRenderListeners.preFrame(gRenderListeners.userdata))
-            break;
-        if (gRenderListeners.renderFrame && !gRenderListeners.renderFrame(gRenderListeners.userdata))
-            break;
-        if (gRenderListeners.postFrame && !gRenderListeners.postFrame(gRenderListeners.userdata))
-            break;
-        lite3d_swap_buffers();
+
+        if(gRenderActive)
+        {
+            if (gRenderListeners.preFrame && !gRenderListeners.preFrame(gRenderListeners.userdata))
+                break;
+            if(!update_render_targets())
+                break;
+            if (gRenderListeners.postFrame && !gRenderListeners.postFrame(gRenderListeners.userdata))
+                break;
+        }
 
         calc_render_stats(beginFrameMark, SDL_GetPerformanceCounter());
 
@@ -132,15 +146,16 @@ void lite3d_render_loop(lite3d_render_listeners *callbacks)
         {
             if (gRenderListeners.processEvent && !gRenderListeners.processEvent(&wevent, gRenderListeners.userdata))
             {
-                starting = LITE3D_FALSE;
+                lite3d_stop_render();
                 break;
             }
         }
     }
 
-    lite3d_erase_all_render_targets();
     if (gRenderListeners.postRender)
-        gRenderListeners.postRender(gRenderListeners.userdata);
+        gRenderListeners.postRender(gRenderListeners.userdata);  
+
+    lite3d_erase_all_render_targets();
 }
 
 lite3d_render_stats *lite3d_get_render_stats(void)
@@ -148,8 +163,8 @@ lite3d_render_stats *lite3d_get_render_stats(void)
     return &gRenderStats;
 }
 
-void lite3d_add_render_target(const char *name, int32_t height,
-    int32_t width, int8_t isRTT, int8_t isRootWindow)
+lite3d_render_target *lite3d_add_render_target(const char *name, int32_t width,
+    int32_t height, int8_t isRoot, void *userdata)
 {
     lite3d_render_target *target = (lite3d_render_target *) lite3d_calloc(sizeof (lite3d_render_target));
     SDL_assert(target);
@@ -157,17 +172,20 @@ void lite3d_add_render_target(const char *name, int32_t height,
     lite3d_list_link_init(&target->node);
     target->height = height;
     target->width = width;
-    target->isRTT = isRTT;
-    target->isRootWindow = isRootWindow;
+    target->isRoot = isRoot;
+    target->userdata = userdata;
+    target->enabled = LITE3D_TRUE;
+    strcpy(target->name, name);
 
     lite3d_list_add_first_link(&target->node, &gRenderTargets);
+    return target;
 }
 
 void lite3d_erase_render_target(const char *name)
 {
     lite3d_list_node *node;
     lite3d_render_target *target;
-    for (node = &gRenderTargets.l; node != &gRenderTargets.l; node = lite3d_list_next(node))
+    for (node = gRenderTargets.l.next; node != &gRenderTargets.l; node = lite3d_list_next(node))
     {
         target = MEMBERCAST(lite3d_render_target, node, node);
         if (!strcmp(target->name, name))
@@ -179,9 +197,47 @@ void lite3d_erase_render_target(const char *name)
     }
 }
 
+lite3d_render_target *lite3d_get_render_target(const char *name)
+{
+    lite3d_list_node *node;
+    lite3d_render_target *target;
+    for (node = gRenderTargets.l.next; node != &gRenderTargets.l; node = lite3d_list_next(node))
+    {
+        target = MEMBERCAST(lite3d_render_target, node, node);
+        if (!strcmp(target->name, name))
+            return target;
+    }
+
+    return NULL;
+}
+
 void lite3d_erase_all_render_targets(void)
 {
     lite3d_list_node *node = NULL;
     while ((node = lite3d_list_remove_first_link(&gRenderTargets)))
         lite3d_free(MEMBERCAST(lite3d_render_target, node, node));
+}
+
+void lite3d_suspend_render(void)
+{
+    gRenderActive = LITE3D_TRUE;
+}
+
+void lite3d_pause_render(void)
+{
+    gRenderActive = LITE3D_FALSE;
+}
+
+void lite3d_stop_render(void)
+{
+    gRenderStarted = LITE3D_FALSE;
+}
+
+int lite3d_render_init(void)
+{
+    gPerfFreq = SDL_GetPerformanceFrequency();
+    memset(&gRenderStats, 0, sizeof (gRenderStats));
+    lite3d_list_init(&gRenderTargets);
+
+    return LITE3D_TRUE;
 }

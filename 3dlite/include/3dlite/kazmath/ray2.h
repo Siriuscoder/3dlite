@@ -29,10 +29,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "utility.h"
 #include "vec2.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 typedef struct kmRay2 {
     kmVec2 start;
     kmVec2 dir;
@@ -46,9 +42,5 @@ kmBool kmRay2IntersectBox(const kmRay2* ray, const kmVec2* p1, const kmVec2* p2,
 kmVec2* intersection, kmVec2* normal_out);
 
 kmBool kmRay2IntersectCircle(const kmRay2* ray, const kmVec2 centre, const kmScalar radius, kmVec2* intersection);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif

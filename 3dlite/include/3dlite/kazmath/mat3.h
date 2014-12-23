@@ -1,6 +1,3 @@
-#ifndef HEADER_8E9D0ABA3C76B989
-#define HEADER_8E9D0ABA3C76B989
-
 /*
 Copyright (c) 2008, Luke Benstead.
 All rights reserved.
@@ -40,10 +37,6 @@ typedef struct kmMat3{
 	kmScalar mat[9];
 } kmMat3;
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 kmMat3* kmMat3Fill(kmMat3* pOut, const kmScalar* pMat);
 kmMat3* kmMat3Adjugate(kmMat3* pOut, const kmMat3* pIn);
 kmMat3* kmMat3Identity(kmMat3* pOut);
@@ -76,10 +69,4 @@ kmMat3* kmMat3RotationAxisAngle(kmMat3* pOut, const struct kmVec3* axis, kmScala
 struct kmVec3* kmMat3RotationToAxisAngle(struct kmVec3* pAxis, kmScalar* radians, const kmMat3* pIn);
 kmMat3* kmMat3LookAt(kmMat3* pOut, const struct kmVec3* pEye, const struct kmVec3* pCenter, const struct kmVec3* pUp);
 
-#ifdef __cplusplus
-}
-#endif
 #endif /* MAT3_H_INCLUDED */
-
-
-#endif /* header guard */

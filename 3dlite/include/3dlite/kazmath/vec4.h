@@ -43,10 +43,6 @@ typedef struct kmVec4
 
 #pragma pack(pop)
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 kmVec4* kmVec4Fill(kmVec4* pOut, kmScalar x, kmScalar y, kmScalar z, kmScalar w);
 kmVec4* kmVec4Add(kmVec4* pOut, const kmVec4* pV1, const kmVec4* pV2);
 kmScalar kmVec4Dot(const kmVec4* pV1, const kmVec4* pV2);
@@ -65,9 +61,5 @@ kmVec4* kmVec4TransformArray(kmVec4* pOut, unsigned int outStride,
 			const kmVec4* pV, unsigned int vStride, const struct kmMat4* pM, unsigned int count);
 int 	kmVec4AreEqual(const kmVec4* p1, const kmVec4* p2);
 kmVec4* kmVec4Assign(kmVec4* pOut, const kmVec4* pIn);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif /* VEC4_H_INCLUDED */

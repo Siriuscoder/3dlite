@@ -42,9 +42,6 @@ mat = | 1   5   9  13 |
         | 3   7  11  15 |
 */
 
-#ifdef __cplusplus
-extern "C" {
-#endif
 
 typedef struct kmMat4 {
 	kmScalar mat[16];
@@ -90,7 +87,5 @@ kmMat4* kmMat4RotationAxisAngle(kmMat4* pOut, const struct kmVec3* axis, kmScala
 struct kmMat3* kmMat4ExtractRotation(struct kmMat3* pOut, const kmMat4* pIn);
 struct kmPlane* kmMat4ExtractPlane(struct kmPlane* pOut, const kmMat4* pIn, const kmEnum plane);
 struct kmVec3* kmMat4RotationToAxisAngle(struct kmVec3* pAxis, kmScalar* radians, const kmMat4* pIn);
-#ifdef __cplusplus
-}
-#endif
+
 #endif /* MAT4_H_INCLUDED */

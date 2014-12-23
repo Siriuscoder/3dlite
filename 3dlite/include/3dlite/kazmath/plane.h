@@ -43,10 +43,6 @@ typedef struct kmPlane {
 	kmScalar 	a, b, c, d;
 } kmPlane;
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 typedef enum KM_POINT_CLASSIFICATION {
     POINT_BEHIND_PLANE = -1,
     POINT_ON_PLANE = 0,
@@ -67,9 +63,5 @@ KM_POINT_CLASSIFICATION kmPlaneClassifyPoint(const kmPlane* pIn, const struct km
 
 kmPlane* kmPlaneExtractFromMat4(kmPlane* pOut, const struct kmMat4* pIn, kmInt row);
 struct kmVec3* kmPlaneGetIntersection(struct kmVec3* pOut, const kmPlane* p1, const kmPlane* p2, const kmPlane* p3);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif /* PLANE_H_INCLUDED */

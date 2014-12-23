@@ -74,10 +74,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define KM_CONTAINS_PARTIAL 1
 #define KM_CONTAINS_ALL 2
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 extern kmScalar kmSQR(kmScalar s);
 extern kmScalar kmDegreesToRadians(kmScalar degrees);
 extern kmScalar kmRadiansToDegrees(kmScalar radians);
@@ -88,9 +84,5 @@ extern kmBool kmAlmostEqual(kmScalar lhs, kmScalar rhs);
 
 extern kmScalar kmClamp(kmScalar x, kmScalar min, kmScalar max);
 extern kmScalar kmLerp(kmScalar x, kmScalar y, kmScalar factor);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif /* UTILITY_H_INCLUDED */

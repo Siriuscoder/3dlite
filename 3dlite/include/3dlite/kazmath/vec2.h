@@ -39,10 +39,6 @@ typedef struct kmVec2 {
 
 #pragma pack(pop)
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 kmVec2* kmVec2Fill(kmVec2* pOut, kmScalar x, kmScalar y);
 kmScalar kmVec2Length(const kmVec2* pIn); /**< Returns the length of the vector*/
 kmScalar kmVec2LengthSq(const kmVec2* pIn); /**< Returns the square of the length of the vector*/
@@ -69,10 +65,6 @@ extern const kmVec2 KM_VEC2_NEG_Y;
 extern const kmVec2 KM_VEC2_NEG_X;
 extern const kmVec2 KM_VEC2_POS_X;
 extern const kmVec2 KM_VEC2_ZERO;
-
-#ifdef __cplusplus
-}
-#endif
 
 
 #endif /* VEC2_H_INCLUDED */
