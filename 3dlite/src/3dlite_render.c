@@ -163,10 +163,14 @@ lite3d_render_stats *lite3d_get_render_stats(void)
     return &gRenderStats;
 }
 
-lite3d_render_target *lite3d_add_render_target(const char *name, int32_t width,
+lite3d_render_target *lite3d_add_render_target(int32_t ID, int32_t width,
     int32_t height, int8_t isRoot, void *userdata)
 {
-    lite3d_render_target *target = (lite3d_render_target *) lite3d_calloc(sizeof (lite3d_render_target));
+    lite3d_render_target *target;
+    if(lite3d_get_render_target(ID))
+        return NULL;
+
+    target = (lite3d_render_target *) lite3d_calloc(sizeof (lite3d_render_target));
     SDL_assert(target);
 
     lite3d_list_link_init(&target->node);
@@ -175,20 +179,20 @@ lite3d_render_target *lite3d_add_render_target(const char *name, int32_t width,
     target->isRoot = isRoot;
     target->userdata = userdata;
     target->enabled = LITE3D_TRUE;
-    strcpy(target->name, name);
+    target->ID = ID;
 
     lite3d_list_add_first_link(&target->node, &gRenderTargets);
     return target;
 }
 
-void lite3d_erase_render_target(const char *name)
+void lite3d_erase_render_target(int32_t ID)
 {
     lite3d_list_node *node;
     lite3d_render_target *target;
     for (node = gRenderTargets.l.next; node != &gRenderTargets.l; node = lite3d_list_next(node))
     {
         target = MEMBERCAST(lite3d_render_target, node, node);
-        if (!strcmp(target->name, name))
+        if (target->ID == ID)
         {
             lite3d_list_unlink_link(node);
             lite3d_free(target);
@@ -197,14 +201,14 @@ void lite3d_erase_render_target(const char *name)
     }
 }
 
-lite3d_render_target *lite3d_get_render_target(const char *name)
+lite3d_render_target *lite3d_get_render_target(int32_t ID)
 {
     lite3d_list_node *node;
     lite3d_render_target *target;
     for (node = gRenderTargets.l.next; node != &gRenderTargets.l; node = lite3d_list_next(node))
     {
         target = MEMBERCAST(lite3d_render_target, node, node);
-        if (!strcmp(target->name, name))
+        if (target->ID == ID)
             return target;
     }
 

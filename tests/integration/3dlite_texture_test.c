@@ -73,7 +73,7 @@ static int init(void *userdata)
         LITE3D_TEXTURE_QL_NICEST)))
         return LITE3D_FALSE;
 
-    lite3d_add_render_target("root", 10, 
+    lite3d_add_render_target(1, 10, 
         10, 0, NULL)->enabled = LITE3D_FALSE;
 
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);

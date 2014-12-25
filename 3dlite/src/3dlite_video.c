@@ -207,7 +207,7 @@ int lite3d_close_video(void)
 
 void lite3d_register_root_render_target(void)
 {
-    lite3d_add_render_target("root", gVideoSettings.screenWidth, 
+    lite3d_add_render_target(0, gVideoSettings.screenWidth, 
         gVideoSettings.screenHeight, LITE3D_TRUE, NULL);
 }
 

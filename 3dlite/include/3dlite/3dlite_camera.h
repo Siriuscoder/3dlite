@@ -19,10 +19,7 @@
 #define	LITE3D_CAMERA_H
 
 #include <3dlite/3dlite_common.h>
-
-#include <3dlite/kazmath/mat4.h>
-#include <3dlite/kazmath/vec3.h>
-#include <3dlite/kazmath/quaternion.h>
+#include <3dlite/3dlite_scene_node.h>
 
 /* compatible with GL */
 #define LITE3D_POLYMODE_POINT        0x1B00
@@ -31,10 +28,11 @@
 
 typedef struct lite3d_camera
 {
+    lite3d_scene_node sceneNode;
+    kmMat4 projection;
+
     uint8_t cullBackFaces;
     uint16_t polygonMode;
-    uint8_t needRecalcModelView;
-    uint8_t needRecalcProjection;
     uint8_t isOrtho;
 
     union
@@ -57,15 +55,13 @@ typedef struct lite3d_camera
             float aspect;
         } perspective;
     } projectionParams;
-
-    kmMat4 modelView;
-    kmMat4 projection;
-    kmQuaternion rotation;
-    kmVec3 position;
 } lite3d_camera;
 
 LITE3D_CEXPORT void lite3d_apply_camera(lite3d_camera *camera);
-LITE3D_CEXPORT lite3d_camera *lite3d_alloc_camera(void);
-LITE3D_CEXPORT void lite3d_delete_camera(lite3d_camera *camera);
+LITE3D_CEXPORT void lite3d_ortho_camera(lite3d_camera *camera, float near,
+    float far, float left, float right, float bottom, float top);
+LITE3D_CEXPORT void lite3d_projection_camera(lite3d_camera *camera, float znear,
+    float zfar, float fovy, float aspect);
+
 #endif	/* LITE3D_CAMERA_H */
 

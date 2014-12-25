@@ -59,24 +59,24 @@ typedef struct lite3d_render_stats
 
 typedef struct lite3d_render_target
 {
+    lite3d_list_node node;
+    int32_t ID;
     int32_t height;
     int32_t width;
     int8_t isRoot;
     void *userdata;
-    uint8_t enabled; 
-    char name[LITE3D_RENDER_TARGET_NAME];
+    uint8_t enabled;
     lite3d_render_target_pre_update_t preUpdate;
     lite3d_render_target_post_update_t postUpdate;
-    lite3d_list_node node;
 } lite3d_render_target;
 
 LITE3D_CEXPORT int lite3d_render_init(void);
 LITE3D_CEXPORT void lite3d_render_loop(lite3d_render_listeners *callbacks);
 LITE3D_CEXPORT lite3d_render_stats *lite3d_get_render_stats(void);
-LITE3D_CEXPORT lite3d_render_target *lite3d_add_render_target(const char *name, int32_t width,
+LITE3D_CEXPORT lite3d_render_target *lite3d_add_render_target(int32_t ID, int32_t width,
     int32_t height, int8_t isRoot, void *userdata);
-LITE3D_CEXPORT void lite3d_erase_render_target(const char *name);
-LITE3D_CEXPORT lite3d_render_target *lite3d_get_render_target(const char *name);
+LITE3D_CEXPORT void lite3d_erase_render_target(int32_t ID);
+LITE3D_CEXPORT lite3d_render_target *lite3d_get_render_target(int32_t ID);
 LITE3D_CEXPORT void lite3d_erase_all_render_targets(void);
 LITE3D_CEXPORT void lite3d_suspend_render(void);
 LITE3D_CEXPORT void lite3d_pause_render(void);

@@ -35,6 +35,11 @@ typedef struct lite3d_resource_pack
 
 typedef struct lite3d_resource_file
 {
+    /* rb tree node entity */
+    lite3d_rb_node cached;
+    /* node of priority */
+    lite3d_list_node priority;
+
     lite3d_resource_pack *packer;
     char name[LITE3D_MAX_FILE_NAME];
     void *fileBuff;
@@ -42,10 +47,6 @@ typedef struct lite3d_resource_file
     uint8_t isLoaded;
     /* for 7z */
     int32_t dbIndex;
-    /* rb tree node entity */
-    lite3d_rb_node cached;
-    /* node of priority */
-    lite3d_list_node priority;
 } lite3d_resource_file;
 
 typedef lite3d_resource_file* (*lite3d_load_resource)(const char *path, struct lite3d_resource_file *resource);
