@@ -49,7 +49,7 @@ lite3d_scene_node *lite3d_scene_node_set_rotation(lite3d_scene_node *node, kmQua
     return node;
 }
 
-lite3d_scene_node *lite3d_scene_node_add_position(lite3d_scene_node *node, kmVec3 *position)
+lite3d_scene_node *lite3d_scene_node_move(lite3d_scene_node *node, kmVec3 *position)
 {
     SDL_assert(node && position);
     kmVec3Add(&node->position, &node->position, position);
@@ -58,7 +58,7 @@ lite3d_scene_node *lite3d_scene_node_add_position(lite3d_scene_node *node, kmVec
     return node;
 }
 
-lite3d_scene_node *lite3d_scene_node_add_rotation(lite3d_scene_node *node, kmQuaternion *quat)
+lite3d_scene_node *lite3d_scene_node_rotate_quat(lite3d_scene_node *node, kmQuaternion *quat)
 {
     SDL_assert(node && quat);
     kmQuaternionMultiply(&node->rotation, &node->rotation, quat);
@@ -67,22 +67,12 @@ lite3d_scene_node *lite3d_scene_node_add_rotation(lite3d_scene_node *node, kmQua
     return node;
 }
 
-lite3d_scene_node *lite3d_scene_node_set_matrix(lite3d_scene_node *node, kmMat4 *mat)
+lite3d_scene_node *lite3d_scene_node_rotate_angle(lite3d_scene_node *node, kmVec3 *axis, float angle)
 {
-    SDL_assert(node && mat);
-    node->modelView = *mat;
-    /* matrix state validated */
-    node->recalc = LITE3D_FALSE;
-
-    return node;
-}
-
-lite3d_scene_node *lite3d_scene_node_matrix_recalc(lite3d_scene_node *node)
-{
-    kmMat4 quatMat;
-    kmMat4Translation(&node->modelView, node->position.x, node->position.y, node->position.z);
-    kmMat4RotationQuaternion(&quatMat, &node->rotation);
-    kmMat4Multiply(&node->modelView, &node->modelView, &quatMat);
+    kmQuaternion tmpQuat;
+    SDL_assert(node && axis);
+    kmQuaternionRotationAxisAngle(&tmpQuat, axis, angle);
+    lite3d_scene_node_rotate_quat(node, &tmpQuat);
 
     return node;
 }
@@ -92,7 +82,11 @@ void lite3d_scene_node_paint_frame_begin(lite3d_scene_node *node)
     SDL_assert(node);
     if(node->recalc)
     {
-        lite3d_scene_node_matrix_recalc(node);
+        kmMat4 quatMat;
+        kmQuaternionNormalize(&node->rotation, &node->rotation);
+        kmMat4Translation(&node->modelView, node->position.x, node->position.y, node->position.z);
+        kmMat4RotationQuaternion(&quatMat, &node->rotation);
+        kmMat4Multiply(&node->modelView, &node->modelView, &quatMat);
         node->recalc = LITE3D_FALSE;
     }
 

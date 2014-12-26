@@ -20,17 +20,34 @@
 #include <SDL_log.h>
 #include <3dlite/GL/glew.h>
 #include <3dlite/3dlite_main.h>
+#include <3dlite/3dlite_camera.h>
 
 #define DEFAULT_WIDTH           800
 #define DEFAULT_HEIGHT          600
 
-static GLfloat xrot = 0;
-static GLfloat yrot = 0;
-static GLfloat zrot = 0;
-
 static lite3d_resource_pack *mFileSysPack = NULL;
 static lite3d_resource_pack *m7zPack = NULL;
 static lite3d_texture_unit *mNormandy = NULL, *mMinigun = NULL;
+static lite3d_camera mCamera01;
+static kmVec3 cameraInitPos = {
+    5.0f, 5.0f, -5.0f
+};
+
+static kmVec3 cameraLookAt = {
+    0.0f, 0.0f, 0.0f
+};
+
+static kmVec3 nodePos[] = {
+    { -2.2f, 0.0f, 0.0f },
+    { 0.0f, 0.0f, 0.0f },
+    { 2.2f, 0.0f, 0.0f }
+};
+
+static kmVec3 rotAxis = {
+    0.0f, 1.0f, 1.0f
+};
+
+static lite3d_scene_node mSceneNode;
 
 static int process_events(SDL_Event *levent, void *userdata)
 {
@@ -51,6 +68,10 @@ static int process_events(SDL_Event *levent, void *userdata)
                 "%f\t%f\t%f\t%f",
                 stats->lastFPS, stats->avrFPS, stats->bestFPS, stats->worstFPS,
                 stats->lastFrameMs, stats->avrFrameMs, stats->bestFrameMs, stats->worstFrameMs);
+        }
+        else if(levent->key.keysym.sym == SDLK_F2)
+        {
+            lite3d_scene_node_rotate_angle(&mSceneNode, &rotAxis, kmDegreesToRadians(5));
         }
     }
 
@@ -73,22 +94,27 @@ static int init(void *userdata)
         LITE3D_TEXTURE_QL_NICEST)))
         return LITE3D_FALSE;
 
+    lite3d_camera_init(&mCamera01);
+
     lite3d_add_render_target(1, 10, 
         10, 0, NULL)->enabled = LITE3D_FALSE;
 
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
     glClearDepth(1.0);
-    glEnable(GL_CULL_FACE);
-    glCullFace(GL_BACK);
     glDepthFunc(GL_LESS);
     glEnable(GL_DEPTH_TEST);
     glShadeModel(GL_SMOOTH);
 
-    glViewport(0, 0, DEFAULT_WIDTH, DEFAULT_HEIGHT);
+    //glMatrixMode(GL_PROJECTION);
+    //glLoadIdentity();
+    //gluPerspective(45.0f, (GLfloat) DEFAULT_WIDTH / (GLfloat) DEFAULT_HEIGHT, 0.1f, 100.0f);
 
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    gluPerspective(45.0f, (GLfloat) DEFAULT_WIDTH / (GLfloat) DEFAULT_HEIGHT, 0.1f, 100.0f);
+    lite3d_camera_perspective(&mCamera01, 0.1f, 100.0f, 45.0f, (float) DEFAULT_WIDTH / (float) DEFAULT_HEIGHT);
+    lite3d_scene_node_set_position(&mCamera01.cameraNode, &cameraInitPos);
+    lite3d_camera_lookAt(&mCamera01, &cameraLookAt);
+
+    lite3d_scene_node_init(&mSceneNode);
+
 
     return LITE3D_TRUE;
 }
@@ -103,18 +129,8 @@ static int shutdown(void *userdata)
     return LITE3D_TRUE;
 }
 
-static int frame(void *userdata)
+static void draw_box(void)
 {
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-    glMatrixMode(GL_MODELVIEW);
-
-    glLoadIdentity();
-    glTranslatef(0.0f, 0.0f, -5.0f);
-    glRotatef(xrot, 1.0f, 0.0f, 0.0f);
-    glRotatef(yrot, 0.0f, 1.0f, 0.0f);
-    glRotatef(zrot, 0.0f, 0.0f, 1.0f);
-
     lite3d_texture_unit_bind(mMinigun);
 
     glBegin(GL_QUADS);
@@ -179,10 +195,37 @@ static int frame(void *userdata)
     glEnd();
 
     lite3d_texture_unit_unbind(mNormandy);
+}
 
-    xrot += 0.3f;
-    yrot += 0.2f;
-    zrot += 0.4f;
+static int frame(void *userdata)
+{
+    int i = 0;
+    kmVec3 vec = { 0.0f, 0.0f, 2.2f };
+
+    lite3d_camera_apply(&mCamera01);
+
+    for(; i < sizeof(nodePos)/sizeof(kmVec3); ++i)
+    {
+        lite3d_scene_node_set_position(&mSceneNode, &nodePos[i]);
+
+        lite3d_scene_node_paint_frame_begin(&mSceneNode);
+
+        draw_box();   
+        
+        //vec = nodePos[i];
+        //vec.z += 2.2f;
+
+        lite3d_scene_node_set_position(&mSceneNode, &vec);
+        lite3d_scene_node_paint_frame_begin(&mSceneNode);
+
+        draw_box();
+
+        lite3d_scene_node_paint_frame_end(&mSceneNode);
+
+        lite3d_scene_node_paint_frame_end(&mSceneNode);
+    }
+ 
+
 
     return LITE3D_TRUE;
 }
@@ -201,7 +244,7 @@ int main(int argc, char *args[])
     settings.videoSettings.fullscreen = LITE3D_FALSE;
     settings.videoSettings.screenWidth = DEFAULT_WIDTH;
     settings.videoSettings.screenHeight = DEFAULT_HEIGHT;
-    settings.videoSettings.vsync = LITE3D_TRUE;
+    settings.videoSettings.vsync = LITE3D_FALSE;
     settings.renderLisneters.processEvent = process_events;
     settings.renderLisneters.preRender = init;
     settings.renderLisneters.postRender = shutdown;

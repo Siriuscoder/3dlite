@@ -28,7 +28,7 @@
 
 typedef struct lite3d_camera
 {
-    lite3d_scene_node sceneNode;
+    lite3d_scene_node cameraNode;
     kmMat4 projection;
 
     uint8_t cullBackFaces;
@@ -57,11 +57,13 @@ typedef struct lite3d_camera
     } projectionParams;
 } lite3d_camera;
 
-LITE3D_CEXPORT void lite3d_apply_camera(lite3d_camera *camera);
-LITE3D_CEXPORT void lite3d_ortho_camera(lite3d_camera *camera, float near,
+LITE3D_CEXPORT void lite3d_camera_init(lite3d_camera *camera);
+LITE3D_CEXPORT void lite3d_camera_apply(lite3d_camera *camera);
+LITE3D_CEXPORT void lite3d_camera_ortho(lite3d_camera *camera, float near,
     float far, float left, float right, float bottom, float top);
-LITE3D_CEXPORT void lite3d_projection_camera(lite3d_camera *camera, float znear,
+LITE3D_CEXPORT void lite3d_camera_perspective(lite3d_camera *camera, float znear,
     float zfar, float fovy, float aspect);
+LITE3D_CEXPORT void lite3d_camera_lookAt(lite3d_camera *camera, kmVec3 *pointTo);
 
 #endif	/* LITE3D_CAMERA_H */
 

@@ -19,6 +19,7 @@
 #include <SDL_timer.h>
 #include <SDL_assert.h>
 
+#include <3dlite/GL/glew.h>
 #include <3dlite/3dlite_alloc.h>
 #include <3dlite/3dlite_render.h>
 #include <3dlite/3dlite_video.h>
@@ -81,7 +82,9 @@ static void update_render_target(lite3d_render_target *target)
 {
     /* TODO: switch target framebuffer */
     /* set viewport */
+    glViewport(0, 0, target->width, target->height);
     /* clear target */
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     /* do paint on current camera */
     if (gRenderListeners.renderFrame)
         gRenderListeners.renderFrame(gRenderListeners.userdata);
