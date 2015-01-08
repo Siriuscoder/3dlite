@@ -28,20 +28,22 @@
 typedef struct  lite3d_scene_node
 {
     lite3d_list_node link;
-    kmMat4 modelView;
+    kmMat4 localView;
+    kmMat4 worldView;
     kmQuaternion rotation;
     kmVec3 position;
     uint8_t recalc;
+    uint8_t rotationCentered;
+    struct lite3d_scene_node *baseNode;
 } lite3d_scene_node;
 
-LITE3D_CEXPORT lite3d_scene_node *lite3d_scene_node_init(lite3d_scene_node *node);
+LITE3D_CEXPORT lite3d_scene_node *lite3d_scene_node_init(lite3d_scene_node *node, lite3d_scene_node *baseNode);
 LITE3D_CEXPORT lite3d_scene_node *lite3d_scene_node_set_position(lite3d_scene_node *node, kmVec3 *position);
 LITE3D_CEXPORT lite3d_scene_node *lite3d_scene_node_move(lite3d_scene_node *node, kmVec3 *position);
 LITE3D_CEXPORT lite3d_scene_node *lite3d_scene_node_set_rotation(lite3d_scene_node *node, kmQuaternion *quat);
 LITE3D_CEXPORT lite3d_scene_node *lite3d_scene_node_rotate_quat(lite3d_scene_node *node, kmQuaternion *quat);
 LITE3D_CEXPORT lite3d_scene_node *lite3d_scene_node_rotate_angle(lite3d_scene_node *node, kmVec3 *axis, float angle);
 
-LITE3D_CEXPORT void lite3d_scene_node_paint_frame_begin(lite3d_scene_node *node);
-LITE3D_CEXPORT void lite3d_scene_node_paint_frame_end(lite3d_scene_node *node);
+LITE3D_CEXPORT uint8_t lite3d_scene_node_update(lite3d_scene_node *node);
 
 #endif

@@ -1,54 +1,48 @@
 /******************************************************************************
-*	This file is part of 3dlite (Light-weight 3d engine).
-*	Copyright (C) 2014  Sirius (Korolev Nikita)
-*
-*	Foobar is free software: you can redistribute it and/or modify
-*	it under the terms of the GNU General Public License as published by
-*	the Free Software Foundation, either version 3 of the License, or
-*	(at your option) any later version.
-*
-*	Foobar is distributed in the hope that it will be useful,
-*	but WITHOUT ANY WARRANTY; without even the implied warranty of
-*	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-*	GNU General Public License for more details.
-*
-*	You should have received a copy of the GNU General Public License
-*	along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
-*******************************************************************************/
+ *	This file is part of 3dlite (Light-weight 3d engine).
+ *	Copyright (C) 2014  Sirius (Korolev Nikita)
+ *
+ *	Foobar is free software: you can redistribute it and/or modify
+ *	it under the terms of the GNU General Public License as published by
+ *	the Free Software Foundation, either version 3 of the License, or
+ *	(at your option) any later version.
+ *
+ *	Foobar is distributed in the hope that it will be useful,
+ *	but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *	GNU General Public License for more details.
+ *
+ *	You should have received a copy of the GNU General Public License
+ *	along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
+ *******************************************************************************/
 #include <string.h>
 #include <SDL_assert.h>
 
 #include <3dlite/GL/glew.h>
 #include <3dlite/3dlite_camera.h>
 
-void lite3d_camera_apply(lite3d_camera *camera)
+void lite3d_camera_update_node(lite3d_camera *camera, lite3d_scene_node *node)
 {
-    SDL_assert(camera);
+    SDL_assert(camera && node);
 
     glMatrixMode(GL_PROJECTION);
     glLoadMatrixf(camera->projection.mat);
 
-    if(camera->cameraNode.recalc)
-    {
-        kmMat4 transMat;
-        kmQuaternionNormalize(&camera->cameraNode.rotation,
-            &camera->cameraNode.rotation);
-        kmMat4RotationQuaternion(&camera->cameraNode.modelView, &camera->cameraNode.rotation);
-        kmMat4Translation(&transMat, 
-            camera->cameraNode.position.x, 
-            camera->cameraNode.position.y, 
-            camera->cameraNode.position.z);
-        kmMat4Multiply(&camera->cameraNode.modelView, 
-            &camera->cameraNode.modelView, &transMat);
+    lite3d_scene_node_update(node);
+    /* camera tracking enabled */
+    if (camera->trackNode)
+        lite3d_camera_track(camera, camera->trackNode, camera->trackType);
 
-        camera->cameraNode.recalc = LITE3D_FALSE;
-    }
+    lite3d_scene_node_update(&camera->cameraNode);
+
+    /* world to camera */
+    kmMat4Multiply(&camera->cameraNode.worldView, &camera->cameraNode.localView, &node->worldView);
 
     glMatrixMode(GL_MODELVIEW);
-    glLoadMatrixf(camera->cameraNode.modelView.mat);
+    glLoadMatrixf(camera->cameraNode.worldView.mat);
 
     glPolygonMode(GL_FRONT_AND_BACK, camera->polygonMode);
-    if(camera->cullBackFaces)
+    if (camera->cullBackFaces)
     {
         glEnable(GL_CULL_FACE);
         glCullFace(GL_BACK);
@@ -85,28 +79,48 @@ void lite3d_camera_perspective(lite3d_camera *camera, float znear,
     kmMat4PerspectiveProjection(&camera->projection, fovy, aspect, znear, zfar);
 }
 
-void lite3d_camera_init(lite3d_camera *camera)
+void lite3d_camera_init(lite3d_camera *camera, lite3d_scene_node *baseNode)
 {
     SDL_assert(camera);
 
-    memset(camera, 0, sizeof(lite3d_camera));
-    lite3d_scene_node_init(&camera->cameraNode);
+    memset(camera, 0, sizeof (lite3d_camera));
+    lite3d_scene_node_init(&camera->cameraNode, baseNode);
+    camera->cameraNode.rotationCentered = LITE3D_FALSE;
     kmMat4Identity(&camera->projection);
 
     camera->cullBackFaces = LITE3D_TRUE;
     camera->polygonMode = LITE3D_POLYMODE_FILL;
 }
 
-void lite3d_camera_lookAt(lite3d_camera *camera, kmVec3 *pointTo)
-{ 
-    kmVec3 direction;
+void lite3d_camera_lookAt(lite3d_camera *camera, const kmVec3 *pointTo)
+{
+    kmVec3 direction, scaled;
     kmVec3 up = {
         0.0f, 0.0f, 1.0f
     };
 
     SDL_assert(camera && pointTo);
 
-    kmVec3Subtract(&direction, &camera->cameraNode.position, pointTo);
+    kmVec3Scale(&scaled, pointTo, -1);
+    kmVec3Subtract(&direction, &camera->cameraNode.position, &scaled);
     kmQuaternionLookRotation(&camera->cameraNode.rotation, &direction, &up);
     camera->cameraNode.recalc = LITE3D_TRUE;
+}
+
+void lite3d_camera_track(lite3d_camera *camera, lite3d_scene_node *target,
+    uint8_t trackType)
+{
+    SDL_assert(camera && target);
+
+    camera->trackNode = target;
+    camera->trackType = trackType;
+    if(lite3d_scene_node_update(camera->trackNode))
+        camera->cameraNode.recalc = LITE3D_TRUE;
+
+    if (trackType & LITE3D_CAMERA_TRACK_POSITION)
+        kmVec3Scale(&camera->cameraNode.position,
+        &camera->trackNode->position, -1);
+
+    if (trackType & LITE3D_CAMERA_TRACK_ORIENTATION)
+        camera->cameraNode.rotation = camera->trackNode->rotation;
 }

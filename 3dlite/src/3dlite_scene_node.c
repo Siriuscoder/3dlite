@@ -19,14 +19,17 @@
 #include <3dlite/GL/glew.h>
 #include <3dlite/3dlite_scene_node.h>
 
-lite3d_scene_node *lite3d_scene_node_init(lite3d_scene_node *node)
+lite3d_scene_node *lite3d_scene_node_init(lite3d_scene_node *node, lite3d_scene_node *baseNode)
 {
     SDL_assert(node);
     lite3d_list_link_init(&node->link);
-    kmMat4Identity(&node->modelView);
+    kmMat4Identity(&node->localView);
+    kmMat4Identity(&node->worldView);
     kmQuaternionIdentity(&node->rotation);
     kmVec3Fill(&node->position, 0, 0, 0);
     node->recalc = LITE3D_TRUE;
+    node->baseNode = baseNode;
+    node->rotationCentered = LITE3D_TRUE;
 
     return node;
 }
@@ -77,26 +80,43 @@ lite3d_scene_node *lite3d_scene_node_rotate_angle(lite3d_scene_node *node, kmVec
     return node;
 }
 
-void lite3d_scene_node_paint_frame_begin(lite3d_scene_node *node)
+uint8_t lite3d_scene_node_update(lite3d_scene_node *node)
 {
+    uint8_t updated = LITE3D_FALSE;
     SDL_assert(node);
-    if(node->recalc)
+
+    if (node->recalc)
     {
-        kmMat4 quatMat;
-        kmQuaternionNormalize(&node->rotation, &node->rotation);
-        kmMat4Translation(&node->modelView, node->position.x, node->position.y, node->position.z);
-        kmMat4RotationQuaternion(&quatMat, &node->rotation);
-        kmMat4Multiply(&node->modelView, &node->modelView, &quatMat);
+        kmMat4 transMat;
+        kmQuaternionNormalize(&node->rotation,
+            &node->rotation);
+
+        kmMat4RotationQuaternion(&node->localView, &node->rotation);
+        kmMat4Translation(&transMat,
+            node->position.x,
+            node->position.y,
+            node->position.z);
+
+        if (node->rotationCentered)
+            kmMat4Multiply(&node->localView,
+            &transMat, &node->localView);
+        else
+            kmMat4Multiply(&node->localView,
+            &node->localView, &transMat);
+
+        if (node->baseNode)
+        {
+            kmMat4Multiply(&node->worldView,
+                &node->baseNode->worldView, &node->localView);
+        }
+        else
+        {
+            node->worldView = node->localView;
+        }
+
         node->recalc = LITE3D_FALSE;
+        updated = LITE3D_TRUE;
     }
 
-    glMatrixMode(GL_MODELVIEW);
-    glPushMatrix();
-    glMultMatrixf(node->modelView.mat);
-}
-
-void lite3d_scene_node_paint_frame_end(lite3d_scene_node *node)
-{
-    glMatrixMode(GL_MODELVIEW);
-    glPopMatrix();
+    return updated;
 }

@@ -72,6 +72,7 @@
           <in>3dlite_nedmalloc.c</in>
           <in>3dlite_rb_tree.c</in>
           <in>3dlite_render.c</in>
+          <in>3dlite_scene_node.c</in>
           <in>3dlite_texture_unit.c</in>
           <in>3dlite_video.c</in>
         </df>
@@ -128,8 +129,7 @@
         <rebuildPropChanged>false</rebuildPropChanged>
       </toolsSet>
       <flagsDictionary>
-        <element flagsID="0" commonFlags="-std=c99 -fstack-protector-all -fPIC"/>
-        <element flagsID="1" commonFlags="-std=c99 -fstack-protector-all -fPIC -fPIC"/>
+        <element flagsID="0" commonFlags="-std=c99 -fstack-protector-all -fPIC -fPIC"/>
       </flagsDictionary>
       <codeAssistance>
       </codeAssistance>
@@ -156,7 +156,7 @@
             flavor2="3">
       </item>
       <item path="3dlite/src/3dlite_7zloader.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
+        <cTool flags="0">
           <incDir>
             <pElem>3dlite/include/3dlite/kazmath</pElem>
             <pElem>/usr/include/SDL2</pElem>
@@ -170,7 +170,7 @@
         </cTool>
       </item>
       <item path="3dlite/src/3dlite_alloc.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
+        <cTool flags="0">
           <incDir>
             <pElem>3dlite/include/3dlite/kazmath</pElem>
             <pElem>/usr/include/SDL2</pElem>
@@ -184,7 +184,7 @@
         </cTool>
       </item>
       <item path="3dlite/src/3dlite_camera.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
+        <cTool flags="0">
           <incDir>
             <pElem>/usr/include/SDL2</pElem>
             <pElem>build/3dlite</pElem>
@@ -197,9 +197,8 @@
         </cTool>
       </item>
       <item path="3dlite/src/3dlite_file_cache.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
+        <cTool flags="0">
           <incDir>
-            <pElem>3dlite/include/3dlite/kazmath</pElem>
             <pElem>/usr/include/SDL2</pElem>
             <pElem>build/3dlite</pElem>
           </incDir>
@@ -211,7 +210,7 @@
         </cTool>
       </item>
       <item path="3dlite/src/3dlite_list.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
+        <cTool flags="0">
           <incDir>
             <pElem>3dlite/include/3dlite/kazmath</pElem>
             <pElem>/usr/include/SDL2</pElem>
@@ -225,7 +224,7 @@
         </cTool>
       </item>
       <item path="3dlite/src/3dlite_logger.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
+        <cTool flags="0">
           <incDir>
             <pElem>3dlite/include/3dlite/kazmath</pElem>
             <pElem>/usr/include/SDL2</pElem>
@@ -239,7 +238,7 @@
         </cTool>
       </item>
       <item path="3dlite/src/3dlite_main.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
+        <cTool flags="0">
           <incDir>
             <pElem>/usr/include/SDL2</pElem>
             <pElem>build/3dlite</pElem>
@@ -252,7 +251,7 @@
         </cTool>
       </item>
       <item path="3dlite/src/3dlite_nedmalloc.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
+        <cTool flags="0">
           <incDir>
             <pElem>3dlite/include/3dlite/kazmath</pElem>
             <pElem>/usr/include/SDL2</pElem>
@@ -266,7 +265,7 @@
         </cTool>
       </item>
       <item path="3dlite/src/3dlite_rb_tree.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
+        <cTool flags="0">
           <incDir>
             <pElem>3dlite/include/3dlite/kazmath</pElem>
             <pElem>/usr/include/SDL2</pElem>
@@ -280,7 +279,20 @@
         </cTool>
       </item>
       <item path="3dlite/src/3dlite_render.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
+        <cTool flags="0">
+          <incDir>
+            <pElem>/usr/include/SDL2</pElem>
+            <pElem>build/3dlite</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>GLEW_STATIC</Elem>
+            <Elem>_3dlite_EXPORTS</Elem>
+            <Elem>_REENTRANT</Elem>
+          </preprocessorList>
+        </cTool>
+      </item>
+      <item path="3dlite/src/3dlite_scene_node.c" ex="false" tool="0" flavor2="3">
+        <cTool flags="0">
           <incDir>
             <pElem>/usr/include/SDL2</pElem>
             <pElem>build/3dlite</pElem>
@@ -293,9 +305,8 @@
         </cTool>
       </item>
       <item path="3dlite/src/3dlite_texture_unit.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
+        <cTool flags="0">
           <incDir>
-            <pElem>3dlite/include/3dlite/kazmath</pElem>
             <pElem>/usr/include/SDL2</pElem>
             <pElem>build/3dlite</pElem>
           </incDir>
@@ -307,9 +318,8 @@
         </cTool>
       </item>
       <item path="3dlite/src/3dlite_video.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
+        <cTool flags="0">
           <incDir>
-            <pElem>3dlite/include/3dlite/kazmath</pElem>
             <pElem>/usr/include/SDL2</pElem>
             <pElem>build/3dlite</pElem>
           </incDir>

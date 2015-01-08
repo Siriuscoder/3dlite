@@ -26,6 +26,9 @@
 #define LITE3D_POLYMODE_LINE         0x1B01
 #define LITE3D_POLYMODE_FILL         0x1B02
 
+#define LITE3D_CAMERA_TRACK_POSITION    0x01
+#define LITE3D_CAMERA_TRACK_ORIENTATION 0x02
+
 typedef struct lite3d_camera
 {
     lite3d_scene_node cameraNode;
@@ -55,15 +58,22 @@ typedef struct lite3d_camera
             float aspect;
         } perspective;
     } projectionParams;
+    
+    lite3d_scene_node *trackNode;
+    uint8_t trackType;
 } lite3d_camera;
 
-LITE3D_CEXPORT void lite3d_camera_init(lite3d_camera *camera);
-LITE3D_CEXPORT void lite3d_camera_apply(lite3d_camera *camera);
+LITE3D_CEXPORT void lite3d_camera_init(lite3d_camera *camera, 
+    lite3d_scene_node *baseNode);
+LITE3D_CEXPORT void lite3d_camera_track(lite3d_camera *camera, 
+    lite3d_scene_node *target, uint8_t trackType);
+LITE3D_CEXPORT void lite3d_camera_update_node(lite3d_camera *camera, 
+    lite3d_scene_node *node);
 LITE3D_CEXPORT void lite3d_camera_ortho(lite3d_camera *camera, float near,
     float far, float left, float right, float bottom, float top);
 LITE3D_CEXPORT void lite3d_camera_perspective(lite3d_camera *camera, float znear,
     float zfar, float fovy, float aspect);
-LITE3D_CEXPORT void lite3d_camera_lookAt(lite3d_camera *camera, kmVec3 *pointTo);
+LITE3D_CEXPORT void lite3d_camera_lookAt(lite3d_camera *camera, const kmVec3 *pointTo);
 
 #endif	/* LITE3D_CAMERA_H */
 
