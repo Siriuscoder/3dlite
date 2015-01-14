@@ -135,7 +135,7 @@ static int init(void *userdata)
         lite3d_scene_node_set_position(&mSceneNodeInherited[i], &tmp);
     }
 
-    lite3d_camera_track(&mCamera01, &mSceneNode[0], LITE3D_CAMERA_TRACK_POSITION);
+    lite3d_camera_link_to(&mCamera01, &mSceneNode[0], LITE3D_CAMERA_LINK_POSITION);
 
     return LITE3D_TRUE;
 }

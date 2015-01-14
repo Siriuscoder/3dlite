@@ -18,9 +18,11 @@
 #include <SDL.h>
 #include <SDL_syswm.h>
 
+
+
 #include <3dlite/GL/glew.h>
-#include <3dlite/3dlite_video.h>
 #include <3dlite/3dlite_render.h>
+#include <3dlite/3dlite_video.h>
 
 #ifdef PLATFORM_Windows
 #include <3dlite/GL/wglew.h>

@@ -21,6 +21,7 @@
 #include <SDL_events.h>
 #include <3dlite/3dlite_common.h>
 #include <3dlite/3dlite_list.h>
+#include <3dlite/3dlite_camera.h>
 
 #define LITE3D_RENDER_TARGET_NAME   20
 
@@ -68,6 +69,8 @@ typedef struct lite3d_render_target
     uint8_t enabled;
     lite3d_render_target_pre_update_t preUpdate;
     lite3d_render_target_post_update_t postUpdate;
+    lite3d_list renderQueue;
+    int32_t bufCleanMask;
 } lite3d_render_target;
 
 LITE3D_CEXPORT int lite3d_render_init(void);
@@ -81,6 +84,10 @@ LITE3D_CEXPORT void lite3d_erase_all_render_targets(void);
 LITE3D_CEXPORT void lite3d_suspend_render(void);
 LITE3D_CEXPORT void lite3d_pause_render(void);
 LITE3D_CEXPORT void lite3d_stop_render(void);
+
+LITE3D_CEXPORT void lite3d_render_target_attach_camera(lite3d_render_target *target, lite3d_camera *camera);
+LITE3D_CEXPORT void lite3d_render_target_dettach_camera(lite3d_camera *camera);
+LITE3D_CEXPORT void lite3d_root_render_target_attach_camera(lite3d_camera *camera);
 
 #endif	/* RENDER_H */
 

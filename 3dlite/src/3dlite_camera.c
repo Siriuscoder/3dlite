@@ -29,10 +29,11 @@ void lite3d_camera_update_node(lite3d_camera *camera, lite3d_scene_node *node)
     glLoadMatrixf(camera->projection.mat);
 
     lite3d_scene_node_update(node);
-    /* camera tracking enabled */
-    if (camera->trackNode)
-        lite3d_camera_track(camera, camera->trackNode, camera->trackType);
-
+    /* camera link to node */
+    lite3d_camera_link_to(camera, camera->linkNode, camera->linkType);
+    /* camera track object */
+    lite3d_camera_tracking(camera, camera->trackNode);
+    /* compute local camera matrix */
     lite3d_scene_node_update(&camera->cameraNode);
 
     /* world to camera */
@@ -86,6 +87,7 @@ void lite3d_camera_init(lite3d_camera *camera, lite3d_scene_node *baseNode)
     memset(camera, 0, sizeof (lite3d_camera));
     lite3d_scene_node_init(&camera->cameraNode, baseNode);
     camera->cameraNode.rotationCentered = LITE3D_FALSE;
+    camera->cameraNode.renderable = LITE3D_FALSE;
     kmMat4Identity(&camera->projection);
 
     camera->cullBackFaces = LITE3D_TRUE;
@@ -107,20 +109,103 @@ void lite3d_camera_lookAt(lite3d_camera *camera, const kmVec3 *pointTo)
     camera->cameraNode.recalc = LITE3D_TRUE;
 }
 
-void lite3d_camera_track(lite3d_camera *camera, lite3d_scene_node *target,
-    uint8_t trackType)
+void lite3d_camera_link_to(lite3d_camera *camera, 
+    lite3d_scene_node *target, uint8_t linkType)
 {
-    SDL_assert(camera && target);
+    SDL_assert(camera);
+
+    camera->linkNode = target;
+    camera->linkType = linkType;
+
+    if(camera->linkNode)
+    {
+        if(lite3d_scene_node_update(camera->linkNode))
+            camera->cameraNode.recalc = LITE3D_TRUE;
+
+        if (linkType & LITE3D_CAMERA_LINK_POSITION)
+            lite3d_camera_set_position(camera, &camera->linkNode->position);
+
+        if (linkType & LITE3D_CAMERA_LINK_ORIENTATION)
+            lite3d_camera_set_rotation(camera, &camera->linkNode->rotation);
+    }
+}
+
+void lite3d_camera_tracking(lite3d_camera *camera, 
+    lite3d_scene_node *target)
+{
+    SDL_assert(camera);
 
     camera->trackNode = target;
-    camera->trackType = trackType;
-    if(lite3d_scene_node_update(camera->trackNode))
-        camera->cameraNode.recalc = LITE3D_TRUE;
+    if(camera->trackNode)
+    {
+        lite3d_camera_lookAt(camera, &camera->trackNode->position);
+    }
+}
 
-    if (trackType & LITE3D_CAMERA_TRACK_POSITION)
-        kmVec3Scale(&camera->cameraNode.position,
-        &camera->trackNode->position, -1);
+void lite3d_camera_set_position(lite3d_camera *camera, 
+    const kmVec3 *position)
+{
+    kmVec3 postmp;
+    kmVec3Scale(&postmp, position, -1.0f);
+    lite3d_scene_node_set_position(&camera->cameraNode, &postmp);
+}
 
-    if (trackType & LITE3D_CAMERA_TRACK_ORIENTATION)
-        camera->cameraNode.rotation = camera->trackNode->rotation;
+void lite3d_camera_set_rotation(lite3d_camera *camera, 
+    const kmQuaternion *orientation)
+{
+    SDL_assert(camera);
+    lite3d_scene_node_set_rotation(&camera->cameraNode, orientation);
+}
+
+void lite3d_camera_rotate(lite3d_camera *camera, 
+    const kmQuaternion *orietation)
+{
+    SDL_assert(camera);
+    lite3d_scene_node_rotate_quat(&camera->cameraNode, orietation);
+}
+
+void lite3d_camera_yaw(lite3d_camera *camera, float angle)
+{
+    kmVec3 vecLocal;
+
+    SDL_assert(camera);
+    kmQuaternionMultiplyVec3(&vecLocal, &camera->cameraNode.rotation, &KM_VEC3_POS_Y);
+    kmQuaternionRotationAxisAngle(&camera->cameraNode.rotation, &vecLocal, angle);
+}
+
+void lite3d_camera_pitch(lite3d_camera *camera, float angle)
+{
+    kmVec3 vecLocal;
+
+    SDL_assert(camera);
+    kmQuaternionMultiplyVec3(&vecLocal, &camera->cameraNode.rotation, &KM_VEC3_POS_X);
+    kmQuaternionRotationAxisAngle(&camera->cameraNode.rotation, &vecLocal, angle);
+}
+
+void lite3d_camera_roll(lite3d_camera *camera, float angle)
+{
+    kmVec3 vecLocal;
+
+    SDL_assert(camera);
+    kmQuaternionMultiplyVec3(&vecLocal, &camera->cameraNode.rotation, &KM_VEC3_POS_Z);
+    kmQuaternionRotationAxisAngle(&camera->cameraNode.rotation, &vecLocal, angle);
+}
+
+void lite3d_camera_move(lite3d_camera *camera, const kmVec3 *value)
+{
+    kmVec3 postmp;
+
+    SDL_assert(camera);
+    kmVec3Scale(&postmp, value, -1.0f);
+    lite3d_scene_node_move(&camera->cameraNode, &postmp);
+}
+
+void lite3d_camera_move_relative(lite3d_camera *camera, 
+    const kmVec3 *vec)
+{
+    kmVec3 vecLocalCamera;
+
+    SDL_assert(camera);
+    kmQuaternionMultiplyVec3(&vecLocalCamera, &camera->cameraNode.rotation, vec);
+    lite3d_camera_move(camera, &vecLocalCamera);
 }

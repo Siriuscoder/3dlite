@@ -20,17 +20,19 @@
 
 #include <3dlite/3dlite_common.h>
 #include <3dlite/3dlite_scene_node.h>
+#include <3dlite/3dlite_list.h>
 
 /* compatible with GL */
 #define LITE3D_POLYMODE_POINT        0x1B00
 #define LITE3D_POLYMODE_LINE         0x1B01
 #define LITE3D_POLYMODE_FILL         0x1B02
 
-#define LITE3D_CAMERA_TRACK_POSITION    0x01
-#define LITE3D_CAMERA_TRACK_ORIENTATION 0x02
+#define LITE3D_CAMERA_LINK_POSITION    0x01
+#define LITE3D_CAMERA_LINK_ORIENTATION 0x02
 
 typedef struct lite3d_camera
 {
+    lite3d_list_node renderTargetLink;
     lite3d_scene_node cameraNode;
     kmMat4 projection;
 
@@ -59,14 +61,17 @@ typedef struct lite3d_camera
         } perspective;
     } projectionParams;
     
+    lite3d_scene_node *linkNode;
     lite3d_scene_node *trackNode;
-    uint8_t trackType;
+    uint8_t linkType;
 } lite3d_camera;
 
 LITE3D_CEXPORT void lite3d_camera_init(lite3d_camera *camera, 
     lite3d_scene_node *baseNode);
-LITE3D_CEXPORT void lite3d_camera_track(lite3d_camera *camera, 
-    lite3d_scene_node *target, uint8_t trackType);
+LITE3D_CEXPORT void lite3d_camera_link_to(lite3d_camera *camera, 
+    lite3d_scene_node *target, uint8_t linkType);
+LITE3D_CEXPORT void lite3d_camera_tracking(lite3d_camera *camera, 
+    lite3d_scene_node *target);
 LITE3D_CEXPORT void lite3d_camera_update_node(lite3d_camera *camera, 
     lite3d_scene_node *node);
 LITE3D_CEXPORT void lite3d_camera_ortho(lite3d_camera *camera, float near,
@@ -74,6 +79,18 @@ LITE3D_CEXPORT void lite3d_camera_ortho(lite3d_camera *camera, float near,
 LITE3D_CEXPORT void lite3d_camera_perspective(lite3d_camera *camera, float znear,
     float zfar, float fovy, float aspect);
 LITE3D_CEXPORT void lite3d_camera_lookAt(lite3d_camera *camera, const kmVec3 *pointTo);
+LITE3D_CEXPORT void lite3d_camera_set_position(lite3d_camera *camera, 
+    const kmVec3 *position);
+LITE3D_CEXPORT void lite3d_camera_set_rotation(lite3d_camera *camera, 
+    const kmQuaternion *orietation);
+LITE3D_CEXPORT void lite3d_camera_rotate(lite3d_camera *camera, 
+    const kmQuaternion *orietation);
+LITE3D_CEXPORT void lite3d_camera_yaw(lite3d_camera *camera, float angle);
+LITE3D_CEXPORT void lite3d_camera_pitch(lite3d_camera *camera, float angle);
+LITE3D_CEXPORT void lite3d_camera_roll(lite3d_camera *camera, float angle);
+LITE3D_CEXPORT void lite3d_camera_move(lite3d_camera *camera, const kmVec3 *value);
+LITE3D_CEXPORT void lite3d_camera_move_relative(lite3d_camera *camera, 
+    const kmVec3 *value);
 
 #endif	/* LITE3D_CAMERA_H */
 

@@ -23,6 +23,7 @@
 #include <3dlite/3dlite_alloc.h>
 #include <3dlite/3dlite_render.h>
 #include <3dlite/3dlite_video.h>
+#include <3dlite/3dlite_scene.h>
 
 static uint64_t gLastMark = 0;
 static uint64_t gPerfFreq = 0;
@@ -80,12 +81,23 @@ static void calc_render_stats(uint64_t beginFrame, uint64_t endFrame)
 
 static void update_render_target(lite3d_render_target *target)
 {
+    lite3d_list_node *node;
+    lite3d_scene *scene;
+    lite3d_camera *camera;
     /* TODO: switch target framebuffer */
     /* set viewport */
     glViewport(0, 0, target->width, target->height);
     /* clear target */
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    /* do paint on current camera */
+    glClear(target->bufCleanMask);
+    /* do paint by render queue */
+    for (node = target->renderQueue.l.next; node != &target->renderQueue.l; node = lite3d_list_next(node))
+    {
+        camera = MEMBERCAST(lite3d_camera, node, renderTargetLink);
+        scene = (lite3d_scene *)camera->cameraNode.scene;
+        lite3d_render_scene(scene, camera);
+    }
+
+    /* TODO: remove this */
     if (gRenderListeners.renderFrame)
         gRenderListeners.renderFrame(gRenderListeners.userdata);
 }
@@ -177,12 +189,14 @@ lite3d_render_target *lite3d_add_render_target(int32_t ID, int32_t width,
     SDL_assert(target);
 
     lite3d_list_link_init(&target->node);
+
     target->height = height;
     target->width = width;
     target->isRoot = isRoot;
     target->userdata = userdata;
     target->enabled = LITE3D_TRUE;
     target->ID = ID;
+    lite3d_list_init(&target->renderQueue);
 
     lite3d_list_add_first_link(&target->node, &gRenderTargets);
     return target;
@@ -247,4 +261,23 @@ int lite3d_render_init(void)
     lite3d_list_init(&gRenderTargets);
 
     return LITE3D_TRUE;
+}
+
+void lite3d_render_target_attach_camera(lite3d_render_target *target, lite3d_camera *camera)
+{
+    SDL_assert(target && camera);
+
+    lite3d_list_link_init(&camera->renderTargetLink);
+    lite3d_list_add_first_link(&camera->renderTargetLink, &target->renderQueue);
+}
+
+void lite3d_render_target_dettach_camera(lite3d_camera *camera)
+{
+    SDL_assert(camera);
+    lite3d_list_unlink_link(&camera->renderTargetLink);
+}
+
+void lite3d_root_render_target_attach_camera(lite3d_camera *camera)
+{
+    lite3d_render_target_attach_camera(lite3d_get_render_target(0), camera);
 }

@@ -22,7 +22,7 @@
 lite3d_scene_node *lite3d_scene_node_init(lite3d_scene_node *node, lite3d_scene_node *baseNode)
 {
     SDL_assert(node);
-    lite3d_list_link_init(&node->link);
+    lite3d_list_link_init(&node->sceneLink);
     kmMat4Identity(&node->localView);
     kmMat4Identity(&node->worldView);
     kmQuaternionIdentity(&node->rotation);
@@ -30,11 +30,13 @@ lite3d_scene_node *lite3d_scene_node_init(lite3d_scene_node *node, lite3d_scene_
     node->recalc = LITE3D_TRUE;
     node->baseNode = baseNode;
     node->rotationCentered = LITE3D_TRUE;
+    node->renderable = LITE3D_TRUE;
+    node->enabled = LITE3D_TRUE;
 
     return node;
 }
 
-lite3d_scene_node *lite3d_scene_node_set_position(lite3d_scene_node *node, kmVec3 *position)
+lite3d_scene_node *lite3d_scene_node_set_position(lite3d_scene_node *node, const kmVec3 *position)
 {
     SDL_assert(node && position);
     node->position = *position;
@@ -43,7 +45,7 @@ lite3d_scene_node *lite3d_scene_node_set_position(lite3d_scene_node *node, kmVec
     return node;
 }
 
-lite3d_scene_node *lite3d_scene_node_set_rotation(lite3d_scene_node *node, kmQuaternion *quat)
+lite3d_scene_node *lite3d_scene_node_set_rotation(lite3d_scene_node *node, const kmQuaternion *quat)
 {
     SDL_assert(node && quat);
     node->rotation = *quat;
@@ -52,7 +54,7 @@ lite3d_scene_node *lite3d_scene_node_set_rotation(lite3d_scene_node *node, kmQua
     return node;
 }
 
-lite3d_scene_node *lite3d_scene_node_move(lite3d_scene_node *node, kmVec3 *position)
+lite3d_scene_node *lite3d_scene_node_move(lite3d_scene_node *node, const kmVec3 *position)
 {
     SDL_assert(node && position);
     kmVec3Add(&node->position, &node->position, position);
@@ -61,7 +63,7 @@ lite3d_scene_node *lite3d_scene_node_move(lite3d_scene_node *node, kmVec3 *posit
     return node;
 }
 
-lite3d_scene_node *lite3d_scene_node_rotate_quat(lite3d_scene_node *node, kmQuaternion *quat)
+lite3d_scene_node *lite3d_scene_node_rotate_quat(lite3d_scene_node *node, const kmQuaternion *quat)
 {
     SDL_assert(node && quat);
     kmQuaternionMultiply(&node->rotation, &node->rotation, quat);
@@ -70,7 +72,7 @@ lite3d_scene_node *lite3d_scene_node_rotate_quat(lite3d_scene_node *node, kmQuat
     return node;
 }
 
-lite3d_scene_node *lite3d_scene_node_rotate_angle(lite3d_scene_node *node, kmVec3 *axis, float angle)
+lite3d_scene_node *lite3d_scene_node_rotate_angle(lite3d_scene_node *node, const kmVec3 *axis, float angle)
 {
     kmQuaternion tmpQuat;
     SDL_assert(node && axis);

@@ -98,7 +98,8 @@ src/3dlite_video.c
 src/3dlite_render.c
 src/3dlite_main.c
 src/3dlite_camera.c
-src/3dlite_scene_node.c)
+src/3dlite_scene_node.c
+src/3dlite_scene.c)
 
 set(3DLITE_HEADERS include/3dlite/3dlite_alloc.h
 include/3dlite/3dlite_common.h
@@ -113,7 +114,8 @@ include/3dlite/3dlite_video.h
 include/3dlite/3dlite_render.h
 include/3dlite/3dlite_main.h
 include/3dlite/3dlite_camera.h
-include/3dlite/3dlite_scene_node.h)
+include/3dlite/3dlite_scene_node.h
+include/3dlite/3dlite_scene.h)
 
 add_library(3dlite SHARED ${3DLITE_SOURCES} ${3DLITE_HEADERS})
 
