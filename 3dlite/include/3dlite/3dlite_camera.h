@@ -72,8 +72,9 @@ LITE3D_CEXPORT void lite3d_camera_link_to(lite3d_camera *camera,
     lite3d_scene_node *target, uint8_t linkType);
 LITE3D_CEXPORT void lite3d_camera_tracking(lite3d_camera *camera, 
     lite3d_scene_node *target);
-LITE3D_CEXPORT void lite3d_camera_update_node(lite3d_camera *camera, 
+LITE3D_CEXPORT void lite3d_camera_to_node(lite3d_camera *camera, 
     lite3d_scene_node *node);
+LITE3D_CEXPORT void lite3d_camera_update_view(lite3d_camera *camera);
 LITE3D_CEXPORT void lite3d_camera_ortho(lite3d_camera *camera, float near,
     float far, float left, float right, float bottom, float top);
 LITE3D_CEXPORT void lite3d_camera_perspective(lite3d_camera *camera, float znear,

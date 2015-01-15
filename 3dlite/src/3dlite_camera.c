@@ -21,26 +21,19 @@
 #include <3dlite/GL/glew.h>
 #include <3dlite/3dlite_camera.h>
 
-void lite3d_camera_update_node(lite3d_camera *camera, lite3d_scene_node *node)
+void lite3d_camera_to_node(lite3d_camera *camera, lite3d_scene_node *node)
 {
     SDL_assert(camera && node);
-
-    glMatrixMode(GL_PROJECTION);
-    glLoadMatrixf(camera->projection.mat);
-
-    lite3d_scene_node_update(node);
-    /* camera link to node */
-    lite3d_camera_link_to(camera, camera->linkNode, camera->linkType);
-    /* camera track object */
-    lite3d_camera_tracking(camera, camera->trackNode);
-    /* compute local camera matrix */
-    lite3d_scene_node_update(&camera->cameraNode);
-
     /* world to camera */
     kmMat4Multiply(&camera->cameraNode.worldView, &camera->cameraNode.localView, &node->worldView);
-
+    /* set modelview */
     glMatrixMode(GL_MODELVIEW);
     glLoadMatrixf(camera->cameraNode.worldView.mat);
+}
+
+void lite3d_camera_update_view(lite3d_camera *camera)
+{
+    SDL_assert(camera);
 
     glPolygonMode(GL_FRONT_AND_BACK, camera->polygonMode);
     if (camera->cullBackFaces)
@@ -52,6 +45,17 @@ void lite3d_camera_update_node(lite3d_camera *camera, lite3d_scene_node *node)
     {
         glDisable(GL_CULL_FACE);
     }
+
+    /* set projection */
+    glMatrixMode(GL_PROJECTION);
+    glLoadMatrixf(camera->projection.mat);
+
+    /* camera link to node */
+    lite3d_camera_link_to(camera, camera->linkNode, camera->linkType);
+    /* camera track object */
+    lite3d_camera_tracking(camera, camera->trackNode);
+    /* compute local camera matrix */
+    lite3d_scene_node_update(&camera->cameraNode);
 }
 
 void lite3d_camera_ortho(lite3d_camera *camera, float near,
@@ -161,7 +165,7 @@ void lite3d_camera_rotate(lite3d_camera *camera,
     const kmQuaternion *orietation)
 {
     SDL_assert(camera);
-    lite3d_scene_node_rotate_quat(&camera->cameraNode, orietation);
+    lite3d_scene_node_rotate(&camera->cameraNode, orietation);
 }
 
 void lite3d_camera_yaw(lite3d_camera *camera, float angle)

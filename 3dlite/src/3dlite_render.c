@@ -32,9 +32,7 @@ static lite3d_list gRenderTargets;
 static lite3d_render_listeners gRenderListeners;
 static uint8_t gRenderStarted = LITE3D_TRUE;
 static uint8_t gRenderActive = LITE3D_TRUE;
-static lite3d_render_stats gRenderStats = {
-    0, 0, 0, 0, 0.0, 0.0, 0.0, 0.0, 0
-};
+static lite3d_render_stats gRenderStats;
 
 static void calc_render_stats(uint64_t beginFrame, uint64_t endFrame)
 {
@@ -55,6 +53,9 @@ static void calc_render_stats(uint64_t beginFrame, uint64_t endFrame)
         gRenderStats.worstFrameMs = gRenderStats.lastFrameMs;
 
     gRenderStats.avrFrameMs = (gRenderStats.lastFrameMs + gRenderStats.avrFrameMs) / 2;
+
+    gRenderStats.triangleByBatch = gRenderStats.batchesByFrame ? gRenderStats.trianglesByFrame / gRenderStats.batchesByFrame : 0;
+    gRenderStats.triangleMs = gRenderStats.trianglesByFrame ? (float)gRenderStats.lastFPS / (float)gRenderStats.trianglesByFrame : 0;
 
     /* second elapsed */
     if ((endFrame - gLastMark) > gPerfFreq)
@@ -94,7 +95,15 @@ static void update_render_target(lite3d_render_target *target)
     {
         camera = MEMBERCAST(lite3d_camera, node, renderTargetLink);
         scene = (lite3d_scene *)camera->cameraNode.scene;
-        lite3d_render_scene(scene, camera);
+        lite3d_scene_render(scene, camera);
+
+        /* accamulate statistic */
+        gRenderStats.trianglesByFrame += scene->stats.trianglesRendered;
+        gRenderStats.objectsByFrame += scene->stats.objectsRendered;
+        gRenderStats.batchesByFrame += scene->stats.batches;
+        gRenderStats.materialsByFrame += scene->stats.materialBlocks;
+        gRenderStats.materialsPassedByFrame += scene->stats.materialPassed;
+        gRenderStats.textureUnitsByFrame += scene->stats.textureUnits;
     }
 
     /* TODO: remove this */
@@ -115,12 +124,12 @@ static int update_render_targets(void)
             continue;
 
         if (target->preUpdate)
-            target->preUpdate(target->userdata);
+            target->preUpdate(target);
 
         update_render_target(target);
 
         if (target->postUpdate)
-            target->postUpdate(target->userdata);
+            target->postUpdate(target);
 
         if (target->isRoot)
             lite3d_swap_buffers();
@@ -138,11 +147,19 @@ void lite3d_render_loop(lite3d_render_listeners *callbacks)
     uint64_t beginFrameMark;
     gRenderListeners = *callbacks;
 
+    memset(&gRenderStats, 0, sizeof(gRenderStats));
     if (gRenderListeners.preRender && !gRenderListeners.preRender(gRenderListeners.userdata))
         return;
 
     while (gRenderStarted)
     {
+        gRenderStats.trianglesByFrame = 
+        gRenderStats.objectsByFrame = 
+        gRenderStats.batchesByFrame = 
+        gRenderStats.materialsByFrame = 
+        gRenderStats.materialsPassedByFrame = 
+        gRenderStats.textureUnitsByFrame = 0;
+
         beginFrameMark = SDL_GetPerformanceCounter();
 
         if (gRenderActive)
@@ -235,7 +252,7 @@ lite3d_render_target *lite3d_get_render_target(int32_t ID)
 void lite3d_erase_all_render_targets(void)
 {
     lite3d_list_node *node = NULL;
-    while ((node = lite3d_list_remove_first_link(&gRenderTargets)))
+    while ((node = lite3d_list_remove_first_link(&gRenderTargets)) != NULL)
         lite3d_free(MEMBERCAST(lite3d_render_target, node, node));
 }
 

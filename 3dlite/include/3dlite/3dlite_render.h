@@ -31,8 +31,6 @@ typedef int (*lite3d_pre_frame_t)(void *userdata);
 typedef int (*lite3d_post_frame_t)(void *userdata);
 typedef int (*lite3d_render_frame_t)(void *userdata);
 typedef int (*lite3d_process_event_t)(SDL_Event *levent, void *userdata);
-typedef void (*lite3d_render_target_pre_update_t)(void *userdata);
-typedef void (*lite3d_render_target_post_update_t)(void *userdata);
 
 typedef struct lite3d_render_listeners
 {
@@ -56,6 +54,14 @@ typedef struct lite3d_render_stats
     float bestFrameMs;
     float worstFrameMs;
     int32_t renderTargets;
+    int32_t trianglesByFrame;
+    float triangleMs;
+    int32_t triangleByBatch;
+    int32_t objectsByFrame;
+    int32_t batchesByFrame;
+    int32_t materialsByFrame;
+    int32_t materialsPassedByFrame;
+    int32_t textureUnitsByFrame;
 } lite3d_render_stats;
 
 typedef struct lite3d_render_target
@@ -67,8 +73,8 @@ typedef struct lite3d_render_target
     int8_t isRoot;
     void *userdata;
     uint8_t enabled;
-    lite3d_render_target_pre_update_t preUpdate;
-    lite3d_render_target_post_update_t postUpdate;
+    void (*preUpdate)(struct lite3d_render_target *target);
+    void (*postUpdate)(struct lite3d_render_target *target);
     lite3d_list renderQueue;
     int32_t bufCleanMask;
 } lite3d_render_target;

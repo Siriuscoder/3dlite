@@ -23,12 +23,26 @@
 #include <3dlite/3dlite_common.h>
 #include <3dlite/3dlite_camera.h>
 
+typedef struct lite3d_scene_stats
+{
+    int32_t trianglesRendered;
+    int32_t objectsRendered;
+    int32_t batches;
+    int32_t materialBlocks;
+    int32_t textureUnits;
+    int32_t materialPassed;
+} lite3d_scene_stats;
+
 typedef struct lite3d_scene
 {
-    uint8_t tmp;
+    lite3d_scene_node rootNode;
+    lite3d_scene_stats stats;
+    void (*preRender)(struct lite3d_scene *scene, lite3d_camera *camera);
+    void (*postRender)(struct lite3d_scene *scene, lite3d_camera *camera);
+    void *userdata;
 } lite3d_scene;
 
-LITE3D_CEXPORT void lite3d_render_scene(lite3d_scene *scene, lite3d_camera *camera);
+LITE3D_CEXPORT void lite3d_scene_render(lite3d_scene *scene, lite3d_camera *camera);
 
 #endif	/* LITE3D_SCENE_H */
 

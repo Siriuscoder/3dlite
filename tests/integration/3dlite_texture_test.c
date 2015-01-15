@@ -221,10 +221,12 @@ static void draw_box(void)
 static int frame(void *userdata)
 {
     int i = 0;
+    lite3d_camera_update_view(&mCamera01);
+
     for (; i < sizeof (mSceneNode) / sizeof (lite3d_scene_node); ++i)
     {
         mCamera01.cameraNode.recalc = LITE3D_TRUE;
-        lite3d_camera_update_node(&mCamera01, &mSceneNode[i]);
+        lite3d_camera_to_node(&mCamera01, &mSceneNode[i]);
         draw_box();
     }
 

@@ -27,7 +27,7 @@
 
 typedef struct  lite3d_scene_node
 {
-    lite3d_list_node sceneLink;
+    lite3d_list_node nodeLink;
     kmMat4 localView;
     kmMat4 worldView;
     kmQuaternion rotation;
@@ -37,6 +37,8 @@ typedef struct  lite3d_scene_node
     uint8_t renderable;
     uint8_t enabled;
     struct lite3d_scene_node *baseNode;
+    struct lite3d_list childNodes;
+    void (*doRenderNode)(struct lite3d_scene_node *node);
     void *scene;
 } lite3d_scene_node;
 
@@ -44,7 +46,7 @@ LITE3D_CEXPORT lite3d_scene_node *lite3d_scene_node_init(lite3d_scene_node *node
 LITE3D_CEXPORT lite3d_scene_node *lite3d_scene_node_set_position(lite3d_scene_node *node, const kmVec3 *position);
 LITE3D_CEXPORT lite3d_scene_node *lite3d_scene_node_move(lite3d_scene_node *node, const kmVec3 *position);
 LITE3D_CEXPORT lite3d_scene_node *lite3d_scene_node_set_rotation(lite3d_scene_node *node, const kmQuaternion *quat);
-LITE3D_CEXPORT lite3d_scene_node *lite3d_scene_node_rotate_quat(lite3d_scene_node *node, const kmQuaternion *quat);
+LITE3D_CEXPORT lite3d_scene_node *lite3d_scene_node_rotate(lite3d_scene_node *node, const kmQuaternion *quat);
 LITE3D_CEXPORT lite3d_scene_node *lite3d_scene_node_rotate_angle(lite3d_scene_node *node, const kmVec3 *axis, float angle);
 
 LITE3D_CEXPORT uint8_t lite3d_scene_node_update(lite3d_scene_node *node);
