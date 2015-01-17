@@ -39,10 +39,16 @@ typedef struct lite3d_scene
     lite3d_scene_stats stats;
     void (*preRender)(struct lite3d_scene *scene, lite3d_camera *camera);
     void (*postRender)(struct lite3d_scene *scene, lite3d_camera *camera);
+    void (*preRenderNode)(struct lite3d_scene *scene, lite3d_scene_node *node);
+    void (*postRenderNode)(struct lite3d_scene *scene, lite3d_scene_node *node);
     void *userdata;
 } lite3d_scene;
 
 LITE3D_CEXPORT void lite3d_scene_render(lite3d_scene *scene, lite3d_camera *camera);
+LITE3D_CEXPORT void lite3d_scene_init(lite3d_scene *scene);
+LITE3D_CEXPORT void lite3d_scene_node_add(lite3d_scene *scene, lite3d_scene_node *node, 
+    lite3d_scene_node *baseNode);
+LITE3D_CEXPORT void lite3d_scene_node_remove(lite3d_scene *scene, lite3d_scene_node *node);
 
 #endif	/* LITE3D_SCENE_H */
 

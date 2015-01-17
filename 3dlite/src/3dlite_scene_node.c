@@ -15,6 +15,7 @@
  *	You should have received a copy of the GNU General Public License
  *	along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
+#include <string.h>
 #include <SDL_assert.h>
 #include <3dlite/GL/glew.h>
 #include <3dlite/3dlite_scene_node.h>
@@ -22,6 +23,7 @@
 lite3d_scene_node *lite3d_scene_node_init(lite3d_scene_node *node, lite3d_scene_node *baseNode)
 {
     SDL_assert(node);
+    memset(node, 0, sizeof(lite3d_scene_node));
     lite3d_list_link_init(&node->nodeLink);
     kmMat4Identity(&node->localView);
     kmMat4Identity(&node->worldView);

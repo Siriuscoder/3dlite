@@ -22,7 +22,7 @@
 #include <3dlite/3dlite_alloc.h>
 #include <3dlite/3dlite_scene.h>
 
-static void lite3d_scene_recursive_render(lite3d_scene *scene, lite3d_scene_node *node, lite3d_camera *camera)
+static void scene_recursive_render(lite3d_scene *scene, lite3d_scene_node *node, lite3d_camera *camera)
 {
     lite3d_list_node *nodeLink;
     lite3d_scene_node *child;
@@ -37,7 +37,7 @@ static void lite3d_scene_recursive_render(lite3d_scene *scene, lite3d_scene_node
         child->recalc = recalcNode;
         if(child->enabled)
         {
-            lite3d_scene_recursive_render(scene, child, camera);
+            scene_recursive_render(scene, child, camera);
         }
     }
 
@@ -46,7 +46,15 @@ static void lite3d_scene_recursive_render(lite3d_scene *scene, lite3d_scene_node
     /* and now draw node */
     if(node->renderable)
     {
-        node->doRenderNode(node);
+        if(scene->preRenderNode)
+            scene->preRenderNode(scene, node);
+        /*  render node directly.. may be any object of: mesh, 
+            paticle system, skin, cubebox, etc. */
+        if(node->doRenderNode)
+            node->doRenderNode(node);
+
+        if(scene->postRenderNode)
+            scene->postRenderNode(scene, node);
         scene->stats.objectsRendered++;
     }
 }
@@ -62,8 +70,37 @@ void lite3d_scene_render(lite3d_scene *scene, lite3d_camera *camera)
     /* setup camera projection */
     lite3d_camera_update_view(camera);
     /* render scene tree */
-    lite3d_scene_recursive_render(scene, &scene->rootNode, camera);
+    scene_recursive_render(scene, &scene->rootNode, camera);
 
     if(scene->postRender)
         scene->postRender(scene, camera);
+}
+
+void lite3d_scene_init(lite3d_scene *scene)
+{
+    SDL_assert(scene);
+    memset(scene, 0, sizeof(lite3d_scene));
+    /* root scene node */
+    lite3d_scene_node_init(&scene->rootNode, NULL);
+    /* never render this node */ 
+    scene->rootNode.renderable = LITE3D_FALSE;
+}
+
+void lite3d_scene_node_add(lite3d_scene *scene, lite3d_scene_node *node, 
+    lite3d_scene_node *baseNode)
+{
+    SDL_assert(scene && node);
+
+    /* mean root node */
+    if(!baseNode)
+        baseNode = &scene->rootNode;
+
+    node->baseNode = baseNode;
+    lite3d_list_add_last_link(&node->nodeLink, &baseNode->childNodes);
+}
+
+void lite3d_scene_node_remove(lite3d_scene *scene, lite3d_scene_node *node)
+{
+    lite3d_list_unlink_link(&node->nodeLink);
+    node->baseNode = NULL;
 }
