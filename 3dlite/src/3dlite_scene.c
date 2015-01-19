@@ -34,7 +34,7 @@ static void scene_recursive_render(lite3d_scene *scene, lite3d_scene_node *node,
         nodeLink != &node->childNodes.l; nodeLink = lite3d_list_next(nodeLink))
     {
         child = MEMBERCAST(lite3d_scene_node, nodeLink, nodeLink);
-        child->recalc = recalcNode;
+        child->recalc = recalcNode ? LITE3D_TRUE : child->recalc;
         if(child->enabled)
         {
             scene_recursive_render(scene, child, camera);
@@ -81,7 +81,7 @@ void lite3d_scene_init(lite3d_scene *scene)
     SDL_assert(scene);
     memset(scene, 0, sizeof(lite3d_scene));
     /* root scene node */
-    lite3d_scene_node_init(&scene->rootNode, NULL);
+    lite3d_scene_node_init(&scene->rootNode);
     /* never render this node */ 
     scene->rootNode.renderable = LITE3D_FALSE;
 }
@@ -96,6 +96,7 @@ void lite3d_scene_node_add(lite3d_scene *scene, lite3d_scene_node *node,
         baseNode = &scene->rootNode;
 
     node->baseNode = baseNode;
+    node->scene = scene;
     lite3d_list_add_last_link(&node->nodeLink, &baseNode->childNodes);
 }
 

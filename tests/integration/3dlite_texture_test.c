@@ -20,7 +20,7 @@
 #include <SDL_log.h>
 #include <3dlite/GL/glew.h>
 #include <3dlite/3dlite_main.h>
-#include <3dlite/3dlite_camera.h>
+#include <3dlite/3dlite_scene.h>
 
 #define DEFAULT_WIDTH           800
 #define DEFAULT_HEIGHT          600
@@ -30,7 +30,7 @@ static lite3d_resource_pack *m7zPack = NULL;
 static lite3d_texture_unit *mNormandy = NULL, *mMinigun = NULL;
 static lite3d_camera mCamera01;
 static kmVec3 cameraInitPos = {
-    5.0f, 5.0f, 5.0f
+    -5.0f, 5.0f, 5.0f
 };
 
 static kmVec3 cameraLookAt = {
@@ -43,8 +43,14 @@ static kmVec3 nodePos[] = {
     { 2.2f, 0.0f, 0.0f}
 };
 
-static kmVec3 rotAxis = {
-    0.0f, .0f, 1.0f
+static kmVec3 nodeScale[] = {
+    { 0.3f, 0.3f, 0.3f},
+    { 0.5f, 0.5f, 0.5f},
+    { 0.7f, 0.7f, 0.7f}
+};
+
+static kmVec3 rotAxisZ = {
+    0.0f, 0.0f, 1.0f
 };
 
 static kmVec3 rotAxisY = {
@@ -52,11 +58,15 @@ static kmVec3 rotAxisY = {
 };
 
 static kmVec3 mVecMove = {
-    0.0f, 0.0f, 0.001f
+    0.0f, 0.05f, 0.0f
 };
 
 static lite3d_scene_node mSceneNode[3];
 static lite3d_scene_node mSceneNodeInherited[3];
+
+static lite3d_scene mScene;
+
+static void draw_box(struct lite3d_scene_node *node);
 
 static int process_events(SDL_Event *levent, void *userdata)
 {
@@ -80,8 +90,16 @@ static int process_events(SDL_Event *levent, void *userdata)
         }
         else if (levent->key.keysym.sym == SDLK_F2)
         {
-            lite3d_scene_node_rotate_angle(&mSceneNode[2], &rotAxis, kmDegreesToRadians(5));
-            mSceneNodeInherited[2].recalc = LITE3D_TRUE;
+            lite3d_scene_node_rotate_angle(&mSceneNode[2], &rotAxisZ, kmDegreesToRadians(5));
+        }
+        else if (levent->key.keysym.sym == SDLK_F3)
+        {
+            kmVec3 vec;
+            kmMat4 mat;
+            kmMat4RotationQuaternion(&mat, &mCamera01.cameraNode.rotation);
+            kmMat4GetForwardVec3RH(&vec, &mat);
+            
+            lite3d_camera_move(&mCamera01, &vec);
         }
     }
 
@@ -106,36 +124,42 @@ static int init(void *userdata)
         LITE3D_TEXTURE_QL_NICEST)))
         return LITE3D_FALSE;
 
-    lite3d_camera_init(&mCamera01, NULL);
+    lite3d_camera_init(&mCamera01);
 
     lite3d_add_render_target(1, 10,
         10, 0, NULL)->enabled = LITE3D_FALSE;
 
-    glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-    glClearDepth(1.0);
-    glDepthFunc(GL_LESS);
-    glEnable(GL_DEPTH_TEST);
-    glShadeModel(GL_SMOOTH);
-
     lite3d_camera_perspective(&mCamera01, 0.1f, 100.0f, 45.0f, (float) DEFAULT_WIDTH / (float) DEFAULT_HEIGHT);
-    lite3d_scene_node_set_position(&mCamera01.cameraNode, &cameraInitPos);
-    //lite3d_camera_lookAt(&mCamera01, &nodePos[2]);
-    lite3d_scene_node_rotate_angle(&mCamera01.cameraNode, &rotAxis, kmDegreesToRadians(90));
-    lite3d_scene_node_rotate_angle(&mCamera01.cameraNode, &rotAxisY, kmDegreesToRadians(90));
-    
+    lite3d_camera_set_position(&mCamera01, &cameraInitPos);
+    lite3d_camera_lookAt(&mCamera01, &nodePos[1]);
+    //lite3d_scene_node_rotate_angle(&mCamera01.cameraNode, &rotAxis, kmDegreesToRadians(90));
+    //lite3d_scene_node_rotate_angle(&mCamera01.cameraNode, &rotAxisY, kmDegreesToRadians(90));
+
+    lite3d_scene_init(&mScene);
     for (; i < sizeof (mSceneNode) / sizeof (lite3d_scene_node); ++i)
     {
         kmVec3 tmp = {
             0.0f, 0.0f, 2.0f
         };
 
-        lite3d_scene_node_init(&mSceneNode[i], NULL);
-        lite3d_scene_node_init(&mSceneNodeInherited[i], &mSceneNode[i]);
+        lite3d_scene_node_init(&mSceneNode[i]);
+        lite3d_scene_node_init(&mSceneNodeInherited[i]);
+
         lite3d_scene_node_set_position(&mSceneNode[i], &nodePos[i]);
+
         lite3d_scene_node_set_position(&mSceneNodeInherited[i], &tmp);
+        lite3d_scene_node_scale(&mSceneNodeInherited[i], &nodeScale[i]);
+
+        lite3d_scene_node_add(&mScene, &mSceneNode[i], NULL);
+        lite3d_scene_node_add(&mScene, &mSceneNodeInherited[i], &mSceneNode[i]);
+
+        mSceneNode[i].doRenderNode = mSceneNodeInherited[i].doRenderNode = draw_box;
     }
 
-    lite3d_camera_link_to(&mCamera01, &mSceneNode[0], LITE3D_CAMERA_LINK_POSITION);
+    lite3d_scene_node_add(&mScene, &mCamera01.cameraNode, NULL);
+    lite3d_root_render_target_attach_camera(&mCamera01);
+    //lite3d_camera_link_to(&mCamera01, &mSceneNode[2], LITE3D_CAMERA_LINK_ORIENTATION);
+    //lite3d_camera_tracking(&mCamera01, &mSceneNode[2]);
 
     return LITE3D_TRUE;
 }
@@ -150,7 +174,7 @@ static int shutdown(void *userdata)
     return LITE3D_TRUE;
 }
 
-static void draw_box(void)
+static void draw_box(struct lite3d_scene_node *node)
 {
     lite3d_texture_unit_bind(mMinigun);
 
@@ -218,28 +242,6 @@ static void draw_box(void)
     lite3d_texture_unit_unbind(mNormandy);
 }
 
-static int frame(void *userdata)
-{
-    int i = 0;
-    lite3d_camera_update_view(&mCamera01);
-
-    for (; i < sizeof (mSceneNode) / sizeof (lite3d_scene_node); ++i)
-    {
-        mCamera01.cameraNode.recalc = LITE3D_TRUE;
-        lite3d_camera_to_node(&mCamera01, &mSceneNode[i]);
-        draw_box();
-    }
-
-    lite3d_scene_node_move(&mSceneNode[0], &mVecMove);
-    lite3d_scene_node_rotate_angle(&mSceneNode[0], &rotAxis, 0.001f);
-    if (mSceneNode[0].position.z > 10.0f || mSceneNode[0].position.z < -10.0f)
-        mVecMove.z *= -1;
-
-    lite3d_camera_lookAt(&mCamera01, &mSceneNode[2].position);
-
-    return LITE3D_TRUE;
-}
-
 int main(int argc, char *args[])
 {
     lite3d_global_settings settings;
@@ -258,7 +260,6 @@ int main(int argc, char *args[])
     settings.renderLisneters.processEvent = process_events;
     settings.renderLisneters.preRender = init;
     settings.renderLisneters.postRender = shutdown;
-    settings.renderLisneters.renderFrame = frame;
 
     return !lite3d_main(&settings);
 }

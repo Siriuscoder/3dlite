@@ -84,12 +84,12 @@ void lite3d_camera_perspective(lite3d_camera *camera, float znear,
     kmMat4PerspectiveProjection(&camera->projection, fovy, aspect, znear, zfar);
 }
 
-void lite3d_camera_init(lite3d_camera *camera, lite3d_scene_node *baseNode)
+void lite3d_camera_init(lite3d_camera *camera)
 {
     SDL_assert(camera);
 
     memset(camera, 0, sizeof (lite3d_camera));
-    lite3d_scene_node_init(&camera->cameraNode, baseNode);
+    lite3d_scene_node_init(&camera->cameraNode);
     camera->cameraNode.rotationCentered = LITE3D_FALSE;
     camera->cameraNode.renderable = LITE3D_FALSE;
     kmMat4Identity(&camera->projection);
@@ -113,7 +113,7 @@ void lite3d_camera_lookAt(lite3d_camera *camera, const kmVec3 *pointTo)
     camera->cameraNode.recalc = LITE3D_TRUE;
 }
 
-void lite3d_camera_link_to(lite3d_camera *camera, 
+void lite3d_camera_link_to(lite3d_camera *camera,
     lite3d_scene_node *target, uint8_t linkType)
 {
     SDL_assert(camera);
@@ -121,9 +121,9 @@ void lite3d_camera_link_to(lite3d_camera *camera,
     camera->linkNode = target;
     camera->linkType = linkType;
 
-    if(camera->linkNode)
+    if (camera->linkNode)
     {
-        if(lite3d_scene_node_update(camera->linkNode))
+        if (lite3d_scene_node_update(camera->linkNode))
             camera->cameraNode.recalc = LITE3D_TRUE;
 
         if (linkType & LITE3D_CAMERA_LINK_POSITION)
@@ -134,19 +134,19 @@ void lite3d_camera_link_to(lite3d_camera *camera,
     }
 }
 
-void lite3d_camera_tracking(lite3d_camera *camera, 
+void lite3d_camera_tracking(lite3d_camera *camera,
     lite3d_scene_node *target)
 {
     SDL_assert(camera);
 
     camera->trackNode = target;
-    if(camera->trackNode)
+    if (camera->trackNode)
     {
         lite3d_camera_lookAt(camera, &camera->trackNode->position);
     }
 }
 
-void lite3d_camera_set_position(lite3d_camera *camera, 
+void lite3d_camera_set_position(lite3d_camera *camera,
     const kmVec3 *position)
 {
     kmVec3 postmp;
@@ -154,14 +154,14 @@ void lite3d_camera_set_position(lite3d_camera *camera,
     lite3d_scene_node_set_position(&camera->cameraNode, &postmp);
 }
 
-void lite3d_camera_set_rotation(lite3d_camera *camera, 
+void lite3d_camera_set_rotation(lite3d_camera *camera,
     const kmQuaternion *orientation)
 {
     SDL_assert(camera);
     lite3d_scene_node_set_rotation(&camera->cameraNode, orientation);
 }
 
-void lite3d_camera_rotate(lite3d_camera *camera, 
+void lite3d_camera_rotate(lite3d_camera *camera,
     const kmQuaternion *orietation)
 {
     SDL_assert(camera);
@@ -171,28 +171,34 @@ void lite3d_camera_rotate(lite3d_camera *camera,
 void lite3d_camera_yaw(lite3d_camera *camera, float angle)
 {
     kmVec3 vecLocal;
+    kmQuaternion quat;
 
     SDL_assert(camera);
     kmQuaternionMultiplyVec3(&vecLocal, &camera->cameraNode.rotation, &KM_VEC3_POS_Y);
-    kmQuaternionRotationAxisAngle(&camera->cameraNode.rotation, &vecLocal, angle);
+    kmQuaternionRotationAxisAngle(&quat, &vecLocal, angle);  
+    lite3d_camera_rotate(camera, &quat);
 }
 
 void lite3d_camera_pitch(lite3d_camera *camera, float angle)
 {
     kmVec3 vecLocal;
+    kmQuaternion quat;
 
     SDL_assert(camera);
     kmQuaternionMultiplyVec3(&vecLocal, &camera->cameraNode.rotation, &KM_VEC3_POS_X);
-    kmQuaternionRotationAxisAngle(&camera->cameraNode.rotation, &vecLocal, angle);
+    kmQuaternionRotationAxisAngle(&quat, &vecLocal, angle);
+    lite3d_camera_rotate(camera, &quat);
 }
 
 void lite3d_camera_roll(lite3d_camera *camera, float angle)
 {
     kmVec3 vecLocal;
+    kmQuaternion quat;
 
     SDL_assert(camera);
     kmQuaternionMultiplyVec3(&vecLocal, &camera->cameraNode.rotation, &KM_VEC3_POS_Z);
-    kmQuaternionRotationAxisAngle(&camera->cameraNode.rotation, &vecLocal, angle);
+    kmQuaternionRotationAxisAngle(&quat, &vecLocal, angle);  
+    lite3d_camera_rotate(camera, &quat);
 }
 
 void lite3d_camera_move(lite3d_camera *camera, const kmVec3 *value)
@@ -204,12 +210,12 @@ void lite3d_camera_move(lite3d_camera *camera, const kmVec3 *value)
     lite3d_scene_node_move(&camera->cameraNode, &postmp);
 }
 
-void lite3d_camera_move_relative(lite3d_camera *camera, 
+void lite3d_camera_move_relative(lite3d_camera *camera,
     const kmVec3 *vec)
 {
     kmVec3 vecLocalCamera;
 
     SDL_assert(camera);
     kmQuaternionMultiplyVec3(&vecLocalCamera, &camera->cameraNode.rotation, vec);
-    lite3d_camera_move(camera, &vecLocalCamera);
+    lite3d_scene_node_move(&camera->cameraNode, &vecLocalCamera);
 }

@@ -89,7 +89,7 @@ static void update_render_target(lite3d_render_target *target)
     /* set viewport */
     glViewport(0, 0, target->width, target->height);
     /* clear target */
-    glClear(target->bufCleanMask);
+    glClear(target->cleanMask);
     /* do paint by render queue */
     for (node = target->renderQueue.l.next; node != &target->renderQueue.l; node = lite3d_list_next(node))
     {
@@ -105,10 +105,6 @@ static void update_render_target(lite3d_render_target *target)
         gRenderStats.materialsPassedByFrame += scene->stats.materialPassed;
         gRenderStats.textureUnitsByFrame += scene->stats.textureUnits;
     }
-
-    /* TODO: remove this */
-    if (gRenderListeners.renderFrame)
-        gRenderListeners.renderFrame(gRenderListeners.userdata);
 }
 
 static int update_render_targets(void)
@@ -214,7 +210,8 @@ lite3d_render_target *lite3d_add_render_target(int32_t ID, int32_t width,
     target->enabled = LITE3D_TRUE;
     target->ID = ID;
     lite3d_list_init(&target->renderQueue);
-
+    target->cleanMask = GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT;
+    
     lite3d_list_add_first_link(&target->node, &gRenderTargets);
     return target;
 }
@@ -276,6 +273,15 @@ int lite3d_render_init(void)
     gPerfFreq = SDL_GetPerformanceFrequency();
     memset(&gRenderStats, 0, sizeof (gRenderStats));
     lite3d_list_init(&gRenderTargets);
+    
+    /* init common GL variables */
+    glClearColor(0.3f, 0.3f, 0.3f, 0.0f);
+    /* enable depth test */
+    glClearDepth(1.0);
+    glDepthFunc(GL_LESS);
+    glEnable(GL_DEPTH_TEST);
+    /* for fixed pipeline GL operations */
+    glShadeModel(GL_SMOOTH);
 
     return LITE3D_TRUE;
 }

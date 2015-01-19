@@ -20,7 +20,7 @@
 #include <3dlite/GL/glew.h>
 #include <3dlite/3dlite_scene_node.h>
 
-lite3d_scene_node *lite3d_scene_node_init(lite3d_scene_node *node, lite3d_scene_node *baseNode)
+lite3d_scene_node *lite3d_scene_node_init(lite3d_scene_node *node)
 {
     SDL_assert(node);
     memset(node, 0, sizeof(lite3d_scene_node));
@@ -31,7 +31,6 @@ lite3d_scene_node *lite3d_scene_node_init(lite3d_scene_node *node, lite3d_scene_
     kmVec3Fill(&node->position, 0, 0, 0);
     kmVec3Fill(&node->scale, 1.0f, 1.0f, 1.0f); 
     node->recalc = LITE3D_TRUE;
-    node->baseNode = baseNode;
     node->rotationCentered = LITE3D_TRUE;
     node->renderable = LITE3D_TRUE;
     node->enabled = LITE3D_TRUE;
@@ -121,7 +120,7 @@ uint8_t lite3d_scene_node_update(lite3d_scene_node *node)
                 node->scale.y,
                 node->scale.z);
 
-            kmMat4Multiply(&transMat, &scaleMat, &transMat);
+            kmMat4Multiply(&transMat, &transMat, &scaleMat);
         }
 
         if (node->rotationCentered)

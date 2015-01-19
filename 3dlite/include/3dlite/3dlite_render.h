@@ -29,7 +29,6 @@ typedef int (*lite3d_pre_render_t)(void *userdata);
 typedef int (*lite3d_post_render_t)(void *userdata);
 typedef int (*lite3d_pre_frame_t)(void *userdata);
 typedef int (*lite3d_post_frame_t)(void *userdata);
-typedef int (*lite3d_render_frame_t)(void *userdata);
 typedef int (*lite3d_process_event_t)(SDL_Event *levent, void *userdata);
 
 typedef struct lite3d_render_listeners
@@ -38,7 +37,6 @@ typedef struct lite3d_render_listeners
     lite3d_post_render_t postRender;
     lite3d_pre_frame_t preFrame;
     lite3d_post_frame_t postFrame;
-    lite3d_render_frame_t renderFrame;
     lite3d_process_event_t processEvent;
     void *userdata;
 } lite3d_render_listeners;
@@ -76,7 +74,7 @@ typedef struct lite3d_render_target
     void (*preUpdate)(struct lite3d_render_target *target);
     void (*postUpdate)(struct lite3d_render_target *target);
     lite3d_list renderQueue;
-    int32_t bufCleanMask;
+    int32_t cleanMask;
 } lite3d_render_target;
 
 LITE3D_CEXPORT int lite3d_render_init(void);
