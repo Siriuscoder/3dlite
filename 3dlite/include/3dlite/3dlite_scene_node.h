@@ -32,6 +32,7 @@ typedef struct  lite3d_scene_node
     kmMat4 worldView;
     kmQuaternion rotation;
     kmVec3 position;
+    kmVec3 scale;
     uint8_t recalc;
     uint8_t rotationCentered;
     uint8_t renderable;
@@ -48,6 +49,7 @@ LITE3D_CEXPORT lite3d_scene_node *lite3d_scene_node_move(lite3d_scene_node *node
 LITE3D_CEXPORT lite3d_scene_node *lite3d_scene_node_set_rotation(lite3d_scene_node *node, const kmQuaternion *quat);
 LITE3D_CEXPORT lite3d_scene_node *lite3d_scene_node_rotate(lite3d_scene_node *node, const kmQuaternion *quat);
 LITE3D_CEXPORT lite3d_scene_node *lite3d_scene_node_rotate_angle(lite3d_scene_node *node, const kmVec3 *axis, float angle);
+LITE3D_CEXPORT lite3d_scene_node *lite3d_scene_node_scale(lite3d_scene_node *node, const kmVec3 *scale);
 
 LITE3D_CEXPORT uint8_t lite3d_scene_node_update(lite3d_scene_node *node);
 

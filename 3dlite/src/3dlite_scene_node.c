@@ -29,6 +29,7 @@ lite3d_scene_node *lite3d_scene_node_init(lite3d_scene_node *node, lite3d_scene_
     kmMat4Identity(&node->worldView);
     kmQuaternionIdentity(&node->rotation);
     kmVec3Fill(&node->position, 0, 0, 0);
+    kmVec3Fill(&node->scale, 1.0f, 1.0f, 1.0f); 
     node->recalc = LITE3D_TRUE;
     node->baseNode = baseNode;
     node->rotationCentered = LITE3D_TRUE;
@@ -85,6 +86,15 @@ lite3d_scene_node *lite3d_scene_node_rotate_angle(lite3d_scene_node *node, const
     return node;
 }
 
+lite3d_scene_node *lite3d_scene_node_scale(lite3d_scene_node *node, const kmVec3 *scale)
+{
+    SDL_assert(node && scale);
+    node->scale = *scale;
+    node->recalc = LITE3D_TRUE;
+
+    return node;
+}
+
 uint8_t lite3d_scene_node_update(lite3d_scene_node *node)
 {
     uint8_t updated = LITE3D_FALSE;
@@ -93,6 +103,7 @@ uint8_t lite3d_scene_node_update(lite3d_scene_node *node)
     if (node->recalc)
     {
         kmMat4 transMat;
+        kmMat4 scaleMat;
         kmQuaternionNormalize(&node->rotation,
             &node->rotation);
 
@@ -101,6 +112,17 @@ uint8_t lite3d_scene_node_update(lite3d_scene_node *node)
             node->position.x,
             node->position.y,
             node->position.z);
+
+        if (node->scale.x != 1.0f || 
+            node->scale.y != 1.0f || 
+            node->scale.z != 1.0f)
+        {
+            kmMat4Scaling(&scaleMat, node->scale.x, 
+                node->scale.y,
+                node->scale.z);
+
+            kmMat4Multiply(&transMat, &scaleMat, &transMat);
+        }
 
         if (node->rotationCentered)
             kmMat4Multiply(&node->localView,
