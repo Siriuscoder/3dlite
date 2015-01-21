@@ -23,13 +23,13 @@
 lite3d_scene_node *lite3d_scene_node_init(lite3d_scene_node *node)
 {
     SDL_assert(node);
-    memset(node, 0, sizeof(lite3d_scene_node));
+    memset(node, 0, sizeof (lite3d_scene_node));
     lite3d_list_link_init(&node->nodeLink);
     kmMat4Identity(&node->localView);
     kmMat4Identity(&node->worldView);
     kmQuaternionIdentity(&node->rotation);
     kmVec3Fill(&node->position, 0, 0, 0);
-    kmVec3Fill(&node->scale, 1.0f, 1.0f, 1.0f); 
+    kmVec3Fill(&node->scale, 1.0f, 1.0f, 1.0f);
     node->recalc = LITE3D_TRUE;
     node->rotationCentered = LITE3D_TRUE;
     node->renderable = LITE3D_TRUE;
@@ -112,11 +112,11 @@ uint8_t lite3d_scene_node_update(lite3d_scene_node *node)
             node->position.y,
             node->position.z);
 
-        if (node->scale.x != 1.0f || 
-            node->scale.y != 1.0f || 
+        if (node->scale.x != 1.0f ||
+            node->scale.y != 1.0f ||
             node->scale.z != 1.0f)
         {
-            kmMat4Scaling(&scaleMat, node->scale.x, 
+            kmMat4Scaling(&scaleMat, node->scale.x,
                 node->scale.y,
                 node->scale.z);
 

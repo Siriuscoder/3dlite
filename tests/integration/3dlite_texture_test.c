@@ -30,7 +30,7 @@ static lite3d_resource_pack *m7zPack = NULL;
 static lite3d_texture_unit *mNormandy = NULL, *mMinigun = NULL;
 static lite3d_camera mCamera01;
 static kmVec3 cameraInitPos = {
-    -5.0f, 5.0f, 5.0f
+    0.0f, 0.0f, 5.0f
 };
 
 static kmVec3 cameraLookAt = {
@@ -92,14 +92,37 @@ static int process_events(SDL_Event *levent, void *userdata)
         {
             lite3d_scene_node_rotate_angle(&mSceneNode[2], &rotAxisZ, kmDegreesToRadians(5));
         }
-        else if (levent->key.keysym.sym == SDLK_F3)
+        else if (levent->key.keysym.sym == SDLK_UP)
         {
-            kmVec3 vec;
-            kmMat4 mat;
-            kmMat4RotationQuaternion(&mat, &mCamera01.cameraNode.rotation);
-            kmMat4GetForwardVec3RH(&vec, &mat);
-            
-            lite3d_camera_move(&mCamera01, &vec);
+            lite3d_camera_pitch(&mCamera01, kmDegreesToRadians(-5));
+        }
+        else if (levent->key.keysym.sym == SDLK_DOWN)
+        {
+            lite3d_camera_pitch(&mCamera01, kmDegreesToRadians(5));
+        }
+        else if (levent->key.keysym.sym == SDLK_LEFT)
+        {
+            lite3d_camera_yaw(&mCamera01, kmDegreesToRadians(-5));
+        }
+        else if (levent->key.keysym.sym == SDLK_RIGHT)
+        {
+            lite3d_camera_yaw(&mCamera01, kmDegreesToRadians(5));
+        }
+        else if (levent->key.keysym.sym == SDLK_w)
+        {
+            lite3d_camera_move_relative(&mCamera01, &KM_VEC3_POS_Z);
+        }
+        else if (levent->key.keysym.sym == SDLK_s)
+        {
+            lite3d_camera_move_relative(&mCamera01, &KM_VEC3_NEG_Z);
+        }
+        else if (levent->key.keysym.sym == SDLK_a)
+        {
+            lite3d_camera_move_relative(&mCamera01, &KM_VEC3_POS_X);
+        }
+        else if (levent->key.keysym.sym == SDLK_d)
+        {
+            lite3d_camera_move_relative(&mCamera01, &KM_VEC3_NEG_X);
         }
     }
 
@@ -131,7 +154,8 @@ static int init(void *userdata)
 
     lite3d_camera_perspective(&mCamera01, 0.1f, 100.0f, 45.0f, (float) DEFAULT_WIDTH / (float) DEFAULT_HEIGHT);
     lite3d_camera_set_position(&mCamera01, &cameraInitPos);
-    lite3d_camera_lookAt(&mCamera01, &nodePos[1]);
+    //lite3d_camera_pitch(&mCamera01, kmDegreesToRadians(90));
+    //lite3d_camera_lookAt(&mCamera01, &nodePos[1]);
     //lite3d_scene_node_rotate_angle(&mCamera01.cameraNode, &rotAxis, kmDegreesToRadians(90));
     //lite3d_scene_node_rotate_angle(&mCamera01.cameraNode, &rotAxisY, kmDegreesToRadians(90));
 

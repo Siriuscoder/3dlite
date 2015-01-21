@@ -18,6 +18,7 @@
 #ifndef LITE3D_SCENE_NODE_H
 #define	LITE3D_SCENE_NODE_H
 
+#include <3dlite/kazmath/mat3.h>
 #include <3dlite/kazmath/mat4.h>
 #include <3dlite/kazmath/vec3.h>
 #include <3dlite/kazmath/quaternion.h>
