@@ -22,15 +22,15 @@
 #include <3dlite/3dlite_main.h>
 #include <3dlite/3dlite_scene.h>
 
-#define DEFAULT_WIDTH           800
-#define DEFAULT_HEIGHT          600
+#define DEFAULT_WIDTH           160
+#define DEFAULT_HEIGHT          120
 
 static lite3d_resource_pack *mFileSysPack = NULL;
 static lite3d_resource_pack *m7zPack = NULL;
 static lite3d_texture_unit *mNormandy = NULL, *mMinigun = NULL;
 static lite3d_camera mCamera01;
 static kmVec3 cameraInitPos = {
-    0.0f, 0.0f, 5.0f
+    0.0f, 5.0f, 5.0f
 };
 
 static kmVec3 cameraLookAt = {
@@ -124,6 +124,10 @@ static int process_events(SDL_Event *levent, void *userdata)
         {
             lite3d_camera_move_relative(&mCamera01, &KM_VEC3_NEG_X);
         }
+        else if (levent->key.keysym.sym == SDLK_q)
+        {
+            lite3d_camera_roll(&mCamera01, kmDegreesToRadians(5));
+        }
     }
 
     return LITE3D_TRUE;
@@ -155,7 +159,7 @@ static int init(void *userdata)
     lite3d_camera_perspective(&mCamera01, 0.1f, 100.0f, 45.0f, (float) DEFAULT_WIDTH / (float) DEFAULT_HEIGHT);
     lite3d_camera_set_position(&mCamera01, &cameraInitPos);
     //lite3d_camera_pitch(&mCamera01, kmDegreesToRadians(90));
-    //lite3d_camera_lookAt(&mCamera01, &nodePos[1]);
+    lite3d_camera_lookAt(&mCamera01, &nodePos[0]);
     //lite3d_scene_node_rotate_angle(&mCamera01.cameraNode, &rotAxis, kmDegreesToRadians(90));
     //lite3d_scene_node_rotate_angle(&mCamera01.cameraNode, &rotAxisY, kmDegreesToRadians(90));
 

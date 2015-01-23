@@ -170,38 +170,29 @@ void lite3d_camera_rotate(lite3d_camera *camera,
 
 void lite3d_camera_yaw(lite3d_camera *camera, float angle)
 {
-    kmVec3 vecLocal;
     kmQuaternion quat;
 
     SDL_assert(camera);
-    kmQuaternionInverse(&quat, &camera->cameraNode.rotation);
-    kmQuaternionMultiplyVec3(&vecLocal, &quat, &KM_VEC3_POS_Y);
-    kmQuaternionRotationAxisAngle(&quat, &vecLocal, angle);  
-    lite3d_camera_rotate(camera, &quat);
+    kmQuaternionRotationAxisAngle(&quat, &KM_VEC3_POS_Y, angle);  
+    lite3d_scene_node_rotate_by(&camera->cameraNode, &quat);
 }
 
 void lite3d_camera_pitch(lite3d_camera *camera, float angle)
 {
-    kmVec3 vecLocal;
     kmQuaternion quat;
 
     SDL_assert(camera);
-    kmQuaternionInverse(&quat, &camera->cameraNode.rotation);
-    kmQuaternionMultiplyVec3(&vecLocal, &quat, &KM_VEC3_POS_X);
-    kmQuaternionRotationAxisAngle(&quat, &vecLocal, angle);
-    lite3d_camera_rotate(camera, &quat);
+    kmQuaternionRotationAxisAngle(&quat, &KM_VEC3_POS_X, angle);
+    lite3d_scene_node_rotate_by(&camera->cameraNode, &quat);
 }
 
 void lite3d_camera_roll(lite3d_camera *camera, float angle)
 {
-    kmVec3 vecLocal;
     kmQuaternion quat;
 
     SDL_assert(camera);
-    kmQuaternionInverse(&quat, &camera->cameraNode.rotation);
-    kmQuaternionMultiplyVec3(&vecLocal, &quat, &KM_VEC3_POS_Z);
-    kmQuaternionRotationAxisAngle(&quat, &vecLocal, angle);  
-    lite3d_camera_rotate(camera, &quat);
+    kmQuaternionRotationAxisAngle(&quat, &KM_VEC3_POS_Z, angle);  
+    lite3d_scene_node_rotate_by(&camera->cameraNode, &quat);
 }
 
 void lite3d_camera_move(lite3d_camera *camera, const kmVec3 *value)
@@ -220,7 +211,6 @@ void lite3d_camera_move_relative(lite3d_camera *camera,
     kmQuaternion inverseRot;
 
     SDL_assert(camera);
-    /* conjugate rotation if changed */
     kmQuaternionInverse(&inverseRot, &camera->cameraNode.rotation);
     kmQuaternionMultiplyVec3(&vecLocalCamera, &inverseRot, vec);
     lite3d_scene_node_move(&camera->cameraNode, &vecLocalCamera);

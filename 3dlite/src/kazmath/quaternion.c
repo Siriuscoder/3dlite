@@ -85,18 +85,6 @@ kmQuaternion* kmQuaternionIdentity(kmQuaternion* pOut)
 kmQuaternion* kmQuaternionInverse(kmQuaternion* pOut,
 											const kmQuaternion* pIn)
 {
-	kmScalar l = kmQuaternionLength(pIn);
-
-	if (fabs(l) < kmEpsilon)
-	{
-		pOut->x = 0.0;
-		pOut->y = 0.0;
-		pOut->z = 0.0;
-		pOut->w = 0.0;
-
-		return pOut;
-	}
-
     pOut->x = -pIn->x;
     pOut->y = -pIn->y;
     pOut->z = -pIn->z;
