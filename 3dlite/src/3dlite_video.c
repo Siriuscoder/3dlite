@@ -108,7 +108,7 @@ static int init_gl_extensions(void)
     return init_platform_gl_extensions();
 }
 
-int lite3d_setup_video(const lite3d_video_settings *settings)
+int lite3d_video_setup(const lite3d_video_settings *settings)
 {
     uint32_t windowFlags;
     SDL_DisplayMode displayMode;
@@ -187,7 +187,7 @@ int lite3d_setup_video(const lite3d_video_settings *settings)
 
     if (!init_gl_extensions())
     {
-        lite3d_close_video();
+        lite3d_video_close();
         return LITE3D_FALSE;
     }
 
@@ -195,25 +195,25 @@ int lite3d_setup_video(const lite3d_video_settings *settings)
     return LITE3D_TRUE;
 }
 
-const lite3d_video_settings *lite3d_get_video_settings(void)
+const lite3d_video_settings *lite3d_video_get_settings(void)
 {
     return &gVideoSettings;
 }
 
-int lite3d_close_video(void)
+int lite3d_video_close(void)
 {
     SDL_GL_DeleteContext(gGLContext);
     SDL_DestroyWindow(gRenderWindow);
     return LITE3D_TRUE;
 }
 
-void lite3d_register_root_render_target(void)
+void lite3d_video_register_root_render_target(void)
 {
-    lite3d_add_render_target(0, gVideoSettings.screenWidth, 
+    lite3d_render_target_add(0, gVideoSettings.screenWidth, 
         gVideoSettings.screenHeight, LITE3D_TRUE, NULL);
 }
 
-void lite3d_swap_buffers(void)
+void lite3d_video_swap_buffers(void)
 {
     SDL_GL_SwapWindow(gRenderWindow);
 }

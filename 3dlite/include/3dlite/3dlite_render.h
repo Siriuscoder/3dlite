@@ -79,19 +79,19 @@ typedef struct lite3d_render_target
 
 LITE3D_CEXPORT int lite3d_render_init(void);
 LITE3D_CEXPORT void lite3d_render_loop(lite3d_render_listeners *callbacks);
-LITE3D_CEXPORT lite3d_render_stats *lite3d_get_render_stats(void);
-LITE3D_CEXPORT lite3d_render_target *lite3d_add_render_target(int32_t ID, int32_t width,
+LITE3D_CEXPORT lite3d_render_stats *lite3d_render_get_stats(void);
+LITE3D_CEXPORT lite3d_render_target *lite3d_render_target_add(int32_t ID, int32_t width,
     int32_t height, int8_t isRoot, void *userdata);
-LITE3D_CEXPORT void lite3d_erase_render_target(int32_t ID);
-LITE3D_CEXPORT lite3d_render_target *lite3d_get_render_target(int32_t ID);
-LITE3D_CEXPORT void lite3d_erase_all_render_targets(void);
-LITE3D_CEXPORT void lite3d_suspend_render(void);
-LITE3D_CEXPORT void lite3d_pause_render(void);
-LITE3D_CEXPORT void lite3d_stop_render(void);
+LITE3D_CEXPORT void lite3d_render_target_erase(int32_t ID);
+LITE3D_CEXPORT lite3d_render_target *lite3d_render_target_get(int32_t ID);
+LITE3D_CEXPORT void lite3d_render_target_erase_all(void);
+LITE3D_CEXPORT void lite3d_render_suspend(void);
+LITE3D_CEXPORT void lite3d_render_pause(void);
+LITE3D_CEXPORT void lite3d_render_stop(void);
 
 LITE3D_CEXPORT void lite3d_render_target_attach_camera(lite3d_render_target *target, lite3d_camera *camera);
 LITE3D_CEXPORT void lite3d_render_target_dettach_camera(lite3d_camera *camera);
-LITE3D_CEXPORT void lite3d_root_render_target_attach_camera(lite3d_camera *camera);
+LITE3D_CEXPORT void lite3d_render_target_root_attach_camera(lite3d_camera *camera);
 
 #endif	/* RENDER_H */
 

@@ -15,30 +15,5 @@
 *	You should have received a copy of the GNU General Public License
 *	along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
-#ifndef LITE3D_VIDEO_H
-#define	LITE3D_VIDEO_H
 
-#include <3dlite/3dlite_common.h>
-
-#define LITE3D_CAPTION_MAX 50
-
-typedef struct lite3d_video_settings
-{
-    int8_t colorBits; /* 24 or 32 valid */
-    int32_t screenHeight;
-    int32_t screenWidth;
-    int8_t FSAA;
-    int8_t fullscreen;
-    char caption[LITE3D_CAPTION_MAX];
-    int8_t vsync;
-} lite3d_video_settings;
-
-LITE3D_CEXPORT int lite3d_video_setup(const lite3d_video_settings *settings);
-LITE3D_CEXPORT const lite3d_video_settings *lite3d_video_get_settings(void);
-LITE3D_CEXPORT int lite3d_video_close(void);
-LITE3D_CEXPORT void lite3d_video_swap_buffers(void);
-LITE3D_CEXPORT void lite3d_video_register_root_render_target(void);
-
-
-#endif	/* VIDEO_H */
 

@@ -193,7 +193,7 @@ void lite3d_texture_technique_shut(void)
 lite3d_texture_unit *lite3d_texture_unit_from_resource_pack(lite3d_resource_pack *pack,
     const char *name, uint32_t imageType, uint32_t textureTarget, int8_t quality)
 {
-    lite3d_resource_file *resource = lite3d_load_resource_file(pack, name);
+    lite3d_resource_file *resource = lite3d_resource_pack_file_load(pack, name);
     if (!resource)
         return NULL;
 

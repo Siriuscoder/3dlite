@@ -66,10 +66,10 @@ int lite3d_main(const lite3d_global_settings *settings)
     gGlobalSettings = *settings;
     /* begin 3dlite initialization */
     /* setup memory */
-    lite3d_init_memory(&gGlobalSettings.userAllocator);
+    lite3d_memory_init(&gGlobalSettings.userAllocator);
     /* setup logger */
-    lite3d_setup_stdout_logger();
-    lite3d_set_loglevel(gGlobalSettings.logLevel);
+    lite3d_logger_setup_stdout();
+    lite3d_logger_set_loglevel(gGlobalSettings.logLevel);
 
     SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
         "====== 3dlite started ======");
@@ -78,38 +78,38 @@ int lite3d_main(const lite3d_global_settings *settings)
         return LITE3D_FALSE;
 
     /* setup video */
-    if (!lite3d_setup_video(&gGlobalSettings.videoSettings))
+    if (!lite3d_video_setup(&gGlobalSettings.videoSettings))
     {
         SDL_Quit();
-        lite3d_cleanup_memory();
+        lite3d_memory_cleanup();
         return LITE3D_FALSE;
     }
 
     /* setup textures technique */
     if (!lite3d_texture_technique_init(&gGlobalSettings.textureSettings))
     {
-        lite3d_close_video();
-        lite3d_cleanup_memory();
+        lite3d_video_close();
+        lite3d_memory_cleanup();
         return LITE3D_FALSE;
     }
 
     /* init render */
     if (!lite3d_render_init())
     {
-        lite3d_close_video();
-        lite3d_cleanup_memory();
+        lite3d_video_close();
+        lite3d_memory_cleanup();
         return LITE3D_FALSE;
     }
 
     /* setup main render target (after render init!!!)*/
-    lite3d_register_root_render_target();
+    lite3d_video_register_root_render_target();
 
     /* start main loop */
     lite3d_render_loop(&gGlobalSettings.renderLisneters);
 
     lite3d_texture_technique_shut();
-    lite3d_close_video();
-    lite3d_cleanup_memory();
+    lite3d_video_close();
+    lite3d_memory_cleanup();
     SDL_Quit();
 
     return LITE3D_TRUE;

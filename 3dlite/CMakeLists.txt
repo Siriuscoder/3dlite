@@ -90,8 +90,8 @@ set(3DLITE_SOURCES src/3dlite_nedmalloc.c
 src/3dlite_alloc.c
 src/3dlite_rb_tree.c
 src/3dlite_list.c
-src/3dlite_file_cache.c
-src/3dlite_7zloader.c
+src/3dlite_resource_pack.c
+src/3dlite_7z_loader.c
 src/3dlite_logger.c
 src/3dlite_texture_unit.c
 src/3dlite_video.c
@@ -99,15 +99,17 @@ src/3dlite_render.c
 src/3dlite_main.c
 src/3dlite_camera.c
 src/3dlite_scene_node.c
-src/3dlite_scene.c)
+src/3dlite_scene.c
+src/3dlite_vbo.c
+src/3dlite_vbo_loader.c)
 
 set(3DLITE_HEADERS include/3dlite/3dlite_alloc.h
 include/3dlite/3dlite_common.h
 include/3dlite/3dlite_nedmalloc.h
 include/3dlite/3dlite_rb_tree.h
 include/3dlite/3dlite_list.h
-include/3dlite/3dlite_file_cache.h
-include/3dlite/3dlite_7zloader.h
+include/3dlite/3dlite_resource_pack.h
+include/3dlite/3dlite_7z_loader.h
 include/3dlite/3dlite_logger.h
 include/3dlite/3dlite_texture_unit.h
 include/3dlite/3dlite_video.h
@@ -115,7 +117,9 @@ include/3dlite/3dlite_render.h
 include/3dlite/3dlite_main.h
 include/3dlite/3dlite_camera.h
 include/3dlite/3dlite_scene_node.h
-include/3dlite/3dlite_scene.h)
+include/3dlite/3dlite_scene.h
+include/3dlite/3dlite_vbo.h
+include/3dlite/3dlite_vbo_loader.h)
 
 add_library(3dlite SHARED ${3DLITE_SOURCES} ${3DLITE_HEADERS})
 

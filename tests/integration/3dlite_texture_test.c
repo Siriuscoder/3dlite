@@ -78,7 +78,7 @@ static int process_events(SDL_Event *levent, void *userdata)
             /* print render stats */
         else if (levent->key.keysym.sym == SDLK_F1)
         {
-            lite3d_render_stats *stats = lite3d_get_render_stats();
+            lite3d_render_stats *stats = lite3d_render_get_stats();
             SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
                 "==== Render statistics ========\n"
                 "last FPS\tavr FPS\t\tbest FPS\tworst FPS\n"
@@ -137,9 +137,9 @@ static int init(void *userdata)
 {
     int i = 0;
 
-    if (!(mFileSysPack = lite3d_open_pack("tests/", LITE3D_FALSE, 700000)))
+    if (!(mFileSysPack = lite3d_resource_pack_open("tests/", LITE3D_FALSE, 700000)))
         return LITE3D_FALSE;
-    if (!(m7zPack = lite3d_open_pack("tests/pack.1", LITE3D_TRUE, 700000)))
+    if (!(m7zPack = lite3d_resource_pack_open("tests/pack.1", LITE3D_TRUE, 700000)))
         return LITE3D_FALSE;
 
     if (!(mNormandy = lite3d_texture_unit_from_resource_pack(m7zPack,
@@ -153,7 +153,7 @@ static int init(void *userdata)
 
     lite3d_camera_init(&mCamera01);
 
-    lite3d_add_render_target(1, 10,
+    lite3d_render_target_add(1, 10,
         10, 0, NULL)->enabled = LITE3D_FALSE;
 
     lite3d_camera_perspective(&mCamera01, 0.1f, 100.0f, 45.0f, (float) DEFAULT_WIDTH / (float) DEFAULT_HEIGHT);
@@ -185,7 +185,7 @@ static int init(void *userdata)
     }
 
     lite3d_scene_node_add(&mScene, &mCamera01.cameraNode, NULL);
-    lite3d_root_render_target_attach_camera(&mCamera01);
+    lite3d_render_target_root_attach_camera(&mCamera01);
     //lite3d_camera_link_to(&mCamera01, &mSceneNode[2], LITE3D_CAMERA_LINK_ORIENTATION);
     //lite3d_camera_tracking(&mCamera01, &mSceneNode[2]);
 
@@ -196,8 +196,8 @@ static int shutdown(void *userdata)
 {
     lite3d_texture_unit_purge(mNormandy);
     lite3d_texture_unit_purge(mMinigun);
-    lite3d_close_pack(mFileSysPack);
-    lite3d_close_pack(m7zPack);
+    lite3d_resource_pack_close(mFileSysPack);
+    lite3d_resource_pack_close(m7zPack);
 
     return LITE3D_TRUE;
 }

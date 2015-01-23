@@ -49,13 +49,13 @@ static void file_output_function(void* userdata, int category,
 
 }
 
-void lite3d_set_loglevel(int8_t level)
+void lite3d_logger_set_loglevel(int8_t level)
 {
     SDL_LogSetAllPriority(level == LITE3D_LOGLEVEL_ERROR ? SDL_LOG_PRIORITY_ERROR : 
         (level == LITE3D_LOGLEVEL_INFO ? SDL_LOG_PRIORITY_INFO : SDL_LOG_PRIORITY_VERBOSE));
 }
 
-void lite3d_setup_stdout_logger(void)
+void lite3d_logger_setup_stdout(void)
 {
     SDL_LogSetOutputFunction(std_output_function, NULL);
 }

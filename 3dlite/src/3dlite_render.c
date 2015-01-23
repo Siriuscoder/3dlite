@@ -128,7 +128,7 @@ static int update_render_targets(void)
             target->postUpdate(target);
 
         if (target->isRoot)
-            lite3d_swap_buffers();
+            lite3d_video_swap_buffers();
 
         targetsCount++;
     }
@@ -174,7 +174,7 @@ void lite3d_render_loop(lite3d_render_listeners *callbacks)
         {
             if (gRenderListeners.processEvent && !gRenderListeners.processEvent(&wevent, gRenderListeners.userdata))
             {
-                lite3d_stop_render();
+                lite3d_render_stop();
                 break;
             }
         }
@@ -183,19 +183,19 @@ void lite3d_render_loop(lite3d_render_listeners *callbacks)
     if (gRenderListeners.postRender)
         gRenderListeners.postRender(gRenderListeners.userdata);
 
-    lite3d_erase_all_render_targets();
+    lite3d_render_target_erase_all();
 }
 
-lite3d_render_stats *lite3d_get_render_stats(void)
+lite3d_render_stats *lite3d_render_get_stats(void)
 {
     return &gRenderStats;
 }
 
-lite3d_render_target *lite3d_add_render_target(int32_t ID, int32_t width,
+lite3d_render_target *lite3d_render_target_add(int32_t ID, int32_t width,
     int32_t height, int8_t isRoot, void *userdata)
 {
     lite3d_render_target *target;
-    if(lite3d_get_render_target(ID))
+    if(lite3d_render_target_get(ID))
         return NULL;
 
     target = (lite3d_render_target *) lite3d_calloc(sizeof (lite3d_render_target));
@@ -216,7 +216,7 @@ lite3d_render_target *lite3d_add_render_target(int32_t ID, int32_t width,
     return target;
 }
 
-void lite3d_erase_render_target(int32_t ID)
+void lite3d_render_target_erase(int32_t ID)
 {
     lite3d_list_node *node;
     lite3d_render_target *target;
@@ -232,7 +232,7 @@ void lite3d_erase_render_target(int32_t ID)
     }
 }
 
-lite3d_render_target *lite3d_get_render_target(int32_t ID)
+lite3d_render_target *lite3d_render_target_get(int32_t ID)
 {
     lite3d_list_node *node;
     lite3d_render_target *target;
@@ -246,24 +246,24 @@ lite3d_render_target *lite3d_get_render_target(int32_t ID)
     return NULL;
 }
 
-void lite3d_erase_all_render_targets(void)
+void lite3d_render_target_erase_all(void)
 {
     lite3d_list_node *node = NULL;
     while ((node = lite3d_list_remove_first_link(&gRenderTargets)) != NULL)
         lite3d_free(MEMBERCAST(lite3d_render_target, node, node));
 }
 
-void lite3d_suspend_render(void)
+void lite3d_render_suspend(void)
 {
     gRenderActive = LITE3D_TRUE;
 }
 
-void lite3d_pause_render(void)
+void lite3d_render_pause(void)
 {
     gRenderActive = LITE3D_FALSE;
 }
 
-void lite3d_stop_render(void)
+void lite3d_render_stop(void)
 {
     gRenderStarted = LITE3D_FALSE;
 }
@@ -300,7 +300,7 @@ void lite3d_render_target_dettach_camera(lite3d_camera *camera)
     lite3d_list_unlink_link(&camera->renderTargetLink);
 }
 
-void lite3d_root_render_target_attach_camera(lite3d_camera *camera)
+void lite3d_render_target_root_attach_camera(lite3d_camera *camera)
 {
-    lite3d_render_target_attach_camera(lite3d_get_render_target(0), camera);
+    lite3d_render_target_attach_camera(lite3d_render_target_get(0), camera);
 }
