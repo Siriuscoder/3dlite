@@ -75,8 +75,6 @@
           <in>3dlite_scene.c</in>
           <in>3dlite_scene_node.c</in>
           <in>3dlite_texture_unit.c</in>
-          <in>3dlite_vbo.c</in>
-          <in>3dlite_vbo_loader.c</in>
           <in>3dlite_video.c</in>
         </df>
       </df>
@@ -329,32 +327,6 @@
           </preprocessorList>
         </cTool>
       </item>
-      <item path="3dlite/src/3dlite_vbo.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="2">
-          <incDir>
-            <pElem>/usr/include/SDL2</pElem>
-            <pElem>build/3dlite</pElem>
-          </incDir>
-          <preprocessorList>
-            <Elem>GLEW_STATIC</Elem>
-            <Elem>_3dlite_EXPORTS</Elem>
-            <Elem>_REENTRANT</Elem>
-          </preprocessorList>
-        </cTool>
-      </item>
-      <item path="3dlite/src/3dlite_vbo_loader.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="2">
-          <incDir>
-            <pElem>/usr/include/SDL2</pElem>
-            <pElem>build/3dlite</pElem>
-          </incDir>
-          <preprocessorList>
-            <Elem>GLEW_STATIC</Elem>
-            <Elem>_3dlite_EXPORTS</Elem>
-            <Elem>_REENTRANT</Elem>
-          </preprocessorList>
-        </cTool>
-      </item>
       <item path="3dlite/src/3dlite_video.c" ex="false" tool="0" flavor2="3">
         <cTool flags="2">
           <incDir>
@@ -369,116 +341,60 @@
         </cTool>
       </item>
       <item path="3dlite/src/7zdec/7zBuf.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
-        </cTool>
       </item>
       <item path="3dlite/src/7zdec/7zBuf2.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
-        </cTool>
       </item>
       <item path="3dlite/src/7zdec/7zCrc.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
-        </cTool>
       </item>
       <item path="3dlite/src/7zdec/7zCrcOpt.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
-        </cTool>
       </item>
       <item path="3dlite/src/7zdec/7zDec.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
-        </cTool>
       </item>
       <item path="3dlite/src/7zdec/7zFile.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
-        </cTool>
       </item>
       <item path="3dlite/src/7zdec/7zIn.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
-        </cTool>
       </item>
       <item path="3dlite/src/7zdec/7zStream.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
-        </cTool>
       </item>
       <item path="3dlite/src/7zdec/Bcj2.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
-        </cTool>
       </item>
       <item path="3dlite/src/7zdec/Bra.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
-        </cTool>
       </item>
       <item path="3dlite/src/7zdec/Bra86.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
-        </cTool>
       </item>
       <item path="3dlite/src/7zdec/CpuArch.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
-        </cTool>
       </item>
       <item path="3dlite/src/7zdec/Lzma2Dec.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
-        </cTool>
       </item>
       <item path="3dlite/src/7zdec/LzmaDec.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
-        </cTool>
       </item>
       <item path="3dlite/src/7zdec/Ppmd7.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
-        </cTool>
       </item>
       <item path="3dlite/src/7zdec/Ppmd7Dec.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
-        </cTool>
       </item>
       <item path="3dlite/src/glew/glew.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
-        </cTool>
       </item>
       <item path="3dlite/src/kazmath/aabb.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
-        </cTool>
       </item>
       <item path="3dlite/src/kazmath/mat3.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
-        </cTool>
       </item>
       <item path="3dlite/src/kazmath/mat4.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
-        </cTool>
       </item>
       <item path="3dlite/src/kazmath/plane.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
-        </cTool>
       </item>
       <item path="3dlite/src/kazmath/quaternion.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
-        </cTool>
       </item>
       <item path="3dlite/src/kazmath/ray2.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
-        </cTool>
       </item>
       <item path="3dlite/src/kazmath/ray3.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
-        </cTool>
       </item>
       <item path="3dlite/src/kazmath/utility.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
-        </cTool>
       </item>
       <item path="3dlite/src/kazmath/vec2.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
-        </cTool>
       </item>
       <item path="3dlite/src/kazmath/vec3.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
-        </cTool>
       </item>
       <item path="3dlite/src/kazmath/vec4.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
-        </cTool>
       </item>
       <folder path="0">
         <cTool>
@@ -567,23 +483,15 @@
             ex="false"
             tool="1"
             flavor2="8">
-        <ccTool flags="0">
-        </ccTool>
       </item>
       <item path="tests/gtest/src/gtest-all.cc" ex="false" tool="1" flavor2="8">
-        <ccTool flags="0">
-        </ccTool>
       </item>
       <item path="tests/gtest/src/gtest_main.cc" ex="false" tool="1" flavor2="8">
-        <ccTool flags="0">
-        </ccTool>
       </item>
       <item path="tests/integration/3dlite_simple_scene_node_test.c"
             ex="false"
             tool="0"
             flavor2="3">
-        <cTool flags="1">
-        </cTool>
       </item>
     </conf>
     <conf name="Release" type="0">

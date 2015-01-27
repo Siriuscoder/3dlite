@@ -15,5 +15,27 @@
 *	You should have received a copy of the GNU General Public License
 *	along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
+#ifndef LITE3D_VAO_H
+#define	LITE3D_VAO_H
 
+#include <3dlite/3dlite_common.h>
+#include <3dlite/3dlite_rb_tree.h>
+
+typedef struct lite3d_vbo
+{
+    /* cached node */
+    lite3d_rb_node cachedBy;
+    int32_t vboID;
+    int32_t vaoID;
+    void (*bindOn)(struct lite3d_vbo *node);
+    void (*bindOff)(struct lite3d_vbo *node);
+} lite3d_vbo;
+
+LITE3D_CEXPORT int lite3d_vbo_technique_init(void);
+LITE3D_CEXPORT int lite3d_vbo_init(struct lite3d_vbo *vbo);
+LITE3D_CEXPORT void lite3d_vbo_purge(struct lite3d_vbo *vbo);
+
+
+
+#endif	/* LITE3D_VAO_H */
 

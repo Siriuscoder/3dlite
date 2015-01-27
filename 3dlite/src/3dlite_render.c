@@ -144,7 +144,7 @@ void lite3d_render_loop(lite3d_render_listeners *callbacks)
     gRenderListeners = *callbacks;
 
     memset(&gRenderStats, 0, sizeof(gRenderStats));
-    if (gRenderListeners.preRender && !gRenderListeners.preRender(gRenderListeners.userdata))
+    if (gRenderListeners.preRender && !gRenderListeners.preRender())
         return;
 
     while (gRenderStarted)
@@ -160,11 +160,11 @@ void lite3d_render_loop(lite3d_render_listeners *callbacks)
 
         if (gRenderActive)
         {
-            if (gRenderListeners.preFrame && !gRenderListeners.preFrame(gRenderListeners.userdata))
+            if (gRenderListeners.preFrame && !gRenderListeners.preFrame())
                 break;
             if (!update_render_targets())
                 break;
-            if (gRenderListeners.postFrame && !gRenderListeners.postFrame(gRenderListeners.userdata))
+            if (gRenderListeners.postFrame && !gRenderListeners.postFrame())
                 break;
         }
 
@@ -172,7 +172,7 @@ void lite3d_render_loop(lite3d_render_listeners *callbacks)
 
         while (SDL_PollEvent(&wevent))
         {
-            if (gRenderListeners.processEvent && !gRenderListeners.processEvent(&wevent, gRenderListeners.userdata))
+            if (gRenderListeners.processEvent && !gRenderListeners.processEvent(&wevent))
             {
                 lite3d_render_stop();
                 break;
@@ -181,7 +181,7 @@ void lite3d_render_loop(lite3d_render_listeners *callbacks)
     }
 
     if (gRenderListeners.postRender)
-        gRenderListeners.postRender(gRenderListeners.userdata);
+        gRenderListeners.postRender();
 
     lite3d_render_target_erase_all();
 }

@@ -26,6 +26,7 @@
 #include <3dlite/GL/glew.h>
 
 #include <3dlite/3dlite_alloc.h>
+#include <3dlite/3dlite_misc.h>
 #include <3dlite/3dlite_texture_unit.h>
 
 static lite3d_texture_technique_settings gTextureSettings;
@@ -225,24 +226,18 @@ lite3d_texture_unit *lite3d_texture_unit_from_memory(const char *textureName,
     SDL_assert(buffer);
     SDL_assert(size > 0);
 
-    while (ilGetError() != IL_NO_ERROR);
+    lite3d_misc_il_error_stack_clean();
     /* gen IL image */
     imageDesc = ilGenImage();
-    if ((errNo = ilGetError()) != IL_NO_ERROR)
-    {
-        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
-            "%s: %s", __FUNCTION__, iluErrorString(errNo));
+    if (!lite3d_misc_check_il_error())
         return NULL;
-    }
 
     /* Bind IL image */
     ilBindImage(imageDesc);
     /* Load IL image from memory */
     if (!ilLoadL(imageType, buffer, size))
     {
-        errNo = ilGetError();
-        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
-            "%s: %s", __FUNCTION__, iluErrorString(errNo));
+        lite3d_misc_check_il_error();
         return NULL;
     }
 
@@ -288,10 +283,8 @@ lite3d_texture_unit *lite3d_texture_unit_from_memory(const char *textureName,
     glEnable(textureTarget);
     /* enable texture target */
     glGenTextures(1, &textureUnit->textureID);
-    if ((errNo = glGetError()) != GL_NO_ERROR)
+    if(!lite3d_misc_check_gl_error())
     {
-        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
-            "%s: %s, code %d", __FUNCTION__, glewGetErrorString(errNo), errNo);
         ilDeleteImages(1, &imageDesc);
         lite3d_free(textureUnit);
         return NULL;
@@ -360,10 +353,8 @@ lite3d_texture_unit *lite3d_texture_unit_from_memory(const char *textureName,
         }
     }
 
-    if ((errNo = glGetError()) != GL_NO_ERROR)
+    if(!lite3d_misc_check_gl_error())
     {
-        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
-            "%s: %s, code %d", __FUNCTION__, glewGetErrorString(errNo), errNo);
         ilDeleteImages(1, &imageDesc);
         lite3d_free(textureUnit);
         return NULL;
