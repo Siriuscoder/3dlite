@@ -22,8 +22,8 @@
 #include <3dlite/3dlite_main.h>
 #include <3dlite/3dlite_scene.h>
 
-#define DEFAULT_WIDTH           160
-#define DEFAULT_HEIGHT          120
+#define DEFAULT_WIDTH           800
+#define DEFAULT_HEIGHT          600
 
 static lite3d_resource_pack *mFileSysPack = NULL;
 static lite3d_resource_pack *m7zPack = NULL;
