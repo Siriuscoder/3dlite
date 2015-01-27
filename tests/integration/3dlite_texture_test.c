@@ -68,7 +68,7 @@ static lite3d_scene mScene;
 
 static void draw_box(struct lite3d_scene_node *node);
 
-static int process_events(SDL_Event *levent, void *userdata)
+static int process_events(SDL_Event *levent)
 {
     if (levent->type == SDL_KEYDOWN)
     {
@@ -133,7 +133,7 @@ static int process_events(SDL_Event *levent, void *userdata)
     return LITE3D_TRUE;
 }
 
-static int init(void *userdata)
+static int init(void)
 {
     int i = 0;
 
@@ -192,7 +192,7 @@ static int init(void *userdata)
     return LITE3D_TRUE;
 }
 
-static int shutdown(void *userdata)
+static int shutdown(void)
 {
     lite3d_texture_unit_purge(mNormandy);
     lite3d_texture_unit_purge(mMinigun);

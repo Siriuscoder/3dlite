@@ -25,11 +25,11 @@
 
 #define LITE3D_RENDER_TARGET_NAME   20
 
-typedef int (*lite3d_pre_render_t)(void *userdata);
-typedef int (*lite3d_post_render_t)(void *userdata);
-typedef int (*lite3d_pre_frame_t)(void *userdata);
-typedef int (*lite3d_post_frame_t)(void *userdata);
-typedef int (*lite3d_process_event_t)(SDL_Event *levent, void *userdata);
+typedef int (*lite3d_pre_render_t)(void);
+typedef int (*lite3d_post_render_t)(void);
+typedef int (*lite3d_pre_frame_t)(void);
+typedef int (*lite3d_post_frame_t)(void);
+typedef int (*lite3d_process_event_t)(SDL_Event *levent);
 
 typedef struct lite3d_render_listeners
 {
@@ -38,7 +38,6 @@ typedef struct lite3d_render_listeners
     lite3d_pre_frame_t preFrame;
     lite3d_post_frame_t postFrame;
     lite3d_process_event_t processEvent;
-    void *userdata;
 } lite3d_render_listeners;
 
 typedef struct lite3d_render_stats

@@ -15,12 +15,11 @@
 *	You should have received a copy of the GNU General Public License
 *	along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
-#ifndef LITE3D_VBO_H
-#define	LITE3D_VBO_H
+#ifndef LITE3D_ASSIMP_LOADER_H
+#define	LITE3D_ASSIMP_LOADER_H
 
 #include <3dlite/3dlite_common.h>
+#include <3dlite/3dlite_vbo.h>
 
-
-
-#endif	/* LITE3D_VBO_H */
+#endif	/* LITE3D_ASSIMP_LOADER_H */
 
