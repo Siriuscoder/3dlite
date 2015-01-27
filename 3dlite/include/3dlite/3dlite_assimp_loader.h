@@ -19,7 +19,7 @@
 #define	LITE3D_ASSIMP_LOADER_H
 
 #include <3dlite/3dlite_common.h>
-#include <3dlite/3dlite_vbo.h>
+#include <3dlite/3dlite_vao.h>
 
 #endif	/* LITE3D_ASSIMP_LOADER_H */
 
