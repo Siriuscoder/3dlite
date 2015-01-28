@@ -1,6 +1,6 @@
 /******************************************************************************
 *	This file is part of 3dlite (Light-weight 3d engine).
-*	Copyright (C) 2014  Sirius (Korolev Nikita)
+*	Copyright (C) 2015  Sirius (Korolev Nikita)
 *
 *	Foobar is free software: you can redistribute it and/or modify
 *	it under the terms of the GNU General Public License as published by
@@ -19,7 +19,20 @@
 #define	LITE3D_MESH_NODE_H
 
 #include <3dlite/3dlite_common.h>
+#include <3dlite/3dlite_resource_pack.h>
+#include <3dlite/3dlite_vbo.h>
+#include <3dlite/3dlite_scene_node.h>
 
+typedef struct lite3d_mesh_node
+{
+    lite3d_scene_node sceneNode;
+    lite3d_vbo *vbo;
+    
+} lite3d_mesh_node;
+
+LITE3D_CEXPORT int lite3d_mesh_node_init(lite3d_mesh_node *node);
+LITE3D_CEXPORT int lite3d_mesh_node_load(lite3d_mesh_node *node, 
+    const char *file, const char *name);
 
 #endif	/* LITE3D_MESH_NODE_H */
 
