@@ -29,8 +29,6 @@ void lite3d_camera_to_node(lite3d_camera *camera, lite3d_scene_node *node)
     /* set modelview */
     glMatrixMode(GL_MODELVIEW);
     glLoadMatrixf(camera->cameraNode.worldView.mat);
-    
-    GL_BUFFER_MAPPED
 }
 
 void lite3d_camera_update_view(lite3d_camera *camera)

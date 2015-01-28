@@ -85,7 +85,7 @@ static int init_gl_extensions(void)
     if (!GL_VERSION_3_0)
     {
         SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION,
-            "%s: GL v4.0 minimum required..", __FUNCTION__);
+            "%s: GL v3.0 minimum required..", __FUNCTION__);
         return LITE3D_FALSE;
     }
 

@@ -161,14 +161,14 @@ int lite3d_texture_technique_init(const lite3d_texture_technique_settings *setti
     {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
             "%s: SGIS_generate_mipmap not supported..", __FUNCTION__);
-        return 0;
+        return LITE3D_FALSE;
     }
 
     if (!GLEW_EXT_texture_filter_anisotropic)
     {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
             "%s: EXT_texture_filter_anisotropic not supported..", __FUNCTION__);
-        return 0;
+        return LITE3D_FALSE;
     }
     else
     {
@@ -183,7 +183,7 @@ int lite3d_texture_technique_init(const lite3d_texture_technique_settings *setti
     iluInit();
 
     lite3d_texture_technique_reset_filters();
-    return 1;
+    return LITE3D_TRUE;
 }
 
 void lite3d_texture_technique_shut(void)
