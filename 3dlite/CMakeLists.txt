@@ -101,7 +101,7 @@ src/3dlite_camera.c
 src/3dlite_scene_node.c
 src/3dlite_scene.c
 src/3dlite_vbo.c
-src/3dlite_assimp_loader.c
+src/3dlite_vbo_loader.c
 src/3dlite_misc.c
 src/3dlite_mesh_node.c)
 
@@ -121,7 +121,7 @@ include/3dlite/3dlite_camera.h
 include/3dlite/3dlite_scene_node.h
 include/3dlite/3dlite_scene.h
 include/3dlite/3dlite_vbo.h
-include/3dlite/3dlite_assimp_loader.h
+include/3dlite/3dlite_vbo_loader.h
 include/3dlite/3dlite_misc.h
 include/3dlite/3dlite_mesh_node.h)
 
@@ -132,7 +132,8 @@ target_compile_definitions(3dlite PRIVATE
 "$<BUILD_INTERFACE:_WINDLL>")
 target_include_directories(3dlite PRIVATE 
 "$<BUILD_INTERFACE:${SDL2_INCLUDE_DIR}>"
-"$<BUILD_INTERFACE:${IL_INCLUDE_DIR}>")
+"$<BUILD_INTERFACE:${IL_INCLUDE_DIR}>"
+"$<BUILD_INTERFACE:${ASSIMP_INCLUDE_DIR}>")
 set(SDL2_LIBS ${SDL2_LIBRARY})
 else()
 target_compile_options(3dlite PRIVATE 
@@ -151,5 +152,6 @@ ${OPENGL_LIBRARIES}
 ${IL_LIBRARIES}
 ${ILU_LIBRARIES}
 ${SDL2_LIBS}
+${ASSIMP_LIBRARY}
 ${CMAKE_THREAD_LIBS_INIT})
 

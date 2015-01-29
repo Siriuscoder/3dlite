@@ -19,7 +19,6 @@
 #define	LITE3D_MESH_NODE_H
 
 #include <3dlite/3dlite_common.h>
-#include <3dlite/3dlite_resource_pack.h>
 #include <3dlite/3dlite_vbo.h>
 #include <3dlite/3dlite_scene_node.h>
 
@@ -30,9 +29,8 @@ typedef struct lite3d_mesh_node
     
 } lite3d_mesh_node;
 
-LITE3D_CEXPORT int lite3d_mesh_node_init(lite3d_mesh_node *node);
-LITE3D_CEXPORT int lite3d_mesh_node_load(lite3d_mesh_node *node, 
-    const char *file, const char *name);
+LITE3D_CEXPORT void lite3d_mesh_node_init(lite3d_mesh_node *node, lite3d_vbo *vbo);
+
 
 #endif	/* LITE3D_MESH_NODE_H */
 

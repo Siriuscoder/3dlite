@@ -1,6 +1,6 @@
 /******************************************************************************
 *	This file is part of 3dlite (Light-weight 3d engine).
-*	Copyright (C) 2014  Sirius (Korolev Nikita)
+*	Copyright (C) 2015  Sirius (Korolev Nikita)
 *
 *	Foobar is free software: you can redistribute it and/or modify
 *	it under the terms of the GNU General Public License as published by
@@ -15,11 +15,5 @@
 *	You should have received a copy of the GNU General Public License
 *	along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
-#ifndef LITE3D_ASSIMP_LOADER_H
-#define	LITE3D_ASSIMP_LOADER_H
-
-#include <3dlite/3dlite_common.h>
-#include <3dlite/3dlite_vbo.h>
-
-#endif	/* LITE3D_ASSIMP_LOADER_H */
+#include <3dlite/3dlite_vbo_loader.h>
 

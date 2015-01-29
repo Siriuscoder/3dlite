@@ -21,8 +21,8 @@
 #define	LITE3D_SCENE_H
 
 #include <3dlite/3dlite_common.h>
-#include <3dlite/3dlite_resource_pack.h>
 #include <3dlite/3dlite_camera.h>
+
 
 typedef struct lite3d_scene_stats
 {
@@ -42,8 +42,6 @@ typedef struct lite3d_scene
     void (*postRender)(struct lite3d_scene *scene, lite3d_camera *camera);
     void (*preRenderNode)(struct lite3d_scene *scene, lite3d_scene_node *node);
     void (*postRenderNode)(struct lite3d_scene *scene, lite3d_scene_node *node);
-    void *userdata;
-    lite3d_resource_pack *scenePack;
 } lite3d_scene;
 
 LITE3D_CEXPORT void lite3d_scene_render(lite3d_scene *scene, lite3d_camera *camera);

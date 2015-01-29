@@ -46,17 +46,17 @@ static const char *glTextureFormats[] = {
 static lite3d_image_filter gFilters[LITE3D_MAX_FILTERS];
 static int8_t gFiltersCount = 0;
 
-static void* DEVIL_CALL ilAlloc(const ILsizei size)
+static void* DEVIL_CALL il_alloc(const ILsizei size)
 {
     return lite3d_malloc_pooled(LITE3D_POOL_NO2, size);
 }
 
-static void DEVIL_CALL ilFree(const void *ptr)
+static void DEVIL_CALL il_free(const void *ptr)
 {
     lite3d_free_pooled(LITE3D_POOL_NO2, (void *) ptr);
 }
 
-static const char *glFormatString(GLenum format)
+static const char *format_string(GLenum format)
 {
     switch (format)
     {
@@ -178,7 +178,7 @@ int lite3d_texture_technique_init(const lite3d_texture_technique_settings *setti
             gTextureSettings.anisotropy = gTextureSettings.maxAnisotropy;
     }
 
-    ilSetMemory(ilAlloc, ilFree);
+    ilSetMemory(il_alloc, il_free);
     ilInit();
     iluInit();
 
@@ -191,46 +191,35 @@ void lite3d_texture_technique_shut(void)
     ilShutDown();
 }
 
-lite3d_texture_unit *lite3d_texture_unit_from_resource_pack(lite3d_resource_pack *pack,
-    const char *name, uint32_t imageType, uint32_t textureTarget, int8_t quality)
-{
-    lite3d_resource_file *resource = lite3d_resource_pack_file_load(pack, name);
-    if (!resource)
-        return NULL;
-
-    return lite3d_texture_unit_from_resource(resource, imageType, textureTarget, quality);
-}
-
-lite3d_texture_unit *lite3d_texture_unit_from_resource(const lite3d_resource_file *resource,
-    uint32_t imageType, uint32_t textureTarget, int8_t quality)
+int lite3d_texture_unit_from_resource(lite3d_texture_unit *texture, 
+    const lite3d_resource_file *resource, uint32_t imageType, uint32_t textureTarget, int8_t quality)
 {
     SDL_assert(resource);
 
     if (!resource->isLoaded || resource->fileSize == 0)
-        return NULL;
+        return LITE3D_FALSE;
 
-    return lite3d_texture_unit_from_memory(resource->name, resource->fileBuff,
+    return lite3d_texture_unit_from_memory(texture, resource->fileBuff,
         resource->fileSize, imageType, textureTarget, quality);
 }
 
-lite3d_texture_unit *lite3d_texture_unit_from_memory(const char *textureName,
-    const void *buffer, size_t size, uint32_t imageType, uint32_t textureTarget,
-    int8_t quality)
+int lite3d_texture_unit_from_memory(lite3d_texture_unit *textureUnit, const void *buffer, 
+    size_t size, uint32_t imageType, uint32_t textureTarget, int8_t quality)
 {
     ILuint imageDesc = 0, imageFormat, internalFormat;
     GLint mipLevel = 0;
-    ILenum errNo;
     int32_t imageHeight, imageWidth, imageDepth;
-    lite3d_texture_unit *textureUnit;
 
     SDL_assert(buffer);
     SDL_assert(size > 0);
+    SDL_assert(textureUnit);
 
+    memset(textureUnit, 0, sizeof(lite3d_texture_unit));
     lite3d_misc_il_error_stack_clean();
     /* gen IL image */
     imageDesc = ilGenImage();
-    if (!lite3d_misc_check_il_error())
-        return NULL;
+    if (lite3d_misc_check_il_error())
+        return LITE3D_FALSE;
 
     /* Bind IL image */
     ilBindImage(imageDesc);
@@ -238,7 +227,7 @@ lite3d_texture_unit *lite3d_texture_unit_from_memory(const char *textureName,
     if (!ilLoadL(imageType, buffer, size))
     {
         lite3d_misc_check_il_error();
-        return NULL;
+        return LITE3D_FALSE;
     }
 
     apply_image_filters();
@@ -248,11 +237,6 @@ lite3d_texture_unit *lite3d_texture_unit_from_memory(const char *textureName,
         imageType = ilGetInteger(IL_IMAGE_TYPE);
     }
 
-    textureUnit =
-        (lite3d_texture_unit *) lite3d_calloc(sizeof (lite3d_texture_unit));
-    SDL_assert_release(textureUnit);
-
-    strcpy(textureUnit->textureName, textureName);
     textureUnit->imageType = imageType;
     textureUnit->imageWidth = imageWidth = ilGetInteger(IL_IMAGE_WIDTH);
     textureUnit->imageHeight = imageHeight = ilGetInteger(IL_IMAGE_HEIGHT);
@@ -283,11 +267,10 @@ lite3d_texture_unit *lite3d_texture_unit_from_memory(const char *textureName,
     glEnable(textureTarget);
     /* enable texture target */
     glGenTextures(1, &textureUnit->textureID);
-    if(!lite3d_misc_check_gl_error())
+    if(lite3d_misc_check_gl_error())
     {
         ilDeleteImages(1, &imageDesc);
-        lite3d_free(textureUnit);
-        return NULL;
+        return LITE3D_FALSE;
     }
 
     /* make texture active */
@@ -353,16 +336,15 @@ lite3d_texture_unit *lite3d_texture_unit_from_memory(const char *textureName,
         }
     }
 
-    if(!lite3d_misc_check_gl_error())
+    if(lite3d_misc_check_gl_error())
     {
         ilDeleteImages(1, &imageDesc);
-        lite3d_free(textureUnit);
-        return NULL;
+        return LITE3D_FALSE;
     }
 
-    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Texture %s (%s)loaded: "
-        "width %d, height %d, depth %d, also loaded mipmaps levels %d, %s, "
-        "format %s", textureUnit->textureName,
+    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "%s: "
+        " %dx%dx%d, build-in mipmaps %d, %s, "
+        "format %s",
         (textureUnit->textureTarget == LITE3D_TEXTURE_1D ? "TEXTURE_1D" :
         (textureUnit->textureTarget == LITE3D_TEXTURE_2D ? "TEXTURE_2D" :
         "TEXTURE_3D")),
@@ -373,20 +355,20 @@ lite3d_texture_unit *lite3d_texture_unit_from_memory(const char *textureName,
         gTextureSettings.useGLCompression ?
         (internalFormat == GL_COMPRESSED_RGB_S3TC_DXT1_EXT ?
         "Compressed DXT1" : "Compressed DXT5") : "Plain",
-        glFormatString(imageFormat));
+        format_string(imageFormat));
 
     glTexParameteri(textureTarget, GL_GENERATE_MIPMAP_SGIS, GL_FALSE);
     glDisable(textureTarget);
     /* release IL image */
     ilDeleteImage(imageDesc);
-    return textureUnit;
+    return LITE3D_TRUE;
 }
 
 void lite3d_texture_unit_purge(lite3d_texture_unit *texture)
 {
     SDL_assert(texture);
     glDeleteTextures(1, &texture->textureID);
-    lite3d_free(texture);
+    texture->textureID = 0;
 }
 
 void lite3d_texture_unit_bind(lite3d_texture_unit *texture)

@@ -63,12 +63,12 @@ int lite3d_vbo_init(struct lite3d_vbo *vbo)
     lite3d_misc_gl_error_stack_clean();
     /* gen buffer for store vertex data */
     glGenBuffers(1, &vbo->vboVerticesID);
-    if(!lite3d_misc_check_gl_error())
+    if(lite3d_misc_check_gl_error())
         return LITE3D_FALSE;
 
     /* gen buffer for store index data */
     glGenBuffers(1, &vbo->vboIndexesID);
-    if(!lite3d_misc_check_gl_error())
+    if(lite3d_misc_check_gl_error())
         return LITE3D_FALSE;
 
     return LITE3D_TRUE;
@@ -87,6 +87,8 @@ void lite3d_vbo_purge(struct lite3d_vbo *vbo)
 
     glDeleteBuffers(1, &vbo->vboVerticesID);
     glDeleteBuffers(1, &vbo->vboIndexesID);
+
+    vbo->vboVerticesID = vbo->vboIndexesID = 0;
 }
 
 void lite3d_vbo_draw(struct lite3d_vbo *vbo)
@@ -119,7 +121,7 @@ void lite3d_vao_draw(struct lite3d_vao *vao)
     /* activate current meterial */
     /* bind current vao */
     glBindVertexArray(vao->vaoID);
-    glDrawElements(GL_TRIANGLES, vao->elementsCount, vao->indexType, (void *)vao->offsetIndexes);
+    glDrawElements(vao->elementType, vao->elementsCount, vao->indexType, (void *)vao->offsetIndexes);
     glBindVertexArray(0);
 }
 
@@ -133,11 +135,12 @@ int lite3d_vao_init(struct lite3d_vao *vao)
     lite3d_misc_gl_error_stack_clean();
     glGenVertexArrays(1, &vao->vaoID);
 
-    return lite3d_misc_check_gl_error();
+    return !lite3d_misc_check_gl_error();
 }
 
 void lite3d_vao_purge(struct lite3d_vao *vao)
 {
     SDL_assert(vao);
     glDeleteVertexArrays(1, &vao->vaoID);
+    vao->vaoID = 0;
 }

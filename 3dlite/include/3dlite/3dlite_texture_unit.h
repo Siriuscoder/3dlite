@@ -76,7 +76,6 @@ typedef struct lite3d_texture_unit
 {
     uint32_t textureID;
     uint32_t textureTarget;
-    char textureName[LITE3D_MAX_NAME];
     int32_t imageType;
     int32_t imageGLFormat;
     int32_t imageHeight;
@@ -95,13 +94,10 @@ LITE3D_CEXPORT void lite3d_texture_technique_reset_filters(void);
 LITE3D_CEXPORT int lite3d_texture_technique_init(const lite3d_texture_technique_settings *settings);
 LITE3D_CEXPORT void lite3d_texture_technique_shut(void);
 
-LITE3D_CEXPORT lite3d_texture_unit *lite3d_texture_unit_from_resource_pack(lite3d_resource_pack *pack, 
-    const char *name, uint32_t imageType, uint32_t textureTarget, int8_t quality);
-
-LITE3D_CEXPORT lite3d_texture_unit *lite3d_texture_unit_from_resource(const lite3d_resource_file *resource, 
-    uint32_t imageType, uint32_t textureTarget, int8_t quality);
-LITE3D_CEXPORT lite3d_texture_unit *lite3d_texture_unit_from_memory(const char *textureName, 
-    const void *buffer, size_t size, uint32_t imageType, uint32_t textureTarget, int8_t quality);
+LITE3D_CEXPORT int lite3d_texture_unit_from_resource(lite3d_texture_unit *texture, 
+    const lite3d_resource_file *resource, uint32_t imageType, uint32_t textureTarget, int8_t quality);
+LITE3D_CEXPORT int lite3d_texture_unit_from_memory(lite3d_texture_unit *texture, const void *buffer, 
+    size_t size, uint32_t imageType, uint32_t textureTarget, int8_t quality);
 LITE3D_CEXPORT void lite3d_texture_unit_purge(lite3d_texture_unit *texture);
 LITE3D_CEXPORT void lite3d_texture_unit_bind(lite3d_texture_unit *texture);
 LITE3D_CEXPORT void lite3d_texture_unit_unbind(lite3d_texture_unit *texture);

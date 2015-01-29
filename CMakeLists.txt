@@ -67,6 +67,11 @@ if(NOT IL_FOUND)
     message(FATAL_ERROR "DevIL library not found..")
 endif()
 
+include(${CMAKE_SOURCE_DIR}/CMake/FindAssimp.cmake)
+if(NOT ASSIMP_FOUND)
+    message(FATAL_ERROR "Assimp library not found..")
+endif()
+
 include_directories("${PROJECT_SOURCE_DIR}/3dlite/include")
 
 add_subdirectory("${PROJECT_SOURCE_DIR}/3dlite/")

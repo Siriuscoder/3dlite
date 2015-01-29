@@ -22,12 +22,12 @@
 #include <3dlite/3dlite_main.h>
 #include <3dlite/3dlite_scene.h>
 
-#define DEFAULT_WIDTH           800
-#define DEFAULT_HEIGHT          600
+#define DEFAULT_WIDTH           160
+#define DEFAULT_HEIGHT          120
 
 static lite3d_resource_pack *mFileSysPack = NULL;
 static lite3d_resource_pack *m7zPack = NULL;
-static lite3d_texture_unit *mNormandy = NULL, *mMinigun = NULL;
+static lite3d_texture_unit mNormandy, mMinigun;
 static lite3d_camera mCamera01;
 static kmVec3 cameraInitPos = {
     0.0f, 5.0f, 5.0f
@@ -136,20 +136,25 @@ static int process_events(SDL_Event *levent)
 static int init(void)
 {
     int i = 0;
+    lite3d_resource_file *file1, *file2;
 
     if (!(mFileSysPack = lite3d_resource_pack_open("tests/", LITE3D_FALSE, 700000)))
         return LITE3D_FALSE;
     if (!(m7zPack = lite3d_resource_pack_open("tests/pack.1", LITE3D_TRUE, 700000)))
         return LITE3D_FALSE;
+    if (!(file1 = lite3d_resource_pack_file_load(mFileSysPack, "pack/minigun.dds")))
+        return LITE3D_FALSE;
+    if (!(file2 = lite3d_resource_pack_file_load(m7zPack, "pack/normandy/t1.jpg")))
+        return LITE3D_FALSE;
 
-    if (!(mNormandy = lite3d_texture_unit_from_resource_pack(m7zPack,
-        "pack/normandy/t1.jpg", LITE3D_IMAGE_JPG, LITE3D_TEXTURE_2D,
-        LITE3D_TEXTURE_QL_NICEST)))
+    if (!lite3d_texture_unit_from_resource(&mMinigun, file1, LITE3D_IMAGE_DDS, 
+        LITE3D_TEXTURE_2D, LITE3D_TEXTURE_QL_NICEST))
         return LITE3D_FALSE;
-    if (!(mMinigun = lite3d_texture_unit_from_resource_pack(mFileSysPack,
-        "pack/minigun.dds", LITE3D_IMAGE_DDS, LITE3D_TEXTURE_2D,
-        LITE3D_TEXTURE_QL_NICEST)))
+
+    if (!lite3d_texture_unit_from_resource(&mNormandy, file2, LITE3D_IMAGE_JPG, 
+        LITE3D_TEXTURE_2D, LITE3D_TEXTURE_QL_NICEST))
         return LITE3D_FALSE;
+
 
     lite3d_camera_init(&mCamera01);
 
@@ -194,8 +199,8 @@ static int init(void)
 
 static int shutdown(void)
 {
-    lite3d_texture_unit_purge(mNormandy);
-    lite3d_texture_unit_purge(mMinigun);
+    lite3d_texture_unit_purge(&mNormandy);
+    lite3d_texture_unit_purge(&mMinigun);
     lite3d_resource_pack_close(mFileSysPack);
     lite3d_resource_pack_close(m7zPack);
 
@@ -204,7 +209,7 @@ static int shutdown(void)
 
 static void draw_box(struct lite3d_scene_node *node)
 {
-    lite3d_texture_unit_bind(mMinigun);
+    lite3d_texture_unit_bind(&mMinigun);
 
     glBegin(GL_QUADS);
     glTexCoord2f(0.0f, 0.0f);
@@ -235,8 +240,8 @@ static void draw_box(struct lite3d_scene_node *node)
     glVertex3f(1.0f, 1.0f, -1.0f);
     glEnd();
 
-    lite3d_texture_unit_unbind(mMinigun);
-    lite3d_texture_unit_bind(mNormandy);
+    lite3d_texture_unit_unbind(&mMinigun);
+    lite3d_texture_unit_bind(&mNormandy);
 
     glBegin(GL_QUADS);
     glTexCoord2f(1.0f, 1.0f);
@@ -267,7 +272,7 @@ static void draw_box(struct lite3d_scene_node *node)
     glVertex3f(-1.0f, 1.0f, -1.0f);
     glEnd();
 
-    lite3d_texture_unit_unbind(mNormandy);
+    lite3d_texture_unit_unbind(&mNormandy);
 }
 
 int main(int argc, char *args[])
