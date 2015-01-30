@@ -15,5 +15,52 @@
 *	You should have received a copy of the GNU General Public License
 *	along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
+#include <string.h>
+
+#include <SDL_log.h>
+#include <SDL_assert.h>
+
+#include <3dlite/GL/glew.h>
+#include <3dlite/3dlite_alloc.h>
+#include <3dlite/3dlite_misc.h>
 #include <3dlite/3dlite_vbo_loader.h>
+
+int lite3d_vbo_load_from_memory(lite3d_vbo *vbo, 
+    void *vertices, 
+    size_t verticesCount, 
+    lite3d_buffer_component *layout,
+    size_t layoutCount,
+    void *indexes, 
+    size_t indexesCount, 
+    uint8_t indexComponents, 
+    uint8_t componentSize)
+{
+    lite3d_vao *vao;
+    size_t verticesSize, indexesSize;
+    SDL_assert(vbo);
+
+    lite3d_misc_gl_error_stack_clean();
+    glBindBuffer(GL_ARRAY_BUFFER, vbo->vboVerticesID);
+
+    if(!lite3d_misc_check_gl_error())
+        return LITE3D_FALSE;
+
+    
+    //glBufferData(GL_ARRAY_BUFFER, 
+}
+
+int lite3d_vbo_extend_from_memory(lite3d_vbo *vbo, 
+    void *vertices, 
+    size_t verticesCount, 
+    lite3d_buffer_component *layout,
+    size_t layoutCount,
+    void *indexes, 
+    size_t indexesCount, 
+    uint8_t indexComponents, 
+    uint8_t componentSize)
+{
+    SDL_assert(vbo);
+
+
+}
 

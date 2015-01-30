@@ -22,6 +22,13 @@
 #include <3dlite/3dlite_vbo.h>
 #include <3dlite/3dlite_resource_pack.h>
 
+typedef struct lite3d_buffer_component
+{
+    uint8_t binding;
+    uint8_t type;
+    uint8_t count;
+    uint8_t size;
+} lite3d_buffer_component;
 /*
     note:
         function load mesh model with specified *name* from *file*,
@@ -29,8 +36,28 @@
 */
 LITE3D_CEXPORT int lite3d_vbo_load(lite3d_vbo *vbo, lite3d_resource_file *resource, 
     const char *name);
-LITE3D_CEXPORT int lite3d_vbo_load(lite3d_vbo *vbo, const char *file, 
-    const char *name);
+
+
+LITE3D_CEXPORT int lite3d_vbo_load_from_memory(lite3d_vbo *vbo, 
+    void *vertices, 
+    size_t verticesCount, 
+    lite3d_buffer_component *layout,
+    size_t layoutCount,
+    void *indexes, 
+    size_t indexesCount, 
+    uint8_t indexComponents, 
+    uint8_t componentSize);
+
+LITE3D_CEXPORT int lite3d_vbo_extend_from_memory(lite3d_vbo *vbo, 
+    void *vertices, 
+    size_t verticesCount, 
+    lite3d_buffer_component *layout,
+    size_t layoutCount,
+    void *indexes, 
+    size_t indexesCount, 
+    uint8_t indexComponents, 
+    uint8_t componentSize);
+
 
 #endif	/* LITE3D_VBO_LOADER_H */
 

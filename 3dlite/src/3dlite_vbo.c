@@ -142,5 +142,5 @@ void lite3d_vao_purge(struct lite3d_vao *vao)
 {
     SDL_assert(vao);
     glDeleteVertexArrays(1, &vao->vaoID);
-    vao->vaoID = 0;
+    lite3d_free(vao);
 }
