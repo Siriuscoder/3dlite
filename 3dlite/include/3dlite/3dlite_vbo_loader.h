@@ -22,13 +22,18 @@
 #include <3dlite/3dlite_vbo.h>
 #include <3dlite/3dlite_resource_pack.h>
 
-typedef struct lite3d_buffer_component
+#define LITE3D_BUFFER_BINDING_VERTEX          0x0
+#define LITE3D_BUFFER_BINDING_COLOR           0x1
+#define LITE3D_BUFFER_BINDING_NORMAL          0x2
+#define LITE3D_BUFFER_BINDING_TEXCOORD        0x3
+/* may be more then one, attribute index will be increased */
+#define LITE3D_BUFFER_BINDING_ATTRIBUTE       0x4
+
+typedef struct lite3d_component_layout
 {
     uint8_t binding;
-    uint8_t type;
-    uint8_t count;
-    uint8_t size;
-} lite3d_buffer_component;
+    uint8_t count; /* count elements in component */
+} lite3d_component_layout;
 /*
     note:
         function load mesh model with specified *name* from *file*,
@@ -41,22 +46,22 @@ LITE3D_CEXPORT int lite3d_vbo_load(lite3d_vbo *vbo, lite3d_resource_file *resour
 LITE3D_CEXPORT int lite3d_vbo_load_from_memory(lite3d_vbo *vbo, 
     void *vertices, 
     size_t verticesCount, 
-    lite3d_buffer_component *layout,
+    lite3d_component_layout *layout,
     size_t layoutCount,
     void *indexes, 
     size_t indexesCount, 
     uint8_t indexComponents, 
-    uint8_t componentSize);
+    uint16_t access);
 
 LITE3D_CEXPORT int lite3d_vbo_extend_from_memory(lite3d_vbo *vbo, 
     void *vertices, 
     size_t verticesCount, 
-    lite3d_buffer_component *layout,
+    lite3d_component_layout *layout,
     size_t layoutCount,
     void *indexes, 
     size_t indexesCount, 
     uint8_t indexComponents, 
-    uint8_t componentSize);
+    uint16_t access);
 
 
 #endif	/* LITE3D_VBO_LOADER_H */

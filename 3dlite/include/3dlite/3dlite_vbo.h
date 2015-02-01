@@ -24,8 +24,6 @@
 
 typedef struct lite3d_vbo
 {
-    /* cached node */
-    lite3d_rb_node managed;
     uint32_t vboVerticesID;
     uint32_t vboIndexesID;
     size_t verticesCount;
