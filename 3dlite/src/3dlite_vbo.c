@@ -26,6 +26,34 @@
 #include <3dlite/3dlite_misc.h>
 #include <3dlite/3dlite_vbo.h>
 
+static int vbo_expand(uint32_t *vboID, size_t expandSize, uint16_t access)
+{
+    int32_t originSize;
+    uint32_t newVbo;
+
+    glBindBuffer(GL_COPY_READ_BUFFER, *vboID);
+    glGetBufferParameteriv(GL_COPY_READ_BUFFER, GL_BUFFER_SIZE, &originSize);
+    
+    glGenBuffers(1, &newVbo);
+    glBindBuffer(GL_COPY_WRITE_BUFFER, newVbo);
+    /* allocate new buffer */
+    glBufferData(GL_COPY_WRITE_BUFFER, originSize + expandSize, NULL, access);
+    /* copy data to new buffer */
+    glCopyBufferSubData(GL_COPY_READ_BUFFER, GL_COPY_WRITE_BUFFER, 0, 0, originSize);
+    
+    if(lite3d_misc_check_gl_error())
+    {
+        glDeleteBuffers(1, &newVbo);;
+        return LITE3D_FALSE;
+    }
+    
+    glDeleteBuffers(1, vboID);
+    glBindBuffer(GL_COPY_READ_BUFFER, 0);
+    glBindBuffer(GL_COPY_WRITE_BUFFER, 0);
+
+    *vboID = newVbo;
+    return LITE3D_TRUE;
+}
 
 int lite3d_vbo_technique_init(void)
 {
@@ -79,9 +107,9 @@ void lite3d_vbo_purge(struct lite3d_vbo *vbo)
     lite3d_list_node *vaoLink;
     SDL_assert(vbo);
 
-    for (vaoLink = vbo->vaos.l.next; 
-        vaoLink != &vbo->vaos.l; vaoLink = lite3d_list_next(vaoLink))
+    while((vaoLink = lite3d_list_first_link(&vbo->vaos)) != NULL)
     {
+        lite3d_list_unlink_link(vaoLink);
         lite3d_vao_purge(MEMBERCAST(lite3d_vao, vaoLink, inVbo));
     }
 
@@ -89,6 +117,7 @@ void lite3d_vbo_purge(struct lite3d_vbo *vbo)
     glDeleteBuffers(1, &vbo->vboIndexesID);
 
     vbo->vboVerticesID = vbo->vboIndexesID = 0;
+    vbo->vaosCount = 0;
 }
 
 void lite3d_vbo_draw(struct lite3d_vbo *vbo)
@@ -114,6 +143,33 @@ void lite3d_vbo_draw(struct lite3d_vbo *vbo)
 
     if(vbo->bindOff)
         vbo->bindOff(vbo);
+}
+
+int lite3d_vbo_extend(struct lite3d_vbo *vbo, size_t verticesSize,
+    size_t indexesSize, uint16_t access)
+{
+    SDL_assert(vbo);
+    if(!GLEW_ARB_copy_buffer)
+    {
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+            "%s: GLEW_ARB_copy_buffer not supported..", __FUNCTION__);
+        return LITE3D_FALSE;
+    }
+
+    lite3d_misc_gl_error_stack_clean();
+
+    if(verticesSize > 0)
+    {
+        if(!vbo_expand(&vbo->vboVerticesID, verticesSize, access))
+            return LITE3D_FALSE;
+    }
+    if(indexesSize > 0)
+    {
+        if(!vbo_expand(&vbo->vboIndexesID, indexesSize, access))
+            return LITE3D_FALSE;
+    }
+
+    return LITE3D_TRUE;
 }
 
 void lite3d_vao_draw(struct lite3d_vao *vao)

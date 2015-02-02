@@ -18,7 +18,10 @@
 #include <stdio.h>
 #include <SDL_log.h>
 
+#include <assimp/cimport.h>
 #include <3dlite/3dlite_logger.h>
+    
+struct aiLogStream aiLogStream;
 
 static void log_to_file(FILE *desc, int category, 
     SDL_LogPriority priority, const char* message)
@@ -43,6 +46,12 @@ static void std_output_function(void* userdata, int category,
     log_to_file(outdesc, category, priority, message);
 }
 
+static void aiLogFunc(const char* message , char* user)
+{
+    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Assimp: %s",
+        message);
+}
+
 static void file_output_function(void* userdata, int category, 
     SDL_LogPriority priority, const char* message)
 {
@@ -58,5 +67,8 @@ void lite3d_logger_set_loglevel(int8_t level)
 void lite3d_logger_setup_stdout(void)
 {
     SDL_LogSetOutputFunction(std_output_function, NULL);
+    aiLogStream.callback = aiLogFunc;
+    aiLogStream.user = NULL;
+	aiAttachLogStream(&aiLogStream);
 }
 

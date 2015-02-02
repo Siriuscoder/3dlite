@@ -26,6 +26,8 @@ typedef struct lite3d_vbo
 {
     uint32_t vboVerticesID;
     uint32_t vboIndexesID;
+    size_t verticesSize;
+    size_t indexesSize;
     size_t verticesCount;
     size_t indexesCount;
     size_t vaosCount;
@@ -52,6 +54,8 @@ typedef struct lite3d_vao
 LITE3D_CEXPORT int lite3d_vbo_technique_init(void);
 LITE3D_CEXPORT int lite3d_vbo_init(struct lite3d_vbo *vbo);
 LITE3D_CEXPORT void lite3d_vbo_purge(struct lite3d_vbo *vbo);
+LITE3D_CEXPORT int lite3d_vbo_extend(struct lite3d_vbo *vbo, 
+    size_t verticesSize, size_t indexesSize, uint16_t access);
 LITE3D_CEXPORT void lite3d_vbo_draw(struct lite3d_vbo *vbo);
 
 LITE3D_CEXPORT int lite3d_vao_init(struct lite3d_vao *vao);

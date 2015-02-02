@@ -20,12 +20,16 @@
 #include <SDL_log.h>
 #include <SDL_assert.h>
 
+#include <assimp/cimport.h>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
+
 #include <3dlite/GL/glew.h>
 #include <3dlite/3dlite_alloc.h>
 #include <3dlite/3dlite_misc.h>
 #include <3dlite/3dlite_vbo_loader.h>
 
-static int vbo_create_batch(lite3d_vbo *vbo,
+static int vbo_append_batch(lite3d_vbo *vbo,
     lite3d_component_layout *layout,
     size_t layoutCount,
     size_t stride,
@@ -37,7 +41,7 @@ static int vbo_create_batch(lite3d_vbo *vbo,
 {
     lite3d_vao *vao;
     uint32_t attribIndex = 0;
-    int i = 0;
+    size_t i = 0;
 
     vao = lite3d_malloc(sizeof (lite3d_vao));
     SDL_assert_release(vao);
@@ -123,10 +127,9 @@ int lite3d_vbo_load_from_memory(lite3d_vbo *vbo,
     uint8_t indexComponents,
     uint16_t access)
 {
-    int i;
     size_t verticesSize = 0, indexesSize = 0,
-        stride = 0;
-    size_t componentSize;
+        stride = 0, i;
+    uint8_t componentSize;
 
     SDL_assert(vbo && layout);
 
@@ -154,12 +157,18 @@ int lite3d_vbo_load_from_memory(lite3d_vbo *vbo,
     if (lite3d_misc_check_gl_error())
         return LITE3D_FALSE;
 
-    if (!vbo_create_batch(vbo, layout, layoutCount, stride,
+    /* append new batch */
+    if (!vbo_append_batch(vbo, layout, layoutCount, stride,
         indexComponents, componentSize, indexesCount, 0, 0))
         return LITE3D_FALSE;
 
     vbo->verticesCount = verticesCount;
     vbo->indexesCount = indexesCount;
+    vbo->verticesSize = verticesSize;
+    vbo->indexesSize = indexesSize;
+
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
     return LITE3D_TRUE;
 }
@@ -174,12 +183,74 @@ int lite3d_vbo_extend_from_memory(lite3d_vbo *vbo,
     uint8_t indexComponents,
     uint16_t access)
 {
+    size_t verticesSize = 0, indexesSize = 0,
+        stride = 0, i;
+    uint8_t componentSize;
+
     SDL_assert(vbo && layout);
 
     if (lite3d_list_is_empty(&vbo->vaos))
         return lite3d_vbo_load_from_memory(vbo, vertices, verticesCount,
         layout, layoutCount, indexes, indexesCount, indexComponents, access);
 
+    /* calculate buffer parameters */
+    for (i = 0; i < layoutCount; ++i)
+        stride += layout[i].count * sizeof (GLfloat);
+    verticesSize = stride * verticesCount;
+    componentSize = verticesCount <= 0xff ? 1 : (verticesCount <= 0xffff ? 2 : 4);
+    indexesSize = indexComponents * componentSize * indexesCount;
+    /* expand VBO */
+    if (!lite3d_vbo_extend(vbo, verticesSize, indexesSize, access))
+        return LITE3D_FALSE;
+
+    /* copy vertices to the end of the vertex buffer */
+    glBindBuffer(GL_ARRAY_BUFFER, vbo->vboVerticesID);
+    glBufferSubData(GL_ARRAY_BUFFER, vbo->verticesSize, verticesSize, vertices);
+    if (lite3d_misc_check_gl_error())
+        return LITE3D_FALSE;
+
+    /* copy indexes to the end of the index buffer */
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbo->vboIndexesID);
+    glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, vbo->indexesSize, indexesSize, vertices);
+    if (lite3d_misc_check_gl_error())
+        return LITE3D_FALSE;
+
+    /* append new batch */
+    if (!vbo_append_batch(vbo, layout, layoutCount, stride,
+        indexComponents, componentSize, indexesCount, vbo->verticesSize, vbo->indexesSize))
+        return LITE3D_FALSE;
+
+    vbo->verticesCount += verticesCount;
+    vbo->indexesCount += verticesCount;
+    vbo->verticesSize += verticesSize;
+    vbo->indexesSize += verticesSize;
+
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
     return LITE3D_TRUE;
 }
 
+int lite3d_vbo_load(lite3d_vbo *vbo, lite3d_resource_file *resource, 
+    const char *name)
+{
+    const struct aiScene* scene = NULL;
+    SDL_assert(vbo && resource);
+
+    if(!resource->isLoaded)
+        return LITE3D_FALSE;
+    ///aiGetPredefinedLogStream
+
+    scene = aiImportFileFromMemory(resource->fileBuff, resource->fileSize, 0, NULL);
+	/*
+	aiProcess_GenSmoothNormals			
+	aiProcess_JoinIdenticalVertices		
+	aiProcess_LimitBoneWeights			
+	aiProcess_RemoveRedundantMaterials  
+	aiProcess_SplitLargeMeshes			
+	aiProcess_Triangulate				          
+	aiProcess_SortByPType               
+	aiProcess_FindDegenerates           
+	aiProcess_FindInvalidData         
+    */
+}
