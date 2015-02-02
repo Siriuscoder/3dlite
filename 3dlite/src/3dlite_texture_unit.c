@@ -343,7 +343,7 @@ int lite3d_texture_unit_from_memory(lite3d_texture_unit *textureUnit, const void
     }
 
     SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "%s: "
-        " %dx%dx%d, build-in mipmaps %d, %s, "
+        "%dx%dx%d, build-in mipmaps %d, %s, "
         "format %s",
         (textureUnit->textureTarget == LITE3D_TEXTURE_1D ? "TEXTURE_1D" :
         (textureUnit->textureTarget == LITE3D_TEXTURE_2D ? "TEXTURE_2D" :

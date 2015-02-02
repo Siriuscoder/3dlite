@@ -20,6 +20,7 @@
 #include <SDL_log.h>
 #include <SDL_assert.h>
 
+#include <assimp/config.h>
 #include <assimp/cimport.h>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
@@ -234,23 +235,55 @@ int lite3d_vbo_extend_from_memory(lite3d_vbo *vbo,
 int lite3d_vbo_load(lite3d_vbo *vbo, lite3d_resource_file *resource, 
     const char *name)
 {
-    const struct aiScene* scene = NULL;
+    const struct aiScene *scene = NULL;
+    struct aiPropertyStore *importProrerties;
+    struct aiMemoryInfo sceneMemory;
+    
     SDL_assert(vbo && resource);
 
     if(!resource->isLoaded)
         return LITE3D_FALSE;
-    ///aiGetPredefinedLogStream
 
-    scene = aiImportFileFromMemory(resource->fileBuff, resource->fileSize, 0, NULL);
-	/*
-	aiProcess_GenSmoothNormals			
-	aiProcess_JoinIdenticalVertices		
-	aiProcess_LimitBoneWeights			
-	aiProcess_RemoveRedundantMaterials  
-	aiProcess_SplitLargeMeshes			
-	aiProcess_Triangulate				          
-	aiProcess_SortByPType               
-	aiProcess_FindDegenerates           
-	aiProcess_FindInvalidData         
-    */
+    importProrerties = aiCreatePropertyStore();
+    SDL_assert_release(importProrerties);
+
+    /* remove this components from loaded scene */
+    /* speedup loading */
+    aiSetImportPropertyInteger(importProrerties, AI_CONFIG_PP_RVC_FLAGS,
+        aiComponent_TANGENTS_AND_BITANGENTS | 
+        aiComponent_LIGHTS | 
+        aiComponent_CAMERAS |
+        aiComponent_ANIMATIONS |
+        aiComponent_BONEWEIGHTS);
+    /* parse scene from memory buffered file */
+    scene = aiImportFileFromMemoryWithProperties(resource->fileBuff, 
+        resource->fileSize, aiProcess_RemoveComponent, NULL, importProrerties);
+    if(!scene)
+    {
+        aiReleasePropertyStore(importProrerties);
+        return LITE3D_FALSE;
+    }
+    
+    aiGetMemoryRequirements(scene, &sceneMemory);
+    scene = aiApplyPostProcessing(scene, 
+        aiProcess_GenSmoothNormals |
+        aiProcess_JoinIdenticalVertices | 
+        aiProcess_RemoveRedundantMaterials |
+        aiProcess_SplitLargeMeshes |
+        aiProcess_Triangulate |
+        aiProcess_SortByPType |
+        aiProcess_FindDegenerates |   
+        aiProcess_FindInvalidData);
+    
+    if(!scene)
+    {
+        aiReleasePropertyStore(importProrerties);
+        return LITE3D_FALSE;
+    }
+        
+    SDL_LogVerbose(SDL_LOG_CATEGORY_APPLICATION, "MESH");
+    aiReleaseImport(scene);
+    aiReleasePropertyStore(importProrerties);
+
+    return LITE3D_TRUE;
 }

@@ -136,7 +136,7 @@ lite3d_resource_pack *lite3d_resource_pack_open(const char *path, uint8_t compre
     lite3d_list_init(&pack->priorityList);
     strncpy(pack->pathto, path, sizeof(pack->pathto)-1);
     SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, 
-        "%s: '%s' pack opened (%s) limit %d bytes", __FUNCTION__,
+        "PACK: '%s' opened (%s) limit %d bytes",
         path, compressed ? "compressed" : "filesystem", (int)memoryLimit);
     
     /* begin indexing 7z pack */
@@ -170,7 +170,7 @@ void lite3d_resource_pack_close(lite3d_resource_pack *pack)
     }
     
     SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, 
-        "%s: '%s' pack (%s) closed ", __FUNCTION__, pack->pathto,
+        "PACK: '%s' (%s) closed ", pack->pathto,
         pack->isCompressed ? "compressed" : "filesystem");
     lite3d_free(pack);
 }
@@ -188,7 +188,8 @@ lite3d_resource_file *lite3d_resource_pack_file_load(lite3d_resource_pack *pack,
     if(strlen(file) >= LITE3D_MAX_FILE_NAME)
     {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, 
-            "create_resource_index: '%s' file name too long..", file);
+            "%s: '%s' file name too long..", 
+            __FUNCTION__, file);
         return NULL;
     }
     
@@ -197,7 +198,7 @@ lite3d_resource_file *lite3d_resource_pack_file_load(lite3d_resource_pack *pack,
     if(resource && resource->isLoaded)
     {
         SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, 
-            "lite3d_load_resource_file: '%s' loaded from index (size: %d bytes)",
+            "PACK: '%s' loaded from index (size: %d bytes)", 
             file, (int)resource->fileSize);
             
         /* move resource to the head of priority queue */
@@ -255,8 +256,8 @@ lite3d_resource_file *lite3d_resource_pack_file_load(lite3d_resource_pack *pack,
         }
         
         SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, 
-            "%s: '%s' loaded (size: %d bytes, chunks %d)",
-            __FUNCTION__, file, (int)fileSize, (int)chunks);
+            "PACK: '%s' loaded (size: %d bytes, chunks %d)",
+            file, (int)fileSize, (int)chunks);
         SDL_RWclose(desc);
     }
     else
@@ -289,7 +290,7 @@ lite3d_resource_file *lite3d_resource_pack_file_load(lite3d_resource_pack *pack,
         }
         
         SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, 
-            "%s: '%s' uncompressed (size: %d bytes)", __FUNCTION__,
+            "PACK: '%s' uncompressed (size: %d bytes)",
             file, (int)fileSize);
     }
     
