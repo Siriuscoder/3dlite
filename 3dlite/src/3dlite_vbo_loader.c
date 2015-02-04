@@ -37,12 +37,16 @@ static int vbo_append_batch(lite3d_vbo *vbo,
     uint8_t indexComponents,
     uint8_t indexComponentSize,
     size_t indexesCount,
-    size_t offsetVertices,
-    size_t offsetIndexes)
+    size_t indexesSize,    
+    size_t indexesOffset,
+    size_t verticesCount,
+    size_t verticesSize,
+    size_t verticesOffset)
 {
     lite3d_vao *vao;
     uint32_t attribIndex = 0;
     size_t i = 0;
+    size_t vOffset = verticesOffset;
 
     vao = lite3d_malloc(sizeof (lite3d_vao));
     SDL_assert_release(vao);
@@ -66,54 +70,221 @@ static int vbo_append_batch(lite3d_vbo *vbo,
             {
                 glEnableVertexAttribArray(attribIndex);
                 glVertexAttribPointer(attribIndex++, layout[i].count, GL_FLOAT,
-                    GL_FALSE, stride, (void *) offsetVertices);
+                    GL_FALSE, stride, (void *) vOffset);
             }
-                break;
+            break;
             case LITE3D_BUFFER_BINDING_VERTEX:
             {
                 glEnableClientState(GL_VERTEX_ARRAY);
                 glVertexPointer(layout[i].count, GL_FLOAT, stride,
-                    (void *) offsetVertices);
+                    (void *) vOffset);
             }
-                break;
+            break;
             case LITE3D_BUFFER_BINDING_COLOR:
             {
                 glEnableClientState(GL_COLOR_ARRAY);
                 glColorPointer(layout[i].count, GL_FLOAT, stride,
-                    (void *) offsetVertices);
+                    (void *) vOffset);
             }
-                break;
+            break;
             case LITE3D_BUFFER_BINDING_NORMAL:
             {
                 glEnableClientState(GL_NORMAL_ARRAY);
                 glNormalPointer(GL_FLOAT, stride,
-                    (void *) offsetVertices);
+                    (void *) vOffset);
             }
-                break;
+            break;
             case LITE3D_BUFFER_BINDING_TEXCOORD:
             {
                 glEnableClientState(GL_TEXTURE_COORD_ARRAY);
                 glTexCoordPointer(layout[i].count, GL_FLOAT, stride,
-                    (void *) offsetVertices);
+                    (void *) vOffset);
             }
-                break;
+            break;
         }
 
-        offsetVertices += layout[i].count * sizeof (GLfloat);
+        vOffset += layout[i].count * sizeof (GLfloat);
     }
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbo->vboIndexesID);
     /* end VAO binding */
     glBindVertexArray(0);
 
-    vao->offsetIndexes = offsetIndexes;
+    vao->indexesOffset = indexesOffset;
     vao->indexType = indexComponentSize == 1 ? GL_UNSIGNED_BYTE :
         (indexComponentSize == 2 ? GL_UNSIGNED_SHORT : GL_UNSIGNED_INT);
     vao->elementType = indexComponents == 1 ? GL_POINTS :
         (indexComponents == 2 ? GL_LINES : GL_TRIANGLES);
     vao->elementsCount = indexesCount;
+    vao->indexesSize = indexesSize;
+    vao->verticesCount = verticesCount;
+    vao->verticesSize = verticesSize;
+    vao->verticesOffset = verticesOffset;
+
     lite3d_list_add_last_link(&vao->inVbo, &vbo->vaos);
     vbo->vaosCount++;
+
+    SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "VBO: 0x%x: BATCH 0x%x: %s, cv/ov/sv %d/%d/%d, ci/oi %d/%d",
+        vbo, vao, indexComponents == 1 ? "POINTS" : (indexComponents == 2 ? "LINES" : "TRIANGLES"),
+        vao->verticesCount, vao->verticesOffset, stride, vao->elementsCount, vao->indexesOffset);
+
+    return LITE3D_TRUE;
+}
+
+static const struct aiNode *ai_find_node_by_name(const struct aiNode *root, const char *name)
+{
+    uint32_t i;
+    const struct aiNode *result;
+
+    if(strcmp(root->mName.data, name) == 0)
+        return root;
+
+    for(i = 0; i < root->mNumChildren; ++i)
+    {
+        if((result = ai_find_node_by_name(root->mChildren[i], name)) != NULL)
+            return result;
+    }
+
+    return NULL;
+}
+
+static int ai_node_load_to_vbo(lite3d_vbo *vbo, const struct aiScene *scene, 
+    const struct aiNode *node, uint16_t access)
+{
+    uint8_t componentSize;
+    lite3d_component_layout layout[10];
+    size_t layoutCount = 0;
+    size_t verticesSize;
+    size_t indexesSize;
+    void *vertices;
+    void *indexes;
+    register float *pvertices;
+    register uint8_t *pindexes;
+    register uint32_t i;
+
+    /* one mesh - one batch on single VBO */
+    for(i = 0; i < node->mNumMeshes; ++i)
+    {
+        const struct aiMesh *mesh = scene->mMeshes[node->mMeshes[i]];
+        uint32_t j;
+
+        if(mesh->mPrimitiveTypes != aiPrimitiveType_TRIANGLE)
+        {
+            SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION, "Skiping no triangles mesh..");
+            continue;
+        }
+
+        verticesSize = mesh->mNumVertices * sizeof(float) * 3;
+        layout[layoutCount].binding = LITE3D_BUFFER_BINDING_VERTEX;
+        layout[layoutCount].count = 3;
+        layoutCount++;
+
+        if(mesh->mNormals)
+        {
+            verticesSize += mesh->mNumVertices * sizeof(float) * 3;
+            layout[layoutCount].binding = LITE3D_BUFFER_BINDING_NORMAL;
+            layout[layoutCount].count = 3;
+            layoutCount++;
+        }
+
+        if(mesh->mColors)
+        {
+            verticesSize += mesh->mNumVertices * sizeof(float) * 4;
+            layout[layoutCount].binding = LITE3D_BUFFER_BINDING_COLOR;
+            layout[layoutCount].count = 4;
+            layoutCount++;
+        }
+
+        if(mesh->mTextureCoords)
+        {
+            verticesSize += mesh->mNumVertices * sizeof(float) * 2;
+            layout[layoutCount].binding = LITE3D_BUFFER_BINDING_TEXCOORD;
+            layout[layoutCount].count = 2;
+            layoutCount++;
+        }
+
+        componentSize = mesh->mNumFaces <= 0xff ? 1 : (mesh->mNumFaces <= 0xffff ? 2 : 4);
+        indexesSize = componentSize * mesh->mNumFaces;
+
+        vertices = lite3d_malloc(verticesSize);
+        SDL_assert_release(vertices);
+        indexes = lite3d_malloc(indexesSize);
+        SDL_assert_release(indexes);
+
+        pvertices = (float *)vertices;
+        pindexes = (uint8_t *)indexes;
+
+        for(j = 0; j < mesh->mNumVertices; ++j)
+        {
+            *pvertices++ = mesh->mVertices[j].x;
+            *pvertices++ = mesh->mVertices[j].y;
+            *pvertices++ = mesh->mVertices[j].z;
+
+            if(mesh->mNormals)
+            {
+                *pvertices++ = mesh->mNormals[j].x;
+                *pvertices++ = mesh->mNormals[j].y;
+                *pvertices++ = mesh->mNormals[j].z;
+            }
+
+            if(mesh->mColors)
+            {
+                *pvertices++ = mesh->mColors[0][j].r;
+                *pvertices++ = mesh->mColors[0][j].g;
+                *pvertices++ = mesh->mColors[0][j].b;
+                *pvertices++ = mesh->mColors[0][j].a;
+            }
+
+            if(mesh->mTextureCoords)
+            {
+                *pvertices++ = mesh->mTextureCoords[0][j].x;
+                *pvertices++ = mesh->mTextureCoords[0][j].y;
+            }
+        }
+
+        for(j = 0; j < mesh->mNumFaces; ++j)
+        {
+            /* only triangles used */
+            if(mesh->mFaces[j].mNumIndices != 3)
+                continue;
+
+            if(componentSize == 1)
+            {
+                *pindexes++ = (uint8_t)mesh->mFaces[j].mIndices[0];
+                *pindexes++ = (uint8_t)mesh->mFaces[j].mIndices[1];
+                *pindexes++ = (uint8_t)mesh->mFaces[j].mIndices[2];
+            }
+            else if(componentSize == 2)
+            {
+                *((uint16_t *)pindexes) = (uint16_t)mesh->mFaces[j].mIndices[0];
+                pindexes += sizeof(uint16_t);
+                *((uint16_t *)pindexes) = (uint16_t)mesh->mFaces[j].mIndices[1];
+                pindexes += sizeof(uint16_t);
+                *((uint16_t *)pindexes) = (uint16_t)mesh->mFaces[j].mIndices[2];
+                pindexes += sizeof(uint16_t);
+            }
+            else if(componentSize == 4)
+            {
+                *((uint32_t *)pindexes) = mesh->mFaces[j].mIndices[0];
+                pindexes += sizeof(uint32_t);
+                *((uint32_t *)pindexes) = mesh->mFaces[j].mIndices[1];
+                pindexes += sizeof(uint32_t);
+                *((uint32_t *)pindexes) = mesh->mFaces[j].mIndices[2];
+                pindexes += sizeof(uint32_t);
+            }
+        }
+
+        if(!lite3d_vbo_extend_from_memory(vbo, vertices, mesh->mNumVertices, 
+            layout, layoutCount, indexes, mesh->mNumFaces, 3, access))
+            return LITE3D_FALSE;
+
+        /* set material index to currently added vao */
+        MEMBERCAST(lite3d_vao, lite3d_list_last_link(&vbo->vaos), inVbo)->
+            materialIndex = mesh->mMaterialIndex;
+
+        lite3d_free(vertices);
+        lite3d_free(indexes);
+    }
 
     return LITE3D_TRUE;
 }
@@ -160,7 +331,8 @@ int lite3d_vbo_load_from_memory(lite3d_vbo *vbo,
 
     /* append new batch */
     if (!vbo_append_batch(vbo, layout, layoutCount, stride,
-        indexComponents, componentSize, indexesCount, 0, 0))
+        indexComponents, componentSize, indexesCount, 
+        indexesSize, 0, verticesCount, verticesSize, 0))
         return LITE3D_FALSE;
 
     vbo->verticesCount = verticesCount;
@@ -170,6 +342,9 @@ int lite3d_vbo_load_from_memory(lite3d_vbo *vbo,
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+    SDL_LogVerbose(SDL_LOG_CATEGORY_APPLICATION, "VBO: 0x%x: cv %d, ci %d",
+        vbo, vbo->verticesCount, vbo->indexesCount);
 
     return LITE3D_TRUE;
 }
@@ -218,7 +393,8 @@ int lite3d_vbo_extend_from_memory(lite3d_vbo *vbo,
 
     /* append new batch */
     if (!vbo_append_batch(vbo, layout, layoutCount, stride,
-        indexComponents, componentSize, indexesCount, vbo->verticesSize, vbo->indexesSize))
+        indexComponents, componentSize, indexesCount,
+        indexesSize, vbo->indexesSize, verticesCount, verticesSize, vbo->verticesSize))
         return LITE3D_FALSE;
 
     vbo->verticesCount += verticesCount;
@@ -229,13 +405,17 @@ int lite3d_vbo_extend_from_memory(lite3d_vbo *vbo,
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
+    SDL_LogVerbose(SDL_LOG_CATEGORY_APPLICATION, "VBO: 0x%x: cv %d, ci %d, batches %d",
+        vbo, vbo->verticesCount, vbo->indexesCount, vbo->vaosCount);
+
     return LITE3D_TRUE;
 }
 
 int lite3d_vbo_load(lite3d_vbo *vbo, lite3d_resource_file *resource, 
-    const char *name)
+    const char *name, uint16_t access)
 {
     const struct aiScene *scene = NULL;
+    const struct aiNode *targetNode = NULL;
     struct aiPropertyStore *importProrerties;
     struct aiMemoryInfo sceneMemory;
     
@@ -280,8 +460,46 @@ int lite3d_vbo_load(lite3d_vbo *vbo, lite3d_resource_file *resource,
         aiReleasePropertyStore(importProrerties);
         return LITE3D_FALSE;
     }
-        
-    SDL_LogVerbose(SDL_LOG_CATEGORY_APPLICATION, "MESH");
+
+    /* try to find node by name */ 
+    if(name)
+    {
+        targetNode = ai_find_node_by_name(scene->mRootNode, name);
+        if(!targetNode)
+        {
+            SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "MESH: %s not found in the %s..",
+                name, resource->name);
+            aiReleaseImport(scene);
+            aiReleasePropertyStore(importProrerties);
+            return LITE3D_FALSE;
+        }
+    }
+    else
+    {
+        if(scene->mRootNode->mNumChildren > 0)
+            targetNode = scene->mRootNode->mChildren[0];
+    }
+
+    if(!targetNode)
+    {
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "MESH: %s is empty..",
+            resource->name);
+        aiReleaseImport(scene);
+        aiReleasePropertyStore(importProrerties);
+        return LITE3D_FALSE;
+    }
+
+    if(!ai_node_load_to_vbo(vbo, scene, targetNode, access))
+    {
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "MESH: %s load failed..",
+            resource->name);
+        aiReleaseImport(scene);
+        aiReleasePropertyStore(importProrerties);
+        return LITE3D_FALSE;
+    }
+
+    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "MESH: %s loaded, cv/ci/cb/ %d/%d/%d",
+        resource->name, vbo->verticesCount, vbo->indexesCount, vbo->vaosCount);
     aiReleaseImport(scene);
     aiReleasePropertyStore(importProrerties);
 

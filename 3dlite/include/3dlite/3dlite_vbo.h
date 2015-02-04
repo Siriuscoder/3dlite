@@ -41,12 +41,16 @@ typedef struct lite3d_vao
     lite3d_list_node inVbo;
     uint32_t vaoID;
     size_t elementsCount;
-    size_t offsetIndexes;    
+    size_t indexesSize;
+    size_t indexesOffset;
+    size_t verticesCount;
+    size_t verticesSize;
+    size_t verticesOffset;
     uint16_t elementType; /* GL_POINTS, GL_LINES, GL_TRIANGLES (GL value)*/
     uint16_t indexType; /* Byte, short, int (GL value)*/
 
     /* material index */
-    int32_t materialIndex;
+    uint32_t materialIndex;
     void (*batchBegin)(struct lite3d_vbo *vbo, struct lite3d_vao *vao);
     void (*batchEnd)(struct lite3d_vbo *vbo, struct lite3d_vao *vao);
 } lite3d_vao;

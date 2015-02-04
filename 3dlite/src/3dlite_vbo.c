@@ -177,7 +177,7 @@ void lite3d_vao_draw(struct lite3d_vao *vao)
     /* activate current meterial */
     /* bind current vao */
     glBindVertexArray(vao->vaoID);
-    glDrawElements(vao->elementType, vao->elementsCount, vao->indexType, (void *)vao->offsetIndexes);
+    glDrawElements(vao->elementType, vao->elementsCount, vao->indexType, (void *)vao->indexesOffset);
     glBindVertexArray(0);
 }
 

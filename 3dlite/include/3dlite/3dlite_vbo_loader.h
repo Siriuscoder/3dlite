@@ -40,7 +40,7 @@ typedef struct lite3d_component_layout
         if *resource* is NULL then first model node from *file* will be load.
 */
 LITE3D_CEXPORT int lite3d_vbo_load(lite3d_vbo *vbo, lite3d_resource_file *resource, 
-    const char *name);
+    const char *name, uint16_t access);
 
 
 LITE3D_CEXPORT int lite3d_vbo_load_from_memory(lite3d_vbo *vbo, 
