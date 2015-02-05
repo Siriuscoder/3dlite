@@ -118,6 +118,7 @@ int lite3d_main(const lite3d_global_settings *settings)
     lite3d_video_close();
     lite3d_memory_cleanup();
     SDL_Quit();
+    lite3d_logger_release();
 
     return LITE3D_TRUE;
 }

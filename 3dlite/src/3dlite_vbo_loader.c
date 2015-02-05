@@ -187,7 +187,7 @@ static int ai_node_load_to_vbo(lite3d_vbo *vbo, const struct aiScene *scene,
             layoutCount++;
         }
 
-        if(mesh->mColors)
+        if(mesh->mColors[0])
         {
             verticesSize += mesh->mNumVertices * sizeof(float) * 4;
             layout[layoutCount].binding = LITE3D_BUFFER_BINDING_COLOR;
@@ -195,7 +195,7 @@ static int ai_node_load_to_vbo(lite3d_vbo *vbo, const struct aiScene *scene,
             layoutCount++;
         }
 
-        if(mesh->mTextureCoords)
+        if(mesh->mTextureCoords[0])
         {
             verticesSize += mesh->mNumVertices * sizeof(float) * 2;
             layout[layoutCount].binding = LITE3D_BUFFER_BINDING_TEXCOORD;
@@ -204,7 +204,7 @@ static int ai_node_load_to_vbo(lite3d_vbo *vbo, const struct aiScene *scene,
         }
 
         componentSize = mesh->mNumFaces <= 0xff ? 1 : (mesh->mNumFaces <= 0xffff ? 2 : 4);
-        indexesSize = componentSize * mesh->mNumFaces;
+        indexesSize = componentSize * mesh->mNumFaces * 3;
 
         vertices = lite3d_malloc(verticesSize);
         SDL_assert_release(vertices);
@@ -227,7 +227,7 @@ static int ai_node_load_to_vbo(lite3d_vbo *vbo, const struct aiScene *scene,
                 *pvertices++ = mesh->mNormals[j].z;
             }
 
-            if(mesh->mColors)
+            if(mesh->mColors[0])
             {
                 *pvertices++ = mesh->mColors[0][j].r;
                 *pvertices++ = mesh->mColors[0][j].g;
@@ -235,7 +235,7 @@ static int ai_node_load_to_vbo(lite3d_vbo *vbo, const struct aiScene *scene,
                 *pvertices++ = mesh->mColors[0][j].a;
             }
 
-            if(mesh->mTextureCoords)
+            if(mesh->mTextureCoords[0])
             {
                 *pvertices++ = mesh->mTextureCoords[0][j].x;
                 *pvertices++ = mesh->mTextureCoords[0][j].y;
@@ -437,9 +437,11 @@ int lite3d_vbo_load(lite3d_vbo *vbo, lite3d_resource_file *resource,
         aiComponent_BONEWEIGHTS);
     /* parse scene from memory buffered file */
     scene = aiImportFileFromMemoryWithProperties(resource->fileBuff, 
-        resource->fileSize, aiProcess_RemoveComponent, NULL, importProrerties);
+        resource->fileSize, 0, NULL, importProrerties);
     if(!scene)
     {
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "MESH: %s import failed.. %s",
+            resource->name, aiGetErrorString());
         aiReleasePropertyStore(importProrerties);
         return LITE3D_FALSE;
     }
@@ -447,9 +449,9 @@ int lite3d_vbo_load(lite3d_vbo *vbo, lite3d_resource_file *resource,
     aiGetMemoryRequirements(scene, &sceneMemory);
     scene = aiApplyPostProcessing(scene, 
         aiProcess_GenSmoothNormals |
+        aiProcess_OptimizeMeshes |
         aiProcess_JoinIdenticalVertices | 
         aiProcess_RemoveRedundantMaterials |
-        aiProcess_SplitLargeMeshes |
         aiProcess_Triangulate |
         aiProcess_SortByPType |
         aiProcess_FindDegenerates |   

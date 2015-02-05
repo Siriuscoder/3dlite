@@ -191,7 +191,8 @@ int lite3d_video_setup(const lite3d_video_settings *settings)
         return LITE3D_FALSE;
     }
 
-    SDL_ShowWindow(gRenderWindow);
+    if(!gVideoSettings.hidden)
+        SDL_ShowWindow(gRenderWindow);
     return LITE3D_TRUE;
 }
 

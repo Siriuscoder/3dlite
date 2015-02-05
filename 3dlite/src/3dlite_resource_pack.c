@@ -178,8 +178,7 @@ void lite3d_resource_pack_close(lite3d_resource_pack *pack)
 lite3d_resource_file *lite3d_resource_pack_file_load(lite3d_resource_pack *pack, const char *file)
 {
     void *fileBuffer = NULL;
-    size_t fileSize = 0, chunks = 0;
-    char *pIt;
+    size_t fileSize = 0;
     lite3d_resource_file *resource;
 
     SDL_assert(pack);
@@ -228,7 +227,7 @@ lite3d_resource_file *lite3d_resource_pack_file_load(lite3d_resource_pack *pack,
         if(!desc)
         {
             SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, 
-                "%s: file '%s': %s",
+                "%s: '%s': %s",
                 __FUNCTION__, fullPath, SDL_GetError());
             return NULL;
         }
@@ -247,17 +246,18 @@ lite3d_resource_file *lite3d_resource_pack_file_load(lite3d_resource_pack *pack,
         fileBuffer = lite3d_malloc(fileSize);
         SDL_assert_release(fileBuffer);
         /* begin to read file into the memory */
-        
-        pIt = (char *)fileBuffer;
-        while(SDL_RWread(desc, pIt, 1024, 1) > 0)
+        if(SDL_RWread(desc, fileBuffer, fileSize, 1) == 0)
         {
-            chunks++;
-            pIt += 1024;
+            SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+                "%s: %s : %s",
+                __FUNCTION__, fullPath, SDL_GetError());
+            SDL_RWclose(desc);
+            return NULL;
         }
-        
+
         SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, 
-            "PACK: '%s' loaded (size: %d bytes, chunks %d)",
-            file, (int)fileSize, (int)chunks);
+            "PACK: '%s' loaded (size: %d bytes)",
+            file, (int)fileSize);
         SDL_RWclose(desc);
     }
     else

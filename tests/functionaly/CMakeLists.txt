@@ -1,7 +1,9 @@
 cmake_minimum_required(VERSION 2.8.10)
 project(3dlite_tests)
 
-set(LITE3D_TEST_SOURCES 3dlite_file_cache_test.cpp)
+set(LITE3D_TEST_SOURCES 3dlite_file_cache_test.cpp
+3dlite_vbo_test.cpp
+3dlite_common_test.cpp)
 
 add_executable(3dlite_tests ${LITE3D_TEST_SOURCES})
 

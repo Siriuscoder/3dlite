@@ -31,6 +31,7 @@ typedef struct lite3d_video_settings
     int8_t fullscreen;
     char caption[LITE3D_CAPTION_MAX];
     int8_t vsync;
+    int8_t hidden;
 } lite3d_video_settings;
 
 LITE3D_CEXPORT int lite3d_video_setup(const lite3d_video_settings *settings);

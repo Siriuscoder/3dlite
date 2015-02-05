@@ -26,6 +26,7 @@
 
 LITE3D_CEXPORT void lite3d_logger_setup_stdout(void);
 LITE3D_CEXPORT void lite3d_logger_set_loglevel(int8_t level);
+LITE3D_CEXPORT void lite3d_logger_release(void);
 
 #endif	/* LOGGER_H */
 

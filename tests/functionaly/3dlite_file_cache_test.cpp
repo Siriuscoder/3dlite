@@ -143,6 +143,7 @@ protected:
     static void TearDownTestCase()
     {
         /* clean memory */
+        lite3d_logger_release();
         lite3d_memory_cleanup();
     }
 
@@ -201,6 +202,7 @@ protected:
     static void TearDownTestCase()
     {
         /* clean memory */
+        lite3d_logger_release();
         lite3d_memory_cleanup();
     }
 

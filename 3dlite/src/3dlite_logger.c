@@ -71,6 +71,12 @@ void lite3d_logger_setup_stdout(void)
     SDL_LogSetOutputFunction(std_output_function, NULL);
     aiLogStream.callback = aiLogFunc;
     aiLogStream.user = NULL;
+
 	aiAttachLogStream(&aiLogStream);
+}
+
+void lite3d_logger_release(void)
+{
+    aiDetachAllLogStreams();
 }
 
