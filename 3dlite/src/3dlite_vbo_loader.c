@@ -31,12 +31,12 @@
 #include <3dlite/3dlite_vbo_loader.h>
 
 static int vbo_append_batch(lite3d_vbo *vbo,
-    lite3d_component_layout *layout,
+    lite3d_vbo_layout *layout,
     size_t layoutCount,
     size_t stride,
     uint8_t indexComponents,
     uint8_t indexComponentSize,
-    size_t indexesCount,
+    size_t elementsCount,
     size_t indexesSize,    
     size_t indexesOffset,
     size_t verticesCount,
@@ -115,7 +115,8 @@ static int vbo_append_batch(lite3d_vbo *vbo,
         (indexComponentSize == 2 ? GL_UNSIGNED_SHORT : GL_UNSIGNED_INT);
     vao->elementType = indexComponents == 1 ? GL_POINTS :
         (indexComponents == 2 ? GL_LINES : GL_TRIANGLES);
-    vao->elementsCount = indexesCount;
+    vao->elementsCount = elementsCount;
+    vao->indexesCount = elementsCount * indexComponents;
     vao->indexesSize = indexesSize;
     vao->verticesCount = verticesCount;
     vao->verticesSize = verticesSize;
@@ -125,7 +126,7 @@ static int vbo_append_batch(lite3d_vbo *vbo,
     vbo->vaosCount++;
 
     SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "VBO: 0x%x: BATCH 0x%x: %s, cv/ov/sv %d/%d/%d, ci/oi %d/%d",
-        vbo, vao, indexComponents == 1 ? "POINTS" : (indexComponents == 2 ? "LINES" : "TRIANGLES"),
+        vbo->vboVerticesID, vao->vaoID, indexComponents == 1 ? "POINTS" : (indexComponents == 2 ? "LINES" : "TRIANGLES"),
         vao->verticesCount, vao->verticesOffset, stride, vao->elementsCount, vao->indexesOffset);
 
     return LITE3D_TRUE;
@@ -152,7 +153,7 @@ static int ai_node_load_to_vbo(lite3d_vbo *vbo, const struct aiScene *scene,
     const struct aiNode *node, uint16_t access)
 {
     uint8_t componentSize;
-    lite3d_component_layout layout[10];
+    lite3d_vbo_layout layout[10];
     size_t layoutCount = 0;
     size_t verticesSize;
     size_t indexesSize;
@@ -292,10 +293,10 @@ static int ai_node_load_to_vbo(lite3d_vbo *vbo, const struct aiScene *scene,
 int lite3d_vbo_load_from_memory(lite3d_vbo *vbo,
     void *vertices,
     size_t verticesCount,
-    lite3d_component_layout *layout,
+    lite3d_vbo_layout *layout,
     size_t layoutCount,
     void *indexes,
-    size_t indexesCount,
+    size_t elementsCount,
     uint8_t indexComponents,
     uint16_t access)
 {
@@ -323,7 +324,7 @@ int lite3d_vbo_load_from_memory(lite3d_vbo *vbo,
         return LITE3D_FALSE;
 
     componentSize = verticesCount <= 0xff ? 1 : (verticesCount <= 0xffff ? 2 : 4);
-    indexesSize = indexComponents * componentSize * indexesCount;
+    indexesSize = indexComponents * componentSize * elementsCount;
     /* store index data to GPU memory */
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexesSize, indexes, access);
     if (lite3d_misc_check_gl_error())
@@ -331,12 +332,12 @@ int lite3d_vbo_load_from_memory(lite3d_vbo *vbo,
 
     /* append new batch */
     if (!vbo_append_batch(vbo, layout, layoutCount, stride,
-        indexComponents, componentSize, indexesCount, 
+        indexComponents, componentSize, elementsCount, 
         indexesSize, 0, verticesCount, verticesSize, 0))
         return LITE3D_FALSE;
 
     vbo->verticesCount = verticesCount;
-    vbo->indexesCount = indexesCount;
+    vbo->elementsCount = elementsCount;
     vbo->verticesSize = verticesSize;
     vbo->indexesSize = indexesSize;
 
@@ -344,7 +345,7 @@ int lite3d_vbo_load_from_memory(lite3d_vbo *vbo,
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
     SDL_LogVerbose(SDL_LOG_CATEGORY_APPLICATION, "VBO: 0x%x: cv %d, ci %d",
-        vbo, vbo->verticesCount, vbo->indexesCount);
+        vbo->vboVerticesID, vbo->verticesCount, vbo->elementsCount);
 
     return LITE3D_TRUE;
 }
@@ -352,10 +353,10 @@ int lite3d_vbo_load_from_memory(lite3d_vbo *vbo,
 int lite3d_vbo_extend_from_memory(lite3d_vbo *vbo,
     void *vertices,
     size_t verticesCount,
-    lite3d_component_layout *layout,
+    lite3d_vbo_layout *layout,
     size_t layoutCount,
     void *indexes,
-    size_t indexesCount,
+    size_t elementsCount,
     uint8_t indexComponents,
     uint16_t access)
 {
@@ -367,14 +368,14 @@ int lite3d_vbo_extend_from_memory(lite3d_vbo *vbo,
 
     if (lite3d_list_is_empty(&vbo->vaos))
         return lite3d_vbo_load_from_memory(vbo, vertices, verticesCount,
-        layout, layoutCount, indexes, indexesCount, indexComponents, access);
+        layout, layoutCount, indexes, elementsCount, indexComponents, access);
 
     /* calculate buffer parameters */
     for (i = 0; i < layoutCount; ++i)
         stride += layout[i].count * sizeof (GLfloat);
     verticesSize = stride * verticesCount;
     componentSize = verticesCount <= 0xff ? 1 : (verticesCount <= 0xffff ? 2 : 4);
-    indexesSize = indexComponents * componentSize * indexesCount;
+    indexesSize = indexComponents * componentSize * elementsCount;
     /* expand VBO */
     if (!lite3d_vbo_extend(vbo, verticesSize, indexesSize, access))
         return LITE3D_FALSE;
@@ -393,20 +394,20 @@ int lite3d_vbo_extend_from_memory(lite3d_vbo *vbo,
 
     /* append new batch */
     if (!vbo_append_batch(vbo, layout, layoutCount, stride,
-        indexComponents, componentSize, indexesCount,
+        indexComponents, componentSize, elementsCount,
         indexesSize, vbo->indexesSize, verticesCount, verticesSize, vbo->verticesSize))
         return LITE3D_FALSE;
 
     vbo->verticesCount += verticesCount;
-    vbo->indexesCount += verticesCount;
+    vbo->elementsCount += elementsCount;
     vbo->verticesSize += verticesSize;
-    vbo->indexesSize += verticesSize;
+    vbo->indexesSize += indexesSize;
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
     SDL_LogVerbose(SDL_LOG_CATEGORY_APPLICATION, "VBO: 0x%x: cv %d, ci %d, batches %d",
-        vbo, vbo->verticesCount, vbo->indexesCount, vbo->vaosCount);
+        vbo->vboVerticesID, vbo->verticesCount, vbo->elementsCount, vbo->vaosCount);
 
     return LITE3D_TRUE;
 }
@@ -450,10 +451,11 @@ int lite3d_vbo_load(lite3d_vbo *vbo, lite3d_resource_file *resource,
     scene = aiApplyPostProcessing(scene, 
         aiProcess_GenSmoothNormals |
         aiProcess_OptimizeMeshes |
-        aiProcess_JoinIdenticalVertices | 
+        aiProcess_JoinIdenticalVertices |
         aiProcess_RemoveRedundantMaterials |
         aiProcess_Triangulate |
         aiProcess_SortByPType |
+        aiProcess_FlipUVs |
         aiProcess_FindDegenerates |   
         aiProcess_FindInvalidData);
     
@@ -501,7 +503,7 @@ int lite3d_vbo_load(lite3d_vbo *vbo, lite3d_resource_file *resource,
     }
 
     SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "MESH: %s loaded, cv/ci/cb/ %d/%d/%d",
-        resource->name, vbo->verticesCount, vbo->indexesCount, vbo->vaosCount);
+        resource->name, vbo->verticesCount, vbo->elementsCount, vbo->vaosCount);
     aiReleaseImport(scene);
     aiReleasePropertyStore(importProrerties);
 

@@ -29,7 +29,7 @@ typedef struct lite3d_vbo
     size_t verticesSize;
     size_t indexesSize;
     size_t verticesCount;
-    size_t indexesCount;
+    size_t elementsCount;
     size_t vaosCount;
     lite3d_list vaos;
     void (*bindOn)(struct lite3d_vbo *vbo);
@@ -41,6 +41,7 @@ typedef struct lite3d_vao
     lite3d_list_node inVbo;
     uint32_t vaoID;
     size_t elementsCount;
+    size_t indexesCount;
     size_t indexesSize;
     size_t indexesOffset;
     size_t verticesCount;

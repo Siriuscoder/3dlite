@@ -94,7 +94,9 @@
       </df>
       <df name="tests">
         <df name="functionaly">
+          <in>3dlite_common_test.cpp</in>
           <in>3dlite_file_cache_test.cpp</in>
+          <in>3dlite_vbo_test.cpp</in>
         </df>
         <df name="gtest">
           <df name="src">
@@ -103,6 +105,7 @@
           </df>
         </df>
         <df name="integration">
+          <in>3dlite_mesh_node_test.c</in>
           <in>3dlite_simple_scene_node_test.c</in>
         </df>
       </df>
@@ -134,7 +137,9 @@
         <rebuildPropChanged>false</rebuildPropChanged>
       </toolsSet>
       <flagsDictionary>
-        <element flagsID="0" commonFlags="-std=c99 -fstack-protector-all -fPIC -fPIC"/>
+        <element flagsID="0" commonFlags="-std=c++11 -fstack-protector-all -fPIC"/>
+        <element flagsID="1" commonFlags="-std=c99 -fstack-protector-all -fPIC"/>
+        <element flagsID="2" commonFlags="-std=c99 -fstack-protector-all -fPIC -fPIC"/>
       </flagsDictionary>
       <codeAssistance>
       </codeAssistance>
@@ -143,7 +148,7 @@
           <buildCommandWorkingDir>build</buildCommandWorkingDir>
           <buildCommand>${MAKE} -f Makefile</buildCommand>
           <cleanCommand>${MAKE} -f Makefile clean</cleanCommand>
-          <executablePath>build/bin/Debug/3dlite_simple_scene_node_test</executablePath>
+          <executablePath>build/bin/Debug/3dlite_mesh_node_test</executablePath>
           <ccTool>
             <incDir>
               <pElem>3dlite/include</pElem>
@@ -161,7 +166,7 @@
             flavor2="3">
       </item>
       <item path="3dlite/src/3dlite_7z_loader.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="0">
+        <cTool flags="2">
           <incDir>
             <pElem>/usr/include/SDL2</pElem>
             <pElem>build/3dlite</pElem>
@@ -174,7 +179,7 @@
         </cTool>
       </item>
       <item path="3dlite/src/3dlite_alloc.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="0">
+        <cTool flags="2">
           <incDir>
             <pElem>/usr/include/SDL2</pElem>
             <pElem>build/3dlite</pElem>
@@ -187,7 +192,7 @@
         </cTool>
       </item>
       <item path="3dlite/src/3dlite_camera.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="0">
+        <cTool flags="2">
           <incDir>
             <pElem>/usr/include/SDL2</pElem>
             <pElem>build/3dlite</pElem>
@@ -200,7 +205,7 @@
         </cTool>
       </item>
       <item path="3dlite/src/3dlite_list.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="0">
+        <cTool flags="2">
           <incDir>
             <pElem>/usr/include/SDL2</pElem>
             <pElem>build/3dlite</pElem>
@@ -213,7 +218,7 @@
         </cTool>
       </item>
       <item path="3dlite/src/3dlite_logger.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="0">
+        <cTool flags="2">
           <incDir>
             <pElem>/usr/include/SDL2</pElem>
             <pElem>build/3dlite</pElem>
@@ -226,7 +231,7 @@
         </cTool>
       </item>
       <item path="3dlite/src/3dlite_main.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="0">
+        <cTool flags="2">
           <incDir>
             <pElem>/usr/include/SDL2</pElem>
             <pElem>build/3dlite</pElem>
@@ -239,7 +244,7 @@
         </cTool>
       </item>
       <item path="3dlite/src/3dlite_mesh_node.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="0">
+        <cTool flags="2">
           <incDir>
             <pElem>/usr/include/SDL2</pElem>
             <pElem>build/3dlite</pElem>
@@ -252,7 +257,7 @@
         </cTool>
       </item>
       <item path="3dlite/src/3dlite_misc.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="0">
+        <cTool flags="2">
           <incDir>
             <pElem>/usr/include/SDL2</pElem>
             <pElem>build/3dlite</pElem>
@@ -265,7 +270,7 @@
         </cTool>
       </item>
       <item path="3dlite/src/3dlite_nedmalloc.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="0">
+        <cTool flags="2">
           <incDir>
             <pElem>/usr/include/SDL2</pElem>
             <pElem>build/3dlite</pElem>
@@ -278,7 +283,7 @@
         </cTool>
       </item>
       <item path="3dlite/src/3dlite_rb_tree.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="0">
+        <cTool flags="2">
           <incDir>
             <pElem>/usr/include/SDL2</pElem>
             <pElem>build/3dlite</pElem>
@@ -291,7 +296,7 @@
         </cTool>
       </item>
       <item path="3dlite/src/3dlite_render.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="0">
+        <cTool flags="2">
           <incDir>
             <pElem>/usr/include/SDL2</pElem>
             <pElem>build/3dlite</pElem>
@@ -304,7 +309,7 @@
         </cTool>
       </item>
       <item path="3dlite/src/3dlite_resource_pack.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="0">
+        <cTool flags="2">
           <incDir>
             <pElem>/usr/include/SDL2</pElem>
             <pElem>build/3dlite</pElem>
@@ -317,7 +322,7 @@
         </cTool>
       </item>
       <item path="3dlite/src/3dlite_scene.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="0">
+        <cTool flags="2">
           <incDir>
             <pElem>/usr/include/SDL2</pElem>
             <pElem>build/3dlite</pElem>
@@ -330,7 +335,7 @@
         </cTool>
       </item>
       <item path="3dlite/src/3dlite_scene_node.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="0">
+        <cTool flags="2">
           <incDir>
             <pElem>/usr/include/SDL2</pElem>
             <pElem>build/3dlite</pElem>
@@ -343,7 +348,7 @@
         </cTool>
       </item>
       <item path="3dlite/src/3dlite_texture_unit.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="0">
+        <cTool flags="2">
           <incDir>
             <pElem>/usr/include/SDL2</pElem>
             <pElem>build/3dlite</pElem>
@@ -356,7 +361,7 @@
         </cTool>
       </item>
       <item path="3dlite/src/3dlite_vbo.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="0">
+        <cTool flags="2">
           <incDir>
             <pElem>/usr/include/SDL2</pElem>
             <pElem>build/3dlite</pElem>
@@ -369,7 +374,7 @@
         </cTool>
       </item>
       <item path="3dlite/src/3dlite_vbo_loader.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="0">
+        <cTool flags="2">
           <incDir>
             <pElem>/usr/include/SDL2</pElem>
             <pElem>build/3dlite</pElem>
@@ -382,7 +387,7 @@
         </cTool>
       </item>
       <item path="3dlite/src/3dlite_video.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="0">
+        <cTool flags="2">
           <incDir>
             <pElem>/usr/include/SDL2</pElem>
             <pElem>build/3dlite</pElem>
@@ -533,19 +538,44 @@
           </preprocessorList>
         </cTool>
       </folder>
+      <item path="tests/functionaly/3dlite_common_test.cpp"
+            ex="false"
+            tool="1"
+            flavor2="8">
+        <ccTool flags="0">
+        </ccTool>
+      </item>
       <item path="tests/functionaly/3dlite_file_cache_test.cpp"
             ex="false"
             tool="1"
             flavor2="8">
+        <ccTool flags="0">
+        </ccTool>
+      </item>
+      <item path="tests/functionaly/3dlite_vbo_test.cpp"
+            ex="false"
+            tool="1"
+            flavor2="8">
+        <ccTool flags="0">
+        </ccTool>
       </item>
       <item path="tests/gtest/src/gtest-all.cc" ex="false" tool="1" flavor2="8">
       </item>
       <item path="tests/gtest/src/gtest_main.cc" ex="false" tool="1" flavor2="8">
       </item>
+      <item path="tests/integration/3dlite_mesh_node_test.c"
+            ex="false"
+            tool="0"
+            flavor2="3">
+        <cTool flags="1">
+        </cTool>
+      </item>
       <item path="tests/integration/3dlite_simple_scene_node_test.c"
             ex="false"
             tool="0"
             flavor2="3">
+        <cTool flags="1">
+        </cTool>
       </item>
     </conf>
     <conf name="Release" type="0">

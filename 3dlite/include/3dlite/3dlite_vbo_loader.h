@@ -29,11 +29,11 @@
 /* may be more then one, attribute index will be increased */
 #define LITE3D_BUFFER_BINDING_ATTRIBUTE       0x4
 
-typedef struct lite3d_component_layout
+typedef struct lite3d_vbo_layout
 {
     uint8_t binding;
     uint8_t count; /* count elements in component */
-} lite3d_component_layout;
+} lite3d_vbo_layout;
 /*
     note:
         function load mesh model with specified *name* from *resource*,
@@ -46,20 +46,20 @@ LITE3D_CEXPORT int lite3d_vbo_load(lite3d_vbo *vbo, lite3d_resource_file *resour
 LITE3D_CEXPORT int lite3d_vbo_load_from_memory(lite3d_vbo *vbo, 
     void *vertices, 
     size_t verticesCount, 
-    lite3d_component_layout *layout,
+    lite3d_vbo_layout *layout,
     size_t layoutCount,
     void *indexes, 
-    size_t indexesCount, 
+    size_t elementsCount, 
     uint8_t indexComponents, 
     uint16_t access);
 
 LITE3D_CEXPORT int lite3d_vbo_extend_from_memory(lite3d_vbo *vbo, 
     void *vertices, 
     size_t verticesCount, 
-    lite3d_component_layout *layout,
+    lite3d_vbo_layout *layout,
     size_t layoutCount,
     void *indexes, 
-    size_t indexesCount, 
+    size_t elementsCount, 
     uint8_t indexComponents, 
     uint16_t access);
 

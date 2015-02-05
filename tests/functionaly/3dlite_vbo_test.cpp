@@ -34,7 +34,7 @@ static int meshLoadingTest()
     lite3d_resource_pack *fileSysPack = lite3d_resource_pack_open("tests/", 0, 1000000);
     EXPECT_TRUE(fileSysPack != NULL);
     lite3d_resource_file *meshFile = lite3d_resource_pack_file_load(fileSysPack, 
-        "cellwallerkiller/cellwallerkiller.3DS");
+        "pack/minigun.3ds");
     EXPECT_TRUE(lite3d_vbo_init(&mVBO) == LITE3D_TRUE);
     EXPECT_TRUE(lite3d_vbo_load(&mVBO, meshFile, NULL, GL_STATIC_DRAW) == LITE3D_TRUE);
 
@@ -51,7 +51,7 @@ TEST_F(VBO_Test, meshLoading)
     mlite3dCommon.main();
 }
 
-TEST_F(VBO_Test, vboMap)
+TEST_F(VBO_Test, mapping)
 {
 
 }

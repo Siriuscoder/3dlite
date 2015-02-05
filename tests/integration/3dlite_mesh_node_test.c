@@ -54,42 +54,6 @@ static int process_events(SDL_Event *levent)
                 stats->lastFPS, stats->avrFPS, stats->bestFPS, stats->worstFPS,
                 stats->lastFrameMs, stats->avrFrameMs, stats->bestFrameMs, stats->worstFrameMs);
         }
-        else if (levent->key.keysym.sym == SDLK_UP)
-        {
-            lite3d_camera_pitch(&mCamera01, kmDegreesToRadians(-5));
-        }
-        else if (levent->key.keysym.sym == SDLK_DOWN)
-        {
-            lite3d_camera_pitch(&mCamera01, kmDegreesToRadians(5));
-        }
-        else if (levent->key.keysym.sym == SDLK_LEFT)
-        {
-            lite3d_camera_yaw(&mCamera01, kmDegreesToRadians(-5));
-        }
-        else if (levent->key.keysym.sym == SDLK_RIGHT)
-        {
-            lite3d_camera_yaw(&mCamera01, kmDegreesToRadians(5));
-        }
-        else if (levent->key.keysym.sym == SDLK_w)
-        {
-            lite3d_camera_move_relative(&mCamera01, &KM_VEC3_POS_Z);
-        }
-        else if (levent->key.keysym.sym == SDLK_s)
-        {
-            lite3d_camera_move_relative(&mCamera01, &KM_VEC3_NEG_Z);
-        }
-        else if (levent->key.keysym.sym == SDLK_a)
-        {
-            lite3d_camera_move_relative(&mCamera01, &KM_VEC3_POS_X);
-        }
-        else if (levent->key.keysym.sym == SDLK_d)
-        {
-            lite3d_camera_move_relative(&mCamera01, &KM_VEC3_NEG_X);
-        }
-        else if (levent->key.keysym.sym == SDLK_q)
-        {
-            lite3d_camera_roll(&mCamera01, kmDegreesToRadians(5));
-        }
     }
 
     return LITE3D_TRUE;
@@ -97,29 +61,31 @@ static int process_events(SDL_Event *levent)
 
 static int init(void)
 {
-    int i = 0;
     lite3d_resource_file *file1, *file2;
     kmVec3 cameraInitPos = {
-        30.0f, 20.0f, 30.0f
+        80.0f, 80.0f, 80.0f
+    };
+    kmVec3 viewPos = {
+        0.0f, 0.0f, 0.0f
     };
 
     if (!(mFileSysPack = lite3d_resource_pack_open("tests/", LITE3D_FALSE, 7000000)))
         return LITE3D_FALSE;
     if (!(file1 = lite3d_resource_pack_file_load(mFileSysPack, "pack/minigun.dds")))
         return LITE3D_FALSE;
-    if (!(file2 = lite3d_resource_pack_file_load(mFileSysPack, "basket/BASKETBALL.3DS")))
+    if (!(file2 = lite3d_resource_pack_file_load(mFileSysPack, "pack/minigun.3ds")))
         return LITE3D_FALSE;
     if (!lite3d_texture_unit_from_resource(&mTexture0, file1, LITE3D_IMAGE_DDS, 
         LITE3D_TEXTURE_2D, LITE3D_TEXTURE_QL_NICEST))
         return LITE3D_FALSE;
     if (!lite3d_vbo_init(&mModel))
         return LITE3D_FALSE;
-    if (!lite3d_vbo_load(&mModel, file2, NULL, GL_STATIC_DRAW))
+    if (!lite3d_vbo_load(&mModel, file2, "Minigun", GL_STATIC_DRAW))
         return LITE3D_FALSE;
 
     lite3d_camera_init(&mCamera01);
 
-    lite3d_camera_perspective(&mCamera01, 0.1f, 100.0f, 45.0f, (float) DEFAULT_WIDTH / (float) DEFAULT_HEIGHT);
+    lite3d_camera_perspective(&mCamera01, 1.0f, 1000.0f, 45.0f, (float) DEFAULT_WIDTH / (float) DEFAULT_HEIGHT);
     lite3d_camera_set_position(&mCamera01, &cameraInitPos);
 
     lite3d_scene_init(&mScene);
@@ -128,7 +94,9 @@ static int init(void)
 
     lite3d_scene_node_add(&mScene, &mCamera01.cameraNode, NULL);
     lite3d_render_target_root_attach_camera(&mCamera01);
-    lite3d_camera_lookAt(&mCamera01, &mSceneNode.sceneNode.position);
+    lite3d_camera_lookAt(&mCamera01, &viewPos);
+    
+    lite3d_texture_unit_bind(&mTexture0);
 
     return LITE3D_TRUE;
 }
@@ -139,6 +107,12 @@ static int shutdown(void)
     lite3d_vbo_purge(&mModel);
     lite3d_resource_pack_close(mFileSysPack);
 
+    return LITE3D_TRUE;
+}
+
+static int pre_frame(void)
+{
+    lite3d_scene_node_rotate_angle(&mSceneNode.sceneNode, &KM_VEC3_POS_Z, 0.001f);
     return LITE3D_TRUE;
 }
 
@@ -159,6 +133,7 @@ int main(int argc, char *args[])
     settings.videoSettings.vsync = LITE3D_FALSE;
     settings.renderLisneters.processEvent = process_events;
     settings.renderLisneters.preRender = init;
+    settings.renderLisneters.preFrame = pre_frame;
     settings.renderLisneters.postRender = shutdown;
 
     return !lite3d_main(&settings);
