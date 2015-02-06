@@ -125,7 +125,7 @@ static int vbo_append_batch(lite3d_vbo *vbo,
     lite3d_list_add_last_link(&vao->inVbo, &vbo->vaos);
     vbo->vaosCount++;
 
-    SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "VBO: 0x%x: BATCH 0x%x: %s, cv/ov/sv %d/%d/%d, ci/oi %d/%d",
+    SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "VBO: 0x%x: BATCH 0x%x: %s, cv/ov/sv %d/%d/%d, ce/oe %d/%d",
         vbo->vboVerticesID, vao->vaoID, indexComponents == 1 ? "POINTS" : (indexComponents == 2 ? "LINES" : "TRIANGLES"),
         vao->verticesCount, vao->verticesOffset, stride, vao->elementsCount, vao->indexesOffset);
 
@@ -344,7 +344,7 @@ int lite3d_vbo_load_from_memory(lite3d_vbo *vbo,
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
-    SDL_LogVerbose(SDL_LOG_CATEGORY_APPLICATION, "VBO: 0x%x: cv %d, ci %d",
+    SDL_LogVerbose(SDL_LOG_CATEGORY_APPLICATION, "VBO: 0x%x: cv %d, ce %d",
         vbo->vboVerticesID, vbo->verticesCount, vbo->elementsCount);
 
     return LITE3D_TRUE;
@@ -406,19 +406,20 @@ int lite3d_vbo_extend_from_memory(lite3d_vbo *vbo,
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
-    SDL_LogVerbose(SDL_LOG_CATEGORY_APPLICATION, "VBO: 0x%x: cv %d, ci %d, batches %d",
+    SDL_LogVerbose(SDL_LOG_CATEGORY_APPLICATION, "VBO: 0x%x: cv %d, ce %d, batches %d",
         vbo->vboVerticesID, vbo->verticesCount, vbo->elementsCount, vbo->vaosCount);
 
     return LITE3D_TRUE;
 }
 
 int lite3d_vbo_load(lite3d_vbo *vbo, lite3d_resource_file *resource, 
-    const char *name, uint16_t access)
+    const char *name, uint16_t access, uint32_t flags)
 {
     const struct aiScene *scene = NULL;
     const struct aiNode *targetNode = NULL;
     struct aiPropertyStore *importProrerties;
     struct aiMemoryInfo sceneMemory;
+    uint32_t aiflags;
     
     SDL_assert(vbo && resource);
 
@@ -438,7 +439,7 @@ int lite3d_vbo_load(lite3d_vbo *vbo, lite3d_resource_file *resource,
         aiComponent_BONEWEIGHTS);
     /* parse scene from memory buffered file */
     scene = aiImportFileFromMemoryWithProperties(resource->fileBuff, 
-        resource->fileSize, 0, NULL, importProrerties);
+        resource->fileSize, aiProcess_RemoveComponent, NULL, importProrerties);
     if(!scene)
     {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "MESH: %s import failed.. %s",
@@ -447,17 +448,21 @@ int lite3d_vbo_load(lite3d_vbo *vbo, lite3d_resource_file *resource,
         return LITE3D_FALSE;
     }
     
-    aiGetMemoryRequirements(scene, &sceneMemory);
-    scene = aiApplyPostProcessing(scene, 
-        aiProcess_GenSmoothNormals |
-        aiProcess_OptimizeMeshes |
-        aiProcess_JoinIdenticalVertices |
+    aiflags = aiProcess_GenSmoothNormals |
         aiProcess_RemoveRedundantMaterials |
         aiProcess_Triangulate |
         aiProcess_SortByPType |
-        aiProcess_FlipUVs |
         aiProcess_FindDegenerates |   
-        aiProcess_FindInvalidData);
+        aiProcess_FindInvalidData;
+
+    if(flags & LITE3D_OPTIMIZE_MESH_FLAG)
+        aiflags |= aiProcess_OptimizeMeshes |
+            aiProcess_JoinIdenticalVertices;
+    if(flags & LITE3D_FLIP_UV_FLAG)
+        aiflags |= aiProcess_FlipUVs;
+
+    aiGetMemoryRequirements(scene, &sceneMemory);
+    scene = aiApplyPostProcessing(scene, aiflags);
     
     if(!scene)
     {
@@ -495,15 +500,15 @@ int lite3d_vbo_load(lite3d_vbo *vbo, lite3d_resource_file *resource,
 
     if(!ai_node_load_to_vbo(vbo, scene, targetNode, access))
     {
-        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "MESH: %s load failed..",
-            resource->name);
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "MESH: %s (%s) load failed..",
+            resource->name, targetNode->mName.data);
         aiReleaseImport(scene);
         aiReleasePropertyStore(importProrerties);
         return LITE3D_FALSE;
     }
 
-    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "MESH: %s loaded, cv/ci/cb/ %d/%d/%d",
-        resource->name, vbo->verticesCount, vbo->elementsCount, vbo->vaosCount);
+    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "MESH: %s (%s) loaded, cv/ce/cb/ %d/%d/%d",
+        resource->name, targetNode->mName.data, vbo->verticesCount, vbo->elementsCount, vbo->vaosCount);
     aiReleaseImport(scene);
     aiReleasePropertyStore(importProrerties);
 

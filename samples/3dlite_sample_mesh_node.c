@@ -80,7 +80,7 @@ static int init(void)
         return LITE3D_FALSE;
     if (!lite3d_vbo_init(&mModel))
         return LITE3D_FALSE;
-    if (!lite3d_vbo_load(&mModel, file2, "Minigun", GL_STATIC_DRAW))
+    if (!lite3d_vbo_load(&mModel, file2, "Minigun", GL_STATIC_DRAW, LITE3D_FLIP_UV_FLAG))
         return LITE3D_FALSE;
 
     lite3d_camera_init(&mCamera01);

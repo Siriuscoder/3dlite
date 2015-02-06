@@ -29,6 +29,9 @@
 /* may be more then one, attribute index will be increased */
 #define LITE3D_BUFFER_BINDING_ATTRIBUTE       0x4
 
+#define LITE3D_OPTIMIZE_MESH_FLAG             0x1
+#define LITE3D_FLIP_UV_FLAG                   0x2
+
 typedef struct lite3d_vbo_layout
 {
     uint8_t binding;
@@ -40,7 +43,7 @@ typedef struct lite3d_vbo_layout
         if *resource* is NULL then first model node from *file* will be load.
 */
 LITE3D_CEXPORT int lite3d_vbo_load(lite3d_vbo *vbo, lite3d_resource_file *resource, 
-    const char *name, uint16_t access);
+    const char *name, uint16_t access, uint32_t flags);
 
 
 LITE3D_CEXPORT int lite3d_vbo_load_from_memory(lite3d_vbo *vbo, 
