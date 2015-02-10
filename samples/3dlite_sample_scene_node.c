@@ -33,10 +33,6 @@ static kmVec3 cameraInitPos = {
     0.0f, 5.0f, 5.0f
 };
 
-static kmVec3 cameraLookAt = {
-    0.0f, 0.0f, 0.0f
-};
-
 static kmVec3 nodePos[] = {
     { -2.2f, 0.0f, 0.0f},
     { 0.0f, 0.0f, 0.0f},
@@ -51,14 +47,6 @@ static kmVec3 nodeScale[] = {
 
 static kmVec3 rotAxisZ = {
     0.0f, 0.0f, 1.0f
-};
-
-static kmVec3 rotAxisY = {
-    0.0f, 1.0f, 0.0f
-};
-
-static kmVec3 mVecMove = {
-    0.0f, 0.05f, 0.0f
 };
 
 static lite3d_scene_node mSceneNode[3];

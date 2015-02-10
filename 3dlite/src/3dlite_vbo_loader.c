@@ -460,6 +460,8 @@ int lite3d_vbo_load(lite3d_vbo *vbo, lite3d_resource_file *resource,
             aiProcess_JoinIdenticalVertices;
     if(flags & LITE3D_FLIP_UV_FLAG)
         aiflags |= aiProcess_FlipUVs;
+    if(flags & LITE3D_MERGE_NODES_FLAG)
+        aiflags |= aiProcess_OptimizeGraph;
 
     aiGetMemoryRequirements(scene, &sceneMemory);
     scene = aiApplyPostProcessing(scene, aiflags);

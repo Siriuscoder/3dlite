@@ -68,6 +68,7 @@
           <in>3dlite_list.c</in>
           <in>3dlite_logger.c</in>
           <in>3dlite_main.c</in>
+          <in>3dlite_material.c</in>
           <in>3dlite_mesh_node.c</in>
           <in>3dlite_misc.c</in>
           <in>3dlite_nedmalloc.c</in>
@@ -76,6 +77,7 @@
           <in>3dlite_resource_pack.c</in>
           <in>3dlite_scene.c</in>
           <in>3dlite_scene_node.c</in>
+          <in>3dlite_shader_params.c</in>
           <in>3dlite_texture_unit.c</in>
           <in>3dlite_vbo.c</in>
           <in>3dlite_vbo_loader.c</in>
@@ -91,6 +93,10 @@
             <in>CMakeCXXCompilerId.cpp</in>
           </df>
         </df>
+      </df>
+      <df name="samples">
+        <in>3dlite_sample_mesh_node.c</in>
+        <in>3dlite_sample_scene_node.c</in>
       </df>
       <df name="tests">
         <df name="functionaly">
@@ -148,7 +154,7 @@
           <buildCommandWorkingDir>build</buildCommandWorkingDir>
           <buildCommand>${MAKE} -f Makefile</buildCommand>
           <cleanCommand>${MAKE} -f Makefile clean</cleanCommand>
-          <executablePath>build/bin/Debug/3dlite_mesh_node_test</executablePath>
+          <executablePath>build/bin/Debug/3dlite_sample_mesh_node</executablePath>
           <ccTool>
             <incDir>
               <pElem>3dlite/include</pElem>
@@ -231,6 +237,19 @@
         </cTool>
       </item>
       <item path="3dlite/src/3dlite_main.c" ex="false" tool="0" flavor2="3">
+        <cTool flags="2">
+          <incDir>
+            <pElem>/usr/include/SDL2</pElem>
+            <pElem>build/3dlite</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>GLEW_STATIC</Elem>
+            <Elem>_3dlite_EXPORTS</Elem>
+            <Elem>_REENTRANT</Elem>
+          </preprocessorList>
+        </cTool>
+      </item>
+      <item path="3dlite/src/3dlite_material.c" ex="false" tool="0" flavor2="3">
         <cTool flags="2">
           <incDir>
             <pElem>/usr/include/SDL2</pElem>
@@ -335,6 +354,19 @@
         </cTool>
       </item>
       <item path="3dlite/src/3dlite_scene_node.c" ex="false" tool="0" flavor2="3">
+        <cTool flags="2">
+          <incDir>
+            <pElem>/usr/include/SDL2</pElem>
+            <pElem>build/3dlite</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>GLEW_STATIC</Elem>
+            <Elem>_3dlite_EXPORTS</Elem>
+            <Elem>_REENTRANT</Elem>
+          </preprocessorList>
+        </cTool>
+      </item>
+      <item path="3dlite/src/3dlite_shader_params.c" ex="false" tool="0" flavor2="3">
         <cTool flags="2">
           <incDir>
             <pElem>/usr/include/SDL2</pElem>
@@ -496,6 +528,18 @@
           </incDir>
         </cTool>
       </folder>
+      <folder path="0/samples">
+        <cTool>
+          <incDir>
+            <pElem>3dlite++/include</pElem>
+            <pElem>/usr/include/SDL2</pElem>
+            <pElem>build/samples</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>_REENTRANT</Elem>
+          </preprocessorList>
+        </cTool>
+      </folder>
       <folder path="0/tests">
         <cTool>
           <incDir>
@@ -538,6 +582,10 @@
           </preprocessorList>
         </cTool>
       </folder>
+      <item path="samples/3dlite_sample_mesh_node.c" ex="false" tool="0" flavor2="3">
+      </item>
+      <item path="samples/3dlite_sample_scene_node.c" ex="false" tool="0" flavor2="3">
+      </item>
       <item path="tests/functionaly/3dlite_common_test.cpp"
             ex="false"
             tool="1"
@@ -549,8 +597,6 @@
             ex="false"
             tool="1"
             flavor2="8">
-        <ccTool flags="0">
-        </ccTool>
       </item>
       <item path="tests/functionaly/3dlite_vbo_test.cpp"
             ex="false"
@@ -567,15 +613,11 @@
             ex="false"
             tool="0"
             flavor2="3">
-        <cTool flags="1">
-        </cTool>
       </item>
       <item path="tests/integration/3dlite_simple_scene_node_test.c"
             ex="false"
             tool="0"
             flavor2="3">
-        <cTool flags="1">
-        </cTool>
       </item>
     </conf>
     <conf name="Release" type="0">

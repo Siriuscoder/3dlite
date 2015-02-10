@@ -26,6 +26,8 @@
 #include <3dlite/3dlite_misc.h>
 #include <3dlite/3dlite_vbo.h>
 
+static int maxVertexAttribs;
+
 static int vbo_expand(uint32_t *vboID, size_t expandSize, uint16_t access)
 {
     int32_t originSize;
@@ -77,7 +79,10 @@ int lite3d_vbo_technique_init(void)
             "%s: GL_ARB_vertex_array_object not supported..", __FUNCTION__);
         return LITE3D_FALSE;
     }
-
+    
+    glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &maxVertexAttribs);
+    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Max vertex attributes: %d",
+        maxVertexAttribs);
     return LITE3D_TRUE;
 }
 

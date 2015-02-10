@@ -31,6 +31,7 @@
 
 #define LITE3D_OPTIMIZE_MESH_FLAG             0x1
 #define LITE3D_FLIP_UV_FLAG                   0x2
+#define LITE3D_MERGE_NODES_FLAG               0x4
 
 typedef struct lite3d_vbo_layout
 {

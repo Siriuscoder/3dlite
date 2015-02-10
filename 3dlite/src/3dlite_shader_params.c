@@ -17,4 +17,4 @@
 *******************************************************************************/
 #include <string.h>
 
-#include <3dlite/3dlite_material.h>
+#include <3dlite/3dlite_shader_params.h>

@@ -20,7 +20,7 @@
 
 #include <3dlite/3dlite_common.h>
 #include <3dlite/3dlite_list.h>
-#include <3dlite/3dlite_rb_tree.h>
+#include <3dlite/3dlite_material.h>
 
 typedef struct lite3d_vbo
 {
@@ -66,6 +66,8 @@ LITE3D_CEXPORT void lite3d_vbo_draw(struct lite3d_vbo *vbo);
 LITE3D_CEXPORT int lite3d_vao_init(struct lite3d_vao *vao);
 LITE3D_CEXPORT void lite3d_vao_purge(struct lite3d_vao *vao);
 LITE3D_CEXPORT void lite3d_vao_draw(struct lite3d_vao *vao);
+LITE3D_CEXPORT void lite3d_vbo_attach_material(struct lite3d_vbo *vao,
+    const lite3d_material *material, uint32_t index);
 
 #endif	/* LITE3D_VBO_H */
 
