@@ -99,7 +99,7 @@ LITE3D_CEXPORT int lite3d_texture_unit_from_resource(lite3d_texture_unit *textur
 LITE3D_CEXPORT int lite3d_texture_unit_from_memory(lite3d_texture_unit *texture, const void *buffer, 
     size_t size, uint32_t imageType, uint32_t textureTarget, int8_t quality);
 LITE3D_CEXPORT void lite3d_texture_unit_purge(lite3d_texture_unit *texture);
-LITE3D_CEXPORT void lite3d_texture_unit_bind(lite3d_texture_unit *texture);
-LITE3D_CEXPORT void lite3d_texture_unit_unbind(lite3d_texture_unit *texture);
+LITE3D_CEXPORT void lite3d_texture_unit_bind(lite3d_texture_unit *texture, uint16_t layer);
+LITE3D_CEXPORT void lite3d_texture_unit_unbind(lite3d_texture_unit *texture, uint16_t layer);
 
 #endif

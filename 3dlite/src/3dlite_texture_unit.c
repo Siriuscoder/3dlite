@@ -46,8 +46,8 @@ static const char *glTextureFormats[] = {
 static lite3d_image_filter gFilters[LITE3D_MAX_FILTERS];
 static int8_t gFiltersCount = 0;
 static int maxTextureSize;
-static int maxTextureUnits;
 static int maxTextureImageUnits;
+static int maxCombinedTextureImageUnits;
 
 
 static void* DEVIL_CALL il_alloc(const ILsizei size)
@@ -182,16 +182,16 @@ int lite3d_texture_technique_init(const lite3d_texture_technique_settings *setti
             gTextureSettings.anisotropy = gTextureSettings.maxAnisotropy;
     }
     
-    glGetIntegerv(GL_MAX_TEXTURE_UNITS, &maxTextureUnits);
     glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &maxTextureImageUnits);
     glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTextureSize);
-    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Max texture units: %d",
-        maxTextureUnits);
+    glGetIntegerv(GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS, &maxCombinedTextureImageUnits); 
     SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Max texture image units: %d",
         maxTextureImageUnits);
+    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Max combined texture image units: %d",
+        maxCombinedTextureImageUnits);
     SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Max texture size: %d",
         maxTextureSize);
-
+    
     ilSetMemory(il_alloc, il_free);
     ilInit();
     iluInit();
@@ -385,16 +385,22 @@ void lite3d_texture_unit_purge(lite3d_texture_unit *texture)
     texture->textureID = 0;
 }
 
-void lite3d_texture_unit_bind(lite3d_texture_unit *texture)
+void lite3d_texture_unit_bind(lite3d_texture_unit *texture, uint16_t layer)
 {
     SDL_assert(texture);
+    SDL_assert_release(layer < maxCombinedTextureImageUnits);
+
+    glActiveTexture(layer);
     glEnable(texture->textureTarget);
     glBindTexture(texture->textureTarget, texture->textureID);
 }
 
-void lite3d_texture_unit_unbind(lite3d_texture_unit *texture)
+void lite3d_texture_unit_unbind(lite3d_texture_unit *texture, uint16_t layer)
 {
     SDL_assert(texture);
+    SDL_assert_release(layer < maxCombinedTextureImageUnits);
+    
+    glActiveTexture(layer);
     glBindTexture(texture->textureTarget, 0);
     glDisable(texture->textureTarget);
 }

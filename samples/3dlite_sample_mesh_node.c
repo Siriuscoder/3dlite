@@ -96,7 +96,7 @@ static int init(void)
     lite3d_render_target_root_attach_camera(&mCamera01);
     lite3d_camera_lookAt(&mCamera01, &viewPos);
     
-    lite3d_texture_unit_bind(&mTexture0);
+    lite3d_texture_unit_bind(&mTexture0, 0);
 
     return LITE3D_TRUE;
 }

@@ -26,7 +26,13 @@
 #include <3dlite/kazmath/mat3.h>
 #include <3dlite/kazmath/mat4.h>
 
-#define LITE3D_MAX_SHADER_PARAMETER_NAME    30
+#define LITE3D_SHADER_PARAMETER_MAX_NAME    30
+#define LITE3D_SHADER_PARAMETER_FLOAT       0x1
+#define LITE3D_SHADER_PARAMETER_FLOATV3     0x2
+#define LITE3D_SHADER_PARAMETER_FLOATV4     0x3
+#define LITE3D_SHADER_PARAMETER_FLOATM3     0x4
+#define LITE3D_SHADER_PARAMETER_FLOATM4     0x5
+#define LITE3D_SHADER_PARAMETER_SAMPLER     0x6
 
 typedef struct lite3d_sampler
 {
@@ -37,9 +43,8 @@ typedef struct lite3d_sampler
 typedef struct lite3d_shader_parameter
 {
     lite3d_rb_node storeBy;
-    char name[LITE3D_MAX_SHADER_PARAMETER_NAME];
+    char name[LITE3D_SHADER_PARAMETER_MAX_NAME];
     uint8_t type;
-    uint32_t location;
     
     union
     {

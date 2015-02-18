@@ -197,7 +197,7 @@ static int shutdown(void)
 
 static void draw_box(struct lite3d_scene_node *node)
 {
-    lite3d_texture_unit_bind(&mMinigun);
+    lite3d_texture_unit_bind(&mMinigun, 0);
 
     glBegin(GL_QUADS);
     glTexCoord2f(0.0f, 0.0f);
@@ -228,8 +228,8 @@ static void draw_box(struct lite3d_scene_node *node)
     glVertex3f(1.0f, 1.0f, -1.0f);
     glEnd();
 
-    lite3d_texture_unit_unbind(&mMinigun);
-    lite3d_texture_unit_bind(&mNormandy);
+    lite3d_texture_unit_unbind(&mMinigun, 0);
+    lite3d_texture_unit_bind(&mNormandy, 0);
 
     glBegin(GL_QUADS);
     glTexCoord2f(1.0f, 1.0f);
@@ -260,7 +260,7 @@ static void draw_box(struct lite3d_scene_node *node)
     glVertex3f(-1.0f, 1.0f, -1.0f);
     glEnd();
 
-    lite3d_texture_unit_unbind(&mNormandy);
+    lite3d_texture_unit_unbind(&mNormandy, 0);
 }
 
 int main(int argc, char *args[])
