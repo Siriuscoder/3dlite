@@ -106,7 +106,8 @@ src/3dlite_misc.c
 src/3dlite_mesh_node.c
 src/3dlite_material.c
 src/3dlite_shader_params.c
-src/3dlite_shader.c)
+src/3dlite_shader.c
+src/3dlite_shader_program.c)
 
 set(3DLITE_HEADERS include/3dlite/3dlite_alloc.h
 include/3dlite/3dlite_common.h
@@ -129,7 +130,8 @@ include/3dlite/3dlite_misc.h
 include/3dlite/3dlite_mesh_node.h
 include/3dlite/3dlite_material.h
 include/3dlite/3dlite_shader_params.h
-include/3dlite/3dlite_shader.h)
+include/3dlite/3dlite_shader.h
+include/3dlite/3dlite_shader_program.h)
 
 add_library(3dlite SHARED ${3DLITE_SOURCES} ${3DLITE_HEADERS})
 

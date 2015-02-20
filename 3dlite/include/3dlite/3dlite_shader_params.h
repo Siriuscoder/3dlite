@@ -42,7 +42,6 @@ typedef struct lite3d_sampler
 
 typedef struct lite3d_shader_parameter
 {
-    lite3d_rb_node storeBy;
     char name[LITE3D_SHADER_PARAMETER_MAX_NAME];
     uint8_t type;
     

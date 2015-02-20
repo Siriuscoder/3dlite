@@ -134,6 +134,7 @@ void lite3d_material_pass_add_parameter(lite3d_material_pass *pass,
     SDL_assert_release(parameter);
     
     parameter->parameter = param;
+    parameter->shaderLocation = 0;
     lite3d_list_link_init(&parameter->parameterLink);
     lite3d_list_add_last_link(&parameter->parameterLink, &pass->parameters);
 }

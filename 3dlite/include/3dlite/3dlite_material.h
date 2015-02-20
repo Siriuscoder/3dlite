@@ -19,7 +19,7 @@
 #define	LITE3D_MATERIAL_H
 
 #include <3dlite/3dlite_common.h>
-#include <3dlite/3dlite_shader_params.h>
+#include <3dlite/3dlite_shader_program.h>
 #include <3dlite/3dlite_list.h>
 
 typedef void (*lite3d_draw_batch_t)(void *data);
@@ -28,17 +28,16 @@ typedef struct lite3d_material_pass_parameter
 {
     lite3d_list_node parameterLink;
     lite3d_shader_parameter *parameter;
+    /* uniform location in shader program attached to this pass */
+    uint32_t shaderLocation;
 } lite3d_material_pass_parameter;
 
 typedef struct lite3d_material_pass
 {
     lite3d_list_node passLink;
     uint32_t passNo;
-    kmVec4 ambient;
-    kmVec4 diffuse;
-    kmVec4 specular;
-    kmVec4 emission;
-    kmVec4 shininess;
+    /* shader must be linked before set parameters */
+    lite3d_shader_program *program;
     /* list lite3d_material_pass_parameter */
     lite3d_list parameters;
 } lite3d_material_pass;
