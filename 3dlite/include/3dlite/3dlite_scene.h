@@ -15,8 +15,6 @@
 *	You should have received a copy of the GNU General Public License
 *	along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
-#pragma once
-
 #ifndef LITE3D_SCENE_H
 #define	LITE3D_SCENE_H
 

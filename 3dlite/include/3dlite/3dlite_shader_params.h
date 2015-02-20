@@ -57,28 +57,10 @@ typedef struct lite3d_shader_parameter
     } parameter;
 } lite3d_shader_parameter;
 
-typedef struct lite3d_shader_parameters_store
-{
-    lite3d_rb_tree *parameters;
-} lite3d_shader_parameters_store;
-
-LITE3D_CEXPORT void lite3d_shader_parameters_store_init(
-    lite3d_shader_parameters_store *store);
-LITE3D_CEXPORT void lite3d_shader_parameters_store_purge(
-    lite3d_shader_parameters_store *store);
 LITE3D_CEXPORT void lite3d_shader_parameter_init(
     lite3d_shader_parameter *param);
 LITE3D_CEXPORT void lite3d_shader_parameter_purge(
     lite3d_shader_parameter *param);
-LITE3D_CEXPORT int lite3d_shader_parameters_store_add(
-    lite3d_shader_parameters_store *store, 
-    lite3d_shader_parameter *param);
-LITE3D_CEXPORT int lite3d_shader_parameters_store_remove(
-    lite3d_shader_parameters_store *store, 
-    const char *name);
-LITE3D_CEXPORT lite3d_shader_parameter *lite3d_shader_parameters_store_lookup(
-    lite3d_shader_parameters_store *store, 
-    const char *name);
 
 
 #endif	/* LITE3D_SHADER_PARAMS_H */
