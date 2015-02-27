@@ -82,7 +82,7 @@ static int init_gl_extensions(void)
             "%s: Glew failed.. %s\n", __FUNCTION__, glewGetErrorString(err));
     }
     
-    if (!GL_VERSION_3_0)
+    if (!GLEW_VERSION_3_1)
     {
         SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION,
             "%s: GL v3.0 minimum required..", __FUNCTION__);

@@ -15,34 +15,26 @@
 *	You should have received a copy of the GNU General Public License
 *	along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
-#include <SDL_assert.h>
+#ifndef LITE3D_MESHES_RENDER_H
+#define	LITE3D_MESHES_RENDER_H
 
-#include <3dlite/3dlite_alloc.h>
-#include <3dlite/3dlite_mesh_node.h>
+#include <3dlite/3dlite_common.h>
+#include <3dlite/3dlite_vbo.h>
 #include <3dlite/3dlite_scene.h>
 
-static void render_mesh_node(struct lite3d_scene_node *node)
+typedef struct lite3d_mesh_node
 {
-    lite3d_mesh_node *meshNode;
-    lite3d_scene *scene;
-    meshNode = MEMBERCAST(lite3d_mesh_node, node, sceneNode);
-    scene = (lite3d_scene *)meshNode->sceneNode.scene;
+    lite3d_scene_node sceneNode;
+    lite3d_vbo *vbo;
+} lite3d_mesh_node;
 
-    lite3d_vbo_draw(meshNode->vbo);
-    scene->stats.batches += meshNode->vbo->vaosCount;
-    scene->stats.materialBlocks += meshNode->vbo->vaosCount;
-    scene->stats.trianglesRendered += meshNode->vbo->verticesCount;
-}
+LITE3D_CEXPORT void lite3d_mesh_node_init(lite3d_mesh_node *node, lite3d_vbo *vbo);
+LITE3D_CEXPORT int lite3d_mesh_node_attach_material(lite3d_mesh_node *node,
+    lite3d_material *material, uint32_t index);
 
-void lite3d_mesh_node_init(lite3d_mesh_node *node, lite3d_vbo *vbo)
-{
-    SDL_assert(node);
+/* init scene using materisl queued renderer */
+LITE3D_CEXPORT void lite3d_scene_init_mqr(lite3d_scene *scene);
+LITE3D_CEXPORT void lite3d_scene_purge_mqr(lite3d_scene *scene);
 
-    lite3d_scene_node_init(&node->sceneNode);
-    node->vbo = vbo;
+#endif	/* LITE3D_MESHES_RENDER_H */
 
-    node->sceneNode.doRenderNode = render_mesh_node;
-    node->sceneNode.enabled = LITE3D_TRUE;
-    node->sceneNode.renderable = LITE3D_TRUE;
-    node->sceneNode.rotationCentered = LITE3D_TRUE;
-}

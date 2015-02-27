@@ -20,7 +20,7 @@
 
 #include <3dlite/3dlite_common.h>
 #include <3dlite/3dlite_camera.h>
-
+#include <3dlite/3dlite_list.h>
 
 typedef struct lite3d_scene_stats
 {
@@ -36,10 +36,12 @@ typedef struct lite3d_scene
 {
     lite3d_scene_node rootNode;
     lite3d_scene_stats stats;
+    lite3d_list renderQueue;
     void (*preRender)(struct lite3d_scene *scene, lite3d_camera *camera);
     void (*postRender)(struct lite3d_scene *scene, lite3d_camera *camera);
     void (*preRenderNode)(struct lite3d_scene *scene, lite3d_scene_node *node);
     void (*postRenderNode)(struct lite3d_scene *scene, lite3d_scene_node *node);
+    void (*doRender)(struct lite3d_scene *scene);
 } lite3d_scene;
 
 LITE3D_CEXPORT void lite3d_scene_render(lite3d_scene *scene, lite3d_camera *camera);

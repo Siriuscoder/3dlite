@@ -100,6 +100,14 @@ int lite3d_main(const lite3d_global_settings *settings)
         return LITE3D_FALSE;
     }
 
+    /* setup shaders technique */
+    if(lite3d_shader_program_technique_init())
+    {
+        lite3d_video_close();
+        lite3d_memory_cleanup();
+        return LITE3D_FALSE;
+    }
+
     /* init render */
     if (!lite3d_render_init())
     {

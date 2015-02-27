@@ -117,12 +117,6 @@ int lite3d_material_remove_pass(
     return LITE3D_FALSE;
 }
 
-void lite3d_material_render(
-    lite3d_material *material, lite3d_draw_batch_t render, void *data)
-{
-
-}
-
 void lite3d_material_pass_add_parameter(lite3d_material_pass *pass,
     lite3d_shader_parameter *param)
 {
@@ -154,6 +148,11 @@ int lite3d_material_pass_remove_parameter(lite3d_material_pass *pass,
     }
     
     return LITE3D_FALSE;
+}
+
+void lite3d_material_pass_remove_all_parameters(lite3d_material_pass *pass)
+{
+    lite3d_material_pass_purge(pass);
 }
 
 lite3d_shader_parameter *lite3d_material_pass_get_parameter(

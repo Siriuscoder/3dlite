@@ -103,7 +103,7 @@ src/3dlite_scene.c
 src/3dlite_vbo.c
 src/3dlite_vbo_loader.c
 src/3dlite_misc.c
-src/3dlite_mesh_node.c
+src/3dlite_meshes_render.c
 src/3dlite_material.c
 src/3dlite_shader_params.c
 src/3dlite_shader.c
@@ -127,7 +127,7 @@ include/3dlite/3dlite_scene.h
 include/3dlite/3dlite_vbo.h
 include/3dlite/3dlite_vbo_loader.h
 include/3dlite/3dlite_misc.h
-include/3dlite/3dlite_mesh_node.h
+include/3dlite/3dlite_meshes_render.h
 include/3dlite/3dlite_material.h
 include/3dlite/3dlite_shader_params.h
 include/3dlite/3dlite_shader.h

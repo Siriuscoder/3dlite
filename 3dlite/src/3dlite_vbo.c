@@ -205,3 +205,21 @@ void lite3d_vao_purge(struct lite3d_vao *vao)
     glDeleteVertexArrays(1, &vao->vaoID);
     lite3d_free(vao);
 }
+
+lite3d_vao *lite3d_vao_get_by_index(struct lite3d_vbo *vbo,
+    uint32_t materialIndex)
+{
+    lite3d_list_node *vaoLink;
+    lite3d_vao *vao;
+    SDL_assert(vbo);
+
+    for (vaoLink = vbo->vaos.l.next; 
+        vaoLink != &vbo->vaos.l; vaoLink = lite3d_list_next(vaoLink))
+    {
+        vao = MEMBERCAST(lite3d_vao, vaoLink, inVbo);
+        if(vao->materialIndex == materialIndex)
+            return vao;
+    }
+
+    return NULL;
+}

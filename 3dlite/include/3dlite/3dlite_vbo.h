@@ -66,8 +66,8 @@ LITE3D_CEXPORT void lite3d_vbo_draw(struct lite3d_vbo *vbo);
 LITE3D_CEXPORT int lite3d_vao_init(struct lite3d_vao *vao);
 LITE3D_CEXPORT void lite3d_vao_purge(struct lite3d_vao *vao);
 LITE3D_CEXPORT void lite3d_vao_draw(struct lite3d_vao *vao);
-LITE3D_CEXPORT void lite3d_vbo_attach_material(struct lite3d_vbo *vao,
-    const lite3d_material *material, uint32_t index);
+LITE3D_CEXPORT lite3d_vao *lite3d_vao_get_by_index(struct lite3d_vbo *vbo, 
+    uint32_t materialIndex);
 
 #endif	/* LITE3D_VBO_H */
 

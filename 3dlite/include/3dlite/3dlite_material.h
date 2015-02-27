@@ -58,12 +58,11 @@ LITE3D_CEXPORT lite3d_material_pass* lite3d_material_add_pass(
     lite3d_material *material);
 LITE3D_CEXPORT int lite3d_material_remove_pass(
     lite3d_material *material, uint32_t no);
-LITE3D_CEXPORT void lite3d_material_render(
-    lite3d_material *material, lite3d_draw_batch_t render, void *data);
 LITE3D_CEXPORT void lite3d_material_pass_add_parameter(lite3d_material_pass *pass,
     lite3d_shader_parameter *param);
 LITE3D_CEXPORT int lite3d_material_pass_remove_parameter(lite3d_material_pass *pass,
     const char *name);
+LITE3D_CEXPORT void lite3d_material_pass_remove_all_parameters(lite3d_material_pass *pass);
 LITE3D_CEXPORT lite3d_shader_parameter *lite3d_material_pass_get_parameter(
     lite3d_material_pass *pass, const char *name);
 LITE3D_CEXPORT lite3d_material_pass *lite3d_material_get_pass(

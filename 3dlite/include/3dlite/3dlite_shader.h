@@ -28,7 +28,7 @@ typedef struct lite3d_shader
 {
     uint32_t shaderID;
     char *statusString;
-    uint8_t compileOK;
+    uint8_t success;
     uint8_t type;
 } lite3d_shader;
 

@@ -53,14 +53,14 @@ int lite3d_shader_compile(
 
     /* check compile status */
     glGetShaderiv(shader->shaderID, GL_COMPILE_STATUS, &isCompiled);
-    shader->compileOK = isCompiled == GL_TRUE ? LITE3D_TRUE : LITE3D_FALSE;
+    shader->success = isCompiled == GL_TRUE ? LITE3D_TRUE : LITE3D_FALSE;
 
 	/* allocate string and copy compile info log into it */
 	glGetShaderiv(shader->shaderID, GL_INFO_LOG_LENGTH, &maxLogLength);
     shader->statusString = (char *)lite3d_malloc(maxLogLength);
 	glGetShaderInfoLog(shader->shaderID, maxLogLength, &maxLogLength, shader->statusString);
 
-    return shader->compileOK;
+    return shader->success;
 }
 
 void lite3d_shader_purge(

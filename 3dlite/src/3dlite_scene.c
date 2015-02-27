@@ -82,6 +82,7 @@ void lite3d_scene_init(lite3d_scene *scene)
     memset(scene, 0, sizeof(lite3d_scene));
     /* root scene node */
     lite3d_scene_node_init(&scene->rootNode);
+    lite3d_list_init(&scene->renderQueue);
     /* never render this node */ 
     scene->rootNode.renderable = LITE3D_FALSE;
 }

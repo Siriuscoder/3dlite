@@ -26,13 +26,24 @@ typedef struct lite3d_shader_program
 {
     uint32_t programID;
     char *statusString;
-    uint8_t linkOK;
+    uint8_t success;
 } lite3d_shader_program;
 
+LITE3D_CEXPORT int lite3d_shader_program_technique_init();
 LITE3D_CEXPORT int lite3d_shader_program_link(
     lite3d_shader_program *program, lite3d_shader *shaders, size_t count);
 LITE3D_CEXPORT void lite3d_shader_program_purge(
     lite3d_shader_program *program);
+LITE3D_CEXPORT void lite3d_shader_program_bind(
+    lite3d_shader_program *program);
+LITE3D_CEXPORT void lite3d_shader_program_unbind(
+    lite3d_shader_program *program);
+
+/* set uniform or sampler params to shader, shader must be bind */
+LITE3D_CEXPORT int lite3d_shader_program_uniform_set(
+    lite3d_shader_program *program, lite3d_shader_parameter *param, int location);
+LITE3D_CEXPORT int lite3d_shader_program_sampler_set(
+    lite3d_shader_program *program, lite3d_shader_parameter *param, int location, int texUnit);
 
 #endif	/* LITE3D_SHADER_PROGRAM_H */
 
