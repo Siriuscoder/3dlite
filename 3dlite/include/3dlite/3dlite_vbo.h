@@ -20,7 +20,6 @@
 
 #include <3dlite/3dlite_common.h>
 #include <3dlite/3dlite_list.h>
-#include <3dlite/3dlite_material.h>
 
 typedef struct lite3d_vbo
 {
@@ -32,8 +31,6 @@ typedef struct lite3d_vbo
     size_t elementsCount;
     size_t vaosCount;
     lite3d_list vaos;
-    void (*bindOn)(struct lite3d_vbo *vbo);
-    void (*bindOff)(struct lite3d_vbo *vbo);
 } lite3d_vbo;
 
 typedef struct lite3d_vao
@@ -52,8 +49,6 @@ typedef struct lite3d_vao
 
     /* material index */
     uint32_t materialIndex;
-    void (*batchBegin)(struct lite3d_vbo *vbo, struct lite3d_vao *vao);
-    void (*batchEnd)(struct lite3d_vbo *vbo, struct lite3d_vao *vao);
 } lite3d_vao;
 
 LITE3D_CEXPORT int lite3d_vbo_technique_init(void);
@@ -65,7 +60,9 @@ LITE3D_CEXPORT void lite3d_vbo_draw(struct lite3d_vbo *vbo);
 
 LITE3D_CEXPORT int lite3d_vao_init(struct lite3d_vao *vao);
 LITE3D_CEXPORT void lite3d_vao_purge(struct lite3d_vao *vao);
+LITE3D_CEXPORT void lite3d_vao_bind(struct lite3d_vao *vao);
 LITE3D_CEXPORT void lite3d_vao_draw(struct lite3d_vao *vao);
+LITE3D_CEXPORT void lite3d_vao_unbind(struct lite3d_vao *vao);
 LITE3D_CEXPORT lite3d_vao *lite3d_vao_get_by_index(struct lite3d_vbo *vbo, 
     uint32_t materialIndex);
 

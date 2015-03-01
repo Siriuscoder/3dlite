@@ -25,10 +25,11 @@
 typedef struct lite3d_scene_stats
 {
     int32_t trianglesRendered;
+    int32_t verticesRendered;
     int32_t objectsRendered;
     int32_t batches;
     int32_t materialBlocks;
-    int32_t textureUnits;
+    int32_t textureUnitsBinded;
     int32_t materialPassed;
 } lite3d_scene_stats;
 
@@ -46,9 +47,9 @@ typedef struct lite3d_scene
 
 LITE3D_CEXPORT void lite3d_scene_render(lite3d_scene *scene, lite3d_camera *camera);
 LITE3D_CEXPORT void lite3d_scene_init(lite3d_scene *scene);
-LITE3D_CEXPORT void lite3d_scene_node_add(lite3d_scene *scene, lite3d_scene_node *node, 
+LITE3D_CEXPORT int lite3d_scene_node_add(lite3d_scene *scene, lite3d_scene_node *node, 
     lite3d_scene_node *baseNode);
-LITE3D_CEXPORT void lite3d_scene_node_remove(lite3d_scene *scene, lite3d_scene_node *node);
+LITE3D_CEXPORT int lite3d_scene_node_remove(lite3d_scene *scene, lite3d_scene_node *node);
 
 #endif	/* LITE3D_SCENE_H */
 

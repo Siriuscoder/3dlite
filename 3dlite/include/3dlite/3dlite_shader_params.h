@@ -44,6 +44,7 @@ typedef struct lite3d_shader_parameter
 {
     char name[LITE3D_SHADER_PARAMETER_MAX_NAME];
     uint8_t type;
+    uint8_t changed;
     
     union
     {

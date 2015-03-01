@@ -103,7 +103,7 @@ static void update_render_target(lite3d_render_target *target)
         gRenderStats.batchesByFrame += scene->stats.batches;
         gRenderStats.materialsByFrame += scene->stats.materialBlocks;
         gRenderStats.materialsPassedByFrame += scene->stats.materialPassed;
-        gRenderStats.textureUnitsByFrame += scene->stats.textureUnits;
+        gRenderStats.textureUnitsByFrame += scene->stats.textureUnitsBinded;
     }
 }
 

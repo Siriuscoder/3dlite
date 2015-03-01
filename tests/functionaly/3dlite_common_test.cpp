@@ -41,7 +41,7 @@ Lite3dCommon::~Lite3dCommon()
 
 }
 
-void Lite3dCommon::main()
+bool Lite3dCommon::main()
 {
-    lite3d_main(&mSettings);
+    return lite3d_main(&mSettings) == LITE3D_TRUE;
 }

@@ -101,7 +101,7 @@ int lite3d_main(const lite3d_global_settings *settings)
     }
 
     /* setup shaders technique */
-    if(lite3d_shader_program_technique_init())
+    if(!lite3d_shader_program_technique_init())
     {
         lite3d_video_close();
         lite3d_memory_cleanup();
@@ -111,6 +111,7 @@ int lite3d_main(const lite3d_global_settings *settings)
     /* init render */
     if (!lite3d_render_init())
     {
+        lite3d_texture_technique_shut();
         lite3d_video_close();
         lite3d_memory_cleanup();
         return LITE3D_FALSE;

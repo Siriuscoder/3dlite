@@ -24,7 +24,7 @@ public:
     Lite3dCommon();
     ~Lite3dCommon();
 
-    void main();
+    bool main();
 
     inline lite3d_global_settings &settings()
     { return mSettings; }

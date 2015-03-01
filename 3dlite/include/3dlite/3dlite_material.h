@@ -22,14 +22,13 @@
 #include <3dlite/3dlite_shader_program.h>
 #include <3dlite/3dlite_list.h>
 
-typedef void (*lite3d_draw_batch_t)(void *data);
-
 typedef struct lite3d_material_pass_parameter
 {
     lite3d_list_node parameterLink;
     lite3d_shader_parameter *parameter;
     /* uniform location in shader program attached to this pass */
-    uint32_t shaderLocation;
+    uint32_t uniformLocation;
+    uint32_t textureUnit;
 } lite3d_material_pass_parameter;
 
 typedef struct lite3d_material_pass
@@ -46,7 +45,10 @@ typedef struct lite3d_material
 {
     lite3d_list passes;
     uint32_t passesCounter;
+    uint32_t textureUnitsBinded;
 } lite3d_material;
+
+typedef void (*lite3d_by_pass_render_t)(lite3d_material_pass *pass, void *data);
 
 LITE3D_CEXPORT void lite3d_material_init(
     lite3d_material *material);
@@ -67,6 +69,11 @@ LITE3D_CEXPORT lite3d_shader_parameter *lite3d_material_pass_get_parameter(
     lite3d_material_pass *pass, const char *name);
 LITE3D_CEXPORT lite3d_material_pass *lite3d_material_get_pass(
     lite3d_material *material, uint32_t no);
+
+LITE3D_CEXPORT void lite3d_material_by_pass_render(lite3d_material *material,
+    lite3d_by_pass_render_t func, void *data);
+LITE3D_CEXPORT void lite3d_material_pass_set_params(lite3d_material *material,
+    lite3d_material_pass *pass, uint8_t changed);
 
 #endif	/* LITE3D_MATERIAL_H */
 

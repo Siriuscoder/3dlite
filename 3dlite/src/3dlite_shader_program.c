@@ -30,7 +30,9 @@ int lite3d_shader_program_technique_init()
 {
     glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &maxTextureImageUnits);
     glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTextureSize);
-    glGetIntegerv(GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS, &maxCombinedTextureImageUnits); 
+    glGetIntegerv(GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS, &maxCombinedTextureImageUnits);
+    
+    return LITE3D_TRUE;
 }
 
 int lite3d_shader_program_link(
@@ -102,24 +104,28 @@ void lite3d_shader_program_bind(
     lite3d_shader_program *program)
 {
     SDL_assert(program);
+    SDL_assert(program->success == LITE3D_TRUE);
     glUseProgram(program->programID);
 }
 
 void lite3d_shader_program_unbind(
     lite3d_shader_program *program)
 {
-    SDL_assert(program);
     glUseProgram(0);
 }
 
 int lite3d_shader_program_uniform_set(
-    lite3d_shader_program *program, lite3d_shader_parameter *param, int location)
+    lite3d_shader_program *program, lite3d_shader_parameter *param, 
+    uint32_t location)
 {
     SDL_assert(program);
+    SDL_assert(program->success == LITE3D_TRUE);
 }
 
 int lite3d_shader_program_sampler_set(
-    lite3d_shader_program *program, lite3d_sampler *param, int location, int texUnit)
+    lite3d_shader_program *program, lite3d_shader_parameter *param, 
+    uint32_t location, uint32_t texUnit)
 {
     SDL_assert(program);
+    SDL_assert(program->success == LITE3D_TRUE);
 }
