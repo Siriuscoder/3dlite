@@ -44,7 +44,13 @@ typedef struct lite3d_shader_parameter
 {
     char name[LITE3D_SHADER_PARAMETER_MAX_NAME];
     uint8_t type;
-    uint8_t changed;
+
+    /*  mean that uniform variable binded to this 
+        parameter will be updated every material pass.
+        if persist == 0 otherwise only then material 
+        activated 
+    */
+    uint8_t persist;
     
     union
     {
@@ -57,11 +63,25 @@ typedef struct lite3d_shader_parameter
     } parameter;
 } lite3d_shader_parameter;
 
+typedef struct lite3d_global_parameters
+{
+    lite3d_shader_parameter projectionMatrix;
+    lite3d_shader_parameter cameraMatrix;
+    lite3d_shader_parameter modelMatrix;
+    lite3d_shader_parameter ambientLight;
+} lite3d_global_parameters;
+
 LITE3D_CEXPORT void lite3d_shader_parameter_init(
     lite3d_shader_parameter *param);
 LITE3D_CEXPORT void lite3d_shader_parameter_purge(
     lite3d_shader_parameter *param);
 
+LITE3D_CEXPORT void lite3d_shader_global_parameters_init(void);
+LITE3D_CEXPORT lite3d_global_parameters *lite3d_shader_global_parameters(void);
+LITE3D_CEXPORT void lite3d_set_projection_matrix(kmMat4 *mat);
+LITE3D_CEXPORT void lite3d_set_camera_matrix(kmMat4 *mat);
+LITE3D_CEXPORT void lite3d_set_model_matrix(kmMat4 *mat);
+LITE3D_CEXPORT void lite3d_set_ambient(float val);
 
 #endif	/* LITE3D_SHADER_PARAMS_H */
 

@@ -108,6 +108,9 @@ int lite3d_main(const lite3d_global_settings *settings)
         return LITE3D_FALSE;
     }
 
+    /* init shader global parameters */
+    lite3d_shader_global_parameters_init();
+
     /* init render */
     if (!lite3d_render_init())
     {

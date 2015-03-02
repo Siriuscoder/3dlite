@@ -16,5 +16,76 @@
 *	along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
 #include <string.h>
+#include <SDL_assert.h>
 
 #include <3dlite/3dlite_shader_params.h>
+
+static lite3d_global_parameters globalParams;
+
+void lite3d_shader_parameter_init(
+    lite3d_shader_parameter *param)
+{
+    SDL_assert(param);
+
+    memset(param, 0, sizeof(lite3d_shader_parameter));
+    param->persist = LITE3D_FALSE;
+}
+
+void lite3d_shader_parameter_purge(
+    lite3d_shader_parameter *param)
+{
+    SDL_assert(param);
+}
+
+void lite3d_set_projection_matrix(kmMat4 *mat)
+{
+    globalParams.projectionMatrix.parameter.valmat4 = *mat;
+}
+
+void lite3d_set_camera_matrix(kmMat4 *mat)
+{
+    globalParams.cameraMatrix.parameter.valmat4 = *mat;
+}
+
+void lite3d_set_model_matrix(kmMat4 *mat)
+{
+    globalParams.modelMatrix.parameter.valmat4 = *mat;
+}
+
+void lite3d_set_ambient(float val)
+{
+    globalParams.ambientLight.parameter.valfloat = val;
+}
+
+lite3d_global_parameters *lite3d_shader_global_parameters(void)
+{
+    return &globalParams;
+}
+
+void lite3d_shader_global_parameters_init(void)
+{
+    lite3d_shader_parameter_init(&globalParams.projectionMatrix);
+    lite3d_shader_parameter_init(&globalParams.cameraMatrix);
+    lite3d_shader_parameter_init(&globalParams.modelMatrix);
+    lite3d_shader_parameter_init(&globalParams.ambientLight);
+
+    strcpy(globalParams.projectionMatrix.name, "projectionMatrix");
+    strcpy(globalParams.cameraMatrix.name, "cameraMatrix");
+    strcpy(globalParams.modelMatrix.name, "modelMatrix");
+    strcpy(globalParams.ambientLight.name, "ambientLight");
+
+    globalParams.projectionMatrix.persist = 
+        globalParams.cameraMatrix.persist = 
+        globalParams.modelMatrix.persist = 
+        globalParams.ambientLight.persist = LITE3D_TRUE;
+
+    globalParams.projectionMatrix.type = LITE3D_SHADER_PARAMETER_FLOATM4;
+    globalParams.cameraMatrix.type = LITE3D_SHADER_PARAMETER_FLOATM4;
+    globalParams.modelMatrix.type = LITE3D_SHADER_PARAMETER_FLOATM4;
+    globalParams.ambientLight.type = LITE3D_SHADER_PARAMETER_FLOAT;
+
+    kmMat4Identity(&globalParams.projectionMatrix.parameter.valmat4);
+    kmMat4Identity(&globalParams.cameraMatrix.parameter.valmat4);
+    kmMat4Identity(&globalParams.modelMatrix.parameter.valmat4);
+    globalParams.ambientLight.parameter.valfloat = 0.8f;
+}

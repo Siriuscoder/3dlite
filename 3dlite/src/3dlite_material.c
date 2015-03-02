@@ -226,7 +226,7 @@ void lite3d_material_pass_set_params(lite3d_material *material,
         parameter = MEMBERCAST(lite3d_material_pass_parameter, 
             parameterNode, parameterLink);
         
-        if (!changed || parameter->parameter->changed)
+        if (!changed || parameter->parameter->persist)
         {
             /* sampler case */
             if (parameter->parameter->type == LITE3D_SHADER_PARAMETER_SAMPLER)
@@ -246,8 +246,6 @@ void lite3d_material_pass_set_params(lite3d_material *material,
                     lite3d_shader_program_uniform_set(pass->program,
                     parameter->parameter, parameter->uniformLocation);
             }
-
-            parameter->parameter->changed = LITE3D_FALSE;
         }
     }
 }

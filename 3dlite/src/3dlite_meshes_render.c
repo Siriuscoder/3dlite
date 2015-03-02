@@ -79,6 +79,8 @@ static void mqr_unit_render(lite3d_material_pass *pass, void *data)
         if(mqrNode->node->postRenderMeshNode)
             mqrNode->node->postRenderMeshNode(scene, mqrNode->node,
                 mqrNode->vao, mqrUnit->material);
+        if(scene->postRenderNode)
+            scene->postRenderNode(scene, &mqrNode->node->sceneNode);
     }
     
     if(scene)
