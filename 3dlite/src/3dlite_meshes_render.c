@@ -68,6 +68,7 @@ static void mqr_unit_render(lite3d_material_pass *pass, void *data)
                 mqrNode->vao, mqrUnit->material);
         
         /* TODO: setup viewmodel */
+        lite3d_set_model_matrix(&mqrNode->node->sceneNode.worldView);
         /* setup changed uniforms parameters */
         lite3d_material_pass_set_params(mqrUnit->material, pass, LITE3D_TRUE);
         /* do render batch */
@@ -104,19 +105,6 @@ static void do_mqr(struct lite3d_scene *scene)
         scene->stats.materialBlocks++;
         scene->stats.textureUnitsBinded += mqrUnit->material->textureUnitsBinded;
     }
-}
-
-static void render_mesh_node(struct lite3d_scene_node *node)
-{
-    lite3d_mesh_node *meshNode;
-    lite3d_scene *scene;
-    meshNode = MEMBERCAST(lite3d_mesh_node, node, sceneNode);
-    scene = (lite3d_scene *) meshNode->sceneNode.scene;
-
-    lite3d_vbo_draw(meshNode->vbo);
-    scene->stats.batches += meshNode->vbo->vaosCount;
-    scene->stats.materialBlocks += meshNode->vbo->vaosCount;
-    scene->stats.trianglesRendered += meshNode->vbo->verticesCount;
 }
 
 static lite3d_mqr_node *check_mqr_material_index_exist(lite3d_mqr_unit *unit,
@@ -182,7 +170,6 @@ void lite3d_mesh_node_init(lite3d_mesh_node *node, lite3d_vbo *vbo)
     lite3d_scene_node_init(&node->sceneNode);
     node->vbo = vbo;
 
-    node->sceneNode.doRenderNode = render_mesh_node;
     node->sceneNode.enabled = LITE3D_TRUE;
     node->sceneNode.renderable = LITE3D_TRUE;
     node->sceneNode.rotationCentered = LITE3D_TRUE;
@@ -248,6 +235,8 @@ int lite3d_mesh_node_attach_material(lite3d_mesh_node *node,
         mqrUnit = (lite3d_mqr_unit *) lite3d_calloc(sizeof (lite3d_mqr_unit));
         lite3d_list_init(&mqrUnit->nodes);
         lite3d_list_link_init(&mqrUnit->queued);
+        mqrUnit->material = material;
+
         lite3d_list_add_last_link(&mqrUnit->queued, &scene->renderQueue);
     }
 

@@ -40,12 +40,12 @@ LITE3D_CEXPORT void lite3d_shader_program_unbind(
     lite3d_shader_program *program);
 
 /* set uniform or sampler params to shader, shader must be bind */
-LITE3D_CEXPORT int lite3d_shader_program_uniform_set(
+LITE3D_CEXPORT int32_t lite3d_shader_program_uniform_set(
     lite3d_shader_program *program, lite3d_shader_parameter *param, 
-    uint32_t location);
-LITE3D_CEXPORT int lite3d_shader_program_sampler_set(
+    int32_t location);
+LITE3D_CEXPORT int32_t lite3d_shader_program_sampler_set(
     lite3d_shader_program *program, lite3d_shader_parameter *param, 
-    uint32_t location, uint32_t texUnit);
+    int32_t location, uint16_t texUnit);
 
 #endif	/* LITE3D_SHADER_PROGRAM_H */
 

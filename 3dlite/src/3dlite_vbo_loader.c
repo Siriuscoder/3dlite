@@ -48,7 +48,7 @@ static int vbo_append_batch(lite3d_vbo *vbo,
     size_t i = 0;
     size_t vOffset = verticesOffset;
 
-    vao = lite3d_malloc(sizeof (lite3d_vao));
+    vao = (lite3d_vao *)lite3d_malloc(sizeof (lite3d_vao));
     SDL_assert_release(vao);
 
     if (!lite3d_vao_init(vao))
@@ -291,11 +291,11 @@ static int ai_node_load_to_vbo(lite3d_vbo *vbo, const struct aiScene *scene,
 }
 
 int lite3d_vbo_load_from_memory(lite3d_vbo *vbo,
-    void *vertices,
+    const void *vertices,
     size_t verticesCount,
-    lite3d_vbo_layout *layout,
+    const lite3d_vbo_layout *layout,
     size_t layoutCount,
-    void *indexes,
+    const void *indexes,
     size_t elementsCount,
     uint8_t indexComponents,
     uint16_t access)
@@ -351,11 +351,11 @@ int lite3d_vbo_load_from_memory(lite3d_vbo *vbo,
 }
 
 int lite3d_vbo_extend_from_memory(lite3d_vbo *vbo,
-    void *vertices,
+    const void *vertices,
     size_t verticesCount,
-    lite3d_vbo_layout *layout,
+    const lite3d_vbo_layout *layout,
     size_t layoutCount,
-    void *indexes,
+    const void *indexes,
     size_t elementsCount,
     uint8_t indexComponents,
     uint16_t access)

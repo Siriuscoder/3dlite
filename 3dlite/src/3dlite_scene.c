@@ -22,7 +22,7 @@
 #include <3dlite/3dlite_alloc.h>
 #include <3dlite/3dlite_scene.h>
 
-static void scene_recursive_render(lite3d_scene *scene, lite3d_scene_node *node, lite3d_camera *camera)
+static void scene_recursive_nodes_update(lite3d_scene *scene, lite3d_scene_node *node)
 {
     lite3d_list_node *nodeLink;
     lite3d_scene_node *child;
@@ -37,25 +37,8 @@ static void scene_recursive_render(lite3d_scene *scene, lite3d_scene_node *node,
         child->recalc = recalcNode ? LITE3D_TRUE : child->recalc;
         if (child->enabled)
         {
-            scene_recursive_render(scene, child, camera);
+            scene_recursive_nodes_update(scene, child);
         }
-    }
-
-    /* apply camera and set modelview */
-    lite3d_camera_to_node(camera, node);
-    /* and now draw node */
-    if (node->renderable)
-    {
-        if (scene->preRenderNode)
-            scene->preRenderNode(scene, node);
-        /*  render node directly.. may be any object of: mesh, 
-            paticle system, skin, cubebox, etc. */
-        if (node->doRenderNode)
-            node->doRenderNode(node);
-
-        if (scene->postRenderNode)
-            scene->postRenderNode(scene, node);
-        scene->stats.objectsRendered++;
     }
 }
 
@@ -67,10 +50,13 @@ void lite3d_scene_render(lite3d_scene *scene, lite3d_camera *camera)
 
     if (scene->preRender)
         scene->preRender(scene, camera);
-    /* setup camera projection */
+    /* update camera projection & transformation */
     lite3d_camera_update_view(camera);
-    /* render scene tree */
-    scene_recursive_render(scene, &scene->rootNode, camera);
+    /* update scene tree */
+    scene_recursive_nodes_update(scene, &scene->rootNode);
+    /* render scene */
+    if(scene->doRender)
+        scene->doRender(scene);
 
     if (scene->postRender)
         scene->postRender(scene, camera);

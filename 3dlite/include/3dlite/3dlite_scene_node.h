@@ -40,7 +40,6 @@ typedef struct  lite3d_scene_node
     uint8_t enabled;
     struct lite3d_scene_node *baseNode;
     struct lite3d_list childNodes;
-    void (*doRenderNode)(struct lite3d_scene_node *node);
     void *scene;
 } lite3d_scene_node;
 

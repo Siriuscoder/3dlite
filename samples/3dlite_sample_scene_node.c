@@ -28,7 +28,12 @@
 static lite3d_resource_pack *mFileSysPack = NULL;
 static lite3d_resource_pack *m7zPack = NULL;
 static lite3d_texture_unit mNormandy, mMinigun;
+static lite3d_shader_parameter mNormandyTexture;
+static lite3d_shader_parameter mMinigunTexture;
+static lite3d_material mNormandyMaterial;
+static lite3d_shader_program mNormandyProgram;
 static lite3d_camera mCamera01;
+static lite3d_vbo mCubeVbo;
 static kmVec3 cameraInitPos = {
     0.0f, 5.0f, 5.0f
 };
@@ -49,8 +54,8 @@ static kmVec3 rotAxisZ = {
     0.0f, 0.0f, 1.0f
 };
 
-static lite3d_scene_node mSceneNode[3];
-static lite3d_scene_node mSceneNodeInherited[3];
+static lite3d_mesh_node mSceneNode[3];
+static lite3d_mesh_node mSceneNodeInherited[3];
 
 static lite3d_scene mScene;
 
@@ -78,7 +83,7 @@ static int process_events(SDL_Event *levent)
         }
         else if (levent->key.keysym.sym == SDLK_F2)
         {
-            lite3d_scene_node_rotate_angle(&mSceneNode[2], &rotAxisZ, kmDegreesToRadians(5));
+            lite3d_scene_node_rotate_angle(&mSceneNode[2].sceneNode, &rotAxisZ, kmDegreesToRadians(5));
         }
         else if (levent->key.keysym.sym == SDLK_UP)
         {
@@ -121,6 +126,123 @@ static int process_events(SDL_Event *levent)
     return LITE3D_TRUE;
 }
 
+static int initNormandyMaterial(void)
+{
+    lite3d_material_pass *matPass;
+    lite3d_shader shaders[2];
+
+    /* init parameter with texture */
+    lite3d_shader_parameter_init(&mNormandyTexture);
+    strcpy(mNormandyTexture.name, "normandy");
+    mNormandyTexture.persist = LITE3D_FALSE;
+    mNormandyTexture.type = LITE3D_SHADER_PARAMETER_SAMPLER;
+    mNormandyTexture.parameter.valsampler.texture = &mNormandy;
+
+    /* create material for owr box */
+    lite3d_material_init(&mNormandyMaterial);
+    matPass = lite3d_material_add_pass(&mNormandyMaterial);
+    /* set default params */
+    lite3d_material_pass_add_parameter(matPass, &lite3d_shader_global_parameters()->projectionMatrix);
+    lite3d_material_pass_add_parameter(matPass, &lite3d_shader_global_parameters()->cameraMatrix);
+    lite3d_material_pass_add_parameter(matPass, &lite3d_shader_global_parameters()->modelMatrix);
+    /* set sampler */
+    lite3d_material_pass_add_parameter(matPass, &mNormandyTexture);
+
+    /* try to compile material shaders */
+    if(!lite3d_shader_compile(&shaders[0], LITE3D_SHADER_TYPE_VERTEX, 
+        "uniform mat4 projectionMatrix; "
+        "uniform mat4 cameraMatrix; "
+        "uniform mat4 modelMatrix; "
+        "void main() "
+        "{"
+        "   gl_TexCoord[0] = gl_MultiTexCoord0; "
+        "   gl_Position = projectionMatrix * cameraMatrix * modelMatrix * gl_Vertex; "
+        "}"))
+        return LITE3D_FALSE;
+
+    if(!lite3d_shader_compile(&shaders[1], LITE3D_SHADER_TYPE_FRAGMENT, 
+        "uniform sampler2D normandy; "
+        "void main() "
+        "{"
+        "   gl_FragColor = texture2D(normandy, gl_TexCoord[0].st); "
+        "}"))
+        return LITE3D_FALSE;
+
+    if(!lite3d_shader_program_link(&mNormandyProgram, shaders, 2))
+        return LITE3D_FALSE;
+
+    lite3d_shader_purge(&shaders[0]);
+    lite3d_shader_purge(&shaders[1]);
+
+    matPass->program = &mNormandyProgram;
+    return LITE3D_TRUE;
+}
+
+static int initCube(void)
+{
+    const float cubeVertices[] = {
+        -1.0f, -1.0f, 1.0f, 0.0f, 0.0f,
+        1.0f, -1.0f, 1.0f, 1.0f, 0.0f,
+        1.0f, 1.0f, 1.0f, 1.0f, 1.0f,
+        -1.0f, 1.0f, 1.0f, 0.0f, 1.0f,
+
+        -1.0f, -1.0f, -1.0f, 1.0f, 0.0f,
+        -1.0f, 1.0f, -1.0f, 1.0f, 1.0f,
+        1.0f, 1.0f, -1.0f, 0.0f, 1.0f,
+        1.0f, -1.0f, -1.0f, 0.0f, 0.0f,
+
+        -1.0f, 1.0f, -1.0f, 0.0f, 1.0f,
+        -1.0f, 1.0f, 1.0f, 0.0f, 0.0f,
+        1.0f, 1.0f, 1.0f, 1.0f, 0.0f,
+        1.0f, 1.0f, -1.0f, 1.0f, 1.0f,
+
+        -1.0f, -1.0f, -1.0f, 1.0f, 1.0f,
+        1.0f, -1.0f, -1.0f, 0.0f, 1.0f,
+        1.0f, -1.0f, 1.0f, 0.0f, 0.0f,
+        -1.0f, -1.0f, 1.0f, 1.0f, 0.0f,
+
+        1.0f, -1.0f, -1.0f, 1.0f, 0.0f,
+        1.0f, 1.0f, -1.0f, 1.0f, 1.0f,
+        1.0f, 1.0f, 1.0f, 0.0f, 1.0f,
+        1.0f, -1.0f, 1.0f, 0.0f, 0.0f,
+
+        -1.0f, -1.0f, -1.0f, 0.0f, 0.0f,
+        -1.0f, -1.0f, 1.0f, 1.0f, 0.0f,
+        -1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 
+        -1.0f, 1.0f, -1.0f, 0.0f, 1.0f
+    };
+    
+    const uint8_t cubeIndices[] = {
+        0, 1, 2,
+        2, 3, 0,
+        4, 5, 6,
+        6, 7, 4,
+        8, 9, 10,
+        10, 11, 8,
+        12, 13, 14,
+        14, 15, 12,
+        16, 17, 18,
+        18, 19, 16,
+        20, 21, 22,
+        22, 23, 20
+    };
+
+    const lite3d_vbo_layout layout[] = {
+        { LITE3D_BUFFER_BINDING_VERTEX, 3 },
+        { LITE3D_BUFFER_BINDING_TEXCOORD, 2 }
+    };
+
+    if (!lite3d_vbo_init(&mCubeVbo))
+        return LITE3D_FALSE;
+    if (!lite3d_vbo_load_from_memory(&mCubeVbo, cubeVertices, 24, layout, 2, cubeIndices, 12, 3, GL_STATIC_DRAW))
+        return LITE3D_FALSE;
+
+    if(!initNormandyMaterial())
+        return LITE3D_FALSE;
+
+    return LITE3D_TRUE;
+}
+
 static int init(void)
 {
     int i = 0;
@@ -143,6 +265,9 @@ static int init(void)
         LITE3D_TEXTURE_2D, LITE3D_TEXTURE_QL_NICEST))
         return LITE3D_FALSE;
 
+    if(!initCube())
+        return LITE3D_FALSE;
+
 
     lite3d_camera_init(&mCamera01);
 
@@ -156,25 +281,26 @@ static int init(void)
     //lite3d_scene_node_rotate_angle(&mCamera01.cameraNode, &rotAxis, kmDegreesToRadians(90));
     //lite3d_scene_node_rotate_angle(&mCamera01.cameraNode, &rotAxisY, kmDegreesToRadians(90));
 
-    lite3d_scene_init(&mScene);
-    for (; i < sizeof (mSceneNode) / sizeof (lite3d_scene_node); ++i)
+    lite3d_scene_mesh_init(&mScene);
+    for (; i < sizeof (mSceneNode) / sizeof (lite3d_mesh_node); ++i)
     {
         kmVec3 tmp = {
             0.0f, 0.0f, 2.0f
         };
 
-        lite3d_scene_node_init(&mSceneNode[i]);
-        lite3d_scene_node_init(&mSceneNodeInherited[i]);
+        lite3d_mesh_node_init(&mSceneNode[i], &mCubeVbo);
+        lite3d_mesh_node_init(&mSceneNodeInherited[i], &mCubeVbo);
 
-        lite3d_scene_node_set_position(&mSceneNode[i], &nodePos[i]);
+        lite3d_scene_node_set_position(&mSceneNode[i].sceneNode, &nodePos[i]);
 
-        lite3d_scene_node_set_position(&mSceneNodeInherited[i], &tmp);
-        lite3d_scene_node_scale(&mSceneNodeInherited[i], &nodeScale[i]);
+        lite3d_scene_node_set_position(&mSceneNodeInherited[i].sceneNode, &tmp);
+        lite3d_scene_node_scale(&mSceneNodeInherited[i].sceneNode, &nodeScale[i]);
 
-        lite3d_scene_node_add(&mScene, &mSceneNode[i], NULL);
-        lite3d_scene_node_add(&mScene, &mSceneNodeInherited[i], &mSceneNode[i]);
+        lite3d_scene_mesh_node_add(&mScene, &mSceneNode[i], NULL);
+        lite3d_mesh_node_attach_material(&mSceneNode[i], &mNormandyMaterial, 0);
 
-        mSceneNode[i].doRenderNode = mSceneNodeInherited[i].doRenderNode = draw_box;
+        lite3d_scene_mesh_node_add(&mScene, &mSceneNodeInherited[i], &mSceneNode[i].sceneNode);
+        lite3d_mesh_node_attach_material(&mSceneNodeInherited[i], &mNormandyMaterial, 0);
     }
 
     lite3d_scene_node_add(&mScene, &mCamera01.cameraNode, NULL);
@@ -187,80 +313,16 @@ static int init(void)
 
 static int shutdown(void)
 {
+    lite3d_vbo_purge(&mCubeVbo);
+    lite3d_material_purge(&mNormandyMaterial);
+    lite3d_shader_program_purge(&mNormandyProgram);
+    lite3d_scene_mesh_purge(&mScene);
     lite3d_texture_unit_purge(&mNormandy);
     lite3d_texture_unit_purge(&mMinigun);
     lite3d_resource_pack_close(mFileSysPack);
     lite3d_resource_pack_close(m7zPack);
 
     return LITE3D_TRUE;
-}
-
-static void draw_box(struct lite3d_scene_node *node)
-{
-    lite3d_texture_unit_bind(&mMinigun, 0);
-
-    glBegin(GL_QUADS);
-    glTexCoord2f(0.0f, 0.0f);
-    glVertex3f(-1.0f, -1.0f, 1.0f);
-    glTexCoord2f(1.0f, 0.0f);
-    glVertex3f(1.0f, -1.0f, 1.0f);
-    glTexCoord2f(1.0f, 1.0f);
-    glVertex3f(1.0f, 1.0f, 1.0f);
-    glTexCoord2f(0.0f, 1.0f);
-    glVertex3f(-1.0f, 1.0f, 1.0f);
-
-    glTexCoord2f(1.0f, 0.0f);
-    glVertex3f(-1.0f, -1.0f, -1.0f);
-    glTexCoord2f(1.0f, 1.0f);
-    glVertex3f(-1.0f, 1.0f, -1.0f);
-    glTexCoord2f(0.0f, 1.0f);
-    glVertex3f(1.0f, 1.0f, -1.0f);
-    glTexCoord2f(0.0f, 0.0f);
-    glVertex3f(1.0f, -1.0f, -1.0f);
-
-    glTexCoord2f(0.0f, 1.0f);
-    glVertex3f(-1.0f, 1.0f, -1.0f);
-    glTexCoord2f(0.0f, 0.0f);
-    glVertex3f(-1.0f, 1.0f, 1.0f);
-    glTexCoord2f(1.0f, 0.0f);
-    glVertex3f(1.0f, 1.0f, 1.0f);
-    glTexCoord2f(1.0f, 1.0f);
-    glVertex3f(1.0f, 1.0f, -1.0f);
-    glEnd();
-
-    lite3d_texture_unit_unbind(&mMinigun, 0);
-    lite3d_texture_unit_bind(&mNormandy, 0);
-
-    glBegin(GL_QUADS);
-    glTexCoord2f(1.0f, 1.0f);
-    glVertex3f(-1.0f, -1.0f, -1.0f);
-    glTexCoord2f(0.0f, 1.0f);
-    glVertex3f(1.0f, -1.0f, -1.0f);
-    glTexCoord2f(0.0f, 0.0f);
-    glVertex3f(1.0f, -1.0f, 1.0f);
-    glTexCoord2f(1.0f, 0.0f);
-    glVertex3f(-1.0f, -1.0f, 1.0f);
-
-    glTexCoord2f(1.0f, 0.0f);
-    glVertex3f(1.0f, -1.0f, -1.0f);
-    glTexCoord2f(1.0f, 1.0f);
-    glVertex3f(1.0f, 1.0f, -1.0f);
-    glTexCoord2f(0.0f, 1.0f);
-    glVertex3f(1.0f, 1.0f, 1.0f);
-    glTexCoord2f(0.0f, 0.0f);
-    glVertex3f(1.0f, -1.0f, 1.0f);
-
-    glTexCoord2f(0.0f, 0.0f);
-    glVertex3f(-1.0f, -1.0f, -1.0f);
-    glTexCoord2f(1.0f, 0.0f);
-    glVertex3f(-1.0f, -1.0f, 1.0f);
-    glTexCoord2f(1.0f, 1.0f);
-    glVertex3f(-1.0f, 1.0f, 1.0f);
-    glTexCoord2f(0.0f, 1.0f);
-    glVertex3f(-1.0f, 1.0f, -1.0f);
-    glEnd();
-
-    lite3d_texture_unit_unbind(&mNormandy, 0);
 }
 
 int main(int argc, char *args[])

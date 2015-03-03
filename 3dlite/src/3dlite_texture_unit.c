@@ -278,7 +278,6 @@ int lite3d_texture_unit_from_memory(lite3d_texture_unit *textureUnit, const void
             break;
     }
 
-    glEnable(textureTarget);
     /* enable texture target */
     glGenTextures(1, &textureUnit->textureID);
     if(lite3d_misc_check_gl_error())
@@ -372,7 +371,6 @@ int lite3d_texture_unit_from_memory(lite3d_texture_unit *textureUnit, const void
         format_string(imageFormat));
 
     glTexParameteri(textureTarget, GL_GENERATE_MIPMAP_SGIS, GL_FALSE);
-    glDisable(textureTarget);
     /* release IL image */
     ilDeleteImage(imageDesc);
     return LITE3D_TRUE;
@@ -391,7 +389,6 @@ void lite3d_texture_unit_bind(lite3d_texture_unit *texture, uint16_t layer)
     SDL_assert_release(layer < maxCombinedTextureImageUnits);
 
     glActiveTexture(layer);
-    glEnable(texture->textureTarget);
     glBindTexture(texture->textureTarget, texture->textureID);
 }
 
@@ -402,6 +399,5 @@ void lite3d_texture_unit_unbind(lite3d_texture_unit *texture, uint16_t layer)
     
     glActiveTexture(layer);
     glBindTexture(texture->textureTarget, 0);
-    glDisable(texture->textureTarget);
 }
 

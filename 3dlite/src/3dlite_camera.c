@@ -20,16 +20,7 @@
 
 #include <3dlite/GL/glew.h>
 #include <3dlite/3dlite_camera.h>
-
-void lite3d_camera_to_node(lite3d_camera *camera, lite3d_scene_node *node)
-{
-    SDL_assert(camera && node);
-    /* world to camera */
-    kmMat4Multiply(&camera->cameraNode.worldView, &camera->cameraNode.localView, &node->worldView);
-    /* set modelview */
-    glMatrixMode(GL_MODELVIEW);
-    glLoadMatrixf(camera->cameraNode.worldView.mat);
-}
+#include <3dlite/3dlite_shader_params.h>
 
 void lite3d_camera_update_view(lite3d_camera *camera)
 {
@@ -46,9 +37,8 @@ void lite3d_camera_update_view(lite3d_camera *camera)
         glDisable(GL_CULL_FACE);
     }
 
-    /* set projection */
-    glMatrixMode(GL_PROJECTION);
-    glLoadMatrixf(camera->projection.mat);
+    /* update global shader proj matrix */
+    lite3d_set_projection_matrix(&camera->projection);
 
     /* camera link to node */
     lite3d_camera_link_to(camera, camera->linkNode, camera->linkType);
@@ -56,6 +46,8 @@ void lite3d_camera_update_view(lite3d_camera *camera)
     lite3d_camera_tracking(camera, camera->trackNode);
     /* compute local camera matrix */
     lite3d_scene_node_update(&camera->cameraNode);
+    /* update global camera view matrix */
+    lite3d_set_camera_matrix(&camera->cameraNode.localView);
 }
 
 void lite3d_camera_ortho(lite3d_camera *camera, float near,

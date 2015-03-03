@@ -48,21 +48,21 @@ LITE3D_CEXPORT int lite3d_vbo_load(lite3d_vbo *vbo, lite3d_resource_file *resour
 
 
 LITE3D_CEXPORT int lite3d_vbo_load_from_memory(lite3d_vbo *vbo, 
-    void *vertices, 
+    const void *vertices, 
     size_t verticesCount, 
-    lite3d_vbo_layout *layout,
+    const lite3d_vbo_layout *layout,
     size_t layoutCount,
-    void *indexes, 
+    const void *indexes, 
     size_t elementsCount, 
     uint8_t indexComponents, 
     uint16_t access);
 
 LITE3D_CEXPORT int lite3d_vbo_extend_from_memory(lite3d_vbo *vbo, 
-    void *vertices, 
+    const void *vertices, 
     size_t verticesCount, 
-    lite3d_vbo_layout *layout,
+    const lite3d_vbo_layout *layout,
     size_t layoutCount,
-    void *indexes, 
+    const void *indexes, 
     size_t elementsCount, 
     uint8_t indexComponents, 
     uint16_t access);
