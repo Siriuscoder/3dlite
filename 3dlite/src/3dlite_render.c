@@ -55,7 +55,7 @@ static void calc_render_stats(uint64_t beginFrame, uint64_t endFrame)
     gRenderStats.avrFrameMs = (gRenderStats.lastFrameMs + gRenderStats.avrFrameMs) / 2;
 
     gRenderStats.triangleByBatch = gRenderStats.batchesByFrame ? gRenderStats.trianglesByFrame / gRenderStats.batchesByFrame : 0;
-    gRenderStats.triangleMs = gRenderStats.trianglesByFrame ? (float)gRenderStats.lastFPS / (float)gRenderStats.trianglesByFrame : 0;
+    gRenderStats.triangleMs = gRenderStats.trianglesByFrame ? (float) gRenderStats.lastFrameMs / (float) gRenderStats.trianglesByFrame : 0;
 
     /* second elapsed */
     if ((endFrame - gLastMark) > gPerfFreq)
@@ -94,11 +94,12 @@ static void update_render_target(lite3d_render_target *target)
     for (node = target->renderQueue.l.next; node != &target->renderQueue.l; node = lite3d_list_next(node))
     {
         camera = MEMBERCAST(lite3d_camera, node, renderTargetLink);
-        scene = (lite3d_scene *)camera->cameraNode.scene;
+        scene = (lite3d_scene *) camera->cameraNode.scene;
         lite3d_scene_render(scene, camera);
 
         /* accamulate statistic */
         gRenderStats.trianglesByFrame += scene->stats.trianglesRendered;
+        gRenderStats.verticesByFrame += scene->stats.verticesRendered;
         gRenderStats.objectsByFrame += scene->stats.objectsRendered;
         gRenderStats.batchesByFrame += scene->stats.batches;
         gRenderStats.materialsByFrame += scene->stats.materialBlocks;
@@ -143,18 +144,19 @@ void lite3d_render_loop(lite3d_render_listeners *callbacks)
     uint64_t beginFrameMark;
     gRenderListeners = *callbacks;
 
-    memset(&gRenderStats, 0, sizeof(gRenderStats));
+    memset(&gRenderStats, 0, sizeof (gRenderStats));
     if (gRenderListeners.preRender && !gRenderListeners.preRender())
         return;
 
     while (gRenderStarted)
     {
-        gRenderStats.trianglesByFrame = 
-        gRenderStats.objectsByFrame = 
-        gRenderStats.batchesByFrame = 
-        gRenderStats.materialsByFrame = 
-        gRenderStats.materialsPassedByFrame = 
-        gRenderStats.textureUnitsByFrame = 0;
+        gRenderStats.trianglesByFrame =
+            gRenderStats.objectsByFrame =
+            gRenderStats.batchesByFrame =
+            gRenderStats.materialsByFrame =
+            gRenderStats.materialsPassedByFrame =
+            gRenderStats.textureUnitsByFrame =
+            gRenderStats.verticesByFrame = 0;
 
         beginFrameMark = SDL_GetPerformanceCounter();
 
@@ -195,7 +197,7 @@ lite3d_render_target *lite3d_render_target_add(int32_t ID, int32_t width,
     int32_t height, int8_t isRoot, void *userdata)
 {
     lite3d_render_target *target;
-    if(lite3d_render_target_get(ID))
+    if (lite3d_render_target_get(ID))
         return NULL;
 
     target = (lite3d_render_target *) lite3d_calloc(sizeof (lite3d_render_target));
@@ -211,7 +213,7 @@ lite3d_render_target *lite3d_render_target_add(int32_t ID, int32_t width,
     target->ID = ID;
     lite3d_list_init(&target->renderQueue);
     target->cleanMask = GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT;
-    
+
     lite3d_list_add_first_link(&target->node, &gRenderTargets);
     return target;
 }
@@ -273,7 +275,7 @@ int lite3d_render_init(void)
     gPerfFreq = SDL_GetPerformanceFrequency();
     memset(&gRenderStats, 0, sizeof (gRenderStats));
     lite3d_list_init(&gRenderTargets);
-    
+
     /* init common GL variables */
     glClearColor(0.3f, 0.3f, 0.3f, 0.0f);
     /* enable depth test */

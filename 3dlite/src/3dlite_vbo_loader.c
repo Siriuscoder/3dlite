@@ -31,7 +31,7 @@
 #include <3dlite/3dlite_vbo_loader.h>
 
 static int vbo_append_batch(lite3d_vbo *vbo,
-    lite3d_vbo_layout *layout,
+    const lite3d_vbo_layout *layout,
     size_t layoutCount,
     size_t stride,
     uint8_t indexComponents,
@@ -125,7 +125,7 @@ static int vbo_append_batch(lite3d_vbo *vbo,
     lite3d_list_add_last_link(&vao->inVbo, &vbo->vaos);
     vbo->vaosCount++;
 
-    SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "VBO: 0x%x: BATCH 0x%x: %s, cv/ov/sv %d/%d/%d, ce/oe %d/%d",
+    SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "VBO: 0x%x: chunk 0x%x: %s, cv/ov/sv %d/%db/%db, ce/oe %d/%db",
         vbo->vboVerticesID, vao->vaoID, indexComponents == 1 ? "POINTS" : (indexComponents == 2 ? "LINES" : "TRIANGLES"),
         vao->verticesCount, vao->verticesOffset, stride, vao->elementsCount, vao->indexesOffset);
 
@@ -344,7 +344,7 @@ int lite3d_vbo_load_from_memory(lite3d_vbo *vbo,
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
-    SDL_LogVerbose(SDL_LOG_CATEGORY_APPLICATION, "VBO: 0x%x: cv %d, ce %d",
+    SDL_LogVerbose(SDL_LOG_CATEGORY_APPLICATION, "VBO: 0x%x: completed: cv %d, ce %d",
         vbo->vboVerticesID, vbo->verticesCount, vbo->elementsCount);
 
     return LITE3D_TRUE;

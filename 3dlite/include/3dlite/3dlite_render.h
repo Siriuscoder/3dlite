@@ -52,6 +52,7 @@ typedef struct lite3d_render_stats
     float worstFrameMs;
     int32_t renderTargets;
     int32_t trianglesByFrame;
+     int32_t verticesByFrame;
     float triangleMs;
     int32_t triangleByBatch;
     int32_t objectsByFrame;

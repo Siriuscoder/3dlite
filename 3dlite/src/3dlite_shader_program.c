@@ -84,6 +84,9 @@ int lite3d_shader_program_link(
 	glGetProgramiv(program->programID, GL_INFO_LOG_LENGTH, &maxLogLength);
     program->statusString = (char *)lite3d_malloc(maxLogLength);
     glGetProgramInfoLog(program->programID, maxLogLength, &maxLogLength, program->statusString);
+    
+    for(i = 0; i < count; ++i)
+        glDetachShader(program->programID, shaders[i].shaderID);
 
     return program->success;
 }
@@ -152,7 +155,7 @@ int32_t lite3d_shader_program_uniform_set(
         glUniformMatrix3fv(location, 1, GL_FALSE, param->parameter.valmat3.mat);
         break;
     case LITE3D_SHADER_PARAMETER_FLOATM4:
-        glUniformMatrix3fv(location, 1, GL_FALSE, param->parameter.valmat4.mat);
+        glUniformMatrix4fv(location, 1, GL_FALSE, param->parameter.valmat4.mat);
         break;
     default:
         {

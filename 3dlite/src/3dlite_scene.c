@@ -37,6 +37,11 @@ static void scene_recursive_nodes_update(lite3d_scene *scene, lite3d_scene_node 
         child->recalc = recalcNode ? LITE3D_TRUE : child->recalc;
         if (child->enabled)
         {
+            if (child->renderable)
+            {
+                scene->stats.objectsRendered++;
+            }
+
             scene_recursive_nodes_update(scene, child);
         }
     }
@@ -55,7 +60,7 @@ void lite3d_scene_render(lite3d_scene *scene, lite3d_camera *camera)
     /* update scene tree */
     scene_recursive_nodes_update(scene, &scene->rootNode);
     /* render scene */
-    if(scene->doRender)
+    if (scene->doRender)
         scene->doRender(scene);
 
     if (scene->postRender)
@@ -68,7 +73,7 @@ void lite3d_scene_init(lite3d_scene *scene)
     memset(scene, 0, sizeof (lite3d_scene));
     /* root scene node */
     lite3d_scene_node_init(&scene->rootNode);
-    lite3d_list_init(&scene->renderQueue);
+    lite3d_list_init(&scene->renderUnitQueue);
     /* never render this node */
     scene->rootNode.renderable = LITE3D_FALSE;
 }
@@ -95,12 +100,12 @@ int lite3d_scene_node_add(lite3d_scene *scene, lite3d_scene_node *node,
 
 int lite3d_scene_node_remove(lite3d_scene *scene, lite3d_scene_node *node)
 {
-    if(node->scene != scene)
+    if (node->scene != scene)
         return LITE3D_FALSE;
-    
+
     lite3d_list_unlink_link(&node->nodeLink);
     node->baseNode = NULL;
     node->scene = NULL;
-    
+
     return LITE3D_TRUE;
 }

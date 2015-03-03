@@ -59,8 +59,6 @@ static lite3d_mesh_node mSceneNodeInherited[3];
 
 static lite3d_scene mScene;
 
-static void draw_box(struct lite3d_scene_node *node);
-
 static int process_events(SDL_Event *levent)
 {
     if (levent->type == SDL_KEYDOWN)

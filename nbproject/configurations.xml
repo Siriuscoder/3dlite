@@ -150,7 +150,7 @@
           <buildCommandWorkingDir>build</buildCommandWorkingDir>
           <buildCommand>${MAKE} -f Makefile</buildCommand>
           <cleanCommand>${MAKE} -f Makefile clean</cleanCommand>
-          <executablePath>build/bin/Debug/3dlite_tests</executablePath>
+          <executablePath>build/bin/Debug/3dlite_sample_scene_node</executablePath>
           <ccTool>
             <incDir>
               <pElem>3dlite/include</pElem>
