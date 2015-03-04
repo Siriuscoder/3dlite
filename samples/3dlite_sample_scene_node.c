@@ -26,12 +26,12 @@
 #define DEFAULT_HEIGHT          600
 
 static lite3d_resource_pack *mFileSysPack = NULL;
-static lite3d_resource_pack *m7zPack = NULL;
-static lite3d_texture_unit mNormandy, mMinigun;
-static lite3d_shader_parameter mNormandyTexture;
-static lite3d_shader_parameter mMinigunTexture;
-static lite3d_material mNormandyMaterial;
-static lite3d_shader_program mNormandyProgram;
+static lite3d_texture_unit mVintageBoxUnit, mBoxUnit;
+static lite3d_shader_parameter mVintageBoxTexture;
+static lite3d_shader_parameter mBoxTexture;
+static lite3d_material mVintageBoxMaterial;
+static lite3d_material mBoxMaterial;
+static lite3d_shader_program mProgram;
 static lite3d_camera mCamera01;
 static lite3d_vbo mCubeVbo;
 static kmVec3 cameraInitPos = {
@@ -124,29 +124,26 @@ static int process_events(SDL_Event *levent)
     return LITE3D_TRUE;
 }
 
-static int initNormandyMaterial(void)
+static int initMaterials(void)
 {
     lite3d_material_pass *matPass;
     lite3d_shader shaders[2];
 
     /* init parameter with texture */
-    lite3d_shader_parameter_init(&mNormandyTexture);
-    strcpy(mNormandyTexture.name, "normandy");
-    mNormandyTexture.persist = LITE3D_FALSE;
-    mNormandyTexture.type = LITE3D_SHADER_PARAMETER_SAMPLER;
-    mNormandyTexture.parameter.valsampler.texture = &mNormandy;
-
-    /* create material for owr box */
-    lite3d_material_init(&mNormandyMaterial);
-    matPass = lite3d_material_add_pass(&mNormandyMaterial);
-    /* set default params */
-    lite3d_material_pass_add_parameter(matPass, &lite3d_shader_global_parameters()->projectionMatrix);
-    lite3d_material_pass_add_parameter(matPass, &lite3d_shader_global_parameters()->modelviewMatrix);
-    /* set sampler */
-    lite3d_material_pass_add_parameter(matPass, &mNormandyTexture);
+    lite3d_shader_parameter_init(&mVintageBoxTexture);
+    strcpy(mVintageBoxTexture.name, "diffuse");
+    mVintageBoxTexture.persist = LITE3D_FALSE;
+    mVintageBoxTexture.type = LITE3D_SHADER_PARAMETER_SAMPLER;
+    mVintageBoxTexture.parameter.valsampler.texture = &mVintageBoxUnit;
+    /* init parameter with texture */
+    lite3d_shader_parameter_init(&mBoxTexture);
+    strcpy(mBoxTexture.name, "diffuse");
+    mBoxTexture.persist = LITE3D_FALSE;
+    mBoxTexture.type = LITE3D_SHADER_PARAMETER_SAMPLER;
+    mBoxTexture.parameter.valsampler.texture = &mBoxUnit;
 
     /* try to compile material shaders */
-    if(!lite3d_shader_compile(&shaders[0], LITE3D_SHADER_TYPE_VERTEX, 
+    if (!lite3d_shader_compile(&shaders[0], LITE3D_SHADER_TYPE_VERTEX,
         "in vec3 vertexAttr; "
         "in vec2 texCoordAttr; "
         "uniform mat4 projectionMatrix; "
@@ -160,28 +157,47 @@ static int initNormandyMaterial(void)
         "}"))
         return LITE3D_FALSE;
 
-    if(!lite3d_shader_compile(&shaders[1], LITE3D_SHADER_TYPE_FRAGMENT, 
-        "uniform sampler2D normandy; "
+    if (!lite3d_shader_compile(&shaders[1], LITE3D_SHADER_TYPE_FRAGMENT,
+        "uniform sampler2D diffuse; "
         "varying vec2 vTexCoord; "
         "void main() "
         "{"
-        "   gl_FragColor = texture2D(normandy, vTexCoord.st); "
+        "   gl_FragColor = texture2D(diffuse, vTexCoord.st); "
         "}"))
         return LITE3D_FALSE;
 
-    if(!lite3d_shader_program_link(&mNormandyProgram, shaders, 2))
+    if (!lite3d_shader_program_link(&mProgram, shaders, 2))
         return LITE3D_FALSE;
 
     /* setup attributes indexes like layout in VBO */
     /* layout[0] - vertex */
     /* layout[1] - tex coords */
-    lite3d_shader_program_attribute_index(&mNormandyProgram, "vertexAttr", 0);
-    lite3d_shader_program_attribute_index(&mNormandyProgram, "texCoordAttr", 1);
+    lite3d_shader_program_attribute_index(&mProgram, "vertexAttr", 0);
+    lite3d_shader_program_attribute_index(&mProgram, "texCoordAttr", 1);
 
     lite3d_shader_purge(&shaders[0]);
     lite3d_shader_purge(&shaders[1]);
 
-    matPass->program = &mNormandyProgram;
+    /* create material for owr box */
+    lite3d_material_init(&mVintageBoxMaterial);
+    matPass = lite3d_material_add_pass(&mVintageBoxMaterial);
+    /* set default params */
+    lite3d_material_pass_add_parameter(matPass, &lite3d_shader_global_parameters()->projectionMatrix);
+    lite3d_material_pass_add_parameter(matPass, &lite3d_shader_global_parameters()->modelviewMatrix);
+    /* set sampler */
+    lite3d_material_pass_add_parameter(matPass, &mVintageBoxTexture);
+    matPass->program = &mProgram;
+
+    /* create material for owr box */
+    lite3d_material_init(&mBoxMaterial);
+    matPass = lite3d_material_add_pass(&mBoxMaterial);
+    /* set default params */
+    lite3d_material_pass_add_parameter(matPass, &lite3d_shader_global_parameters()->projectionMatrix);
+    lite3d_material_pass_add_parameter(matPass, &lite3d_shader_global_parameters()->modelviewMatrix);
+    /* set sampler */
+    lite3d_material_pass_add_parameter(matPass, &mBoxTexture);
+    matPass->program = &mProgram;
+
     return LITE3D_TRUE;
 }
 
@@ -215,10 +231,10 @@ static int initCube(void)
 
         -1.0f, -1.0f, -1.0f, 0.0f, 0.0f,
         -1.0f, -1.0f, 1.0f, 1.0f, 0.0f,
-        -1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 
+        -1.0f, 1.0f, 1.0f, 1.0f, 1.0f,
         -1.0f, 1.0f, -1.0f, 0.0f, 1.0f
     };
-    
+
     const uint8_t cubeIndices[] = {
         0, 1, 2,
         2, 3, 0,
@@ -235,16 +251,13 @@ static int initCube(void)
     };
 
     const lite3d_vbo_layout layout[] = {
-        { LITE3D_BUFFER_BINDING_ATTRIBUTE, 3 },
-        { LITE3D_BUFFER_BINDING_ATTRIBUTE, 2 }
+        { LITE3D_BUFFER_BINDING_ATTRIBUTE, 3},
+        { LITE3D_BUFFER_BINDING_ATTRIBUTE, 2}
     };
 
     if (!lite3d_vbo_init(&mCubeVbo))
         return LITE3D_FALSE;
     if (!lite3d_vbo_load_from_memory(&mCubeVbo, cubeVertices, 24, layout, 2, cubeIndices, 12, 3, GL_STATIC_DRAW))
-        return LITE3D_FALSE;
-
-    if(!initNormandyMaterial())
         return LITE3D_FALSE;
 
     return LITE3D_TRUE;
@@ -257,22 +270,22 @@ static int init(void)
 
     if (!(mFileSysPack = lite3d_resource_pack_open("tests/", LITE3D_FALSE, 700000)))
         return LITE3D_FALSE;
-    if (!(m7zPack = lite3d_resource_pack_open("tests/pack.1", LITE3D_TRUE, 700000)))
+    if (!(file1 = lite3d_resource_pack_file_load(mFileSysPack, "pack/box1.jpg")))
         return LITE3D_FALSE;
-    if (!(file1 = lite3d_resource_pack_file_load(mFileSysPack, "pack/minigun.dds")))
-        return LITE3D_FALSE;
-    if (!(file2 = lite3d_resource_pack_file_load(m7zPack, "pack/normandy/t1.jpg")))
+    if (!(file2 = lite3d_resource_pack_file_load(mFileSysPack, "pack/box2.jpg")))
         return LITE3D_FALSE;
 
-    if (!lite3d_texture_unit_from_resource(&mMinigun, file1, LITE3D_IMAGE_DDS, 
+    if (!lite3d_texture_unit_from_resource(&mBoxUnit, file1, LITE3D_IMAGE_JPG,
         LITE3D_TEXTURE_2D, LITE3D_TEXTURE_QL_NICEST))
         return LITE3D_FALSE;
 
-    if (!lite3d_texture_unit_from_resource(&mNormandy, file2, LITE3D_IMAGE_JPG, 
+    if (!lite3d_texture_unit_from_resource(&mVintageBoxUnit, file2, LITE3D_IMAGE_JPG,
         LITE3D_TEXTURE_2D, LITE3D_TEXTURE_QL_NICEST))
         return LITE3D_FALSE;
 
-    if(!initCube())
+    if (!initCube())
+        return LITE3D_FALSE;
+    if (!initMaterials())
         return LITE3D_FALSE;
 
 
@@ -304,10 +317,10 @@ static int init(void)
         lite3d_scene_node_scale(&mSceneNodeInherited[i].sceneNode, &nodeScale[i]);
 
         lite3d_scene_mesh_node_add(&mScene, &mSceneNode[i], NULL);
-        lite3d_mesh_node_attach_material(&mSceneNode[i], &mNormandyMaterial, 0);
+        lite3d_mesh_node_attach_material(&mSceneNode[i], &mVintageBoxMaterial, 0);
 
         lite3d_scene_mesh_node_add(&mScene, &mSceneNodeInherited[i], &mSceneNode[i].sceneNode);
-        lite3d_mesh_node_attach_material(&mSceneNodeInherited[i], &mNormandyMaterial, 0);
+        lite3d_mesh_node_attach_material(&mSceneNodeInherited[i], &mBoxMaterial, 0);
     }
 
     lite3d_scene_node_add(&mScene, &mCamera01.cameraNode, NULL);
@@ -321,13 +334,12 @@ static int init(void)
 static int shutdown(void)
 {
     lite3d_vbo_purge(&mCubeVbo);
-    lite3d_material_purge(&mNormandyMaterial);
-    lite3d_shader_program_purge(&mNormandyProgram);
+    lite3d_material_purge(&mVintageBoxMaterial);
+    lite3d_shader_program_purge(&mProgram);
     lite3d_scene_mesh_purge(&mScene);
-    lite3d_texture_unit_purge(&mNormandy);
-    lite3d_texture_unit_purge(&mMinigun);
+    lite3d_texture_unit_purge(&mVintageBoxUnit);
+    lite3d_texture_unit_purge(&mBoxUnit);
     lite3d_resource_pack_close(mFileSysPack);
-    lite3d_resource_pack_close(m7zPack);
 
     return LITE3D_TRUE;
 }
