@@ -35,6 +35,16 @@ typedef struct lite3d_mqr_unit
     lite3d_list nodes;
 } lite3d_mqr_unit;
 
+static void update_modelview_parameter(lite3d_mesh_node *node)
+{
+    kmMat4 modelview;
+    kmMat4Multiply(&modelview, 
+        &lite3d_shader_global_parameters()->cameraMatrix.parameter.valmat4,
+        &node->sceneNode.worldView);
+
+    lite3d_shader_set_modelview_matrix(&modelview);
+}
+
 static void mqr_unit_render(lite3d_material_pass *pass, void *data)
 {
     lite3d_mqr_unit *mqrUnit = (lite3d_mqr_unit *) data;
@@ -68,7 +78,7 @@ static void mqr_unit_render(lite3d_material_pass *pass, void *data)
                 mqrNode->vao, mqrUnit->material);
         
         /* TODO: setup viewmodel */
-        lite3d_set_model_matrix(&mqrNode->node->sceneNode.worldView);
+        update_modelview_parameter(mqrNode->node);
         /* setup changed uniforms parameters */
         lite3d_material_pass_set_params(mqrUnit->material, pass, LITE3D_TRUE);
         /* do render batch */

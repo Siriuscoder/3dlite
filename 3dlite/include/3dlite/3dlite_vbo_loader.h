@@ -22,6 +22,7 @@
 #include <3dlite/3dlite_vbo.h>
 #include <3dlite/3dlite_resource_pack.h>
 
+/* legacy types, now not used  */
 #define LITE3D_BUFFER_BINDING_VERTEX          0x0
 #define LITE3D_BUFFER_BINDING_COLOR           0x1
 #define LITE3D_BUFFER_BINDING_NORMAL          0x2

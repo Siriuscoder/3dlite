@@ -141,33 +141,42 @@ static int initNormandyMaterial(void)
     matPass = lite3d_material_add_pass(&mNormandyMaterial);
     /* set default params */
     lite3d_material_pass_add_parameter(matPass, &lite3d_shader_global_parameters()->projectionMatrix);
-    lite3d_material_pass_add_parameter(matPass, &lite3d_shader_global_parameters()->cameraMatrix);
-    lite3d_material_pass_add_parameter(matPass, &lite3d_shader_global_parameters()->modelMatrix);
+    lite3d_material_pass_add_parameter(matPass, &lite3d_shader_global_parameters()->modelviewMatrix);
     /* set sampler */
     lite3d_material_pass_add_parameter(matPass, &mNormandyTexture);
 
     /* try to compile material shaders */
     if(!lite3d_shader_compile(&shaders[0], LITE3D_SHADER_TYPE_VERTEX, 
+        "in vec3 vertexAttr; "
+        "in vec2 texCoordAttr; "
         "uniform mat4 projectionMatrix; "
-        "uniform mat4 cameraMatrix; "
-        "uniform mat4 modelMatrix; "
+        "uniform mat4 modelviewMatrix; "
+        "varying vec2 vTexCoord; "
         "void main() "
         "{"
-        "   gl_TexCoord[0] = gl_MultiTexCoord0; "
-        "   gl_Position = projectionMatrix * cameraMatrix * modelMatrix * gl_Vertex; "
+        "   vTexCoord = texCoordAttr; "
+        "   vec4 vertex = vec4(vertexAttr, 1.0); "
+        "   gl_Position = projectionMatrix * modelviewMatrix * vertex; "
         "}"))
         return LITE3D_FALSE;
 
     if(!lite3d_shader_compile(&shaders[1], LITE3D_SHADER_TYPE_FRAGMENT, 
         "uniform sampler2D normandy; "
+        "varying vec2 vTexCoord; "
         "void main() "
         "{"
-        "   gl_FragColor = texture2D(normandy, gl_TexCoord[0].st); "
+        "   gl_FragColor = texture2D(normandy, vTexCoord.st); "
         "}"))
         return LITE3D_FALSE;
 
     if(!lite3d_shader_program_link(&mNormandyProgram, shaders, 2))
         return LITE3D_FALSE;
+
+    /* setup attributes indexes like layout in VBO */
+    /* layout[0] - vertex */
+    /* layout[1] - tex coords */
+    lite3d_shader_program_attribute_index(&mNormandyProgram, "vertexAttr", 0);
+    lite3d_shader_program_attribute_index(&mNormandyProgram, "texCoordAttr", 1);
 
     lite3d_shader_purge(&shaders[0]);
     lite3d_shader_purge(&shaders[1]);
@@ -226,8 +235,8 @@ static int initCube(void)
     };
 
     const lite3d_vbo_layout layout[] = {
-        { LITE3D_BUFFER_BINDING_VERTEX, 3 },
-        { LITE3D_BUFFER_BINDING_TEXCOORD, 2 }
+        { LITE3D_BUFFER_BINDING_ATTRIBUTE, 3 },
+        { LITE3D_BUFFER_BINDING_ATTRIBUTE, 2 }
     };
 
     if (!lite3d_vbo_init(&mCubeVbo))

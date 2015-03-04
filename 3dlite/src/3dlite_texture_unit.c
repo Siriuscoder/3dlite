@@ -388,7 +388,7 @@ void lite3d_texture_unit_bind(lite3d_texture_unit *texture, uint16_t layer)
     SDL_assert(texture);
     SDL_assert_release(layer < maxCombinedTextureImageUnits);
 
-    glActiveTexture(layer);
+    glActiveTexture(GL_TEXTURE0 + layer);
     glBindTexture(texture->textureTarget, texture->textureID);
 }
 
@@ -397,7 +397,7 @@ void lite3d_texture_unit_unbind(lite3d_texture_unit *texture, uint16_t layer)
     SDL_assert(texture);
     SDL_assert_release(layer < maxCombinedTextureImageUnits);
     
-    glActiveTexture(layer);
+    glActiveTexture(GL_TEXTURE0 + layer);
     glBindTexture(texture->textureTarget, 0);
 }
 

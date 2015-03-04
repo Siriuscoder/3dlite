@@ -47,5 +47,8 @@ LITE3D_CEXPORT int32_t lite3d_shader_program_sampler_set(
     lite3d_shader_program *program, lite3d_shader_parameter *param, 
     int32_t location, uint16_t texUnit);
 
+LITE3D_CEXPORT void lite3d_shader_program_attribute_index(
+    lite3d_shader_program *program, const char *name, int32_t location);
+
 #endif	/* LITE3D_SHADER_PROGRAM_H */
 

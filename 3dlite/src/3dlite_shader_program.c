@@ -203,3 +203,12 @@ int32_t lite3d_shader_program_sampler_set(
     lite3d_texture_unit_bind(param->parameter.valsampler.texture, texUnit);
     return location;
 }
+
+void lite3d_shader_program_attribute_index(
+    lite3d_shader_program *program, const char *name, int32_t location)
+{
+    SDL_assert(program);
+    SDL_assert(program->success == LITE3D_TRUE);
+
+    glBindAttribLocation(program->programID, location, name);
+}

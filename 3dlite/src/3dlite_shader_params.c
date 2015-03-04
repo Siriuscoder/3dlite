@@ -37,22 +37,22 @@ void lite3d_shader_parameter_purge(
     SDL_assert(param);
 }
 
-void lite3d_set_projection_matrix(kmMat4 *mat)
+void lite3d_shader_set_projection_matrix(kmMat4 *mat)
 {
     globalParams.projectionMatrix.parameter.valmat4 = *mat;
 }
 
-void lite3d_set_camera_matrix(kmMat4 *mat)
+void lite3d_shader_set_camera_matrix(kmMat4 *mat)
 {
     globalParams.cameraMatrix.parameter.valmat4 = *mat;
 }
 
-void lite3d_set_model_matrix(kmMat4 *mat)
+void lite3d_shader_set_modelview_matrix(kmMat4 *mat)
 {
-    globalParams.modelMatrix.parameter.valmat4 = *mat;
+    globalParams.modelviewMatrix.parameter.valmat4 = *mat;
 }
 
-void lite3d_set_ambient(float val)
+void lite3d_shader_set_ambient_light(float val)
 {
     globalParams.ambientLight.parameter.valfloat = val;
 }
@@ -66,26 +66,26 @@ void lite3d_shader_global_parameters_init(void)
 {
     lite3d_shader_parameter_init(&globalParams.projectionMatrix);
     lite3d_shader_parameter_init(&globalParams.cameraMatrix);
-    lite3d_shader_parameter_init(&globalParams.modelMatrix);
+    lite3d_shader_parameter_init(&globalParams.modelviewMatrix);
     lite3d_shader_parameter_init(&globalParams.ambientLight);
 
     strcpy(globalParams.projectionMatrix.name, "projectionMatrix");
     strcpy(globalParams.cameraMatrix.name, "cameraMatrix");
-    strcpy(globalParams.modelMatrix.name, "modelMatrix");
+    strcpy(globalParams.modelviewMatrix.name, "modelviewMatrix");
     strcpy(globalParams.ambientLight.name, "ambientLight");
 
     globalParams.projectionMatrix.persist = 
         globalParams.cameraMatrix.persist = 
-        globalParams.modelMatrix.persist = 
+        globalParams.modelviewMatrix.persist = 
         globalParams.ambientLight.persist = LITE3D_TRUE;
 
     globalParams.projectionMatrix.type = LITE3D_SHADER_PARAMETER_FLOATM4;
     globalParams.cameraMatrix.type = LITE3D_SHADER_PARAMETER_FLOATM4;
-    globalParams.modelMatrix.type = LITE3D_SHADER_PARAMETER_FLOATM4;
+    globalParams.modelviewMatrix.type = LITE3D_SHADER_PARAMETER_FLOATM4;
     globalParams.ambientLight.type = LITE3D_SHADER_PARAMETER_FLOAT;
 
     kmMat4Identity(&globalParams.projectionMatrix.parameter.valmat4);
     kmMat4Identity(&globalParams.cameraMatrix.parameter.valmat4);
-    kmMat4Identity(&globalParams.modelMatrix.parameter.valmat4);
+    kmMat4Identity(&globalParams.modelviewMatrix.parameter.valmat4);
     globalParams.ambientLight.parameter.valfloat = 0.8f;
 }

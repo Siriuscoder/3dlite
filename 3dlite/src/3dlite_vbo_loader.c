@@ -64,44 +64,16 @@ static int vbo_append_batch(lite3d_vbo *vbo,
     /* bind all arrays and attribs into the current VAO */
     for (; i < layoutCount; ++i)
     {
-        switch (layout[i].binding)
+        if(layout[i].binding != LITE3D_BUFFER_BINDING_ATTRIBUTE)
         {
-            case LITE3D_BUFFER_BINDING_ATTRIBUTE:
-            {
-                glEnableVertexAttribArray(attribIndex);
-                glVertexAttribPointer(attribIndex++, layout[i].count, GL_FLOAT,
-                    GL_FALSE, stride, (void *) vOffset);
-            }
-            break;
-            case LITE3D_BUFFER_BINDING_VERTEX:
-            {
-                glEnableClientState(GL_VERTEX_ARRAY);
-                glVertexPointer(layout[i].count, GL_FLOAT, stride,
-                    (void *) vOffset);
-            }
-            break;
-            case LITE3D_BUFFER_BINDING_COLOR:
-            {
-                glEnableClientState(GL_COLOR_ARRAY);
-                glColorPointer(layout[i].count, GL_FLOAT, stride,
-                    (void *) vOffset);
-            }
-            break;
-            case LITE3D_BUFFER_BINDING_NORMAL:
-            {
-                glEnableClientState(GL_NORMAL_ARRAY);
-                glNormalPointer(GL_FLOAT, stride,
-                    (void *) vOffset);
-            }
-            break;
-            case LITE3D_BUFFER_BINDING_TEXCOORD:
-            {
-                glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-                glTexCoordPointer(layout[i].count, GL_FLOAT, stride,
-                    (void *) vOffset);
-            }
-            break;
+            SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION, "VBO: 0x%x: chunk 0x%x used "
+                "legacy binding type attribute",  vbo->vboVerticesID, vao->vaoID);
+            continue;
         }
+
+        glEnableVertexAttribArray(attribIndex);
+        glVertexAttribPointer(attribIndex++, layout[i].count, GL_FLOAT,
+            GL_FALSE, stride, (void *) vOffset);
 
         vOffset += layout[i].count * sizeof (GLfloat);
     }
@@ -176,14 +148,14 @@ static int ai_node_load_to_vbo(lite3d_vbo *vbo, const struct aiScene *scene,
         }
 
         verticesSize = mesh->mNumVertices * sizeof(float) * 3;
-        layout[layoutCount].binding = LITE3D_BUFFER_BINDING_VERTEX;
+        layout[layoutCount].binding = LITE3D_BUFFER_BINDING_ATTRIBUTE;
         layout[layoutCount].count = 3;
         layoutCount++;
 
         if(mesh->mNormals)
         {
             verticesSize += mesh->mNumVertices * sizeof(float) * 3;
-            layout[layoutCount].binding = LITE3D_BUFFER_BINDING_NORMAL;
+            layout[layoutCount].binding = LITE3D_BUFFER_BINDING_ATTRIBUTE;
             layout[layoutCount].count = 3;
             layoutCount++;
         }
@@ -191,7 +163,7 @@ static int ai_node_load_to_vbo(lite3d_vbo *vbo, const struct aiScene *scene,
         if(mesh->mColors[0])
         {
             verticesSize += mesh->mNumVertices * sizeof(float) * 4;
-            layout[layoutCount].binding = LITE3D_BUFFER_BINDING_COLOR;
+            layout[layoutCount].binding = LITE3D_BUFFER_BINDING_ATTRIBUTE;
             layout[layoutCount].count = 4;
             layoutCount++;
         }
@@ -199,7 +171,7 @@ static int ai_node_load_to_vbo(lite3d_vbo *vbo, const struct aiScene *scene,
         if(mesh->mTextureCoords[0])
         {
             verticesSize += mesh->mNumVertices * sizeof(float) * 2;
-            layout[layoutCount].binding = LITE3D_BUFFER_BINDING_TEXCOORD;
+            layout[layoutCount].binding = LITE3D_BUFFER_BINDING_ATTRIBUTE;
             layout[layoutCount].count = 2;
             layoutCount++;
         }
