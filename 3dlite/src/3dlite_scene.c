@@ -22,13 +22,16 @@
 #include <3dlite/3dlite_alloc.h>
 #include <3dlite/3dlite_scene.h>
 
-static void scene_recursive_nodes_update(lite3d_scene *scene, lite3d_scene_node *node)
+static void scene_recursive_nodes_update(lite3d_scene *scene, 
+    lite3d_scene_node *node, lite3d_camera *camera)
 {
     lite3d_list_node *nodeLink;
     lite3d_scene_node *child;
     uint8_t recalcNode;
 
     recalcNode = lite3d_scene_node_update(node);
+    /* recalc modelview matrix */
+    kmMat4Multiply(&node->cameraView, &camera->cameraNode.localView, &node->worldView);
     /* render all childrens firts */
     for (nodeLink = node->childNodes.l.next;
         nodeLink != &node->childNodes.l; nodeLink = lite3d_list_next(nodeLink))
@@ -42,7 +45,7 @@ static void scene_recursive_nodes_update(lite3d_scene *scene, lite3d_scene_node 
                 scene->stats.objectsRendered++;
             }
 
-            scene_recursive_nodes_update(scene, child);
+            scene_recursive_nodes_update(scene, child, camera);
         }
     }
 }
@@ -58,7 +61,7 @@ void lite3d_scene_render(lite3d_scene *scene, lite3d_camera *camera)
     /* update camera projection & transformation */
     lite3d_camera_update_view(camera);
     /* update scene tree */
-    scene_recursive_nodes_update(scene, &scene->rootNode);
+    scene_recursive_nodes_update(scene, &scene->rootNode, camera);
     /* render scene */
     if (scene->doRender)
         scene->doRender(scene);
