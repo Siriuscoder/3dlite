@@ -151,7 +151,7 @@ static int ai_node_load_to_vbo(lite3d_vbo *vbo, const struct aiScene *scene,
         layout[layoutCount].binding = LITE3D_BUFFER_BINDING_ATTRIBUTE;
         layout[layoutCount].count = 3;
         layoutCount++;
-
+        
         if(mesh->mNormals)
         {
             verticesSize += mesh->mNumVertices * sizeof(float) * 3;

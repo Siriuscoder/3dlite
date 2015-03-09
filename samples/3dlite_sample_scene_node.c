@@ -143,7 +143,8 @@ static int initMaterials(void)
     mBoxTexture.parameter.valsampler.texture = &mBoxUnit;
 
     /* try to compile material shaders */
-    if (!lite3d_shader_compile(&shaders[0], LITE3D_SHADER_TYPE_VERTEX,
+    lite3d_shader_init(&shaders[0], LITE3D_SHADER_TYPE_VERTEX);
+    if (!lite3d_shader_compile(&shaders[0],
         "in vec3 vertexAttr; "
         "in vec2 texCoordAttr; "
         "uniform mat4 projectionMatrix; "
@@ -156,8 +157,8 @@ static int initMaterials(void)
         "   gl_Position = projectionMatrix * modelviewMatrix * vertex; "
         "}"))
         return LITE3D_FALSE;
-
-    if (!lite3d_shader_compile(&shaders[1], LITE3D_SHADER_TYPE_FRAGMENT,
+    lite3d_shader_init(&shaders[1], LITE3D_SHADER_TYPE_FRAGMENT);
+    if (!lite3d_shader_compile(&shaders[1],
         "uniform sampler2D diffuse; "
         "varying vec2 vTexCoord; "
         "void main() "
@@ -166,14 +167,14 @@ static int initMaterials(void)
         "}"))
         return LITE3D_FALSE;
 
-    if (!lite3d_shader_program_link(&mProgram, shaders, 2))
-        return LITE3D_FALSE;
-
+    lite3d_shader_program_init(&mProgram);
     /* setup attributes indexes like layout in VBO */
     /* layout[0] - vertex */
     /* layout[1] - tex coords */
     lite3d_shader_program_attribute_index(&mProgram, "vertexAttr", 0);
     lite3d_shader_program_attribute_index(&mProgram, "texCoordAttr", 1);
+    if (!lite3d_shader_program_link(&mProgram, shaders, 2))
+        return LITE3D_FALSE;
 
     lite3d_shader_purge(&shaders[0]);
     lite3d_shader_purge(&shaders[1]);

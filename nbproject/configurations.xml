@@ -97,7 +97,8 @@
         </df>
       </df>
       <df name="samples">
-        <in>3dlite_sample_mesh_node.c</in>
+        <in>3dlite_sample_minigun.c</in>
+        <in>3dlite_sample_rifle.c</in>
         <in>3dlite_sample_scene_node.c</in>
       </df>
       <df name="tests">
@@ -141,7 +142,8 @@
         <rebuildPropChanged>false</rebuildPropChanged>
       </toolsSet>
       <flagsDictionary>
-        <element flagsID="0" commonFlags="-std=c99 -fstack-protector-all -fPIC -fPIC"/>
+        <element flagsID="0" commonFlags="-std=c99 -fstack-protector-all -fPIC"/>
+        <element flagsID="1" commonFlags="-std=c99 -fstack-protector-all -fPIC -fPIC"/>
       </flagsDictionary>
       <codeAssistance>
       </codeAssistance>
@@ -150,7 +152,7 @@
           <buildCommandWorkingDir>build</buildCommandWorkingDir>
           <buildCommand>${MAKE} -f Makefile</buildCommand>
           <cleanCommand>${MAKE} -f Makefile clean</cleanCommand>
-          <executablePath>build/bin/Debug/3dlite_sample_scene_node</executablePath>
+          <executablePath>build/bin/Debug/3dlite_sample_minigun</executablePath>
           <ccTool>
             <incDir>
               <pElem>3dlite/include</pElem>
@@ -168,7 +170,7 @@
             flavor2="3">
       </item>
       <item path="3dlite/src/3dlite_7z_loader.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="0">
+        <cTool flags="1">
           <incDir>
             <pElem>/usr/include/SDL2</pElem>
             <pElem>build/3dlite</pElem>
@@ -181,7 +183,7 @@
         </cTool>
       </item>
       <item path="3dlite/src/3dlite_alloc.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="0">
+        <cTool flags="1">
           <incDir>
             <pElem>/usr/include/SDL2</pElem>
             <pElem>build/3dlite</pElem>
@@ -194,7 +196,7 @@
         </cTool>
       </item>
       <item path="3dlite/src/3dlite_camera.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="0">
+        <cTool flags="1">
           <incDir>
             <pElem>/usr/include/SDL2</pElem>
             <pElem>build/3dlite</pElem>
@@ -207,7 +209,7 @@
         </cTool>
       </item>
       <item path="3dlite/src/3dlite_list.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="0">
+        <cTool flags="1">
           <incDir>
             <pElem>/usr/include/SDL2</pElem>
             <pElem>build/3dlite</pElem>
@@ -220,7 +222,7 @@
         </cTool>
       </item>
       <item path="3dlite/src/3dlite_logger.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="0">
+        <cTool flags="1">
           <incDir>
             <pElem>/usr/include/SDL2</pElem>
             <pElem>build/3dlite</pElem>
@@ -233,7 +235,7 @@
         </cTool>
       </item>
       <item path="3dlite/src/3dlite_main.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="0">
+        <cTool flags="1">
           <incDir>
             <pElem>/usr/include/SDL2</pElem>
             <pElem>build/3dlite</pElem>
@@ -246,7 +248,7 @@
         </cTool>
       </item>
       <item path="3dlite/src/3dlite_material.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="0">
+        <cTool flags="1">
           <incDir>
             <pElem>/usr/include/SDL2</pElem>
             <pElem>build/3dlite</pElem>
@@ -259,7 +261,7 @@
         </cTool>
       </item>
       <item path="3dlite/src/3dlite_meshes_render.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="0">
+        <cTool flags="1">
           <incDir>
             <pElem>/usr/include/SDL2</pElem>
             <pElem>build/3dlite</pElem>
@@ -272,7 +274,7 @@
         </cTool>
       </item>
       <item path="3dlite/src/3dlite_misc.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="0">
+        <cTool flags="1">
           <incDir>
             <pElem>/usr/include/SDL2</pElem>
             <pElem>build/3dlite</pElem>
@@ -285,7 +287,7 @@
         </cTool>
       </item>
       <item path="3dlite/src/3dlite_nedmalloc.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="0">
+        <cTool flags="1">
           <incDir>
             <pElem>/usr/include/SDL2</pElem>
             <pElem>build/3dlite</pElem>
@@ -298,7 +300,7 @@
         </cTool>
       </item>
       <item path="3dlite/src/3dlite_rb_tree.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="0">
+        <cTool flags="1">
           <incDir>
             <pElem>/usr/include/SDL2</pElem>
             <pElem>build/3dlite</pElem>
@@ -311,7 +313,7 @@
         </cTool>
       </item>
       <item path="3dlite/src/3dlite_render.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="0">
+        <cTool flags="1">
           <incDir>
             <pElem>/usr/include/SDL2</pElem>
             <pElem>build/3dlite</pElem>
@@ -324,7 +326,7 @@
         </cTool>
       </item>
       <item path="3dlite/src/3dlite_resource_pack.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="0">
+        <cTool flags="1">
           <incDir>
             <pElem>/usr/include/SDL2</pElem>
             <pElem>build/3dlite</pElem>
@@ -337,7 +339,7 @@
         </cTool>
       </item>
       <item path="3dlite/src/3dlite_scene.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="0">
+        <cTool flags="1">
           <incDir>
             <pElem>/usr/include/SDL2</pElem>
             <pElem>build/3dlite</pElem>
@@ -350,7 +352,7 @@
         </cTool>
       </item>
       <item path="3dlite/src/3dlite_scene_node.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="0">
+        <cTool flags="1">
           <incDir>
             <pElem>/usr/include/SDL2</pElem>
             <pElem>build/3dlite</pElem>
@@ -363,7 +365,7 @@
         </cTool>
       </item>
       <item path="3dlite/src/3dlite_shader.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="0">
+        <cTool flags="1">
           <incDir>
             <pElem>/usr/include/SDL2</pElem>
             <pElem>build/3dlite</pElem>
@@ -376,7 +378,7 @@
         </cTool>
       </item>
       <item path="3dlite/src/3dlite_shader_params.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="0">
+        <cTool flags="1">
           <incDir>
             <pElem>/usr/include/SDL2</pElem>
             <pElem>build/3dlite</pElem>
@@ -389,7 +391,7 @@
         </cTool>
       </item>
       <item path="3dlite/src/3dlite_shader_program.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="0">
+        <cTool flags="1">
           <incDir>
             <pElem>/usr/include/SDL2</pElem>
             <pElem>build/3dlite</pElem>
@@ -402,7 +404,7 @@
         </cTool>
       </item>
       <item path="3dlite/src/3dlite_texture_unit.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="0">
+        <cTool flags="1">
           <incDir>
             <pElem>/usr/include/SDL2</pElem>
             <pElem>build/3dlite</pElem>
@@ -415,7 +417,7 @@
         </cTool>
       </item>
       <item path="3dlite/src/3dlite_vbo.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="0">
+        <cTool flags="1">
           <incDir>
             <pElem>/usr/include/SDL2</pElem>
             <pElem>build/3dlite</pElem>
@@ -428,7 +430,7 @@
         </cTool>
       </item>
       <item path="3dlite/src/3dlite_vbo_loader.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="0">
+        <cTool flags="1">
           <incDir>
             <pElem>/usr/include/SDL2</pElem>
             <pElem>build/3dlite</pElem>
@@ -441,7 +443,7 @@
         </cTool>
       </item>
       <item path="3dlite/src/3dlite_video.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="0">
+        <cTool flags="1">
           <incDir>
             <pElem>/usr/include/SDL2</pElem>
             <pElem>build/3dlite</pElem>
@@ -604,7 +606,13 @@
           </preprocessorList>
         </cTool>
       </folder>
-      <item path="samples/3dlite_sample_mesh_node.c" ex="false" tool="0" flavor2="3">
+      <item path="samples/3dlite_sample_minigun.c" ex="false" tool="0" flavor2="3">
+        <cTool flags="0">
+        </cTool>
+      </item>
+      <item path="samples/3dlite_sample_rifle.c" ex="false" tool="0" flavor2="3">
+        <cTool flags="0">
+        </cTool>
       </item>
       <item path="samples/3dlite_sample_scene_node.c" ex="false" tool="0" flavor2="3">
       </item>

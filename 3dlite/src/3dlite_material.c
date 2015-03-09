@@ -208,7 +208,8 @@ void lite3d_material_by_pass_render(lite3d_material *material,
         func(pass, data);
     }
 
-    lite3d_shader_program_unbind(prevProg);
+    /* newer shader unbind - PPL used only */
+    //lite3d_shader_program_unbind(prevProg);
 }
 
 void lite3d_material_pass_set_params(lite3d_material *material,

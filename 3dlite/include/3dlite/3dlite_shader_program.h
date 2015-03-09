@@ -30,6 +30,7 @@ typedef struct lite3d_shader_program
 } lite3d_shader_program;
 
 LITE3D_CEXPORT int lite3d_shader_program_technique_init();
+LITE3D_CEXPORT int lite3d_shader_program_init(lite3d_shader_program *program);
 LITE3D_CEXPORT int lite3d_shader_program_link(
     lite3d_shader_program *program, lite3d_shader *shaders, size_t count);
 LITE3D_CEXPORT void lite3d_shader_program_purge(

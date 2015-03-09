@@ -32,8 +32,9 @@ typedef struct lite3d_shader
     uint8_t type;
 } lite3d_shader;
 
+LITE3D_CEXPORT int lite3d_shader_init(lite3d_shader *shader, uint8_t type);
 LITE3D_CEXPORT int lite3d_shader_compile(
-    lite3d_shader *shader, uint8_t type, const char *source);
+    lite3d_shader *shader, const char *source);
 LITE3D_CEXPORT void lite3d_shader_purge(
     lite3d_shader *shader);
 
