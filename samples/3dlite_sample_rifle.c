@@ -25,14 +25,22 @@
 #define DEFAULT_HEIGHT          600
 
 static lite3d_resource_pack *mFileSysPack = NULL;
-static lite3d_texture_unit mMinigunTexture;
+static lite3d_texture_unit mRifleTextureA;
+static lite3d_texture_unit mRifleTextureB;
+static lite3d_texture_unit mBattTexture;
 static lite3d_camera mCamera01;
-static lite3d_vbo mModel;
-static lite3d_shader_parameter mMinigunTextureUnit;
-static lite3d_material mMinigunMaterial;
+static lite3d_vbo mRifle;
+static lite3d_vbo mRifleBatt;
+static lite3d_shader_parameter mRifleTextureUnitA;
+static lite3d_shader_parameter mRifleTextureUnitB;
+static lite3d_shader_parameter mBattTextureUnit;
+static lite3d_material mRifleMaterialA;
+static lite3d_material mRifleMaterialB;
+static lite3d_material mBattMaterial;
 static lite3d_shader_program mProgram;
 
-static lite3d_mesh_node mSceneNode;
+static lite3d_mesh_node mRifleNode;
+static lite3d_mesh_node mBattNode;
 static lite3d_scene mScene;
 
 static int process_events(SDL_Event *levent)
@@ -66,18 +74,40 @@ static int initMaterials(void)
     lite3d_material_pass *matPass;
     lite3d_shader shaders[2];
 
-    if (!(file1 = lite3d_resource_pack_file_load(mFileSysPack, "pack/minigun.dds")))
+    if (!(file1 = lite3d_resource_pack_file_load(mFileSysPack, "pack/plasmagun/plasmarif02a.dds")))
         return LITE3D_FALSE;
-    if (!lite3d_texture_unit_from_resource(&mMinigunTexture, file1, LITE3D_IMAGE_DDS,
+    if (!lite3d_texture_unit_from_resource(&mRifleTextureA, file1, LITE3D_IMAGE_DDS,
+        LITE3D_TEXTURE_2D, LITE3D_TEXTURE_QL_NICEST))
+        return LITE3D_FALSE;
+    if (!(file1 = lite3d_resource_pack_file_load(mFileSysPack, "pack/plasmagun/plasmarif02b.dds")))
+        return LITE3D_FALSE;
+    if (!lite3d_texture_unit_from_resource(&mRifleTextureB, file1, LITE3D_IMAGE_DDS,
+        LITE3D_TEXTURE_2D, LITE3D_TEXTURE_QL_NICEST))
+        return LITE3D_FALSE;
+    if (!(file1 = lite3d_resource_pack_file_load(mFileSysPack, "pack/plasmagun/plasmarif02c.dds")))
+        return LITE3D_FALSE;
+    if (!lite3d_texture_unit_from_resource(&mBattTexture, file1, LITE3D_IMAGE_DDS,
         LITE3D_TEXTURE_2D, LITE3D_TEXTURE_QL_NICEST))
         return LITE3D_FALSE;
 
     /* init parameter with texture */
-    lite3d_shader_parameter_init(&mMinigunTextureUnit);
-    strcpy(mMinigunTextureUnit.name, "diffuse");
-    mMinigunTextureUnit.persist = LITE3D_FALSE;
-    mMinigunTextureUnit.type = LITE3D_SHADER_PARAMETER_SAMPLER;
-    mMinigunTextureUnit.parameter.valsampler.texture = &mMinigunTexture;
+    lite3d_shader_parameter_init(&mRifleTextureUnitA);
+    strcpy(mRifleTextureUnitA.name, "diffuse");
+    mRifleTextureUnitA.persist = LITE3D_FALSE;
+    mRifleTextureUnitA.type = LITE3D_SHADER_PARAMETER_SAMPLER;
+    mRifleTextureUnitA.parameter.valsampler.texture = &mRifleTextureA;
+    /* init parameter with texture */
+    lite3d_shader_parameter_init(&mRifleTextureUnitB);
+    strcpy(mRifleTextureUnitB.name, "diffuse");
+    mRifleTextureUnitB.persist = LITE3D_FALSE;
+    mRifleTextureUnitB.type = LITE3D_SHADER_PARAMETER_SAMPLER;
+    mRifleTextureUnitB.parameter.valsampler.texture = &mRifleTextureB;
+    /* init parameter with texture */
+    lite3d_shader_parameter_init(&mBattTextureUnit);
+    strcpy(mBattTextureUnit.name, "diffuse");
+    mBattTextureUnit.persist = LITE3D_FALSE;
+    mBattTextureUnit.type = LITE3D_SHADER_PARAMETER_SAMPLER;
+    mBattTextureUnit.parameter.valsampler.texture = &mBattTexture;
 
     /* try to compile material shaders */
     lite3d_shader_init(&shaders[0], LITE3D_SHADER_TYPE_VERTEX);
@@ -120,14 +150,34 @@ static int initMaterials(void)
     lite3d_shader_purge(&shaders[0]);
     lite3d_shader_purge(&shaders[1]);
 
-    /* create material for owr box */
-    lite3d_material_init(&mMinigunMaterial);
-    matPass = lite3d_material_add_pass(&mMinigunMaterial);
+    /* create material A */
+    lite3d_material_init(&mRifleMaterialA);
+    matPass = lite3d_material_add_pass(&mRifleMaterialA);
     /* set default params */
     lite3d_material_pass_add_parameter(matPass, &lite3d_shader_global_parameters()->projectionMatrix);
     lite3d_material_pass_add_parameter(matPass, &lite3d_shader_global_parameters()->modelviewMatrix);
     /* set sampler */
-    lite3d_material_pass_add_parameter(matPass, &mMinigunTextureUnit);
+    lite3d_material_pass_add_parameter(matPass, &mRifleTextureUnitA);
+    matPass->program = &mProgram;
+
+    /* create material B */
+    lite3d_material_init(&mRifleMaterialB);
+    matPass = lite3d_material_add_pass(&mRifleMaterialB);
+    /* set default params */
+    lite3d_material_pass_add_parameter(matPass, &lite3d_shader_global_parameters()->projectionMatrix);
+    lite3d_material_pass_add_parameter(matPass, &lite3d_shader_global_parameters()->modelviewMatrix);
+    /* set sampler */
+    lite3d_material_pass_add_parameter(matPass, &mRifleTextureUnitB);
+    matPass->program = &mProgram;
+
+    /* create material Battery */
+    lite3d_material_init(&mBattMaterial);
+    matPass = lite3d_material_add_pass(&mBattMaterial);
+    /* set default params */
+    lite3d_material_pass_add_parameter(matPass, &lite3d_shader_global_parameters()->projectionMatrix);
+    lite3d_material_pass_add_parameter(matPass, &lite3d_shader_global_parameters()->modelviewMatrix);
+    /* set sampler */
+    lite3d_material_pass_add_parameter(matPass, &mBattTextureUnit);
     matPass->program = &mProgram;
 
     return LITE3D_TRUE;
@@ -136,12 +186,20 @@ static int initMaterials(void)
 static int initModel(void)
 {
     lite3d_resource_file *file1;
-    if (!(file1 = lite3d_resource_pack_file_load(mFileSysPack, "pack/minigun.3ds")))
+    if (!(file1 = lite3d_resource_pack_file_load(mFileSysPack, "pack/plasmagun/plasmarif.3ds")))
         return LITE3D_FALSE;
 
-    if (!lite3d_vbo_init(&mModel))
+    if (!lite3d_vbo_init(&mRifle))
         return LITE3D_FALSE;
-    if (!lite3d_vbo_load(&mModel, file1, "Minigun", GL_STATIC_DRAW, LITE3D_FLIP_UV_FLAG))
+    if (!lite3d_vbo_load(&mRifle, file1, "PlasmaRifl", GL_STATIC_DRAW, LITE3D_FLIP_UV_FLAG | LITE3D_OPTIMIZE_MESH_FLAG))
+        return LITE3D_FALSE;
+    /* fix material indexes to 0..maxVao */
+    /* it is right way if you know submeshes attached to real materials */
+    lite3d_vbo_order_mat_indexes(&mRifle);
+
+    if (!lite3d_vbo_init(&mRifleBatt))
+        return LITE3D_FALSE;
+    if (!lite3d_vbo_load(&mRifleBatt, file1, "Battery", GL_STATIC_DRAW, LITE3D_FLIP_UV_FLAG))
         return LITE3D_FALSE;
 
     return LITE3D_TRUE;
@@ -150,7 +208,7 @@ static int initModel(void)
 static int init(void)
 {
     kmVec3 cameraInitPos = {
-        80.0f, 80.0f, 80.0f
+        40.0f, 40.0f, 40.0f
     };
     kmVec3 viewPos = {
         0.0f, 0.0f, 0.0f
@@ -170,9 +228,18 @@ static int init(void)
     lite3d_camera_set_position(&mCamera01, &cameraInitPos);
 
     lite3d_scene_mesh_init(&mScene);
-    lite3d_mesh_node_init(&mSceneNode, &mModel);
-    lite3d_scene_mesh_node_add(&mScene, &mSceneNode, NULL);
-    lite3d_mesh_node_attach_material(&mSceneNode, &mMinigunMaterial, 0);
+    lite3d_mesh_node_init(&mRifleNode, &mRifle);
+    lite3d_mesh_node_init(&mBattNode, &mRifleBatt);
+
+    lite3d_scene_mesh_node_add(&mScene, &mRifleNode, NULL);
+    lite3d_scene_mesh_node_add(&mScene, &mBattNode, &mRifleNode.sceneNode);
+
+    lite3d_mesh_node_attach_material(&mRifleNode, &mRifleMaterialA, 0);
+    lite3d_mesh_node_attach_material(&mRifleNode, &mRifleMaterialB, 1);
+    lite3d_mesh_node_attach_material(&mRifleNode, &mRifleMaterialB, 2);
+    lite3d_mesh_node_attach_material(&mRifleNode, &mRifleMaterialB, 3);
+    lite3d_mesh_node_attach_material(&mRifleNode, &mRifleMaterialB, 4);
+    lite3d_mesh_node_attach_material(&mBattNode, &mBattMaterial, 0);
 
     lite3d_scene_node_add(&mScene, &mCamera01.cameraNode, NULL);
     lite3d_render_target_root_attach_camera(&mCamera01);
@@ -184,11 +251,20 @@ static int init(void)
 static int shutdown(void)
 {
     /* release resources */
-    lite3d_vbo_purge(&mModel);
-    lite3d_material_purge(&mMinigunMaterial);
+    lite3d_vbo_purge(&mRifle);
+    lite3d_vbo_purge(&mRifleBatt);
+
+    lite3d_material_purge(&mRifleMaterialA);
+    lite3d_material_purge(&mRifleMaterialB);
+    lite3d_material_purge(&mBattMaterial);
+
     lite3d_shader_program_purge(&mProgram);
     lite3d_scene_mesh_purge(&mScene);
-    lite3d_texture_unit_purge(&mMinigunTexture);
+
+    lite3d_texture_unit_purge(&mRifleTextureA);
+    lite3d_texture_unit_purge(&mRifleTextureB);
+    lite3d_texture_unit_purge(&mBattTexture);
+
     lite3d_resource_pack_close(mFileSysPack);
 
     return LITE3D_TRUE;
@@ -196,7 +272,7 @@ static int shutdown(void)
 
 static int pre_frame(void)
 {
-    lite3d_scene_node_rotate_angle(&mSceneNode.sceneNode, &KM_VEC3_POS_Z, 0.001f);
+    lite3d_scene_node_rotate_angle(&mRifleNode.sceneNode, &KM_VEC3_POS_Z, 0.001f);
     return LITE3D_TRUE;
 }
 

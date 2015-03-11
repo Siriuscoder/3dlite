@@ -40,13 +40,13 @@ static void scene_recursive_nodes_update(lite3d_scene *scene,
         child->recalc = recalcNode ? LITE3D_TRUE : child->recalc;
         if (child->enabled)
         {
-            if (child->renderable)
-            {
-                scene->stats.objectsRendered++;
-            }
-
             scene_recursive_nodes_update(scene, child, camera);
         }
+    }
+
+    if (node->renderable)
+    {
+        scene->stats.objectsRendered++;
     }
 }
 

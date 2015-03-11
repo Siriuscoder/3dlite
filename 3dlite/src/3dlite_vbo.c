@@ -97,33 +97,39 @@ Overview
     from and writing pixel data to a buffer object.
  */
 
-static int vbo_expand(uint32_t *vboID, size_t expandSize, uint16_t access)
+static int vbo_buffer_extend(uint32_t vboID, size_t expandSize, uint16_t access)
 {
     int32_t originSize;
-    uint32_t newVbo;
+    uint32_t tmpVbo;
 
-    glBindBuffer(GL_COPY_READ_BUFFER, *vboID);
+    glBindBuffer(GL_COPY_READ_BUFFER, vboID);
     glGetBufferParameteriv(GL_COPY_READ_BUFFER, GL_BUFFER_SIZE, &originSize);
 
-    glGenBuffers(1, &newVbo);
-    glBindBuffer(GL_COPY_WRITE_BUFFER, newVbo);
-    /* allocate new buffer */
-    glBufferData(GL_COPY_WRITE_BUFFER, originSize + expandSize, NULL, access);
-    /* copy data to new buffer */
+    glGenBuffers(1, &tmpVbo);
+    glBindBuffer(GL_COPY_WRITE_BUFFER, tmpVbo);
+    /* allocate tmp buffer */
+    glBufferData(GL_COPY_WRITE_BUFFER, originSize, NULL, GL_STATIC_COPY);
+    /* copy data to tmp buffer */
     glCopyBufferSubData(GL_COPY_READ_BUFFER, GL_COPY_WRITE_BUFFER, 0, 0, originSize);
 
     if (lite3d_misc_check_gl_error())
     {
-        glDeleteBuffers(1, &newVbo);
-        ;
+        glDeleteBuffers(1, &tmpVbo);
         return LITE3D_FALSE;
     }
 
-    glDeleteBuffers(1, vboID);
+    glBindBuffer(GL_COPY_READ_BUFFER, tmpVbo);
+    glBindBuffer(GL_COPY_WRITE_BUFFER, vboID);
+    /* reallocate our buffer */
+    glGetBufferParameteriv(GL_COPY_READ_BUFFER, GL_BUFFER_SIZE, &originSize);
+    glBufferData(GL_COPY_WRITE_BUFFER, originSize + expandSize, NULL, access);
+    /* copy data back to our buffer */
+    glCopyBufferSubData(GL_COPY_READ_BUFFER, GL_COPY_WRITE_BUFFER, 0, 0, originSize);
+
     glBindBuffer(GL_COPY_READ_BUFFER, 0);
     glBindBuffer(GL_COPY_WRITE_BUFFER, 0);
+    glDeleteBuffers(1, &tmpVbo);
 
-    *vboID = newVbo;
     return LITE3D_TRUE;
 }
 
@@ -147,6 +153,13 @@ int lite3d_vbo_technique_init(void)
     {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
             "%s: GL_ARB_vertex_array_object not supported..", __FUNCTION__);
+        return LITE3D_FALSE;
+    }
+
+    if (!GLEW_ARB_copy_buffer)
+    {
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+            "%s: GLEW_ARB_copy_buffer not supported..", __FUNCTION__);
         return LITE3D_FALSE;
     }
 
@@ -213,23 +226,17 @@ int lite3d_vbo_extend(struct lite3d_vbo *vbo, size_t verticesSize,
     size_t indexesSize, uint16_t access)
 {
     SDL_assert(vbo);
-    if (!GLEW_ARB_copy_buffer)
-    {
-        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
-            "%s: GLEW_ARB_copy_buffer not supported..", __FUNCTION__);
-        return LITE3D_FALSE;
-    }
 
     lite3d_misc_gl_error_stack_clean();
 
     if (verticesSize > 0)
     {
-        if (!vbo_expand(&vbo->vboVerticesID, verticesSize, access))
+        if (!vbo_buffer_extend(vbo->vboVerticesID, verticesSize, access))
             return LITE3D_FALSE;
     }
     if (indexesSize > 0)
     {
-        if (!vbo_expand(&vbo->vboIndexesID, indexesSize, access))
+        if (!vbo_buffer_extend(vbo->vboIndexesID, indexesSize, access))
             return LITE3D_FALSE;
     }
 

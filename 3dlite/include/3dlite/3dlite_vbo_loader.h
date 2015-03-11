@@ -68,6 +68,7 @@ LITE3D_CEXPORT int lite3d_vbo_extend_from_memory(lite3d_vbo *vbo,
     uint8_t indexComponents, 
     uint16_t access);
 
+LITE3D_CEXPORT void lite3d_vbo_order_mat_indexes(lite3d_vbo *vbo);
 
 #endif	/* LITE3D_VBO_LOADER_H */
 

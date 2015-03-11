@@ -126,20 +126,19 @@ static int ai_node_load_to_vbo(lite3d_vbo *vbo, const struct aiScene *scene,
 {
     uint8_t componentSize;
     lite3d_vbo_layout layout[10];
-    size_t layoutCount = 0;
+    size_t layoutCount;
     size_t verticesSize;
     size_t indexesSize;
     void *vertices;
     void *indexes;
-    register float *pvertices;
-    register uint8_t *pindexes;
     register uint32_t i;
 
     /* one mesh - one batch on single VBO */
     for(i = 0; i < node->mNumMeshes; ++i)
     {
         const struct aiMesh *mesh = scene->mMeshes[node->mMeshes[i]];
-        uint32_t j;
+        register float *pvertices;
+        register uint32_t j;
 
         if(mesh->mPrimitiveTypes != aiPrimitiveType_TRIANGLE)
         {
@@ -147,6 +146,7 @@ static int ai_node_load_to_vbo(lite3d_vbo *vbo, const struct aiScene *scene,
             continue;
         }
 
+        layoutCount = 0;
         verticesSize = mesh->mNumVertices * sizeof(float) * 3;
         layout[layoutCount].binding = LITE3D_BUFFER_BINDING_ATTRIBUTE;
         layout[layoutCount].count = 3;
@@ -185,7 +185,6 @@ static int ai_node_load_to_vbo(lite3d_vbo *vbo, const struct aiScene *scene,
         SDL_assert_release(indexes);
 
         pvertices = (float *)vertices;
-        pindexes = (uint8_t *)indexes;
 
         for(j = 0; j < mesh->mNumVertices; ++j)
         {
@@ -215,35 +214,49 @@ static int ai_node_load_to_vbo(lite3d_vbo *vbo, const struct aiScene *scene,
             }
         }
 
-        for(j = 0; j < mesh->mNumFaces; ++j)
+        if(componentSize == 1)
         {
-            /* only triangles used */
-            if(mesh->mFaces[j].mNumIndices != 3)
-                continue;
+            register uint8_t *pindexes8 = (uint8_t *)indexes;
 
-            if(componentSize == 1)
+            for(j = 0; j < mesh->mNumFaces; ++j)
             {
-                *pindexes++ = (uint8_t)mesh->mFaces[j].mIndices[0];
-                *pindexes++ = (uint8_t)mesh->mFaces[j].mIndices[1];
-                *pindexes++ = (uint8_t)mesh->mFaces[j].mIndices[2];
+                /* only triangles used */
+                if(mesh->mFaces[j].mNumIndices != 3)
+                    continue;
+
+                *pindexes8++ = (uint8_t)mesh->mFaces[j].mIndices[0];
+                *pindexes8++ = (uint8_t)mesh->mFaces[j].mIndices[1];
+                *pindexes8++ = (uint8_t)mesh->mFaces[j].mIndices[2];
             }
-            else if(componentSize == 2)
+        }
+        else if(componentSize == 2)
+        {
+            register uint16_t *pindexes16 = (uint16_t *)indexes;
+
+            for(j = 0; j < mesh->mNumFaces; ++j)
             {
-                *((uint16_t *)pindexes) = (uint16_t)mesh->mFaces[j].mIndices[0];
-                pindexes += sizeof(uint16_t);
-                *((uint16_t *)pindexes) = (uint16_t)mesh->mFaces[j].mIndices[1];
-                pindexes += sizeof(uint16_t);
-                *((uint16_t *)pindexes) = (uint16_t)mesh->mFaces[j].mIndices[2];
-                pindexes += sizeof(uint16_t);
+                /* only triangles used */
+                if(mesh->mFaces[j].mNumIndices != 3)
+                    continue;
+
+                *pindexes16++ = (uint16_t)mesh->mFaces[j].mIndices[0];
+                *pindexes16++ = (uint16_t)mesh->mFaces[j].mIndices[1];
+                *pindexes16++ = (uint16_t)mesh->mFaces[j].mIndices[2];
             }
-            else if(componentSize == 4)
+        }
+        else if(componentSize == 4)
+        {
+            register uint32_t *pindexes32 = (uint32_t *)indexes;
+
+            for(j = 0; j < mesh->mNumFaces; ++j)
             {
-                *((uint32_t *)pindexes) = mesh->mFaces[j].mIndices[0];
-                pindexes += sizeof(uint32_t);
-                *((uint32_t *)pindexes) = mesh->mFaces[j].mIndices[1];
-                pindexes += sizeof(uint32_t);
-                *((uint32_t *)pindexes) = mesh->mFaces[j].mIndices[2];
-                pindexes += sizeof(uint32_t);
+                /* only triangles used */
+                if(mesh->mFaces[j].mNumIndices != 3)
+                    continue;
+
+                *pindexes32++ = mesh->mFaces[j].mIndices[0];
+                *pindexes32++ =  mesh->mFaces[j].mIndices[1];
+                *pindexes32++ =  mesh->mFaces[j].mIndices[2];
             }
         }
 
@@ -316,9 +329,6 @@ int lite3d_vbo_load_from_memory(lite3d_vbo *vbo,
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
-    SDL_LogVerbose(SDL_LOG_CATEGORY_APPLICATION, "VBO: 0x%x: completed: cv %d, ce %d",
-        vbo->vboVerticesID, vbo->verticesCount, vbo->elementsCount);
-
     return LITE3D_TRUE;
 }
 
@@ -360,7 +370,7 @@ int lite3d_vbo_extend_from_memory(lite3d_vbo *vbo,
 
     /* copy indexes to the end of the index buffer */
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbo->vboIndexesID);
-    glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, vbo->indexesSize, indexesSize, vertices);
+    glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, vbo->indexesSize, indexesSize, indexes);
     if (lite3d_misc_check_gl_error())
         return LITE3D_FALSE;
 
@@ -377,9 +387,6 @@ int lite3d_vbo_extend_from_memory(lite3d_vbo *vbo,
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
-    SDL_LogVerbose(SDL_LOG_CATEGORY_APPLICATION, "VBO: 0x%x: cv %d, ce %d, batches %d",
-        vbo->vboVerticesID, vbo->verticesCount, vbo->elementsCount, vbo->vaosCount);
 
     return LITE3D_TRUE;
 }
@@ -487,4 +494,18 @@ int lite3d_vbo_load(lite3d_vbo *vbo, lite3d_resource_file *resource,
     aiReleasePropertyStore(importProrerties);
 
     return LITE3D_TRUE;
+}
+
+void lite3d_vbo_order_mat_indexes(lite3d_vbo *vbo)
+{
+    lite3d_list_node *vaoLink;
+    uint32_t materialIndex = 0;
+    SDL_assert(vbo);
+
+    for (vaoLink = vbo->vaos.l.next;
+        vaoLink != &vbo->vaos.l; vaoLink = lite3d_list_next(vaoLink))
+    {
+        MEMBERCAST(lite3d_vao, vaoLink, inVbo)->
+            materialIndex = materialIndex++;
+    }
 }
