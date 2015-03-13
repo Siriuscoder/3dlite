@@ -1,6 +1,6 @@
 /******************************************************************************
 *	This file is part of 3dlite (Light-weight 3d engine).
-*	Copyright (C) 2014  Sirius (Korolev Nikita)
+*	Copyright (C) 2015  Sirius (Korolev Nikita)
 *
 *	Foobar is free software: you can redistribute it and/or modify
 *	it under the terms of the GNU General Public License as published by
@@ -21,7 +21,16 @@
 #include <3dlite/3dlite_common.h>
 #include <3dlite/3dlite_list.h>
 
+typedef struct lite3d_framebuffer
+{
+    uint32_t framebufferId;
+    uint32_t renderBuffersIds[3];
+    size_t renderBuffersUsed;
+    int32_t height;
+    int32_t width;
+} lite3d_framebuffer;
 
+LITE3D_CEXPORT int lite3d_framebuffer_technique_init(void);
 
 
 #endif	/* LITE3D_FRAMEBUFFER_H */

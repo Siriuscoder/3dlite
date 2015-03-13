@@ -22,6 +22,7 @@
 #include <3dlite/3dlite_common.h>
 #include <3dlite/3dlite_list.h>
 #include <3dlite/3dlite_camera.h>
+#include <3dlite/3dlite_framebuffer.h>
 
 #define LITE3D_RENDER_TARGET_NAME   20
 
