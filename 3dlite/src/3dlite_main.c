@@ -77,7 +77,7 @@ int lite3d_main(const lite3d_global_settings *settings)
         return LITE3D_FALSE;
 
     /* setup video */
-    if (!lite3d_video_setup(&gGlobalSettings.videoSettings))
+    if (!lite3d_video_open(&gGlobalSettings.videoSettings))
     {
         SDL_Quit();
         lite3d_memory_cleanup();
@@ -110,18 +110,6 @@ int lite3d_main(const lite3d_global_settings *settings)
 
     /* init shader global parameters */
     lite3d_shader_global_parameters_init();
-
-    /* init render */
-    if (!lite3d_render_init())
-    {
-        lite3d_texture_technique_shut();
-        lite3d_video_close();
-        lite3d_memory_cleanup();
-        return LITE3D_FALSE;
-    }
-
-    /* setup main render target (after render init!!!)*/
-    lite3d_video_register_root_render_target();
 
     /* start main loop */
     lite3d_render_loop(&gGlobalSettings.renderLisneters);

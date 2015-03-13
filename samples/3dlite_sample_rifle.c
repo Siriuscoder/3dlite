@@ -53,7 +53,7 @@ static int process_events(SDL_Event *levent)
             /* print render stats */
         else if (levent->key.keysym.sym == SDLK_F1)
         {
-            lite3d_render_stats *stats = lite3d_render_get_stats();
+            lite3d_render_stats *stats = lite3d_render_stats_get();
             SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
                 "==== Render statistics ========\n"
                 "last FPS\tavr FPS\t\tbest FPS\tworst FPS\n"
@@ -194,7 +194,7 @@ static int initModel(void)
     if (!lite3d_vbo_load(&mRifle, file1, "PlasmaRifl", GL_STATIC_DRAW, LITE3D_FLIP_UV_FLAG | LITE3D_OPTIMIZE_MESH_FLAG))
         return LITE3D_FALSE;
     /* fix material indexes to 0..maxVao */
-    /* it is right way if you know submeshes attached to real materials */
+    /* it is right way if you know how submeshes attached to real materials */
     lite3d_vbo_order_mat_indexes(&mRifle);
 
     if (!lite3d_vbo_init(&mRifleBatt))
@@ -242,7 +242,7 @@ static int init(void)
     lite3d_mesh_node_attach_material(&mBattNode, &mBattMaterial, 0);
 
     lite3d_scene_node_add(&mScene, &mCamera01.cameraNode, NULL);
-    lite3d_render_target_root_attach_camera(&mCamera01);
+    lite3d_render_target_screen_attach_camera(&mCamera01);
     lite3d_camera_lookAt(&mCamera01, &viewPos);
 
     return LITE3D_TRUE;

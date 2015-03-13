@@ -69,7 +69,7 @@ static int process_events(SDL_Event *levent)
             /* print render stats */
         else if (levent->key.keysym.sym == SDLK_F1)
         {
-            lite3d_render_stats *stats = lite3d_render_get_stats();
+            lite3d_render_stats *stats = lite3d_render_stats_get();
             SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
                 "==== Render statistics ========\n"
                 "last FPS\tavr FPS\t\tbest FPS\tworst FPS\n"
@@ -292,9 +292,6 @@ static int init(void)
 
     lite3d_camera_init(&mCamera01);
 
-    lite3d_render_target_add(1, 10,
-        10, 0, NULL)->enabled = LITE3D_FALSE;
-
     lite3d_camera_perspective(&mCamera01, 0.1f, 100.0f, 45.0f, (float) DEFAULT_WIDTH / (float) DEFAULT_HEIGHT);
     lite3d_camera_set_position(&mCamera01, &cameraInitPos);
     //lite3d_camera_pitch(&mCamera01, kmDegreesToRadians(90));
@@ -325,7 +322,7 @@ static int init(void)
     }
 
     lite3d_scene_node_add(&mScene, &mCamera01.cameraNode, NULL);
-    lite3d_render_target_root_attach_camera(&mCamera01);
+    lite3d_render_target_screen_attach_camera(&mCamera01);
     //lite3d_camera_link_to(&mCamera01, &mSceneNode[2], LITE3D_CAMERA_LINK_ORIENTATION);
     //lite3d_camera_tracking(&mCamera01, &mSceneNode[2]);
 

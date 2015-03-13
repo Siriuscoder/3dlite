@@ -52,7 +52,7 @@ typedef struct lite3d_render_stats
     float worstFrameMs;
     int32_t renderTargets;
     int32_t trianglesByFrame;
-     int32_t verticesByFrame;
+    int32_t verticesByFrame;
     float triangleMs;
     int32_t triangleByBatch;
     int32_t objectsByFrame;
@@ -65,33 +65,34 @@ typedef struct lite3d_render_stats
 typedef struct lite3d_render_target
 {
     lite3d_list_node node;
-    int32_t ID;
     int32_t height;
     int32_t width;
-    int8_t isRoot;
     void *userdata;
     uint8_t enabled;
     void (*preUpdate)(struct lite3d_render_target *target);
     void (*postUpdate)(struct lite3d_render_target *target);
-    lite3d_list renderQueue;
-    int32_t cleanMask;
+    lite3d_list lookSequence;
+    uint32_t cleanMask;
+    kmVec4 cleanColor;
 } lite3d_render_target;
 
-LITE3D_CEXPORT int lite3d_render_init(void);
 LITE3D_CEXPORT void lite3d_render_loop(lite3d_render_listeners *callbacks);
-LITE3D_CEXPORT lite3d_render_stats *lite3d_render_get_stats(void);
-LITE3D_CEXPORT lite3d_render_target *lite3d_render_target_add(int32_t ID, int32_t width,
-    int32_t height, int8_t isRoot, void *userdata);
-LITE3D_CEXPORT void lite3d_render_target_erase(int32_t ID);
-LITE3D_CEXPORT lite3d_render_target *lite3d_render_target_get(int32_t ID);
+LITE3D_CEXPORT lite3d_render_stats *lite3d_render_stats_get(void);
+
+LITE3D_CEXPORT void lite3d_render_target_init(lite3d_render_target *rt);
+LITE3D_CEXPORT void lite3d_render_target_purge(lite3d_render_target *rt);
+LITE3D_CEXPORT void lite3d_render_target_add(lite3d_render_target *rt);
+LITE3D_CEXPORT void lite3d_render_target_erase(lite3d_render_target *rt);
 LITE3D_CEXPORT void lite3d_render_target_erase_all(void);
+
 LITE3D_CEXPORT void lite3d_render_suspend(void);
 LITE3D_CEXPORT void lite3d_render_pause(void);
 LITE3D_CEXPORT void lite3d_render_stop(void);
 
-LITE3D_CEXPORT void lite3d_render_target_attach_camera(lite3d_render_target *target, lite3d_camera *camera);
-LITE3D_CEXPORT void lite3d_render_target_dettach_camera(lite3d_camera *camera);
-LITE3D_CEXPORT void lite3d_render_target_root_attach_camera(lite3d_camera *camera);
-
+LITE3D_CEXPORT int lite3d_render_target_attach_camera(lite3d_render_target *rt, lite3d_camera *camera);
+LITE3D_CEXPORT int lite3d_render_target_dettach_camera(lite3d_render_target *rt, lite3d_camera *camera);
+LITE3D_CEXPORT int lite3d_render_target_screen_attach_camera(lite3d_camera *camera);
+LITE3D_CEXPORT int lite3d_render_target_screen_dettach_camera(lite3d_camera *camera);
+LITE3D_CEXPORT lite3d_render_target *lite3d_render_target_screen_get(void);
 #endif	/* RENDER_H */
 

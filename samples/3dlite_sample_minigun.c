@@ -45,7 +45,7 @@ static int process_events(SDL_Event *levent)
             /* print render stats */
         else if (levent->key.keysym.sym == SDLK_F1)
         {
-            lite3d_render_stats *stats = lite3d_render_get_stats();
+            lite3d_render_stats *stats = lite3d_render_stats_get();
             SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
                 "==== Render statistics ========\n"
                 "last FPS\tavr FPS\t\tbest FPS\tworst FPS\n"
@@ -175,7 +175,7 @@ static int init(void)
     lite3d_mesh_node_attach_material(&mSceneNode, &mMinigunMaterial, 0);
 
     lite3d_scene_node_add(&mScene, &mCamera01.cameraNode, NULL);
-    lite3d_render_target_root_attach_camera(&mCamera01);
+    lite3d_render_target_screen_attach_camera(&mCamera01);
     lite3d_camera_lookAt(&mCamera01, &viewPos);
 
     return LITE3D_TRUE;

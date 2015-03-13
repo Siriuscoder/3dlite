@@ -26,9 +26,8 @@ static void lite3d_material_pass_purge(lite3d_material_pass *pass)
 {
     lite3d_list_node *parameterNode;
 
-    while ((parameterNode = lite3d_list_first_link(&pass->parameters)) != NULL)
+    while ((parameterNode = lite3d_list_remove_first_link(&pass->parameters)) != NULL)
     {
-        lite3d_list_unlink_link(parameterNode);
         lite3d_free(MEMBERCAST(lite3d_material_pass_parameter,
             parameterNode, parameterLink));
     }
@@ -67,10 +66,9 @@ void lite3d_material_purge(
     lite3d_material_pass *pass;
     SDL_assert(material);
 
-    while ((passNode = lite3d_list_first_link(&material->passes)) != NULL)
+    while ((passNode = lite3d_list_remove_first_link(&material->passes)) != NULL)
     {
         pass = MEMBERCAST(lite3d_material_pass, passNode, passLink);
-        lite3d_list_unlink_link(passNode);
         lite3d_material_pass_purge(pass);
         lite3d_free(pass);
     }
@@ -217,7 +215,7 @@ void lite3d_material_pass_set_params(lite3d_material *material,
 {
     lite3d_list_node *parameterNode;
     lite3d_material_pass_parameter *parameter;
-    uint32_t textureUnit = 0;
+    uint16_t textureUnit = 0;
 
     /* check parameters and set it if changed */
     for (parameterNode = pass->parameters.l.next;

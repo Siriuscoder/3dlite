@@ -189,13 +189,11 @@ void lite3d_scene_mesh_purge(lite3d_scene *scene)
     lite3d_list_node *mqrListNode = NULL;
 
     SDL_assert(scene);
-    while ((mqrUnitNode = lite3d_list_first_link(&scene->renderUnitQueue)) != NULL)
+    while ((mqrUnitNode = lite3d_list_remove_first_link(&scene->renderUnitQueue)) != NULL)
     {
-        lite3d_list_unlink_link(mqrUnitNode);
         mqrUnit = MEMBERCAST(lite3d_mqr_unit, mqrUnitNode, queued);
-        while ((mqrListNode = lite3d_list_first_link(&mqrUnit->nodes)) != NULL)
+        while ((mqrListNode = lite3d_list_remove_first_link(&mqrUnit->nodes)) != NULL)
         {
-            lite3d_list_unlink_link(mqrListNode);
             mqrNode = MEMBERCAST(lite3d_mqr_node, mqrListNode, unit);
             lite3d_free(mqrNode);
         }

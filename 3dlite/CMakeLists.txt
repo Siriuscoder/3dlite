@@ -107,7 +107,8 @@ src/3dlite_meshes_render.c
 src/3dlite_material.c
 src/3dlite_shader_params.c
 src/3dlite_shader.c
-src/3dlite_shader_program.c)
+src/3dlite_shader_program.c
+src/3dlite_framebuffer.c)
 
 set(3DLITE_HEADERS include/3dlite/3dlite_alloc.h
 include/3dlite/3dlite_common.h
@@ -131,7 +132,8 @@ include/3dlite/3dlite_meshes_render.h
 include/3dlite/3dlite_material.h
 include/3dlite/3dlite_shader_params.h
 include/3dlite/3dlite_shader.h
-include/3dlite/3dlite_shader_program.h)
+include/3dlite/3dlite_shader_program.h
+include/3dlite/3dlite_framebuffer.h)
 
 add_library(3dlite SHARED ${3DLITE_SOURCES} ${3DLITE_HEADERS})
 

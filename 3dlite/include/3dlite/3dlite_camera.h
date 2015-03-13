@@ -32,7 +32,6 @@
 
 typedef struct lite3d_camera
 {
-    lite3d_list_node renderTargetLink;
     lite3d_scene_node cameraNode;
     kmMat4 projection;
 

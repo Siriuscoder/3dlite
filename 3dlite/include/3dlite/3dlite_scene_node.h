@@ -21,6 +21,7 @@
 #include <3dlite/kazmath/mat3.h>
 #include <3dlite/kazmath/mat4.h>
 #include <3dlite/kazmath/vec3.h>
+#include <3dlite/kazmath/vec4.h>
 #include <3dlite/kazmath/quaternion.h>
 
 #include <3dlite/3dlite_common.h>
