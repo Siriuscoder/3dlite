@@ -48,7 +48,7 @@ static void std_output_function(void* userdata, int category,
 
 static void aiLogFunc(const char* message , char* user)
 {
-    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Assimp: %s",
+    SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "Assimp: %s",
         message);
 }
 

@@ -40,7 +40,7 @@ static lite3d_render_listeners gRenderListeners;
 static uint8_t gRenderStarted = LITE3D_TRUE;
 static uint8_t gRenderActive = LITE3D_TRUE;
 static lite3d_render_stats gRenderStats;
-static lite3d_render_target gScreenRt; 
+static lite3d_render_target gScreenRt;
 
 static void calc_render_stats(uint64_t beginFrame, uint64_t endFrame)
 {
@@ -93,7 +93,8 @@ static void update_render_target(lite3d_render_target *target)
     lite3d_list_node *node;
     lite3d_scene *scene;
     lookUnit *look;
-    /* TODO: switch target framebuffer */
+    /* switch target framebuffer */
+    lite3d_framebuffer_switch(&target->fb);
     /* set viewport */
     glViewport(0, 0, target->width, target->height);
     /* clear target */
@@ -147,6 +148,20 @@ static int update_render_targets(void)
     return targetsCount ? LITE3D_TRUE : LITE3D_FALSE;
 }
 
+void lite3d_render_depth_test(uint8_t on)
+{
+    if (on)
+    {
+        glClearDepth(1.0);
+        glDepthFunc(GL_LESS);
+        glEnable(GL_DEPTH_TEST);
+    }
+    else
+    {
+        glDisable(GL_DEPTH_TEST);
+    }
+}
+
 void lite3d_render_loop(lite3d_render_listeners *callbacks)
 {
     SDL_Event wevent;
@@ -154,19 +169,21 @@ void lite3d_render_loop(lite3d_render_listeners *callbacks)
     gRenderListeners = *callbacks;
 
     gPerfFreq = SDL_GetPerformanceFrequency();
-    /* enable depth test */
-    glClearDepth(1.0);
-    glDepthFunc(GL_LESS);
-    glEnable(GL_DEPTH_TEST);
-
+    
+    /* depth test enable by default */
+    lite3d_render_depth_test(LITE3D_TRUE);
+    
     /* clean statistic */
     memset(&gRenderStats, 0, sizeof (gRenderStats));
     /* init screen render target */
     lite3d_render_target_init(&gScreenRt);
     gScreenRt.width = lite3d_get_global_settings()->videoSettings.screenWidth;
     gScreenRt.height = lite3d_get_global_settings()->videoSettings.screenHeight;
+    /* set screem framebuffer */
+    gScreenRt.fb = *lite3d_framebuffer_screen();
     lite3d_list_init(&gRenderTargets);
     lite3d_render_target_add(&gScreenRt);
+
     /* start user initialization */
     if (gRenderListeners.preRender && !gRenderListeners.preRender())
         return;
@@ -222,7 +239,7 @@ void lite3d_render_target_init(lite3d_render_target *rt)
 {
     SDL_assert(rt);
 
-    memset(rt, 0, sizeof(lite3d_render_target));
+    memset(rt, 0, sizeof (lite3d_render_target));
     lite3d_list_link_init(&rt->node);
 
     rt->enabled = LITE3D_TRUE;
@@ -284,15 +301,15 @@ int lite3d_render_target_attach_camera(lite3d_render_target *target, lite3d_came
 
     /* check camera already attached to the render target */
     node = &target->lookSequence.l;
-    while((node = lite3d_list_next(node)) != &target->lookSequence.l)
+    while ((node = lite3d_list_next(node)) != &target->lookSequence.l)
     {
-        look = MEMBERCAST(lookUnit, node, rtLink);        
-        if(look->camera == camera)
+        look = MEMBERCAST(lookUnit, node, rtLink);
+        if (look->camera == camera)
             return LITE3D_FALSE;
     }
 
-    if(!look)
-        look = (lookUnit *)lite3d_calloc(sizeof(lookUnit));
+    if (!look)
+        look = (lookUnit *) lite3d_calloc(sizeof (lookUnit));
     SDL_assert_release(look);
 
     look->camera = camera;
@@ -310,10 +327,10 @@ int lite3d_render_target_dettach_camera(lite3d_render_target *rt, lite3d_camera 
 
     /* check camera already attached to the render target */
     node = &rt->lookSequence.l;
-    while((node = lite3d_list_next(node)) != &rt->lookSequence.l)
+    while ((node = lite3d_list_next(node)) != &rt->lookSequence.l)
     {
-        look = MEMBERCAST(lookUnit, node, rtLink);        
-        if(look->camera == camera)
+        look = MEMBERCAST(lookUnit, node, rtLink);
+        if (look->camera == camera)
         {
             lite3d_list_unlink_link(node);
             lite3d_free(look);

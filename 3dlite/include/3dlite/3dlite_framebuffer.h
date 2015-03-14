@@ -20,18 +20,39 @@
 
 #include <3dlite/3dlite_common.h>
 #include <3dlite/3dlite_list.h>
+#include <3dlite/3dlite_texture_unit.h>
+
+#define LITE3D_FRAMEBUFFER_STATUS_EMPTY     0x1
+#define LITE3D_FRAMEBUFFER_STATUS_ERROR     0x2
+#define LITE3D_FRAMEBUFFER_STATUS_OK        0x0 
 
 typedef struct lite3d_framebuffer
 {
     uint32_t framebufferId;
     uint32_t renderBuffersIds[3];
-    size_t renderBuffersUsed;
+    size_t renderBuffersCount;
+    uint8_t useColorbuffer;
+    uint8_t useDepthbuffer;
+    uint8_t useStencilbuffer;
     int32_t height;
     int32_t width;
+    uint8_t status;
 } lite3d_framebuffer;
 
 LITE3D_CEXPORT int lite3d_framebuffer_technique_init(void);
+LITE3D_CEXPORT int lite3d_framebuffer_init(lite3d_framebuffer *fb,
+    int32_t width, int32_t height);
 
+/* setup frame buffer attachments - without whis call framebuffer is invalid */
+/* if attachments is NULL or attachments count is 0 renderbuffer attachment will be used */
+LITE3D_CEXPORT int lite3d_framebuffer_setup(lite3d_framebuffer *fb,
+    lite3d_texture_unit *colorAttachments, size_t colorAttachmentsCount, uint8_t useColorRenderbuffer,
+    lite3d_texture_unit *depthAttachments, uint8_t useDepthRenderbuffer, uint8_t useStencilRenderbuffer);
+
+LITE3D_CEXPORT lite3d_framebuffer *lite3d_framebuffer_screen(void);
+
+LITE3D_CEXPORT void lite3d_framebuffer_switch(lite3d_framebuffer *fb);
+LITE3D_CEXPORT void lite3d_framebuffer_purge(lite3d_framebuffer *fb);
 
 #endif	/* LITE3D_FRAMEBUFFER_H */
 

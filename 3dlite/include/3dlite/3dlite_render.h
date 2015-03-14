@@ -66,6 +66,7 @@ typedef struct lite3d_render_stats
 typedef struct lite3d_render_target
 {
     lite3d_list_node node;
+    lite3d_framebuffer fb;
     int32_t height;
     int32_t width;
     void *userdata;
@@ -89,6 +90,7 @@ LITE3D_CEXPORT void lite3d_render_target_erase_all(void);
 LITE3D_CEXPORT void lite3d_render_suspend(void);
 LITE3D_CEXPORT void lite3d_render_pause(void);
 LITE3D_CEXPORT void lite3d_render_stop(void);
+LITE3D_CEXPORT void lite3d_render_depth_test(uint8_t on);
 
 LITE3D_CEXPORT int lite3d_render_target_attach_camera(lite3d_render_target *rt, lite3d_camera *camera);
 LITE3D_CEXPORT int lite3d_render_target_dettach_camera(lite3d_render_target *rt, lite3d_camera *camera);

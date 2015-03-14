@@ -152,10 +152,10 @@ int32_t lite3d_shader_program_uniform_set(
     SDL_assert(program);
     SDL_assert(program->success == LITE3D_TRUE);
 
-    if (location < 0)
+    if (location < -1)
         return location;
 
-    if (location == 0)
+    if (location == -1)
     {
         location = glGetUniformLocation(program->programID, param->name);
         if (location < 0)
@@ -163,7 +163,7 @@ int32_t lite3d_shader_program_uniform_set(
             SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
                 "%s: uniform %s not found in program 0x%x",
                 __FUNCTION__, param->name, program);
-            return -1;
+            return -2;
         }
     }
 
@@ -189,7 +189,7 @@ int32_t lite3d_shader_program_uniform_set(
             SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
                 "%s: unknown type for parameter %s",
                 __FUNCTION__, param->name);
-            return -1;
+            return -2;
         }
     }
 
@@ -203,7 +203,7 @@ int32_t lite3d_shader_program_sampler_set(
     SDL_assert(program);
     SDL_assert(program->success == LITE3D_TRUE);
 
-    if (location < 0)
+    if (location < -1)
         return location;
 
     if (param->type != LITE3D_SHADER_PARAMETER_SAMPLER)
@@ -211,10 +211,11 @@ int32_t lite3d_shader_program_sampler_set(
         SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
             "%s: uniform %s not a sampler..",
             __FUNCTION__, param->name);
-        return -1;
+        return -2;
     }
 
-    if (location == 0)
+    /* -1  mean what location unknown yet */
+    if (location == -1)
     {
         location = glGetUniformLocation(program->programID, param->name);
         if (location < 0)
@@ -222,7 +223,7 @@ int32_t lite3d_shader_program_sampler_set(
             SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
                 "%s: sampler %s not found in program 0x%x",
                 __FUNCTION__, param->name, program);
-            return -1;
+            return -2;
         }
     }
 

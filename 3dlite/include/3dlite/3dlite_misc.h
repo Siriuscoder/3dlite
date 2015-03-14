@@ -25,5 +25,8 @@ LITE3D_CEXPORT void lite3d_misc_il_error_stack_clean(void);
 
 LITE3D_CEXPORT int lite3d_misc_check_gl_error(void);
 LITE3D_CEXPORT int lite3d_misc_check_il_error(void);
+
+LITE3D_CEXPORT int lite3d_misc_check_gl_out_of_mem(void);
+LITE3D_CEXPORT int lite3d_misc_check_gl_stack_corruption(void);
 #endif	/* LITE3D_MISC_H */
 

@@ -49,7 +49,6 @@ static int maxTextureSize;
 static int maxTextureImageUnits;
 static int maxCombinedTextureImageUnits;
 
-
 static void* DEVIL_CALL il_alloc(const ILsizei size)
 {
     return lite3d_malloc_pooled(LITE3D_POOL_NO2, size);
@@ -181,17 +180,17 @@ int lite3d_texture_technique_init(const lite3d_texture_technique_settings *setti
         if (gTextureSettings.anisotropy > gTextureSettings.maxAnisotropy)
             gTextureSettings.anisotropy = gTextureSettings.maxAnisotropy;
     }
-    
+
     glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &maxTextureImageUnits);
     glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTextureSize);
-    glGetIntegerv(GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS, &maxCombinedTextureImageUnits); 
+    glGetIntegerv(GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS, &maxCombinedTextureImageUnits);
     SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Max texture image units: %d",
         maxTextureImageUnits);
     SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Max combined texture image units: %d",
         maxCombinedTextureImageUnits);
     SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Max texture size: %d",
         maxTextureSize);
-    
+
     ilSetMemory(il_alloc, il_free);
     ilInit();
     iluInit();
@@ -205,8 +204,9 @@ void lite3d_texture_technique_shut(void)
     ilShutDown();
 }
 
-int lite3d_texture_unit_from_resource(lite3d_texture_unit *texture, 
-    const lite3d_resource_file *resource, uint32_t imageType, uint32_t textureTarget, int8_t quality)
+int lite3d_texture_unit_from_resource(lite3d_texture_unit *texture,
+    const lite3d_resource_file *resource, uint32_t imageType,
+    uint32_t textureTarget, int8_t quality, uint8_t wrapping)
 {
     SDL_assert(resource);
 
@@ -214,11 +214,11 @@ int lite3d_texture_unit_from_resource(lite3d_texture_unit *texture,
         return LITE3D_FALSE;
 
     return lite3d_texture_unit_from_memory(texture, resource->fileBuff,
-        resource->fileSize, imageType, textureTarget, quality);
+        resource->fileSize, imageType, textureTarget, quality, wrapping);
 }
 
-int lite3d_texture_unit_from_memory(lite3d_texture_unit *textureUnit, const void *buffer, 
-    size_t size, uint32_t imageType, uint32_t textureTarget, int8_t quality)
+int lite3d_texture_unit_from_memory(lite3d_texture_unit *textureUnit, const void *buffer,
+    size_t size, uint32_t imageType, uint32_t textureTarget, int8_t quality, uint8_t wrapping)
 {
     ILuint imageDesc = 0, imageFormat, internalFormat;
     GLint mipLevel = 0;
@@ -228,7 +228,7 @@ int lite3d_texture_unit_from_memory(lite3d_texture_unit *textureUnit, const void
     SDL_assert(size > 0);
     SDL_assert(textureUnit);
 
-    memset(textureUnit, 0, sizeof(lite3d_texture_unit));
+    memset(textureUnit, 0, sizeof (lite3d_texture_unit));
     lite3d_misc_il_error_stack_clean();
     /* gen IL image */
     imageDesc = ilGenImage();
@@ -260,6 +260,7 @@ int lite3d_texture_unit_from_memory(lite3d_texture_unit *textureUnit, const void
     textureUnit->imageSize = ilGetInteger(IL_IMAGE_SIZE_OF_DATA);
     textureUnit->loadedMipmaps = 0;
     textureUnit->textureTarget = textureTarget;
+    textureUnit->wrapping = wrapping;
     /* matches openGL texture format */
     imageFormat = ilGetInteger(IL_IMAGE_FORMAT);
 
@@ -280,7 +281,7 @@ int lite3d_texture_unit_from_memory(lite3d_texture_unit *textureUnit, const void
 
     /* enable texture target */
     glGenTextures(1, &textureUnit->textureID);
-    if(lite3d_misc_check_gl_error())
+    if (lite3d_misc_check_gl_error())
     {
         ilDeleteImages(1, &imageDesc);
         return LITE3D_FALSE;
@@ -298,6 +299,13 @@ int lite3d_texture_unit_from_memory(lite3d_texture_unit *textureUnit, const void
 
     glTexParameteri(textureTarget, GL_TEXTURE_MIN_FILTER, textureUnit->minFilter);
     glTexParameteri(textureTarget, GL_TEXTURE_MAG_FILTER, textureUnit->magFilter);
+    glTexParameteri(textureTarget, GL_TEXTURE_WRAP_S,
+        textureUnit->wrapping == LITE3D_TEXTURE_REPEAT ? GL_REPEAT : GL_CLAMP_TO_EDGE);
+    glTexParameteri(textureTarget, GL_TEXTURE_WRAP_T,
+        textureUnit->wrapping == LITE3D_TEXTURE_REPEAT ? GL_REPEAT : GL_CLAMP_TO_EDGE);
+    glTexParameteri(textureTarget, GL_TEXTURE_WRAP_R,
+        textureUnit->wrapping == LITE3D_TEXTURE_REPEAT ? GL_REPEAT : GL_CLAMP_TO_EDGE);
+
     /* calc saved mipmaps in image */
     textureUnit->loadedMipmaps = ilGetInteger(IL_NUM_MIPMAPS);
     //while (ilActiveMipmap(textureUnit->loadedMipmaps + 1))
@@ -349,7 +357,7 @@ int lite3d_texture_unit_from_memory(lite3d_texture_unit *textureUnit, const void
         }
     }
 
-    if(lite3d_misc_check_gl_error())
+    if (lite3d_misc_check_gl_error())
     {
         ilDeleteImages(1, &imageDesc);
         return LITE3D_FALSE;
@@ -373,6 +381,10 @@ int lite3d_texture_unit_from_memory(lite3d_texture_unit *textureUnit, const void
     glTexParameteri(textureTarget, GL_GENERATE_MIPMAP_SGIS, GL_FALSE);
     /* release IL image */
     ilDeleteImage(imageDesc);
+
+    textureUnit->isFbAttachment = LITE3D_FALSE;
+    glBindTexture(textureTarget, 0);
+
     return LITE3D_TRUE;
 }
 
@@ -390,13 +402,16 @@ void lite3d_texture_unit_bind(lite3d_texture_unit *texture, uint16_t layer)
 
     glActiveTexture(GL_TEXTURE0 + layer);
     glBindTexture(texture->textureTarget, texture->textureID);
+    
+    if(texture->isFbAttachment)
+        glGenerateMipmapEXT(texture->textureTarget);
 }
 
 void lite3d_texture_unit_unbind(lite3d_texture_unit *texture, uint16_t layer)
 {
     SDL_assert(texture);
     SDL_assert_release(layer < maxCombinedTextureImageUnits);
-    
+
     glActiveTexture(GL_TEXTURE0 + layer);
     glBindTexture(texture->textureTarget, 0);
 }

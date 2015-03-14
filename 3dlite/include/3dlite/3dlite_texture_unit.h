@@ -55,6 +55,9 @@
 #define LITE3D_TEXTURE_QL_LOW       0x0002
 #define LITE3D_TEXTURE_QL_MIDDLE    0x0003
 
+#define LITE3D_TEXTURE_CLAMP_TO_EDGE    0x0001
+#define LITE3D_TEXTURE_REPEAT           0x0002
+
 typedef struct lite3d_image_filter
 {
     uint32_t filterID;
@@ -86,6 +89,8 @@ typedef struct lite3d_texture_unit
     int8_t loadedMipmaps;
     int16_t minFilter;
     int16_t magFilter;
+    uint8_t wrapping;
+    uint8_t isFbAttachment;
 } lite3d_texture_unit;
 
 LITE3D_CEXPORT void lite3d_texture_technique_add_image_filter(lite3d_image_filter *filter);
@@ -95,9 +100,10 @@ LITE3D_CEXPORT int lite3d_texture_technique_init(const lite3d_texture_technique_
 LITE3D_CEXPORT void lite3d_texture_technique_shut(void);
 
 LITE3D_CEXPORT int lite3d_texture_unit_from_resource(lite3d_texture_unit *texture, 
-    const lite3d_resource_file *resource, uint32_t imageType, uint32_t textureTarget, int8_t quality);
+    const lite3d_resource_file *resource, uint32_t imageType, uint32_t textureTarget, 
+    int8_t quality, uint8_t wrapping);
 LITE3D_CEXPORT int lite3d_texture_unit_from_memory(lite3d_texture_unit *texture, const void *buffer, 
-    size_t size, uint32_t imageType, uint32_t textureTarget, int8_t quality);
+    size_t size, uint32_t imageType, uint32_t textureTarget, int8_t quality, uint8_t wrapping);
 LITE3D_CEXPORT void lite3d_texture_unit_purge(lite3d_texture_unit *texture);
 LITE3D_CEXPORT void lite3d_texture_unit_bind(lite3d_texture_unit *texture, uint16_t layer);
 LITE3D_CEXPORT void lite3d_texture_unit_unbind(lite3d_texture_unit *texture, uint16_t layer);
