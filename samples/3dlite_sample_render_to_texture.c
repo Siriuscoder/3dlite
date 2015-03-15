@@ -24,18 +24,32 @@
 
 #define DEFAULT_WIDTH           800
 #define DEFAULT_HEIGHT          600
+#define RENDER_TEXTURE_WIDTH    512
+#define RENDER_TEXTURE_HEIGHT   512
+
 
 static lite3d_resource_pack *mFileSysPack = NULL;
-static lite3d_texture_unit mVintageBoxUnit, mBoxUnit;
-static lite3d_shader_parameter mVintageBoxTexture;
-static lite3d_shader_parameter mBoxTexture;
-static lite3d_material mVintageBoxMaterial;
+static lite3d_texture_unit mRenderTextureUnit, mBoxUnit;
+static lite3d_shader_parameter mRenderTextureSampler;
+static lite3d_shader_parameter mBoxTextureSampler;
+static lite3d_material mRenderTextureMaterial;
 static lite3d_material mBoxMaterial;
 static lite3d_shader_program mProgram;
 static lite3d_camera mCamera01;
+static lite3d_camera mCamera02;
 static lite3d_vbo mCubeVbo;
+static lite3d_render_target mRTT;
+
 static kmVec3 cameraInitPos = {
-    0.0f, 5.0f, 5.0f
+    3.0f, 3.0f, 3.0f
+};
+
+static kmVec3 cameraInitPos2 = {
+    0.0f, 3.0f, 3.0f
+};
+
+static kmVec4 renderTextureClearColor = {
+    0.0f, 0.0f, 0.0f, 1.0f
 };
 
 static kmVec3 nodePos[] = {
@@ -44,20 +58,10 @@ static kmVec3 nodePos[] = {
     { 2.2f, 0.0f, 0.0f}
 };
 
-static kmVec3 nodeScale[] = {
-    { 0.3f, 0.3f, 0.3f},
-    { 0.5f, 0.5f, 0.5f},
-    { 0.7f, 0.7f, 0.7f}
-};
-
-static kmVec3 rotAxisZ = {
-    0.0f, 0.0f, 1.0f
-};
-
-static lite3d_mesh_node mSceneNode[3];
-static lite3d_mesh_node mSceneNodeInherited[3];
+static lite3d_mesh_node mSceneNode[2];
 
 static lite3d_scene mScene;
+static lite3d_scene mSceneMain;
 
 static int process_events(SDL_Event *levent)
 {
@@ -79,45 +83,41 @@ static int process_events(SDL_Event *levent)
                 stats->lastFPS, stats->avrFPS, stats->bestFPS, stats->worstFPS,
                 stats->lastFrameMs, stats->avrFrameMs, stats->bestFrameMs, stats->worstFrameMs);
         }
-        else if (levent->key.keysym.sym == SDLK_F2)
-        {
-            lite3d_scene_node_rotate_angle(&mSceneNode[2].sceneNode, &rotAxisZ, kmDegreesToRadians(5));
-        }
         else if (levent->key.keysym.sym == SDLK_UP)
         {
-            lite3d_camera_pitch(&mCamera01, kmDegreesToRadians(-5));
+            lite3d_camera_pitch(&mCamera02, kmDegreesToRadians(-1));
         }
         else if (levent->key.keysym.sym == SDLK_DOWN)
         {
-            lite3d_camera_pitch(&mCamera01, kmDegreesToRadians(5));
+            lite3d_camera_pitch(&mCamera02, kmDegreesToRadians(1));
         }
         else if (levent->key.keysym.sym == SDLK_LEFT)
         {
-            lite3d_camera_yaw(&mCamera01, kmDegreesToRadians(-5));
+            lite3d_camera_yaw(&mCamera02, kmDegreesToRadians(-1));
         }
         else if (levent->key.keysym.sym == SDLK_RIGHT)
         {
-            lite3d_camera_yaw(&mCamera01, kmDegreesToRadians(5));
+            lite3d_camera_yaw(&mCamera02, kmDegreesToRadians(1));
         }
         else if (levent->key.keysym.sym == SDLK_w)
         {
-            lite3d_camera_move_relative(&mCamera01, &KM_VEC3_POS_Z);
+            lite3d_camera_move_relative(&mCamera02, &KM_VEC3_POS_Z);
         }
         else if (levent->key.keysym.sym == SDLK_s)
         {
-            lite3d_camera_move_relative(&mCamera01, &KM_VEC3_NEG_Z);
+            lite3d_camera_move_relative(&mCamera02, &KM_VEC3_NEG_Z);
         }
         else if (levent->key.keysym.sym == SDLK_a)
         {
-            lite3d_camera_move_relative(&mCamera01, &KM_VEC3_POS_X);
+            lite3d_camera_move_relative(&mCamera02, &KM_VEC3_POS_X);
         }
         else if (levent->key.keysym.sym == SDLK_d)
         {
-            lite3d_camera_move_relative(&mCamera01, &KM_VEC3_NEG_X);
+            lite3d_camera_move_relative(&mCamera02, &KM_VEC3_NEG_X);
         }
         else if (levent->key.keysym.sym == SDLK_q)
         {
-            lite3d_camera_roll(&mCamera01, kmDegreesToRadians(5));
+            lite3d_camera_roll(&mCamera02, kmDegreesToRadians(5));
         }
     }
 
@@ -130,17 +130,17 @@ static int initMaterials(void)
     lite3d_shader shaders[2];
 
     /* init parameter with texture */
-    lite3d_shader_parameter_init(&mVintageBoxTexture);
-    strcpy(mVintageBoxTexture.name, "diffuse");
-    mVintageBoxTexture.persist = LITE3D_FALSE;
-    mVintageBoxTexture.type = LITE3D_SHADER_PARAMETER_SAMPLER;
-    mVintageBoxTexture.parameter.valsampler.texture = &mVintageBoxUnit;
+    lite3d_shader_parameter_init(&mRenderTextureSampler);
+    strcpy(mRenderTextureSampler.name, "diffuse");
+    mRenderTextureSampler.persist = LITE3D_FALSE;
+    mRenderTextureSampler.type = LITE3D_SHADER_PARAMETER_SAMPLER;
+    mRenderTextureSampler.parameter.valsampler.texture = &mRenderTextureUnit;
     /* init parameter with texture */
-    lite3d_shader_parameter_init(&mBoxTexture);
-    strcpy(mBoxTexture.name, "diffuse");
-    mBoxTexture.persist = LITE3D_FALSE;
-    mBoxTexture.type = LITE3D_SHADER_PARAMETER_SAMPLER;
-    mBoxTexture.parameter.valsampler.texture = &mBoxUnit;
+    lite3d_shader_parameter_init(&mBoxTextureSampler);
+    strcpy(mBoxTextureSampler.name, "diffuse");
+    mBoxTextureSampler.persist = LITE3D_FALSE;
+    mBoxTextureSampler.type = LITE3D_SHADER_PARAMETER_SAMPLER;
+    mBoxTextureSampler.parameter.valsampler.texture = &mBoxUnit;
 
     /* try to compile material shaders */
     lite3d_shader_init(&shaders[0], LITE3D_SHADER_TYPE_VERTEX);
@@ -180,13 +180,13 @@ static int initMaterials(void)
     lite3d_shader_purge(&shaders[1]);
 
     /* create material for owr box */
-    lite3d_material_init(&mVintageBoxMaterial);
-    matPass = lite3d_material_add_pass(&mVintageBoxMaterial);
+    lite3d_material_init(&mRenderTextureMaterial);
+    matPass = lite3d_material_add_pass(&mRenderTextureMaterial);
     /* set default params */
     lite3d_material_pass_add_parameter(matPass, &lite3d_shader_global_parameters()->projectionMatrix);
     lite3d_material_pass_add_parameter(matPass, &lite3d_shader_global_parameters()->modelviewMatrix);
     /* set sampler */
-    lite3d_material_pass_add_parameter(matPass, &mVintageBoxTexture);
+    lite3d_material_pass_add_parameter(matPass, &mRenderTextureSampler);
     matPass->program = &mProgram;
 
     /* create material for owr box */
@@ -196,7 +196,7 @@ static int initMaterials(void)
     lite3d_material_pass_add_parameter(matPass, &lite3d_shader_global_parameters()->projectionMatrix);
     lite3d_material_pass_add_parameter(matPass, &lite3d_shader_global_parameters()->modelviewMatrix);
     /* set sampler */
-    lite3d_material_pass_add_parameter(matPass, &mBoxTexture);
+    lite3d_material_pass_add_parameter(matPass, &mBoxTextureSampler);
     matPass->program = &mProgram;
 
     return LITE3D_TRUE;
@@ -266,23 +266,26 @@ static int initCube(void)
 
 static int init(void)
 {
-    int i = 0;
-    lite3d_resource_file *file1, *file2;
+    lite3d_resource_file *file1;
 
     if (!(mFileSysPack = lite3d_resource_pack_open("tests/", LITE3D_FALSE, 700000)))
         return LITE3D_FALSE;
     if (!(file1 = lite3d_resource_pack_file_load(mFileSysPack, "pack/box1.jpg")))
-        return LITE3D_FALSE;
-    if (!(file2 = lite3d_resource_pack_file_load(mFileSysPack, "pack/box2.jpg")))
         return LITE3D_FALSE;
 
     if (!lite3d_texture_unit_from_resource(&mBoxUnit, file1, LITE3D_IMAGE_JPG,
         LITE3D_TEXTURE_2D, LITE3D_TEXTURE_QL_NICEST, LITE3D_TEXTURE_REPEAT))
         return LITE3D_FALSE;
 
-    if (!lite3d_texture_unit_from_resource(&mVintageBoxUnit, file2, LITE3D_IMAGE_JPG,
-        LITE3D_TEXTURE_2D, LITE3D_TEXTURE_QL_LOW, LITE3D_TEXTURE_REPEAT))
+    /* allocate texture for render */
+    /* framebuffers not support texture compression, we mast turn off it */
+    lite3d_texture_unit_compression(LITE3D_FALSE);
+    if (!lite3d_texture_unit_allocate(&mRenderTextureUnit, LITE3D_TEXTURE_2D,
+        LITE3D_TEXTURE_QL_MEDIUM, LITE3D_TEXTURE_REPEAT, LITE3D_TEXTURE_FORMAT_RGBA,
+        RENDER_TEXTURE_WIDTH, RENDER_TEXTURE_HEIGHT, 1))
         return LITE3D_FALSE;
+    /* then texture allocated we can enable it */
+    lite3d_texture_unit_compression(LITE3D_TRUE);
 
     if (!initCube())
         return LITE3D_FALSE;
@@ -290,41 +293,53 @@ static int init(void)
         return LITE3D_FALSE;
 
 
+    /* init cameras */
     lite3d_camera_init(&mCamera01);
-
     lite3d_camera_perspective(&mCamera01, 0.1f, 100.0f, 45.0f, (float) DEFAULT_WIDTH / (float) DEFAULT_HEIGHT);
     lite3d_camera_set_position(&mCamera01, &cameraInitPos);
-    //lite3d_camera_pitch(&mCamera01, kmDegreesToRadians(90));
-    lite3d_camera_lookAt(&mCamera01, &nodePos[0]);
-    //lite3d_scene_node_rotate_angle(&mCamera01.cameraNode, &rotAxis, kmDegreesToRadians(90));
-    //lite3d_scene_node_rotate_angle(&mCamera01.cameraNode, &rotAxisY, kmDegreesToRadians(90));
+    lite3d_camera_lookAt(&mCamera01, &nodePos[1]);
+
+    lite3d_camera_init(&mCamera02);
+    lite3d_camera_perspective(&mCamera02, 0.1f, 100.0f, 45.0f, (float) DEFAULT_WIDTH / (float) DEFAULT_HEIGHT);
+    lite3d_camera_set_position(&mCamera02, &cameraInitPos2);
+    lite3d_camera_lookAt(&mCamera02, &nodePos[1]);
 
     lite3d_scene_mesh_init(&mScene);
-    for (; i < sizeof (mSceneNode) / sizeof (lite3d_mesh_node); ++i)
-    {
-        kmVec3 tmp = {
-            0.0f, 0.0f, 2.0f
-        };
+    lite3d_scene_mesh_init(&mSceneMain);
 
-        lite3d_mesh_node_init(&mSceneNode[i], &mCubeVbo);
-        lite3d_mesh_node_init(&mSceneNodeInherited[i], &mCubeVbo);
 
-        lite3d_scene_node_set_position(&mSceneNode[i].sceneNode, &nodePos[i]);
+    lite3d_mesh_node_init(&mSceneNode[0], &mCubeVbo);
+    lite3d_mesh_node_init(&mSceneNode[1], &mCubeVbo);
 
-        lite3d_scene_node_set_position(&mSceneNodeInherited[i].sceneNode, &tmp);
-        lite3d_scene_node_scale(&mSceneNodeInherited[i].sceneNode, &nodeScale[i]);
+    lite3d_scene_node_set_position(&mSceneNode[0].sceneNode, &nodePos[1]);
+    lite3d_scene_node_set_position(&mSceneNode[1].sceneNode, &nodePos[1]);
 
-        lite3d_scene_mesh_node_add(&mScene, &mSceneNode[i], NULL);
-        lite3d_mesh_node_attach_material(&mSceneNode[i], &mVintageBoxMaterial, 0);
 
-        lite3d_scene_mesh_node_add(&mScene, &mSceneNodeInherited[i], &mSceneNode[i].sceneNode);
-        lite3d_mesh_node_attach_material(&mSceneNodeInherited[i], &mBoxMaterial, 0);
-    }
+    lite3d_scene_mesh_node_add(&mScene, &mSceneNode[0], NULL);
+    lite3d_mesh_node_attach_material(&mSceneNode[0], &mBoxMaterial, 0);
+
+    lite3d_scene_mesh_node_add(&mSceneMain, &mSceneNode[1], NULL);
+    lite3d_mesh_node_attach_material(&mSceneNode[1], &mRenderTextureMaterial, 0);
+
 
     lite3d_scene_node_add(&mScene, &mCamera01.cameraNode, NULL);
-    lite3d_render_target_screen_attach_camera(&mCamera01);
-    //lite3d_camera_link_to(&mCamera01, &mSceneNode[2], LITE3D_CAMERA_LINK_ORIENTATION);
-    //lite3d_camera_tracking(&mCamera01, &mSceneNode[2]);
+    lite3d_scene_node_add(&mSceneMain, &mCamera02.cameraNode, NULL);
+
+    /* setup render targets */
+    lite3d_render_target_screen_attach_camera(&mCamera02);
+
+    /* create new render target and attach cam1 to it */
+    lite3d_render_target_init(&mRTT, RENDER_TEXTURE_WIDTH, RENDER_TEXTURE_HEIGHT);
+    lite3d_render_target_attach_camera(&mRTT, &mCamera01);
+    /* setup render target framebuffer */
+    if (!lite3d_framebuffer_setup(&mRTT.fb, &mRenderTextureUnit, 1,
+        LITE3D_FALSE, NULL, LITE3D_TRUE, LITE3D_FALSE))
+        return LITE3D_FALSE;
+
+    /* setup clear color to render texture */
+    mRTT.cleanColor = renderTextureClearColor;
+    /* attach render target to render system, now it will be render ! */
+    lite3d_render_target_add(&mRTT);
 
     return LITE3D_TRUE;
 }
@@ -332,13 +347,26 @@ static int init(void)
 static int shutdown(void)
 {
     lite3d_vbo_purge(&mCubeVbo);
-    lite3d_material_purge(&mVintageBoxMaterial);
+    lite3d_material_purge(&mRenderTextureMaterial);
+    lite3d_material_purge(&mBoxMaterial);
+
     lite3d_shader_program_purge(&mProgram);
+
     lite3d_scene_mesh_purge(&mScene);
-    lite3d_texture_unit_purge(&mVintageBoxUnit);
+    lite3d_scene_mesh_purge(&mSceneMain);
+    lite3d_texture_unit_purge(&mRenderTextureUnit);
     lite3d_texture_unit_purge(&mBoxUnit);
+
+    lite3d_render_target_purge(&mRTT);
     lite3d_resource_pack_close(mFileSysPack);
 
+    return LITE3D_TRUE;
+}
+
+static int pre_frame(void)
+{
+    lite3d_scene_node_rotate_angle(&mSceneNode[0].sceneNode, &KM_VEC3_POS_Z, 0.005f);
+    lite3d_scene_node_rotate_angle(&mSceneNode[1].sceneNode, &KM_VEC3_POS_Z, 0.001f);
     return LITE3D_TRUE;
 }
 
@@ -360,6 +388,7 @@ int main(int argc, char *args[])
     settings.renderLisneters.processEvent = process_events;
     settings.renderLisneters.preRender = init;
     settings.renderLisneters.postRender = shutdown;
+    settings.renderLisneters.preFrame = pre_frame;
 
     return !lite3d_main(&settings);
 }

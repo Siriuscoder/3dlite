@@ -169,18 +169,17 @@ void lite3d_render_loop(lite3d_render_listeners *callbacks)
     gRenderListeners = *callbacks;
 
     gPerfFreq = SDL_GetPerformanceFrequency();
-    
+
     /* depth test enable by default */
     lite3d_render_depth_test(LITE3D_TRUE);
-    
+
     /* clean statistic */
     memset(&gRenderStats, 0, sizeof (gRenderStats));
     /* init screen render target */
-    lite3d_render_target_init(&gScreenRt);
-    gScreenRt.width = lite3d_get_global_settings()->videoSettings.screenWidth;
-    gScreenRt.height = lite3d_get_global_settings()->videoSettings.screenHeight;
-    /* set screem framebuffer */
-    gScreenRt.fb = *lite3d_framebuffer_screen();
+    lite3d_render_target_init(&gScreenRt,
+        lite3d_get_global_settings()->videoSettings.screenWidth,
+        lite3d_get_global_settings()->videoSettings.screenHeight);
+
     lite3d_list_init(&gRenderTargets);
     lite3d_render_target_add(&gScreenRt);
 
@@ -235,7 +234,8 @@ lite3d_render_stats *lite3d_render_stats_get(void)
     return &gRenderStats;
 }
 
-void lite3d_render_target_init(lite3d_render_target *rt)
+int lite3d_render_target_init(lite3d_render_target *rt,
+    int32_t width, int32_t height)
 {
     SDL_assert(rt);
 
@@ -247,6 +247,21 @@ void lite3d_render_target_init(lite3d_render_target *rt)
     rt->cleanMask = GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT;
     rt->cleanColor.x = rt->cleanColor.y = rt->cleanColor.z = 0.3f;
     rt->cleanColor.w = 0.0f;
+    rt->width = width;
+    rt->height = height;
+
+    if (rt != &gScreenRt)
+    {
+        if (!lite3d_framebuffer_init(&rt->fb, width, height))
+            return LITE3D_FALSE;
+    }
+    else
+    {
+        if (!lite3d_framebuffer_screen_init(&rt->fb, width, height))
+            return LITE3D_FALSE;
+    }
+    
+    return LITE3D_TRUE;
 }
 
 void lite3d_render_target_purge(lite3d_render_target *rt)
@@ -255,6 +270,8 @@ void lite3d_render_target_purge(lite3d_render_target *rt)
     lookUnit *look = NULL;
 
     SDL_assert(rt);
+
+    lite3d_framebuffer_purge(&rt->fb);
     while ((node = lite3d_list_remove_first_link(&rt->lookSequence)) != NULL)
     {
         look = MEMBERCAST(lookUnit, node, rtLink);

@@ -99,6 +99,7 @@
       </df>
       <df name="samples">
         <in>3dlite_sample_minigun.c</in>
+        <in>3dlite_sample_render_to_texture.c</in>
         <in>3dlite_sample_rifle.c</in>
         <in>3dlite_sample_scene_node.c</in>
       </df>
@@ -153,7 +154,7 @@
           <buildCommandWorkingDir>build</buildCommandWorkingDir>
           <buildCommand>${MAKE} -f Makefile</buildCommand>
           <cleanCommand>${MAKE} -f Makefile clean</cleanCommand>
-          <executablePath>build/bin/Debug/3dlite_sample_minigun</executablePath>
+          <executablePath>build/bin/Debug/3dlite_sample_render_to_texture</executablePath>
           <ccTool>
             <incDir>
               <pElem>3dlite/include</pElem>
@@ -621,6 +622,11 @@
         </cTool>
       </folder>
       <item path="samples/3dlite_sample_minigun.c" ex="false" tool="0" flavor2="3">
+      </item>
+      <item path="samples/3dlite_sample_render_to_texture.c"
+            ex="false"
+            tool="0"
+            flavor2="3">
       </item>
       <item path="samples/3dlite_sample_rifle.c" ex="false" tool="0" flavor2="3">
       </item>

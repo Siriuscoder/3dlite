@@ -53,11 +53,20 @@
 
 #define LITE3D_TEXTURE_QL_NICEST    0x0001
 #define LITE3D_TEXTURE_QL_LOW       0x0002
-#define LITE3D_TEXTURE_QL_MIDDLE    0x0003
+#define LITE3D_TEXTURE_QL_MEDIUM    0x0003
 
 #define LITE3D_TEXTURE_CLAMP_TO_EDGE    0x0001
 #define LITE3D_TEXTURE_REPEAT           0x0002
 
+#define LITE3D_TEXTURE_FORMAT_ALPHA             0x1906
+#define LITE3D_TEXTURE_FORMAT_RGB               0x1907
+#define LITE3D_TEXTURE_FORMAT_RGBA              0x1908            
+#define LITE3D_TEXTURE_FORMAT_BRG               0x80E0            
+#define LITE3D_TEXTURE_FORMAT_BRGA              0x80E1
+#define LITE3D_TEXTURE_FORMAT_LUMINANCE         0x1909
+#define LITE3D_TEXTURE_FORMAT_LUMINANCE_ALPHA   0x190A
+#define LITE3D_TEXTURE_FORMAT_DEPTH             0x1902
+            
 typedef struct lite3d_image_filter
 {
     uint32_t filterID;
@@ -79,14 +88,16 @@ typedef struct lite3d_texture_unit
 {
     uint32_t textureID;
     uint32_t textureTarget;
+    int32_t texFormat;
+    int32_t texiFormat;
     int32_t imageType;
-    int32_t imageGLFormat;
     int32_t imageHeight;
     int32_t imageWidth;
     int32_t imageDepth;
     size_t imageSize;
     int8_t imageBPP;
     int8_t loadedMipmaps;
+    int8_t generatedMipmaps;
     int16_t minFilter;
     int16_t magFilter;
     uint8_t wrapping;
@@ -99,13 +110,25 @@ LITE3D_CEXPORT void lite3d_texture_technique_reset_filters(void);
 LITE3D_CEXPORT int lite3d_texture_technique_init(const lite3d_texture_technique_settings *settings);
 LITE3D_CEXPORT void lite3d_texture_technique_shut(void);
 
-LITE3D_CEXPORT int lite3d_texture_unit_from_resource(lite3d_texture_unit *texture, 
+/* load texture from resource file using Devil */
+LITE3D_CEXPORT int lite3d_texture_unit_from_resource(lite3d_texture_unit *textureUnit, 
     const lite3d_resource_file *resource, uint32_t imageType, uint32_t textureTarget, 
     int8_t quality, uint8_t wrapping);
-LITE3D_CEXPORT int lite3d_texture_unit_from_memory(lite3d_texture_unit *texture, const void *buffer, 
-    size_t size, uint32_t imageType, uint32_t textureTarget, int8_t quality, uint8_t wrapping);
+
+/* allocate empty texture object */
+LITE3D_CEXPORT int lite3d_texture_unit_allocate(lite3d_texture_unit *textureUnit, 
+    uint32_t textureTarget, int8_t quality, uint8_t wrapping, uint16_t format,
+    int32_t height, int32_t width, int32_t depth);
+
+/* update specified mipmap surface */
+LITE3D_CEXPORT int lite3d_texture_unit_set_pixels(lite3d_texture_unit *textureUnit, 
+    uint32_t level, int32_t width, int32_t height, int32_t depth,
+    int32_t widthOff, int32_t heightOff, int32_t depthOff, void *pixels);
+
 LITE3D_CEXPORT void lite3d_texture_unit_purge(lite3d_texture_unit *texture);
 LITE3D_CEXPORT void lite3d_texture_unit_bind(lite3d_texture_unit *texture, uint16_t layer);
 LITE3D_CEXPORT void lite3d_texture_unit_unbind(lite3d_texture_unit *texture, uint16_t layer);
+
+LITE3D_CEXPORT void lite3d_texture_unit_compression(uint8_t on);
 
 #endif

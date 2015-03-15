@@ -81,7 +81,8 @@ typedef struct lite3d_render_target
 LITE3D_CEXPORT void lite3d_render_loop(lite3d_render_listeners *callbacks);
 LITE3D_CEXPORT lite3d_render_stats *lite3d_render_stats_get(void);
 
-LITE3D_CEXPORT void lite3d_render_target_init(lite3d_render_target *rt);
+LITE3D_CEXPORT int lite3d_render_target_init(lite3d_render_target *rt, 
+    int32_t width, int32_t height);
 LITE3D_CEXPORT void lite3d_render_target_purge(lite3d_render_target *rt);
 LITE3D_CEXPORT void lite3d_render_target_add(lite3d_render_target *rt);
 LITE3D_CEXPORT void lite3d_render_target_erase(lite3d_render_target *rt);

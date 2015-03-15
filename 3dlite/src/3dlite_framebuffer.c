@@ -26,7 +26,6 @@
 #include <3dlite/3dlite_framebuffer.h>
 
 static lite3d_framebuffer *gCurrentFb = NULL;
-static lite3d_framebuffer gScreenFb;
 static int gMaxColorAttachments = 0;
 static int gMaxFramebufferSize = 0;
 
@@ -214,15 +213,6 @@ int lite3d_framebuffer_technique_init(void)
     SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Framebuffer max size: %d",
         gMaxFramebufferSize);
 
-    memset(&gScreenFb, 0, sizeof (gScreenFb));
-
-    gScreenFb.framebufferId = 0; /* important: screen FBO`s id = 0 ! */
-    gScreenFb.width = lite3d_get_global_settings()->videoSettings.screenWidth;
-    gScreenFb.height = lite3d_get_global_settings()->videoSettings.screenHeight;
-    gScreenFb.status = LITE3D_FRAMEBUFFER_STATUS_OK;
-    gScreenFb.useColorbuffer = gScreenFb.useDepthbuffer =
-        gScreenFb.useStencilbuffer = LITE3D_TRUE;
-
     return LITE3D_TRUE;
 }
 
@@ -390,15 +380,15 @@ int lite3d_framebuffer_setup(lite3d_framebuffer *fb,
         return LITE3D_FALSE;
     }
 
-/*
- * This is similar to the case above (Color texture, Depth texture) 
- * except that since there is no color buffer, call glDrawBuffer(GL_NONE) 
- * before or after calling glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, fb) 
- * and then render. When you are done, call glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0)
- * to render to the main framebuffer. This is important, call glDrawBuffer(GL_BACK) 
- * after. If you call before glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0), 
- * a GL error will be raised.
- */
+    /*
+     * This is similar to the case above (Color texture, Depth texture) 
+     * except that since there is no color buffer, call glDrawBuffer(GL_NONE) 
+     * before or after calling glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, fb) 
+     * and then render. When you are done, call glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0)
+     * to render to the main framebuffer. This is important, call glDrawBuffer(GL_BACK) 
+     * after. If you call before glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0), 
+     * a GL error will be raised.
+     */
     glDrawBuffer(fb->useColorbuffer ? GL_BACK : GL_NONE);
     glReadBuffer(fb->useColorbuffer ? GL_BACK : GL_NONE);
 
@@ -411,15 +401,25 @@ int lite3d_framebuffer_setup(lite3d_framebuffer *fb,
 
     /* bind screen by current FBO */
     glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, 0);
-    glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, gScreenFb.framebufferId);
+    glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
 
     fb->status = LITE3D_FRAMEBUFFER_STATUS_OK;
     return LITE3D_TRUE;
 }
 
-lite3d_framebuffer *lite3d_framebuffer_screen(void)
+int lite3d_framebuffer_screen_init(lite3d_framebuffer *fb,
+    int32_t width, int32_t height)
 {
-    return &gScreenFb;
+    memset(fb, 0, sizeof (lite3d_framebuffer));
+
+    fb->framebufferId = 0; /* important: screen FBO`s id always = 0 ! */
+    fb->width = width;
+    fb->height = height;
+    fb->status = LITE3D_FRAMEBUFFER_STATUS_OK;
+    fb->useColorbuffer = fb->useDepthbuffer =
+        fb->useStencilbuffer = LITE3D_TRUE;
+
+    return LITE3D_TRUE;
 }
 
 void lite3d_framebuffer_switch(lite3d_framebuffer *fb)
