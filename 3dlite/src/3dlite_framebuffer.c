@@ -270,7 +270,7 @@ int lite3d_framebuffer_setup(lite3d_framebuffer *fb,
     /* setup color attachment */
     if (colorAttachments && colorAttachmentsCount > 0)
     {
-        int i = 0;
+        size_t i = 0;
         for (; i < colorAttachmentsCount; i++)
         {
             switch (colorAttachments[i].textureTarget)
@@ -399,6 +399,12 @@ int lite3d_framebuffer_setup(lite3d_framebuffer *fb,
         return LITE3D_FALSE;
     }
 
+    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "FBO: 0x%x validated, %dx%d, color %s, "
+        "depth %s, stencil %s", fb->framebufferId, fb->width, fb->height,
+        fb->useColorbuffer ? (colorAttachments ? "texture" : "renderbuffer") : "none",
+        fb->useDepthbuffer ? (depthAttachments ? "texture" : "renderbuffer") : "none",
+        fb->useStencilbuffer ? "renderbuffer" : "none");
+
     /* bind screen by current FBO */
     glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, 0);
     glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
@@ -410,6 +416,7 @@ int lite3d_framebuffer_setup(lite3d_framebuffer *fb,
 int lite3d_framebuffer_screen_init(lite3d_framebuffer *fb,
     int32_t width, int32_t height)
 {
+    SDL_assert(fb);
     memset(fb, 0, sizeof (lite3d_framebuffer));
 
     fb->framebufferId = 0; /* important: screen FBO`s id always = 0 ! */

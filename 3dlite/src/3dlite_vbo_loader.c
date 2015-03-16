@@ -265,7 +265,7 @@ static int ai_node_load_to_vbo(lite3d_vbo *vbo, const struct aiScene *scene,
             return LITE3D_FALSE;
 
         /* set material index to currently added vao */
-        MEMBERCAST(lite3d_vao, lite3d_list_last_link(&vbo->vaos), inVbo)->
+        LITE3D_MEMBERCAST(lite3d_vao, lite3d_list_last_link(&vbo->vaos), inVbo)->
             materialIndex = mesh->mMaterialIndex;
 
         lite3d_free(vertices);
@@ -505,7 +505,7 @@ void lite3d_vbo_order_mat_indexes(lite3d_vbo *vbo)
     for (vaoLink = vbo->vaos.l.next;
         vaoLink != &vbo->vaos.l; vaoLink = lite3d_list_next(vaoLink))
     {
-        MEMBERCAST(lite3d_vao, vaoLink, inVbo)->
+        LITE3D_MEMBERCAST(lite3d_vao, vaoLink, inVbo)->
             materialIndex = materialIndex++;
     }
 }

@@ -36,7 +36,7 @@ static void scene_recursive_nodes_update(lite3d_scene *scene,
     for (nodeLink = node->childNodes.l.next;
         nodeLink != &node->childNodes.l; nodeLink = lite3d_list_next(nodeLink))
     {
-        child = MEMBERCAST(lite3d_scene_node, nodeLink, nodeLink);
+        child = LITE3D_MEMBERCAST(lite3d_scene_node, nodeLink, nodeLink);
         child->recalc = recalcNode ? LITE3D_TRUE : child->recalc;
         if (child->enabled)
         {

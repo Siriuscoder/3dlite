@@ -46,7 +46,7 @@ static void mqr_unit_render(lite3d_material_pass *pass, void *data)
     for (mqrListNode = mqrUnit->nodes.l.next;
         mqrListNode != &mqrUnit->nodes.l; mqrListNode = lite3d_list_next(mqrListNode))
     {
-        mqrNode = MEMBERCAST(lite3d_mqr_node, mqrListNode, unit);
+        mqrNode = LITE3D_MEMBERCAST(lite3d_mqr_node, mqrListNode, unit);
         if (!mqrNode->node->sceneNode.enabled)
             continue;
         if (!mqrNode->node->sceneNode.renderable)
@@ -98,7 +98,7 @@ static void mqr_render(struct lite3d_scene *scene)
     for (mqrUnitNode = scene->renderUnitQueue.l.next;
         mqrUnitNode != &scene->renderUnitQueue.l; mqrUnitNode = lite3d_list_next(mqrUnitNode))
     {
-        mqrUnit = MEMBERCAST(lite3d_mqr_unit, mqrUnitNode, queued);
+        mqrUnit = LITE3D_MEMBERCAST(lite3d_mqr_unit, mqrUnitNode, queued);
 
         lite3d_material_by_pass_render(mqrUnit->material,
             mqr_unit_render, mqrUnit);
@@ -116,7 +116,7 @@ static lite3d_mqr_node *check_mqr_material_index_exist(lite3d_mqr_unit *unit,
     for (mqrListNode = unit->nodes.l.next;
         mqrListNode != &unit->nodes.l; mqrListNode = lite3d_list_next(mqrListNode))
     {
-        mqrNode = MEMBERCAST(lite3d_mqr_node, mqrListNode, unit);
+        mqrNode = LITE3D_MEMBERCAST(lite3d_mqr_node, mqrListNode, unit);
         if (mqrNode->node == node && mqrNode->vao->materialIndex == index)
             return mqrNode;
     }
@@ -133,7 +133,7 @@ static lite3d_mqr_node *check_mqr_node_exist(lite3d_mqr_unit *unit,
     for (mqrListNode = unit->nodes.l.next;
         mqrListNode != &unit->nodes.l; mqrListNode = lite3d_list_next(mqrListNode))
     {
-        mqrNode = MEMBERCAST(lite3d_mqr_node, mqrListNode, unit);
+        mqrNode = LITE3D_MEMBERCAST(lite3d_mqr_node, mqrListNode, unit);
         if (mqrNode->node == node)
             return mqrNode;
     }
@@ -151,7 +151,7 @@ static void mqr_unit_add_node(lite3d_mqr_unit *unit, lite3d_mqr_node *node)
     for (mqrListNode = unit->nodes.l.next;
         mqrListNode != &unit->nodes.l; mqrListNode = lite3d_list_next(mqrListNode))
     {
-        mqrNode = MEMBERCAST(lite3d_mqr_node, mqrListNode, unit);
+        mqrNode = LITE3D_MEMBERCAST(lite3d_mqr_node, mqrListNode, unit);
         if (mqrNode->vao == node->vao)
         {
             lite3d_list_insert_after_link(&node->unit, &mqrNode->unit);
@@ -191,10 +191,10 @@ void lite3d_scene_mesh_purge(lite3d_scene *scene)
     SDL_assert(scene);
     while ((mqrUnitNode = lite3d_list_remove_first_link(&scene->renderUnitQueue)) != NULL)
     {
-        mqrUnit = MEMBERCAST(lite3d_mqr_unit, mqrUnitNode, queued);
+        mqrUnit = LITE3D_MEMBERCAST(lite3d_mqr_unit, mqrUnitNode, queued);
         while ((mqrListNode = lite3d_list_remove_first_link(&mqrUnit->nodes)) != NULL)
         {
-            mqrNode = MEMBERCAST(lite3d_mqr_node, mqrListNode, unit);
+            mqrNode = LITE3D_MEMBERCAST(lite3d_mqr_node, mqrListNode, unit);
             lite3d_free(mqrNode);
         }
 
@@ -218,7 +218,7 @@ int lite3d_mesh_node_attach_material(lite3d_mesh_node *node,
     for (mqrUnitNode = scene->renderUnitQueue.l.next;
         mqrUnitNode != &scene->renderUnitQueue.l; mqrUnitNode = lite3d_list_next(mqrUnitNode))
     {
-        mqrUnitTmp = MEMBERCAST(lite3d_mqr_unit, mqrUnitNode, queued);
+        mqrUnitTmp = LITE3D_MEMBERCAST(lite3d_mqr_unit, mqrUnitNode, queued);
         if (mqrUnitTmp->material == material)
             mqrUnit = mqrUnitTmp;
 
@@ -280,7 +280,7 @@ int lite3d_scene_mesh_node_remove(lite3d_scene *scene,
     for (mqrUnitNode = scene->renderUnitQueue.l.next;
         mqrUnitNode != &scene->renderUnitQueue.l; mqrUnitNode = lite3d_list_next(mqrUnitNode))
     {
-        mqrUnit = MEMBERCAST(lite3d_mqr_unit, mqrUnitNode, queued);
+        mqrUnit = LITE3D_MEMBERCAST(lite3d_mqr_unit, mqrUnitNode, queued);
         /* check render unit node exist */
         while ((mqrNode = check_mqr_node_exist(mqrUnit, node)) != NULL)
         {

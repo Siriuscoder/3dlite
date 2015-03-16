@@ -198,7 +198,7 @@ void lite3d_vbo_purge(struct lite3d_vbo *vbo)
     while ((vaoLink = lite3d_list_first_link(&vbo->vaos)) != NULL)
     {
         lite3d_list_unlink_link(vaoLink);
-        lite3d_vao_purge(MEMBERCAST(lite3d_vao, vaoLink, inVbo));
+        lite3d_vao_purge(LITE3D_MEMBERCAST(lite3d_vao, vaoLink, inVbo));
     }
 
     glDeleteBuffers(1, &vbo->vboVerticesID);
@@ -217,7 +217,7 @@ void lite3d_vbo_draw(struct lite3d_vbo *vbo)
     for (vaoLink = vbo->vaos.l.next;
         vaoLink != &vbo->vaos.l; vaoLink = lite3d_list_next(vaoLink))
     {
-        vao = MEMBERCAST(lite3d_vao, vaoLink, inVbo);
+        vao = LITE3D_MEMBERCAST(lite3d_vao, vaoLink, inVbo);
         lite3d_vao_draw(vao);
     }
 }
@@ -332,7 +332,7 @@ lite3d_vao *lite3d_vao_get_by_index(struct lite3d_vbo *vbo,
     for (vaoLink = vbo->vaos.l.next;
         vaoLink != &vbo->vaos.l; vaoLink = lite3d_list_next(vaoLink))
     {
-        vao = MEMBERCAST(lite3d_vao, vaoLink, inVbo);
+        vao = LITE3D_MEMBERCAST(lite3d_vao, vaoLink, inVbo);
         if (vao->materialIndex == materialIndex)
             return vao;
     }

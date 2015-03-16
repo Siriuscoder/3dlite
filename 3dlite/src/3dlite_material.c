@@ -28,7 +28,7 @@ static void lite3d_material_pass_purge(lite3d_material_pass *pass)
 
     while ((parameterNode = lite3d_list_remove_first_link(&pass->parameters)) != NULL)
     {
-        lite3d_free(MEMBERCAST(lite3d_material_pass_parameter,
+        lite3d_free(LITE3D_MEMBERCAST(lite3d_material_pass_parameter,
             parameterNode, parameterLink));
     }
 }
@@ -44,7 +44,7 @@ static lite3d_material_pass_parameter *lite3d_material_pass_find_parameter(
         parameterNode != &pass->parameters.l;
         parameterNode = lite3d_list_next(parameterNode))
     {
-        parameter = MEMBERCAST(lite3d_material_pass_parameter, parameterNode, parameterLink);
+        parameter = LITE3D_MEMBERCAST(lite3d_material_pass_parameter, parameterNode, parameterLink);
         if (strcmp(parameter->parameter->name, name) == 0)
             return parameter;
     }
@@ -68,7 +68,7 @@ void lite3d_material_purge(
 
     while ((passNode = lite3d_list_remove_first_link(&material->passes)) != NULL)
     {
-        pass = MEMBERCAST(lite3d_material_pass, passNode, passLink);
+        pass = LITE3D_MEMBERCAST(lite3d_material_pass, passNode, passLink);
         lite3d_material_pass_purge(pass);
         lite3d_free(pass);
     }
@@ -173,7 +173,7 @@ lite3d_material_pass *lite3d_material_get_pass(
     for (passNode = material->passes.l.next;
         passNode != &material->passes.l; passNode = lite3d_list_next(passNode))
     {
-        pass = MEMBERCAST(lite3d_material_pass, passNode, passLink);
+        pass = LITE3D_MEMBERCAST(lite3d_material_pass, passNode, passLink);
         if (pass->passNo == no)
             return pass;
     }
@@ -192,7 +192,7 @@ void lite3d_material_by_pass_render(lite3d_material *material,
     for (passNode = material->passes.l.next;
         passNode != &material->passes.l; passNode = lite3d_list_next(passNode))
     {
-        pass = MEMBERCAST(lite3d_material_pass, passNode, passLink);
+        pass = LITE3D_MEMBERCAST(lite3d_material_pass, passNode, passLink);
 
         /* bind current shander first */
         if (prevProg != pass->program)
@@ -223,7 +223,7 @@ void lite3d_material_pass_set_params(lite3d_material *material,
         parameterNode != &pass->parameters.l;
         parameterNode = lite3d_list_next(parameterNode))
     {
-        parameter = MEMBERCAST(lite3d_material_pass_parameter, 
+        parameter = LITE3D_MEMBERCAST(lite3d_material_pass_parameter, 
             parameterNode, parameterLink);
         
         if (!changed || parameter->parameter->persist)

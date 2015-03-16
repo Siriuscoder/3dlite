@@ -20,24 +20,26 @@
 
 #include <3dlite/3dlite_common.h>
 
-#ifdef OFFSETOF
-#undef OFFSETOF
+#ifdef LITE3D_OFFSETOF
+#undef LITE3D_OFFSETOF
 #endif
 
-#ifdef MEMBERCAST
-#undef MEMBERCAST
+#ifdef LITE3D_MEMBERCAST
+#undef LITE3D_MEMBERCAST
 #endif
 
-#define OFFSETOF(tstruct, field)            ((size_t) &((tstruct*)0x0)->field)
-#define MEMBERCAST(tstruct, pfield, field)  ((tstruct*)((size_t)pfield - \
-    OFFSETOF(tstruct, field)))
+#define LITE3D_OFFSETOF(tstruct, field)            ((size_t) &((tstruct*)0x0)->field)
+#define LITE3D_MEMBERCAST(tstruct, pfield, field)  ((tstruct*)((size_t)pfield - \
+    LITE3D_OFFSETOF(tstruct, field)))
 
 #define LITE3D_MEMMODEL_MALLOC      0x01
 #define LITE3D_MEMMODEL_NEDPOOL     0x02
 
 #define LITE3D_POOL_MAX             0x06
 #define LITE3D_POOL_COMMON          0x00
+/* file cache */
 #define LITE3D_POOL_NO1             0x01
+/* Devil allocator */
 #define LITE3D_POOL_NO2             0x02
 #define LITE3D_POOL_NO3             0x03
 #define LITE3D_POOL_NO4             0x04

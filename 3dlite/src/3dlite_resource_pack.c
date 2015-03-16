@@ -32,7 +32,7 @@ static lite3d_resource_file *lookup_resource_index(lite3d_resource_pack *pack, c
     if(index)
     {
         /* OK, found */
-        resource = MEMBERCAST(lite3d_resource_file, index, cached);
+        resource = LITE3D_MEMBERCAST(lite3d_resource_file, index, cached);
     }
     
     return resource;
@@ -59,7 +59,7 @@ static lite3d_resource_file *create_resource_index(lite3d_resource_pack *pack, c
 static void resource_index_delete(lite3d_rb_node *x)
 {
     lite3d_resource_file *resource = 
-        MEMBERCAST(lite3d_resource_file, x, cached);
+        LITE3D_MEMBERCAST(lite3d_resource_file, x, cached);
 
     lite3d_resource_pack_file_purge(resource);
     lite3d_list_unlink_link(&resource->priority);
@@ -74,7 +74,7 @@ static void resource_index_delete(lite3d_rb_node *x)
 static void resource_purge_iter(lite3d_rb_tree* tree, lite3d_rb_node *x)
 {
     lite3d_resource_file *resource = 
-        MEMBERCAST(lite3d_resource_file, x, cached);
+        LITE3D_MEMBERCAST(lite3d_resource_file, x, cached);
     
     lite3d_resource_pack_file_purge(resource);
 }
@@ -344,7 +344,7 @@ void lite3d_resource_pack_purge_unused(lite3d_resource_pack *pack)
         return;
     
     last = lite3d_list_last_link(&pack->priorityList);
-    resource = MEMBERCAST(lite3d_resource_file, last, priority);
+    resource = LITE3D_MEMBERCAST(lite3d_resource_file, last, priority);
     
     lite3d_resource_pack_file_purge(resource);
 }
