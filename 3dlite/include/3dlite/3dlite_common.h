@@ -44,12 +44,12 @@
 #   endif
 
 
-#   ifdef _WINDLL
+#   ifdef WIN_3DLITE_DLL
 // When making the DLL, export tagged symbols, so they appear
 // in the import library.
 #   define LITE3D_EXPORT __declspec(dllexport)
 #   define LITE3D_CLASS_EXPORT LITE3D_EXPORT
-#   elif !defined(_WINDLL)
+#   elif !defined(WIN_3DLITE_DLL)
         // We must be _using_ the DLL, so import symbols instead.
 #   define LITE3D_EXPORT
 #   define LITE3D_CLASS_EXPORT __declspec(dllimport)

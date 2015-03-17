@@ -5,7 +5,10 @@ if(UNIX)
 include(FindPkgConfig)
 endif()
 
+# Configuration
 set(CMAKE_CONFIGURATION_TYPES Debug Release)
+# Platform configuration
+set(PLATFORM_TYPE PLATFORM_${CMAKE_SYSTEM_NAME})
 
 # Specify build paths
 if(MSVC)
@@ -18,7 +21,7 @@ else()
 		set(CMAKE_BUILD_TYPE Debug)
 	endif()
 
-	message(STATUS "Build configuration (${PROJECT_NAME}): ${CMAKE_BUILD_TYPE}")
+	message(STATUS "Build configuration (${PROJECT_NAME}): ${CMAKE_BUILD_TYPE} : ${PLATFORM_TYPE}")
 	
 	set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib/${CMAKE_BUILD_TYPE})
 	set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib/${CMAKE_BUILD_TYPE})
@@ -46,7 +49,7 @@ elseif(MSVC)
 	endif()
 endif()
 
-add_definitions(-DPLATFORM_${CMAKE_SYSTEM_NAME})
+add_definitions(-D${PLATFORM_TYPE})
 
 if(UNIX)
 pkg_search_module(SDL2 REQUIRED sdl2)
@@ -77,7 +80,9 @@ if(NOT ASSIMP_FOUND)
 endif()
 
 include_directories("${PROJECT_SOURCE_DIR}/3dlite/include")
+include_directories("${PROJECT_SOURCE_DIR}/3dlitepp/include")
 
 add_subdirectory("${PROJECT_SOURCE_DIR}/3dlite/")
+add_subdirectory("${PROJECT_SOURCE_DIR}/3dlitepp/")
 add_subdirectory("${PROJECT_SOURCE_DIR}/tests/")
 add_subdirectory("${PROJECT_SOURCE_DIR}/samples/")

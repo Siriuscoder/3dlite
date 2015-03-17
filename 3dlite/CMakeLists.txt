@@ -139,7 +139,7 @@ add_library(3dlite SHARED ${3DLITE_SOURCES} ${3DLITE_HEADERS})
 
 if(MSVC)
 target_compile_definitions(3dlite PRIVATE
-"$<BUILD_INTERFACE:_WINDLL>")
+"$<BUILD_INTERFACE:WIN_3DLITE_DLL>")
 target_include_directories(3dlite PRIVATE 
 "$<BUILD_INTERFACE:${SDL2_INCLUDE_DIR}>"
 "$<BUILD_INTERFACE:${IL_INCLUDE_DIR}>"
