@@ -97,7 +97,11 @@ include/3dlitepp/as_helpers/scriptarray.h
 include/3dlitepp/as_helpers/scriptbuilder.h
 include/3dlitepp/as_helpers/scriptdictionary.h
 include/3dlitepp/as_helpers/scripthelper.h
-include/3dlitepp/as_helpers/scriptmath.h)
+include/3dlitepp/as_helpers/scriptmath.h
+include/3dlitepp/as_helpers/scriptstdstring.h
+include/3dlitepp/3dlitepp_as_runner.h
+include/3dlitepp/3dlitepp_main.h
+include/3dlitepp/3dlitepp_common.h)
 
 set(LITE3DPP_SOURCE
 src/as_helpers/debugger.cpp
@@ -105,7 +109,11 @@ src/as_helpers/scriptarray.cpp
 src/as_helpers/scriptbuilder.cpp
 src/as_helpers/scriptdictionary.cpp
 src/as_helpers/scripthelper.cpp
-src/as_helpers/scriptmath.cpp)
+src/as_helpers/scriptmath.cpp
+src/as_helpers/scriptstdstring.cpp
+src/as_helpers/scriptstdstring_utils.cpp
+src/3dlitepp_as_runner.cpp
+src/3dlitepp_main.cpp)
 
 add_library(3dlitepp SHARED ${LITE3DPP_SOURCE} ${LITE3DPP_HEADERS})
 
