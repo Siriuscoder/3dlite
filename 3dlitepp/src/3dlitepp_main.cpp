@@ -20,4 +20,24 @@
 namespace lite3dpp
 {
 
+    Main::Main()
+    {
+
+    }
+
+    bool Main::initFromConfig(const char *config)
+    {
+
+    }
+
+    const lite3d_global_settings &Main::getSettings() const
+    {
+        return *lite3d_get_global_settings();
+    }
+
+    Main::~Main()
+    {
+
+
+    }
 }

@@ -183,13 +183,6 @@ int lite3d_texture_technique_init(const lite3d_texture_technique_settings *setti
         }
     }
 
-    if (!GLEW_SGIS_generate_mipmap)
-    {
-        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
-            "%s: SGIS_generate_mipmap not supported..", __FUNCTION__);
-        return LITE3D_FALSE;
-    }
-
     if (!GLEW_EXT_texture_filter_anisotropic)
     {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,

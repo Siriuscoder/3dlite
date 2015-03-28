@@ -17,6 +17,7 @@
 *******************************************************************************/
 #pragma once
 
+#include <3dlite/3dlite_main.h>
 #include <3dlitepp/3dlitepp_common.h>
 #include <3dlitepp/3dlitepp_manageable.h>
 
@@ -26,7 +27,13 @@ namespace lite3dpp
     {
     public:
         
-        Main(const lited3dpp_string &configPath);
+        Main();
+        
+        bool initFromConfig(const char *config);
+        const lite3d_global_settings &getSettings() const;
+        
+        
+        
         ~Main();
     };
 }

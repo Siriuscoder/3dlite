@@ -145,6 +145,10 @@
             <in>scriptstdstring.cpp</in>
             <in>scriptstdstring_utils.cpp</in>
           </df>
+          <df name="json">
+            <in>JSON.cpp</in>
+            <in>JSONValue.cpp</in>
+          </df>
           <in>3dlitepp_as_runner.cpp</in>
           <in>3dlitepp_main.cpp</in>
           <in>3dlitepp_manageable.cpp</in>
@@ -184,6 +188,7 @@
           <in>3dlite_common_test.cpp</in>
           <in>3dlite_file_cache_test.cpp</in>
           <in>3dlite_vbo_test.cpp</in>
+          <in>3dlitepp_main_test.cpp</in>
         </df>
         <df name="gtest">
           <df name="src">
@@ -232,7 +237,7 @@
           <buildCommandWorkingDir>build</buildCommandWorkingDir>
           <buildCommand>${MAKE} -f Makefile</buildCommand>
           <cleanCommand>${MAKE} -f Makefile clean</cleanCommand>
-          <executablePath>build/bin/Debug/3dlite_sample_render_to_texture</executablePath>
+          <executablePath>build/bin/Debug/3dlite_tests</executablePath>
           <ccTool>
             <incDir>
               <pElem>3dlite/include</pElem>
@@ -973,6 +978,14 @@
         <ccTool flags="1">
         </ccTool>
       </item>
+      <item path="3dlitepp/src/json/JSON.cpp" ex="false" tool="1" flavor2="8">
+        <ccTool flags="1">
+        </ccTool>
+      </item>
+      <item path="3dlitepp/src/json/JSONValue.cpp" ex="false" tool="1" flavor2="8">
+        <ccTool flags="1">
+        </ccTool>
+      </item>
       <folder path="0">
         <cTool>
           <incDir>
@@ -1030,6 +1043,18 @@
         </ccTool>
       </folder>
       <folder path="0/3dlitepp/src/as_helpers">
+        <ccTool>
+          <incDir>
+            <pElem>/usr/include/SDL2</pElem>
+            <pElem>build/3dlitepp</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>_3dlitepp_EXPORTS</Elem>
+            <Elem>_REENTRANT</Elem>
+          </preprocessorList>
+        </ccTool>
+      </folder>
+      <folder path="0/3dlitepp/src/json">
         <ccTool>
           <incDir>
             <pElem>/usr/include/SDL2</pElem>
@@ -1109,7 +1134,6 @@
       <folder path="0/tests/functionaly">
         <ccTool>
           <incDir>
-            <pElem>3dlite++/include</pElem>
             <pElem>/usr/include/SDL2</pElem>
             <pElem>build/tests/functionaly</pElem>
           </incDir>
@@ -1217,6 +1241,13 @@
         </ccTool>
       </item>
       <item path="tests/functionaly/3dlite_vbo_test.cpp"
+            ex="false"
+            tool="1"
+            flavor2="8">
+        <ccTool flags="0">
+        </ccTool>
+      </item>
+      <item path="tests/functionaly/3dlitepp_main_test.cpp"
             ex="false"
             tool="1"
             flavor2="8">
@@ -1367,6 +1398,11 @@
             flavor2="0">
       </item>
       <item path="CMakeFiles/2.8.12.2/CompilerIdCXX/CMakeCXXCompilerId.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="tests/functionaly/3dlitepp_main_test.cpp"
             ex="false"
             tool="1"
             flavor2="0">

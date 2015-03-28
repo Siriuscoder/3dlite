@@ -45,8 +45,10 @@ unset(HEADERS_LIST)
 
 source_files("src")
 source_files("src/as_helpers")
+source_files("src/json")
 headers_files("include/3dlitepp")
 headers_files("include/3dlitepp/as_helpers")
+headers_files("include/3dlitepp/json")
 
 add_library(3dlitepp SHARED ${SOURCES_LIST} ${HEADERS_LIST})
 
