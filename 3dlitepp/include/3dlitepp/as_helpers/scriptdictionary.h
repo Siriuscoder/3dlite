@@ -18,7 +18,7 @@
 #endif
 
 #include <map>
-
+#include <3dlitepp/3dlitepp_manageable.h>
 // Sometimes it may be desired to use the same method names as used by C++ STL.
 // This may for example reduce time when converting code from script to C++ or
 // back.
@@ -94,25 +94,25 @@ public:
 	CScriptDictionary &operator =(const CScriptDictionary &other);
 
 	// Sets a key/value pair
-	void Set(const std::string &key, void *value, int typeId);
-	void Set(const std::string &key, const asINT64 &value);
-	void Set(const std::string &key, const double &value);
+	void Set(const lite3dpp::lited3dpp_string &key, void *value, int typeId);
+	void Set(const lite3dpp::lited3dpp_string &key, const asINT64 &value);
+	void Set(const lite3dpp::lited3dpp_string &key, const double &value);
 
 	// Gets the stored value. Returns false if the value isn't compatible with the informed typeId
-	bool Get(const std::string &key, void *value, int typeId) const;
-	bool Get(const std::string &key, asINT64 &value) const;
-	bool Get(const std::string &key, double &value) const;
+	bool Get(const lite3dpp::lited3dpp_string &key, void *value, int typeId) const;
+	bool Get(const lite3dpp::lited3dpp_string &key, asINT64 &value) const;
+	bool Get(const lite3dpp::lited3dpp_string &key, double &value) const;
 
 	// Index accessors. If the dictionary is not const it inserts the value if it doesn't already exist
 	// If the dictionary is const then a script exception is set if it doesn't exist and a null pointer is returned
-	CScriptDictValue *operator[](const std::string &key);
-	const CScriptDictValue *operator[](const std::string &key) const;
+	CScriptDictValue *operator[](const lite3dpp::lited3dpp_string &key);
+	const CScriptDictValue *operator[](const lite3dpp::lited3dpp_string &key) const;
 
 	// Returns the type id of the stored value, or negative if it doesn't exist
-	int GetTypeId(const std::string &key) const;
+	int GetTypeId(const lite3dpp::lited3dpp_string &key) const;
 
 	// Returns true if the key is set
-	bool Exists(const std::string &key) const;
+	bool Exists(const lite3dpp::lited3dpp_string &key) const;
 
 	// Returns true if there are no key/value pairs in the dictionary
 	bool IsEmpty() const;
@@ -121,7 +121,7 @@ public:
 	asUINT GetSize() const;
 
 	// Deletes the key
-	void Delete(const std::string &key);
+	void Delete(const lite3dpp::lited3dpp_string &key);
 
 	// Deletes all keys
 	void DeleteAll();
@@ -144,7 +144,7 @@ public:
 		bool operator!=(const CIterator &other) const;
 
 		// Accessors
-		const std::string &GetKey() const;
+		const lite3dpp::lited3dpp_string &GetKey() const;
 		int                GetTypeId() const;
 		bool               GetValue(asINT64 &value) const;
 		bool               GetValue(double &value) const;
@@ -155,11 +155,12 @@ public:
 
 		CIterator();
 		CIterator(const CScriptDictionary &dict,
-		          std::map<std::string, CScriptDictValue>::const_iterator it);
+		          lite3dpp::stl<lite3dpp::lited3dpp_string, 
+                  CScriptDictValue>::map::const_iterator it);
 
 		CIterator &operator=(const CIterator &) {return *this;} // Not used
 
-		std::map<std::string, CScriptDictValue>::const_iterator m_it;
+		lite3dpp::stl<lite3dpp::lited3dpp_string, CScriptDictValue>::map::const_iterator m_it;
 		const CScriptDictionary &m_dict;
 	};
 
@@ -190,7 +191,7 @@ protected:
 
 	// TODO: memory: The allocator should use the asAllocMem and asFreeMem
 	// TODO: optimize: Use C++11 std::unordered_map instead
-	std::map<std::string, CScriptDictValue> dict;
+	lite3dpp::stl<lite3dpp::lited3dpp_string, CScriptDictValue>::map dict;
 };
 
 // This function will determine the configuration of the engine

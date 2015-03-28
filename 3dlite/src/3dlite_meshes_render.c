@@ -195,10 +195,10 @@ void lite3d_scene_mesh_purge(lite3d_scene *scene)
         while ((mqrListNode = lite3d_list_remove_first_link(&mqrUnit->nodes)) != NULL)
         {
             mqrNode = LITE3D_MEMBERCAST(lite3d_mqr_node, mqrListNode, unit);
-            lite3d_free(mqrNode);
+            lite3d_free_pooled(LITE3D_POOL_NO1, mqrNode);
         }
 
-        lite3d_free(mqrUnit);
+        lite3d_free_pooled(LITE3D_POOL_NO1, mqrUnit);
     }
 }
 
@@ -230,7 +230,8 @@ int lite3d_mesh_node_attach_material(lite3d_mesh_node *node,
 
     if (mqrUnit == NULL)
     {
-        mqrUnit = (lite3d_mqr_unit *) lite3d_calloc(sizeof (lite3d_mqr_unit));
+        mqrUnit = (lite3d_mqr_unit *) lite3d_calloc_pooled(LITE3D_POOL_NO1, 
+            sizeof (lite3d_mqr_unit));
         lite3d_list_init(&mqrUnit->nodes);
         lite3d_list_link_init(&mqrUnit->queued);
         mqrUnit->material = material;
@@ -242,7 +243,8 @@ int lite3d_mesh_node_attach_material(lite3d_mesh_node *node,
 
     if (mqrNode == NULL)
     {
-        mqrNode = (lite3d_mqr_node *) lite3d_calloc(sizeof (lite3d_mqr_node));
+        mqrNode = (lite3d_mqr_node *) lite3d_calloc_pooled(LITE3D_POOL_NO1, 
+            sizeof (lite3d_mqr_node));
         lite3d_list_link_init(&mqrNode->unit);
         mqrNode->node = node;
         mqrNode->vao = lite3d_vao_get_by_index(node->vbo, index);
@@ -250,7 +252,7 @@ int lite3d_mesh_node_attach_material(lite3d_mesh_node *node,
         {
             SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
                 "%s: Material index %d not found in mesh..", __FUNCTION__);
-            lite3d_free(mqrNode);
+            lite3d_free_pooled(LITE3D_POOL_NO1, mqrNode);
             return LITE3D_FALSE;
         }
     }
@@ -286,7 +288,7 @@ int lite3d_scene_mesh_node_remove(lite3d_scene *scene,
         {
             /* unlink it */
             lite3d_list_unlink_link(&mqrNode->unit);
-            lite3d_free(mqrNode);
+            lite3d_free_pooled(LITE3D_POOL_NO1, mqrNode);
         }
     }
 

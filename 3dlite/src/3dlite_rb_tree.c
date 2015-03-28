@@ -38,7 +38,8 @@ lite3d_rb_tree* lite3d_rb_tree_create(lite3d_rb_tree_comparator comparator,
     lite3d_rb_tree* newTree;
     lite3d_rb_node* temp;
 
-    newTree = (lite3d_rb_tree*) lite3d_malloc(sizeof (lite3d_rb_tree));
+    newTree = (lite3d_rb_tree*) lite3d_malloc_pooled(LITE3D_POOL_NO1, 
+        sizeof (lite3d_rb_tree));
     newTree->compare = comparator;
     newTree->free = deleter;
     /* out of memory */
@@ -361,7 +362,7 @@ static void lite3d_rb_tree_destroy_help(lite3d_rb_tree* tree, lite3d_rb_node* x)
 void lite3d_rb_tree_destroy(lite3d_rb_tree* tree)
 {
     lite3d_rb_tree_destroy_help(tree, tree->root->left);
-    lite3d_free(tree);
+    lite3d_free_pooled(LITE3D_POOL_NO1, tree);
 }
 
 lite3d_rb_node* lite3d_rb_tree_exact_query(lite3d_rb_tree* tree, const void* q)

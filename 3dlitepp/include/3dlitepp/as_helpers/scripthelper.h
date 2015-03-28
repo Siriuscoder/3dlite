@@ -9,6 +9,7 @@
 #include <3dlitepp/as/angelscript.h>
 #endif
 
+#include <3dlitepp/3dlitepp_manageable.h>
 
 BEGIN_AS_NAMESPACE
 
@@ -41,7 +42,7 @@ int WriteConfigToStream(asIScriptEngine *engine, std::ostream &strm);
 int ConfigEngineFromStream(asIScriptEngine *engine, std::istream &strm, const char *nameOfStream = "config");
 
 // Format the details of the script exception into a human readable text
-std::string GetExceptionInfo(asIScriptContext *ctx, bool showStack = false);
+lite3dpp::lited3dpp_string GetExceptionInfo(asIScriptContext *ctx, bool showStack = false);
 
 END_AS_NAMESPACE
 

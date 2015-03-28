@@ -140,7 +140,7 @@ int ExecuteString(asIScriptEngine *engine, const char *code, asIScriptModule *mo
 int ExecuteString(asIScriptEngine *engine, const char *code, void *ref, int refTypeId, asIScriptModule *mod, asIScriptContext *ctx)
 {
 	// Wrap the code in a function so that it can be compiled and executed
-	string funcCode = " ExecuteString() {\n";
+	lite3dpp::lited3dpp_string funcCode = " ExecuteString() {\n";
 	funcCode += code;
 	funcCode += "\n;}";
 
@@ -225,15 +225,15 @@ int WriteConfigToStream(asIScriptEngine *engine, ostream &strm)
 	// A helper function for escaping quotes in default arguments
 	struct Escape
 	{
-		static string Quotes(const char *decl)
+		static lite3dpp::lited3dpp_string Quotes(const char *decl)
 		{
-			string str = decl;
+			lite3dpp::lited3dpp_string str = decl;
 			size_t pos = 0;
 			for(;;)
 			{
 				// Find " characters
 				pos = str.find("\"",pos);
-				if( pos == string::npos )
+				if( pos == lite3dpp::lited3dpp_string::npos )
 					break;
 
 				// Add a \ to escape them
@@ -248,7 +248,7 @@ int WriteConfigToStream(asIScriptEngine *engine, ostream &strm)
 	int c, n;
 
 	asDWORD currAccessMask = 0;
-	string currNamespace = "";
+	lite3dpp::lited3dpp_string currNamespace = "";
 	engine->SetDefaultNamespace(currNamespace.c_str());
 
 	// Export the engine version, just for info
@@ -381,7 +381,7 @@ int WriteConfigToStream(asIScriptEngine *engine, ostream &strm)
 	// A helper for writing object type members
 	struct TypeWriter
 	{
-		static void Write(asIScriptEngine *engine, ostream &strm, asIObjectType *type, string &currNamespace, asDWORD &currAccessMask)
+		static void Write(asIScriptEngine *engine, ostream &strm, asIObjectType *type, lite3dpp::lited3dpp_string &currNamespace, asDWORD &currAccessMask)
 		{
 			const char *nameSpace = type->GetNamespace();
 			if( nameSpace != currNamespace )
@@ -390,7 +390,7 @@ int WriteConfigToStream(asIScriptEngine *engine, ostream &strm)
 				currNamespace = nameSpace;
 				engine->SetDefaultNamespace(currNamespace.c_str());
 			}
-			string typeDecl = engine->GetTypeDeclaration(type->GetTypeId());
+			lite3dpp::lited3dpp_string typeDecl = engine->GetTypeDeclaration(type->GetTypeId());
 			if( type->GetFlags() & asOBJ_SCRIPT_OBJECT )
 			{
 				for( asUINT m = 0; m < type->GetMethodCount(); m++ )
@@ -530,7 +530,7 @@ int WriteConfigToStream(asIScriptEngine *engine, ostream &strm)
 
 	engine->SetDefaultNamespace("");
 
-	// Write string factory
+	// Write lite3dpp::lited3dpp_string factory
 	strm << "\n// String factory\n";
 	asDWORD flags = 0;
 	int typeId = engine->GetStringFactoryReturnTypeId(&flags);
@@ -556,7 +556,7 @@ int ConfigEngineFromStream(asIScriptEngine *engine, istream &strm, const char *c
 	// Some helper functions for parsing the configuration
 	struct in
 	{
-		static asETokenClass GetToken(asIScriptEngine *engine, string &token, const string &text, asUINT &pos)
+		static asETokenClass GetToken(asIScriptEngine *engine, lite3dpp::lited3dpp_string &token, const lite3dpp::lited3dpp_string &text, asUINT &pos)
 		{
 			asUINT len = 0;
 			asETokenClass t = engine->ParseToken(&text[pos], text.length() - pos, &len);
@@ -573,14 +573,14 @@ int ConfigEngineFromStream(asIScriptEngine *engine, istream &strm, const char *c
 			return t;
 		}
 
-		static void ReplaceSlashQuote(string &str)
+		static void ReplaceSlashQuote(lite3dpp::lited3dpp_string &str)
 		{
 			size_t pos = 0;
 			for(;;)
 			{
-				// Search for \" in the string
+				// Search for \" in the lite3dpp::lited3dpp_string
 				pos = str.find("\\\"", pos);
-				if( pos == string::npos )
+				if( pos == lite3dpp::lited3dpp_string::npos )
 					break;
 
 				// Remove the \ character
@@ -588,7 +588,7 @@ int ConfigEngineFromStream(asIScriptEngine *engine, istream &strm, const char *c
 			}
 		}
 
-		static asUINT GetLineNumber(const string &text, asUINT pos)
+		static asUINT GetLineNumber(const lite3dpp::lited3dpp_string &text, asUINT pos)
 		{
 			asUINT count = 1;
 			for( asUINT n = 0; n < pos; n++ )
@@ -606,7 +606,7 @@ int ConfigEngineFromStream(asIScriptEngine *engine, istream &strm, const char *c
 
 	// Read the entire file
 	char buffer[1000];
-	string config;
+	lite3dpp::lited3dpp_string config;
 	do {
 		strm.getline(buffer, 1000);
 		config += buffer;
@@ -617,12 +617,12 @@ int ConfigEngineFromStream(asIScriptEngine *engine, istream &strm, const char *c
 	asUINT pos  = 0;
 	while( pos < config.length() )
 	{
-		string token;
+		lite3dpp::lited3dpp_string token;
 		// TODO: The position where the initial token is found should be stored for error messages
 		in::GetToken(engine, token, config, pos);
 		if( token == "ep" )
 		{
-			string tmp;
+			lite3dpp::lited3dpp_string tmp;
 			in::GetToken(engine, tmp, config, pos);
 
 			asEEngineProp ep = asEEngineProp(atol(tmp.c_str()));
@@ -636,7 +636,7 @@ int ConfigEngineFromStream(asIScriptEngine *engine, istream &strm, const char *c
 			{
 				// Get the value for the property
 				in::GetToken(engine, tmp, config, pos);
-				stringstream s(tmp);
+				lite3dpp::lited3dpp_stringstream s(tmp);
 				asPWORD value;
 
 				s >> value;
@@ -646,7 +646,7 @@ int ConfigEngineFromStream(asIScriptEngine *engine, istream &strm, const char *c
 		}
 		else if( token == "namespace" )
 		{
-			string ns;
+			lite3dpp::lited3dpp_string ns;
 			in::GetToken(engine, ns, config, pos);
 			ns = ns.substr(1, ns.length() - 2);
 
@@ -659,14 +659,14 @@ int ConfigEngineFromStream(asIScriptEngine *engine, istream &strm, const char *c
 		}
 		else if( token == "access" )
 		{
-			string maskStr;
+			lite3dpp::lited3dpp_string maskStr;
 			in::GetToken(engine, maskStr, config, pos);
 			asDWORD mask = strtol(maskStr.c_str(), 0, 16);
 			engine->SetDefaultAccessMask(mask);
 		}
 		else if( token == "objtype" )
 		{
-			string name, flags;
+			lite3dpp::lited3dpp_string name, flags;
 			in::GetToken(engine, name, config, pos);
 			name = name.substr(1, name.length() - 2);
 			in::GetToken(engine, flags, config, pos);
@@ -682,7 +682,7 @@ int ConfigEngineFromStream(asIScriptEngine *engine, istream &strm, const char *c
 		}
 		else if( token == "objbeh" )
 		{
-			string name, behaviour, decl;
+			lite3dpp::lited3dpp_string name, behaviour, decl;
 			in::GetToken(engine, name, config, pos);
 			name = name.substr(1, name.length() - 2);
 			in::GetToken(engine, behaviour, config, pos);
@@ -708,7 +708,7 @@ int ConfigEngineFromStream(asIScriptEngine *engine, istream &strm, const char *c
 		}
 		else if( token == "objmthd" )
 		{
-			string name, decl;
+			lite3dpp::lited3dpp_string name, decl;
 			in::GetToken(engine, name, config, pos);
 			name = name.substr(1, name.length() - 2);
 			in::GetToken(engine, decl, config, pos);
@@ -724,7 +724,7 @@ int ConfigEngineFromStream(asIScriptEngine *engine, istream &strm, const char *c
 		}
 		else if( token == "objprop" )
 		{
-			string name, decl;
+			lite3dpp::lited3dpp_string name, decl;
 			in::GetToken(engine, name, config, pos);
 			name = name.substr(1, name.length() - 2);
 			in::GetToken(engine, decl, config, pos);
@@ -748,7 +748,7 @@ int ConfigEngineFromStream(asIScriptEngine *engine, istream &strm, const char *c
 		}
 		else if( token == "intf" )
 		{
-			string name, size, flags;
+			lite3dpp::lited3dpp_string name, size, flags;
 			in::GetToken(engine, name, config, pos);
 
 			r = engine->RegisterInterface(name.c_str());
@@ -760,7 +760,7 @@ int ConfigEngineFromStream(asIScriptEngine *engine, istream &strm, const char *c
 		}
 		else if( token == "intfmthd" )
 		{
-			string name, decl;
+			lite3dpp::lited3dpp_string name, decl;
 			in::GetToken(engine, name, config, pos);
 			in::GetToken(engine, decl, config, pos);
 			decl = decl.substr(1, decl.length() - 2);
@@ -775,7 +775,7 @@ int ConfigEngineFromStream(asIScriptEngine *engine, istream &strm, const char *c
 		}
 		else if( token == "func" )
 		{
-			string decl;
+			lite3dpp::lited3dpp_string decl;
 			in::GetToken(engine, decl, config, pos);
 			decl = decl.substr(1, decl.length() - 2);
 			in::ReplaceSlashQuote(decl);
@@ -789,7 +789,7 @@ int ConfigEngineFromStream(asIScriptEngine *engine, istream &strm, const char *c
 		}
 		else if( token == "prop" )
 		{
-			string decl;
+			lite3dpp::lited3dpp_string decl;
 			in::GetToken(engine, decl, config, pos);
 			decl = decl.substr(1, decl.length() - 2);
 
@@ -805,20 +805,20 @@ int ConfigEngineFromStream(asIScriptEngine *engine, istream &strm, const char *c
 		}
 		else if( token == "strfactory" )
 		{
-			string type;
+			lite3dpp::lited3dpp_string type;
 			in::GetToken(engine, type, config, pos);
 			type = type.substr(1, type.length() - 2);
 
 			r = engine->RegisterStringFactory(type.c_str(), asFUNCTION(0), asCALL_GENERIC);
 			if( r < 0 )
 			{
-				engine->WriteMessage(configFile, in::GetLineNumber(config, pos), 0, asMSGTYPE_ERROR, "Failed to register string factory");
+				engine->WriteMessage(configFile, in::GetLineNumber(config, pos), 0, asMSGTYPE_ERROR, "Failed to register lite3dpp::lited3dpp_string factory");
 				return -1;
 			}
 		}
 		else if( token == "defarray" )
 		{
-			string type;
+			lite3dpp::lited3dpp_string type;
 			in::GetToken(engine, type, config, pos);
 			type = type.substr(1, type.length() - 2);
 
@@ -831,7 +831,7 @@ int ConfigEngineFromStream(asIScriptEngine *engine, istream &strm, const char *c
 		}
 		else if( token == "enum" )
 		{
-			string type;
+			lite3dpp::lited3dpp_string type;
 			in::GetToken(engine, type, config, pos);
 
 			r = engine->RegisterEnum(type.c_str());
@@ -843,7 +843,7 @@ int ConfigEngineFromStream(asIScriptEngine *engine, istream &strm, const char *c
 		}
 		else if( token == "enumval" )
 		{
-			string type, name, value;
+			lite3dpp::lited3dpp_string type, name, value;
 			in::GetToken(engine, type, config, pos);
 			in::GetToken(engine, name, config, pos);
 			in::GetToken(engine, value, config, pos);
@@ -857,7 +857,7 @@ int ConfigEngineFromStream(asIScriptEngine *engine, istream &strm, const char *c
 		}
 		else if( token == "typedef" )
 		{
-			string type, decl;
+			lite3dpp::lited3dpp_string type, decl;
 			in::GetToken(engine, type, config, pos);
 			in::GetToken(engine, decl, config, pos);
 			decl = decl.substr(1, decl.length() - 2);
@@ -871,7 +871,7 @@ int ConfigEngineFromStream(asIScriptEngine *engine, istream &strm, const char *c
 		}
 		else if( token == "funcdef" )
 		{
-			string decl;
+			lite3dpp::lited3dpp_string decl;
 			in::GetToken(engine, decl, config, pos);
 			decl = decl.substr(1, decl.length() - 2);
 
@@ -887,11 +887,11 @@ int ConfigEngineFromStream(asIScriptEngine *engine, istream &strm, const char *c
 	return 0;
 }
 
-string GetExceptionInfo(asIScriptContext *ctx, bool showStack)
+lite3dpp::lited3dpp_string GetExceptionInfo(asIScriptContext *ctx, bool showStack)
 {
 	if( ctx->GetState() != asEXECUTION_EXCEPTION ) return "";
 
-	stringstream text;
+	lite3dpp::lited3dpp_stringstream text;
 
 	const asIScriptFunction *function = ctx->GetExceptionFunction();
 	text << "func: " << function->GetDeclaration() << "\n";

@@ -124,7 +124,8 @@ lite3d_resource_pack *lite3d_resource_pack_open(const char *path, uint8_t compre
             return NULL;
     }
 
-    pack = (lite3d_resource_pack *)lite3d_malloc(sizeof(lite3d_resource_pack));
+    pack = (lite3d_resource_pack *)lite3d_malloc_pooled(LITE3D_POOL_NO1, 
+        sizeof(lite3d_resource_pack));
     SDL_assert_release(pack);
     
     pack->isCompressed = compressed;
@@ -172,7 +173,7 @@ void lite3d_resource_pack_close(lite3d_resource_pack *pack)
     SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, 
         "PACK: '%s' (%s) closed ", pack->pathto,
         pack->isCompressed ? "compressed" : "filesystem");
-    lite3d_free(pack);
+    lite3d_free_pooled(LITE3D_POOL_NO1, pack);
 }
 
 lite3d_resource_file *lite3d_resource_pack_file_load(lite3d_resource_pack *pack, const char *file)

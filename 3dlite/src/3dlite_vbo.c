@@ -319,7 +319,7 @@ void lite3d_vao_purge(struct lite3d_vao *vao)
 {
     SDL_assert(vao);
     glDeleteVertexArrays(1, &vao->vaoID);
-    lite3d_free(vao);
+    lite3d_free_pooled(LITE3D_POOL_NO1, vao);
 }
 
 lite3d_vao *lite3d_vao_get_by_index(struct lite3d_vbo *vbo,

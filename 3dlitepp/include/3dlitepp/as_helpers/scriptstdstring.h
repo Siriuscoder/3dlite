@@ -16,7 +16,7 @@
 #include <3dlitepp/as/angelscript.h>
 #endif
 
-#include <string>
+#include <3dlitepp/3dlitepp_manageable.h>
 
 //---------------------------
 // Compilation settings

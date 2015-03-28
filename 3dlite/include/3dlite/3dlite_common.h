@@ -36,13 +36,6 @@
 #       error "GCC or MSVC compiller requred.."
 #   endif
 
-// Stuff for Visual C++ only
-#   if defined(_MSC_VER)
-// Disable whining about using 'this' as a member initializer on VC++.
-#       pragma warning(disable: 4355)
-#       pragma warning(disable: 4127)
-#   endif
-
 
 #   ifdef WIN_3DLITE_DLL
 // When making the DLL, export tagged symbols, so they appear
@@ -73,7 +66,7 @@
     // config.h file only if this file was included from a non-header
     // file, because headers must not be dependent on config.h.
 #   if !defined(__GNUC__)
-#       error "GCC compiller requred.."
+#       error "GCC compiler requred.."
 #   endif
 
 #   define LITE3D_EXPORT

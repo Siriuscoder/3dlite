@@ -105,7 +105,7 @@ lite3d_7z_pack *lite3d_7z_pack_open(const char *path)
         return NULL;
     }
     
-    pack = (lite3d_7z_pack *)lite3d_malloc(sizeof(lite3d_7z_pack));
+    pack = (lite3d_7z_pack *)lite3d_malloc_pooled(LITE3D_POOL_NO1, sizeof(lite3d_7z_pack));
     SDL_assert_release(pack);
     
     pack->allocImp.Alloc = alloc7z;
@@ -151,7 +151,7 @@ void lite3d_7z_pack_close(lite3d_7z_pack *pack)
     SzArEx_Free(&pack->db, &pack->allocImp);
     File_Close(&pack->archiveStream.file);
     
-    lite3d_free(pack);
+    lite3d_free_pooled(LITE3D_POOL_NO1, pack);
 }
 
 void lite3d_7z_pack_iterate(lite3d_7z_pack *pack, lite3d_7z_iterator iter, void *userdata)

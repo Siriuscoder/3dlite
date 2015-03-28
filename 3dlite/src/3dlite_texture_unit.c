@@ -52,12 +52,12 @@ static int maxCombinedTextureImageUnits;
 
 static void* DEVIL_CALL il_alloc(const ILsizei size)
 {
-    return lite3d_malloc_pooled(LITE3D_POOL_NO2, size);
+    return lite3d_malloc(size);
 }
 
 static void DEVIL_CALL il_free(const void *ptr)
 {
-    lite3d_free_pooled(LITE3D_POOL_NO2, (void *) ptr);
+    lite3d_free((void *) ptr);
 }
 
 static const char *format_string(GLenum format)

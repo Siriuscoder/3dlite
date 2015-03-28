@@ -1,6 +1,6 @@
 /******************************************************************************
 *	This file is part of 3dlite (Light-weight 3d engine).
-*	Copyright (C) 2014  Sirius (Korolev Nikita)
+*	Copyright (C) 2015  Sirius (Korolev Nikita)
 *
 *	Foobar is free software: you can redistribute it and/or modify
 *	it under the terms of the GNU General Public License as published by
@@ -15,18 +15,4 @@
 *	You should have received a copy of the GNU General Public License
 *	along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
-#pragma once
-
-#include <3dlitepp/3dlitepp_common.h>
-#include <3dlitepp/3dlitepp_manageable.h>
-
-namespace lite3dpp
-{
-    class LITE3DPP_EXPORT Main
-    {
-    public:
-        
-        Main(const lited3dpp_string &configPath);
-        ~Main();
-    };
-}
+#include <3dlitepp/3dlitepp_resource_pack_manager.h>

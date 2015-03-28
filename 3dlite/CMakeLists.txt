@@ -1,141 +1,68 @@
+
+#	This file is part of 3dlite (Light-weight 3d engine).
+#	Copyright (C) 2014  Sirius (Korolev Nikita)
+#
+#	Foobar is free software: you can redistribute it and/or modify
+#	it under the terms of the GNU General Public License as published by
+#	the Free Software Foundation, either version 3 of the License, or
+#	(at your option) any later version.
+#
+#	Foobar is distributed in the hope that it will be useful,
+#	but WITHOUT ANY WARRANTY; without even the implied warranty of
+#	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#	GNU General Public License for more details.
+#
+#	You should have received a copy of the GNU General Public License
+#	along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
+
 cmake_minimum_required(VERSION 2.8.10)
 project(7zdec)
 project(glewc)
 project(3dlite)
 project(kazmath)
-################################################################
-# 7zdec sources
-set(7ZDEC_SOURCES src/7zdec/7zBuf2.c
-src/7zdec/7zBuf.c
-src/7zdec/7zCrc.c
-src/7zdec/7zCrcOpt.c
-src/7zdec/7zDec.c
-src/7zdec/7zFile.c
-src/7zdec/7zIn.c
-src/7zdec/7zStream.c
-src/7zdec/Bcj2.c
-src/7zdec/Bra86.c
-src/7zdec/Bra.c
-src/7zdec/CpuArch.c
-src/7zdec/Lzma2Dec.c
-src/7zdec/LzmaDec.c
-src/7zdec/Ppmd7.c
-src/7zdec/Ppmd7Dec.c)
+######################### 7zdec ################################
+unset(SOURCES_LIST)
+unset(HEADERS_LIST)
 
-set(7ZDEC_HEADERS include/3dlite/7zdec/7z.h
-include/3dlite/7zdec/7zBuf.h
-include/3dlite/7zdec/7zCrc.h
-include/3dlite/7zdec/7zFile.h
-include/3dlite/7zdec/7zVersion.h
-include/3dlite/7zdec/Bcj2.h
-include/3dlite/7zdec/Bra.h
-include/3dlite/7zdec/CpuArch.h
-include/3dlite/7zdec/Lzma2Dec.h
-include/3dlite/7zdec/LzmaDec.h
-include/3dlite/7zdec/Ppmd.h
-include/3dlite/7zdec/Ppmd7.h
-include/3dlite/7zdec/Types.h)
+source_files("src/7zdec")
+headers_files("include/3dlite/7zdec")
 
-add_library(7zdec ${7ZDEC_SOURCES} ${7ZDEC_HEADERS})
+add_library(7zdec ${SOURCES_LIST} ${HEADERS_LIST})
 target_include_directories(7zdec PRIVATE 
 "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include/3dlite/7zdec>")
 target_compile_definitions(7zdec PRIVATE
 "$<BUILD_INTERFACE:_7ZIP_PPMD_SUPPPORT>")
-################################################################
-# glew sources
-set(GLEWC_SOURCES src/glew/glew.c)
+######################### glewc ################################
+unset(SOURCES_LIST)
+unset(HEADERS_LIST)
 
-set(GLEWC_HEADERS include/3dlite/GL/glew.h
-include/3dlite/GL/glxew.h
-include/3dlite/GL/wglew.h)
+source_files("src/glew")
+headers_files("include/3dlite/GL")
 
-add_library(glewc ${GLEWC_SOURCES} ${GLEWC_HEADERS})
+add_library(glewc ${SOURCES_LIST} ${HEADERS_LIST})
 target_include_directories(glewc PRIVATE 
 "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include/3dlite/>")
 target_compile_definitions(glewc PRIVATE
 "$<BUILD_INTERFACE:GLEW_NO_GLU>"
 "$<BUILD_INTERFACE:GLEW_STATIC>")
-################################################################
-# kazmath sources
-set(KAZMATH_SOURCES src/kazmath/aabb.c
-src/kazmath/mat3.c
-src/kazmath/mat4.c
-src/kazmath/plane.c
-src/kazmath/quaternion.c
-src/kazmath/ray2.c
-src/kazmath/ray3.c
-src/kazmath/utility.c
-src/kazmath/vec2.c
-src/kazmath/vec3.c
-src/kazmath/vec4.c)
+######################### kazmath ##############################
+unset(SOURCES_LIST)
+unset(HEADERS_LIST)
 
-set(KAZMATH_HEADERS include/3dlite/kazmath/aabb.h
-include/3dlite/kazmath/mat3.h
-include/3dlite/kazmath/mat4.h
-include/3dlite/kazmath/plane.h
-include/3dlite/kazmath/quaternion.h
-include/3dlite/kazmath/ray2.h
-include/3dlite/kazmath/ray3.h
-include/3dlite/kazmath/utility.h
-include/3dlite/kazmath/vec2.h
-include/3dlite/kazmath/vec3.h
-include/3dlite/kazmath/vec4.h)
+source_files("src/kazmath")
+headers_files("include/3dlite/kazmath")
 
-add_library(kazmath ${KAZMATH_SOURCES} ${KAZMATH_HEADERS})
+add_library(kazmath ${SOURCES_LIST} ${HEADERS_LIST})
 target_include_directories(kazmath PRIVATE 
 "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include/3dlite/kazmath/>")
-################################################################
-# 3dlite sources
-set(3DLITE_SOURCES src/3dlite_nedmalloc.c
-src/3dlite_alloc.c
-src/3dlite_rb_tree.c
-src/3dlite_list.c
-src/3dlite_resource_pack.c
-src/3dlite_7z_loader.c
-src/3dlite_logger.c
-src/3dlite_texture_unit.c
-src/3dlite_video.c
-src/3dlite_render.c
-src/3dlite_main.c
-src/3dlite_camera.c
-src/3dlite_scene_node.c
-src/3dlite_scene.c
-src/3dlite_vbo.c
-src/3dlite_vbo_loader.c
-src/3dlite_misc.c
-src/3dlite_meshes_render.c
-src/3dlite_material.c
-src/3dlite_shader_params.c
-src/3dlite_shader.c
-src/3dlite_shader_program.c
-src/3dlite_framebuffer.c)
+######################### 3dlite ###############################
+unset(SOURCES_LIST)
+unset(HEADERS_LIST)
 
-set(3DLITE_HEADERS include/3dlite/3dlite_alloc.h
-include/3dlite/3dlite_common.h
-include/3dlite/3dlite_nedmalloc.h
-include/3dlite/3dlite_rb_tree.h
-include/3dlite/3dlite_list.h
-include/3dlite/3dlite_resource_pack.h
-include/3dlite/3dlite_7z_loader.h
-include/3dlite/3dlite_logger.h
-include/3dlite/3dlite_texture_unit.h
-include/3dlite/3dlite_video.h
-include/3dlite/3dlite_render.h
-include/3dlite/3dlite_main.h
-include/3dlite/3dlite_camera.h
-include/3dlite/3dlite_scene_node.h
-include/3dlite/3dlite_scene.h
-include/3dlite/3dlite_vbo.h
-include/3dlite/3dlite_vbo_loader.h
-include/3dlite/3dlite_misc.h
-include/3dlite/3dlite_meshes_render.h
-include/3dlite/3dlite_material.h
-include/3dlite/3dlite_shader_params.h
-include/3dlite/3dlite_shader.h
-include/3dlite/3dlite_shader_program.h
-include/3dlite/3dlite_framebuffer.h)
+source_files("src")
+headers_files("include/3dlite")
 
-add_library(3dlite SHARED ${3DLITE_SOURCES} ${3DLITE_HEADERS})
+add_library(3dlite SHARED ${SOURCES_LIST} ${HEADERS_LIST})
 
 if(MSVC)
 target_compile_definitions(3dlite PRIVATE

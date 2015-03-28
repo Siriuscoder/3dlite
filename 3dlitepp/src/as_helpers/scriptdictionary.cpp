@@ -69,8 +69,8 @@ CScriptDictionary::CScriptDictionary(asBYTE *buffer)
 			buffer += 4 - (asPWORD(buffer) & 0x3);
 
 		// Get the name value pair from the buffer and insert it in the dictionary
-		string name = *(string*)buffer;
-		buffer += sizeof(string);
+		lite3dpp::lited3dpp_string name = *(lite3dpp::lited3dpp_string*)buffer;
+		buffer += sizeof(lite3dpp::lited3dpp_string);
 
 		// Get the type id of the value
 		int typeId = *(int*)buffer;
@@ -182,7 +182,7 @@ void CScriptDictionary::EnumReferences(asIScriptEngine *engine)
 	//       protected so that it doesn't get lost during the iteration if the dictionary is modified
 
 	// Call the gc enum callback for each of the objects
-	map<string, CScriptDictValue>::iterator it;
+	map<lite3dpp::lited3dpp_string, CScriptDictValue>::iterator it;
 	for( it = dict.begin(); it != dict.end(); it++ )
 	{
 		if( it->second.m_typeId & asTYPEID_MASK_OBJECT )
@@ -203,7 +203,7 @@ CScriptDictionary &CScriptDictionary::operator =(const CScriptDictionary &other)
 	DeleteAll();
 
 	// Do a shallow copy of the dictionary
-	map<string, CScriptDictValue>::const_iterator it;
+	map<lite3dpp::lited3dpp_string, CScriptDictValue>::const_iterator it;
 	for( it = other.dict.begin(); it != other.dict.end(); it++ )
 	{
 		if( it->second.m_typeId & asTYPEID_OBJHANDLE )
@@ -217,21 +217,21 @@ CScriptDictionary &CScriptDictionary::operator =(const CScriptDictionary &other)
 	return *this;
 }
 
-CScriptDictValue *CScriptDictionary::operator[](const string &key)
+CScriptDictValue *CScriptDictionary::operator[](const lite3dpp::lited3dpp_string &key)
 {
 	// Return the existing value if it exists, else insert an empty value
-	map<string, CScriptDictValue>::iterator it;
+	map<lite3dpp::lited3dpp_string, CScriptDictValue>::iterator it;
 	it = dict.find(key);
 	if( it == dict.end() )
-		it = dict.insert(map<string, CScriptDictValue>::value_type(key, CScriptDictValue())).first;
+		it = dict.insert(map<lite3dpp::lited3dpp_string, CScriptDictValue>::value_type(key, CScriptDictValue())).first;
 	
 	return &it->second;
 }
 
-const CScriptDictValue *CScriptDictionary::operator[](const string &key) const
+const CScriptDictValue *CScriptDictionary::operator[](const lite3dpp::lited3dpp_string &key) const
 {
 	// Return the existing value if it exists
-	map<string, CScriptDictValue>::const_iterator it;
+	map<lite3dpp::lited3dpp_string, CScriptDictValue>::const_iterator it;
 	it = dict.find(key);
 	if( it != dict.end() )
 		return &it->second;
@@ -244,12 +244,12 @@ const CScriptDictValue *CScriptDictionary::operator[](const string &key) const
 	return 0;
 }
 
-void CScriptDictionary::Set(const string &key, void *value, int typeId)
+void CScriptDictionary::Set(const lite3dpp::lited3dpp_string &key, void *value, int typeId)
 {
-	map<string, CScriptDictValue>::iterator it;
+	map<lite3dpp::lited3dpp_string, CScriptDictValue>::iterator it;
 	it = dict.find(key);
 	if( it == dict.end() )
-		it = dict.insert(map<string, CScriptDictValue>::value_type(key, CScriptDictValue())).first;
+		it = dict.insert(map<lite3dpp::lited3dpp_string, CScriptDictValue>::value_type(key, CScriptDictValue())).first;
 
 	it->second.Set(engine, value, typeId);
 }
@@ -259,7 +259,7 @@ void CScriptDictionary::Set(const string &key, void *value, int typeId)
 // through implicit conversions. This simplifies the management of the
 // numeric types when the script retrieves the stored value using a 
 // different type.
-void CScriptDictionary::Set(const string &key, const asINT64 &value)
+void CScriptDictionary::Set(const lite3dpp::lited3dpp_string &key, const asINT64 &value)
 {
 	Set(key, const_cast<asINT64*>(&value), asTYPEID_INT64);
 }
@@ -268,15 +268,15 @@ void CScriptDictionary::Set(const string &key, const asINT64 &value)
 // will be stored in the dictionary as double through implicit conversions. 
 // This simplifies the management of the numeric types when the script 
 // retrieves the stored value using a different type.
-void CScriptDictionary::Set(const string &key, const double &value)
+void CScriptDictionary::Set(const lite3dpp::lited3dpp_string &key, const double &value)
 {
 	Set(key, const_cast<double*>(&value), asTYPEID_DOUBLE);
 }
 
 // Returns true if the value was successfully retrieved
-bool CScriptDictionary::Get(const string &key, void *value, int typeId) const
+bool CScriptDictionary::Get(const lite3dpp::lited3dpp_string &key, void *value, int typeId) const
 {
-	map<string, CScriptDictValue>::const_iterator it;
+	map<lite3dpp::lited3dpp_string, CScriptDictValue>::const_iterator it;
 	it = dict.find(key);
 	if( it != dict.end() )
 		return it->second.Get(engine, value, typeId);
@@ -289,9 +289,9 @@ bool CScriptDictionary::Get(const string &key, void *value, int typeId) const
 }
 
 // Returns the type id of the stored value
-int CScriptDictionary::GetTypeId(const string &key) const
+int CScriptDictionary::GetTypeId(const lite3dpp::lited3dpp_string &key) const
 {
-	map<string, CScriptDictValue>::const_iterator it;
+	map<lite3dpp::lited3dpp_string, CScriptDictValue>::const_iterator it;
 	it = dict.find(key);
 	if( it != dict.end() )
 		return it->second.m_typeId;
@@ -299,19 +299,19 @@ int CScriptDictionary::GetTypeId(const string &key) const
 	return -1;
 }
 
-bool CScriptDictionary::Get(const string &key, asINT64 &value) const
+bool CScriptDictionary::Get(const lite3dpp::lited3dpp_string &key, asINT64 &value) const
 {
 	return Get(key, &value, asTYPEID_INT64);
 }
 
-bool CScriptDictionary::Get(const string &key, double &value) const
+bool CScriptDictionary::Get(const lite3dpp::lited3dpp_string &key, double &value) const
 {
 	return Get(key, &value, asTYPEID_DOUBLE);
 }
 
-bool CScriptDictionary::Exists(const string &key) const
+bool CScriptDictionary::Exists(const lite3dpp::lited3dpp_string &key) const
 {
-	map<string, CScriptDictValue>::const_iterator it;
+	map<lite3dpp::lited3dpp_string, CScriptDictValue>::const_iterator it;
 	it = dict.find(key);
 	if( it != dict.end() )
 		return true;
@@ -332,9 +332,9 @@ asUINT CScriptDictionary::GetSize() const
 	return asUINT(dict.size());
 }
 
-void CScriptDictionary::Delete(const string &key)
+void CScriptDictionary::Delete(const lite3dpp::lited3dpp_string &key)
 {
-	map<string, CScriptDictValue>::iterator it;
+	map<lite3dpp::lited3dpp_string, CScriptDictValue>::iterator it;
 	it = dict.find(key);
 	if( it != dict.end() )
 	{
@@ -345,7 +345,7 @@ void CScriptDictionary::Delete(const string &key)
 
 void CScriptDictionary::DeleteAll()
 {
-	map<string, CScriptDictValue>::iterator it;
+	map<lite3dpp::lited3dpp_string, CScriptDictValue>::iterator it;
 	for( it = dict.begin(); it != dict.end(); it++ )
 		it->second.FreeValue(engine);
 
@@ -364,11 +364,11 @@ CScriptArray* CScriptDictionary::GetKeys() const
 	// Create the array object
 	CScriptArray *array = CScriptArray::Create(ot, asUINT(dict.size()));
 	long current = -1;
-	std::map<string, CScriptDictValue>::const_iterator it;
+	std::map<lite3dpp::lited3dpp_string, CScriptDictValue>::const_iterator it;
 	for( it = dict.begin(); it != dict.end(); it++ )
 	{
 		current++;
-		*(string*)array->At(current) = it->first;
+		*(lite3dpp::lited3dpp_string*)array->At(current) = it->first;
 	}
 
 	return array;
@@ -411,7 +411,7 @@ void ScriptDictionaryAssign_Generic(asIScriptGeneric *gen)
 void ScriptDictionarySet_Generic(asIScriptGeneric *gen)
 {
 	CScriptDictionary *dict = (CScriptDictionary*)gen->GetObject();
-	string *key = *(string**)gen->GetAddressOfArg(0);
+	lite3dpp::lited3dpp_string *key = *(lite3dpp::lited3dpp_string**)gen->GetAddressOfArg(0);
 	void *ref = *(void**)gen->GetAddressOfArg(1);
 	int typeId = gen->GetArgTypeId(1);
 	dict->Set(*key, ref, typeId);
@@ -420,7 +420,7 @@ void ScriptDictionarySet_Generic(asIScriptGeneric *gen)
 void ScriptDictionarySetInt_Generic(asIScriptGeneric *gen)
 {
 	CScriptDictionary *dict = (CScriptDictionary*)gen->GetObject();
-	string *key = *(string**)gen->GetAddressOfArg(0);
+	lite3dpp::lited3dpp_string *key = *(lite3dpp::lited3dpp_string**)gen->GetAddressOfArg(0);
 	void *ref = *(void**)gen->GetAddressOfArg(1);
 	dict->Set(*key, *(asINT64*)ref);
 }
@@ -428,7 +428,7 @@ void ScriptDictionarySetInt_Generic(asIScriptGeneric *gen)
 void ScriptDictionarySetFlt_Generic(asIScriptGeneric *gen)
 {
 	CScriptDictionary *dict = (CScriptDictionary*)gen->GetObject();
-	string *key = *(string**)gen->GetAddressOfArg(0);
+	lite3dpp::lited3dpp_string *key = *(lite3dpp::lited3dpp_string**)gen->GetAddressOfArg(0);
 	void *ref = *(void**)gen->GetAddressOfArg(1);
 	dict->Set(*key, *(double*)ref);
 }
@@ -436,7 +436,7 @@ void ScriptDictionarySetFlt_Generic(asIScriptGeneric *gen)
 void ScriptDictionaryGet_Generic(asIScriptGeneric *gen)
 {
 	CScriptDictionary *dict = (CScriptDictionary*)gen->GetObject();
-	string *key = *(string**)gen->GetAddressOfArg(0);
+	lite3dpp::lited3dpp_string *key = *(lite3dpp::lited3dpp_string**)gen->GetAddressOfArg(0);
 	void *ref = *(void**)gen->GetAddressOfArg(1);
 	int typeId = gen->GetArgTypeId(1);
 	*(bool*)gen->GetAddressOfReturnLocation() = dict->Get(*key, ref, typeId);
@@ -445,7 +445,7 @@ void ScriptDictionaryGet_Generic(asIScriptGeneric *gen)
 void ScriptDictionaryGetInt_Generic(asIScriptGeneric *gen)
 {
 	CScriptDictionary *dict = (CScriptDictionary*)gen->GetObject();
-	string *key = *(string**)gen->GetAddressOfArg(0);
+	lite3dpp::lited3dpp_string *key = *(lite3dpp::lited3dpp_string**)gen->GetAddressOfArg(0);
 	void *ref = *(void**)gen->GetAddressOfArg(1);
 	*(bool*)gen->GetAddressOfReturnLocation() = dict->Get(*key, *(asINT64*)ref);
 }
@@ -453,7 +453,7 @@ void ScriptDictionaryGetInt_Generic(asIScriptGeneric *gen)
 void ScriptDictionaryGetFlt_Generic(asIScriptGeneric *gen)
 {
 	CScriptDictionary *dict = (CScriptDictionary*)gen->GetObject();
-	string *key = *(string**)gen->GetAddressOfArg(0);
+	lite3dpp::lited3dpp_string *key = *(lite3dpp::lited3dpp_string**)gen->GetAddressOfArg(0);
 	void *ref = *(void**)gen->GetAddressOfArg(1);
 	*(bool*)gen->GetAddressOfReturnLocation() = dict->Get(*key, *(double*)ref);
 }
@@ -461,7 +461,7 @@ void ScriptDictionaryGetFlt_Generic(asIScriptGeneric *gen)
 void ScriptDictionaryExists_Generic(asIScriptGeneric *gen)
 {
 	CScriptDictionary *dict = (CScriptDictionary*)gen->GetObject();
-	string *key = *(string**)gen->GetAddressOfArg(0);
+	lite3dpp::lited3dpp_string *key = *(lite3dpp::lited3dpp_string**)gen->GetAddressOfArg(0);
 	bool ret = dict->Exists(*key);
 	*(bool*)gen->GetAddressOfReturnLocation() = ret;
 }
@@ -483,7 +483,7 @@ void ScriptDictionaryGetSize_Generic(asIScriptGeneric *gen)
 void ScriptDictionaryDelete_Generic(asIScriptGeneric *gen)
 {
 	CScriptDictionary *dict = (CScriptDictionary*)gen->GetObject();
-	string *key = *(string**)gen->GetAddressOfArg(0);
+	lite3dpp::lited3dpp_string *key = *(lite3dpp::lited3dpp_string**)gen->GetAddressOfArg(0);
 	dict->Delete(*key);
 }
 
@@ -534,14 +534,14 @@ static void CScriptDictionaryGetKeys_Generic(asIScriptGeneric *gen)
 static void CScriptDictionary_opIndex_Generic(asIScriptGeneric *gen)
 {
 	CScriptDictionary *self = (CScriptDictionary*)gen->GetObject();
-	std::string *key = *(std::string**)gen->GetAddressOfArg(0);
+	lite3dpp::lited3dpp_string *key = *(lite3dpp::lited3dpp_string**)gen->GetAddressOfArg(0);
 	*(CScriptDictValue**)gen->GetAddressOfReturnLocation() = self->operator[](*key);
 }
 
 static void CScriptDictionary_opIndex_const_Generic(asIScriptGeneric *gen)
 {
 	const CScriptDictionary *self = (const CScriptDictionary*)gen->GetObject();
-	std::string *key = *(std::string**)gen->GetAddressOfArg(0);
+	lite3dpp::lited3dpp_string *key = *(lite3dpp::lited3dpp_string**)gen->GetAddressOfArg(0);
 	*(const CScriptDictValue**)gen->GetAddressOfReturnLocation() = self->operator[](*key);
 }
 
@@ -959,14 +959,14 @@ void RegisterScriptDictionary_Native(asIScriptEngine *engine)
 
 	r = engine->RegisterObjectMethod("dictionary", "dictionary &opAssign(const dictionary &in)", asMETHODPR(CScriptDictionary, operator=, (const CScriptDictionary &), CScriptDictionary&), asCALL_THISCALL); assert( r >= 0 );
 
-	r = engine->RegisterObjectMethod("dictionary", "void set(const string &in, const ?&in)", asMETHODPR(CScriptDictionary,Set,(const string&,void*,int),void), asCALL_THISCALL); assert( r >= 0 );
-	r = engine->RegisterObjectMethod("dictionary", "bool get(const string &in, ?&out) const", asMETHODPR(CScriptDictionary,Get,(const string&,void*,int) const,bool), asCALL_THISCALL); assert( r >= 0 );
+	r = engine->RegisterObjectMethod("dictionary", "void set(const string &in, const ?&in)", asMETHODPR(CScriptDictionary,Set,(const lite3dpp::lited3dpp_string&,void*,int),void), asCALL_THISCALL); assert( r >= 0 );
+	r = engine->RegisterObjectMethod("dictionary", "bool get(const string &in, ?&out) const", asMETHODPR(CScriptDictionary,Get,(const lite3dpp::lited3dpp_string&,void*,int) const,bool), asCALL_THISCALL); assert( r >= 0 );
 
-	r = engine->RegisterObjectMethod("dictionary", "void set(const string &in, const int64&in)", asMETHODPR(CScriptDictionary,Set,(const string&,const asINT64&),void), asCALL_THISCALL); assert( r >= 0 );
-	r = engine->RegisterObjectMethod("dictionary", "bool get(const string &in, int64&out) const", asMETHODPR(CScriptDictionary,Get,(const string&,asINT64&) const,bool), asCALL_THISCALL); assert( r >= 0 );
+	r = engine->RegisterObjectMethod("dictionary", "void set(const string &in, const int64&in)", asMETHODPR(CScriptDictionary,Set,(const lite3dpp::lited3dpp_string&,const asINT64&),void), asCALL_THISCALL); assert( r >= 0 );
+	r = engine->RegisterObjectMethod("dictionary", "bool get(const string &in, int64&out) const", asMETHODPR(CScriptDictionary,Get,(const lite3dpp::lited3dpp_string&,asINT64&) const,bool), asCALL_THISCALL); assert( r >= 0 );
 
-	r = engine->RegisterObjectMethod("dictionary", "void set(const string &in, const double&in)", asMETHODPR(CScriptDictionary,Set,(const string&,const double&),void), asCALL_THISCALL); assert( r >= 0 );
-	r = engine->RegisterObjectMethod("dictionary", "bool get(const string &in, double&out) const", asMETHODPR(CScriptDictionary,Get,(const string&,double&) const,bool), asCALL_THISCALL); assert( r >= 0 );
+	r = engine->RegisterObjectMethod("dictionary", "void set(const string &in, const double&in)", asMETHODPR(CScriptDictionary,Set,(const lite3dpp::lited3dpp_string&,const double&),void), asCALL_THISCALL); assert( r >= 0 );
+	r = engine->RegisterObjectMethod("dictionary", "bool get(const string &in, double&out) const", asMETHODPR(CScriptDictionary,Get,(const lite3dpp::lited3dpp_string&,double&) const,bool), asCALL_THISCALL); assert( r >= 0 );
 
 	r = engine->RegisterObjectMethod("dictionary", "bool exists(const string &in) const", asMETHOD(CScriptDictionary,Exists), asCALL_THISCALL); assert( r >= 0 );
 	r = engine->RegisterObjectMethod("dictionary", "bool isEmpty() const", asMETHOD(CScriptDictionary, IsEmpty), asCALL_THISCALL); assert( r >= 0 );
@@ -976,8 +976,8 @@ void RegisterScriptDictionary_Native(asIScriptEngine *engine)
 
 	r = engine->RegisterObjectMethod("dictionary", "array<string> @getKeys() const", asMETHOD(CScriptDictionary,GetKeys), asCALL_THISCALL); assert( r >= 0 );
 
-	r = engine->RegisterObjectMethod("dictionary", "dictionaryValue &opIndex(const string &in)", asMETHODPR(CScriptDictionary, operator[], (const string &), CScriptDictValue*), asCALL_THISCALL); assert( r >= 0 );
-	r = engine->RegisterObjectMethod("dictionary", "const dictionaryValue &opIndex(const string &in) const", asMETHODPR(CScriptDictionary, operator[], (const string &) const, const CScriptDictValue*), asCALL_THISCALL); assert( r >= 0 );
+	r = engine->RegisterObjectMethod("dictionary", "dictionaryValue &opIndex(const string &in)", asMETHODPR(CScriptDictionary, operator[], (const lite3dpp::lited3dpp_string &), CScriptDictValue*), asCALL_THISCALL); assert( r >= 0 );
+	r = engine->RegisterObjectMethod("dictionary", "const dictionaryValue &opIndex(const string &in) const", asMETHODPR(CScriptDictionary, operator[], (const lite3dpp::lited3dpp_string &) const, const CScriptDictValue*), asCALL_THISCALL); assert( r >= 0 );
 
 	// Register GC behaviours
 	r = engine->RegisterObjectBehaviour("dictionary", asBEHAVE_GETREFCOUNT, "int f()", asMETHOD(CScriptDictionary,GetRefCount), asCALL_THISCALL); assert( r >= 0 );
@@ -1071,7 +1071,7 @@ CScriptDictionary::CIterator CScriptDictionary::end() const
 
 CScriptDictionary::CIterator::CIterator(
 		const CScriptDictionary &dict,
-		std::map<std::string, CScriptDictValue>::const_iterator it)
+		std::map<lite3dpp::lited3dpp_string, CScriptDictValue>::const_iterator it)
 	: m_it(it), m_dict(dict)
 {}
 
@@ -1103,7 +1103,7 @@ bool CScriptDictionary::CIterator::operator!=(const CIterator &other) const
 	return m_it != other.m_it; 
 }
 
-const std::string &CScriptDictionary::CIterator::GetKey() const 
+const lite3dpp::lited3dpp_string &CScriptDictionary::CIterator::GetKey() const 
 { 
 	return m_it->first; 
 }

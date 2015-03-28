@@ -48,12 +48,12 @@ static int vbo_append_batch(lite3d_vbo *vbo,
     size_t i = 0;
     size_t vOffset = verticesOffset;
 
-    vao = (lite3d_vao *)lite3d_malloc(sizeof (lite3d_vao));
+    vao = (lite3d_vao *)lite3d_malloc_pooled(LITE3D_POOL_NO1, sizeof (lite3d_vao));
     SDL_assert_release(vao);
 
     if (!lite3d_vao_init(vao))
     {
-        lite3d_free(vao);
+        lite3d_free_pooled(LITE3D_POOL_NO1, vao);
         return LITE3D_FALSE;
     }
 

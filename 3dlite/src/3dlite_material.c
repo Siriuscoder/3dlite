@@ -28,7 +28,8 @@ static void lite3d_material_pass_purge(lite3d_material_pass *pass)
 
     while ((parameterNode = lite3d_list_remove_first_link(&pass->parameters)) != NULL)
     {
-        lite3d_free(LITE3D_MEMBERCAST(lite3d_material_pass_parameter,
+        lite3d_free_pooled(LITE3D_POOL_NO1, 
+            LITE3D_MEMBERCAST(lite3d_material_pass_parameter,
             parameterNode, parameterLink));
     }
 }
@@ -70,7 +71,7 @@ void lite3d_material_purge(
     {
         pass = LITE3D_MEMBERCAST(lite3d_material_pass, passNode, passLink);
         lite3d_material_pass_purge(pass);
-        lite3d_free(pass);
+        lite3d_free_pooled(LITE3D_POOL_NO1, pass);
     }
 }
 
@@ -89,7 +90,8 @@ lite3d_material_pass* lite3d_material_add_pass(
     lite3d_material_pass *pass;
 
     SDL_assert(material);
-    pass = (lite3d_material_pass *) lite3d_malloc(sizeof (lite3d_material_pass));
+    pass = (lite3d_material_pass *) lite3d_malloc_pooled(LITE3D_POOL_NO1, 
+        sizeof (lite3d_material_pass));
     SDL_assert_release(pass);
 
     lite3d_material_pass_init(pass);
@@ -108,7 +110,7 @@ int lite3d_material_remove_pass(
     {
         lite3d_list_unlink_link(&pass->passLink);
         lite3d_material_pass_purge(pass);
-        lite3d_free(pass);
+        lite3d_free_pooled(LITE3D_POOL_NO1, pass);
         return LITE3D_TRUE;
     }
 
@@ -121,7 +123,8 @@ void lite3d_material_pass_add_parameter(lite3d_material_pass *pass,
     lite3d_material_pass_parameter *parameter;
     SDL_assert(pass);
 
-    parameter = (lite3d_material_pass_parameter *) lite3d_malloc(
+    parameter = (lite3d_material_pass_parameter *) lite3d_malloc_pooled(
+        LITE3D_POOL_NO1,
         sizeof (lite3d_material_pass_parameter));
     SDL_assert_release(parameter);
 
@@ -141,7 +144,7 @@ int lite3d_material_pass_remove_parameter(lite3d_material_pass *pass,
     if ((parameter = lite3d_material_pass_find_parameter(pass, name)) != NULL)
     {
         lite3d_list_unlink_link(&parameter->parameterLink);
-        lite3d_free(parameter);
+        lite3d_free_pooled(LITE3D_POOL_NO1, parameter);
 
         return LITE3D_TRUE;
     }
