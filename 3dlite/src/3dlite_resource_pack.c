@@ -24,6 +24,7 @@
 #include <3dlite/3dlite_resource_pack.h>
 #include <3dlite/3dlite_alloc.h>
 #include <3dlite/3dlite_7z_loader.h>
+#include <3dlite/3dlite_main.h>
 
 static lite3d_resource_file *lookup_resource_index(lite3d_resource_pack *pack, const char *key)
 {
@@ -129,7 +130,8 @@ lite3d_resource_pack *lite3d_resource_pack_open(const char *path, uint8_t compre
     SDL_assert_release(pack);
     
     pack->isCompressed = compressed;
-    pack->memoryLimit = memoryLimit;
+    pack->memoryLimit = memoryLimit == 0 ? 
+        lite3d_get_global_settings()->maxFileCacheSize : memoryLimit;
     pack->memoryUsed = 0;
     pack->fileCache = lite3d_rb_tree_create(lite3d_rb_tree_c_string_comparator,
         resource_index_delete);

@@ -20,32 +20,32 @@ public:
 	virtual ~CDebugger();
 
 	// Register callbacks to handle to-lite3dpp::lited3dpp_string conversions of application types
-	typedef lite3dpp::lited3dpp_string (*ToStringCallback)(void *obj, bool expandMembers, CDebugger *dbg);
+	typedef lite3dpp::lite3dpp_string (*ToStringCallback)(void *obj, bool expandMembers, CDebugger *dbg);
 	virtual void RegisterToStringCallback(const asIObjectType *ot, ToStringCallback callback);
 
 	// User interaction
 	virtual void TakeCommands(asIScriptContext *ctx);
-	virtual void Output(const lite3dpp::lited3dpp_string &str);
+	virtual void Output(const lite3dpp::lite3dpp_string &str);
 
 	// Line callback invoked by context
 	virtual void LineCallback(asIScriptContext *ctx);
 
 	// Commands
 	virtual void PrintHelp();
-	virtual void AddFileBreakPoint(const lite3dpp::lited3dpp_string &file, int lineNbr);
-	virtual void AddFuncBreakPoint(const lite3dpp::lited3dpp_string &func);
+	virtual void AddFileBreakPoint(const lite3dpp::lite3dpp_string &file, int lineNbr);
+	virtual void AddFuncBreakPoint(const lite3dpp::lite3dpp_string &func);
 	virtual void ListBreakPoints();
 	virtual void ListLocalVariables(asIScriptContext *ctx);
 	virtual void ListGlobalVariables(asIScriptContext *ctx);
 	virtual void ListMemberProperties(asIScriptContext *ctx);
 	virtual void ListStatistics(asIScriptContext *ctx);
 	virtual void PrintCallstack(asIScriptContext *ctx);
-	virtual void PrintValue(const lite3dpp::lited3dpp_string &expr, asIScriptContext *ctx);
+	virtual void PrintValue(const lite3dpp::lite3dpp_string &expr, asIScriptContext *ctx);
 
 	// Helpers
-	virtual bool InterpretCommand(const lite3dpp::lited3dpp_string &cmd, asIScriptContext *ctx);
+	virtual bool InterpretCommand(const lite3dpp::lite3dpp_string &cmd, asIScriptContext *ctx);
 	virtual bool CheckBreakPoint(asIScriptContext *ctx);
-	virtual lite3dpp::lited3dpp_string ToString(void *value, asUINT typeId, bool expandMembers, asIScriptEngine *engine);
+	virtual lite3dpp::lite3dpp_string ToString(void *value, asUINT typeId, bool expandMembers, asIScriptEngine *engine);
 
 protected:
 	enum DebugAction
@@ -61,8 +61,8 @@ protected:
 
 	struct BreakPoint
 	{
-		BreakPoint(lite3dpp::lited3dpp_string f, int n, bool _func) : name(f), lineNbr(n), func(_func), needsAdjusting(true) {}
-		lite3dpp::lited3dpp_string name;
+		BreakPoint(lite3dpp::lite3dpp_string f, int n, bool _func) : name(f), lineNbr(n), func(_func), needsAdjusting(true) {}
+		lite3dpp::lite3dpp_string name;
 		int         lineNbr;
 		bool        func;
 		bool        needsAdjusting;

@@ -6,6 +6,8 @@
 
 using namespace std;
 
+#include <3dlitepp/3dlitepp_manageable.h>
+
 BEGIN_AS_NAMESPACE
 
 // This function takes an input string and splits it into parts by looking
@@ -20,7 +22,7 @@ BEGIN_AS_NAMESPACE
 //
 // AngelScript signature:
 // array<string>@ string::split(const string &in delim) const
-static CScriptArray *StringSplit(const string &delim, const string &str)
+static CScriptArray *StringSplit(const lite3dpp::lite3dpp_string &delim, const lite3dpp::lite3dpp_string &str)
 {
 	// Obtain a pointer to the engine
 	asIScriptContext *ctx = asGetActiveContext();
@@ -35,11 +37,11 @@ static CScriptArray *StringSplit(const string &delim, const string &str)
 
 	// Find the existence of the delimiter in the input string
 	int pos = 0, prev = 0, count = 0;
-	while( (pos = (int)str.find(delim, prev)) != (int)string::npos )
+	while( (pos = (int)str.find(delim, prev)) != (int)lite3dpp::lite3dpp_string::npos )
 	{
 		// Add the part to the array
 		array->Resize(array->GetSize()+1);
-		((string*)array->At(count))->assign(&str[prev], pos-prev);
+		((lite3dpp::lite3dpp_string*)array->At(count))->assign(&str[prev], pos-prev);
 
 		// Find the next part
 		count++;
@@ -48,7 +50,7 @@ static CScriptArray *StringSplit(const string &delim, const string &str)
 
 	// Add the remaining part
 	array->Resize(array->GetSize()+1);
-	((string*)array->At(count))->assign(&str[prev]);
+	((lite3dpp::lite3dpp_string*)array->At(count))->assign(&str[prev]);
 
 	return array;
 }
@@ -56,8 +58,8 @@ static CScriptArray *StringSplit(const string &delim, const string &str)
 static void StringSplit_Generic(asIScriptGeneric *gen)
 {
 	// Get the arguments
-	string *str   = (string*)gen->GetObject();
-	string *delim = *(string**)gen->GetAddressOfArg(0);
+	lite3dpp::lite3dpp_string *str   = (lite3dpp::lite3dpp_string*)gen->GetObject();
+	lite3dpp::lite3dpp_string *delim = *(lite3dpp::lite3dpp_string**)gen->GetAddressOfArg(0);
 
 	// Return the array by handle
 	*(CScriptArray**)gen->GetAddressOfReturnLocation() = StringSplit(*delim, *str);
@@ -78,21 +80,21 @@ static void StringSplit_Generic(asIScriptGeneric *gen)
 //
 // AngelScript signature:
 // string join(const array<string> &in array, const string &in delim)
-static string StringJoin(const CScriptArray &array, const string &delim)
+static lite3dpp::lite3dpp_string StringJoin(const CScriptArray &array, const lite3dpp::lite3dpp_string &delim)
 {
 	// Create the new string
-	string str = "";
+	lite3dpp::lite3dpp_string str = "";
 	if( array.GetSize() )
 	{
 		int n;
 		for( n = 0; n < (int)array.GetSize() - 1; n++ )
 		{
-			str += *(string*)array.At(n);
+			str += *(lite3dpp::lite3dpp_string*)array.At(n);
 			str += delim;
 		}
 
 		// Add the last part
-		str += *(string*)array.At(n);
+		str += *(lite3dpp::lite3dpp_string*)array.At(n);
 	}
 
 	return str;
@@ -102,10 +104,10 @@ static void StringJoin_Generic(asIScriptGeneric *gen)
 {
 	// Get the arguments
 	CScriptArray  *array = *(CScriptArray**)gen->GetAddressOfArg(0);
-	string *delim = *(string**)gen->GetAddressOfArg(1);
+	lite3dpp::lite3dpp_string *delim = *(lite3dpp::lite3dpp_string**)gen->GetAddressOfArg(1);
 
 	// Return the string
-	new(gen->GetAddressOfReturnLocation()) string(StringJoin(*array, *delim));
+	new(gen->GetAddressOfReturnLocation()) lite3dpp::lite3dpp_string(StringJoin(*array, *delim));
 }
 
 // This is where the utility functions are registered.

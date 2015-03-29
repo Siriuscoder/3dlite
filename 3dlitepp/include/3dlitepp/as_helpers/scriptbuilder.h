@@ -87,7 +87,7 @@ public:
 
 	// Enumerate included script sections
 	unsigned int GetSectionCount() const;
-	lite3dpp::lited3dpp_string  GetSectionName(unsigned int idx) const;
+	lite3dpp::lite3dpp_string  GetSectionName(unsigned int idx) const;
 
 #if AS_PROCESS_METADATA == 1
 	// Get metadata declared for class types and interfaces
@@ -120,48 +120,48 @@ protected:
 
 	asIScriptEngine           *engine;
 	asIScriptModule           *module;
-	lite3dpp::lited3dpp_string modifiedScript;
+	lite3dpp::lite3dpp_string modifiedScript;
 
 	INCLUDECALLBACK_t  includeCallback;
 	void              *callbackParam;
 
 #if AS_PROCESS_METADATA == 1
-	int  ExtractMetadataString(int pos, lite3dpp::lited3dpp_string &outMetadata);
-	int  ExtractDeclaration(int pos, lite3dpp::lited3dpp_string &outDeclaration, int &outType);
+	int  ExtractMetadataString(int pos, lite3dpp::lite3dpp_string &outMetadata);
+	int  ExtractDeclaration(int pos, lite3dpp::lite3dpp_string &outDeclaration, int &outType);
 
 	// Temporary structure for storing metadata and declaration
 	struct SMetadataDecl
 	{
-		SMetadataDecl(lite3dpp::lited3dpp_string m, lite3dpp::lited3dpp_string d, int t, lite3dpp::lited3dpp_string c, lite3dpp::lited3dpp_string ns) : metadata(m), declaration(d), type(t), parentClass(c), nameSpace(ns) {}
-		lite3dpp::lited3dpp_string  metadata;
-		lite3dpp::lited3dpp_string  declaration;
+		SMetadataDecl(lite3dpp::lite3dpp_string m, lite3dpp::lite3dpp_string d, int t, lite3dpp::lite3dpp_string c, lite3dpp::lite3dpp_string ns) : metadata(m), declaration(d), type(t), parentClass(c), nameSpace(ns) {}
+		lite3dpp::lite3dpp_string  metadata;
+		lite3dpp::lite3dpp_string  declaration;
 		int                         type;
-		lite3dpp::lited3dpp_string  parentClass;
-		lite3dpp::lited3dpp_string  nameSpace;
+		lite3dpp::lite3dpp_string  parentClass;
+		lite3dpp::lite3dpp_string  nameSpace;
 	};
 	lite3dpp::stl<SMetadataDecl>::vector foundDeclarations;
-	lite3dpp::lited3dpp_string currentClass;
-	lite3dpp::lited3dpp_string currentNamespace;
+	lite3dpp::lite3dpp_string currentClass;
+	lite3dpp::lite3dpp_string currentNamespace;
 
 	// Storage of metadata for global declarations
-	lite3dpp::stl<int, lite3dpp::lited3dpp_string>::map typeMetadataMap;
-	lite3dpp::stl<int, lite3dpp::lited3dpp_string>::map funcMetadataMap;
-	lite3dpp::stl<int, lite3dpp::lited3dpp_string>::map varMetadataMap;
+	lite3dpp::stl<int, lite3dpp::lite3dpp_string>::map typeMetadataMap;
+	lite3dpp::stl<int, lite3dpp::lite3dpp_string>::map funcMetadataMap;
+	lite3dpp::stl<int, lite3dpp::lite3dpp_string>::map varMetadataMap;
 
 	// Storage of metadata for class member declarations
 	struct SClassMetadata
 	{
-		SClassMetadata(const lite3dpp::lited3dpp_string& aName) : className(aName) {}
-		lite3dpp::lited3dpp_string className;
-		lite3dpp::stl<int, lite3dpp::lited3dpp_string>::map funcMetadataMap;
-		lite3dpp::stl<int, lite3dpp::lited3dpp_string>::map varMetadataMap;
+		SClassMetadata(const lite3dpp::lite3dpp_string& aName) : className(aName) {}
+		lite3dpp::lite3dpp_string className;
+		lite3dpp::stl<int, lite3dpp::lite3dpp_string>::map funcMetadataMap;
+		lite3dpp::stl<int, lite3dpp::lite3dpp_string>::map varMetadataMap;
 	};
     lite3dpp::stl<int, SClassMetadata>::map classMetadataMap;
 
 #endif
 
-	lite3dpp::stl<lite3dpp::lited3dpp_string>::set      includedScripts;
-	lite3dpp::stl<lite3dpp::lited3dpp_string>::set      definedWords;
+	lite3dpp::stl<lite3dpp::lite3dpp_string>::set      includedScripts;
+	lite3dpp::stl<lite3dpp::lite3dpp_string>::set      definedWords;
 };
 
 END_AS_NAMESPACE

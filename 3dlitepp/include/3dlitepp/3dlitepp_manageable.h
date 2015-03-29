@@ -61,6 +61,8 @@ namespace lite3dpp
         void operator delete[](void *p, const std::nothrow_t &n);
     };
 
+#ifdef LITE3DPP_USE_STL_ALLOCATOR
+    
     template<class T>
     class LITE3DPP_EXPORT ManageableStlAllocator :
         public std::allocator<T>
@@ -101,12 +103,34 @@ namespace lite3dpp
     };
 
     typedef std::basic_string<char, std::char_traits<char>,
-        ManageableStlAllocator<char> > lited3dpp_string;
+        ManageableStlAllocator<char> > lite3dpp_string;
     typedef std::basic_string<wchar_t, std::char_traits<wchar_t>,
-        ManageableStlAllocator<wchar_t> > lited3dpp_wstring;
+        ManageableStlAllocator<wchar_t> > lite3dpp_wstring;
     typedef std::basic_stringstream< char, std::char_traits<char>,
         ManageableStlAllocator<char> > lited3dpp_stringstream;
     typedef std::basic_stringstream< wchar_t, std::char_traits<wchar_t>,
         ManageableStlAllocator<wchar_t> > lited3dpp_wstringstream;
+ 
+#else
+    template<class T, class Y = void>
+    class stl
+    {
+    public:
+
+        typedef std::vector<T> vector;
+
+        typedef std::map<T, Y> map;
+
+        typedef std::list<T> list;
+        
+        typedef std::set<T> set;
+    };
+    
+    typedef std::string lite3dpp_string;
+    typedef std::wstring lite3dpp_wstring;
+    typedef std::stringstream lited3dpp_stringstream;
+    typedef std::wstringstream lited3dpp_wstringstream;
+    
+#endif
 }
 

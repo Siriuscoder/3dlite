@@ -42,7 +42,7 @@ int WriteConfigToStream(asIScriptEngine *engine, std::ostream &strm);
 int ConfigEngineFromStream(asIScriptEngine *engine, std::istream &strm, const char *nameOfStream = "config");
 
 // Format the details of the script exception into a human readable text
-lite3dpp::lited3dpp_string GetExceptionInfo(asIScriptContext *ctx, bool showStack = false);
+lite3dpp::lite3dpp_string GetExceptionInfo(asIScriptContext *ctx, bool showStack = false);
 
 END_AS_NAMESPACE
 

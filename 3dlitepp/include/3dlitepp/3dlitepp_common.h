@@ -54,3 +54,11 @@
 #   define LITE3DPP_EXPORT
 
 #endif
+
+//#define LITE3DPP_USE_STL_ALLOCATOR
+
+/* Main engine class */
+namespace lite3dpp
+{
+    class Main;
+}

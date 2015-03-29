@@ -18,7 +18,7 @@ CDebugger::~CDebugger()
 {
 }
 
-lite3dpp::lited3dpp_string CDebugger::ToString(void *value, asUINT typeId, bool expandMembers, asIScriptEngine *engine)
+lite3dpp::lite3dpp_string CDebugger::ToString(void *value, asUINT typeId, bool expandMembers, asIScriptEngine *engine)
 {
 	if( value == 0 )
 		return "<null>";
@@ -127,7 +127,7 @@ lite3dpp::lited3dpp_string CDebugger::ToString(void *value, asUINT typeId, bool 
 					s << endl;
 
 				// Invoke the callback to get the lite3dpp::lited3dpp_string representation of this type
-				lite3dpp::lited3dpp_string str = it->second(value, expandMembers, this);
+				lite3dpp::lite3dpp_string str = it->second(value, expandMembers, this);
 				s << str;
 			}
 		}
@@ -207,9 +207,9 @@ bool CDebugger::CheckBreakPoint(asIScriptContext *ctx)
 	int lineNbr = ctx->GetLineNumber(0, 0, &tmp);
 
 	// Consider just filename, not the full path
-	lite3dpp::lited3dpp_string file = tmp ? tmp : "";
+	lite3dpp::lite3dpp_string file = tmp ? tmp : "";
 	size_t r = file.find_last_of("\\/");
-	if( r != lite3dpp::lited3dpp_string::npos )
+	if( r != lite3dpp::lite3dpp_string::npos )
 		file = file.substr(r+1);
 
 	// Did we move into a new function?
@@ -287,12 +287,12 @@ void CDebugger::TakeCommands(asIScriptContext *ctx)
 		Output("[dbg]> ");
 		cin.getline(buf, 512);
 
-		if( InterpretCommand(lite3dpp::lited3dpp_string(buf), ctx) )
+		if( InterpretCommand(lite3dpp::lite3dpp_string(buf), ctx) )
 			break;
 	}
 }
 
-bool CDebugger::InterpretCommand(const lite3dpp::lited3dpp_string &cmd, asIScriptContext *ctx)
+bool CDebugger::InterpretCommand(const lite3dpp::lite3dpp_string &cmd, asIScriptContext *ctx)
 {
 	if( cmd.length() == 0 ) return true;
 
@@ -330,18 +330,18 @@ bool CDebugger::InterpretCommand(const lite3dpp::lited3dpp_string &cmd, asIScrip
 		{
 			// Set break point
 			size_t div = cmd.find(':'); 
-			if( div != lite3dpp::lited3dpp_string::npos && div > 2 )
+			if( div != lite3dpp::lite3dpp_string::npos && div > 2 )
 			{
-				lite3dpp::lited3dpp_string file = cmd.substr(2, div-2);
-				lite3dpp::lited3dpp_string line = cmd.substr(div+1);
+				lite3dpp::lite3dpp_string file = cmd.substr(2, div-2);
+				lite3dpp::lite3dpp_string line = cmd.substr(div+1);
 
 				int nbr = atoi(line.c_str());
 
 				AddFileBreakPoint(file, nbr);
 			}
-			else if( div == lite3dpp::lited3dpp_string::npos && (div = cmd.find_first_not_of(" \t", 1)) != lite3dpp::lited3dpp_string::npos )
+			else if( div == lite3dpp::lite3dpp_string::npos && (div = cmd.find_first_not_of(" \t", 1)) != lite3dpp::lite3dpp_string::npos )
 			{
-				lite3dpp::lited3dpp_string func = cmd.substr(div);
+				lite3dpp::lite3dpp_string func = cmd.substr(div);
 
 				AddFuncBreakPoint(func);
 			}
@@ -360,7 +360,7 @@ bool CDebugger::InterpretCommand(const lite3dpp::lited3dpp_string &cmd, asIScrip
 			// Remove break point
 			if( cmd.length() > 2 )
 			{
-				lite3dpp::lited3dpp_string br = cmd.substr(2);
+				lite3dpp::lite3dpp_string br = cmd.substr(2);
 				if( br == "all" )
 				{
 					m_breakPoints.clear();
@@ -387,7 +387,7 @@ bool CDebugger::InterpretCommand(const lite3dpp::lited3dpp_string &cmd, asIScrip
 		{
 			// List something
 			size_t p = cmd.find_first_not_of(" \t", 1);
-			if( p != lite3dpp::lited3dpp_string::npos )
+			if( p != lite3dpp::lite3dpp_string::npos )
 			{
 				if( cmd[p] == 'b' )
 				{
@@ -437,7 +437,7 @@ bool CDebugger::InterpretCommand(const lite3dpp::lited3dpp_string &cmd, asIScrip
 		{
 			// Print a value 
 			size_t p = cmd.find_first_not_of(" \t", 1);
-			if( p != lite3dpp::lited3dpp_string::npos )
+			if( p != lite3dpp::lite3dpp_string::npos )
 			{
 				PrintValue(cmd.substr(p), ctx);
 			}
@@ -476,7 +476,7 @@ bool CDebugger::InterpretCommand(const lite3dpp::lited3dpp_string &cmd, asIScrip
 	return true;
 }
 
-void CDebugger::PrintValue(const lite3dpp::lited3dpp_string &expr, asIScriptContext *ctx)
+void CDebugger::PrintValue(const lite3dpp::lite3dpp_string &expr, asIScriptContext *ctx)
 {
 	if( ctx == 0 )
 	{
@@ -488,9 +488,9 @@ void CDebugger::PrintValue(const lite3dpp::lited3dpp_string &expr, asIScriptCont
 
 	// Tokenize the input lite3dpp::lited3dpp_string to get the variable scope and name
 	asUINT len = 0;
-	lite3dpp::lited3dpp_string scope;
-	lite3dpp::lited3dpp_string name;
-	lite3dpp::lited3dpp_string str = expr;
+	lite3dpp::lite3dpp_string scope;
+	lite3dpp::lite3dpp_string name;
+	lite3dpp::lite3dpp_string str = expr;
 	asETokenClass t = engine->ParseToken(str.c_str(), 0, &len);
 	while( t == asTC_IDENTIFIER || (t == asTC_KEYWORD && len == 2 && str.compare("::")) )
 	{
@@ -728,12 +728,12 @@ void CDebugger::PrintCallstack(asIScriptContext *ctx)
 	Output(s.str());
 }
 
-void CDebugger::AddFuncBreakPoint(const lite3dpp::lited3dpp_string &func)
+void CDebugger::AddFuncBreakPoint(const lite3dpp::lite3dpp_string &func)
 {
 	// Trim the function name
 	size_t b = func.find_first_not_of(" \t");
 	size_t e = func.find_last_not_of(" \t");
-	lite3dpp::lited3dpp_string actual = func.substr(b, e != lite3dpp::lited3dpp_string::npos ? e-b+1 : lite3dpp::lited3dpp_string::npos);
+	lite3dpp::lite3dpp_string actual = func.substr(b, e != lite3dpp::lite3dpp_string::npos ? e-b+1 : lite3dpp::lite3dpp_string::npos);
 
 	lite3dpp::lited3dpp_stringstream s;
 	s << "Adding deferred break point for function '" << actual << "'" << endl;
@@ -743,12 +743,12 @@ void CDebugger::AddFuncBreakPoint(const lite3dpp::lited3dpp_string &func)
 	m_breakPoints.push_back(bp);
 }
 
-void CDebugger::AddFileBreakPoint(const lite3dpp::lited3dpp_string &file, int lineNbr)
+void CDebugger::AddFileBreakPoint(const lite3dpp::lite3dpp_string &file, int lineNbr)
 {
 	// Store just file name, not entire path
 	size_t r = file.find_last_of("\\/");
-	lite3dpp::lited3dpp_string actual;
-	if( r != lite3dpp::lited3dpp_string::npos )
+	lite3dpp::lite3dpp_string actual;
+	if( r != lite3dpp::lite3dpp_string::npos )
 		actual = file.substr(r+1);
 	else
 		actual = file;
@@ -756,7 +756,7 @@ void CDebugger::AddFileBreakPoint(const lite3dpp::lited3dpp_string &file, int li
 	// Trim the file name
 	size_t b = actual.find_first_not_of(" \t");
 	size_t e = actual.find_last_not_of(" \t");
-	actual = actual.substr(b, e != lite3dpp::lited3dpp_string::npos ? e-b+1 : lite3dpp::lited3dpp_string::npos);
+	actual = actual.substr(b, e != lite3dpp::lite3dpp_string::npos ? e-b+1 : lite3dpp::lite3dpp_string::npos);
 
 	lite3dpp::lited3dpp_stringstream s;
 	s << "Setting break point in file '" << actual << "' at line " << lineNbr << endl;
@@ -781,7 +781,7 @@ void CDebugger::PrintHelp()
 	       "h - Print this help text\n");
 }
 
-void CDebugger::Output(const lite3dpp::lited3dpp_string &str)
+void CDebugger::Output(const lite3dpp::lite3dpp_string &str)
 {
 	// By default we just output to stdout
 	cout << str;

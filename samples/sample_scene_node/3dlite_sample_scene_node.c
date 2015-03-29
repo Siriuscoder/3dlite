@@ -59,7 +59,7 @@ static lite3d_mesh_node mSceneNodeInherited[3];
 
 static lite3d_scene mScene;
 
-static int process_events(SDL_Event *levent)
+static int process_events(SDL_Event *levent, void *userdata)
 {
     if (levent->type == SDL_KEYDOWN)
     {
@@ -264,7 +264,7 @@ static int initCube(void)
     return LITE3D_TRUE;
 }
 
-static int init(void)
+static int init(void *userdata)
 {
     int i = 0;
     lite3d_resource_file *file1, *file2;
@@ -329,7 +329,7 @@ static int init(void)
     return LITE3D_TRUE;
 }
 
-static int shutdown(void)
+static int shutdown(void *userdata)
 {
     lite3d_vbo_purge(&mCubeVbo);
     lite3d_material_purge(&mVintageBoxMaterial);

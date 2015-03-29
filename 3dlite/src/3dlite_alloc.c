@@ -28,11 +28,12 @@ nedpool *globalMemPools[LITE3D_POOL_MAX] = {NULL, NULL, NULL, NULL, NULL, NULL};
 void lite3d_memory_init(lite3d_alloca_f *allocator)
 {
     int i;
+    
     if (allocator && allocator->mallocf != NULL && allocator->freef != NULL)
     {
         gAlloca_f = *allocator;
     }
-    else
+    else if(gAlloca_f.mallocf == NULL && gAlloca_f.freef == NULL)
     {
         gAlloca_f.mallocf = malloc;
         gAlloca_f.freef = free;

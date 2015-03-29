@@ -35,7 +35,7 @@ static lite3d_shader_program mProgram;
 static lite3d_mesh_node mSceneNode;
 static lite3d_scene mScene;
 
-static int process_events(SDL_Event *levent)
+static int process_events(SDL_Event *levent, void *userdata)
 {
     if (levent->type == SDL_KEYDOWN)
     {
@@ -147,7 +147,7 @@ static int initModel(void)
     return LITE3D_TRUE;
 }
 
-static int init(void)
+static int init(void *userdata)
 {
     kmVec3 cameraInitPos = {
         80.0f, 80.0f, 80.0f
@@ -181,7 +181,7 @@ static int init(void)
     return LITE3D_TRUE;
 }
 
-static int shutdown(void)
+static int shutdown(void *userdata)
 {
     /* release resources */
     lite3d_vbo_purge(&mModel);
@@ -194,7 +194,7 @@ static int shutdown(void)
     return LITE3D_TRUE;
 }
 
-static int pre_frame(void)
+static int pre_frame(void *userdata)
 {
     lite3d_scene_node_rotate_angle(&mSceneNode.sceneNode, &KM_VEC3_POS_Z, 0.001f);
     return LITE3D_TRUE;

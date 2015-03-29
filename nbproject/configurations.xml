@@ -91,6 +91,7 @@
         <df name="include">
           <df name="3dlitepp">
             <in>3dlitepp_manageable.h</in>
+            <in>3dlitepp_resource_manager.h</in>
             <in>3dlitepp_resource_pack_manager.h</in>
           </df>
         </df>
@@ -178,10 +179,6 @@
         <df name="sample_scene_node">
           <in>3dlite_sample_scene_node.c</in>
         </df>
-        <in>3dlite_sample_minigun.c</in>
-        <in>3dlite_sample_render_to_texture.c</in>
-        <in>3dlite_sample_rifle.c</in>
-        <in>3dlite_sample_scene_node.c</in>
       </df>
       <df name="tests">
         <df name="functionaly">
@@ -664,6 +661,11 @@
       <item path="3dlite/src/kazmath/vec4.c" ex="false" tool="0" flavor2="3">
         <cTool flags="2">
         </cTool>
+      </item>
+      <item path="3dlitepp/include/3dlitepp/3dlitepp_resource_manager.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
       </item>
       <item path="3dlitepp/src/3dlitepp_as_runner.cpp"
             ex="false"
@@ -1159,45 +1161,6 @@
           </preprocessorList>
         </cTool>
       </folder>
-      <item path="samples/3dlite_sample_minigun.c" ex="false" tool="0" flavor2="3">
-        <cTool>
-          <incDir>
-            <pElem>3dlite++/include</pElem>
-            <pElem>/usr/include/SDL2</pElem>
-            <pElem>build/samples</pElem>
-          </incDir>
-        </cTool>
-      </item>
-      <item path="samples/3dlite_sample_render_to_texture.c"
-            ex="false"
-            tool="0"
-            flavor2="3">
-        <cTool>
-          <incDir>
-            <pElem>3dlite++/include</pElem>
-            <pElem>/usr/include/SDL2</pElem>
-            <pElem>build/samples</pElem>
-          </incDir>
-        </cTool>
-      </item>
-      <item path="samples/3dlite_sample_rifle.c" ex="false" tool="0" flavor2="3">
-        <cTool>
-          <incDir>
-            <pElem>3dlite++/include</pElem>
-            <pElem>/usr/include/SDL2</pElem>
-            <pElem>build/samples</pElem>
-          </incDir>
-        </cTool>
-      </item>
-      <item path="samples/3dlite_sample_scene_node.c" ex="false" tool="0" flavor2="3">
-        <cTool>
-          <incDir>
-            <pElem>3dlite++/include</pElem>
-            <pElem>/usr/include/SDL2</pElem>
-            <pElem>build/samples</pElem>
-          </incDir>
-        </cTool>
-      </item>
       <item path="samples/sample_minigun/3dlite_sample_minigun.c"
             ex="false"
             tool="0"
@@ -1373,6 +1336,11 @@
       <item path="3dlite/src/glew/glew.c" ex="false" tool="0" flavor2="0">
       </item>
       <item path="3dlitepp/include/3dlitepp/3dlitepp_manageable.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="3dlitepp/include/3dlitepp/3dlitepp_resource_manager.h"
             ex="false"
             tool="3"
             flavor2="0">

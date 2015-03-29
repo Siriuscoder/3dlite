@@ -17,41 +17,20 @@
  *******************************************************************************/
 #include <gtest/gtest.h>
 
-#include <3dlite/GL/glew.h>
-#include "3dlite_common_test.h"
 
-class VBO_Test : public ::testing::Test
+#include <3dlitepp/3dlitepp_main.h>
+
+class Lite3dpp_MainTest : public ::testing::Test
 {
 public:
 
 protected:
-    Lite3dCommon mlite3dCommon;
+
+    lite3dpp::Main mMain;
 };
 
-static int meshLoadingTest(void *userdata)
+TEST_F(Lite3dpp_MainTest, ConfigureMain)
 {
-    lite3d_vbo mVBO;
-    lite3d_resource_pack *fileSysPack = lite3d_resource_pack_open("tests/", 0, 1000000);
-    EXPECT_TRUE(fileSysPack != NULL);
-    lite3d_resource_file *meshFile = lite3d_resource_pack_file_load(fileSysPack, 
-        "pack/minigun/minigun.3ds");
-    EXPECT_TRUE(lite3d_vbo_init(&mVBO) == LITE3D_TRUE);
-    EXPECT_TRUE(lite3d_vbo_load(&mVBO, meshFile, NULL, GL_STATIC_DRAW, 0) == LITE3D_TRUE);
-
-
-    lite3d_vbo_purge(&mVBO);
-    lite3d_resource_pack_close(fileSysPack);
-    /* quit immediatly */
-    return LITE3D_FALSE;
+    EXPECT_TRUE(mMain.initFromConfig("tests/config/config.json"));
 }
 
-TEST_F(VBO_Test, meshLoading)
-{
-    mlite3dCommon.settings().renderLisneters.preRender = meshLoadingTest;
-    mlite3dCommon.main();
-}
-
-TEST_F(VBO_Test, mapping)
-{
-
-}
