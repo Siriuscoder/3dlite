@@ -37,9 +37,9 @@ typedef struct lite3d_global_settings
     lite3d_texture_technique_settings textureSettings;
     lite3d_alloca_f userAllocator;
     lite3d_render_listeners renderLisneters;
-
+    
+    size_t maxFileCacheSize;
     int8_t logLevel;
-    void *userdata;
 } lite3d_global_settings;
 
 LITE3D_CEXPORT int lite3d_main(const lite3d_global_settings *settings);

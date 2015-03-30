@@ -1,6 +1,5 @@
 #include <3dlitepp/as_helpers/scriptstdstring.h>
 #include <assert.h> // assert()
-#include <sstream>  // std::stringstream
 #include <string.h> // strstr()
 #include <stdio.h>	// sprintf()
 #include <stdlib.h> // strtod()
@@ -35,9 +34,9 @@ const asPWORD STRING_POOL = 1001;
 // before the memory leak detector starts, thus it won't report the missing
 // deallocation. An example of this the Marmalade leak detector initialized with
 // IwGxInit() and finished with IwGxTerminate().
-static const string emptyString;
+static const lite3dpp::lite3dpp_string emptyString;
 
-static const string &StringFactory(asUINT length, const char *s)
+static const lite3dpp::lite3dpp_string &StringFactory(asUINT length, const char *s)
 {
 	// Each engine instance has its own string pool
 	asIScriptContext *ctx = asGetActiveContext();
@@ -50,7 +49,7 @@ static const string &StringFactory(asUINT length, const char *s)
 	asIScriptEngine *engine = ctx->GetEngine();
 
 	// TODO: runtime optimize: Use unordered_map if C++11 is supported, i.e. MSVC10+, gcc 4.?+
-	map<const char *, string> *pool = reinterpret_cast< map<const char *, string>* >(engine->GetUserData(STRING_POOL));
+	map<const char *, lite3dpp::lite3dpp_string> *pool = reinterpret_cast< map<const char *, lite3dpp::lite3dpp_string>* >(engine->GetUserData(STRING_POOL));
 
 	if( !pool )
 	{
@@ -58,13 +57,13 @@ static const string &StringFactory(asUINT length, const char *s)
 		asAcquireExclusiveLock();
 
 		// Make sure the string pool wasn't created while we were waiting for the lock
-		pool = reinterpret_cast< map<const char *, string>* >(engine->GetUserData(STRING_POOL));
+		pool = reinterpret_cast< map<const char *, lite3dpp::lite3dpp_string>* >(engine->GetUserData(STRING_POOL));
 		if( !pool )
 		{
 			#if defined(__S3E__)
-			pool = new map<const char *, string>;
+			pool = new map<const char *, lite3dpp::lite3dpp_string>;
 			#else
-			pool = new (nothrow) map<const char *, string>;
+			pool = new (nothrow) map<const char *, lite3dpp::lite3dpp_string>;
 			#endif
 			if( pool == 0 )
 			{
@@ -82,7 +81,7 @@ static const string &StringFactory(asUINT length, const char *s)
 	asAcquireSharedLock();
 
 	// First check if a string object hasn't been created already
-	map<const char *, string>::iterator it;
+	map<const char *, lite3dpp::lite3dpp_string>::iterator it;
 	it = pool->find(s);
 	if( it != pool->end() )
 	{
@@ -100,7 +99,7 @@ static const string &StringFactory(asUINT length, const char *s)
 	if( it == pool->end() )
 	{
 		// Create a new string object
-		it = pool->insert(map<const char *, string>::value_type(s, string(s, length))).first;
+		it = pool->insert(map<const char *, lite3dpp::lite3dpp_string>::value_type(s, lite3dpp::lite3dpp_string(s, length))).first;
 	}
 
 	asReleaseExclusiveLock();
@@ -109,34 +108,35 @@ static const string &StringFactory(asUINT length, const char *s)
 
 static void CleanupEngineStringPool(asIScriptEngine *engine)
 {
-	map<const char *, string> *pool = reinterpret_cast< map<const char *, string>* >(engine->GetUserData(STRING_POOL));
+	map<const char *, lite3dpp::lite3dpp_string> *pool = reinterpret_cast< map<const char *, lite3dpp::lite3dpp_string>* >(engine->GetUserData(STRING_POOL));
 	if( pool )
 		delete pool;
 }
 
 #else
-static string StringFactory(asUINT length, const char *s)
+static lite3dpp::lite3dpp_string StringFactory(asUINT length, const char *s)
 {
-	return string(s, length);
+	return lite3dpp::lite3dpp_string(s, length);
 }
 #endif
 
-static void ConstructString(string *thisPointer)
+static void ConstructString(lite3dpp::lite3dpp_string *thisPointer)
 {
-	new(thisPointer) string();
+	new(thisPointer) lite3dpp::lite3dpp_string();
 }
 
-static void CopyConstructString(const string &other, string *thisPointer)
+static void CopyConstructString(const lite3dpp::lite3dpp_string &other, lite3dpp::lite3dpp_string *thisPointer)
 {
-	new(thisPointer) string(other);
+	new(thisPointer) lite3dpp::lite3dpp_string(other);
 }
 
-static void DestructString(string *thisPointer)
+static void DestructString(lite3dpp::lite3dpp_string *thisPointer)
 {
-	thisPointer->~string();
+    using lite3dpp::lite3dpp_string;
+	thisPointer->~lite3dpp_string();
 }
 
-static string &AddAssignStringToString(const string &str, string &dest)
+static lite3dpp::lite3dpp_string &AddAssignStringToString(const lite3dpp::lite3dpp_string &str, lite3dpp::lite3dpp_string &dest)
 {
 	// We don't register the method directly because some compilers
 	// and standard libraries inline the definition, resulting in the
@@ -146,9 +146,9 @@ static string &AddAssignStringToString(const string &str, string &dest)
 	return dest;
 }
 
-// bool string::isEmpty()
-// bool string::empty() // if AS_USE_STLNAMES == 1
-static bool StringIsEmpty(const string &str)
+// bool lite3dpp::lited3dpp_string::isEmpty()
+// bool lite3dpp::lited3dpp_string::empty() // if AS_USE_STLNAMES == 1
+static bool StringIsEmpty(const lite3dpp::lite3dpp_string &str)
 {
 	// We don't register the method directly because some compilers
 	// and standard libraries inline the definition, resulting in the
@@ -157,157 +157,157 @@ static bool StringIsEmpty(const string &str)
 	return str.empty();
 }
 
-static string &AssignUInt64ToString(asQWORD i, string &dest)
+static lite3dpp::lite3dpp_string &AssignUInt64ToString(asQWORD i, lite3dpp::lite3dpp_string &dest)
 {
-	ostringstream stream;
+	lite3dpp::lited3dpp_stringstream stream;
 	stream << i;
 	dest = stream.str();
 	return dest;
 }
 
-static string &AddAssignUInt64ToString(asQWORD i, string &dest)
+static lite3dpp::lite3dpp_string &AddAssignUInt64ToString(asQWORD i, lite3dpp::lite3dpp_string &dest)
 {
-	ostringstream stream;
+	lite3dpp::lited3dpp_stringstream stream;
 	stream << i;
 	dest += stream.str();
 	return dest;
 }
 
-static string AddStringUInt64(const string &str, asQWORD i)
+static lite3dpp::lite3dpp_string AddStringUInt64(const lite3dpp::lite3dpp_string &str, asQWORD i)
 {
-	ostringstream stream;
+	lite3dpp::lited3dpp_stringstream stream;
 	stream << i;
 	return str + stream.str();
 }
 
-static string AddInt64String(asINT64 i, const string &str)
+static lite3dpp::lite3dpp_string AddInt64String(asINT64 i, const lite3dpp::lite3dpp_string &str)
 {
-	ostringstream stream;
+	lite3dpp::lited3dpp_stringstream stream;
 	stream << i;
 	return stream.str() + str;
 }
 
-static string &AssignInt64ToString(asINT64 i, string &dest)
+static lite3dpp::lite3dpp_string &AssignInt64ToString(asINT64 i, lite3dpp::lite3dpp_string &dest)
 {
-	ostringstream stream;
+	lite3dpp::lited3dpp_stringstream stream;
 	stream << i;
 	dest = stream.str();
 	return dest;
 }
 
-static string &AddAssignInt64ToString(asINT64 i, string &dest)
+static lite3dpp::lite3dpp_string &AddAssignInt64ToString(asINT64 i, lite3dpp::lite3dpp_string &dest)
 {
-	ostringstream stream;
+	lite3dpp::lited3dpp_stringstream stream;
 	stream << i;
 	dest += stream.str();
 	return dest;
 }
 
-static string AddStringInt64(const string &str, asINT64 i)
+static lite3dpp::lite3dpp_string AddStringInt64(const lite3dpp::lite3dpp_string &str, asINT64 i)
 {
-	ostringstream stream;
+	lite3dpp::lited3dpp_stringstream stream;
 	stream << i;
 	return str + stream.str();
 }
 
-static string AddUInt64String(asQWORD i, const string &str)
+static lite3dpp::lite3dpp_string AddUInt64String(asQWORD i, const lite3dpp::lite3dpp_string &str)
 {
-	ostringstream stream;
+	lite3dpp::lited3dpp_stringstream stream;
 	stream << i;
 	return stream.str() + str;
 }
 
-static string &AssignDoubleToString(double f, string &dest)
+static lite3dpp::lite3dpp_string &AssignDoubleToString(double f, lite3dpp::lite3dpp_string &dest)
 {
-	ostringstream stream;
+	lite3dpp::lited3dpp_stringstream stream;
 	stream << f;
 	dest = stream.str();
 	return dest;
 }
 
-static string &AddAssignDoubleToString(double f, string &dest)
+static lite3dpp::lite3dpp_string &AddAssignDoubleToString(double f, lite3dpp::lite3dpp_string &dest)
 {
-	ostringstream stream;
+	lite3dpp::lited3dpp_stringstream stream;
 	stream << f;
 	dest += stream.str();
 	return dest;
 }
 
-static string &AssignFloatToString(float f, string &dest)
+static lite3dpp::lite3dpp_string &AssignFloatToString(float f, lite3dpp::lite3dpp_string &dest)
 {
-	ostringstream stream;
+	lite3dpp::lited3dpp_stringstream stream;
 	stream << f;
 	dest = stream.str();
 	return dest;
 }
 
-static string &AddAssignFloatToString(float f, string &dest)
+static lite3dpp::lite3dpp_string &AddAssignFloatToString(float f, lite3dpp::lite3dpp_string &dest)
 {
-	ostringstream stream;
+	lite3dpp::lited3dpp_stringstream stream;
 	stream << f;
 	dest += stream.str();
 	return dest;
 }
 
-static string &AssignBoolToString(bool b, string &dest)
+static lite3dpp::lite3dpp_string &AssignBoolToString(bool b, lite3dpp::lite3dpp_string &dest)
 {
-	ostringstream stream;
+	lite3dpp::lited3dpp_stringstream stream;
 	stream << (b ? "true" : "false");
 	dest = stream.str();
 	return dest;
 }
 
-static string &AddAssignBoolToString(bool b, string &dest)
+static lite3dpp::lite3dpp_string &AddAssignBoolToString(bool b, lite3dpp::lite3dpp_string &dest)
 {
-	ostringstream stream;
+	lite3dpp::lited3dpp_stringstream stream;
 	stream << (b ? "true" : "false");
 	dest += stream.str();
 	return dest;
 }
 
-static string AddStringDouble(const string &str, double f)
+static lite3dpp::lite3dpp_string AddStringDouble(const lite3dpp::lite3dpp_string &str, double f)
 {
-	ostringstream stream;
+	lite3dpp::lited3dpp_stringstream stream;
 	stream << f;
 	return str + stream.str();
 }
 
-static string AddDoubleString(double f, const string &str)
+static lite3dpp::lite3dpp_string AddDoubleString(double f, const lite3dpp::lite3dpp_string &str)
 {
-	ostringstream stream;
+	lite3dpp::lited3dpp_stringstream stream;
 	stream << f;
 	return stream.str() + str;
 }
 
-static string AddStringFloat(const string &str, float f)
+static lite3dpp::lite3dpp_string AddStringFloat(const lite3dpp::lite3dpp_string &str, float f)
 {
-	ostringstream stream;
+	lite3dpp::lited3dpp_stringstream stream;
 	stream << f;
 	return str + stream.str();
 }
 
-static string AddFloatString(float f, const string &str)
+static lite3dpp::lite3dpp_string AddFloatString(float f, const lite3dpp::lite3dpp_string &str)
 {
-	ostringstream stream;
+	lite3dpp::lited3dpp_stringstream stream;
 	stream << f;
 	return stream.str() + str;
 }
 
-static string AddStringBool(const string &str, bool b)
+static lite3dpp::lite3dpp_string AddStringBool(const lite3dpp::lite3dpp_string &str, bool b)
 {
-	ostringstream stream;
+	lite3dpp::lited3dpp_stringstream stream;
 	stream << (b ? "true" : "false");
 	return str + stream.str();
 }
 
-static string AddBoolString(bool b, const string &str)
+static lite3dpp::lite3dpp_string AddBoolString(bool b, const lite3dpp::lite3dpp_string &str)
 {
-	ostringstream stream;
+	lite3dpp::lited3dpp_stringstream stream;
 	stream << (b ? "true" : "false");
 	return stream.str() + str;
 }
 
-static char *StringCharAt(unsigned int i, string &str)
+static char *StringCharAt(unsigned int i, lite3dpp::lite3dpp_string &str)
 {
 	if( i >= str.size() )
 	{
@@ -323,8 +323,8 @@ static char *StringCharAt(unsigned int i, string &str)
 }
 
 // AngelScript signature:
-// int string::opCmp(const string &in) const
-static int StringCmp(const string &a, const string &b)
+// int lite3dpp::lited3dpp_string::opCmp(const lite3dpp::lited3dpp_string &in) const
+static int StringCmp(const lite3dpp::lite3dpp_string &a, const lite3dpp::lite3dpp_string &b)
 {
 	int cmp = 0;
 	if( a < b ) cmp = -1;
@@ -333,12 +333,12 @@ static int StringCmp(const string &a, const string &b)
 }
 
 // This function returns the index of the first position where the substring
-// exists in the input string. If the substring doesn't exist in the input
-// string -1 is returned.
+// exists in the input lite3dpp::lited3dpp_string. If the substring doesn't exist in the input
+// lite3dpp::lited3dpp_string -1 is returned.
 //
 // AngelScript signature:
-// int string::findFirst(const string &in sub, uint start = 0) const
-static int StringFindFirst(const string &sub, asUINT start, const string &str)
+// int lite3dpp::lited3dpp_string::findFirst(const lite3dpp::lited3dpp_string &in sub, uint start = 0) const
+static int StringFindFirst(const lite3dpp::lite3dpp_string &sub, asUINT start, const lite3dpp::lite3dpp_string &str)
 {
 	// We don't register the method directly because the argument types change between 32bit and 64bit platforms
 	return (int)str.find(sub, start);
@@ -350,15 +350,15 @@ static int StringFindFirst(const string &sub, asUINT start, const string &str)
 //
 // AngelScript signature:
 // int string::findLast(const string &in sub, int start = -1) const
-static int StringFindLast(const string &sub, int start, const string &str)
+static int StringFindLast(const lite3dpp::lite3dpp_string &sub, int start, const lite3dpp::lite3dpp_string &str)
 {
 	// We don't register the method directly because the argument types change between 32bit and 64bit platforms
 	return (int)str.rfind(sub, (size_t)start);
 }
 
 // AngelScript signature:
-// uint string::length() const
-static asUINT StringLength(const string &str)
+// uint lite3dpp::lited3dpp_string::length() const
+static asUINT StringLength(const lite3dpp::lite3dpp_string &str)
 {
 	// We don't register the method directly because the return type changes between 32bit and 64bit platforms
 	return (asUINT)str.length();
@@ -366,25 +366,25 @@ static asUINT StringLength(const string &str)
 
 
 // AngelScript signature:
-// void string::resize(uint l)
-static void StringResize(asUINT l, string &str)
+// void lite3dpp::lited3dpp_string::resize(uint l)
+static void StringResize(asUINT l, lite3dpp::lite3dpp_string &str)
 {
 	// We don't register the method directly because the argument types change between 32bit and 64bit platforms
 	str.resize(l);
 }
 
 // AngelScript signature:
-// string formatInt(int64 val, const string &in options, uint width)
-static string formatInt(asINT64 value, const string &options, asUINT width)
+// lite3dpp::lited3dpp_string formatInt(int64 val, const lite3dpp::lited3dpp_string &in options, uint width)
+static lite3dpp::lite3dpp_string formatInt(asINT64 value, const lite3dpp::lite3dpp_string &options, asUINT width)
 {
-	bool leftJustify = options.find("l") != string::npos;
-	bool padWithZero = options.find("0") != string::npos;
-	bool alwaysSign  = options.find("+") != string::npos;
-	bool spaceOnSign = options.find(" ") != string::npos;
-	bool hexSmall    = options.find("h") != string::npos;
-	bool hexLarge    = options.find("H") != string::npos;
+	bool leftJustify = options.find("l") != lite3dpp::lite3dpp_string::npos;
+	bool padWithZero = options.find("0") != lite3dpp::lite3dpp_string::npos;
+	bool alwaysSign  = options.find("+") != lite3dpp::lite3dpp_string::npos;
+	bool spaceOnSign = options.find(" ") != lite3dpp::lite3dpp_string::npos;
+	bool hexSmall    = options.find("h") != lite3dpp::lite3dpp_string::npos;
+	bool hexLarge    = options.find("H") != lite3dpp::lite3dpp_string::npos;
 
-	string fmt = "%";
+	lite3dpp::lite3dpp_string fmt = "%";
 	if( leftJustify ) fmt += "-";
 	if( alwaysSign ) fmt += "+";
 	if( spaceOnSign ) fmt += " ";
@@ -404,7 +404,7 @@ static string formatInt(asINT64 value, const string &options, asUINT width)
 	else if( hexLarge ) fmt += "X";
 	else fmt += "d";
 
-	string buf;
+	lite3dpp::lite3dpp_string buf;
 	buf.resize(width+30);
 #if _MSC_VER >= 1400 && !defined(__S3E__)
 	// MSVC 8.0 / 2005 or newer
@@ -418,17 +418,17 @@ static string formatInt(asINT64 value, const string &options, asUINT width)
 }
 
 // AngelScript signature:
-// string formatFloat(double val, const string &in options, uint width, uint precision)
-static string formatFloat(double value, const string &options, asUINT width, asUINT precision)
+// lite3dpp::lited3dpp_string formatFloat(double val, const lite3dpp::lited3dpp_string &in options, uint width, uint precision)
+static lite3dpp::lite3dpp_string formatFloat(double value, const lite3dpp::lite3dpp_string &options, asUINT width, asUINT precision)
 {
-	bool leftJustify = options.find("l") != string::npos;
-	bool padWithZero = options.find("0") != string::npos;
-	bool alwaysSign  = options.find("+") != string::npos;
-	bool spaceOnSign = options.find(" ") != string::npos;
-	bool expSmall    = options.find("e") != string::npos;
-	bool expLarge    = options.find("E") != string::npos;
+	bool leftJustify = options.find("l") != lite3dpp::lite3dpp_string::npos;
+	bool padWithZero = options.find("0") != lite3dpp::lite3dpp_string::npos;
+	bool alwaysSign  = options.find("+") != lite3dpp::lite3dpp_string::npos;
+	bool spaceOnSign = options.find(" ") != lite3dpp::lite3dpp_string::npos;
+	bool expSmall    = options.find("e") != lite3dpp::lite3dpp_string::npos;
+	bool expLarge    = options.find("E") != lite3dpp::lite3dpp_string::npos;
 
-	string fmt = "%";
+	lite3dpp::lite3dpp_string fmt = "%";
 	if( leftJustify ) fmt += "-";
 	if( alwaysSign ) fmt += "+";
 	if( spaceOnSign ) fmt += " ";
@@ -440,7 +440,7 @@ static string formatFloat(double value, const string &options, asUINT width, asU
 	else if( expLarge ) fmt += "E";
 	else fmt += "f";
 
-	string buf;
+	lite3dpp::lite3dpp_string buf;
 	buf.resize(width+precision+50);
 #if _MSC_VER >= 1400 && !defined(__S3E__)
 	// MSVC 8.0 / 2005 or newer
@@ -454,8 +454,8 @@ static string formatFloat(double value, const string &options, asUINT width, asU
 }
 
 // AngelScript signature:
-// int64 parseInt(const string &in val, uint base = 10, uint &out byteCount = 0)
-static asINT64 parseInt(const string &val, asUINT base, asUINT *byteCount)
+// int64 parseInt(const lite3dpp::lited3dpp_string &in val, uint base = 10, uint &out byteCount = 0)
+static asINT64 parseInt(const lite3dpp::lite3dpp_string &val, asUINT base, asUINT *byteCount)
 {
 	// Only accept base 10 and 16
 	if( base != 10 && base != 16 )
@@ -511,8 +511,8 @@ static asINT64 parseInt(const string &val, asUINT base, asUINT *byteCount)
 }
 
 // AngelScript signature:
-// double parseFloat(const string &in val, uint &out byteCount = 0)
-double parseFloat(const string &val, asUINT *byteCount)
+// double parseFloat(const lite3dpp::lited3dpp_string &in val, uint &out byteCount = 0)
+double parseFloat(const lite3dpp::lite3dpp_string &val, asUINT *byteCount)
 {
 	char *end;
 
@@ -543,10 +543,10 @@ double parseFloat(const string &val, asUINT *byteCount)
 //
 // AngelScript signature:
 // string string::substr(uint start = 0, int count = -1) const
-static string StringSubString(asUINT start, int count, const string &str)
+static lite3dpp::lite3dpp_string StringSubString(asUINT start, int count, const lite3dpp::lite3dpp_string &str)
 {
 	// Check for out-of-bounds
-	string ret;
+	lite3dpp::lite3dpp_string ret;
 	if( start < str.length() && count != 0 )
 		ret = str.substr(start, count);
 
@@ -557,9 +557,9 @@ static string StringSubString(asUINT start, int count, const string &str)
 // Returns true iff lhs is equal to rhs.
 //
 // For some reason gcc 4.7 has difficulties resolving the
-// asFUNCTIONPR(operator==, (const string &, const string &)
+// asFUNCTIONPR(operator==, (const lite3dpp::lited3dpp_string &, const lite3dpp::lited3dpp_string &)
 // makro, so this wrapper was introduced as work around.
-static bool StringEquals(const std::string& lhs, const std::string& rhs)
+static bool StringEquals(const lite3dpp::lite3dpp_string& lhs, const lite3dpp::lite3dpp_string& rhs)
 {
     return lhs == rhs;
 }
@@ -572,9 +572,9 @@ void RegisterStdString_Native(asIScriptEngine *engine)
 	// Register the string type
 #if AS_CAN_USE_CPP11
 	// With C++11 it is possible to use asGetTypeTraits to automatically determine the correct flags to use
-	r = engine->RegisterObjectType("string", sizeof(string), asOBJ_VALUE | asGetTypeTraits<string>()); assert( r >= 0 );
+	r = engine->RegisterObjectType("string", sizeof(lite3dpp::lite3dpp_string), asOBJ_VALUE | asGetTypeTraits<lite3dpp::lite3dpp_string>()); assert( r >= 0 );
 #else
-	r = engine->RegisterObjectType("string", sizeof(string), asOBJ_VALUE | asOBJ_APP_CLASS_CDAK); assert( r >= 0 );
+	r = engine->RegisterObjectType("string", sizeof(lite3dpp::lite3dpp_string), asOBJ_VALUE | asOBJ_APP_CLASS_CDAK); assert( r >= 0 );
 #endif
 
 #if AS_USE_STRINGPOOL == 1
@@ -592,15 +592,15 @@ void RegisterStdString_Native(asIScriptEngine *engine)
 	r = engine->RegisterObjectBehaviour("string", asBEHAVE_CONSTRUCT,  "void f()",                    asFUNCTION(ConstructString), asCALL_CDECL_OBJLAST); assert( r >= 0 );
 	r = engine->RegisterObjectBehaviour("string", asBEHAVE_CONSTRUCT,  "void f(const string &in)",    asFUNCTION(CopyConstructString), asCALL_CDECL_OBJLAST); assert( r >= 0 );
 	r = engine->RegisterObjectBehaviour("string", asBEHAVE_DESTRUCT,   "void f()",                    asFUNCTION(DestructString),  asCALL_CDECL_OBJLAST); assert( r >= 0 );
-	r = engine->RegisterObjectMethod("string", "string &opAssign(const string &in)", asMETHODPR(string, operator =, (const string&), string&), asCALL_THISCALL); assert( r >= 0 );
+	r = engine->RegisterObjectMethod("string", "string &opAssign(const string &in)", asMETHODPR(lite3dpp::lite3dpp_string, operator =, (const lite3dpp::lite3dpp_string&), lite3dpp::lite3dpp_string&), asCALL_THISCALL); assert( r >= 0 );
 	// Need to use a wrapper on Mac OS X 10.7/XCode 4.3 and CLang/LLVM, otherwise the linker fails
 	r = engine->RegisterObjectMethod("string", "string &opAddAssign(const string &in)", asFUNCTION(AddAssignStringToString), asCALL_CDECL_OBJLAST); assert( r >= 0 );
 //	r = engine->RegisterObjectMethod("string", "string &opAddAssign(const string &in)", asMETHODPR(string, operator+=, (const string&), string&), asCALL_THISCALL); assert( r >= 0 );
 
 	// Need to use a wrapper for operator== otherwise gcc 4.7 fails to compile
-	r = engine->RegisterObjectMethod("string", "bool opEquals(const string &in) const", asFUNCTIONPR(StringEquals, (const string &, const string &), bool), asCALL_CDECL_OBJFIRST); assert( r >= 0 );
+	r = engine->RegisterObjectMethod("string", "bool opEquals(const string &in) const", asFUNCTIONPR(StringEquals, (const lite3dpp::lite3dpp_string &, const lite3dpp::lite3dpp_string &), bool), asCALL_CDECL_OBJFIRST); assert( r >= 0 );
 	r = engine->RegisterObjectMethod("string", "int opCmp(const string &in) const", asFUNCTION(StringCmp), asCALL_CDECL_OBJFIRST); assert( r >= 0 );
-	r = engine->RegisterObjectMethod("string", "string opAdd(const string &in) const", asFUNCTIONPR(operator +, (const string &, const string &), string), asCALL_CDECL_OBJFIRST); assert( r >= 0 );
+	r = engine->RegisterObjectMethod("string", "string opAdd(const string &in) const", asFUNCTIONPR(operator +, (const lite3dpp::lite3dpp_string &, const lite3dpp::lite3dpp_string &), lite3dpp::lite3dpp_string), asCALL_CDECL_OBJFIRST); assert( r >= 0 );
 
 	// The string length can be accessed through methods or through virtual property
 	r = engine->RegisterObjectMethod("string", "uint length() const", asFUNCTION(StringLength), asCALL_CDECL_OBJLAST); assert( r >= 0 );
@@ -681,7 +681,7 @@ static void StringFactoryGeneric(asIScriptGeneric *gen)
   const char *s = (const char*)gen->GetArgAddress(1);
 
   // Return a reference to a string
-  gen->SetReturnAddress(const_cast<string*>(&StringFactory(length, s)));
+  gen->SetReturnAddress(const_cast<lite3dpp::lite3dpp_string*>(&StringFactory(length, s)));
 }
 #else
 static void StringFactoryGeneric(asIScriptGeneric *gen)
@@ -690,54 +690,55 @@ static void StringFactoryGeneric(asIScriptGeneric *gen)
   const char *s = (const char*)gen->GetArgAddress(1);
 
   // Return a string value
-  new (gen->GetAddressOfReturnLocation()) string(StringFactory(length, s));
+  new (gen->GetAddressOfReturnLocation()) lite3dpp::lite3dpp_string(StringFactory(length, s));
 }
 #endif
 
 static void ConstructStringGeneric(asIScriptGeneric * gen)
 {
-  new (gen->GetObject()) string();
+  new (gen->GetObject()) lite3dpp::lite3dpp_string();
 }
 
 static void CopyConstructStringGeneric(asIScriptGeneric * gen)
 {
-  string * a = static_cast<string *>(gen->GetArgObject(0));
-  new (gen->GetObject()) string(*a);
+  lite3dpp::lite3dpp_string * a = static_cast<lite3dpp::lite3dpp_string *>(gen->GetArgObject(0));
+  new (gen->GetObject()) lite3dpp::lite3dpp_string(*a);
 }
 
 static void DestructStringGeneric(asIScriptGeneric * gen)
 {
-  string * ptr = static_cast<string *>(gen->GetObject());
-  ptr->~string();
+  using lite3dpp::lite3dpp_string;
+  lite3dpp::lite3dpp_string * ptr = static_cast<lite3dpp::lite3dpp_string *>(gen->GetObject());
+  ptr->~lite3dpp_string();
 }
 
 static void AssignStringGeneric(asIScriptGeneric *gen)
 {
-  string * a = static_cast<string *>(gen->GetArgObject(0));
-  string * self = static_cast<string *>(gen->GetObject());
+  lite3dpp::lite3dpp_string * a = static_cast<lite3dpp::lite3dpp_string *>(gen->GetArgObject(0));
+  lite3dpp::lite3dpp_string * self = static_cast<lite3dpp::lite3dpp_string *>(gen->GetObject());
   *self = *a;
   gen->SetReturnAddress(self);
 }
 
 static void AddAssignStringGeneric(asIScriptGeneric *gen)
 {
-  string * a = static_cast<string *>(gen->GetArgObject(0));
-  string * self = static_cast<string *>(gen->GetObject());
+  lite3dpp::lite3dpp_string * a = static_cast<lite3dpp::lite3dpp_string *>(gen->GetArgObject(0));
+  lite3dpp::lite3dpp_string * self = static_cast<lite3dpp::lite3dpp_string *>(gen->GetObject());
   *self += *a;
   gen->SetReturnAddress(self);
 }
 
 static void StringEqualsGeneric(asIScriptGeneric * gen)
 {
-  string * a = static_cast<string *>(gen->GetObject());
-  string * b = static_cast<string *>(gen->GetArgAddress(0));
+  lite3dpp::lite3dpp_string * a = static_cast<lite3dpp::lite3dpp_string *>(gen->GetObject());
+  lite3dpp::lite3dpp_string * b = static_cast<lite3dpp::lite3dpp_string *>(gen->GetArgAddress(0));
   *(bool*)gen->GetAddressOfReturnLocation() = (*a == *b);
 }
 
 static void StringCmpGeneric(asIScriptGeneric * gen)
 {
-  string * a = static_cast<string *>(gen->GetObject());
-  string * b = static_cast<string *>(gen->GetArgAddress(0));
+  lite3dpp::lite3dpp_string * a = static_cast<lite3dpp::lite3dpp_string *>(gen->GetObject());
+  lite3dpp::lite3dpp_string * b = static_cast<lite3dpp::lite3dpp_string *>(gen->GetArgAddress(0));
 
   int cmp = 0;
   if( *a < *b ) cmp = -1;
@@ -748,66 +749,66 @@ static void StringCmpGeneric(asIScriptGeneric * gen)
 
 static void StringAddGeneric(asIScriptGeneric * gen)
 {
-  string * a = static_cast<string *>(gen->GetObject());
-  string * b = static_cast<string *>(gen->GetArgAddress(0));
-  string ret_val = *a + *b;
+  lite3dpp::lite3dpp_string * a = static_cast<lite3dpp::lite3dpp_string *>(gen->GetObject());
+  lite3dpp::lite3dpp_string * b = static_cast<lite3dpp::lite3dpp_string *>(gen->GetArgAddress(0));
+  lite3dpp::lite3dpp_string ret_val = *a + *b;
   gen->SetReturnObject(&ret_val);
 }
 
 static void StringLengthGeneric(asIScriptGeneric * gen)
 {
-  string * self = static_cast<string *>(gen->GetObject());
+  lite3dpp::lite3dpp_string * self = static_cast<lite3dpp::lite3dpp_string *>(gen->GetObject());
   *static_cast<asUINT *>(gen->GetAddressOfReturnLocation()) = (asUINT)self->length();
 }
 
 static void StringIsEmptyGeneric(asIScriptGeneric * gen)
 {
-  string * self = reinterpret_cast<string *>(gen->GetObject());
+  lite3dpp::lite3dpp_string * self = reinterpret_cast<lite3dpp::lite3dpp_string *>(gen->GetObject());
   *reinterpret_cast<bool *>(gen->GetAddressOfReturnLocation()) = StringIsEmpty(*self);
 }
 
 static void StringResizeGeneric(asIScriptGeneric * gen)
 {
-  string * self = static_cast<string *>(gen->GetObject());
+  lite3dpp::lite3dpp_string * self = static_cast<lite3dpp::lite3dpp_string *>(gen->GetObject());
   self->resize(*static_cast<asUINT *>(gen->GetAddressOfArg(0)));
 }
 
 static void StringFindFirst_Generic(asIScriptGeneric * gen)
 {
-	string *find = reinterpret_cast<string*>(gen->GetArgAddress(0));
+	lite3dpp::lite3dpp_string *find = reinterpret_cast<lite3dpp::lite3dpp_string*>(gen->GetArgAddress(0));
 	asUINT start = gen->GetArgDWord(1);
-	string *self = reinterpret_cast<string *>(gen->GetObject());
+	lite3dpp::lite3dpp_string *self = reinterpret_cast<lite3dpp::lite3dpp_string *>(gen->GetObject());
 	*reinterpret_cast<int *>(gen->GetAddressOfReturnLocation()) = StringFindFirst(*find, start, *self);
 }
 
 static void StringFindLast_Generic(asIScriptGeneric * gen)
 {
-	string *find = reinterpret_cast<string*>(gen->GetArgAddress(0));
+	lite3dpp::lite3dpp_string *find = reinterpret_cast<lite3dpp::lite3dpp_string*>(gen->GetArgAddress(0));
 	asUINT start = gen->GetArgDWord(1);
-	string *self = reinterpret_cast<string *>(gen->GetObject());
+	lite3dpp::lite3dpp_string *self = reinterpret_cast<lite3dpp::lite3dpp_string *>(gen->GetObject());
 	*reinterpret_cast<int *>(gen->GetAddressOfReturnLocation()) = StringFindLast(*find, start, *self);
 }
 
 static void formatInt_Generic(asIScriptGeneric * gen)
 {
 	asINT64 val = gen->GetArgQWord(0);
-	string *options = reinterpret_cast<string*>(gen->GetArgAddress(1));
+	lite3dpp::lite3dpp_string *options = reinterpret_cast<lite3dpp::lite3dpp_string*>(gen->GetArgAddress(1));
 	asUINT width = gen->GetArgDWord(2);
-	new(gen->GetAddressOfReturnLocation()) string(formatInt(val, *options, width));
+	new(gen->GetAddressOfReturnLocation()) lite3dpp::lite3dpp_string(formatInt(val, *options, width));
 }
 
 static void formatFloat_Generic(asIScriptGeneric *gen)
 {
 	double val = gen->GetArgDouble(0);
-	string *options = reinterpret_cast<string*>(gen->GetArgAddress(1));
+	lite3dpp::lite3dpp_string *options = reinterpret_cast<lite3dpp::lite3dpp_string*>(gen->GetArgAddress(1));
 	asUINT width = gen->GetArgDWord(2);
 	asUINT precision = gen->GetArgDWord(3);
-	new(gen->GetAddressOfReturnLocation()) string(formatFloat(val, *options, width, precision));
+	new(gen->GetAddressOfReturnLocation()) lite3dpp::lite3dpp_string(formatFloat(val, *options, width, precision));
 }
 
 static void parseInt_Generic(asIScriptGeneric *gen)
 {
-	string *str = reinterpret_cast<string*>(gen->GetArgAddress(0));
+	lite3dpp::lite3dpp_string *str = reinterpret_cast<lite3dpp::lite3dpp_string*>(gen->GetArgAddress(0));
 	asUINT base = gen->GetArgDWord(1);
 	asUINT *byteCount = reinterpret_cast<asUINT*>(gen->GetArgAddress(2));
 	gen->SetReturnQWord(parseInt(*str,base,byteCount));
@@ -815,7 +816,7 @@ static void parseInt_Generic(asIScriptGeneric *gen)
 
 static void parseFloat_Generic(asIScriptGeneric *gen)
 {
-	string *str = reinterpret_cast<string*>(gen->GetArgAddress(0));
+	lite3dpp::lite3dpp_string *str = reinterpret_cast<lite3dpp::lite3dpp_string*>(gen->GetArgAddress(0));
 	asUINT *byteCount = reinterpret_cast<asUINT*>(gen->GetArgAddress(1));
 	gen->SetReturnDouble(parseFloat(*str,byteCount));
 }
@@ -823,7 +824,7 @@ static void parseFloat_Generic(asIScriptGeneric *gen)
 static void StringCharAtGeneric(asIScriptGeneric * gen)
 {
   unsigned int index = gen->GetArgDWord(0);
-  string * self = static_cast<string *>(gen->GetObject());
+  lite3dpp::lite3dpp_string * self = static_cast<lite3dpp::lite3dpp_string *>(gen->GetObject());
 
   if (index >= self->size())
   {
@@ -842,8 +843,8 @@ static void StringCharAtGeneric(asIScriptGeneric * gen)
 static void AssignInt2StringGeneric(asIScriptGeneric *gen)
 {
 	asINT64 *a = static_cast<asINT64*>(gen->GetAddressOfArg(0));
-	string *self = static_cast<string*>(gen->GetObject());
-	std::stringstream sstr;
+	lite3dpp::lite3dpp_string *self = static_cast<lite3dpp::lite3dpp_string*>(gen->GetObject());
+	lite3dpp::lited3dpp_stringstream sstr;
 	sstr << *a;
 	*self = sstr.str();
 	gen->SetReturnAddress(self);
@@ -852,8 +853,8 @@ static void AssignInt2StringGeneric(asIScriptGeneric *gen)
 static void AssignUInt2StringGeneric(asIScriptGeneric *gen)
 {
 	asQWORD *a = static_cast<asQWORD*>(gen->GetAddressOfArg(0));
-	string *self = static_cast<string*>(gen->GetObject());
-	std::stringstream sstr;
+	lite3dpp::lite3dpp_string *self = static_cast<lite3dpp::lite3dpp_string*>(gen->GetObject());
+	lite3dpp::lited3dpp_stringstream sstr;
 	sstr << *a;
 	*self = sstr.str();
 	gen->SetReturnAddress(self);
@@ -862,8 +863,8 @@ static void AssignUInt2StringGeneric(asIScriptGeneric *gen)
 static void AssignDouble2StringGeneric(asIScriptGeneric *gen)
 {
 	double *a = static_cast<double*>(gen->GetAddressOfArg(0));
-	string *self = static_cast<string*>(gen->GetObject());
-	std::stringstream sstr;
+	lite3dpp::lite3dpp_string *self = static_cast<lite3dpp::lite3dpp_string*>(gen->GetObject());
+	lite3dpp::lited3dpp_stringstream sstr;
 	sstr << *a;
 	*self = sstr.str();
 	gen->SetReturnAddress(self);
@@ -872,8 +873,8 @@ static void AssignDouble2StringGeneric(asIScriptGeneric *gen)
 static void AssignFloat2StringGeneric(asIScriptGeneric *gen)
 {
 	float *a = static_cast<float*>(gen->GetAddressOfArg(0));
-	string *self = static_cast<string*>(gen->GetObject());
-	std::stringstream sstr;
+	lite3dpp::lite3dpp_string *self = static_cast<lite3dpp::lite3dpp_string*>(gen->GetObject());
+	lite3dpp::lited3dpp_stringstream sstr;
 	sstr << *a;
 	*self = sstr.str();
 	gen->SetReturnAddress(self);
@@ -882,8 +883,8 @@ static void AssignFloat2StringGeneric(asIScriptGeneric *gen)
 static void AssignBool2StringGeneric(asIScriptGeneric *gen)
 {
 	bool *a = static_cast<bool*>(gen->GetAddressOfArg(0));
-	string *self = static_cast<string*>(gen->GetObject());
-	std::stringstream sstr;
+	lite3dpp::lite3dpp_string *self = static_cast<lite3dpp::lite3dpp_string*>(gen->GetObject());
+	lite3dpp::lited3dpp_stringstream sstr;
 	sstr << (*a ? "true" : "false");
 	*self = sstr.str();
 	gen->SetReturnAddress(self);
@@ -892,8 +893,8 @@ static void AssignBool2StringGeneric(asIScriptGeneric *gen)
 static void AddAssignDouble2StringGeneric(asIScriptGeneric * gen)
 {
   double * a = static_cast<double *>(gen->GetAddressOfArg(0));
-  string * self = static_cast<string *>(gen->GetObject());
-  std::stringstream sstr;
+  lite3dpp::lite3dpp_string * self = static_cast<lite3dpp::lite3dpp_string *>(gen->GetObject());
+  lite3dpp::lited3dpp_stringstream sstr;
   sstr << *a;
   *self += sstr.str();
   gen->SetReturnAddress(self);
@@ -902,8 +903,8 @@ static void AddAssignDouble2StringGeneric(asIScriptGeneric * gen)
 static void AddAssignFloat2StringGeneric(asIScriptGeneric * gen)
 {
   float * a = static_cast<float *>(gen->GetAddressOfArg(0));
-  string * self = static_cast<string *>(gen->GetObject());
-  std::stringstream sstr;
+  lite3dpp::lite3dpp_string * self = static_cast<lite3dpp::lite3dpp_string *>(gen->GetObject());
+  lite3dpp::lited3dpp_stringstream sstr;
   sstr << *a;
   *self += sstr.str();
   gen->SetReturnAddress(self);
@@ -912,8 +913,8 @@ static void AddAssignFloat2StringGeneric(asIScriptGeneric * gen)
 static void AddAssignInt2StringGeneric(asIScriptGeneric * gen)
 {
   asINT64 * a = static_cast<asINT64 *>(gen->GetAddressOfArg(0));
-  string * self = static_cast<string *>(gen->GetObject());
-  std::stringstream sstr;
+  lite3dpp::lite3dpp_string * self = static_cast<lite3dpp::lite3dpp_string *>(gen->GetObject());
+  lite3dpp::lited3dpp_stringstream sstr;
   sstr << *a;
   *self += sstr.str();
   gen->SetReturnAddress(self);
@@ -922,8 +923,8 @@ static void AddAssignInt2StringGeneric(asIScriptGeneric * gen)
 static void AddAssignUInt2StringGeneric(asIScriptGeneric * gen)
 {
   asQWORD * a = static_cast<asQWORD *>(gen->GetAddressOfArg(0));
-  string * self = static_cast<string *>(gen->GetObject());
-  std::stringstream sstr;
+  lite3dpp::lite3dpp_string * self = static_cast<lite3dpp::lite3dpp_string *>(gen->GetObject());
+  lite3dpp::lited3dpp_stringstream sstr;
   sstr << *a;
   *self += sstr.str();
   gen->SetReturnAddress(self);
@@ -932,8 +933,8 @@ static void AddAssignUInt2StringGeneric(asIScriptGeneric * gen)
 static void AddAssignBool2StringGeneric(asIScriptGeneric * gen)
 {
   bool * a = static_cast<bool *>(gen->GetAddressOfArg(0));
-  string * self = static_cast<string *>(gen->GetObject());
-  std::stringstream sstr;
+  lite3dpp::lite3dpp_string * self = static_cast<lite3dpp::lite3dpp_string *>(gen->GetObject());
+  lite3dpp::lited3dpp_stringstream sstr;
   sstr << (*a ? "true" : "false");
   *self += sstr.str();
   gen->SetReturnAddress(self);
@@ -941,113 +942,113 @@ static void AddAssignBool2StringGeneric(asIScriptGeneric * gen)
 
 static void AddString2DoubleGeneric(asIScriptGeneric * gen)
 {
-  string * a = static_cast<string *>(gen->GetObject());
+  lite3dpp::lite3dpp_string * a = static_cast<lite3dpp::lite3dpp_string *>(gen->GetObject());
   double * b = static_cast<double *>(gen->GetAddressOfArg(0));
-  std::stringstream sstr;
+  lite3dpp::lited3dpp_stringstream sstr;
   sstr << *a << *b;
-  std::string ret_val = sstr.str();
+  lite3dpp::lite3dpp_string ret_val = sstr.str();
   gen->SetReturnObject(&ret_val);
 }
 
 static void AddString2FloatGeneric(asIScriptGeneric * gen)
 {
-  string * a = static_cast<string *>(gen->GetObject());
+  lite3dpp::lite3dpp_string * a = static_cast<lite3dpp::lite3dpp_string *>(gen->GetObject());
   float * b = static_cast<float *>(gen->GetAddressOfArg(0));
-  std::stringstream sstr;
+  lite3dpp::lited3dpp_stringstream sstr;
   sstr << *a << *b;
-  std::string ret_val = sstr.str();
+  lite3dpp::lite3dpp_string ret_val = sstr.str();
   gen->SetReturnObject(&ret_val);
 }
 
 static void AddString2IntGeneric(asIScriptGeneric * gen)
 {
-  string * a = static_cast<string *>(gen->GetObject());
+  lite3dpp::lite3dpp_string * a = static_cast<lite3dpp::lite3dpp_string *>(gen->GetObject());
   asINT64 * b = static_cast<asINT64 *>(gen->GetAddressOfArg(0));
-  std::stringstream sstr;
+  lite3dpp::lited3dpp_stringstream sstr;
   sstr << *a << *b;
-  std::string ret_val = sstr.str();
+  lite3dpp::lite3dpp_string ret_val = sstr.str();
   gen->SetReturnObject(&ret_val);
 }
 
 static void AddString2UIntGeneric(asIScriptGeneric * gen)
 {
-  string * a = static_cast<string *>(gen->GetObject());
+  lite3dpp::lite3dpp_string * a = static_cast<lite3dpp::lite3dpp_string *>(gen->GetObject());
   asQWORD * b = static_cast<asQWORD *>(gen->GetAddressOfArg(0));
-  std::stringstream sstr;
+  lite3dpp::lited3dpp_stringstream sstr;
   sstr << *a << *b;
-  std::string ret_val = sstr.str();
+  lite3dpp::lite3dpp_string ret_val = sstr.str();
   gen->SetReturnObject(&ret_val);
 }
 
 static void AddString2BoolGeneric(asIScriptGeneric * gen)
 {
-  string * a = static_cast<string *>(gen->GetObject());
+  lite3dpp::lite3dpp_string * a = static_cast<lite3dpp::lite3dpp_string *>(gen->GetObject());
   bool * b = static_cast<bool *>(gen->GetAddressOfArg(0));
-  std::stringstream sstr;
+  lite3dpp::lited3dpp_stringstream sstr;
   sstr << *a << (*b ? "true" : "false");
-  std::string ret_val = sstr.str();
+  lite3dpp::lite3dpp_string ret_val = sstr.str();
   gen->SetReturnObject(&ret_val);
 }
 
 static void AddDouble2StringGeneric(asIScriptGeneric * gen)
 {
   double* a = static_cast<double *>(gen->GetAddressOfArg(0));
-  string * b = static_cast<string *>(gen->GetObject());
-  std::stringstream sstr;
+  lite3dpp::lite3dpp_string * b = static_cast<lite3dpp::lite3dpp_string *>(gen->GetObject());
+  lite3dpp::lited3dpp_stringstream sstr;
   sstr << *a << *b;
-  std::string ret_val = sstr.str();
+  lite3dpp::lite3dpp_string ret_val = sstr.str();
   gen->SetReturnObject(&ret_val);
 }
 
 static void AddFloat2StringGeneric(asIScriptGeneric * gen)
 {
   float* a = static_cast<float *>(gen->GetAddressOfArg(0));
-  string * b = static_cast<string *>(gen->GetObject());
-  std::stringstream sstr;
+  lite3dpp::lite3dpp_string * b = static_cast<lite3dpp::lite3dpp_string *>(gen->GetObject());
+  lite3dpp::lited3dpp_stringstream sstr;
   sstr << *a << *b;
-  std::string ret_val = sstr.str();
+  lite3dpp::lite3dpp_string ret_val = sstr.str();
   gen->SetReturnObject(&ret_val);
 }
 
 static void AddInt2StringGeneric(asIScriptGeneric * gen)
 {
   asINT64* a = static_cast<asINT64 *>(gen->GetAddressOfArg(0));
-  string * b = static_cast<string *>(gen->GetObject());
-  std::stringstream sstr;
+  lite3dpp::lite3dpp_string * b = static_cast<lite3dpp::lite3dpp_string *>(gen->GetObject());
+  lite3dpp::lited3dpp_stringstream sstr;
   sstr << *a << *b;
-  std::string ret_val = sstr.str();
+  lite3dpp::lite3dpp_string ret_val = sstr.str();
   gen->SetReturnObject(&ret_val);
 }
 
 static void AddUInt2StringGeneric(asIScriptGeneric * gen)
 {
   asQWORD* a = static_cast<asQWORD *>(gen->GetAddressOfArg(0));
-  string * b = static_cast<string *>(gen->GetObject());
-  std::stringstream sstr;
+  lite3dpp::lite3dpp_string * b = static_cast<lite3dpp::lite3dpp_string *>(gen->GetObject());
+  lite3dpp::lited3dpp_stringstream sstr;
   sstr << *a << *b;
-  std::string ret_val = sstr.str();
+  lite3dpp::lite3dpp_string ret_val = sstr.str();
   gen->SetReturnObject(&ret_val);
 }
 
 static void AddBool2StringGeneric(asIScriptGeneric * gen)
 {
   bool* a = static_cast<bool *>(gen->GetAddressOfArg(0));
-  string * b = static_cast<string *>(gen->GetObject());
-  std::stringstream sstr;
+  lite3dpp::lite3dpp_string * b = static_cast<lite3dpp::lite3dpp_string *>(gen->GetObject());
+  lite3dpp::lited3dpp_stringstream sstr;
   sstr << (*a ? "true" : "false") << *b;
-  std::string ret_val = sstr.str();
+  lite3dpp::lite3dpp_string ret_val = sstr.str();
   gen->SetReturnObject(&ret_val);
 }
 
 static void StringSubString_Generic(asIScriptGeneric *gen)
 {
     // Get the arguments
-    string *str   = (string*)gen->GetObject();
+    lite3dpp::lite3dpp_string *str   = (lite3dpp::lite3dpp_string*)gen->GetObject();
     asUINT  start = *(int*)gen->GetAddressOfArg(0);
     int     count = *(int*)gen->GetAddressOfArg(1);
 
 	// Return the substring
-    new(gen->GetAddressOfReturnLocation()) string(StringSubString(start, count, *str));
+    new(gen->GetAddressOfReturnLocation()) lite3dpp::lite3dpp_string(StringSubString(start, count, *str));
 }
 
 void RegisterStdString_Generic(asIScriptEngine *engine)
@@ -1056,7 +1057,7 @@ void RegisterStdString_Generic(asIScriptEngine *engine)
 	UNUSED_VAR(r);
 
 	// Register the string type
-	r = engine->RegisterObjectType("string", sizeof(string), asOBJ_VALUE | asOBJ_APP_CLASS_CDAK); assert( r >= 0 );
+	r = engine->RegisterObjectType("string", sizeof(lite3dpp::lite3dpp_string), asOBJ_VALUE | asOBJ_APP_CLASS_CDAK); assert( r >= 0 );
 
 #if AS_USE_STRINGPOOL == 1
 	// Register the string factory

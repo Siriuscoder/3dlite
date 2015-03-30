@@ -1,0 +1,21 @@
+{
+        "LogLevel": 3,
+        "FileCacheSize": 1024000,
+        "TextureSettings": {
+                "Anisotropy": 8,
+                "Compression": "yes"
+        },
+        "VideoSettings": {
+                "Wight": 800,
+                "Heigth": 600,
+                "Caption": "My test window",
+                "ColorBits": 24,
+                "Fullscreen": "no",
+                "FSAA": 4,
+                "VSync": "yes"
+        },
+        "ResourceLocations": [
+                "tests/",
+                "tests/pack.1"
+        ]
+}

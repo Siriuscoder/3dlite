@@ -28,7 +28,7 @@ protected:
     Lite3dCommon mlite3dCommon;
 };
 
-static int meshLoadingTest()
+static int meshLoadingTest(void *userdata)
 {
     lite3d_vbo mVBO;
     lite3d_resource_pack *fileSysPack = lite3d_resource_pack_open("tests/", 0, 1000000);

@@ -18,8 +18,8 @@ using namespace std;
 BEGIN_AS_NAMESPACE
 
 // Helper functions
-static string GetCurrentDir();
-static string GetAbsolutePath(const string &path);
+static lite3dpp::lite3dpp_string GetCurrentDir();
+static lite3dpp::lite3dpp_string GetAbsolutePath(const lite3dpp::lite3dpp_string &path);
 
 
 CScriptBuilder::CScriptBuilder()
@@ -61,11 +61,11 @@ unsigned int CScriptBuilder::GetSectionCount() const
 	return (unsigned int)(includedScripts.size());
 }
 
-string CScriptBuilder::GetSectionName(unsigned int idx) const
+lite3dpp::lite3dpp_string CScriptBuilder::GetSectionName(unsigned int idx) const
 {
 	if( idx >= includedScripts.size() ) return "";
 
-	set<string>::const_iterator it = includedScripts.begin();
+	set<lite3dpp::lite3dpp_string>::const_iterator it = includedScripts.begin();
 	while( idx-- > 0 ) it++;
 	return *it;
 }
@@ -77,7 +77,7 @@ int CScriptBuilder::AddSectionFromFile(const char *filename)
 {
 	// The file name stored in the set should be the fully resolved name because
 	// it is possible to name the same file in multiple ways using relative paths.
-	string fullpath = GetAbsolutePath(filename);
+	lite3dpp::lite3dpp_string fullpath = GetAbsolutePath(filename);
 
 	if( IncludeIfNotAlreadyIncluded(fullpath.c_str()) )
 	{
@@ -115,7 +115,7 @@ int CScriptBuilder::BuildModule()
 
 void CScriptBuilder::DefineWord(const char *word)
 {
-	string sword = word;
+	lite3dpp::lite3dpp_string sword = word;
 	if( definedWords.find(sword) == definedWords.end() )
 	{
 		definedWords.insert(sword);
@@ -139,7 +139,7 @@ void CScriptBuilder::ClearAll()
 
 bool CScriptBuilder::IncludeIfNotAlreadyIncluded(const char *filename)
 {
-	string scriptFile = filename;
+	lite3dpp::lite3dpp_string scriptFile = filename;
 	if( includedScripts.find(scriptFile) != includedScripts.end() )
 	{
 		// Already included
@@ -155,7 +155,7 @@ bool CScriptBuilder::IncludeIfNotAlreadyIncluded(const char *filename)
 int CScriptBuilder::LoadScriptSection(const char *filename)
 {
 	// Open the script file
-	string scriptFile = filename;
+	lite3dpp::lite3dpp_string scriptFile = filename;
 #if _MSC_VER >= 1500 && !defined(__S3E__)
 	FILE *f = 0;
 	fopen_s(&f, scriptFile.c_str(), "rb");
@@ -165,7 +165,7 @@ int CScriptBuilder::LoadScriptSection(const char *filename)
 	if( f == 0 )
 	{
 		// Write a message to the engine's message callback
-		string msg = "Failed to open script file '" + GetAbsolutePath(scriptFile) + "'";
+		lite3dpp::lite3dpp_string msg = "Failed to open script file '" + GetAbsolutePath(scriptFile) + "'";
 		engine->WriteMessage(filename, 0, 0, asMSGTYPE_ERROR, msg.c_str());
 
 		// TODO: Write the file where this one was included from
@@ -182,7 +182,7 @@ int CScriptBuilder::LoadScriptSection(const char *filename)
 	// int len = _filelength(_fileno(f));
 
 	// Read the entire file
-	string code;
+	lite3dpp::lite3dpp_string code;
 	size_t c = 0;
 	if( len > 0 )
 	{
@@ -195,7 +195,7 @@ int CScriptBuilder::LoadScriptSection(const char *filename)
 	if( c == 0 && len > 0 )
 	{
 		// Write a message to the engine's message callback
-		string msg = "Failed to load script file '" + GetAbsolutePath(scriptFile) + "'";
+		lite3dpp::lite3dpp_string msg = "Failed to load script file '" + GetAbsolutePath(scriptFile) + "'";
 		engine->WriteMessage(filename, 0, 0, asMSGTYPE_ERROR, msg.c_str());
 		return -1;
 	}
@@ -206,7 +206,7 @@ int CScriptBuilder::LoadScriptSection(const char *filename)
 
 int CScriptBuilder::ProcessScriptSection(const char *script, unsigned int length, const char *sectionname, int lineOffset)
 {
-	vector<string> includes;
+	vector<lite3dpp::lite3dpp_string> includes;
 
 	// Perform a superficial parsing of the script first to store the metadata
 	if( length )
@@ -228,7 +228,7 @@ int CScriptBuilder::ProcessScriptSection(const char *script, unsigned int length
 			// Is this an #if directive?
 			asETokenClass t = engine->ParseToken(&modifiedScript[pos], modifiedScript.size() - pos, &len);
 
-			string token;
+			lite3dpp::lite3dpp_string token;
 			token.assign(&modifiedScript[pos], len);
 
 			pos += len;
@@ -244,7 +244,7 @@ int CScriptBuilder::ProcessScriptSection(const char *script, unsigned int length
 
 				if( t == asTC_IDENTIFIER )
 				{
-					string word;
+					lite3dpp::lite3dpp_string word;
 					word.assign(&modifiedScript[pos], len);
 
 					// Overwrite the #if directive with space characters to avoid compiler error
@@ -279,7 +279,7 @@ int CScriptBuilder::ProcessScriptSection(const char *script, unsigned int length
 
 #if AS_PROCESS_METADATA == 1
 	// Preallocate memory
-	string metadata, declaration;
+	lite3dpp::lite3dpp_string metadata, declaration;
 	metadata.reserve(500);
 	declaration.reserve(100);
 #endif
@@ -381,7 +381,7 @@ int CScriptBuilder::ProcessScriptSection(const char *script, unsigned int length
 		if( currentNamespace != "" && modifiedScript[pos] == '}' )
 		{
 			size_t found = currentNamespace.rfind( "::" );
-			if( found != string::npos )
+			if( found != lite3dpp::lite3dpp_string::npos )
 			{
 				currentNamespace.erase( found );
 			}
@@ -396,7 +396,7 @@ int CScriptBuilder::ProcessScriptSection(const char *script, unsigned int length
 		// Is this the start of metadata?
 		if( modifiedScript[pos] == '[' )
 		{
-			// Get the metadata string
+			// Get the metadata lite3dpp::lited3dpp_string
 			pos = ExtractMetadataString(pos, metadata);
 
 			// Determine what this metadata is for
@@ -420,7 +420,7 @@ int CScriptBuilder::ProcessScriptSection(const char *script, unsigned int length
 			asETokenClass t = engine->ParseToken(&modifiedScript[pos], modifiedScript.size() - pos, &len);
 			if( t == asTC_IDENTIFIER )
 			{
-				string token;
+				lite3dpp::lite3dpp_string token;
 				token.assign(&modifiedScript[pos], len);
 				if( token == "include" )
 				{
@@ -435,7 +435,7 @@ int CScriptBuilder::ProcessScriptSection(const char *script, unsigned int length
 					if( t == asTC_VALUE && len > 2 && (modifiedScript[pos] == '"' || modifiedScript[pos] == '\'') )
 					{
 						// Get the include file
-						string includefile;
+						lite3dpp::lite3dpp_string includefile;
 						includefile.assign(&modifiedScript[pos+1], len-2);
 						pos += len;
 
@@ -476,9 +476,9 @@ int CScriptBuilder::ProcessScriptSection(const char *script, unsigned int length
 			// By default we try to load the included file from the relative directory of the current file
 
 			// Determine the path of the current script so that we can resolve relative paths for includes
-			string path = sectionname;
+			lite3dpp::lite3dpp_string path = sectionname;
 			size_t posOfSlash = path.find_last_of("/\\");
-			if( posOfSlash != string::npos )
+			if( posOfSlash != lite3dpp::lite3dpp_string::npos )
 				path.resize(posOfSlash+1);
 			else
 				path = "";
@@ -488,7 +488,7 @@ int CScriptBuilder::ProcessScriptSection(const char *script, unsigned int length
 			{
 				// If the include is a relative path, then prepend the path of the originating script
 				if( includes[n].find_first_of("/\\") != 0 &&
-					includes[n].find_first_of(":") == string::npos )
+					includes[n].find_first_of(":") == lite3dpp::lite3dpp_string::npos )
 				{
 					includes[n] = path + includes[n];
 				}
@@ -523,7 +523,7 @@ int CScriptBuilder::Build()
 			int typeId = module->GetTypeIdByDecl(decl->declaration.c_str());
 			assert( typeId >= 0 );
 			if( typeId >= 0 )
-				typeMetadataMap.insert(map<int, string>::value_type(typeId, decl->metadata));
+				typeMetadataMap.insert(map<int, lite3dpp::lite3dpp_string>::value_type(typeId, decl->metadata));
 		}
 		else if( decl->type == 2 )
 		{
@@ -533,7 +533,7 @@ int CScriptBuilder::Build()
 				asIScriptFunction *func = module->GetFunctionByDecl(decl->declaration.c_str());
 				assert( func );
 				if( func )
-					funcMetadataMap.insert(map<int, string>::value_type(func->GetId(), decl->metadata));
+					funcMetadataMap.insert(map<int, lite3dpp::lite3dpp_string>::value_type(func->GetId(), decl->metadata));
 			}
 			else
 			{
@@ -551,7 +551,7 @@ int CScriptBuilder::Build()
 				asIScriptFunction *func = type->GetMethodByDecl(decl->declaration.c_str());
 				assert( func );
 				if( func )
-					it->second.funcMetadataMap.insert(map<int, string>::value_type(func->GetId(), decl->metadata));
+					it->second.funcMetadataMap.insert(map<int, lite3dpp::lite3dpp_string>::value_type(func->GetId(), decl->metadata));
 			}
 		}
 		else if( decl->type == 4 )
@@ -561,10 +561,10 @@ int CScriptBuilder::Build()
 				// Find the global virtual property accessors
 				asIScriptFunction *func = module->GetFunctionByName(("get_" + decl->declaration).c_str());
 				if( func )
-					funcMetadataMap.insert(map<int, string>::value_type(func->GetId(), decl->metadata));
+					funcMetadataMap.insert(map<int, lite3dpp::lite3dpp_string>::value_type(func->GetId(), decl->metadata));
 				func = module->GetFunctionByName(("set_" + decl->declaration).c_str());
 				if( func )
-					funcMetadataMap.insert(map<int, string>::value_type(func->GetId(), decl->metadata));
+					funcMetadataMap.insert(map<int, lite3dpp::lite3dpp_string>::value_type(func->GetId(), decl->metadata));
 			}
 			else
 			{
@@ -581,10 +581,10 @@ int CScriptBuilder::Build()
 				asIObjectType *type = engine->GetObjectTypeById(typeId);
 				asIScriptFunction *func = type->GetMethodByName(("get_" + decl->declaration).c_str());
 				if( func )
-					it->second.funcMetadataMap.insert(map<int, string>::value_type(func->GetId(), decl->metadata));
+					it->second.funcMetadataMap.insert(map<int, lite3dpp::lite3dpp_string>::value_type(func->GetId(), decl->metadata));
 				func = type->GetMethodByName(("set_" + decl->declaration).c_str());
 				if( func )
-					it->second.funcMetadataMap.insert(map<int, string>::value_type(func->GetId(), decl->metadata));
+					it->second.funcMetadataMap.insert(map<int, lite3dpp::lite3dpp_string>::value_type(func->GetId(), decl->metadata));
 
 			}
 		}
@@ -596,7 +596,7 @@ int CScriptBuilder::Build()
 				int varIdx = module->GetGlobalVarIndexByName(decl->declaration.c_str());
 				assert( varIdx >= 0 );
 				if( varIdx >= 0 )
-					varMetadataMap.insert(map<int, string>::value_type(varIdx, decl->metadata));
+					varMetadataMap.insert(map<int, lite3dpp::lite3dpp_string>::value_type(varIdx, decl->metadata));
 			}
 			else
 			{
@@ -629,7 +629,7 @@ int CScriptBuilder::Build()
 
 				// If found, add it
 				assert( idx >= 0 );
-				if( idx >= 0 ) it->second.varMetadataMap.insert(map<int, string>::value_type(idx, decl->metadata));
+				if( idx >= 0 ) it->second.varMetadataMap.insert(map<int, lite3dpp::lite3dpp_string>::value_type(idx, decl->metadata));
 			}
 		}
 	}
@@ -692,7 +692,7 @@ int CScriptBuilder::ExcludeCode(int pos)
 
 			// Is it an #if or #endif directive?
 			engine->ParseToken(&modifiedScript[pos], modifiedScript.size() - pos, &len);
-			string token;
+			lite3dpp::lite3dpp_string token;
 			token.assign(&modifiedScript[pos], len);
 			OverwriteCode(pos, len);
 
@@ -732,7 +732,7 @@ void CScriptBuilder::OverwriteCode(int start, int len)
 }
 
 #if AS_PROCESS_METADATA == 1
-int CScriptBuilder::ExtractMetadataString(int pos, string &metadata)
+int CScriptBuilder::ExtractMetadataString(int pos, lite3dpp::lite3dpp_string &metadata)
 {
 	metadata = "";
 
@@ -769,14 +769,14 @@ int CScriptBuilder::ExtractMetadataString(int pos, string &metadata)
 	return pos;
 }
 
-int CScriptBuilder::ExtractDeclaration(int pos, string &declaration, int &type)
+int CScriptBuilder::ExtractDeclaration(int pos, lite3dpp::lite3dpp_string &declaration, int &type)
 {
 	declaration = "";
 	type = 0;
 
 	int start = pos;
 
-	std::string token;
+	lite3dpp::lite3dpp_string token;
 	asUINT len = 0;
 	asETokenClass t = asTC_WHITESPACE;
 
@@ -818,7 +818,7 @@ int CScriptBuilder::ExtractDeclaration(int pos, string &declaration, int &type)
 			bool hasParenthesis = false;
 			declaration.append(&modifiedScript[pos], len);
 			pos += len;
-			string name;
+			lite3dpp::lite3dpp_string name;
 			for(; pos < (int)modifiedScript.size();)
 			{
 				t = engine->ParseToken(&modifiedScript[pos], modifiedScript.size() - pos, &len);
@@ -871,7 +871,7 @@ int CScriptBuilder::ExtractDeclaration(int pos, string &declaration, int &type)
 
 const char *CScriptBuilder::GetMetadataStringForType(int typeId)
 {
-	map<int,string>::iterator it = typeMetadataMap.find(typeId);
+	map<int,lite3dpp::lite3dpp_string>::iterator it = typeMetadataMap.find(typeId);
 	if( it != typeMetadataMap.end() )
 		return it->second.c_str();
 
@@ -882,7 +882,7 @@ const char *CScriptBuilder::GetMetadataStringForFunc(asIScriptFunction *func)
 {
 	if( func )
 	{
-		map<int,string>::iterator it = funcMetadataMap.find(func->GetId());
+		map<int,lite3dpp::lite3dpp_string>::iterator it = funcMetadataMap.find(func->GetId());
 		if( it != funcMetadataMap.end() )
 			return it->second.c_str();
 	}
@@ -892,7 +892,7 @@ const char *CScriptBuilder::GetMetadataStringForFunc(asIScriptFunction *func)
 
 const char *CScriptBuilder::GetMetadataStringForVar(int varIdx)
 {
-	map<int,string>::iterator it = varMetadataMap.find(varIdx);
+	map<int,lite3dpp::lite3dpp_string>::iterator it = varMetadataMap.find(varIdx);
 	if( it != varMetadataMap.end() )
 		return it->second.c_str();
 
@@ -904,7 +904,7 @@ const char *CScriptBuilder::GetMetadataStringForTypeProperty(int typeId, int var
 	map<int, SClassMetadata>::iterator typeIt = classMetadataMap.find(typeId);
 	if(typeIt == classMetadataMap.end()) return "";
 
-	map<int, string>::iterator propIt = typeIt->second.varMetadataMap.find(varIdx);
+	map<int, lite3dpp::lite3dpp_string>::iterator propIt = typeIt->second.varMetadataMap.find(varIdx);
 	if(propIt == typeIt->second.varMetadataMap.end()) return "";
 
 	return propIt->second.c_str();
@@ -917,7 +917,7 @@ const char *CScriptBuilder::GetMetadataStringForTypeMethod(int typeId, asIScript
 		map<int, SClassMetadata>::iterator typeIt = classMetadataMap.find(typeId);
 		if(typeIt == classMetadataMap.end()) return "";
 
-		map<int, string>::iterator methodIt = typeIt->second.funcMetadataMap.find(method->GetId());
+		map<int, lite3dpp::lite3dpp_string>::iterator methodIt = typeIt->second.funcMetadataMap.find(method->GetId());
 		if(methodIt == typeIt->second.funcMetadataMap.end()) return "";
 
 		return methodIt->second.c_str();
@@ -927,33 +927,33 @@ const char *CScriptBuilder::GetMetadataStringForTypeMethod(int typeId, asIScript
 }
 #endif
 
-string GetAbsolutePath(const string &file)
+lite3dpp::lite3dpp_string GetAbsolutePath(const lite3dpp::lite3dpp_string &file)
 {
-	string str = file;
+	lite3dpp::lite3dpp_string str = file;
 
 	// If this is a relative path, complement it with the current path
 	if( !((str.length() > 0 && (str[0] == '/' || str[0] == '\\')) ||
-		  str.find(":") != string::npos) )
+		  str.find(":") != lite3dpp::lite3dpp_string::npos) )
 	{
 		str = GetCurrentDir() + "/" + str;
 	}
 
 	// Replace backslashes for forward slashes
 	size_t pos = 0;
-	while( (pos = str.find("\\", pos)) != string::npos )
+	while( (pos = str.find("\\", pos)) != lite3dpp::lite3dpp_string::npos )
 		str[pos] = '/';
 
 	// Replace /./ with nothing
 	pos = 0;
-	while( (pos = str.find("/./", pos)) != string::npos )
+	while( (pos = str.find("/./", pos)) != lite3dpp::lite3dpp_string::npos )
 		str.erase(pos, 3);
 
 	// For each /../ remove the parent dir and the /../
 	pos = 0;
-	while( (pos = str.find("/../")) != string::npos )
+	while( (pos = str.find("/../")) != lite3dpp::lite3dpp_string::npos )
 	{
 		size_t pos2 = str.rfind("/", pos-1);
-		if( pos2 != string::npos )
+		if( pos2 != lite3dpp::lite3dpp_string::npos )
 			str.erase(pos2, pos+3-pos2);
 		else
 		{
@@ -965,7 +965,7 @@ string GetAbsolutePath(const string &file)
 	return str;
 }
 
-string GetCurrentDir()
+lite3dpp::lite3dpp_string GetCurrentDir()
 {
 	char buffer[1024];
 #if defined(_MSC_VER) || defined(_WIN32)
@@ -989,7 +989,7 @@ string GetCurrentDir()
 			appLen--;
 		}
 
-		// Terminate the string after the trailing backslash
+		// Terminate the lite3dpp::lited3dpp_string after the trailing backslash
 		apppath[appLen] = TEXT('\0');
 	}
 		#ifdef _UNICODE

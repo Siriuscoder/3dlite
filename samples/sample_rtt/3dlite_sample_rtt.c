@@ -63,7 +63,7 @@ static lite3d_mesh_node mSceneNode[2];
 static lite3d_scene mScene;
 static lite3d_scene mSceneMain;
 
-static int process_events(SDL_Event *levent)
+static int process_events(SDL_Event *levent, void *userdata)
 {
     if (levent->type == SDL_KEYDOWN)
     {
@@ -264,7 +264,7 @@ static int initCube(void)
     return LITE3D_TRUE;
 }
 
-static int init(void)
+static int init(void *userdata)
 {
     lite3d_resource_file *file1;
 
@@ -344,7 +344,7 @@ static int init(void)
     return LITE3D_TRUE;
 }
 
-static int shutdown(void)
+static int shutdown(void *userdata)
 {
     lite3d_vbo_purge(&mCubeVbo);
     lite3d_material_purge(&mRenderTextureMaterial);
@@ -363,7 +363,7 @@ static int shutdown(void)
     return LITE3D_TRUE;
 }
 
-static int pre_frame(void)
+static int pre_frame(void *userdata)
 {
     lite3d_scene_node_rotate_angle(&mSceneNode[0].sceneNode, &KM_VEC3_POS_Z, 0.005f);
     lite3d_scene_node_rotate_angle(&mSceneNode[1].sceneNode, &KM_VEC3_POS_Z, 0.001f);

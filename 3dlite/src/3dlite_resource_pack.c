@@ -24,6 +24,7 @@
 #include <3dlite/3dlite_resource_pack.h>
 #include <3dlite/3dlite_alloc.h>
 #include <3dlite/3dlite_7z_loader.h>
+#include <3dlite/3dlite_main.h>
 
 static lite3d_resource_file *lookup_resource_index(lite3d_resource_pack *pack, const char *key)
 {
@@ -124,11 +125,13 @@ lite3d_resource_pack *lite3d_resource_pack_open(const char *path, uint8_t compre
             return NULL;
     }
 
-    pack = (lite3d_resource_pack *)lite3d_malloc(sizeof(lite3d_resource_pack));
+    pack = (lite3d_resource_pack *)lite3d_malloc_pooled(LITE3D_POOL_NO1, 
+        sizeof(lite3d_resource_pack));
     SDL_assert_release(pack);
     
     pack->isCompressed = compressed;
-    pack->memoryLimit = memoryLimit;
+    pack->memoryLimit = memoryLimit == 0 ? 
+        lite3d_get_global_settings()->maxFileCacheSize : memoryLimit;
     pack->memoryUsed = 0;
     pack->fileCache = lite3d_rb_tree_create(lite3d_rb_tree_c_string_comparator,
         resource_index_delete);
@@ -172,7 +175,7 @@ void lite3d_resource_pack_close(lite3d_resource_pack *pack)
     SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, 
         "PACK: '%s' (%s) closed ", pack->pathto,
         pack->isCompressed ? "compressed" : "filesystem");
-    lite3d_free(pack);
+    lite3d_free_pooled(LITE3D_POOL_NO1, pack);
 }
 
 lite3d_resource_file *lite3d_resource_pack_file_load(lite3d_resource_pack *pack, const char *file)

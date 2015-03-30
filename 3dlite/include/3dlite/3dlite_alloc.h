@@ -37,10 +37,11 @@
 
 #define LITE3D_POOL_MAX             0x06
 #define LITE3D_POOL_COMMON          0x00
-/* file cache */
+/* Littlest chanks */
 #define LITE3D_POOL_NO1             0x01
-/* Devil allocator */
+/* C++ objects pool */
 #define LITE3D_POOL_NO2             0x02
+/* */
 #define LITE3D_POOL_NO3             0x03
 #define LITE3D_POOL_NO4             0x04
 #define LITE3D_POOL_NO5             0x05
@@ -60,6 +61,7 @@ LITE3D_CEXPORT void *lite3d_calloc(size_t size);
 LITE3D_CEXPORT void lite3d_free(void *p);
 
 LITE3D_CEXPORT void *lite3d_malloc_pooled(uint8_t pollNo, size_t size);
+LITE3D_CEXPORT void *lite3d_calloc_pooled(uint8_t pollNo, size_t size);
 LITE3D_CEXPORT void lite3d_free_pooled(uint8_t pollNo, void *p);
 
 LITE3D_CEXPORT void lite3d_memory_init(lite3d_alloca_f *allocator);

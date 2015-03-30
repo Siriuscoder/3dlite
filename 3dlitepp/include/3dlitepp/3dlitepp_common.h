@@ -17,11 +17,7 @@
 *******************************************************************************/
 #pragma once
 
-#include <stdint.h>
-#include <stddef.h>
-
-#define STR_HELPER(x) #x
-#define STR(x) STR_HELPER(x)
+#include <3dlite/3dlite_common.h>
 
 #ifdef PLATFORM_Windows
 
@@ -46,29 +42,23 @@
 #   define LITE3DPP_EXPORT __declspec(dllimport)
 #   endif
 
-#   define INLINE __inline
-#   define DEVIL_CALL __stdcall
-
-#   ifdef near
-#   undef near
-#   endif
-
-#   ifdef far
-#   undef far
-#   endif
-
 #elif PLATFORM_Linux
     // If not Windows, we assume some sort of Unixy build environment,
     // where autotools is used.  (This includes Cygwin!)  #include the
     // config.h file only if this file was included from a non-header
     // file, because headers must not be dependent on config.h.
 #   if !defined(__GNUC__)
-#       error "GCC compiller requred.."
+#       error "GCC compiler requred.."
 #   endif
 
-#   define LITE3D_EXPORT
-#   define LITE3D_CLASS_EXPORT
+#   define LITE3DPP_EXPORT
 
-#   define INLINE inline
-#   define DEVIL_CALL
 #endif
+
+//#define LITE3DPP_USE_STL_ALLOCATOR
+
+/* Main engine class */
+namespace lite3dpp
+{
+    class Main;
+}

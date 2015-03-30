@@ -52,12 +52,12 @@ static int maxCombinedTextureImageUnits;
 
 static void* DEVIL_CALL il_alloc(const ILsizei size)
 {
-    return lite3d_malloc_pooled(LITE3D_POOL_NO2, size);
+    return lite3d_malloc(size);
 }
 
 static void DEVIL_CALL il_free(const void *ptr)
 {
-    lite3d_free_pooled(LITE3D_POOL_NO2, (void *) ptr);
+    lite3d_free((void *) ptr);
 }
 
 static const char *format_string(GLenum format)
@@ -181,13 +181,6 @@ int lite3d_texture_technique_init(const lite3d_texture_technique_settings *setti
                 "%s: Texture compression not supported, skiping", __FUNCTION__);
             gTextureSettings.useGLCompression = 0;
         }
-    }
-
-    if (!GLEW_SGIS_generate_mipmap)
-    {
-        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
-            "%s: SGIS_generate_mipmap not supported..", __FUNCTION__);
-        return LITE3D_FALSE;
     }
 
     if (!GLEW_EXT_texture_filter_anisotropic)

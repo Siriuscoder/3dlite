@@ -184,37 +184,40 @@ void lite3d_render_loop(lite3d_render_listeners *callbacks)
     lite3d_render_target_add(&gScreenRt);
 
     /* start user initialization */
-    if (gRenderListeners.preRender && !gRenderListeners.preRender())
+    if (gRenderListeners.preRender && 
+        !gRenderListeners.preRender(gRenderListeners.userdata))
         return;
 
     /* begin render loop */
     while (gRenderStarted)
     {
-        gRenderStats.trianglesByFrame =
-            gRenderStats.objectsByFrame =
-            gRenderStats.batchesByFrame =
-            gRenderStats.materialsByFrame =
-            gRenderStats.materialsPassedByFrame =
-            gRenderStats.textureUnitsByFrame =
-            gRenderStats.verticesByFrame = 0;
-
-        beginFrameMark = SDL_GetPerformanceCounter();
-
         if (gRenderActive)
         {
-            if (gRenderListeners.preFrame && !gRenderListeners.preFrame())
+            gRenderStats.trianglesByFrame =
+                gRenderStats.objectsByFrame =
+                gRenderStats.batchesByFrame =
+                gRenderStats.materialsByFrame =
+                gRenderStats.materialsPassedByFrame =
+                gRenderStats.textureUnitsByFrame =
+                gRenderStats.verticesByFrame = 0;
+
+            beginFrameMark = SDL_GetPerformanceCounter();
+            if (gRenderListeners.preFrame && 
+                !gRenderListeners.preFrame(gRenderListeners.userdata))
                 break;
             if (!update_render_targets())
                 break;
-            if (gRenderListeners.postFrame && !gRenderListeners.postFrame())
+            if (gRenderListeners.postFrame && 
+                !gRenderListeners.postFrame(gRenderListeners.userdata))
                 break;
-        }
 
-        calc_render_stats(beginFrameMark, SDL_GetPerformanceCounter());
+            calc_render_stats(beginFrameMark, SDL_GetPerformanceCounter());
+        }
 
         while (SDL_PollEvent(&wevent))
         {
-            if (gRenderListeners.processEvent && !gRenderListeners.processEvent(&wevent))
+            if (gRenderListeners.processEvent && 
+                !gRenderListeners.processEvent(&wevent, gRenderListeners.userdata))
             {
                 lite3d_render_stop();
                 break;
@@ -223,7 +226,7 @@ void lite3d_render_loop(lite3d_render_listeners *callbacks)
     }
 
     if (gRenderListeners.postRender)
-        gRenderListeners.postRender();
+        gRenderListeners.postRender(gRenderListeners.userdata);
 
     lite3d_render_target_erase_all();
     lite3d_render_target_purge(&gScreenRt);
@@ -260,7 +263,7 @@ int lite3d_render_target_init(lite3d_render_target *rt,
         if (!lite3d_framebuffer_screen_init(&rt->fb, width, height))
             return LITE3D_FALSE;
     }
-    
+
     return LITE3D_TRUE;
 }
 
@@ -275,7 +278,7 @@ void lite3d_render_target_purge(lite3d_render_target *rt)
     while ((node = lite3d_list_remove_first_link(&rt->lookSequence)) != NULL)
     {
         look = LITE3D_MEMBERCAST(lookUnit, node, rtLink);
-        lite3d_free(look);
+        lite3d_free_pooled(LITE3D_POOL_NO1, look);
     }
 }
 
@@ -326,7 +329,7 @@ int lite3d_render_target_attach_camera(lite3d_render_target *target, lite3d_came
     }
 
     if (!look)
-        look = (lookUnit *) lite3d_calloc(sizeof (lookUnit));
+        look = (lookUnit *) lite3d_calloc_pooled(LITE3D_POOL_NO1, sizeof (lookUnit));
     SDL_assert_release(look);
 
     look->camera = camera;
@@ -350,7 +353,7 @@ int lite3d_render_target_dettach_camera(lite3d_render_target *rt, lite3d_camera 
         if (look->camera == camera)
         {
             lite3d_list_unlink_link(node);
-            lite3d_free(look);
+            lite3d_free_pooled(LITE3D_POOL_NO1, look);
             return LITE3D_FALSE;
         }
     }

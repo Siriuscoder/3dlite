@@ -87,6 +87,75 @@
           <in>3dlite_video.c</in>
         </df>
       </df>
+      <df name="3dlitepp">
+        <df name="include">
+          <df name="3dlitepp">
+            <in>3dlitepp_manageable.h</in>
+            <in>3dlitepp_resource_manager.h</in>
+            <in>3dlitepp_resource_pack_manager.h</in>
+          </df>
+        </df>
+        <df name="src">
+          <df name="as">
+            <in>as_atomic.cpp</in>
+            <in>as_builder.cpp</in>
+            <in>as_bytecode.cpp</in>
+            <in>as_callfunc.cpp</in>
+            <in>as_callfunc_arm.cpp</in>
+            <in>as_callfunc_mips.cpp</in>
+            <in>as_callfunc_ppc.cpp</in>
+            <in>as_callfunc_ppc_64.cpp</in>
+            <in>as_callfunc_sh4.cpp</in>
+            <in>as_callfunc_x64_gcc.cpp</in>
+            <in>as_callfunc_x64_mingw.cpp</in>
+            <in>as_callfunc_x64_msvc.cpp</in>
+            <in>as_callfunc_x86.cpp</in>
+            <in>as_callfunc_xenon.cpp</in>
+            <in>as_compiler.cpp</in>
+            <in>as_configgroup.cpp</in>
+            <in>as_context.cpp</in>
+            <in>as_datatype.cpp</in>
+            <in>as_gc.cpp</in>
+            <in>as_generic.cpp</in>
+            <in>as_globalproperty.cpp</in>
+            <in>as_memory.cpp</in>
+            <in>as_module.cpp</in>
+            <in>as_objecttype.cpp</in>
+            <in>as_outputbuffer.cpp</in>
+            <in>as_parser.cpp</in>
+            <in>as_restore.cpp</in>
+            <in>as_scriptcode.cpp</in>
+            <in>as_scriptengine.cpp</in>
+            <in>as_scriptfunction.cpp</in>
+            <in>as_scriptnode.cpp</in>
+            <in>as_scriptobject.cpp</in>
+            <in>as_string.cpp</in>
+            <in>as_string_util.cpp</in>
+            <in>as_thread.cpp</in>
+            <in>as_tokenizer.cpp</in>
+            <in>as_typeinfo.cpp</in>
+            <in>as_variablescope.cpp</in>
+          </df>
+          <df name="as_helpers">
+            <in>debugger.cpp</in>
+            <in>scriptarray.cpp</in>
+            <in>scriptbuilder.cpp</in>
+            <in>scriptdictionary.cpp</in>
+            <in>scripthelper.cpp</in>
+            <in>scriptmath.cpp</in>
+            <in>scriptstdstring.cpp</in>
+            <in>scriptstdstring_utils.cpp</in>
+          </df>
+          <df name="json">
+            <in>JSON.cpp</in>
+            <in>JSONValue.cpp</in>
+          </df>
+          <in>3dlitepp_as_runner.cpp</in>
+          <in>3dlitepp_main.cpp</in>
+          <in>3dlitepp_manageable.cpp</in>
+          <in>3dlitepp_resource_pack_manager.cpp</in>
+        </df>
+      </df>
       <df name="CMakeFiles">
         <df name="2.8.12.2">
           <df name="CompilerIdC">
@@ -98,16 +167,25 @@
         </df>
       </df>
       <df name="samples">
-        <in>3dlite_sample_minigun.c</in>
-        <in>3dlite_sample_render_to_texture.c</in>
-        <in>3dlite_sample_rifle.c</in>
-        <in>3dlite_sample_scene_node.c</in>
+        <df name="sample_minigun">
+          <in>3dlite_sample_minigun.c</in>
+        </df>
+        <df name="sample_rifle">
+          <in>3dlite_sample_rifle.c</in>
+        </df>
+        <df name="sample_rtt">
+          <in>3dlite_sample_rtt.c</in>
+        </df>
+        <df name="sample_scene_node">
+          <in>3dlite_sample_scene_node.c</in>
+        </df>
       </df>
       <df name="tests">
         <df name="functionaly">
           <in>3dlite_common_test.cpp</in>
           <in>3dlite_file_cache_test.cpp</in>
           <in>3dlite_vbo_test.cpp</in>
+          <in>3dlitepp_main_test.cpp</in>
         </df>
         <df name="gtest">
           <df name="src">
@@ -145,7 +223,9 @@
       </toolsSet>
       <flagsDictionary>
         <element flagsID="0" commonFlags="-std=c++11 -fstack-protector-all -fPIC"/>
-        <element flagsID="1" commonFlags="-std=c99 -fstack-protector-all -fPIC -fPIC"/>
+        <element flagsID="1" commonFlags="-std=c++11 -fstack-protector-all -fPIC -fPIC"/>
+        <element flagsID="2" commonFlags="-std=c99 -fstack-protector-all -fPIC"/>
+        <element flagsID="3" commonFlags="-std=c99 -fstack-protector-all -fPIC -fPIC"/>
       </flagsDictionary>
       <codeAssistance>
       </codeAssistance>
@@ -154,11 +234,11 @@
           <buildCommandWorkingDir>build</buildCommandWorkingDir>
           <buildCommand>${MAKE} -f Makefile</buildCommand>
           <cleanCommand>${MAKE} -f Makefile clean</cleanCommand>
-          <executablePath>build/bin/Debug/3dlite_sample_render_to_texture</executablePath>
+          <executablePath>build/bin/Debug/3dlite_tests</executablePath>
           <ccTool>
             <incDir>
               <pElem>3dlite/include</pElem>
-              <pElem>tests/gtest</pElem>
+              <pElem>3dlitepp/include</pElem>
             </incDir>
             <preprocessorList>
               <Elem>PLATFORM_Linux</Elem>
@@ -172,7 +252,7 @@
             flavor2="3">
       </item>
       <item path="3dlite/src/3dlite_7z_loader.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
+        <cTool flags="3">
           <incDir>
             <pElem>/usr/include/SDL2</pElem>
             <pElem>build/3dlite</pElem>
@@ -185,7 +265,7 @@
         </cTool>
       </item>
       <item path="3dlite/src/3dlite_alloc.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
+        <cTool flags="3">
           <incDir>
             <pElem>/usr/include/SDL2</pElem>
             <pElem>build/3dlite</pElem>
@@ -198,7 +278,7 @@
         </cTool>
       </item>
       <item path="3dlite/src/3dlite_camera.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
+        <cTool flags="3">
           <incDir>
             <pElem>/usr/include/SDL2</pElem>
             <pElem>build/3dlite</pElem>
@@ -211,7 +291,7 @@
         </cTool>
       </item>
       <item path="3dlite/src/3dlite_framebuffer.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
+        <cTool flags="3">
           <incDir>
             <pElem>/usr/include/SDL2</pElem>
             <pElem>build/3dlite</pElem>
@@ -224,7 +304,7 @@
         </cTool>
       </item>
       <item path="3dlite/src/3dlite_list.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
+        <cTool flags="3">
           <incDir>
             <pElem>/usr/include/SDL2</pElem>
             <pElem>build/3dlite</pElem>
@@ -237,7 +317,7 @@
         </cTool>
       </item>
       <item path="3dlite/src/3dlite_logger.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
+        <cTool flags="3">
           <incDir>
             <pElem>/usr/include/SDL2</pElem>
             <pElem>build/3dlite</pElem>
@@ -250,7 +330,7 @@
         </cTool>
       </item>
       <item path="3dlite/src/3dlite_main.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
+        <cTool flags="3">
           <incDir>
             <pElem>/usr/include/SDL2</pElem>
             <pElem>build/3dlite</pElem>
@@ -263,7 +343,7 @@
         </cTool>
       </item>
       <item path="3dlite/src/3dlite_material.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
+        <cTool flags="3">
           <incDir>
             <pElem>/usr/include/SDL2</pElem>
             <pElem>build/3dlite</pElem>
@@ -276,7 +356,7 @@
         </cTool>
       </item>
       <item path="3dlite/src/3dlite_meshes_render.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
+        <cTool flags="3">
           <incDir>
             <pElem>/usr/include/SDL2</pElem>
             <pElem>build/3dlite</pElem>
@@ -289,7 +369,7 @@
         </cTool>
       </item>
       <item path="3dlite/src/3dlite_misc.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
+        <cTool flags="3">
           <incDir>
             <pElem>/usr/include/SDL2</pElem>
             <pElem>build/3dlite</pElem>
@@ -302,7 +382,7 @@
         </cTool>
       </item>
       <item path="3dlite/src/3dlite_nedmalloc.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
+        <cTool flags="3">
           <incDir>
             <pElem>/usr/include/SDL2</pElem>
             <pElem>build/3dlite</pElem>
@@ -315,7 +395,7 @@
         </cTool>
       </item>
       <item path="3dlite/src/3dlite_rb_tree.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
+        <cTool flags="3">
           <incDir>
             <pElem>/usr/include/SDL2</pElem>
             <pElem>build/3dlite</pElem>
@@ -328,7 +408,7 @@
         </cTool>
       </item>
       <item path="3dlite/src/3dlite_render.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
+        <cTool flags="3">
           <incDir>
             <pElem>/usr/include/SDL2</pElem>
             <pElem>build/3dlite</pElem>
@@ -341,7 +421,7 @@
         </cTool>
       </item>
       <item path="3dlite/src/3dlite_resource_pack.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
+        <cTool flags="3">
           <incDir>
             <pElem>/usr/include/SDL2</pElem>
             <pElem>build/3dlite</pElem>
@@ -354,7 +434,7 @@
         </cTool>
       </item>
       <item path="3dlite/src/3dlite_scene.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
+        <cTool flags="3">
           <incDir>
             <pElem>/usr/include/SDL2</pElem>
             <pElem>build/3dlite</pElem>
@@ -367,7 +447,7 @@
         </cTool>
       </item>
       <item path="3dlite/src/3dlite_scene_node.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
+        <cTool flags="3">
           <incDir>
             <pElem>/usr/include/SDL2</pElem>
             <pElem>build/3dlite</pElem>
@@ -380,7 +460,7 @@
         </cTool>
       </item>
       <item path="3dlite/src/3dlite_shader.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
+        <cTool flags="3">
           <incDir>
             <pElem>/usr/include/SDL2</pElem>
             <pElem>build/3dlite</pElem>
@@ -393,7 +473,7 @@
         </cTool>
       </item>
       <item path="3dlite/src/3dlite_shader_params.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
+        <cTool flags="3">
           <incDir>
             <pElem>/usr/include/SDL2</pElem>
             <pElem>build/3dlite</pElem>
@@ -406,7 +486,7 @@
         </cTool>
       </item>
       <item path="3dlite/src/3dlite_shader_program.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
+        <cTool flags="3">
           <incDir>
             <pElem>/usr/include/SDL2</pElem>
             <pElem>build/3dlite</pElem>
@@ -419,7 +499,7 @@
         </cTool>
       </item>
       <item path="3dlite/src/3dlite_texture_unit.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
+        <cTool flags="3">
           <incDir>
             <pElem>/usr/include/SDL2</pElem>
             <pElem>build/3dlite</pElem>
@@ -432,7 +512,7 @@
         </cTool>
       </item>
       <item path="3dlite/src/3dlite_vbo.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
+        <cTool flags="3">
           <incDir>
             <pElem>/usr/include/SDL2</pElem>
             <pElem>build/3dlite</pElem>
@@ -445,7 +525,7 @@
         </cTool>
       </item>
       <item path="3dlite/src/3dlite_vbo_loader.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
+        <cTool flags="3">
           <incDir>
             <pElem>/usr/include/SDL2</pElem>
             <pElem>build/3dlite</pElem>
@@ -458,7 +538,7 @@
         </cTool>
       </item>
       <item path="3dlite/src/3dlite_video.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
+        <cTool flags="3">
           <incDir>
             <pElem>/usr/include/SDL2</pElem>
             <pElem>build/3dlite</pElem>
@@ -471,60 +551,442 @@
         </cTool>
       </item>
       <item path="3dlite/src/7zdec/7zBuf.c" ex="false" tool="0" flavor2="3">
+        <cTool flags="2">
+        </cTool>
       </item>
       <item path="3dlite/src/7zdec/7zBuf2.c" ex="false" tool="0" flavor2="3">
+        <cTool flags="2">
+        </cTool>
       </item>
       <item path="3dlite/src/7zdec/7zCrc.c" ex="false" tool="0" flavor2="3">
+        <cTool flags="2">
+        </cTool>
       </item>
       <item path="3dlite/src/7zdec/7zCrcOpt.c" ex="false" tool="0" flavor2="3">
+        <cTool flags="2">
+        </cTool>
       </item>
       <item path="3dlite/src/7zdec/7zDec.c" ex="false" tool="0" flavor2="3">
+        <cTool flags="2">
+        </cTool>
       </item>
       <item path="3dlite/src/7zdec/7zFile.c" ex="false" tool="0" flavor2="3">
+        <cTool flags="2">
+        </cTool>
       </item>
       <item path="3dlite/src/7zdec/7zIn.c" ex="false" tool="0" flavor2="3">
+        <cTool flags="2">
+        </cTool>
       </item>
       <item path="3dlite/src/7zdec/7zStream.c" ex="false" tool="0" flavor2="3">
+        <cTool flags="2">
+        </cTool>
       </item>
       <item path="3dlite/src/7zdec/Bcj2.c" ex="false" tool="0" flavor2="3">
+        <cTool flags="2">
+        </cTool>
       </item>
       <item path="3dlite/src/7zdec/Bra.c" ex="false" tool="0" flavor2="3">
+        <cTool flags="2">
+        </cTool>
       </item>
       <item path="3dlite/src/7zdec/Bra86.c" ex="false" tool="0" flavor2="3">
+        <cTool flags="2">
+        </cTool>
       </item>
       <item path="3dlite/src/7zdec/CpuArch.c" ex="false" tool="0" flavor2="3">
+        <cTool flags="2">
+        </cTool>
       </item>
       <item path="3dlite/src/7zdec/Lzma2Dec.c" ex="false" tool="0" flavor2="3">
+        <cTool flags="2">
+        </cTool>
       </item>
       <item path="3dlite/src/7zdec/LzmaDec.c" ex="false" tool="0" flavor2="3">
+        <cTool flags="2">
+        </cTool>
       </item>
       <item path="3dlite/src/7zdec/Ppmd7.c" ex="false" tool="0" flavor2="3">
+        <cTool flags="2">
+        </cTool>
       </item>
       <item path="3dlite/src/7zdec/Ppmd7Dec.c" ex="false" tool="0" flavor2="3">
+        <cTool flags="2">
+        </cTool>
       </item>
       <item path="3dlite/src/glew/glew.c" ex="false" tool="0" flavor2="3">
+        <cTool flags="2">
+        </cTool>
       </item>
       <item path="3dlite/src/kazmath/aabb.c" ex="false" tool="0" flavor2="3">
+        <cTool flags="2">
+        </cTool>
       </item>
       <item path="3dlite/src/kazmath/mat3.c" ex="false" tool="0" flavor2="3">
+        <cTool flags="2">
+        </cTool>
       </item>
       <item path="3dlite/src/kazmath/mat4.c" ex="false" tool="0" flavor2="3">
+        <cTool flags="2">
+        </cTool>
       </item>
       <item path="3dlite/src/kazmath/plane.c" ex="false" tool="0" flavor2="3">
+        <cTool flags="2">
+        </cTool>
       </item>
       <item path="3dlite/src/kazmath/quaternion.c" ex="false" tool="0" flavor2="3">
+        <cTool flags="2">
+        </cTool>
       </item>
       <item path="3dlite/src/kazmath/ray2.c" ex="false" tool="0" flavor2="3">
+        <cTool flags="2">
+        </cTool>
       </item>
       <item path="3dlite/src/kazmath/ray3.c" ex="false" tool="0" flavor2="3">
+        <cTool flags="2">
+        </cTool>
       </item>
       <item path="3dlite/src/kazmath/utility.c" ex="false" tool="0" flavor2="3">
+        <cTool flags="2">
+        </cTool>
       </item>
       <item path="3dlite/src/kazmath/vec2.c" ex="false" tool="0" flavor2="3">
+        <cTool flags="2">
+        </cTool>
       </item>
       <item path="3dlite/src/kazmath/vec3.c" ex="false" tool="0" flavor2="3">
+        <cTool flags="2">
+        </cTool>
       </item>
       <item path="3dlite/src/kazmath/vec4.c" ex="false" tool="0" flavor2="3">
+        <cTool flags="2">
+        </cTool>
+      </item>
+      <item path="3dlitepp/include/3dlitepp/3dlitepp_resource_manager.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="3dlitepp/src/3dlitepp_as_runner.cpp"
+            ex="false"
+            tool="1"
+            flavor2="8">
+        <ccTool flags="1">
+          <incDir>
+            <pElem>/usr/include/SDL2</pElem>
+            <pElem>build/3dlitepp</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>_3dlitepp_EXPORTS</Elem>
+            <Elem>_REENTRANT</Elem>
+          </preprocessorList>
+        </ccTool>
+      </item>
+      <item path="3dlitepp/src/3dlitepp_main.cpp" ex="false" tool="1" flavor2="8">
+        <ccTool flags="1">
+          <incDir>
+            <pElem>/usr/include/SDL2</pElem>
+            <pElem>build/3dlitepp</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>_3dlitepp_EXPORTS</Elem>
+            <Elem>_REENTRANT</Elem>
+          </preprocessorList>
+        </ccTool>
+      </item>
+      <item path="3dlitepp/src/3dlitepp_manageable.cpp"
+            ex="false"
+            tool="1"
+            flavor2="8">
+        <ccTool flags="1">
+          <incDir>
+            <pElem>/usr/include/SDL2</pElem>
+            <pElem>build/3dlitepp</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>_3dlitepp_EXPORTS</Elem>
+            <Elem>_REENTRANT</Elem>
+          </preprocessorList>
+        </ccTool>
+      </item>
+      <item path="3dlitepp/src/3dlitepp_resource_pack_manager.cpp"
+            ex="false"
+            tool="1"
+            flavor2="8">
+        <ccTool flags="1">
+          <incDir>
+            <pElem>/usr/include/SDL2</pElem>
+            <pElem>build/3dlitepp</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>_3dlitepp_EXPORTS</Elem>
+            <Elem>_REENTRANT</Elem>
+          </preprocessorList>
+        </ccTool>
+      </item>
+      <item path="3dlitepp/src/as/as_atomic.cpp" ex="false" tool="1" flavor2="8">
+        <ccTool flags="0">
+        </ccTool>
+      </item>
+      <item path="3dlitepp/src/as/as_builder.cpp" ex="false" tool="1" flavor2="8">
+        <ccTool flags="0">
+        </ccTool>
+      </item>
+      <item path="3dlitepp/src/as/as_bytecode.cpp" ex="false" tool="1" flavor2="8">
+        <ccTool flags="0">
+        </ccTool>
+      </item>
+      <item path="3dlitepp/src/as/as_callfunc.cpp" ex="false" tool="1" flavor2="8">
+        <ccTool flags="0">
+        </ccTool>
+      </item>
+      <item path="3dlitepp/src/as/as_callfunc_arm.cpp"
+            ex="false"
+            tool="1"
+            flavor2="8">
+        <ccTool flags="0">
+        </ccTool>
+      </item>
+      <item path="3dlitepp/src/as/as_callfunc_mips.cpp"
+            ex="false"
+            tool="1"
+            flavor2="8">
+        <ccTool flags="0">
+        </ccTool>
+      </item>
+      <item path="3dlitepp/src/as/as_callfunc_ppc.cpp"
+            ex="false"
+            tool="1"
+            flavor2="8">
+        <ccTool flags="0">
+        </ccTool>
+      </item>
+      <item path="3dlitepp/src/as/as_callfunc_ppc_64.cpp"
+            ex="false"
+            tool="1"
+            flavor2="8">
+        <ccTool flags="0">
+        </ccTool>
+      </item>
+      <item path="3dlitepp/src/as/as_callfunc_sh4.cpp"
+            ex="false"
+            tool="1"
+            flavor2="8">
+        <ccTool flags="0">
+        </ccTool>
+      </item>
+      <item path="3dlitepp/src/as/as_callfunc_x64_gcc.cpp"
+            ex="false"
+            tool="1"
+            flavor2="8">
+        <ccTool flags="0">
+        </ccTool>
+      </item>
+      <item path="3dlitepp/src/as/as_callfunc_x64_mingw.cpp"
+            ex="false"
+            tool="1"
+            flavor2="8">
+        <ccTool flags="0">
+        </ccTool>
+      </item>
+      <item path="3dlitepp/src/as/as_callfunc_x64_msvc.cpp"
+            ex="false"
+            tool="1"
+            flavor2="8">
+        <ccTool flags="0">
+        </ccTool>
+      </item>
+      <item path="3dlitepp/src/as/as_callfunc_x86.cpp"
+            ex="false"
+            tool="1"
+            flavor2="8">
+        <ccTool flags="0">
+        </ccTool>
+      </item>
+      <item path="3dlitepp/src/as/as_callfunc_xenon.cpp"
+            ex="false"
+            tool="1"
+            flavor2="8">
+        <ccTool flags="0">
+        </ccTool>
+      </item>
+      <item path="3dlitepp/src/as/as_compiler.cpp" ex="false" tool="1" flavor2="8">
+        <ccTool flags="0">
+        </ccTool>
+      </item>
+      <item path="3dlitepp/src/as/as_configgroup.cpp" ex="false" tool="1" flavor2="8">
+        <ccTool flags="0">
+        </ccTool>
+      </item>
+      <item path="3dlitepp/src/as/as_context.cpp" ex="false" tool="1" flavor2="8">
+        <ccTool flags="0">
+        </ccTool>
+      </item>
+      <item path="3dlitepp/src/as/as_datatype.cpp" ex="false" tool="1" flavor2="8">
+        <ccTool flags="0">
+        </ccTool>
+      </item>
+      <item path="3dlitepp/src/as/as_gc.cpp" ex="false" tool="1" flavor2="8">
+        <ccTool flags="0">
+        </ccTool>
+      </item>
+      <item path="3dlitepp/src/as/as_generic.cpp" ex="false" tool="1" flavor2="8">
+        <ccTool flags="0">
+        </ccTool>
+      </item>
+      <item path="3dlitepp/src/as/as_globalproperty.cpp"
+            ex="false"
+            tool="1"
+            flavor2="8">
+        <ccTool flags="0">
+        </ccTool>
+      </item>
+      <item path="3dlitepp/src/as/as_memory.cpp" ex="false" tool="1" flavor2="8">
+        <ccTool flags="0">
+        </ccTool>
+      </item>
+      <item path="3dlitepp/src/as/as_module.cpp" ex="false" tool="1" flavor2="8">
+        <ccTool flags="0">
+        </ccTool>
+      </item>
+      <item path="3dlitepp/src/as/as_objecttype.cpp" ex="false" tool="1" flavor2="8">
+        <ccTool flags="0">
+        </ccTool>
+      </item>
+      <item path="3dlitepp/src/as/as_outputbuffer.cpp"
+            ex="false"
+            tool="1"
+            flavor2="8">
+        <ccTool flags="0">
+        </ccTool>
+      </item>
+      <item path="3dlitepp/src/as/as_parser.cpp" ex="false" tool="1" flavor2="8">
+        <ccTool flags="0">
+        </ccTool>
+      </item>
+      <item path="3dlitepp/src/as/as_restore.cpp" ex="false" tool="1" flavor2="8">
+        <ccTool flags="0">
+        </ccTool>
+      </item>
+      <item path="3dlitepp/src/as/as_scriptcode.cpp" ex="false" tool="1" flavor2="8">
+        <ccTool flags="0">
+        </ccTool>
+      </item>
+      <item path="3dlitepp/src/as/as_scriptengine.cpp"
+            ex="false"
+            tool="1"
+            flavor2="8">
+        <ccTool flags="0">
+        </ccTool>
+      </item>
+      <item path="3dlitepp/src/as/as_scriptfunction.cpp"
+            ex="false"
+            tool="1"
+            flavor2="8">
+        <ccTool flags="0">
+        </ccTool>
+      </item>
+      <item path="3dlitepp/src/as/as_scriptnode.cpp" ex="false" tool="1" flavor2="8">
+        <ccTool flags="0">
+        </ccTool>
+      </item>
+      <item path="3dlitepp/src/as/as_scriptobject.cpp"
+            ex="false"
+            tool="1"
+            flavor2="8">
+        <ccTool flags="0">
+        </ccTool>
+      </item>
+      <item path="3dlitepp/src/as/as_string.cpp" ex="false" tool="1" flavor2="8">
+        <ccTool flags="0">
+        </ccTool>
+      </item>
+      <item path="3dlitepp/src/as/as_string_util.cpp" ex="false" tool="1" flavor2="8">
+        <ccTool flags="0">
+        </ccTool>
+      </item>
+      <item path="3dlitepp/src/as/as_thread.cpp" ex="false" tool="1" flavor2="8">
+        <ccTool flags="0">
+        </ccTool>
+      </item>
+      <item path="3dlitepp/src/as/as_tokenizer.cpp" ex="false" tool="1" flavor2="8">
+        <ccTool flags="0">
+        </ccTool>
+      </item>
+      <item path="3dlitepp/src/as/as_typeinfo.cpp" ex="false" tool="1" flavor2="8">
+        <ccTool flags="0">
+        </ccTool>
+      </item>
+      <item path="3dlitepp/src/as/as_variablescope.cpp"
+            ex="false"
+            tool="1"
+            flavor2="8">
+        <ccTool flags="0">
+        </ccTool>
+      </item>
+      <item path="3dlitepp/src/as_helpers/debugger.cpp"
+            ex="false"
+            tool="1"
+            flavor2="8">
+        <ccTool flags="1">
+        </ccTool>
+      </item>
+      <item path="3dlitepp/src/as_helpers/scriptarray.cpp"
+            ex="false"
+            tool="1"
+            flavor2="8">
+        <ccTool flags="1">
+        </ccTool>
+      </item>
+      <item path="3dlitepp/src/as_helpers/scriptbuilder.cpp"
+            ex="false"
+            tool="1"
+            flavor2="8">
+        <ccTool flags="1">
+        </ccTool>
+      </item>
+      <item path="3dlitepp/src/as_helpers/scriptdictionary.cpp"
+            ex="false"
+            tool="1"
+            flavor2="8">
+        <ccTool flags="1">
+        </ccTool>
+      </item>
+      <item path="3dlitepp/src/as_helpers/scripthelper.cpp"
+            ex="false"
+            tool="1"
+            flavor2="8">
+        <ccTool flags="1">
+        </ccTool>
+      </item>
+      <item path="3dlitepp/src/as_helpers/scriptmath.cpp"
+            ex="false"
+            tool="1"
+            flavor2="8">
+        <ccTool flags="1">
+        </ccTool>
+      </item>
+      <item path="3dlitepp/src/as_helpers/scriptstdstring.cpp"
+            ex="false"
+            tool="1"
+            flavor2="8">
+        <ccTool flags="1">
+        </ccTool>
+      </item>
+      <item path="3dlitepp/src/as_helpers/scriptstdstring_utils.cpp"
+            ex="false"
+            tool="1"
+            flavor2="8">
+        <ccTool flags="1">
+        </ccTool>
+      </item>
+      <item path="3dlitepp/src/json/JSON.cpp" ex="false" tool="1" flavor2="8">
+        <ccTool flags="1">
+        </ccTool>
+      </item>
+      <item path="3dlitepp/src/json/JSONValue.cpp" ex="false" tool="1" flavor2="8">
+        <ccTool flags="1">
+        </ccTool>
       </item>
       <folder path="0">
         <cTool>
@@ -534,6 +996,13 @@
           <preprocessorList>
             <Elem>PLATFORM_Linux</Elem>
           </preprocessorList>
+        </cTool>
+      </folder>
+      <folder path="0/3dlite">
+        <cTool>
+          <incDir>
+            <pElem>3dlitepp/include</pElem>
+          </incDir>
         </cTool>
       </folder>
       <folder path="0/3dlite/src/7zdec">
@@ -567,16 +1036,83 @@
           </incDir>
         </cTool>
       </folder>
+      <folder path="0/3dlitepp/src/as">
+        <ccTool>
+          <incDir>
+            <pElem>3dlitepp/include/3dlitepp/as</pElem>
+            <pElem>build/3dlitepp</pElem>
+          </incDir>
+        </ccTool>
+      </folder>
+      <folder path="0/3dlitepp/src/as_helpers">
+        <ccTool>
+          <incDir>
+            <pElem>/usr/include/SDL2</pElem>
+            <pElem>build/3dlitepp</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>_3dlitepp_EXPORTS</Elem>
+            <Elem>_REENTRANT</Elem>
+          </preprocessorList>
+        </ccTool>
+      </folder>
+      <folder path="0/3dlitepp/src/json">
+        <ccTool>
+          <incDir>
+            <pElem>/usr/include/SDL2</pElem>
+            <pElem>build/3dlitepp</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>_3dlitepp_EXPORTS</Elem>
+            <Elem>_REENTRANT</Elem>
+          </preprocessorList>
+        </ccTool>
+      </folder>
       <folder path="0/samples">
         <cTool>
-          <incDir>
-            <pElem>3dlite++/include</pElem>
-            <pElem>/usr/include/SDL2</pElem>
-            <pElem>build/samples</pElem>
-          </incDir>
           <preprocessorList>
             <Elem>_REENTRANT</Elem>
           </preprocessorList>
+        </cTool>
+      </folder>
+      <folder path="0/samples/sample_minigun">
+        <cTool>
+          <incDir>
+            <pElem>3dlitepp/include</pElem>
+            <pElem>samples/sample_minigun</pElem>
+            <pElem>/usr/include/SDL2</pElem>
+            <pElem>build/samples</pElem>
+          </incDir>
+        </cTool>
+      </folder>
+      <folder path="0/samples/sample_rifle">
+        <cTool>
+          <incDir>
+            <pElem>3dlitepp/include</pElem>
+            <pElem>samples/sample_rifle</pElem>
+            <pElem>/usr/include/SDL2</pElem>
+            <pElem>build/samples</pElem>
+          </incDir>
+        </cTool>
+      </folder>
+      <folder path="0/samples/sample_rtt">
+        <cTool>
+          <incDir>
+            <pElem>3dlitepp/include</pElem>
+            <pElem>samples/sample_rtt</pElem>
+            <pElem>/usr/include/SDL2</pElem>
+            <pElem>build/samples</pElem>
+          </incDir>
+        </cTool>
+      </folder>
+      <folder path="0/samples/sample_scene_node">
+        <cTool>
+          <incDir>
+            <pElem>3dlitepp/include</pElem>
+            <pElem>samples/sample_scene_node</pElem>
+            <pElem>/usr/include/SDL2</pElem>
+            <pElem>build/samples</pElem>
+          </incDir>
         </cTool>
       </folder>
       <folder path="0/tests">
@@ -591,11 +1127,15 @@
             <Elem>_REENTRANT</Elem>
           </preprocessorList>
         </cTool>
+        <ccTool>
+          <incDir>
+            <pElem>tests/gtest</pElem>
+          </incDir>
+        </ccTool>
       </folder>
       <folder path="0/tests/functionaly">
         <ccTool>
           <incDir>
-            <pElem>3dlite++/include</pElem>
             <pElem>/usr/include/SDL2</pElem>
             <pElem>build/tests/functionaly</pElem>
           </incDir>
@@ -621,16 +1161,33 @@
           </preprocessorList>
         </cTool>
       </folder>
-      <item path="samples/3dlite_sample_minigun.c" ex="false" tool="0" flavor2="3">
-      </item>
-      <item path="samples/3dlite_sample_render_to_texture.c"
+      <item path="samples/sample_minigun/3dlite_sample_minigun.c"
             ex="false"
             tool="0"
             flavor2="3">
+        <cTool flags="2">
+        </cTool>
       </item>
-      <item path="samples/3dlite_sample_rifle.c" ex="false" tool="0" flavor2="3">
+      <item path="samples/sample_rifle/3dlite_sample_rifle.c"
+            ex="false"
+            tool="0"
+            flavor2="3">
+        <cTool flags="2">
+        </cTool>
       </item>
-      <item path="samples/3dlite_sample_scene_node.c" ex="false" tool="0" flavor2="3">
+      <item path="samples/sample_rtt/3dlite_sample_rtt.c"
+            ex="false"
+            tool="0"
+            flavor2="3">
+        <cTool flags="2">
+        </cTool>
+      </item>
+      <item path="samples/sample_scene_node/3dlite_sample_scene_node.c"
+            ex="false"
+            tool="0"
+            flavor2="3">
+        <cTool flags="2">
+        </cTool>
       </item>
       <item path="tests/functionaly/3dlite_common_test.cpp"
             ex="false"
@@ -643,6 +1200,8 @@
             ex="false"
             tool="1"
             flavor2="8">
+        <ccTool flags="0">
+        </ccTool>
       </item>
       <item path="tests/functionaly/3dlite_vbo_test.cpp"
             ex="false"
@@ -651,9 +1210,20 @@
         <ccTool flags="0">
         </ccTool>
       </item>
+      <item path="tests/functionaly/3dlitepp_main_test.cpp"
+            ex="false"
+            tool="1"
+            flavor2="8">
+        <ccTool flags="0">
+        </ccTool>
+      </item>
       <item path="tests/gtest/src/gtest-all.cc" ex="false" tool="1" flavor2="8">
+        <ccTool flags="0">
+        </ccTool>
       </item>
       <item path="tests/gtest/src/gtest_main.cc" ex="false" tool="1" flavor2="8">
+        <ccTool flags="0">
+        </ccTool>
       </item>
     </conf>
     <conf name="Release" type="0">
@@ -765,12 +1335,42 @@
       </item>
       <item path="3dlite/src/glew/glew.c" ex="false" tool="0" flavor2="0">
       </item>
+      <item path="3dlitepp/include/3dlitepp/3dlitepp_manageable.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="3dlitepp/include/3dlitepp/3dlitepp_resource_manager.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="3dlitepp/include/3dlitepp/3dlitepp_resource_pack_manager.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="3dlitepp/src/3dlitepp_manageable.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="3dlitepp/src/3dlitepp_resource_pack_manager.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
       <item path="CMakeFiles/2.8.12.2/CompilerIdC/CMakeCCompilerId.c"
             ex="false"
             tool="0"
             flavor2="0">
       </item>
       <item path="CMakeFiles/2.8.12.2/CompilerIdCXX/CMakeCXXCompilerId.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="tests/functionaly/3dlitepp_main_test.cpp"
             ex="false"
             tool="1"
             flavor2="0">
