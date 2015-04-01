@@ -30,16 +30,18 @@ namespace lite3dpp
     public:
 
         Main();
+        ~Main();
 
         bool initFromConfig(const char *config);
         const lite3d_global_settings &getSettings() const;
 
-        void setResourceLocation(const char *location);
+        void setResourceLocation(const lite3dpp_string &location);
 
         bool run();
         void stop();
 
-        ~Main();
+        inline ResourcePackManager &getResourcePackManager()
+        { return mResourcePackManager; }
 
     private:
 

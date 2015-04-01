@@ -28,7 +28,7 @@ namespace lite3dpp
 {
 
     Main::Main() :
-    mResourcePackManager(*this)
+    mResourcePackManager(this)
     {
         /* init memory model first
          * json parser used lite3d allocator model,
@@ -195,7 +195,7 @@ namespace lite3dpp
         return *lite3d_get_global_settings();
     }
 
-    void Main::setResourceLocation(const char* location)
+    void Main::setResourceLocation(const lite3dpp_string &location)
     {
         mResourcePackManager.addResourceLocation(location);
     }
@@ -208,7 +208,15 @@ namespace lite3dpp
 
     bool Main::run()
     {
-        return lite3d_main(&mSettings) == LITE3D_TRUE;
+        try
+        {
+            return lite3d_main(&mSettings) == LITE3D_TRUE;
+        }
+        catch(std::exception &ex)
+        {
+            SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "run: error detected %s",
+                ex.what());
+        }
     }
 
     void Main::stop()
@@ -225,7 +233,7 @@ namespace lite3dpp
         stl<lite3dpp_string>::set::iterator it = 
             mainObj->mResourceLocations.begin();
         for(; it != mainObj->mResourceLocations.end(); ++it)
-            mainObj->setResourceLocation((*it).c_str());
+            mainObj->setResourceLocation((*it));
         
         return LITE3D_TRUE;
     }

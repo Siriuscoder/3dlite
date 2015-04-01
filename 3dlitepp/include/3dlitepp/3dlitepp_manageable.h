@@ -88,7 +88,7 @@ namespace lite3dpp
     };
 
     template<class T, class Y = void>
-    class stl
+    class LITE3DPP_EXPORT stl
     {
     public:
 
@@ -113,7 +113,7 @@ namespace lite3dpp
  
 #else
     template<class T, class Y = void>
-    class stl
+    class LITE3DPP_EXPORT stl
     {
     public:
 

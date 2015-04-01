@@ -21,10 +21,10 @@
 #include <SDL_log.h>
 #include <SDL_rwops.h>
 
-#include <3dlite/3dlite_resource_pack.h>
-#include <3dlite/3dlite_alloc.h>
-#include <3dlite/3dlite_7z_loader.h>
+
 #include <3dlite/3dlite_main.h>
+#include <3dlite/3dlite_7z_loader.h>
+#include <3dlite/3dlite_resource_pack.h>
 
 static lite3d_resource_file *lookup_resource_index(lite3d_resource_pack *pack, const char *key)
 {
@@ -138,7 +138,7 @@ lite3d_resource_pack *lite3d_resource_pack_open(const char *path, uint8_t compre
     
     lite3d_list_init(&pack->priorityList);
     strncpy(pack->pathto, path, sizeof(pack->pathto)-1);
-    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, 
+    SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, 
         "PACK: '%s' opened (%s) limit %d bytes",
         path, compressed ? "compressed" : "filesystem", (int)memoryLimit);
     
@@ -172,18 +172,14 @@ void lite3d_resource_pack_close(lite3d_resource_pack *pack)
         lite3d_7z_pack_close(pack7z);
     }
     
-    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, 
+    SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, 
         "PACK: '%s' (%s) closed ", pack->pathto,
         pack->isCompressed ? "compressed" : "filesystem");
     lite3d_free_pooled(LITE3D_POOL_NO1, pack);
 }
 
-lite3d_resource_file *lite3d_resource_pack_file_load(lite3d_resource_pack *pack, const char *file)
+lite3d_resource_file *lite3d_resource_pack_file_find(lite3d_resource_pack *pack, const char *file)
 {
-    void *fileBuffer = NULL;
-    size_t fileSize = 0;
-    lite3d_resource_file *resource;
-
     SDL_assert(pack);
     SDL_assert(file);
     
@@ -195,7 +191,16 @@ lite3d_resource_file *lite3d_resource_pack_file_load(lite3d_resource_pack *pack,
         return NULL;
     }
     
-    resource = lookup_resource_index(pack, file);
+    return lookup_resource_index(pack, file);
+}
+
+lite3d_resource_file *lite3d_resource_pack_file_load(lite3d_resource_pack *pack, const char *file)
+{
+    void *fileBuffer = NULL;
+    size_t fileSize = 0;
+    lite3d_resource_file *resource;
+    
+    resource = lite3d_resource_pack_file_find(pack, file);
     
     if(resource && resource->isLoaded)
     {

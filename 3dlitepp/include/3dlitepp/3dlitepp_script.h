@@ -15,38 +15,21 @@
 *	You should have received a copy of the GNU General Public License
 *	along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
-#pragma once 
-
-#include <3dlite/3dlite_resource_pack.h>
+#pragma once
 
 #include <3dlitepp/3dlitepp_common.h>
 #include <3dlitepp/3dlitepp_manageable.h>
-#include <3dlitepp/3dlitepp_resource_manager.h>
 
 namespace lite3dpp
 {
-    class LITE3DPP_EXPORT ResourcePackManager : 
-        public AbstractResourceManager<lite3d_resource_file>
+    class LITE3DPP_EXPORT Script : public Manageable
     {
     public:
-        
-        typedef stl<lite3dpp_string, lite3d_resource_pack*>::map PacksMap;
-        
-        ResourcePackManager(Main *mainObj);
-        ~ResourcePackManager();
-        
-        virtual lite3d_resource_file *loadResourceFromFile(const lite3dpp_string &fileName);
-        virtual void unloadResource(lite3d_resource_file *resource);
-        virtual void unloadResource(const lite3dpp_string &resourceName);
-        virtual void unloadAllResources();
-        virtual size_t loadedResourcesSize() const;
-        
-        lite3d_resource_pack *addResourceLocation(const lite3dpp_string &path);
-        
-    private:
-        
-        Main *mMainObj;
-        PacksMap mPacks;
+
+        Script();
+        ~Script();
+
+        lite3dpp_string getName();
     };
 }
 

@@ -60,7 +60,7 @@ elseif(MSVC)
     set(CMAKE_C_FLAGS_RELEASE ${RELEASE_COMPILER_FLAGS})
     set(CMAKE_CXX_FLAGS_RELEASE ${RELEASE_COMPILER_FLAGS})
 
-    add_definitions(/fp:fast /W4 /D_CRT_SECURE_NO_WARNINGS)
+    add_definitions(/fp:fast /W3 /D_CRT_SECURE_NO_WARNINGS)
 	if(MSVC11)
 		add_definitions(/DGTEST_HAS_TR1_TUPLE=0 /DGTEST_USE_OWN_TR1_TUPLE=1)
 	endif()

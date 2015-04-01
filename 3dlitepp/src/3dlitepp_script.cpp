@@ -15,22 +15,9 @@
 *	You should have received a copy of the GNU General Public License
 *	along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
-#pragma once
-
-#include <3dlitepp/3dlitepp_manageable.h>
+#include <3dlitepp/3dlitepp_script.h>
 
 namespace lite3dpp
 {
-    template<class T>
-    class LITE3DPP_EXPORT AbstractResourceManager : public Manageable
-    {
-    public:
-        
-        virtual T *loadResourceFromFile(const lite3dpp_string &fileName) = 0;
-        virtual void unloadResource(T *resource) = 0;
-        virtual void unloadResource(const lite3dpp_string &resourceName) = 0;
-        virtual void unloadAllResources() = 0;
-        virtual size_t loadedResourcesSize() const = 0;
-    };
-}
 
+}
