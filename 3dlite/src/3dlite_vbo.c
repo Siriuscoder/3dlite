@@ -164,7 +164,7 @@ int lite3d_vbo_technique_init(void)
     }
 
     glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &maxVertexAttribs);
-    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Max vertex attributes: %d",
+    SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "Max vertex attributes: %d",
         maxVertexAttribs);
     return LITE3D_TRUE;
 }

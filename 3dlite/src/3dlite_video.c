@@ -46,7 +46,7 @@ static int init_platform_gl_extensions(void)
     if (!WGLEW_ARB_extensions_string)
         return LITE3D_FALSE;
 
-    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
+    SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION,
         "%s: WGL Extensions %s", __FUNCTION__,
         (char *) wglGetExtensionsStringARB(GetDC(wminfo.info.win.window)));
 
@@ -58,13 +58,13 @@ static int init_platform_gl_extensions(void)
         return LITE3D_FALSE;
     }
 
-    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
+    SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION,
         "%s: GLX Client %s", __FUNCTION__,
         (char *) glXGetClientString(wminfo.info.x11.display, 1));
-    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
+    SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION,
         "%s: GLX Server %s", __FUNCTION__,
         (char *) glXQueryServerString(wminfo.info.x11.display, 0, 1));
-    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
+    SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION,
         "%s: GLX Extensions %s", __FUNCTION__,
         (char *) glXQueryExtensionsString(wminfo.info.x11.display, 0));
 #endif
@@ -89,15 +89,15 @@ static int init_gl_extensions(void)
         return LITE3D_FALSE;
     }
 
-    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
+    SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION,
         "%s: GL Version %s", __FUNCTION__, (char *) glGetString(GL_VERSION));
-    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
+    SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION,
         "%s: GL Vendor %s", __FUNCTION__, (char *) glGetString(GL_VENDOR));
-    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
+    SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION,
         "%s: GL Renderer %s", __FUNCTION__, (char *) glGetString(GL_RENDERER));
-    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
+    SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION,
         "%s: GL Extensions %s", __FUNCTION__, (char *) glGetString(GL_EXTENSIONS));
-    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
+    SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION,
         "%s: GL Shading Lang %s", __FUNCTION__, (char *) glGetString(GL_SHADING_LANGUAGE_VERSION));
 
     /* enable multisample buffers */

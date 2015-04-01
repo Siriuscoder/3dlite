@@ -15,6 +15,8 @@
  *	You should have received a copy of the GNU General Public License
  *	along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
+#include <SDL_log.h>
+
 #include <3dlitepp/3dlitepp_main.h>
 #include <3dlitepp/3dlitepp_resource_pack_manager.h>
 
@@ -22,7 +24,7 @@ namespace lite3dpp
 {
 
     ResourcePackManager::ResourcePackManager(Main &mainObj) :
-        mMainObj(mainObj)
+    mMainObj(mainObj)
     {
 
     }
@@ -71,7 +73,7 @@ namespace lite3dpp
         {
             result += it->second->memoryUsed;
         }
-        
+
         return result;
     }
 
@@ -86,7 +88,10 @@ namespace lite3dpp
 
         lite3d_resource_pack *pack =
             lite3d_resource_pack_open(path.c_str(), isFile, 0);
-        mPacks.insert(std::make_pair(path, pack));
+        if (mPacks.insert(std::make_pair(path, pack)).second)
+            SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
+                        "Resource location added: %s", path.c_str());
+
         return pack;
     }
 }

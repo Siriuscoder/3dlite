@@ -38,6 +38,9 @@ namespace lite3dpp
 
         bool run();
         void stop();
+        
+        inline ResourcePackManager &getResourcePackManager()
+        { return mResourcePackManager; }
 
         ~Main();
 

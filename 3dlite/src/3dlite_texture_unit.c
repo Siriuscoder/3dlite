@@ -201,11 +201,11 @@ int lite3d_texture_technique_init(const lite3d_texture_technique_settings *setti
     glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTextureSize);
     glGetIntegerv(GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS, &maxCombinedTextureImageUnits);
 
-    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Max texture image units: %d",
+    SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "Max texture image units: %d",
         maxTextureImageUnits);
-    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Max combined texture image units: %d",
+    SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "Max combined texture image units: %d",
         maxCombinedTextureImageUnits);
-    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Max texture size: %d",
+    SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "Max texture size: %d",
         maxTextureSize);
 
     ilSetMemory(il_alloc, il_free);

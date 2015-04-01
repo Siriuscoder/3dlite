@@ -138,9 +138,9 @@ lite3d_resource_pack *lite3d_resource_pack_open(const char *path, uint8_t compre
     
     lite3d_list_init(&pack->priorityList);
     strncpy(pack->pathto, path, sizeof(pack->pathto)-1);
-    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, 
+    SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, 
         "PACK: '%s' opened (%s) limit %d bytes",
-        path, compressed ? "compressed" : "filesystem", (int)memoryLimit);
+        path, compressed ? "compressed" : "filesystem", (int)pack->memoryLimit);
     
     /* begin indexing 7z pack */
     if(compressed)

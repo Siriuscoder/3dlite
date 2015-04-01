@@ -208,9 +208,9 @@ int lite3d_framebuffer_technique_init(void)
 
     glGetIntegerv(GL_MAX_COLOR_ATTACHMENTS_EXT, &gMaxColorAttachments);
     glGetIntegerv(GL_MAX_RENDERBUFFER_SIZE_EXT, &gMaxFramebufferSize);
-    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Framebuffer max color attachments: %d",
+    SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "Framebuffer max color attachments: %d",
         gMaxColorAttachments);
-    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Framebuffer max size: %d",
+    SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "Framebuffer max size: %d",
         gMaxFramebufferSize);
 
     return LITE3D_TRUE;

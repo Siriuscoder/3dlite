@@ -1,5 +1,5 @@
 {
-        "LogLevel": 3,
+        "LogLevel": 2,
         "FileCacheSize": 1024000,
         "TextureSettings": {
                 "Anisotropy": 8,
