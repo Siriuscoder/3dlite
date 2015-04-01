@@ -150,10 +150,11 @@
             <in>JSON.cpp</in>
             <in>JSONValue.cpp</in>
           </df>
-          <in>3dlitepp_as_runner.cpp</in>
           <in>3dlitepp_main.cpp</in>
           <in>3dlitepp_manageable.cpp</in>
           <in>3dlitepp_resource_pack_manager.cpp</in>
+          <in>3dlitepp_script.cpp</in>
+          <in>3dlitepp_script_manager.cpp</in>
         </df>
       </df>
       <df name="CMakeFiles">
@@ -662,26 +663,6 @@
         <cTool flags="2">
         </cTool>
       </item>
-      <item path="3dlitepp/include/3dlitepp/3dlitepp_resource_manager.h"
-            ex="false"
-            tool="3"
-            flavor2="0">
-      </item>
-      <item path="3dlitepp/src/3dlitepp_as_runner.cpp"
-            ex="false"
-            tool="1"
-            flavor2="8">
-        <ccTool flags="1">
-          <incDir>
-            <pElem>/usr/include/SDL2</pElem>
-            <pElem>build/3dlitepp</pElem>
-          </incDir>
-          <preprocessorList>
-            <Elem>_3dlitepp_EXPORTS</Elem>
-            <Elem>_REENTRANT</Elem>
-          </preprocessorList>
-        </ccTool>
-      </item>
       <item path="3dlitepp/src/3dlitepp_main.cpp" ex="false" tool="1" flavor2="8">
         <ccTool flags="1">
           <incDir>
@@ -710,6 +691,33 @@
         </ccTool>
       </item>
       <item path="3dlitepp/src/3dlitepp_resource_pack_manager.cpp"
+            ex="false"
+            tool="1"
+            flavor2="8">
+        <ccTool flags="1">
+          <incDir>
+            <pElem>/usr/include/SDL2</pElem>
+            <pElem>build/3dlitepp</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>_3dlitepp_EXPORTS</Elem>
+            <Elem>_REENTRANT</Elem>
+          </preprocessorList>
+        </ccTool>
+      </item>
+      <item path="3dlitepp/src/3dlitepp_script.cpp" ex="false" tool="1" flavor2="8">
+        <ccTool flags="1">
+          <incDir>
+            <pElem>/usr/include/SDL2</pElem>
+            <pElem>build/3dlitepp</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>_3dlitepp_EXPORTS</Elem>
+            <Elem>_REENTRANT</Elem>
+          </preprocessorList>
+        </ccTool>
+      </item>
+      <item path="3dlitepp/src/3dlitepp_script_manager.cpp"
             ex="false"
             tool="1"
             flavor2="8">
@@ -992,17 +1000,11 @@
         <cTool>
           <incDir>
             <pElem>3dlite/include</pElem>
+            <pElem>3dlitepp/include</pElem>
           </incDir>
           <preprocessorList>
             <Elem>PLATFORM_Linux</Elem>
           </preprocessorList>
-        </cTool>
-      </folder>
-      <folder path="0/3dlite">
-        <cTool>
-          <incDir>
-            <pElem>3dlitepp/include</pElem>
-          </incDir>
         </cTool>
       </folder>
       <folder path="0/3dlite/src/7zdec">
@@ -1078,7 +1080,6 @@
       <folder path="0/samples/sample_minigun">
         <cTool>
           <incDir>
-            <pElem>3dlitepp/include</pElem>
             <pElem>samples/sample_minigun</pElem>
             <pElem>/usr/include/SDL2</pElem>
             <pElem>build/samples</pElem>
@@ -1088,7 +1089,6 @@
       <folder path="0/samples/sample_rifle">
         <cTool>
           <incDir>
-            <pElem>3dlitepp/include</pElem>
             <pElem>samples/sample_rifle</pElem>
             <pElem>/usr/include/SDL2</pElem>
             <pElem>build/samples</pElem>
@@ -1098,7 +1098,6 @@
       <folder path="0/samples/sample_rtt">
         <cTool>
           <incDir>
-            <pElem>3dlitepp/include</pElem>
             <pElem>samples/sample_rtt</pElem>
             <pElem>/usr/include/SDL2</pElem>
             <pElem>build/samples</pElem>
@@ -1108,7 +1107,6 @@
       <folder path="0/samples/sample_scene_node">
         <cTool>
           <incDir>
-            <pElem>3dlitepp/include</pElem>
             <pElem>samples/sample_scene_node</pElem>
             <pElem>/usr/include/SDL2</pElem>
             <pElem>build/samples</pElem>

@@ -30,6 +30,7 @@
 // Disable whining about using 'this' as a member initializer on VC++.
 #       pragma warning(disable: 4355)
 #       pragma warning(disable: 4127)
+#       pragma warning(disable: 4251)
 #   endif
 
 
@@ -40,6 +41,14 @@
 #   elif !defined(WIN_3DLITEPP_DLL)
         // We must be _using_ the DLL, so import symbols instead.
 #   define LITE3DPP_EXPORT __declspec(dllimport)
+#   endif
+
+#   ifdef near
+#   undef near
+#   endif
+
+#   ifdef far
+#   undef far
 #   endif
 
 #elif PLATFORM_Linux
@@ -60,5 +69,10 @@
 /* Main engine class */
 namespace lite3dpp
 {
-    class Main;
+    class LITE3DPP_EXPORT Main;
 }
+
+class asIScriptEngine;
+class asIScriptModule;
+class asIScriptFunction;
+class asIScriptContext;

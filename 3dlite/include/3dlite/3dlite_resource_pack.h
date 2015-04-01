@@ -53,6 +53,7 @@ LITE3D_CEXPORT lite3d_resource_pack *lite3d_resource_pack_open(const char *path,
 LITE3D_CEXPORT void lite3d_resource_pack_close(lite3d_resource_pack *pack);
 
 LITE3D_CEXPORT lite3d_resource_file *lite3d_resource_pack_file_load(lite3d_resource_pack *pack, const char *file);
+LITE3D_CEXPORT lite3d_resource_file *lite3d_resource_pack_file_find(lite3d_resource_pack *pack, const char *file);
 LITE3D_CEXPORT void lite3d_resource_pack_file_purge(lite3d_resource_file *resource);
 LITE3D_CEXPORT void lite3d_resource_pack_purge(lite3d_resource_pack *pack);
 LITE3D_CEXPORT void lite3d_resource_pack_purge_unused(lite3d_resource_pack *pack);

@@ -15,7 +15,7 @@
 #	You should have received a copy of the GNU General Public License
 #	along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
 
-cmake_minimum_required(VERSION 2.8.10)
+cmake_minimum_required(VERSION 2.8.9)
 project(3dlite)
 
 if(UNIX)
@@ -60,7 +60,7 @@ elseif(MSVC)
     set(CMAKE_C_FLAGS_RELEASE ${RELEASE_COMPILER_FLAGS})
     set(CMAKE_CXX_FLAGS_RELEASE ${RELEASE_COMPILER_FLAGS})
 
-    add_definitions(/fp:fast /W4 /D_CRT_SECURE_NO_WARNINGS)
+    add_definitions(/fp:fast /W3 /D_CRT_SECURE_NO_WARNINGS)
 	if(MSVC11)
 		add_definitions(/DGTEST_HAS_TR1_TUPLE=0 /DGTEST_USE_OWN_TR1_TUPLE=1)
 	endif()

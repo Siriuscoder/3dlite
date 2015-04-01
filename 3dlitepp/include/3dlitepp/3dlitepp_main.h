@@ -21,6 +21,7 @@
 #include <3dlitepp/3dlitepp_common.h>
 #include <3dlitepp/3dlitepp_manageable.h>
 #include <3dlitepp/3dlitepp_resource_pack_manager.h>
+#include <3dlitepp/3dlitepp_script_manager.h>
 
 namespace lite3dpp
 {
@@ -30,20 +31,21 @@ namespace lite3dpp
     public:
 
         Main();
+        ~Main();
 
         bool initFromConfig(const char *config);
         const lite3d_global_settings &getSettings() const;
 
-        void setResourceLocation(const char *location);
+        void setResourceLocation(const lite3dpp_string &location);
 
-        bool run();
+        void run();
         void stop();
         
         inline ResourcePackManager &getResourcePackManager()
         { return mResourcePackManager; }
-
-        ~Main();
-
+        inline ScriptManager &getScriptManager()
+        { return mScriptManager; }
+        
     private:
 
         static int engineInit(void *userdata);
@@ -54,6 +56,7 @@ namespace lite3dpp
     private:
 
         ResourcePackManager mResourcePackManager;
+        ScriptManager mScriptManager;
         stl<lite3dpp_string>::set mResourceLocations;
         lite3d_global_settings mSettings;
     };

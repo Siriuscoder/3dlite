@@ -22,12 +22,13 @@
 namespace lite3dpp
 {
     template<class T>
-    class AbstractResourceManager : public Manageable
+    class LITE3DPP_EXPORT AbstractResourceManager : public Manageable
     {
     public:
         
         virtual T *loadResourceFromFile(const lite3dpp_string &fileName) = 0;
         virtual void unloadResource(T *resource) = 0;
+        virtual void unloadResource(const lite3dpp_string &resourceName) = 0;
         virtual void unloadAllResources() = 0;
         virtual size_t loadedResourcesSize() const = 0;
     };

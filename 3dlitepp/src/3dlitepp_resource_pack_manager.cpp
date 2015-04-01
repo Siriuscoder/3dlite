@@ -22,9 +22,8 @@
 
 namespace lite3dpp
 {
-
-    ResourcePackManager::ResourcePackManager(Main &mainObj) :
-    mMainObj(mainObj)
+    ResourcePackManager::ResourcePackManager(Main *mainObj) :
+        mMainObj(mainObj)
     {
 
     }
@@ -52,6 +51,19 @@ namespace lite3dpp
     void ResourcePackManager::unloadResource(lite3d_resource_file *resource)
     {
         lite3d_resource_pack_file_purge(resource);
+    }
+
+    void ResourcePackManager::unloadResource(const lite3dpp_string &resourceName)
+    {
+        PacksMap::iterator it = mPacks.begin();
+        for (; it != mPacks.end(); ++it)
+        {
+            lite3d_resource_file *resource =
+                lite3d_resource_pack_file_find(it->second, resourceName.c_str());
+
+            if(resource)
+                unloadResource(resource);
+        }
     }
 
     void ResourcePackManager::unloadAllResources()

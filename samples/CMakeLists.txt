@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8.10)
+cmake_minimum_required(VERSION 2.8.9)
 
 define_sample(3dlite_sample_scene_node sample_scene_node)
 define_sample(3dlite_sample_minigun sample_minigun)
