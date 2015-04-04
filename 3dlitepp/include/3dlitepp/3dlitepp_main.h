@@ -53,11 +53,16 @@ namespace lite3dpp
         static int engineFrameBegin(void *userdata);
         static int engineFrameEnd(void *userdata);
 
+        void initResourceLocations();
+        void init();
+        void shut();
+
     private:
 
         ResourcePackManager mResourcePackManager;
         ScriptManager mScriptManager;
         stl<lite3dpp_string>::set mResourceLocations;
         lite3d_global_settings mSettings;
+        lite3dpp_string mInitialScriptName;
     };
 }

@@ -46,7 +46,7 @@ namespace lite3dpp
 
     ScriptManager::~ScriptManager()
     {
-        scriptManagerDestroy();
+
     }
 
     Script *ScriptManager::loadResourceFromFile(const lite3dpp_string &fileName)
@@ -116,24 +116,6 @@ namespace lite3dpp
     }
 
     /* script callers */
-    void ScriptManager::performInit()
-    {
-        ManagedScripts::const_iterator it = mManagedScripts.begin();
-        for (; it != mManagedScripts.end(); ++it)
-        {
-            it->second->performInit();
-        }
-    }
-
-    void ScriptManager::performShut()
-    {
-        ManagedScripts::const_iterator it = mManagedScripts.begin();
-        for (; it != mManagedScripts.end(); ++it)
-        {
-            it->second->performShut();
-        }
-    }
-
     void ScriptManager::performFrameBegin()
     {
         ManagedScripts::const_iterator it = mManagedScripts.begin();
@@ -157,7 +139,7 @@ namespace lite3dpp
 
     }
 
-    void ScriptManager::scriptManagerInit()
+    void ScriptManager::init()
     {
         // Create the script engine
         mAsEngine = asCreateScriptEngine(ANGELSCRIPT_VERSION);
@@ -167,7 +149,7 @@ namespace lite3dpp
         registerTypes();
     }
 
-    void ScriptManager::scriptManagerDestroy()
+    void ScriptManager::shut()
     {
         /* destroy all scripts */
         unloadAllResources();

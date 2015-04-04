@@ -1,20 +1,20 @@
 /******************************************************************************
- *	This file is part of 3dlite (Light-weight 3d engine).
- *	Copyright (C) 2015  Sirius (Korolev Nikita)
- *
- *	Foobar is free software: you can redistribute it and/or modify
- *	it under the terms of the GNU General Public License as published by
- *	the Free Software Foundation, either version 3 of the License, or
- *	(at your option) any later version.
- *
- *	Foobar is distributed in the hope that it will be useful,
- *	but WITHOUT ANY WARRANTY; without even the implied warranty of
- *	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *	GNU General Public License for more details.
- *
- *	You should have received a copy of the GNU General Public License
- *	along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
- *******************************************************************************/
+*	This file is part of 3dlite (Light-weight 3d engine).
+*	Copyright (C) 2015  Sirius (Korolev Nikita)
+*
+*	Foobar is free software: you can redistribute it and/or modify
+*	it under the terms of the GNU General Public License as published by
+*	the Free Software Foundation, either version 3 of the License, or
+*	(at your option) any later version.
+*
+*	Foobar is distributed in the hope that it will be useful,
+*	but WITHOUT ANY WARRANTY; without even the implied warranty of
+*	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*	GNU General Public License for more details.
+*
+*	You should have received a copy of the GNU General Public License
+*	along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
+*******************************************************************************/
 #include <SDL_rwops.h>
 #include <SDL_log.h>
 
@@ -32,10 +32,10 @@ namespace lite3dpp
         mScriptManager(this)
     {
         /* init memory model first
-         * json parser used lite3d allocator model,
-         * and if we do not do it - application will 
-         * be crash on config parse step 
-         */
+        * json parser used lite3d allocator model,
+        * and if we do not do it - application will 
+        * be crash on config parse step 
+        */
         lite3d_memory_init(NULL);
     }
 
@@ -164,7 +164,7 @@ namespace lite3dpp
                 videoSettings[L"Caption"]->IsString())
             {
                 strcpy(mSettings.videoSettings.caption,
-                       JSON::wStringToString(videoSettings[L"Caption"]->AsString()).c_str());
+                    JSON::wStringToString(videoSettings[L"Caption"]->AsString()).c_str());
             }
         }
 
@@ -203,13 +203,13 @@ namespace lite3dpp
 
     Main::~Main()
     {
-        mResourcePackManager.unloadAllResources();
+        shut();
         lite3d_memory_cleanup();
     }
 
     void Main::run()
     {
-        if (lite3d_main(&mSettings) != LITE3D_TRUE)
+        if (!lite3d_main(&mSettings))
             throw std::runtime_error("Main exited with error");
     }
 
@@ -218,35 +218,93 @@ namespace lite3dpp
         lite3d_render_stop();
     }
 
+    void Main::initResourceLocations()
+    {
+        stl<lite3dpp_string>::set::iterator it =
+            mResourceLocations.begin();
+        for (; it != mResourceLocations.end(); ++it)
+            setResourceLocation((*it));
+    }
+
+    void Main::init()
+    {
+        initResourceLocations();
+        mScriptManager.init();
+        mScriptManager.loadResourceFromFile(mInitialScriptName);
+    }
+
+    void Main::shut()
+    {
+        mScriptManager.shut();
+        mResourcePackManager.shut();
+    }
     /* callbackes */
     int Main::engineInit(void *userdata)
     {
-        Main *mainObj = reinterpret_cast<Main *> (userdata);
+        try
+        {
+            Main *mainObj = reinterpret_cast<Main *> (userdata);
+            mainObj->init();
 
-        /* init resource locations */
-        stl<lite3dpp_string>::set::iterator it =
-            mainObj->mResourceLocations.begin();
-        for (; it != mainObj->mResourceLocations.end(); ++it)
-            mainObj->setResourceLocation((*it));
+            return LITE3D_TRUE;
+        }
+        catch(std::exception &ex)
+        {
+            SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+                "engineInit error detected: %s", ex.what());
+        }
 
-        return LITE3D_TRUE;
+        return LITE3D_FALSE;
     }
 
     int Main::engineLeave(void *userdata)
     {
-        Main *mainObj = reinterpret_cast<Main *> (userdata);
-        return LITE3D_TRUE;
+        try
+        {
+            Main *mainObj = reinterpret_cast<Main *> (userdata);
+            mainObj->shut();
+            return LITE3D_TRUE;
+        }
+        catch(std::exception &ex)
+        {
+            SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+                "engineLeave error detected: %s", ex.what());
+        }
+
+        return LITE3D_FALSE;
     }
 
     int Main::engineFrameBegin(void *userdata)
     {
-        Main *mainObj = reinterpret_cast<Main *> (userdata);
-        return LITE3D_TRUE;
+        try
+        {
+            Main *mainObj = reinterpret_cast<Main *> (userdata);
+            mainObj->mScriptManager.performFrameBegin();
+            return LITE3D_TRUE;
+        }
+        catch(std::exception &ex)
+        {
+            SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+                "engineFrameBegin error detected: %s", ex.what());
+        }
+
+        return LITE3D_FALSE;
     }
 
     int Main::engineFrameEnd(void *userdata)
-    {
-        Main *mainObj = reinterpret_cast<Main *> (userdata);
-        return LITE3D_TRUE;
+    {        
+        try
+        {
+            Main *mainObj = reinterpret_cast<Main *> (userdata);
+            mainObj->mScriptManager.performFrameEnd();
+            return LITE3D_TRUE;
+        }
+        catch(std::exception &ex)
+        {
+            SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+                "engineFrameEnd error detected: %s", ex.what());
+        }
+
+        return LITE3D_FALSE;
     }
 }

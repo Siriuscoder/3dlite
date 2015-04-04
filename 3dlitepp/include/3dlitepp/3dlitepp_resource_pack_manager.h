@@ -40,6 +40,8 @@ namespace lite3dpp
         virtual void unloadResource(const lite3dpp_string &resourceName);
         virtual void unloadAllResources();
         virtual size_t loadedResourcesSize() const;
+        virtual void init();
+        virtual void shut();
         
         lite3d_resource_pack *addResourceLocation(const lite3dpp_string &path);
         

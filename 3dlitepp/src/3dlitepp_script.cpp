@@ -19,5 +19,28 @@
 
 namespace lite3dpp
 {
+    Script::Script(Main *main) : 
+        mMain(main)
+    {}
 
+    Script::~Script()
+    {}
+
+    void Script::scriptCompile(const char *data, size_t size)
+    {
+
+    }
+
+    void Script::scriptRelease()
+    {
+
+    }
+
+    void Script::performFrameBegin()
+    {
+    }
+
+    void Script::performFrameEnd()
+    {
+    }
 }

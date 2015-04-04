@@ -41,14 +41,12 @@ namespace lite3dpp
         virtual size_t loadedResourcesSize() const;
 
         /* script callers */
-        virtual void performInit();
-        virtual void performShut();
         virtual void performFrameBegin();
         virtual void performFrameEnd();
         
         /* init script engine, bind types */
-        void scriptManagerInit();
-        void scriptManagerDestroy();
+        virtual void init();
+        virtual void shut();
         
     private:
         

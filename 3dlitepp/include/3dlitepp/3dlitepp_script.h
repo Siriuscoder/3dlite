@@ -27,8 +27,6 @@ namespace lite3dpp
     {
     public:
 
-        virtual void performInit() = 0;
-        virtual void performShut() = 0;
         virtual void performFrameBegin() = 0;
         virtual void performFrameEnd() = 0;
     };
@@ -40,16 +38,12 @@ namespace lite3dpp
         Script(Main *main);
         virtual ~Script();
 
-        lite3dpp_string getName();
-
         void scriptCompile(const char *data, size_t size);
         void scriptRelease();
 
         inline size_t getScriptSize() const
         { return mScriptSize; }
 
-        virtual void performInit();
-        virtual void performShut();
         virtual void performFrameBegin();
         virtual void performFrameEnd();
 

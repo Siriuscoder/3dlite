@@ -31,6 +31,8 @@ namespace lite3dpp
         virtual void unloadResource(const lite3dpp_string &resourceName) = 0;
         virtual void unloadAllResources() = 0;
         virtual size_t loadedResourcesSize() const = 0;
+        virtual void init() = 0;
+        virtual void shut() = 0;
     };
 }
 
