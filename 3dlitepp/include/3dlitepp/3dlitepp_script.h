@@ -35,7 +35,7 @@ namespace lite3dpp
     {
     public:
 
-        Script(Main *main);
+        Script(const lite3dpp_string &name, Main *main, asIScriptEngine *engine);
         virtual ~Script();
 
         void scriptCompile(const char *data, size_t size);
@@ -43,14 +43,27 @@ namespace lite3dpp
 
         inline size_t getScriptSize() const
         { return mScriptSize; }
+        inline lite3dpp_string getScriptName()
+        { return mScriptName; }
 
         virtual void performFrameBegin();
         virtual void performFrameEnd();
 
     private:
+        
+        void checkScriptExec(int ret);
+        
+    private:
 
         Main *mMain;
         size_t mScriptSize;
+        lite3dpp_string mScriptName;
+        asIScriptEngine *mScriptEngine;
+        asIScriptFunction *mInitFunction;
+        asIScriptFunction *mShutFunction;
+        asIScriptFunction *mFrameBeginFunction;
+        asIScriptFunction *mFrameEndFunction;
+        asIScriptContext *mContext;
     };
 }
 

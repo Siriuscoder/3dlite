@@ -39,7 +39,7 @@ namespace lite3dpp
     }
 
     ScriptManager::ScriptManager(Main *main) :
-    mMain(main)
+    mMain(main), mAsEngine(NULL)
     {
 
     }
@@ -58,7 +58,10 @@ namespace lite3dpp
         lite3d_resource_file *resource =
             mMain->getResourcePackManager().loadResourceFromFile(fileName);
 
-        Script *scriptObj = new Script(mMain);
+        Script *scriptObj = new Script(fileName, mMain, mAsEngine);
+        
+        SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Compiling script %s ...",
+                    fileName.c_str());
         scriptObj->scriptCompile((char *) resource->fileBuff, resource->fileSize);
         mManagedScripts.insert(std::make_pair(fileName, scriptObj));
 

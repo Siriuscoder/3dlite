@@ -203,7 +203,6 @@ namespace lite3dpp
 
     Main::~Main()
     {
-        shut();
         lite3d_memory_cleanup();
     }
 
