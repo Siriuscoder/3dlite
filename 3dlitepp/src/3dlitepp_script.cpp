@@ -16,10 +16,10 @@
  *	along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
 #include <SDL_assert.h>
+#include <SDL_log.h>
 
 #include <3dlitepp/as_helpers/scriptbuilder.h>
 #include <3dlitepp/3dlitepp_main.h>
-#include <SDL2/SDL_log.h>
 
 
 namespace lite3dpp
