@@ -180,6 +180,9 @@
         <df name="sample_scene_node">
           <in>3dlite_sample_scene_node.c</in>
         </df>
+        <df name="sample_script">
+          <in>3dlitepp_sample_script.cpp</in>
+        </df>
       </df>
       <df name="tests">
         <df name="functionaly">
@@ -235,7 +238,7 @@
           <buildCommandWorkingDir>build</buildCommandWorkingDir>
           <buildCommand>${MAKE} -f Makefile</buildCommand>
           <cleanCommand>${MAKE} -f Makefile clean</cleanCommand>
-          <executablePath>build/bin/Debug/3dlite_tests</executablePath>
+          <executablePath>build/bin/Debug/3dlitepp_sample_script</executablePath>
           <ccTool>
             <incDir>
               <pElem>3dlite/include</pElem>
@@ -1076,6 +1079,16 @@
             <Elem>_REENTRANT</Elem>
           </preprocessorList>
         </cTool>
+        <ccTool>
+          <incDir>
+            <pElem>samples/sample_script</pElem>
+            <pElem>/usr/include/SDL2</pElem>
+            <pElem>build/samples</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>_REENTRANT</Elem>
+          </preprocessorList>
+        </ccTool>
       </folder>
       <folder path="0/samples/sample_minigun">
         <cTool>
@@ -1186,6 +1199,13 @@
             flavor2="3">
         <cTool flags="2">
         </cTool>
+      </item>
+      <item path="samples/sample_script/3dlitepp_sample_script.cpp"
+            ex="false"
+            tool="1"
+            flavor2="8">
+        <ccTool flags="0">
+        </ccTool>
       </item>
       <item path="tests/functionaly/3dlite_common_test.cpp"
             ex="false"
@@ -1364,6 +1384,11 @@
             flavor2="0">
       </item>
       <item path="CMakeFiles/2.8.12.2/CompilerIdCXX/CMakeCXXCompilerId.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="samples/sample_script/3dlitepp_sample_script.cpp"
             ex="false"
             tool="1"
             flavor2="0">

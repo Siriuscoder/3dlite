@@ -3,19 +3,21 @@
         "FileCacheSize": 1024000,
         "TextureSettings": {
                 "Anisotropy": 8,
-                "Compression": "yes"
+                "Compression": true
         },
         "VideoSettings": {
                 "Wight": 800,
                 "Heigth": 600,
                 "Caption": "My test window",
                 "ColorBits": 24,
-                "Fullscreen": "no",
+                "Fullscreen": false,
                 "FSAA": 4,
-                "VSync": "yes"
+                "VSync": true
         },
         "ResourceLocations": [
                 "tests/",
                 "tests/pack.1"
-        ]
+        ],
+        
+        "InitScript": "pack/scripts/run.as"
 }

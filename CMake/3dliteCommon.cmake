@@ -78,6 +78,7 @@ macro(define_sample SAMPLE_NAME SAMPLE_DIRECTORY)
 	endif()
 	
 	target_link_libraries(${SAMPLE_NAME} 
-		3dlite)
+		3dlite
+		3dlitepp)
 		
 endmacro()
