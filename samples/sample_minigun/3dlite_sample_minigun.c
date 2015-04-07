@@ -18,7 +18,6 @@
 #include <string.h>
 
 #include <SDL_log.h>
-#include <3dlite/GL/glew.h>
 #include <3dlite/3dlite_main.h>
 
 #define DEFAULT_WIDTH           800
@@ -141,7 +140,7 @@ static int initModel(void)
 
     if (!lite3d_vbo_init(&mModel))
         return LITE3D_FALSE;
-    if (!lite3d_vbo_load(&mModel, file1, "Minigun", GL_STATIC_DRAW, LITE3D_FLIP_UV_FLAG))
+    if (!lite3d_vbo_load(&mModel, file1, "Minigun", LITE3D_VBO_STATIC_DRAW, LITE3D_FLIP_UV_FLAG))
         return LITE3D_FALSE;
 
     return LITE3D_TRUE;

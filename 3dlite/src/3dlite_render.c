@@ -42,7 +42,7 @@ static uint8_t gRenderActive = LITE3D_TRUE;
 static lite3d_render_stats gRenderStats;
 static lite3d_render_target gScreenRt;
 
-static void calc_render_stats(uint64_t beginFrame, uint64_t endFrame)
+static void refresh_render_stats(uint64_t beginFrame, uint64_t endFrame)
 {
     gFPSCounter++;
     gRenderStats.lastFrameMs = ((float) (endFrame - beginFrame) / (float) gPerfFreq) * 1000.0;
@@ -201,7 +201,11 @@ void lite3d_render_loop(lite3d_render_listeners *callbacks)
                 gRenderStats.textureUnitsByFrame =
                 gRenderStats.verticesByFrame = 0;
 
+            /* get time mark */
             beginFrameMark = SDL_GetPerformanceCounter();
+            /* induce timers using time mark */
+            lite3d_timer_induce(beginFrameMark);
+            
             if (gRenderListeners.preFrame && 
                 !gRenderListeners.preFrame(gRenderListeners.userdata))
                 break;
@@ -211,7 +215,8 @@ void lite3d_render_loop(lite3d_render_listeners *callbacks)
                 !gRenderListeners.postFrame(gRenderListeners.userdata))
                 break;
 
-            calc_render_stats(beginFrameMark, SDL_GetPerformanceCounter());
+            /* refresh render statistic, render time span used */
+            refresh_render_stats(beginFrameMark, SDL_GetPerformanceCounter());
         }
 
         while (SDL_PollEvent(&wevent))

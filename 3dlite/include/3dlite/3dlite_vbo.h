@@ -21,6 +21,16 @@
 #include <3dlite/3dlite_common.h>
 #include <3dlite/3dlite_list.h>
 
+#define LITE3D_VBO_STREAM_DRAW 0x88E0
+#define LITE3D_VBO_STREAM_READ 0x88E1
+#define LITE3D_VBO_STREAM_COPY 0x88E2
+#define LITE3D_VBO_STATIC_DRAW 0x88E4
+#define LITE3D_VBO_STATIC_READ 0x88E5
+#define LITE3D_VBO_STATIC_COPY 0x88E6
+#define LITE3D_VBO_DYNAMIC_DRAW 0x88E8
+#define LITE3D_VBO_DYNAMIC_READ 0x88E9
+#define LITE3D_VBO_DYNAMIC_COPY 0x88EA
+
 typedef struct lite3d_vbo
 {
     uint32_t vboVerticesID;

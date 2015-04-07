@@ -18,7 +18,6 @@
 #include <string.h>
 
 #include <SDL_log.h>
-#include <3dlite/GL/glew.h>
 #include <3dlite/3dlite_main.h>
 
 #define DEFAULT_WIDTH           800
@@ -191,7 +190,7 @@ static int initModel(void)
 
     if (!lite3d_vbo_init(&mRifle))
         return LITE3D_FALSE;
-    if (!lite3d_vbo_load(&mRifle, file1, "PlasmaRifl", GL_STATIC_DRAW, LITE3D_FLIP_UV_FLAG | LITE3D_OPTIMIZE_MESH_FLAG))
+    if (!lite3d_vbo_load(&mRifle, file1, "PlasmaRifl", LITE3D_VBO_STATIC_DRAW, LITE3D_FLIP_UV_FLAG | LITE3D_OPTIMIZE_MESH_FLAG))
         return LITE3D_FALSE;
     /* fix material indexes to 0..maxVao */
     /* it is right way if you know how submeshes attached to real materials */
@@ -199,7 +198,7 @@ static int initModel(void)
 
     if (!lite3d_vbo_init(&mRifleBatt))
         return LITE3D_FALSE;
-    if (!lite3d_vbo_load(&mRifleBatt, file1, "Battery", GL_STATIC_DRAW, LITE3D_FLIP_UV_FLAG))
+    if (!lite3d_vbo_load(&mRifleBatt, file1, "Battery", LITE3D_VBO_STATIC_DRAW, LITE3D_FLIP_UV_FLAG))
         return LITE3D_FALSE;
 
     return LITE3D_TRUE;

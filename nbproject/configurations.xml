@@ -25,6 +25,7 @@
               <in>glxew.h</in>
               <in>wglew.h</in>
             </df>
+            <in>3dlite_timer.h</in>
           </df>
         </df>
         <df name="src">
@@ -82,6 +83,7 @@
           <in>3dlite_shader_params.c</in>
           <in>3dlite_shader_program.c</in>
           <in>3dlite_texture_unit.c</in>
+          <in>3dlite_timer.c</in>
           <in>3dlite_vbo.c</in>
           <in>3dlite_vbo_loader.c</in>
           <in>3dlite_video.c</in>
@@ -503,6 +505,19 @@
         </cTool>
       </item>
       <item path="3dlite/src/3dlite_texture_unit.c" ex="false" tool="0" flavor2="3">
+        <cTool flags="3">
+          <incDir>
+            <pElem>/usr/include/SDL2</pElem>
+            <pElem>build/3dlite</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>GLEW_STATIC</Elem>
+            <Elem>_3dlite_EXPORTS</Elem>
+            <Elem>_REENTRANT</Elem>
+          </preprocessorList>
+        </cTool>
+      </item>
+      <item path="3dlite/src/3dlite_timer.c" ex="false" tool="0" flavor2="3">
         <cTool flags="3">
           <incDir>
             <pElem>/usr/include/SDL2</pElem>
@@ -1260,6 +1275,11 @@
           <executablePath></executablePath>
         </makeTool>
       </makefileType>
+      <item path="3dlite/include/3dlite/3dlite_timer.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
       <item path="3dlite/include/3dlite/7zdec/7z.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="3dlite/include/3dlite/7zdec/7zBuf.h"
@@ -1318,6 +1338,8 @@
       <item path="3dlite/include/3dlite/GL/glxew.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="3dlite/include/3dlite/GL/wglew.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="3dlite/src/3dlite_timer.c" ex="false" tool="0" flavor2="0">
       </item>
       <item path="3dlite/src/7zdec/7zBuf.c" ex="false" tool="0" flavor2="0">
       </item>

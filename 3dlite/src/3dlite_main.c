@@ -93,7 +93,7 @@ int lite3d_main(const lite3d_global_settings *settings)
         ret = LITE3D_FALSE;
         goto ret2;
     }
-    
+
     /* setup textures technique */
     if (!lite3d_vbo_technique_init())
     {
@@ -102,7 +102,13 @@ int lite3d_main(const lite3d_global_settings *settings)
     }
 
     /* setup shaders technique */
-    if(!lite3d_shader_program_technique_init())
+    if (!lite3d_shader_program_technique_init())
+    {
+        ret = LITE3D_FALSE;
+        goto ret1;
+    }
+
+    if (!lite3d_timer_technique_init())
     {
         ret = LITE3D_FALSE;
         goto ret1;
@@ -111,7 +117,7 @@ int lite3d_main(const lite3d_global_settings *settings)
     /* init shader global parameters */
     lite3d_shader_global_parameters_init();
 
-    if(!lite3d_framebuffer_technique_init())
+    if (!lite3d_framebuffer_technique_init())
     {
         ret = LITE3D_FALSE;
         goto ret1;
