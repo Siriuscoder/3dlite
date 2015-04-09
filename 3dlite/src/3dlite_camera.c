@@ -85,6 +85,8 @@ void lite3d_camera_init(lite3d_camera *camera)
     camera->cameraNode.rotationCentered = LITE3D_FALSE;
     camera->cameraNode.renderable = LITE3D_FALSE;
     kmMat4Identity(&camera->projection);
+    /* pass no 1 by default */
+    camera->materialPass = 1;
 
     camera->cullBackFaces = LITE3D_TRUE;
     camera->polygonMode = LITE3D_POLYMODE_FILL;

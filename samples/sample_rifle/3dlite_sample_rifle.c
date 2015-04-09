@@ -151,7 +151,7 @@ static int initMaterials(void)
 
     /* create material A */
     lite3d_material_init(&mRifleMaterialA);
-    matPass = lite3d_material_add_pass(&mRifleMaterialA);
+    matPass = lite3d_material_add_pass(&mRifleMaterialA, 1);
     /* set default params */
     lite3d_material_pass_add_parameter(matPass, &lite3d_shader_global_parameters()->projectionMatrix);
     lite3d_material_pass_add_parameter(matPass, &lite3d_shader_global_parameters()->modelviewMatrix);
@@ -161,7 +161,7 @@ static int initMaterials(void)
 
     /* create material B */
     lite3d_material_init(&mRifleMaterialB);
-    matPass = lite3d_material_add_pass(&mRifleMaterialB);
+    matPass = lite3d_material_add_pass(&mRifleMaterialB, 1);
     /* set default params */
     lite3d_material_pass_add_parameter(matPass, &lite3d_shader_global_parameters()->projectionMatrix);
     lite3d_material_pass_add_parameter(matPass, &lite3d_shader_global_parameters()->modelviewMatrix);
@@ -171,7 +171,7 @@ static int initMaterials(void)
 
     /* create material Battery */
     lite3d_material_init(&mBattMaterial);
-    matPass = lite3d_material_add_pass(&mBattMaterial);
+    matPass = lite3d_material_add_pass(&mBattMaterial, 1);
     /* set default params */
     lite3d_material_pass_add_parameter(matPass, &lite3d_shader_global_parameters()->projectionMatrix);
     lite3d_material_pass_add_parameter(matPass, &lite3d_shader_global_parameters()->modelviewMatrix);

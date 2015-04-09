@@ -42,7 +42,7 @@ typedef struct lite3d_scene
     void (*postRender)(struct lite3d_scene *scene, lite3d_camera *camera);
     void (*preRenderNode)(struct lite3d_scene *scene, lite3d_scene_node *node);
     void (*postRenderNode)(struct lite3d_scene *scene, lite3d_scene_node *node);
-    void (*doRender)(struct lite3d_scene *scene);
+    void (*doRender)(struct lite3d_scene *scene, lite3d_camera *camera);
 } lite3d_scene;
 
 LITE3D_CEXPORT void lite3d_scene_render(lite3d_scene *scene, lite3d_camera *camera);

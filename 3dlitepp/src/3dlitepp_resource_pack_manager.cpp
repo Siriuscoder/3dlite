@@ -102,7 +102,7 @@ LITE3D_FALSE : LITE3D_TRUE;
             lite3d_resource_pack_open(path.c_str(), isFile, 0);
         if (mPacks.insert(std::make_pair(path, pack)).second)
             SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
-            "Resource location added: %s", path.c_str());
+            "Open resource location: %s", path.c_str());
 
         return pack;
     }

@@ -105,13 +105,14 @@ namespace lite3dpp
         if (root.find(L"TextureSettings") != root.end() && root[L"TextureSettings"]->IsObject())
         {
             JSONObject textureSettings = root[L"TextureSettings"]->AsObject();
-            if (textureSettings.find(L"Anisotropy") != root.end() &&
+
+            if (textureSettings.find(L"Anisotropy") != textureSettings.end() &&
                 textureSettings[L"Anisotropy"]->IsNumber())
             {
                 mSettings.textureSettings.anisotropy = textureSettings[L"Anisotropy"]->AsInt();
             }
 
-            if (textureSettings.find(L"Compression") != root.end() &&
+            if (textureSettings.find(L"Compression") != textureSettings.end() &&
                 textureSettings[L"Compression"]->IsBool())
             {
                 mSettings.textureSettings.useGLCompression =
@@ -122,45 +123,45 @@ namespace lite3dpp
         if (root.find(L"VideoSettings") != root.end() && root[L"VideoSettings"]->IsObject())
         {
             JSONObject videoSettings = root[L"VideoSettings"]->AsObject();
-            if (videoSettings.find(L"Wight") != root.end() &&
-                videoSettings[L"Wight"]->IsNumber())
+            if (videoSettings.find(L"Width") != videoSettings.end() &&
+                videoSettings[L"Width"]->IsNumber())
             {
-                mSettings.videoSettings.screenWidth = videoSettings[L"Wight"]->AsInt();
+                mSettings.videoSettings.screenWidth = videoSettings[L"Width"]->AsInt();
             }
 
-            if (videoSettings.find(L"Heigth") != root.end() &&
-                videoSettings[L"Heigth"]->IsNumber())
+            if (videoSettings.find(L"Height") != videoSettings.end() &&
+                videoSettings[L"Height"]->IsNumber())
             {
-                mSettings.videoSettings.screenHeight = videoSettings[L"Heigth"]->AsInt();
+                mSettings.videoSettings.screenHeight = videoSettings[L"Height"]->AsInt();
             }
 
-            if (videoSettings.find(L"ColorBits") != root.end() &&
+            if (videoSettings.find(L"ColorBits") != videoSettings.end() &&
                 videoSettings[L"ColorBits"]->IsNumber())
             {
                 mSettings.videoSettings.colorBits = videoSettings[L"ColorBits"]->AsInt();
             }
 
-            if (videoSettings.find(L"FSAA") != root.end() &&
+            if (videoSettings.find(L"FSAA") != videoSettings.end() &&
                 videoSettings[L"FSAA"]->IsNumber())
             {
                 mSettings.videoSettings.FSAA = videoSettings[L"FSAA"]->AsInt();
             }
 
-            if (videoSettings.find(L"VSync") != root.end() &&
+            if (videoSettings.find(L"VSync") != videoSettings.end() &&
                 videoSettings[L"VSync"]->IsBool())
             {
                 mSettings.videoSettings.vsync =
                     videoSettings[L"VSync"]->AsBool() ? LITE3D_TRUE : LITE3D_FALSE;
             }
 
-            if (videoSettings.find(L"Fullscreen") != root.end() &&
+            if (videoSettings.find(L"Fullscreen") != videoSettings.end() &&
                 videoSettings[L"Fullscreen"]->IsBool())
             {
                 mSettings.videoSettings.fullscreen =
                     videoSettings[L"Fullscreen"]->AsBool() ? LITE3D_TRUE : LITE3D_FALSE;
             }
 
-            if (videoSettings.find(L"Caption") != root.end() &&
+            if (videoSettings.find(L"Caption") != videoSettings.end() &&
                 videoSettings[L"Caption"]->IsString())
             {
                 strcpy(mSettings.videoSettings.caption,

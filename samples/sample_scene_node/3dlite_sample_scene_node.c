@@ -180,7 +180,7 @@ static int initMaterials(void)
 
     /* create material for owr box */
     lite3d_material_init(&mVintageBoxMaterial);
-    matPass = lite3d_material_add_pass(&mVintageBoxMaterial);
+    matPass = lite3d_material_add_pass(&mVintageBoxMaterial, 1);
     /* set default params */
     lite3d_material_pass_add_parameter(matPass, &lite3d_shader_global_parameters()->projectionMatrix);
     lite3d_material_pass_add_parameter(matPass, &lite3d_shader_global_parameters()->modelviewMatrix);
@@ -190,7 +190,7 @@ static int initMaterials(void)
 
     /* create material for owr box */
     lite3d_material_init(&mBoxMaterial);
-    matPass = lite3d_material_add_pass(&mBoxMaterial);
+    matPass = lite3d_material_add_pass(&mBoxMaterial, 1);
     /* set default params */
     lite3d_material_pass_add_parameter(matPass, &lite3d_shader_global_parameters()->projectionMatrix);
     lite3d_material_pass_add_parameter(matPass, &lite3d_shader_global_parameters()->modelviewMatrix);

@@ -1,20 +1,20 @@
 /******************************************************************************
- *	This file is part of 3dlite (Light-weight 3d engine).
- *	Copyright (C) 2015  Sirius (Korolev Nikita)
- *
- *	Foobar is free software: you can redistribute it and/or modify
- *	it under the terms of the GNU General Public License as published by
- *	the Free Software Foundation, either version 3 of the License, or
- *	(at your option) any later version.
- *
- *	Foobar is distributed in the hope that it will be useful,
- *	but WITHOUT ANY WARRANTY; without even the implied warranty of
- *	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *	GNU General Public License for more details.
- *
- *	You should have received a copy of the GNU General Public License
- *	along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
- *******************************************************************************/
+*	This file is part of 3dlite (Light-weight 3d engine).
+*	Copyright (C) 2015  Sirius (Korolev Nikita)
+*
+*	Foobar is free software: you can redistribute it and/or modify
+*	it under the terms of the GNU General Public License as published by
+*	the Free Software Foundation, either version 3 of the License, or
+*	(at your option) any later version.
+*
+*	Foobar is distributed in the hope that it will be useful,
+*	but WITHOUT ANY WARRANTY; without even the implied warranty of
+*	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*	GNU General Public License for more details.
+*
+*	You should have received a copy of the GNU General Public License
+*	along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
+*******************************************************************************/
 #include <string.h>
 
 #include <SDL_assert.h>
@@ -57,22 +57,24 @@ void lite3d_material_init(
     lite3d_material *material)
 {
     SDL_assert(material);
-    lite3d_list_init(&material->passes);
+    material->passes = NULL;
+    material->passesSize = 0;
+    material->textureUnitsBinded = 0;
+    material->passesCapacity = 0;
 }
 
 void lite3d_material_purge(
     lite3d_material *material)
 {
-    lite3d_list_node *passNode;
-    lite3d_material_pass *pass;
+    uint32_t i;
     SDL_assert(material);
 
-    while ((passNode = lite3d_list_remove_first_link(&material->passes)) != NULL)
+    for(i = 0; i < material->passesSize; ++i)
     {
-        pass = LITE3D_MEMBERCAST(lite3d_material_pass, passNode, passLink);
-        lite3d_material_pass_purge(pass);
-        lite3d_free_pooled(LITE3D_POOL_NO1, pass);
+        lite3d_material_pass_purge(&material->passes[i]);
     }
+
+    lite3d_free(material->passes);
 }
 
 void lite3d_material_pass_init(
@@ -81,23 +83,34 @@ void lite3d_material_pass_init(
     SDL_assert(pass);
     memset(pass, 0, sizeof (lite3d_material_pass));
     lite3d_list_init(&pass->parameters);
-    lite3d_list_link_init(&pass->passLink);
 }
 
 lite3d_material_pass* lite3d_material_add_pass(
-    lite3d_material *material)
+    lite3d_material *material, uint32_t no)
 {
     lite3d_material_pass *pass;
 
     SDL_assert(material);
-    pass = (lite3d_material_pass *) lite3d_malloc_pooled(LITE3D_POOL_NO1, 
-        sizeof (lite3d_material_pass));
-    SDL_assert_release(pass);
+    SDL_assert_release(no && no < 0xff);
 
+    if(material->passesCapacity < no)
+    {
+        pass = (lite3d_material_pass *)
+            lite3d_malloc(sizeof(lite3d_material_pass) * no * 2);
+        SDL_assert_release(pass);
+
+        if(material->passes)
+            memcpy(pass, material->passes, sizeof(lite3d_material_pass) * material->passesSize);
+
+        material->passes = pass;
+        material->passesCapacity = no * 2;
+        material->passesSize = no;
+    }
+
+    pass = &material->passes[no-1];
     lite3d_material_pass_init(pass);
-    lite3d_list_add_last_link(&pass->passLink, &material->passes);
 
-    pass->passNo = ++material->passesCounter;
+    pass->passNo = no;
     return pass;
 }
 
@@ -108,9 +121,7 @@ int lite3d_material_remove_pass(
 
     if ((pass = lite3d_material_get_pass(material, no)) != NULL)
     {
-        lite3d_list_unlink_link(&pass->passLink);
         lite3d_material_pass_purge(pass);
-        lite3d_free_pooled(LITE3D_POOL_NO1, pass);
         return LITE3D_TRUE;
     }
 
@@ -118,7 +129,7 @@ int lite3d_material_remove_pass(
 }
 
 void lite3d_material_pass_add_parameter(lite3d_material_pass *pass,
-    lite3d_shader_parameter *param)
+                                        lite3d_shader_parameter *param)
 {
     lite3d_material_pass_parameter *parameter;
     SDL_assert(pass);
@@ -136,7 +147,7 @@ void lite3d_material_pass_add_parameter(lite3d_material_pass *pass,
 }
 
 int lite3d_material_pass_remove_parameter(lite3d_material_pass *pass,
-    const char *name)
+                                          const char *name)
 {
     lite3d_material_pass_parameter *parameter;
     SDL_assert(pass);
@@ -169,53 +180,45 @@ lite3d_shader_parameter *lite3d_material_pass_get_parameter(
 lite3d_material_pass *lite3d_material_get_pass(
     lite3d_material *material, uint32_t no)
 {
-    lite3d_list_node *passNode;
-    lite3d_material_pass *pass;
     SDL_assert(material);
 
-    for (passNode = material->passes.l.next;
-        passNode != &material->passes.l; passNode = lite3d_list_next(passNode))
-    {
-        pass = LITE3D_MEMBERCAST(lite3d_material_pass, passNode, passLink);
-        if (pass->passNo == no)
-            return pass;
-    }
+    if(material->passesSize < no)
+        return NULL;
 
-    return NULL;
+    return &material->passes[no-1];
 }
 
-void lite3d_material_by_pass_render(lite3d_material *material,
-    lite3d_by_pass_render_t func, void *data)
+void lite3d_material_pass_render(lite3d_material *material, uint16_t no,
+                                 lite3d_pass_render_t func, void *data)
 {
-    lite3d_list_node *passNode;
+    uint32_t i;
     lite3d_material_pass *pass;
     lite3d_shader_program *prevProg = NULL;
 
+    if(material->passesSize < no)
+        return;
+
     material->textureUnitsBinded = 0;
-    for (passNode = material->passes.l.next;
-        passNode != &material->passes.l; passNode = lite3d_list_next(passNode))
+    pass = &material->passes[no-1];
+
+    /* bind current shander first */
+    if (prevProg != pass->program)
     {
-        pass = LITE3D_MEMBERCAST(lite3d_material_pass, passNode, passLink);
+        lite3d_shader_program_bind(pass->program);
+        prevProg = pass->program;
 
-        /* bind current shander first */
-        if (prevProg != pass->program)
-        {
-            lite3d_shader_program_bind(pass->program);
-            prevProg = pass->program;
-
-            /* set up uniforms if shader changed */
-            lite3d_material_pass_set_params(material, pass, LITE3D_FALSE);
-        }
-
-        func(pass, data);
+        /* set up uniforms if shader changed */
+        lite3d_material_pass_set_params(material, pass, LITE3D_FALSE);
     }
+
+    func(pass, data);
 
     /* newer shader unbind - PPL used only */
     //lite3d_shader_program_unbind(prevProg);
 }
 
 void lite3d_material_pass_set_params(lite3d_material *material,
-    lite3d_material_pass *pass, uint8_t changed)
+                                     lite3d_material_pass *pass, uint8_t changed)
 {
     lite3d_list_node *parameterNode;
     lite3d_material_pass_parameter *parameter;
@@ -228,7 +231,7 @@ void lite3d_material_pass_set_params(lite3d_material *material,
     {
         parameter = LITE3D_MEMBERCAST(lite3d_material_pass_parameter, 
             parameterNode, parameterLink);
-        
+
         if (!changed || parameter->parameter->persist)
         {
             /* sampler case */
@@ -242,7 +245,7 @@ void lite3d_material_pass_set_params(lite3d_material *material,
                     parameter->uniformLocation,
                     parameter->textureUnit);
             }
-                /* others */
+            /* others */
             else
             {
                 parameter->uniformLocation =

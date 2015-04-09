@@ -90,7 +90,7 @@ static void mqr_unit_render(lite3d_material_pass *pass, void *data)
     lite3d_vao_unbind(prevVao);
 }
 
-static void mqr_render(struct lite3d_scene *scene)
+static void mqr_render(struct lite3d_scene *scene, lite3d_camera *camera)
 {
     lite3d_mqr_unit *mqrUnit = NULL;
     lite3d_list_node *mqrUnitNode = NULL;
@@ -100,7 +100,7 @@ static void mqr_render(struct lite3d_scene *scene)
     {
         mqrUnit = LITE3D_MEMBERCAST(lite3d_mqr_unit, mqrUnitNode, queued);
 
-        lite3d_material_by_pass_render(mqrUnit->material,
+        lite3d_material_pass_render(mqrUnit->material, camera->materialPass,
             mqr_unit_render, mqrUnit);
         scene->stats.materialBlocks++;
         scene->stats.textureUnitsBinded += mqrUnit->material->textureUnitsBinded;

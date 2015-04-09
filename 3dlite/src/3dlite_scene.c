@@ -64,7 +64,7 @@ void lite3d_scene_render(lite3d_scene *scene, lite3d_camera *camera)
     scene_recursive_nodes_update(scene, &scene->rootNode, camera);
     /* render scene */
     if (scene->doRender)
-        scene->doRender(scene);
+        scene->doRender(scene, camera);
 
     if (scene->postRender)
         scene->postRender(scene, camera);

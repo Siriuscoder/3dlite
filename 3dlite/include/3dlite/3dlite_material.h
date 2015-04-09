@@ -33,7 +33,6 @@ typedef struct lite3d_material_pass_parameter
 
 typedef struct lite3d_material_pass
 {
-    lite3d_list_node passLink;
     uint32_t passNo;
     /* shader must be linked before set parameters */
     lite3d_shader_program *program;
@@ -43,12 +42,13 @@ typedef struct lite3d_material_pass
 
 typedef struct lite3d_material
 {
-    lite3d_list passes;
-    uint32_t passesCounter;
+    lite3d_material_pass *passes;
+    uint32_t passesSize;
+    uint32_t passesCapacity;
     uint32_t textureUnitsBinded;
 } lite3d_material;
 
-typedef void (*lite3d_by_pass_render_t)(lite3d_material_pass *pass, void *data);
+typedef void (*lite3d_pass_render_t)(lite3d_material_pass *pass, void *data);
 
 LITE3D_CEXPORT void lite3d_material_init(
     lite3d_material *material);
@@ -57,7 +57,7 @@ LITE3D_CEXPORT void lite3d_material_purge(
 LITE3D_CEXPORT void lite3d_material_pass_init(
     lite3d_material_pass *pass);
 LITE3D_CEXPORT lite3d_material_pass* lite3d_material_add_pass(
-    lite3d_material *material);
+    lite3d_material *material, uint32_t no);
 LITE3D_CEXPORT int lite3d_material_remove_pass(
     lite3d_material *material, uint32_t no);
 LITE3D_CEXPORT void lite3d_material_pass_add_parameter(lite3d_material_pass *pass,
@@ -70,8 +70,8 @@ LITE3D_CEXPORT lite3d_shader_parameter *lite3d_material_pass_get_parameter(
 LITE3D_CEXPORT lite3d_material_pass *lite3d_material_get_pass(
     lite3d_material *material, uint32_t no);
 
-LITE3D_CEXPORT void lite3d_material_by_pass_render(lite3d_material *material,
-    lite3d_by_pass_render_t func, void *data);
+LITE3D_CEXPORT void lite3d_material_pass_render(lite3d_material *material, uint16_t no,
+    lite3d_pass_render_t func, void *data);
 LITE3D_CEXPORT void lite3d_material_pass_set_params(lite3d_material *material,
     lite3d_material_pass *pass, uint8_t changed);
 

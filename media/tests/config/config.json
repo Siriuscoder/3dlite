@@ -6,8 +6,8 @@
                 "Compression": true
         },
         "VideoSettings": {
-                "Wight": 800,
-                "Heigth": 600,
+                "Width": 800,
+                "Height": 600,
                 "Caption": "My test window",
                 "ColorBits": 24,
                 "Fullscreen": false,

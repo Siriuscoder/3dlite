@@ -121,7 +121,7 @@ static int initMaterials(void)
 
     /* create material for owr box */
     lite3d_material_init(&mMinigunMaterial);
-    matPass = lite3d_material_add_pass(&mMinigunMaterial);
+    matPass = lite3d_material_add_pass(&mMinigunMaterial, 1);
     /* set default params */
     lite3d_material_pass_add_parameter(matPass, &lite3d_shader_global_parameters()->projectionMatrix);
     lite3d_material_pass_add_parameter(matPass, &lite3d_shader_global_parameters()->modelviewMatrix);
