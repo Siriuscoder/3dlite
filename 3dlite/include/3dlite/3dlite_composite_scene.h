@@ -23,27 +23,27 @@
 #include <3dlite/3dlite_scene.h>
 #include <3dlite/3dlite_material.h>
 
-typedef struct lite3d_mesh_node
+typedef struct lite3d_composite_scene
 {
-    lite3d_scene_node sceneNode;
-    lite3d_vbo *vbo;
+    lite3d_scene scene;
     void (*preRenderMeshNode)(struct lite3d_scene *scene, 
-        struct lite3d_mesh_node *node, lite3d_vao *vao, lite3d_material *material);
+        struct lite3d_scene_node *node, lite3d_vao *vao, lite3d_material *material);
     void (*postRenderMeshNode)(struct lite3d_scene *scene, 
-        struct lite3d_mesh_node *node, lite3d_vao *vao, lite3d_material *material);
-} lite3d_mesh_node;
+        struct lite3d_scene_node *node, lite3d_vao *vao, lite3d_material *material); 
+} lite3d_composite_scene;
 
-LITE3D_CEXPORT void lite3d_mesh_node_init(lite3d_mesh_node *node, lite3d_vbo *vbo);
-LITE3D_CEXPORT int lite3d_mesh_node_attach_material(lite3d_mesh_node *node,
-    lite3d_material *material, uint32_t index);
 
-/* init scene using materisl queued renderer */
-LITE3D_CEXPORT void lite3d_scene_mesh_init(lite3d_scene *scene);
-LITE3D_CEXPORT void lite3d_scene_mesh_purge(lite3d_scene *scene);
-LITE3D_CEXPORT int lite3d_scene_mesh_node_add(lite3d_scene *scene, 
-    lite3d_mesh_node *node, lite3d_scene_node *baseNode);
-LITE3D_CEXPORT int lite3d_scene_mesh_node_remove(lite3d_scene *scene, 
-    lite3d_mesh_node *node);
+LITE3D_CEXPORT void lite3d_composite_scene_init(lite3d_composite_scene *scene);
+LITE3D_CEXPORT void lite3d_composite_scene_purge(lite3d_composite_scene *scene);
+LITE3D_CEXPORT lite3d_scene_node *lite3d_composite_scene_add_vbo(
+    lite3d_composite_scene *scene, 
+    lite3d_vbo *vbo,
+    lite3d_scene_node *baseNode);
+LITE3D_CEXPORT int lite3d_composite_scene_node_attach_material(
+    lite3d_scene_node *node, lite3d_material *material, uint32_t index);
+
+LITE3D_CEXPORT int lite3d_composite_scene_remove(lite3d_composite_scene *scene, 
+    lite3d_scene_node *node);
 
 #endif	/* LITE3D_MESHES_RENDER_H */
 

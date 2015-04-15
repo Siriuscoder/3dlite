@@ -40,8 +40,6 @@ typedef struct lite3d_scene
     lite3d_list renderUnitQueue;
     void (*preRender)(struct lite3d_scene *scene, lite3d_camera *camera);
     void (*postRender)(struct lite3d_scene *scene, lite3d_camera *camera);
-    void (*preRenderNode)(struct lite3d_scene *scene, lite3d_scene_node *node);
-    void (*postRenderNode)(struct lite3d_scene *scene, lite3d_scene_node *node);
     void (*doRender)(struct lite3d_scene *scene, lite3d_camera *camera);
 } lite3d_scene;
 

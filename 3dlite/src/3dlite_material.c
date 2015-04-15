@@ -191,7 +191,6 @@ lite3d_material_pass *lite3d_material_get_pass(
 void lite3d_material_pass_render(lite3d_material *material, uint16_t no,
                                  lite3d_pass_render_t func, void *data)
 {
-    uint32_t i;
     lite3d_material_pass *pass;
     lite3d_shader_program *prevProg = NULL;
 

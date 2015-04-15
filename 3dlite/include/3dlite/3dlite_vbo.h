@@ -57,6 +57,7 @@ typedef struct lite3d_vao
     uint16_t elementType; /* GL_POINTS, GL_LINES, GL_TRIANGLES (GL value)*/
     uint16_t indexType; /* Byte, short, int (GL value)*/
 
+    lite3d_vbo *ownVbo;
     /* material index */
     uint32_t materialIndex;
 } lite3d_vao;

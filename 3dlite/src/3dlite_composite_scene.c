@@ -19,7 +19,7 @@
 #include <SDL_log.h>
 
 #include <3dlite/3dlite_alloc.h>
-#include <3dlite/3dlite_meshes_render.h>
+#include <3dlite/3dlite_composite_scene.h>
 
 typedef struct lite3d_mqr_node
 {

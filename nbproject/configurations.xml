@@ -66,12 +66,12 @@
           <in>3dlite_7z_loader.c</in>
           <in>3dlite_alloc.c</in>
           <in>3dlite_camera.c</in>
+          <in>3dlite_composite_scene.c</in>
           <in>3dlite_framebuffer.c</in>
           <in>3dlite_list.c</in>
           <in>3dlite_logger.c</in>
           <in>3dlite_main.c</in>
           <in>3dlite_material.c</in>
-          <in>3dlite_meshes_render.c</in>
           <in>3dlite_misc.c</in>
           <in>3dlite_nedmalloc.c</in>
           <in>3dlite_rb_tree.c</in>
@@ -296,6 +296,22 @@
           </preprocessorList>
         </cTool>
       </item>
+      <item path="3dlite/src/3dlite_composite_scene.c"
+            ex="false"
+            tool="0"
+            flavor2="3">
+        <cTool flags="3">
+          <incDir>
+            <pElem>/usr/include/SDL2</pElem>
+            <pElem>build/3dlite</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>GLEW_STATIC</Elem>
+            <Elem>_3dlite_EXPORTS</Elem>
+            <Elem>_REENTRANT</Elem>
+          </preprocessorList>
+        </cTool>
+      </item>
       <item path="3dlite/src/3dlite_framebuffer.c" ex="false" tool="0" flavor2="3">
         <cTool flags="3">
           <incDir>
@@ -349,19 +365,6 @@
         </cTool>
       </item>
       <item path="3dlite/src/3dlite_material.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="3">
-          <incDir>
-            <pElem>/usr/include/SDL2</pElem>
-            <pElem>build/3dlite</pElem>
-          </incDir>
-          <preprocessorList>
-            <Elem>GLEW_STATIC</Elem>
-            <Elem>_3dlite_EXPORTS</Elem>
-            <Elem>_REENTRANT</Elem>
-          </preprocessorList>
-        </cTool>
-      </item>
-      <item path="3dlite/src/3dlite_meshes_render.c" ex="false" tool="0" flavor2="3">
         <cTool flags="3">
           <incDir>
             <pElem>/usr/include/SDL2</pElem>

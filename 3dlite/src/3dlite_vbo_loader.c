@@ -93,6 +93,7 @@ static int vbo_append_batch(lite3d_vbo *vbo,
     vao->verticesCount = verticesCount;
     vao->verticesSize = verticesSize;
     vao->verticesOffset = verticesOffset;
+    vao->ownVbo = vbo;
 
     lite3d_list_add_last_link(&vao->inVbo, &vbo->vaos);
     vbo->vaosCount++;
@@ -488,7 +489,7 @@ int lite3d_vbo_load(lite3d_vbo *vbo, lite3d_resource_file *resource,
         return LITE3D_FALSE;
     }
 
-    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "MESH: %s (%s) loaded, cv/ce/cb/ %d/%d/%d",
+    SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "MESH: %s (%s) loaded, cv/ce/cb/ %d/%d/%d",
         resource->name, targetNode->mName.data, vbo->verticesCount, vbo->elementsCount, vbo->vaosCount);
     aiReleaseImport(scene);
     aiReleasePropertyStore(importProrerties);
