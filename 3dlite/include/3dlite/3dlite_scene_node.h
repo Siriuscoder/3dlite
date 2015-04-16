@@ -40,6 +40,7 @@ typedef struct  lite3d_scene_node
     uint8_t rotationCentered;
     uint8_t renderable;
     uint8_t enabled;
+    uint8_t visible;
     struct lite3d_scene_node *baseNode;
     struct lite3d_list childNodes;
     void *scene;

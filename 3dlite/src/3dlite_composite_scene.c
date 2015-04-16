@@ -24,7 +24,7 @@
 typedef struct lite3d_mqr_node
 {
     lite3d_list_node unit;
-    lite3d_mesh_node *node;
+    lite3d_composite_scene_node *node;
     lite3d_vao *vao;
 } lite3d_mqr_node;
 
@@ -41,15 +41,16 @@ static void mqr_unit_render(lite3d_material_pass *pass, void *data)
     lite3d_mqr_node *mqrNode;
     lite3d_list_node *mqrListNode;
     lite3d_vao *prevVao = NULL;
-    lite3d_scene *scene = NULL;
+    lite3d_scene *base = NULL;
+    lite3d_composite_scene *scene = NULL;
 
     for (mqrListNode = mqrUnit->nodes.l.next;
         mqrListNode != &mqrUnit->nodes.l; mqrListNode = lite3d_list_next(mqrListNode))
     {
         mqrNode = LITE3D_MEMBERCAST(lite3d_mqr_node, mqrListNode, unit);
-        if (!mqrNode->node->sceneNode.enabled)
+        if (!mqrNode->node->node.enabled)
             continue;
-        if (!mqrNode->node->sceneNode.renderable)
+        if (!mqrNode->node->node.renderable)
             continue;
 
         /* bind vao */
@@ -59,42 +60,37 @@ static void mqr_unit_render(lite3d_material_pass *pass, void *data)
             prevVao = mqrNode->vao;
         }
 
-        scene = (lite3d_scene *) mqrNode->node->sceneNode.scene;
-        SDL_assert(scene);
-        if(scene->preRenderNode)
-            scene->preRenderNode(scene, &mqrNode->node->sceneNode);
-        if(mqrNode->node->preRenderMeshNode)
-            mqrNode->node->preRenderMeshNode(scene, mqrNode->node,
-                mqrNode->vao, mqrUnit->material);
-        
-        /* TODO: setup viewmodel */
-        lite3d_shader_set_modelview_matrix(&mqrNode->node->sceneNode.cameraView);
+        base = (lite3d_scene *) mqrNode->node->node.scene;
+        SDL_assert(base);
+
+        scene = LITE3D_MEMBERCAST(lite3d_composite_scene, base, scene);
+        /* setup global parameters (viewmodel) */
+        lite3d_shader_set_modelview_matrix(&mqrNode->node->node.cameraView);
         /* setup changed uniforms parameters */
         lite3d_material_pass_set_params(mqrUnit->material, pass, LITE3D_TRUE);
         /* do render batch */
+        if (scene->drawBatch)
+            scene->drawBatch(scene, mqrNode->node,
+            mqrNode->vao, mqrUnit->material);
         lite3d_vao_draw(mqrNode->vao);
-        scene->stats.batches++;
-        scene->stats.trianglesRendered += mqrNode->vao->elementsCount;
-        scene->stats.verticesRendered += mqrNode->vao->verticesCount;
-        
-        if(mqrNode->node->postRenderMeshNode)
-            mqrNode->node->postRenderMeshNode(scene, mqrNode->node,
-                mqrNode->vao, mqrUnit->material);
-        if(scene->postRenderNode)
-            scene->postRenderNode(scene, &mqrNode->node->sceneNode);
+        base->stats.batches++;
+        base->stats.trianglesRendered += mqrNode->vao->elementsCount;
+        base->stats.verticesRendered += mqrNode->vao->verticesCount;
     }
-    
-    if(scene)
-        scene->stats.materialPassed++;
-    
+
+    if (base)
+        base->stats.materialPassed++;
+
     lite3d_vao_unbind(prevVao);
 }
 
-static void mqr_render(struct lite3d_scene *scene, lite3d_camera *camera)
+static void mqr_render(struct lite3d_scene *base, lite3d_camera *camera)
 {
     lite3d_mqr_unit *mqrUnit = NULL;
     lite3d_list_node *mqrUnitNode = NULL;
+    lite3d_composite_scene *scene = NULL;
 
+    scene = LITE3D_MEMBERCAST(lite3d_composite_scene, base, scene);
     for (mqrUnitNode = scene->renderUnitQueue.l.next;
         mqrUnitNode != &scene->renderUnitQueue.l; mqrUnitNode = lite3d_list_next(mqrUnitNode))
     {
@@ -102,13 +98,13 @@ static void mqr_render(struct lite3d_scene *scene, lite3d_camera *camera)
 
         lite3d_material_pass_render(mqrUnit->material, camera->materialPass,
             mqr_unit_render, mqrUnit);
-        scene->stats.materialBlocks++;
-        scene->stats.textureUnitsBinded += mqrUnit->material->textureUnitsBinded;
+        base->stats.materialBlocks++;
+        base->stats.textureUnitsBinded += mqrUnit->material->textureUnitsBinded;
     }
 }
 
 static lite3d_mqr_node *check_mqr_material_index_exist(lite3d_mqr_unit *unit,
-    lite3d_mesh_node *node, uint32_t index)
+    lite3d_composite_scene_node *node, uint32_t index)
 {
     lite3d_mqr_node *mqrNode;
     lite3d_list_node *mqrListNode;
@@ -125,7 +121,7 @@ static lite3d_mqr_node *check_mqr_material_index_exist(lite3d_mqr_unit *unit,
 }
 
 static lite3d_mqr_node *check_mqr_node_exist(lite3d_mqr_unit *unit,
-    lite3d_mesh_node *node)
+    lite3d_composite_scene_node *node)
 {
     lite3d_mqr_node *mqrNode;
     lite3d_list_node *mqrListNode;
@@ -163,25 +159,26 @@ static void mqr_unit_add_node(lite3d_mqr_unit *unit, lite3d_mqr_node *node)
     lite3d_list_add_last_link(&node->unit, &unit->nodes);
 }
 
-void lite3d_mesh_node_init(lite3d_mesh_node *node, lite3d_vbo *vbo)
+void lite3d_mesh_node_init(lite3d_composite_scene_node *node, lite3d_vbo *vbo)
 {
     SDL_assert(node);
 
-    lite3d_scene_node_init(&node->sceneNode);
+    lite3d_scene_node_init(&node->node);
     node->vbo = vbo;
 
-    node->sceneNode.enabled = LITE3D_TRUE;
-    node->sceneNode.renderable = LITE3D_TRUE;
-    node->sceneNode.rotationCentered = LITE3D_TRUE;
+    node->node.enabled = LITE3D_TRUE;
+    node->node.renderable = LITE3D_TRUE;
+    node->node.rotationCentered = LITE3D_TRUE;
 }
 
-void lite3d_scene_mesh_init(lite3d_scene *scene)
+void lite3d_composite_scene_init(lite3d_composite_scene *scene)
 {
-    lite3d_scene_init(scene);
-    scene->doRender = mqr_render;
+    lite3d_scene_init(&scene->scene);
+    lite3d_list_init(&scene->renderUnitQueue);
+    scene->scene.doRender = mqr_render;
 }
 
-void lite3d_scene_mesh_purge(lite3d_scene *scene)
+void lite3d_composite_scene_purge(lite3d_composite_scene *scene)
 {
     lite3d_mqr_unit *mqrUnit = NULL;
     lite3d_list_node *mqrUnitNode = NULL;
@@ -202,18 +199,20 @@ void lite3d_scene_mesh_purge(lite3d_scene *scene)
     }
 }
 
-int lite3d_mesh_node_attach_material(lite3d_mesh_node *node,
-    lite3d_material *material, uint32_t index)
+int lite3d_composite_scene_node_attach_material(
+    lite3d_composite_scene_node *node, lite3d_material *material, uint32_t index)
 {
     lite3d_mqr_unit *mqrUnit = NULL;
     lite3d_mqr_unit *mqrUnitTmp = NULL;
     lite3d_list_node *mqrUnitNode = NULL;
     lite3d_mqr_node *mqrNode = NULL;
-    lite3d_scene *scene = NULL;
+    lite3d_scene *base = NULL;
+    lite3d_composite_scene *scene = NULL;
 
     SDL_assert(node);
 
-    scene = (lite3d_scene *) node->sceneNode.scene;
+    base = (lite3d_scene *) node->node.scene;
+    scene = LITE3D_MEMBERCAST(lite3d_composite_scene, base, scene);
 
     for (mqrUnitNode = scene->renderUnitQueue.l.next;
         mqrUnitNode != &scene->renderUnitQueue.l; mqrUnitNode = lite3d_list_next(mqrUnitNode))
@@ -230,7 +229,7 @@ int lite3d_mesh_node_attach_material(lite3d_mesh_node *node,
 
     if (mqrUnit == NULL)
     {
-        mqrUnit = (lite3d_mqr_unit *) lite3d_calloc_pooled(LITE3D_POOL_NO1, 
+        mqrUnit = (lite3d_mqr_unit *) lite3d_calloc_pooled(LITE3D_POOL_NO1,
             sizeof (lite3d_mqr_unit));
         lite3d_list_init(&mqrUnit->nodes);
         lite3d_list_link_init(&mqrUnit->queued);
@@ -243,7 +242,7 @@ int lite3d_mesh_node_attach_material(lite3d_mesh_node *node,
 
     if (mqrNode == NULL)
     {
-        mqrNode = (lite3d_mqr_node *) lite3d_calloc_pooled(LITE3D_POOL_NO1, 
+        mqrNode = (lite3d_mqr_node *) lite3d_calloc_pooled(LITE3D_POOL_NO1,
             sizeof (lite3d_mqr_node));
         lite3d_list_link_init(&mqrNode->unit);
         mqrNode->node = node;
@@ -263,20 +262,24 @@ int lite3d_mesh_node_attach_material(lite3d_mesh_node *node,
     return LITE3D_TRUE;
 }
 
-int lite3d_scene_mesh_node_add(lite3d_scene *scene,
-    lite3d_mesh_node *node, lite3d_scene_node *baseNode)
+int lite3d_composite_scene_add_node(
+    lite3d_composite_scene *scene,
+    lite3d_composite_scene_node *node,
+    lite3d_vbo *vbo,
+    lite3d_scene_node *baseNode)
 {
-    return lite3d_scene_node_add(scene, &node->sceneNode, baseNode);
+    node->vbo = vbo;
+    return lite3d_scene_node_add(&scene->scene, &node->node, baseNode);
 }
 
-int lite3d_scene_mesh_node_remove(lite3d_scene *scene,
-    lite3d_mesh_node *node)
+int lite3d_composite_scene_remove(lite3d_composite_scene *scene,
+    lite3d_composite_scene_node *node)
 {
     lite3d_mqr_unit *mqrUnit = NULL;
     lite3d_list_node *mqrUnitNode = NULL;
     lite3d_mqr_node *mqrNode = NULL;
 
-    if (!lite3d_scene_node_remove(scene, &node->sceneNode))
+    if (!lite3d_scene_node_remove(&scene->scene, &node->node))
         return LITE3D_FALSE;
 
     for (mqrUnitNode = scene->renderUnitQueue.l.next;

@@ -37,7 +37,6 @@ typedef struct lite3d_scene
 {
     lite3d_scene_node rootNode;
     lite3d_scene_stats stats;
-    lite3d_list renderUnitQueue;
     void (*preRender)(struct lite3d_scene *scene, lite3d_camera *camera);
     void (*postRender)(struct lite3d_scene *scene, lite3d_camera *camera);
     void (*doRender)(struct lite3d_scene *scene, lite3d_camera *camera);

@@ -163,6 +163,13 @@ int lite3d_vbo_technique_init(void)
         return LITE3D_FALSE;
     }
 
+    if (!GL_ARB_instanced_arrays)
+    {
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+            "%s: GL_ARB_instanced_arrays not supported..", __FUNCTION__);
+        return LITE3D_FALSE;
+    }
+
     glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &maxVertexAttribs);
     SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "Max vertex attributes: %d",
         maxVertexAttribs);
@@ -288,6 +295,17 @@ void lite3d_vao_draw(struct lite3d_vao *vao)
      */
 
     glDrawElements(vao->elementType, vao->indexesCount, vao->indexType, (void *) vao->indexesOffset);
+}
+
+void lite3d_vbo_draw_instanced(struct lite3d_vao *vao, size_t count)
+{
+    /* glDrawElementsInstanced behaves identically to glDrawElements 
+     * except that primcount instances of the set of elements are executed. 
+     * Those attributes that have divisor N where N is other than zero 
+     * (as specified by glVertexAttribDivisor) advance once every N instances. 
+     */
+    glDrawElementsInstancedARB(vao->elementType, vao->indexesCount, 
+        vao->indexType, (void *) vao->indexesOffset, count);
 }
 
 void lite3d_vao_bind(struct lite3d_vao *vao)

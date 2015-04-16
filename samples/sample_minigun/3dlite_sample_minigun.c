@@ -31,7 +31,7 @@ static lite3d_shader_parameter mMinigunTextureUnit;
 static lite3d_material mMinigunMaterial;
 static lite3d_shader_program mProgram;
 
-static lite3d_mesh_node mSceneNode;
+static lite3d_composite_scene_node mSceneNode;
 static lite3d_scene mScene;
 
 static int process_events(SDL_Event *levent, void *userdata)
