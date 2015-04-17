@@ -159,7 +159,7 @@ static void mqr_unit_add_node(lite3d_mqr_unit *unit, lite3d_mqr_node *node)
     lite3d_list_add_last_link(&node->unit, &unit->nodes);
 }
 
-void lite3d_mesh_node_init(lite3d_composite_scene_node *node, lite3d_vbo *vbo)
+void lite3d_composite_scene_node_init(lite3d_composite_scene_node *node, lite3d_vbo *vbo)
 {
     SDL_assert(node);
 
@@ -265,10 +265,8 @@ int lite3d_composite_scene_node_attach_material(
 int lite3d_composite_scene_add_node(
     lite3d_composite_scene *scene,
     lite3d_composite_scene_node *node,
-    lite3d_vbo *vbo,
     lite3d_scene_node *baseNode)
 {
-    node->vbo = vbo;
     return lite3d_scene_node_add(&scene->scene, &node->node, baseNode);
 }
 

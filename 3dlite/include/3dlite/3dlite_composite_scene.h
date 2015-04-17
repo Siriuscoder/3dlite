@@ -40,10 +40,11 @@ typedef struct lite3d_composite_scene
 
 LITE3D_CEXPORT void lite3d_composite_scene_init(lite3d_composite_scene *scene);
 LITE3D_CEXPORT void lite3d_composite_scene_purge(lite3d_composite_scene *scene);
+LITE3D_CEXPORT void lite3d_composite_scene_node_init(lite3d_composite_scene_node *node,
+    lite3d_vbo *vbo);
 LITE3D_CEXPORT int lite3d_composite_scene_add_node(
     lite3d_composite_scene *scene, 
     lite3d_composite_scene_node *node,
-    lite3d_vbo *vbo,
     lite3d_scene_node *baseNode);
 LITE3D_CEXPORT int lite3d_composite_scene_node_attach_material(
     lite3d_composite_scene_node *node, lite3d_material *material, uint32_t index);
