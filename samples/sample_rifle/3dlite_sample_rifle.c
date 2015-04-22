@@ -28,8 +28,8 @@ static lite3d_texture_unit mRifleTextureA;
 static lite3d_texture_unit mRifleTextureB;
 static lite3d_texture_unit mBattTexture;
 static lite3d_camera mCamera01;
-static lite3d_vbo mRifle;
-static lite3d_vbo mRifleBatt;
+static lite3d_indexed_mesh mRifle;
+static lite3d_indexed_mesh mRifleBatt;
 static lite3d_shader_parameter mRifleTextureUnitA;
 static lite3d_shader_parameter mRifleTextureUnitB;
 static lite3d_shader_parameter mBattTextureUnit;
@@ -188,17 +188,17 @@ static int initModel(void)
     if (!(file1 = lite3d_resource_pack_file_load(mFileSysPack, "pack/plasmagun/plasmarif.3ds")))
         return LITE3D_FALSE;
 
-    if (!lite3d_vbo_init(&mRifle))
+    if (!lite3d_indexed_mesh_init(&mRifle))
         return LITE3D_FALSE;
-    if (!lite3d_vbo_load(&mRifle, file1, "PlasmaRifl", LITE3D_VBO_STATIC_DRAW, LITE3D_FLIP_UV_FLAG | LITE3D_OPTIMIZE_MESH_FLAG))
+    if (!lite3d_indexed_mesh_load(&mRifle, file1, "PlasmaRifl", LITE3D_VBO_STATIC_DRAW, LITE3D_FLIP_UV_FLAG | LITE3D_OPTIMIZE_MESH_FLAG))
         return LITE3D_FALSE;
     /* fix material indexes to 0..maxVao */
     /* it is right way if you know how submeshes attached to real materials */
-    lite3d_vbo_order_mat_indexes(&mRifle);
+    lite3d_indexed_mesh_order_mat_indexes(&mRifle);
 
-    if (!lite3d_vbo_init(&mRifleBatt))
+    if (!lite3d_indexed_mesh_init(&mRifleBatt))
         return LITE3D_FALSE;
-    if (!lite3d_vbo_load(&mRifleBatt, file1, "Battery", LITE3D_VBO_STATIC_DRAW, LITE3D_FLIP_UV_FLAG))
+    if (!lite3d_indexed_mesh_load(&mRifleBatt, file1, "Battery", LITE3D_VBO_STATIC_DRAW, LITE3D_FLIP_UV_FLAG))
         return LITE3D_FALSE;
 
     return LITE3D_TRUE;
@@ -250,8 +250,8 @@ static int init(void *userdata)
 static int shutdown(void *userdata)
 {
     /* release resources */
-    lite3d_vbo_purge(&mRifle);
-    lite3d_vbo_purge(&mRifleBatt);
+    lite3d_indexed_mesh_purge(&mRifle);
+    lite3d_indexed_mesh_purge(&mRifleBatt);
 
     lite3d_material_purge(&mRifleMaterialA);
     lite3d_material_purge(&mRifleMaterialB);

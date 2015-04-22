@@ -28,10 +28,10 @@
 #include <3dlite/GL/glew.h>
 #include <3dlite/3dlite_alloc.h>
 #include <3dlite/3dlite_misc.h>
-#include <3dlite/3dlite_vbo_loader.h>
+#include <3dlite/3dlite_mesh_loader.h>
 
-static int vbo_append_batch(lite3d_vbo *vbo,
-    const lite3d_vbo_layout *layout,
+static int mesh_append_chunk(lite3d_indexed_mesh *mesh,
+    const lite3d_indexed_mesh_layout *layout,
     size_t layoutCount,
     size_t stride,
     uint8_t indexComponents,
@@ -43,31 +43,31 @@ static int vbo_append_batch(lite3d_vbo *vbo,
     size_t verticesSize,
     size_t verticesOffset)
 {
-    lite3d_vao *vao;
+    lite3d_mesh_chunk *meshChunk;
     uint32_t attribIndex = 0;
     size_t i = 0;
     size_t vOffset = verticesOffset;
 
-    vao = (lite3d_vao *)lite3d_malloc_pooled(LITE3D_POOL_NO1, sizeof (lite3d_vao));
-    SDL_assert_release(vao);
+    meshChunk = (lite3d_mesh_chunk *)lite3d_malloc_pooled(LITE3D_POOL_NO1, sizeof (lite3d_mesh_chunk));
+    SDL_assert_release(meshChunk);
 
-    if (!lite3d_vao_init(vao))
+    if (!lite3d_mesh_chunk_init(meshChunk))
     {
-        lite3d_free_pooled(LITE3D_POOL_NO1, vao);
+        lite3d_free_pooled(LITE3D_POOL_NO1, meshChunk);
         return LITE3D_FALSE;
     }
 
     /* VAO set current */
-    glBindVertexArray(vao->vaoID);
+    glBindVertexArray(meshChunk->vaoID);
     /* use single VBO to store all data */
-    glBindBuffer(GL_ARRAY_BUFFER, vbo->vboVerticesID);
+    glBindBuffer(GL_ARRAY_BUFFER, mesh->vboVerticesID);
     /* bind all arrays and attribs into the current VAO */
     for (; i < layoutCount; ++i)
     {
         if(layout[i].binding != LITE3D_BUFFER_BINDING_ATTRIBUTE)
         {
             SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION, "VBO: 0x%x: chunk 0x%x used "
-                "legacy binding type attribute",  vbo->vboVerticesID, vao->vaoID);
+                "legacy binding type attribute",  mesh->vboVerticesID, meshChunk->vaoID);
             continue;
         }
 
@@ -78,29 +78,29 @@ static int vbo_append_batch(lite3d_vbo *vbo,
         vOffset += layout[i].count * sizeof (GLfloat);
     }
 
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbo->vboIndexesID);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->vboIndexesID);
     /* end VAO binding */
     glBindVertexArray(0);
 
-    vao->indexesOffset = indexesOffset;
-    vao->indexType = indexComponentSize == 1 ? GL_UNSIGNED_BYTE :
+    meshChunk->indexesOffset = indexesOffset;
+    meshChunk->indexType = indexComponentSize == 1 ? GL_UNSIGNED_BYTE :
         (indexComponentSize == 2 ? GL_UNSIGNED_SHORT : GL_UNSIGNED_INT);
-    vao->elementType = indexComponents == 1 ? GL_POINTS :
+    meshChunk->elementType = indexComponents == 1 ? GL_POINTS :
         (indexComponents == 2 ? GL_LINES : GL_TRIANGLES);
-    vao->elementsCount = elementsCount;
-    vao->indexesCount = elementsCount * indexComponents;
-    vao->indexesSize = indexesSize;
-    vao->verticesCount = verticesCount;
-    vao->verticesSize = verticesSize;
-    vao->verticesOffset = verticesOffset;
-    vao->ownVbo = vbo;
+    meshChunk->elementsCount = elementsCount;
+    meshChunk->indexesCount = elementsCount * indexComponents;
+    meshChunk->indexesSize = indexesSize;
+    meshChunk->verticesCount = verticesCount;
+    meshChunk->verticesSize = verticesSize;
+    meshChunk->verticesOffset = verticesOffset;
+    meshChunk->ownVbo = mesh;
 
-    lite3d_list_add_last_link(&vao->inVbo, &vbo->vaos);
-    vbo->vaosCount++;
+    lite3d_list_add_last_link(&meshChunk->inVbo, &mesh->vaos);
+    mesh->vaosCount++;
 
     SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "VBO: 0x%x: chunk 0x%x: %s, cv/ov/sv %d/%db/%db, ce/oe %d/%db",
-        vbo->vboVerticesID, vao->vaoID, indexComponents == 1 ? "POINTS" : (indexComponents == 2 ? "LINES" : "TRIANGLES"),
-        vao->verticesCount, vao->verticesOffset, stride, vao->elementsCount, vao->indexesOffset);
+        mesh->vboVerticesID, meshChunk->vaoID, indexComponents == 1 ? "POINTS" : (indexComponents == 2 ? "LINES" : "TRIANGLES"),
+        meshChunk->verticesCount, meshChunk->verticesOffset, stride, meshChunk->elementsCount, meshChunk->indexesOffset);
 
     return LITE3D_TRUE;
 }
@@ -122,11 +122,11 @@ static const struct aiNode *ai_find_node_by_name(const struct aiNode *root, cons
     return NULL;
 }
 
-static int ai_node_load_to_vbo(lite3d_vbo *vbo, const struct aiScene *scene, 
+static int ai_node_load_to_vbo(lite3d_indexed_mesh *meshInst, const struct aiScene *scene, 
     const struct aiNode *node, uint16_t access)
 {
     uint8_t componentSize;
-    lite3d_vbo_layout layout[10];
+    lite3d_indexed_mesh_layout layout[10];
     size_t layoutCount;
     size_t verticesSize;
     size_t indexesSize;
@@ -261,12 +261,12 @@ static int ai_node_load_to_vbo(lite3d_vbo *vbo, const struct aiScene *scene,
             }
         }
 
-        if(!lite3d_vbo_extend_from_memory(vbo, vertices, mesh->mNumVertices, 
+        if(!lite3d_indexed_mesh_extend_from_memory(meshInst, vertices, mesh->mNumVertices, 
             layout, layoutCount, indexes, mesh->mNumFaces, 3, access))
             return LITE3D_FALSE;
 
-        /* set material index to currently added vao */
-        LITE3D_MEMBERCAST(lite3d_vao, lite3d_list_last_link(&vbo->vaos), inVbo)->
+        /* set material index to currently added meshChunk */
+        LITE3D_MEMBERCAST(lite3d_mesh_chunk, lite3d_list_last_link(&meshInst->vaos), inVbo)->
             materialIndex = mesh->mMaterialIndex;
 
         lite3d_free(vertices);
@@ -276,10 +276,10 @@ static int ai_node_load_to_vbo(lite3d_vbo *vbo, const struct aiScene *scene,
     return LITE3D_TRUE;
 }
 
-int lite3d_vbo_load_from_memory(lite3d_vbo *vbo,
+int lite3d_indexed_mesh_load_from_memory(lite3d_indexed_mesh *mesh,
     const void *vertices,
     size_t verticesCount,
-    const lite3d_vbo_layout *layout,
+    const lite3d_indexed_mesh_layout *layout,
     size_t layoutCount,
     const void *indexes,
     size_t elementsCount,
@@ -290,10 +290,10 @@ int lite3d_vbo_load_from_memory(lite3d_vbo *vbo,
         stride = 0, i;
     uint8_t componentSize;
 
-    SDL_assert(vbo && layout);
+    SDL_assert(mesh && layout);
 
     lite3d_misc_gl_error_stack_clean();
-    glBindBuffer(GL_ARRAY_BUFFER, vbo->vboVerticesID);
+    glBindBuffer(GL_ARRAY_BUFFER, mesh->vboVerticesID);
     if (lite3d_misc_check_gl_error())
         return LITE3D_FALSE;
 
@@ -305,7 +305,7 @@ int lite3d_vbo_load_from_memory(lite3d_vbo *vbo,
     if (lite3d_misc_check_gl_error())
         return LITE3D_FALSE;
 
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbo->vboIndexesID);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->vboIndexesID);
     if (lite3d_misc_check_gl_error())
         return LITE3D_FALSE;
 
@@ -317,15 +317,15 @@ int lite3d_vbo_load_from_memory(lite3d_vbo *vbo,
         return LITE3D_FALSE;
 
     /* append new batch */
-    if (!vbo_append_batch(vbo, layout, layoutCount, stride,
+    if (!mesh_append_chunk(mesh, layout, layoutCount, stride,
         indexComponents, componentSize, elementsCount, 
         indexesSize, 0, verticesCount, verticesSize, 0))
         return LITE3D_FALSE;
 
-    vbo->verticesCount = verticesCount;
-    vbo->elementsCount = elementsCount;
-    vbo->verticesSize = verticesSize;
-    vbo->indexesSize = indexesSize;
+    mesh->verticesCount = verticesCount;
+    mesh->elementsCount = elementsCount;
+    mesh->verticesSize = verticesSize;
+    mesh->indexesSize = indexesSize;
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
@@ -333,10 +333,10 @@ int lite3d_vbo_load_from_memory(lite3d_vbo *vbo,
     return LITE3D_TRUE;
 }
 
-int lite3d_vbo_extend_from_memory(lite3d_vbo *vbo,
+int lite3d_indexed_mesh_extend_from_memory(lite3d_indexed_mesh *mesh,
     const void *vertices,
     size_t verticesCount,
-    const lite3d_vbo_layout *layout,
+    const lite3d_indexed_mesh_layout *layout,
     size_t layoutCount,
     const void *indexes,
     size_t elementsCount,
@@ -347,10 +347,10 @@ int lite3d_vbo_extend_from_memory(lite3d_vbo *vbo,
         stride = 0, i;
     uint8_t componentSize;
 
-    SDL_assert(vbo && layout);
+    SDL_assert(mesh && layout);
 
-    if (lite3d_list_is_empty(&vbo->vaos))
-        return lite3d_vbo_load_from_memory(vbo, vertices, verticesCount,
+    if (lite3d_list_is_empty(&mesh->vaos))
+        return lite3d_indexed_mesh_load_from_memory(mesh, vertices, verticesCount,
         layout, layoutCount, indexes, elementsCount, indexComponents, access);
 
     /* calculate buffer parameters */
@@ -360,31 +360,31 @@ int lite3d_vbo_extend_from_memory(lite3d_vbo *vbo,
     componentSize = verticesCount <= 0xff ? 1 : (verticesCount <= 0xffff ? 2 : 4);
     indexesSize = indexComponents * componentSize * elementsCount;
     /* expand VBO */
-    if (!lite3d_vbo_extend(vbo, verticesSize, indexesSize, access))
+    if (!lite3d_indexed_mesh_extend(mesh, verticesSize, indexesSize, access))
         return LITE3D_FALSE;
 
     /* copy vertices to the end of the vertex buffer */
-    glBindBuffer(GL_ARRAY_BUFFER, vbo->vboVerticesID);
-    glBufferSubData(GL_ARRAY_BUFFER, vbo->verticesSize, verticesSize, vertices);
+    glBindBuffer(GL_ARRAY_BUFFER, mesh->vboVerticesID);
+    glBufferSubData(GL_ARRAY_BUFFER, mesh->verticesSize, verticesSize, vertices);
     if (lite3d_misc_check_gl_error())
         return LITE3D_FALSE;
 
     /* copy indexes to the end of the index buffer */
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbo->vboIndexesID);
-    glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, vbo->indexesSize, indexesSize, indexes);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->vboIndexesID);
+    glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, mesh->indexesSize, indexesSize, indexes);
     if (lite3d_misc_check_gl_error())
         return LITE3D_FALSE;
 
     /* append new batch */
-    if (!vbo_append_batch(vbo, layout, layoutCount, stride,
+    if (!mesh_append_chunk(mesh, layout, layoutCount, stride,
         indexComponents, componentSize, elementsCount,
-        indexesSize, vbo->indexesSize, verticesCount, verticesSize, vbo->verticesSize))
+        indexesSize, mesh->indexesSize, verticesCount, verticesSize, mesh->verticesSize))
         return LITE3D_FALSE;
 
-    vbo->verticesCount += verticesCount;
-    vbo->elementsCount += elementsCount;
-    vbo->verticesSize += verticesSize;
-    vbo->indexesSize += indexesSize;
+    mesh->verticesCount += verticesCount;
+    mesh->elementsCount += elementsCount;
+    mesh->verticesSize += verticesSize;
+    mesh->indexesSize += indexesSize;
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
@@ -392,7 +392,7 @@ int lite3d_vbo_extend_from_memory(lite3d_vbo *vbo,
     return LITE3D_TRUE;
 }
 
-int lite3d_vbo_load(lite3d_vbo *vbo, lite3d_resource_file *resource, 
+int lite3d_indexed_mesh_load(lite3d_indexed_mesh *mesh, lite3d_resource_file *resource, 
     const char *name, uint16_t access, uint32_t flags)
 {
     const struct aiScene *scene = NULL;
@@ -401,7 +401,7 @@ int lite3d_vbo_load(lite3d_vbo *vbo, lite3d_resource_file *resource,
     struct aiMemoryInfo sceneMemory;
     uint32_t aiflags;
     
-    SDL_assert(vbo && resource);
+    SDL_assert(mesh && resource);
 
     if(!resource->isLoaded)
         return LITE3D_FALSE;
@@ -480,7 +480,7 @@ int lite3d_vbo_load(lite3d_vbo *vbo, lite3d_resource_file *resource,
         return LITE3D_FALSE;
     }
 
-    if(!ai_node_load_to_vbo(vbo, scene, targetNode, access))
+    if(!ai_node_load_to_vbo(mesh, scene, targetNode, access))
     {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "MESH: %s (%s) load failed..",
             resource->name, targetNode->mName.data);
@@ -490,23 +490,23 @@ int lite3d_vbo_load(lite3d_vbo *vbo, lite3d_resource_file *resource,
     }
 
     SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "MESH: %s (%s) loaded, cv/ce/cb/ %d/%d/%d",
-        resource->name, targetNode->mName.data, vbo->verticesCount, vbo->elementsCount, vbo->vaosCount);
+        resource->name, targetNode->mName.data, mesh->verticesCount, mesh->elementsCount, mesh->vaosCount);
     aiReleaseImport(scene);
     aiReleasePropertyStore(importProrerties);
 
     return LITE3D_TRUE;
 }
 
-void lite3d_vbo_order_mat_indexes(lite3d_vbo *vbo)
+void lite3d_indexed_mesh_order_mat_indexes(lite3d_indexed_mesh *mesh)
 {
     lite3d_list_node *vaoLink;
     uint32_t materialIndex = 0;
-    SDL_assert(vbo);
+    SDL_assert(mesh);
 
-    for (vaoLink = vbo->vaos.l.next;
-        vaoLink != &vbo->vaos.l; vaoLink = lite3d_list_next(vaoLink))
+    for (vaoLink = mesh->vaos.l.next;
+        vaoLink != &mesh->vaos.l; vaoLink = lite3d_list_next(vaoLink))
     {
-        LITE3D_MEMBERCAST(lite3d_vao, vaoLink, inVbo)->
+        LITE3D_MEMBERCAST(lite3d_mesh_chunk, vaoLink, inVbo)->
             materialIndex = materialIndex++;
     }
 }

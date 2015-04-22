@@ -29,16 +29,16 @@ protected:
 
 static int meshLoadingTest(void *userdata)
 {
-    lite3d_vbo mVBO;
+    lite3d_indexed_mesh mVBO;
     lite3d_resource_pack *fileSysPack = lite3d_resource_pack_open("tests/", 0, 1000000);
     EXPECT_TRUE(fileSysPack != NULL);
     lite3d_resource_file *meshFile = lite3d_resource_pack_file_load(fileSysPack, 
         "pack/minigun/minigun.3ds");
-    EXPECT_TRUE(lite3d_vbo_init(&mVBO) == LITE3D_TRUE);
-    EXPECT_TRUE(lite3d_vbo_load(&mVBO, meshFile, NULL, LITE3D_VBO_STATIC_DRAW, 0) == LITE3D_TRUE);
+    EXPECT_TRUE(lite3d_indexed_mesh_init(&mVBO) == LITE3D_TRUE);
+    EXPECT_TRUE(lite3d_indexed_mesh_load(&mVBO, meshFile, NULL, LITE3D_VBO_STATIC_DRAW, 0) == LITE3D_TRUE);
 
 
-    lite3d_vbo_purge(&mVBO);
+    lite3d_indexed_mesh_purge(&mVBO);
     lite3d_resource_pack_close(fileSysPack);
     /* quit immediatly */
     return LITE3D_FALSE;

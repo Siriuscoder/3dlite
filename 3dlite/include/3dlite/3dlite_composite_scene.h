@@ -19,14 +19,14 @@
 #define	LITE3D_MESHES_RENDER_H
 
 #include <3dlite/3dlite_common.h>
-#include <3dlite/3dlite_vbo.h>
+#include <3dlite/3dlite_mesh.h>
 #include <3dlite/3dlite_scene.h>
 #include <3dlite/3dlite_material.h>
 
 typedef struct lite3d_composite_scene_node
 {
     lite3d_scene_node node;
-    lite3d_vbo *vbo; 
+    lite3d_indexed_mesh *mesh; 
 } lite3d_composite_scene_node;
 
 typedef struct lite3d_composite_scene
@@ -35,13 +35,13 @@ typedef struct lite3d_composite_scene
     lite3d_list renderUnitQueue;
     void (*drawBatch)(struct lite3d_composite_scene *scene, 
         struct lite3d_composite_scene_node *node, 
-        lite3d_vao *vao, lite3d_material *material);
+        lite3d_mesh_chunk *meshChunk, lite3d_material *material);
 } lite3d_composite_scene;
 
 LITE3D_CEXPORT void lite3d_composite_scene_init(lite3d_composite_scene *scene);
 LITE3D_CEXPORT void lite3d_composite_scene_purge(lite3d_composite_scene *scene);
 LITE3D_CEXPORT void lite3d_composite_scene_node_init(lite3d_composite_scene_node *node,
-    lite3d_vbo *vbo);
+    lite3d_indexed_mesh *mesh);
 LITE3D_CEXPORT int lite3d_composite_scene_add_node(
     lite3d_composite_scene *scene, 
     lite3d_composite_scene_node *node,

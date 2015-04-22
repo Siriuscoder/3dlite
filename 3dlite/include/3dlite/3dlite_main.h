@@ -24,8 +24,8 @@
 #include <3dlite/3dlite_alloc.h>
 #include <3dlite/3dlite_logger.h>
 #include <3dlite/3dlite_render.h>
-#include <3dlite/3dlite_vbo.h>
-#include <3dlite/3dlite_vbo_loader.h>
+#include <3dlite/3dlite_mesh.h>
+#include <3dlite/3dlite_mesh_loader.h>
 #include <3dlite/3dlite_composite_scene.h>
 #include <3dlite/3dlite_timer.h>
 

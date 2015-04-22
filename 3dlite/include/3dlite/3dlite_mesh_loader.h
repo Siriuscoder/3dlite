@@ -19,7 +19,7 @@
 #define	LITE3D_VBO_LOADER_H
 
 #include <3dlite/3dlite_common.h>
-#include <3dlite/3dlite_vbo.h>
+#include <3dlite/3dlite_mesh.h>
 #include <3dlite/3dlite_resource_pack.h>
 
 /* legacy types, now not used  */
@@ -34,41 +34,41 @@
 #define LITE3D_FLIP_UV_FLAG                   0x2
 #define LITE3D_MERGE_NODES_FLAG               0x4
 
-typedef struct lite3d_vbo_layout
+typedef struct lite3d_indexed_mesh_layout
 {
     uint8_t binding;
     uint8_t count; /* count elements in component */
-} lite3d_vbo_layout;
+} lite3d_indexed_mesh_layout;
 /*
     note:
         function load mesh model with specified *name* from *resource*,
         if *resource* is NULL then first model node from *file* will be load.
 */
-LITE3D_CEXPORT int lite3d_vbo_load(lite3d_vbo *vbo, lite3d_resource_file *resource, 
+LITE3D_CEXPORT int lite3d_indexed_mesh_load(lite3d_indexed_mesh *mesh, lite3d_resource_file *resource, 
     const char *name, uint16_t access, uint32_t flags);
 
 
-LITE3D_CEXPORT int lite3d_vbo_load_from_memory(lite3d_vbo *vbo, 
+LITE3D_CEXPORT int lite3d_indexed_mesh_load_from_memory(lite3d_indexed_mesh *mesh, 
     const void *vertices, 
     size_t verticesCount, 
-    const lite3d_vbo_layout *layout,
+    const lite3d_indexed_mesh_layout *layout,
     size_t layoutCount,
     const void *indexes, 
     size_t elementsCount, 
     uint8_t indexComponents, 
     uint16_t access);
 
-LITE3D_CEXPORT int lite3d_vbo_extend_from_memory(lite3d_vbo *vbo, 
+LITE3D_CEXPORT int lite3d_indexed_mesh_extend_from_memory(lite3d_indexed_mesh *mesh, 
     const void *vertices, 
     size_t verticesCount, 
-    const lite3d_vbo_layout *layout,
+    const lite3d_indexed_mesh_layout *layout,
     size_t layoutCount,
     const void *indexes, 
     size_t elementsCount, 
     uint8_t indexComponents, 
     uint16_t access);
 
-LITE3D_CEXPORT void lite3d_vbo_order_mat_indexes(lite3d_vbo *vbo);
+LITE3D_CEXPORT void lite3d_indexed_mesh_order_mat_indexes(lite3d_indexed_mesh *mesh);
 
 #endif	/* LITE3D_VBO_LOADER_H */
 

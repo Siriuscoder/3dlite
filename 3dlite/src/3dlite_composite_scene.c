@@ -25,7 +25,7 @@ typedef struct lite3d_mqr_node
 {
     lite3d_list_node unit;
     lite3d_composite_scene_node *node;
-    lite3d_vao *vao;
+    lite3d_mesh_chunk *meshChunk;
 } lite3d_mqr_node;
 
 typedef struct lite3d_mqr_unit
@@ -40,7 +40,7 @@ static void mqr_unit_render(lite3d_material_pass *pass, void *data)
     lite3d_mqr_unit *mqrUnit = (lite3d_mqr_unit *) data;
     lite3d_mqr_node *mqrNode;
     lite3d_list_node *mqrListNode;
-    lite3d_vao *prevVao = NULL;
+    lite3d_mesh_chunk *prevVao = NULL;
     lite3d_scene *base = NULL;
     lite3d_composite_scene *scene = NULL;
 
@@ -53,11 +53,11 @@ static void mqr_unit_render(lite3d_material_pass *pass, void *data)
         if (!mqrNode->node->node.renderable)
             continue;
 
-        /* bind vao */
-        if (prevVao != mqrNode->vao)
+        /* bind meshChunk */
+        if (prevVao != mqrNode->meshChunk)
         {
-            lite3d_vao_bind(mqrNode->vao);
-            prevVao = mqrNode->vao;
+            lite3d_mesh_chunk_bind(mqrNode->meshChunk);
+            prevVao = mqrNode->meshChunk;
         }
 
         base = (lite3d_scene *) mqrNode->node->node.scene;
@@ -71,17 +71,17 @@ static void mqr_unit_render(lite3d_material_pass *pass, void *data)
         /* do render batch */
         if (scene->drawBatch)
             scene->drawBatch(scene, mqrNode->node,
-            mqrNode->vao, mqrUnit->material);
-        lite3d_vao_draw(mqrNode->vao);
+            mqrNode->meshChunk, mqrUnit->material);
+        lite3d_mesh_chunk_draw(mqrNode->meshChunk);
         base->stats.batches++;
-        base->stats.trianglesRendered += mqrNode->vao->elementsCount;
-        base->stats.verticesRendered += mqrNode->vao->verticesCount;
+        base->stats.trianglesRendered += mqrNode->meshChunk->elementsCount;
+        base->stats.verticesRendered += mqrNode->meshChunk->verticesCount;
     }
 
     if (base)
         base->stats.materialPassed++;
 
-    lite3d_vao_unbind(prevVao);
+    lite3d_mesh_chunk_unbind(prevVao);
 }
 
 static void mqr_render(struct lite3d_scene *base, lite3d_camera *camera)
@@ -113,7 +113,7 @@ static lite3d_mqr_node *check_mqr_material_index_exist(lite3d_mqr_unit *unit,
         mqrListNode != &unit->nodes.l; mqrListNode = lite3d_list_next(mqrListNode))
     {
         mqrNode = LITE3D_MEMBERCAST(lite3d_mqr_node, mqrListNode, unit);
-        if (mqrNode->node == node && mqrNode->vao->materialIndex == index)
+        if (mqrNode->node == node && mqrNode->meshChunk->materialIndex == index)
             return mqrNode;
     }
 
@@ -142,29 +142,29 @@ static void mqr_unit_add_node(lite3d_mqr_unit *unit, lite3d_mqr_node *node)
     lite3d_mqr_node *mqrNode;
     lite3d_list_node *mqrListNode;
 
-    /* insert node info list group by vao */
-    /* it guarantee what node will be sorted by vao */
+    /* insert node info list group by meshChunk */
+    /* it guarantee what node will be sorted by meshChunk */
     for (mqrListNode = unit->nodes.l.next;
         mqrListNode != &unit->nodes.l; mqrListNode = lite3d_list_next(mqrListNode))
     {
         mqrNode = LITE3D_MEMBERCAST(lite3d_mqr_node, mqrListNode, unit);
-        if (mqrNode->vao == node->vao)
+        if (mqrNode->meshChunk == node->meshChunk)
         {
             lite3d_list_insert_after_link(&node->unit, &mqrNode->unit);
             return;
         }
     }
 
-    /* vao contained in node not found.. */
+    /* meshChunk contained in node not found.. */
     lite3d_list_add_last_link(&node->unit, &unit->nodes);
 }
 
-void lite3d_composite_scene_node_init(lite3d_composite_scene_node *node, lite3d_vbo *vbo)
+void lite3d_composite_scene_node_init(lite3d_composite_scene_node *node, lite3d_indexed_mesh *mesh)
 {
     SDL_assert(node);
 
     lite3d_scene_node_init(&node->node);
-    node->vbo = vbo;
+    node->mesh = mesh;
 
     node->node.enabled = LITE3D_TRUE;
     node->node.renderable = LITE3D_TRUE;
@@ -246,8 +246,8 @@ int lite3d_composite_scene_node_attach_material(
             sizeof (lite3d_mqr_node));
         lite3d_list_link_init(&mqrNode->unit);
         mqrNode->node = node;
-        mqrNode->vao = lite3d_vao_get_by_index(node->vbo, index);
-        if (!mqrNode->vao)
+        mqrNode->meshChunk = lite3d_mesh_chunk_get_by_index(node->mesh, index);
+        if (!mqrNode->meshChunk)
         {
             SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
                 "%s: Material index %d not found in mesh..", __FUNCTION__);

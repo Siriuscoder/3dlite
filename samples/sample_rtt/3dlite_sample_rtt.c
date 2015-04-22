@@ -36,7 +36,7 @@ static lite3d_material mBoxMaterial;
 static lite3d_shader_program mProgram;
 static lite3d_camera mCamera01;
 static lite3d_camera mCamera02;
-static lite3d_vbo mCubeVbo;
+static lite3d_indexed_mesh mCubeVbo;
 static lite3d_render_target mRTT;
 
 static kmVec3 cameraInitPos = {
@@ -250,14 +250,14 @@ static int initCube(void)
         22, 23, 20
     };
 
-    const lite3d_vbo_layout layout[] = {
+    const lite3d_indexed_mesh_layout layout[] = {
         { LITE3D_BUFFER_BINDING_ATTRIBUTE, 3},
         { LITE3D_BUFFER_BINDING_ATTRIBUTE, 2}
     };
 
-    if (!lite3d_vbo_init(&mCubeVbo))
+    if (!lite3d_indexed_mesh_init(&mCubeVbo))
         return LITE3D_FALSE;
-    if (!lite3d_vbo_load_from_memory(&mCubeVbo, cubeVertices, 24, layout, 2, cubeIndices, 12, 3, LITE3D_VBO_STATIC_DRAW))
+    if (!lite3d_indexed_mesh_load_from_memory(&mCubeVbo, cubeVertices, 24, layout, 2, cubeIndices, 12, 3, LITE3D_VBO_STATIC_DRAW))
         return LITE3D_FALSE;
 
     return LITE3D_TRUE;
@@ -345,7 +345,7 @@ static int init(void *userdata)
 
 static int shutdown(void *userdata)
 {
-    lite3d_vbo_purge(&mCubeVbo);
+    lite3d_indexed_mesh_purge(&mCubeVbo);
     lite3d_material_purge(&mRenderTextureMaterial);
     lite3d_material_purge(&mBoxMaterial);
 
