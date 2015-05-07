@@ -58,16 +58,16 @@ static int mesh_append_chunk(lite3d_indexed_mesh *mesh,
     }
 
     /* VAO set current */
-    glBindVertexArray(meshChunk->vaoID);
+    glBindVertexArray(meshChunk->vao.vaoID);
     /* use single VBO to store all data */
-    glBindBuffer(GL_ARRAY_BUFFER, mesh->vboVerticesID);
+    glBindBuffer(GL_ARRAY_BUFFER, mesh->vertexBuffer.vboID);
     /* bind all arrays and attribs into the current VAO */
     for (; i < layoutCount; ++i)
     {
         if(layout[i].binding != LITE3D_BUFFER_BINDING_ATTRIBUTE)
         {
             SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION, "VBO: 0x%x: chunk 0x%x used "
-                "legacy binding type attribute",  mesh->vboVerticesID, meshChunk->vaoID);
+                "legacy binding type attribute",  mesh->vertexBuffer.vboID, meshChunk->vao.vaoID);
             continue;
         }
 
@@ -78,29 +78,29 @@ static int mesh_append_chunk(lite3d_indexed_mesh *mesh,
         vOffset += layout[i].count * sizeof (GLfloat);
     }
 
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->vboIndexesID);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->indexBuffer.vboID);
     /* end VAO binding */
     glBindVertexArray(0);
 
-    meshChunk->indexesOffset = indexesOffset;
-    meshChunk->indexType = indexComponentSize == 1 ? GL_UNSIGNED_BYTE :
+    meshChunk->vao.indexesOffset = indexesOffset;
+    meshChunk->vao.indexType = indexComponentSize == 1 ? GL_UNSIGNED_BYTE :
         (indexComponentSize == 2 ? GL_UNSIGNED_SHORT : GL_UNSIGNED_INT);
-    meshChunk->elementType = indexComponents == 1 ? GL_POINTS :
+    meshChunk->vao.elementType = indexComponents == 1 ? GL_POINTS :
         (indexComponents == 2 ? GL_LINES : GL_TRIANGLES);
-    meshChunk->elementsCount = elementsCount;
-    meshChunk->indexesCount = elementsCount * indexComponents;
-    meshChunk->indexesSize = indexesSize;
-    meshChunk->verticesCount = verticesCount;
-    meshChunk->verticesSize = verticesSize;
-    meshChunk->verticesOffset = verticesOffset;
-    meshChunk->ownVbo = mesh;
+    meshChunk->vao.elementsCount = elementsCount;
+    meshChunk->vao.indexesCount = elementsCount * indexComponents;
+    meshChunk->vao.indexesSize = indexesSize;
+    meshChunk->vao.verticesCount = verticesCount;
+    meshChunk->vao.verticesSize = verticesSize;
+    meshChunk->vao.verticesOffset = verticesOffset;
+    meshChunk->ownMesh = mesh;
 
-    lite3d_list_add_last_link(&meshChunk->inVbo, &mesh->vaos);
-    mesh->vaosCount++;
+    lite3d_list_add_last_link(&meshChunk->node, &mesh->chunks);
+    mesh->chunkCount++;
 
     SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "VBO: 0x%x: chunk 0x%x: %s, cv/ov/sv %d/%db/%db, ce/oe %d/%db",
-        mesh->vboVerticesID, meshChunk->vaoID, indexComponents == 1 ? "POINTS" : (indexComponents == 2 ? "LINES" : "TRIANGLES"),
-        meshChunk->verticesCount, meshChunk->verticesOffset, stride, meshChunk->elementsCount, meshChunk->indexesOffset);
+        mesh->vertexBuffer.vboID, meshChunk->vao.vaoID, indexComponents == 1 ? "POINTS" : (indexComponents == 2 ? "LINES" : "TRIANGLES"),
+        meshChunk->vao.verticesCount, meshChunk->vao.verticesOffset, stride, meshChunk->vao.elementsCount, meshChunk->vao.indexesOffset);
 
     return LITE3D_TRUE;
 }
@@ -266,7 +266,7 @@ static int ai_node_load_to_vbo(lite3d_indexed_mesh *meshInst, const struct aiSce
             return LITE3D_FALSE;
 
         /* set material index to currently added meshChunk */
-        LITE3D_MEMBERCAST(lite3d_mesh_chunk, lite3d_list_last_link(&meshInst->vaos), inVbo)->
+        LITE3D_MEMBERCAST(lite3d_mesh_chunk, lite3d_list_last_link(&meshInst->chunks), node)->
             materialIndex = mesh->mMaterialIndex;
 
         lite3d_free(vertices);
@@ -293,7 +293,7 @@ int lite3d_indexed_mesh_load_from_memory(lite3d_indexed_mesh *mesh,
     SDL_assert(mesh && layout);
 
     lite3d_misc_gl_error_stack_clean();
-    glBindBuffer(GL_ARRAY_BUFFER, mesh->vboVerticesID);
+    glBindBuffer(GL_ARRAY_BUFFER, mesh->vertexBuffer.vboID);
     if (lite3d_misc_check_gl_error())
         return LITE3D_FALSE;
 
@@ -305,7 +305,7 @@ int lite3d_indexed_mesh_load_from_memory(lite3d_indexed_mesh *mesh,
     if (lite3d_misc_check_gl_error())
         return LITE3D_FALSE;
 
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->vboIndexesID);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->indexBuffer.vboID);
     if (lite3d_misc_check_gl_error())
         return LITE3D_FALSE;
 
@@ -324,8 +324,8 @@ int lite3d_indexed_mesh_load_from_memory(lite3d_indexed_mesh *mesh,
 
     mesh->verticesCount = verticesCount;
     mesh->elementsCount = elementsCount;
-    mesh->verticesSize = verticesSize;
-    mesh->indexesSize = indexesSize;
+    mesh->vertexBuffer.size = verticesSize;
+    mesh->indexBuffer.size = indexesSize;
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
@@ -344,12 +344,13 @@ int lite3d_indexed_mesh_extend_from_memory(lite3d_indexed_mesh *mesh,
     uint16_t access)
 {
     size_t verticesSize = 0, indexesSize = 0,
-        stride = 0, i;
+        stride = 0, i, offsetVertices = 0,
+        offsetIndexes = 0;
     uint8_t componentSize;
 
     SDL_assert(mesh && layout);
 
-    if (lite3d_list_is_empty(&mesh->vaos))
+    if (lite3d_list_is_empty(&mesh->chunks))
         return lite3d_indexed_mesh_load_from_memory(mesh, vertices, verticesCount,
         layout, layoutCount, indexes, elementsCount, indexComponents, access);
 
@@ -360,31 +361,31 @@ int lite3d_indexed_mesh_extend_from_memory(lite3d_indexed_mesh *mesh,
     componentSize = verticesCount <= 0xff ? 1 : (verticesCount <= 0xffff ? 2 : 4);
     indexesSize = indexComponents * componentSize * elementsCount;
     /* expand VBO */
+    offsetVertices = mesh->vertexBuffer.size;
+    offsetIndexes = mesh->indexBuffer.size;
     if (!lite3d_indexed_mesh_extend(mesh, verticesSize, indexesSize, access))
         return LITE3D_FALSE;
 
     /* copy vertices to the end of the vertex buffer */
-    glBindBuffer(GL_ARRAY_BUFFER, mesh->vboVerticesID);
-    glBufferSubData(GL_ARRAY_BUFFER, mesh->verticesSize, verticesSize, vertices);
+    glBindBuffer(GL_ARRAY_BUFFER, mesh->vertexBuffer.vboID);
+    glBufferSubData(GL_ARRAY_BUFFER, offsetVertices, verticesSize, vertices);
     if (lite3d_misc_check_gl_error())
         return LITE3D_FALSE;
 
     /* copy indexes to the end of the index buffer */
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->vboIndexesID);
-    glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, mesh->indexesSize, indexesSize, indexes);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->indexBuffer.vboID);
+    glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, offsetIndexes, indexesSize, indexes);
     if (lite3d_misc_check_gl_error())
         return LITE3D_FALSE;
 
     /* append new batch */
     if (!mesh_append_chunk(mesh, layout, layoutCount, stride,
         indexComponents, componentSize, elementsCount,
-        indexesSize, mesh->indexesSize, verticesCount, verticesSize, mesh->verticesSize))
+        indexesSize, offsetIndexes, verticesCount, verticesSize, offsetVertices))
         return LITE3D_FALSE;
 
     mesh->verticesCount += verticesCount;
     mesh->elementsCount += elementsCount;
-    mesh->verticesSize += verticesSize;
-    mesh->indexesSize += indexesSize;
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
@@ -490,7 +491,7 @@ int lite3d_indexed_mesh_load(lite3d_indexed_mesh *mesh, lite3d_resource_file *re
     }
 
     SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "MESH: %s (%s) loaded, cv/ce/cb/ %d/%d/%d",
-        resource->name, targetNode->mName.data, mesh->verticesCount, mesh->elementsCount, mesh->vaosCount);
+        resource->name, targetNode->mName.data, mesh->verticesCount, mesh->elementsCount, mesh->chunkCount);
     aiReleaseImport(scene);
     aiReleasePropertyStore(importProrerties);
 
@@ -503,10 +504,10 @@ void lite3d_indexed_mesh_order_mat_indexes(lite3d_indexed_mesh *mesh)
     uint32_t materialIndex = 0;
     SDL_assert(mesh);
 
-    for (vaoLink = mesh->vaos.l.next;
-        vaoLink != &mesh->vaos.l; vaoLink = lite3d_list_next(vaoLink))
+    for (vaoLink = mesh->chunks.l.next;
+        vaoLink != &mesh->chunks.l; vaoLink = lite3d_list_next(vaoLink))
     {
-        LITE3D_MEMBERCAST(lite3d_mesh_chunk, vaoLink, inVbo)->
+        LITE3D_MEMBERCAST(lite3d_mesh_chunk, vaoLink, node)->
             materialIndex = materialIndex++;
     }
 }

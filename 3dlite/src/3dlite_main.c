@@ -95,7 +95,7 @@ int lite3d_main(const lite3d_global_settings *settings)
     }
 
     /* setup textures technique */
-    if (!lite3d_indexed_mesh_technique_init())
+    if (!lite3d_vbo_technique_init())
     {
         ret = LITE3D_FALSE;
         goto ret1;
