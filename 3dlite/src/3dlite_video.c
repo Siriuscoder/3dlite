@@ -82,10 +82,10 @@ static int init_gl_extensions(void)
             "%s: Glew failed.. %s\n", __FUNCTION__, glewGetErrorString(err));
     }
     
-    if (!GLEW_VERSION_3_1)
+    if (!GLEW_VERSION_2_0)
     {
         SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION,
-            "%s: GL v3.0 minimum required..", __FUNCTION__);
+            "%s: GL v2.0 minimum required..", __FUNCTION__);
         return LITE3D_FALSE;
     }
 
@@ -143,8 +143,8 @@ int lite3d_video_open(const lite3d_video_settings *settings)
         windowFlags |= SDL_WINDOW_BORDERLESS;
     }
 
-    /* Specify 3.3 openGL context */ 
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+    /* Specify 2.0 openGL context */ 
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
 
     /* setup render window */

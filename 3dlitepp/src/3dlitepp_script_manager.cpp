@@ -16,8 +16,13 @@
  *	along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
 #include <SDL_log.h>
+#include <SDL_assert.h>
 
 #include <3dlitepp/as/angelscript.h>
+#include <3dlitepp/as_helpers/scriptstdstring.h>
+#include <3dlitepp/as_helpers/scriptarray.h>
+#include <3dlitepp/as_helpers/scriptmath.h>
+
 #include <3dlitepp/3dlitepp_main.h>
 #include <3dlitepp/3dlitepp_script_manager.h>
 #include <algorithm>
@@ -137,9 +142,24 @@ namespace lite3dpp
         }
     }
 
-    void ScriptManager::registerTypes()
+    void ScriptManager::performFixedUpdate()
     {
+        ManagedScripts::const_iterator it = mManagedScripts.begin();
+        for (; it != mManagedScripts.end(); ++it)
+        {
+            it->second->performFixedUpdate();
+        }
+    }
 
+    void ScriptManager::registerGlobals()
+    {
+        RegisterStdString(mAsEngine);
+        RegisterScriptArray(mAsEngine, true);
+        RegisterStdStringUtils(mAsEngine);
+        RegisterScriptMath(mAsEngine);
+
+        SDL_assert(mAsEngine->RegisterGlobalFunction("void breakRender()",
+            asFUNCTION(lite3d_render_stop), asCALL_CDECL) >= 0);
     }
 
     void ScriptManager::init()
@@ -149,7 +169,7 @@ namespace lite3dpp
         // Set the message callback to receive information on errors in human readable form.
         mAsEngine->SetMessageCallback(asFUNCTION(asMessageListener), 0, asCALL_CDECL);
 
-        registerTypes();
+        registerGlobals();
     }
 
     void ScriptManager::shut()

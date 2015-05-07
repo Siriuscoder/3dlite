@@ -29,7 +29,8 @@ namespace lite3dpp
 
     Main::Main() :
         mResourcePackManager(this),
-        mScriptManager(this)
+        mScriptManager(this),
+        mFixedUpdatesInterval(100)
     {
         /* init memory model first
          * json parser used lite3d allocator model,
@@ -52,7 +53,7 @@ namespace lite3dpp
         json = (char *) Manageable::alloc(fileSize + 1);
         /* guard */
         json[fileSize] = 0;
-        /* read all file */
+        /* read whole file */
         if (SDL_RWread(desc, json, fileSize, 1) == 0)
         {
             Manageable::free(json);
@@ -61,7 +62,7 @@ namespace lite3dpp
         }
 
         SDL_RWclose(desc);
-        // Parse config data
+        /* Parse config data */
         JSONValue *value = JSON::Parse(json);
         if (value == NULL)
         {
@@ -187,6 +188,11 @@ namespace lite3dpp
             mInitialScriptName = JSON::wStringToString(root[L"InitScript"]->AsString());               
         }
 
+        if (root.find(L"FixedUpdatesInterval") != root.end() && root[L"FixedUpdatesInterval"]->IsNumber())
+        {
+            mFixedUpdatesInterval = root[L"FixedUpdatesInterval"]->AsInt();
+        }
+
         mSettings.renderLisneters.userdata = reinterpret_cast<void *> (this);
         mSettings.renderLisneters.preRender = Main::engineInit;
         mSettings.renderLisneters.postRender = Main::engineLeave;
@@ -236,10 +242,15 @@ namespace lite3dpp
         initResourceLocations();
         mScriptManager.init();
         mScriptManager.loadResourceFromFile(mInitialScriptName);
+
+        /* perform fixed update timer */    
+        mFixedUpdatesTimer = 
+            lite3d_timer_add(mFixedUpdatesInterval, timerFixed, this);
     }
 
     void Main::shut()
     {
+        lite3d_timer_purge(mFixedUpdatesTimer);
         mScriptManager.shut();
         mResourcePackManager.shut();
     }
@@ -257,7 +268,7 @@ namespace lite3dpp
         catch (std::exception &ex)
         {
             SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
-                         "engineInit error detected: %s", ex.what());
+                         "engineInit: %s", ex.what());
         }
 
         return LITE3D_FALSE;
@@ -274,7 +285,7 @@ namespace lite3dpp
         catch (std::exception &ex)
         {
             SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
-                         "engineLeave error detected: %s", ex.what());
+                         "engineLeave: %s", ex.what());
         }
 
         return LITE3D_FALSE;
@@ -291,7 +302,7 @@ namespace lite3dpp
         catch (std::exception &ex)
         {
             SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
-                         "engineFrameBegin error detected: %s", ex.what());
+                         "engineFrameBegin: %s", ex.what());
         }
 
         return LITE3D_FALSE;
@@ -308,9 +319,25 @@ namespace lite3dpp
         catch (std::exception &ex)
         {
             SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
-                         "engineFrameEnd error detected: %s", ex.what());
+                         "engineFrameEnd: ", ex.what());
         }
 
         return LITE3D_FALSE;
+    }
+
+    void Main::timerFixed(lite3d_timer *timer)
+    {
+        Main *mainObj = reinterpret_cast<Main *> (timer->userdata);
+
+        try
+        {
+            mainObj->mScriptManager.performFixedUpdate();
+        }
+        catch (std::exception &ex)
+        {
+            SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+                         "timerFixed: %s", ex.what());
+            mainObj->stop();
+        }
     }
 }

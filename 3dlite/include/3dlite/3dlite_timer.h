@@ -38,7 +38,7 @@ LITE3D_CEXPORT lite3d_timer *lite3d_timer_add(int32_t milli,
     lite3d_timer_func timerCallback, void *userdata);
 LITE3D_CEXPORT void lite3d_timer_purge(lite3d_timer *timer);
 
-void lite3d_timer_induce(uint64_t timeMark);
+void lite3d_timer_induce(uint64_t timeMark, uint64_t freq);
 
 #endif	/* LITE3D_TIMER_H */
 

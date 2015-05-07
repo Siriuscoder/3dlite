@@ -43,14 +43,15 @@ namespace lite3dpp
         /* script callers */
         virtual void performFrameBegin();
         virtual void performFrameEnd();
-        
+        virtual void performFixedUpdate();
+
         /* init script engine, bind types */
         virtual void init();
         virtual void shut();
         
     private:
         
-        void registerTypes();
+        void registerGlobals();
         
     private:
 

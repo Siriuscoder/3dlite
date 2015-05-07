@@ -19,5 +19,6 @@
                 "tests/pack.1"
         ],
         
-        "InitScript": "pack/scripts/run.as"
+        "InitScript": "pack/scripts/run.as",
+		"FixedUpdatesInterval": 1000
 }

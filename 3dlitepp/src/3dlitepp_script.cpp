@@ -78,6 +78,7 @@ namespace lite3dpp
         mShutFunction = mod->GetFunctionByDecl("void shut()");
         mFrameBeginFunction = mod->GetFunctionByDecl("void frameBegin()");
         mFrameEndFunction = mod->GetFunctionByDecl("void frameEnd()");
+        mFixedUpdateFunction = mod->GetFunctionByDecl("void fixedUpdate()");
 
         mContext = mScriptEngine->CreateContext();
         SDL_assert_release(mContext);
@@ -88,26 +89,26 @@ namespace lite3dpp
         }
     }
 
-    void Script::checkScriptExec(int ret)
+    void Script::checkScriptExec(int code)
     {
-        if (ret != asEXECUTION_FINISHED)
+        if (code != asEXECUTION_FINISHED)
         {
-            if (ret == asEXECUTION_EXCEPTION)
+            if (code == asEXECUTION_EXCEPTION)
             {
                 SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, 
-                             "Script %s exception occurred %s",
+                             "Script %s unexpected broken: %s",
                              mScriptName.c_str(), mContext->GetExceptionString());
                 
                 throw std::runtime_error(mContext->GetExceptionString());
             }
-            else if (ret == asEXECUTION_ERROR)
+            else if (code == asEXECUTION_ERROR)
             {
                 SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, 
                              "Script %s execution error..",
                              mScriptName.c_str());
                 
-                throw std::runtime_error(lite3dpp_string("Script") +
-                                         mScriptName + "execution error..");
+                throw std::runtime_error(lite3dpp_string("Script ") +
+                                         mScriptName + " execution error..");
             }
         }
     }
@@ -139,6 +140,15 @@ namespace lite3dpp
         if (mFrameEndFunction)
         {
             mContext->Prepare(mFrameEndFunction);
+            checkScriptExec(mContext->Execute());
+        }
+    }
+
+    void Script::performFixedUpdate()
+    {
+        if (mFixedUpdateFunction)
+        {
+            mContext->Prepare(mFixedUpdateFunction);
             checkScriptExec(mContext->Execute());
         }
     }

@@ -204,10 +204,12 @@ void lite3d_render_loop(lite3d_render_listeners *callbacks)
             /* get time mark */
             beginFrameMark = SDL_GetPerformanceCounter();
             /* induce timers using time mark */
-            lite3d_timer_induce(beginFrameMark);
+            lite3d_timer_induce(beginFrameMark, gPerfFreq);
             
             if (gRenderListeners.preFrame && 
                 !gRenderListeners.preFrame(gRenderListeners.userdata))
+                break;
+            if (!gRenderStarted)
                 break;
             if (!update_render_targets())
                 break;

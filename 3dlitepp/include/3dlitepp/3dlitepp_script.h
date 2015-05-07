@@ -29,6 +29,7 @@ namespace lite3dpp
 
         virtual void performFrameBegin() = 0;
         virtual void performFrameEnd() = 0;
+        virtual void performFixedUpdate() = 0;
     };
 
     class LITE3DPP_EXPORT Script : public ScriptExecuteByEvents
@@ -48,6 +49,7 @@ namespace lite3dpp
 
         virtual void performFrameBegin();
         virtual void performFrameEnd();
+        virtual void performFixedUpdate();
 
     private:
         
@@ -63,6 +65,7 @@ namespace lite3dpp
         asIScriptFunction *mShutFunction;
         asIScriptFunction *mFrameBeginFunction;
         asIScriptFunction *mFrameEndFunction;
+        asIScriptFunction *mFixedUpdateFunction;
         asIScriptContext *mContext;
     };
 }

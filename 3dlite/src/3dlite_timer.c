@@ -53,7 +53,7 @@ void lite3d_timer_purge(lite3d_timer *timer)
     lite3d_free_pooled(LITE3D_POOL_NO1, timer);
 }
 
-void lite3d_timer_induce(uint64_t timeMark)
+void lite3d_timer_induce(uint64_t timeMark, uint64_t freq)
 {
     lite3d_list_node *link;
     lite3d_timer *timer;
@@ -65,7 +65,8 @@ void lite3d_timer_induce(uint64_t timeMark)
         if (!timer->enabled)
             continue;
         
-        if ((timeMark - timer->lastTick) >= timer->interval)
+        freq /= 1000;
+        if ((timeMark - timer->lastTick) >= (freq * timer->interval))
         {
             if (timer->lastTick && timer->ontimer)
                 timer->ontimer(timer);

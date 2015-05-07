@@ -52,6 +52,7 @@ namespace lite3dpp
         static int engineLeave(void *userdata);
         static int engineFrameBegin(void *userdata);
         static int engineFrameEnd(void *userdata);
+        static void timerFixed(lite3d_timer *timer);
 
         void initResourceLocations();
         void init();
@@ -64,5 +65,7 @@ namespace lite3dpp
         stl<lite3dpp_string>::set mResourceLocations;
         lite3d_global_settings mSettings;
         lite3dpp_string mInitialScriptName;
+        int32_t mFixedUpdatesInterval;
+        lite3d_timer *mFixedUpdatesTimer;
     };
 }
