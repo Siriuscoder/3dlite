@@ -28,7 +28,7 @@ macro(source_files DIRECTORY)
 	
 	get_filename_component(DIR_NAME ${DIRECTORY} NAME)
 	
-	if(${DIR_NAME} STREQUAL "src")
+	if(${DIR_NAME} STREQUAL "src" OR ${DIRECTORY} STREQUAL ".")
 		unset(DIR_NAME)
 	endif()
 	
@@ -47,7 +47,7 @@ macro(headers_files DIRECTORY)
 	
 	get_filename_component(DIR_NAME ${DIRECTORY} NAME)
 	
-	if(${DIR_NAME} MATCHES "3dlite")
+	if(${DIR_NAME} MATCHES "3dlite" OR ${DIRECTORY} STREQUAL ".")
 		unset(DIR_NAME)
 	endif()
 	

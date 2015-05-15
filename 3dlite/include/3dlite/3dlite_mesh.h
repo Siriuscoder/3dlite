@@ -21,6 +21,12 @@
 #include <3dlite/3dlite_common.h>
 #include <3dlite/3dlite_vbo.h>
 
+typedef struct lite3d_indexed_mesh_layout
+{
+    uint8_t binding;
+    uint8_t count; /* count elements in component */
+} lite3d_indexed_mesh_layout;
+
 typedef struct lite3d_indexed_mesh
 {
     lite3d_vbo vertexBuffer;
@@ -36,6 +42,8 @@ typedef struct lite3d_mesh_chunk
     lite3d_list_node node;
     lite3d_vao vao;
     lite3d_indexed_mesh *ownMesh;
+    size_t layoutEntriesCount;
+    lite3d_indexed_mesh_layout *layout;
     /* material index */
     uint32_t materialIndex;
 } lite3d_mesh_chunk;

@@ -34,11 +34,6 @@
 #define LITE3D_FLIP_UV_FLAG                   0x2
 #define LITE3D_MERGE_NODES_FLAG               0x4
 
-typedef struct lite3d_indexed_mesh_layout
-{
-    uint8_t binding;
-    uint8_t count; /* count elements in component */
-} lite3d_indexed_mesh_layout;
 /*
     note:
         function load mesh model with specified *name* from *resource*,
@@ -46,6 +41,12 @@ typedef struct lite3d_indexed_mesh_layout
 */
 LITE3D_CEXPORT int lite3d_indexed_mesh_load(lite3d_indexed_mesh *mesh, lite3d_resource_file *resource, 
     const char *name, uint16_t access, uint32_t flags);
+/*
+    note:
+        function load mesh model from m file represented by *resource*
+*/
+LITE3D_CEXPORT int lite3d_indexed_mesh_load_from_m_file(lite3d_indexed_mesh *mesh, lite3d_resource_file *resource, 
+    uint16_t access);
 
 
 LITE3D_CEXPORT int lite3d_indexed_mesh_load_from_memory(lite3d_indexed_mesh *mesh, 

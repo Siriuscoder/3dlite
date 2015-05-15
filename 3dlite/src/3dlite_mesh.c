@@ -159,6 +159,8 @@ void lite3d_mesh_chunk_purge(struct lite3d_mesh_chunk *meshChunk)
 {
     SDL_assert(meshChunk);
     lite3d_vao_purge(&meshChunk->vao);
+    if(meshChunk->layoutEntriesCount > 0)
+        lite3d_free(meshChunk->layout);
     lite3d_free_pooled(LITE3D_POOL_NO1, meshChunk);
 }
 

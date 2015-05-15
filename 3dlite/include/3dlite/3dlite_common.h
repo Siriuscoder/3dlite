@@ -88,16 +88,16 @@
 #define LITE3D_CEXPORT  LITE3D_EXPORT LITE3D_EXTERN
 #define LITE3D_CPPEXPORT  LITE3D_CLASS_EXPORT LITE3D_EXTERN
 
-#define VERSION_MAJ         0
-#define VERSION_MIN         0
-#define VERSION_PCH         1
+#define LITE3D_VERSION_MAJ         0
+#define LITE3D_VERSION_MIN         0
+#define LITE3D_VERSION_PCH         1
 
-#define VERSION_STRING      STR(VERSION_MAJ) "." STR(VERSION_MIN) \
-    "." STR(VERSION_PCH)
-#define FULL_VERSION        VERSION_STRING " at " __DATE__ " " __TIME__ \
+#define LITE3D_VERSION_STRING      STR(LITE3D_VERSION_MAJ) "." STR(LITE3D_VERSION_MIN) \
+    "." STR(LITE3D_VERSION_PCH)
+#define LITE3D_FULL_VERSION        LITE3D_VERSION_STRING " at " __DATE__ " " __TIME__ \
     " " COMPILER_VERSION
-#define VERSION_NUM         (uint32_t)((((uint32_t)VERSION_MAJ) << 16) | \
-    (((uint32_t)VERSION_MIN) << 8) | ((uint32_t)VERSION_PCH))
+#define LITE3D_VERSION_NUM         (uint32_t)((((uint32_t)LITE3D_VERSION_MAJ) << 16) | \
+    (((uint32_t)LITE3D_VERSION_MIN) << 8) | ((uint32_t)LITE3D_VERSION_PCH))
 
 
 #define LITE3D_MAX_FILE_PATH    1024

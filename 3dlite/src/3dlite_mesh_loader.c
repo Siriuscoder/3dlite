@@ -29,6 +29,7 @@
 #include <3dlite/3dlite_alloc.h>
 #include <3dlite/3dlite_misc.h>
 #include <3dlite/3dlite_mesh_loader.h>
+#include <3dlite/3dlite_m_codec.h>
 
 static int mesh_append_chunk(lite3d_indexed_mesh *mesh,
     const lite3d_indexed_mesh_layout *layout,
@@ -57,6 +58,9 @@ static int mesh_append_chunk(lite3d_indexed_mesh *mesh,
         return LITE3D_FALSE;
     }
 
+    meshChunk->layout = (lite3d_indexed_mesh_layout *)lite3d_malloc(sizeof (lite3d_indexed_mesh_layout) * layoutCount);
+    SDL_assert_release(meshChunk->layout);
+
     /* VAO set current */
     glBindVertexArray(meshChunk->vao.vaoID);
     /* use single VBO to store all data */
@@ -76,6 +80,7 @@ static int mesh_append_chunk(lite3d_indexed_mesh *mesh,
             GL_FALSE, stride, (void *) vOffset);
 
         vOffset += layout[i].count * sizeof (GLfloat);
+        meshChunk->layout[i] = layout[i];
     }
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->indexBuffer.vboID);
@@ -94,6 +99,7 @@ static int mesh_append_chunk(lite3d_indexed_mesh *mesh,
     meshChunk->vao.verticesSize = verticesSize;
     meshChunk->vao.verticesOffset = verticesOffset;
     meshChunk->ownMesh = mesh;
+    meshChunk->layoutEntriesCount = layoutCount;
 
     lite3d_list_add_last_link(&meshChunk->node, &mesh->chunks);
     mesh->chunkCount++;
@@ -511,3 +517,14 @@ void lite3d_indexed_mesh_order_mat_indexes(lite3d_indexed_mesh *mesh)
             materialIndex = materialIndex++;
     }
 }
+
+int lite3d_indexed_mesh_load_from_m_file(lite3d_indexed_mesh *mesh, lite3d_resource_file *resource, 
+    uint16_t access)
+{
+    if(!resource->isLoaded)
+        return LITE3D_FALSE;
+
+    return lite3d_indexed_mesh_m_decode(mesh, resource->fileBuff, resource->fileSize,
+        access);
+}
+

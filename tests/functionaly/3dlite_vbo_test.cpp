@@ -17,6 +17,7 @@
  *******************************************************************************/
 #include <gtest/gtest.h>
 
+#include <3dlite/3dlite_m_codec.h>
 #include "3dlite_common_test.h"
 
 class VBO_Test : public ::testing::Test
@@ -44,6 +45,28 @@ static int meshLoadingTest(void *userdata)
     return LITE3D_FALSE;
 }
 
+static int encodeDecode_M_formatTest(void *userdata)
+{
+    lite3d_indexed_mesh mVBO;
+    lite3d_resource_pack *fileSysPack = lite3d_resource_pack_open("tests/", 0, 1000000);
+    EXPECT_TRUE(fileSysPack != NULL);
+    lite3d_resource_file *meshFile = lite3d_resource_pack_file_load(fileSysPack, 
+        "pack/minigun/minigun.3ds");
+    EXPECT_TRUE(lite3d_indexed_mesh_init(&mVBO) == LITE3D_TRUE);
+    EXPECT_TRUE(lite3d_indexed_mesh_load(&mVBO, meshFile, NULL, LITE3D_VBO_STATIC_DRAW, 
+        LITE3D_OPTIMIZE_MESH_FLAG) == LITE3D_TRUE);
+
+    size_t mfileSize = lite3d_indexed_mesh_m_encode_size(&mVBO);
+    void *encodeBuffer = lite3d_malloc(mfileSize);
+    EXPECT_TRUE(lite3d_indexed_mesh_m_encode(&mVBO, encodeBuffer, mfileSize) == LITE3D_TRUE);
+
+    lite3d_free(encodeBuffer);
+    lite3d_indexed_mesh_purge(&mVBO);
+    lite3d_resource_pack_close(fileSysPack);
+    /* quit immediatly */
+    return LITE3D_FALSE;
+}
+
 TEST_F(VBO_Test, meshLoading)
 {
     mlite3dCommon.settings().renderLisneters.preRender = meshLoadingTest;
@@ -53,4 +76,10 @@ TEST_F(VBO_Test, meshLoading)
 TEST_F(VBO_Test, mapping)
 {
 
+}
+
+TEST_F(VBO_Test, encodeDecode_M_format)
+{
+    mlite3dCommon.settings().renderLisneters.preRender = encodeDecode_M_formatTest;
+    mlite3dCommon.main();
 }
