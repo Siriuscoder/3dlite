@@ -70,8 +70,11 @@
           <in>3dlite_framebuffer.c</in>
           <in>3dlite_list.c</in>
           <in>3dlite_logger.c</in>
+          <in>3dlite_m_codec.c</in>
           <in>3dlite_main.c</in>
           <in>3dlite_material.c</in>
+          <in>3dlite_mesh.c</in>
+          <in>3dlite_mesh_loader.c</in>
           <in>3dlite_misc.c</in>
           <in>3dlite_nedmalloc.c</in>
           <in>3dlite_rb_tree.c</in>
@@ -85,7 +88,6 @@
           <in>3dlite_texture_unit.c</in>
           <in>3dlite_timer.c</in>
           <in>3dlite_vbo.c</in>
-          <in>3dlite_vbo_loader.c</in>
           <in>3dlite_video.c</in>
         </df>
       </df>
@@ -240,7 +242,7 @@
           <buildCommandWorkingDir>build</buildCommandWorkingDir>
           <buildCommand>${MAKE} -f Makefile</buildCommand>
           <cleanCommand>${MAKE} -f Makefile clean</cleanCommand>
-          <executablePath>build/bin/Debug/3dlitepp_sample_script</executablePath>
+          <executablePath>build/bin/Debug/3dlite_sample_rifle</executablePath>
           <ccTool>
             <incDir>
               <pElem>3dlite/include</pElem>
@@ -351,6 +353,19 @@
           </preprocessorList>
         </cTool>
       </item>
+      <item path="3dlite/src/3dlite_m_codec.c" ex="false" tool="0" flavor2="3">
+        <cTool flags="3">
+          <incDir>
+            <pElem>/usr/include/SDL2</pElem>
+            <pElem>build/3dlite</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>GLEW_STATIC</Elem>
+            <Elem>_3dlite_EXPORTS</Elem>
+            <Elem>_REENTRANT</Elem>
+          </preprocessorList>
+        </cTool>
+      </item>
       <item path="3dlite/src/3dlite_main.c" ex="false" tool="0" flavor2="3">
         <cTool flags="3">
           <incDir>
@@ -365,6 +380,32 @@
         </cTool>
       </item>
       <item path="3dlite/src/3dlite_material.c" ex="false" tool="0" flavor2="3">
+        <cTool flags="3">
+          <incDir>
+            <pElem>/usr/include/SDL2</pElem>
+            <pElem>build/3dlite</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>GLEW_STATIC</Elem>
+            <Elem>_3dlite_EXPORTS</Elem>
+            <Elem>_REENTRANT</Elem>
+          </preprocessorList>
+        </cTool>
+      </item>
+      <item path="3dlite/src/3dlite_mesh.c" ex="false" tool="0" flavor2="3">
+        <cTool flags="3">
+          <incDir>
+            <pElem>/usr/include/SDL2</pElem>
+            <pElem>build/3dlite</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>GLEW_STATIC</Elem>
+            <Elem>_3dlite_EXPORTS</Elem>
+            <Elem>_REENTRANT</Elem>
+          </preprocessorList>
+        </cTool>
+      </item>
+      <item path="3dlite/src/3dlite_mesh_loader.c" ex="false" tool="0" flavor2="3">
         <cTool flags="3">
           <incDir>
             <pElem>/usr/include/SDL2</pElem>
@@ -534,19 +575,6 @@
         </cTool>
       </item>
       <item path="3dlite/src/3dlite_vbo.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="3">
-          <incDir>
-            <pElem>/usr/include/SDL2</pElem>
-            <pElem>build/3dlite</pElem>
-          </incDir>
-          <preprocessorList>
-            <Elem>GLEW_STATIC</Elem>
-            <Elem>_3dlite_EXPORTS</Elem>
-            <Elem>_REENTRANT</Elem>
-          </preprocessorList>
-        </cTool>
-      </item>
-      <item path="3dlite/src/3dlite_vbo_loader.c" ex="false" tool="0" flavor2="3">
         <cTool flags="3">
           <incDir>
             <pElem>/usr/include/SDL2</pElem>

@@ -31,6 +31,10 @@
 #define LITE3D_VBO_DYNAMIC_READ 0x88E9
 #define LITE3D_VBO_DYNAMIC_COPY 0x88EA
 
+#define LITE3D_VBO_MAP_READ_ONLY 0x88B8
+#define LITE3D_VBO_MAP_WRITE_ONLY 0x88B9
+#define LITE3D_VBO_MAP_READ_WRITE 0x88BA
+
 typedef struct lite3d_vbo
 {
     uint32_t vboID;
@@ -52,10 +56,19 @@ typedef struct lite3d_vao
 } lite3d_vao;
 
 LITE3D_CEXPORT int lite3d_vbo_technique_init(void);
+LITE3D_CEXPORT int lite3d_vbo_support_instancing(void);
+
 LITE3D_CEXPORT int lite3d_vbo_init(struct lite3d_vbo *vbo);
 LITE3D_CEXPORT void lite3d_vbo_purge(struct lite3d_vbo *vbo);
+LITE3D_CEXPORT void *lite3d_vbo_map(struct lite3d_vbo *vbo,
+    uint16_t access);
+LITE3D_CEXPORT void lite3d_vbo_unmap(struct lite3d_vbo *vbo);
 LITE3D_CEXPORT int lite3d_vbo_extend(struct lite3d_vbo *vbo, 
     size_t addSize, uint16_t access);
+LITE3D_CEXPORT int lite3d_vbo_buffer(struct lite3d_vbo *vbo, 
+    const void *buffer, size_t size, uint16_t access);
+LITE3D_CEXPORT int lite3d_vbo_subbuffer(struct lite3d_vbo *vbo, 
+    const void *buffer, size_t offset, size_t size);
 
 LITE3D_CEXPORT int lite3d_vao_init(struct lite3d_vao *vao);
 LITE3D_CEXPORT void lite3d_vao_purge(struct lite3d_vao *vao);

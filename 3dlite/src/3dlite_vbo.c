@@ -27,7 +27,12 @@
 #include <3dlite/3dlite_vbo.h>
 
 static int maxVertexAttribs;
-static int emulateInstancing;
+static int instancingSupport;
+
+int lite3d_vbo_support_instancing(void)
+{
+    return instancingSupport;
+}
 
 /*
 Name
@@ -136,7 +141,7 @@ static int vbo_buffer_extend(uint32_t vboID, size_t expandSize, uint16_t access)
 
 int lite3d_vbo_technique_init(void)
 {
-    emulateInstancing = LITE3D_FALSE;
+    instancingSupport = LITE3D_FALSE;
     if (!GL_VERSION_2_0)
     {
         SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION,
@@ -169,7 +174,7 @@ int lite3d_vbo_technique_init(void)
     {
         SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
             "%s: GL_ARB_instanced_arrays not supported..", __FUNCTION__);
-        emulateInstancing = LITE3D_TRUE;
+        instancingSupport = LITE3D_TRUE;
     }
 
     glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &maxVertexAttribs);
@@ -211,9 +216,72 @@ int lite3d_vbo_extend(struct lite3d_vbo *vbo, size_t addSize, uint16_t access)
 
     if (!vbo_buffer_extend(vbo->vboID, addSize, access))
         return LITE3D_FALSE;
-    
+
     vbo->size += addSize;
 
+    return LITE3D_TRUE;
+}
+
+void *lite3d_vbo_map(struct lite3d_vbo *vbo, uint16_t access)
+{
+    void *mapped;
+
+    SDL_assert(vbo);
+    lite3d_misc_gl_error_stack_clean();
+
+    glBindBuffer(GL_ARRAY_BUFFER, vbo->vboID);
+    mapped = glMapBuffer(GL_ARRAY_BUFFER, access);
+    if (lite3d_misc_check_gl_error())
+    {
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+        return NULL;
+    }
+
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    return mapped;
+}
+
+void lite3d_vbo_unmap(struct lite3d_vbo *vbo)
+{
+    SDL_assert(vbo);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo->vboID);
+    glUnmapBuffer(GL_ARRAY_BUFFER);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+}
+
+int lite3d_vbo_buffer(struct lite3d_vbo *vbo,
+    const void *buffer, size_t size, uint16_t access)
+{
+    SDL_assert(vbo);
+    lite3d_misc_gl_error_stack_clean();
+
+    glBindBuffer(GL_ARRAY_BUFFER, vbo->vboID);
+    if (lite3d_misc_check_gl_error())
+        return LITE3D_FALSE;
+
+    /* store data to GPU memory */
+    glBufferData(GL_ARRAY_BUFFER, size, buffer, access);
+    if (lite3d_misc_check_gl_error())
+        return LITE3D_FALSE;
+
+    vbo->size = size;
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    return LITE3D_TRUE;
+}
+
+int lite3d_vbo_subbuffer(struct lite3d_vbo *vbo,
+    const void *buffer, size_t offset, size_t size)
+{
+    SDL_assert(vbo);
+    lite3d_misc_gl_error_stack_clean();
+
+    /* copy vertices to the end of the vertex buffer */
+    glBindBuffer(GL_ARRAY_BUFFER, vbo->vboID);
+    glBufferSubData(GL_ARRAY_BUFFER, offset, size, buffer);
+    if (lite3d_misc_check_gl_error())
+        return LITE3D_FALSE;
+
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
     return LITE3D_TRUE;
 }
 
@@ -272,17 +340,10 @@ void lite3d_vao_draw_indexed_instanced(struct lite3d_vao *vao, size_t count)
      * (as specified by glVertexAttribDivisor) advance once every N instances. 
      */
 
-    if(!emulateInstancing)
-    {
-        glDrawElementsInstancedARB(vao->elementType, vao->indexesCount, 
-            vao->indexType, (void *) vao->indexesOffset, count);
-    }
-    else
-    {
-        size_t i = 0;
-        for(; i < count; ++i)
-            lite3d_vao_draw_indexed(vao);
-    }
+    if (!instancingSupport)
+        return;
+    glDrawElementsInstancedARB(vao->elementType, vao->indexesCount,
+        vao->indexType, (void *) vao->indexesOffset, count);
 }
 
 void lite3d_vao_draw(struct lite3d_vao *vao)
@@ -292,17 +353,10 @@ void lite3d_vao_draw(struct lite3d_vao *vao)
 
 void lite3d_vao_draw_instanced(struct lite3d_vao *vao, size_t count)
 {
-    if(!emulateInstancing)
-    {
-        glDrawArraysInstancedARB(vao->elementType, 0, 
-            vao->verticesCount, count);
-    }
-    else
-    {
-        size_t i = 0;
-        for(; i < count; ++i)
-            lite3d_vao_draw(vao);
-    }
+    if (!instancingSupport)
+        return;
+    glDrawArraysInstancedARB(vao->elementType, 0,
+        vao->verticesCount, count);
 }
 
 void lite3d_vao_bind(struct lite3d_vao *vao)
@@ -335,3 +389,4 @@ void lite3d_vao_purge(struct lite3d_vao *vao)
     glDeleteVertexArrays(1, &vao->vaoID);
     vao->vaoID = 0;
 }
+

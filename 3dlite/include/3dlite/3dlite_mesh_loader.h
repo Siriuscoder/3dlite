@@ -22,14 +22,6 @@
 #include <3dlite/3dlite_mesh.h>
 #include <3dlite/3dlite_resource_pack.h>
 
-/* legacy types, now not used  */
-#define LITE3D_BUFFER_BINDING_VERTEX          0x0
-#define LITE3D_BUFFER_BINDING_COLOR           0x1
-#define LITE3D_BUFFER_BINDING_NORMAL          0x2
-#define LITE3D_BUFFER_BINDING_TEXCOORD        0x3
-/* may be more then one, attribute index will be increased */
-#define LITE3D_BUFFER_BINDING_ATTRIBUTE       0x4
-
 #define LITE3D_OPTIMIZE_MESH_FLAG             0x1
 #define LITE3D_FLIP_UV_FLAG                   0x2
 #define LITE3D_MERGE_NODES_FLAG               0x4
