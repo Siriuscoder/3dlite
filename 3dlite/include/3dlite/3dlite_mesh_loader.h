@@ -29,7 +29,7 @@
 /*
     note:
         function load mesh model with specified *name* from *resource*,
-        if *resource* is NULL then first model node from *file* will be load.
+        if *name* is NULL then first model node from *resource* will be load.
 */
 LITE3D_CEXPORT int lite3d_indexed_mesh_load(lite3d_indexed_mesh *mesh, lite3d_resource_file *resource, 
     const char *name, uint16_t access, uint32_t flags);

@@ -135,12 +135,12 @@ static int initMaterials(void)
 static int initModel(void)
 {
     lite3d_resource_file *file1;
-    if (!(file1 = lite3d_resource_pack_file_load(mFileSysPack, "pack/minigun/minigun.3ds")))
+    if (!(file1 = lite3d_resource_pack_file_load(mFileSysPack, "pack/minigun/minigun.m")))
         return LITE3D_FALSE;
 
     if (!lite3d_indexed_mesh_init(&mModel))
         return LITE3D_FALSE;
-    if (!lite3d_indexed_mesh_load(&mModel, file1, "Minigun", LITE3D_VBO_STATIC_DRAW, LITE3D_FLIP_UV_FLAG))
+    if (!lite3d_indexed_mesh_load_from_m_file(&mModel, file1, LITE3D_VBO_STATIC_DRAW))
         return LITE3D_FALSE;
 
     return LITE3D_TRUE;

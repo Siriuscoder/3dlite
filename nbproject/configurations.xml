@@ -202,6 +202,11 @@
           </df>
         </df>
       </df>
+      <df name="tools">
+        <df name="mconverter">
+          <in>lite3d_mconverter.c</in>
+        </df>
+      </df>
     </df>
     <logicalFolder name="Modules"
                    displayName="Modules"
@@ -242,7 +247,7 @@
           <buildCommandWorkingDir>build</buildCommandWorkingDir>
           <buildCommand>${MAKE} -f Makefile</buildCommand>
           <cleanCommand>${MAKE} -f Makefile clean</cleanCommand>
-          <executablePath>build/bin/Debug/3dlite_sample_rifle</executablePath>
+          <executablePath>build/bin/Debug/mconverter</executablePath>
           <ccTool>
             <incDir>
               <pElem>3dlite/include</pElem>
@@ -1208,6 +1213,18 @@
           </incDir>
         </ccTool>
       </folder>
+      <folder path="0/tools">
+        <cTool>
+          <incDir>
+            <pElem>tools/mconverter</pElem>
+            <pElem>/usr/include/SDL2</pElem>
+            <pElem>build/tools</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>_REENTRANT</Elem>
+          </preprocessorList>
+        </cTool>
+      </folder>
       <folder path="Modules">
         <cTool>
           <incDir>
@@ -1288,6 +1305,13 @@
       <item path="tests/gtest/src/gtest_main.cc" ex="false" tool="1" flavor2="8">
         <ccTool flags="0">
         </ccTool>
+      </item>
+      <item path="tools/mconverter/lite3d_mconverter.c"
+            ex="false"
+            tool="0"
+            flavor2="3">
+        <cTool flags="2">
+        </cTool>
       </item>
     </conf>
     <conf name="Release" type="0">
