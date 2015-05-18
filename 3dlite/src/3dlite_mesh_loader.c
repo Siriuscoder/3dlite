@@ -201,6 +201,90 @@ static int ai_node_load_to_vbo(lite3d_indexed_mesh *meshInst, const struct aiSce
     return LITE3D_TRUE;
 }
 
+static int ai_node_load_recursive(const struct aiScene *scene, 
+    const struct aiNode *node, lite3d_retrieve_mesh retrieveMesh, 
+    lite3d_mesh_loaded meshLoaded, uint16_t access)
+{
+    uint32_t i;
+
+    if (node->mNumMeshes > 0)
+    {
+        lite3d_indexed_mesh *mesh;
+
+        if((mesh = retrieveMesh()) == NULL)
+            return LITE3D_FALSE;
+
+        if(!ai_node_load_to_vbo(mesh, scene, node, access))
+        {
+            SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "MESH: %s load failed..",
+                node->mName.data);
+            return LITE3D_FALSE;
+        }
+
+        meshLoaded(mesh, node->mName.data);
+    }
+
+    for (i = 0; i < node->mNumChildren; ++i)
+    {
+        if (!ai_node_load_recursive(scene, node->mChildren[i], retrieveMesh, 
+            meshLoaded, access))
+            return LITE3D_FALSE;
+    }
+
+    return LITE3D_TRUE;
+}
+
+static const struct aiScene *ai_load_scene(lite3d_resource_file *resource, uint32_t flags,
+    struct aiPropertyStore *importProrerties)
+{
+    const struct aiScene *scene = NULL;
+    struct aiMemoryInfo sceneMemory;
+    uint32_t aiflags;
+
+    SDL_assert(resource);
+
+    if (!resource->isLoaded)
+        return NULL;
+
+    /* remove this components from loaded scene */
+    /* speedup loading */
+    aiSetImportPropertyInteger(importProrerties, AI_CONFIG_PP_RVC_FLAGS,
+        aiComponent_TANGENTS_AND_BITANGENTS |
+        aiComponent_LIGHTS |
+        aiComponent_CAMERAS |
+        aiComponent_ANIMATIONS |
+        aiComponent_BONEWEIGHTS);
+    /* parse scene from memory buffered file */
+    scene = aiImportFileFromMemoryWithProperties(resource->fileBuff,
+        resource->fileSize, aiProcess_RemoveComponent, NULL, importProrerties);
+    if (!scene)
+    {
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "MESH: %s import failed.. %s",
+            resource->name, aiGetErrorString());
+        return NULL;
+    }
+
+    aiflags = aiProcess_GenSmoothNormals |
+        aiProcess_RemoveRedundantMaterials |
+        aiProcess_Triangulate |
+        aiProcess_SortByPType |
+        aiProcess_FindDegenerates |
+        aiProcess_FindInvalidData;
+
+    if (flags & LITE3D_OPTIMIZE_MESH_FLAG)
+        aiflags |= aiProcess_OptimizeMeshes |
+        aiProcess_JoinIdenticalVertices;
+    if (flags & LITE3D_FLIP_UV_FLAG)
+        aiflags |= aiProcess_FlipUVs;
+    if (flags & LITE3D_MERGE_NODES_FLAG)
+        aiflags |= aiProcess_OptimizeGraph;
+
+    aiGetMemoryRequirements(scene, &sceneMemory);
+    scene = aiApplyPostProcessing(scene, aiflags);
+
+    return scene;
+}
+
 int lite3d_indexed_mesh_load_from_memory(lite3d_indexed_mesh *mesh,
     const void *vertices,
     size_t verticesCount,
@@ -314,55 +398,13 @@ int lite3d_indexed_mesh_load(lite3d_indexed_mesh *mesh, lite3d_resource_file *re
     const struct aiScene *scene = NULL;
     const struct aiNode *targetNode = NULL;
     struct aiPropertyStore *importProrerties;
-    struct aiMemoryInfo sceneMemory;
-    uint32_t aiflags;
 
-    SDL_assert(mesh && resource);
-
-    if (!resource->isLoaded)
-        return LITE3D_FALSE;
+    SDL_assert(mesh);
 
     importProrerties = aiCreatePropertyStore();
     SDL_assert_release(importProrerties);
 
-    /* remove this components from loaded scene */
-    /* speedup loading */
-    aiSetImportPropertyInteger(importProrerties, AI_CONFIG_PP_RVC_FLAGS,
-        aiComponent_TANGENTS_AND_BITANGENTS |
-        aiComponent_LIGHTS |
-        aiComponent_CAMERAS |
-        aiComponent_ANIMATIONS |
-        aiComponent_BONEWEIGHTS);
-    /* parse scene from memory buffered file */
-    scene = aiImportFileFromMemoryWithProperties(resource->fileBuff,
-        resource->fileSize, aiProcess_RemoveComponent, NULL, importProrerties);
-    if (!scene)
-    {
-        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "MESH: %s import failed.. %s",
-            resource->name, aiGetErrorString());
-        aiReleasePropertyStore(importProrerties);
-        return LITE3D_FALSE;
-    }
-
-    aiflags = aiProcess_GenSmoothNormals |
-        aiProcess_RemoveRedundantMaterials |
-        aiProcess_Triangulate |
-        aiProcess_SortByPType |
-        aiProcess_FindDegenerates |
-        aiProcess_FindInvalidData;
-
-    if (flags & LITE3D_OPTIMIZE_MESH_FLAG)
-        aiflags |= aiProcess_OptimizeMeshes |
-        aiProcess_JoinIdenticalVertices;
-    if (flags & LITE3D_FLIP_UV_FLAG)
-        aiflags |= aiProcess_FlipUVs;
-    if (flags & LITE3D_MERGE_NODES_FLAG)
-        aiflags |= aiProcess_OptimizeGraph;
-
-    aiGetMemoryRequirements(scene, &sceneMemory);
-    scene = aiApplyPostProcessing(scene, aiflags);
-
-    if (!scene)
+    if((scene = ai_load_scene(resource, flags, importProrerties)) == NULL)
     {
         aiReleasePropertyStore(importProrerties);
         return LITE3D_FALSE;
@@ -407,6 +449,31 @@ int lite3d_indexed_mesh_load(lite3d_indexed_mesh *mesh, lite3d_resource_file *re
 
     SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "MESH: %s (%s) loaded, cv/ce/cb/ %d/%d/%d",
         resource->name, targetNode->mName.data, mesh->verticesCount, mesh->elementsCount, mesh->chunkCount);
+    aiReleaseImport(scene);
+    aiReleasePropertyStore(importProrerties);
+
+    return LITE3D_TRUE;
+}
+
+int lite3d_indexed_mesh_load_recursive(lite3d_resource_file *resource, 
+    lite3d_retrieve_mesh retrieveMesh, lite3d_mesh_loaded meshLoaded, uint16_t access, uint32_t flags)
+{
+    const struct aiScene *scene = NULL;
+    struct aiPropertyStore *importProrerties;
+    SDL_assert(retrieveMesh);
+    SDL_assert(meshLoaded);
+
+    importProrerties = aiCreatePropertyStore();
+    SDL_assert_release(importProrerties);
+
+    if((scene = ai_load_scene(resource, flags, importProrerties)) == NULL)
+    {
+        aiReleasePropertyStore(importProrerties);
+        return LITE3D_FALSE;
+    }
+
+    if(!ai_node_load_recursive(scene, scene->mRootNode, retrieveMesh, meshLoaded, access))
+        return LITE3D_FALSE;
     aiReleaseImport(scene);
     aiReleasePropertyStore(importProrerties);
 

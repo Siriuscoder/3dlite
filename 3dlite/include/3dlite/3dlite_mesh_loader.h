@@ -26,6 +26,9 @@
 #define LITE3D_FLIP_UV_FLAG                   0x2
 #define LITE3D_MERGE_NODES_FLAG               0x4
 
+typedef lite3d_indexed_mesh *(*lite3d_retrieve_mesh)(void);
+typedef void (*lite3d_mesh_loaded)(lite3d_indexed_mesh *, const char *name);
+
 /*
     note:
         function load mesh model with specified *name* from *resource*,
@@ -33,6 +36,14 @@
 */
 LITE3D_CEXPORT int lite3d_indexed_mesh_load(lite3d_indexed_mesh *mesh, lite3d_resource_file *resource, 
     const char *name, uint16_t access, uint32_t flags);
+
+/*
+    note:
+        recursive load all meshes from *resource*
+*/
+LITE3D_CEXPORT int lite3d_indexed_mesh_load_recursive(lite3d_resource_file *resource, 
+    lite3d_retrieve_mesh retrieveMesh, lite3d_mesh_loaded meshLoaded, uint16_t access, uint32_t flags);
+
 /*
     note:
         function load mesh model from m file represented by *resource*
