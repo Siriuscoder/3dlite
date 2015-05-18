@@ -33,6 +33,7 @@ static void log_to_file(FILE *desc, int category,
         (priority == SDL_LOG_PRIORITY_ERROR ? "error" : "critical"))))),
         category == SDL_LOG_CATEGORY_APPLICATION ? "app" : "sdl",
         message);
+    fflush(desc);
 }
 
 static void std_output_function(void* userdata, int category, 

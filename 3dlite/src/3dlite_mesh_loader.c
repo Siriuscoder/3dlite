@@ -26,7 +26,6 @@
 #include <assimp/postprocess.h>
 
 #include <3dlite/3dlite_alloc.h>
-#include <3dlite/3dlite_misc.h>
 #include <3dlite/3dlite_mesh_loader.h>
 #include <3dlite/3dlite_m_codec.h>
 
@@ -280,9 +279,8 @@ static const struct aiScene *ai_load_scene(lite3d_resource_file *resource, uint3
         aiflags |= aiProcess_OptimizeGraph;
 
     aiGetMemoryRequirements(scene, &sceneMemory);
-    scene = aiApplyPostProcessing(scene, aiflags);
 
-    return scene;
+    return aiApplyPostProcessing(scene, aiflags);
 }
 
 int lite3d_indexed_mesh_load_from_memory(lite3d_indexed_mesh *mesh,

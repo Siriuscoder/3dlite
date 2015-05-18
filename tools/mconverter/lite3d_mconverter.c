@@ -32,6 +32,7 @@ static char inputFilePath[1024] = {0};
 static char outputFolder[1024] = {0};
 static int optimize = LITE3D_FALSE;
 static int flipUV = LITE3D_FALSE;
+static int nonameCounter = 0;
 static lite3d_indexed_mesh model;
 
 static int save_buffer(void *buffer, size_t size, const char *path)
@@ -39,12 +40,7 @@ static int save_buffer(void *buffer, size_t size, const char *path)
     SDL_RWops *output;
     output = SDL_RWFromFile(path, "wb");
     if (!output)
-    {
-        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
-            "%s: '%s': %s",
-            __FUNCTION__, path, SDL_GetError());
         return LITE3D_FALSE;
-    }
 
     if (SDL_RWwrite(output, buffer, size, 1) != 1)
     {
@@ -70,7 +66,20 @@ static void mesh_loaded(lite3d_indexed_mesh *mesh, const char *name)
     size_t encodeBufferSize;
     char encodedFile[1024] = {0};
 
-    printf("Encoding %s ... ", name);
+    if (name == NULL || name[0] == 0)
+    {
+        sprintf(encodedFile, "%s%snoname%d.m", outputFolder, outputFolder[0] == 0 ? "" : "/",
+            ++nonameCounter);
+    }
+    else
+    {
+        sprintf(encodedFile, "%s%s%s.m", outputFolder, outputFolder[0] == 0 ? "" : "/",
+            name);
+    }
+
+    printf("Encoding %s ... ", encodedFile); 
+    fflush(stdout);
+    
     encodeBufferSize = lite3d_indexed_mesh_m_encode_size(mesh);
     encodeBuffer = lite3d_malloc(encodeBufferSize);
     if (!lite3d_indexed_mesh_m_encode(mesh, encodeBuffer, encodeBufferSize))
@@ -80,18 +89,11 @@ static void mesh_loaded(lite3d_indexed_mesh *mesh, const char *name)
     }
     else
     {
-        if(outputFolder[0] != 0)
+        if (save_buffer(encodeBuffer, encodeBufferSize, encodedFile))
         {
-            strcpy(encodedFile, outputFolder);
-            strcat(encodedFile, "/");
+            printf("done\n");
+            fflush(stdout);
         }
-
-        strcat(encodedFile, name);
-        strcat(encodedFile, ".m");
-        printf("done, saving %s ... ", encodedFile);
-
-        if(save_buffer(encodeBuffer, encodeBufferSize, encodedFile))
-            printf("done");
     }
 
     lite3d_free(encodeBuffer);
@@ -115,7 +117,7 @@ static int convert_mesh(void *userdata)
     if (flipUV)
         loadFlags |= LITE3D_FLIP_UV_FLAG;
 
-    lite3d_indexed_mesh_load_recursive(meshFile, mesh_init, mesh_loaded, 
+    lite3d_indexed_mesh_load_recursive(meshFile, mesh_init, mesh_loaded,
         LITE3D_VBO_STATIC_READ, loadFlags);
     lite3d_resource_pack_close(pack);
 
@@ -125,7 +127,7 @@ static int convert_mesh(void *userdata)
 static void print_help_and_exit()
 {
     printf("Lite3d conversion utility.\n");
-    printf("Conversion from formats supported by Assimp to internal lite3d format (m).\n\n");
+    printf("Conversion from formats supported by Assimp to internal lite3d format (m).\n");
     printf("Engine version %s\n\n", LITE3D_VERSION_STRING);
 
     printf("Usage: -i[input] file -o[output] folder -O[optimize mesh] -F[flip UVs]\n\n");
@@ -161,14 +163,14 @@ int main(int argc, char *args[])
         if (strcmp(args[i], "-i") == 0)
         {
             if ((i + 1) < argc)
-                strcpy(inputFilePath, args[i + 1]);
+                strncpy(inputFilePath, args[i + 1], sizeof (inputFilePath) - 1);
             else
                 print_help_and_exit();
         }
         else if (strcmp(args[i], "-o") == 0)
         {
             if ((i + 1) < argc)
-                strcpy(outputFolder, args[i + 1]);
+                strncpy(outputFolder, args[i + 1], sizeof (outputFolder) - 1);
             else
                 print_help_and_exit();
         }
@@ -181,6 +183,9 @@ int main(int argc, char *args[])
             flipUV = LITE3D_TRUE;
         }
     }
+
+    if (inputFilePath[0] == 0)
+        print_help_and_exit();
 
     return !lite3d_main(&settings);
 }

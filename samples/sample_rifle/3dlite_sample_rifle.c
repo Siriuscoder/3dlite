@@ -184,13 +184,16 @@ static int initMaterials(void)
 
 static int initModel(void)
 {
-    lite3d_resource_file *file1;
-    if (!(file1 = lite3d_resource_pack_file_load(mFileSysPack, "pack/plasmagun/plasmarif.3ds")))
+    lite3d_resource_file *PlasmaRifl;
+    lite3d_resource_file *Battery;
+    if (!(PlasmaRifl = lite3d_resource_pack_file_load(mFileSysPack, "pack/plasmagun/PlasmaRifl.m")))
+        return LITE3D_FALSE;
+    if (!(Battery = lite3d_resource_pack_file_load(mFileSysPack, "pack/plasmagun/Battery.m")))
         return LITE3D_FALSE;
 
     if (!lite3d_indexed_mesh_init(&mRifle))
         return LITE3D_FALSE;
-    if (!lite3d_indexed_mesh_load(&mRifle, file1, "PlasmaRifl", LITE3D_VBO_STATIC_DRAW, LITE3D_FLIP_UV_FLAG | LITE3D_OPTIMIZE_MESH_FLAG))
+    if (!lite3d_indexed_mesh_load_from_m_file(&mRifle, PlasmaRifl, LITE3D_VBO_STATIC_DRAW))
         return LITE3D_FALSE;
     /* fix material indexes to 0..maxVao */
     /* it is right way if you know how submeshes attached to real materials */
@@ -198,7 +201,7 @@ static int initModel(void)
 
     if (!lite3d_indexed_mesh_init(&mRifleBatt))
         return LITE3D_FALSE;
-    if (!lite3d_indexed_mesh_load(&mRifleBatt, file1, "Battery", LITE3D_VBO_STATIC_DRAW, LITE3D_FLIP_UV_FLAG))
+    if (!lite3d_indexed_mesh_load_from_m_file(&mRifleBatt, Battery, LITE3D_VBO_STATIC_DRAW))
         return LITE3D_FALSE;
 
     return LITE3D_TRUE;
