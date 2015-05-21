@@ -25,4 +25,6 @@ namespace lite3dpp
     void RegisterScriptTypes(asIScriptEngine *engine);
     void RegisterScriptVec3(asIScriptEngine *engine);
     void RegisterScriptVec4(asIScriptEngine *engine);
+    void RegisterScriptMat4(asIScriptEngine *engine);
+    void RegisterScriptMat3(asIScriptEngine *engine);
 }
