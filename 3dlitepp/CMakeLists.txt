@@ -64,4 +64,5 @@ endif()
 
 target_link_libraries(3dlitepp
 3dlite
-as)
+as
+kazmath)
