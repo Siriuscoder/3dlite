@@ -15,6 +15,8 @@
  *	You should have received a copy of the GNU General Public License
  *	along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
+#include <string.h>
+
 #include <SDL_assert.h>
 
 #include <3dlite/3dlite_common.h>

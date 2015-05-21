@@ -159,6 +159,12 @@
           <in>3dlitepp_resource_pack_manager.cpp</in>
           <in>3dlitepp_script.cpp</in>
           <in>3dlitepp_script_manager.cpp</in>
+          <in>3dlitepp_script_mat3.cpp</in>
+          <in>3dlitepp_script_mat4.cpp</in>
+          <in>3dlitepp_script_quat.cpp</in>
+          <in>3dlitepp_script_types.cpp</in>
+          <in>3dlitepp_script_vec3.cpp</in>
+          <in>3dlitepp_script_vec4.cpp</in>
         </df>
       </df>
       <df name="CMakeFiles">
@@ -772,6 +778,96 @@
         </ccTool>
       </item>
       <item path="3dlitepp/src/3dlitepp_script_manager.cpp"
+            ex="false"
+            tool="1"
+            flavor2="8">
+        <ccTool flags="1">
+          <incDir>
+            <pElem>/usr/include/SDL2</pElem>
+            <pElem>build/3dlitepp</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>_3dlitepp_EXPORTS</Elem>
+            <Elem>_REENTRANT</Elem>
+          </preprocessorList>
+        </ccTool>
+      </item>
+      <item path="3dlitepp/src/3dlitepp_script_mat3.cpp"
+            ex="false"
+            tool="1"
+            flavor2="8">
+        <ccTool flags="1">
+          <incDir>
+            <pElem>/usr/include/SDL2</pElem>
+            <pElem>build/3dlitepp</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>_3dlitepp_EXPORTS</Elem>
+            <Elem>_REENTRANT</Elem>
+          </preprocessorList>
+        </ccTool>
+      </item>
+      <item path="3dlitepp/src/3dlitepp_script_mat4.cpp"
+            ex="false"
+            tool="1"
+            flavor2="8">
+        <ccTool flags="1">
+          <incDir>
+            <pElem>/usr/include/SDL2</pElem>
+            <pElem>build/3dlitepp</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>_3dlitepp_EXPORTS</Elem>
+            <Elem>_REENTRANT</Elem>
+          </preprocessorList>
+        </ccTool>
+      </item>
+      <item path="3dlitepp/src/3dlitepp_script_quat.cpp"
+            ex="false"
+            tool="1"
+            flavor2="8">
+        <ccTool flags="1">
+          <incDir>
+            <pElem>/usr/include/SDL2</pElem>
+            <pElem>build/3dlitepp</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>_3dlitepp_EXPORTS</Elem>
+            <Elem>_REENTRANT</Elem>
+          </preprocessorList>
+        </ccTool>
+      </item>
+      <item path="3dlitepp/src/3dlitepp_script_types.cpp"
+            ex="false"
+            tool="1"
+            flavor2="8">
+        <ccTool flags="1">
+          <incDir>
+            <pElem>/usr/include/SDL2</pElem>
+            <pElem>build/3dlitepp</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>_3dlitepp_EXPORTS</Elem>
+            <Elem>_REENTRANT</Elem>
+          </preprocessorList>
+        </ccTool>
+      </item>
+      <item path="3dlitepp/src/3dlitepp_script_vec3.cpp"
+            ex="false"
+            tool="1"
+            flavor2="8">
+        <ccTool flags="1">
+          <incDir>
+            <pElem>/usr/include/SDL2</pElem>
+            <pElem>build/3dlitepp</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>_3dlitepp_EXPORTS</Elem>
+            <Elem>_REENTRANT</Elem>
+          </preprocessorList>
+        </ccTool>
+      </item>
+      <item path="3dlitepp/src/3dlitepp_script_vec4.cpp"
             ex="false"
             tool="1"
             flavor2="8">
