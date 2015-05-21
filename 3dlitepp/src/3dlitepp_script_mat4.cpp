@@ -98,9 +98,9 @@ namespace lite3dpp
         kmMat4RotationZ(&self, radians);
     }
 
-    static void Mat4RotationYawPitchRoll(kmMat4 &self, float yaw, float pitch, float roll)
+    static void Mat4RotationYawPitchRoll(kmMat4 &self, float pitch, float yaw, float roll)
     {
-        kmMat4RotationYawPitchRoll(&self, yaw, pitch, roll);
+        kmMat4RotationYawPitchRoll(&self, pitch, yaw, roll);
     }
 
     static void Mat4RotationQuaternion(kmMat4 &self, const kmQuaternion &quat)
