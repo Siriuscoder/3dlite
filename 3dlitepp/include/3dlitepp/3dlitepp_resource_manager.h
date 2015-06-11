@@ -79,8 +79,8 @@ namespace lite3dpp
             try
             {
                 /* resource not found.. create one */
-                result = new T(name, this);
-                addResource(name, path, result);
+                result = new T(name, mMain);
+                loadResource(name, path, result);
             }
             catch(std::exception &ex)
             {
@@ -97,7 +97,7 @@ namespace lite3dpp
         void releaseAllResources();
         void releaseResource(const lite3dpp_string &name);
 
-        ResourceManagerStats getStats();
+        ResourceManagerStats getStats() const;
 
         const void *loadFileToMemory(const lite3dpp_string &path, size_t *size);
 

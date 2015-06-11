@@ -24,40 +24,31 @@
 
 namespace lite3dpp
 {
-    class LITE3DPP_EXPORT ScriptManager : public AbstractResourceManager<Script>,
-        public ScriptExecuteByEvents
+    class LITE3DPP_EXPORT ScriptDispatcher : public Manageable
     {
+        friend class Script;
     public:
 
-        typedef stl<lite3dpp_string, Script *>::map ManagedScripts;
+        typedef stl<lite3dpp_string, Script *>::map Scripts;
 
-        ScriptManager(Main *main);
-        virtual ~ScriptManager();
-
-        virtual Script *loadResourceFromFile(const lite3dpp_string &fileName);
-        virtual void unloadResource(Script *resource);
-        virtual void unloadResource(const lite3dpp_string &resourceName);
-        virtual void unloadAllResources();
-        virtual size_t loadedResourcesSize() const;
+        ScriptDispatcher(Main *main);
+        virtual ~ScriptDispatcher();
 
         /* script callers */
-        virtual void performFrameBegin();
-        virtual void performFrameEnd();
-        virtual void performFixedUpdate();
-
-        /* init script engine, bind types */
-        virtual void init();
-        virtual void shut();
-        
-    private:
+        void performFrameBegin();
+        void performFrameEnd();
+        void performFixedUpdate();
         
         void registerGlobals();
-        
+
+        void registerScript(Script *script);
+        void unregisterScript(Script *script);
+
     private:
 
         Main *mMain;
         asIScriptEngine *mAsEngine;
-        ManagedScripts mManagedScripts;
+        Scripts mScripts;
     };
 }
 

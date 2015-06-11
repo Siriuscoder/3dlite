@@ -38,11 +38,9 @@ namespace lite3dpp
                                              scriptFileSize, 0);
     }
 
-    Script::Script(const lite3dpp_string &name, Main *main, asIScriptEngine *engine) :
-        mMain(main),
-        mScriptSize(0),
-        mScriptName(name),
-        mScriptEngine(engine),
+    Script::Script(const lite3dpp_string &name, Main *main) :
+        AbstractResource(name, main),
+        mScriptEngine(main->getScriptDispatcher()->mAsEngine),
         mInitFunction(NULL),
         mShutFunction(NULL),
         mFrameBeginFunction(NULL),
@@ -57,7 +55,7 @@ namespace lite3dpp
 
     void Script::scriptCompile(const char *data, size_t size)
     {
-        mScriptSize = size;
+        mHeapSize = size;
         SDL_assert(data);
 
         /*  The CScriptBuilder helper is an add-on that loads the file,
@@ -65,10 +63,10 @@ namespace lite3dpp
             the engine to build a script module. */
         CScriptBuilder builder;
         builder.SetIncludeCallback(scriptBuilderSearchInclude, mMain);
-        SDL_assert_release(builder.StartNewModule(mScriptEngine, mScriptName.c_str()) >= 0);
+        SDL_assert_release(builder.StartNewModule(mScriptEngine, mName.c_str()) >= 0);
 
         /* load code sections */
-        if (builder.AddSectionFromMemory(mScriptName.c_str(), data, size, 0) < 0)
+        if (builder.AddSectionFromMemory(mName.c_str(), data, size, 0) < 0)
             throw std::runtime_error("Script load error");
 
         /* compile script */
@@ -89,6 +87,9 @@ namespace lite3dpp
             mContext->Prepare(mInitFunction);
             checkScriptExec(mContext->Execute());
         }
+
+        /* register script in event dispatcher */
+        mMain->getScriptDispatcher()->registerScript(this);
     }
 
     void Script::checkScriptExec(int code)
@@ -99,7 +100,7 @@ namespace lite3dpp
             {
                 SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, 
                              "Script %s unexpected broken: %s",
-                             mScriptName.c_str(), mContext->GetExceptionString());
+                             mName.c_str(), mContext->GetExceptionString());
                 
                 throw std::runtime_error(mContext->GetExceptionString());
             }
@@ -107,16 +108,19 @@ namespace lite3dpp
             {
                 SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, 
                              "Script %s execution error..",
-                             mScriptName.c_str());
+                             mName.c_str());
                 
                 throw std::runtime_error(lite3dpp_string("Script ") +
-                                         mScriptName + " execution error..");
+                                         mName + " execution error..");
             }
         }
     }
 
     void Script::scriptRelease()
     {
+        /* unregister script and going to release script object */
+        mMain->getScriptDispatcher()->unregisterScript(this);
+
         if (mShutFunction)
         {
             mContext->Prepare(mShutFunction);
@@ -154,4 +158,20 @@ namespace lite3dpp
             checkScriptExec(mContext->Execute());
         }
     }
+
+    void Script::loadImpl(const void *buffer, size_t size)
+    {
+        scriptCompile(static_cast<const char *>(buffer), size);
+    }
+
+    void Script::unloadImpl()
+    {
+        scriptRelease();
+    }
+
+    void Script::mapImpl()
+    {}
+
+    void Script::unmapImpl()
+    {}
 }

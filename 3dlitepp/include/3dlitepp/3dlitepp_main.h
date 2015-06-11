@@ -21,7 +21,7 @@
 #include <3dlitepp/3dlitepp_common.h>
 #include <3dlitepp/3dlitepp_manageable.h>
 #include <3dlitepp/3dlitepp_resource_manager.h>
-#include <3dlitepp/3dlitepp_script_manager.h>
+#include <3dlitepp/3dlitepp_script_dispatcher.h>
 
 namespace lite3dpp
 {
@@ -42,6 +42,8 @@ namespace lite3dpp
 
         inline ResourceManager *getResourceManager()
         { return &mResourceManager; }
+        inline ScriptDispatcher *getScriptDispatcher()
+        { return &mScriptDispatcher; }
 
         void run();
         void stop();
@@ -49,7 +51,7 @@ namespace lite3dpp
     private:
 
         static int engineInit(void *userdata);
-        static int engineLeave(void *userdata);
+        static int engineShutdown(void *userdata);
         static int engineFrameBegin(void *userdata);
         static int engineFrameEnd(void *userdata);
         static void timerFixed(lite3d_timer *timer);
@@ -61,6 +63,7 @@ namespace lite3dpp
     private:
 
         ResourceManager mResourceManager;
+        ScriptDispatcher mScriptDispatcher;
         JSONValue *mConfigRoot;
         lite3d_global_settings mSettings;
         lite3d_timer *mFixedUpdatesTimer;

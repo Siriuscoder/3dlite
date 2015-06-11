@@ -29,6 +29,7 @@ namespace lite3dpp
 
     Main::Main() :
         mResourceManager(this),
+        mScriptDispatcher(this),
         mConfigRoot(NULL)
     {
         /* init memory model first
@@ -167,7 +168,7 @@ namespace lite3dpp
 
         mSettings.renderLisneters.userdata = reinterpret_cast<void *> (this);
         mSettings.renderLisneters.preRender = Main::engineInit;
-        mSettings.renderLisneters.postRender = Main::engineLeave;
+        mSettings.renderLisneters.postRender = Main::engineShutdown;
         mSettings.renderLisneters.preFrame = Main::engineFrameBegin;
         mSettings.renderLisneters.postFrame = Main::engineFrameEnd;
         return true;
@@ -247,9 +248,8 @@ namespace lite3dpp
         if(!mConfigRoot)
             throw std::runtime_error("Bad configuration");
 
-        initResourceLocations();
         int32_t fixedUpdatesInterval = 200;
-        lite3dpp_string initialScriptName;
+        lite3dpp_string initialScriptPath;
 
 
         JSONObject root = mConfigRoot->AsObject();
@@ -260,8 +260,16 @@ namespace lite3dpp
 
         if (root.find(L"InitScript") != root.end() && root[L"InitScript"]->IsString())
         {
-            initialScriptName = JSON::wStringToString(root[L"InitScript"]->AsString());               
+            initialScriptPath = JSON::wStringToString(root[L"InitScript"]->AsString());               
         }
+
+        /* basic initialization */
+        initResourceLocations();
+        mScriptDispatcher.registerGlobals();
+
+        /* load first script */
+        /* after script been loaded, init script function will be executed */
+        mResourceManager.queryResource<Script>("", initialScriptPath);
 
         /* perform fixed update timer */    
         mFixedUpdatesTimer = 
@@ -293,7 +301,7 @@ namespace lite3dpp
         return LITE3D_FALSE;
     }
 
-    int Main::engineLeave(void *userdata)
+    int Main::engineShutdown(void *userdata)
     {
         try
         {

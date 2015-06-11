@@ -18,38 +18,30 @@
 #pragma once
 
 #include <3dlitepp/3dlitepp_common.h>
-#include <3dlitepp/3dlitepp_manageable.h>
+#include <3dlitepp/3dlitepp_resource.h>
 
 namespace lite3dpp
 {
-
-    class LITE3DPP_EXPORT ScriptExecuteByEvents : public Manageable
+    class LITE3DPP_EXPORT Script : public AbstractResource
     {
     public:
 
-        virtual void performFrameBegin() = 0;
-        virtual void performFrameEnd() = 0;
-        virtual void performFixedUpdate() = 0;
-    };
+        Script(const lite3dpp_string &name, Main *main);
+        ~Script();
 
-    class LITE3DPP_EXPORT Script : public ScriptExecuteByEvents
-    {
-    public:
+        void performFrameBegin();
+        void performFrameEnd();
+        void performFixedUpdate();
 
-        Script(const lite3dpp_string &name, Main *main, asIScriptEngine *engine);
-        virtual ~Script();
+    protected:
 
         void scriptCompile(const char *data, size_t size);
         void scriptRelease();
 
-        inline size_t getScriptSize() const
-        { return mScriptSize; }
-        inline lite3dpp_string getScriptName()
-        { return mScriptName; }
-
-        virtual void performFrameBegin();
-        virtual void performFrameEnd();
-        virtual void performFixedUpdate();
+        virtual void loadImpl(const void *buffer, size_t size);
+        virtual void unloadImpl();
+        virtual void mapImpl();
+        virtual void unmapImpl();
 
     private:
         
@@ -57,9 +49,6 @@ namespace lite3dpp
         
     private:
 
-        Main *mMain;
-        size_t mScriptSize;
-        lite3dpp_string mScriptName;
         asIScriptEngine *mScriptEngine;
         asIScriptFunction *mInitFunction;
         asIScriptFunction *mShutFunction;
