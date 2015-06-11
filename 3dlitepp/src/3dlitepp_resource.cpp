@@ -21,9 +21,10 @@
 namespace lite3dpp
 {
     AbstractResource::AbstractResource(const lite3dpp_string &name,
-        Main *main) : 
+        const lite3dpp_string &path, Main *main) : 
         mState(NEW),
         mName(name),
+        mPath(path),
         mHeapSize(0),
         mMappedSize(0),
         mMain(main)

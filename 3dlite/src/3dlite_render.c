@@ -186,7 +186,7 @@ void lite3d_render_loop(lite3d_render_listeners *callbacks)
     /* start user initialization */
     if (gRenderListeners.preRender && 
         !gRenderListeners.preRender(gRenderListeners.userdata))
-        return;
+        goto render_exit;
 
     /* begin render loop */
     while (gRenderStarted)
@@ -235,6 +235,7 @@ void lite3d_render_loop(lite3d_render_listeners *callbacks)
     if (gRenderListeners.postRender)
         gRenderListeners.postRender(gRenderListeners.userdata);
 
+render_exit:
     lite3d_render_target_erase_all();
     lite3d_render_target_purge(&gScreenRt);
 }

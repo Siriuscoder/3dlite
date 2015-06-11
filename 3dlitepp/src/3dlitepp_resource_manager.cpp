@@ -58,6 +58,7 @@ namespace lite3dpp
     {
         size_t fileSize;
         const char *buffer;
+
         /* open file buffer */
         buffer = static_cast<const char *>(loadFileToMemory(path, &fileSize));
         /* load resource from memory file */
@@ -132,7 +133,7 @@ namespace lite3dpp
         const lite3dpp_string &path, size_t fileCacheMaxSize)
     {
         SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
-            "Open resource location: %s", path.c_str());
+            "Open resource location: [%s] %s", name.c_str(), path.c_str());
 
         Packs::iterator it = mPacks.find(name);
         if (it != mPacks.end())
@@ -148,7 +149,7 @@ namespace lite3dpp
             throw std::runtime_error(lite3dpp_string("Location open failed.. ") + 
                 name + " :: " + path);
 
-        mPacks.insert(std::make_pair(path, pack));
+        mPacks.insert(std::make_pair(name, pack));
     }
 
     const void *ResourceManager::loadFileToMemory(const lite3dpp_string &path, size_t *size)

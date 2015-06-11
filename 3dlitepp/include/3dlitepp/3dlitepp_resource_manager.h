@@ -79,13 +79,13 @@ namespace lite3dpp
             try
             {
                 /* resource not found.. create one */
-                result = new T(name, mMain);
+                result = new T(name, path, mMain);
                 loadResource(name, path, result);
             }
             catch(std::exception &ex)
             {
                 delete result;
-                throw ex;
+                throw std::runtime_error(ex.what());
             }
 
             return result;

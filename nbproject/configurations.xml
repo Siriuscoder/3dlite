@@ -96,7 +96,6 @@
           <df name="3dlitepp">
             <in>3dlitepp_manageable.h</in>
             <in>3dlitepp_resource_manager.h</in>
-            <in>3dlitepp_resource_pack_manager.h</in>
           </df>
         </df>
         <df name="src">
@@ -156,9 +155,10 @@
           </df>
           <in>3dlitepp_main.cpp</in>
           <in>3dlitepp_manageable.cpp</in>
-          <in>3dlitepp_resource_pack_manager.cpp</in>
+          <in>3dlitepp_resource.cpp</in>
+          <in>3dlitepp_resource_manager.cpp</in>
           <in>3dlitepp_script.cpp</in>
-          <in>3dlitepp_script_manager.cpp</in>
+          <in>3dlitepp_script_dispatcher.cpp</in>
           <in>3dlitepp_script_mat3.cpp</in>
           <in>3dlitepp_script_mat4.cpp</in>
           <in>3dlitepp_script_quat.cpp</in>
@@ -253,7 +253,7 @@
           <buildCommandWorkingDir>build</buildCommandWorkingDir>
           <buildCommand>${MAKE} -f Makefile</buildCommand>
           <cleanCommand>${MAKE} -f Makefile clean</cleanCommand>
-          <executablePath>build/bin/Debug/mconverter</executablePath>
+          <executablePath>build/bin/Debug/3dlitepp_sample_script</executablePath>
           <ccTool>
             <incDir>
               <pElem>3dlite/include</pElem>
@@ -750,7 +750,19 @@
           </preprocessorList>
         </ccTool>
       </item>
-      <item path="3dlitepp/src/3dlitepp_resource_pack_manager.cpp"
+      <item path="3dlitepp/src/3dlitepp_resource.cpp" ex="false" tool="1" flavor2="8">
+        <ccTool flags="1">
+          <incDir>
+            <pElem>/usr/include/SDL2</pElem>
+            <pElem>build/3dlitepp</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>_3dlitepp_EXPORTS</Elem>
+            <Elem>_REENTRANT</Elem>
+          </preprocessorList>
+        </ccTool>
+      </item>
+      <item path="3dlitepp/src/3dlitepp_resource_manager.cpp"
             ex="false"
             tool="1"
             flavor2="8">
@@ -777,7 +789,7 @@
           </preprocessorList>
         </ccTool>
       </item>
-      <item path="3dlitepp/src/3dlitepp_script_manager.cpp"
+      <item path="3dlitepp/src/3dlitepp_script_dispatcher.cpp"
             ex="false"
             tool="1"
             flavor2="8">
@@ -1536,17 +1548,7 @@
             tool="3"
             flavor2="0">
       </item>
-      <item path="3dlitepp/include/3dlitepp/3dlitepp_resource_pack_manager.h"
-            ex="false"
-            tool="3"
-            flavor2="0">
-      </item>
       <item path="3dlitepp/src/3dlitepp_manageable.cpp"
-            ex="false"
-            tool="1"
-            flavor2="0">
-      </item>
-      <item path="3dlitepp/src/3dlitepp_resource_pack_manager.cpp"
             ex="false"
             tool="1"
             flavor2="0">

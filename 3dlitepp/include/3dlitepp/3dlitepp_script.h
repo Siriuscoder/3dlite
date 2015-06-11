@@ -26,7 +26,8 @@ namespace lite3dpp
     {
     public:
 
-        Script(const lite3dpp_string &name, Main *main);
+        Script(const lite3dpp_string &name, 
+            const lite3dpp_string &path, Main *main);
         ~Script();
 
         void performFrameBegin();

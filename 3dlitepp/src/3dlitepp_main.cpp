@@ -62,13 +62,19 @@ namespace lite3dpp
         }
 
         SDL_RWclose(desc);
+        
+        if (mConfigRoot)
+        {
+            delete mConfigRoot;
+            mConfigRoot = NULL;
+        }
+        
         /* Parse config data */
         mConfigRoot = JSON::Parse(json);
+        
+        Manageable::free(json);
         if (mConfigRoot == NULL)
-        {
-            Manageable::free(json);
             return false;
-        }
 
         JSONObject root;
         memset(&mSettings, 0, sizeof (mSettings));
@@ -89,7 +95,6 @@ namespace lite3dpp
         {
             delete mConfigRoot;
             mConfigRoot = NULL;
-            Manageable::free(json);
             return false;
         }
 
@@ -190,8 +195,6 @@ namespace lite3dpp
 
     Main::~Main()
     {
-        if(mConfigRoot)
-            delete mConfigRoot;
         lite3d_memory_cleanup();
     }
 
@@ -280,6 +283,12 @@ namespace lite3dpp
     {
         lite3d_timer_purge(mFixedUpdatesTimer);
         mResourceManager.releaseAllResources();
+        
+        if (mConfigRoot)
+        {
+            delete mConfigRoot;
+            mConfigRoot = NULL;
+        }
     }
 
     /* callbackes */
@@ -323,7 +332,7 @@ namespace lite3dpp
         try
         {
             Main *mainObj = reinterpret_cast<Main *> (userdata);
-            //mainObj->mScriptManager.performFrameBegin();
+            mainObj->mScriptDispatcher.performFrameBegin();
             return LITE3D_TRUE;
         }
         catch (std::exception &ex)
@@ -340,7 +349,7 @@ namespace lite3dpp
         try
         {
             Main *mainObj = reinterpret_cast<Main *> (userdata);
-            //mainObj->mScriptManager.performFrameEnd();
+            mainObj->mScriptDispatcher.performFrameEnd();
             return LITE3D_TRUE;
         }
         catch (std::exception &ex)
@@ -358,7 +367,7 @@ namespace lite3dpp
 
         try
         {
-            //mainObj->mScriptManager.performFixedUpdate();
+            mainObj->mScriptDispatcher.performFixedUpdate();
         }
         catch (std::exception &ex)
         {

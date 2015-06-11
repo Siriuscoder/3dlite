@@ -38,8 +38,9 @@ namespace lite3dpp
                                              scriptFileSize, 0);
     }
 
-    Script::Script(const lite3dpp_string &name, Main *main) :
-        AbstractResource(name, main),
+    Script::Script(const lite3dpp_string &name, 
+        const lite3dpp_string &path, Main *main) :
+        AbstractResource(name, path, main),
         mScriptEngine(main->getScriptDispatcher()->mAsEngine),
         mInitFunction(NULL),
         mShutFunction(NULL),
@@ -57,6 +58,9 @@ namespace lite3dpp
     {
         mHeapSize = size;
         SDL_assert(data);
+        
+        SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION,
+            "Compiling %s ...", mPath.c_str());
 
         /*  The CScriptBuilder helper is an add-on that loads the file,
             performs a pre-processing pass if necessary, and then tells

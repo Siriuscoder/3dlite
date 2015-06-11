@@ -41,7 +41,7 @@ namespace lite3dpp
         };
 
         AbstractResource(const lite3dpp_string &name, 
-            Main *main);
+            const lite3dpp_string &path, Main *main);
         virtual ~AbstractResource();
 
         void load(const void *buffer, size_t size);
@@ -60,7 +60,9 @@ namespace lite3dpp
         { return mState; }
         inline const lite3dpp_string &getName() const
         { return mName; }
-
+        inline const lite3dpp_string &getPath() const
+        { return mPath; }
+        
     protected:
 
         virtual void loadImpl(const void *buffer, size_t size) = 0;
@@ -73,6 +75,7 @@ namespace lite3dpp
         ResourceState mState;
         ResourceType mType;
         lite3dpp_string mName;
+        lite3dpp_string mPath;
         size_t mHeapSize;
         size_t mMappedSize;
         Main *mMain;
