@@ -87,3 +87,13 @@ int lite3d_misc_check_gl_stack_corruption(void)
 {
     return glStackCorruption;
 }
+
+void lite3d_misc_gl_out_of_mem_reset(void)
+{
+    glOutOfMemory = LITE3D_FALSE;
+}
+
+void lite3d_misc_gl_stack_corruption_reset(void)
+{
+    glStackCorruption = LITE3D_FALSE;
+}

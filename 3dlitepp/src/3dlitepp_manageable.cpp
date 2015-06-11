@@ -32,8 +32,8 @@ namespace lite3dpp
 
     void Manageable::freePolled(void * mem)
     {
-        SDL_assert_release(mem);
-        lite3d_free_pooled(LITE3D_POOL_NO2, mem);
+        if(mem)
+            lite3d_free_pooled(LITE3D_POOL_NO2, mem);
     }
 
 
@@ -47,8 +47,8 @@ namespace lite3dpp
 
     void Manageable::free(void * mem)
     {
-        SDL_assert_release(mem);
-        lite3d_free(mem);
+        if(mem)
+            lite3d_free(mem);
     }
 
     void *Manageable::callocPuled(size_t size)

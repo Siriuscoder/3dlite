@@ -1,6 +1,5 @@
 {
         "LogLevel": 2,
-        "FileCacheSize": 1024000,
         "TextureSettings": {
                 "Anisotropy": 8,
                 "Compression": true
@@ -15,8 +14,16 @@
                 "VSync": true
         },
         "ResourceLocations": [
-                "tests/",
-                "tests/pack.1"
+                { 
+					"Name": "filesystem_01",
+					"FileCacheMaxSize": 1024000,
+					"Path": "tests/"
+				},
+				{
+					"Name": "pack_01",
+					"FileCacheMaxSize": 1024000,
+					"Path": "tests/pack.1"
+				}
         ],
         
         "InitScript": "pack/scripts/run.as",

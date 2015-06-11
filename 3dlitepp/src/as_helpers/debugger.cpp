@@ -23,7 +23,7 @@ lite3dpp::lite3dpp_string CDebugger::ToString(void *value, asUINT typeId, bool e
 	if( value == 0 )
 		return "<null>";
 
-	lite3dpp::lited3dpp_stringstream s;
+	lite3dpp::lite3dpp_stringstream s;
 	if( typeId == asTYPEID_VOID )
 		return "<void>";
 	else if( typeId == asTYPEID_BOOL )
@@ -185,7 +185,7 @@ void CDebugger::LineCallback(asIScriptContext *ctx)
 		// to tell user when break point has been reached
 	}
 
-	lite3dpp::lited3dpp_stringstream s;
+	lite3dpp::lite3dpp_stringstream s;
 	const char *file = 0;
 	int lineNbr = ctx->GetLineNumber(0, 0, &file);
 	s << (file ? file : "{unnamed}") << ":" << lineNbr << "; " << ctx->GetFunction()->GetDeclaration() << endl;
@@ -224,7 +224,7 @@ bool CDebugger::CheckBreakPoint(asIScriptContext *ctx)
 			{
 				if( m_breakPoints[n].name == func->GetName() )
 				{
-					lite3dpp::lited3dpp_stringstream s;
+					lite3dpp::lite3dpp_stringstream s;
 					s << "Entering function '" << m_breakPoints[n].name << "'. Transforming it into break point" << endl;
 					Output(s.str());
 
@@ -245,7 +245,7 @@ bool CDebugger::CheckBreakPoint(asIScriptContext *ctx)
 					m_breakPoints[n].needsAdjusting = false;
 					if( line != m_breakPoints[n].lineNbr )
 					{
-						lite3dpp::lited3dpp_stringstream s;
+						lite3dpp::lite3dpp_stringstream s;
 						s << "Moving break point " << n << " in file '" << file << "' to next line with code at line " << line << endl;
 						Output(s.str());
 
@@ -268,7 +268,7 @@ bool CDebugger::CheckBreakPoint(asIScriptContext *ctx)
 			m_breakPoints[n].lineNbr == lineNbr &&
 			m_breakPoints[n].name == file )
 		{
-			lite3dpp::lited3dpp_stringstream s;
+			lite3dpp::lite3dpp_stringstream s;
 			s << "Reached break point " << n << " in file '" << file << "' at line " << lineNbr << endl;
 			Output(s.str());
 			return true;
@@ -600,7 +600,7 @@ void CDebugger::PrintValue(const lite3dpp::lite3dpp_string &expr, asIScriptConte
 			// TODO: If there is a . after the identifier, check for members
 			// TODO: If there is a [ after the identifier try to call the 'opIndex(expr) const' method 
 
-			lite3dpp::lited3dpp_stringstream s;
+			lite3dpp::lite3dpp_stringstream s;
 			s << ToString(ptr, typeId, true, engine) << endl;
 			Output(s.str());
 		}
@@ -614,7 +614,7 @@ void CDebugger::PrintValue(const lite3dpp::lite3dpp_string &expr, asIScriptConte
 void CDebugger::ListBreakPoints()
 {
 	// List all break points
-	lite3dpp::lited3dpp_stringstream s;
+	lite3dpp::lite3dpp_stringstream s;
 	for( size_t b = 0; b < m_breakPoints.size(); b++ )
 		if( m_breakPoints[b].func )
 			s << b << " - " << m_breakPoints[b].name << endl;
@@ -634,7 +634,7 @@ void CDebugger::ListMemberProperties(asIScriptContext *ctx)
 	void *ptr = ctx->GetThisPointer();
 	if( ptr )
 	{
-		lite3dpp::lited3dpp_stringstream s;
+		lite3dpp::lite3dpp_stringstream s;
 		s << "this = " << ToString(ptr, ctx->GetThisTypeId(), true, ctx->GetEngine()) << endl;
 		Output(s.str());
 	}
@@ -651,7 +651,7 @@ void CDebugger::ListLocalVariables(asIScriptContext *ctx)
 	asIScriptFunction *func = ctx->GetFunction();
 	if( !func ) return;
 
-	lite3dpp::lited3dpp_stringstream s;
+	lite3dpp::lite3dpp_stringstream s;
 	for( asUINT n = 0; n < func->GetVarCount(); n++ )
 	{
 		if( ctx->IsVarInScope(n) )
@@ -675,7 +675,7 @@ void CDebugger::ListGlobalVariables(asIScriptContext *ctx)
 	asIScriptModule *mod = func->GetModule();
 	if( !mod ) return;
 
-	lite3dpp::lited3dpp_stringstream s;
+	lite3dpp::lite3dpp_stringstream s;
 	for( asUINT n = 0; n < mod->GetGlobalVarCount(); n++ )
 	{
 		int typeId = 0;
@@ -698,7 +698,7 @@ void CDebugger::ListStatistics(asIScriptContext *ctx)
 	asUINT gcCurrSize, gcTotalDestr, gcTotalDet, gcNewObjects, gcTotalNewDestr;
 	engine->GetGCStatistics(&gcCurrSize, &gcTotalDestr, &gcTotalDet, &gcNewObjects, &gcTotalNewDestr);
 
-	lite3dpp::lited3dpp_stringstream s;
+	lite3dpp::lite3dpp_stringstream s;
 	s << "Garbage collector:" << endl;
 	s << " current size:          " << gcCurrSize << endl;
 	s << " total destroyed:       " << gcTotalDestr << endl;
@@ -717,7 +717,7 @@ void CDebugger::PrintCallstack(asIScriptContext *ctx)
 		return;
 	}
 
-	lite3dpp::lited3dpp_stringstream s;
+	lite3dpp::lite3dpp_stringstream s;
 	const char *file = 0;
 	int lineNbr = 0;
 	for( asUINT n = 0; n < ctx->GetCallstackSize(); n++ )
@@ -735,7 +735,7 @@ void CDebugger::AddFuncBreakPoint(const lite3dpp::lite3dpp_string &func)
 	size_t e = func.find_last_not_of(" \t");
 	lite3dpp::lite3dpp_string actual = func.substr(b, e != lite3dpp::lite3dpp_string::npos ? e-b+1 : lite3dpp::lite3dpp_string::npos);
 
-	lite3dpp::lited3dpp_stringstream s;
+	lite3dpp::lite3dpp_stringstream s;
 	s << "Adding deferred break point for function '" << actual << "'" << endl;
 	Output(s.str());
 
@@ -758,7 +758,7 @@ void CDebugger::AddFileBreakPoint(const lite3dpp::lite3dpp_string &file, int lin
 	size_t e = actual.find_last_not_of(" \t");
 	actual = actual.substr(b, e != lite3dpp::lite3dpp_string::npos ? e-b+1 : lite3dpp::lite3dpp_string::npos);
 
-	lite3dpp::lited3dpp_stringstream s;
+	lite3dpp::lite3dpp_stringstream s;
 	s << "Setting break point in file '" << actual << "' at line " << lineNbr << endl;
 	Output(s.str());
 

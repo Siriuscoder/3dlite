@@ -17,7 +17,10 @@
 *******************************************************************************/
 #pragma once
 
+#include <3dlite/3dlite_resource_pack.h>
+
 #include <3dlitepp/3dlitepp_manageable.h>
+#include <3dlitepp/3dlitepp_resource.h>
 
 namespace lite3dpp
 {
@@ -33,6 +36,89 @@ namespace lite3dpp
         virtual size_t loadedResourcesSize() const = 0;
         virtual void init() = 0;
         virtual void shut() = 0;
+    };
+
+    class LITE3DPP_EXPORT ResourceManager : public Manageable
+    {
+    public:
+
+        typedef stl<lite3dpp_string, AbstractResource *>::map Resources;
+        typedef stl<lite3dpp_string, lite3d_resource_pack*>::map Packs;
+
+        typedef struct ResourceManagerStats
+        {
+            size_t resourcesHeapSize;
+            size_t resourcesMappedSize;
+            size_t totalFileCacheSize;
+        } ResourceManagerStats;
+
+        template<class T>
+        T *queryResource(lite3dpp_string name, 
+            const lite3dpp_string &path = "")
+        {
+            T *result = NULL;
+            AbstractResource *resource;
+
+            if((resource = fetchResource(name)) != NULL)
+            {
+                if((result = dynamic_cast<T*>(resource)) == NULL)
+                    throw std::runtime_error((lite3dpp_string("Resource type mismatch: ") + 
+                        name).c_str());
+                return result;
+            }
+
+            if(path.size() == 0)
+            {
+                throw std::runtime_error((lite3dpp_string("Resource not found: ") + 
+                    name).c_str());
+            }
+
+            if(name.size() == 0)
+                name = generateName();
+
+            try
+            {
+                /* resource not found.. create one */
+                result = new T(name, this);
+                addResource(name, path, result);
+            }
+            catch(std::exception &ex)
+            {
+                delete result;
+                throw ex;
+            }
+
+            return result;
+        }
+
+        ResourceManager(Main *main);
+        virtual ~ResourceManager();
+
+        void releaseAllResources();
+        void releaseResource(const lite3dpp_string &name);
+
+        ResourceManagerStats getStats();
+
+        const void *loadFileToMemory(const lite3dpp_string &path, size_t *size);
+
+        void addResourceLocation(const lite3dpp_string &name,
+            const lite3dpp_string &path,
+            size_t fileCacheMaxSize);
+
+    protected:
+
+        lite3dpp_string generateName();
+        AbstractResource *fetchResource(const lite3dpp_string &key);
+        virtual void loadResource(const lite3dpp_string &name, 
+            const lite3dpp_string &path,
+            AbstractResource *resource);
+        virtual void mapResource(AbstractResource *resource);
+
+    private:
+
+        Main *mMain;
+        Resources mResources;
+        Packs mPacks;
     };
 }
 

@@ -70,8 +70,10 @@
 namespace lite3dpp
 {
     class LITE3DPP_EXPORT Main;
+    class LITE3DPP_EXPORT ResourceManager;
 }
 
+class JSONValue;
 class asIScriptEngine;
 class asIScriptModule;
 class asIScriptFunction;

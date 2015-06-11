@@ -107,7 +107,7 @@ namespace lite3dpp
     typedef std::basic_string<wchar_t, std::char_traits<wchar_t>,
         ManageableStlAllocator<wchar_t> > lite3dpp_wstring;
     typedef std::basic_stringstream< char, std::char_traits<char>,
-        ManageableStlAllocator<char> > lited3dpp_stringstream;
+        ManageableStlAllocator<char> > lite3dpp_stringstream;
     typedef std::basic_stringstream< wchar_t, std::char_traits<wchar_t>,
         ManageableStlAllocator<wchar_t> > lited3dpp_wstringstream;
  
@@ -128,7 +128,7 @@ namespace lite3dpp
     
     typedef std::string lite3dpp_string;
     typedef std::wstring lite3dpp_wstring;
-    typedef std::stringstream lited3dpp_stringstream;
+    typedef std::stringstream lite3dpp_stringstream;
     typedef std::wstringstream lited3dpp_wstringstream;
     
 #endif

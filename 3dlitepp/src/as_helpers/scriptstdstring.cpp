@@ -159,7 +159,7 @@ static bool StringIsEmpty(const lite3dpp::lite3dpp_string &str)
 
 static lite3dpp::lite3dpp_string &AssignUInt64ToString(asQWORD i, lite3dpp::lite3dpp_string &dest)
 {
-	lite3dpp::lited3dpp_stringstream stream;
+	lite3dpp::lite3dpp_stringstream stream;
 	stream << i;
 	dest = stream.str();
 	return dest;
@@ -167,7 +167,7 @@ static lite3dpp::lite3dpp_string &AssignUInt64ToString(asQWORD i, lite3dpp::lite
 
 static lite3dpp::lite3dpp_string &AddAssignUInt64ToString(asQWORD i, lite3dpp::lite3dpp_string &dest)
 {
-	lite3dpp::lited3dpp_stringstream stream;
+	lite3dpp::lite3dpp_stringstream stream;
 	stream << i;
 	dest += stream.str();
 	return dest;
@@ -175,21 +175,21 @@ static lite3dpp::lite3dpp_string &AddAssignUInt64ToString(asQWORD i, lite3dpp::l
 
 static lite3dpp::lite3dpp_string AddStringUInt64(const lite3dpp::lite3dpp_string &str, asQWORD i)
 {
-	lite3dpp::lited3dpp_stringstream stream;
+	lite3dpp::lite3dpp_stringstream stream;
 	stream << i;
 	return str + stream.str();
 }
 
 static lite3dpp::lite3dpp_string AddInt64String(asINT64 i, const lite3dpp::lite3dpp_string &str)
 {
-	lite3dpp::lited3dpp_stringstream stream;
+	lite3dpp::lite3dpp_stringstream stream;
 	stream << i;
 	return stream.str() + str;
 }
 
 static lite3dpp::lite3dpp_string &AssignInt64ToString(asINT64 i, lite3dpp::lite3dpp_string &dest)
 {
-	lite3dpp::lited3dpp_stringstream stream;
+	lite3dpp::lite3dpp_stringstream stream;
 	stream << i;
 	dest = stream.str();
 	return dest;
@@ -197,7 +197,7 @@ static lite3dpp::lite3dpp_string &AssignInt64ToString(asINT64 i, lite3dpp::lite3
 
 static lite3dpp::lite3dpp_string &AddAssignInt64ToString(asINT64 i, lite3dpp::lite3dpp_string &dest)
 {
-	lite3dpp::lited3dpp_stringstream stream;
+	lite3dpp::lite3dpp_stringstream stream;
 	stream << i;
 	dest += stream.str();
 	return dest;
@@ -205,21 +205,21 @@ static lite3dpp::lite3dpp_string &AddAssignInt64ToString(asINT64 i, lite3dpp::li
 
 static lite3dpp::lite3dpp_string AddStringInt64(const lite3dpp::lite3dpp_string &str, asINT64 i)
 {
-	lite3dpp::lited3dpp_stringstream stream;
+	lite3dpp::lite3dpp_stringstream stream;
 	stream << i;
 	return str + stream.str();
 }
 
 static lite3dpp::lite3dpp_string AddUInt64String(asQWORD i, const lite3dpp::lite3dpp_string &str)
 {
-	lite3dpp::lited3dpp_stringstream stream;
+	lite3dpp::lite3dpp_stringstream stream;
 	stream << i;
 	return stream.str() + str;
 }
 
 static lite3dpp::lite3dpp_string &AssignDoubleToString(double f, lite3dpp::lite3dpp_string &dest)
 {
-	lite3dpp::lited3dpp_stringstream stream;
+	lite3dpp::lite3dpp_stringstream stream;
 	stream << f;
 	dest = stream.str();
 	return dest;
@@ -227,7 +227,7 @@ static lite3dpp::lite3dpp_string &AssignDoubleToString(double f, lite3dpp::lite3
 
 static lite3dpp::lite3dpp_string &AddAssignDoubleToString(double f, lite3dpp::lite3dpp_string &dest)
 {
-	lite3dpp::lited3dpp_stringstream stream;
+	lite3dpp::lite3dpp_stringstream stream;
 	stream << f;
 	dest += stream.str();
 	return dest;
@@ -235,7 +235,7 @@ static lite3dpp::lite3dpp_string &AddAssignDoubleToString(double f, lite3dpp::li
 
 static lite3dpp::lite3dpp_string &AssignFloatToString(float f, lite3dpp::lite3dpp_string &dest)
 {
-	lite3dpp::lited3dpp_stringstream stream;
+	lite3dpp::lite3dpp_stringstream stream;
 	stream << f;
 	dest = stream.str();
 	return dest;
@@ -243,7 +243,7 @@ static lite3dpp::lite3dpp_string &AssignFloatToString(float f, lite3dpp::lite3dp
 
 static lite3dpp::lite3dpp_string &AddAssignFloatToString(float f, lite3dpp::lite3dpp_string &dest)
 {
-	lite3dpp::lited3dpp_stringstream stream;
+	lite3dpp::lite3dpp_stringstream stream;
 	stream << f;
 	dest += stream.str();
 	return dest;
@@ -251,7 +251,7 @@ static lite3dpp::lite3dpp_string &AddAssignFloatToString(float f, lite3dpp::lite
 
 static lite3dpp::lite3dpp_string &AssignBoolToString(bool b, lite3dpp::lite3dpp_string &dest)
 {
-	lite3dpp::lited3dpp_stringstream stream;
+	lite3dpp::lite3dpp_stringstream stream;
 	stream << (b ? "true" : "false");
 	dest = stream.str();
 	return dest;
@@ -259,7 +259,7 @@ static lite3dpp::lite3dpp_string &AssignBoolToString(bool b, lite3dpp::lite3dpp_
 
 static lite3dpp::lite3dpp_string &AddAssignBoolToString(bool b, lite3dpp::lite3dpp_string &dest)
 {
-	lite3dpp::lited3dpp_stringstream stream;
+	lite3dpp::lite3dpp_stringstream stream;
 	stream << (b ? "true" : "false");
 	dest += stream.str();
 	return dest;
@@ -267,42 +267,42 @@ static lite3dpp::lite3dpp_string &AddAssignBoolToString(bool b, lite3dpp::lite3d
 
 static lite3dpp::lite3dpp_string AddStringDouble(const lite3dpp::lite3dpp_string &str, double f)
 {
-	lite3dpp::lited3dpp_stringstream stream;
+	lite3dpp::lite3dpp_stringstream stream;
 	stream << f;
 	return str + stream.str();
 }
 
 static lite3dpp::lite3dpp_string AddDoubleString(double f, const lite3dpp::lite3dpp_string &str)
 {
-	lite3dpp::lited3dpp_stringstream stream;
+	lite3dpp::lite3dpp_stringstream stream;
 	stream << f;
 	return stream.str() + str;
 }
 
 static lite3dpp::lite3dpp_string AddStringFloat(const lite3dpp::lite3dpp_string &str, float f)
 {
-	lite3dpp::lited3dpp_stringstream stream;
+	lite3dpp::lite3dpp_stringstream stream;
 	stream << f;
 	return str + stream.str();
 }
 
 static lite3dpp::lite3dpp_string AddFloatString(float f, const lite3dpp::lite3dpp_string &str)
 {
-	lite3dpp::lited3dpp_stringstream stream;
+	lite3dpp::lite3dpp_stringstream stream;
 	stream << f;
 	return stream.str() + str;
 }
 
 static lite3dpp::lite3dpp_string AddStringBool(const lite3dpp::lite3dpp_string &str, bool b)
 {
-	lite3dpp::lited3dpp_stringstream stream;
+	lite3dpp::lite3dpp_stringstream stream;
 	stream << (b ? "true" : "false");
 	return str + stream.str();
 }
 
 static lite3dpp::lite3dpp_string AddBoolString(bool b, const lite3dpp::lite3dpp_string &str)
 {
-	lite3dpp::lited3dpp_stringstream stream;
+	lite3dpp::lite3dpp_stringstream stream;
 	stream << (b ? "true" : "false");
 	return stream.str() + str;
 }
@@ -844,7 +844,7 @@ static void AssignInt2StringGeneric(asIScriptGeneric *gen)
 {
 	asINT64 *a = static_cast<asINT64*>(gen->GetAddressOfArg(0));
 	lite3dpp::lite3dpp_string *self = static_cast<lite3dpp::lite3dpp_string*>(gen->GetObject());
-	lite3dpp::lited3dpp_stringstream sstr;
+	lite3dpp::lite3dpp_stringstream sstr;
 	sstr << *a;
 	*self = sstr.str();
 	gen->SetReturnAddress(self);
@@ -854,7 +854,7 @@ static void AssignUInt2StringGeneric(asIScriptGeneric *gen)
 {
 	asQWORD *a = static_cast<asQWORD*>(gen->GetAddressOfArg(0));
 	lite3dpp::lite3dpp_string *self = static_cast<lite3dpp::lite3dpp_string*>(gen->GetObject());
-	lite3dpp::lited3dpp_stringstream sstr;
+	lite3dpp::lite3dpp_stringstream sstr;
 	sstr << *a;
 	*self = sstr.str();
 	gen->SetReturnAddress(self);
@@ -864,7 +864,7 @@ static void AssignDouble2StringGeneric(asIScriptGeneric *gen)
 {
 	double *a = static_cast<double*>(gen->GetAddressOfArg(0));
 	lite3dpp::lite3dpp_string *self = static_cast<lite3dpp::lite3dpp_string*>(gen->GetObject());
-	lite3dpp::lited3dpp_stringstream sstr;
+	lite3dpp::lite3dpp_stringstream sstr;
 	sstr << *a;
 	*self = sstr.str();
 	gen->SetReturnAddress(self);
@@ -874,7 +874,7 @@ static void AssignFloat2StringGeneric(asIScriptGeneric *gen)
 {
 	float *a = static_cast<float*>(gen->GetAddressOfArg(0));
 	lite3dpp::lite3dpp_string *self = static_cast<lite3dpp::lite3dpp_string*>(gen->GetObject());
-	lite3dpp::lited3dpp_stringstream sstr;
+	lite3dpp::lite3dpp_stringstream sstr;
 	sstr << *a;
 	*self = sstr.str();
 	gen->SetReturnAddress(self);
@@ -884,7 +884,7 @@ static void AssignBool2StringGeneric(asIScriptGeneric *gen)
 {
 	bool *a = static_cast<bool*>(gen->GetAddressOfArg(0));
 	lite3dpp::lite3dpp_string *self = static_cast<lite3dpp::lite3dpp_string*>(gen->GetObject());
-	lite3dpp::lited3dpp_stringstream sstr;
+	lite3dpp::lite3dpp_stringstream sstr;
 	sstr << (*a ? "true" : "false");
 	*self = sstr.str();
 	gen->SetReturnAddress(self);
@@ -894,7 +894,7 @@ static void AddAssignDouble2StringGeneric(asIScriptGeneric * gen)
 {
   double * a = static_cast<double *>(gen->GetAddressOfArg(0));
   lite3dpp::lite3dpp_string * self = static_cast<lite3dpp::lite3dpp_string *>(gen->GetObject());
-  lite3dpp::lited3dpp_stringstream sstr;
+  lite3dpp::lite3dpp_stringstream sstr;
   sstr << *a;
   *self += sstr.str();
   gen->SetReturnAddress(self);
@@ -904,7 +904,7 @@ static void AddAssignFloat2StringGeneric(asIScriptGeneric * gen)
 {
   float * a = static_cast<float *>(gen->GetAddressOfArg(0));
   lite3dpp::lite3dpp_string * self = static_cast<lite3dpp::lite3dpp_string *>(gen->GetObject());
-  lite3dpp::lited3dpp_stringstream sstr;
+  lite3dpp::lite3dpp_stringstream sstr;
   sstr << *a;
   *self += sstr.str();
   gen->SetReturnAddress(self);
@@ -914,7 +914,7 @@ static void AddAssignInt2StringGeneric(asIScriptGeneric * gen)
 {
   asINT64 * a = static_cast<asINT64 *>(gen->GetAddressOfArg(0));
   lite3dpp::lite3dpp_string * self = static_cast<lite3dpp::lite3dpp_string *>(gen->GetObject());
-  lite3dpp::lited3dpp_stringstream sstr;
+  lite3dpp::lite3dpp_stringstream sstr;
   sstr << *a;
   *self += sstr.str();
   gen->SetReturnAddress(self);
@@ -924,7 +924,7 @@ static void AddAssignUInt2StringGeneric(asIScriptGeneric * gen)
 {
   asQWORD * a = static_cast<asQWORD *>(gen->GetAddressOfArg(0));
   lite3dpp::lite3dpp_string * self = static_cast<lite3dpp::lite3dpp_string *>(gen->GetObject());
-  lite3dpp::lited3dpp_stringstream sstr;
+  lite3dpp::lite3dpp_stringstream sstr;
   sstr << *a;
   *self += sstr.str();
   gen->SetReturnAddress(self);
@@ -934,7 +934,7 @@ static void AddAssignBool2StringGeneric(asIScriptGeneric * gen)
 {
   bool * a = static_cast<bool *>(gen->GetAddressOfArg(0));
   lite3dpp::lite3dpp_string * self = static_cast<lite3dpp::lite3dpp_string *>(gen->GetObject());
-  lite3dpp::lited3dpp_stringstream sstr;
+  lite3dpp::lite3dpp_stringstream sstr;
   sstr << (*a ? "true" : "false");
   *self += sstr.str();
   gen->SetReturnAddress(self);
@@ -944,7 +944,7 @@ static void AddString2DoubleGeneric(asIScriptGeneric * gen)
 {
   lite3dpp::lite3dpp_string * a = static_cast<lite3dpp::lite3dpp_string *>(gen->GetObject());
   double * b = static_cast<double *>(gen->GetAddressOfArg(0));
-  lite3dpp::lited3dpp_stringstream sstr;
+  lite3dpp::lite3dpp_stringstream sstr;
   sstr << *a << *b;
   lite3dpp::lite3dpp_string ret_val = sstr.str();
   gen->SetReturnObject(&ret_val);
@@ -954,7 +954,7 @@ static void AddString2FloatGeneric(asIScriptGeneric * gen)
 {
   lite3dpp::lite3dpp_string * a = static_cast<lite3dpp::lite3dpp_string *>(gen->GetObject());
   float * b = static_cast<float *>(gen->GetAddressOfArg(0));
-  lite3dpp::lited3dpp_stringstream sstr;
+  lite3dpp::lite3dpp_stringstream sstr;
   sstr << *a << *b;
   lite3dpp::lite3dpp_string ret_val = sstr.str();
   gen->SetReturnObject(&ret_val);
@@ -964,7 +964,7 @@ static void AddString2IntGeneric(asIScriptGeneric * gen)
 {
   lite3dpp::lite3dpp_string * a = static_cast<lite3dpp::lite3dpp_string *>(gen->GetObject());
   asINT64 * b = static_cast<asINT64 *>(gen->GetAddressOfArg(0));
-  lite3dpp::lited3dpp_stringstream sstr;
+  lite3dpp::lite3dpp_stringstream sstr;
   sstr << *a << *b;
   lite3dpp::lite3dpp_string ret_val = sstr.str();
   gen->SetReturnObject(&ret_val);
@@ -974,7 +974,7 @@ static void AddString2UIntGeneric(asIScriptGeneric * gen)
 {
   lite3dpp::lite3dpp_string * a = static_cast<lite3dpp::lite3dpp_string *>(gen->GetObject());
   asQWORD * b = static_cast<asQWORD *>(gen->GetAddressOfArg(0));
-  lite3dpp::lited3dpp_stringstream sstr;
+  lite3dpp::lite3dpp_stringstream sstr;
   sstr << *a << *b;
   lite3dpp::lite3dpp_string ret_val = sstr.str();
   gen->SetReturnObject(&ret_val);
@@ -984,7 +984,7 @@ static void AddString2BoolGeneric(asIScriptGeneric * gen)
 {
   lite3dpp::lite3dpp_string * a = static_cast<lite3dpp::lite3dpp_string *>(gen->GetObject());
   bool * b = static_cast<bool *>(gen->GetAddressOfArg(0));
-  lite3dpp::lited3dpp_stringstream sstr;
+  lite3dpp::lite3dpp_stringstream sstr;
   sstr << *a << (*b ? "true" : "false");
   lite3dpp::lite3dpp_string ret_val = sstr.str();
   gen->SetReturnObject(&ret_val);
@@ -994,7 +994,7 @@ static void AddDouble2StringGeneric(asIScriptGeneric * gen)
 {
   double* a = static_cast<double *>(gen->GetAddressOfArg(0));
   lite3dpp::lite3dpp_string * b = static_cast<lite3dpp::lite3dpp_string *>(gen->GetObject());
-  lite3dpp::lited3dpp_stringstream sstr;
+  lite3dpp::lite3dpp_stringstream sstr;
   sstr << *a << *b;
   lite3dpp::lite3dpp_string ret_val = sstr.str();
   gen->SetReturnObject(&ret_val);
@@ -1004,7 +1004,7 @@ static void AddFloat2StringGeneric(asIScriptGeneric * gen)
 {
   float* a = static_cast<float *>(gen->GetAddressOfArg(0));
   lite3dpp::lite3dpp_string * b = static_cast<lite3dpp::lite3dpp_string *>(gen->GetObject());
-  lite3dpp::lited3dpp_stringstream sstr;
+  lite3dpp::lite3dpp_stringstream sstr;
   sstr << *a << *b;
   lite3dpp::lite3dpp_string ret_val = sstr.str();
   gen->SetReturnObject(&ret_val);
@@ -1014,7 +1014,7 @@ static void AddInt2StringGeneric(asIScriptGeneric * gen)
 {
   asINT64* a = static_cast<asINT64 *>(gen->GetAddressOfArg(0));
   lite3dpp::lite3dpp_string * b = static_cast<lite3dpp::lite3dpp_string *>(gen->GetObject());
-  lite3dpp::lited3dpp_stringstream sstr;
+  lite3dpp::lite3dpp_stringstream sstr;
   sstr << *a << *b;
   lite3dpp::lite3dpp_string ret_val = sstr.str();
   gen->SetReturnObject(&ret_val);
@@ -1024,7 +1024,7 @@ static void AddUInt2StringGeneric(asIScriptGeneric * gen)
 {
   asQWORD* a = static_cast<asQWORD *>(gen->GetAddressOfArg(0));
   lite3dpp::lite3dpp_string * b = static_cast<lite3dpp::lite3dpp_string *>(gen->GetObject());
-  lite3dpp::lited3dpp_stringstream sstr;
+  lite3dpp::lite3dpp_stringstream sstr;
   sstr << *a << *b;
   lite3dpp::lite3dpp_string ret_val = sstr.str();
   gen->SetReturnObject(&ret_val);
@@ -1034,7 +1034,7 @@ static void AddBool2StringGeneric(asIScriptGeneric * gen)
 {
   bool* a = static_cast<bool *>(gen->GetAddressOfArg(0));
   lite3dpp::lite3dpp_string * b = static_cast<lite3dpp::lite3dpp_string *>(gen->GetObject());
-  lite3dpp::lited3dpp_stringstream sstr;
+  lite3dpp::lite3dpp_stringstream sstr;
   sstr << (*a ? "true" : "false") << *b;
   lite3dpp::lite3dpp_string ret_val = sstr.str();
   gen->SetReturnObject(&ret_val);

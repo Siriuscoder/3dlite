@@ -20,7 +20,7 @@
 #include <3dlite/3dlite_main.h>
 #include <3dlitepp/3dlitepp_common.h>
 #include <3dlitepp/3dlitepp_manageable.h>
-#include <3dlitepp/3dlitepp_resource_pack_manager.h>
+#include <3dlitepp/3dlitepp_resource_manager.h>
 #include <3dlitepp/3dlitepp_script_manager.h>
 
 namespace lite3dpp
@@ -36,15 +36,15 @@ namespace lite3dpp
         bool initFromConfig(const char *config);
         const lite3d_global_settings &getSettings() const;
 
-        void setResourceLocation(const lite3dpp_string &location);
+        void setResourceLocation(const lite3dpp_string &name, 
+            const lite3dpp_string &location,
+            size_t fileCacheMaxSize);
+
+        inline ResourceManager *getResourceManager()
+        { return &mResourceManager; }
 
         void run();
         void stop();
-        
-        inline ResourcePackManager &getResourcePackManager()
-        { return mResourcePackManager; }
-        inline ScriptManager &getScriptManager()
-        { return mScriptManager; }
         
     private:
 
@@ -60,12 +60,9 @@ namespace lite3dpp
 
     private:
 
-        ResourcePackManager mResourcePackManager;
-        ScriptManager mScriptManager;
-        stl<lite3dpp_string>::set mResourceLocations;
+        ResourceManager mResourceManager;
+        JSONValue *mConfigRoot;
         lite3d_global_settings mSettings;
-        lite3dpp_string mInitialScriptName;
-        int32_t mFixedUpdatesInterval;
         lite3d_timer *mFixedUpdatesTimer;
     };
 }

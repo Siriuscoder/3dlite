@@ -56,6 +56,7 @@ namespace lite3dpp
 
     Script *ScriptManager::loadResourceFromFile(const lite3dpp_string &fileName)
     {
+        /*
         ManagedScripts::iterator it = mManagedScripts.find(fileName);
         if (it != mManagedScripts.end())
             return it->second;
@@ -71,6 +72,9 @@ namespace lite3dpp
         mManagedScripts.insert(std::make_pair(fileName, scriptObj));
 
         return scriptObj;
+        */
+
+        return NULL;
     }
 
     void ScriptManager::unloadResource(Script *resource)

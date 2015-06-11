@@ -28,9 +28,8 @@ namespace lite3dpp
 {
 
     Main::Main() :
-        mResourcePackManager(this),
-        mScriptManager(this),
-        mFixedUpdatesInterval(100)
+        mResourceManager(this),
+        mConfigRoot(NULL)
     {
         /* init memory model first
          * json parser used lite3d allocator model,
@@ -63,8 +62,8 @@ namespace lite3dpp
 
         SDL_RWclose(desc);
         /* Parse config data */
-        JSONValue *value = JSON::Parse(json);
-        if (value == NULL)
+        mConfigRoot = JSON::Parse(json);
+        if (mConfigRoot == NULL)
         {
             Manageable::free(json);
             return false;
@@ -85,22 +84,18 @@ namespace lite3dpp
         mSettings.videoSettings.screenHeight = 600;
         mSettings.videoSettings.vsync = LITE3D_TRUE;
 
-        if (!value->IsObject())
+        if (!mConfigRoot->IsObject())
         {
-            delete value;
+            delete mConfigRoot;
+            mConfigRoot = NULL;
             Manageable::free(json);
             return false;
         }
 
-        root = value->AsObject();
+        root = mConfigRoot->AsObject();
         if (root.find(L"LogLevel") != root.end() && root[L"LogLevel"]->IsNumber())
         {
             mSettings.logLevel = root[L"LogLevel"]->AsInt();
-        }
-
-        if (root.find(L"FileCacheSize") != root.end() && root[L"FileCacheSize"]->IsNumber())
-        {
-            mSettings.maxFileCacheSize = root[L"FileCacheSize"]->AsInt();
         }
 
         if (root.find(L"TextureSettings") != root.end() && root[L"TextureSettings"]->IsObject())
@@ -170,36 +165,11 @@ namespace lite3dpp
             }
         }
 
-        if (root.find(L"ResourceLocations") != root.end() && root[L"ResourceLocations"]->IsArray())
-        {
-            JSONArray locations = root[L"ResourceLocations"]->AsArray();
-
-            for (uint32_t i = 0; i < locations.size(); ++i)
-            {
-                if (locations[i]->IsString())
-                {
-                    mResourceLocations.insert(JSON::wStringToString(locations[i]->AsString()));
-                }
-            }
-        }
-
-        if (root.find(L"InitScript") != root.end() && root[L"InitScript"]->IsString())
-        {
-            mInitialScriptName = JSON::wStringToString(root[L"InitScript"]->AsString());               
-        }
-
-        if (root.find(L"FixedUpdatesInterval") != root.end() && root[L"FixedUpdatesInterval"]->IsNumber())
-        {
-            mFixedUpdatesInterval = root[L"FixedUpdatesInterval"]->AsInt();
-        }
-
         mSettings.renderLisneters.userdata = reinterpret_cast<void *> (this);
         mSettings.renderLisneters.preRender = Main::engineInit;
         mSettings.renderLisneters.postRender = Main::engineLeave;
         mSettings.renderLisneters.preFrame = Main::engineFrameBegin;
         mSettings.renderLisneters.postFrame = Main::engineFrameEnd;
-
-        delete value;
         return true;
     }
 
@@ -208,13 +178,19 @@ namespace lite3dpp
         return *lite3d_get_global_settings();
     }
 
-    void Main::setResourceLocation(const lite3dpp_string &location)
+    void Main::setResourceLocation(const lite3dpp_string &name, 
+        const lite3dpp_string &location,
+        size_t fileCacheMaxSize)
     {
-        mResourcePackManager.addResourceLocation(location);
+        mResourceManager.addResourceLocation(name,
+            location,
+            fileCacheMaxSize);
     }
 
     Main::~Main()
     {
+        if(mConfigRoot)
+            delete mConfigRoot;
         lite3d_memory_cleanup();
     }
 
@@ -231,28 +207,71 @@ namespace lite3dpp
 
     void Main::initResourceLocations()
     {
-        stl<lite3dpp_string>::set::iterator it =
-            mResourceLocations.begin();
-        for (; it != mResourceLocations.end(); ++it)
-            setResourceLocation((*it));
+        JSONObject root = mConfigRoot->AsObject();
+        if (root.find(L"ResourceLocations") != root.end() && root[L"ResourceLocations"]->IsArray())
+        {
+            JSONArray locations = root[L"ResourceLocations"]->AsArray();
+
+            for (uint32_t i = 0; i < locations.size(); ++i)
+            {
+                if (locations[i]->IsObject())
+                {
+                    lite3dpp_string locationName;
+                    lite3dpp_string locationPath;
+                    size_t fileCacheLimit;
+
+                    JSONObject locationObj = locations[i]->AsObject();
+                    if (locationObj.find(L"Name") != locationObj.end() && locationObj[L"Name"]->IsString())
+                    {
+                        locationName = JSON::wStringToString(locationObj[L"Name"]->AsString());
+                    }
+
+                    if (locationObj.find(L"Path") != locationObj.end() && locationObj[L"Path"]->IsString())
+                    {
+                        locationPath = JSON::wStringToString(locationObj[L"Path"]->AsString());
+                    }
+
+                    if (locationObj.find(L"FileCacheMaxSize") != locationObj.end() && locationObj[L"FileCacheMaxSize"]->IsNumber())
+                    {
+                        fileCacheLimit = locationObj[L"FileCacheMaxSize"]->AsInt();
+                    }
+                    
+                    setResourceLocation(locationName, locationPath, fileCacheLimit);
+                }
+            }
+        }
     }
 
     void Main::init()
     {
+        if(!mConfigRoot)
+            throw std::runtime_error("Bad configuration");
+
         initResourceLocations();
-        mScriptManager.init();
-        mScriptManager.loadResourceFromFile(mInitialScriptName);
+        int32_t fixedUpdatesInterval = 200;
+        lite3dpp_string initialScriptName;
+
+
+        JSONObject root = mConfigRoot->AsObject();
+        if (root.find(L"FixedUpdatesInterval") != root.end() && root[L"FixedUpdatesInterval"]->IsNumber())
+        {
+            fixedUpdatesInterval = root[L"FixedUpdatesInterval"]->AsInt();
+        }
+
+        if (root.find(L"InitScript") != root.end() && root[L"InitScript"]->IsString())
+        {
+            initialScriptName = JSON::wStringToString(root[L"InitScript"]->AsString());               
+        }
 
         /* perform fixed update timer */    
         mFixedUpdatesTimer = 
-            lite3d_timer_add(mFixedUpdatesInterval, timerFixed, this);
+            lite3d_timer_add(fixedUpdatesInterval, timerFixed, this);
     }
 
     void Main::shut()
     {
         lite3d_timer_purge(mFixedUpdatesTimer);
-        mScriptManager.shut();
-        mResourcePackManager.shut();
+        mResourceManager.releaseAllResources();
     }
 
     /* callbackes */
@@ -296,7 +315,7 @@ namespace lite3dpp
         try
         {
             Main *mainObj = reinterpret_cast<Main *> (userdata);
-            mainObj->mScriptManager.performFrameBegin();
+            //mainObj->mScriptManager.performFrameBegin();
             return LITE3D_TRUE;
         }
         catch (std::exception &ex)
@@ -313,7 +332,7 @@ namespace lite3dpp
         try
         {
             Main *mainObj = reinterpret_cast<Main *> (userdata);
-            mainObj->mScriptManager.performFrameEnd();
+            //mainObj->mScriptManager.performFrameEnd();
             return LITE3D_TRUE;
         }
         catch (std::exception &ex)
@@ -331,7 +350,7 @@ namespace lite3dpp
 
         try
         {
-            mainObj->mScriptManager.performFixedUpdate();
+            //mainObj->mScriptManager.performFixedUpdate();
         }
         catch (std::exception &ex)
         {

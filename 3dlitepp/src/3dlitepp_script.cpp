@@ -29,11 +29,13 @@ namespace lite3dpp
                                           CScriptBuilder *builder, void *userParam)
     {
         Main *mainObj = reinterpret_cast<Main *> (userParam);
-        lite3d_resource_file *scriptFile =
-            mainObj->getResourcePackManager().loadResourceFromFile(include);
 
-        return builder->AddSectionFromMemory(include, (char *)scriptFile->fileBuff,
-                                             scriptFile->fileSize, 0);
+        size_t scriptFileSize;
+        const char *scriptFile = static_cast<const char *>(
+            mainObj->getResourceManager()->loadFileToMemory(include, &scriptFileSize));
+
+        return builder->AddSectionFromMemory(include, (char *)scriptFile,
+                                             scriptFileSize, 0);
     }
 
     Script::Script(const lite3dpp_string &name, Main *main, asIScriptEngine *engine) :

@@ -636,7 +636,7 @@ int ConfigEngineFromStream(asIScriptEngine *engine, istream &strm, const char *c
 			{
 				// Get the value for the property
 				in::GetToken(engine, tmp, config, pos);
-				lite3dpp::lited3dpp_stringstream s(tmp);
+				lite3dpp::lite3dpp_stringstream s(tmp);
 				asPWORD value;
 
 				s >> value;
@@ -891,7 +891,7 @@ lite3dpp::lite3dpp_string GetExceptionInfo(asIScriptContext *ctx, bool showStack
 {
 	if( ctx->GetState() != asEXECUTION_EXCEPTION ) return "";
 
-	lite3dpp::lited3dpp_stringstream text;
+	lite3dpp::lite3dpp_stringstream text;
 
 	const asIScriptFunction *function = ctx->GetExceptionFunction();
 	text << "func: " << function->GetDeclaration() << "\n";
