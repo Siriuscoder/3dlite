@@ -17,13 +17,13 @@
  *******************************************************************************/
 #include <gtest/gtest.h>
 
-#include <3dlite/3dlite_file_cache.h>
+#include <3dlite/3dlite_resource_pack.h>
 #include <3dlite/3dlite_alloc.h>
 #include <3dlite/3dlite_logger.h>
 
 static void TestCommon(lite3d_resource_pack *pack)
 {
-    lite3d_resource_file *resource1 = lite3d_load_resource_file(pack,
+    lite3d_resource_file *resource1 = lite3d_resource_pack_file_load(pack,
         "pack/eev.jpg");
 
     ASSERT_TRUE(resource1 != NULL);
@@ -31,7 +31,7 @@ static void TestCommon(lite3d_resource_pack *pack)
     EXPECT_TRUE(resource1->fileBuff != NULL);
     EXPECT_EQ(resource1->fileSize, 89149);
 
-    lite3d_resource_file *resource2 = lite3d_load_resource_file(pack,
+    lite3d_resource_file *resource2 = lite3d_resource_pack_file_load(pack,
         "pack/normandy/ref.jpg");
 
     ASSERT_TRUE(resource2 != NULL);
@@ -41,14 +41,14 @@ static void TestCommon(lite3d_resource_pack *pack)
 
     EXPECT_EQ(pack->memoryUsed, 89149 + 229837);
 
-    lite3d_purge_resource_file(resource1);
+    lite3d_resource_pack_file_purge(resource1);
 
     EXPECT_TRUE(resource1->isLoaded == 0);
     EXPECT_TRUE(resource1->fileBuff == NULL);
     EXPECT_EQ(resource1->fileSize, 0);
     EXPECT_EQ(pack->memoryUsed, 229837);
 
-    lite3d_resource_file *resource3 = lite3d_load_resource_file(pack,
+    lite3d_resource_file *resource3 = lite3d_resource_pack_file_load(pack,
         "pack/pack.0");
 
     ASSERT_TRUE(resource3 != NULL);
@@ -56,7 +56,7 @@ static void TestCommon(lite3d_resource_pack *pack)
     EXPECT_TRUE(resource3->fileBuff != NULL);
     EXPECT_EQ(resource3->fileSize, 380065);
 
-    lite3d_resource_file *resource4 = lite3d_load_resource_file(pack,
+    lite3d_resource_file *resource4 = lite3d_resource_pack_file_load(pack,
         "pack/normandy/ref.jpg");
 
     ASSERT_TRUE(resource4 != NULL);
@@ -68,7 +68,7 @@ static void TestCommon(lite3d_resource_pack *pack)
 
     /* memory limit reached in this point */
     /* expecting purged tail resource */
-    lite3d_resource_file *resource5 = lite3d_load_resource_file(pack,
+    lite3d_resource_file *resource5 = lite3d_resource_pack_file_load(pack,
         "pack/normandy/t1.jpg");
 
     ASSERT_TRUE(resource5 != NULL);
@@ -82,7 +82,7 @@ static void TestPerfomanceIndex(lite3d_resource_pack *pack)
 {
     for(int i = 0; i < 10000; i++)
     {
-        lite3d_resource_file *resource = lite3d_load_resource_file(pack,
+        lite3d_resource_file *resource = lite3d_resource_pack_file_load(pack,
             "pack/pack.0");
     
         ASSERT_TRUE(resource != NULL);
@@ -90,7 +90,7 @@ static void TestPerfomanceIndex(lite3d_resource_pack *pack)
         EXPECT_TRUE(resource->fileBuff != NULL);
         EXPECT_EQ(resource->fileSize, 380065);
     
-        lite3d_resource_file *resource2 = lite3d_load_resource_file(pack,
+        lite3d_resource_file *resource2 = lite3d_resource_pack_file_load(pack,
             "pack/normandy/ref.jpg");
     
         ASSERT_TRUE(resource2 != NULL);
@@ -104,7 +104,7 @@ static void TestPerfomanceLoad(lite3d_resource_pack *pack)
 {
     for(int i = 0; i < 10; i++)
     {
-        lite3d_resource_file *resource = lite3d_load_resource_file(pack,
+        lite3d_resource_file *resource = lite3d_resource_pack_file_load(pack,
             i % 2 ? "pack/pack.0" : "pack/normandy/ref.jpg");
     
         ASSERT_TRUE(resource != NULL);
@@ -112,7 +112,7 @@ static void TestPerfomanceLoad(lite3d_resource_pack *pack)
         EXPECT_TRUE(resource->fileBuff != NULL);
         EXPECT_EQ(resource->fileSize, i % 2 ? 380065 : 229837);
 
-        lite3d_purge_resource_file(resource);
+        lite3d_resource_pack_file_purge(resource);
 
         EXPECT_TRUE(resource->isLoaded == 0);
         EXPECT_TRUE(resource->fileBuff == NULL);
@@ -131,9 +131,9 @@ protected:
     static void SetUpTestCase()
     {
         /* setup memory */
-        lite3d_init_memory(NULL);
-        lite3d_setup_stdout_logger();
-        lite3d_set_loglevel(LITE3D_LOGLEVEL_ERROR);
+        lite3d_memory_init(NULL);
+        lite3d_logger_setup_stdout();
+        lite3d_logger_set_loglevel(LITE3D_LOGLEVEL_ERROR);
     }
 
     // Per-test-case tear-down.
@@ -143,20 +143,21 @@ protected:
     static void TearDownTestCase()
     {
         /* clean memory */
-        lite3d_cleanup_memory();
+        lite3d_logger_release();
+        lite3d_memory_cleanup();
     }
 
 public:
 
     virtual void SetUp()
     {
-        mFileSysPack = lite3d_open_pack("tests/", 0, 700000);
+        mFileSysPack = lite3d_resource_pack_open("tests/", 0, 700000);
         ASSERT_TRUE(mFileSysPack != NULL);
     }
 
     virtual void TearDown()
     {
-        lite3d_close_pack(mFileSysPack);
+        lite3d_resource_pack_close(mFileSysPack);
     }
 
 protected:
@@ -189,9 +190,9 @@ protected:
     static void SetUpTestCase()
     {
         /* setup memory */
-        lite3d_init_memory(NULL);
-        lite3d_setup_stdout_logger();
-        lite3d_set_loglevel(LITE3D_LOGLEVEL_ERROR);
+        lite3d_memory_init(NULL);
+        lite3d_logger_setup_stdout();
+        lite3d_logger_set_loglevel(LITE3D_LOGLEVEL_ERROR);
     }
 
     // Per-test-case tear-down.
@@ -201,20 +202,21 @@ protected:
     static void TearDownTestCase()
     {
         /* clean memory */
-        lite3d_cleanup_memory();
+        lite3d_logger_release();
+        lite3d_memory_cleanup();
     }
 
 public:
 
     virtual void SetUp()
     {
-        mFile7zPack = lite3d_open_pack("tests/pack.1", 1, 700000);
+        mFile7zPack = lite3d_resource_pack_open("tests/pack.1", 1, 700000);
         ASSERT_TRUE(mFile7zPack != NULL);
     }
 
     virtual void TearDown()
     {
-        lite3d_close_pack(mFile7zPack);
+        lite3d_resource_pack_close(mFile7zPack);
     }
 
 protected:

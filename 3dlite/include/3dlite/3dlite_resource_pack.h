@@ -35,6 +35,11 @@ typedef struct lite3d_resource_pack
 
 typedef struct lite3d_resource_file
 {
+    /* rb tree node entity */
+    lite3d_rb_node cached;
+    /* node of priority */
+    lite3d_list_node priority;
+
     lite3d_resource_pack *packer;
     char name[LITE3D_MAX_FILE_NAME];
     void *fileBuff;
@@ -42,21 +47,15 @@ typedef struct lite3d_resource_file
     uint8_t isLoaded;
     /* for 7z */
     int32_t dbIndex;
-    /* rb tree node entity */
-    lite3d_rb_node cached;
-    /* node of priority */
-    lite3d_list_node priority;
 } lite3d_resource_file;
 
-typedef lite3d_resource_file* (*lite3d_load_resource)(const char *path, struct lite3d_resource_file *resource);
+LITE3D_CEXPORT lite3d_resource_pack *lite3d_resource_pack_open(const char *path, uint8_t compressed, size_t memoryLimit);
+LITE3D_CEXPORT void lite3d_resource_pack_close(lite3d_resource_pack *pack);
 
-LITE3D_CEXPORT lite3d_resource_pack *lite3d_open_pack(const char *path, uint8_t compressed, size_t memoryLimit);
-LITE3D_CEXPORT void lite3d_close_pack(lite3d_resource_pack *pack);
-
-LITE3D_CEXPORT lite3d_resource_file *lite3d_load_resource_file(lite3d_resource_pack *pack, const char *file);
-LITE3D_CEXPORT void lite3d_purge_resource_file(lite3d_resource_file *resource);
-LITE3D_CEXPORT void lite3d_purge_resources(lite3d_resource_pack *pack);
-LITE3D_CEXPORT void lite3d_cleanup_out_of_use(lite3d_resource_pack *pack);
+LITE3D_CEXPORT lite3d_resource_file *lite3d_resource_pack_file_load(lite3d_resource_pack *pack, const char *file);
+LITE3D_CEXPORT void lite3d_resource_pack_file_purge(lite3d_resource_file *resource);
+LITE3D_CEXPORT void lite3d_resource_pack_purge(lite3d_resource_pack *pack);
+LITE3D_CEXPORT void lite3d_resource_pack_purge_unused(lite3d_resource_pack *pack);
 
 #endif	/* LITE3D_FILEPACK_H */
 

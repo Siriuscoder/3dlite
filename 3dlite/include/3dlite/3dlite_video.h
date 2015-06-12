@@ -31,12 +31,13 @@ typedef struct lite3d_video_settings
     int8_t fullscreen;
     char caption[LITE3D_CAPTION_MAX];
     int8_t vsync;
+    int8_t hidden;
 } lite3d_video_settings;
 
-LITE3D_CEXPORT int lite3d_setup_video(const lite3d_video_settings *settings);
-LITE3D_CEXPORT const lite3d_video_settings *lite3d_get_video_settings(void);
-LITE3D_CEXPORT int lite3d_close_video(void);
-LITE3D_CEXPORT void lite3d_swap_buffers(void);
+LITE3D_CEXPORT int lite3d_video_open(const lite3d_video_settings *settings);
+LITE3D_CEXPORT const lite3d_video_settings *lite3d_video_get_settings(void);
+LITE3D_CEXPORT int lite3d_video_close(void);
+LITE3D_CEXPORT void lite3d_video_swap_buffers(void);
 
 
 #endif	/* VIDEO_H */

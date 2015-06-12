@@ -57,7 +57,15 @@
 
 #   define STRUCT_PACKED(x) __declspec(align(x))
 #   define INLINE __inline
-#   define DEVIL_CALL   __stdcall
+#   define DEVIL_CALL __stdcall
+
+#   ifdef near
+#   undef near
+#   endif
+
+#   ifdef far
+#   undef far
+#   endif
 
 #elif PLATFORM_Linux
     // If not Windows, we assume some sort of Unixy build environment,

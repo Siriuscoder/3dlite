@@ -24,6 +24,9 @@
 #include <3dlite/3dlite_alloc.h>
 #include <3dlite/3dlite_logger.h>
 #include <3dlite/3dlite_render.h>
+#include <3dlite/3dlite_vbo.h>
+#include <3dlite/3dlite_vbo_loader.h>
+#include <3dlite/3dlite_meshes_render.h>
 
 typedef int (*lite3d_user_init_completed_t)(void *userdata);
 typedef int (*lite3d_user_shut_t)(void *userdata);

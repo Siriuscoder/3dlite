@@ -20,13 +20,17 @@
 
 #include <SDL_events.h>
 #include <3dlite/3dlite_common.h>
+#include <3dlite/3dlite_list.h>
+#include <3dlite/3dlite_camera.h>
+#include <3dlite/3dlite_framebuffer.h>
 
-typedef int (*lite3d_pre_render_t)(void *userdata);
-typedef int (*lite3d_post_render_t)(void *userdata);
-typedef int (*lite3d_pre_frame_t)(void *userdata);
-typedef int (*lite3d_post_frame_t)(void *userdata);
-typedef int (*lite3d_render_frame_t)(void *userdata);
-typedef int (*lite3d_process_event_t)(SDL_Event *levent, void *userdata);
+#define LITE3D_RENDER_TARGET_NAME   20
+
+typedef int (*lite3d_pre_render_t)(void);
+typedef int (*lite3d_post_render_t)(void);
+typedef int (*lite3d_pre_frame_t)(void);
+typedef int (*lite3d_post_frame_t)(void);
+typedef int (*lite3d_process_event_t)(SDL_Event *levent);
 
 typedef struct lite3d_render_listeners
 {
@@ -34,9 +38,7 @@ typedef struct lite3d_render_listeners
     lite3d_post_render_t postRender;
     lite3d_pre_frame_t preFrame;
     lite3d_post_frame_t postFrame;
-    lite3d_render_frame_t renderFrame;
     lite3d_process_event_t processEvent;
-    void *userdata;
 } lite3d_render_listeners;
 
 typedef struct lite3d_render_stats
@@ -49,12 +51,52 @@ typedef struct lite3d_render_stats
     float avrFrameMs;
     float bestFrameMs;
     float worstFrameMs;
+    int32_t renderTargets;
+    int32_t trianglesByFrame;
+    int32_t verticesByFrame;
+    float triangleMs;
+    int32_t triangleByBatch;
+    int32_t objectsByFrame;
+    int32_t batchesByFrame;
+    int32_t materialsByFrame;
+    int32_t materialsPassedByFrame;
+    int32_t textureUnitsByFrame;
 } lite3d_render_stats;
 
+typedef struct lite3d_render_target
+{
+    lite3d_list_node node;
+    lite3d_framebuffer fb;
+    int32_t height;
+    int32_t width;
+    void *userdata;
+    uint8_t enabled;
+    void (*preUpdate)(struct lite3d_render_target *target);
+    void (*postUpdate)(struct lite3d_render_target *target);
+    lite3d_list lookSequence;
+    uint32_t cleanMask;
+    kmVec4 cleanColor;
+} lite3d_render_target;
 
 LITE3D_CEXPORT void lite3d_render_loop(lite3d_render_listeners *callbacks);
-LITE3D_CEXPORT lite3d_render_stats *lite3d_get_render_stats(void);
+LITE3D_CEXPORT lite3d_render_stats *lite3d_render_stats_get(void);
 
+LITE3D_CEXPORT int lite3d_render_target_init(lite3d_render_target *rt, 
+    int32_t width, int32_t height);
+LITE3D_CEXPORT void lite3d_render_target_purge(lite3d_render_target *rt);
+LITE3D_CEXPORT void lite3d_render_target_add(lite3d_render_target *rt);
+LITE3D_CEXPORT void lite3d_render_target_erase(lite3d_render_target *rt);
+LITE3D_CEXPORT void lite3d_render_target_erase_all(void);
 
+LITE3D_CEXPORT void lite3d_render_suspend(void);
+LITE3D_CEXPORT void lite3d_render_pause(void);
+LITE3D_CEXPORT void lite3d_render_stop(void);
+LITE3D_CEXPORT void lite3d_render_depth_test(uint8_t on);
+
+LITE3D_CEXPORT int lite3d_render_target_attach_camera(lite3d_render_target *rt, lite3d_camera *camera);
+LITE3D_CEXPORT int lite3d_render_target_dettach_camera(lite3d_render_target *rt, lite3d_camera *camera);
+LITE3D_CEXPORT int lite3d_render_target_screen_attach_camera(lite3d_camera *camera);
+LITE3D_CEXPORT int lite3d_render_target_screen_dettach_camera(lite3d_camera *camera);
+LITE3D_CEXPORT lite3d_render_target *lite3d_render_target_screen_get(void);
 #endif	/* RENDER_H */
 

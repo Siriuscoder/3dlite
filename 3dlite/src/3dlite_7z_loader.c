@@ -18,7 +18,7 @@
 #include <SDL_log.h>
 #include <SDL_assert.h>
 
-#include <3dlite/3dlite_7zloader.h>
+#include <3dlite/3dlite_7z_loader.h>
 #include <3dlite/3dlite_alloc.h>
 
 static uint8_t gCRC_gen = 0;
@@ -101,7 +101,7 @@ lite3d_7z_pack *lite3d_7z_pack_open(const char *path)
     if (InFile_Open(&zFile, path))
     {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
-            "lite3d_7z_pack_open: '%s' open failed..", path);
+            "%s: '%s' open failed..", __FUNCTION__, path);
         return NULL;
     }
     
@@ -122,7 +122,7 @@ lite3d_7z_pack *lite3d_7z_pack_open(const char *path)
     if(SzArEx_Open(&pack->db, &pack->lookStream.s, &pack->allocImp, &pack->allocImp) != SZ_OK)
     {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
-            "lite3d_7z_pack_open: '%s' extract index failed, bad archive..", path);
+            "%s: '%s' extract index failed, bad archive..", __FUNCTION__, path);
         
         SzArEx_Free(&pack->db, &pack->allocImp);
         File_Close(&pack->archiveStream.file);
@@ -175,7 +175,7 @@ void lite3d_7z_pack_iterate(lite3d_7z_pack *pack, lite3d_7z_iterator iter, void 
         if(nameLen >= LITE3D_MAX_FILE_NAME)
         {
             SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
-                "lite3d_7z_pack_iterate: skip index %d, name too long..",
+                "%s: skip index %d, name too long..", __FUNCTION__,
                 (int)index);
             continue;
         }
@@ -186,14 +186,14 @@ void lite3d_7z_pack_iterate(lite3d_7z_pack *pack, lite3d_7z_iterator iter, void 
         if(!utf16_to_utf8(utf8name, &destPos, utf16name))
         {
             SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
-                "lite3d_7z_pack_iterate: to utf8 name decode failed..");
+                "%s: to utf8 name decode failed..");
             continue;
         }
             
         utf8name[destPos+1] = 0;
         
         SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION,
-            "lite3d_7z_pack_iterate: '%s' index %d",
+            "%s: '%s' index %d", __FUNCTION__,
             utf8name, (int)index);
         iter(pack, (char *)utf8name, index, userdata);
     }
@@ -213,7 +213,7 @@ void *lite3d_7z_pack_file_extract(lite3d_7z_pack *pack, uint32_t index, size_t *
     {
         *outSize = 0;
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
-            "lite3d_7z_pack_file_extract: index %d extract failed..", (int)index);
+            "%s: index %d extract failed..", __FUNCTION__, (int)index);
         return NULL;
     }
     

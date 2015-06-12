@@ -26,7 +26,7 @@ lite3d_alloca_f gAlloca_f =
 nedpool *globalMemPools[LITE3D_POOL_MAX] = 
     { NULL, NULL, NULL, NULL, NULL, NULL };
 
-void lite3d_init_memory(lite3d_alloca_f *allocator)
+void lite3d_memory_init(lite3d_alloca_f *allocator)
 {
     int i;
     if(allocator && allocator->mallocf != NULL && allocator->freef != NULL)
@@ -46,7 +46,7 @@ void lite3d_init_memory(lite3d_alloca_f *allocator)
     }
 }
 
-void lite3d_cleanup_memory(void)
+void lite3d_memory_cleanup(void)
 {
     int i;
     for(i = 0; i < LITE3D_POOL_MAX; ++i)

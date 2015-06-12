@@ -18,7 +18,6 @@
 #include <SDL.h>
 
 #include <3dlite/3dlite_main.h>
-#include <3dlite/3dlite_logger.h>
 
 static lite3d_global_settings gGlobalSettings;
 
@@ -63,44 +62,75 @@ static int sdl_init(void)
 
 int lite3d_main(const lite3d_global_settings *settings)
 {
+    int ret = LITE3D_TRUE;
     gGlobalSettings = *settings;
     /* begin 3dlite initialization */
     /* setup memory */
-    lite3d_init_memory(&gGlobalSettings.userAllocator);
+    lite3d_memory_init(&gGlobalSettings.userAllocator);
     /* setup logger */
-    lite3d_setup_stdout_logger();
-    lite3d_set_loglevel(gGlobalSettings.logLevel);
+    lite3d_logger_setup_stdout();
+    lite3d_logger_set_loglevel(gGlobalSettings.logLevel);
 
     SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
         "====== 3dlite started ======");
     /* setup SDL */
     if (!sdl_init())
-        return LITE3D_FALSE;
+    {
+        ret = LITE3D_FALSE;
+        goto ret4;
+    }
 
     /* setup video */
-    if (!lite3d_setup_video(&gGlobalSettings.videoSettings))
+    if (!lite3d_video_open(&gGlobalSettings.videoSettings))
     {
-        SDL_Quit();
-        lite3d_cleanup_memory();
-        return LITE3D_FALSE;
+        ret = LITE3D_FALSE;
+        goto ret3;
     }
 
     /* setup textures technique */
     if (!lite3d_texture_technique_init(&gGlobalSettings.textureSettings))
     {
-        lite3d_close_video();
-        lite3d_cleanup_memory();
-        return LITE3D_FALSE;
+        ret = LITE3D_FALSE;
+        goto ret2;
+    }
+    
+    /* setup textures technique */
+    if (!lite3d_vbo_technique_init())
+    {
+        ret = LITE3D_FALSE;
+        goto ret1;
     }
 
+    /* setup shaders technique */
+    if(!lite3d_shader_program_technique_init())
+    {
+        ret = LITE3D_FALSE;
+        goto ret1;
+    }
+
+    /* init shader global parameters */
+    lite3d_shader_global_parameters_init();
+
+    if(!lite3d_framebuffer_technique_init())
+    {
+        ret = LITE3D_FALSE;
+        goto ret1;
+    }
+
+    /* start main loop */
     lite3d_render_loop(&gGlobalSettings.renderLisneters);
 
+ret1:
     lite3d_texture_technique_shut();
-    lite3d_close_video();
-    lite3d_cleanup_memory();
+ret2:
+    lite3d_video_close();
+ret3:
     SDL_Quit();
+ret4:
+    lite3d_logger_release();
+    lite3d_memory_cleanup();
 
-    return LITE3D_TRUE;
+    return ret;
 }
 
 const lite3d_global_settings *lite3d_get_global_settings(void)

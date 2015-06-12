@@ -18,7 +18,10 @@
 #include <SDL.h>
 #include <SDL_syswm.h>
 
+
+
 #include <3dlite/GL/glew.h>
+#include <3dlite/3dlite_render.h>
 #include <3dlite/3dlite_video.h>
 
 #ifdef PLATFORM_Windows
@@ -79,10 +82,10 @@ static int init_gl_extensions(void)
             "%s: Glew failed.. %s\n", __FUNCTION__, glewGetErrorString(err));
     }
     
-    if (!GL_VERSION_3_0)
+    if (!GLEW_VERSION_3_1)
     {
         SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION,
-            "%s: GL v4.0 minimum required..", __FUNCTION__);
+            "%s: GL v3.0 minimum required..", __FUNCTION__);
         return LITE3D_FALSE;
     }
 
@@ -105,7 +108,7 @@ static int init_gl_extensions(void)
     return init_platform_gl_extensions();
 }
 
-int lite3d_setup_video(const lite3d_video_settings *settings)
+int lite3d_video_open(const lite3d_video_settings *settings)
 {
     uint32_t windowFlags;
     SDL_DisplayMode displayMode;
@@ -184,27 +187,28 @@ int lite3d_setup_video(const lite3d_video_settings *settings)
 
     if (!init_gl_extensions())
     {
-        lite3d_close_video();
+        lite3d_video_close();
         return LITE3D_FALSE;
     }
 
-    SDL_ShowWindow(gRenderWindow);
+    if(!gVideoSettings.hidden)
+        SDL_ShowWindow(gRenderWindow);
     return LITE3D_TRUE;
 }
 
-const lite3d_video_settings *lite3d_get_video_settings(void)
+const lite3d_video_settings *lite3d_video_get_settings(void)
 {
     return &gVideoSettings;
 }
 
-int lite3d_close_video(void)
+int lite3d_video_close(void)
 {
     SDL_GL_DeleteContext(gGLContext);
     SDL_DestroyWindow(gRenderWindow);
     return LITE3D_TRUE;
 }
 
-void lite3d_swap_buffers(void)
+void lite3d_video_swap_buffers(void)
 {
     SDL_GL_SwapWindow(gRenderWindow);
 }

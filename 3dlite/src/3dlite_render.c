@@ -17,17 +17,30 @@
  *******************************************************************************/
 #include <string.h>
 #include <SDL_timer.h>
+#include <SDL_assert.h>
 
+#include <3dlite/GL/glew.h>
+#include <3dlite/3dlite_alloc.h>
 #include <3dlite/3dlite_render.h>
 #include <3dlite/3dlite_video.h>
+#include <3dlite/3dlite_scene.h>
+#include <3dlite/3dlite_main.h>
+
+typedef struct lookUnit
+{
+    lite3d_list_node rtLink;
+    lite3d_camera *camera;
+} lookUnit;
 
 static uint64_t gLastMark = 0;
 static uint64_t gPerfFreq = 0;
 static int32_t gFPSCounter = 0;
-static lite3d_render_listeners gRenderCallbacks;
-static lite3d_render_stats gRenderStats = {
-    0, 0, 0, 0, 0.0, 0.0, 0.0, 0.0
-};
+static lite3d_list gRenderTargets;
+static lite3d_render_listeners gRenderListeners;
+static uint8_t gRenderStarted = LITE3D_TRUE;
+static uint8_t gRenderActive = LITE3D_TRUE;
+static lite3d_render_stats gRenderStats;
+static lite3d_render_target gScreenRt;
 
 static void calc_render_stats(uint64_t beginFrame, uint64_t endFrame)
 {
@@ -48,6 +61,9 @@ static void calc_render_stats(uint64_t beginFrame, uint64_t endFrame)
         gRenderStats.worstFrameMs = gRenderStats.lastFrameMs;
 
     gRenderStats.avrFrameMs = (gRenderStats.lastFrameMs + gRenderStats.avrFrameMs) / 2;
+
+    gRenderStats.triangleByBatch = gRenderStats.batchesByFrame ? gRenderStats.trianglesByFrame / gRenderStats.batchesByFrame : 0;
+    gRenderStats.triangleMs = gRenderStats.trianglesByFrame ? (float) gRenderStats.lastFrameMs / (float) gRenderStats.trianglesByFrame : 0;
 
     /* second elapsed */
     if ((endFrame - gLastMark) > gPerfFreq)
@@ -72,46 +88,287 @@ static void calc_render_stats(uint64_t beginFrame, uint64_t endFrame)
     }
 }
 
+static void update_render_target(lite3d_render_target *target)
+{
+    lite3d_list_node *node;
+    lite3d_scene *scene;
+    lookUnit *look;
+    /* switch target framebuffer */
+    lite3d_framebuffer_switch(&target->fb);
+    /* set viewport */
+    glViewport(0, 0, target->width, target->height);
+    /* clear target */
+    glClearColor(target->cleanColor.x, target->cleanColor.y, target->cleanColor.z, target->cleanColor.w);
+    glClear(target->cleanMask);
+    /* do paint by render queue */
+    for (node = target->lookSequence.l.next; node != &target->lookSequence.l; node = lite3d_list_next(node))
+    {
+        look = LITE3D_MEMBERCAST(lookUnit, node, rtLink);
+        scene = (lite3d_scene *) look->camera->cameraNode.scene;
+        lite3d_scene_render(scene, look->camera);
+
+        /* accamulate statistics */
+        gRenderStats.trianglesByFrame += scene->stats.trianglesRendered;
+        gRenderStats.verticesByFrame += scene->stats.verticesRendered;
+        gRenderStats.objectsByFrame += scene->stats.objectsRendered;
+        gRenderStats.batchesByFrame += scene->stats.batches;
+        gRenderStats.materialsByFrame += scene->stats.materialBlocks;
+        gRenderStats.materialsPassedByFrame += scene->stats.materialPassed;
+        gRenderStats.textureUnitsByFrame += scene->stats.textureUnitsBinded;
+    }
+}
+
+static int update_render_targets(void)
+{
+    int32_t targetsCount = 0;
+    lite3d_list_node *node;
+    lite3d_render_target *target;
+
+    for (node = gRenderTargets.l.next; node != &gRenderTargets.l; node = lite3d_list_next(node))
+    {
+        target = LITE3D_MEMBERCAST(lite3d_render_target, node, node);
+        if (!target->enabled)
+            continue;
+
+        if (target->preUpdate)
+            target->preUpdate(target);
+
+        update_render_target(target);
+
+        if (target->postUpdate)
+            target->postUpdate(target);
+
+        targetsCount++;
+    }
+
+    glFinish();
+    lite3d_video_swap_buffers();
+
+    gRenderStats.renderTargets = targetsCount;
+    return targetsCount ? LITE3D_TRUE : LITE3D_FALSE;
+}
+
+void lite3d_render_depth_test(uint8_t on)
+{
+    if (on)
+    {
+        glClearDepth(1.0);
+        glDepthFunc(GL_LESS);
+        glEnable(GL_DEPTH_TEST);
+    }
+    else
+    {
+        glDisable(GL_DEPTH_TEST);
+    }
+}
+
 void lite3d_render_loop(lite3d_render_listeners *callbacks)
 {
     SDL_Event wevent;
     uint64_t beginFrameMark;
-    gPerfFreq = SDL_GetPerformanceFrequency();
-    uint8_t starting = LITE3D_TRUE;
-    gRenderCallbacks = *callbacks;
-    memset(&gRenderStats, 0, sizeof (gRenderStats));
+    gRenderListeners = *callbacks;
 
-    if (gRenderCallbacks.preRender && !gRenderCallbacks.preRender(gRenderCallbacks.userdata))
+    gPerfFreq = SDL_GetPerformanceFrequency();
+
+    /* depth test enable by default */
+    lite3d_render_depth_test(LITE3D_TRUE);
+
+    /* clean statistic */
+    memset(&gRenderStats, 0, sizeof (gRenderStats));
+    /* init screen render target */
+    lite3d_render_target_init(&gScreenRt,
+        lite3d_get_global_settings()->videoSettings.screenWidth,
+        lite3d_get_global_settings()->videoSettings.screenHeight);
+
+    lite3d_list_init(&gRenderTargets);
+    lite3d_render_target_add(&gScreenRt);
+
+    /* start user initialization */
+    if (gRenderListeners.preRender && !gRenderListeners.preRender())
         return;
 
-    while (starting)
+    /* begin render loop */
+    while (gRenderStarted)
     {
-        beginFrameMark = SDL_GetPerformanceCounter();
-        if (gRenderCallbacks.preFrame && !gRenderCallbacks.preFrame(gRenderCallbacks.userdata))
-            break;
-        if (gRenderCallbacks.renderFrame && !gRenderCallbacks.renderFrame(gRenderCallbacks.userdata))
-            break;
-        if (gRenderCallbacks.postFrame && !gRenderCallbacks.postFrame(gRenderCallbacks.userdata))
-            break;
+        gRenderStats.trianglesByFrame =
+            gRenderStats.objectsByFrame =
+            gRenderStats.batchesByFrame =
+            gRenderStats.materialsByFrame =
+            gRenderStats.materialsPassedByFrame =
+            gRenderStats.textureUnitsByFrame =
+            gRenderStats.verticesByFrame = 0;
 
-        lite3d_swap_buffers();
+        beginFrameMark = SDL_GetPerformanceCounter();
+
+        if (gRenderActive)
+        {
+            if (gRenderListeners.preFrame && !gRenderListeners.preFrame())
+                break;
+            if (!update_render_targets())
+                break;
+            if (gRenderListeners.postFrame && !gRenderListeners.postFrame())
+                break;
+        }
+
         calc_render_stats(beginFrameMark, SDL_GetPerformanceCounter());
 
         while (SDL_PollEvent(&wevent))
         {
-            if (gRenderCallbacks.processEvent && !gRenderCallbacks.processEvent(&wevent, gRenderCallbacks.userdata))
+            if (gRenderListeners.processEvent && !gRenderListeners.processEvent(&wevent))
             {
-                starting = LITE3D_FALSE;
+                lite3d_render_stop();
                 break;
             }
         }
     }
 
-    if (gRenderCallbacks.postRender)
-        gRenderCallbacks.postRender(gRenderCallbacks.userdata);
+    if (gRenderListeners.postRender)
+        gRenderListeners.postRender();
+
+    lite3d_render_target_erase_all();
+    lite3d_render_target_purge(&gScreenRt);
 }
 
-lite3d_render_stats *lite3d_get_render_stats(void)
+lite3d_render_stats *lite3d_render_stats_get(void)
 {
     return &gRenderStats;
+}
+
+int lite3d_render_target_init(lite3d_render_target *rt,
+    int32_t width, int32_t height)
+{
+    SDL_assert(rt);
+
+    memset(rt, 0, sizeof (lite3d_render_target));
+    lite3d_list_link_init(&rt->node);
+
+    rt->enabled = LITE3D_TRUE;
+    lite3d_list_init(&rt->lookSequence);
+    rt->cleanMask = GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT;
+    rt->cleanColor.x = rt->cleanColor.y = rt->cleanColor.z = 0.3f;
+    rt->cleanColor.w = 0.0f;
+    rt->width = width;
+    rt->height = height;
+
+    if (rt != &gScreenRt)
+    {
+        if (!lite3d_framebuffer_init(&rt->fb, width, height))
+            return LITE3D_FALSE;
+    }
+    else
+    {
+        if (!lite3d_framebuffer_screen_init(&rt->fb, width, height))
+            return LITE3D_FALSE;
+    }
+    
+    return LITE3D_TRUE;
+}
+
+void lite3d_render_target_purge(lite3d_render_target *rt)
+{
+    lite3d_list_node *node = NULL;
+    lookUnit *look = NULL;
+
+    SDL_assert(rt);
+
+    lite3d_framebuffer_purge(&rt->fb);
+    while ((node = lite3d_list_remove_first_link(&rt->lookSequence)) != NULL)
+    {
+        look = LITE3D_MEMBERCAST(lookUnit, node, rtLink);
+        lite3d_free(look);
+    }
+}
+
+void lite3d_render_target_add(lite3d_render_target *rt)
+{
+    lite3d_list_add_first_link(&rt->node, &gRenderTargets);
+}
+
+void lite3d_render_target_erase(lite3d_render_target *rt)
+{
+    lite3d_list_unlink_link(&rt->node);
+}
+
+void lite3d_render_target_erase_all(void)
+{
+    lite3d_list_node *node = NULL;
+    while ((node = lite3d_list_remove_first_link(&gRenderTargets)) != NULL);
+}
+
+void lite3d_render_suspend(void)
+{
+    gRenderActive = LITE3D_TRUE;
+}
+
+void lite3d_render_pause(void)
+{
+    gRenderActive = LITE3D_FALSE;
+}
+
+void lite3d_render_stop(void)
+{
+    gRenderStarted = LITE3D_FALSE;
+}
+
+int lite3d_render_target_attach_camera(lite3d_render_target *target, lite3d_camera *camera)
+{
+    lookUnit *look = NULL;
+    lite3d_list_node *node = NULL;
+    SDL_assert(target && camera);
+
+    /* check camera already attached to the render target */
+    node = &target->lookSequence.l;
+    while ((node = lite3d_list_next(node)) != &target->lookSequence.l)
+    {
+        look = LITE3D_MEMBERCAST(lookUnit, node, rtLink);
+        if (look->camera == camera)
+            return LITE3D_FALSE;
+    }
+
+    if (!look)
+        look = (lookUnit *) lite3d_calloc(sizeof (lookUnit));
+    SDL_assert_release(look);
+
+    look->camera = camera;
+    lite3d_list_link_init(&look->rtLink);
+    lite3d_list_add_last_link(&look->rtLink, &target->lookSequence);
+
+    return LITE3D_TRUE;
+}
+
+int lite3d_render_target_dettach_camera(lite3d_render_target *rt, lite3d_camera *camera)
+{
+    lookUnit *look = NULL;
+    lite3d_list_node *node = NULL;
+    SDL_assert(rt && camera);
+
+    /* check camera already attached to the render target */
+    node = &rt->lookSequence.l;
+    while ((node = lite3d_list_next(node)) != &rt->lookSequence.l)
+    {
+        look = LITE3D_MEMBERCAST(lookUnit, node, rtLink);
+        if (look->camera == camera)
+        {
+            lite3d_list_unlink_link(node);
+            lite3d_free(look);
+            return LITE3D_FALSE;
+        }
+    }
+
+    return LITE3D_TRUE;
+}
+
+int lite3d_render_target_screen_attach_camera(lite3d_camera *camera)
+{
+    return lite3d_render_target_attach_camera(&gScreenRt, camera);
+}
+
+int lite3d_render_target_screen_dettach_camera(lite3d_camera *camera)
+{
+    return lite3d_render_target_dettach_camera(&gScreenRt, camera);
+}
+
+lite3d_render_target *lite3d_render_target_screen_get(void)
+{
+    return &gScreenRt;
 }

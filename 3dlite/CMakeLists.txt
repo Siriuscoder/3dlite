@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.8.10)
 project(7zdec)
 project(glewc)
 project(3dlite)
-
+project(kazmath)
 ################################################################
 # 7zdec sources
 set(7ZDEC_SOURCES src/7zdec/7zBuf2.c
@@ -56,31 +56,84 @@ target_compile_definitions(glewc PRIVATE
 "$<BUILD_INTERFACE:GLEW_NO_GLU>"
 "$<BUILD_INTERFACE:GLEW_STATIC>")
 ################################################################
+# kazmath sources
+set(KAZMATH_SOURCES src/kazmath/aabb.c
+src/kazmath/mat3.c
+src/kazmath/mat4.c
+src/kazmath/plane.c
+src/kazmath/quaternion.c
+src/kazmath/ray2.c
+src/kazmath/ray3.c
+src/kazmath/utility.c
+src/kazmath/vec2.c
+src/kazmath/vec3.c
+src/kazmath/vec4.c)
+
+set(KAZMATH_HEADERS include/3dlite/kazmath/aabb.h
+include/3dlite/kazmath/mat3.h
+include/3dlite/kazmath/mat4.h
+include/3dlite/kazmath/plane.h
+include/3dlite/kazmath/quaternion.h
+include/3dlite/kazmath/ray2.h
+include/3dlite/kazmath/ray3.h
+include/3dlite/kazmath/utility.h
+include/3dlite/kazmath/vec2.h
+include/3dlite/kazmath/vec3.h
+include/3dlite/kazmath/vec4.h)
+
+add_library(kazmath ${KAZMATH_SOURCES} ${KAZMATH_HEADERS})
+target_include_directories(kazmath PRIVATE 
+"$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include/3dlite/kazmath/>")
+################################################################
 # 3dlite sources
 set(3DLITE_SOURCES src/3dlite_nedmalloc.c
 src/3dlite_alloc.c
 src/3dlite_rb_tree.c
 src/3dlite_list.c
-src/3dlite_file_cache.c
-src/3dlite_7zloader.c
+src/3dlite_resource_pack.c
+src/3dlite_7z_loader.c
 src/3dlite_logger.c
 src/3dlite_texture_unit.c
 src/3dlite_video.c
 src/3dlite_render.c
-src/3dlite_main.c)
+src/3dlite_main.c
+src/3dlite_camera.c
+src/3dlite_scene_node.c
+src/3dlite_scene.c
+src/3dlite_vbo.c
+src/3dlite_vbo_loader.c
+src/3dlite_misc.c
+src/3dlite_meshes_render.c
+src/3dlite_material.c
+src/3dlite_shader_params.c
+src/3dlite_shader.c
+src/3dlite_shader_program.c
+src/3dlite_framebuffer.c)
 
 set(3DLITE_HEADERS include/3dlite/3dlite_alloc.h
 include/3dlite/3dlite_common.h
 include/3dlite/3dlite_nedmalloc.h
 include/3dlite/3dlite_rb_tree.h
 include/3dlite/3dlite_list.h
-include/3dlite/3dlite_file_cache.h
-include/3dlite/3dlite_7zloader.h
+include/3dlite/3dlite_resource_pack.h
+include/3dlite/3dlite_7z_loader.h
 include/3dlite/3dlite_logger.h
 include/3dlite/3dlite_texture_unit.h
 include/3dlite/3dlite_video.h
 include/3dlite/3dlite_render.h
-include/3dlite/3dlite_main.h)
+include/3dlite/3dlite_main.h
+include/3dlite/3dlite_camera.h
+include/3dlite/3dlite_scene_node.h
+include/3dlite/3dlite_scene.h
+include/3dlite/3dlite_vbo.h
+include/3dlite/3dlite_vbo_loader.h
+include/3dlite/3dlite_misc.h
+include/3dlite/3dlite_meshes_render.h
+include/3dlite/3dlite_material.h
+include/3dlite/3dlite_shader_params.h
+include/3dlite/3dlite_shader.h
+include/3dlite/3dlite_shader_program.h
+include/3dlite/3dlite_framebuffer.h)
 
 add_library(3dlite SHARED ${3DLITE_SOURCES} ${3DLITE_HEADERS})
 
@@ -89,7 +142,8 @@ target_compile_definitions(3dlite PRIVATE
 "$<BUILD_INTERFACE:_WINDLL>")
 target_include_directories(3dlite PRIVATE 
 "$<BUILD_INTERFACE:${SDL2_INCLUDE_DIR}>"
-"$<BUILD_INTERFACE:${IL_INCLUDE_DIR}>")
+"$<BUILD_INTERFACE:${IL_INCLUDE_DIR}>"
+"$<BUILD_INTERFACE:${ASSIMP_INCLUDE_DIR}>")
 set(SDL2_LIBS ${SDL2_LIBRARY})
 else()
 target_compile_options(3dlite PRIVATE 
@@ -103,8 +157,11 @@ target_compile_definitions(3dlite PRIVATE
 target_link_libraries(3dlite
 7zdec
 glewc
+kazmath
 ${OPENGL_LIBRARIES}
 ${IL_LIBRARIES}
 ${ILU_LIBRARIES}
 ${SDL2_LIBS}
+${ASSIMP_LIBRARY}
 ${CMAKE_THREAD_LIBS_INIT})
+

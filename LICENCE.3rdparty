@@ -131,3 +131,15 @@ program!
 Acknowledgment: Google Test borrowed the idea of automatic test
 registration from Barthelemy Dagenais' (barthelemy@prologique.com)
 easyUnit framework.
+
+============================ Kazmath ========================================
+Kazmath is a 3D math library aimed at game programming. It is released under the modified BSD license.
+
+Authors
+
+Luke Benstead Carsten Haubold
+
+License
+
+Copyright (c) 2008, Luke Benstead. All rights reserved.
+
