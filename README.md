@@ -23,6 +23,22 @@ Library provides two API levels:
 
 Dependencies
 ------------
+* [DevIL](http://example.net/)
+* [Assimp](https://www.libsdl.org/index.php)
+* [SDL2](http://assimp.sourceforge.net/)
+* Also Lite3d use [Angelscript](http://www.angelcode.com/angelscript/) for scripting and
+some other libraries (see [LICENCE](LICENCE.3rdparty))
 
 Compiling
 ---------
+Use [cmake](http://www.cmake.org/) 2.8.10 or higher.
+```
+$ mkdir build
+$ cmake /path/to/3dlite/sources
+$ make all
+```
+You can use cmake to generate Visual Studio projects on windows.
+
+
+***
+> Copyright © 2014-2015 Nikita Korolev (Sirius)
