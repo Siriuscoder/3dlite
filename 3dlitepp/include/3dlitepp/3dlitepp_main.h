@@ -22,6 +22,7 @@
 #include <3dlitepp/3dlitepp_manageable.h>
 #include <3dlitepp/3dlitepp_resource_manager.h>
 #include <3dlitepp/3dlitepp_script_dispatcher.h>
+#include <3dlitepp/3dlitepp_json_helper.h>
 
 namespace lite3dpp
 {
@@ -33,7 +34,7 @@ namespace lite3dpp
         Main();
         ~Main();
 
-        bool initFromConfig(const char *config);
+        void initFromConfig(const char *config);
         const lite3d_global_settings &getSettings() const;
 
         void setResourceLocation(const lite3dpp_string &name, 
@@ -64,7 +65,7 @@ namespace lite3dpp
 
         ResourceManager mResourceManager;
         ScriptDispatcher mScriptDispatcher;
-        JSONValue *mConfigRoot;
+        JsonHelper *mConfig;
         lite3d_global_settings mSettings;
         lite3d_timer *mFixedUpdatesTimer;
     };

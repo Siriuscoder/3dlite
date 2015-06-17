@@ -30,7 +30,7 @@ namespace lite3dpp
     Main::Main() :
         mResourceManager(this),
         mScriptDispatcher(this),
-        mConfigRoot(NULL)
+        mConfig(NULL)
     {
         /* init memory model first
          * json parser used lite3d allocator model,
@@ -40,143 +40,43 @@ namespace lite3dpp
         lite3d_memory_init(NULL);
     }
 
-    bool Main::initFromConfig(const char *config)
-    {
-        SDL_RWops *desc = NULL;
-        size_t fileSize;
-        char *json;
-        /* check open file */
-        desc = SDL_RWFromFile(config, "r");
-        if (!desc)
-            return false;
-        fileSize = SDL_RWsize(desc);
-        json = (char *) Manageable::alloc(fileSize + 1);
-        /* guard */
-        json[fileSize] = 0;
-        /* read whole file */
-        if (SDL_RWread(desc, json, fileSize, 1) == 0)
+    void Main::initFromConfig(const char *config)
+    {           
+        if (mConfig)
         {
-            Manageable::free(json);
-            SDL_RWclose(desc);
-            return false;
+            delete mConfig;
+            mConfig = NULL;
         }
 
-        SDL_RWclose(desc);
-        
-        if (mConfigRoot)
-        {
-            delete mConfigRoot;
-            mConfigRoot = NULL;
-        }
-        
-        /* Parse config data */
-        mConfigRoot = JSON::Parse(json);
-        
-        Manageable::free(json);
-        if (mConfigRoot == NULL)
-            return false;
+        mConfig = new JsonHelper(config);
 
-        JSONObject root;
         memset(&mSettings, 0, sizeof (mSettings));
-
-        mSettings.logLevel = LITE3D_LOGLEVEL_ERROR;
         mSettings.maxFileCacheSize = 0x100000;
-        mSettings.textureSettings.anisotropy = 2;
-        mSettings.textureSettings.useGLCompression = LITE3D_FALSE;
-        mSettings.videoSettings.FSAA = 1;
-        strcpy(mSettings.videoSettings.caption, "TEST window");
-        mSettings.videoSettings.colorBits = 24;
-        mSettings.videoSettings.fullscreen = LITE3D_FALSE;
-        mSettings.videoSettings.screenWidth = 800;
-        mSettings.videoSettings.screenHeight = 600;
-        mSettings.videoSettings.vsync = LITE3D_TRUE;
 
-        if (!mConfigRoot->IsObject())
-        {
-            delete mConfigRoot;
-            mConfigRoot = NULL;
-            return false;
-        }
+        mSettings.logLevel = mConfig->getInt(L"LogLevel", LITE3D_LOGLEVEL_ERROR);
+        JsonHelper textureSettings = mConfig->getObject(L"TextureSettings");
+        JsonHelper videoSettings = mConfig->getObject(L"VideoSettings");
 
-        root = mConfigRoot->AsObject();
-        if (root.find(L"LogLevel") != root.end() && root[L"LogLevel"]->IsNumber())
-        {
-            mSettings.logLevel = root[L"LogLevel"]->AsInt();
-        }
+        mSettings.textureSettings.anisotropy = textureSettings.getInt(L"Anisotropy", 2);
+        mSettings.textureSettings.useGLCompression =
+            textureSettings.getBool(L"Compression", false) ? LITE3D_TRUE : LITE3D_FALSE;
 
-        if (root.find(L"TextureSettings") != root.end() && root[L"TextureSettings"]->IsObject())
-        {
-            JSONObject textureSettings = root[L"TextureSettings"]->AsObject();
-
-            if (textureSettings.find(L"Anisotropy") != textureSettings.end() &&
-                textureSettings[L"Anisotropy"]->IsNumber())
-            {
-                mSettings.textureSettings.anisotropy = textureSettings[L"Anisotropy"]->AsInt();
-            }
-
-            if (textureSettings.find(L"Compression") != textureSettings.end() &&
-                textureSettings[L"Compression"]->IsBool())
-            {
-                mSettings.textureSettings.useGLCompression =
-                    textureSettings[L"Compression"]->AsBool() ? LITE3D_TRUE : LITE3D_FALSE;
-            }
-        }
-
-        if (root.find(L"VideoSettings") != root.end() && root[L"VideoSettings"]->IsObject())
-        {
-            JSONObject videoSettings = root[L"VideoSettings"]->AsObject();
-            if (videoSettings.find(L"Width") != videoSettings.end() &&
-                videoSettings[L"Width"]->IsNumber())
-            {
-                mSettings.videoSettings.screenWidth = videoSettings[L"Width"]->AsInt();
-            }
-
-            if (videoSettings.find(L"Height") != videoSettings.end() &&
-                videoSettings[L"Height"]->IsNumber())
-            {
-                mSettings.videoSettings.screenHeight = videoSettings[L"Height"]->AsInt();
-            }
-
-            if (videoSettings.find(L"ColorBits") != videoSettings.end() &&
-                videoSettings[L"ColorBits"]->IsNumber())
-            {
-                mSettings.videoSettings.colorBits = videoSettings[L"ColorBits"]->AsInt();
-            }
-
-            if (videoSettings.find(L"FSAA") != videoSettings.end() &&
-                videoSettings[L"FSAA"]->IsNumber())
-            {
-                mSettings.videoSettings.FSAA = videoSettings[L"FSAA"]->AsInt();
-            }
-
-            if (videoSettings.find(L"VSync") != videoSettings.end() &&
-                videoSettings[L"VSync"]->IsBool())
-            {
-                mSettings.videoSettings.vsync =
-                    videoSettings[L"VSync"]->AsBool() ? LITE3D_TRUE : LITE3D_FALSE;
-            }
-
-            if (videoSettings.find(L"Fullscreen") != videoSettings.end() &&
-                videoSettings[L"Fullscreen"]->IsBool())
-            {
-                mSettings.videoSettings.fullscreen =
-                    videoSettings[L"Fullscreen"]->AsBool() ? LITE3D_TRUE : LITE3D_FALSE;
-            }
-
-            if (videoSettings.find(L"Caption") != videoSettings.end() &&
-                videoSettings[L"Caption"]->IsString())
-            {
-                strcpy(mSettings.videoSettings.caption,
-                       JSON::wStringToString(videoSettings[L"Caption"]->AsString()).c_str());
-            }
-        }
+        mSettings.videoSettings.screenWidth = videoSettings.getInt(L"Width", 800);
+        mSettings.videoSettings.screenHeight = videoSettings.getInt(L"Height", 600);
+        mSettings.videoSettings.colorBits = videoSettings.getInt(L"ColorBits", 24);
+        mSettings.videoSettings.FSAA = videoSettings.getInt(L"FSAA", 1);
+        mSettings.videoSettings.vsync =
+            videoSettings.getBool(L"VSync", true) ? LITE3D_TRUE : LITE3D_FALSE;
+        mSettings.videoSettings.fullscreen =
+            videoSettings.getBool(L"Fullscreen", false) ? LITE3D_TRUE : LITE3D_FALSE;
+        videoSettings.getString(L"Caption", "TEST window").copy(mSettings.videoSettings.caption,
+            sizeof(mSettings.videoSettings.caption)-1);
 
         mSettings.renderLisneters.userdata = reinterpret_cast<void *> (this);
         mSettings.renderLisneters.preRender = Main::engineInit;
         mSettings.renderLisneters.postRender = Main::engineShutdown;
         mSettings.renderLisneters.preFrame = Main::engineFrameBegin;
         mSettings.renderLisneters.postFrame = Main::engineFrameEnd;
-        return true;
     }
 
     const lite3d_global_settings &Main::getSettings() const
@@ -211,60 +111,19 @@ namespace lite3dpp
 
     void Main::initResourceLocations()
     {
-        JSONObject root = mConfigRoot->AsObject();
-        if (root.find(L"ResourceLocations") != root.end() && root[L"ResourceLocations"]->IsArray())
-        {
-            JSONArray locations = root[L"ResourceLocations"]->AsArray();
-
-            for (uint32_t i = 0; i < locations.size(); ++i)
-            {
-                if (locations[i]->IsObject())
-                {
-                    lite3dpp_string locationName;
-                    lite3dpp_string locationPath;
-                    size_t fileCacheLimit;
-
-                    JSONObject locationObj = locations[i]->AsObject();
-                    if (locationObj.find(L"Name") != locationObj.end() && locationObj[L"Name"]->IsString())
-                    {
-                        locationName = JSON::wStringToString(locationObj[L"Name"]->AsString());
-                    }
-
-                    if (locationObj.find(L"Path") != locationObj.end() && locationObj[L"Path"]->IsString())
-                    {
-                        locationPath = JSON::wStringToString(locationObj[L"Path"]->AsString());
-                    }
-
-                    if (locationObj.find(L"FileCacheMaxSize") != locationObj.end() && locationObj[L"FileCacheMaxSize"]->IsNumber())
-                    {
-                        fileCacheLimit = locationObj[L"FileCacheMaxSize"]->AsInt();
-                    }
-                    
-                    setResourceLocation(locationName, locationPath, fileCacheLimit);
-                }
-            }
+        stl<JsonHelper>::vector locations = mConfig->getObjects(L"ResourceLocations");
+        for (uint32_t i = 0; i < locations.size(); ++i)
+        {           
+            setResourceLocation(locations[i].getString(L"Name"), 
+                locations[i].getString(L"Path"),
+                locations[i].getInt(L"FileCacheMaxSize"));
         }
     }
 
     void Main::init()
     {
-        if(!mConfigRoot)
+        if(!mConfig)
             throw std::runtime_error("Bad configuration");
-
-        int32_t fixedUpdatesInterval = 200;
-        lite3dpp_string initialScriptPath;
-
-
-        JSONObject root = mConfigRoot->AsObject();
-        if (root.find(L"FixedUpdatesInterval") != root.end() && root[L"FixedUpdatesInterval"]->IsNumber())
-        {
-            fixedUpdatesInterval = root[L"FixedUpdatesInterval"]->AsInt();
-        }
-
-        if (root.find(L"InitScript") != root.end() && root[L"InitScript"]->IsString())
-        {
-            initialScriptPath = JSON::wStringToString(root[L"InitScript"]->AsString());               
-        }
 
         /* basic initialization */
         initResourceLocations();
@@ -272,11 +131,11 @@ namespace lite3dpp
 
         /* load first script */
         /* after script been loaded, init script function will be executed */
-        mResourceManager.queryResource<Script>("", initialScriptPath);
+        mResourceManager.queryResource<Script>("", mConfig->getString(L"InitScript"));
 
         /* perform fixed update timer */    
         mFixedUpdatesTimer = 
-            lite3d_timer_add(fixedUpdatesInterval, timerFixed, this);
+            lite3d_timer_add(mConfig->getInt(L"FixedUpdatesInterval", 200), timerFixed, this);
     }
 
     void Main::shut()
@@ -284,10 +143,10 @@ namespace lite3dpp
         lite3d_timer_purge(mFixedUpdatesTimer);
         mResourceManager.releaseAllResources();
         
-        if (mConfigRoot)
+        if (mConfig)
         {
-            delete mConfigRoot;
-            mConfigRoot = NULL;
+            delete mConfig;
+            mConfig = NULL;
         }
     }
 
