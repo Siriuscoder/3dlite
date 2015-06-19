@@ -89,8 +89,8 @@ LITE3D_CEXPORT void lite3d_render_target_add(lite3d_render_target *rt);
 LITE3D_CEXPORT void lite3d_render_target_erase(lite3d_render_target *rt);
 LITE3D_CEXPORT void lite3d_render_target_erase_all(void);
 
+LITE3D_CEXPORT void lite3d_render_resume(void);
 LITE3D_CEXPORT void lite3d_render_suspend(void);
-LITE3D_CEXPORT void lite3d_render_pause(void);
 LITE3D_CEXPORT void lite3d_render_stop(void);
 LITE3D_CEXPORT void lite3d_render_depth_test(uint8_t on);
 

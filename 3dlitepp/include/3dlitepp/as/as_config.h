@@ -44,7 +44,7 @@
 //
 // Features
 //-----------------------------------------
-
+#define AS_NO_THREADS
 // AS_NO_THREADS
 // Turns off support for multithreading. By turning off
 // this when it's not needed a bit of performance is gained.

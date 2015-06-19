@@ -133,7 +133,7 @@ protected:
         /* setup memory */
         lite3d_memory_init(NULL);
         lite3d_logger_setup_stdout();
-        lite3d_logger_set_loglevel(LITE3D_LOGLEVEL_ERROR);
+        lite3d_logger_set_logParams(LITE3D_LOGLEVEL_ERROR, LITE3D_FALSE);
     }
 
     // Per-test-case tear-down.
@@ -192,7 +192,7 @@ protected:
         /* setup memory */
         lite3d_memory_init(NULL);
         lite3d_logger_setup_stdout();
-        lite3d_logger_set_loglevel(LITE3D_LOGLEVEL_ERROR);
+        lite3d_logger_set_logParams(LITE3D_LOGLEVEL_ERROR, LITE3D_FALSE);
     }
 
     // Per-test-case tear-down.

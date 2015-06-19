@@ -69,7 +69,8 @@ int lite3d_main(const lite3d_global_settings *settings)
     lite3d_memory_init(&gGlobalSettings.userAllocator);
     /* setup logger */
     lite3d_logger_setup_stdout();
-    lite3d_logger_set_loglevel(gGlobalSettings.logLevel);
+    lite3d_logger_set_logParams(gGlobalSettings.logLevel,
+        gGlobalSettings.logFlushAlways);
 
     SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
         "====== 3dlite started ======");

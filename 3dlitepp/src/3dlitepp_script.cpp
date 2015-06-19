@@ -103,7 +103,7 @@ namespace lite3dpp
             if (code == asEXECUTION_EXCEPTION)
             {
                 SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, 
-                             "Script %s unexpected broken: %s",
+                             "Script %s unexpected broken: %s", 
                              mName.c_str(), mContext->GetExceptionString());
                 
                 throw std::runtime_error(mContext->GetExceptionString());

@@ -33,11 +33,11 @@ namespace lite3dpp
     void RegisterScriptTypes(asIScriptEngine *engine)
     {
         /* register types */
-        SDL_assert(engine->RegisterObjectType("Vec3", sizeof(kmVec3), asOBJ_VALUE | asOBJ_APP_CLASS_CAK) >= 0);
-        SDL_assert(engine->RegisterObjectType("Vec4", sizeof(kmVec4), asOBJ_VALUE | asOBJ_APP_CLASS_CAK) >= 0);
-        SDL_assert(engine->RegisterObjectType("Mat3", sizeof(kmMat3), asOBJ_VALUE | asOBJ_APP_CLASS_CAK) >= 0);
-        SDL_assert(engine->RegisterObjectType("Mat4", sizeof(kmMat4), asOBJ_VALUE | asOBJ_APP_CLASS_CAK) >= 0);
-        SDL_assert(engine->RegisterObjectType("Quaternion", sizeof(kmQuaternion), asOBJ_VALUE | asOBJ_APP_CLASS_CAK) >= 0);
-        SDL_assert(engine->RegisterObjectType("Ray3", sizeof(kmRay3), asOBJ_VALUE | asOBJ_APP_CLASS_CAK) >= 0);
+        SDL_assert(engine->RegisterObjectType("Vec3", sizeof(kmVec3), asOBJ_VALUE | asOBJ_APP_CLASS_CDAK) >= 0);
+        SDL_assert(engine->RegisterObjectType("Vec4", sizeof(kmVec4), asOBJ_VALUE | asOBJ_APP_CLASS_CDAK) >= 0);
+        SDL_assert(engine->RegisterObjectType("Mat3", sizeof(kmMat3), asOBJ_VALUE | asOBJ_APP_CLASS_CDAK) >= 0);
+        SDL_assert(engine->RegisterObjectType("Mat4", sizeof(kmMat4), asOBJ_VALUE | asOBJ_APP_CLASS_CDAK) >= 0);
+        SDL_assert(engine->RegisterObjectType("Quaternion", sizeof(kmQuaternion), asOBJ_VALUE | asOBJ_APP_CLASS_CDAK) >= 0);
+        //SDL_assert(engine->RegisterObjectType("Ray3", sizeof(kmRay3), asOBJ_VALUE | asOBJ_APP_CLASS_CDAK) >= 0);
     }
 }

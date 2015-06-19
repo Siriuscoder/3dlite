@@ -1,6 +1,6 @@
 #include "filesystem_01:pack/scripts/common.as"
 
-int counter = 0;
+int counter = 15;
 
 void init()
 {
@@ -16,8 +16,9 @@ void shut()
 
 void fixedUpdate()
 {
-	counter++;
+	counter = sub(counter, 1);
 	
-	if(counter > 30)
+	logInfo("fixedUpdate: in " + formatInt(counter, "") + " times");
+	if(counter <= 0)
 		breakRender();
 } 
