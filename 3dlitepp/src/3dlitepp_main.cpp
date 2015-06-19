@@ -54,6 +54,8 @@ namespace lite3dpp
         mSettings.maxFileCacheSize = 0x100000;
 
         mSettings.logLevel = mConfig->getInt(L"LogLevel", LITE3D_LOGLEVEL_ERROR);
+        mSettings.logFlushAlways = mConfig->getBool(L"LogFlushAlways", false) ? LITE3D_TRUE : LITE3D_FALSE;
+
         JsonHelper textureSettings = mConfig->getObject(L"TextureSettings");
         JsonHelper videoSettings = mConfig->getObject(L"VideoSettings");
 

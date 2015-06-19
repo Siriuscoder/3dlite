@@ -191,21 +191,21 @@ void lite3d_render_loop(lite3d_render_listeners *callbacks)
     /* begin render loop */
     while (gRenderStarted)
     {
+        gRenderStats.trianglesByFrame =
+            gRenderStats.objectsByFrame =
+            gRenderStats.batchesByFrame =
+            gRenderStats.materialsByFrame =
+            gRenderStats.materialsPassedByFrame =
+            gRenderStats.textureUnitsByFrame =
+            gRenderStats.verticesByFrame = 0;
+
+        /* get time mark */
+        beginFrameMark = SDL_GetPerformanceCounter();
+        /* induce timers using time mark */
+        lite3d_timer_induce(beginFrameMark, gPerfFreq);
+
         if (gRenderActive)
         {
-            gRenderStats.trianglesByFrame =
-                gRenderStats.objectsByFrame =
-                gRenderStats.batchesByFrame =
-                gRenderStats.materialsByFrame =
-                gRenderStats.materialsPassedByFrame =
-                gRenderStats.textureUnitsByFrame =
-                gRenderStats.verticesByFrame = 0;
-
-            /* get time mark */
-            beginFrameMark = SDL_GetPerformanceCounter();
-            /* induce timers using time mark */
-            lite3d_timer_induce(beginFrameMark, gPerfFreq);
-            
             if (gRenderListeners.preFrame && 
                 !gRenderListeners.preFrame(gRenderListeners.userdata))
                 break;
@@ -216,10 +216,10 @@ void lite3d_render_loop(lite3d_render_listeners *callbacks)
             if (gRenderListeners.postFrame && 
                 !gRenderListeners.postFrame(gRenderListeners.userdata))
                 break;
-
-            /* refresh render statistic, render time span used */
-            refresh_render_stats(beginFrameMark, SDL_GetPerformanceCounter());
         }
+
+        /* refresh render statistic, render time span used */
+        refresh_render_stats(beginFrameMark, SDL_GetPerformanceCounter());
 
         while (SDL_PollEvent(&wevent))
         {
@@ -306,12 +306,12 @@ void lite3d_render_target_erase_all(void)
     while ((node = lite3d_list_remove_first_link(&gRenderTargets)) != NULL);
 }
 
-void lite3d_render_suspend(void)
+void lite3d_render_resume(void)
 {
     gRenderActive = LITE3D_TRUE;
 }
 
-void lite3d_render_pause(void)
+void lite3d_render_suspend(void)
 {
     gRenderActive = LITE3D_FALSE;
 }

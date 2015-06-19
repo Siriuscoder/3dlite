@@ -34,6 +34,11 @@ namespace lite3dpp
     {
         self = KM_VEC4_ZERO;
     }
+
+    static void Vec4Destruct(kmVec4 &self)
+    {
+
+    }
     
     static void Vec4ConstructXYZ(kmVec4 &self, float x, float y, float z, float w)
     {
@@ -170,6 +175,8 @@ namespace lite3dpp
             asFUNCTION(Vec4ConstructCopy), asCALL_CDECL_OBJFIRST) >= 0);
         SDL_assert(engine->RegisterObjectBehaviour("Vec4", asBEHAVE_CONSTRUCT, "void f(const Vec3 &in)", 
             asFUNCTION(Vec4FromVec3), asCALL_CDECL_OBJFIRST) >= 0);
+        SDL_assert(engine->RegisterObjectBehaviour("Vec4", asBEHAVE_DESTRUCT, "void f()", 
+            asFUNCTION(Vec4Destruct), asCALL_CDECL_OBJFIRST) >= 0);
 
         /* register properties */
         SDL_assert(engine->RegisterObjectProperty("Vec4", "float x", asOFFSET(kmVec4, x)) >= 0);
@@ -200,7 +207,7 @@ namespace lite3dpp
         SDL_assert(engine->RegisterObjectMethod("Vec4", "float lengthSq() const", asFUNCTION(Vec4LengthSq), asCALL_CDECL_OBJFIRST) >= 0);
         SDL_assert(engine->RegisterObjectMethod("Vec4", "void normalize()", asFUNCTION(Vec4Normalize), asCALL_CDECL_OBJFIRST) >= 0);
         SDL_assert(engine->RegisterObjectMethod("Vec4", "Vec4 dot(const Vec4 &in) const", asFUNCTION(Vec4Dot), asCALL_CDECL_OBJFIRST) >= 0);
-        SDL_assert(engine->RegisterObjectMethod("Vec4", "void scale(float in)", asFUNCTION(Vec4Scale), asCALL_CDECL_OBJFIRST) >= 0);
+        SDL_assert(engine->RegisterObjectMethod("Vec4", "void scale(float)", asFUNCTION(Vec4Scale), asCALL_CDECL_OBJFIRST) >= 0);
 
         /* register constants */
         SDL_assert(engine->RegisterGlobalProperty("const Vec4 VEC4_ZERO", (void *)&KM_VEC4_ZERO) >= 0);

@@ -35,6 +35,11 @@ namespace lite3dpp
     {
         memset(&self, 0, sizeof(kmQuaternion));
     }
+
+    static void QuaternionDestruct(kmQuaternion &self)
+    {
+
+    }
     
     static void QuaternionConstructXYZW(kmQuaternion &self, float x, float y, float z, float w)
     {
@@ -208,6 +213,8 @@ namespace lite3dpp
             asFUNCTION(QuaternionConstructXYZW), asCALL_CDECL_OBJFIRST) >= 0);
         SDL_assert(engine->RegisterObjectBehaviour("Quaternion", asBEHAVE_CONSTRUCT, "void f(const Quaternion &in)", 
             asFUNCTION(QuaternionConstructCopy), asCALL_CDECL_OBJFIRST) >= 0);
+        SDL_assert(engine->RegisterObjectBehaviour("Quaternion", asBEHAVE_DESTRUCT, "void f()", 
+            asFUNCTION(QuaternionDestruct), asCALL_CDECL_OBJFIRST) >= 0);
 
         /* register properties */
         SDL_assert(engine->RegisterObjectProperty("Quaternion", "float x", asOFFSET(kmQuaternion, x)) >= 0);
@@ -233,7 +240,7 @@ namespace lite3dpp
         SDL_assert(engine->RegisterObjectMethod("Quaternion", "float lengthSq() const", asFUNCTION(QuaternionLengthSq), asCALL_CDECL_OBJFIRST) >= 0);
         SDL_assert(engine->RegisterObjectMethod("Quaternion", "void normalize()", asFUNCTION(QuaternionNormalize), asCALL_CDECL_OBJFIRST) >= 0);
         SDL_assert(engine->RegisterObjectMethod("Quaternion", "Quaternion dot(const Quaternion &in) const", asFUNCTION(QuaternionDot), asCALL_CDECL_OBJFIRST) >= 0);
-        SDL_assert(engine->RegisterObjectMethod("Quaternion", "void scale(float in)", asFUNCTION(QuaternionScale), asCALL_CDECL_OBJFIRST) >= 0);
+        SDL_assert(engine->RegisterObjectMethod("Quaternion", "void scale(float)", asFUNCTION(QuaternionScale), asCALL_CDECL_OBJFIRST) >= 0);
         SDL_assert(engine->RegisterObjectMethod("Quaternion", "Vec3 getUpVec3() const", asFUNCTION(QuaternionGetUpVec3), asCALL_CDECL_OBJFIRST) >= 0);
         SDL_assert(engine->RegisterObjectMethod("Quaternion", "Vec3 getRightVec3() const", asFUNCTION(QuaternionGetRightVec3), asCALL_CDECL_OBJFIRST) >= 0);
         SDL_assert(engine->RegisterObjectMethod("Quaternion", "Vec3 getForwardVec3RH() const", asFUNCTION(QuaternionGetForwardVec3RH), asCALL_CDECL_OBJFIRST) >= 0);
@@ -241,8 +248,8 @@ namespace lite3dpp
         SDL_assert(engine->RegisterObjectMethod("Quaternion", "void inverse()", asFUNCTION(QuaternionInverse), asCALL_CDECL_OBJFIRST) >= 0);
         SDL_assert(engine->RegisterObjectMethod("Quaternion", "void identity()", asFUNCTION(QuaternionIdentity), asCALL_CDECL_OBJFIRST) >= 0);
         SDL_assert(engine->RegisterObjectMethod("Quaternion", "void rotationYawPitchRoll(float, float, float)", asFUNCTION(QuaternionRotationYawPitchRoll), asCALL_CDECL_OBJFIRST) >= 0);
-        SDL_assert(engine->RegisterObjectMethod("Quaternion", "void rotationAxisAngle(const Vec3&, float)", asFUNCTION(QuaternionRotationAxisAngle), asCALL_CDECL_OBJFIRST) >= 0);
-        SDL_assert(engine->RegisterObjectMethod("Quaternion", "void rotationMatrix(const Mat3&)", asFUNCTION(QuaternionRotationMatrix), asCALL_CDECL_OBJFIRST) >= 0);
+        SDL_assert(engine->RegisterObjectMethod("Quaternion", "void rotationAxisAngle(const Vec3 &in, float)", asFUNCTION(QuaternionRotationAxisAngle), asCALL_CDECL_OBJFIRST) >= 0);
+        SDL_assert(engine->RegisterObjectMethod("Quaternion", "void rotationMatrix(const Mat3 &in)", asFUNCTION(QuaternionRotationMatrix), asCALL_CDECL_OBJFIRST) >= 0);
         SDL_assert(engine->RegisterObjectMethod("Quaternion", "float getPitch() const", asFUNCTION(QuaternionGetPitch), asCALL_CDECL_OBJFIRST) >= 0);
         SDL_assert(engine->RegisterObjectMethod("Quaternion", "float getYaw() const", asFUNCTION(QuaternionGetYaw), asCALL_CDECL_OBJFIRST) >= 0);
         SDL_assert(engine->RegisterObjectMethod("Quaternion", "float getRoll() const", asFUNCTION(QuaternionGetRoll), asCALL_CDECL_OBJFIRST) >= 0);

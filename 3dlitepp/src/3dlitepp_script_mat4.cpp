@@ -35,6 +35,11 @@ namespace lite3dpp
     {
         memset(&self, 0, sizeof(kmMat4));
     }
+
+    static void Mat4Destruct(kmMat4 &self)
+    {
+
+    }
     
     static void Mat4ConstructCopy(kmMat4 &self, const kmMat4 &other)
     {
@@ -177,6 +182,8 @@ namespace lite3dpp
             asFUNCTION(Mat4ConstructCopy), asCALL_CDECL_OBJFIRST) >= 0);
         SDL_assert(engine->RegisterObjectBehaviour("Mat4", asBEHAVE_CONSTRUCT, "void f(const Mat3 &in)", 
             asFUNCTION(Mat4FromMat3), asCALL_CDECL_OBJFIRST) >= 0);
+        SDL_assert(engine->RegisterObjectBehaviour("Mat4", asBEHAVE_DESTRUCT, "void f()", 
+            asFUNCTION(Mat4Destruct), asCALL_CDECL_OBJFIRST) >= 0);
 
         /* register properties */
         SDL_assert(engine->RegisterObjectProperty("Mat4", "float x1", asOFFSET(kmMat4, mat[0])) >= 0);
@@ -212,7 +219,7 @@ namespace lite3dpp
         SDL_assert(engine->RegisterObjectMethod("Mat4", "void rotationY(float)", asFUNCTION(Mat4RotationY), asCALL_CDECL_OBJFIRST) >= 0);
         SDL_assert(engine->RegisterObjectMethod("Mat4", "void rotationZ(float)", asFUNCTION(Mat4RotationZ), asCALL_CDECL_OBJFIRST) >= 0);
         SDL_assert(engine->RegisterObjectMethod("Mat4", "void rotationYawPitchRoll(float, float, float)", asFUNCTION(Mat4RotationYawPitchRoll), asCALL_CDECL_OBJFIRST) >= 0);
-        SDL_assert(engine->RegisterObjectMethod("Mat4", "void rotationQuaternion(const Quaternion&)", asFUNCTION(Mat4RotationQuaternion), asCALL_CDECL_OBJFIRST) >= 0);
+        SDL_assert(engine->RegisterObjectMethod("Mat4", "void rotationQuaternion(const Quaternion &in)", asFUNCTION(Mat4RotationQuaternion), asCALL_CDECL_OBJFIRST) >= 0);
         SDL_assert(engine->RegisterObjectMethod("Mat4", "void scaling(float, float, float)", asFUNCTION(Mat4Scaling), asCALL_CDECL_OBJFIRST) >= 0);
         SDL_assert(engine->RegisterObjectMethod("Mat4", "void translation(float, float, float)", asFUNCTION(Mat4Translation), asCALL_CDECL_OBJFIRST) >= 0);
         SDL_assert(engine->RegisterObjectMethod("Mat4", "Vec3 getUpVec3() const", asFUNCTION(Mat4GetUpVec3), asCALL_CDECL_OBJFIRST) >= 0);
@@ -221,7 +228,7 @@ namespace lite3dpp
         SDL_assert(engine->RegisterObjectMethod("Mat4", "Vec3 getForwardVec3LH() const", asFUNCTION(Mat4GetForwardVec3LH), asCALL_CDECL_OBJFIRST) >= 0);
         SDL_assert(engine->RegisterObjectMethod("Mat4", "void perspectiveProjection(float, float, float, float)", asFUNCTION(Mat4PerspectiveProjection), asCALL_CDECL_OBJFIRST) >= 0);
         SDL_assert(engine->RegisterObjectMethod("Mat4", "void orthographicProjection(float, float, float, float, float)", asFUNCTION(Mat4OrthographicProjection), asCALL_CDECL_OBJFIRST) >= 0);
-        SDL_assert(engine->RegisterObjectMethod("Mat4", "void lookAt(const Vec3&, const Vec3&, const Vec3&)", asFUNCTION(Mat4LookAt), asCALL_CDECL_OBJFIRST) >= 0);
-        SDL_assert(engine->RegisterObjectMethod("Mat4", "void rotationAxisAngle(const Vec3&, float)", asFUNCTION(Mat4RotationAxisAngle), asCALL_CDECL_OBJFIRST) >= 0);
+        SDL_assert(engine->RegisterObjectMethod("Mat4", "void lookAt(const Vec3 &in, const Vec3 &in, const Vec3 &in)", asFUNCTION(Mat4LookAt), asCALL_CDECL_OBJFIRST) >= 0);
+        SDL_assert(engine->RegisterObjectMethod("Mat4", "void rotationAxisAngle(const Vec3 &in, float)", asFUNCTION(Mat4RotationAxisAngle), asCALL_CDECL_OBJFIRST) >= 0);
     }
 }

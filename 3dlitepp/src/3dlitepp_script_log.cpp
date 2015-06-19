@@ -16,13 +16,7 @@
  *	along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
 #include <SDL_assert.h>
-
-#include <3dlite/kazmath/quaternion.h>
-#include <3dlite/kazmath/ray3.h>
-#include <3dlite/kazmath/mat4.h>
-#include <3dlite/kazmath/mat3.h>
-#include <3dlite/kazmath/vec4.h>
-#include <3dlite/kazmath/vec3.h>
+#include <SDL_log.h>
 
 #include <3dlitepp/as/angelscript.h>
 
@@ -30,14 +24,28 @@
 
 namespace lite3dpp
 {
-    void RegisterScriptTypes(asIScriptEngine *engine)
+    static void printToLogInfo(const lite3dpp::lite3dpp_string &str)
     {
-        /* register types */
-        SDL_assert(engine->RegisterObjectType("Vec3", sizeof(kmVec3), asOBJ_VALUE | asOBJ_APP_CLASS_CDAK) >= 0);
-        SDL_assert(engine->RegisterObjectType("Vec4", sizeof(kmVec4), asOBJ_VALUE | asOBJ_APP_CLASS_CDAK) >= 0);
-        SDL_assert(engine->RegisterObjectType("Mat3", sizeof(kmMat3), asOBJ_VALUE | asOBJ_APP_CLASS_CDAK) >= 0);
-        SDL_assert(engine->RegisterObjectType("Mat4", sizeof(kmMat4), asOBJ_VALUE | asOBJ_APP_CLASS_CDAK) >= 0);
-        SDL_assert(engine->RegisterObjectType("Quaternion", sizeof(kmQuaternion), asOBJ_VALUE | asOBJ_APP_CLASS_CDAK) >= 0);
-        //SDL_assert(engine->RegisterObjectType("Ray3", sizeof(kmRay3), asOBJ_VALUE | asOBJ_APP_CLASS_CDAK) >= 0);
+        SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, str.c_str());
+    }
+
+    static void printToLogDebug(const lite3dpp::lite3dpp_string &str)
+    {
+        SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, str.c_str());
+    }
+
+    static void printToLogError(const lite3dpp::lite3dpp_string &str)
+    {
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, str.c_str());
+    }
+
+    void RegisterScriptLogger(asIScriptEngine *engine)
+    {
+        SDL_assert(engine->RegisterGlobalFunction("void logInfo(const string &in)",
+            asFUNCTION(printToLogInfo), asCALL_CDECL) >= 0);
+        SDL_assert(engine->RegisterGlobalFunction("void logDebug(const string &in)",
+            asFUNCTION(printToLogDebug), asCALL_CDECL) >= 0);
+        SDL_assert(engine->RegisterGlobalFunction("void logError(const string &in)",
+            asFUNCTION(printToLogError), asCALL_CDECL) >= 0);
     }
 }

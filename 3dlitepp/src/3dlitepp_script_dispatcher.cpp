@@ -24,8 +24,8 @@
 #include <3dlitepp/as_helpers/scriptmath.h>
 
 #include <3dlitepp/3dlitepp_main.h>
+#include <3dlitepp/3dlitepp_script_binding.h>
 #include <3dlitepp/3dlitepp_script_dispatcher.h>
-#include <algorithm>
 
 namespace lite3dpp
 {
@@ -103,12 +103,27 @@ namespace lite3dpp
 
     void ScriptDispatcher::registerGlobals()
     {
+        /* register common types */
         RegisterStdString(mAsEngine);
         RegisterScriptArray(mAsEngine, true);
         RegisterStdStringUtils(mAsEngine);
         RegisterScriptMath(mAsEngine);
 
+        /* register engine types */
+        RegisterScriptTypes(mAsEngine);
+        RegisterScriptVec3(mAsEngine);
+        RegisterScriptVec4(mAsEngine);
+        RegisterScriptMat4(mAsEngine);
+        RegisterScriptMat3(mAsEngine);
+        RegisterScriptQuaternion(mAsEngine);
+        RegisterScriptLogger(mAsEngine);
+
+        /* register functions */
         SDL_assert(mAsEngine->RegisterGlobalFunction("void breakRender()",
             asFUNCTION(lite3d_render_stop), asCALL_CDECL) >= 0);
+        SDL_assert(mAsEngine->RegisterGlobalFunction("void suspendRender()",
+            asFUNCTION(lite3d_render_suspend), asCALL_CDECL) >= 0);
+        SDL_assert(mAsEngine->RegisterGlobalFunction("void resumeRender()",
+            asFUNCTION(lite3d_render_resume), asCALL_CDECL) >= 0);
     }
 }

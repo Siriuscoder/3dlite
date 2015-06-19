@@ -17,23 +17,29 @@
  *******************************************************************************/
 #include <stdio.h>
 #include <SDL_log.h>
+#include <SDL_timer.h>
 
 #include <assimp/cimport.h>
 #include <3dlite/3dlite_logger.h>
     
-struct aiLogStream aiLogStream;
+static struct aiLogStream aiLogStream;
+static uint8_t gFlushAlways = LITE3D_FALSE;
 
 static void log_to_file(FILE *desc, int category, 
     SDL_LogPriority priority, const char* message)
 {
-    fprintf(desc, "%s(%s): %s\n", (priority == SDL_LOG_PRIORITY_VERBOSE ? "note" :
+    fprintf(desc, "[%10d]:%s:%s : %s\n", 
+        SDL_GetTicks(),
+        (priority == SDL_LOG_PRIORITY_VERBOSE ? "note" :
         (priority == SDL_LOG_PRIORITY_DEBUG ? "debug" : 
         (priority == SDL_LOG_PRIORITY_INFO ? "info" :
         (priority == SDL_LOG_PRIORITY_WARN ? "warn" :
         (priority == SDL_LOG_PRIORITY_ERROR ? "error" : "critical"))))),
         category == SDL_LOG_CATEGORY_APPLICATION ? "app" : "sdl",
         message);
-    fflush(desc);
+
+    if(gFlushAlways)
+        fflush(desc);
 }
 
 static void std_output_function(void* userdata, int category, 
@@ -59,12 +65,13 @@ static void file_output_function(void* userdata, int category,
 
 }
 
-void lite3d_logger_set_loglevel(int8_t level)
+void lite3d_logger_set_logParams(int8_t level, int8_t flushAlways)
 {
     SDL_LogSetAllPriority(level == LITE3D_LOGLEVEL_ERROR ? SDL_LOG_PRIORITY_ERROR : 
         (level == LITE3D_LOGLEVEL_INFO ? SDL_LOG_PRIORITY_INFO : SDL_LOG_PRIORITY_VERBOSE));
 
     aiEnableVerboseLogging(level == LITE3D_LOGLEVEL_VERBOSE ? AI_TRUE : AI_FALSE);
+    flushAlways = flushAlways;
 }
 
 void lite3d_logger_setup_stdout(void)

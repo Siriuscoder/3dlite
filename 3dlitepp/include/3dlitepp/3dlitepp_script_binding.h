@@ -28,4 +28,5 @@ namespace lite3dpp
     void RegisterScriptMat4(asIScriptEngine *engine);
     void RegisterScriptMat3(asIScriptEngine *engine);
     void RegisterScriptQuaternion(asIScriptEngine *engine);
+    void RegisterScriptLogger(asIScriptEngine *engine);
 }
