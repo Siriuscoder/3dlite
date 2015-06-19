@@ -17,8 +17,8 @@ library may be simply ported on others platforms.
 API
 ---
 Library provides two API levels:
-1. Low level C API (3dlite), common graphic operations.
-2. High level C++ API (3dlitepp), user friendly C++ components and scripting API.
+  1. Low level C API (3dlite), common graphic operations.
+  2. High level C++ API (3dlitepp), user friendly C++ components and scripting API.
 (See samples for more details)
 
 Dependencies
