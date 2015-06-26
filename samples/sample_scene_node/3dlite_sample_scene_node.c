@@ -53,10 +53,10 @@ static kmVec3 rotAxisZ = {
     0.0f, 0.0f, 1.0f
 };
 
-static lite3d_composite_scene_node mSceneNode[3];
-static lite3d_composite_scene_node mSceneNodeInherited[3];
+static lite3d_scene_node mSceneNode[3];
+static lite3d_scene_node mSceneNodeInherited[3];
 
-static lite3d_composite_scene mScene;
+static lite3d_scene mScene;
 
 static int process_events(SDL_Event *levent, void *userdata)
 {
@@ -80,7 +80,7 @@ static int process_events(SDL_Event *levent, void *userdata)
         }
         else if (levent->key.keysym.sym == SDLK_F2)
         {
-            lite3d_scene_node_rotate_angle(&mSceneNode[2].node, &rotAxisZ, kmDegreesToRadians(5));
+            lite3d_scene_node_rotate_angle(&mSceneNode[2], &rotAxisZ, kmDegreesToRadians(5));
         }
         else if (levent->key.keysym.sym == SDLK_UP)
         {
@@ -298,28 +298,28 @@ static int init(void *userdata)
     //lite3d_scene_node_rotate_angle(&mCamera01.cameraNode, &rotAxis, kmDegreesToRadians(90));
     //lite3d_scene_node_rotate_angle(&mCamera01.cameraNode, &rotAxisY, kmDegreesToRadians(90));
 
-    lite3d_composite_scene_init(&mScene);
-    for (; i < sizeof (mSceneNode) / sizeof (lite3d_composite_scene_node); ++i)
+    lite3d_scene_init(&mScene);
+    for (; i < sizeof (mSceneNode) / sizeof (lite3d_scene_node); ++i)
     {
         kmVec3 tmp = {
             0.0f, 0.0f, 2.0f
         };
 
-        lite3d_composite_scene_node_init(&mSceneNode[i], &mCubeVbo);
-        lite3d_scene_node_set_position(&mSceneNode[i].node, &nodePos[i]);
+        lite3d_scene_node_init(&mSceneNode[i]);
+        lite3d_scene_node_set_position(&mSceneNode[i], &nodePos[i]);
 
-        lite3d_composite_scene_node_init(&mSceneNodeInherited[i], &mCubeVbo);
-        lite3d_scene_node_set_position(&mSceneNodeInherited[i].node, &tmp);
-        lite3d_scene_node_scale(&mSceneNodeInherited[i].node, &nodeScale[i]);
+        lite3d_scene_node_init(&mSceneNodeInherited[i]);
+        lite3d_scene_node_set_position(&mSceneNodeInherited[i], &tmp);
+        lite3d_scene_node_scale(&mSceneNodeInherited[i], &nodeScale[i]);
 
-        lite3d_composite_scene_add_node(&mScene, &mSceneNode[i], NULL);
-        lite3d_composite_scene_node_attach_material(&mSceneNode[i], &mVintageBoxMaterial, 0);
+        lite3d_scene_add_node(&mScene, &mSceneNode[i], NULL);
+        lite3d_scene_node_touch_material(&mSceneNode[i], lite3d_mesh_chunk_get_by_index(&mCubeVbo, 0), &mVintageBoxMaterial);
 
-        lite3d_composite_scene_add_node(&mScene, &mSceneNodeInherited[i], &mSceneNode[i].node);
-        lite3d_composite_scene_node_attach_material(&mSceneNodeInherited[i], &mBoxMaterial, 0);
+        lite3d_scene_add_node(&mScene, &mSceneNodeInherited[i], &mSceneNode[i]);
+        lite3d_scene_node_touch_material(&mSceneNodeInherited[i], lite3d_mesh_chunk_get_by_index(&mCubeVbo, 0), &mBoxMaterial);
     }
 
-    lite3d_scene_node_add(&mScene.scene, &mCamera01.cameraNode, NULL);
+    lite3d_scene_add_node(&mScene, &mCamera01.cameraNode, NULL);
     lite3d_render_target_screen_attach_camera(&mCamera01);
     //lite3d_camera_link_to(&mCamera01, &mSceneNode[2], LITE3D_CAMERA_LINK_ORIENTATION);
     //lite3d_camera_tracking(&mCamera01, &mSceneNode[2]);
@@ -332,7 +332,7 @@ static int shutdown(void *userdata)
     lite3d_indexed_mesh_purge(&mCubeVbo);
     lite3d_material_purge(&mVintageBoxMaterial);
     lite3d_shader_program_purge(&mProgram);
-    lite3d_composite_scene_purge(&mScene);
+    lite3d_scene_purge(&mScene);
     lite3d_texture_unit_purge(&mVintageBoxUnit);
     lite3d_texture_unit_purge(&mBoxUnit);
     lite3d_resource_pack_close(mFileSysPack);

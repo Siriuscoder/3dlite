@@ -38,9 +38,9 @@ static lite3d_material mRifleMaterialB;
 static lite3d_material mBattMaterial;
 static lite3d_shader_program mProgram;
 
-static lite3d_composite_scene_node mRifleNode;
-static lite3d_composite_scene_node mBattNode;
-static lite3d_composite_scene mScene;
+static lite3d_scene_node mRifleNode;
+static lite3d_scene_node mBattNode;
+static lite3d_scene mScene;
 
 static int process_events(SDL_Event *levent, void *userdata)
 {
@@ -229,21 +229,21 @@ static int init(void *userdata)
     lite3d_camera_perspective(&mCamera01, 1.0f, 1000.0f, 45.0f, (float) DEFAULT_WIDTH / (float) DEFAULT_HEIGHT);
     lite3d_camera_set_position(&mCamera01, &cameraInitPos);
 
-    lite3d_composite_scene_init(&mScene);
-    lite3d_composite_scene_node_init(&mRifleNode, &mRifle);
-    lite3d_composite_scene_node_init(&mBattNode, &mRifleBatt);
+    lite3d_scene_init(&mScene);
+    lite3d_scene_node_init(&mRifleNode);
+    lite3d_scene_node_init(&mBattNode);
 
-    lite3d_composite_scene_add_node(&mScene, &mRifleNode, NULL);
-    lite3d_composite_scene_add_node(&mScene, &mBattNode, &mRifleNode.node);
+    lite3d_scene_add_node(&mScene, &mRifleNode, NULL);
+    lite3d_scene_add_node(&mScene, &mBattNode, &mRifleNode);
 
-    lite3d_composite_scene_node_attach_material(&mRifleNode, &mRifleMaterialA, 0);
-    lite3d_composite_scene_node_attach_material(&mRifleNode, &mRifleMaterialB, 1);
-    lite3d_composite_scene_node_attach_material(&mRifleNode, &mRifleMaterialB, 2);
-    lite3d_composite_scene_node_attach_material(&mRifleNode, &mRifleMaterialB, 3);
-    lite3d_composite_scene_node_attach_material(&mRifleNode, &mRifleMaterialB, 4);
-    lite3d_composite_scene_node_attach_material(&mBattNode, &mBattMaterial, 0);
+    lite3d_scene_node_touch_material(&mRifleNode, lite3d_mesh_chunk_get_by_index(&mRifle, 0), &mRifleMaterialA);
+    lite3d_scene_node_touch_material(&mRifleNode, lite3d_mesh_chunk_get_by_index(&mRifle, 1), &mRifleMaterialB);
+    lite3d_scene_node_touch_material(&mRifleNode, lite3d_mesh_chunk_get_by_index(&mRifle, 2), &mRifleMaterialB);
+    lite3d_scene_node_touch_material(&mRifleNode, lite3d_mesh_chunk_get_by_index(&mRifle, 3), &mRifleMaterialB);
+    lite3d_scene_node_touch_material(&mRifleNode, lite3d_mesh_chunk_get_by_index(&mRifle, 4), &mRifleMaterialB);
+    lite3d_scene_node_touch_material(&mBattNode, lite3d_mesh_chunk_get_by_index(&mRifleBatt, 0), &mBattMaterial);
 
-    lite3d_scene_node_add(&mScene.scene, &mCamera01.cameraNode, NULL);
+    lite3d_scene_add_node(&mScene, &mCamera01.cameraNode, NULL);
     lite3d_render_target_screen_attach_camera(&mCamera01);
     lite3d_camera_lookAt(&mCamera01, &viewPos);
 
@@ -261,7 +261,7 @@ static int shutdown(void *userdata)
     lite3d_material_purge(&mBattMaterial);
 
     lite3d_shader_program_purge(&mProgram);
-    lite3d_composite_scene_purge(&mScene);
+    lite3d_scene_purge(&mScene);
 
     lite3d_texture_unit_purge(&mRifleTextureA);
     lite3d_texture_unit_purge(&mRifleTextureB);
@@ -274,7 +274,7 @@ static int shutdown(void *userdata)
 
 static int pre_frame(void *userdata)
 {
-    lite3d_scene_node_rotate_angle(&mRifleNode.node, &KM_VEC3_POS_Z, 0.001f);
+    lite3d_scene_node_rotate_angle(&mRifleNode, &KM_VEC3_POS_Z, 0.001f);
     return LITE3D_TRUE;
 }
 

@@ -29,15 +29,17 @@ namespace lite3dpp
         {
             /* just created */
             NEW,
-            /* json parsed, loaded to RAM */
-            LOADED_UNMAPPED,
-            /* loaded to Video memory */ 
-            LOADED_MAPPED
+            /* fully loaded */
+            LOADED
         };
 
         enum ResourceType
         {
-            SCRIPT
+            SCRIPT,
+            MESH,
+            SCENE_OBJECT,
+            SCENE,
+            MATERIAL
         };
 
         AbstractResource(const lite3dpp_string &name, 
@@ -45,16 +47,13 @@ namespace lite3dpp
         virtual ~AbstractResource();
 
         void load(const void *buffer, size_t size);
+        /* call this if want to reload object */ 
+        void reload();
         void unload();
-        void map();
-        void unmap();
 
-        /* allocated size in heap */
-        inline size_t heapSize() const
-        { return mHeapSize; }
         /* allocated size in video memory (when resource LOADED_MAPPED) */
-        inline size_t mappedSize() const
-        { return mMappedSize; }
+        inline size_t getBufferedSize() const
+        { return mBufferedSize; }
 
         inline ResourceState getState() const
         { return mState; }
@@ -66,9 +65,8 @@ namespace lite3dpp
     protected:
 
         virtual void loadImpl(const void *buffer, size_t size) = 0;
+        virtual void reloadImpl() = 0;
         virtual void unloadImpl() = 0;
-        virtual void mapImpl() = 0;
-        virtual void unmapImpl() = 0;
 
     protected:
 
@@ -76,8 +74,8 @@ namespace lite3dpp
         ResourceType mType;
         lite3dpp_string mName;
         lite3dpp_string mPath;
-        size_t mHeapSize;
-        size_t mMappedSize;
+        size_t mBufferedSize;
+        size_t mDependedBufferedSize;
         Main *mMain;
     };
 }

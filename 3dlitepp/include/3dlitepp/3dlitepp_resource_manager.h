@@ -47,8 +47,8 @@ namespace lite3dpp
 
         typedef struct ResourceManagerStats
         {
-            size_t resourcesHeapSize;
-            size_t resourcesMappedSize;
+            /* total allocated video memory buffers size */
+            size_t bufferedSize;
             size_t totalFileCacheSize;
         } ResourceManagerStats;
 
@@ -74,7 +74,7 @@ namespace lite3dpp
             }
 
             if(name.size() == 0)
-                name = generateName();
+                name = generateResourceName();
 
             try
             {
@@ -100,6 +100,7 @@ namespace lite3dpp
         ResourceManagerStats getStats() const;
 
         const void *loadFileToMemory(const lite3dpp_string &path, size_t *size);
+        const lite3d_resource_file *loadFileToMemory(const lite3dpp_string &path);
 
         void addResourceLocation(const lite3dpp_string &name,
             const lite3dpp_string &path,
@@ -107,12 +108,11 @@ namespace lite3dpp
 
     protected:
 
-        lite3dpp_string generateName();
+        lite3dpp_string generateResourceName();
         AbstractResource *fetchResource(const lite3dpp_string &key);
         virtual void loadResource(const lite3dpp_string &name, 
             const lite3dpp_string &path,
             AbstractResource *resource);
-        virtual void mapResource(AbstractResource *resource);
 
     private:
 

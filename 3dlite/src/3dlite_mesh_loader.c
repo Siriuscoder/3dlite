@@ -233,7 +233,7 @@ static int ai_node_load_recursive(const struct aiScene *scene,
     return LITE3D_TRUE;
 }
 
-static const struct aiScene *ai_load_scene(lite3d_resource_file *resource, uint32_t flags,
+static const struct aiScene *ai_load_scene(const lite3d_resource_file *resource, uint32_t flags,
     struct aiPropertyStore *importProrerties)
 {
     const struct aiScene *scene = NULL;
@@ -390,7 +390,7 @@ int lite3d_indexed_mesh_extend_from_memory(lite3d_indexed_mesh *mesh,
     return LITE3D_TRUE;
 }
 
-int lite3d_indexed_mesh_load(lite3d_indexed_mesh *mesh, lite3d_resource_file *resource,
+int lite3d_indexed_mesh_load(lite3d_indexed_mesh *mesh, const lite3d_resource_file *resource,
     const char *name, uint16_t access, uint32_t flags)
 {
     const struct aiScene *scene = NULL;
@@ -453,7 +453,7 @@ int lite3d_indexed_mesh_load(lite3d_indexed_mesh *mesh, lite3d_resource_file *re
     return LITE3D_TRUE;
 }
 
-int lite3d_indexed_mesh_load_recursive(lite3d_resource_file *resource, 
+int lite3d_indexed_mesh_load_recursive(const lite3d_resource_file *resource, 
     lite3d_retrieve_mesh retrieveMesh, lite3d_mesh_loaded meshLoaded, uint16_t access, uint32_t flags)
 {
     const struct aiScene *scene = NULL;
@@ -492,7 +492,7 @@ void lite3d_indexed_mesh_order_mat_indexes(lite3d_indexed_mesh *mesh)
     }
 }
 
-int lite3d_indexed_mesh_load_from_m_file(lite3d_indexed_mesh *mesh, lite3d_resource_file *resource,
+int lite3d_indexed_mesh_load_from_m_file(lite3d_indexed_mesh *mesh, const lite3d_resource_file *resource,
     uint16_t access)
 {
     if (!resource->isLoaded)

@@ -17,45 +17,40 @@
  *******************************************************************************/
 #pragma once
 
+#include <3dlite/3dlite_mesh.h>
+
 #include <3dlitepp/3dlitepp_common.h>
 #include <3dlitepp/3dlitepp_resource.h>
+#include <3dlitepp/3dlitepp_json_helper.h>
+#include <3dlitepp/3dlitepp_material.h>
 
 namespace lite3dpp
 {
-    class LITE3DPP_EXPORT Script : public AbstractResource
+    class LITE3DPP_EXPORT Mesh : public AbstractResource
     {
     public:
+        
+        typedef stl<int, Material *>::map MaterialMapping;
 
-        Script(const lite3dpp_string &name, 
+        Mesh(const lite3dpp_string &name, 
             const lite3dpp_string &path, Main *main);
-        ~Script();
+        ~Mesh();
 
-        void performFrameBegin();
-        void performFrameEnd();
-        void performFixedUpdate();
+        void mapMaterial(int unit, Material *material);
+        inline const MaterialMapping &getMaterialMapping() const
+        { return mMaterialMapping; }
 
     protected:
 
-        void scriptCompile(const char *data, size_t size);
-        void scriptRelease();
-
         virtual void loadImpl(const void *buffer, size_t size);
-        virtual void reloadImpl();
         virtual void unloadImpl();
+        virtual void reloadImpl();
 
     private:
-        
-        void checkScriptExec(int ret);
-        
-    private:
 
-        asIScriptEngine *mScriptEngine;
-        asIScriptFunction *mInitFunction;
-        asIScriptFunction *mShutFunction;
-        asIScriptFunction *mFrameBeginFunction;
-        asIScriptFunction *mFrameEndFunction;
-        asIScriptFunction *mFixedUpdateFunction;
-        asIScriptContext *mContext;
+        JsonHelper *mOptions;
+        MaterialMapping mMaterialMapping;
+        lite3d_indexed_mesh mMesh;
     };
 }
 

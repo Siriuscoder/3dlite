@@ -45,7 +45,7 @@ namespace lite3dpp
         Resources::iterator it;
         if((it = mResources.find(key)) != mResources.end())
         {
-            mapResource(it->second);
+            it->second->reload();
             return it->second;
         }
 
@@ -64,15 +64,8 @@ namespace lite3dpp
         /* load resource from memory file */
         resource->load(buffer, fileSize);
 
-        /* map resource to GPU memory */
-        mapResource(resource);
         /* just insert resource */
         mResources.insert(std::make_pair(name, resource));
-    }
-
-    void ResourceManager::mapResource(AbstractResource *resource)
-    {
-        resource->map();
     }
 
     void ResourceManager::releaseAllResources()
@@ -80,7 +73,6 @@ namespace lite3dpp
         Resources::iterator it = mResources.begin();
         for(; it != mResources.end(); ++it)
         {
-            it->second->unmap();
             it->second->unload();
             delete it->second;
         }
@@ -93,7 +85,6 @@ namespace lite3dpp
         Resources::iterator it;
         if((it = mResources.find(name)) != mResources.end())
         {
-            it->second->unmap();
             it->second->unload();
             delete it->second;
 
@@ -101,7 +92,7 @@ namespace lite3dpp
         }
     }
 
-    lite3dpp_string ResourceManager::generateName()
+    lite3dpp_string ResourceManager::generateResourceName()
     {
         lite3dpp_stringstream result;
         result << std::hex << SDL_GetPerformanceCounter();
@@ -122,8 +113,7 @@ namespace lite3dpp
         Resources::const_iterator resIt = mResources.begin();
         for(; resIt != mResources.end(); ++resIt)
         {
-            stats.resourcesHeapSize += resIt->second->heapSize();
-            stats.resourcesMappedSize += resIt->second->mappedSize();
+            stats.bufferedSize += resIt->second->getBufferedSize();
         }
 
         return stats;
@@ -154,6 +144,14 @@ namespace lite3dpp
 
     const void *ResourceManager::loadFileToMemory(const lite3dpp_string &path, size_t *size)
     {
+        /* load resource file to memory */
+        const lite3d_resource_file *resourceFile = loadFileToMemory(path);
+        *size = resourceFile->fileSize;
+        return resourceFile->fileBuff;
+    }
+
+    const lite3d_resource_file *ResourceManager::loadFileToMemory(const lite3dpp_string &path)
+    {
         lite3dpp_stringstream pathStream(path);
         lite3dpp_string packName, filePath;
         std::getline(pathStream, packName, ':');
@@ -169,8 +167,7 @@ namespace lite3dpp
         if(!resourceFile || !resourceFile->isLoaded)
             throw std::runtime_error(lite3dpp_string("Resource open failed..") + filePath);
 
-        *size = resourceFile->fileSize;
-        return resourceFile->fileBuff;
+        return resourceFile;
     }
 }
 

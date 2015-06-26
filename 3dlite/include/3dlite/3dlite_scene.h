@@ -21,6 +21,8 @@
 #include <3dlite/3dlite_common.h>
 #include <3dlite/3dlite_camera.h>
 #include <3dlite/3dlite_list.h>
+#include <3dlite/3dlite_mesh.h>
+#include <3dlite/3dlite_material.h>
 
 typedef struct lite3d_scene_stats
 {
@@ -37,16 +39,25 @@ typedef struct lite3d_scene
 {
     lite3d_scene_node rootNode;
     lite3d_scene_stats stats;
+    lite3d_list renderUnitQueue;
+    void (*drawBatch)(struct lite3d_scene *scene, 
+        struct lite3d_scene_node *node, 
+        lite3d_mesh_chunk *meshChunk, lite3d_material *material);
     void (*preRender)(struct lite3d_scene *scene, lite3d_camera *camera);
     void (*postRender)(struct lite3d_scene *scene, lite3d_camera *camera);
-    void (*doRender)(struct lite3d_scene *scene, lite3d_camera *camera);
 } lite3d_scene;
 
 LITE3D_CEXPORT void lite3d_scene_render(lite3d_scene *scene, lite3d_camera *camera);
 LITE3D_CEXPORT void lite3d_scene_init(lite3d_scene *scene);
-LITE3D_CEXPORT int lite3d_scene_node_add(lite3d_scene *scene, lite3d_scene_node *node, 
+LITE3D_CEXPORT void lite3d_scene_purge(lite3d_scene *scene);
+
+LITE3D_CEXPORT int lite3d_scene_add_node(lite3d_scene *scene, 
+    lite3d_scene_node *node, 
     lite3d_scene_node *baseNode);
-LITE3D_CEXPORT int lite3d_scene_node_remove(lite3d_scene *scene, lite3d_scene_node *node);
+LITE3D_CEXPORT int lite3d_scene_remove_node(lite3d_scene *scene, lite3d_scene_node *node);
+
+LITE3D_CEXPORT int lite3d_scene_node_touch_material(
+    lite3d_scene_node *node, lite3d_mesh_chunk *meshChunk, lite3d_material *material);
 
 #endif	/* LITE3D_SCENE_H */
 

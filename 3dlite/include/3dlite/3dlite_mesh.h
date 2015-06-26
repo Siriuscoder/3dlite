@@ -57,7 +57,6 @@ typedef struct lite3d_mesh_chunk
 {
     lite3d_list_node node;
     lite3d_vao vao;
-    lite3d_indexed_mesh *ownMesh;
     size_t layoutEntriesCount;
     lite3d_indexed_mesh_layout *layout;
     /* material index */

@@ -31,8 +31,8 @@ static lite3d_shader_parameter mMinigunTextureUnit;
 static lite3d_material mMinigunMaterial;
 static lite3d_shader_program mProgram;
 
-static lite3d_composite_scene_node mSceneNode;
-static lite3d_composite_scene mScene;
+static lite3d_scene_node mSceneNode;
+static lite3d_scene mScene;
 
 static int process_events(SDL_Event *levent, void *userdata)
 {
@@ -168,12 +168,12 @@ static int init(void *userdata)
     lite3d_camera_perspective(&mCamera01, 1.0f, 1000.0f, 45.0f, (float) DEFAULT_WIDTH / (float) DEFAULT_HEIGHT);
     lite3d_camera_set_position(&mCamera01, &cameraInitPos);
 
-    lite3d_composite_scene_init(&mScene);
-    lite3d_composite_scene_node_init(&mSceneNode, &mModel);
-    lite3d_composite_scene_add_node(&mScene, &mSceneNode, NULL);
-    lite3d_composite_scene_node_attach_material(&mSceneNode, &mMinigunMaterial, 0);
+    lite3d_scene_init(&mScene);
+    lite3d_scene_node_init(&mSceneNode);
+    lite3d_scene_add_node(&mScene, &mSceneNode, NULL);
+    lite3d_scene_node_touch_material(&mSceneNode, lite3d_mesh_chunk_get_by_index(&mModel, 0), &mMinigunMaterial);
 
-    lite3d_scene_node_add(&mScene.scene, &mCamera01.cameraNode, NULL);
+    lite3d_scene_add_node(&mScene, &mCamera01.cameraNode, NULL);
     lite3d_render_target_screen_attach_camera(&mCamera01);
     lite3d_camera_lookAt(&mCamera01, &viewPos);
 
@@ -186,7 +186,7 @@ static int shutdown(void *userdata)
     lite3d_indexed_mesh_purge(&mModel);
     lite3d_material_purge(&mMinigunMaterial);
     lite3d_shader_program_purge(&mProgram);
-    lite3d_composite_scene_purge(&mScene);
+    lite3d_scene_purge(&mScene);
     lite3d_texture_unit_purge(&mMinigunTexture);
     lite3d_resource_pack_close(mFileSysPack);
 
@@ -195,7 +195,7 @@ static int shutdown(void *userdata)
 
 static int pre_frame(void *userdata)
 {
-    lite3d_scene_node_rotate_angle(&mSceneNode.node, &KM_VEC3_POS_Z, 0.001f);
+    lite3d_scene_node_rotate_angle(&mSceneNode, &KM_VEC3_POS_Z, 0.001f);
     return LITE3D_TRUE;
 }
 

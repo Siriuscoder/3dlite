@@ -17,45 +17,47 @@
  *******************************************************************************/
 #pragma once
 
+#include <3dlite/3dlite_scene.h>
+
 #include <3dlitepp/3dlitepp_common.h>
-#include <3dlitepp/3dlitepp_resource.h>
+#include <3dlitepp/3dlitepp_json_helper.h>
+#include <3dlitepp/3dlitepp_mesh.h>
 
 namespace lite3dpp
 {
-    class LITE3DPP_EXPORT Script : public AbstractResource
+    class LITE3DPP_EXPORT SceneNode : public Manageable
     {
     public:
 
-        Script(const lite3dpp_string &name, 
-            const lite3dpp_string &path, Main *main);
-        ~Script();
+        SceneNode();
+        SceneNode(const JsonHelper &json);
+        ~SceneNode();
 
-        void performFrameBegin();
-        void performFrameEnd();
-        void performFixedUpdate();
+        inline void setName(const lite3dpp_string &name)
+        { mName = name; }
 
-    protected:
+        inline lite3dpp_string getName() const
+        { return mName; }
 
-        void scriptCompile(const char *data, size_t size);
-        void scriptRelease();
+        void setMesh(Mesh *mesh);
+        inline Mesh *getMesh()
+        { return mMesh; }
 
-        virtual void loadImpl(const void *buffer, size_t size);
-        virtual void reloadImpl();
-        virtual void unloadImpl();
+        void setPosition(const kmVec3 *position);
+        void move(const kmVec3 *position);
+        void setRotation(const kmQuaternion *quat);
+        void rotate(const kmQuaternion *quat);
+        void rotateAngle(const kmVec3 *axis, float angle);
+        void scale(const kmVec3 *scale);
+
+        void replaceMaterial(int unit, Material *material);
 
     private:
-        
-        void checkScriptExec(int ret);
-        
-    private:
 
-        asIScriptEngine *mScriptEngine;
-        asIScriptFunction *mInitFunction;
-        asIScriptFunction *mShutFunction;
-        asIScriptFunction *mFrameBeginFunction;
-        asIScriptFunction *mFrameEndFunction;
-        asIScriptFunction *mFixedUpdateFunction;
-        asIScriptContext *mContext;
+        lite3d_scene_node mNode;
+        Mesh::MaterialMapping mMaterialMappingReplacement;
+        Mesh *mMesh;
+        lite3dpp_string mName;
     };
 }
 

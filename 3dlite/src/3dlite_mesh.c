@@ -244,7 +244,6 @@ lite3d_mesh_chunk *lite3d_indexed_mesh_append_chunk(lite3d_indexed_mesh *mesh,
     meshChunk->vao.verticesCount = verticesCount;
     meshChunk->vao.verticesSize = verticesSize;
     meshChunk->vao.verticesOffset = verticesOffset;
-    meshChunk->ownMesh = mesh;
     meshChunk->layoutEntriesCount = layoutCount;
     meshChunk->vao.elementsCount = indexesCount /
         (indexPrimitive == LITE3D_PRIMITIVE_POINT ? 1 :

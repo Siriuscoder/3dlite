@@ -25,8 +25,8 @@ namespace lite3dpp
         mState(NEW),
         mName(name),
         mPath(path),
-        mHeapSize(0),
-        mMappedSize(0),
+        mBufferedSize(0),
+        mDependedBufferedSize(0),
         mMain(main)
     {}
 
@@ -38,34 +38,24 @@ namespace lite3dpp
         if(mState == NEW)
         {
             loadImpl(buffer, size);
-            mState = LOADED_UNMAPPED;
+            mState = LOADED;
+        }
+    }
+
+    void AbstractResource::reload()
+    {
+        if(mState == LOADED)
+        {
+            reloadImpl();
         }
     }
 
     void AbstractResource::unload()
     {
-        if(mState == LOADED_UNMAPPED)
+        if(mState == LOADED)
         {
             unloadImpl();
             mState = NEW;
-        }
-    }
-
-    void AbstractResource::map()
-    {
-        if(mState == LOADED_UNMAPPED)
-        {
-            mapImpl();
-            mState = LOADED_MAPPED;
-        }
-    }
-
-    void AbstractResource::unmap()
-    {
-        if(mState == LOADED_MAPPED)
-        {
-            unmapImpl();
-            mState = LOADED_UNMAPPED;
         }
     }
 }

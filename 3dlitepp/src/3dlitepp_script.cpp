@@ -48,6 +48,7 @@ namespace lite3dpp
         mFrameEndFunction(NULL),
         mContext(NULL)
     {
+        mType = AbstractResource::SCRIPT;
     }
 
     Script::~Script()
@@ -56,7 +57,6 @@ namespace lite3dpp
 
     void Script::scriptCompile(const char *data, size_t size)
     {
-        mHeapSize = size;
         SDL_assert(data);
         
         SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION,
@@ -173,9 +173,6 @@ namespace lite3dpp
         scriptRelease();
     }
 
-    void Script::mapImpl()
-    {}
-
-    void Script::unmapImpl()
+    void Script::reloadImpl()
     {}
 }
