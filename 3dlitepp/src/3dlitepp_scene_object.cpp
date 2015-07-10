@@ -15,6 +15,9 @@
  *	You should have received a copy of the GNU General Public License
  *	along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
+#include <algorithm>
+
+#include <3dlitepp/3dlitepp_scene.h>
 #include <3dlitepp/3dlitepp_scene_object.h>
 
 namespace lite3dpp
@@ -44,12 +47,62 @@ namespace lite3dpp
 
     void SceneObject::unloadImpl()
     {
+        std::for_each(mNodes.begin(), mNodes.end(), [] (Nodes::value_type &node)
+        {
+            delete node.second;
+        });
+
         mNodes.clear();
     }
 
     void SceneObject::reloadImpl()
     {
+        JsonHelper rootNodeHelper = mOptions->getObject(L"Root");
+        if(rootNodeHelper.isEmpty())
+            return;
 
+        mObjectRoot = new SceneNode(mMain, rootNodeHelper, NULL);
+        setupNodes(rootNodeHelper.getObjects(L"Nodes"), mObjectRoot);
+    }
+
+    void SceneObject::setupNodes(const stl<JsonHelper>::vector &nodesRange, SceneNode *base)
+    {
+        for(const auto &nodeHelper : nodesRange)
+        {
+            if(nodeHelper.isEmpty())
+                continue;
+
+            SceneNode *sceneNode = new SceneNode(mMain, nodeHelper, base);
+            /* create and initialize new node then store it */
+            mNodes.insert(std::make_pair(nodeHelper.getString(L"Name"),
+                sceneNode));
+
+            stl<JsonHelper>::vector nodesSubRange = nodeHelper.getObjects(L"Nodes");
+            if(nodesSubRange.size() > 0)
+                setupNodes(nodesSubRange, sceneNode);
+        }
+    }
+
+    SceneNode *SceneObject::getNode(const lite3dpp_string &name)
+    {
+        Nodes::iterator it = mNodes.find(name);
+        return it == mNodes.end() ? NULL : it->second; 
+    }
+
+    void SceneObject::addToScene(Scene *scene)
+    {
+        std::for_each(mNodes.begin(), mNodes.end(), [scene] (Nodes::value_type &node)
+        {
+            node.second->addToScene(scene);
+        });
+    }
+
+    void SceneObject::removeFromScene(Scene *scene)
+    {
+        std::for_each(mNodes.begin(), mNodes.end(), [scene] (Nodes::value_type &node)
+        {
+            node.second->removeFromScene(scene);
+        });
     }
 }
 

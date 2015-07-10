@@ -51,7 +51,7 @@ namespace lite3dpp
         if(mOptions->getString(L"Codec", "m") == "m")
         {
             if(!lite3d_indexed_mesh_load_from_m_file(&mMesh, 
-                mMain->getResourceManager()->loadFileToMemory(mOptions->getString(L"File")),
+                mMain->getResourceManager()->loadFileToMemory(mOptions->getString(L"Model")),
                 mOptions->getBool(L"Dynamic", false) ? LITE3D_VBO_DYNAMIC_DRAW : LITE3D_VBO_STATIC_DRAW))
                 throw std::runtime_error("Mesh bad format..");
         }
@@ -64,7 +64,7 @@ namespace lite3dpp
                 flags |= LITE3D_FLIP_UV_FLAG;
 
             if(!lite3d_indexed_mesh_load(&mMesh, 
-                mMain->getResourceManager()->loadFileToMemory(mOptions->getString(L"File")),
+                mMain->getResourceManager()->loadFileToMemory(mOptions->getString(L"Model")),
                 mOptions->getString(L"ModelName").c_str(), 
                 mOptions->getBool(L"Dynamic", false) ? LITE3D_VBO_DYNAMIC_DRAW : LITE3D_VBO_STATIC_DRAW,
                 flags))
@@ -74,8 +74,15 @@ namespace lite3dpp
         if(mOptions->getBool(L"MaterialMappingAutoOrdered", false))
             lite3d_indexed_mesh_order_mat_indexes(&mMesh);
 
+        for(auto &matMap : mOptions->getObjects(L"MaterialMapping"))
+        {
+            mapMaterial(matMap.getInt(L"MaterialIndex"), 
+                mMain->getResourceManager()->queryResource<Material>(
+                    matMap.getString(L"Name"),
+                    matMap.getString(L"Material")));
+        }
+
         mBufferedSize = mMesh.indexBuffer.size + mMesh.vertexBuffer.size;
-        mDependedBufferedSize += mBufferedSize;
     }
 
     void Mesh::unloadImpl()

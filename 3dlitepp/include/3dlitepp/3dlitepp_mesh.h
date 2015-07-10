@@ -26,7 +26,7 @@
 
 namespace lite3dpp
 {
-    class LITE3DPP_EXPORT Mesh : public AbstractResource
+    class LITE3DPP_EXPORT Mesh : public AbstractResource, public NoncopiableResource
     {
     public:
         
@@ -39,6 +39,8 @@ namespace lite3dpp
         void mapMaterial(int unit, Material *material);
         inline const MaterialMapping &getMaterialMapping() const
         { return mMaterialMapping; }
+        inline lite3d_indexed_mesh *getPtr()
+        { return &mMesh; }
 
     protected:
 

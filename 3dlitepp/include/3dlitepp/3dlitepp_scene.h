@@ -17,11 +17,32 @@
  *******************************************************************************/
 #pragma once
 
+#include <3dlite/3dlite_scene.h>
+
 #include <3dlitepp/3dlitepp_common.h>
 #include <3dlitepp/3dlitepp_resource.h>
 
 namespace lite3dpp
 {
-    
+    class LITE3DPP_EXPORT Scene : public AbstractResource, public NoncopiableResource
+    {
+    public:
+        Scene(const lite3dpp_string &name, 
+            const lite3dpp_string &path, Main *main);
+        ~Scene();
+
+        inline lite3d_scene *getPtr()
+        { return &mScene; }
+
+    protected:
+
+        virtual void loadImpl(const void *buffer, size_t size);
+        virtual void unloadImpl();
+        virtual void reloadImpl();
+
+    private:
+
+        lite3d_scene mScene;
+    };
 }
 

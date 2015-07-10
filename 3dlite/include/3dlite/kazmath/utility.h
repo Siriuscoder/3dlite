@@ -27,6 +27,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define UTILITY_H_INCLUDED
 
 #include <math.h>
+#include <3dlite/3dlite_common.h>
 
 #ifndef kmScalar
 #ifdef USE_DOUBLE_PRECISION

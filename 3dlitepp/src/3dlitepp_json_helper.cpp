@@ -183,4 +183,70 @@ namespace lite3dpp
 
         return result;
     }
+
+    bool JsonHelper::isEmpty() const
+    {
+        return mObject.size() == 0;
+    }
+
+    kmVec2 JsonHelper::getVec2(const lite3dpp_wstring &name, const kmVec2 &def) const
+    {
+        JsonHelper helper = getObject(name);
+        if(helper.isEmpty())
+            return def;
+
+        kmVec2 vec2 = {
+            static_cast<float>(helper.getDouble(L"x")),
+            static_cast<float>(helper.getDouble(L"y"))
+        };
+
+        return vec2;
+    }
+
+    kmVec3 JsonHelper::getVec3(const lite3dpp_wstring &name, const kmVec3 &def) const
+    {
+        JsonHelper helper = getObject(name);
+        if(helper.isEmpty())
+            return def;
+
+        kmVec3 vec3 = {
+            static_cast<float>(helper.getDouble(L"x")),
+            static_cast<float>(helper.getDouble(L"y")),
+            static_cast<float>(helper.getDouble(L"z"))
+        };
+
+        return vec3;
+    }
+
+    kmVec4 JsonHelper::getVec4(const lite3dpp_wstring &name, const kmVec4 &def) const
+    {
+        JsonHelper helper = getObject(name);
+        if(helper.isEmpty())
+            return def;
+
+        kmVec4 vec4 = {
+            static_cast<float>(helper.getDouble(L"x")),
+            static_cast<float>(helper.getDouble(L"y")),
+            static_cast<float>(helper.getDouble(L"z")),
+            static_cast<float>(helper.getDouble(L"w"))
+        };
+
+        return vec4;
+    }
+
+    kmQuaternion JsonHelper::getQuaternion(const lite3dpp_wstring &name, const kmQuaternion &def) const
+    {
+        JsonHelper helper = getObject(name);
+        if(helper.isEmpty())
+            return def;
+
+        kmQuaternion quat = {
+            static_cast<float>(helper.getDouble(L"x")),
+            static_cast<float>(helper.getDouble(L"y")),
+            static_cast<float>(helper.getDouble(L"z")),
+            static_cast<float>(helper.getDouble(L"w"))
+        };
+
+        return quat;
+    }
 }

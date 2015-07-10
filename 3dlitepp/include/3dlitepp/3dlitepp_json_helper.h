@@ -20,6 +20,11 @@
 #include <3dlitepp/3dlitepp_common.h>
 #include <3dlitepp/json/JSON.h>
 
+#include <3dlite/kazmath/vec2.h>
+#include <3dlite/kazmath/vec3.h>
+#include <3dlite/kazmath/vec4.h>
+#include <3dlite/kazmath/quaternion.h>
+
 namespace lite3dpp
 {
     class JsonHelper : public Manageable
@@ -37,6 +42,14 @@ namespace lite3dpp
         lite3dpp_string getString(const lite3dpp_wstring &name, const lite3dpp_string &def = "") const;
         JsonHelper getObject(const lite3dpp_wstring &name) const;
         stl<JsonHelper>::vector getObjects(const lite3dpp_wstring &name) const;
+
+        kmVec2 getVec2(const lite3dpp_wstring &name, const kmVec2 &def = KM_VEC2_ZERO) const;
+        kmVec3 getVec3(const lite3dpp_wstring &name, const kmVec3 &def = KM_VEC3_ZERO) const;
+        kmVec4 getVec4(const lite3dpp_wstring &name, const kmVec4 &def = KM_VEC4_ZERO) const;
+        kmQuaternion getQuaternion(const lite3dpp_wstring &name, const kmQuaternion &def = KM_QUATERNION_IDENTITY ) const;
+
+
+        bool isEmpty() const;
 
     private:
 

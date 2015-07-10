@@ -22,7 +22,7 @@
 #include <3dlitepp/3dlitepp_common.h>
 #include <3dlitepp/3dlitepp_resource.h>
 #include <3dlitepp/3dlitepp_json_helper.h>
-#include <3dlitepp/3dlitepp_mesh.h>
+#include <3dlitepp/3dlitepp_scene_node.h>
 
 namespace lite3dpp
 {
@@ -30,11 +30,19 @@ namespace lite3dpp
     {
     public:
 
-        typedef stl<lite3dpp_string, lite3d_scene_node>::map Nodes;
+        typedef stl<lite3dpp_string, SceneNode*>::map Nodes;
 
         SceneObject(const lite3dpp_string &name, 
             const lite3dpp_string &path, Main *main);
         ~SceneObject();
+
+        inline const Nodes &getNodes() const
+        { return mNodes; }
+
+        SceneNode *getNode(const lite3dpp_string &name);
+
+        void addToScene(Scene *scene);
+        void removeFromScene(Scene *scene);
 
     protected:
 
@@ -44,8 +52,13 @@ namespace lite3dpp
 
     private:
 
+        void setupNodes(const stl<JsonHelper>::vector &nodesRange, SceneNode *base);
+
+    private:
+
         JsonHelper *mOptions;
         Nodes mNodes;
+        SceneNode *mObjectRoot;
     };
 }
 

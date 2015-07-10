@@ -26,7 +26,6 @@ namespace lite3dpp
         mName(name),
         mPath(path),
         mBufferedSize(0),
-        mDependedBufferedSize(0),
         mMain(main)
     {}
 
@@ -58,5 +57,11 @@ namespace lite3dpp
             mState = NEW;
         }
     }
+
+    NoncopiableResource::NoncopiableResource()
+    {}
+
+    NoncopiableResource::NoncopiableResource(const NoncopiableResource &other)
+    {}
 }
 

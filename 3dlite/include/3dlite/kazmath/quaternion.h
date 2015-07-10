@@ -114,4 +114,6 @@ kmScalar kmQuaternionGetRoll(const kmQuaternion* q);
 
 kmQuaternion* kmQuaternionLookRotation(kmQuaternion* pOut, const kmVec3* direction, const kmVec3* up);
 
+LITE3D_EXPORT const kmQuaternion KM_QUATERNION_IDENTITY;
+
 #endif

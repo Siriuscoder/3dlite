@@ -70,6 +70,7 @@
 namespace lite3dpp
 {
     class LITE3DPP_EXPORT Main;
+    class LITE3DPP_EXPORT Scene;
 }
 
 class JSONValue;

@@ -33,6 +33,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "vec3.h"
 #include "quaternion.h"
 
+const kmQuaternion KM_QUATERNION_IDENTITY = { 0, 0, 0, 1 };
+
 int kmQuaternionAreEqual(const kmQuaternion* p1, const kmQuaternion* p2) {
     if ((p1->x < (p2->x + kmEpsilon) && p1->x > (p2->x - kmEpsilon)) &&
         (p1->y < (p2->y + kmEpsilon) && p1->y > (p2->y - kmEpsilon)) &&

@@ -17,13 +17,15 @@
  *******************************************************************************/
 #pragma once
 
+#include <3dlite/3dlite_material.h>
+
 #include <3dlitepp/3dlitepp_common.h>
 #include <3dlitepp/3dlitepp_json_helper.h>
 #include <3dlitepp/3dlitepp_resource.h>
 
 namespace lite3dpp
 {
-    class LITE3DPP_EXPORT Material : public AbstractResource
+    class LITE3DPP_EXPORT Material : public AbstractResource, public NoncopiableResource
     {
     public:
 
@@ -31,6 +33,9 @@ namespace lite3dpp
             const lite3dpp_string &path, Main *main);
 
         ~Material();
+
+        inline lite3d_material *getPtr()
+        { return &mMaterial; }
 
     protected:
 
@@ -41,6 +46,7 @@ namespace lite3dpp
     private:
 
         JsonHelper *mOptions;
+        lite3d_material mMaterial;
     };
 }
 

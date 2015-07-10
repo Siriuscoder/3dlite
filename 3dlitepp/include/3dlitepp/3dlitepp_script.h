@@ -22,7 +22,7 @@
 
 namespace lite3dpp
 {
-    class LITE3DPP_EXPORT Script : public AbstractResource
+    class LITE3DPP_EXPORT Script : public AbstractResource, public NoncopiableResource
     {
     public:
 

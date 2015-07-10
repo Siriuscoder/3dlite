@@ -22,7 +22,6 @@
 
 #include <3dlitepp/json/JSON.h>
 #include <3dlitepp/3dlitepp_main.h>
-#include <algorithm>
 
 namespace lite3dpp
 {
@@ -113,12 +112,11 @@ namespace lite3dpp
 
     void Main::initResourceLocations()
     {
-        stl<JsonHelper>::vector locations = mConfig->getObjects(L"ResourceLocations");
-        for (uint32_t i = 0; i < locations.size(); ++i)
+        for (auto &location : mConfig->getObjects(L"ResourceLocations"))
         {           
-            setResourceLocation(locations[i].getString(L"Name"), 
-                locations[i].getString(L"Path"),
-                locations[i].getInt(L"FileCacheMaxSize"));
+            setResourceLocation(location.getString(L"Name"), 
+                location.getString(L"Path"),
+                location.getInt(L"FileCacheMaxSize"));
         }
     }
 

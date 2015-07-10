@@ -75,8 +75,17 @@ namespace lite3dpp
         lite3dpp_string mName;
         lite3dpp_string mPath;
         size_t mBufferedSize;
-        size_t mDependedBufferedSize;
         Main *mMain;
+    };
+
+    class LITE3DPP_EXPORT NoncopiableResource
+    {
+    public:
+
+        NoncopiableResource();
+    private:
+
+        NoncopiableResource(const NoncopiableResource &other);
     };
 }
 

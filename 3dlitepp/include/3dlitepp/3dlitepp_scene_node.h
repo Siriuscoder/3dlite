@@ -25,12 +25,12 @@
 
 namespace lite3dpp
 {
-    class LITE3DPP_EXPORT SceneNode : public Manageable
+    class LITE3DPP_EXPORT SceneNode : public Manageable, public NoncopiableResource
     {
     public:
 
         SceneNode();
-        SceneNode(const JsonHelper &json);
+        SceneNode(Main *nain, const JsonHelper &json, SceneNode *base);
         ~SceneNode();
 
         inline void setName(const lite3dpp_string &name)
@@ -43,6 +43,9 @@ namespace lite3dpp
         inline Mesh *getMesh()
         { return mMesh; }
 
+        inline lite3d_scene_node *getPtr()
+        { return &mNode; }
+
         void setPosition(const kmVec3 *position);
         void move(const kmVec3 *position);
         void setRotation(const kmQuaternion *quat);
@@ -50,7 +53,10 @@ namespace lite3dpp
         void rotateAngle(const kmVec3 *axis, float angle);
         void scale(const kmVec3 *scale);
 
-        void replaceMaterial(int unit, Material *material);
+        void replaceMaterial(int chunkNo, Material *material);
+
+        void addToScene(Scene *scene);
+        void removeFromScene(Scene *scene);
 
     private:
 
@@ -58,6 +64,7 @@ namespace lite3dpp
         Mesh::MaterialMapping mMaterialMappingReplacement;
         Mesh *mMesh;
         lite3dpp_string mName;
+        SceneNode *mBaseNode;
     };
 }
 

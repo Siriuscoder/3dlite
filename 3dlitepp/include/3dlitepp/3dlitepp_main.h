@@ -23,6 +23,7 @@
 #include <3dlitepp/3dlitepp_resource_manager.h>
 #include <3dlitepp/3dlitepp_script_dispatcher.h>
 #include <3dlitepp/3dlitepp_json_helper.h>
+#include <3dlitepp/3dlitepp_scene.h>
 
 namespace lite3dpp
 {
