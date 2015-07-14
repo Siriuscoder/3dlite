@@ -26,7 +26,7 @@
 
 namespace lite3dpp
 {
-    class LITE3DPP_EXPORT Mesh : public AbstractResource, public NoncopiableResource
+    class LITE3DPP_EXPORT Mesh : public JsonResource, public NoncopiableResource
     {
     public:
         
@@ -44,13 +44,11 @@ namespace lite3dpp
 
     protected:
 
-        virtual void loadImpl(const void *buffer, size_t size);
+        virtual void loadFromJsonImpl(const JsonHelper &helper);
         virtual void unloadImpl();
-        virtual void reloadImpl();
 
     private:
 
-        JsonHelper *mOptions;
         MaterialMapping mMaterialMapping;
         lite3d_indexed_mesh mMesh;
     };

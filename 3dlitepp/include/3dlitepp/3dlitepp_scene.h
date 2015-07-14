@@ -21,10 +21,11 @@
 
 #include <3dlitepp/3dlitepp_common.h>
 #include <3dlitepp/3dlitepp_resource.h>
+#include <3dlitepp/3dlitepp_scene_object.h>
 
 namespace lite3dpp
 {
-    class LITE3DPP_EXPORT Scene : public AbstractResource, public NoncopiableResource
+    class LITE3DPP_EXPORT Scene : public JsonResource, public NoncopiableResource
     {
     public:
         Scene(const lite3dpp_string &name, 
@@ -36,9 +37,8 @@ namespace lite3dpp
 
     protected:
 
-        virtual void loadImpl(const void *buffer, size_t size);
+        virtual void loadFromJsonImpl(const JsonHelper &helper);
         virtual void unloadImpl();
-        virtual void reloadImpl();
 
     private:
 

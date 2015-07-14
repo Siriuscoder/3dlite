@@ -1,0 +1,17 @@
+{
+    "Codec": "m",
+    "Model": "filesystem_01:tests/pack/minigun/minigun.m",
+	"MaterialMappingAutoOrdered": false,
+
+	"MaterialMapping": 
+	[
+		{ 
+			"MaterialIndex": 0,
+			"Material":
+			{
+				"Name": "mat_minigun",
+				"Material": "filesystem_01:tests/pack/minigun/minigun.mat.json"
+			}
+		}
+	]
+}

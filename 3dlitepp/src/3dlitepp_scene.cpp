@@ -19,6 +19,22 @@
 
 namespace lite3dpp
 {
-    
+    Scene::Scene(const lite3dpp_string &name, 
+        const lite3dpp_string &path, Main *main) : 
+        JsonResource(name, path, main, AbstractResource::SCENE)
+    {}
+
+    Scene::~Scene()
+    {}
+
+    void Scene::loadFromJsonImpl(const JsonHelper &helper)
+    {
+        lite3d_scene_init(&mScene);
+    }
+
+    void Scene::unloadImpl()
+    {
+        lite3d_scene_purge(&mScene);
+    }
 }
 

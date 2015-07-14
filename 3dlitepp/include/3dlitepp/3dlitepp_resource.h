@@ -18,6 +18,7 @@
 #pragma once
 
 #include <3dlitepp/3dlitepp_manageable.h>
+#include <3dlitepp/3dlitepp_json_helper.h>
 
 namespace lite3dpp
 {
@@ -43,7 +44,7 @@ namespace lite3dpp
         };
 
         AbstractResource(const lite3dpp_string &name, 
-            const lite3dpp_string &path, Main *main);
+            const lite3dpp_string &path, Main *main, ResourceType type);
         virtual ~AbstractResource();
 
         void load(const void *buffer, size_t size);
@@ -68,14 +69,38 @@ namespace lite3dpp
         virtual void reloadImpl() = 0;
         virtual void unloadImpl() = 0;
 
-    protected:
+        inline void setBufferedSize(size_t size)
+        { mBufferedSize = size; }
+
+    private:
 
         ResourceState mState;
         ResourceType mType;
         lite3dpp_string mName;
         lite3dpp_string mPath;
         size_t mBufferedSize;
+
+    protected:
         Main *mMain;
+    };
+
+    class LITE3DPP_EXPORT JsonResource : public AbstractResource
+    {
+    public:
+        JsonResource(const lite3dpp_string &name, 
+            const lite3dpp_string &path, Main *main, ResourceType type);
+        virtual ~JsonResource();
+
+    protected:
+
+        virtual void loadImpl(const void *buffer, size_t size) override final;
+        virtual void reloadImpl() override final;
+
+        virtual void loadFromJsonImpl(const JsonHelper &helper) = 0;
+
+    private:
+
+        JsonHelper *mJsonHelper;
     };
 
     class LITE3DPP_EXPORT NoncopiableResource

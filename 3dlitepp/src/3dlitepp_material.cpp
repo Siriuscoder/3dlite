@@ -21,35 +21,20 @@ namespace lite3dpp
 {
     Material::Material(const lite3dpp_string &name, 
         const lite3dpp_string &path, Main *main) : 
-        AbstractResource(name, path, main),
-        mOptions(NULL)
-    {
-        mType = AbstractResource::MATERIAL;
-    }
+        JsonResource(name, path, main, AbstractResource::MATERIAL)
+    {}
 
     Material::~Material()
-    {
-        if(mOptions)
-        {
-            delete mOptions;
-            mOptions = NULL;
-        }
-    }
+    {}
 
-    void Material::loadImpl(const void *buffer, size_t size)
+    void Material::loadFromJsonImpl(const JsonHelper &helper)
     {
-        mOptions = new JsonHelper(static_cast<const char *>(buffer), size);
-        reloadImpl();
+
     }
 
     void Material::unloadImpl()
     {
 
     }
-
-    void Material::reloadImpl()
-    {
-
-    }   
 }
 

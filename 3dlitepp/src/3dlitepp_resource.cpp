@@ -21,8 +21,9 @@
 namespace lite3dpp
 {
     AbstractResource::AbstractResource(const lite3dpp_string &name,
-        const lite3dpp_string &path, Main *main) : 
+        const lite3dpp_string &path, Main *main, ResourceType type) : 
         mState(NEW),
+        mType(type),
         mName(name),
         mPath(path),
         mBufferedSize(0),
@@ -43,7 +44,7 @@ namespace lite3dpp
 
     void AbstractResource::reload()
     {
-        if(mState == LOADED)
+        if(mState != LOADED)
         {
             reloadImpl();
         }
@@ -56,6 +57,31 @@ namespace lite3dpp
             unloadImpl();
             mState = NEW;
         }
+    }
+
+    JsonResource::JsonResource(const lite3dpp_string &name, 
+        const lite3dpp_string &path, Main *main, ResourceType type) : 
+        AbstractResource(name, path, main, type)
+    {}
+
+    JsonResource::~JsonResource()
+    {
+        if(mJsonHelper)
+        {
+            delete mJsonHelper;
+            mJsonHelper = NULL;
+        }
+    }
+
+    void JsonResource::loadImpl(const void *buffer, size_t size)
+    {
+        mJsonHelper = new JsonHelper(static_cast<const char *>(buffer), size);
+        reloadImpl();
+    }
+
+    void JsonResource::reloadImpl()
+    {
+        loadFromJsonImpl(*mJsonHelper);
     }
 
     NoncopiableResource::NoncopiableResource()

@@ -1,0 +1,21 @@
+{
+    "Codec": "assimp",
+    "Model": "filesystem_01:tests/pack/minigun/minigun.3ds",
+	"ModelName": "minigun",
+	"Optimize": true,
+	"FlipUV": true,
+	"MaterialMappingAutoOrdered": false,
+	"Dynamic": false,
+	
+	"MaterialMapping": 
+	[
+		{ 
+			"MaterialIndex": 0,
+			"Material":
+			{
+				"Name": "mat_minigun",
+				"Material": "filesystem_01:tests/pack/minigun/minigun.mat.json"
+			}
+		}
+	]
+}

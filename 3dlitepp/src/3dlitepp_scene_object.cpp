@@ -24,26 +24,12 @@ namespace lite3dpp
 {
     SceneObject::SceneObject(const lite3dpp_string &name, 
         const lite3dpp_string &path, Main *main) : 
-        AbstractResource(name, path, main),
-        mOptions(NULL)
-    {
-        mType = AbstractResource::SCENE_OBJECT;
-    }
+        JsonResource(name, path, main, AbstractResource::SCENE_OBJECT),
+        mObjectRoot(NULL)
+    {}
 
     SceneObject::~SceneObject()
-    {
-        if(mOptions)
-        {
-            delete mOptions;
-            mOptions = NULL;
-        }
-    }
-
-    void SceneObject::loadImpl(const void *buffer, size_t size)
-    {
-        mOptions = new JsonHelper(static_cast<const char *>(buffer), size);
-        reloadImpl();
-    }
+    {}
 
     void SceneObject::unloadImpl()
     {
@@ -55,9 +41,9 @@ namespace lite3dpp
         mNodes.clear();
     }
 
-    void SceneObject::reloadImpl()
+    void SceneObject::loadFromJsonImpl(const JsonHelper &helper)
     {
-        JsonHelper rootNodeHelper = mOptions->getObject(L"Root");
+        JsonHelper rootNodeHelper = helper.getObject(L"Root");
         if(rootNodeHelper.isEmpty())
             return;
 

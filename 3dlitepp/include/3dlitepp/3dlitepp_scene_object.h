@@ -26,7 +26,7 @@
 
 namespace lite3dpp
 {
-    class LITE3DPP_EXPORT SceneObject : public AbstractResource
+    class LITE3DPP_EXPORT SceneObject : public JsonResource, public NoncopiableResource
     {
     public:
 
@@ -38,6 +38,8 @@ namespace lite3dpp
 
         inline const Nodes &getNodes() const
         { return mNodes; }
+        inline SceneNode *getRoot()
+        { return mObjectRoot; }
 
         SceneNode *getNode(const lite3dpp_string &name);
 
@@ -46,9 +48,8 @@ namespace lite3dpp
 
     protected:
 
-        virtual void loadImpl(const void *buffer, size_t size);
+        virtual void loadFromJsonImpl(const JsonHelper &helper);
         virtual void unloadImpl();
-        virtual void reloadImpl();
 
     private:
 
@@ -56,7 +57,6 @@ namespace lite3dpp
 
     private:
 
-        JsonHelper *mOptions;
         Nodes mNodes;
         SceneNode *mObjectRoot;
     };

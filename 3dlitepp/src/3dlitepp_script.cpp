@@ -40,16 +40,14 @@ namespace lite3dpp
 
     Script::Script(const lite3dpp_string &name, 
         const lite3dpp_string &path, Main *main) :
-        AbstractResource(name, path, main),
+        AbstractResource(name, path, main, AbstractResource::SCRIPT),
         mScriptEngine(main->getScriptDispatcher()->mAsEngine),
         mInitFunction(NULL),
         mShutFunction(NULL),
         mFrameBeginFunction(NULL),
         mFrameEndFunction(NULL),
         mContext(NULL)
-    {
-        mType = AbstractResource::SCRIPT;
-    }
+    {}
 
     Script::~Script()
     {
@@ -60,17 +58,17 @@ namespace lite3dpp
         SDL_assert(data);
         
         SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION,
-            "Compiling %s ...", mPath.c_str());
+            "Compiling %s ...", getPath().c_str());
 
         /*  The CScriptBuilder helper is an add-on that loads the file,
             performs a pre-processing pass if necessary, and then tells
             the engine to build a script module. */
         CScriptBuilder builder;
         builder.SetIncludeCallback(scriptBuilderSearchInclude, mMain);
-        SDL_assert_release(builder.StartNewModule(mScriptEngine, mName.c_str()) >= 0);
+        SDL_assert_release(builder.StartNewModule(mScriptEngine, getName().c_str()) >= 0);
 
         /* load code sections */
-        if (builder.AddSectionFromMemory(mName.c_str(), data, size, 0) < 0)
+        if (builder.AddSectionFromMemory(getName().c_str(), data, size, 0) < 0)
             throw std::runtime_error("Script load error");
 
         /* compile script */
@@ -104,7 +102,7 @@ namespace lite3dpp
             {
                 SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, 
                              "Script %s unexpected broken: %s", 
-                             mName.c_str(), mContext->GetExceptionString());
+                             getName().c_str(), mContext->GetExceptionString());
                 
                 throw std::runtime_error(mContext->GetExceptionString());
             }
@@ -112,10 +110,10 @@ namespace lite3dpp
             {
                 SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, 
                              "Script %s execution error..",
-                             mName.c_str());
+                             getName().c_str());
                 
                 throw std::runtime_error(lite3dpp_string("Script ") +
-                                         mName + " execution error..");
+                                         getName() + " execution error..");
             }
         }
     }
