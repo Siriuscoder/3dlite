@@ -27,7 +27,7 @@
 #define RENDER_TEXTURE_HEIGHT   512
 
 
-static lite3d_resource_pack *mFileSysPack = NULL;
+static lite3d_pack *mFileSysPack = NULL;
 static lite3d_texture_unit mRenderTextureUnit, mBoxUnit;
 static lite3d_shader_parameter mRenderTextureSampler;
 static lite3d_shader_parameter mBoxTextureSampler;
@@ -265,11 +265,11 @@ static int initCube(void)
 
 static int init(void *userdata)
 {
-    lite3d_resource_file *file1;
+    lite3d_file *file1;
 
-    if (!(mFileSysPack = lite3d_resource_pack_open("tests/", LITE3D_FALSE, 700000)))
+    if (!(mFileSysPack = lite3d_pack_open("tests/", LITE3D_FALSE, 700000)))
         return LITE3D_FALSE;
-    if (!(file1 = lite3d_resource_pack_file_load(mFileSysPack, "pack/box1.jpg")))
+    if (!(file1 = lite3d_pack_file_load(mFileSysPack, "pack/box1.jpg")))
         return LITE3D_FALSE;
 
     if (!lite3d_texture_unit_from_resource(&mBoxUnit, file1, LITE3D_IMAGE_JPG,
@@ -357,7 +357,7 @@ static int shutdown(void *userdata)
     lite3d_texture_unit_purge(&mBoxUnit);
 
     lite3d_render_target_purge(&mRTT);
-    lite3d_resource_pack_close(mFileSysPack);
+    lite3d_pack_close(mFileSysPack);
 
     return LITE3D_TRUE;
 }

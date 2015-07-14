@@ -222,7 +222,7 @@ void lite3d_texture_technique_shut(void)
 }
 
 int lite3d_texture_unit_from_resource(lite3d_texture_unit *textureUnit,
-    const lite3d_resource_file *resource, uint32_t imageType,
+    const lite3d_file *resource, uint32_t imageType,
     uint32_t textureTarget, int8_t quality, uint8_t wrapping)
 {
     ILuint imageDesc = 0, imageFormat;

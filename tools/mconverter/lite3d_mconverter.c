@@ -102,13 +102,13 @@ static void mesh_loaded(lite3d_indexed_mesh *mesh, const char *name)
 
 static int convert_mesh(void *userdata)
 {
-    lite3d_resource_pack *pack;
-    lite3d_resource_file *meshFile;
+    lite3d_pack *pack;
+    lite3d_file *meshFile;
     uint32_t loadFlags = 0;
 
-    if (!(pack = lite3d_resource_pack_open("./", LITE3D_FALSE, 0)))
+    if (!(pack = lite3d_pack_open("./", LITE3D_FALSE, 0)))
         return LITE3D_FALSE;
-    if (!(meshFile = lite3d_resource_pack_file_load(pack, inputFilePath)))
+    if (!(meshFile = lite3d_pack_file_load(pack, inputFilePath)))
         return LITE3D_FALSE;
 
 
@@ -119,7 +119,7 @@ static int convert_mesh(void *userdata)
 
     lite3d_indexed_mesh_load_recursive(meshFile, mesh_init, mesh_loaded,
         LITE3D_VBO_STATIC_READ, loadFlags);
-    lite3d_resource_pack_close(pack);
+    lite3d_pack_close(pack);
 
     return LITE3D_FALSE;
 }

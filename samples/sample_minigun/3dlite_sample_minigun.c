@@ -23,7 +23,7 @@
 #define DEFAULT_WIDTH           800
 #define DEFAULT_HEIGHT          600
 
-static lite3d_resource_pack *mFileSysPack = NULL;
+static lite3d_pack *mFileSysPack = NULL;
 static lite3d_texture_unit mMinigunTexture;
 static lite3d_camera mCamera01;
 static lite3d_indexed_mesh mModel;
@@ -61,11 +61,11 @@ static int process_events(SDL_Event *levent, void *userdata)
 
 static int initMaterials(void)
 {
-    lite3d_resource_file *file1;
+    lite3d_file *file1;
     lite3d_material_pass *matPass;
     lite3d_shader shaders[2];
 
-    if (!(file1 = lite3d_resource_pack_file_load(mFileSysPack, "pack/minigun/minigun.dds")))
+    if (!(file1 = lite3d_pack_file_load(mFileSysPack, "pack/minigun/minigun.dds")))
         return LITE3D_FALSE;
     if (!lite3d_texture_unit_from_resource(&mMinigunTexture, file1, LITE3D_IMAGE_DDS,
         LITE3D_TEXTURE_2D, LITE3D_TEXTURE_QL_NICEST, LITE3D_TEXTURE_REPEAT))
@@ -134,8 +134,8 @@ static int initMaterials(void)
 
 static int initModel(void)
 {
-    lite3d_resource_file *file1;
-    if (!(file1 = lite3d_resource_pack_file_load(mFileSysPack, "pack/minigun/minigun.m")))
+    lite3d_file *file1;
+    if (!(file1 = lite3d_pack_file_load(mFileSysPack, "pack/minigun/minigun.m")))
         return LITE3D_FALSE;
 
     if (!lite3d_indexed_mesh_init(&mModel))
@@ -155,7 +155,7 @@ static int init(void *userdata)
         0.0f, 0.0f, 0.0f
     };
 
-    if (!(mFileSysPack = lite3d_resource_pack_open("tests/", LITE3D_FALSE, 7000000)))
+    if (!(mFileSysPack = lite3d_pack_open("tests/", LITE3D_FALSE, 7000000)))
         return LITE3D_FALSE;
 
     if (!initModel())
@@ -188,7 +188,7 @@ static int shutdown(void *userdata)
     lite3d_shader_program_purge(&mProgram);
     lite3d_scene_purge(&mScene);
     lite3d_texture_unit_purge(&mMinigunTexture);
-    lite3d_resource_pack_close(mFileSysPack);
+    lite3d_pack_close(mFileSysPack);
 
     return LITE3D_TRUE;
 }

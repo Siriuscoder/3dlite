@@ -24,25 +24,25 @@
 
 #include <3dlite/3dlite_main.h>
 #include <3dlite/3dlite_7z_loader.h>
-#include <3dlite/3dlite_resource_pack.h>
+#include <3dlite/3dlite_pack.h>
 
-static lite3d_resource_file *lookup_resource_index(lite3d_resource_pack *pack, const char *key)
+static lite3d_file *lookup_resource_index(lite3d_pack *pack, const char *key)
 {
     lite3d_rb_node *index = lite3d_rb_tree_exact_query(pack->fileCache, key);
-    lite3d_resource_file *resource = NULL;
+    lite3d_file *resource = NULL;
     if(index)
     {
         /* OK, found */
-        resource = LITE3D_MEMBERCAST(lite3d_resource_file, index, cached);
+        resource = LITE3D_MEMBERCAST(lite3d_file, index, cached);
     }
     
     return resource;
 }
 
-static lite3d_resource_file *create_resource_index(lite3d_resource_pack *pack, const char *key)
+static lite3d_file *create_resource_index(lite3d_pack *pack, const char *key)
 {
-    lite3d_resource_file *resource = (lite3d_resource_file *)
-        lite3d_malloc_pooled(LITE3D_POOL_NO1, sizeof(lite3d_resource_file));
+    lite3d_file *resource = (lite3d_file *)
+        lite3d_malloc_pooled(LITE3D_POOL_NO1, sizeof(lite3d_file));
     
     SDL_assert_release(resource);
     
@@ -59,10 +59,10 @@ static lite3d_resource_file *create_resource_index(lite3d_resource_pack *pack, c
 
 static void resource_index_delete(lite3d_rb_node *x)
 {
-    lite3d_resource_file *resource = 
-        LITE3D_MEMBERCAST(lite3d_resource_file, x, cached);
+    lite3d_file *resource = 
+        LITE3D_MEMBERCAST(lite3d_file, x, cached);
 
-    lite3d_resource_pack_file_purge(resource);
+    lite3d_pack_file_purge(resource);
     lite3d_list_unlink_link(&resource->priority);
     
     SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, 
@@ -74,23 +74,23 @@ static void resource_index_delete(lite3d_rb_node *x)
 
 static void resource_purge_iter(lite3d_rb_tree* tree, lite3d_rb_node *x)
 {
-    lite3d_resource_file *resource = 
-        LITE3D_MEMBERCAST(lite3d_resource_file, x, cached);
+    lite3d_file *resource = 
+        LITE3D_MEMBERCAST(lite3d_file, x, cached);
     
-    lite3d_resource_pack_file_purge(resource);
+    lite3d_pack_file_purge(resource);
 }
 
 static void pack_7z_iterator(lite3d_7z_pack *pack,
     const char *path, int32_t index, void *userdata)
 {
-    lite3d_resource_pack *rpack = (lite3d_resource_pack *)userdata;
-    lite3d_resource_file *resource = create_resource_index(rpack, path);
+    lite3d_pack *rpack = (lite3d_pack *)userdata;
+    lite3d_file *resource = create_resource_index(rpack, path);
     
     if(resource)
         resource->dbIndex = index;
 }
 
-static int check_pack_memory_limit(lite3d_resource_pack *pack, size_t size)
+static int check_pack_memory_limit(lite3d_pack *pack, size_t size)
 {
     if (size > 0x6400000)
     {
@@ -105,17 +105,17 @@ memValidate:
             "%s: memory limit is reached "
             "(%d bytes vs %d bytes limit) cleanup old data..", __FUNCTION__,
             (int)(pack->memoryUsed + size), (int)pack->memoryLimit);
-        lite3d_resource_pack_purge_unused(pack);
+        lite3d_pack_purge_unused(pack);
         goto memValidate;
     }
 
     return 1;
 }
 
-lite3d_resource_pack *lite3d_resource_pack_open(const char *path, uint8_t compressed, 
+lite3d_pack *lite3d_pack_open(const char *path, uint8_t compressed, 
     size_t memoryLimit)
 {
-    lite3d_resource_pack *pack = NULL;
+    lite3d_pack *pack = NULL;
     lite3d_7z_pack *pack7z = NULL;
 
     /* compressed packs case */
@@ -125,8 +125,8 @@ lite3d_resource_pack *lite3d_resource_pack_open(const char *path, uint8_t compre
             return NULL;
     }
 
-    pack = (lite3d_resource_pack *)lite3d_malloc_pooled(LITE3D_POOL_NO1, 
-        sizeof(lite3d_resource_pack));
+    pack = (lite3d_pack *)lite3d_malloc_pooled(LITE3D_POOL_NO1, 
+        sizeof(lite3d_pack));
     SDL_assert_release(pack);
     
     pack->isCompressed = compressed;
@@ -152,7 +152,7 @@ lite3d_resource_pack *lite3d_resource_pack_open(const char *path, uint8_t compre
     return pack;
 }
 
-void lite3d_resource_pack_close(lite3d_resource_pack *pack)
+void lite3d_pack_close(lite3d_pack *pack)
 {
     SDL_assert(pack);
     
@@ -178,7 +178,7 @@ void lite3d_resource_pack_close(lite3d_resource_pack *pack)
     lite3d_free_pooled(LITE3D_POOL_NO1, pack);
 }
 
-lite3d_resource_file *lite3d_resource_pack_file_find(lite3d_resource_pack *pack, const char *file)
+lite3d_file *lite3d_pack_file_find(lite3d_pack *pack, const char *file)
 {
     SDL_assert(pack);
     SDL_assert(file);
@@ -194,13 +194,13 @@ lite3d_resource_file *lite3d_resource_pack_file_find(lite3d_resource_pack *pack,
     return lookup_resource_index(pack, file);
 }
 
-lite3d_resource_file *lite3d_resource_pack_file_load(lite3d_resource_pack *pack, const char *file)
+lite3d_file *lite3d_pack_file_load(lite3d_pack *pack, const char *file)
 {
     void *fileBuffer = NULL;
     size_t fileSize = 0;
-    lite3d_resource_file *resource;
+    lite3d_file *resource;
     
-    resource = lite3d_resource_pack_file_find(pack, file);
+    resource = lite3d_pack_file_find(pack, file);
     
     if(resource && resource->isLoaded)
     {
@@ -318,7 +318,7 @@ lite3d_resource_file *lite3d_resource_pack_file_load(lite3d_resource_pack *pack,
     return resource;
 }
 
-void lite3d_resource_pack_file_purge(lite3d_resource_file *resource)
+void lite3d_pack_file_purge(lite3d_file *resource)
 {
     SDL_assert(resource);
     if(resource->isLoaded)
@@ -337,22 +337,22 @@ void lite3d_resource_pack_file_purge(lite3d_resource_file *resource)
     resource->isLoaded = 0;
 }
 
-void lite3d_resource_pack_purge(lite3d_resource_pack *pack)
+void lite3d_pack_purge(lite3d_pack *pack)
 {
     lite3d_rb_tree_iterate(pack->fileCache, resource_purge_iter);
 }
 
-void lite3d_resource_pack_purge_unused(lite3d_resource_pack *pack)
+void lite3d_pack_purge_unused(lite3d_pack *pack)
 {
     lite3d_list_node *last;
-    lite3d_resource_file *resource;
+    lite3d_file *resource;
     SDL_assert(pack);
 
     if(lite3d_list_is_empty(&pack->priorityList))
         return;
     
     last = lite3d_list_last_link(&pack->priorityList);
-    resource = LITE3D_MEMBERCAST(lite3d_resource_file, last, priority);
+    resource = LITE3D_MEMBERCAST(lite3d_file, last, priority);
     
-    lite3d_resource_pack_file_purge(resource);
+    lite3d_pack_file_purge(resource);
 }

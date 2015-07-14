@@ -20,7 +20,7 @@
 
 #include <3dlite/3dlite_common.h>
 #include <3dlite/3dlite_mesh.h>
-#include <3dlite/3dlite_resource_pack.h>
+#include <3dlite/3dlite_pack.h>
 
 /*  
     .m files containes optimised and prepared meshes in simplest format 

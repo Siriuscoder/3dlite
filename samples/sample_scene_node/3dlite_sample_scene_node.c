@@ -24,7 +24,7 @@
 #define DEFAULT_WIDTH           800
 #define DEFAULT_HEIGHT          600
 
-static lite3d_resource_pack *mFileSysPack = NULL;
+static lite3d_pack *mFileSysPack = NULL;
 static lite3d_texture_unit mVintageBoxUnit, mBoxUnit;
 static lite3d_shader_parameter mVintageBoxTexture;
 static lite3d_shader_parameter mBoxTexture;
@@ -266,13 +266,13 @@ static int initCube(void)
 static int init(void *userdata)
 {
     int i = 0;
-    lite3d_resource_file *file1, *file2;
+    lite3d_file *file1, *file2;
 
-    if (!(mFileSysPack = lite3d_resource_pack_open("tests/", LITE3D_FALSE, 700000)))
+    if (!(mFileSysPack = lite3d_pack_open("tests/", LITE3D_FALSE, 700000)))
         return LITE3D_FALSE;
-    if (!(file1 = lite3d_resource_pack_file_load(mFileSysPack, "pack/box1.jpg")))
+    if (!(file1 = lite3d_pack_file_load(mFileSysPack, "pack/box1.jpg")))
         return LITE3D_FALSE;
-    if (!(file2 = lite3d_resource_pack_file_load(mFileSysPack, "pack/box2.jpg")))
+    if (!(file2 = lite3d_pack_file_load(mFileSysPack, "pack/box2.jpg")))
         return LITE3D_FALSE;
 
     if (!lite3d_texture_unit_from_resource(&mBoxUnit, file1, LITE3D_IMAGE_JPG,
@@ -335,7 +335,7 @@ static int shutdown(void *userdata)
     lite3d_scene_purge(&mScene);
     lite3d_texture_unit_purge(&mVintageBoxUnit);
     lite3d_texture_unit_purge(&mBoxUnit);
-    lite3d_resource_pack_close(mFileSysPack);
+    lite3d_pack_close(mFileSysPack);
 
     return LITE3D_TRUE;
 }

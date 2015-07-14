@@ -20,7 +20,7 @@
 
 #include <3dlite/3dlite_common.h>
 #include <3dlite/3dlite_mesh.h>
-#include <3dlite/3dlite_resource_pack.h>
+#include <3dlite/3dlite_pack.h>
 
 #define LITE3D_OPTIMIZE_MESH_FLAG             0x1
 #define LITE3D_FLIP_UV_FLAG                   0x2
@@ -34,21 +34,21 @@ typedef void (*lite3d_mesh_loaded)(lite3d_indexed_mesh *, const char *name);
         function load mesh model with specified *name* from *resource*,
         if *name* is NULL then first model node from *resource* will be load.
 */
-LITE3D_CEXPORT int lite3d_indexed_mesh_load(lite3d_indexed_mesh *mesh, const lite3d_resource_file *resource, 
+LITE3D_CEXPORT int lite3d_indexed_mesh_load(lite3d_indexed_mesh *mesh, const lite3d_file *resource, 
     const char *name, uint16_t access, uint32_t flags);
 
 /*
     note:
         recursive load all meshes from *resource*
 */
-LITE3D_CEXPORT int lite3d_indexed_mesh_load_recursive(const lite3d_resource_file *resource, 
+LITE3D_CEXPORT int lite3d_indexed_mesh_load_recursive(const lite3d_file *resource, 
     lite3d_retrieve_mesh retrieveMesh, lite3d_mesh_loaded meshLoaded, uint16_t access, uint32_t flags);
 
 /*
     note:
         function load mesh model from m file represented by *resource*
 */
-LITE3D_CEXPORT int lite3d_indexed_mesh_load_from_m_file(lite3d_indexed_mesh *mesh, const lite3d_resource_file *resource, 
+LITE3D_CEXPORT int lite3d_indexed_mesh_load_from_m_file(lite3d_indexed_mesh *mesh, const lite3d_file *resource, 
     uint16_t access);
 
 

@@ -17,7 +17,7 @@
 *******************************************************************************/
 #pragma once
 
-#include <3dlite/3dlite_resource_pack.h>
+#include <3dlite/3dlite_pack.h>
 
 #include <3dlitepp/3dlitepp_manageable.h>
 #include <3dlitepp/3dlitepp_resource.h>
@@ -43,7 +43,7 @@ namespace lite3dpp
     public:
 
         typedef stl<lite3dpp_string, AbstractResource *>::map Resources;
-        typedef stl<lite3dpp_string, lite3d_resource_pack*>::map Packs;
+        typedef stl<lite3dpp_string, lite3d_pack*>::map Packs;
 
         typedef struct ResourceManagerStats
         {
@@ -100,7 +100,7 @@ namespace lite3dpp
         ResourceManagerStats getStats() const;
 
         const void *loadFileToMemory(const lite3dpp_string &path, size_t *size);
-        const lite3d_resource_file *loadFileToMemory(const lite3dpp_string &path);
+        const lite3d_file *loadFileToMemory(const lite3dpp_string &path);
 
         void addResourceLocation(const lite3dpp_string &name,
             const lite3dpp_string &path,

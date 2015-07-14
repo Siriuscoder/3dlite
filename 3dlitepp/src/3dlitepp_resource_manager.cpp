@@ -133,8 +133,8 @@ namespace lite3dpp
         uint8_t isFile = path.back() == '/' || path.back() == '.' ?
             LITE3D_FALSE : LITE3D_TRUE;
 
-        lite3d_resource_pack *pack =
-            lite3d_resource_pack_open(path.c_str(), isFile, fileCacheMaxSize);
+        lite3d_pack *pack =
+            lite3d_pack_open(path.c_str(), isFile, fileCacheMaxSize);
         if(!pack)
             throw std::runtime_error(lite3dpp_string("Location open failed.. ") + 
                 name + " :: " + path);
@@ -145,12 +145,12 @@ namespace lite3dpp
     const void *ResourceManager::loadFileToMemory(const lite3dpp_string &path, size_t *size)
     {
         /* load resource file to memory */
-        const lite3d_resource_file *resourceFile = loadFileToMemory(path);
+        const lite3d_file *resourceFile = loadFileToMemory(path);
         *size = resourceFile->fileSize;
         return resourceFile->fileBuff;
     }
 
-    const lite3d_resource_file *ResourceManager::loadFileToMemory(const lite3dpp_string &path)
+    const lite3d_file *ResourceManager::loadFileToMemory(const lite3dpp_string &path)
     {
         lite3dpp_stringstream pathStream(path);
         lite3dpp_string packName, filePath;
@@ -162,8 +162,8 @@ namespace lite3dpp
             throw std::runtime_error(lite3dpp_string("Package not found: ") + packName);
 
         /* load resource file to memory */
-        lite3d_resource_file *resourceFile =
-            lite3d_resource_pack_file_load(packIt->second, filePath.c_str());
+        lite3d_file *resourceFile =
+            lite3d_pack_file_load(packIt->second, filePath.c_str());
         if(!resourceFile || !resourceFile->isLoaded)
             throw std::runtime_error(lite3dpp_string("Resource open failed..") + filePath);
 

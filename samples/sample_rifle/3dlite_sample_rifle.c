@@ -23,7 +23,7 @@
 #define DEFAULT_WIDTH           800
 #define DEFAULT_HEIGHT          600
 
-static lite3d_resource_pack *mFileSysPack = NULL;
+static lite3d_pack *mFileSysPack = NULL;
 static lite3d_texture_unit mRifleTextureA;
 static lite3d_texture_unit mRifleTextureB;
 static lite3d_texture_unit mBattTexture;
@@ -69,21 +69,21 @@ static int process_events(SDL_Event *levent, void *userdata)
 
 static int initMaterials(void)
 {
-    lite3d_resource_file *file1;
+    lite3d_file *file1;
     lite3d_material_pass *matPass;
     lite3d_shader shaders[2];
 
-    if (!(file1 = lite3d_resource_pack_file_load(mFileSysPack, "pack/plasmagun/plasmarif02a.dds")))
+    if (!(file1 = lite3d_pack_file_load(mFileSysPack, "pack/plasmagun/plasmarif02a.dds")))
         return LITE3D_FALSE;
     if (!lite3d_texture_unit_from_resource(&mRifleTextureA, file1, LITE3D_IMAGE_DDS,
         LITE3D_TEXTURE_2D, LITE3D_TEXTURE_QL_NICEST, LITE3D_TEXTURE_REPEAT))
         return LITE3D_FALSE;
-    if (!(file1 = lite3d_resource_pack_file_load(mFileSysPack, "pack/plasmagun/plasmarif02b.dds")))
+    if (!(file1 = lite3d_pack_file_load(mFileSysPack, "pack/plasmagun/plasmarif02b.dds")))
         return LITE3D_FALSE;
     if (!lite3d_texture_unit_from_resource(&mRifleTextureB, file1, LITE3D_IMAGE_DDS,
         LITE3D_TEXTURE_2D, LITE3D_TEXTURE_QL_NICEST, LITE3D_TEXTURE_REPEAT))
         return LITE3D_FALSE;
-    if (!(file1 = lite3d_resource_pack_file_load(mFileSysPack, "pack/plasmagun/plasmarif02c.dds")))
+    if (!(file1 = lite3d_pack_file_load(mFileSysPack, "pack/plasmagun/plasmarif02c.dds")))
         return LITE3D_FALSE;
     if (!lite3d_texture_unit_from_resource(&mBattTexture, file1, LITE3D_IMAGE_DDS,
         LITE3D_TEXTURE_2D, LITE3D_TEXTURE_QL_NICEST, LITE3D_TEXTURE_REPEAT))
@@ -184,11 +184,11 @@ static int initMaterials(void)
 
 static int initModel(void)
 {
-    lite3d_resource_file *PlasmaRifl;
-    lite3d_resource_file *Battery;
-    if (!(PlasmaRifl = lite3d_resource_pack_file_load(mFileSysPack, "pack/plasmagun/PlasmaRifl.m")))
+    lite3d_file *PlasmaRifl;
+    lite3d_file *Battery;
+    if (!(PlasmaRifl = lite3d_pack_file_load(mFileSysPack, "pack/plasmagun/PlasmaRifl.m")))
         return LITE3D_FALSE;
-    if (!(Battery = lite3d_resource_pack_file_load(mFileSysPack, "pack/plasmagun/Battery.m")))
+    if (!(Battery = lite3d_pack_file_load(mFileSysPack, "pack/plasmagun/Battery.m")))
         return LITE3D_FALSE;
 
     if (!lite3d_indexed_mesh_init(&mRifle))
@@ -216,7 +216,7 @@ static int init(void *userdata)
         0.0f, 0.0f, 0.0f
     };
 
-    if (!(mFileSysPack = lite3d_resource_pack_open("tests/", LITE3D_FALSE, 7000000)))
+    if (!(mFileSysPack = lite3d_pack_open("tests/", LITE3D_FALSE, 7000000)))
         return LITE3D_FALSE;
 
     if (!initModel())
@@ -267,7 +267,7 @@ static int shutdown(void *userdata)
     lite3d_texture_unit_purge(&mRifleTextureB);
     lite3d_texture_unit_purge(&mBattTexture);
 
-    lite3d_resource_pack_close(mFileSysPack);
+    lite3d_pack_close(mFileSysPack);
 
     return LITE3D_TRUE;
 }

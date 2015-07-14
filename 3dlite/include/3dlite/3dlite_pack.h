@@ -22,7 +22,7 @@
 #include <3dlite/3dlite_rb_tree.h>
 #include <3dlite/3dlite_list.h>
 
-typedef struct lite3d_resource_pack
+typedef struct lite3d_pack
 {
     lite3d_rb_tree *fileCache;
     lite3d_list priorityList;
@@ -31,32 +31,32 @@ typedef struct lite3d_resource_pack
     size_t memoryUsed;
     char pathto[LITE3D_MAX_FILE_PATH];
     void *internal7z;
-} lite3d_resource_pack;
+} lite3d_pack;
 
-typedef struct lite3d_resource_file
+typedef struct lite3d_file
 {
     /* rb tree node entity */
     lite3d_rb_node cached;
     /* node of priority */
     lite3d_list_node priority;
 
-    lite3d_resource_pack *packer;
+    lite3d_pack *packer;
     char name[LITE3D_MAX_FILE_NAME];
     void *fileBuff;
     size_t fileSize;
     uint8_t isLoaded;
     /* for 7z */
     int32_t dbIndex;
-} lite3d_resource_file;
+} lite3d_file;
 
-LITE3D_CEXPORT lite3d_resource_pack *lite3d_resource_pack_open(const char *path, uint8_t compressed, size_t memoryLimit);
-LITE3D_CEXPORT void lite3d_resource_pack_close(lite3d_resource_pack *pack);
+LITE3D_CEXPORT lite3d_pack *lite3d_pack_open(const char *path, uint8_t compressed, size_t memoryLimit);
+LITE3D_CEXPORT void lite3d_pack_close(lite3d_pack *pack);
 
-LITE3D_CEXPORT lite3d_resource_file *lite3d_resource_pack_file_load(lite3d_resource_pack *pack, const char *file);
-LITE3D_CEXPORT lite3d_resource_file *lite3d_resource_pack_file_find(lite3d_resource_pack *pack, const char *file);
-LITE3D_CEXPORT void lite3d_resource_pack_file_purge(lite3d_resource_file *resource);
-LITE3D_CEXPORT void lite3d_resource_pack_purge(lite3d_resource_pack *pack);
-LITE3D_CEXPORT void lite3d_resource_pack_purge_unused(lite3d_resource_pack *pack);
+LITE3D_CEXPORT lite3d_file *lite3d_pack_file_load(lite3d_pack *pack, const char *file);
+LITE3D_CEXPORT lite3d_file *lite3d_pack_file_find(lite3d_pack *pack, const char *file);
+LITE3D_CEXPORT void lite3d_pack_file_purge(lite3d_file *resource);
+LITE3D_CEXPORT void lite3d_pack_purge(lite3d_pack *pack);
+LITE3D_CEXPORT void lite3d_pack_purge_unused(lite3d_pack *pack);
 
 #endif	/* LITE3D_FILEPACK_H */
 

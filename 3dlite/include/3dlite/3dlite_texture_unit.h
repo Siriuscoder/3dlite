@@ -19,7 +19,7 @@
 #define	LITE3D_GL_TEXTURE_UNIT_H
 
 #include <3dlite/3dlite_common.h>
-#include <3dlite/3dlite_resource_pack.h>
+#include <3dlite/3dlite_pack.h>
 
 // Image types (IL enum compatible)
 #define LITE3D_IMAGE_ANY          0x0000
@@ -112,7 +112,7 @@ LITE3D_CEXPORT void lite3d_texture_technique_shut(void);
 
 /* load texture from resource file using Devil */
 LITE3D_CEXPORT int lite3d_texture_unit_from_resource(lite3d_texture_unit *textureUnit, 
-    const lite3d_resource_file *resource, uint32_t imageType, uint32_t textureTarget, 
+    const lite3d_file *resource, uint32_t imageType, uint32_t textureTarget, 
     int8_t quality, uint8_t wrapping);
 
 /* allocate empty texture object */
