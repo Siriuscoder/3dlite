@@ -60,17 +60,17 @@ typedef struct lite3d_camera
         } perspective;
     } projectionParams;
     
-    lite3d_scene_node *linkNode;
-    lite3d_scene_node *trackNode;
+    const lite3d_scene_node *linkNode;
+    const lite3d_scene_node *trackNode;
     uint8_t linkType;
     uint16_t materialPass;
 } lite3d_camera;
 
 LITE3D_CEXPORT void lite3d_camera_init(lite3d_camera *camera);
 LITE3D_CEXPORT void lite3d_camera_link_to(lite3d_camera *camera, 
-    lite3d_scene_node *target, uint8_t linkType);
+    const lite3d_scene_node *target, uint8_t linkType);
 LITE3D_CEXPORT void lite3d_camera_tracking(lite3d_camera *camera, 
-    lite3d_scene_node *target);
+    const lite3d_scene_node *target);
 LITE3D_CEXPORT void lite3d_camera_update_view(lite3d_camera *camera);
 LITE3D_CEXPORT void lite3d_camera_ortho(lite3d_camera *camera, float near,
     float far, float left, float right, float bottom, float top);

@@ -30,7 +30,7 @@ namespace lite3dpp
     public:
 
         SceneNode();
-        SceneNode(Main *nain, const JsonHelper &json, SceneNode *base);
+        SceneNode(const JsonHelper &json, SceneNode *base, Main *main);
         ~SceneNode();
 
         inline void setName(const lite3dpp_string &name)
@@ -44,6 +44,8 @@ namespace lite3dpp
         { return mMesh; }
 
         inline lite3d_scene_node *getPtr()
+        { return &mNode; }
+        inline const lite3d_scene_node *getPtr() const
         { return &mNode; }
 
         void setPosition(const kmVec3 *position);

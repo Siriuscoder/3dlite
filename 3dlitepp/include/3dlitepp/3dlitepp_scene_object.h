@@ -26,30 +26,37 @@
 
 namespace lite3dpp
 {
-    class LITE3DPP_EXPORT SceneObject : public JsonResource, public NoncopiableResource
+    class LITE3DPP_EXPORT SceneObject : public Manageable, public NoncopiableResource
     {
     public:
 
         typedef stl<lite3dpp_string, SceneNode*>::map Nodes;
 
         SceneObject(const lite3dpp_string &name, 
-            const lite3dpp_string &path, Main *main);
+            SceneObject *parent, Main *main);
         ~SceneObject();
 
         inline const Nodes &getNodes() const
         { return mNodes; }
         inline SceneNode *getRoot()
         { return mObjectRoot; }
+        inline const SceneNode *getRoot() const
+        { return mObjectRoot; }
+        inline const lite3dpp_string &getName() const 
+        { return mName; }
 
         SceneNode *getNode(const lite3dpp_string &name);
 
         void addToScene(Scene *scene);
         void removeFromScene(Scene *scene);
 
-    protected:
+        void loadFromTemplate(const JsonHelper &helper);
 
-        virtual void loadFromJsonImpl(const JsonHelper &helper);
-        virtual void unloadImpl();
+        inline bool isEnabled() 
+        { return mEnabled; }
+
+        void disable();
+        void enable();
 
     private:
 
@@ -57,8 +64,13 @@ namespace lite3dpp
 
     private:
 
+        lite3dpp_string mName;
         Nodes mNodes;
         SceneNode *mObjectRoot;
+        SceneObject *mParent;
+        Main *mMain;
+        Scene *mScene;
+        bool mEnabled;
     };
 }
 

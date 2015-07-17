@@ -1,34 +1,22 @@
 {
-	"Root":
-	{
-		"Position": { "x": 0, "y": 0, "z": 0 },
-		"Rotation": { "x": 0, "y": 0, "z": 0, "w": 1 },
-		"Scale": { "x": 1, "y": 1, "z": 1 },
-		
-		"Nodes": [
-			{
-				"Name": "Minigun",
-				"Mesh": 
-				{
-					"Name": "minigun",
-					"Mesh": "filesystem_01:tests/pack/minigun/minigun.mesh.json",
-					"MaterialMapping": 
-					[
-						{ 
-							"MaterialIndex": 0,
-							"Material":
-							{
-								"Name": "mat_minigun",
-								"Material": "filesystem_01:tests/pack/minigun/minigun.mat.json"
-							}
-						}
-					]
-				},
-				"Position": { "x": 0, "y": 0, "z": 0 },
-				"Rotation": { "x": 0, "y": 0, "z": 0, "w": 1 },
-				"Scale": { "x": 1, "y": 1, "z": 1 }
-			}
-		]
-	}
+	"Objects":
+	[
+		{
+			"Name": "Minigun",
+			"Object": "filesystem_01:tests/pack/minigun/minigun.o.json",
+
+			"Position": { "x": 0, "y": 0, "z": 0 },
+			"Rotation": { "x": 0, "y": 0, "z": 0, "w": 1 },
+			"Scale": { "x": 1, "y": 1, "z": 1 }
+		},
+		{
+			"Name": "PlasmaRifle",
+			"Object": "filesystem_01:tests/pack/plasmagun/plasma.o.json",
+
+			"Position": { "x": 0, "y": 10, "z": 0 },
+			"Rotation": { "x": 0, "y": 0, "z": 0, "w": 1 },
+			"Scale": { "x": 1, "y": 1, "z": 1 }
+		}
+	]
 }
 

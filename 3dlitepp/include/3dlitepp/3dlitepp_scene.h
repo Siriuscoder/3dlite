@@ -22,18 +22,33 @@
 #include <3dlitepp/3dlitepp_common.h>
 #include <3dlitepp/3dlitepp_resource.h>
 #include <3dlitepp/3dlitepp_scene_object.h>
+#include <3dlitepp/3dlitepp_camera.h>
 
 namespace lite3dpp
 {
     class LITE3DPP_EXPORT Scene : public JsonResource, public NoncopiableResource
     {
     public:
+
+        typedef stl<lite3dpp_string, Camera *>::map Cameras;
+        typedef stl<lite3dpp_string, SceneObject *>::map Objects;
+
         Scene(const lite3dpp_string &name, 
             const lite3dpp_string &path, Main *main);
         ~Scene();
 
         inline lite3d_scene *getPtr()
         { return &mScene; }
+
+        Camera *getCamera(const lite3dpp_string &name);
+        SceneObject *makeObject(const lite3dpp_string &name,
+            const lite3dpp_string &templatePath, SceneObject *parent);
+        SceneObject *getObject(const lite3dpp_string &name);
+
+        void removeAllCameras();
+        void removeCamera(const lite3dpp_string &name);
+        void removeAllObjects();
+        void removeObject(const lite3dpp_string &name);
 
     protected:
 
@@ -42,7 +57,11 @@ namespace lite3dpp
 
     private:
 
+        void setupObjects(const stl<JsonHelper>::vector &objects, SceneObject *base);
+
         lite3d_scene mScene;
+        Cameras mCameras;
+        Objects mObjects;
     };
 }
 
