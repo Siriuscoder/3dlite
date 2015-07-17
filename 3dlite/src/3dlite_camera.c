@@ -108,7 +108,7 @@ void lite3d_camera_lookAt(lite3d_camera *camera, const kmVec3 *pointTo)
 }
 
 void lite3d_camera_link_to(lite3d_camera *camera,
-    lite3d_scene_node *target, uint8_t linkType)
+    const lite3d_scene_node *target, uint8_t linkType)
 {
     SDL_assert(camera);
 
@@ -117,9 +117,6 @@ void lite3d_camera_link_to(lite3d_camera *camera,
 
     if (camera->linkNode)
     {
-        if (lite3d_scene_node_update(camera->linkNode))
-            camera->cameraNode.recalc = LITE3D_TRUE;
-
         if (linkType & LITE3D_CAMERA_LINK_POSITION)
             lite3d_camera_set_position(camera, &camera->linkNode->position);
 
@@ -129,7 +126,7 @@ void lite3d_camera_link_to(lite3d_camera *camera,
 }
 
 void lite3d_camera_tracking(lite3d_camera *camera,
-    lite3d_scene_node *target)
+    const lite3d_scene_node *target)
 {
     SDL_assert(camera);
 

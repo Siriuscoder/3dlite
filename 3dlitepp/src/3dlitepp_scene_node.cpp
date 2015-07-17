@@ -29,7 +29,7 @@ namespace lite3dpp
 
     }
 
-    SceneNode::SceneNode(Main *main, const JsonHelper &json, SceneNode *base) : 
+    SceneNode::SceneNode(const JsonHelper &json, SceneNode *base, Main *main) : 
         mMesh(NULL),
         mBaseNode(base)
     {

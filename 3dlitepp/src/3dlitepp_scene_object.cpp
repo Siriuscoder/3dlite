@@ -23,15 +23,16 @@
 namespace lite3dpp
 {
     SceneObject::SceneObject(const lite3dpp_string &name, 
-        const lite3dpp_string &path, Main *main) : 
-        JsonResource(name, path, main, AbstractResource::SCENE_OBJECT),
-        mObjectRoot(NULL)
+        SceneObject *parent, Main *main) : 
+        mName(name),
+        mObjectRoot(NULL),
+        mParent(parent),
+        mMain(main),
+        mScene(NULL),
+        mEnabled(true)
     {}
 
     SceneObject::~SceneObject()
-    {}
-
-    void SceneObject::unloadImpl()
     {
         std::for_each(mNodes.begin(), mNodes.end(), [] (Nodes::value_type &node)
         {
@@ -41,24 +42,24 @@ namespace lite3dpp
         mNodes.clear();
     }
 
-    void SceneObject::loadFromJsonImpl(const JsonHelper &helper)
+    void SceneObject::loadFromTemplate(const JsonHelper &helper)
     {
         JsonHelper rootNodeHelper = helper.getObject(L"Root");
         if(rootNodeHelper.isEmpty())
             return;
 
-        mObjectRoot = new SceneNode(mMain, rootNodeHelper, NULL);
+        mObjectRoot = new SceneNode(rootNodeHelper, mParent ? mParent->getRoot() : NULL, mMain);
         setupNodes(rootNodeHelper.getObjects(L"Nodes"), mObjectRoot);
     }
 
     void SceneObject::setupNodes(const stl<JsonHelper>::vector &nodesRange, SceneNode *base)
     {
-        for(const auto &nodeHelper : nodesRange)
+        for(const JsonHelper &nodeHelper : nodesRange)
         {
             if(nodeHelper.isEmpty())
                 continue;
 
-            SceneNode *sceneNode = new SceneNode(mMain, nodeHelper, base);
+            SceneNode *sceneNode = new SceneNode(nodeHelper, base, mMain);
             /* create and initialize new node then store it */
             mNodes.insert(std::make_pair(nodeHelper.getString(L"Name"),
                 sceneNode));
@@ -77,10 +78,16 @@ namespace lite3dpp
 
     void SceneObject::addToScene(Scene *scene)
     {
+        if(mScene)
+            throw std::runtime_error(getName() + " already in scene " + scene->getName());
+
+        mObjectRoot->addToScene(scene);
         std::for_each(mNodes.begin(), mNodes.end(), [scene] (Nodes::value_type &node)
         {
             node.second->addToScene(scene);
         });
+
+        mScene = scene;
     }
 
     void SceneObject::removeFromScene(Scene *scene)
@@ -89,6 +96,29 @@ namespace lite3dpp
         {
             node.second->removeFromScene(scene);
         });
+
+        mObjectRoot->removeFromScene(scene);
+        mScene = NULL;
+    }
+
+    void SceneObject::disable()
+    {
+        for(Nodes::value_type &node : mNodes)
+        {
+            node.second->getPtr()->enabled = LITE3D_FALSE;
+        }
+
+        mObjectRoot->getPtr()->enabled = LITE3D_FALSE;
+    }
+
+    void SceneObject::enable()
+    {
+        for(Nodes::value_type &node : mNodes)
+        {
+            node.second->getPtr()->enabled = LITE3D_TRUE;
+        }
+
+        mObjectRoot->getPtr()->enabled = LITE3D_TRUE;
     }
 }
 

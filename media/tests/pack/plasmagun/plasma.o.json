@@ -1,0 +1,29 @@
+{
+	"Root":
+	{	
+		"Nodes": 
+		[
+			{
+				"Name": "Plasmagun",
+				"Mesh": 
+				{
+					"Name": "plasmagun",
+					"Mesh": "filesystem_01:tests/pack/plasmagun/plasma.mesh.json"
+				},
+				
+				"Nodes": 
+				[
+					{
+						"Name": "PlasmaBattery",
+						"Mesh": 
+						{
+							"Name": "plasmabatt",
+							"Mesh": "filesystem_01:tests/pack/plasmagun/plasma_battery.mesh.json"
+						}
+					}
+				]
+			}
+		]
+	}
+}
+

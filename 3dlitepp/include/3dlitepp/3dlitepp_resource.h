@@ -38,7 +38,6 @@ namespace lite3dpp
         {
             SCRIPT,
             MESH,
-            SCENE_OBJECT,
             SCENE,
             MATERIAL
         };
