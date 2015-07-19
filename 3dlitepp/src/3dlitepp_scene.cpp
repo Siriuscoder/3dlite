@@ -136,11 +136,11 @@ namespace lite3dpp
                 objHelper.getString(L"Object"), base);
 
             if(!objHelper.getObject(L"Position").isEmpty())
-                sceneObj->getRoot()->setPosition(&objHelper.getVec3(L"Position"));
+                sceneObj->getRoot()->setPosition(objHelper.getVec3(L"Position"));
             if(!objHelper.getObject(L"Rotation").isEmpty())
-                sceneObj->getRoot()->setRotation(&objHelper.getQuaternion(L"Rotation"));
+                sceneObj->getRoot()->setRotation(objHelper.getQuaternion(L"Rotation"));
             if(!objHelper.getObject(L"Scale").isEmpty())
-                sceneObj->getRoot()->scale(&objHelper.getVec3(L"Scale"));
+                sceneObj->getRoot()->scale(objHelper.getVec3(L"Scale"));
 
             setupObjects(objHelper.getObjects(L"Objects"), sceneObj);
         }

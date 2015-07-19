@@ -48,12 +48,12 @@ namespace lite3dpp
         inline const lite3d_scene_node *getPtr() const
         { return &mNode; }
 
-        void setPosition(const kmVec3 *position);
-        void move(const kmVec3 *position);
-        void setRotation(const kmQuaternion *quat);
-        void rotate(const kmQuaternion *quat);
-        void rotateAngle(const kmVec3 *axis, float angle);
-        void scale(const kmVec3 *scale);
+        void setPosition(const kmVec3 &position);
+        void move(const kmVec3 &position);
+        void setRotation(const kmQuaternion &quat);
+        void rotate(const kmQuaternion &quat);
+        void rotateAngle(const kmVec3 &axis, float angle);
+        void scale(const kmVec3 &scale);
 
         void replaceMaterial(int chunkNo, Material *material);
 

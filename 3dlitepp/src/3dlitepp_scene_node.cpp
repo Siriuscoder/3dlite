@@ -51,9 +51,9 @@ namespace lite3dpp
                 matMap.getString(L"Material")));
         }
 
-        setPosition(&meshHelper.getVec3(L"Position"));
-        setRotation(&meshHelper.getQuaternion(L"Rotation"));
-        scale(&meshHelper.getVec3(L"Scale"));
+        setPosition(meshHelper.getVec3(L"Position"));
+        setRotation(meshHelper.getQuaternion(L"Rotation"));
+        scale(meshHelper.getVec3(L"Scale"));
     }
 
     SceneNode::~SceneNode()
@@ -74,34 +74,34 @@ namespace lite3dpp
         mMaterialMappingReplacement[chunkNo] = material;
     }
 
-    void SceneNode::setPosition(const kmVec3 *position)
+    void SceneNode::setPosition(const kmVec3 &position)
     {
-        lite3d_scene_node_set_position(&mNode, position);
+        lite3d_scene_node_set_position(&mNode, &position);
     }
 
-    void SceneNode::move(const kmVec3 *position)
+    void SceneNode::move(const kmVec3 &position)
     {
-        lite3d_scene_node_move(&mNode, position);
+        lite3d_scene_node_move(&mNode, &position);
     }
 
-    void SceneNode::setRotation(const kmQuaternion *quat)
+    void SceneNode::setRotation(const kmQuaternion &quat)
     {
-        lite3d_scene_node_set_rotation(&mNode, quat);
+        lite3d_scene_node_set_rotation(&mNode, &quat);
     }
 
-    void SceneNode::rotate(const kmQuaternion *quat)
+    void SceneNode::rotate(const kmQuaternion &quat)
     {
-        lite3d_scene_node_rotate(&mNode, quat);
+        lite3d_scene_node_rotate(&mNode, &quat);
     }
 
-    void SceneNode::rotateAngle(const kmVec3 *axis, float angle)
+    void SceneNode::rotateAngle(const kmVec3 &axis, float angle)
     {
-        lite3d_scene_node_rotate_angle(&mNode, axis, angle);
+        lite3d_scene_node_rotate_angle(&mNode, &axis, angle);
     }
 
-    void SceneNode::scale(const kmVec3 *scale)
+    void SceneNode::scale(const kmVec3 &scale)
     {
-        lite3d_scene_node_scale(&mNode, scale);
+        lite3d_scene_node_scale(&mNode, &scale);
     }
 
     void SceneNode::addToScene(Scene *scene)

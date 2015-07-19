@@ -74,6 +74,9 @@ static int init_platform_gl_extensions(void)
 
 static int init_gl_extensions(void)
 {
+    const char *extensionsStr;
+    int32_t extensionsStrLength;
+
     GLenum err = glewInit();
     if (GLEW_OK != err)
     {
@@ -81,7 +84,7 @@ static int init_gl_extensions(void)
         SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION,
             "%s: Glew failed.. %s\n", __FUNCTION__, glewGetErrorString(err));
     }
-    
+
     if (!GLEW_VERSION_2_0)
     {
         SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION,
@@ -89,16 +92,26 @@ static int init_gl_extensions(void)
         return LITE3D_FALSE;
     }
 
+    extensionsStr = (const char *) glGetString(GL_EXTENSIONS);
+    extensionsStrLength = strlen(extensionsStr);
+
     SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION,
-        "%s: GL Version %s", __FUNCTION__, (char *) glGetString(GL_VERSION));
+        "%s: GL Version: %s", __FUNCTION__, (const char *) glGetString(GL_VERSION));
     SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION,
-        "%s: GL Vendor %s", __FUNCTION__, (char *) glGetString(GL_VENDOR));
+        "%s: GL Vendor: %s", __FUNCTION__, (const char *) glGetString(GL_VENDOR));
     SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION,
-        "%s: GL Renderer %s", __FUNCTION__, (char *) glGetString(GL_RENDERER));
+        "%s: GL Renderer: %s", __FUNCTION__, (const char *) glGetString(GL_RENDERER));
+
+    while (extensionsStrLength >= 0)
+    {
+        SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION,
+            "%s: GL Extensions: %s", __FUNCTION__, extensionsStr);
+        extensionsStr += SDL_MAX_LOG_MESSAGE;
+        extensionsStrLength -= SDL_MAX_LOG_MESSAGE;
+    }
+
     SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION,
-        "%s: GL Extensions %s", __FUNCTION__, (char *) glGetString(GL_EXTENSIONS));
-    SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION,
-        "%s: GL Shading Lang %s", __FUNCTION__, (char *) glGetString(GL_SHADING_LANGUAGE_VERSION));
+        "%s: GL Shading Lang %s", __FUNCTION__, (const char *) glGetString(GL_SHADING_LANGUAGE_VERSION));
 
     /* enable multisample buffers */
     if (gVideoSettings.FSAA > 1 && GLEW_ARB_multisample)
@@ -143,7 +156,7 @@ int lite3d_video_open(const lite3d_video_settings *settings)
         windowFlags |= SDL_WINDOW_BORDERLESS;
     }
 
-    /* Specify 2.0 openGL context */ 
+    /* Specify 2.0 openGL context */
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
 
@@ -195,7 +208,7 @@ int lite3d_video_open(const lite3d_video_settings *settings)
         return LITE3D_FALSE;
     }
 
-    if(!gVideoSettings.hidden)
+    if (!gVideoSettings.hidden)
         SDL_ShowWindow(gRenderWindow);
     return LITE3D_TRUE;
 }

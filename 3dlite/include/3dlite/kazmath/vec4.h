@@ -62,6 +62,6 @@ kmVec4* kmVec4TransformArray(kmVec4* pOut, unsigned int outStride,
 int 	kmVec4AreEqual(const kmVec4* p1, const kmVec4* p2);
 kmVec4* kmVec4Assign(kmVec4* pOut, const kmVec4* pIn);
 
-LITE3D_EXPORT const kmVec4 KM_VEC4_ZERO;
+LITE3D_CEXPORT const kmVec4 KM_VEC4_ZERO;
 
 #endif /* VEC4_H_INCLUDED */
