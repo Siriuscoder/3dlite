@@ -57,10 +57,22 @@ namespace lite3dpp
         AbstractResource *resource)
     {
         size_t fileSize;
+        const char dummyJson[] = "{ \"dummy\": {} }";
         const char *buffer;
 
-        /* open file buffer */
-        buffer = static_cast<const char *>(loadFileToMemory(path, &fileSize));
+        /*  if we not needed any parameters and configuration for this resource -
+            we can use a dummy.json path (for json resources) */ 
+        if(path == "dummy.json")
+        {
+            buffer = dummyJson;
+            fileSize = sizeof(dummyJson);
+        }
+        else
+        {
+            /* open file buffer */
+            buffer = static_cast<const char *>(loadFileToMemory(path, &fileSize));
+        }
+
         /* load resource from memory file */
         resource->load(buffer, fileSize);
 

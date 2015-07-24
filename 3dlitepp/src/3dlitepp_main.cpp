@@ -74,10 +74,12 @@ namespace lite3dpp
             sizeof(mSettings.videoSettings.caption)-1);
 
         mSettings.renderLisneters.userdata = reinterpret_cast<void *> (this);
-        mSettings.renderLisneters.preRender = Main::engineInit;
-        mSettings.renderLisneters.postRender = Main::engineShutdown;
-        mSettings.renderLisneters.preFrame = Main::engineFrameBegin;
-        mSettings.renderLisneters.postFrame = Main::engineFrameEnd;
+        mSettings.renderLisneters.preRender = Main::onInit;
+        mSettings.renderLisneters.postRender = Main::onShutdown;
+        mSettings.renderLisneters.preFrame = Main::onFrameBegin;
+        mSettings.renderLisneters.postFrame = Main::onFrameEnd;
+        mSettings.renderLisneters.processEvent = Main::onProcessEvent;
+
     }
 
     const lite3d_global_settings &Main::getSettings() const
@@ -129,13 +131,15 @@ namespace lite3dpp
         initResourceLocations();
         mScriptDispatcher.registerGlobals();
 
+        /* create image of main window render target (not json needed, in this case use special dummy.json =) ) */
+        mResourceManager.queryResource<WindowRenderTarget>("MainWindow", "dummy.json");
         /* load first script */
         /* after script been loaded, init script function will be executed */
         mResourceManager.queryResource<Script>("", mConfig->getString(L"InitScript"));
 
         /* perform fixed update timer */    
         mFixedUpdatesTimer = 
-            lite3d_timer_add(mConfig->getInt(L"FixedUpdatesInterval", 200), timerFixed, this);
+            lite3d_timer_add(mConfig->getInt(L"FixedUpdatesInterval", 200), onTimerTick, this);
     }
 
     void Main::shut()
@@ -150,89 +154,133 @@ namespace lite3dpp
         }
     }
 
+    WindowRenderTarget *Main::window()
+    {
+        /* query main windows from resources */
+        return mResourceManager.queryResource<WindowRenderTarget>("MainWindow");
+    }
+
     /* callbackes */
-    int Main::engineInit(void *userdata)
+    int Main::onInit(void *userdata)
     {
         try
         {
             Main *mainObj = reinterpret_cast<Main *> (userdata);
             mainObj->init();
 
-            return LITE3D_TRUE;
+            if(mainObj->mLifeCycleListener)
+                mainObj->mLifeCycleListener->init(mainObj);
         }
         catch (std::exception &ex)
         {
-            SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+            SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION,
                          "engineInit: %s", ex.what());
+            return LITE3D_FALSE;
         }
 
-        return LITE3D_FALSE;
+        return LITE3D_TRUE;
     }
 
-    int Main::engineShutdown(void *userdata)
+    int Main::onShutdown(void *userdata)
     {
         try
         {
             Main *mainObj = reinterpret_cast<Main *> (userdata);
             mainObj->shut();
-            return LITE3D_TRUE;
+
+            if(mainObj->mLifeCycleListener)
+                mainObj->mLifeCycleListener->shut(mainObj);
         }
         catch (std::exception &ex)
         {
-            SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+            SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION,
                          "engineLeave: %s", ex.what());
+            return LITE3D_FALSE;
         }
 
-        return LITE3D_FALSE;
+        return LITE3D_TRUE;
     }
 
-    int Main::engineFrameBegin(void *userdata)
+    int Main::onFrameBegin(void *userdata)
     {
         try
         {
             Main *mainObj = reinterpret_cast<Main *> (userdata);
             mainObj->mScriptDispatcher.performFrameBegin();
-            return LITE3D_TRUE;
+
+            if(mainObj->mLifeCycleListener)
+                mainObj->mLifeCycleListener->frameBegin(mainObj);
         }
         catch (std::exception &ex)
         {
-            SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+            SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION,
                          "engineFrameBegin: %s", ex.what());
+            return LITE3D_FALSE;
         }
 
-        return LITE3D_FALSE;
+        return LITE3D_TRUE;
     }
 
-    int Main::engineFrameEnd(void *userdata)
+    int Main::onFrameEnd(void *userdata)
     {
         try
         {
             Main *mainObj = reinterpret_cast<Main *> (userdata);
             mainObj->mScriptDispatcher.performFrameEnd();
-            return LITE3D_TRUE;
+
+            if(mainObj->mLifeCycleListener)
+                mainObj->mLifeCycleListener->frameEnd(mainObj);
         }
         catch (std::exception &ex)
         {
-            SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+            SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION,
                          "engineFrameEnd: ", ex.what());
+            return LITE3D_FALSE;
         }
 
-        return LITE3D_FALSE;
+        return LITE3D_TRUE;
     }
 
-    void Main::timerFixed(lite3d_timer *timer)
+    void Main::onTimerTick(lite3d_timer *timer)
     {
         Main *mainObj = reinterpret_cast<Main *> (timer->userdata);
 
         try
         {
-            mainObj->mScriptDispatcher.performFixedUpdate();
+            if(timer == mainObj->mFixedUpdatesTimer)
+                mainObj->mScriptDispatcher.performFixedUpdate();
+
+            if(mainObj->mLifeCycleListener)
+                mainObj->mLifeCycleListener->timerTick(mainObj, timer);
         }
         catch (std::exception &ex)
         {
-            SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+            SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION,
                          "timerFixed: %s", ex.what());
             mainObj->stop();
         }
     }
+
+    int Main::onProcessEvent(SDL_Event *e, void *userdata)
+    {
+        try
+        {
+            Main *mainObj = reinterpret_cast<Main *> (userdata);
+            mainObj->mScriptDispatcher.performEvent(e);
+
+            if(mainObj->mLifeCycleListener)
+                mainObj->mLifeCycleListener->processEvent(mainObj, e);
+        }
+        catch (std::exception &ex)
+        {
+            SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION,
+                         "onProcessEvent: %s", ex.what());
+            return LITE3D_FALSE;
+        }
+
+        return LITE3D_TRUE;
+    }
+
+    Main::LifecycleListener::~LifecycleListener()
+    {}
 }

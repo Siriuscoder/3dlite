@@ -15,6 +15,8 @@
  *	You should have received a copy of the GNU General Public License
  *	along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
+#include <algorithm>
+
 #include <SDL_log.h>
 #include <SDL_assert.h>
 
@@ -63,12 +65,19 @@ namespace lite3dpp
 
     void ScriptDispatcher::registerScript(Script *script)
     {
-        mScripts.insert(std::make_pair(script->getName(), script));
+        if(mScripts.find(script->getName()) != mScripts.end())
+            throw std::runtime_error(script->getName() + " script already registered");
+
+        mPendingScripts.insert(std::make_pair(script->getName(), script));
     }
 
     void ScriptDispatcher::unregisterScript(Script *script)
     {
-        Scripts::iterator it = mScripts.find(script->getName());
+        Scripts::iterator it = mPendingScripts.find(script->getName());
+        if(it != mPendingScripts.end())
+            mPendingScripts.erase(it);
+
+        it = mScripts.find(script->getName());
         if(it != mScripts.end())
             mScripts.erase(it);
     }
@@ -76,6 +85,7 @@ namespace lite3dpp
     /* script callers */
     void ScriptDispatcher::performFrameBegin()
     {
+        flushPendingScripts();
         Scripts::const_iterator it = mScripts.begin();
         for (; it != mScripts.end(); ++it)
         {
@@ -85,6 +95,7 @@ namespace lite3dpp
 
     void ScriptDispatcher::performFrameEnd()
     {
+        flushPendingScripts();
         Scripts::const_iterator it = mScripts.begin();
         for (; it != mScripts.end(); ++it)
         {
@@ -94,10 +105,34 @@ namespace lite3dpp
 
     void ScriptDispatcher::performFixedUpdate()
     {
+        flushPendingScripts();
         Scripts::const_iterator it = mScripts.begin();
         for (; it != mScripts.end(); ++it)
         {
             it->second->performFixedUpdate();
+        }
+    }
+
+    void ScriptDispatcher::performEvent(SDL_Event *e)
+    {
+        flushPendingScripts();
+        Scripts::const_iterator it = mScripts.begin();
+        for (; it != mScripts.end(); ++it)
+        {
+            it->second->performProcessEvent(e);
+        }
+    }
+
+    void ScriptDispatcher::flushPendingScripts()
+    {
+        if(mPendingScripts.size() > 0)
+        {
+            std::for_each(mPendingScripts.begin(), mPendingScripts.end(), [this](Scripts::value_type val)
+            {
+                mScripts.insert(val);
+            });
+
+            mPendingScripts.clear();
         }
     }
 

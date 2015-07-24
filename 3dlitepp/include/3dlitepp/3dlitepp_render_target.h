@@ -17,46 +17,50 @@
  *******************************************************************************/
 #pragma once
 
+#include <3dlite/3dlite_render.h>
+
 #include <3dlitepp/3dlitepp_common.h>
 #include <3dlitepp/3dlitepp_resource.h>
+#include <3dlitepp/3dlitepp_camera.h>
 
 namespace lite3dpp
 {
-    class LITE3DPP_EXPORT Script : public AbstractResource, public NoncopiableResource
+    class LITE3DPP_EXPORT RenderTarget : public JsonResource, public NoncopiableResource
     {
     public:
 
-        Script(const lite3dpp_string &name, 
+        RenderTarget(const lite3dpp_string &name, 
             const lite3dpp_string &path, Main *main);
-        ~Script();
+        ~RenderTarget();
 
-        void performFrameBegin();
-        void performFrameEnd();
-        void performFixedUpdate();
-        void performProcessEvent(SDL_Event *e);
+        bool isEnabled();
+        void enable();
+        void disable();
+        int32_t height();
+        int32_t width();
+        void setBlankColor(const kmVec4 &color);
+        void setCleanMask(uint32_t mask);
+
+        void addCamera(Camera *camera);
+        void removeCamera(Camera *camera);
 
     protected:
 
-        void scriptCompile(const char *data, size_t size);
-        void scriptRelease();
+        lite3d_render_target *mRenderTarget;
+    };
 
-        virtual void loadImpl(const void *buffer, size_t size);
-        virtual void reloadImpl();
-        virtual void unloadImpl();
+    class LITE3DPP_EXPORT WindowRenderTarget : public RenderTarget
+    {
+    public:
 
-    private:
-        
-        void checkScriptExec(int ret);
-        
-    private:
+        WindowRenderTarget(const lite3dpp_string &name, 
+            const lite3dpp_string &path, Main *main);
+        ~WindowRenderTarget();
 
-        asIScriptEngine *mScriptEngine;
-        asIScriptFunction *mInitFunction;
-        asIScriptFunction *mShutFunction;
-        asIScriptFunction *mFrameBeginFunction;
-        asIScriptFunction *mFrameEndFunction;
-        asIScriptFunction *mFixedUpdateFunction;
-        asIScriptContext *mContext;
+    protected:
+
+        virtual void loadFromJsonImpl(const JsonHelper &helper) override final;
+        virtual void unloadImpl() override final;
     };
 }
 

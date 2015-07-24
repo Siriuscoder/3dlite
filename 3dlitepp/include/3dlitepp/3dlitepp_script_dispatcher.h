@@ -38,7 +38,8 @@ namespace lite3dpp
         void performFrameBegin();
         void performFrameEnd();
         void performFixedUpdate();
-        
+        void performEvent(SDL_Event *e);
+
         void registerGlobals();
 
         void registerScript(Script *script);
@@ -46,9 +47,12 @@ namespace lite3dpp
 
     private:
 
+        void flushPendingScripts();
+
         Main *mMain;
         asIScriptEngine *mAsEngine;
         Scripts mScripts;
+        Scripts mPendingScripts;
     };
 }
 

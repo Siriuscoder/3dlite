@@ -24,12 +24,28 @@
 #include <3dlitepp/3dlitepp_script_dispatcher.h>
 #include <3dlitepp/3dlitepp_json_helper.h>
 #include <3dlitepp/3dlitepp_scene.h>
+#include <3dlitepp/3dlitepp_render_target.h>
 
 namespace lite3dpp
 {
-
     class LITE3DPP_EXPORT Main
     {
+    public:
+
+        class LITE3DPP_EXPORT LifecycleListener
+        {
+        public:
+
+            virtual ~LifecycleListener();
+
+            virtual void init(Main *main) = 0;
+            virtual void shut(Main *main) = 0;
+            virtual void frameBegin(Main *main) = 0;
+            virtual void frameEnd(Main *main) = 0;
+            virtual void timerTick(Main *main, lite3d_timer *timerid) = 0;
+            virtual void processEvent(Main *main, SDL_Event *e) = 0;
+        };
+
     public:
 
         Main();
@@ -46,17 +62,21 @@ namespace lite3dpp
         { return &mResourceManager; }
         inline ScriptDispatcher *getScriptDispatcher()
         { return &mScriptDispatcher; }
+        inline void registerLifecycleListener(LifecycleListener *listener)
+        { mLifeCycleListener = listener; }
+        WindowRenderTarget *window();
 
         void run();
         void stop();
         
     private:
 
-        static int engineInit(void *userdata);
-        static int engineShutdown(void *userdata);
-        static int engineFrameBegin(void *userdata);
-        static int engineFrameEnd(void *userdata);
-        static void timerFixed(lite3d_timer *timer);
+        static int onInit(void *userdata);
+        static int onShutdown(void *userdata);
+        static int onFrameBegin(void *userdata);
+        static int onFrameEnd(void *userdata);
+        static void onTimerTick(lite3d_timer *timer);
+        static int onProcessEvent(SDL_Event *e, void *userdata);
 
         void initResourceLocations();
         void init();
@@ -69,5 +89,6 @@ namespace lite3dpp
         JsonHelper *mConfig;
         lite3d_global_settings mSettings;
         lite3d_timer *mFixedUpdatesTimer;
+        LifecycleListener *mLifeCycleListener;
     };
 }

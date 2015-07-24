@@ -22,7 +22,7 @@ namespace lite3dpp
 {
     AbstractResource::AbstractResource(const lite3dpp_string &name,
         const lite3dpp_string &path, Main *main, ResourceType type) : 
-        mState(NEW),
+        mState(UNLOADED),
         mType(type),
         mName(name),
         mPath(path),
@@ -35,7 +35,7 @@ namespace lite3dpp
 
     void AbstractResource::load(const void *buffer, size_t size)
     {
-        if(mState == NEW)
+        if(mState == UNLOADED)
         {
             loadImpl(buffer, size);
             mState = LOADED;
@@ -55,7 +55,7 @@ namespace lite3dpp
         if(mState == LOADED)
         {
             unloadImpl();
-            mState = NEW;
+            mState = UNLOADED;
         }
     }
 

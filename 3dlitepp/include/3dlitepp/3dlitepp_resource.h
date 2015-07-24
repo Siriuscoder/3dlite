@@ -29,7 +29,7 @@ namespace lite3dpp
         enum ResourceState
         {
             /* just created */
-            NEW,
+            UNLOADED,
             /* fully loaded */
             LOADED
         };
@@ -39,7 +39,10 @@ namespace lite3dpp
             SCRIPT,
             MESH,
             SCENE,
-            MATERIAL
+            MATERIAL,
+            TEXTURE,
+            SHADER_PROGRAMM,
+            RENDER_TARGET
         };
 
         AbstractResource(const lite3dpp_string &name, 

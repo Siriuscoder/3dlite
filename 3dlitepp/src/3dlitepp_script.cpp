@@ -161,6 +161,11 @@ namespace lite3dpp
         }
     }
 
+    void Script::performProcessEvent(SDL_Event *e)
+    {
+
+    }
+
     void Script::loadImpl(const void *buffer, size_t size)
     {
         scriptCompile(static_cast<const char *>(buffer), size);
