@@ -32,11 +32,11 @@ static int gMaxFramebufferSize = 0;
 /*
 Name
 
-    EXT_framebuffer_object
+    _framebuffer_object
 
 Name Strings
 
-    GL_EXT_framebuffer_object
+    GL_framebuffer_object
 
 Overview
 
@@ -92,7 +92,7 @@ Overview
     glXMakeCurrent, aglSetDrawable, etc.) to bind a drawable with a GL
     context (as is done in the WGL_ARB_pbuffer extension).  In this
     extension however, this functionality is subsumed by the GL and the
-    GL provides the function BindFramebufferEXT to bind a framebuffer
+    GL provides the function BindFramebuffer to bind a framebuffer
     object to the current context.  Later, the context can bind back to
     the window-system-provided framebuffer in order to display rendered
     content.
@@ -109,11 +109,11 @@ Overview
     pixelformat or FBConfig.  All of these characteristics make
     ARB_render_texture both inefficient and cumbersome to use.
 
-    EXT_framebuffer_object, on the other hand, is both simpler to use
+    _framebuffer_object, on the other hand, is both simpler to use
     and more efficient than ARB_render_texture.  The
-    EXT_framebuffer_object API is contained wholly within the GL API and
+    _framebuffer_object API is contained wholly within the GL API and
     has no (non-portable) window-system components.  Under
-    EXT_framebuffer_object, it is not necessary to create a second GL
+    _framebuffer_object, it is not necessary to create a second GL
     context when rendering to a texture image whose format differs from
     that of the window.  Finally, unlike the pbuffers of
     ARB_render_texture, a single framebuffer object can facilitate
@@ -199,15 +199,18 @@ Glossary of Helpful Terms
 
 int lite3d_framebuffer_technique_init(void)
 {
-    if (!GLEW_EXT_framebuffer_object)
+    if (!GLEW_VERSION_3_0)
     {
-        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
-            "%s: GLEW_EXT_framebuffer_object not supported..", __FUNCTION__);
-        return LITE3D_FALSE;
+        if (!GLEW_EXT_framebuffer_object && !GLEW_ARB_framebuffer_object)
+        {
+            SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+                "%s: GLEW_framebuffer_object not supported..", __FUNCTION__);
+            return LITE3D_FALSE;
+        }
     }
 
-    glGetIntegerv(GL_MAX_COLOR_ATTACHMENTS_EXT, &gMaxColorAttachments);
-    glGetIntegerv(GL_MAX_RENDERBUFFER_SIZE_EXT, &gMaxFramebufferSize);
+    glGetIntegerv(GL_MAX_COLOR_ATTACHMENTS, &gMaxColorAttachments);
+    glGetIntegerv(GL_MAX_RENDERBUFFER_SIZE, &gMaxFramebufferSize);
     SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "Framebuffer max color attachments: %d",
         gMaxColorAttachments);
     SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "Framebuffer max size: %d",
@@ -221,7 +224,7 @@ int lite3d_framebuffer_init(lite3d_framebuffer *fb,
 {
     SDL_assert(fb);
 
-    if (glIsFramebufferEXT(fb->framebufferId))
+    if (glIsFramebuffer(fb->framebufferId))
         lite3d_framebuffer_purge(fb);
 
     lite3d_misc_gl_error_stack_clean();
@@ -230,12 +233,12 @@ int lite3d_framebuffer_init(lite3d_framebuffer *fb,
     fb->width = width;
     fb->height = height;
 
-    glGenFramebuffersEXT(1, &fb->framebufferId);
+    glGenFramebuffers(1, &fb->framebufferId);
     fb->status = LITE3D_FRAMEBUFFER_STATUS_EMPTY;
 
     if (lite3d_misc_check_gl_error())
     {
-        glDeleteFramebuffersEXT(1, &fb->framebufferId);
+        glDeleteFramebuffers(1, &fb->framebufferId);
         return LITE3D_FALSE;
     }
 
@@ -246,11 +249,11 @@ void lite3d_framebuffer_purge(lite3d_framebuffer *fb)
 {
     SDL_assert(fb);
 
-    if (!glIsFramebufferEXT(fb->framebufferId))
+    if (!glIsFramebuffer(fb->framebufferId))
         return;
 
-    glDeleteRenderbuffersEXT(fb->renderBuffersCount, fb->renderBuffersIds);
-    glDeleteFramebuffersEXT(1, &fb->framebufferId);
+    glDeleteRenderbuffers(fb->renderBuffersCount, fb->renderBuffersIds);
+    glDeleteFramebuffers(1, &fb->framebufferId);
 }
 
 int lite3d_framebuffer_setup(lite3d_framebuffer *fb,
@@ -265,7 +268,7 @@ int lite3d_framebuffer_setup(lite3d_framebuffer *fb,
         return LITE3D_FALSE;
 
     lite3d_misc_gl_error_stack_clean();
-    glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, fb->framebufferId);
+    glBindFramebuffer(GL_FRAMEBUFFER, fb->framebufferId);
 
     /* setup color attachment */
     if (colorAttachments && colorAttachmentsCount > 0)
@@ -277,7 +280,7 @@ int lite3d_framebuffer_setup(lite3d_framebuffer *fb,
             {
                 case LITE3D_TEXTURE_1D:
                 {
-                    glFramebufferTexture1DEXT(GL_FRAMEBUFFER_EXT,
+                    glFramebufferTexture1D(GL_FRAMEBUFFER,
                         GL_COLOR_ATTACHMENT0 + i,
                         colorAttachments[i].textureTarget,
                         colorAttachments[i].textureID,
@@ -288,7 +291,7 @@ int lite3d_framebuffer_setup(lite3d_framebuffer *fb,
                     break;
                 case LITE3D_TEXTURE_2D:
                 {
-                    glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT,
+                    glFramebufferTexture2D(GL_FRAMEBUFFER,
                         GL_COLOR_ATTACHMENT0 + i,
                         colorAttachments[i].textureTarget,
                         colorAttachments[i].textureID,
@@ -306,15 +309,15 @@ int lite3d_framebuffer_setup(lite3d_framebuffer *fb,
     else if (useColorRenderbuffer)
     {
         fb->useColorbuffer = LITE3D_TRUE;
-        glGenRenderbuffersEXT(1, &fb->renderBuffersIds[renderBuffersCount]);
-        glBindRenderbufferEXT(GL_RENDERBUFFER_EXT,
+        glGenRenderbuffers(1, &fb->renderBuffersIds[renderBuffersCount]);
+        glBindRenderbuffer(GL_RENDERBUFFER,
             fb->renderBuffersIds[renderBuffersCount]);
-        glRenderbufferStorageEXT(GL_RENDERBUFFER_EXT, GL_RGBA8, fb->width,
+        glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, fb->width,
             fb->height);
 
         /* attach color buffer to FBO */
-        glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT,
-            GL_RENDERBUFFER_EXT, fb->renderBuffersIds[renderBuffersCount]);
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
+            GL_RENDERBUFFER, fb->renderBuffersIds[renderBuffersCount]);
 
         renderBuffersCount++;
     }
@@ -332,7 +335,7 @@ int lite3d_framebuffer_setup(lite3d_framebuffer *fb,
             return LITE3D_FALSE;
 
         fb->useDepthbuffer = LITE3D_TRUE;
-        glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT,
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
             GL_TEXTURE_2D, depthAttachments->textureID, 0);
         depthAttachments->isFbAttachment = LITE3D_TRUE;
     }
@@ -340,35 +343,35 @@ int lite3d_framebuffer_setup(lite3d_framebuffer *fb,
     {
         fb->useDepthbuffer = LITE3D_TRUE;
         fb->useStencilbuffer = LITE3D_TRUE;
-        glGenRenderbuffersEXT(1, &fb->renderBuffersIds[renderBuffersCount]);
-        glBindRenderbufferEXT(GL_RENDERBUFFER_EXT,
+        glGenRenderbuffers(1, &fb->renderBuffersIds[renderBuffersCount]);
+        glBindRenderbuffer(GL_RENDERBUFFER,
             fb->renderBuffersIds[renderBuffersCount]);
 
         /* use dual depth/stencil buffer */
-        glRenderbufferStorageEXT(GL_RENDERBUFFER_EXT, GL_DEPTH24_STENCIL8_EXT,
+        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8,
             fb->width, fb->height);
         /* Attach depth buffer to FBO */
-        glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT,
-            GL_RENDERBUFFER_EXT, fb->renderBuffersIds[renderBuffersCount]);
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
+            GL_RENDERBUFFER, fb->renderBuffersIds[renderBuffersCount]);
         /* Also attach as a stencil */
-        glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_STENCIL_ATTACHMENT_EXT,
-            GL_RENDERBUFFER_EXT, fb->renderBuffersIds[renderBuffersCount]);
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT,
+            GL_RENDERBUFFER, fb->renderBuffersIds[renderBuffersCount]);
 
         renderBuffersCount++;
     }
     else if (useDepthRenderbuffer)
     {
         fb->useDepthbuffer = LITE3D_TRUE;
-        glGenRenderbuffersEXT(1, &fb->renderBuffersIds[renderBuffersCount]);
-        glBindRenderbufferEXT(GL_RENDERBUFFER_EXT,
+        glGenRenderbuffers(1, &fb->renderBuffersIds[renderBuffersCount]);
+        glBindRenderbuffer(GL_RENDERBUFFER,
             fb->renderBuffersIds[renderBuffersCount]);
 
         /* use dual depth/stencil buffer */
-        glRenderbufferStorageEXT(GL_RENDERBUFFER_EXT, GL_DEPTH_COMPONENT24,
+        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24,
             fb->width, fb->height);
         /* Attach depth buffer to FBO */
-        glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT,
-            GL_RENDERBUFFER_EXT, fb->renderBuffersIds[renderBuffersCount]);
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
+            GL_RENDERBUFFER, fb->renderBuffersIds[renderBuffersCount]);
 
         renderBuffersCount++;
     }
@@ -383,17 +386,17 @@ int lite3d_framebuffer_setup(lite3d_framebuffer *fb,
     /*
      * This is similar to the case above (Color texture, Depth texture) 
      * except that since there is no color buffer, call glDrawBuffer(GL_NONE) 
-     * before or after calling glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, fb) 
-     * and then render. When you are done, call glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0)
+     * before or after calling glBindFramebuffer(GL_FRAMEBUFFER, fb) 
+     * and then render. When you are done, call glBindFramebuffer(GL_FRAMEBUFFER, 0)
      * to render to the main framebuffer. This is important, call glDrawBuffer(GL_BACK) 
-     * after. If you call before glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0), 
+     * after. If you call before glBindFramebuffer(GL_FRAMEBUFFER, 0), 
      * a GL error will be raised.
      */
     glDrawBuffer(fb->useColorbuffer ? GL_BACK : GL_NONE);
     glReadBuffer(fb->useColorbuffer ? GL_BACK : GL_NONE);
 
     /* Does the GPU support current FBO configuration? */
-    if (glCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT) != GL_FRAMEBUFFER_COMPLETE_EXT)
+    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
     {
         lite3d_framebuffer_purge(fb);
         return LITE3D_FALSE;
@@ -406,8 +409,8 @@ int lite3d_framebuffer_setup(lite3d_framebuffer *fb,
         fb->useStencilbuffer ? "renderbuffer" : "none");
 
     /* bind screen by current FBO */
-    glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, 0);
-    glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
+    glBindRenderbuffer(GL_RENDERBUFFER, 0);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
     fb->status = LITE3D_FRAMEBUFFER_STATUS_OK;
     return LITE3D_TRUE;
@@ -435,7 +438,7 @@ void lite3d_framebuffer_switch(lite3d_framebuffer *fb)
 
     if (fb != gCurrentFb)
     {
-        glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, fb->framebufferId);
+        glBindFramebuffer(GL_FRAMEBUFFER, fb->framebufferId);
         gCurrentFb = fb;
 
         glDrawBuffer(gCurrentFb->useColorbuffer ? GL_BACK : GL_NONE);

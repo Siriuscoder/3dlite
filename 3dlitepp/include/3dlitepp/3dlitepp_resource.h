@@ -41,7 +41,7 @@ namespace lite3dpp
             SCENE,
             MATERIAL,
             TEXTURE,
-            SHADER_PROGRAMM,
+            SHADER_PROGRAM,
             RENDER_TARGET
         };
 
