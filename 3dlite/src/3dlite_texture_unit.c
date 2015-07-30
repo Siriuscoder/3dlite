@@ -98,16 +98,16 @@ static void apply_image_filters(void)
                 iluAlienify();
                 break;
             case LITE3D_BLURAVG_FILTER:
-                iluBlurAvg(gFilters[i].param1.intVal);
+                iluBlurAvg((ILint)gFilters[i].param1);
                 break;
             case LITE3D_BLURGAUSSIAN_FILTER:
-                iluBlurGaussian(gFilters[i].param1.intVal);
+                iluBlurGaussian((ILint)gFilters[i].param1);
                 break;
             case LITE3D_CONTRAST_FILTER:
-                iluContrast(gFilters[i].param1.floatVal);
+                iluContrast(gFilters[i].param1);
                 break;
             case LITE3D_GAMMACORRECT_FILTER:
-                iluGammaCorrect(gFilters[i].param1.floatVal);
+                iluGammaCorrect(gFilters[i].param1);
                 break;
             case LITE3D_MIRROR_FILTER:
                 iluMirror();
@@ -116,17 +116,17 @@ static void apply_image_filters(void)
                 iluNegative();
                 break;
             case LITE3D_NOISIFY_FILTER:
-                iluNoisify(gFilters[i].param1.floatVal);
+                iluNoisify(gFilters[i].param1);
                 break;
             case LITE3D_PIXELIZE_FILTER:
-                iluPixelize(gFilters[i].param1.intVal);
+                iluPixelize((ILint)gFilters[i].param1);
                 break;
             case LITE3D_WAVE_FILTER:
-                iluWave(gFilters[i].param1.floatVal);
+                iluWave(gFilters[i].param1);
                 break;
             case LITE3D_SHARPEN_FILTER:
-                iluSharpen(gFilters[i].param1.floatVal,
-                    gFilters[i].param2.intVal);
+                iluSharpen(gFilters[i].param1,
+                    (ILint)gFilters[i].param2);
                 break;
         }
     }
@@ -156,10 +156,10 @@ void lite3d_texture_technique_add_image_filter(lite3d_image_filter *filter)
 {
     SDL_assert(filter);
 
-    if (gFiltersCount >= LITE3D_MAX_FILTERS)
-        lite3d_texture_technique_reset_filters();
-
-    gFilters[gFiltersCount] = *filter;
+    if (gFiltersCount < LITE3D_MAX_FILTERS)
+    {
+        gFilters[gFiltersCount++] = *filter;
+    }
 }
 
 void lite3d_texture_technique_reset_filters(void)

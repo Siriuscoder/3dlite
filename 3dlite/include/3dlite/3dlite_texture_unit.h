@@ -70,11 +70,7 @@
 typedef struct lite3d_image_filter
 {
     uint32_t filterID;
-    union
-    {
-        int32_t intVal;
-        float floatVal;
-    } param1, param2;
+    float param1, param2;
 } lite3d_image_filter;
 
 typedef struct lite3d_texture_technique_settings
