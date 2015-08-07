@@ -15,6 +15,8 @@
  *	You should have received a copy of the GNU General Public License
  *	along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
+#include <algorithm>
+
 #include <3dlitepp/3dlitepp_main.h>
 #include <3dlitepp/3dlitepp_shader_program.h>
 
@@ -30,12 +32,65 @@ namespace lite3dpp
 
     void ShaderProgram::loadFromJsonImpl(const JsonHelper &helper)
     {
+        stl<lite3d_shader>::vector shaders;
+        shaders.reserve(2);
 
+        try
+        {
+            loadShaders(helper, shaders, LITE3D_SHADER_TYPE_VERTEX);
+            loadShaders(helper, shaders, LITE3D_SHADER_TYPE_FRAGMENT);
+        }
+        catch(std::exception &ex)
+        {
+            unloadShaders(shaders);
+            throw ex;
+        }
+
+        if(!lite3d_shader_program_init(&mProgram))
+            throw std::runtime_error("Shader program init failed..");
+
+        try
+        {
+            if(!lite3d_shader_program_link(&mProgram, &shaders[0], shaders.size()))
+                throw std::runtime_error(getPath() + " link: " + mProgram.statusString);
+        }
+        catch(std::exception &ex)
+        {
+            unloadShaders(shaders);
+            unloadImpl();
+            throw ex;
+        }
+
+        unloadShaders(shaders);
     }
 
     void ShaderProgram::unloadImpl()
     {
+        lite3d_shader_program_purge(&mProgram);
+    }
 
+    void ShaderProgram::loadShaders(const JsonHelper &helper, 
+        stl<lite3d_shader>::vector &shaders, uint8_t shaderType)
+    {
+        for(const JsonHelper &vsScript : helper.getObjects(shaderType == LITE3D_SHADER_TYPE_VERTEX ? L"vs" : L"ps"))
+        {
+            shaders.resize(shaders.size()+1);
+            if(!lite3d_shader_init(&shaders.back(), LITE3D_SHADER_TYPE_VERTEX))
+                throw std::runtime_error("Shader init failed..");
+
+            size_t sourceLen;
+            if(!lite3d_shader_compile(&shaders.back(), 
+                (const char *)mMain->getResourceManager()->loadFileToMemory(vsScript.getString(L"Source"), &sourceLen), sourceLen))
+                throw std::runtime_error(vsScript.getString(L"Source") + " compile: " + shaders.back().statusString);
+        }
+    }
+
+    void ShaderProgram::unloadShaders(stl<lite3d_shader>::vector &shaders)
+    {
+        for(lite3d_shader &shader : shaders)
+        {
+            lite3d_shader_purge(&shader);
+        }
     }
 }
 

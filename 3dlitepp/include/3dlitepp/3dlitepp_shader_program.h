@@ -44,6 +44,12 @@ namespace lite3dpp
 
     private:
 
+        void loadShaders(const JsonHelper &helper, 
+            stl<lite3d_shader>::vector &shaders, uint8_t shaderType);
+        void unloadShaders(stl<lite3d_shader>::vector &shaders);
+
+    private:
+
         lite3d_shader_program mProgram;
     };
 }

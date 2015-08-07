@@ -154,7 +154,7 @@ static int initMaterials(void)
         "   vTexCoord = texCoordAttr; "
         "   vec4 vertex = vec4(vertexAttr, 1.0); "
         "   gl_Position = projectionMatrix * modelviewMatrix * vertex; "
-        "}"))
+        "}", 0))
         return LITE3D_FALSE;
     lite3d_shader_init(&shaders[1], LITE3D_SHADER_TYPE_FRAGMENT);
     if (!lite3d_shader_compile(&shaders[1],
@@ -163,7 +163,7 @@ static int initMaterials(void)
         "void main() "
         "{"
         "   gl_FragColor = texture2D(diffuse, vTexCoord.st); "
-        "}"))
+        "}", 0))
         return LITE3D_FALSE;
 
     lite3d_shader_program_init(&mProgram);
