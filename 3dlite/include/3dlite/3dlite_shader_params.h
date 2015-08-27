@@ -61,6 +61,8 @@ typedef struct lite3d_shader_parameter
         kmMat3 valmat3;
         kmMat4 valmat4;
     } parameter;
+    /* userdata */
+    void *userdata;
 } lite3d_shader_parameter;
 
 typedef struct lite3d_global_parameters

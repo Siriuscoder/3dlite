@@ -326,7 +326,6 @@ void lite3d_render_stop(void)
 int lite3d_render_target_attach_camera(lite3d_render_target *target, lite3d_camera *camera, uint16_t pass)
 {
     lookUnit *look = NULL;
-    lite3d_list_node *node = NULL;
     SDL_assert(target && camera);
 
     if (!look)

@@ -91,7 +91,9 @@ lite3d_material_pass* lite3d_material_add_pass(
     lite3d_material_pass *pass;
 
     SDL_assert(material);
-    SDL_assert_release(no && no < 0xff);
+    
+    if(!no || no >= 0xff)
+        return NULL;
 
     if(material->passesCapacity < no)
     {
@@ -178,7 +180,7 @@ lite3d_shader_parameter *lite3d_material_pass_get_parameter(
 }
 
 lite3d_material_pass *lite3d_material_get_pass(
-    lite3d_material *material, uint32_t no)
+    const lite3d_material *material, uint32_t no)
 {
     SDL_assert(material);
 

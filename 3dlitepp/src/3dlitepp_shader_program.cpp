@@ -53,13 +53,14 @@ namespace lite3dpp
             if(!lite3d_shader_program_init(&mProgram))
                 throw std::runtime_error("Shader program init failed..");
 
+            mProgram.userdata = this;
             bindAttributeLocations();
 
             SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION,
                 "Linking %s ...", getPath().c_str());
 
             if(!lite3d_shader_program_link(&mProgram, &shaders[0], shaders.size()))
-                throw std::runtime_error(getPath() + " link: " + mProgram.statusString);
+                throw std::runtime_error(getPath() + " link: \"" + mProgram.statusString + "\"");
         }
         catch(std::exception &ex)
         {
@@ -91,7 +92,7 @@ namespace lite3dpp
             size_t sourceLen = 0;
             if(!lite3d_shader_compile(&shaders.back(), 
                 (const char *)mMain->getResourceManager()->loadFileToMemory(source, &sourceLen), sourceLen))
-                throw std::runtime_error(source + " compile: " + shaders.back().statusString);
+                throw std::runtime_error(source + " compile: \"" + shaders.back().statusString + "\"");
         }
     }
 

@@ -27,6 +27,8 @@ typedef struct lite3d_shader_program
     uint32_t programID;
     char *statusString;
     uint8_t success;
+    /* userdata */
+    void *userdata;
 } lite3d_shader_program;
 
 LITE3D_CEXPORT int lite3d_shader_program_technique_init();

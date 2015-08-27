@@ -17,11 +17,15 @@
  *******************************************************************************/
 #pragma once
 
+#include <tuple>
+
 #include <3dlite/3dlite_material.h>
 
 #include <3dlitepp/3dlitepp_common.h>
 #include <3dlitepp/3dlitepp_json_helper.h>
 #include <3dlitepp/3dlitepp_resource.h>
+#include <3dlitepp/3dlitepp_texture.h>
+#include <3dlitepp/3dlitepp_shader_program.h>
 
 namespace lite3dpp
 {
@@ -29,8 +33,9 @@ namespace lite3dpp
     {
     public:
 
-        typedef stl<lite3dpp_string, lite3d_shader_parameter>::map ShaderParameters;
-
+        typedef stl<lite3dpp_string, std::tuple<lite3d_material_pass *, lite3d_shader_parameter> >::map MaterialParameters;
+        typedef stl<uint16_t,  lite3d_material_pass *>::map Passes;
+        
         Material(const lite3dpp_string &name, 
             const lite3dpp_string &path, Main *main);
 
@@ -39,8 +44,25 @@ namespace lite3dpp
         inline lite3d_material *getPtr()
         { return &mMaterial; }
 
-
-
+        uint16_t addPass();
+        void removePass(uint16_t pass); 
+        void setPassProgram(uint16_t pass, ShaderProgram *program);
+        /* if pass == 0 parameter will be used for all passes */
+        void setFloatParameter(uint16_t pass, const lite3dpp_string &name, float value);
+        void setFloatv3Parameter(uint16_t pass, const lite3dpp_string &name, const kmVec3 &value);
+        void setFloatv4Parameter(uint16_t pass, const lite3dpp_string &name, const kmVec4 &value);
+        void setFloatm3Parameter(uint16_t pass, const lite3dpp_string &name, const kmMat3 &value);
+        void setFloatm4Parameter(uint16_t pass, const lite3dpp_string &name, const kmMat4 &value);
+        void setSamplerTextureParameter(uint16_t pass, const lite3dpp_string &name, Texture *texture);
+        
+        ShaderProgram *getPassProgram(uint16_t pass) const;
+        float getFloatParameter(uint16_t pass, const lite3dpp_string &name) const;
+        kmVec3 getFloatv3Parameter(uint16_t pass, const lite3dpp_string &name) const;
+        kmVec4 getFloatv4Parameter(uint16_t pass, const lite3dpp_string &name) const;
+        kmMat3 getFloatm3Parameter(uint16_t pass, const lite3dpp_string &name) const;
+        kmMat4 getFloatm4Parameter(uint16_t pass, const lite3dpp_string &name) const;
+        
+        
     protected:
 
         virtual void loadFromJsonImpl(const JsonHelper &helper);
@@ -49,7 +71,7 @@ namespace lite3dpp
     private:
 
         lite3d_material mMaterial;
-        ShaderParameters mShaderParameters;
+        MaterialParameters mMaterialParameters;
+        Passes mPasses;
     };
 }
-

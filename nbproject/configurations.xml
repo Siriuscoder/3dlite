@@ -160,6 +160,7 @@
           <in>3dlitepp_manageable.cpp</in>
           <in>3dlitepp_material.cpp</in>
           <in>3dlitepp_mesh.cpp</in>
+          <in>3dlitepp_render_target.cpp</in>
           <in>3dlitepp_resource.cpp</in>
           <in>3dlitepp_resource_manager.cpp</in>
           <in>3dlitepp_scene.cpp</in>
@@ -174,6 +175,8 @@
           <in>3dlitepp_script_types.cpp</in>
           <in>3dlitepp_script_vec3.cpp</in>
           <in>3dlitepp_script_vec4.cpp</in>
+          <in>3dlitepp_shader_program.cpp</in>
+          <in>3dlitepp_texture.cpp</in>
         </df>
       </df>
       <df name="CMakeFiles">
@@ -823,6 +826,21 @@
           </preprocessorList>
         </ccTool>
       </item>
+      <item path="3dlitepp/src/3dlitepp_render_target.cpp"
+            ex="false"
+            tool="1"
+            flavor2="8">
+        <ccTool flags="1">
+          <incDir>
+            <pElem>/usr/include/SDL2</pElem>
+            <pElem>build/3dlitepp</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>_3dlitepp_EXPORTS</Elem>
+            <Elem>_REENTRANT</Elem>
+          </preprocessorList>
+        </ccTool>
+      </item>
       <item path="3dlitepp/src/3dlitepp_resource.cpp" ex="false" tool="1" flavor2="8">
         <ccTool flags="1">
           <incDir>
@@ -1013,6 +1031,33 @@
             ex="false"
             tool="1"
             flavor2="8">
+        <ccTool flags="1">
+          <incDir>
+            <pElem>/usr/include/SDL2</pElem>
+            <pElem>build/3dlitepp</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>_3dlitepp_EXPORTS</Elem>
+            <Elem>_REENTRANT</Elem>
+          </preprocessorList>
+        </ccTool>
+      </item>
+      <item path="3dlitepp/src/3dlitepp_shader_program.cpp"
+            ex="false"
+            tool="1"
+            flavor2="8">
+        <ccTool flags="1">
+          <incDir>
+            <pElem>/usr/include/SDL2</pElem>
+            <pElem>build/3dlitepp</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>_3dlitepp_EXPORTS</Elem>
+            <Elem>_REENTRANT</Elem>
+          </preprocessorList>
+        </ccTool>
+      </item>
+      <item path="3dlitepp/src/3dlitepp_texture.cpp" ex="false" tool="1" flavor2="8">
         <ccTool flags="1">
           <incDir>
             <pElem>/usr/include/SDL2</pElem>
