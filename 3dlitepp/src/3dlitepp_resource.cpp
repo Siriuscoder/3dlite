@@ -15,6 +15,8 @@
 *	You should have received a copy of the GNU General Public License
 *	along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
+#include <SDL_assert.h>
+
 #include <3dlitepp/3dlitepp_resource.h>
 #include <3dlitepp/3dlitepp_resource_manager.h>
 
@@ -82,6 +84,12 @@ namespace lite3dpp
     void JsonResource::reloadImpl()
     {
         loadFromJsonImpl(*mJsonHelper);
+    }
+
+    const JsonHelper &JsonResource::getJson() const
+    {
+        SDL_assert(mJsonHelper);
+        return *mJsonHelper;
     }
 
     NoncopiableResource::NoncopiableResource()

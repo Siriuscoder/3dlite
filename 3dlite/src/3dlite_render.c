@@ -30,6 +30,7 @@ typedef struct lookUnit
 {
     lite3d_list_node rtLink;
     lite3d_camera *camera;
+    uint16_t pass;
 } lookUnit;
 
 static uint64_t gLastMark = 0;
@@ -105,7 +106,8 @@ static void update_render_target(lite3d_render_target *target)
     {
         look = LITE3D_MEMBERCAST(lookUnit, node, rtLink);
         scene = (lite3d_scene *) look->camera->cameraNode.scene;
-        lite3d_scene_render(scene, look->camera);
+
+        lite3d_scene_render(scene, look->camera, look->pass);
 
         /* accamulate statistics */
         gRenderStats.trianglesByFrame += scene->stats.trianglesRendered;
@@ -321,33 +323,25 @@ void lite3d_render_stop(void)
     gRenderStarted = LITE3D_FALSE;
 }
 
-int lite3d_render_target_attach_camera(lite3d_render_target *target, lite3d_camera *camera)
+int lite3d_render_target_attach_camera(lite3d_render_target *target, lite3d_camera *camera, uint16_t pass)
 {
     lookUnit *look = NULL;
     lite3d_list_node *node = NULL;
     SDL_assert(target && camera);
-
-    /* check camera already attached to the render target */
-    node = &target->lookSequence.l;
-    while ((node = lite3d_list_next(node)) != &target->lookSequence.l)
-    {
-        look = LITE3D_MEMBERCAST(lookUnit, node, rtLink);
-        if (look->camera == camera)
-            return LITE3D_FALSE;
-    }
 
     if (!look)
         look = (lookUnit *) lite3d_calloc_pooled(LITE3D_POOL_NO1, sizeof (lookUnit));
     SDL_assert_release(look);
 
     look->camera = camera;
+    look->pass = pass;
     lite3d_list_link_init(&look->rtLink);
     lite3d_list_add_last_link(&look->rtLink, &target->lookSequence);
 
     return LITE3D_TRUE;
 }
 
-int lite3d_render_target_dettach_camera(lite3d_render_target *rt, lite3d_camera *camera)
+int lite3d_render_target_dettach_camera(lite3d_render_target *rt, lite3d_camera *camera, uint16_t pass)
 {
     lookUnit *look = NULL;
     lite3d_list_node *node = NULL;
@@ -358,7 +352,7 @@ int lite3d_render_target_dettach_camera(lite3d_render_target *rt, lite3d_camera 
     while ((node = lite3d_list_next(node)) != &rt->lookSequence.l)
     {
         look = LITE3D_MEMBERCAST(lookUnit, node, rtLink);
-        if (look->camera == camera)
+        if (look->camera == camera && look->pass == pass)
         {
             lite3d_list_unlink_link(node);
             lite3d_free_pooled(LITE3D_POOL_NO1, look);
@@ -369,14 +363,14 @@ int lite3d_render_target_dettach_camera(lite3d_render_target *rt, lite3d_camera 
     return LITE3D_TRUE;
 }
 
-int lite3d_render_target_screen_attach_camera(lite3d_camera *camera)
+int lite3d_render_target_screen_attach_camera(lite3d_camera *camera, uint16_t pass)
 {
-    return lite3d_render_target_attach_camera(&gScreenRt, camera);
+    return lite3d_render_target_attach_camera(&gScreenRt, camera, pass);
 }
 
-int lite3d_render_target_screen_dettach_camera(lite3d_camera *camera)
+int lite3d_render_target_screen_dettach_camera(lite3d_camera *camera, uint16_t pass)
 {
-    return lite3d_render_target_dettach_camera(&gScreenRt, camera);
+    return lite3d_render_target_dettach_camera(&gScreenRt, camera, pass);
 }
 
 lite3d_render_target *lite3d_render_target_screen_get(void)

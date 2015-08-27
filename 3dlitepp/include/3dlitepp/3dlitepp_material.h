@@ -29,6 +29,8 @@ namespace lite3dpp
     {
     public:
 
+        typedef stl<lite3dpp_string, lite3d_shader_parameter>::map ShaderParameters;
+
         Material(const lite3dpp_string &name, 
             const lite3dpp_string &path, Main *main);
 
@@ -36,6 +38,8 @@ namespace lite3dpp
 
         inline lite3d_material *getPtr()
         { return &mMaterial; }
+
+
 
     protected:
 
@@ -45,6 +49,7 @@ namespace lite3dpp
     private:
 
         lite3d_material mMaterial;
+        ShaderParameters mShaderParameters;
     };
 }
 

@@ -166,24 +166,6 @@ namespace lite3dpp
         return JsonHelper();
     }
 
-    stl<JsonHelper>::vector JsonHelper::getObjects(const lite3dpp_wstring &name) const
-    {
-        JSONObject::const_iterator it = mObject.find(name);
-        stl<JsonHelper>::vector result;
-
-        if (it != mObject.end() && it->second->IsArray())
-        {
-            const JSONArray jarray = it->second->AsArray();
-            for (uint32_t i = 0; i < jarray.size(); ++i)
-            {
-                if(jarray[i]->IsObject())
-                    result.push_back(JsonHelper(jarray[i]->AsObject()));
-            }
-        }
-
-        return result;
-    }
-
     bool JsonHelper::isEmpty() const
     {
         return mObject.size() == 0;
@@ -248,5 +230,95 @@ namespace lite3dpp
         };
 
         return quat;
+    }
+
+    stl<JsonHelper>::vector JsonHelper::getObjects(const lite3dpp_wstring &name) const
+    {
+        JSONObject::const_iterator it = mObject.find(name);
+        stl<JsonHelper>::vector result;
+
+        if (it != mObject.end() && it->second->IsArray())
+        {
+            const JSONArray &jarray = it->second->AsArray();
+            for (uint32_t i = 0; i < jarray.size(); ++i)
+            {
+                if(jarray[i]->IsObject())
+                    result.push_back(JsonHelper(jarray[i]->AsObject()));
+            }
+        }
+
+        return result;
+    }
+
+    stl<lite3dpp_string>::vector JsonHelper::getStrings(const lite3dpp_wstring &name) const
+    {
+        JSONObject::const_iterator it = mObject.find(name);
+        stl<lite3dpp_string>::vector result;
+
+        if (it != mObject.end() && it->second->IsArray())
+        {
+            const JSONArray &jarray = it->second->AsArray();
+            for (uint32_t i = 0; i < jarray.size(); ++i)
+            {
+                if(jarray[i]->IsString())
+                    result.push_back(std::move(JSON::wStringToString(jarray[i]->AsString())));
+            }
+        }
+
+        return result;
+    }
+
+    stl<int32_t>::vector JsonHelper::getInts(const lite3dpp_wstring &name) const
+    {
+        JSONObject::const_iterator it = mObject.find(name);
+        stl<int32_t>::vector result;
+
+        if (it != mObject.end() && it->second->IsArray())
+        {
+            const JSONArray &jarray = it->second->AsArray();
+            for (uint32_t i = 0; i < jarray.size(); ++i)
+            {
+                if(jarray[i]->IsNumber())
+                    result.push_back(jarray[i]->AsInt());
+            }
+        }
+
+        return result;
+    }
+
+    stl<double>::vector JsonHelper::getFloats(const lite3dpp_wstring &name) const
+    {
+        JSONObject::const_iterator it = mObject.find(name);
+        stl<double>::vector result;
+
+        if (it != mObject.end() && it->second->IsArray())
+        {
+            const JSONArray &jarray = it->second->AsArray();
+            for (uint32_t i = 0; i < jarray.size(); ++i)
+            {
+                if(jarray[i]->IsNumber())
+                    result.push_back(jarray[i]->AsNumber());
+            }
+        }
+
+        return result;
+    }
+
+    stl<bool>::vector JsonHelper::getBools(const lite3dpp_wstring &name) const
+    {
+        JSONObject::const_iterator it = mObject.find(name);
+        stl<bool>::vector result;
+
+        if (it != mObject.end() && it->second->IsArray())
+        {
+            const JSONArray &jarray = it->second->AsArray();
+            for (uint32_t i = 0; i < jarray.size(); ++i)
+            {
+                if(jarray[i]->IsNumber())
+                    result.push_back(jarray[i]->AsBool());
+            }
+        }
+
+        return result;
     }
 }

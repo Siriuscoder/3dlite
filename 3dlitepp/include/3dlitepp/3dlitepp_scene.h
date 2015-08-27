@@ -40,8 +40,8 @@ namespace lite3dpp
         inline lite3d_scene *getPtr()
         { return &mScene; }
 
-        Camera *getCamera(const lite3dpp_string &name);
-        SceneObject *makeObject(const lite3dpp_string &name,
+        Camera *addCamera(const lite3dpp_string &name);
+        SceneObject *addObject(const lite3dpp_string &name,
             const lite3dpp_string &templatePath, SceneObject *parent);
         SceneObject *getObject(const lite3dpp_string &name);
 

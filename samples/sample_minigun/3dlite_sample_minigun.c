@@ -174,7 +174,7 @@ static int init(void *userdata)
     lite3d_scene_node_touch_material(&mSceneNode, lite3d_mesh_chunk_get_by_index(&mModel, 0), &mMinigunMaterial);
 
     lite3d_scene_add_node(&mScene, &mCamera01.cameraNode, NULL);
-    lite3d_render_target_screen_attach_camera(&mCamera01);
+    lite3d_render_target_screen_attach_camera(&mCamera01, 1);
     lite3d_camera_lookAt(&mCamera01, &viewPos);
 
     return LITE3D_TRUE;

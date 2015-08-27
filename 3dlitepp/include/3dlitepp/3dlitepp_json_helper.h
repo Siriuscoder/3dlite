@@ -41,7 +41,12 @@ namespace lite3dpp
         bool getBool(const lite3dpp_wstring &name, bool def = true) const;
         lite3dpp_string getString(const lite3dpp_wstring &name, const lite3dpp_string &def = "") const;
         JsonHelper getObject(const lite3dpp_wstring &name) const;
+
         stl<JsonHelper>::vector getObjects(const lite3dpp_wstring &name) const;
+        stl<lite3dpp_string>::vector getStrings(const lite3dpp_wstring &name) const;
+        stl<int32_t>::vector getInts(const lite3dpp_wstring &name) const;
+        stl<double>::vector getFloats(const lite3dpp_wstring &name) const;
+        stl<bool>::vector getBools(const lite3dpp_wstring &name) const;
 
         kmVec2 getVec2(const lite3dpp_wstring &name, const kmVec2 &def = KM_VEC2_ZERO) const;
         kmVec3 getVec3(const lite3dpp_wstring &name, const kmVec3 &def = KM_VEC3_ZERO) const;

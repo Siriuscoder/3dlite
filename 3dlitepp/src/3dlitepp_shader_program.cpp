@@ -17,6 +17,8 @@
  *******************************************************************************/
 #include <algorithm>
 
+#include <SDL_log.h>
+
 #include <3dlitepp/3dlitepp_main.h>
 #include <3dlitepp/3dlitepp_shader_program.h>
 
@@ -37,8 +39,8 @@ namespace lite3dpp
 
         try
         {
-            loadShaders(helper, shaders, LITE3D_SHADER_TYPE_VERTEX);
-            loadShaders(helper, shaders, LITE3D_SHADER_TYPE_FRAGMENT);
+            loadShaders(shaders, LITE3D_SHADER_TYPE_VERTEX);
+            loadShaders(shaders, LITE3D_SHADER_TYPE_FRAGMENT);
         }
         catch(std::exception &ex)
         {
@@ -46,11 +48,16 @@ namespace lite3dpp
             throw ex;
         }
 
-        if(!lite3d_shader_program_init(&mProgram))
-            throw std::runtime_error("Shader program init failed..");
-
         try
         {
+            if(!lite3d_shader_program_init(&mProgram))
+                throw std::runtime_error("Shader program init failed..");
+
+            bindAttributeLocations();
+
+            SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION,
+                "Linking %s ...", getPath().c_str());
+
             if(!lite3d_shader_program_link(&mProgram, &shaders[0], shaders.size()))
                 throw std::runtime_error(getPath() + " link: " + mProgram.statusString);
         }
@@ -69,19 +76,22 @@ namespace lite3dpp
         lite3d_shader_program_purge(&mProgram);
     }
 
-    void ShaderProgram::loadShaders(const JsonHelper &helper, 
-        stl<lite3d_shader>::vector &shaders, uint8_t shaderType)
+    void ShaderProgram::loadShaders(stl<lite3d_shader>::vector &shaders, uint8_t shaderType)
     {
-        for(const JsonHelper &vsScript : helper.getObjects(shaderType == LITE3D_SHADER_TYPE_VERTEX ? L"vs" : L"ps"))
+        for(lite3dpp_string &source : getJson().getStrings(shaderType == LITE3D_SHADER_TYPE_VERTEX ? L"vs" : L"ps"))
         {
             shaders.resize(shaders.size()+1);
+
+            SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION,
+                "Compiling %s ...", source.c_str());
+
             if(!lite3d_shader_init(&shaders.back(), LITE3D_SHADER_TYPE_VERTEX))
                 throw std::runtime_error("Shader init failed..");
 
-            size_t sourceLen;
+            size_t sourceLen = 0;
             if(!lite3d_shader_compile(&shaders.back(), 
-                (const char *)mMain->getResourceManager()->loadFileToMemory(vsScript.getString(L"Source"), &sourceLen), sourceLen))
-                throw std::runtime_error(vsScript.getString(L"Source") + " compile: " + shaders.back().statusString);
+                (const char *)mMain->getResourceManager()->loadFileToMemory(source, &sourceLen), sourceLen))
+                throw std::runtime_error(source + " compile: " + shaders.back().statusString);
         }
     }
 
@@ -90,6 +100,16 @@ namespace lite3dpp
         for(lite3d_shader &shader : shaders)
         {
             lite3d_shader_purge(&shader);
+        }
+    }
+
+    void ShaderProgram::bindAttributeLocations()
+    {
+        int location = 0;
+        for(lite3dpp_string &name : getJson().getStrings(L"AttributesLocation"))
+        {
+            lite3d_shader_program_attribute_index(&mProgram, name.c_str(), location);
+            location++;
         }
     }
 }

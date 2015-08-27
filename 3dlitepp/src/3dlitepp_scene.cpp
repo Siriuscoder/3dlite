@@ -44,7 +44,7 @@ namespace lite3dpp
         lite3d_scene_purge(&mScene);
     }
 
-    Camera *Scene::getCamera(const lite3dpp_string &name)
+    Camera *Scene::addCamera(const lite3dpp_string &name)
     {
         Cameras::iterator it = mCameras.find(name);
         if(it != mCameras.end())
@@ -78,7 +78,7 @@ namespace lite3dpp
         }
     }
 
-    SceneObject *Scene::makeObject(const lite3dpp_string &name,
+    SceneObject *Scene::addObject(const lite3dpp_string &name,
         const lite3dpp_string &templatePath, SceneObject *parent)
     {
         if(mObjects.find(name) != mObjects.end())
@@ -132,7 +132,7 @@ namespace lite3dpp
         {
             if(objHelper.isEmpty())
                 continue;
-            SceneObject *sceneObj = makeObject(objHelper.getString(L"Name"),
+            SceneObject *sceneObj = addObject(objHelper.getString(L"Name"),
                 objHelper.getString(L"Object"), base);
 
             if(!objHelper.getObject(L"Position").isEmpty())

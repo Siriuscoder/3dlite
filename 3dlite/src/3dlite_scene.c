@@ -85,7 +85,7 @@ static void mqr_unit_render(lite3d_material_pass *pass, void *data)
     lite3d_mesh_chunk_unbind(prevVao);
 }
 
-static void mqr_render(struct lite3d_scene *scene, lite3d_camera *camera)
+static void mqr_render(struct lite3d_scene *scene, lite3d_camera *camera, uint16_t pass)
 {
     lite3d_mqr_unit *mqrUnit = NULL;
     lite3d_list_node *mqrUnitNode = NULL;
@@ -95,7 +95,7 @@ static void mqr_render(struct lite3d_scene *scene, lite3d_camera *camera)
     {
         mqrUnit = LITE3D_MEMBERCAST(lite3d_mqr_unit, mqrUnitNode, queued);
 
-        lite3d_material_pass_render(mqrUnit->material, camera->materialPass,
+        lite3d_material_pass_render(mqrUnit->material, pass,
             mqr_unit_render, mqrUnit);
         scene->stats.materialBlocks++;
         scene->stats.textureUnitsBinded += mqrUnit->material->textureUnitsBinded;
@@ -186,7 +186,7 @@ static void scene_recursive_nodes_update(lite3d_scene *scene,
     }
 }
 
-void lite3d_scene_render(lite3d_scene *scene, lite3d_camera *camera)
+void lite3d_scene_render(lite3d_scene *scene, lite3d_camera *camera, uint16_t pass)
 {
     SDL_assert(scene && camera);
     /* clean statistic */
@@ -199,7 +199,7 @@ void lite3d_scene_render(lite3d_scene *scene, lite3d_camera *camera)
     /* update scene tree */
     scene_recursive_nodes_update(scene, &scene->rootNode, camera);
     /* render scene */
-    mqr_render(scene, camera);
+    mqr_render(scene, camera, pass);
 
     if (scene->postRender)
         scene->postRender(scene, camera);

@@ -93,6 +93,8 @@ namespace lite3dpp
             const lite3dpp_string &path, Main *main, ResourceType type);
         virtual ~JsonResource();
 
+        const JsonHelper &getJson() const;
+
     protected:
 
         virtual void loadImpl(const void *buffer, size_t size) override final;

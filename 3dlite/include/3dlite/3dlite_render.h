@@ -94,10 +94,10 @@ LITE3D_CEXPORT void lite3d_render_suspend(void);
 LITE3D_CEXPORT void lite3d_render_stop(void);
 LITE3D_CEXPORT void lite3d_render_depth_test(uint8_t on);
 
-LITE3D_CEXPORT int lite3d_render_target_attach_camera(lite3d_render_target *rt, lite3d_camera *camera);
-LITE3D_CEXPORT int lite3d_render_target_dettach_camera(lite3d_render_target *rt, lite3d_camera *camera);
-LITE3D_CEXPORT int lite3d_render_target_screen_attach_camera(lite3d_camera *camera);
-LITE3D_CEXPORT int lite3d_render_target_screen_dettach_camera(lite3d_camera *camera);
+LITE3D_CEXPORT int lite3d_render_target_attach_camera(lite3d_render_target *rt, lite3d_camera *camera, uint16_t pass);
+LITE3D_CEXPORT int lite3d_render_target_dettach_camera(lite3d_render_target *rt, lite3d_camera *camera, uint16_t pass);
+LITE3D_CEXPORT int lite3d_render_target_screen_attach_camera(lite3d_camera *camera, uint16_t pass);
+LITE3D_CEXPORT int lite3d_render_target_screen_dettach_camera(lite3d_camera *camera, uint16_t pass);
 LITE3D_CEXPORT lite3d_render_target *lite3d_render_target_screen_get(void);
 #endif	/* RENDER_H */
 

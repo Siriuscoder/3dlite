@@ -238,5 +238,9 @@ void lite3d_shader_program_attribute_index(
     SDL_assert(program);
     SDL_assert(glIsProgram(program->programID));
 
+    SDL_LogVerbose(SDL_LOG_CATEGORY_APPLICATION,
+        "%s: bind attribute %s:%d for program 0x%x",
+        __FUNCTION__, name, location, program);
+
     glBindAttribLocation(program->programID, location, name);
 }

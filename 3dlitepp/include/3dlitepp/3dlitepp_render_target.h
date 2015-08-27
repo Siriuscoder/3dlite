@@ -41,8 +41,8 @@ namespace lite3dpp
         void setBlankColor(const kmVec4 &color);
         void setCleanMask(uint32_t mask);
 
-        void addCamera(Camera *camera);
-        void removeCamera(Camera *camera);
+        void addCamera(Camera *camera, uint16_t pass);
+        void removeCamera(Camera *camera, uint16_t pass);
 
     protected:
 
