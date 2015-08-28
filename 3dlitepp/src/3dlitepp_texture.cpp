@@ -102,6 +102,8 @@ namespace lite3dpp
                 helper.getInt(L"Height"), helper.getInt(L"Width"), helper.getInt(L"Depth")))
                 throw std::runtime_error(getName() + " texture allocation failed..");
         }
+
+        mTexture.userdata = this;
     }
 
     void Texture::unloadImpl()

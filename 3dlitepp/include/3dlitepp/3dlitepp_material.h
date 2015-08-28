@@ -56,17 +56,23 @@ namespace lite3dpp
         void setSamplerTextureParameter(uint16_t pass, const lite3dpp_string &name, Texture *texture);
         
         ShaderProgram *getPassProgram(uint16_t pass) const;
-        float getFloatParameter(uint16_t pass, const lite3dpp_string &name) const;
-        kmVec3 getFloatv3Parameter(uint16_t pass, const lite3dpp_string &name) const;
-        kmVec4 getFloatv4Parameter(uint16_t pass, const lite3dpp_string &name) const;
-        kmMat3 getFloatm3Parameter(uint16_t pass, const lite3dpp_string &name) const;
-        kmMat4 getFloatm4Parameter(uint16_t pass, const lite3dpp_string &name) const;
-        
+        float getFloatParameter(const lite3dpp_string &name) const;
+        kmVec3 getFloatv3Parameter(const lite3dpp_string &name) const;
+        kmVec4 getFloatv4Parameter(const lite3dpp_string &name) const;
+        kmMat3 getFloatm3Parameter(const lite3dpp_string &name) const;
+        kmMat4 getFloatm4Parameter(const lite3dpp_string &name) const;
+        Texture *getSamplerTextureParameter(const lite3dpp_string &name) const;
         
     protected:
 
         virtual void loadFromJsonImpl(const JsonHelper &helper);
         virtual void unloadImpl();
+
+    private:
+
+        lite3d_shader_parameter *getParameter(const lite3dpp_string &name, 
+            uint8_t type, uint8_t persist, lite3d_material_pass *passPtr);
+        void addParameter(lite3d_material_pass *passPtr, lite3d_shader_parameter *parameterPtr);
 
     private:
 

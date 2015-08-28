@@ -98,6 +98,7 @@ typedef struct lite3d_texture_unit
     int16_t magFilter;
     uint8_t wrapping;
     uint8_t isFbAttachment;
+    void *userdata;
 } lite3d_texture_unit;
 
 LITE3D_CEXPORT void lite3d_texture_technique_add_image_filter(lite3d_image_filter *filter);
