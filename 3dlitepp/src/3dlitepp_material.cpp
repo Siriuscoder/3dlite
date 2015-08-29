@@ -17,6 +17,7 @@
  *******************************************************************************/
 #include <SDL_assert.h>
 
+#include <3dlitepp/3dlitepp_main.h>
 #include <3dlitepp/3dlitepp_material.h>
 
 namespace lite3dpp
@@ -31,7 +32,73 @@ namespace lite3dpp
 
     void Material::loadFromJsonImpl(const JsonHelper &helper)
     {
+        lite3d_material_init(&mMaterial);
+        for(const JsonHelper &passJson : helper.getObjects(L"Passes"))
+        {
+            uint16_t passNo = addPass();
 
+            JsonHelper programJson = passJson.getObject(L"Program");
+            setPassProgram(passNo, mMain->getResourceManager()->queryResource<ShaderProgram>(programJson.getString(L"Name"),
+                programJson.getString(L"Path")));
+
+            for(const JsonHelper &uniformParamJson : passJson.getObjects(L"Uniforms"))
+            {
+                lite3dpp_string paramName = uniformParamJson.getString(L"Name");
+                /* check for global parameters */
+                if(paramName == "ProjectionMatrix")
+                    addParameter(lite3d_material_get_pass(&mMaterial, passNo),
+                        &lite3d_shader_global_parameters()->projectionMatrix);
+                else if(paramName == "CameraMatrix")
+                    addParameter(lite3d_material_get_pass(&mMaterial, passNo),
+                        &lite3d_shader_global_parameters()->cameraMatrix);
+                else if(paramName == "ModelviewMatrix")
+                    addParameter(lite3d_material_get_pass(&mMaterial, passNo),
+                        &lite3d_shader_global_parameters()->modelviewMatrix);
+                else if(paramName == "AmbientLight")
+                    addParameter(lite3d_material_get_pass(&mMaterial, passNo),
+                        &lite3d_shader_global_parameters()->ambientLight);
+                else
+                /* user parameters */
+                {
+                    lite3dpp_string paramType = uniformParamJson.getString(L"Type");
+                    if(paramType == "Float")
+                        setFloatParameter(passNo, paramName, uniformParamJson.getDouble(L"Value"));
+                    if(paramType == "v3")
+                        setFloatv3Parameter(passNo, paramName, uniformParamJson.getVec3(L"Value"));
+                    if(paramType == "v4")
+                        setFloatv4Parameter(passNo, paramName, uniformParamJson.getVec4(L"Value"));
+                }
+            }
+        }
+
+        for(const JsonHelper &uniformParamJson : helper.getObjects(L"Uniforms"))
+        {
+            lite3dpp_string paramName = uniformParamJson.getString(L"Name");
+            /* check for global parameters */
+            if(paramName == "projectionMatrix")
+                addParameter(NULL,
+                    &lite3d_shader_global_parameters()->projectionMatrix);
+            else if(paramName == "pameraMatrix")
+                addParameter(NULL,
+                    &lite3d_shader_global_parameters()->cameraMatrix);
+            else if(paramName == "modelviewMatrix")
+                addParameter(NULL,
+                    &lite3d_shader_global_parameters()->modelviewMatrix);
+            else if(paramName == "ambientLight")
+                addParameter(NULL,
+                    &lite3d_shader_global_parameters()->ambientLight);
+            else
+            /* user parameters */
+            {
+                lite3dpp_string paramType = uniformParamJson.getString(L"Type");
+                if(paramType == "Float")
+                    setFloatParameter(0, paramName, uniformParamJson.getDouble(L"Value"));
+                if(paramType == "v3")
+                    setFloatv3Parameter(0, paramName, uniformParamJson.getVec3(L"Value"));
+                if(paramType == "v4")
+                    setFloatv4Parameter(0, paramName, uniformParamJson.getVec4(L"Value"));
+            }
+        }
     }
 
     void Material::unloadImpl()
