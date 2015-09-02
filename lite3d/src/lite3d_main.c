@@ -15,6 +15,7 @@
  *	You should have received a copy of the GNU General Public License
  *	along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
+#include <stdlib.h>
 #include <SDL.h>
 
 #include <lite3d/lite3d_main.h>
@@ -67,6 +68,8 @@ int lite3d_main(const lite3d_global_settings *settings)
     /* begin lite3d initialization */
     /* setup memory */
     lite3d_memory_init(&gGlobalSettings.userAllocator);
+    /* cleanup engine memory at exit */
+    atexit(lite3d_memory_cleanup);
     /* setup logger */
     lite3d_logger_setup_stdout();
     lite3d_logger_set_logParams(gGlobalSettings.logLevel,
@@ -135,7 +138,6 @@ ret3:
     SDL_Quit();
 ret4:
     lite3d_logger_release();
-    lite3d_memory_cleanup();
 
     return ret;
 }

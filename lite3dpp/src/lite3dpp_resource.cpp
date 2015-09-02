@@ -72,7 +72,7 @@ namespace lite3dpp
 
     void JsonResource::loadImpl(const void *buffer, size_t size)
     {
-        SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION,
+        SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
             "Parsing json (%s) \"%s\" ...", getName().c_str(), getPath().c_str());
 
         mJsonHelper.reset(new JsonHelper(static_cast<const char *>(buffer), size));

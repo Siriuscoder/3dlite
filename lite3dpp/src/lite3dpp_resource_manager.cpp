@@ -37,6 +37,7 @@ namespace lite3dpp
     ResourceManager::~ResourceManager()
     {
         releaseAllResources();
+        releaseFileCache();
     }
 
     AbstractResource *ResourceManager::fetchResource(const String &key)
@@ -102,6 +103,16 @@ namespace lite3dpp
 
             mResources.erase(it);
         }
+    }
+    
+        void ResourceManager::releaseFileCache()
+    {
+        for(Packs::value_type &pack : mPacks)
+        {
+            lite3d_pack_close(pack.second);
+        }
+        
+        mPacks.clear();
     }
 
     String ResourceManager::generateResourceName()

@@ -1,5 +1,5 @@
 {
-    "LogLevel": 3,
+    "LogLevel": 2,
 	"LogFlushAlways": true,
     "TextureSettings": {
         "Anisotropy": 8,

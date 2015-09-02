@@ -29,7 +29,6 @@ namespace lite3dpp
     Main::Main() :
         mResourceManager(this),
         mScriptDispatcher(this),
-        mConfig(NULL),
         mLifeCycleListener(NULL)
     {
         /* init memory model first
@@ -42,13 +41,7 @@ namespace lite3dpp
 
     void Main::initFromConfig(const char *config)
     {           
-        if (mConfig)
-        {
-            delete mConfig;
-            mConfig = NULL;
-        }
-
-        mConfig = new JsonHelper(config);
+        mConfig.reset(new JsonHelper(config));
 
         memset(&mSettings, 0, sizeof (mSettings));
         mSettings.maxFileCacheSize = 0x100000;
@@ -99,7 +92,7 @@ namespace lite3dpp
 
     Main::~Main()
     {
-        lite3d_memory_cleanup();
+
     }
 
     void Main::run()
@@ -144,12 +137,7 @@ namespace lite3dpp
     {
         lite3d_timer_purge(mFixedUpdatesTimer);
         mResourceManager.releaseAllResources();
-        
-        if (mConfig)
-        {
-            delete mConfig;
-            mConfig = NULL;
-        }
+        mResourceManager.releaseFileCache();
     }
 
     WindowRenderTarget *Main::window()

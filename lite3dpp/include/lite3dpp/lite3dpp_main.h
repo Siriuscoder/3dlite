@@ -86,7 +86,7 @@ namespace lite3dpp
 
         ResourceManager mResourceManager;
         ScriptDispatcher mScriptDispatcher;
-        JsonHelper *mConfig;
+        std::unique_ptr<JsonHelper> mConfig;
         lite3d_global_settings mSettings;
         lite3d_timer *mFixedUpdatesTimer;
         LifecycleListener *mLifeCycleListener;

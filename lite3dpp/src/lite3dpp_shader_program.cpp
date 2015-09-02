@@ -55,7 +55,7 @@ namespace lite3dpp
             mProgram.userdata = this;
             bindAttributeLocations();
 
-            SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION,
+            SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
                 "Linking \"%s\" ...", getPath().c_str());
 
             if(!lite3d_shader_program_link(&mProgram, &shaders[0], shaders.size()))
@@ -82,7 +82,7 @@ namespace lite3dpp
         {
             shaders.resize(shaders.size()+1);
 
-            SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION,
+            SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
                 "Compiling \"%s\" ...", source.c_str());
 
             if(!lite3d_shader_init(&shaders.back(), 

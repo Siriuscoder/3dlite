@@ -18,7 +18,6 @@
 #include <iostream>
 #include <lite3dpp/lite3dpp_main.h>
 
-
 class SampleLifecycleListener : public lite3dpp::Main::LifecycleListener
 {
 public:
@@ -37,8 +36,8 @@ public:
         mPlasmagun = scene->getObject("Plasmagun");
 
         lite3dpp::Camera *camera = scene->addCamera("MyCamera");
-        camera->setupPerspective(1.0f, 1000.0f, 45.0f, 
-            (float)main->window()->width() / (float)main->window()->height());
+        camera->setupPerspective(1.0f, 1000.0f, 45.0f,
+                                 (float) main->window()->width() / (float) main->window()->height());
 
         camera->setPosition(mCameraPos);
         camera->lookAt(mCameraLookAt);
@@ -80,23 +79,22 @@ private:
     lite3dpp::SceneObject *mPlasmagun;
 };
 
-
 int main(int agrc, char *args[])
 {
-    lite3dpp::Main mainObj;
-    SampleLifecycleListener lifecycleListener;
-    
     try
     {
+        lite3dpp::Main mainObj;
+        SampleLifecycleListener lifecycleListener;
+
         mainObj.registerLifecycleListener(&lifecycleListener);
         mainObj.initFromConfig("samples/config/config.json");
         mainObj.run();
     }
-    catch(std::exception &ex)
+    catch (std::exception &ex)
     {
         std::cout << "Exception occurred: " << ex.what() << std::endl;
         return -1;
     }
-    
+
     return 0;
 }

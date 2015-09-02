@@ -96,7 +96,8 @@ namespace lite3dpp
 
         void releaseAllResources();
         void releaseResource(const String &name);
-
+        void releaseFileCache();
+        
         ResourceManagerStats getStats() const;
 
         const void *loadFileToMemory(const String &path, size_t *size);

@@ -1,7 +1,7 @@
 Lite 3d rendering engine
 ========================
 
-![](/media/minigun.png "Minigun")
+![](/media/screenshots/minigun.png "Minigun")
 
 About
 -----

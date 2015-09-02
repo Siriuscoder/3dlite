@@ -43,7 +43,7 @@ namespace lite3dpp
         if(mName.size() == 0)
             throw std::runtime_error("Node must have a name..");
 
-        SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION,
+        SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
             "Parsing node %s ...", mName.c_str());
 
         auto meshHelper = json.getObject(L"Mesh");

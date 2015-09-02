@@ -57,7 +57,7 @@ namespace lite3dpp
     {
         SDL_assert(data);
         
-        SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION,
+        SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
             "Compiling %s ...", getPath().c_str());
 
         /*  The CScriptBuilder helper is an add-on that loads the file,
