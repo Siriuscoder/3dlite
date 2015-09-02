@@ -1,0 +1,124 @@
+/******************************************************************************
+*	This file is part of lite3d (Light-weight 3d engine).
+*	Copyright (C) 2015  Sirius (Korolev Nikita)
+*
+*	Foobar is free software: you can redistribute it and/or modify
+*	it under the terms of the GNU General Public License as published by
+*	the Free Software Foundation, either version 3 of the License, or
+*	(at your option) any later version.
+*
+*	Foobar is distributed in the hope that it will be useful,
+*	but WITHOUT ANY WARRANTY; without even the implied warranty of
+*	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*	GNU General Public License for more details.
+*
+*	You should have received a copy of the GNU General Public License
+*	along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
+*******************************************************************************/
+#pragma once
+
+#include <lite3d/lite3d_pack.h>
+
+#include <lite3dpp/lite3dpp_manageable.h>
+#include <lite3dpp/lite3dpp_resource.h>
+
+namespace lite3dpp
+{
+    template<class T>
+    class LITE3DPP_EXPORT AbstractResourceManager : public Manageable
+    {
+    public:
+        
+        virtual T *loadResourceFromFile(const String &fileName) = 0;
+        virtual void unloadResource(T *resource) = 0;
+        virtual void unloadResource(const String &resourceName) = 0;
+        virtual void unloadAllResources() = 0;
+        virtual size_t loadedResourcesSize() const = 0;
+        virtual void init() = 0;
+        virtual void shut() = 0;
+    };
+
+    class LITE3DPP_EXPORT ResourceManager : public Manageable
+    {
+    public:
+
+        typedef stl<String, AbstractResource *>::map Resources;
+        typedef stl<String, lite3d_pack*>::map Packs;
+
+        typedef struct ResourceManagerStats
+        {
+            /* total allocated video memory buffers size */
+            size_t bufferedSize;
+            size_t totalFileCacheSize;
+        } ResourceManagerStats;
+
+        template<class T>
+        T *queryResource(String name, 
+            const String &path = "")
+        {
+            T *result = NULL;
+            AbstractResource *resource;
+
+            if((resource = fetchResource(name)) != NULL)
+            {
+                if((result = dynamic_cast<T*>(resource)) == NULL)
+                    throw std::runtime_error((String("Resource type mismatch: ") + 
+                        name).c_str());
+                return result;
+            }
+
+            if(path.size() == 0)
+            {
+                throw std::runtime_error((String("Resource not found: ") + 
+                    name).c_str());
+            }
+
+            if(name.size() == 0)
+                name = generateResourceName();
+
+            try
+            {
+                /* resource not found.. create one */
+                result = new T(name, path, mMain);
+                loadResource(name, path, result);
+            }
+            catch(std::exception &ex)
+            {
+                delete result;
+                throw ex;
+            }
+
+            return result;
+        }
+
+        ResourceManager(Main *main);
+        virtual ~ResourceManager();
+
+        void releaseAllResources();
+        void releaseResource(const String &name);
+
+        ResourceManagerStats getStats() const;
+
+        const void *loadFileToMemory(const String &path, size_t *size);
+        const lite3d_file *loadFileToMemory(const String &path);
+
+        void addResourceLocation(const String &name,
+            const String &path,
+            size_t fileCacheMaxSize);
+
+    protected:
+
+        String generateResourceName();
+        AbstractResource *fetchResource(const String &key);
+        virtual void loadResource(const String &name, 
+            const String &path,
+            AbstractResource *resource);
+
+    private:
+
+        Main *mMain;
+        Resources mResources;
+        Packs mPacks;
+    };
+}
+

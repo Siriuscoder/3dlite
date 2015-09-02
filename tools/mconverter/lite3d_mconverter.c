@@ -1,5 +1,5 @@
 /******************************************************************************
- *	This file is part of 3dlite (Light-weight 3d engine).
+ *	This file is part of lite3d (Light-weight 3d engine).
  *	Copyright (C) 2014  Sirius (Korolev Nikita)
  *
  *	Foobar is free software: you can redistribute it and/or modify
@@ -22,8 +22,8 @@
 #include <SDL_assert.h>
 #include <SDL_log.h>
 #include <SDL_rwops.h>
-#include <3dlite/3dlite_main.h>
-#include <3dlite/3dlite_m_codec.h>
+#include <lite3d/lite3d_main.h>
+#include <lite3d/lite3d_m_codec.h>
 
 #define DEFAULT_WIDTH           800
 #define DEFAULT_HEIGHT          600

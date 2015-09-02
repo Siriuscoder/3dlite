@@ -1,5 +1,5 @@
 
-#	This file is part of 3dlite (Light-weight 3d engine).
+#	This file is part of lite3d (Light-weight 3d engine).
 #	Copyright (C) 2014  Sirius (Korolev Nikita)
 #
 #	Foobar is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
 #	along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
 
 cmake_minimum_required(VERSION 2.8.9)
-project(3dlite)
+project(lite3d)
 
 if(UNIX)
 include(FindPkgConfig)
@@ -96,13 +96,13 @@ if(NOT ASSIMP_FOUND)
     message(FATAL_ERROR "Assimp library not found..")
 endif()
 
-include(${CMAKE_SOURCE_DIR}/CMake/3dliteCommon.cmake)
+include(${CMAKE_SOURCE_DIR}/CMake/lite3dCommon.cmake)
 
-include_directories("${PROJECT_SOURCE_DIR}/3dlite/include")
-include_directories("${PROJECT_SOURCE_DIR}/3dlitepp/include")
+include_directories("${PROJECT_SOURCE_DIR}/lite3d/include")
+include_directories("${PROJECT_SOURCE_DIR}/lite3dpp/include")
 
-add_subdirectory("${PROJECT_SOURCE_DIR}/3dlite/")
-add_subdirectory("${PROJECT_SOURCE_DIR}/3dlitepp/")
+add_subdirectory("${PROJECT_SOURCE_DIR}/lite3d/")
+add_subdirectory("${PROJECT_SOURCE_DIR}/lite3dpp/")
 add_subdirectory("${PROJECT_SOURCE_DIR}/tests/")
 add_subdirectory("${PROJECT_SOURCE_DIR}/samples/")
 add_subdirectory("${PROJECT_SOURCE_DIR}/tools/")
