@@ -1,0 +1,7 @@
+{
+    "TextureType": "2D",
+    "Filtering": "Trilinear",
+	"Wrapping": "ClampToEdge",
+	"Image": "samples:textures/images/minigun.dds",
+	"ImageFormat": "DDS"
+}

@@ -47,7 +47,7 @@ void lite3d_camera_update_view(lite3d_camera *camera)
     /* compute local camera matrix */
     lite3d_scene_node_update(&camera->cameraNode);
     /* update global camera view matrix */
-    lite3d_shader_set_camera_matrix(&camera->cameraNode.localView);
+    lite3d_shader_set_view_matrix(&camera->cameraNode.localView);
 }
 
 void lite3d_camera_ortho(lite3d_camera *camera, float near,

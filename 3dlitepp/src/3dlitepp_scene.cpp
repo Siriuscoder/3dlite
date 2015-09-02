@@ -17,6 +17,8 @@
  *******************************************************************************/
 #include <algorithm>
 
+#include <SDL_log.h>
+
 #include <3dlitepp/3dlitepp_main.h>
 #include <3dlitepp/3dlitepp_scene.h>
 
@@ -85,8 +87,8 @@ namespace lite3dpp
             throw std::runtime_error(name + " make object failed.. already exist");
 
         size_t fileSize = 0;
-        JsonHelper json(static_cast<const char *>(
-            mMain->getResourceManager()->loadFileToMemory(templatePath, &fileSize)), fileSize);
+        const void *fileData = mMain->getResourceManager()->loadFileToMemory(templatePath, &fileSize);
+        JsonHelper json(static_cast<const char *>(fileData), fileSize);
 
         SceneObject *sceneObject = new SceneObject(name, parent, mMain);
         sceneObject->loadFromTemplate(json);
@@ -101,7 +103,7 @@ namespace lite3dpp
         if((it = mObjects.find(name)) != mObjects.end())
             return it->second;
 
-        return NULL;
+        throw std::runtime_error(name + " object not found");
     }
 
     void Scene::removeAllObjects()
@@ -135,12 +137,9 @@ namespace lite3dpp
             SceneObject *sceneObj = addObject(objHelper.getString(L"Name"),
                 objHelper.getString(L"Object"), base);
 
-            if(!objHelper.getObject(L"Position").isEmpty())
-                sceneObj->getRoot()->setPosition(objHelper.getVec3(L"Position"));
-            if(!objHelper.getObject(L"Rotation").isEmpty())
-                sceneObj->getRoot()->setRotation(objHelper.getQuaternion(L"Rotation"));
-            if(!objHelper.getObject(L"Scale").isEmpty())
-                sceneObj->getRoot()->scale(objHelper.getVec3(L"Scale"));
+            sceneObj->getRoot()->setPosition(objHelper.getVec3(L"Position"));
+            sceneObj->getRoot()->setRotation(objHelper.getQuaternion(L"Rotation"));
+            sceneObj->getRoot()->scale(objHelper.getVec3(L"Scale", KM_VEC3_ONE));
 
             setupObjects(objHelper.getObjects(L"Objects"), sceneObj);
         }

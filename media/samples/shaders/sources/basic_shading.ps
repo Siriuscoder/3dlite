@@ -1,0 +1,7 @@
+uniform sampler2D diffuseTexture;
+varying vec2 tcoords;
+
+void main()
+{
+	gl_FragColor = texture2D(diffuseTexture, tcoords.st);
+}

@@ -66,7 +66,8 @@ static void mqr_unit_render(lite3d_material_pass *pass, void *data)
         SDL_assert(scene);
 
         /* setup global parameters (viewmodel) */
-        lite3d_shader_set_modelview_matrix(&mqrNode->node->cameraView);
+        lite3d_shader_set_modelview_matrix(&mqrNode->node->modelView);
+        lite3d_shader_set_model_matrix(&mqrNode->node->localView);
         /* setup changed uniforms parameters */
         lite3d_material_pass_set_params(mqrUnit->material, pass, LITE3D_TRUE);
         /* do render batch */
@@ -167,7 +168,7 @@ static void scene_recursive_nodes_update(lite3d_scene *scene,
 
     recalcNode = lite3d_scene_node_update(node);
     /* recalc modelview matrix */
-    kmMat4Multiply(&node->cameraView, &camera->cameraNode.localView, &node->worldView);
+    kmMat4Multiply(&node->modelView, &camera->cameraNode.localView, &node->worldView);
     /* render all childrens firts */
     for (nodeLink = node->childNodes.l.next;
         nodeLink != &node->childNodes.l; nodeLink = lite3d_list_next(nodeLink))
@@ -245,11 +246,6 @@ int lite3d_scene_add_node(lite3d_scene *scene, lite3d_scene_node *node,
     /* mean root node */
     if (!baseNode)
         baseNode = &scene->rootNode;
-    else
-    {
-        if (baseNode->scene != scene)
-            return LITE3D_FALSE;
-    }
 
     node->baseNode = baseNode;
     node->scene = scene;
@@ -335,7 +331,7 @@ int lite3d_scene_node_touch_material(
         if (!mqrNode->meshChunk)
         {
             SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
-                "%s: Material index %d not found in mesh..", __FUNCTION__);
+                "%s: mesh chunk is null", __FUNCTION__);
             lite3d_free_pooled(LITE3D_POOL_NO1, mqrNode);
             return LITE3D_FALSE;
         }

@@ -1,0 +1,7 @@
+{
+    "TextureType": "2D",
+    "Filtering": "Trilinear",
+	"Wrapping": "ClampToEdge",
+	"Image": "samples:textures/images/plasmarif02b.dds",
+	"ImageFormat": "DDS"
+}

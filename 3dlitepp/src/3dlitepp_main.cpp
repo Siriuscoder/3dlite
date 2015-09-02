@@ -29,7 +29,8 @@ namespace lite3dpp
     Main::Main() :
         mResourceManager(this),
         mScriptDispatcher(this),
-        mConfig(NULL)
+        mConfig(NULL),
+        mLifeCycleListener(NULL)
     {
         /* init memory model first
          * json parser used lite3d allocator model,
@@ -104,7 +105,7 @@ namespace lite3dpp
     void Main::run()
     {
         if (!lite3d_main(&mSettings))
-            throw std::runtime_error("Main exited with error");
+            throw std::runtime_error("Engine startup failed..");
     }
 
     void Main::stop()
@@ -133,9 +134,6 @@ namespace lite3dpp
 
         /* create image of main window render target (not json needed, in this case use special dummy.json =) ) */
         mResourceManager.queryResource<WindowRenderTarget>("MainWindow", "dummy.json");
-        /* load first script */
-        /* after script been loaded, init script function will be executed */
-        mResourceManager.queryResource<Script>("", mConfig->getString(L"InitScript"));
 
         /* perform fixed update timer */    
         mFixedUpdatesTimer = 
@@ -174,7 +172,7 @@ namespace lite3dpp
         catch (std::exception &ex)
         {
             SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION,
-                         "engineInit: %s", ex.what());
+                         "init: %s", ex.what());
             return LITE3D_FALSE;
         }
 

@@ -44,7 +44,7 @@ namespace lite3dpp
 
     private:
 
-        void loadShaders(stl<lite3d_shader>::vector &shaders, uint8_t shaderType);
+        void loadShaders(stl<lite3d_shader>::vector &shaders);
         void unloadShaders(stl<lite3d_shader>::vector &shaders);
         void bindAttributeLocations();
 

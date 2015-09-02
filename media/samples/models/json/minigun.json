@@ -1,0 +1,16 @@
+{
+    "Codec": "m",
+    "Model": "samples:models/meshes/minigun.m",
+
+	"MaterialMapping": 
+	[
+		{
+			"MaterialIndex": 0,
+			"Material":
+			{
+				"Name": "mat_minigun",
+				"Material": "samples:materials/minigun.json"
+			}
+		}
+	]
+}

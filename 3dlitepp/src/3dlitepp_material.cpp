@@ -15,6 +15,7 @@
  *	You should have received a copy of the GNU General Public License
  *	along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
+#include <SDL_log.h>
 #include <SDL_assert.h>
 
 #include <3dlitepp/3dlitepp_main.h>
@@ -45,28 +46,35 @@ namespace lite3dpp
             {
                 lite3dpp_string paramName = uniformParamJson.getString(L"Name");
                 /* check for global parameters */
-                if(paramName == "ProjectionMatrix")
+                if(paramName == "projectionMatrix")
                     addParameter(lite3d_material_get_pass(&mMaterial, passNo),
                         &lite3d_shader_global_parameters()->projectionMatrix);
-                else if(paramName == "CameraMatrix")
+                else if(paramName == "viewMatrix")
                     addParameter(lite3d_material_get_pass(&mMaterial, passNo),
-                        &lite3d_shader_global_parameters()->cameraMatrix);
-                else if(paramName == "ModelviewMatrix")
+                        &lite3d_shader_global_parameters()->viewMatrix);
+                else if(paramName == "modelMatrix")
+                    addParameter(lite3d_material_get_pass(&mMaterial, passNo),
+                        &lite3d_shader_global_parameters()->modelMatrix);
+                else if(paramName == "modelviewMatrix")
                     addParameter(lite3d_material_get_pass(&mMaterial, passNo),
                         &lite3d_shader_global_parameters()->modelviewMatrix);
-                else if(paramName == "AmbientLight")
+                else if(paramName == "ambientLight")
                     addParameter(lite3d_material_get_pass(&mMaterial, passNo),
                         &lite3d_shader_global_parameters()->ambientLight);
                 else
                 /* user parameters */
                 {
                     lite3dpp_string paramType = uniformParamJson.getString(L"Type");
-                    if(paramType == "Float")
+                    if(paramType == "float")
                         setFloatParameter(passNo, paramName, uniformParamJson.getDouble(L"Value"));
                     if(paramType == "v3")
                         setFloatv3Parameter(passNo, paramName, uniformParamJson.getVec3(L"Value"));
                     if(paramType == "v4")
                         setFloatv4Parameter(passNo, paramName, uniformParamJson.getVec4(L"Value"));
+                    if(paramType == "sampler")
+                        setSamplerTextureParameter(passNo, paramName, 
+                            mMain->getResourceManager()->queryResource<Texture>(uniformParamJson.getString(L"TextureName"),
+                            uniformParamJson.getString(L"TexturePath")));
                 }
             }
         }
@@ -78,9 +86,12 @@ namespace lite3dpp
             if(paramName == "projectionMatrix")
                 addParameter(NULL,
                     &lite3d_shader_global_parameters()->projectionMatrix);
-            else if(paramName == "pameraMatrix")
+            else if(paramName == "viewMatrix")
                 addParameter(NULL,
-                    &lite3d_shader_global_parameters()->cameraMatrix);
+                    &lite3d_shader_global_parameters()->viewMatrix);
+            else if(paramName == "modelMatrix")
+                addParameter(NULL,
+                    &lite3d_shader_global_parameters()->modelMatrix);
             else if(paramName == "modelviewMatrix")
                 addParameter(NULL,
                     &lite3d_shader_global_parameters()->modelviewMatrix);
@@ -97,6 +108,10 @@ namespace lite3dpp
                     setFloatv3Parameter(0, paramName, uniformParamJson.getVec3(L"Value"));
                 if(paramType == "v4")
                     setFloatv4Parameter(0, paramName, uniformParamJson.getVec4(L"Value"));
+                if(paramType == "sampler")
+                    setSamplerTextureParameter(0, paramName, 
+                        mMain->getResourceManager()->queryResource<Texture>(uniformParamJson.getString(L"TextureName"),
+                        uniformParamJson.getString(L"TexturePath")));
             }
         }
     }

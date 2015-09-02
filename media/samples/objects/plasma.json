@@ -1,0 +1,30 @@
+{
+	"Root":
+	{	
+		"Name": "Plasmagun.root",
+		"Nodes": 
+		[
+			{
+				"Name": "Plasmagun.node",
+				"Mesh": 
+				{
+					"Name": "plasmagun.mesh",
+					"Mesh": "samples:models/json/plasmagun.json"
+				},
+				
+				"Nodes": 
+				[
+					{
+						"Name": "PlasmaBattery.node",
+						"Mesh": 
+						{
+							"Name": "plasmabatt.mesh",
+							"Mesh": "samples:models/json/battery.json"
+						}
+					}
+				]
+			}
+		]
+	}
+}
+

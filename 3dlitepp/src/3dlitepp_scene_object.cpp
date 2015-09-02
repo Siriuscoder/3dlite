@@ -17,6 +17,8 @@
  *******************************************************************************/
 #include <algorithm>
 
+#include <SDL_log.h>
+
 #include <3dlitepp/3dlitepp_scene.h>
 #include <3dlitepp/3dlitepp_scene_object.h>
 

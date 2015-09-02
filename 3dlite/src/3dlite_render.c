@@ -186,50 +186,50 @@ void lite3d_render_loop(lite3d_render_listeners *callbacks)
     lite3d_render_target_add(&gScreenRt);
 
     /* start user initialization */
-    if (gRenderListeners.preRender && 
-        !gRenderListeners.preRender(gRenderListeners.userdata))
-        goto render_exit;
-
-    /* begin render loop */
-    while (gRenderStarted)
+    if (!gRenderListeners.preRender || (gRenderListeners.preRender &&
+        gRenderListeners.preRender(gRenderListeners.userdata)))
     {
-        gRenderStats.trianglesByFrame =
-            gRenderStats.objectsByFrame =
-            gRenderStats.batchesByFrame =
-            gRenderStats.materialsByFrame =
-            gRenderStats.materialsPassedByFrame =
-            gRenderStats.textureUnitsByFrame =
-            gRenderStats.verticesByFrame = 0;
-
-        /* get time mark */
-        beginFrameMark = SDL_GetPerformanceCounter();
-        /* induce timers using time mark */
-        lite3d_timer_induce(beginFrameMark, gPerfFreq);
-
-        if (gRenderActive)
+        /* begin render loop */
+        while (gRenderStarted)
         {
-            if (gRenderListeners.preFrame && 
-                !gRenderListeners.preFrame(gRenderListeners.userdata))
-                break;
-            if (!gRenderStarted)
-                break;
-            if (!update_render_targets())
-                break;
-            if (gRenderListeners.postFrame && 
-                !gRenderListeners.postFrame(gRenderListeners.userdata))
-                break;
-        }
+            gRenderStats.trianglesByFrame =
+                gRenderStats.objectsByFrame =
+                gRenderStats.batchesByFrame =
+                gRenderStats.materialsByFrame =
+                gRenderStats.materialsPassedByFrame =
+                gRenderStats.textureUnitsByFrame =
+                gRenderStats.verticesByFrame = 0;
 
-        /* refresh render statistic, render time span used */
-        refresh_render_stats(beginFrameMark, SDL_GetPerformanceCounter());
+            /* get time mark */
+            beginFrameMark = SDL_GetPerformanceCounter();
+            /* induce timers using time mark */
+            lite3d_timer_induce(beginFrameMark, gPerfFreq);
 
-        while (SDL_PollEvent(&wevent))
-        {
-            if (gRenderListeners.processEvent && 
-                !gRenderListeners.processEvent(&wevent, gRenderListeners.userdata))
+            if (gRenderActive)
             {
-                lite3d_render_stop();
-                break;
+                if (gRenderListeners.preFrame && 
+                    !gRenderListeners.preFrame(gRenderListeners.userdata))
+                    break;
+                if (!gRenderStarted)
+                    break;
+                if (!update_render_targets())
+                    break;
+                if (gRenderListeners.postFrame && 
+                    !gRenderListeners.postFrame(gRenderListeners.userdata))
+                    break;
+            }
+
+            /* refresh render statistic, render time span used */
+            refresh_render_stats(beginFrameMark, SDL_GetPerformanceCounter());
+
+            while (SDL_PollEvent(&wevent))
+            {
+                if (gRenderListeners.processEvent && 
+                    !gRenderListeners.processEvent(&wevent, gRenderListeners.userdata))
+                {
+                    lite3d_render_stop();
+                    break;
+                }
             }
         }
     }
@@ -237,7 +237,6 @@ void lite3d_render_loop(lite3d_render_listeners *callbacks)
     if (gRenderListeners.postRender)
         gRenderListeners.postRender(gRenderListeners.userdata);
 
-render_exit:
     lite3d_render_target_erase_all();
     lite3d_render_target_purge(&gScreenRt);
 }

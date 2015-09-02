@@ -104,7 +104,7 @@ namespace lite3dpp
 
     private:
 
-        JsonHelper *mJsonHelper;
+        std::unique_ptr<JsonHelper> mJsonHelper;
     };
 
     class LITE3DPP_EXPORT NoncopiableResource

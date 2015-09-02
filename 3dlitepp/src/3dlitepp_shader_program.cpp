@@ -39,8 +39,7 @@ namespace lite3dpp
 
         try
         {
-            loadShaders(shaders, LITE3D_SHADER_TYPE_VERTEX);
-            loadShaders(shaders, LITE3D_SHADER_TYPE_FRAGMENT);
+            loadShaders(shaders);
         }
         catch(std::exception &ex)
         {
@@ -57,7 +56,7 @@ namespace lite3dpp
             bindAttributeLocations();
 
             SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION,
-                "Linking %s ...", getPath().c_str());
+                "Linking \"%s\" ...", getPath().c_str());
 
             if(!lite3d_shader_program_link(&mProgram, &shaders[0], shaders.size()))
                 throw std::runtime_error(getPath() + " link: \"" + mProgram.statusString + "\"");
@@ -77,21 +76,24 @@ namespace lite3dpp
         lite3d_shader_program_purge(&mProgram);
     }
 
-    void ShaderProgram::loadShaders(stl<lite3d_shader>::vector &shaders, uint8_t shaderType)
+    void ShaderProgram::loadShaders(stl<lite3d_shader>::vector &shaders)
     {
-        for(lite3dpp_string &source : getJson().getStrings(shaderType == LITE3D_SHADER_TYPE_VERTEX ? L"vs" : L"ps"))
+        for(lite3dpp_string &source : getJson().getStrings(L"Sources"))
         {
             shaders.resize(shaders.size()+1);
 
             SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION,
-                "Compiling %s ...", source.c_str());
+                "Compiling \"%s\" ...", source.c_str());
 
-            if(!lite3d_shader_init(&shaders.back(), LITE3D_SHADER_TYPE_VERTEX))
+            if(!lite3d_shader_init(&shaders.back(), 
+                source.find(".vs") != lite3dpp_string::npos ? LITE3D_SHADER_TYPE_VERTEX : LITE3D_SHADER_TYPE_FRAGMENT))
                 throw std::runtime_error("Shader init failed..");
 
             size_t sourceLen = 0;
+            const void *sourceData = mMain->getResourceManager()->loadFileToMemory(source, &sourceLen);
+
             if(!lite3d_shader_compile(&shaders.back(), 
-                (const char *)mMain->getResourceManager()->loadFileToMemory(source, &sourceLen), sourceLen))
+                static_cast<const char *>(sourceData), sourceLen))
                 throw std::runtime_error(source + " compile: \"" + shaders.back().statusString + "\"");
         }
     }

@@ -16,6 +16,7 @@
 *	along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
 #include <SDL_assert.h>
+#include <SDL_log.h>
 
 #include <3dlitepp/3dlitepp_resource.h>
 #include <3dlitepp/3dlitepp_resource_manager.h>
@@ -67,28 +68,26 @@ namespace lite3dpp
     {}
 
     JsonResource::~JsonResource()
-    {
-        if(mJsonHelper)
-        {
-            delete mJsonHelper;
-            mJsonHelper = NULL;
-        }
-    }
+    {}
 
     void JsonResource::loadImpl(const void *buffer, size_t size)
     {
-        mJsonHelper = new JsonHelper(static_cast<const char *>(buffer), size);
+        SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION,
+            "Parsing json (%s) \"%s\" ...", getName().c_str(), getPath().c_str());
+
+        mJsonHelper.reset(new JsonHelper(static_cast<const char *>(buffer), size));
         reloadImpl();
     }
 
     void JsonResource::reloadImpl()
     {
+        SDL_assert_release(mJsonHelper);
         loadFromJsonImpl(*mJsonHelper);
     }
 
     const JsonHelper &JsonResource::getJson() const
     {
-        SDL_assert(mJsonHelper);
+        SDL_assert_release(mJsonHelper);
         return *mJsonHelper;
     }
 

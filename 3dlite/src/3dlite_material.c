@@ -22,6 +22,8 @@
 #include <3dlite/3dlite_alloc.h>
 #include <3dlite/3dlite_material.h>
 
+lite3d_shader_program *gActProg = NULL;
+
 static void lite3d_material_pass_purge(lite3d_material_pass *pass)
 {
     lite3d_list_node *parameterNode;
@@ -194,7 +196,6 @@ void lite3d_material_pass_render(lite3d_material *material, uint16_t no,
                                  lite3d_pass_render_t func, void *data)
 {
     lite3d_material_pass *pass;
-    lite3d_shader_program *prevProg = NULL;
 
     if(material->passesSize < no)
         return;
@@ -203,10 +204,10 @@ void lite3d_material_pass_render(lite3d_material *material, uint16_t no,
     pass = &material->passes[no-1];
 
     /* bind current shander first */
-    if (prevProg != pass->program)
+    if (gActProg != pass->program)
     {
         lite3d_shader_program_bind(pass->program);
-        prevProg = pass->program;
+        gActProg  = pass->program;
 
         /* set up uniforms if shader changed */
         lite3d_material_pass_set_params(material, pass, LITE3D_FALSE);
@@ -233,7 +234,7 @@ void lite3d_material_pass_set_params(lite3d_material *material,
         parameter = LITE3D_MEMBERCAST(lite3d_material_pass_parameter, 
             parameterNode, parameterLink);
 
-        if (!changed || parameter->parameter->persist)
+        if (changed || parameter->parameter->persist)
         {
             /* sampler case */
             if (parameter->parameter->type == LITE3D_SHADER_PARAMETER_SAMPLER)

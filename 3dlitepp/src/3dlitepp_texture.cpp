@@ -15,6 +15,7 @@
  *	You should have received a copy of the GNU General Public License
  *	along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
+#include <SDL_log.h>
 
 #include <3dlitepp/3dlitepp_main.h>
 #include <3dlitepp/3dlitepp_texture.h>

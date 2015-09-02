@@ -1,0 +1,26 @@
+{
+    "LogLevel": 3,
+	"LogFlushAlways": true,
+    "TextureSettings": {
+        "Anisotropy": 8,
+        "Compression": true
+    },
+    "VideoSettings": {
+        "Width": 800,
+        "Height": 600,
+        "Caption": "My test window",
+        "ColorBits": 24,
+        "Fullscreen": false,
+        "FSAA": 4,
+        "VSync": true
+    },
+    "ResourceLocations": [
+        {
+            "Name": "samples",
+            "FileCacheMaxSize": 1024000,
+            "Path": "samples/"
+        }
+    ],
+
+    "FixedUpdatesInterval": 30
+}

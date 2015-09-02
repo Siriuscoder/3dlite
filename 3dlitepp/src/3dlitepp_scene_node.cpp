@@ -17,6 +17,8 @@
  *******************************************************************************/
 #include <SDL_assert.h>
 
+#include <SDL_log.h>
+
 #include <3dlitepp/3dlitepp_main.h>
 #include <3dlitepp/3dlitepp_scene_node.h>
 
@@ -38,22 +40,31 @@ namespace lite3dpp
         lite3d_scene_node_init(&mNode);
 
         mName = json.getString(L"Name");
-        auto meshHelper = json.getObject(L"Mesh");
-        setMesh(main->getResourceManager()->queryResource<Mesh>(
-            meshHelper.getString(L"Name"),
-            meshHelper.getString(L"Mesh")));
+        if(mName.size() == 0)
+            throw std::runtime_error("Node must have a name..");
 
-        for(auto &matMap : meshHelper.getObjects(L"MaterialMapping"))
+        SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION,
+            "Parsing node %s ...", mName.c_str());
+
+        auto meshHelper = json.getObject(L"Mesh");
+        if(!meshHelper.isEmpty())
         {
-            replaceMaterial(matMap.getInt(L"MaterialIndex"),
-                main->getResourceManager()->queryResource<Material>(
-                matMap.getString(L"Name"),
-                matMap.getString(L"Material")));
+            setMesh(main->getResourceManager()->queryResource<Mesh>(
+                meshHelper.getString(L"Name"),
+                meshHelper.getString(L"Mesh")));
+
+            for(auto &matMap : meshHelper.getObjects(L"MaterialMapping"))
+            {
+                replaceMaterial(matMap.getInt(L"MaterialIndex"),
+                    main->getResourceManager()->queryResource<Material>(
+                    matMap.getString(L"Name"),
+                    matMap.getString(L"Material")));
+            }
         }
 
-        setPosition(meshHelper.getVec3(L"Position"));
-        setRotation(meshHelper.getQuaternion(L"Rotation"));
-        scale(meshHelper.getVec3(L"Scale"));
+        setPosition(json.getVec3(L"Position"));
+        setRotation(json.getQuaternion(L"Rotation"));
+        scale(json.getVec3(L"Scale", KM_VEC3_ONE));
     }
 
     SceneNode::~SceneNode()
@@ -111,7 +122,10 @@ namespace lite3dpp
             throw std::runtime_error("Attaching node failed..");
 
         if(!mMesh)
+        {
+            mNode.renderable = 0;
             return;
+        }
 
         /* touch material and mesh chunk to node */ 
         for(auto &material : mMaterialMappingReplacement)

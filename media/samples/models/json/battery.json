@@ -1,0 +1,16 @@
+{
+    "Codec": "m",
+    "Model": "samples:models/meshes/battery.m",
+
+	"MaterialMapping": 
+	[
+		{
+			"MaterialIndex": 0,
+			"Material":
+			{
+				"Name": "mat_plasmagun_bat",
+				"Material": "samples:materials/battery.json"
+			}
+		}
+	]
+}

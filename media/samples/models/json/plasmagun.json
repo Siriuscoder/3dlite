@@ -1,0 +1,46 @@
+{
+    "Codec": "m",
+    "Model": "samples:models/meshes/plasmagun.m",
+	"MaterialMappingAutoOrdered": true,
+	
+	"MaterialMapping": 
+	[
+		{
+			"MaterialIndex": 0,
+			"Material":
+			{
+				"Name": "mat_plasmagun_a",
+				"Material": "samples:materials/plasmagun_a.json"
+			}
+		},
+		{
+			"MaterialIndex": 1,
+			"Material":
+			{
+				"Name": "mat_plasmagun_b",
+				"Material": "samples:materials/plasmagun_b.json"
+			}
+		},
+		{
+			"MaterialIndex": 2,
+			"Material":
+			{
+				"Name": "mat_plasmagun_b"
+			}
+		},
+		{
+			"MaterialIndex": 3,
+			"Material":
+			{
+				"Name": "mat_plasmagun_b"
+			}
+		},
+		{
+			"MaterialIndex": 4,
+			"Material":
+			{
+				"Name": "mat_plasmagun_b"
+			}
+		}
+	]
+}

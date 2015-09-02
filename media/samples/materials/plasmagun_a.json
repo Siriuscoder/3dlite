@@ -1,0 +1,25 @@
+{
+	"Uniforms":
+	[
+		{ "Name": "projectionMatrix" },
+		{ "Name": "modelviewMatrix" },
+		
+		{
+			"Name": "diffuseTexture",
+			"Type": "sampler",
+			"TextureName": "plasmagun_a.texture",
+			"TexturePath": "samples:textures/json/plasmagun_a.json"
+		}
+	],
+	
+	"Passes": 
+	[
+		{
+			"Program": 
+			{
+				"Name": "BasicShading",
+				"Path": "samples:shaders/json/basic_shading.json"
+			}
+		}
+	]
+}

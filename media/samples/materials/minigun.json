@@ -1,0 +1,25 @@
+{
+	"Uniforms":
+	[
+		{ "Name": "projectionMatrix" },
+		{ "Name": "modelviewMatrix" },
+		
+		{
+			"Name": "diffuseTexture",
+			"Type": "sampler",
+			"TextureName": "minigun.texture",
+			"TexturePath": "samples:textures/json/minigun.json"
+		}
+	],
+	
+	"Passes": 
+	[
+		{
+			"Program": 
+			{
+				"Name": "BasicShading",
+				"Path": "samples:shaders/json/basic_shading.json"
+			}
+		}
+	]
+}

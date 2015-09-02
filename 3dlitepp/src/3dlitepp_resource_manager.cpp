@@ -171,13 +171,13 @@ namespace lite3dpp
         /* lookup resource package */
         Packs::iterator packIt;
         if((packIt = mPacks.find(packName)) == mPacks.end())
-            throw std::runtime_error(lite3dpp_string("Package not found: ") + packName);
+            throw std::runtime_error(lite3dpp_string("Package not found: ") + packName + ", \"" + path + "\"");
 
         /* load resource file to memory */
         lite3d_file *resourceFile =
             lite3d_pack_file_load(packIt->second, filePath.c_str());
         if(!resourceFile || !resourceFile->isLoaded)
-            throw std::runtime_error(lite3dpp_string("Resource open failed..") + filePath);
+            throw std::runtime_error(lite3dpp_string("File not found.. ") + "\"" + path + "\"");
 
         return resourceFile;
     }

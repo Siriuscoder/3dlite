@@ -15,6 +15,7 @@
  *	You should have received a copy of the GNU General Public License
  *	along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
+#include <SDL_log.h>
 
 #include <3dlite/3dlite_mesh_loader.h>
 #include <3dlitepp/3dlitepp_main.h>
@@ -63,8 +64,8 @@ namespace lite3dpp
         {
             mapMaterial(matMap.getInt(L"MaterialIndex"), 
                 mMain->getResourceManager()->queryResource<Material>(
-                    matMap.getString(L"Name"),
-                    matMap.getString(L"Material")));
+                    matMap.getObject(L"Material").getString(L"Name"),
+                    matMap.getObject(L"Material").getString(L"Material")));
         }
 
         setBufferedSize(mMesh.indexBuffer.size + mMesh.vertexBuffer.size);

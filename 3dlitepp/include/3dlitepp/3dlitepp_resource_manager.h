@@ -85,7 +85,7 @@ namespace lite3dpp
             catch(std::exception &ex)
             {
                 delete result;
-                throw std::runtime_error(ex.what());
+                throw ex;
             }
 
             return result;
