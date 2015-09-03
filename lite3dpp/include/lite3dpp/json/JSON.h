@@ -90,7 +90,7 @@ static inline bool simplejson_wcsnlen(const wchar_t *s, size_t n) {
 // Custom types
 class JSONValue;
 typedef std::vector<JSONValue*> JSONArray;
-typedef std::map<lite3dpp::lite3dpp_wstring, JSONValue*> JSONObject;
+typedef std::map<lite3dpp::WString, JSONValue*> JSONObject;
 
 #include <lite3dpp/json/JSONValue.h>
 
@@ -102,12 +102,12 @@ class JSON
 	public:
 		static JSONValue* Parse(const char *data);
 		static JSONValue* Parse(const wchar_t *data);
-		static lite3dpp::lite3dpp_wstring Stringify(const JSONValue *value);
-        static lite3dpp::String wStringToString(const lite3dpp::lite3dpp_wstring &str);
+		static lite3dpp::WString Stringify(const JSONValue *value);
+        static lite3dpp::String wStringToString(const lite3dpp::WString &str);
         
 	protected:
 		static bool SkipWhitespace(const wchar_t **data);
-		static bool ExtractString(const wchar_t **data, lite3dpp::lite3dpp_wstring &str);
+		static bool ExtractString(const wchar_t **data, lite3dpp::WString &str);
 		static double ParseInt(const wchar_t **data);
 		static double ParseDecimal(const wchar_t **data);
 	private:

@@ -73,17 +73,17 @@ static int initMaterials(void)
     lite3d_material_pass *matPass;
     lite3d_shader shaders[2];
 
-    if (!(file1 = lite3d_pack_file_load(mFileSysPack, "pack/plasmagun/plasmarif02a.dds")))
+    if (!(file1 = lite3d_pack_file_load(mFileSysPack, "textures/images/plasmarif02a.dds")))
         return LITE3D_FALSE;
     if (!lite3d_texture_unit_from_resource(&mRifleTextureA, file1, LITE3D_IMAGE_DDS,
         LITE3D_TEXTURE_2D, LITE3D_TEXTURE_QL_NICEST, LITE3D_TEXTURE_REPEAT))
         return LITE3D_FALSE;
-    if (!(file1 = lite3d_pack_file_load(mFileSysPack, "pack/plasmagun/plasmarif02b.dds")))
+    if (!(file1 = lite3d_pack_file_load(mFileSysPack, "textures/images/plasmarif02b.dds")))
         return LITE3D_FALSE;
     if (!lite3d_texture_unit_from_resource(&mRifleTextureB, file1, LITE3D_IMAGE_DDS,
         LITE3D_TEXTURE_2D, LITE3D_TEXTURE_QL_NICEST, LITE3D_TEXTURE_REPEAT))
         return LITE3D_FALSE;
-    if (!(file1 = lite3d_pack_file_load(mFileSysPack, "pack/plasmagun/plasmarif02c.dds")))
+    if (!(file1 = lite3d_pack_file_load(mFileSysPack, "textures/images/plasmarif02c.dds")))
         return LITE3D_FALSE;
     if (!lite3d_texture_unit_from_resource(&mBattTexture, file1, LITE3D_IMAGE_DDS,
         LITE3D_TEXTURE_2D, LITE3D_TEXTURE_QL_NICEST, LITE3D_TEXTURE_REPEAT))
@@ -186,9 +186,9 @@ static int initModel(void)
 {
     lite3d_file *PlasmaRifl;
     lite3d_file *Battery;
-    if (!(PlasmaRifl = lite3d_pack_file_load(mFileSysPack, "pack/plasmagun/PlasmaRifl.m")))
+    if (!(PlasmaRifl = lite3d_pack_file_load(mFileSysPack, "models/meshes/plasmagun.m")))
         return LITE3D_FALSE;
-    if (!(Battery = lite3d_pack_file_load(mFileSysPack, "pack/plasmagun/Battery.m")))
+    if (!(Battery = lite3d_pack_file_load(mFileSysPack, "models/meshes/battery.m")))
         return LITE3D_FALSE;
 
     if (!lite3d_indexed_mesh_init(&mRifle))
@@ -216,7 +216,7 @@ static int init(void *userdata)
         0.0f, 0.0f, 0.0f
     };
 
-    if (!(mFileSysPack = lite3d_pack_open("tests/", LITE3D_FALSE, 7000000)))
+    if (!(mFileSysPack = lite3d_pack_open("samples/", LITE3D_FALSE, 7000000)))
         return LITE3D_FALSE;
 
     if (!initModel())

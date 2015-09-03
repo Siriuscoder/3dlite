@@ -51,7 +51,7 @@ JSONValue *JSONValue::Parse(const wchar_t **data)
 	// Is it a string?
 	if (**data == '"')
 	{
-		lite3dpp::lite3dpp_wstring str;
+		lite3dpp::WString str;
 		if (!JSON::ExtractString(&(++(*data)), str))
 			return NULL;
 		else
@@ -161,7 +161,7 @@ JSONValue *JSONValue::Parse(const wchar_t **data)
 			}
 
 			// We want a string now...
-			lite3dpp::lite3dpp_wstring name;
+			lite3dpp::WString name;
 			if (!JSON::ExtractString(&(++(*data)), name))
 			{
 				FREE_OBJECT(object);
@@ -321,7 +321,7 @@ JSONValue::JSONValue(/*NULL*/)
 JSONValue::JSONValue(const wchar_t *m_char_value)
 {
 	type = JSONType_String;
-	string_value = lite3dpp::lite3dpp_wstring(m_char_value);
+	string_value = lite3dpp::WString(m_char_value);
 }
 
 /**
@@ -331,7 +331,7 @@ JSONValue::JSONValue(const wchar_t *m_char_value)
  *
  * @param lite3dpp::lited3dpp_wstring m_string_value The string to use as the value
  */
-JSONValue::JSONValue(const lite3dpp::lite3dpp_wstring &m_string_value)
+JSONValue::JSONValue(const lite3dpp::WString &m_string_value)
 {
 	type = JSONType_String;
 	string_value = m_string_value;
@@ -493,7 +493,7 @@ bool JSONValue::IsObject() const
  *
  * @return lite3dpp::lited3dpp_wstring Returns the string value
  */
-const lite3dpp::lite3dpp_wstring &JSONValue::AsString() const
+const lite3dpp::WString &JSONValue::AsString() const
 {
 	return string_value;
 }
@@ -668,9 +668,9 @@ JSONValue* JSONValue::Child(const wchar_t* name)
  *
  * @return std::vector<lite3dpp::lited3dpp_wstring> A vector containing the keys.
  */
-std::vector<lite3dpp::lite3dpp_wstring> JSONValue::ObjectKeys() const
+std::vector<lite3dpp::WString> JSONValue::ObjectKeys() const
 {
-	std::vector<lite3dpp::lite3dpp_wstring> keys;
+	std::vector<lite3dpp::WString> keys;
 
 	if (type == JSONType_Object)
 	{
@@ -695,7 +695,7 @@ std::vector<lite3dpp::lite3dpp_wstring> JSONValue::ObjectKeys() const
  *
  * @return lite3dpp::lited3dpp_wstring Returns the JSON string
  */
-lite3dpp::lite3dpp_wstring JSONValue::Stringify(bool const prettyprint) const
+lite3dpp::WString JSONValue::Stringify(bool const prettyprint) const
 {
 	size_t const indentDepth = prettyprint ? 1 : 0;
 	return StringifyImpl(indentDepth);
@@ -711,12 +711,12 @@ lite3dpp::lite3dpp_wstring JSONValue::Stringify(bool const prettyprint) const
  *
  * @return lite3dpp::lited3dpp_wstring Returns the JSON string
  */
-lite3dpp::lite3dpp_wstring JSONValue::StringifyImpl(size_t const indentDepth) const
+lite3dpp::WString JSONValue::StringifyImpl(size_t const indentDepth) const
 {
-	lite3dpp::lite3dpp_wstring ret_string;
+	lite3dpp::WString ret_string;
 	size_t const indentDepth1 = indentDepth ? indentDepth + 1 : 0;
-	lite3dpp::lite3dpp_wstring const indentStr = Indent(indentDepth);
-	lite3dpp::lite3dpp_wstring const indentStr1 = Indent(indentDepth1);
+	lite3dpp::WString const indentStr = Indent(indentDepth);
+	lite3dpp::WString const indentStr1 = Indent(indentDepth1);
 
 	switch (type)
 	{
@@ -795,11 +795,11 @@ lite3dpp::lite3dpp_wstring JSONValue::StringifyImpl(size_t const indentDepth) co
  *
  * @return lite3dpp::lited3dpp_wstring Returns the JSON string
  */
-lite3dpp::lite3dpp_wstring JSONValue::StringifyString(const lite3dpp::lite3dpp_wstring &str)
+lite3dpp::WString JSONValue::StringifyString(const lite3dpp::WString &str)
 {
-	lite3dpp::lite3dpp_wstring str_out = L"\"";
+	lite3dpp::WString str_out = L"\"";
 
-	lite3dpp::lite3dpp_wstring::const_iterator iter = str.begin();
+	lite3dpp::WString::const_iterator iter = str.begin();
 	while (iter != str.end())
 	{
 		wchar_t chr = *iter;
@@ -863,10 +863,10 @@ lite3dpp::lite3dpp_wstring JSONValue::StringifyString(const lite3dpp::lite3dpp_w
 *
 * @return lite3dpp::lited3dpp_wstring Returns the string
 */
-lite3dpp::lite3dpp_wstring JSONValue::Indent(size_t depth)
+lite3dpp::WString JSONValue::Indent(size_t depth)
 {
 	const size_t indent_step = 2;
 	depth ? --depth : 0;
-	lite3dpp::lite3dpp_wstring indentStr(depth * indent_step, ' ');
+	lite3dpp::WString indentStr(depth * indent_step, ' ');
 	return indentStr;
 }

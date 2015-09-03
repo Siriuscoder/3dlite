@@ -36,22 +36,22 @@ namespace lite3dpp
         JsonHelper(const JsonHelper &other);
         ~JsonHelper();
 
-        int32_t getInt(const lite3dpp_wstring &name, int32_t def = 0) const;
-        double getDouble(const lite3dpp_wstring &name, double def = 0) const;
-        bool getBool(const lite3dpp_wstring &name, bool def = true) const;
-        String getString(const lite3dpp_wstring &name, const String &def = "") const;
-        JsonHelper getObject(const lite3dpp_wstring &name) const;
+        int32_t getInt(const WString &name, int32_t def = 0) const;
+        double getDouble(const WString &name, double def = 0) const;
+        bool getBool(const WString &name, bool def = true) const;
+        String getString(const WString &name, const String &def = "") const;
+        JsonHelper getObject(const WString &name) const;
 
-        stl<JsonHelper>::vector getObjects(const lite3dpp_wstring &name) const;
-        stl<String>::vector getStrings(const lite3dpp_wstring &name) const;
-        stl<int32_t>::vector getInts(const lite3dpp_wstring &name) const;
-        stl<double>::vector getFloats(const lite3dpp_wstring &name) const;
-        stl<bool>::vector getBools(const lite3dpp_wstring &name) const;
+        stl<JsonHelper>::vector getObjects(const WString &name) const;
+        stl<String>::vector getStrings(const WString &name) const;
+        stl<int32_t>::vector getInts(const WString &name) const;
+        stl<double>::vector getFloats(const WString &name) const;
+        stl<bool>::vector getBools(const WString &name) const;
 
-        kmVec2 getVec2(const lite3dpp_wstring &name, const kmVec2 &def = KM_VEC2_ZERO) const;
-        kmVec3 getVec3(const lite3dpp_wstring &name, const kmVec3 &def = KM_VEC3_ZERO) const;
-        kmVec4 getVec4(const lite3dpp_wstring &name, const kmVec4 &def = KM_VEC4_ZERO) const;
-        kmQuaternion getQuaternion(const lite3dpp_wstring &name, const kmQuaternion &def = KM_QUATERNION_IDENTITY ) const;
+        kmVec2 getVec2(const WString &name, const kmVec2 &def = KM_VEC2_ZERO) const;
+        kmVec3 getVec3(const WString &name, const kmVec3 &def = KM_VEC3_ZERO) const;
+        kmVec4 getVec4(const WString &name, const kmVec4 &def = KM_VEC4_ZERO) const;
+        kmQuaternion getQuaternion(const WString &name, const kmQuaternion &def = KM_QUATERNION_IDENTITY ) const;
 
 
         bool isEmpty() const;

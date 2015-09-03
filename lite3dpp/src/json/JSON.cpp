@@ -113,7 +113,7 @@ JSONValue *JSON::Parse(const wchar_t *data)
  *
  * @return lite3dpp::lited3dpp_wstring Returns a JSON encoded string representation of the given value
  */
-lite3dpp::lite3dpp_wstring JSON::Stringify(const JSONValue *value)
+lite3dpp::WString JSON::Stringify(const JSONValue *value)
 {
 	if (value != NULL)
 		return value->Stringify();
@@ -149,7 +149,7 @@ bool JSON::SkipWhitespace(const wchar_t **data)
  *
  * @return bool Returns true on success, false on failure
  */
-bool JSON::ExtractString(const wchar_t **data, lite3dpp::lite3dpp_wstring &str)
+bool JSON::ExtractString(const wchar_t **data, lite3dpp::WString &str)
 {
 	str = L"";
 	
@@ -279,7 +279,7 @@ double JSON::ParseDecimal(const wchar_t **data)
 	return decimal;
 }
 
-lite3dpp::String JSON::wStringToString(const lite3dpp::lite3dpp_wstring &str)
+lite3dpp::String JSON::wStringToString(const lite3dpp::WString &str)
 {
     lite3dpp::String strDest(str.begin(), str.end());
     return strDest;

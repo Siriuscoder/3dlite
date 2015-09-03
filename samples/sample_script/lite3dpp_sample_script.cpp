@@ -25,7 +25,7 @@ int main(int agrc, char *args[])
     
     try
     {
-        mainObj.initFromConfig("tests/config/config.json");
+        mainObj.initFromConfig("samples/config/config.json");
         mainObj.run();
     }
     catch(std::exception &ex)

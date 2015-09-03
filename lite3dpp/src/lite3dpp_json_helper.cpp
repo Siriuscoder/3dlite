@@ -111,7 +111,7 @@ namespace lite3dpp
         return true;
     }
 
-    int32_t JsonHelper::getInt(const lite3dpp_wstring &name, int32_t def) const
+    int32_t JsonHelper::getInt(const WString &name, int32_t def) const
     {
         JSONObject::const_iterator it = mObject.find(name);
         if (it != mObject.end() && it->second->IsNumber())
@@ -122,7 +122,7 @@ namespace lite3dpp
         return def;
     }
 
-    double JsonHelper::getDouble(const lite3dpp_wstring &name, double def) const
+    double JsonHelper::getDouble(const WString &name, double def) const
     {
         JSONObject::const_iterator it = mObject.find(name);
         if (it != mObject.end() && it->second->IsNumber())
@@ -133,7 +133,7 @@ namespace lite3dpp
         return def;
     }
 
-    bool JsonHelper::getBool(const lite3dpp_wstring &name, bool def) const
+    bool JsonHelper::getBool(const WString &name, bool def) const
     {
         JSONObject::const_iterator it = mObject.find(name);
         if (it != mObject.end() && it->second->IsBool())
@@ -144,7 +144,7 @@ namespace lite3dpp
         return def;
     }
 
-    String JsonHelper::getString(const lite3dpp_wstring &name, const String &def) const
+    String JsonHelper::getString(const WString &name, const String &def) const
     {
         JSONObject::const_iterator it = mObject.find(name);
         if (it != mObject.end() && it->second->IsString())
@@ -155,7 +155,7 @@ namespace lite3dpp
         return def;
     }
 
-    JsonHelper JsonHelper::getObject(const lite3dpp_wstring &name) const
+    JsonHelper JsonHelper::getObject(const WString &name) const
     {
         JSONObject::const_iterator it = mObject.find(name);
         if (it != mObject.end() && it->second->IsObject())
@@ -171,7 +171,7 @@ namespace lite3dpp
         return mObject.size() == 0;
     }
 
-    kmVec2 JsonHelper::getVec2(const lite3dpp_wstring &name, const kmVec2 &def) const
+    kmVec2 JsonHelper::getVec2(const WString &name, const kmVec2 &def) const
     {
         JsonHelper helper = getObject(name);
         if(helper.isEmpty())
@@ -185,7 +185,7 @@ namespace lite3dpp
         return vec2;
     }
 
-    kmVec3 JsonHelper::getVec3(const lite3dpp_wstring &name, const kmVec3 &def) const
+    kmVec3 JsonHelper::getVec3(const WString &name, const kmVec3 &def) const
     {
         JsonHelper helper = getObject(name);
         if(helper.isEmpty())
@@ -200,7 +200,7 @@ namespace lite3dpp
         return vec3;
     }
 
-    kmVec4 JsonHelper::getVec4(const lite3dpp_wstring &name, const kmVec4 &def) const
+    kmVec4 JsonHelper::getVec4(const WString &name, const kmVec4 &def) const
     {
         JsonHelper helper = getObject(name);
         if(helper.isEmpty())
@@ -216,7 +216,7 @@ namespace lite3dpp
         return vec4;
     }
 
-    kmQuaternion JsonHelper::getQuaternion(const lite3dpp_wstring &name, const kmQuaternion &def) const
+    kmQuaternion JsonHelper::getQuaternion(const WString &name, const kmQuaternion &def) const
     {
         JsonHelper helper = getObject(name);
         if(helper.isEmpty())
@@ -232,7 +232,7 @@ namespace lite3dpp
         return quat;
     }
 
-    stl<JsonHelper>::vector JsonHelper::getObjects(const lite3dpp_wstring &name) const
+    stl<JsonHelper>::vector JsonHelper::getObjects(const WString &name) const
     {
         JSONObject::const_iterator it = mObject.find(name);
         stl<JsonHelper>::vector result;
@@ -250,7 +250,7 @@ namespace lite3dpp
         return result;
     }
 
-    stl<String>::vector JsonHelper::getStrings(const lite3dpp_wstring &name) const
+    stl<String>::vector JsonHelper::getStrings(const WString &name) const
     {
         JSONObject::const_iterator it = mObject.find(name);
         stl<String>::vector result;
@@ -268,7 +268,7 @@ namespace lite3dpp
         return result;
     }
 
-    stl<int32_t>::vector JsonHelper::getInts(const lite3dpp_wstring &name) const
+    stl<int32_t>::vector JsonHelper::getInts(const WString &name) const
     {
         JSONObject::const_iterator it = mObject.find(name);
         stl<int32_t>::vector result;
@@ -286,7 +286,7 @@ namespace lite3dpp
         return result;
     }
 
-    stl<double>::vector JsonHelper::getFloats(const lite3dpp_wstring &name) const
+    stl<double>::vector JsonHelper::getFloats(const WString &name) const
     {
         JSONObject::const_iterator it = mObject.find(name);
         stl<double>::vector result;
@@ -304,7 +304,7 @@ namespace lite3dpp
         return result;
     }
 
-    stl<bool>::vector JsonHelper::getBools(const lite3dpp_wstring &name) const
+    stl<bool>::vector JsonHelper::getBools(const WString &name) const
     {
         JSONObject::const_iterator it = mObject.find(name);
         stl<bool>::vector result;

@@ -144,7 +144,6 @@ protected:
     {
         /* clean memory */
         lite3d_logger_release();
-        lite3d_memory_cleanup();
     }
 
 public:
@@ -210,7 +209,7 @@ public:
 
     virtual void SetUp()
     {
-        mFile7zPack = lite3d_pack_open("tests/pack.1", 1, 700000);
+        mFile7zPack = lite3d_pack_open("tests/pack/pack.1", 1, 700000);
         ASSERT_TRUE(mFile7zPack != NULL);
     }
 

@@ -65,7 +65,7 @@ static int initMaterials(void)
     lite3d_material_pass *matPass;
     lite3d_shader shaders[2];
 
-    if (!(file1 = lite3d_pack_file_load(mFileSysPack, "pack/minigun/minigun.dds")))
+    if (!(file1 = lite3d_pack_file_load(mFileSysPack, "textures/images/minigun.dds")))
         return LITE3D_FALSE;
     if (!lite3d_texture_unit_from_resource(&mMinigunTexture, file1, LITE3D_IMAGE_DDS,
         LITE3D_TEXTURE_2D, LITE3D_TEXTURE_QL_NICEST, LITE3D_TEXTURE_REPEAT))
@@ -135,7 +135,7 @@ static int initMaterials(void)
 static int initModel(void)
 {
     lite3d_file *file1;
-    if (!(file1 = lite3d_pack_file_load(mFileSysPack, "pack/minigun/minigun.m")))
+    if (!(file1 = lite3d_pack_file_load(mFileSysPack, "models/meshes/minigun.m")))
         return LITE3D_FALSE;
 
     if (!lite3d_indexed_mesh_init(&mModel))
@@ -155,7 +155,7 @@ static int init(void *userdata)
         0.0f, 0.0f, 0.0f
     };
 
-    if (!(mFileSysPack = lite3d_pack_open("tests/", LITE3D_FALSE, 7000000)))
+    if (!(mFileSysPack = lite3d_pack_open("samples/", LITE3D_FALSE, 7000000)))
         return LITE3D_FALSE;
 
     if (!initModel())

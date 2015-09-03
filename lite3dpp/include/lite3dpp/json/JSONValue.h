@@ -41,7 +41,7 @@ class JSONValue : public lite3dpp::Manageable
 	public:
 		JSONValue(/*NULL*/);
 		JSONValue(const wchar_t *m_char_value);
-		JSONValue(const lite3dpp::lite3dpp_wstring &m_string_value);
+		JSONValue(const lite3dpp::WString &m_string_value);
 		JSONValue(bool m_bool_value);
 		JSONValue(double m_number_value);
 		JSONValue(const JSONArray &m_array_value);
@@ -55,7 +55,7 @@ class JSONValue : public lite3dpp::Manageable
 		bool IsArray() const;
 		bool IsObject() const;
 
-		const lite3dpp::lite3dpp_wstring &AsString() const;
+		const lite3dpp::WString &AsString() const;
 		bool AsBool() const;
 		double AsNumber() const;
         int AsInt() const;
@@ -67,20 +67,20 @@ class JSONValue : public lite3dpp::Manageable
 		JSONValue *Child(std::size_t index);
 		bool HasChild(const wchar_t* name) const;
 		JSONValue *Child(const wchar_t* name);
-		std::vector<lite3dpp::lite3dpp_wstring> ObjectKeys() const;
+		std::vector<lite3dpp::WString> ObjectKeys() const;
 
-		lite3dpp::lite3dpp_wstring Stringify(bool const prettyprint = false) const;
+		lite3dpp::WString Stringify(bool const prettyprint = false) const;
 
 	protected:
 		static JSONValue *Parse(const wchar_t **data);
 
 	private:
-		static lite3dpp::lite3dpp_wstring StringifyString(const lite3dpp::lite3dpp_wstring &str);
-		lite3dpp::lite3dpp_wstring StringifyImpl(size_t const indentDepth) const;
-		static lite3dpp::lite3dpp_wstring Indent(size_t depth);
+		static lite3dpp::WString StringifyString(const lite3dpp::WString &str);
+		lite3dpp::WString StringifyImpl(size_t const indentDepth) const;
+		static lite3dpp::WString Indent(size_t depth);
 
 		JSONType type;
-		lite3dpp::lite3dpp_wstring string_value;
+		lite3dpp::WString string_value;
 		bool bool_value;
 		double number_value;
 		JSONArray array_value;
