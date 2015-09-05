@@ -31,6 +31,6 @@ protected:
 
 TEST_F(Lite3dpp_MainTest, ConfigureMain)
 {
-    EXPECT_NO_THROW(mMain.initFromConfig("tests/config/config.json"));
+    EXPECT_NO_THROW(mMain.initFromConfig("samples/config/config.json"));
 }
 
