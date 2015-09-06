@@ -63,7 +63,7 @@ namespace lite3dpp
         void parseFromFile(const String &file);
         bool parseFromBuffer(const char *data, size_t size);
 
-        JSONValue *mRoot;
+        std::unique_ptr<JSONValue> mRoot;
         JSONObject mObject;
     };
 }

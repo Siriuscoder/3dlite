@@ -35,30 +35,21 @@ namespace lite3dpp
     }
 
     JsonHelper::~JsonHelper()
-    {
-        if(mRoot)
-            delete mRoot;
-        mRoot = NULL;
-    }
+    {}
 
     // private
     JsonHelper::JsonHelper(const JSONObject &fromJsonObject) : 
-        mRoot(NULL),
         mObject(fromJsonObject)
     {}
 
     // private default
-    JsonHelper::JsonHelper() : 
-        mRoot(NULL)
+    JsonHelper::JsonHelper()
     {}
 
     // copy 
     JsonHelper::JsonHelper(const JsonHelper &other) : 
-        mRoot(NULL),
         mObject(other.mObject)
-    {
-
-    }
+    {}
 
     void JsonHelper::parseFromFile(const String &file)
     {
@@ -95,17 +86,13 @@ namespace lite3dpp
     {
         String bufCopy(data, size);
         /* Parse data from buffer */
-        mRoot = JSON::Parse(bufCopy.c_str());
+        mRoot.reset(JSON::Parse(bufCopy.c_str()));
 
-        if (mRoot == NULL)
+        if (!mRoot)
             return false;
 
         if (!mRoot->IsObject())
-        {
-            delete mRoot;
-            mRoot = NULL;
             return false;
-        }
 
         mObject = mRoot->AsObject();
         return true;

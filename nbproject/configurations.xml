@@ -9,6 +9,8 @@
       </df>
       <df name="lite3dpp">
         <df name="src">
+          <in>lite3dpp_camera.cpp</in>
+          <in>lite3dpp_json_helper.cpp</in>
           <in>lite3dpp_main.cpp</in>
           <in>lite3dpp_material.cpp</in>
           <in>lite3dpp_mesh.cpp</in>
@@ -17,10 +19,12 @@
           <in>lite3dpp_resource_manager.cpp</in>
           <in>lite3dpp_scene.cpp</in>
           <in>lite3dpp_scene_node.cpp</in>
+          <in>lite3dpp_scene_object.cpp</in>
           <in>lite3dpp_script.cpp</in>
           <in>lite3dpp_script_dispatcher.cpp</in>
           <in>lite3dpp_shader_program.cpp</in>
           <in>lite3dpp_texture.cpp</in>
+          <in>lite3dpp_texture_render_target.cpp</in>
         </df>
       </df>
       <df name="samples">
@@ -227,6 +231,17 @@
         <cTool flags="3">
         </cTool>
       </item>
+      <item path="lite3dpp/src/lite3dpp_camera.cpp" ex="false" tool="1" flavor2="8">
+        <ccTool flags="1">
+        </ccTool>
+      </item>
+      <item path="lite3dpp/src/lite3dpp_json_helper.cpp"
+            ex="false"
+            tool="1"
+            flavor2="8">
+        <ccTool flags="1">
+        </ccTool>
+      </item>
       <item path="lite3dpp/src/lite3dpp_main.cpp" ex="false" tool="1" flavor2="8">
         <ccTool flags="1">
         </ccTool>
@@ -268,6 +283,13 @@
         <ccTool flags="1">
         </ccTool>
       </item>
+      <item path="lite3dpp/src/lite3dpp_scene_object.cpp"
+            ex="false"
+            tool="1"
+            flavor2="8">
+        <ccTool flags="1">
+        </ccTool>
+      </item>
       <item path="lite3dpp/src/lite3dpp_script.cpp" ex="false" tool="1" flavor2="8">
         <ccTool flags="1">
         </ccTool>
@@ -287,6 +309,13 @@
         </ccTool>
       </item>
       <item path="lite3dpp/src/lite3dpp_texture.cpp" ex="false" tool="1" flavor2="8">
+        <ccTool flags="1">
+        </ccTool>
+      </item>
+      <item path="lite3dpp/src/lite3dpp_texture_render_target.cpp"
+            ex="false"
+            tool="1"
+            flavor2="8">
         <ccTool flags="1">
         </ccTool>
       </item>
