@@ -15,6 +15,7 @@
 	"Passes": 
 	[
 		{
+			"Pass": 1,
 			"Program": 
 			{
 				"Name": "BasicShading",

@@ -1,25 +1,25 @@
 {
-	"Uniforms":
-	[
-		{ "Name": "projectionMatrix" },
-		{ "Name": "modelviewMatrix" },
-		
-		{
-			"Name": "diffuseTexture",
-			"Type": "sampler",
-			"TextureName": "battery.texture",
-			"TexturePath": "samples:textures/json/plasmagun_c.json"
-		}
-	],
-	
 	"Passes": 
 	[
 		{
+			"Pass": 1,
 			"Program": 
 			{
 				"Name": "BasicShading",
 				"Path": "samples:shaders/json/basic_shading.json"
-			}
+			},
+			"Uniforms":
+			[
+				{ "Name": "projectionMatrix" },
+				{ "Name": "modelviewMatrix" },
+				
+				{
+					"Name": "diffuseTexture",
+					"Type": "sampler",
+					"TextureName": "battery.texture",
+					"TexturePath": "samples:textures/json/plasmagun_c.json"
+				}
+			]
 		}
 	]
 }

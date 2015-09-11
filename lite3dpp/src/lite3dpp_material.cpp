@@ -36,80 +36,52 @@ namespace lite3dpp
         lite3d_material_init(&mMaterial);
         for(const JsonHelper &passJson : helper.getObjects(L"Passes"))
         {
-            uint16_t passNo = addPass();
+            uint16_t passNo = passJson.getInt(L"Pass");
+            addPass(passNo);
 
             JsonHelper programJson = passJson.getObject(L"Program");
             setPassProgram(passNo, mMain->getResourceManager()->queryResource<ShaderProgram>(programJson.getString(L"Name"),
                 programJson.getString(L"Path")));
 
-            for(const JsonHelper &uniformParamJson : passJson.getObjects(L"Uniforms"))
-            {
-                String paramName = uniformParamJson.getString(L"Name");
-                /* check for global parameters */
-                if(paramName == "projectionMatrix")
-                    addParameter(lite3d_material_get_pass(&mMaterial, passNo),
-                        &lite3d_shader_global_parameters()->projectionMatrix);
-                else if(paramName == "viewMatrix")
-                    addParameter(lite3d_material_get_pass(&mMaterial, passNo),
-                        &lite3d_shader_global_parameters()->viewMatrix);
-                else if(paramName == "modelMatrix")
-                    addParameter(lite3d_material_get_pass(&mMaterial, passNo),
-                        &lite3d_shader_global_parameters()->modelMatrix);
-                else if(paramName == "modelviewMatrix")
-                    addParameter(lite3d_material_get_pass(&mMaterial, passNo),
-                        &lite3d_shader_global_parameters()->modelviewMatrix);
-                else if(paramName == "ambientLight")
-                    addParameter(lite3d_material_get_pass(&mMaterial, passNo),
-                        &lite3d_shader_global_parameters()->ambientLight);
-                else
-                /* user parameters */
-                {
-                    String paramType = uniformParamJson.getString(L"Type");
-                    if(paramType == "float")
-                        setFloatParameter(passNo, paramName, uniformParamJson.getDouble(L"Value"));
-                    if(paramType == "v3")
-                        setFloatv3Parameter(passNo, paramName, uniformParamJson.getVec3(L"Value"));
-                    if(paramType == "v4")
-                        setFloatv4Parameter(passNo, paramName, uniformParamJson.getVec4(L"Value"));
-                    if(paramType == "sampler")
-                        setSamplerTextureParameter(passNo, paramName, 
-                            mMain->getResourceManager()->queryResource<Texture>(uniformParamJson.getString(L"TextureName"),
-                            uniformParamJson.getString(L"TexturePath")));
-                }
-            }
+            parseParameteres(passJson, passNo);
         }
 
-        for(const JsonHelper &uniformParamJson : helper.getObjects(L"Uniforms"))
+        parseParameteres(helper, 0);
+    }
+
+    void Material::parseParameteres(const JsonHelper &passJson, uint16_t passNo)
+    {
+        for(const JsonHelper &uniformParamJson : passJson.getObjects(L"Uniforms"))
         {
             String paramName = uniformParamJson.getString(L"Name");
             /* check for global parameters */
             if(paramName == "projectionMatrix")
-                addParameter(NULL,
+                addParameter(lite3d_material_get_pass(&mMaterial, passNo),
                     &lite3d_shader_global_parameters()->projectionMatrix);
             else if(paramName == "viewMatrix")
-                addParameter(NULL,
+                addParameter(lite3d_material_get_pass(&mMaterial, passNo),
                     &lite3d_shader_global_parameters()->viewMatrix);
             else if(paramName == "modelMatrix")
-                addParameter(NULL,
+                addParameter(lite3d_material_get_pass(&mMaterial, passNo),
                     &lite3d_shader_global_parameters()->modelMatrix);
             else if(paramName == "modelviewMatrix")
-                addParameter(NULL,
+                addParameter(lite3d_material_get_pass(&mMaterial, passNo),
                     &lite3d_shader_global_parameters()->modelviewMatrix);
             else if(paramName == "ambientLight")
-                addParameter(NULL,
+                addParameter(lite3d_material_get_pass(&mMaterial, passNo),
                     &lite3d_shader_global_parameters()->ambientLight);
             else
             /* user parameters */
             {
                 String paramType = uniformParamJson.getString(L"Type");
-                if(paramType == "Float")
-                    setFloatParameter(0, paramName, uniformParamJson.getDouble(L"Value"));
+                if(paramType == "float")
+                    setFloatParameter(passNo, paramName, uniformParamJson.getDouble(L"Value"));
                 if(paramType == "v3")
-                    setFloatv3Parameter(0, paramName, uniformParamJson.getVec3(L"Value"));
+                    setFloatv3Parameter(passNo, paramName, uniformParamJson.getVec3(L"Value"));
                 if(paramType == "v4")
-                    setFloatv4Parameter(0, paramName, uniformParamJson.getVec4(L"Value"));
+                    setFloatv4Parameter(passNo, paramName, uniformParamJson.getVec4(L"Value"));
                 if(paramType == "sampler")
-                    setSamplerTextureParameter(0, paramName, 
+                    setSamplerTextureParameter(passNo, paramName, 
                         mMain->getResourceManager()->queryResource<Texture>(uniformParamJson.getString(L"TextureName"),
                         uniformParamJson.getString(L"TexturePath")));
             }
@@ -123,11 +95,11 @@ namespace lite3dpp
         mPasses.clear();
     }
     
-    uint16_t Material::addPass()
+    void Material::addPass(uint16_t passNo)
     {
         lite3d_material_pass *passPtr;
         
-        if(!(passPtr = lite3d_material_add_pass(&mMaterial, mMaterial.passesSize+1)))
+        if(!(passPtr = lite3d_material_add_pass(&mMaterial, passNo)))
             throw std::runtime_error(String("Material \"") + getName() + "\" add pass failed..");
         
         for(MaterialParameters::value_type &parameter : mMaterialParameters)
@@ -140,7 +112,6 @@ namespace lite3dpp
         }
         
         mPasses.insert(std::make_pair(mMaterial.passesSize, passPtr));
-        return mMaterial.passesSize;
     }
     
     void Material::removePass(uint16_t pass)

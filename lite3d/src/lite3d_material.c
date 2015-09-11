@@ -186,7 +186,7 @@ lite3d_material_pass *lite3d_material_get_pass(
 {
     SDL_assert(material);
 
-    if(material->passesSize < no)
+    if(material->passesSize < no || !no)
         return NULL;
 
     return &material->passes[no-1];
@@ -208,10 +208,10 @@ void lite3d_material_pass_render(lite3d_material *material, uint16_t no,
     {
         lite3d_shader_program_bind(pass->program);
         gActProg  = pass->program;
-
-        /* set up uniforms if shader changed */
-        lite3d_material_pass_set_params(material, pass, LITE3D_FALSE);
     }
+
+    /* set up uniforms if shader changed */
+    lite3d_material_pass_set_params(material, pass, LITE3D_TRUE);
 
     func(pass, data);
 

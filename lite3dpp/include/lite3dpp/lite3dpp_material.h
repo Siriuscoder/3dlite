@@ -44,7 +44,7 @@ namespace lite3dpp
         inline lite3d_material *getPtr()
         { return &mMaterial; }
 
-        uint16_t addPass();
+        void addPass(uint16_t passNo);
         void removePass(uint16_t pass); 
         void setPassProgram(uint16_t pass, ShaderProgram *program);
         /* if pass == 0 parameter will be used for all passes */
@@ -73,6 +73,7 @@ namespace lite3dpp
         lite3d_shader_parameter *getParameter(const String &name, 
             uint8_t type, uint8_t persist, lite3d_material_pass *passPtr);
         void addParameter(lite3d_material_pass *passPtr, lite3d_shader_parameter *parameterPtr);
+        void parseParameteres(const JsonHelper &passJson, uint16_t passNo);
 
     private:
 

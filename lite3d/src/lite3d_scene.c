@@ -69,7 +69,7 @@ static void mqr_unit_render(lite3d_material_pass *pass, void *data)
         lite3d_shader_set_modelview_matrix(&mqrNode->node->modelView);
         lite3d_shader_set_model_matrix(&mqrNode->node->localView);
         /* setup changed uniforms parameters */
-        lite3d_material_pass_set_params(mqrUnit->material, pass, LITE3D_TRUE);
+        lite3d_material_pass_set_params(mqrUnit->material, pass, LITE3D_FALSE);
         /* do render batch */
         if (scene->drawBatch)
             scene->drawBatch(scene, mqrNode->node,
