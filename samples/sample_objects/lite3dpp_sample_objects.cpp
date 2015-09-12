@@ -45,7 +45,7 @@ public:
         camera->setPosition(mCameraPos);
         camera->lookAt(mCameraLookAt);
 
-        main->window()->addCamera(camera, 1);
+        main->window()->addCamera(camera, 1, 0);
     }
 
     void shut(lite3dpp::Main *main) override

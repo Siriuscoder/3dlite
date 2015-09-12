@@ -4,7 +4,13 @@
     <df root="." name="0">
       <df name="lite3d">
         <df name="src">
+          <in>lite3d_framebuffer.c</in>
           <in>lite3d_main.c</in>
+          <in>lite3d_material.c</in>
+          <in>lite3d_pack.c</in>
+          <in>lite3d_render.c</in>
+          <in>lite3d_scene.c</in>
+          <in>lite3d_video.c</in>
         </df>
       </df>
       <df name="lite3dpp">
@@ -12,6 +18,7 @@
           <in>lite3dpp_camera.cpp</in>
           <in>lite3dpp_json_helper.cpp</in>
           <in>lite3dpp_main.cpp</in>
+          <in>lite3dpp_manageable.cpp</in>
           <in>lite3dpp_material.cpp</in>
           <in>lite3dpp_mesh.cpp</in>
           <in>lite3dpp_render_target.cpp</in>
@@ -22,14 +29,27 @@
           <in>lite3dpp_scene_object.cpp</in>
           <in>lite3dpp_script.cpp</in>
           <in>lite3dpp_script_dispatcher.cpp</in>
+          <in>lite3dpp_script_log.cpp</in>
           <in>lite3dpp_shader_program.cpp</in>
           <in>lite3dpp_texture.cpp</in>
           <in>lite3dpp_texture_render_target.cpp</in>
         </df>
       </df>
       <df name="samples">
+        <df name="sample_minigun">
+          <in>lite3d_sample_minigun.c</in>
+        </df>
         <df name="sample_objects">
           <in>lite3dpp_sample_objects.cpp</in>
+        </df>
+        <df name="sample_rifle">
+          <in>lite3d_sample_rifle.c</in>
+        </df>
+        <df name="sample_rtt">
+          <in>lite3d_sample_rtt.c</in>
+        </df>
+        <df name="sample_scene_node">
+          <in>lite3d_sample_scene_node.c</in>
         </df>
         <df name="sample_script">
           <in>lite3dpp_sample_script.cpp</in>
@@ -41,6 +61,8 @@
           <in>3dlite_file_cache_test.cpp</in>
           <in>3dlite_vbo_test.cpp</in>
           <in>3dlitepp_main_test.cpp</in>
+          <in>lite3d_common_test.cpp</in>
+          <in>lite3d_vbo_test.cpp</in>
           <in>lite3dpp_main_test.cpp</in>
         </df>
         <df name="gtest">
@@ -95,7 +117,7 @@
           <buildCommandWorkingDir>build</buildCommandWorkingDir>
           <buildCommand>${MAKE} -f Makefile</buildCommand>
           <cleanCommand>${MAKE} -f Makefile clean</cleanCommand>
-          <executablePath>build/bin/Debug/lite3dpp_sample_objects</executablePath>
+          <executablePath>build/bin/Debug/lite3d_sample_render_to_texture</executablePath>
           <ccTool>
             <preprocessorList>
               <Elem>PLATFORM_Linux</Elem>
@@ -149,6 +171,12 @@
         </ccTool>
       </folder>
       <folder path="0/samples">
+        <cTool>
+          <incDir>
+            <pElem>lite3d/include</pElem>
+            <pElem>lite3dpp/include</pElem>
+          </incDir>
+        </cTool>
         <ccTool>
           <incDir>
             <pElem>lite3d/include</pElem>
@@ -159,6 +187,15 @@
           </preprocessorList>
         </ccTool>
       </folder>
+      <folder path="0/samples/sample_minigun">
+        <cTool>
+          <incDir>
+            <pElem>samples/sample_minigun</pElem>
+            <pElem>/usr/include/SDL2</pElem>
+            <pElem>build/samples</pElem>
+          </incDir>
+        </cTool>
+      </folder>
       <folder path="0/samples/sample_objects">
         <ccTool>
           <incDir>
@@ -167,6 +204,33 @@
             <pElem>build/samples</pElem>
           </incDir>
         </ccTool>
+      </folder>
+      <folder path="0/samples/sample_rifle">
+        <cTool>
+          <incDir>
+            <pElem>samples/sample_rifle</pElem>
+            <pElem>/usr/include/SDL2</pElem>
+            <pElem>build/samples</pElem>
+          </incDir>
+        </cTool>
+      </folder>
+      <folder path="0/samples/sample_rtt">
+        <cTool>
+          <incDir>
+            <pElem>samples/sample_rtt</pElem>
+            <pElem>/usr/include/SDL2</pElem>
+            <pElem>build/samples</pElem>
+          </incDir>
+        </cTool>
+      </folder>
+      <folder path="0/samples/sample_scene_node">
+        <cTool>
+          <incDir>
+            <pElem>samples/sample_scene_node</pElem>
+            <pElem>/usr/include/SDL2</pElem>
+            <pElem>build/samples</pElem>
+          </incDir>
+        </cTool>
       </folder>
       <folder path="0/samples/sample_script">
         <ccTool>
@@ -194,6 +258,12 @@
       </folder>
       <folder path="0/tests/functionaly">
         <ccTool>
+          <incDir>
+            <pElem>lite3d/include</pElem>
+            <pElem>lite3dpp/include</pElem>
+            <pElem>/usr/include/SDL2</pElem>
+            <pElem>build/tests/functionaly</pElem>
+          </incDir>
           <preprocessorList>
             <Elem>_REENTRANT</Elem>
           </preprocessorList>
@@ -211,6 +281,8 @@
       <folder path="0/tools">
         <cTool>
           <incDir>
+            <pElem>lite3d/include</pElem>
+            <pElem>lite3dpp/include</pElem>
             <pElem>tools/mconverter</pElem>
             <pElem>/usr/include/SDL2</pElem>
             <pElem>build/tools</pElem>
@@ -227,8 +299,86 @@
           </preprocessorList>
         </cTool>
       </folder>
+      <item path="lite3d/src/lite3d_framebuffer.c" ex="false" tool="0" flavor2="3">
+        <cTool flags="3">
+          <incDir>
+            <pElem>3dlite/include</pElem>
+            <pElem>3dlitepp/include</pElem>
+            <pElem>lite3d/include</pElem>
+            <pElem>lite3dpp/include</pElem>
+            <pElem>/usr/include/SDL2</pElem>
+            <pElem>build/lite3d</pElem>
+          </incDir>
+        </cTool>
+      </item>
       <item path="lite3d/src/lite3d_main.c" ex="false" tool="0" flavor2="3">
         <cTool flags="3">
+          <incDir>
+            <pElem>3dlite/include</pElem>
+            <pElem>3dlitepp/include</pElem>
+            <pElem>lite3d/include</pElem>
+            <pElem>lite3dpp/include</pElem>
+            <pElem>/usr/include/SDL2</pElem>
+            <pElem>build/lite3d</pElem>
+          </incDir>
+        </cTool>
+      </item>
+      <item path="lite3d/src/lite3d_material.c" ex="false" tool="0" flavor2="3">
+        <cTool flags="3">
+          <incDir>
+            <pElem>3dlite/include</pElem>
+            <pElem>3dlitepp/include</pElem>
+            <pElem>lite3d/include</pElem>
+            <pElem>lite3dpp/include</pElem>
+            <pElem>/usr/include/SDL2</pElem>
+            <pElem>build/lite3d</pElem>
+          </incDir>
+        </cTool>
+      </item>
+      <item path="lite3d/src/lite3d_pack.c" ex="false" tool="0" flavor2="3">
+        <cTool flags="3">
+          <incDir>
+            <pElem>3dlite/include</pElem>
+            <pElem>3dlitepp/include</pElem>
+            <pElem>lite3d/include</pElem>
+            <pElem>lite3dpp/include</pElem>
+            <pElem>/usr/include/SDL2</pElem>
+            <pElem>build/lite3d</pElem>
+          </incDir>
+        </cTool>
+      </item>
+      <item path="lite3d/src/lite3d_render.c" ex="false" tool="0" flavor2="3">
+        <cTool flags="3">
+          <incDir>
+            <pElem>lite3d/include</pElem>
+            <pElem>lite3dpp/include</pElem>
+            <pElem>/usr/include/SDL2</pElem>
+            <pElem>build/lite3d</pElem>
+          </incDir>
+        </cTool>
+      </item>
+      <item path="lite3d/src/lite3d_scene.c" ex="false" tool="0" flavor2="3">
+        <cTool flags="3">
+          <incDir>
+            <pElem>3dlite/include</pElem>
+            <pElem>3dlitepp/include</pElem>
+            <pElem>lite3d/include</pElem>
+            <pElem>lite3dpp/include</pElem>
+            <pElem>/usr/include/SDL2</pElem>
+            <pElem>build/lite3d</pElem>
+          </incDir>
+        </cTool>
+      </item>
+      <item path="lite3d/src/lite3d_video.c" ex="false" tool="0" flavor2="3">
+        <cTool flags="3">
+          <incDir>
+            <pElem>3dlite/include</pElem>
+            <pElem>3dlitepp/include</pElem>
+            <pElem>lite3d/include</pElem>
+            <pElem>lite3dpp/include</pElem>
+            <pElem>/usr/include/SDL2</pElem>
+            <pElem>build/lite3d</pElem>
+          </incDir>
         </cTool>
       </item>
       <item path="lite3dpp/src/lite3dpp_camera.cpp" ex="false" tool="1" flavor2="8">
@@ -245,6 +395,11 @@
       <item path="lite3dpp/src/lite3dpp_main.cpp" ex="false" tool="1" flavor2="8">
         <ccTool flags="1">
         </ccTool>
+      </item>
+      <item path="lite3dpp/src/lite3dpp_manageable.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
       </item>
       <item path="lite3dpp/src/lite3dpp_material.cpp" ex="false" tool="1" flavor2="8">
         <ccTool flags="1">
@@ -301,6 +456,11 @@
         <ccTool flags="1">
         </ccTool>
       </item>
+      <item path="lite3dpp/src/lite3dpp_script_log.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+      </item>
       <item path="lite3dpp/src/lite3dpp_shader_program.cpp"
             ex="false"
             tool="1"
@@ -319,12 +479,40 @@
         <ccTool flags="1">
         </ccTool>
       </item>
+      <item path="samples/sample_minigun/lite3d_sample_minigun.c"
+            ex="false"
+            tool="0"
+            flavor2="3">
+        <cTool flags="2">
+        </cTool>
+      </item>
       <item path="samples/sample_objects/lite3dpp_sample_objects.cpp"
             ex="false"
             tool="1"
             flavor2="8">
         <ccTool flags="0">
         </ccTool>
+      </item>
+      <item path="samples/sample_rifle/lite3d_sample_rifle.c"
+            ex="false"
+            tool="0"
+            flavor2="3">
+        <cTool flags="2">
+        </cTool>
+      </item>
+      <item path="samples/sample_rtt/lite3d_sample_rtt.c"
+            ex="false"
+            tool="0"
+            flavor2="3">
+        <cTool flags="2">
+        </cTool>
+      </item>
+      <item path="samples/sample_scene_node/lite3d_sample_scene_node.c"
+            ex="false"
+            tool="0"
+            flavor2="3">
+        <cTool flags="2">
+        </cTool>
       </item>
       <item path="samples/sample_script/lite3dpp_sample_script.cpp"
             ex="false"
@@ -333,56 +521,18 @@
         <ccTool flags="0">
         </ccTool>
       </item>
-      <item path="tests/functionaly/3dlite_common_test.cpp"
+      <item path="tests/functionaly/lite3d_common_test.cpp"
             ex="false"
             tool="1"
             flavor2="8">
         <ccTool flags="0">
-          <incDir>
-            <pElem>3dlite/include</pElem>
-            <pElem>3dlitepp/include</pElem>
-            <pElem>/usr/include/SDL2</pElem>
-            <pElem>build/tests/functionaly</pElem>
-          </incDir>
         </ccTool>
       </item>
-      <item path="tests/functionaly/3dlite_file_cache_test.cpp"
+      <item path="tests/functionaly/lite3d_vbo_test.cpp"
             ex="false"
             tool="1"
             flavor2="8">
         <ccTool flags="0">
-          <incDir>
-            <pElem>3dlite/include</pElem>
-            <pElem>3dlitepp/include</pElem>
-            <pElem>/usr/include/SDL2</pElem>
-            <pElem>build/tests/functionaly</pElem>
-          </incDir>
-        </ccTool>
-      </item>
-      <item path="tests/functionaly/3dlite_vbo_test.cpp"
-            ex="false"
-            tool="1"
-            flavor2="8">
-        <ccTool flags="0">
-          <incDir>
-            <pElem>3dlite/include</pElem>
-            <pElem>3dlitepp/include</pElem>
-            <pElem>/usr/include/SDL2</pElem>
-            <pElem>build/tests/functionaly</pElem>
-          </incDir>
-        </ccTool>
-      </item>
-      <item path="tests/functionaly/3dlitepp_main_test.cpp"
-            ex="false"
-            tool="1"
-            flavor2="8">
-        <ccTool flags="0">
-          <incDir>
-            <pElem>3dlite/include</pElem>
-            <pElem>3dlitepp/include</pElem>
-            <pElem>/usr/include/SDL2</pElem>
-            <pElem>build/tests/functionaly</pElem>
-          </incDir>
         </ccTool>
       </item>
       <item path="tests/functionaly/lite3dpp_main_test.cpp"
@@ -390,12 +540,6 @@
             tool="1"
             flavor2="8">
         <ccTool flags="0">
-          <incDir>
-            <pElem>lite3d/include</pElem>
-            <pElem>lite3dpp/include</pElem>
-            <pElem>/usr/include/SDL2</pElem>
-            <pElem>build/tests/functionaly</pElem>
-          </incDir>
         </ccTool>
       </item>
       <item path="tests/gtest/src/gtest-all.cc" ex="false" tool="1" flavor2="8">

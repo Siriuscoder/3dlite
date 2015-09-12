@@ -31,6 +31,7 @@ typedef struct lookUnit
     lite3d_list_node rtLink;
     lite3d_camera *camera;
     uint16_t pass;
+    int priority;
 } lookUnit;
 
 static uint64_t gLastMark = 0;
@@ -183,7 +184,7 @@ void lite3d_render_loop(lite3d_render_listeners *callbacks)
         lite3d_get_global_settings()->videoSettings.screenHeight);
 
     lite3d_list_init(&gRenderTargets);
-    lite3d_render_target_add(&gScreenRt);
+    lite3d_render_target_add(&gScreenRt, 0xFFFFFFF);
 
     /* start user initialization */
     if (!gRenderListeners.preRender || (gRenderListeners.preRender &&
@@ -207,14 +208,14 @@ void lite3d_render_loop(lite3d_render_listeners *callbacks)
 
             if (gRenderActive)
             {
-                if (gRenderListeners.preFrame && 
+                if (gRenderListeners.preFrame &&
                     !gRenderListeners.preFrame(gRenderListeners.userdata))
                     break;
                 if (!gRenderStarted)
                     break;
                 if (!update_render_targets())
                     break;
-                if (gRenderListeners.postFrame && 
+                if (gRenderListeners.postFrame &&
                     !gRenderListeners.postFrame(gRenderListeners.userdata))
                     break;
             }
@@ -224,7 +225,7 @@ void lite3d_render_loop(lite3d_render_listeners *callbacks)
 
             while (SDL_PollEvent(&wevent))
             {
-                if (gRenderListeners.processEvent && 
+                if (gRenderListeners.processEvent &&
                     !gRenderListeners.processEvent(&wevent, gRenderListeners.userdata))
                 {
                     lite3d_render_stop();
@@ -291,9 +292,26 @@ void lite3d_render_target_purge(lite3d_render_target *rt)
     }
 }
 
-void lite3d_render_target_add(lite3d_render_target *rt)
+void lite3d_render_target_add(lite3d_render_target *newRt, int priority)
 {
-    lite3d_list_add_first_link(&rt->node, &gRenderTargets);
+    lite3d_render_target *rtPtr = NULL;
+    lite3d_list_node *node = NULL;
+
+    newRt->priority = priority;
+    lite3d_render_target_erase(newRt);
+
+    node = &gRenderTargets.l;
+    while ((node = lite3d_list_next(node)) != &gRenderTargets.l)
+    {
+        rtPtr = LITE3D_MEMBERCAST(lite3d_render_target, node, node);
+        if (priority <= rtPtr->priority)
+        {
+            lite3d_list_insert_before_link(&newRt->node, &rtPtr->node);
+            return;
+        }
+    }
+
+    lite3d_list_add_first_link(&newRt->node, &gRenderTargets);
 }
 
 void lite3d_render_target_erase(lite3d_render_target *rt)
@@ -322,35 +340,60 @@ void lite3d_render_stop(void)
     gRenderStarted = LITE3D_FALSE;
 }
 
-int lite3d_render_target_attach_camera(lite3d_render_target *target, lite3d_camera *camera, uint16_t pass)
+int lite3d_render_target_attach_camera(lite3d_render_target *target, lite3d_camera *camera,
+    uint16_t pass, int priority)
 {
     lookUnit *look = NULL;
+    lookUnit *lookIns = NULL;
+    lite3d_list_node *node = NULL;
     SDL_assert(target && camera);
 
-    if (!look)
-        look = (lookUnit *) lite3d_calloc_pooled(LITE3D_POOL_NO1, sizeof (lookUnit));
-    SDL_assert_release(look);
 
-    look->camera = camera;
-    look->pass = pass;
-    lite3d_list_link_init(&look->rtLink);
-    lite3d_list_add_last_link(&look->rtLink, &target->lookSequence);
+    lookIns = (lookUnit *) lite3d_calloc_pooled(LITE3D_POOL_NO1, sizeof (lookUnit));
+    SDL_assert_release(lookIns);
 
+    lookIns->camera = camera;
+    lookIns->pass = pass;
+    lookIns->priority = priority;
+    lite3d_list_link_init(&lookIns->rtLink);
+
+    /* check camera already attached to the render target */
+    node = &target->lookSequence.l;
+    while ((node = lite3d_list_next(node)) != &target->lookSequence.l)
+    {
+        look = LITE3D_MEMBERCAST(lookUnit, node, rtLink);
+        if (look->camera == camera && look->pass == pass &&
+            look->priority == priority)
+        {
+            lite3d_free_pooled(LITE3D_POOL_NO1, lookIns);
+            return LITE3D_FALSE;
+        }
+
+        if (priority <= look->priority)
+        {
+            lite3d_list_insert_before_link(&lookIns->rtLink, &look->rtLink);
+            return LITE3D_TRUE;
+        }
+    }
+
+    lite3d_list_add_last_link(&lookIns->rtLink, &target->lookSequence);
     return LITE3D_TRUE;
 }
 
-int lite3d_render_target_dettach_camera(lite3d_render_target *rt, lite3d_camera *camera, uint16_t pass)
+int lite3d_render_target_dettach_camera(lite3d_render_target *rt, lite3d_camera *camera,
+    uint16_t pass, int priority)
 {
     lookUnit *look = NULL;
     lite3d_list_node *node = NULL;
     SDL_assert(rt && camera);
 
-    /* check camera already attached to the render target */
+    /* lookup for the camera */
     node = &rt->lookSequence.l;
     while ((node = lite3d_list_next(node)) != &rt->lookSequence.l)
     {
         look = LITE3D_MEMBERCAST(lookUnit, node, rtLink);
-        if (look->camera == camera && look->pass == pass)
+        if (look->camera == camera && look->pass == pass &&
+            look->priority == priority)
         {
             lite3d_list_unlink_link(node);
             lite3d_free_pooled(LITE3D_POOL_NO1, look);
@@ -361,14 +404,18 @@ int lite3d_render_target_dettach_camera(lite3d_render_target *rt, lite3d_camera 
     return LITE3D_TRUE;
 }
 
-int lite3d_render_target_screen_attach_camera(lite3d_camera *camera, uint16_t pass)
+int lite3d_render_target_screen_attach_camera(lite3d_camera *camera,
+    uint16_t pass, int priority)
 {
-    return lite3d_render_target_attach_camera(&gScreenRt, camera, pass);
+    return lite3d_render_target_attach_camera(&gScreenRt, camera,
+        pass, priority);
 }
 
-int lite3d_render_target_screen_dettach_camera(lite3d_camera *camera, uint16_t pass)
+int lite3d_render_target_screen_dettach_camera(lite3d_camera *camera,
+    uint16_t pass, int priority)
 {
-    return lite3d_render_target_dettach_camera(&gScreenRt, camera, pass);
+    return lite3d_render_target_dettach_camera(&gScreenRt, camera,
+        pass, priority);
 }
 
 lite3d_render_target *lite3d_render_target_screen_get(void)

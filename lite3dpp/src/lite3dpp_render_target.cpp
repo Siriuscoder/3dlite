@@ -76,16 +76,16 @@ namespace lite3dpp
     }
 
 
-    void RenderTarget::addCamera(Camera *camera, uint16_t pass)
+    void RenderTarget::addCamera(Camera *camera, uint16_t pass, int priority)
     {
         SDL_assert_release(mRenderTarget);
-        lite3d_render_target_attach_camera(mRenderTarget, camera->getPtr(), pass);
+        lite3d_render_target_attach_camera(mRenderTarget, camera->getPtr(), pass, priority);
     }
 
-    void RenderTarget::removeCamera(Camera *camera, uint16_t pass)
+    void RenderTarget::removeCamera(Camera *camera, uint16_t pass, int priority)
     {
         SDL_assert_release(mRenderTarget);
-        lite3d_render_target_dettach_camera(mRenderTarget, camera->getPtr(), pass);
+        lite3d_render_target_dettach_camera(mRenderTarget, camera->getPtr(), pass, priority);
     }
 
     WindowRenderTarget::WindowRenderTarget(const String &name, 
