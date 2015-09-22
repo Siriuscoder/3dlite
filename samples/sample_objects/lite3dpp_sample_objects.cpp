@@ -25,11 +25,9 @@ class SampleLifecycleListener : public lite3dpp::Main::LifecycleListener
 {
 public:
 
-    SampleLifecycleListener()
-    {
-        mCameraPos.x = mCameraPos.y = mCameraPos.z = 50.0f;
-        mCameraLookAt.x = mCameraLookAt.y = mCameraLookAt.z = 0.0f;
-    }
+    SampleLifecycleListener() : mMinigun(NULL),
+        mPlasmagun(NULL)
+    {}
 
     void init(lite3dpp::Main *main) override
     {
@@ -37,15 +35,6 @@ public:
             "samples:scenes/scene.json");
         mMinigun = scene->getObject("Minigun");
         mPlasmagun = scene->getObject("Plasmagun");
-
-        lite3dpp::Camera *camera = scene->addCamera("MyCamera");
-        camera->setupPerspective(1.0f, 1000.0f, 45.0f,
-                                 (float) main->window()->width() / (float) main->window()->height());
-
-        camera->setPosition(mCameraPos);
-        camera->lookAt(mCameraLookAt);
-
-        main->window()->addCamera(camera, 1, 0);
     }
 
     void shut(lite3dpp::Main *main) override
@@ -86,9 +75,6 @@ public:
     }
 
 private:
-
-    kmVec3 mCameraPos;
-    kmVec3 mCameraLookAt;
 
     lite3dpp::SceneObject *mMinigun;
     lite3dpp::SceneObject *mPlasmagun;

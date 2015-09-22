@@ -1,4 +1,29 @@
 {
+	"Cameras":
+	[
+		{
+			"Name": "MyCamera",
+
+			"Position": { "x": 50, "y": 50, "z": 50 },
+			"LootAt": { "x": 0, "y": 0, "z": 0 },
+			"Perspective": 
+			{
+				"Znear": 1,
+				"Zfar": 1000,
+				"Fov": 45
+			},
+			
+			"RenderTargets":
+			[
+				{
+					"Name": MainWindow,
+					"Priority": 0,
+					"TexturePass": 1
+				}
+			]
+		},
+	],
+	
 	"Objects":
 	[
 		{

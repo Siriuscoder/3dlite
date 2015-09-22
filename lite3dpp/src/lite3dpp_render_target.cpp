@@ -27,7 +27,7 @@ namespace lite3dpp
     RenderTarget::RenderTarget(const String &name, 
         const String &path, Main *main) : 
         JsonResource(name, path, main, AbstractResource::RENDER_TARGET),
-        mRenderTarget(NULL)
+        mRenderTargetPtr(NULL)
     {}
 
     RenderTarget::~RenderTarget()
@@ -35,57 +35,57 @@ namespace lite3dpp
 
     bool RenderTarget::isEnabled()
     {
-        SDL_assert_release(mRenderTarget);
-        return mRenderTarget->enabled == LITE3D_TRUE;
+        SDL_assert_release(mRenderTargetPtr);
+        return mRenderTargetPtr->enabled == LITE3D_TRUE;
     }
 
     void RenderTarget::enable()
     {
-        SDL_assert_release(mRenderTarget);
-        mRenderTarget->enabled = LITE3D_TRUE;
+        SDL_assert_release(mRenderTargetPtr);
+        mRenderTargetPtr->enabled = LITE3D_TRUE;
     }
 
     void RenderTarget::disable()
     {
-        SDL_assert_release(mRenderTarget);
-        mRenderTarget->enabled = LITE3D_FALSE;
+        SDL_assert_release(mRenderTargetPtr);
+        mRenderTargetPtr->enabled = LITE3D_FALSE;
     }
 
     int32_t RenderTarget::height()
     {
-        SDL_assert_release(mRenderTarget);
-        return mRenderTarget->height;
+        SDL_assert_release(mRenderTargetPtr);
+        return mRenderTargetPtr->height;
     }
 
     int32_t RenderTarget::width()
     {
-        SDL_assert_release(mRenderTarget);
-        return mRenderTarget->width;
+        SDL_assert_release(mRenderTargetPtr);
+        return mRenderTargetPtr->width;
     }
 
-    void RenderTarget::setBlankColor(const kmVec4 &color)
+    void RenderTarget::setBackgroundColor(const kmVec4 &color)
     {
-        SDL_assert_release(mRenderTarget);
-        mRenderTarget->cleanColor = color;
+        SDL_assert_release(mRenderTargetPtr);
+        mRenderTargetPtr->cleanColor = color;
     }
 
     void RenderTarget::setCleanMask(uint32_t mask)
     {
-        SDL_assert_release(mRenderTarget);
-        mRenderTarget->cleanMask = mask;
+        SDL_assert_release(mRenderTargetPtr);
+        mRenderTargetPtr->cleanMask = mask;
     }
 
 
     void RenderTarget::addCamera(Camera *camera, uint16_t pass, int priority)
     {
-        SDL_assert_release(mRenderTarget);
-        lite3d_render_target_attach_camera(mRenderTarget, camera->getPtr(), pass, priority);
+        SDL_assert_release(mRenderTargetPtr);
+        lite3d_render_target_attach_camera(mRenderTargetPtr, camera->getPtr(), pass, priority);
     }
 
     void RenderTarget::removeCamera(Camera *camera, uint16_t pass, int priority)
     {
-        SDL_assert_release(mRenderTarget);
-        lite3d_render_target_dettach_camera(mRenderTarget, camera->getPtr(), pass, priority);
+        SDL_assert_release(mRenderTargetPtr);
+        lite3d_render_target_dettach_camera(mRenderTargetPtr, camera->getPtr(), pass, priority);
     }
 
     WindowRenderTarget::WindowRenderTarget(const String &name, 
@@ -100,7 +100,7 @@ namespace lite3dpp
 
     void WindowRenderTarget::loadFromJsonImpl(const JsonHelper &helper)
     {
-        mRenderTarget = lite3d_render_target_screen_get();
+        mRenderTargetPtr = lite3d_render_target_screen_get();
     }
 
     void WindowRenderTarget::unloadImpl()

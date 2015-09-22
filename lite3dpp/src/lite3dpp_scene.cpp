@@ -37,6 +37,7 @@ namespace lite3dpp
         lite3d_scene_init(&mScene);
 
         setupObjects(helper.getObjects(L"Objects"), NULL);
+        setupCameras(helper.getObjects(L"Cameras"));
     }
 
     void Scene::unloadImpl()
@@ -50,12 +51,21 @@ namespace lite3dpp
     {
         Cameras::iterator it = mCameras.find(name);
         if(it != mCameras.end())
-            return it->second;
+            throw std::runtime_error("Camera \"" + name + "\" already exists..");
 
         Camera *camera = new Camera(name, mMain);
         lite3d_scene_add_node(&mScene, &camera->getPtr()->cameraNode, NULL);
         mCameras.insert(std::make_pair(name, camera));
         return camera;
+    }
+
+    Camera *Scene::getCamera(const String &name)
+    {
+        Cameras::iterator it = mCameras.find(name);
+        if(it != mCameras.end())
+            return it->second;
+
+        throw std::runtime_error(name + " camera not found..");
     }
 
     void Scene::removeAllCameras()
@@ -142,6 +152,54 @@ namespace lite3dpp
             sceneObj->getRoot()->scale(objHelper.getVec3(L"Scale", KM_VEC3_ONE));
 
             setupObjects(objHelper.getObjects(L"Objects"), sceneObj);
+        }
+    }
+
+    void Scene::setupCameras(const stl<JsonHelper>::vector &cameras)
+    {
+        for(const JsonHelper &cameraJson : cameras)
+        {
+            Camera *camera = addCamera(cameraJson.getString(L"Name"));
+            RenderTarget *renderTarget = NULL;
+
+            for(const JsonHelper &renderTargetJson : cameraJson.getObjects(L"RenderTargets"))
+            {
+                String renderTargetName = renderTargetJson.getString(L"Name");
+                if(renderTargetName == "Window") 
+                    renderTarget = mMain->window();
+                else
+                {
+                    renderTarget = mMain->getResourceManager()->queryResource<TextureRenderTarget>(
+                        renderTargetJson.getString(L"Name"),
+                        renderTargetJson.getString(L"Path"));
+                }
+
+                renderTarget->addCamera(camera, renderTargetJson.getInt(L"TexturePass"),
+                    renderTargetJson.getInt(L"Priority"));
+            }
+
+            JsonHelper perspectiveOptionsJson = cameraJson.getObject(L"Perspective");
+            JsonHelper orthoOptionsJson = cameraJson.getObject(L"Ortho");
+            if(!perspectiveOptionsJson.isEmpty())
+            {
+                camera->setupPerspective(cameraJson.getDouble(L"Znear"),
+                    cameraJson.getDouble(L"Zfar"),
+                    cameraJson.getDouble(L"Fov"),
+                    cameraJson.getDouble(L"Aspect", -1.0) < 0 ? 
+                    (float)renderTarget->width() / (float)renderTarget->height() : cameraJson.getDouble(L"Aspect"));
+            }
+            else if(!orthoOptionsJson.isEmpty())
+            {
+                camera->setupOrtho(cameraJson.getDouble(L"Near"),
+                    cameraJson.getDouble(L"Far"),
+                    cameraJson.getDouble(L"Left"),
+                    cameraJson.getDouble(L"Right"),
+                    cameraJson.getDouble(L"Bottom"),
+                    cameraJson.getDouble(L"Top"));
+            }
+
+            camera->setPosition(cameraJson.getVec3(L"Position"));
+            camera->lookAt(cameraJson.getVec3(L"LookAt"));
         }
     }
 }

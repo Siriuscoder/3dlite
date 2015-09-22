@@ -44,6 +44,7 @@ namespace lite3dpp
         SceneObject *addObject(const String &name,
             const String &templatePath, SceneObject *parent);
         SceneObject *getObject(const String &name);
+        Camera *getCamera(const String &name);
 
         void removeAllCameras();
         void removeCamera(const String &name);
@@ -58,6 +59,7 @@ namespace lite3dpp
     private:
 
         void setupObjects(const stl<JsonHelper>::vector &objects, SceneObject *base);
+        void setupCameras(const stl<JsonHelper>::vector &cameras);
 
         lite3d_scene mScene;
         Cameras mCameras;

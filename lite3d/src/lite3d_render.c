@@ -257,7 +257,7 @@ int lite3d_render_target_init(lite3d_render_target *rt,
 
     rt->enabled = LITE3D_TRUE;
     lite3d_list_init(&rt->lookSequence);
-    rt->cleanMask = GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT;
+    rt->cleanMask = CLEAN_COLOR_BUFFER | CLEAN_DEPTH_BUFFER | CLEAN_STENCIL_BUFFER;
     rt->cleanColor.x = rt->cleanColor.y = rt->cleanColor.z = 0.3f;
     rt->cleanColor.w = 0.0f;
     rt->width = width;

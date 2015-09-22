@@ -25,6 +25,9 @@
 #include <lite3d/lite3d_framebuffer.h>
 
 #define LITE3D_RENDER_TARGET_NAME   20
+#define CLEAN_COLOR_BUFFER 0x00004000
+#define CLEAN_DEPTH_BUFFER 0x00000100
+#define CLEAN_STENCIL_BUFFER 0x00000400
 
 typedef int (*lite3d_pre_render_t)(void *userdata);
 typedef int (*lite3d_post_render_t)(void *userdata);

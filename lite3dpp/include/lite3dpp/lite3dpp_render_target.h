@@ -38,15 +38,18 @@ namespace lite3dpp
         void disable();
         int32_t height();
         int32_t width();
-        void setBlankColor(const kmVec4 &color);
+        void setBackgroundColor(const kmVec4 &color);
         void setCleanMask(uint32_t mask);
+
+        inline lite3d_render_target *getPtr()
+        { return mRenderTargetPtr; }
 
         void addCamera(Camera *camera, uint16_t pass, int priority);
         void removeCamera(Camera *camera, uint16_t pass, int priority);
 
     protected:
 
-        lite3d_render_target *mRenderTarget;
+        lite3d_render_target *mRenderTargetPtr;
     };
 
     class LITE3DPP_EXPORT WindowRenderTarget : public RenderTarget

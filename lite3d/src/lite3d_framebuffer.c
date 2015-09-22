@@ -398,6 +398,7 @@ int lite3d_framebuffer_setup(lite3d_framebuffer *fb,
     /* Does the GPU support current FBO configuration? */
     if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
     {
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Framebuffer configuration not supported..");
         lite3d_framebuffer_purge(fb);
         return LITE3D_FALSE;
     }

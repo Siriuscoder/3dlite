@@ -25,6 +25,7 @@
 #include <lite3dpp/lite3dpp_json_helper.h>
 #include <lite3dpp/lite3dpp_scene.h>
 #include <lite3dpp/lite3dpp_render_target.h>
+#include <lite3dpp/lite3dpp_texture_render_target.h>
 
 namespace lite3dpp
 {
