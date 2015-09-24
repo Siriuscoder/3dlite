@@ -182,20 +182,20 @@ namespace lite3dpp
             JsonHelper orthoOptionsJson = cameraJson.getObject(L"Ortho");
             if(!perspectiveOptionsJson.isEmpty())
             {
-                camera->setupPerspective(cameraJson.getDouble(L"Znear"),
-                    cameraJson.getDouble(L"Zfar"),
-                    cameraJson.getDouble(L"Fov"),
-                    cameraJson.getDouble(L"Aspect", -1.0) < 0 ? 
+                camera->setupPerspective(perspectiveOptionsJson.getDouble(L"Znear"),
+                    perspectiveOptionsJson.getDouble(L"Zfar"),
+                    perspectiveOptionsJson.getDouble(L"Fov"),
+                    perspectiveOptionsJson.getDouble(L"Aspect", -1.0) < 0 ? 
                     (float)renderTarget->width() / (float)renderTarget->height() : cameraJson.getDouble(L"Aspect"));
             }
             else if(!orthoOptionsJson.isEmpty())
             {
-                camera->setupOrtho(cameraJson.getDouble(L"Near"),
-                    cameraJson.getDouble(L"Far"),
-                    cameraJson.getDouble(L"Left"),
-                    cameraJson.getDouble(L"Right"),
-                    cameraJson.getDouble(L"Bottom"),
-                    cameraJson.getDouble(L"Top"));
+                camera->setupOrtho(orthoOptionsJson.getDouble(L"Near"),
+                    orthoOptionsJson.getDouble(L"Far"),
+                    orthoOptionsJson.getDouble(L"Left"),
+                    orthoOptionsJson.getDouble(L"Right"),
+                    orthoOptionsJson.getDouble(L"Bottom"),
+                    orthoOptionsJson.getDouble(L"Top"));
             }
 
             camera->setPosition(cameraJson.getVec3(L"Position"));

@@ -56,11 +56,11 @@ namespace lite3dpp
         T *queryResource(String name, 
             const String &path = "")
         {
-            T *result = NULL;
             AbstractResource *resource;
 
             if((resource = fetchResource(name)) != NULL)
             {
+                T *result;
                 if((result = dynamic_cast<T*>(resource)) == NULL)
                     throw std::runtime_error((String("Resource type mismatch: ") + 
                         name).c_str());
@@ -76,19 +76,11 @@ namespace lite3dpp
             if(name.size() == 0)
                 name = generateResourceName();
 
-            try
-            {
-                /* resource not found.. create one */
-                result = new T(name, path, mMain);
-                loadResource(name, path, result);
-            }
-            catch(std::exception &ex)
-            {
-                delete result;
-                throw ex;
-            }
+            /* resource not found.. create one */
+            std::unique_ptr<T> result(new T(name, path, mMain));
+            loadResource(name, path, result.get());
 
-            return result;
+            return result.release();
         }
 
         ResourceManager(Main *main);
