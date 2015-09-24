@@ -23,6 +23,16 @@
 
 namespace lite3dpp
 {
+    const char *AbstractResource::ResourceTypeName[] = {
+        "SCRIPT",
+        "MESH",
+        "SCENE",
+        "MATERIAL",
+        "TEXTURE",
+        "SHADER_PROGRAM",
+        "RENDER_TARGET"
+    };
+    
     AbstractResource::AbstractResource(const String &name,
         const String &path, Main *main, ResourceType type) : 
         mState(UNLOADED),
@@ -35,6 +45,15 @@ namespace lite3dpp
 
     AbstractResource::~AbstractResource()
     {}
+    
+    void AbstractResource::logState()
+    {
+        SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
+            "Resource %s %s \"%s\" %s", ResourceTypeName[mType], 
+                mName.c_str(), 
+                mPath.size() == 0 ? "from memory" : mPath.c_str(), 
+                mState == LOADED ? "LOADED" : "UNLOADED");
+    }
 
     void AbstractResource::load(const void *buffer, size_t size)
     {
@@ -42,6 +61,8 @@ namespace lite3dpp
         {
             loadImpl(buffer, size);
             mState = LOADED;
+            
+            logState();
         }
     }
 
@@ -50,6 +71,9 @@ namespace lite3dpp
         if(mState != LOADED)
         {
             reloadImpl();
+            mState = LOADED;
+            
+            logState();
         }
     }
 
@@ -59,6 +83,8 @@ namespace lite3dpp
         {
             unloadImpl();
             mState = UNLOADED;
+            
+            logState();
         }
     }
 
@@ -73,7 +99,8 @@ namespace lite3dpp
     void JsonResource::loadImpl(const void *buffer, size_t size)
     {
         SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
-            "Parsing json (%s) \"%s\" ...", getName().c_str(), getPath().c_str());
+            "Parsing json (%s) \"%s\" ...", getName().c_str(), 
+            getPath().size() == 0 ? "from memory" : getPath().c_str()); 
 
         mJsonHelper.reset(new JsonHelper(static_cast<const char *>(buffer), size));
         reloadImpl();

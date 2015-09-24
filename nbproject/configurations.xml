@@ -57,9 +57,6 @@
       </df>
       <df name="tests">
         <df name="functionaly">
-          <in>3dlite_common_test.cpp</in>
-          <in>3dlite_file_cache_test.cpp</in>
-          <in>3dlite_vbo_test.cpp</in>
           <in>3dlitepp_main_test.cpp</in>
           <in>lite3d_common_test.cpp</in>
           <in>lite3d_vbo_test.cpp</in>
@@ -133,8 +130,8 @@
       <folder path="0">
         <cTool>
           <incDir>
-            <pElem>3dlite/include</pElem>
-            <pElem>3dlitepp/include</pElem>
+            <pElem>lite3d/include</pElem>
+            <pElem>lite3dpp/include</pElem>
           </incDir>
           <preprocessorList>
             <Elem>PLATFORM_Linux</Elem>
@@ -145,8 +142,6 @@
       <folder path="0/lite3d">
         <cTool>
           <incDir>
-            <pElem>lite3d/include</pElem>
-            <pElem>lite3dpp/include</pElem>
             <pElem>/usr/include/SDL2</pElem>
             <pElem>build/lite3d</pElem>
           </incDir>
@@ -171,12 +166,6 @@
         </ccTool>
       </folder>
       <folder path="0/samples">
-        <cTool>
-          <incDir>
-            <pElem>lite3d/include</pElem>
-            <pElem>lite3dpp/include</pElem>
-          </incDir>
-        </cTool>
         <ccTool>
           <incDir>
             <pElem>lite3d/include</pElem>
@@ -281,8 +270,6 @@
       <folder path="0/tools">
         <cTool>
           <incDir>
-            <pElem>lite3d/include</pElem>
-            <pElem>lite3dpp/include</pElem>
             <pElem>tools/mconverter</pElem>
             <pElem>/usr/include/SDL2</pElem>
             <pElem>build/tools</pElem>
@@ -302,8 +289,6 @@
       <item path="lite3d/src/lite3d_framebuffer.c" ex="false" tool="0" flavor2="3">
         <cTool flags="3">
           <incDir>
-            <pElem>3dlite/include</pElem>
-            <pElem>3dlitepp/include</pElem>
             <pElem>lite3d/include</pElem>
             <pElem>lite3dpp/include</pElem>
             <pElem>/usr/include/SDL2</pElem>
@@ -314,8 +299,6 @@
       <item path="lite3d/src/lite3d_main.c" ex="false" tool="0" flavor2="3">
         <cTool flags="3">
           <incDir>
-            <pElem>3dlite/include</pElem>
-            <pElem>3dlitepp/include</pElem>
             <pElem>lite3d/include</pElem>
             <pElem>lite3dpp/include</pElem>
             <pElem>/usr/include/SDL2</pElem>
@@ -338,8 +321,6 @@
       <item path="lite3d/src/lite3d_pack.c" ex="false" tool="0" flavor2="3">
         <cTool flags="3">
           <incDir>
-            <pElem>3dlite/include</pElem>
-            <pElem>3dlitepp/include</pElem>
             <pElem>lite3d/include</pElem>
             <pElem>lite3dpp/include</pElem>
             <pElem>/usr/include/SDL2</pElem>
@@ -372,8 +353,6 @@
       <item path="lite3d/src/lite3d_video.c" ex="false" tool="0" flavor2="3">
         <cTool flags="3">
           <incDir>
-            <pElem>3dlite/include</pElem>
-            <pElem>3dlitepp/include</pElem>
             <pElem>lite3d/include</pElem>
             <pElem>lite3dpp/include</pElem>
             <pElem>/usr/include/SDL2</pElem>

@@ -25,6 +25,8 @@ namespace lite3dpp
     class LITE3DPP_EXPORT AbstractResource : public Manageable
     {
     public:
+        
+        static const char *ResourceTypeName[];
 
         enum ResourceState
         {
@@ -34,9 +36,9 @@ namespace lite3dpp
             LOADED
         };
 
-        enum ResourceType
+        enum ResourceType : int32_t
         {
-            SCRIPT,
+            SCRIPT = 0,
             MESH,
             SCENE,
             MATERIAL,
@@ -60,6 +62,8 @@ namespace lite3dpp
 
         inline ResourceState getState() const
         { return mState; }
+        inline ResourceType getType() const
+        { return mType; }
         inline const String &getName() const
         { return mName; }
         inline const String &getPath() const
@@ -75,6 +79,8 @@ namespace lite3dpp
         { mBufferedSize = size; }
 
     private:
+        
+        void logState();
 
         ResourceState mState;
         ResourceType mType;

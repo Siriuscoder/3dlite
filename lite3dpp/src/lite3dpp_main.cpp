@@ -126,7 +126,8 @@ namespace lite3dpp
         mScriptDispatcher.registerGlobals();
 
         /* create image of main window render target (not json needed, in this case use special dummy.json =) ) */
-        mResourceManager.queryResource<WindowRenderTarget>("MainWindow", "dummy.json");
+        String emptyJson("{}\0");
+        mResourceManager.queryResource<WindowRenderTarget>("MainWindow", emptyJson.data(), emptyJson.size());
 
         /* perform fixed update timer */    
         mFixedUpdatesTimer = 
