@@ -257,7 +257,7 @@ void lite3d_framebuffer_purge(lite3d_framebuffer *fb)
 }
 
 int lite3d_framebuffer_setup(lite3d_framebuffer *fb,
-    lite3d_texture_unit *colorAttachments, size_t colorAttachmentsCount, uint8_t useColorRenderbuffer,
+    lite3d_texture_unit **colorAttachments, size_t colorAttachmentsCount, uint8_t useColorRenderbuffer,
     lite3d_texture_unit *depthAttachments, uint8_t useDepthRenderbuffer, uint8_t useStencilRenderbuffer)
 {
     int renderBuffersCount = 0;
@@ -276,16 +276,16 @@ int lite3d_framebuffer_setup(lite3d_framebuffer *fb,
         size_t i = 0;
         for (; i < colorAttachmentsCount; i++)
         {
-            switch (colorAttachments[i].textureTarget)
+            switch (colorAttachments[i]->textureTarget)
             {
                 case LITE3D_TEXTURE_1D:
                 {
                     glFramebufferTexture1D(GL_FRAMEBUFFER,
                         GL_COLOR_ATTACHMENT0 + i,
-                        colorAttachments[i].textureTarget,
-                        colorAttachments[i].textureID,
+                        colorAttachments[i]->textureTarget,
+                        colorAttachments[i]->textureID,
                         0);
-                    colorAttachments[i].isFbAttachment = LITE3D_TRUE;
+                    colorAttachments[i]->isFbAttachment = LITE3D_TRUE;
                     fb->useColorbuffer = LITE3D_TRUE;
                 }
                     break;
@@ -293,10 +293,10 @@ int lite3d_framebuffer_setup(lite3d_framebuffer *fb,
                 {
                     glFramebufferTexture2D(GL_FRAMEBUFFER,
                         GL_COLOR_ATTACHMENT0 + i,
-                        colorAttachments[i].textureTarget,
-                        colorAttachments[i].textureID,
+                        colorAttachments[i]->textureTarget,
+                        colorAttachments[i]->textureID,
                         0);
-                    colorAttachments[i].isFbAttachment = LITE3D_TRUE;
+                    colorAttachments[i]->isFbAttachment = LITE3D_TRUE;
                     fb->useColorbuffer = LITE3D_TRUE;
                 }
                     break;

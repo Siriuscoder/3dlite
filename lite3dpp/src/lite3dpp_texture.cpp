@@ -100,7 +100,7 @@ namespace lite3dpp
                 (textureFormatStr == "DEPTH" ? LITE3D_TEXTURE_FORMAT_DEPTH : 0)))))));
 
             if(!lite3d_texture_unit_allocate(&mTexture, textureType, quality, wrapping, textureFormat, 
-                helper.getInt(L"Height"), helper.getInt(L"Width"), helper.getInt(L"Depth")))
+                helper.getInt(L"Height", 1), helper.getInt(L"Width", 1), helper.getInt(L"Depth", 1)))
                 throw std::runtime_error(getName() + " texture allocation failed..");
         }
 

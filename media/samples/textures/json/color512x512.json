@@ -1,0 +1,9 @@
+{
+    "TextureType": "2D",
+    "Filtering": "Trilinear",
+	"Wrapping": "Repeat",
+	"Compression": false,
+	"TextureFormat": "RGBA",
+	"Height": 512,
+	"Width": 512
+}

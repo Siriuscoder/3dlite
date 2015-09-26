@@ -1,0 +1,35 @@
+{
+	"Root":
+	{
+		"Name": "box.root",
+		"Position": { "x": 0, "y": 0, "z": 0 },
+		"Rotation": { "x": 0, "y": 0, "z": 0, "w": 1 },
+		"Scale": { "x": 1, "y": 1, "z": 1 },
+		
+		"Nodes": [
+			{
+				"Name": "box.node",
+				"Mesh": 
+				{
+					"Name": "box.mesh",
+					"Mesh": "samples:models/json/cube.json",
+					"MaterialMapping": 
+					[
+						{
+							"MaterialIndex": 0,
+							"Material":
+							{
+								"Name": "render512x512.material",
+								"Material": "samples:materials/render512x512.json"
+							}
+						}
+					]
+				},
+				"Position": { "x": 0, "y": 0, "z": 0 },
+				"Rotation": { "x": 0, "y": 0, "z": 0, "w": 1 },
+				"Scale": { "x": 1, "y": 1, "z": 1 }
+			}
+		]
+	}
+}
+

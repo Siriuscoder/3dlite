@@ -46,7 +46,7 @@ LITE3D_CEXPORT int lite3d_framebuffer_init(lite3d_framebuffer *fb,
 /* setup frame buffer attachments - without whis call framebuffer is invalid */
 /* if attachments is NULL or attachments count is 0 renderbuffer attachment will be used */
 LITE3D_CEXPORT int lite3d_framebuffer_setup(lite3d_framebuffer *fb,
-    lite3d_texture_unit *colorAttachments, size_t colorAttachmentsCount, uint8_t useColorRenderbuffer,
+    lite3d_texture_unit **colorAttachments, size_t colorAttachmentsCount, uint8_t useColorRenderbuffer,
     lite3d_texture_unit *depthAttachments, uint8_t useDepthRenderbuffer, uint8_t useStencilRenderbuffer);
 
 LITE3D_CEXPORT int lite3d_framebuffer_screen_init(lite3d_framebuffer *fb, 

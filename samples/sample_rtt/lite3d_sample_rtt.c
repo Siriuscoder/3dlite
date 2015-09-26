@@ -266,6 +266,7 @@ static int initCube(void)
 static int init(void *userdata)
 {
     lite3d_file *file1;
+    lite3d_texture_unit *colorTextureArr[1];
 
     if (!(mFileSysPack = lite3d_pack_open("samples/", LITE3D_FALSE, 700000)))
         return LITE3D_FALSE;
@@ -331,7 +332,8 @@ static int init(void *userdata)
     lite3d_render_target_init(&mRTT, RENDER_TEXTURE_WIDTH, RENDER_TEXTURE_HEIGHT);
     lite3d_render_target_attach_camera(&mRTT, &mCamera01, 1, 0);
     /* setup render target framebuffer */
-    if (!lite3d_framebuffer_setup(&mRTT.fb, &mRenderTextureUnit, 1,
+    colorTextureArr[0] = &mRenderTextureUnit;
+    if (!lite3d_framebuffer_setup(&mRTT.fb, colorTextureArr, 1,
         LITE3D_FALSE, NULL, LITE3D_TRUE, LITE3D_FALSE))
         return LITE3D_FALSE;
 

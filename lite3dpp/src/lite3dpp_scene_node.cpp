@@ -57,8 +57,8 @@ namespace lite3dpp
             {
                 replaceMaterial(matMap.getInt(L"MaterialIndex"),
                     main->getResourceManager()->queryResource<Material>(
-                    matMap.getString(L"Name"),
-                    matMap.getString(L"Material")));
+                    matMap.getObject(L"Material").getString(L"Name"),
+                    matMap.getObject(L"Material").getString(L"Material")));
             }
         }
 

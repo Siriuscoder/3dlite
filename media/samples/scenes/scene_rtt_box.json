@@ -1,0 +1,35 @@
+{
+	"Cameras":
+	[
+		{
+			"Name": "MyCamera",
+
+			"Position": { "x": 0, "y": 3.0, "z": 3.0 },
+			"LootAt": { "x": 0, "y": 0, "z": 0 },
+			"Perspective": 
+			{
+				"Znear": 1,
+				"Zfar": 1000,
+				"Fov": 45
+			},
+			
+			"RenderTargets":
+			[
+				{
+					"Name": "Window",
+					"Priority": 0,
+					"TexturePass": 1
+				}
+			]
+		}
+	],
+	
+	"Objects":
+	[
+		{
+			"Name": "Box",
+			"Object": "samples:objects/box_rtt.json"
+		}
+	]
+}
+

@@ -1,0 +1,48 @@
+{
+	"Cameras":
+	[
+		{
+			"Name": "MyCamera",
+
+			"Position": { "x": 50, "y": 50, "z": 50 },
+			"LootAt": { "x": 0, "y": 0, "z": 0 },
+			"Perspective": 
+			{
+				"Znear": 1,
+				"Zfar": 1000,
+				"Fov": 45
+			},
+			
+			"RenderTargets":
+			[
+				{
+					"Name": "RenderColorToTexture",
+					"Path": "samples:targets/render_to_tex_512.json",
+					"Priority": 0,
+					"TexturePass": 1
+				}
+			]
+		}
+	],
+	
+	"Objects":
+	[
+		{
+			"Name": "Minigun",
+			"Object": "samples:objects/minigun.json",
+
+			"Position": { "x": 0, "y": 0, "z": 0 },
+			"Rotation": { "x": 0, "y": 0, "z": 0, "w": 1 },
+			"Scale": { "x": 0.4, "y": 0.4, "z": 0.4 }
+		},
+		{
+			"Name": "Plasmagun",
+			"Object": "samples:objects/plasma.json",
+
+			"Position": { "x": 0, "y": 0, "z": 20 },
+			"Rotation": { "x": 0, "y": 0, "z": 0, "w": 1 },
+			"Scale": { "x": 1, "y": 1, "z": 1 }
+		}
+	]
+}
+

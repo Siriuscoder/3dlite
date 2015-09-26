@@ -1,0 +1,26 @@
+{
+	"Uniforms":
+	[
+		{ "Name": "projectionMatrix" },
+		{ "Name": "modelviewMatrix" },
+		
+		{
+			"Name": "diffuseTexture",
+			"Type": "sampler",
+			"TextureName": "color512x512.texture",
+			"TexturePath": "samples:textures/json/color512x512.json"
+		}
+	],
+	
+	"Passes": 
+	[
+		{
+			"Pass": 1,
+			"Program": 
+			{
+				"Name": "BasicShadingNoNormals",
+				"Path": "samples:shaders/json/basic_shading_no_normals.json"
+			}
+		}
+	]
+}

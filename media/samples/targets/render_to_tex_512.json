@@ -1,0 +1,23 @@
+{
+	"Width": 512,
+	"Height": 512,
+	"BackgroundColor": { "x": 0.7, "y": 0.7, "z": 0.7, "w": 0 },
+	"Priority": 2,
+	
+	"ColorAttachments":
+	{
+		"Attachments":
+		[
+			{
+				"TextureName": "color512x512.texture",
+				"TexturePath": "samples:textures/json/color512x512.json"
+			}
+		]
+	},
+	
+	"DepthAttachments":
+	{
+		"Renderbuffer": true
+	}
+}
+

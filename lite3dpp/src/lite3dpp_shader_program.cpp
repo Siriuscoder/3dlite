@@ -109,7 +109,7 @@ namespace lite3dpp
     void ShaderProgram::bindAttributeLocations()
     {
         int location = 0;
-        for(String &name : getJson().getStrings(L"AttributesLocation"))
+        for(String &name : getJson().getStrings(L"AttributesOrder"))
         {
             lite3d_shader_program_attribute_index(&mProgram, name.c_str(), location);
             location++;
