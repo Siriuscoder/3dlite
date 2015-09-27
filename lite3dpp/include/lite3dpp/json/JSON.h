@@ -107,6 +107,7 @@ class JSON
         
 	protected:
 		static bool SkipWhitespace(const wchar_t **data);
+        static bool SkipWhitespaceAndComments(const wchar_t **data);
 		static bool ExtractString(const wchar_t **data, lite3dpp::WString &str);
 		static double ParseInt(const wchar_t **data);
 		static double ParseDecimal(const wchar_t **data);

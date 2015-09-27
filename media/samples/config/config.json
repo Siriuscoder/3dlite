@@ -1,10 +1,13 @@
 {
-    "LogLevel": 3,
+    // common settings
+    "LogLevel": 2,
 	"LogFlushAlways": true,
     "TextureSettings": {
         "Anisotropy": 8,
         "Compression": true
     },
+    // Video settings
+    // Window size, caption, color settings, etc
     "VideoSettings": {
         "Width": 800,
         "Height": 600,
@@ -14,6 +17,7 @@
         "FSAA": 4,
         "VSync": true
     },
+    // resource locations
     "ResourceLocations": [
         {
             "Name": "samples",

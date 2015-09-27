@@ -147,7 +147,7 @@ JSONValue *JSONValue::Parse(const wchar_t **data)
 		while (**data != 0)
 		{
 			// Whitespace at the start?
-			if (!JSON::SkipWhitespace(data))
+			if (!JSON::SkipWhitespaceAndComments(data))
 			{
 				FREE_OBJECT(object);
 				return NULL;
@@ -169,7 +169,7 @@ JSONValue *JSONValue::Parse(const wchar_t **data)
 			}
 
 			// More whitespace?
-			if (!JSON::SkipWhitespace(data))
+			if (!JSON::SkipWhitespaceAndComments(data))
 			{
 				FREE_OBJECT(object);
 				return NULL;
@@ -183,7 +183,7 @@ JSONValue *JSONValue::Parse(const wchar_t **data)
 			}
 
 			// More whitespace?
-			if (!JSON::SkipWhitespace(data))
+			if (!JSON::SkipWhitespaceAndComments(data))
 			{
 				FREE_OBJECT(object);
 				return NULL;
@@ -203,7 +203,7 @@ JSONValue *JSONValue::Parse(const wchar_t **data)
 			object[name] = value;
 
 			// More whitespace?
-			if (!JSON::SkipWhitespace(data))
+			if (!JSON::SkipWhitespaceAndComments(data))
 			{
 				FREE_OBJECT(object);
 				return NULL;
@@ -241,7 +241,7 @@ JSONValue *JSONValue::Parse(const wchar_t **data)
 		while (**data != 0)
 		{
 			// Whitespace at the start?
-			if (!JSON::SkipWhitespace(data))
+			if (!JSON::SkipWhitespaceAndComments(data))
 			{
 				FREE_ARRAY(array);
 				return NULL;
@@ -266,7 +266,7 @@ JSONValue *JSONValue::Parse(const wchar_t **data)
 			array.push_back(value);
 
 			// More whitespace?
-			if (!JSON::SkipWhitespace(data))
+			if (!JSON::SkipWhitespaceAndComments(data))
 			{
 				FREE_ARRAY(array);
 				return NULL;

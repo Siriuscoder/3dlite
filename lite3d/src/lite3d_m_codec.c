@@ -180,6 +180,7 @@ int lite3d_indexed_mesh_m_decode(lite3d_indexed_mesh *mesh,
     if (SDL_RWread(stream, mapped, mheader.vertexSectionSize, 1) != 1)
     {
         SDL_RWclose(stream);
+        lite3d_vbo_unmap(&mesh->vertexBuffer);
         return LITE3D_FALSE;
     }
 
@@ -195,6 +196,7 @@ int lite3d_indexed_mesh_m_decode(lite3d_indexed_mesh *mesh,
     if (SDL_RWread(stream, mapped, mheader.indexSectionSize, 1) != 1)
     {
         SDL_RWclose(stream);
+        lite3d_vbo_unmap(&mesh->indexBuffer);
         return LITE3D_FALSE;
     }
 
@@ -290,6 +292,7 @@ int lite3d_indexed_mesh_m_encode(lite3d_indexed_mesh *mesh,
     if (SDL_RWwrite(stream, vboData, mesh->vertexBuffer.size, 1) != 1)
     {
         SDL_RWclose(stream);
+        lite3d_vbo_unmap(&mesh->vertexBuffer);
         return LITE3D_FALSE;
     }
     lite3d_vbo_unmap(&mesh->vertexBuffer);
@@ -305,6 +308,7 @@ int lite3d_indexed_mesh_m_encode(lite3d_indexed_mesh *mesh,
     if (SDL_RWwrite(stream, vboData, mesh->indexBuffer.size, 1) != 1)
     {
         SDL_RWclose(stream);
+        lite3d_vbo_unmap(&mesh->indexBuffer);
         return LITE3D_FALSE;
     }
     lite3d_vbo_unmap(&mesh->indexBuffer);

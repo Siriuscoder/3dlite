@@ -85,7 +85,7 @@ JSONValue *JSON::Parse(const char *data)
 JSONValue *JSON::Parse(const wchar_t *data)
 {
 	// Skip any preceding whitespace, end of data = no JSON = fail
-	if (!SkipWhitespace(&data))
+	if (!SkipWhitespaceAndComments(&data))
 		return NULL;
 
 	// We need the start of a value here now...
@@ -94,7 +94,7 @@ JSONValue *JSON::Parse(const wchar_t *data)
 		return NULL;
 	
 	// Can be white space now and should be at the end of the string then...
-	if (SkipWhitespace(&data))
+	if (SkipWhitespaceAndComments(&data))
 	{
 		delete value;
 		return NULL;
@@ -138,6 +138,27 @@ bool JSON::SkipWhitespace(const wchar_t **data)
 	return **data != 0;
 }
 
+bool JSON::SkipWhitespaceAndComments(const wchar_t **data)
+{
+    if(!SkipWhitespace(data))
+        return false;
+
+checkcomment:
+    if(**data == L'/' && *((*data)+1) == L'/')
+    {
+        while (**data != 0 && (**data != L'\n'))
+            (*data)++;
+    }
+    
+    if(!SkipWhitespace(data))
+        return false;
+
+    // skip next comment if found
+    if(*((*data)+1) == L'/')
+        goto checkcomment;
+
+    return true;
+}
 /**
  * Extracts a JSON String as defined by the spec - "<some chars>"
  * Any escaped characters are swapped out for their unescaped values
