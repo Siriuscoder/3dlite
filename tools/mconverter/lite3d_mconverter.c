@@ -1,6 +1,6 @@
 /******************************************************************************
  *	This file is part of lite3d (Light-weight 3d engine).
- *	Copyright (C) 2014  Sirius (Korolev Nikita)
+ *	Copyright (C) 2015  Sirius (Korolev Nikita)
  *
  *	Foobar is free software: you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -27,6 +27,8 @@
 
 #define DEFAULT_WIDTH           800
 #define DEFAULT_HEIGHT          600
+
+void print_mesh_info(lite3d_file *meshFile);
 
 static char inputFilePath[1024] = {0};
 static char outputFolder[1024] = {0};
@@ -124,6 +126,23 @@ static int convert_mesh(void *userdata)
     return LITE3D_FALSE;
 }
 
+static int mesh_info(void *userdata)
+{
+    lite3d_pack *pack;
+    lite3d_file *meshFile;
+    uint32_t loadFlags = 0;
+
+    if (!(pack = lite3d_pack_open("./", LITE3D_FALSE, 0)))
+        return LITE3D_FALSE;
+    if (!(meshFile = lite3d_pack_file_load(pack, inputFilePath)))
+        return LITE3D_FALSE;
+
+    print_mesh_info(meshFile);
+    lite3d_pack_close(pack);
+
+    return LITE3D_FALSE;
+}
+
 static void print_help_and_exit()
 {
     printf("Lite3d conversion utility.\n");
@@ -166,6 +185,15 @@ int main(int argc, char *args[])
                 strncpy(inputFilePath, args[i + 1], sizeof (inputFilePath) - 1);
             else
                 print_help_and_exit();
+        }
+        if (strcmp(args[i], "-p") == 0)
+        {
+            if ((i + 1) < argc)
+                strncpy(inputFilePath, args[i + 1], sizeof (inputFilePath) - 1);
+            else
+                print_help_and_exit();
+
+            settings.renderLisneters.preRender = mesh_info;
         }
         else if (strcmp(args[i], "-o") == 0)
         {

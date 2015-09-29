@@ -80,7 +80,7 @@ size_t lite3d_indexed_mesh_m_encode_size(lite3d_indexed_mesh *mesh)
 }
 
 int lite3d_indexed_mesh_m_decode(lite3d_indexed_mesh *mesh,
-    void *buffer, size_t size, uint16_t access)
+    const void *buffer, size_t size, uint16_t access)
 {
     SDL_RWops *stream;
     lite3d_m_header mheader;
@@ -94,7 +94,7 @@ int lite3d_indexed_mesh_m_decode(lite3d_indexed_mesh *mesh,
     SDL_assert(mesh);
 
     /* open memory stream */
-    stream = SDL_RWFromMem(buffer, size);
+    stream = SDL_RWFromConstMem(buffer, size);
 
     if (SDL_RWread(stream, &mheader, sizeof (mheader), 1) != 1)
     {
@@ -162,6 +162,9 @@ int lite3d_indexed_mesh_m_decode(lite3d_indexed_mesh *mesh,
 
         indOffset += mchunk.indexesSize;
         vertOffset += mchunk.verticesSize;
+        mesh->verticesCount += mchunk.verticesCount;
+        mesh->elementsCount += mchunk.indexesCount / (mchunk.elementType == LITE3D_PRIMITIVE_POINT ? 1 : 
+            (mchunk.elementType == LITE3D_PRIMITIVE_LINE ? 2 : 3));
     }
 
     if (SDL_RWseek(stream, sizeof (mheader) + mheader.chunkSectionSize, RW_SEEK_SET) < 0)

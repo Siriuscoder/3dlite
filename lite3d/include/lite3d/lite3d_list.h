@@ -44,7 +44,7 @@ typedef int
  * @return
  *   The argument.
  */
-struct lite3d_list *
+LITE3D_CEXPORT struct lite3d_list *
 lite3d_list_init(struct lite3d_list *lite3d_list);
 
 /**
@@ -53,69 +53,69 @@ lite3d_list_init(struct lite3d_list *lite3d_list);
  * @return
  *   The argument.
  */
-struct lite3d_list_node *
+LITE3D_CEXPORT struct lite3d_list_node *
 lite3d_list_link_init(struct lite3d_list_node *link);
 
-int
+LITE3D_CEXPORT int
 lite3d_list_is_empty(struct lite3d_list *lite3d_list);
 
-int
+LITE3D_CEXPORT int
 lite3d_list_alone_link(struct lite3d_list_node *link);
 
 /* Unlinking an element from its lite3d_list. */
-void
+LITE3D_CEXPORT void
 lite3d_list_unlink_link(struct lite3d_list_node *link);
 
 /* Retrieving the first/last elements. */
-struct lite3d_list_node *
+LITE3D_CEXPORT struct lite3d_list_node *
 lite3d_list_first_link(struct lite3d_list *lite3d_list);
 
-struct lite3d_list_node *
+LITE3D_CEXPORT struct lite3d_list_node *
 lite3d_list_last_link(struct lite3d_list *lite3d_list);
 
 /* Adding an element at the lite3d_list ends. */
-void
+LITE3D_CEXPORT void
 lite3d_list_add_first_link(struct lite3d_list_node *new_link, struct lite3d_list *lite3d_list);
 
-void
+LITE3D_CEXPORT void
 lite3d_list_add_last_link(struct lite3d_list_node *new_link, struct lite3d_list *lite3d_list);
 
 /* Insertion of an element near a given one. */
-void
+LITE3D_CEXPORT void
 lite3d_list_insert_before_link(struct lite3d_list_node *new_link, struct lite3d_list_node *link);
 
-void
+LITE3D_CEXPORT void
 lite3d_list_insert_after_link(struct lite3d_list_node *new_link, struct lite3d_list_node *link);
 
 /* Popping an element from the lite3d_list ends. */
-struct lite3d_list_node *
+LITE3D_CEXPORT struct lite3d_list_node *
 lite3d_list_remove_first_link(struct lite3d_list *lite3d_list);
 
-struct lite3d_list_node *
+LITE3D_CEXPORT struct lite3d_list_node *
 lite3d_list_remove_last_link(struct lite3d_list *lite3d_list);
 
-void
+LITE3D_CEXPORT void
 lite3d_list_bulk_add_first(struct lite3d_list *from_list, struct lite3d_list *to_list);
 
-void
+LITE3D_CEXPORT void
 lite3d_list_bulk_add_last(struct lite3d_list *from_list, struct lite3d_list *to_list);
 
-void
+LITE3D_CEXPORT void
 lite3d_list_bulk_insert_before_link(struct lite3d_list *from_list, struct lite3d_list_node *link);
 
-void
+LITE3D_CEXPORT void
 lite3d_list_bulk_insert_after_link(struct lite3d_list *from_list, struct lite3d_list_node *link);
 
-struct lite3d_list_node *
+LITE3D_CEXPORT struct lite3d_list_node *
 lite3d_list_next(struct lite3d_list_node *link);
 
-struct lite3d_list_node *
+LITE3D_CEXPORT struct lite3d_list_node *
 lite3d_list_prev(struct lite3d_list_node *link);
 
-struct lite3d_list_node *
+LITE3D_CEXPORT struct lite3d_list_node *
 lite3d_list_find_arg(struct lite3d_list *in_list, lite3d_list_node_arg_predicate_t predicate, void *arg);
 
-void
+LITE3D_CEXPORT void
 lite3d_list_iterate(struct lite3d_list *in_list, lite3d_list_iterate_t func);
 
 #endif	/* LITE3D_LIST_H */
