@@ -15,6 +15,9 @@
  *	You should have received a copy of the GNU General Public License
  *	along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
+// original code taken from Embox
+// https://github.com/embox/embox
+
 #include <lite3d/lite3d_list.h>
 #include <lite3d/lite3d_alloc.h>
 

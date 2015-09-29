@@ -143,19 +143,14 @@ bool JSON::SkipWhitespaceAndComments(const wchar_t **data)
     if(!SkipWhitespace(data))
         return false;
 
-checkcomment:
-    if(**data == L'/' && *((*data)+1) == L'/')
+    while (**data == L'/' && *((*data)+1) == L'/')
     {
         while (**data != 0 && (**data != L'\n'))
             (*data)++;
-    }
     
-    if(!SkipWhitespace(data))
-        return false;
-
-    // skip next comment if found
-    if(*((*data)+1) == L'/')
-        goto checkcomment;
+        if(!SkipWhitespace(data))
+            return false;
+    }
 
     return true;
 }
