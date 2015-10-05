@@ -25,9 +25,6 @@
 #include <lite3d/lite3d_framebuffer.h>
 
 #define LITE3D_RENDER_TARGET_NAME   20
-#define CLEAN_COLOR_BUFFER 0x00004000
-#define CLEAN_DEPTH_BUFFER 0x00000100
-#define CLEAN_STENCIL_BUFFER 0x00000400
 
 typedef int (*lite3d_pre_render_t)(void *userdata);
 typedef int (*lite3d_post_render_t)(void *userdata);
@@ -78,8 +75,11 @@ typedef struct lite3d_render_target
     void (*preUpdate)(struct lite3d_render_target *target);
     void (*postUpdate)(struct lite3d_render_target *target);
     lite3d_list lookSequence;
-    uint32_t cleanMask;
+    uint8_t clearColorBuffer;
+    uint8_t clearDepthBuffer;
+    uint8_t clearStencilBuffer;
     kmVec4 cleanColor;
+    float cleanDepth;
     int priority;
 } lite3d_render_target;
 
@@ -96,7 +96,6 @@ LITE3D_CEXPORT void lite3d_render_target_erase_all(void);
 LITE3D_CEXPORT void lite3d_render_resume(void);
 LITE3D_CEXPORT void lite3d_render_suspend(void);
 LITE3D_CEXPORT void lite3d_render_stop(void);
-LITE3D_CEXPORT void lite3d_render_depth_test(uint8_t on);
 
 LITE3D_CEXPORT int lite3d_render_target_attach_camera(lite3d_render_target *rt, lite3d_camera *camera, uint16_t pass, int priority);
 LITE3D_CEXPORT int lite3d_render_target_dettach_camera(lite3d_render_target *rt, lite3d_camera *camera, uint16_t pass, int priority);

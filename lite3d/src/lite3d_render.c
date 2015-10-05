@@ -24,6 +24,7 @@
 #include <lite3d/lite3d_render.h>
 #include <lite3d/lite3d_video.h>
 #include <lite3d/lite3d_scene.h>
+#include <lite3d/lite3d_buffers_manip.h>
 #include <lite3d/lite3d_main.h>
 
 typedef struct lookUnit
@@ -97,11 +98,10 @@ static void update_render_target(lite3d_render_target *target)
     lookUnit *look;
     /* switch target framebuffer */
     lite3d_framebuffer_switch(&target->fb);
-    /* set viewport */
-    glViewport(0, 0, target->width, target->height);
     /* clear target */
-    glClearColor(target->cleanColor.x, target->cleanColor.y, target->cleanColor.z, target->cleanColor.w);
-    glClear(target->cleanMask);
+    lite3d_buffers_clear_values(&target->cleanColor, target->cleanDepth);
+    lite3d_buffers_clear(target->clearColorBuffer, target->clearDepthBuffer, target->clearStencilBuffer);
+
     /* do paint by render queue */
     for (node = target->lookSequence.l.next; node != &target->lookSequence.l; node = lite3d_list_next(node))
     {
@@ -151,20 +151,6 @@ static int update_render_targets(void)
     return targetsCount ? LITE3D_TRUE : LITE3D_FALSE;
 }
 
-void lite3d_render_depth_test(uint8_t on)
-{
-    if (on)
-    {
-        glClearDepth(1.0);
-        glDepthFunc(GL_LESS);
-        glEnable(GL_DEPTH_TEST);
-    }
-    else
-    {
-        glDisable(GL_DEPTH_TEST);
-    }
-}
-
 void lite3d_render_loop(lite3d_render_listeners *callbacks)
 {
     SDL_Event wevent;
@@ -174,7 +160,8 @@ void lite3d_render_loop(lite3d_render_listeners *callbacks)
     gPerfFreq = SDL_GetPerformanceFrequency();
 
     /* depth test enable by default */
-    lite3d_render_depth_test(LITE3D_TRUE);
+    lite3d_depth_test(LITE3D_TRUE);
+    lite3d_depth_test_func(LITE3D_TEST_LESS);
 
     /* clean statistic */
     memset(&gRenderStats, 0, sizeof (gRenderStats));
@@ -257,9 +244,12 @@ int lite3d_render_target_init(lite3d_render_target *rt,
 
     rt->enabled = LITE3D_TRUE;
     lite3d_list_init(&rt->lookSequence);
-    rt->cleanMask = CLEAN_COLOR_BUFFER | CLEAN_DEPTH_BUFFER | CLEAN_STENCIL_BUFFER;
+    rt->clearColorBuffer = LITE3D_TRUE;
+    rt->clearDepthBuffer = LITE3D_TRUE;
+    rt->clearStencilBuffer = LITE3D_TRUE;
     rt->cleanColor.x = rt->cleanColor.y = rt->cleanColor.z = 0.3f;
     rt->cleanColor.w = 0.0f;
+    rt->cleanDepth = 1.0f;
     rt->width = width;
     rt->height = height;
 

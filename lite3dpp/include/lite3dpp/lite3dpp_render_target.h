@@ -39,7 +39,22 @@ namespace lite3dpp
         int32_t height();
         int32_t width();
         void setBackgroundColor(const kmVec4 &color);
-        void setCleanMask(uint32_t mask);
+        void setCleanDepth(float value);
+        /* clean buffers control, clean operation perform then 
+           this render target begin updating */
+        void setBuffersCleanBit(bool color, bool depth, bool stencil);
+        /* output buffers write control */
+        /* perform immediately */
+        void depthOutput(bool flag);
+        void colorOutput(bool r, bool g, bool b, bool a);
+        void stencilOutput(bool flag);
+        /* Buffer testing control */
+        void depthTest(bool flag);
+        void depthTestFunc(uint32_t func);
+        void stencilTest(bool flag);
+        void stencilTestFunc(uint32_t func, int32_t value);
+        /* clean buffers immediately */
+        void clear(bool color, bool depth, bool stencil);
 
         inline lite3d_render_target *getPtr()
         { return mRenderTargetPtr; }

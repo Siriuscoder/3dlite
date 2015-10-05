@@ -19,6 +19,8 @@
 
 #include <algorithm>
 
+#include <lite3d/lite3d_buffers_manip.h>
+
 #include <lite3dpp/lite3dpp_main.h>
 #include <lite3dpp/lite3dpp_render_target.h>
 
@@ -69,12 +71,67 @@ namespace lite3dpp
         mRenderTargetPtr->cleanColor = color;
     }
 
-    void RenderTarget::setCleanMask(uint32_t mask)
+    void RenderTarget::setCleanDepth(float value)
     {
         SDL_assert_release(mRenderTargetPtr);
-        mRenderTargetPtr->cleanMask = mask;
+        mRenderTargetPtr->cleanDepth = value;
     }
 
+    void RenderTarget::setBuffersCleanBit(bool color, bool depth, bool stencil)
+    {
+        SDL_assert_release(mRenderTargetPtr);
+        mRenderTargetPtr->clearColorBuffer = color ? LITE3D_TRUE : LITE3D_FALSE;
+        mRenderTargetPtr->clearDepthBuffer = depth ? LITE3D_TRUE : LITE3D_FALSE;
+        mRenderTargetPtr->clearStencilBuffer = stencil ? LITE3D_TRUE : LITE3D_FALSE;
+    }
+
+    void RenderTarget::depthOutput(bool flag)
+    {
+        lite3d_depth_output(flag ? LITE3D_TRUE : LITE3D_FALSE);
+    }
+
+    void RenderTarget::colorOutput(bool r, bool g, bool b, bool a)
+    {
+        lite3d_color_output(r ? LITE3D_TRUE : LITE3D_FALSE,
+            g ? LITE3D_TRUE : LITE3D_FALSE, 
+            b ? LITE3D_TRUE : LITE3D_FALSE, 
+            a ? LITE3D_TRUE : LITE3D_FALSE);
+    }
+
+    void RenderTarget::stencilOutput(bool flag)
+    {
+        lite3d_stencil_output(flag ? LITE3D_TRUE : LITE3D_FALSE);
+    }
+
+    void RenderTarget::depthTest(bool flag)
+    {
+        lite3d_depth_test(flag ? LITE3D_TRUE : LITE3D_FALSE);
+    }
+
+    void RenderTarget::depthTestFunc(uint32_t func)
+    {
+        lite3d_depth_test_func(func);
+    }
+
+    void RenderTarget::stencilTest(bool flag)
+    {
+        lite3d_stencil_test(flag ? LITE3D_TRUE : LITE3D_FALSE);
+    }
+
+    void RenderTarget::stencilTestFunc(uint32_t func, int32_t value)
+    {
+        lite3d_stencil_test_func(func, value);
+    }
+
+    void RenderTarget::clear(bool color, bool depth, bool stencil)
+    {
+        SDL_assert_release(mRenderTargetPtr);
+        lite3d_buffers_clear_values(&mRenderTargetPtr->cleanColor,
+            mRenderTargetPtr->cleanDepth);
+        lite3d_buffers_clear(color ? LITE3D_TRUE : LITE3D_FALSE,
+            depth ? LITE3D_TRUE : LITE3D_FALSE,
+            stencil ? LITE3D_TRUE : LITE3D_FALSE);
+    }
 
     void RenderTarget::addCamera(Camera *camera, uint16_t pass, int priority)
     {

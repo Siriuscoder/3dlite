@@ -444,5 +444,7 @@ void lite3d_framebuffer_switch(lite3d_framebuffer *fb)
 
         glDrawBuffer(gCurrentFb->useColorbuffer ? GL_BACK : GL_NONE);
         glReadBuffer(gCurrentFb->useColorbuffer ? GL_BACK : GL_NONE);
+        /* set viewport */
+        glViewport(0, 0, fb->width, fb->height);
     }
 }
