@@ -18,6 +18,8 @@
 #include <SDL_log.h>
 
 #include <lite3d/lite3d_mesh_loader.h>
+#include <lite3d/lite3d_mesh_assimp_loader.h>
+
 #include <lite3dpp/lite3dpp_main.h>
 #include <lite3dpp/lite3dpp_mesh.h>
 
@@ -41,6 +43,7 @@ namespace lite3dpp
                 helper.getBool(L"Dynamic", false) ? LITE3D_VBO_DYNAMIC_DRAW : LITE3D_VBO_STATIC_DRAW))
                 throw std::runtime_error("Mesh bad format..");
         }
+#ifdef INCLUDE_ASSIMP
         else
         {
             uint32_t flags = 0;
@@ -49,13 +52,14 @@ namespace lite3dpp
             if(helper.getBool(L"FlipUV"))
                 flags |= LITE3D_FLIP_UV_FLAG;
 
-            if(!lite3d_indexed_mesh_load(&mMesh, 
+            if(!lite3d_assimp_mesh_load(&mMesh, 
                 mMain->getResourceManager()->loadFileToMemory(helper.getString(L"Model")),
                 helper.getString(L"ModelName").c_str(), 
                 helper.getBool(L"Dynamic", false) ? LITE3D_VBO_DYNAMIC_DRAW : LITE3D_VBO_STATIC_DRAW,
                 flags))
                 throw std::runtime_error("mesh bad format..");
         }
+#endif
 
         if(helper.getBool(L"MaterialMappingAutoOrdered", false))
             lite3d_indexed_mesh_order_mat_indexes(&mMesh);

@@ -17,8 +17,12 @@
  *******************************************************************************/
 #include <gtest/gtest.h>
 
-#include <lite3d/lite3d_m_codec.h>
+#include <lite3d/lite3d_mesh_codec.h>
+#include <lite3d/lite3d_mesh_assimp_loader.h>
 #include "lite3d_common_test.h"
+
+#ifdef INCLUDE_ASSIMP
+
 class VBO_Test : public ::testing::Test
 {
 public:
@@ -35,7 +39,7 @@ static int meshLoadingTest(void *userdata)
     lite3d_file *meshFile = lite3d_pack_file_load(fileSysPack,
                                                                     "pack/minigun/minigun.3ds");
     EXPECT_TRUE(lite3d_indexed_mesh_init(&mVBO) == LITE3D_TRUE);
-    EXPECT_TRUE(lite3d_indexed_mesh_load(&mVBO, meshFile, NULL, LITE3D_VBO_STATIC_DRAW, 0) == LITE3D_TRUE);
+    EXPECT_TRUE(lite3d_assimp_mesh_load(&mVBO, meshFile, NULL, LITE3D_VBO_STATIC_DRAW, 0) == LITE3D_TRUE);
 
 
     lite3d_indexed_mesh_purge(&mVBO);
@@ -54,7 +58,7 @@ static int encodeDecode_M_formatTest(void *userdata)
     lite3d_file *meshFile = lite3d_pack_file_load(fileSysPack,
                                                                     "pack/minigun/minigun.3ds");
     EXPECT_TRUE(lite3d_indexed_mesh_init(&mVBO) == LITE3D_TRUE);
-    EXPECT_TRUE(lite3d_indexed_mesh_load(&mVBO, meshFile, NULL, LITE3D_VBO_STATIC_DRAW,
+    EXPECT_TRUE(lite3d_assimp_mesh_load(&mVBO, meshFile, NULL, LITE3D_VBO_STATIC_DRAW,
         LITE3D_OPTIMIZE_MESH_FLAG) == LITE3D_TRUE);
 
     size_t mfileSize = lite3d_indexed_mesh_m_encode_size(&mVBO);
@@ -89,3 +93,5 @@ TEST_F(VBO_Test, encodeDecode_M_format)
     mlite3dCommon.settings().renderLisneters.preRender = encodeDecode_M_formatTest;
     mlite3dCommon.main();
 }
+
+#endif

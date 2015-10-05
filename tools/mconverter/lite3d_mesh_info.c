@@ -23,7 +23,7 @@
 #include <SDL_log.h>
 #include <SDL_rwops.h>
 #include <lite3d/lite3d_main.h>
-#include <lite3d/lite3d_m_codec.h>
+#include <lite3d/lite3d_mesh_codec.h>
 
 void print_mesh_info(lite3d_file *meshFile)
 {

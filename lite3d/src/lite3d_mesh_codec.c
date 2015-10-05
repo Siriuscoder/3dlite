@@ -20,7 +20,7 @@
 
 #include <lite3d/lite3d_misc.h>
 #include <lite3d/lite3d_alloc.h>
-#include <lite3d/lite3d_m_codec.h>
+#include <lite3d/lite3d_mesh_codec.h>
 
 #define LITE3D_M_SIGNATURE          0xBEEB0001
 

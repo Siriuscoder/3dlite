@@ -23,7 +23,8 @@
 #include <SDL_log.h>
 #include <SDL_rwops.h>
 #include <lite3d/lite3d_main.h>
-#include <lite3d/lite3d_m_codec.h>
+#include <lite3d/lite3d_mesh_codec.h>
+#include <lite3d/lite3d_mesh_assimp_loader.h>
 
 #define DEFAULT_WIDTH           800
 #define DEFAULT_HEIGHT          600
@@ -36,6 +37,8 @@ static int optimize = LITE3D_FALSE;
 static int flipUV = LITE3D_FALSE;
 static int nonameCounter = 0;
 static lite3d_indexed_mesh model;
+
+#ifdef INCLUDE_ASSIMP
 
 static int save_buffer(void *buffer, size_t size, const char *path)
 {
@@ -119,12 +122,14 @@ static int convert_mesh(void *userdata)
     if (flipUV)
         loadFlags |= LITE3D_FLIP_UV_FLAG;
 
-    lite3d_indexed_mesh_load_recursive(meshFile, mesh_init, mesh_loaded,
+    lite3d_assimp_mesh_load_recursive(meshFile, mesh_init, mesh_loaded,
         LITE3D_VBO_STATIC_READ, loadFlags);
     lite3d_pack_close(pack);
 
     return LITE3D_FALSE;
 }
+
+#endif
 
 static int mesh_info(void *userdata)
 {
@@ -172,7 +177,11 @@ int main(int argc, char *args[])
     settings.videoSettings.vsync = LITE3D_TRUE;
     settings.videoSettings.hidden = LITE3D_TRUE;
 
+#ifdef INCLUDE_ASSIMP
     settings.renderLisneters.preRender = convert_mesh;
+#else
+    printf("Warning: If you want to use converter, please, recompile me with Assimp support!");
+#endif
 
     if (argc < 3)
         print_help_and_exit();
@@ -213,6 +222,8 @@ int main(int argc, char *args[])
     }
 
     if (inputFilePath[0] == 0)
+        print_help_and_exit();
+    if (!settings.renderLisneters.preRender)
         print_help_and_exit();
 
     return !lite3d_main(&settings);
