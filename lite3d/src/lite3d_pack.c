@@ -97,19 +97,20 @@ static int check_pack_memory_limit(lite3d_pack *pack, size_t size)
         return 0;
     }
 
-memValidate:
+    if (size >= pack->memoryLimit)
+        return LITE3D_FALSE;
+
     /* validate memory limit */
-    if ((pack->memoryUsed + size) > pack->memoryLimit)
+    while ((pack->memoryUsed + size) > pack->memoryLimit)
     {
         SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
             "%s: memory limit is reached "
             "(%d bytes vs %d bytes limit) cleanup old data..", __FUNCTION__,
             (int)(pack->memoryUsed + size), (int)pack->memoryLimit);
         lite3d_pack_purge_unused(pack);
-        goto memValidate;
     }
 
-    return 1;
+    return LITE3D_TRUE;
 }
 
 lite3d_pack *lite3d_pack_open(const char *path, uint8_t compressed, 
@@ -245,8 +246,8 @@ lite3d_file *lite3d_pack_file_load(lite3d_pack *pack, const char *file)
         if(!check_pack_memory_limit(pack, fileSize))
         {
             SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
-                "%s: file %s too big: %d bytes (limit 100M)",
-                __FUNCTION__, fullPath, (int) fileSize);
+                "%s: file %s too big: %d bytes (limit %d)",
+                __FUNCTION__, fullPath, (int) fileSize, (int) pack->memoryLimit);
             SDL_RWclose(desc);
             return NULL;
         }

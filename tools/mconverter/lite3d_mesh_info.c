@@ -75,9 +75,9 @@ void print_mesh_info(lite3d_file *meshFile)
         for(i = 0; i < meshChunk->layoutEntriesCount; ++i)
         {
             printf("\t%d\t%s\tFLOAT%d\t0x%x\n", i,
-                (meshChunk->layout[i].binding == LITE3D_BUFFER_BINDING_VERTEX ? "VERTEX" : 
-                (meshChunk->layout[i].binding == LITE3D_BUFFER_BINDING_COLOR ? "COLOR" : 
-                (meshChunk->layout[i].binding == LITE3D_BUFFER_BINDING_NORMAL ? "NORMAL" : 
+                (meshChunk->layout[i].binding == LITE3D_BUFFER_BINDING_VERTEX ? "VERTEX\t" : 
+                (meshChunk->layout[i].binding == LITE3D_BUFFER_BINDING_COLOR ? "COLOR\t" : 
+                (meshChunk->layout[i].binding == LITE3D_BUFFER_BINDING_NORMAL ? "NORMAL\t" : 
                 (meshChunk->layout[i].binding == LITE3D_BUFFER_BINDING_TEXCOORD ? "TEXCOORD" : "ATTRIBUTE")))),
                 meshChunk->layout[i].count, offset);
 

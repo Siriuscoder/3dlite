@@ -217,13 +217,6 @@ lite3d_mesh_chunk *lite3d_indexed_mesh_append_chunk(lite3d_indexed_mesh *mesh,
     /* bind all arrays and attribs into the current VAO */
     for (; i < layoutCount; ++i)
     {
-        if (layout[i].binding != LITE3D_BUFFER_BINDING_ATTRIBUTE)
-        {
-            SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION, "VBO: 0x%x: chunk 0x%x used "
-                "legacy binding type attribute", mesh->vertexBuffer.vboID, meshChunk->vao.vaoID);
-            continue;
-        }
-
         glEnableVertexAttribArray(attribIndex);
         glVertexAttribPointer(attribIndex++, layout[i].count, GL_FLOAT,
             GL_FALSE, stride, (void *) vOffset);

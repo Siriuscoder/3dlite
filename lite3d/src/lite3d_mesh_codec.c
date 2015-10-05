@@ -48,6 +48,7 @@ typedef struct lite3d_m_chunk
     int32_t verticesOffset;
     uint16_t elementType;
     uint16_t indexType;
+    uint32_t materialIndex;
 } lite3d_m_chunk;
 
 typedef struct lite3d_m_chunk_layout
@@ -160,6 +161,10 @@ int lite3d_indexed_mesh_m_decode(lite3d_indexed_mesh *mesh,
             mchunk.indexesSize, indOffset, mchunk.verticesCount, mchunk.verticesSize, vertOffset))
             return LITE3D_FALSE;
 
+        /* set material index to currently added meshChunk */
+        LITE3D_MEMBERCAST(lite3d_mesh_chunk, lite3d_list_last_link(&mesh->chunks), node)->
+            materialIndex = mchunk.materialIndex;
+
         indOffset += mchunk.indexesSize;
         vertOffset += mchunk.verticesSize;
         mesh->verticesCount += mchunk.verticesCount;
@@ -263,6 +268,7 @@ int lite3d_indexed_mesh_m_encode(lite3d_indexed_mesh *mesh,
         mchunk.verticesOffset = meshChunk->vao.verticesOffset;
         mchunk.elementType = meshChunk->vao.elementType;
         mchunk.indexType = meshChunk->vao.indexType;
+        mchunk.materialIndex = meshChunk->materialIndex;
 
         if (SDL_RWwrite(stream, &mchunk, sizeof (mchunk), 1) != 1)
         {

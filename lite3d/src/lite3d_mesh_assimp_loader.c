@@ -78,32 +78,38 @@ static int ai_node_load_to_vbo(lite3d_indexed_mesh *meshInst, const struct aiSce
 
         layoutCount = 0;
         verticesSize = mesh->mNumVertices * sizeof (float) * 3;
-        layout[layoutCount].binding = LITE3D_BUFFER_BINDING_ATTRIBUTE;
+        layout[layoutCount].binding = LITE3D_BUFFER_BINDING_VERTEX;
         layout[layoutCount].count = 3;
         layoutCount++;
 
         if (mesh->mNormals)
         {
             verticesSize += mesh->mNumVertices * sizeof (float) * 3;
-            layout[layoutCount].binding = LITE3D_BUFFER_BINDING_ATTRIBUTE;
+            layout[layoutCount].binding = LITE3D_BUFFER_BINDING_NORMAL;
             layout[layoutCount].count = 3;
             layoutCount++;
         }
 
-        if (mesh->mColors[0])
+        for (j = 0; j < AI_MAX_NUMBER_OF_COLOR_SETS; ++j)
         {
-            verticesSize += mesh->mNumVertices * sizeof (float) * 4;
-            layout[layoutCount].binding = LITE3D_BUFFER_BINDING_ATTRIBUTE;
-            layout[layoutCount].count = 4;
-            layoutCount++;
+            if (mesh->mColors[j])
+            {
+                verticesSize += mesh->mNumVertices * sizeof (float) * 4;
+                layout[layoutCount].binding = LITE3D_BUFFER_BINDING_COLOR;
+                layout[layoutCount].count = 4;
+                layoutCount++;
+            }
         }
 
-        if (mesh->mTextureCoords[0])
+        for (j = 0; j < AI_MAX_NUMBER_OF_TEXTURECOORDS; ++j)
         {
-            verticesSize += mesh->mNumVertices * sizeof (float) * 2;
-            layout[layoutCount].binding = LITE3D_BUFFER_BINDING_ATTRIBUTE;
-            layout[layoutCount].count = 2;
-            layoutCount++;
+            if (mesh->mTextureCoords[j])
+            {
+                verticesSize += mesh->mNumVertices * sizeof (float) * 2;
+                layout[layoutCount].binding = LITE3D_BUFFER_BINDING_TEXCOORD;
+                layout[layoutCount].count = 2;
+                layoutCount++;
+            }
         }
 
         componentSize = mesh->mNumFaces <= 0xff ? 1 : (mesh->mNumFaces <= 0xffff ? 2 : 4);
@@ -118,6 +124,8 @@ static int ai_node_load_to_vbo(lite3d_indexed_mesh *meshInst, const struct aiSce
 
         for (j = 0; j < mesh->mNumVertices; ++j)
         {
+            register uint32_t g;
+
             *pvertices++ = mesh->mVertices[j].x;
             *pvertices++ = mesh->mVertices[j].y;
             *pvertices++ = mesh->mVertices[j].z;
@@ -129,18 +137,24 @@ static int ai_node_load_to_vbo(lite3d_indexed_mesh *meshInst, const struct aiSce
                 *pvertices++ = mesh->mNormals[j].z;
             }
 
-            if (mesh->mColors[0])
+            for (g = 0; g < AI_MAX_NUMBER_OF_COLOR_SETS; ++g)
             {
-                *pvertices++ = mesh->mColors[0][j].r;
-                *pvertices++ = mesh->mColors[0][j].g;
-                *pvertices++ = mesh->mColors[0][j].b;
-                *pvertices++ = mesh->mColors[0][j].a;
+                if (mesh->mColors[g])
+                {
+                    *pvertices++ = mesh->mColors[g][j].r;
+                    *pvertices++ = mesh->mColors[g][j].g;
+                    *pvertices++ = mesh->mColors[g][j].b;
+                    *pvertices++ = mesh->mColors[g][j].a;
+                }
             }
 
-            if (mesh->mTextureCoords[0])
+            for (g = 0; g < AI_MAX_NUMBER_OF_TEXTURECOORDS; ++g)
             {
-                *pvertices++ = mesh->mTextureCoords[0][j].x;
-                *pvertices++ = mesh->mTextureCoords[0][j].y;
+                if (mesh->mTextureCoords[g])
+                {
+                    *pvertices++ = mesh->mTextureCoords[g][j].x;
+                    *pvertices++ = mesh->mTextureCoords[g][j].y;
+                }
             }
         }
 

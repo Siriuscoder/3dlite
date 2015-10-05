@@ -165,7 +165,7 @@ int main(int argc, char *args[])
     memset(&settings, 0, sizeof (settings));
 
     settings.logLevel = LITE3D_LOGLEVEL_ERROR;
-    settings.maxFileCacheSize = 0x700000;
+    settings.maxFileCacheSize = 0x6400000; // 100MB
     settings.textureSettings.anisotropy = 8;
     settings.textureSettings.useGLCompression = LITE3D_TRUE;
     settings.videoSettings.FSAA = 1;
