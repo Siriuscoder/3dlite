@@ -5,7 +5,6 @@
       <df name="lite3d">
         <df name="src">
           <in>lite3d_framebuffer.c</in>
-          <in>lite3d_m_codec.c</in>
           <in>lite3d_main.c</in>
           <in>lite3d_material.c</in>
           <in>lite3d_pack.c</in>
@@ -94,6 +93,7 @@
       <df name="tools">
         <df name="mconverter">
           <in>lite3d_mconverter.c</in>
+          <in>lite3d_mesh_info.c</in>
         </df>
       </df>
     </df>
@@ -278,6 +278,12 @@
       </folder>
       <folder path="0/tests/functionaly">
         <ccTool>
+          <incDir>
+            <pElem>lite3d/include</pElem>
+            <pElem>lite3dpp/include</pElem>
+            <pElem>/usr/include/SDL2</pElem>
+            <pElem>build/tests/functionaly</pElem>
+          </incDir>
           <preprocessorList>
             <Elem>_REENTRANT</Elem>
           </preprocessorList>
@@ -299,6 +305,9 @@
             <pElem>/usr/include/SDL2</pElem>
             <pElem>build/tools</pElem>
           </incDir>
+          <preprocessorList>
+            <Elem>INCLUDE_ASSIMP</Elem>
+          </preprocessorList>
         </cTool>
       </folder>
       <folder path="Modules">
@@ -312,10 +321,6 @@
         </cTool>
       </folder>
       <item path="lite3d/src/lite3d_framebuffer.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="3">
-        </cTool>
-      </item>
-      <item path="lite3d/src/lite3d_m_codec.c" ex="false" tool="0" flavor2="3">
         <cTool flags="3">
         </cTool>
       </item>
@@ -599,13 +604,6 @@
             tool="1"
             flavor2="8">
         <ccTool flags="0">
-          <incDir>
-            <pElem>tests/gtest</pElem>
-            <pElem>lite3d/include</pElem>
-            <pElem>lite3dpp/include</pElem>
-            <pElem>/usr/include/SDL2</pElem>
-            <pElem>build/tests/functionaly</pElem>
-          </incDir>
         </ccTool>
       </item>
       <item path="tests/functionaly/lite3d_vbo_test.cpp"
@@ -613,13 +611,6 @@
             tool="1"
             flavor2="8">
         <ccTool flags="0">
-          <incDir>
-            <pElem>tests/gtest</pElem>
-            <pElem>lite3d/include</pElem>
-            <pElem>lite3dpp/include</pElem>
-            <pElem>/usr/include/SDL2</pElem>
-            <pElem>build/tests/functionaly</pElem>
-          </incDir>
         </ccTool>
       </item>
       <item path="tests/functionaly/lite3dpp_main_test.cpp"
@@ -627,13 +618,6 @@
             tool="1"
             flavor2="8">
         <ccTool flags="0">
-          <incDir>
-            <pElem>lite3d/include</pElem>
-            <pElem>lite3dpp/include</pElem>
-            <pElem>tests/gtest</pElem>
-            <pElem>/usr/include/SDL2</pElem>
-            <pElem>build/tests/functionaly</pElem>
-          </incDir>
         </ccTool>
       </item>
       <item path="tests/gtest/src/gtest-all.cc" ex="false" tool="1" flavor2="8">
@@ -645,6 +629,13 @@
         </ccTool>
       </item>
       <item path="tools/mconverter/lite3d_mconverter.c"
+            ex="false"
+            tool="0"
+            flavor2="3">
+        <cTool flags="2">
+        </cTool>
+      </item>
+      <item path="tools/mconverter/lite3d_mesh_info.c"
             ex="false"
             tool="0"
             flavor2="3">

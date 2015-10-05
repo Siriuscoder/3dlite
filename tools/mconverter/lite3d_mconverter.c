@@ -135,7 +135,6 @@ static int mesh_info(void *userdata)
 {
     lite3d_pack *pack;
     lite3d_file *meshFile;
-    uint32_t loadFlags = 0;
 
     if (!(pack = lite3d_pack_open("./", LITE3D_FALSE, 0)))
         return LITE3D_FALSE;
@@ -154,7 +153,7 @@ static void print_help_and_exit()
     printf("Conversion from formats supported by Assimp to internal lite3d format (m).\n");
     printf("Engine version %s\n\n", LITE3D_VERSION_STRING);
 
-    printf("Usage: -i[input] file -o[output] folder -O[optimize mesh] -F[flip UVs]\n\n");
+    printf("Usage: -p[view file] -i[input] file -o[output] folder -O[optimize mesh] -F[flip UVs]\n\n");
     exit(1);
 }
 

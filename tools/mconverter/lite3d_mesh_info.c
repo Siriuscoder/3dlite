@@ -32,10 +32,10 @@ void print_mesh_info(lite3d_file *meshFile)
     lite3d_list_node *chunkNode;
     int chunksCount = 0;
 
-    if(!lite3d_indexed_mesh_init(&mesh))
+    if (!lite3d_indexed_mesh_init(&mesh))
         return;
 
-    if(!lite3d_indexed_mesh_m_decode(&mesh, meshFile->fileBuff, 
+    if (!lite3d_indexed_mesh_m_decode(&mesh, meshFile->fileBuff,
         meshFile->fileSize, LITE3D_VBO_STATIC_READ))
     {
         fprintf(stderr, "'%s' decode failed.. bad format..", meshFile->name);
@@ -43,14 +43,14 @@ void print_mesh_info(lite3d_file *meshFile)
     }
 
     printf("Vertex buffer:\n\n");
-    printf("\tVertices count: %d\n", mesh.verticesCount);
-    printf("\tRaw size: %d bytes\n\n", mesh.vertexBuffer.size);
+    printf("\tVertices count: %lu\n", mesh.verticesCount);
+    printf("\tRaw size: %lu bytes\n\n", mesh.vertexBuffer.size);
     printf("Index buffer:\n\n");
-    printf("\tElements count: %d\n", mesh.elementsCount);
-    printf("\tRaw size: %d bytes\n\n", mesh.indexBuffer.size);
+    printf("\tElements count: %lu\n", mesh.elementsCount);
+    printf("\tRaw size: %lu bytes\n\n", mesh.indexBuffer.size);
 
-    printf("Chunks count: %d\n\n", mesh.chunkCount);
-    for(chunkNode = mesh.chunks.l.next; chunkNode != &mesh.chunks.l; 
+    printf("Chunks count: %lu\n\n", mesh.chunkCount);
+    for (chunkNode = mesh.chunks.l.next; chunkNode != &mesh.chunks.l;
         chunkNode = lite3d_list_next(chunkNode), ++chunksCount)
     {
         uint32_t i;
@@ -62,9 +62,9 @@ void print_mesh_info(lite3d_file *meshFile)
         printf("\tMaterial index %d\n", meshChunk->materialIndex);
         printf("\tVertices count: %d\n", meshChunk->vao.verticesCount);
         printf("\tIndices count: %d\n", meshChunk->vao.indexesCount);
-        printf("\tElements: %s\n", meshChunk->vao.elementType == LITE3D_PRIMITIVE_POINT ? "POINTS" : 
+        printf("\tElements: %s\n", meshChunk->vao.elementType == LITE3D_PRIMITIVE_POINT ? "POINTS" :
             (meshChunk->vao.elementType == LITE3D_PRIMITIVE_LINE ? "LINES" : "TRIANGLES"));
-        printf("\tElements count: %d\n", meshChunk->vao.indexesCount / (meshChunk->vao.elementType == LITE3D_PRIMITIVE_POINT ? 1 : 
+        printf("\tElements count: %d\n", meshChunk->vao.indexesCount / (meshChunk->vao.elementType == LITE3D_PRIMITIVE_POINT ? 1 :
             (meshChunk->vao.elementType == LITE3D_PRIMITIVE_LINE ? 2 : 3)));
         printf("\tVertices offset: 0x%x bytes\n", meshChunk->vao.verticesOffset);
         printf("\tIndices offset: 0x%x bytes\n", meshChunk->vao.indexesOffset);
@@ -72,19 +72,19 @@ void print_mesh_info(lite3d_file *meshFile)
 
         printf("\tFORMAT\n");
         printf("\tLoc\tType\t\tData\tOffset\n");
-        for(i = 0; i < meshChunk->layoutEntriesCount; ++i)
+        for (i = 0; i < meshChunk->layoutEntriesCount; ++i)
         {
-            printf("\t%d\t%s\tFLOAT%d\t0x%x\n", i,
-                (meshChunk->layout[i].binding == LITE3D_BUFFER_BINDING_VERTEX ? "VERTEX\t" : 
-                (meshChunk->layout[i].binding == LITE3D_BUFFER_BINDING_COLOR ? "COLOR\t" : 
-                (meshChunk->layout[i].binding == LITE3D_BUFFER_BINDING_NORMAL ? "NORMAL\t" : 
+            printf("\t%d\t%s\tFLOAT%d\t0x%lx\n", i,
+                (meshChunk->layout[i].binding == LITE3D_BUFFER_BINDING_VERTEX ? "VERTEX\t" :
+                (meshChunk->layout[i].binding == LITE3D_BUFFER_BINDING_COLOR ? "COLOR\t" :
+                (meshChunk->layout[i].binding == LITE3D_BUFFER_BINDING_NORMAL ? "NORMAL\t" :
                 (meshChunk->layout[i].binding == LITE3D_BUFFER_BINDING_TEXCOORD ? "TEXCOORD" : "ATTRIBUTE")))),
                 meshChunk->layout[i].count, offset);
 
-            offset += sizeof(float) * meshChunk->layout[i].count;
+            offset += sizeof (float) * meshChunk->layout[i].count;
         }
 
-        printf("\n\tStride: %d bytes \n\n", offset);
+        printf("\n\tStride: %lu bytes \n\n", offset);
     }
 
     lite3d_indexed_mesh_purge(&mesh);
