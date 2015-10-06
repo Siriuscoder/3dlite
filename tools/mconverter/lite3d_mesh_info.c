@@ -66,9 +66,9 @@ void print_mesh_info(lite3d_file *meshFile)
             (meshChunk->vao.elementType == LITE3D_PRIMITIVE_LINE ? "LINES" : "TRIANGLES"));
         printf("\tElements count: %d\n", meshChunk->vao.indexesCount / (meshChunk->vao.elementType == LITE3D_PRIMITIVE_POINT ? 1 :
             (meshChunk->vao.elementType == LITE3D_PRIMITIVE_LINE ? 2 : 3)));
-        printf("\tVertices offset: 0x%x bytes\n", meshChunk->vao.verticesOffset);
-        printf("\tIndices offset: 0x%x bytes\n", meshChunk->vao.indexesOffset);
-        printf("\tIndex size: %d bytes\n\n", meshChunk->vao.indexesSize / meshChunk->vao.indexesCount);
+        printf("\tVertices offset: 0x%lx bytes\n", meshChunk->vao.verticesOffset);
+        printf("\tIndices offset: 0x%lx bytes\n", meshChunk->vao.indexesOffset);
+        printf("\tIndex size: %lu bytes\n\n", meshChunk->vao.indexesSize / meshChunk->vao.indexesCount);
 
         printf("\tFORMAT\n");
         printf("\tLoc\tType\t\tData\tOffset\n");

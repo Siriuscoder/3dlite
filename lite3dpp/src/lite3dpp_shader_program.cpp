@@ -31,6 +31,9 @@ namespace lite3dpp
 
     ShaderProgram::~ShaderProgram()
     {}
+    
+    void ShaderProgram::loadImpl(const ResourceParameters &params)
+    {}
 
     void ShaderProgram::loadFromJsonImpl(const JsonHelper &helper)
     {

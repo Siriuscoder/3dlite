@@ -51,8 +51,19 @@ namespace lite3dpp
         SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
             "Resource %s %s \"%s\" %s", ResourceTypeName[mType], 
                 mName.c_str(), 
-                mPath.size() == 0 ? "from memory" : mPath.c_str(), 
+                mPath.size() == 0 ? "(none)" : mPath.c_str(), 
                 mState == LOADED ? "LOADED" : "UNLOADED");
+    }
+    
+    void AbstractResource::load(const ResourceParameters &params)
+    {
+        if(mState == UNLOADED)
+        {
+            loadImpl(params);
+            mState = LOADED;
+            
+            logState();
+        }
     }
 
     void AbstractResource::load(const void *buffer, size_t size)

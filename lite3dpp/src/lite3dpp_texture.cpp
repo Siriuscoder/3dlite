@@ -29,6 +29,9 @@ namespace lite3dpp
 
     Texture::~Texture()
     {}
+    
+    void Texture::loadImpl(const ResourceParameters &params)
+    {}
 
     void Texture::loadFromJsonImpl(const JsonHelper &helper)
     {

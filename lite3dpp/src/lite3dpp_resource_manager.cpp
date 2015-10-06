@@ -76,6 +76,17 @@ namespace lite3dpp
         /* just insert resource */
         mResources.insert(std::make_pair(name, resource));     
     }
+    
+    void ResourceManager::loadResource(const String &name, 
+        const ResourceParameters &params,
+        AbstractResource *resource)
+    {
+        /* load resource from parameters */
+        resource->load(params);
+
+        /* just insert resource */
+        mResources.insert(std::make_pair(name, resource));            
+    }
 
     void ResourceManager::releaseAllResources()
     {

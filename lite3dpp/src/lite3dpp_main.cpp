@@ -125,11 +125,11 @@ namespace lite3dpp
         initResourceLocations();
         mScriptDispatcher.registerGlobals();
 
-        /* create image of main window render target (not json needed, in this case use special dummy.json =) ) */
-        String emptyJson("{}\0");
-        mResourceManager.queryResource<WindowRenderTarget>("MainWindow", emptyJson.data(), emptyJson.size());
+        /* create main window render target */
+        /* it is fake and used only as label indicating render to screen */
+        mResourceManager.queryResource<WindowRenderTarget>("MainWindow", ResourceParameters());
 
-        /* perform fixed update timer */    
+        /* perform fixed update timer */
         mFixedUpdatesTimer = 
             lite3d_timer_add(mConfig->getInt(L"FixedUpdatesInterval", 200), onTimerTick, this);
     }

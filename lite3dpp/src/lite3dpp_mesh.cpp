@@ -32,6 +32,9 @@ namespace lite3dpp
 
     Mesh::~Mesh()
     {}
+    
+    void Mesh::loadImpl(const ResourceParameters &params)
+    {}
 
     void Mesh::loadFromJsonImpl(const JsonHelper &helper)
     {

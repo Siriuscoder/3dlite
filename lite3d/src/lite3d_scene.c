@@ -28,6 +28,7 @@ typedef struct lite3d_mqr_node
     lite3d_list_node unit;
     lite3d_scene_node *node;
     lite3d_mesh_chunk *meshChunk;
+    uint32_t instanceCount;
 } lite3d_mqr_node;
 
 typedef struct lite3d_mqr_unit
@@ -74,7 +75,11 @@ static void mqr_unit_render(lite3d_material_pass *pass, void *data)
         if (scene->drawBatch)
             scene->drawBatch(scene, mqrNode->node,
             mqrNode->meshChunk, mqrUnit->material);
-        lite3d_mesh_chunk_draw(mqrNode->meshChunk);
+        
+        mqrNode->instanceCount > 1 ? 
+            lite3d_mesh_chunk_draw_instanced(mqrNode->meshChunk, mqrNode->instanceCount) :
+            lite3d_mesh_chunk_draw(mqrNode->meshChunk);
+        
         scene->stats.batches++;
         scene->stats.trianglesRendered += mqrNode->meshChunk->vao.elementsCount;
         scene->stats.verticesRendered += mqrNode->meshChunk->vao.verticesCount;
@@ -285,6 +290,13 @@ int lite3d_scene_remove_node(lite3d_scene *scene, lite3d_scene_node *node)
 int lite3d_scene_node_touch_material(
     lite3d_scene_node *node, lite3d_mesh_chunk *meshChunk, lite3d_material *material)
 {
+    return lite3d_scene_node_touch_material_instanced(node, meshChunk, material, 1);
+}
+
+int lite3d_scene_node_touch_material_instanced(
+    lite3d_scene_node *node, lite3d_mesh_chunk *meshChunk, 
+    lite3d_material *material, uint32_t count)
+{
     lite3d_mqr_unit *mqrUnit = NULL;
     lite3d_mqr_unit *mqrUnitTmp = NULL;
     lite3d_list_node *mqrUnitNode = NULL;
@@ -339,7 +351,8 @@ int lite3d_scene_node_touch_material(
 
     SDL_assert_release(mqrNode);
     /* relink render node */
+    mqrNode->instanceCount = count;
     mqr_unit_add_node(mqrUnit, mqrNode);
-    return LITE3D_TRUE;
+    return LITE3D_TRUE;    
 }
 

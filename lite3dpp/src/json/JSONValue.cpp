@@ -738,7 +738,7 @@ lite3dpp::WString JSONValue::StringifyImpl(size_t const indentDepth) const
 				ret_string = L"null";
 			else
 			{
-				lite3dpp::lited3dpp_wstringstream ss;
+				lite3dpp::WStringstream ss;
 				ss.precision(15);
 				ss << number_value;
 				ret_string = ss.str();

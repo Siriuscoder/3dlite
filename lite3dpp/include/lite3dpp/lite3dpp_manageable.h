@@ -109,7 +109,7 @@ namespace lite3dpp
     typedef std::basic_stringstream< char, std::char_traits<char>,
         ManageableStlAllocator<char> > Stringstream;
     typedef std::basic_stringstream< wchar_t, std::char_traits<wchar_t>,
-        ManageableStlAllocator<wchar_t> > lited3dpp_wstringstream;
+        ManageableStlAllocator<wchar_t> > WStringstream;
  
 #else
     template<class T, class Y = void>
@@ -129,7 +129,7 @@ namespace lite3dpp
     typedef std::string String;
     typedef std::wstring WString;
     typedef std::stringstream Stringstream;
-    typedef std::wstringstream lited3dpp_wstringstream;
+    typedef std::wstringstream WStringstream;
     
 #endif
 }

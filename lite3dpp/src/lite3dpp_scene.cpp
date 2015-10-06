@@ -31,6 +31,9 @@ namespace lite3dpp
 
     Scene::~Scene()
     {}
+    
+    void Scene::loadImpl(const ResourceParameters &params)
+    {}
 
     void Scene::loadFromJsonImpl(const JsonHelper &helper)
     {

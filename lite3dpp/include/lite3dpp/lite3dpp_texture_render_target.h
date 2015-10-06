@@ -35,12 +35,12 @@ namespace lite3dpp
 
     protected:
 
-        virtual void loadFromJsonImpl(const JsonHelper &helper) override final;
-        virtual void unloadImpl() override final;
+        virtual void loadFromJsonImpl(const JsonHelper &helper) override;
+        virtual void loadImpl(const ResourceParameters &params) override;   
+        virtual void unloadImpl() override;
 
     private:
 
         lite3d_render_target mRenderTarget;
     };
 }
-

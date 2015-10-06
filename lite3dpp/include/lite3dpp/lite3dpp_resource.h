@@ -22,6 +22,11 @@
 
 namespace lite3dpp
 {
+    class LITE3DPP_EXPORT ResourceParameters : public Manageable
+    {
+    public:
+    };
+    
     class LITE3DPP_EXPORT AbstractResource : public Manageable
     {
     public:
@@ -52,7 +57,8 @@ namespace lite3dpp
         virtual ~AbstractResource();
 
         void load(const void *buffer, size_t size);
-        /* call this if want to reload object */ 
+        void load(const ResourceParameters &params);
+        /* call this to reload object */ 
         void reload();
         void unload();
 
@@ -72,6 +78,7 @@ namespace lite3dpp
     protected:
 
         virtual void loadImpl(const void *buffer, size_t size) = 0;
+        virtual void loadImpl(const ResourceParameters &params) = 0;
         virtual void reloadImpl() = 0;
         virtual void unloadImpl() = 0;
 

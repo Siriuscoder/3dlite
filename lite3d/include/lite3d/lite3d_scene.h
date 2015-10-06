@@ -58,6 +58,8 @@ LITE3D_CEXPORT int lite3d_scene_remove_node(lite3d_scene *scene, lite3d_scene_no
 
 LITE3D_CEXPORT int lite3d_scene_node_touch_material(
     lite3d_scene_node *node, lite3d_mesh_chunk *meshChunk, lite3d_material *material);
+LITE3D_CEXPORT int lite3d_scene_node_touch_material_instanced(
+    lite3d_scene_node *node, lite3d_mesh_chunk *meshChunk, lite3d_material *material, uint32_t count);
 
 #endif	/* LITE3D_SCENE_H */
 
