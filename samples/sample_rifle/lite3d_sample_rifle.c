@@ -28,8 +28,8 @@ static lite3d_texture_unit mRifleTextureA;
 static lite3d_texture_unit mRifleTextureB;
 static lite3d_texture_unit mBattTexture;
 static lite3d_camera mCamera01;
-static lite3d_indexed_mesh mRifle;
-static lite3d_indexed_mesh mRifleBatt;
+static lite3d_mesh mRifle;
+static lite3d_mesh mRifleBatt;
 static lite3d_shader_parameter mRifleTextureUnitA;
 static lite3d_shader_parameter mRifleTextureUnitB;
 static lite3d_shader_parameter mBattTextureUnit;
@@ -191,17 +191,17 @@ static int initModel(void)
     if (!(Battery = lite3d_pack_file_load(mFileSysPack, "models/meshes/battery.m")))
         return LITE3D_FALSE;
 
-    if (!lite3d_indexed_mesh_init(&mRifle))
+    if (!lite3d_mesh_init(&mRifle))
         return LITE3D_FALSE;
-    if (!lite3d_indexed_mesh_load_from_m_file(&mRifle, PlasmaRifl, LITE3D_VBO_STATIC_DRAW))
+    if (!lite3d_mesh_load_from_m_file(&mRifle, PlasmaRifl, LITE3D_VBO_STATIC_DRAW))
         return LITE3D_FALSE;
     /* fix material indexes to 0..maxVao */
     /* it is right way if you know how submeshes attached to real materials */
-    lite3d_indexed_mesh_order_mat_indexes(&mRifle);
+    lite3d_mesh_order_mat_indexes(&mRifle);
 
-    if (!lite3d_indexed_mesh_init(&mRifleBatt))
+    if (!lite3d_mesh_init(&mRifleBatt))
         return LITE3D_FALSE;
-    if (!lite3d_indexed_mesh_load_from_m_file(&mRifleBatt, Battery, LITE3D_VBO_STATIC_DRAW))
+    if (!lite3d_mesh_load_from_m_file(&mRifleBatt, Battery, LITE3D_VBO_STATIC_DRAW))
         return LITE3D_FALSE;
 
     return LITE3D_TRUE;
@@ -253,8 +253,8 @@ static int init(void *userdata)
 static int shutdown(void *userdata)
 {
     /* release resources */
-    lite3d_indexed_mesh_purge(&mRifle);
-    lite3d_indexed_mesh_purge(&mRifleBatt);
+    lite3d_mesh_purge(&mRifle);
+    lite3d_mesh_purge(&mRifleBatt);
 
     lite3d_material_purge(&mRifleMaterialA);
     lite3d_material_purge(&mRifleMaterialB);

@@ -36,7 +36,7 @@ static char outputFolder[1024] = {0};
 static int optimize = LITE3D_FALSE;
 static int flipUV = LITE3D_FALSE;
 static int nonameCounter = 0;
-static lite3d_indexed_mesh model;
+static lite3d_mesh model;
 
 #ifdef INCLUDE_ASSIMP
 
@@ -57,15 +57,15 @@ static int save_buffer(void *buffer, size_t size, const char *path)
     return LITE3D_TRUE;
 }
 
-static lite3d_indexed_mesh *mesh_init(void)
+static lite3d_mesh *mesh_init(void)
 {
-    if (!lite3d_indexed_mesh_init(&model))
+    if (!lite3d_mesh_init(&model))
         return NULL;
 
     return &model;
 }
 
-static void mesh_loaded(lite3d_indexed_mesh *mesh, const char *name)
+static void mesh_loaded(lite3d_mesh *mesh, const char *name)
 {
     void *encodeBuffer = NULL;
     size_t encodeBufferSize;
@@ -85,9 +85,9 @@ static void mesh_loaded(lite3d_indexed_mesh *mesh, const char *name)
     printf("Encoding %s ... ", encodedFile); 
     fflush(stdout);
     
-    encodeBufferSize = lite3d_indexed_mesh_m_encode_size(mesh);
+    encodeBufferSize = lite3d_mesh_m_encode_size(mesh);
     encodeBuffer = lite3d_malloc(encodeBufferSize);
-    if (!lite3d_indexed_mesh_m_encode(mesh, encodeBuffer, encodeBufferSize))
+    if (!lite3d_mesh_m_encode(mesh, encodeBuffer, encodeBufferSize))
     {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "%s: encode failed..",
             __FUNCTION__);
@@ -102,7 +102,7 @@ static void mesh_loaded(lite3d_indexed_mesh *mesh, const char *name)
     }
 
     lite3d_free(encodeBuffer);
-    lite3d_indexed_mesh_purge(mesh);
+    lite3d_mesh_purge(mesh);
 }
 
 static int convert_mesh(void *userdata)

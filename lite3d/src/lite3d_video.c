@@ -156,9 +156,9 @@ int lite3d_video_open(const lite3d_video_settings *settings)
         windowFlags |= SDL_WINDOW_BORDERLESS;
     }
 
-    /* Specify 2.0 openGL context */
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
+    /* Specify openGL context */
+    //SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+    //SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
 
     /* setup render window */
     gRenderWindow = SDL_CreateWindow(

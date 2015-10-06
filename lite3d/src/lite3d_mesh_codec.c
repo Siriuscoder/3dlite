@@ -23,6 +23,7 @@
 #include <lite3d/lite3d_mesh_codec.h>
 
 #define LITE3D_M_SIGNATURE          0xBEEB0001
+#define CHUNK_LAYOUT_MAX_COUNT      32
 
 #pragma pack(push, 1)
 
@@ -59,7 +60,7 @@ typedef struct lite3d_m_chunk_layout
 
 #pragma pack(pop)
 
-size_t lite3d_indexed_mesh_m_encode_size(lite3d_indexed_mesh *mesh)
+size_t lite3d_mesh_m_encode_size(lite3d_mesh *mesh)
 {
     size_t result = 0;
     lite3d_list_node *vaoLink;
@@ -80,14 +81,14 @@ size_t lite3d_indexed_mesh_m_encode_size(lite3d_indexed_mesh *mesh)
     return result;
 }
 
-int lite3d_indexed_mesh_m_decode(lite3d_indexed_mesh *mesh,
+int lite3d_mesh_m_decode(lite3d_mesh *mesh,
     const void *buffer, size_t size, uint16_t access)
 {
     SDL_RWops *stream;
     lite3d_m_header mheader;
     lite3d_m_chunk mchunk;
     lite3d_m_chunk_layout layout;
-    lite3d_indexed_mesh_layout meshLayout[16];
+    lite3d_mesh_layout meshLayout[CHUNK_LAYOUT_MAX_COUNT];
     register int32_t i = 0;
     size_t indOffset = 0;
     size_t vertOffset = 0;
@@ -139,8 +140,8 @@ int lite3d_indexed_mesh_m_decode(lite3d_indexed_mesh *mesh,
             return LITE3D_FALSE;
         }
 
-        if (mchunk.chunkLayoutCount > 16)
-            mchunk.chunkLayoutCount = 16;
+        if (mchunk.chunkLayoutCount > CHUNK_LAYOUT_MAX_COUNT)
+            mchunk.chunkLayoutCount = CHUNK_LAYOUT_MAX_COUNT;
 
         for (; j < mchunk.chunkLayoutCount; ++j)
         {
@@ -156,7 +157,7 @@ int lite3d_indexed_mesh_m_decode(lite3d_indexed_mesh *mesh,
         }
 
         /* append new batch */
-        if (!lite3d_indexed_mesh_append_chunk(mesh, meshLayout, mchunk.chunkLayoutCount, stride,
+        if (!lite3d_mesh_indexed_append_chunk(mesh, meshLayout, mchunk.chunkLayoutCount, stride,
             mchunk.indexType, mchunk.elementType, mchunk.indexesCount,
             mchunk.indexesSize, indOffset, mchunk.verticesCount, mchunk.verticesSize, vertOffset))
             return LITE3D_FALSE;
@@ -213,7 +214,7 @@ int lite3d_indexed_mesh_m_decode(lite3d_indexed_mesh *mesh,
     return LITE3D_TRUE;
 }
 
-int lite3d_indexed_mesh_m_encode(lite3d_indexed_mesh *mesh,
+int lite3d_mesh_m_encode(lite3d_mesh *mesh,
     void *buffer, size_t size)
 {
     lite3d_list_node *vaoLink;

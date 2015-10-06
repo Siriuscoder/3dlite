@@ -41,22 +41,7 @@ typedef struct lite3d_vbo
     size_t size;
 } lite3d_vbo;
 
-typedef struct lite3d_vao
-{
-    uint32_t vaoID;
-    uint32_t elementsCount;
-    uint32_t indexesCount;
-    uint32_t indexesSize;
-    uint32_t indexesOffset;
-    uint32_t verticesCount;
-    uint32_t verticesSize;
-    uint32_t verticesOffset;
-    uint16_t elementType; /* GL_POINTS, GL_LINES, GL_TRIANGLES (GL value) */
-    uint16_t indexType; /* Byte, short, int (GL value) */
-} lite3d_vao;
-
 LITE3D_CEXPORT int lite3d_vbo_technique_init(void);
-LITE3D_CEXPORT int lite3d_vbo_support_instancing(void);
 
 LITE3D_CEXPORT int lite3d_vbo_init(struct lite3d_vbo *vbo);
 LITE3D_CEXPORT void lite3d_vbo_purge(struct lite3d_vbo *vbo);
@@ -69,15 +54,6 @@ LITE3D_CEXPORT int lite3d_vbo_buffer(struct lite3d_vbo *vbo,
     const void *buffer, size_t size, uint16_t access);
 LITE3D_CEXPORT int lite3d_vbo_subbuffer(struct lite3d_vbo *vbo, 
     const void *buffer, size_t offset, size_t size);
-
-LITE3D_CEXPORT int lite3d_vao_init(struct lite3d_vao *vao);
-LITE3D_CEXPORT void lite3d_vao_purge(struct lite3d_vao *vao);
-LITE3D_CEXPORT void lite3d_vao_bind(struct lite3d_vao *vao);
-LITE3D_CEXPORT void lite3d_vao_draw_indexed(struct lite3d_vao *vao);
-LITE3D_CEXPORT void lite3d_vao_draw_indexed_instanced(struct lite3d_vao *vao, size_t count);
-LITE3D_CEXPORT void lite3d_vao_draw(struct lite3d_vao *vao);
-LITE3D_CEXPORT void lite3d_vao_draw_instanced(struct lite3d_vao *vao, size_t count);
-LITE3D_CEXPORT void lite3d_vao_unbind(struct lite3d_vao *vao);
 
 #endif	/* LITE3D_VBO_H */
 

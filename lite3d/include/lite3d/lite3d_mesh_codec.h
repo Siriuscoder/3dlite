@@ -54,11 +54,11 @@
 
 */
 
-LITE3D_CEXPORT int lite3d_indexed_mesh_m_decode(lite3d_indexed_mesh *mesh, 
+LITE3D_CEXPORT int lite3d_mesh_m_decode(lite3d_mesh *mesh, 
     const void *buffer, size_t size, uint16_t access);
 
-LITE3D_CEXPORT size_t lite3d_indexed_mesh_m_encode_size(lite3d_indexed_mesh *mesh);
-LITE3D_CEXPORT int lite3d_indexed_mesh_m_encode(lite3d_indexed_mesh *mesh, 
+LITE3D_CEXPORT size_t lite3d_mesh_m_encode_size(lite3d_mesh *mesh);
+LITE3D_CEXPORT int lite3d_mesh_m_encode(lite3d_mesh *mesh, 
     void *buffer, size_t size);
 
 #endif	/* LITE3D_M_CODEC_H */

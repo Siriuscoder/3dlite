@@ -51,11 +51,11 @@ static const struct aiNode *ai_find_node_by_name(const struct aiNode *root, cons
     return NULL;
 }
 
-static int ai_node_load_to_vbo(lite3d_indexed_mesh *meshInst, const struct aiScene *scene,
+static int ai_node_load_to_vbo(lite3d_mesh *meshInst, const struct aiScene *scene,
     const struct aiNode *node, uint16_t access)
 {
     uint8_t componentSize;
-    lite3d_indexed_mesh_layout layout[10];
+    lite3d_mesh_layout layout[10];
     size_t layoutCount;
     size_t verticesSize;
     size_t indexesSize;
@@ -204,7 +204,7 @@ static int ai_node_load_to_vbo(lite3d_indexed_mesh *meshInst, const struct aiSce
             }
         }
 
-        if (!lite3d_indexed_mesh_extend_from_memory(meshInst, vertices, mesh->mNumVertices,
+        if (!lite3d_mesh_indexed_extend_from_memory(meshInst, vertices, mesh->mNumVertices,
             layout, layoutCount, indexes, mesh->mNumFaces, 3, access))
             return LITE3D_FALSE;
 
@@ -227,7 +227,7 @@ static int ai_node_load_recursive(const struct aiScene *scene,
 
     if (node->mNumMeshes > 0)
     {
-        lite3d_indexed_mesh *mesh;
+        lite3d_mesh *mesh;
 
         if((mesh = retrieveMesh()) == NULL)
             return LITE3D_FALSE;
@@ -302,7 +302,7 @@ static const struct aiScene *ai_load_scene(const lite3d_file *resource, uint32_t
     return aiApplyPostProcessing(scene, aiflags);
 }
 
-int lite3d_assimp_mesh_load(lite3d_indexed_mesh *mesh, const lite3d_file *resource,
+int lite3d_assimp_mesh_load(lite3d_mesh *mesh, const lite3d_file *resource,
     const char *name, uint16_t access, uint32_t flags)
 {
     const struct aiScene *scene = NULL;

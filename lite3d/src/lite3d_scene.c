@@ -74,7 +74,7 @@ static void mqr_unit_render(lite3d_material_pass *pass, void *data)
         if (scene->drawBatch)
             scene->drawBatch(scene, mqrNode->node,
             mqrNode->meshChunk, mqrUnit->material);
-        lite3d_indexed_mesh_chunk_draw(mqrNode->meshChunk);
+        lite3d_mesh_chunk_draw(mqrNode->meshChunk);
         scene->stats.batches++;
         scene->stats.trianglesRendered += mqrNode->meshChunk->vao.elementsCount;
         scene->stats.verticesRendered += mqrNode->meshChunk->vao.verticesCount;

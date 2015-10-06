@@ -30,31 +30,31 @@
     note:
         function load mesh model from m file represented by *resource*
 */
-LITE3D_CEXPORT int lite3d_indexed_mesh_load_from_m_file(lite3d_indexed_mesh *mesh, const lite3d_file *resource, 
+LITE3D_CEXPORT int lite3d_mesh_load_from_m_file(lite3d_mesh *mesh, const lite3d_file *resource, 
     uint16_t access);
 
 
-LITE3D_CEXPORT int lite3d_indexed_mesh_load_from_memory(lite3d_indexed_mesh *mesh, 
+LITE3D_CEXPORT int lite3d_mesh_indexed_load_from_memory(lite3d_mesh *mesh, 
     const void *vertices, 
     size_t verticesCount, 
-    const lite3d_indexed_mesh_layout *layout,
+    const lite3d_mesh_layout *layout,
     size_t layoutCount,
     const void *indexes, 
     size_t elementsCount, 
     uint8_t indexComponents, 
     uint16_t access);
 
-LITE3D_CEXPORT int lite3d_indexed_mesh_extend_from_memory(lite3d_indexed_mesh *mesh, 
+LITE3D_CEXPORT int lite3d_mesh_indexed_extend_from_memory(lite3d_mesh *mesh, 
     const void *vertices, 
     size_t verticesCount, 
-    const lite3d_indexed_mesh_layout *layout,
+    const lite3d_mesh_layout *layout,
     size_t layoutCount,
     const void *indexes, 
     size_t elementsCount, 
     uint8_t indexComponents, 
     uint16_t access);
 
-LITE3D_CEXPORT void lite3d_indexed_mesh_order_mat_indexes(lite3d_indexed_mesh *mesh);
+LITE3D_CEXPORT void lite3d_mesh_order_mat_indexes(lite3d_mesh *mesh);
 
 #endif	/* LITE3D_VBO_LOADER_H */
 

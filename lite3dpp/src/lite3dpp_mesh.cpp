@@ -35,10 +35,10 @@ namespace lite3dpp
 
     void Mesh::loadFromJsonImpl(const JsonHelper &helper)
     {
-        lite3d_indexed_mesh_init(&mMesh);
+        lite3d_mesh_init(&mMesh);
         if(helper.getString(L"Codec", "m") == "m")
         {
-            if(!lite3d_indexed_mesh_load_from_m_file(&mMesh, 
+            if(!lite3d_mesh_load_from_m_file(&mMesh, 
                 mMain->getResourceManager()->loadFileToMemory(helper.getString(L"Model")),
                 helper.getBool(L"Dynamic", false) ? LITE3D_VBO_DYNAMIC_DRAW : LITE3D_VBO_STATIC_DRAW))
                 throw std::runtime_error("Mesh bad format..");
@@ -62,7 +62,7 @@ namespace lite3dpp
 #endif
 
         if(helper.getBool(L"MaterialMappingAutoOrdered", false))
-            lite3d_indexed_mesh_order_mat_indexes(&mMesh);
+            lite3d_mesh_order_mat_indexes(&mMesh);
 
         for(auto &matMap : helper.getObjects(L"MaterialMapping"))
         {
@@ -77,7 +77,7 @@ namespace lite3dpp
 
     void Mesh::unloadImpl()
     {
-        lite3d_indexed_mesh_purge(&mMesh);
+        lite3d_mesh_purge(&mMesh);
     }
 
     void Mesh::mapMaterial(int unit, Material *material)

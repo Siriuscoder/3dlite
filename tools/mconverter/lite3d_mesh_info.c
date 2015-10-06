@@ -27,15 +27,15 @@
 
 void print_mesh_info(lite3d_file *meshFile)
 {
-    lite3d_indexed_mesh mesh;
+    lite3d_mesh mesh;
     lite3d_mesh_chunk *meshChunk;
     lite3d_list_node *chunkNode;
     int chunksCount = 0;
 
-    if (!lite3d_indexed_mesh_init(&mesh))
+    if (!lite3d_mesh_init(&mesh))
         return;
 
-    if (!lite3d_indexed_mesh_m_decode(&mesh, meshFile->fileBuff,
+    if (!lite3d_mesh_m_decode(&mesh, meshFile->fileBuff,
         meshFile->fileSize, LITE3D_VBO_STATIC_READ))
     {
         fprintf(stderr, "'%s' decode failed.. bad format..", meshFile->name);
@@ -87,5 +87,5 @@ void print_mesh_info(lite3d_file *meshFile)
         printf("\n\tStride: %lu bytes \n\n", offset);
     }
 
-    lite3d_indexed_mesh_purge(&mesh);
+    lite3d_mesh_purge(&mesh);
 }

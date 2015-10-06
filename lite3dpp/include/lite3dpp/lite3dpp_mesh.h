@@ -39,7 +39,7 @@ namespace lite3dpp
         void mapMaterial(int unit, Material *material);
         inline const MaterialMapping &getMaterialMapping() const
         { return mMaterialMapping; }
-        inline lite3d_indexed_mesh *getPtr()
+        inline lite3d_mesh *getPtr()
         { return &mMesh; }
 
     protected:
@@ -50,7 +50,7 @@ namespace lite3dpp
     private:
 
         MaterialMapping mMaterialMapping;
-        lite3d_indexed_mesh mMesh;
+        lite3d_mesh mMesh;
     };
 }
 

@@ -27,13 +27,6 @@
 #include <lite3d/lite3d_vbo.h>
 
 static int maxVertexAttribs;
-static int instancingSupport;
-
-int lite3d_vbo_support_instancing(void)
-{
-    return instancingSupport;
-}
-
 /*
 Name
 
@@ -141,8 +134,7 @@ static int vbo_buffer_extend(uint32_t vboID, size_t expandSize, uint16_t access)
 
 int lite3d_vbo_technique_init(void)
 {
-    instancingSupport = LITE3D_FALSE;
-    if (!GL_VERSION_2_0)
+    if (!GL_VERSION_3_1)
     {
         SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION,
             "%s: GL v3.1 minimum required (VBO)", __FUNCTION__);
@@ -156,25 +148,11 @@ int lite3d_vbo_technique_init(void)
         return LITE3D_FALSE;
     }
 
-    if (!GL_ARB_vertex_array_object)
-    {
-        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
-            "%s: GL_ARB_vertex_array_object not supported..", __FUNCTION__);
-        return LITE3D_FALSE;
-    }
-
     if (!GLEW_ARB_copy_buffer)
     {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
             "%s: GLEW_ARB_copy_buffer not supported..", __FUNCTION__);
         return LITE3D_FALSE;
-    }
-
-    if (!GL_ARB_instanced_arrays)
-    {
-        SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
-            "%s: GL_ARB_instanced_arrays not supported..", __FUNCTION__);
-        instancingSupport = LITE3D_TRUE;
     }
 
     glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &maxVertexAttribs);
@@ -284,109 +262,3 @@ int lite3d_vbo_subbuffer(struct lite3d_vbo *vbo,
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     return LITE3D_TRUE;
 }
-
-/*
-Name
-
-    ARB_vertex_array_object
-
-Name Strings
-
-    GL_ARB_vertex_array_object
-
-Overview
-
-    This extension introduces named vertex array objects which encapsulate
-    vertex array state on the client side.  These objects allow applications
-    to rapidly switch between large sets of array state.  In addition, layered
-    libraries can return to the default array state by simply creating and
-    binding a new vertex array object.
-
-    This extension differs from GL_APPLE_vertex_array_object in that client
-    memory cannot be accessed through a non-zero vertex array object.  It also
-    differs in that vertex array objects are explicitly not sharable between
-    contexts.
- */
-
-void lite3d_vao_draw_indexed(struct lite3d_vao *vao)
-{
-    /*
-     * glDrawElements specifies multiple geometric primitives with very few 
-     * subroutine calls. Instead of calling a GL function to pass each individual 
-     * vertex, normal, texture coordinate, edge flag, or color, you can prespecify 
-     * separate arrays of vertices, normals, and so on, and use them to construct a 
-     * sequence of primitives with a single call to glDrawElements.
-     * 
-     * When glDrawElements is called, it uses count sequential elements from an 
-     * enabled array, starting at indices to construct a sequence of geometric 
-     * primitives. mode specifies what kind of primitives are constructed and how 
-     * the array elements construct these primitives. If more than one array is 
-     * enabled, each is used. If GL_VERTEX_ARRAY is not enabled, no geometric 
-     * primitives are constructed.
-     * Vertex attributes that are modified by glDrawElements have an unspecified 
-     * value after glDrawElements returns. For example, if GL_COLOR_ARRAY is enabled, 
-     * the value of the current color is undefined after glDrawElements executes. 
-     * Attributes that aren't modified maintain their previous values.
-     */
-
-    glDrawElements(vao->elementType, vao->indexesCount, vao->indexType, (void *) vao->indexesOffset);
-}
-
-void lite3d_vao_draw_indexed_instanced(struct lite3d_vao *vao, size_t count)
-{
-    /* glDrawElementsInstanced behaves identically to glDrawElements 
-     * except that primcount instances of the set of elements are executed. 
-     * Those attributes that have divisor N where N is other than zero 
-     * (as specified by glVertexAttribDivisor) advance once every N instances. 
-     */
-
-    if (!instancingSupport)
-        return;
-    glDrawElementsInstancedARB(vao->elementType, vao->indexesCount,
-        vao->indexType, (void *) vao->indexesOffset, count);
-}
-
-void lite3d_vao_draw(struct lite3d_vao *vao)
-{
-    glDrawArrays(vao->elementType, 0, vao->verticesCount);
-}
-
-void lite3d_vao_draw_instanced(struct lite3d_vao *vao, size_t count)
-{
-    if (!instancingSupport)
-        return;
-    glDrawArraysInstancedARB(vao->elementType, 0,
-        vao->verticesCount, count);
-}
-
-void lite3d_vao_bind(struct lite3d_vao *vao)
-{
-    /* bind current vao */
-    glBindVertexArray(vao->vaoID);
-}
-
-void lite3d_vao_unbind(struct lite3d_vao *vao)
-{
-    /* zero bind */
-    glBindVertexArray(0);
-}
-
-int lite3d_vao_init(struct lite3d_vao *vao)
-{
-    SDL_assert(vao);
-
-    memset(vao, 0, sizeof (lite3d_vao));
-
-    lite3d_misc_gl_error_stack_clean();
-    glGenVertexArrays(1, &vao->vaoID);
-
-    return !lite3d_misc_check_gl_error();
-}
-
-void lite3d_vao_purge(struct lite3d_vao *vao)
-{
-    SDL_assert(vao);
-    glDeleteVertexArrays(1, &vao->vaoID);
-    vao->vaoID = 0;
-}
-

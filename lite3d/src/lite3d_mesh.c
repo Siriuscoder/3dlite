@@ -26,11 +26,11 @@
 #include <lite3d/lite3d_misc.h>
 #include <lite3d/lite3d_mesh.h>
 
-int lite3d_indexed_mesh_init(struct lite3d_indexed_mesh *mesh)
+int lite3d_mesh_init(struct lite3d_mesh *mesh)
 {
     SDL_assert(mesh);
 
-    memset(mesh, 0, sizeof (lite3d_indexed_mesh));
+    memset(mesh, 0, sizeof (lite3d_mesh));
     lite3d_list_init(&mesh->chunks);
 
     /* gen buffer for store vertex data */
@@ -47,7 +47,7 @@ int lite3d_indexed_mesh_init(struct lite3d_indexed_mesh *mesh)
     return LITE3D_TRUE;
 }
 
-void lite3d_indexed_mesh_purge(struct lite3d_indexed_mesh *mesh)
+void lite3d_mesh_purge(struct lite3d_mesh *mesh)
 {
     lite3d_list_node *vaoLink;
     SDL_assert(mesh);
@@ -64,7 +64,7 @@ void lite3d_indexed_mesh_purge(struct lite3d_indexed_mesh *mesh)
     mesh->chunkCount = 0;
 }
 
-void lite3d_indexed_mesh_draw(struct lite3d_indexed_mesh *mesh)
+void lite3d_mesh_draw(struct lite3d_mesh *mesh)
 {
     lite3d_list_node *vaoLink;
     lite3d_mesh_chunk *meshChunk;
@@ -74,11 +74,11 @@ void lite3d_indexed_mesh_draw(struct lite3d_indexed_mesh *mesh)
         vaoLink != &mesh->chunks.l; vaoLink = lite3d_list_next(vaoLink))
     {
         meshChunk = LITE3D_MEMBERCAST(lite3d_mesh_chunk, vaoLink, node);
-        lite3d_indexed_mesh_chunk_draw(meshChunk);
+        lite3d_mesh_chunk_draw(meshChunk);
     }
 }
 
-void lite3d_indexed_mesh_draw_instanced(struct lite3d_indexed_mesh *mesh, size_t count)
+void lite3d_mesh_draw_instanced(struct lite3d_mesh *mesh, size_t count)
 {
     lite3d_list_node *vaoLink;
     lite3d_mesh_chunk *meshChunk;
@@ -88,11 +88,11 @@ void lite3d_indexed_mesh_draw_instanced(struct lite3d_indexed_mesh *mesh, size_t
         vaoLink != &mesh->chunks.l; vaoLink = lite3d_list_next(vaoLink))
     {
         meshChunk = LITE3D_MEMBERCAST(lite3d_mesh_chunk, vaoLink, node);
-        lite3d_indexed_mesh_chunk_draw_instanced(meshChunk, count);
+        lite3d_mesh_chunk_draw_instanced(meshChunk, count);
     }
 }
 
-int lite3d_indexed_mesh_extend(struct lite3d_indexed_mesh *mesh, size_t verticesSize,
+int lite3d_mesh_extend(struct lite3d_mesh *mesh, size_t verticesSize,
     size_t indexesSize, uint16_t access)
 {
     SDL_assert(mesh);
@@ -113,24 +113,18 @@ int lite3d_indexed_mesh_extend(struct lite3d_indexed_mesh *mesh, size_t vertices
     return LITE3D_TRUE;
 }
 
-void lite3d_indexed_mesh_chunk_draw(struct lite3d_mesh_chunk *meshChunk)
-{
-    lite3d_vao_draw_indexed(&meshChunk->vao);
-}
-
-void lite3d_indexed_mesh_chunk_draw_instanced(struct lite3d_mesh_chunk *meshChunk, size_t count)
-{
-    lite3d_vao_draw_indexed_instanced(&meshChunk->vao, count);
-}
-
 void lite3d_mesh_chunk_draw(struct lite3d_mesh_chunk *meshChunk)
 {
-    lite3d_vao_draw(&meshChunk->vao);
+    meshChunk->hasIndexes ? 
+        lite3d_vao_draw_indexed(&meshChunk->vao) : 
+        lite3d_vao_draw(&meshChunk->vao);
 }
 
 void lite3d_mesh_chunk_draw_instanced(struct lite3d_mesh_chunk *meshChunk, size_t count)
 {
-    lite3d_vao_draw_instanced(&meshChunk->vao, count);
+    meshChunk->hasIndexes ? 
+        lite3d_vao_draw_indexed_instanced(&meshChunk->vao, count) : 
+        lite3d_vao_draw_instanced(&meshChunk->vao, count);
 }
 
 void lite3d_mesh_chunk_bind(struct lite3d_mesh_chunk *meshChunk)
@@ -143,12 +137,13 @@ void lite3d_mesh_chunk_unbind(struct lite3d_mesh_chunk *meshChunk)
     lite3d_vao_unbind(&meshChunk->vao);
 }
 
-int lite3d_mesh_chunk_init(struct lite3d_mesh_chunk *meshChunk)
+int lite3d_mesh_chunk_init(struct lite3d_mesh_chunk *meshChunk, uint8_t indexed)
 {
     SDL_assert(meshChunk);
 
     memset(meshChunk, 0, sizeof (lite3d_mesh_chunk));
     lite3d_list_link_init(&meshChunk->node);
+    meshChunk->hasIndexes = indexed;
 
     return lite3d_vao_init(&meshChunk->vao);
 }
@@ -162,7 +157,7 @@ void lite3d_mesh_chunk_purge(struct lite3d_mesh_chunk *meshChunk)
     lite3d_free_pooled(LITE3D_POOL_NO1, meshChunk);
 }
 
-lite3d_mesh_chunk *lite3d_mesh_chunk_get_by_index(struct lite3d_indexed_mesh *mesh,
+lite3d_mesh_chunk *lite3d_mesh_chunk_get_by_index(struct lite3d_mesh *mesh,
     uint32_t materialIndex)
 {
     lite3d_list_node *vaoLink;
@@ -180,8 +175,8 @@ lite3d_mesh_chunk *lite3d_mesh_chunk_get_by_index(struct lite3d_indexed_mesh *me
     return NULL;
 }
 
-lite3d_mesh_chunk *lite3d_indexed_mesh_append_chunk(lite3d_indexed_mesh *mesh,
-    const lite3d_indexed_mesh_layout *layout,
+lite3d_mesh_chunk *lite3d_mesh_indexed_append_chunk(lite3d_mesh *mesh,
+    const lite3d_mesh_layout *layout,
     size_t layoutCount,
     size_t stride,
     uint16_t componentType,
@@ -201,13 +196,13 @@ lite3d_mesh_chunk *lite3d_indexed_mesh_append_chunk(lite3d_indexed_mesh *mesh,
     meshChunk = (lite3d_mesh_chunk *) lite3d_malloc_pooled(LITE3D_POOL_NO1, sizeof (lite3d_mesh_chunk));
     SDL_assert_release(meshChunk);
 
-    if (!lite3d_mesh_chunk_init(meshChunk))
+    if (!lite3d_mesh_chunk_init(meshChunk, LITE3D_TRUE))
     {
         lite3d_free_pooled(LITE3D_POOL_NO1, meshChunk);
         return NULL;
     }
 
-    meshChunk->layout = (lite3d_indexed_mesh_layout *) lite3d_malloc(sizeof (lite3d_indexed_mesh_layout) * layoutCount);
+    meshChunk->layout = (lite3d_mesh_layout *) lite3d_malloc(sizeof (lite3d_mesh_layout) * layoutCount);
     SDL_assert_release(meshChunk->layout);
 
     /* VAO set current */

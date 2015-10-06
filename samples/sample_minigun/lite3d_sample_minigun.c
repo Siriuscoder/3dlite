@@ -26,7 +26,7 @@
 static lite3d_pack *mFileSysPack = NULL;
 static lite3d_texture_unit mMinigunTexture;
 static lite3d_camera mCamera01;
-static lite3d_indexed_mesh mModel;
+static lite3d_mesh mModel;
 static lite3d_shader_parameter mMinigunTextureUnit;
 static lite3d_material mMinigunMaterial;
 static lite3d_shader_program mProgram;
@@ -138,9 +138,9 @@ static int initModel(void)
     if (!(file1 = lite3d_pack_file_load(mFileSysPack, "models/meshes/minigun.m")))
         return LITE3D_FALSE;
 
-    if (!lite3d_indexed_mesh_init(&mModel))
+    if (!lite3d_mesh_init(&mModel))
         return LITE3D_FALSE;
-    if (!lite3d_indexed_mesh_load_from_m_file(&mModel, file1, LITE3D_VBO_STATIC_DRAW))
+    if (!lite3d_mesh_load_from_m_file(&mModel, file1, LITE3D_VBO_STATIC_DRAW))
         return LITE3D_FALSE;
 
     return LITE3D_TRUE;
@@ -183,7 +183,7 @@ static int init(void *userdata)
 static int shutdown(void *userdata)
 {
     /* release resources */
-    lite3d_indexed_mesh_purge(&mModel);
+    lite3d_mesh_purge(&mModel);
     lite3d_material_purge(&mMinigunMaterial);
     lite3d_shader_program_purge(&mProgram);
     lite3d_scene_purge(&mScene);

@@ -28,15 +28,15 @@
 #define LITE3D_FLIP_UV_FLAG                   0x2
 #define LITE3D_MERGE_NODES_FLAG               0x4
 
-typedef lite3d_indexed_mesh *(*lite3d_retrieve_mesh)(void);
-typedef void (*lite3d_mesh_loaded)(lite3d_indexed_mesh *, const char *name);
+typedef lite3d_mesh *(*lite3d_retrieve_mesh)(void);
+typedef void (*lite3d_mesh_loaded)(lite3d_mesh *, const char *name);
 
 /*
     note:
         function load mesh model with specified *name* from *resource*,
         if *name* is NULL then first model node from *resource* will be load.
 */
-LITE3D_CEXPORT int lite3d_assimp_mesh_load(lite3d_indexed_mesh *mesh, const lite3d_file *resource, 
+LITE3D_CEXPORT int lite3d_assimp_mesh_load(lite3d_mesh *mesh, const lite3d_file *resource, 
     const char *name, uint16_t access, uint32_t flags);
 
 /*
