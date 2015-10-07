@@ -228,6 +228,7 @@ int lite3d_texture_unit_from_resource(lite3d_texture_unit *textureUnit,
     ILuint imageDesc = 0, imageFormat;
     GLint mipLevel = 0;
     int32_t imageHeight, imageWidth, imageDepth;
+    int8_t totalLevels = 0;
 
     SDL_assert(resource);
     SDL_assert(textureUnit);
@@ -309,18 +310,15 @@ int lite3d_texture_unit_from_resource(lite3d_texture_unit *textureUnit,
      * for the start of each pixel row in memory.*/
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
-    for (mipLevel = 0; mipLevel <= textureUnit->loadedMipmaps; ++mipLevel)
+    totalLevels = textureUnit->loadedMipmaps < textureUnit->generatedMipmaps ?
+        textureUnit->loadedMipmaps : textureUnit->generatedMipmaps;
+    for (mipLevel = 0; mipLevel <= totalLevels; ++mipLevel)
     {
         /* workaround to prevent ilActiveMipmap bug */
         ilBindImage(imageDesc);
         ilActiveMipmap(mipLevel);
 
-        imageWidth = ilGetInteger(IL_IMAGE_WIDTH);
-        imageHeight = ilGetInteger(IL_IMAGE_HEIGHT);
-        imageDepth = ilGetInteger(IL_IMAGE_DEPTH);
-
-        if (!lite3d_texture_unit_set_pixels(textureUnit, mipLevel,
-            imageWidth, imageHeight, imageDepth, 0, 0, 0, ilGetData()))
+        if (!lite3d_texture_unit_set_pixels(textureUnit, mipLevel, ilGetData()))
         {
             ilDeleteImages(1, &imageDesc);
             lite3d_texture_unit_purge(textureUnit);
@@ -328,6 +326,8 @@ int lite3d_texture_unit_from_resource(lite3d_texture_unit *textureUnit,
         }
     }
 
+    /* make texture active */
+    glBindTexture(textureTarget, textureUnit->textureID);
     /* ganerate mipmaps if not loaded */
     if (textureUnit->loadedMipmaps == 0 && quality == LITE3D_TEXTURE_QL_NICEST)
         glGenerateMipmapEXT(textureTarget);
@@ -367,35 +367,102 @@ int lite3d_texture_unit_from_resource(lite3d_texture_unit *textureUnit,
 }
 
 int lite3d_texture_unit_set_pixels(lite3d_texture_unit *textureUnit,
-    uint32_t level, int32_t width, int32_t height, int32_t depth,
-    int32_t widthOff, int32_t heightOff, int32_t depthOff, void *pixels)
+    uint32_t level, void *pixels)
 {
+    int32_t imageHeight, imageWidth, imageDepth;
+    
     SDL_assert(textureUnit);
     if (textureUnit->textureID == 0)
         return LITE3D_FALSE;
 
     if (textureUnit->generatedMipmaps < level)
         return LITE3D_FALSE;
-
+    
+    /* make texture active */
+    glBindTexture(textureUnit->textureTarget, textureUnit->textureID);
+    
+    glGetTexLevelParameteriv(textureUnit->textureTarget, level,
+        GL_TEXTURE_WIDTH, &imageWidth);
+    glGetTexLevelParameteriv(textureUnit->textureTarget, level,
+        GL_TEXTURE_HEIGHT, &imageHeight);
+    glGetTexLevelParameteriv(textureUnit->textureTarget, level,
+        GL_TEXTURE_DEPTH, &imageDepth);
+    
     switch (textureUnit->textureTarget)
     {
         case LITE3D_TEXTURE_1D:
-            glTexSubImage1D(textureUnit->textureTarget, level, widthOff,
-                width, textureUnit->texFormat, GL_UNSIGNED_BYTE, pixels);
+            glTexSubImage1D(textureUnit->textureTarget, level, 0,
+                imageWidth, textureUnit->texFormat, GL_UNSIGNED_BYTE, pixels);
             break;
         case LITE3D_TEXTURE_2D:
-            glTexSubImage2D(textureUnit->textureTarget, level, widthOff,
-                heightOff, width, height, textureUnit->texFormat,
+            glTexSubImage2D(textureUnit->textureTarget, level, 0,
+                0, imageWidth, imageHeight, textureUnit->texFormat,
                 GL_UNSIGNED_BYTE, pixels);
             break;
         case LITE3D_TEXTURE_3D:
-            glTexSubImage3D(textureUnit->textureTarget, level, widthOff,
-                heightOff, depthOff, width, height, depth,
+            glTexSubImage3D(textureUnit->textureTarget, level, 0,
+                0, 0, imageWidth, imageHeight, imageDepth,
                 textureUnit->texFormat, GL_UNSIGNED_BYTE, pixels);
             break;
     }
-
+    
+    glBindTexture(textureUnit->textureTarget, 0);
     return lite3d_misc_check_gl_error() ? LITE3D_FALSE : LITE3D_TRUE;
+}
+
+int lite3d_texture_unit_set_compressed_pixels(lite3d_texture_unit *textureUnit, 
+    uint32_t level, size_t pixelsSize, void *pixels)
+{
+    int32_t imageHeight, imageWidth, imageDepth;
+    int32_t compressed;
+    
+    SDL_assert(textureUnit);
+    if (textureUnit->textureID == 0)
+        return LITE3D_FALSE;
+
+    if (textureUnit->generatedMipmaps < level)
+        return LITE3D_FALSE;
+    
+    /* make texture active */
+    glBindTexture(textureUnit->textureTarget, textureUnit->textureID);
+    
+    glGetTexLevelParameteriv(textureUnit->textureTarget, level,
+        GL_TEXTURE_COMPRESSED, &compressed);
+    
+    if(compressed == GL_FALSE)
+    {
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "%s texture level %d is not a compressed format...",
+            __FUNCTION__, level);
+        return LITE3D_FALSE;
+    }
+    
+    glGetTexLevelParameteriv(textureUnit->textureTarget, level,
+        GL_TEXTURE_WIDTH, &imageWidth);
+    glGetTexLevelParameteriv(textureUnit->textureTarget, level,
+        GL_TEXTURE_HEIGHT, &imageHeight);
+    glGetTexLevelParameteriv(textureUnit->textureTarget, level,
+        GL_TEXTURE_DEPTH, &imageDepth);
+    
+    switch (textureUnit->textureTarget)
+    {
+        case LITE3D_TEXTURE_1D:
+            glCompressedTexSubImage1D(textureUnit->textureTarget, level, 0,
+                imageWidth, textureUnit->texFormat, pixelsSize, pixels);
+            break;
+        case LITE3D_TEXTURE_2D:
+            glCompressedTexSubImage2D(textureUnit->textureTarget, level, 0,
+                0, imageWidth, imageHeight, textureUnit->texFormat,
+                pixelsSize, pixels);
+            break;
+        case LITE3D_TEXTURE_3D:
+            glCompressedTexSubImage3D(textureUnit->textureTarget, level, 0,
+                0, 0, imageWidth, imageHeight, imageDepth,
+                textureUnit->texFormat, pixelsSize, pixels);
+            break;
+    }
+
+    glBindTexture(textureUnit->textureTarget, 0);
+    return lite3d_misc_check_gl_error() ? LITE3D_FALSE : LITE3D_TRUE;  
 }
 
 int lite3d_texture_unit_allocate(lite3d_texture_unit *textureUnit,

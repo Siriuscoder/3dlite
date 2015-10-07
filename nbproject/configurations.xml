@@ -4,6 +4,7 @@
     <df root="." name="0">
       <df name="lite3d">
         <df name="src">
+          <in>lite3d_camera.c</in>
           <in>lite3d_framebuffer.c</in>
           <in>lite3d_logger.c</in>
           <in>lite3d_main.c</in>
@@ -15,6 +16,10 @@
           <in>lite3d_pack.c</in>
           <in>lite3d_render.c</in>
           <in>lite3d_scene.c</in>
+          <in>lite3d_shader.c</in>
+          <in>lite3d_shader_params.c</in>
+          <in>lite3d_shader_program.c</in>
+          <in>lite3d_texture_unit.c</in>
           <in>lite3d_vao.c</in>
           <in>lite3d_vbo.c</in>
           <in>lite3d_video.c</in>
@@ -163,6 +168,7 @@
             <pElem>lite3dpp/include</pElem>
           </incDir>
           <preprocessorList>
+            <Elem>INCLUDE_ASSIMP</Elem>
             <Elem>PLATFORM_Linux</Elem>
             <Elem>_REENTRANT</Elem>
           </preprocessorList>
@@ -196,11 +202,6 @@
         </ccTool>
       </folder>
       <folder path="0/samples">
-        <cTool>
-          <preprocessorList>
-            <Elem>INCLUDE_ASSIMP</Elem>
-          </preprocessorList>
-        </cTool>
         <ccTool>
           <incDir>
             <pElem>lite3d/include</pElem>
@@ -320,9 +321,6 @@
             <pElem>/usr/include/SDL2</pElem>
             <pElem>build/tools</pElem>
           </incDir>
-          <preprocessorList>
-            <Elem>INCLUDE_ASSIMP</Elem>
-          </preprocessorList>
         </cTool>
       </folder>
       <folder path="Modules">
@@ -335,40 +333,28 @@
           </preprocessorList>
         </cTool>
       </folder>
+      <item path="lite3d/src/lite3d_camera.c" ex="false" tool="0" flavor2="3">
+        <cTool flags="3">
+        </cTool>
+      </item>
       <item path="lite3d/src/lite3d_framebuffer.c" ex="false" tool="0" flavor2="3">
         <cTool flags="3">
-          <preprocessorList>
-            <Elem>INCLUDE_ASSIMP</Elem>
-          </preprocessorList>
         </cTool>
       </item>
       <item path="lite3d/src/lite3d_logger.c" ex="false" tool="0" flavor2="3">
         <cTool flags="3">
-          <preprocessorList>
-            <Elem>INCLUDE_ASSIMP</Elem>
-          </preprocessorList>
         </cTool>
       </item>
       <item path="lite3d/src/lite3d_main.c" ex="false" tool="0" flavor2="3">
         <cTool flags="3">
-          <preprocessorList>
-            <Elem>INCLUDE_ASSIMP</Elem>
-          </preprocessorList>
         </cTool>
       </item>
       <item path="lite3d/src/lite3d_material.c" ex="false" tool="0" flavor2="3">
         <cTool flags="3">
-          <incDir>
-            <pElem>3dlite/include</pElem>
-            <pElem>3dlitepp/include</pElem>
-          </incDir>
         </cTool>
       </item>
       <item path="lite3d/src/lite3d_mesh.c" ex="false" tool="0" flavor2="3">
         <cTool flags="3">
-          <preprocessorList>
-            <Elem>INCLUDE_ASSIMP</Elem>
-          </preprocessorList>
         </cTool>
       </item>
       <item path="lite3d/src/lite3d_mesh_assimp_loader.c"
@@ -376,65 +362,54 @@
             tool="0"
             flavor2="3">
         <cTool flags="3">
-          <preprocessorList>
-            <Elem>INCLUDE_ASSIMP</Elem>
-          </preprocessorList>
         </cTool>
       </item>
       <item path="lite3d/src/lite3d_mesh_codec.c" ex="false" tool="0" flavor2="3">
         <cTool flags="3">
-          <preprocessorList>
-            <Elem>INCLUDE_ASSIMP</Elem>
-          </preprocessorList>
         </cTool>
       </item>
       <item path="lite3d/src/lite3d_mesh_loader.c" ex="false" tool="0" flavor2="3">
         <cTool flags="3">
-          <preprocessorList>
-            <Elem>INCLUDE_ASSIMP</Elem>
-          </preprocessorList>
         </cTool>
       </item>
       <item path="lite3d/src/lite3d_pack.c" ex="false" tool="0" flavor2="3">
         <cTool flags="3">
-          <preprocessorList>
-            <Elem>INCLUDE_ASSIMP</Elem>
-          </preprocessorList>
         </cTool>
       </item>
       <item path="lite3d/src/lite3d_render.c" ex="false" tool="0" flavor2="3">
         <cTool flags="3">
-          <preprocessorList>
-            <Elem>INCLUDE_ASSIMP</Elem>
-          </preprocessorList>
         </cTool>
       </item>
       <item path="lite3d/src/lite3d_scene.c" ex="false" tool="0" flavor2="3">
         <cTool flags="3">
-          <preprocessorList>
-            <Elem>INCLUDE_ASSIMP</Elem>
-          </preprocessorList>
+        </cTool>
+      </item>
+      <item path="lite3d/src/lite3d_shader.c" ex="false" tool="0" flavor2="3">
+        <cTool flags="3">
+        </cTool>
+      </item>
+      <item path="lite3d/src/lite3d_shader_params.c" ex="false" tool="0" flavor2="3">
+        <cTool flags="3">
+        </cTool>
+      </item>
+      <item path="lite3d/src/lite3d_shader_program.c" ex="false" tool="0" flavor2="3">
+        <cTool flags="3">
+        </cTool>
+      </item>
+      <item path="lite3d/src/lite3d_texture_unit.c" ex="false" tool="0" flavor2="3">
+        <cTool flags="3">
         </cTool>
       </item>
       <item path="lite3d/src/lite3d_vao.c" ex="false" tool="0" flavor2="3">
         <cTool flags="3">
-          <preprocessorList>
-            <Elem>INCLUDE_ASSIMP</Elem>
-          </preprocessorList>
         </cTool>
       </item>
       <item path="lite3d/src/lite3d_vbo.c" ex="false" tool="0" flavor2="3">
         <cTool flags="3">
-          <preprocessorList>
-            <Elem>INCLUDE_ASSIMP</Elem>
-          </preprocessorList>
         </cTool>
       </item>
       <item path="lite3d/src/lite3d_video.c" ex="false" tool="0" flavor2="3">
         <cTool flags="3">
-          <preprocessorList>
-            <Elem>INCLUDE_ASSIMP</Elem>
-          </preprocessorList>
         </cTool>
       </item>
       <item path="lite3dpp/src/as_helpers/debugger.cpp"

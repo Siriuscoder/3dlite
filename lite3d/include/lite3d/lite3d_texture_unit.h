@@ -117,10 +117,24 @@ LITE3D_CEXPORT int lite3d_texture_unit_allocate(lite3d_texture_unit *textureUnit
     uint32_t textureTarget, int8_t quality, uint8_t wrapping, uint16_t format,
     int32_t height, int32_t width, int32_t depth);
 
-/* update specified mipmap surface */
+/* update specified mipmap level */
 LITE3D_CEXPORT int lite3d_texture_unit_set_pixels(lite3d_texture_unit *textureUnit, 
-    uint32_t level, int32_t width, int32_t height, int32_t depth,
-    int32_t widthOff, int32_t heightOff, int32_t depthOff, void *pixels);
+    uint32_t level, void *pixels);
+/* update specified mipmap compressed level */
+LITE3D_CEXPORT int lite3d_texture_unit_set_compressed_pixels(lite3d_texture_unit *textureUnit, 
+    uint32_t level, size_t pixelsSize, void *pixels);
+
+/* get data from mipmap level */
+LITE3D_CEXPORT int lite3d_texture_unit_get_pixels(lite3d_texture_unit *textureUnit, 
+    uint32_t level, void *pixels);
+LITE3D_CEXPORT int lite3d_texture_unit_get_compressed_pixels(lite3d_texture_unit *textureUnit, 
+    uint32_t level, void *pixels);
+
+/* size of mipmap levels */
+LITE3D_CEXPORT int lite3d_texture_unit_get_level_size(lite3d_texture_unit *textureUnit, 
+    uint32_t level, size_t *size);
+LITE3D_CEXPORT int lite3d_texture_unit_get_compressed_level_size(lite3d_texture_unit *textureUnit, 
+    uint32_t level, size_t *size);
 
 LITE3D_CEXPORT void lite3d_texture_unit_purge(lite3d_texture_unit *texture);
 LITE3D_CEXPORT void lite3d_texture_unit_bind(lite3d_texture_unit *texture, uint16_t layer);

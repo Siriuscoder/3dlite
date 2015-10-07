@@ -1,6 +1,6 @@
 {
     // common settings
-    "LogLevel": 2,
+    "LogLevel": 3,
 	"LogFlushAlways": true,
     "TextureSettings": {
         "Anisotropy": 8,
