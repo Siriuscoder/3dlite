@@ -32,13 +32,13 @@ namespace lite3dpp
 
     Mesh::~Mesh()
     {}
-    
-    void Mesh::loadImpl(const ResourceParameters &params)
-    {}
 
     void Mesh::loadFromJsonImpl(const JsonHelper &helper)
     {
         lite3d_mesh_init(&mMesh);
+        if(helper.isEmpty())
+            return;
+
         if(helper.getString(L"Codec", "m") == "m")
         {
             if(!lite3d_mesh_load_from_m_file(&mMesh, 
@@ -76,11 +76,17 @@ namespace lite3dpp
         }
 
         setBufferedSize(mMesh.indexBuffer.size + mMesh.vertexBuffer.size);
+        mMesh.userdata = this;
     }
 
     void Mesh::unloadImpl()
     {
         lite3d_mesh_purge(&mMesh);
+    }
+
+    void Mesh::reloadImpl()
+    {
+
     }
 
     void Mesh::mapMaterial(int unit, Material *material)

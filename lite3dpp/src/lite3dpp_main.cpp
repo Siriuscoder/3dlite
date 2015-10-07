@@ -127,7 +127,7 @@ namespace lite3dpp
 
         /* create main window render target */
         /* it is fake and used only as label indicating render to screen */
-        mResourceManager.queryResource<WindowRenderTarget>("MainWindow", ResourceParameters());
+        mResourceManager.queryResource<WindowRenderTarget>(LITE3D_EMPTY_NAMED_RESOURCE("MainWindow"));
 
         /* perform fixed update timer */
         mFixedUpdatesTimer = 

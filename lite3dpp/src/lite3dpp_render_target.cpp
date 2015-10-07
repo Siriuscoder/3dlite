@@ -156,13 +156,10 @@ namespace lite3dpp
     {}
     
     void WindowRenderTarget::loadFromJsonImpl(const JsonHelper &helper)
-    {}
-    
-    void WindowRenderTarget::loadImpl(const ResourceParameters &params)
     {
         mRenderTargetPtr = lite3d_render_target_screen_get();
     }
-
+    
     void WindowRenderTarget::unloadImpl()
     {}
 

@@ -39,7 +39,7 @@ namespace lite3dpp
         } ResourceManagerStats;
 
         template<class T>
-        T *queryResource(String name, 
+        T *queryResource(String name,
             const String &path = "")
         {
             AbstractResource *resource;
@@ -73,17 +73,6 @@ namespace lite3dpp
         T *queryResource(String name, 
             const void *data, size_t size)
         {
-            AbstractResource *resource;
-
-            if((resource = fetchResource(name)) != NULL)
-            {
-                T *result;
-                if((result = dynamic_cast<T*>(resource)) == NULL)
-                    throw std::runtime_error((String("Resource type mismatch: ") + 
-                        name).c_str());
-                return result;
-            }
-
             if(name.size() == 0)
                 name = generateResourceName();
 
@@ -98,37 +87,6 @@ namespace lite3dpp
         T *queryResource(const void *data, size_t size)
         {
             return queryResource<T>("", data, size);
-        }
-        
-        template<class T>
-        T *queryResource(String name, 
-            const ResourceParameters &params)
-        {
-            AbstractResource *resource;
-
-            if((resource = fetchResource(name)) != NULL)
-            {
-                T *result;
-                if((result = dynamic_cast<T*>(resource)) == NULL)
-                    throw std::runtime_error((String("Resource type mismatch: ") + 
-                        name).c_str());
-                return result;
-            }
-
-            if(name.size() == 0)
-                name = generateResourceName();
-
-            /* resource not found.. create one */
-            std::unique_ptr<T> result(new T(name, "", mMain));
-            loadResource(name, params, result.get());
-
-            return result.release();
-        }
-        
-        template<class T>
-        T *queryResource(const ResourceParameters &params)
-        {
-            return queryResource<T>("", params);
         }
 
         ResourceManager(Main *main);
@@ -156,9 +114,6 @@ namespace lite3dpp
             AbstractResource *resource);
         virtual void loadResource(const String &name, 
             const void *buffer, size_t size,
-            AbstractResource *resource);
-        virtual void loadResource(const String &name, 
-            const ResourceParameters &params,
             AbstractResource *resource);
 
     private:

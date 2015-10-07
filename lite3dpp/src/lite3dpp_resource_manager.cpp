@@ -71,21 +71,19 @@ namespace lite3dpp
         AbstractResource *resource)
     {
         /* load resource from memory chunk */
-        resource->load(buffer, size);
+        try
+        {
+            resource->load(buffer, size);
+        }
+        catch(std::exception &ex)
+        {
+            /* to prevent reource leak */
+            resource->unload();
+            throw ex;
+        }
 
         /* just insert resource */
         mResources.insert(std::make_pair(name, resource));     
-    }
-    
-    void ResourceManager::loadResource(const String &name, 
-        const ResourceParameters &params,
-        AbstractResource *resource)
-    {
-        /* load resource from parameters */
-        resource->load(params);
-
-        /* just insert resource */
-        mResources.insert(std::make_pair(name, resource));            
     }
 
     void ResourceManager::releaseAllResources()

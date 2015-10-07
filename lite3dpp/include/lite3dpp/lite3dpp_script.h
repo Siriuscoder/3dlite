@@ -41,7 +41,6 @@ namespace lite3dpp
         void scriptRelease();
 
         virtual void loadImpl(const void *buffer, size_t size) override;
-        virtual void loadImpl(const ResourceParameters &params) override;
         virtual void reloadImpl() override;
         virtual void unloadImpl() override;
 

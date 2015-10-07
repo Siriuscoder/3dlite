@@ -30,9 +30,6 @@ namespace lite3dpp
 
     Material::~Material()
     {}
-    
-    void Material::loadImpl(const ResourceParameters &params)
-    {}
 
     void Material::loadFromJsonImpl(const JsonHelper &helper)
     {

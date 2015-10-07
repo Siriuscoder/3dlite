@@ -52,6 +52,7 @@ typedef struct lite3d_mesh
     size_t elementsCount;
     size_t chunkCount;
     lite3d_list chunks;
+    void *userdata;
 } lite3d_mesh;
 
 typedef struct lite3d_mesh_chunk

@@ -21,6 +21,8 @@
 #include <lite3dpp/lite3dpp_resource.h>
 #include <lite3dpp/lite3dpp_resource_manager.h>
 
+const char lite3dpp::JsonResource::emptyJson[] = LITE3D_EMPTY_JSON;
+
 namespace lite3dpp
 {
     const char *AbstractResource::ResourceTypeName[] = {
@@ -53,17 +55,6 @@ namespace lite3dpp
                 mName.c_str(), 
                 mPath.size() == 0 ? "(none)" : mPath.c_str(), 
                 mState == LOADED ? "LOADED" : "UNLOADED");
-    }
-    
-    void AbstractResource::load(const ResourceParameters &params)
-    {
-        if(mState == UNLOADED)
-        {
-            loadImpl(params);
-            mState = LOADED;
-            
-            logState();
-        }
     }
 
     void AbstractResource::load(const void *buffer, size_t size)
@@ -111,15 +102,16 @@ namespace lite3dpp
     {
         SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
             "Parsing json (%s) \"%s\" ...", getName().c_str(), 
-            getPath().size() == 0 ? "from memory" : getPath().c_str()); 
+            getPath().size() == 0 ? "(none)" : getPath().c_str()); 
 
         mJsonHelper.reset(new JsonHelper(static_cast<const char *>(buffer), size));
-        reloadImpl();
+        SDL_assert_release(mJsonHelper);
+        loadFromJsonImpl(*mJsonHelper);
     }
 
     void JsonResource::reloadImpl()
     {
-        SDL_assert_release(mJsonHelper);
+        /* by default, we try to load resource from json one more time */
         loadFromJsonImpl(*mJsonHelper);
     }
 

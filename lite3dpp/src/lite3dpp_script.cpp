@@ -52,9 +52,6 @@ namespace lite3dpp
     Script::~Script()
     {
     }
-    
-    void Script::loadImpl(const ResourceParameters &params)
-    {}
 
     void Script::scriptCompile(const char *data, size_t size)
     {

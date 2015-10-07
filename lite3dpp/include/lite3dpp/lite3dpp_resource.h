@@ -20,13 +20,12 @@
 #include <lite3dpp/lite3dpp_manageable.h>
 #include <lite3dpp/lite3dpp_json_helper.h>
 
+#define LITE3D_EMPTY_JSON                       "{}\0"
+#define LITE3D_EMPTY_NAMED_RESOURCE(name)       name, static_cast<const void *>(lite3dpp::JsonResource::emptyJson), sizeof(LITE3D_EMPTY_JSON)
+#define LITE3D_EMPTY_RESOURCE                   static_cast<const void *>(lite3dpp::JsonResource::emptyJson), sizeof(LITE3D_EMPTY_JSON)
+
 namespace lite3dpp
 {
-    class LITE3DPP_EXPORT ResourceParameters : public Manageable
-    {
-    public:
-    };
-    
     class LITE3DPP_EXPORT AbstractResource : public Manageable
     {
     public:
@@ -57,7 +56,6 @@ namespace lite3dpp
         virtual ~AbstractResource();
 
         void load(const void *buffer, size_t size);
-        void load(const ResourceParameters &params);
         /* call this to reload object */ 
         void reload();
         void unload();
@@ -78,7 +76,6 @@ namespace lite3dpp
     protected:
 
         virtual void loadImpl(const void *buffer, size_t size) = 0;
-        virtual void loadImpl(const ResourceParameters &params) = 0;
         virtual void reloadImpl() = 0;
         virtual void unloadImpl() = 0;
 
@@ -102,6 +99,9 @@ namespace lite3dpp
     class LITE3DPP_EXPORT JsonResource : public AbstractResource
     {
     public:
+
+        static const char emptyJson[];
+
         JsonResource(const String &name, 
             const String &path, Main *main, ResourceType type);
         virtual ~JsonResource();
@@ -111,8 +111,7 @@ namespace lite3dpp
     protected:
 
         virtual void loadImpl(const void *buffer, size_t size) override final;
-        virtual void reloadImpl() override final;
-
+        virtual void reloadImpl() override;
         virtual void loadFromJsonImpl(const JsonHelper &helper) = 0;
 
     private:

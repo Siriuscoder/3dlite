@@ -33,9 +33,6 @@ namespace lite3dpp
 
     TextureRenderTarget::~TextureRenderTarget()
     {}
-    
-    void TextureRenderTarget::loadImpl(const ResourceParameters &params)
-    {}
 
     void TextureRenderTarget::loadFromJsonImpl(const JsonHelper &helper)
     {
