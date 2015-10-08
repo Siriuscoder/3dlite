@@ -24,7 +24,8 @@ namespace lite3dpp
 {
     Texture::Texture(const String &name, 
         const String &path, Main *main) : 
-        JsonResource(name, path, main, AbstractResource::TEXTURE)
+        JsonResource(name, path, main, AbstractResource::TEXTURE),
+        mModifyed(false)
     {}
 
     Texture::~Texture()
@@ -108,14 +109,109 @@ namespace lite3dpp
         setBufferedSize(mTexture.imageSize);
     }
 
-    void Texture::reloadImpl()
+    void Texture::reloadFromJsonImpl(const JsonHelper &helper)
     {
+        /* reload json content */
+        loadFromJsonImpl(helper);
 
+        /* restore modifyed content */
+        if(mModifyed)
+        {
+            for(int8_t level = 0; level <= getLevelsNum() && level < (int8_t)mLayersData.size(); ++level)
+            {
+                if(mTexture.compressed)
+                    setCompressedPixels(level, mLayersData[level]);
+                else
+                    setPixels(level, mLayersData[level]);
+            }
+
+            mLayersData.clear();
+        }
     }
 
     void Texture::unloadImpl()
     {
+        if(mModifyed)
+        {
+            for(int8_t level = 0; level <= getLevelsNum(); ++level)
+            {
+                PixelsData pixels;
+
+                if(mTexture.compressed)
+                    getCompressedPixels(level, pixels);
+                else
+                    getPixels(level, pixels);
+
+                mLayersData.push_back(std::move(pixels));
+            }
+        }
+
         lite3d_texture_unit_purge(&mTexture);
+    }
+
+    void Texture::getPixels(int8_t level, PixelsData &pixels)
+    {
+        size_t size;
+        if(!lite3d_texture_unit_get_level_size(&mTexture, level, &size))
+        {
+            Stringstream error;
+            error << "Could`n get size of level " << level << " for texture " << getName();
+            throw std::runtime_error(error.str());
+        }
+
+        pixels.resize(size);
+        if(!lite3d_texture_unit_get_pixels(&mTexture, level, &pixels[0]))
+        {
+            Stringstream error;
+            error << "Could`n get level " << level << " for texture " << getName();
+            throw std::runtime_error(error.str());
+        }
+    }
+
+    void Texture::setPixels(int8_t level, const PixelsData &pixels)
+    {
+        if(!lite3d_texture_unit_set_pixels(&mTexture, level, &pixels[0]))
+        {
+            Stringstream error;
+            error << "Could`n set level " << level << " for texture " << getName();
+            throw std::runtime_error(error.str());
+        }
+        mModifyed = true;
+    }
+
+    void Texture::getCompressedPixels(int8_t level, PixelsData &pixels)
+    {
+        size_t size;
+        if(!lite3d_texture_unit_get_compressed_level_size(&mTexture, level, &size))
+        {
+            Stringstream error;
+            error << "Could`n get size of level " << level << " for texture " << getName();
+            throw std::runtime_error(error.str());
+        }
+
+        pixels.resize(size);
+        if(!lite3d_texture_unit_get_compressed_pixels(&mTexture, level, &pixels[0]))
+        {
+            Stringstream error;
+            error << "Could`n get level " << level << " for texture " << getName();
+            throw std::runtime_error(error.str());
+        }
+    }
+
+    void Texture::setCompressedPixels(int8_t level, const PixelsData &pixels)
+    {
+        if(!lite3d_texture_unit_set_compressed_pixels(&mTexture, level, pixels.size(), &pixels[0]))
+        {
+            Stringstream error;
+            error << "Could`n set level " << level << " for texture " << getName();
+            throw std::runtime_error(error.str());
+        }
+        mModifyed = true;
+    }
+
+    void Texture::generateMipmaps()
+    {
+        lite3d_texture_unit_generate_mipmaps(&mTexture);
     }
 }
 

@@ -84,7 +84,7 @@ namespace lite3dpp
         lite3d_mesh_purge(&mMesh);
     }
 
-    void Mesh::reloadImpl()
+    void Mesh::reloadFromJsonImpl(const JsonHelper &helper)
     {
 
     }

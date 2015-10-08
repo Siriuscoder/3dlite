@@ -41,6 +41,8 @@ namespace lite3dpp
 
         inline String getName()
         { return mName; }
+        inline void showWireframe(bool flag)
+        { mCamera.polygonMode = flag ? LITE3D_POLYMODE_LINE : LITE3D_POLYMODE_FILL; }
 
         /* camera projection modes */
         void setupOrtho(float near, float far, float left, float right, 

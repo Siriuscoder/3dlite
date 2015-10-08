@@ -46,7 +46,7 @@ namespace lite3dpp
 
         virtual void loadFromJsonImpl(const JsonHelper &helper) override;
         virtual void unloadImpl() override;
-        virtual void reloadImpl() override;
+        virtual void reloadFromJsonImpl(const JsonHelper &helper) override;
 
     private:
 

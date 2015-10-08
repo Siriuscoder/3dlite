@@ -111,9 +111,9 @@ namespace lite3dpp
     protected:
 
         virtual void loadImpl(const void *buffer, size_t size) override final;
-        virtual void reloadImpl() override;
+        virtual void reloadImpl() override final;
         virtual void loadFromJsonImpl(const JsonHelper &helper) = 0;
-
+        virtual void reloadFromJsonImpl(const JsonHelper &helper);
     private:
 
         std::unique_ptr<JsonHelper> mJsonHelper;

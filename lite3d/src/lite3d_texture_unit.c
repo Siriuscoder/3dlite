@@ -330,7 +330,7 @@ int lite3d_texture_unit_from_resource(lite3d_texture_unit *textureUnit,
     glBindTexture(textureTarget, textureUnit->textureID);
     /* ganerate mipmaps if not loaded */
     if (textureUnit->loadedMipmaps == 0 && quality == LITE3D_TEXTURE_QL_NICEST)
-        glGenerateMipmapEXT(textureTarget);
+        glGenerateMipmap(textureTarget);
 
     if (lite3d_misc_check_gl_error())
     {
@@ -354,33 +354,29 @@ int lite3d_texture_unit_from_resource(lite3d_texture_unit *textureUnit,
         textureUnit->generatedMipmaps,
         gTextureSettings.useGLCompression ?
         (textureUnit->texiFormat == GL_COMPRESSED_RGB_S3TC_DXT1_EXT ?
-        "Compressed DXT1" : "Compressed DXT5") : "Plain",
+        "Compressed DXT1" : "Compressed DXT5") : "Not compressed",
         format_string(imageFormat));
 
     /* release IL image */
     ilDeleteImage(imageDesc);
 
     textureUnit->isFbAttachment = LITE3D_FALSE;
-    glBindTexture(textureTarget, 0);
-
     return LITE3D_TRUE;
 }
 
 int lite3d_texture_unit_set_pixels(lite3d_texture_unit *textureUnit,
-    uint32_t level, void *pixels)
+    int8_t level, const void *pixels)
 {
     int32_t imageHeight, imageWidth, imageDepth;
     
     SDL_assert(textureUnit);
-    if (textureUnit->textureID == 0)
-        return LITE3D_FALSE;
-
     if (textureUnit->generatedMipmaps < level)
         return LITE3D_FALSE;
     
     /* make texture active */
     glBindTexture(textureUnit->textureTarget, textureUnit->textureID);
-    
+    lite3d_misc_gl_error_stack_clean();
+
     glGetTexLevelParameteriv(textureUnit->textureTarget, level,
         GL_TEXTURE_WIDTH, &imageWidth);
     glGetTexLevelParameteriv(textureUnit->textureTarget, level,
@@ -406,26 +402,23 @@ int lite3d_texture_unit_set_pixels(lite3d_texture_unit *textureUnit,
             break;
     }
     
-    glBindTexture(textureUnit->textureTarget, 0);
     return lite3d_misc_check_gl_error() ? LITE3D_FALSE : LITE3D_TRUE;
 }
 
 int lite3d_texture_unit_set_compressed_pixels(lite3d_texture_unit *textureUnit, 
-    uint32_t level, size_t pixelsSize, void *pixels)
+    int8_t level, size_t pixelsSize, const void *pixels)
 {
     int32_t imageHeight, imageWidth, imageDepth;
     int32_t compressed;
     
     SDL_assert(textureUnit);
-    if (textureUnit->textureID == 0)
-        return LITE3D_FALSE;
-
     if (textureUnit->generatedMipmaps < level)
         return LITE3D_FALSE;
     
     /* make texture active */
     glBindTexture(textureUnit->textureTarget, textureUnit->textureID);
-    
+    lite3d_misc_gl_error_stack_clean();
+
     glGetTexLevelParameteriv(textureUnit->textureTarget, level,
         GL_TEXTURE_COMPRESSED, &compressed);
     
@@ -433,6 +426,7 @@ int lite3d_texture_unit_set_compressed_pixels(lite3d_texture_unit *textureUnit,
     {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "%s texture level %d is not a compressed format...",
             __FUNCTION__, level);
+        glBindTexture(textureUnit->textureTarget, 0);
         return LITE3D_FALSE;
     }
     
@@ -461,8 +455,107 @@ int lite3d_texture_unit_set_compressed_pixels(lite3d_texture_unit *textureUnit,
             break;
     }
 
-    glBindTexture(textureUnit->textureTarget, 0);
     return lite3d_misc_check_gl_error() ? LITE3D_FALSE : LITE3D_TRUE;  
+}
+
+int lite3d_texture_unit_get_level_size(lite3d_texture_unit *textureUnit, 
+    int8_t level, size_t *size)
+{
+    int32_t imageHeight, imageWidth, imageDepth;
+
+    SDL_assert(textureUnit);
+    SDL_assert(size);
+    if (textureUnit->generatedMipmaps < level)
+        return LITE3D_FALSE;
+    
+    /* make texture active */
+    glBindTexture(textureUnit->textureTarget, textureUnit->textureID);
+
+    glGetTexLevelParameteriv(textureUnit->textureTarget, level,
+        GL_TEXTURE_WIDTH, &imageWidth);
+    glGetTexLevelParameteriv(textureUnit->textureTarget, level,
+        GL_TEXTURE_HEIGHT, &imageHeight);
+    glGetTexLevelParameteriv(textureUnit->textureTarget, level,
+        GL_TEXTURE_DEPTH, &imageDepth);
+
+    *size = imageHeight * imageWidth * imageDepth * textureUnit->imageBPP;
+
+    return LITE3D_TRUE;
+}
+
+int lite3d_texture_unit_get_compressed_level_size(lite3d_texture_unit *textureUnit, 
+    int8_t level, size_t *size)
+{
+    int32_t compressed;
+
+    SDL_assert(textureUnit);
+    SDL_assert(size);
+    if (textureUnit->generatedMipmaps < level)
+        return LITE3D_FALSE;
+
+    /* make texture active */
+    glBindTexture(textureUnit->textureTarget, textureUnit->textureID);
+    glGetTexLevelParameteriv(textureUnit->textureTarget, level,
+        GL_TEXTURE_COMPRESSED, &compressed);
+    
+    if(compressed == GL_FALSE)
+        return LITE3D_FALSE;
+
+    glGetTexLevelParameteriv(textureUnit->textureTarget, level, GL_TEXTURE_COMPRESSED_IMAGE_SIZE, (GLint *)size);
+
+    return LITE3D_TRUE;
+}
+
+int lite3d_texture_unit_get_pixels(lite3d_texture_unit *textureUnit, 
+    int8_t level, void *pixels)
+{
+    SDL_assert(textureUnit);
+    if (textureUnit->generatedMipmaps < level)
+        return LITE3D_FALSE;
+
+    /* make texture active */
+    glBindTexture(textureUnit->textureTarget, textureUnit->textureID);
+    lite3d_misc_gl_error_stack_clean();
+
+    glGetTexImage(textureUnit->textureTarget, level, textureUnit->texFormat,
+        GL_UNSIGNED_BYTE, pixels);
+
+    return lite3d_misc_check_gl_error() ? LITE3D_FALSE : LITE3D_TRUE;
+}
+
+int lite3d_texture_unit_get_compressed_pixels(lite3d_texture_unit *textureUnit, 
+    int8_t level, void *pixels)
+{
+    int32_t compressed;
+
+    SDL_assert(textureUnit);
+    if (textureUnit->generatedMipmaps < level)
+        return LITE3D_FALSE;
+
+    /* make texture active */
+    glBindTexture(textureUnit->textureTarget, textureUnit->textureID);
+    lite3d_misc_gl_error_stack_clean();
+
+    glGetTexLevelParameteriv(textureUnit->textureTarget, level,
+        GL_TEXTURE_COMPRESSED, &compressed);
+
+    if(compressed == GL_FALSE)
+        return LITE3D_FALSE;
+
+    glGetCompressedTexImage(textureUnit->textureTarget, level, pixels);
+    return lite3d_misc_check_gl_error() ? LITE3D_FALSE : LITE3D_TRUE;
+}
+
+int lite3d_texture_unit_generate_mipmaps(lite3d_texture_unit *textureUnit)
+{
+    if(textureUnit->generatedMipmaps > 0)
+    {
+        glBindTexture(textureUnit->textureTarget, textureUnit->textureID);
+        glGenerateMipmap(textureUnit->textureTarget);
+        return LITE3D_TRUE;
+    }
+    
+    return LITE3D_FALSE;
 }
 
 int lite3d_texture_unit_allocate(lite3d_texture_unit *textureUnit,
@@ -617,12 +710,34 @@ int lite3d_texture_unit_allocate(lite3d_texture_unit *textureUnit,
 
     /*
      * You must reserve memory for other mipmaps levels as well either by making a 
-     * series of calls to glTexImage2D or use glGenerateMipmapEXT(GL_TEXTURE_2D).
+     * series of calls to glTexImage2D or use glGenerateMipmap(GL_TEXTURE_2D).
      * Here, we'll use :
      */
     if (quality == LITE3D_TEXTURE_QL_NICEST)
-        glGenerateMipmapEXT(textureTarget);
+        glGenerateMipmap(textureTarget);
 
+    /* calculate texture total size */
+    if (internalFormat == GL_COMPRESSED_RGB_S3TC_DXT1_EXT || 
+        internalFormat == GL_COMPRESSED_RGBA_S3TC_DXT5_EXT)
+    {
+        size_t levelSize;
+        uint8_t li = 0;
+        textureUnit->totalSize = 0;
+        while(lite3d_texture_unit_get_compressed_level_size(textureUnit, li++, &levelSize))
+            textureUnit->totalSize += levelSize;
+
+        textureUnit->compressed = LITE3D_TRUE;
+    }
+    else
+    {
+        size_t levelSize;
+        uint8_t li = 0;
+        textureUnit->totalSize = 0;
+        while(lite3d_texture_unit_get_level_size(textureUnit, li++, &levelSize))
+            textureUnit->totalSize += levelSize;
+
+        textureUnit->compressed = LITE3D_FALSE;
+    }
 
     if (lite3d_misc_check_gl_error())
     {
@@ -631,7 +746,7 @@ int lite3d_texture_unit_allocate(lite3d_texture_unit *textureUnit,
     }
 
     SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "%s: "
-        "%dx%dx%d surface allocated, levels %d, %s, "
+        "%dx%dx%d surface allocated (%lu bytes), levels %d, %s, "
         "format %s",
         (textureUnit->textureTarget == LITE3D_TEXTURE_1D ? "TEXTURE_1D" :
         (textureUnit->textureTarget == LITE3D_TEXTURE_2D ? "TEXTURE_2D" :
@@ -639,15 +754,14 @@ int lite3d_texture_unit_allocate(lite3d_texture_unit *textureUnit,
         textureUnit->imageWidth,
         textureUnit->imageHeight,
         textureUnit->imageDepth,
+        textureUnit->totalSize,
         textureUnit->generatedMipmaps,
         gTextureSettings.useGLCompression ?
         (internalFormat == GL_COMPRESSED_RGB_S3TC_DXT1_EXT ?
-        "Compressed DXT1" : "Compressed DXT5") : "Plain",
+        "Compressed DXT1" : "Compressed DXT5") : "Not compressed",
         format_string(format));
 
     textureUnit->isFbAttachment = LITE3D_FALSE;
-    glBindTexture(textureTarget, 0);
-
     return LITE3D_TRUE;
 }
 
@@ -667,8 +781,8 @@ void lite3d_texture_unit_bind(lite3d_texture_unit *textureUnit, uint16_t layer)
     glBindTexture(textureUnit->textureTarget, textureUnit->textureID);
 
     if (textureUnit->isFbAttachment &&
-        textureUnit->minFilter == GL_LINEAR_MIPMAP_LINEAR)
-        glGenerateMipmapEXT(textureUnit->textureTarget);
+        textureUnit->generatedMipmaps > 0)
+        glGenerateMipmap(textureUnit->textureTarget);
 }
 
 void lite3d_texture_unit_unbind(lite3d_texture_unit *textureUnit, uint16_t layer)

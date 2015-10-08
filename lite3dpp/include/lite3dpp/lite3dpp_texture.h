@@ -29,6 +29,9 @@ namespace lite3dpp
     {
     public:
 
+        typedef stl<unsigned char>::vector PixelsData;
+        typedef stl<PixelsData>::vector LayersData;
+
         Texture(const String &name, 
             const String &path, Main *main);
 
@@ -37,15 +40,28 @@ namespace lite3dpp
         inline lite3d_texture_unit *getPtr()
         { return &mTexture; }
 
+        inline int8_t getLevelsNum()
+        { return mTexture.generatedMipmaps; }
+
+        void getPixels(int8_t level,PixelsData &pixels);
+        void setPixels(int8_t level, const PixelsData &pixels);
+
+        void getCompressedPixels(int8_t level, PixelsData &pixels);
+        void setCompressedPixels(int8_t level, const PixelsData &pixels);
+
+        void generateMipmaps();
+
     protected:
 
         virtual void loadFromJsonImpl(const JsonHelper &helper) override;
-        virtual void reloadImpl() override;
+        virtual void reloadFromJsonImpl(const JsonHelper &helper) override;
         virtual void unloadImpl() override;
 
     private:
 
         lite3d_texture_unit mTexture;
+        bool mModifyed;
+        LayersData mLayersData;
     };
 }
 

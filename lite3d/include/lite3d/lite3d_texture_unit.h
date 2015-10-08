@@ -91,12 +91,14 @@ typedef struct lite3d_texture_unit
     int32_t imageWidth;
     int32_t imageDepth;
     size_t imageSize;
+    size_t totalSize;
     int8_t imageBPP;
     int8_t loadedMipmaps;
     int8_t generatedMipmaps;
     int16_t minFilter;
     int16_t magFilter;
     uint8_t wrapping;
+    uint8_t compressed;
     uint8_t isFbAttachment;
     void *userdata;
 } lite3d_texture_unit;
@@ -119,22 +121,24 @@ LITE3D_CEXPORT int lite3d_texture_unit_allocate(lite3d_texture_unit *textureUnit
 
 /* update specified mipmap level */
 LITE3D_CEXPORT int lite3d_texture_unit_set_pixels(lite3d_texture_unit *textureUnit, 
-    uint32_t level, void *pixels);
+    int8_t level, const void *pixels);
 /* update specified mipmap compressed level */
 LITE3D_CEXPORT int lite3d_texture_unit_set_compressed_pixels(lite3d_texture_unit *textureUnit, 
-    uint32_t level, size_t pixelsSize, void *pixels);
+    int8_t level, size_t pixelsSize, const void *pixels);
 
 /* get data from mipmap level */
 LITE3D_CEXPORT int lite3d_texture_unit_get_pixels(lite3d_texture_unit *textureUnit, 
-    uint32_t level, void *pixels);
+    int8_t level, void *pixels);
 LITE3D_CEXPORT int lite3d_texture_unit_get_compressed_pixels(lite3d_texture_unit *textureUnit, 
-    uint32_t level, void *pixels);
+    int8_t level, void *pixels);
 
 /* size of mipmap levels */
 LITE3D_CEXPORT int lite3d_texture_unit_get_level_size(lite3d_texture_unit *textureUnit, 
-    uint32_t level, size_t *size);
+    int8_t level, size_t *size);
 LITE3D_CEXPORT int lite3d_texture_unit_get_compressed_level_size(lite3d_texture_unit *textureUnit, 
-    uint32_t level, size_t *size);
+    int8_t level, size_t *size);
+/* regenerate mipmaps */
+LITE3D_CEXPORT int lite3d_texture_unit_generate_mipmaps(lite3d_texture_unit *textureUnit);
 
 LITE3D_CEXPORT void lite3d_texture_unit_purge(lite3d_texture_unit *texture);
 LITE3D_CEXPORT void lite3d_texture_unit_bind(lite3d_texture_unit *texture, uint16_t layer);

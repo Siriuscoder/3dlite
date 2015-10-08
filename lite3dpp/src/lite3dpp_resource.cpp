@@ -109,10 +109,15 @@ namespace lite3dpp
         loadFromJsonImpl(*mJsonHelper);
     }
 
-    void JsonResource::reloadImpl()
+    void JsonResource::reloadFromJsonImpl(const JsonHelper &helper)
     {
         /* by default, we try to load resource from json one more time */
         loadFromJsonImpl(*mJsonHelper);
+    }
+
+    void JsonResource::reloadImpl()
+    {
+        reloadFromJsonImpl(*mJsonHelper);
     }
 
     const JsonHelper &JsonResource::getJson() const
