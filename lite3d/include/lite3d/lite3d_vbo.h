@@ -39,6 +39,7 @@ typedef struct lite3d_vbo
 {
     uint32_t vboID;
     size_t size;
+    uint16_t access;
 } lite3d_vbo;
 
 LITE3D_CEXPORT int lite3d_vbo_technique_init(void);

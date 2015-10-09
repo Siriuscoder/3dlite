@@ -43,6 +43,8 @@ namespace lite3dpp
         { return mName; }
         inline void showWireframe(bool flag)
         { mCamera.polygonMode = flag ? LITE3D_POLYMODE_LINE : LITE3D_POLYMODE_FILL; }
+        inline void cullBackFaces(bool flag)
+        { mCamera.cullBackFaces = flag ? LITE3D_TRUE : LITE3D_FALSE; }
 
         /* camera projection modes */
         void setupOrtho(float near, float far, float left, float right, 

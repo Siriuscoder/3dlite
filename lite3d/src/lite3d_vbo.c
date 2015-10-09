@@ -192,6 +192,7 @@ int lite3d_vbo_extend(struct lite3d_vbo *vbo, size_t addSize, uint16_t access)
 
     lite3d_misc_gl_error_stack_clean();
 
+    vbo->access = access;
     if (!vbo_buffer_extend(vbo->vboID, addSize, access))
         return LITE3D_FALSE;
 
@@ -238,6 +239,7 @@ int lite3d_vbo_buffer(struct lite3d_vbo *vbo,
         return LITE3D_FALSE;
 
     /* store data to GPU memory */
+    vbo->access = access;
     glBufferData(GL_ARRAY_BUFFER, size, buffer, access);
     if (lite3d_misc_check_gl_error())
         return LITE3D_FALSE;

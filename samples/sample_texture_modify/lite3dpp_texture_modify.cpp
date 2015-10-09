@@ -27,7 +27,8 @@ public:
 
     SampleLifecycleListener() :
         mBox(NULL),
-        mWireftameView(false)
+        mWireftameView(false),
+        mDepthTest(true)
     {}
 
     void init(lite3dpp::Main *main) override
@@ -38,6 +39,7 @@ public:
         mBoxTexture = main->getResourceManager()->queryResource<lite3dpp::Texture>("color512x512.texture");
         mCamera = scene->getCamera("MyCamera");
         mBox = scene->getObject("Box");
+        mBoxMesh = main->getResourceManager()->queryResource<lite3dpp::Mesh>("box.mesh");
 
         updateTextureData();
     }
@@ -80,10 +82,15 @@ public:
         {
             mWireftameView = !mWireftameView;
             mCamera->showWireframe(mWireftameView);
+            mCamera->cullBackFaces(!mWireftameView);
         }
         else if (e->key.keysym.sym == SDLK_r)
         {
             updateTextureData();
+        }
+        else if (e->key.keysym.sym == SDLK_a)
+        {
+            updateMesh();
         }
     }
 
@@ -112,12 +119,21 @@ public:
         }
     }
 
+    void updateMesh()
+    {
+        lite3dpp::Mesh::BufferData buffer;
+        mBoxMesh->getVertexData(buffer);
+    }
+
 private:
 
     lite3dpp::SceneObject *mBox;
     lite3dpp::Texture *mBoxTexture;
     lite3dpp::Camera *mCamera;
+    lite3dpp::Mesh *mBoxMesh;
+
     bool mWireftameView;
+    bool mDepthTest;
 };
 
 int main(int agrc, char *args[])

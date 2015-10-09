@@ -26,10 +26,43 @@
 
 namespace lite3dpp
 {
+    class Mesh;
+    class LITE3DPP_EXPORT BufferMapper : public Manageable, public NoncopiableResource
+    {
+    friend Mesh;
+    private:
+
+        BufferMapper(lite3d_vbo &source, uint16_t lockType);
+        BufferMapper(const BufferMapper &other);
+
+    public:
+
+        BufferMapper(BufferMapper &&other);
+        ~BufferMapper();
+
+        template<class T>
+        const T *getPtr() const
+        { return static_cast<T *>(mPtr); }
+
+        template<class T>
+        T *getPtr()
+        { return static_cast<T *>(mPtr); }
+
+        inline size_t getSize()
+        { return mSource.size; }
+
+    private:
+
+        lite3d_vbo &mSource;
+        void *mPtr;
+    };
+
     class LITE3DPP_EXPORT Mesh : public JsonResource, public NoncopiableResource
     {
     public:
         
+        typedef stl<unsigned char>::vector BufferData;
+        typedef stl<lite3d_mesh_layout>::vector BufferLayout; 
         typedef stl<int, Material *>::map MaterialMapping;
 
         Mesh(const String &name, 
@@ -42,6 +75,12 @@ namespace lite3dpp
         inline lite3d_mesh *getPtr()
         { return &mMesh; }
 
+        void getVertexData(BufferData &buffer);
+        void getIndexData(BufferData &buffer);
+
+        BufferMapper mapVertexBuffer(uint16_t lockType);
+        BufferMapper mapIndexBuffer(uint16_t lockType);
+
     protected:
 
         virtual void loadFromJsonImpl(const JsonHelper &helper) override;
@@ -52,6 +91,8 @@ namespace lite3dpp
 
         MaterialMapping mMaterialMapping;
         lite3d_mesh mMesh;
+        BufferData mVertexData;
+        BufferData mIndexData;
     };
 }
 

@@ -25,13 +25,40 @@
 
 namespace lite3dpp
 {
+    BufferMapper::BufferMapper(lite3d_vbo &source, uint16_t lockType) : 
+        mSource(source)
+    {
+        if((mPtr = lite3d_vbo_map(&source, lockType)) == NULL)
+            throw std::runtime_error("vertex buffer map failed..");
+    }
+
+    BufferMapper::BufferMapper(const BufferMapper &other) :
+        mSource(other.mSource),
+        mPtr(other.mPtr)
+    {}
+
+    BufferMapper::BufferMapper(BufferMapper &&other) : 
+        mSource(other.mSource),
+        mPtr(other.mPtr)
+    {
+        other.mPtr = NULL;
+    }
+
+    BufferMapper::~BufferMapper()
+    {
+        if(mPtr)
+            lite3d_vbo_unmap(&mSource);
+    }
+
     Mesh::Mesh(const String &name, 
         const String &path, Main *main) : 
         JsonResource(name, path, main, AbstractResource::MESH)
     {}
 
     Mesh::~Mesh()
-    {}
+    {
+        lite3d_mesh_purge(&mMesh);
+    }
 
     void Mesh::loadFromJsonImpl(const JsonHelper &helper)
     {
@@ -81,17 +108,69 @@ namespace lite3dpp
 
     void Mesh::unloadImpl()
     {
-        lite3d_mesh_purge(&mMesh);
+        /* store buffers data */
+        getVertexData(mVertexData);
+        getIndexData(mIndexData);
+
+        /* unload vbo from vmem */
+        lite3d_vbo_buffer(&mMesh.vertexBuffer, NULL, 0, mMesh.vertexBuffer.access);
+        lite3d_vbo_buffer(&mMesh.indexBuffer, NULL, 0, mMesh.indexBuffer.access);
     }
 
     void Mesh::reloadFromJsonImpl(const JsonHelper &helper)
     {
+        /* restore data */
+        if(mVertexData.size() > 0)
+            lite3d_vbo_buffer(&mMesh.vertexBuffer, &mVertexData[0], mVertexData.size(), mMesh.vertexBuffer.access);
 
+        if(mIndexData.size() > 0)
+            lite3d_vbo_buffer(&mMesh.indexBuffer, &mIndexData[0], mIndexData.size(), mMesh.indexBuffer.access);
+
+        mVertexData.clear();
+        mIndexData.clear();
     }
 
     void Mesh::mapMaterial(int unit, Material *material)
     {
         mMaterialMapping[unit] = material;
+    }
+
+    BufferMapper Mesh::mapVertexBuffer(uint16_t lockType)
+    {
+        if(mMesh.vertexBuffer.size > 0)
+            return BufferMapper(mMesh.vertexBuffer, lockType);
+
+        throw std::runtime_error(getName() + " Could`t map vertex buffer.. it is empty..");
+    }
+
+    BufferMapper Mesh::mapIndexBuffer(uint16_t lockType)
+    {
+        if(mMesh.indexBuffer.size > 0)
+            return BufferMapper(mMesh.indexBuffer, lockType);
+
+        throw std::runtime_error(getName() + " Could`t map vertex buffer.. it is empty..");
+    }
+
+    void Mesh::getVertexData(BufferData &buffer)
+    {
+        if(mMesh.vertexBuffer.size > 0)
+        {
+            BufferMapper lock = mapVertexBuffer(LITE3D_VBO_MAP_READ_ONLY);
+            buffer.resize(lock.getSize());
+
+            memcpy(&buffer[0], lock.getPtr<void>(), buffer.size());
+        }
+    }
+
+    void Mesh::getIndexData(BufferData &buffer)
+    {
+        if(mMesh.indexBuffer.size > 0)
+        {
+            BufferMapper lock = mapIndexBuffer(LITE3D_VBO_MAP_READ_ONLY);
+            buffer.resize(lock.getSize());
+
+            memcpy(&buffer[0], lock.getPtr<void>(), buffer.size());
+        }
     }
 }
 
