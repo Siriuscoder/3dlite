@@ -74,10 +74,49 @@ namespace lite3dpp
         { return mMaterialMapping; }
         inline lite3d_mesh *getPtr()
         { return &mMesh; }
+        
+        template<class T>
+        typename stl<T>::vector getVertexData()
+        {
+            typename stl<T>::vector buffer;
+            if(mMesh.vertexBuffer.size > 0)
+            {
+                BufferMapper lock = mapVertexBuffer(LITE3D_VBO_MAP_READ_ONLY);
+                buffer.resize(lock.getSize());
 
-        void getVertexData(BufferData &buffer);
-        void getIndexData(BufferData &buffer);
+                memcpy(&buffer[0], lock.getPtr<void>(), buffer.size());
+            }
+            
+            return buffer;
+        }
+        
+        template<class T>
+        typename stl<T>::vector getIndexData()
+        {
+            typename stl<T>::vector buffer;
+            if(mMesh.indexBuffer.size > 0)
+            {
+                BufferMapper lock = mapIndexBuffer(LITE3D_VBO_MAP_READ_ONLY);
+                buffer.resize(lock.getSize());
 
+                memcpy(&buffer[0], lock.getPtr<void>(), buffer.size());
+            }
+            
+            return buffer;
+        }
+        
+        template<class V, class Indx>
+        void addIndexedMeshChunk(const typename stl<V>::vector &vertices,
+            const typename stl<Indx>::vector &indices, const BufferLayout &layout)
+        {
+            uint8_t indexSize = vertices.size() <= 0xff ? 1 : (vertices.size() <= 0xffff ? 2 : 4);
+            uint8_t indexesCount = sizeof(Indx) / indexSize;
+            
+            if(!lite3d_mesh_indexed_extend_from_memory(&mMesh, &vertices[0], vertices.size(),
+                &layout[0], layout.size(), &indices[0], layout.size(), indexesCount, LITE3D_VBO_DYNAMIC_DRAW))
+                throw std::runtime_error(getName() + " append mesh chunk failed..");
+        }
+        
         BufferMapper mapVertexBuffer(uint16_t lockType);
         BufferMapper mapIndexBuffer(uint16_t lockType);
 

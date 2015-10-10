@@ -21,6 +21,13 @@
 
 #include <lite3dpp/lite3dpp_main.h>
 
+#pragma pack(push, 1)
+typedef struct vertexPod
+{
+    float x,y,z,s,t;
+} vertexPod;
+#pragma pack(pop)
+
 class SampleLifecycleListener : public lite3dpp::Main::LifecycleListener
 {
 public:
@@ -28,7 +35,8 @@ public:
     SampleLifecycleListener() :
         mBox(NULL),
         mWireftameView(false),
-        mDepthTest(true)
+        mDepthTest(true),
+        mKof(1)
     {}
 
     void init(lite3dpp::Main *main) override
@@ -90,6 +98,11 @@ public:
         }
         else if (e->key.keysym.sym == SDLK_a)
         {
+            if (e->key.keysym.mod & KMOD_LCTRL)
+                mKof = -1;
+            else 
+                mKof = 1;
+            
             updateMesh();
         }
     }
@@ -121,8 +134,19 @@ public:
 
     void updateMesh()
     {
-        lite3dpp::Mesh::BufferData buffer;
-        mBoxMesh->getVertexData(buffer);
+        vertexPod *vertices;
+        lite3dpp::BufferMapper vmap = mBoxMesh->mapVertexBuffer(LITE3D_VBO_MAP_READ_WRITE);
+        
+        vertices = vmap.getPtr<vertexPod>();
+        for(uint32_t i = 0; i < vmap.getSize(); i += sizeof(vertexPod), ++vertices)
+        {
+            if(vertices->z >= 0.0f)
+            {
+                vertices->z += mKof * 0.1f;
+                if(vertices->z < 0.0f)
+                    vertices->z = 0.0f;
+            }
+        }
     }
 
 private:
@@ -134,6 +158,7 @@ private:
 
     bool mWireftameView;
     bool mDepthTest;
+    int8_t mKof;
 };
 
 int main(int agrc, char *args[])

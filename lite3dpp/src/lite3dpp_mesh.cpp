@@ -109,8 +109,8 @@ namespace lite3dpp
     void Mesh::unloadImpl()
     {
         /* store buffers data */
-        getVertexData(mVertexData);
-        getIndexData(mIndexData);
+        mVertexData = getVertexData<unsigned char>();
+        mIndexData = getIndexData<unsigned char>();
 
         /* unload vbo from vmem */
         lite3d_vbo_buffer(&mMesh.vertexBuffer, NULL, 0, mMesh.vertexBuffer.access);
@@ -149,28 +149,6 @@ namespace lite3dpp
             return BufferMapper(mMesh.indexBuffer, lockType);
 
         throw std::runtime_error(getName() + " Could`t map vertex buffer.. it is empty..");
-    }
-
-    void Mesh::getVertexData(BufferData &buffer)
-    {
-        if(mMesh.vertexBuffer.size > 0)
-        {
-            BufferMapper lock = mapVertexBuffer(LITE3D_VBO_MAP_READ_ONLY);
-            buffer.resize(lock.getSize());
-
-            memcpy(&buffer[0], lock.getPtr<void>(), buffer.size());
-        }
-    }
-
-    void Mesh::getIndexData(BufferData &buffer)
-    {
-        if(mMesh.indexBuffer.size > 0)
-        {
-            BufferMapper lock = mapIndexBuffer(LITE3D_VBO_MAP_READ_ONLY);
-            buffer.resize(lock.getSize());
-
-            memcpy(&buffer[0], lock.getPtr<void>(), buffer.size());
-        }
     }
 }
 
