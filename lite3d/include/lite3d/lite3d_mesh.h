@@ -73,7 +73,7 @@ LITE3D_CEXPORT int lite3d_mesh_extend(struct lite3d_mesh *mesh,
 LITE3D_CEXPORT void lite3d_mesh_draw(struct lite3d_mesh *mesh);
 LITE3D_CEXPORT void lite3d_mesh_draw_instanced(struct lite3d_mesh *mesh, size_t count);
 
-LITE3D_CEXPORT lite3d_mesh_chunk *lite3d_mesh_indexed_append_chunk(lite3d_mesh *mesh,
+LITE3D_CEXPORT lite3d_mesh_chunk *lite3d_mesh_append_chunk(lite3d_mesh *mesh,
     const lite3d_mesh_layout *layout,
     size_t layoutCount,
     size_t stride,

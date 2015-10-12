@@ -157,7 +157,7 @@ int lite3d_mesh_m_decode(lite3d_mesh *mesh,
         }
 
         /* append new batch */
-        if (!lite3d_mesh_indexed_append_chunk(mesh, meshLayout, mchunk.chunkLayoutCount, stride,
+        if (!lite3d_mesh_append_chunk(mesh, meshLayout, mchunk.chunkLayoutCount, stride,
             mchunk.indexType, mchunk.elementType, mchunk.indexesCount,
             mchunk.indexesSize, indOffset, mchunk.verticesCount, mchunk.verticesSize, vertOffset))
             return LITE3D_FALSE;

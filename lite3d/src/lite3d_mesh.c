@@ -175,7 +175,7 @@ lite3d_mesh_chunk *lite3d_mesh_chunk_get_by_index(struct lite3d_mesh *mesh,
     return NULL;
 }
 
-lite3d_mesh_chunk *lite3d_mesh_indexed_append_chunk(lite3d_mesh *mesh,
+lite3d_mesh_chunk *lite3d_mesh_append_chunk(lite3d_mesh *mesh,
     const lite3d_mesh_layout *layout,
     size_t layoutCount,
     size_t stride,
@@ -220,7 +220,9 @@ lite3d_mesh_chunk *lite3d_mesh_indexed_append_chunk(lite3d_mesh *mesh,
         meshChunk->layout[i] = layout[i];
     }
 
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->indexBuffer.vboID);
+    if (indexesCount > 0)
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->indexBuffer.vboID);
+
     /* end VAO binding */
     glBindVertexArray(0);
 
@@ -233,7 +235,7 @@ lite3d_mesh_chunk *lite3d_mesh_indexed_append_chunk(lite3d_mesh *mesh,
     meshChunk->vao.verticesSize = verticesSize;
     meshChunk->vao.verticesOffset = verticesOffset;
     meshChunk->layoutEntriesCount = layoutCount;
-    meshChunk->vao.elementsCount = indexesCount /
+    meshChunk->vao.elementsCount = (indexesCount > 0 ? indexesCount : verticesCount) /
         (indexPrimitive == LITE3D_PRIMITIVE_POINT ? 1 :
         (indexPrimitive == LITE3D_PRIMITIVE_LINE ? 2 : 3));
 
