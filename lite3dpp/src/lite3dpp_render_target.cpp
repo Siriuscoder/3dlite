@@ -28,7 +28,7 @@ namespace lite3dpp
 {
     RenderTarget::RenderTarget(const String &name, 
         const String &path, Main *main) : 
-        JsonResource(name, path, main, AbstractResource::RENDER_TARGET),
+        ConfigurableResource(name, path, main, AbstractResource::RENDER_TARGET),
         mRenderTargetPtr(NULL)
     {}
 
@@ -155,7 +155,7 @@ namespace lite3dpp
     WindowRenderTarget::~WindowRenderTarget()
     {}
     
-    void WindowRenderTarget::loadFromJsonImpl(const JsonHelper &helper)
+    void WindowRenderTarget::loadFromConfigImpl(const ConfigurationReader &helper)
     {
         mRenderTargetPtr = lite3d_render_target_screen_get();
     }

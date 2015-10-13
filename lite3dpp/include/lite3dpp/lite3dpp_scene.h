@@ -26,7 +26,7 @@
 
 namespace lite3dpp
 {
-    class LITE3DPP_EXPORT Scene : public JsonResource, public NoncopiableResource
+    class LITE3DPP_EXPORT Scene : public ConfigurableResource, public NoncopiableResource
     {
     public:
 
@@ -53,13 +53,13 @@ namespace lite3dpp
 
     protected:
 
-        virtual void loadFromJsonImpl(const JsonHelper &helper) override;
+        virtual void loadFromConfigImpl(const ConfigurationReader &helper) override;
         virtual void unloadImpl() override;
 
     private:
 
-        void setupObjects(const stl<JsonHelper>::vector &objects, SceneObject *base);
-        void setupCameras(const stl<JsonHelper>::vector &cameras);
+        void setupObjects(const stl<ConfigurationReader>::vector &objects, SceneObject *base);
+        void setupCameras(const stl<ConfigurationReader>::vector &cameras);
 
         lite3d_scene mScene;
         Cameras mCameras;

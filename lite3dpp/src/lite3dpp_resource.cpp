@@ -21,7 +21,7 @@
 #include <lite3dpp/lite3dpp_resource.h>
 #include <lite3dpp/lite3dpp_resource_manager.h>
 
-const char lite3dpp::JsonResource::emptyJson[] = LITE3D_EMPTY_JSON;
+const char lite3dpp::ConfigurableResource::emptyJson[] = LITE3D_EMPTY_JSON;
 
 namespace lite3dpp
 {
@@ -90,40 +90,40 @@ namespace lite3dpp
         }
     }
 
-    JsonResource::JsonResource(const String &name, 
+    ConfigurableResource::ConfigurableResource(const String &name, 
         const String &path, Main *main, ResourceType type) : 
         AbstractResource(name, path, main, type)
     {}
 
-    JsonResource::~JsonResource()
+    ConfigurableResource::~ConfigurableResource()
     {}
 
-    void JsonResource::loadImpl(const void *buffer, size_t size)
+    void ConfigurableResource::loadImpl(const void *buffer, size_t size)
     {
         SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
             "Parsing json (%s) \"%s\" ...", getName().c_str(), 
             getPath().size() == 0 ? "(none)" : getPath().c_str()); 
 
-        mJsonHelper.reset(new JsonHelper(static_cast<const char *>(buffer), size));
-        SDL_assert_release(mJsonHelper);
-        loadFromJsonImpl(*mJsonHelper);
+        mConfiguration.reset(new ConfigurationReader(static_cast<const char *>(buffer), size));
+        SDL_assert_release(mConfiguration);
+        loadFromConfigImpl(*mConfiguration);
     }
 
-    void JsonResource::reloadFromJsonImpl(const JsonHelper &helper)
+    void ConfigurableResource::reloadFromConfigImpl(const ConfigurationReader &helper)
     {
         /* by default, we try to load resource from json one more time */
-        loadFromJsonImpl(*mJsonHelper);
+        loadFromConfigImpl(*mConfiguration);
     }
 
-    void JsonResource::reloadImpl()
+    void ConfigurableResource::reloadImpl()
     {
-        reloadFromJsonImpl(*mJsonHelper);
+        reloadFromConfigImpl(*mConfiguration);
     }
 
-    const JsonHelper &JsonResource::getJson() const
+    const ConfigurationReader &ConfigurableResource::getJson() const
     {
-        SDL_assert_release(mJsonHelper);
-        return *mJsonHelper;
+        SDL_assert_release(mConfiguration);
+        return *mConfiguration;
     }
 
     NoncopiableResource::NoncopiableResource()

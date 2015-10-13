@@ -24,14 +24,14 @@ namespace lite3dpp
 {
     Texture::Texture(const String &name, 
         const String &path, Main *main) : 
-        JsonResource(name, path, main, AbstractResource::TEXTURE),
+        ConfigurableResource(name, path, main, AbstractResource::TEXTURE),
         mModifyed(false)
     {}
 
     Texture::~Texture()
     {}
 
-    void Texture::loadFromJsonImpl(const JsonHelper &helper)
+    void Texture::loadFromConfigImpl(const ConfigurationReader &helper)
     {
         lite3d_texture_unit_compression(helper.getBool(L"Compression", true) ? LITE3D_TRUE : LITE3D_FALSE);
 
@@ -63,7 +63,7 @@ namespace lite3dpp
                 (imageFormatStr == "ANY" ? LITE3D_IMAGE_ANY : 0)))))))));
 
             lite3d_texture_technique_reset_filters();
-            for(const JsonHelper &filterConfig : helper.getObjects(L"ProcessingFilters"))
+            for(const ConfigurationReader &filterConfig : helper.getObjects(L"ProcessingFilters"))
             {
                 lite3d_image_filter filter;
                 String filterTypeStr = filterConfig.getString(L"Type");
@@ -109,10 +109,10 @@ namespace lite3dpp
         setBufferedSize(mTexture.imageSize);
     }
 
-    void Texture::reloadFromJsonImpl(const JsonHelper &helper)
+    void Texture::reloadFromConfigImpl(const ConfigurationReader &helper)
     {
         /* reload json content */
-        loadFromJsonImpl(helper);
+        loadFromConfigImpl(helper);
 
         /* restore modifyed content */
         if(mModifyed)

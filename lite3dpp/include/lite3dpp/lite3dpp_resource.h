@@ -18,11 +18,11 @@
 #pragma once
 
 #include <lite3dpp/lite3dpp_manageable.h>
-#include <lite3dpp/lite3dpp_json_helper.h>
+#include <lite3dpp/lite3dpp_config_reader.h>
 
 #define LITE3D_EMPTY_JSON                       "{}\0"
-#define LITE3D_EMPTY_NAMED_RESOURCE(name)       name, static_cast<const void *>(lite3dpp::JsonResource::emptyJson), sizeof(LITE3D_EMPTY_JSON)
-#define LITE3D_EMPTY_RESOURCE                   static_cast<const void *>(lite3dpp::JsonResource::emptyJson), sizeof(LITE3D_EMPTY_JSON)
+#define LITE3D_EMPTY_NAMED_RESOURCE(name)       name, static_cast<const void *>(lite3dpp::ConfigurableResource::emptyJson), sizeof(LITE3D_EMPTY_JSON)
+#define LITE3D_EMPTY_RESOURCE                   static_cast<const void *>(lite3dpp::ConfigurableResource::emptyJson), sizeof(LITE3D_EMPTY_JSON)
 
 namespace lite3dpp
 {
@@ -96,27 +96,27 @@ namespace lite3dpp
         Main *mMain;
     };
 
-    class LITE3DPP_EXPORT JsonResource : public AbstractResource
+    class LITE3DPP_EXPORT ConfigurableResource : public AbstractResource
     {
     public:
 
         static const char emptyJson[];
 
-        JsonResource(const String &name, 
+        ConfigurableResource(const String &name, 
             const String &path, Main *main, ResourceType type);
-        virtual ~JsonResource();
+        virtual ~ConfigurableResource();
 
-        const JsonHelper &getJson() const;
+        const ConfigurationReader &getJson() const;
 
     protected:
 
         virtual void loadImpl(const void *buffer, size_t size) override final;
         virtual void reloadImpl() override final;
-        virtual void loadFromJsonImpl(const JsonHelper &helper) = 0;
-        virtual void reloadFromJsonImpl(const JsonHelper &helper);
+        virtual void loadFromConfigImpl(const ConfigurationReader &helper) = 0;
+        virtual void reloadFromConfigImpl(const ConfigurationReader &helper);
     private:
 
-        std::unique_ptr<JsonHelper> mJsonHelper;
+        std::unique_ptr<ConfigurationReader> mConfiguration;
     };
 
     class LITE3DPP_EXPORT NoncopiableResource

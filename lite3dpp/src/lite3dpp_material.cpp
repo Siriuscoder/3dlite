@@ -25,21 +25,21 @@ namespace lite3dpp
 {
     Material::Material(const String &name, 
         const String &path, Main *main) : 
-        JsonResource(name, path, main, AbstractResource::MATERIAL)
+        ConfigurableResource(name, path, main, AbstractResource::MATERIAL)
     {}
 
     Material::~Material()
     {}
 
-    void Material::loadFromJsonImpl(const JsonHelper &helper)
+    void Material::loadFromConfigImpl(const ConfigurationReader &helper)
     {
         lite3d_material_init(&mMaterial);
-        for(const JsonHelper &passJson : helper.getObjects(L"Passes"))
+        for(const ConfigurationReader &passJson : helper.getObjects(L"Passes"))
         {
             uint16_t passNo = passJson.getInt(L"Pass");
             addPass(passNo);
 
-            JsonHelper programJson = passJson.getObject(L"Program");
+            ConfigurationReader programJson = passJson.getObject(L"Program");
             setPassProgram(passNo, mMain->getResourceManager()->queryResource<ShaderProgram>(programJson.getString(L"Name"),
                 programJson.getString(L"Path")));
 
@@ -49,9 +49,9 @@ namespace lite3dpp
         parseParameteres(helper, 0);
     }
 
-    void Material::parseParameteres(const JsonHelper &passJson, uint16_t passNo)
+    void Material::parseParameteres(const ConfigurationReader &passJson, uint16_t passNo)
     {
-        for(const JsonHelper &uniformParamJson : passJson.getObjects(L"Uniforms"))
+        for(const ConfigurationReader &uniformParamJson : passJson.getObjects(L"Uniforms"))
         {
             String paramName = uniformParamJson.getString(L"Name");
             /* check for global parameters */

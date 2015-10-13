@@ -20,7 +20,7 @@
 #include <lite3d/lite3d_scene.h>
 
 #include <lite3dpp/lite3dpp_common.h>
-#include <lite3dpp/lite3dpp_json_helper.h>
+#include <lite3dpp/lite3dpp_config_reader.h>
 #include <lite3dpp/lite3dpp_mesh.h>
 
 namespace lite3dpp
@@ -30,7 +30,7 @@ namespace lite3dpp
     public:
 
         SceneNode();
-        SceneNode(const JsonHelper &json, SceneNode *base, Main *main);
+        SceneNode(const ConfigurationReader &json, SceneNode *base, Main *main);
         ~SceneNode();
 
         inline void setName(const String &name)

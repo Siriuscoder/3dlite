@@ -21,7 +21,7 @@
 
 #include <lite3dpp/lite3dpp_common.h>
 #include <lite3dpp/lite3dpp_resource.h>
-#include <lite3dpp/lite3dpp_json_helper.h>
+#include <lite3dpp/lite3dpp_config_reader.h>
 #include <lite3dpp/lite3dpp_material.h>
 
 namespace lite3dpp
@@ -57,7 +57,7 @@ namespace lite3dpp
         void *mPtr;
     };
 
-    class LITE3DPP_EXPORT Mesh : public JsonResource, public NoncopiableResource
+    class LITE3DPP_EXPORT Mesh : public ConfigurableResource, public NoncopiableResource
     {
     public:
         
@@ -130,9 +130,9 @@ namespace lite3dpp
 
     protected:
 
-        virtual void loadFromJsonImpl(const JsonHelper &helper) override;
+        virtual void loadFromConfigImpl(const ConfigurationReader &helper) override;
         virtual void unloadImpl() override;
-        virtual void reloadFromJsonImpl(const JsonHelper &helper) override;
+        virtual void reloadFromConfigImpl(const ConfigurationReader &helper) override;
 
     private:
 

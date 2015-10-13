@@ -36,55 +36,63 @@ enum JSONType { JSONType_Null, JSONType_String, JSONType_Bool, JSONType_Number, 
 
 class JSONValue : public lite3dpp::Manageable
 {
-	friend class JSON;
+    friend class JSON;
 
-	public:
-		JSONValue(/*NULL*/);
-		JSONValue(const wchar_t *m_char_value);
-		JSONValue(const lite3dpp::WString &m_string_value);
-		JSONValue(bool m_bool_value);
-		JSONValue(double m_number_value);
-		JSONValue(const JSONArray &m_array_value);
-		JSONValue(const JSONObject &m_object_value);
-		~JSONValue();
+    public:
+        JSONValue(/*NULL*/);
+        JSONValue(const wchar_t *m_char_value);
+        JSONValue(const lite3dpp::WString &m_string_value);
+        JSONValue(bool m_bool_value);
+        JSONValue(double m_number_value);
+        JSONValue(const JSONArray &m_array_value);
+        JSONValue(const JSONObject &m_object_value);
+        ~JSONValue();
 
-		bool IsNull() const;
-		bool IsString() const;
-		bool IsBool() const;
-		bool IsNumber() const;
-		bool IsArray() const;
-		bool IsObject() const;
+        void setValue(/*NULL*/);
+        void setValue(const wchar_t *m_char_value);
+        void setValue(const lite3dpp::WString &m_string_value);
+        void setValue(bool m_bool_value);
+        void setValue(double m_number_value);
+        void setValue(const JSONArray &m_array_value);
+        void setValue(const JSONObject &m_object_value);
 
-		const lite3dpp::WString &AsString() const;
-		bool AsBool() const;
-		double AsNumber() const;
+        bool IsNull() const;
+        bool IsString() const;
+        bool IsBool() const;
+        bool IsNumber() const;
+        bool IsArray() const;
+        bool IsObject() const;
+
+        const lite3dpp::WString &AsString() const;
+        bool AsBool() const;
+        double AsNumber() const;
         int AsInt() const;
-		const JSONArray &AsArray() const;
-		const JSONObject &AsObject() const;
+        const JSONArray &AsArray() const;
+        const JSONObject &AsObject() const;
 
-		std::size_t CountChildren() const;
-		bool HasChild(std::size_t index) const;
-		JSONValue *Child(std::size_t index);
-		bool HasChild(const wchar_t* name) const;
-		JSONValue *Child(const wchar_t* name);
-		std::vector<lite3dpp::WString> ObjectKeys() const;
+        std::size_t CountChildren() const;
+        bool HasChild(std::size_t index) const;
+        JSONValue *Child(std::size_t index);
+        bool HasChild(const wchar_t* name) const;
+        JSONValue *Child(const wchar_t* name);
+        std::vector<lite3dpp::WString> ObjectKeys() const;
 
-		lite3dpp::WString Stringify(bool const prettyprint = false) const;
+        lite3dpp::WString Stringify(bool const prettyprint = false) const;
 
-	protected:
-		static JSONValue *Parse(const wchar_t **data);
+    protected:
+        static JSONValue *Parse(const wchar_t **data);
 
-	private:
-		static lite3dpp::WString StringifyString(const lite3dpp::WString &str);
-		lite3dpp::WString StringifyImpl(size_t const indentDepth) const;
-		static lite3dpp::WString Indent(size_t depth);
+    private:
+        static lite3dpp::WString StringifyString(const lite3dpp::WString &str);
+        lite3dpp::WString StringifyImpl(size_t const indentDepth) const;
+        static lite3dpp::WString Indent(size_t depth);
 
-		JSONType type;
-		lite3dpp::WString string_value;
-		bool bool_value;
-		double number_value;
-		JSONArray array_value;
-		JSONObject object_value;
+        JSONType type;
+        lite3dpp::WString string_value;
+        bool bool_value;
+        double number_value;
+        JSONArray array_value;
+        JSONObject object_value;
 };
 
 #endif

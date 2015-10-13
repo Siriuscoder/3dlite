@@ -27,22 +27,22 @@
 
 namespace lite3dpp
 {
-    class JsonHelper : public Manageable
+    class ConfigurationReader : public Manageable
     {
     public:
 
-        JsonHelper(const String &file);
-        JsonHelper(const char *data, size_t size);
-        JsonHelper(const JsonHelper &other);
-        ~JsonHelper();
+        ConfigurationReader(const String &file);
+        ConfigurationReader(const char *data, size_t size);
+        ConfigurationReader(const ConfigurationReader &other);
+        ~ConfigurationReader();
 
         int32_t getInt(const WString &name, int32_t def = 0) const;
         double getDouble(const WString &name, double def = 0) const;
         bool getBool(const WString &name, bool def = true) const;
         String getString(const WString &name, const String &def = "") const;
-        JsonHelper getObject(const WString &name) const;
+        ConfigurationReader getObject(const WString &name) const;
 
-        stl<JsonHelper>::vector getObjects(const WString &name) const;
+        stl<ConfigurationReader>::vector getObjects(const WString &name) const;
         stl<String>::vector getStrings(const WString &name) const;
         stl<int32_t>::vector getInts(const WString &name) const;
         stl<double>::vector getFloats(const WString &name) const;
@@ -58,8 +58,8 @@ namespace lite3dpp
 
     private:
 
-        JsonHelper();
-        JsonHelper(const JSONObject &fromJsonObject);
+        ConfigurationReader();
+        ConfigurationReader(const JSONObject &fromJsonObject);
         void parseFromFile(const String &file);
         bool parseFromBuffer(const char *data, size_t size);
 

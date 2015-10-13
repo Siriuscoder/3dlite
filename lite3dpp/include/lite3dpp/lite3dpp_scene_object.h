@@ -21,7 +21,7 @@
 
 #include <lite3dpp/lite3dpp_common.h>
 #include <lite3dpp/lite3dpp_resource.h>
-#include <lite3dpp/lite3dpp_json_helper.h>
+#include <lite3dpp/lite3dpp_config_reader.h>
 #include <lite3dpp/lite3dpp_scene_node.h>
 
 namespace lite3dpp
@@ -50,7 +50,7 @@ namespace lite3dpp
         void addToScene(Scene *scene);
         void removeFromScene(Scene *scene);
 
-        void loadFromTemplate(const JsonHelper &helper);
+        void loadFromTemplate(const ConfigurationReader &helper);
 
         inline bool isEnabled() 
         { return mEnabled; }
@@ -60,7 +60,7 @@ namespace lite3dpp
 
     private:
 
-        void setupNodes(const stl<JsonHelper>::vector &nodesRange, SceneNode *base);
+        void setupNodes(const stl<ConfigurationReader>::vector &nodesRange, SceneNode *base);
 
     private:
 

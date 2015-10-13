@@ -19,39 +19,39 @@
 #include <SDL_log.h>
 #include <SDL_rwops.h>
 
-#include <lite3dpp/lite3dpp_json_helper.h>
+#include <lite3dpp/lite3dpp_config_reader.h>
 
 namespace lite3dpp
 {
-    JsonHelper::JsonHelper(const String &file)
+    ConfigurationReader::ConfigurationReader(const String &file)
     {
         parseFromFile(file);
     }
 
-    JsonHelper::JsonHelper(const char *data, size_t size)
+    ConfigurationReader::ConfigurationReader(const char *data, size_t size)
     {
         if(!parseFromBuffer(data, size))
             throw std::runtime_error("json parse failed..");
     }
 
-    JsonHelper::~JsonHelper()
+    ConfigurationReader::~ConfigurationReader()
     {}
 
     // private
-    JsonHelper::JsonHelper(const JSONObject &fromJsonObject) : 
+    ConfigurationReader::ConfigurationReader(const JSONObject &fromJsonObject) : 
         mObject(fromJsonObject)
     {}
 
     // private default
-    JsonHelper::JsonHelper()
+    ConfigurationReader::ConfigurationReader()
     {}
 
     // copy 
-    JsonHelper::JsonHelper(const JsonHelper &other) : 
+    ConfigurationReader::ConfigurationReader(const ConfigurationReader &other) : 
         mObject(other.mObject)
     {}
 
-    void JsonHelper::parseFromFile(const String &file)
+    void ConfigurationReader::parseFromFile(const String &file)
     {
         SDL_RWops *desc = NULL;
         size_t fileSize;
@@ -82,7 +82,7 @@ namespace lite3dpp
         Manageable::free(json);
     }
 
-    bool JsonHelper::parseFromBuffer(const char *data, size_t size)
+    bool ConfigurationReader::parseFromBuffer(const char *data, size_t size)
     {
         String bufCopy(data, size);
         /* Parse data from buffer */
@@ -98,7 +98,7 @@ namespace lite3dpp
         return true;
     }
 
-    int32_t JsonHelper::getInt(const WString &name, int32_t def) const
+    int32_t ConfigurationReader::getInt(const WString &name, int32_t def) const
     {
         JSONObject::const_iterator it = mObject.find(name);
         if (it != mObject.end() && it->second->IsNumber())
@@ -109,7 +109,7 @@ namespace lite3dpp
         return def;
     }
 
-    double JsonHelper::getDouble(const WString &name, double def) const
+    double ConfigurationReader::getDouble(const WString &name, double def) const
     {
         JSONObject::const_iterator it = mObject.find(name);
         if (it != mObject.end() && it->second->IsNumber())
@@ -120,7 +120,7 @@ namespace lite3dpp
         return def;
     }
 
-    bool JsonHelper::getBool(const WString &name, bool def) const
+    bool ConfigurationReader::getBool(const WString &name, bool def) const
     {
         JSONObject::const_iterator it = mObject.find(name);
         if (it != mObject.end() && it->second->IsBool())
@@ -131,7 +131,7 @@ namespace lite3dpp
         return def;
     }
 
-    String JsonHelper::getString(const WString &name, const String &def) const
+    String ConfigurationReader::getString(const WString &name, const String &def) const
     {
         JSONObject::const_iterator it = mObject.find(name);
         if (it != mObject.end() && it->second->IsString())
@@ -142,25 +142,25 @@ namespace lite3dpp
         return def;
     }
 
-    JsonHelper JsonHelper::getObject(const WString &name) const
+    ConfigurationReader ConfigurationReader::getObject(const WString &name) const
     {
         JSONObject::const_iterator it = mObject.find(name);
         if (it != mObject.end() && it->second->IsObject())
         {
-            return JsonHelper(it->second->AsObject());
+            return ConfigurationReader(it->second->AsObject());
         }
 
-        return JsonHelper();
+        return ConfigurationReader();
     }
 
-    bool JsonHelper::isEmpty() const
+    bool ConfigurationReader::isEmpty() const
     {
         return mObject.size() == 0;
     }
 
-    kmVec2 JsonHelper::getVec2(const WString &name, const kmVec2 &def) const
+    kmVec2 ConfigurationReader::getVec2(const WString &name, const kmVec2 &def) const
     {
-        JsonHelper helper = getObject(name);
+        ConfigurationReader helper = getObject(name);
         if(helper.isEmpty())
             return def;
 
@@ -172,9 +172,9 @@ namespace lite3dpp
         return vec2;
     }
 
-    kmVec3 JsonHelper::getVec3(const WString &name, const kmVec3 &def) const
+    kmVec3 ConfigurationReader::getVec3(const WString &name, const kmVec3 &def) const
     {
-        JsonHelper helper = getObject(name);
+        ConfigurationReader helper = getObject(name);
         if(helper.isEmpty())
             return def;
 
@@ -187,9 +187,9 @@ namespace lite3dpp
         return vec3;
     }
 
-    kmVec4 JsonHelper::getVec4(const WString &name, const kmVec4 &def) const
+    kmVec4 ConfigurationReader::getVec4(const WString &name, const kmVec4 &def) const
     {
-        JsonHelper helper = getObject(name);
+        ConfigurationReader helper = getObject(name);
         if(helper.isEmpty())
             return def;
 
@@ -203,9 +203,9 @@ namespace lite3dpp
         return vec4;
     }
 
-    kmQuaternion JsonHelper::getQuaternion(const WString &name, const kmQuaternion &def) const
+    kmQuaternion ConfigurationReader::getQuaternion(const WString &name, const kmQuaternion &def) const
     {
-        JsonHelper helper = getObject(name);
+        ConfigurationReader helper = getObject(name);
         if(helper.isEmpty())
             return def;
 
@@ -219,10 +219,10 @@ namespace lite3dpp
         return quat;
     }
 
-    stl<JsonHelper>::vector JsonHelper::getObjects(const WString &name) const
+    stl<ConfigurationReader>::vector ConfigurationReader::getObjects(const WString &name) const
     {
         JSONObject::const_iterator it = mObject.find(name);
-        stl<JsonHelper>::vector result;
+        stl<ConfigurationReader>::vector result;
 
         if (it != mObject.end() && it->second->IsArray())
         {
@@ -230,14 +230,14 @@ namespace lite3dpp
             for (uint32_t i = 0; i < jarray.size(); ++i)
             {
                 if(jarray[i]->IsObject())
-                    result.push_back(JsonHelper(jarray[i]->AsObject()));
+                    result.push_back(ConfigurationReader(jarray[i]->AsObject()));
             }
         }
 
         return result;
     }
 
-    stl<String>::vector JsonHelper::getStrings(const WString &name) const
+    stl<String>::vector ConfigurationReader::getStrings(const WString &name) const
     {
         JSONObject::const_iterator it = mObject.find(name);
         stl<String>::vector result;
@@ -255,7 +255,7 @@ namespace lite3dpp
         return result;
     }
 
-    stl<int32_t>::vector JsonHelper::getInts(const WString &name) const
+    stl<int32_t>::vector ConfigurationReader::getInts(const WString &name) const
     {
         JSONObject::const_iterator it = mObject.find(name);
         stl<int32_t>::vector result;
@@ -273,7 +273,7 @@ namespace lite3dpp
         return result;
     }
 
-    stl<double>::vector JsonHelper::getFloats(const WString &name) const
+    stl<double>::vector ConfigurationReader::getFloats(const WString &name) const
     {
         JSONObject::const_iterator it = mObject.find(name);
         stl<double>::vector result;
@@ -291,7 +291,7 @@ namespace lite3dpp
         return result;
     }
 
-    stl<bool>::vector JsonHelper::getBools(const WString &name) const
+    stl<bool>::vector ConfigurationReader::getBools(const WString &name) const
     {
         JSONObject::const_iterator it = mObject.find(name);
         stl<bool>::vector result;

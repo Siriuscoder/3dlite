@@ -35,7 +35,7 @@ namespace lite3dpp
 
     protected:
 
-        virtual void loadFromJsonImpl(const JsonHelper &helper) override;
+        virtual void loadFromConfigImpl(const ConfigurationReader &helper) override;
         virtual void unloadImpl() override;
 
     private:

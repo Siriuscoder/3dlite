@@ -44,9 +44,9 @@ namespace lite3dpp
         mNodes.clear();
     }
 
-    void SceneObject::loadFromTemplate(const JsonHelper &helper)
+    void SceneObject::loadFromTemplate(const ConfigurationReader &helper)
     {
-        JsonHelper rootNodeHelper = helper.getObject(L"Root");
+        ConfigurationReader rootNodeHelper = helper.getObject(L"Root");
         if(rootNodeHelper.isEmpty())
             return;
 
@@ -54,9 +54,9 @@ namespace lite3dpp
         setupNodes(rootNodeHelper.getObjects(L"Nodes"), mObjectRoot);
     }
 
-    void SceneObject::setupNodes(const stl<JsonHelper>::vector &nodesRange, SceneNode *base)
+    void SceneObject::setupNodes(const stl<ConfigurationReader>::vector &nodesRange, SceneNode *base)
     {
-        for(const JsonHelper &nodeHelper : nodesRange)
+        for(const ConfigurationReader &nodeHelper : nodesRange)
         {
             if(nodeHelper.isEmpty())
                 continue;
@@ -66,7 +66,7 @@ namespace lite3dpp
             mNodes.insert(std::make_pair(nodeHelper.getString(L"Name"),
                 sceneNode));
 
-            stl<JsonHelper>::vector nodesSubRange = nodeHelper.getObjects(L"Nodes");
+            stl<ConfigurationReader>::vector nodesSubRange = nodeHelper.getObjects(L"Nodes");
             if(nodesSubRange.size() > 0)
                 setupNodes(nodesSubRange, sceneNode);
         }

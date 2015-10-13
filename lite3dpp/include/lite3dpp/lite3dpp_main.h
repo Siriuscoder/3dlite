@@ -22,10 +22,12 @@
 #include <lite3dpp/lite3dpp_manageable.h>
 #include <lite3dpp/lite3dpp_resource_manager.h>
 #include <lite3dpp/lite3dpp_script_dispatcher.h>
-#include <lite3dpp/lite3dpp_json_helper.h>
+#include <lite3dpp/lite3dpp_config_reader.h>
 #include <lite3dpp/lite3dpp_scene.h>
 #include <lite3dpp/lite3dpp_render_target.h>
 #include <lite3dpp/lite3dpp_texture_render_target.h>
+#include <lite3dpp/lite3dpp_config_writer.h>
+
 
 namespace lite3dpp
 {
@@ -53,6 +55,7 @@ namespace lite3dpp
         ~Main();
 
         void initFromConfig(const char *config);
+        void initFromConfigString(const char *config);
         const lite3d_global_settings &getSettings() const;
 
         void setResourceLocation(const String &name, 
@@ -72,6 +75,8 @@ namespace lite3dpp
         
     private:
 
+        void parseConfig();
+
         static int onInit(void *userdata);
         static int onShutdown(void *userdata);
         static int onFrameBegin(void *userdata);
@@ -87,7 +92,7 @@ namespace lite3dpp
 
         ResourceManager mResourceManager;
         ScriptDispatcher mScriptDispatcher;
-        std::unique_ptr<JsonHelper> mConfig;
+        std::unique_ptr<ConfigurationReader> mConfig;
         lite3d_global_settings mSettings;
         lite3d_timer *mFixedUpdatesTimer;
         LifecycleListener *mLifeCycleListener;

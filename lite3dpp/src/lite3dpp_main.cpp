@@ -41,16 +41,26 @@ namespace lite3dpp
 
     void Main::initFromConfig(const char *config)
     {           
-        mConfig.reset(new JsonHelper(config));
+        mConfig.reset(new ConfigurationReader(config));
+        parseConfig();
+    }
 
+    void Main::initFromConfigString(const char *config)
+    {           
+        mConfig.reset(new ConfigurationReader(config, strlen(config)));
+        parseConfig();
+    }
+    
+    void Main::parseConfig()
+    {
         memset(&mSettings, 0, sizeof (mSettings));
         mSettings.maxFileCacheSize = 0x100000;
 
         mSettings.logLevel = mConfig->getInt(L"LogLevel", LITE3D_LOGLEVEL_ERROR);
         mSettings.logFlushAlways = mConfig->getBool(L"LogFlushAlways", false) ? LITE3D_TRUE : LITE3D_FALSE;
 
-        JsonHelper textureSettings = mConfig->getObject(L"TextureSettings");
-        JsonHelper videoSettings = mConfig->getObject(L"VideoSettings");
+        ConfigurationReader textureSettings = mConfig->getObject(L"TextureSettings");
+        ConfigurationReader videoSettings = mConfig->getObject(L"VideoSettings");
 
         mSettings.textureSettings.anisotropy = textureSettings.getInt(L"Anisotropy", 2);
         mSettings.textureSettings.useGLCompression =

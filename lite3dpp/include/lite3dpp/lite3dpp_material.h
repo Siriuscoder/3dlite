@@ -22,14 +22,14 @@
 #include <lite3d/lite3d_material.h>
 
 #include <lite3dpp/lite3dpp_common.h>
-#include <lite3dpp/lite3dpp_json_helper.h>
+#include <lite3dpp/lite3dpp_config_reader.h>
 #include <lite3dpp/lite3dpp_resource.h>
 #include <lite3dpp/lite3dpp_texture.h>
 #include <lite3dpp/lite3dpp_shader_program.h>
 
 namespace lite3dpp
 {
-    class LITE3DPP_EXPORT Material : public JsonResource, public NoncopiableResource
+    class LITE3DPP_EXPORT Material : public ConfigurableResource, public NoncopiableResource
     {
     public:
 
@@ -65,7 +65,7 @@ namespace lite3dpp
         
     protected:
 
-        virtual void loadFromJsonImpl(const JsonHelper &helper) override;
+        virtual void loadFromConfigImpl(const ConfigurationReader &helper) override;
         virtual void unloadImpl() override;
 
     private:
@@ -73,7 +73,7 @@ namespace lite3dpp
         lite3d_shader_parameter *getParameter(const String &name, 
             uint8_t type, uint8_t persist, lite3d_material_pass *passPtr);
         void addParameter(lite3d_material_pass *passPtr, lite3d_shader_parameter *parameterPtr);
-        void parseParameteres(const JsonHelper &passJson, uint16_t passNo);
+        void parseParameteres(const ConfigurationReader &passJson, uint16_t passNo);
 
     private:
 

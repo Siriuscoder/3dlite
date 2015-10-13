@@ -25,7 +25,7 @@
 
 namespace lite3dpp
 {
-    class LITE3DPP_EXPORT RenderTarget : public JsonResource, public NoncopiableResource
+    class LITE3DPP_EXPORT RenderTarget : public ConfigurableResource, public NoncopiableResource
     {
     public:
 
@@ -77,7 +77,7 @@ namespace lite3dpp
 
     protected:
 
-        virtual void loadFromJsonImpl(const JsonHelper &helper) override final;
+        virtual void loadFromConfigImpl(const ConfigurationReader &helper) override final;
         virtual void unloadImpl() override final;
     };
 }

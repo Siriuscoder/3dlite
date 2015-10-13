@@ -52,7 +52,7 @@ namespace lite3dpp
 
     Mesh::Mesh(const String &name, 
         const String &path, Main *main) : 
-        JsonResource(name, path, main, AbstractResource::MESH)
+        ConfigurableResource(name, path, main, AbstractResource::MESH)
     {}
 
     Mesh::~Mesh()
@@ -60,7 +60,7 @@ namespace lite3dpp
         lite3d_mesh_purge(&mMesh);
     }
 
-    void Mesh::loadFromJsonImpl(const JsonHelper &helper)
+    void Mesh::loadFromConfigImpl(const ConfigurationReader &helper)
     {
         lite3d_mesh_init(&mMesh);
         if(helper.isEmpty())
@@ -117,7 +117,7 @@ namespace lite3dpp
         lite3d_vbo_buffer(&mMesh.indexBuffer, NULL, 0, mMesh.indexBuffer.access);
     }
 
-    void Mesh::reloadFromJsonImpl(const JsonHelper &helper)
+    void Mesh::reloadFromConfigImpl(const ConfigurationReader &helper)
     {
         /* restore data */
         if(mVertexData.size() > 0)

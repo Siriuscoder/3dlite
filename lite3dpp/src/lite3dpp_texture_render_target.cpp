@@ -34,7 +34,7 @@ namespace lite3dpp
     TextureRenderTarget::~TextureRenderTarget()
     {}
 
-    void TextureRenderTarget::loadFromJsonImpl(const JsonHelper &helper)
+    void TextureRenderTarget::loadFromConfigImpl(const ConfigurationReader &helper)
     {
         int32_t width = helper.getInt(L"Width"), 
             height = helper.getInt(L"Height");
@@ -55,9 +55,9 @@ namespace lite3dpp
         setBackgroundColor(helper.getVec4(L"BackgroundColor"));
 
         {
-            JsonHelper attachmentJson = helper.getObject(L"ColorAttachments");
+            ConfigurationReader attachmentJson = helper.getObject(L"ColorAttachments");
             attachColorRenderBuffer = attachmentJson.getBool(L"Renderbuffer", false) ? LITE3D_TRUE : LITE3D_FALSE;
-            for(const JsonHelper &targetJson : attachmentJson.getObjects(L"Attachments"))
+            for(const ConfigurationReader &targetJson : attachmentJson.getObjects(L"Attachments"))
             {
                 colorAttachments.push_back(mMain->getResourceManager()->queryResource<Texture>(
                     targetJson.getString(L"TextureName"), targetJson.getString(L"TexturePath"))->getPtr());
@@ -65,7 +65,7 @@ namespace lite3dpp
         }
 
         {
-            JsonHelper attachmentJson = helper.getObject(L"DepthAttachments");
+            ConfigurationReader attachmentJson = helper.getObject(L"DepthAttachments");
             attachDepthRenderBuffer = attachmentJson.getBool(L"Renderbuffer", false) ? LITE3D_TRUE : LITE3D_FALSE;
             if(!attachDepthRenderBuffer && !attachmentJson.isEmpty())
                 depthAttachment = mMain->getResourceManager()->queryResource<Texture>(
@@ -73,7 +73,7 @@ namespace lite3dpp
         }
 
         {
-            JsonHelper attachmentJson = helper.getObject(L"StencilAttachments");
+            ConfigurationReader attachmentJson = helper.getObject(L"StencilAttachments");
             attachStencilRenderBuffer = attachmentJson.getBool(L"Renderbuffer", false) ? LITE3D_TRUE : LITE3D_FALSE;
         }
 

@@ -26,13 +26,13 @@ namespace lite3dpp
 {
     Scene::Scene(const String &name, 
         const String &path, Main *main) : 
-        JsonResource(name, path, main, AbstractResource::SCENE)
+        ConfigurableResource(name, path, main, AbstractResource::SCENE)
     {}
 
     Scene::~Scene()
     {}
 
-    void Scene::loadFromJsonImpl(const JsonHelper &helper)
+    void Scene::loadFromConfigImpl(const ConfigurationReader &helper)
     {
         lite3d_scene_init(&mScene);
 
@@ -98,7 +98,7 @@ namespace lite3dpp
 
         size_t fileSize = 0;
         const void *fileData = mMain->getResourceManager()->loadFileToMemory(templatePath, &fileSize);
-        JsonHelper json(static_cast<const char *>(fileData), fileSize);
+        ConfigurationReader json(static_cast<const char *>(fileData), fileSize);
 
         SceneObject *sceneObject = new SceneObject(name, parent, mMain);
         sceneObject->loadFromTemplate(json);
@@ -138,9 +138,9 @@ namespace lite3dpp
         mObjects.erase(it);
     }
 
-    void Scene::setupObjects(const stl<JsonHelper>::vector &objects, SceneObject *base)
+    void Scene::setupObjects(const stl<ConfigurationReader>::vector &objects, SceneObject *base)
     {
-        for(const JsonHelper &objHelper : objects)
+        for(const ConfigurationReader &objHelper : objects)
         {
             if(objHelper.isEmpty())
                 continue;
@@ -155,14 +155,14 @@ namespace lite3dpp
         }
     }
 
-    void Scene::setupCameras(const stl<JsonHelper>::vector &cameras)
+    void Scene::setupCameras(const stl<ConfigurationReader>::vector &cameras)
     {
-        for(const JsonHelper &cameraJson : cameras)
+        for(const ConfigurationReader &cameraJson : cameras)
         {
             Camera *camera = addCamera(cameraJson.getString(L"Name"));
             RenderTarget *renderTarget = NULL;
 
-            for(const JsonHelper &renderTargetJson : cameraJson.getObjects(L"RenderTargets"))
+            for(const ConfigurationReader &renderTargetJson : cameraJson.getObjects(L"RenderTargets"))
             {
                 String renderTargetName = renderTargetJson.getString(L"Name");
                 if(renderTargetName == "Window") 
@@ -178,8 +178,8 @@ namespace lite3dpp
                     renderTargetJson.getInt(L"Priority"));
             }
 
-            JsonHelper perspectiveOptionsJson = cameraJson.getObject(L"Perspective");
-            JsonHelper orthoOptionsJson = cameraJson.getObject(L"Ortho");
+            ConfigurationReader perspectiveOptionsJson = cameraJson.getObject(L"Perspective");
+            ConfigurationReader orthoOptionsJson = cameraJson.getObject(L"Ortho");
             if(!perspectiveOptionsJson.isEmpty())
             {
                 camera->setupPerspective(perspectiveOptionsJson.getDouble(L"Znear"),

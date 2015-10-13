@@ -26,13 +26,13 @@ namespace lite3dpp
 {
     ShaderProgram::ShaderProgram(const String &name, 
         const String &path, Main *main) : 
-        JsonResource(name, path, main, AbstractResource::SHADER_PROGRAM)
+        ConfigurableResource(name, path, main, AbstractResource::SHADER_PROGRAM)
     {}
 
     ShaderProgram::~ShaderProgram()
     {}
 
-    void ShaderProgram::loadFromJsonImpl(const JsonHelper &helper)
+    void ShaderProgram::loadFromConfigImpl(const ConfigurationReader &helper)
     {
         stl<lite3d_shader>::vector shaders;
         shaders.reserve(2);

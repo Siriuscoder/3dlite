@@ -20,12 +20,12 @@
 #include <lite3d/lite3d_shader_program.h>
 
 #include <lite3dpp/lite3dpp_common.h>
-#include <lite3dpp/lite3dpp_json_helper.h>
+#include <lite3dpp/lite3dpp_config_reader.h>
 #include <lite3dpp/lite3dpp_resource.h>
 
 namespace lite3dpp
 {
-    class LITE3DPP_EXPORT ShaderProgram : public JsonResource, public NoncopiableResource
+    class LITE3DPP_EXPORT ShaderProgram : public ConfigurableResource, public NoncopiableResource
     {
     public:
 
@@ -39,7 +39,7 @@ namespace lite3dpp
 
     protected:
 
-        virtual void loadFromJsonImpl(const JsonHelper &helper) override;
+        virtual void loadFromConfigImpl(const ConfigurationReader &helper) override;
         virtual void unloadImpl() override;
 
     private:
