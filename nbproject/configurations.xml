@@ -125,6 +125,8 @@
             <in>JSONValue.cpp</in>
           </df>
           <in>lite3dpp_camera.cpp</in>
+          <in>lite3dpp_config_reader.cpp</in>
+          <in>lite3dpp_config_writer.cpp</in>
           <in>lite3dpp_json_helper.cpp</in>
           <in>lite3dpp_main.cpp</in>
           <in>lite3dpp_manageable.cpp</in>
@@ -151,6 +153,9 @@
         </df>
       </df>
       <df name="samples">
+        <df name="sample_cellwallerkiller">
+          <in>lite3dpp_cellwallerkiller.cpp</in>
+        </df>
         <df name="sample_dynamic_cube">
           <in>lite3dpp_dynamic_cube.cpp</in>
         </df>
@@ -175,16 +180,13 @@
         <df name="sample_script">
           <in>lite3dpp_sample_script.cpp</in>
         </df>
-        <df name="sample_texture_modify">
-          <in>lite3dpp_texture_modify.cpp</in>
-        </df>
       </df>
       <df name="tests">
         <df name="functionaly">
-          <in>3dlitepp_main_test.cpp</in>
           <in>lite3d_common_test.cpp</in>
           <in>lite3d_file_cache_test.cpp</in>
           <in>lite3d_vbo_test.cpp</in>
+          <in>lite3dpp_conf_writer.cpp</in>
           <in>lite3dpp_main_test.cpp</in>
         </df>
         <df name="gtest">
@@ -345,6 +347,15 @@
           </preprocessorList>
         </ccTool>
       </folder>
+      <folder path="0/samples/sample_cellwallerkiller">
+        <ccTool>
+          <incDir>
+            <pElem>samples/sample_cellwallerkiller</pElem>
+            <pElem>/usr/include/SDL2</pElem>
+            <pElem>build/samples</pElem>
+          </incDir>
+        </ccTool>
+      </folder>
       <folder path="0/samples/sample_dynamic_cube">
         <ccTool>
           <incDir>
@@ -412,15 +423,6 @@
         <ccTool>
           <incDir>
             <pElem>samples/sample_script</pElem>
-            <pElem>/usr/include/SDL2</pElem>
-            <pElem>build/samples</pElem>
-          </incDir>
-        </ccTool>
-      </folder>
-      <folder path="0/samples/sample_texture_modify">
-        <ccTool>
-          <incDir>
-            <pElem>samples/sample_texture_modify</pElem>
             <pElem>/usr/include/SDL2</pElem>
             <pElem>build/samples</pElem>
           </incDir>
@@ -1236,6 +1238,36 @@
           </preprocessorList>
         </ccTool>
       </item>
+      <item path="lite3dpp/src/lite3dpp_config_reader.cpp"
+            ex="false"
+            tool="1"
+            flavor2="8">
+        <ccTool flags="1">
+          <incDir>
+            <pElem>/usr/include/SDL2</pElem>
+            <pElem>build/lite3dpp</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>_REENTRANT</Elem>
+            <Elem>lite3dpp_EXPORTS</Elem>
+          </preprocessorList>
+        </ccTool>
+      </item>
+      <item path="lite3dpp/src/lite3dpp_config_writer.cpp"
+            ex="false"
+            tool="1"
+            flavor2="8">
+        <ccTool flags="1">
+          <incDir>
+            <pElem>/usr/include/SDL2</pElem>
+            <pElem>build/lite3dpp</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>_REENTRANT</Elem>
+            <Elem>lite3dpp_EXPORTS</Elem>
+          </preprocessorList>
+        </ccTool>
+      </item>
       <item path="lite3dpp/src/lite3dpp_json_helper.cpp"
             ex="false"
             tool="1"
@@ -1560,6 +1592,13 @@
           </preprocessorList>
         </ccTool>
       </item>
+      <item path="samples/sample_cellwallerkiller/lite3dpp_cellwallerkiller.cpp"
+            ex="false"
+            tool="1"
+            flavor2="8">
+        <ccTool flags="0">
+        </ccTool>
+      </item>
       <item path="samples/sample_dynamic_cube/lite3dpp_dynamic_cube.cpp"
             ex="false"
             tool="1"
@@ -1616,13 +1655,6 @@
         <ccTool flags="0">
         </ccTool>
       </item>
-      <item path="samples/sample_texture_modify/lite3dpp_texture_modify.cpp"
-            ex="false"
-            tool="1"
-            flavor2="8">
-        <ccTool flags="0">
-        </ccTool>
-      </item>
       <item path="tests/functionaly/lite3d_common_test.cpp"
             ex="false"
             tool="1"
@@ -1638,6 +1670,13 @@
         </ccTool>
       </item>
       <item path="tests/functionaly/lite3d_vbo_test.cpp"
+            ex="false"
+            tool="1"
+            flavor2="8">
+        <ccTool flags="0">
+        </ccTool>
+      </item>
+      <item path="tests/functionaly/lite3dpp_conf_writer.cpp"
             ex="false"
             tool="1"
             flavor2="8">
@@ -1690,11 +1729,6 @@
           <executablePath></executablePath>
         </makeTool>
       </makefileType>
-      <item path="tests/functionaly/3dlitepp_main_test.cpp"
-            ex="false"
-            tool="1"
-            flavor2="0">
-      </item>
     </conf>
   </confs>
 </configurationDescriptor>

@@ -36,23 +36,23 @@ namespace lite3dpp
         ConfigurationWriter(const ConfigurationWriter &other);
         ~ConfigurationWriter();
 
-        void setInt(const WString &name, int32_t value);
-        void setDouble(const WString &name, double value);
-        void setBool(const WString &name, bool value);
-        void setString(const WString &name, const WString &value);
-        void setObject(const WString &name, const ConfigurationWriter &object);
+        void set(const WString &name, int32_t value);
+        void set(const WString &name, double value);
+        void set(const WString &name, bool value);
+        void set(const WString &name, const WString &value);
+        void set(const WString &name, const ConfigurationWriter &object);
 
-        void setObjects(const WString &name, const stl<ConfigurationWriter>::vector &objects);
-        void setStrings(const WString &name, const stl<WString>::vector &strings);
-        void setInts(const WString &name, const stl<int32_t>::vector &ints);
-        void setFloats(const WString &name, const stl<double>::vector &floats);
-        void setBools(const WString &name, const stl<bool>::vector &bools);
+        void set(const WString &name, const stl<ConfigurationWriter>::vector &objects);
+        void set(const WString &name, const stl<WString>::vector &strings);
+        void set(const WString &name, const stl<int32_t>::vector &ints);
+        void set(const WString &name, const stl<double>::vector &floats);
+        void set(const WString &name, const stl<bool>::vector &bools);
 
-        void setVec2(const WString &name, const kmVec2 &value);
-        void setVec3(const WString &name, const kmVec3 &value);
-        void setVec4(const WString &name, const kmVec4 &value);
-        void setQuaternion(const WString &name, const kmQuaternion &value);
-        void setMat4(const WString &name, const kmMat4 &value);
+        void set(const WString &name, const kmVec2 &value);
+        void set(const WString &name, const kmVec3 &value);
+        void set(const WString &name, const kmVec4 &value);
+        void set(const WString &name, const kmQuaternion &value);
+        void set(const WString &name, const kmMat4 &value);
 
         void remove(const WString &name);
 

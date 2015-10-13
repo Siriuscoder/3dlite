@@ -39,37 +39,37 @@ namespace lite3dpp
         mObject(other.mObject)
     {}
 
-    void ConfigurationWriter::setInt(const WString &name, int32_t value)
+    void ConfigurationWriter::set(const WString &name, int32_t value)
     {
         remove(name);
         mObject[name] = new JSONValue((double)value);
     }
 
-    void ConfigurationWriter::setDouble(const WString &name, double value)
+    void ConfigurationWriter::set(const WString &name, double value)
     {
         remove(name);
         mObject[name] = new JSONValue(value);
     }
 
-    void ConfigurationWriter::setBool(const WString &name, bool value)
+    void ConfigurationWriter::set(const WString &name, bool value)
     {
         remove(name);
         mObject[name] = new JSONValue(value);
     }
 
-    void ConfigurationWriter::setString(const WString &name, const WString &value)
+    void ConfigurationWriter::set(const WString &name, const WString &value)
     {
         remove(name);
         mObject[name] = new JSONValue(value);
     }
 
-    void ConfigurationWriter::setObject(const WString &name, const ConfigurationWriter &object)
+    void ConfigurationWriter::set(const WString &name, const ConfigurationWriter &object)
     {
         remove(name);
         mObject[name] = new JSONValue(object.mObject);
     }
 
-    void ConfigurationWriter::setObjects(const WString &name, const stl<ConfigurationWriter>::vector &objects)
+    void ConfigurationWriter::set(const WString &name, const stl<ConfigurationWriter>::vector &objects)
     {
         remove(name);
         JSONArray jarray;
@@ -81,7 +81,7 @@ namespace lite3dpp
         mObject[name] = new JSONValue(jarray);
     }
 
-    void ConfigurationWriter::setStrings(const WString &name, const stl<WString>::vector &strings)
+    void ConfigurationWriter::set(const WString &name, const stl<WString>::vector &strings)
     {
         remove(name);
         JSONArray jarray;
@@ -93,7 +93,7 @@ namespace lite3dpp
         mObject[name] = new JSONValue(jarray);
     }
 
-    void ConfigurationWriter::setInts(const WString &name, const stl<int32_t>::vector &ints)
+    void ConfigurationWriter::set(const WString &name, const stl<int32_t>::vector &ints)
     {
         remove(name);
         JSONArray jarray;
@@ -105,7 +105,7 @@ namespace lite3dpp
         mObject[name] = new JSONValue(jarray);
     }
     
-    void ConfigurationWriter::setFloats(const WString &name, const stl<double>::vector &floats)
+    void ConfigurationWriter::set(const WString &name, const stl<double>::vector &floats)
     {
         remove(name);
         JSONArray jarray;
@@ -117,7 +117,7 @@ namespace lite3dpp
         mObject[name] = new JSONValue(jarray);
     }
      
-    void ConfigurationWriter::setBools(const WString &name, const stl<bool>::vector &bools)
+    void ConfigurationWriter::set(const WString &name, const stl<bool>::vector &bools)
     {
         remove(name);
         JSONArray jarray;
@@ -129,53 +129,53 @@ namespace lite3dpp
         mObject[name] = new JSONValue(jarray);
     }
 
-    void ConfigurationWriter::setVec2(const WString &name, const kmVec2 &value)
+    void ConfigurationWriter::set(const WString &name, const kmVec2 &value)
     {
         remove(name);
         ConfigurationWriter writer;
-        writer.setDouble(L"x", value.x);
-        writer.setDouble(L"y", value.y);
-        setObject(name, writer);
+        writer.set(L"x", value.x);
+        writer.set(L"y", value.y);
+        set(name, writer);
     }
     
-    void ConfigurationWriter::setVec3(const WString &name, const kmVec3 &value)
+    void ConfigurationWriter::set(const WString &name, const kmVec3 &value)
     {
         remove(name);
         ConfigurationWriter writer;
-        writer.setDouble(L"x", value.x);
-        writer.setDouble(L"y", value.y);
-        writer.setDouble(L"z", value.z);
-        setObject(name, writer);
+        writer.set(L"x", value.x);
+        writer.set(L"y", value.y);
+        writer.set(L"z", value.z);
+        set(name, writer);
     }
      
     
-    void ConfigurationWriter::setVec4(const WString &name, const kmVec4 &value)
+    void ConfigurationWriter::set(const WString &name, const kmVec4 &value)
     {
         remove(name);
         ConfigurationWriter writer;
-        writer.setDouble(L"x", value.x);
-        writer.setDouble(L"y", value.y);
-        writer.setDouble(L"z", value.z);
-        writer.setDouble(L"w", value.w);
-        setObject(name, writer);
+        writer.set(L"x", value.x);
+        writer.set(L"y", value.y);
+        writer.set(L"z", value.z);
+        writer.set(L"w", value.w);
+        set(name, writer);
     }
      
-    void ConfigurationWriter::setQuaternion(const WString &name, const kmQuaternion &value)
+    void ConfigurationWriter::set(const WString &name, const kmQuaternion &value)
     {
         remove(name);
         ConfigurationWriter writer;
-        writer.setDouble(L"x", value.x);
-        writer.setDouble(L"y", value.y);
-        writer.setDouble(L"z", value.z);
-        writer.setDouble(L"w", value.w);
-        setObject(name, writer);
+        writer.set(L"x", value.x);
+        writer.set(L"y", value.y);
+        writer.set(L"z", value.z);
+        writer.set(L"w", value.w);
+        set(name, writer);
     }
      
-    void ConfigurationWriter::setMat4(const WString &name, const kmMat4 &value)
+    void ConfigurationWriter::set(const WString &name, const kmMat4 &value)
     {
         remove(name);
         stl<double>::vector mat(value.mat, value.mat+16);
-        setFloats(name, mat);
+        set(name, mat);
     }
 
     void ConfigurationWriter::remove(const WString &name)

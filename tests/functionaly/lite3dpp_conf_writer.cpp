@@ -39,33 +39,33 @@ TEST_F(Lite3dpp_ConfWriterTest, ConfigGenerate)
 {
     lite3dpp::ConfigurationWriter writer;
 
-    writer.setInt(L"LogLevel", 2);
-    writer.setBool(L"LogFlushAlways", false);
-    writer.setInt(L"FixedUpdatesInterval", 30);
+    writer.set(L"LogLevel", 2);
+    writer.set(L"LogFlushAlways", false);
+    writer.set(L"FixedUpdatesInterval", 30);
 
     lite3dpp::ConfigurationWriter video;
-    video.setInt(L"Width", 800);
-    video.setInt(L"Height", 600);
-    video.setString(L"Caption", L"My test window");
-    video.setInt(L"ColorBits", 24);
-    video.setBool(L"Fullscreen", false);
-    video.setInt(L"FSAA", 4);
-    video.setBool(L"VSync", true);
+    video.set(L"Width", 800);
+    video.set(L"Height", 600);
+    video.set(L"Caption", L"My test window");
+    video.set(L"ColorBits", 24);
+    video.set(L"Fullscreen", false);
+    video.set(L"FSAA", 4);
+    video.set(L"VSync", true);
 
     lite3dpp::ConfigurationWriter texture;
-    texture.setInt(L"Anisotropy", 8);
-    texture.setBool(L"Compression", true);
+    texture.set(L"Anisotropy", 8);
+    texture.set(L"Compression", true);
 
     lite3dpp::ConfigurationWriter reslocation;
-    reslocation.setString(L"Name", L"samples");
-    reslocation.setString(L"Path", L"samples/");
-    reslocation.setInt(L"FileCacheMaxSize", 1024000);
+    reslocation.set(L"Name", L"samples");
+    reslocation.set(L"Path", L"samples/");
+    reslocation.set(L"FileCacheMaxSize", 1024000);
 
     lite3dpp::stl<lite3dpp::ConfigurationWriter>::vector reslocationArr;
     reslocationArr.push_back(reslocation);
-    writer.setObjects(L"ResourceLocations", reslocationArr);
-    writer.setObject(L"VideoSettings", video);
-    writer.setObject(L"TextureSettings", texture);
+    writer.set(L"ResourceLocations", reslocationArr);
+    writer.set(L"VideoSettings", video);
+    writer.set(L"TextureSettings", texture);
 
     lite3dpp::String code = writer.write();
     writer.clear();
