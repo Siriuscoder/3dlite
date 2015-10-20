@@ -76,6 +76,7 @@ namespace lite3dpp
             videoSettings.getBool(L"Fullscreen", false) ? LITE3D_TRUE : LITE3D_FALSE;
         videoSettings.getString(L"Caption", "TEST window").copy(mSettings.videoSettings.caption,
             sizeof(mSettings.videoSettings.caption)-1);
+        mSettings.videoSettings.hidden = videoSettings.getBool(L"Hidden", false) ? LITE3D_TRUE : LITE3D_FALSE;
 
         mSettings.renderLisneters.userdata = reinterpret_cast<void *> (this);
         mSettings.renderLisneters.preRender = Main::onInit;
@@ -130,10 +131,11 @@ namespace lite3dpp
     {
         if(!mConfig)
             throw std::runtime_error("Bad configuration");
-
+        
+        /* init scripting */
+        AsScript::engineInit();
         /* basic initialization */
         initResourceLocations();
-        mScriptDispatcher.registerGlobals();
 
         /* create main window render target */
         /* it is fake and used only as label indicating render to screen */
@@ -149,6 +151,7 @@ namespace lite3dpp
         lite3d_timer_purge(mFixedUpdatesTimer);
         mResourceManager.releaseAllResources();
         mResourceManager.releaseFileCache();
+        AsScript::engineShut();
     }
 
     WindowRenderTarget *Main::window()
@@ -166,7 +169,7 @@ namespace lite3dpp
             mainObj->init();
 
             if(mainObj->mLifeCycleListener)
-                mainObj->mLifeCycleListener->init(mainObj);
+                mainObj->mLifeCycleListener->init();
         }
         catch (std::exception &ex)
         {
@@ -186,7 +189,7 @@ namespace lite3dpp
             mainObj->shut();
 
             if(mainObj->mLifeCycleListener)
-                mainObj->mLifeCycleListener->shut(mainObj);
+                mainObj->mLifeCycleListener->shut();
         }
         catch (std::exception &ex)
         {
@@ -206,7 +209,7 @@ namespace lite3dpp
             mainObj->mScriptDispatcher.performFrameBegin();
 
             if(mainObj->mLifeCycleListener)
-                mainObj->mLifeCycleListener->frameBegin(mainObj);
+                mainObj->mLifeCycleListener->frameBegin();
         }
         catch (std::exception &ex)
         {
@@ -226,7 +229,7 @@ namespace lite3dpp
             mainObj->mScriptDispatcher.performFrameEnd();
 
             if(mainObj->mLifeCycleListener)
-                mainObj->mLifeCycleListener->frameEnd(mainObj);
+                mainObj->mLifeCycleListener->frameEnd();
         }
         catch (std::exception &ex)
         {
@@ -248,7 +251,7 @@ namespace lite3dpp
                 mainObj->mScriptDispatcher.performFixedUpdate();
 
             if(mainObj->mLifeCycleListener)
-                mainObj->mLifeCycleListener->timerTick(mainObj, timer);
+                mainObj->mLifeCycleListener->timerTick(timer);
         }
         catch (std::exception &ex)
         {
@@ -263,10 +266,10 @@ namespace lite3dpp
         try
         {
             Main *mainObj = reinterpret_cast<Main *> (userdata);
-            mainObj->mScriptDispatcher.performEvent(e);
+            mainObj->mScriptDispatcher.performProcessEvent(e);
 
             if(mainObj->mLifeCycleListener)
-                mainObj->mLifeCycleListener->processEvent(mainObj, e);
+                mainObj->mLifeCycleListener->processEvent(e);
         }
         catch (std::exception &ex)
         {

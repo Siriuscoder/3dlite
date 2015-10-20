@@ -18,40 +18,45 @@
 #pragma once
 
 #include <lite3dpp/lite3dpp_common.h>
-#include <lite3dpp/lite3dpp_resource.h>
+#include <lite3dpp/lite3dpp_script.h>
 
 namespace lite3dpp
 {
-    class LITE3DPP_EXPORT ScriptActing
+    class LITE3DPP_EXPORT AsScript : public Script
     {
     public:
 
-        virtual void performFrameBegin() = 0;
-        virtual void performFrameEnd() = 0;
-        virtual void performFixedUpdate() = 0;
-        virtual void performProcessEvent(SDL_Event *e) = 0;
-    };
-
-    class LITE3DPP_EXPORT Script : public AbstractResource, public ScriptActing, public NoncopiableResource
-    {
-    public:
-
-        Script(const String &name, 
+        AsScript(const String &name, 
             const String &path, Main *main);
-        ~Script();
+        ~AsScript();
+
+        virtual void performFrameBegin() override;
+        virtual void performFrameEnd() override;
+        virtual void performFixedUpdate() override;
+        virtual void performProcessEvent(SDL_Event *e) override;
+
+        static void engineInit();
+        static void engineShut();
 
     protected:
 
-        virtual void scriptCompile(const String &text) = 0;
-        virtual void scriptRelease() = 0;
-
-        virtual void loadImpl(const void *buffer, size_t size) override;
-        virtual void reloadImpl() override;
-        virtual void unloadImpl() override;
+        virtual void scriptCompile(const String &text) override;
+        virtual void scriptRelease() override;
 
     private:
+        
+        void checkScriptExec(int ret);
+        
+    private:
 
-        String mScriptText;
+        asIScriptFunction *mInitFunction;
+        asIScriptFunction *mShutFunction;
+        asIScriptFunction *mFrameBeginFunction;
+        asIScriptFunction *mFrameEndFunction;
+        asIScriptFunction *mFixedUpdateFunction;
+        asIScriptContext *mContext;
+
+        static asIScriptEngine *mScriptEngine;
     };
 }
 

@@ -24,158 +24,33 @@
 
 namespace lite3dpp
 {
-
-    static int scriptBuilderSearchInclude(const char *include, const char *from,
-                                          CScriptBuilder *builder, void *userParam)
-    {
-        Main *mainObj = reinterpret_cast<Main *> (userParam);
-
-        size_t scriptFileSize;
-        const char *scriptFile = static_cast<const char *>(
-            mainObj->getResourceManager()->loadFileToMemory(include, &scriptFileSize));
-
-        return builder->AddSectionFromMemory(include, (char *)scriptFile,
-                                             scriptFileSize, 0);
-    }
-
     Script::Script(const String &name, 
         const String &path, Main *main) :
-        AbstractResource(name, path, main, AbstractResource::SCRIPT),
-        mScriptEngine(main->getScriptDispatcher()->mAsEngine),
-        mInitFunction(NULL),
-        mShutFunction(NULL),
-        mFrameBeginFunction(NULL),
-        mFrameEndFunction(NULL),
-        mContext(NULL)
+        AbstractResource(name, path, main, AbstractResource::SCRIPT)
     {}
 
     Script::~Script()
-    {
-    }
-
-    void Script::scriptCompile(const char *data, size_t size)
-    {
-        SDL_assert(data);
-        
-        SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
-            "Compiling %s ...", getPath().c_str());
-
-        /*  The CScriptBuilder helper is an add-on that loads the file,
-            performs a pre-processing pass if necessary, and then tells
-            the engine to build a script module. */
-        CScriptBuilder builder;
-        builder.SetIncludeCallback(scriptBuilderSearchInclude, mMain);
-        SDL_assert_release(builder.StartNewModule(mScriptEngine, getName().c_str()) >= 0);
-
-        /* load code sections */
-        if (builder.AddSectionFromMemory(getName().c_str(), data, size, 0) < 0)
-            throw std::runtime_error("Script load error");
-
-        /* compile script */
-        if (builder.BuildModule() < 0)
-            throw std::runtime_error("Script compile error");
-
-        asIScriptModule *mod = builder.GetModule();
-        mInitFunction = mod->GetFunctionByDecl("void init()");
-        mShutFunction = mod->GetFunctionByDecl("void shut()");
-        mFrameBeginFunction = mod->GetFunctionByDecl("void frameBegin()");
-        mFrameEndFunction = mod->GetFunctionByDecl("void frameEnd()");
-        mFixedUpdateFunction = mod->GetFunctionByDecl("void fixedUpdate()");
-
-        mContext = mScriptEngine->CreateContext();
-        SDL_assert_release(mContext);
-        if (mInitFunction)
-        {
-            mContext->Prepare(mInitFunction);
-            checkScriptExec(mContext->Execute());
-        }
-
-        /* register script in event dispatcher */
-        mMain->getScriptDispatcher()->registerScript(this);
-    }
-
-    void Script::checkScriptExec(int code)
-    {
-        if (code != asEXECUTION_FINISHED)
-        {
-            if (code == asEXECUTION_EXCEPTION)
-            {
-                SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, 
-                             "Script %s unexpected broken: %s", 
-                             getName().c_str(), mContext->GetExceptionString());
-                
-                throw std::runtime_error(mContext->GetExceptionString());
-            }
-            else if (code == asEXECUTION_ERROR)
-            {
-                SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, 
-                             "Script %s execution error..",
-                             getName().c_str());
-                
-                throw std::runtime_error(String("Script ") +
-                                         getName() + " execution error..");
-            }
-        }
-    }
-
-    void Script::scriptRelease()
-    {
-        /* unregister script and going to release script object */
-        mMain->getScriptDispatcher()->unregisterScript(this);
-
-        if (mShutFunction)
-        {
-            mContext->Prepare(mShutFunction);
-            checkScriptExec(mContext->Execute());
-        }
-
-        if (mContext)
-            mContext->Release();
-        mContext = NULL;
-    }
-
-    void Script::performFrameBegin()
-    {
-        if (mFrameBeginFunction)
-        {
-            mContext->Prepare(mFrameBeginFunction);
-            checkScriptExec(mContext->Execute());
-        }
-    }
-
-    void Script::performFrameEnd()
-    {
-        if (mFrameEndFunction)
-        {
-            mContext->Prepare(mFrameEndFunction);
-            checkScriptExec(mContext->Execute());
-        }
-    }
-
-    void Script::performFixedUpdate()
-    {
-        if (mFixedUpdateFunction)
-        {
-            mContext->Prepare(mFixedUpdateFunction);
-            checkScriptExec(mContext->Execute());
-        }
-    }
-
-    void Script::performProcessEvent(SDL_Event *e)
-    {
-
-    }
+    {}
 
     void Script::loadImpl(const void *buffer, size_t size)
     {
-        scriptCompile(static_cast<const char *>(buffer), size);
+        mScriptText.assign((const char *)buffer, size);
+        scriptCompile(mScriptText);
+        /* register script in event dispatcher */
+        mMain->getScriptDispatcher()->registerScript(this);
     }
 
     void Script::unloadImpl()
     {
         scriptRelease();
+        /* unregister script and going to release script object */
+        mMain->getScriptDispatcher()->unregisterScript(this);
     }
 
     void Script::reloadImpl()
-    {}
+    {
+        scriptCompile(mScriptText);
+        /* register script in event dispatcher */
+        mMain->getScriptDispatcher()->registerScript(this);
+    }
 }

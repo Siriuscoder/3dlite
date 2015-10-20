@@ -32,47 +32,48 @@ class SampleLifecycleListener : public lite3dpp::Main::LifecycleListener
 {
 public:
 
-    SampleLifecycleListener() :
+    SampleLifecycleListener(lite3dpp::Main *main) :
+        mMain(main),
         mBox(NULL),
         mWireftameView(false),
         mDepthTest(true),
         mKof(1)
     {}
 
-    void init(lite3dpp::Main *main) override
+    void init() override
     {
-        lite3dpp::Scene *scene = main->getResourceManager()->queryResource<lite3dpp::Scene>("BoxScene",
+        lite3dpp::Scene *scene = mMain->getResourceManager()->queryResource<lite3dpp::Scene>("BoxScene",
             "samples:scenes/scene_rtt_box.json");
 
-        mBoxTexture = main->getResourceManager()->queryResource<lite3dpp::Texture>("color512x512.texture");
+        mBoxTexture = mMain->getResourceManager()->queryResource<lite3dpp::Texture>("color512x512.texture");
         mCamera = scene->getCamera("MyCamera");
         mBox = scene->getObject("Box");
-        mBoxMesh = main->getResourceManager()->queryResource<lite3dpp::Mesh>("box.mesh");
+        mBoxMesh = mMain->getResourceManager()->queryResource<lite3dpp::Mesh>("box.mesh");
 
         updateTextureData();
     }
 
-    void shut(lite3dpp::Main *main) override
+    void shut() override
     {}
 
-    void frameBegin(lite3dpp::Main *main) override
+    void frameBegin() override
     {}
 
-    void frameEnd(lite3dpp::Main *main) override
+    void frameEnd() override
     {}
 
-    void timerTick(lite3dpp::Main *main, lite3d_timer *timerid) override
+    void timerTick(lite3d_timer *timerid) override
     {
         mBox->getRoot()->rotateAngle(KM_VEC3_NEG_Z, 0.01f);
     }
 
-    void processEvent(lite3dpp::Main *main, SDL_Event *e) override
+    void processEvent(SDL_Event *e) override
     {
         if (e->type == SDL_KEYDOWN)
         {
             /* exit */
             if (e->key.keysym.sym == SDLK_ESCAPE)
-                main->stop();
+                mMain->stop();
         }
         else if (e->key.keysym.sym == SDLK_F1)
         {
@@ -151,6 +152,7 @@ public:
 
 private:
 
+    lite3dpp::Main *mMain;
     lite3dpp::SceneObject *mBox;
     lite3dpp::Texture *mBoxTexture;
     lite3dpp::Camera *mCamera;
@@ -166,7 +168,7 @@ int main(int agrc, char *args[])
     try
     {
         lite3dpp::Main mainObj;
-        SampleLifecycleListener lifecycleListener;
+        SampleLifecycleListener lifecycleListener(&mainObj);
 
         mainObj.registerLifecycleListener(&lifecycleListener);
         mainObj.initFromConfig("samples/config/config.json");

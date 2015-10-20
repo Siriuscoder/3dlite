@@ -41,12 +41,12 @@ namespace lite3dpp
 
             virtual ~LifecycleListener();
 
-            virtual void init(Main *main) = 0;
-            virtual void shut(Main *main) = 0;
-            virtual void frameBegin(Main *main) = 0;
-            virtual void frameEnd(Main *main) = 0;
-            virtual void timerTick(Main *main, lite3d_timer *timerid) = 0;
-            virtual void processEvent(Main *main, SDL_Event *e) = 0;
+            virtual void init() = 0;
+            virtual void shut() = 0;
+            virtual void frameBegin() = 0;
+            virtual void frameEnd() = 0;
+            virtual void timerTick(lite3d_timer *timerid) = 0;
+            virtual void processEvent(SDL_Event *e) = 0;
         };
 
     public:

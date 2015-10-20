@@ -21,12 +21,13 @@
 #include <lite3dpp/lite3dpp_manageable.h>
 #include <lite3dpp/lite3dpp_resource_manager.h>
 #include <lite3dpp/lite3dpp_script.h>
+#include <lite3dpp/lite3dpp_script_as.h>
 
 namespace lite3dpp
 {
-    class LITE3DPP_EXPORT ScriptDispatcher : public Manageable
+    class LITE3DPP_EXPORT ScriptDispatcher : public ScriptActing, public Manageable
     {
-        friend class Script;
+        friend class AsScript;
     public:
 
         typedef stl<String, Script *>::map Scripts;
@@ -35,12 +36,10 @@ namespace lite3dpp
         virtual ~ScriptDispatcher();
 
         /* script callers */
-        void performFrameBegin();
-        void performFrameEnd();
-        void performFixedUpdate();
-        void performEvent(SDL_Event *e);
-
-        void registerGlobals();
+        virtual void performFrameBegin() override;
+        virtual void performFrameEnd() override;
+        virtual void performFixedUpdate() override;
+        virtual void performProcessEvent(SDL_Event *e) override;
 
         void registerScript(Script *script);
         void unregisterScript(Script *script);
@@ -50,7 +49,6 @@ namespace lite3dpp
         void flushPendingScripts();
 
         Main *mMain;
-        asIScriptEngine *mAsEngine;
         Scripts mScripts;
         Scripts mPendingScripts;
     };

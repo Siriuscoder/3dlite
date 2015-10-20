@@ -25,40 +25,42 @@ class SampleLifecycleListener : public lite3dpp::Main::LifecycleListener
 {
 public:
 
-    SampleLifecycleListener() : mMinigun(NULL),
+    SampleLifecycleListener(lite3dpp::Main *main) : 
+        mMain(main),
+        mMinigun(NULL),
         mPlasmagun(NULL)
     {}
 
-    void init(lite3dpp::Main *main) override
+    void init() override
     {
-        lite3dpp::Scene *scene = main->getResourceManager()->queryResource<lite3dpp::Scene>("SimpleScene",
+        lite3dpp::Scene *scene = mMain->getResourceManager()->queryResource<lite3dpp::Scene>("SimpleScene",
             "samples:scenes/scene.json");
         mMinigun = scene->getObject("Minigun");
         mPlasmagun = scene->getObject("Plasmagun");
     }
 
-    void shut(lite3dpp::Main *main) override
+    void shut() override
     {}
 
-    void frameBegin(lite3dpp::Main *main) override
+    void frameBegin() override
     {}
 
-    void frameEnd(lite3dpp::Main *main) override
+    void frameEnd() override
     {}
 
-    void timerTick(lite3dpp::Main *main, lite3d_timer *timerid) override
+    void timerTick(lite3d_timer *timerid) override
     {
         mMinigun->getRoot()->rotateAngle(KM_VEC3_POS_Z, 0.01f);
         mPlasmagun->getRoot()->rotateAngle(KM_VEC3_NEG_Z, 0.01f);
     }
 
-    void processEvent(lite3dpp::Main *main, SDL_Event *e) override
+    void processEvent(SDL_Event *e) override
     {
         if (e->type == SDL_KEYDOWN)
         {
             /* exit */
             if (e->key.keysym.sym == SDLK_ESCAPE)
-                main->stop();
+                mMain->stop();
         }
         else if (e->key.keysym.sym == SDLK_F1)
         {
@@ -76,6 +78,7 @@ public:
 
 private:
 
+    lite3dpp::Main *mMain;
     lite3dpp::SceneObject *mMinigun;
     lite3dpp::SceneObject *mPlasmagun;
 };
@@ -85,7 +88,7 @@ int main(int agrc, char *args[])
     try
     {
         lite3dpp::Main mainObj;
-        SampleLifecycleListener lifecycleListener;
+        SampleLifecycleListener lifecycleListener(&mainObj);
 
         mainObj.registerLifecycleListener(&lifecycleListener);
         mainObj.initFromConfig("samples/config/config.json");
