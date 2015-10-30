@@ -23,6 +23,7 @@
 #include <lite3d/kazmath/vec2.h>
 #include <lite3d/kazmath/vec3.h>
 #include <lite3d/kazmath/vec4.h>
+#include <lite3d/kazmath/mat4.h>
 #include <lite3d/kazmath/quaternion.h>
 
 namespace lite3dpp
@@ -52,7 +53,7 @@ namespace lite3dpp
         kmVec3 getVec3(const WString &name, const kmVec3 &def = KM_VEC3_ZERO) const;
         kmVec4 getVec4(const WString &name, const kmVec4 &def = KM_VEC4_ZERO) const;
         kmQuaternion getQuaternion(const WString &name, const kmQuaternion &def = KM_QUATERNION_IDENTITY ) const;
-
+        kmMat4 getMat4(const WString &name, const kmMat4 &def) const;
 
         bool isEmpty() const;
 

@@ -160,13 +160,13 @@ namespace lite3dpp
 
     kmVec2 ConfigurationReader::getVec2(const WString &name, const kmVec2 &def) const
     {
-        ConfigurationReader helper = getObject(name);
-        if(helper.isEmpty())
+        auto floats = getFloats(name);
+        if(floats.size() != 2)
             return def;
 
         kmVec2 vec2 = {
-            static_cast<float>(helper.getDouble(L"x")),
-            static_cast<float>(helper.getDouble(L"y"))
+            (float)floats[0],
+            (float)floats[1]
         };
 
         return vec2;
@@ -174,14 +174,14 @@ namespace lite3dpp
 
     kmVec3 ConfigurationReader::getVec3(const WString &name, const kmVec3 &def) const
     {
-        ConfigurationReader helper = getObject(name);
-        if(helper.isEmpty())
+        auto floats = getFloats(name);
+        if(floats.size() != 3)
             return def;
 
         kmVec3 vec3 = {
-            static_cast<float>(helper.getDouble(L"x")),
-            static_cast<float>(helper.getDouble(L"y")),
-            static_cast<float>(helper.getDouble(L"z"))
+            (float)floats[0],
+            (float)floats[1],
+            (float)floats[2]
         };
 
         return vec3;
@@ -189,15 +189,15 @@ namespace lite3dpp
 
     kmVec4 ConfigurationReader::getVec4(const WString &name, const kmVec4 &def) const
     {
-        ConfigurationReader helper = getObject(name);
-        if(helper.isEmpty())
+        auto floats = getFloats(name);
+        if(floats.size() != 4)
             return def;
 
         kmVec4 vec4 = {
-            static_cast<float>(helper.getDouble(L"x")),
-            static_cast<float>(helper.getDouble(L"y")),
-            static_cast<float>(helper.getDouble(L"z")),
-            static_cast<float>(helper.getDouble(L"w"))
+            (float)floats[0],
+            (float)floats[1],
+            (float)floats[2],
+            (float)floats[3]
         };
 
         return vec4;
@@ -205,18 +205,46 @@ namespace lite3dpp
 
     kmQuaternion ConfigurationReader::getQuaternion(const WString &name, const kmQuaternion &def) const
     {
-        ConfigurationReader helper = getObject(name);
-        if(helper.isEmpty())
+        auto floats = getFloats(name);
+        if(floats.size() != 4)
             return def;
 
         kmQuaternion quat = {
-            static_cast<float>(helper.getDouble(L"x")),
-            static_cast<float>(helper.getDouble(L"y")),
-            static_cast<float>(helper.getDouble(L"z")),
-            static_cast<float>(helper.getDouble(L"w"))
+            (float)floats[0],
+            (float)floats[1],
+            (float)floats[2],
+            (float)floats[3]
         };
 
         return quat;
+    }
+
+    kmMat4 ConfigurationReader::getMat4(const WString &name, const kmMat4 &def) const
+    {
+        auto floats = getFloats(name);
+        if(floats.size() != 16)
+            return def;
+
+        kmMat4 mat4 = {
+            (float)floats[0],
+            (float)floats[1],
+            (float)floats[2],
+            (float)floats[3],
+            (float)floats[4],
+            (float)floats[5],
+            (float)floats[6],
+            (float)floats[7],
+            (float)floats[8],
+            (float)floats[9],
+            (float)floats[10],
+            (float)floats[11],
+            (float)floats[12],
+            (float)floats[13],
+            (float)floats[14],
+            (float)floats[15],
+        };
+
+        return mat4;
     }
 
     stl<ConfigurationReader>::vector ConfigurationReader::getObjects(const WString &name) const

@@ -15,17 +15,23 @@
  *	You should have received a copy of the GNU General Public License
  *	along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
-#include <string.h>
-#include <stdio.h>
-#include <stdlib.h>
+#include <iostream>
 
 #include <SDL_assert.h>
 #include <SDL_log.h>
-#include <SDL_rwops.h>
-#include <lite3d/lite3d_main.h>
-#include <lite3d/lite3d_mesh_codec.h>
 
-void print_mesh_info(lite3d_file *meshFile)
+#include <lite3d/lite3d_mesh_codec.h>
+#include <mtool_m_info.h>
+
+MeshInfoCommand::MeshInfoCommand()
+{}
+
+void MeshInfoCommand::runImpl()
+{
+    printInfo(mMain.getResourceManager()->loadFileToMemory(mInputFilePath));
+}
+
+void MeshInfoCommand::printInfo(const lite3d_file *meshFile)
 {
     lite3d_mesh mesh;
     lite3d_mesh_chunk *meshChunk;

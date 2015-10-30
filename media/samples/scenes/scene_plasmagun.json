@@ -5,9 +5,9 @@
 			"Name": "PlasmaRifle",
 			"Object": "samples:objects/plasma.json",
 
-			"Position": { "x": 0, "y": 0, "z": 0 },
-			"Rotation": { "x": 0, "y": 0, "z": 0, "w": 1 },
-			"Scale": { "x": 1, "y": 1, "z": 1 }
+			"Position": [0,0,0],
+			"Rotation": [0,0,0,1],
+			"Scale": [1,1,1]
 		}
 	]
 }

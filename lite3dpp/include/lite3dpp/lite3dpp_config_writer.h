@@ -40,6 +40,9 @@ namespace lite3dpp
         void set(const WString &name, double value);
         void set(const WString &name, bool value);
         void set(const WString &name, const WString &value);
+        void set(const WString &name, const String &value);
+        void set(const WString &name, const char *value);
+        void set(const WString &name, const wchar_t *value);
         void set(const WString &name, const ConfigurationWriter &object);
 
         void set(const WString &name, const stl<ConfigurationWriter>::vector &objects);
@@ -55,10 +58,7 @@ namespace lite3dpp
         void set(const WString &name, const kmMat4 &value);
 
         void remove(const WString &name);
-
         String write();
-        void write(const String &filename);
-
         void clear();
 
     private:

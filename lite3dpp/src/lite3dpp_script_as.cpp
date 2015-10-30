@@ -45,7 +45,7 @@ namespace lite3dpp
                                              scriptFileSize, 0);
     }
 
-    void asMessageListener(const asSMessageInfo *msg, void *param)
+    static void asMessageListener(const asSMessageInfo *msg, void *param)
     {
         if (msg->type == asMSGTYPE_WARNING)
             SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION, "Script: %s, (%d/%d) %s",

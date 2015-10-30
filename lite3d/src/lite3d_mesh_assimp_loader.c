@@ -220,16 +220,16 @@ static int ai_node_load_to_vbo(lite3d_mesh *meshInst, const struct aiScene *scen
 }
 
 static int ai_node_load_recursive(const struct aiScene *scene, 
-    const struct aiNode *node, lite3d_retrieve_mesh retrieveMesh, 
-    lite3d_mesh_loaded meshLoaded, uint16_t access)
+    const struct aiNode *node, lite3d_assimp_loader_ctx ctx,
+    uint16_t access)
 {
     uint32_t i;
+    lite3d_mesh *mesh = NULL;
+    kmMat4 transform;
 
     if (node->mNumMeshes > 0)
     {
-        lite3d_mesh *mesh;
-
-        if((mesh = retrieveMesh()) == NULL)
+        if(ctx.onNewMesh && ((mesh = ctx.onNewMesh(ctx.userdata)) == NULL))
             return LITE3D_FALSE;
 
         if(!ai_node_load_to_vbo(mesh, scene, node, access))
@@ -238,16 +238,24 @@ static int ai_node_load_recursive(const struct aiScene *scene,
                 node->mName.data);
             return LITE3D_FALSE;
         }
-
-        meshLoaded(mesh, node->mName.data);
     }
+
+    kmMat4Fill(&transform, &node->mTransformation.a1);
+
+    if(ctx.onLoaded)
+        ctx.onLoaded(mesh, &transform, node->mName.data, ctx.userdata);
+
+    if (ctx.onLevelPush)
+        ctx.onLevelPush(ctx.userdata);
 
     for (i = 0; i < node->mNumChildren; ++i)
     {
-        if (!ai_node_load_recursive(scene, node->mChildren[i], retrieveMesh, 
-            meshLoaded, access))
+        if (!ai_node_load_recursive(scene, node->mChildren[i], ctx, access))
             return LITE3D_FALSE;
     }
+
+    if (ctx.onLevelPop)
+        ctx.onLevelPop(ctx.userdata);
 
     return LITE3D_TRUE;
 }
@@ -366,12 +374,11 @@ int lite3d_assimp_mesh_load(lite3d_mesh *mesh, const lite3d_file *resource,
 }
 
 int lite3d_assimp_mesh_load_recursive(const lite3d_file *resource, 
-    lite3d_retrieve_mesh retrieveMesh, lite3d_mesh_loaded meshLoaded, uint16_t access, uint32_t flags)
+    lite3d_assimp_loader_ctx ctx,
+    uint16_t access, uint32_t flags)
 {
     const struct aiScene *scene = NULL;
     struct aiPropertyStore *importProrerties;
-    SDL_assert(retrieveMesh);
-    SDL_assert(meshLoaded);
 
     importProrerties = aiCreatePropertyStore();
     SDL_assert_release(importProrerties);
@@ -382,8 +389,15 @@ int lite3d_assimp_mesh_load_recursive(const lite3d_file *resource,
         return LITE3D_FALSE;
     }
 
-    if(!ai_node_load_recursive(scene, scene->mRootNode, retrieveMesh, meshLoaded, access))
+    if (ctx.onLevelPush)
+        ctx.onLevelPush(ctx.userdata);
+
+    if(!ai_node_load_recursive(scene, scene->mRootNode, ctx, access))
         return LITE3D_FALSE;
+
+    if (ctx.onLevelPop)
+        ctx.onLevelPop(ctx.userdata);
+
     aiReleaseImport(scene);
     aiReleasePropertyStore(importProrerties);
 

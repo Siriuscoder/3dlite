@@ -4,8 +4,8 @@
 		{
 			"Name": "MyCamera",
 
-			"Position": { "x": 0, "y": 3.0, "z": 3.0 },
-			"LootAt": { "x": 0, "y": 0, "z": 0 },
+			"Position": [0,3,3],
+			"LootAt": [0,0,0],
 			"Perspective": 
 			{
 				"Znear": 1,

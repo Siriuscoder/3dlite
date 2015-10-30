@@ -74,6 +74,8 @@
 #   define STRUCT_PACKED(x) __attribute__ ((aligned(x)));
 #   define INLINE inline
 #   define DEVIL_CALL
+#else
+#   error "Unknown target platform"
 #endif
 
 #ifdef __GNUC__

@@ -193,7 +193,7 @@ namespace lite3dpp
         lite3d_file *resourceFile =
             lite3d_pack_file_load(packIt->second, filePath.c_str());
         if(!resourceFile || !resourceFile->isLoaded)
-            throw std::runtime_error(String("File not found.. ") + "\"" + path + "\"");
+            throw std::runtime_error(String("File open error...") + "\"" + path + "\"");
 
         return resourceFile;
     }

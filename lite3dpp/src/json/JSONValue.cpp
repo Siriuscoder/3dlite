@@ -775,8 +775,8 @@ lite3dpp::WString JSONValue::StringifyImpl(size_t const indentDepth) const
             else
             {
                 lite3dpp::WStringstream ss;
-                ss.precision(15);
-                ss << number_value;
+                ss.precision(10);
+                ss << std::fixed << number_value;
                 ret_string = ss.str();
             }
             break;
@@ -792,7 +792,7 @@ lite3dpp::WString JSONValue::StringifyImpl(size_t const indentDepth) const
 
                 // Not at the end - add a separator
                 if (++iter != array_value.end())
-                    ret_string += L",";
+                    ret_string += L",\n" + indentStr1;
             }
             ret_string += indentDepth ? L"\n" + indentStr + L"]" : L"]";
             break;
@@ -810,7 +810,7 @@ lite3dpp::WString JSONValue::StringifyImpl(size_t const indentDepth) const
 
                 // Not at the end - add a separator
                 if (++iter != object_value.end())
-                    ret_string += L",";
+                    ret_string += L",\n" + indentStr1;
             }
             ret_string += indentDepth ? L"\n" + indentStr + L"}" : L"}";
             break;
@@ -840,7 +840,7 @@ lite3dpp::WString JSONValue::StringifyString(const lite3dpp::WString &str)
     {
         wchar_t chr = *iter;
 
-        if (chr == L'"' || chr == L'\\' || chr == L'/')
+        if (chr == L'"' || chr == L'\\')
         {
             str_out += L'\\';
             str_out += chr;

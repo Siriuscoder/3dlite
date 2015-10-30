@@ -23,13 +23,20 @@
 #include <lite3d/lite3d_common.h>
 #include <lite3d/lite3d_mesh.h>
 #include <lite3d/lite3d_pack.h>
+#include <lite3d/kazmath/mat4.h>
 
 #define LITE3D_OPTIMIZE_MESH_FLAG             0x1
 #define LITE3D_FLIP_UV_FLAG                   0x2
 #define LITE3D_MERGE_NODES_FLAG               0x4
 
-typedef lite3d_mesh *(*lite3d_retrieve_mesh)(void);
-typedef void (*lite3d_mesh_loaded)(lite3d_mesh *, const char *name);
+typedef struct lite3d_assimp_loader_ctx
+{
+    lite3d_mesh *(*onNewMesh)(void *userdata);
+    void (*onLoaded)(lite3d_mesh *, const kmMat4 *transform, const char *name, void *userdata);
+    void (*onLevelPush)(void *userdata);
+    void (*onLevelPop)(void *userdata);
+    void *userdata;
+} lite3d_assimp_loader_ctx;
 
 /*
     note:
@@ -44,7 +51,8 @@ LITE3D_CEXPORT int lite3d_assimp_mesh_load(lite3d_mesh *mesh, const lite3d_file 
         recursive load all meshes from *resource*
 */
 LITE3D_CEXPORT int lite3d_assimp_mesh_load_recursive(const lite3d_file *resource, 
-    lite3d_retrieve_mesh retrieveMesh, lite3d_mesh_loaded meshLoaded, uint16_t access, uint32_t flags);
+    lite3d_assimp_loader_ctx ctx,
+    uint16_t access, uint32_t flags);
 
 LITE3D_CEXPORT void lite3d_assimp_logging_init(void);
 LITE3D_CEXPORT void lite3d_assimp_logging_level(int8_t level);

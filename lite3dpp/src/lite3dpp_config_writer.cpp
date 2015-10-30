@@ -63,6 +63,24 @@ namespace lite3dpp
         mObject[name] = new JSONValue(value);
     }
 
+    void ConfigurationWriter::set(const WString &name, const String &value)
+    {
+        remove(name);
+
+        WString localWString(value.begin(), value.end());
+        mObject[name] = new JSONValue(localWString);
+    }
+
+    void ConfigurationWriter::set(const WString &name, const char *value)
+    {
+        set(name, String(value));
+    }
+
+    void ConfigurationWriter::set(const WString &name, const wchar_t *value)
+    {
+        set(name, WString(value));
+    }
+
     void ConfigurationWriter::set(const WString &name, const ConfigurationWriter &object)
     {
         remove(name);
@@ -194,11 +212,6 @@ namespace lite3dpp
         String result = JSON::wStringToString(value.Stringify(true));
         value.setValue();
         return result;
-    }
-
-    void ConfigurationWriter::write(const String &filename)
-    {
-        String result = write();
     }
 
     void ConfigurationWriter::clear()

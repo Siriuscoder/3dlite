@@ -1,7 +1,7 @@
 {
 	"Width": 512,
 	"Height": 512,
-	"BackgroundColor": { "x": 0.7, "y": 0.7, "z": 0.7, "w": 0 },
+	"BackgroundColor": [0.7, 0.7, 0.7, 0 ],
 	"Priority": 2,
 	
 	"ColorAttachments":

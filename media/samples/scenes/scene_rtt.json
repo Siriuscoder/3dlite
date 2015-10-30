@@ -4,8 +4,8 @@
 		{
 			"Name": "MyCamera",
 
-			"Position": { "x": 50, "y": 50, "z": 50 },
-			"LootAt": { "x": 0, "y": 0, "z": 0 },
+			"Position": [50,50,50],
+			"LootAt": [0,0,0],
 			"Perspective": 
 			{
 				"Znear": 1,
@@ -31,17 +31,17 @@
 			"Name": "Minigun",
 			"Object": "samples:objects/minigun.json",
 
-			"Position": { "x": 0, "y": 0, "z": 0 },
-			"Rotation": { "x": 0, "y": 0, "z": 0, "w": 1 },
-			"Scale": { "x": 0.4, "y": 0.4, "z": 0.4 }
+			"Position": [0,0,0],
+			"Rotation": [0,0,0,1],
+			"Scale": [0.4,0.4,0.4]
 		},
 		{
 			"Name": "Plasmagun",
 			"Object": "samples:objects/plasma.json",
 
-			"Position": { "x": 0, "y": 0, "z": 20 },
-			"Rotation": { "x": 0, "y": 0, "z": 0, "w": 1 },
-			"Scale": { "x": 1, "y": 1, "z": 1 }
+			"Position": [0,0,20],
+			"Rotation": [0,0,0,1],
+			"Scale": [1,1,1]
 		}
 	]
 }

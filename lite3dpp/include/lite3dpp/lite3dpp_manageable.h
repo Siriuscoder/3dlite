@@ -25,6 +25,7 @@
 #include <map>
 #include <set>
 #include <list>
+#include <stack>
 
 #include <lite3dpp/lite3dpp_common.h>
 
@@ -100,6 +101,8 @@ namespace lite3dpp
         typedef std::list<T, ManageableStlAllocator<T> > list;
         
         typedef std::set<T, std::less<T>, ManageableStlAllocator<T> > set;
+
+        typedef std::stack<T, ManageableStlAllocator<T> > stack;
     };
 
     typedef std::basic_string<char, std::char_traits<char>,
@@ -124,6 +127,8 @@ namespace lite3dpp
         typedef std::list<T> list;
         
         typedef std::set<T> set;
+
+        typedef std::stack<T> stack;
     };
     
     typedef std::string String;

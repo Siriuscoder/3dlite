@@ -54,6 +54,7 @@ namespace lite3dpp
         void rotate(const kmQuaternion &quat);
         void rotateAngle(const kmVec3 &axis, float angle);
         void scale(const kmVec3 &scale);
+        void setTransform(const kmMat4 &mat);
 
         void replaceMaterial(int chunkNo, Material *material);
 
