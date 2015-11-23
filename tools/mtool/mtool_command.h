@@ -33,6 +33,13 @@ protected:
 
     virtual void runImpl() = 0;
 
+    /* utils functions */
+    lite3dpp::String makeFullPath(const lite3dpp::String &outputFolder, const lite3dpp::String &relative);
+    lite3dpp::String makeRelativePath(const lite3dpp::String &inpath, 
+        const lite3dpp::String &name, const lite3dpp::String &ext);
+    void saveFile(const void *buffer, size_t size, const lite3dpp::String &path);
+    void makeFolders(const lite3dpp::String &outputFolder);
+
 private:
 
     virtual void init() override;
@@ -46,4 +53,5 @@ protected:
 
     lite3dpp::Main mMain;
     lite3dpp::String mInputFilePath;
+    int mNonameCounter;
 };

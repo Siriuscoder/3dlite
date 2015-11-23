@@ -790,9 +790,18 @@ lite3dpp::WString JSONValue::StringifyImpl(size_t const indentDepth) const
             {
                 ret_string += (*iter)->StringifyImpl(indentDepth1);
 
-                // Not at the end - add a separator
-                if (++iter != array_value.end())
-                    ret_string += L",\n" + indentStr1;
+                if ((*iter)->IsObject())
+                {
+                    // Not at the end - add a separator
+                    if (++iter != array_value.end())
+                        ret_string += L",\n" + indentStr1;
+                }
+                else
+                {
+                    // Not at the end - add a separator
+                    if (++iter != array_value.end())
+                        ret_string += L",";
+                }
             }
             ret_string += indentDepth ? L"\n" + indentStr + L"]" : L"]";
             break;

@@ -15,11 +15,25 @@
  *	You should have received a copy of the GNU General Public License
  *	along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
-#pragma once
+#define MAKE_PATH(folder, name) (folder + "/" + name).c_str()
 
+#ifdef PLATFORM_Windows
+#   include <Windows.h>
+#   define MKDIR(folder, name) \
+    if(CreateDirectory(MAKE_PATH(folder, name), NULL)) \
+        printf("Make directory %s\n", MAKE_PATH(folder, name));
+#elif PLATFORM_Linux
+#   include <sys/stat.h>
+#   define MKDIR(folder, name) \
+    if(mkdir(MAKE_PATH(folder, name), 755) == 0) \
+        printf("Make directory %s\n", MAKE_PATH(folder, name));
+#endif
+
+#include <SDL_rwops.h>
 #include <mtool_command.h>
 
-Command::Command()
+Command::Command() : 
+    mNonameCounter(0)
 {
     mMain.registerLifecycleListener(this);
 }
@@ -86,6 +100,67 @@ void Command::timerTick(lite3d_timer *timerid)
 
 void Command::processEvent(SDL_Event *e)
 {}
+
+void Command::saveFile(const void *buffer, size_t size, const lite3dpp::String &path)
+{
+    SDL_RWops *descr;
+    printf("Writing %s ... ", path.c_str());
+    fflush(stdout);
+
+    descr = SDL_RWFromFile(path.c_str(), "wb");
+    if (!descr)
+        throw std::runtime_error(lite3dpp::String("Unable to open file " + path));
+
+    if (SDL_RWwrite(descr, buffer, size, 1) != 1)
+    {
+        SDL_RWclose(descr);
+        throw std::runtime_error(lite3dpp::String("IO error.. ") + path);
+    }
+
+    SDL_RWclose(descr);
+
+    printf("done\n");
+    fflush(stdout);
+}
+
+lite3dpp::String Command::makeFullPath(const lite3dpp::String &outputFolder, const lite3dpp::String &relative)
+{
+    char path[1024] = {0};
+    sprintf(path, "%s%s%s", outputFolder.c_str(), outputFolder.size() == 0 ? "" : "/", relative.c_str());
+
+    return path;
+}
+
+lite3dpp::String Command::makeRelativePath(const lite3dpp::String &inpath, const lite3dpp::String &name,
+    const lite3dpp::String &ext)
+{
+    char path[1024] = {0};
+
+    if (name.size() == 0)
+        sprintf(path, "%snoname%d.%s", inpath.c_str(), ++mNonameCounter, ext.c_str());
+    else
+        sprintf(path, "%s%s.%s", inpath.c_str(), name.c_str(), ext.c_str());
+
+    return path;
+}
+
+void Command::makeFolders(const lite3dpp::String &outputFolder)
+{
+    MKDIR(outputFolder, "materials");
+    MKDIR(outputFolder, "models");
+    MKDIR(outputFolder, "models/json");
+    MKDIR(outputFolder, "models/meshes");
+    MKDIR(outputFolder, "objects");
+    MKDIR(outputFolder, "scenes");
+    MKDIR(outputFolder, "scripts");
+    MKDIR(outputFolder, "shaders");
+    MKDIR(outputFolder, "shaders/json");
+    MKDIR(outputFolder, "shaders/sources");
+    MKDIR(outputFolder, "targets");
+    MKDIR(outputFolder, "textures");
+    MKDIR(outputFolder, "textures/json");
+    MKDIR(outputFolder, "textures/images");
+}
 
 
 
