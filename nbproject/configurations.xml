@@ -127,7 +127,6 @@
           <in>lite3dpp_camera.cpp</in>
           <in>lite3dpp_config_reader.cpp</in>
           <in>lite3dpp_config_writer.cpp</in>
-          <in>lite3dpp_json_helper.cpp</in>
           <in>lite3dpp_main.cpp</in>
           <in>lite3dpp_manageable.cpp</in>
           <in>lite3dpp_material.cpp</in>
@@ -194,12 +193,6 @@
             <in>gtest-all.cc</in>
             <in>gtest_main.cc</in>
           </df>
-        </df>
-      </df>
-      <df name="tools">
-        <df name="mconverter">
-          <in>lite3d_mconverter.c</in>
-          <in>lite3d_mesh_info.c</in>
         </df>
       </df>
     </df>
@@ -460,18 +453,6 @@
             <pElem>build/tests</pElem>
           </incDir>
         </ccTool>
-      </folder>
-      <folder path="0/tools">
-        <cTool>
-          <incDir>
-            <pElem>tools/mconverter</pElem>
-            <pElem>/usr/include/SDL2</pElem>
-            <pElem>build/tools</pElem>
-          </incDir>
-          <preprocessorList>
-            <Elem>_REENTRANT</Elem>
-          </preprocessorList>
-        </cTool>
       </folder>
       <folder path="Modules">
         <cTool>
@@ -1268,21 +1249,6 @@
           </preprocessorList>
         </ccTool>
       </item>
-      <item path="lite3dpp/src/lite3dpp_json_helper.cpp"
-            ex="false"
-            tool="1"
-            flavor2="8">
-        <ccTool flags="1">
-          <incDir>
-            <pElem>/usr/include/SDL2</pElem>
-            <pElem>build/lite3dpp</pElem>
-          </incDir>
-          <preprocessorList>
-            <Elem>_REENTRANT</Elem>
-            <Elem>lite3dpp_EXPORTS</Elem>
-          </preprocessorList>
-        </ccTool>
-      </item>
       <item path="lite3dpp/src/lite3dpp_main.cpp" ex="false" tool="1" flavor2="8">
         <ccTool flags="1">
           <incDir>
@@ -1697,20 +1663,6 @@
       <item path="tests/gtest/src/gtest_main.cc" ex="false" tool="1" flavor2="8">
         <ccTool flags="0">
         </ccTool>
-      </item>
-      <item path="tools/mconverter/lite3d_mconverter.c"
-            ex="false"
-            tool="0"
-            flavor2="3">
-        <cTool flags="2">
-        </cTool>
-      </item>
-      <item path="tools/mconverter/lite3d_mesh_info.c"
-            ex="false"
-            tool="0"
-            flavor2="3">
-        <cTool flags="2">
-        </cTool>
       </item>
     </conf>
     <conf name="Release" type="0">
