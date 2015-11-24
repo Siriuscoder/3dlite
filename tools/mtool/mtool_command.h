@@ -26,12 +26,12 @@ public:
     Command();
     
     void run();
-
-    void setInputFilePath(const lite3dpp::String &filePath);
+    void parseCommandLine(int argc, char *args[]);
 
 protected:
 
     virtual void runImpl() = 0;
+    virtual void parseCommandLineImpl(int argc, char *args[]);
 
     /* utils functions */
     lite3dpp::String makeFullPath(const lite3dpp::String &outputFolder, const lite3dpp::String &relative);
@@ -52,6 +52,5 @@ private:
 protected:
 
     lite3dpp::Main mMain;
-    lite3dpp::String mInputFilePath;
     int mNonameCounter;
 };

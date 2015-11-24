@@ -28,5 +28,11 @@ public:
 protected:
 
     virtual void runImpl() override;
+    virtual void parseCommandLineImpl(int argc, char *args[]) override;
+
     void printInfo(const lite3d_file *file);
+
+private:
+
+    lite3dpp::String mInputFilePath;
 };

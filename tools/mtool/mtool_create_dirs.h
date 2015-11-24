@@ -15,4 +15,18 @@
  *	You should have received a copy of the GNU General Public License
  *	along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
-#include <mtool_generator.h>
+#pragma once
+
+#include <mtool_command.h>
+
+class CreateDirsCommand : public Command
+{
+protected:
+
+    virtual void runImpl() override;
+    virtual void parseCommandLineImpl(int argc, char *args[]) override;
+
+private:
+
+    lite3dpp::String mOutputFolder;
+};

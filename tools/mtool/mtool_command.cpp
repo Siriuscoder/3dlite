@@ -38,12 +38,6 @@ Command::Command() :
     mMain.registerLifecycleListener(this);
 }
 
-void Command::setInputFilePath(const lite3dpp::String &filePath)
-{
-    mInputFilePath.assign("filesystem:");
-    mInputFilePath.append(filePath);
-}
-    
 void Command::run()
 {
     lite3dpp::ConfigurationWriter writer;
@@ -72,8 +66,6 @@ void Command::run()
     writer.set(L"ResourceLocations", reslocationArr);
     writer.set(L"VideoSettings", video);
     writer.set(L"TextureSettings", texture);
-
-    lite3dpp::String code = writer.write();
 
     mMain.initFromConfigString(writer.write().c_str());
     writer.clear();
@@ -161,6 +153,15 @@ void Command::makeFolders(const lite3dpp::String &outputFolder)
     MKDIR(outputFolder, "textures/json");
     MKDIR(outputFolder, "textures/images");
 }
+
+void Command::parseCommandLine(int argc, char *args[])
+{
+    parseCommandLineImpl(argc, args);
+}
+
+void Command::parseCommandLineImpl(int argc, char *args[])
+{}
+    
 
 
 

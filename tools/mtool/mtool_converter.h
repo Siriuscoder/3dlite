@@ -26,20 +26,10 @@ public:
 
     ConverterCommand();
 
-    inline void setOutputFolder(const lite3dpp::String &path)
-    { mOutputFolder = path; }
-    inline void enableOptimize()
-    { mOptimizeMesh = true; }
-    inline void enableFlipUV()
-    { mFlipUV = true; }
-    inline void enableGenerateJson()
-    { mGenerateJson = true; }
-    inline void setObjectName(const lite3dpp::String &objName)
-    { mObjectName = objName; }
-
 protected:
 
     virtual void runImpl() override;
+    virtual void parseCommandLineImpl(int argc, char *args[]) override;
 
 private:
 
@@ -54,6 +44,7 @@ private:
 
 private:
 
+    lite3dpp::String mInputFilePath;
     lite3dpp::String mOutputFolder;
     lite3dpp::String mObjectName;
     bool mOptimizeMesh;

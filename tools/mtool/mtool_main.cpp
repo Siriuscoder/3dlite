@@ -21,13 +21,10 @@
 #include <lite3d/lite3d_main.h>
 #include <mtool_converter.h>
 #include <mtool_m_info.h>
+#include <mtool_create_dirs.h>
 
 static void print_help_and_exit()
 {
-    printf("Lite3d conversion utility.\n");
-    printf("Conversion from formats supported by Assimp to internal lite3d format (m).\n");
-    printf("Engine version %s\n\n", LITE3D_VERSION_STRING);
-
     printf("Usage: -p[view file] -i[input] file -o[output] folder -O[optimize mesh] -F[flip UVs]\n\n");
     exit(1);
 }
@@ -37,46 +34,21 @@ int main(int argc, char *args[])
     int i = 0;
     std::unique_ptr<Command> command;
 
+    printf("Lite3d conversion utility.\n");
+    printf("Conversion from formats supported by Assimp to internal lite3d format (m).\n");
+    printf("Engine version %s\n\n", LITE3D_VERSION_STRING);
+
     if (argc < 3)
         print_help_and_exit();
 
     for (i = 1; i < argc; ++i)
     {
         if (strcmp(args[i], "-p") == 0)
-        {
             command.reset(new MeshInfoCommand());
-            if ((i + 1) < argc)
-                command->setInputFilePath(args[i + 1]);
-            else
-                print_help_and_exit();
-        }
-        else if (strcmp(args[i], "-i") == 0)
-        {
+        else if (strcmp(args[i], "-c") == 0)
             command.reset(new ConverterCommand());
-            if ((i + 1) < argc)
-                command->setInputFilePath(args[i + 1]);
-            else
-                print_help_and_exit();
-        }
-        else if (strcmp(args[i], "-o") == 0)
-        {
-            if ((i + 1) < argc)
-                static_cast<ConverterCommand *>(command.get())->setOutputFolder(args[i + 1]);
-            else
-                print_help_and_exit();
-        }
-        else if (strcmp(args[i], "-O") == 0)
-        {
-            static_cast<ConverterCommand *>(command.get())->enableOptimize();
-        }
-        else if (strcmp(args[i], "-F") == 0)
-        {
-            static_cast<ConverterCommand *>(command.get())->enableFlipUV();
-        }
-        else if (strcmp(args[i], "-j") == 0)
-        {
-            static_cast<ConverterCommand *>(command.get())->enableGenerateJson();
-        }
+        else if (strcmp(args[i], "-d") == 0)
+            command.reset(new CreateDirsCommand());
     }
 
     if (!command)
@@ -84,12 +56,13 @@ int main(int argc, char *args[])
 
     try
     {
+        command->parseCommandLine(argc, args);
         command->run();
     }
     catch(std::exception &ex)
     {
-        std::cerr << ex.what() << std::endl;
-        return -1;
+        std::cerr << "Error: " << ex.what() << std::endl;
+        print_help_and_exit();
     }
 
     return 0;

@@ -51,8 +51,10 @@ void ConverterCommand::proxy_level_pop(void *userdata)
 }
 
 ConverterCommand::ConverterCommand() : 
+    mObjectName("noname.root"),
     mOptimizeMesh(false),
-    mFlipUV(false)
+    mFlipUV(false),
+    mGenerateJson(false)
 {}
 
 #ifdef INCLUDE_ASSIMP
@@ -84,6 +86,49 @@ void ConverterCommand::runImpl()
     throw std::runtime_error("If you want to use converter, please, recompile with Assimp support!");
 }
 #endif
+
+void ConverterCommand::parseCommandLineImpl(int argc, char *args[])
+{
+    for (int i = 1; i < argc; ++i)
+    {
+        if (strcmp(args[i], "-i") == 0)
+        {
+            if ((i + 1) < argc && args[i + 1][0] != '-')
+            {
+                mInputFilePath.assign("filesystem:");
+                mInputFilePath.append(args[i + 1]);
+            }
+            else
+                throw std::runtime_error("Missing input file");
+        }
+        else if (strcmp(args[i], "-o") == 0)
+        {
+            if ((i + 1) < argc && args[i + 1][0] != '-')
+                mOutputFolder.assign(args[i + 1]);
+            else
+                throw std::runtime_error("Missing output folder");
+        }
+        else if (strcmp(args[i], "-oname") == 0)
+        {
+            if ((i + 1) < argc && args[i + 1][0] != '-')
+                mObjectName.assign(args[i + 1]);
+            else
+                throw std::runtime_error("Missing object name");
+        }
+        else if (strcmp(args[i], "-O") == 0)
+        {
+            mOptimizeMesh = true;
+        }
+        else if (strcmp(args[i], "-F") == 0)
+        {
+            mFlipUV = true;
+        }
+        else if (strcmp(args[i], "-j") == 0)
+        {
+            mGenerateJson = true;
+        }
+    }
+}
 
 void ConverterCommand::convertMesh(lite3d_mesh *mesh, const lite3dpp::String &savePath)
 {

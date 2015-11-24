@@ -15,4 +15,23 @@
  *	You should have received a copy of the GNU General Public License
  *	along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
-#include <mtool_generator.h>
+#include <mtool_create_dirs.h>
+
+void CreateDirsCommand::runImpl()
+{
+    makeFolders(mOutputFolder);
+}
+
+void CreateDirsCommand::parseCommandLineImpl(int argc, char *args[])
+{
+    for (int i = 1; i < argc; ++i)
+    {
+        if (strcmp(args[i], "-o") == 0)
+        {
+            if ((i + 1) < argc && args[i + 1][0] != '-')
+                mOutputFolder.assign(args[i + 1]);
+            else
+                throw std::runtime_error("Missing output folder");
+        }
+    }
+}

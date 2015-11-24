@@ -31,6 +31,26 @@ void MeshInfoCommand::runImpl()
     printInfo(mMain.getResourceManager()->loadFileToMemory(mInputFilePath));
 }
 
+void MeshInfoCommand::parseCommandLineImpl(int argc, char *args[]) 
+{
+    for (int i = 1; i < argc; ++i)
+    {
+        if (strcmp(args[i], "-i") == 0)
+        {
+            if ((i + 1) < argc && args[i + 1][0] != '-')
+            {
+                mInputFilePath.assign("filesystem:");
+                mInputFilePath.append(args[i + 1]);
+            }
+            else
+                throw std::runtime_error("Missing input file");
+        }
+    }
+
+    if(mInputFilePath.size() == 0)
+        throw std::runtime_error("Missing input file");
+}
+
 void MeshInfoCommand::printInfo(const lite3d_file *meshFile)
 {
     lite3d_mesh mesh;
