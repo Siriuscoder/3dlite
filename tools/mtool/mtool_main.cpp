@@ -25,7 +25,10 @@
 
 static void print_help_and_exit()
 {
-    printf("Usage: -p[view file] -i[input] file -o[output] folder -O[optimize mesh] -F[flip UVs]\n\n");
+    printf("Usage: \n");
+    printf("View m file content:  \n\t-p -i[input file] \n");
+    printf("Convert file:  \n\t-c -i[input file] -o[output folder] -O[optimize mesh] -F[flip UVs] -j[generate json]\n");
+    printf("Create directories:  \n\t-d -o[output folder]\n\n");
     exit(1);
 }
 
@@ -56,8 +59,7 @@ int main(int argc, char *args[])
 
     try
     {
-        command->parseCommandLine(argc, args);
-        command->run();
+        command->run(argc, args);
     }
     catch(std::exception &ex)
     {

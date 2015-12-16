@@ -22,17 +22,17 @@
 #include <lite3d/lite3d_mesh_assimp_loader.h>
 
 #include <mtool_converter.h>
+#include <mtool_utils.h>
 
-void ConverterCommand::proxy_mesh_loaded(lite3d_mesh *mesh, const kmMat4 *transform, const char *name, void *userdata)
+void ConverterCommand::entry_mesh_loaded(lite3d_mesh *mesh, const kmMat4 *transform, const char *name, void *userdata)
 {
     SDL_assert(userdata);
     static_cast<ConverterCommand *>(userdata)->processMesh(mesh, transform, name);
 }
 
-lite3d_mesh *ConverterCommand::proxy_mesh_init(void *userdata)
+lite3d_mesh *ConverterCommand::entry_mesh_init(void *userdata)
 {
     SDL_assert(userdata);
-
     lite3d_mesh *mesh = &static_cast<ConverterCommand *>(userdata)->mMesh;
     if (!lite3d_mesh_init(mesh))
         return NULL;
@@ -40,18 +40,21 @@ lite3d_mesh *ConverterCommand::proxy_mesh_init(void *userdata)
     return mesh;
 }
 
-void ConverterCommand::proxy_level_push(void *userdata)
+void ConverterCommand::entry_level_push(void *userdata)
 {
-    static_cast<ConverterCommand *>(userdata)->nodeLevelPush();
+    SDL_assert(userdata);
+    static_cast<ConverterCommand *>(userdata)->mGenerator->pushNodeTree();
 }
 
-void ConverterCommand::proxy_level_pop(void *userdata)
+void ConverterCommand::entry_level_pop(void *userdata)
 {
-    static_cast<ConverterCommand *>(userdata)->nodeLevelPop();
+    SDL_assert(userdata);
+    ConverterCommand *command = static_cast<ConverterCommand *>(userdata);
+    command->mGenerator->popNodeTree();
 }
 
 ConverterCommand::ConverterCommand() : 
-    mObjectName("noname.root"),
+    mObjectName("noname"),
     mOptimizeMesh(false),
     mFlipUV(false),
     mGenerateJson(false)
@@ -69,11 +72,16 @@ void ConverterCommand::runImpl()
         loadFlags |= LITE3D_FLIP_UV_FLAG;
 
     lite3d_assimp_loader_ctx ctx;
-    ctx.onNewMesh = proxy_mesh_init;
-    ctx.onLoaded = proxy_mesh_loaded;
-    ctx.onLevelPush = mGenerateJson ? proxy_level_push : NULL;
-    ctx.onLevelPop = mGenerateJson ? proxy_level_pop : NULL;
+    ctx.onNewMesh = entry_mesh_init;
+    ctx.onLoaded = entry_mesh_loaded;
+    ctx.onLevelPush = entry_level_push;
+    ctx.onLevelPop = entry_level_pop;
     ctx.userdata = this;
+
+    if(mGenerateJson)
+        mGenerator.reset(new JsonGenerator(mOutputFolder, mObjectName));
+    else 
+        mGenerator.reset(new NullGenerator());
 
     if(!lite3d_assimp_mesh_load_recursive(
         mMain.getResourceManager()->loadFileToMemory(mInputFilePath), ctx,
@@ -144,7 +152,7 @@ void ConverterCommand::convertMesh(lite3d_mesh *mesh, const lite3dpp::String &sa
     }
     else
     {
-        saveFile(encodeBuffer, encodeBufferSize, savePath);
+        Utils::saveFile(encodeBuffer, encodeBufferSize, savePath);
     }
 
     lite3d_free(encodeBuffer);
@@ -153,68 +161,11 @@ void ConverterCommand::convertMesh(lite3d_mesh *mesh, const lite3dpp::String &sa
 
 void ConverterCommand::processMesh(lite3d_mesh *mesh, const kmMat4 *transform, const lite3dpp::String &name)
 {
-    lite3dpp::String relativeMeshPath = makeRelativePath("models/meshes/", name, "m");
-    lite3dpp::String fullMeshPath = makeFullPath(mOutputFolder, relativeMeshPath);
-    lite3dpp::String relativeJsonPath = makeRelativePath("models/json/", name, "json");
-    lite3dpp::String fullJsonPath = makeFullPath(mOutputFolder, relativeJsonPath);
+    lite3dpp::String relativeMeshPath = Utils::makeRelativePath("models/meshes/", name, "m");
+    lite3dpp::String fullMeshPath = Utils::makeFullPath(mOutputFolder, relativeMeshPath);
+    lite3dpp::String relativeJsonPath = Utils::makeRelativePath("models/json/", name, "json");
+    lite3dpp::String fullJsonPath = Utils::makeFullPath(mOutputFolder, relativeJsonPath);
     
     convertMesh(mesh, fullMeshPath);
-
-    if(mGenerateJson)
-    {
-        /* configure node */
-        lite3dpp::ConfigurationWriter nodeWriter;
-        nodeWriter.set(L"Name", name + ".node");
-
-        if(mesh)
-        {
-            /* configure mesh ison */
-            lite3dpp::ConfigurationWriter writer;
-            writer.set(L"Codec", "m");
-            writer.set(L"Model", relativeMeshPath);
-
-            lite3dpp::ConfigurationWriter nodeMeshWriter;
-            nodeMeshWriter.set(L"Name", name + ".mesh");
-            nodeMeshWriter.set(L"Mesh", relativeJsonPath);
-            nodeWriter.set(L"Mesh", nodeMeshWriter);
-
-            lite3dpp::String jsonData = writer.write();
-            saveFile(jsonData.data(), jsonData.size(), fullJsonPath);
-            writer.clear();
-        }
-
-        nodeWriter.set(L"Transform", *transform);
-        mNodesLevels.top().push_back(nodeWriter);
-    }
-}
-
-void ConverterCommand::nodeLevelPush()
-{
-    mNodesLevels.push(lite3dpp::stl<lite3dpp::ConfigurationWriter>::vector());
-}
-
-void ConverterCommand::nodeLevelPop()
-{
-    lite3dpp::stl<lite3dpp::ConfigurationWriter>::vector nodes = mNodesLevels.top();
-    mNodesLevels.pop();
-
-    if(mNodesLevels.size() > 0)
-    {
-        if(nodes.size() > 0)
-            mNodesLevels.top().back().set(L"Nodes", nodes);
-        return;
-    }
-
-    /* mean all nodes imported.. save hole tree as one object */
-    lite3dpp::ConfigurationWriter rootObject;
-    rootObject.set(L"Name", mObjectName.size() > 0 ? mObjectName : "noname.root");
-    rootObject.set(L"Nodes", nodes);
-
-    lite3dpp::ConfigurationWriter finalWriter;
-    finalWriter.set(L"Root", rootObject);
-
-    lite3dpp::String jsonData = finalWriter.write();
-    saveFile(jsonData.data(), jsonData.size(), 
-        makeFullPath(mOutputFolder, makeRelativePath("objects/", mObjectName, "json")));
-    finalWriter.clear();
+    mGenerator->generateNode(name, transform, mesh != NULL);
 }

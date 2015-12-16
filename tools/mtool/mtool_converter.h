@@ -18,7 +18,7 @@
 #pragma once
 
 #include <mtool_command.h>
-#include <lite3dpp/lite3dpp_config_writer.h>
+#include <mtool_generator.h>
 
 class ConverterCommand : public Command
 {
@@ -33,12 +33,11 @@ protected:
 
 private:
 
-    static void proxy_mesh_loaded(lite3d_mesh *mesh, const kmMat4 *transform, const char *name, void *userdata);
-    static lite3d_mesh *proxy_mesh_init(void *userdata);
-    static void proxy_level_push(void *userdata);
-    static void proxy_level_pop(void *userdata);
-    void nodeLevelPush();
-    void nodeLevelPop();
+    static void entry_mesh_loaded(lite3d_mesh *mesh, const kmMat4 *transform, const char *name, void *userdata);
+    static lite3d_mesh *entry_mesh_init(void *userdata);
+    static void entry_level_push(void *userdata);
+    static void entry_level_pop(void *userdata);
+
     void processMesh(lite3d_mesh *mesh, const kmMat4 *transform, const lite3dpp::String &name);
     void convertMesh(lite3d_mesh *mesh, const lite3dpp::String &savePath);
 
@@ -51,5 +50,5 @@ private:
     bool mFlipUV;
     bool mGenerateJson;
     lite3d_mesh mMesh;
-    lite3dpp::stl<lite3dpp::stl<lite3dpp::ConfigurationWriter>::vector>::stack mNodesLevels;
+    std::unique_ptr<Generator> mGenerator;
 };

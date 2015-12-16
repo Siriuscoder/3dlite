@@ -19,32 +19,17 @@
 
 #include <lite3dpp/lite3dpp_main.h>
 
-class Command : private lite3dpp::Main::LifecycleListener
+class Utils
 {
 public:
 
-    Command();
-    
-    void run(int argc, char *args[]);
-
-protected:
-
-    virtual void runImpl() = 0;
-    virtual void parseCommandLineImpl(int argc, char *args[]);
-
-    void makeFolders(const lite3dpp::String &outputFolder);
+    /* utils functions */
+    static lite3dpp::String makeFullPath(const lite3dpp::String &outputFolder, const lite3dpp::String &relative);
+    static lite3dpp::String makeRelativePath(const lite3dpp::String &inpath, 
+        const lite3dpp::String &name, const lite3dpp::String &ext);
+    static void saveFile(const void *buffer, size_t size, const lite3dpp::String &path);
+    static void makeFolder(const lite3dpp::String &outputFolder, const lite3dpp::String &name);
 
 private:
-
-    virtual void init() override;
-    virtual void shut() override;
-    virtual void frameBegin() override;
-    virtual void frameEnd() override;
-    virtual void timerTick(lite3d_timer *timerid) override;
-    virtual void processEvent(SDL_Event *e) override;
-
-protected:
-
-    lite3dpp::Main mMain;
-    int mNonameCounter;
+    static int mNonameCounter;
 };
