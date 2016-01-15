@@ -32,6 +32,17 @@ public:
     virtual void pushNodeTree() = 0;
     /* go to parent node */
     virtual void popNodeTree() = 0;
+    /* genegate material and textures */
+    virtual void generateMaterial(const lite3dpp::String &matName, 
+        const kmVec4 *ambient,
+        const kmVec4 *diffuse,
+        const kmVec4 *specular,
+        const kmVec4 *emissive,
+        const kmVec4 *reflective,
+        const kmVec4 *transparent,
+        const lite3dpp::String &diffuseTextureFile,
+        const lite3dpp::String &normalTextureFile,
+        const lite3dpp::String &reflectionTextureFile) = 0;
 
 protected:
 
@@ -51,6 +62,17 @@ public:
     virtual void pushNodeTree() override;
     /* go to parent node */
     virtual void popNodeTree() override;
+    /* genegate material and textures */
+    virtual void generateMaterial(const lite3dpp::String &matName, 
+        const kmVec4 *ambient,
+        const kmVec4 *diffuse,
+        const kmVec4 *specular,
+        const kmVec4 *emissive,
+        const kmVec4 *reflective,
+        const kmVec4 *transparent,
+        const lite3dpp::String &diffuseTextureFile,
+        const lite3dpp::String &normalTextureFile,
+        const lite3dpp::String &reflectionTextureFile) override;
 };
 
 class JsonGenerator : public Generator
@@ -66,6 +88,17 @@ public:
     virtual void pushNodeTree() override;
     /* go to parent node */
     virtual void popNodeTree() override;
+    /* genegate material and textures */
+    virtual void generateMaterial(const lite3dpp::String &matName, 
+        const kmVec4 *ambient,
+        const kmVec4 *diffuse,
+        const kmVec4 *specular,
+        const kmVec4 *emissive,
+        const kmVec4 *reflective,
+        const kmVec4 *transparent,
+        const lite3dpp::String &diffuseTextureFile,
+        const lite3dpp::String &normalTextureFile,
+        const lite3dpp::String &reflectionTextureFile) override;
 
 private:
 

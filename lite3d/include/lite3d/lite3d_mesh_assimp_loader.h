@@ -24,6 +24,7 @@
 #include <lite3d/lite3d_mesh.h>
 #include <lite3d/lite3d_pack.h>
 #include <lite3d/kazmath/mat4.h>
+#include <lite3d/kazmath/vec4.h>
 
 #define LITE3D_OPTIMIZE_MESH_FLAG             0x1
 #define LITE3D_FLIP_UV_FLAG                   0x2
@@ -31,8 +32,21 @@
 
 typedef struct lite3d_assimp_loader_ctx
 {
-    lite3d_mesh *(*onNewMesh)(void *userdata);
-    void (*onLoaded)(lite3d_mesh *, const kmMat4 *transform, const char *name, void *userdata);
+    lite3d_mesh *(*onAllocMesh)(void *userdata);
+    void (*onMesh)(lite3d_mesh *, const kmMat4 *transform, const char *name, void *userdata);
+    void (*onMaterial)(const char *matName, 
+        uint32_t matIndex,
+        const kmVec4 *ambient,
+        const kmVec4 *diffuse,
+        const kmVec4 *specular,
+        const kmVec4 *emissive,
+        const kmVec4 *reflective,
+        const kmVec4 *transparent,
+        const char *diffuseTextureFile,
+        const char *normalTextureFile,
+        const char *reflectionTextureFile,
+        void *userdata);
+
     void (*onLevelPush)(void *userdata);
     void (*onLevelPop)(void *userdata);
     void *userdata;

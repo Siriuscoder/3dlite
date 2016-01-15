@@ -44,7 +44,7 @@ namespace lite3dpp
         catch(std::exception &ex)
         {
             unloadShaders(shaders);
-            throw ex;
+            throw;
         }
 
         try
@@ -65,7 +65,7 @@ namespace lite3dpp
         {
             unloadShaders(shaders);
             unloadImpl();
-            throw ex;
+            throw;
         }
 
         unloadShaders(shaders);
