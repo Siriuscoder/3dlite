@@ -24,13 +24,13 @@
 #include <mtool_converter.h>
 #include <mtool_utils.h>
 
-void ConverterCommand::entry_mesh_loaded(lite3d_mesh *mesh, const kmMat4 *transform, const char *name, void *userdata)
+void ConverterCommand::entry_on_mesh(lite3d_mesh *mesh, const kmMat4 *transform, const char *name, void *userdata)
 {
     SDL_assert(userdata);
     static_cast<ConverterCommand *>(userdata)->processMesh(mesh, transform, name);
 }
 
-lite3d_mesh *ConverterCommand::entry_mesh_init(void *userdata)
+lite3d_mesh *ConverterCommand::entry_alloc_mesh(void *userdata)
 {
     SDL_assert(userdata);
     lite3d_mesh *mesh = &static_cast<ConverterCommand *>(userdata)->mMesh;
@@ -53,6 +53,26 @@ void ConverterCommand::entry_level_pop(void *userdata)
     command->mGenerator->popNodeTree();
 }
 
+void ConverterCommand::entry_on_material(const char *matName, 
+        uint32_t matIndex,
+        const kmVec4 *ambient,
+        const kmVec4 *diffuse,
+        const kmVec4 *specular,
+        const kmVec4 *emissive,
+        const kmVec4 *reflective,
+        const kmVec4 *transparent,
+        const char *diffuseTextureFile,
+        const char *normalTextureFile,
+        const char *reflectionTextureFile,
+        void *userdata)
+{
+    SDL_assert(userdata);
+    ConverterCommand *command = static_cast<ConverterCommand *>(userdata);
+    command->mGenerator->generateMaterial(matName, ambient, diffuse, specular,
+        emissive, reflective, transparent, diffuseTextureFile, normalTextureFile,
+        reflectionTextureFile);
+}
+
 ConverterCommand::ConverterCommand() : 
     mObjectName("noname"),
     mOptimizeMesh(false),
@@ -72,10 +92,11 @@ void ConverterCommand::runImpl()
         loadFlags |= LITE3D_FLIP_UV_FLAG;
 
     lite3d_assimp_loader_ctx ctx;
-    ctx.onNewMesh = entry_mesh_init;
-    ctx.onLoaded = entry_mesh_loaded;
+    ctx.onAllocMesh = entry_alloc_mesh;
+    ctx.onMesh = entry_on_mesh;
     ctx.onLevelPush = entry_level_push;
     ctx.onLevelPop = entry_level_pop;
+    ctx.onMaterial = entry_on_material;
     ctx.userdata = this;
 
     if(mGenerateJson)

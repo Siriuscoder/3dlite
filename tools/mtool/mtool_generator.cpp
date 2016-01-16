@@ -38,6 +38,18 @@ void NullGenerator::pushNodeTree()
 void NullGenerator::popNodeTree()
 {}
 
+void NullGenerator::generateMaterial(const lite3dpp::String &matName, 
+    const kmVec4 *ambient,
+    const kmVec4 *diffuse,
+    const kmVec4 *specular,
+    const kmVec4 *emissive,
+    const kmVec4 *reflective,
+    const kmVec4 *transparent,
+    const lite3dpp::String &diffuseTextureFile,
+    const lite3dpp::String &normalTextureFile,
+    const lite3dpp::String &reflectionTextureFile)
+{}
+
 JsonGenerator::JsonGenerator(const lite3dpp::String &outputFolder,
     const lite3dpp::String &objectName) : 
     Generator(outputFolder, objectName)
@@ -107,4 +119,18 @@ void JsonGenerator::popNodeTree()
             objectConfig.clear();
         }
     }
+}
+
+void JsonGenerator::generateMaterial(const lite3dpp::String &matName, 
+    const kmVec4 *ambient,
+    const kmVec4 *diffuse,
+    const kmVec4 *specular,
+    const kmVec4 *emissive,
+    const kmVec4 *reflective,
+    const kmVec4 *transparent,
+    const lite3dpp::String &diffuseTextureFile,
+    const lite3dpp::String &normalTextureFile,
+    const lite3dpp::String &reflectionTextureFile)
+{
+
 }

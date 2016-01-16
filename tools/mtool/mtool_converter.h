@@ -33,10 +33,22 @@ protected:
 
 private:
 
-    static void entry_mesh_loaded(lite3d_mesh *mesh, const kmMat4 *transform, const char *name, void *userdata);
-    static lite3d_mesh *entry_mesh_init(void *userdata);
+    static void entry_on_mesh(lite3d_mesh *mesh, const kmMat4 *transform, const char *name, void *userdata);
+    static lite3d_mesh *entry_alloc_mesh(void *userdata);
     static void entry_level_push(void *userdata);
     static void entry_level_pop(void *userdata);
+    static void entry_on_material(const char *matName, 
+        uint32_t matIndex,
+        const kmVec4 *ambient,
+        const kmVec4 *diffuse,
+        const kmVec4 *specular,
+        const kmVec4 *emissive,
+        const kmVec4 *reflective,
+        const kmVec4 *transparent,
+        const char *diffuseTextureFile,
+        const char *normalTextureFile,
+        const char *reflectionTextureFile,
+        void *userdata);
 
     void processMesh(lite3d_mesh *mesh, const kmMat4 *transform, const lite3dpp::String &name);
     void convertMesh(lite3d_mesh *mesh, const lite3dpp::String &savePath);

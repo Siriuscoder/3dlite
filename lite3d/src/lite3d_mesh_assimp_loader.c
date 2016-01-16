@@ -229,7 +229,7 @@ static int ai_node_load_recursive(const struct aiScene *scene,
 
     if (node->mNumMeshes > 0)
     {
-        if(ctx.onNewMesh && ((mesh = ctx.onNewMesh(ctx.userdata)) == NULL))
+        if(ctx.onAllocMesh && ((mesh = ctx.onAllocMesh(ctx.userdata)) == NULL))
             return LITE3D_FALSE;
 
         if(!ai_node_load_to_vbo(mesh, scene, node, access))
@@ -242,8 +242,8 @@ static int ai_node_load_recursive(const struct aiScene *scene,
 
     kmMat4Fill(&transform, &node->mTransformation.a1);
 
-    if(ctx.onLoaded)
-        ctx.onLoaded(mesh, &transform, node->mName.data, ctx.userdata);
+    if(ctx.onMesh)
+        ctx.onMesh(mesh, &transform, node->mName.data, ctx.userdata);
 
     if (ctx.onLevelPush)
         ctx.onLevelPush(ctx.userdata);
@@ -256,6 +256,41 @@ static int ai_node_load_recursive(const struct aiScene *scene,
 
     if (ctx.onLevelPop)
         ctx.onLevelPop(ctx.userdata);
+
+    return LITE3D_TRUE;
+}
+
+static int ai_load_materials(const struct aiScene *scene, lite3d_assimp_loader_ctx ctx)
+{
+    uint32_t mati, propi;
+    for (mati = 0; mati < scene->mNumMaterials; ++mati)
+    {
+        struct aiString matName;
+        struct aiString diffuseTextureFile;
+        struct aiString normalTextureFile;
+        struct aiString reflectionTextureFile;
+        kmVec4 ambient;
+        kmVec4 diffuse;
+        kmVec4 specular;
+        kmVec4 emissive;
+        kmVec4 reflective;
+        kmVec4 transparent;
+
+        aiGetMaterialString(scene->mMaterials[mati], AI_MATKEY_NAME, &matName);
+        
+        if (ctx.onMaterial)
+            ctx.onMaterial(matName.data, mati, 
+            aiGetMaterialColor(scene->mMaterials[mati], AI_MATKEY_COLOR_AMBIENT, (struct aiColor4D *)&ambient) ? &ambient : NULL,
+            aiGetMaterialColor(scene->mMaterials[mati], AI_MATKEY_COLOR_DIFFUSE, (struct aiColor4D *)&diffuse) ? &diffuse : NULL,
+            aiGetMaterialColor(scene->mMaterials[mati], AI_MATKEY_COLOR_SPECULAR, (struct aiColor4D *)&specular) ? &specular : NULL,
+            aiGetMaterialColor(scene->mMaterials[mati], AI_MATKEY_COLOR_EMISSIVE, (struct aiColor4D *)&emissive) ? &emissive : NULL,
+            aiGetMaterialColor(scene->mMaterials[mati], AI_MATKEY_COLOR_REFLECTIVE, (struct aiColor4D *)&reflective) ? &reflective : NULL,
+            aiGetMaterialColor(scene->mMaterials[mati], AI_MATKEY_COLOR_TRANSPARENT, (struct aiColor4D *)&transparent) ? &transparent : NULL,
+            aiGetMaterialTexture(scene->mMaterials[mati], aiTextureType_DIFFUSE, 0, &diffuseTextureFile, NULL, NULL, NULL, NULL, NULL, NULL) ? diffuseTextureFile.data : NULL,
+            aiGetMaterialTexture(scene->mMaterials[mati], aiTextureType_NORMALS, 0, &normalTextureFile, NULL, NULL, NULL, NULL, NULL, NULL) ? normalTextureFile.data : NULL,
+            aiGetMaterialTexture(scene->mMaterials[mati], aiTextureType_REFLECTION, 0, &reflectionTextureFile, NULL, NULL, NULL, NULL, NULL, NULL) ? reflectionTextureFile.data : NULL,
+            ctx.userdata);
+    }
 
     return LITE3D_TRUE;
 }
@@ -391,6 +426,9 @@ int lite3d_assimp_mesh_load_recursive(const lite3d_file *resource,
 
     if (ctx.onLevelPush)
         ctx.onLevelPush(ctx.userdata);
+
+    if(!ai_load_materials(scene, ctx))
+        return LITE3D_FALSE;
 
     if(!ai_node_load_recursive(scene, scene->mRootNode, ctx, access))
         return LITE3D_FALSE;

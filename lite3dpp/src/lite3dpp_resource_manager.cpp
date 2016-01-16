@@ -79,7 +79,7 @@ namespace lite3dpp
         {
             /* to prevent reource leak */
             resource->unload();
-            throw ex;
+            throw;
         }
 
         /* just insert resource */
