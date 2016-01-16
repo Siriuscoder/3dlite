@@ -1,0 +1,16 @@
+#!/bin/sh
+
+echo "Updating $1"
+
+git pull origin $1
+
+if [ $? -eq 0 ]; then
+        find . -type f -name *.cpp -exec chmod 664 {} \;
+        find . -type f -name *.h -exec chmod 664 {} \;
+        find . -type f -name *.c -exec chmod 664 {} \;
+        find . -type f -name *.txt -exec chmod 664 {} \;
+        find media/ -type f -exec chmod 664 {} \;
+
+        git status
+fi
+
