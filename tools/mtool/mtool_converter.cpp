@@ -68,7 +68,7 @@ void ConverterCommand::entry_on_material(const char *matName,
 {
     SDL_assert(userdata);
     ConverterCommand *command = static_cast<ConverterCommand *>(userdata);
-    command->mGenerator->generateMaterial(matName, ambient, diffuse, specular,
+    command->mGenerator->generateMaterial(matName, matIndex, ambient, diffuse, specular,
         emissive, reflective, transparent, diffuseTextureFile, normalTextureFile,
         reflectionTextureFile);
 }
@@ -100,7 +100,7 @@ void ConverterCommand::runImpl()
     ctx.userdata = this;
 
     if(mGenerateJson)
-        mGenerator.reset(new JsonGenerator(mOutputFolder, mObjectName));
+        mGenerator.reset(new JsonGenerator(mOutputFolder, mObjectName, mPackageName));
     else 
         mGenerator.reset(new NullGenerator());
 
@@ -156,6 +156,13 @@ void ConverterCommand::parseCommandLineImpl(int argc, char *args[])
         {
             mGenerateJson = true;
         }
+        else if (strcmp(args[i], "-packname") == 0)
+        {
+            if ((i + 1) < argc && args[i + 1][0] != '-')
+                mPackageName.assign(args[i + 1]);
+            else
+                throw std::runtime_error("Missing package name");
+        }
     }
 }
 
@@ -187,6 +194,6 @@ void ConverterCommand::processMesh(lite3d_mesh *mesh, const kmMat4 *transform, c
     lite3dpp::String relativeJsonPath = Utils::makeRelativePath("models/json/", name, "json");
     lite3dpp::String fullJsonPath = Utils::makeFullPath(mOutputFolder, relativeJsonPath);
     
+    mGenerator->generateNode(mesh, name, transform, mesh != NULL);
     convertMesh(mesh, fullMeshPath);
-    mGenerator->generateNode(name, transform, mesh != NULL);
 }

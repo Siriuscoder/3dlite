@@ -29,7 +29,8 @@
 namespace lite3dpp
 {
     ResourceManager::ResourceManager(Main *main) : 
-        mMain(main)
+        mMain(main),
+        mLastUsed(NULL)
     {
 
     }
@@ -75,7 +76,7 @@ namespace lite3dpp
         {
             resource->load(buffer, size);
         }
-        catch(std::exception &ex)
+        catch(std::exception &)
         {
             /* to prevent reource leak */
             resource->unload();
@@ -181,17 +182,25 @@ namespace lite3dpp
     const lite3d_file *ResourceManager::loadFileToMemory(const String &path)
     {
         Stringstream pathStream(path);
-        String packName, filePath;
-        std::getline(pathStream, packName, ':');
+        String packageName, filePath;
+        std::getline(pathStream, packageName, ':');
         std::getline(pathStream, filePath);
         /* lookup resource package */
         Packs::iterator packIt;
-        if((packIt = mPacks.find(packName)) == mPacks.end())
-            throw std::runtime_error(String("Package not found: ") + packName + ", \"" + path + "\"");
+
+        if(filePath.empty())
+            filePath.swap(packageName);
+        else if((packIt = mPacks.find(packageName)) != mPacks.end())
+            mLastUsed = packIt->second;
+        else
+            throw std::runtime_error(String("Package not found: ") + packageName + ", \"" + path + "\"");
+
+        if(!mLastUsed)
+            throw std::runtime_error(String("Package not specified: \"") + path + "\"");
 
         /* load resource file to memory */
         lite3d_file *resourceFile =
-            lite3d_pack_file_load(packIt->second, filePath.c_str());
+            lite3d_pack_file_load(mLastUsed, filePath.c_str());
         if(!resourceFile || !resourceFile->isLoaded)
             throw std::runtime_error(String("File open error...") + "\"" + path + "\"");
 

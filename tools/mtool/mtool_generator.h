@@ -17,6 +17,7 @@
  *******************************************************************************/
 #pragma once
 
+#include <mtool_command.h>
 #include <lite3dpp/lite3dpp_config_writer.h>
 
 class Generator
@@ -24,9 +25,10 @@ class Generator
 public:
 
     Generator(const lite3dpp::String &outputFolder,
-        const lite3dpp::String &objectName);
+        const lite3dpp::String &objectName,
+        const lite3dpp::String &packageName);
 
-    virtual void generateNode(const lite3dpp::String &name, const kmMat4 *transform,
+    virtual void generateNode(const lite3d_mesh *mesh, const lite3dpp::String &name, const kmMat4 *transform,
         bool meshExist) = 0;
     /* make child node and go to it */
     virtual void pushNodeTree() = 0;
@@ -34,20 +36,22 @@ public:
     virtual void popNodeTree() = 0;
     /* genegate material and textures */
     virtual void generateMaterial(const lite3dpp::String &matName, 
+        uint32_t matIdx,
         const kmVec4 *ambient,
         const kmVec4 *diffuse,
         const kmVec4 *specular,
         const kmVec4 *emissive,
         const kmVec4 *reflective,
         const kmVec4 *transparent,
-        const lite3dpp::String &diffuseTextureFile,
-        const lite3dpp::String &normalTextureFile,
-        const lite3dpp::String &reflectionTextureFile) = 0;
+        const char *diffuseTextureFile,
+        const char *normalTextureFile,
+        const char *reflectionTextureFile) = 0;
 
 protected:
 
     lite3dpp::String mOutputFolder;
     lite3dpp::String mObjectName;
+    lite3dpp::String mPackageName;
 };
 
 class NullGenerator : public Generator
@@ -56,7 +60,7 @@ public:
 
     NullGenerator();
 
-    virtual void generateNode(const lite3dpp::String &name, const kmMat4 *transform,
+    virtual void generateNode(const lite3d_mesh *mesh, const lite3dpp::String &name, const kmMat4 *transform,
         bool meshExist) override;
     /* make child node and go to it */
     virtual void pushNodeTree() override;
@@ -64,15 +68,16 @@ public:
     virtual void popNodeTree() override;
     /* genegate material and textures */
     virtual void generateMaterial(const lite3dpp::String &matName, 
+        uint32_t matIdx,
         const kmVec4 *ambient,
         const kmVec4 *diffuse,
         const kmVec4 *specular,
         const kmVec4 *emissive,
         const kmVec4 *reflective,
         const kmVec4 *transparent,
-        const lite3dpp::String &diffuseTextureFile,
-        const lite3dpp::String &normalTextureFile,
-        const lite3dpp::String &reflectionTextureFile) override;
+        const char *diffuseTextureFile,
+        const char *normalTextureFile,
+        const char *reflectionTextureFile) override;
 };
 
 class JsonGenerator : public Generator
@@ -80,9 +85,10 @@ class JsonGenerator : public Generator
 public:
 
     JsonGenerator(const lite3dpp::String &outputFolder,
-        const lite3dpp::String &objectName);
+        const lite3dpp::String &objectName,
+        const lite3dpp::String &packageName);
 
-    virtual void generateNode(const lite3dpp::String &name, const kmMat4 *transform,
+    virtual void generateNode(const lite3d_mesh *mesh, const lite3dpp::String &name, const kmMat4 *transform,
         bool meshExist) override;
     /* make child node and go to it */
     virtual void pushNodeTree() override;
@@ -90,17 +96,22 @@ public:
     virtual void popNodeTree() override;
     /* genegate material and textures */
     virtual void generateMaterial(const lite3dpp::String &matName, 
+        uint32_t matIdx,
         const kmVec4 *ambient,
         const kmVec4 *diffuse,
         const kmVec4 *specular,
         const kmVec4 *emissive,
         const kmVec4 *reflective,
         const kmVec4 *transparent,
-        const lite3dpp::String &diffuseTextureFile,
-        const lite3dpp::String &normalTextureFile,
-        const lite3dpp::String &reflectionTextureFile) override;
+        const char *diffuseTextureFile,
+        const char *normalTextureFile,
+        const char *reflectionTextureFile) override;
 
 private:
 
+    void generateUniformSampler(lite3dpp::stl<lite3dpp::ConfigurationWriter>::vector &uniforms, const char *fileName);
+    void generateUniformVec4(lite3dpp::stl<lite3dpp::ConfigurationWriter>::vector &uniforms, const lite3dpp::String &paramName, const kmVec4 *val);
+
     lite3dpp::stl<lite3dpp::stl<lite3dpp::ConfigurationWriter>::vector>::stack mNodesStack;
+    lite3dpp::stl<uint32_t, lite3dpp::String>::map mMaterials;
 };

@@ -150,43 +150,30 @@ namespace lite3dpp
     void ConfigurationWriter::set(const WString &name, const kmVec2 &value)
     {
         remove(name);
-        ConfigurationWriter writer;
-        writer.set(L"x", value.x);
-        writer.set(L"y", value.y);
-        set(name, writer);
+        stl<double>::vector vec(&value.x, &value.x+2);
+        set(name, vec);
     }
     
     void ConfigurationWriter::set(const WString &name, const kmVec3 &value)
     {
         remove(name);
-        ConfigurationWriter writer;
-        writer.set(L"x", value.x);
-        writer.set(L"y", value.y);
-        writer.set(L"z", value.z);
-        set(name, writer);
+        stl<double>::vector vec(&value.x, &value.x+3);
+        set(name, vec);
     }
      
     
     void ConfigurationWriter::set(const WString &name, const kmVec4 &value)
     {
         remove(name);
-        ConfigurationWriter writer;
-        writer.set(L"x", value.x);
-        writer.set(L"y", value.y);
-        writer.set(L"z", value.z);
-        writer.set(L"w", value.w);
-        set(name, writer);
+        stl<double>::vector vec(&value.x, &value.x+4);
+        set(name, vec);
     }
      
     void ConfigurationWriter::set(const WString &name, const kmQuaternion &value)
     {
         remove(name);
-        ConfigurationWriter writer;
-        writer.set(L"x", value.x);
-        writer.set(L"y", value.y);
-        writer.set(L"z", value.z);
-        writer.set(L"w", value.w);
-        set(name, writer);
+        stl<double>::vector vec(&value.x, &value.x+4);
+        set(name, vec);
     }
      
     void ConfigurationWriter::set(const WString &name, const kmMat4 &value)

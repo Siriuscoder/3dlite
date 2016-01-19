@@ -57,6 +57,11 @@ void Utils::saveFile(const void *buffer, size_t size, const lite3dpp::String &pa
     fflush(stdout);
 }
 
+void Utils::saveTextFile(const lite3dpp::String &text, const lite3dpp::String &path)
+{
+    saveFile(text.data(), text.size(), path);
+}
+
 lite3dpp::String Utils::makeFullPath(const lite3dpp::String &outputFolder, const lite3dpp::String &relative)
 {
     char path[1024] = {0};
@@ -83,3 +88,20 @@ void Utils::makeFolder(const lite3dpp::String &outputFolder, const lite3dpp::Str
     MKDIR(outputFolder, name);
 }
 
+lite3dpp::String Utils::getFileExt(const lite3dpp::String &filePath)
+{
+    std::size_t dotPos = filePath.find(".");
+    if(dotPos != lite3dpp::String::npos)
+        return filePath.substr(dotPos+1);
+
+    return filePath;
+}
+
+lite3dpp::String Utils::getFileNameWithoutExt(const lite3dpp::String &filePath)
+{
+    std::size_t dotPos = filePath.find(".");
+    if(dotPos != lite3dpp::String::npos)
+        return filePath.substr(0, dotPos);
+
+    return filePath;
+}

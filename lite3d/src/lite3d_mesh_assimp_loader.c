@@ -262,7 +262,7 @@ static int ai_node_load_recursive(const struct aiScene *scene,
 
 static int ai_load_materials(const struct aiScene *scene, lite3d_assimp_loader_ctx ctx)
 {
-    uint32_t mati, propi;
+    uint32_t mati;
     for (mati = 0; mati < scene->mNumMaterials; ++mati)
     {
         struct aiString matName;
@@ -280,15 +280,15 @@ static int ai_load_materials(const struct aiScene *scene, lite3d_assimp_loader_c
         
         if (ctx.onMaterial)
             ctx.onMaterial(matName.data, mati, 
-            aiGetMaterialColor(scene->mMaterials[mati], AI_MATKEY_COLOR_AMBIENT, (struct aiColor4D *)&ambient) ? &ambient : NULL,
-            aiGetMaterialColor(scene->mMaterials[mati], AI_MATKEY_COLOR_DIFFUSE, (struct aiColor4D *)&diffuse) ? &diffuse : NULL,
-            aiGetMaterialColor(scene->mMaterials[mati], AI_MATKEY_COLOR_SPECULAR, (struct aiColor4D *)&specular) ? &specular : NULL,
-            aiGetMaterialColor(scene->mMaterials[mati], AI_MATKEY_COLOR_EMISSIVE, (struct aiColor4D *)&emissive) ? &emissive : NULL,
-            aiGetMaterialColor(scene->mMaterials[mati], AI_MATKEY_COLOR_REFLECTIVE, (struct aiColor4D *)&reflective) ? &reflective : NULL,
-            aiGetMaterialColor(scene->mMaterials[mati], AI_MATKEY_COLOR_TRANSPARENT, (struct aiColor4D *)&transparent) ? &transparent : NULL,
-            aiGetMaterialTexture(scene->mMaterials[mati], aiTextureType_DIFFUSE, 0, &diffuseTextureFile, NULL, NULL, NULL, NULL, NULL, NULL) ? diffuseTextureFile.data : NULL,
-            aiGetMaterialTexture(scene->mMaterials[mati], aiTextureType_NORMALS, 0, &normalTextureFile, NULL, NULL, NULL, NULL, NULL, NULL) ? normalTextureFile.data : NULL,
-            aiGetMaterialTexture(scene->mMaterials[mati], aiTextureType_REFLECTION, 0, &reflectionTextureFile, NULL, NULL, NULL, NULL, NULL, NULL) ? reflectionTextureFile.data : NULL,
+            aiGetMaterialColor(scene->mMaterials[mati], AI_MATKEY_COLOR_AMBIENT, (struct aiColor4D *)&ambient) == aiReturn_SUCCESS ? &ambient : NULL,
+            aiGetMaterialColor(scene->mMaterials[mati], AI_MATKEY_COLOR_DIFFUSE, (struct aiColor4D *)&diffuse) == aiReturn_SUCCESS ? &diffuse : NULL,
+            aiGetMaterialColor(scene->mMaterials[mati], AI_MATKEY_COLOR_SPECULAR, (struct aiColor4D *)&specular) == aiReturn_SUCCESS ? &specular : NULL,
+            aiGetMaterialColor(scene->mMaterials[mati], AI_MATKEY_COLOR_EMISSIVE, (struct aiColor4D *)&emissive) == aiReturn_SUCCESS ? &emissive : NULL,
+            aiGetMaterialColor(scene->mMaterials[mati], AI_MATKEY_COLOR_REFLECTIVE, (struct aiColor4D *)&reflective) == aiReturn_SUCCESS ? &reflective : NULL,
+            aiGetMaterialColor(scene->mMaterials[mati], AI_MATKEY_COLOR_TRANSPARENT, (struct aiColor4D *)&transparent) == aiReturn_SUCCESS ? &transparent : NULL,
+            aiGetMaterialTexture(scene->mMaterials[mati], aiTextureType_DIFFUSE, 0, &diffuseTextureFile, NULL, NULL, NULL, NULL, NULL, NULL) == aiReturn_SUCCESS ? diffuseTextureFile.data : NULL,
+            aiGetMaterialTexture(scene->mMaterials[mati], aiTextureType_NORMALS, 0, &normalTextureFile, NULL, NULL, NULL, NULL, NULL, NULL) == aiReturn_SUCCESS ? normalTextureFile.data : NULL,
+            aiGetMaterialTexture(scene->mMaterials[mati], aiTextureType_REFLECTION, 0, &reflectionTextureFile, NULL, NULL, NULL, NULL, NULL, NULL) == aiReturn_SUCCESS ? reflectionTextureFile.data : NULL,
             ctx.userdata);
     }
 

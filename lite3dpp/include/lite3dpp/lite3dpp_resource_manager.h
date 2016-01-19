@@ -121,6 +121,7 @@ namespace lite3dpp
         Main *mMain;
         Resources mResources;
         Packs mPacks;
+        lite3d_pack *mLastUsed;
     };
 }
 

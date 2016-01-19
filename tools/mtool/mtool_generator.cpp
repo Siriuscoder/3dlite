@@ -19,16 +19,21 @@
 #include <mtool_utils.h>
 
 Generator::Generator(const lite3dpp::String &outputFolder,
-    const lite3dpp::String &objectName) :
+    const lite3dpp::String &objectName,
+    const lite3dpp::String &packageName) :
     mOutputFolder(outputFolder),
-    mObjectName(objectName)
-{}
+    mObjectName(objectName),
+    mPackageName(packageName)
+{
+    if(!mPackageName.empty())
+        mPackageName.append(":");
+}
 
 NullGenerator::NullGenerator() :
-    Generator("", "")
+    Generator("", "", "")
 {}
 
-void NullGenerator::generateNode(const lite3dpp::String &name, const kmMat4 *transform,
+void NullGenerator::generateNode(const lite3d_mesh *mesh, const lite3dpp::String &name, const kmMat4 *transform,
     bool meshExist)
 {}
 
@@ -39,23 +44,24 @@ void NullGenerator::popNodeTree()
 {}
 
 void NullGenerator::generateMaterial(const lite3dpp::String &matName, 
+    uint32_t matIdx,
     const kmVec4 *ambient,
     const kmVec4 *diffuse,
     const kmVec4 *specular,
     const kmVec4 *emissive,
     const kmVec4 *reflective,
     const kmVec4 *transparent,
-    const lite3dpp::String &diffuseTextureFile,
-    const lite3dpp::String &normalTextureFile,
-    const lite3dpp::String &reflectionTextureFile)
+    const char *diffuseTextureFile,
+    const char *normalTextureFile,
+    const char *reflectionTextureFile)
 {}
 
 JsonGenerator::JsonGenerator(const lite3dpp::String &outputFolder,
-    const lite3dpp::String &objectName) : 
-    Generator(outputFolder, objectName)
+    const lite3dpp::String &objectName, const lite3dpp::String &packageName) : 
+    Generator(outputFolder, objectName, packageName)
 {}
 
-void JsonGenerator::generateNode(const lite3dpp::String &name, const kmMat4 *transform,
+void JsonGenerator::generateNode(const lite3d_mesh *mesh, const lite3dpp::String &name, const kmMat4 *transform,
     bool meshExist)
 {
     lite3dpp::String relativeMeshPath = Utils::makeRelativePath("models/meshes/", name, "m");
@@ -70,15 +76,35 @@ void JsonGenerator::generateNode(const lite3dpp::String &name, const kmMat4 *tra
         /* configure mesh ison */
         lite3dpp::ConfigurationWriter meshConfig;
         meshConfig.set(L"Codec", "m");
-        meshConfig.set(L"Model", relativeMeshPath);
+        meshConfig.set(L"Model", mPackageName + relativeMeshPath);
+
+        lite3dpp::stl<lite3dpp::ConfigurationWriter>::vector matMapping;
+
+        {
+            const lite3d_mesh_chunk *meshChunk;
+            const lite3d_list_node *chunkNode;
+            for (chunkNode = mesh->chunks.l.next; chunkNode != &mesh->chunks.l;
+                chunkNode = chunkNode->next)
+            {
+                meshChunk = LITE3D_MEMBERCAST(lite3d_mesh_chunk, chunkNode, node);
+                lite3dpp::ConfigurationWriter material;
+                material.set(L"MaterialIndex", (int32_t)meshChunk->materialIndex);
+
+                lite3dpp::ConfigurationWriter materialDesc;
+                materialDesc.set(L"Name", mMaterials[meshChunk->materialIndex] + ".material");
+                materialDesc.set(L"Material", mPackageName + Utils::makeRelativePath("materials/", mMaterials[meshChunk->materialIndex], "json"));
+                material.set(L"Material", materialDesc);
+                matMapping.push_back(material);
+            }
+        }
+        meshConfig.set(L"MaterialMapping", matMapping);
 
         lite3dpp::ConfigurationWriter nodeMeshConfig;
         nodeMeshConfig.set(L"Name", name + ".mesh");
-        nodeMeshConfig.set(L"Mesh", relativeMeshConfigPath);
+        nodeMeshConfig.set(L"Mesh", mPackageName + relativeMeshConfigPath);
         nodeConfig.set(L"Mesh", nodeMeshConfig);
 
-        lite3dpp::String jsonData = meshConfig.write();
-        Utils::saveFile(jsonData.data(), jsonData.size(), fullMeshConfigPath);
+        Utils::saveTextFile(meshConfig.write(), fullMeshConfigPath);
         meshConfig.clear();
     }
 
@@ -113,8 +139,7 @@ void JsonGenerator::popNodeTree()
             lite3dpp::ConfigurationWriter objectConfig;
             objectConfig.set(L"Root", rootObject);
 
-            lite3dpp::String jsonData = objectConfig.write();
-            Utils::saveFile(jsonData.data(), jsonData.size(), 
+            Utils::saveTextFile(objectConfig.write(),
                 Utils::makeFullPath(mOutputFolder, Utils::makeRelativePath("objects/", mObjectName, "json")));
             objectConfig.clear();
         }
@@ -122,15 +147,101 @@ void JsonGenerator::popNodeTree()
 }
 
 void JsonGenerator::generateMaterial(const lite3dpp::String &matName, 
+    uint32_t matIdx,
     const kmVec4 *ambient,
     const kmVec4 *diffuse,
     const kmVec4 *specular,
     const kmVec4 *emissive,
     const kmVec4 *reflective,
     const kmVec4 *transparent,
-    const lite3dpp::String &diffuseTextureFile,
-    const lite3dpp::String &normalTextureFile,
-    const lite3dpp::String &reflectionTextureFile)
+    const char *diffuseTextureFile,
+    const char *normalTextureFile,
+    const char *reflectionTextureFile)
 {
+    lite3dpp::stl<lite3dpp::ConfigurationWriter>::vector uniforms;
+    lite3dpp::stl<lite3dpp::ConfigurationWriter>::vector passes;
 
+    {
+        lite3dpp::ConfigurationWriter param;
+        param.set(L"Name", "projectionMatrix");
+        uniforms.push_back(param);
+    }
+
+    {
+        lite3dpp::ConfigurationWriter param;
+        param.set(L"Name", "modelviewMatrix");
+        uniforms.push_back(param);
+    }
+
+    generateUniformVec4(uniforms, "ambient", ambient);
+    generateUniformVec4(uniforms, "diffuse", diffuse);
+    generateUniformVec4(uniforms, "specular", specular);
+    generateUniformVec4(uniforms, "emissive", emissive);
+    generateUniformVec4(uniforms, "reflective", reflective);
+    generateUniformVec4(uniforms, "transparent", transparent);
+
+    generateUniformSampler(uniforms, diffuseTextureFile);
+    generateUniformSampler(uniforms, normalTextureFile);
+    generateUniformSampler(uniforms, reflectionTextureFile);
+
+    {
+        lite3dpp::ConfigurationWriter pass1;
+        pass1.set(L"Pass", 1);
+
+        lite3dpp::ConfigurationWriter program;
+        program.set(L"Name", "Stub.program");
+        program.set(L"Path", mPackageName + "shaders/json/stub.json");
+        pass1.set(L"Program", program);
+        passes.push_back(pass1);
+    }
+
+    lite3dpp::String matFull = Utils::makeFullPath(mOutputFolder, Utils::makeRelativePath("materials/", matName, "json"));
+    lite3dpp::ConfigurationWriter material;
+
+    material.set(L"Uniforms", uniforms);
+    material.set(L"Passes", passes);
+    Utils::saveTextFile(material.write(), matFull);
+    material.clear();
+
+    mMaterials.insert(std::make_pair(matIdx, matName));
+}
+
+void JsonGenerator::generateUniformSampler(lite3dpp::stl<lite3dpp::ConfigurationWriter>::vector &uniforms, const char *fileName)
+{
+    if(!fileName)
+        return;
+
+    lite3dpp::ConfigurationWriter param;
+    lite3dpp::String texRel = Utils::makeRelativePath("textures/json/", Utils::getFileNameWithoutExt(fileName), "json");
+    lite3dpp::String texFull = Utils::makeFullPath(mOutputFolder, texRel);
+    
+    param.set(L"Name", "diffuseSampler");
+    param.set(L"Type", "sampler");
+    param.set(L"TextureName", Utils::getFileNameWithoutExt(fileName) + ".texture");
+    param.set(L"TexturePath", mPackageName + texRel);
+    uniforms.push_back(param);
+    
+    {
+        lite3dpp::ConfigurationWriter texture;
+        texture.set(L"TextureType", "2D");
+        texture.set(L"Filtering", "Trilinear");
+        texture.set(L"Wrapping", "ClampToEdge");
+        texture.set(L"Image", mPackageName + "textures/images/" + fileName);
+        texture.set(L"ImageFormat", Utils::getFileExt(fileName));
+    
+        Utils::saveTextFile(texture.write(), texFull);
+        texture.clear();
+    }
+}
+
+void JsonGenerator::generateUniformVec4(lite3dpp::stl<lite3dpp::ConfigurationWriter>::vector &uniforms, const lite3dpp::String &paramName, const kmVec4 *val)
+{
+    if(!val)
+        return;
+
+    lite3dpp::ConfigurationWriter param;
+    param.set(L"Name", paramName);
+    param.set(L"Type", "v4");
+    param.set(L"Value", *val);
+    uniforms.push_back(param);
 }

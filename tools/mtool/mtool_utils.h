@@ -28,7 +28,10 @@ public:
     static lite3dpp::String makeRelativePath(const lite3dpp::String &inpath, 
         const lite3dpp::String &name, const lite3dpp::String &ext);
     static void saveFile(const void *buffer, size_t size, const lite3dpp::String &path);
+    static void saveTextFile(const lite3dpp::String &text, const lite3dpp::String &path);
     static void makeFolder(const lite3dpp::String &outputFolder, const lite3dpp::String &name);
+    static lite3dpp::String getFileExt(const lite3dpp::String &filePath);
+    static lite3dpp::String getFileNameWithoutExt(const lite3dpp::String &filePath);
 
 private:
     static int mNonameCounter;

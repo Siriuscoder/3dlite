@@ -58,6 +58,7 @@ private:
     lite3dpp::String mInputFilePath;
     lite3dpp::String mOutputFolder;
     lite3dpp::String mObjectName;
+    lite3dpp::String mPackageName;
     bool mOptimizeMesh;
     bool mFlipUV;
     bool mGenerateJson;
