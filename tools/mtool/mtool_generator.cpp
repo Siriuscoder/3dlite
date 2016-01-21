@@ -173,6 +173,18 @@ void JsonGenerator::generateMaterial(const lite3dpp::String &matName,
         uniforms.push_back(param);
     }
 
+    {
+        lite3dpp::ConfigurationWriter param;
+        param.set(L"Name", "viewMatrix");
+        uniforms.push_back(param);
+    }
+
+    {
+        lite3dpp::ConfigurationWriter param;
+        param.set(L"Name", "modelMatrix");
+        uniforms.push_back(param);
+    }
+
     generateUniformVec4(uniforms, "ambient", ambient);
     generateUniformVec4(uniforms, "diffuse", diffuse);
     generateUniformVec4(uniforms, "specular", specular);

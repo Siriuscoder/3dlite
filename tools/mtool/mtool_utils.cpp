@@ -16,6 +16,8 @@
  *	along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
 #define MAKE_PATH(folder, name) (folder + "/" + name).c_str()
+#include <algorithm>
+#include <cctype>
 
 #ifdef PLATFORM_Windows
 #   include <Windows.h>
@@ -92,7 +94,11 @@ lite3dpp::String Utils::getFileExt(const lite3dpp::String &filePath)
 {
     std::size_t dotPos = filePath.find(".");
     if(dotPos != lite3dpp::String::npos)
-        return filePath.substr(dotPos+1);
+    {
+        lite3dpp::String ext = filePath.substr(dotPos+1);
+        std::transform(ext.begin(), ext.end(), ext.begin(), std::toupper);
+        return ext;
+    }
 
     return filePath;
 }
@@ -101,7 +107,14 @@ lite3dpp::String Utils::getFileNameWithoutExt(const lite3dpp::String &filePath)
 {
     std::size_t dotPos = filePath.find(".");
     if(dotPos != lite3dpp::String::npos)
-        return filePath.substr(0, dotPos);
+    {
+        lite3dpp::String fileName = filePath.substr(0, dotPos);
+        std::size_t slashPos = fileName.find_last_of("\\/");
+        if(slashPos != lite3dpp::String::npos)
+        {
+            return fileName.substr(slashPos+1);
+        }
+    }
 
     return filePath;
 }
