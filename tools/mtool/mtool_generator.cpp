@@ -238,7 +238,7 @@ void JsonGenerator::generateUniformSampler(lite3dpp::stl<lite3dpp::Configuration
         texture.set(L"TextureType", "2D");
         texture.set(L"Filtering", "Trilinear");
         texture.set(L"Wrapping", "ClampToEdge");
-        texture.set(L"Image", mPackageName + "textures/images/" + fileName);
+        texture.set(L"Image", mPackageName + Utils::makeRelativePath("textures/images/", Utils::getFileNameWithoutExt(fileName), Utils::getFileExt(fileName)));
         texture.set(L"ImageFormat", Utils::getFileExt(fileName));
     
         Utils::saveTextFile(texture.write(), texFull);

@@ -95,9 +95,7 @@ lite3dpp::String Utils::getFileExt(const lite3dpp::String &filePath)
     std::size_t dotPos = filePath.find(".");
     if(dotPos != lite3dpp::String::npos)
     {
-        lite3dpp::String ext = filePath.substr(dotPos+1);
-        std::transform(ext.begin(), ext.end(), ext.begin(), std::toupper);
-        return ext;
+        return filePath.substr(dotPos+1);
     }
 
     return filePath;
