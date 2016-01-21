@@ -54,7 +54,8 @@ namespace lite3dpp
         {
             String imageFormatStr = helper.getString(L"ImageFormat", "ANY");
 
-            std::transform(imageFormatStr.begin(), imageFormatStr.end(), imageFormatStr.begin(), std::toupper);
+            std::transform(imageFormatStr.begin(), imageFormatStr.end(), imageFormatStr.begin(), [](char a) -> char
+            { return std::toupper(a); });
             uint32_t imageType = imageFormatStr == "BMP" ? LITE3D_IMAGE_BMP : 
                 (imageFormatStr == "JPG" ? LITE3D_IMAGE_JPG : 
                 (imageFormatStr == "PNG" ? LITE3D_IMAGE_PNG : 
@@ -71,7 +72,8 @@ namespace lite3dpp
             {
                 lite3d_image_filter filter;
                 String filterTypeStr = filterConfig.getString(L"Type");
-                std::transform(filterTypeStr.begin(), filterTypeStr.end(), filterTypeStr.begin(), std::toupper);
+                std::transform(filterTypeStr.begin(), filterTypeStr.end(), filterTypeStr.begin(), [](char a) -> char
+                { return std::toupper(a); });
                 filter.filterID = filterTypeStr == "ALIENIFY" ? LITE3D_ALIENIFY_FILTER :
                     (filterTypeStr == "BLURAVG" ? LITE3D_BLURAVG_FILTER :
                     (filterTypeStr == "BLURGAUSSIAN" ? LITE3D_BLURGAUSSIAN_FILTER :
@@ -96,7 +98,8 @@ namespace lite3dpp
         else
         {
             String textureFormatStr = helper.getString(L"TextureFormat", "RGB");
-            std::transform(textureFormatStr.begin(), textureFormatStr.end(), textureFormatStr.begin(), std::toupper);
+            std::transform(textureFormatStr.begin(), textureFormatStr.end(), textureFormatStr.begin(), [](char a) -> char
+            { return std::toupper(a); });
             uint16_t textureFormat = textureFormatStr == "ALPHA" ? LITE3D_TEXTURE_FORMAT_ALPHA :
                 (textureFormatStr == "RGB" ? LITE3D_TEXTURE_FORMAT_RGB : 
                 (textureFormatStr == "RGBA" ? LITE3D_TEXTURE_FORMAT_RGBA : 

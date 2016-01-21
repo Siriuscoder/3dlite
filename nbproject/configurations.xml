@@ -138,6 +138,7 @@
           <in>lite3dpp_scene_node.cpp</in>
           <in>lite3dpp_scene_object.cpp</in>
           <in>lite3dpp_script.cpp</in>
+          <in>lite3dpp_script_as.cpp</in>
           <in>lite3dpp_script_dispatcher.cpp</in>
           <in>lite3dpp_script_log.cpp</in>
           <in>lite3dpp_script_mat3.cpp</in>
@@ -197,6 +198,12 @@
       </df>
       <df name="tools">
         <df name="mtool">
+          <in>mtool_command.cpp</in>
+          <in>mtool_converter.cpp</in>
+          <in>mtool_create_dirs.cpp</in>
+          <in>mtool_generator.cpp</in>
+          <in>mtool_m_info.cpp</in>
+          <in>mtool_main.cpp</in>
           <in>mtool_utils.cpp</in>
         </df>
       </df>
@@ -1413,6 +1420,21 @@
           </preprocessorList>
         </ccTool>
       </item>
+      <item path="lite3dpp/src/lite3dpp_script_as.cpp"
+            ex="false"
+            tool="1"
+            flavor2="8">
+        <ccTool flags="1">
+          <incDir>
+            <pElem>/usr/include/SDL2</pElem>
+            <pElem>build/lite3dpp</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>_REENTRANT</Elem>
+            <Elem>lite3dpp_EXPORTS</Elem>
+          </preprocessorList>
+        </ccTool>
+      </item>
       <item path="lite3dpp/src/lite3dpp_script_dispatcher.cpp"
             ex="false"
             tool="1"
@@ -1678,6 +1700,30 @@
         </ccTool>
       </item>
       <item path="tests/gtest/src/gtest_main.cc" ex="false" tool="1" flavor2="8">
+        <ccTool flags="0">
+        </ccTool>
+      </item>
+      <item path="tools/mtool/mtool_command.cpp" ex="false" tool="1" flavor2="8">
+        <ccTool flags="0">
+        </ccTool>
+      </item>
+      <item path="tools/mtool/mtool_converter.cpp" ex="false" tool="1" flavor2="8">
+        <ccTool flags="0">
+        </ccTool>
+      </item>
+      <item path="tools/mtool/mtool_create_dirs.cpp" ex="false" tool="1" flavor2="8">
+        <ccTool flags="0">
+        </ccTool>
+      </item>
+      <item path="tools/mtool/mtool_generator.cpp" ex="false" tool="1" flavor2="8">
+        <ccTool flags="0">
+        </ccTool>
+      </item>
+      <item path="tools/mtool/mtool_m_info.cpp" ex="false" tool="1" flavor2="8">
+        <ccTool flags="0">
+        </ccTool>
+      </item>
+      <item path="tools/mtool/mtool_main.cpp" ex="false" tool="1" flavor2="8">
         <ccTool flags="0">
         </ccTool>
       </item>

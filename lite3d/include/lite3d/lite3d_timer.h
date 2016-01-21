@@ -26,8 +26,9 @@ typedef struct lite3d_timer
     lite3d_list_node link;
     void (*ontimer)(struct lite3d_timer *timer);
     int32_t interval;
-    uint64_t lastTick;
+    uint64_t lastTimeUpdate;
     uint8_t enabled;
+    int32_t lag;
     void *userdata;
 } lite3d_timer;
 

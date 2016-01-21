@@ -39,8 +39,9 @@ lite3d_timer *lite3d_timer_add(int32_t milli,
 
     timer->interval = milli;
     timer->ontimer = timerCallback;
-    timer->lastTick = 0;
+    timer->lastTimeUpdate = 0;
     timer->enabled = LITE3D_TRUE;
+    timer->lag = 0;
     timer->userdata = userdata;
 
     return timer;
@@ -58,6 +59,7 @@ void lite3d_timer_induce(uint64_t timeMark, uint64_t freq)
     lite3d_list_node *link;
     lite3d_timer *timer;
 
+    freq /= 1000;
     /* check all timers */
     for (link = gTimers.l.next; link != &gTimers.l; link = lite3d_list_next(link))
     {
@@ -65,13 +67,18 @@ void lite3d_timer_induce(uint64_t timeMark, uint64_t freq)
         if (!timer->enabled)
             continue;
         
-        freq /= 1000;
-        if ((timeMark - timer->lastTick) >= (freq * timer->interval))
+        if (timer->lastTimeUpdate == 0)
+            timer->lastTimeUpdate = timeMark;
+        
+        timer->lag += timeMark - timer->lastTimeUpdate; 
+        timer->lastTimeUpdate = timeMark;
+        
+        while (timer->lag >= (freq * timer->interval))
         {
-            if (timer->lastTick && timer->ontimer)
+            if (timer->ontimer)
                 timer->ontimer(timer);
 
-            timer->lastTick = timeMark;
+            timer->lag -= freq * timer->interval;
         }
     }
 }
