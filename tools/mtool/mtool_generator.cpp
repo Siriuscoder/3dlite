@@ -173,6 +173,18 @@ void JsonGenerator::generateMaterial(const lite3dpp::String &matName,
         uniforms.push_back(param);
     }
 
+    {
+        lite3dpp::ConfigurationWriter param;
+        param.set(L"Name", "viewMatrix");
+        uniforms.push_back(param);
+    }
+
+    {
+        lite3dpp::ConfigurationWriter param;
+        param.set(L"Name", "modelMatrix");
+        uniforms.push_back(param);
+    }
+
     generateUniformVec4(uniforms, "ambient", ambient);
     generateUniformVec4(uniforms, "diffuse", diffuse);
     generateUniformVec4(uniforms, "specular", specular);
@@ -226,7 +238,7 @@ void JsonGenerator::generateUniformSampler(lite3dpp::stl<lite3dpp::Configuration
         texture.set(L"TextureType", "2D");
         texture.set(L"Filtering", "Trilinear");
         texture.set(L"Wrapping", "ClampToEdge");
-        texture.set(L"Image", mPackageName + "textures/images/" + fileName);
+        texture.set(L"Image", mPackageName + Utils::makeRelativePath("textures/images/", Utils::getFileNameWithoutExt(fileName), Utils::getFileExt(fileName)));
         texture.set(L"ImageFormat", Utils::getFileExt(fileName));
     
         Utils::saveTextFile(texture.write(), texFull);
