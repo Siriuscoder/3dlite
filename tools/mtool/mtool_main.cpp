@@ -27,7 +27,7 @@ static void print_help_and_exit()
 {
     printf("Usage: \n");
     printf("View m file content:  \n\t-p -i[input file] \n");
-    printf("Convert file:  \n\t-c -i[input file] -o[output folder] -O[optimize mesh] -F[flip UVs] -j[generate json]\n");
+    printf("Convert file:  \n\t-c -i[input file] -o[output folder] -O[optimize mesh] -F[flip UVs] -j[generate json] -oname[object name] -packname[package]\n");
     printf("Create directories:  \n\t-d -o[output folder]\n\n");
     exit(1);
 }
