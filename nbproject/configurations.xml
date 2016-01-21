@@ -195,6 +195,11 @@
           </df>
         </df>
       </df>
+      <df name="tools">
+        <df name="mtool">
+          <in>mtool_utils.cpp</in>
+        </df>
+      </df>
     </df>
     <logicalFolder name="Modules"
                    displayName="Modules"
@@ -452,6 +457,18 @@
           <incDir>
             <pElem>build/tests</pElem>
           </incDir>
+        </ccTool>
+      </folder>
+      <folder path="0/tools">
+        <ccTool>
+          <incDir>
+            <pElem>tools/mtool</pElem>
+            <pElem>/usr/include/SDL2</pElem>
+            <pElem>build/tools</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>_REENTRANT</Elem>
+          </preprocessorList>
         </ccTool>
       </folder>
       <folder path="Modules">
@@ -1661,6 +1678,10 @@
         </ccTool>
       </item>
       <item path="tests/gtest/src/gtest_main.cc" ex="false" tool="1" flavor2="8">
+        <ccTool flags="0">
+        </ccTool>
+      </item>
+      <item path="tools/mtool/mtool_utils.cpp" ex="false" tool="1" flavor2="8">
         <ccTool flags="0">
         </ccTool>
       </item>
