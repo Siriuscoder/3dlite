@@ -28,7 +28,7 @@
 	[
 		{
 			"Name": "SponzaHall",
-			"Object": "samples:objects/sponza.json",
+			"Object": "samples:objects/Sponza.json",
 
 			"Position": [0,0,0],
 			"Rotation": [0,0,0,1],

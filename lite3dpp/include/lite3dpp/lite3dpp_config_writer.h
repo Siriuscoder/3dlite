@@ -20,12 +20,6 @@
 #include <lite3dpp/lite3dpp_common.h>
 #include <lite3dpp/json/JSON.h>
 
-#include <lite3d/kazmath/vec2.h>
-#include <lite3d/kazmath/vec3.h>
-#include <lite3d/kazmath/vec4.h>
-#include <lite3d/kazmath/mat4.h>
-#include <lite3d/kazmath/quaternion.h>
-
 namespace lite3dpp
 {
     class LITE3DPP_EXPORT ConfigurationWriter : public Manageable

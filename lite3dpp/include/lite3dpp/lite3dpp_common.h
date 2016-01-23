@@ -66,6 +66,8 @@
 
 //#define LITE3DPP_USE_STL_ALLOCATOR
 
+#include <lite3d/lite3d_kazmath.h>
+
 /* Main engine class */
 namespace lite3dpp
 {

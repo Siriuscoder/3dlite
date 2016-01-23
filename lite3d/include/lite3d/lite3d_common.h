@@ -24,7 +24,7 @@
 #ifdef	__cplusplus
 #   define LITE3D_EXTERN extern "C" 
 #else
-#   define LITE3D_EXTERN extern
+#   define LITE3D_EXTERN
 #endif
 
 #define STR_HELPER(x) #x

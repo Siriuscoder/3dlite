@@ -21,10 +21,7 @@
 #include <lite3d/lite3d_common.h>
 #include <lite3d/lite3d_texture_unit.h>
 #include <lite3d/lite3d_rb_tree.h>
-#include <lite3d/kazmath/vec3.h>
-#include <lite3d/kazmath/vec4.h>
-#include <lite3d/kazmath/mat3.h>
-#include <lite3d/kazmath/mat4.h>
+#include <lite3d/lite3d_kazmath.h>
 
 #define LITE3D_SHADER_PARAMETER_MAX_NAME    30
 #define LITE3D_SHADER_PARAMETER_FLOAT       0x1

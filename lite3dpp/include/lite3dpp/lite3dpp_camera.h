@@ -58,6 +58,9 @@ namespace lite3dpp
         void yaw(float angle);
         void pitch(float angle);
         void roll(float angle);
+        void yaw_fixed_xz(float angle);
+        void pitch_fixed_yz(float angle);
+        void roll_fixed_xy(float angle);
         void move(const kmVec3 &value);
         void moveRelative(const kmVec3 &value);
         void holdOnSceneObject(const SceneObject &sceneObj);

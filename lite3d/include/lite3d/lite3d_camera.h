@@ -85,6 +85,9 @@ LITE3D_CEXPORT void lite3d_camera_rotate(lite3d_camera *camera,
 LITE3D_CEXPORT void lite3d_camera_yaw(lite3d_camera *camera, float angle);
 LITE3D_CEXPORT void lite3d_camera_pitch(lite3d_camera *camera, float angle);
 LITE3D_CEXPORT void lite3d_camera_roll(lite3d_camera *camera, float angle);
+LITE3D_CEXPORT void lite3d_camera_yaw_fixed_xz(lite3d_camera *camera, float angle);
+LITE3D_CEXPORT void lite3d_camera_pitch_fixed_yz(lite3d_camera *camera, float angle);
+LITE3D_CEXPORT void lite3d_camera_roll_fixed_xy(lite3d_camera *camera, float angle);
 LITE3D_CEXPORT void lite3d_camera_move(lite3d_camera *camera, const kmVec3 *value);
 LITE3D_CEXPORT void lite3d_camera_move_relative(lite3d_camera *camera, 
     const kmVec3 *value);

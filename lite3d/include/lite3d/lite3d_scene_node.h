@@ -18,13 +18,8 @@
 #ifndef LITE3D_SCENE_NODE_H
 #define	LITE3D_SCENE_NODE_H
 
-#include <lite3d/kazmath/mat3.h>
-#include <lite3d/kazmath/mat4.h>
-#include <lite3d/kazmath/vec3.h>
-#include <lite3d/kazmath/vec4.h>
-#include <lite3d/kazmath/quaternion.h>
-
 #include <lite3d/lite3d_common.h>
+#include <lite3d/lite3d_kazmath.h>
 #include <lite3d/lite3d_list.h>
 
 typedef struct  lite3d_scene_node

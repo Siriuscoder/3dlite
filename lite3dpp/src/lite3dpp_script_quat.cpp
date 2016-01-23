@@ -20,13 +20,8 @@
 #include <SDL_assert.h>
 
 #include <lite3d/lite3d_common.h>
-LITE3D_EXTERN {
-#include <lite3d/kazmath/vec3.h>
-#include <lite3d/kazmath/quaternion.h>
-}
 
 #include <lite3dpp/as/angelscript.h>
-
 #include <lite3dpp/lite3dpp_script_binding.h>
 
 namespace lite3dpp

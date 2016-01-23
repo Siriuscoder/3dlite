@@ -79,11 +79,11 @@ public:
             }
             else if (e->key.keysym.sym == SDLK_LEFT)
             {
-                mCamera->yaw(-0.05);
+                mCamera->yaw_fixed_xz(-0.05);
             }
             else if (e->key.keysym.sym == SDLK_RIGHT)
             {
-                mCamera->yaw(0.05);
+                mCamera->yaw_fixed_xz(0.05);
             }
             else if (e->key.keysym.sym == SDLK_w)
             {

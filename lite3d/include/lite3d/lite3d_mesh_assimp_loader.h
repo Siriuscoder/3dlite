@@ -23,8 +23,7 @@
 #include <lite3d/lite3d_common.h>
 #include <lite3d/lite3d_mesh.h>
 #include <lite3d/lite3d_pack.h>
-#include <lite3d/kazmath/mat4.h>
-#include <lite3d/kazmath/vec4.h>
+#include <lite3d/lite3d_kazmath.h>
 
 #define LITE3D_OPTIMIZE_MESH_FLAG             0x1
 #define LITE3D_FLIP_UV_FLAG                   0x2

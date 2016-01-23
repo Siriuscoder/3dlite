@@ -3,6 +3,11 @@
   <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
     <df root="." name="0">
       <df name="lite3d">
+        <df name="include">
+          <df name="lite3d">
+            <in>lite3d_kazmath.h</in>
+          </df>
+        </df>
         <df name="src">
           <df name="7zdec">
             <in>7zBuf.c</in>
@@ -180,6 +185,9 @@
         <df name="sample_script">
           <in>lite3dpp_sample_script.cpp</in>
         </df>
+        <df name="sample_sponzahall">
+          <in>lite3dpp_sponza.cpp</in>
+        </df>
       </df>
       <df name="tests">
         <df name="functionaly">
@@ -247,7 +255,7 @@
           <buildCommandWorkingDir>build</buildCommandWorkingDir>
           <buildCommand>${MAKE} -f Makefile</buildCommand>
           <cleanCommand>${MAKE} -f Makefile clean</cleanCommand>
-          <executablePath>build/bin/Debug/sample_texture_modify</executablePath>
+          <executablePath>build/bin/Debug/sample_sponzahall</executablePath>
           <ccTool>
             <incDir>
               <pElem>lite3d/include</pElem>
@@ -433,6 +441,15 @@
           </incDir>
         </ccTool>
       </folder>
+      <folder path="0/samples/sample_sponzahall">
+        <ccTool>
+          <incDir>
+            <pElem>samples/sample_sponzahall</pElem>
+            <pElem>/usr/include/SDL2</pElem>
+            <pElem>build/samples</pElem>
+          </incDir>
+        </ccTool>
+      </folder>
       <folder path="0/tests">
         <cTool>
           <incDir>
@@ -488,6 +505,11 @@
           </preprocessorList>
         </cTool>
       </folder>
+      <item path="lite3d/include/lite3d/lite3d_kazmath.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
       <item path="lite3d/src/7zdec/7zBuf.c" ex="false" tool="0" flavor2="3">
         <cTool flags="2">
         </cTool>
@@ -1660,6 +1682,13 @@
         <ccTool flags="0">
         </ccTool>
       </item>
+      <item path="samples/sample_sponzahall/lite3dpp_sponza.cpp"
+            ex="false"
+            tool="1"
+            flavor2="8">
+        <ccTool flags="0">
+        </ccTool>
+      </item>
       <item path="tests/functionaly/lite3d_common_test.cpp"
             ex="false"
             tool="1"
@@ -1748,6 +1777,11 @@
           <executablePath></executablePath>
         </makeTool>
       </makefileType>
+      <item path="lite3d/include/lite3d/lite3d_kazmath.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
     </conf>
   </confs>
 </configurationDescriptor>
