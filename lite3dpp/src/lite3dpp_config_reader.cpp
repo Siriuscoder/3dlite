@@ -336,4 +336,9 @@ namespace lite3dpp
 
         return result;
     }
+
+    bool ConfigurationReader::has(const WString &name) const
+    {
+        return mObject.find(name) != mObject.end();
+    }
 }

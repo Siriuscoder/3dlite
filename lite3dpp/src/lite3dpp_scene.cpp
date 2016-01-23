@@ -198,8 +198,10 @@ namespace lite3dpp
                     orthoOptionsJson.getDouble(L"Top"));
             }
 
-            camera->setPosition(cameraJson.getVec3(L"Position"));
-            camera->lookAt(cameraJson.getVec3(L"LookAt"));
+            if(cameraJson.has(L"Position"))
+                camera->setPosition(cameraJson.getVec3(L"Position"));
+            if(cameraJson.has(L"LookAt"))
+                camera->lookAt(cameraJson.getVec3(L"LookAt"));
         }
     }
 }

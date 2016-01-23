@@ -1,0 +1,13 @@
+{
+  "Codec":"m",
+  "MaterialMapping":[
+    {
+      "Material":{
+        "Material":"samples:materials/column_a.json",
+        "Name":"column_a.material"
+      },
+      "MaterialIndex":1.0000000000
+    }
+  ],
+  "Model":"samples:models/meshes/sponza_16.m"
+}

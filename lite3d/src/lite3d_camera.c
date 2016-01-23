@@ -162,8 +162,7 @@ void lite3d_camera_yaw(lite3d_camera *camera, float angle)
     kmQuaternion quat;
 
     SDL_assert(camera);
-    kmQuaternionRotationAxisAngle(&quat, &KM_VEC3_POS_Y, angle);  
-    lite3d_scene_node_rotate_by(&camera->cameraNode, &quat);
+    lite3d_scene_node_rotate_angle(&camera->cameraNode, &KM_VEC3_POS_Y, angle);
 }
 
 void lite3d_camera_pitch(lite3d_camera *camera, float angle)

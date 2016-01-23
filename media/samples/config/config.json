@@ -1,6 +1,6 @@
 {
     // common settings
-    "LogLevel": 3,
+    "LogLevel": 1,
 	"LogFlushAlways": true,
     "TextureSettings": {
         "Anisotropy": 8,
@@ -21,7 +21,7 @@
     "ResourceLocations": [
         {
             "Name": "samples",
-            "FileCacheMaxSize": 1024000,
+            "FileCacheMaxSize": 10240000,
             "Path": "samples/"
         }
     ],

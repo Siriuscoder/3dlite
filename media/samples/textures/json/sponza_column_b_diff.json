@@ -1,0 +1,7 @@
+{
+  "Filtering":"Trilinear",
+  "Image":"samples:textures/images/sponza_column_b_diff.tga",
+  "ImageFormat":"tga",
+  "TextureType":"2D",
+  "Wrapping":"ClampToEdge"
+}

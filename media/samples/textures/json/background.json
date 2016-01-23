@@ -1,0 +1,7 @@
+{
+  "Filtering":"Trilinear",
+  "Image":"samples:textures/images/background.tga",
+  "ImageFormat":"tga",
+  "TextureType":"2D",
+  "Wrapping":"ClampToEdge"
+}

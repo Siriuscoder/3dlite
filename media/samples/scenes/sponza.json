@@ -1,0 +1,39 @@
+{
+	"Cameras":
+	[
+		{
+			"Name": "MyCamera",
+
+			"Position": [0,0,800],
+			"LootAt": [0,0,0],
+			"Perspective": 
+			{
+				"Znear": 1,
+				"Zfar": 10000,
+				"Fov": 55
+			
+			},
+			"RenderTargets":
+			[
+				{
+					"Name": "Window",
+					"Priority": 0,
+					"TexturePass": 1
+				}
+			]
+		}
+	],
+	
+	"Objects":
+	[
+		{
+			"Name": "SponzaHall",
+			"Object": "samples:objects/sponza.json",
+
+			"Position": [0,0,0],
+			"Rotation": [0,0,0,1],
+			"Scale": [1,1,1]
+		}
+	]
+}
+

@@ -1,0 +1,7 @@
+{
+  "Filtering":"Trilinear",
+  "Image":"samples:textures/images/spnza_bricks_a_diff.tga",
+  "ImageFormat":"tga",
+  "TextureType":"2D",
+  "Wrapping":"ClampToEdge"
+}

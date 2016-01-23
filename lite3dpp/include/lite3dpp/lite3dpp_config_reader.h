@@ -55,6 +55,7 @@ namespace lite3dpp
         kmQuaternion getQuaternion(const WString &name, const kmQuaternion &def = KM_QUATERNION_IDENTITY ) const;
         kmMat4 getMat4(const WString &name, const kmMat4 &def) const;
 
+        bool has(const WString &name) const;
         bool isEmpty() const;
 
     private:
