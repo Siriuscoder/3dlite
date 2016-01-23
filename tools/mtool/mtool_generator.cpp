@@ -20,17 +20,33 @@
 
 Generator::Generator(const lite3dpp::String &outputFolder,
     const lite3dpp::String &objectName,
-    const lite3dpp::String &packageName) :
+    const lite3dpp::String &texPackname,
+    const lite3dpp::String &imgPackname,
+    const lite3dpp::String &matPackname,
+    const lite3dpp::String &nodePackname,
+    const lite3dpp::String &meshPackname) :
     mOutputFolder(outputFolder),
     mObjectName(objectName),
-    mPackageName(packageName)
+    mTexPackname(texPackname),
+    mImgPackname(imgPackname),
+    mMatPackname(matPackname),
+    mNodePackname(nodePackname),
+    mMeshPackname(meshPackname)
 {
-    if(!mPackageName.empty())
-        mPackageName.append(":");
+    if(!mTexPackname.empty())
+        mTexPackname.append(":");
+    if(!mImgPackname.empty())
+        mImgPackname.append(":");
+    if(!mMatPackname.empty())
+        mMatPackname.append(":");
+    if(!mNodePackname.empty())
+        mNodePackname.append(":");
+    if(!mMeshPackname.empty())
+        mMeshPackname.append(":");
 }
 
 NullGenerator::NullGenerator() :
-    Generator("", "", "")
+    Generator("", "", "", "", "", "", "")
 {}
 
 void NullGenerator::generateNode(const lite3d_mesh *mesh, const lite3dpp::String &name, const kmMat4 *transform,
@@ -57,8 +73,19 @@ void NullGenerator::generateMaterial(const lite3dpp::String &matName,
 {}
 
 JsonGenerator::JsonGenerator(const lite3dpp::String &outputFolder,
-    const lite3dpp::String &objectName, const lite3dpp::String &packageName) : 
-    Generator(outputFolder, objectName, packageName)
+    const lite3dpp::String &objectName, 
+    const lite3dpp::String &texPackname,
+    const lite3dpp::String &imgPackname,
+    const lite3dpp::String &matPackname,
+    const lite3dpp::String &nodePackname,
+    const lite3dpp::String &meshPackname) :
+    Generator(outputFolder, 
+              objectName, 
+              texPackname,
+              imgPackname,
+              matPackname,
+              nodePackname,
+              meshPackname)
 {}
 
 void JsonGenerator::generateNode(const lite3d_mesh *mesh, const lite3dpp::String &name, const kmMat4 *transform,
@@ -76,7 +103,7 @@ void JsonGenerator::generateNode(const lite3d_mesh *mesh, const lite3dpp::String
         /* configure mesh ison */
         lite3dpp::ConfigurationWriter meshConfig;
         meshConfig.set(L"Codec", "m");
-        meshConfig.set(L"Model", mPackageName + relativeMeshPath);
+        meshConfig.set(L"Model", mMeshPackname + relativeMeshPath);
 
         lite3dpp::stl<lite3dpp::ConfigurationWriter>::vector matMapping;
 
@@ -92,7 +119,7 @@ void JsonGenerator::generateNode(const lite3d_mesh *mesh, const lite3dpp::String
 
                 lite3dpp::ConfigurationWriter materialDesc;
                 materialDesc.set(L"Name", mMaterials[meshChunk->materialIndex] + ".material");
-                materialDesc.set(L"Material", mPackageName + Utils::makeRelativePath("materials/", mMaterials[meshChunk->materialIndex], "json"));
+                materialDesc.set(L"Material", mMatPackname + Utils::makeRelativePath("materials/", mMaterials[meshChunk->materialIndex], "json"));
                 material.set(L"Material", materialDesc);
                 matMapping.push_back(material);
             }
@@ -101,7 +128,7 @@ void JsonGenerator::generateNode(const lite3d_mesh *mesh, const lite3dpp::String
 
         lite3dpp::ConfigurationWriter nodeMeshConfig;
         nodeMeshConfig.set(L"Name", name + ".mesh");
-        nodeMeshConfig.set(L"Mesh", mPackageName + relativeMeshConfigPath);
+        nodeMeshConfig.set(L"Mesh", mMeshPackname + relativeMeshConfigPath);
         nodeConfig.set(L"Mesh", nodeMeshConfig);
 
         Utils::saveTextFile(meshConfig.write(), fullMeshConfigPath);
@@ -133,7 +160,7 @@ void JsonGenerator::popNodeTree()
         {
             /* mean all nodes imported.. save hole tree as one object */
             lite3dpp::ConfigurationWriter rootObject;
-            rootObject.set(L"Name", mObjectName + ".root");
+            rootObject.set(L"Name", mNodePackname + ".root");
             rootObject.set(L"Nodes", nodes);
 
             lite3dpp::ConfigurationWriter objectConfig;
@@ -202,7 +229,7 @@ void JsonGenerator::generateMaterial(const lite3dpp::String &matName,
 
         lite3dpp::ConfigurationWriter program;
         program.set(L"Name", "Stub.program");
-        program.set(L"Path", mPackageName + "shaders/json/stub.json");
+        program.set(L"Path", mMatPackname + "shaders/json/stub.json");
         pass1.set(L"Program", program);
         passes.push_back(pass1);
     }
@@ -230,7 +257,7 @@ void JsonGenerator::generateUniformSampler(lite3dpp::stl<lite3dpp::Configuration
     param.set(L"Name", "diffuseSampler");
     param.set(L"Type", "sampler");
     param.set(L"TextureName", Utils::getFileNameWithoutExt(fileName) + ".texture");
-    param.set(L"TexturePath", mPackageName + texRel);
+    param.set(L"TexturePath", mTexPackname + texRel);
     uniforms.push_back(param);
     
     {
@@ -238,7 +265,7 @@ void JsonGenerator::generateUniformSampler(lite3dpp::stl<lite3dpp::Configuration
         texture.set(L"TextureType", "2D");
         texture.set(L"Filtering", "Trilinear");
         texture.set(L"Wrapping", "ClampToEdge");
-        texture.set(L"Image", mPackageName + Utils::makeRelativePath("textures/images/", Utils::getFileNameWithoutExt(fileName), Utils::getFileExt(fileName)));
+        texture.set(L"Image", mImgPackname + Utils::makeRelativePath("textures/images/", Utils::getFileNameWithoutExt(fileName), Utils::getFileExt(fileName)));
         texture.set(L"ImageFormat", Utils::getFileExt(fileName));
     
         Utils::saveTextFile(texture.write(), texFull);

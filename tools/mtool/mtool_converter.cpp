@@ -100,7 +100,12 @@ void ConverterCommand::runImpl()
     ctx.userdata = this;
 
     if(mGenerateJson)
-        mGenerator.reset(new JsonGenerator(mOutputFolder, mObjectName, mPackageName));
+        mGenerator.reset(new JsonGenerator(mOutputFolder, mObjectName, 
+            mTexPackname.empty() ? mPackageName : mTexPackname,
+            mImgPackname.empty() ? mPackageName : mImgPackname,
+            mMatPackname.empty() ? mPackageName : mMatPackname,
+            mNodePackname.empty() ? mPackageName : mNodePackname,
+            mMeshPackname.empty() ? mPackageName : mMeshPackname));
     else 
         mGenerator.reset(new NullGenerator());
 
@@ -156,10 +161,45 @@ void ConverterCommand::parseCommandLineImpl(int argc, char *args[])
         {
             mGenerateJson = true;
         }
-        else if (strcmp(args[i], "-packname") == 0)
+        else if (strcmp(args[i], "-pkg") == 0)
         {
             if ((i + 1) < argc && args[i + 1][0] != '-')
                 mPackageName.assign(args[i + 1]);
+            else
+                throw std::runtime_error("Missing package name");
+        }
+        else if (strcmp(args[i], "-texpkg") == 0)
+        {
+            if ((i + 1) < argc && args[i + 1][0] != '-')
+                mTexPackname.assign(args[i + 1]);
+            else
+                throw std::runtime_error("Missing package name");
+        }
+        else if (strcmp(args[i], "-imgpkg") == 0)
+        {
+            if ((i + 1) < argc && args[i + 1][0] != '-')
+                mImgPackname.assign(args[i + 1]);
+            else
+                throw std::runtime_error("Missing package name");
+        }
+        else if (strcmp(args[i], "-meshpkg") == 0)
+        {
+            if ((i + 1) < argc && args[i + 1][0] != '-')
+                mMeshPackname.assign(args[i + 1]);
+            else
+                throw std::runtime_error("Missing package name");
+        }
+        else if (strcmp(args[i], "-matpkg") == 0)
+        {
+            if ((i + 1) < argc && args[i + 1][0] != '-')
+                mMatPackname.assign(args[i + 1]);
+            else
+                throw std::runtime_error("Missing package name");
+        }
+        else if (strcmp(args[i], "-nodepkg") == 0)
+        {
+            if ((i + 1) < argc && args[i + 1][0] != '-')
+                mNodePackname.assign(args[i + 1]);
             else
                 throw std::runtime_error("Missing package name");
         }

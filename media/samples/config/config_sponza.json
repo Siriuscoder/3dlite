@@ -1,0 +1,35 @@
+{
+    // common settings
+    "LogLevel": 2,
+	"LogFlushAlways": true,
+    "TextureSettings": {
+        "Anisotropy": 8,
+        "Compression": true
+    },
+    // Video settings
+    // Window size, caption, color settings, etc
+    "VideoSettings": {
+        "Width": 1024,
+        "Height": 768,
+        "Caption": "Sponza",
+        "ColorBits": 24,
+        "Fullscreen": false,
+        "FSAA": 4,
+        "VSync": true
+    },
+    // resource locations
+    "ResourceLocations": [
+        {
+            "Name": "samples",
+            "FileCacheMaxSize": 1024000,
+            "Path": "samples/"
+        },
+        {
+            "Name": "sponza",
+            "FileCacheMaxSize": 10240000,
+            "Path": "samples/packs/sponza.pkg"
+        }
+    ],
+
+    "FixedUpdatesInterval": 30
+}

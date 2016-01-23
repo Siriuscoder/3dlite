@@ -25,8 +25,12 @@ class Generator
 public:
 
     Generator(const lite3dpp::String &outputFolder,
-        const lite3dpp::String &objectName,
-        const lite3dpp::String &packageName);
+        const lite3dpp::String &objectName,    
+        const lite3dpp::String &texPackname,
+        const lite3dpp::String &imgPackname,
+        const lite3dpp::String &matPackname,
+        const lite3dpp::String &nodePackname,
+        const lite3dpp::String &meshPackname);
 
     virtual void generateNode(const lite3d_mesh *mesh, const lite3dpp::String &name, const kmMat4 *transform,
         bool meshExist) = 0;
@@ -51,7 +55,12 @@ protected:
 
     lite3dpp::String mOutputFolder;
     lite3dpp::String mObjectName;
-    lite3dpp::String mPackageName;
+    lite3dpp::String mTexPackname;
+    lite3dpp::String mImgPackname;
+    lite3dpp::String mMatPackname;
+    lite3dpp::String mNodePackname;
+    lite3dpp::String mMeshPackname;
+    
 };
 
 class NullGenerator : public Generator
@@ -86,7 +95,11 @@ public:
 
     JsonGenerator(const lite3dpp::String &outputFolder,
         const lite3dpp::String &objectName,
-        const lite3dpp::String &packageName);
+        const lite3dpp::String &texPackname,
+        const lite3dpp::String &imgPackname,
+        const lite3dpp::String &matPackname,
+        const lite3dpp::String &nodePackname,
+        const lite3dpp::String &meshPackname);
 
     virtual void generateNode(const lite3d_mesh *mesh, const lite3dpp::String &name, const kmMat4 *transform,
         bool meshExist) override;

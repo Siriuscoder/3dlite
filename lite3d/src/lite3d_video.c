@@ -229,3 +229,8 @@ void lite3d_video_swap_buffers(void)
 {
     SDL_GL_SwapWindow(gRenderWindow);
 }
+
+void lite3d_video_set_mouse_pos(int x, int y)
+{
+    SDL_WarpMouseInWindow(gRenderWindow, x, y);
+}

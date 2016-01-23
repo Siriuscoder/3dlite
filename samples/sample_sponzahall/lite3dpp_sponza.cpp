@@ -34,6 +34,11 @@ public:
         lite3dpp::Scene *scene = mMain->getResourceManager()->queryResource<lite3dpp::Scene>("SponzaHall",
             "samples:scenes/sponza.json");
         mCamera = scene->getCamera("MyCamera");
+        mWindow = mMain->getResourceManager()->queryResource<lite3dpp::WindowRenderTarget>("MainWindow");
+        
+        mSenterXPos = mWindow->width() >> 1;
+        mSenterYPos = mWindow->height() >> 1;
+        lite3d_video_set_mouse_pos(mSenterXPos, mSenterYPos);
     }
 
     void shut() override
@@ -47,7 +52,30 @@ public:
 
     void timerTick(lite3d_timer *timerid) override
     {
-
+        const Uint8 *state = SDL_GetKeyboardState(NULL);
+        if(state[SDL_SCANCODE_W])
+        {
+            kmVec3 vec3 = {0, 0, 6};
+            mCamera->moveRelative(vec3);
+        }
+        
+        if(state[SDL_SCANCODE_S])
+        {
+            kmVec3 vec3 = {0, 0, -6};
+            mCamera->moveRelative(vec3);
+        }
+        
+        if(state[SDL_SCANCODE_A])
+        {
+            kmVec3 vec3 = {6, 0, 0};
+            mCamera->moveRelative(vec3);
+        }
+        
+        if(state[SDL_SCANCODE_D])
+        {
+            kmVec3 vec3 = {-6, 0, 0};
+            mCamera->moveRelative(vec3);
+        }
     }
 
     void processEvent(SDL_Event *e) override
@@ -69,46 +97,12 @@ public:
                     stats->lastFPS, stats->avrFPS, stats->bestFPS, stats->worstFPS,
                     stats->lastFrameMs, stats->avrFrameMs, stats->bestFrameMs, stats->worstFrameMs);
             }
-            else if (e->key.keysym.sym == SDLK_UP)
-            {
-                mCamera->pitch(-0.05);
-            }
-            else if (e->key.keysym.sym == SDLK_DOWN)
-            {
-                mCamera->pitch(0.05);
-            }
-            else if (e->key.keysym.sym == SDLK_LEFT)
-            {
-                mCamera->yaw_fixed_xz(-0.05);
-            }
-            else if (e->key.keysym.sym == SDLK_RIGHT)
-            {
-                mCamera->yaw_fixed_xz(0.05);
-            }
-            else if (e->key.keysym.sym == SDLK_w)
-            {
-                kmVec3 vec3 = {0, 0, 4};
-                mCamera->moveRelative(vec3);
-            }
-            else if (e->key.keysym.sym == SDLK_s)
-            {
-                kmVec3 vec3 = {0, 0, -4};
-                mCamera->moveRelative(vec3);
-            }
-            else if (e->key.keysym.sym == SDLK_a)
-            {
-                kmVec3 vec3 = {4, 0, 0};
-                mCamera->moveRelative(vec3);
-            }
-            else if (e->key.keysym.sym == SDLK_d)
-            {
-                kmVec3 vec3 = {-4, 0, 0};
-                mCamera->moveRelative(vec3);
-            }
-            else if (e->key.keysym.sym == SDLK_q)
-            {
-                mCamera->roll(0.05);
-            }
+        }
+        else if(e->type == SDL_MOUSEMOTION)
+        {
+            mCamera->yaw_fixed_xz((e->motion.x - mSenterXPos) * 0.003);
+            mCamera->pitch((e->motion.y - mSenterYPos) * 0.003);
+            lite3d_video_set_mouse_pos(mSenterXPos, mSenterYPos);
         }
     }
 
@@ -116,6 +110,9 @@ private:
 
     lite3dpp::Main *mMain;
     lite3dpp::Camera *mCamera;
+    lite3dpp::RenderTarget *mWindow;
+    int mSenterXPos;
+    int mSenterYPos;
 };
 
 int main(int agrc, char *args[])
@@ -126,7 +123,7 @@ int main(int agrc, char *args[])
         SampleLifecycleListener lifecycleListener(&mainObj);
 
         mainObj.registerLifecycleListener(&lifecycleListener);
-        mainObj.initFromConfig("samples/config/config.json");
+        mainObj.initFromConfig("samples/config/config_sponza.json");
         mainObj.run();
     }
     catch (std::exception &ex)

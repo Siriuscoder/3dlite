@@ -94,7 +94,7 @@ void lite3d_camera_lookAt(lite3d_camera *camera, const kmVec3 *pointTo)
 {
     kmVec3 direction, scaled;
     kmVec3 up = {
-        0.0f, 0.0f, 1.0f
+        0.0f, 1.0f, 0.0f
     };
 
     SDL_assert(camera && pointTo);

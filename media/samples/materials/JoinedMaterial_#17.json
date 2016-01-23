@@ -25,7 +25,7 @@
       "Name":"ambient",
       "Type":"v4",
       "Value":[
-        0.5879999995,0.5879999995,0.5879999995,1.0000000000
+        0.3,0.3,0.3,1.0000000000
       ]
     },
     {
@@ -51,8 +51,8 @@
     },
     {
       "Name":"diffuseSampler",
-      "TextureName":"background.texture",
-      "TexturePath":"samples:textures/json/background.json",
+      "TextureName":"lion.texture",
+      "TexturePath":"sponza:textures/json/lion.json",
       "Type":"sampler"
     }
   ]

@@ -84,8 +84,8 @@ static void refresh_render_stats(uint64_t beginFrame, uint64_t endFrame)
 
         if (gRenderStats.bestFPS < gRenderStats.lastFPS)
             gRenderStats.bestFPS = gRenderStats.lastFPS;
-        if (gRenderStats.worstFPS > gRenderStats.lastFPS)
-            gRenderStats.worstFPS = gRenderStats.worstFPS;
+        if (gRenderStats.worstFPS > gRenderStats.lastFPS || gRenderStats.worstFPS <= 1)
+            gRenderStats.worstFPS = gRenderStats.lastFPS;
 
         gRenderStats.avrFPS = (gRenderStats.avrFPS + gRenderStats.lastFPS) / 2;
     }

@@ -4,14 +4,13 @@
 		{
 			"Name": "MyCamera",
 
-			"Position": [0,0,800],
-			"LootAt": [0,0,0],
+			"Position": [700,-450,0],
+			"LookAt": [0,-450,0],
 			"Perspective": 
 			{
 				"Znear": 1,
 				"Zfar": 10000,
 				"Fov": 55
-			
 			},
 			"RenderTargets":
 			[
@@ -28,7 +27,7 @@
 	[
 		{
 			"Name": "SponzaHall",
-			"Object": "samples:objects/Sponza.json",
+			"Object": "sponza:objects/sponza.json",
 
 			"Position": [0,0,0],
 			"Rotation": [0,0,0,1],

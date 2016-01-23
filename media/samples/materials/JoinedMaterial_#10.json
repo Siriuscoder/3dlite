@@ -25,7 +25,7 @@
       "Name":"ambient",
       "Type":"v4",
       "Value":[
-        0.5879999995,0.5879999995,0.5879999995,1.0000000000
+        0.8,0.8,0.8,1.0000000000
       ]
     },
     {
@@ -52,7 +52,7 @@
     {
       "Name":"diffuseSampler",
       "TextureName":"spnza_bricks_a_diff.texture",
-      "TexturePath":"samples:textures/json/spnza_bricks_a_diff.json",
+      "TexturePath":"sponza:textures/json/spnza_bricks_a_diff.json",
       "Type":"sampler"
     }
   ]

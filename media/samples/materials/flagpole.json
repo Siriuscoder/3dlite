@@ -51,8 +51,8 @@
     },
     {
       "Name":"diffuseSampler",
-      "TextureName":"vase_dif.texture",
-      "TexturePath":"sponza:textures/json/vase_dif.json",
+      "TextureName":"sponza_flagpole_diff.texture",
+      "TexturePath":"sponza:textures/json/sponza_flagpole_diff.json",
       "Type":"sampler"
     }
   ]

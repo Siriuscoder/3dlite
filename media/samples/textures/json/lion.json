@@ -1,7 +1,0 @@
-{
-  "Filtering":"Trilinear",
-  "Image":"samples:textures/images/lion.tga",
-  "ImageFormat":"tga",
-  "TextureType":"2D",
-  "Wrapping":"ClampToEdge"
-}
