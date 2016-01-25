@@ -84,6 +84,7 @@ void lite3d_camera_init(lite3d_camera *camera)
     lite3d_scene_node_init(&camera->cameraNode);
     camera->cameraNode.rotationCentered = LITE3D_FALSE;
     camera->cameraNode.renderable = LITE3D_FALSE;
+    camera->cameraNode.isCamera = LITE3D_TRUE;
     kmMat4Identity(&camera->projection);
 
     camera->cullBackFaces = LITE3D_TRUE;
@@ -94,13 +95,12 @@ void lite3d_camera_lookAt(lite3d_camera *camera, const kmVec3 *pointTo)
 {
     kmVec3 direction, scaled;
     kmVec3 up = {
-        0.0f, 1.0f, 0.0f
+        0.0f, 0.0f, 1.0f
     };
 
     SDL_assert(camera && pointTo);
 
-    kmVec3Scale(&scaled, pointTo, -1);
-    kmVec3Subtract(&direction, &camera->cameraNode.position, &scaled);
+    kmVec3Subtract(&direction, pointTo, &camera->cameraNode.position);
     kmQuaternionLookRotation(&camera->cameraNode.rotation, &direction, &up);
     camera->cameraNode.recalc = LITE3D_TRUE;
 }
@@ -138,9 +138,7 @@ void lite3d_camera_tracking(lite3d_camera *camera,
 void lite3d_camera_set_position(lite3d_camera *camera,
     const kmVec3 *position)
 {
-    kmVec3 postmp;
-    kmVec3Scale(&postmp, position, -1.0f);
-    lite3d_scene_node_set_position(&camera->cameraNode, &postmp);
+    lite3d_scene_node_set_position(&camera->cameraNode, position);
 }
 
 void lite3d_camera_set_rotation(lite3d_camera *camera,
@@ -204,11 +202,8 @@ void lite3d_camera_roll_fixed_xy(lite3d_camera *camera, float angle)
 
 void lite3d_camera_move(lite3d_camera *camera, const kmVec3 *value)
 {
-    kmVec3 postmp;
-
     SDL_assert(camera);
-    kmVec3Scale(&postmp, value, -1.0f);
-    lite3d_scene_node_move(&camera->cameraNode, &postmp);
+    lite3d_scene_node_move(&camera->cameraNode, value);
 }
 
 void lite3d_camera_move_relative(lite3d_camera *camera,

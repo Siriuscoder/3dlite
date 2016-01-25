@@ -33,6 +33,7 @@ lite3d_scene_node *lite3d_scene_node_init(lite3d_scene_node *node)
     kmVec3Fill(&node->scale, 1.0f, 1.0f, 1.0f);
     node->recalc = LITE3D_TRUE;
     node->rotationCentered = LITE3D_TRUE;
+    node->isCamera = LITE3D_FALSE;
     node->renderable = LITE3D_TRUE;
     node->enabled = LITE3D_TRUE;
     node->visible = LITE3D_TRUE;
@@ -119,9 +120,9 @@ uint8_t lite3d_scene_node_update(lite3d_scene_node *node)
 
         kmMat4RotationQuaternion(&node->localView, &node->rotation);
         kmMat4Translation(&transMat,
-            node->position.x,
-            node->position.y,
-            node->position.z);
+            node->isCamera ? -node->position.x : node->position.x,
+            node->isCamera ? -node->position.y : node->position.y,
+            node->isCamera ? -node->position.z : node->position.z);
 
         if (node->scale.x != 1.0f ||
             node->scale.y != 1.0f ||

@@ -41,7 +41,7 @@ namespace lite3dpp
         {
             loadShaders(shaders);
         }
-        catch(std::exception &ex)
+        catch(std::exception &)
         {
             unloadShaders(shaders);
             throw;
@@ -61,7 +61,7 @@ namespace lite3dpp
             if(!lite3d_shader_program_link(&mProgram, &shaders[0], shaders.size()))
                 throw std::runtime_error(getPath() + " link: \"" + mProgram.statusString + "\"");
         }
-        catch(std::exception &ex)
+        catch(std::exception &)
         {
             unloadShaders(shaders);
             unloadImpl();
