@@ -55,25 +55,25 @@ public:
         const Uint8 *state = SDL_GetKeyboardState(NULL);
         if(state[SDL_SCANCODE_W])
         {
-            kmVec3 vec3 = {0, 0, 6};
+            kmVec3 vec3 = {0, 0, -6};
             mCamera->moveRelative(vec3);
         }
         
         if(state[SDL_SCANCODE_S])
         {
-            kmVec3 vec3 = {0, 0, -6};
+            kmVec3 vec3 = {0, 0, 6};
             mCamera->moveRelative(vec3);
         }
         
         if(state[SDL_SCANCODE_A])
         {
-            kmVec3 vec3 = {6, 0, 0};
+            kmVec3 vec3 = {-6, 0, 0};
             mCamera->moveRelative(vec3);
         }
         
         if(state[SDL_SCANCODE_D])
         {
-            kmVec3 vec3 = {-6, 0, 0};
+            kmVec3 vec3 = {6, 0, 0};
             mCamera->moveRelative(vec3);
         }
     }
@@ -100,7 +100,7 @@ public:
         }
         else if(e->type == SDL_MOUSEMOTION)
         {
-            mCamera->yaw_fixed_xz((e->motion.x - mSenterXPos) * 0.003);
+            mCamera->rotateZ((e->motion.x - mSenterXPos) * 0.003);
             mCamera->pitch((e->motion.y - mSenterYPos) * 0.003);
             lite3d_video_set_mouse_pos(mSenterXPos, mSenterYPos);
         }

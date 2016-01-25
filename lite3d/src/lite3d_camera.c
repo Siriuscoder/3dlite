@@ -93,7 +93,7 @@ void lite3d_camera_init(lite3d_camera *camera)
 
 void lite3d_camera_lookAt(lite3d_camera *camera, const kmVec3 *pointTo)
 {
-    kmVec3 direction, scaled;
+    kmVec3 direction;
     kmVec3 up = {
         0.0f, 0.0f, 1.0f
     };
@@ -182,19 +182,19 @@ void lite3d_camera_roll(lite3d_camera *camera, float angle)
     lite3d_scene_node_rotate_by(&camera->cameraNode, &quat);
 }
 
-void lite3d_camera_yaw_fixed_xz(lite3d_camera *camera, float angle)
+void lite3d_camera_rotate_y(lite3d_camera *camera, float angle)
 {
     SDL_assert(camera);
     lite3d_scene_node_rotate_angle(&camera->cameraNode, &KM_VEC3_POS_Y, angle);
 }
 
-void lite3d_camera_pitch_fixed_yz(lite3d_camera *camera, float angle)
+void lite3d_camera_rotate_x(lite3d_camera *camera, float angle)
 {
     SDL_assert(camera);
     lite3d_scene_node_rotate_angle(&camera->cameraNode, &KM_VEC3_POS_X, angle);    
 }
 
-void lite3d_camera_roll_fixed_xy(lite3d_camera *camera, float angle)
+void lite3d_camera_rotate_z(lite3d_camera *camera, float angle)
 {
     SDL_assert(camera);
     lite3d_scene_node_rotate_angle(&camera->cameraNode, &KM_VEC3_POS_Z, angle);

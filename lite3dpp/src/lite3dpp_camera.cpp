@@ -80,19 +80,19 @@ namespace lite3dpp
         lite3d_camera_move(&mCamera, &value);
     }
     
-    void Camera::yaw_fixed_xz(float angle)
+    void Camera::rotateY(float angle)
     {
-        lite3d_camera_yaw_fixed_xz(&mCamera, angle);
+        lite3d_camera_rotate_y(&mCamera, angle);
     }
     
-    void Camera::pitch_fixed_yz(float angle)
+    void Camera::rotateX(float angle)
     {
-        lite3d_camera_pitch(&mCamera, angle);
+        lite3d_camera_rotate_x(&mCamera, angle);
     }
     
-    void Camera::roll_fixed_xy(float angle)
+    void Camera::rotateZ(float angle)
     {
-        lite3d_camera_roll(&mCamera, angle);
+        lite3d_camera_rotate_z(&mCamera, angle);
     }
 
     void Camera::moveRelative(const kmVec3 &value)
