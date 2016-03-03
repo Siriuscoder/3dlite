@@ -21,6 +21,7 @@
 #include <lite3d/lite3d_common.h>
 #include <lite3d/lite3d_scene_node.h>
 #include <lite3d/lite3d_list.h>
+#include <lite3d/lite3d_frustum.h>
 
 /* compatible with GL */
 #define LITE3D_POLYMODE_POINT        0x1B00
@@ -60,6 +61,8 @@ typedef struct lite3d_camera
         } perspective;
     } projectionParams;
     
+    lite3d_frustum frustum;
+
     const lite3d_scene_node *linkNode;
     const lite3d_scene_node *trackNode;
     uint8_t linkType;

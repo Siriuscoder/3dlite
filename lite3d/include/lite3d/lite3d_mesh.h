@@ -21,6 +21,7 @@
 #include <lite3d/lite3d_common.h>
 #include <lite3d/lite3d_vbo.h>
 #include <lite3d/lite3d_vao.h>
+#include <lite3d/lite3d_frustum.h>
 
 /* legacy types, now not used  */
 #define LITE3D_BUFFER_BINDING_VERTEX          0x0
@@ -64,6 +65,7 @@ typedef struct lite3d_mesh_chunk
     /* material index */
     uint32_t materialIndex;
     uint8_t hasIndexes;
+    lite3d_bouding_box boudingBox;
 } lite3d_mesh_chunk;
 
 LITE3D_CEXPORT int lite3d_mesh_init(struct lite3d_mesh *mesh);
