@@ -186,7 +186,7 @@ void lite3d_7z_pack_iterate(lite3d_7z_pack *pack, lite3d_7z_iterator iter, void 
         if(!utf16_to_utf8(utf8name, &destPos, utf16name))
         {
             SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
-                "%s: to utf8 name decode failed..");
+                "%s: to utf8 name decode failed..", LITE3D_CURRENT_FUNCTION);
             continue;
         }
             

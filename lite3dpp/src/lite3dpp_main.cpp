@@ -234,7 +234,7 @@ namespace lite3dpp
         catch (std::exception &ex)
         {
             SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION,
-                         "engineFrameEnd: ", ex.what());
+                         "engineFrameEnd: %s", ex.what());
             return LITE3D_FALSE;
         }
 

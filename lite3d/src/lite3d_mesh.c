@@ -242,8 +242,8 @@ lite3d_mesh_chunk *lite3d_mesh_append_chunk(lite3d_mesh *mesh,
     lite3d_list_add_last_link(&meshChunk->node, &mesh->chunks);
     mesh->chunkCount++;
 
-    SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "MESH: 0x%x: chunk 0x%x: %s, cv/ov/sv %d/%db/%db, ci/oi %d/%db",
-        mesh, meshChunk, indexPrimitive == LITE3D_PRIMITIVE_POINT ? "POINTS" : (indexPrimitive == LITE3D_PRIMITIVE_LINE ? "LINES" : "TRIANGLES"),
+    SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "MESH: %p: chunk %p: %s, cv/ov/sv %d/%db/%db, ci/oi %d/%db",
+        (void *)mesh, (void *)meshChunk, indexPrimitive == LITE3D_PRIMITIVE_POINT ? "POINTS" : (indexPrimitive == LITE3D_PRIMITIVE_LINE ? "LINES" : "TRIANGLES"),
         meshChunk->vao.verticesCount, meshChunk->vao.verticesOffset, stride, meshChunk->vao.indexesCount, meshChunk->vao.indexesOffset);
 
     return meshChunk;

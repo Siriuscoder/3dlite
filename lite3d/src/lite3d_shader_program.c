@@ -161,8 +161,8 @@ int32_t lite3d_shader_program_uniform_set(
         if (location < 0)
         {
             SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
-                "%s: uniform %s not found in program 0x%x",
-                LITE3D_CURRENT_FUNCTION, param->name, program);
+                "%s: uniform %s not found in program %p",
+                LITE3D_CURRENT_FUNCTION, param->name, (void *)program);
             return -2;
         }
     }
@@ -221,8 +221,8 @@ int32_t lite3d_shader_program_sampler_set(
         if (location < 0)
         {
             SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
-                "%s: sampler %s not found in program 0x%x",
-                LITE3D_CURRENT_FUNCTION, param->name, program);
+                "%s: sampler %s not found in program %p",
+                LITE3D_CURRENT_FUNCTION, param->name, (void *)program);
             return -2;
         }
     }
@@ -239,8 +239,8 @@ void lite3d_shader_program_attribute_index(
     SDL_assert(glIsProgram(program->programID));
 
     SDL_LogVerbose(SDL_LOG_CATEGORY_APPLICATION,
-        "%s: bind attribute %s:%d for program 0x%x",
-        LITE3D_CURRENT_FUNCTION, name, location, program);
+        "%s: bind attribute %s:%d for program %p",
+        LITE3D_CURRENT_FUNCTION, name, location, (void *)program);
 
     glBindAttribLocation(program->programID, location, name);
 }
