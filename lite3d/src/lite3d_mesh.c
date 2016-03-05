@@ -238,6 +238,8 @@ lite3d_mesh_chunk *lite3d_mesh_append_chunk(lite3d_mesh *mesh,
     meshChunk->vao.elementsCount = (indexesCount > 0 ? indexesCount : verticesCount) /
         (indexPrimitive == LITE3D_PRIMITIVE_POINT ? 1 :
         (indexPrimitive == LITE3D_PRIMITIVE_LINE ? 2 : 3));
+    
+    memset(&meshChunk->boudingVol, 0, sizeof(meshChunk->boudingVol));
 
     lite3d_list_add_last_link(&meshChunk->node, &mesh->chunks);
     mesh->chunkCount++;

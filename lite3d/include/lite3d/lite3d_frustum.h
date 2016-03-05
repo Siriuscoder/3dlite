@@ -26,16 +26,21 @@ typedef struct lite3d_frustum
     kmPlane clipPlains[6];
 } lite3d_frustum;
 
-typedef struct lite3d_bouding_box
+typedef struct lite3d_bouding_vol
 {
-    kmVec3 points[8];
-} lite3d_bouding_box;
+    kmVec3 box[8];
+    kmVec3 sphereCenter;
+    float radius;
+} lite3d_bouding_vol;
 
-LITE3D_CEXPORT void makeFrustum(struct lite3d_frustum *frustum, 
+LITE3D_CEXPORT void lite3d_frustum_compute(struct lite3d_frustum *frustum, 
     const struct kmMat4 *clip);
     
-LITE3D_CEXPORT int testFrustum(struct lite3d_frustum *frustum, 
-    const struct lite3d_bouding_box *box);
+LITE3D_CEXPORT int lite3d_frustum_test(struct lite3d_frustum *frustum, 
+    const struct lite3d_bouding_vol *vol);
+
+LITE3D_CEXPORT void lite3d_bouding_vol_setup(struct lite3d_bouding_vol *vol,
+    const kmVec3 *vmin, const kmVec3 *vmax);
 
 #endif	/* LITE3D_FRUSTUM_H */
 

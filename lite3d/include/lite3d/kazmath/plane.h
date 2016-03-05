@@ -60,6 +60,7 @@ struct kmVec3* kmPlaneIntersectLine(struct kmVec3* pOut, const kmPlane* pP, cons
 kmPlane* kmPlaneNormalize(kmPlane* pOut, const kmPlane* pP);
 kmPlane* kmPlaneScale(kmPlane* pOut, const kmPlane* pP, kmScalar s);
 KM_POINT_CLASSIFICATION kmPlaneClassifyPoint(const kmPlane* pIn, const struct kmVec3* pP); /** Classifys a point against a plane */
+kmScalar kmPlaneDistance(const kmPlane* pIn, const struct kmVec3* pP);
 
 kmPlane* kmPlaneExtractFromMat4(kmPlane* pOut, const struct kmMat4* pIn, kmInt row);
 struct kmVec3* kmPlaneGetIntersection(struct kmVec3* pOut, const kmPlane* p1, const kmPlane* p2, const kmPlane* p3);

@@ -67,6 +67,8 @@ static int ai_node_load_to_vbo(lite3d_mesh *meshInst, const struct aiScene *scen
     for (i = 0; i < node->mNumMeshes; ++i)
     {
         const struct aiMesh *mesh = scene->mMeshes[node->mMeshes[i]];
+        kmVec3 vmax = {0, 0, 0}, vmin = {0, 0, 0};
+        lite3d_mesh_chunk *thisChunk;
         register float *pvertices;
         register uint32_t j;
 
@@ -121,6 +123,10 @@ static int ai_node_load_to_vbo(lite3d_mesh *meshInst, const struct aiScene *scen
         SDL_assert_release(indexes);
 
         pvertices = (float *) vertices;
+        
+        vmax.x = vmin.x = mesh->mVertices[0].x;
+        vmax.y = vmin.y = mesh->mVertices[0].y;
+        vmax.z = vmin.z = mesh->mVertices[0].z;
 
         for (j = 0; j < mesh->mNumVertices; ++j)
         {
@@ -129,7 +135,15 @@ static int ai_node_load_to_vbo(lite3d_mesh *meshInst, const struct aiScene *scen
             *pvertices++ = mesh->mVertices[j].x;
             *pvertices++ = mesh->mVertices[j].y;
             *pvertices++ = mesh->mVertices[j].z;
-
+            
+            vmin.x = LITE3D_MIN(mesh->mVertices[j].x, vmin.x);
+            vmin.y = LITE3D_MIN(mesh->mVertices[j].y, vmin.y);
+            vmin.z = LITE3D_MIN(mesh->mVertices[j].z, vmin.z);
+            
+            vmax.x = LITE3D_MAX(mesh->mVertices[j].x, vmax.x);
+            vmax.y = LITE3D_MAX(mesh->mVertices[j].y, vmax.y);
+            vmax.z = LITE3D_MAX(mesh->mVertices[j].z, vmax.z);
+            
             if (mesh->mNormals)
             {
                 *pvertices++ = mesh->mNormals[j].x;
@@ -209,8 +223,9 @@ static int ai_node_load_to_vbo(lite3d_mesh *meshInst, const struct aiScene *scen
             return LITE3D_FALSE;
 
         /* set material index to currently added meshChunk */
-        LITE3D_MEMBERCAST(lite3d_mesh_chunk, lite3d_list_last_link(&meshInst->chunks), node)->
-            materialIndex = mesh->mMaterialIndex;
+        thisChunk = LITE3D_MEMBERCAST(lite3d_mesh_chunk, lite3d_list_last_link(&meshInst->chunks), node);
+        thisChunk->materialIndex = mesh->mMaterialIndex;
+        lite3d_bouding_vol_setup(&thisChunk->boudingVol, &vmin, &vmax);
 
         lite3d_free(vertices);
         lite3d_free(indexes);

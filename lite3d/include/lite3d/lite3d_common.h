@@ -87,6 +87,9 @@
 #   define COMPILER_VERSION "UNKNOWN"
 #endif
 
+#define LITE3D_MIN(a, b) (((a) < (b)) ? (a) : (b))
+#define LITE3D_MAX(a, b) (((a) > (b)) ? (a) : (b))
+
 #define LITE3D_CURRENT_FUNCTION __func__
 
 #define LITE3D_CEXPORT  LITE3D_EXPORT LITE3D_EXTERN
