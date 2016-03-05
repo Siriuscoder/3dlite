@@ -42,6 +42,7 @@ typedef struct lite3d_global_settings
     size_t maxFileCacheSize;
     int8_t logLevel;
     int8_t logFlushAlways;
+    char logFile[50];
 } lite3d_global_settings;
 
 LITE3D_CEXPORT int lite3d_main(const lite3d_global_settings *settings);

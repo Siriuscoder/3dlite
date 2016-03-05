@@ -24,42 +24,42 @@
 
 #include <lite3d/lite3d_logger.h>
 #include <lite3d/lite3d_mesh_assimp_loader.h>
-    
+
 static uint8_t gFlushAlways = LITE3D_FALSE;
 static FILE *gOutFile = NULL;
 
-static void log_to_file(FILE *desc, int category, 
+static void log_to_file(FILE *desc, int category,
     SDL_LogPriority priority, const char* message)
 {
-    if(!desc)
+    if (!desc)
         return;
-    
-    fprintf(desc, "[%10d]:%s:%s : %s\n", 
+
+    fprintf(desc, "[%10d]:%s:%s : %s\n",
         SDL_GetTicks(),
         (priority == SDL_LOG_PRIORITY_VERBOSE ? "note" :
-        (priority == SDL_LOG_PRIORITY_DEBUG ? "debug" : 
+        (priority == SDL_LOG_PRIORITY_DEBUG ? "debug" :
         (priority == SDL_LOG_PRIORITY_INFO ? "info" :
         (priority == SDL_LOG_PRIORITY_WARN ? "warn" :
         (priority == SDL_LOG_PRIORITY_ERROR ? "error" : "critical"))))),
         category == SDL_LOG_CATEGORY_APPLICATION ? "app" : "sdl",
         message);
 
-    if(gFlushAlways)
+    if (gFlushAlways)
         fflush(desc);
 }
 
-static void std_output_function(void* userdata, int category, 
+static void std_output_function(void* userdata, int category,
     SDL_LogPriority priority, const char* message)
 {
     FILE *outdesc = stdout;
-    
-    if(priority >= SDL_LOG_PRIORITY_ERROR)
+
+    if (priority >= SDL_LOG_PRIORITY_ERROR)
         outdesc = stderr;
-        
+
     log_to_file(outdesc, category, priority, message);
 }
 
-static void file_output_function(void* userdata, int category, 
+static void file_output_function(void* userdata, int category,
     SDL_LogPriority priority, const char* message)
 {
     std_output_function(userdata, category, priority, message);
@@ -68,7 +68,7 @@ static void file_output_function(void* userdata, int category,
 
 void lite3d_logger_set_logParams(int8_t level, int8_t flushAlways)
 {
-    SDL_LogSetAllPriority(level == LITE3D_LOGLEVEL_ERROR ? SDL_LOG_PRIORITY_ERROR : 
+    SDL_LogSetAllPriority(level == LITE3D_LOGLEVEL_ERROR ? SDL_LOG_PRIORITY_ERROR :
         (level == LITE3D_LOGLEVEL_INFO ? SDL_LOG_PRIORITY_INFO : SDL_LOG_PRIORITY_VERBOSE));
 
     flushAlways = flushAlways;
@@ -90,10 +90,10 @@ void lite3d_logger_setup_stdout(void)
 void lite3d_logger_setup_file(const char *logfile)
 {
     SDL_LogSetOutputFunction(file_output_function, NULL);
-    if((gOutFile = fopen(logfile, "wa")) == NULL)
+    if ((gOutFile = fopen(logfile, "a")) == NULL)
         SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION, "%s: Could not open log file: %s",
-            LITE3D_CURRENT_FUNCTION, strerror(errno));
-    
+        LITE3D_CURRENT_FUNCTION, strerror(errno));
+
 #ifdef INCLUDE_ASSIMP
     lite3d_assimp_logging_init();
 #endif
@@ -101,6 +101,12 @@ void lite3d_logger_setup_file(const char *logfile)
 
 void lite3d_logger_release(void)
 {
+    if (gOutFile)
+    {
+        fclose(gOutFile);
+        gOutFile = NULL;
+    }
+
 #ifdef INCLUDE_ASSIMP
     lite3d_assimp_logging_release();
 #endif

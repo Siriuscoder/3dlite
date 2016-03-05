@@ -720,7 +720,7 @@ int lite3d_texture_unit_allocate(lite3d_texture_unit *textureUnit,
     if (internalFormat == GL_COMPRESSED_RGB_S3TC_DXT1_EXT || 
         internalFormat == GL_COMPRESSED_RGBA_S3TC_DXT5_EXT)
     {
-        size_t levelSize;
+        size_t levelSize = 0;
         uint8_t li = 0;
         textureUnit->totalSize = 0;
         while(lite3d_texture_unit_get_compressed_level_size(textureUnit, li++, &levelSize))
@@ -730,7 +730,7 @@ int lite3d_texture_unit_allocate(lite3d_texture_unit *textureUnit,
     }
     else
     {
-        size_t levelSize;
+        size_t levelSize = 0;
         uint8_t li = 0;
         textureUnit->totalSize = 0;
         while(lite3d_texture_unit_get_level_size(textureUnit, li++, &levelSize))

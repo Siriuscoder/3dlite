@@ -71,7 +71,11 @@ int lite3d_main(const lite3d_global_settings *settings)
     /* cleanup engine memory at exit */
     atexit(lite3d_memory_cleanup);
     /* setup logger */
-    lite3d_logger_setup_stdout();
+    if(settings->logFile[0] == 0)
+        lite3d_logger_setup_stdout();
+    else
+        lite3d_logger_setup_file(settings->logFile);
+    
     lite3d_logger_set_logParams(gGlobalSettings.logLevel,
         gGlobalSettings.logFlushAlways);
 
