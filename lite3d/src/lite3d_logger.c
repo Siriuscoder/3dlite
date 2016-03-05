@@ -16,6 +16,9 @@
  *	along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
 #include <stdio.h>
+#include <string.h>
+#include <errno.h>
+
 #include <SDL_log.h>
 #include <SDL_timer.h>
 
@@ -23,10 +26,14 @@
 #include <lite3d/lite3d_mesh_assimp_loader.h>
     
 static uint8_t gFlushAlways = LITE3D_FALSE;
+static FILE *gOutFile = NULL;
 
 static void log_to_file(FILE *desc, int category, 
     SDL_LogPriority priority, const char* message)
 {
+    if(!desc)
+        return;
+    
     fprintf(desc, "[%10d]:%s:%s : %s\n", 
         SDL_GetTicks(),
         (priority == SDL_LOG_PRIORITY_VERBOSE ? "note" :
@@ -55,7 +62,8 @@ static void std_output_function(void* userdata, int category,
 static void file_output_function(void* userdata, int category, 
     SDL_LogPriority priority, const char* message)
 {
-
+    std_output_function(userdata, category, priority, message);
+    log_to_file(gOutFile, category, priority, message);
 }
 
 void lite3d_logger_set_logParams(int8_t level, int8_t flushAlways)
@@ -67,7 +75,6 @@ void lite3d_logger_set_logParams(int8_t level, int8_t flushAlways)
 #ifdef INCLUDE_ASSIMP
     lite3d_assimp_logging_level(level);
 #endif
-
 }
 
 void lite3d_logger_setup_stdout(void)
@@ -78,6 +85,18 @@ void lite3d_logger_setup_stdout(void)
     lite3d_assimp_logging_init();
 #endif
 
+}
+
+void lite3d_logger_setup_file(const char *logfile)
+{
+    SDL_LogSetOutputFunction(file_output_function, NULL);
+    if((gOutFile = fopen(logfile, "wa")) == NULL)
+        SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION, "%s: Could not open log file: %s",
+            LITE3D_CURRENT_FUNCTION, strerror(errno));
+    
+#ifdef INCLUDE_ASSIMP
+    lite3d_assimp_logging_init();
+#endif
 }
 
 void lite3d_logger_release(void)

@@ -48,6 +48,7 @@
           <in>lite3d_buffers_manip.c</in>
           <in>lite3d_camera.c</in>
           <in>lite3d_framebuffer.c</in>
+          <in>lite3d_frustum.c</in>
           <in>lite3d_list.c</in>
           <in>lite3d_logger.c</in>
           <in>lite3d_main.c</in>
@@ -505,11 +506,6 @@
           </preprocessorList>
         </cTool>
       </folder>
-      <item path="lite3d/include/lite3d/lite3d_kazmath.h"
-            ex="false"
-            tool="3"
-            flavor2="0">
-      </item>
       <item path="lite3d/src/7zdec/7zBuf.c" ex="false" tool="0" flavor2="3">
         <cTool flags="2">
         </cTool>
@@ -675,6 +671,19 @@
         </cTool>
       </item>
       <item path="lite3d/src/lite3d_framebuffer.c" ex="false" tool="0" flavor2="3">
+        <cTool flags="3">
+          <incDir>
+            <pElem>/usr/include/SDL2</pElem>
+            <pElem>build/lite3d</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>GLEW_STATIC</Elem>
+            <Elem>_REENTRANT</Elem>
+            <Elem>lite3d_EXPORTS</Elem>
+          </preprocessorList>
+        </cTool>
+      </item>
+      <item path="lite3d/src/lite3d_frustum.c" ex="false" tool="0" flavor2="3">
         <cTool flags="3">
           <incDir>
             <pElem>/usr/include/SDL2</pElem>

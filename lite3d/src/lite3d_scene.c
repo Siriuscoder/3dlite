@@ -343,7 +343,7 @@ int lite3d_scene_node_touch_material_instanced(
         if (!mqrNode->meshChunk)
         {
             SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
-                "%s: mesh chunk is null", __FUNCTION__);
+                "%s: mesh chunk is null", LITE3D_CURRENT_FUNCTION);
             lite3d_free_pooled(LITE3D_POOL_NO1, mqrNode);
             return LITE3D_FALSE;
         }

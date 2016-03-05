@@ -137,21 +137,21 @@ int lite3d_vbo_technique_init(void)
     if (!GL_VERSION_3_1)
     {
         SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION,
-            "%s: GL v3.1 minimum required (VBO)", __FUNCTION__);
+            "%s: GL v3.1 minimum required (VBO)", LITE3D_CURRENT_FUNCTION);
         return LITE3D_FALSE;
     }
 
     if (!GL_ARB_vertex_buffer_object)
     {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
-            "%s: GL_ARB_vertex_buffer_object not supported..", __FUNCTION__);
+            "%s: GL_ARB_vertex_buffer_object not supported..", LITE3D_CURRENT_FUNCTION);
         return LITE3D_FALSE;
     }
 
     if (!GLEW_ARB_copy_buffer)
     {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
-            "%s: GLEW_ARB_copy_buffer not supported..", __FUNCTION__);
+            "%s: GLEW_ARB_copy_buffer not supported..", LITE3D_CURRENT_FUNCTION);
         return LITE3D_FALSE;
     }
 

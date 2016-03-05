@@ -101,7 +101,7 @@ lite3d_7z_pack *lite3d_7z_pack_open(const char *path)
     if (InFile_Open(&zFile, path))
     {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
-            "%s: '%s' open failed..", __FUNCTION__, path);
+            "%s: '%s' open failed..", LITE3D_CURRENT_FUNCTION, path);
         return NULL;
     }
     
@@ -122,7 +122,7 @@ lite3d_7z_pack *lite3d_7z_pack_open(const char *path)
     if(SzArEx_Open(&pack->db, &pack->lookStream.s, &pack->allocImp, &pack->allocImp) != SZ_OK)
     {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
-            "%s: '%s' extract index failed, bad archive..", __FUNCTION__, path);
+            "%s: '%s' extract index failed, bad archive..", LITE3D_CURRENT_FUNCTION, path);
         
         SzArEx_Free(&pack->db, &pack->allocImp);
         File_Close(&pack->archiveStream.file);
@@ -175,7 +175,7 @@ void lite3d_7z_pack_iterate(lite3d_7z_pack *pack, lite3d_7z_iterator iter, void 
         if(nameLen >= LITE3D_MAX_FILE_NAME)
         {
             SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
-                "%s: skip index %d, name too long..", __FUNCTION__,
+                "%s: skip index %d, name too long..", LITE3D_CURRENT_FUNCTION,
                 (int)index);
             continue;
         }
@@ -193,7 +193,7 @@ void lite3d_7z_pack_iterate(lite3d_7z_pack *pack, lite3d_7z_iterator iter, void 
         utf8name[destPos+1] = 0;
         
         SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION,
-            "%s: '%s' index %d", __FUNCTION__,
+            "%s: '%s' index %d", LITE3D_CURRENT_FUNCTION,
             utf8name, (int)index);
         iter(pack, (char *)utf8name, index, userdata);
     }
@@ -213,7 +213,7 @@ void *lite3d_7z_pack_file_extract(lite3d_7z_pack *pack, uint32_t index, size_t *
     {
         *outSize = 0;
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
-            "%s: index %d extract failed..", __FUNCTION__, (int)index);
+            "%s: index %d extract failed..", LITE3D_CURRENT_FUNCTION, (int)index);
         return NULL;
     }
     

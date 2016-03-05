@@ -178,7 +178,7 @@ int lite3d_texture_technique_init(const lite3d_texture_technique_settings *setti
         if (!GLEW_ARB_texture_compression || !GLEW_EXT_texture_compression_s3tc)
         {
             SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
-                "%s: Texture compression not supported, skiping", __FUNCTION__);
+                "%s: Texture compression not supported, skiping", LITE3D_CURRENT_FUNCTION);
             gTextureSettings.useGLCompression = 0;
         }
     }
@@ -186,7 +186,7 @@ int lite3d_texture_technique_init(const lite3d_texture_technique_settings *setti
     if (!GLEW_EXT_texture_filter_anisotropic)
     {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
-            "%s: EXT_texture_filter_anisotropic not supported..", __FUNCTION__);
+            "%s: EXT_texture_filter_anisotropic not supported..", LITE3D_CURRENT_FUNCTION);
         return LITE3D_FALSE;
     }
     else
@@ -425,7 +425,7 @@ int lite3d_texture_unit_set_compressed_pixels(lite3d_texture_unit *textureUnit,
     if(compressed == GL_FALSE)
     {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "%s texture level %d is not a compressed format...",
-            __FUNCTION__, level);
+            LITE3D_CURRENT_FUNCTION, level);
         glBindTexture(textureUnit->textureTarget, 0);
         return LITE3D_FALSE;
     }

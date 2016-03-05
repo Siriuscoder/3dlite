@@ -37,7 +37,7 @@ static int sdl_init(void)
         if (SDL_Init(subSystems) != 0)
         {
             SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION,
-                "%s: SDL startup error..", __FUNCTION__);
+                "%s: SDL startup error..", LITE3D_CURRENT_FUNCTION);
             return LITE3D_FALSE;
         }
     }
@@ -76,7 +76,8 @@ int lite3d_main(const lite3d_global_settings *settings)
         gGlobalSettings.logFlushAlways);
 
     SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
-        "====== lite3d started ======");
+        "====== lite3d %s ======", LITE3D_FULL_VERSION);
+
     /* setup SDL */
     if (!sdl_init())
     {

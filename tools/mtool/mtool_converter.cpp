@@ -216,7 +216,7 @@ void ConverterCommand::convertMesh(lite3d_mesh *mesh, const lite3dpp::String &sa
     if (!lite3d_mesh_m_encode(mesh, encodeBuffer, encodeBufferSize))
     {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "%s: encode failed..",
-            __FUNCTION__);
+            LITE3D_CURRENT_FUNCTION);
     }
     else
     {

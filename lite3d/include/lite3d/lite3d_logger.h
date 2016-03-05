@@ -25,6 +25,7 @@
 #define LITE3D_LOGLEVEL_VERBOSE         0x3
 
 LITE3D_CEXPORT void lite3d_logger_setup_stdout(void);
+LITE3D_CEXPORT void lite3d_logger_setup_file(const char *logfile);
 LITE3D_CEXPORT void lite3d_logger_set_logParams(int8_t level, int8_t flushAlways);
 LITE3D_CEXPORT void lite3d_logger_release(void);
 

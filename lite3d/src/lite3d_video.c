@@ -47,25 +47,25 @@ static int init_platform_gl_extensions(void)
         return LITE3D_FALSE;
 
     SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION,
-        "%s: WGL Extensions %s", __FUNCTION__,
+        "%s: WGL Extensions %s", LITE3D_CURRENT_FUNCTION,
         (char *) wglGetExtensionsStringARB(GetDC(wminfo.info.win.window)));
 
 #elif defined PLATFORM_Linux
     if (!GLXEW_VERSION_1_3)
     {
         SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION,
-            "%s: GLX v1.3 not supported..", __FUNCTION__);
+            "%s: GLX v1.3 not supported..", LITE3D_CURRENT_FUNCTION);
         return LITE3D_FALSE;
     }
 
     SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION,
-        "%s: GLX Client %s", __FUNCTION__,
+        "%s: GLX Client %s", LITE3D_CURRENT_FUNCTION,
         (char *) glXGetClientString(wminfo.info.x11.display, 1));
     SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION,
-        "%s: GLX Server %s", __FUNCTION__,
+        "%s: GLX Server %s", LITE3D_CURRENT_FUNCTION,
         (char *) glXQueryServerString(wminfo.info.x11.display, 0, 1));
     SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION,
-        "%s: GLX Extensions %s", __FUNCTION__,
+        "%s: GLX Extensions %s", LITE3D_CURRENT_FUNCTION,
         (char *) glXQueryExtensionsString(wminfo.info.x11.display, 0));
 #endif
 
@@ -82,13 +82,13 @@ static int init_gl_extensions(void)
     {
         /* Problem: glewInit failed, something is seriously wrong. */
         SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION,
-            "%s: Glew failed.. %s\n", __FUNCTION__, glewGetErrorString(err));
+            "%s: Glew failed.. %s\n", LITE3D_CURRENT_FUNCTION, glewGetErrorString(err));
     }
 
     if (!GLEW_VERSION_2_0)
     {
         SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION,
-            "%s: GL v2.0 minimum required..", __FUNCTION__);
+            "%s: GL v2.0 minimum required..", LITE3D_CURRENT_FUNCTION);
         return LITE3D_FALSE;
     }
 
@@ -96,22 +96,22 @@ static int init_gl_extensions(void)
     extensionsStrLength = strlen(extensionsStr);
 
     SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION,
-        "%s: GL Version: %s", __FUNCTION__, (const char *) glGetString(GL_VERSION));
+        "%s: GL Version: %s", LITE3D_CURRENT_FUNCTION, (const char *) glGetString(GL_VERSION));
     SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION,
-        "%s: GL Vendor: %s", __FUNCTION__, (const char *) glGetString(GL_VENDOR));
+        "%s: GL Vendor: %s", LITE3D_CURRENT_FUNCTION, (const char *) glGetString(GL_VENDOR));
     SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION,
-        "%s: GL Renderer: %s", __FUNCTION__, (const char *) glGetString(GL_RENDERER));
+        "%s: GL Renderer: %s", LITE3D_CURRENT_FUNCTION, (const char *) glGetString(GL_RENDERER));
 
     while (extensionsStrLength >= 0)
     {
         SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION,
-            "%s: GL Extensions: %s", __FUNCTION__, extensionsStr);
+            "%s: GL Extensions: %s", LITE3D_CURRENT_FUNCTION, extensionsStr);
         extensionsStr += SDL_MAX_LOG_MESSAGE;
         extensionsStrLength -= SDL_MAX_LOG_MESSAGE;
     }
 
     SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION,
-        "%s: GL Shading Lang %s", __FUNCTION__, (const char *) glGetString(GL_SHADING_LANGUAGE_VERSION));
+        "%s: GL Shading Lang %s", LITE3D_CURRENT_FUNCTION, (const char *) glGetString(GL_SHADING_LANGUAGE_VERSION));
 
     /* enable multisample buffers */
     if (gVideoSettings.FSAA > 1 && GLEW_ARB_multisample)
@@ -172,13 +172,13 @@ int lite3d_video_open(const lite3d_video_settings *settings)
     if (!gRenderWindow)
     {
         SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION,
-            "%s: SDL_CreateWindow failed..", __FUNCTION__);
+            "%s: SDL_CreateWindow failed..", LITE3D_CURRENT_FUNCTION);
         return LITE3D_FALSE;
     }
 
     SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
         "%s: render window created %d/%d (%s)",
-        __FUNCTION__,
+        LITE3D_CURRENT_FUNCTION,
         gVideoSettings.screenWidth,
         gVideoSettings.screenHeight,
         gVideoSettings.fullscreen ? "fullscreen" : "windowed");
@@ -188,7 +188,7 @@ int lite3d_video_open(const lite3d_video_settings *settings)
     if (!gGLContext)
     {
         SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION,
-            "%s: GL Context create failed..", __FUNCTION__);
+            "%s: GL Context create failed..", LITE3D_CURRENT_FUNCTION);
         return LITE3D_FALSE;
     }
 
@@ -197,7 +197,7 @@ int lite3d_video_open(const lite3d_video_settings *settings)
 
     SDL_GetWindowDisplayMode(gRenderWindow, &displayMode);
     SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
-        "%s: selected pixel format: %d bpp, %s", __FUNCTION__,
+        "%s: selected pixel format: %d bpp, %s", LITE3D_CURRENT_FUNCTION,
         SDL_BITSPERPIXEL(displayMode.format), SDL_GetPixelFormatName(displayMode.format));
 
     SDL_GL_SetSwapInterval(gVideoSettings.vsync ? 1 : 0);

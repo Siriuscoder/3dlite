@@ -66,7 +66,7 @@ static void resource_index_delete(lite3d_rb_node *x)
     lite3d_list_unlink_link(&resource->priority);
     
     SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, 
-        "%s: '%s' unindexed", __FUNCTION__,
+        "%s: '%s' unindexed", LITE3D_CURRENT_FUNCTION,
         resource->name);
     /* for fast resources alloc/free operations use NO1 memory pool */
     lite3d_free_pooled(LITE3D_POOL_NO1, resource);
@@ -105,7 +105,7 @@ static int check_pack_memory_limit(lite3d_pack *pack, size_t size)
     {
         SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
             "%s: memory limit is reached "
-            "(%d bytes vs %d bytes limit) cleanup old data..", __FUNCTION__,
+            "(%d bytes vs %d bytes limit) cleanup old data..", LITE3D_CURRENT_FUNCTION,
             (int)(pack->memoryUsed + size), (int)pack->memoryLimit);
         lite3d_pack_purge_unused(pack);
     }
@@ -158,7 +158,7 @@ void lite3d_pack_close(lite3d_pack *pack)
     SDL_assert(pack);
     
     SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION,
-        "%s: begin to closing pack '%s' (%s)", __FUNCTION__,
+        "%s: begin to closing pack '%s' (%s)", LITE3D_CURRENT_FUNCTION,
         pack->pathto, pack->isCompressed ? "compressed" : "filesystem");
     
     /* empty list */
@@ -188,7 +188,7 @@ lite3d_file *lite3d_pack_file_find(lite3d_pack *pack, const char *file)
     {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, 
             "%s: '%s' file name too long..", 
-            __FUNCTION__, file);
+            LITE3D_CURRENT_FUNCTION, file);
         return NULL;
     }
     
@@ -224,7 +224,7 @@ lite3d_file *lite3d_pack_file_load(lite3d_pack *pack, const char *file)
         if((strlen(file) + strlen(pack->pathto)) >= LITE3D_MAX_FILE_PATH)
         {
             SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, 
-                "%s: path too long..", __FUNCTION__);
+                "%s: path too long..", LITE3D_CURRENT_FUNCTION);
             return NULL;
         }
 
@@ -237,7 +237,7 @@ lite3d_file *lite3d_pack_file_load(lite3d_pack *pack, const char *file)
         {
             SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, 
                 "%s: '%s': %s",
-                __FUNCTION__, fullPath, SDL_GetError());
+                LITE3D_CURRENT_FUNCTION, fullPath, SDL_GetError());
             return NULL;
         }
 
@@ -247,7 +247,7 @@ lite3d_file *lite3d_pack_file_load(lite3d_pack *pack, const char *file)
         {
             SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
                 "%s: file %s too big: %d bytes (limit %d)",
-                __FUNCTION__, fullPath, (int) fileSize, (int) pack->memoryLimit);
+                LITE3D_CURRENT_FUNCTION, fullPath, (int) fileSize, (int) pack->memoryLimit);
             SDL_RWclose(desc);
             return NULL;
         }
@@ -259,7 +259,7 @@ lite3d_file *lite3d_pack_file_load(lite3d_pack *pack, const char *file)
         {
             SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
                 "%s: %s : %s",
-                __FUNCTION__, fullPath, SDL_GetError());
+                LITE3D_CURRENT_FUNCTION, fullPath, SDL_GetError());
             SDL_RWclose(desc);
             return NULL;
         }
@@ -275,7 +275,7 @@ lite3d_file *lite3d_pack_file_load(lite3d_pack *pack, const char *file)
         if(!resource)
         {
             SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, 
-               "%s: file %s not found..", __FUNCTION__,
+               "%s: file %s not found..", LITE3D_CURRENT_FUNCTION,
                file);
             return NULL;
         }
@@ -286,7 +286,7 @@ lite3d_file *lite3d_pack_file_load(lite3d_pack *pack, const char *file)
         {
             SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
                 "%s: file %s too big: %d bytes (limit 100M)", 
-                __FUNCTION__, file, (int) fileSize);
+                LITE3D_CURRENT_FUNCTION, file, (int) fileSize);
             return NULL;
         }
 
@@ -331,7 +331,7 @@ void lite3d_pack_file_purge(lite3d_file *resource)
         lite3d_list_unlink_link(&resource->priority);
         
         SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, 
-            "%s: '%s' unloaded", __FUNCTION__,
+            "%s: '%s' unloaded", LITE3D_CURRENT_FUNCTION,
             resource->name);
     }
     

@@ -204,7 +204,7 @@ int lite3d_framebuffer_technique_init(void)
         if (!GLEW_EXT_framebuffer_object && !GLEW_ARB_framebuffer_object)
         {
             SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
-                "%s: GLEW_framebuffer_object not supported..", __FUNCTION__);
+                "%s: GLEW_framebuffer_object not supported..", LITE3D_CURRENT_FUNCTION);
             return LITE3D_FALSE;
         }
     }
