@@ -256,7 +256,7 @@
           <buildCommandWorkingDir>build</buildCommandWorkingDir>
           <buildCommand>${MAKE} -f Makefile</buildCommand>
           <cleanCommand>${MAKE} -f Makefile clean</cleanCommand>
-          <executablePath>build/bin/Debug/sample_sponzahall</executablePath>
+          <executablePath>build/bin/Debug/sample_minigun</executablePath>
           <ccTool>
             <incDir>
               <pElem>lite3d/include</pElem>

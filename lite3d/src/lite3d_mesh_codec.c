@@ -17,6 +17,7 @@
  *******************************************************************************/
 #include <SDL_assert.h>
 #include <SDL_rwops.h>
+#include <SDL_log.h>
 
 #include <lite3d/lite3d_misc.h>
 #include <lite3d/lite3d_alloc.h>
@@ -50,6 +51,7 @@ typedef struct lite3d_m_chunk
     uint16_t elementType;
     uint16_t indexType;
     uint32_t materialIndex;
+    lite3d_bouding_vol boudingVol;
 } lite3d_m_chunk;
 
 typedef struct lite3d_m_chunk_layout
@@ -92,7 +94,10 @@ int lite3d_mesh_m_decode(lite3d_mesh *mesh,
     register int32_t i = 0;
     size_t indOffset = 0;
     size_t vertOffset = 0;
+    uint32_t chunkSectionOffset = 0;
     void *mapped;
+    lite3d_mesh_chunk *thisChunk;
+    
     SDL_assert(mesh);
 
     /* open memory stream */
@@ -107,14 +112,12 @@ int lite3d_mesh_m_decode(lite3d_mesh *mesh,
     if (mheader.sig != LITE3D_M_SIGNATURE)
     {
         SDL_RWclose(stream);
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "%s: Signature mismatch: %d vs %d",
+            LITE3D_CURRENT_FUNCTION, mheader.sig, LITE3D_M_SIGNATURE);
         return LITE3D_FALSE;
     }
-
-    if (mheader.version < LITE3D_VERSION_NUM)
-    {
-        SDL_RWclose(stream);
-        return LITE3D_FALSE;
-    }
+    
+    mesh->version = mheader.version;
 
     if (!lite3d_vbo_buffer(&mesh->vertexBuffer, NULL, mheader.vertexSectionSize,
         access))
@@ -133,7 +136,14 @@ int lite3d_mesh_m_decode(lite3d_mesh *mesh,
     for (i = 0; i < mheader.chunkCount; ++i)
     {
         register int32_t j = 0;
-        size_t stride = 0;
+        size_t stride = 0;   
+        
+        if (SDL_RWseek(stream, sizeof (mheader) + chunkSectionOffset, RW_SEEK_SET) < 0)
+        {
+            SDL_RWclose(stream);
+            return LITE3D_FALSE;
+        }
+        
         if (SDL_RWread(stream, &mchunk, sizeof (mchunk), 1) != 1)
         {
             SDL_RWclose(stream);
@@ -163,14 +173,17 @@ int lite3d_mesh_m_decode(lite3d_mesh *mesh,
             return LITE3D_FALSE;
 
         /* set material index to currently added meshChunk */
-        LITE3D_MEMBERCAST(lite3d_mesh_chunk, lite3d_list_last_link(&mesh->chunks), node)->
-            materialIndex = mchunk.materialIndex;
+        thisChunk = LITE3D_MEMBERCAST(lite3d_mesh_chunk, lite3d_list_last_link(&mesh->chunks), node);
+        thisChunk->materialIndex = mchunk.materialIndex;
+        thisChunk->boudingVol = mchunk.boudingVol;
 
         indOffset += mchunk.indexesSize;
         vertOffset += mchunk.verticesSize;
         mesh->verticesCount += mchunk.verticesCount;
         mesh->elementsCount += mchunk.indexesCount / (mchunk.elementType == LITE3D_PRIMITIVE_POINT ? 1 : 
             (mchunk.elementType == LITE3D_PRIMITIVE_LINE ? 2 : 3));
+        
+        chunkSectionOffset += mchunk.chunkSize;
     }
 
     if (SDL_RWseek(stream, sizeof (mheader) + mheader.chunkSectionSize, RW_SEEK_SET) < 0)
@@ -270,6 +283,7 @@ int lite3d_mesh_m_encode(lite3d_mesh *mesh,
         mchunk.elementType = meshChunk->vao.elementType;
         mchunk.indexType = meshChunk->vao.indexType;
         mchunk.materialIndex = meshChunk->materialIndex;
+        mchunk.boudingVol = meshChunk->boudingVol;
 
         if (SDL_RWwrite(stream, &mchunk, sizeof (mchunk), 1) != 1)
         {

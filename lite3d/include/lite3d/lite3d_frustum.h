@@ -42,5 +42,9 @@ LITE3D_CEXPORT int lite3d_frustum_test(struct lite3d_frustum *frustum,
 LITE3D_CEXPORT void lite3d_bouding_vol_setup(struct lite3d_bouding_vol *vol,
     const kmVec3 *vmin, const kmVec3 *vmax);
 
+LITE3D_CEXPORT void lite3d_bouding_vol_translate(struct lite3d_bouding_vol *volOut,
+    const struct lite3d_bouding_vol *volIn, const struct kmMat4 *tr);
+
+
 #endif	/* LITE3D_FRUSTUM_H */
 

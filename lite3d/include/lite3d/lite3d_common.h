@@ -106,6 +106,9 @@
 #define LITE3D_VERSION_NUM         (uint32_t)((((uint32_t)LITE3D_VERSION_MAJ) << 16) | \
     (((uint32_t)LITE3D_VERSION_MIN) << 8) | ((uint32_t)LITE3D_VERSION_PCH))
 
+#define LITE3D_GET_VERSION_MAJ(version) ((uint8_t)((version >> 16) & 0xff))
+#define LITE3D_GET_VERSION_MIN(version) ((uint8_t)((version >> 8) & 0xff))
+#define LITE3D_GET_VERSION_PCH(version) ((uint8_t)((version) & 0xff))
 
 #define LITE3D_MAX_FILE_PATH    1024
 #define LITE3D_MAX_FILE_NAME    128

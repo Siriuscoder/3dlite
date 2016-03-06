@@ -20,6 +20,7 @@
 #include <SDL_log.h>
 #include <lite3d/lite3d_main.h>
 #include <lite3d/lite3d_scene.h>
+#include <lite3d/lite3d_mesh_codec.h>
 
 #define DEFAULT_WIDTH           800
 #define DEFAULT_HEIGHT          600
@@ -199,6 +200,39 @@ static int initMaterials(void)
     matPass->program = &mProgram;
 
     return LITE3D_TRUE;
+}
+
+static void saveCube()
+{
+    SDL_RWops *descr;
+    size_t encodeBufferSize;
+    void *encodeBuffer;
+    
+    encodeBufferSize = lite3d_mesh_m_encode_size(&mCubeVbo);
+    encodeBuffer = lite3d_malloc(encodeBufferSize);
+    
+    if(!lite3d_mesh_m_encode(&mCubeVbo, encodeBuffer, encodeBufferSize))
+    {
+        lite3d_free(encodeBuffer);
+        return;
+    }
+    
+    descr = SDL_RWFromFile("cube.m", "wb");
+    if (!descr)
+    {
+        lite3d_free(encodeBuffer);
+        return;
+    }
+    
+    if (SDL_RWwrite(descr, encodeBuffer, encodeBufferSize, 1) != 1)
+    {
+        lite3d_free(encodeBuffer);
+        SDL_RWclose(descr);
+        return;
+    }
+
+    SDL_RWclose(descr);
+    lite3d_free(encodeBuffer);
 }
 
 static int initCube(void)

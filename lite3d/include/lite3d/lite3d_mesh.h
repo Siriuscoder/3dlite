@@ -47,6 +47,7 @@ typedef struct lite3d_mesh_layout
 
 typedef struct lite3d_mesh
 {
+    uint32_t version;
     lite3d_vbo vertexBuffer;
     lite3d_vbo indexBuffer;
     size_t verticesCount;

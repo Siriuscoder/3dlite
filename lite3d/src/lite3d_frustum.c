@@ -122,44 +122,62 @@ void lite3d_bouding_vol_setup(struct lite3d_bouding_vol *vol,
 {
     float l, w, h;
     kmVec3 center;
-    
+
     l = vmax->x - vmin->x;
     w = vmax->y - vmin->y;
     h = vmax->z - vmin->z;
-    
+
     vol->box[0] = *vmin;
-    
+
     vol->box[1].x = vmin->x;
     vol->box[1].y = vmin->y;
     vol->box[1].z = vmin->z + h;
-    
+
     vol->box[2].x = vmin->x;
     vol->box[2].y = vmin->y + w;
     vol->box[2].z = vmin->z + h;
-    
+
     vol->box[3].x = vmin->x;
     vol->box[3].y = vmin->y + w;
     vol->box[3].z = vmin->z;
-    
+
     vol->box[4].x = vmin->x + l;
     vol->box[4].y = vmin->y;
     vol->box[4].z = vmin->z;
-    
+
     vol->box[5].x = vmin->x + l;
     vol->box[5].y = vmin->y;
     vol->box[5].z = vmin->z + h;
-    
+
     vol->box[6].x = vmin->x + l;
     vol->box[6].y = vmin->y + w;
     vol->box[6].z = vmin->z;
-    
+
     vol->box[7] = *vmax;
-    
+
     /* calc center vector */
     center.x = l / 2;
     center.y = w / 2;
     center.z = h / 2;
-    
+
     kmVec3Add(&vol->sphereCenter, vmin, &center);
     vol->radius = kmVec3Length(&center);
+}
+
+void lite3d_bouding_vol_translate(struct lite3d_bouding_vol *volOut,
+    const struct lite3d_bouding_vol *volIn, const struct kmMat4 *tr)
+{
+    int i;
+    kmVec3 center;
+    
+    for (i = 0; i < 8; ++i)
+    {
+        kmVec3MultiplyMat4(&volOut->box[i], &volIn->box[i], tr);
+    }
+
+    kmVec3MultiplyMat4(&volOut->sphereCenter, &volIn->sphereCenter, tr);
+    /* calculate radius */
+    kmVec3Subtract(&center, &volIn->sphereCenter, &volIn->box[0]);
+    kmVec3MultiplyMat4(&center, &center, tr);
+    volOut->radius = kmVec3Length(&center);
 }

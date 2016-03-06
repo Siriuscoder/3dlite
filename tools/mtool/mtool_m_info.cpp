@@ -67,7 +67,9 @@ void MeshInfoCommand::printInfo(const lite3d_file *meshFile)
         fprintf(stderr, "'%s' decode failed.. bad format..", meshFile->name);
         return;
     }
-
+    
+    printf("Mesh file version: %d.%d.%d\n\n", LITE3D_GET_VERSION_MAJ(mesh.version),
+        LITE3D_GET_VERSION_MIN(mesh.version), LITE3D_GET_VERSION_PCH(mesh.version));
     printf("Vertex buffer:\n\n");
     printf("\tVertices count: %zu\n", mesh.verticesCount);
     printf("\tRaw size: %zu bytes\n\n", mesh.vertexBuffer.size);

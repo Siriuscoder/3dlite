@@ -5,7 +5,7 @@
 			"Name": "MyCamera",
 
 			"Position": [0,3,3],
-			"LootAt": [0,0,0],
+			"LookAt": [0,0,0],
 			"Perspective": 
 			{
 				"Znear": 1,
