@@ -66,7 +66,6 @@ typedef struct lite3d_camera
     const lite3d_scene_node *linkNode;
     const lite3d_scene_node *trackNode;
     uint8_t linkType;
-    uint8_t invalidated;
 } lite3d_camera;
 
 LITE3D_CEXPORT void lite3d_camera_init(lite3d_camera *camera);

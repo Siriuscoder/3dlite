@@ -32,6 +32,7 @@ lite3d_scene_node *lite3d_scene_node_init(lite3d_scene_node *node)
     kmVec3Fill(&node->position, 0, 0, 0);
     kmVec3Fill(&node->scale, 1.0f, 1.0f, 1.0f);
     node->recalc = LITE3D_TRUE;
+    node->invalidated = LITE3D_TRUE;
     node->rotationCentered = LITE3D_TRUE;
     node->isCamera = LITE3D_FALSE;
     node->renderable = LITE3D_TRUE;
@@ -153,6 +154,7 @@ uint8_t lite3d_scene_node_update(lite3d_scene_node *node)
         }
 
         node->recalc = LITE3D_FALSE;
+        node->invalidated = LITE3D_TRUE;
         updated = LITE3D_TRUE;
     }
 

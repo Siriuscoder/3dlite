@@ -32,6 +32,7 @@ typedef struct  lite3d_scene_node
     kmVec3 position;
     kmVec3 scale;
     uint8_t recalc;
+    uint8_t invalidated;
     uint8_t rotationCentered;
     uint8_t isCamera;
     uint8_t renderable;

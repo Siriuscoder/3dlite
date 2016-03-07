@@ -131,7 +131,7 @@ namespace lite3dpp
         for(auto &material : mMaterialMappingReplacement)
         {
             if(!lite3d_scene_node_touch_material(&mNode, 
-                lite3d_mesh_chunk_get_by_index(mMesh->getPtr(), material.first), material.second->getPtr()))
+                lite3d_mesh_chunk_get_by_index(mMesh->getPtr(), material.first), material.second->getPtr(), 1))
                 throw std::runtime_error("Linking node failed..");
         }
     }

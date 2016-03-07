@@ -313,10 +313,10 @@ static int init(void *userdata)
         lite3d_scene_node_scale(&mSceneNodeInherited[i], &nodeScale[i]);
 
         lite3d_scene_add_node(&mScene, &mSceneNode[i], NULL);
-        lite3d_scene_node_touch_material(&mSceneNode[i], lite3d_mesh_chunk_get_by_index(&mCubeVbo, 0), &mVintageBoxMaterial);
+        lite3d_scene_node_touch_material(&mSceneNode[i], lite3d_mesh_chunk_get_by_index(&mCubeVbo, 0), &mVintageBoxMaterial, 1);
 
         lite3d_scene_add_node(&mScene, &mSceneNodeInherited[i], &mSceneNode[i]);
-        lite3d_scene_node_touch_material(&mSceneNodeInherited[i], lite3d_mesh_chunk_get_by_index(&mCubeVbo, 0), &mBoxMaterial);
+        lite3d_scene_node_touch_material(&mSceneNodeInherited[i], lite3d_mesh_chunk_get_by_index(&mCubeVbo, 0), &mBoxMaterial, 1);
     }
 
     lite3d_scene_add_node(&mScene, &mCamera01.cameraNode, NULL);

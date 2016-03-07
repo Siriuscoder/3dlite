@@ -93,9 +93,12 @@ public:
                     "last FPS\tavr FPS\t\tbest FPS\tworst FPS\n"
                     "%d\t\t%d\t\t%d\t\t%d\n"
                     "last frame ms\tavr frame ms\tbest frame ms\tworst frame ms\n"
-                    "%f\t%f\t%f\t%f",
+                    "%f\t%f\t%f\t%f\n"
+                    "nodes total\tbatches total\tbatches called\n"
+                    "%d\t\t%d\t\t%d\n",
                     stats->lastFPS, stats->avrFPS, stats->bestFPS, stats->worstFPS,
-                    stats->lastFrameMs, stats->avrFrameMs, stats->bestFrameMs, stats->worstFrameMs);
+                    stats->lastFrameMs, stats->avrFrameMs, stats->bestFrameMs, stats->worstFrameMs,
+                    stats->nodesTotal, stats->batchesTotal, stats->batchedByFrame);
             }
         }
         else if(e->type == SDL_MOUSEMOTION)

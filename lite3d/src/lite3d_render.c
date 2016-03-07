@@ -65,7 +65,7 @@ static void refresh_render_stats(uint64_t beginFrame, uint64_t endFrame)
 
     gRenderStats.avrFrameMs = (gRenderStats.lastFrameMs + gRenderStats.avrFrameMs) / 2;
 
-    gRenderStats.triangleByBatch = gRenderStats.batchesByFrame ? gRenderStats.trianglesByFrame / gRenderStats.batchesByFrame : 0;
+    gRenderStats.triangleByBatch = gRenderStats.batchedByFrame ? gRenderStats.trianglesByFrame / gRenderStats.batchedByFrame : 0;
     gRenderStats.triangleMs = gRenderStats.trianglesByFrame ? (float) gRenderStats.lastFrameMs / (float) gRenderStats.trianglesByFrame : 0;
 
     /* second elapsed */
@@ -113,9 +113,10 @@ static void update_render_target(lite3d_render_target *target)
         /* accamulate statistics */
         gRenderStats.trianglesByFrame += scene->stats.trianglesRendered;
         gRenderStats.verticesByFrame += scene->stats.verticesRendered;
-        gRenderStats.objectsByFrame += scene->stats.objectsRendered;
-        gRenderStats.batchesByFrame += scene->stats.batches;
-        gRenderStats.materialsByFrame += scene->stats.materialBlocks;
+        gRenderStats.nodesTotal += scene->stats.nodesTotal;
+        gRenderStats.batchesTotal += scene->stats.batchesTotal;
+        gRenderStats.batchedByFrame += scene->stats.batchesCalled;
+        gRenderStats.materialsTotal += scene->stats.materialBlocks;
         gRenderStats.materialsPassedByFrame += scene->stats.materialPassed;
         gRenderStats.textureUnitsByFrame += scene->stats.textureUnitsBinded;
     }
@@ -181,9 +182,10 @@ void lite3d_render_loop(lite3d_render_listeners *callbacks)
         while (gRenderStarted)
         {
             gRenderStats.trianglesByFrame =
-                gRenderStats.objectsByFrame =
-                gRenderStats.batchesByFrame =
-                gRenderStats.materialsByFrame =
+                gRenderStats.nodesTotal =
+                gRenderStats.batchesTotal =
+                gRenderStats.batchedByFrame = 
+                gRenderStats.materialsTotal =
                 gRenderStats.materialsPassedByFrame =
                 gRenderStats.textureUnitsByFrame =
                 gRenderStats.verticesByFrame = 0;

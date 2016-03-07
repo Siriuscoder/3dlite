@@ -28,8 +28,9 @@ typedef struct lite3d_scene_stats
 {
     int32_t trianglesRendered;
     int32_t verticesRendered;
-    int32_t objectsRendered;
-    int32_t batches;
+    int32_t nodesTotal;
+    int32_t batchesCalled;
+    int32_t batchesTotal;
     int32_t materialBlocks;
     int32_t textureUnitsBinded;
     int32_t materialPassed;
@@ -40,11 +41,17 @@ typedef struct lite3d_scene
     lite3d_scene_node rootNode;
     lite3d_scene_stats stats;
     lite3d_list renderUnitQueue;
-    void (*drawBatch)(struct lite3d_scene *scene, 
+    void (*beginDrawBatch)(struct lite3d_scene *scene, 
         struct lite3d_scene_node *node, 
         lite3d_mesh_chunk *meshChunk, lite3d_material *material);
-    void (*preRender)(struct lite3d_scene *scene, lite3d_camera *camera);
-    void (*postRender)(struct lite3d_scene *scene, lite3d_camera *camera);
+    void (*nodeInFrustum)(struct lite3d_scene *scene, 
+        struct lite3d_scene_node *node, 
+        lite3d_mesh_chunk *meshChunk, lite3d_material *material);
+    void (*nodeOutOfFrustum)(struct lite3d_scene *scene, 
+        struct lite3d_scene_node *node, 
+        lite3d_mesh_chunk *meshChunk, lite3d_material *material);
+    void (*beginSceneRender)(struct lite3d_scene *scene, lite3d_camera *camera);
+    void (*endSceneRender)(struct lite3d_scene *scene, lite3d_camera *camera);
 } lite3d_scene;
 
 LITE3D_CEXPORT void lite3d_scene_render(lite3d_scene *scene, lite3d_camera *camera, uint16_t pass);
@@ -57,9 +64,8 @@ LITE3D_CEXPORT int lite3d_scene_add_node(lite3d_scene *scene,
 LITE3D_CEXPORT int lite3d_scene_remove_node(lite3d_scene *scene, lite3d_scene_node *node);
 
 LITE3D_CEXPORT int lite3d_scene_node_touch_material(
-    lite3d_scene_node *node, lite3d_mesh_chunk *meshChunk, lite3d_material *material);
-LITE3D_CEXPORT int lite3d_scene_node_touch_material_instanced(
-    lite3d_scene_node *node, lite3d_mesh_chunk *meshChunk, lite3d_material *material, uint32_t count);
+    lite3d_scene_node *node, lite3d_mesh_chunk *meshChunk, 
+    lite3d_material *material, uint32_t instancesCount);
 
 #endif	/* LITE3D_SCENE_H */
 
