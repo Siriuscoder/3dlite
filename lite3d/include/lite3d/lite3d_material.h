@@ -48,7 +48,6 @@ typedef struct lite3d_material
     uint32_t passesSize;
     uint32_t passesCapacity;
     uint32_t textureUnitsBinded;
-    int8_t hasTransparency;
 } lite3d_material;
 
 typedef void (*lite3d_pass_render_t)(lite3d_material_pass *pass, void *data);
