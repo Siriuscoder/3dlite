@@ -30,6 +30,7 @@ typedef struct lite3d_mqr_node
     lite3d_mesh_chunk *meshChunk;
     uint32_t instancesCount;
     lite3d_bouding_vol boudingVol;
+    float distanceToCamera;
 } lite3d_mqr_node;
 
 typedef struct lite3d_mqr_unit
@@ -53,6 +54,9 @@ static void mqr_unit_render(lite3d_material_pass *pass, void *data)
     {
         mqrNode = LITE3D_MEMBERCAST(lite3d_mqr_node, mqrListNode, unit);
 
+        SDL_assert(mqrNode->node);
+        SDL_assert(mqrUnit->currentCamera);
+
         scene = (lite3d_scene *) mqrNode->node->scene;
         SDL_assert(scene);
 
@@ -62,6 +66,12 @@ static void mqr_unit_render(lite3d_material_pass *pass, void *data)
             lite3d_bouding_vol_translate(&mqrNode->boudingVol,
                 &mqrNode->meshChunk->boudingVol,
                 &mqrNode->node->worldView);
+        }
+
+        if (mqrNode->node->invalidated || mqrUnit->currentCamera->cameraNode.invalidated)
+        {
+            mqrNode->distanceToCamera = lite3d_frustum_distance_bouding_vol(&mqrUnit->currentCamera->frustum,
+                &mqrNode->boudingVol);
         }
 
         if (!mqrNode->node->renderable)
