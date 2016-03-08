@@ -42,14 +42,13 @@ typedef struct lite3d_scene
     lite3d_scene_stats stats;
     lite3d_list renderUnitQueue;
     void (*beginDrawBatch)(struct lite3d_scene *scene, 
-        struct lite3d_scene_node *node, 
-        lite3d_mesh_chunk *meshChunk, lite3d_material *material);
+        lite3d_scene_node *node, lite3d_mesh_chunk *meshChunk, lite3d_material *material);
     void (*nodeInFrustum)(struct lite3d_scene *scene, 
-        struct lite3d_scene_node *node, 
-        lite3d_mesh_chunk *meshChunk, lite3d_material *material);
+        lite3d_scene_node *node, lite3d_mesh_chunk *meshChunk, 
+        lite3d_material *material, lite3d_bouding_vol *boudingVol);
     void (*nodeOutOfFrustum)(struct lite3d_scene *scene, 
-        struct lite3d_scene_node *node, 
-        lite3d_mesh_chunk *meshChunk, lite3d_material *material);
+        lite3d_scene_node *node, lite3d_mesh_chunk *meshChunk, 
+        lite3d_material *material, lite3d_bouding_vol *boudingVol);
     void (*beginSceneRender)(struct lite3d_scene *scene, lite3d_camera *camera);
     void (*endSceneRender)(struct lite3d_scene *scene, lite3d_camera *camera);
 } lite3d_scene;

@@ -26,14 +26,16 @@ namespace lite3dpp
 {
     SceneNode::SceneNode() : 
         mMesh(NULL), 
-        mBaseNode(NULL)
+        mBaseNode(NULL),
+        mInstances(1)
     {
 
     }
 
     SceneNode::SceneNode(const ConfigurationReader &json, SceneNode *base, Main *main) : 
         mMesh(NULL),
-        mBaseNode(base)
+        mBaseNode(base),
+        mInstances(1)
     {
         SDL_assert(main);
 
@@ -61,6 +63,9 @@ namespace lite3dpp
                     matMap.getObject(L"Material").getString(L"Material")));
             }
         }
+        
+        instances(json.getInt(L"Instances", 1));
+        frustumTest(json.getBool(L"FrustumTest", true));
 
         setPosition(json.getVec3(L"Position"));
         setRotation(json.getQuaternion(L"Rotation"));
@@ -131,7 +136,7 @@ namespace lite3dpp
         for(auto &material : mMaterialMappingReplacement)
         {
             if(!lite3d_scene_node_touch_material(&mNode, 
-                lite3d_mesh_chunk_get_by_index(mMesh->getPtr(), material.first), material.second->getPtr(), 1))
+                lite3d_mesh_chunk_get_by_index(mMesh->getPtr(), material.first), material.second->getPtr(), mInstances))
                 throw std::runtime_error("Linking node failed..");
         }
     }

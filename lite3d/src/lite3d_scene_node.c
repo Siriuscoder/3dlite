@@ -38,6 +38,7 @@ lite3d_scene_node *lite3d_scene_node_init(lite3d_scene_node *node)
     node->renderable = LITE3D_TRUE;
     node->enabled = LITE3D_TRUE;
     node->visible = LITE3D_TRUE;
+    node->frustumTest = LITE3D_TRUE;
     lite3d_list_init(&node->childNodes);
 
     return node;

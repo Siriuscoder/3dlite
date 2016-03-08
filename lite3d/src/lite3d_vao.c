@@ -86,6 +86,7 @@ int lite3d_vao_technique_init(void)
 
 void lite3d_vao_draw_indexed(struct lite3d_vao *vao)
 {
+    SDL_assert(vao);
     /*
      * glDrawElements specifies multiple geometric primitives with very few 
      * subroutine calls. Instead of calling a GL function to pass each individual 
@@ -118,6 +119,7 @@ void lite3d_vao_draw_indexed_instanced(struct lite3d_vao *vao, size_t count)
 
     if (!instancingSupport)
         return;
+    SDL_assert(vao);
     glDrawElementsInstancedARB(vao->elementType, vao->indexesCount,
         vao->indexType, (void *) vao->indexesOffset, count);
 }
@@ -131,12 +133,14 @@ void lite3d_vao_draw_instanced(struct lite3d_vao *vao, size_t count)
 {
     if (!instancingSupport)
         return;
+    SDL_assert(vao);
     glDrawArraysInstancedARB(vao->elementType, 0,
         vao->verticesCount, count);
 }
 
 void lite3d_vao_bind(struct lite3d_vao *vao)
 {
+    SDL_assert(vao);
     /* bind current vao */
     glBindVertexArray(vao->vaoID);
 }

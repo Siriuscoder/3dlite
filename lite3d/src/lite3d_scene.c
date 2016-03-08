@@ -63,7 +63,7 @@ static void mqr_unit_render(lite3d_material_pass *pass, void *data)
                 &mqrNode->meshChunk->boudingVol,
                 &mqrNode->node->worldView);
         }
-        
+
         if (!mqrNode->node->renderable)
             continue;
         if (!mqrNode->node->enabled)
@@ -71,17 +71,17 @@ static void mqr_unit_render(lite3d_material_pass *pass, void *data)
 
         scene->stats.batchesTotal++;
         /* frustum test */
-        if (!lite3d_frustum_test(&mqrUnit->currentCamera->frustum, &mqrNode->boudingVol))
+        if (mqrNode->node->frustumTest && !lite3d_frustum_test(&mqrUnit->currentCamera->frustum, &mqrNode->boudingVol))
         {
             if (scene->nodeOutOfFrustum)
                 scene->nodeOutOfFrustum(scene, mqrNode->node,
-                mqrNode->meshChunk, mqrUnit->material);
+                mqrNode->meshChunk, mqrUnit->material, &mqrNode->boudingVol);
             continue;
         }
 
-        if (scene->nodeInFrustum)
+        if (mqrNode->node->frustumTest && scene->nodeInFrustum)
             scene->nodeInFrustum(scene, mqrNode->node,
-            mqrNode->meshChunk, mqrUnit->material);
+            mqrNode->meshChunk, mqrUnit->material, &mqrNode->boudingVol);
 
         /* bind meshChunk */
         if (prevVao != mqrNode->meshChunk)
@@ -110,7 +110,8 @@ static void mqr_unit_render(lite3d_material_pass *pass, void *data)
     if (scene)
         scene->stats.materialPassed++;
 
-    lite3d_mesh_chunk_unbind(prevVao);
+    if (prevVao)
+        lite3d_mesh_chunk_unbind(prevVao);
 }
 
 static void mqr_render(struct lite3d_scene *scene, lite3d_camera *camera, uint16_t pass)

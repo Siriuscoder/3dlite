@@ -38,6 +38,7 @@ typedef struct  lite3d_scene_node
     uint8_t renderable;
     uint8_t enabled;
     uint8_t visible;
+    uint8_t frustumTest;
     struct lite3d_scene_node *baseNode;
     struct lite3d_list childNodes;
     void *scene;

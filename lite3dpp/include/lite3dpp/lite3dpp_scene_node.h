@@ -47,6 +47,11 @@ namespace lite3dpp
         { return &mNode; }
         inline const lite3d_scene_node *getPtr() const
         { return &mNode; }
+        inline void frustumTest(bool flag)
+        { mNode.frustumTest = flag ? LITE3D_TRUE : LITE3D_FALSE; }
+        inline void instances(size_t count)
+        { mInstances = count; }
+        
 
         void setPosition(const kmVec3 &position);
         void move(const kmVec3 &position);
@@ -68,6 +73,7 @@ namespace lite3dpp
         Mesh *mMesh;
         String mName;
         SceneNode *mBaseNode;
+        size_t mInstances;
     };
 }
 

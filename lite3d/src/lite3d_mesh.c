@@ -101,6 +101,8 @@ int lite3d_mesh_extend(struct lite3d_mesh *mesh, size_t verticesSize,
 
 void lite3d_mesh_chunk_draw(struct lite3d_mesh_chunk *meshChunk, size_t instancesCount)
 {
+    SDL_assert(meshChunk);
+    
     if (instancesCount == 0)
         return;
     else if (instancesCount == 1)
@@ -121,11 +123,13 @@ void lite3d_mesh_chunk_draw(struct lite3d_mesh_chunk *meshChunk, size_t instance
 
 void lite3d_mesh_chunk_bind(struct lite3d_mesh_chunk *meshChunk)
 {
+    SDL_assert(meshChunk);
     lite3d_vao_bind(&meshChunk->vao);
 }
 
 void lite3d_mesh_chunk_unbind(struct lite3d_mesh_chunk *meshChunk)
 {
+    SDL_assert(meshChunk);
     lite3d_vao_unbind(&meshChunk->vao);
 }
 
