@@ -231,7 +231,31 @@ static void scene_recursive_nodes_validate(lite3d_scene_node *node)
 
     node->invalidated = LITE3D_FALSE;
 }
-
+/*
+static void arrtest()
+{
+    lite3d_array arr;
+    lite3d_array arr2;
+    int *i = 0x1212, *p = 0x5656, j;
+    uint16_t res;
+    
+    lite3d_array_init(&arr, sizeof(uint16_t), 3);
+    for(j = 0; j < 10; ++j)
+        LITE3D_ARR_ADD_ELEM(&arr, uint16_t, j);
+    
+    lite3d_array_init(&arr2, sizeof(i), 10);
+    LITE3D_ARR_ADD_ELEM(&arr2, int *, NULL);
+    LITE3D_ARR_ADD_ELEM(&arr2, int *, NULL);
+    LITE3D_ARR_ADD_ELEM(&arr2, int *, i);
+    LITE3D_ARR_ADD_ELEM(&arr2, int *, p);
+    
+    res = LITE3D_ARR_ELEM(&arr, uint16_t, 8);
+    i = LITE3D_ARR_ELEM(&arr2, int *, 3);
+    
+    lite3d_array_purge(&arr);
+    lite3d_array_purge(&arr2);
+}
+*/
 void lite3d_scene_render(lite3d_scene *scene, lite3d_camera *camera, uint16_t pass)
 {
     SDL_assert(scene && camera);
@@ -250,6 +274,7 @@ void lite3d_scene_render(lite3d_scene *scene, lite3d_camera *camera, uint16_t pa
     if (scene->endSceneRender)
         scene->endSceneRender(scene, camera);
 
+    arrtest();
     scene_recursive_nodes_validate(&scene->rootNode);
 }
 

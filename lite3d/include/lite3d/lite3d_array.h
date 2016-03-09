@@ -20,6 +20,10 @@
 
 #include <lite3d/lite3d_common.h>
 
+#define LITE3D_ARR_ELEM(arr, arrtype, ind) *((arrtype *)lite3d_array_get(arr, ind))
+#define LITE3D_ARR_ADD_ELEM(arr, arrtype, data) *((arrtype *)lite3d_array_add(arr)) = data;
+
+
 typedef struct lite3d_array
 {
     void *data;
@@ -28,9 +32,13 @@ typedef struct lite3d_array
     size_t capacity;
 } lite3d_array;
 
-LITE3D_CEXPORT void lite3d_array_init(lite3d_array *a, size_t elemSize, size_t size);
+LITE3D_CEXPORT void lite3d_array_init(lite3d_array *a, size_t elemSize, size_t capacity);
 LITE3D_CEXPORT void lite3d_array_clean(lite3d_array *a);
 LITE3D_CEXPORT void lite3d_array_purge(lite3d_array *a);
+LITE3D_CEXPORT void *lite3d_array_add(lite3d_array *a);
+LITE3D_CEXPORT void *lite3d_array_get(lite3d_array *a, size_t index);
+LITE3D_CEXPORT void lite3d_array_remove(lite3d_array *a, size_t index);
+
 
 
 #endif	/* LITE3D_ARRAY_H */

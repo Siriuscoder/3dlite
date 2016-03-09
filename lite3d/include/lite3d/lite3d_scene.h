@@ -23,6 +23,7 @@
 #include <lite3d/lite3d_list.h>
 #include <lite3d/lite3d_mesh.h>
 #include <lite3d/lite3d_material.h>
+#include <lite3d/lite3d_array.h>
 
 typedef struct lite3d_scene_stats
 {

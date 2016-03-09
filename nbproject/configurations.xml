@@ -45,6 +45,7 @@
           </df>
           <in>lite3d_7z_loader.c</in>
           <in>lite3d_alloc.c</in>
+          <in>lite3d_array.c</in>
           <in>lite3d_buffers_manip.c</in>
           <in>lite3d_camera.c</in>
           <in>lite3d_framebuffer.c</in>
@@ -632,6 +633,19 @@
         </cTool>
       </item>
       <item path="lite3d/src/lite3d_alloc.c" ex="false" tool="0" flavor2="3">
+        <cTool flags="3">
+          <incDir>
+            <pElem>/usr/include/SDL2</pElem>
+            <pElem>build/lite3d</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>GLEW_STATIC</Elem>
+            <Elem>_REENTRANT</Elem>
+            <Elem>lite3d_EXPORTS</Elem>
+          </preprocessorList>
+        </cTool>
+      </item>
+      <item path="lite3d/src/lite3d_array.c" ex="false" tool="0" flavor2="3">
         <cTool flags="3">
           <incDir>
             <pElem>/usr/include/SDL2</pElem>
