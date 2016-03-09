@@ -68,7 +68,7 @@ static void file_output_function(void* userdata, int category,
 
 void lite3d_logger_set_logParams(int8_t level, int8_t flushAlways)
 {
-    SDL_LogSetAllPriority(level == LITE3D_LOGLEVEL_ERROR ? SDL_LOG_PRIORITY_ERROR :
+    SDL_LogSetAllPriority(level == LITE3D_LOGLEVEL_ERROR ? SDL_LOG_PRIORITY_WARN :
         (level == LITE3D_LOGLEVEL_INFO ? SDL_LOG_PRIORITY_INFO : SDL_LOG_PRIORITY_VERBOSE));
 
     flushAlways = flushAlways;

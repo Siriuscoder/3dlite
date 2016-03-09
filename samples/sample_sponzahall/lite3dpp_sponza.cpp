@@ -88,17 +88,17 @@ public:
             else if (e->key.keysym.sym == SDLK_F1)
             {
                 lite3d_render_stats *stats = lite3d_render_stats_get();
-                SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
+                SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
                     "==== Render statistics ========\n"
                     "last FPS\tavr FPS\t\tbest FPS\tworst FPS\n"
                     "%d\t\t%d\t\t%d\t\t%d\n"
                     "last frame ms\tavr frame ms\tbest frame ms\tworst frame ms\n"
                     "%f\t%f\t%f\t%f\n"
-                    "nodes total\tbatches total\tbatches called\n"
-                    "%d\t\t%d\t\t%d\n",
+                    "nodes total\tbatches total\tbatches called\tfaces\n"
+                    "%d\t\t%d\t\t%d\t\t%d\n",
                     stats->lastFPS, stats->avrFPS, stats->bestFPS, stats->worstFPS,
                     stats->lastFrameMs, stats->avrFrameMs, stats->bestFrameMs, stats->worstFrameMs,
-                    stats->nodesTotal, stats->batchesTotal, stats->batchedByFrame);
+                    stats->nodesTotal, stats->batchesTotal, stats->batchedByFrame, stats->verticesByFrame);
             }
         }
         else if(e->type == SDL_MOUSEMOTION)

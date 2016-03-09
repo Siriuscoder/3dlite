@@ -79,18 +79,19 @@
 #endif
 
 #ifdef __GNUC__
-#   define COMPILER_VERSION "GCC " STR(__GNUC__) "." \
-    STR(__GNUC_MINOR__) "." STR(__GNUC_PATCHLEVEL__) 
+#   define LITE3D_COMPILER_VERSION "GCC " STR(__GNUC__) "." \
+    STR(__GNUC_MINOR__) "." STR(__GNUC_PATCHLEVEL__)
+#   define LITE3D_CURRENT_FUNCTION __func__
 #elif defined(_MSC_VER)
-#   define COMPILER_VERSION "MSC " STR(_MSC_FULL_VER)
+#   define LITE3D_COMPILER_VERSION "MSC " STR(_MSC_FULL_VER)
+#   define LITE3D_CURRENT_FUNCTION __FUNCTION__
 #else
-#   define COMPILER_VERSION "UNKNOWN"
+#   define LITE3D_COMPILER_VERSION "UNKNOWN"
+#   define LITE3D_CURRENT_FUNCTION __PRETTY_FUNCTION__
 #endif
 
 #define LITE3D_MIN(a, b) (((a) < (b)) ? (a) : (b))
 #define LITE3D_MAX(a, b) (((a) > (b)) ? (a) : (b))
-
-#define LITE3D_CURRENT_FUNCTION __func__
 
 #define LITE3D_CEXPORT  LITE3D_EXPORT LITE3D_EXTERN
 #define LITE3D_CPPEXPORT  LITE3D_CLASS_EXPORT LITE3D_EXTERN
@@ -102,7 +103,7 @@
 #define LITE3D_VERSION_STRING      STR(LITE3D_VERSION_MAJ) "." STR(LITE3D_VERSION_MIN) \
     "." STR(LITE3D_VERSION_PCH)
 #define LITE3D_FULL_VERSION        LITE3D_VERSION_STRING " at " __DATE__ " " __TIME__ \
-    " " COMPILER_VERSION
+    " " LITE3D_COMPILER_VERSION
 #define LITE3D_VERSION_NUM         (uint32_t)((((uint32_t)LITE3D_VERSION_MAJ) << 16) | \
     (((uint32_t)LITE3D_VERSION_MIN) << 8) | ((uint32_t)LITE3D_VERSION_PCH))
 

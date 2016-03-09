@@ -746,7 +746,7 @@ int lite3d_texture_unit_allocate(lite3d_texture_unit *textureUnit,
     }
 
     SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "%s: "
-        "%dx%dx%d surface allocated (%zu bytes), levels %d, %s, "
+        "%dx%dx%d surface allocated (%lu bytes), levels %d, %s, "
         "format %s",
         (textureUnit->textureTarget == LITE3D_TEXTURE_1D ? "TEXTURE_1D" :
         (textureUnit->textureTarget == LITE3D_TEXTURE_2D ? "TEXTURE_2D" :

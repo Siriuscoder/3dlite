@@ -71,13 +71,13 @@ void MeshInfoCommand::printInfo(const lite3d_file *meshFile)
     printf("Mesh file version: %d.%d.%d\n\n", LITE3D_GET_VERSION_MAJ(mesh.version),
         LITE3D_GET_VERSION_MIN(mesh.version), LITE3D_GET_VERSION_PCH(mesh.version));
     printf("Vertex buffer:\n\n");
-    printf("\tVertices count: %zu\n", mesh.verticesCount);
-    printf("\tRaw size: %zu bytes\n\n", mesh.vertexBuffer.size);
+    printf("\tVertices count: %lu\n", mesh.verticesCount);
+    printf("\tRaw size: %lu bytes\n\n", mesh.vertexBuffer.size);
     printf("Index buffer:\n\n");
-    printf("\tElements count: %zu\n", mesh.elementsCount);
-    printf("\tRaw size: %zu bytes\n\n", mesh.indexBuffer.size);
+    printf("\tElements count: %lu\n", mesh.elementsCount);
+    printf("\tRaw size: %lu bytes\n\n", mesh.indexBuffer.size);
 
-    printf("Chunks count: %zu\n\n", mesh.chunkCount);
+    printf("Chunks count: %lu\n\n", mesh.chunkCount);
     for (chunkNode = mesh.chunks.l.next; chunkNode != &mesh.chunks.l;
         chunkNode = lite3d_list_next(chunkNode), ++chunksCount)
     {
@@ -94,15 +94,15 @@ void MeshInfoCommand::printInfo(const lite3d_file *meshFile)
             (meshChunk->vao.elementType == LITE3D_PRIMITIVE_LINE ? "LINES" : "TRIANGLES"));
         printf("\tElements count: %d\n", meshChunk->vao.indexesCount / (meshChunk->vao.elementType == LITE3D_PRIMITIVE_POINT ? 1 :
             (meshChunk->vao.elementType == LITE3D_PRIMITIVE_LINE ? 2 : 3)));
-        printf("\tVertices offset: 0x%zx bytes\n", meshChunk->vao.verticesOffset);
-        printf("\tIndices offset: 0x%zx bytes\n", meshChunk->vao.indexesOffset);
-        printf("\tIndex size: %zu bytes\n\n", meshChunk->vao.indexesSize / meshChunk->vao.indexesCount);
+        printf("\tVertices offset: 0x%lx bytes\n", meshChunk->vao.verticesOffset);
+        printf("\tIndices offset: 0x%lx bytes\n", meshChunk->vao.indexesOffset);
+        printf("\tIndex size: %lu bytes\n\n", meshChunk->vao.indexesSize / meshChunk->vao.indexesCount);
 
         printf("\tFORMAT\n");
         printf("\tLoc\tType\t\tData\tOffset\n");
         for (i = 0; i < meshChunk->layoutEntriesCount; ++i)
         {
-            printf("\t%d\t%s\tFLOAT%d\t0x%zx\n", i,
+            printf("\t%d\t%s\tFLOAT%d\t0x%lx\n", i,
                 (meshChunk->layout[i].binding == LITE3D_BUFFER_BINDING_VERTEX ? "VERTEX\t" :
                 (meshChunk->layout[i].binding == LITE3D_BUFFER_BINDING_COLOR ? "COLOR\t" :
                 (meshChunk->layout[i].binding == LITE3D_BUFFER_BINDING_NORMAL ? "NORMAL\t" :
@@ -112,7 +112,7 @@ void MeshInfoCommand::printInfo(const lite3d_file *meshFile)
             offset += sizeof (float) * meshChunk->layout[i].count;
         }
 
-        printf("\n\tStride: %zu bytes \n\n", offset);
+        printf("\n\tStride: %lu bytes \n\n", offset);
     }
 
     lite3d_mesh_purge(&mesh);
