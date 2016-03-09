@@ -15,10 +15,8 @@
  *	You should have received a copy of the GNU General Public License
  *	along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
-#include <SDL.h>
+#include <SDL_log.h>
 #include <SDL_syswm.h>
-
-
 
 #include <lite3d/GL/glew.h>
 #include <lite3d/lite3d_render.h>
