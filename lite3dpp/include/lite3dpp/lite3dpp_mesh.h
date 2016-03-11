@@ -27,7 +27,7 @@
 namespace lite3dpp
 {
     class Mesh;
-    class LITE3DPP_EXPORT BufferMapper : public Manageable, public NoncopiableResource
+    class LITE3DPP_EXPORT BufferMapper : public Manageable, public Noncopiable
     {
     friend Mesh;
     private:
@@ -57,7 +57,7 @@ namespace lite3dpp
         void *mPtr;
     };
 
-    class LITE3DPP_EXPORT Mesh : public ConfigurableResource, public NoncopiableResource
+    class LITE3DPP_EXPORT Mesh : public ConfigurableResource, public Noncopiable
     {
     public:
         

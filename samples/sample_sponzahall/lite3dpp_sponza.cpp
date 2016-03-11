@@ -39,6 +39,8 @@ public:
         mSenterXPos = mWindow->width() >> 1;
         mSenterYPos = mWindow->height() >> 1;
         lite3d_video_set_mouse_pos(mSenterXPos, mSenterYPos);
+
+        mStatRerfeshTimer = mMain->addTimer("statisticURefresh", 1000);
     }
 
     void shut() override
@@ -52,29 +54,36 @@ public:
 
     void timerTick(lite3d_timer *timerid) override
     {
-        const Uint8 *state = SDL_GetKeyboardState(NULL);
-        if(state[SDL_SCANCODE_W])
+        if(timerid == mMain->getTimer(lite3dpp::Main::fixedUpdateTimerName))
         {
-            kmVec3 vec3 = {0, 0, -6};
-            mCamera->moveRelative(vec3);
+            const Uint8 *state = SDL_GetKeyboardState(NULL);
+            if(state[SDL_SCANCODE_W])
+            {
+                kmVec3 vec3 = {0, 0, -6};
+                mCamera->moveRelative(vec3);
+            }
+            
+            if(state[SDL_SCANCODE_S])
+            {
+                kmVec3 vec3 = {0, 0, 6};
+                mCamera->moveRelative(vec3);
+            }
+            
+            if(state[SDL_SCANCODE_A])
+            {
+                kmVec3 vec3 = {-6, 0, 0};
+                mCamera->moveRelative(vec3);
+            }
+            
+            if(state[SDL_SCANCODE_D])
+            {
+                kmVec3 vec3 = {6, 0, 0};
+                mCamera->moveRelative(vec3);
+            }
         }
-        
-        if(state[SDL_SCANCODE_S])
+        else if(timerid == mStatRerfeshTimer)
         {
-            kmVec3 vec3 = {0, 0, 6};
-            mCamera->moveRelative(vec3);
-        }
-        
-        if(state[SDL_SCANCODE_A])
-        {
-            kmVec3 vec3 = {-6, 0, 0};
-            mCamera->moveRelative(vec3);
-        }
-        
-        if(state[SDL_SCANCODE_D])
-        {
-            kmVec3 vec3 = {6, 0, 0};
-            mCamera->moveRelative(vec3);
+            printStats();
         }
     }
 
@@ -87,26 +96,31 @@ public:
                 mMain->stop();
             else if (e->key.keysym.sym == SDLK_F1)
             {
-                lite3d_render_stats *stats = lite3d_render_stats_get();
-                SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
-                    "==== Render statistics ========\n"
-                    "last FPS\tavr FPS\t\tbest FPS\tworst FPS\n"
-                    "%d\t\t%d\t\t%d\t\t%d\n"
-                    "last frame ms\tavr frame ms\tbest frame ms\tworst frame ms\n"
-                    "%f\t%f\t%f\t%f\n"
-                    "nodes total\tbatches total\tbatches called\tfaces\n"
-                    "%d\t\t%d\t\t%d\t\t%d\n",
-                    stats->lastFPS, stats->avrFPS, stats->bestFPS, stats->worstFPS,
-                    stats->lastFrameMs, stats->avrFrameMs, stats->bestFrameMs, stats->worstFrameMs,
-                    stats->nodesTotal, stats->batchesTotal, stats->batchedByFrame, stats->verticesByFrame);
+                printStats();
             }
         }
         else if(e->type == SDL_MOUSEMOTION)
         {
-            mCamera->rotateZ((e->motion.x - mSenterXPos) * 0.003);
-            mCamera->pitch((e->motion.y - mSenterYPos) * 0.003);
+            mCamera->rotateZ((e->motion.x - mSenterXPos) * 0.003f);
+            mCamera->pitch((e->motion.y - mSenterYPos) * 0.003f);
             lite3d_video_set_mouse_pos(mSenterXPos, mSenterYPos);
         }
+    }
+
+    void printStats()
+    {
+        lite3d_render_stats *stats = lite3d_render_stats_get();
+        SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
+            "==== Render statistics ========\n"
+            "last FPS\tavr FPS\t\tbest FPS\tworst FPS\n"
+            "%d\t\t%d\t\t%d\t\t%d\n"
+            "last frame ms\tavr frame ms\tbest frame ms\tworst frame ms\n"
+            "%f\t%f\t%f\t%f\n"
+            "nodes total\tbatches total\tbatches called\tfaces\n"
+            "%d\t\t%d\t\t%d\t\t%d\n",
+            stats->lastFPS, stats->avrFPS, stats->bestFPS, stats->worstFPS,
+            stats->lastFrameMs, stats->avrFrameMs, stats->bestFrameMs, stats->worstFrameMs,
+            stats->nodesTotal, stats->batchesTotal, stats->batchedByFrame, stats->verticesByFrame);
     }
 
 private:
@@ -116,6 +130,7 @@ private:
     lite3dpp::RenderTarget *mWindow;
     int mSenterXPos;
     int mSenterYPos;
+    lite3d_timer *mStatRerfeshTimer;
 };
 
 int main(int agrc, char *args[])

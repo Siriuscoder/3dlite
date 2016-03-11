@@ -15,6 +15,8 @@
  *	You should have received a copy of the GNU General Public License
  *	along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
+#include <algorithm>
+
 #include <SDL_rwops.h>
 #include <SDL_log.h>
 
@@ -25,6 +27,7 @@
 
 namespace lite3dpp
 {
+    const char Main::fixedUpdateTimerName[] = "fixedTimer";
 
     Main::Main() :
         mResourceManager(this),
@@ -143,13 +146,16 @@ namespace lite3dpp
         mResourceManager.queryResource<WindowRenderTarget>(LITE3D_EMPTY_NAMED_RESOURCE("MainWindow"));
 
         /* perform fixed update timer */
-        mFixedUpdatesTimer = 
-            lite3d_timer_add(mConfig->getInt(L"FixedUpdatesInterval", 200), onTimerTick, this);
+        mFixedUpdatesTimer = addTimer(fixedUpdateTimerName, mConfig->getInt(L"FixedUpdatesInterval", 200));
     }
 
     void Main::shut()
     {
-        lite3d_timer_purge(mFixedUpdatesTimer);
+        std::for_each(mTimers.begin(), mTimers.end(), [](Timers::value_type &it)
+        {
+            lite3d_timer_purge(it.second);
+        });
+
         mResourceManager.releaseAllResources();
         mResourceManager.releaseFileCache();
         AsScript::engineShut();
@@ -284,4 +290,24 @@ namespace lite3dpp
 
     Main::LifecycleListener::~LifecycleListener()
     {}
+
+    lite3d_timer *Main::addTimer(const String &name, int32_t millisec)
+    {
+        lite3d_timer *timer;
+        if((timer = getTimer(name)) != NULL)
+            return timer;
+
+        timer = lite3d_timer_add(millisec, onTimerTick, this);
+        mTimers.insert(std::make_pair(name, timer));
+        return timer;
+    }
+
+    lite3d_timer *Main::getTimer(const String &name)
+    {
+        auto it = mTimers.find(name);
+        if(it != mTimers.end())
+            return it->second;
+
+        return NULL;
+    }
 }

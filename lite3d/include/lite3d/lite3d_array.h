@@ -22,7 +22,8 @@
 
 #define LITE3D_ARR_ELEM(arr, arrtype, ind) *((arrtype *)lite3d_array_get(arr, ind))
 #define LITE3D_ARR_ADD_ELEM(arr, arrtype, data) *((arrtype *)lite3d_array_add(arr)) = data;
-
+#define LITE3D_ARR_FOREACH(arr, arrtype, i) \
+    for (i = (arrtype *)(arr)->data; (size_t)(i - (arrtype *)(arr)->data) < (arr)->size; ++i)
 
 typedef struct lite3d_array
 {

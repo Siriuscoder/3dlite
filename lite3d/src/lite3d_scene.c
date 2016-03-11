@@ -31,6 +31,7 @@ typedef struct lite3d_mqr_node
     uint32_t instancesCount;
     lite3d_bouding_vol boudingVol;
     float distanceToCamera;
+    lite3d_material *material;
 } lite3d_mqr_node;
 
 typedef struct lite3d_mqr_unit
@@ -40,6 +41,33 @@ typedef struct lite3d_mqr_unit
     lite3d_list nodes;
     lite3d_camera *currentCamera;
 } lite3d_mqr_unit;
+
+static void mqr_node_render(lite3d_scene *scene,
+    lite3d_mqr_node *mqrNode, lite3d_mesh_chunk **prev)
+{
+    /* notify render batch */
+    if (scene->beginDrawBatch)
+        scene->beginDrawBatch(scene, mqrNode->node,
+        mqrNode->meshChunk, mqrNode->material);
+    /* bind meshChunk */
+    if (*prev != mqrNode->meshChunk)
+    {
+        lite3d_mesh_chunk_bind(mqrNode->meshChunk);
+        *prev = mqrNode->meshChunk;
+    }
+    
+    /* setup global parameters (viewmodel) */
+    lite3d_shader_set_modelview_matrix(&mqrNode->node->modelView);
+    lite3d_shader_set_model_matrix(&mqrNode->node->worldView);
+    /* setup changed uniforms parameters */
+    
+    /* do render batch */
+    lite3d_mesh_chunk_draw(mqrNode->meshChunk, mqrNode->instancesCount);
+    
+    scene->stats.batchesCalled++;
+    scene->stats.trianglesRendered += mqrNode->meshChunk->vao.elementsCount;
+    scene->stats.verticesRendered += mqrNode->meshChunk->vao.verticesCount;
+}
 
 static void mqr_unit_render(lite3d_material_pass *pass, void *data)
 {
@@ -60,12 +88,14 @@ static void mqr_unit_render(lite3d_material_pass *pass, void *data)
         scene = (lite3d_scene *) mqrNode->node->scene;
         SDL_assert(scene);
 
-        /* recalc bouding volume if node begin invalidated (position or rotation changed)*/
         if (mqrNode->node->invalidated)
         {
+            /* recalc bouding volume if node begin invalidated (position or rotation changed)*/
             lite3d_bouding_vol_translate(&mqrNode->boudingVol,
                 &mqrNode->meshChunk->boudingVol,
                 &mqrNode->node->worldView);
+
+            LITE3D_ARR_ADD_ELEM(&scene->invalidatedUnits, lite3d_scene_node *, mqrNode->node);
         }
 
         if (mqrNode->node->invalidated || mqrUnit->currentCamera->cameraNode.invalidated)
@@ -85,36 +115,23 @@ static void mqr_unit_render(lite3d_material_pass *pass, void *data)
         {
             if (scene->nodeOutOfFrustum)
                 scene->nodeOutOfFrustum(scene, mqrNode->node,
-                mqrNode->meshChunk, mqrUnit->material, &mqrNode->boudingVol);
+                mqrNode->meshChunk, mqrUnit->material, &mqrNode->boudingVol, mqrUnit->currentCamera);
             continue;
         }
 
         if (mqrNode->node->frustumTest && scene->nodeInFrustum)
             scene->nodeInFrustum(scene, mqrNode->node,
-            mqrNode->meshChunk, mqrUnit->material, &mqrNode->boudingVol);
+            mqrNode->meshChunk, mqrUnit->material, &mqrNode->boudingVol, mqrUnit->currentCamera);
 
-        /* bind meshChunk */
-        if (prevVao != mqrNode->meshChunk)
+        /* do not render transparent objects, we will do it in second stage  */
+        if (pass->blending)
         {
-            lite3d_mesh_chunk_bind(mqrNode->meshChunk);
-            prevVao = mqrNode->meshChunk;
+            LITE3D_ARR_ADD_ELEM(&scene->orderedRenderUnits, lite3d_mqr_node *, mqrNode);
+            continue;
         }
 
-        /* setup global parameters (viewmodel) */
-        lite3d_shader_set_modelview_matrix(&mqrNode->node->modelView);
-        lite3d_shader_set_model_matrix(&mqrNode->node->worldView);
-        /* setup changed uniforms parameters */
         lite3d_material_pass_set_params(mqrUnit->material, pass, LITE3D_FALSE);
-        /* notify render batch */
-        if (scene->beginDrawBatch)
-            scene->beginDrawBatch(scene, mqrNode->node,
-            mqrNode->meshChunk, mqrUnit->material);
-        /* do render batch */
-        lite3d_mesh_chunk_draw(mqrNode->meshChunk, mqrNode->instancesCount);
-
-        scene->stats.batchesCalled++;
-        scene->stats.trianglesRendered += mqrNode->meshChunk->vao.elementsCount;
-        scene->stats.verticesRendered += mqrNode->meshChunk->vao.verticesCount;
+        mqr_node_render(scene, mqrNode, &prevVao);
     }
 
     if (scene)
@@ -129,8 +146,10 @@ static void mqr_render(struct lite3d_scene *scene, lite3d_camera *camera, uint16
     lite3d_mqr_unit *mqrUnit = NULL;
     lite3d_list_node *mqrUnitNode = NULL;
 
-    for (mqrUnitNode = scene->renderUnitQueue.l.next;
-        mqrUnitNode != &scene->renderUnitQueue.l; mqrUnitNode = lite3d_list_next(mqrUnitNode))
+    //LITE3D_ARR_ADD_ELEM(&scene->invalidatedUnits, lite3d_scene_node *, &camera->cameraNode);
+
+    for (mqrUnitNode = scene->materialRenderUnits.l.next;
+        mqrUnitNode != &scene->materialRenderUnits.l; mqrUnitNode = lite3d_list_next(mqrUnitNode))
     {
         mqrUnit = LITE3D_MEMBERCAST(lite3d_mqr_unit, mqrUnitNode, queued);
         mqrUnit->currentCamera = camera;
@@ -220,42 +239,17 @@ static void scene_recursive_nodes_update(lite3d_scene *scene,
     scene->stats.nodesTotal++;
 }
 
-static void scene_recursive_nodes_validate(lite3d_scene_node *node)
+static void scene_updated_nodes_validate(lite3d_scene *scene)
 {
-    lite3d_list_node *nodeLink;
+    lite3d_scene_node **node;
+    LITE3D_ARR_FOREACH(&scene->invalidatedUnits, lite3d_scene_node *, node)
+    {
+        (*node)->invalidated = LITE3D_FALSE;
+    }
 
-    /* render all childrens firts */
-    for (nodeLink = node->childNodes.l.next;
-        nodeLink != &node->childNodes.l; nodeLink = lite3d_list_next(nodeLink))
-        scene_recursive_nodes_validate(LITE3D_MEMBERCAST(lite3d_scene_node, nodeLink, nodeLink));
+    lite3d_array_clean(&scene->invalidatedUnits);
+}
 
-    node->invalidated = LITE3D_FALSE;
-}
-/*
-static void arrtest()
-{
-    lite3d_array arr;
-    lite3d_array arr2;
-    int *i = 0x1212, *p = 0x5656, j;
-    uint16_t res;
-    
-    lite3d_array_init(&arr, sizeof(uint16_t), 3);
-    for(j = 0; j < 10; ++j)
-        LITE3D_ARR_ADD_ELEM(&arr, uint16_t, j);
-    
-    lite3d_array_init(&arr2, sizeof(i), 10);
-    LITE3D_ARR_ADD_ELEM(&arr2, int *, NULL);
-    LITE3D_ARR_ADD_ELEM(&arr2, int *, NULL);
-    LITE3D_ARR_ADD_ELEM(&arr2, int *, i);
-    LITE3D_ARR_ADD_ELEM(&arr2, int *, p);
-    
-    res = LITE3D_ARR_ELEM(&arr, uint16_t, 8);
-    i = LITE3D_ARR_ELEM(&arr2, int *, 3);
-    
-    lite3d_array_purge(&arr);
-    lite3d_array_purge(&arr2);
-}
-*/
 void lite3d_scene_render(lite3d_scene *scene, lite3d_camera *camera, uint16_t pass)
 {
     SDL_assert(scene && camera);
@@ -274,8 +268,7 @@ void lite3d_scene_render(lite3d_scene *scene, lite3d_camera *camera, uint16_t pa
     if (scene->endSceneRender)
         scene->endSceneRender(scene, camera);
 
-    arrtest();
-    scene_recursive_nodes_validate(&scene->rootNode);
+    scene_updated_nodes_validate(scene);
 }
 
 void lite3d_scene_init(lite3d_scene *scene)
@@ -286,7 +279,9 @@ void lite3d_scene_init(lite3d_scene *scene)
     lite3d_scene_node_init(&scene->rootNode);
     /* never render this node */
     scene->rootNode.renderable = LITE3D_FALSE;
-    lite3d_list_init(&scene->renderUnitQueue);
+    lite3d_list_init(&scene->materialRenderUnits);
+    lite3d_array_init(&scene->orderedRenderUnits, sizeof(lite3d_mqr_node *), 2);
+    lite3d_array_init(&scene->invalidatedUnits, sizeof(lite3d_scene_node *), 2);
 }
 
 void lite3d_scene_purge(lite3d_scene *scene)
@@ -297,7 +292,7 @@ void lite3d_scene_purge(lite3d_scene *scene)
     lite3d_list_node *mqrListNode = NULL;
 
     SDL_assert(scene);
-    while ((mqrUnitNode = lite3d_list_remove_first_link(&scene->renderUnitQueue)) != NULL)
+    while ((mqrUnitNode = lite3d_list_remove_first_link(&scene->materialRenderUnits)) != NULL)
     {
         mqrUnit = LITE3D_MEMBERCAST(lite3d_mqr_unit, mqrUnitNode, queued);
         while ((mqrListNode = lite3d_list_remove_first_link(&mqrUnit->nodes)) != NULL)
@@ -308,6 +303,9 @@ void lite3d_scene_purge(lite3d_scene *scene)
 
         lite3d_free_pooled(LITE3D_POOL_NO1, mqrUnit);
     }
+
+    lite3d_array_purge(&scene->orderedRenderUnits);
+    lite3d_array_purge(&scene->invalidatedUnits);
 }
 
 int lite3d_scene_add_node(lite3d_scene *scene, lite3d_scene_node *node,
@@ -338,8 +336,8 @@ int lite3d_scene_remove_node(lite3d_scene *scene, lite3d_scene_node *node)
     node->baseNode = NULL;
     node->scene = NULL;
 
-    for (mqrUnitNode = scene->renderUnitQueue.l.next;
-        mqrUnitNode != &scene->renderUnitQueue.l; mqrUnitNode = lite3d_list_next(mqrUnitNode))
+    for (mqrUnitNode = scene->materialRenderUnits.l.next;
+        mqrUnitNode != &scene->materialRenderUnits.l; mqrUnitNode = lite3d_list_next(mqrUnitNode))
     {
         mqrUnit = LITE3D_MEMBERCAST(lite3d_mqr_unit, mqrUnitNode, queued);
         /* check render unit node exist */
@@ -369,8 +367,8 @@ int lite3d_scene_node_touch_material(
 
     scene = (lite3d_scene *) node->scene;
 
-    for (mqrUnitNode = scene->renderUnitQueue.l.next;
-        mqrUnitNode != &scene->renderUnitQueue.l; mqrUnitNode = lite3d_list_next(mqrUnitNode))
+    for (mqrUnitNode = scene->materialRenderUnits.l.next;
+        mqrUnitNode != &scene->materialRenderUnits.l; mqrUnitNode = lite3d_list_next(mqrUnitNode))
     {
         mqrUnitTmp = LITE3D_MEMBERCAST(lite3d_mqr_unit, mqrUnitNode, queued);
         if (mqrUnitTmp->material == material)
@@ -390,35 +388,35 @@ int lite3d_scene_node_touch_material(
         lite3d_list_link_init(&mqrUnit->queued);
         mqrUnit->material = material;
 
-        lite3d_list_add_last_link(&mqrUnit->queued, &scene->renderUnitQueue);
+        lite3d_list_add_last_link(&mqrUnit->queued, &scene->materialRenderUnits);
     }
 
     SDL_assert_release(mqrUnit);
 
     if (mqrNode == NULL)
     {
-        mqrNode = (lite3d_mqr_node *) lite3d_calloc_pooled(LITE3D_POOL_NO1,
-            sizeof (lite3d_mqr_node));
-        lite3d_list_link_init(&mqrNode->unit);
-
         if (!meshChunk)
         {
             SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
                 "%s: mesh chunk is null", LITE3D_CURRENT_FUNCTION);
-            lite3d_free_pooled(LITE3D_POOL_NO1, mqrNode);
             return LITE3D_FALSE;
         }
 
+        mqrNode = (lite3d_mqr_node *) lite3d_calloc_pooled(LITE3D_POOL_NO1,
+            sizeof (lite3d_mqr_node));
+        lite3d_list_link_init(&mqrNode->unit);
         mqrNode->node = node;
-        mqrNode->meshChunk = meshChunk;
-        mqrNode->boudingVol = meshChunk->boudingVol;
-        mqrNode->node->recalc = LITE3D_TRUE;
     }
 
     SDL_assert_release(mqrNode);
     /* relink render node */
+    mqrNode->meshChunk = meshChunk;
+    mqrNode->boudingVol = meshChunk->boudingVol;
     mqrNode->instancesCount = instancesCount;
+    mqrNode->material = material;
+    mqrNode->node->recalc = LITE3D_TRUE;
     mqr_unit_add_node(mqrUnit, mqrNode);
+
     return LITE3D_TRUE;
 }
 

@@ -62,6 +62,17 @@ namespace lite3dpp
         void operator delete[](void *p, const std::nothrow_t &n);
     };
 
+
+    class LITE3DPP_EXPORT Noncopiable
+    {
+    public:
+
+        Noncopiable();
+    private:
+
+        Noncopiable(const Noncopiable &other);
+    };
+
 #ifdef LITE3DPP_USE_STL_ALLOCATOR
     
     template<class T>

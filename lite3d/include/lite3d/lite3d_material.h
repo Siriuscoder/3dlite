@@ -28,7 +28,7 @@ typedef struct lite3d_material_pass_parameter
     lite3d_shader_parameter *parameter;
     /* uniform location in shader program attached to this pass */
     int32_t uniformLocation;
-    uint16_t textureUnit;
+    int16_t textureUnit;
 } lite3d_material_pass_parameter;
 
 typedef struct lite3d_material_pass

@@ -26,7 +26,7 @@
 #include <lite3d/lite3d_framebuffer.h>
 
 static lite3d_framebuffer *gCurrentFb = NULL;
-static int gMaxColorAttachments = 0;
+static size_t gMaxColorAttachments = 0;
 static int gMaxFramebufferSize = 0;
 
 /*

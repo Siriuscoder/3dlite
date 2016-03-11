@@ -143,10 +143,10 @@ static int update_render_targets(void)
             target->postUpdate(target);
 
         targetsCount++;
-    }
 
-    glFinish();
-    lite3d_video_swap_buffers();
+        /* flush gl commands */
+        glFlush();
+    }
 
     gRenderStats.renderTargets = targetsCount;
     return targetsCount ? LITE3D_TRUE : LITE3D_FALSE;
@@ -174,6 +174,9 @@ void lite3d_render_loop(lite3d_render_listeners *callbacks)
     lite3d_list_init(&gRenderTargets);
     lite3d_render_target_add(&gScreenRt, 0xFFFFFFF);
 
+    /* get time mark */
+    beginFrameMark = SDL_GetPerformanceCounter();
+
     /* start user initialization */
     if (!gRenderListeners.preRender || (gRenderListeners.preRender &&
         gRenderListeners.preRender(gRenderListeners.userdata)))
@@ -190,11 +193,6 @@ void lite3d_render_loop(lite3d_render_listeners *callbacks)
                 gRenderStats.textureUnitsByFrame =
                 gRenderStats.verticesByFrame = 0;
 
-            /* get time mark */
-            beginFrameMark = SDL_GetPerformanceCounter();
-            /* induce timers using time mark */
-            lite3d_timer_induce(beginFrameMark, gPerfFreq);
-
             if (gRenderActive)
             {
                 if (gRenderListeners.preFrame &&
@@ -208,9 +206,13 @@ void lite3d_render_loop(lite3d_render_listeners *callbacks)
                     !gRenderListeners.postFrame(gRenderListeners.userdata))
                     break;
             }
-
+            
             /* refresh render statistic, render time span used */
             refresh_render_stats(beginFrameMark, SDL_GetPerformanceCounter());
+            /* get time mark */
+            beginFrameMark = SDL_GetPerformanceCounter();
+            /* induce timers */
+            lite3d_timer_induce(beginFrameMark, gPerfFreq);
 
             while (SDL_PollEvent(&wevent))
             {
@@ -221,6 +223,9 @@ void lite3d_render_loop(lite3d_render_listeners *callbacks)
                     break;
                 }
             }
+            
+            /* finish gl operations and swap buffers */
+            lite3d_video_swap_buffers();
         }
     }
 

@@ -26,7 +26,7 @@
 
 namespace lite3dpp
 {
-    class LITE3DPP_EXPORT Scene : public ConfigurableResource, public NoncopiableResource
+    class LITE3DPP_EXPORT Scene : public ConfigurableResource, public Noncopiable
     {
     public:
 

@@ -145,7 +145,7 @@ void lite3d_material_pass_add_parameter(lite3d_material_pass *pass,
 
     parameter->parameter = param;
     parameter->uniformLocation = -1; // unknown ??
-    parameter->textureUnit = 0;
+    parameter->textureUnit = -1; // unknown ??
     lite3d_list_link_init(&parameter->parameterLink);
     lite3d_list_add_last_link(&parameter->parameterLink, &pass->parameters);
 }
@@ -224,7 +224,7 @@ void lite3d_material_pass_set_params(lite3d_material *material,
 {
     lite3d_list_node *parameterNode;
     lite3d_material_pass_parameter *parameter;
-    uint16_t textureUnit = 0;
+    uint16_t texUnitCounter = 0;
 
     /* check parameters and set it if changed */
     for (parameterNode = pass->parameters.l.next;
@@ -234,13 +234,15 @@ void lite3d_material_pass_set_params(lite3d_material *material,
         parameter = LITE3D_MEMBERCAST(lite3d_material_pass_parameter, 
             parameterNode, parameterLink);
 
-        if (changed || parameter->parameter->persist)
+        if (changed || parameter->parameter->changed)
         {
             /* sampler case */
             if (parameter->parameter->type == LITE3D_SHADER_PARAMETER_SAMPLER)
             {
                 material->textureUnitsBinded++;
-                parameter->textureUnit = textureUnit++;
+                if (parameter->textureUnit < 0)
+                    parameter->textureUnit = texUnitCounter++;
+
                 parameter->uniformLocation =
                     lite3d_shader_program_sampler_set(pass->program,
                     parameter->parameter,
@@ -254,6 +256,8 @@ void lite3d_material_pass_set_params(lite3d_material *material,
                     lite3d_shader_program_uniform_set(pass->program,
                     parameter->parameter, parameter->uniformLocation);
             }
+
+            parameter->parameter->changed = LITE3D_FALSE;
         }
     }
 }

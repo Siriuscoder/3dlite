@@ -131,13 +131,11 @@ static int initMaterials(void)
     /* init parameter with texture */
     lite3d_shader_parameter_init(&mVintageBoxTexture);
     strcpy(mVintageBoxTexture.name, "diffuse");
-    mVintageBoxTexture.persist = LITE3D_FALSE;
     mVintageBoxTexture.type = LITE3D_SHADER_PARAMETER_SAMPLER;
     mVintageBoxTexture.parameter.valsampler.texture = &mVintageBoxUnit;
     /* init parameter with texture */
     lite3d_shader_parameter_init(&mBoxTexture);
     strcpy(mBoxTexture.name, "diffuse");
-    mBoxTexture.persist = LITE3D_FALSE;
     mBoxTexture.type = LITE3D_SHADER_PARAMETER_SAMPLER;
     mBoxTexture.parameter.valsampler.texture = &mBoxUnit;
 

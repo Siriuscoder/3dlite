@@ -24,7 +24,7 @@
 
 namespace lite3dpp
 {
-    class LITE3DPP_EXPORT ResourceManager : public Manageable
+    class LITE3DPP_EXPORT ResourceManager : public Manageable, public Noncopiable
     {
     public:
 

@@ -12,6 +12,6 @@ mat4 normalMatrix();
 void main()
 {
 	tcoords = texCoordAttr;
-	normal = normalize(normalMatrix() * vec4(normalAttr, 0.0));
+	//normal = normalize(normalMatrix() * vec4(normalAttr, 0.0));
 	gl_Position = rtransform(vertexAttr);
 }

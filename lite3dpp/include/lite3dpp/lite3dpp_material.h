@@ -29,7 +29,7 @@
 
 namespace lite3dpp
 {
-    class LITE3DPP_EXPORT Material : public ConfigurableResource, public NoncopiableResource
+    class LITE3DPP_EXPORT Material : public ConfigurableResource, public Noncopiable
     {
     public:
 
@@ -71,7 +71,7 @@ namespace lite3dpp
     private:
 
         lite3d_shader_parameter *getParameter(const String &name, 
-            uint8_t type, uint8_t persist, lite3d_material_pass *passPtr);
+            uint8_t type, lite3d_material_pass *passPtr);
         void addParameter(lite3d_material_pass *passPtr, lite3d_shader_parameter *parameterPtr);
         void parseParameteres(const ConfigurationReader &passJson, uint16_t passNo);
 

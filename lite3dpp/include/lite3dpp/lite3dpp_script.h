@@ -32,7 +32,7 @@ namespace lite3dpp
         virtual void performProcessEvent(SDL_Event *e) = 0;
     };
 
-    class LITE3DPP_EXPORT Script : public AbstractResource, public ScriptActing, public NoncopiableResource
+    class LITE3DPP_EXPORT Script : public AbstractResource, public ScriptActing, public Noncopiable
     {
     public:
 

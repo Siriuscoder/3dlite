@@ -168,7 +168,7 @@ namespace lite3dpp
                 throw std::runtime_error(String("Material \"") + getName() + "\" pass not found..");
         }
 
-        parameterPtr = getParameter(name, LITE3D_SHADER_PARAMETER_FLOAT, LITE3D_FALSE, passPtr);
+        parameterPtr = getParameter(name, LITE3D_SHADER_PARAMETER_FLOAT, passPtr);
         SDL_assert_release(parameterPtr);
 
         /* update value */
@@ -189,7 +189,7 @@ namespace lite3dpp
                 throw std::runtime_error(String("Material \"") + getName() + "\" pass not found..");
         }
 
-        parameterPtr = getParameter(name, LITE3D_SHADER_PARAMETER_FLOATV3, LITE3D_FALSE, passPtr);
+        parameterPtr = getParameter(name, LITE3D_SHADER_PARAMETER_FLOATV3, passPtr);
         SDL_assert_release(parameterPtr);
 
         /* update value */
@@ -210,7 +210,7 @@ namespace lite3dpp
                 throw std::runtime_error(String("Material \"") + getName() + "\" pass not found..");
         }
 
-        parameterPtr = getParameter(name, LITE3D_SHADER_PARAMETER_FLOATV4, LITE3D_FALSE, passPtr);
+        parameterPtr = getParameter(name, LITE3D_SHADER_PARAMETER_FLOATV4, passPtr);
         SDL_assert_release(parameterPtr);
 
         /* update value */
@@ -231,7 +231,7 @@ namespace lite3dpp
                 throw std::runtime_error(String("Material \"") + getName() + "\" pass not found..");
         }
 
-        parameterPtr = getParameter(name, LITE3D_SHADER_PARAMETER_FLOATM3, LITE3D_FALSE, passPtr);
+        parameterPtr = getParameter(name, LITE3D_SHADER_PARAMETER_FLOATM3, passPtr);
         SDL_assert_release(parameterPtr);
 
         /* update value */
@@ -252,7 +252,7 @@ namespace lite3dpp
                 throw std::runtime_error(String("Material \"") + getName() + "\" pass not found..");
         }
 
-        parameterPtr = getParameter(name, LITE3D_SHADER_PARAMETER_FLOATM4, LITE3D_FALSE, passPtr);
+        parameterPtr = getParameter(name, LITE3D_SHADER_PARAMETER_FLOATM4, passPtr);
         SDL_assert_release(parameterPtr);
 
         /* update value */
@@ -274,7 +274,7 @@ namespace lite3dpp
                 throw std::runtime_error(String("Material \"") + getName() + "\" pass not found..");
         }
 
-        parameterPtr = getParameter(name, LITE3D_SHADER_PARAMETER_SAMPLER, LITE3D_FALSE, passPtr);
+        parameterPtr = getParameter(name, LITE3D_SHADER_PARAMETER_SAMPLER, passPtr);
         SDL_assert_release(parameterPtr);
 
         /* update value */
@@ -366,7 +366,7 @@ namespace lite3dpp
     }
 
     lite3d_shader_parameter *Material::getParameter(const String &name, 
-        uint8_t type, uint8_t persist, lite3d_material_pass *passPtr)
+        uint8_t type, lite3d_material_pass *passPtr)
     {
         MaterialParameters::iterator it;
         if((it = mMaterialParameters.find(name)) == mMaterialParameters.end())
@@ -379,7 +379,6 @@ namespace lite3dpp
             std::get<0>(it->second) = passPtr;
             name.copy(std::get<1>(it->second).name, sizeof(std::get<1>(it->second).name)-1);
             std::get<1>(it->second).type = type;
-            std::get<1>(it->second).persist = persist;
         }
 
         return &std::get<1>(it->second);

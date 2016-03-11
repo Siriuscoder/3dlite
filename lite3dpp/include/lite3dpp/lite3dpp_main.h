@@ -31,10 +31,10 @@
 
 namespace lite3dpp
 {
-    class LITE3DPP_EXPORT Main
+    class LITE3DPP_EXPORT Main : public Noncopiable
     {
     public:
-
+        typedef stl<String, lite3d_timer *>::map Timers;
         class LITE3DPP_EXPORT LifecycleListener
         {
         public:
@@ -49,6 +49,8 @@ namespace lite3dpp
             virtual void processEvent(SDL_Event *e) = 0;
         };
 
+        static const char fixedUpdateTimerName[];
+
     public:
 
         Main();
@@ -62,12 +64,17 @@ namespace lite3dpp
             const String &location,
             size_t fileCacheMaxSize);
 
+        lite3d_timer *addTimer(const String &name, int32_t millisec);
+        lite3d_timer *getTimer(const String &name);
+
         inline ResourceManager *getResourceManager()
         { return &mResourceManager; }
         inline ScriptDispatcher *getScriptDispatcher()
         { return &mScriptDispatcher; }
         inline void registerLifecycleListener(LifecycleListener *listener)
         { mLifeCycleListener = listener; }
+        inline lite3d_timer *getFixedUpdateTimer()
+        { return mFixedUpdatesTimer; }
         WindowRenderTarget *window();
 
         void run();
@@ -94,7 +101,8 @@ namespace lite3dpp
         ScriptDispatcher mScriptDispatcher;
         std::unique_ptr<ConfigurationReader> mConfig;
         lite3d_global_settings mSettings;
-        lite3d_timer *mFixedUpdatesTimer;
         LifecycleListener *mLifeCycleListener;
+        Timers mTimers;
+        lite3d_timer *mFixedUpdatesTimer;
     };
 }

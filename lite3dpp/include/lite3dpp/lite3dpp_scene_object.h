@@ -26,7 +26,7 @@
 
 namespace lite3dpp
 {
-    class LITE3DPP_EXPORT SceneObject : public Manageable, public NoncopiableResource
+    class LITE3DPP_EXPORT SceneObject : public Manageable, public Noncopiable
     {
     public:
 

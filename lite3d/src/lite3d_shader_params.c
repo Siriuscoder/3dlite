@@ -28,7 +28,7 @@ void lite3d_shader_parameter_init(
     SDL_assert(param);
 
     memset(param, 0, sizeof(lite3d_shader_parameter));
-    param->persist = LITE3D_FALSE;
+    param->changed = LITE3D_TRUE;
 }
 
 void lite3d_shader_parameter_purge(
@@ -40,26 +40,31 @@ void lite3d_shader_parameter_purge(
 void lite3d_shader_set_projection_matrix(kmMat4 *mat)
 {
     globalParams.projectionMatrix.parameter.valmat4 = *mat;
+    globalParams.projectionMatrix.changed = LITE3D_TRUE;
 }
 
 void lite3d_shader_set_modelview_matrix(kmMat4 *mat)
 {
     globalParams.modelviewMatrix.parameter.valmat4 = *mat;
+    globalParams.modelviewMatrix.changed = LITE3D_TRUE;
 }
 
 void lite3d_shader_set_model_matrix(kmMat4 *mat)
 {
     globalParams.modelMatrix.parameter.valmat4 = *mat;
+    globalParams.modelMatrix.changed = LITE3D_TRUE;
 }
 
 void lite3d_shader_set_view_matrix(kmMat4 *mat)
 {
     globalParams.viewMatrix.parameter.valmat4 = *mat;
+    globalParams.viewMatrix.changed = LITE3D_TRUE;
 }
 
 void lite3d_shader_set_ambient_light(float val)
 {
     globalParams.ambientLight.parameter.valfloat = val;
+    globalParams.ambientLight.changed = LITE3D_TRUE;
 }
 
 lite3d_global_parameters *lite3d_shader_global_parameters(void)
@@ -80,12 +85,6 @@ void lite3d_shader_global_parameters_init(void)
     strcpy(globalParams.modelMatrix.name, "modelMatrix");
     strcpy(globalParams.modelviewMatrix.name, "modelviewMatrix");
     strcpy(globalParams.ambientLight.name, "ambientLight");
-
-    globalParams.projectionMatrix.persist = 
-        globalParams.viewMatrix.persist = 
-        globalParams.modelMatrix.persist = 
-        globalParams.modelviewMatrix.persist = 
-        globalParams.ambientLight.persist = LITE3D_TRUE;
 
     globalParams.projectionMatrix.type = LITE3D_SHADER_PARAMETER_FLOATM4;
     globalParams.viewMatrix.type = LITE3D_SHADER_PARAMETER_FLOATM4;

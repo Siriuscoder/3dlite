@@ -118,15 +118,5 @@ namespace lite3dpp
 
         std::unique_ptr<ConfigurationReader> mConfiguration;
     };
-
-    class LITE3DPP_EXPORT NoncopiableResource
-    {
-    public:
-
-        NoncopiableResource();
-    private:
-
-        NoncopiableResource(const NoncopiableResource &other);
-    };
 }
 

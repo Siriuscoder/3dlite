@@ -125,11 +125,5 @@ namespace lite3dpp
         SDL_assert_release(mConfiguration);
         return *mConfiguration;
     }
-
-    NoncopiableResource::NoncopiableResource()
-    {}
-
-    NoncopiableResource::NoncopiableResource(const NoncopiableResource &other)
-    {}
 }
 

@@ -41,13 +41,7 @@ typedef struct lite3d_shader_parameter
 {
     char name[LITE3D_SHADER_PARAMETER_MAX_NAME];
     uint8_t type;
-
-    /*  mean that uniform variable binded to this 
-        parameter will be updated every material pass.
-        if persist == 0 otherwise only then material 
-        activated 
-    */
-    uint8_t persist;
+    uint8_t changed;
     
     union
     {

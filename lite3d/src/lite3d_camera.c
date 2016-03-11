@@ -69,6 +69,7 @@ void lite3d_camera_ortho(lite3d_camera *camera, float near,
     camera->projectionParams.ortho.bottom = bottom;
     camera->projectionParams.ortho.top = top;
     kmMat4OrthographicProjection(&camera->projection, left, right, bottom, top, near, far);
+    camera->cameraNode.invalidated = LITE3D_TRUE;
 }
 
 void lite3d_camera_perspective(lite3d_camera *camera, float znear,
@@ -81,6 +82,7 @@ void lite3d_camera_perspective(lite3d_camera *camera, float znear,
     camera->projectionParams.perspective.fovy = fovy;
     camera->projectionParams.perspective.aspect = aspect;
     kmMat4PerspectiveProjection(&camera->projection, fovy, aspect, znear, zfar);
+    camera->cameraNode.invalidated = LITE3D_TRUE;
 }
 
 void lite3d_camera_init(lite3d_camera *camera)

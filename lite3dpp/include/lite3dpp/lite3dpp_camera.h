@@ -24,7 +24,7 @@
 
 namespace lite3dpp
 {
-    class LITE3DPP_EXPORT Camera : public NoncopiableResource, public Manageable
+    class LITE3DPP_EXPORT Camera : public Noncopiable, public Manageable
     {
     public:
 

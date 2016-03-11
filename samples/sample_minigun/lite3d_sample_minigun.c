@@ -74,7 +74,6 @@ static int initMaterials(void)
     /* init parameter with texture */
     lite3d_shader_parameter_init(&mMinigunTextureUnit);
     strcpy(mMinigunTextureUnit.name, "diffuse");
-    mMinigunTextureUnit.persist = LITE3D_FALSE;
     mMinigunTextureUnit.type = LITE3D_SHADER_PARAMETER_SAMPLER;
     mMinigunTextureUnit.parameter.valsampler.texture = &mMinigunTexture;
 
