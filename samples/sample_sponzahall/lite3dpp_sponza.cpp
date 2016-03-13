@@ -54,7 +54,7 @@ public:
 
     void timerTick(lite3d_timer *timerid) override
     {
-        if(timerid == mMain->getTimer(lite3dpp::Main::fixedUpdateTimerName))
+        if(timerid == mMain->getFixedUpdateTimer())
         {
             const Uint8 *state = SDL_GetKeyboardState(NULL);
             if(state[SDL_SCANCODE_W])

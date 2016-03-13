@@ -26,7 +26,7 @@
 #include <lite3d/lite3d_framebuffer.h>
 
 static lite3d_framebuffer *gCurrentFb = NULL;
-static size_t gMaxColorAttachments = 0;
+static int gMaxColorAttachments = 0;
 static int gMaxFramebufferSize = 0;
 
 /*
@@ -257,7 +257,7 @@ void lite3d_framebuffer_purge(lite3d_framebuffer *fb)
 }
 
 int lite3d_framebuffer_setup(lite3d_framebuffer *fb,
-    lite3d_texture_unit **colorAttachments, size_t colorAttachmentsCount, uint8_t useColorRenderbuffer,
+    lite3d_texture_unit **colorAttachments, int8_t colorAttachmentsCount, uint8_t useColorRenderbuffer,
     lite3d_texture_unit *depthAttachments, uint8_t useDepthRenderbuffer, uint8_t useStencilRenderbuffer)
 {
     int renderBuffersCount = 0;

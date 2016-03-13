@@ -127,7 +127,7 @@ namespace lite3dpp
     {
         SDL_assert_release(mRenderTargetPtr);
         lite3d_buffers_clear_values(&mRenderTargetPtr->cleanColor,
-            mRenderTargetPtr->cleanDepth);
+            mRenderTargetPtr->cleanDepth, mRenderTargetPtr->cleanStencil);
         lite3d_buffers_clear(color ? LITE3D_TRUE : LITE3D_FALSE,
             depth ? LITE3D_TRUE : LITE3D_FALSE,
             stencil ? LITE3D_TRUE : LITE3D_FALSE);

@@ -99,7 +99,7 @@ static void update_render_target(lite3d_render_target *target)
     /* switch target framebuffer */
     lite3d_framebuffer_switch(&target->fb);
     /* clear target */
-    lite3d_buffers_clear_values(&target->cleanColor, target->cleanDepth);
+    lite3d_buffers_clear_values(&target->cleanColor, target->cleanDepth, target->cleanStencil);
     lite3d_buffers_clear(target->clearColorBuffer, target->clearDepthBuffer, target->clearStencilBuffer);
 
     /* do paint by render queue */
@@ -163,6 +163,9 @@ void lite3d_render_loop(lite3d_render_listeners *callbacks)
     /* depth test enable by default */
     lite3d_depth_test(LITE3D_TRUE);
     lite3d_depth_test_func(LITE3D_TEST_LESS);
+    lite3d_buffers_clear_values(&KM_VEC4_ZERO, 1.0f, 0);
+    lite3d_buffers_clear(LITE3D_TRUE, LITE3D_TRUE, LITE3D_TRUE);
+    lite3d_video_swap_buffers();
 
     /* clean statistic */
     memset(&gRenderStats, 0, sizeof (gRenderStats));
@@ -174,13 +177,13 @@ void lite3d_render_loop(lite3d_render_listeners *callbacks)
     lite3d_list_init(&gRenderTargets);
     lite3d_render_target_add(&gScreenRt, 0xFFFFFFF);
 
-    /* get time mark */
-    beginFrameMark = SDL_GetPerformanceCounter();
-
     /* start user initialization */
     if (!gRenderListeners.preRender || (gRenderListeners.preRender &&
         gRenderListeners.preRender(gRenderListeners.userdata)))
     {
+        /* get time mark */
+        beginFrameMark = SDL_GetPerformanceCounter();
+        
         /* begin render loop */
         while (gRenderStarted)
         {
@@ -257,6 +260,7 @@ int lite3d_render_target_init(lite3d_render_target *rt,
     rt->cleanColor.x = rt->cleanColor.y = rt->cleanColor.z = 0.3f;
     rt->cleanColor.w = 0.0f;
     rt->cleanDepth = 1.0f;
+    rt->cleanStencil = 0;
     rt->width = width;
     rt->height = height;
 

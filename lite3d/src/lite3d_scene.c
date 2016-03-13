@@ -56,11 +56,6 @@ static void mqr_node_render(lite3d_scene *scene,
         *prev = mqrNode->meshChunk;
     }
     
-    /* setup global parameters (viewmodel) */
-    lite3d_shader_set_modelview_matrix(&mqrNode->node->modelView);
-    lite3d_shader_set_model_matrix(&mqrNode->node->worldView);
-    /* setup changed uniforms parameters */
-    
     /* do render batch */
     lite3d_mesh_chunk_draw(mqrNode->meshChunk, mqrNode->instancesCount);
     
@@ -130,7 +125,12 @@ static void mqr_unit_render(lite3d_material_pass *pass, void *data)
             continue;
         }
 
+        /* setup global parameters (viewmodel) */
+        lite3d_shader_set_modelview_matrix(&mqrNode->node->modelView);
+        lite3d_shader_set_model_matrix(&mqrNode->node->worldView);
+        /* setup changed uniforms parameters */
         lite3d_material_pass_set_params(mqrUnit->material, pass, LITE3D_FALSE);
+        /* call rendering current chunk */
         mqr_node_render(scene, mqrNode, &prevVao);
     }
 
@@ -146,7 +146,7 @@ static void mqr_render(struct lite3d_scene *scene, lite3d_camera *camera, uint16
     lite3d_mqr_unit *mqrUnit = NULL;
     lite3d_list_node *mqrUnitNode = NULL;
 
-    //LITE3D_ARR_ADD_ELEM(&scene->invalidatedUnits, lite3d_scene_node *, &camera->cameraNode);
+    LITE3D_ARR_ADD_ELEM(&scene->invalidatedUnits, lite3d_scene_node *, &camera->cameraNode);
 
     for (mqrUnitNode = scene->materialRenderUnits.l.next;
         mqrUnitNode != &scene->materialRenderUnits.l; mqrUnitNode = lite3d_list_next(mqrUnitNode))

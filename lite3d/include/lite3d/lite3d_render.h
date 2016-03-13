@@ -81,6 +81,7 @@ typedef struct lite3d_render_target
     uint8_t clearStencilBuffer;
     kmVec4 cleanColor;
     float cleanDepth;
+    int cleanStencil;
     int priority;
 } lite3d_render_target;
 

@@ -42,7 +42,7 @@ LITE3D_CEXPORT void lite3d_stencil_value(int32_t value);
 LITE3D_CEXPORT void lite3d_color_output(uint8_t r, uint8_t g, uint8_t b, uint8_t a);
 
 LITE3D_CEXPORT void lite3d_buffers_clear(uint8_t color, uint8_t depth, uint8_t stencil);
-LITE3D_CEXPORT void lite3d_buffers_clear_values(const kmVec4 *color, float depth);
+LITE3D_CEXPORT void lite3d_buffers_clear_values(const kmVec4 *color, float depth, int stencil);
 
 #endif	/* LITE3D_BUFFERS_MANIP_H */
 

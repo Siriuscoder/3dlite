@@ -8,9 +8,9 @@
 			//"LookAt": [0,0,0],
 			"Perspective": 
 			{
-				"Znear": 1,
+				"Znear": 10,
 				"Zfar": 10000,
-				"Fov": 55
+				"Fov": 70
 			},
 			"RenderTargets":
 			[
