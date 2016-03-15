@@ -73,7 +73,7 @@ LITE3D_CEXPORT lite3d_material_pass *lite3d_material_get_pass(
     const lite3d_material *material, uint32_t no);
 
 LITE3D_CEXPORT void lite3d_material_pass_render(lite3d_material *material, uint16_t no,
-    lite3d_pass_render_t func, void *data);
+    lite3d_pass_render_t passrender, void *data);
 LITE3D_CEXPORT void lite3d_material_pass_set_params(lite3d_material *material,
     lite3d_material_pass *pass, uint8_t changed);
 
