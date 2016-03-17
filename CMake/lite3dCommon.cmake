@@ -62,6 +62,10 @@ macro(define_sample SAMPLE_NAME SAMPLE_DIRECTORY)
 	unset(HEADERS_LIST)
 	source_files(${SAMPLE_DIRECTORY})
 	headers_files(${SAMPLE_DIRECTORY})
+	
+	if(MSVC)
+		set(SOURCES_LIST ${SOURCES_LIST} ${CMAKE_SOURCE_DIR}/winres/ResourceSample.rc)
+	endif()
 
 	add_executable(${SAMPLE_NAME} ${SOURCES_LIST} ${HEADERS_LIST})
 
@@ -71,7 +75,8 @@ macro(define_sample SAMPLE_NAME SAMPLE_DIRECTORY)
 		target_compile_definitions(${SAMPLE_NAME} PRIVATE
 			"$<BUILD_INTERFACE:_WINEXE>")
 		target_include_directories(${SAMPLE_NAME} PRIVATE 
-			"$<BUILD_INTERFACE:${SDL2_INCLUDE_DIR}>")
+			"$<BUILD_INTERFACE:${SDL2_INCLUDE_DIR}>"
+			"$<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/winres/>")
 	else()
 		target_compile_options(${SAMPLE_NAME} PRIVATE 
 			"$<BUILD_INTERFACE:${SDL2_CFLAGS}>")

@@ -62,6 +62,10 @@ unset(HEADERS_LIST)
 source_files("src")
 headers_files("include/lite3d")
 
+if(MSVC)
+set(SOURCES_LIST ${SOURCES_LIST} ${CMAKE_SOURCE_DIR}/winres/Resource.rc)
+endif()
+
 add_library(lite3d SHARED ${SOURCES_LIST} ${HEADERS_LIST})
 
 if(MSVC)
@@ -70,7 +74,8 @@ target_compile_definitions(lite3d PRIVATE
 target_include_directories(lite3d PRIVATE 
 "$<BUILD_INTERFACE:${SDL2_INCLUDE_DIR}>"
 "$<BUILD_INTERFACE:${IL_INCLUDE_DIR}>"
-"$<BUILD_INTERFACE:${ASSIMP_INCLUDE_DIR}>")
+"$<BUILD_INTERFACE:${ASSIMP_INCLUDE_DIR}>"
+"$<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/winres/>")
 set(SDL2_LIBS ${SDL2_LIBRARY})
 else()
 target_compile_options(lite3d PRIVATE 

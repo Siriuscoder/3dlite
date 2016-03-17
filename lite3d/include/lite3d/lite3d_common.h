@@ -32,7 +32,7 @@
 
 #ifdef PLATFORM_Windows
 
-#   if !defined(_MSC_VER) && !defined(__GNUC__)
+#   if !defined(_MSC_VER) && !defined(__GNUC__) && !defined(RC_INVOKED)
 #       error "GCC or MSVC compiller requred.."
 #   endif
 
