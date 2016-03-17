@@ -17,6 +17,7 @@
  *******************************************************************************/
 #include <stdlib.h>
 #include <string.h>
+#include <SDL_log.h>
 #include <SDL_assert.h>
 
 #include <lite3d/lite3d_alloc.h>
@@ -61,10 +62,15 @@ void lite3d_memory_cleanup(void)
 
 void *lite3d_malloc(size_t size)
 {
+    void *newmem = NULL;
     if (gAlloca_f.mallocf)
-        return gAlloca_f.mallocf(size);
+    {
+        if ((newmem = gAlloca_f.mallocf(size)) == NULL)
+            SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
+                "%s: no more memory needed to allocate %lu bytes", LITE3D_CURRENT_FUNCTION, size);
+    }
 
-    return NULL;
+    return newmem;
 }
 
 void *lite3d_calloc(size_t size)
@@ -84,17 +90,24 @@ void lite3d_free(void *p)
 
 void *lite3d_malloc_pooled(uint8_t pollNo, size_t size)
 {
+    void *newmem = NULL;
     SDL_assert_release(pollNo < LITE3D_POOL_MAX);
-    return nedpmalloc(globalMemPools[pollNo], size);
+
+    if ((newmem = nedpmalloc(globalMemPools[pollNo], size)) == NULL)
+        SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
+            "%s: no more memory needed to allocate %lu bytes", LITE3D_CURRENT_FUNCTION, size);
+
+    return newmem;
 }
 
 void *lite3d_calloc_pooled(uint8_t pollNo, size_t size)
 {
-    void *mem = lite3d_malloc_pooled(pollNo, size);
-    if (mem)
-        memset(mem, 0, size);
+    void *newmem = lite3d_malloc_pooled(pollNo, size);
+    
+    if (newmem)
+        memset(newmem, 0, size);
 
-    return mem;
+    return newmem;
 }
 
 void lite3d_free_pooled(uint8_t pollNo, void *p)

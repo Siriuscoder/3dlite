@@ -30,7 +30,8 @@ typedef struct lite3d_framebuffer
 {
     uint32_t framebufferId;
     uint32_t renderBuffersIds[3];
-    size_t renderBuffersCount;
+    int8_t renderBuffersCount;
+    int8_t colorAttachmentsCount;
     uint8_t useColorbuffer;
     uint8_t useDepthbuffer;
     uint8_t useStencilbuffer;

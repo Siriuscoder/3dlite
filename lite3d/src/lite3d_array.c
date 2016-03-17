@@ -16,6 +16,8 @@
  *	along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
 #include <string.h>
+#include <stdlib.h> 
+
 #include <SDL_assert.h>
 
 #include <lite3d/lite3d_alloc.h>
@@ -88,4 +90,13 @@ void lite3d_array_remove(lite3d_array *a, size_t index)
     }
 
     a->size--;
+}
+
+void lite3d_array_qsort(lite3d_array *a, lite3d_array_compare_t comparator)
+{
+    SDL_assert(a);
+    if (!a->size)
+        return;
+
+    qsort(a->data, a->size, a->elemSize, comparator);
 }

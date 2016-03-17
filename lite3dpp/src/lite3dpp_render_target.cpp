@@ -90,12 +90,9 @@ namespace lite3dpp
         lite3d_depth_output(flag ? LITE3D_TRUE : LITE3D_FALSE);
     }
 
-    void RenderTarget::colorOutput(bool r, bool g, bool b, bool a)
+    void RenderTarget::colorOutput(bool flag)
     {
-        lite3d_color_output(r ? LITE3D_TRUE : LITE3D_FALSE,
-            g ? LITE3D_TRUE : LITE3D_FALSE, 
-            b ? LITE3D_TRUE : LITE3D_FALSE, 
-            a ? LITE3D_TRUE : LITE3D_FALSE);
+        lite3d_color_output(flag ? LITE3D_TRUE : LITE3D_FALSE);
     }
 
     void RenderTarget::stencilOutput(bool flag)

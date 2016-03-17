@@ -20,6 +20,7 @@
 #include <SDL_assert.h>
 
 #include <lite3d/lite3d_alloc.h>
+#include <lite3d/lite3d_buffers_manip.h>
 #include <lite3d/lite3d_material.h>
 
 lite3d_shader_program *gActProg = NULL;
@@ -192,6 +193,24 @@ lite3d_material_pass *lite3d_material_get_pass(
     return &material->passes[no - 1];
 }
 
+int lite3d_material_pass_is_blend(
+    const lite3d_material *material, uint32_t no)
+{
+    lite3d_material_pass *pass = lite3d_material_get_pass(material, no);
+    SDL_assert(pass);
+
+    return pass->blending && pass->passNo > 0;
+}
+
+int lite3d_material_pass_is_empty(
+    const lite3d_material *material, uint32_t no)
+{
+    lite3d_material_pass *pass = lite3d_material_get_pass(material, no);
+    SDL_assert(pass);
+
+    return pass->passNo == 0;
+}
+
 void lite3d_material_pass_render(lite3d_material *material, uint16_t no,
     lite3d_pass_render_t passrender, void *data)
 {
@@ -203,6 +222,7 @@ void lite3d_material_pass_render(lite3d_material *material, uint16_t no,
     material->textureUnitsBinded = 0;
     pass = &material->passes[no - 1];
 
+    /* ignode empty pass */
     if (pass->passNo == 0)
         return;
 
@@ -216,10 +236,9 @@ void lite3d_material_pass_render(lite3d_material *material, uint16_t no,
     /* set up uniforms if shader changed */
     lite3d_material_pass_set_params(material, pass, LITE3D_TRUE);
 
+    lite3d_blending(pass->blending);
+    lite3d_blending_mode_set(pass->blendingMode);
     passrender(pass, data);
-
-    /* newer shader unbind - PPL used only */
-    //lite3d_shader_program_unbind(prevProg);
 }
 
 void lite3d_material_pass_set_params(lite3d_material *material,

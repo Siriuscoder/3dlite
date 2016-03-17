@@ -46,7 +46,7 @@ namespace lite3dpp
         /* output buffers write control */
         /* perform immediately */
         void depthOutput(bool flag);
-        void colorOutput(bool r, bool g, bool b, bool a);
+        void colorOutput(bool flag);
         void stencilOutput(bool flag);
         /* Buffer testing control */
         void depthTest(bool flag);

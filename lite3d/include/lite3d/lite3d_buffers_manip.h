@@ -30,6 +30,11 @@
 #define LITE3D_TEST_GEQUAL 0x0206
 #define LITE3D_TEST_ALWAYS 0x0207
 
+#define LITE3D_BLENDING_MODE_TRADITIONAL                        0
+#define LITE3D_BLENDING_MODE_TRADITIONAL_WITH_ALPHA_BLEND       1
+
+typedef void (*lite3d_blend_mode_t)(void);
+
 LITE3D_CEXPORT void lite3d_depth_test(uint8_t on);
 LITE3D_CEXPORT void lite3d_depth_test_func(uint32_t func);
 LITE3D_CEXPORT void lite3d_depth_output(uint8_t on);
@@ -39,10 +44,25 @@ LITE3D_CEXPORT void lite3d_stencil_test_func(uint32_t func, int32_t value);
 LITE3D_CEXPORT void lite3d_stencil_output(uint8_t on);
 LITE3D_CEXPORT void lite3d_stencil_value(int32_t value);
 
-LITE3D_CEXPORT void lite3d_color_output(uint8_t r, uint8_t g, uint8_t b, uint8_t a);
+LITE3D_CEXPORT void lite3d_color_output(uint8_t on);
 
 LITE3D_CEXPORT void lite3d_buffers_clear(uint8_t color, uint8_t depth, uint8_t stencil);
 LITE3D_CEXPORT void lite3d_buffers_clear_values(const kmVec4 *color, float depth, int stencil);
+
+/* 
+    0 - Traditional, 1 - Traditional with alpha blend 
+
+    Traditional blend algorithm:
+    Orgb = Sa * Srgb + (1 - Sa) * Drgb
+    Oa = 1 * Sa + 0 * Da = Sa
+
+    Traditional blend algorithm with alpha blend:
+    Orgb = Sa * Srgb + (1 - Sa) * Drgb
+    Oa = 1 * Sa + (1 - Sa) * Da = Sa
+*/
+LITE3D_CEXPORT void lite3d_blending_mode_set(uint8_t mode);
+LITE3D_CEXPORT void lite3d_blending(uint8_t on);
+
 
 #endif	/* LITE3D_BUFFERS_MANIP_H */
 

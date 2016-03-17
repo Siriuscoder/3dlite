@@ -33,12 +33,15 @@ typedef struct lite3d_array
     size_t capacity;
 } lite3d_array;
 
+typedef int (*lite3d_array_compare_t)(const void*, const void*);
+
 LITE3D_CEXPORT void lite3d_array_init(lite3d_array *a, size_t elemSize, size_t capacity);
 LITE3D_CEXPORT void lite3d_array_clean(lite3d_array *a);
 LITE3D_CEXPORT void lite3d_array_purge(lite3d_array *a);
 LITE3D_CEXPORT void *lite3d_array_add(lite3d_array *a);
 LITE3D_CEXPORT void *lite3d_array_get(lite3d_array *a, size_t index);
 LITE3D_CEXPORT void lite3d_array_remove(lite3d_array *a, size_t index);
+LITE3D_CEXPORT void lite3d_array_qsort(lite3d_array *a, lite3d_array_compare_t comparator);
 
 
 

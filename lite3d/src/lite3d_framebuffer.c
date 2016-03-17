@@ -28,6 +28,24 @@
 static lite3d_framebuffer *gCurrentFb = NULL;
 static int gMaxColorAttachments = 0;
 static int gMaxFramebufferSize = 0;
+static GLenum gDrawBuffersArr[16] = {
+    GL_COLOR_ATTACHMENT0,
+    GL_COLOR_ATTACHMENT1,
+    GL_COLOR_ATTACHMENT2,
+    GL_COLOR_ATTACHMENT3,
+    GL_COLOR_ATTACHMENT4,
+    GL_COLOR_ATTACHMENT5,
+    GL_COLOR_ATTACHMENT6,
+    GL_COLOR_ATTACHMENT7,
+    GL_COLOR_ATTACHMENT8,
+    GL_COLOR_ATTACHMENT9,
+    GL_COLOR_ATTACHMENT10,
+    GL_COLOR_ATTACHMENT11,
+    GL_COLOR_ATTACHMENT12,
+    GL_COLOR_ATTACHMENT13,
+    GL_COLOR_ATTACHMENT14,
+    GL_COLOR_ATTACHMENT15
+};
 
 /*
 Name
@@ -260,7 +278,7 @@ int lite3d_framebuffer_setup(lite3d_framebuffer *fb,
     lite3d_texture_unit **colorAttachments, int8_t colorAttachmentsCount, uint8_t useColorRenderbuffer,
     lite3d_texture_unit *depthAttachments, uint8_t useDepthRenderbuffer, uint8_t useStencilRenderbuffer)
 {
-    int renderBuffersCount = 0;
+    int8_t renderBuffersCount = 0;
     SDL_assert(fb);
     SDL_assert_release(colorAttachmentsCount <= gMaxColorAttachments);
 
@@ -273,8 +291,9 @@ int lite3d_framebuffer_setup(lite3d_framebuffer *fb,
     /* setup color attachment */
     if (colorAttachments && colorAttachmentsCount > 0)
     {
-        size_t i = 0;
-        for (; i < colorAttachmentsCount; i++)
+        int8_t i = 0;
+        fb->colorAttachmentsCount = 0;
+        for (; i < colorAttachmentsCount; i++, fb->colorAttachmentsCount++)
         {
             switch (colorAttachments[i]->textureTarget)
             {
@@ -392,8 +411,11 @@ int lite3d_framebuffer_setup(lite3d_framebuffer *fb,
      * after. If you call before glBindFramebuffer(GL_FRAMEBUFFER, 0), 
      * a GL error will be raised.
      */
-    glDrawBuffer(fb->useColorbuffer ? GL_BACK : GL_NONE);
-    glReadBuffer(fb->useColorbuffer ? GL_BACK : GL_NONE);
+    if (!fb->useColorbuffer)
+    {
+        glDrawBuffer(GL_NONE);
+        glReadBuffer(GL_NONE);
+    }
 
     /* Does the GPU support current FBO configuration? */
     if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
@@ -441,10 +463,32 @@ void lite3d_framebuffer_switch(lite3d_framebuffer *fb)
     {
         glBindFramebuffer(GL_FRAMEBUFFER, fb->framebufferId);
         gCurrentFb = fb;
-
-        glDrawBuffer(gCurrentFb->useColorbuffer ? GL_BACK : GL_NONE);
-        glReadBuffer(gCurrentFb->useColorbuffer ? GL_BACK : GL_NONE);
         /* set viewport */
         glViewport(0, 0, fb->width, fb->height);
+        /* set buffers drawable */
+        if (fb->framebufferId == 0)
+        {
+            /* always paint to back buffer in screen framebuffer case */
+            /* sterioscopic output does not supported yet */
+            glDrawBuffer(GL_BACK);
+            glReadBuffer(GL_BACK);
+        }
+        else if (!fb->useColorbuffer)
+        {
+            /* FBO does not has color attachmets */
+            glDrawBuffer(GL_NONE);
+            glReadBuffer(GL_NONE);
+        }
+        else if (fb->colorAttachmentsCount == 1)
+        {
+            /* FBO has only one color attachment */
+            glDrawBuffer(GL_COLOR_ATTACHMENT0);
+            glReadBuffer(GL_COLOR_ATTACHMENT0);
+        }
+        /* MRT: more difficult case, not all conexts does supports this */
+        else if (fb->colorAttachmentsCount > 1)
+        {
+            glDrawBuffers(fb->colorAttachmentsCount, gDrawBuffersArr);
+        }
     }
 }

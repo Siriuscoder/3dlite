@@ -42,8 +42,9 @@ typedef struct lite3d_scene
     lite3d_scene_node rootNode;
     lite3d_scene_stats stats;
     lite3d_list materialRenderUnits;
-    lite3d_array orderedRenderUnits;
+    lite3d_array sortedNodesByDistance;
     lite3d_array invalidatedUnits;
+    lite3d_mesh_chunk *bindedMeshChunk;
     void (*beginDrawBatch)(struct lite3d_scene *scene, 
         lite3d_scene_node *node, lite3d_mesh_chunk *meshChunk, lite3d_material *material);
     void (*nodeInFrustum)(struct lite3d_scene *scene, 
@@ -56,6 +57,8 @@ typedef struct lite3d_scene
         lite3d_camera *camera);
     void (*beginSceneRender)(struct lite3d_scene *scene, lite3d_camera *camera);
     void (*endSceneRender)(struct lite3d_scene *scene, lite3d_camera *camera);
+    void (*beginFirstStageRender)(struct lite3d_scene *scene, lite3d_camera *camera);
+    void (*beginSecondStageRender)(struct lite3d_scene *scene, lite3d_camera *camera);
 } lite3d_scene;
 
 LITE3D_CEXPORT void lite3d_scene_render(lite3d_scene *scene, lite3d_camera *camera, uint16_t pass);
