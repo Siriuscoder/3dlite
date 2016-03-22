@@ -30,7 +30,8 @@ public:
         const lite3dpp::String &imgPackname,
         const lite3dpp::String &matPackname,
         const lite3dpp::String &nodePackname,
-        const lite3dpp::String &meshPackname);
+        const lite3dpp::String &meshPackname,
+        bool useDifTexNameAsMatName);
 
     virtual void generateNode(const lite3d_mesh *mesh, const lite3dpp::String &name, const kmMat4 *transform,
         bool meshExist) = 0;
@@ -39,7 +40,7 @@ public:
     /* go to parent node */
     virtual void popNodeTree() = 0;
     /* genegate material and textures */
-    virtual void generateMaterial(const lite3dpp::String &matName, 
+    virtual void generateMaterial(const lite3dpp::String &name, 
         uint32_t matIdx,
         const kmVec4 *ambient,
         const kmVec4 *diffuse,
@@ -60,7 +61,7 @@ protected:
     lite3dpp::String mMatPackname;
     lite3dpp::String mNodePackname;
     lite3dpp::String mMeshPackname;
-    
+    bool mUseDifTexNameAsMatName;
 };
 
 class NullGenerator : public Generator
@@ -76,7 +77,7 @@ public:
     /* go to parent node */
     virtual void popNodeTree() override;
     /* genegate material and textures */
-    virtual void generateMaterial(const lite3dpp::String &matName, 
+    virtual void generateMaterial(const lite3dpp::String &name, 
         uint32_t matIdx,
         const kmVec4 *ambient,
         const kmVec4 *diffuse,
@@ -99,7 +100,8 @@ public:
         const lite3dpp::String &imgPackname,
         const lite3dpp::String &matPackname,
         const lite3dpp::String &nodePackname,
-        const lite3dpp::String &meshPackname);
+        const lite3dpp::String &meshPackname,
+        bool useDifTexNameAsMatName);
 
     virtual void generateNode(const lite3d_mesh *mesh, const lite3dpp::String &name, const kmMat4 *transform,
         bool meshExist) override;
@@ -108,7 +110,7 @@ public:
     /* go to parent node */
     virtual void popNodeTree() override;
     /* genegate material and textures */
-    virtual void generateMaterial(const lite3dpp::String &matName, 
+    virtual void generateMaterial(const lite3dpp::String &name, 
         uint32_t matIdx,
         const kmVec4 *ambient,
         const kmVec4 *diffuse,

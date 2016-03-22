@@ -67,6 +67,7 @@ private:
     bool mOptimizeMesh;
     bool mFlipUV;
     bool mGenerateJson;
+    bool mTexNameAsMapName;
     lite3d_mesh mMesh;
     std::unique_ptr<Generator> mGenerator;
 };

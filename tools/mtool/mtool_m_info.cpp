@@ -64,8 +64,8 @@ void MeshInfoCommand::printInfo(const lite3d_file *meshFile)
     if (!lite3d_mesh_m_decode(&mesh, meshFile->fileBuff,
         meshFile->fileSize, LITE3D_VBO_STATIC_READ))
     {
-        fprintf(stderr, "'%s' decode failed.. bad format..", meshFile->name);
-        return;
+        lite3d_mesh_purge(&mesh);
+        throw std::runtime_error("Bad format..");
     }
     
     printf("Mesh file version: %d.%d.%d\n\n", LITE3D_GET_VERSION_MAJ(mesh.version),
