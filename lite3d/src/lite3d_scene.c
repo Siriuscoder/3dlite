@@ -315,6 +315,12 @@ static void scene_recursive_nodes_update(lite3d_scene *scene,
     {
         child = LITE3D_MEMBERCAST(lite3d_scene_node, nodeLink, nodeLink);
         child->recalc = recalcNode ? LITE3D_TRUE : child->recalc;
+
+        if(child->recalc == 1)
+        {
+            int jj = 0;
+        }
+
         scene_recursive_nodes_update(scene, child, camera);
     }
 
@@ -350,7 +356,10 @@ void lite3d_scene_render(lite3d_scene *scene, lite3d_camera *camera, uint16_t pa
     mqr_render_stage_second(scene, camera, pass);
 
     if (scene->bindedMeshChunk)
+    {
         lite3d_mesh_chunk_unbind(scene->bindedMeshChunk);
+        scene->bindedMeshChunk = NULL;
+    }
 
     if (scene->endSceneRender)
         scene->endSceneRender(scene, camera);

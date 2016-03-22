@@ -60,11 +60,11 @@ kmScalar kmVec2DegreesBetween(const kmVec2* v1, const kmVec2* v2);
 kmScalar kmVec2DistanceBetween(const kmVec2* v1, const kmVec2* v2);
 kmVec2* kmVec2MidPointBetween(kmVec2* pOut, const kmVec2* v1, const kmVec2* v2);
 
-LITE3D_EXTERN const kmVec2 KM_VEC2_POS_Y;
-LITE3D_EXTERN const kmVec2 KM_VEC2_NEG_Y;
-LITE3D_EXTERN const kmVec2 KM_VEC2_NEG_X;
-LITE3D_EXTERN const kmVec2 KM_VEC2_POS_X;
-LITE3D_EXTERN const kmVec2 KM_VEC2_ZERO;
-LITE3D_EXTERN const kmVec2 KM_VEC2_ONE;
+extern const kmVec2 KM_VEC2_POS_Y;
+extern const kmVec2 KM_VEC2_NEG_Y;
+extern const kmVec2 KM_VEC2_NEG_X;
+extern const kmVec2 KM_VEC2_POS_X;
+extern const kmVec2 KM_VEC2_ZERO;
+extern const kmVec2 KM_VEC2_ONE;
 
 #endif /* VEC2_H_INCLUDED */

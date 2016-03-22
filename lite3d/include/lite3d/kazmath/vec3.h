@@ -69,13 +69,13 @@ kmVec3* kmVec3RotationToDirection(kmVec3* pOut, const kmVec3* pIn, const kmVec3*
 
 kmVec3* kmVec3ProjectOnToPlane(kmVec3* pOut, const kmVec3* point, const struct kmPlane* plane);
 
-LITE3D_CEXPORT const kmVec3 KM_VEC3_NEG_Z;
-LITE3D_CEXPORT const kmVec3 KM_VEC3_POS_Z;
-LITE3D_CEXPORT const kmVec3 KM_VEC3_POS_Y;
-LITE3D_CEXPORT const kmVec3 KM_VEC3_NEG_Y;
-LITE3D_CEXPORT const kmVec3 KM_VEC3_NEG_X;
-LITE3D_CEXPORT const kmVec3 KM_VEC3_POS_X;
-LITE3D_CEXPORT const kmVec3 KM_VEC3_ZERO;
-LITE3D_CEXPORT const kmVec3 KM_VEC3_ONE;
+extern const kmVec3 KM_VEC3_NEG_Z;
+extern const kmVec3 KM_VEC3_POS_Z;
+extern const kmVec3 KM_VEC3_POS_Y;
+extern const kmVec3 KM_VEC3_NEG_Y;
+extern const kmVec3 KM_VEC3_NEG_X;
+extern const kmVec3 KM_VEC3_POS_X;
+extern const kmVec3 KM_VEC3_ZERO;
+extern const kmVec3 KM_VEC3_ONE;
 
 #endif /* VEC3_H_INCLUDED */
