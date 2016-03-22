@@ -123,6 +123,8 @@ void ConverterCommand::runImpl()
 
 void ConverterCommand::parseCommandLineImpl(int argc, char *args[])
 {
+    Command::parseCommandLineImpl(argc, args);
+
     for (int i = 1; i < argc; ++i)
     {
         if (strcmp(args[i], "-i") == 0)

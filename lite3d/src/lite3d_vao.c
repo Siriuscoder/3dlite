@@ -106,7 +106,7 @@ void lite3d_vao_draw_indexed(struct lite3d_vao *vao)
      * Attributes that aren't modified maintain their previous values.
      */
 
-    glDrawElements(vao->elementType, vao->indexesCount, vao->indexType, (void *) vao->indexesOffset);
+    glDrawElements(GL_TRIANGLES, vao->indexesCount, vao->indexType, LITE3D_BUFFER_OFFSET(vao->indexesOffset));
 }
 
 void lite3d_vao_draw_indexed_instanced(struct lite3d_vao *vao, size_t count)
@@ -120,13 +120,13 @@ void lite3d_vao_draw_indexed_instanced(struct lite3d_vao *vao, size_t count)
     if (!instancingSupport)
         return;
     SDL_assert(vao);
-    glDrawElementsInstancedARB(vao->elementType, vao->indexesCount,
+    glDrawElementsInstancedARB(GL_TRIANGLES, vao->indexesCount,
         vao->indexType, (void *) vao->indexesOffset, count);
 }
 
 void lite3d_vao_draw(struct lite3d_vao *vao)
 {
-    glDrawArrays(vao->elementType, 0, vao->verticesCount);
+    glDrawArrays(GL_TRIANGLES, 0, vao->verticesCount);
 }
 
 void lite3d_vao_draw_instanced(struct lite3d_vao *vao, size_t count)
@@ -134,7 +134,7 @@ void lite3d_vao_draw_instanced(struct lite3d_vao *vao, size_t count)
     if (!instancingSupport)
         return;
     SDL_assert(vao);
-    glDrawArraysInstancedARB(vao->elementType, 0,
+    glDrawArraysInstancedARB(GL_TRIANGLES, 0,
         vao->verticesCount, count);
 }
 

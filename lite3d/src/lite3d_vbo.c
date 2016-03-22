@@ -127,6 +127,8 @@ static int vbo_buffer_extend(uint32_t vboID, size_t expandSize, uint16_t access)
 
     glBindBuffer(GL_COPY_READ_BUFFER, 0);
     glBindBuffer(GL_COPY_WRITE_BUFFER, 0);
+    /* wait until async operation will be completed */
+    glFinish();
     glDeleteBuffers(1, &tmpVbo);
 
     return LITE3D_TRUE;

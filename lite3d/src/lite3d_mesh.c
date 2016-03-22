@@ -176,7 +176,6 @@ lite3d_mesh_chunk *lite3d_mesh_append_chunk(lite3d_mesh *mesh,
     size_t layoutCount,
     size_t stride,
     uint16_t componentType,
-    uint16_t indexPrimitive,
     size_t indexesCount,
     size_t indexesSize,
     size_t indexesOffset,
@@ -210,7 +209,7 @@ lite3d_mesh_chunk *lite3d_mesh_append_chunk(lite3d_mesh *mesh,
     {
         glEnableVertexAttribArray(attribIndex);
         glVertexAttribPointer(attribIndex++, layout[i].count, GL_FLOAT,
-            GL_FALSE, stride, (void *) vOffset);
+            GL_FALSE, stride, LITE3D_BUFFER_OFFSET(vOffset));
 
         vOffset += layout[i].count * sizeof (GLfloat);
         meshChunk->layout[i] = layout[i];
@@ -224,16 +223,13 @@ lite3d_mesh_chunk *lite3d_mesh_append_chunk(lite3d_mesh *mesh,
 
     meshChunk->vao.indexesOffset = indexesOffset;
     meshChunk->vao.indexType = componentType;
-    meshChunk->vao.elementType = indexPrimitive;
     meshChunk->vao.indexesCount = indexesCount;
     meshChunk->vao.indexesSize = indexesSize;
     meshChunk->vao.verticesCount = verticesCount;
     meshChunk->vao.verticesSize = verticesSize;
     meshChunk->vao.verticesOffset = verticesOffset;
     meshChunk->layoutEntriesCount = layoutCount;
-    meshChunk->vao.elementsCount = (indexesCount > 0 ? indexesCount : verticesCount) /
-        (indexPrimitive == LITE3D_PRIMITIVE_POINT ? 1 :
-        (indexPrimitive == LITE3D_PRIMITIVE_LINE ? 2 : 3));
+    meshChunk->vao.elementsCount = (indexesCount > 0 ? indexesCount : verticesCount) / 3;
 
     memset(&meshChunk->boudingVol, 0, sizeof (meshChunk->boudingVol));
 
@@ -241,7 +237,7 @@ lite3d_mesh_chunk *lite3d_mesh_append_chunk(lite3d_mesh *mesh,
     mesh->chunkCount++;
 
     SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "MESH: %p: chunk %p: %s, cv/ov/sv %d/%db/%db, ci/oi %d/%db",
-        (void *) mesh, (void *) meshChunk, indexPrimitive == LITE3D_PRIMITIVE_POINT ? "POINTS" : (indexPrimitive == LITE3D_PRIMITIVE_LINE ? "LINES" : "TRIANGLES"),
+        (void *) mesh, (void *) meshChunk, "TRIANGLES",
         meshChunk->vao.verticesCount, meshChunk->vao.verticesOffset, stride, meshChunk->vao.indexesCount, meshChunk->vao.indexesOffset);
 
     return meshChunk;
@@ -249,12 +245,12 @@ lite3d_mesh_chunk *lite3d_mesh_append_chunk(lite3d_mesh *mesh,
 
 uint16_t lite3d_index_component_type_by_size(uint8_t size)
 {
-    return size == 1 ? GL_UNSIGNED_BYTE :
-        (size == 2 ? GL_UNSIGNED_SHORT : GL_UNSIGNED_INT);
+    return size == sizeof(uint8_t) ? GL_UNSIGNED_BYTE :
+        (size == sizeof(uint16_t) ? GL_UNSIGNED_SHORT : GL_UNSIGNED_INT);
 }
 
-uint16_t lite3d_index_primitive_by_components(uint8_t count)
+uint8_t lite3d_size_by_index_type(uint16_t type)
 {
-    return count == 1 ? GL_POINTS :
-        (count == 2 ? GL_LINES : GL_TRIANGLES);
+    return type == GL_UNSIGNED_BYTE ? sizeof(uint8_t) : 
+        (type == GL_UNSIGNED_SHORT ? sizeof(uint16_t) : sizeof(uint32_t));
 }

@@ -31,7 +31,6 @@ typedef struct lite3d_vao
     uint32_t verticesCount;
     size_t verticesSize;
     size_t verticesOffset;
-    uint16_t elementType; /* GL_POINTS, GL_LINES, GL_TRIANGLES (GL value) */
     uint16_t indexType; /* Byte, short, int (GL value) */
 } lite3d_vao;
 

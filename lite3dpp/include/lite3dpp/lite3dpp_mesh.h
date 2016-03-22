@@ -82,7 +82,7 @@ namespace lite3dpp
             if(mMesh.vertexBuffer.size > 0)
             {
                 BufferMapper lock = mapVertexBuffer(LITE3D_VBO_MAP_READ_ONLY);
-                buffer.resize(lock.getSize());
+                buffer.resize(lock.getSize() / sizeof(T));
 
                 memcpy(&buffer[0], lock.getPtr<void>(), buffer.size());
             }
@@ -97,7 +97,7 @@ namespace lite3dpp
             if(mMesh.indexBuffer.size > 0)
             {
                 BufferMapper lock = mapIndexBuffer(LITE3D_VBO_MAP_READ_ONLY);
-                buffer.resize(lock.getSize());
+                buffer.resize(lock.getSize() / sizeof(T));
 
                 memcpy(&buffer[0], lock.getPtr<void>(), buffer.size());
             }
@@ -107,21 +107,20 @@ namespace lite3dpp
         
         template<class V, class Indx>
         void addTriangleMeshChunk(const typename stl<V>::vector &vertices,
-            const typename stl<Indx>::vector &indices, const BufferLayout &layout)
+            const typename stl<Indx>::vector &indices, const BufferLayout &layout, 
+            int indexSize, int mode = LITE3D_VBO_DYNAMIC_DRAW)
         {
-            uint8_t indexSize = vertices.size() <= 0xff ? 1 : (vertices.size() <= 0xffff ? 2 : 4);
-            
             if(!lite3d_mesh_indexed_extend_from_memory(&mMesh, &vertices[0], vertices.size(),
-                &layout[0], layout.size(), &indices[0], layout.size(), 3, LITE3D_VBO_DYNAMIC_DRAW))
+                &layout[0], layout.size(), &indices[0], indices.size(), indexSize, mode))
                 throw std::runtime_error(getName() + " append mesh chunk failed..");
         }
 
         template<class V>
         void addTriangleMeshChunk(const typename stl<V>::vector &vertices,
-            const BufferLayout &layout)
+            const BufferLayout &layout, int mode = LITE3D_VBO_DYNAMIC_DRAW)
         {
             if(!lite3d_mesh_extend_from_memory(&mMesh, &vertices[0], vertices.size(),
-                &layout[0], layout.size(), LITE3D_PRIMITIVE_TRIANGLE, LITE3D_VBO_DYNAMIC_DRAW))
+                &layout[0], layout.size(), mode))
                 throw std::runtime_error(getName() + " append mesh chunk failed..");
         }
         

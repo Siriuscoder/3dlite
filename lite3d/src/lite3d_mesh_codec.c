@@ -15,6 +15,8 @@
  *	You should have received a copy of the GNU General Public License
  *	along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
+#include <string.h>
+
 #include <SDL_assert.h>
 #include <SDL_rwops.h>
 #include <SDL_log.h>
@@ -48,8 +50,7 @@ typedef struct lite3d_m_chunk
     int32_t verticesCount;
     int32_t verticesSize;
     int32_t verticesOffset;
-    uint16_t elementType;
-    uint16_t indexType;
+    uint8_t indexElemSize;
     uint32_t materialIndex;
     lite3d_bouding_vol boudingVol;
 } lite3d_m_chunk;
@@ -168,7 +169,7 @@ int lite3d_mesh_m_decode(lite3d_mesh *mesh,
 
         /* append new batch */
         if (!lite3d_mesh_append_chunk(mesh, meshLayout, mchunk.chunkLayoutCount, stride,
-            mchunk.indexType, mchunk.elementType, mchunk.indexesCount,
+            lite3d_index_component_type_by_size(mchunk.indexElemSize), mchunk.indexesCount,
             mchunk.indexesSize, indOffset, mchunk.verticesCount, mchunk.verticesSize, vertOffset))
             return LITE3D_FALSE;
 
@@ -180,8 +181,7 @@ int lite3d_mesh_m_decode(lite3d_mesh *mesh,
         indOffset += mchunk.indexesSize;
         vertOffset += mchunk.verticesSize;
         mesh->verticesCount += mchunk.verticesCount;
-        mesh->elementsCount += mchunk.indexesCount / (mchunk.elementType == LITE3D_PRIMITIVE_POINT ? 1 : 
-            (mchunk.elementType == LITE3D_PRIMITIVE_LINE ? 2 : 3));
+        mesh->elementsCount += mchunk.indexesCount / 3;
         
         chunkSectionOffset += mchunk.chunkSize;
     }
@@ -271,6 +271,8 @@ int lite3d_mesh_m_encode(lite3d_mesh *mesh,
     {
         int i = 0;
         meshChunk = LITE3D_MEMBERCAST(lite3d_mesh_chunk, vaoLink, node);
+
+        memset(&mchunk, 0, sizeof(mchunk));
         mchunk.chunkSize = sizeof (lite3d_m_chunk) +
             sizeof (lite3d_m_chunk_layout) * meshChunk->layoutEntriesCount;
         mchunk.chunkLayoutCount = meshChunk->layoutEntriesCount;
@@ -280,8 +282,7 @@ int lite3d_mesh_m_encode(lite3d_mesh *mesh,
         mchunk.verticesCount = meshChunk->vao.verticesCount;
         mchunk.verticesSize = meshChunk->vao.verticesSize;
         mchunk.verticesOffset = meshChunk->vao.verticesOffset;
-        mchunk.elementType = meshChunk->vao.elementType;
-        mchunk.indexType = meshChunk->vao.indexType;
+        mchunk.indexElemSize = lite3d_size_by_index_type(meshChunk->vao.indexType);
         mchunk.materialIndex = meshChunk->materialIndex;
         mchunk.boudingVol = meshChunk->boudingVol;
 

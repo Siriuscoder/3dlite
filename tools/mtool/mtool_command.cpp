@@ -19,7 +19,8 @@
 #include <mtool_utils.h>
 
 Command::Command() : 
-    mNonameCounter(0)
+    mNonameCounter(0),
+    mVerbose(false)
 {
     mMain.registerLifecycleListener(this);
 }
@@ -27,8 +28,9 @@ Command::Command() :
 void Command::run(int argc, char *args[])
 {
     lite3dpp::ConfigurationWriter writer;
+    parseCommandLineImpl(argc, args);
 
-    writer.set(L"LogLevel", 1);
+    writer.set(L"LogLevel", mVerbose ? 3 : 1);
     writer.set(L"LogFlushAlways", false);
 
     lite3dpp::ConfigurationWriter video;
@@ -56,7 +58,6 @@ void Command::run(int argc, char *args[])
     mMain.initFromConfigString(writer.write().c_str());
     writer.clear();
 
-    parseCommandLineImpl(argc, args);
     mMain.run();
 }
 
@@ -100,7 +101,15 @@ void Command::makeFolders(const lite3dpp::String &outputFolder)
 }
 
 void Command::parseCommandLineImpl(int argc, char *args[])
-{}
+{
+    for (int i = 1; i < argc; ++i)
+    {
+        if (strcmp(args[i], "-vv") == 0)
+        {
+            mVerbose = true;
+        }
+    }
+}
     
 
 

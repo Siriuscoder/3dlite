@@ -55,7 +55,7 @@ static int ai_node_load_to_vbo(lite3d_mesh *meshInst, const struct aiScene *scen
     const struct aiNode *node, uint16_t access)
 {
     uint8_t componentSize;
-    lite3d_mesh_layout layout[10];
+    lite3d_mesh_layout layout[2 + AI_MAX_NUMBER_OF_COLOR_SETS + AI_MAX_NUMBER_OF_TEXTURECOORDS];
     size_t layoutCount;
     size_t verticesSize;
     size_t indexesSize;
@@ -114,7 +114,7 @@ static int ai_node_load_to_vbo(lite3d_mesh *meshInst, const struct aiScene *scen
             }
         }
 
-        componentSize = mesh->mNumFaces <= 0xff ? 1 : (mesh->mNumFaces <= 0xffff ? 2 : 4);
+        componentSize = mesh->mNumVertices <= 0x7f ? sizeof(uint8_t) : (mesh->mNumVertices <= 0x7fff ? sizeof(uint16_t) : sizeof(uint32_t));
         indexesSize = componentSize * mesh->mNumFaces * 3;
 
         vertices = lite3d_malloc(verticesSize);
@@ -172,46 +172,34 @@ static int ai_node_load_to_vbo(lite3d_mesh *meshInst, const struct aiScene *scen
             }
         }
 
-        if (componentSize == 1)
+        if (componentSize == sizeof(uint8_t))
         {
             register uint8_t *pindexes8 = (uint8_t *) indexes;
 
             for (j = 0; j < mesh->mNumFaces; ++j)
             {
-                /* only triangles used */
-                if (mesh->mFaces[j].mNumIndices != 3)
-                    continue;
-
                 *pindexes8++ = (uint8_t) mesh->mFaces[j].mIndices[0];
                 *pindexes8++ = (uint8_t) mesh->mFaces[j].mIndices[1];
                 *pindexes8++ = (uint8_t) mesh->mFaces[j].mIndices[2];
             }
         }
-        else if (componentSize == 2)
+        else if (componentSize == sizeof(uint16_t))
         {
             register uint16_t *pindexes16 = (uint16_t *) indexes;
 
             for (j = 0; j < mesh->mNumFaces; ++j)
             {
-                /* only triangles used */
-                if (mesh->mFaces[j].mNumIndices != 3)
-                    continue;
-
                 *pindexes16++ = (uint16_t) mesh->mFaces[j].mIndices[0];
                 *pindexes16++ = (uint16_t) mesh->mFaces[j].mIndices[1];
                 *pindexes16++ = (uint16_t) mesh->mFaces[j].mIndices[2];
             }
         }
-        else if (componentSize == 4)
+        else if (componentSize == sizeof(uint32_t))
         {
             register uint32_t *pindexes32 = (uint32_t *) indexes;
 
             for (j = 0; j < mesh->mNumFaces; ++j)
             {
-                /* only triangles used */
-                if (mesh->mFaces[j].mNumIndices != 3)
-                    continue;
-
                 *pindexes32++ = mesh->mFaces[j].mIndices[0];
                 *pindexes32++ = mesh->mFaces[j].mIndices[1];
                 *pindexes32++ = mesh->mFaces[j].mIndices[2];
@@ -219,7 +207,7 @@ static int ai_node_load_to_vbo(lite3d_mesh *meshInst, const struct aiScene *scen
         }
 
         if (!lite3d_mesh_indexed_extend_from_memory(meshInst, vertices, mesh->mNumVertices,
-            layout, layoutCount, indexes, mesh->mNumFaces, 3, access))
+            layout, layoutCount, indexes, mesh->mNumFaces, componentSize, access))
             return LITE3D_FALSE;
 
         /* set material index to currently added meshChunk */

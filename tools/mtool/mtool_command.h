@@ -47,4 +47,5 @@ protected:
 
     lite3dpp::Main mMain;
     int mNonameCounter;
+    bool mVerbose;
 };

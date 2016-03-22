@@ -33,6 +33,8 @@ void MeshInfoCommand::runImpl()
 
 void MeshInfoCommand::parseCommandLineImpl(int argc, char *args[]) 
 {
+    Command::parseCommandLineImpl(argc, args);
+
     for (int i = 1; i < argc; ++i)
     {
         if (strcmp(args[i], "-i") == 0)
@@ -89,14 +91,13 @@ void MeshInfoCommand::printInfo(const lite3d_file *meshFile)
         printf("CHUNK %d\n", chunksCount);
         printf("\tMaterial index %d\n", meshChunk->materialIndex);
         printf("\tVertices count: %d\n", meshChunk->vao.verticesCount);
+        printf("\tVertices size: %lu bytes\n", meshChunk->vao.verticesSize);
         printf("\tIndices count: %d\n", meshChunk->vao.indexesCount);
-        printf("\tElements: %s\n", meshChunk->vao.elementType == LITE3D_PRIMITIVE_POINT ? "POINTS" :
-            (meshChunk->vao.elementType == LITE3D_PRIMITIVE_LINE ? "LINES" : "TRIANGLES"));
-        printf("\tElements count: %d\n", meshChunk->vao.indexesCount / (meshChunk->vao.elementType == LITE3D_PRIMITIVE_POINT ? 1 :
-            (meshChunk->vao.elementType == LITE3D_PRIMITIVE_LINE ? 2 : 3)));
-        printf("\tVertices offset: 0x%lx bytes\n", meshChunk->vao.verticesOffset);
-        printf("\tIndices offset: 0x%lx bytes\n", meshChunk->vao.indexesOffset);
-        printf("\tIndex size: %lu bytes\n\n", meshChunk->vao.indexesSize / meshChunk->vao.indexesCount);
+        printf("\tIndices size: %lu bytes\n", meshChunk->vao.indexesSize);
+        printf("\tElements count: %d\n", meshChunk->vao.indexesCount / 3);
+        printf("\tVertices offset: 0x%lx\n", meshChunk->vao.verticesOffset);
+        printf("\tIndices offset: 0x%lx\n", meshChunk->vao.indexesOffset);
+        printf("\tIndex size: %lu bytes\n\n", lite3d_size_by_index_type(meshChunk->vao.indexType));
 
         printf("\tFORMAT\n");
         printf("\tLoc\tType\t\tData\tOffset\n");
