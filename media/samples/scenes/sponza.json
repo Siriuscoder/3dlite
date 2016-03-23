@@ -10,7 +10,7 @@
 			{
 				"Znear": 10,
 				"Zfar": 10000,
-				"Fov": 70
+				"Fov": 60
 			},
 			"RenderTargets":
 			[
