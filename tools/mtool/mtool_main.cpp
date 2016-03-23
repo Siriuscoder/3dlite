@@ -26,9 +26,9 @@
 static void print_help_and_exit()
 {
     printf("Usage: \n");
-    printf("View m file content:  \n\t-p -i[input file] \n");
-    printf("Convert file:  \n\t-c -i[input file] -o[output folder] -O[optimize mesh] -F[flip UVs] -j[generate json] -oname[object name] -packname[package]\n");
-    printf("Create directories:  \n\t-d -o[output folder]\n\n");
+    printf("\n\t-p\tview m file content \n\t-i\tinput file \n");
+    printf("\n\t-c\tconvert file \n\t-i\tinput file \n\t-o\toutput folder \n\t-O\toptimize mesh \n\t-F\tflip UVs \n\t-j\tgenerate json \n\t-oname\tobject name \n\t-[img|mesh|tex|mat|node]pkg \n\t-matastex \n");
+    printf("\n\t-d\tcreate directories \n\t-o\toutput folder\n\n");
     exit(1);
 }
 
@@ -37,8 +37,8 @@ int main(int argc, char *args[])
     int i = 0;
     std::unique_ptr<Command> command;
 
-    printf("Lite3d conversion utility.\n");
-    printf("Conversion from formats supported by Assimp to internal lite3d format (m).\n");
+    printf("Lite3d scene objests conversion utility.\n");
+    printf("Conversion from formats supports by Assimp to internal lite3d format (m).\n");
     printf("Engine version %s\n\n", LITE3D_VERSION_STRING);
 
     if (argc < 3)
@@ -47,11 +47,20 @@ int main(int argc, char *args[])
     for (i = 1; i < argc; ++i)
     {
         if (strcmp(args[i], "-p") == 0)
+        {
             command.reset(new MeshInfoCommand());
+            break;
+        }
         else if (strcmp(args[i], "-c") == 0)
+        {
             command.reset(new ConverterCommand());
+            break;
+        }
         else if (strcmp(args[i], "-d") == 0)
+        {
             command.reset(new CreateDirsCommand());
+            break;
+        }
     }
 
     if (!command)

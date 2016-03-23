@@ -24,14 +24,16 @@ Generator::Generator(const lite3dpp::String &outputFolder,
     const lite3dpp::String &imgPackname,
     const lite3dpp::String &matPackname,
     const lite3dpp::String &nodePackname,
-    const lite3dpp::String &meshPackname) :
+    const lite3dpp::String &meshPackname,
+    bool useDifTexNameAsMatName) :
     mOutputFolder(outputFolder),
     mObjectName(objectName),
     mTexPackname(texPackname),
     mImgPackname(imgPackname),
     mMatPackname(matPackname),
     mNodePackname(nodePackname),
-    mMeshPackname(meshPackname)
+    mMeshPackname(meshPackname),
+    mUseDifTexNameAsMatName(useDifTexNameAsMatName)
 {
     if(!mTexPackname.empty())
         mTexPackname.append(":");
@@ -46,7 +48,7 @@ Generator::Generator(const lite3dpp::String &outputFolder,
 }
 
 NullGenerator::NullGenerator() :
-    Generator("", "", "", "", "", "", "")
+    Generator("", "", "", "", "", "", "", false)
 {}
 
 void NullGenerator::generateNode(const lite3d_mesh *mesh, const lite3dpp::String &name, const kmMat4 *transform,
@@ -59,7 +61,7 @@ void NullGenerator::pushNodeTree()
 void NullGenerator::popNodeTree()
 {}
 
-void NullGenerator::generateMaterial(const lite3dpp::String &matName, 
+void NullGenerator::generateMaterial(const lite3dpp::String &name, 
     uint32_t matIdx,
     const kmVec4 *ambient,
     const kmVec4 *diffuse,
@@ -78,14 +80,16 @@ JsonGenerator::JsonGenerator(const lite3dpp::String &outputFolder,
     const lite3dpp::String &imgPackname,
     const lite3dpp::String &matPackname,
     const lite3dpp::String &nodePackname,
-    const lite3dpp::String &meshPackname) :
+    const lite3dpp::String &meshPackname,
+    bool useDifTexNameAsMatName) :
     Generator(outputFolder, 
               objectName, 
               texPackname,
               imgPackname,
               matPackname,
               nodePackname,
-              meshPackname)
+              meshPackname,
+              useDifTexNameAsMatName)
 {}
 
 void JsonGenerator::generateNode(const lite3d_mesh *mesh, const lite3dpp::String &name, const kmMat4 *transform,
@@ -173,7 +177,7 @@ void JsonGenerator::popNodeTree()
     }
 }
 
-void JsonGenerator::generateMaterial(const lite3dpp::String &matName, 
+void JsonGenerator::generateMaterial(const lite3dpp::String &name, 
     uint32_t matIdx,
     const kmVec4 *ambient,
     const kmVec4 *diffuse,
@@ -187,6 +191,7 @@ void JsonGenerator::generateMaterial(const lite3dpp::String &matName,
 {
     lite3dpp::stl<lite3dpp::ConfigurationWriter>::vector uniforms;
     lite3dpp::stl<lite3dpp::ConfigurationWriter>::vector passes;
+    lite3dpp::String matName = name;
 
     {
         lite3dpp::ConfigurationWriter param;
@@ -233,6 +238,11 @@ void JsonGenerator::generateMaterial(const lite3dpp::String &matName,
         pass1.set(L"Program", program);
         passes.push_back(pass1);
     }
+    
+    if (mUseDifTexNameAsMatName && diffuseTextureFile)
+    {
+        matName = Utils::getFileNameWithoutExt(diffuseTextureFile);
+    }
 
     lite3dpp::String matFull = Utils::makeFullPath(mOutputFolder, Utils::makeRelativePath("materials/", matName, "json"));
     lite3dpp::ConfigurationWriter material;
@@ -264,7 +274,7 @@ void JsonGenerator::generateUniformSampler(lite3dpp::stl<lite3dpp::Configuration
         lite3dpp::ConfigurationWriter texture;
         texture.set(L"TextureType", "2D");
         texture.set(L"Filtering", "Trilinear");
-        texture.set(L"Wrapping", "ClampToEdge");
+        texture.set(L"Wrapping", "Repeat");
         texture.set(L"Image", mImgPackname + Utils::makeRelativePath("textures/images/", Utils::getFileNameWithoutExt(fileName), Utils::getFileExt(fileName)));
         texture.set(L"ImageFormat", Utils::getFileExt(fileName));
     

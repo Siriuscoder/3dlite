@@ -77,7 +77,8 @@ ConverterCommand::ConverterCommand() :
     mObjectName("noname"),
     mOptimizeMesh(false),
     mFlipUV(false),
-    mGenerateJson(false)
+    mGenerateJson(false),
+    mTexNameAsMapName(false)
 {}
 
 #ifdef INCLUDE_ASSIMP
@@ -105,14 +106,15 @@ void ConverterCommand::runImpl()
             mImgPackname.empty() ? mPackageName : mImgPackname,
             mMatPackname.empty() ? mPackageName : mMatPackname,
             mNodePackname.empty() ? mPackageName : mNodePackname,
-            mMeshPackname.empty() ? mPackageName : mMeshPackname));
+            mMeshPackname.empty() ? mPackageName : mMeshPackname,
+            mTexNameAsMapName));
     else 
         mGenerator.reset(new NullGenerator());
 
     if(!lite3d_assimp_mesh_load_recursive(
         mMain.getResourceManager()->loadFileToMemory(mInputFilePath), ctx,
         LITE3D_VBO_STATIC_READ, loadFlags))
-        throw std::runtime_error("Unable to import inmput file.. possible bad format..");
+        throw std::runtime_error("Unable to import input file.. possible bad format..");
 }
 #else
 void ConverterCommand::runImpl()
@@ -204,6 +206,10 @@ void ConverterCommand::parseCommandLineImpl(int argc, char *args[])
                 mNodePackname.assign(args[i + 1]);
             else
                 throw std::runtime_error("Missing package name");
+        }
+        else if (strcmp(args[i], "-matastex") == 0)
+        {
+            mTexNameAsMapName = true;
         }
     }
 }
