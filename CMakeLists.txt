@@ -18,9 +18,7 @@
 cmake_minimum_required(VERSION 2.8.9)
 project(lite3d)
 
-if(UNIX)
-include(FindPkgConfig)
-endif()
+include(${CMAKE_SOURCE_DIR}/CMake/lite3dCommon.cmake)
 
 # Configuration
 set(CMAKE_CONFIGURATION_TYPES Debug Release)
@@ -69,26 +67,13 @@ elseif(MSVC)
 endif()
 
 if(UNIX)
-pkg_search_module(SDL2 REQUIRED sdl2)
-    if(NOT SDL2_FOUND)
-        message(FATAL_ERROR "SDL2 Required")
-    endif()
-find_package(Threads)
-else()
+	include(FindPkgConfig)
+	find_package(Threads)
+endif()
+
 include(${CMAKE_SOURCE_DIR}/CMake/FindSDL2.cmake)
-    if(NOT SDL2_FOUND)
-        message(FATAL_ERROR "SDL2 Required")
-    endif()
-endif()
-
-find_package(OpenGL)
-if(NOT OPENGL_FOUND)
-    message(FATAL_ERROR "OpenGL library not found..")
-endif()
-
-include(FindDevIL)
-if(NOT IL_FOUND)
-    message(FATAL_ERROR "DevIL library not found..")
+if(NOT SDL2_FOUND)
+    message(FATAL_ERROR "SDL2 Required")
 endif()
 
 include(${CMAKE_SOURCE_DIR}/CMake/FindAssimp.cmake)
@@ -102,7 +87,15 @@ else()
 	endif()
 endif()
 
-include(${CMAKE_SOURCE_DIR}/CMake/lite3dCommon.cmake)
+find_package(OpenGL)
+if(NOT OPENGL_FOUND)
+    message(FATAL_ERROR "OpenGL library not found..")
+endif()
+
+find_package(DevIL)
+if(NOT IL_FOUND)
+    message(FATAL_ERROR "DevIL library not found..")
+endif()
 
 include_directories("${PROJECT_SOURCE_DIR}/lite3d/include")
 include_directories("${PROJECT_SOURCE_DIR}/lite3dpp/include")

@@ -23,26 +23,26 @@
 
 #define __list_check(expr) (expr)
 
-static INLINE void
+static LITE3D_INLINE void
 __list_bind(struct lite3d_list_node *prev, struct lite3d_list_node *next)
 {
     __list_check(next)->prev = prev;
     __list_check(prev)->next = next;
 }
 
-static INLINE int
+static LITE3D_INLINE int
 __list_link_alone(struct lite3d_list_node *link)
 {
     return link == __list_check(link)->next;
 }
 
-static INLINE void
+static LITE3D_INLINE void
 __list_link_init(struct lite3d_list_node *link)
 {
     __list_bind(link, link);
 }
 
-static INLINE void
+static LITE3D_INLINE void
 __list_insert_chain(struct lite3d_list_node *first, struct lite3d_list_node *last,
     struct lite3d_list_node *prev, struct lite3d_list_node *next)
 {
@@ -50,7 +50,7 @@ __list_insert_chain(struct lite3d_list_node *first, struct lite3d_list_node *las
     __list_bind(last, next);
 }
 
-static INLINE void
+static LITE3D_INLINE void
 __list_insert_link(struct lite3d_list_node *link, struct lite3d_list_node *prev,
     struct lite3d_list_node *next)
 {

@@ -38,15 +38,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "plane.h"
 #include "ray3.h"
 
-const kmVec3 KM_VEC3_POS_Z = { 0, 0, 1 };
-const kmVec3 KM_VEC3_NEG_Z = { 0, 0, -1 };
-const kmVec3 KM_VEC3_POS_Y = { 0, 1, 0 };
-const kmVec3 KM_VEC3_NEG_Y = { 0, -1, 0 };
-const kmVec3 KM_VEC3_NEG_X = { -1, 0, 0 };
-const kmVec3 KM_VEC3_POS_X = { 1, 0, 0 };
-const kmVec3 KM_VEC3_ZERO = { 0, 0, 0 };
-const kmVec3 KM_VEC3_ONE = { 1, 1, 1 };
-
 /**
  * Fill a kmVec3 structure using 3 floating point values
  * The result is store in pOut, returns pOut

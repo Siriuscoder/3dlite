@@ -75,15 +75,15 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define KM_CONTAINS_PARTIAL 1
 #define KM_CONTAINS_ALL 2
 
-extern kmScalar kmSQR(kmScalar s);
-extern kmScalar kmDegreesToRadians(kmScalar degrees);
-extern kmScalar kmRadiansToDegrees(kmScalar radians);
+LITE3D_CEXPORT kmScalar kmSQR(kmScalar s);
+LITE3D_CEXPORT kmScalar kmDegreesToRadians(kmScalar degrees);
+LITE3D_CEXPORT kmScalar kmRadiansToDegrees(kmScalar radians);
 
-extern kmScalar kmMin(kmScalar lhs, kmScalar rhs);
-extern kmScalar kmMax(kmScalar lhs, kmScalar rhs);
-extern kmBool kmAlmostEqual(kmScalar lhs, kmScalar rhs);
+LITE3D_CEXPORT kmScalar kmMin(kmScalar lhs, kmScalar rhs);
+LITE3D_CEXPORT kmScalar kmMax(kmScalar lhs, kmScalar rhs);
+LITE3D_CEXPORT kmBool kmAlmostEqual(kmScalar lhs, kmScalar rhs);
 
-extern kmScalar kmClamp(kmScalar x, kmScalar min, kmScalar max);
-extern kmScalar kmLerp(kmScalar x, kmScalar y, kmScalar factor);
+LITE3D_CEXPORT kmScalar kmClamp(kmScalar x, kmScalar min, kmScalar max);
+LITE3D_CEXPORT kmScalar kmLerp(kmScalar x, kmScalar y, kmScalar factor);
 
 #endif /* UTILITY_H_INCLUDED */

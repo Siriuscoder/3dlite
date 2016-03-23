@@ -31,8 +31,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "vec4.h"
 #include "mat4.h"
 
-const kmVec4 KM_VEC4_ZERO = { 0, 0, 0, 0 };
-
 kmVec4* kmVec4Fill(kmVec4* pOut, kmScalar x, kmScalar y, kmScalar z, kmScalar w)
 {
     pOut->x = x;

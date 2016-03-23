@@ -15,7 +15,6 @@
 #	along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
 
 cmake_minimum_required(VERSION 2.8.9)
-project(as)
 project(lite3dpp)
 
 ################################################################
@@ -25,24 +24,15 @@ unset(HEADERS_LIST)
 source_files("src/as")
 headers_files("include/lite3dpp/as")
 
-if(MSVC AND CMAKE_CL_64)
-    enable_language(ASM_MASM)
-    if(CMAKE_ASM_MASM_COMPILER_WORKS)
-        set(SOURCES_LIST ${SOURCES_LIST} src/as/as_callfunc_x64_msvc_asm.asm)
-    else()
-        message(FATAL ERROR "MSVC x86_64 target requires a working assembler")
-    endif()
+if(UNIX AND AS_ARM)
+	list(APPEND SOURCES_LIST src/as/as_callfunc_arm_gcc.S
+		src/as/as_callfunc_arm_vita.S
+		src/as/as_callfunc_arm_xcode.S)
+elseif(MSVC AND AS_ARM)
+	list(APPEND src/as/as_callfunc_arm_msvc.asm)
 endif()
 
-add_library(as ${SOURCES_LIST} ${HEADERS_LIST})
-
-target_include_directories(as PRIVATE 
-"$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include/lite3dpp/as>")
-
 ################################################################
-unset(SOURCES_LIST)
-unset(HEADERS_LIST)
-
 source_files("src")
 source_files("src/as_helpers")
 source_files("src/json")
@@ -59,15 +49,12 @@ add_library(lite3dpp SHARED ${SOURCES_LIST} ${HEADERS_LIST})
 if(MSVC)
 target_compile_definitions(lite3dpp PRIVATE
 "$<BUILD_INTERFACE:WIN_3DLITEPP_DLL>")
-target_include_directories(lite3dpp PRIVATE 
-"$<BUILD_INTERFACE:${SDL2_INCLUDE_DIR}>"
-"$<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/winres/>")
-else()
-target_compile_options(lite3dpp PRIVATE 
-"$<BUILD_INTERFACE:${SDL2_CFLAGS}>")
 endif()
 
+target_include_directories(lite3dpp PRIVATE 
+"$<BUILD_INTERFACE:${SDL2_INCLUDE_DIR}>"
+"$<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/winres/>"
+"$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include/lite3dpp/as>")
+
 target_link_libraries(lite3dpp
-lite3d
-as
-kazmath)
+lite3d)

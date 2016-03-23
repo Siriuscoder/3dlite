@@ -49,20 +49,20 @@ typedef enum KM_POINT_CLASSIFICATION {
     POINT_INFRONT_OF_PLANE = 1
 } KM_POINT_CLASSIFICATION;
 
-kmPlane* kmPlaneFill(kmPlane* plane, float a, float b, float c, float d);
-kmScalar kmPlaneDot(const kmPlane* pP, const struct kmVec4* pV);
-kmScalar kmPlaneDotCoord(const kmPlane* pP, const struct kmVec3* pV);
-kmScalar kmPlaneDotNormal(const kmPlane* pP, const struct kmVec3* pV);
-kmPlane* kmPlaneFromNormalAndDistance(kmPlane* plane, const struct kmVec3* normal, const kmScalar dist);
-kmPlane* kmPlaneFromPointAndNormal(kmPlane* pOut, const struct kmVec3* pPoint, const struct kmVec3* pNormal);
-kmPlane* kmPlaneFromPoints(kmPlane* pOut, const struct kmVec3* p1, const struct kmVec3* p2, const struct kmVec3* p3);
-struct kmVec3* kmPlaneIntersectLine(struct kmVec3* pOut, const kmPlane* pP, const struct kmVec3* pV1, const struct kmVec3* pV2);
-kmPlane* kmPlaneNormalize(kmPlane* pOut, const kmPlane* pP);
-kmPlane* kmPlaneScale(kmPlane* pOut, const kmPlane* pP, kmScalar s);
-KM_POINT_CLASSIFICATION kmPlaneClassifyPoint(const kmPlane* pIn, const struct kmVec3* pP); /** Classifys a point against a plane */
-kmScalar kmPlaneDistance(const kmPlane* pIn, const struct kmVec3* pP);
+LITE3D_CEXPORT kmPlane* kmPlaneFill(kmPlane* plane, float a, float b, float c, float d);
+LITE3D_CEXPORT kmScalar kmPlaneDot(const kmPlane* pP, const struct kmVec4* pV);
+LITE3D_CEXPORT kmScalar kmPlaneDotCoord(const kmPlane* pP, const struct kmVec3* pV);
+LITE3D_CEXPORT kmScalar kmPlaneDotNormal(const kmPlane* pP, const struct kmVec3* pV);
+LITE3D_CEXPORT kmPlane* kmPlaneFromNormalAndDistance(kmPlane* plane, const struct kmVec3* normal, const kmScalar dist);
+LITE3D_CEXPORT kmPlane* kmPlaneFromPointAndNormal(kmPlane* pOut, const struct kmVec3* pPoint, const struct kmVec3* pNormal);
+LITE3D_CEXPORT kmPlane* kmPlaneFromPoints(kmPlane* pOut, const struct kmVec3* p1, const struct kmVec3* p2, const struct kmVec3* p3);
+LITE3D_CEXPORT struct kmVec3* kmPlaneIntersectLine(struct kmVec3* pOut, const kmPlane* pP, const struct kmVec3* pV1, const struct kmVec3* pV2);
+LITE3D_CEXPORT kmPlane* kmPlaneNormalize(kmPlane* pOut, const kmPlane* pP);
+LITE3D_CEXPORT kmPlane* kmPlaneScale(kmPlane* pOut, const kmPlane* pP, kmScalar s);
+LITE3D_CEXPORT KM_POINT_CLASSIFICATION kmPlaneClassifyPoint(const kmPlane* pIn, const struct kmVec3* pP); /** Classifys a point against a plane */
+LITE3D_CEXPORT kmScalar kmPlaneDistance(const kmPlane* pIn, const struct kmVec3* pP);
 
-kmPlane* kmPlaneExtractFromMat4(kmPlane* pOut, const struct kmMat4* pIn, kmInt row);
-struct kmVec3* kmPlaneGetIntersection(struct kmVec3* pOut, const kmPlane* p1, const kmPlane* p2, const kmPlane* p3);
+LITE3D_CEXPORT kmPlane* kmPlaneExtractFromMat4(kmPlane* pOut, const struct kmMat4* pIn, kmInt row);
+LITE3D_CEXPORT struct kmVec3* kmPlaneGetIntersection(struct kmVec3* pOut, const kmPlane* p1, const kmPlane* p2, const kmPlane* p3);
 
 #endif /* PLANE_H_INCLUDED */

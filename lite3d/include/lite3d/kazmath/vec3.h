@@ -39,43 +39,43 @@ typedef struct kmVec3 {
 	kmScalar z;
 } kmVec3;
 
-kmVec3* kmVec3Fill(kmVec3* pOut, kmScalar x, kmScalar y, kmScalar z);
-kmScalar kmVec3Length(const kmVec3* pIn); /** Returns the length of the vector */
-kmScalar kmVec3LengthSq(const kmVec3* pIn); /** Returns the square of the length of the vector */
-kmVec3* kmVec3Lerp(kmVec3* pOut, const kmVec3* pV1, const kmVec3* pV2, kmScalar t);
-kmVec3* kmVec3Normalize(kmVec3* pOut, const kmVec3* pIn); /** Returns the vector passed in set to unit length */
-kmVec3* kmVec3Cross(kmVec3* pOut, const kmVec3* pV1, const kmVec3* pV2); /** Returns a vector perpendicular to 2 other vectors */
-kmScalar kmVec3Dot(const kmVec3* pV1, const kmVec3* pV2); /** Returns the cosine of the angle between 2 vectors */
-kmVec3* kmVec3Add(kmVec3* pOut, const kmVec3* pV1, const kmVec3* pV2); /** Adds 2 vectors and returns the result */
-kmVec3* kmVec3Subtract(kmVec3* pOut, const kmVec3* pV1, const kmVec3* pV2); /** Subtracts 2 vectors and returns the result */
-kmVec3* kmVec3Mul( kmVec3* pOut,const kmVec3* pV1, const kmVec3* pV2 ); 
-kmVec3* kmVec3Div( kmVec3* pOut,const kmVec3* pV1, const kmVec3* pV2 );
+LITE3D_CEXPORT kmVec3* kmVec3Fill(kmVec3* pOut, kmScalar x, kmScalar y, kmScalar z);
+LITE3D_CEXPORT kmScalar kmVec3Length(const kmVec3* pIn); /** Returns the length of the vector */
+LITE3D_CEXPORT kmScalar kmVec3LengthSq(const kmVec3* pIn); /** Returns the square of the length of the vector */
+LITE3D_CEXPORT kmVec3* kmVec3Lerp(kmVec3* pOut, const kmVec3* pV1, const kmVec3* pV2, kmScalar t);
+LITE3D_CEXPORT kmVec3* kmVec3Normalize(kmVec3* pOut, const kmVec3* pIn); /** Returns the vector passed in set to unit length */
+LITE3D_CEXPORT kmVec3* kmVec3Cross(kmVec3* pOut, const kmVec3* pV1, const kmVec3* pV2); /** Returns a vector perpendicular to 2 other vectors */
+LITE3D_CEXPORT kmScalar kmVec3Dot(const kmVec3* pV1, const kmVec3* pV2); /** Returns the cosine of the angle between 2 vectors */
+LITE3D_CEXPORT kmVec3* kmVec3Add(kmVec3* pOut, const kmVec3* pV1, const kmVec3* pV2); /** Adds 2 vectors and returns the result */
+LITE3D_CEXPORT kmVec3* kmVec3Subtract(kmVec3* pOut, const kmVec3* pV1, const kmVec3* pV2); /** Subtracts 2 vectors and returns the result */
+LITE3D_CEXPORT kmVec3* kmVec3Mul( kmVec3* pOut,const kmVec3* pV1, const kmVec3* pV2 ); 
+LITE3D_CEXPORT kmVec3* kmVec3Div( kmVec3* pOut,const kmVec3* pV1, const kmVec3* pV2 );
 
-kmVec3* kmVec3MultiplyMat3(kmVec3 *pOut, const kmVec3 *pV, const struct kmMat3* pM);
-kmVec3* kmVec3MultiplyMat4(kmVec3* pOut, const kmVec3* pV, const struct kmMat4* pM);
+LITE3D_CEXPORT kmVec3* kmVec3MultiplyMat3(kmVec3 *pOut, const kmVec3 *pV, const struct kmMat3* pM);
+LITE3D_CEXPORT kmVec3* kmVec3MultiplyMat4(kmVec3* pOut, const kmVec3* pV, const struct kmMat4* pM);
 
-kmVec3* kmVec3Transform(kmVec3* pOut, const kmVec3* pV1, const struct kmMat4* pM); /** Transforms a vector (assuming w=1) by a given matrix */
-kmVec3* kmVec3TransformNormal(kmVec3* pOut, const kmVec3* pV, const struct kmMat4* pM);/**Transforms a 3D normal by a given matrix */
-kmVec3* kmVec3TransformCoord(kmVec3* pOut, const kmVec3* pV, const struct kmMat4* pM); /**Transforms a 3D vector by a given matrix, projecting the result back into w = 1. */
+LITE3D_CEXPORT kmVec3* kmVec3Transform(kmVec3* pOut, const kmVec3* pV1, const struct kmMat4* pM); /** Transforms a vector (assuming w=1) by a given matrix */
+LITE3D_CEXPORT kmVec3* kmVec3TransformNormal(kmVec3* pOut, const kmVec3* pV, const struct kmMat4* pM);/**Transforms a 3D normal by a given matrix */
+LITE3D_CEXPORT kmVec3* kmVec3TransformCoord(kmVec3* pOut, const kmVec3* pV, const struct kmMat4* pM); /**Transforms a 3D vector by a given matrix, projecting the result back into w = 1. */
 
-kmVec3* kmVec3Scale(kmVec3* pOut, const kmVec3* pIn, const kmScalar s); /** Scales a vector to length s */
-int 	kmVec3AreEqual(const kmVec3* p1, const kmVec3* p2);
-kmVec3* kmVec3InverseTransform(kmVec3* pOut, const kmVec3* pV, const struct kmMat4* pM);
-kmVec3* kmVec3InverseTransformNormal(kmVec3* pOut, const kmVec3* pVect, const struct kmMat4* pM);
-kmVec3* kmVec3Assign(kmVec3* pOut, const kmVec3* pIn);
-kmVec3* kmVec3Zero(kmVec3* pOut);
-kmVec3* kmVec3GetHorizontalAngle(kmVec3* pOut, const kmVec3 *pIn); /** Get the rotations that would make a (0,0,1) direction vector point in the same direction as this direction vector. */
-kmVec3* kmVec3RotationToDirection(kmVec3* pOut, const kmVec3* pIn, const kmVec3* forwards); /** Builds a direction vector from input vector. */
+LITE3D_CEXPORT kmVec3* kmVec3Scale(kmVec3* pOut, const kmVec3* pIn, const kmScalar s); /** Scales a vector to length s */
+LITE3D_CEXPORT int 	kmVec3AreEqual(const kmVec3* p1, const kmVec3* p2);
+LITE3D_CEXPORT kmVec3* kmVec3InverseTransform(kmVec3* pOut, const kmVec3* pV, const struct kmMat4* pM);
+LITE3D_CEXPORT kmVec3* kmVec3InverseTransformNormal(kmVec3* pOut, const kmVec3* pVect, const struct kmMat4* pM);
+LITE3D_CEXPORT kmVec3* kmVec3Assign(kmVec3* pOut, const kmVec3* pIn);
+LITE3D_CEXPORT kmVec3* kmVec3Zero(kmVec3* pOut);
+LITE3D_CEXPORT kmVec3* kmVec3GetHorizontalAngle(kmVec3* pOut, const kmVec3 *pIn); /** Get the rotations that would make a (0,0,1) direction vector point in the same direction as this direction vector. */
+LITE3D_CEXPORT kmVec3* kmVec3RotationToDirection(kmVec3* pOut, const kmVec3* pIn, const kmVec3* forwards); /** Builds a direction vector from input vector. */
 
-kmVec3* kmVec3ProjectOnToPlane(kmVec3* pOut, const kmVec3* point, const struct kmPlane* plane);
+LITE3D_CEXPORT kmVec3* kmVec3ProjectOnToPlane(kmVec3* pOut, const kmVec3* point, const struct kmPlane* plane);
 
-extern const kmVec3 KM_VEC3_NEG_Z;
-extern const kmVec3 KM_VEC3_POS_Z;
-extern const kmVec3 KM_VEC3_POS_Y;
-extern const kmVec3 KM_VEC3_NEG_Y;
-extern const kmVec3 KM_VEC3_NEG_X;
-extern const kmVec3 KM_VEC3_POS_X;
-extern const kmVec3 KM_VEC3_ZERO;
-extern const kmVec3 KM_VEC3_ONE;
+static const kmVec3 KM_VEC3_POS_Z = { 0, 0, 1 };
+static const kmVec3 KM_VEC3_NEG_Z = { 0, 0, -1 };
+static const kmVec3 KM_VEC3_POS_Y = { 0, 1, 0 };
+static const kmVec3 KM_VEC3_NEG_Y = { 0, -1, 0 };
+static const kmVec3 KM_VEC3_NEG_X = { -1, 0, 0 };
+static const kmVec3 KM_VEC3_POS_X = { 1, 0, 0 };
+static const kmVec3 KM_VEC3_ZERO = { 0, 0, 0 };
+static const kmVec3 KM_VEC3_ONE = { 1, 1, 1 };
 
 #endif /* VEC3_H_INCLUDED */

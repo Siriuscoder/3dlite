@@ -36,21 +36,22 @@
 #       error "GCC or MSVC compiller requred.."
 #   endif
 
+#   pragma warning(disable:4244)
 
 #   ifdef WIN_3DLITE_DLL
 // When making the DLL, export tagged symbols, so they appear
 // in the import library.
 #   define LITE3D_EXPORT __declspec(dllexport)
 #   define LITE3D_CLASS_EXPORT LITE3D_EXPORT
-#   elif !defined(WIN_3DLITE_DLL)
-        // We must be _using_ the DLL, so import symbols instead.
+#   else
+// We must be _using_ the DLL, so import symbols instead.
 #   define LITE3D_EXPORT
 #   define LITE3D_CLASS_EXPORT __declspec(dllimport)
 #   endif
 
-#   define STRUCT_PACKED(x) __declspec(align(x))
-#   define INLINE __inline
-#   define DEVIL_CALL __stdcall
+#   define LITE3D_STRUCT_PACKED(x) __declspec(align(x))
+#   define LITE3D_INLINE __inline
+#   define LITE3D_DEVIL_CALL __stdcall
 
 #   ifdef near
 #   undef near
@@ -71,9 +72,9 @@
 
 #   define LITE3D_EXPORT
 #   define LITE3D_CLASS_EXPORT
-#   define STRUCT_PACKED(x) __attribute__ ((aligned(x)));
-#   define INLINE inline
-#   define DEVIL_CALL
+#   define LITE3D_STRUCT_PACKED(x) __attribute__ ((aligned(x)));
+#   define LITE3D_INLINE inline
+#   define LITE3D_DEVIL_CALL
 #else
 #   error "Unknown target platform"
 #endif
@@ -94,6 +95,7 @@
 #define LITE3D_MAX(a, b) (((a) > (b)) ? (a) : (b))
 
 #define LITE3D_CEXPORT  LITE3D_EXPORT LITE3D_EXTERN
+#define LITE3D_CVAREXPORT  LITE3D_EXPORT LITE3D_VAR_EXTERN
 #define LITE3D_CPPEXPORT  LITE3D_CLASS_EXPORT LITE3D_EXTERN
 
 #define LITE3D_VERSION_MAJ         0

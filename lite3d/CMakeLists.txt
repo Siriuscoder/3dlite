@@ -16,49 +16,21 @@
 #	along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
 
 cmake_minimum_required(VERSION 2.8.9)
-project(7zdec)
-project(glewc)
 project(lite3d)
-project(kazmath)
-######################### 7zdec ################################
+
 unset(SOURCES_LIST)
 unset(HEADERS_LIST)
 
+######################### 7zdec ########################################
 source_files("src/7zdec")
 headers_files("include/lite3d/7zdec")
-
-add_library(7zdec ${SOURCES_LIST} ${HEADERS_LIST})
-target_include_directories(7zdec PRIVATE 
-"$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include/lite3d/7zdec>")
-target_compile_definitions(7zdec PRIVATE
-"$<BUILD_INTERFACE:_7ZIP_PPMD_SUPPPORT>")
-######################### glewc ################################
-unset(SOURCES_LIST)
-unset(HEADERS_LIST)
-
+######################### glewc ########################################
 source_files("src/glew")
 headers_files("include/lite3d/GL")
-
-add_library(glewc ${SOURCES_LIST} ${HEADERS_LIST})
-target_include_directories(glewc PRIVATE 
-"$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include/lite3d/>")
-target_compile_definitions(glewc PRIVATE
-"$<BUILD_INTERFACE:GLEW_NO_GLU>"
-"$<BUILD_INTERFACE:GLEW_STATIC>")
-######################### kazmath ##############################
-unset(SOURCES_LIST)
-unset(HEADERS_LIST)
-
+######################### kazmath ######################################
 source_files("src/kazmath")
 headers_files("include/lite3d/kazmath")
-
-add_library(kazmath ${SOURCES_LIST} ${HEADERS_LIST})
-target_include_directories(kazmath PRIVATE 
-"$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include/lite3d/kazmath/>")
-######################### lite3d ###############################
-unset(SOURCES_LIST)
-unset(HEADERS_LIST)
-
+######################### primary lite3d ###############################
 source_files("src")
 headers_files("include/lite3d")
 
@@ -68,32 +40,31 @@ endif()
 
 add_library(lite3d SHARED ${SOURCES_LIST} ${HEADERS_LIST})
 
+target_include_directories(lite3d PRIVATE 
+"$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include/lite3d/7zdec>"
+"$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include/lite3d/>"
+"$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include/lite3d/kazmath/>")
+target_compile_definitions(lite3d PRIVATE
+"$<BUILD_INTERFACE:_7ZIP_PPMD_SUPPPORT>"
+"$<BUILD_INTERFACE:GLEW_NO_GLU>"
+"$<BUILD_INTERFACE:GLEW_STATIC>")
+
 if(MSVC)
 target_compile_definitions(lite3d PRIVATE
 "$<BUILD_INTERFACE:WIN_3DLITE_DLL>")
+endif()
+
 target_include_directories(lite3d PRIVATE 
 "$<BUILD_INTERFACE:${SDL2_INCLUDE_DIR}>"
 "$<BUILD_INTERFACE:${IL_INCLUDE_DIR}>"
 "$<BUILD_INTERFACE:${ASSIMP_INCLUDE_DIR}>"
 "$<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/winres/>")
-set(SDL2_LIBS ${SDL2_LIBRARY})
-else()
-target_compile_options(lite3d PRIVATE 
-"$<BUILD_INTERFACE:${SDL2_CFLAGS}>")
-set(SDL2_LIBS ${SDL2_LIBRARIES})
-endif()
-
-target_compile_definitions(lite3d PRIVATE
-"$<BUILD_INTERFACE:GLEW_STATIC>")
 
 target_link_libraries(lite3d
-7zdec
-glewc
-kazmath
 ${OPENGL_LIBRARIES}
 ${IL_LIBRARIES}
 ${ILU_LIBRARIES}
-${SDL2_LIBS}
+${SDL2_LIBRARY}
 ${ASSIMP_LIBRARY}
 ${CMAKE_THREAD_LIBS_INIT})
 

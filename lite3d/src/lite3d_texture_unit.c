@@ -50,12 +50,12 @@ static int maxTextureSize;
 static int maxTextureImageUnits;
 static int maxCombinedTextureImageUnits;
 
-static void* DEVIL_CALL il_alloc(const ILsizei size)
+static void* LITE3D_DEVIL_CALL il_alloc(const ILsizei size)
 {
     return lite3d_malloc(size);
 }
 
-static void DEVIL_CALL il_free(const void *ptr)
+static void LITE3D_DEVIL_CALL il_free(const void *ptr)
 {
     lite3d_free((void *) ptr);
 }

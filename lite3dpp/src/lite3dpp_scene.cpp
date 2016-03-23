@@ -186,7 +186,7 @@ namespace lite3dpp
                     perspectiveOptionsJson.getDouble(L"Zfar"),
                     perspectiveOptionsJson.getDouble(L"Fov"),
                     perspectiveOptionsJson.getDouble(L"Aspect", -1.0) < 0 ? 
-                    (float)renderTarget->width() / (float)renderTarget->height() : cameraJson.getDouble(L"Aspect"));
+                    renderTarget->width() / renderTarget->height() : cameraJson.getDouble(L"Aspect"));
             }
             else if(!orthoOptionsJson.isEmpty())
             {

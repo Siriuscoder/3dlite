@@ -18,12 +18,6 @@
 #ifndef LITE3D_KAZMATH_H
 #define	LITE3D_KAZMATH_H
 
-#include <lite3d/lite3d_common.h>
-
-#ifdef __cplusplus
-LITE3D_CEXPORT {
-#endif
-    
 #include <lite3d/kazmath/aabb.h>
 #include <lite3d/kazmath/mat3.h>
 #include <lite3d/kazmath/mat4.h>
@@ -35,10 +29,6 @@ LITE3D_CEXPORT {
 #include <lite3d/kazmath/vec2.h>
 #include <lite3d/kazmath/vec3.h>
 #include <lite3d/kazmath/vec4.h>
-    
-#ifdef __cplusplus
-}
-#endif
 
 #endif	/* LITE3D_KAZMATH_H */
 

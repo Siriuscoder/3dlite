@@ -30,13 +30,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "vec2.h"
 #include "utility.h"
 
-const kmVec2 KM_VEC2_POS_Y = { 0, 1 };
-const kmVec2 KM_VEC2_NEG_Y = { 0, -1 };
-const kmVec2 KM_VEC2_NEG_X = { -1, 0 };
-const kmVec2 KM_VEC2_POS_X = { 1, 0 };
-const kmVec2 KM_VEC2_ZERO = { 0, 0 };
-const kmVec2 KM_VEC2_ONE = { 1, 1 };
-
 kmVec2* kmVec2Fill(kmVec2* pOut, kmScalar x, kmScalar y)
 {
     pOut->x = x;
