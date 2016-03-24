@@ -32,7 +32,7 @@ namespace lite3dpp
         ~ConfigurationReader();
 
         int32_t getInt(const WString &name, int32_t def = 0) const;
-        double getDouble(const WString &name, double def = 0) const;
+        float getDouble(const WString &name, float def = 0) const;
         bool getBool(const WString &name, bool def = true) const;
         String getString(const WString &name, const String &def = "") const;
         ConfigurationReader getObject(const WString &name) const;
@@ -40,7 +40,7 @@ namespace lite3dpp
         stl<ConfigurationReader>::vector getObjects(const WString &name) const;
         stl<String>::vector getStrings(const WString &name) const;
         stl<int32_t>::vector getInts(const WString &name) const;
-        stl<double>::vector getFloats(const WString &name) const;
+        stl<float>::vector getFloats(const WString &name) const;
         stl<bool>::vector getBools(const WString &name) const;
 
         kmVec2 getVec2(const WString &name, const kmVec2 &def = KM_VEC2_ZERO) const;

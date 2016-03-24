@@ -42,10 +42,10 @@ namespace lite3dpp
     void ConfigurationWriter::set(const WString &name, int32_t value)
     {
         remove(name);
-        mObject[name] = new JSONValue((double)value);
+        mObject[name] = new JSONValue((float)value);
     }
 
-    void ConfigurationWriter::set(const WString &name, double value)
+    void ConfigurationWriter::set(const WString &name, float value)
     {
         remove(name);
         mObject[name] = new JSONValue(value);
@@ -117,17 +117,17 @@ namespace lite3dpp
         JSONArray jarray;
         for(const int32_t object : ints)
         {
-            jarray.push_back(new JSONValue((double)object));
+            jarray.push_back(new JSONValue((float)object));
         }
 
         mObject[name] = new JSONValue(jarray);
     }
     
-    void ConfigurationWriter::set(const WString &name, const stl<double>::vector &floats)
+    void ConfigurationWriter::set(const WString &name, const stl<float>::vector &floats)
     {
         remove(name);
         JSONArray jarray;
-        for(const double object : floats)
+        for(const float object : floats)
         {
             jarray.push_back(new JSONValue(object));
         }
@@ -150,14 +150,14 @@ namespace lite3dpp
     void ConfigurationWriter::set(const WString &name, const kmVec2 &value)
     {
         remove(name);
-        stl<double>::vector vec(&value.x, &value.x+2);
+        stl<float>::vector vec(&value.x, &value.x+2);
         set(name, vec);
     }
     
     void ConfigurationWriter::set(const WString &name, const kmVec3 &value)
     {
         remove(name);
-        stl<double>::vector vec(&value.x, &value.x+3);
+        stl<float>::vector vec(&value.x, &value.x+3);
         set(name, vec);
     }
      
@@ -165,21 +165,21 @@ namespace lite3dpp
     void ConfigurationWriter::set(const WString &name, const kmVec4 &value)
     {
         remove(name);
-        stl<double>::vector vec(&value.x, &value.x+4);
+        stl<float>::vector vec(&value.x, &value.x+4);
         set(name, vec);
     }
      
     void ConfigurationWriter::set(const WString &name, const kmQuaternion &value)
     {
         remove(name);
-        stl<double>::vector vec(&value.x, &value.x+4);
+        stl<float>::vector vec(&value.x, &value.x+4);
         set(name, vec);
     }
      
     void ConfigurationWriter::set(const WString &name, const kmMat4 &value)
     {
         remove(name);
-        stl<double>::vector mat(value.mat, value.mat+16);
+        stl<float>::vector mat(value.mat, value.mat+16);
         set(name, mat);
     }
 

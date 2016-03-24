@@ -109,7 +109,7 @@ namespace lite3dpp
         return def;
     }
 
-    double ConfigurationReader::getDouble(const WString &name, double def) const
+    float ConfigurationReader::getDouble(const WString &name, float def) const
     {
         JSONObject::const_iterator it = mObject.find(name);
         if (it != mObject.end() && it->second->IsNumber())
@@ -301,10 +301,10 @@ namespace lite3dpp
         return result;
     }
 
-    stl<double>::vector ConfigurationReader::getFloats(const WString &name) const
+    stl<float>::vector ConfigurationReader::getFloats(const WString &name) const
     {
         JSONObject::const_iterator it = mObject.find(name);
-        stl<double>::vector result;
+        stl<float>::vector result;
 
         if (it != mObject.end() && it->second->IsArray())
         {

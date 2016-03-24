@@ -15,7 +15,7 @@
         "Caption": "Vault Scene",
         "ColorBits": 24,
         "Fullscreen": false,
-        "FSAA": 4,
+        "FSAA": 1,
         "VSync": true
     },
     // resource locations

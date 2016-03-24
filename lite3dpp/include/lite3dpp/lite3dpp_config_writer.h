@@ -31,7 +31,7 @@ namespace lite3dpp
         ~ConfigurationWriter();
 
         void set(const WString &name, int32_t value);
-        void set(const WString &name, double value);
+        void set(const WString &name, float value);
         void set(const WString &name, bool value);
         void set(const WString &name, const WString &value);
         void set(const WString &name, const String &value);
@@ -42,7 +42,7 @@ namespace lite3dpp
         void set(const WString &name, const stl<ConfigurationWriter>::vector &objects);
         void set(const WString &name, const stl<WString>::vector &strings);
         void set(const WString &name, const stl<int32_t>::vector &ints);
-        void set(const WString &name, const stl<double>::vector &floats);
+        void set(const WString &name, const stl<float>::vector &floats);
         void set(const WString &name, const stl<bool>::vector &bools);
 
         void set(const WString &name, const kmVec2 &value);

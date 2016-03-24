@@ -43,7 +43,7 @@ class JSONValue : public lite3dpp::Manageable
         JSONValue(const wchar_t *m_char_value);
         JSONValue(const lite3dpp::WString &m_string_value);
         JSONValue(bool m_bool_value);
-        JSONValue(double m_number_value);
+        JSONValue(float m_number_value);
         JSONValue(const JSONArray &m_array_value);
         JSONValue(const JSONObject &m_object_value);
         ~JSONValue();
@@ -52,7 +52,7 @@ class JSONValue : public lite3dpp::Manageable
         void setValue(const wchar_t *m_char_value);
         void setValue(const lite3dpp::WString &m_string_value);
         void setValue(bool m_bool_value);
-        void setValue(double m_number_value);
+        void setValue(float m_number_value);
         void setValue(const JSONArray &m_array_value);
         void setValue(const JSONObject &m_object_value);
 
@@ -65,7 +65,7 @@ class JSONValue : public lite3dpp::Manageable
 
         const lite3dpp::WString &AsString() const;
         bool AsBool() const;
-        double AsNumber() const;
+        float AsNumber() const;
         int AsInt() const;
         const JSONArray &AsArray() const;
         const JSONObject &AsObject() const;
@@ -90,7 +90,7 @@ class JSONValue : public lite3dpp::Manageable
         JSONType type;
         lite3dpp::WString string_value;
         bool bool_value;
-        double number_value;
+        float number_value;
         JSONArray array_value;
         JSONObject object_value;
 };

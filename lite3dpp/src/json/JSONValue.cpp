@@ -80,7 +80,7 @@ JSONValue *JSONValue::Parse(const wchar_t **data)
         bool neg = **data == L'-';
         if (neg) (*data)++;
 
-        double number = 0.0;
+        float number = 0.0;
 
         // Parse the whole part of the number - only if it wasn't 0
         if (**data == L'0')
@@ -102,7 +102,7 @@ JSONValue *JSONValue::Parse(const wchar_t **data)
             // Find the decimal and sort the decimal place out
             // Use ParseDecimal as ParseInt won't work with decimals less than 0.1
             // thanks to Javier Abadia for the report & fix
-            double decimal = JSON::ParseDecimal(data);
+            float decimal = JSON::ParseDecimal(data);
 
             // Save the number
             number += decimal;
@@ -126,8 +126,8 @@ JSONValue *JSONValue::Parse(const wchar_t **data)
                 return NULL;
 
             // Sort the expo out
-            double expo = JSON::ParseInt(data);
-            for (double i = 0.0; i < expo; i++)
+            float expo = JSON::ParseInt(data);
+            for (float i = 0.0; i < expo; i++)
                 number = neg_expo ? (number / 10.0) : (number * 10.0);
         }
 
@@ -324,7 +324,7 @@ void JSONValue::setValue(bool m_bool_value)
     bool_value = m_bool_value;
 }
 
-void JSONValue::setValue(double m_number_value)
+void JSONValue::setValue(float m_number_value)
 {
     type = JSONType_Number;
     number_value = m_number_value;
@@ -394,9 +394,9 @@ JSONValue::JSONValue(bool m_bool_value)
  *
  * @access public
  *
- * @param double m_number_value The number to use as the value
+ * @param float m_number_value The number to use as the value
  */
-JSONValue::JSONValue(double m_number_value)
+JSONValue::JSONValue(float m_number_value)
 {
     setValue(m_number_value);
 }
@@ -553,9 +553,9 @@ bool JSONValue::AsBool() const
  *
  * @access public
  *
- * @return double Returns the number value
+ * @return float Returns the number value
  */
-double JSONValue::AsNumber() const
+float JSONValue::AsNumber() const
 {
     return number_value;
 }
