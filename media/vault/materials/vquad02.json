@@ -1,0 +1,76 @@
+{
+  "Passes":[
+    {
+      "Pass":1.0000000000,
+      "Program":{
+        "Name":"vault.program",
+        "Path":"vaultmat:shaders/json/vault.json"
+      },
+      "Blending":true,
+      //  
+      // Traditional blend algorithm:
+      // Orgb = Sa * Srgb + (1 - Sa) * Drgb
+      // Oa = 1 * Sa + 0 * Da = Sa
+      //
+      // Traditional blend algorithm with alpha blend: (TraditionalWithAlpha)
+      // Orgb = Sa * Srgb + (1 - Sa) * Drgb
+      // Oa = 1 * Sa + (1 - Sa) * Da
+      "Blendingmode":"traditional"
+    }
+  ],
+  "Uniforms":[
+    {
+      "Name":"projectionMatrix"
+    },
+    {
+      "Name":"modelviewMatrix"
+    },
+    {
+      "Name":"viewMatrix"
+    },
+    {
+      "Name":"modelMatrix"
+    },
+    {
+      "Name":"mode",
+      "Type":"float",
+      // 1 - diffuse, 2 - texture, 3 - diffuse + normal
+      "Value":1,
+      "Scope":"global"
+    },
+    {
+      "Name":"ambient",
+      "Type":"v4",
+      "Value":[
+        0.15,0.15,0.15,1
+      ]
+    },
+    {
+      "Name":"diffuse",
+      "Type":"v4",
+      "Value":[
+        0.4,0.0,1.0,1
+      ]
+    },
+    {
+      "Name":"specular",
+      "Type":"v4",
+      "Value":[
+        0.2,0.2,0.2,1
+      ]
+    },
+    {
+      "Name":"emissive",
+      "Type":"v4",
+      "Value":[
+        0,0,0,1
+      ]
+    },
+    {
+      "Name":"diffuseSampler",
+      "TextureName":"vquad02.texture",
+      "TexturePath":"vault:textures/json/vquad02.json",
+      "Type":"sampler"
+    }
+  ]
+}

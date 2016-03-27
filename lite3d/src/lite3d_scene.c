@@ -218,7 +218,6 @@ static void mqr_render_stage_first(struct lite3d_scene *scene, lite3d_camera *ca
 
 static void mqr_render_stage_second(struct lite3d_scene *scene, lite3d_camera *camera, uint16_t pass)
 {
-    lite3d_mqr_unit *mqrUnit = NULL;
     lite3d_mqr_node **mqrNode = NULL;
 
     if (scene->sortedNodesByDistance.size == 0)
@@ -226,9 +225,9 @@ static void mqr_render_stage_second(struct lite3d_scene *scene, lite3d_camera *c
 
     lite3d_array_qsort(&scene->sortedNodesByDistance, mqr_node_distance_comparator);
 
-    /* make shure what blending is enabled */
+    /* depth buffer colebrate */
     lite3d_depth_test(LITE3D_TRUE);
-    lite3d_depth_output(LITE3D_FALSE);
+    lite3d_depth_output(LITE3D_TRUE);
 
     if (scene->beginSecondStageRender)
         scene->beginSecondStageRender(scene, camera);
@@ -237,7 +236,7 @@ static void mqr_render_stage_second(struct lite3d_scene *scene, lite3d_camera *c
     {
         lite3d_material_pass_render((*mqrNode)->matUnit->material, pass,
             mqr_render_node, *mqrNode);
-        scene->stats.textureUnitsBinded += mqrUnit->material->textureUnitsBinded;
+        scene->stats.textureUnitsBinded += (*mqrNode)->matUnit->material->textureUnitsBinded;
     }
 
     lite3d_array_clean(&scene->sortedNodesByDistance);
@@ -315,12 +314,6 @@ static void scene_recursive_nodes_update(lite3d_scene *scene,
     {
         child = LITE3D_MEMBERCAST(lite3d_scene_node, nodeLink, nodeLink);
         child->recalc = recalcNode ? LITE3D_TRUE : child->recalc;
-
-        if(child->recalc == 1)
-        {
-            int jj = 0;
-        }
-
         scene_recursive_nodes_update(scene, child, camera);
     }
 

@@ -1,0 +1,23 @@
+uniform vec4 ambient;
+uniform vec4 diffuse;
+uniform vec4 specular;
+uniform vec4 emissive;
+uniform float mode;
+uniform sampler2D diffuseSampler;
+
+const vec3 lightDir = vec3(0.0, 1.0, 1.0);
+
+varying vec3 vnormal;
+varying vec2 vtcoords;
+
+void main()
+{
+	vec4 fragDiffuse = diffuse;
+	if (mode == 2)
+	{
+		fragDiffuse = texture2D(diffuseSampler, vtcoords.st);
+	}
+
+	float nDotL = clamp(dot(vnormal, lightDir), ambient.x, 1);
+	gl_FragColor = vec4(fragDiffuse.xyz * nDotL, fragDiffuse.w);
+}

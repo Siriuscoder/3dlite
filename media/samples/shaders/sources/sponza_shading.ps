@@ -5,8 +5,11 @@ uniform vec4 specular;
 uniform vec4 emissive;
 
 varying vec2 tcoords;
+varying vec3 vnormal;
 
 void main()
 {
-	gl_FragColor = texture2D(diffuseSampler, tcoords.st) * ambient;
+    vec3 lightDir = vec3(0.0, 1.0, 1.0);
+    float nDotL = clamp(dot(vnormal, lightDir), 0.2, 1);
+	gl_FragColor = texture2D(diffuseSampler, tcoords.st) * nDotL;
 }

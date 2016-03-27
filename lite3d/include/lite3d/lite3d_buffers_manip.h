@@ -58,7 +58,7 @@ LITE3D_CEXPORT void lite3d_buffers_clear_values(const kmVec4 *color, float depth
 
     Traditional blend algorithm with alpha blend:
     Orgb = Sa * Srgb + (1 - Sa) * Drgb
-    Oa = 1 * Sa + (1 - Sa) * Da = Sa
+    Oa = 1 * Sa + (1 - Sa) * Da
 */
 LITE3D_CEXPORT void lite3d_blending_mode_set(uint8_t mode);
 LITE3D_CEXPORT void lite3d_blending(uint8_t on);
