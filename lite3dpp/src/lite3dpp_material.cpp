@@ -18,8 +18,11 @@
 #include <SDL_log.h>
 #include <SDL_assert.h>
 
+#include <lite3d/lite3d_buffers_manip.h>
 #include <lite3dpp/lite3dpp_main.h>
 #include <lite3dpp/lite3dpp_material.h>
+
+lite3dpp::Material::MaterialParameters lite3dpp::Material::mGlobalParameters;
 
 namespace lite3dpp
 {
@@ -42,6 +45,11 @@ namespace lite3dpp
             ConfigurationReader programJson = passJson.getObject(L"Program");
             setPassProgram(passNo, mMain->getResourceManager()->queryResource<ShaderProgram>(programJson.getString(L"Name"),
                 programJson.getString(L"Path")));
+            
+            lite3dpp::String bMode = passJson.getString(L"BlendingMode", "traditional");
+            setPassBlendMode(passNo, passJson.getBool(L"Blending", false), 
+                bMode == "Traditional" ? LITE3D_BLENDING_MODE_TRADITIONAL : 
+                LITE3D_BLENDING_MODE_TRADITIONAL_WITH_ALPHA_BLEND);
 
             parseParameteres(passJson, passNo);
         }
@@ -54,7 +62,7 @@ namespace lite3dpp
         for(const ConfigurationReader &uniformParamJson : passJson.getObjects(L"Uniforms"))
         {
             String paramName = uniformParamJson.getString(L"Name");
-            /* check for global parameters */
+            /* check for built-in parameters */
             if(paramName == "projectionMatrix")
                 addParameter(lite3d_material_get_pass(&mMaterial, passNo),
                     &lite3d_shader_global_parameters()->projectionMatrix);
@@ -74,16 +82,17 @@ namespace lite3dpp
             /* user parameters */
             {
                 String paramType = uniformParamJson.getString(L"Type");
+                String scope = uniformParamJson.getString(L"Scope", "local");
                 if(paramType == "float")
-                    setFloatParameter(passNo, paramName, uniformParamJson.getDouble(L"Value"));
-                if(paramType == "v3")
-                    setFloatv3Parameter(passNo, paramName, uniformParamJson.getVec3(L"Value"));
-                if(paramType == "v4")
-                    setFloatv4Parameter(passNo, paramName, uniformParamJson.getVec4(L"Value"));
-                if(paramType == "sampler")
+                    setFloatParameter(passNo, paramName, uniformParamJson.getDouble(L"Value"), scope == "global");
+                else if(paramType == "v3")
+                    setFloatv3Parameter(passNo, paramName, uniformParamJson.getVec3(L"Value"), scope == "global");
+                else if(paramType == "v4")
+                    setFloatv4Parameter(passNo, paramName, uniformParamJson.getVec4(L"Value"), scope == "global");
+                else if(paramType == "sampler")
                     setSamplerTextureParameter(passNo, paramName, 
                         mMain->getResourceManager()->queryResource<Texture>(uniformParamJson.getString(L"TextureName"),
-                        uniformParamJson.getString(L"TexturePath")));
+                        uniformParamJson.getString(L"TexturePath")), scope == "global");
             }
         }
     }
@@ -102,12 +111,23 @@ namespace lite3dpp
         if(!(passPtr = lite3d_material_add_pass(&mMaterial, passNo)))
             throw std::runtime_error(String("Material \"") + getName() + "\" add pass failed..");
         
-        for(MaterialParameters::value_type &parameter : mMaterialParameters)
+        /* add local parameters to new pass */
+        for(auto &parameter : mMaterialParameters)
         {
             /* meant that this parameter must used in all passes */
             if(std::get<0>(parameter.second) == NULL)
             {
                 lite3d_material_pass_add_parameter(passPtr, &std::get<1>(parameter.second));
+            }
+        }
+        
+        /* add global parameters to new pass */
+        for(auto &nameParam : mGlobalParamNames)
+        {
+            /* meant that this parameter must used in all passes */
+            if(nameParam.second == NULL)
+            {
+                lite3d_material_pass_add_parameter(passPtr, &std::get<1>(mGlobalParameters[nameParam.first]));
             }
         }
         
@@ -136,6 +156,16 @@ namespace lite3dpp
         mPasses.erase(pass);
     }
     
+    void Material::setPassBlendMode(uint16_t pass, bool blendEnable, uint8_t mode)
+    {
+        lite3d_material_pass *passPtr = lite3d_material_get_pass(&mMaterial, pass);
+        if(!passPtr)
+            throw std::runtime_error(String("Material \"") + getName() + "\" pass not found..");
+        
+        passPtr->blending = blendEnable ? LITE3D_TRUE : LITE3D_FALSE;
+        passPtr->blendingMode = mode;
+    }
+    
     void Material::setPassProgram(uint16_t pass, ShaderProgram *program)
     {
         lite3d_material_pass *passPtr = lite3d_material_get_pass(&mMaterial, pass);
@@ -156,7 +186,7 @@ namespace lite3dpp
         return static_cast<ShaderProgram *>(passPtr->program->userdata);
     }
     
-    void Material::setFloatParameter(uint16_t pass, const String &name, float value)
+    void Material::setFloatParameter(uint16_t pass, const String &name, float value, bool isGlobal)
     {
         lite3d_material_pass *passPtr = NULL;
         lite3d_shader_parameter *parameterPtr;
@@ -168,7 +198,7 @@ namespace lite3dpp
                 throw std::runtime_error(String("Material \"") + getName() + "\" pass not found..");
         }
 
-        parameterPtr = getParameter(name, LITE3D_SHADER_PARAMETER_FLOAT, passPtr);
+        parameterPtr = getParameter(name, LITE3D_SHADER_PARAMETER_FLOAT, passPtr, isGlobal);
         SDL_assert_release(parameterPtr);
 
         /* update value */
@@ -177,7 +207,7 @@ namespace lite3dpp
         addParameter(passPtr, parameterPtr);
     }
     
-    void Material::setFloatv3Parameter(uint16_t pass, const String &name, const kmVec3 &value)
+    void Material::setFloatv3Parameter(uint16_t pass, const String &name, const kmVec3 &value, bool isGlobal)
     {
         lite3d_material_pass *passPtr = NULL;
         lite3d_shader_parameter *parameterPtr;
@@ -189,7 +219,7 @@ namespace lite3dpp
                 throw std::runtime_error(String("Material \"") + getName() + "\" pass not found..");
         }
 
-        parameterPtr = getParameter(name, LITE3D_SHADER_PARAMETER_FLOATV3, passPtr);
+        parameterPtr = getParameter(name, LITE3D_SHADER_PARAMETER_FLOATV3, passPtr, isGlobal);
         SDL_assert_release(parameterPtr);
 
         /* update value */
@@ -198,7 +228,7 @@ namespace lite3dpp
         addParameter(passPtr, parameterPtr);
     }
     
-    void Material::setFloatv4Parameter(uint16_t pass, const String &name, const kmVec4 &value)
+    void Material::setFloatv4Parameter(uint16_t pass, const String &name, const kmVec4 &value, bool isGlobal)
     {
         lite3d_material_pass *passPtr = NULL;
         lite3d_shader_parameter *parameterPtr;
@@ -210,7 +240,7 @@ namespace lite3dpp
                 throw std::runtime_error(String("Material \"") + getName() + "\" pass not found..");
         }
 
-        parameterPtr = getParameter(name, LITE3D_SHADER_PARAMETER_FLOATV4, passPtr);
+        parameterPtr = getParameter(name, LITE3D_SHADER_PARAMETER_FLOATV4, passPtr, isGlobal);
         SDL_assert_release(parameterPtr);
 
         /* update value */
@@ -219,7 +249,7 @@ namespace lite3dpp
         addParameter(passPtr, parameterPtr);
     }
     
-    void Material::setFloatm3Parameter(uint16_t pass, const String &name, const kmMat3 &value)
+    void Material::setFloatm3Parameter(uint16_t pass, const String &name, const kmMat3 &value, bool isGlobal)
     {
         lite3d_material_pass *passPtr = NULL;
         lite3d_shader_parameter *parameterPtr;
@@ -231,7 +261,7 @@ namespace lite3dpp
                 throw std::runtime_error(String("Material \"") + getName() + "\" pass not found..");
         }
 
-        parameterPtr = getParameter(name, LITE3D_SHADER_PARAMETER_FLOATM3, passPtr);
+        parameterPtr = getParameter(name, LITE3D_SHADER_PARAMETER_FLOATM3, passPtr, isGlobal);
         SDL_assert_release(parameterPtr);
 
         /* update value */
@@ -240,7 +270,7 @@ namespace lite3dpp
         addParameter(passPtr, parameterPtr);
     }
     
-    void Material::setFloatm4Parameter(uint16_t pass, const String &name, const kmMat4 &value)
+    void Material::setFloatm4Parameter(uint16_t pass, const String &name, const kmMat4 &value, bool isGlobal)
     {
         lite3d_material_pass *passPtr = NULL;
         lite3d_shader_parameter *parameterPtr;
@@ -252,7 +282,7 @@ namespace lite3dpp
                 throw std::runtime_error(String("Material \"") + getName() + "\" pass not found..");
         }
 
-        parameterPtr = getParameter(name, LITE3D_SHADER_PARAMETER_FLOATM4, passPtr);
+        parameterPtr = getParameter(name, LITE3D_SHADER_PARAMETER_FLOATM4, passPtr, isGlobal);
         SDL_assert_release(parameterPtr);
 
         /* update value */
@@ -261,7 +291,7 @@ namespace lite3dpp
         addParameter(passPtr, parameterPtr);
     }
     
-    void Material::setSamplerTextureParameter(uint16_t pass, const String &name, Texture *texture)
+    void Material::setSamplerTextureParameter(uint16_t pass, const String &name, Texture *texture, bool isGlobal)
     {
         lite3d_material_pass *passPtr = NULL;
         lite3d_shader_parameter *parameterPtr;
@@ -274,7 +304,7 @@ namespace lite3dpp
                 throw std::runtime_error(String("Material \"") + getName() + "\" pass not found..");
         }
 
-        parameterPtr = getParameter(name, LITE3D_SHADER_PARAMETER_SAMPLER, passPtr);
+        parameterPtr = getParameter(name, LITE3D_SHADER_PARAMETER_SAMPLER, passPtr, isGlobal);
         SDL_assert_release(parameterPtr);
 
         /* update value */
@@ -285,90 +315,63 @@ namespace lite3dpp
 
     float Material::getFloatParameter(const String &name) const
     {
-        MaterialParameters::const_iterator it;
-        if((it = mMaterialParameters.find(name)) == mMaterialParameters.end())
-        {
-            if(std::get<1>(it->second).type != LITE3D_SHADER_PARAMETER_FLOAT)
-                throw std::runtime_error(String("Material \"") + getName() + "\" parameter " + name + " type mismatch");
-            return std::get<1>(it->second).parameter.valfloat;
-        }
-
-        throw std::runtime_error(String("Material \"") + getName() + "\" parameter " + name + " not found..");
+        if(mGlobalParamNames.count(name) > 0)
+            return getFloatParameterFromMap(name, getName(), mGlobalParameters);
+        
+        return getFloatParameterFromMap(name, getName(), mMaterialParameters);
     }
 
     kmVec3 Material::getFloatv3Parameter(const String &name) const
     {
-        MaterialParameters::const_iterator it;
-        if((it = mMaterialParameters.find(name)) == mMaterialParameters.end())
-        {
-            if(std::get<1>(it->second).type != LITE3D_SHADER_PARAMETER_FLOATV3)
-                throw std::runtime_error(String("Material \"") + getName() + "\" parameter " + name + " type mismatch");
-            return std::get<1>(it->second).parameter.valvec3;
-        }
-
-        throw std::runtime_error(String("Material \"") + getName() + "\" parameter " + name + " not found..");
+        if(mGlobalParamNames.count(name) > 0)
+            return getFloatv3ParameterFromMap(name, getName(), mGlobalParameters);
+        
+        return getFloatv3ParameterFromMap(name, getName(), mMaterialParameters);
     }
 
     kmVec4 Material::getFloatv4Parameter(const String &name) const
     {
-        MaterialParameters::const_iterator it;
-        if((it = mMaterialParameters.find(name)) == mMaterialParameters.end())
-        {
-            if(std::get<1>(it->second).type != LITE3D_SHADER_PARAMETER_FLOATV4)
-                throw std::runtime_error(String("Material \"") + getName() + "\" parameter " + name + " type mismatch");
-            return std::get<1>(it->second).parameter.valvec4;
-        }
-
-        throw std::runtime_error(String("Material \"") + getName() + "\" parameter " + name + " not found..");
+        if(mGlobalParamNames.count(name) > 0)
+            return getFloatv4ParameterFromMap(name, getName(), mGlobalParameters);
+        
+        return getFloatv4ParameterFromMap(name, getName(), mMaterialParameters);
     }
 
     kmMat3 Material::getFloatm3Parameter(const String &name) const
     {
-        MaterialParameters::const_iterator it;
-        if((it = mMaterialParameters.find(name)) == mMaterialParameters.end())
-        {
-            if(std::get<1>(it->second).type != LITE3D_SHADER_PARAMETER_FLOATM3)
-                throw std::runtime_error(String("Material \"") + getName() + "\" parameter " + name + " type mismatch");
-            return std::get<1>(it->second).parameter.valmat3;
-        }
-
-        throw std::runtime_error(String("Material \"") + getName() + "\" parameter " + name + " not found..");
+        if(mGlobalParamNames.count(name) > 0)
+            return getFloatm3ParameterFromMap(name, getName(), mGlobalParameters);
+        
+        return getFloatm3ParameterFromMap(name, getName(), mMaterialParameters);
     }
 
     kmMat4 Material::getFloatm4Parameter(const String &name) const
     {
-        MaterialParameters::const_iterator it;
-        if((it = mMaterialParameters.find(name)) == mMaterialParameters.end())
-        {
-            if(std::get<1>(it->second).type != LITE3D_SHADER_PARAMETER_FLOATM4)
-                throw std::runtime_error(String("Material \"") + getName() + "\" parameter " + name + " type mismatch");
-            return std::get<1>(it->second).parameter.valmat4;
-        }
-
-        throw std::runtime_error(String("Material \"") + getName() + "\" parameter " + name + " not found..");
+        if(mGlobalParamNames.count(name) > 0)
+            return getFloatm4ParameterFromMap(name, getName(), mGlobalParameters);
+        
+        return getFloatm4ParameterFromMap(name, getName(), mMaterialParameters);
     }
 
     Texture *Material::getSamplerTextureParameter(const String &name) const
     {
-        MaterialParameters::const_iterator it;
-        if((it = mMaterialParameters.find(name)) == mMaterialParameters.end())
-        {
-            if(std::get<1>(it->second).type != LITE3D_SHADER_PARAMETER_SAMPLER)
-                throw std::runtime_error(String("Material \"") + getName() + "\" parameter " + name + " type mismatch");
-
-            if(!std::get<1>(it->second).parameter.valsampler.texture || !std::get<1>(it->second).parameter.valsampler.texture->userdata)
-                throw std::runtime_error(String("Material \"") + getName() + "\" parameter " + name + " not set");
-
-            return static_cast<Texture *>(std::get<1>(it->second).parameter.valsampler.texture->userdata);
-        }
-
-        throw std::runtime_error(String("Material \"") + getName() + "\" parameter " + name + " not found..");
+        if(mGlobalParamNames.count(name) > 0)
+            return getSamplerTextureParameterFromMap(name, getName(), mGlobalParameters);
+        
+        return getSamplerTextureParameterFromMap(name, getName(), mMaterialParameters);
     }
 
     lite3d_shader_parameter *Material::getParameter(const String &name, 
-        uint8_t type, lite3d_material_pass *passPtr)
+        uint8_t type, lite3d_material_pass *passPtr, bool isGlobal)
     {
         MaterialParameters::iterator it;
+
+        if(isGlobal)
+        {
+            mGlobalParamNames.insert(std::make_pair(name, passPtr));
+            return getGlobalParameter(name, type);
+        }
+
         if((it = mMaterialParameters.find(name)) == mMaterialParameters.end())
         {
             auto result = mMaterialParameters.insert(std::make_pair(name, std::make_tuple(passPtr, lite3d_shader_parameter())));
@@ -383,6 +386,28 @@ namespace lite3dpp
 
         return &std::get<1>(it->second);
     }
+    
+    lite3d_shader_parameter *Material::getGlobalParameter(const String &name, 
+        uint8_t type)
+    {
+        MaterialParameters::iterator it;
+        lite3d_material_pass *passPtr = NULL;
+
+        if((it = mGlobalParameters.find(name)) == mGlobalParameters.end())
+        {
+            auto result = mGlobalParameters.insert(std::make_pair(name, 
+                std::make_tuple(passPtr, lite3d_shader_parameter())));
+            it = result.first;
+            
+            lite3d_shader_parameter_init(&std::get<1>(it->second));
+            
+            name.copy(std::get<1>(it->second).name, sizeof(std::get<1>(it->second).name)-1);
+            std::get<1>(it->second).type = type;
+        }
+
+        return &std::get<1>(it->second);
+    }
+    
 
     void Material::addParameter(lite3d_material_pass *passPtr, lite3d_shader_parameter *parameterPtr)
     {
@@ -393,6 +418,184 @@ namespace lite3dpp
             for(Passes::value_type &passEntry : mPasses)
                 lite3d_material_pass_add_parameter(passEntry.second, parameterPtr);
         }
+    }
+    
+    void Material::setFloatGlobalParameter(const String &name, float value)
+    {
+        lite3d_shader_parameter *parameterPtr;
+
+        parameterPtr = getGlobalParameter(name, LITE3D_SHADER_PARAMETER_FLOAT);
+        SDL_assert_release(parameterPtr);
+
+        /* update value */
+        parameterPtr->parameter.valfloat = value;
+    }
+    
+    void Material::setFloatv3GlobalParameter(const String &name, const kmVec3 &value)
+    {
+        lite3d_shader_parameter *parameterPtr;
+
+        parameterPtr = getGlobalParameter(name, LITE3D_SHADER_PARAMETER_FLOATV3);
+        SDL_assert_release(parameterPtr);
+
+        /* update value */
+        parameterPtr->parameter.valvec3 = value;        
+    }
+    
+    void Material::setFloatv4GlobalParameter(const String &name, const kmVec4 &value)
+    {
+        lite3d_shader_parameter *parameterPtr;
+
+        parameterPtr = getGlobalParameter(name, LITE3D_SHADER_PARAMETER_FLOATV4);
+        SDL_assert_release(parameterPtr);
+
+        /* update value */
+        parameterPtr->parameter.valvec4 = value;
+    }
+    
+    void Material::setFloatm3GlobalParameter(const String &name, const kmMat3 &value)
+    {
+        lite3d_shader_parameter *parameterPtr;
+
+        parameterPtr = getGlobalParameter(name, LITE3D_SHADER_PARAMETER_FLOATM3);
+        SDL_assert_release(parameterPtr);
+
+        /* update value */
+        parameterPtr->parameter.valmat3 = value;      
+    }
+    
+    void Material::setFloatm4GlobalParameter(const String &name, const kmMat4 &value)
+    {
+        lite3d_shader_parameter *parameterPtr;
+
+        parameterPtr = getGlobalParameter(name, LITE3D_SHADER_PARAMETER_FLOATM4);
+        SDL_assert_release(parameterPtr);
+
+        /* update value */
+        parameterPtr->parameter.valmat4 = value;
+    }
+    
+    void Material::setSamplerTextureGlobalParameter(const String &name, Texture *texture)
+    {
+        lite3d_shader_parameter *parameterPtr;
+
+        parameterPtr = getGlobalParameter(name, LITE3D_SHADER_PARAMETER_SAMPLER);
+        SDL_assert_release(parameterPtr);
+
+        /* update value */
+        parameterPtr->parameter.valsampler.texture = texture->getPtr();
+    }
+        
+    float Material::getFloatGlobalParameter(const String &name)
+    {
+        return getFloatParameterFromMap(name, "...", mGlobalParameters);
+    }
+    
+    kmVec3 Material::getFloatv3GlobalParameter(const String &name)
+    {
+        return getFloatv3ParameterFromMap(name, "...", mGlobalParameters);        
+    }
+    
+    kmVec4 Material::getFloatv4GlobalParameter(const String &name)
+    {
+        return getFloatv4ParameterFromMap(name, "...", mGlobalParameters);        
+    }
+    
+    kmMat3 Material::getFloatm3GlobalParameter(const String &name)
+    {
+        return getFloatm3ParameterFromMap(name, "...", mGlobalParameters);        
+    }
+    
+    kmMat4 Material::getFloatm4GlobalParameter(const String &name)
+    {
+        return getFloatm4ParameterFromMap(name, "...", mGlobalParameters);        
+    }
+    
+    Texture *Material::getSamplerTextureGlobalParameter(const String &name)
+    {
+        return getSamplerTextureParameterFromMap(name, "...", mGlobalParameters);        
+    }
+
+    float Material::getFloatParameterFromMap(const String &name, const String &matName, const MaterialParameters &params)
+    {
+        MaterialParameters::const_iterator it;
+        if((it = params.find(name)) == params.end())
+        {
+            if(std::get<1>(it->second).type != LITE3D_SHADER_PARAMETER_FLOAT)
+                throw std::runtime_error(String("Material \"") + matName + "\" parameter " + name + " type mismatch");
+            return std::get<1>(it->second).parameter.valfloat;
+        }
+
+        throw std::runtime_error(String("Material \"") + matName + "\" parameter " + name + " not found..");
+    }
+
+    kmVec3 Material::getFloatv3ParameterFromMap(const String &name, const String &matName, const MaterialParameters &params)
+    {
+        MaterialParameters::const_iterator it;
+        if((it = params.find(name)) == params.end())
+        {
+            if(std::get<1>(it->second).type != LITE3D_SHADER_PARAMETER_FLOATV3)
+                throw std::runtime_error(String("Material \"") + matName + "\" parameter " + name + " type mismatch");
+            return std::get<1>(it->second).parameter.valvec3;
+        }
+
+        throw std::runtime_error(String("Material \"") + matName + "\" parameter " + name + " not found..");
+    }
+
+    kmVec4 Material::getFloatv4ParameterFromMap(const String &name, const String &matName, const MaterialParameters &params)
+    {
+        MaterialParameters::const_iterator it;
+        if((it = params.find(name)) == params.end())
+        {
+            if(std::get<1>(it->second).type != LITE3D_SHADER_PARAMETER_FLOATV4)
+                throw std::runtime_error(String("Material \"") + matName + "\" parameter " + name + " type mismatch");
+            return std::get<1>(it->second).parameter.valvec4;
+        }
+
+        throw std::runtime_error(String("Material \"") + matName + "\" parameter " + name + " not found..");
+    }
+
+    kmMat3 Material::getFloatm3ParameterFromMap(const String &name, const String &matName, const MaterialParameters &params)
+    {
+        MaterialParameters::const_iterator it;
+        if((it = params.find(name)) == params.end())
+        {
+            if(std::get<1>(it->second).type != LITE3D_SHADER_PARAMETER_FLOATM3)
+                throw std::runtime_error(String("Material \"") + matName + "\" parameter " + name + " type mismatch");
+            return std::get<1>(it->second).parameter.valmat3;
+        }
+
+        throw std::runtime_error(String("Material \"") + matName + "\" parameter " + name + " not found..");
+    }
+
+    kmMat4 Material::getFloatm4ParameterFromMap(const String &name, const String &matName, const MaterialParameters &params)
+    {
+        MaterialParameters::const_iterator it;
+        if((it = params.find(name)) == params.end())
+        {
+            if(std::get<1>(it->second).type != LITE3D_SHADER_PARAMETER_FLOATM4)
+                throw std::runtime_error(String("Material \"") + matName + "\" parameter " + name + " type mismatch");
+            return std::get<1>(it->second).parameter.valmat4;
+        }
+
+        throw std::runtime_error(String("Material \"") + matName + "\" parameter " + name + " not found..");
+    }
+
+    Texture *Material::getSamplerTextureParameterFromMap(const String &name, const String &matName, const MaterialParameters &params)
+    {
+        MaterialParameters::const_iterator it;
+        if((it = params.find(name)) == params.end())
+        {
+            if(std::get<1>(it->second).type != LITE3D_SHADER_PARAMETER_SAMPLER)
+                throw std::runtime_error(String("Material \"") + matName + "\" parameter " + name + " type mismatch");
+
+            if(!std::get<1>(it->second).parameter.valsampler.texture || !std::get<1>(it->second).parameter.valsampler.texture->userdata)
+                throw std::runtime_error(String("Material \"") + matName + "\" parameter " + name + " not set");
+
+            return static_cast<Texture *>(std::get<1>(it->second).parameter.valsampler.texture->userdata);
+        }
+
+        throw std::runtime_error(String("Material \"") + matName + "\" parameter " + name + " not found..");
     }
 }
 

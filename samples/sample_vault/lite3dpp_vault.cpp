@@ -26,13 +26,14 @@ class SampleLifecycleListener : public lite3dpp::Main::LifecycleListener
 public:
 
     SampleLifecycleListener(lite3dpp::Main *main) : 
-        mMain(main)
+        mMain(main),
+        mMode(1)
     {}
 
     void init() override
     {
         lite3dpp::Scene *scene = mMain->getResourceManager()->queryResource<lite3dpp::Scene>("Vault",
-            "vault:scenes/vault.json");
+            "vaultmat:scenes/vault.json");
         mCamera = scene->getCamera("MyCamera");
         mWindow = mMain->getResourceManager()->queryResource<lite3dpp::WindowRenderTarget>("MainWindow");
         
@@ -98,6 +99,15 @@ public:
             {
                 printStats();
             }
+            else if (e->key.keysym.sym == SDLK_m)
+            {
+                if (mMode == 1)
+                    mMode = 2;
+                else 
+                    mMode = 1;
+                
+                lite3dpp::Material::setFloatGlobalParameter("mode", (float)mMode);
+            }
         }
         else if(e->type == SDL_MOUSEMOTION)
         {
@@ -131,6 +141,7 @@ private:
     int mSenterXPos;
     int mSenterYPos;
     lite3d_timer *mStatRerfeshTimer;
+    int mMode;
 };
 
 int main(int agrc, char *args[])

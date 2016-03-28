@@ -7,7 +7,7 @@ About
 -----
 Lite weight 3d/2d graphics rendering helper. "Engine" is not correct word for this library. 
 It is disigned as adapter from low level OpenGL API to more simple high level API. This API containes some high level 
-conceps like scene, material, mesh, shader.. etc. whereas OpenGL API provides low level conceps like Framebuffer, 
+conceps like scene, material, mesh, shader.. etc. whereas OpenGL API provides low level concepts like Framebuffer, 
 vertex buffer, texture buffer and others.
 
 Lite3d library suppport only OpenGL graphics API as backend for GPU operations. No sound, no phisics, graphics only!

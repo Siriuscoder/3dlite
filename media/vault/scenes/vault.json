@@ -1,0 +1,38 @@
+{
+	"Cameras":
+	[
+		{
+			"Name": "MyCamera",
+
+			"Position": [0,380,140],
+			"LookAt": [0,0,140],
+			"Perspective": 
+			{
+				"Znear": 10,
+				"Zfar": 5000,
+				"Fov": 70
+			},
+			"RenderTargets":
+			[
+				{
+					"Name": "Window",
+					"Priority": 0,
+					"TexturePass": 1
+				}
+			]
+		}
+	],
+	
+	"Objects":
+	[
+		{
+			"Name": "Vault",
+			"Object": "vault:objects/vault_static.json",
+
+			"Position": [0,0,0],
+			"Rotation": [0,0,0,1],
+			"Scale": [1,1,1]
+		}
+	]
+}
+

@@ -1,0 +1,16 @@
+{
+	"Sources": 
+	[
+		"vaultmat:shaders/sources/common.vs",
+		"vaultmat:shaders/sources/common.ps",
+		"vaultmat:shaders/sources/vault_diff.vs",
+		"vaultmat:shaders/sources/vault_diff.ps"
+	],
+	
+	"AttributesOrder":
+	[
+		"vertexAttr",
+		"normalAttr",
+		"texCoordAttr"
+	]
+}
