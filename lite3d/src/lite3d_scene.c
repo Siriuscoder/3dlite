@@ -120,8 +120,7 @@ static int mqr_node_approve(lite3d_scene *scene,
 
     if (mqrNode->node->invalidated || mqrNode->matUnit->currentCamera->cameraNode.invalidated)
     {
-        mqrNode->distanceToCamera = lite3d_frustum_distance_bouding_vol(&mqrNode->matUnit->currentCamera->frustum,
-            &mqrNode->boudingVol);
+        mqrNode->distanceToCamera = lite3d_camera_distance(mqrNode->matUnit->currentCamera, &mqrNode->boudingVol.sphereCenter);
     }
     
     if (!mqrNode->node->renderable)

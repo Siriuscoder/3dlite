@@ -94,6 +94,8 @@ LITE3D_CEXPORT void lite3d_camera_rotate_z(lite3d_camera *camera, float angle);
 LITE3D_CEXPORT void lite3d_camera_move(lite3d_camera *camera, const kmVec3 *value);
 LITE3D_CEXPORT void lite3d_camera_move_relative(lite3d_camera *camera, 
     const kmVec3 *value);
+LITE3D_CEXPORT float lite3d_camera_distance(lite3d_camera *camera, 
+    const kmVec3 *point);
 
 #endif	/* LITE3D_CAMERA_H */
 

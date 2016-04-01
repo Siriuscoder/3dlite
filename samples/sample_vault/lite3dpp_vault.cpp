@@ -42,6 +42,7 @@ public:
         lite3d_video_set_mouse_pos(mSenterXPos, mSenterYPos);
 
         mStatRerfeshTimer = mMain->addTimer("statisticURefresh", 1000);
+        lite3dpp::Material::setFloatGlobalParameter("mode", 2);
     }
 
     void shut() override
