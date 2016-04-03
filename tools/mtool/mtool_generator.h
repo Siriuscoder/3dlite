@@ -20,18 +20,31 @@
 #include <mtool_command.h>
 #include <lite3dpp/lite3dpp_config_writer.h>
 
+class GeneratorOptions
+{
+public:
+    
+    GeneratorOptions();
+    
+    lite3dpp::String outputFolder;
+    lite3dpp::String objectName;
+    lite3dpp::String texPackname;
+    lite3dpp::String imgPackname;
+    lite3dpp::String matPackname;
+    lite3dpp::String nodePackname;
+    lite3dpp::String meshPackname;
+    lite3dpp::String packname;
+    bool useDifTexNameAsMatName;
+    bool nodeUniqName;
+    
+    static const GeneratorOptions NullOptions;
+};
+
 class Generator
 {
 public:
 
-    Generator(const lite3dpp::String &outputFolder,
-        const lite3dpp::String &objectName,    
-        const lite3dpp::String &texPackname,
-        const lite3dpp::String &imgPackname,
-        const lite3dpp::String &matPackname,
-        const lite3dpp::String &nodePackname,
-        const lite3dpp::String &meshPackname,
-        bool useDifTexNameAsMatName);
+    Generator(const GeneratorOptions &options);
 
     virtual void generateNode(const lite3d_mesh *mesh, const lite3dpp::String &name, const kmMat4 *transform,
         bool meshExist) = 0;
@@ -54,14 +67,7 @@ public:
 
 protected:
 
-    lite3dpp::String mOutputFolder;
-    lite3dpp::String mObjectName;
-    lite3dpp::String mTexPackname;
-    lite3dpp::String mImgPackname;
-    lite3dpp::String mMatPackname;
-    lite3dpp::String mNodePackname;
-    lite3dpp::String mMeshPackname;
-    bool mUseDifTexNameAsMatName;
+    GeneratorOptions mOptions;
 };
 
 class NullGenerator : public Generator
@@ -94,14 +100,7 @@ class JsonGenerator : public Generator
 {
 public:
 
-    JsonGenerator(const lite3dpp::String &outputFolder,
-        const lite3dpp::String &objectName,
-        const lite3dpp::String &texPackname,
-        const lite3dpp::String &imgPackname,
-        const lite3dpp::String &matPackname,
-        const lite3dpp::String &nodePackname,
-        const lite3dpp::String &meshPackname,
-        bool useDifTexNameAsMatName);
+    JsonGenerator(const GeneratorOptions &options);
 
     virtual void generateNode(const lite3d_mesh *mesh, const lite3dpp::String &name, const kmMat4 *transform,
         bool meshExist) override;
@@ -123,10 +122,13 @@ public:
         const char *reflectionTextureFile) override;
 
 private:
+    
+    void generatePositionRotation(lite3dpp::ConfigurationWriter &writer, const kmMat4 *transform);
 
     void generateUniformSampler(lite3dpp::stl<lite3dpp::ConfigurationWriter>::vector &uniforms, const char *fileName);
     void generateUniformVec4(lite3dpp::stl<lite3dpp::ConfigurationWriter>::vector &uniforms, const lite3dpp::String &paramName, const kmVec4 *val);
 
     lite3dpp::stl<lite3dpp::stl<lite3dpp::ConfigurationWriter>::vector>::stack mNodesStack;
     lite3dpp::stl<uint32_t, lite3dpp::String>::map mMaterials;
+    int mNodeCounter;
 };

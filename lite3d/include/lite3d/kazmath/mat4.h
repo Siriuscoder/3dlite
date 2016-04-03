@@ -85,6 +85,7 @@ LITE3D_CEXPORT kmMat4* kmMat4LookAt(kmMat4* pOut, const struct kmVec3* pEye, con
 
 LITE3D_CEXPORT kmMat4* kmMat4RotationAxisAngle(kmMat4* pOut, const struct kmVec3* axis, kmScalar radians);
 LITE3D_CEXPORT struct kmMat3* kmMat4ExtractRotation(struct kmMat3* pOut, const kmMat4* pIn);
+LITE3D_CEXPORT struct kmVec3* kmMat4ExtractPosition(struct kmVec3* pOut, const kmMat4* pIn);
 LITE3D_CEXPORT struct kmPlane* kmMat4ExtractPlane(struct kmPlane* pOut, const kmMat4* pIn, const kmEnum plane);
 LITE3D_CEXPORT struct kmVec3* kmMat4RotationToAxisAngle(struct kmVec3* pAxis, kmScalar* radians, const kmMat4* pIn);
 

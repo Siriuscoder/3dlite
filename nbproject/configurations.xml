@@ -313,14 +313,6 @@
           </preprocessorList>
         </cTool>
       </folder>
-      <folder path="0/lite3d/src/kazmath">
-        <cTool>
-          <incDir>
-            <pElem>lite3d/include/lite3d/kazmath</pElem>
-            <pElem>build/lite3d</pElem>
-          </incDir>
-        </cTool>
-      </folder>
       <folder path="0/lite3dpp/src/as">
         <ccTool>
           <incDir>
@@ -333,10 +325,8 @@
         <ccTool>
           <incDir>
             <pElem>/usr/include/SDL2</pElem>
-            <pElem>build/lite3dpp</pElem>
           </incDir>
           <preprocessorList>
-            <Elem>_REENTRANT</Elem>
             <Elem>lite3dpp_EXPORTS</Elem>
           </preprocessorList>
         </ccTool>
@@ -345,10 +335,11 @@
         <ccTool>
           <incDir>
             <pElem>/usr/include/SDL2</pElem>
+            <pElem>winres</pElem>
+            <pElem>lite3dpp/include/lite3dpp/as</pElem>
             <pElem>build/lite3dpp</pElem>
           </incDir>
           <preprocessorList>
-            <Elem>_REENTRANT</Elem>
             <Elem>lite3dpp_EXPORTS</Elem>
           </preprocessorList>
         </ccTool>
@@ -589,46 +580,156 @@
       </item>
       <item path="lite3d/src/kazmath/aabb.c" ex="false" tool="0" flavor2="3">
         <cTool flags="2">
+          <incDir>
+            <pElem>lite3d/include/lite3d/kazmath</pElem>
+            <pElem>build/lite3d</pElem>
+          </incDir>
         </cTool>
       </item>
       <item path="lite3d/src/kazmath/mat3.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="2">
+        <cTool flags="3">
+          <incDir>
+            <pElem>lite3d/include/lite3d/7zdec</pElem>
+            <pElem>lite3d/include/lite3d</pElem>
+            <pElem>lite3d/include/lite3d/kazmath</pElem>
+            <pElem>/usr/include/SDL2</pElem>
+            <pElem>/usr/include/IL</pElem>
+            <pElem>winres</pElem>
+            <pElem>build/lite3d</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>GLEW_NO_GLU</Elem>
+            <Elem>GLEW_STATIC</Elem>
+            <Elem>_7ZIP_PPMD_SUPPPORT</Elem>
+            <Elem>lite3d_EXPORTS</Elem>
+          </preprocessorList>
         </cTool>
       </item>
       <item path="lite3d/src/kazmath/mat4.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="2">
+        <cTool flags="3">
+          <incDir>
+            <pElem>lite3d/include/lite3d/7zdec</pElem>
+            <pElem>lite3d/include/lite3d</pElem>
+            <pElem>lite3d/include/lite3d/kazmath</pElem>
+            <pElem>/usr/include/SDL2</pElem>
+            <pElem>/usr/include/IL</pElem>
+            <pElem>winres</pElem>
+            <pElem>build/lite3d</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>GLEW_NO_GLU</Elem>
+            <Elem>GLEW_STATIC</Elem>
+            <Elem>_7ZIP_PPMD_SUPPPORT</Elem>
+            <Elem>lite3d_EXPORTS</Elem>
+          </preprocessorList>
         </cTool>
       </item>
       <item path="lite3d/src/kazmath/plane.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="2">
+        <cTool flags="3">
+          <incDir>
+            <pElem>lite3d/include/lite3d/7zdec</pElem>
+            <pElem>lite3d/include/lite3d</pElem>
+            <pElem>lite3d/include/lite3d/kazmath</pElem>
+            <pElem>/usr/include/SDL2</pElem>
+            <pElem>/usr/include/IL</pElem>
+            <pElem>winres</pElem>
+            <pElem>build/lite3d</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>GLEW_NO_GLU</Elem>
+            <Elem>GLEW_STATIC</Elem>
+            <Elem>_7ZIP_PPMD_SUPPPORT</Elem>
+            <Elem>lite3d_EXPORTS</Elem>
+          </preprocessorList>
         </cTool>
       </item>
       <item path="lite3d/src/kazmath/quaternion.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="2">
+        <cTool flags="3">
+          <incDir>
+            <pElem>lite3d/include/lite3d/7zdec</pElem>
+            <pElem>lite3d/include/lite3d</pElem>
+            <pElem>lite3d/include/lite3d/kazmath</pElem>
+            <pElem>/usr/include/SDL2</pElem>
+            <pElem>/usr/include/IL</pElem>
+            <pElem>winres</pElem>
+            <pElem>build/lite3d</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>GLEW_NO_GLU</Elem>
+            <Elem>GLEW_STATIC</Elem>
+            <Elem>_7ZIP_PPMD_SUPPPORT</Elem>
+            <Elem>lite3d_EXPORTS</Elem>
+          </preprocessorList>
         </cTool>
       </item>
       <item path="lite3d/src/kazmath/ray2.c" ex="false" tool="0" flavor2="3">
         <cTool flags="2">
+          <incDir>
+            <pElem>lite3d/include/lite3d/kazmath</pElem>
+            <pElem>build/lite3d</pElem>
+          </incDir>
         </cTool>
       </item>
       <item path="lite3d/src/kazmath/ray3.c" ex="false" tool="0" flavor2="3">
         <cTool flags="2">
+          <incDir>
+            <pElem>lite3d/include/lite3d/kazmath</pElem>
+            <pElem>build/lite3d</pElem>
+          </incDir>
         </cTool>
       </item>
       <item path="lite3d/src/kazmath/utility.c" ex="false" tool="0" flavor2="3">
         <cTool flags="2">
+          <incDir>
+            <pElem>lite3d/include/lite3d/kazmath</pElem>
+            <pElem>build/lite3d</pElem>
+          </incDir>
         </cTool>
       </item>
       <item path="lite3d/src/kazmath/vec2.c" ex="false" tool="0" flavor2="3">
         <cTool flags="2">
+          <incDir>
+            <pElem>lite3d/include/lite3d/kazmath</pElem>
+            <pElem>build/lite3d</pElem>
+          </incDir>
         </cTool>
       </item>
       <item path="lite3d/src/kazmath/vec3.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="2">
+        <cTool flags="3">
+          <incDir>
+            <pElem>lite3d/include/lite3d/7zdec</pElem>
+            <pElem>lite3d/include/lite3d</pElem>
+            <pElem>lite3d/include/lite3d/kazmath</pElem>
+            <pElem>/usr/include/SDL2</pElem>
+            <pElem>/usr/include/IL</pElem>
+            <pElem>winres</pElem>
+            <pElem>build/lite3d</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>GLEW_NO_GLU</Elem>
+            <Elem>GLEW_STATIC</Elem>
+            <Elem>_7ZIP_PPMD_SUPPPORT</Elem>
+            <Elem>lite3d_EXPORTS</Elem>
+          </preprocessorList>
         </cTool>
       </item>
       <item path="lite3d/src/kazmath/vec4.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="2">
+        <cTool flags="3">
+          <incDir>
+            <pElem>lite3d/include/lite3d/7zdec</pElem>
+            <pElem>lite3d/include/lite3d</pElem>
+            <pElem>lite3d/include/lite3d/kazmath</pElem>
+            <pElem>/usr/include/SDL2</pElem>
+            <pElem>/usr/include/IL</pElem>
+            <pElem>winres</pElem>
+            <pElem>build/lite3d</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>GLEW_NO_GLU</Elem>
+            <Elem>GLEW_STATIC</Elem>
+            <Elem>_7ZIP_PPMD_SUPPPORT</Elem>
+            <Elem>lite3d_EXPORTS</Elem>
+          </preprocessorList>
         </cTool>
       </item>
       <item path="lite3d/src/lite3d_7z_loader.c" ex="false" tool="0" flavor2="3">
@@ -692,12 +793,18 @@
       <item path="lite3d/src/lite3d_camera.c" ex="false" tool="0" flavor2="3">
         <cTool flags="3">
           <incDir>
+            <pElem>lite3d/include/lite3d/7zdec</pElem>
+            <pElem>lite3d/include/lite3d</pElem>
+            <pElem>lite3d/include/lite3d/kazmath</pElem>
             <pElem>/usr/include/SDL2</pElem>
+            <pElem>/usr/include/IL</pElem>
+            <pElem>winres</pElem>
             <pElem>build/lite3d</pElem>
           </incDir>
           <preprocessorList>
+            <Elem>GLEW_NO_GLU</Elem>
             <Elem>GLEW_STATIC</Elem>
-            <Elem>_REENTRANT</Elem>
+            <Elem>_7ZIP_PPMD_SUPPPORT</Elem>
             <Elem>lite3d_EXPORTS</Elem>
           </preprocessorList>
         </cTool>
@@ -705,12 +812,18 @@
       <item path="lite3d/src/lite3d_framebuffer.c" ex="false" tool="0" flavor2="3">
         <cTool flags="3">
           <incDir>
+            <pElem>lite3d/include/lite3d/7zdec</pElem>
+            <pElem>lite3d/include/lite3d</pElem>
+            <pElem>lite3d/include/lite3d/kazmath</pElem>
             <pElem>/usr/include/SDL2</pElem>
+            <pElem>/usr/include/IL</pElem>
+            <pElem>winres</pElem>
             <pElem>build/lite3d</pElem>
           </incDir>
           <preprocessorList>
+            <Elem>GLEW_NO_GLU</Elem>
             <Elem>GLEW_STATIC</Elem>
-            <Elem>_REENTRANT</Elem>
+            <Elem>_7ZIP_PPMD_SUPPPORT</Elem>
             <Elem>lite3d_EXPORTS</Elem>
           </preprocessorList>
         </cTool>
@@ -718,12 +831,18 @@
       <item path="lite3d/src/lite3d_frustum.c" ex="false" tool="0" flavor2="3">
         <cTool flags="3">
           <incDir>
+            <pElem>lite3d/include/lite3d/7zdec</pElem>
+            <pElem>lite3d/include/lite3d</pElem>
+            <pElem>lite3d/include/lite3d/kazmath</pElem>
             <pElem>/usr/include/SDL2</pElem>
+            <pElem>/usr/include/IL</pElem>
+            <pElem>winres</pElem>
             <pElem>build/lite3d</pElem>
           </incDir>
           <preprocessorList>
+            <Elem>GLEW_NO_GLU</Elem>
             <Elem>GLEW_STATIC</Elem>
-            <Elem>_REENTRANT</Elem>
+            <Elem>_7ZIP_PPMD_SUPPPORT</Elem>
             <Elem>lite3d_EXPORTS</Elem>
           </preprocessorList>
         </cTool>
@@ -744,12 +863,18 @@
       <item path="lite3d/src/lite3d_logger.c" ex="false" tool="0" flavor2="3">
         <cTool flags="3">
           <incDir>
+            <pElem>lite3d/include/lite3d/7zdec</pElem>
+            <pElem>lite3d/include/lite3d</pElem>
+            <pElem>lite3d/include/lite3d/kazmath</pElem>
             <pElem>/usr/include/SDL2</pElem>
+            <pElem>/usr/include/IL</pElem>
+            <pElem>winres</pElem>
             <pElem>build/lite3d</pElem>
           </incDir>
           <preprocessorList>
+            <Elem>GLEW_NO_GLU</Elem>
             <Elem>GLEW_STATIC</Elem>
-            <Elem>_REENTRANT</Elem>
+            <Elem>_7ZIP_PPMD_SUPPPORT</Elem>
             <Elem>lite3d_EXPORTS</Elem>
           </preprocessorList>
         </cTool>
@@ -757,12 +882,18 @@
       <item path="lite3d/src/lite3d_main.c" ex="false" tool="0" flavor2="3">
         <cTool flags="3">
           <incDir>
+            <pElem>lite3d/include/lite3d/7zdec</pElem>
+            <pElem>lite3d/include/lite3d</pElem>
+            <pElem>lite3d/include/lite3d/kazmath</pElem>
             <pElem>/usr/include/SDL2</pElem>
+            <pElem>/usr/include/IL</pElem>
+            <pElem>winres</pElem>
             <pElem>build/lite3d</pElem>
           </incDir>
           <preprocessorList>
+            <Elem>GLEW_NO_GLU</Elem>
             <Elem>GLEW_STATIC</Elem>
-            <Elem>_REENTRANT</Elem>
+            <Elem>_7ZIP_PPMD_SUPPPORT</Elem>
             <Elem>lite3d_EXPORTS</Elem>
           </preprocessorList>
         </cTool>
@@ -789,12 +920,18 @@
       <item path="lite3d/src/lite3d_mesh.c" ex="false" tool="0" flavor2="3">
         <cTool flags="3">
           <incDir>
+            <pElem>lite3d/include/lite3d/7zdec</pElem>
+            <pElem>lite3d/include/lite3d</pElem>
+            <pElem>lite3d/include/lite3d/kazmath</pElem>
             <pElem>/usr/include/SDL2</pElem>
+            <pElem>/usr/include/IL</pElem>
+            <pElem>winres</pElem>
             <pElem>build/lite3d</pElem>
           </incDir>
           <preprocessorList>
+            <Elem>GLEW_NO_GLU</Elem>
             <Elem>GLEW_STATIC</Elem>
-            <Elem>_REENTRANT</Elem>
+            <Elem>_7ZIP_PPMD_SUPPPORT</Elem>
             <Elem>lite3d_EXPORTS</Elem>
           </preprocessorList>
         </cTool>
@@ -805,12 +942,18 @@
             flavor2="3">
         <cTool flags="3">
           <incDir>
+            <pElem>lite3d/include/lite3d/7zdec</pElem>
+            <pElem>lite3d/include/lite3d</pElem>
+            <pElem>lite3d/include/lite3d/kazmath</pElem>
             <pElem>/usr/include/SDL2</pElem>
+            <pElem>/usr/include/IL</pElem>
+            <pElem>winres</pElem>
             <pElem>build/lite3d</pElem>
           </incDir>
           <preprocessorList>
+            <Elem>GLEW_NO_GLU</Elem>
             <Elem>GLEW_STATIC</Elem>
-            <Elem>_REENTRANT</Elem>
+            <Elem>_7ZIP_PPMD_SUPPPORT</Elem>
             <Elem>lite3d_EXPORTS</Elem>
           </preprocessorList>
         </cTool>
@@ -818,12 +961,18 @@
       <item path="lite3d/src/lite3d_mesh_codec.c" ex="false" tool="0" flavor2="3">
         <cTool flags="3">
           <incDir>
+            <pElem>lite3d/include/lite3d/7zdec</pElem>
+            <pElem>lite3d/include/lite3d</pElem>
+            <pElem>lite3d/include/lite3d/kazmath</pElem>
             <pElem>/usr/include/SDL2</pElem>
+            <pElem>/usr/include/IL</pElem>
+            <pElem>winres</pElem>
             <pElem>build/lite3d</pElem>
           </incDir>
           <preprocessorList>
+            <Elem>GLEW_NO_GLU</Elem>
             <Elem>GLEW_STATIC</Elem>
-            <Elem>_REENTRANT</Elem>
+            <Elem>_7ZIP_PPMD_SUPPPORT</Elem>
             <Elem>lite3d_EXPORTS</Elem>
           </preprocessorList>
         </cTool>
@@ -831,12 +980,18 @@
       <item path="lite3d/src/lite3d_mesh_loader.c" ex="false" tool="0" flavor2="3">
         <cTool flags="3">
           <incDir>
+            <pElem>lite3d/include/lite3d/7zdec</pElem>
+            <pElem>lite3d/include/lite3d</pElem>
+            <pElem>lite3d/include/lite3d/kazmath</pElem>
             <pElem>/usr/include/SDL2</pElem>
+            <pElem>/usr/include/IL</pElem>
+            <pElem>winres</pElem>
             <pElem>build/lite3d</pElem>
           </incDir>
           <preprocessorList>
+            <Elem>GLEW_NO_GLU</Elem>
             <Elem>GLEW_STATIC</Elem>
-            <Elem>_REENTRANT</Elem>
+            <Elem>_7ZIP_PPMD_SUPPPORT</Elem>
             <Elem>lite3d_EXPORTS</Elem>
           </preprocessorList>
         </cTool>
@@ -870,12 +1025,18 @@
       <item path="lite3d/src/lite3d_pack.c" ex="false" tool="0" flavor2="3">
         <cTool flags="3">
           <incDir>
+            <pElem>lite3d/include/lite3d/7zdec</pElem>
+            <pElem>lite3d/include/lite3d</pElem>
+            <pElem>lite3d/include/lite3d/kazmath</pElem>
             <pElem>/usr/include/SDL2</pElem>
+            <pElem>/usr/include/IL</pElem>
+            <pElem>winres</pElem>
             <pElem>build/lite3d</pElem>
           </incDir>
           <preprocessorList>
+            <Elem>GLEW_NO_GLU</Elem>
             <Elem>GLEW_STATIC</Elem>
-            <Elem>_REENTRANT</Elem>
+            <Elem>_7ZIP_PPMD_SUPPPORT</Elem>
             <Elem>lite3d_EXPORTS</Elem>
           </preprocessorList>
         </cTool>
@@ -934,12 +1095,18 @@
       <item path="lite3d/src/lite3d_scene_node.c" ex="false" tool="0" flavor2="3">
         <cTool flags="3">
           <incDir>
+            <pElem>lite3d/include/lite3d/7zdec</pElem>
+            <pElem>lite3d/include/lite3d</pElem>
+            <pElem>lite3d/include/lite3d/kazmath</pElem>
             <pElem>/usr/include/SDL2</pElem>
+            <pElem>/usr/include/IL</pElem>
+            <pElem>winres</pElem>
             <pElem>build/lite3d</pElem>
           </incDir>
           <preprocessorList>
+            <Elem>GLEW_NO_GLU</Elem>
             <Elem>GLEW_STATIC</Elem>
-            <Elem>_REENTRANT</Elem>
+            <Elem>_7ZIP_PPMD_SUPPPORT</Elem>
             <Elem>lite3d_EXPORTS</Elem>
           </preprocessorList>
         </cTool>
@@ -947,12 +1114,18 @@
       <item path="lite3d/src/lite3d_shader.c" ex="false" tool="0" flavor2="3">
         <cTool flags="3">
           <incDir>
+            <pElem>lite3d/include/lite3d/7zdec</pElem>
+            <pElem>lite3d/include/lite3d</pElem>
+            <pElem>lite3d/include/lite3d/kazmath</pElem>
             <pElem>/usr/include/SDL2</pElem>
+            <pElem>/usr/include/IL</pElem>
+            <pElem>winres</pElem>
             <pElem>build/lite3d</pElem>
           </incDir>
           <preprocessorList>
+            <Elem>GLEW_NO_GLU</Elem>
             <Elem>GLEW_STATIC</Elem>
-            <Elem>_REENTRANT</Elem>
+            <Elem>_7ZIP_PPMD_SUPPPORT</Elem>
             <Elem>lite3d_EXPORTS</Elem>
           </preprocessorList>
         </cTool>
@@ -960,12 +1133,18 @@
       <item path="lite3d/src/lite3d_shader_params.c" ex="false" tool="0" flavor2="3">
         <cTool flags="3">
           <incDir>
+            <pElem>lite3d/include/lite3d/7zdec</pElem>
+            <pElem>lite3d/include/lite3d</pElem>
+            <pElem>lite3d/include/lite3d/kazmath</pElem>
             <pElem>/usr/include/SDL2</pElem>
+            <pElem>/usr/include/IL</pElem>
+            <pElem>winres</pElem>
             <pElem>build/lite3d</pElem>
           </incDir>
           <preprocessorList>
+            <Elem>GLEW_NO_GLU</Elem>
             <Elem>GLEW_STATIC</Elem>
-            <Elem>_REENTRANT</Elem>
+            <Elem>_7ZIP_PPMD_SUPPPORT</Elem>
             <Elem>lite3d_EXPORTS</Elem>
           </preprocessorList>
         </cTool>
@@ -973,12 +1152,18 @@
       <item path="lite3d/src/lite3d_shader_program.c" ex="false" tool="0" flavor2="3">
         <cTool flags="3">
           <incDir>
+            <pElem>lite3d/include/lite3d/7zdec</pElem>
+            <pElem>lite3d/include/lite3d</pElem>
+            <pElem>lite3d/include/lite3d/kazmath</pElem>
             <pElem>/usr/include/SDL2</pElem>
+            <pElem>/usr/include/IL</pElem>
+            <pElem>winres</pElem>
             <pElem>build/lite3d</pElem>
           </incDir>
           <preprocessorList>
+            <Elem>GLEW_NO_GLU</Elem>
             <Elem>GLEW_STATIC</Elem>
-            <Elem>_REENTRANT</Elem>
+            <Elem>_7ZIP_PPMD_SUPPPORT</Elem>
             <Elem>lite3d_EXPORTS</Elem>
           </preprocessorList>
         </cTool>
@@ -1038,12 +1223,18 @@
       <item path="lite3d/src/lite3d_video.c" ex="false" tool="0" flavor2="3">
         <cTool flags="3">
           <incDir>
+            <pElem>lite3d/include/lite3d/7zdec</pElem>
+            <pElem>lite3d/include/lite3d</pElem>
+            <pElem>lite3d/include/lite3d/kazmath</pElem>
             <pElem>/usr/include/SDL2</pElem>
+            <pElem>/usr/include/IL</pElem>
+            <pElem>winres</pElem>
             <pElem>build/lite3d</pElem>
           </incDir>
           <preprocessorList>
+            <Elem>GLEW_NO_GLU</Elem>
             <Elem>GLEW_STATIC</Elem>
-            <Elem>_REENTRANT</Elem>
+            <Elem>_7ZIP_PPMD_SUPPPORT</Elem>
             <Elem>lite3d_EXPORTS</Elem>
           </preprocessorList>
         </cTool>
@@ -1253,6 +1444,11 @@
             tool="1"
             flavor2="8">
         <ccTool flags="1">
+          <incDir>
+            <pElem>winres</pElem>
+            <pElem>lite3dpp/include/lite3dpp/as</pElem>
+            <pElem>build/lite3dpp</pElem>
+          </incDir>
         </ccTool>
       </item>
       <item path="lite3dpp/src/as_helpers/scriptarray.cpp"
@@ -1260,6 +1456,12 @@
             tool="1"
             flavor2="8">
         <ccTool flags="1">
+          <incDir>
+            <pElem>build/lite3dpp</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>_REENTRANT</Elem>
+          </preprocessorList>
         </ccTool>
       </item>
       <item path="lite3dpp/src/as_helpers/scriptbuilder.cpp"
@@ -1267,6 +1469,11 @@
             tool="1"
             flavor2="8">
         <ccTool flags="1">
+          <incDir>
+            <pElem>winres</pElem>
+            <pElem>lite3dpp/include/lite3dpp/as</pElem>
+            <pElem>build/lite3dpp</pElem>
+          </incDir>
         </ccTool>
       </item>
       <item path="lite3dpp/src/as_helpers/scriptdictionary.cpp"
@@ -1274,6 +1481,11 @@
             tool="1"
             flavor2="8">
         <ccTool flags="1">
+          <incDir>
+            <pElem>winres</pElem>
+            <pElem>lite3dpp/include/lite3dpp/as</pElem>
+            <pElem>build/lite3dpp</pElem>
+          </incDir>
         </ccTool>
       </item>
       <item path="lite3dpp/src/as_helpers/scripthelper.cpp"
@@ -1281,6 +1493,11 @@
             tool="1"
             flavor2="8">
         <ccTool flags="1">
+          <incDir>
+            <pElem>winres</pElem>
+            <pElem>lite3dpp/include/lite3dpp/as</pElem>
+            <pElem>build/lite3dpp</pElem>
+          </incDir>
         </ccTool>
       </item>
       <item path="lite3dpp/src/as_helpers/scriptmath.cpp"
@@ -1288,6 +1505,12 @@
             tool="1"
             flavor2="8">
         <ccTool flags="1">
+          <incDir>
+            <pElem>build/lite3dpp</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>_REENTRANT</Elem>
+          </preprocessorList>
         </ccTool>
       </item>
       <item path="lite3dpp/src/as_helpers/scriptstdstring.cpp"
@@ -1295,6 +1518,11 @@
             tool="1"
             flavor2="8">
         <ccTool flags="1">
+          <incDir>
+            <pElem>winres</pElem>
+            <pElem>lite3dpp/include/lite3dpp/as</pElem>
+            <pElem>build/lite3dpp</pElem>
+          </incDir>
         </ccTool>
       </item>
       <item path="lite3dpp/src/as_helpers/scriptstdstring_utils.cpp"
@@ -1302,6 +1530,11 @@
             tool="1"
             flavor2="8">
         <ccTool flags="1">
+          <incDir>
+            <pElem>winres</pElem>
+            <pElem>lite3dpp/include/lite3dpp/as</pElem>
+            <pElem>build/lite3dpp</pElem>
+          </incDir>
         </ccTool>
       </item>
       <item path="lite3dpp/src/json/JSON.cpp" ex="false" tool="1" flavor2="8">
@@ -1332,10 +1565,11 @@
         <ccTool flags="1">
           <incDir>
             <pElem>/usr/include/SDL2</pElem>
+            <pElem>winres</pElem>
+            <pElem>lite3dpp/include/lite3dpp/as</pElem>
             <pElem>build/lite3dpp</pElem>
           </incDir>
           <preprocessorList>
-            <Elem>_REENTRANT</Elem>
             <Elem>lite3dpp_EXPORTS</Elem>
           </preprocessorList>
         </ccTool>
@@ -1347,10 +1581,11 @@
         <ccTool flags="1">
           <incDir>
             <pElem>/usr/include/SDL2</pElem>
+            <pElem>winres</pElem>
+            <pElem>lite3dpp/include/lite3dpp/as</pElem>
             <pElem>build/lite3dpp</pElem>
           </incDir>
           <preprocessorList>
-            <Elem>_REENTRANT</Elem>
             <Elem>lite3dpp_EXPORTS</Elem>
           </preprocessorList>
         </ccTool>
@@ -1375,10 +1610,11 @@
         <ccTool flags="1">
           <incDir>
             <pElem>/usr/include/SDL2</pElem>
+            <pElem>winres</pElem>
+            <pElem>lite3dpp/include/lite3dpp/as</pElem>
             <pElem>build/lite3dpp</pElem>
           </incDir>
           <preprocessorList>
-            <Elem>_REENTRANT</Elem>
             <Elem>lite3dpp_EXPORTS</Elem>
           </preprocessorList>
         </ccTool>
@@ -1429,10 +1665,11 @@
         <ccTool flags="1">
           <incDir>
             <pElem>/usr/include/SDL2</pElem>
+            <pElem>winres</pElem>
+            <pElem>lite3dpp/include/lite3dpp/as</pElem>
             <pElem>build/lite3dpp</pElem>
           </incDir>
           <preprocessorList>
-            <Elem>_REENTRANT</Elem>
             <Elem>lite3dpp_EXPORTS</Elem>
           </preprocessorList>
         </ccTool>
@@ -1550,10 +1787,11 @@
         <ccTool flags="1">
           <incDir>
             <pElem>/usr/include/SDL2</pElem>
+            <pElem>winres</pElem>
+            <pElem>lite3dpp/include/lite3dpp/as</pElem>
             <pElem>build/lite3dpp</pElem>
           </incDir>
           <preprocessorList>
-            <Elem>_REENTRANT</Elem>
             <Elem>lite3dpp_EXPORTS</Elem>
           </preprocessorList>
         </ccTool>
@@ -1565,10 +1803,11 @@
         <ccTool flags="1">
           <incDir>
             <pElem>/usr/include/SDL2</pElem>
+            <pElem>winres</pElem>
+            <pElem>lite3dpp/include/lite3dpp/as</pElem>
             <pElem>build/lite3dpp</pElem>
           </incDir>
           <preprocessorList>
-            <Elem>_REENTRANT</Elem>
             <Elem>lite3dpp_EXPORTS</Elem>
           </preprocessorList>
         </ccTool>
@@ -1580,10 +1819,11 @@
         <ccTool flags="1">
           <incDir>
             <pElem>/usr/include/SDL2</pElem>
+            <pElem>winres</pElem>
+            <pElem>lite3dpp/include/lite3dpp/as</pElem>
             <pElem>build/lite3dpp</pElem>
           </incDir>
           <preprocessorList>
-            <Elem>_REENTRANT</Elem>
             <Elem>lite3dpp_EXPORTS</Elem>
           </preprocessorList>
         </ccTool>
@@ -1595,10 +1835,11 @@
         <ccTool flags="1">
           <incDir>
             <pElem>/usr/include/SDL2</pElem>
+            <pElem>winres</pElem>
+            <pElem>lite3dpp/include/lite3dpp/as</pElem>
             <pElem>build/lite3dpp</pElem>
           </incDir>
           <preprocessorList>
-            <Elem>_REENTRANT</Elem>
             <Elem>lite3dpp_EXPORTS</Elem>
           </preprocessorList>
         </ccTool>
@@ -1610,10 +1851,11 @@
         <ccTool flags="1">
           <incDir>
             <pElem>/usr/include/SDL2</pElem>
+            <pElem>winres</pElem>
+            <pElem>lite3dpp/include/lite3dpp/as</pElem>
             <pElem>build/lite3dpp</pElem>
           </incDir>
           <preprocessorList>
-            <Elem>_REENTRANT</Elem>
             <Elem>lite3dpp_EXPORTS</Elem>
           </preprocessorList>
         </ccTool>
@@ -1625,10 +1867,11 @@
         <ccTool flags="1">
           <incDir>
             <pElem>/usr/include/SDL2</pElem>
+            <pElem>winres</pElem>
+            <pElem>lite3dpp/include/lite3dpp/as</pElem>
             <pElem>build/lite3dpp</pElem>
           </incDir>
           <preprocessorList>
-            <Elem>_REENTRANT</Elem>
             <Elem>lite3dpp_EXPORTS</Elem>
           </preprocessorList>
         </ccTool>
@@ -1640,10 +1883,11 @@
         <ccTool flags="1">
           <incDir>
             <pElem>/usr/include/SDL2</pElem>
+            <pElem>winres</pElem>
+            <pElem>lite3dpp/include/lite3dpp/as</pElem>
             <pElem>build/lite3dpp</pElem>
           </incDir>
           <preprocessorList>
-            <Elem>_REENTRANT</Elem>
             <Elem>lite3dpp_EXPORTS</Elem>
           </preprocessorList>
         </ccTool>

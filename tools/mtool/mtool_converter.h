@@ -56,18 +56,10 @@ private:
 private:
 
     lite3dpp::String mInputFilePath;
-    lite3dpp::String mOutputFolder;
-    lite3dpp::String mObjectName;
-    lite3dpp::String mPackageName;
-    lite3dpp::String mTexPackname;
-    lite3dpp::String mImgPackname;
-    lite3dpp::String mMatPackname;
-    lite3dpp::String mNodePackname;
-    lite3dpp::String mMeshPackname;
     bool mOptimizeMesh;
     bool mFlipUV;
     bool mGenerateJson;
-    bool mTexNameAsMapName;
     lite3d_mesh mMesh;
     std::unique_ptr<Generator> mGenerator;
+    GeneratorOptions mGenOptions;
 };

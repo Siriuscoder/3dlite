@@ -18,37 +18,37 @@
 #include <mtool_generator.h>
 #include <mtool_utils.h>
 
-Generator::Generator(const lite3dpp::String &outputFolder,
-    const lite3dpp::String &objectName,
-    const lite3dpp::String &texPackname,
-    const lite3dpp::String &imgPackname,
-    const lite3dpp::String &matPackname,
-    const lite3dpp::String &nodePackname,
-    const lite3dpp::String &meshPackname,
-    bool useDifTexNameAsMatName) :
-    mOutputFolder(outputFolder),
-    mObjectName(objectName),
-    mTexPackname(texPackname),
-    mImgPackname(imgPackname),
-    mMatPackname(matPackname),
-    mNodePackname(nodePackname),
-    mMeshPackname(meshPackname),
-    mUseDifTexNameAsMatName(useDifTexNameAsMatName)
+const GeneratorOptions GeneratorOptions::NullOptions;
+
+GeneratorOptions::GeneratorOptions() : 
+    objectName("noname"),
+    useDifTexNameAsMatName(false),
+    nodeUniqName(false)
+{}
+
+Generator::Generator(const GeneratorOptions &options) :
+    mOptions(options)
 {
-    if(!mTexPackname.empty())
-        mTexPackname.append(":");
-    if(!mImgPackname.empty())
-        mImgPackname.append(":");
-    if(!mMatPackname.empty())
-        mMatPackname.append(":");
-    if(!mNodePackname.empty())
-        mNodePackname.append(":");
-    if(!mMeshPackname.empty())
-        mMeshPackname.append(":");
+    if(mOptions.texPackname.empty())
+        mOptions.texPackname = mOptions.packname;
+    if(mOptions.imgPackname.empty())
+        mOptions.imgPackname = mOptions.packname;
+    if(mOptions.matPackname.empty())
+        mOptions.matPackname = mOptions.packname;
+    if(mOptions.nodePackname.empty())
+        mOptions.nodePackname = mOptions.packname;
+    if(mOptions.meshPackname.empty())
+        mOptions.meshPackname = mOptions.packname;
+    
+    mOptions.texPackname.append(":");
+    mOptions.imgPackname.append(":");
+    mOptions.matPackname.append(":");
+    mOptions.nodePackname.append(":");
+    mOptions.meshPackname.append(":");
 }
 
 NullGenerator::NullGenerator() :
-    Generator("", "", "", "", "", "", "", false)
+    Generator(GeneratorOptions::NullOptions)
 {}
 
 void NullGenerator::generateNode(const lite3d_mesh *mesh, const lite3dpp::String &name, const kmMat4 *transform,
@@ -74,22 +74,9 @@ void NullGenerator::generateMaterial(const lite3dpp::String &name,
     const char *reflectionTextureFile)
 {}
 
-JsonGenerator::JsonGenerator(const lite3dpp::String &outputFolder,
-    const lite3dpp::String &objectName, 
-    const lite3dpp::String &texPackname,
-    const lite3dpp::String &imgPackname,
-    const lite3dpp::String &matPackname,
-    const lite3dpp::String &nodePackname,
-    const lite3dpp::String &meshPackname,
-    bool useDifTexNameAsMatName) :
-    Generator(outputFolder, 
-              objectName, 
-              texPackname,
-              imgPackname,
-              matPackname,
-              nodePackname,
-              meshPackname,
-              useDifTexNameAsMatName)
+JsonGenerator::JsonGenerator(const GeneratorOptions &options) :
+    Generator(options),
+    mNodeCounter(0)
 {}
 
 void JsonGenerator::generateNode(const lite3d_mesh *mesh, const lite3dpp::String &name, const kmMat4 *transform,
@@ -97,17 +84,17 @@ void JsonGenerator::generateNode(const lite3d_mesh *mesh, const lite3dpp::String
 {
     lite3dpp::String relativeMeshPath = Utils::makeRelativePath("models/meshes/", name, "m");
     lite3dpp::String relativeMeshConfigPath = Utils::makeRelativePath("models/json/", name, "json");
-    lite3dpp::String fullMeshConfigPath = Utils::makeFullPath(mOutputFolder, relativeMeshConfigPath);
+    lite3dpp::String fullMeshConfigPath = Utils::makeFullPath(mOptions.outputFolder, relativeMeshConfigPath);
 
     lite3dpp::ConfigurationWriter nodeConfig;
-    nodeConfig.set(L"Name", name + ".node");
+    nodeConfig.set(L"Name", name + (meshExist && mOptions.nodeUniqName ? std::to_string(++mNodeCounter) : "") + ".node");
 
     if(meshExist)
     {
         /* configure mesh ison */
         lite3dpp::ConfigurationWriter meshConfig;
         meshConfig.set(L"Codec", "m");
-        meshConfig.set(L"Model", mMeshPackname + relativeMeshPath);
+        meshConfig.set(L"Model", mOptions.meshPackname + relativeMeshPath);
 
         lite3dpp::stl<lite3dpp::ConfigurationWriter>::vector matMapping;
 
@@ -123,7 +110,7 @@ void JsonGenerator::generateNode(const lite3d_mesh *mesh, const lite3dpp::String
 
                 lite3dpp::ConfigurationWriter materialDesc;
                 materialDesc.set(L"Name", mMaterials[meshChunk->materialIndex] + ".material");
-                materialDesc.set(L"Material", mMatPackname + Utils::makeRelativePath("materials/", mMaterials[meshChunk->materialIndex], "json"));
+                materialDesc.set(L"Material", mOptions.matPackname + Utils::makeRelativePath("materials/", mMaterials[meshChunk->materialIndex], "json"));
                 material.set(L"Material", materialDesc);
                 matMapping.push_back(material);
             }
@@ -132,14 +119,14 @@ void JsonGenerator::generateNode(const lite3d_mesh *mesh, const lite3dpp::String
 
         lite3dpp::ConfigurationWriter nodeMeshConfig;
         nodeMeshConfig.set(L"Name", name + ".mesh");
-        nodeMeshConfig.set(L"Mesh", mMeshPackname + relativeMeshConfigPath);
+        nodeMeshConfig.set(L"Mesh", mOptions.meshPackname + relativeMeshConfigPath);
         nodeConfig.set(L"Mesh", nodeMeshConfig);
 
         Utils::saveTextFile(meshConfig.write(), fullMeshConfigPath);
         meshConfig.clear();
     }
 
-    nodeConfig.set(L"Transform", *transform);
+    generatePositionRotation(nodeConfig, transform);
     mNodesStack.top().push_back(nodeConfig);
 }
 
@@ -164,14 +151,14 @@ void JsonGenerator::popNodeTree()
         {
             /* mean all nodes imported.. save hole tree as one object */
             lite3dpp::ConfigurationWriter rootObject;
-            rootObject.set(L"Name", mNodePackname + ".root");
+            rootObject.set(L"Name", mOptions.nodePackname + ".root");
             rootObject.set(L"Nodes", nodes);
 
             lite3dpp::ConfigurationWriter objectConfig;
             objectConfig.set(L"Root", rootObject);
 
             Utils::saveTextFile(objectConfig.write(),
-                Utils::makeFullPath(mOutputFolder, Utils::makeRelativePath("objects/", mObjectName, "json")));
+                Utils::makeFullPath(mOptions.outputFolder, Utils::makeRelativePath("objects/", mOptions.objectName, "json")));
             objectConfig.clear();
         }
     }
@@ -234,17 +221,17 @@ void JsonGenerator::generateMaterial(const lite3dpp::String &name,
 
         lite3dpp::ConfigurationWriter program;
         program.set(L"Name", "Stub.program");
-        program.set(L"Path", mMatPackname + "shaders/json/stub.json");
+        program.set(L"Path", mOptions.matPackname + "shaders/json/stub.json");
         pass1.set(L"Program", program);
         passes.push_back(pass1);
     }
     
-    if (mUseDifTexNameAsMatName && diffuseTextureFile)
+    if (mOptions.useDifTexNameAsMatName && diffuseTextureFile)
     {
         matName = Utils::getFileNameWithoutExt(diffuseTextureFile);
     }
 
-    lite3dpp::String matFull = Utils::makeFullPath(mOutputFolder, Utils::makeRelativePath("materials/", matName, "json"));
+    lite3dpp::String matFull = Utils::makeFullPath(mOptions.outputFolder, Utils::makeRelativePath("materials/", matName, "json"));
     lite3dpp::ConfigurationWriter material;
 
     material.set(L"Uniforms", uniforms);
@@ -262,12 +249,12 @@ void JsonGenerator::generateUniformSampler(lite3dpp::stl<lite3dpp::Configuration
 
     lite3dpp::ConfigurationWriter param;
     lite3dpp::String texRel = Utils::makeRelativePath("textures/json/", Utils::getFileNameWithoutExt(fileName), "json");
-    lite3dpp::String texFull = Utils::makeFullPath(mOutputFolder, texRel);
+    lite3dpp::String texFull = Utils::makeFullPath(mOptions.outputFolder, texRel);
     
     param.set(L"Name", "diffuseSampler");
     param.set(L"Type", "sampler");
     param.set(L"TextureName", Utils::getFileNameWithoutExt(fileName) + ".texture");
-    param.set(L"TexturePath", mTexPackname + texRel);
+    param.set(L"TexturePath", mOptions.texPackname + texRel);
     uniforms.push_back(param);
     
     {
@@ -275,7 +262,7 @@ void JsonGenerator::generateUniformSampler(lite3dpp::stl<lite3dpp::Configuration
         texture.set(L"TextureType", "2D");
         texture.set(L"Filtering", "Trilinear");
         texture.set(L"Wrapping", "Repeat");
-        texture.set(L"Image", mImgPackname + Utils::makeRelativePath("textures/images/", Utils::getFileNameWithoutExt(fileName), Utils::getFileExt(fileName)));
+        texture.set(L"Image", mOptions.imgPackname + Utils::makeRelativePath("textures/images/", Utils::getFileNameWithoutExt(fileName), Utils::getFileExt(fileName)));
         texture.set(L"ImageFormat", Utils::getFileExt(fileName));
     
         Utils::saveTextFile(texture.write(), texFull);
@@ -293,4 +280,24 @@ void JsonGenerator::generateUniformVec4(lite3dpp::stl<lite3dpp::ConfigurationWri
     param.set(L"Type", "v4");
     param.set(L"Value", *val);
     uniforms.push_back(param);
+}
+
+void JsonGenerator::generatePositionRotation(lite3dpp::ConfigurationWriter &writer, const kmMat4 *transform)
+{
+    kmMat4 transformt;
+    kmVec3 position;
+    kmMat3 rotation;
+    kmQuaternion rotationq;
+    
+    kmMat4Transpose(&transformt, transform);
+    writer.set(L"Transform", transformt);
+    
+    /* extract position and rotation from transform matrix */
+    kmMat4ExtractPosition(&position, &transformt);
+    kmMat4ExtractRotation(&rotation, &transformt);
+    /* create rotation quaternion from rotation matrix */
+    kmQuaternionRotationMatrix(&rotationq, &rotation);
+    /* save results */
+    writer.set(L"Position", position);
+    writer.set(L"Rotation", rotationq);
 }

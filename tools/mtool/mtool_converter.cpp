@@ -74,18 +74,16 @@ void ConverterCommand::entry_on_material(const char *matName,
 }
 
 ConverterCommand::ConverterCommand() : 
-    mObjectName("noname"),
     mOptimizeMesh(false),
     mFlipUV(false),
-    mGenerateJson(false),
-    mTexNameAsMapName(false)
+    mGenerateJson(false)
 {}
 
 #ifdef INCLUDE_ASSIMP
 void ConverterCommand::runImpl()
 {
     uint32_t loadFlags = 0;
-    makeFolders(mOutputFolder);
+    makeFolders(mGenOptions.outputFolder);
 
     if (mOptimizeMesh)
         loadFlags |= LITE3D_OPTIMIZE_MESH_FLAG;
@@ -101,13 +99,7 @@ void ConverterCommand::runImpl()
     ctx.userdata = this;
 
     if(mGenerateJson)
-        mGenerator.reset(new JsonGenerator(mOutputFolder, mObjectName, 
-            mTexPackname.empty() ? mPackageName : mTexPackname,
-            mImgPackname.empty() ? mPackageName : mImgPackname,
-            mMatPackname.empty() ? mPackageName : mMatPackname,
-            mNodePackname.empty() ? mPackageName : mNodePackname,
-            mMeshPackname.empty() ? mPackageName : mMeshPackname,
-            mTexNameAsMapName));
+        mGenerator.reset(new JsonGenerator(mGenOptions));
     else 
         mGenerator.reset(new NullGenerator());
 
@@ -142,14 +134,14 @@ void ConverterCommand::parseCommandLineImpl(int argc, char *args[])
         else if (strcmp(args[i], "-o") == 0)
         {
             if ((i + 1) < argc && args[i + 1][0] != '-')
-                mOutputFolder.assign(args[i + 1]);
+                mGenOptions.outputFolder.assign(args[i + 1]);
             else
                 throw std::runtime_error("Missing output folder");
         }
         else if (strcmp(args[i], "-oname") == 0)
         {
             if ((i + 1) < argc && args[i + 1][0] != '-')
-                mObjectName.assign(args[i + 1]);
+                mGenOptions.objectName.assign(args[i + 1]);
             else
                 throw std::runtime_error("Missing object name");
         }
@@ -168,48 +160,52 @@ void ConverterCommand::parseCommandLineImpl(int argc, char *args[])
         else if (strcmp(args[i], "-pkg") == 0)
         {
             if ((i + 1) < argc && args[i + 1][0] != '-')
-                mPackageName.assign(args[i + 1]);
+                mGenOptions.packname.assign(args[i + 1]);
             else
                 throw std::runtime_error("Missing package name");
         }
         else if (strcmp(args[i], "-texpkg") == 0)
         {
             if ((i + 1) < argc && args[i + 1][0] != '-')
-                mTexPackname.assign(args[i + 1]);
+                mGenOptions.texPackname.assign(args[i + 1]);
             else
                 throw std::runtime_error("Missing package name");
         }
         else if (strcmp(args[i], "-imgpkg") == 0)
         {
             if ((i + 1) < argc && args[i + 1][0] != '-')
-                mImgPackname.assign(args[i + 1]);
+                mGenOptions.imgPackname.assign(args[i + 1]);
             else
                 throw std::runtime_error("Missing package name");
         }
         else if (strcmp(args[i], "-meshpkg") == 0)
         {
             if ((i + 1) < argc && args[i + 1][0] != '-')
-                mMeshPackname.assign(args[i + 1]);
+                mGenOptions.meshPackname.assign(args[i + 1]);
             else
                 throw std::runtime_error("Missing package name");
         }
         else if (strcmp(args[i], "-matpkg") == 0)
         {
             if ((i + 1) < argc && args[i + 1][0] != '-')
-                mMatPackname.assign(args[i + 1]);
+                mGenOptions.matPackname.assign(args[i + 1]);
             else
                 throw std::runtime_error("Missing package name");
         }
         else if (strcmp(args[i], "-nodepkg") == 0)
         {
             if ((i + 1) < argc && args[i + 1][0] != '-')
-                mNodePackname.assign(args[i + 1]);
+                mGenOptions.nodePackname.assign(args[i + 1]);
             else
                 throw std::runtime_error("Missing package name");
         }
         else if (strcmp(args[i], "-matastex") == 0)
         {
-            mTexNameAsMapName = true;
+            mGenOptions.useDifTexNameAsMatName = true;
+        }
+        else if (strcmp(args[i], "-nodeuniq") == 0)
+        {
+            mGenOptions.nodeUniqName = true;
         }
     }
 }
@@ -238,9 +234,9 @@ void ConverterCommand::convertMesh(lite3d_mesh *mesh, const lite3dpp::String &sa
 void ConverterCommand::processMesh(lite3d_mesh *mesh, const kmMat4 *transform, const lite3dpp::String &name)
 {
     lite3dpp::String relativeMeshPath = Utils::makeRelativePath("models/meshes/", name, "m");
-    lite3dpp::String fullMeshPath = Utils::makeFullPath(mOutputFolder, relativeMeshPath);
+    lite3dpp::String fullMeshPath = Utils::makeFullPath(mGenOptions.outputFolder, relativeMeshPath);
     lite3dpp::String relativeJsonPath = Utils::makeRelativePath("models/json/", name, "json");
-    lite3dpp::String fullJsonPath = Utils::makeFullPath(mOutputFolder, relativeJsonPath);
+    lite3dpp::String fullJsonPath = Utils::makeFullPath(mGenOptions.outputFolder, relativeJsonPath);
     
     mGenerator->generateNode(mesh, name, transform, mesh != NULL);
     convertMesh(mesh, fullMeshPath);

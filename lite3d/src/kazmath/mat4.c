@@ -688,6 +688,15 @@ kmMat3* kmMat4ExtractRotation(kmMat3* pOut, const kmMat4* pIn)
     return pOut;
 }
 
+struct kmVec3* kmMat4ExtractPosition(struct kmVec3* pOut, const kmMat4* pIn)
+{
+    pOut->x = pIn->mat[12];
+    pOut->y = pIn->mat[13];
+    pOut->z = pIn->mat[14];
+    
+    return pOut;
+}
+
 /**
  * Take the rotation from a 4x4 transformation matrix, and return it as an axis and an angle (in radians)
  * returns the output axis.
