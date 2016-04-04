@@ -117,7 +117,7 @@ LITE3D_CEXPORT int lite3d_texture_unit_from_resource(lite3d_texture_unit *textur
 /* allocate empty texture object */
 LITE3D_CEXPORT int lite3d_texture_unit_allocate(lite3d_texture_unit *textureUnit, 
     uint32_t textureTarget, int8_t quality, uint8_t wrapping, uint16_t format,
-    int32_t height, int32_t width, int32_t depth);
+    int32_t width, int32_t height, int32_t depth);
 
 /* update specified mipmap level */
 LITE3D_CEXPORT int lite3d_texture_unit_set_pixels(lite3d_texture_unit *textureUnit, 

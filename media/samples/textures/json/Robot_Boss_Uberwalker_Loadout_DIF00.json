@@ -1,0 +1,7 @@
+{
+  "Filtering":"Trilinear",
+  "Image":"samples:textures/images/Robot_Boss_Uberwalker_Loadout_DIF00.tga",
+  "ImageFormat":"tga",
+  "TextureType":"2D",
+  "Wrapping":"ClampToEdge"
+}

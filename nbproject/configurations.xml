@@ -260,7 +260,7 @@
           <buildCommandWorkingDir>build</buildCommandWorkingDir>
           <buildCommand>${MAKE} -f Makefile</buildCommand>
           <cleanCommand>${MAKE} -f Makefile clean</cleanCommand>
-          <executablePath>build/bin/Debug/sample_vault</executablePath>
+          <executablePath>build/bin/Debug/sample_cellwallerkiller</executablePath>
           <ccTool>
             <incDir>
               <pElem>lite3d/include</pElem>
@@ -1171,12 +1171,18 @@
       <item path="lite3d/src/lite3d_texture_unit.c" ex="false" tool="0" flavor2="3">
         <cTool flags="3">
           <incDir>
+            <pElem>lite3d/include/lite3d/7zdec</pElem>
+            <pElem>lite3d/include/lite3d</pElem>
+            <pElem>lite3d/include/lite3d/kazmath</pElem>
             <pElem>/usr/include/SDL2</pElem>
+            <pElem>/usr/include/IL</pElem>
+            <pElem>winres</pElem>
             <pElem>build/lite3d</pElem>
           </incDir>
           <preprocessorList>
+            <Elem>GLEW_NO_GLU</Elem>
             <Elem>GLEW_STATIC</Elem>
-            <Elem>_REENTRANT</Elem>
+            <Elem>_7ZIP_PPMD_SUPPPORT</Elem>
             <Elem>lite3d_EXPORTS</Elem>
           </preprocessorList>
         </cTool>

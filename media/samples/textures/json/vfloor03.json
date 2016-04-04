@@ -1,0 +1,7 @@
+{
+  "Filtering":"Trilinear",
+  "Image":"samples:textures/images/vfloor03.dds",
+  "ImageFormat":"dds",
+  "TextureType":"2D",
+  "Wrapping":"Repeat"
+}

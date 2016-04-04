@@ -1,0 +1,20 @@
+{
+  "Codec":"m",
+  "MaterialMapping":[
+    {
+      "Material":{
+        "Material":"samples:materials/T_UberWalker_Dif.json",
+        "Name":"T_UberWalker_Dif.material"
+      },
+      "MaterialIndex":0.0000000000
+    },
+    {
+      "Material":{
+        "Material":"samples:materials/Robot_Boss_Uberwalker_Loadout_DIF00.json",
+        "Name":"Robot_Boss_Uberwalker_Loadout_DIF00.material"
+      },
+      "MaterialIndex":1.0000000000
+    }
+  ],
+  "Model":"samples:models/meshes/SKL_Robot.m"
+}

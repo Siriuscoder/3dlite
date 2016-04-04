@@ -227,7 +227,7 @@ int lite3d_texture_unit_from_resource(lite3d_texture_unit *textureUnit,
 {
     ILuint imageDesc = 0, imageFormat;
     GLint mipLevel = 0;
-    int32_t imageHeight, imageWidth, imageDepth;
+    int32_t imageWidth, imageHeight, imageDepth;
     int8_t totalLevels = 0;
 
     SDL_assert(resource);
@@ -367,7 +367,7 @@ int lite3d_texture_unit_from_resource(lite3d_texture_unit *textureUnit,
 int lite3d_texture_unit_set_pixels(lite3d_texture_unit *textureUnit,
     int8_t level, const void *pixels)
 {
-    int32_t imageHeight, imageWidth, imageDepth;
+    int32_t imageWidth, imageHeight, imageDepth;
     
     SDL_assert(textureUnit);
     if (textureUnit->generatedMipmaps < level)
@@ -408,7 +408,7 @@ int lite3d_texture_unit_set_pixels(lite3d_texture_unit *textureUnit,
 int lite3d_texture_unit_set_compressed_pixels(lite3d_texture_unit *textureUnit, 
     int8_t level, size_t pixelsSize, const void *pixels)
 {
-    int32_t imageHeight, imageWidth, imageDepth;
+    int32_t imageWidth, imageHeight, imageDepth;
     int32_t compressed;
     
     SDL_assert(textureUnit);
@@ -461,7 +461,7 @@ int lite3d_texture_unit_set_compressed_pixels(lite3d_texture_unit *textureUnit,
 int lite3d_texture_unit_get_level_size(lite3d_texture_unit *textureUnit, 
     int8_t level, size_t *size)
 {
-    int32_t imageHeight, imageWidth, imageDepth;
+    int32_t imageWidth, imageHeight, imageDepth;
 
     SDL_assert(textureUnit);
     SDL_assert(size);
@@ -478,7 +478,7 @@ int lite3d_texture_unit_get_level_size(lite3d_texture_unit *textureUnit,
     glGetTexLevelParameteriv(textureUnit->textureTarget, level,
         GL_TEXTURE_DEPTH, &imageDepth);
 
-    *size = imageHeight * imageWidth * imageDepth * textureUnit->imageBPP;
+    *size = imageWidth * imageHeight * imageDepth * textureUnit->imageBPP;
 
     return LITE3D_TRUE;
 }
@@ -560,7 +560,7 @@ int lite3d_texture_unit_generate_mipmaps(lite3d_texture_unit *textureUnit)
 
 int lite3d_texture_unit_allocate(lite3d_texture_unit *textureUnit,
     uint32_t textureTarget, int8_t quality, uint8_t wrapping, uint16_t format,
-    int32_t height, int32_t width, int32_t depth)
+    int32_t width, int32_t height, int32_t depth)
 {
     uint32_t internalFormat;
     int32_t textureMaxLevels;
@@ -596,7 +596,7 @@ int lite3d_texture_unit_allocate(lite3d_texture_unit *textureUnit,
             return LITE3D_FALSE;
     }
 
-    textureUnit->imageSize = height * width * depth * textureUnit->imageBPP;
+    textureUnit->imageSize = width * height * depth * textureUnit->imageBPP;
     textureUnit->loadedMipmaps = 0;
     textureUnit->generatedMipmaps = 0;
     textureUnit->textureTarget = textureTarget;

@@ -1,6 +1,6 @@
 /******************************************************************************
  *	This file is part of lite3d (Light-weight 3d engine).
- *	Copyright (C) 2015  Sirius (Korolev Nikita)
+ *	Copyright (C) 2016  Sirius (Korolev Nikita)
  *
  *	Foobar is free software: you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -26,17 +26,21 @@ class SampleLifecycleListener : public lite3dpp::Main::LifecycleListener
 public:
 
     SampleLifecycleListener(lite3dpp::Main *main) : 
-        mMain(main),
-        mMinigun(NULL),
-        mPlasmagun(NULL)
+        mMain(main)
     {}
 
     void init() override
     {
-        lite3dpp::Scene *scene = mMain->getResourceManager()->queryResource<lite3dpp::Scene>("SimpleScene",
-            "samples:scenes/scene.json");
-        mMinigun = scene->getObject("Minigun");
-        mPlasmagun = scene->getObject("Plasmagun");
+        lite3dpp::Scene *scene = mMain->getResourceManager()->queryResource<lite3dpp::Scene>("InstancedRobots",
+            "samples:scenes/robots.json");
+        mCamera = scene->getCamera("MyCamera");
+        mWindow = mMain->getResourceManager()->queryResource<lite3dpp::WindowRenderTarget>("MainWindow");
+        
+        mSenterXPos = mWindow->width() >> 1;
+        mSenterYPos = mWindow->height() >> 1;
+        lite3d_video_set_mouse_pos(mSenterXPos, mSenterYPos);
+
+        mStatRerfeshTimer = mMain->addTimer("statisticURefresh", 1000);
     }
 
     void shut() override
@@ -50,8 +54,37 @@ public:
 
     void timerTick(lite3d_timer *timerid) override
     {
-        mMinigun->getRoot()->rotateAngle(KM_VEC3_POS_Z, 0.01f);
-        mPlasmagun->getRoot()->rotateAngle(KM_VEC3_NEG_Z, 0.01f);
+        if(timerid == mMain->getFixedUpdateTimer())
+        {
+            const Uint8 *state = SDL_GetKeyboardState(NULL);
+            if(state[SDL_SCANCODE_W])
+            {
+                kmVec3 vec3 = {0, 0, -6};
+                mCamera->moveRelative(vec3);
+            }
+            
+            if(state[SDL_SCANCODE_S])
+            {
+                kmVec3 vec3 = {0, 0, 6};
+                mCamera->moveRelative(vec3);
+            }
+            
+            if(state[SDL_SCANCODE_A])
+            {
+                kmVec3 vec3 = {-6, 0, 0};
+                mCamera->moveRelative(vec3);
+            }
+            
+            if(state[SDL_SCANCODE_D])
+            {
+                kmVec3 vec3 = {6, 0, 0};
+                mCamera->moveRelative(vec3);
+            }
+        }
+        else if(timerid == mStatRerfeshTimer)
+        {
+            printStats();
+        }
     }
 
     void processEvent(SDL_Event *e) override
@@ -61,26 +94,43 @@ public:
             /* exit */
             if (e->key.keysym.sym == SDLK_ESCAPE)
                 mMain->stop();
+            else if (e->key.keysym.sym == SDLK_F1)
+            {
+                printStats();
+            }
         }
-        else if (e->key.keysym.sym == SDLK_F1)
+        else if(e->type == SDL_MOUSEMOTION)
         {
-            lite3d_render_stats *stats = lite3d_render_stats_get();
-            SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
-                "==== Render statistics ========\n"
-                "last FPS\tavr FPS\t\tbest FPS\tworst FPS\n"
-                "%d\t\t%d\t\t%d\t\t%d\n"
-                "last frame ms\tavr frame ms\tbest frame ms\tworst frame ms\n"
-                "%f\t%f\t%f\t%f",
-                stats->lastFPS, stats->avrFPS, stats->bestFPS, stats->worstFPS,
-                stats->lastFrameMs, stats->avrFrameMs, stats->bestFrameMs, stats->worstFrameMs);
+            mCamera->rotateZ((e->motion.x - mSenterXPos) * 0.003f);
+            mCamera->pitch((e->motion.y - mSenterYPos) * 0.003f);
+            lite3d_video_set_mouse_pos(mSenterXPos, mSenterYPos);
         }
+    }
+
+    void printStats()
+    {
+        lite3d_render_stats *stats = lite3d_render_stats_get();
+        SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
+            "==== Render statistics ========\n"
+            "last FPS\tavr FPS\t\tbest FPS\tworst FPS\n"
+            "%d\t\t%d\t\t%d\t\t%d\n"
+            "last frame ms\tavr frame ms\tbest frame ms\tworst frame ms\n"
+            "%f\t%f\t%f\t%f\n"
+            "nodes total\tbatches total\tbatches called\tfaces\n"
+            "%d\t\t%d\t\t%d\t\t%d\n",
+            stats->lastFPS, stats->avrFPS, stats->bestFPS, stats->worstFPS,
+            stats->lastFrameMs, stats->avrFrameMs, stats->bestFrameMs, stats->worstFrameMs,
+            stats->nodesTotal, stats->batchesTotal, stats->batchedByFrame, stats->verticesByFrame);
     }
 
 private:
 
     lite3dpp::Main *mMain;
-    lite3dpp::SceneObject *mMinigun;
-    lite3dpp::SceneObject *mPlasmagun;
+    lite3dpp::Camera *mCamera;
+    lite3dpp::RenderTarget *mWindow;
+    int mSenterXPos;
+    int mSenterYPos;
+    lite3d_timer *mStatRerfeshTimer;
 };
 
 int main(int agrc, char *args[])

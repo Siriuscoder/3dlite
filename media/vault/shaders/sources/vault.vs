@@ -8,10 +8,11 @@ varying vec2 vtcoords;
 // common functions
 vec4 rtransform(vec4 v1);
 mat4 normalMatrix();
+vec4 rntransform(vec3 normal);
 
 void main()
 {
 	vtcoords = texCoordAttr;
-	vnormal = normalize(normalAttr);
+	vnormal = rntransform(normalAttr);
 	gl_Position = rtransform(vertexAttr);
 }
