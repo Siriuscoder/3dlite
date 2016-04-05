@@ -14,8 +14,8 @@
                   "Name":"SKL_Robot.mesh"
                 },
                 "Name":"SKL_Robot.node",
-				"Instances":100,
-				"FrustumTest":false,
+                "Instances":100,
+                "FrustumTest":false,
 				
                 "Position":[
                   0.0000000000,0.0000000000,0.0000000000
