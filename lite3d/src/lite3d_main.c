@@ -110,6 +110,13 @@ int lite3d_main(const lite3d_global_settings *settings)
         goto ret1;
     }
 
+    /* setup textures technique */
+    if (!lite3d_vao_technique_init())
+    {
+        ret = LITE3D_FALSE;
+        goto ret1;
+    }
+
     /* setup shaders technique */
     if (!lite3d_shader_program_technique_init())
     {

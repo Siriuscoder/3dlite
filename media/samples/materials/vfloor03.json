@@ -3,8 +3,8 @@
     {
       "Pass":1.0000000000,
       "Program":{
-        "Name":"sponza_shading.program",
-        "Path":"samples:shaders/json/sponza_shading.json"
+        "Name":"robots_floor.program",
+        "Path":"samples:shaders/json/robots_floor.json"
       }
     }
   ],
@@ -20,6 +20,14 @@
     },
     {
       "Name":"modelMatrix"
+    },
+    {
+      "Name":"fogColor",
+      "Type":"v4",
+      "Value":[
+        0.0, 0.0, 0.0, 1.0
+      ],
+      "Scope":"global"
     },
     {
       "Name":"ambient",

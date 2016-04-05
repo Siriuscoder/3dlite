@@ -76,8 +76,8 @@ static void mqr_render_batch(lite3d_scene *scene,
     lite3d_mesh_chunk_draw(mqrNode->meshChunk, mqrNode->instancesCount);
     
     scene->stats.batchesCalled++;
-    scene->stats.trianglesRendered += mqrNode->meshChunk->vao.elementsCount;
-    scene->stats.verticesRendered += mqrNode->meshChunk->vao.verticesCount;
+    scene->stats.trianglesRendered += mqrNode->meshChunk->vao.elementsCount * mqrNode->instancesCount;
+    scene->stats.verticesRendered += mqrNode->meshChunk->vao.verticesCount * mqrNode->instancesCount;
 }
 
 static void mqr_render_node(lite3d_material_pass *pass, void *data)

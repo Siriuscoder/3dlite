@@ -59,8 +59,8 @@ Overview
 
 int lite3d_vao_technique_init(void)
 {
-    instancingSupport = LITE3D_FALSE;
-    if (!GL_VERSION_3_1)
+    instancingSupport = LITE3D_TRUE;
+    if (!GL_VERSION_2_0)
     {
         SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION,
             "%s: GL v3.1 minimum required (VBO)", LITE3D_CURRENT_FUNCTION);
@@ -78,7 +78,7 @@ int lite3d_vao_technique_init(void)
     {
         SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
             "%s: GL_ARB_instanced_arrays not supported..", LITE3D_CURRENT_FUNCTION);
-        instancingSupport = LITE3D_TRUE;
+        instancingSupport = LITE3D_FALSE;
     }
 
     return LITE3D_TRUE;

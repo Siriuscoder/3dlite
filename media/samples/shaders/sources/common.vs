@@ -12,5 +12,10 @@ vec4 rtransform(vec4 v1)
 
 mat4 normalMatrix()
 {
-	return viewMatrix * transpose(inverse(modelMatrix));
+	return transpose(inverse(modelMatrix));
+}
+
+vec4 rntransform(vec3 normal)
+{
+	return normalize(modelMatrix * vec4(normal, 0));
 }

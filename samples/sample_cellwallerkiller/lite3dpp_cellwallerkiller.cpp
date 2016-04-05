@@ -41,6 +41,10 @@ public:
         lite3d_video_set_mouse_pos(mSenterXPos, mSenterYPos);
 
         mStatRerfeshTimer = mMain->addTimer("statisticURefresh", 1000);
+
+        kmVec4 bColor = { 0.05, 0.38, 0.45, 1.0 };
+        mMain->window()->setBackgroundColor(bColor);
+        lite3dpp::Material::setFloatv4GlobalParameter("fogColor", bColor);
     }
 
     void shut() override
