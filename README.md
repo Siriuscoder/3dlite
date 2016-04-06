@@ -1,16 +1,14 @@
 Lite 3d rendering engine
 ========================
 
-![](/media/screenshots/minigun.png "Minigun")
-
 About
 -----
-Lite weight 3d/2d graphics rendering helper. "Engine" is not correct word for this library. 
-It is disigned as adapter from low level OpenGL API to more simple high level API. This API containes some high level 
-conceps like scene, material, mesh, shader.. etc. whereas OpenGL API provides low level concepts like Framebuffer, 
+Light weight 3d/2d graphics rendering helper. "Engine" is not correct word for this library. 
+It is designed as adapter from low level OpenGL API to more simple high level API. This API contains some high level 
+concepts like scene, material, mesh, shader.. etc. whereas OpenGL API provides low level concepts like Framebuffer, 
 vertex buffer, texture buffer and others.
 
-Lite3d library suppport only OpenGL graphics API as backend for GPU operations. No sound, no phisics, graphics only!
+Lite3d library support only OpenGL graphics API as back end for GPU operations. No sound, no physics, graphics only!
 One of the reason of using OpenGL API was a potential support of many OS. Windows/Linux supports now, but 
 library may be simply ported on others platforms. 
 
@@ -39,6 +37,12 @@ $ make all
 ```
 You can use cmake to generate Visual Studio projects on windows.
 
+Screenshots
+---------
+![](/media/screenshots/minigun.png "Minigun")
+![](/media/screenshots/robots.png "Robots")
+![](/media/screenshots/sponza.png "Sponza")
+![](/media/screenshots/vault.png "Vault")
 
 ***
-> Copyright © 2014-2015 Nikita Korolev (Sirius)
+> Copyright © 2014-2016 Nikita Korolev (Sirius)
