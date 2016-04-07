@@ -34,8 +34,7 @@ typedef struct lite3d_video_settings
     int8_t hidden;
 } lite3d_video_settings;
 
-LITE3D_CEXPORT int lite3d_video_open(const lite3d_video_settings *settings);
-LITE3D_CEXPORT const lite3d_video_settings *lite3d_video_get_settings(void);
+LITE3D_CEXPORT int lite3d_video_open(lite3d_video_settings *settings);
 LITE3D_CEXPORT int lite3d_video_close(void);
 LITE3D_CEXPORT void lite3d_video_swap_buffers(void);
 LITE3D_CEXPORT void lite3d_video_set_mouse_pos(int x, int y);

@@ -39,7 +39,6 @@ You can use cmake to generate Visual Studio projects on windows.
 
 Screenshots
 ---------
-![](/media/screenshots/minigun.png "Minigun")
 ![](/media/screenshots/robots.png "Robots")
 ![](/media/screenshots/sponza.png "Sponza")
 ![](/media/screenshots/vault.png "Vault")

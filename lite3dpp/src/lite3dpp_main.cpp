@@ -70,8 +70,8 @@ namespace lite3dpp
         mSettings.textureSettings.useGLCompression =
             textureSettings.getBool(L"Compression", false) ? LITE3D_TRUE : LITE3D_FALSE;
 
-        mSettings.videoSettings.screenWidth = videoSettings.getInt(L"Width", 800);
-        mSettings.videoSettings.screenHeight = videoSettings.getInt(L"Height", 600);
+        mSettings.videoSettings.screenWidth = videoSettings.getInt(L"Width", 0);
+        mSettings.videoSettings.screenHeight = videoSettings.getInt(L"Height", 0);
         mSettings.videoSettings.colorBits = videoSettings.getInt(L"ColorBits", 24);
         mSettings.videoSettings.FSAA = videoSettings.getInt(L"FSAA", 1);
         mSettings.videoSettings.vsync =
