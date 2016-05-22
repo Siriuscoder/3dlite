@@ -114,7 +114,7 @@ static int ai_node_load_to_vbo(lite3d_mesh *meshInst, const struct aiScene *scen
             }
         }
 
-        componentSize = mesh->mNumVertices <= 0x7f ? sizeof(uint8_t) : (mesh->mNumVertices <= 0x7fff ? sizeof(uint16_t) : sizeof(uint32_t));
+        componentSize = sizeof(uint32_t);
         indexesSize = componentSize * mesh->mNumFaces * 3;
 
         vertices = lite3d_malloc(verticesSize);

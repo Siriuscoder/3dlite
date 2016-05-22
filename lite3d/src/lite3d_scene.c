@@ -226,7 +226,7 @@ static void mqr_render_stage_second(struct lite3d_scene *scene, lite3d_camera *c
 
     /* depth buffer colebrate */
     lite3d_depth_test(LITE3D_TRUE);
-    lite3d_depth_output(LITE3D_FALSE);
+    lite3d_depth_output(LITE3D_TRUE);
 
     if (scene->beginSecondStageRender)
         scene->beginSecondStageRender(scene, camera);

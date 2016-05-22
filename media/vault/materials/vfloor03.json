@@ -5,17 +5,7 @@
       "Program":{
         "Name":"vault.program",
         "Path":"vaultmat:shaders/json/vault.json"
-      },
-      "Blending":true,
-      //  
-      // Traditional blend algorithm:
-      // Orgb = Sa * Srgb + (1 - Sa) * Drgb
-      // Oa = 1 * Sa + 0 * Da = Sa
-      //
-      // Traditional blend algorithm with alpha blend: (TraditionalWithAlpha)
-      // Orgb = Sa * Srgb + (1 - Sa) * Drgb
-      // Oa = 1 * Sa + (1 - Sa) * Da
-      "Blendingmode":"traditional"
+      }
     }
   ],
   "Uniforms":[
@@ -49,7 +39,7 @@
       "Name":"diffuse",
       "Type":"v4",
       "Value":[
-        0.3,0.5,0.6,1
+        0.5,0.27,0.20,1
       ]
     },
     {
@@ -68,8 +58,8 @@
     },
     {
       "Name":"diffuseSampler",
-      "TextureName":"vmesh01.texture",
-      "TexturePath":"vault:textures/json/vmesh01.json",
+      "TextureName":"vfloor03.texture",
+      "TexturePath":"vault:textures/json/vfloor03.json",
       "Type":"sampler"
     }
   ]
