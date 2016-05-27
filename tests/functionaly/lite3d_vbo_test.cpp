@@ -27,71 +27,79 @@ class VBO_Test : public ::testing::Test
 {
 public:
 
+    static int meshLoadingTest(void *userdata)
+    {
+        lite3d_mesh mVBO;
+        lite3d_pack *fileSysPack = lite3d_pack_open("tests/", 0, 1000000);
+        EXPECT_TRUE(fileSysPack != NULL);
+        lite3d_file *meshFile = lite3d_pack_file_load(fileSysPack,
+                                                                        "pack/minigun/minigun.3ds");
+        EXPECT_TRUE(lite3d_mesh_init(&mVBO) == LITE3D_TRUE);
+        EXPECT_TRUE(lite3d_assimp_mesh_load(&mVBO, meshFile, NULL, LITE3D_VBO_STATIC_DRAW, 0) == LITE3D_TRUE);
+    
+    
+        lite3d_mesh_purge(&mVBO);
+        lite3d_pack_close(fileSysPack);
+        /* quit immediatly */
+        return LITE3D_FALSE;
+    }
+
+    static int bufferMapTest(void *userdata)
+    {
+        lite3d_mesh mVBO;
+        lite3d_pack *fileSysPack = lite3d_pack_open("tests/", 0, 1000000);
+        EXPECT_TRUE(fileSysPack != NULL);
+        lite3d_file *meshFile = lite3d_pack_file_load(fileSysPack,
+                                                                        "pack/minigun/minigun.3ds");
+        EXPECT_TRUE(lite3d_mesh_init(&mVBO) == LITE3D_TRUE);
+        EXPECT_TRUE(lite3d_assimp_mesh_load(&mVBO, meshFile, NULL, LITE3D_VBO_STATIC_DRAW, 0) == LITE3D_TRUE);
+
+        EXPECT_TRUE(lite3d_vbo_map(&mVBO.vertexBuffer, LITE3D_VBO_MAP_READ_ONLY) != NULL);
+        EXPECT_TRUE(lite3d_vbo_map(&mVBO.indexBuffer, LITE3D_VBO_MAP_READ_ONLY) != NULL);
+    
+        lite3d_vbo_unmap(&mVBO.vertexBuffer);
+        lite3d_vbo_unmap(&mVBO.indexBuffer);
+        lite3d_mesh_purge(&mVBO);
+        lite3d_pack_close(fileSysPack);
+        /* quit immediatly */
+        return LITE3D_FALSE;
+    }
+    
+    static int encodeDecode_M_formatTest(void *userdata)
+    {
+        lite3d_mesh mVBO;
+        lite3d_mesh mVBO1;
+    
+        lite3d_pack *fileSysPack = lite3d_pack_open("tests/", 0, 1000000);
+        EXPECT_TRUE(fileSysPack != NULL);
+        lite3d_file *meshFile = lite3d_pack_file_load(fileSysPack, "pack/minigun/minigun.3ds");
+        EXPECT_TRUE(lite3d_mesh_init(&mVBO) == LITE3D_TRUE);
+        EXPECT_TRUE(lite3d_assimp_mesh_load(&mVBO, meshFile, NULL, LITE3D_VBO_STATIC_DRAW,
+            LITE3D_OPTIMIZE_MESH_FLAG) == LITE3D_TRUE);
+    
+        size_t mfileSize = lite3d_mesh_m_encode_size(&mVBO);
+        void *encodeBuffer = lite3d_malloc(mfileSize);
+        EXPECT_TRUE(lite3d_mesh_m_encode(&mVBO, encodeBuffer, mfileSize) == LITE3D_TRUE);
+    
+        EXPECT_TRUE(lite3d_mesh_init(&mVBO1) == LITE3D_TRUE);
+        EXPECT_TRUE(lite3d_mesh_m_decode(&mVBO1, encodeBuffer, mfileSize, 
+            LITE3D_VBO_STATIC_DRAW) == LITE3D_TRUE);
+    
+    
+        lite3d_free(encodeBuffer);
+        lite3d_mesh_purge(&mVBO);
+        lite3d_mesh_purge(&mVBO1);
+        lite3d_pack_close(fileSysPack);
+        /* quit immediatly */
+        return LITE3D_FALSE;
+    }
+
 protected:
     Lite3dCommon mlite3dCommon;
 };
 
-static int meshLoadingTest(void *userdata)
-{
-    lite3d_mesh mVBO;
-    lite3d_pack *fileSysPack = lite3d_pack_open("tests/", 0, 1000000);
-    EXPECT_TRUE(fileSysPack != NULL);
-    lite3d_file *meshFile = lite3d_pack_file_load(fileSysPack,
-                                                                    "pack/minigun/minigun.3ds");
-    EXPECT_TRUE(lite3d_mesh_init(&mVBO) == LITE3D_TRUE);
-    EXPECT_TRUE(lite3d_assimp_mesh_load(&mVBO, meshFile, NULL, LITE3D_VBO_STATIC_DRAW, 0) == LITE3D_TRUE);
-
-
-    lite3d_mesh_purge(&mVBO);
-    lite3d_pack_close(fileSysPack);
-    /* quit immediatly */
-    return LITE3D_FALSE;
-}
-
-static int encodeDecode_M_formatTest(void *userdata)
-{
-    lite3d_mesh mVBO;
-    lite3d_mesh mVBO1;
-
-    lite3d_pack *fileSysPack = lite3d_pack_open("tests/", 0, 1000000);
-    EXPECT_TRUE(fileSysPack != NULL);
-    lite3d_file *meshFile = lite3d_pack_file_load(fileSysPack, "pack/minigun/minigun.3ds");
-    EXPECT_TRUE(lite3d_mesh_init(&mVBO) == LITE3D_TRUE);
-    EXPECT_TRUE(lite3d_assimp_mesh_load(&mVBO, meshFile, NULL, LITE3D_VBO_STATIC_DRAW,
-        LITE3D_OPTIMIZE_MESH_FLAG) == LITE3D_TRUE);
-
-    size_t mfileSize = lite3d_mesh_m_encode_size(&mVBO);
-    void *encodeBuffer = lite3d_malloc(mfileSize);
-    EXPECT_TRUE(lite3d_mesh_m_encode(&mVBO, encodeBuffer, mfileSize) == LITE3D_TRUE);
-
-    EXPECT_TRUE(lite3d_mesh_init(&mVBO1) == LITE3D_TRUE);
-    EXPECT_TRUE(lite3d_mesh_m_decode(&mVBO1, encodeBuffer, mfileSize, 
-        LITE3D_VBO_STATIC_DRAW) == LITE3D_TRUE);
-
-
-    lite3d_free(encodeBuffer);
-    lite3d_mesh_purge(&mVBO);
-    lite3d_mesh_purge(&mVBO1);
-    lite3d_pack_close(fileSysPack);
-    /* quit immediatly */
-    return LITE3D_FALSE;
-}
-
-TEST_F(VBO_Test, meshLoading)
-{
-    mlite3dCommon.settings().renderLisneters.preRender = meshLoadingTest;
-    mlite3dCommon.main();
-}
-
-TEST_F(VBO_Test, mapping)
-{
-
-}
-
-TEST_F(VBO_Test, encodeDecode_M_format)
-{
-    mlite3dCommon.settings().renderLisneters.preRender = encodeDecode_M_formatTest;
-    mlite3dCommon.main();
-}
+LITE3D_GTEST_DECLARE(VBO_Test, meshLoading, meshLoadingTest);
+LITE3D_GTEST_DECLARE(VBO_Test, mapping, bufferMapTest);
+LITE3D_GTEST_DECLARE(VBO_Test, encodeDecode_M_format, encodeDecode_M_formatTest);
 
 #endif
