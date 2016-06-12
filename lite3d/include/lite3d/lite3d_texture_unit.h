@@ -109,6 +109,14 @@ LITE3D_CEXPORT void lite3d_texture_technique_reset_filters(void);
 LITE3D_CEXPORT int lite3d_texture_technique_init(const lite3d_texture_technique_settings *settings);
 LITE3D_CEXPORT void lite3d_texture_technique_shut(void);
 
+/* texture mipmap level size */
+LITE3D_CEXPORT int32_t lite3d_texture_unit_get_level_width(lite3d_texture_unit *textureUnit,
+    int8_t level);
+LITE3D_CEXPORT int32_t lite3d_texture_unit_get_level_height(lite3d_texture_unit *textureUnit,
+    int8_t level);
+LITE3D_CEXPORT int32_t lite3d_texture_unit_get_level_depth(lite3d_texture_unit *textureUnit,
+    int8_t level);
+
 /* load texture from resource file using Devil */
 LITE3D_CEXPORT int lite3d_texture_unit_from_resource(lite3d_texture_unit *textureUnit, 
     const lite3d_file *resource, uint32_t imageType, uint32_t textureTarget, 
@@ -121,9 +129,14 @@ LITE3D_CEXPORT int lite3d_texture_unit_allocate(lite3d_texture_unit *textureUnit
 
 /* update specified mipmap level */
 LITE3D_CEXPORT int lite3d_texture_unit_set_pixels(lite3d_texture_unit *textureUnit, 
+    int32_t widthOff, int32_t heightOff, int32_t depthOff, 
+    int32_t width, int32_t height, int32_t depth,
     int8_t level, const void *pixels);
+
 /* update specified mipmap compressed level */
 LITE3D_CEXPORT int lite3d_texture_unit_set_compressed_pixels(lite3d_texture_unit *textureUnit, 
+    int32_t widthOff, int32_t heightOff, int32_t depthOff, 
+    int32_t width, int32_t height, int32_t depth,
     int8_t level, size_t pixelsSize, const void *pixels);
 
 /* get data from mipmap level */

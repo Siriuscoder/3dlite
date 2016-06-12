@@ -20,8 +20,8 @@
 #include <SDL_log.h>
 #include <SDL_assert.h>
 
-#include <lite3d/GL/glew.h>
-
+#include <lite3d/lite3d_gl.h>
+#include <lite3d/lite3d_glext.h>
 #include <lite3d/lite3d_alloc.h>
 #include <lite3d/lite3d_misc.h>
 #include <lite3d/lite3d_vbo.h>
@@ -98,6 +98,7 @@ Overview
 
 static int vbo_buffer_extend(uint32_t vboID, size_t expandSize, uint16_t access)
 {
+#ifndef WITH_GLES2
     int32_t originSize;
     uint32_t tmpVbo;
 
@@ -132,31 +133,31 @@ static int vbo_buffer_extend(uint32_t vboID, size_t expandSize, uint16_t access)
     glDeleteBuffers(1, &tmpVbo);
 
     return LITE3D_TRUE;
+#else
+    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+        "%s: ARB_copy_buffer not supported with GLES2..", LITE3D_CURRENT_FUNCTION);
+    return LITE3D_FALSE;
+#endif
 }
 
 int lite3d_vbo_technique_init(void)
 {
-    if (!GL_VERSION_3_1)
-    {
-        SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION,
-            "%s: GL v3.1 minimum required (VBO)", LITE3D_CURRENT_FUNCTION);
-        return LITE3D_FALSE;
-    }
-
-    if (!GL_ARB_vertex_buffer_object)
+    if (!lite3d_check_vertex_buffer_object())
     {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
             "%s: GL_ARB_vertex_buffer_object not supported..", LITE3D_CURRENT_FUNCTION);
         return LITE3D_FALSE;
     }
-
-    if (!GLEW_ARB_copy_buffer)
+    
+#ifndef WITH_GLES2
+    if (!lite3d_check_copy_buffer())
     {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
             "%s: GLEW_ARB_copy_buffer not supported..", LITE3D_CURRENT_FUNCTION);
         return LITE3D_FALSE;
     }
-
+#endif
+    
     glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &maxVertexAttribs);
     SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "Max vertex attributes: %d",
         maxVertexAttribs);

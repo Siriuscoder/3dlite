@@ -18,7 +18,7 @@
 #include <string.h>
 #include <SDL_assert.h>
 
-#include <lite3d/GL/glew.h>
+#include <lite3d/lite3d_gl.h>
 #include <lite3d/lite3d_camera.h>
 #include <lite3d/lite3d_shader_params.h>
 
@@ -26,7 +26,10 @@ void lite3d_camera_update_view(lite3d_camera *camera)
 {
     SDL_assert(camera);
 
+    /* In OpenGL ES, GL_FILL is the only available polygon mode. */
+#ifndef GLES
     glPolygonMode(GL_FRONT_AND_BACK, camera->polygonMode);
+#endif
     if (camera->cullBackFaces)
     {
         glEnable(GL_CULL_FACE);

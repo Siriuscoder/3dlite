@@ -1,3 +1,7 @@
+#ifdef GL_ES
+precision lowp float;
+#endif
+
 uniform sampler2D diffuseTexture;
 varying vec2 tcoords;
 

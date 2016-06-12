@@ -36,11 +36,11 @@ namespace lite3dpp
     {
     public:
 
-        static void *allocPuled(size_t size);
-        static void freePolled(void * mem);
+        static void *allocPulled(size_t size);
+        static void freePulled(void * mem);
         static void *alloc(size_t size);
         static void free(void * mem);
-        static void *callocPuled(size_t size);
+        static void *callocPulled(size_t size);
         static void *calloc(size_t size);
 
         /* memory management */

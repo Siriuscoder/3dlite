@@ -16,7 +16,8 @@
  *	along with Lite3D.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
 #include <SDL_assert.h>
-#include <lite3d/GL/glew.h>
+#include <lite3d/lite3d_gl.h>
+#include <lite3d/lite3d_glext.h>
 
 #include <lite3d/lite3d_buffers_manip.h>
 
@@ -122,7 +123,7 @@ void lite3d_buffers_clear(uint8_t color, uint8_t depth, uint8_t stencil)
 void lite3d_buffers_clear_values(const kmVec4 *color, float depth, int stencil)
 {
     glClearColor(color->x, color->y, color->z, color->w);
-    glClearDepth(depth);
+    glClearDepthf(depth);
     glClearStencil(stencil);
 }
 

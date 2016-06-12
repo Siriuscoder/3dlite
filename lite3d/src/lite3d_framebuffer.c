@@ -20,7 +20,8 @@
 #include <SDL_assert.h>
 #include <SDL_log.h>
 
-#include <lite3d/GL/glew.h>
+#include <lite3d/lite3d_gl.h>
+#include <lite3d/lite3d_glext.h>
 #include <lite3d/lite3d_misc.h>
 #include <lite3d/lite3d_main.h>
 #include <lite3d/lite3d_framebuffer.h>
@@ -28,6 +29,8 @@
 static lite3d_framebuffer *gCurrentFb = NULL;
 static int gMaxColorAttachments = 0;
 static int gMaxFramebufferSize = 0;
+
+#ifndef GLES
 static GLenum gDrawBuffersArr[16] = {
     GL_COLOR_ATTACHMENT0,
     GL_COLOR_ATTACHMENT1,
@@ -46,6 +49,7 @@ static GLenum gDrawBuffersArr[16] = {
     GL_COLOR_ATTACHMENT14,
     GL_COLOR_ATTACHMENT15
 };
+#endif
 
 /*
 Name
@@ -217,17 +221,11 @@ Glossary of Helpful Terms
 
 int lite3d_framebuffer_technique_init(void)
 {
-    if (!GLEW_VERSION_3_0)
-    {
-        if (!GLEW_EXT_framebuffer_object && !GLEW_ARB_framebuffer_object)
-        {
-            SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
-                "%s: GLEW_framebuffer_object not supported..", LITE3D_CURRENT_FUNCTION);
-            return LITE3D_FALSE;
-        }
-    }
-
+#ifdef GL_MAX_COLOR_ATTACHMENTS
     glGetIntegerv(GL_MAX_COLOR_ATTACHMENTS, &gMaxColorAttachments);
+#else
+    gMaxColorAttachments = 1;
+#endif
     glGetIntegerv(GL_MAX_RENDERBUFFER_SIZE, &gMaxFramebufferSize);
     SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "Framebuffer max color attachments: %d",
         gMaxColorAttachments);
@@ -297,17 +295,6 @@ int lite3d_framebuffer_setup(lite3d_framebuffer *fb,
         {
             switch (colorAttachments[i]->textureTarget)
             {
-                case LITE3D_TEXTURE_1D:
-                {
-                    glFramebufferTexture1D(GL_FRAMEBUFFER,
-                        GL_COLOR_ATTACHMENT0 + i,
-                        colorAttachments[i]->textureTarget,
-                        colorAttachments[i]->textureID,
-                        0);
-                    colorAttachments[i]->isFbAttachment = LITE3D_TRUE;
-                    fb->useColorbuffer = LITE3D_TRUE;
-                }
-                    break;
                 case LITE3D_TEXTURE_2D:
                 {
                     glFramebufferTexture2D(GL_FRAMEBUFFER,
@@ -318,7 +305,7 @@ int lite3d_framebuffer_setup(lite3d_framebuffer *fb,
                     colorAttachments[i]->isFbAttachment = LITE3D_TRUE;
                     fb->useColorbuffer = LITE3D_TRUE;
                 }
-                    break;
+                break;
                 default:
                     /* other texture types not supported yet */
                     return LITE3D_FALSE;
@@ -331,7 +318,7 @@ int lite3d_framebuffer_setup(lite3d_framebuffer *fb,
         glGenRenderbuffers(1, &fb->renderBuffersIds[renderBuffersCount]);
         glBindRenderbuffer(GL_RENDERBUFFER,
             fb->renderBuffersIds[renderBuffersCount]);
-        glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, fb->width,
+        glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA4, fb->width,
             fb->height);
 
         /* attach color buffer to FBO */
@@ -358,6 +345,7 @@ int lite3d_framebuffer_setup(lite3d_framebuffer *fb,
             GL_TEXTURE_2D, depthAttachments->textureID, 0);
         depthAttachments->isFbAttachment = LITE3D_TRUE;
     }
+#ifdef GL_DEPTH24_STENCIL8
     else if (useDepthRenderbuffer && useStencilRenderbuffer)
     {
         fb->useDepthbuffer = LITE3D_TRUE;
@@ -378,6 +366,7 @@ int lite3d_framebuffer_setup(lite3d_framebuffer *fb,
 
         renderBuffersCount++;
     }
+#endif
     else if (useDepthRenderbuffer)
     {
         fb->useDepthbuffer = LITE3D_TRUE;
@@ -386,7 +375,7 @@ int lite3d_framebuffer_setup(lite3d_framebuffer *fb,
             fb->renderBuffersIds[renderBuffersCount]);
 
         /* use dual depth/stencil buffer */
-        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24,
+        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT,
             fb->width, fb->height);
         /* Attach depth buffer to FBO */
         glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
@@ -411,12 +400,13 @@ int lite3d_framebuffer_setup(lite3d_framebuffer *fb,
      * after. If you call before glBindFramebuffer(GL_FRAMEBUFFER, 0), 
      * a GL error will be raised.
      */
+#ifndef GLES
     if (!fb->useColorbuffer)
     {
         glDrawBuffer(GL_NONE);
         glReadBuffer(GL_NONE);
     }
-
+#endif
     /* Does the GPU support current FBO configuration? */
     if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
     {
@@ -466,6 +456,7 @@ void lite3d_framebuffer_switch(lite3d_framebuffer *fb)
         /* set viewport */
         glViewport(0, 0, fb->width, fb->height);
         /* set buffers drawable */
+#ifndef GLES
         if (fb->framebufferId == 0)
         {
             /* always paint to back buffer in screen framebuffer case */
@@ -490,5 +481,6 @@ void lite3d_framebuffer_switch(lite3d_framebuffer *fb)
         {
             glDrawBuffers(fb->colorAttachmentsCount, gDrawBuffersArr);
         }
+#endif
     }
 }

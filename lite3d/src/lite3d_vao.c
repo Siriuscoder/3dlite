@@ -20,8 +20,8 @@
 #include <SDL_log.h>
 #include <SDL_assert.h>
 
-#include <lite3d/GL/glew.h>
-
+#include <lite3d/lite3d_gl.h>
+#include <lite3d/lite3d_glext.h>
 #include <lite3d/lite3d_alloc.h>
 #include <lite3d/lite3d_misc.h>
 #include <lite3d/lite3d_vao.h>
@@ -60,21 +60,15 @@ Overview
 int lite3d_vao_technique_init(void)
 {
     instancingSupport = LITE3D_TRUE;
-    if (!GL_VERSION_2_0)
-    {
-        SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION,
-            "%s: GL v3.1 minimum required (VBO)", LITE3D_CURRENT_FUNCTION);
-        return LITE3D_FALSE;
-    }
 
-    if (!GL_ARB_vertex_array_object)
+    if (!lite3d_check_vertex_array_object())
     {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
             "%s: GL_ARB_vertex_array_object not supported..", LITE3D_CURRENT_FUNCTION);
         return LITE3D_FALSE;
     }
 
-    if (!GL_ARB_instanced_arrays)
+    if (!lite3d_check_instanced_arrays())
     {
         SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
             "%s: GL_ARB_instanced_arrays not supported..", LITE3D_CURRENT_FUNCTION);
@@ -120,7 +114,7 @@ void lite3d_vao_draw_indexed_instanced(struct lite3d_vao *vao, size_t count)
     if (!instancingSupport)
         return;
     SDL_assert(vao);
-    glDrawElementsInstancedARB(GL_TRIANGLES, vao->indexesCount,
+    glDrawElementsInstanced(GL_TRIANGLES, vao->indexesCount,
         vao->indexType, (void *) vao->indexesOffset, count);
 }
 
@@ -134,7 +128,7 @@ void lite3d_vao_draw_instanced(struct lite3d_vao *vao, size_t count)
     if (!instancingSupport)
         return;
     SDL_assert(vao);
-    glDrawArraysInstancedARB(GL_TRIANGLES, 0,
+    glDrawArraysInstanced(GL_TRIANGLES, 0,
         vao->verticesCount, count);
 }
 

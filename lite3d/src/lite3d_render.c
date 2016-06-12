@@ -19,7 +19,7 @@
 #include <SDL_timer.h>
 #include <SDL_assert.h>
 
-#include <lite3d/GL/glew.h>
+#include <lite3d/lite3d_gl.h>
 #include <lite3d/lite3d_alloc.h>
 #include <lite3d/lite3d_render.h>
 #include <lite3d/lite3d_video.h>

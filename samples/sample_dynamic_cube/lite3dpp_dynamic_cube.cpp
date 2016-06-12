@@ -110,9 +110,9 @@ public:
 
     void updateTextureData()
     {
+        lite3dpp::Texture::PixelsData pixels;
         for(int8_t i = 0; i <= mBoxTexture->getLevelsNum(); ++i)
         {
-            lite3dpp::Texture::PixelsData pixels;
             mBoxTexture->getPixels(i, pixels);
 
             /* random color */

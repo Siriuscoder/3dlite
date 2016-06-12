@@ -15,11 +15,12 @@
  *	You should have received a copy of the GNU General Public License
  *	along with Lite3D.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
-#include <lite3d/GL/glew.h>
 #include <IL/il.h>
 #include <IL/ilu.h>
 #include <SDL_log.h>
 
+#include <lite3d/lite3d_gl.h>
+#include <lite3d/lite3d_glext.h>
 #include <lite3d/lite3d_misc.h>
 
 static uint8_t glOutOfMemory = LITE3D_FALSE;

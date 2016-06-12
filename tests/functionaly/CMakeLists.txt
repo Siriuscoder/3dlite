@@ -9,13 +9,12 @@ headers_files(".")
 add_executable(lite3d_tests ${SOURCES_LIST} ${HEADERS_LIST})
 
 target_include_directories(lite3d_tests PRIVATE 
-"$<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/tests/gtest>")
+"$<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/tests/gtest>"
+"$<BUILD_INTERFACE:${SDL2_INCLUDE_DIR}>")
 
 if(MSVC)
 target_compile_definitions(lite3d_tests PRIVATE
 "$<BUILD_INTERFACE:_WINEXE>")
-target_include_directories(lite3d_tests PRIVATE 
-"$<BUILD_INTERFACE:${SDL2_INCLUDE_DIR}>")
 else()
 target_compile_options(lite3d_tests PRIVATE 
 "$<BUILD_INTERFACE:${SDL2_CFLAGS}>")

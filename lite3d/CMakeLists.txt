@@ -25,8 +25,10 @@ unset(HEADERS_LIST)
 source_files("src/7zdec")
 headers_files("include/lite3d/7zdec")
 ######################### glewc ########################################
-source_files("src/glew")
-headers_files("include/lite3d/GL")
+if(GRAPHIC_BACKEND STREQUAL GLEW)
+	source_files("src/glew")
+	headers_files("include/lite3d/GL")
+endif()
 ######################### kazmath ######################################
 source_files("src/kazmath")
 headers_files("include/lite3d/kazmath")
@@ -55,6 +57,7 @@ target_compile_definitions(lite3d PRIVATE
 endif()
 
 target_include_directories(lite3d PRIVATE 
+"$<BUILD_INTERFACE:${OPENGL_INCLUDE_DIR}>"
 "$<BUILD_INTERFACE:${SDL2_INCLUDE_DIR}>"
 "$<BUILD_INTERFACE:${IL_INCLUDE_DIR}>"
 "$<BUILD_INTERFACE:${ASSIMP_INCLUDE_DIR}>"

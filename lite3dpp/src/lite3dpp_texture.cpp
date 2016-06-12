@@ -179,7 +179,11 @@ namespace lite3dpp
 
     void Texture::setPixels(int8_t level, const PixelsData &pixels)
     {
-        if(!lite3d_texture_unit_set_pixels(&mTexture, level, &pixels[0]))
+        if(!lite3d_texture_unit_set_pixels(&mTexture, 0, 0, 0,
+            lite3d_texture_unit_get_level_width(&mTexture, level), 
+            lite3d_texture_unit_get_level_height(&mTexture, level), 
+            lite3d_texture_unit_get_level_depth(&mTexture, level), 
+            level, &pixels[0]))
         {
             Stringstream error;
             error << "Could`n set level " << level << " for texture " << getName();
@@ -209,7 +213,11 @@ namespace lite3dpp
 
     void Texture::setCompressedPixels(int8_t level, const PixelsData &pixels)
     {
-        if(!lite3d_texture_unit_set_compressed_pixels(&mTexture, level, pixels.size(), &pixels[0]))
+        if(!lite3d_texture_unit_set_compressed_pixels(&mTexture, 0, 0, 0,
+            lite3d_texture_unit_get_level_width(&mTexture, level), 
+            lite3d_texture_unit_get_level_height(&mTexture, level), 
+            lite3d_texture_unit_get_level_depth(&mTexture, level), 
+            level, pixels.size(), &pixels[0]))
         {
             Stringstream error;
             error << "Could`n set level " << level << " for texture " << getName();

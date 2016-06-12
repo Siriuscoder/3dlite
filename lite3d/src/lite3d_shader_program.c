@@ -18,7 +18,7 @@
 #include <SDL_assert.h>
 #include <SDL_log.h>
 
-#include <lite3d/GL/glew.h>
+#include <lite3d/lite3d_gl.h>
 #include <lite3d/lite3d_alloc.h>
 #include <lite3d/lite3d_misc.h>
 #include <lite3d/lite3d_shader_program.h>
@@ -86,11 +86,7 @@ int lite3d_shader_program_link(
     /* linking process */
     glLinkProgram(program->programID);
 
-    if (lite3d_misc_check_gl_error())
-    {
-        glDeleteProgram(program->programID);
-        return LITE3D_FALSE;
-    }
+    lite3d_misc_check_gl_error();
 
     glGetProgramiv(program->programID, GL_LINK_STATUS, &isLinked);
     program->success = isLinked == GL_TRUE ? LITE3D_TRUE : LITE3D_FALSE;

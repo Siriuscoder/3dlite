@@ -19,15 +19,10 @@
 #include <SDL_syswm.h>
 #include <SDL_assert.h>
 
-#include <lite3d/GL/glew.h>
+#include <lite3d/lite3d_gl.h>
+#include <lite3d/lite3d_glext.h>
 #include <lite3d/lite3d_render.h>
 #include <lite3d/lite3d_video.h>
-
-#ifdef PLATFORM_Windows
-#include <lite3d/GL/wglew.h>
-#elif defined PLATFORM_Linux
-#include <lite3d/GL/glxew.h>
-#endif
 
 static SDL_Window *gRenderWindow = NULL;
 static SDL_GLContext gGLContext = NULL;
@@ -39,7 +34,8 @@ static int init_platform_gl_extensions(lite3d_video_settings *settings)
     if (!SDL_GetWindowWMInfo(gRenderWindow, &wminfo))
         return LITE3D_FALSE;
 
-#ifdef PLATFORM_Windows
+#ifndef GLES
+#   ifdef PLATFORM_Windows
     if (!WGLEW_ARB_extensions_string)
         return LITE3D_FALSE;
 
@@ -47,7 +43,7 @@ static int init_platform_gl_extensions(lite3d_video_settings *settings)
         "%s: WGL Extensions %s", LITE3D_CURRENT_FUNCTION,
         (char *) wglGetExtensionsStringARB(GetDC(wminfo.info.win.window)));
 
-#elif defined PLATFORM_Linux
+#   elif defined PLATFORM_Linux
     if (!GLXEW_VERSION_1_3)
     {
         SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION,
@@ -64,6 +60,7 @@ static int init_platform_gl_extensions(lite3d_video_settings *settings)
     SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION,
         "%s: GLX Extensions %s", LITE3D_CURRENT_FUNCTION,
         (char *) glXQueryExtensionsString(wminfo.info.x11.display, 0));
+#   endif
 #endif
 
     return LITE3D_TRUE;
@@ -74,23 +71,11 @@ static int init_gl_extensions(lite3d_video_settings *settings)
     const char *extensionsStr;
     int32_t extensionsStrLength;
 
-    GLenum err = glewInit();
-    if (GLEW_OK != err)
-    {
-        /* Problem: glewInit failed, something is seriously wrong. */
-        SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION,
-            "%s: Glew failed.. %s\n", LITE3D_CURRENT_FUNCTION, glewGetErrorString(err));
-    }
-
-    if (!GLEW_VERSION_2_0)
-    {
-        SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION,
-            "%s: GL v2.0 minimum required..", LITE3D_CURRENT_FUNCTION);
+    if (!lite3d_init_gl_extensions_binding())
         return LITE3D_FALSE;
-    }
 
-    extensionsStr = (const char *) glGetString(GL_EXTENSIONS);
-    extensionsStrLength = strlen(extensionsStr);
+    if (!lite3d_check_gl_version())
+        return LITE3D_FALSE;
 
     SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION,
         "%s: GL Version: %s", LITE3D_CURRENT_FUNCTION, (const char *) glGetString(GL_VERSION));
@@ -98,6 +83,9 @@ static int init_gl_extensions(lite3d_video_settings *settings)
         "%s: GL Vendor: %s", LITE3D_CURRENT_FUNCTION, (const char *) glGetString(GL_VENDOR));
     SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION,
         "%s: GL Renderer: %s", LITE3D_CURRENT_FUNCTION, (const char *) glGetString(GL_RENDERER));
+    
+    extensionsStr = (const char *) glGetString(GL_EXTENSIONS);
+    extensionsStrLength = strlen(extensionsStr);
 
     while (extensionsStrLength >= 0)
     {
@@ -111,9 +99,10 @@ static int init_gl_extensions(lite3d_video_settings *settings)
         "%s: GL Shading Lang %s", LITE3D_CURRENT_FUNCTION, (const char *) glGetString(GL_SHADING_LANGUAGE_VERSION));
 
     /* enable multisample buffers */
+#ifndef GLES
     if (settings->FSAA > 1 && GLEW_ARB_multisample)
         glEnable(GL_MULTISAMPLE_ARB);
-
+#endif
 
     return init_platform_gl_extensions(settings);
 }
@@ -139,13 +128,25 @@ int lite3d_video_open(lite3d_video_settings *settings)
     SDL_GL_SetAttribute(SDL_GL_ACCUM_ALPHA_SIZE, 16);
 
     SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
-
+    
+#ifndef GLES
     if (settings->FSAA > 1)
     {
         SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
         SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, settings->FSAA);
     }
-
+#else
+#ifdef WITH_GLES2
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
+#elif WITH_GLES3
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
+#endif
+#endif
+    
     windowFlags = SDL_WINDOW_OPENGL | SDL_WINDOW_HIDDEN;
     if (settings->fullscreen)
     {

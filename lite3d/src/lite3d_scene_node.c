@@ -17,7 +17,7 @@
  *******************************************************************************/
 #include <string.h>
 #include <SDL_assert.h>
-#include <lite3d/GL/glew.h>
+
 #include <lite3d/lite3d_scene_node.h>
 
 lite3d_scene_node *lite3d_scene_node_init(lite3d_scene_node *node)

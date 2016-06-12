@@ -17,8 +17,7 @@
  *******************************************************************************/
 #include <SDL_assert.h>
 
-#include <lite3d/GL/glew.h>
-
+#include <lite3d/lite3d_gl.h>
 #include <lite3d/lite3d_misc.h>
 #include <lite3d/lite3d_alloc.h>
 #include <lite3d/lite3d_shader.h>
@@ -62,12 +61,7 @@ int lite3d_shader_compile(
     glShaderSource(shader->shaderID, 1, &source, length ? (GLint *)&length : NULL);
     glCompileShader(shader->shaderID);
 
-    if (lite3d_misc_check_gl_error())
-    {
-        glDeleteShader(shader->shaderID);
-        shader->shaderID = 0;
-        return LITE3D_FALSE;
-    }
+    lite3d_misc_check_gl_error();
 
     /* check compile status */
     glGetShaderiv(shader->shaderID, GL_COMPILE_STATUS, &isCompiled);
