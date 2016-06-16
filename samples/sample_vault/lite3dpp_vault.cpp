@@ -43,6 +43,8 @@ public:
 
         mStatRerfeshTimer = mMain->addTimer("statisticURefresh", 1000);
         lite3dpp::Material::setFloatGlobalParameter("mode", 2);
+
+        mMain->getResourceManager()->releaseFileCache();
     }
 
     void shut() override
@@ -153,7 +155,7 @@ int main(int agrc, char *args[])
         SampleLifecycleListener lifecycleListener(&mainObj);
 
         mainObj.registerLifecycleListener(&lifecycleListener);
-        mainObj.initFromConfig("samples/config/config_vault.json");
+        mainObj.initFromConfig("vault/config/config_vault.json");
         mainObj.run();
     }
     catch (std::exception &ex)

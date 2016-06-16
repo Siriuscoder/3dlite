@@ -6,7 +6,7 @@
         "Name":"vault.program",
         "Path":"vaultmat:shaders/json/vault.json"
       },
-      "Blending":true,
+      "Blending":false,
       //  
       // Traditional blend algorithm:
       // Orgb = Sa * Srgb + (1 - Sa) * Drgb

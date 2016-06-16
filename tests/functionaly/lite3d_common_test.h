@@ -17,6 +17,13 @@
  *******************************************************************************/
 #include <lite3d/lite3d_main.h>
 
+#define LITE3D_GTEST_DECLARE(testCase, test, func) \
+    TEST_F(testCase, test) \
+    { \
+        mlite3dCommon.settings().renderLisneters.preRender = func; \
+        mlite3dCommon.main(); \
+    }
+
 class Lite3dCommon
 {
 public:

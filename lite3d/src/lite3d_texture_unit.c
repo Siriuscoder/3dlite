@@ -626,11 +626,11 @@ int lite3d_texture_unit_allocate(lite3d_texture_unit *textureUnit,
     {
         case 3:
             internalFormat = gTextureSettings.useGLCompression ?
-                GL_COMPRESSED_RGB_S3TC_DXT1_EXT : 3;
+                GL_COMPRESSED_RGB_S3TC_DXT1_EXT : GL_RGB;
             break;
         case 4:
             internalFormat = format == LITE3D_TEXTURE_FORMAT_DEPTH ? GL_DEPTH_COMPONENT :
-                (gTextureSettings.useGLCompression ? GL_COMPRESSED_RGBA_S3TC_DXT5_EXT : 4);
+                (gTextureSettings.useGLCompression ? GL_COMPRESSED_RGBA_S3TC_DXT5_EXT : GL_RGBA);
             break;
         default:
             internalFormat = textureUnit->imageBPP;

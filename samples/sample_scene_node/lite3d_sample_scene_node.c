@@ -142,6 +142,9 @@ static int initMaterials(void)
     /* try to compile material shaders */
     lite3d_shader_init(&shaders[0], LITE3D_SHADER_TYPE_VERTEX);
     if (!lite3d_shader_compile(&shaders[0],
+        "#ifdef GL_ES\n"
+        "precision mediump float;\n"
+        "#endif\n"
         "in vec3 vertexAttr; "
         "in vec2 texCoordAttr; "
         "uniform mat4 projectionMatrix; "
@@ -156,6 +159,9 @@ static int initMaterials(void)
         return LITE3D_FALSE;
     lite3d_shader_init(&shaders[1], LITE3D_SHADER_TYPE_FRAGMENT);
     if (!lite3d_shader_compile(&shaders[1],
+        "#ifdef GL_ES\n"
+        "precision mediump float;\n"
+        "#endif\n"
         "uniform sampler2D diffuse; "
         "varying vec2 vTexCoord; "
         "void main() "

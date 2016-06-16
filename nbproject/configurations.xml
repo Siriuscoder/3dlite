@@ -199,6 +199,7 @@
         <df name="functionaly">
           <in>lite3d_common_test.cpp</in>
           <in>lite3d_file_cache_test.cpp</in>
+          <in>lite3d_m_compare.cpp</in>
           <in>lite3d_vbo_test.cpp</in>
           <in>lite3dpp_conf_writer.cpp</in>
           <in>lite3dpp_main_test.cpp</in>
@@ -261,7 +262,7 @@
           <buildCommandWorkingDir>build</buildCommandWorkingDir>
           <buildCommand>${MAKE} -f Makefile</buildCommand>
           <cleanCommand>${MAKE} -f Makefile clean</cleanCommand>
-          <executablePath>build/bin/Debug/sample_objects</executablePath>
+          <executablePath>build/bin/Debug/sample_RTT</executablePath>
           <ccTool>
             <incDir>
               <pElem>lite3d/include</pElem>
@@ -356,6 +357,13 @@
             <Elem>lite3dpp_EXPORTS</Elem>
           </preprocessorList>
         </ccTool>
+      </folder>
+      <folder path="0/samples">
+        <cTool>
+          <preprocessorList>
+            <Elem>WITH_GLES2</Elem>
+          </preprocessorList>
+        </cTool>
       </folder>
       <folder path="0/samples/sample_cellwallerkiller">
         <ccTool>
@@ -454,6 +462,9 @@
             <pElem>/usr/include/SDL2</pElem>
             <pElem>build/samples</pElem>
           </incDir>
+          <preprocessorList>
+            <Elem>WITH_GLES2</Elem>
+          </preprocessorList>
         </ccTool>
       </folder>
       <folder path="0/tests">
@@ -1102,6 +1113,7 @@
             <pElem>build/lite3d</pElem>
           </incDir>
           <preprocessorList>
+            <Elem>WITH_GLES2</Elem>
             <Elem>_7ZIP_PPMD_SUPPPORT</Elem>
             <Elem>lite3d_EXPORTS</Elem>
           </preprocessorList>
@@ -1686,6 +1698,13 @@
         </ccTool>
       </item>
       <item path="tests/functionaly/lite3d_file_cache_test.cpp"
+            ex="false"
+            tool="1"
+            flavor2="8">
+        <ccTool flags="0">
+        </ccTool>
+      </item>
+      <item path="tests/functionaly/lite3d_m_compare.cpp"
             ex="false"
             tool="1"
             flavor2="8">

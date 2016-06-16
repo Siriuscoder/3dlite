@@ -26,7 +26,9 @@
 #include <lite3d/lite3d_misc.h>
 #include <lite3d/lite3d_vbo.h>
 
-static int maxVertexAttribs;
+static int gMaxVertexAttribs;
+static int gMapBufferSupport = 0;
+
 /*
 Name
 
@@ -149,6 +151,12 @@ int lite3d_vbo_technique_init(void)
         return LITE3D_FALSE;
     }
     
+    if (!(gMapBufferSupport = lite3d_check_map_buffer()))
+    {
+        SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
+            "%s: Buffer mapping not supported..", LITE3D_CURRENT_FUNCTION);
+    }
+    
 #ifndef WITH_GLES2
     if (!lite3d_check_copy_buffer())
     {
@@ -158,9 +166,9 @@ int lite3d_vbo_technique_init(void)
     }
 #endif
     
-    glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &maxVertexAttribs);
+    glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &gMaxVertexAttribs);
     SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "Max vertex attributes: %d",
-        maxVertexAttribs);
+        gMaxVertexAttribs);
     return LITE3D_TRUE;
 }
 
