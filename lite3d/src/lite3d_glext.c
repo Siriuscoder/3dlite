@@ -161,6 +161,12 @@ int lite3d_init_gl_extensions_binding()
         glUnmapBufferPtr = SDL_GL_GetProcAddress("glUnmapBufferOES");
         glGetBufferPointervPtr = SDL_GL_GetProcAddress("glGetBufferPointervOES");
     }
+    else
+    {
+        glMapBufferPtr = glMapBuffer_stub;
+        glUnmapBufferPtr = glUnmapBuffer_stub;
+        glGetBufferPointervPtr = glGetBufferPointerv_stub;
+    }
     
 #ifdef WITH_GLES2
     if(lite3d_check_instanced_arrays())
@@ -210,4 +216,22 @@ void glCompressedTexSubImage1D_stub(GLenum target, GLint level, GLint xoffset, G
 {
     SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
         "%s: glCompressedTexSubImage1D not supported..", LITE3D_CURRENT_FUNCTION);       
+}
+
+void glMapBuffer_stub(GLenum target, GLenum access)
+{
+    SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
+        "%s: glMapBuffer not supported..", LITE3D_CURRENT_FUNCTION);   
+}
+
+void glUnmapBuffer_stub(GLenum target)
+{
+    SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
+        "%s: glUnmapBuffer not supported..", LITE3D_CURRENT_FUNCTION);   
+}
+
+void glGetBufferPointerv_stub(GLenum target, GLenum pname, void** params)
+{
+    SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
+        "%s: glGetBufferPointerv not supported..", LITE3D_CURRENT_FUNCTION);
 }

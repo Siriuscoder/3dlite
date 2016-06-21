@@ -39,7 +39,9 @@ void glCompressedTexSubImage3D_stub(GLenum target, GLint level, GLint xoffset, G
 void glTexSubImage1D_stub(GLenum target, GLint level, GLint xoffset, GLsizei width, GLenum format, GLenum type, const void *pixels);
 void glTexImage1D_stub(GLenum target, GLint level, GLint internalformat, GLsizei width, GLint border, GLenum format, GLenum type, const void *pixels);
 void glCompressedTexSubImage1D_stub(GLenum target, GLint level, GLint xoffset, GLsizei width, GLenum format, GLsizei imageSize, const void *data);
-
+void glMapBuffer_stub(GLenum target, GLenum access);
+void glUnmapBuffer_stub(GLenum target);
+void glGetBufferPointerv_stub(GLenum target, GLenum pname, void** params);
 
 #ifdef GLES
 

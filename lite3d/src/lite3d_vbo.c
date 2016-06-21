@@ -27,8 +27,6 @@
 #include <lite3d/lite3d_vbo.h>
 
 static int gMaxVertexAttribs;
-static int gMapBufferSupport = 0;
-
 /*
 Name
 
@@ -151,7 +149,7 @@ int lite3d_vbo_technique_init(void)
         return LITE3D_FALSE;
     }
     
-    if (!(gMapBufferSupport = lite3d_check_map_buffer()))
+    if (!lite3d_check_map_buffer())
     {
         SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
             "%s: Buffer mapping not supported..", LITE3D_CURRENT_FUNCTION);

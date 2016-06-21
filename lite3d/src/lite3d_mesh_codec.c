@@ -192,6 +192,7 @@ int lite3d_mesh_m_decode(lite3d_mesh *mesh,
         return LITE3D_FALSE;
     }
 
+#ifndef GLES
     if ((mapped = lite3d_vbo_map(&mesh->vertexBuffer, LITE3D_VBO_MAP_WRITE_ONLY)) == NULL)
     {
         SDL_RWclose(stream);
@@ -223,6 +224,33 @@ int lite3d_mesh_m_decode(lite3d_mesh *mesh,
     }
 
     lite3d_vbo_unmap(&mesh->indexBuffer);
+#else
+    {
+        void *tbuffer = lite3d_malloc(mheader.vertexSectionSize);
+        /* read vertex section in mapped vertex buffer directly */
+        if (SDL_RWread(stream, tbuffer, mheader.vertexSectionSize, 1) != 1)
+        {
+            SDL_RWclose(stream);
+            lite3d_free(tbuffer);
+            return LITE3D_FALSE;
+        }
+
+        lite3d_vbo_subbuffer(&mesh->vertexBuffer, tbuffer, 0, mheader.vertexSectionSize);
+        lite3d_free(tbuffer);
+
+        tbuffer = lite3d_malloc(mheader.indexSectionSize);
+        /* read vertex section in mapped vertex buffer directly */
+        if (SDL_RWread(stream, tbuffer, mheader.indexSectionSize, 1) != 1)
+        {
+            SDL_RWclose(stream);
+            lite3d_free(tbuffer);
+            return LITE3D_FALSE;
+        }
+
+        lite3d_vbo_subbuffer(&mesh->indexBuffer, tbuffer, 0, mheader.indexSectionSize);
+        lite3d_free(tbuffer);
+    }
+#endif
     SDL_RWclose(stream);
     return LITE3D_TRUE;
 }
@@ -304,7 +332,6 @@ int lite3d_mesh_m_encode(lite3d_mesh *mesh,
             }
         }
     }
-
 
     /* map vertex buffer */
     if ((vboData = lite3d_vbo_map(&mesh->vertexBuffer, LITE3D_VBO_MAP_READ_ONLY)) == NULL)
