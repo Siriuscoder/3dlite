@@ -43,11 +43,20 @@ namespace lite3dpp
         inline int8_t getLevelsNum()
         { return mTexture.generatedMipmaps; }
 
-        void getPixels(int8_t level,PixelsData &pixels);
+        void getPixels(int8_t level, PixelsData &pixels);
+        void getPixels(int8_t level, void *pixels);
+
         void setPixels(int8_t level, const PixelsData &pixels);
+        void setPixels(int8_t level, const void *pixels);
 
         void getCompressedPixels(int8_t level, PixelsData &pixels);
+        void getCompressedPixels(int8_t level, void *pixels);
         void setCompressedPixels(int8_t level, const PixelsData &pixels);
+        void setCompressedPixels(int8_t level, const void *pixels, size_t size);
+
+        size_t getLayerSize(int8_t level);
+        size_t getCompressedLayerSize(int8_t level);
+
 
         void generateMipmaps();
 

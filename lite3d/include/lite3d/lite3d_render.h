@@ -83,6 +83,7 @@ typedef struct lite3d_render_target
     float cleanDepth;
     int cleanStencil;
     int priority;
+    int8_t fullscreen;
 } lite3d_render_target;
 
 LITE3D_CEXPORT void lite3d_render_loop(lite3d_render_listeners *callbacks);
@@ -104,5 +105,8 @@ LITE3D_CEXPORT int lite3d_render_target_dettach_camera(lite3d_render_target *rt,
 LITE3D_CEXPORT int lite3d_render_target_screen_attach_camera(lite3d_camera *camera, uint16_t pass, int priority);
 LITE3D_CEXPORT int lite3d_render_target_screen_dettach_camera(lite3d_camera *camera, uint16_t pass, int priority);
 LITE3D_CEXPORT lite3d_render_target *lite3d_render_target_screen_get(void);
+LITE3D_CEXPORT void lite3d_render_target_resize(lite3d_render_target *rt, int32_t width, int32_t height);
+LITE3D_CEXPORT void lite3d_render_target_fullscreen(lite3d_render_target *rt, int8_t flag);
+
 #endif	/* RENDER_H */
 

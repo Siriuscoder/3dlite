@@ -63,6 +63,67 @@ typedef struct lite3d_m_chunk_layout
 
 #pragma pack(pop)
 
+#ifndef GLES
+static int _load_mesh_from_stream(lite3d_mesh *mesh, SDL_RWops *stream)
+{
+    void *mapped;
+    if ((mapped = lite3d_vbo_map(&mesh->vertexBuffer, LITE3D_VBO_MAP_WRITE_ONLY)) == NULL)
+    {
+        return LITE3D_FALSE;
+    }
+
+    /* read vertex section in mapped vertex buffer directly */
+    if (SDL_RWread(stream, mapped, mesh->vertexBuffer.size, 1) != 1)
+    {
+        lite3d_vbo_unmap(&mesh->vertexBuffer);
+        return LITE3D_FALSE;
+    }
+
+    lite3d_vbo_unmap(&mesh->vertexBuffer);
+
+    if ((mapped = lite3d_vbo_map(&mesh->indexBuffer, LITE3D_VBO_MAP_WRITE_ONLY)) == NULL)
+    {
+        return LITE3D_FALSE;
+    }
+
+    /* read index section in mapped index buffer directly */
+    if (SDL_RWread(stream, mapped, mesh->indexBuffer.size, 1) != 1)
+    {
+        lite3d_vbo_unmap(&mesh->indexBuffer);
+        return LITE3D_FALSE;
+    }
+
+    lite3d_vbo_unmap(&mesh->indexBuffer);
+    return LITE3D_TRUE;
+}
+#else
+static int _load_mesh_from_stream(lite3d_mesh *mesh, SDL_RWops *stream)
+{
+    void *tbuffer = lite3d_malloc(mesh->vertexBuffer.size);
+    /* read vertex section in mapped vertex buffer directly */
+    if (SDL_RWread(stream, tbuffer, mesh->vertexBuffer.size, 1) != 1)
+    {
+        lite3d_free(tbuffer);
+        return LITE3D_FALSE;
+    }
+    
+    lite3d_vbo_subbuffer(&mesh->vertexBuffer, tbuffer, 0, mesh->vertexBuffer.size);
+    lite3d_free(tbuffer);
+    
+    tbuffer = lite3d_malloc(mesh->indexBuffer.size);
+    /* read vertex section in mapped vertex buffer directly */
+    if (SDL_RWread(stream, tbuffer, mesh->indexBuffer.size, 1) != 1)
+    {
+        lite3d_free(tbuffer);
+        return LITE3D_FALSE;
+    }
+    
+    lite3d_vbo_subbuffer(&mesh->indexBuffer, tbuffer, 0, mesh->indexBuffer.size);
+    lite3d_free(tbuffer);
+    return LITE3D_TRUE;
+}
+#endif
+
 size_t lite3d_mesh_m_encode_size(lite3d_mesh *mesh)
 {
     size_t result = 0;
@@ -96,7 +157,6 @@ int lite3d_mesh_m_decode(lite3d_mesh *mesh,
     size_t indOffset = 0;
     size_t vertOffset = 0;
     uint32_t chunkSectionOffset = 0;
-    void *mapped;
     lite3d_mesh_chunk *thisChunk;
     
     SDL_assert(mesh);
@@ -192,65 +252,12 @@ int lite3d_mesh_m_decode(lite3d_mesh *mesh,
         return LITE3D_FALSE;
     }
 
-#ifndef GLES
-    if ((mapped = lite3d_vbo_map(&mesh->vertexBuffer, LITE3D_VBO_MAP_WRITE_ONLY)) == NULL)
+    if(!_load_mesh_from_stream(mesh, stream))
     {
         SDL_RWclose(stream);
         return LITE3D_FALSE;
     }
 
-    /* read vertex section in mapped vertex buffer directly */
-    if (SDL_RWread(stream, mapped, mheader.vertexSectionSize, 1) != 1)
-    {
-        SDL_RWclose(stream);
-        lite3d_vbo_unmap(&mesh->vertexBuffer);
-        return LITE3D_FALSE;
-    }
-
-    lite3d_vbo_unmap(&mesh->vertexBuffer);
-
-    if ((mapped = lite3d_vbo_map(&mesh->indexBuffer, LITE3D_VBO_MAP_WRITE_ONLY)) == NULL)
-    {
-        SDL_RWclose(stream);
-        return LITE3D_FALSE;
-    }
-
-    /* read index section in mapped index buffer directly */
-    if (SDL_RWread(stream, mapped, mheader.indexSectionSize, 1) != 1)
-    {
-        SDL_RWclose(stream);
-        lite3d_vbo_unmap(&mesh->indexBuffer);
-        return LITE3D_FALSE;
-    }
-
-    lite3d_vbo_unmap(&mesh->indexBuffer);
-#else
-    {
-        void *tbuffer = lite3d_malloc(mheader.vertexSectionSize);
-        /* read vertex section in mapped vertex buffer directly */
-        if (SDL_RWread(stream, tbuffer, mheader.vertexSectionSize, 1) != 1)
-        {
-            SDL_RWclose(stream);
-            lite3d_free(tbuffer);
-            return LITE3D_FALSE;
-        }
-
-        lite3d_vbo_subbuffer(&mesh->vertexBuffer, tbuffer, 0, mheader.vertexSectionSize);
-        lite3d_free(tbuffer);
-
-        tbuffer = lite3d_malloc(mheader.indexSectionSize);
-        /* read vertex section in mapped vertex buffer directly */
-        if (SDL_RWread(stream, tbuffer, mheader.indexSectionSize, 1) != 1)
-        {
-            SDL_RWclose(stream);
-            lite3d_free(tbuffer);
-            return LITE3D_FALSE;
-        }
-
-        lite3d_vbo_subbuffer(&mesh->indexBuffer, tbuffer, 0, mheader.indexSectionSize);
-        lite3d_free(tbuffer);
-    }
-#endif
     SDL_RWclose(stream);
     return LITE3D_TRUE;
 }

@@ -484,3 +484,13 @@ void lite3d_framebuffer_switch(lite3d_framebuffer *fb)
 #endif
     }
 }
+
+void lite3d_framebuffer_resize(lite3d_framebuffer *fb, 
+    int32_t width, int32_t height)
+{
+    SDL_assert(fb);
+    fb->width = width;
+    fb->height = height;
+    // framebuffer will be readjusted
+    gCurrentFb = NULL;
+}

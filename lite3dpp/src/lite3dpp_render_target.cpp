@@ -35,7 +35,7 @@ namespace lite3dpp
     RenderTarget::~RenderTarget()
     {}
 
-    bool RenderTarget::isEnabled()
+    bool RenderTarget::isEnabled() const
     {
         SDL_assert_release(mRenderTargetPtr);
         return mRenderTargetPtr->enabled == LITE3D_TRUE;
@@ -53,13 +53,13 @@ namespace lite3dpp
         mRenderTargetPtr->enabled = LITE3D_FALSE;
     }
 
-    int32_t RenderTarget::height()
+    int32_t RenderTarget::height() const
     {
         SDL_assert_release(mRenderTargetPtr);
         return mRenderTargetPtr->height;
     }
 
-    int32_t RenderTarget::width()
+    int32_t RenderTarget::width() const
     {
         SDL_assert_release(mRenderTargetPtr);
         return mRenderTargetPtr->width;
@@ -160,5 +160,19 @@ namespace lite3dpp
     void WindowRenderTarget::unloadImpl()
     {}
 
+    void WindowRenderTarget::resize(int32_t width, int32_t height)
+    {
+        lite3d_render_target_resize(mRenderTargetPtr, width, height);
+    }
+
+    void WindowRenderTarget::fullscreen(bool flag)
+    {
+        lite3d_render_target_fullscreen(mRenderTargetPtr, flag);
+    }
+
+    float WindowRenderTarget::computeCameraAspect() const
+    {
+        return (float)width() / (float)height();
+    }
 }
 

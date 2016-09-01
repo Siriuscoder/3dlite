@@ -50,6 +50,7 @@ namespace lite3dpp
         void setupOrtho(float near, float far, float left, float right, 
             float bottom, float top);
         void setupPerspective(float znear, float zfar, float fovy, float aspect);
+        void setAspect(float aspect);
 
         void lookAt(const kmVec3 &pointTo);
         void setPosition(const kmVec3 &position);

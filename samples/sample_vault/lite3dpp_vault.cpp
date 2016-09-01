@@ -35,11 +35,11 @@ public:
         lite3dpp::Scene *scene = mMain->getResourceManager()->queryResource<lite3dpp::Scene>("Vault",
             "vaultmat:scenes/vault.json");
         mCamera = scene->getCamera("MyCamera");
-        mWindow = mMain->getResourceManager()->queryResource<lite3dpp::WindowRenderTarget>("MainWindow");
+        mWindow = mMain->window();
         
-        mSenterXPos = mWindow->width() >> 1;
-        mSenterYPos = mWindow->height() >> 1;
-        lite3d_video_set_mouse_pos(mSenterXPos, mSenterYPos);
+        mCenterXPos = mWindow->width() >> 1;
+        mCenterYPos = mWindow->height() >> 1;
+        lite3d_video_set_mouse_pos(mCenterXPos, mCenterYPos);
 
         mStatRerfeshTimer = mMain->addTimer("statisticURefresh", 1000);
         lite3dpp::Material::setFloatGlobalParameter("mode", 2);
@@ -111,12 +111,32 @@ public:
                 
                 lite3dpp::Material::setFloatGlobalParameter("mode", (float)mMode);
             }
+            else if (e->key.keysym.sym == SDLK_f)
+            {
+                static bool scRes = true;
+                if(scRes)
+                {
+                    mWindow->resize(1024, 768);
+                    mWindow->fullscreen(false);
+                }
+                else
+                {
+                    mWindow->resize(0, 0);
+                    mWindow->fullscreen(true);
+                }
+
+                mCenterXPos = mWindow->width() >> 1;
+                mCenterYPos = mWindow->height() >> 1;
+                lite3d_video_set_mouse_pos(mCenterXPos, mCenterYPos);
+                mCamera->setAspect(mWindow->computeCameraAspect());
+                scRes = !scRes;
+            }
         }
         else if(e->type == SDL_MOUSEMOTION)
         {
-            mCamera->rotateZ((e->motion.x - mSenterXPos) * 0.003f);
-            mCamera->pitch((e->motion.y - mSenterYPos) * 0.003f);
-            lite3d_video_set_mouse_pos(mSenterXPos, mSenterYPos);
+            mCamera->rotateZ((e->motion.x - mCenterXPos) * 0.003f);
+            mCamera->pitch((e->motion.y - mCenterYPos) * 0.003f);
+            lite3d_video_set_mouse_pos(mCenterXPos, mCenterYPos);
         }
     }
 
@@ -140,9 +160,9 @@ private:
 
     lite3dpp::Main *mMain;
     lite3dpp::Camera *mCamera;
-    lite3dpp::RenderTarget *mWindow;
-    int mSenterXPos;
-    int mSenterYPos;
+    lite3dpp::WindowRenderTarget *mWindow;
+    int mCenterXPos;
+    int mCenterYPos;
     lite3d_timer *mStatRerfeshTimer;
     int mMode;
 };

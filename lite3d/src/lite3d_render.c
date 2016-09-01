@@ -174,6 +174,8 @@ void lite3d_render_loop(lite3d_render_listeners *callbacks)
     lite3d_render_target_init(&gScreenRt,
         lite3d_get_global_settings()->videoSettings.screenWidth,
         lite3d_get_global_settings()->videoSettings.screenHeight);
+    
+    lite3d_render_target_fullscreen(&gScreenRt, lite3d_get_global_settings()->videoSettings.fullscreen);
 
     lite3d_list_init(&gRenderTargets);
     lite3d_render_target_add(&gScreenRt, 0xFFFFFFF);
@@ -423,4 +425,30 @@ int lite3d_render_target_screen_dettach_camera(lite3d_camera *camera,
 lite3d_render_target *lite3d_render_target_screen_get(void)
 {
     return &gScreenRt;
+}
+
+void lite3d_render_target_resize(lite3d_render_target *rt, int32_t width, int32_t height)
+{
+    SDL_assert(rt);
+
+    if (width == 0 || height == 0)
+    {
+        if (!lite3d_video_get_display_size(&width, &height))
+            return;
+    }
+
+    rt->width = width;
+    rt->height = height;
+    lite3d_video_resize(width, height);
+    lite3d_framebuffer_resize(&rt->fb, width, height);
+}
+
+void lite3d_render_target_fullscreen(lite3d_render_target *rt, int8_t flag)
+{
+    SDL_assert(rt);
+    if (rt == &gScreenRt && rt->fullscreen != flag)
+    {
+        lite3d_video_set_fullscreen(flag);
+        rt->fullscreen = flag;
+    }
 }

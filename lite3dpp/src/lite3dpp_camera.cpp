@@ -40,6 +40,14 @@ namespace lite3dpp
         lite3d_camera_perspective(&mCamera, znear, zfar, fovy, aspect);
     }
 
+    void Camera::setAspect(float aspect)
+    {
+        lite3d_camera_perspective(&mCamera, mCamera.projectionParams.perspective.znear,
+            mCamera.projectionParams.perspective.zfar,
+            mCamera.projectionParams.perspective.fovy,
+            aspect);
+    }
+
     void Camera::lookAt(const kmVec3 &pointTo)
     {
         lite3d_camera_lookAt(&mCamera, &pointTo);

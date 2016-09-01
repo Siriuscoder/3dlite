@@ -33,11 +33,11 @@ namespace lite3dpp
             const String &path, Main *main);
         ~RenderTarget();
 
-        bool isEnabled();
+        bool isEnabled() const;
         void enable();
         void disable();
-        int32_t height();
-        int32_t width();
+        int32_t height() const;
+        int32_t width() const;
         void setBackgroundColor(const kmVec4 &color);
         void setCleanDepth(float value);
         /* clean buffers control, clean operation perform then 
@@ -74,6 +74,10 @@ namespace lite3dpp
         WindowRenderTarget(const String &name, 
             const String &path, Main *main);
         ~WindowRenderTarget();
+
+        void resize(int32_t width, int32_t height);
+        void fullscreen(bool flag);
+        float computeCameraAspect() const;
 
     protected:
 

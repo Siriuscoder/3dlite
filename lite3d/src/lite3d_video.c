@@ -129,6 +129,7 @@ int lite3d_video_open(lite3d_video_settings *settings)
 
     SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
     
+    /* Specify openGL context */
 #ifndef GLES
     if (settings->FSAA > 1)
     {
@@ -156,16 +157,10 @@ int lite3d_video_open(lite3d_video_settings *settings)
 
     if (settings->screenWidth == 0 || settings->screenHeight == 0)
     {
-        if (SDL_GetDesktopDisplayMode(0, &displayMode) != 0)
+        if (!lite3d_video_get_display_size(&settings->screenWidth,
+            &settings->screenHeight))
             return LITE3D_FALSE;
-
-        settings->screenWidth = displayMode.w;
-        settings->screenHeight = displayMode.h;
     }
-
-    /* Specify openGL context */
-    //SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-    //SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
 
     /* setup render window */
     gRenderWindow = SDL_CreateWindow(
@@ -232,7 +227,44 @@ void lite3d_video_swap_buffers(void)
     SDL_GL_SwapWindow(gRenderWindow);
 }
 
-void lite3d_video_set_mouse_pos(int x, int y)
+void lite3d_video_set_mouse_pos(int32_t x, int32_t y)
 {
     SDL_WarpMouseInWindow(gRenderWindow, x, y);
+}
+
+void lite3d_video_resize(int32_t width, int32_t height)
+{
+    if (gRenderWindow)
+    {
+        if (width == 0 || height == 0)
+        {
+            if (!lite3d_video_get_display_size(&width, &height))
+                return;
+        }
+
+        SDL_SetWindowSize(gRenderWindow, width, height);
+    }
+}
+
+void lite3d_video_set_fullscreen(int8_t flag)
+{
+    if (gRenderWindow)
+    {
+        SDL_SetWindowFullscreen(gRenderWindow, flag ? SDL_WINDOW_FULLSCREEN : 0);
+    }
+}
+
+int lite3d_video_get_display_size(int32_t *width, int32_t *height)
+{
+    SDL_DisplayMode displayMode;
+    if (SDL_GetDesktopDisplayMode(0, &displayMode) != 0)
+    {
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+            "%s: SDL_GetDesktopDisplayMode failed..", LITE3D_CURRENT_FUNCTION);
+        return LITE3D_FALSE;
+    }
+
+    *width = displayMode.w;
+    *height = displayMode.h;
+    return LITE3D_TRUE;
 }
