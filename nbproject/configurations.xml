@@ -733,7 +733,6 @@
             <pElem>build/lite3d</pElem>
           </incDir>
           <preprocessorList>
-            <Elem>WITH_GLES2</Elem>
             <Elem>_7ZIP_PPMD_SUPPPORT</Elem>
             <Elem>lite3d_EXPORTS</Elem>
           </preprocessorList>

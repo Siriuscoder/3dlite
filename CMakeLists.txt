@@ -21,6 +21,8 @@ project(lite3d)
 include(${CMAKE_SOURCE_DIR}/CMake/lite3dCommon.cmake)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/CMake/")
 
+enable_testing()
+
 # Configuration
 set(CMAKE_CONFIGURATION_TYPES Debug Release)
 # Platform configuration
@@ -104,6 +106,8 @@ else()
     set(GRAPHIC_BACKEND "GLEW")
 endif()
 
+message(STATUS "Graphic backend: ${GRAPHIC_BACKEND}")
+
 find_package(DevIL)
 if(NOT IL_FOUND)
     message(FATAL_ERROR "DevIL library not found..")
@@ -114,6 +118,12 @@ include_directories("${PROJECT_SOURCE_DIR}/lite3dpp/include")
 
 add_subdirectory("${PROJECT_SOURCE_DIR}/lite3d/")
 add_subdirectory("${PROJECT_SOURCE_DIR}/lite3dpp/")
+add_subdirectory("${PROJECT_SOURCE_DIR}/lite3dpp_font/")
 add_subdirectory("${PROJECT_SOURCE_DIR}/tests/")
 add_subdirectory("${PROJECT_SOURCE_DIR}/samples/")
 add_subdirectory("${PROJECT_SOURCE_DIR}/tools/")
+
+option(SHOW_STATS "Show cmake variables" OFF)
+if(SHOW_STATS)
+    print_build_info()
+endif()

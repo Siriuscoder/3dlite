@@ -25,10 +25,6 @@ gtest
 lite3d
 lite3dpp)
 
-if(NOT MSVC)
-# how to know output executable file path in MSVC compilation case?
-add_custom_command(TARGET lite3d_tests POST_BUILD 
+add_test(NAME lite3d_tests 
 	COMMAND ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/lite3d_tests
-	WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/media/
-	COMMENT "Self-testing...")
-endif()
+	WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/media/)
