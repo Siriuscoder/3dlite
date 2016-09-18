@@ -112,10 +112,13 @@ namespace lite3dpp
             if(!lite3d_texture_unit_allocate(&mTexture, textureType, quality, wrapping, textureFormat, 
                 helper.getInt(L"Height", 1), helper.getInt(L"Width", 1), helper.getInt(L"Depth", 1)))
                 throw std::runtime_error(getName() + " texture allocation failed..");
+            
+            if(helper.has(L"BlankColor"))
+                setBlankColor(helper.getVec4(L"BlankColor"));
         }
 
         mTexture.userdata = this;
-        setBufferedSize(mTexture.imageSize);
+        setBufferedSize(mTexture.totalSize);
     }
 
     void Texture::reloadFromConfigImpl(const ConfigurationReader &helper)
@@ -285,6 +288,30 @@ namespace lite3dpp
         }
 
         return res;
+    }
+    
+    void Texture::setBlankColor(const kmVec4 &color)
+    {
+        if(getState() != AbstractResource::LOADED)
+            return;
+        
+        /* fullup pixels */
+        PixelsData pixels(mTexture.imageSize);
+        for(unsigned j = 0; j < pixels.size();)
+        {
+            if(mTexture.imageBPP >= 1)
+                pixels[j++] = color.x * 255;
+            if(mTexture.imageBPP >= 2)
+                pixels[j++] = color.y * 255;
+            if(mTexture.imageBPP >= 3)
+                pixels[j++] = color.z * 255;
+            if(mTexture.imageBPP == 4)
+                pixels[j++] = color.w * 255;
+        }
+        
+        /* upload pixels */
+        setPixels(0, pixels);
+        generateMipmaps();
     }
 }
 

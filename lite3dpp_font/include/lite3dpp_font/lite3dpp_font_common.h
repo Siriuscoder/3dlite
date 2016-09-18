@@ -1,6 +1,6 @@
 /******************************************************************************
 *	This file is part of lite3d (Light-weight 3d engine).
-*	Copyright (C) 2014  Sirius (Korolev Nikita)
+*	Copyright (C) 2016  Sirius (Korolev Nikita)
 *
 *	Lite3D is free software: you can redistribute it and/or modify
 *	it under the terms of the GNU General Public License as published by
@@ -25,22 +25,13 @@
 #       error "GCC or MSVC compiller requred.."
 #   endif
 
-// Stuff for Visual C++ only
-#   if defined(_MSC_VER)
-// Disable whining about using 'this' as a member initializer on VC++.
-#       pragma warning(disable: 4355)
-#       pragma warning(disable: 4127)
-#       pragma warning(disable: 4251)
-#   endif
-
-
-#   ifdef WIN_3DLITEPP_DLL
+#   ifdef WIN_3DLITEPP_FONT_DLL
 // When making the DLL, export tagged symbols, so they appear
 // in the import library.
-#   define LITE3DPP_EXPORT __declspec(dllexport)
-#   elif !defined(WIN_3DLITEPP_DLL)
+#   define LITE3DPP_FONT_EXPORT __declspec(dllexport)
+#   elif !defined(WIN_3DLITEPP_FONT_DLL)
         // We must be _using_ the DLL, so import symbols instead.
-#   define LITE3DPP_EXPORT __declspec(dllimport)
+#   define LITE3DPP_FONT_EXPORT __declspec(dllimport)
 #   endif
 
 #elif PLATFORM_Linux
@@ -52,23 +43,13 @@
 #       error "GCC compiler requred.."
 #   endif
 
-#   define LITE3DPP_EXPORT
+#   define LITE3DPP_FONT_EXPORT
 
 #endif
 
-//#define LITE3DPP_USE_STL_ALLOCATOR
-
-#include <lite3d/lite3d_kazmath.h>
-
-/* Main engine class */
-namespace lite3dpp
+namespace nw
 {
-    class LITE3DPP_EXPORT Main;
-    class LITE3DPP_EXPORT Scene;
+    class FontLib;
+    class Font;
+    class Text;
 }
-
-class JSONValue;
-class asIScriptEngine;
-class asIScriptModule;
-class asIScriptFunction;
-class asIScriptContext;

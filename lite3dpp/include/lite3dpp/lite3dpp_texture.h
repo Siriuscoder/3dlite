@@ -29,7 +29,7 @@ namespace lite3dpp
     {
     public:
 
-        typedef stl<unsigned char>::vector PixelsData;
+        typedef stl<uint8_t>::vector PixelsData;
         typedef stl<PixelsData>::vector LayersData;
 
         Texture(const String &name, 
@@ -56,9 +56,19 @@ namespace lite3dpp
 
         size_t getLayerSize(int8_t level);
         size_t getCompressedLayerSize(int8_t level);
-
+        
+        /* commonly color.x = r, color.y = b ... */
+        void setBlankColor(const kmVec4 &color);
 
         void generateMipmaps();
+        
+        inline int32_t getHeight()
+        { return mTexture.imageHeight; }
+        inline int32_t getWidth()
+        { return mTexture.imageWidth; }
+        inline int32_t getDepth()
+        { return mTexture.imageDepth; }
+
 
     protected:
 

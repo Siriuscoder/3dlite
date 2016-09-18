@@ -1,5 +1,5 @@
 #	This file is part of lite3d (Light-weight 3d engine).
-#	Copyright (C) 2014  Sirius (Korolev Nikita)
+#	Copyright (C) 2016  Sirius (Korolev Nikita)
 #
 #	Lite3D is free software: you can redistribute it and/or modify
 #	it under the terms of the GNU General Public License as published by
@@ -37,7 +37,7 @@ add_library(lite3dpp_font SHARED ${SOURCES_LIST} ${HEADERS_LIST})
 
 if(MSVC)
 target_compile_definitions(lite3dpp_font PRIVATE
-"$<BUILD_INTERFACE:WIN_3DLITEPP_DLL>")
+"$<BUILD_INTERFACE:WIN_3DLITEPP_FONT_DLL>")
 endif()
 
 target_include_directories(lite3dpp_font PRIVATE

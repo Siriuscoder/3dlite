@@ -160,6 +160,15 @@
           <in>lite3dpp_texture_render_target.cpp</in>
         </df>
       </df>
+      <df name="lite3dpp_font">
+        <df name="src">
+          <in>font.cpp</in>
+          <in>lite3dpp_font_texture.cpp</in>
+          <in>mathlib.cpp</in>
+          <in>texture.cpp</in>
+          <in>utils.cpp</in>
+        </df>
+      </df>
       <df name="samples">
         <df name="sample_cellwallerkiller">
           <in>lite3dpp_cellwallerkiller.cpp</in>
@@ -353,17 +362,16 @@
             <pElem>build/lite3dpp</pElem>
           </incDir>
           <preprocessorList>
-            <Elem>WITH_GLES2</Elem>
             <Elem>lite3dpp_EXPORTS</Elem>
           </preprocessorList>
         </ccTool>
       </folder>
-      <folder path="0/samples">
-        <cTool>
+      <folder path="0/lite3dpp/src/as">
+        <ccTool>
           <preprocessorList>
             <Elem>WITH_GLES2</Elem>
           </preprocessorList>
-        </cTool>
+        </ccTool>
       </folder>
       <folder path="0/samples/sample_cellwallerkiller">
         <ccTool>
@@ -462,9 +470,6 @@
             <pElem>/usr/include/SDL2</pElem>
             <pElem>build/samples</pElem>
           </incDir>
-          <preprocessorList>
-            <Elem>WITH_GLES2</Elem>
-          </preprocessorList>
         </ccTool>
       </folder>
       <folder path="0/tests">
@@ -480,9 +485,6 @@
           <incDir>
             <pElem>tests/gtest</pElem>
           </incDir>
-          <preprocessorList>
-            <Elem>WITH_GLES2</Elem>
-          </preprocessorList>
         </ccTool>
       </folder>
       <folder path="0/tests/functionaly">
@@ -1402,6 +1404,9 @@
             tool="1"
             flavor2="8">
         <ccTool flags="1">
+          <preprocessorList>
+            <Elem>WITH_GLES2</Elem>
+          </preprocessorList>
         </ccTool>
       </item>
       <item path="lite3dpp/src/as_helpers/scriptbuilder.cpp"
@@ -1430,6 +1435,9 @@
             tool="1"
             flavor2="8">
         <ccTool flags="1">
+          <preprocessorList>
+            <Elem>WITH_GLES2</Elem>
+          </preprocessorList>
         </ccTool>
       </item>
       <item path="lite3dpp/src/as_helpers/scriptstdstring.cpp"
@@ -1611,6 +1619,32 @@
             flavor2="8">
         <ccTool flags="1">
         </ccTool>
+      </item>
+      <item path="lite3dpp_font/src/font.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="lite3dpp_font/src/lite3dpp_font_texture.cpp"
+            ex="false"
+            tool="1"
+            flavor2="8">
+        <ccTool flags="1">
+          <incDir>
+            <pElem>lite3dpp_font/include</pElem>
+            <pElem>lite3dpp_font/include/lite3dpp_font</pElem>
+            <pElem>/usr/include/freetype2</pElem>
+            <pElem>/usr/include/SDL2</pElem>
+            <pElem>winres</pElem>
+            <pElem>build/lite3dpp_font</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>lite3dpp_font_EXPORTS</Elem>
+          </preprocessorList>
+        </ccTool>
+      </item>
+      <item path="lite3dpp_font/src/mathlib.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="lite3dpp_font/src/texture.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="lite3dpp_font/src/utils.cpp" ex="false" tool="1" flavor2="4">
       </item>
       <item path="samples/sample_cellwallerkiller/lite3dpp_cellwallerkiller.cpp"
             ex="false"
