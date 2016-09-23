@@ -20,6 +20,7 @@
 #include <iostream>
 
 #include <lite3dpp/lite3dpp_main.h>
+#include <lite3dpp_font/lite3dpp_font_texture.h>
 
 namespace lite3dpp {
 namespace samples {
@@ -43,6 +44,8 @@ public:
     inline Main &getMain()
     { return mMain; }
     WindowRenderTarget &getMainWindow();
+    Camera &getMainCamera();
+
 
     virtual void createScene() = 0;
 
@@ -50,6 +53,7 @@ protected:
 
     void initGui();
     void printStats();
+    void updateGuiStats();
 
 private:
 
@@ -57,6 +61,8 @@ private:
     Camera *mMainCamera;
     Camera *mGuiCamera;
     WindowRenderTarget *mMainWindow;
+    lite3dpp_font::FontTexture *mStatTexture;
+    lite3d_timer *mStatTimer;
     int mCenterXPos;
     int mCenterYPos;
 };

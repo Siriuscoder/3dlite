@@ -28,6 +28,8 @@ Sample::Sample() :
     mMainCamera(NULL),
     mGuiCamera(NULL),
     mMainWindow(NULL),
+    mStatTexture(NULL),
+    mStatTimer(NULL),
     mCenterXPos(0),
     mCenterYPos(0)
 {
@@ -36,7 +38,12 @@ Sample::Sample() :
 
 void Sample::initGui()
 {
-    lite3dpp::Scene *gui = mMain.getResourceManager()->queryResource<Scene>("GUI",
+    /* preload font texture */
+    mStatTexture = mMain.getResourceManager()->
+        queryResource<lite3dpp_font::FontTexture>("arial256x128.texture",
+        "samples:textures/json/arial256x128.json");
+    
+    Scene *gui = mMain.getResourceManager()->queryResource<Scene>("GUI",
         "samples:scenes/gui.json");
     gui->addObserver(this);
     
@@ -51,8 +58,10 @@ void Sample::initGui()
     mGuiCamera->lookAt(KM_VEC3_ZERO);
     
     SceneObject *sOverlay = gui->getObject("StatOverlay");
-    kmVec3 sOverlayPos = { mMainWindow->width()-270, mMainWindow->height()-14, 0 };
+    kmVec3 sOverlayPos = { float(mMainWindow->width()-270), float(mMainWindow->height())-14, 0 };
     sOverlay->getRoot()->setPosition(sOverlayPos);
+    
+    mStatTimer = mMain.addTimer("StatTimer", 500);
 }
 
 void Sample::init()
@@ -60,6 +69,7 @@ void Sample::init()
     mMainWindow = mMain.window();
     initGui();
     createScene();
+    updateGuiStats();
     
     mCenterXPos = mMainWindow->width() >> 1;
     mCenterYPos = mMainWindow->height() >> 1;
@@ -105,6 +115,8 @@ void Sample::timerTick(lite3d_timer *timerid)
             mMainCamera->moveRelative(vec3);
         }
     }
+    else if(timerid == mStatTimer)
+        updateGuiStats();
 }
 
 void Sample::processEvent(SDL_Event *e)
@@ -160,7 +172,25 @@ void Sample::printStats()
         "%d\t\t%d\t\t%d\t\t%d\n",
         stats->lastFPS, stats->avrFPS, stats->bestFPS, stats->worstFPS,
         stats->lastFrameMs, stats->avrFrameMs, stats->bestFrameMs, stats->worstFrameMs,
-        stats->nodesTotal, stats->batchesTotal, stats->batchedByFrame, stats->verticesByFrame);
+        stats->nodesTotal, stats->batchesTotal, stats->batchedByFrame, stats->trianglesByFrame);
+}
+
+void Sample::updateGuiStats()
+{
+    SDL_assert(mStatTexture);
+    lite3d_render_stats *stats = lite3d_render_stats_get();
+    
+    char strbuf[150];
+    kmVec2 textPos = {15, 20};
+    kmVec4 textColor = {0.3f, 0.7f, 0.8f, 1.0f};
+
+    sprintf(strbuf, "FPS: %d\nFrame time: %f\nBatches: %d/%d\nFaces: %d",
+        stats->lastFPS, stats->lastFrameMs, stats->batchedByFrame, 
+        stats->batchesTotal, stats->trianglesByFrame);
+    
+    mStatTexture->clean();
+    mStatTexture->drawText(strbuf, textPos, textColor);
+    mStatTexture->uploadChanges();
 }
 
 WindowRenderTarget &Sample::getMainWindow()
@@ -169,6 +199,11 @@ WindowRenderTarget &Sample::getMainWindow()
     return *mMainWindow;
 }
 
+Camera &Sample::getMainCamera()
+{
+    SDL_assert(mMainCamera);
+    return *mMainCamera;    
+}
 
 int Sample::start(const char *config)
 {

@@ -52,4 +52,5 @@ namespace nw
     class FontLib;
     class Font;
     class Text;
+    class Texture;
 }

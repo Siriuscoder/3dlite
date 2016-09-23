@@ -115,6 +115,7 @@ endif()
 
 include_directories("${PROJECT_SOURCE_DIR}/lite3d/include")
 include_directories("${PROJECT_SOURCE_DIR}/lite3dpp/include")
+include_directories("${PROJECT_SOURCE_DIR}/lite3dpp_font/include")
 
 add_subdirectory("${PROJECT_SOURCE_DIR}/lite3d/")
 add_subdirectory("${PROJECT_SOURCE_DIR}/lite3dpp/")

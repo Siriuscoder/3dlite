@@ -117,8 +117,10 @@ namespace lite3dpp
         mIndexData = getIndexData<unsigned char>();
 
         /* unload vbo from vmem */
-        lite3d_vbo_buffer(&mMesh.vertexBuffer, NULL, 0, mMesh.vertexBuffer.access);
-        lite3d_vbo_buffer(&mMesh.indexBuffer, NULL, 0, mMesh.indexBuffer.access);
+        if (mMesh.vertexBuffer.size > 0)
+            lite3d_vbo_buffer(&mMesh.vertexBuffer, NULL, 0, mMesh.vertexBuffer.access);
+        if (mMesh.indexBuffer.size > 0)
+            lite3d_vbo_buffer(&mMesh.indexBuffer, NULL, 0, mMesh.indexBuffer.access);
     }
 
     void Mesh::reloadFromConfigImpl(const ConfigurationReader &helper)

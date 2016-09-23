@@ -50,7 +50,7 @@ namespace lite3dpp
             static nw::FontLib gFontLib;
             std::unique_ptr<nw::Font> mFont;
             std::unique_ptr<nw::Text> mText;
-            nw::Texture mTexBuf;
+            std::unique_ptr<nw::Texture> mTexBuf;
         };
     }
 }

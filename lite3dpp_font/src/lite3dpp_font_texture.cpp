@@ -29,7 +29,8 @@ namespace lite3dpp
     {
         FontTexture::FontTexture(const String &name,
             const String &path, Main *main) : 
-            Texture(name, path, main)
+            Texture(name, path, main),
+            mTexBuf(new nw::Texture())
         {}
         
         FontTexture::~FontTexture()
@@ -53,7 +54,7 @@ namespace lite3dpp
                 mFont.reset(new nw::Font(gFontLib, helper.getString(L"Font"),
                     helper.getInt(L"FontSize")));
                 mText.reset(new nw::Text(*mFont, ""));
-                mTexBuf.resize(getWidth(), getHeight());
+                mTexBuf->resize(getWidth(), getHeight());
             }
         }
         
@@ -72,7 +73,7 @@ namespace lite3dpp
         
         void FontTexture::clean(const kmVec4 &color)
         {
-            mTexBuf.fill(nw::RGBA(color.x * 255,
+            mTexBuf->fill(nw::RGBA(color.x * 255,
                 color.y * 255, 
                 color.z * 255, 
                 color.w * 255));
@@ -85,7 +86,7 @@ namespace lite3dpp
         
         void FontTexture::uploadChanges()
         {
-            setPixels(0, &mTexBuf.data()[0]);
+            setPixels(0, &mTexBuf->data()[0]);
         }
         
         void FontTexture::drawText(const String &text, const kmVec2 &pos, const kmVec4 &color)
@@ -100,7 +101,7 @@ namespace lite3dpp
                 color.z * 255, 
                 color.w * 255));
             mText->setText(text);
-            mText->render(mTexBuf);
+            mText->render(*mTexBuf);
         }
     }
 }

@@ -815,6 +815,7 @@ int32_t lite3d_texture_unit_get_level_width(lite3d_texture_unit *textureUnit,
 #ifndef GLES
     int32_t result = 0;
     SDL_assert(textureUnit);
+    glBindTexture(textureUnit->textureTarget, textureUnit->textureID);
     glGetTexLevelParameteriv(textureUnit->textureTarget, level,
         GL_TEXTURE_WIDTH, &result);
     return result;
@@ -830,6 +831,7 @@ int32_t lite3d_texture_unit_get_level_height(lite3d_texture_unit *textureUnit,
 #ifndef GLES
     int32_t result = 0;
     SDL_assert(textureUnit);
+    glBindTexture(textureUnit->textureTarget, textureUnit->textureID);
     glGetTexLevelParameteriv(textureUnit->textureTarget, level,
         GL_TEXTURE_HEIGHT, &result);
     return result;
@@ -845,6 +847,7 @@ int32_t lite3d_texture_unit_get_level_depth(lite3d_texture_unit *textureUnit,
 #ifndef GLES
     int32_t result = 0;
     SDL_assert(textureUnit);
+    glBindTexture(textureUnit->textureTarget, textureUnit->textureID);
     glGetTexLevelParameteriv(textureUnit->textureTarget, level,
         GL_TEXTURE_DEPTH, &result);
     return result;

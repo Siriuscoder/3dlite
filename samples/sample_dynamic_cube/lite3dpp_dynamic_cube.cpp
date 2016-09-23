@@ -1,6 +1,6 @@
 /******************************************************************************
  *	This file is part of lite3d (Light-weight 3d engine).
- *	Copyright (C) 2015  Sirius (Korolev Nikita)
+ *	Copyright (C) 2016  Sirius (Korolev Nikita)
  *
  *	Lite3D is free software: you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -16,11 +16,13 @@
  *	along with Lite3D.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
 #include <iostream>
-
 #include <SDL_log.h>
 
-#include <lite3dpp/lite3dpp_main.h>
+#include <sample_common/lite3dpp_common.h>
 
+namespace lite3dpp {
+namespace samples {
+    
 #pragma pack(push, 1)
 typedef struct vertexPod
 {
@@ -28,77 +30,66 @@ typedef struct vertexPod
 } vertexPod;
 #pragma pack(pop)
 
-class SampleLifecycleListener : public lite3dpp::LifecycleObserver
+class DynamicCude : public Sample
 {
 public:
-
-    SampleLifecycleListener(lite3dpp::Main *main) :
-        mMain(main),
+    
+    DynamicCude() : 
         mBox(NULL),
         mWireftameView(false),
         mDepthTest(true),
         mKof(1)
     {}
 
-    void init() override
+    void createScene() override
     {
-        lite3dpp::Scene *scene = mMain->getResourceManager()->queryResource<lite3dpp::Scene>("BoxScene",
+        Scene *scene = getMain().getResourceManager()->queryResource<Scene>("BoxScene",
             "samples:scenes/scene_rtt_box.json");
 
-        mBoxTexture = mMain->getResourceManager()->queryResource<lite3dpp::Texture>("color512x512.texture");
-        mCamera = scene->getCamera("MyCamera");
+        mBoxTexture = getMain().getResourceManager()->queryResource<Texture>("color512x512.texture");
+        setMainCamera(scene->getCamera("MyCamera"));
         mBox = scene->getObject("Box");
-        mBoxMesh = mMain->getResourceManager()->queryResource<lite3dpp::Mesh>("box.mesh");
+        mBoxMesh = getMain().getResourceManager()->queryResource<Mesh>("box.mesh");
 
         updateTextureData();
     }
-
+    
     void timerTick(lite3d_timer *timerid) override
     {
-        mBox->getRoot()->rotateAngle(KM_VEC3_NEG_Z, 0.01f);
+        Sample::timerTick(timerid);
+        if(timerid == getMain().getFixedUpdateTimer())
+        {
+            mBox->getRoot()->rotateAngle(KM_VEC3_NEG_Z, 0.01f);
+        }
     }
 
     void processEvent(SDL_Event *e) override
     {
+        Sample::processEvent(e);
         if (e->type == SDL_KEYDOWN)
         {
-            /* exit */
-            if (e->key.keysym.sym == SDLK_ESCAPE)
-                mMain->stop();
-        }
-        else if (e->key.keysym.sym == SDLK_F1)
-        {
-            lite3d_render_stats *stats = lite3d_render_stats_get();
-            SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
-                "==== Render statistics ========\n"
-                "last FPS\tavr FPS\t\tbest FPS\tworst FPS\n"
-                "%d\t\t%d\t\t%d\t\t%d\n"
-                "last frame ms\tavr frame ms\tbest frame ms\tworst frame ms\n"
-                "%f\t%f\t%f\t%f",
-                stats->lastFPS, stats->avrFPS, stats->bestFPS, stats->worstFPS,
-                stats->lastFrameMs, stats->avrFrameMs, stats->bestFrameMs, stats->worstFrameMs);
-        }
-        else if (e->key.keysym.sym == SDLK_v)
-        {
-            mWireftameView = !mWireftameView;
-            mCamera->showWireframe(mWireftameView);
-            mCamera->cullBackFaces(!mWireftameView);
-        }
-        else if (e->key.keysym.sym == SDLK_r)
-        {
-            updateTextureData();
-        }
-        else if (e->key.keysym.sym == SDLK_a)
-        {
-            if (e->key.keysym.mod & KMOD_LCTRL)
-                mKof = -1;
-            else 
-                mKof = 1;
+            if (e->key.keysym.sym == SDLK_v)
+            {
+                mWireftameView = !mWireftameView;
+                getMainCamera().showWireframe(mWireftameView);
+                getMainCamera().cullBackFaces(!mWireftameView);
+            }
+            else if (e->key.keysym.sym == SDLK_r)
+            {
+                updateTextureData();
+            }
+            else if (e->key.keysym.sym == SDLK_a)
+            {
+                if (e->key.keysym.mod & KMOD_LCTRL)
+                    mKof = -1;
+                else
+                    mKof = 1;
             
-            updateMesh();
+                updateMesh();
+            }
         }
     }
-
+    
     void updateTextureData()
     {
         lite3dpp::Texture::PixelsData pixels;
@@ -140,36 +131,24 @@ public:
             }
         }
     }
-
+    
 private:
-
-    lite3dpp::Main *mMain;
-    lite3dpp::SceneObject *mBox;
-    lite3dpp::Texture *mBoxTexture;
-    lite3dpp::Camera *mCamera;
-    lite3dpp::Mesh *mBoxMesh;
+    
+    SceneObject *mBox;
+    Texture *mBoxTexture;
+    Mesh *mBoxMesh;
 
     bool mWireftameView;
     bool mDepthTest;
-    int8_t mKof;
+    int8_t mKof;    
 };
+
+}}
 
 int main(int agrc, char *args[])
 {
-    try
-    {
-        lite3dpp::Main mainObj;
-        SampleLifecycleListener lifecycleListener(&mainObj);
-
-        mainObj.addObserver(&lifecycleListener);
-        mainObj.initFromConfig("samples/config/config.json");
-        mainObj.run();
-    }
-    catch (std::exception &ex)
-    {
-        std::cout << "Exception occurred: " << ex.what() << std::endl;
-        return -1;
-    }
-
-    return 0;
+    lite3dpp::samples::DynamicCude sample;
+    return sample.start("samples/config/config.json");
 }
+
+
