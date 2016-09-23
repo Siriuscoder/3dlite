@@ -87,6 +87,7 @@ namespace lite3dpp
         void FontTexture::uploadChanges()
         {
             setPixels(0, &mTexBuf->data()[0]);
+            generateMipmaps();
         }
         
         void FontTexture::drawText(const String &text, const kmVec2 &pos, const kmVec4 &color)
