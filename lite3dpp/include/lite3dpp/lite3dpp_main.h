@@ -27,27 +27,14 @@
 #include <lite3dpp/lite3dpp_render_target.h>
 #include <lite3dpp/lite3dpp_texture_render_target.h>
 #include <lite3dpp/lite3dpp_config_writer.h>
-
+#include <lite3dpp/lite3dpp_observer.h>
 
 namespace lite3dpp
 {
-    class LITE3DPP_EXPORT Main : public Noncopiable
+    class LITE3DPP_EXPORT Main : public Observable<LifecycleObserver>, public Noncopiable
     {
     public:
         typedef stl<String, lite3d_timer *>::map Timers;
-        class LITE3DPP_EXPORT LifecycleListener
-        {
-        public:
-
-            virtual ~LifecycleListener();
-
-            virtual void init() = 0;
-            virtual void shut() = 0;
-            virtual void frameBegin() = 0;
-            virtual void frameEnd() = 0;
-            virtual void timerTick(lite3d_timer *timerid) = 0;
-            virtual void processEvent(SDL_Event *e) = 0;
-        };
 
         static const char fixedUpdateTimerName[];
 
@@ -71,8 +58,6 @@ namespace lite3dpp
         { return &mResourceManager; }
         inline ScriptDispatcher *getScriptDispatcher()
         { return &mScriptDispatcher; }
-        inline void registerLifecycleListener(LifecycleListener *listener)
-        { mLifeCycleListener = listener; }
         inline lite3d_timer *getFixedUpdateTimer()
         { return mFixedUpdatesTimer; }
         WindowRenderTarget *window();
@@ -101,7 +86,6 @@ namespace lite3dpp
         ScriptDispatcher mScriptDispatcher;
         std::unique_ptr<ConfigurationReader> mConfig;
         lite3d_global_settings mSettings;
-        LifecycleListener *mLifeCycleListener;
         Timers mTimers;
         lite3d_timer *mFixedUpdatesTimer;
     };

@@ -1,0 +1,25 @@
+{
+    "Cameras":
+    [
+        {
+            "Name": "GuiCamera",            
+            "RenderTargets":
+            [
+                {
+                    "Name": "Window",
+                    "Priority": 1,
+                    "TexturePass": 1
+                }
+            ]
+        }
+    ],
+    
+    "Objects":
+    [
+        {
+            "Name": "StatOverlay",
+            "Object": "samples:objects/stat_overlay.json"
+        }
+    ]
+}
+

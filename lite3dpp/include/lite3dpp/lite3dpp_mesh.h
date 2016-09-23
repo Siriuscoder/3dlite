@@ -129,6 +129,8 @@ namespace lite3dpp
 
     protected:
 
+        void genPlain(const kmVec2 &size, bool dynamic);
+
         virtual void loadFromConfigImpl(const ConfigurationReader &helper) override;
         virtual void unloadImpl() override;
         virtual void reloadFromConfigImpl(const ConfigurationReader &helper) override;

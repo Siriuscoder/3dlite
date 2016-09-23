@@ -21,6 +21,8 @@
 #include <texture.h>
 #include <lite3dpp_font/lite3dpp_font_texture.h>
 
+nw::FontLib lite3dpp::lite3dpp_font::FontTexture::gFontLib;
+
 namespace lite3dpp
 {
     namespace lite3dpp_font

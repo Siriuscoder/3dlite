@@ -29,6 +29,7 @@ namespace lite3dpp
         RenderTarget(name, path, main)
     {
         mRenderTargetPtr = &mRenderTarget;
+        mRenderTargetPtr->userdata = this;
     }
 
     TextureRenderTarget::~TextureRenderTarget()

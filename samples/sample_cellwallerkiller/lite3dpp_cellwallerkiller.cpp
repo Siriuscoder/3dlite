@@ -21,7 +21,7 @@
 
 #include <lite3dpp/lite3dpp_main.h>
 
-class SampleLifecycleListener : public lite3dpp::Main::LifecycleListener
+class SampleLifecycleListener : public lite3dpp::LifecycleObserver
 {
 public:
 
@@ -29,12 +29,34 @@ public:
         mMain(main)
     {}
 
+    void initGui()
+    {
+        lite3dpp::Scene *gui = mMain->getResourceManager()->queryResource<lite3dpp::Scene>("GUI",
+            "samples:scenes/gui.json");
+
+        mWindow = mMain->getResourceManager()->queryResource<lite3dpp::WindowRenderTarget>("MainWindow");
+        mGuiCamera = gui->getCamera("GuiCamera");
+        //mGuiCamera->cullBackFaces(false);
+
+        mGuiCamera->setupOrtho(0, 20, 0, mWindow->width(),
+            0, mWindow->height());
+
+        kmVec3 cameraPos = { 0, 0, 10 };
+        mGuiCamera->setPosition(cameraPos);
+        mGuiCamera->lookAt(KM_VEC3_ZERO);
+
+        lite3dpp::SceneObject *sOverlay = gui->getObject("StatOverlay");
+        kmVec3 sOverlayPos = { mWindow->width()-270, mWindow->height()-14, 0 };
+        sOverlay->getRoot()->setPosition(sOverlayPos);
+    }
+
     void init() override
     {
+        initGui();
+
         lite3dpp::Scene *scene = mMain->getResourceManager()->queryResource<lite3dpp::Scene>("InstancedRobots",
             "samples:scenes/robots.json");
         mCamera = scene->getCamera("MyCamera");
-        mWindow = mMain->getResourceManager()->queryResource<lite3dpp::WindowRenderTarget>("MainWindow");
         
         mSenterXPos = mWindow->width() >> 1;
         mSenterYPos = mWindow->height() >> 1;
@@ -46,15 +68,6 @@ public:
         mMain->window()->setBackgroundColor(bColor);
         lite3dpp::Material::setFloatv4GlobalParameter("fogColor", bColor);
     }
-
-    void shut() override
-    {}
-
-    void frameBegin() override
-    {}
-
-    void frameEnd() override
-    {}
 
     void timerTick(lite3d_timer *timerid) override
     {
@@ -131,7 +144,8 @@ private:
 
     lite3dpp::Main *mMain;
     lite3dpp::Camera *mCamera;
-    lite3dpp::RenderTarget *mWindow;
+    lite3dpp::Camera *mGuiCamera;
+    lite3dpp::WindowRenderTarget *mWindow;
     int mSenterXPos;
     int mSenterYPos;
     lite3d_timer *mStatRerfeshTimer;
@@ -144,7 +158,7 @@ int main(int agrc, char *args[])
         lite3dpp::Main mainObj;
         SampleLifecycleListener lifecycleListener(&mainObj);
 
-        mainObj.registerLifecycleListener(&lifecycleListener);
+        mainObj.addObserver(&lifecycleListener);
         mainObj.initFromConfig("samples/config/config.json");
         mainObj.run();
     }

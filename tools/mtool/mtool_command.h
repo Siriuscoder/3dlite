@@ -19,7 +19,7 @@
 
 #include <lite3dpp/lite3dpp_main.h>
 
-class Command : private lite3dpp::Main::LifecycleListener
+class Command : private lite3dpp::LifecycleObserver
 {
 public:
 

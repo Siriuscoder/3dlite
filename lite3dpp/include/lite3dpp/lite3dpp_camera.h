@@ -52,6 +52,9 @@ namespace lite3dpp
         void setupPerspective(float znear, float zfar, float fovy, float aspect);
         void setAspect(float aspect);
 
+        inline void setEnabled(bool enabled)
+        { mCamera.cameraNode.enabled = enabled ? LITE3D_TRUE : LITE3D_FALSE; }
+
         void lookAt(const kmVec3 &pointTo);
         void setPosition(const kmVec3 &position);
         void setRotation(const kmQuaternion &orietation);

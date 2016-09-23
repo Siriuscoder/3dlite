@@ -64,7 +64,7 @@ void lite3d_camera_ortho(lite3d_camera *camera, float near,
 {
     SDL_assert(camera);
     memset(&camera->frustum, 0, sizeof(camera->frustum));
-    camera->isOrtho = LITE3D_FALSE;
+    camera->isOrtho = LITE3D_TRUE;
     camera->projectionParams.ortho.near = near;
     camera->projectionParams.ortho.far = far;
     camera->projectionParams.ortho.left = left;

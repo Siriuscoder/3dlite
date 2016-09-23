@@ -24,6 +24,7 @@ namespace lite3dpp
         mMain(main)
     {
         lite3d_camera_init(&mCamera);
+        mCamera.userdata = this;
     }
 
     Camera::~Camera()

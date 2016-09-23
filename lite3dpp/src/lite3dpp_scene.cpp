@@ -18,6 +18,7 @@
 #include <algorithm>
 
 #include <SDL_log.h>
+#include <SDL_assert.h>
 
 #include <lite3dpp/lite3dpp_main.h>
 #include <lite3dpp/lite3dpp_scene.h>
@@ -35,6 +36,7 @@ namespace lite3dpp
     void Scene::loadFromConfigImpl(const ConfigurationReader &helper)
     {
         lite3d_scene_init(&mScene);
+        mScene.userdata = this;
 
         setupObjects(helper.getObjects(L"Objects"), NULL);
         setupCameras(helper.getObjects(L"Cameras"));
@@ -202,6 +204,154 @@ namespace lite3dpp
                 camera->setPosition(cameraJson.getVec3(L"Position"));
             if(cameraJson.has(L"LookAt"))
                 camera->lookAt(cameraJson.getVec3(L"LookAt"));
+        }
+    }
+
+    void Scene::beginDrawBatch(struct lite3d_scene *scene, 
+            struct lite3d_scene_node *node, struct lite3d_mesh_chunk *meshChunk, struct lite3d_material *material)
+    {
+        SDL_assert(scene->userdata);
+        SDL_assert(material->userdata);
+        SDL_assert(node->userdata);
+
+        try
+        {
+            LITE3D_EXT_OBSERVER_NOTIFY_4(reinterpret_cast<Scene *>(scene->userdata), beginDrawBatch, 
+                reinterpret_cast<Scene *>(scene->userdata),
+                reinterpret_cast<SceneNode *>(node->userdata),
+                meshChunk,
+                reinterpret_cast<Material *>(material->userdata));
+        }
+        catch(std::exception &ex)
+        {
+            SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
+                "beginDrawBatch: %s", ex.what());
+        }
+    }
+
+    void Scene::nodeInFrustum(struct lite3d_scene *scene, 
+            struct lite3d_scene_node *node, struct lite3d_mesh_chunk *meshChunk, 
+            struct lite3d_material *material, struct lite3d_bouding_vol *boudingVol, 
+            struct lite3d_camera *camera)
+    {
+        SDL_assert(scene->userdata);
+        SDL_assert(material->userdata);
+        SDL_assert(node->userdata);
+        SDL_assert(camera->userdata);
+
+        try
+        {
+            LITE3D_EXT_OBSERVER_NOTIFY_6(reinterpret_cast<Scene *>(scene->userdata), nodeInFrustum, 
+                reinterpret_cast<Scene *>(scene->userdata),
+                reinterpret_cast<SceneNode *>(node->userdata),
+                meshChunk,
+                reinterpret_cast<Material *>(material->userdata),
+                boudingVol,
+                reinterpret_cast<Camera *>(camera->userdata));
+        }
+        catch(std::exception &ex)
+        {
+            SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
+                "nodeInFrustum: %s", ex.what());
+        }
+    }
+
+    void Scene::nodeOutOfFrustum(struct lite3d_scene *scene, 
+            struct lite3d_scene_node *node, struct lite3d_mesh_chunk *meshChunk, 
+            struct lite3d_material *material, struct lite3d_bouding_vol *boudingVol,
+            struct lite3d_camera *camera)
+    {
+        SDL_assert(scene->userdata);
+        SDL_assert(material->userdata);
+        SDL_assert(node->userdata);
+        SDL_assert(camera->userdata);
+
+        try
+        {
+            LITE3D_EXT_OBSERVER_NOTIFY_6(reinterpret_cast<Scene *>(scene->userdata), nodeOutOfFrustum, 
+                reinterpret_cast<Scene *>(scene->userdata),
+                reinterpret_cast<SceneNode *>(node->userdata),
+                meshChunk,
+                reinterpret_cast<Material *>(material->userdata),
+                boudingVol,
+                reinterpret_cast<Camera *>(camera->userdata));
+        }
+        catch(std::exception &ex)
+        {
+            SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
+                "nodeOutOfFrustum: %s", ex.what());
+        }
+    }
+
+    void Scene::beginSceneRender(struct lite3d_scene *scene, struct lite3d_camera *camera)
+    {
+        SDL_assert(scene->userdata);
+        SDL_assert(camera->userdata);
+
+        try
+        {
+            LITE3D_EXT_OBSERVER_NOTIFY_2(reinterpret_cast<Scene *>(scene->userdata), beginSceneRender, 
+                reinterpret_cast<Scene *>(scene->userdata),
+                reinterpret_cast<Camera *>(camera->userdata));
+        }
+        catch(std::exception &ex)
+        {
+            SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
+                "beginDrawBatch: %s", ex.what());
+        }
+    }
+
+    void Scene::endSceneRender(struct lite3d_scene *scene, struct lite3d_camera *camera)
+    {
+        SDL_assert(scene->userdata);
+        SDL_assert(camera->userdata);
+
+        try
+        {
+            LITE3D_EXT_OBSERVER_NOTIFY_2(reinterpret_cast<Scene *>(scene->userdata), endSceneRender, 
+                reinterpret_cast<Scene *>(scene->userdata),
+                reinterpret_cast<Camera *>(camera->userdata));
+        }
+        catch(std::exception &ex)
+        {
+            SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
+                "endSceneRender: %s", ex.what());
+        }
+    }
+
+    void Scene::beginFirstStageRender(struct lite3d_scene *scene, struct lite3d_camera *camera)
+    {
+        SDL_assert(scene->userdata);
+        SDL_assert(camera->userdata);
+
+        try
+        {
+            LITE3D_EXT_OBSERVER_NOTIFY_2(reinterpret_cast<Scene *>(scene->userdata), beginFirstStageRender, 
+                reinterpret_cast<Scene *>(scene->userdata),
+                reinterpret_cast<Camera *>(camera->userdata));
+        }
+        catch(std::exception &ex)
+        {
+            SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
+                "beginFirstStageRender: %s", ex.what());
+        }
+    }
+
+    void Scene::beginSecondStageRender(struct lite3d_scene *scene, struct lite3d_camera *camera)
+    {
+        SDL_assert(scene->userdata);
+        SDL_assert(camera->userdata);
+
+        try
+        {
+            LITE3D_EXT_OBSERVER_NOTIFY_2(reinterpret_cast<Scene *>(scene->userdata), beginSecondStageRender, 
+                reinterpret_cast<Scene *>(scene->userdata),
+                reinterpret_cast<Camera *>(camera->userdata));
+        }
+        catch(std::exception &ex)
+        {
+            SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
+                "beginSecondStageRender: %s", ex.what());
         }
     }
 }

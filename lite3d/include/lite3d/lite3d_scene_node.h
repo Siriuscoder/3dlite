@@ -42,6 +42,7 @@ typedef struct  lite3d_scene_node
     struct lite3d_scene_node *baseNode;
     struct lite3d_list childNodes;
     void *scene;
+    void *userdata;
 } lite3d_scene_node;
 
 LITE3D_CEXPORT lite3d_scene_node *lite3d_scene_node_init(lite3d_scene_node *node);

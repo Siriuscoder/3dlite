@@ -21,7 +21,7 @@
 
 #include <lite3dpp/lite3dpp_main.h>
 
-class SampleLifecycleListener : public lite3dpp::Main::LifecycleListener
+class SampleLifecycleListener : public lite3dpp::LifecycleObserver
 {
 public:
 
@@ -43,15 +43,6 @@ public:
 
         mBox = scene->getObject("Box");
     }
-
-    void shut() override
-    {}
-
-    void frameBegin() override
-    {}
-
-    void frameEnd() override
-    {}
 
     void timerTick(lite3d_timer *timerid) override
     {
@@ -97,7 +88,7 @@ int main(int agrc, char *args[])
         lite3dpp::Main mainObj;
         SampleLifecycleListener lifecycleListener(&mainObj);
 
-        mainObj.registerLifecycleListener(&lifecycleListener);
+        mainObj.addObserver(&lifecycleListener);
         mainObj.initFromConfig("samples/config/config.json");
         mainObj.run();
     }

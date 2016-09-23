@@ -23,10 +23,11 @@
 #include <lite3dpp/lite3dpp_resource.h>
 #include <lite3dpp/lite3dpp_scene_object.h>
 #include <lite3dpp/lite3dpp_camera.h>
+#include <lite3dpp/lite3dpp_observer.h>
 
 namespace lite3dpp
 {
-    class LITE3DPP_EXPORT Scene : public ConfigurableResource, public Noncopiable
+    class LITE3DPP_EXPORT Scene : public Observable<SceneObserver>, public ConfigurableResource, public Noncopiable
     {
     public:
 
@@ -60,6 +61,24 @@ namespace lite3dpp
 
         void setupObjects(const stl<ConfigurationReader>::vector &objects, SceneObject *base);
         void setupCameras(const stl<ConfigurationReader>::vector &cameras);
+
+        static void beginDrawBatch(struct lite3d_scene *scene, 
+            struct lite3d_scene_node *node, struct lite3d_mesh_chunk *meshChunk, struct lite3d_material *material);
+
+        static void nodeInFrustum(struct lite3d_scene *scene, 
+            struct lite3d_scene_node *node, struct lite3d_mesh_chunk *meshChunk, 
+            struct lite3d_material *material, struct lite3d_bouding_vol *boudingVol, 
+            struct lite3d_camera *camera);
+
+        static void nodeOutOfFrustum(struct lite3d_scene *scene, 
+            struct lite3d_scene_node *node, struct lite3d_mesh_chunk *meshChunk, 
+            struct lite3d_material *material, struct lite3d_bouding_vol *boudingVol,
+            struct lite3d_camera *camera);
+
+        static void beginSceneRender(struct lite3d_scene *scene, struct lite3d_camera *camera);
+        static void endSceneRender(struct lite3d_scene *scene, struct lite3d_camera *camera);
+        static void beginFirstStageRender(struct lite3d_scene *scene, struct lite3d_camera *camera);
+        static void beginSecondStageRender(struct lite3d_scene *scene, struct lite3d_camera *camera);
 
         lite3d_scene mScene;
         Cameras mCameras;

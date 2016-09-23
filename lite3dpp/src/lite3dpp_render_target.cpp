@@ -155,6 +155,7 @@ namespace lite3dpp
     void WindowRenderTarget::loadFromConfigImpl(const ConfigurationReader &helper)
     {
         mRenderTargetPtr = lite3d_render_target_screen_get();
+        mRenderTargetPtr->userdata = this;
     }
     
     void WindowRenderTarget::unloadImpl()

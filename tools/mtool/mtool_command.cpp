@@ -22,7 +22,7 @@ Command::Command() :
     mNonameCounter(0),
     mVerbose(false)
 {
-    mMain.registerLifecycleListener(this);
+    mMain.addObserver(this);
 }
 
 void Command::run(int argc, char *args[])

@@ -40,6 +40,7 @@ namespace lite3dpp
         SDL_assert(main);
 
         lite3d_scene_node_init(&mNode);
+        mNode.userdata = this;
 
         mName = json.getString(L"Name");
         if(mName.size() == 0)

@@ -54,6 +54,7 @@ namespace lite3dpp
             parseParameteres(passJson, passNo);
         }
 
+        mMaterial.userdata = this;
         parseParameteres(helper, 0);
     }
 

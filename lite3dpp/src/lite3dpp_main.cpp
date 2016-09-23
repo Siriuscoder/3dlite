@@ -31,8 +31,7 @@ namespace lite3dpp
 
     Main::Main() :
         mResourceManager(this),
-        mScriptDispatcher(this),
-        mLifeCycleListener(NULL)
+        mScriptDispatcher(this)
     {
         /* init memory model first
          * json parser used lite3d allocator model,
@@ -175,8 +174,7 @@ namespace lite3dpp
             Main *mainObj = reinterpret_cast<Main *> (userdata);
             mainObj->init();
 
-            if(mainObj->mLifeCycleListener)
-                mainObj->mLifeCycleListener->init();
+            LITE3D_EXT_OBSERVER_NOTIFY(mainObj, init);
         }
         catch (std::exception &ex)
         {
@@ -195,8 +193,7 @@ namespace lite3dpp
             Main *mainObj = reinterpret_cast<Main *> (userdata);
             mainObj->shut();
 
-            if(mainObj->mLifeCycleListener)
-                mainObj->mLifeCycleListener->shut();
+            LITE3D_EXT_OBSERVER_NOTIFY(mainObj, shut);
         }
         catch (std::exception &ex)
         {
@@ -213,10 +210,7 @@ namespace lite3dpp
         try
         {
             Main *mainObj = reinterpret_cast<Main *> (userdata);
-            mainObj->mScriptDispatcher.performFrameBegin();
-
-            if(mainObj->mLifeCycleListener)
-                mainObj->mLifeCycleListener->frameBegin();
+            LITE3D_EXT_OBSERVER_NOTIFY(mainObj, frameBegin);
         }
         catch (std::exception &ex)
         {
@@ -233,10 +227,7 @@ namespace lite3dpp
         try
         {
             Main *mainObj = reinterpret_cast<Main *> (userdata);
-            mainObj->mScriptDispatcher.performFrameEnd();
-
-            if(mainObj->mLifeCycleListener)
-                mainObj->mLifeCycleListener->frameEnd();
+            LITE3D_EXT_OBSERVER_NOTIFY(mainObj, frameEnd);
         }
         catch (std::exception &ex)
         {
@@ -250,21 +241,15 @@ namespace lite3dpp
 
     void Main::onTimerTick(lite3d_timer *timer)
     {
-        Main *mainObj = reinterpret_cast<Main *> (timer->userdata);
-
         try
         {
-            if(timer == mainObj->mFixedUpdatesTimer)
-                mainObj->mScriptDispatcher.performFixedUpdate();
-
-            if(mainObj->mLifeCycleListener)
-                mainObj->mLifeCycleListener->timerTick(timer);
+            Main *mainObj = reinterpret_cast<Main *> (timer->userdata);
+            LITE3D_EXT_OBSERVER_NOTIFY_1(mainObj, timerTick, timer);
         }
         catch (std::exception &ex)
         {
             SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION,
                          "timerFixed: %s", ex.what());
-            mainObj->stop();
         }
     }
 
@@ -273,10 +258,7 @@ namespace lite3dpp
         try
         {
             Main *mainObj = reinterpret_cast<Main *> (userdata);
-            mainObj->mScriptDispatcher.performProcessEvent(e);
-
-            if(mainObj->mLifeCycleListener)
-                mainObj->mLifeCycleListener->processEvent(e);
+            LITE3D_EXT_OBSERVER_NOTIFY_1(mainObj, processEvent, e);
         }
         catch (std::exception &ex)
         {
@@ -287,9 +269,6 @@ namespace lite3dpp
 
         return LITE3D_TRUE;
     }
-
-    Main::LifecycleListener::~LifecycleListener()
-    {}
 
     lite3d_timer *Main::addTimer(const String &name, int32_t millisec)
     {

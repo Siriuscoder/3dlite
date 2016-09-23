@@ -1,0 +1,36 @@
+{
+    "Uniforms":
+    [
+        { "Name": "projectionMatrix" },
+        { "Name": "modelviewMatrix" },
+        
+        {
+            "Name": "diffuseTexture",
+            "Type": "sampler",
+            "TextureName": "arial256x128.texture",
+            "TexturePath": "samples:textures/json/arial256x128.json"
+        }
+    ],
+    
+    "Passes": 
+    [
+        {
+            "Pass": 1,
+            "Program": 
+            {
+                "Name": "BasicShadingNoNormals",
+                "Path": "samples:shaders/json/basic_shading_no_normals.json"
+            },
+            "Blending":true,
+            //  
+            // Traditional blend algorithm:
+            // Orgb = Sa * Srgb + (1 - Sa) * Drgb
+            // Oa = 1 * Sa + 0 * Da = Sa
+            //
+            // Traditional blend algorithm with alpha blend: (TraditionalWithAlpha)
+            // Orgb = Sa * Srgb + (1 - Sa) * Drgb
+            // Oa = 1 * Sa + (1 - Sa) * Da
+            "Blendingmode":"traditional"
+        }
+    ]
+}

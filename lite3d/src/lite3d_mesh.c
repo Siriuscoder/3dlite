@@ -215,8 +215,15 @@ lite3d_mesh_chunk *lite3d_mesh_append_chunk(lite3d_mesh *mesh,
         meshChunk->layout[i] = layout[i];
     }
 
-    if (indexesCount > 0)
+    if (indexesCount > 0 && indexesSize > 0)
+    {
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->indexBuffer.vboID);
+        meshChunk->hasIndexes = LITE3D_TRUE;
+    }
+    else
+    {
+        meshChunk->hasIndexes = LITE3D_FALSE;
+    }
 
     /* end VAO binding */
     glBindVertexArray(0);

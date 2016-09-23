@@ -292,9 +292,6 @@ namespace lite3dpp
     
     void Texture::setBlankColor(const kmVec4 &color)
     {
-        if(getState() != AbstractResource::LOADED)
-            return;
-        
         /* fullup pixels */
         PixelsData pixels(mTexture.imageSize);
         for(unsigned j = 0; j < pixels.size();)

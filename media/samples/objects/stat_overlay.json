@@ -1,0 +1,28 @@
+{
+    "Root":
+    {
+        "Name": "StatOverlay.root",
+        "Nodes": [
+            {
+                "Name": "Overlay.node",
+                "Mesh": 
+                {
+                    "Name": "overlay_plain.mesh",
+                    "Mesh": "samples:models/json/plain256x128.json",
+					"MaterialMapping": 
+                    [
+                        {
+                            "MaterialIndex": 0,
+                            "Material":
+                            {
+                                "Name": "arial256x128.material",
+                                "Material": "samples:materials/arial256x128.json"
+                            }
+                        }
+                    ]
+                }
+            }
+        ]
+    }
+}
+

@@ -108,17 +108,20 @@ static void update_render_target(lite3d_render_target *target)
         look = LITE3D_MEMBERCAST(lookUnit, node, rtLink);
         scene = (lite3d_scene *) look->camera->cameraNode.scene;
 
-        lite3d_scene_render(scene, look->camera, look->pass);
+        if(look->camera->cameraNode.enabled)
+        {
+            lite3d_scene_render(scene, look->camera, look->pass);
 
-        /* accamulate statistics */
-        gRenderStats.trianglesByFrame += scene->stats.trianglesRendered;
-        gRenderStats.verticesByFrame += scene->stats.verticesRendered;
-        gRenderStats.nodesTotal += scene->stats.nodesTotal;
-        gRenderStats.batchesTotal += scene->stats.batchesTotal;
-        gRenderStats.batchedByFrame += scene->stats.batchesCalled;
-        gRenderStats.materialsTotal += scene->stats.materialBlocks;
-        gRenderStats.materialsPassedByFrame += scene->stats.materialPassed;
-        gRenderStats.textureUnitsByFrame += scene->stats.textureUnitsBinded;
+            /* accamulate statistics */
+            gRenderStats.trianglesByFrame += scene->stats.trianglesRendered;
+            gRenderStats.verticesByFrame += scene->stats.verticesRendered;
+            gRenderStats.nodesTotal += scene->stats.nodesTotal;
+            gRenderStats.batchesTotal += scene->stats.batchesTotal;
+            gRenderStats.batchedByFrame += scene->stats.batchesCalled;
+            gRenderStats.materialsTotal += scene->stats.materialBlocks;
+            gRenderStats.materialsPassedByFrame += scene->stats.materialPassed;
+            gRenderStats.textureUnitsByFrame += scene->stats.textureUnitsBinded;
+        }
     }
 }
 

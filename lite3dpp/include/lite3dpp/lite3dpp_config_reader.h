@@ -22,7 +22,7 @@
 
 namespace lite3dpp
 {
-    class ConfigurationReader : public Manageable
+    class LITE3DPP_EXPORT ConfigurationReader : public Manageable
     {
     public:
 

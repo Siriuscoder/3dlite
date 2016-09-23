@@ -66,7 +66,11 @@ namespace lite3dpp
         if(helper.isEmpty())
             return;
 
-        if(helper.getString(L"Codec", "m") == "m")
+        if(helper.getString(L"Model") == "Plain")
+        {
+            genPlain(helper.getVec2(L"PlainSize"), helper.getBool(L"Dynamic", false));
+        }
+        else if(helper.getString(L"Codec", "m") == "m")
         {
             if(!lite3d_mesh_load_from_m_file(&mMesh, 
                 mMain->getResourceManager()->loadFileToMemory(helper.getString(L"Model")),
@@ -149,6 +153,31 @@ namespace lite3dpp
             return BufferMapper(mMesh.indexBuffer, lockType);
 
         throw std::runtime_error(getName() + " Could`t map vertex buffer.. it is empty..");
+    }
+
+    void Mesh::genPlain(const kmVec2 &size, bool dynamic)
+    {
+        kmVec3 vmax = {size.x, 0, 0}, vmin = {0, -size.y, 0};
+        const float vertices[] = {
+            0.0f, -size.y, 0.0f, 0.0f, 1.0f,
+            size.x, 0.0f, 0.0f, 1.0f, 0.0f,
+            0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+
+            0.0f, -size.y, 0.0f, 0.0f, 1.0f,
+            size.x, -size.y, 0.0f, 1.0f, 1.0f,
+            size.x, 0.0f, 0.0f, 1.0f, 0.0f
+        };
+
+        const lite3d_mesh_layout layout[] = {
+            { LITE3D_BUFFER_BINDING_ATTRIBUTE, 3},
+            { LITE3D_BUFFER_BINDING_ATTRIBUTE, 2}
+        };
+
+        if (!lite3d_mesh_load_from_memory(&mMesh, vertices, 6, layout, 2, dynamic ? LITE3D_VBO_DYNAMIC_DRAW : LITE3D_VBO_STATIC_DRAW))
+            throw std::runtime_error("Plain generation failed");
+
+        lite3d_mesh_chunk *meshChunk = LITE3D_MEMBERCAST(lite3d_mesh_chunk, lite3d_list_last_link(&mMesh.chunks), node);
+        lite3d_bouding_vol_setup(&meshChunk->boudingVol, &vmin, &vmax);
     }
 }
 
