@@ -15,8 +15,8 @@
  *	You should have received a copy of the GNU General Public License
  *	along with Lite3D.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
-#include <mtool_generator.h>
-#include <mtool_utils.h>
+#include <mtool/mtool_generator.h>
+#include <mtool/mtool_utils.h>
 
 const GeneratorOptions GeneratorOptions::NullOptions;
 

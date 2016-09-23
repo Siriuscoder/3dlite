@@ -21,8 +21,8 @@
 #include <lite3d/lite3d_mesh_codec.h>
 #include <lite3d/lite3d_mesh_assimp_loader.h>
 
-#include <mtool_converter.h>
-#include <mtool_utils.h>
+#include <mtool/mtool_converter.h>
+#include <mtool/mtool_utils.h>
 
 void ConverterCommand::entry_on_mesh(lite3d_mesh *mesh, const kmMat4 *transform, const char *name, void *userdata)
 {

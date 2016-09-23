@@ -1,6 +1,6 @@
 /******************************************************************************
  *	This file is part of lite3d (Light-weight 3d engine).
- *	Copyright (C) 2015  Sirius (Korolev Nikita)
+ *	Copyright (C) 2016  Sirius (Korolev Nikita)
  *
  *	Lite3D is free software: you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -19,161 +19,47 @@
 
 #include <SDL_log.h>
 
-#include <lite3dpp/lite3dpp_main.h>
+#include <sample_common/lite3dpp_common.h>
 
-class SampleLifecycleListener : public lite3dpp::LifecycleObserver
+namespace lite3dpp {
+namespace samples {
+
+class Vault : public Sample
 {
 public:
 
-    SampleLifecycleListener(lite3dpp::Main *main) : 
-        mMain(main),
-        mMode(1)
-    {}
-
-    void init() override
+    void createScene() override
     {
-        lite3dpp::Scene *scene = mMain->getResourceManager()->queryResource<lite3dpp::Scene>("Vault",
+        Scene *scene = getMain().getResourceManager()->queryResource<Scene>("Vault",
             "vaultmat:scenes/vault.json");
-        mCamera = scene->getCamera("MyCamera");
-        mWindow = mMain->window();
-        
-        mCenterXPos = mWindow->width() >> 1;
-        mCenterYPos = mWindow->height() >> 1;
-        lite3d_video_set_mouse_pos(mCenterXPos, mCenterYPos);
-
-        mStatRerfeshTimer = mMain->addTimer("statisticURefresh", 1000);
-        lite3dpp::Material::setFloatGlobalParameter("mode", 2);
-
-        mMain->getResourceManager()->releaseFileCache();
-    }
-
-    void timerTick(lite3d_timer *timerid) override
-    {
-        if(timerid == mMain->getFixedUpdateTimer())
-        {
-            const Uint8 *state = SDL_GetKeyboardState(NULL);
-            if(state[SDL_SCANCODE_W])
-            {
-                kmVec3 vec3 = {0, 0, -6};
-                mCamera->moveRelative(vec3);
-            }
-            
-            if(state[SDL_SCANCODE_S])
-            {
-                kmVec3 vec3 = {0, 0, 6};
-                mCamera->moveRelative(vec3);
-            }
-            
-            if(state[SDL_SCANCODE_A])
-            {
-                kmVec3 vec3 = {-6, 0, 0};
-                mCamera->moveRelative(vec3);
-            }
-            
-            if(state[SDL_SCANCODE_D])
-            {
-                kmVec3 vec3 = {6, 0, 0};
-                mCamera->moveRelative(vec3);
-            }
-        }
-        else if(timerid == mStatRerfeshTimer)
-        {
-            printStats();
-        }
+        setMainCamera(scene->getCamera("MyCamera"));
+        Material::setFloatGlobalParameter("mode", 2);
     }
 
     void processEvent(SDL_Event *e) override
     {
+        Sample::processEvent(e);
         if (e->type == SDL_KEYDOWN)
         {
-            /* exit */
-            if (e->key.keysym.sym == SDLK_ESCAPE)
-                mMain->stop();
-            else if (e->key.keysym.sym == SDLK_F1)
+            if (e->key.keysym.sym == SDLK_m)
             {
-                printStats();
-            }
-            else if (e->key.keysym.sym == SDLK_m)
-            {
-                if (mMode == 1)
-                    mMode = 2;
-                else 
-                    mMode = 1;
-                
-                lite3dpp::Material::setFloatGlobalParameter("mode", (float)mMode);
-            }
-            else if (e->key.keysym.sym == SDLK_f)
-            {
-                static bool scRes = true;
-                if(scRes)
-                {
-                    mWindow->resize(1024, 768);
-                    mWindow->fullscreen(false);
-                }
+                static int mode = 2;
+                if (mode == 1)
+                    mode = 2;
                 else
-                {
-                    mWindow->resize(0, 0);
-                    mWindow->fullscreen(true);
-                }
-
-                mCenterXPos = mWindow->width() >> 1;
-                mCenterYPos = mWindow->height() >> 1;
-                lite3d_video_set_mouse_pos(mCenterXPos, mCenterYPos);
-                mCamera->setAspect(mWindow->computeCameraAspect());
-                scRes = !scRes;
+                    mode = 1;
+                
+                lite3dpp::Material::setFloatGlobalParameter("mode", (float)mode);
             }
         }
-        else if(e->type == SDL_MOUSEMOTION)
-        {
-            mCamera->rotateZ((e->motion.x - mCenterXPos) * 0.003f);
-            mCamera->pitch((e->motion.y - mCenterYPos) * 0.003f);
-            lite3d_video_set_mouse_pos(mCenterXPos, mCenterYPos);
-        }
     }
-
-    void printStats()
-    {
-        lite3d_render_stats *stats = lite3d_render_stats_get();
-        SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
-            "==== Render statistics ========\n"
-            "last FPS\tavr FPS\t\tbest FPS\tworst FPS\n"
-            "%d\t\t%d\t\t%d\t\t%d\n"
-            "last frame ms\tavr frame ms\tbest frame ms\tworst frame ms\n"
-            "%f\t%f\t%f\t%f\n"
-            "nodes total\tbatches total\tbatches called\tfaces\n"
-            "%d\t\t%d\t\t%d\t\t%d\n",
-            stats->lastFPS, stats->avrFPS, stats->bestFPS, stats->worstFPS,
-            stats->lastFrameMs, stats->avrFrameMs, stats->bestFrameMs, stats->worstFrameMs,
-            stats->nodesTotal, stats->batchesTotal, stats->batchedByFrame, stats->verticesByFrame);
-    }
-
-private:
-
-    lite3dpp::Main *mMain;
-    lite3dpp::Camera *mCamera;
-    lite3dpp::WindowRenderTarget *mWindow;
-    int mCenterXPos;
-    int mCenterYPos;
-    lite3d_timer *mStatRerfeshTimer;
-    int mMode;
 };
+
+}}
 
 int main(int agrc, char *args[])
 {
-    try
-    {
-        lite3dpp::Main mainObj;
-        SampleLifecycleListener lifecycleListener(&mainObj);
-
-        mainObj.addObserver(&lifecycleListener);
-        mainObj.initFromConfig("vault/config/config_vault.json");
-        mainObj.run();
-    }
-    catch (std::exception &ex)
-    {
-        std::cout << "Exception occurred: " << ex.what() << std::endl;
-        return -1;
-    }
-
-    return 0;
+    lite3dpp::samples::Vault sample;
+    return sample.start("vault/config/config_vault.json");
 }
+

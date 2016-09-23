@@ -37,6 +37,13 @@ namespace lite3dpp
     {
         lite3d_scene_init(&mScene);
         mScene.userdata = this;
+        mScene.beginDrawBatch = beginDrawBatch;
+        mScene.beginFirstStageRender = beginFirstStageRender;
+        mScene.beginSceneRender = beginSceneRender;
+        mScene.beginSecondStageRender = beginSecondStageRender;
+        mScene.endSceneRender = endSceneRender;
+        mScene.nodeInFrustum = nodeInFrustum;
+        mScene.nodeOutOfFrustum = nodeOutOfFrustum;
 
         setupObjects(helper.getObjects(L"Objects"), NULL);
         setupCameras(helper.getObjects(L"Cameras"));

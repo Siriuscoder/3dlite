@@ -1,6 +1,6 @@
 /******************************************************************************
  *	This file is part of lite3d (Light-weight 3d engine).
- *	Copyright (C) 2016  Sirius (Korolev Nikita)
+ *	Copyright (C) 2015  Sirius (Korolev Nikita)
  *
  *	Lite3D is free software: you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -15,35 +15,50 @@
  *	You should have received a copy of the GNU General Public License
  *	along with Lite3D.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
+#pragma once
+
 #include <iostream>
 
-#include <SDL_log.h>
-
-#include <sample_common/lite3dpp_common.h>
+#include <lite3dpp/lite3dpp_main.h>
 
 namespace lite3dpp {
 namespace samples {
 
-class Cellwallerkiller : public Sample
+class Sample : public LifecycleObserver,
+    public SceneObserver
 {
 public:
 
-    void createScene() override
-    {
-        Scene *scene = getMain().getResourceManager()->queryResource<lite3dpp::Scene>("InstancedRobots",
-            "samples:scenes/robots.json");
-        setMainCamera(scene->getCamera("MyCamera"));
+    Sample();
 
-        kmVec4 bColor = { 0.05, 0.38, 0.45, 1.0 };
-        getMainWindow().setBackgroundColor(bColor);
-        Material::setFloatv4GlobalParameter("fogColor", bColor);
-    }
+    void init() override;
+    void timerTick(lite3d_timer *timerid) override;
+    void processEvent(SDL_Event *e) override;
+    void beginSceneRender(Scene *scene, Camera *camera) override;
+
+    int start(const char *config);
+
+    inline void setMainCamera(Camera *camera)
+    { mMainCamera = camera; }
+    inline Main &getMain()
+    { return mMain; }
+    WindowRenderTarget &getMainWindow();
+
+    virtual void createScene() = 0;
+
+protected:
+
+    void initGui();
+    void printStats();
+
+private:
+
+    Main mMain;
+    Camera *mMainCamera;
+    Camera *mGuiCamera;
+    WindowRenderTarget *mMainWindow;
+    int mCenterXPos;
+    int mCenterYPos;
 };
 
 }}
-
-int main(int agrc, char *args[])
-{
-    lite3dpp::samples::Cellwallerkiller sample;
-    return sample.start("samples/config/config.json");
-}

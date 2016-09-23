@@ -63,6 +63,16 @@ macro(define_sample SAMPLE_NAME SAMPLE_DIRECTORY)
 	source_files(${SAMPLE_DIRECTORY})
 	headers_files(${SAMPLE_DIRECTORY})
 	
+	set(EXTRA_ARGS ${ARGN})
+
+    # Did we get any optional args?
+    list(LENGTH EXTRA_ARGS NUM_EXTRA_ARGS)
+    if (${NUM_EXTRA_ARGS} GREATER 0)
+		list(GET EXTRA_ARGS 0 COMMON_DIRECTORY)
+		source_files(${COMMON_DIRECTORY})
+		headers_files(${COMMON_DIRECTORY})
+    endif()
+	
 	if(MSVC)
 		set(SOURCES_LIST ${SOURCES_LIST} ${CMAKE_SOURCE_DIR}/winres/ResourceSample.rc)
 	endif()
@@ -70,8 +80,9 @@ macro(define_sample SAMPLE_NAME SAMPLE_DIRECTORY)
 	add_executable(${SAMPLE_NAME} ${SOURCES_LIST} ${HEADERS_LIST})
 
 	target_include_directories(${SAMPLE_NAME} PRIVATE 
-			"$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/${SAMPLE_DIRECTORY}>"
-			"$<BUILD_INTERFACE:${SDL2_INCLUDE_DIR}>")
+		"$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}>"
+		"$<BUILD_INTERFACE:${SDL2_INCLUDE_DIR}>")
+			
 	if(MSVC)
 		target_compile_definitions(${SAMPLE_NAME} PRIVATE
 			"$<BUILD_INTERFACE:_WINEXE>")
@@ -84,7 +95,8 @@ macro(define_sample SAMPLE_NAME SAMPLE_DIRECTORY)
 	
 	target_link_libraries(${SAMPLE_NAME} 
 		lite3d
-		lite3dpp)
+		lite3dpp
+		lite3dpp_font)
 		
 endmacro()
 

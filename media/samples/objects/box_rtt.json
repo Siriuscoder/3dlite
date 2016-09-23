@@ -9,6 +9,7 @@
 		"Nodes": [
 			{
 				"Name": "box.node",
+				"FrustumTest":false,
 				"Mesh": 
 				{
 					"Name": "box.mesh",

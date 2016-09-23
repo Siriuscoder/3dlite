@@ -17,7 +17,7 @@
  *******************************************************************************/
 #pragma once
 
-#include <mtool_command.h>
+#include <mtool/mtool_command.h>
 
 class CreateDirsCommand : public Command
 {

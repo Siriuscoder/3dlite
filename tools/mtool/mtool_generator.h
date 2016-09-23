@@ -17,7 +17,7 @@
  *******************************************************************************/
 #pragma once
 
-#include <mtool_command.h>
+#include <mtool/mtool_command.h>
 #include <lite3dpp/lite3dpp_config_writer.h>
 
 class GeneratorOptions

@@ -21,7 +21,7 @@
 #include <SDL_log.h>
 
 #include <lite3d/lite3d_mesh_codec.h>
-#include <mtool_m_info.h>
+#include <mtool/mtool_m_info.h>
 
 MeshInfoCommand::MeshInfoCommand()
 {}

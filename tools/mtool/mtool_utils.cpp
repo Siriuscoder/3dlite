@@ -33,7 +33,7 @@
 
 #include <SDL_rwops.h>
 #include <SDL_log.h>
-#include <mtool_utils.h>
+#include <mtool/mtool_utils.h>
 
 int Utils::mNonameCounter = 0;
 

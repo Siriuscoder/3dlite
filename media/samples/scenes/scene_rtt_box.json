@@ -4,7 +4,7 @@
 		{
 			"Name": "MyCamera",
 
-			"Position": [0,3,3],
+			"Position": [0,70,70],
 			"LookAt": [0,0,0],
 			"Perspective": 
 			{
@@ -28,7 +28,8 @@
 	[
 		{
 			"Name": "Box",
-			"Object": "samples:objects/box_rtt.json"
+			"Object": "samples:objects/box_rtt.json",
+			"Scale": [30, 30, 30]
 		}
 	]
 }

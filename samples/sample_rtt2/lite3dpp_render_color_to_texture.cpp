@@ -1,6 +1,6 @@
 /******************************************************************************
  *	This file is part of lite3d (Light-weight 3d engine).
- *	Copyright (C) 2015  Sirius (Korolev Nikita)
+ *	Copyright (C) 2016  Sirius (Korolev Nikita)
  *
  *	Lite3D is free software: you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -19,84 +19,57 @@
 
 #include <SDL_log.h>
 
-#include <lite3dpp/lite3dpp_main.h>
+#include <sample_common/lite3dpp_common.h>
 
-class SampleLifecycleListener : public lite3dpp::LifecycleObserver
+namespace lite3dpp {
+namespace samples {
+
+class RenderToTexture : public Sample
 {
 public:
 
-    SampleLifecycleListener(lite3dpp::Main *main) : 
-        mMain(main),
+    RenderToTexture() : 
         mMinigun(NULL),
         mPlasmagun(NULL)
     {}
 
-    void init() override
+    void createScene() override
     {
-        lite3dpp::Scene *scene = mMain->getResourceManager()->queryResource<lite3dpp::Scene>("SceneInTexture",
+        Scene *scene = getMain().getResourceManager()->queryResource<Scene>("SceneInTexture",
             "samples:scenes/scene_rtt.json");
         mMinigun = scene->getObject("Minigun");
         mPlasmagun = scene->getObject("Plasmagun");
 
-        scene = mMain->getResourceManager()->queryResource<lite3dpp::Scene>("BoxScene",
+        scene = getMain().getResourceManager()->queryResource<Scene>("BoxScene",
             "samples:scenes/scene_rtt_box.json");
+        setMainCamera(scene->getCamera("MyCamera"));
 
         mBox = scene->getObject("Box");
     }
 
     void timerTick(lite3d_timer *timerid) override
     {
-        mMinigun->getRoot()->rotateAngle(KM_VEC3_POS_Z, 0.01f);
-        mPlasmagun->getRoot()->rotateAngle(KM_VEC3_NEG_Z, 0.01f);
-        mBox->getRoot()->rotateAngle(KM_VEC3_NEG_Z, 0.01f);
-    }
+        Sample::timerTick(timerid);
 
-    void processEvent(SDL_Event *e) override
-    {
-        if (e->type == SDL_KEYDOWN)
+        if(timerid == getMain().getFixedUpdateTimer())
         {
-            /* exit */
-            if (e->key.keysym.sym == SDLK_ESCAPE)
-                mMain->stop();
-        }
-        else if (e->key.keysym.sym == SDLK_F1)
-        {
-            lite3d_render_stats *stats = lite3d_render_stats_get();
-            SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
-                "==== Render statistics ========\n"
-                "last FPS\tavr FPS\t\tbest FPS\tworst FPS\n"
-                "%d\t\t%d\t\t%d\t\t%d\n"
-                "last frame ms\tavr frame ms\tbest frame ms\tworst frame ms\n"
-                "%f\t%f\t%f\t%f",
-                stats->lastFPS, stats->avrFPS, stats->bestFPS, stats->worstFPS,
-                stats->lastFrameMs, stats->avrFrameMs, stats->bestFrameMs, stats->worstFrameMs);
+            mMinigun->getRoot()->rotateAngle(KM_VEC3_POS_Z, 0.01f);
+            mPlasmagun->getRoot()->rotateAngle(KM_VEC3_NEG_Z, 0.01f);
+            mBox->getRoot()->rotateAngle(KM_VEC3_NEG_Z, 0.01f);
         }
     }
 
 private:
 
-    lite3dpp::Main *mMain;
-    lite3dpp::SceneObject *mMinigun;
-    lite3dpp::SceneObject *mPlasmagun;
-    lite3dpp::SceneObject *mBox;
+    SceneObject *mMinigun;
+    SceneObject *mPlasmagun;
+    SceneObject *mBox;
 };
+
+}}
 
 int main(int agrc, char *args[])
 {
-    try
-    {
-        lite3dpp::Main mainObj;
-        SampleLifecycleListener lifecycleListener(&mainObj);
-
-        mainObj.addObserver(&lifecycleListener);
-        mainObj.initFromConfig("samples/config/config.json");
-        mainObj.run();
-    }
-    catch (std::exception &ex)
-    {
-        std::cout << "Exception occurred: " << ex.what() << std::endl;
-        return -1;
-    }
-
-    return 0;
+    lite3dpp::samples::RenderToTexture sample;
+    return sample.start("samples/config/config.json");
 }

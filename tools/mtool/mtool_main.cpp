@@ -19,9 +19,9 @@
 #include <memory>
 
 #include <lite3d/lite3d_main.h>
-#include <mtool_converter.h>
-#include <mtool_m_info.h>
-#include <mtool_create_dirs.h>
+#include <mtool/mtool_converter.h>
+#include <mtool/mtool_m_info.h>
+#include <mtool/mtool_create_dirs.h>
 
 static void print_help_and_exit()
 {

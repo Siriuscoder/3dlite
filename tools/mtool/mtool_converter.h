@@ -17,8 +17,8 @@
  *******************************************************************************/
 #pragma once
 
-#include <mtool_command.h>
-#include <mtool_generator.h>
+#include <mtool/mtool_command.h>
+#include <mtool/mtool_generator.h>
 
 class ConverterCommand : public Command
 {
