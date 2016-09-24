@@ -41,13 +41,13 @@ namespace lite3dpp
             Texture::loadFromConfigImpl(helper);
             
             if(getPtr()->texFormat != LITE3D_TEXTURE_FORMAT_RGBA)
-                throw std::runtime_error("Font texture must be in RGBA format");
+                LITE3D_THROW("Font texture must be in RGBA format");
             if(!helper.has(L"BlankColor"))
-                throw std::runtime_error("BlankColor parameter not found");
+                LITE3D_THROW("BlankColor parameter not found");
             if(!helper.has(L"Font"))
-                throw std::runtime_error("Font parameter not found");
+                LITE3D_THROW("Font parameter not found");
             if(!helper.has(L"FontSize"))
-                throw std::runtime_error("FontSize parameter not found");
+                LITE3D_THROW("FontSize parameter not found");
                 
             if(!mFont)
             {
@@ -93,7 +93,7 @@ namespace lite3dpp
         void FontTexture::drawText(const String &text, const kmVec2 &pos, const kmVec4 &color)
         {
             if(!mText)
-                throw std::runtime_error("Resource is not initialized");
+                LITE3D_THROW("Resource is not initialized");
 
             mText->setPos(pos.x, pos.y);
             mText->setWidth(getWidth() - pos.x);

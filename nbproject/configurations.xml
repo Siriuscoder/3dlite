@@ -279,6 +279,7 @@
             <incDir>
               <pElem>lite3d/include</pElem>
               <pElem>lite3dpp/include</pElem>
+              <pElem>lite3dpp_font/include</pElem>
             </incDir>
             <preprocessorList>
               <Elem>INCLUDE_ASSIMP</Elem>
@@ -327,7 +328,6 @@
       <folder path="0/lite3dpp">
         <ccTool>
           <incDir>
-            <pElem>lite3dpp_font/include</pElem>
             <pElem>/usr/include/SDL2</pElem>
             <pElem>winres</pElem>
             <pElem>lite3dpp/include/lite3dpp/as</pElem>
@@ -335,6 +335,20 @@
           </incDir>
           <preprocessorList>
             <Elem>lite3dpp_EXPORTS</Elem>
+          </preprocessorList>
+        </ccTool>
+      </folder>
+      <folder path="0/lite3dpp_font">
+        <ccTool>
+          <incDir>
+            <pElem>lite3dpp_font/include/lite3dpp_font</pElem>
+            <pElem>/usr/include/freetype2</pElem>
+            <pElem>/usr/include/SDL2</pElem>
+            <pElem>winres</pElem>
+            <pElem>build/lite3dpp_font</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>lite3dpp_font_EXPORTS</Elem>
           </preprocessorList>
         </ccTool>
       </folder>
@@ -348,7 +362,6 @@
         </cTool>
         <ccTool>
           <incDir>
-            <pElem>lite3dpp_font/include</pElem>
             <pElem>samples</pElem>
             <pElem>/usr/include/SDL2</pElem>
             <pElem>build/samples</pElem>
@@ -366,7 +379,6 @@
         </cTool>
         <ccTool>
           <incDir>
-            <pElem>lite3dpp_font/include</pElem>
             <pElem>tests/gtest</pElem>
           </incDir>
         </ccTool>
@@ -389,7 +401,6 @@
       <folder path="0/tools">
         <ccTool>
           <incDir>
-            <pElem>lite3dpp_font/include</pElem>
             <pElem>tools</pElem>
             <pElem>/usr/include/SDL2</pElem>
             <pElem>build/tools</pElem>
@@ -1067,31 +1078,28 @@
         <ccTool flags="1">
         </ccTool>
       </item>
-      <item path="lite3dpp_font/src/font.cpp" ex="false" tool="1" flavor2="4">
+      <item path="lite3dpp_font/src/font.cpp" ex="false" tool="1" flavor2="8">
+        <ccTool flags="1">
+        </ccTool>
       </item>
       <item path="lite3dpp_font/src/lite3dpp_font_texture.cpp"
             ex="false"
             tool="1"
             flavor2="8">
         <ccTool flags="1">
-          <incDir>
-            <pElem>lite3dpp_font/include</pElem>
-            <pElem>lite3dpp_font/include/lite3dpp_font</pElem>
-            <pElem>/usr/include/freetype2</pElem>
-            <pElem>/usr/include/SDL2</pElem>
-            <pElem>winres</pElem>
-            <pElem>build/lite3dpp_font</pElem>
-          </incDir>
-          <preprocessorList>
-            <Elem>lite3dpp_font_EXPORTS</Elem>
-          </preprocessorList>
         </ccTool>
       </item>
-      <item path="lite3dpp_font/src/mathlib.cpp" ex="false" tool="1" flavor2="4">
+      <item path="lite3dpp_font/src/mathlib.cpp" ex="false" tool="1" flavor2="8">
+        <ccTool flags="1">
+        </ccTool>
       </item>
-      <item path="lite3dpp_font/src/texture.cpp" ex="false" tool="1" flavor2="4">
+      <item path="lite3dpp_font/src/texture.cpp" ex="false" tool="1" flavor2="8">
+        <ccTool flags="1">
+        </ccTool>
       </item>
-      <item path="lite3dpp_font/src/utils.cpp" ex="false" tool="1" flavor2="4">
+      <item path="lite3dpp_font/src/utils.cpp" ex="false" tool="1" flavor2="8">
+        <ccTool flags="1">
+        </ccTool>
       </item>
       <item path="samples/sample_cellwallerkiller/lite3dpp_cellwallerkiller.cpp"
             ex="false"

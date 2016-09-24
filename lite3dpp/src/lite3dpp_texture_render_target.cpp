@@ -82,7 +82,7 @@ namespace lite3dpp
         if (!lite3d_framebuffer_setup(&mRenderTargetPtr->fb, 
             colorAttachments.size() > 0 ? &colorAttachments[0] : NULL, colorAttachments.size(), attachColorRenderBuffer,
             depthAttachment, attachDepthRenderBuffer, attachStencilRenderBuffer))
-            throw std::runtime_error(getName() + " framebuffer setup failed.. ");
+            LITE3D_THROW(getName() << " framebuffer setup failed.. ");
             
         lite3d_render_target_add(mRenderTargetPtr, helper.getInt(L"Priority"));
     }

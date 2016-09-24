@@ -106,12 +106,12 @@ void ConverterCommand::runImpl()
     if(!lite3d_assimp_mesh_load_recursive(
         mMain.getResourceManager()->loadFileToMemory(mInputFilePath), ctx,
         LITE3D_VBO_STATIC_READ, loadFlags))
-        throw std::runtime_error("Unable to import input file.. possible bad format..");
+        LITE3D_THROW("Unable to import input file.. possible bad format..");
 }
 #else
 void ConverterCommand::runImpl()
 {
-    throw std::runtime_error("If you want to use converter, please, recompile with Assimp support!");
+    LITE3D_THROW("If you want to use converter, please, recompile with Assimp support!");
 }
 #endif
 
@@ -129,21 +129,21 @@ void ConverterCommand::parseCommandLineImpl(int argc, char *args[])
                 mInputFilePath.append(args[i + 1]);
             }
             else
-                throw std::runtime_error("Missing input file");
+                LITE3D_THROW("Missing input file");
         }
         else if (strcmp(args[i], "-o") == 0)
         {
             if ((i + 1) < argc && args[i + 1][0] != '-')
                 mGenOptions.outputFolder.assign(args[i + 1]);
             else
-                throw std::runtime_error("Missing output folder");
+                LITE3D_THROW("Missing output folder");
         }
         else if (strcmp(args[i], "-oname") == 0)
         {
             if ((i + 1) < argc && args[i + 1][0] != '-')
                 mGenOptions.objectName.assign(args[i + 1]);
             else
-                throw std::runtime_error("Missing object name");
+                LITE3D_THROW("Missing object name");
         }
         else if (strcmp(args[i], "-O") == 0)
         {
@@ -162,42 +162,42 @@ void ConverterCommand::parseCommandLineImpl(int argc, char *args[])
             if ((i + 1) < argc && args[i + 1][0] != '-')
                 mGenOptions.packname.assign(args[i + 1]);
             else
-                throw std::runtime_error("Missing package name");
+                LITE3D_THROW("Missing package name");
         }
         else if (strcmp(args[i], "-texpkg") == 0)
         {
             if ((i + 1) < argc && args[i + 1][0] != '-')
                 mGenOptions.texPackname.assign(args[i + 1]);
             else
-                throw std::runtime_error("Missing package name");
+                LITE3D_THROW("Missing package name");
         }
         else if (strcmp(args[i], "-imgpkg") == 0)
         {
             if ((i + 1) < argc && args[i + 1][0] != '-')
                 mGenOptions.imgPackname.assign(args[i + 1]);
             else
-                throw std::runtime_error("Missing package name");
+                LITE3D_THROW("Missing package name");
         }
         else if (strcmp(args[i], "-meshpkg") == 0)
         {
             if ((i + 1) < argc && args[i + 1][0] != '-')
                 mGenOptions.meshPackname.assign(args[i + 1]);
             else
-                throw std::runtime_error("Missing package name");
+                LITE3D_THROW("Missing package name");
         }
         else if (strcmp(args[i], "-matpkg") == 0)
         {
             if ((i + 1) < argc && args[i + 1][0] != '-')
                 mGenOptions.matPackname.assign(args[i + 1]);
             else
-                throw std::runtime_error("Missing package name");
+                LITE3D_THROW("Missing package name");
         }
         else if (strcmp(args[i], "-nodepkg") == 0)
         {
             if ((i + 1) < argc && args[i + 1][0] != '-')
                 mGenOptions.nodePackname.assign(args[i + 1]);
             else
-                throw std::runtime_error("Missing package name");
+                LITE3D_THROW("Missing package name");
         }
         else if (strcmp(args[i], "-matastex") == 0)
         {

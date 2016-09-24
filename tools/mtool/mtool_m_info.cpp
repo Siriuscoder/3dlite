@@ -45,12 +45,12 @@ void MeshInfoCommand::parseCommandLineImpl(int argc, char *args[])
                 mInputFilePath.append(args[i + 1]);
             }
             else
-                throw std::runtime_error("Missing input file");
+                LITE3D_THROW("Missing input file");
         }
     }
 
     if(mInputFilePath.size() == 0)
-        throw std::runtime_error("Missing input file");
+        LITE3D_THROW("Missing input file");
 }
 
 void MeshInfoCommand::printInfo(const lite3d_file *meshFile)
@@ -67,7 +67,7 @@ void MeshInfoCommand::printInfo(const lite3d_file *meshFile)
         meshFile->fileSize, LITE3D_VBO_STATIC_READ))
     {
         lite3d_mesh_purge(&mesh);
-        throw std::runtime_error("Bad format..");
+        LITE3D_THROW("Bad format..");
     }
     
     printf("Mesh file version: %d.%d.%d\n\n", LITE3D_GET_VERSION_MAJ(mesh.version),

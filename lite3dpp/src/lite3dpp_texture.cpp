@@ -93,7 +93,7 @@ namespace lite3dpp
 
             if(!lite3d_texture_unit_from_resource(&mTexture, mMain->getResourceManager()->loadFileToMemory(helper.getString(L"Image")),
                 imageType, textureType, quality, wrapping))
-                throw std::runtime_error(getName() + " texture load failed..");
+                LITE3D_THROW(getName() << " texture load failed..");
         }
         else
         {
@@ -111,7 +111,7 @@ namespace lite3dpp
 
             if(!lite3d_texture_unit_allocate(&mTexture, textureType, quality, wrapping, textureFormat, 
                 helper.getInt(L"Height", 1), helper.getInt(L"Width", 1), helper.getInt(L"Depth", 1)))
-                throw std::runtime_error(getName() + " texture allocation failed..");
+                LITE3D_THROW(getName() << " texture allocation failed..");
             
             if(helper.has(L"BlankColor"))
                 setBlankColor(helper.getVec4(L"BlankColor"));
@@ -165,29 +165,17 @@ namespace lite3dpp
     {
         size_t size;
         if(!lite3d_texture_unit_get_level_size(&mTexture, level, &size))
-        {
-            Stringstream error;
-            error << "Could`n get size of level " << level << " for texture " << getName();
-            throw std::runtime_error(error.str());
-        }
+            LITE3D_THROW("Could`n get size of level " << level << " for texture " << getName());
 
         pixels.resize(size);
         if(!lite3d_texture_unit_get_pixels(&mTexture, level, &pixels[0]))
-        {
-            Stringstream error;
-            error << "Could`n get level " << level << " for texture " << getName();
-            throw std::runtime_error(error.str());
-        }
+            LITE3D_THROW("Could`n get level " << level << " for texture ");
     }
 
     void Texture::getPixels(int8_t level, void *pixels)
     {
         if(!lite3d_texture_unit_get_pixels(&mTexture, level, pixels))
-        {
-            Stringstream error;
-            error << "Could`n get level " << level << " for texture " << getName();
-            throw std::runtime_error(error.str());
-        }
+            LITE3D_THROW("Could`n get level " << level << " for texture ");
     }
 
     void Texture::setPixels(int8_t level, const PixelsData &pixels)
@@ -202,11 +190,8 @@ namespace lite3dpp
             lite3d_texture_unit_get_level_height(&mTexture, level), 
             lite3d_texture_unit_get_level_depth(&mTexture, level), 
             level, pixels))
-        {
-            Stringstream error;
-            error << "Could`n set level " << level << " for texture " << getName();
-            throw std::runtime_error(error.str());
-        }
+            LITE3D_THROW("Could`n set level " << level << " for texture ");
+
         mModifyed = true;
     }
 
@@ -214,29 +199,17 @@ namespace lite3dpp
     {
         size_t size;
         if(!lite3d_texture_unit_get_compressed_level_size(&mTexture, level, &size))
-        {
-            Stringstream error;
-            error << "Could`n get size of level " << level << " for texture " << getName();
-            throw std::runtime_error(error.str());
-        }
+            LITE3D_THROW("Could`n get size of level " << level << " for texture " << getName());
 
         pixels.resize(size);
         if(!lite3d_texture_unit_get_compressed_pixels(&mTexture, level, &pixels[0]))
-        {
-            Stringstream error;
-            error << "Could`n get level " << level << " for texture " << getName();
-            throw std::runtime_error(error.str());
-        }
+            LITE3D_THROW("Could`n get level " << level << " for texture ");
     }
 
     void Texture::getCompressedPixels(int8_t level, void *pixels)
     {
         if(!lite3d_texture_unit_get_compressed_pixels(&mTexture, level, pixels))
-        {
-            Stringstream error;
-            error << "Could`n get level " << level << " for texture " << getName();
-            throw std::runtime_error(error.str());
-        }
+            LITE3D_THROW("Could`n get level " << level << " for texture ");
     }
 
     void Texture::setCompressedPixels(int8_t level, const PixelsData &pixels)
@@ -251,11 +224,8 @@ namespace lite3dpp
             lite3d_texture_unit_get_level_height(&mTexture, level), 
             lite3d_texture_unit_get_level_depth(&mTexture, level), 
             level, size, pixels))
-        {
-            Stringstream error;
-            error << "Could`n set level " << level << " for texture " << getName();
-            throw std::runtime_error(error.str());
-        }
+            LITE3D_THROW("Could`n set level " << level << " for texture ");
+
         mModifyed = true;
     }
 
@@ -268,11 +238,7 @@ namespace lite3dpp
     {
         size_t res;
         if(!lite3d_texture_unit_get_level_size(&mTexture, level, &res))
-        {
-            Stringstream error;
-            error << "Could`n dump level " << level << " size for texture " << getName();
-            throw std::runtime_error(error.str());
-        }
+            LITE3D_THROW("Could`n dump level " << level << " size for texture " << getName());
 
         return res;
     }
@@ -281,11 +247,7 @@ namespace lite3dpp
     {
         size_t res;
         if(!lite3d_texture_unit_get_compressed_level_size(&mTexture, level, &res))
-        {
-            Stringstream error;
-            error << "Could`n dump level " << level << " size for texture " << getName();
-            throw std::runtime_error(error.str());
-        }
+            LITE3D_THROW("Could`n dump level " << level << " size for texture " << getName());
 
         return res;
     }

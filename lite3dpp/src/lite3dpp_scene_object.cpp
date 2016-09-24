@@ -81,7 +81,7 @@ namespace lite3dpp
     void SceneObject::addToScene(Scene *scene)
     {
         if(mScene)
-            throw std::runtime_error(getName() + " already in scene " + scene->getName());
+            LITE3D_THROW(getName() << " already in scene " << scene->getName());
 
         mObjectRoot->addToScene(scene);
         std::for_each(mNodes.begin(), mNodes.end(), [scene] (Nodes::value_type &node)

@@ -44,7 +44,7 @@ namespace lite3dpp
 
         mName = json.getString(L"Name");
         if(mName.size() == 0)
-            throw std::runtime_error("Node must have a name..");
+            LITE3D_THROW("Node must have a name..");
 
         SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
             "Parsing node %s ...", mName.c_str());
@@ -125,7 +125,7 @@ namespace lite3dpp
     {
         /* attach node to scene */
         if(!lite3d_scene_add_node(scene->getPtr(), &mNode, mBaseNode ? &mBaseNode->mNode : NULL))
-            throw std::runtime_error("Attaching node failed..");
+            LITE3D_THROW("Attaching node failed..");
 
         if(!mMesh)
         {
@@ -138,7 +138,7 @@ namespace lite3dpp
         {
             if(!lite3d_scene_node_touch_material(&mNode, 
                 lite3d_mesh_chunk_get_by_index(mMesh->getPtr(), material.first), material.second->getPtr(), mInstances))
-                throw std::runtime_error("Linking node failed..");
+                LITE3D_THROW("Linking node failed..");
         }
     }
 

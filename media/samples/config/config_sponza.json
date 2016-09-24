@@ -16,7 +16,7 @@
         "ColorBits": 24,
         "Fullscreen": false,
         "FSAA": 4,
-        "VSync": true
+        "VSync": false
     },
     // resource locations
     "ResourceLocations": [

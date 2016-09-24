@@ -45,12 +45,12 @@ void Utils::saveFile(const void *buffer, size_t size, const lite3dpp::String &pa
 
     descr = SDL_RWFromFile(path.c_str(), "wb");
     if (!descr)
-        throw std::runtime_error(lite3dpp::String("Unable to open file " + path));
+        LITE3D_THROW("Unable to open file " << path);
 
     if (SDL_RWwrite(descr, buffer, size, 1) != 1)
     {
         SDL_RWclose(descr);
-        throw std::runtime_error(lite3dpp::String("IO error.. ") + path);
+        LITE3D_THROW("IO error.. " << path);
     }
 
     SDL_RWclose(descr);

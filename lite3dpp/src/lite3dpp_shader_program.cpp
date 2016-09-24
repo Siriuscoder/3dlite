@@ -50,7 +50,7 @@ namespace lite3dpp
         try
         {
             if(!lite3d_shader_program_init(&mProgram))
-                throw std::runtime_error("Shader program init failed..");
+                LITE3D_THROW("Shader program init failed..");
 
             mProgram.userdata = this;
             bindAttributeLocations();
@@ -59,7 +59,7 @@ namespace lite3dpp
                 "Linking \"%s\" ...", getPath().c_str());
 
             if(!lite3d_shader_program_link(&mProgram, &shaders[0], shaders.size()))
-                throw std::runtime_error(getPath() + " link: \"" + mProgram.statusString + "\"");
+                LITE3D_THROW(getPath() << " link: \"" << mProgram.statusString << "\"");
         }
         catch(std::exception &)
         {
@@ -87,14 +87,14 @@ namespace lite3dpp
 
             if(!lite3d_shader_init(&shaders.back(), 
                 source.find(".vs") != String::npos ? LITE3D_SHADER_TYPE_VERTEX : LITE3D_SHADER_TYPE_FRAGMENT))
-                throw std::runtime_error("Shader init failed..");
+                LITE3D_THROW("Shader init failed..");
 
             size_t sourceLen = 0;
             const void *sourceData = mMain->getResourceManager()->loadFileToMemory(source, &sourceLen);
 
             if(!lite3d_shader_compile(&shaders.back(), 
                 static_cast<const char *>(sourceData), sourceLen))
-                throw std::runtime_error(source + " compile: \"" + shaders.back().statusString + "\"");
+                LITE3D_THROW(source << " compile: \"" << shaders.back().statusString << "\"");
         }
     }
 

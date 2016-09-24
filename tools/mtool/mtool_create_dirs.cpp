@@ -33,7 +33,7 @@ void CreateDirsCommand::parseCommandLineImpl(int argc, char *args[])
             if ((i + 1) < argc && args[i + 1][0] != '-')
                 mOutputFolder.assign(args[i + 1]);
             else
-                throw std::runtime_error("Missing output folder");
+                LITE3D_THROW("Missing output folder");
         }
     }
 }

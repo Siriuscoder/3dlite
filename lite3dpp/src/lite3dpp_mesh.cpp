@@ -29,7 +29,7 @@ namespace lite3dpp
         mSource(source)
     {
         if((mPtr = lite3d_vbo_map(&source, lockType)) == NULL)
-            throw std::runtime_error("vertex buffer map failed..");
+            LITE3D_THROW("vertex buffer map failed..");
     }
 
     BufferMapper::BufferMapper(const BufferMapper &other) :
@@ -75,7 +75,7 @@ namespace lite3dpp
             if(!lite3d_mesh_load_from_m_file(&mMesh, 
                 mMain->getResourceManager()->loadFileToMemory(helper.getString(L"Model")),
                 helper.getBool(L"Dynamic", false) ? LITE3D_VBO_DYNAMIC_DRAW : LITE3D_VBO_STATIC_DRAW))
-                throw std::runtime_error("Mesh bad format..");
+                LITE3D_THROW("Mesh bad format..");
         }
 #ifdef INCLUDE_ASSIMP
         else
@@ -91,7 +91,7 @@ namespace lite3dpp
                 helper.getString(L"ModelName").c_str(), 
                 helper.getBool(L"Dynamic", false) ? LITE3D_VBO_DYNAMIC_DRAW : LITE3D_VBO_STATIC_DRAW,
                 flags))
-                throw std::runtime_error("mesh bad format..");
+                LITE3D_THROW("mesh bad format..");
         }
 #endif
 
@@ -146,7 +146,7 @@ namespace lite3dpp
         if(mMesh.vertexBuffer.size > 0)
             return BufferMapper(mMesh.vertexBuffer, lockType);
 
-        throw std::runtime_error(getName() + " Could`t map vertex buffer.. it is empty..");
+        LITE3D_THROW(getName() << " Could`t map vertex buffer.. it is empty..");
     }
 
     BufferMapper Mesh::mapIndexBuffer(uint16_t lockType)
@@ -154,7 +154,7 @@ namespace lite3dpp
         if(mMesh.indexBuffer.size > 0)
             return BufferMapper(mMesh.indexBuffer, lockType);
 
-        throw std::runtime_error(getName() + " Could`t map vertex buffer.. it is empty..");
+        LITE3D_THROW(getName() << " Could`t map vertex buffer.. it is empty..");
     }
 
     void Mesh::genPlain(const kmVec2 &size, bool dynamic)
@@ -176,7 +176,7 @@ namespace lite3dpp
         };
 
         if (!lite3d_mesh_load_from_memory(&mMesh, vertices, 6, layout, 2, dynamic ? LITE3D_VBO_DYNAMIC_DRAW : LITE3D_VBO_STATIC_DRAW))
-            throw std::runtime_error("Plain generation failed");
+            LITE3D_THROW("Plain generation failed");
 
         lite3d_mesh_chunk *meshChunk = LITE3D_MEMBERCAST(lite3d_mesh_chunk, lite3d_list_last_link(&mMesh.chunks), node);
         lite3d_bouding_vol_setup(&meshChunk->boudingVol, &vmin, &vmax);

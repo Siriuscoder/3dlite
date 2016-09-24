@@ -178,8 +178,7 @@ namespace lite3dpp
         }
         catch (std::exception &ex)
         {
-            SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION,
-                         "init: %s", ex.what());
+            SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION, ex.what());
             return LITE3D_FALSE;
         }
 
@@ -197,8 +196,7 @@ namespace lite3dpp
         }
         catch (std::exception &ex)
         {
-            SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION,
-                         "engineLeave: %s", ex.what());
+            SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION, ex.what());
             return LITE3D_FALSE;
         }
 
@@ -214,8 +212,7 @@ namespace lite3dpp
         }
         catch (std::exception &ex)
         {
-            SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION,
-                         "engineFrameBegin: %s", ex.what());
+            SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION, ex.what());
             return LITE3D_FALSE;
         }
 
@@ -231,8 +228,7 @@ namespace lite3dpp
         }
         catch (std::exception &ex)
         {
-            SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION,
-                         "engineFrameEnd: %s", ex.what());
+            SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION, ex.what());
             return LITE3D_FALSE;
         }
 
@@ -248,8 +244,7 @@ namespace lite3dpp
         }
         catch (std::exception &ex)
         {
-            SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION,
-                         "timerFixed: %s", ex.what());
+            SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION, ex.what());
         }
     }
 
@@ -262,8 +257,7 @@ namespace lite3dpp
         }
         catch (std::exception &ex)
         {
-            SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION,
-                         "onProcessEvent: %s", ex.what());
+            SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION, ex.what());
             return LITE3D_FALSE;
         }
 

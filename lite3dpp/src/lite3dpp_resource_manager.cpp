@@ -156,8 +156,8 @@ namespace lite3dpp
 
         Packs::iterator it = mPacks.find(name);
         if (it != mPacks.end())
-            throw std::runtime_error(String("Resource location already opened: ") + 
-                name + " :: " + path);
+            LITE3D_THROW("Resource location already opened: " << 
+                name << " :: " << path);
 
         uint8_t isFile = path.back() == '/' || path.back() == '.' ?
             LITE3D_FALSE : LITE3D_TRUE;
@@ -165,8 +165,8 @@ namespace lite3dpp
         lite3d_pack *pack =
             lite3d_pack_open(path.c_str(), isFile, fileCacheMaxSize);
         if(!pack)
-            throw std::runtime_error(String("Location open failed.. ") + 
-                name + " :: " + path);
+            LITE3D_THROW("Location open failed.. " << 
+                name << " :: " << path);
 
         mPacks.insert(std::make_pair(name, pack));
     }
@@ -193,16 +193,16 @@ namespace lite3dpp
         else if((packIt = mPacks.find(packageName)) != mPacks.end())
             mLastUsed = packIt->second;
         else
-            throw std::runtime_error(String("Package not found: ") + packageName + ", \"" + path + "\"");
+            LITE3D_THROW("Package not found: " << packageName << ", \"" << path << "\"");
 
         if(!mLastUsed)
-            throw std::runtime_error(String("Package not specified: \"") + path + "\"");
+            LITE3D_THROW("Package not specified: \"" << path << "\"");
 
         /* load resource file to memory */
         lite3d_file *resourceFile =
             lite3d_pack_file_load(mLastUsed, filePath.c_str());
         if(!resourceFile || !resourceFile->isLoaded)
-            throw std::runtime_error(String("File open error...") + "\"" + path + "\"");
+            LITE3D_THROW("File open error..." << "\"" << path << "\"");
 
         return resourceFile;
     }

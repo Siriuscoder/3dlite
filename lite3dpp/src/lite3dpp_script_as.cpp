@@ -75,7 +75,7 @@ namespace lite3dpp
     {
         // Create the script engine
         if((mScriptEngine = asCreateScriptEngine(ANGELSCRIPT_VERSION)) == NULL)
-            throw std::runtime_error("Angelscript engine startup error..");
+            LITE3D_THROW("Angelscript engine startup error..");
 
         // Set the message callback to receive information on errors in human readable form.
         mScriptEngine->SetMessageCallback(asFUNCTION(asMessageListener), 0, asCALL_CDECL);
@@ -127,11 +127,11 @@ namespace lite3dpp
 
         /* load code sections */
         if (builder.AddSectionFromMemory(getName().c_str(), text.data(), text.size(), 0) < 0)
-            throw std::runtime_error("AsScript load error");
+            LITE3D_THROW("AsScript load error");
 
         /* compile script */
         if (builder.BuildModule() < 0)
-            throw std::runtime_error("AsScript compile error");
+            LITE3D_THROW("AsScript compile error");
 
         asIScriptModule *mod = builder.GetModule();
         mInitFunction = mod->GetFunctionByDecl("void init()");
@@ -159,7 +159,7 @@ namespace lite3dpp
                              "AsScript %s unexpected broken: %s", 
                              getName().c_str(), mContext->GetExceptionString());
                 
-                throw std::runtime_error(mContext->GetExceptionString());
+                LITE3D_THROW(mContext->GetExceptionString());
             }
             else if (code == asEXECUTION_ERROR)
             {
@@ -167,8 +167,7 @@ namespace lite3dpp
                              "AsScript %s execution error..",
                              getName().c_str());
                 
-                throw std::runtime_error(String("AsScript ") +
-                                         getName() + " execution error..");
+                LITE3D_THROW("AsScript " << getName() << " execution error..");
             }
         }
     }
