@@ -48,16 +48,12 @@ namespace lite3dpp
             {
                 T *result;
                 if((result = dynamic_cast<T*>(resource)) == NULL)
-                    throw std::runtime_error((String("Resource type mismatch: ") + 
-                        name).c_str());
+                    LITE3D_THROW("Resource type mismatch: " << name);
                 return result;
             }
 
             if(path.size() == 0)
-            {
-                throw std::runtime_error((String("Resource not found: ") + 
-                    name).c_str());
-            }
+                LITE3D_THROW("Resource not found: " << name);
 
             if(name.size() == 0)
                 name = generateResourceName();

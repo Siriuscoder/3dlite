@@ -60,7 +60,7 @@ namespace lite3dpp
     {
         Cameras::iterator it = mCameras.find(name);
         if(it != mCameras.end())
-            throw std::runtime_error("Camera \"" + name + "\" already exists..");
+            LITE3D_THROW("Camera \"" << name << "\" already exists..");
 
         Camera *camera = new Camera(name, mMain);
         lite3d_scene_add_node(&mScene, &camera->getPtr()->cameraNode, NULL);
@@ -74,7 +74,7 @@ namespace lite3dpp
         if(it != mCameras.end())
             return it->second;
 
-        throw std::runtime_error(name + " camera not found..");
+        LITE3D_THROW("Camera " << name << " not found..");
     }
 
     void Scene::removeAllCameras()
@@ -103,7 +103,7 @@ namespace lite3dpp
         const String &templatePath, SceneObject *parent)
     {
         if(mObjects.find(name) != mObjects.end())
-            throw std::runtime_error(name + " make object failed.. already exist");
+            LITE3D_THROW(name << " make object failed.. already exist");
 
         size_t fileSize = 0;
         const void *fileData = mMain->getResourceManager()->loadFileToMemory(templatePath, &fileSize);
@@ -122,7 +122,7 @@ namespace lite3dpp
         if((it = mObjects.find(name)) != mObjects.end())
             return it->second;
 
-        throw std::runtime_error(name + " object not found");
+        LITE3D_THROW(name << " object not found");
     }
 
     void Scene::removeAllObjects()
@@ -140,7 +140,7 @@ namespace lite3dpp
     {
         Objects::iterator it;
         if((it = mObjects.find(name)) == mObjects.end())
-            throw std::runtime_error(name + " remove object failed.. not found");
+            LITE3D_THROW(name << " remove object failed.. not found");
         it->second->removeFromScene(this);
         delete it->second;
 
@@ -231,8 +231,7 @@ namespace lite3dpp
         }
         catch(std::exception &ex)
         {
-            SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
-                "beginDrawBatch: %s", ex.what());
+            SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION, ex.what());
         }
     }
 
@@ -258,8 +257,7 @@ namespace lite3dpp
         }
         catch(std::exception &ex)
         {
-            SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
-                "nodeInFrustum: %s", ex.what());
+            SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION, ex.what());
         }
     }
 
@@ -285,8 +283,7 @@ namespace lite3dpp
         }
         catch(std::exception &ex)
         {
-            SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
-                "nodeOutOfFrustum: %s", ex.what());
+            SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION, ex.what());
         }
     }
 
@@ -303,8 +300,7 @@ namespace lite3dpp
         }
         catch(std::exception &ex)
         {
-            SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
-                "beginDrawBatch: %s", ex.what());
+            SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION, ex.what());
         }
     }
 
@@ -321,8 +317,7 @@ namespace lite3dpp
         }
         catch(std::exception &ex)
         {
-            SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
-                "endSceneRender: %s", ex.what());
+            SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION, ex.what());
         }
     }
 
@@ -339,8 +334,7 @@ namespace lite3dpp
         }
         catch(std::exception &ex)
         {
-            SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
-                "beginFirstStageRender: %s", ex.what());
+            SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION, ex.what());
         }
     }
 
@@ -357,8 +351,7 @@ namespace lite3dpp
         }
         catch(std::exception &ex)
         {
-            SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
-                "beginSecondStageRender: %s", ex.what());
+            SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION, ex.what());
         }
     }
 }

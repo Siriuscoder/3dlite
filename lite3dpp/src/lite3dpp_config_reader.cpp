@@ -31,7 +31,7 @@ namespace lite3dpp
     ConfigurationReader::ConfigurationReader(const char *data, size_t size)
     {
         if(!parseFromBuffer(data, size))
-            throw std::runtime_error("json parse failed..");
+            LITE3D_THROW("json parse failed..");
     }
 
     ConfigurationReader::~ConfigurationReader()
@@ -59,7 +59,7 @@ namespace lite3dpp
         /* check open file */
         desc = SDL_RWFromFile(file.c_str(), "r");
         if (!desc)
-            throw std::runtime_error(file + " file open failed..");
+            LITE3D_THROW(file << " file open failed..");
 
         fileSize = static_cast<size_t>(SDL_RWsize(desc));
         json = (char *) Manageable::alloc(fileSize);
@@ -68,7 +68,7 @@ namespace lite3dpp
         {
             Manageable::free(json);
             SDL_RWclose(desc);
-            throw std::runtime_error(file + " file read failed..");
+            LITE3D_THROW(file << " file read failed..");
         }
 
         SDL_RWclose(desc);
@@ -76,7 +76,7 @@ namespace lite3dpp
         if(!parseFromBuffer(json, fileSize))
         {
             Manageable::free(json);
-            throw std::runtime_error(file + " file parse failed..");
+            LITE3D_THROW(file << " file parse failed..");
         }
 
         Manageable::free(json);

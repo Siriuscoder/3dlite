@@ -112,7 +112,7 @@ namespace lite3dpp
     void Main::run()
     {
         if (!lite3d_main(&mSettings))
-            throw std::runtime_error("Engine startup failed..");
+            LITE3D_THROW("Engine startup failed..");
     }
 
     void Main::stop()
@@ -133,7 +133,7 @@ namespace lite3dpp
     void Main::init()
     {
         if(!mConfig)
-            throw std::runtime_error("Bad configuration");
+            LITE3D_THROW("Bad configuration");
         
         /* init scripting */
         AsScript::engineInit();

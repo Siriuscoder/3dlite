@@ -110,7 +110,7 @@ namespace lite3dpp
         lite3d_material_pass *passPtr;
         
         if(!(passPtr = lite3d_material_add_pass(&mMaterial, passNo)))
-            throw std::runtime_error(String("Material \"") + getName() + "\" add pass failed..");
+            LITE3D_THROW("Material \"" << getName() << "\" add pass failed..");
         
         /* add local parameters to new pass */
         for(auto &parameter : mMaterialParameters)
@@ -139,7 +139,7 @@ namespace lite3dpp
     {
         lite3d_material_pass *passPtr = lite3d_material_get_pass(&mMaterial, pass);
         if(!passPtr)
-            throw std::runtime_error(String("Material \"") + getName() + "\" pass not found..");
+            LITE3D_THROW("Material \"" << getName() << "\" pass not found..");
 
         /* remove all parameters associated with this pass */
         MaterialParameters::iterator it = mMaterialParameters.begin();
@@ -161,7 +161,7 @@ namespace lite3dpp
     {
         lite3d_material_pass *passPtr = lite3d_material_get_pass(&mMaterial, pass);
         if(!passPtr)
-            throw std::runtime_error(String("Material \"") + getName() + "\" pass not found..");
+            LITE3D_THROW("Material \"" << getName() << "\" pass not found..");
         
         passPtr->blending = blendEnable ? LITE3D_TRUE : LITE3D_FALSE;
         passPtr->blendingMode = mode;
@@ -171,7 +171,7 @@ namespace lite3dpp
     {
         lite3d_material_pass *passPtr = lite3d_material_get_pass(&mMaterial, pass);
         if(!passPtr)
-            throw std::runtime_error(String("Material \"") + getName() + "\" pass not found..");
+            LITE3D_THROW("Material \"" << getName() << "\" pass not found..");
         
         passPtr->program = program->getPtr();
     }
@@ -180,9 +180,9 @@ namespace lite3dpp
     {
         const lite3d_material_pass *passPtr = lite3d_material_get_pass(&mMaterial, pass);
         if(!passPtr)
-            throw std::runtime_error(String("Material \"") + getName() + "\" pass not found..");
+            LITE3D_THROW("Material \"" << getName() << "\" pass not found..");
         if(!passPtr->program)
-            throw std::runtime_error(String("Material \"") + getName() + "\" program not specified..");
+            LITE3D_THROW("Material \"" << getName() << "\" program not specified..");
         
         return static_cast<ShaderProgram *>(passPtr->program->userdata);
     }
@@ -196,7 +196,7 @@ namespace lite3dpp
         {
             passPtr = lite3d_material_get_pass(&mMaterial, pass);
             if(!passPtr)
-                throw std::runtime_error(String("Material \"") + getName() + "\" pass not found..");
+                LITE3D_THROW("Material \"" << getName() << "\" pass not found..");
         }
 
         parameterPtr = getParameter(name, LITE3D_SHADER_PARAMETER_FLOAT, passPtr, isGlobal);
@@ -217,7 +217,7 @@ namespace lite3dpp
         {
             passPtr = lite3d_material_get_pass(&mMaterial, pass);
             if(!passPtr)
-                throw std::runtime_error(String("Material \"") + getName() + "\" pass not found..");
+                LITE3D_THROW("Material \"" << getName() << "\" pass not found..");
         }
 
         parameterPtr = getParameter(name, LITE3D_SHADER_PARAMETER_FLOATV3, passPtr, isGlobal);
@@ -238,7 +238,7 @@ namespace lite3dpp
         {
             passPtr = lite3d_material_get_pass(&mMaterial, pass);
             if(!passPtr)
-                throw std::runtime_error(String("Material \"") + getName() + "\" pass not found..");
+                LITE3D_THROW("Material \"" << getName() << "\" pass not found..");
         }
 
         parameterPtr = getParameter(name, LITE3D_SHADER_PARAMETER_FLOATV4, passPtr, isGlobal);
@@ -259,7 +259,7 @@ namespace lite3dpp
         {
             passPtr = lite3d_material_get_pass(&mMaterial, pass);
             if(!passPtr)
-                throw std::runtime_error(String("Material \"") + getName() + "\" pass not found..");
+                LITE3D_THROW("Material \"" <<  getName() << "\" pass not found..");
         }
 
         parameterPtr = getParameter(name, LITE3D_SHADER_PARAMETER_FLOATM3, passPtr, isGlobal);
@@ -280,7 +280,7 @@ namespace lite3dpp
         {
             passPtr = lite3d_material_get_pass(&mMaterial, pass);
             if(!passPtr)
-                throw std::runtime_error(String("Material \"") + getName() + "\" pass not found..");
+                LITE3D_THROW("Material \"" << getName() << "\" pass not found..");
         }
 
         parameterPtr = getParameter(name, LITE3D_SHADER_PARAMETER_FLOATM4, passPtr, isGlobal);
@@ -302,7 +302,7 @@ namespace lite3dpp
         {
             passPtr = lite3d_material_get_pass(&mMaterial, pass);
             if(!passPtr)
-                throw std::runtime_error(String("Material \"") + getName() + "\" pass not found..");
+                LITE3D_THROW("Material \"" << getName() << "\" pass not found..");
         }
 
         parameterPtr = getParameter(name, LITE3D_SHADER_PARAMETER_SAMPLER, passPtr, isGlobal);
@@ -523,11 +523,11 @@ namespace lite3dpp
         if((it = params.find(name)) == params.end())
         {
             if(std::get<1>(it->second).type != LITE3D_SHADER_PARAMETER_FLOAT)
-                throw std::runtime_error(String("Material \"") + matName + "\" parameter " + name + " type mismatch");
+                LITE3D_THROW("Material \"" << matName << "\" parameter " << name << " type mismatch");
             return std::get<1>(it->second).parameter.valfloat;
         }
 
-        throw std::runtime_error(String("Material \"") + matName + "\" parameter " + name + " not found..");
+        LITE3D_THROW("Material \"" << matName << "\" parameter " << name << " not found..");
     }
 
     kmVec3 Material::getFloatv3ParameterFromMap(const String &name, const String &matName, const MaterialParameters &params)
@@ -536,11 +536,11 @@ namespace lite3dpp
         if((it = params.find(name)) == params.end())
         {
             if(std::get<1>(it->second).type != LITE3D_SHADER_PARAMETER_FLOATV3)
-                throw std::runtime_error(String("Material \"") + matName + "\" parameter " + name + " type mismatch");
+                LITE3D_THROW("Material \"" << matName << "\" parameter " << name << " type mismatch");
             return std::get<1>(it->second).parameter.valvec3;
         }
 
-        throw std::runtime_error(String("Material \"") + matName + "\" parameter " + name + " not found..");
+        LITE3D_THROW("Material \"" << matName << "\" parameter " << name << " not found..");
     }
 
     kmVec4 Material::getFloatv4ParameterFromMap(const String &name, const String &matName, const MaterialParameters &params)
@@ -549,11 +549,11 @@ namespace lite3dpp
         if((it = params.find(name)) == params.end())
         {
             if(std::get<1>(it->second).type != LITE3D_SHADER_PARAMETER_FLOATV4)
-                throw std::runtime_error(String("Material \"") + matName + "\" parameter " + name + " type mismatch");
+                LITE3D_THROW("Material \"" << matName << "\" parameter " << name << " type mismatch");
             return std::get<1>(it->second).parameter.valvec4;
         }
 
-        throw std::runtime_error(String("Material \"") + matName + "\" parameter " + name + " not found..");
+        LITE3D_THROW("Material \"" << matName << "\" parameter " << name << " not found..");
     }
 
     kmMat3 Material::getFloatm3ParameterFromMap(const String &name, const String &matName, const MaterialParameters &params)
@@ -562,11 +562,11 @@ namespace lite3dpp
         if((it = params.find(name)) == params.end())
         {
             if(std::get<1>(it->second).type != LITE3D_SHADER_PARAMETER_FLOATM3)
-                throw std::runtime_error(String("Material \"") + matName + "\" parameter " + name + " type mismatch");
+                LITE3D_THROW("Material \"" << matName << "\" parameter " << name << " type mismatch");
             return std::get<1>(it->second).parameter.valmat3;
         }
 
-        throw std::runtime_error(String("Material \"") + matName + "\" parameter " + name + " not found..");
+        LITE3D_THROW("Material \"" << matName << "\" parameter " << name << " not found..");
     }
 
     kmMat4 Material::getFloatm4ParameterFromMap(const String &name, const String &matName, const MaterialParameters &params)
@@ -575,11 +575,11 @@ namespace lite3dpp
         if((it = params.find(name)) == params.end())
         {
             if(std::get<1>(it->second).type != LITE3D_SHADER_PARAMETER_FLOATM4)
-                throw std::runtime_error(String("Material \"") + matName + "\" parameter " + name + " type mismatch");
+                LITE3D_THROW("Material \"" << matName << "\" parameter " << name << " type mismatch");
             return std::get<1>(it->second).parameter.valmat4;
         }
 
-        throw std::runtime_error(String("Material \"") + matName + "\" parameter " + name + " not found..");
+        LITE3D_THROW("Material \"" << matName << "\" parameter " << name << " not found..");
     }
 
     Texture *Material::getSamplerTextureParameterFromMap(const String &name, const String &matName, const MaterialParameters &params)
@@ -588,15 +588,15 @@ namespace lite3dpp
         if((it = params.find(name)) == params.end())
         {
             if(std::get<1>(it->second).type != LITE3D_SHADER_PARAMETER_SAMPLER)
-                throw std::runtime_error(String("Material \"") + matName + "\" parameter " + name + " type mismatch");
+                LITE3D_THROW("Material \"" << matName << "\" parameter " << name << " type mismatch");
 
             if(!std::get<1>(it->second).parameter.valsampler.texture || !std::get<1>(it->second).parameter.valsampler.texture->userdata)
-                throw std::runtime_error(String("Material \"") + matName + "\" parameter " + name + " not set");
+                LITE3D_THROW("Material \"" << matName << "\" parameter " << name << " not set");
 
             return static_cast<Texture *>(std::get<1>(it->second).parameter.valsampler.texture->userdata);
         }
 
-        throw std::runtime_error(String("Material \"") + matName + "\" parameter " + name + " not found..");
+        LITE3D_THROW("Material \"" << matName << "\" parameter " << name << " not found..");
     }
 }
 

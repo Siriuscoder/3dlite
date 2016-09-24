@@ -41,7 +41,7 @@ namespace lite3dpp
             for (; it != mObservers.end(); ++it)
             {
                 if (observer == *it)
-                    throw std::runtime_error("Observer already exist");
+                    LITE3D_THROW("Observer already exist");
             }
 
             mObservers.push_back(observer);

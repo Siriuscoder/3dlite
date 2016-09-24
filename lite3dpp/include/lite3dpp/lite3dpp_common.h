@@ -60,6 +60,9 @@
 
 #include <lite3d/lite3d_kazmath.h>
 
+#define LITE3D_THROW(mess) { lite3dpp::Stringstream exmess; exmess << __FILE__ << ":" << \
+    LITE3D_CURRENT_FUNCTION << ":" << __LINE__ << mess; throw std::runtime_error(exmess.str()); }
+
 /* Main engine class */
 namespace lite3dpp
 {

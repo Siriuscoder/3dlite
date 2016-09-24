@@ -112,7 +112,7 @@ namespace lite3dpp
         {
             if(!lite3d_mesh_indexed_extend_from_memory(&mMesh, &vertices[0], vertices.size(),
                 &layout[0], layout.size(), &indices[0], indices.size(), indexSize, mode))
-                throw std::runtime_error(getName() + " append mesh chunk failed..");
+                LITE3D_THROW(getName() << " append mesh chunk failed..");
         }
 
         template<class V>
@@ -121,7 +121,7 @@ namespace lite3dpp
         {
             if(!lite3d_mesh_extend_from_memory(&mMesh, &vertices[0], vertices.size(),
                 &layout[0], layout.size(), mode))
-                throw std::runtime_error(getName() + " append mesh chunk failed..");
+                LITE3D_THROW(getName() << " append mesh chunk failed..");
         }
         
         BufferMapper mapVertexBuffer(uint16_t lockType);
