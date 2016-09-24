@@ -52,6 +52,8 @@ namespace lite3dpp
         void setupPerspective(float znear, float zfar, float fovy, float aspect);
         void setAspect(float aspect);
 
+        Scene &getScene();
+
         inline void setEnabled(bool enabled)
         { mCamera.cameraNode.enabled = enabled ? LITE3D_TRUE : LITE3D_FALSE; }
 

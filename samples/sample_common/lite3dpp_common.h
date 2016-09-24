@@ -46,6 +46,8 @@ public:
     WindowRenderTarget &getMainWindow();
     Camera &getMainCamera();
 
+    void resizeMainWindow(int32_t width, int32_t height);
+
 
     virtual void createScene() = 0;
 
@@ -54,6 +56,9 @@ protected:
     void initGui();
     void printStats();
     void updateGuiStats();
+
+    void setGuiSize(int32_t width, int32_t height);
+    void adjustMainCamera(int32_t width, int32_t height);
 
 private:
 

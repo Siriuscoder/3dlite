@@ -15,6 +15,7 @@
  *	You should have received a copy of the GNU General Public License
  *	along with Lite3D.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
+#include <SDL_assert.h>
 #include <lite3dpp/lite3dpp_camera.h>
 
 namespace lite3dpp
@@ -47,6 +48,14 @@ namespace lite3dpp
             mCamera.projectionParams.perspective.zfar,
             mCamera.projectionParams.perspective.fovy,
             aspect);
+    }
+
+    Scene &Camera::getScene()
+    {
+        SDL_assert(mCamera.cameraNode.scene);
+        lite3d_scene *scene = (lite3d_scene *)mCamera.cameraNode.scene;
+        SDL_assert(scene->userdata);
+        return *reinterpret_cast<Scene *>(scene->userdata);
     }
 
     void Camera::lookAt(const kmVec3 &pointTo)

@@ -49,17 +49,7 @@ void Sample::initGui()
     
     mGuiCamera = gui->getCamera("GuiCamera");
     //mGuiCamera->cullBackFaces(false);
-    
-    mGuiCamera->setupOrtho(0, 20, 0, mMainWindow->width(),
-        0, mMainWindow->height());
-    
-    kmVec3 cameraPos = { 0, 0, 10 };
-    mGuiCamera->setPosition(cameraPos);
-    mGuiCamera->lookAt(KM_VEC3_ZERO);
-    
-    SceneObject *sOverlay = gui->getObject("StatOverlay");
-    kmVec3 sOverlayPos = { float(mMainWindow->width()-270), float(mMainWindow->height())-14, 0 };
-    sOverlay->getRoot()->setPosition(sOverlayPos);
+    setGuiSize(mMainWindow->width(), mMainWindow->height());
     
     mStatTimer = mMain.addTimer("StatTimer", 500);
 }
@@ -71,10 +61,7 @@ void Sample::init()
     createScene();
     updateGuiStats();
     
-    mCenterXPos = mMainWindow->width() >> 1;
-    mCenterYPos = mMainWindow->height() >> 1;
-    lite3d_video_set_mouse_pos(mCenterXPos, mCenterYPos);
-    mMain.getResourceManager()->releaseFileCache();
+    adjustMainCamera(mMainWindow->width(), mMainWindow->height());
 }
 
 void Sample::beginSceneRender(Scene *scene, Camera *camera) 
@@ -132,22 +119,18 @@ void Sample::processEvent(SDL_Event *e)
         }
         else if (mMainWindow && mMainCamera && e->key.keysym.sym == SDLK_f)
         {
-            static bool scRes = true;
+            static bool scRes = false;
             if(scRes)
             {
-                mMainWindow->resize(1024, 768);
+                resizeMainWindow(1024, 768);
                 mMainWindow->fullscreen(false);
             }
             else
             {
-                mMainWindow->resize(0, 0);
+                resizeMainWindow(0, 0);
                 mMainWindow->fullscreen(true);
             }
 
-            mCenterXPos = mMainWindow->width() >> 1;
-            mCenterYPos = mMainWindow->height() >> 1;
-            lite3d_video_set_mouse_pos(mCenterXPos, mCenterYPos);
-            mMainCamera->setAspect(mMainWindow->computeCameraAspect());
             scRes = !scRes;
         }
     }
@@ -157,6 +140,39 @@ void Sample::processEvent(SDL_Event *e)
         mMainCamera->pitch((e->motion.y - mCenterYPos) * 0.003f);
         lite3d_video_set_mouse_pos(mCenterXPos, mCenterYPos);
     }
+}
+
+void Sample::setGuiSize(int32_t width, int32_t height)
+{
+    SDL_assert(mGuiCamera);
+    mGuiCamera->setupOrtho(0, 20, 0, mMainWindow->width(),
+        0, mMainWindow->height());
+    
+    kmVec3 cameraPos = { 0, 0, 10 };
+    mGuiCamera->setPosition(cameraPos);
+    mGuiCamera->lookAt(KM_VEC3_ZERO);
+    
+    SceneObject *sOverlay = mGuiCamera->getScene().getObject("StatOverlay");
+    kmVec3 sOverlayPos = { float(mMainWindow->width()-270), float(mMainWindow->height())-14, 0 };
+    sOverlay->getRoot()->setPosition(sOverlayPos);
+}
+
+void Sample::adjustMainCamera(int32_t width, int32_t height)
+{
+    SDL_assert(mMainCamera);
+    mCenterXPos = mMainWindow->width() >> 1;
+    mCenterYPos = mMainWindow->height() >> 1;
+    lite3d_video_set_mouse_pos(mCenterXPos, mCenterYPos);
+    mMainCamera->setAspect(mMainWindow->computeCameraAspect());
+}
+
+void Sample::resizeMainWindow(int32_t width, int32_t height)
+{
+    SDL_assert(mMainWindow);
+
+    mMainWindow->resize(width, height);
+    setGuiSize(mMainWindow->width(), mMainWindow->height());
+    adjustMainCamera(mMainWindow->width(), mMainWindow->height());
 }
 
 void Sample::printStats()
