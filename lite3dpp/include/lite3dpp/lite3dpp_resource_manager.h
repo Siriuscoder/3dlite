@@ -34,8 +34,24 @@ namespace lite3dpp
         typedef struct ResourceManagerStats
         {
             /* total allocated video memory buffers size */
-            size_t bufferedSize;
-            size_t totalFileCacheSize;
+            size_t usedVideoMem;
+            uint32_t totalObjectsCount;
+            uint32_t texturesCount;
+            uint32_t texturesLoadedCount;
+            uint32_t materialsCount;
+            uint32_t materialsLoadedCount;
+            uint32_t scriptsCount;
+            uint32_t scriptsLoadedCount;
+            uint32_t meshesCount;
+            uint32_t meshesLoadedCount;
+            uint32_t scenesCount;
+            uint32_t scenesLoadedCount;
+            uint32_t shaderProgramsCount;
+            uint32_t shaderProgramsLoadedCount;
+            uint32_t renderTargetsCount;
+            uint32_t renderTargetsLoadedCount;
+            uint32_t fileCachesCount;
+            size_t totalCachedFilesMemSize;
         } ResourceManagerStats;
 
         template<class T>
@@ -91,6 +107,8 @@ namespace lite3dpp
         void releaseAllResources();
         void releaseResource(const String &name);
         void releaseFileCache();
+        void releaseFileCache(const String &location);
+
         
         ResourceManagerStats getStats() const;
 

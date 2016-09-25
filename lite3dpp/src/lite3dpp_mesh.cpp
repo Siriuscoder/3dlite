@@ -106,7 +106,7 @@ namespace lite3dpp
                     matMap.getObject(L"Material").getString(L"Material")));
         }
 
-        setBufferedSize(mMesh.indexBuffer.size + mMesh.vertexBuffer.size);
+        setUsedVideoMem(mMesh.indexBuffer.size + mMesh.vertexBuffer.size);
         mMesh.userdata = this;
     }
 
@@ -121,6 +121,8 @@ namespace lite3dpp
             lite3d_vbo_buffer(&mMesh.vertexBuffer, NULL, 0, mMesh.vertexBuffer.access);
         if (mMesh.indexBuffer.size > 0)
             lite3d_vbo_buffer(&mMesh.indexBuffer, NULL, 0, mMesh.indexBuffer.access);
+        
+        setUsedVideoMem(0);
     }
 
     void Mesh::reloadFromConfigImpl(const ConfigurationReader &helper)

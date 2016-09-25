@@ -34,7 +34,10 @@ namespace lite3dpp
         {}
         
         FontTexture::~FontTexture()
-        {}
+        {
+            if(mText)
+                mText->release();
+        }
         
         void FontTexture::loadFromConfigImpl(const ConfigurationReader &helper)
         {
@@ -65,9 +68,6 @@ namespace lite3dpp
         
         void FontTexture::unloadImpl()
         {
-            if(mText)
-                mText->release();
-            
             Texture::unloadImpl();
         }
         

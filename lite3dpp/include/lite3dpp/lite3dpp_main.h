@@ -61,6 +61,9 @@ namespace lite3dpp
         inline lite3d_timer *getFixedUpdateTimer()
         { return mFixedUpdatesTimer; }
         WindowRenderTarget *window();
+        inline const lite3d_render_stats *getRenderStats() const
+        { return lite3d_render_stats_get(); }
+
 
         void run();
         void stop();

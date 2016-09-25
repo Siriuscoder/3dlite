@@ -41,7 +41,7 @@ namespace lite3dpp
         mType(type),
         mName(name),
         mPath(path),
-        mBufferedSize(0),
+        mUsedVideoMem(0),
         mMain(main)
     {}
 

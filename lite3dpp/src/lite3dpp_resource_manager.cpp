@@ -111,7 +111,7 @@ namespace lite3dpp
         }
     }
     
-        void ResourceManager::releaseFileCache()
+    void ResourceManager::releaseFileCache()
     {
         for(Packs::value_type &pack : mPacks)
         {
@@ -119,6 +119,16 @@ namespace lite3dpp
         }
         
         mPacks.clear();
+    }
+        
+    void ResourceManager::releaseFileCache(const String &location)
+    {
+        Packs::iterator it;
+        if((it = mPacks.find(location)) != mPacks.end())
+        {
+            lite3d_pack_close(it->second);
+            mPacks.erase(it);
+        }        
     }
 
     String ResourceManager::generateResourceName()
@@ -136,13 +146,53 @@ namespace lite3dpp
         Packs::const_iterator packIt = mPacks.begin();
         for (; packIt != mPacks.end(); ++packIt)
         {
-            stats.totalFileCacheSize += packIt->second->memoryUsed;
+            stats.totalCachedFilesMemSize += packIt->second->memoryUsed;
+            stats.fileCachesCount++;
         }
 
         Resources::const_iterator resIt = mResources.begin();
-        for(; resIt != mResources.end(); ++resIt)
+        for (; resIt != mResources.end(); ++resIt)
         {
-            stats.bufferedSize += resIt->second->getBufferedSize();
+            stats.usedVideoMem += resIt->second->getUsedVideoMem();
+            stats.totalObjectsCount++;
+            switch(resIt->second->getType())
+            {
+            case AbstractResource::MATERIAL:
+                stats.materialsCount++;
+                if (resIt->second->getState() == AbstractResource::LOADED)
+                    stats.materialsLoadedCount++;
+                break;
+            case AbstractResource::TEXTURE:
+                stats.texturesCount++;
+                if (resIt->second->getState() == AbstractResource::LOADED)
+                    stats.texturesLoadedCount++;
+                break;
+            case AbstractResource::SCENE:
+                stats.scenesCount++;
+                if (resIt->second->getState() == AbstractResource::LOADED)
+                    stats.scenesLoadedCount++;
+                break;
+            case AbstractResource::SCRIPT:
+                stats.scriptsCount++;
+                if (resIt->second->getState() == AbstractResource::LOADED)
+                    stats.scenesLoadedCount++;
+                break;
+            case AbstractResource::MESH:
+                stats.meshesCount++;
+                if (resIt->second->getState() == AbstractResource::LOADED)
+                    stats.meshesLoadedCount++;
+                break;                
+            case AbstractResource::RENDER_TARGET:
+                stats.renderTargetsCount++;
+                if (resIt->second->getState() == AbstractResource::LOADED)
+                    stats.renderTargetsLoadedCount++;
+                break;
+            case AbstractResource::SHADER_PROGRAM:
+                stats.shaderProgramsCount++;
+                if (resIt->second->getState() == AbstractResource::LOADED)
+                    stats.shaderProgramsLoadedCount++;
+                break;
+            }
         }
 
         return stats;

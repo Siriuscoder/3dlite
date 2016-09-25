@@ -62,6 +62,7 @@ void Sample::init()
     updateGuiStats();
     
     adjustMainCamera(mMainWindow->width(), mMainWindow->height());
+    mMain.getResourceManager()->releaseFileCache();
 }
 
 void Sample::beginSceneRender(Scene *scene, Camera *camera) 
@@ -113,9 +114,13 @@ void Sample::processEvent(SDL_Event *e)
         /* exit */
         if (e->key.keysym.sym == SDLK_ESCAPE)
             mMain.stop();
-        else if (e->key.keysym.sym == SDLK_F1)
+        else if (e->key.keysym.sym == SDLK_1)
         {
-            printStats();
+            printRenderStats();
+        }
+        else if (e->key.keysym.sym == SDLK_2)
+        {
+            printMemoryStats();
         }
         else if (mMainWindow && mMainCamera && e->key.keysym.sym == SDLK_f)
         {
@@ -175,7 +180,7 @@ void Sample::resizeMainWindow(int32_t width, int32_t height)
     adjustMainCamera(mMainWindow->width(), mMainWindow->height());
 }
 
-void Sample::printStats()
+void Sample::printRenderStats()
 {
     lite3d_render_stats *stats = lite3d_render_stats_get();
     SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
@@ -191,10 +196,37 @@ void Sample::printStats()
         stats->nodesTotal, stats->batchesTotal, stats->batchedByFrame, stats->trianglesByFrame);
 }
 
+void Sample::printMemoryStats()
+{
+    ResourceManager::ResourceManagerStats memStats = mMain.getResourceManager()->getStats();
+    SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
+        "==== Memory statistics ========\n"
+        "Video memory: %lu bytes\n"
+        "Total objects: %d\n"
+        "Textures: %d/%d\n"
+        "Materials: %d/%d\n"
+        "Scenes: %d/%d\n"
+        "Scripts: %d/%d\n"
+        "Meshes: %d/%d\n"
+        "Shaders: %d/%d\n"
+        "Render targets: %d/%d\n"
+        "File cache: %d/%lu bytes\n",
+        memStats.usedVideoMem,
+        memStats.totalObjectsCount,
+        memStats.texturesLoadedCount, memStats.texturesCount,
+        memStats.materialsLoadedCount, memStats.materialsCount,
+        memStats.scenesLoadedCount, memStats.scenesCount,
+        memStats.scriptsLoadedCount, memStats.scriptsCount,
+        memStats.meshesLoadedCount, memStats.meshesCount,
+        memStats.shaderProgramsLoadedCount, memStats.shaderProgramsCount,
+        memStats.renderTargetsLoadedCount, memStats.renderTargetsCount,
+        memStats.fileCachesCount, memStats.totalCachedFilesMemSize);
+}
+
 void Sample::updateGuiStats()
 {
     SDL_assert(mStatTexture);
-    lite3d_render_stats *stats = lite3d_render_stats_get();
+    const lite3d_render_stats *stats = mMain.getRenderStats();
     
     char strbuf[150];
     kmVec2 textPos = {15, 20};

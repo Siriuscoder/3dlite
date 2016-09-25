@@ -458,7 +458,6 @@ int lite3d_texture_unit_set_compressed_pixels(lite3d_texture_unit *textureUnit,
 int lite3d_texture_unit_get_level_size(lite3d_texture_unit *textureUnit, 
     int8_t level, size_t *size)
 {
-#ifndef GLES
     int32_t imageWidth, imageHeight, imageDepth;
 
     SDL_assert(textureUnit);
@@ -476,11 +475,6 @@ int lite3d_texture_unit_get_level_size(lite3d_texture_unit *textureUnit,
     *size = imageWidth * imageHeight * imageDepth * textureUnit->imageBPP;
 
     return LITE3D_TRUE;
-#else
-    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "%s texture dumping is not supported..",
-        LITE3D_CURRENT_FUNCTION);
-    return LITE3D_FALSE;
-#endif    
 }
 
 int lite3d_texture_unit_get_compressed_level_size(lite3d_texture_unit *textureUnit, 

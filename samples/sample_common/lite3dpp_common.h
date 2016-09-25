@@ -54,7 +54,9 @@ public:
 protected:
 
     void initGui();
-    void printStats();
+    void printRenderStats();
+    void printMemoryStats();
+
     void updateGuiStats();
 
     void setGuiSize(int32_t width, int32_t height);

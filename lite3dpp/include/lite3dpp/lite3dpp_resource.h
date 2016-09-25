@@ -61,8 +61,8 @@ namespace lite3dpp
         void unload();
 
         /* allocated size in video memory (when resource LOADED_MAPPED) */
-        inline size_t getBufferedSize() const
-        { return mBufferedSize; }
+        inline size_t getUsedVideoMem() const
+        { return mUsedVideoMem; }
 
         inline ResourceState getState() const
         { return mState; }
@@ -79,8 +79,8 @@ namespace lite3dpp
         virtual void reloadImpl() = 0;
         virtual void unloadImpl() = 0;
 
-        inline void setBufferedSize(size_t size)
-        { mBufferedSize = size; }
+        inline void setUsedVideoMem(size_t size)
+        { mUsedVideoMem = size; }
 
     private:
         
@@ -90,7 +90,7 @@ namespace lite3dpp
         ResourceType mType;
         String mName;
         String mPath;
-        size_t mBufferedSize;
+        size_t mUsedVideoMem;
 
     protected:
         Main *mMain;

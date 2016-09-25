@@ -118,7 +118,7 @@ namespace lite3dpp
         }
 
         mTexture.userdata = this;
-        setBufferedSize(mTexture.totalSize);
+        setUsedVideoMem(mTexture.totalSize);
     }
 
     void Texture::reloadFromConfigImpl(const ConfigurationReader &helper)
@@ -159,6 +159,7 @@ namespace lite3dpp
         }
 
         lite3d_texture_unit_purge(&mTexture);
+        setUsedVideoMem(0);
     }
 
     void Texture::getPixels(int8_t level, PixelsData &pixels)
