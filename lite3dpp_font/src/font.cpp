@@ -194,7 +194,7 @@ namespace nw
 
     FaceId& FontLib::getFaceId(
         const std::string& _name,
-        FaceId::Byte* _pData,
+        const FaceId::Byte* _pData,
         FaceId::Size _dataSize
         )
     {
@@ -204,7 +204,8 @@ namespace nw
             FaceId faceId;
             faceId.name = _name;
             faceId.isFile = false;
-            faceId.pData = _pData;
+            faceId.pData = new FaceId::Byte[_dataSize];
+            memcpy(faceId.pData, _pData, _dataSize);
             faceId.dataSize = _dataSize;
             m_faceIds[_name] = faceId;
             return m_faceIds[_name];
@@ -227,7 +228,7 @@ namespace nw
     Font::Font(
             FontLib& _fontLib,
             const std::string& _name,
-            FaceId::Byte* _pData,
+            const FaceId::Byte* _pData,
             FaceId::Size _dataSize,
             size_t _size) :
         Loggable(),

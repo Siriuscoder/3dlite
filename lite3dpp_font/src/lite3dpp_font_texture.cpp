@@ -21,6 +21,7 @@
 #include <texture.h>
 #include <log/logger.h>
 
+#include <lite3dpp/lite3dpp_main.h>
 #include <lite3dpp_font/lite3dpp_font_texture.h>
 
 nw::FontLib lite3dpp::lite3dpp_font::FontTexture::gFontLib;
@@ -90,8 +91,9 @@ namespace lite3dpp
                 
             if(!mFont)
             {
-                mFont.reset(new nw::Font(gFontLib, helper.getString(L"Font"),
-                    helper.getInt(L"FontSize")));
+                const lite3d_file *fontFile = mMain->getResourceManager()->loadFileToMemory(helper.getString(L"Font"));
+                mFont.reset(new nw::Font(gFontLib, helper.getString(L"Font"), (const nw::FaceId::Byte *)fontFile->fileBuff, 
+                    fontFile->fileSize, helper.getInt(L"FontSize")));
                 mFont->setLogger(&gFontLibLogger);
 
                 mText.reset(new nw::Text(*mFont, ""));

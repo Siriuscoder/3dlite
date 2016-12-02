@@ -72,7 +72,7 @@ namespace nw
             FaceId& getFaceId(const std::string& _name);
             FaceId& getFaceId(
                 const std::string& _name,
-                FaceId::Byte* _pData,
+                const FaceId::Byte* _pData,
                 FaceId::Size _dataSize);
 
         private:
@@ -97,7 +97,7 @@ namespace nw
             Font(
                 FontLib& _fontLib,
                 const std::string& _name,
-                FaceId::Byte* _pData,
+                const FaceId::Byte* _pData,
                 FaceId::Size _dataSize,
                 size_t _size);
 
