@@ -19,6 +19,8 @@
 
 #include <font.h>
 #include <texture.h>
+#include <log/logger.h>
+
 #include <lite3dpp_font/lite3dpp_font_texture.h>
 
 nw::FontLib lite3dpp::lite3dpp_font::FontTexture::gFontLib;
@@ -27,11 +29,45 @@ namespace lite3dpp
 {
     namespace lite3dpp_font
     {
+        class FontLibLogger : public nw::Logger
+        {
+        public:
+
+            virtual void log(
+                Level _level,
+                const char* _msg,
+                const char* _function,
+                const char* _file,
+                int _line) override
+            {
+                lite3dpp::Stringstream ss;
+                ss << _file << ":" << _function << ": " << _msg;
+
+                switch(_level)
+                {
+                case nw::Logger::Info:
+                    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, ss.str().c_str());
+                    break;
+                case nw::Logger::Error:
+                    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, ss.str().c_str());
+                    break;
+                case nw::Logger::Warning:
+                    SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION, ss.str().c_str());
+                    break;
+                case nw::Logger::Debug:
+                    SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, ss.str().c_str());
+                    break;
+                }
+            }
+        } gFontLibLogger;
+
         FontTexture::FontTexture(const String &name,
             const String &path, Main *main) : 
             Texture(name, path, main),
             mTexBuf(new nw::Texture())
-        {}
+        {
+            gFontLib.setLogger(&gFontLibLogger);
+        }
         
         FontTexture::~FontTexture()
         {
@@ -56,7 +92,10 @@ namespace lite3dpp
             {
                 mFont.reset(new nw::Font(gFontLib, helper.getString(L"Font"),
                     helper.getInt(L"FontSize")));
+                mFont->setLogger(&gFontLibLogger);
+
                 mText.reset(new nw::Text(*mFont, ""));
+                mText->setLogger(&gFontLibLogger);
                 mTexBuf->resize(getWidth(), getHeight());
             }
         }

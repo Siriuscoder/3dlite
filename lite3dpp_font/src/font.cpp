@@ -1,9 +1,12 @@
-#include <font.h>
+#include "font.h"
 #include <iostream>
 #include <algorithm>
-#include <math.h>
+#include "math.h"
 
-#include <utf8.h>
+#pragma GCC diagnostic push 
+#pragma GCC diagnostic ignored "-Wshadow"
+#include "utf8.h"
+#pragma GCC diagnostic pop
 
 namespace
 {
@@ -15,19 +18,19 @@ namespace
     struct User {
         nw::Pos2d<int> pos;
         nw::RGBA color;
-        nw::Texture *pTexture;
-        const nw::Rect<int> *pRect;
+        nw::Texture* pTexture;
+        const nw::Rect<int>* pRect;
         User() : pos(0, 0), color(), pTexture(NULL), pRect(NULL) {}
     };
 
     void RasterCallback(
         const int _y,
         const int _count,
-        const FT_Span *_spans,
+        const FT_Span* _spans,
         void * const _user)
     {
-        User *pUser = static_cast<User*>(_user);
-        const FT_Span *pSpan;
+        User* pUser = static_cast<User*>(_user);
+        const FT_Span* pSpan;
 
         for (int i = 0; i < _count; ++i)
         {
@@ -46,7 +49,7 @@ namespace
                 nw::RGBA fg = pUser->color;
                 fg.a = pSpan->coverage;
 
-                nw::RGBA &bg = pUser->pTexture->pixel(px, py);
+                nw::RGBA& bg = pUser->pTexture->pixel(px, py);
                 bg.r = (bg.r * (255 - fg.a) + fg.r * fg.a) / 255;
                 bg.g = (bg.g * (255 - fg.a) + fg.g * fg.a) / 255;
                 bg.b = (bg.b * (255 - fg.a) + fg.b * fg.a) / 255;
@@ -62,6 +65,7 @@ namespace nw
     // FontLib
 
     FontLib::FontLib(size_t _hdpi, size_t _vdpi) :
+        Loggable(),
         m_library(),
         m_manager(),
         m_imageCache(),
@@ -73,7 +77,8 @@ namespace nw
         init();
     }
 
-    FontLib::FontLib(const FontLib &_copy) :
+    FontLib::FontLib(const FontLib& _copy) :
+        Loggable(),
         m_library(),
         m_manager(),
         m_imageCache(),
@@ -90,7 +95,7 @@ namespace nw
         release();
     }
 
-    FontLib& FontLib::operator=(const FontLib &_copy)
+    FontLib& FontLib::operator=(const FontLib& _copy)
     {
         m_hdpi = _copy.m_hdpi;
         m_vdpi = _copy.m_vdpi;
@@ -104,26 +109,26 @@ namespace nw
         int error = FT_Init_FreeType(&m_library);
         if (error)
         {
-            std::cout << "FreeType2 init failed." << std::endl;
+            NW_ERROR("FreeType2 init failed.")
         }
 
         error = FTC_Manager_New(
             m_library, 0, 0, 0, &Font::FaceRequester, NULL, &m_manager);
         if (error)
         {
-            std::cout << "FreeType2 manager init failed." << std::endl;
+            NW_ERROR("FreeType2 manager init failed.")
         }
 
         error = FTC_ImageCache_New(m_manager, &m_imageCache);
         if (error)
         {
-            std::cout << "FreeType2 cache init failed." << std::endl;
+            NW_ERROR("FreeType2 cache init failed.")
         }
 
         error = FT_Stroker_New(m_library, &m_stroker);
         if (error)
         {
-            std::cout << "FreeType2 stroker init failed." << std::endl;
+            NW_ERROR("FreeType2 stroker init failed.")
         }
     }
 
@@ -173,45 +178,79 @@ namespace nw
         return m_vdpi;
     }
 
-    FaceId& FontLib::getFaceId(const std::string &_fileName)
+    FaceId& FontLib::getFaceId(const std::string& _name)
     {
-        FontLib::FaceIdIterator pos = m_faceIds.find(_fileName);
+        FontLib::FaceIdIterator pos = m_faceIds.find(_name);
         if (m_faceIds.end() == pos)
         {
             FaceId faceId;
-            faceId.fileName = _fileName;
-            faceId.index = 0;
-            m_faceIds[_fileName] = faceId;
-            return m_faceIds[_fileName];
+            faceId.name = _name;
+            faceId.isFile = true;
+            m_faceIds[_name] = faceId;
+            return m_faceIds[_name];
+        }
+        return pos->second;
+    }
+
+    FaceId& FontLib::getFaceId(
+        const std::string& _name,
+        FaceId::Byte* _pData,
+        FaceId::Size _dataSize
+        )
+    {
+        FontLib::FaceIdIterator pos = m_faceIds.find(_name);
+        if (m_faceIds.end() == pos)
+        {
+            FaceId faceId;
+            faceId.name = _name;
+            faceId.isFile = false;
+            faceId.pData = _pData;
+            faceId.dataSize = _dataSize;
+            m_faceIds[_name] = faceId;
+            return m_faceIds[_name];
         }
         return pos->second;
     }
 
     // Font
 
-    Font::Font(FontLib &_fontLib, const std::string &_fileName, size_t _size) :
+    Font::Font(FontLib& _fontLib, const std::string& _fileName, size_t _size) :
+        Loggable(),
         m_fontLib(_fontLib),
         m_faceId(_fontLib.getFaceId(_fileName)),
         m_face(),
         m_scaler()
     {
+        init(_size);
+    }
+
+    Font::Font(
+            FontLib& _fontLib,
+            const std::string& _name,
+            FaceId::Byte* _pData,
+            FaceId::Size _dataSize,
+            size_t _size) :
+        Loggable(),
+        m_fontLib(_fontLib),
+        m_faceId(_fontLib.getFaceId(_name, _pData, _dataSize)),
+        m_face(),
+        m_scaler()
+    {
+        init(_size);
+    }
+
+    void Font::init(size_t _size)
+    {
         int error = FTC_Manager_LookupFace(
             m_fontLib.manager(), &m_faceId, &m_face);
         if (error == FT_Err_Unknown_File_Format)
         {
-            std::cout
-                    << "FreeType2  font '"
-                    << m_faceId.fileName
-                    << "' unknown format."
-                    << std::endl;
+            NW_ERROR(
+                "FreeType2  font '" << m_faceId.name << "' unknown format.")
         }
         else if (error)
         {
-            std::cout
-                << "FreeType2  font '"
-                << m_faceId.fileName
-                << "' init failed."
-                << std::endl;
+            NW_ERROR("FreeType2  font '" << m_faceId.name << "' init failed.")
         }
 
         m_scaler.face_id = static_cast<FTC_FaceID>(&m_faceId);
@@ -222,7 +261,8 @@ namespace nw
         m_scaler.y_res = m_fontLib.vDPI();
     }
 
-    Font::Font(const Font &_copy) :
+    Font::Font(const Font& _copy) :
+        Loggable(_copy.logger()),
         m_fontLib(_copy.m_fontLib),
         m_faceId(_copy.m_faceId),
         m_face(_copy.m_face),
@@ -234,7 +274,7 @@ namespace nw
     {
     }
 
-    Font& Font::operator=(const Font &_copy)
+    Font& Font::operator=(const Font& _copy)
     {
         m_fontLib = _copy.m_fontLib;
         m_faceId = _copy.m_faceId;
@@ -247,11 +287,17 @@ namespace nw
         FTC_FaceID _faceId,
         FT_Library _library,
         FT_Pointer /*_requestData*/,
-        FT_Face *_aFace)
+        FT_Face* _aFace)
     {
-        FaceId *pFace = static_cast<FaceId*>(_faceId);
-        return FT_New_Face(
-            _library, pFace->fileName.c_str(), pFace->index, _aFace);
+        FaceId* pFace = static_cast<FaceId*>(_faceId);
+
+        if (pFace->isFile) {
+            return FT_New_Face(
+                _library, pFace->name.c_str(), pFace->index, _aFace);
+        }
+
+        return FT_New_Memory_Face(
+            _library, pFace->pData, pFace->dataSize, pFace->index, _aFace);
     }
 
     const FontLib& Font::fontLib() const
@@ -299,7 +345,8 @@ namespace nw
     }
 
     // Text
-    Text::Text(const Font &_font, const std::string &_text) :
+    Text::Text(const Font& _font, const std::string& _text) :
+        Loggable(),
         m_font(_font),
         m_text(),
         m_pos(0, 0),
@@ -340,7 +387,7 @@ namespace nw
         return m_font;
     }
 
-    void Text::setFont(const Font &_font)
+    void Text::setFont(const Font& _font)
     {
         m_font = _font;
         m_dirty = true;
@@ -351,7 +398,7 @@ namespace nw
         return m_text;
     }
 
-    void Text::setText(const std::string &_text)
+    void Text::setText(const std::string& _text)
     {
         m_text.resize(0);
         utf8::unchecked::utf8to32(
@@ -388,12 +435,12 @@ namespace nw
         m_dirty = true;
     }
 
-    void Text::setColor(const RGBA &_color)
+    void Text::setColor(const RGBA& _color)
     {
         m_color = _color;
     }
 
-    void Text::setBgColor(const RGBA &_color)
+    void Text::setBgColor(const RGBA& _color)
     {
         m_bgColor = _color;
     }
@@ -403,7 +450,7 @@ namespace nw
         m_useBgColor = _use;
     }
 
-    void Text::setOutlineColor(const RGBA &_color)
+    void Text::setOutlineColor(const RGBA& _color)
     {
         m_oColor = _color;
     }
@@ -447,15 +494,15 @@ namespace nw
         return ret;
     }
 
-    void Text::render(Texture &_texture)
+    void Text::render(Texture& _texture)
     {
         validate();
 
         Pos2d<int> adjustedPos(m_pos);
         adjustedPos.add(-m_rect.x0, -m_rect.y0);
 
-        const FT_Library &library = m_font.fontLib().library();
-        const FT_Stroker &stroker = m_font.fontLib().stroker(m_oSize);
+        const FT_Library& library = m_font.fontLib().library();
+        const FT_Stroker& stroker = m_font.fontLib().stroker(m_oSize);
 
         User user;
         user.pos = adjustedPos;
@@ -518,7 +565,7 @@ namespace nw
     {
         release();
 
-        const FTC_ImageCache &imageCache = m_font.fontLib().imageCache();
+        const FTC_ImageCache& imageCache = m_font.fontLib().imageCache();
         FTC_Scaler scaler = const_cast<FTC_Scaler>(&m_font.scaler());
 
         FT_Vector pen = {0, 0};
@@ -527,7 +574,7 @@ namespace nw
         m_glyphs.resize(m_text.size());
         for (size_t i = 0; i < m_text.size(); ++i)
         {
-            FT_UInt index = FT_Get_Char_Index(m_font.face(), m_text[i]);
+            FT_UInt index = FT_Get_Char_Index(m_font.face(), m_text[i] == '\n' ? ' ' : m_text[i]);
             int error = FTC_ImageCache_LookupScaler(
                 imageCache,
                 scaler,
@@ -537,9 +584,9 @@ namespace nw
                 NULL);
             if (error)
             {
-                std::cout
-                    << "FreeType2 get glyph failed for char '" << m_text[i]
-                    << "'." << std::endl;
+                NW_WARNING(
+                    "FreeType2 get glyph failed for char '"
+                    << m_text[i] << "'")
                 continue;
             }
             FT_Glyph_Copy(m_glyphs[i], &m_glyphs[i]);

@@ -1,10 +1,10 @@
-#include <utils.h>
+#include "utils.h"
 #include <iostream>
 #include <fstream>
 
 namespace nw
 {
-    std::string ReadFileFromString(const std::string &_fname)
+    std::string ReadFileFromString(const std::string& _fname)
     {
         std::ifstream file(_fname.c_str(), std::ios::in | std::ios::binary);
         if(file.fail()) return std::string();
@@ -22,7 +22,7 @@ namespace nw
         return ret;
     }
 
-    std::string& Replace(std::string &_where, const std::string &_what, const std::string &_to)
+    std::string& Replace(std::string& _where, const std::string& _what, const std::string& _to)
     {
         std::string::size_type currPos = 0;
 
@@ -35,19 +35,19 @@ namespace nw
         return _where;
     }
 
-    std::string& LTrim(std::string &_str, const std::string &_what)
+    std::string& LTrim(std::string& _str, const std::string& _what)
     {
         _str.erase(0, _str.find_first_not_of(_what));
         return _str;
     }
 
-    std::string& RTrim(std::string &_str, const std::string &_what)
+    std::string& RTrim(std::string& _str, const std::string& _what)
     {
         _str.erase(_str.find_last_not_of(_what) + 1);
         return _str;
     }
 
-    std::string& Trim(std::string &_str, const std::string &_what)
+    std::string& Trim(std::string& _str, const std::string& _what)
     {
         return LTrim(RTrim(_str, _what), _what);
     }

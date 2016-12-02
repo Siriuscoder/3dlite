@@ -34,8 +34,8 @@ namespace nw
         static Mat4 Perspective(FPType _fovy, FPType _aspect, FPType _znear, FPType _zfar);
         static Mat4 Orthographic(FPType _l, FPType _r, FPType _b, FPType _t, FPType _n, FPType _f);
 
-        Mat4 operator*(const Mat4 &_r) const;
-        Mat4& operator*=(const Mat4 &_r);
+        Mat4 operator*(const Mat4& _r) const;
+        Mat4& operator*=(const Mat4& _r);
     };
 
     struct Vec4
@@ -49,10 +49,10 @@ namespace nw
         FPType len() const;
         Vec4 unit() const;
 
-        Vec4 operator+(const Vec4 &_r) const;
-        Vec4& operator+=(const Vec4 &_r);
-        Vec4 operator*(const Mat4 &_m) const;
-        Vec4& operator*=(const Mat4 &_m);
+        Vec4 operator+(const Vec4& _r) const;
+        Vec4& operator+=(const Vec4& _r);
+        Vec4 operator*(const Mat4& _m) const;
+        Vec4& operator*=(const Mat4& _m);
     };
 
     struct Quat
@@ -71,11 +71,11 @@ namespace nw
 
         static Quat FromAngleAxis(FPType _angle, FPType _x, FPType _y, FPType _z);
 
-        Quat operator*(const Quat &_r) const;
-        Quat& operator*=(const Quat &_r);
+        Quat operator*(const Quat& _r) const;
+        Quat& operator*=(const Quat& _r);
         Quat operator/(FPType _s) const;
         Quat& operator/=(FPType _s);
-        bool operator==(const Quat &_r) const;
+        bool operator==(const Quat& _r) const;
     };
 }
 

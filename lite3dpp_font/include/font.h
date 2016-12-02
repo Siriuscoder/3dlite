@@ -1,10 +1,6 @@
 #ifndef NWE_FONT_H
 #define NWE_FONT_H
 
-#include <rect.h>
-#include <pos2d.h>
-#include <texture.h>
-
 #include <string>
 #include <vector>
 #include <map>
@@ -17,20 +13,34 @@
 #include FT_STROKER_H
 #include FT_BBOX_H
 
+#include "rect.h"
+#include "pos2d.h"
+#include "texture.h"
+#include "log/loggable.h"
+
 namespace nw
 {
     struct FaceId {
-        std::string fileName;
+        typedef unsigned char Byte;
+        typedef signed long Size;
+
+        std::string name;
         int index;
+        bool isFile;
+        Byte* pData;
+        Size dataSize;
 
         FaceId() :
-            fileName(),
-            index(0)
+            name(),
+            index(0),
+            isFile(true),
+            pData(NULL),
+            dataSize(0)
         {
         }
     };
 
-    class FontLib
+    class FontLib : public Loggable
     {
         public:
             typedef std::map<std::string, FaceId>::iterator FaceIdIterator;
@@ -48,9 +58,9 @@ namespace nw
 
         public:
             FontLib(size_t _hdpi=120, size_t _vdpi=120);
-            FontLib(const FontLib &_copy);
+            FontLib(const FontLib& _copy);
             virtual ~FontLib();
-            FontLib& operator=(const FontLib &_copy);
+            FontLib& operator=(const FontLib& _copy);
 
             const FT_Library& library() const;
             const FTC_Manager& manager() const;
@@ -59,33 +69,50 @@ namespace nw
             size_t hDPI() const;
             size_t vDPI() const;
 
-            FaceId& getFaceId(const std::string &_fileName);
+            FaceId& getFaceId(const std::string& _name);
+            FaceId& getFaceId(
+                const std::string& _name,
+                FaceId::Byte* _pData,
+                FaceId::Size _dataSize);
 
         private:
             void init();
             void release();
     };
 
-    class Font
+    class Font : public Loggable
     {
         private:
-            FontLib &m_fontLib;
-            FaceId &m_faceId;
+            FontLib& m_fontLib;
+            FaceId& m_faceId;
             FT_Face m_face;
             FTC_ScalerRec m_scaler;
 
         public:
             Font(
-                FontLib &_fontLib, const std::string &_fileName, size_t _size);
-            Font(const Font &_copy);
+                FontLib& _fontLib,
+                const std::string& _fileName,
+                size_t _size);
+
+            Font(
+                FontLib& _fontLib,
+                const std::string& _name,
+                FaceId::Byte* _pData,
+                FaceId::Size _dataSize,
+                size_t _size);
+
+            Font(const Font& _copy);
+
+            void init(size_t _size);
+
             virtual ~Font();
-            Font& operator=(const Font &_copy);
+            Font& operator=(const Font& _copy);
 
             static FT_Error FaceRequester(
                 FTC_FaceID _faceId,
                 FT_Library _library,
                 FT_Pointer _requestData,
-                FT_Face *_aFace);
+                FT_Face* _aFace);
 
             const FontLib& fontLib() const;
             const FaceId& faceId() const;
@@ -97,7 +124,7 @@ namespace nw
             size_t toNextOrigin() const;
     };
 
-    class Text
+    class Text : public Loggable
     {
         public:
             typedef std::basic_string<uint32_t> UString;
@@ -129,15 +156,15 @@ namespace nw
             Rect<int> m_rect;
 
         public:
-            Text(const Font &_font, const std::string &_text);
+            Text(const Font& _font, const std::string& _text);
             virtual ~Text();
             void release();
 
             const Font& font() const;
-            void setFont(const Font &_font);
+            void setFont(const Font& _font);
 
             const UString& text() const;
-            void setText(const std::string &_text);
+            void setText(const std::string& _text);
 
             const Pos2d<int>& pos() const;
             void setPos(int _x, int _y);
@@ -146,19 +173,19 @@ namespace nw
 
             void rotate(FPType _degree);
 
-            void setColor(const RGBA &_color);
+            void setColor(const RGBA& _color);
 
-            void setBgColor(const RGBA &_color);
+            void setBgColor(const RGBA& _color);
             void useBgColor(bool _use=true);
 
-            void setOutlineColor(const RGBA &_color);
+            void setOutlineColor(const RGBA& _color);
             void setOutlineSize(int _size);
 
             void select(size_t _begin, size_t _end);
             void deselect();
 
             Rect<int> rect();
-            void render(Texture &_texture);
+            void render(Texture& _texture);
 
         private:
             void validate();

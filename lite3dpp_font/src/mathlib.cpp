@@ -90,7 +90,7 @@ namespace nw
             );
     }
 
-    Mat4 Mat4::operator*(const Mat4 &_r) const
+    Mat4 Mat4::operator*(const Mat4& _r) const
     {
         return Mat4(
             m[0][0]*_r.m[0][0] + m[0][1]*_r.m[1][0] + m[0][2]*_r.m[2][0] + m[0][3]*_r.m[3][0],
@@ -112,7 +112,7 @@ namespace nw
         );
     }
 
-    Mat4& Mat4::operator*=(const Mat4 &_r)
+    Mat4& Mat4::operator*=(const Mat4& _r)
     {
         init(
             m[0][0]*_r.m[0][0] + m[0][1]*_r.m[1][0] + m[0][2]*_r.m[2][0] + m[0][3]*_r.m[3][0],
@@ -160,12 +160,12 @@ namespace nw
         return Vec4(x / n, y / n, z / n, w / n);
     }
 
-    Vec4 Vec4::operator+(const Vec4 &_r) const
+    Vec4 Vec4::operator+(const Vec4& _r) const
     {
         return Vec4(x + _r.x, y + _r.y, z + _r.z, w + _r.w);
     }
 
-    Vec4& Vec4::operator+=(const Vec4 &_r)
+    Vec4& Vec4::operator+=(const Vec4& _r)
     {
         x += _r.x;
         y += _r.y;
@@ -174,7 +174,7 @@ namespace nw
         return *this;
     }
 
-    Vec4 Vec4::operator*(const Mat4 &_m) const
+    Vec4 Vec4::operator*(const Mat4& _m) const
     {
         return Vec4(
             x*_m.m[0][0] + y*_m.m[1][0] + z*_m.m[2][0] + w*_m.m[3][0],
@@ -184,7 +184,7 @@ namespace nw
             );
     }
 
-    Vec4& Vec4::operator*=(const Mat4 &_m)
+    Vec4& Vec4::operator*=(const Mat4& _m)
     {
         x = x*_m.m[0][0] + y*_m.m[1][0] + z*_m.m[2][0] + w*_m.m[3][0];
         y = x*_m.m[0][1] + y*_m.m[1][1] + z*_m.m[2][1] + w*_m.m[3][1];
@@ -263,7 +263,7 @@ namespace nw
             );
     }
 
-    Quat Quat::operator*(const Quat &_r) const
+    Quat Quat::operator*(const Quat& _r) const
     {
         return Quat(
             w*_r.w - x*_r.x - y*_r.y - z*_r.z,
@@ -273,7 +273,7 @@ namespace nw
             );
     }
 
-    Quat& Quat::operator*=(const Quat &_r)
+    Quat& Quat::operator*=(const Quat& _r)
     {
         FPType tw = w*_r.w - x*_r.x - y*_r.y - z*_r.z;
         FPType tx = w*_r.x + x*_r.w + y*_r.z - z*_r.y;
@@ -300,7 +300,7 @@ namespace nw
         return *this;
     }
 
-    bool Quat::operator==(const Quat &_r) const
+    bool Quat::operator==(const Quat& _r) const
     {
         return std::abs(w - _r.w) < EPS
             && std::abs(x - _r.x) < EPS
