@@ -27,7 +27,7 @@ namespace nw
         std::string name;
         int index;
         bool isFile;
-        Byte* pData;
+        const Byte* pData;
         Size dataSize;
 
         FaceId() :

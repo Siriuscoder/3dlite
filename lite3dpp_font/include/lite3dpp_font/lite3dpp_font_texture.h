@@ -51,6 +51,7 @@ namespace lite3dpp
             std::unique_ptr<nw::Font> mFont;
             std::unique_ptr<nw::Text> mText;
             std::unique_ptr<nw::Texture> mTexBuf;
+            stl<uint8_t>::vector mFontBuffer; 
         };
     }
 }

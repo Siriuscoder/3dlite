@@ -92,7 +92,10 @@ namespace lite3dpp
             if(!mFont)
             {
                 const lite3d_file *fontFile = mMain->getResourceManager()->loadFileToMemory(helper.getString(L"Font"));
-                mFont.reset(new nw::Font(gFontLib, helper.getString(L"Font"), (const nw::FaceId::Byte *)fontFile->fileBuff, 
+                mFontBuffer.insert(mFontBuffer.begin(), (uint8_t *)fontFile->fileBuff, 
+                    (uint8_t *)fontFile->fileBuff + fontFile->fileSize);
+                
+                mFont.reset(new nw::Font(gFontLib, helper.getString(L"Font"), &mFontBuffer[0], 
                     fontFile->fileSize, helper.getInt(L"FontSize")));
                 mFont->setLogger(&gFontLibLogger);
 
