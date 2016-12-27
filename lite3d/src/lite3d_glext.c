@@ -134,6 +134,19 @@ int lite3d_check_gl_version()
 #endif
 }
 
+int lite3d_check_tbo()
+{
+#ifdef GLES
+#   ifdef GL_ES_VERSION_3_2
+    return LITE3D_TRUE;
+#   else
+    return LITE3D_FALSE;
+#   endif
+#else 
+    return GLEW_VERSION_3_1;
+#endif    
+}
+
 int lite3d_init_gl_extensions_binding()
 {
 #ifndef GLES

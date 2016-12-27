@@ -24,7 +24,15 @@
 #   define GLES
 #elif defined WITH_GLES3
 #   include <GLES3/gl3.h>
-#   include <GLES3/gl3ext.h>
+#   include <GLES2/gl2ext.h>
+#   define GLES
+#elif defined WITH_GLES31
+#   include <GLES3/gl31.h>
+#   include <GLES2/gl2ext.h>
+#   define GLES
+#elif defined WITH_GLES32
+#   include <GLES3/gl32.h>
+#   include <GLES2/gl2ext.h>
 #   define GLES
 #else
 #   include <lite3d/GL/glew.h>

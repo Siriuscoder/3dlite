@@ -31,6 +31,7 @@ int lite3d_check_texture_filter_anisotropic();
 int lite3d_check_map_buffer();
 int lite3d_check_gl_version();
 int lite3d_init_gl_extensions_binding();
+int lite3d_check_tbo();
 
 /* stub functions */
 void glTexSubImage3D_stub(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLenum format, GLenum type, const void *pixels);
@@ -68,34 +69,36 @@ extern PFNGLDRAWARRAYSINSTANCEDANGLEPROC glDrawArraysInstancedPtr;
 extern PFNGLDRAWELEMENTSINSTANCEDANGLEPROC glDrawElementsInstancedPtr;
 extern PFNGLVERTEXATTRIBDIVISORANGLEPROC glVertexAttribDivisorPtr;
 
-#if defined GL_ES_VERSION_3_1
-
+#if defined GL_ES_VERSION_3_2
+#elif defined GL_ES_VERSION_3_1
+#   define glTexBuffer glTexBuffer_stub
 #elif defined GL_ES_VERSION_3_0
-#define glTexSubImage3D glTexSubImage3D_stub
-#define glTexImage3D glTexImage3D_stub
-#define glCompressedTexSubImage3D glCompressedTexSubImage3D_stub
+#   define glTexSubImage3D glTexSubImage3D_stub
+#   define glTexImage3D glTexImage3D_stub
+#   define glCompressedTexSubImage3D glCompressedTexSubImage3D_stub
+#   define glTexBuffer glTexBuffer_stub
 #elif defined GL_ES_VERSION_2_0
 
-#define glDrawArraysInstanced glDrawArraysInstancedPtr
-#define glDrawElementsInstanced glDrawElementsInstancedPtr
-#define glVertexAttribDivisor glVertexAttribDivisorPtr
+#   define glDrawArraysInstanced glDrawArraysInstancedPtr
+#   define glDrawElementsInstanced glDrawElementsInstancedPtr
+#   define glVertexAttribDivisor glVertexAttribDivisorPtr
 
-#define glTexSubImage3D glTexSubImage3D_stub
-#define glTexImage3D glTexImage3D_stub
-#define glCompressedTexSubImage3D glCompressedTexSubImage3D_stub
-#define glTexSubImage1D glTexSubImage1D_stub
-#define glTexImage1D glTexImage1D_stub
-#define glCompressedTexSubImage1D glCompressedTexSubImage1D_stub
+#   define glTexSubImage3D glTexSubImage3D_stub
+#   define glTexImage3D glTexImage3D_stub
+#   define glCompressedTexSubImage3D glCompressedTexSubImage3D_stub
+#   define glTexSubImage1D glTexSubImage1D_stub
+#   define glTexImage1D glTexImage1D_stub
+#   define glCompressedTexSubImage1D glCompressedTexSubImage1D_stub
+#   define glTexBuffer glTexBuffer_stub
 #endif
 
-#define glBindVertexArray glBindVertexArrayPtr
-#define glDeleteVertexArrays glDeleteVertexArraysPtr
-#define glGenVertexArrays glGenVertexArraysPtr
-#define glIsVertexArray glIsVertexArrayPtr
-#define glMapBuffer glMapBufferPtr
-#define glUnmapBuffer glUnmapBufferPtr
-#define glGetBufferPointerv glGetBufferPointervPtr
-#define glTexBuffer glTexBuffer_stub
+#   define glBindVertexArray glBindVertexArrayPtr
+#   define glDeleteVertexArrays glDeleteVertexArraysPtr
+#   define glGenVertexArrays glGenVertexArraysPtr
+#   define glIsVertexArray glIsVertexArrayPtr
+#   define glMapBuffer glMapBufferPtr
+#   define glUnmapBuffer glUnmapBufferPtr
+#   define glGetBufferPointerv glGetBufferPointervPtr
 
 #endif
 

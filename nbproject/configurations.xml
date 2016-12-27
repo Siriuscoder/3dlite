@@ -6,6 +6,7 @@
         <df name="include">
           <df name="lite3d">
             <in>lite3d_kazmath.h</in>
+            <in>lite3d_tbo.h</in>
           </df>
         </df>
         <df name="src">
@@ -69,6 +70,7 @@
           <in>lite3d_shader.c</in>
           <in>lite3d_shader_params.c</in>
           <in>lite3d_shader_program.c</in>
+          <in>lite3d_tbo.c</in>
           <in>lite3d_texture_unit.c</in>
           <in>lite3d_timer.c</in>
           <in>lite3d_vao.c</in>
@@ -417,6 +419,8 @@
           </preprocessorList>
         </cTool>
       </folder>
+      <item path="lite3d/include/lite3d/lite3d_tbo.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="lite3d/src/7zdec/7zBuf.c" ex="false" tool="0" flavor2="3">
         <cTool flags="3">
         </cTool>
@@ -635,6 +639,8 @@
       <item path="lite3d/src/lite3d_shader_program.c" ex="false" tool="0" flavor2="3">
         <cTool flags="3">
         </cTool>
+      </item>
+      <item path="lite3d/src/lite3d_tbo.c" ex="false" tool="0" flavor2="0">
       </item>
       <item path="lite3d/src/lite3d_texture_unit.c" ex="false" tool="0" flavor2="3">
         <cTool flags="3">
