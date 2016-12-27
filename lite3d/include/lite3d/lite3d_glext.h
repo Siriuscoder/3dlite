@@ -42,6 +42,7 @@ void glCompressedTexSubImage1D_stub(GLenum target, GLint level, GLint xoffset, G
 void glMapBuffer_stub(GLenum target, GLenum access);
 void glUnmapBuffer_stub(GLenum target);
 void glGetBufferPointerv_stub(GLenum target, GLenum pname, void** params);
+void glTexBuffer_stub(GLenum target, GLenum internalFormat, GLuint buffer);
 
 #ifdef GLES
 
@@ -94,6 +95,7 @@ extern PFNGLVERTEXATTRIBDIVISORANGLEPROC glVertexAttribDivisorPtr;
 #define glMapBuffer glMapBufferPtr
 #define glUnmapBuffer glUnmapBufferPtr
 #define glGetBufferPointerv glGetBufferPointervPtr
+#define glTexBuffer glTexBuffer_stub
 
 #endif
 

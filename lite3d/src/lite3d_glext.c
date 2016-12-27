@@ -235,3 +235,9 @@ void glGetBufferPointerv_stub(GLenum target, GLenum pname, void** params)
     SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
         "%s: glGetBufferPointerv not supported..", LITE3D_CURRENT_FUNCTION);
 }
+
+void glTexBuffer_stub(GLenum target, GLenum internalFormat, GLuint buffer)
+{
+    SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
+        "%s: glTexBuffer not supported..", LITE3D_CURRENT_FUNCTION);
+}

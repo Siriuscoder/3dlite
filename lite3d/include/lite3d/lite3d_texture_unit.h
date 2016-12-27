@@ -20,6 +20,7 @@
 
 #include <lite3d/lite3d_common.h>
 #include <lite3d/lite3d_pack.h>
+#include <lite3d/lite3d_vbo.h>
 
 // Image types (IL enum compatible)
 #define LITE3D_IMAGE_ANY          0x0000
@@ -36,6 +37,7 @@
 #define LITE3D_TEXTURE_1D         0x0DE0
 #define LITE3D_TEXTURE_2D         0x0DE1
 #define LITE3D_TEXTURE_3D         0x806F
+#define LITE3D_TEXTURE_BUFFER     0x8C2A
 /* pre-loading texture manipulation */
 #define LITE3D_ALIENIFY_FILTER      0x0001
 #define LITE3D_BLURAVG_FILTER       0x0002
@@ -60,8 +62,8 @@
 
 #define LITE3D_TEXTURE_FORMAT_ALPHA             0x1906
 #define LITE3D_TEXTURE_FORMAT_RGB               0x1907
-#define LITE3D_TEXTURE_FORMAT_RGBA              0x1908            
-#define LITE3D_TEXTURE_FORMAT_BRG               0x80E0            
+#define LITE3D_TEXTURE_FORMAT_RGBA              0x1908
+#define LITE3D_TEXTURE_FORMAT_BRG               0x80E0
 #define LITE3D_TEXTURE_FORMAT_BRGA              0x80E1
 #define LITE3D_TEXTURE_FORMAT_LUMINANCE         0x1909
 #define LITE3D_TEXTURE_FORMAT_LUMINANCE_ALPHA   0x190A
@@ -100,6 +102,7 @@ typedef struct lite3d_texture_unit
     uint8_t wrapping;
     uint8_t compressed;
     uint8_t isFbAttachment;
+    lite3d_vbo tbo;
     void *userdata;
 } lite3d_texture_unit;
 
