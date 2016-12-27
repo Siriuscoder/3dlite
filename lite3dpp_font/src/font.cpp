@@ -186,6 +186,8 @@ namespace nw
             FaceId faceId;
             faceId.name = _name;
             faceId.isFile = true;
+            faceId.pData = NULL;
+            faceId.dataSize = 0;
             m_faceIds[_name] = faceId;
             return m_faceIds[_name];
         }
@@ -204,8 +206,7 @@ namespace nw
             FaceId faceId;
             faceId.name = _name;
             faceId.isFile = false;
-            faceId.pData = new FaceId::Byte[_dataSize];
-            memcpy(faceId.pData, _pData, _dataSize);
+            faceId.pData = _pData;
             faceId.dataSize = _dataSize;
             m_faceIds[_name] = faceId;
             return m_faceIds[_name];
