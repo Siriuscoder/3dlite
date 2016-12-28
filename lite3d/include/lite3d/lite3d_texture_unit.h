@@ -68,6 +68,69 @@
 #define LITE3D_TEXTURE_FORMAT_LUMINANCE         0x1909
 #define LITE3D_TEXTURE_FORMAT_LUMINANCE_ALPHA   0x190A
 #define LITE3D_TEXTURE_FORMAT_DEPTH             0x1902
+
+#define LITE3D_TEXTURE_INTERNAL_R8              0x8229
+#define LITE3D_TEXTURE_INTERNAL_R8_SNORM        0x8F94
+#define LITE3D_TEXTURE_INTERNAL_R16             0x822A
+#define LITE3D_TEXTURE_INTERNAL_R16_SNORM       0x8F98
+#define LITE3D_TEXTURE_INTERNAL_RG8             0x822B
+#define LITE3D_TEXTURE_INTERNAL_RG8_SNORM       0x8F95
+#define LITE3D_TEXTURE_INTERNAL_RG16            0x822C
+#define LITE3D_TEXTURE_INTERNAL_RG16_SNORM      0x8F99
+#define LITE3D_TEXTURE_INTERNAL_R3_G3_B2        0x2A10
+#define LITE3D_TEXTURE_INTERNAL_RGB4            0x804F
+#define LITE3D_TEXTURE_INTERNAL_RGB5            0x8050
+#define LITE3D_TEXTURE_INTERNAL_RGB8            0x8051
+#define LITE3D_TEXTURE_INTERNAL_RGB8_SNORM      0x8F96
+#define LITE3D_TEXTURE_INTERNAL_RGB10           0x8052
+#define LITE3D_TEXTURE_INTERNAL_RGB12           0x8053
+#define LITE3D_TEXTURE_INTERNAL_RGB16_SNORM     0x8F9A
+#define LITE3D_TEXTURE_INTERNAL_RGBA2           0x8055
+#define LITE3D_TEXTURE_INTERNAL_RGBA4           0x8056
+#define LITE3D_TEXTURE_INTERNAL_RGB5_A1         0x8057
+#define LITE3D_TEXTURE_INTERNAL_RGBA8           0x8058
+#define LITE3D_TEXTURE_INTERNAL_RGBA8_SNORM     0x8F97
+#define LITE3D_TEXTURE_INTERNAL_RGB10_A2        0x8059
+#define LITE3D_TEXTURE_INTERNAL_RGB10_A2UI      0x906F
+#define LITE3D_TEXTURE_INTERNAL_RGBA12          0x805A
+#define LITE3D_TEXTURE_INTERNAL_RGBA16          0x805B
+#define LITE3D_TEXTURE_INTERNAL_SRGB8           0x8C41
+#define LITE3D_TEXTURE_INTERNAL_SRGB8_ALPHA8    0x8C43
+#define LITE3D_TEXTURE_INTERNAL_R16F            0x822D
+#define LITE3D_TEXTURE_INTERNAL_RG16F           0x822F
+#define LITE3D_TEXTURE_INTERNAL_RGB16F          0x881B
+#define LITE3D_TEXTURE_INTERNAL_RGBA16F         0x881A
+#define LITE3D_TEXTURE_INTERNAL_R32F            0x822E
+#define LITE3D_TEXTURE_INTERNAL_RG32F           0x8230
+#define LITE3D_TEXTURE_INTERNAL_RGB32F          0x8815
+#define LITE3D_TEXTURE_INTERNAL_RGBA32F         0x8814
+#define LITE3D_TEXTURE_INTERNAL_R11F_G11F_B10F  0x8C3A
+#define LITE3D_TEXTURE_INTERNAL_RGB9_E5         0x8C3D
+#define LITE3D_TEXTURE_INTERNAL_R8I             0x8231
+#define LITE3D_TEXTURE_INTERNAL_R8UI            0x8232
+#define LITE3D_TEXTURE_INTERNAL_R16I            0x8233
+#define LITE3D_TEXTURE_INTERNAL_R16UI           0x8234
+#define LITE3D_TEXTURE_INTERNAL_R32I            0x8235
+#define LITE3D_TEXTURE_INTERNAL_R32UI           0x8236
+#define LITE3D_TEXTURE_INTERNAL_RG8I            0x8237
+#define LITE3D_TEXTURE_INTERNAL_RG8UI           0x8238
+#define LITE3D_TEXTURE_INTERNAL_RG16I           0x8239
+#define LITE3D_TEXTURE_INTERNAL_RG16UI          0x823A
+#define LITE3D_TEXTURE_INTERNAL_RG32I           0x823B
+#define LITE3D_TEXTURE_INTERNAL_RG32UI          0x823C
+#define LITE3D_TEXTURE_INTERNAL_RGB8I           0x8D8F
+#define LITE3D_TEXTURE_INTERNAL_RGB8UI          0x8D7D
+#define LITE3D_TEXTURE_INTERNAL_RGB16I          0x8D89
+#define LITE3D_TEXTURE_INTERNAL_RGB16UI         0x8D77
+#define LITE3D_TEXTURE_INTERNAL_RGB32I          0x8D83
+#define LITE3D_TEXTURE_INTERNAL_RGB32UI         0x8D71
+#define LITE3D_TEXTURE_INTERNAL_RGBA8I          0x8D8E
+#define LITE3D_TEXTURE_INTERNAL_RGBA8UI         0x8D7C
+#define LITE3D_TEXTURE_INTERNAL_RGBA16I         0x8D88
+#define LITE3D_TEXTURE_INTERNAL_RGBA16UI        0x8D76
+#define LITE3D_TEXTURE_INTERNAL_RGBA32I         0x8D82
+#define LITE3D_TEXTURE_INTERNAL_RGBA32UI        0x8D70
+
             
 typedef struct lite3d_image_filter
 {
@@ -126,9 +189,10 @@ LITE3D_CEXPORT int lite3d_texture_unit_from_resource(lite3d_texture_unit *textur
     int8_t quality, uint8_t wrapping);
 
 /* allocate empty texture object */
+/* set iformat = 0 to specify what internal format does not matter */
 LITE3D_CEXPORT int lite3d_texture_unit_allocate(lite3d_texture_unit *textureUnit, 
     uint32_t textureTarget, int8_t quality, uint8_t wrapping, uint16_t format,
-    int32_t width, int32_t height, int32_t depth);
+    uint16_t iformat, int32_t width, int32_t height, int32_t depth);
 
 /* update specified mipmap level */
 LITE3D_CEXPORT int lite3d_texture_unit_set_pixels(lite3d_texture_unit *textureUnit, 

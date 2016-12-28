@@ -320,7 +320,7 @@ static int init(void *userdata)
     /* framebuffers not support texture compression, we mast turn off it */
     lite3d_texture_unit_compression(LITE3D_FALSE);
     if (!lite3d_texture_unit_allocate(&mRenderTextureUnit, LITE3D_TEXTURE_2D,
-        LITE3D_TEXTURE_QL_MEDIUM, LITE3D_TEXTURE_REPEAT, LITE3D_TEXTURE_FORMAT_RGBA,
+        LITE3D_TEXTURE_QL_MEDIUM, LITE3D_TEXTURE_REPEAT, LITE3D_TEXTURE_FORMAT_RGBA, 0,
         RENDER_TEXTURE_WIDTH, RENDER_TEXTURE_HEIGHT, 1))
         return LITE3D_FALSE;
     /* then texture allocated we can enable it */

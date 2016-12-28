@@ -265,7 +265,7 @@ int lite3d_texture_unit_from_resource(lite3d_texture_unit *textureUnit,
     imageFormat = ilGetInteger(IL_IMAGE_FORMAT);
     /* allocate texture surface */
     if (!lite3d_texture_unit_allocate(textureUnit, textureTarget, quality,
-        wrapping, imageFormat, imageWidth, imageHeight, imageDepth))
+        wrapping, imageFormat, 0, imageWidth, imageHeight, imageDepth))
     {
         /* release IL image */
         ilDeleteImage(imageDesc);
@@ -572,7 +572,7 @@ int lite3d_texture_unit_generate_mipmaps(lite3d_texture_unit *textureUnit)
 
 int lite3d_texture_unit_allocate(lite3d_texture_unit *textureUnit,
     uint32_t textureTarget, int8_t quality, uint8_t wrapping, uint16_t format,
-    int32_t width, int32_t height, int32_t depth)
+    uint16_t iformat, int32_t width, int32_t height, int32_t depth)
 {
     uint32_t internalFormat;
     int32_t textureMaxLevels;
@@ -620,11 +620,11 @@ int lite3d_texture_unit_allocate(lite3d_texture_unit *textureUnit,
     {
         case 3:
             internalFormat = gTextureSettings.useGLCompression ?
-                GL_COMPRESSED_RGB_S3TC_DXT1_EXT : GL_RGB;
+                GL_COMPRESSED_RGB_S3TC_DXT1_EXT : (iformat > 0 ? iformat : GL_RGB);
             break;
         case 4:
             internalFormat = format == LITE3D_TEXTURE_FORMAT_DEPTH ? GL_DEPTH_COMPONENT :
-                (gTextureSettings.useGLCompression ? GL_COMPRESSED_RGBA_S3TC_DXT5_EXT : GL_RGBA);
+                (gTextureSettings.useGLCompression ? GL_COMPRESSED_RGBA_S3TC_DXT5_EXT : (iformat > 0 ? iformat : GL_RGBA));
             break;
         default:
             internalFormat = textureUnit->imageBPP;
