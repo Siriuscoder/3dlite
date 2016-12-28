@@ -237,8 +237,11 @@ static void mqr_render_stage_second(struct lite3d_scene *scene, lite3d_camera *c
             mqr_render_node, *mqrNode);
         scene->stats.textureUnitsBinded += (*mqrNode)->matUnit->material->textureUnitsBinded;
     }
+}
 
-    lite3d_array_clean(&scene->sortedNodesByDistance);
+static void mqr_render_cleanup(struct lite3d_scene *scene)
+{
+    lite3d_array_clean(&scene->sortedNodesByDistance);    
 }
 
 static lite3d_mqr_node *mqr_check_mesh_chunk_exist(lite3d_mqr_unit *unit,
@@ -330,7 +333,8 @@ static void scene_updated_nodes_validate(lite3d_scene *scene)
     lite3d_array_clean(&scene->invalidatedUnits);
 }
 
-void lite3d_scene_render(lite3d_scene *scene, lite3d_camera *camera, uint16_t pass)
+void lite3d_scene_render(lite3d_scene *scene, lite3d_camera *camera, 
+    uint16_t pass, uint32_t flags)
 {
     SDL_assert(scene && camera);
     /* clean statistic */
@@ -343,9 +347,12 @@ void lite3d_scene_render(lite3d_scene *scene, lite3d_camera *camera, uint16_t pa
     /* update scene tree */
     scene_recursive_nodes_update(scene, &scene->rootNode, camera);
     /* render common objects */
-    mqr_render_stage_first(scene, camera, pass);
+    if (flags & LITE3D_RENDER_STAGE_FIRST)
+        mqr_render_stage_first(scene, camera, pass);
     /* render transparent objects */
-    mqr_render_stage_second(scene, camera, pass);
+    if (flags & LITE3D_RENDER_STAGE_SECOND)
+        mqr_render_stage_second(scene, camera, pass);
+    
 
     if (scene->bindedMeshChunk)
     {
@@ -357,6 +364,7 @@ void lite3d_scene_render(lite3d_scene *scene, lite3d_camera *camera, uint16_t pa
         scene->endSceneRender(scene, camera);
 
     scene_updated_nodes_validate(scene);
+    mqr_render_cleanup(scene);
 }
 
 void lite3d_scene_init(lite3d_scene *scene)

@@ -61,6 +61,9 @@ namespace lite3dpp
 
         void addCamera(Camera *camera, uint16_t pass, int priority);
         void removeCamera(Camera *camera, uint16_t pass, int priority);
+        
+        void setRenderFlags(uint32_t flags);
+        uint32_t getRenderFlags();
 
     protected:
 

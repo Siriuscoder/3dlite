@@ -84,6 +84,7 @@ typedef struct lite3d_render_target
     int cleanStencil;
     int priority;
     int8_t fullscreen;
+    uint32_t renderFlags; 
 } lite3d_render_target;
 
 LITE3D_CEXPORT void lite3d_render_loop(lite3d_render_listeners *callbacks);

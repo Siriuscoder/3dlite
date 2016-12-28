@@ -141,6 +141,18 @@ namespace lite3dpp
         SDL_assert_release(mRenderTargetPtr);
         lite3d_render_target_dettach_camera(mRenderTargetPtr, camera->getPtr(), pass, priority);
     }
+    
+    void RenderTarget::setRenderFlags(uint32_t flags)
+    {
+        SDL_assert_release(mRenderTargetPtr);
+        mRenderTargetPtr->renderFlags = flags;
+    }
+    
+    uint32_t RenderTarget::getRenderFlags()
+    {
+        SDL_assert_release(mRenderTargetPtr);
+        return mRenderTargetPtr->renderFlags;
+    }
 
     WindowRenderTarget::WindowRenderTarget(const String &name, 
         const String &path, Main *main) : 

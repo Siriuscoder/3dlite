@@ -110,7 +110,7 @@ static void update_render_target(lite3d_render_target *target)
 
         if(look->camera->cameraNode.enabled)
         {
-            lite3d_scene_render(scene, look->camera, look->pass);
+            lite3d_scene_render(scene, look->camera, look->pass, target->renderFlags);
 
             /* accamulate statistics */
             gRenderStats.trianglesByFrame += scene->stats.trianglesRendered;
@@ -269,6 +269,7 @@ int lite3d_render_target_init(lite3d_render_target *rt,
     rt->cleanStencil = 0;
     rt->width = width;
     rt->height = height;
+    rt->renderFlags = LITE3D_RENDER_STAGE_FIRST | LITE3D_RENDER_STAGE_SECOND;
 
     if (rt != &gScreenRt)
     {

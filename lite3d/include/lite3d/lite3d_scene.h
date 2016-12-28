@@ -25,6 +25,10 @@
 #include <lite3d/lite3d_material.h>
 #include <lite3d/lite3d_array.h>
 
+#define LITE3D_RENDER_STAGE_FIRST       0x1
+#define LITE3D_RENDER_STAGE_SECOND      0x2
+
+
 typedef struct lite3d_scene_stats
 {
     int32_t trianglesRendered;
@@ -62,9 +66,11 @@ typedef struct lite3d_scene
     void (*beginSecondStageRender)(struct lite3d_scene *scene, struct lite3d_camera *camera);
 } lite3d_scene;
 
-LITE3D_CEXPORT void lite3d_scene_render(lite3d_scene *scene, lite3d_camera *camera, uint16_t pass);
+LITE3D_CEXPORT void lite3d_scene_render(lite3d_scene *scene, lite3d_camera *camera, 
+    uint16_t pass, uint32_t flags);
 LITE3D_CEXPORT void lite3d_scene_init(lite3d_scene *scene);
 LITE3D_CEXPORT void lite3d_scene_purge(lite3d_scene *scene);
+
 
 LITE3D_CEXPORT int lite3d_scene_add_node(lite3d_scene *scene, 
     lite3d_scene_node *node, 
