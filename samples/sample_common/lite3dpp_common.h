@@ -47,7 +47,7 @@ public:
     Camera &getMainCamera();
 
     void resizeMainWindow(int32_t width, int32_t height);
-
+    void saveScreenshot();
 
     virtual void createScene() = 0;
 

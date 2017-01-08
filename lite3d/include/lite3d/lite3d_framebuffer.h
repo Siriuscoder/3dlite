@@ -22,9 +22,15 @@
 #include <lite3d/lite3d_list.h>
 #include <lite3d/lite3d_texture_unit.h>
 
-#define LITE3D_FRAMEBUFFER_STATUS_EMPTY     0x1
-#define LITE3D_FRAMEBUFFER_STATUS_ERROR     0x2
-#define LITE3D_FRAMEBUFFER_STATUS_OK        0x0 
+#define LITE3D_FRAMEBUFFER_STATUS_EMPTY             0x1
+#define LITE3D_FRAMEBUFFER_STATUS_ERROR             0x2
+#define LITE3D_FRAMEBUFFER_STATUS_OK                0x0
+
+#define LITE3D_FRAMEBUFFER_READ_RGB_INT8            0x1
+#define LITE3D_FRAMEBUFFER_READ_RGBA_INT8           0x2
+#define LITE3D_FRAMEBUFFER_READ_DEPTH_INT32         0x3
+#define LITE3D_FRAMEBUFFER_READ_DEPTH_FLOAT32       0x4
+
 
 typedef struct lite3d_framebuffer
 {
@@ -57,6 +63,12 @@ LITE3D_CEXPORT void lite3d_framebuffer_resize(lite3d_framebuffer *fb,
 
 LITE3D_CEXPORT void lite3d_framebuffer_switch(lite3d_framebuffer *fb);
 LITE3D_CEXPORT void lite3d_framebuffer_purge(lite3d_framebuffer *fb);
+
+LITE3D_CEXPORT int lite3d_framebuffer_read(lite3d_framebuffer *fb,
+    uint16_t index, uint16_t format, void *pixels);
+LITE3D_CEXPORT size_t lite3d_framebuffer_size(lite3d_framebuffer *fb,
+    uint8_t format);
+
 
 #endif	/* LITE3D_FRAMEBUFFER_H */
 

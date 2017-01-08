@@ -153,6 +153,12 @@ namespace lite3dpp
         SDL_assert_release(mRenderTargetPtr);
         return mRenderTargetPtr->renderFlags;
     }
+    
+    void RenderTarget::saveScreenshot(const std::string &filename)
+    {
+        SDL_assert_release(mRenderTargetPtr);
+        lite3d_render_target_screenshot(mRenderTargetPtr, filename.c_str());
+    }
 
     WindowRenderTarget::WindowRenderTarget(const String &name, 
         const String &path, Main *main) : 

@@ -122,6 +122,10 @@ void Sample::processEvent(SDL_Event *e)
         {
             printMemoryStats();
         }
+        else if (e->key.keysym.sym == SDLK_3)
+        {
+            saveScreenshot();
+        }
         else if (mMainWindow && mMainCamera && e->key.keysym.sym == SDLK_f)
         {
             static bool scRes = false;
@@ -239,6 +243,18 @@ void Sample::updateGuiStats()
     mStatTexture->clean();
     mStatTexture->drawText(strbuf, textPos, textColor);
     mStatTexture->uploadChanges();
+}
+
+void Sample::saveScreenshot()
+{
+    time_t rawtime;
+    struct tm * timeinfo;
+    char filename[80];
+
+    time(&rawtime);
+    timeinfo = localtime(&rawtime);
+    strftime(filename, sizeof(filename), "screen-%F-%H-%M-%S.png", timeinfo);
+    mMainWindow->saveScreenshot(filename);
 }
 
 WindowRenderTarget &Sample::getMainWindow()

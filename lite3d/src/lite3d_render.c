@@ -18,6 +18,9 @@
 #include <string.h>
 #include <SDL_timer.h>
 #include <SDL_assert.h>
+#include <SDL_log.h>
+
+#include <IL/il.h>
 
 #include <lite3d/lite3d_gl.h>
 #include <lite3d/lite3d_alloc.h>
@@ -25,6 +28,7 @@
 #include <lite3d/lite3d_video.h>
 #include <lite3d/lite3d_scene.h>
 #include <lite3d/lite3d_buffers_manip.h>
+#include <lite3d/lite3d_misc.h>
 #include <lite3d/lite3d_main.h>
 
 typedef struct lookUnit
@@ -456,3 +460,48 @@ void lite3d_render_target_fullscreen(lite3d_render_target *rt, int8_t flag)
         rt->fullscreen = flag;
     }
 }
+
+void lite3d_render_target_screenshot(lite3d_render_target *rt, const char *filename)
+{
+    ILuint imageId;
+    uint8_t *pixels;
+    
+    SDL_assert(rt);
+    pixels = lite3d_malloc(lite3d_framebuffer_size(&rt->fb, LITE3D_FRAMEBUFFER_READ_RGB_INT8));
+    
+    if (!lite3d_framebuffer_read(&rt->fb, 0, LITE3D_FRAMEBUFFER_READ_RGB_INT8, pixels))
+    {
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+            "%s: framebuffer read failed", LITE3D_CURRENT_FUNCTION);
+        lite3d_free(pixels);
+        return;
+    }
+    
+    lite3d_misc_il_error_stack_clean();
+    imageId = ilGenImage();
+    if (lite3d_misc_check_il_error())
+    {
+        lite3d_free(pixels);
+        return;
+    }
+    
+    ilBindImage(imageId);
+    ilTexImage(rt->fb.width, rt->fb.height, 1, 3, IL_RGB, IL_UNSIGNED_BYTE, pixels);
+    lite3d_free(pixels);
+    
+    if (lite3d_misc_check_il_error())
+        return;
+
+    ilEnable(IL_FILE_OVERWRITE);
+    ilSaveImage(filename);
+    if (lite3d_misc_check_il_error())
+    {
+        ilDeleteImage(imageId);
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+            "%s: save image failed", LITE3D_CURRENT_FUNCTION);
+        return;
+    }
+    
+    ilDeleteImage(imageId);
+}
+

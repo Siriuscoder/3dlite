@@ -55,6 +55,7 @@ namespace lite3dpp
         void stencilTestFunc(uint32_t func, int32_t value);
         /* clean buffers immediately */
         void clear(bool color, bool depth, bool stencil);
+        void saveScreenshot(const std::string &filename);
 
         inline lite3d_render_target *getPtr()
         { return mRenderTargetPtr; }

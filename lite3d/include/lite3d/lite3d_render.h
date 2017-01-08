@@ -108,6 +108,8 @@ LITE3D_CEXPORT int lite3d_render_target_screen_dettach_camera(lite3d_camera *cam
 LITE3D_CEXPORT lite3d_render_target *lite3d_render_target_screen_get(void);
 LITE3D_CEXPORT void lite3d_render_target_resize(lite3d_render_target *rt, int32_t width, int32_t height);
 LITE3D_CEXPORT void lite3d_render_target_fullscreen(lite3d_render_target *rt, int8_t flag);
+LITE3D_CEXPORT void lite3d_render_target_screenshot(lite3d_render_target *rt, const char *filename);
+
 
 #endif	/* RENDER_H */
 

@@ -494,3 +494,42 @@ void lite3d_framebuffer_resize(lite3d_framebuffer *fb,
     // framebuffer will be readjusted
     gCurrentFb = NULL;
 }
+
+int lite3d_framebuffer_read(lite3d_framebuffer *fb,
+    uint16_t index, uint16_t format, void *pixels)
+{
+    SDL_assert(fb);
+    if (format > LITE3D_FRAMEBUFFER_READ_DEPTH_FLOAT32)
+        return LITE3D_FALSE;
+        
+    lite3d_misc_gl_error_stack_clean();
+    glBindFramebuffer(GL_FRAMEBUFFER, fb->framebufferId);
+    /* if it is screen framebuffer we can read only back buffer  */
+    if (fb->framebufferId == 0)
+        glReadBuffer(GL_BACK);
+    else if (fb->colorAttachmentsCount > 0)
+        glReadBuffer(GL_COLOR_ATTACHMENT0 + index);
+    
+    glReadPixels(0, 0, fb->width, fb->height, 
+        format == LITE3D_FRAMEBUFFER_READ_RGB_INT8 ? GL_RGB : 
+        (format == LITE3D_FRAMEBUFFER_READ_RGBA_INT8 ? GL_RGBA : GL_DEPTH_COMPONENT),
+        format == LITE3D_FRAMEBUFFER_READ_DEPTH_INT32 ? GL_UNSIGNED_INT : 
+        (format == LITE3D_FRAMEBUFFER_READ_DEPTH_FLOAT32 ? GL_FLOAT : GL_UNSIGNED_BYTE),        
+        pixels);
+        
+    
+    if (gCurrentFb)
+        glBindFramebuffer(GL_FRAMEBUFFER, gCurrentFb->framebufferId);
+    
+    return !lite3d_misc_check_gl_error();
+}
+
+size_t lite3d_framebuffer_size(lite3d_framebuffer *fb,
+    uint8_t format)
+{
+    SDL_assert(fb);
+    if (format > LITE3D_FRAMEBUFFER_READ_DEPTH_FLOAT32)
+        return 0;
+    
+    return fb->width * fb->height * (format == LITE3D_FRAMEBUFFER_READ_RGB_INT8 ? 3 : 4);
+}
