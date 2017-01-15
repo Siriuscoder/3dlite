@@ -27,13 +27,14 @@ namespace lite3dpp
 {
     Scene::Scene(const String &name, 
         const String &path, Main *main) : 
-        ConfigurableResource(name, path, main, AbstractResource::SCENE)
+        ConfigurableResource(name, path, main, AbstractResource::SCENE),
+        mLightingTextureBuffer(NULL)
     {}
 
     Scene::~Scene()
     {}
 
-    void Scene::loadFromConfigImpl(const ConfigurationReader &helper)
+    void Scene::loadFromConfigImpl(const ConfigurationReader &helper)       
     {
         lite3d_scene_init(&mScene);
         mScene.userdata = this;
@@ -48,8 +49,19 @@ namespace lite3dpp
         setupObjects(helper.getObjects(L"Objects"), NULL);
         setupCameras(helper.getObjects(L"Cameras"));
         
-        mLightingTextureBuffer = mMain->getResourceManager()->
-            queryResourceFromString<Texture>("{\"BufferFormat\": \"RGBA32F\"}");
+        try
+        {
+            /* default name of lighting buffer is scene name + "LightingBufferObject" */
+            mLightingTextureBuffer = mMain->getResourceManager()->
+                queryResourceFromString<Texture>(getName() + "LightingBufferObject",
+                "{\"BufferFormat\": \"RGBA32F\"}");
+            setupLights(helper.getObjects(L"Lights"));
+        }
+        catch(std::exception &ex)
+        {
+            SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
+                "%s: %s, default lighting disabled", LITE3D_CURRENT_FUNCTION, ex.what());
+        }
     }
 
     void Scene::unloadImpl()
@@ -65,17 +77,17 @@ namespace lite3dpp
         if(it != mCameras.end())
             LITE3D_THROW("Camera \"" << name << "\" already exists..");
 
-        Camera *camera = new Camera(name, mMain);
+        std::shared_ptr<Camera> camera = std::make_shared<Camera>(name, mMain);
         lite3d_scene_add_node(&mScene, &camera->getPtr()->cameraNode, NULL);
         mCameras.insert(std::make_pair(name, camera));
-        return camera;
+        return camera.get();
     }
 
-    Camera *Scene::getCamera(const String &name)
+    Camera *Scene::getCamera(const String &name) const
     {
-        Cameras::iterator it = mCameras.find(name);
+        Cameras::const_iterator it = mCameras.find(name);
         if(it != mCameras.end())
-            return it->second;
+            return it->second.get();
 
         LITE3D_THROW("Camera " << name << " not found..");
     }
@@ -85,7 +97,6 @@ namespace lite3dpp
         std::for_each(mCameras.begin(), mCameras.end(), [this](Cameras::value_type &camera)
         {
             lite3d_scene_remove_node(&mScene, &camera.second->getPtr()->cameraNode);
-            delete camera.second;
         });
 
         mCameras.clear();
@@ -97,7 +108,6 @@ namespace lite3dpp
         if(it != mCameras.end())
         {
             lite3d_scene_remove_node(&mScene, &it->second->getPtr()->cameraNode);
-            delete it->second;
             mCameras.erase(it);
         }
     }
@@ -112,18 +122,18 @@ namespace lite3dpp
         const void *fileData = mMain->getResourceManager()->loadFileToMemory(templatePath, &fileSize);
         ConfigurationReader json(static_cast<const char *>(fileData), fileSize);
 
-        SceneObject *sceneObject = new SceneObject(name, parent, mMain);
+        std::shared_ptr<SceneObject> sceneObject = std::make_shared<SceneObject>(name, parent, mMain);
         sceneObject->loadFromTemplate(json);
         sceneObject->addToScene(this);
         mObjects.insert(std::make_pair(name, sceneObject));
-        return sceneObject;
+        return sceneObject.get();
     }
 
-    SceneObject *Scene::getObject(const String &name)
+    SceneObject *Scene::getObject(const String &name) const
     {
-        Objects::iterator it;
+        Objects::const_iterator it;
         if((it = mObjects.find(name)) != mObjects.end())
-            return it->second;
+            return it->second.get();
 
         LITE3D_THROW(name << " object not found");
     }
@@ -133,7 +143,6 @@ namespace lite3dpp
         for(Objects::value_type &object : mObjects)
         {
             object.second->removeFromScene(this);
-            delete object.second;
         }
 
         mObjects.clear();
@@ -145,9 +154,57 @@ namespace lite3dpp
         if((it = mObjects.find(name)) == mObjects.end())
             LITE3D_THROW(name << " remove object failed.. not found");
         it->second->removeFromScene(this);
-        delete it->second;
 
         mObjects.erase(it);
+    }
+    
+    LightSource *Scene::addLightSource(const String &name)
+    {
+        Lights::iterator it = mLights.find(name);
+        if(it != mLights.end())
+            LITE3D_THROW("LightSource \"" << name << "\" already exists..");
+
+        std::shared_ptr<LightSource> light = std::make_shared<LightSource>(name, mMain);
+        lite3d_scene_add_node(&mScene, &light->getPtr()->lightNode, NULL);
+        mLights.insert(std::make_pair(name, light));
+        rebuildLightingBuffer();
+        return light.get();
+    }
+    
+    void Scene::removeLight(const String &name)
+    {
+        Lights::iterator it = mLights.find(name);
+        if(it != mLights.end())
+        {
+            lite3d_scene_remove_node(&mScene, &it->second->getPtr()->lightNode);
+            mLights.erase(it);
+            rebuildLightingBuffer();
+        }
+    }
+    
+    void Scene::removeAllLights()
+    {
+        std::for_each(mLights.begin(), mLights.end(), [this](Lights::value_type &light)
+        {
+            lite3d_scene_remove_node(&mScene, &light.second->getPtr()->lightNode);
+        });
+
+        rebuildLightingBuffer();
+        mLights.clear();
+    }
+    
+    LightSource *Scene::getLightSource(const String &name) const
+    {
+        Lights::const_iterator it;
+        if((it = mLights.find(name)) != mLights.end())
+            return it->second.get();
+
+        LITE3D_THROW(name << " object not found");
+    }
+    
+    void Scene::rebuildLightingBuffer()
+    {
+        
     }
 
     void Scene::setupObjects(const stl<ConfigurationReader>::vector &objects, SceneObject *base)
@@ -215,6 +272,11 @@ namespace lite3dpp
             if(cameraJson.has(L"LookAt"))
                 camera->lookAt(cameraJson.getVec3(L"LookAt"));
         }
+    }
+    
+    void Scene::setupLights(const stl<ConfigurationReader>::vector &lights)
+    {
+        
     }
 
     void Scene::beginDrawBatch(struct lite3d_scene *scene, 

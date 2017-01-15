@@ -55,6 +55,7 @@ typedef struct lite3d_light_source
 {
     lite3d_scene_node lightNode;
     lite3d_light_params params;
+    void *userdata;
 } lite3d_light_source;
 
 #endif

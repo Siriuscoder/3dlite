@@ -172,7 +172,7 @@ namespace lite3dpp
             if (!lite3d_texture_buffer_allocate(&mTexture, helper.getInt(L"TexelsCount", 0), NULL, 
                 tbf))
             {
-                LITE3D_THROW(getName() << " texture buffer allocation failed..");
+                LITE3D_THROW(getName() << " texture buffer allocation failed, probably it is not supported");
             }
         }
         else

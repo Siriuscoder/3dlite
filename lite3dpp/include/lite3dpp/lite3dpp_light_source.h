@@ -35,12 +35,18 @@ namespace lite3dpp
         { return &mLightSource; }
         inline const lite3d_light_source *getPtr() const
         { return &mLightSource; }
+        
+        inline void setBufferIndex(int32_t i)
+        { mBufferIndex = i; }     
+        inline int32_t getBufferIndex() const
+        { return mBufferIndex; }
 
     private:
 
         String mName;
         Main *mMain;
         lite3d_light_source mLightSource;
+        int32_t mBufferIndex;
     };
 }
 

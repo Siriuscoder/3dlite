@@ -20,6 +20,15 @@
 
 namespace lite3dpp
 {
+    LightSource::LightSource(const String &name, Main *main) : 
+        mName(name),
+        mMain(main)
+    {
+        memset(&mLightSource, 0, sizeof(mLightSource));
+        mLightSource.userdata = this;
+    }
     
+    LightSource::~LightSource()
+    {}
 }
 
