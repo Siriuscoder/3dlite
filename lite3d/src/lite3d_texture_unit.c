@@ -582,6 +582,7 @@ int lite3d_texture_unit_allocate(lite3d_texture_unit *textureUnit,
     lite3d_misc_gl_error_stack_clean();
 
 
+    textureUnit->isTextureBuffer = LITE3D_FALSE;
     textureUnit->imageType = LITE3D_IMAGE_ANY;
     textureUnit->imageWidth = width;
     textureUnit->imageHeight = height;

@@ -76,68 +76,14 @@ int lite3d_texture_buffer_allocate(lite3d_texture_unit *textureUnit,
     textureUnit->imageType = LITE3D_IMAGE_ANY;
 
     /* what BPP ? */
-    switch (bf)
+    if ((textureUnit->imageBPP = lite3d_texture_buffer_texel_size(bf)) == 0)
     {
-        case LITE3D_TB_R8:
-        case LITE3D_TB_R8I:
-        case LITE3D_TB_R8UI:
-            textureUnit->imageBPP = 1 * 1;
-            break;
-        case LITE3D_TB_R16:
-        case LITE3D_TB_R16F:
-        case LITE3D_TB_R16I:
-        case LITE3D_TB_R16UI:
-            textureUnit->imageBPP = 1 * 2;
-            break;
-        case LITE3D_TB_R32I:
-        case LITE3D_TB_R32F:
-        case LITE3D_TB_R32UI:
-            textureUnit->imageBPP = 1 * 4;
-            break;
-        case LITE3D_TB_RG8:
-        case LITE3D_TB_RG8I:
-        case LITE3D_TB_RG8UI:
-            textureUnit->imageBPP = 2 * 1;
-            break;
-        case LITE3D_TB_RG16:
-        case LITE3D_TB_RG16F:
-        case LITE3D_TB_RG16I:
-        case LITE3D_TB_RG16UI:
-            textureUnit->imageBPP = 2 * 2;
-            break;
-        case LITE3D_TB_RG32F:
-        case LITE3D_TB_RG32I:
-        case LITE3D_TB_RG32UI:
-            textureUnit->imageBPP = 2 * 4;
-            break;
-        case LITE3D_TB_RGB32F:
-        case LITE3D_TB_RGB32I:
-        case LITE3D_TB_RGB32UI:
-            textureUnit->imageBPP = 3 * 4;
-            break;
-        case LITE3D_TB_RGBA8:
-        case LITE3D_TB_RGBA8I:
-        case LITE3D_TB_RGBA8UI:
-            textureUnit->imageBPP = 4 * 1;
-            break;
-        case LITE3D_TB_RGBA16:
-        case LITE3D_TB_RGBA16F:
-        case LITE3D_TB_RGBA16I:
-        case LITE3D_TB_RGBA16UI:
-            textureUnit->imageBPP = 4 * 2;
-            break;            
-        case LITE3D_TB_RGBA32F:
-        case LITE3D_TB_RGBA32I:
-        case LITE3D_TB_RGBA32UI:
-            textureUnit->imageBPP = 4 * 4;
-            break;
-        default:
-            SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
-                "%s: Invalid buffer format", LITE3D_CURRENT_FUNCTION);
-            return LITE3D_FALSE;
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+            "%s: Invalid buffer format", LITE3D_CURRENT_FUNCTION);
+        return LITE3D_FALSE;
     }
 
-    textureUnit->imageSize = texelsCount * textureUnit->imageBPP;
+    textureUnit->totalSize = textureUnit->imageSize = texelsCount * textureUnit->imageBPP;
     textureUnit->textureTarget = GL_TEXTURE_BUFFER;
     if (!lite3d_vbo_init(&textureUnit->tbo))
         return LITE3D_FALSE;
@@ -155,6 +101,8 @@ int lite3d_texture_buffer_allocate(lite3d_texture_unit *textureUnit,
         return LITE3D_FALSE;
     }
     
+    textureUnit->isTextureBuffer = LITE3D_TRUE;
+    textureUnit->texFormat = bf;
     return LITE3D_TRUE;
 }
 
@@ -165,4 +113,56 @@ int lite3d_texture_buffer_purge(lite3d_texture_unit *textureUnit)
     lite3d_vbo_purge(&textureUnit->tbo);
     lite3d_texture_unit_purge(textureUnit);
     return LITE3D_TRUE;
+}
+
+int8_t lite3d_texture_buffer_texel_size(uint16_t bf)
+{
+    switch (bf)
+    {
+        case LITE3D_TB_R8:
+        case LITE3D_TB_R8I:
+        case LITE3D_TB_R8UI:
+            return 1 * 1;
+        case LITE3D_TB_R16:
+        case LITE3D_TB_R16F:
+        case LITE3D_TB_R16I:
+        case LITE3D_TB_R16UI:
+            return 1 * 2;
+        case LITE3D_TB_R32I:
+        case LITE3D_TB_R32F:
+        case LITE3D_TB_R32UI:
+            return 1 * 4;
+        case LITE3D_TB_RG8:
+        case LITE3D_TB_RG8I:
+        case LITE3D_TB_RG8UI:
+            return 2 * 1;
+        case LITE3D_TB_RG16:
+        case LITE3D_TB_RG16F:
+        case LITE3D_TB_RG16I:
+        case LITE3D_TB_RG16UI:
+            return 2 * 2;
+        case LITE3D_TB_RG32F:
+        case LITE3D_TB_RG32I:
+        case LITE3D_TB_RG32UI:
+            return 2 * 4;
+        case LITE3D_TB_RGB32F:
+        case LITE3D_TB_RGB32I:
+        case LITE3D_TB_RGB32UI:
+            return 3 * 4;
+        case LITE3D_TB_RGBA8:
+        case LITE3D_TB_RGBA8I:
+        case LITE3D_TB_RGBA8UI:
+            return 4 * 1;
+        case LITE3D_TB_RGBA16:
+        case LITE3D_TB_RGBA16F:
+        case LITE3D_TB_RGBA16I:
+        case LITE3D_TB_RGBA16UI:
+            return 4 * 2;
+        case LITE3D_TB_RGBA32F:
+        case LITE3D_TB_RGBA32I:
+        case LITE3D_TB_RGBA32UI:
+            return 4 * 4;
+    }
+    
+    return 0;
 }

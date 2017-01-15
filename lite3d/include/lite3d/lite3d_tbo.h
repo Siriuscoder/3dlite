@@ -60,5 +60,8 @@ LITE3D_CEXPORT int lite3d_texture_buffer_allocate(lite3d_texture_unit *textureUn
 
 LITE3D_CEXPORT int lite3d_texture_buffer_purge(lite3d_texture_unit *textureUnit);
 
+LITE3D_CEXPORT int8_t lite3d_texture_buffer_texel_size(uint16_t bf);
+
+
 #endif	/* LITE3D_TBO_H */
 

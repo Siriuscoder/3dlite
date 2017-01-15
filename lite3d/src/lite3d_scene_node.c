@@ -108,6 +108,22 @@ lite3d_scene_node *lite3d_scene_node_scale(lite3d_scene_node *node, const kmVec3
     return node;
 }
 
+kmVec3 *lite3d_scene_node_world_position(lite3d_scene_node *node, kmVec3 *pos)
+{
+    SDL_assert(node && pos);
+
+    if (node->baseNode)
+    {
+        kmVec3Transform(pos, &node->position, &node->baseNode->worldView);
+    }
+    else
+    {
+        *pos = node->position;
+    }
+    
+    return pos;
+}
+
 uint8_t lite3d_scene_node_update(lite3d_scene_node *node)
 {
     uint8_t updated = LITE3D_FALSE;

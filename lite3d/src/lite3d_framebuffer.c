@@ -28,6 +28,7 @@
 
 static lite3d_framebuffer *gCurrentFb = NULL;
 static int gMaxColorAttachments = 0;
+static int gMaxDrawBuffers = 0;
 static int gMaxFramebufferSize = 0;
 
 #ifndef GLES
@@ -226,11 +227,20 @@ int lite3d_framebuffer_technique_init(void)
 #else
     gMaxColorAttachments = 1;
 #endif
+    
+#ifdef GL_MAX_DRAW_BUFFERS
+    glGetIntegerv(GL_MAX_DRAW_BUFFERS, &gMaxDrawBuffers);
+#else
+    gMaxDrawBuffers = 1;
+#endif
+    
     glGetIntegerv(GL_MAX_RENDERBUFFER_SIZE, &gMaxFramebufferSize);
     SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "Framebuffer max color attachments: %d",
         gMaxColorAttachments);
     SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "Framebuffer max size: %d",
         gMaxFramebufferSize);
+    SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "Framebuffer max draw buffers: %d",
+        gMaxDrawBuffers);
 
     return LITE3D_TRUE;
 }
@@ -278,8 +288,21 @@ int lite3d_framebuffer_setup(lite3d_framebuffer *fb,
 {
     int8_t renderBuffersCount = 0;
     SDL_assert(fb);
-    SDL_assert_release(colorAttachmentsCount <= gMaxColorAttachments);
 
+    if (colorAttachmentsCount > gMaxColorAttachments)
+    {
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Too many color buffers to attach, maxinum supported: %d",
+            gMaxColorAttachments);
+        return LITE3D_FALSE;
+    }
+    
+    if (colorAttachmentsCount > gMaxDrawBuffers)
+    {
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Maxinum draw buffers supported: %d",
+            gMaxDrawBuffers);
+        return LITE3D_FALSE;
+    }
+    
     if (fb->status != LITE3D_FRAMEBUFFER_STATUS_EMPTY)
         return LITE3D_FALSE;
 

@@ -83,6 +83,7 @@ namespace lite3dpp
         lite3d_scene mScene;
         Cameras mCameras;
         Objects mObjects;
+        Texture *mLightingTextureBuffer;
     };
 }
 

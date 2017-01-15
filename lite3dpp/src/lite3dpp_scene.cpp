@@ -47,6 +47,9 @@ namespace lite3dpp
 
         setupObjects(helper.getObjects(L"Objects"), NULL);
         setupCameras(helper.getObjects(L"Cameras"));
+        
+        mLightingTextureBuffer = mMain->getResourceManager()->
+            queryResourceFromString<Texture>("{\"BufferFormat\": \"RGBA32F\"}");
     }
 
     void Scene::unloadImpl()

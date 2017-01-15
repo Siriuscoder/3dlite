@@ -6,6 +6,7 @@
         <df name="include">
           <df name="lite3d">
             <in>lite3d_kazmath.h</in>
+            <in>lite3d_lighting.h</in>
             <in>lite3d_tbo.h</in>
           </df>
         </df>
@@ -79,6 +80,11 @@
         </df>
       </df>
       <df name="lite3dpp">
+        <df name="include">
+          <df name="lite3dpp">
+            <in>lite3dpp_light_source.h</in>
+          </df>
+        </df>
         <df name="src">
           <df name="as">
             <in>as_atomic.cpp</in>
@@ -137,6 +143,7 @@
           <in>lite3dpp_camera.cpp</in>
           <in>lite3dpp_config_reader.cpp</in>
           <in>lite3dpp_config_writer.cpp</in>
+          <in>lite3dpp_light_source.cpp</in>
           <in>lite3dpp_main.cpp</in>
           <in>lite3dpp_manageable.cpp</in>
           <in>lite3dpp_material.cpp</in>
@@ -419,6 +426,11 @@
           </preprocessorList>
         </cTool>
       </folder>
+      <item path="lite3d/include/lite3d/lite3d_lighting.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
       <item path="lite3d/include/lite3d/lite3d_tbo.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="lite3d/src/7zdec/7zBuf.c" ex="false" tool="0" flavor2="3">
@@ -661,6 +673,11 @@
       <item path="lite3d/src/lite3d_video.c" ex="false" tool="0" flavor2="3">
         <cTool flags="3">
         </cTool>
+      </item>
+      <item path="lite3dpp/include/lite3dpp/lite3dpp_light_source.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
       </item>
       <item path="lite3dpp/src/as/as_atomic.cpp" ex="false" tool="1" flavor2="8">
         <ccTool flags="1">
@@ -943,6 +960,11 @@
             flavor2="8">
         <ccTool flags="1">
         </ccTool>
+      </item>
+      <item path="lite3dpp/src/lite3dpp_light_source.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
       </item>
       <item path="lite3dpp/src/lite3dpp_main.cpp" ex="false" tool="1" flavor2="8">
         <ccTool flags="1">

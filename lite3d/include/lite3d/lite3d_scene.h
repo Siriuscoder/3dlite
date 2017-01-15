@@ -24,6 +24,7 @@
 #include <lite3d/lite3d_mesh.h>
 #include <lite3d/lite3d_material.h>
 #include <lite3d/lite3d_array.h>
+#include <lite3d/lite3d_lighting.h>
 
 #define LITE3D_RENDER_STAGE_FIRST       0x1
 #define LITE3D_RENDER_STAGE_SECOND      0x2
@@ -75,6 +76,7 @@ LITE3D_CEXPORT void lite3d_scene_purge(lite3d_scene *scene);
 LITE3D_CEXPORT int lite3d_scene_add_node(lite3d_scene *scene, 
     lite3d_scene_node *node, 
     lite3d_scene_node *baseNode);
+
 LITE3D_CEXPORT int lite3d_scene_remove_node(lite3d_scene *scene, lite3d_scene_node *node);
 
 LITE3D_CEXPORT int lite3d_scene_node_touch_material(

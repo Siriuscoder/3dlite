@@ -69,6 +69,12 @@ namespace lite3dpp
         inline int32_t getDepth()
         { return mTexture.imageDepth; }
 
+        inline bool isTextureBuffer()
+        { return mTexture.isTextureBuffer == LITE3D_TRUE; }
+        size_t textureBufferSize();
+        size_t textureBufferTexelsCount();
+        void relocateTextureBuffer(size_t newTexelsCount);
+        void extendTextureBuffer(size_t texelsCount);
 
     protected:
 

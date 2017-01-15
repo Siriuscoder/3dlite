@@ -55,7 +55,7 @@ namespace lite3dpp
         } ResourceManagerStats;
 
         template<class T>
-        T *queryResource(String name,
+        T *queryResource(const String &name,
             const String &path = "")
         {
             AbstractResource *resource;
@@ -71,12 +71,13 @@ namespace lite3dpp
             if(path.size() == 0)
                 LITE3D_THROW("Resource not found: " << name);
 
-            if(name.size() == 0)
-                name = generateResourceName();
+            String resName = name;
+            if(resName.size() == 0)
+                resName = generateResourceName();
 
             /* resource not found.. create one */
-            std::unique_ptr<T> result(new T(name, path, mMain));
-            loadResource(name, path, result.get());
+            std::unique_ptr<T> result(new T(resName, path, mMain));
+            loadResource(resName, path, result.get());
 
             return result.release();
         }
@@ -99,6 +100,18 @@ namespace lite3dpp
         T *queryResource(const void *data, size_t size)
         {
             return queryResource<T>("", data, size);
+        }
+        
+        template<class T>
+        T *queryResourceFromString(const String &data)
+        {
+            return queryResource<T>("", data.data(), data.size());
+        }
+        
+        template<class T>
+        T *queryResourceFromString(const String &name, const String &data)
+        {
+            return queryResource<T>(name, data.data(), data.size());
         }
 
         ResourceManager(Main *main);

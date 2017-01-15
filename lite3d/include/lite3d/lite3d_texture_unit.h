@@ -166,6 +166,7 @@ typedef struct lite3d_texture_unit
     uint8_t compressed;
     uint8_t isFbAttachment;
     lite3d_vbo tbo;
+    uint8_t isTextureBuffer;
     void *userdata;
 } lite3d_texture_unit;
 
