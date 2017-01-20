@@ -56,11 +56,24 @@
 
 
 LITE3D_CEXPORT int lite3d_texture_buffer_allocate(lite3d_texture_unit *textureUnit, 
-    uint32_t texelsCount, const void *data, uint16_t bf);
+    uint32_t texelsCount, const void *data, uint16_t bf, uint16_t access);
 
 LITE3D_CEXPORT int lite3d_texture_buffer_purge(lite3d_texture_unit *textureUnit);
 
 LITE3D_CEXPORT int8_t lite3d_texture_buffer_texel_size(uint16_t bf);
+
+LITE3D_CEXPORT void *lite3d_texture_buffer_map(lite3d_texture_unit *textureUnit, uint16_t access);
+
+LITE3D_CEXPORT void lite3d_texture_buffer_unmap(lite3d_texture_unit *textureUnit);
+
+LITE3D_CEXPORT int lite3d_texture_buffer(lite3d_texture_unit *textureUnit,
+    const void *buffer, size_t offset, size_t size);
+
+LITE3D_CEXPORT int lite3d_texture_buffer_get(lite3d_texture_unit *textureUnit,
+    void *buffer, size_t offset, size_t size);
+
+LITE3D_CEXPORT int lite3d_texture_buffer_extend(lite3d_texture_unit *textureUnit, 
+    size_t addSize, uint16_t access);
 
 
 #endif	/* LITE3D_TBO_H */

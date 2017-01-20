@@ -92,7 +92,11 @@ namespace lite3dpp
                     setFloatv4Parameter(passNo, paramName, uniformParamJson.getVec4(L"Value"), scope == "global");
                 else if(paramType == "sampler")
                     setSamplerTextureParameter(passNo, paramName, 
-                        mMain->getResourceManager()->queryResource<Texture>(uniformParamJson.getString(L"TextureName"),
+                        mMain->getResourceManager()->queryResource<TextureImage>(uniformParamJson.getString(L"TextureName"),
+                        uniformParamJson.getString(L"TexturePath")), scope == "global");
+                else if(paramType == "samplerBuffer")
+                    setSamplerTextureParameter(passNo, paramName, 
+                        mMain->getResourceManager()->queryResource<TextureBuffer>(uniformParamJson.getString(L"TextureName"),
                         uniformParamJson.getString(L"TexturePath")), scope == "global");
             }
         }

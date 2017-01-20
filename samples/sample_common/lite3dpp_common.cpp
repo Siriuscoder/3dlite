@@ -15,6 +15,7 @@
  *	You should have received a copy of the GNU General Public License
  *	along with Lite3D.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
+#include <ctime>
 #include <iostream>
 #include <SDL_log.h>
 #include <SDL_assert.h>

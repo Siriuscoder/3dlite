@@ -15,6 +15,7 @@
  *	You should have received a copy of the GNU General Public License
  *	along with Lite3D.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
+#define HAVE_M_PI
 #include <SDL_log.h>
 
 #include <font.h>
@@ -64,7 +65,7 @@ namespace lite3dpp
 
         FontTexture::FontTexture(const String &name,
             const String &path, Main *main) : 
-            Texture(name, path, main),
+            TextureImage(name, path, main),
             mTexBuf(new nw::Texture())
         {
             gFontLib.setLogger(&gFontLibLogger);
@@ -78,7 +79,7 @@ namespace lite3dpp
         
         void FontTexture::loadFromConfigImpl(const ConfigurationReader &helper)
         {
-            Texture::loadFromConfigImpl(helper);
+            TextureImage::loadFromConfigImpl(helper);
             
             if(getPtr()->texFormat != LITE3D_TEXTURE_FORMAT_RGBA)
                 LITE3D_THROW("Font texture must be in RGBA format");
@@ -107,12 +108,12 @@ namespace lite3dpp
         
         void FontTexture::reloadFromConfigImpl(const ConfigurationReader &helper)
         {
-            Texture::reloadFromConfigImpl(helper);
+            TextureImage::reloadFromConfigImpl(helper);
         }
         
         void FontTexture::unloadImpl()
         {
-            Texture::unloadImpl();
+            TextureImage::unloadImpl();
         }
         
         void FontTexture::clean(const kmVec4 &color)

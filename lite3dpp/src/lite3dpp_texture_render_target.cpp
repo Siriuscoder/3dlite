@@ -68,7 +68,7 @@ namespace lite3dpp
             attachColorRenderBuffer = attachmentJson.getBool(L"Renderbuffer", false) ? LITE3D_TRUE : LITE3D_FALSE;
             for(const ConfigurationReader &targetJson : attachmentJson.getObjects(L"Attachments"))
             {
-                colorAttachments.push_back(mMain->getResourceManager()->queryResource<Texture>(
+                colorAttachments.push_back(mMain->getResourceManager()->queryResource<TextureImage>(
                     targetJson.getString(L"TextureName"), targetJson.getString(L"TexturePath"))->getPtr());
             }
         }
@@ -77,7 +77,7 @@ namespace lite3dpp
             ConfigurationReader attachmentJson = helper.getObject(L"DepthAttachments");
             attachDepthRenderBuffer = attachmentJson.getBool(L"Renderbuffer", false) ? LITE3D_TRUE : LITE3D_FALSE;
             if(!attachDepthRenderBuffer && !attachmentJson.isEmpty())
-                depthAttachment = mMain->getResourceManager()->queryResource<Texture>(
+                depthAttachment = mMain->getResourceManager()->queryResource<TextureImage>(
                     attachmentJson.getString(L"TextureName"), attachmentJson.getString(L"TexturePath"))->getPtr();
         }
 

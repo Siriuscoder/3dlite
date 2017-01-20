@@ -24,7 +24,7 @@ namespace lite3dpp
 {
     namespace lite3dpp_font
     {
-        class LITE3DPP_FONT_EXPORT FontTexture : public Texture
+        class LITE3DPP_FONT_EXPORT FontTexture : public TextureImage
         {
         public:
 

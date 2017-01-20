@@ -53,7 +53,7 @@ namespace lite3dpp
         {
             /* default name of lighting buffer is scene name + "LightingBufferObject" */
             mLightingTextureBuffer = mMain->getResourceManager()->
-                queryResourceFromString<Texture>(getName() + "LightingBufferObject",
+                queryResourceFromString<TextureBuffer>(getName() + "LightingBufferObject",
                 "{\"BufferFormat\": \"RGBA32F\"}");
             setupLights(helper.getObjects(L"Lights"));
         }

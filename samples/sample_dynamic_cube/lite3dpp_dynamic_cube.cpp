@@ -43,7 +43,7 @@ public:
         Scene *scene = getMain().getResourceManager()->queryResource<Scene>("BoxScene",
             "samples:scenes/scene_rtt_box.json");
 
-        mBoxTexture = getMain().getResourceManager()->queryResource<Texture>("color512x512.texture");
+        mBoxTexture = getMain().getResourceManager()->queryResource<TextureImage>("color512x512.texture");
         setMainCamera(scene->getCamera("MyCamera"));
         mBox = scene->getObject("Box");
         mBoxMesh = getMain().getResourceManager()->queryResource<Mesh>("box.mesh");
@@ -89,7 +89,7 @@ public:
     
     void updateTextureData()
     {
-        lite3dpp::Texture::PixelsData pixels;
+        lite3dpp::TextureImage::PixelsData pixels;
         for(int8_t i = 0; i <= mBoxTexture->getLevelsNum(); ++i)
         {
             mBoxTexture->getPixels(i, pixels);
@@ -132,7 +132,7 @@ public:
 private:
     
     SceneObject *mBox;
-    Texture *mBoxTexture;
+    TextureImage *mBoxTexture;
     Mesh *mBoxMesh;
 
     bool mWireftameView;

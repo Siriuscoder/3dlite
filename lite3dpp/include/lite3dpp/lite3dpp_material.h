@@ -25,6 +25,7 @@
 #include <lite3dpp/lite3dpp_config_reader.h>
 #include <lite3dpp/lite3dpp_resource.h>
 #include <lite3dpp/lite3dpp_texture.h>
+#include <lite3dpp/lite3dpp_texture_buffer.h>
 #include <lite3dpp/lite3dpp_shader_program.h>
 
 namespace lite3dpp

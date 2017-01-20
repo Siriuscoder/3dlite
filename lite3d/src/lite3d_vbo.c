@@ -273,3 +273,19 @@ int lite3d_vbo_subbuffer(struct lite3d_vbo *vbo,
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     return LITE3D_TRUE;
 }
+
+int lite3d_vbo_get_buffer(struct lite3d_vbo *vbo,
+    void *buffer, size_t offset, size_t size)
+{
+    SDL_assert(vbo);
+    lite3d_misc_gl_error_stack_clean();
+
+    /* copy vertices to the end of the vertex buffer */
+    glBindBuffer(GL_ARRAY_BUFFER, vbo->vboID);
+    glGetBufferSubData(GL_ARRAY_BUFFER, offset, size, buffer);
+    if (lite3d_misc_check_gl_error())
+        return LITE3D_FALSE;
+
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    return LITE3D_TRUE;
+}

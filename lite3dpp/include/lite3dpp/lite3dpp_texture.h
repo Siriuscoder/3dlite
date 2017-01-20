@@ -32,13 +32,34 @@ namespace lite3dpp
         typedef stl<uint8_t>::vector PixelsData;
         typedef stl<PixelsData>::vector LayersData;
 
-        Texture(const String &name, 
-            const String &path, Main *main);
-
         ~Texture();
 
         inline lite3d_texture_unit *getPtr()
         { return &mTexture; }
+        inline const lite3d_texture_unit *getPtr() const
+        { return &mTexture; }
+
+        inline bool isTextureBuffer()
+        { return mTexture.isTextureBuffer == LITE3D_TRUE; }
+
+    protected:
+
+        Texture(const String &name, 
+            const String &path, Main *main);
+
+        virtual void unloadImpl() override;
+
+        lite3d_texture_unit mTexture;
+    };
+
+    class LITE3DPP_EXPORT TextureImage : public Texture
+    {
+    public:
+
+        TextureImage(const String &name, 
+            const String &path, Main *main);
+
+        ~TextureImage();
 
         inline int8_t getLevelsNum()
         { return mTexture.generatedMipmaps; }
@@ -69,13 +90,6 @@ namespace lite3dpp
         inline int32_t getDepth()
         { return mTexture.imageDepth; }
 
-        inline bool isTextureBuffer()
-        { return mTexture.isTextureBuffer == LITE3D_TRUE; }
-        size_t textureBufferSize();
-        size_t textureBufferTexelsCount();
-        void relocateTextureBuffer(size_t newTexelsCount);
-        void extendTextureBuffer(size_t texelsCount);
-
     protected:
 
         virtual void loadFromConfigImpl(const ConfigurationReader &helper) override;
@@ -84,9 +98,8 @@ namespace lite3dpp
 
     private:
 
-        lite3d_texture_unit mTexture;
         bool mModifyed;
-        LayersData mLayersData;
+        LayersData mLayersBackup;
     };
 }
 

@@ -20,8 +20,6 @@
 
 #include <SDL_log.h>
 
-#include <lite3d/lite3d_tbo.h>
-
 #include <lite3dpp/lite3dpp_main.h>
 #include <lite3dpp/lite3dpp_texture.h>
 
@@ -29,14 +27,30 @@ namespace lite3dpp
 {
     Texture::Texture(const String &name, 
         const String &path, Main *main) : 
-        ConfigurableResource(name, path, main, AbstractResource::TEXTURE),
-        mModifyed(false)
-    {}
+        ConfigurableResource(name, path, main, AbstractResource::TEXTURE)
+    {
+        memset(&mTexture, 0, sizeof(mTexture));
+    }
 
     Texture::~Texture()
     {}
 
-    void Texture::loadFromConfigImpl(const ConfigurationReader &helper)
+    void Texture::unloadImpl()
+    {
+        lite3d_texture_unit_purge(&mTexture);
+        setUsedVideoMem(0);
+    }
+
+    TextureImage::TextureImage(const String &name, 
+        const String &path, Main *main) : 
+        Texture(name, path, main),
+        mModifyed(false)
+    {}
+
+    TextureImage::~TextureImage()
+    {}
+
+    void TextureImage::loadFromConfigImpl(const ConfigurationReader &helper)
     {
         lite3d_texture_unit_compression(helper.getBool(L"Compression", true) ? LITE3D_TRUE : LITE3D_FALSE);
 
@@ -97,84 +111,6 @@ namespace lite3dpp
                 imageType, textureType, quality, wrapping))
                 LITE3D_THROW(getName() << " texture load failed..");
         }
-        else if (helper.getString(L"BufferFormat").size() > 0)
-        {
-            uint16_t tbf = 0;
-            String tbfString = helper.getString(L"BufferFormat");
-
-            if (tbfString == "R8")
-                tbf = LITE3D_TB_R8;
-            else if (tbfString == "R16")
-                tbf = LITE3D_TB_R16;
-            else if (tbfString == "R16F")
-                tbf = LITE3D_TB_R16F;
-            else if (tbfString == "R32F")
-                tbf = LITE3D_TB_R32F;
-            else if (tbfString == "R8I")
-                tbf = LITE3D_TB_R8I;
-            else if (tbfString == "R16I")
-                tbf = LITE3D_TB_R16I;
-            else if (tbfString == "R32I")
-                tbf = LITE3D_TB_R32I;
-            else if (tbfString == "R8UI")
-                tbf = LITE3D_TB_R8UI;
-            else if (tbfString == "R16UI")
-                tbf = LITE3D_TB_R16UI;
-            else if (tbfString == "R32UI")
-                tbf = LITE3D_TB_R32UI;
-            else if (tbfString == "RG8")
-                tbf = LITE3D_TB_RG8;
-            else if (tbfString == "RG16")
-                tbf = LITE3D_TB_RG16;
-            else if (tbfString == "RG16F")
-                tbf = LITE3D_TB_RG16F;
-            else if (tbfString == "RG32F")
-                tbf = LITE3D_TB_RG32F;
-            else if (tbfString == "RG8I")
-                tbf = LITE3D_TB_RG8I;
-            else if (tbfString == "RG16I")
-                tbf = LITE3D_TB_RG16I;
-            else if (tbfString == "RG32I")
-                tbf = LITE3D_TB_RG32I;
-            else if (tbfString == "RG8UI")
-                tbf = LITE3D_TB_RG8UI;
-            else if (tbfString == "RG16UI")
-                tbf = LITE3D_TB_RG16UI;
-            else if (tbfString == "RG32UI")
-                tbf = LITE3D_TB_RG32UI;
-            else if (tbfString == "RGB32F")
-                tbf = LITE3D_TB_RGB32F;
-            else if (tbfString == "RGB32I")
-                tbf = LITE3D_TB_RGB32I;
-            else if (tbfString == "RGB32UI")
-                tbf = LITE3D_TB_RGB32UI;
-            else if (tbfString == "RGBA8")
-                tbf = LITE3D_TB_RGBA8;
-            else if (tbfString == "RGBA16")
-                tbf = LITE3D_TB_RGBA16;
-            else if (tbfString == "RGBA16F")
-                tbf = LITE3D_TB_RGBA16F;
-            else if (tbfString == "RGBA32F")
-                tbf = LITE3D_TB_RGBA32F;
-            else if (tbfString == "RGBA8I")
-                tbf = LITE3D_TB_RGBA8I;
-            else if (tbfString == "RGBA16I")
-                tbf = LITE3D_TB_RGBA16I;
-            else if (tbfString == "RGBA32I")
-                tbf = LITE3D_TB_RGBA32I;
-            else if (tbfString == "RGBA8UI")
-                tbf = LITE3D_TB_RGBA8UI;
-            else if (tbfString == "RGBA16UI")
-                tbf = LITE3D_TB_RGBA16UI;
-            else if (tbfString == "RGBA32UI")
-                tbf = LITE3D_TB_RGBA32UI;
-            
-            if (!lite3d_texture_buffer_allocate(&mTexture, helper.getInt(L"TexelsCount", 0), NULL, 
-                tbf))
-            {
-                LITE3D_THROW(getName() << " texture buffer allocation failed, probably it is not supported");
-            }
-        }
         else
         {
             String textureFormatStr = helper.getString(L"TextureFormat", "RGB");
@@ -201,7 +137,7 @@ namespace lite3dpp
         setUsedVideoMem(mTexture.totalSize);
     }
 
-    void Texture::reloadFromConfigImpl(const ConfigurationReader &helper)
+    void TextureImage::reloadFromConfigImpl(const ConfigurationReader &helper)
     {
         /* reload json content */
         loadFromConfigImpl(helper);
@@ -209,19 +145,19 @@ namespace lite3dpp
         /* restore modifyed content */
         if(mModifyed)
         {
-            for(int8_t level = 0; level <= getLevelsNum() && level < (int8_t)mLayersData.size(); ++level)
+            for(int8_t level = 0; level <= getLevelsNum() && level < (int8_t)mLayersBackup.size(); ++level)
             {
                 if(mTexture.compressed)
-                    setCompressedPixels(level, mLayersData[level]);
+                    setCompressedPixels(level, mLayersBackup[level]);
                 else
-                    setPixels(level, mLayersData[level]);
+                    setPixels(level, mLayersBackup[level]);
             }
 
-            mLayersData.clear();
+            mLayersBackup.clear();
         }
     }
 
-    void Texture::unloadImpl()
+    void TextureImage::unloadImpl()
     {
         if(mModifyed)
         {
@@ -234,15 +170,14 @@ namespace lite3dpp
                 else
                     getPixels(level, pixels);
 
-                mLayersData.push_back(std::move(pixels));
+                mLayersBackup.push_back(std::move(pixels));
             }
         }
 
-        lite3d_texture_unit_purge(&mTexture);
-        setUsedVideoMem(0);
+        Texture::unloadImpl();
     }
 
-    void Texture::getPixels(int8_t level, PixelsData &pixels)
+    void TextureImage::getPixels(int8_t level, PixelsData &pixels)
     {
         size_t size;
         if(!lite3d_texture_unit_get_level_size(&mTexture, level, &size))
@@ -253,18 +188,18 @@ namespace lite3dpp
             LITE3D_THROW("Could`n get level " << level << " for texture ");
     }
 
-    void Texture::getPixels(int8_t level, void *pixels)
+    void TextureImage::getPixels(int8_t level, void *pixels)
     {
         if(!lite3d_texture_unit_get_pixels(&mTexture, level, pixels))
             LITE3D_THROW("Could`n get level " << level << " for texture ");
     }
 
-    void Texture::setPixels(int8_t level, const PixelsData &pixels)
+    void TextureImage::setPixels(int8_t level, const PixelsData &pixels)
     {
         setPixels(level, &pixels[0]);
     }
 
-    void Texture::setPixels(int8_t level, const void *pixels)
+    void TextureImage::setPixels(int8_t level, const void *pixels)
     {
         if(!lite3d_texture_unit_set_pixels(&mTexture, 0, 0, 0,
             lite3d_texture_unit_get_level_width(&mTexture, level), 
@@ -276,7 +211,7 @@ namespace lite3dpp
         mModifyed = true;
     }
 
-    void Texture::getCompressedPixels(int8_t level, PixelsData &pixels)
+    void TextureImage::getCompressedPixels(int8_t level, PixelsData &pixels)
     {
         size_t size;
         if(!lite3d_texture_unit_get_compressed_level_size(&mTexture, level, &size))
@@ -287,18 +222,18 @@ namespace lite3dpp
             LITE3D_THROW("Could`n get level " << level << " for texture ");
     }
 
-    void Texture::getCompressedPixels(int8_t level, void *pixels)
+    void TextureImage::getCompressedPixels(int8_t level, void *pixels)
     {
         if(!lite3d_texture_unit_get_compressed_pixels(&mTexture, level, pixels))
             LITE3D_THROW("Could`n get level " << level << " for texture ");
     }
 
-    void Texture::setCompressedPixels(int8_t level, const PixelsData &pixels)
+    void TextureImage::setCompressedPixels(int8_t level, const PixelsData &pixels)
     {
         setCompressedPixels(level, &pixels[0], pixels.size());
     }
 
-    void Texture::setCompressedPixels(int8_t level, const void *pixels, size_t size)
+    void TextureImage::setCompressedPixels(int8_t level, const void *pixels, size_t size)
     {
         if(!lite3d_texture_unit_set_compressed_pixels(&mTexture, 0, 0, 0,
             lite3d_texture_unit_get_level_width(&mTexture, level), 
@@ -310,12 +245,12 @@ namespace lite3dpp
         mModifyed = true;
     }
 
-    void Texture::generateMipmaps()
+    void TextureImage::generateMipmaps()
     {
         lite3d_texture_unit_generate_mipmaps(&mTexture);
     }
 
-    size_t Texture::getLayerSize(int8_t level)
+    size_t TextureImage::getLayerSize(int8_t level)
     {
         size_t res;
         if(!lite3d_texture_unit_get_level_size(&mTexture, level, &res))
@@ -324,7 +259,7 @@ namespace lite3dpp
         return res;
     }
 
-    size_t Texture::getCompressedLayerSize(int8_t level)
+    size_t TextureImage::getCompressedLayerSize(int8_t level)
     {
         size_t res;
         if(!lite3d_texture_unit_get_compressed_level_size(&mTexture, level, &res))
@@ -333,7 +268,7 @@ namespace lite3dpp
         return res;
     }
     
-    void Texture::setBlankColor(const kmVec4 &color)
+    void TextureImage::setBlankColor(const kmVec4 &color)
     {
         /* fullup pixels */
         PixelsData pixels(mTexture.imageSize);
@@ -352,42 +287,6 @@ namespace lite3dpp
         /* upload pixels */
         setPixels(0, pixels);
         generateMipmaps();
-    }
-
-    size_t Texture::textureBufferSize()
-    {
-        if (getState() != AbstractResource::LOADED)
-            LITE3D_THROW("Resource unavailable");
-        if (!isTextureBuffer())
-            LITE3D_THROW("This is not a texture buffer");
-        
-        return mTexture.totalSize;
-    }
-    
-    size_t Texture::textureBufferTexelsCount()
-    {
-        if (getState() != AbstractResource::LOADED)
-            LITE3D_THROW("Resource unavailable");
-        if (!isTextureBuffer())
-            LITE3D_THROW("This is not a texture buffer");
-        
-        return mTexture.totalSize / lite3d_texture_buffer_texel_size(mTexture.texFormat);
-    }
-    
-    void Texture::relocateTextureBuffer(size_t newTexelsCount)
-    {
-        if (getState() != AbstractResource::LOADED)
-            LITE3D_THROW("Resource unavailable");
-        if (!isTextureBuffer())
-            LITE3D_THROW("This is not a texture buffer");    
-    }
-    
-    void Texture::extendTextureBuffer(size_t texelsCount)
-    {
-        if (getState() != AbstractResource::LOADED)
-            LITE3D_THROW("Resource unavailable");
-        if (!isTextureBuffer())
-            LITE3D_THROW("This is not a texture buffer");
     }
 }
 
