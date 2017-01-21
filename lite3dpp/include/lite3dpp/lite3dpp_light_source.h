@@ -36,17 +36,34 @@ namespace lite3dpp
         inline const lite3d_light_source *getPtr() const
         { return &mLightSource; }
         
-        inline void setBufferIndex(int32_t i)
+        inline void setBufferIndex(uint32_t i)
         { mBufferIndex = i; }     
-        inline int32_t getBufferIndex() const
+        inline int32_t index() const
         { return mBufferIndex; }
-
+        inline void index(uint32_t i)
+        { mBufferIndex = i; }
+        inline bool isUpdated() const 
+        { return mUpdated; }
+        inline void validate()
+        { mUpdated = false; }
+        
+        void setType(uint8_t t);
+        void enabled(bool f);
+        void setPosition(const kmVec3 &v);
+        void setSpotDirection(const kmVec3 &v);
+        void setAmbient(const kmVec4 &v);
+        void setDiffuse(const kmVec4 &v);
+        void setSpecular(const kmVec4 &v);
+        void setAttenuation(const kmVec4 &v);
+        void setSpotFactor(const kmVec4 &v);
+        
     private:
 
         String mName;
         Main *mMain;
         lite3d_light_source mLightSource;
-        int32_t mBufferIndex;
+        uint32_t mBufferIndex;
+        bool mUpdated;
     };
 }
 

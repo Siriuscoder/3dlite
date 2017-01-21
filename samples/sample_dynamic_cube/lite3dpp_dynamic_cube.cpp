@@ -115,7 +115,7 @@ public:
     void updateMesh()
     {
         vertexPod *vertices;
-        lite3dpp::BufferMapper vmap = mBoxMesh->mapVertexBuffer(LITE3D_VBO_MAP_READ_WRITE);
+        lite3dpp::BufferScopedMapper vmap = mBoxMesh->mapVertexBuffer(LITE3D_VBO_MAP_READ_WRITE);
         
         vertices = vmap.getPtr<vertexPod>();
         for(uint32_t i = 0; i < vmap.getSize(); i += sizeof(vertexPod), ++vertices)

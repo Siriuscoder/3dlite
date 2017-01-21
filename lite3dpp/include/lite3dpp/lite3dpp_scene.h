@@ -25,6 +25,7 @@
 #include <lite3dpp/lite3dpp_camera.h>
 #include <lite3dpp/lite3dpp_light_source.h>
 #include <lite3dpp/lite3dpp_observer.h>
+#include <lite3dpp/lite3dpp_texture_buffer.h>
 
 namespace lite3dpp
 {
@@ -64,8 +65,9 @@ namespace lite3dpp
 
         virtual void loadFromConfigImpl(const ConfigurationReader &helper) override;
         virtual void unloadImpl() override;
-        
+            
         void rebuildLightingBuffer();
+        void validateLightingBuffer();
 
     private:
 
@@ -96,7 +98,7 @@ namespace lite3dpp
         Cameras mCameras;
         Objects mObjects;
         Lights mLights;
-        Texture *mLightingTextureBuffer;
+        TextureBuffer *mLightingTextureBuffer;
     };
 }
 

@@ -142,7 +142,7 @@ namespace lite3dpp
 
         /* create main window render target */
         /* it is fake and used only as label indicating render to screen */
-        mResourceManager.queryResource<WindowRenderTarget>(LITE3D_EMPTY_NAMED_RESOURCE("MainWindow"));
+        mResourceManager.queryResourceFromJson<WindowRenderTarget>("MainWindow", ConfigurableResource::emptyJson);
 
         /* perform fixed update timer */
         mFixedUpdatesTimer = addTimer(fixedUpdateTimerName, mConfig->getInt(L"FixedUpdatesInterval", 200));

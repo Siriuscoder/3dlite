@@ -26,6 +26,7 @@
 #include <set>
 #include <list>
 #include <stack>
+#include <unordered_map>
 
 #include <lite3dpp/lite3dpp_common.h>
 
@@ -114,16 +115,10 @@ namespace lite3dpp
         typedef std::set<T, std::less<T>, ManageableStlAllocator<T> > set;
 
         typedef std::stack<T, ManageableStlAllocator<T> > stack;
+        
+        typedef std::unordered_map<T, Y, std::hash<T>, std::equal_to<T>,
+            ManageableStlAllocator<std::pair<const T, Y>>> unordered_map;
     };
-
-    typedef std::basic_string<char, std::char_traits<char>,
-        ManageableStlAllocator<char> > String;
-    typedef std::basic_string<wchar_t, std::char_traits<wchar_t>,
-        ManageableStlAllocator<wchar_t> > WString;
-    typedef std::basic_stringstream< char, std::char_traits<char>,
-        ManageableStlAllocator<char> > Stringstream;
-    typedef std::basic_stringstream< wchar_t, std::char_traits<wchar_t>,
-        ManageableStlAllocator<wchar_t> > WStringstream;
  
 #else
     template<class T, class Y = void>
@@ -140,6 +135,8 @@ namespace lite3dpp
         typedef std::set<T> set;
 
         typedef std::stack<T> stack;
+        
+        typedef std::unordered_map<T, Y> unordered_map;
     };
     
     typedef std::string String;

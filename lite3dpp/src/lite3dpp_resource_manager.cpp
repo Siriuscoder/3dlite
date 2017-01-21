@@ -48,7 +48,7 @@ namespace lite3dpp
         if((it = mResources.find(key)) != mResources.end())
         {
             it->second->reload();
-            return it->second;
+            return it->second.get();
         }
 
         return NULL;
@@ -56,7 +56,7 @@ namespace lite3dpp
 
     void ResourceManager::loadResource(const String &name,
         const String &path,
-        AbstractResource *resource)
+        std::shared_ptr<AbstractResource> resource)
     {
         size_t fileSize;
 
@@ -69,7 +69,7 @@ namespace lite3dpp
     
     void ResourceManager::loadResource(const String &name, 
         const void *buffer, size_t size,
-        AbstractResource *resource)
+        std::shared_ptr<AbstractResource> resource)
     {
         /* load resource from memory chunk */
         try
@@ -93,7 +93,6 @@ namespace lite3dpp
         for(; it != mResources.end(); ++it)
         {
             it->second->unload();
-            delete it->second;
         }
 
         mResources.clear();
@@ -105,8 +104,6 @@ namespace lite3dpp
         if((it = mResources.find(name)) != mResources.end())
         {
             it->second->unload();
-            delete it->second;
-
             mResources.erase(it);
         }
     }

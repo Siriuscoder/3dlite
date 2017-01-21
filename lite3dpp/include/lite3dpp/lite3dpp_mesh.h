@@ -23,40 +23,10 @@
 #include <lite3dpp/lite3dpp_resource.h>
 #include <lite3dpp/lite3dpp_config_reader.h>
 #include <lite3dpp/lite3dpp_material.h>
+#include <lite3dpp/lite3dpp_buffer_mapper.h>
 
 namespace lite3dpp
 {
-    class Mesh;
-    class LITE3DPP_EXPORT BufferMapper : public Manageable, public Noncopiable
-    {
-    friend Mesh;
-    private:
-
-        BufferMapper(lite3d_vbo &source, uint16_t lockType);
-        BufferMapper(const BufferMapper &other);
-
-    public:
-
-        BufferMapper(BufferMapper &&other);
-        ~BufferMapper();
-
-        template<class T>
-        const T *getPtr() const
-        { return static_cast<T *>(mPtr); }
-
-        template<class T>
-        T *getPtr()
-        { return static_cast<T *>(mPtr); }
-
-        inline size_t getSize()
-        { return mSource.size; }
-
-    private:
-
-        lite3d_vbo &mSource;
-        void *mPtr;
-    };
-
     class LITE3DPP_EXPORT Mesh : public ConfigurableResource, public Noncopiable
     {
     public:
@@ -81,7 +51,7 @@ namespace lite3dpp
             typename stl<T>::vector buffer;
             if(mMesh.vertexBuffer.size > 0)
             {
-                BufferMapper lock = mapVertexBuffer(LITE3D_VBO_MAP_READ_ONLY);
+                BufferScopedMapper lock = mapVertexBuffer(LITE3D_VBO_MAP_READ_ONLY);
                 buffer.resize(lock.getSize() / sizeof(T));
 
                 memcpy(&buffer[0], lock.getPtr<void>(), buffer.size());
@@ -96,7 +66,7 @@ namespace lite3dpp
             typename stl<T>::vector buffer;
             if(mMesh.indexBuffer.size > 0)
             {
-                BufferMapper lock = mapIndexBuffer(LITE3D_VBO_MAP_READ_ONLY);
+                BufferScopedMapper lock = mapIndexBuffer(LITE3D_VBO_MAP_READ_ONLY);
                 buffer.resize(lock.getSize() / sizeof(T));
 
                 memcpy(&buffer[0], lock.getPtr<void>(), buffer.size());
@@ -124,12 +94,13 @@ namespace lite3dpp
                 LITE3D_THROW(getName() << " append mesh chunk failed..");
         }
         
-        BufferMapper mapVertexBuffer(uint16_t lockType);
-        BufferMapper mapIndexBuffer(uint16_t lockType);
+        BufferScopedMapper mapVertexBuffer(uint16_t lockType);
+        BufferScopedMapper mapIndexBuffer(uint16_t lockType);
 
     protected:
 
         void genPlain(const kmVec2 &size, bool dynamic);
+        void genBigTriangle(bool dynamic);
 
         virtual void loadFromConfigImpl(const ConfigurationReader &helper) override;
         virtual void unloadImpl() override;

@@ -21,8 +21,6 @@
 #include <lite3dpp/lite3dpp_config_reader.h>
 
 #define LITE3D_EMPTY_JSON                       "{}\0"
-#define LITE3D_EMPTY_NAMED_RESOURCE(name)       name, static_cast<const void *>(lite3dpp::ConfigurableResource::emptyJson), sizeof(LITE3D_EMPTY_JSON)
-#define LITE3D_EMPTY_RESOURCE                   static_cast<const void *>(lite3dpp::ConfigurableResource::emptyJson), sizeof(LITE3D_EMPTY_JSON)
 
 namespace lite3dpp
 {
@@ -100,7 +98,7 @@ namespace lite3dpp
     {
     public:
 
-        static const char emptyJson[];
+        static const String emptyJson;
 
         ConfigurableResource(const String &name, 
             const String &path, Main *main, ResourceType type);

@@ -28,8 +28,8 @@ namespace lite3dpp
     {
     public:
 
-        typedef stl<String, AbstractResource *>::map Resources;
-        typedef stl<String, lite3d_pack*>::map Packs;
+        typedef stl<String, std::shared_ptr<AbstractResource>>::unordered_map Resources;
+        typedef stl<String, lite3d_pack*>::unordered_map Packs;
 
         typedef struct ResourceManagerStats
         {
@@ -76,10 +76,10 @@ namespace lite3dpp
                 resName = generateResourceName();
 
             /* resource not found.. create one */
-            std::unique_ptr<T> result(new T(resName, path, mMain));
-            loadResource(resName, path, result.get());
+            std::shared_ptr<T> result(new T(resName, path, mMain));
+            loadResource(resName, path, result);
 
-            return result.release();
+            return result.get();
         }
         
         template<class T>
@@ -90,10 +90,10 @@ namespace lite3dpp
                 name = generateResourceName();
 
             /* resource not found.. create one */
-            std::unique_ptr<T> result(new T(name, "", mMain));
-            loadResource(name, data, size, result.get());
+            std::shared_ptr<T> result(new T(name, "", mMain));
+            loadResource(name, data, size, result);
 
-            return result.release();
+            return result.get();
         }
         
         template<class T>
@@ -103,15 +103,15 @@ namespace lite3dpp
         }
         
         template<class T>
-        T *queryResourceFromString(const String &data)
+        T *queryResourceFromJson(const String &json)
         {
-            return queryResource<T>("", data.data(), data.size());
+            return queryResource<T>("", json.data(), json.size());
         }
         
         template<class T>
-        T *queryResourceFromString(const String &name, const String &data)
+        T *queryResourceFromJson(const String &name, const String &json)
         {
-            return queryResource<T>(name, data.data(), data.size());
+            return queryResource<T>(name, json.data(), json.size());
         }
 
         ResourceManager(Main *main);
@@ -138,10 +138,10 @@ namespace lite3dpp
         AbstractResource *fetchResource(const String &key);
         virtual void loadResource(const String &name, 
             const String &path,
-            AbstractResource *resource);
+            std::shared_ptr<AbstractResource> resource);
         virtual void loadResource(const String &name, 
             const void *buffer, size_t size,
-            AbstractResource *resource);
+            std::shared_ptr<AbstractResource> resource);
 
     private:
 

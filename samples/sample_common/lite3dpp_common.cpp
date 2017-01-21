@@ -237,7 +237,7 @@ void Sample::updateGuiStats()
     kmVec2 textPos = {15, 20};
     kmVec4 textColor = {0.3f, 0.7f, 0.8f, 1.0f};
 
-    sprintf(strbuf, "FPS: %d\nFrame time: %f\nBatches: %d/%d\nFaces: %d",
+    sprintf(strbuf, "FPS: %d\nFrame time: %.2f ms\nBatches: %d/%d\nFaces: %d",
         stats->lastFPS, stats->lastFrameMs, stats->batchedByFrame, 
         stats->batchesTotal, stats->trianglesByFrame);
     

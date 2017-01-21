@@ -21,7 +21,7 @@
 #include <lite3dpp/lite3dpp_resource.h>
 #include <lite3dpp/lite3dpp_resource_manager.h>
 
-const char lite3dpp::ConfigurableResource::emptyJson[] = LITE3D_EMPTY_JSON;
+const lite3dpp::String lite3dpp::ConfigurableResource::emptyJson = LITE3D_EMPTY_JSON;
 
 namespace lite3dpp
 {

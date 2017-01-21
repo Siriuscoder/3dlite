@@ -26,9 +26,14 @@
 #define LITE3D_LIGHT_DIRECTIONAL        0x2
 #define LITE3D_LIGHT_SPOT               0x3
 
+/* align structure to 16 bytes texel, this ability gives us a 
+ * chance to use each kmVec4 field in this structure as a texel in 
+ * texture buffer */
+#pragma pack(push,16)
 typedef struct lite3d_light_params
 {
     /* flags.x - type */
+    /* flags.y - enabled */
     kmVec4 flags;
     /* light position */
     kmVec4 position;
@@ -50,6 +55,7 @@ typedef struct lite3d_light_params
     /* y - spot cutoff exponent */
     kmVec4 spotFactor;
 } lite3d_light_params;
+#pragma pack(pop)
 
 typedef struct lite3d_light_source
 {

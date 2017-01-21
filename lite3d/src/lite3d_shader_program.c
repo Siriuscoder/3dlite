@@ -39,7 +39,10 @@ int lite3d_shader_program_technique_init()
 int lite3d_shader_program_init(lite3d_shader_program *program)
 {
     SDL_assert(program);
-
+    
+    program->statusString = NULL;
+    program->success = 0;
+    
     lite3d_misc_gl_error_stack_clean();
     if (glIsProgram(program->programID))
     {
@@ -165,6 +168,9 @@ int32_t lite3d_shader_program_uniform_set(
 
     switch (param->type)
     {
+        case LITE3D_SHADER_PARAMETER_INT:
+            glUniform1i(location, param->parameter.valint);
+            break;
         case LITE3D_SHADER_PARAMETER_FLOAT:
             glUniform1f(location, param->parameter.valfloat);
             break;

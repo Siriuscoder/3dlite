@@ -30,6 +30,8 @@
 #define LITE3D_SHADER_PARAMETER_FLOATM3     0x4
 #define LITE3D_SHADER_PARAMETER_FLOATM4     0x5
 #define LITE3D_SHADER_PARAMETER_SAMPLER     0x6
+#define LITE3D_SHADER_PARAMETER_INT         0x7
+
 
 typedef struct lite3d_sampler
 {
@@ -45,6 +47,7 @@ typedef struct lite3d_shader_parameter
     
     union
     {
+        int32_t valint; 
         float valfloat;
         lite3d_sampler valsampler;
         kmVec3 valvec3;

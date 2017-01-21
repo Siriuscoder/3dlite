@@ -6,8 +6,6 @@
         <df name="include">
           <df name="lite3d">
             <in>lite3d_kazmath.h</in>
-            <in>lite3d_lighting.h</in>
-            <in>lite3d_tbo.h</in>
           </df>
         </df>
         <df name="src">
@@ -82,7 +80,7 @@
       <df name="lite3dpp">
         <df name="include">
           <df name="lite3dpp">
-            <in>lite3dpp_light_source.h</in>
+            <in>lite3dpp_buffer_mapper.h</in>
           </df>
         </df>
         <df name="src">
@@ -140,6 +138,7 @@
             <in>JSON.cpp</in>
             <in>JSONValue.cpp</in>
           </df>
+          <in>lite3dpp_buffer_mapper.cpp</in>
           <in>lite3dpp_camera.cpp</in>
           <in>lite3dpp_config_reader.cpp</in>
           <in>lite3dpp_config_writer.cpp</in>
@@ -166,6 +165,7 @@
           <in>lite3dpp_script_vec4.cpp</in>
           <in>lite3dpp_shader_program.cpp</in>
           <in>lite3dpp_texture.cpp</in>
+          <in>lite3dpp_texture_buffer.cpp</in>
           <in>lite3dpp_texture_render_target.cpp</in>
         </df>
       </df>
@@ -426,13 +426,6 @@
           </preprocessorList>
         </cTool>
       </folder>
-      <item path="lite3d/include/lite3d/lite3d_lighting.h"
-            ex="false"
-            tool="3"
-            flavor2="0">
-      </item>
-      <item path="lite3d/include/lite3d/lite3d_tbo.h" ex="false" tool="3" flavor2="0">
-      </item>
       <item path="lite3d/src/7zdec/7zBuf.c" ex="false" tool="0" flavor2="3">
         <cTool flags="3">
         </cTool>
@@ -652,7 +645,7 @@
         <cTool flags="3">
         </cTool>
       </item>
-      <item path="lite3d/src/lite3d_tbo.c" ex="false" tool="0" flavor2="0">
+      <item path="lite3d/src/lite3d_tbo.c" ex="false" tool="0" flavor2="2">
       </item>
       <item path="lite3d/src/lite3d_texture_unit.c" ex="false" tool="0" flavor2="3">
         <cTool flags="3">
@@ -674,7 +667,7 @@
         <cTool flags="3">
         </cTool>
       </item>
-      <item path="lite3dpp/include/lite3dpp/lite3dpp_light_source.h"
+      <item path="lite3dpp/include/lite3dpp/lite3dpp_buffer_mapper.h"
             ex="false"
             tool="3"
             flavor2="0">
@@ -943,6 +936,11 @@
         <ccTool flags="1">
         </ccTool>
       </item>
+      <item path="lite3dpp/src/lite3dpp_buffer_mapper.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
       <item path="lite3dpp/src/lite3dpp_camera.cpp" ex="false" tool="1" flavor2="8">
         <ccTool flags="1">
         </ccTool>
@@ -964,7 +962,7 @@
       <item path="lite3dpp/src/lite3dpp_light_source.cpp"
             ex="false"
             tool="1"
-            flavor2="0">
+            flavor2="4">
       </item>
       <item path="lite3dpp/src/lite3dpp_main.cpp" ex="false" tool="1" flavor2="8">
         <ccTool flags="1">
@@ -1096,6 +1094,13 @@
         </ccTool>
       </item>
       <item path="lite3dpp/src/lite3dpp_texture.cpp" ex="false" tool="1" flavor2="8">
+        <ccTool flags="1">
+        </ccTool>
+      </item>
+      <item path="lite3dpp/src/lite3dpp_texture_buffer.cpp"
+            ex="false"
+            tool="1"
+            flavor2="8">
         <ccTool flags="1">
         </ccTool>
       </item>

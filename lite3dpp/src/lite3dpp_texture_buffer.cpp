@@ -148,6 +148,11 @@ namespace lite3dpp
         getData(mTexelsBackup, 0, textureBufferSize());
         Texture::unloadImpl();
     }
+    
+    uint8_t TextureBuffer::getTexelSize()
+    {
+        return lite3d_texture_buffer_texel_size(mTexture.texFormat);
+    }
 
     size_t TextureBuffer::textureBufferSize()
     {
@@ -183,6 +188,7 @@ namespace lite3dpp
     {
         if (getState() != AbstractResource::LOADED)
             LITE3D_THROW(getName() << " resource unavailable");
+        
         if (size > 0)
         {
             if ((offset + size) > textureBufferSize())
@@ -201,10 +207,14 @@ namespace lite3dpp
     {
         if (getState() != AbstractResource::LOADED)
             LITE3D_THROW(getName() << " resource unavailable");
-        if ((offset + size) > textureBufferSize())
-            LITE3D_THROW(getName() << " requested size too big");
-        if (!lite3d_texture_buffer_get(&mTexture, buffer, offset, size))
-            LITE3D_THROW(getName() << " operation failed");
+        
+        if (size > 0)
+        {
+            if ((offset + size) > textureBufferSize())
+                LITE3D_THROW(getName() << " requested size too big");
+            if (!lite3d_texture_buffer_get(&mTexture, buffer, offset, size))
+                LITE3D_THROW(getName() << " operation failed");
+        }
     }
 
     void TextureBuffer::getData(PixelsData &buffer, size_t offset, size_t size)
@@ -214,6 +224,16 @@ namespace lite3dpp
             buffer.resize(size);
             getData(&buffer[0], offset, size);
         }
+    }
+    
+    BufferScopedMapper TextureBuffer::map(uint16_t lockType)
+    {
+        if (getState() != AbstractResource::LOADED)
+            LITE3D_THROW(getName() << " resource unavailable");
+        
+        BufferScopedMapper mapper(mTexture.tbo, lockType);
+        /* move constructor is a great power! */
+        return mapper;
     }
 }
 

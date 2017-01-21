@@ -25,31 +25,6 @@
 
 namespace lite3dpp
 {
-    BufferMapper::BufferMapper(lite3d_vbo &source, uint16_t lockType) : 
-        mSource(source)
-    {
-        if((mPtr = lite3d_vbo_map(&source, lockType)) == NULL)
-            LITE3D_THROW("vertex buffer map failed..");
-    }
-
-    BufferMapper::BufferMapper(const BufferMapper &other) :
-        mSource(other.mSource),
-        mPtr(other.mPtr)
-    {}
-
-    BufferMapper::BufferMapper(BufferMapper &&other) : 
-        mSource(other.mSource),
-        mPtr(other.mPtr)
-    {
-        other.mPtr = NULL;
-    }
-
-    BufferMapper::~BufferMapper()
-    {
-        if(mPtr)
-            lite3d_vbo_unmap(&mSource);
-    }
-
     Mesh::Mesh(const String &name, 
         const String &path, Main *main) : 
         ConfigurableResource(name, path, main, AbstractResource::MESH)
@@ -69,6 +44,10 @@ namespace lite3dpp
         if(helper.getString(L"Model") == "Plain")
         {
             genPlain(helper.getVec2(L"PlainSize"), helper.getBool(L"Dynamic", false));
+        }
+        else if(helper.getString(L"Model") == "BigTriangle")
+        {
+            genBigTriangle(helper.getBool(L"Dynamic", false));
         }
         else if(helper.getString(L"Codec", "m") == "m")
         {
@@ -143,18 +122,18 @@ namespace lite3dpp
         mMaterialMapping[unit] = material;
     }
 
-    BufferMapper Mesh::mapVertexBuffer(uint16_t lockType)
+    BufferScopedMapper Mesh::mapVertexBuffer(uint16_t lockType)
     {
         if(mMesh.vertexBuffer.size > 0)
-            return BufferMapper(mMesh.vertexBuffer, lockType);
+            return BufferScopedMapper(mMesh.vertexBuffer, lockType);
 
         LITE3D_THROW(getName() << " Could`t map vertex buffer.. it is empty..");
     }
 
-    BufferMapper Mesh::mapIndexBuffer(uint16_t lockType)
+    BufferScopedMapper Mesh::mapIndexBuffer(uint16_t lockType)
     {
         if(mMesh.indexBuffer.size > 0)
-            return BufferMapper(mMesh.indexBuffer, lockType);
+            return BufferScopedMapper(mMesh.indexBuffer, lockType);
 
         LITE3D_THROW(getName() << " Could`t map vertex buffer.. it is empty..");
     }
@@ -179,6 +158,26 @@ namespace lite3dpp
 
         if (!lite3d_mesh_load_from_memory(&mMesh, vertices, 6, layout, 2, dynamic ? LITE3D_VBO_DYNAMIC_DRAW : LITE3D_VBO_STATIC_DRAW))
             LITE3D_THROW("Plain generation failed");
+
+        lite3d_mesh_chunk *meshChunk = LITE3D_MEMBERCAST(lite3d_mesh_chunk, lite3d_list_last_link(&mMesh.chunks), node);
+        lite3d_bouding_vol_setup(&meshChunk->boudingVol, &vmin, &vmax);
+    }
+    
+    void Mesh::genBigTriangle(bool dynamic)
+    {
+        kmVec3 vmax = {2, 2, 0}, vmin = {0, 0, 0};
+        const float vertices[] = {
+            0.0f, 0.0f,
+            2.0f, 0.0f,
+            0.0f, 2.0f
+        };
+
+        const lite3d_mesh_layout layout[] = {
+            { LITE3D_BUFFER_BINDING_ATTRIBUTE, 2}
+        };
+
+        if (!lite3d_mesh_load_from_memory(&mMesh, vertices, 3, layout, 1, dynamic ? LITE3D_VBO_DYNAMIC_DRAW : LITE3D_VBO_STATIC_DRAW))
+            LITE3D_THROW("BigTriangle generation failed");
 
         lite3d_mesh_chunk *meshChunk = LITE3D_MEMBERCAST(lite3d_mesh_chunk, lite3d_list_last_link(&mMesh.chunks), node);
         lite3d_bouding_vol_setup(&meshChunk->boudingVol, &vmin, &vmax);

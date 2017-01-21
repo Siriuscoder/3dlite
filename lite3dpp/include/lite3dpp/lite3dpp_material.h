@@ -52,6 +52,7 @@ namespace lite3dpp
         void setPassBlendMode(uint16_t pass, bool blendEnable, uint8_t mode);
         /* if pass == 0 parameter will be used for all passes */
         void setFloatParameter(uint16_t pass, const String &name, float value, bool isGlobal);
+        void setIntParameter(uint16_t pass, const String &name, int32_t value, bool isGlobal);
         void setFloatv3Parameter(uint16_t pass, const String &name, const kmVec3 &value, bool isGlobal = false);
         void setFloatv4Parameter(uint16_t pass, const String &name, const kmVec4 &value, bool isGlobal = false);
         void setFloatm3Parameter(uint16_t pass, const String &name, const kmMat3 &value, bool isGlobal = false);
@@ -60,6 +61,7 @@ namespace lite3dpp
         
         ShaderProgram *getPassProgram(uint16_t pass) const;
         float getFloatParameter(const String &name) const;
+        int32_t getIntParameter(const String &name) const;
         kmVec3 getFloatv3Parameter(const String &name) const;
         kmVec4 getFloatv4Parameter(const String &name) const;
         kmMat3 getFloatm3Parameter(const String &name) const;
@@ -67,6 +69,7 @@ namespace lite3dpp
         Texture *getSamplerTextureParameter(const String &name) const;
         
         static void setFloatGlobalParameter(const String &name, float value);
+        static void setIntGlobalParameter(const String &name, int32_t value);
         static void setFloatv3GlobalParameter(const String &name, const kmVec3 &value);
         static void setFloatv4GlobalParameter(const String &name, const kmVec4 &value);
         static void setFloatm3GlobalParameter(const String &name, const kmMat3 &value);
@@ -74,6 +77,7 @@ namespace lite3dpp
         static void setSamplerTextureGlobalParameter(const String &name, Texture *texture);
         
         static float getFloatGlobalParameter(const String &name);
+        static int32_t getIntGlobalParameter(const String &name);
         static kmVec3 getFloatv3GlobalParameter(const String &name);
         static kmVec4 getFloatv4GlobalParameter(const String &name);
         static kmMat3 getFloatm3GlobalParameter(const String &name);
@@ -96,6 +100,7 @@ namespace lite3dpp
             uint8_t type);
 
         static float getFloatParameterFromMap(const String &name, const String &matName, const MaterialParameters &params);
+        static int32_t getIntParameterFromMap(const String &name, const String &matName, const MaterialParameters &params);
         static kmVec3 getFloatv3ParameterFromMap(const String &name, const String &matName, const MaterialParameters &params);
         static kmVec4 getFloatv4ParameterFromMap(const String &name, const String &matName, const MaterialParameters &params);
         static kmMat3 getFloatm3ParameterFromMap(const String &name, const String &matName, const MaterialParameters &params);

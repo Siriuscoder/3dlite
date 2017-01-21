@@ -48,12 +48,13 @@ namespace lite3dpp
 
         setupObjects(helper.getObjects(L"Objects"), NULL);
         setupCameras(helper.getObjects(L"Cameras"));
+        setupLights(helper.getObjects(L"Lights"));
         
         try
         {
             /* default name of lighting buffer is scene name + "LightingBufferObject" */
             mLightingTextureBuffer = mMain->getResourceManager()->
-                queryResourceFromString<TextureBuffer>(getName() + "LightingBufferObject",
+                queryResourceFromJson<TextureBuffer>(getName() + "_lightingBufferObject",
                 "{\"BufferFormat\": \"RGBA32F\"}");
             setupLights(helper.getObjects(L"Lights"));
         }
@@ -68,6 +69,7 @@ namespace lite3dpp
     {
         removeAllCameras();
         removeAllObjects();
+        removeAllLights();
         lite3d_scene_purge(&mScene);
     }
 
@@ -189,7 +191,6 @@ namespace lite3dpp
             lite3d_scene_remove_node(&mScene, &light.second->getPtr()->lightNode);
         });
 
-        rebuildLightingBuffer();
         mLights.clear();
     }
     
@@ -204,7 +205,35 @@ namespace lite3dpp
     
     void Scene::rebuildLightingBuffer()
     {
+        uint32_t i = 0;
+        for (auto &light : mLights)
+        {
+            /* extend if needed */
+            if (mLightingTextureBuffer->textureBufferSize() < ((i+1) * sizeof(lite3d_light_params)))
+            {
+                mLightingTextureBuffer->extendTextureBuffer(sizeof(lite3d_light_params) / 
+                    mLightingTextureBuffer->getTexelSize());
+            }
+            
+            mLightingTextureBuffer->setElement<lite3d_light_params>(i, &light.second->getPtr()->params);
+            light.second->validate();
+            light.second->index(i++);
+        }
         
+        Material::setIntGlobalParameter(getName() + "_numLights", i);
+    }
+    
+    void Scene::validateLightingBuffer()
+    {
+        for (auto &light : mLights)
+        {
+            if (light.second->isUpdated())
+            {
+                mLightingTextureBuffer->setElement<lite3d_light_params>(light.second->index(), 
+                    &light.second->getPtr()->params);
+                light.second->validate();
+            }
+        }      
     }
 
     void Scene::setupObjects(const stl<ConfigurationReader>::vector &objects, SceneObject *base)
@@ -276,7 +305,22 @@ namespace lite3dpp
     
     void Scene::setupLights(const stl<ConfigurationReader>::vector &lights)
     {
-        
+        for(const ConfigurationReader &lightJson : lights)
+        {
+            LightSource *light = addLightSource(lightJson.getString(L"Name"));
+            
+            String lightType = lightJson.getString(L"Type", "Point");
+            light->setType(lightType == "Directional" ? LITE3D_LIGHT_DIRECTIONAL : 
+                (lightType == "Spot" ? LITE3D_LIGHT_SPOT : LITE3D_LIGHT_POINT));
+            
+            light->setPosition(lightJson.getVec3(L"Position"));
+            light->setSpotDirection(lightJson.getVec3(L"SpotDirection"));        
+            light->setSpotFactor(lightJson.getVec4(L"SpotFactor"));
+            light->setAmbient(lightJson.getVec4(L"Ambient"));
+            light->setDiffuse(lightJson.getVec4(L"Diffuse"));
+            light->setSpecular(lightJson.getVec4(L"Specular"));
+            light->setAttenuation(lightJson.getVec4(L"Attenuation"));
+        }
     }
 
     void Scene::beginDrawBatch(struct lite3d_scene *scene, 
@@ -359,6 +403,8 @@ namespace lite3dpp
 
         try
         {
+            reinterpret_cast<Scene *>(scene->userdata)->validateLightingBuffer();
+            
             LITE3D_EXT_OBSERVER_NOTIFY_2(reinterpret_cast<Scene *>(scene->userdata), beginSceneRender, 
                 reinterpret_cast<Scene *>(scene->userdata),
                 reinterpret_cast<Camera *>(camera->userdata));

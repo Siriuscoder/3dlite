@@ -23,6 +23,7 @@
 #include <lite3dpp/lite3dpp_config_reader.h>
 #include <lite3dpp/lite3dpp_resource.h>
 #include <lite3dpp/lite3dpp_texture.h>
+#include <lite3dpp/lite3dpp_buffer_mapper.h>
 
 namespace lite3dpp
 {
@@ -36,11 +37,30 @@ namespace lite3dpp
 
         size_t textureBufferSize();
         size_t textureBufferTexelsCount();
+        uint8_t getTexelSize();
         void extendTextureBuffer(size_t texelsCount);
         void setData(const void *buffer, size_t offset, size_t size);
         void setData(const PixelsData &buffer, size_t offset);
         void getData(void *buffer, size_t offset, size_t size);
         void getData(PixelsData &buffer, size_t offset, size_t size);
+        
+        BufferScopedMapper map(uint16_t lockType);
+        
+        /* type align must be related with texel size */
+        template<class T>
+        T *getElement(uint32_t index, T *elem)
+        {
+            size_t offset = index * sizeof(T);
+            getData(elem, offset, sizeof(T));
+            return elem;
+        }
+        
+        template<class T>
+        void setElement(uint32_t index, const T *elem)
+        {
+            size_t offset = index * sizeof(T);
+            setData(elem, offset, sizeof(T));
+        }
 
     protected:
 

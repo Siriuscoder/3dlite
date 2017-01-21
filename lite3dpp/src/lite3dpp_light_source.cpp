@@ -25,10 +25,74 @@ namespace lite3dpp
         mMain(main)
     {
         memset(&mLightSource, 0, sizeof(mLightSource));
+        lite3d_scene_node_init(&mLightSource.lightNode);
         mLightSource.userdata = this;
+        /* enabled by default */
+        mLightSource.params.flags.y = 1;
     }
     
     LightSource::~LightSource()
     {}
+    
+    void LightSource::setType(uint8_t t)
+    {
+        mLightSource.params.flags.x = t;
+        mUpdated = true;
+    }
+    
+    void LightSource::enabled(bool f)
+    {
+        mLightSource.params.flags.y = f ? 1 : 0;
+        mUpdated = true;  
+    }
+    
+    void LightSource::setPosition(const kmVec3 &v)
+    {
+        mLightSource.params.position.x = v.x;
+        mLightSource.params.position.y = v.y;
+        mLightSource.params.position.z = v.z;
+
+        lite3d_scene_node_set_position(&mLightSource.lightNode, &v);
+        mUpdated = true;    
+    }
+    
+    void LightSource::setSpotDirection(const kmVec3 &v)
+    {
+        mLightSource.params.spotDirection.x = v.x;
+        mLightSource.params.spotDirection.y = v.y;
+        mLightSource.params.spotDirection.z = v.z;
+
+        mUpdated = true;           
+    }
+    
+    void LightSource::setAmbient(const kmVec4 &v)
+    {
+        mLightSource.params.ambient = v;
+        mUpdated = true;      
+    }
+    
+    void LightSource::setDiffuse(const kmVec4 &v)
+    {
+        mLightSource.params.diffuse = v;
+        mUpdated = true;   
+    }
+    
+    void LightSource::setSpecular(const kmVec4 &v)
+    {
+        mLightSource.params.specular = v;
+        mUpdated = true;   
+    }
+    
+    void LightSource::setAttenuation(const kmVec4 &v)
+    {
+        mLightSource.params.attenuation = v;
+        mUpdated = true;   
+    }
+    
+    void LightSource::setSpotFactor(const kmVec4 &v)
+    {
+        mLightSource.params.spotFactor = v;
+        mUpdated = true;   
+    }
 }
 
