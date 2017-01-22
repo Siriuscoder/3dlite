@@ -37,11 +37,25 @@ $ make all
 ```
 You can use cmake to generate Visual Studio projects on windows.
 
-Screenshots
+Samples
 ---------
+After successfully compiling you can find some samples in bin directory. To provide samples work correctly you must download 
+resources pack [vault.pkg](https://cloud.mail.ru/public/KSNq/1d49nsShF) and put it to media/vault/packs also 
+[sponza.pkg](https://cloud.mail.ru/public/5spg/Efb3FLsRL) to media/samples/packs/
+
+Screenshots
+-----------
 ![](/media/screenshots/robots.png "Robots")
+![](/media/screenshots/robots1.png "Robots")
 ![](/media/screenshots/sponza.png "Sponza")
+![](/media/screenshots/sponza1.png "Sponza")
+![](/media/screenshots/sponza2.png "Sponza")
 ![](/media/screenshots/vault.png "Vault")
+![](/media/screenshots/vault1.png "Vault")
+![](/media/screenshots/vault2.png "Vault")
+![](/media/screenshots/vault3.png "Vault")
+![](/media/screenshots/vault4.png "Vault")
 
 ***
+Check branch work to fetch recent changes =)
 > Copyright © 2014-2016 Nikita Korolev (Sirius)
