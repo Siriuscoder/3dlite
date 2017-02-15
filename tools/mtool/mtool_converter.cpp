@@ -78,7 +78,9 @@ void ConverterCommand::entry_on_light(const char *lightName,
     const kmMat4 *transform,
     void *userdata)
 {
-
+    SDL_assert(userdata);
+    ConverterCommand *command = static_cast<ConverterCommand *>(userdata);
+    command->mGenerator->generateLight(lightName, params);
 }
 
 ConverterCommand::ConverterCommand() : 

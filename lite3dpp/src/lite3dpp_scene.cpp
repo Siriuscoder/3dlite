@@ -118,7 +118,7 @@ namespace lite3dpp
         if(mObjects.find(name) != mObjects.end())
             LITE3D_THROW(name << " make object failed.. already exist");
 
-        std::shared_ptr<SceneObject> sceneObject = std::make_shared<SceneObject>(name, parent, mMain);
+        SceneObject::Ptr sceneObject = createObject(name, parent);
         sceneObject->loadFromTemplate(templatePath);
         sceneObject->addToScene(this);
         mObjects.insert(std::make_pair(name, sceneObject));
@@ -154,7 +154,7 @@ namespace lite3dpp
         mObjects.erase(it);
     }
     
-    SceneNode *Scene::addLightNode(SceneNode *light)
+    LightSceneNode *Scene::addLightNode(LightSceneNode *light)
     {
         Lights::iterator it = mLights.find(light->getName());
         if(it != mLights.end())
@@ -183,7 +183,7 @@ namespace lite3dpp
         rebuildLightingBuffer();
     }
     
-    SceneNode *Scene::getLightNode(const String &name) const
+    LightSceneNode *Scene::getLightNode(const String &name) const
     {
         Lights::const_iterator it;
         if((it = mLights.find(name)) != mLights.end())
@@ -223,6 +223,11 @@ namespace lite3dpp
                 light.second->getLight()->validate();
             }
         }      
+    }
+    
+    SceneObject::Ptr Scene::createObject(const String &name, SceneObject *parent)
+    {
+        return std::shared_ptr<SceneObject>(new SceneObject(name, parent, mMain));
     }
 
     void Scene::setupObjects(const stl<ConfigurationReader>::vector &objects, SceneObject *base)

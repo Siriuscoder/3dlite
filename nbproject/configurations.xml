@@ -78,11 +78,6 @@
         </df>
       </df>
       <df name="lite3dpp">
-        <df name="include">
-          <df name="lite3dpp">
-            <in>lite3dpp_buffer_mapper.h</in>
-          </df>
-        </df>
         <df name="src">
           <df name="as">
             <in>as_atomic.cpp</in>
@@ -184,6 +179,9 @@
         </df>
         <df name="sample_common">
           <in>lite3dpp_common.cpp</in>
+        </df>
+        <df name="sample_deferred_shading">
+          <in>lite3dpp_main.cpp</in>
         </df>
         <df name="sample_dynamic_cube">
           <in>lite3dpp_dynamic_cube.cpp</in>
@@ -667,11 +665,6 @@
         <cTool flags="3">
         </cTool>
       </item>
-      <item path="lite3dpp/include/lite3dpp/lite3dpp_buffer_mapper.h"
-            ex="false"
-            tool="3"
-            flavor2="0">
-      </item>
       <item path="lite3dpp/src/as/as_atomic.cpp" ex="false" tool="1" flavor2="8">
         <ccTool flags="1">
         </ccTool>
@@ -939,7 +932,7 @@
       <item path="lite3dpp/src/lite3dpp_buffer_mapper.cpp"
             ex="false"
             tool="1"
-            flavor2="0">
+            flavor2="4">
       </item>
       <item path="lite3dpp/src/lite3dpp_camera.cpp" ex="false" tool="1" flavor2="8">
         <ccTool flags="1">
@@ -1142,6 +1135,13 @@
         </ccTool>
       </item>
       <item path="samples/sample_common/lite3dpp_common.cpp"
+            ex="false"
+            tool="1"
+            flavor2="8">
+        <ccTool flags="0">
+        </ccTool>
+      </item>
+      <item path="samples/sample_deferred_shading/lite3dpp_main.cpp"
             ex="false"
             tool="1"
             flavor2="8">

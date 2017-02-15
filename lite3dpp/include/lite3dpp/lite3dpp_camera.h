@@ -27,6 +27,8 @@ namespace lite3dpp
     class LITE3DPP_EXPORT Camera : public Noncopiable, public Manageable
     {
     public:
+        
+        typedef std::shared_ptr<Camera> Ptr;
 
         Camera(const String &name, Main *main);
         ~Camera();

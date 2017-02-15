@@ -30,7 +30,8 @@ namespace lite3dpp
     {
     public:
 
-        typedef stl<String, SceneNode*>::map Nodes;
+        typedef std::shared_ptr<SceneObject> Ptr;
+        typedef stl<String, SceneNode::Ptr>::map Nodes;
 
         SceneObject(const String &name, 
             SceneObject *parent, Main *main);
@@ -39,9 +40,9 @@ namespace lite3dpp
         inline const Nodes &getNodes() const
         { return mNodes; }
         inline SceneNode *getRoot()
-        { return mObjectRoot; }
+        { return mObjectRoot.get(); }
         inline const SceneNode *getRoot() const
-        { return mObjectRoot; }
+        { return mObjectRoot.get(); }
         inline const String &getName() const 
         { return mName; }
 
@@ -57,6 +58,10 @@ namespace lite3dpp
 
         void disable();
         void enable();
+        
+    protected:
+        
+        virtual SceneNode::Ptr createNode(const ConfigurationReader &nodeconf, SceneNode *base);
 
     private:
 
@@ -66,7 +71,7 @@ namespace lite3dpp
 
         String mName;
         Nodes mNodes;
-        SceneNode *mObjectRoot;
+        SceneNode::Ptr mObjectRoot;
         SceneObject *mParent;
         Main *mMain;
         Scene *mScene;

@@ -15,7 +15,9 @@
  *	You should have received a copy of the GNU General Public License
  *	along with Lite3D.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
+#include <string.h>
 #include <SDL_assert.h>
+
 #include <lite3dpp/lite3dpp_light_source.h>
 
 namespace lite3dpp

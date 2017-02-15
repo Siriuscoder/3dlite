@@ -28,7 +28,6 @@ namespace lite3dpp
     SceneObject::SceneObject(const String &name, 
         SceneObject *parent, Main *main) : 
         mName(name),
-        mObjectRoot(NULL),
         mParent(parent),
         mMain(main),
         mScene(NULL),
@@ -36,14 +35,7 @@ namespace lite3dpp
     {}
 
     SceneObject::~SceneObject()
-    {
-        std::for_each(mNodes.begin(), mNodes.end(), [] (Nodes::value_type &node)
-        {
-            delete node.second;
-        });
-
-        mNodes.clear();
-    }
+    {}
 
     void SceneObject::loadFromTemplate(const String &templatePath)
     {
@@ -55,8 +47,8 @@ namespace lite3dpp
         if(rootNodeHelper.isEmpty())
             return;
 
-        mObjectRoot = new SceneNode(rootNodeHelper, mParent ? mParent->getRoot() : NULL, mMain);
-        setupNodes(rootNodeHelper.getObjects(L"Nodes"), mObjectRoot);
+        mObjectRoot = createNode(rootNodeHelper, mParent ? mParent->getRoot() : NULL);
+        setupNodes(rootNodeHelper.getObjects(L"Nodes"), mObjectRoot.get());
     }
 
     void SceneObject::setupNodes(const stl<ConfigurationReader>::vector &nodesRange, SceneNode *base)
@@ -66,21 +58,21 @@ namespace lite3dpp
             if(nodeHelper.isEmpty())
                 continue;
 
-            SceneNode *sceneNode = new SceneNode(nodeHelper, base, mMain);
+            SceneNode::Ptr sceneNode = createNode(nodeHelper, base);
             /* create and initialize new node then store it */
-            mNodes.insert(std::make_pair(nodeHelper.getString(L"Name"),
+            mNodes.insert(std::make_pair(sceneNode->getName(),
                 sceneNode));
 
             stl<ConfigurationReader>::vector nodesSubRange = nodeHelper.getObjects(L"Nodes");
             if(nodesSubRange.size() > 0)
-                setupNodes(nodesSubRange, sceneNode);
+                setupNodes(nodesSubRange, sceneNode.get());
         }
     }
 
     SceneNode *SceneObject::getNode(const String &name)
     {
         Nodes::iterator it = mNodes.find(name);
-        return it == mNodes.end() ? NULL : it->second; 
+        return it == mNodes.end() ? NULL : it->second.get(); 
     }
 
     void SceneObject::addToScene(Scene *scene)
@@ -133,6 +125,16 @@ namespace lite3dpp
         }
 
         mObjectRoot->getPtr()->enabled = LITE3D_TRUE;
+    }
+    
+    SceneNode::Ptr SceneObject::createNode(const ConfigurationReader &nodeconf, SceneNode *base)
+    {
+        if (nodeconf.has(L"Mesh"))
+            return std::shared_ptr<MeshSceneNode>(new MeshSceneNode(nodeconf, base, mMain));
+        else if (nodeconf.has(L"Mesh"))
+            return std::shared_ptr<LightSceneNode>(new LightSceneNode(nodeconf, base, mMain));
+        
+        return std::shared_ptr<SceneNode>(new SceneNode(nodeconf, base, mMain));
     }
 }
 

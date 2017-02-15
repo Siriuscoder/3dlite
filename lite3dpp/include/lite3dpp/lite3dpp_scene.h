@@ -33,9 +33,9 @@ namespace lite3dpp
     {
     public:
 
-        typedef stl<String, std::shared_ptr<Camera>>::map Cameras;
-        typedef stl<String, std::shared_ptr<SceneObject>>::map Objects;
-        typedef stl<String, SceneNode *>::map Lights;
+        typedef stl<String, Camera::Ptr>::map Cameras;
+        typedef stl<String, SceneObject::Ptr>::map Objects;
+        typedef stl<String, LightSceneNode *>::map Lights;
 
 
         Scene(const String &name, 
@@ -56,8 +56,8 @@ namespace lite3dpp
         void removeAllObjects();
         void removeObject(const String &name);
         
-        SceneNode *addLightNode(SceneNode *light);
-        SceneNode *getLightNode(const String &name) const;
+        LightSceneNode *addLightNode(LightSceneNode *light);
+        LightSceneNode *getLightNode(const String &name) const;
         void removeLight(const String &name);
         void removeAllLights();
 
@@ -68,6 +68,8 @@ namespace lite3dpp
             
         void rebuildLightingBuffer();
         void validateLightingBuffer();
+        
+        virtual SceneObject::Ptr createObject(const String &name, SceneObject *parent);
 
     private:
 
