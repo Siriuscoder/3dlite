@@ -1,6 +1,6 @@
 /******************************************************************************
  *	This file is part of lite3d (Light-weight 3d engine).
- *	Copyright (C) 2016  Sirius (Korolev Nikita)
+ *	Copyright (C) 2017  Sirius (Korolev Nikita)
  *
  *	Lite3D is free software: you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
 namespace lite3dpp {
 namespace samples {
 
-class DefferedShadingSample : public Sample
+class DeferredShadingSample : public Sample
 {
 public:
 
@@ -42,7 +42,7 @@ public:
 
 int main(int agrc, char *args[])
 {
-    lite3dpp::samples::DefferedShadingSample sample;
+    lite3dpp::samples::DeferredShadingSample sample;
     return sample.start("vault/config/config_vault.json");
 }
 
