@@ -54,23 +54,31 @@ void ConverterCommand::entry_level_pop(void *userdata)
 }
 
 void ConverterCommand::entry_on_material(const char *matName, 
-        uint32_t matIndex,
-        const kmVec4 *ambient,
-        const kmVec4 *diffuse,
-        const kmVec4 *specular,
-        const kmVec4 *emissive,
-        const kmVec4 *reflective,
-        const kmVec4 *transparent,
-        const char *diffuseTextureFile,
-        const char *normalTextureFile,
-        const char *reflectionTextureFile,
-        void *userdata)
+    uint32_t matIndex,
+    const kmVec4 *ambient,
+    const kmVec4 *diffuse,
+    const kmVec4 *specular,
+    const kmVec4 *emissive,
+    const kmVec4 *reflective,
+    const kmVec4 *transparent,
+    const char *diffuseTextureFile,
+    const char *normalTextureFile,
+    const char *reflectionTextureFile,
+    void *userdata)
 {
     SDL_assert(userdata);
     ConverterCommand *command = static_cast<ConverterCommand *>(userdata);
     command->mGenerator->generateMaterial(matName, matIndex, ambient, diffuse, specular,
         emissive, reflective, transparent, diffuseTextureFile, normalTextureFile,
         reflectionTextureFile);
+}
+
+void ConverterCommand::entry_on_light(const char *lightName,
+    const lite3d_light_params *params,
+    const kmMat4 *transform,
+    void *userdata)
+{
+
 }
 
 ConverterCommand::ConverterCommand() : 
@@ -96,6 +104,7 @@ void ConverterCommand::runImpl()
     ctx.onLevelPush = entry_level_push;
     ctx.onLevelPop = entry_level_pop;
     ctx.onMaterial = entry_on_material;
+    ctx.onLight = entry_on_light;
     ctx.userdata = this;
 
     if(mGenerateJson)

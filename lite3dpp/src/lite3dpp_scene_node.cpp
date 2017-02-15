@@ -64,6 +64,25 @@ namespace lite3dpp
                     matMap.getObject(L"Material").getString(L"Material")));
             }
         }
+
+        /* setup object lighting */
+        auto lightHelper = json.getObject(L"Light");
+        if (!lightHelper.isEmpty())
+        {
+            mLight.reset(new LightSource(lightHelper.getString(L"Name"), main));
+
+            String lightType = lightHelper.getString(L"Type", "Point");
+            mLight->setType(lightType == "Directional" ? LITE3D_LIGHT_DIRECTIONAL : 
+                (lightType == "Spot" ? LITE3D_LIGHT_SPOT : LITE3D_LIGHT_POINT));
+            
+            mLight->setPosition(lightHelper.getVec3(L"Position"));
+            mLight->setSpotDirection(lightHelper.getVec3(L"SpotDirection"));        
+            mLight->setSpotFactor(lightHelper.getVec4(L"SpotFactor"));
+            mLight->setAmbient(lightHelper.getVec4(L"Ambient"));
+            mLight->setDiffuse(lightHelper.getVec4(L"Diffuse"));
+            mLight->setSpecular(lightHelper.getVec4(L"Specular"));
+            mLight->setAttenuation(lightHelper.getVec4(L"Attenuation"));
+        }
         
         instances(json.getInt(L"Instances", 1));
         frustumTest(json.getBool(L"FrustumTest", true));
@@ -140,11 +159,16 @@ namespace lite3dpp
                 lite3d_mesh_chunk_get_by_index(mMesh->getPtr(), material.first), material.second->getPtr(), mInstances))
                 LITE3D_THROW("Linking node failed..");
         }
+
+        if (mLight) 
+            scene->addLightNode(this);
     }
 
     void SceneNode::removeFromScene(Scene *scene)
     {
         lite3d_scene_remove_node(scene->getPtr(), &mNode);
+        if (mLight) 
+            scene->removeLight(mName);
     }
 }
 

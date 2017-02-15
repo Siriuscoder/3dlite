@@ -74,6 +74,10 @@ void NullGenerator::generateMaterial(const lite3dpp::String &name,
     const char *reflectionTextureFile)
 {}
 
+void NullGenerator::generateLight(const lite3dpp::String &lightName,
+    const lite3d_light_params *params)
+{}
+
 JsonGenerator::JsonGenerator(const GeneratorOptions &options) :
     Generator(options),
     mNodeCounter(0)
@@ -128,6 +132,36 @@ void JsonGenerator::generateNode(const lite3d_mesh *mesh, const lite3dpp::String
 
     generatePositionRotation(nodeConfig, transform);
     mNodesStack.top().push_back(nodeConfig);
+}
+
+void JsonGenerator::generateLight(const lite3dpp::String &lightName,
+    const lite3d_light_params *params)
+{
+    if (mNodesStack.size() > 0 && mNodesStack.top().size() > 0)
+    {
+        auto &lastNode = mNodesStack.top().back();
+        lite3dpp::ConfigurationWriter liConfig;
+        
+        if (params->flags.x == LITE3D_LIGHT_POINT)
+            liConfig.set(L"Type", "Point");
+        else if (params->flags.x == LITE3D_LIGHT_DIRECTIONAL)
+            liConfig.set(L"Type", "Directional");
+        else if (params->flags.x == LITE3D_LIGHT_SPOT)
+            liConfig.set(L"Type", "Spot");
+        else
+            liConfig.set(L"Type", "Undefined");
+
+        liConfig.set(L"Name", lightName);
+        liConfig.set(L"Ambient", params->ambient);
+        liConfig.set(L"Diffuse", params->diffuse);
+        liConfig.set(L"Specular", params->specular);
+        liConfig.set(L"Attenuation", params->attenuation);
+        liConfig.set(L"Position", params->position);
+        liConfig.set(L"SpotDirection", params->spotDirection);
+        liConfig.set(L"SpotFactor", params->spotFactor);
+
+        lastNode.set(L"Light", liConfig);
+    }
 }
 
 void JsonGenerator::pushNodeTree()

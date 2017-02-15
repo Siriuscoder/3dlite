@@ -50,7 +50,7 @@ namespace lite3dpp
         void addToScene(Scene *scene);
         void removeFromScene(Scene *scene);
 
-        void loadFromTemplate(const ConfigurationReader &helper);
+        void loadFromTemplate(const String &templatePath);
 
         inline bool isEnabled() 
         { return mEnabled; }
@@ -71,6 +71,7 @@ namespace lite3dpp
         Main *mMain;
         Scene *mScene;
         bool mEnabled;
+        std::unique_ptr<ConfigurationReader> mConfiguration;
     };
 }
 

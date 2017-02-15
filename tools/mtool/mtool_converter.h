@@ -49,6 +49,10 @@ private:
         const char *normalTextureFile,
         const char *reflectionTextureFile,
         void *userdata);
+    static void entry_on_light(const char *lightName,
+        const lite3d_light_params *params,
+        const kmMat4 *transform,
+        void *userdata);
 
     void processMesh(lite3d_mesh *mesh, const kmMat4 *transform, const lite3dpp::String &name);
     void convertMesh(lite3d_mesh *mesh, const lite3dpp::String &savePath);

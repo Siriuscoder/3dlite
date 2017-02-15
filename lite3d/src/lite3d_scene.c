@@ -347,12 +347,14 @@ void lite3d_scene_render(lite3d_scene *scene, lite3d_camera *camera,
     /* clean statistic */
     memset(&scene->stats, 0, sizeof (scene->stats));
 
-    if (scene->beginSceneRender)
-        scene->beginSceneRender(scene, camera);
     /* update camera projection & transformation */
     lite3d_camera_update_view(camera);
     /* update scene tree */
     scene_recursive_nodes_update(scene, &scene->rootNode, camera);
+
+    if (scene->beginSceneRender)
+        scene->beginSceneRender(scene, camera);
+
     /* render common objects */
     if (flags & LITE3D_RENDER_STAGE_FIRST)
         mqr_render_stage_first(scene, camera, pass);

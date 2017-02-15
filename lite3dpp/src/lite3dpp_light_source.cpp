@@ -25,7 +25,6 @@ namespace lite3dpp
         mMain(main)
     {
         memset(&mLightSource, 0, sizeof(mLightSource));
-        lite3d_scene_node_init(&mLightSource.lightNode);
         mLightSource.userdata = this;
         /* enabled by default */
         mLightSource.params.flags.y = 1;
@@ -52,7 +51,6 @@ namespace lite3dpp
         mLightSource.params.position.y = v.y;
         mLightSource.params.position.z = v.z;
 
-        lite3d_scene_node_set_position(&mLightSource.lightNode, &v);
         mUpdated = true;    
     }
     
@@ -62,7 +60,7 @@ namespace lite3dpp
         mLightSource.params.spotDirection.y = v.y;
         mLightSource.params.spotDirection.z = v.z;
 
-        mUpdated = true;           
+        mUpdated = true;
     }
     
     void LightSource::setAmbient(const kmVec4 &v)

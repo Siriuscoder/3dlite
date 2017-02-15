@@ -35,7 +35,7 @@ namespace lite3dpp
 
         typedef stl<String, std::shared_ptr<Camera>>::map Cameras;
         typedef stl<String, std::shared_ptr<SceneObject>>::map Objects;
-        typedef stl<String, std::shared_ptr<LightSource>>::map Lights;
+        typedef stl<String, SceneNode *>::map Lights;
 
 
         Scene(const String &name, 
@@ -56,8 +56,8 @@ namespace lite3dpp
         void removeAllObjects();
         void removeObject(const String &name);
         
-        LightSource *addLightSource(const String &name);
-        LightSource *getLightSource(const String &name) const;
+        SceneNode *addLightNode(SceneNode *light);
+        SceneNode *getLightNode(const String &name) const;
         void removeLight(const String &name);
         void removeAllLights();
 
@@ -73,8 +73,6 @@ namespace lite3dpp
 
         void setupObjects(const stl<ConfigurationReader>::vector &objects, SceneObject *base);
         void setupCameras(const stl<ConfigurationReader>::vector &cameras);
-        void setupLights(const stl<ConfigurationReader>::vector &lights);
-
 
         static void beginDrawBatch(struct lite3d_scene *scene, 
             struct lite3d_scene_node *node, struct lite3d_mesh_chunk *meshChunk, struct lite3d_material *material);

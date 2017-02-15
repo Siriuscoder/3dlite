@@ -19,6 +19,7 @@
 
 #include <SDL_log.h>
 
+#include <lite3dpp/lite3dpp_main.h>
 #include <lite3dpp/lite3dpp_scene.h>
 #include <lite3dpp/lite3dpp_scene_object.h>
 
@@ -44,9 +45,13 @@ namespace lite3dpp
         mNodes.clear();
     }
 
-    void SceneObject::loadFromTemplate(const ConfigurationReader &helper)
+    void SceneObject::loadFromTemplate(const String &templatePath)
     {
-        ConfigurationReader rootNodeHelper = helper.getObject(L"Root");
+        size_t fileSize = 0;
+        const void *fileData = mMain->getResourceManager()->loadFileToMemory(templatePath, &fileSize);
+        mConfiguration.reset(new ConfigurationReader(static_cast<const char *>(fileData), fileSize));
+
+        ConfigurationReader rootNodeHelper = mConfiguration->getObject(L"Root");
         if(rootNodeHelper.isEmpty())
             return;
 
@@ -80,7 +85,7 @@ namespace lite3dpp
 
     void SceneObject::addToScene(Scene *scene)
     {
-        if(mScene)
+        if (mScene)
             LITE3D_THROW(getName() << " already in scene " << scene->getName());
 
         mObjectRoot->addToScene(scene);
@@ -100,6 +105,13 @@ namespace lite3dpp
         });
 
         mObjectRoot->removeFromScene(scene);
+
+        /* setup object lighting */
+        for (const ConfigurationReader &lightJson : mConfiguration->getObjects(L"Lights"))
+        {
+            scene->removeLight(lightJson.getString(L"Name"));
+        }
+
         mScene = NULL;
     }
 

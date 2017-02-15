@@ -22,6 +22,7 @@
 #include <lite3dpp/lite3dpp_common.h>
 #include <lite3dpp/lite3dpp_config_reader.h>
 #include <lite3dpp/lite3dpp_mesh.h>
+#include <lite3dpp/lite3dpp_light_source.h>
 
 namespace lite3dpp
 {
@@ -39,9 +40,14 @@ namespace lite3dpp
         inline String getName() const
         { return mName; }
 
-        void setMesh(Mesh *mesh);
         inline Mesh *getMesh()
         { return mMesh; }
+        inline const Mesh *getMesh() const
+        { return mMesh; }
+        inline LightSource *getLight()
+        { return mLight.get(); }
+        inline const LightSource *getLight() const 
+        { return mLight.get(); }
 
         inline lite3d_scene_node *getPtr()
         { return &mNode; }
@@ -66,6 +72,10 @@ namespace lite3dpp
         void addToScene(Scene *scene);
         void removeFromScene(Scene *scene);
 
+    protected:
+
+        void setMesh(Mesh *mesh);
+
     private:
 
         lite3d_scene_node mNode;
@@ -74,6 +84,7 @@ namespace lite3dpp
         String mName;
         SceneNode *mBaseNode;
         size_t mInstances;
+        std::unique_ptr<LightSource> mLight;
     };
 }
 

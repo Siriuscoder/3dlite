@@ -22,6 +22,7 @@
 #include <lite3d/lite3d_kazmath.h>
 #include <lite3d/lite3d_scene_node.h>
 
+#define LITE3D_LIGHT_UNDEFINED          0x0
 #define LITE3D_LIGHT_POINT              0x1
 #define LITE3D_LIGHT_DIRECTIONAL        0x2
 #define LITE3D_LIGHT_SPOT               0x3
@@ -59,7 +60,6 @@ typedef struct lite3d_light_params
 
 typedef struct lite3d_light_source
 {
-    lite3d_scene_node lightNode;
     lite3d_light_params params;
     void *userdata;
 } lite3d_light_source;

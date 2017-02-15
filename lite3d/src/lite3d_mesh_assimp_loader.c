@@ -222,6 +222,70 @@ static int ai_node_load_to_vbo(lite3d_mesh *meshInst, const struct aiScene *scen
     return LITE3D_TRUE;
 }
 
+static int ai_load_light(const struct aiScene *scene, const struct aiNode *node, lite3d_assimp_loader_ctx ctx)
+{
+    uint32_t li;
+    struct aiLight *light = NULL;
+    lite3d_light_params params;
+    kmMat4 transform;
+
+    for (li = 0; li < scene->mNumLights; ++li)
+    {
+        light = scene->mLights[li];
+        if (strcmp(light->mName.data, node->mName.data) == 0)
+            break;
+    }
+
+    if (!light)
+        return LITE3D_FALSE;
+
+    memset(&params, 0, sizeof(params));
+    kmMat4Fill(&transform, &node->mTransformation.a1);
+
+    /* type */
+    if (scene->mLights[li]->mType == aiLightSource_DIRECTIONAL)
+        params.flags.x = LITE3D_LIGHT_DIRECTIONAL;
+    else if (scene->mLights[li]->mType == aiLightSource_POINT)
+        params.flags.x = LITE3D_LIGHT_POINT;
+    else if (scene->mLights[li]->mType == aiLightSource_SPOT)
+        params.flags.x = LITE3D_LIGHT_SPOT;
+
+    /* enabled */
+    params.flags.y = LITE3D_TRUE;
+
+    params.ambient.x = light->mColorAmbient.r;
+    params.ambient.y = light->mColorAmbient.g;
+    params.ambient.z = light->mColorAmbient.b;
+
+    params.specular.x = light->mColorSpecular.r;
+    params.specular.y = light->mColorSpecular.g;
+    params.specular.z = light->mColorSpecular.b;
+
+    params.diffuse.x = light->mColorDiffuse.r;
+    params.diffuse.y = light->mColorDiffuse.g;
+    params.diffuse.z = light->mColorDiffuse.b;
+
+    params.attenuation.x = light->mAttenuationConstant;
+    params.attenuation.y = light->mAttenuationLinear;
+    params.attenuation.z = light->mAttenuationQuadratic;
+
+    params.position.x = light->mPosition.x;
+    params.position.y = light->mPosition.y;
+    params.position.z = light->mPosition.z;
+
+    params.spotDirection.x = light->mDirection.x;
+    params.spotDirection.y = light->mDirection.y;
+    params.spotDirection.z = light->mDirection.z;
+
+    params.spotFactor.x = light->mAngleInnerCone;
+    params.spotFactor.y = light->mAngleOuterCone;
+
+    if (ctx.onLight)
+        ctx.onLight(node->mName.data, &params, &transform, ctx.userdata);
+
+    return LITE3D_TRUE;
+}
+
 static int ai_node_load_recursive(const struct aiScene *scene, 
     const struct aiNode *node, lite3d_assimp_loader_ctx ctx,
     uint16_t access)
@@ -245,8 +309,10 @@ static int ai_node_load_recursive(const struct aiScene *scene,
 
     kmMat4Fill(&transform, &node->mTransformation.a1);
 
-    if(ctx.onMesh)
+    if (ctx.onMesh)
         ctx.onMesh(mesh, &transform, node->mName.data, ctx.userdata);
+
+    ai_load_light(scene, node, ctx);
 
     if (ctx.onLevelPush)
         ctx.onLevelPush(ctx.userdata);
@@ -421,7 +487,7 @@ int lite3d_assimp_mesh_load_recursive(const lite3d_file *resource,
     importProrerties = aiCreatePropertyStore();
     SDL_assert_release(importProrerties);
 
-    if((scene = ai_load_scene(resource, flags, importProrerties)) == NULL)
+    if ((scene = ai_load_scene(resource, flags, importProrerties)) == NULL)
     {
         aiReleasePropertyStore(importProrerties);
         return LITE3D_FALSE;
@@ -430,10 +496,10 @@ int lite3d_assimp_mesh_load_recursive(const lite3d_file *resource,
     if (ctx.onLevelPush)
         ctx.onLevelPush(ctx.userdata);
 
-    if(!ai_load_materials(scene, ctx))
+    if (!ai_load_materials(scene, ctx))
         return LITE3D_FALSE;
 
-    if(!ai_node_load_recursive(scene, scene->mRootNode, ctx, access))
+    if (!ai_node_load_recursive(scene, scene->mRootNode, ctx, access))
         return LITE3D_FALSE;
 
     if (ctx.onLevelPop)

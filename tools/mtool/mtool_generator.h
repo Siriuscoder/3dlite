@@ -64,6 +64,9 @@ public:
         const char *diffuseTextureFile,
         const char *normalTextureFile,
         const char *reflectionTextureFile) = 0;
+    /* generate light node */
+    virtual void generateLight(const lite3dpp::String &lightName,
+        const lite3d_light_params *params) = 0;
 
 protected:
 
@@ -94,6 +97,9 @@ public:
         const char *diffuseTextureFile,
         const char *normalTextureFile,
         const char *reflectionTextureFile) override;
+    /* generate light node */
+    virtual void generateLight(const lite3dpp::String &lightName,
+        const lite3d_light_params *params) override;
 };
 
 class JsonGenerator : public Generator
@@ -120,6 +126,9 @@ public:
         const char *diffuseTextureFile,
         const char *normalTextureFile,
         const char *reflectionTextureFile) override;
+    /* generate light node */
+    virtual void generateLight(const lite3dpp::String &lightName,
+        const lite3d_light_params *params) override;
 
 private:
     

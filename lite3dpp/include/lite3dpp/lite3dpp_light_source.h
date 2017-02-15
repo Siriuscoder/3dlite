@@ -20,7 +20,7 @@
 #include <lite3d/lite3d_lighting.h>
 
 #include <lite3dpp/lite3dpp_common.h>
-#include <lite3dpp/lite3dpp_scene_object.h>
+#include <lite3dpp/lite3dpp_manageable.h>
 
 namespace lite3dpp
 {
@@ -35,6 +35,9 @@ namespace lite3dpp
         { return &mLightSource; }
         inline const lite3d_light_source *getPtr() const
         { return &mLightSource; }
+
+        inline const String &getName() const
+        { return mName; }
         
         inline void setBufferIndex(uint32_t i)
         { mBufferIndex = i; }     

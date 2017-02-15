@@ -48,7 +48,6 @@ namespace lite3dpp
 
         setupObjects(helper.getObjects(L"Objects"), NULL);
         setupCameras(helper.getObjects(L"Cameras"));
-        setupLights(helper.getObjects(L"Lights"));
         
         try
         {
@@ -56,7 +55,6 @@ namespace lite3dpp
             mLightingTextureBuffer = mMain->getResourceManager()->
                 queryResourceFromJson<TextureBuffer>(getName() + "_lightingBufferObject",
                 "{\"BufferFormat\": \"RGBA32F\"}");
-            setupLights(helper.getObjects(L"Lights"));
         }
         catch(std::exception &ex)
         {
@@ -120,12 +118,8 @@ namespace lite3dpp
         if(mObjects.find(name) != mObjects.end())
             LITE3D_THROW(name << " make object failed.. already exist");
 
-        size_t fileSize = 0;
-        const void *fileData = mMain->getResourceManager()->loadFileToMemory(templatePath, &fileSize);
-        ConfigurationReader json(static_cast<const char *>(fileData), fileSize);
-
         std::shared_ptr<SceneObject> sceneObject = std::make_shared<SceneObject>(name, parent, mMain);
-        sceneObject->loadFromTemplate(json);
+        sceneObject->loadFromTemplate(templatePath);
         sceneObject->addToScene(this);
         mObjects.insert(std::make_pair(name, sceneObject));
         return sceneObject.get();
@@ -160,17 +154,17 @@ namespace lite3dpp
         mObjects.erase(it);
     }
     
-    LightSource *Scene::addLightSource(const String &name)
+    SceneNode *Scene::addLightNode(SceneNode *light)
     {
-        Lights::iterator it = mLights.find(name);
+        Lights::iterator it = mLights.find(light->getName());
         if(it != mLights.end())
-            LITE3D_THROW("LightSource \"" << name << "\" already exists..");
+            LITE3D_THROW("LightSource \"" << light->getName() << "\" already exists..");
+        if(!light->getLight())
+            LITE3D_THROW("Node \"" << light->getName() << "\" do not contain light source");
 
-        std::shared_ptr<LightSource> light = std::make_shared<LightSource>(name, mMain);
-        lite3d_scene_add_node(&mScene, &light->getPtr()->lightNode, NULL);
-        mLights.insert(std::make_pair(name, light));
+        mLights.insert(std::make_pair(light->getName(), light));
         rebuildLightingBuffer();
-        return light.get();
+        return light;
     }
     
     void Scene::removeLight(const String &name)
@@ -178,7 +172,6 @@ namespace lite3dpp
         Lights::iterator it = mLights.find(name);
         if(it != mLights.end())
         {
-            lite3d_scene_remove_node(&mScene, &it->second->getPtr()->lightNode);
             mLights.erase(it);
             rebuildLightingBuffer();
         }
@@ -186,19 +179,15 @@ namespace lite3dpp
     
     void Scene::removeAllLights()
     {
-        std::for_each(mLights.begin(), mLights.end(), [this](Lights::value_type &light)
-        {
-            lite3d_scene_remove_node(&mScene, &light.second->getPtr()->lightNode);
-        });
-
         mLights.clear();
+        rebuildLightingBuffer();
     }
     
-    LightSource *Scene::getLightSource(const String &name) const
+    SceneNode *Scene::getLightNode(const String &name) const
     {
         Lights::const_iterator it;
         if((it = mLights.find(name)) != mLights.end())
-            return it->second.get();
+            return it->second;
 
         LITE3D_THROW(name << " object not found");
     }
@@ -215,9 +204,9 @@ namespace lite3dpp
                     mLightingTextureBuffer->getTexelSize());
             }
             
-            mLightingTextureBuffer->setElement<lite3d_light_params>(i, &light.second->getPtr()->params);
-            light.second->validate();
-            light.second->index(i++);
+            mLightingTextureBuffer->setElement<lite3d_light_params>(i, &light.second->getLight()->getPtr()->params);
+            light.second->getLight()->validate();
+            light.second->getLight()->index(i++);
         }
         
         Material::setIntGlobalParameter(getName() + "_numLights", i);
@@ -227,11 +216,11 @@ namespace lite3dpp
     {
         for (auto &light : mLights)
         {
-            if (light.second->isUpdated())
+            if (light.second->getLight()->isUpdated())
             {
-                mLightingTextureBuffer->setElement<lite3d_light_params>(light.second->index(), 
-                    &light.second->getPtr()->params);
-                light.second->validate();
+                mLightingTextureBuffer->setElement<lite3d_light_params>(light.second->getLight()->index(), 
+                    &light.second->getLight()->getPtr()->params);
+                light.second->getLight()->validate();
             }
         }      
     }
@@ -300,26 +289,6 @@ namespace lite3dpp
                 camera->setPosition(cameraJson.getVec3(L"Position"));
             if(cameraJson.has(L"LookAt"))
                 camera->lookAt(cameraJson.getVec3(L"LookAt"));
-        }
-    }
-    
-    void Scene::setupLights(const stl<ConfigurationReader>::vector &lights)
-    {
-        for(const ConfigurationReader &lightJson : lights)
-        {
-            LightSource *light = addLightSource(lightJson.getString(L"Name"));
-            
-            String lightType = lightJson.getString(L"Type", "Point");
-            light->setType(lightType == "Directional" ? LITE3D_LIGHT_DIRECTIONAL : 
-                (lightType == "Spot" ? LITE3D_LIGHT_SPOT : LITE3D_LIGHT_POINT));
-            
-            light->setPosition(lightJson.getVec3(L"Position"));
-            light->setSpotDirection(lightJson.getVec3(L"SpotDirection"));        
-            light->setSpotFactor(lightJson.getVec4(L"SpotFactor"));
-            light->setAmbient(lightJson.getVec4(L"Ambient"));
-            light->setDiffuse(lightJson.getVec4(L"Diffuse"));
-            light->setSpecular(lightJson.getVec4(L"Specular"));
-            light->setAttenuation(lightJson.getVec4(L"Attenuation"));
         }
     }
 
