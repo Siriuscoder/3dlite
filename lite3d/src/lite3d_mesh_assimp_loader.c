@@ -231,9 +231,11 @@ static int ai_load_light(const struct aiScene *scene, const struct aiNode *node,
 
     for (li = 0; li < scene->mNumLights; ++li)
     {
-        light = scene->mLights[li];
-        if (strcmp(light->mName.data, node->mName.data) == 0)
+        if (strcmp(scene->mLights[li]->mName.data, node->mName.data) == 0)
+        {
+            light = scene->mLights[li];
             break;
+        }
     }
 
     if (!light)
@@ -243,11 +245,11 @@ static int ai_load_light(const struct aiScene *scene, const struct aiNode *node,
     kmMat4Fill(&transform, &node->mTransformation.a1);
 
     /* type */
-    if (scene->mLights[li]->mType == aiLightSource_DIRECTIONAL)
+    if (light->mType == aiLightSource_DIRECTIONAL)
         params.flags.x = LITE3D_LIGHT_DIRECTIONAL;
-    else if (scene->mLights[li]->mType == aiLightSource_POINT)
+    else if (light->mType == aiLightSource_POINT)
         params.flags.x = LITE3D_LIGHT_POINT;
-    else if (scene->mLights[li]->mType == aiLightSource_SPOT)
+    else if (light->mType == aiLightSource_SPOT)
         params.flags.x = LITE3D_LIGHT_SPOT;
 
     /* enabled */
@@ -379,8 +381,6 @@ static const struct aiScene *ai_load_scene(const lite3d_file *resource, uint32_t
     /* remove this components from loaded scene */
     /* speedup loading */
     aiSetImportPropertyInteger(importProrerties, AI_CONFIG_PP_RVC_FLAGS,
-        aiComponent_TANGENTS_AND_BITANGENTS |
-        aiComponent_LIGHTS |
         aiComponent_CAMERAS |
         aiComponent_ANIMATIONS |
         aiComponent_BONEWEIGHTS);
