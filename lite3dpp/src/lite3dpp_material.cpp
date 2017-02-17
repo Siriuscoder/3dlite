@@ -76,9 +76,9 @@ namespace lite3dpp
             else if(paramName == "modelviewMatrix")
                 addParameter(lite3d_material_get_pass(&mMaterial, passNo),
                     &lite3d_shader_global_parameters()->modelviewMatrix);
-            else if(paramName == "ambientLight")
+            else if(paramName == "normalMatrix")
                 addParameter(lite3d_material_get_pass(&mMaterial, passNo),
-                    &lite3d_shader_global_parameters()->ambientLight);
+                    &lite3d_shader_global_parameters()->normalMatrix);
             else
             /* user parameters */
             {
@@ -90,6 +90,18 @@ namespace lite3dpp
                     setFloatv3Parameter(passNo, paramName, uniformParamJson.getVec3(L"Value"), scope == "global");
                 else if(paramType == "v4")
                     setFloatv4Parameter(passNo, paramName, uniformParamJson.getVec4(L"Value"), scope == "global");
+                else if(paramType == "m3")
+                {
+                    kmMat3 mat3;
+                    kmMat3Identity(&mat3);
+                    setFloatm3Parameter(passNo, paramName, uniformParamJson.getMat3(L"Value", mat3), scope == "global");
+                }
+                else if(paramType == "m4")
+                {
+                    kmMat4 mat4;
+                    kmMat4Identity(&mat4);
+                    setFloatm4Parameter(passNo, paramName, uniformParamJson.getMat4(L"Value", mat4), scope == "global");
+                }
                 else if(paramType == "sampler")
                     setSamplerTextureParameter(passNo, paramName, 
                         mMain->getResourceManager()->queryResource<TextureImage>(uniformParamJson.getString(L"TextureName"),

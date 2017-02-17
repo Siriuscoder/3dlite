@@ -183,7 +183,7 @@ int lite3d_texture_buffer(lite3d_texture_unit *textureUnit,
     const void *buffer, size_t offset, size_t size)
 {
     SDL_assert(textureUnit);
-    return lite3d_vbo_buffer(&textureUnit->tbo, buffer, offset, size);
+    return lite3d_vbo_subbuffer(&textureUnit->tbo, buffer, offset, size);
 }
 
 int lite3d_texture_buffer_get(lite3d_texture_unit *textureUnit,

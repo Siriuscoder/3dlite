@@ -65,7 +65,7 @@ typedef struct lite3d_global_parameters
     lite3d_shader_parameter viewMatrix;
     lite3d_shader_parameter modelMatrix;
     lite3d_shader_parameter modelviewMatrix;
-    lite3d_shader_parameter ambientLight;
+    lite3d_shader_parameter normalMatrix;
 } lite3d_global_parameters;
 
 LITE3D_CEXPORT void lite3d_shader_parameter_init(
@@ -79,7 +79,7 @@ LITE3D_CEXPORT void lite3d_shader_set_projection_matrix(kmMat4 *mat);
 LITE3D_CEXPORT void lite3d_shader_set_view_matrix(kmMat4 *mat);
 LITE3D_CEXPORT void lite3d_shader_set_model_matrix(kmMat4 *mat);
 LITE3D_CEXPORT void lite3d_shader_set_modelview_matrix(kmMat4 *mat);
-LITE3D_CEXPORT void lite3d_shader_set_ambient_light(float val);
+LITE3D_CEXPORT void lite3d_shader_set_normal_matrix(kmMat3 *mat);
 
 #endif	/* LITE3D_SHADER_PARAMS_H */
 

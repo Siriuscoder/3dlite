@@ -47,6 +47,7 @@ namespace lite3dpp
         kmVec3 getVec3(const WString &name, const kmVec3 &def = KM_VEC3_ZERO) const;
         kmVec4 getVec4(const WString &name, const kmVec4 &def = KM_VEC4_ZERO) const;
         kmQuaternion getQuaternion(const WString &name, const kmQuaternion &def = KM_QUATERNION_IDENTITY ) const;
+        kmMat3 getMat3(const WString &name, const kmMat3 &def) const;
         kmMat4 getMat4(const WString &name, const kmMat4 &def) const;
 
         bool has(const WString &name) const;

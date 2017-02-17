@@ -274,6 +274,7 @@ static int ai_load_light(const struct aiScene *scene, const struct aiNode *node,
     params.position.x = light->mPosition.x;
     params.position.y = light->mPosition.y;
     params.position.z = light->mPosition.z;
+    params.position.w = 1.0f;
 
     params.spotDirection.x = light->mDirection.x;
     params.spotDirection.y = light->mDirection.y;

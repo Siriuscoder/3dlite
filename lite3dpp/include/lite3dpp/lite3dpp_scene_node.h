@@ -34,6 +34,7 @@ namespace lite3dpp
 
         SceneNode();
         SceneNode(const ConfigurationReader &json, SceneNode *base, Main *main);
+        virtual ~SceneNode();
 
         inline void setName(const String &name)
         { mName = name; }
@@ -101,7 +102,6 @@ namespace lite3dpp
     {
     public:
         
-        LightSceneNode();
         LightSceneNode(const ConfigurationReader &json, SceneNode *base, Main *main);
         
         inline LightSource *getLight()
@@ -111,7 +111,10 @@ namespace lite3dpp
         
         virtual void addToScene(Scene *scene) override;
         virtual void removeFromScene(Scene *scene) override;
-        
+
+        lite3d_light_params lightSourceToModelView() const;
+        lite3d_light_params lightSourceToWorld() const;
+
     private:
         
         std::unique_ptr<LightSource> mLight;

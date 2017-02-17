@@ -51,6 +51,9 @@ namespace lite3dpp
         scale(json.getVec3(L"Scale", KM_VEC3_ONE));
     }
 
+    SceneNode::~SceneNode()
+    {}
+
     void SceneNode::setPosition(const kmVec3 &position)
     {
         lite3d_scene_node_set_position(&mNode, &position);
@@ -152,9 +155,6 @@ namespace lite3dpp
         }
     }
     
-    LightSceneNode::LightSceneNode()
-    {}
-    
     LightSceneNode::LightSceneNode(const ConfigurationReader &json, SceneNode *base, Main *main) : 
         SceneNode(json, base, main)
     {
@@ -168,8 +168,8 @@ namespace lite3dpp
             mLight->setType(lightType == "Directional" ? LITE3D_LIGHT_DIRECTIONAL : 
                 (lightType == "Spot" ? LITE3D_LIGHT_SPOT : LITE3D_LIGHT_POINT));
             
-            mLight->setPosition(lightHelper.getVec3(L"Position"));
-            mLight->setSpotDirection(lightHelper.getVec3(L"SpotDirection"));        
+            mLight->setPosition(lightHelper.getVec4(L"Position"));
+            mLight->setSpotDirection(lightHelper.getVec4(L"SpotDirection"));        
             mLight->setSpotFactor(lightHelper.getVec4(L"SpotFactor"));
             mLight->setAmbient(lightHelper.getVec4(L"Ambient"));
             mLight->setDiffuse(lightHelper.getVec4(L"Diffuse"));
@@ -191,6 +191,32 @@ namespace lite3dpp
         SceneNode::removeFromScene(scene);
         if (mLight) 
             scene->removeLight(mLight->getName());
+    }
+
+    lite3d_light_params LightSceneNode::lightSourceToModelView() const
+    {
+        lite3d_light_params res = mLight->getPtr()->params;
+        kmVec4Transform(&res.position, &res.position, &getPtr()->modelView);
+        if (res.flags.x == LITE3D_LIGHT_DIRECTIONAL || res.flags.x == LITE3D_LIGHT_SPOT)
+        {
+            kmVec4Transform(&res.spotDirection, &res.spotDirection, &getPtr()->modelView);
+            kmVec4Normalize(&res.spotDirection, &res.spotDirection);
+        }
+
+        return res;
+    }
+
+    lite3d_light_params LightSceneNode::lightSourceToWorld() const
+    {
+        lite3d_light_params res = mLight->getPtr()->params;
+        kmVec4Transform(&res.position, &res.position, &getPtr()->worldView);
+        if (res.flags.x == LITE3D_LIGHT_DIRECTIONAL || res.flags.x == LITE3D_LIGHT_SPOT)
+        {
+            kmVec4Transform(&res.spotDirection, &res.spotDirection, &getPtr()->worldView);
+            kmVec4Normalize(&res.spotDirection, &res.spotDirection);
+        }
+
+        return res;
     }
 }
 

@@ -131,7 +131,7 @@ namespace lite3dpp
     {
         if (nodeconf.has(L"Mesh"))
             return std::shared_ptr<MeshSceneNode>(new MeshSceneNode(nodeconf, base, mMain));
-        else if (nodeconf.has(L"Mesh"))
+        else if (nodeconf.has(L"Light"))
             return std::shared_ptr<LightSceneNode>(new LightSceneNode(nodeconf, base, mMain));
         
         return std::shared_ptr<SceneNode>(new SceneNode(nodeconf, base, mMain));

@@ -28,6 +28,7 @@ typedef struct  lite3d_scene_node
     kmMat4 localView;
     kmMat4 worldView;
     kmMat4 modelView;
+    kmMat3 normalModelView;
     kmQuaternion rotation;
     kmVec3 position;
     kmVec3 scale;

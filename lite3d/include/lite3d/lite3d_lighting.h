@@ -51,6 +51,7 @@ typedef struct lite3d_light_params
     /* x - constant attenuation */
     /* y - linear attenuation */
     /* z - quadratic attenuation */
+    /* w - affect radius */
     kmVec4 attenuation;
     /* x - spot cutoff */
     /* y - spot cutoff exponent */

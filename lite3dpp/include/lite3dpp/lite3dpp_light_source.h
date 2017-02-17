@@ -52,8 +52,8 @@ namespace lite3dpp
         
         void setType(uint8_t t);
         void enabled(bool f);
-        void setPosition(const kmVec3 &v);
-        void setSpotDirection(const kmVec3 &v);
+        void setPosition(const kmVec4 &v);
+        void setSpotDirection(const kmVec4 &v);
         void setAmbient(const kmVec4 &v);
         void setDiffuse(const kmVec4 &v);
         void setSpecular(const kmVec4 &v);

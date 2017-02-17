@@ -97,6 +97,7 @@ namespace lite3dpp
             Material *material, lite3d_bouding_vol *boudingVol,
             Camera *camera) {}
 
+        virtual void beforeUpdateNodes(Scene *scene, Camera *camera) {}
         virtual void beginSceneRender(Scene *scene, Camera *camera) {}
         virtual void endSceneRender(Scene *scene, Camera *camera) {}
         virtual void beginFirstStageRender(Scene *scene, Camera *camera) {}

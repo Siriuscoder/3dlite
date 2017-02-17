@@ -101,6 +101,7 @@ static void mqr_render_node(lite3d_material_pass *pass, void *data)
     /* setup global parameters (viewmodel) */
     lite3d_shader_set_modelview_matrix(&mqrNode->node->modelView);
     lite3d_shader_set_model_matrix(&mqrNode->node->worldView);
+    lite3d_shader_set_normal_matrix(&mqrNode->node->normalModelView);
     /* setup changed uniforms parameters */
     lite3d_material_pass_set_params(mqrNode->matUnit->material, pass, LITE3D_FALSE);
     /* call rendering current chunk */
@@ -121,8 +122,6 @@ static int mqr_node_approve(lite3d_scene *scene,
         lite3d_bouding_vol_translate(&mqrNode->boudingVol,
             &mqrNode->meshChunk->boudingVol,
             &mqrNode->node->worldView);
-
-        LITE3D_ARR_ADD_ELEM(&scene->invalidatedUnits, lite3d_scene_node *, mqrNode->node);
     }
 
     if (mqrNode->node->invalidated || mqrNode->matUnit->currentCamera->cameraNode.invalidated)
@@ -314,9 +313,22 @@ static void scene_recursive_nodes_update(lite3d_scene *scene,
     lite3d_scene_node *child;
     uint8_t recalcNode;
 
-    recalcNode = lite3d_scene_node_update(node);
-    /* recalc modelview matrix */
+    if ((recalcNode = lite3d_scene_node_update(node)) == LITE3D_TRUE)
+        LITE3D_ARR_ADD_ELEM(&scene->invalidatedUnits, lite3d_scene_node *, node);
+    /*  
+        recalc modelview matrix 
+        MV = V * M
+        V is World to Camera translation matrix
+        M is Local Model view to World translation matrix 
+    */
     kmMat4Multiply(&node->modelView, &camera->cameraNode.localView, &node->worldView);
+    /* 
+        recalc normal matrix 
+        normalMatrix = transpose(inverse(MV))
+    */
+    kmMat3AssignMat4(&node->normalModelView, &node->modelView);
+    kmMat3Inverse(&node->normalModelView, &node->normalModelView);
+    kmMat3Transpose(&node->normalModelView, &node->normalModelView);
     /* render all childrens firts */
     for (nodeLink = node->childNodes.l.next;
         nodeLink != &node->childNodes.l; nodeLink = lite3d_list_next(nodeLink))
@@ -347,6 +359,8 @@ void lite3d_scene_render(lite3d_scene *scene, lite3d_camera *camera,
     /* clean statistic */
     memset(&scene->stats, 0, sizeof (scene->stats));
 
+    if (scene->beforeUpdateNodes)
+        scene->beforeUpdateNodes(scene, camera);
     /* update camera projection & transformation */
     lite3d_camera_update_view(camera);
     /* update scene tree */

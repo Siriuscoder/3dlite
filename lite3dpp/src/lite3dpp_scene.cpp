@@ -45,22 +45,23 @@ namespace lite3dpp
         mScene.endSceneRender = endSceneRender;
         mScene.nodeInFrustum = nodeInFrustum;
         mScene.nodeOutOfFrustum = nodeOutOfFrustum;
-
-        setupObjects(helper.getObjects(L"Objects"), NULL);
-        setupCameras(helper.getObjects(L"Cameras"));
+        mScene.beforeUpdateNodes = beforeUpdateNodes;
         
         try
         {
             /* default name of lighting buffer is scene name + "LightingBufferObject" */
             mLightingTextureBuffer = mMain->getResourceManager()->
                 queryResourceFromJson<TextureBuffer>(getName() + "_lightingBufferObject",
-                "{\"BufferFormat\": \"RGBA32F\"}");
+                "{\"BufferFormat\": \"RGBA32F\", \"Dynamic\": true}");
         }
         catch(std::exception &ex)
         {
             SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
                 "%s: %s, default lighting disabled", LITE3D_CURRENT_FUNCTION, ex.what());
         }
+
+        setupObjects(helper.getObjects(L"Objects"), NULL);
+        setupCameras(helper.getObjects(L"Cameras"));
     }
 
     void Scene::unloadImpl()
@@ -205,7 +206,6 @@ namespace lite3dpp
             }
             
             mLightingTextureBuffer->setElement<lite3d_light_params>(i, &light.second->getLight()->getPtr()->params);
-            light.second->getLight()->validate();
             light.second->getLight()->index(i++);
         }
         
@@ -216,13 +216,13 @@ namespace lite3dpp
     {
         for (auto &light : mLights)
         {
-            if (light.second->getLight()->isUpdated())
+            if (light.second->getLight()->isUpdated() || light.second->getPtr()->invalidated)
             {
                 mLightingTextureBuffer->setElement<lite3d_light_params>(light.second->getLight()->index(), 
-                    &light.second->getLight()->getPtr()->params);
+                    &light.second->lightSourceToWorld());
                 light.second->getLight()->validate();
             }
-        }      
+        }
     }
     
     SceneObject::Ptr Scene::createObject(const String &name, SceneObject *parent)
@@ -362,6 +362,23 @@ namespace lite3dpp
                 meshChunk,
                 reinterpret_cast<Material *>(material->userdata),
                 boudingVol,
+                reinterpret_cast<Camera *>(camera->userdata));
+        }
+        catch(std::exception &ex)
+        {
+            SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION, ex.what());
+        }
+    }
+
+    void Scene::beforeUpdateNodes(struct lite3d_scene *scene, struct lite3d_camera *camera)
+    {
+        SDL_assert(scene->userdata);
+        SDL_assert(camera->userdata);
+
+        try
+        {
+            LITE3D_EXT_OBSERVER_NOTIFY_2(reinterpret_cast<Scene *>(scene->userdata), beforeUpdateNodes, 
+                reinterpret_cast<Scene *>(scene->userdata),
                 reinterpret_cast<Camera *>(camera->userdata));
         }
         catch(std::exception &ex)

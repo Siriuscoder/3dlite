@@ -47,21 +47,15 @@ namespace lite3dpp
         mUpdated = true;  
     }
     
-    void LightSource::setPosition(const kmVec3 &v)
+    void LightSource::setPosition(const kmVec4 &v)
     {
-        mLightSource.params.position.x = v.x;
-        mLightSource.params.position.y = v.y;
-        mLightSource.params.position.z = v.z;
-
+        mLightSource.params.position = v;
         mUpdated = true;    
     }
     
-    void LightSource::setSpotDirection(const kmVec3 &v)
+    void LightSource::setSpotDirection(const kmVec4 &v)
     {
-        mLightSource.params.spotDirection.x = v.x;
-        mLightSource.params.spotDirection.y = v.y;
-        mLightSource.params.spotDirection.z = v.z;
-
+        mLightSource.params.spotDirection = v;
         mUpdated = true;
     }
     

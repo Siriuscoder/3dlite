@@ -89,6 +89,7 @@ namespace lite3dpp
             struct lite3d_material *material, struct lite3d_bouding_vol *boudingVol,
             struct lite3d_camera *camera);
 
+        static void beforeUpdateNodes(struct lite3d_scene *scene, struct lite3d_camera *camera);
         static void beginSceneRender(struct lite3d_scene *scene, struct lite3d_camera *camera);
         static void endSceneRender(struct lite3d_scene *scene, struct lite3d_camera *camera);
         static void beginFirstStageRender(struct lite3d_scene *scene, struct lite3d_camera *camera);

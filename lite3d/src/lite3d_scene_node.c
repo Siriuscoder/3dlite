@@ -28,6 +28,7 @@ lite3d_scene_node *lite3d_scene_node_init(lite3d_scene_node *node)
     kmMat4Identity(&node->localView);
     kmMat4Identity(&node->worldView);
     kmMat4Identity(&node->modelView);
+    kmMat3Identity(&node->normalModelView);
     kmQuaternionIdentity(&node->rotation);
     kmVec3Fill(&node->position, 0, 0, 0);
     kmVec3Fill(&node->scale, 1.0f, 1.0f, 1.0f);

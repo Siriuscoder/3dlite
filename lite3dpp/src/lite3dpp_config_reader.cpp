@@ -219,6 +219,27 @@ namespace lite3dpp
         return quat;
     }
 
+    kmMat3 ConfigurationReader::getMat3(const WString &name, const kmMat3 &def) const
+    {
+        auto floats = getFloats(name);
+        if(floats.size() != 9)
+            return def;
+
+        kmMat3 mat3 = {
+            (float)floats[0],
+            (float)floats[1],
+            (float)floats[2],
+            (float)floats[3],
+            (float)floats[4],
+            (float)floats[5],
+            (float)floats[6],
+            (float)floats[7],
+            (float)floats[8]
+        };
+
+        return mat3;
+    }
+
     kmMat4 ConfigurationReader::getMat4(const WString &name, const kmMat4 &def) const
     {
         auto floats = getFloats(name);
