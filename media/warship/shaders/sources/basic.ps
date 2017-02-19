@@ -1,0 +1,16 @@
+#version 140
+
+uniform sampler2D diffuse;
+
+const vec3 lightDir = vec3(1.0, 1.0, 1.0);
+
+in vec3 vnormal;
+in vec2 uv;
+
+void main()
+{
+    vec4 fragDiffuse = texture2D(diffuse, uv);
+
+    float nDotL = clamp(dot(vnormal, lightDir), 0.1, 1.0);
+    gl_FragColor = vec4(fragDiffuse.xyz * nDotL, fragDiffuse.w);
+}

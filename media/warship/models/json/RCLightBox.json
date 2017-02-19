@@ -1,0 +1,13 @@
+{
+  "Codec":"m",
+  "MaterialMapping":[
+    {
+      "Material":{
+        "Material":"warship:materials/rclight01.json",
+        "Name":"rclight01.material"
+      },
+      "MaterialIndex":3.0000000000
+    }
+  ],
+  "Model":"warship:models/meshes/RCLightBox.m"
+}

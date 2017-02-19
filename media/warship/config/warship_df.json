@@ -1,0 +1,36 @@
+{
+    // common settings
+    "LogLevel": 2,
+    "LogFlushAlways": true,
+    "LogFile": "lite3d.log",
+    "TextureSettings": {
+        "Anisotropy": 4,
+        "Compression": true
+    },
+    // Video settings
+    // Window size, caption, color settings, etc
+    "VideoSettings": {
+        "Width": 1024,
+        "Height": 768,
+        "Caption": "Warship deferred shading scene",
+        "ColorBits": 24,
+        "Fullscreen": false,
+        "MSAA": 4,
+        "VSync": false
+    },
+    // resource locations
+    "ResourceLocations": [
+        {
+            "Name": "samples",
+            "FileCacheMaxSize": 1024000,
+            "Path": "samples/"
+        },
+        {
+            "Name": "warship",
+            "FileCacheMaxSize": 10240000,
+            "Path": "warship/"
+        }
+    ],
+
+    "FixedUpdatesInterval": 30
+}

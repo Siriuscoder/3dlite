@@ -165,7 +165,7 @@ void lite3d_bouding_vol_setup(struct lite3d_bouding_vol *vol,
     center.z = h / 2;
 
     kmVec3Add(&vol->sphereCenter, vmin, &center);
-    vol->radius = kmVec3Length(&center);
+    vol->radius = kmVec3Length(&vol->sphereCenter);
 }
 
 void lite3d_bouding_vol_translate(struct lite3d_bouding_vol *volOut,

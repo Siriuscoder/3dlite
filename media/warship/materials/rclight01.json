@@ -1,0 +1,31 @@
+{
+  "Passes":[
+    {
+      "Pass":1,
+      "Program":{
+        "Name":"Stub.program",
+        "Path":"warship:shaders/json/basic.json"
+      }
+    }
+  ],
+  "Uniforms":[
+    {
+      "Name":"projectionMatrix"
+    },
+    {
+      "Name":"viewMatrix"
+    },
+    {
+      "Name":"normalMatrix"
+    },
+    {
+      "Name":"modelMatrix"
+    },
+    {
+      "Name":"diffuse",
+      "TextureName":"rclight01.texture",
+      "TexturePath":"warship:textures/json/rclight01.json",
+      "Type":"sampler"
+    }
+  ]
+}

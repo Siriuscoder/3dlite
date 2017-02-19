@@ -1,0 +1,27 @@
+{
+  "Codec":"m",
+  "MaterialMapping":[
+    {
+      "Material":{
+        "Material":"warship:materials/rcsidepanel01.json",
+        "Name":"rcsidepanel01.material"
+      },
+      "MaterialIndex":0.0000000000
+    },
+    {
+      "Material":{
+        "Material":"warship:materials/rcsidepanel02.json",
+        "Name":"rcsidepanel02.material"
+      },
+      "MaterialIndex":1.0000000000
+    },
+    {
+      "Material":{
+        "Material":"warship:materials/rcsidepanel03.json",
+        "Name":"rcsidepanel03.material"
+      },
+      "MaterialIndex":2.0000000000
+    }
+  ],
+  "Model":"warship:models/meshes/RCHallSm1Way03.m"
+}

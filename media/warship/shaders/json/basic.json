@@ -1,0 +1,14 @@
+{
+	"Sources": 
+	[
+		"warship:shaders/sources/basic.vs",
+		"warship:shaders/sources/basic.ps"
+	],
+	
+	"AttributesOrder":
+	[
+		"vertexAttr",
+		"normalAttr",
+		"texCoordAttr"
+	]
+}

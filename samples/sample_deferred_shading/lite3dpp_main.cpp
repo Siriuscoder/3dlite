@@ -26,10 +26,9 @@ public:
 
     void createScene() override
     {
-        Scene *scene = getMain().getResourceManager()->queryResource<Scene>("Vault",
-            "vaultmat:scenes/vault.json");
-        setMainCamera(scene->getCamera("MyCamera"));
-        Material::setFloatGlobalParameter("mode", 2);
+        Scene *scene = getMain().getResourceManager()->queryResource<Scene>("Warship",
+            "warship:scenes/warship.json");
+        setMainCamera(scene->getCamera("MainCamera"));
     }
 
     void processEvent(SDL_Event *e) override
@@ -43,6 +42,6 @@ public:
 int main(int agrc, char *args[])
 {
     lite3dpp::samples::DeferredShadingSample sample;
-    return sample.start("vault/config/config_vault.json");
+    return sample.start("warship/config/warship_df.json");
 }
 
