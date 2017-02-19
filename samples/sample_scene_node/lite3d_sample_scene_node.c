@@ -148,13 +148,14 @@ static int initMaterials(void)
         "in vec3 vertexAttr; "
         "in vec2 texCoordAttr; "
         "uniform mat4 projectionMatrix; "
-        "uniform mat4 modelviewMatrix; "
+        "uniform mat4 modelMatrix; "
+        "uniform mat4 viewMatrix; "
         "varying vec2 vTexCoord; "
         "void main() "
         "{"
         "   vTexCoord = texCoordAttr; "
         "   vec4 vertex = vec4(vertexAttr, 1.0); "
-        "   gl_Position = projectionMatrix * modelviewMatrix * vertex; "
+        "   gl_Position = projectionMatrix * viewMatrix * modelMatrix * vertex; "
         "}", 0))
         return LITE3D_FALSE;
     lite3d_shader_init(&shaders[1], LITE3D_SHADER_TYPE_FRAGMENT);
@@ -187,7 +188,9 @@ static int initMaterials(void)
     matPass = lite3d_material_add_pass(&mVintageBoxMaterial, 1);
     /* set default params */
     lite3d_material_pass_add_parameter(matPass, &lite3d_shader_global_parameters()->projectionMatrix);
-    lite3d_material_pass_add_parameter(matPass, &lite3d_shader_global_parameters()->modelviewMatrix);
+    lite3d_material_pass_add_parameter(matPass, &lite3d_shader_global_parameters()->modelMatrix);
+    lite3d_material_pass_add_parameter(matPass, &lite3d_shader_global_parameters()->viewMatrix);
+
     /* set sampler */
     lite3d_material_pass_add_parameter(matPass, &mVintageBoxTexture);
     matPass->program = &mProgram;
@@ -197,7 +200,9 @@ static int initMaterials(void)
     matPass = lite3d_material_add_pass(&mBoxMaterial, 1);
     /* set default params */
     lite3d_material_pass_add_parameter(matPass, &lite3d_shader_global_parameters()->projectionMatrix);
-    lite3d_material_pass_add_parameter(matPass, &lite3d_shader_global_parameters()->modelviewMatrix);
+    lite3d_material_pass_add_parameter(matPass, &lite3d_shader_global_parameters()->modelMatrix);
+    lite3d_material_pass_add_parameter(matPass, &lite3d_shader_global_parameters()->viewMatrix);
+
     /* set sampler */
     lite3d_material_pass_add_parameter(matPass, &mBoxTexture);
     matPass->program = &mProgram;
@@ -298,7 +303,7 @@ static int init(void *userdata)
     lite3d_camera_perspective(&mCamera01, 0.1f, 100.0f, 45.0f, (float) DEFAULT_WIDTH / (float) DEFAULT_HEIGHT);
     lite3d_camera_set_position(&mCamera01, &cameraInitPos);
     //lite3d_camera_pitch(&mCamera01, kmDegreesToRadians(90));
-    lite3d_camera_lookAt(&mCamera01, &nodePos[0]);
+    lite3d_camera_lookAt(&mCamera01, &nodePos[1]);
     //lite3d_scene_node_rotate_angle(&mCamera01.cameraNode, &rotAxis, kmDegreesToRadians(90));
     //lite3d_scene_node_rotate_angle(&mCamera01.cameraNode, &rotAxisY, kmDegreesToRadians(90));
 
@@ -310,9 +315,11 @@ static int init(void *userdata)
         };
 
         lite3d_scene_node_init(&mSceneNode[i]);
+        mSceneNode[i].frustumTest = 0;
         lite3d_scene_node_set_position(&mSceneNode[i], &nodePos[i]);
 
         lite3d_scene_node_init(&mSceneNodeInherited[i]);
+        mSceneNodeInherited[i].frustumTest = 0;
         lite3d_scene_node_set_position(&mSceneNodeInherited[i], &tmp);
         lite3d_scene_node_scale(&mSceneNodeInherited[i], &nodeScale[i]);
 

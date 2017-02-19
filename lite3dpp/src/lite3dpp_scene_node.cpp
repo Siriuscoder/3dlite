@@ -193,19 +193,6 @@ namespace lite3dpp
             scene->removeLight(mLight->getName());
     }
 
-    lite3d_light_params LightSceneNode::lightSourceToModelView() const
-    {
-        lite3d_light_params res = mLight->getPtr()->params;
-        kmVec4Transform(&res.position, &res.position, &getPtr()->modelView);
-        if (res.flags.x == LITE3D_LIGHT_DIRECTIONAL || res.flags.x == LITE3D_LIGHT_SPOT)
-        {
-            kmVec4Transform(&res.spotDirection, &res.spotDirection, &getPtr()->modelView);
-            kmVec4Normalize(&res.spotDirection, &res.spotDirection);
-        }
-
-        return res;
-    }
-
     lite3d_light_params LightSceneNode::lightSourceToWorld() const
     {
         lite3d_light_params res = mLight->getPtr()->params;

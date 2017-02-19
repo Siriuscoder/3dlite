@@ -98,10 +98,9 @@ static void mqr_render_node(lite3d_material_pass *pass, void *data)
     scene = (lite3d_scene *) mqrNode->node->scene;
     SDL_assert(scene);
 
-    /* setup global parameters (viewmodel) */
-    lite3d_shader_set_modelview_matrix(&mqrNode->node->modelView);
+    /* setup global parameters (model) */
     lite3d_shader_set_model_matrix(&mqrNode->node->worldView);
-    lite3d_shader_set_normal_matrix(&mqrNode->node->normalModelView);
+    lite3d_shader_set_normal_matrix(&mqrNode->node->normalModel);
     /* setup changed uniforms parameters */
     lite3d_material_pass_set_params(mqrNode->matUnit->material, pass, LITE3D_FALSE);
     /* call rendering current chunk */
@@ -315,20 +314,7 @@ static void scene_recursive_nodes_update(lite3d_scene *scene,
 
     if ((recalcNode = lite3d_scene_node_update(node)) == LITE3D_TRUE)
         LITE3D_ARR_ADD_ELEM(&scene->invalidatedUnits, lite3d_scene_node *, node);
-    /*  
-        recalc modelview matrix 
-        MV = V * M
-        V is World to Camera translation matrix
-        M is Local Model view to World translation matrix 
-    */
-    kmMat4Multiply(&node->modelView, &camera->cameraNode.localView, &node->worldView);
-    /* 
-        recalc normal matrix 
-        normalMatrix = transpose(inverse(MV))
-    */
-    kmMat3AssignMat4(&node->normalModelView, &node->modelView);
-    kmMat3Inverse(&node->normalModelView, &node->normalModelView);
-    kmMat3Transpose(&node->normalModelView, &node->normalModelView);
+
     /* render all childrens firts */
     for (nodeLink = node->childNodes.l.next;
         nodeLink != &node->childNodes.l; nodeLink = lite3d_list_next(nodeLink))

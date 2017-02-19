@@ -23,9 +23,6 @@
       "Name":"projectionMatrix"
     },
     {
-      "Name":"modelviewMatrix"
-    },
-    {
       "Name":"viewMatrix"
     },
     {

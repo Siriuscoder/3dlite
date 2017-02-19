@@ -7,12 +7,13 @@ in vec3 normalAttr;
 in vec2 texCoordAttr;
 
 uniform mat4 projectionMatrix;
-uniform mat4 modelviewMatrix;
+uniform mat4 viewMatrix;
+uniform mat4 modelMatrix;
 
 varying vec2 tcoords;
 
 void main()
 {
 	tcoords = texCoordAttr;
-	gl_Position = projectionMatrix * modelviewMatrix * vertexAttr;
+	gl_Position = projectionMatrix * viewMatrix * modelMatrix * vertexAttr;
 }

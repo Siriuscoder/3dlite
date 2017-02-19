@@ -65,6 +65,13 @@ kmScalar kmMat3Determinant(const kmMat3* pIn)
     return output;
 }
 
+kmMat3* kmMat3NormalMatrix(kmMat3* pOut, const struct kmMat4* pIn)
+{
+    kmMat3AssignMat4(pOut, pIn);
+    kmMat3Inverse(pOut, pOut);
+    kmMat3Transpose(pOut, pOut);
+    return pOut;
+}
 
 kmMat3* kmMat3Adjugate(kmMat3* pOut, const kmMat3* pIn)
 {

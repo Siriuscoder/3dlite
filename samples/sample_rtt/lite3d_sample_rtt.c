@@ -149,13 +149,14 @@ static int initMaterials(void)
         "in vec3 vertexAttr; "
         "in vec2 texCoordAttr; "
         "uniform mat4 projectionMatrix; "
-        "uniform mat4 modelviewMatrix; "
+        "uniform mat4 modelMatrix; "
+        "uniform mat4 viewMatrix; "
         "varying vec2 vTexCoord; "
         "void main() "
         "{"
         "   vTexCoord = texCoordAttr; "
         "   vec4 vertex = vec4(vertexAttr, 1.0); "
-        "   gl_Position = projectionMatrix * modelviewMatrix * vertex; "
+        "   gl_Position = projectionMatrix * viewMatrix * modelMatrix * vertex; "
         "}", 0))
         return LITE3D_FALSE;
     lite3d_shader_init(&shaders[1], LITE3D_SHADER_TYPE_FRAGMENT);
@@ -188,7 +189,8 @@ static int initMaterials(void)
     matPass = lite3d_material_add_pass(&mRenderTextureMaterial, 1);
     /* set default params */
     lite3d_material_pass_add_parameter(matPass, &lite3d_shader_global_parameters()->projectionMatrix);
-    lite3d_material_pass_add_parameter(matPass, &lite3d_shader_global_parameters()->modelviewMatrix);
+    lite3d_material_pass_add_parameter(matPass, &lite3d_shader_global_parameters()->modelMatrix);
+    lite3d_material_pass_add_parameter(matPass, &lite3d_shader_global_parameters()->viewMatrix);
     /* set sampler */
     lite3d_material_pass_add_parameter(matPass, &mRenderTextureSampler);
     matPass->program = &mProgram;
@@ -198,7 +200,9 @@ static int initMaterials(void)
     matPass = lite3d_material_add_pass(&mBoxMaterial, 1);
     /* set default params */
     lite3d_material_pass_add_parameter(matPass, &lite3d_shader_global_parameters()->projectionMatrix);
-    lite3d_material_pass_add_parameter(matPass, &lite3d_shader_global_parameters()->modelviewMatrix);
+    lite3d_material_pass_add_parameter(matPass, &lite3d_shader_global_parameters()->modelMatrix);
+    lite3d_material_pass_add_parameter(matPass, &lite3d_shader_global_parameters()->viewMatrix);
+
     /* set sampler */
     lite3d_material_pass_add_parameter(matPass, &mBoxTextureSampler);
     matPass->program = &mProgram;

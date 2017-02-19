@@ -11,7 +11,8 @@
 			"Uniforms":
 			[
 				{ "Name": "projectionMatrix" },
-				{ "Name": "modelviewMatrix" },
+				{ "Name": "modelMatrix" },
+				{ "Name": "viewMatrix" },
 				
 				{
 					"Name": "diffuseTexture",

@@ -73,9 +73,6 @@ namespace lite3dpp
             else if(paramName == "modelMatrix")
                 addParameter(lite3d_material_get_pass(&mMaterial, passNo),
                     &lite3d_shader_global_parameters()->modelMatrix);
-            else if(paramName == "modelviewMatrix")
-                addParameter(lite3d_material_get_pass(&mMaterial, passNo),
-                    &lite3d_shader_global_parameters()->modelviewMatrix);
             else if(paramName == "normalMatrix")
                 addParameter(lite3d_material_get_pass(&mMaterial, passNo),
                     &lite3d_shader_global_parameters()->normalMatrix);

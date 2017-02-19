@@ -218,8 +218,9 @@ namespace lite3dpp
         {
             if (light.second->getLight()->isUpdated() || light.second->getPtr()->invalidated)
             {
+                lite3d_light_params wpar = light.second->lightSourceToWorld();
                 mLightingTextureBuffer->setElement<lite3d_light_params>(light.second->getLight()->index(), 
-                    &light.second->lightSourceToWorld());
+                    &wpar);
                 light.second->getLight()->validate();
             }
         }

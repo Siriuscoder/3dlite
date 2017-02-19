@@ -225,16 +225,16 @@ void JsonGenerator::generateMaterial(const lite3dpp::String &name,
 
     {
         lite3dpp::ConfigurationWriter param;
-        param.set(L"Name", "modelviewMatrix");
+        param.set(L"Name", "viewMatrix");
         uniforms.push_back(param);
     }
 
     {
         lite3dpp::ConfigurationWriter param;
-        param.set(L"Name", "viewMatrix");
+        param.set(L"Name", "normalMatrix");
         uniforms.push_back(param);
     }
-
+    
     {
         lite3dpp::ConfigurationWriter param;
         param.set(L"Name", "modelMatrix");

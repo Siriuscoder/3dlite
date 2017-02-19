@@ -43,12 +43,6 @@ void lite3d_shader_set_projection_matrix(kmMat4 *mat)
     globalParams.projectionMatrix.changed = LITE3D_TRUE;
 }
 
-void lite3d_shader_set_modelview_matrix(kmMat4 *mat)
-{
-    globalParams.modelviewMatrix.parameter.valmat4 = *mat;
-    globalParams.modelviewMatrix.changed = LITE3D_TRUE;
-}
-
 void lite3d_shader_set_normal_matrix(kmMat3 *mat)
 {
     globalParams.normalMatrix.parameter.valmat3 = *mat;
@@ -77,24 +71,20 @@ void lite3d_shader_global_parameters_init(void)
     lite3d_shader_parameter_init(&globalParams.projectionMatrix);
     lite3d_shader_parameter_init(&globalParams.viewMatrix);
     lite3d_shader_parameter_init(&globalParams.modelMatrix);
-    lite3d_shader_parameter_init(&globalParams.modelviewMatrix);
     lite3d_shader_parameter_init(&globalParams.normalMatrix);
 
     strcpy(globalParams.projectionMatrix.name, "projectionMatrix");
     strcpy(globalParams.viewMatrix.name, "viewMatrix");
     strcpy(globalParams.modelMatrix.name, "modelMatrix");
-    strcpy(globalParams.modelviewMatrix.name, "modelviewMatrix");
     strcpy(globalParams.normalMatrix.name, "normalMatrix");
 
     globalParams.projectionMatrix.type = LITE3D_SHADER_PARAMETER_FLOATM4;
     globalParams.viewMatrix.type = LITE3D_SHADER_PARAMETER_FLOATM4;
     globalParams.modelMatrix.type = LITE3D_SHADER_PARAMETER_FLOATM4;
-    globalParams.modelviewMatrix.type = LITE3D_SHADER_PARAMETER_FLOATM4;
     globalParams.normalMatrix.type = LITE3D_SHADER_PARAMETER_FLOATM3;
 
     kmMat4Identity(&globalParams.projectionMatrix.parameter.valmat4);
     kmMat4Identity(&globalParams.viewMatrix.parameter.valmat4);
     kmMat4Identity(&globalParams.modelMatrix.parameter.valmat4);
-    kmMat4Identity(&globalParams.modelviewMatrix.parameter.valmat4);
     kmMat3Identity(&globalParams.normalMatrix.parameter.valmat3);
 }
