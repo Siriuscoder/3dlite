@@ -9,7 +9,7 @@
             "Perspective": 
             {
                 "Znear": 10,
-                "Zfar": 1500,
+                "Zfar": 5000,
                 "Fov": 70
             },
             "RenderTargets":
