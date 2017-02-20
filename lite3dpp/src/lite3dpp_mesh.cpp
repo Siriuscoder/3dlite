@@ -160,7 +160,7 @@ namespace lite3dpp
             LITE3D_THROW("Plain generation failed");
 
         lite3d_mesh_chunk *meshChunk = LITE3D_MEMBERCAST(lite3d_mesh_chunk, lite3d_list_last_link(&mMesh.chunks), node);
-        lite3d_bouding_vol_setup(&meshChunk->boudingVol, &vmin, &vmax);
+        lite3d_bounding_vol_setup(&meshChunk->boundingVol, &vmin, &vmax);
     }
     
     void Mesh::genBigTriangle(bool dynamic)
@@ -180,7 +180,7 @@ namespace lite3dpp
             LITE3D_THROW("BigTriangle generation failed");
 
         lite3d_mesh_chunk *meshChunk = LITE3D_MEMBERCAST(lite3d_mesh_chunk, lite3d_list_last_link(&mMesh.chunks), node);
-        lite3d_bouding_vol_setup(&meshChunk->boudingVol, &vmin, &vmax);
+        lite3d_bounding_vol_setup(&meshChunk->boundingVol, &vmin, &vmax);
     }
 }
 

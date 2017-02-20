@@ -38,7 +38,7 @@ typedef struct _mqr_node
     lite3d_scene_node *node;
     lite3d_mesh_chunk *meshChunk;
     uint32_t instancesCount;
-    lite3d_bouding_vol boudingVol;
+    lite3d_bounding_vol boundingVol;
     float distanceToCamera;
     _mqr_unit *matUnit;
 } _mqr_node;
@@ -117,15 +117,15 @@ static int mqr_node_approve(lite3d_scene *scene,
 
     if (mqrNode->node->invalidated)
     {
-        /* recalc bouding volume if node begin invalidated (position or rotation changed)*/
-        lite3d_bouding_vol_translate(&mqrNode->boudingVol,
-            &mqrNode->meshChunk->boudingVol,
+        /* recalc bounding volume if node begin invalidated (position or rotation changed)*/
+        lite3d_bounding_vol_translate(&mqrNode->boundingVol,
+            &mqrNode->meshChunk->boundingVol,
             &mqrNode->node->worldView);
     }
 
     if (mqrNode->node->invalidated || mqrNode->matUnit->currentCamera->cameraNode.invalidated)
     {
-        mqrNode->distanceToCamera = lite3d_camera_distance(mqrNode->matUnit->currentCamera, &mqrNode->boudingVol.sphereCenter);
+        mqrNode->distanceToCamera = lite3d_camera_distance(mqrNode->matUnit->currentCamera, &mqrNode->boundingVol.sphereCenter);
     }
     
     if (!mqrNode->node->renderable)
@@ -135,17 +135,17 @@ static int mqr_node_approve(lite3d_scene *scene,
 
     scene->stats.batchesTotal++;
     /* frustum test */
-    if (mqrNode->node->frustumTest && !lite3d_frustum_test(&mqrNode->matUnit->currentCamera->frustum, &mqrNode->boudingVol))
+    if (mqrNode->node->frustumTest && !lite3d_frustum_test(&mqrNode->matUnit->currentCamera->frustum, &mqrNode->boundingVol))
     {
         if (scene->nodeOutOfFrustum)
             scene->nodeOutOfFrustum(scene, mqrNode->node,
-            mqrNode->meshChunk, mqrNode->matUnit->material, &mqrNode->boudingVol, mqrNode->matUnit->currentCamera);
+            mqrNode->meshChunk, mqrNode->matUnit->material, &mqrNode->boundingVol, mqrNode->matUnit->currentCamera);
         return LITE3D_FALSE;
     }
     
     if (mqrNode->node->frustumTest && scene->nodeInFrustum)
         scene->nodeInFrustum(scene, mqrNode->node,
-        mqrNode->meshChunk, mqrNode->matUnit->material, &mqrNode->boudingVol, mqrNode->matUnit->currentCamera);
+        mqrNode->meshChunk, mqrNode->matUnit->material, &mqrNode->boundingVol, mqrNode->matUnit->currentCamera);
 
     return LITE3D_TRUE;
 }
@@ -517,7 +517,7 @@ int lite3d_scene_node_touch_material(
     SDL_assert_release(mqrNode);
     /* relink render node */
     mqrNode->meshChunk = meshChunk;
-    mqrNode->boudingVol = meshChunk->boudingVol;
+    mqrNode->boundingVol = meshChunk->boundingVol;
     mqrNode->instancesCount = instancesCount;
     mqrNode->matUnit = mqrUnit;
     mqrNode->node->recalc = LITE3D_TRUE;

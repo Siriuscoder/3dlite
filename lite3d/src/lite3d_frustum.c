@@ -69,7 +69,7 @@ void lite3d_frustum_compute(struct lite3d_frustum *frustum,
 }
 
 static int testSphereInFrustum(struct lite3d_frustum *frustum,
-    const struct lite3d_bouding_vol *vol)
+    const struct lite3d_bounding_vol *vol)
 {
     int i;
     for (i = 0; i < 6; ++i)
@@ -83,7 +83,7 @@ static int testSphereInFrustum(struct lite3d_frustum *frustum,
 }
 
 static int testBoxInFrustum(struct lite3d_frustum *frustum,
-    const struct lite3d_bouding_vol *vol)
+    const struct lite3d_bounding_vol *vol)
 {
     int i, j;
     for (i = 0; i < 6; ++i)
@@ -102,12 +102,12 @@ static int testBoxInFrustum(struct lite3d_frustum *frustum,
 }
 
 int lite3d_frustum_test(struct lite3d_frustum *frustum,
-    const struct lite3d_bouding_vol *vol)
+    const struct lite3d_bounding_vol *vol)
 {
     SDL_assert(frustum);
     SDL_assert(vol);
 
-    /* bouding volume not setup, always true */
+    /* bounding volume not setup, always true */
     if (vol->radius == 0.0f)
         return LITE3D_TRUE;
 
@@ -117,7 +117,7 @@ int lite3d_frustum_test(struct lite3d_frustum *frustum,
     return testBoxInFrustum(frustum, vol);
 }
 
-void lite3d_bouding_vol_setup(struct lite3d_bouding_vol *vol,
+void lite3d_bounding_vol_setup(struct lite3d_bounding_vol *vol,
     const kmVec3 *vmin, const kmVec3 *vmax)
 {
     float l, w, h;
@@ -168,11 +168,11 @@ void lite3d_bouding_vol_setup(struct lite3d_bouding_vol *vol,
     vol->radius = kmVec3Length(&center);
 }
 
-void lite3d_bouding_vol_translate(struct lite3d_bouding_vol *volOut,
-    const struct lite3d_bouding_vol *volIn, const struct kmMat4 *tr)
+void lite3d_bounding_vol_translate(struct lite3d_bounding_vol *volOut,
+    const struct lite3d_bounding_vol *volIn, const struct kmMat4 *tr)
 {
     int i;
-    kmVec3 center;
+    //kmVec3 center;
     
     SDL_assert(volOut);
     SDL_assert(volIn);
@@ -180,14 +180,14 @@ void lite3d_bouding_vol_translate(struct lite3d_bouding_vol *volOut,
     
     for (i = 0; i < 8; ++i)
     {
-        kmVec3MultiplyMat4(&volOut->box[i], &volIn->box[i], tr);
+        kmVec3TransformCoord(&volOut->box[i], &volIn->box[i], tr);
     }
 
-    kmVec3MultiplyMat4(&volOut->sphereCenter, &volIn->sphereCenter, tr);
-    /* calculate radius */
-    kmVec3Subtract(&center, &volIn->sphereCenter, &volIn->box[0]);
-    kmVec3MultiplyMat4(&center, &center, tr);
-    volOut->radius = kmVec3Length(&center);
+    kmVec3TransformCoord(&volOut->sphereCenter, &volIn->sphereCenter, tr);
+    /* TODO: calculate radius */
+    //kmVec3Subtract(&center, &volIn->sphereCenter, &volIn->box[0]);
+    //kmVec3MultiplyMat4(&center, &center, tr);
+    //volOut->radius = kmVec3Length(&center);
 }
 
 
@@ -200,8 +200,8 @@ float lite3d_frustum_distance(struct lite3d_frustum *frustum,
     return kmPlaneDistance(&frustum->clipPlains[5], point);
 }
 
-float lite3d_frustum_distance_bouding_vol(struct lite3d_frustum *frustum, 
-    const struct lite3d_bouding_vol *vol)
+float lite3d_frustum_distance_bounding_vol(struct lite3d_frustum *frustum, 
+    const struct lite3d_bounding_vol *vol)
 {
     SDL_assert(frustum);
     SDL_assert(vol);

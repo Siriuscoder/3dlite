@@ -89,12 +89,12 @@ namespace lite3dpp
 
         virtual void nodeInFrustum(Scene *scene, 
             SceneNode *node, lite3d_mesh_chunk *meshChunk, 
-            Material *material, lite3d_bouding_vol *boudingVol, 
+            Material *material, lite3d_bounding_vol *boundingVol, 
             Camera *camera) {}
 
         virtual void nodeOutOfFrustum(Scene *scene, 
             SceneNode *node, lite3d_mesh_chunk *meshChunk, 
-            Material *material, lite3d_bouding_vol *boudingVol,
+            Material *material, lite3d_bounding_vol *boundingVol,
             Camera *camera) {}
 
         virtual void beforeUpdateNodes(Scene *scene, Camera *camera) {}

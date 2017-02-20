@@ -321,7 +321,7 @@ namespace lite3dpp
 
     void Scene::nodeInFrustum(struct lite3d_scene *scene, 
             struct lite3d_scene_node *node, struct lite3d_mesh_chunk *meshChunk, 
-            struct lite3d_material *material, struct lite3d_bouding_vol *boudingVol, 
+            struct lite3d_material *material, struct lite3d_bounding_vol *boundingVol, 
             struct lite3d_camera *camera)
     {
         SDL_assert(scene->userdata);
@@ -336,7 +336,7 @@ namespace lite3dpp
                 reinterpret_cast<SceneNode *>(node->userdata),
                 meshChunk,
                 reinterpret_cast<Material *>(material->userdata),
-                boudingVol,
+                boundingVol,
                 reinterpret_cast<Camera *>(camera->userdata));
         }
         catch(std::exception &ex)
@@ -347,7 +347,7 @@ namespace lite3dpp
 
     void Scene::nodeOutOfFrustum(struct lite3d_scene *scene, 
             struct lite3d_scene_node *node, struct lite3d_mesh_chunk *meshChunk, 
-            struct lite3d_material *material, struct lite3d_bouding_vol *boudingVol,
+            struct lite3d_material *material, struct lite3d_bounding_vol *boundingVol,
             struct lite3d_camera *camera)
     {
         SDL_assert(scene->userdata);
@@ -362,7 +362,7 @@ namespace lite3dpp
                 reinterpret_cast<SceneNode *>(node->userdata),
                 meshChunk,
                 reinterpret_cast<Material *>(material->userdata),
-                boudingVol,
+                boundingVol,
                 reinterpret_cast<Camera *>(camera->userdata));
         }
         catch(std::exception &ex)

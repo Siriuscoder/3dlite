@@ -66,7 +66,7 @@ typedef struct lite3d_mesh_chunk
     /* material index */
     uint32_t materialIndex;
     uint8_t hasIndexes;
-    lite3d_bouding_vol boudingVol;
+    lite3d_bounding_vol boundingVol;
 } lite3d_mesh_chunk;
 
 LITE3D_CEXPORT int lite3d_mesh_init(struct lite3d_mesh *mesh);

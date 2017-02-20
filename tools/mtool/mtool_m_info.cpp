@@ -114,8 +114,8 @@ void MeshInfoCommand::printInfo(const lite3d_file *meshFile)
         }
 
         printf("\n\tStride: %lu bytes \n", offset);
-        printf("\tBouding sphere : (%f,%f,%f) radius %f\n\n", meshChunk->boudingVol.sphereCenter.x,
-            meshChunk->boudingVol.sphereCenter.y, meshChunk->boudingVol.sphereCenter.z, meshChunk->boudingVol.radius);
+        printf("\tBouding sphere : (%f,%f,%f) radius %f\n\n", meshChunk->boundingVol.sphereCenter.x,
+            meshChunk->boundingVol.sphereCenter.y, meshChunk->boundingVol.sphereCenter.z, meshChunk->boundingVol.radius);
     }
 
     lite3d_mesh_purge(&mesh);

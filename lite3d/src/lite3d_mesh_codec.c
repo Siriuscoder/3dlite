@@ -52,7 +52,7 @@ typedef struct lite3d_m_chunk
     int32_t verticesOffset;
     uint8_t indexElemSize;
     uint32_t materialIndex;
-    lite3d_bouding_vol boudingVol;
+    lite3d_bounding_vol boundingVol;
 } lite3d_m_chunk;
 
 typedef struct lite3d_m_chunk_layout
@@ -236,7 +236,7 @@ int lite3d_mesh_m_decode(lite3d_mesh *mesh,
         /* set material index to currently added meshChunk */
         thisChunk = LITE3D_MEMBERCAST(lite3d_mesh_chunk, lite3d_list_last_link(&mesh->chunks), node);
         thisChunk->materialIndex = mchunk.materialIndex;
-        thisChunk->boudingVol = mchunk.boudingVol;
+        thisChunk->boundingVol = mchunk.boundingVol;
 
         indOffset += mchunk.indexesSize;
         vertOffset += mchunk.verticesSize;
@@ -319,7 +319,7 @@ int lite3d_mesh_m_encode(lite3d_mesh *mesh,
         mchunk.verticesOffset = meshChunk->vao.verticesOffset;
         mchunk.indexElemSize = lite3d_size_by_index_type(meshChunk->vao.indexType);
         mchunk.materialIndex = meshChunk->materialIndex;
-        mchunk.boudingVol = meshChunk->boudingVol;
+        mchunk.boundingVol = meshChunk->boundingVol;
 
         if (SDL_RWwrite(stream, &mchunk, sizeof (mchunk), 1) != 1)
         {

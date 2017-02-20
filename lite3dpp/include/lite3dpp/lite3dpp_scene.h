@@ -81,12 +81,12 @@ namespace lite3dpp
 
         static void nodeInFrustum(struct lite3d_scene *scene, 
             struct lite3d_scene_node *node, struct lite3d_mesh_chunk *meshChunk, 
-            struct lite3d_material *material, struct lite3d_bouding_vol *boudingVol, 
+            struct lite3d_material *material, struct lite3d_bounding_vol *boundingVol, 
             struct lite3d_camera *camera);
 
         static void nodeOutOfFrustum(struct lite3d_scene *scene, 
             struct lite3d_scene_node *node, struct lite3d_mesh_chunk *meshChunk, 
-            struct lite3d_material *material, struct lite3d_bouding_vol *boudingVol,
+            struct lite3d_material *material, struct lite3d_bounding_vol *boundingVol,
             struct lite3d_camera *camera);
 
         static void beforeUpdateNodes(struct lite3d_scene *scene, struct lite3d_camera *camera);
