@@ -1,0 +1,14 @@
+{
+	"Sources": 
+	[
+		"warship:shaders/sources/basic.vs",
+		"warship:shaders/sources/basic_illum.ps"
+	],
+	
+	"AttributesOrder":
+	[
+		"vertexAttr",
+		"normalAttr",
+		"texCoordAttr"
+	]
+}

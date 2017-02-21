@@ -3,7 +3,7 @@
     {
       "Pass":1,
       "Program":{
-        "Name":"Stub.program",
+        "Name":"basic.program",
         "Path":"warship:shaders/json/basic.json"
       }
     }

@@ -87,6 +87,8 @@ namespace lite3dpp
                     setFloatv3Parameter(passNo, paramName, uniformParamJson.getVec3(L"Value"), scope == "global");
                 else if(paramType == "v4")
                     setFloatv4Parameter(passNo, paramName, uniformParamJson.getVec4(L"Value"), scope == "global");
+                else if(paramType == "int")
+                    setIntParameter(passNo, paramName, uniformParamJson.getInt(L"Value"), scope == "global");
                 else if(paramType == "m3")
                 {
                     kmMat3 mat3;

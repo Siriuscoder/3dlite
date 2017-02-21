@@ -34,6 +34,16 @@ public:
     void processEvent(SDL_Event *e) override
     {
         Sample::processEvent(e);
+        if (e->type == SDL_KEYDOWN)
+        {
+            if (e->key.keysym.sym == SDLK_l)
+            {
+                static bool light = true;
+                light = !light;
+                
+                lite3dpp::Material::setIntGlobalParameter("glowEnabled", light ? 1 : 0);
+            }
+        }
     }
 };
 

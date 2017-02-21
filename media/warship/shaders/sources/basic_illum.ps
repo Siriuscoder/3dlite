@@ -1,0 +1,36 @@
+#version 140
+
+uniform sampler2D diffuse;
+uniform sampler2D glow;
+uniform int glowEnabled;
+
+const vec3 lightDir = vec3(1.0, 1.0, 1.0);
+
+in vec3 vnormal;
+in vec2 uv;
+
+bool vec3zero(vec3 vec)
+{
+    float prec = 0.000001;
+    return ((1.0-step(prec, vec.x)) * (1.0-step(prec, vec.y)) * (1.0-step(prec, vec.z))) == 1.0;
+}
+
+void main()
+{
+    float nDotL = 1.0;
+    
+    vec4 fragDiffuse = texture2D(diffuse, uv);
+    nDotL = clamp(dot(vnormal, lightDir), 0.1, 1.0);
+
+    if (glowEnabled > 0)
+    {
+        vec3 fragGlow = texture2D(glow, uv).xyz;
+        if (!vec3zero(fragGlow))
+        {
+            fragDiffuse.xyz = fragGlow;
+            nDotL = 1.0;
+        }
+    }
+
+    gl_FragColor = vec4(fragDiffuse.xyz * nDotL, fragDiffuse.w);
+}

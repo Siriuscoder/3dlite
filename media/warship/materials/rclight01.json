@@ -3,8 +3,8 @@
     {
       "Pass":1,
       "Program":{
-        "Name":"Stub.program",
-        "Path":"warship:shaders/json/basic.json"
+        "Name":"basic_illum.program",
+        "Path":"warship:shaders/json/basic_illum.json"
       }
     }
   ],
@@ -22,9 +22,21 @@
       "Name":"modelMatrix"
     },
     {
+      "Name":"glowEnabled",
+      "Type":"int",
+	  "Value": 1,
+	  "Scope":"global"
+    },
+    {
       "Name":"diffuse",
       "TextureName":"rclight01.texture",
       "TexturePath":"warship:textures/json/rclight01.json",
+      "Type":"sampler"
+    },
+    {
+      "Name":"glow",
+      "TextureName":"rclight01_g.texture",
+      "TexturePath":"warship:textures/json/rclight01_g.json",
       "Type":"sampler"
     }
   ]
