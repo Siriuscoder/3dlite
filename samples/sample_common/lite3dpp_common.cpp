@@ -46,7 +46,6 @@ void Sample::initGui()
     
     Scene *gui = mMain.getResourceManager()->queryResource<Scene>("GUI",
         "samples:scenes/gui.json");
-    gui->addObserver(this);
     
     mGuiCamera = gui->getCamera("GuiCamera");
     //mGuiCamera->cullBackFaces(false);
@@ -64,15 +63,6 @@ void Sample::init()
     
     adjustMainCamera(mMainWindow->width(), mMainWindow->height());
     mMain.getResourceManager()->releaseFileCache();
-}
-
-void Sample::beginSceneRender(Scene *scene, Camera *camera) 
-{
-    if(mMainWindow && scene->getName() == "GUI")
-    {
-        /* clean depth berore gui render should begin */
-        mMainWindow->clear(false, true, false);
-    }
 }
 
 void Sample::timerTick(lite3d_timer *timerid)

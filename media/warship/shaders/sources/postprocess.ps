@@ -1,0 +1,12 @@
+#version 330
+
+uniform sampler2D combined;
+uniform int FXAA;
+uniform int Gamma;
+
+in vec2 uv;
+
+void main()
+{
+    gl_FragColor = texture2D(combined, uv);
+}

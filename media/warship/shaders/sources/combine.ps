@@ -1,0 +1,14 @@
+#version 330
+
+uniform sampler2D fragMap;
+uniform sampler2D normalMap;
+uniform sampler2D diffuseMap;
+uniform samplerBuffer lightSources;
+uniform int Warship_numLights;
+
+in vec2 uv;
+
+void main()
+{
+    gl_FragColor = texture2D(diffuseMap, uv);
+}

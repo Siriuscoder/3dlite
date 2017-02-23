@@ -54,6 +54,8 @@ namespace lite3dpp
 
         lite3d_render_target_init(mRenderTargetPtr, width, height);
         setBackgroundColor(helper.getVec4(L"BackgroundColor"));
+        setBuffersCleanBit(helper.getBool(L"CleanColorBuf", true),
+            helper.getBool(L"CleanDepthBuf", true), helper.getBool(L"CleanStencilBuf", true));
 
         {
             ConfigurationReader attachmentJson = helper.getObject(L"ColorAttachments");

@@ -1,0 +1,14 @@
+{
+    "Sources": 
+    [
+        "warship:shaders/sources/prepass.vs",
+        "warship:shaders/sources/prepass.ps"
+    ],
+    
+    "AttributesOrder":
+    [
+        "ivertex",
+        "inormal",
+        "iuv"
+    ]
+}

@@ -22,24 +22,24 @@
       "Scope":"global"
     },
     {
-      "Name":"combined",
+      "Name":"fragMap",
       "TextureName": "fragmentWorldCoords.texture",
       "Type":"sampler"
     },
     {
-      "Name":"combined",
+      "Name":"normalMap",
       "TextureName": "normalsWorld.texture",
       "Type":"sampler"
     },
     {
-      "Name":"combined",
+      "Name":"diffuseMap",
       "TextureName": "diffuseMap.texture",
       "Type":"sampler"
     },
     {
-      "Name":"liBuffer",
+      "Name":"lightSources",
       "TextureName": "Warship_lightingBufferObject",
       "Type":"samplerBuffer"
-    },
+    }
   ]
 }

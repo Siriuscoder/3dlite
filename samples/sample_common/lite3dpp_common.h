@@ -25,8 +25,7 @@
 namespace lite3dpp {
 namespace samples {
 
-class Sample : public LifecycleObserver,
-    public SceneObserver
+class Sample : public LifecycleObserver
 {
 public:
 
@@ -35,7 +34,6 @@ public:
     void init() override;
     void timerTick(lite3d_timer *timerid) override;
     void processEvent(SDL_Event *e) override;
-    void beginSceneRender(Scene *scene, Camera *camera) override;
 
     int start(const char *config);
 

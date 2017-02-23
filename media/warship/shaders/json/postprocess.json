@@ -1,0 +1,12 @@
+{
+    "Sources": 
+    [
+        "warship:shaders/sources/tri.vs",
+        "warship:shaders/sources/postprocess.ps"
+    ],
+    
+    "AttributesOrder":
+    [
+        "ivertex"
+    ]
+}

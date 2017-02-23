@@ -16,7 +16,7 @@
       "Name":"viewMatrix"
     },
     {
-      "Name":"SSAO",
+      "Name":"FXAA",
       "Type":"int",
       "Value": 1,
       "Scope":"global"

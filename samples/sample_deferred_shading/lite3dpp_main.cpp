@@ -27,8 +27,13 @@ public:
     void createScene() override
     {
         Scene *scene = getMain().getResourceManager()->queryResource<Scene>("Warship",
-            "warship:scenes/warship.json");
+            "warship:scenes/warship_prepass.json");
         setMainCamera(scene->getCamera("MainCamera"));
+        
+        scene = getMain().getResourceManager()->queryResource<Scene>("WarshipCombine",
+            "warship:scenes/warship_combine.json");
+        scene = getMain().getResourceManager()->queryResource<Scene>("WarshipPostProcess",
+            "warship:scenes/warship_postprocess.json");
     }
 
     void processEvent(SDL_Event *e) override

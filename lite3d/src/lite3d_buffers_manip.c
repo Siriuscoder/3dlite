@@ -115,9 +115,10 @@ void lite3d_buffers_clear(uint8_t color, uint8_t depth, uint8_t stencil)
         clearbits |= GL_STENCIL_BUFFER_BIT;
     }
 
-    glClear((color ? GL_COLOR_BUFFER_BIT : 0) | 
-        (depth ? GL_DEPTH_BUFFER_BIT : 0) | 
-        (stencil ? GL_STENCIL_BUFFER_BIT : 0));
+    if (color || depth || stencil)
+        glClear((color ? GL_COLOR_BUFFER_BIT : 0) | 
+            (depth ? GL_DEPTH_BUFFER_BIT : 0) | 
+            (stencil ? GL_STENCIL_BUFFER_BIT : 0));
 }
 
 void lite3d_buffers_clear_values(const kmVec4 *color, float depth, int stencil)
