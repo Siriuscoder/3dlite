@@ -331,7 +331,7 @@ static int init(void *userdata)
     }
 
     lite3d_scene_add_node(&mScene, &mCamera01.cameraNode, NULL);
-    lite3d_render_target_screen_attach_camera(&mCamera01, 1, 0);
+    lite3d_render_target_screen_attach_camera(&mCamera01, 1, 0, LITE3D_RENDER_DEFAULT);
     //lite3d_camera_link_to(&mCamera01, &mSceneNode[2], LITE3D_CAMERA_LINK_ORIENTATION);
     //lite3d_camera_tracking(&mCamera01, &mSceneNode[2]);
 

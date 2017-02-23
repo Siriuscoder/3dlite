@@ -7,8 +7,9 @@
             [
                 {
                     "Name": "Window",
-                    "Priority": 1,
-                    "TexturePass": 1
+                    "Priority": 20,
+                    "TexturePass": 1,
+                    "CleanDepthBuffer": true
                 }
             ]
         }

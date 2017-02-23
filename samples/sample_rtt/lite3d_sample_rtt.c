@@ -369,11 +369,11 @@ static int init(void *userdata)
     lite3d_scene_add_node(&mSceneMain, &mCamera02.cameraNode, NULL);
 
     /* setup render targets */
-    lite3d_render_target_screen_attach_camera(&mCamera02, 1, 0);
+    lite3d_render_target_screen_attach_camera(&mCamera02, 1, 0, LITE3D_RENDER_DEFAULT);
 
     /* create new render target and attach cam1 to it */
     lite3d_render_target_init(&mRTT, RENDER_TEXTURE_WIDTH, RENDER_TEXTURE_HEIGHT);
-    lite3d_render_target_attach_camera(&mRTT, &mCamera01, 1, 0);
+    lite3d_render_target_attach_camera(&mRTT, &mCamera01, 1, 0, LITE3D_RENDER_DEFAULT);
     /* setup render target framebuffer */
     colorTextureArr[0] = &mRenderTextureUnit;
     if (!lite3d_framebuffer_setup(&mRTT.fb, colorTextureArr, 1,

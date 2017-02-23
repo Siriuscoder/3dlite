@@ -190,9 +190,6 @@ static void mqr_render_stage_first(struct lite3d_scene *scene, lite3d_camera *ca
     lite3d_list_node *mqrUnitNode = NULL;
 
     LITE3D_ARR_ADD_ELEM(&scene->invalidatedUnits, lite3d_scene_node *, &camera->cameraNode);
-    /* make shure what blending is disabled */
-    lite3d_depth_test(LITE3D_TRUE);
-    lite3d_depth_output(LITE3D_TRUE);
 
     if (scene->beginFirstStageRender)
         scene->beginFirstStageRender(scene, camera);
@@ -228,10 +225,6 @@ static void mqr_render_stage_second(struct lite3d_scene *scene, lite3d_camera *c
         return;
 
     lite3d_array_qsort(&scene->sortedNodesByDistance, mqr_node_distance_comparator);
-
-    /* depth buffer colebrate */
-    lite3d_depth_test(LITE3D_TRUE);
-    lite3d_depth_output(LITE3D_TRUE);
 
     if (scene->beginSecondStageRender)
         scene->beginSecondStageRender(scene, camera);

@@ -2,15 +2,18 @@
     "Cameras":
     [
         {
-            "Name": "MainCamera",
+            "Name": "OrthoCamera",
 
-            "Position": [0,0,50],
+            "Position": [0,0,0.5],
             "LookAt": [0,0,0],
-            "Perspective": 
+            "Ortho": 
             {
-                "Znear": 10,
-                "Zfar": 5000,
-                "Fov": 70
+                "Near": 0,
+                "Far": 1.0,
+                "Left": 0,
+                "Right": 1.0,
+                "Bottom": 0,
+                "Top": 1.0
             },
             "RenderTargets":
             [
@@ -26,8 +29,8 @@
     "Objects":
     [
         {
-            "Name": "WarshipStaticGeom",
-            "Object": "warship:objects/warship_static.json"
+            "Name": "BigTriangleGeom",
+            "Object": "warship:objects/warship_postprocess_tri.json"
         }
     ]
 }

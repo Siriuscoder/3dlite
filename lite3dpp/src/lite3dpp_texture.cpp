@@ -124,9 +124,20 @@ namespace lite3dpp
                 (textureFormatStr == "LUMINANCE" ? LITE3D_TEXTURE_FORMAT_LUMINANCE : 
                 (textureFormatStr == "LUMINANCE_ALPHA" ? LITE3D_TEXTURE_FORMAT_LUMINANCE_ALPHA :
                 (textureFormatStr == "DEPTH" ? LITE3D_TEXTURE_FORMAT_DEPTH : 0)))))));
+            
+            int32_t width = helper.getInt(L"Width", 0), 
+                height = helper.getInt(L"Height", 0),
+                depth = helper.getInt(L"Depth", 1);
+            
+            /* use screen size if not specified */
+            if(width == 0 && height == 0)
+            {
+                width = mMain->window()->width();
+                height = mMain->window()->height();
+            }
 
             if(!lite3d_texture_unit_allocate(&mTexture, textureType, quality, wrapping, textureFormat, helper.getInt(L"InternalFormat", 0),
-                helper.getInt(L"Height", 1), helper.getInt(L"Width", 1), helper.getInt(L"Depth", 1)))
+                width, height, depth))
                 LITE3D_THROW(getName() << " texture allocation failed..");
             
             if(helper.has(L"BlankColor"))

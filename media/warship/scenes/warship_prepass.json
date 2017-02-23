@@ -1,0 +1,43 @@
+{
+    "Cameras":
+    [
+        {
+            "Name": "MainCamera",
+
+            "Position": [0,0,50],
+            "LookAt": [0,0,0],
+            "Perspective": 
+            {
+                "Znear": 10,
+                "Zfar": 5000,
+                "Fov": 75
+            },
+            "RenderTargets":
+            [
+                {
+                    "Name": "RenderPrepass",
+                    "Path": "warship:targets/prepass.json",
+                    "Priority": 0,
+                    "TexturePass": 1,
+                    "RenderSecondStage": false
+                },
+                {
+                    "Name": "CombinePass",
+                    "Path": "warship:targets/combine.json",
+                    "Priority": 2, // render second in combine pass
+                    "TexturePass": 1,
+                    "RenderFirstStage": false
+                }
+            ]
+        }
+    ],
+    
+    "Objects":
+    [
+        {
+            "Name": "WarshipStaticGeom",
+            "Object": "warship:objects/warship_static.json"
+        }
+    ]
+}
+

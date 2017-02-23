@@ -4,9 +4,9 @@
     "Wrapping": "ClampToEdge",
     "Compression": false,
     "TextureFormat": "RGBA",
-    "Height": 256,
-    "Width": 128,
-	"Font": "samples:fonts/arial.ttf",
-	"FontSize": 12,
-	"BlankColor": [ 0.2, 0.2, 0.2, 0.4 ]
+    "Width": 256,
+    "Height": 128,
+    "Font": "samples:fonts/arial.ttf",
+    "FontSize": 12,
+    "BlankColor": [ 0.2, 0.2, 0.2, 0.4 ]
 }

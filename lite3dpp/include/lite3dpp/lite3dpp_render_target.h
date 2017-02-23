@@ -60,11 +60,8 @@ namespace lite3dpp
         inline lite3d_render_target *getPtr()
         { return mRenderTargetPtr; }
 
-        void addCamera(Camera *camera, uint16_t pass, int priority);
+        void addCamera(Camera *camera, uint16_t pass, int priority, uint32_t renderFlags);
         void removeCamera(Camera *camera, uint16_t pass, int priority);
-        
-        void setRenderFlags(uint32_t flags);
-        uint32_t getRenderFlags();
 
     protected:
 

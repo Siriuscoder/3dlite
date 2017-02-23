@@ -1,0 +1,23 @@
+{
+    "Root":
+    {
+        "Name": "BigTriangle.root",
+        "Mesh": 
+        {
+            "Name": "BigTriangle.mesh",
+            "Mesh": "warship:models/json/BigTriangle.json",
+            "MaterialMapping": 
+            [
+                {
+                    "MaterialIndex": 0,
+                    "Material":
+                    {
+                        "Name": "combine.material",
+                        "Material": "warship:materials/combine.json"
+                    }
+                }
+            ]
+        }
+    }
+}
+

@@ -130,28 +130,16 @@ namespace lite3dpp
             stencil ? LITE3D_TRUE : LITE3D_FALSE);
     }
 
-    void RenderTarget::addCamera(Camera *camera, uint16_t pass, int priority)
+    void RenderTarget::addCamera(Camera *camera, uint16_t pass, int priority, uint32_t renderFlags)
     {
         SDL_assert_release(mRenderTargetPtr);
-        lite3d_render_target_attach_camera(mRenderTargetPtr, camera->getPtr(), pass, priority);
+        lite3d_render_target_attach_camera(mRenderTargetPtr, camera->getPtr(), pass, priority, renderFlags);
     }
 
     void RenderTarget::removeCamera(Camera *camera, uint16_t pass, int priority)
     {
         SDL_assert_release(mRenderTargetPtr);
         lite3d_render_target_dettach_camera(mRenderTargetPtr, camera->getPtr(), pass, priority);
-    }
-    
-    void RenderTarget::setRenderFlags(uint32_t flags)
-    {
-        SDL_assert_release(mRenderTargetPtr);
-        mRenderTargetPtr->renderFlags = flags;
-    }
-    
-    uint32_t RenderTarget::getRenderFlags()
-    {
-        SDL_assert_release(mRenderTargetPtr);
-        return mRenderTargetPtr->renderFlags;
     }
     
     void RenderTarget::saveScreenshot(const String &filename)

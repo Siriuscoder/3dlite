@@ -15,7 +15,7 @@
         "Caption": "Warship deferred shading scene",
         "ColorBits": 24,
         "Fullscreen": false,
-        "MSAA": 4,
+        "MSAA": 1,
         "VSync": false
     },
     // resource locations

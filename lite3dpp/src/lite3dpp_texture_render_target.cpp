@@ -37,14 +37,13 @@ namespace lite3dpp
 
     void TextureRenderTarget::loadFromConfigImpl(const ConfigurationReader &helper)
     {
-        int32_t width = helper.getInt(L"Width"), 
-            height = helper.getInt(L"Height");
+        int32_t width = helper.getInt(L"Width", 0), 
+            height = helper.getInt(L"Height", 0);
         int8_t attachColorRenderBuffer = LITE3D_FALSE;
         int8_t attachDepthRenderBuffer = LITE3D_FALSE;
         int8_t attachStencilRenderBuffer = LITE3D_FALSE;
         stl<lite3d_texture_unit *>::vector colorAttachments;
         lite3d_texture_unit *depthAttachment = NULL;
-        uint32_t renderFlags = 0;
 
         /* use screen size if not specified */
         if(width == 0 && height == 0)
@@ -55,13 +54,6 @@ namespace lite3dpp
 
         lite3d_render_target_init(mRenderTargetPtr, width, height);
         setBackgroundColor(helper.getVec4(L"BackgroundColor"));
-        
-        if (helper.getBool(L"RenderFirstStage", true))
-            renderFlags |= LITE3D_RENDER_STAGE_FIRST;
-        if (helper.getBool(L"RenderSecondStage", true))
-            renderFlags |= LITE3D_RENDER_STAGE_SECOND;
-        
-        setRenderFlags(renderFlags);
 
         {
             ConfigurationReader attachmentJson = helper.getObject(L"ColorAttachments");

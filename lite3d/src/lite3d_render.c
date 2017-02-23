@@ -37,6 +37,7 @@ typedef struct lookUnit
     lite3d_camera *camera;
     uint16_t pass;
     int priority;
+    uint32_t renderFlags;
 } lookUnit;
 
 static uint64_t gLastMark = 0;
@@ -114,7 +115,16 @@ static void update_render_target(lite3d_render_target *target)
 
         if(look->camera->cameraNode.enabled)
         {
-            lite3d_scene_render(scene, look->camera, look->pass, target->renderFlags);
+            lite3d_buffers_clear((look->renderFlags & LITE3D_RENDER_CLEAN_COLOR_BUF) ? LITE3D_TRUE : LITE3D_FALSE,
+                (look->renderFlags & LITE3D_RENDER_CLEAN_DEPTH_BUF) ? LITE3D_TRUE : LITE3D_FALSE,
+                (look->renderFlags & LITE3D_RENDER_CLEAN_STENCIL_BUF) ? LITE3D_TRUE : LITE3D_FALSE);
+            
+            lite3d_depth_test((look->renderFlags & LITE3D_RENDER_DEPTH_TEST) ? LITE3D_TRUE : LITE3D_FALSE);
+            lite3d_color_output((look->renderFlags & LITE3D_RENDER_COLOR_OUTPUT) ? LITE3D_TRUE : LITE3D_FALSE);
+            lite3d_depth_output((look->renderFlags & LITE3D_RENDER_DEPTH_OUTPUT) ? LITE3D_TRUE : LITE3D_FALSE);
+            lite3d_stencil_output((look->renderFlags & LITE3D_RENDER_STENCIL_OUTPUT) ? LITE3D_TRUE : LITE3D_FALSE);
+            
+            lite3d_scene_render(scene, look->camera, look->pass, look->renderFlags);
 
             /* accamulate statistics */
             gRenderStats.trianglesByFrame += scene->stats.trianglesRendered;
@@ -150,9 +160,6 @@ static int update_render_targets(void)
             target->postUpdate(target);
 
         targetsCount++;
-
-        /* flush gl commands */
-        glFlush();
     }
 
     gRenderStats.renderTargets = targetsCount;
@@ -168,7 +175,6 @@ void lite3d_render_loop(lite3d_render_listeners *callbacks)
     gPerfFreq = SDL_GetPerformanceFrequency();
 
     /* depth test enable by default */
-    lite3d_depth_test(LITE3D_TRUE);
     lite3d_depth_test_func(LITE3D_TEST_LESS);
 
     lite3d_buffers_clear_values(&KM_VEC4_ZERO, 1.0f, 0);
@@ -273,7 +279,6 @@ int lite3d_render_target_init(lite3d_render_target *rt,
     rt->cleanStencil = 0;
     rt->width = width;
     rt->height = height;
-    rt->renderFlags = LITE3D_RENDER_STAGE_FIRST | LITE3D_RENDER_STAGE_SECOND;
 
     if (rt != &gScreenRt)
     {
@@ -353,7 +358,7 @@ void lite3d_render_stop(void)
 }
 
 int lite3d_render_target_attach_camera(lite3d_render_target *target, lite3d_camera *camera,
-    uint16_t pass, int priority)
+    uint16_t pass, int priority, uint32_t renderFlags)
 {
     lookUnit *look = NULL;
     lookUnit *lookIns = NULL;
@@ -367,6 +372,7 @@ int lite3d_render_target_attach_camera(lite3d_render_target *target, lite3d_came
     lookIns->camera = camera;
     lookIns->pass = pass;
     lookIns->priority = priority;
+    lookIns->renderFlags = renderFlags;
     lite3d_list_link_init(&lookIns->rtLink);
 
     /* check camera already attached to the render target */
@@ -417,10 +423,10 @@ int lite3d_render_target_dettach_camera(lite3d_render_target *rt, lite3d_camera 
 }
 
 int lite3d_render_target_screen_attach_camera(lite3d_camera *camera,
-    uint16_t pass, int priority)
+    uint16_t pass, int priority, uint32_t renderFlags)
 {
     return lite3d_render_target_attach_camera(&gScreenRt, camera,
-        pass, priority);
+        pass, priority, renderFlags);
 }
 
 int lite3d_render_target_screen_dettach_camera(lite3d_camera *camera,

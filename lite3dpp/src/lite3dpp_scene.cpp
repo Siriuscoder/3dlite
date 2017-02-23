@@ -266,9 +266,29 @@ namespace lite3dpp
                         renderTargetJson.getString(L"Name"),
                         renderTargetJson.getString(L"Path"));
                 }
-
+                
+                uint32_t renderFlags = 0;
+                if (cameraJson.getBool(L"RenderFirstStage", true))
+                    renderFlags |= LITE3D_RENDER_STAGE_FIRST;
+                if (cameraJson.getBool(L"RenderSecondStage", true))
+                    renderFlags |= LITE3D_RENDER_STAGE_SECOND;
+                if (cameraJson.getBool(L"CleanColorBuffer", false))
+                    renderFlags |= LITE3D_RENDER_CLEAN_COLOR_BUF;
+                if (cameraJson.getBool(L"CleanDepthBuffer", false))
+                    renderFlags |= LITE3D_RENDER_CLEAN_DEPTH_BUF;
+                if (cameraJson.getBool(L"CleanStencilBuffer", false))
+                    renderFlags |= LITE3D_RENDER_CLEAN_STENCIL_BUF;
+                if (cameraJson.getBool(L"DepthTest", true))
+                    renderFlags |= LITE3D_RENDER_DEPTH_TEST;
+                if (cameraJson.getBool(L"ColorOutput", true))
+                    renderFlags |= LITE3D_RENDER_COLOR_OUTPUT;
+                if (cameraJson.getBool(L"DepthOutput", true))
+                    renderFlags |= LITE3D_RENDER_DEPTH_OUTPUT;
+                if (cameraJson.getBool(L"StencilOutput", false))
+                    renderFlags |= LITE3D_RENDER_STENCIL_OUTPUT;
+        
                 renderTarget->addCamera(camera, renderTargetJson.getInt(L"TexturePass"),
-                    renderTargetJson.getInt(L"Priority"));
+                    renderTargetJson.getInt(L"Priority"), renderFlags);
             }
 
             ConfigurationReader perspectiveOptionsJson = cameraJson.getObject(L"Perspective");
