@@ -3,18 +3,19 @@
 uniform sampler2D diffuse;
 uniform sampler2D normals;
 
-uniform mat3 normalMatrix;
-
-in vec4 vv;
-in vec3 vn;
-in vec2 uv;
+in vec2 iuv;
+in vec4 ivv;
+in mat3 itbn;
 
 void main()
 {
-    // use normal from normal map instead vn
-    vec4 nn = texture2D(normals, uv);
+    // sampling normal from normal map
+    vec4 nval = texture2D(normals, iuv);
+    // put normal in [-1,1] range in tangent space 
+    // and trasform normal to world space 
+    vec3 nw = normalize(itbn * normalize(2*nval.rgb-1));
 
-    gl_FragData[0] = vec4(vv / vv.w);
-    gl_FragData[1] = vec4(normalMatrix * vec3(nn.xyz), nn.w);
-    gl_FragData[2] = texture2D(diffuse, uv);
+    gl_FragData[0] = ivv / ivv.w;
+    gl_FragData[1] = vec4(nw, nval.a);
+    gl_FragData[2] = texture2D(diffuse, iuv);
 }

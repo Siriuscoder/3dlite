@@ -107,7 +107,9 @@ void MeshInfoCommand::printInfo(const lite3d_file *meshFile)
                 (meshChunk->layout[i].binding == LITE3D_BUFFER_BINDING_VERTEX ? "VERTEX\t" :
                 (meshChunk->layout[i].binding == LITE3D_BUFFER_BINDING_COLOR ? "COLOR\t" :
                 (meshChunk->layout[i].binding == LITE3D_BUFFER_BINDING_NORMAL ? "NORMAL\t" :
-                (meshChunk->layout[i].binding == LITE3D_BUFFER_BINDING_TEXCOORD ? "TEXCOORD" : "ATTRIBUTE")))),
+                (meshChunk->layout[i].binding == LITE3D_BUFFER_BINDING_TEXCOORD ? "TEXCOORD" : 
+                (meshChunk->layout[i].binding == LITE3D_BUFFER_BINDING_TANGENT ? "TANGENT\t" :
+                (meshChunk->layout[i].binding == LITE3D_BUFFER_BINDING_BINORMAL ? "BINORMAL" : "ATTRIBUTE")))))),
                 meshChunk->layout[i].count, offset);
 
             offset += sizeof (float) * meshChunk->layout[i].count;

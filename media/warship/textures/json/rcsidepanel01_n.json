@@ -1,5 +1,5 @@
 {
-  "Filtering":"None",
+  "Filtering":"Linear",
   "Image":"warship:textures/images/rcsidepanel01_n.dds",
   "ImageFormat":"dds",
   "TextureType":"2D",

@@ -9,6 +9,8 @@
     [
         "ivertex",
         "inormal",
-        "iuv"
+        "iuv",
+        "tang",
+        "binorm"
     ]
 }

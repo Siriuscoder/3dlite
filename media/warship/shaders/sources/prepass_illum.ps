@@ -5,11 +5,9 @@ uniform sampler2D glow;
 uniform sampler2D normals;
 uniform int glowEnabled;
 
-uniform mat3 normalMatrix;
-
-in vec4 vv;
-in vec3 vn;
-in vec2 uv;
+in vec2 iuv;
+in vec4 ivv;
+in mat3 itbn;
 
 bool vec3zero(vec3 vec)
 {
@@ -19,11 +17,11 @@ bool vec3zero(vec3 vec)
 
 void main()
 {
-    vec4 fragDiffuse = texture2D(diffuse, uv);
+    vec4 fragDiffuse = texture2D(diffuse, iuv);
 
     if (glowEnabled > 0)
     {
-        vec3 fragGlow = texture2D(glow, uv).xyz;
+        vec3 fragGlow = texture2D(glow, iuv).xyz;
         if (!vec3zero(fragGlow))
         {
             fragDiffuse.xyz = fragGlow;
@@ -31,9 +29,13 @@ void main()
     }
 
 
-    vec4 nn = texture2D(normals, uv);
+    // sampling normal from normal map
+    vec4 nval = texture2D(normals, iuv);
+    // put normal in [-1,1] range in tangent space 
+    // and trasform normal to world space 
+    vec3 nw = normalize(itbn * normalize(2*nval.rgb-1));
 
-    gl_FragData[0] = vec4(vv / vv.w);
-    gl_FragData[1] = vec4(normalMatrix * vec3(nn.xyz), nn.w);
+    gl_FragData[0] = ivv / ivv.w;
+    gl_FragData[1] = vec4(nw, nval.a);
     gl_FragData[2] = fragDiffuse;
 }

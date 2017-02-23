@@ -30,6 +30,8 @@
 #define LITE3D_BUFFER_BINDING_TEXCOORD        0x3
 /* may be more then one, attribute index will be increased */
 #define LITE3D_BUFFER_BINDING_ATTRIBUTE       0x4
+#define LITE3D_BUFFER_BINDING_TANGENT         0x5
+#define LITE3D_BUFFER_BINDING_BINORMAL        0x6
 
 #define LITE3D_INDEX_UNSIGNED_BYTE  0x1401
 #define LITE3D_INDEX_UNSIGNED_SHORT 0x1403

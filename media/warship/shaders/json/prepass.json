@@ -7,8 +7,10 @@
     
     "AttributesOrder":
     [
-        "ivertex",
-        "inormal",
-        "iuv"
+        "vertex",
+        "normal",
+        "uv",
+        "tang",
+        "binorm"
     ]
 }

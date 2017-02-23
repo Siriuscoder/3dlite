@@ -55,7 +55,7 @@ static int ai_node_load_to_vbo(lite3d_mesh *meshInst, const struct aiScene *scen
     const struct aiNode *node, uint16_t access)
 {
     uint8_t componentSize;
-    lite3d_mesh_layout layout[2 + AI_MAX_NUMBER_OF_COLOR_SETS + AI_MAX_NUMBER_OF_TEXTURECOORDS];
+    lite3d_mesh_layout layout[4 + AI_MAX_NUMBER_OF_COLOR_SETS + AI_MAX_NUMBER_OF_TEXTURECOORDS];
     size_t layoutCount;
     size_t verticesSize;
     size_t indexesSize;
@@ -113,6 +113,22 @@ static int ai_node_load_to_vbo(lite3d_mesh *meshInst, const struct aiScene *scen
                 layoutCount++;
             }
         }
+        
+        if (mesh->mTangents)
+        {
+            verticesSize += mesh->mNumVertices * sizeof (float) * 3;
+            layout[layoutCount].binding = LITE3D_BUFFER_BINDING_TANGENT;
+            layout[layoutCount].count = 3;
+            layoutCount++;
+        }
+        
+        if (mesh->mBitangents)
+        {
+            verticesSize += mesh->mNumVertices * sizeof (float) * 3;
+            layout[layoutCount].binding = LITE3D_BUFFER_BINDING_BINORMAL;
+            layout[layoutCount].count = 3;
+            layoutCount++;
+        }
 
         componentSize = sizeof(uint32_t);
         indexesSize = componentSize * mesh->mNumFaces * 3;
@@ -169,6 +185,20 @@ static int ai_node_load_to_vbo(lite3d_mesh *meshInst, const struct aiScene *scen
                     *pvertices++ = mesh->mTextureCoords[g][j].x;
                     *pvertices++ = mesh->mTextureCoords[g][j].y;
                 }
+            }
+            
+            if (mesh->mTangents)
+            {
+                *pvertices++ = mesh->mTangents[j].x;
+                *pvertices++ = mesh->mTangents[j].y;
+                *pvertices++ = mesh->mTangents[j].z;
+            }
+            
+            if (mesh->mBitangents)
+            {
+                *pvertices++ = mesh->mBitangents[j].x;
+                *pvertices++ = mesh->mBitangents[j].y;
+                *pvertices++ = mesh->mBitangents[j].z;
             }
         }
 
@@ -396,6 +426,7 @@ static const struct aiScene *ai_load_scene(const lite3d_file *resource, uint32_t
     }
 
     aiflags = aiProcess_GenSmoothNormals |
+        aiProcess_CalcTangentSpace |
         aiProcess_RemoveRedundantMaterials |
         aiProcess_Triangulate |
         aiProcess_SortByPType |

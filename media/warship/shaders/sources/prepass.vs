@@ -1,23 +1,31 @@
 #version 330
 
-in vec3 ivertex;
-in vec3 inormal;
-in vec2 iuv;
+in vec3 vertex;
+in vec3 normal;
+in vec2 uv;
+in vec3 tang;
+in vec3 binorm;
 
 uniform mat4 projectionMatrix;
 uniform mat4 viewMatrix;
 uniform mat4 modelMatrix;
 uniform mat3 normalMatrix;
 
-out vec4 vv;
-out vec3 vn;
-out vec2 uv;
+
+out vec2 iuv;
+out vec4 ivv;
+out mat3 itbn;
 
 void main()
 {
-    uv = iuv;
-    vn = normalMatrix * inormal;
-    vv = modelMatrix * vec4(ivertex, 1);
+    // texture coordinate 
+    iuv = uv;
+    // vertex coordinate in world space 
+    ivv = modelMatrix * vec4(vertex, 1);
+    // calculate TBN matrix to transform normal from tangent space to world space
+    itbn = mat3(normalize(normalMatrix * tang),
+        normalize(normalMatrix * binorm),
+        normalize(normalMatrix * normal));
 
-    gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(ivertex, 1);
+    gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(vertex, 1);
 }
