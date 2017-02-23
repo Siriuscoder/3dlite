@@ -1,0 +1,36 @@
+{
+  "Passes":[
+    {
+      "Pass":1,
+      "Program":{
+        "Name":"postprocess.program",
+        "Path":"warship:shaders/json/postprocess.json"
+      }
+    }
+  ],
+  "Uniforms":[
+    {
+      "Name":"projectionMatrix"
+    },
+    {
+      "Name":"viewMatrix"
+    },
+    {
+      "Name":"SSAO",
+      "Type":"int",
+      "Value": 1,
+      "Scope":"global"
+    },
+    {
+      "Name":"Gamma",
+      "Type":"int",
+      "Value": 1,
+      "Scope":"global"
+    },
+    {
+      "Name":"combined",
+      "TextureName": "combined.texture",
+      "Type":"sampler"
+    }
+  ]
+}

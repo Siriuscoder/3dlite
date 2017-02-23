@@ -1,0 +1,45 @@
+{
+  "Passes":[
+    {
+      "Pass":1,
+      "Program":{
+        "Name":"combine.program",
+        "Path":"warship:shaders/json/combine.json"
+      }
+    }
+  ],
+  "Uniforms":[
+    {
+      "Name":"projectionMatrix"
+    },
+    {
+      "Name":"viewMatrix"
+    },
+    {
+      "Name":"Warship_numLights",
+      "Type":"int",
+      "Value": 1,
+      "Scope":"global"
+    },
+    {
+      "Name":"combined",
+      "TextureName": "fragmentWorldCoords.texture",
+      "Type":"sampler"
+    },
+    {
+      "Name":"combined",
+      "TextureName": "normalsWorld.texture",
+      "Type":"sampler"
+    },
+    {
+      "Name":"combined",
+      "TextureName": "diffuseMap.texture",
+      "Type":"sampler"
+    },
+    {
+      "Name":"liBuffer",
+      "TextureName": "Warship_lightingBufferObject",
+      "Type":"samplerBuffer"
+    },
+  ]
+}

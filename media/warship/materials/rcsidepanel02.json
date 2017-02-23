@@ -3,8 +3,8 @@
     {
       "Pass":1,
       "Program":{
-        "Name":"basic.program",
-        "Path":"warship:shaders/json/basic.json"
+        "Name":"prepass.program",
+        "Path":"warship:shaders/json/prepass.json"
       }
     }
   ],
@@ -25,6 +25,12 @@
       "Name":"diffuse",
       "TextureName":"rcsidepanel02.texture",
       "TexturePath":"warship:textures/json/rcsidepanel02.json",
+      "Type":"sampler"
+    },
+    {
+      "Name":"normals",
+      "TextureName":"rcsidepanel02_n.texture",
+      "TexturePath":"warship:textures/json/rcsidepanel02_n.json",
       "Type":"sampler"
     }
   ]
