@@ -4,6 +4,7 @@ uniform sampler2D diffuse;
 uniform sampler2D glow;
 uniform sampler2D normals;
 uniform int glowEnabled;
+uniform int Gamma;
 
 in vec2 iuv;
 in vec4 ivv;
@@ -34,6 +35,12 @@ void main()
     // put normal in [-1,1] range in tangent space 
     // and trasform normal to world space 
     vec3 nw = normalize(itbn * normalize(2*nval.rgb-1));
+    // transform color from srgb to linear space
+    if (Gamma > 0)
+    {
+        float gammaFactor = 2.2;
+        fragDiffuse.rgb = pow(fragDiffuse.rgb, vec3(gammaFactor));
+    }
 
     gl_FragData[0] = ivv / ivv.w;
     gl_FragData[1] = vec4(nw, nval.a);

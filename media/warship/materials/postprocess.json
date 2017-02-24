@@ -24,7 +24,7 @@
     {
       "Name":"Gamma",
       "Type":"int",
-      "Value": 1,
+      "Value": 0,
       "Scope":"global"
     },
     {

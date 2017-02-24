@@ -8,5 +8,13 @@ in vec2 uv;
 
 void main()
 {
-    gl_FragColor = texture2D(combined, uv);
+    vec4 finalColor = texture2D(combined, uv);
+    // transform color from linear to srgb space
+    if (Gamma > 0)
+    {
+        float gammaFactor = 2.2;
+        finalColor.rgb = pow(finalColor.rgb, vec3(1/gammaFactor));
+    }
+
+    gl_FragColor = finalColor;
 }

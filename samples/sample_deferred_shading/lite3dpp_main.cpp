@@ -34,6 +34,10 @@ public:
             "warship:scenes/warship_combine.json");
         scene = getMain().getResourceManager()->queryResource<Scene>("WarshipPostProcess",
             "warship:scenes/warship_postprocess.json");
+        
+        lite3dpp::Material::setIntGlobalParameter("FXAA", 0);
+        lite3dpp::Material::setIntGlobalParameter("Gamma", 0);
+        lite3dpp::Material::setIntGlobalParameter("glowEnabled", 1);
     }
 
     void processEvent(SDL_Event *e) override

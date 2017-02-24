@@ -22,6 +22,12 @@
       "Name":"modelMatrix"
     },
     {
+      "Name":"Gamma",
+      "Type":"int",
+      "Value": 0,
+      "Scope":"global"
+    },
+    {
       "Name":"diffuse",
       "TextureName":"rcsidepanel02.texture",
       "TexturePath":"warship:textures/json/rcsidepanel02.json",
