@@ -70,7 +70,6 @@ namespace lite3dpp
 
     private:
 
-        lite3d_texture_unit mTexture;
         PixelsData mTexelsBackup;
     };
 }

@@ -208,12 +208,11 @@ namespace lite3dpp
             mLightingTextureBuffer->setElement<lite3d_light_params>(i, &light.second->getLight()->getPtr()->params);
             light.second->getLight()->index(i++);
         }
-        
-        Material::setIntGlobalParameter(getName() + "_numLights", i);
     }
     
     void Scene::validateLightingBuffer()
     {
+        bool anyValidated = false;
         for (auto &light : mLights)
         {
             if (light.second->getLight()->isUpdated() || light.second->getPtr()->invalidated)
@@ -222,8 +221,12 @@ namespace lite3dpp
                 mLightingTextureBuffer->setElement<lite3d_light_params>(light.second->getLight()->index(), 
                     &wpar);
                 light.second->getLight()->validate();
+                anyValidated = true;
             }
         }
+        
+        if (anyValidated)
+            Material::setIntGlobalParameter(getName() + "_numLights", mLights.size());
     }
     
     SceneObject::Ptr Scene::createObject(const String &name, SceneObject *parent)

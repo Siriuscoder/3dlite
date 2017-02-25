@@ -4,11 +4,11 @@ uniform sampler2D combined;
 uniform int FXAA;
 uniform int Gamma;
 
-in vec2 uv;
+in vec2 iuv;
 
 void main()
 {
-    vec4 finalColor = texture2D(combined, uv);
+    vec4 finalColor = texture2D(combined, iuv);
     // transform color from linear to srgb space
     if (Gamma > 0)
     {

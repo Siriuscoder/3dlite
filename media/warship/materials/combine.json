@@ -18,7 +18,15 @@
     {
       "Name":"Warship_numLights",
       "Type":"int",
-      "Value": 1,
+      "Value": 0,
+      "Scope":"global"
+    },
+    {
+      "Name":"eye",
+      "Type":"v3",
+      "Value":[
+        0,0,0
+      ],
       "Scope":"global"
     },
     {

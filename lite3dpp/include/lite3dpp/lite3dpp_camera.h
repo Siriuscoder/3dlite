@@ -58,6 +58,9 @@ namespace lite3dpp
 
         inline void setEnabled(bool enabled)
         { mCamera.cameraNode.enabled = enabled ? LITE3D_TRUE : LITE3D_FALSE; }
+        
+        inline kmVec3 getPosition() const
+        { return mCamera.cameraNode.position; }
 
         void lookAt(const kmVec3 &pointTo);
         void setPosition(const kmVec3 &position);

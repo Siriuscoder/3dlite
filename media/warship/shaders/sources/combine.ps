@@ -5,10 +5,88 @@ uniform sampler2D normalMap;
 uniform sampler2D diffuseMap;
 uniform samplerBuffer lightSources;
 uniform int Warship_numLights;
+uniform vec3 eye;
 
-in vec2 uv;
+in vec2 iuv;
+
+const vec3 ambient = vec3(0.02, 0.02, 0.02);
+const float wrapAroundFactor = 0.1;
+const float specPower = 80.0;
 
 void main()
 {
-    gl_FragColor = texture2D(diffuseMap, uv);
+    vec4 linear = vec4(ambient, 1);
+    /* fragment coordinate */
+    vec4 fragXYZW = texture2D(fragMap, iuv);
+    vec4 fragTexture = texture2D(diffuseMap, iuv);
+    /* check fragment not shaded or self-illum material */
+    if (fragXYZW.w == 0 || fragTexture.w == 1)
+    {
+        gl_FragColor = vec4(fragTexture.xyz, 0);
+        return;
+    }
+    /* sampling normal and specular factor (w)*/
+    vec4 fragNormalAndSpecular = texture2D(normalMap, iuv);
+
+    for(int i = 0; i < Warship_numLights; i++)
+    {
+        int texel = i * 8;
+        vec3 fragPos = fragXYZW.xyz;
+        vec3 fragNormal = fragNormalAndSpecular.xyz;
+        float specularFactor = fragNormalAndSpecular.w;
+
+        /* flags.x - type */
+        /* flags.y - enabled */
+        vec4 flags = texelFetch(lightSources, texel + 0);
+        if (flags.y == 0)
+            continue;
+
+        /* light position */
+        vec4 lposition = texelFetch(lightSources, texel + 1);
+        /* calculate direction from fragment to light */
+        vec3 lightDir = lposition.xyz - fragPos;
+        /* distance to light */
+        float dist = length(lightDir);
+        lightDir = normalize(lightDir);
+        /* spot directional */
+        /* take effect with spot and directional light */
+        vec4 lspotDirection = texelFetch(lightSources, texel + 2);
+        /* ambient color */
+        vec4 lambient = texelFetch(lightSources, texel + 3);
+        /* diffuse color */
+        vec4 ldiffuse = texelFetch(lightSources, texel + 4);
+        /* specular color */
+        vec4 lspecular = texelFetch(lightSources, texel + 5);
+        /* attenuation factor */
+        /* x - constant attenuation */
+        /* y - linear attenuation */
+        /* z - quadratic attenuation */
+        /* w - affect radius */
+        vec4 lattenuation = texelFetch(lightSources, texel + 6);
+        /* x - spot cutoff */
+        /* y - spot cutoff exponent */
+        vec4 lspotFactor = texelFetch(lightSources, texel + 7);
+
+        /* calculate spot attenuation */
+        float spotAngle = acos(dot(-lightDir, normalize(lspotDirection.xyz)));
+        float spotAttenuationFactor = max(lspotFactor.y - spotAngle, 0) / lspotFactor.y;
+        /* calculate attenuation */
+        float attenuationFactor = spotAttenuationFactor / (dist * dist * 0.00013);//(lattenuation[0] +
+            //0.005 * dist + lattenuation[2] * dist * dist);
+
+        /* calculate lambertian factor */
+        float lambertian = max(dot(fragNormal, lightDir) + wrapAroundFactor, 0.0) / (1.0 + wrapAroundFactor);
+        /* calculate direction from fragment to eye */
+        vec3 eyeDir = normalize(eye - fragPos);
+        /* calculate specular factor */
+        vec3 half = normalize(lightDir + eyeDir);
+        float specular = pow(max(dot(fragNormal, half), 0.0), specPower) * specularFactor;
+
+        /* calculate linear color factor */
+        linear += lambient * attenuationFactor;
+        linear += ldiffuse * lambertian * attenuationFactor;
+        linear += ldiffuse * specular * (attenuationFactor * 5);
+    }
+
+    gl_FragColor = linear * fragTexture;
 }

@@ -39,6 +39,12 @@ public:
         lite3dpp::Material::setIntGlobalParameter("Gamma", 0);
         lite3dpp::Material::setIntGlobalParameter("glowEnabled", 1);
     }
+    
+    void timerTick(lite3d_timer *timerid) override
+    {
+        Sample::timerTick(timerid);
+        lite3dpp::Material::setFloatv3GlobalParameter("eye", getMainCamera().getPosition());
+    }
 
     void processEvent(SDL_Event *e) override
     {

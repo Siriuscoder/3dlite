@@ -28,12 +28,6 @@
       "Scope":"global"
     },
     {
-      "Name":"Gamma",
-      "Type":"int",
-      "Value": 0,
-      "Scope":"global"
-    },
-    {
       "Name":"diffuse",
       "TextureName":"rclight01.texture",
       "TexturePath":"warship:textures/json/rclight01.json",

@@ -2,10 +2,9 @@
 
 uniform sampler2D diffuse;
 uniform sampler2D normals;
-uniform int Gamma;
 
 in vec2 iuv;
-in vec4 ivv;
+in vec3 ivv;
 in mat3 itbn;
 
 void main()
@@ -17,14 +16,8 @@ void main()
     vec3 nw = normalize(itbn * normalize(2*nval.rgb-1));
     // sampling diffuse color 
     vec4 fragDiffuse = texture2D(diffuse, iuv);
-    // transform color from srgb to linear space
-    if (Gamma > 0)
-    {
-        float gammaFactor = 2.2;
-        fragDiffuse.rgb = pow(fragDiffuse.rgb, vec3(gammaFactor));
-    }
 
-    gl_FragData[0] = ivv / ivv.w;
+    gl_FragData[0] = vec4(ivv, 1);
     gl_FragData[1] = vec4(nw, nval.a);
-    gl_FragData[2] = fragDiffuse;
+    gl_FragData[2] = vec4(fragDiffuse.rgb, 0);
 }
