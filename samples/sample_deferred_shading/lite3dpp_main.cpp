@@ -23,6 +23,10 @@ namespace samples {
 class DeferredShadingSample : public Sample
 {
 public:
+    
+    DeferredShadingSample() : 
+        mGammaFactor(1.0f)
+    {}
 
     void createScene() override
     {
@@ -36,7 +40,7 @@ public:
             "warship:scenes/warship_postprocess.json");
         
         lite3dpp::Material::setIntGlobalParameter("FXAA", 0);
-        lite3dpp::Material::setIntGlobalParameter("Gamma", 0);
+        lite3dpp::Material::setIntGlobalParameter("Gamma", 1);
         lite3dpp::Material::setIntGlobalParameter("glowEnabled", 1);
     }
     
@@ -58,8 +62,26 @@ public:
                 
                 lite3dpp::Material::setIntGlobalParameter("glowEnabled", light ? 1 : 0);
             }
+            else if (e->key.keysym.sym == SDLK_KP_PLUS)
+            {
+                mGammaFactor += 0.02;
+                if (mGammaFactor > 2.2)
+                    mGammaFactor = 2.2;
+                lite3dpp::Material::setFloatGlobalParameter("GammaFactor", mGammaFactor);
+            }
+            else if (e->key.keysym.sym == SDLK_KP_MINUS)
+            {
+                mGammaFactor -= 0.02;
+                if (mGammaFactor < 1.0)
+                    mGammaFactor = 1.0;
+                lite3dpp::Material::setFloatGlobalParameter("GammaFactor", mGammaFactor);
+            }
         }
     }
+    
+private:
+                    
+    float mGammaFactor;
 };
 
 }}

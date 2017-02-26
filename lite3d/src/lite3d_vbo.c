@@ -261,14 +261,12 @@ int lite3d_vbo_buffer(struct lite3d_vbo *vbo,
 int lite3d_vbo_subbuffer(struct lite3d_vbo *vbo,
     const void *buffer, size_t offset, size_t size)
 {
-    int32_t originSize;
     SDL_assert(vbo);
     lite3d_misc_gl_error_stack_clean();
 
     /* copy vertices to the end of the vertex buffer */
     glBindBuffer(GL_ARRAY_BUFFER, vbo->vboID);
     glBufferSubData(GL_ARRAY_BUFFER, offset, size, buffer);
-    glGetBufferParameteriv(GL_ARRAY_BUFFER, GL_BUFFER_SIZE, &originSize);
     if (lite3d_misc_check_gl_error())
         return LITE3D_FALSE;
 
