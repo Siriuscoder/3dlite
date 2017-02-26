@@ -55,14 +55,7 @@ public:
         Sample::processEvent(e);
         if (e->type == SDL_KEYDOWN)
         {
-            if (e->key.keysym.sym == SDLK_l)
-            {
-                static bool light = true;
-                light = !light;
-                
-                lite3dpp::Material::setIntGlobalParameter("glowEnabled", light ? 1 : 0);
-            }
-            else if (e->key.keysym.sym == SDLK_KP_PLUS)
+            if (e->key.keysym.sym == SDLK_KP_PLUS)
             {
                 mGammaFactor += 0.02;
                 if (mGammaFactor > 2.2)

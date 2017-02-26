@@ -1,0 +1,35 @@
+{
+    "Width": 0, // use screen wight
+    "Height": 0, // use screen height
+    "BackgroundColor": [0.7, 0.7, 0.7, 0.0],
+    "Priority": 1, // render first
+    "CleanColorBuf": true,
+    "CleanDepthBuf": true,
+    "CleanStencilBuf": false,
+    
+    "ColorAttachments":
+    {
+        "Attachments":
+        [
+            {
+                "TextureName": "fragmentWorldCoords.texture",
+                "TexturePath": "warship:textures/json/rgba32f.json"
+            },
+            {
+                "TextureName": "normalsWorld.texture",
+                "TexturePath": "warship:textures/json/rgba32f.json"
+            },
+            {
+                "TextureName": "diffuseMap.texture",
+                "TexturePath": "warship:textures/json/rgba32f.json"
+            }
+        ]
+    },
+    
+    "DepthAttachments":
+    {
+        "TextureName": "prepassDepth.texture",
+        "TexturePath": "warship:textures/json/depth.json"
+    }
+}
+

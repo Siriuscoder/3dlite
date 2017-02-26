@@ -1,0 +1,27 @@
+{
+    "Width": 0, // use screen wight
+    "Height": 0, // use screen height
+    "BackgroundColor": [0.0, 0.0, 0.0, 0.0],
+    "Priority": 2, // render after prepass target
+    "CleanColorBuf": false,
+    "CleanDepthBuf": false,
+    "CleanStencilBuf": false,
+    
+    "ColorAttachments":
+    {
+        "Attachments":
+        [
+            {
+                "TextureName": "combined.texture",
+                "TexturePath": "warship:textures/json/rgba.json"
+            }
+        ]
+    },
+    
+    "DepthAttachments":
+    {
+        "TextureName": "prepassDepth.texture",
+        "TexturePath": "warship:textures/json/depth.json"
+    }
+}
+
