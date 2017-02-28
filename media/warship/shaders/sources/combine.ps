@@ -71,7 +71,7 @@ void main()
         float spotAngle = acos(dot(-lightDir, normalize(lspotDirection.xyz)));
         float spotAttenuationFactor = max(lspotFactor.y - spotAngle, 0) / lspotFactor.y;
         /* calculate attenuation */
-        float attenuationFactor = spotAttenuationFactor / (dist * dist * 0.00013);//(lattenuation[0] +
+        float attenuationFactor = spotAttenuationFactor / (dist * dist * 0.00003);//(lattenuation[0] +
             //0.005 * dist + lattenuation[2] * dist * dist);
 
         /* calculate lambertian factor */
@@ -85,7 +85,7 @@ void main()
         /* calculate linear color factor */
         linear += lambient * attenuationFactor;
         linear += ldiffuse * lambertian * attenuationFactor;
-        linear += ldiffuse * specular * (attenuationFactor * 5);
+        linear += lspecular * specular * (attenuationFactor * 5);
     }
 
     gl_FragColor = linear * fragTexture;

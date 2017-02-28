@@ -244,10 +244,8 @@ void ConverterCommand::convertMesh(lite3d_mesh *mesh, const lite3dpp::String &sa
 
 void ConverterCommand::processMesh(lite3d_mesh *mesh, const kmMat4 *transform, const lite3dpp::String &name)
 {
-    lite3dpp::String relativeMeshPath = Utils::makeRelativePath("models/meshes/", name, "m");
+    lite3dpp::String relativeMeshPath = Utils::makeRelativePath("models/meshes/", Utils::extractMeshName(name), "m");
     lite3dpp::String fullMeshPath = Utils::makeFullPath(mGenOptions.outputFolder, relativeMeshPath);
-    lite3dpp::String relativeJsonPath = Utils::makeRelativePath("models/json/", name, "json");
-    lite3dpp::String fullJsonPath = Utils::makeFullPath(mGenOptions.outputFolder, relativeJsonPath);
     
     mGenerator->generateNode(mesh, name, transform, mesh != NULL);
     convertMesh(mesh, fullMeshPath);

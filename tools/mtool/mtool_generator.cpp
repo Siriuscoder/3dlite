@@ -86,8 +86,8 @@ JsonGenerator::JsonGenerator(const GeneratorOptions &options) :
 void JsonGenerator::generateNode(const lite3d_mesh *mesh, const lite3dpp::String &name, const kmMat4 *transform,
     bool meshExist)
 {
-    lite3dpp::String relativeMeshPath = Utils::makeRelativePath("models/meshes/", name, "m");
-    lite3dpp::String relativeMeshConfigPath = Utils::makeRelativePath("models/json/", name, "json");
+    lite3dpp::String relativeMeshPath = Utils::makeRelativePath("models/meshes/", Utils::extractMeshName(name), "m");
+    lite3dpp::String relativeMeshConfigPath = Utils::makeRelativePath("models/json/", Utils::extractMeshName(name), "json");
     lite3dpp::String fullMeshConfigPath = Utils::makeFullPath(mOptions.outputFolder, relativeMeshConfigPath);
 
     lite3dpp::ConfigurationWriter nodeConfig;
@@ -122,7 +122,7 @@ void JsonGenerator::generateNode(const lite3d_mesh *mesh, const lite3dpp::String
         meshConfig.set(L"MaterialMapping", matMapping);
 
         lite3dpp::ConfigurationWriter nodeMeshConfig;
-        nodeMeshConfig.set(L"Name", name + ".mesh");
+        nodeMeshConfig.set(L"Name", Utils::extractMeshName(name) + ".mesh");
         nodeMeshConfig.set(L"Mesh", mOptions.meshPackname + relativeMeshConfigPath);
         nodeConfig.set(L"Mesh", nodeMeshConfig);
 

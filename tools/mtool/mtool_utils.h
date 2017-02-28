@@ -32,7 +32,7 @@ public:
     static void makeFolder(const lite3dpp::String &outputFolder, const lite3dpp::String &name);
     static lite3dpp::String getFileExt(const lite3dpp::String &filePath);
     static lite3dpp::String getFileNameWithoutExt(const lite3dpp::String &filePath);
-
+    static lite3dpp::String extractMeshName(const lite3dpp::String &nodeName);
 private:
     static int mNonameCounter;
 };

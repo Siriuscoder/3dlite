@@ -10,7 +10,6 @@
         "ivertex",
         "inormal",
         "iuv",
-        "tang",
-        "binorm"
+        "tang"
     ]
 }

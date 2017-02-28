@@ -121,14 +121,6 @@ static int ai_node_load_to_vbo(lite3d_mesh *meshInst, const struct aiScene *scen
             layout[layoutCount].count = 3;
             layoutCount++;
         }
-        
-        if (mesh->mBitangents)
-        {
-            verticesSize += mesh->mNumVertices * sizeof (float) * 3;
-            layout[layoutCount].binding = LITE3D_BUFFER_BINDING_BINORMAL;
-            layout[layoutCount].count = 3;
-            layoutCount++;
-        }
 
         componentSize = sizeof(uint32_t);
         indexesSize = componentSize * mesh->mNumFaces * 3;
@@ -192,13 +184,6 @@ static int ai_node_load_to_vbo(lite3d_mesh *meshInst, const struct aiScene *scen
                 *pvertices++ = mesh->mTangents[j].x;
                 *pvertices++ = mesh->mTangents[j].y;
                 *pvertices++ = mesh->mTangents[j].z;
-            }
-            
-            if (mesh->mBitangents)
-            {
-                *pvertices++ = mesh->mBitangents[j].x;
-                *pvertices++ = mesh->mBitangents[j].y;
-                *pvertices++ = mesh->mBitangents[j].z;
             }
         }
 
