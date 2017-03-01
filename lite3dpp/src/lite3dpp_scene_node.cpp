@@ -26,7 +26,11 @@ namespace lite3dpp
 {
     SceneNode::SceneNode() : 
         mBaseNode(NULL)
-    {}
+    {
+        lite3d_scene_node_init(&mNode);
+        mNode.userdata = this;
+        mNode.renderable = LITE3D_FALSE;
+    }
 
     SceneNode::SceneNode(const ConfigurationReader &json, SceneNode *base, Main *main) : 
         mBaseNode(base)

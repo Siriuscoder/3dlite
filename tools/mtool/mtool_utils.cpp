@@ -122,7 +122,10 @@ lite3dpp::String Utils::extractMeshName(const lite3dpp::String &nodeName)
     size_t dPos = nodeName.find('_');
     if (dPos != lite3dpp::String::npos)
     {
-        return nodeName.substr(0, dPos);
+        lite3dpp::String mn = nodeName.substr(0, dPos);
+        if (mn.size() == 0)
+            return nodeName;
+        return mn;
     }
 
     return nodeName;

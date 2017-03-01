@@ -98,12 +98,6 @@ namespace lite3dpp
 
         mObjectRoot->removeFromScene(scene);
 
-        /* setup object lighting */
-        for (const ConfigurationReader &lightJson : mConfiguration->getObjects(L"Lights"))
-        {
-            scene->removeLight(lightJson.getString(L"Name"));
-        }
-
         mScene = NULL;
     }
 
