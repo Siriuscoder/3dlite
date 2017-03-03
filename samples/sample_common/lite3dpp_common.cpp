@@ -63,6 +63,7 @@ void Sample::init()
     
     adjustMainCamera(mMainWindow->width(), mMainWindow->height());
     mMain.getResourceManager()->releaseFileCache();
+    mMain.showSystemCursor(false);
 }
 
 void Sample::timerTick(lite3d_timer *timerid)

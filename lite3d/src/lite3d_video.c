@@ -268,3 +268,8 @@ int lite3d_video_get_display_size(int32_t *width, int32_t *height)
     *height = displayMode.h;
     return LITE3D_TRUE;
 }
+
+void lite3d_video_view_system_cursor(int8_t flag)
+{
+    SDL_ShowCursor(flag == LITE3D_TRUE ? 1 : 0);
+}

@@ -130,6 +130,11 @@ namespace lite3dpp
         }
     }
 
+    void Main::showSystemCursor(bool ok)
+    {
+        lite3d_video_view_system_cursor(ok ? LITE3D_TRUE : LITE3D_FALSE);
+    }
+
     void Main::init()
     {
         if(!mConfig)

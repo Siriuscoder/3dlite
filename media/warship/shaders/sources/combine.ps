@@ -79,8 +79,8 @@ void main()
         /* calculate direction from fragment to eye */
         vec3 eyeDir = normalize(eye - fragPos);
         /* calculate specular factor */
-        vec3 half = normalize(lightDir + eyeDir);
-        float specular = pow(max(dot(fragNormal, half), 0.0), specPower) * specularFactor;
+        vec3 halfv = normalize(lightDir + eyeDir);
+        float specular = pow(max(dot(fragNormal, halfv), 0.0), specPower) * specularFactor;
 
         /* calculate linear color factor */
         linear += lambient * attenuationFactor;

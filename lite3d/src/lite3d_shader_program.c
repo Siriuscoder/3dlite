@@ -42,7 +42,8 @@ int lite3d_shader_program_init(lite3d_shader_program *program)
     
     program->statusString = NULL;
     program->success = 0;
-    
+    program->validated = 0;
+
     lite3d_misc_gl_error_stack_clean();
     if (glIsProgram(program->programID))
     {
@@ -94,14 +95,6 @@ int lite3d_shader_program_link(
     glGetProgramiv(program->programID, GL_LINK_STATUS, &isLinked);
     program->success = isLinked == GL_TRUE ? LITE3D_TRUE : LITE3D_FALSE;
 
-    /* validationg process */
-    if (program->success)
-    {
-        glValidateProgram(program->programID);
-        glGetProgramiv(program->programID, GL_VALIDATE_STATUS, &isValidated);
-        program->success = isValidated == GL_TRUE ? LITE3D_TRUE : LITE3D_FALSE;
-    }
-
     /* get informaion log */
     glGetProgramiv(program->programID, GL_INFO_LOG_LENGTH, &maxLogLength);
     program->statusString = (char *) lite3d_malloc(maxLogLength);
@@ -111,6 +104,34 @@ int lite3d_shader_program_link(
         glDetachShader(program->programID, shaders[i].shaderID);
 
     return program->success;
+}
+
+int lite3d_shader_program_validate(
+    lite3d_shader_program *program)
+{
+    GLint isValidated = 0;
+    GLint maxLogLength = 0;
+
+    SDL_assert(program);
+
+    /* validationg process */
+    if (program->success)
+        return LITE3D_FALSE;
+    if (program->validated)
+        return LITE3D_TRUE;
+
+    glValidateProgram(program->programID);
+    glGetProgramiv(program->programID, GL_VALIDATE_STATUS, &isValidated);
+    program->validated = isValidated == GL_TRUE ? LITE3D_TRUE : LITE3D_FALSE;
+
+    /* get informaion log */
+    glGetProgramiv(program->programID, GL_INFO_LOG_LENGTH, &maxLogLength);
+    if (program->statusString)
+        lite3d_free(program->statusString);
+
+    program->statusString = (char *) lite3d_malloc(maxLogLength);
+    glGetProgramInfoLog(program->programID, maxLogLength, &maxLogLength, program->statusString);
+    return program->validated;
 }
 
 void lite3d_shader_program_purge(
