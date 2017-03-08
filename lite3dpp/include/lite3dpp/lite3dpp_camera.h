@@ -61,6 +61,8 @@ namespace lite3dpp
         
         inline kmVec3 getPosition() const
         { return mCamera.cameraNode.position; }
+        kmQuaternion getRotation() const;
+        kmVec3 getDirection() const;
 
         void lookAt(const kmVec3 &pointTo);
         void setPosition(const kmVec3 &position);

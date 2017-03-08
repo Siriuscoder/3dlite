@@ -47,33 +47,48 @@ namespace lite3dpp
         mUpdated = true;  
     }
     
-    void LightSource::setPosition(const kmVec4 &v)
+    void LightSource::setPosition(const kmVec3 &v)
     {
-        mLightSource.params.position = v;
+        mLightSource.params.position.x = v.x;
+        mLightSource.params.position.y = v.y;
+        mLightSource.params.position.z = v.z;
+        mLightSource.params.position.w = 1.0f;
         mUpdated = true;    
     }
     
-    void LightSource::setSpotDirection(const kmVec4 &v)
+    void LightSource::setSpotDirection(const kmVec3 &v)
     {
-        mLightSource.params.spotDirection = v;
+        mLightSource.params.spotDirection.x = v.x;
+        mLightSource.params.spotDirection.y = v.y;
+        mLightSource.params.spotDirection.z = v.z;
+        mLightSource.params.spotDirection.w = 0.0f;
         mUpdated = true;
     }
     
-    void LightSource::setAmbient(const kmVec4 &v)
+    void LightSource::setAmbient(const kmVec3 &v)
     {
-        mLightSource.params.ambient = v;
+        mLightSource.params.ambient.x = v.x;
+        mLightSource.params.ambient.y = v.y;
+        mLightSource.params.ambient.z = v.z;
+        mLightSource.params.ambient.w = 0.0f;
         mUpdated = true;      
     }
     
-    void LightSource::setDiffuse(const kmVec4 &v)
+    void LightSource::setDiffuse(const kmVec3 &v)
     {
-        mLightSource.params.diffuse = v;
+        mLightSource.params.diffuse.x = v.x;
+        mLightSource.params.diffuse.y = v.y;
+        mLightSource.params.diffuse.z = v.z;
+        mLightSource.params.diffuse.w = 0.0f;
         mUpdated = true;   
     }
     
-    void LightSource::setSpecular(const kmVec4 &v)
+    void LightSource::setSpecular(const kmVec3 &v)
     {
-        mLightSource.params.specular = v;
+        mLightSource.params.specular.x = v.x;
+        mLightSource.params.specular.y = v.y;
+        mLightSource.params.specular.z = v.z;
+        mLightSource.params.specular.w = 0.0f;
         mUpdated = true;   
     }
     
@@ -83,9 +98,12 @@ namespace lite3dpp
         mUpdated = true;   
     }
     
-    void LightSource::setSpotFactor(const kmVec4 &v)
+    void LightSource::setSpotFactor(const kmVec3 &v)
     {
-        mLightSource.params.spotFactor = v;
+        mLightSource.params.spotFactor.x = v.x;
+        mLightSource.params.spotFactor.y = v.y;
+        mLightSource.params.spotFactor.z = 0.0f;
+        mLightSource.params.spotFactor.w = 0.0f;
         mUpdated = true;   
     }
 }

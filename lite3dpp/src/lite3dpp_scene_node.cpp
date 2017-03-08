@@ -172,12 +172,12 @@ namespace lite3dpp
             mLight->setType(lightType == "Directional" ? LITE3D_LIGHT_DIRECTIONAL : 
                 (lightType == "Spot" ? LITE3D_LIGHT_SPOT : LITE3D_LIGHT_POINT));
             
-            mLight->setPosition(lightHelper.getVec4(L"Position"));
-            mLight->setSpotDirection(lightHelper.getVec4(L"SpotDirection"));        
-            mLight->setSpotFactor(lightHelper.getVec4(L"SpotFactor"));
-            mLight->setAmbient(lightHelper.getVec4(L"Ambient"));
-            mLight->setDiffuse(lightHelper.getVec4(L"Diffuse"));
-            mLight->setSpecular(lightHelper.getVec4(L"Specular"));
+            mLight->setPosition(lightHelper.getVec3(L"Position"));
+            mLight->setSpotDirection(lightHelper.getVec3(L"SpotDirection"));
+            mLight->setSpotFactor(lightHelper.getVec3(L"SpotFactor"));
+            mLight->setAmbient(lightHelper.getVec3(L"Ambient"));
+            mLight->setDiffuse(lightHelper.getVec3(L"Diffuse"));
+            mLight->setSpecular(lightHelper.getVec3(L"Specular"));
             mLight->setAttenuation(lightHelper.getVec4(L"Attenuation"));
         }
     }
@@ -203,8 +203,9 @@ namespace lite3dpp
         kmVec3TransformCoord((kmVec3 *)&res.position, (kmVec3 *)&res.position, &getPtr()->worldView);
         if (res.flags.x == LITE3D_LIGHT_DIRECTIONAL || res.flags.x == LITE3D_LIGHT_SPOT)
         {
-            kmVec4Transform(&res.spotDirection, &res.spotDirection, &getPtr()->worldView);
-            kmVec4Normalize(&res.spotDirection, &res.spotDirection);
+            kmVec4 direction = KM_VEC4_ZERO;
+            kmQuaternionMultiplyVec3((kmVec3 *)&direction, &getPtr()->rotation, (kmVec3 *)&res.spotDirection);
+            kmVec4Normalize(&res.spotDirection, &direction);
         }
 
         return res;

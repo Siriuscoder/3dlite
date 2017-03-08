@@ -127,5 +127,19 @@ namespace lite3dpp
     {
         lite3d_camera_link_to(&mCamera, sceneObj.getRoot()->getPtr(), LITE3D_CAMERA_LINK_POSITION);
     }
+    
+    kmVec3 Camera::getDirection() const
+    {
+        kmVec3 direction;
+        lite3d_camera_direction(&mCamera, &direction);
+        return direction;
+    }
+    
+    kmQuaternion Camera::getRotation() const 
+    {
+        kmQuaternion inverseRot;
+        kmQuaternionInverse(&inverseRot, &mCamera.cameraNode.rotation);
+        return inverseRot;
+    }
 }
 

@@ -64,7 +64,7 @@ int lite3d_shader_program_link(
     lite3d_shader_program *program, lite3d_shader *shaders, size_t count)
 {
     uint32_t i;
-    GLint isLinked, isValidated = 0;
+    GLint isLinked = 0;
     GLint maxLogLength = 0;
 
     SDL_assert(program);
@@ -115,7 +115,7 @@ int lite3d_shader_program_validate(
     SDL_assert(program);
 
     /* validationg process */
-    if (program->success)
+    if (!program->success)
         return LITE3D_FALSE;
     if (program->validated)
         return LITE3D_TRUE;

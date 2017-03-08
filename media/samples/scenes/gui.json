@@ -9,7 +9,8 @@
                     "Name": "Window",
                     "Priority": 20,
                     "TexturePass": 1,
-                    "CleanDepthBuffer": true
+                    "DepthTest": false,
+                    "DepthOutput": false
                 }
             ]
         }

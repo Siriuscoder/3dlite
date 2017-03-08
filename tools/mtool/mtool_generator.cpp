@@ -154,13 +154,13 @@ void JsonGenerator::generateLight(const lite3dpp::String &lightName,
                 liConfig.set(L"Type", "Undefined");
 
             liConfig.set(L"Name", lightName);
-            liConfig.set(L"Ambient", params->ambient);
-            liConfig.set(L"Diffuse", params->diffuse);
-            liConfig.set(L"Specular", params->specular);
+            liConfig.set(L"Ambient", *((kmVec3 *)&params->ambient));
+            liConfig.set(L"Diffuse", *((kmVec3 *)&params->diffuse));
+            liConfig.set(L"Specular", *((kmVec3 *)&params->specular));
             liConfig.set(L"Attenuation", params->attenuation);
-            liConfig.set(L"Position", params->position);
-            liConfig.set(L"SpotDirection", params->spotDirection);
-            liConfig.set(L"SpotFactor", params->spotFactor);
+            liConfig.set(L"Position", *((kmVec3 *)&params->position));
+            liConfig.set(L"SpotDirection", *((kmVec3 *)&params->spotDirection));
+            liConfig.set(L"SpotFactor", *((kmVec3 *)&params->spotFactor));
 
             lastNode.set(L"Light", liConfig);
         }

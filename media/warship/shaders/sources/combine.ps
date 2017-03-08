@@ -12,17 +12,20 @@ in vec2 iuv;
 const vec3 ambient = vec3(0.02, 0.02, 0.02);
 const float wrapAroundFactor = 0.1;
 const float specPower = 80.0;
+const float density = 0.0005;
+const float LOG2 = 1.442695;
+const vec3 fogColor = vec3(0.5, 0.5, 0.2);
 
 void main()
 {
-    vec4 linear = vec4(ambient, 1);
+    vec3 linear = ambient;
     /* fragment coordinate */
     vec4 fragXYZW = texture2D(fragMap, iuv);
     vec4 fragTexture = texture2D(diffuseMap, iuv);
     /* check fragment not shaded or self-illum material */
-    if (fragXYZW.w == 0 || fragTexture.w == 1)
+    if (fragXYZW.w == 1.0 || fragTexture.w == 1.0)
     {
-        gl_FragColor = vec4(fragTexture.xyz, 0);
+        gl_FragColor = vec4(fragTexture.xyz, 1.0);
         return;
     }
     /* sampling normal and specular factor (w)*/
@@ -47,6 +50,16 @@ void main()
         vec3 lightDir = lposition.xyz - fragPos;
         /* distance to light */
         float dist = length(lightDir);
+        /* attenuation factor */
+        /* x - constant attenuation */
+        /* y - linear attenuation */
+        /* z - quadratic attenuation */
+        /* w - affect radius */
+        vec4 lattenuation = texelFetch(lightSources, texel + 6);
+        /* check light distance */
+        if (dist > lattenuation.w)
+            continue;
+
         lightDir = normalize(lightDir);
         /* spot directional */
         /* take effect with spot and directional light */
@@ -57,12 +70,6 @@ void main()
         vec4 ldiffuse = texelFetch(lightSources, texel + 4);
         /* specular color */
         vec4 lspecular = texelFetch(lightSources, texel + 5);
-        /* attenuation factor */
-        /* x - constant attenuation */
-        /* y - linear attenuation */
-        /* z - quadratic attenuation */
-        /* w - affect radius */
-        vec4 lattenuation = texelFetch(lightSources, texel + 6);
         /* x - spot cutoff */
         /* y - spot cutoff exponent */
         vec4 lspotFactor = texelFetch(lightSources, texel + 7);
@@ -83,10 +90,14 @@ void main()
         float specular = pow(max(dot(fragNormal, halfv), 0.0), specPower) * specularFactor;
 
         /* calculate linear color factor */
-        linear += lambient * attenuationFactor;
-        linear += ldiffuse * lambertian * attenuationFactor;
-        linear += lspecular * specular * (attenuationFactor * 5);
+        linear += lambient.rgb * attenuationFactor;
+        linear += ldiffuse.rgb * lambertian * attenuationFactor;
+        linear += lspecular.rgb * specular * (attenuationFactor * 3);
     }
 
-    gl_FragColor = linear * fragTexture;
+    /* calculate fog factor */
+    float fogFactor = clamp(exp2(-density * density * fragXYZW.w * fragXYZW.w * LOG2), 0.0, 1.0);
+    vec3 rcolor = mix(fogColor, linear * fragTexture.rgb, fogFactor);
+    /* result color in LDR */
+    gl_FragColor = vec4(rcolor, 1.0);
 }

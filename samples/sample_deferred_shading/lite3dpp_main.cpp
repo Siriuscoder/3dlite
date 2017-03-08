@@ -33,6 +33,7 @@ public:
         Scene *scene = getMain().getResourceManager()->queryResource<Scene>("Warship",
             "warship:scenes/warship_prepass.json");
         setMainCamera(scene->getCamera("MainCamera"));
+        addFlashlight(scene);
         
         scene = getMain().getResourceManager()->queryResource<Scene>("WarshipCombine",
             "warship:scenes/warship_combine.json");
@@ -44,10 +45,29 @@ public:
         lite3dpp::Material::setIntGlobalParameter("glowEnabled", 1);
     }
     
+    void addFlashlight(Scene *scene)
+    {
+        String flashLightParams = "{\"Light\":{"
+            "\"Ambient\":[ 0.0,0.0,0.0 ],"
+            "\"Attenuation\":[ 0.0,1.0,0.0,1000.0 ],"
+            "\"Diffuse\":[ 1.0,1.0,1.0 ],"
+            "\"Name\":\"FlashLight\","
+            "\"Position\":[ 0.0,0.0,0.0 ],"
+            "\"Specular\":[ 1.0,1.0,1.0 ],"
+            "\"SpotDirection\":[ 0.0,0.0,-1.0 ],"
+            "\"SpotFactor\":[ 0.35,0.52,0.0 ]," // 20-30 degrees in radians
+            "\"Type\":\"Spot\"},"
+            "\"Name\":\"FlashLight.node\"}";
+        mFlashLight.reset(new LightSceneNode(ConfigurationReader(flashLightParams.data(), flashLightParams.size()), NULL, &getMain()));
+        mFlashLight->addToScene(scene);
+        mFlashLight->getLight()->enabled(false);
+    }
+    
     void timerTick(lite3d_timer *timerid) override
     {
         Sample::timerTick(timerid);
         lite3dpp::Material::setFloatv3GlobalParameter("eye", getMainCamera().getPosition());
+        mFlashLight->setPosition(getMainCamera().getPosition());
     }
 
     void processEvent(SDL_Event *e) override
@@ -69,12 +89,21 @@ public:
                     mGammaFactor = 1.0;
                 lite3dpp::Material::setFloatGlobalParameter("GammaFactor", mGammaFactor);
             }
+            else if (e->key.keysym.sym == SDLK_l)
+            {
+                static bool flashLightEnabled = false;
+                flashLightEnabled = !flashLightEnabled;
+                mFlashLight->getLight()->enabled(flashLightEnabled);
+            }
         }
+        
+        mFlashLight->setRotation(getMainCamera().getRotation());
     }
     
 private:
                     
     float mGammaFactor;
+    std::unique_ptr<LightSceneNode> mFlashLight;
 };
 
 }}

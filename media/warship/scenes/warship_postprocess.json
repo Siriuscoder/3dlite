@@ -20,7 +20,9 @@
                 {
                     "Name": "Window",
                     "Priority": 0,
-                    "TexturePass": 1
+                    "TexturePass": 1,
+                    "DepthTest": false,
+                    "DepthOutput": false
                 }
             ]
         }

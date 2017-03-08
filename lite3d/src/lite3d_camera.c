@@ -231,6 +231,16 @@ void lite3d_camera_move_relative(lite3d_camera *camera,
     lite3d_scene_node_move(&camera->cameraNode, &vecLocalCamera);
 }
 
+void lite3d_camera_direction(const lite3d_camera *camera,
+    kmVec3 *vec)
+{
+    kmQuaternion inverseRot;
+
+    SDL_assert(camera && vec);
+    kmQuaternionInverse(&inverseRot, &camera->cameraNode.rotation);
+    kmQuaternionMultiplyVec3(vec, &inverseRot, &KM_VEC3_NEG_Z);
+}
+
 float lite3d_camera_distance(lite3d_camera *camera, 
     const kmVec3 *point)
 {
