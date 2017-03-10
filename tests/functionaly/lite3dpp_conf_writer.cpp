@@ -37,38 +37,29 @@ protected:
 
 TEST_F(Lite3dpp_ConfWriterTest, ConfigGenerate)
 {
-    lite3dpp::ConfigurationWriter writer;
-
-    writer.set(L"LogLevel", 2);
-    writer.set(L"LogFlushAlways", false);
-    writer.set(L"FixedUpdatesInterval", 30);
-
-    lite3dpp::ConfigurationWriter video;
-    video.set(L"Width", 800);
-    video.set(L"Height", 600);
-    video.set(L"Caption", L"My test window");
-    video.set(L"ColorBits", 24);
-    video.set(L"Fullscreen", false);
-    video.set(L"FSAA", 4);
-    video.set(L"VSync", true);
-
-    lite3dpp::ConfigurationWriter texture;
-    texture.set(L"Anisotropy", 8);
-    texture.set(L"Compression", true);
-
     lite3dpp::ConfigurationWriter reslocation;
-    reslocation.set(L"Name", L"samples");
-    reslocation.set(L"Path", L"samples/");
-    reslocation.set(L"FileCacheMaxSize", 1024000);
+    reslocation.set(L"Name", L"samples")
+        .set(L"Path", L"samples/")
+        .set(L"FileCacheMaxSize", 1024000);
 
     lite3dpp::stl<lite3dpp::ConfigurationWriter>::vector reslocationArr;
     reslocationArr.push_back(reslocation);
-    writer.set(L"ResourceLocations", reslocationArr);
-    writer.set(L"VideoSettings", video);
-    writer.set(L"TextureSettings", texture);
 
-    lite3dpp::String code = writer.write();
-    writer.clear();
+    lite3dpp::String code = lite3dpp::ConfigurationWriter().set(L"LogLevel", 2)
+        .set(L"LogFlushAlways", false)
+        .set(L"FixedUpdatesInterval", 30)
+        .set(L"VideoSettings", lite3dpp::ConfigurationWriter()
+            .set(L"Width", 800)
+            .set(L"Height", 600)
+            .set(L"Caption", L"My test window")
+            .set(L"ColorBits", 24)
+            .set(L"Fullscreen", false)
+            .set(L"FSAA", 4)
+            .set(L"VSync", true))
+        .set(L"TextureSettings", lite3dpp::ConfigurationWriter()
+            .set(L"Anisotropy", 8)
+            .set(L"Compression", true))
+        .set(L"ResourceLocations", reslocationArr).write(true);
 
     EXPECT_NO_THROW(mMain.initFromConfigString(code.c_str()));
 }

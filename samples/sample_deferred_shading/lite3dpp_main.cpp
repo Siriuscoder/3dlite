@@ -47,17 +47,19 @@ public:
     
     void addFlashlight(Scene *scene)
     {
-        String flashLightParams = "{\"Light\":{"
-            "\"Ambient\":[ 0.0,0.0,0.0 ],"
-            "\"Attenuation\":[ 0.0,1.0,0.0,1000.0 ],"
-            "\"Diffuse\":[ 1.0,1.0,1.0 ],"
-            "\"Name\":\"FlashLight\","
-            "\"Position\":[ 0.0,0.0,0.0 ],"
-            "\"Specular\":[ 1.0,1.0,1.0 ],"
-            "\"SpotDirection\":[ 0.0,0.0,-1.0 ],"
-            "\"SpotFactor\":[ 0.35,0.52,0.0 ]," // 20-30 degrees in radians
-            "\"Type\":\"Spot\"},"
-            "\"Name\":\"FlashLight.node\"}";
+        kmVec3 spotFactor = { 0.35f, 0.52f, 0.0f };
+        kmVec4 attenuation = { 0.0f, 1.0f, 0.0f, 1000.0f };
+        String flashLightParams = ConfigurationWriter().set(L"Name", "FlashLight.node").set(L"Light", 
+            ConfigurationWriter().set(L"Ambient", KM_VEC3_ZERO)
+            .set(L"Diffuse", KM_VEC3_ONE)
+            .set(L"Position", KM_VEC3_ZERO)
+            .set(L"Name", "FlashLight")
+            .set(L"Specular", KM_VEC3_ONE)
+            .set(L"SpotDirection", KM_VEC3_NEG_Z)
+            .set(L"Type", "Spot")
+            .set(L"SpotFactor", spotFactor)
+            .set(L"Attenuation", attenuation)).write(true);
+
         mFlashLight.reset(new LightSceneNode(ConfigurationReader(flashLightParams.data(), flashLightParams.size()), NULL, &getMain()));
         mFlashLight->addToScene(scene);
         mFlashLight->getLight()->enabled(false);

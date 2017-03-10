@@ -30,29 +30,30 @@ namespace lite3dpp
         ConfigurationWriter(const ConfigurationWriter &other);
         ~ConfigurationWriter();
 
-        void set(const WString &name, int32_t value);
-        void set(const WString &name, float value);
-        void set(const WString &name, bool value);
-        void set(const WString &name, const WString &value);
-        void set(const WString &name, const String &value);
-        void set(const WString &name, const char *value);
-        void set(const WString &name, const wchar_t *value);
-        void set(const WString &name, const ConfigurationWriter &object);
+        ConfigurationWriter &set(const WString &name, int32_t value);
+        ConfigurationWriter &set(const WString &name, float value);
+        ConfigurationWriter &set(const WString &name, bool value);
+        ConfigurationWriter &set(const WString &name, const WString &value);
+        ConfigurationWriter &set(const WString &name, const String &value);
+        ConfigurationWriter &set(const WString &name, const char *value);
+        ConfigurationWriter &set(const WString &name, const wchar_t *value);
+        ConfigurationWriter &set(const WString &name, const ConfigurationWriter &object);
 
-        void set(const WString &name, const stl<ConfigurationWriter>::vector &objects);
-        void set(const WString &name, const stl<WString>::vector &strings);
-        void set(const WString &name, const stl<int32_t>::vector &ints);
-        void set(const WString &name, const stl<float>::vector &floats);
-        void set(const WString &name, const stl<bool>::vector &bools);
+        ConfigurationWriter &set(const WString &name, const stl<ConfigurationWriter>::vector &objects);
+        ConfigurationWriter &set(const WString &name, const stl<WString>::vector &strings);
+        ConfigurationWriter &set(const WString &name, const stl<int32_t>::vector &ints);
+        ConfigurationWriter &set(const WString &name, const stl<float>::vector &floats);
+        ConfigurationWriter &set(const WString &name, const stl<bool>::vector &bools);
 
-        void set(const WString &name, const kmVec2 &value);
-        void set(const WString &name, const kmVec3 &value);
-        void set(const WString &name, const kmVec4 &value);
-        void set(const WString &name, const kmQuaternion &value);
-        void set(const WString &name, const kmMat4 &value);
+        ConfigurationWriter &set(const WString &name, const kmVec2 &value);
+        ConfigurationWriter &set(const WString &name, const kmVec3 &value);
+        ConfigurationWriter &set(const WString &name, const kmVec4 &value);
+        ConfigurationWriter &set(const WString &name, const kmQuaternion &value);
+        ConfigurationWriter &set(const WString &name, const kmMat4 &value);
 
         void remove(const WString &name);
-        String write();
+        /* WARNING: if true passed then internal state will be released (effect like clear call) */
+        String write(bool fin);
         void clear();
 
     private:

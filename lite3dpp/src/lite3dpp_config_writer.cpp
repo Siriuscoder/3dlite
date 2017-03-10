@@ -39,55 +39,61 @@ namespace lite3dpp
         mObject(other.mObject)
     {}
 
-    void ConfigurationWriter::set(const WString &name, int32_t value)
+    ConfigurationWriter &ConfigurationWriter::set(const WString &name, int32_t value)
     {
         remove(name);
         mObject[name] = new JSONValue((float)value);
+        return *this;
     }
 
-    void ConfigurationWriter::set(const WString &name, float value)
+    ConfigurationWriter &ConfigurationWriter::set(const WString &name, float value)
     {
         remove(name);
         mObject[name] = new JSONValue(value);
+        return *this;
     }
 
-    void ConfigurationWriter::set(const WString &name, bool value)
+    ConfigurationWriter &ConfigurationWriter::set(const WString &name, bool value)
     {
         remove(name);
         mObject[name] = new JSONValue(value);
+        return *this;
     }
 
-    void ConfigurationWriter::set(const WString &name, const WString &value)
+    ConfigurationWriter &ConfigurationWriter::set(const WString &name, const WString &value)
     {
         remove(name);
         mObject[name] = new JSONValue(value);
+        return *this;
     }
 
-    void ConfigurationWriter::set(const WString &name, const String &value)
+    ConfigurationWriter &ConfigurationWriter::set(const WString &name, const String &value)
     {
         remove(name);
 
         WString localWString(value.begin(), value.end());
         mObject[name] = new JSONValue(localWString);
+        return *this;
     }
 
-    void ConfigurationWriter::set(const WString &name, const char *value)
+    ConfigurationWriter &ConfigurationWriter::set(const WString &name, const char *value)
     {
-        set(name, String(value));
+        return set(name, String(value));
     }
 
-    void ConfigurationWriter::set(const WString &name, const wchar_t *value)
+    ConfigurationWriter &ConfigurationWriter::set(const WString &name, const wchar_t *value)
     {
-        set(name, WString(value));
+        return set(name, WString(value));
     }
 
-    void ConfigurationWriter::set(const WString &name, const ConfigurationWriter &object)
+    ConfigurationWriter &ConfigurationWriter::set(const WString &name, const ConfigurationWriter &object)
     {
         remove(name);
         mObject[name] = new JSONValue(object.mObject);
+        return *this;
     }
 
-    void ConfigurationWriter::set(const WString &name, const stl<ConfigurationWriter>::vector &objects)
+    ConfigurationWriter &ConfigurationWriter::set(const WString &name, const stl<ConfigurationWriter>::vector &objects)
     {
         remove(name);
         JSONArray jarray;
@@ -97,9 +103,10 @@ namespace lite3dpp
         }
 
         mObject[name] = new JSONValue(jarray);
+        return *this;
     }
 
-    void ConfigurationWriter::set(const WString &name, const stl<WString>::vector &strings)
+    ConfigurationWriter &ConfigurationWriter::set(const WString &name, const stl<WString>::vector &strings)
     {
         remove(name);
         JSONArray jarray;
@@ -109,9 +116,10 @@ namespace lite3dpp
         }
 
         mObject[name] = new JSONValue(jarray);
+        return *this;
     }
 
-    void ConfigurationWriter::set(const WString &name, const stl<int32_t>::vector &ints)
+    ConfigurationWriter &ConfigurationWriter::set(const WString &name, const stl<int32_t>::vector &ints)
     {
         remove(name);
         JSONArray jarray;
@@ -121,9 +129,10 @@ namespace lite3dpp
         }
 
         mObject[name] = new JSONValue(jarray);
+        return *this;
     }
     
-    void ConfigurationWriter::set(const WString &name, const stl<float>::vector &floats)
+    ConfigurationWriter &ConfigurationWriter::set(const WString &name, const stl<float>::vector &floats)
     {
         remove(name);
         JSONArray jarray;
@@ -133,9 +142,10 @@ namespace lite3dpp
         }
 
         mObject[name] = new JSONValue(jarray);
+        return *this;
     }
      
-    void ConfigurationWriter::set(const WString &name, const stl<bool>::vector &bools)
+    ConfigurationWriter &ConfigurationWriter::set(const WString &name, const stl<bool>::vector &bools)
     {
         remove(name);
         JSONArray jarray;
@@ -145,42 +155,43 @@ namespace lite3dpp
         }
 
         mObject[name] = new JSONValue(jarray);
+        return *this;
     }
 
-    void ConfigurationWriter::set(const WString &name, const kmVec2 &value)
+    ConfigurationWriter &ConfigurationWriter::set(const WString &name, const kmVec2 &value)
     {
         remove(name);
         stl<float>::vector vec(&value.x, &value.x+2);
-        set(name, vec);
+        return set(name, vec);
     }
     
-    void ConfigurationWriter::set(const WString &name, const kmVec3 &value)
+    ConfigurationWriter &ConfigurationWriter::set(const WString &name, const kmVec3 &value)
     {
         remove(name);
         stl<float>::vector vec(&value.x, &value.x+3);
-        set(name, vec);
+        return set(name, vec);
     }
      
     
-    void ConfigurationWriter::set(const WString &name, const kmVec4 &value)
+    ConfigurationWriter &ConfigurationWriter::set(const WString &name, const kmVec4 &value)
     {
         remove(name);
         stl<float>::vector vec(&value.x, &value.x+4);
-        set(name, vec);
+        return set(name, vec);
     }
      
-    void ConfigurationWriter::set(const WString &name, const kmQuaternion &value)
+    ConfigurationWriter &ConfigurationWriter::set(const WString &name, const kmQuaternion &value)
     {
         remove(name);
         stl<float>::vector vec(&value.x, &value.x+4);
-        set(name, vec);
+        return set(name, vec);
     }
      
-    void ConfigurationWriter::set(const WString &name, const kmMat4 &value)
+    ConfigurationWriter &ConfigurationWriter::set(const WString &name, const kmMat4 &value)
     {
         remove(name);
         stl<float>::vector mat(value.mat, value.mat+16);
-        set(name, mat);
+        return set(name, mat);
     }
 
     void ConfigurationWriter::remove(const WString &name)
@@ -193,11 +204,12 @@ namespace lite3dpp
         }
     }
 
-    String ConfigurationWriter::write()
+    String ConfigurationWriter::write(bool fin)
     {
         JSONValue value(mObject);
         String result = JSON::wStringToString(value.Stringify(true));
-        value.setValue();
+        if (!fin)
+            value.setValue();
         return result;
     }
 
