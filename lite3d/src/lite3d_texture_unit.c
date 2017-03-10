@@ -49,6 +49,7 @@ static int8_t gFiltersCount = 0;
 static int maxTextureSize;
 static int maxTextureImageUnits;
 static int maxCombinedTextureImageUnits;
+static int textureCompression = LITE3D_TRUE;
 
 static void* LITE3D_DEVIL_CALL il_alloc(const ILsizei size)
 {
@@ -174,16 +175,14 @@ int lite3d_texture_technique_init(const lite3d_texture_technique_settings *setti
     SDL_assert(settings);
     gTextureSettings = *settings;
 
-    if (settings->useGLCompression)
+    /* check compression extentions */
+    if (!lite3d_check_texture_compression() || !lite3d_check_texture_compression_s3tc()
+        || !lite3d_check_texture_compression_dxt1())
     {
-        /* check compression extentions */
-        if (!lite3d_check_texture_compression() || !lite3d_check_texture_compression_s3tc()
-            || !lite3d_check_texture_compression_dxt1())
-        {
-            SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
-                "%s: Texture compression not supported, skiping", LITE3D_CURRENT_FUNCTION);
-            gTextureSettings.useGLCompression = 0;
-        }
+        SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
+            "%s: Texture compression not supported, skiping", LITE3D_CURRENT_FUNCTION);
+        textureCompression = LITE3D_FALSE;
+        gTextureSettings.useGLCompression = LITE3D_FALSE;
     }
 
     if (!lite3d_check_texture_filter_anisotropic())
@@ -801,6 +800,13 @@ void lite3d_texture_unit_unbind(lite3d_texture_unit *textureUnit, uint16_t layer
 
 void lite3d_texture_unit_compression(uint8_t on)
 {
+    /* skip if not supported */
+    if (!textureCompression)
+    {
+        gTextureSettings.useGLCompression = textureCompression;
+        return;
+    }
+
     gTextureSettings.useGLCompression = on;
 }
 

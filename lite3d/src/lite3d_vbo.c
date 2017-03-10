@@ -202,8 +202,17 @@ int lite3d_vbo_extend(struct lite3d_vbo *vbo, size_t addSize, uint16_t access)
     lite3d_misc_gl_error_stack_clean();
 
     vbo->access = access;
-    if (!vbo_buffer_extend(vbo->vboID, addSize, access))
-        return LITE3D_FALSE;
+    if (vbo->size > 0)
+    {
+        if (!vbo_buffer_extend(vbo->vboID, addSize, access))
+            return LITE3D_FALSE;
+    }
+    // relocate not needed, overwise may cause crash on some hardware
+    else
+    {
+        if (!lite3d_vbo_buffer(vbo, NULL, addSize, access))
+            return LITE3D_FALSE;
+    }
 
     vbo->size += addSize;
 

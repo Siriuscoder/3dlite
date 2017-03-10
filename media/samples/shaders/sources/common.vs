@@ -1,9 +1,3 @@
-#ifndef GL_ES
-#version 150
-#else
-precision mediump float;
-#endif
-
 uniform mat4 projectionMatrix;
 uniform mat4 viewMatrix;
 uniform mat4 modelMatrix;

@@ -21,6 +21,7 @@
 #include <SDL_log.h>
 
 #include <lite3d/lite3d_alloc.h>
+#include <lite3d/lite3d_dbg.h>
 
 #include <lite3dpp/json/JSON.h>
 #include <lite3dpp/lite3dpp_main.h>
@@ -61,6 +62,9 @@ namespace lite3dpp
         mSettings.logLevel = mConfig->getInt(L"LogLevel", LITE3D_LOGLEVEL_ERROR);
         mSettings.logFlushAlways = mConfig->getBool(L"LogFlushAlways", false) ? LITE3D_TRUE : LITE3D_FALSE;
         mConfig->getString(L"LogFile").copy(mSettings.logFile, sizeof(mSettings.logFile)-1);
+
+        if (mConfig->getBool(L"Minidump", false))
+            lite3d_dbg_enable_coredump();
 
         ConfigurationReader textureSettings = mConfig->getObject(L"TextureSettings");
         ConfigurationReader videoSettings = mConfig->getObject(L"VideoSettings");
