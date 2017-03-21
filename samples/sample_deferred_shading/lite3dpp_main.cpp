@@ -41,8 +41,9 @@ public:
             "warship:scenes/warship_postprocess.json");
         
         lite3dpp::Material::setIntGlobalParameter("FXAA", 0);
-        lite3dpp::Material::setIntGlobalParameter("Gamma", 1);
-        lite3dpp::Material::setIntGlobalParameter("glowEnabled", 1);
+
+        kmVec3 resolution = { getMain().window()->width(), getMain().window()->height(), 0 };
+        lite3dpp::Material::setFloatv3GlobalParameter("screenResolution", resolution);
     }
     
     void addFlashlight(Scene *scene)
@@ -91,6 +92,12 @@ public:
                     mGammaFactor = 1.0;
                 lite3dpp::Material::setFloatGlobalParameter("GammaFactor", mGammaFactor);
             }
+            else if (e->key.keysym.sym == SDLK_o)
+            {
+                static bool fxaaEnabled = false;
+                fxaaEnabled = !fxaaEnabled;
+                lite3dpp::Material::setIntGlobalParameter("FXAA", fxaaEnabled ? 1 : 0);
+            }
             else if (e->key.keysym.sym == SDLK_l)
             {
                 static bool flashLightEnabled = false;
@@ -98,8 +105,10 @@ public:
                 mFlashLight->getLight()->enabled(flashLightEnabled);
             }
         }
-        
-        mFlashLight->setRotation(getMainCamera().getRotation());
+        else if (e->type == SDL_MOUSEMOTION)
+        {
+            mFlashLight->setRotation(getMainCamera().getRotation());
+        }
     }
     
 private:

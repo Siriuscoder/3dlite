@@ -22,12 +22,6 @@
       "Name":"modelMatrix"
     },
     {
-      "Name":"glowEnabled",
-      "Type":"int",
-      "Value": 1,
-      "Scope":"global"
-    },
-    {
       "Name":"diffuse",
       "TextureName":"rclight01.texture",
       "TexturePath":"warship:textures/json/rclight01.json",

@@ -1,8 +1,9 @@
 {
     "Sources": 
     [
-        "warship:shaders/sources/tri.vs",
-        "warship:shaders/sources/postprocess.ps"
+        "warship:shaders/sources/postprocess.vs",
+        "warship:shaders/sources/postprocess.ps",
+		"warship:shaders/sources/fxaa.ps"
     ],
     
     "AttributesOrder":

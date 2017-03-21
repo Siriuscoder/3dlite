@@ -18,7 +18,15 @@
     {
       "Name":"FXAA",
       "Type":"int",
-      "Value": 1,
+      "Value": 0,
+      "Scope":"global"
+    },
+    {
+      "Name":"screenResolution",
+      "Type":"v3",
+      "Value":[
+        0,0,0
+      ],
       "Scope":"global"
     },
     {
