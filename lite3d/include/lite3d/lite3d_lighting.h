@@ -33,29 +33,42 @@
 #pragma pack(push,16)
 typedef struct lite3d_light_params
 {
-    /* flags.x - type */
-    /* flags.y - enabled */
-    kmVec4 flags;
-    /* light position */
-    kmVec4 position;
-    /* spot directional */
-    /* take effect with spot and directional light */
-    kmVec4 spotDirection;
-    /* ambient color */
-    kmVec4 ambient;
-    /* diffuse color */
-    kmVec4 diffuse;
-    /* specular color */
-    kmVec4 specular;
+    /* block1.x - type */
+    /* block1.y - enabled */
+    /* block1.z - affect radius */
+    /* block1.w - position.x */
+    kmVec4 block1;
+
+    /* block2.x - position.y */
+    /* block2.y - position.z  */
+    /* block2.z - ambient.r */
+    /* block2.w - ambient.g */
+    kmVec4 block2;
+
+    /* block3.x - ambient.b */
+    /* block3.y - diffuse.r */
+    /* block3.z - diffuse.g */
+    /* block3.w - diffuse.b */
+    kmVec4 block3;
+
+    /* block4.x - specular.r */
+    /* block4.y - specular.g */
+    /* block4.z - specular.b */
+    /* block4.w - spot directional.x */
+    kmVec4 block4;
+
+    /* block5.x - spot directional.y */
+    /* block5.y - spot directional.z */
+    /* block5.z - spot cutoff */
+    /* block5.w - spot cutoff exponent */
+    kmVec4 block5;
+
     /* attenuation factor */
-    /* x - constant attenuation */
-    /* y - linear attenuation */
-    /* z - quadratic attenuation */
-    /* w - affect radius */
-    kmVec4 attenuation;
-    /* x - spot cutoff */
-    /* y - spot cutoff exponent */
-    kmVec4 spotFactor;
+    /* block6.x - constant attenuation */
+    /* block6.y - linear attenuation */
+    /* block6.z - quadratic attenuation */
+    kmVec4 block6;
+
 } lite3d_light_params;
 #pragma pack(pop)
 

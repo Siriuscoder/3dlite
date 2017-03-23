@@ -261,42 +261,34 @@ static int ai_load_light(const struct aiScene *scene, const struct aiNode *node,
 
     /* type */
     if (light->mType == aiLightSource_DIRECTIONAL)
-        params.flags.x = LITE3D_LIGHT_DIRECTIONAL;
+        params.block1.x = LITE3D_LIGHT_DIRECTIONAL;
     else if (light->mType == aiLightSource_POINT)
-        params.flags.x = LITE3D_LIGHT_POINT;
+        params.block1.x = LITE3D_LIGHT_POINT;
     else if (light->mType == aiLightSource_SPOT)
-        params.flags.x = LITE3D_LIGHT_SPOT;
+        params.block1.x = LITE3D_LIGHT_SPOT;
 
     /* enabled */
-    params.flags.y = LITE3D_TRUE;
-
-    params.ambient.x = light->mColorAmbient.r;
-    params.ambient.y = light->mColorAmbient.g;
-    params.ambient.z = light->mColorAmbient.b;
-
-    params.specular.x = light->mColorSpecular.r;
-    params.specular.y = light->mColorSpecular.g;
-    params.specular.z = light->mColorSpecular.b;
-
-    params.diffuse.x = light->mColorDiffuse.r;
-    params.diffuse.y = light->mColorDiffuse.g;
-    params.diffuse.z = light->mColorDiffuse.b;
-
-    params.attenuation.x = light->mAttenuationConstant;
-    params.attenuation.y = light->mAttenuationLinear;
-    params.attenuation.z = light->mAttenuationQuadratic;
-
-    params.position.x = light->mPosition.x;
-    params.position.y = light->mPosition.y;
-    params.position.z = light->mPosition.z;
-    params.position.w = 1.0f;
-
-    params.spotDirection.x = light->mDirection.x;
-    params.spotDirection.y = light->mDirection.y;
-    params.spotDirection.z = light->mDirection.z;
-
-    params.spotFactor.x = light->mAngleInnerCone;
-    params.spotFactor.y = light->mAngleOuterCone;
+    params.block1.y = LITE3D_TRUE;
+    params.block1.w = light->mPosition.x;
+    params.block2.x = light->mPosition.y;
+    params.block2.y = light->mPosition.z;
+    params.block2.z = light->mColorAmbient.r;
+    params.block2.w = light->mColorAmbient.g;
+    params.block3.x = light->mColorAmbient.b;
+    params.block3.y = light->mColorDiffuse.r;
+    params.block3.z = light->mColorDiffuse.g;
+    params.block3.w = light->mColorDiffuse.b;
+    params.block4.x = light->mColorSpecular.r;
+    params.block4.y = light->mColorSpecular.g;
+    params.block4.z = light->mColorSpecular.b;
+    params.block4.w = light->mDirection.x;
+    params.block5.x = light->mDirection.y;
+    params.block5.y = light->mDirection.z;
+    params.block5.z = light->mAngleInnerCone;
+    params.block5.w = light->mAngleOuterCone;
+    params.block6.x = light->mAttenuationConstant;
+    params.block6.y = light->mAttenuationLinear;
+    params.block6.z = light->mAttenuationQuadratic;
 
     if (ctx.onLight)
         ctx.onLight(node->mName.data, &params, &transform, ctx.userdata);

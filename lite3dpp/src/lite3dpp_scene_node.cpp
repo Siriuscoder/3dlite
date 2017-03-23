@@ -200,12 +200,12 @@ namespace lite3dpp
     lite3d_light_params LightSceneNode::lightSourceToWorld() const
     {
         lite3d_light_params res = mLight->getPtr()->params;
-        kmVec3TransformCoord((kmVec3 *)&res.position, (kmVec3 *)&res.position, &getPtr()->worldView);
-        if (res.flags.x == LITE3D_LIGHT_DIRECTIONAL || res.flags.x == LITE3D_LIGHT_SPOT)
+        kmVec3TransformCoord((kmVec3 *)&res.block1.w, (kmVec3 *)&res.block1.w, &getPtr()->worldView);
+        if (res.block1.x == LITE3D_LIGHT_DIRECTIONAL || res.block1.x == LITE3D_LIGHT_SPOT)
         {
-            kmVec4 direction = KM_VEC4_ZERO;
-            kmQuaternionMultiplyVec3((kmVec3 *)&direction, &getPtr()->rotation, (kmVec3 *)&res.spotDirection);
-            kmVec4Normalize(&res.spotDirection, &direction);
+            kmVec3 direction = KM_VEC3_ZERO;
+            kmQuaternionMultiplyVec3(&direction, &getPtr()->rotation, (kmVec3 *)&res.block4.w);
+            kmVec3Normalize((kmVec3 *)&res.block4.w, &direction);
         }
 
         return res;

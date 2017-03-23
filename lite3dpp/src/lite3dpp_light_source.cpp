@@ -29,7 +29,7 @@ namespace lite3dpp
         memset(&mLightSource, 0, sizeof(mLightSource));
         mLightSource.userdata = this;
         /* enabled by default */
-        mLightSource.params.flags.y = 1;
+        mLightSource.params.block1.y = 1;
     }
     
     LightSource::~LightSource()
@@ -37,73 +37,69 @@ namespace lite3dpp
     
     void LightSource::setType(uint8_t t)
     {
-        mLightSource.params.flags.x = t;
+        mLightSource.params.block1.x = t;
         mUpdated = true;
     }
     
     void LightSource::enabled(bool f)
     {
-        mLightSource.params.flags.y = f ? 1 : 0;
+        mLightSource.params.block1.y = f ? 1 : 0;
         mUpdated = true;  
     }
     
     void LightSource::setPosition(const kmVec3 &v)
     {
-        mLightSource.params.position.x = v.x;
-        mLightSource.params.position.y = v.y;
-        mLightSource.params.position.z = v.z;
-        mLightSource.params.position.w = 1.0f;
-        mUpdated = true;    
+        mLightSource.params.block1.w = v.x;
+        mLightSource.params.block2.x = v.y;
+        mLightSource.params.block2.y = v.z;
+        mUpdated = true;
     }
     
     void LightSource::setSpotDirection(const kmVec3 &v)
     {
-        mLightSource.params.spotDirection.x = v.x;
-        mLightSource.params.spotDirection.y = v.y;
-        mLightSource.params.spotDirection.z = v.z;
-        mLightSource.params.spotDirection.w = 0.0f;
+        mLightSource.params.block4.w = v.x;
+        mLightSource.params.block5.x = v.y;
+        mLightSource.params.block5.y = v.z;
         mUpdated = true;
     }
     
     void LightSource::setAmbient(const kmVec3 &v)
     {
-        mLightSource.params.ambient.x = v.x;
-        mLightSource.params.ambient.y = v.y;
-        mLightSource.params.ambient.z = v.z;
-        mLightSource.params.ambient.w = 0.0f;
+        mLightSource.params.block2.z = v.x;
+        mLightSource.params.block2.w = v.y;
+        mLightSource.params.block3.x = v.z;
         mUpdated = true;      
     }
     
     void LightSource::setDiffuse(const kmVec3 &v)
     {
-        mLightSource.params.diffuse.x = v.x;
-        mLightSource.params.diffuse.y = v.y;
-        mLightSource.params.diffuse.z = v.z;
-        mLightSource.params.diffuse.w = 0.0f;
+        mLightSource.params.block3.y = v.x;
+        mLightSource.params.block3.z = v.y;
+        mLightSource.params.block3.w = v.z;
         mUpdated = true;   
     }
     
     void LightSource::setSpecular(const kmVec3 &v)
     {
-        mLightSource.params.specular.x = v.x;
-        mLightSource.params.specular.y = v.y;
-        mLightSource.params.specular.z = v.z;
-        mLightSource.params.specular.w = 0.0f;
+        mLightSource.params.block4.x = v.x;
+        mLightSource.params.block4.y = v.y;
+        mLightSource.params.block4.z = v.z;
         mUpdated = true;   
     }
     
     void LightSource::setAttenuation(const kmVec4 &v)
     {
-        mLightSource.params.attenuation = v;
+        mLightSource.params.block1.z = v.w;
+        mLightSource.params.block6.x = v.x;
+        mLightSource.params.block6.y = v.y;
+        mLightSource.params.block6.z = v.z;
         mUpdated = true;   
     }
     
     void LightSource::setSpotFactor(const kmVec3 &v)
     {
-        mLightSource.params.spotFactor.x = v.x;
-        mLightSource.params.spotFactor.y = v.y;
-        mLightSource.params.spotFactor.z = 0.0f;
-        mLightSource.params.spotFactor.w = 0.0f;
+        mLightSource.params.block5.z = v.x;
+        mLightSource.params.block5.w = v.y;
         mUpdated = true;   
     }
 }
