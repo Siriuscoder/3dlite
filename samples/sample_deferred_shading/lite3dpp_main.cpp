@@ -42,7 +42,7 @@ public:
         
         lite3dpp::Material::setIntGlobalParameter("FXAA", 0);
 
-        kmVec3 resolution = { getMain().window()->width(), getMain().window()->height(), 0 };
+        kmVec3 resolution = { (float)getMain().window()->width(), (float)getMain().window()->height(), 0 };
         lite3dpp::Material::setFloatv3GlobalParameter("screenResolution", resolution);
     }
     
