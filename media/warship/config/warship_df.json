@@ -4,7 +4,7 @@
     "LogFlushAlways": true,
     "LogFile": "lite3d.log",
     "TextureSettings": {
-        "Anisotropy": 4,
+        "Anisotropy": 16,
         "Compression": true
     },
     // Video settings

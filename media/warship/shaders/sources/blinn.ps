@@ -81,7 +81,7 @@ vec3 blinn_calculate(samplerBuffer source, int num, vec3 ambient, vec3 fragPos,
         /* calculate linear color factor */
         linear += lambient * attenuationFactor;
         linear += ldiffuse * lambertian * attenuationFactor;
-        linear += lspecular * specular * (attenuationFactor * 3);
+        linear += lspecular * specular * (attenuationFactor * 2);
     }
 
     return linear;

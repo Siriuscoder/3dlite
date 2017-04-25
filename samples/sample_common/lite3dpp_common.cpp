@@ -245,7 +245,7 @@ void Sample::saveScreenshot()
 
     time(&rawtime);
     timeinfo = localtime(&rawtime);
-    strftime(filename, sizeof(filename), "screen-%F-%H-%M-%S.png", timeinfo);
+    strftime(filename, sizeof(filename), "screen-%Y-%m-%d-%H-%M-%S.png", timeinfo);
     mMainWindow->saveScreenshot(filename);
 }
 

@@ -1,7 +1,7 @@
 {
     "Sources": 
     [
-        "warship:shaders/sources/tri.vs",
+        "warship:shaders/sources/combine.vs",
         "warship:shaders/sources/combine.ps",
         "warship:shaders/sources/blinn.ps"
     ],
