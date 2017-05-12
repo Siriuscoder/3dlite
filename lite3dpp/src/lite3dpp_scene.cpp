@@ -57,7 +57,7 @@ namespace lite3dpp
         catch(std::exception &ex)
         {
             SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
-                "%s: %s, default lighting disabled", LITE3D_CURRENT_FUNCTION, ex.what());
+                "%s: %s, default lighting will be disabled", LITE3D_CURRENT_FUNCTION, ex.what());
         }
 
         setupObjects(helper.getObjects(L"Objects"), NULL);
@@ -195,6 +195,9 @@ namespace lite3dpp
     
     void Scene::rebuildLightingBuffer()
     {
+        if (!mLightingTextureBuffer)
+            return;
+
         uint32_t i = 0;
         for (auto &light : mLights)
         {
@@ -212,10 +215,13 @@ namespace lite3dpp
     
     void Scene::validateLightingBuffer()
     {
+        if (!mLightingTextureBuffer)
+            return;
+
         bool anyValidated = false;
         for (auto &light : mLights)
         {
-            if (light.second->getLight()->isUpdated() || light.second->getPtr()->invalidated)
+            if (light.second->needRecalcToWorld())
             {
                 lite3d_light_params wpar = light.second->lightSourceToWorld();
                 mLightingTextureBuffer->setElement<lite3d_light_params>(light.second->getLight()->index(), 

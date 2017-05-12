@@ -1,5 +1,5 @@
 {
-  "Filtering":"Linear",
+  "Filtering":"Trilinear",
   "Image":"warship:textures/images/rclight01_n.dds",
   "ImageFormat":"dds",
   "TextureType":"2D",

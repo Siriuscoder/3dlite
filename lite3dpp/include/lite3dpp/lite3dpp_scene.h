@@ -61,6 +61,9 @@ namespace lite3dpp
         void removeLight(const String &name);
         void removeAllLights();
 
+        inline const Lights &getLights() const 
+        { return mLights; }
+
     protected:
 
         virtual void loadFromConfigImpl(const ConfigurationReader &helper) override;

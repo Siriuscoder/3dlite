@@ -210,5 +210,10 @@ namespace lite3dpp
 
         return res;
     }
+
+    bool LightSceneNode::needRecalcToWorld() const
+    {
+        return mLight->isUpdated() || getPtr()->invalidated;
+    }
 }
 
