@@ -1,0 +1,46 @@
+{
+  "Passes":[
+    {
+      "Pass":1.0000000000,
+      "Program":{
+        "Name":"lightpass.program",
+        "Path":"vaultmat:shaders/json/lightpass.json"
+      },
+      "Blending":true,
+      // Orgb = 1 * Srgb + 1 * Drgb
+      // Oa = 1 * Sa + 0 * Da = Sa
+      "Blendingmode":"additive"
+    }
+  ],
+  "Uniforms":[
+    {
+      "Name":"projectionMatrix"
+    },
+    {
+      "Name":"viewMatrix"
+    },
+    {
+      "Name":"eye",
+      "Type":"v3",
+      "Value":[
+        0,0,0
+      ],
+      "Scope":"global"
+    },
+    {
+      "Name":"fragMap",
+      "TextureName": "fragmentWorldCoords.texture",
+      "Type":"sampler"
+    },
+    {
+      "Name":"normalMap",
+      "TextureName": "normalsWorld.texture",
+      "Type":"sampler"
+    },
+    {
+      "Name":"diffuseMap",
+      "TextureName": "diffuseMap.texture",
+      "Type":"sampler"
+    }
+  ]
+}

@@ -32,6 +32,7 @@
 
 #define LITE3D_BLENDING_MODE_TRADITIONAL                        0
 #define LITE3D_BLENDING_MODE_TRADITIONAL_WITH_ALPHA_BLEND       1
+#define LITE3D_BLENDING_MODE_ADDITIVE                           2
 
 typedef void (*lite3d_blend_mode_t)(void);
 
@@ -50,7 +51,7 @@ LITE3D_CEXPORT void lite3d_buffers_clear(uint8_t color, uint8_t depth, uint8_t s
 LITE3D_CEXPORT void lite3d_buffers_clear_values(const kmVec4 *color, float depth, int stencil);
 
 /* 
-    0 - Traditional, 1 - Traditional with alpha blend 
+    0 - Traditional, 1 - Traditional with alpha blend, 2 additive
 
     Traditional blend algorithm:
     Orgb = Sa * Srgb + (1 - Sa) * Drgb
@@ -59,7 +60,11 @@ LITE3D_CEXPORT void lite3d_buffers_clear_values(const kmVec4 *color, float depth
     Traditional blend algorithm with alpha blend:
     Orgb = Sa * Srgb + (1 - Sa) * Drgb
     Oa = 1 * Sa + (1 - Sa) * Da
-*/
+    
+    Additive blend algorithm:
+    Orgb = 1 * Srgb + 1 * Drgb
+    Oa = 1 * Sa + (1 - Sa) * Da
+ */
 LITE3D_CEXPORT void lite3d_blending_mode_set(uint8_t mode);
 LITE3D_CEXPORT void lite3d_blending(uint8_t on);
 

@@ -3,8 +3,8 @@
     {
       "Pass":1.0000000000,
       "Program":{
-        "Name":"vault.program",
-        "Path":"vaultmat:shaders/json/vault.json"
+        "Name":"prepass.program",
+        "Path":"vaultmat:shaders/json/prepass.json"
       }
     }
   ],
@@ -16,47 +16,21 @@
       "Name":"viewMatrix"
     },
     {
+      "Name":"normalMatrix"
+    },
+    {
       "Name":"modelMatrix"
     },
     {
-      "Name":"mode",
-      "Type":"float",
-      // 1 - diffuse, 2 - texture, 3 - diffuse + normal
-      "Value":1,
-      "Scope":"global"
-    },
-    {
-      "Name":"ambient",
-      "Type":"v4",
-      "Value":[
-        0.15,0.15,0.15,1
-      ]
-    },
-    {
       "Name":"diffuse",
-      "Type":"v4",
-      "Value":[
-        0.21,0.45,0.4,1
-      ]
-    },
-    {
-      "Name":"specular",
-      "Type":"v4",
-      "Value":[
-        0.2,0.2,0.2,1
-      ]
-    },
-    {
-      "Name":"emissive",
-      "Type":"v4",
-      "Value":[
-        0,0,0,1
-      ]
-    },
-    {
-      "Name":"diffuseSampler",
       "TextureName":"vtrim03.texture",
       "TexturePath":"vault:textures/json/vtrim03.json",
+      "Type":"sampler"
+    },
+    {
+      "Name":"normals",
+      "TextureName":"vtrim03_n.texture",
+      "TexturePath":"vault:textures/json/vtrim03_n.json",
       "Type":"sampler"
     }
   ]

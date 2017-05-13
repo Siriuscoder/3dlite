@@ -1,8 +1,0 @@
-uniform vec4 ambient;
-uniform vec4 diffuse;
-
-void main()
-{
-	vec4 fragDiffuse = clamp(diffuse + ambient, 0, 1);
-	gl_FragColor = vec4(fragDiffuse.xyz, diffuse.w);
-}

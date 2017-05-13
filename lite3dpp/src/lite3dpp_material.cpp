@@ -48,8 +48,8 @@ namespace lite3dpp
             
             lite3dpp::String bMode = passJson.getString(L"BlendingMode", "traditional");
             setPassBlendMode(passNo, passJson.getBool(L"Blending", false), 
-                bMode == "Traditional" ? LITE3D_BLENDING_MODE_TRADITIONAL : 
-                LITE3D_BLENDING_MODE_TRADITIONAL_WITH_ALPHA_BLEND);
+                bMode == "traditional" ? LITE3D_BLENDING_MODE_TRADITIONAL : 
+               (bMode == "additive" ? LITE3D_BLENDING_MODE_ADDITIVE : LITE3D_BLENDING_MODE_TRADITIONAL_WITH_ALPHA_BLEND));
 
             parseParameteres(passJson, passNo);
         }

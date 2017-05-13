@@ -3,8 +3,8 @@
     {
       "Pass":1.0000000000,
       "Program":{
-        "Name":"vault.program",
-        "Path":"vaultmat:shaders/json/vault.json"
+        "Name":"combine_blend_illum.program",
+        "Path":"vaultmat:shaders/json/combine_blend_illum.json"
       },
       "Blending":true,
       //  
@@ -29,45 +29,44 @@
       "Name":"modelMatrix"
     },
     {
-      "Name":"mode",
-      "Type":"float",
-      // 1 - diffuse, 2 - texture, 3 - diffuse + normal
-      "Value":1,
+      "Name":"modelMatrix"
+    },
+    {
+      "Name":"Vault_numLights",
+      "Type":"int",
+      "Value": 0,
       "Scope":"global"
     },
     {
-      "Name":"ambient",
-      "Type":"v4",
+      "Name":"eye",
+      "Type":"v3",
       "Value":[
-        0.15,0.15,0.15,1
-      ]
+        0,0,0
+      ],
+      "Scope":"global"
     },
     {
       "Name":"diffuse",
-      "Type":"v4",
-      "Value":[
-        0.8,0.8,0.21,1
-      ]
-    },
-    {
-      "Name":"specular",
-      "Type":"v4",
-      "Value":[
-        0.2,0.2,0.2,1
-      ]
-    },
-    {
-      "Name":"emissive",
-      "Type":"v4",
-      "Value":[
-        0,0,0,1
-      ]
-    },
-    {
-      "Name":"diffuseSampler",
       "TextureName":"vsign01.texture",
       "TexturePath":"vault:textures/json/vsign01.json",
       "Type":"sampler"
+    },
+    {
+      "Name":"glow",
+      "TextureName":"vsign01_g.texture",
+      "TexturePath":"vault:textures/json/vsign01_g.json",
+      "Type":"sampler"
+    },
+    {
+      "Name":"normals",
+      "TextureName":"vsign01_n.texture",
+      "TexturePath":"vault:textures/json/vsign01_n.json",
+      "Type":"sampler"
+    },
+    {
+      "Name":"lightSources",
+      "TextureName": "Vault_lightingBufferObject",
+      "Type":"samplerBuffer"
     }
   ]
 }
