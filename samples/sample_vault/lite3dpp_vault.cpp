@@ -20,12 +20,13 @@
 namespace lite3dpp {
 namespace samples {
 
-class Vault : public Sample
+class Vault : public Sample, public SceneObserver
 {
 public:
     
     Vault() : 
-        mGammaFactor(1.0f)
+        mGammaFactor(1.0f),
+        mPrepass(NULL)
     {}
 
     void createScene() override
@@ -47,7 +48,27 @@ public:
     
     void setupLightPassScene(Scene *prepass, Scene *scene)
     {
+        mPrepass = prepass;
+        for (const auto &light : prepass->getLights())
+        {
+            SceneObject *lo = scene->addObject(light.first, "vault:objects/lightpass_tri.json", NULL);
+            lo->getNode("Root")->setName(light.first);
+        }
         
+        scene->addObserver(this);
+    }
+    
+    void beginDrawBatch(Scene *scene, SceneNode *node, 
+        lite3d_mesh_chunk *meshChunk, Material *material) override
+    {
+        LightSceneNode *sceneLight = mPrepass->getLightNode(node->getName());
+        //material->setIntParameter(0, "light.enabled", )
+    }
+    
+    void timerTick(lite3d_timer *timerid) override
+    {
+        Sample::timerTick(timerid);
+        lite3dpp::Material::setFloatv3GlobalParameter("eye", getMainCamera().getPosition());
     }
 
     void processEvent(SDL_Event *e) override
@@ -81,6 +102,7 @@ public:
 private:
     
     float mGammaFactor;
+    Scene *mPrepass;
 };
 
 }}

@@ -78,6 +78,11 @@
         </df>
       </df>
       <df name="lite3dpp">
+        <df name="include">
+          <df name="lite3dpp">
+            <in>lite3dpp_scene.h</in>
+          </df>
+        </df>
         <df name="src">
           <df name="as">
             <in>as_atomic.cpp</in>
@@ -664,6 +669,11 @@
       <item path="lite3d/src/lite3d_video.c" ex="false" tool="0" flavor2="3">
         <cTool flags="3">
         </cTool>
+      </item>
+      <item path="lite3dpp/include/lite3dpp/lite3dpp_scene.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
       </item>
       <item path="lite3dpp/src/as/as_atomic.cpp" ex="false" tool="1" flavor2="8">
         <ccTool flags="1">
