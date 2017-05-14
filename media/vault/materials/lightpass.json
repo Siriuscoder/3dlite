@@ -27,6 +27,70 @@
       ],
       "Scope":"global"
     },
+
+    {
+      "Name":"light.enabled",
+      "Type":"int",
+      "Value": 1
+    },
+    {
+      "Name":"light.radius",
+      "Type":"float",
+      "Value": 0.0
+    },
+    {
+      "Name":"light.type",
+      "Type":"int",
+      "Value": 0.0
+    },
+    {
+      "Name":"light.position",
+      "Type":"v3",
+      "Value":[
+        0,0,0
+      ]
+    },
+    {
+      "Name":"light.ambient",
+      "Type":"v3",
+      "Value":[
+        0,0,0
+      ]
+    },
+    {
+      "Name":"light.diffuse",
+      "Type":"v3",
+      "Value":[
+        0,0,0
+      ]
+    },
+    {
+      "Name":"light.specular",
+      "Type":"v3",
+      "Value":[
+        0,0,0
+      ]
+    },
+    {
+      "Name":"light.direction",
+      "Type":"v3",
+      "Value":[
+        0,0,0
+      ]
+    },
+    {
+      "Name":"light.spotangle",
+      "Type":"float",
+      "Value": 0.0
+    },
+    {
+      "Name":"light.attenuation",
+      "Type":"v3",
+      "Value":[
+        0,0,0
+      ]
+    },
+
     {
       "Name":"fragMap",
       "TextureName": "fragmentWorldCoords.texture",
@@ -35,11 +99,6 @@
     {
       "Name":"normalMap",
       "TextureName": "normalsWorld.texture",
-      "Type":"sampler"
-    },
-    {
-      "Name":"diffuseMap",
-      "TextureName": "diffuseMap.texture",
       "Type":"sampler"
     }
   ]

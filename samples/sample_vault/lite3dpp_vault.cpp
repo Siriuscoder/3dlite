@@ -23,13 +23,31 @@ namespace samples {
 class Vault : public Sample
 {
 public:
+    
+    Vault() : 
+        mGammaFactor(1.0f)
+    {}
 
     void createScene() override
     {
+        // load main scene as precompute step
         Scene *scene = getMain().getResourceManager()->queryResource<Scene>("Vault",
-            "vaultmat:scenes/vault.json");
+            "vaultmat:scenes/prepass.json");
         setMainCamera(scene->getCamera("MyCamera"));
-        Material::setFloatGlobalParameter("mode", 2);
+        // load intermediate light compute scene and setup lighting 
+        setupLightPassScene(scene, getMain().getResourceManager()->queryResource<Scene>("VaultLightComputeStep",
+            "vaultmat:scenes/lightpass.json"));
+        // Scene that combines lightmap from previous step and textures and draw all transparent objects at end of step.
+        getMain().getResourceManager()->queryResource<Scene>("VaultCombineStep",
+            "vaultmat:scenes/combine.json");
+        // postprocess step, fxaa, gamma correcion, draw directly info window. 
+        getMain().getResourceManager()->queryResource<Scene>("VaultPostprocessStep",
+            "vaultmat:scenes/postprocess.json");
+    }
+    
+    void setupLightPassScene(Scene *prepass, Scene *scene)
+    {
+        
     }
 
     void processEvent(SDL_Event *e) override
@@ -37,18 +55,32 @@ public:
         Sample::processEvent(e);
         if (e->type == SDL_KEYDOWN)
         {
-            if (e->key.keysym.sym == SDLK_m)
+            if (e->key.keysym.sym == SDLK_KP_PLUS)
             {
-                static int mode = 2;
-                if (mode == 1)
-                    mode = 2;
-                else
-                    mode = 1;
-                
-                lite3dpp::Material::setFloatGlobalParameter("mode", (float)mode);
+                mGammaFactor += 0.02;
+                if (mGammaFactor > 2.2)
+                    mGammaFactor = 2.2;
+                lite3dpp::Material::setFloatGlobalParameter("GammaFactor", mGammaFactor);
+            }
+            else if (e->key.keysym.sym == SDLK_KP_MINUS)
+            {
+                mGammaFactor -= 0.02;
+                if (mGammaFactor < 1.0)
+                    mGammaFactor = 1.0;
+                lite3dpp::Material::setFloatGlobalParameter("GammaFactor", mGammaFactor);
+            }
+            else if (e->key.keysym.sym == SDLK_o)
+            {
+                static bool fxaaEnabled = false;
+                fxaaEnabled = !fxaaEnabled;
+                lite3dpp::Material::setIntGlobalParameter("FXAA", fxaaEnabled ? 1 : 0);
             }
         }
     }
+    
+private:
+    
+    float mGammaFactor;
 };
 
 }}

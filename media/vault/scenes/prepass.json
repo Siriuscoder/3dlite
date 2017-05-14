@@ -14,6 +14,7 @@
             },
             "RenderTargets":
             [
+                // draw only non transparent objects to MRT prepass
                 {
                     "Name": "RenderPrepass",
                     "Path": "vaultmat:targets/prepass.json",
@@ -21,10 +22,11 @@
                     "TexturePass": 1,
                     "RenderSecondStage": false
                 },
+                // draw only transparent objects at end of combine pass
                 {
-                    "Name": "RenderTransparentPass",
+                    "Name": "RenderCombineStep",
                     "Path": "vaultmat:targets/combine.json",
-                    "Priority": 2, // render second in combine pass
+                    "Priority": 2, // render after light combine step of combine pass
                     "TexturePass": 1,
                     "RenderFirstStage": false
                 }

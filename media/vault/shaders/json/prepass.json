@@ -1,8 +1,8 @@
 {
     "Sources": 
     [
-        "warship:shaders/sources/prepass.vs",
-        "warship:shaders/sources/prepass.ps"
+        "vaultmat:shaders/sources/prepass.vs",
+        "vaultmat:shaders/sources/prepass.ps"
     ],
     
     "AttributesOrder":

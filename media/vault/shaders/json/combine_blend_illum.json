@@ -1,0 +1,13 @@
+{
+    "Sources": 
+    [
+        "vaultmat:shaders/sources/combine_blend.vs",
+        "vaultmat:shaders/sources/combine_blend_illum.ps",
+        "vaultmat:shaders/sources/blinn.ps"
+    ],
+    
+    "AttributesOrder":
+    [
+        "ivertex"
+    ]
+}

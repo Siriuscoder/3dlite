@@ -18,22 +18,14 @@
             "RenderTargets":
             [
                 {
-                    "Name": "RenderCombineStep",
-                    "Path": "vaultmat:targets/combine.json",
+                    "Name": "LightComputeStep",
+                    "Path": "vaultmat:targets/lightpass.json",
                     "Priority": 1,
                     "TexturePass": 1,
                     "DepthTest": false,
                     "DepthOutput": false
                 }
             ]
-        }
-    ],
-
-    "Objects":
-    [
-        {
-            "Name": "BigTriangleGeom",
-            "Object": "vault:objects/combine_tri.json"
         }
     ]
 }

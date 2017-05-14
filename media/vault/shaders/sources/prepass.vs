@@ -23,11 +23,11 @@ void main()
     ivv = wv.xyz / wv.w;
     // calculate tangent, normal, binormal in world space
     vec3 worldTang = normalize(normalMatrix * tang);
-	vec3 worldNorm = normalize(normalMatrix * normal);
-	// re-orthogonalize T with respect to N
-	worldTang = normalize(worldTang - dot(worldTang, worldNorm) * worldNorm);
-	vec3 worldBinorm = cross(worldNorm, worldTang);
-	// TBN matrix to transform normal from tangent space to world space
+    vec3 worldNorm = normalize(normalMatrix * normal);
+    // re-orthogonalize T with respect to N
+    worldTang = normalize(worldTang - dot(worldTang, worldNorm) * worldNorm);
+    vec3 worldBinorm = cross(worldNorm, worldTang);
+    // TBN matrix to transform normal from tangent space to world space
     itbn = mat3(worldTang, worldBinorm, worldNorm);
     
     gl_Position = projectionMatrix * viewMatrix * wv;

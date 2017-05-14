@@ -1,9 +1,9 @@
 {
     "Sources": 
     [
-        "warship:shaders/sources/postprocess.vs",
-        "warship:shaders/sources/postprocess.ps",
-		"warship:shaders/sources/fxaa.ps"
+        "vaultmat:shaders/sources/postprocess.vs",
+        "vaultmat:shaders/sources/postprocess.ps",
+        "vaultmat:shaders/sources/fxaa.ps"
     ],
     
     "AttributesOrder":
