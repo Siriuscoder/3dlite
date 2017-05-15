@@ -29,6 +29,7 @@ namespace lite3dpp
     public:
 
         LightSource(const String &name, Main *main);
+        LightSource(const lite3d_light_params &ls, Main *main);
         ~LightSource();
 
         inline lite3d_light_source *getPtr()
@@ -59,7 +60,17 @@ namespace lite3dpp
         void setSpecular(const kmVec3 &v);
         void setAttenuation(const kmVec4 &v);
         void setSpotFactor(const kmVec3 &v);
-        
+
+        uint8_t getType() const;
+        bool enabled() const;
+        const kmVec3 &getPosition() const;
+        const kmVec3 &getSpotDirection() const;
+        const kmVec3 &getAmbient() const;
+        const kmVec3 &getDiffuse() const;
+        const kmVec3 &getSpecular() const;
+        kmVec4 getAttenuation() const;
+        kmVec3 getSpotFactor() const;
+
     private:
 
         String mName;

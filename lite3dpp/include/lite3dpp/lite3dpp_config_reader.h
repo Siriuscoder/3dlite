@@ -35,6 +35,7 @@ namespace lite3dpp
         float getDouble(const WString &name, float def = 0) const;
         bool getBool(const WString &name, bool def = true) const;
         String getString(const WString &name, const String &def = "") const;
+        String getUpperString(const WString &name, const String &def = "") const;
         ConfigurationReader getObject(const WString &name) const;
 
         stl<ConfigurationReader>::vector getObjects(const WString &name) const;

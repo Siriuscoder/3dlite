@@ -31,6 +31,13 @@ namespace lite3dpp
         /* enabled by default */
         mLightSource.params.block1.y = 1;
     }
+
+    LightSource::LightSource(const lite3d_light_params &ls, Main *main) : 
+        mMain(main)
+    {
+        mLightSource.params = ls;
+        mLightSource.userdata = this;
+    }
     
     LightSource::~LightSource()
     {}
@@ -101,6 +108,62 @@ namespace lite3dpp
         mLightSource.params.block5.z = v.x;
         mLightSource.params.block5.w = v.y;
         mUpdated = true;   
+    }
+
+    uint8_t LightSource::getType() const
+    {
+        return mLightSource.params.block1.x;
+    }
+
+    bool LightSource::enabled() const
+    {
+        return mLightSource.params.block1.y == 1;
+    }
+
+    const kmVec3 &LightSource::getPosition() const
+    {
+        return *(kmVec3 *)&mLightSource.params.block1.w;
+    }
+
+    const kmVec3 &LightSource::getSpotDirection() const
+    {
+        return *(kmVec3 *)&mLightSource.params.block4.w;
+    }
+
+    const kmVec3 &LightSource::getAmbient() const
+    {
+        return *(kmVec3 *)&mLightSource.params.block2.z;
+    }
+
+    const kmVec3 &LightSource::getDiffuse() const
+    {
+        return *(kmVec3 *)&mLightSource.params.block3.y;
+    }
+
+    const kmVec3 &LightSource::getSpecular() const
+    {
+        return *(kmVec3 *)&mLightSource.params.block4.x;
+    }
+
+    kmVec4 LightSource::getAttenuation() const
+    {
+        kmVec4 vec4 = {
+            mLightSource.params.block1.z,
+            mLightSource.params.block6.x, 
+            mLightSource.params.block6.y,
+            mLightSource.params.block6.z 
+        };
+        return vec4;
+    }
+
+    kmVec3 LightSource::getSpotFactor() const
+    {
+        kmVec3 vec3 = {
+            mLightSource.params.block5.z,
+            mLightSource.params.block5.w,
+            0
+        };
+        return vec3;
     }
 }
 

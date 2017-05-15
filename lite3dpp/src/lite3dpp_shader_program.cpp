@@ -80,21 +80,38 @@ namespace lite3dpp
     {
         for(String &source : getJson().getStrings(L"Sources"))
         {
-            shaders.resize(shaders.size()+1);
+            String sourcePath;
+            String defPath;
+            size_t slen;
+            stl<const char *>::vector sources;
+            stl<int32_t>::vector sourcesLen;
 
-            SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
-                "Compiling \"%s\" ...", source.c_str());
+            shaders.resize(shaders.size()+1);
+            sourcePath = source.substr(0, source.find_first_of(','));
+            if (source.find_first_of(',') != String::npos)
+                defPath = source.substr(source.find_first_of(',')+1);
 
             if(!lite3d_shader_init(&shaders.back(), 
-                source.find(".vs") != String::npos ? LITE3D_SHADER_TYPE_VERTEX : LITE3D_SHADER_TYPE_FRAGMENT))
+                sourcePath.find(".vs") != String::npos ? LITE3D_SHADER_TYPE_VERTEX : LITE3D_SHADER_TYPE_FRAGMENT))
                 LITE3D_THROW("Shader init failed..");
 
-            size_t sourceLen = 0;
-            const void *sourceData = mMain->getResourceManager()->loadFileToMemory(source, &sourceLen);
+            // load definition source
+            if (defPath.size() > 0)
+            {
+                sources.push_back((const char *)mMain->getResourceManager()->loadFileToMemory(defPath, &slen));
+                sourcesLen.push_back(slen);
+            }
 
-            if(!lite3d_shader_compile(&shaders.back(), 
-                static_cast<const char *>(sourceData), sourceLen))
-                LITE3D_THROW(source << " compile: \"" << shaders.back().statusString << "\"");
+            // load main shader source
+            sources.push_back((const char *)mMain->getResourceManager()->loadFileToMemory(sourcePath, &slen));
+            sourcesLen.push_back(slen);
+
+            SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
+                "Compiling \"%s\" ...", sourcePath.c_str());
+
+            if(!lite3d_shader_compile(&shaders.back(), sources.size(),
+                &sources[0], &sourcesLen[0]))
+                LITE3D_THROW(sourcePath << " compile: \"" << shaders.back().statusString << "\"");
         }
     }
 

@@ -15,6 +15,9 @@
  *	You should have received a copy of the GNU General Public License
  *	along with Lite3D.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
+#include <algorithm>
+#include <cctype>
+
 #include <SDL_assert.h>
 #include <SDL_log.h>
 #include <SDL_rwops.h>
@@ -137,6 +140,20 @@ namespace lite3dpp
         if (it != mObject.end() && it->second->IsString())
         {
             return JSON::wStringToString(it->second->AsString());
+        }
+
+        return def;
+    }
+
+    String ConfigurationReader::getUpperString(const WString &name, const String &def) const
+    {
+        JSONObject::const_iterator it = mObject.find(name);
+        if (it != mObject.end() && it->second->IsString())
+        {
+            String res = JSON::wStringToString(it->second->AsString());
+            std::transform(res.begin(), res.end(), res.begin(), [](char a) -> char
+            { return std::toupper(a); });
+            return res;
         }
 
         return def;

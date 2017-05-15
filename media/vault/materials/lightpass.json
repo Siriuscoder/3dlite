@@ -34,11 +34,6 @@
       "Value": 1
     },
     {
-      "Name":"light.radius",
-      "Type":"float",
-      "Value": 0.0
-    },
-    {
       "Name":"light.type",
       "Type":"int",
       "Value": 0.0
@@ -79,15 +74,17 @@
       ]
     },
     {
-      "Name":"light.spotangle",
-      "Type":"float",
-      "Value": 0.0
+      "Name":"light.spotfactor",
+      "Type":"v2",
+      "Value":[
+        0,0
+      ]
     },
     {
       "Name":"light.attenuation",
-      "Type":"v3",
+      "Type":"v4",
       "Value":[
-        0,0,0
+        0,0,0,0
       ]
     },
 

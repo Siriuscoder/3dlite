@@ -47,7 +47,7 @@ int lite3d_shader_init(lite3d_shader *shader, uint8_t type)
 }
 
 int lite3d_shader_compile(
-    lite3d_shader *shader, const char *source, size_t length)
+    lite3d_shader *shader, uint32_t sources, const char **source, int32_t *length)
 {
     GLint isCompiled = 0;
     GLint maxLogLength = 0;
@@ -58,7 +58,7 @@ int lite3d_shader_compile(
         return LITE3D_FALSE;
 
     /* setup source and compile it */
-    glShaderSource(shader->shaderID, 1, &source, length ? (GLint *)&length : NULL);
+    glShaderSource(shader->shaderID, sources, source, length ? (GLint *)length : NULL);
     glCompileShader(shader->shaderID);
 
     lite3d_misc_check_gl_error();

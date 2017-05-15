@@ -15,18 +15,18 @@
  *	You should have received a copy of the GNU General Public License
  *	along with Lite3D.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
+#include <SDL_assert.h>
 #include <sample_common/lite3dpp_common.h>
 
 namespace lite3dpp {
 namespace samples {
 
-class Vault : public Sample, public SceneObserver
+class Vault : public Sample
 {
 public:
     
     Vault() : 
-        mGammaFactor(1.0f),
-        mPrepass(NULL)
+        mGammaFactor(1.0f)
     {}
 
     void createScene() override
@@ -48,21 +48,33 @@ public:
     
     void setupLightPassScene(Scene *prepass, Scene *scene)
     {
-        mPrepass = prepass;
         for (const auto &light : prepass->getLights())
         {
+            /* load per light big triangle */
             SceneObject *lo = scene->addObject(light.first, "vault:objects/lightpass_tri.json", NULL);
-            lo->getNode("Root")->setName(light.first);
+            /* load per light big triangle material and setup light properties as uniform parameters */
+            Material *material = getMain().getResourceManager()->queryResource<Material>(light.first + ".material",
+                "vaultmat:materials/lightpass.json");
+
+            MeshSceneNode *mnode = (MeshSceneNode *)lo->getNode("Root");
+            SDL_assert(mnode);
+
+
+            LightSource lsw(light.second->lightSourceToWorld(), NULL);
+            material->setIntParameter(0, "light.enabled", lsw.enabled() ? 1 : 0, false);
+            material->setIntParameter(0, "light.type", lsw.getType(), false);
+            material->setFloatParameter(0, "light.spotangle", lsw.getSpotFactor().x, false);
+            material->setFloatv3Parameter(0, "light.position", lsw.getPosition(), false);
+            material->setFloatv3Parameter(0, "light.diffuse", lsw.getDiffuse(), false);
+            material->setFloatv3Parameter(0, "light.ambient", lsw.getAmbient(), false);
+            material->setFloatv3Parameter(0, "light.specular", lsw.getSpecular(), false);
+            material->setFloatv3Parameter(0, "light.direction", lsw.getSpotDirection(), false);
+            material->setFloatv4Parameter(0, "light.attenuation", lsw.getAttenuation(), false);
+
+            mnode->frustumTest(false);
+            mnode->setName(light.first);
+            mnode->replaceMaterial(0, material);
         }
-        
-        scene->addObserver(this);
-    }
-    
-    void beginDrawBatch(Scene *scene, SceneNode *node, 
-        lite3d_mesh_chunk *meshChunk, Material *material) override
-    {
-        LightSceneNode *sceneLight = mPrepass->getLightNode(node->getName());
-        //material->setIntParameter(0, "light.enabled", )
     }
     
     void timerTick(lite3d_timer *timerid) override
@@ -102,7 +114,6 @@ public:
 private:
     
     float mGammaFactor;
-    Scene *mPrepass;
 };
 
 }}
