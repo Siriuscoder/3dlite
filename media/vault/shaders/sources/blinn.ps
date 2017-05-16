@@ -1,6 +1,40 @@
 #version 330
 
-vec3 blinn_calculate(samplerBuffer source, int num, vec3 ambient, vec3 fragPos, 
+vec3 blinn_single(int type, vec3 lightDir, vec3 eyeDir, vec3 ambient, vec3 diffuse, 
+    vec3 specular, vec3 normal, vec3 spotDirection, vec2 spotFactor, vec3 attenuation, 
+    float specularFactor, float wrapAroundFactor, float specPower)
+{
+    vec3 ldir = normalize(lightDir);
+    float ldist = length(lightDir);
+    float spotAttenuationFactor = 1.0;
+    float attenuationFactor = 1.0;
+
+    // no attenuation for direction light
+    if (type != 2)
+    {
+        if (type == 3)
+        {
+            /* calculate spot attenuation */
+            float spotAngle = acos(dot(-ldir, normalize(spotDirection)));
+            spotAttenuationFactor = max(spotFactor.y - spotAngle, 0) / spotFactor.y;
+        }
+
+        /* calculate attenuation */
+        attenuationFactor = spotAttenuationFactor / (attenuation.x + attenuation.y * ldist + attenuation.z * ldist * ldist);
+    }
+    
+    /* calculate lambertian ratio */
+    float lambRatio = max(dot(normal, ldir) + wrapAroundFactor, 0.0) / (1.0 + wrapAroundFactor);
+    /* calculate specular ratio */
+    float specRatio = pow(max(dot(normal, normalize(ldir + eyeDir)), 0.0), specPower) * specularFactor;
+
+    /* calculate linear color factor */
+    return (ambient * attenuationFactor) + 
+        (diffuse * lambRatio * attenuationFactor) + 
+        (specular * specRatio * attenuationFactor);
+}
+
+vec3 blinn_multiple(samplerBuffer source, int num, vec3 ambient, vec3 fragPos, 
     vec3 fragNormal, vec3 eye, float specularFactor, 
     float wrapAroundFactor, float specPower)
 {
@@ -35,12 +69,10 @@ vec3 blinn_calculate(samplerBuffer source, int num, vec3 ambient, vec3 fragPos,
         if (dist > block1.z)
             continue;
 
-        lightDir = normalize(lightDir);
-
         vec4 block3 = texelFetch(source, texel + 2);
         vec4 block4 = texelFetch(source, texel + 3);
         vec4 block5 = texelFetch(source, texel + 4);
-
+        vec4 block6 = texelFetch(source, texel + 5);
         /* ambient color */
         vec3 lambient = vec3(block2.z, block2.w, block3.x);
         /* diffuse color */
@@ -55,33 +87,16 @@ vec3 blinn_calculate(samplerBuffer source, int num, vec3 ambient, vec3 fragPos,
         /* y - spot cutoff exponent */
         vec2 lspotFactor = vec2(block5.z, block5.w);
 
-
+        /* calculate direction from fragment to eye */
+        vec3 eyeDir = normalize(eye - fragPos);
         /* attenuation factor */
         /* block6.x - constant attenuation */
         /* block6.y - linear attenuation */
         /* block6.z - quadratic attenuation */
-        // vec4 block6 = texelFetch(source, texel + 5);
+        vec3 lattenuation = vec3(block6.x, block6.y, block6.z);
 
-
-        /* calculate spot attenuation */
-        float spotAngle = acos(dot(-lightDir, normalize(lspotDirection)));
-        float spotAttenuationFactor = max(lspotFactor.y - spotAngle, 0) / lspotFactor.y;
-        /* calculate attenuation */
-        float attenuationFactor = spotAttenuationFactor / (dist * dist * 0.00003);//(lattenuation[0] +
-            //0.005 * dist + lattenuation[2] * dist * dist);
-
-        /* calculate lambertian factor */
-        float lambertian = max(dot(fragNormal, lightDir) + wrapAroundFactor, 0.0) / (1.0 + wrapAroundFactor);
-        /* calculate direction from fragment to eye */
-        vec3 eyeDir = normalize(eye - fragPos);
-        /* calculate specular factor */
-        vec3 halfv = normalize(lightDir + eyeDir);
-        float specular = pow(max(dot(fragNormal, halfv), 0.0), specPower) * specularFactor;
-
-        /* calculate linear color factor */
-        linear += lambient * attenuationFactor;
-        linear += ldiffuse * lambertian * attenuationFactor;
-        linear += lspecular * specular * (attenuationFactor * 2);
+        linear += blinn_single(int(block1.x), lightDir, eyeDir, lambient, ldiffuse, lspecular, fragNormal, 
+            lspotDirection, lspotFactor, lattenuation, specularFactor, wrapAroundFactor, specPower);
     }
 
     return linear;

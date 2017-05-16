@@ -2,7 +2,8 @@
     "Sources": 
     [
         "vaultmat:shaders/sources/triangle.vs",
-        "vaultmat:shaders/sources/combine.ps"
+        "vaultmat:shaders/sources/lightpass.ps",
+        "vaultmat:shaders/sources/blinn.ps"
     ],
     
     "AttributesOrder":

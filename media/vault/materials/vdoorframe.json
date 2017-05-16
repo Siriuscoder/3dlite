@@ -23,14 +23,14 @@
     },
     {
       "Name":"diffuse",
-      "TextureName":"vdoorframe.texture",
-      "TexturePath":"vault:textures/json/vdoorframe.json",
+      "TextureName":"vdoor01.texture",
+      "TexturePath":"vault:textures/json/vdoor01.json",
       "Type":"sampler"
     },
     {
       "Name":"normals",
-      "TextureName":"vdoorframe_n.texture",
-      "TexturePath":"vault:textures/json/vdoorframe_n.json",
+      "TextureName":"vdoor01_n.texture",
+      "TexturePath":"vault:textures/json/vdoor01_n.json",
       "Type":"sampler"
     }
   ]

@@ -2,22 +2,43 @@
 
 uniform sampler2D diffuse;
 uniform sampler2D normals;
+#ifdef CALC_ILLUM
+uniform sampler2D glow;
+#endif
 
 in vec2 iuv;
 in vec3 ivv;
 in mat3 itbn;
 
+#ifdef CALC_ILLUM
+bool vec3zero(vec3 vec)
+{
+    float prec = 0.000001;
+    return ((1.0-step(prec, vec.x)) * (1.0-step(prec, vec.y)) * (1.0-step(prec, vec.z))) == 1.0;
+}
+#endif
+
 void main()
 {
+    // sampling diffuse color 
+    vec4 fragDiffuse = vec4(texture2D(diffuse, iuv).rgb, 0.0);
+
+#ifdef CALC_ILLUM
+    // sampling glow texture and check colors
+    vec3 fragGlow = texture2D(glow, iuv).rgb;
+    if (!vec3zero(fragGlow))
+    {
+        fragDiffuse = vec4(fragGlow, 1.0);
+    }
+#endif
+
     // sampling normal from normal map
     vec4 nval = texture2D(normals, iuv);
     // put normal in [-1,1] range in tangent space 
     // and trasform normal to world space 
     vec3 nw = normalize(itbn * normalize(2*nval.rgb-1));
-    // sampling diffuse color 
-    vec4 fragDiffuse = texture2D(diffuse, iuv);
 
     gl_FragData[0] = vec4(ivv, gl_FragCoord.z / gl_FragCoord.w);
     gl_FragData[1] = vec4(nw, nval.a);
-    gl_FragData[2] = vec4(fragDiffuse.rgb, 0.0);
+    gl_FragData[2] = fragDiffuse;
 }

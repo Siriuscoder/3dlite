@@ -21,15 +21,15 @@
                     "Priority": 0,
                     "TexturePass": 1,
                     "RenderSecondStage": false
-                },
-                // draw only transparent objects at end of combine pass
-                {
-                    "Name": "RenderCombineStep",
-                    "Path": "vaultmat:targets/combine.json",
-                    "Priority": 2, // render after light combine step of combine pass
-                    "TexturePass": 1,
-                    "RenderFirstStage": false
                 }
+                // draw only transparent objects at end of combine pass
+                //{
+                //    "Name": "RenderCombineStep",
+                //    "Path": "vaultmat:targets/combine.json",
+                //    "Priority": 2, // render after light combine step of combine pass
+                //    "TexturePass": 1,
+                //    "RenderFirstStage": false
+                //}
             ]
         }
     ],

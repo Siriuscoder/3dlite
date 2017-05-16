@@ -1,13 +1,16 @@
 {
     "Sources": 
     [
-        "vaultmat:shaders/sources/combine_blend.vs",
+        "vaultmat:shaders/sources/prepass.vs",
         "vaultmat:shaders/sources/combine_blend.ps",
         "vaultmat:shaders/sources/blinn.ps"
     ],
     
     "AttributesOrder":
     [
-        "ivertex"
+        "vertex",
+        "normal",
+        "uv",
+        "tang"
     ]
 }

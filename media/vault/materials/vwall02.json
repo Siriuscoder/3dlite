@@ -16,7 +16,7 @@
       "Name":"viewMatrix"
     },
     {
-      "Name":"modelMatrix"
+      "Name":"normalMatrix"
     },
     {
       "Name":"modelMatrix"

@@ -30,7 +30,7 @@
     {
       "Name":"normals",
       "TextureName":"vconcrete03_n.texture",
-      "TexturePath":"vault:textures/json/vconcrete013_n.json",
+      "TexturePath":"vault:textures/json/vconcrete03_n.json",
       "Type":"sampler"
     }
   ]
