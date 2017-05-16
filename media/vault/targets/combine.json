@@ -1,0 +1,26 @@
+{
+    "Width": 0, // use screen wight
+    "Height": 0, // use screen height
+    "BackgroundColor": [0.0, 0.0, 0.0, 1.0],
+    "Priority": 3, // render after lightpass target
+    "CleanColorBuf": true,
+    "CleanDepthBuf": false,
+    "CleanStencilBuf": false,
+    
+    "ColorAttachments":
+    {
+        "Attachments":
+        [
+            {
+                "TextureName": "combined.texture",
+                "TexturePath": "vault:textures/json/rgba.json"
+            }
+        ]
+    },
+    
+    "DepthAttachments":
+    {
+        "TextureName": "prepassDepth.texture"
+    }
+}
+

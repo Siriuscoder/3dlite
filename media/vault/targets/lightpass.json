@@ -1,0 +1,21 @@
+{
+    "Width": 0, // use screen wight
+    "Height": 0, // use screen height
+    "BackgroundColor": [0.0, 0.0, 0.0, 1.0],
+    "Priority": 2, // render after prepass target
+    "CleanColorBuf": true,
+    "CleanDepthBuf": false,
+    "CleanStencilBuf": false,
+    
+    "ColorAttachments":
+    {
+        "Attachments":
+        [
+            {
+                "TextureName": "lightMap.texture",
+                "TexturePath": "vault:textures/json/rgba32f.json"
+            }
+        ]
+    }
+}
+

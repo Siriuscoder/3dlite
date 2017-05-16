@@ -286,7 +286,7 @@
           <buildCommandWorkingDir>build</buildCommandWorkingDir>
           <buildCommand>${MAKE} -f Makefile</buildCommand>
           <cleanCommand>${MAKE} -f Makefile clean</cleanCommand>
-          <executablePath>build/bin/Debug/sample_deferred_shading</executablePath>
+          <executablePath>build/bin/Debug/sample_vault</executablePath>
           <ccTool>
             <incDir>
               <pElem>lite3d/include</pElem>

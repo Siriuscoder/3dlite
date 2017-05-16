@@ -43,7 +43,7 @@ void main()
 
     vec3 lightDir = light.position - frag;
     /* check light distance */
-    if (length(lightDir) > attenuation.x)
+    if (length(lightDir) > light.attenuation.x)
         discard;
 
     /* calculate direction from fragment to eye */

@@ -4,7 +4,7 @@
       "Pass":1,
       "Program":{
         "Name":"postprocess.program",
-        "Path":"warship:shaders/json/postprocess.json"
+        "Path":"vaultmat:shaders/json/postprocess.json"
       }
     }
   ],

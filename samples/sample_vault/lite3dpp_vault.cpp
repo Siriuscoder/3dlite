@@ -34,7 +34,7 @@ public:
         // load main scene as precompute step
         Scene *scene = getMain().getResourceManager()->queryResource<Scene>("Vault",
             "vaultmat:scenes/prepass.json");
-        setMainCamera(scene->getCamera("MyCamera"));
+        setMainCamera(scene->getCamera("MainCamera"));
         // load intermediate light compute scene and setup lighting 
         setupLightPassScene(scene, getMain().getResourceManager()->queryResource<Scene>("VaultLightComputeStep",
             "vaultmat:scenes/lightpass.json"));
@@ -44,6 +44,9 @@ public:
         // postprocess step, fxaa, gamma correcion, draw directly info window. 
         getMain().getResourceManager()->queryResource<Scene>("VaultPostprocessStep",
             "vaultmat:scenes/postprocess.json");
+        
+        kmVec3 resolution = { (float)getMain().window()->width(), (float)getMain().window()->height(), 0 };
+        lite3dpp::Material::setFloatv3GlobalParameter("screenResolution", resolution);
     }
     
     void setupLightPassScene(Scene *prepass, Scene *scene)
@@ -56,7 +59,7 @@ public:
             Material *material = getMain().getResourceManager()->queryResource<Material>(light.first + ".material",
                 "vaultmat:materials/lightpass.json");
 
-            MeshSceneNode *mnode = (MeshSceneNode *)lo->getNode("Root");
+            MeshSceneNode *mnode = (MeshSceneNode *)lo->getRoot();
             SDL_assert(mnode);
 
 
