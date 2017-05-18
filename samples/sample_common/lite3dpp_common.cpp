@@ -62,7 +62,6 @@ void Sample::init()
     updateGuiStats();
     
     adjustMainCamera(mMainWindow->width(), mMainWindow->height());
-    mMain.getResourceManager()->releaseFileCache();
     mMain.showSystemCursor(false);
 }
 

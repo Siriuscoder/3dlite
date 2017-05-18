@@ -15,7 +15,7 @@
       // Traditional blend algorithm with alpha blend: (TraditionalWithAlpha)
       // Orgb = Sa * Srgb + (1 - Sa) * Drgb
       // Oa = 1 * Sa + (1 - Sa) * Da
-      "Blendingmode":"traditional"
+      "BlendingMode":"traditional"
     }
   ],
   "Uniforms":[

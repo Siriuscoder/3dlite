@@ -28,5 +28,6 @@ void main()
 
     vec3 linear = texture2D(lightMap, iuv).rgb;
     /* result color in LDR */
-    gl_FragColor = vec4(diff.rgb * (ambient + linear), 1.0);
+    //gl_FragColor = vec4(diff.rgb * (ambient + linear), 1.0);
+    gl_FragColor = vec4(linear, 1.0);
 }

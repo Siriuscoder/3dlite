@@ -21,23 +21,24 @@
 namespace lite3dpp {
 namespace samples {
 
-class Vault : public Sample
+class Vault : public Sample, public SceneObserver
 {
 public:
     
     Vault() : 
-        mGammaFactor(1.0f)
+        mGammaFactor(1.0f),
+        mVaultScene(NULL)
     {}
 
     void createScene() override
     {
         // load main scene as precompute step
-        Scene *scene = getMain().getResourceManager()->queryResource<Scene>("Vault",
+        mVaultScene = getMain().getResourceManager()->queryResource<Scene>("Vault",
             "vaultmat:scenes/prepass.json");
-        setMainCamera(scene->getCamera("MainCamera"));
-        // load intermediate light compute scene and setup lighting 
-        setupLightPassScene(scene, getMain().getResourceManager()->queryResource<Scene>("VaultLightComputeStep",
-            "vaultmat:scenes/lightpass.json"));
+        setMainCamera(mVaultScene->getCamera("MainCamera"));
+        // load intermediate light compute scene
+        getMain().getResourceManager()->queryResource<Scene>("VaultLightComputeStep",
+            "vaultmat:scenes/lightpass.json")->addObserver(this);
         // Scene that combines lightmap from previous step and textures and draw all transparent objects at end of step.
         getMain().getResourceManager()->queryResource<Scene>("VaultCombineStep",
             "vaultmat:scenes/combine.json");
@@ -47,6 +48,17 @@ public:
         
         kmVec3 resolution = { (float)getMain().window()->width(), (float)getMain().window()->height(), 0 };
         lite3dpp::Material::setFloatv3GlobalParameter("screenResolution", resolution);
+    }
+
+    // setup lighting at once before light compute scene begin rendering first time
+    void beginSceneRender(Scene *scene, Camera *camera)
+    {
+        SDL_assert(mVaultScene);
+        /* check scene already fullup */
+        if (scene->getObjects().size() > 0)
+            return;
+
+        setupLightPassScene(mVaultScene, scene);
     }
     
     void setupLightPassScene(Scene *prepass, Scene *scene)
@@ -64,15 +76,15 @@ public:
 
 
             LightSource lsw(light.second->lightSourceToWorld(), NULL);
-            material->setIntParameter(0, "light.enabled", lsw.enabled() ? 1 : 0, false);
-            material->setIntParameter(0, "light.type", lsw.getType(), false);
-            material->setFloatParameter(0, "light.spotangle", lsw.getSpotFactor().x, false);
-            material->setFloatv3Parameter(0, "light.position", lsw.getPosition(), false);
-            material->setFloatv3Parameter(0, "light.diffuse", lsw.getDiffuse(), false);
-            material->setFloatv3Parameter(0, "light.ambient", lsw.getAmbient(), false);
-            material->setFloatv3Parameter(0, "light.specular", lsw.getSpecular(), false);
-            material->setFloatv3Parameter(0, "light.direction", lsw.getSpotDirection(), false);
-            material->setFloatv4Parameter(0, "light.attenuation", lsw.getAttenuation(), false);
+            material->setIntParameter(1, "light.enabled", lsw.enabled() ? 1 : 0, false);
+            material->setIntParameter(1, "light.type", lsw.getType(), false);
+            material->setFloatv3Parameter(1, "light.spotfactor", lsw.getSpotFactor(), false);
+            material->setFloatv3Parameter(1, "light.position", lsw.getPosition(), false);
+            material->setFloatv3Parameter(1, "light.diffuse", lsw.getDiffuse(), false);
+            material->setFloatv3Parameter(1, "light.ambient", lsw.getAmbient(), false);
+            material->setFloatv3Parameter(1, "light.specular", lsw.getSpecular(), false);
+            material->setFloatv3Parameter(1, "light.direction", lsw.getSpotDirection(), false);
+            material->setFloatv4Parameter(1, "light.attenuation", lsw.getAttenuation(), false);
 
             mnode->frustumTest(false);
             mnode->setName(light.first);
@@ -117,6 +129,7 @@ public:
 private:
     
     float mGammaFactor;
+    Scene *mVaultScene;
 };
 
 }}

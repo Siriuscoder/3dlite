@@ -13,7 +13,7 @@ struct lightSource
     vec3 diffuse;
     vec3 specular;
     vec3 direction;
-    vec2 spotfactor;
+    vec3 spotfactor;
     vec4 attenuation;
 };
 
@@ -43,15 +43,15 @@ void main()
 
     vec3 lightDir = light.position - frag;
     /* check light distance */
-    if (length(lightDir) > light.attenuation.x)
+    if (length(lightDir) > 1500)
         discard;
 
     /* calculate direction from fragment to eye */
     vec3 eyeDir = normalize(eye - frag);
 
     vec3 linear = blinn_single(light.type, lightDir, eyeDir, light.ambient, light.diffuse, light.specular, normal.xyz, 
-        light.direction, light.spotfactor, light.attenuation.yzw, normal.w, wrapAroundFactor, specPower);
+        light.direction, light.spotfactor.xy, vec3(2, 0.01, 0), normal.w, wrapAroundFactor, specPower);
 
-    /* result color in LDR */
+    /* result color in HDR */
     gl_FragColor = vec4(linear, 1.0);
 }

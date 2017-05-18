@@ -9,7 +9,7 @@
       "Blending":true,
       // Orgb = 1 * Srgb + 1 * Drgb
       // Oa = 1 * Sa + 0 * Da = Sa
-      "Blendingmode":"additive"
+      "BlendingMode":"additive"
     }
   ],
   "Uniforms":[
@@ -75,9 +75,9 @@
     },
     {
       "Name":"light.spotfactor",
-      "Type":"v2",
+      "Type":"v3",
       "Value":[
-        0,0
+        0,0,0
       ]
     },
     {

@@ -50,6 +50,8 @@ namespace lite3dpp
             const String &templatePath, SceneObject *parent);
         SceneObject *getObject(const String &name) const;
         Camera *getCamera(const String &name) const;
+        inline const Objects &getObjects() const
+        { return mObjects; }
 
         void removeAllCameras();
         void removeCamera(const String &name);

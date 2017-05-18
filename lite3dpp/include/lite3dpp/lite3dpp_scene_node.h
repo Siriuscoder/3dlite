@@ -90,6 +90,7 @@ namespace lite3dpp
     protected:
 
         void setMesh(Mesh *mesh);
+        void applyMaterials();
         
     private:
         

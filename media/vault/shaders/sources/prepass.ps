@@ -6,6 +6,10 @@ uniform sampler2D normals;
 uniform sampler2D glow;
 #endif
 
+#ifdef CALC_PARALLAX
+uniform sampler2D depth;
+#endif
+
 in vec2 iuv;
 in vec3 ivv;
 in mat3 itbn;

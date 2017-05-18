@@ -130,32 +130,35 @@ namespace lite3dpp
     void MeshSceneNode::setMesh(Mesh *mesh)
     {
         SDL_assert(mesh);
-        if(mMesh == NULL)
-        {
-            mMaterialMappingReplacement = mesh->getMaterialMapping();
-            mMesh = mesh;
-        }
+        mMaterialMappingReplacement = mesh->getMaterialMapping();
+        mMesh = mesh;
+        applyMaterials();
     }
 
     void MeshSceneNode::replaceMaterial(int chunkNo, Material *material)
     {
         mMaterialMappingReplacement[chunkNo] = material;
+        applyMaterials();
     }
     
     void MeshSceneNode::addToScene(Scene *scene)
     {
         SceneNode::addToScene(scene);
+        applyMaterials();
+    }
 
-        if (!mMesh)
-            return;
-
-        getPtr()->renderable = LITE3D_TRUE;
-        /* touch material and mesh chunk to node */ 
-        for (auto &material : mMaterialMappingReplacement)
+    void MeshSceneNode::applyMaterials()
+    {
+        if (getPtr()->scene && mMesh) /* check node is attached to scene */
         {
-            if(!lite3d_scene_node_touch_material(getPtr(), 
-                lite3d_mesh_chunk_get_by_index(mMesh->getPtr(), material.first), material.second->getPtr(), mInstances))
-                LITE3D_THROW("Linking node failed..");
+            getPtr()->renderable = LITE3D_TRUE;
+            /* touch material and mesh chunk to node */ 
+            for (auto &material : mMaterialMappingReplacement)
+            {
+                if(!lite3d_scene_node_touch_material(getPtr(), 
+                    lite3d_mesh_chunk_get_by_index(mMesh->getPtr(), material.first), material.second->getPtr(), mInstances))
+                    LITE3D_THROW("Linking node failed..");
+            }
         }
     }
     
