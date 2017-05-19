@@ -1,1 +1,2 @@
+#version 330
 #define CALC_ILLUM

@@ -9,7 +9,7 @@ uniform sampler2D glow;
 #ifdef CALC_PARALLAX
 uniform sampler2D depth;
 uniform vec3 eye;
-const float pscale = 0.07;
+uniform float pscale;
 #endif
 
 in vec2 iuv;
@@ -26,9 +26,38 @@ bool vec3zero(vec3 vec)
 #ifdef CALC_PARALLAX
 vec2 ParallaxMapping(vec2 tc, vec3 viewDir)
 { 
-    float height = texture2D(depth, tc).r;
-    vec2 p = viewDir.xy / viewDir.z * (height * pscale);
-    return tc - p;
+    // number of depth layers
+    const float numLayers = 10;
+    // calculate the size of each layer
+    float layerDepth = 1.0 / numLayers;
+    // depth of current layer
+    float currentLayerDepth = 0.0;
+    // the amount to shift the texture coordinates per layer (from vector P)
+    vec2 deltaTexCoords = viewDir.xy * pscale / numLayers;
+
+    vec2 currentTexCoords = tc;
+    float currentDepthMapValue = texture2D(depth, currentTexCoords).r;
+  
+    while(currentLayerDepth < currentDepthMapValue)
+    {
+        // shift texture coordinates along direction of P
+        currentTexCoords -= deltaTexCoords;
+        // get depthmap value at current texture coordinates
+        currentDepthMapValue = texture2D(depth, currentTexCoords).r;
+        // get depth of next layer
+        currentLayerDepth += layerDepth;
+    }
+    // Parallax Occlusion Mapping
+    // get texture coordinates before collision (reverse operations)
+    vec2 prevTexCoords = currentTexCoords + deltaTexCoords;
+
+    // get depth after and before collision for linear interpolation
+    float afterDepth  = currentDepthMapValue - currentLayerDepth;
+    float beforeDepth = texture2D(depth, prevTexCoords).r - currentLayerDepth + layerDepth;
+     
+    // interpolation of texture coordinates
+    float weight = afterDepth / (afterDepth - beforeDepth);
+    return prevTexCoords * weight + currentTexCoords * (1.0 - weight);
 }
 #endif
 

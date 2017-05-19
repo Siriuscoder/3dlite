@@ -3,8 +3,8 @@
     {
       "Pass":1.0000000000,
       "Program":{
-        "Name":"combine_blend.program",
-        "Path":"vaultmat:shaders/json/combine_blend.json"
+        "Name":"combine_blend_glass.program",
+        "Path":"vaultmat:shaders/json/combine_blend_glass.json"
       },
       "Blending":true,
       //  

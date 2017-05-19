@@ -30,6 +30,11 @@
       "Scope":"global"
     },
     {
+      "Name":"pscale",
+      "Type":"float",
+      "Value": 0.08
+    },
+    {
       "Name":"diffuse",
       "TextureName":"vwall02.texture",
       "TexturePath":"vault:textures/json/vwall02.json",

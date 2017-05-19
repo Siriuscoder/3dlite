@@ -184,14 +184,15 @@ static void mqr_unit_render(lite3d_material_pass *pass, void *data)
         scene->stats.materialPassed++;
 }
 
-static void mqr_render_stage_first(struct lite3d_scene *scene, lite3d_camera *camera, uint16_t pass)
+static void mqr_render_stage_first(struct lite3d_scene *scene, lite3d_camera *camera, 
+    uint16_t pass, uint32_t flags)
 {
     _mqr_unit *mqrUnit = NULL;
     lite3d_list_node *mqrUnitNode = NULL;
 
     LITE3D_ARR_ADD_ELEM(&scene->invalidatedUnits, lite3d_scene_node *, &camera->cameraNode);
 
-    if (scene->beginFirstStageRender)
+    if (scene->beginFirstStageRender && (flags & LITE3D_RENDER_STAGE_FIRST))
         scene->beginFirstStageRender(scene, camera);
 
     for (mqrUnitNode = scene->materialRenderUnits.l.next;
@@ -210,9 +211,12 @@ static void mqr_render_stage_first(struct lite3d_scene *scene, lite3d_camera *ca
                 continue;
             }
 
-            lite3d_material_pass_render(mqrUnit->material, pass,
-                mqr_unit_render, mqrUnit);
-            scene->stats.textureUnitsBinded += mqrUnit->material->textureUnitsBinded;
+            if (flags & LITE3D_RENDER_STAGE_FIRST)
+            {
+                lite3d_material_pass_render(mqrUnit->material, pass,
+                    mqr_unit_render, mqrUnit);
+                scene->stats.textureUnitsBinded += mqrUnit->material->textureUnitsBinded;
+            }
         }
     }
 }
@@ -349,8 +353,7 @@ void lite3d_scene_render(lite3d_scene *scene, lite3d_camera *camera,
         scene->beginSceneRender(scene, camera);
 
     /* render common objects */
-    if (flags & LITE3D_RENDER_STAGE_FIRST)
-        mqr_render_stage_first(scene, camera, pass);
+    mqr_render_stage_first(scene, camera, pass, flags);
     /* render transparent objects */
     if (flags & LITE3D_RENDER_STAGE_SECOND)
         mqr_render_stage_second(scene, camera, pass);

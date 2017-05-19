@@ -14,15 +14,54 @@ in vec2 iuv;
 in vec3 ivv;
 in mat3 itbn;
 
-#ifdef CALC_ILLUM
+const float wrapAroundFactor = 0.1;
+const vec3 ambient = vec3(0.02, 0.02, 0.02);
+#ifdef GLASS
+const float specPower = 180.0;
+#else
+const float specPower = 40.0;
+#endif
+
 bool vec3zero(vec3 vec)
 {
     float prec = 0.000001;
     return ((1.0-step(prec, vec.x)) * (1.0-step(prec, vec.y)) * (1.0-step(prec, vec.z))) == 1.0;
 }
-#endif
+
+vec3 blinn_multiple(samplerBuffer source, int num, vec3 ambient, vec3 fragPos, 
+    vec3 fragNormal, vec3 eye, float specularFactor, 
+    float wrapAroundFactor, float specPower, inout vec3 linearSpec);
 
 void main()
 {
-    gl_FragColor = vec4(1.0);
+    vec4 fragTexture = texture2D(diffuse, iuv);
+#ifdef CALC_ILLUM
+    // sampling glow texture and check colors
+    vec3 fragGlow = texture2D(glow, iuv).rgb;
+    if (!vec3zero(fragGlow))
+    {
+        gl_FragColor = vec4(fragGlow, fragTexture.a);
+        return;
+    }
+#endif
+
+    /* sampling normal and specular factor (w)*/
+    vec4 fragNormalAndSpecular = texture2D(normals, iuv);
+#ifdef GLASS
+    fragNormalAndSpecular.w = 2.5;
+#endif
+
+    // put normal in [-1,1] range in tangent space 
+    // and trasform normal to world space 
+    vec3 nw = normalize(itbn * normalize(2*fragNormalAndSpecular.xyz-1));
+
+    vec3 linearSpec;
+    vec3 linear = blinn_multiple(lightSources, Vault_numLights, ambient, ivv, nw,
+        eye, fragNormalAndSpecular.w, wrapAroundFactor, specPower, linearSpec);
+
+#ifdef GLASS
+    fragTexture.a = mix(fragTexture.a, 1.0, length(linearSpec.rgb));
+#endif
+
+    gl_FragColor = vec4(linear * fragTexture.rgb, fragTexture.a);
 }

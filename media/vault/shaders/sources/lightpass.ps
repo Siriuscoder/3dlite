@@ -23,13 +23,10 @@ in vec2 iuv;
 
 const float wrapAroundFactor = 0.1;
 const float specPower = 40.0;
-const float density = 0.0005;
-const float LOG2 = 1.442695;
-const vec3 fogColor = vec3(0.5, 0.5, 0.2);
 
 vec3 blinn_single(int type, vec3 lightDir, vec3 eyeDir, vec3 ambient, vec3 diffuse, 
     vec3 specular, vec3 normal, vec3 spotDirection, vec2 spotFactor, vec3 attenuation, 
-    float specularFactor, float wrapAroundFactor, float specPower);
+    float specularFactor, float wrapAroundFactor, float specPower, inout vec3 linearSpec);
 
 void main()
 {
@@ -49,8 +46,9 @@ void main()
     /* calculate direction from fragment to eye */
     vec3 eyeDir = normalize(eye - frag);
 
+    vec3 linearSpec;
     vec3 linear = blinn_single(light.type, lightDir, eyeDir, light.ambient, light.diffuse, light.specular, normal.xyz, 
-        light.direction, light.spotfactor.xy, vec3(0.7, 0.01, 0.00001), normal.w, wrapAroundFactor, specPower);
+        light.direction, light.spotfactor.xy, vec3(0.7, 0.01, 0.00001), normal.w, wrapAroundFactor, specPower, linearSpec);
 
     /* result color in HDR */
     gl_FragColor = vec4(linear, 1.0);
