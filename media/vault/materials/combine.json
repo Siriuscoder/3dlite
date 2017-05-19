@@ -24,11 +24,6 @@
       "Scope":"global"
     },
     {
-      "Name":"fragMap",
-      "TextureName": "fragmentWorldCoords.texture",
-      "Type":"sampler"
-    },
-    {
       "Name":"lightMap",
       "TextureName": "lightMap.texture",
       "Type":"sampler"

@@ -59,6 +59,7 @@ protected:
 
     void setGuiSize(int32_t width, int32_t height);
     void adjustMainCamera(int32_t width, int32_t height);
+    virtual void mainCameraChanged();
 
 private:
 

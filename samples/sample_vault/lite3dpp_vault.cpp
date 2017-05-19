@@ -27,7 +27,8 @@ public:
     
     Vault() : 
         mGammaFactor(1.0f),
-        mVaultScene(NULL)
+        mVaultScene(NULL),
+        mLightComputeStep(NULL)
     {}
 
     void createScene() override
@@ -39,6 +40,7 @@ public:
         // load intermediate light compute scene
         getMain().getResourceManager()->queryResource<Scene>("VaultLightComputeStep",
             "vaultmat:scenes/lightpass.json")->addObserver(this);
+        mLightComputeStep = getMain().getResourceManager()->queryResource<TextureRenderTarget>("LightComputeStep");
         // Scene that combines lightmap from previous step and textures and draw all transparent objects at end of step.
         getMain().getResourceManager()->queryResource<Scene>("VaultCombineStep",
             "vaultmat:scenes/combine.json");
@@ -51,7 +53,7 @@ public:
     }
 
     // setup lighting at once before light compute scene begin rendering first time
-    void beginSceneRender(Scene *scene, Camera *camera)
+    void beginSceneRender(Scene *scene, Camera *camera) override
     {
         SDL_assert(mVaultScene);
         /* check scene already fullup */
@@ -60,9 +62,17 @@ public:
 
         setupLightPassScene(mVaultScene, scene);
     }
+
+    void endSceneRender(Scene *scene, Camera *camera) override 
+    {
+        /* disable lightpass after lightmap recalc complete */
+        SDL_assert(mLightComputeStep);
+        mLightComputeStep->disable();
+    }
     
     void setupLightPassScene(Scene *prepass, Scene *scene)
     {
+        int i = 0;
         for (const auto &light : prepass->getLights())
         {
             /* load per light big triangle */
@@ -89,6 +99,8 @@ public:
             mnode->frustumTest(false);
             mnode->setName(light.first);
             mnode->replaceMaterial(0, material);
+            //if(i++ > 5)
+            //    break;
         }
     }
     
@@ -125,11 +137,19 @@ public:
             }
         }
     }
+
+    /* enable lightpass then the main camera state changed to recalc lightmap */
+    void mainCameraChanged() override
+    {
+        SDL_assert(mLightComputeStep);
+        mLightComputeStep->enable();
+    }
     
 private:
     
     float mGammaFactor;
     Scene *mVaultScene;
+    RenderTarget *mLightComputeStep;
 };
 
 }}

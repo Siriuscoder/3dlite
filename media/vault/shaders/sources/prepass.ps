@@ -8,28 +8,45 @@ uniform sampler2D glow;
 
 #ifdef CALC_PARALLAX
 uniform sampler2D depth;
+uniform vec3 eye;
+const float pscale = 0.07;
 #endif
 
 in vec2 iuv;
 in vec3 ivv;
 in mat3 itbn;
+in vec3 wnorm;
 
-#ifdef CALC_ILLUM
 bool vec3zero(vec3 vec)
 {
     float prec = 0.000001;
     return ((1.0-step(prec, vec.x)) * (1.0-step(prec, vec.y)) * (1.0-step(prec, vec.z))) == 1.0;
 }
+
+#ifdef CALC_PARALLAX
+vec2 ParallaxMapping(vec2 tc, vec3 viewDir)
+{ 
+    float height = texture2D(depth, tc).r;
+    vec2 p = viewDir.xy / viewDir.z * (height * pscale);
+    return tc - p;
+}
 #endif
 
 void main()
 {
+    vec2 tc = iuv;
+#ifdef CALC_PARALLAX
+    // Offset texture coordinates with Parallax Mapping
+    vec3 tanViewDir = normalize(transpose(itbn) * (eye - ivv));
+    tc = ParallaxMapping(iuv, tanViewDir);
+#endif
+
     // sampling diffuse color 
-    vec4 fragDiffuse = vec4(texture2D(diffuse, iuv).rgb, 0.0);
+    vec4 fragDiffuse = vec4(texture2D(diffuse, tc).rgb, 0.0);
 
 #ifdef CALC_ILLUM
     // sampling glow texture and check colors
-    vec3 fragGlow = texture2D(glow, iuv).rgb;
+    vec3 fragGlow = texture2D(glow, tc).rgb;
     if (!vec3zero(fragGlow))
     {
         fragDiffuse = vec4(fragGlow, 1.0);
@@ -37,10 +54,16 @@ void main()
 #endif
 
     // sampling normal from normal map
-    vec4 nval = texture2D(normals, iuv);
+    vec4 nval = texture2D(normals, tc);
     // put normal in [-1,1] range in tangent space 
     // and trasform normal to world space 
     vec3 nw = normalize(itbn * normalize(2*nval.rgb-1));
+
+    // fix bad normals
+    if (vec3zero(nw))
+    {
+        nw = wnorm;
+    }
 
     gl_FragData[0] = vec4(ivv, gl_FragCoord.z / gl_FragCoord.w);
     gl_FragData[1] = vec4(nw, nval.a);

@@ -74,24 +74,28 @@ void Sample::timerTick(lite3d_timer *timerid)
         {
             kmVec3 vec3 = {0, 0, -6};
             mMainCamera->moveRelative(vec3);
+            mainCameraChanged();
         }
         
         if(state[SDL_SCANCODE_S])
         {
             kmVec3 vec3 = {0, 0, 6};
             mMainCamera->moveRelative(vec3);
+            mainCameraChanged();
         }
         
         if(state[SDL_SCANCODE_A])
         {
             kmVec3 vec3 = {-6, 0, 0};
             mMainCamera->moveRelative(vec3);
+            mainCameraChanged();
         }
         
         if(state[SDL_SCANCODE_D])
         {
             kmVec3 vec3 = {6, 0, 0};
             mMainCamera->moveRelative(vec3);
+            mainCameraChanged();
         }
     }
     else if(timerid == mStatTimer)
@@ -132,6 +136,7 @@ void Sample::processEvent(SDL_Event *e)
             }
 
             scRes = !scRes;
+            mainCameraChanged();
         }
     }
     else if(mMainCamera && e->type == SDL_MOUSEMOTION)
@@ -139,6 +144,7 @@ void Sample::processEvent(SDL_Event *e)
         mMainCamera->rotateZ((e->motion.x - mCenterXPos) * 0.003f);
         mMainCamera->pitch((e->motion.y - mCenterYPos) * 0.003f);
         lite3d_video_set_mouse_pos(mCenterXPos, mCenterYPos);
+        mainCameraChanged();
     }
 }
 
@@ -275,5 +281,8 @@ int Sample::start(const char *config)
 
     return 0;
 }
+
+void Sample::mainCameraChanged()
+{}
 
 }}

@@ -1,6 +1,5 @@
 #version 330
 
-uniform sampler2D fragMap;
 uniform sampler2D lightMap;
 uniform sampler2D diffuseMap;
 
@@ -17,10 +16,9 @@ vec3 blinn_calculate(samplerBuffer source, int num, vec3 ambient, vec3 fragPos,
 void main()
 {
     /* fragment coordinate */
-    vec4 frag = texture2D(fragMap, iuv);
     vec4 diff = texture2D(diffuseMap, iuv);
     /* check fragment not shaded or self-illum material */
-    if (frag.w == 1.0 || diff.w == 1.0)
+    if (diff.w == 1.0)
     {
         gl_FragColor = vec4(diff.xyz, 1.0);
         return;
@@ -28,6 +26,6 @@ void main()
 
     vec3 linear = texture2D(lightMap, iuv).rgb;
     /* result color in LDR */
-    //gl_FragColor = vec4(diff.rgb * (ambient + linear), 1.0);
-    gl_FragColor = vec4(linear, 1.0);
+    gl_FragColor = vec4(diff.rgb * (ambient + linear), 1.0);
+    //gl_FragColor = vec4(linear, 1.0);
 }

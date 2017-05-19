@@ -207,7 +207,7 @@ namespace lite3dpp
         if (res.block1.x == LITE3D_LIGHT_DIRECTIONAL || res.block1.x == LITE3D_LIGHT_SPOT)
         {
             kmVec3 direction = KM_VEC3_ZERO;
-            kmQuaternionMultiplyVec3(&direction, &getPtr()->rotation, (kmVec3 *)&res.block4.w);
+            kmVec3TransformNormal(&direction, (kmVec3 *)&res.block4.w, &getPtr()->worldView);
             kmVec3Normalize((kmVec3 *)&res.block4.w, &direction);
         }
 
