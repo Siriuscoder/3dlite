@@ -1,0 +1,37 @@
+{
+  "Passes":[
+    {
+      "Pass":1.0000000000,
+      "Program":{
+        "Name":"lava.program",
+        "Path":"vaultmat:shaders/json/lava.json"
+      }
+    }
+  ],
+  "Uniforms":[
+    {
+      "Name":"projectionMatrix"
+    },
+    {
+      "Name":"viewMatrix"
+    },
+    {
+      "Name":"normalMatrix"
+    },
+    {
+      "Name":"modelMatrix"
+    },
+    {
+      "Name":"animcounter",
+      "Type":"float",
+      "Value": 0,
+      "Scope":"global"
+    },
+    {
+      "Name":"diffuse",
+      "TextureName":"lava.texture",
+      "TexturePath":"vault:textures/json/lava.json",
+      "Type":"sampler"
+    }
+  ]
+}

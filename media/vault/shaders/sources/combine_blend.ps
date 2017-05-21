@@ -13,6 +13,7 @@ uniform vec3 eye;
 in vec2 iuv;
 in vec3 ivv;
 in mat3 itbn;
+in vec3 wnorm;
 
 const float wrapAroundFactor = 0.1;
 const vec3 ambient = vec3(0.02, 0.02, 0.02);
@@ -54,6 +55,9 @@ void main()
     // put normal in [-1,1] range in tangent space 
     // and trasform normal to world space 
     vec3 nw = normalize(itbn * normalize(2*fragNormalAndSpecular.xyz-1));
+    // fix bad normals
+    if (vec3zero(fragNormalAndSpecular.xyz))
+        nw = wnorm;
 
     vec3 linearSpec;
     vec3 linear = blinn_multiple(lightSources, Vault_numLights, ambient, ivv, nw,

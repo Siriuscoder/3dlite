@@ -90,9 +90,7 @@ void main()
 
     // fix bad normals
     if (vec3zero(nw))
-    {
         nw = wnorm;
-    }
 
     gl_FragData[0] = vec4(ivv, gl_FragCoord.z / gl_FragCoord.w);
     gl_FragData[1] = vec4(nw, nval.a);

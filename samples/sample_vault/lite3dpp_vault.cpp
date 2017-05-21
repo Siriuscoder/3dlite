@@ -28,7 +28,8 @@ public:
     Vault() : 
         mGammaFactor(1.0f),
         mVaultScene(NULL),
-        mLightComputeStep(NULL)
+        mLightComputeStep(NULL),
+        mAnimCounter(0)
     {}
 
     void createScene() override
@@ -50,6 +51,7 @@ public:
         
         kmVec3 resolution = { (float)getMain().window()->width(), (float)getMain().window()->height(), 0 };
         lite3dpp::Material::setFloatv3GlobalParameter("screenResolution", resolution);
+        lite3dpp::Material::setIntGlobalParameter("FXAA", 1);
     }
 
     // setup lighting at once before light compute scene begin rendering first time
@@ -72,7 +74,6 @@ public:
     
     void setupLightPassScene(Scene *prepass, Scene *scene)
     {
-        int i = 0;
         for (const auto &light : prepass->getLights())
         {
             /* load per light big triangle */
@@ -99,8 +100,6 @@ public:
             mnode->frustumTest(false);
             mnode->setName(light.first);
             mnode->replaceMaterial(0, material);
-            //if(i++ > 5)
-            //    break;
         }
     }
     
@@ -108,6 +107,12 @@ public:
     {
         Sample::timerTick(timerid);
         lite3dpp::Material::setFloatv3GlobalParameter("eye", getMainCamera().getPosition());
+        
+        if (timerid == getMain().getFixedUpdateTimer())
+        {
+            mAnimCounter = mAnimCounter >= 1.0f ? 0.0f : mAnimCounter + 0.005f;           
+            lite3dpp::Material::setFloatGlobalParameter("animcounter", mAnimCounter);
+        }
     }
 
     void processEvent(SDL_Event *e) override
@@ -131,7 +136,7 @@ public:
             }
             else if (e->key.keysym.sym == SDLK_o)
             {
-                static bool fxaaEnabled = false;
+                static bool fxaaEnabled = true;
                 fxaaEnabled = !fxaaEnabled;
                 lite3dpp::Material::setIntGlobalParameter("FXAA", fxaaEnabled ? 1 : 0);
             }
@@ -150,6 +155,7 @@ private:
     float mGammaFactor;
     Scene *mVaultScene;
     RenderTarget *mLightComputeStep;
+    float mAnimCounter;
 };
 
 }}
