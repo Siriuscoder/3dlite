@@ -40,7 +40,7 @@ You can use cmake to generate Visual Studio projects on windows.
 Samples
 ---------
 After successfully compiling you can find some samples in bin directory. To provide samples work correctly you must download 
-resources pack [vault.pkg](https://cloud.mail.ru/public/KSNq/1d49nsShF) and put it to media/vault/packs also 
+resources pack [vault.pkg](https://cloud.mail.ru/public/47uC/RgnBfCbXA) and put it to media/vault/packs also 
 [sponza.pkg](https://cloud.mail.ru/public/5spg/Efb3FLsRL) to media/samples/packs/
 
 Screenshots
