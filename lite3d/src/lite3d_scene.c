@@ -69,9 +69,9 @@ static void mqr_render_batch(lite3d_scene *scene,
     _mqr_node *mqrNode)
 {
     /* notify render batch */
-    if (scene->beginDrawBatch)
-        scene->beginDrawBatch(scene, mqrNode->node,
-        mqrNode->meshChunk, mqrNode->matUnit->material);
+    if (scene->beginDrawBatch && !scene->beginDrawBatch(scene, mqrNode->node,
+        mqrNode->meshChunk, mqrNode->matUnit->material))
+            return;
     /* bind meshChunk */
     if (scene->bindedMeshChunk != mqrNode->meshChunk)
     {
@@ -349,8 +349,8 @@ void lite3d_scene_render(lite3d_scene *scene, lite3d_camera *camera,
     /* update scene tree */
     scene_recursive_nodes_update(scene, &scene->rootNode, camera);
 
-    if (scene->beginSceneRender)
-        scene->beginSceneRender(scene, camera);
+    if (scene->beginSceneRender && !scene->beginSceneRender(scene, camera))
+        return;
 
     /* render common objects */
     mqr_render_stage_first(scene, camera, pass, flags);

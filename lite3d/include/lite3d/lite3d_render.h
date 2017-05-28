@@ -73,7 +73,7 @@ typedef struct lite3d_render_target
     int32_t width;
     void *userdata;
     uint8_t enabled;
-    void (*preUpdate)(struct lite3d_render_target *target);
+    int (*preUpdate)(struct lite3d_render_target *target);
     void (*postUpdate)(struct lite3d_render_target *target);
     lite3d_list lookSequence;
     uint8_t clearColorBuffer;

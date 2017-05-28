@@ -16,14 +16,6 @@
       "Name":"viewMatrix"
     },
     {
-      "Name":"eye",
-      "Type":"v3",
-      "Value":[
-        0,0,0
-      ],
-      "Scope":"global"
-    },
-    {
       "Name":"lightMap",
       "TextureName": "lightMap.texture",
       "Type":"sampler"

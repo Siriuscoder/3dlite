@@ -84,8 +84,8 @@ namespace lite3dpp
 
         virtual ~SceneObserver() {}
         
-        virtual void beginDrawBatch(Scene *scene, 
-            SceneNode *node, lite3d_mesh_chunk *meshChunk, Material *material) {}
+        virtual bool beginDrawBatch(Scene *scene, 
+            SceneNode *node, lite3d_mesh_chunk *meshChunk, Material *material) { return true; }
 
         virtual void nodeInFrustum(Scene *scene, 
             SceneNode *node, lite3d_mesh_chunk *meshChunk, 
@@ -98,27 +98,45 @@ namespace lite3dpp
             Camera *camera) {}
 
         virtual void beforeUpdateNodes(Scene *scene, Camera *camera) {}
-        virtual void beginSceneRender(Scene *scene, Camera *camera) {}
+        virtual bool beginSceneRender(Scene *scene, Camera *camera) { return true; }
         virtual void endSceneRender(Scene *scene, Camera *camera) {}
         virtual void beginFirstStageRender(Scene *scene, Camera *camera) {}
         virtual void beginSecondStageRender(Scene *scene, Camera *camera) {}
     };
 
-#define LITE3D_EXT_OBSERVER_NOTIFY(obj, func)                               { for(auto o : (obj)->getObservers()) o->func(); }
-#define LITE3D_EXT_OBSERVER_NOTIFY_1(obj, func, p1)                         { for(auto o : (obj)->getObservers()) o->func(p1); }
-#define LITE3D_EXT_OBSERVER_NOTIFY_2(obj, func, p1, p2)                     { for(auto o : (obj)->getObservers()) o->func(p1, p2); }
-#define LITE3D_EXT_OBSERVER_NOTIFY_3(obj, func, p1, p2, p3)                 { for(auto o : (obj)->getObservers()) o->func(p1, p2, p3); }
-#define LITE3D_EXT_OBSERVER_NOTIFY_4(obj, func, p1, p2, p3, p4)             { for(auto o : (obj)->getObservers()) o->func(p1, p2, p3, p4); }
-#define LITE3D_EXT_OBSERVER_NOTIFY_5(obj, func, p1, p2, p3, p4, p5)         { for(auto o : (obj)->getObservers()) o->func(p1, p2, p3, p4, p5); }
-#define LITE3D_EXT_OBSERVER_NOTIFY_6(obj, func, p1, p2, p3, p4, p5, p6)     { for(auto o : (obj)->getObservers()) o->func(p1, p2, p3, p4, p5, p6); }
+#define LITE3D_EXT_OBSERVER_NOTIFY(obj, func)                                     { for(auto o : (obj)->getObservers()) o->func(); }
+#define LITE3D_EXT_OBSERVER_NOTIFY_1(obj, func, p1)                               { for(auto o : (obj)->getObservers()) o->func(p1); }
+#define LITE3D_EXT_OBSERVER_NOTIFY_2(obj, func, p1, p2)                           { for(auto o : (obj)->getObservers()) o->func(p1, p2); }
+#define LITE3D_EXT_OBSERVER_NOTIFY_3(obj, func, p1, p2, p3)                       { for(auto o : (obj)->getObservers()) o->func(p1, p2, p3); }
+#define LITE3D_EXT_OBSERVER_NOTIFY_4(obj, func, p1, p2, p3, p4)                   { for(auto o : (obj)->getObservers()) o->func(p1, p2, p3, p4); }
+#define LITE3D_EXT_OBSERVER_NOTIFY_5(obj, func, p1, p2, p3, p4, p5)               { for(auto o : (obj)->getObservers()) o->func(p1, p2, p3, p4, p5); }
+#define LITE3D_EXT_OBSERVER_NOTIFY_6(obj, func, p1, p2, p3, p4, p5, p6)           { for(auto o : (obj)->getObservers()) o->func(p1, p2, p3, p4, p5, p6); }
 
-#define LITE3D_OBSERVER_NOTIFY(func)                                        LITE3D_EXT_OBSERVER_NOTIFY(this, func)
-#define LITE3D_OBSERVER_NOTIFY_1(func, p1)                                  LITE3D_EXT_OBSERVER_NOTIFY_1(this, func, p1)
-#define LITE3D_OBSERVER_NOTIFY_2(func, p1, p2)                              LITE3D_EXT_OBSERVER_NOTIFY_2(this, func, p1, p2)
-#define LITE3D_OBSERVER_NOTIFY_3(func, p1, p2, p3)                          LITE3D_EXT_OBSERVER_NOTIFY_3(this, func, p1, p2, p3)
-#define LITE3D_OBSERVER_NOTIFY_4(func, p1, p2, p3, p4)                      LITE3D_EXT_OBSERVER_NOTIFY_4(this, func, p1, p2, p3, p4)
-#define LITE3D_OBSERVER_NOTIFY_5(func, p1, p2, p3, p4, p5)                  LITE3D_EXT_OBSERVER_NOTIFY_5(this, func, p1, p2, p3, p4, p5)
-#define LITE3D_OBSERVER_NOTIFY_6(func, p1, p2, p3, p4, p5, p6)              LITE3D_EXT_OBSERVER_NOTIFY_6(this, func, p1, p2, p3, p4, p5, p6)
+#define LITE3D_EXT_OBSERVER_NOTIFY_CHECK(obj, func)                               bool __ret = true; { for(auto o : (obj)->getObservers()) if (o->func() != LITE3D_TRUE) __ret = false; }
+#define LITE3D_EXT_OBSERVER_NOTIFY_CHECK_1(obj, func, p1)                         bool __ret = true; { for(auto o : (obj)->getObservers()) if (o->func(p1) != LITE3D_TRUE) __ret = false; }
+#define LITE3D_EXT_OBSERVER_NOTIFY_CHECK_2(obj, func, p1, p2)                     bool __ret = true; { for(auto o : (obj)->getObservers()) if (o->func(p1, p2) != LITE3D_TRUE) __ret = false; }
+#define LITE3D_EXT_OBSERVER_NOTIFY_CHECK_3(obj, func, p1, p2, p3)                 bool __ret = true; { for(auto o : (obj)->getObservers()) if (o->func(p1, p2, p3) != LITE3D_TRUE) __ret = false; }
+#define LITE3D_EXT_OBSERVER_NOTIFY_CHECK_4(obj, func, p1, p2, p3, p4)             bool __ret = true; { for(auto o : (obj)->getObservers()) if (o->func(p1, p2, p3, p4) != LITE3D_TRUE) __ret = false; }
+#define LITE3D_EXT_OBSERVER_NOTIFY_CHECK_5(obj, func, p1, p2, p3, p4, p5)         bool __ret = true; { for(auto o : (obj)->getObservers()) if (o->func(p1, p2, p3, p4, p5) != LITE3D_TRUE) __ret = false; }
+#define LITE3D_EXT_OBSERVER_NOTIFY_CHECK_6(obj, func, p1, p2, p3, p4, p5, p6)     bool __ret = true; { for(auto o : (obj)->getObservers()) if (o->func(p1, p2, p3, p4, p5, p6) != LITE3D_TRUE) __ret = false; }
+
+#define LITE3D_EXT_OBSERVER_RETURN return __ret ? LITE3D_TRUE : LITE3D_FALSE;
+
+#define LITE3D_OBSERVER_NOTIFY(func)                                              LITE3D_EXT_OBSERVER_NOTIFY(this, func)
+#define LITE3D_OBSERVER_NOTIFY_1(func, p1)                                        LITE3D_EXT_OBSERVER_NOTIFY_1(this, func, p1)
+#define LITE3D_OBSERVER_NOTIFY_2(func, p1, p2)                                    LITE3D_EXT_OBSERVER_NOTIFY_2(this, func, p1, p2)
+#define LITE3D_OBSERVER_NOTIFY_3(func, p1, p2, p3)                                LITE3D_EXT_OBSERVER_NOTIFY_3(this, func, p1, p2, p3)
+#define LITE3D_OBSERVER_NOTIFY_4(func, p1, p2, p3, p4)                            LITE3D_EXT_OBSERVER_NOTIFY_4(this, func, p1, p2, p3, p4)
+#define LITE3D_OBSERVER_NOTIFY_5(func, p1, p2, p3, p4, p5)                        LITE3D_EXT_OBSERVER_NOTIFY_5(this, func, p1, p2, p3, p4, p5)
+#define LITE3D_OBSERVER_NOTIFY_6(func, p1, p2, p3, p4, p5, p6)                    LITE3D_EXT_OBSERVER_NOTIFY_6(this, func, p1, p2, p3, p4, p5, p6)
+
+#define LITE3D_OBSERVER_NOTIFY_CHECK(func)                                        LITE3D_EXT_OBSERVER_NOTIFY_CHECK(this, func)
+#define LITE3D_OBSERVER_NOTIFY_CHECK_1(func, p1)                                  LITE3D_EXT_OBSERVER_NOTIFY_CHECK_1(this, func, p1)
+#define LITE3D_OBSERVER_NOTIFY_CHECK_2(func, p1, p2)                              LITE3D_EXT_OBSERVER_NOTIFY_CHECK_2(this, func, p1, p2)
+#define LITE3D_OBSERVER_NOTIFY_CHECK_3(func, p1, p2, p3)                          LITE3D_EXT_OBSERVER_NOTIFY_CHECK_3(this, func, p1, p2, p3)
+#define LITE3D_OBSERVER_NOTIFY_CHECK_4(func, p1, p2, p3, p4)                      LITE3D_EXT_OBSERVER_NOTIFY_CHECK_4(this, func, p1, p2, p3, p4)
+#define LITE3D_OBSERVER_NOTIFY_CHECK_5(func, p1, p2, p3, p4, p5)                  LITE3D_EXT_OBSERVER_NOTIFY_CHECK_5(this, func, p1, p2, p3, p4, p5)
+#define LITE3D_OBSERVER_NOTIFY_CHECK_6(func, p1, p2, p3, p4, p5, p6)              LITE3D_EXT_OBSERVER_NOTIFY_CHECK_6(this, func, p1, p2, p3, p4, p5, p6)
 
 }
 

@@ -32,15 +32,16 @@ void main()
 {
     if (light.enabled == 0)
         discard;
+    /* sampling normal and specular factor (w)*/
+    vec4 normal = texture2D(normalMap, iuv);
+    if (normal.x == 0 && normal.y == 0 && normal.z == 0)
+        discard;
 
     /* fragment coordinate */
     vec3 frag = texture2D(fragMap, iuv).xyz;
-    /* sampling normal and specular factor (w)*/
-    vec4 normal = texture2D(normalMap, iuv);
-
     vec3 lightDir = light.position - frag;
     /* check light distance */
-    if (length(lightDir) > 1000)
+    if (length(lightDir) > light.attenuation.w)
         discard;
 
     /* calculate direction from fragment to eye */
@@ -48,7 +49,7 @@ void main()
 
     vec3 linearSpec;
     vec3 linear = blinn_single(light.type, lightDir, eyeDir, light.ambient, light.diffuse, light.specular, normal.xyz, 
-        light.direction, light.spotfactor.xy, vec3(0.7, 0.01, 0.00001), normal.w, wrapAroundFactor, specPower, linearSpec);
+        light.direction, light.spotfactor.xy, light.attenuation.xyz, normal.w, wrapAroundFactor, specPower, linearSpec);
 
     /* result color in HDR */
     gl_FragColor = vec4(linear, 1.0);

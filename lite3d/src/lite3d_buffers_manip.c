@@ -21,13 +21,13 @@
 
 #include <lite3d/lite3d_buffers_manip.h>
 
-uint8_t gDepthTestOn = 0xff;
-uint8_t gStencilTestOn = 0xff;
-uint8_t gBlendingOn = 0xff;
-uint8_t gBlendigMode = 0xff;
-uint8_t gColorOutOn = 0xff;
-uint8_t gDepthOutOn = 0xff;
-uint8_t gStencilOutOn = 0xff;
+static uint8_t gDepthTestOn = 0xff;
+static uint8_t gStencilTestOn = 0xff;
+static uint8_t gBlendingOn = 0xff;
+static uint8_t gBlendigMode = 0xff;
+static uint8_t gColorOutOn = 0xff;
+static uint8_t gDepthOutOn = 0xff;
+static uint8_t gStencilOutOn = 0xff;
 
 void lite3d_depth_test(uint8_t on)
 {

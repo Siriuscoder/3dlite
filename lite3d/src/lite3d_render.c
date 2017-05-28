@@ -151,8 +151,8 @@ static int update_render_targets(void)
         if (!target->enabled)
             continue;
 
-        if (target->preUpdate)
-            target->preUpdate(target);
+        if (target->preUpdate && !target->preUpdate(target))
+            continue;
 
         update_render_target(target);
 

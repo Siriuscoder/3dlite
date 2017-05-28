@@ -600,11 +600,18 @@ int lite3d_texture_unit_allocate(lite3d_texture_unit *textureUnit,
             textureUnit->imageBPP = 4;
             break;
         case LITE3D_TEXTURE_FORMAT_ALPHA:
+        case LITE3D_TEXTURE_FORMAT_RED:
         case LITE3D_TEXTURE_FORMAT_LUMINANCE_ALPHA:
         case LITE3D_TEXTURE_FORMAT_LUMINANCE:
             textureUnit->imageBPP = 1;
             break;
+        case LITE3D_TEXTURE_FORMAT_RG:
+            textureUnit->imageBPP = 2;
+            break;
         default:
+            SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+                "%s: Unknown texture format %d",
+                LITE3D_CURRENT_FUNCTION, format);
             return LITE3D_FALSE;
     }
 
@@ -626,8 +633,16 @@ int lite3d_texture_unit_allocate(lite3d_texture_unit *textureUnit,
             internalFormat = format == LITE3D_TEXTURE_FORMAT_DEPTH ? GL_DEPTH_COMPONENT :
                 (gTextureSettings.useGLCompression ? GL_COMPRESSED_RGBA_S3TC_DXT5_EXT : (iformat > 0 ? iformat : GL_RGBA));
             break;
+        case 1:
+            internalFormat = gTextureSettings.useGLCompression ?
+                GL_COMPRESSED_RED_RGTC1_EXT : (iformat > 0 ? iformat : GL_R);
+            break;
+        case 2:
+            internalFormat = gTextureSettings.useGLCompression ?
+                GL_COMPRESSED_RED_GREEN_RGTC2_EXT : (iformat > 0 ? iformat : GL_RGB);
+            break;
         default:
-            internalFormat = textureUnit->imageBPP;
+            internalFormat = iformat;
             break;
     }
 

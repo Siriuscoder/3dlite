@@ -327,7 +327,7 @@ namespace lite3dpp
         }
     }
 
-    void Scene::beginDrawBatch(struct lite3d_scene *scene, 
+    int Scene::beginDrawBatch(struct lite3d_scene *scene, 
             struct lite3d_scene_node *node, struct lite3d_mesh_chunk *meshChunk, struct lite3d_material *material)
     {
         SDL_assert(scene->userdata);
@@ -336,16 +336,19 @@ namespace lite3dpp
 
         try
         {
-            LITE3D_EXT_OBSERVER_NOTIFY_4(reinterpret_cast<Scene *>(scene->userdata), beginDrawBatch, 
+            LITE3D_EXT_OBSERVER_NOTIFY_CHECK_4(reinterpret_cast<Scene *>(scene->userdata), beginDrawBatch, 
                 reinterpret_cast<Scene *>(scene->userdata),
                 reinterpret_cast<SceneNode *>(node->userdata),
                 meshChunk,
                 reinterpret_cast<Material *>(material->userdata));
+            LITE3D_EXT_OBSERVER_RETURN;
         }
         catch(std::exception &ex)
         {
             SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION, ex.what());
         }
+
+        return LITE3D_FALSE;
     }
 
     void Scene::nodeInFrustum(struct lite3d_scene *scene, 
@@ -417,7 +420,7 @@ namespace lite3dpp
         }
     }
 
-    void Scene::beginSceneRender(struct lite3d_scene *scene, struct lite3d_camera *camera)
+    int Scene::beginSceneRender(struct lite3d_scene *scene, struct lite3d_camera *camera)
     {
         SDL_assert(scene->userdata);
         SDL_assert(camera->userdata);
@@ -426,14 +429,17 @@ namespace lite3dpp
         {
             reinterpret_cast<Scene *>(scene->userdata)->validateLightingBuffer();
             
-            LITE3D_EXT_OBSERVER_NOTIFY_2(reinterpret_cast<Scene *>(scene->userdata), beginSceneRender, 
+            LITE3D_EXT_OBSERVER_NOTIFY_CHECK_2(reinterpret_cast<Scene *>(scene->userdata), beginSceneRender, 
                 reinterpret_cast<Scene *>(scene->userdata),
                 reinterpret_cast<Camera *>(camera->userdata));
+            LITE3D_EXT_OBSERVER_RETURN;
         }
         catch(std::exception &ex)
         {
             SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION, ex.what());
         }
+
+        return LITE3D_FALSE;
     }
 
     void Scene::endSceneRender(struct lite3d_scene *scene, struct lite3d_camera *camera)

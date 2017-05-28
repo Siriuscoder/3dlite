@@ -118,12 +118,12 @@ namespace lite3dpp
             int32_t width = helper.getInt(L"Width", 0), 
                 height = helper.getInt(L"Height", 0),
                 depth = helper.getInt(L"Depth", 1);
-            
+            int32_t scale = helper.getInt(L"Scale", 1);
             /* use screen size if not specified */
             if(width == 0 && height == 0)
             {
-                width = mMain->window()->width();
-                height = mMain->window()->height();
+                width = mMain->window()->width() / scale;
+                height = mMain->window()->height() / scale;
             }
 
             if(!lite3d_texture_unit_allocate(&mTexture, textureType, quality, wrapping, textureFormat, helper.getInt(L"InternalFormat", 0),

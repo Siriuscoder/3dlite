@@ -67,13 +67,13 @@ vec3 blinn_multiple(samplerBuffer source, int num, vec3 ambient, vec3 fragPos,
         /* distance to light */
         float dist = length(lightDir);
         /* check light distance */
-        if (dist > 1000)//block1.z)
+        if (dist > block1.z)
             continue;
 
         vec4 block3 = texelFetch(source, texel + 2);
         vec4 block4 = texelFetch(source, texel + 3);
         vec4 block5 = texelFetch(source, texel + 4);
-        //vec4 block6 = texelFetch(source, texel + 5);
+        vec4 block6 = texelFetch(source, texel + 5);
         /* ambient color */
         vec3 lambient = vec3(block2.z, block2.w, block3.x);
         /* diffuse color */
@@ -94,8 +94,8 @@ vec3 blinn_multiple(samplerBuffer source, int num, vec3 ambient, vec3 fragPos,
         /* block6.x - constant attenuation */
         /* block6.y - linear attenuation */
         /* block6.z - quadratic attenuation */
-        //vec3 lattenuation = vec3(block6.x, block6.y, block6.z);
-        vec3 lattenuation = vec3(0.7, 0.01, 0.00001);
+        vec3 lattenuation = vec3(block6.x, block6.y, block6.z);
+        //vec3 lattenuation = vec3(0.5, 0.001, 0.00006);
 
         vec3 curSpec;
         linear += blinn_single(int(block1.x), lightDir, eyeDir, lambient, ldiffuse, lspecular, fragNormal, 
