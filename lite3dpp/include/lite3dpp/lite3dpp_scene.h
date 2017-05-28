@@ -81,7 +81,7 @@ namespace lite3dpp
         void setupObjects(const stl<ConfigurationReader>::vector &objects, SceneObject *base);
         void setupCameras(const stl<ConfigurationReader>::vector &cameras);
 
-        static void beginDrawBatch(struct lite3d_scene *scene, 
+        static int beginDrawBatch(struct lite3d_scene *scene, 
             struct lite3d_scene_node *node, struct lite3d_mesh_chunk *meshChunk, struct lite3d_material *material);
 
         static void nodeInFrustum(struct lite3d_scene *scene, 
@@ -95,7 +95,7 @@ namespace lite3dpp
             struct lite3d_camera *camera);
 
         static void beforeUpdateNodes(struct lite3d_scene *scene, struct lite3d_camera *camera);
-        static void beginSceneRender(struct lite3d_scene *scene, struct lite3d_camera *camera);
+        static int beginSceneRender(struct lite3d_scene *scene, struct lite3d_camera *camera);
         static void endSceneRender(struct lite3d_scene *scene, struct lite3d_camera *camera);
         static void beginFirstStageRender(struct lite3d_scene *scene, struct lite3d_camera *camera);
         static void beginSecondStageRender(struct lite3d_scene *scene, struct lite3d_camera *camera);

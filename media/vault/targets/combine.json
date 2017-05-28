@@ -3,7 +3,7 @@
     "Height": 0, // use screen height
     "BackgroundColor": [0.0, 0.0, 0.0, 1.0],
     "Priority": 3, // render after lightpass target
-    "CleanColorBuf": true,
+    "CleanColorBuf": false,
     "CleanDepthBuf": false,
     "CleanStencilBuf": false,
     

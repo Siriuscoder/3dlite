@@ -52,17 +52,20 @@ public:
         kmVec3 resolution = { (float)getMain().window()->width(), (float)getMain().window()->height(), 0 };
         lite3dpp::Material::setFloatv3GlobalParameter("screenResolution", resolution);
         lite3dpp::Material::setIntGlobalParameter("FXAA", 1);
+        // optimize: window clean not needed, because all pixels in last render target always be updated
+        getMain().window()->setBuffersCleanBit(false, false, false);
     }
 
     // setup lighting at once before light compute scene begin rendering first time
-    void beginSceneRender(Scene *scene, Camera *camera) override
+    bool beginSceneRender(Scene *scene, Camera *camera) override
     {
         SDL_assert(mVaultScene);
         /* check scene already fullup */
         if (scene->getObjects().size() > 0)
-            return;
+            return true;;
 
         setupLightPassScene(mVaultScene, scene);
+        return true;
     }
 
     void endSceneRender(Scene *scene, Camera *camera) override 

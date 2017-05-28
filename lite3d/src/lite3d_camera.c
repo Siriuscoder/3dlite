@@ -22,22 +22,34 @@
 #include <lite3d/lite3d_camera.h>
 #include <lite3d/lite3d_shader_params.h>
 
+static uint16_t gCurPolygonMode = 0;
+static uint8_t gBackFaceCullingOn = 0x99;
+
 void lite3d_camera_update_view(lite3d_camera *camera)
 {
     SDL_assert(camera);
 
     /* In OpenGL ES, GL_FILL is the only available polygon mode. */
 #ifndef GLES
-    glPolygonMode(GL_FRONT_AND_BACK, camera->polygonMode);
-#endif
-    if (camera->cullBackFaces)
+    if (gCurPolygonMode != camera->polygonMode)
     {
-        glEnable(GL_CULL_FACE);
-        glCullFace(GL_BACK);
+        glPolygonMode(GL_FRONT_AND_BACK, camera->polygonMode);
+        gCurPolygonMode = camera->polygonMode;
     }
-    else
+#endif
+    if (gBackFaceCullingOn != camera->cullBackFaces)
     {
-        glDisable(GL_CULL_FACE);
+        if (camera->cullBackFaces)
+        {
+            glEnable(GL_CULL_FACE);
+            glCullFace(GL_BACK);
+        }
+        else
+        {
+            glDisable(GL_CULL_FACE);
+        }
+
+        gBackFaceCullingOn = camera->cullBackFaces;
     }
 
     /* camera link to node */

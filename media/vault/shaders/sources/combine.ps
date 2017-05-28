@@ -3,15 +3,9 @@
 uniform sampler2D lightMap;
 uniform sampler2D diffuseMap;
 
-uniform vec3 eye;
-
 in vec2 iuv;
 
 const vec3 ambient = vec3(0.02, 0.02, 0.02);
-
-vec3 blinn_calculate(samplerBuffer source, int num, vec3 ambient, vec3 fragPos, 
-    vec3 fragNormal, vec3 eye, float specularFactor, 
-    float wrapAroundFactor, float specPower);
 
 void main()
 {

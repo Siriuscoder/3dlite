@@ -148,10 +148,10 @@ namespace lite3dpp
     kmVec4 LightSource::getAttenuation() const
     {
         kmVec4 vec4 = {
-            mLightSource.params.block1.z,
             mLightSource.params.block6.x, 
             mLightSource.params.block6.y,
-            mLightSource.params.block6.z 
+            mLightSource.params.block6.z,
+            mLightSource.params.block1.z
         };
         return vec4;
     }

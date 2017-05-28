@@ -39,6 +39,7 @@ namespace lite3dpp
     {
         int32_t width = helper.getInt(L"Width", 0), 
             height = helper.getInt(L"Height", 0);
+        int32_t scale = helper.getInt(L"Scale", 1);
         int8_t attachColorRenderBuffer = LITE3D_FALSE;
         int8_t attachDepthRenderBuffer = LITE3D_FALSE;
         int8_t attachStencilRenderBuffer = LITE3D_FALSE;
@@ -48,8 +49,8 @@ namespace lite3dpp
         /* use screen size if not specified */
         if(width == 0 && height == 0)
         {
-            width = mMain->window()->width();
-            height = mMain->window()->height();
+            width = mMain->window()->width() / scale;
+            height = mMain->window()->height() / scale;
         }
 
         lite3d_render_target_init(mRenderTargetPtr, width, height);

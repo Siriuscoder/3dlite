@@ -60,7 +60,7 @@ typedef struct lite3d_scene
     lite3d_array invalidatedUnits;
     lite3d_mesh_chunk *bindedMeshChunk;
     void *userdata;
-    void (*beginDrawBatch)(struct lite3d_scene *scene, 
+    int (*beginDrawBatch)(struct lite3d_scene *scene, 
         struct lite3d_scene_node *node, struct lite3d_mesh_chunk *meshChunk, struct lite3d_material *material);
     void (*nodeInFrustum)(struct lite3d_scene *scene, 
         struct lite3d_scene_node *node, struct lite3d_mesh_chunk *meshChunk, 
@@ -71,7 +71,7 @@ typedef struct lite3d_scene
         struct lite3d_material *material, struct lite3d_bounding_vol *boundingVol,
         struct lite3d_camera *camera);
     void (*beforeUpdateNodes)(struct lite3d_scene *scene, struct lite3d_camera *camera);
-    void (*beginSceneRender)(struct lite3d_scene *scene, struct lite3d_camera *camera);
+    int (*beginSceneRender)(struct lite3d_scene *scene, struct lite3d_camera *camera);
     void (*endSceneRender)(struct lite3d_scene *scene, struct lite3d_camera *camera);
     void (*beginFirstStageRender)(struct lite3d_scene *scene, struct lite3d_camera *camera);
     void (*beginSecondStageRender)(struct lite3d_scene *scene, struct lite3d_camera *camera);

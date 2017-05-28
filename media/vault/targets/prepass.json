@@ -21,7 +21,7 @@
             },
             {
                 "TextureName": "diffuseMap.texture",
-                "TexturePath": "vault:textures/json/rgba32f.json"
+                "TexturePath": "vault:textures/json/rgba.json"
             }
         ]
     },
