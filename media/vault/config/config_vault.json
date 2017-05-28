@@ -4,7 +4,7 @@
 	"LogFlushAlways": true,
     "LogFile": "lite3d.log",
     "TextureSettings": {
-        "Anisotropy": 4,
+        "Anisotropy": 16,
         "Compression": true
     },
     // Video settings
@@ -15,7 +15,7 @@
         "Caption": "Vault Scene",
         "ColorBits": 24,
         "Fullscreen": false,
-        "MSAA": 4,
+        "MSAA": 1,
         "VSync": false
     },
     // resource locations

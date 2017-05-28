@@ -48,6 +48,7 @@
           <in>lite3d_array.c</in>
           <in>lite3d_buffers_manip.c</in>
           <in>lite3d_camera.c</in>
+          <in>lite3d_dbg.c</in>
           <in>lite3d_framebuffer.c</in>
           <in>lite3d_frustum.c</in>
           <in>lite3d_glext.c</in>
@@ -78,11 +79,6 @@
         </df>
       </df>
       <df name="lite3dpp">
-        <df name="include">
-          <df name="lite3dpp">
-            <in>lite3dpp_scene.h</in>
-          </df>
-        </df>
         <df name="src">
           <df name="as">
             <in>as_atomic.cpp</in>
@@ -541,10 +537,6 @@
         <cTool flags="3">
         </cTool>
       </item>
-      <item path="lite3d/src/lite3d_7z_loader.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="3">
-        </cTool>
-      </item>
       <item path="lite3d/src/lite3d_alloc.c" ex="false" tool="0" flavor2="3">
         <cTool flags="3">
         </cTool>
@@ -558,6 +550,10 @@
         </cTool>
       </item>
       <item path="lite3d/src/lite3d_camera.c" ex="false" tool="0" flavor2="3">
+        <cTool flags="3">
+        </cTool>
+      </item>
+      <item path="lite3d/src/lite3d_dbg.c" ex="false" tool="0" flavor2="3">
         <cTool flags="3">
         </cTool>
       </item>
@@ -590,13 +586,6 @@
         </cTool>
       </item>
       <item path="lite3d/src/lite3d_mesh.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="3">
-        </cTool>
-      </item>
-      <item path="lite3d/src/lite3d_mesh_assimp_loader.c"
-            ex="false"
-            tool="0"
-            flavor2="3">
         <cTool flags="3">
         </cTool>
       </item>
@@ -648,9 +637,7 @@
         <cTool flags="3">
         </cTool>
       </item>
-      <item path="lite3d/src/lite3d_tbo.c" ex="false" tool="0" flavor2="2">
-      </item>
-      <item path="lite3d/src/lite3d_texture_unit.c" ex="false" tool="0" flavor2="3">
+      <item path="lite3d/src/lite3d_tbo.c" ex="false" tool="0" flavor2="3">
         <cTool flags="3">
         </cTool>
       </item>
@@ -669,11 +656,6 @@
       <item path="lite3d/src/lite3d_video.c" ex="false" tool="0" flavor2="3">
         <cTool flags="3">
         </cTool>
-      </item>
-      <item path="lite3dpp/include/lite3dpp/lite3dpp_scene.h"
-            ex="false"
-            tool="3"
-            flavor2="0">
       </item>
       <item path="lite3dpp/src/as/as_atomic.cpp" ex="false" tool="1" flavor2="8">
         <ccTool flags="1">
@@ -942,7 +924,9 @@
       <item path="lite3dpp/src/lite3dpp_buffer_mapper.cpp"
             ex="false"
             tool="1"
-            flavor2="4">
+            flavor2="8">
+        <ccTool flags="1">
+        </ccTool>
       </item>
       <item path="lite3dpp/src/lite3dpp_camera.cpp" ex="false" tool="1" flavor2="8">
         <ccTool flags="1">
@@ -952,22 +936,6 @@
             ex="false"
             tool="1"
             flavor2="8">
-        <ccTool flags="1">
-        </ccTool>
-      </item>
-      <item path="lite3dpp/src/lite3dpp_config_writer.cpp"
-            ex="false"
-            tool="1"
-            flavor2="8">
-        <ccTool flags="1">
-        </ccTool>
-      </item>
-      <item path="lite3dpp/src/lite3dpp_light_source.cpp"
-            ex="false"
-            tool="1"
-            flavor2="4">
-      </item>
-      <item path="lite3dpp/src/lite3dpp_main.cpp" ex="false" tool="1" flavor2="8">
         <ccTool flags="1">
         </ccTool>
       </item>
@@ -998,17 +966,6 @@
         </ccTool>
       </item>
       <item path="lite3dpp/src/lite3dpp_resource_manager.cpp"
-            ex="false"
-            tool="1"
-            flavor2="8">
-        <ccTool flags="1">
-        </ccTool>
-      </item>
-      <item path="lite3dpp/src/lite3dpp_scene.cpp" ex="false" tool="1" flavor2="8">
-        <ccTool flags="1">
-        </ccTool>
-      </item>
-      <item path="lite3dpp/src/lite3dpp_scene_node.cpp"
             ex="false"
             tool="1"
             flavor2="8">
@@ -1144,13 +1101,6 @@
         <ccTool flags="0">
         </ccTool>
       </item>
-      <item path="samples/sample_common/lite3dpp_common.cpp"
-            ex="false"
-            tool="1"
-            flavor2="8">
-        <ccTool flags="0">
-        </ccTool>
-      </item>
       <item path="samples/sample_deferred_shading/lite3dpp_main.cpp"
             ex="false"
             tool="1"
@@ -1278,23 +1228,11 @@
         <ccTool flags="0">
         </ccTool>
       </item>
-      <item path="tools/mtool/mtool_command.cpp" ex="false" tool="1" flavor2="8">
-        <ccTool flags="0">
-        </ccTool>
-      </item>
       <item path="tools/mtool/mtool_converter.cpp" ex="false" tool="1" flavor2="8">
         <ccTool flags="0">
         </ccTool>
       </item>
       <item path="tools/mtool/mtool_create_dirs.cpp" ex="false" tool="1" flavor2="8">
-        <ccTool flags="0">
-        </ccTool>
-      </item>
-      <item path="tools/mtool/mtool_generator.cpp" ex="false" tool="1" flavor2="8">
-        <ccTool flags="0">
-        </ccTool>
-      </item>
-      <item path="tools/mtool/mtool_m_info.cpp" ex="false" tool="1" flavor2="8">
         <ccTool flags="0">
         </ccTool>
       </item>

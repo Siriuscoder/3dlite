@@ -13,11 +13,11 @@
         [
             {
                 "TextureName": "fragmentWorldCoords.texture",
-                "TexturePath": "vault:textures/json/rgba32f.json"
+                "TexturePath": "vault:textures/json/rgba16f.json"
             },
             {
                 "TextureName": "normalsWorld.texture",
-                "TexturePath": "vault:textures/json/rgba32f.json"
+                "TexturePath": "vault:textures/json/rgba16f.json"
             },
             {
                 "TextureName": "diffuseMap.texture",
