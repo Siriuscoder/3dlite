@@ -26,49 +26,25 @@ void lite3d_frustum_compute(struct lite3d_frustum *frustum,
     SDL_assert(clip);
 
     /* rigth plane */
-    frustum->clipPlains[0].a = clip->mat[ 3] - clip->mat[ 0];
-    frustum->clipPlains[0].b = clip->mat[ 7] - clip->mat[ 4];
-    frustum->clipPlains[0].c = clip->mat[11] - clip->mat[ 8];
-    frustum->clipPlains[0].d = clip->mat[15] - clip->mat[12];
-    kmPlaneNormalize(&frustum->clipPlains[0], &frustum->clipPlains[0]);
+    kmMat4ExtractPlane(&frustum->clipPlains[0], clip, KM_PLANE_RIGHT);
 
     /* left plane */
-    frustum->clipPlains[1].a = clip->mat[ 3] + clip->mat[ 0];
-    frustum->clipPlains[1].b = clip->mat[ 7] + clip->mat[ 4];
-    frustum->clipPlains[1].c = clip->mat[11] + clip->mat[ 8];
-    frustum->clipPlains[1].d = clip->mat[15] + clip->mat[12];
-    kmPlaneNormalize(&frustum->clipPlains[1], &frustum->clipPlains[1]);
+    kmMat4ExtractPlane(&frustum->clipPlains[1], clip, KM_PLANE_LEFT);
 
     /* bottom plane */
-    frustum->clipPlains[2].a = clip->mat[ 3] + clip->mat[ 1];
-    frustum->clipPlains[2].b = clip->mat[ 7] + clip->mat[ 5];
-    frustum->clipPlains[2].c = clip->mat[11] + clip->mat[ 9];
-    frustum->clipPlains[2].d = clip->mat[15] + clip->mat[13];
-    kmPlaneNormalize(&frustum->clipPlains[2], &frustum->clipPlains[2]);
+    kmMat4ExtractPlane(&frustum->clipPlains[2], clip, KM_PLANE_BOTTOM);
 
     /* top plane  */
-    frustum->clipPlains[3].a = clip->mat[ 3] - clip->mat[ 1];
-    frustum->clipPlains[3].b = clip->mat[ 7] - clip->mat[ 5];
-    frustum->clipPlains[3].c = clip->mat[11] - clip->mat[ 9];
-    frustum->clipPlains[3].d = clip->mat[15] - clip->mat[13];
-    kmPlaneNormalize(&frustum->clipPlains[3], &frustum->clipPlains[3]);
+    kmMat4ExtractPlane(&frustum->clipPlains[3], clip, KM_PLANE_TOP);
 
     /* rear plane */
-    frustum->clipPlains[4].a = clip->mat[ 3] - clip->mat[ 2];
-    frustum->clipPlains[4].b = clip->mat[ 7] - clip->mat[ 6];
-    frustum->clipPlains[4].c = clip->mat[11] - clip->mat[10];
-    frustum->clipPlains[4].d = clip->mat[15] - clip->mat[14];
-    kmPlaneNormalize(&frustum->clipPlains[4], &frustum->clipPlains[4]);
+    kmMat4ExtractPlane(&frustum->clipPlains[4], clip, KM_PLANE_FAR);
 
     /* front plane */
-    frustum->clipPlains[5].a = clip->mat[ 3] + clip->mat[ 2];
-    frustum->clipPlains[5].b = clip->mat[ 7] + clip->mat[ 6];
-    frustum->clipPlains[5].c = clip->mat[11] + clip->mat[10];
-    frustum->clipPlains[5].d = clip->mat[15] + clip->mat[14];
-    kmPlaneNormalize(&frustum->clipPlains[5], &frustum->clipPlains[5]);
+    kmMat4ExtractPlane(&frustum->clipPlains[5], clip, KM_PLANE_NEAR);
 }
 
-static int testSphereInFrustum(struct lite3d_frustum *frustum,
+int lite3d_frustum_test_sphere(struct lite3d_frustum *frustum,
     const struct lite3d_bounding_vol *vol)
 {
     int i;
@@ -82,7 +58,7 @@ static int testSphereInFrustum(struct lite3d_frustum *frustum,
     return LITE3D_TRUE;
 }
 
-static int testBoxInFrustum(struct lite3d_frustum *frustum,
+int lite3d_frustum_test_box(struct lite3d_frustum *frustum,
     const struct lite3d_bounding_vol *vol)
 {
     int i, j;
@@ -111,10 +87,10 @@ int lite3d_frustum_test(struct lite3d_frustum *frustum,
     if (vol->radius == 0.0f)
         return LITE3D_TRUE;
 
-    if (!testSphereInFrustum(frustum, vol))
+    if (!lite3d_frustum_test_sphere(frustum, vol))
         return LITE3D_FALSE;
 
-    return testBoxInFrustum(frustum, vol);
+    return lite3d_frustum_test_box(frustum, vol);
 }
 
 void lite3d_bounding_vol_setup(struct lite3d_bounding_vol *vol,

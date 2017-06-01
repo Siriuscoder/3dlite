@@ -36,6 +36,7 @@ namespace lite3dpp
         typedef stl<String, Camera::Ptr>::map Cameras;
         typedef stl<String, SceneObject::Ptr>::map Objects;
         typedef stl<String, LightSceneNode *>::map Lights;
+        typedef stl<lite3d_light_params>::vector LightsStore;
 
 
         Scene(const String &name, 
@@ -72,7 +73,7 @@ namespace lite3dpp
         virtual void unloadImpl() override;
             
         void rebuildLightingBuffer();
-        void validateLightingBuffer();
+        void validateLightingBuffer(const Camera &camera);
         
         virtual SceneObject::Ptr createObject(const String &name, SceneObject *parent);
 
@@ -104,7 +105,9 @@ namespace lite3dpp
         Cameras mCameras;
         Objects mObjects;
         Lights mLights;
-        TextureBuffer *mLightingTextureBuffer;
+        TextureBuffer *mLightingParamsBuffer;
+        TextureBuffer *mLightingIndexBuffer;
+        LightsStore mLightsWorld;
     };
 }
 

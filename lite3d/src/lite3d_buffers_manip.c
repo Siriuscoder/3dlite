@@ -28,6 +28,8 @@ static uint8_t gBlendigMode = 0xff;
 static uint8_t gColorOutOn = 0xff;
 static uint8_t gDepthOutOn = 0xff;
 static uint8_t gStencilOutOn = 0xff;
+static uint16_t gPolygonMode = 0;
+static uint8_t gBackFaceCullingOn = 0x99;
 
 void lite3d_depth_test(uint8_t on)
 {
@@ -180,9 +182,39 @@ void lite3d_blending_mode_set(uint8_t mode)
 {
     SDL_assert(mode < (sizeof(gBlendModes)/sizeof(lite3d_blend_mode_t)));
 
-    if(mode != gBlendigMode)
+    if (mode != gBlendigMode)
     {
         gBlendModes[mode]();
         gBlendigMode = mode;
+    }
+}
+
+void lite3d_polygon_mode(uint16_t flag)
+{
+    /* In OpenGL ES, GL_FILL is the only available polygon mode. */
+#ifndef GLES
+    if (gPolygonMode != flag)
+    {
+        glPolygonMode(GL_FRONT_AND_BACK, flag);
+        gPolygonMode = flag;
+    }
+#endif
+}
+
+void lite3d_backface_culling(uint8_t on)
+{
+    if (gBackFaceCullingOn != on)
+    {
+        if (on)
+        {
+            glEnable(GL_CULL_FACE);
+            glCullFace(GL_BACK);
+        }
+        else
+        {
+            glDisable(GL_CULL_FACE);
+        }
+
+        gBackFaceCullingOn = on;
     }
 }

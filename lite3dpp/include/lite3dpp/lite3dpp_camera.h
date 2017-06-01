@@ -18,6 +18,7 @@
 #pragma once
 
 #include <lite3d/lite3d_camera.h>
+#include <lite3d/lite3d_buffers_manip.h>
 
 #include <lite3dpp/lite3dpp_common.h>
 #include <lite3dpp/lite3dpp_scene_object.h>
@@ -78,6 +79,8 @@ namespace lite3dpp
         void moveRelative(const kmVec3 &value);
         void holdOnSceneObject(const SceneObject &sceneObj);
         void linkWithSceneObject(const SceneObject &sceneObj);
+        bool inFrustum(const lite3d_bounding_vol &vol) const;
+        bool inFrustum(const lite3d_light_params &lp) const;
 
     private:
 

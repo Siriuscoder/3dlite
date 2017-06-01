@@ -23,11 +23,6 @@
 #include <lite3d/lite3d_list.h>
 #include <lite3d/lite3d_frustum.h>
 
-/* compatible with GL */
-#define LITE3D_POLYMODE_POINT        0x1B00
-#define LITE3D_POLYMODE_LINE         0x1B01
-#define LITE3D_POLYMODE_FILL         0x1B02
-
 #define LITE3D_CAMERA_LINK_POSITION    0x01
 #define LITE3D_CAMERA_LINK_ORIENTATION 0x02
 
@@ -40,25 +35,16 @@ typedef struct lite3d_camera
     uint16_t polygonMode;
     uint8_t isOrtho;
 
-    union
+    struct
     {
-        struct
-        {
-            float near;
-            float far;
-            float left;
-            float right;
-            float bottom;
-            float top;
-        } ortho;
-
-        struct
-        {
-            float znear;
-            float zfar;
-            float fovy;
-            float aspect;
-        } perspective;
+        float near;
+        float far;
+        float left;
+        float right;
+        float bottom;
+        float top;
+        float fovy;
+        float aspect;
     } projectionParams;
     
     lite3d_frustum frustum;

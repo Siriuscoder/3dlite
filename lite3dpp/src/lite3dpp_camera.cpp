@@ -44,9 +44,9 @@ namespace lite3dpp
 
     void Camera::setAspect(float aspect)
     {
-        lite3d_camera_perspective(&mCamera, mCamera.projectionParams.perspective.znear,
-            mCamera.projectionParams.perspective.zfar,
-            mCamera.projectionParams.perspective.fovy,
+        lite3d_camera_perspective(&mCamera, mCamera.projectionParams.near,
+            mCamera.projectionParams.far,
+            mCamera.projectionParams.fovy,
             aspect);
     }
 
@@ -140,6 +140,22 @@ namespace lite3dpp
         kmQuaternion inverseRot;
         kmQuaternionInverse(&inverseRot, &mCamera.cameraNode.rotation);
         return inverseRot;
+    }
+
+    bool Camera::inFrustum(const lite3d_bounding_vol &vol) const
+    {
+        return true;
+    }
+
+    bool Camera::inFrustum(const lite3d_light_params &lp) const
+    {
+        lite3d_bounding_vol volToCheck;
+        memset(&volToCheck, 0, sizeof(volToCheck));
+        volToCheck.radius = lp.block1.z;
+        volToCheck.sphereCenter.x = lp.block1.w;
+        volToCheck.sphereCenter.y = lp.block2.x;
+        volToCheck.sphereCenter.z = lp.block1.y;
+        return inFrustum(volToCheck);
     }
 }
 

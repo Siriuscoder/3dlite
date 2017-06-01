@@ -34,6 +34,10 @@
 #define LITE3D_BLENDING_MODE_TRADITIONAL_WITH_ALPHA_BLEND       1
 #define LITE3D_BLENDING_MODE_ADDITIVE                           2
 
+#define LITE3D_POLYMODE_POINT        0x1B00
+#define LITE3D_POLYMODE_LINE         0x1B01
+#define LITE3D_POLYMODE_FILL         0x1B02
+
 typedef void (*lite3d_blend_mode_t)(void);
 
 LITE3D_CEXPORT void lite3d_depth_test(uint8_t on);
@@ -67,6 +71,9 @@ LITE3D_CEXPORT void lite3d_buffers_clear_values(const kmVec4 *color, float depth
  */
 LITE3D_CEXPORT void lite3d_blending_mode_set(uint8_t mode);
 LITE3D_CEXPORT void lite3d_blending(uint8_t on);
+
+LITE3D_CEXPORT void lite3d_polygon_mode(uint16_t flag);
+LITE3D_CEXPORT void lite3d_backface_culling(uint8_t on);
 
 
 #endif	/* LITE3D_BUFFERS_MANIP_H */

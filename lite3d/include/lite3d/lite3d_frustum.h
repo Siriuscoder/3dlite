@@ -35,6 +35,12 @@ typedef struct lite3d_bounding_vol
 
 LITE3D_CEXPORT void lite3d_frustum_compute(struct lite3d_frustum *frustum, 
     const struct kmMat4 *clip);
+
+LITE3D_CEXPORT int lite3d_frustum_test_sphere(struct lite3d_frustum *frustum,
+    const struct lite3d_bounding_vol *vol);
+
+LITE3D_CEXPORT int lite3d_frustum_test_box(struct lite3d_frustum *frustum,
+    const struct lite3d_bounding_vol *vol);
     
 LITE3D_CEXPORT int lite3d_frustum_test(struct lite3d_frustum *frustum, 
     const struct lite3d_bounding_vol *vol);

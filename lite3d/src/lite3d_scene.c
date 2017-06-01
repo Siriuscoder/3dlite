@@ -87,15 +87,10 @@ static void mqr_render_batch(lite3d_scene *scene,
     scene->stats.verticesRendered += mqrNode->meshChunk->vao.verticesCount * mqrNode->instancesCount;
 }
 
-static void mqr_render_node(lite3d_material_pass *pass, void *data)
+static void mqr_render_node(lite3d_material_pass *pass, _mqr_node *mqrNode)
 {
-    _mqr_node *mqrNode;
-    lite3d_scene *scene;
-
-    mqrNode = (_mqr_node *) data;
+    lite3d_scene *scene = (lite3d_scene *) mqrNode->node->scene;
     SDL_assert(mqrNode);
-
-    scene = (lite3d_scene *) mqrNode->node->scene;
     SDL_assert(scene);
 
     /* setup global parameters (model) */
@@ -150,14 +145,12 @@ static int mqr_node_approve(lite3d_scene *scene,
     return LITE3D_TRUE;
 }
 
-static void mqr_unit_render(lite3d_material_pass *pass, void *data)
+static void mqr_unit_render(lite3d_material_pass *pass, _mqr_unit *mqrUnit)
 {
-    _mqr_unit *mqrUnit;
     _mqr_node *mqrNode;
     lite3d_list_node *mqrListNode;
     lite3d_scene *scene = NULL;
 
-    mqrUnit = (_mqr_unit *) data;
     SDL_assert(mqrUnit);
 
     for (mqrListNode = mqrUnit->nodes.l.next;
@@ -213,8 +206,7 @@ static void mqr_render_stage_first(struct lite3d_scene *scene, lite3d_camera *ca
 
             if (flags & LITE3D_RENDER_STAGE_FIRST)
             {
-                lite3d_material_pass_render(mqrUnit->material, pass,
-                    mqr_unit_render, mqrUnit);
+                mqr_unit_render(lite3d_material_apply(mqrUnit->material, pass), mqrUnit);
                 scene->stats.textureUnitsBinded += mqrUnit->material->textureUnitsBinded;
             }
         }
@@ -235,8 +227,7 @@ static void mqr_render_stage_second(struct lite3d_scene *scene, lite3d_camera *c
 
     LITE3D_ARR_FOREACH(&scene->sortedNodesByDistance, _mqr_node *, mqrNode)
     {
-        lite3d_material_pass_render((*mqrNode)->matUnit->material, pass,
-            mqr_render_node, *mqrNode);
+        mqr_render_node(lite3d_material_apply((*mqrNode)->matUnit->material, pass), *mqrNode);
         scene->stats.textureUnitsBinded += (*mqrNode)->matUnit->material->textureUnitsBinded;
     }
 }

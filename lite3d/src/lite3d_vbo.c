@@ -206,6 +206,7 @@ int lite3d_vbo_extend(struct lite3d_vbo *vbo, size_t addSize, uint16_t access)
     {
         if (!vbo_buffer_extend(vbo->vboID, addSize, access))
             return LITE3D_FALSE;
+        vbo->size += addSize;
     }
     // relocate not needed, overwise may cause crash on some hardware
     else
@@ -213,8 +214,6 @@ int lite3d_vbo_extend(struct lite3d_vbo *vbo, size_t addSize, uint16_t access)
         if (!lite3d_vbo_buffer(vbo, NULL, addSize, access))
             return LITE3D_FALSE;
     }
-
-    vbo->size += addSize;
 
     return LITE3D_TRUE;
 }

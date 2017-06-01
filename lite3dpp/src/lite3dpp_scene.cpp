@@ -28,7 +28,8 @@ namespace lite3dpp
     Scene::Scene(const String &name, 
         const String &path, Main *main) : 
         ConfigurableResource(name, path, main, AbstractResource::SCENE),
-        mLightingTextureBuffer(NULL)
+        mLightingParamsBuffer(NULL),
+        mLightingIndexBuffer(NULL)
     {}
 
     Scene::~Scene()
@@ -50,9 +51,12 @@ namespace lite3dpp
         try
         {
             /* default name of lighting buffer is scene name + "LightingBufferObject" */
-            mLightingTextureBuffer = mMain->getResourceManager()->
+            mLightingParamsBuffer = mMain->getResourceManager()->
                 queryResourceFromJson<TextureBuffer>(getName() + "_lightingBufferObject",
                 "{\"BufferFormat\": \"RGBA32F\", \"Dynamic\": true}");
+            mLightingIndexBuffer = mMain->getResourceManager()->
+                queryResourceFromJson<TextureBuffer>(getName() + "_lightingIndexBuffer",
+                "{\"BufferFormat\": \"R16UI\", \"Dynamic\": true}");
         }
         catch(std::exception &ex)
         {
@@ -181,7 +185,6 @@ namespace lite3dpp
     void Scene::removeAllLights()
     {
         mLights.clear();
-        rebuildLightingBuffer();
     }
     
     LightSceneNode *Scene::getLightNode(const String &name) const
@@ -195,28 +198,37 @@ namespace lite3dpp
     
     void Scene::rebuildLightingBuffer()
     {
-        if (!mLightingTextureBuffer)
+        if (!mLightingParamsBuffer || !mLightingIndexBuffer || mLights.size() == 0)
             return;
 
         uint32_t i = 0;
+
+        if (mLightingParamsBuffer->textureBufferSize() < (mLights.size() * sizeof(lite3d_light_params)))
+            mLightingParamsBuffer->extendTextureBuffer(sizeof(lite3d_light_params) * mLights.size() / 
+                mLightingParamsBuffer->getTexelSize());
+
+        if (mLightingIndexBuffer->textureBufferTexelsCount() < mLights.size()+1)
+            mLightingIndexBuffer->extendTextureBuffer(mLights.size()-mLightingIndexBuffer->textureBufferTexelsCount()+1);
+
+        mLightsWorld.resize(mLights.size());
+
         for (auto &light : mLights)
         {
-            /* extend if needed */
-            if (mLightingTextureBuffer->textureBufferSize() < ((i+1) * sizeof(lite3d_light_params)))
-            {
-                mLightingTextureBuffer->extendTextureBuffer(sizeof(lite3d_light_params) / 
-                    mLightingTextureBuffer->getTexelSize());
-            }
-            
-            mLightingTextureBuffer->setElement<lite3d_light_params>(i, &light.second->getLight()->getPtr()->params);
+            mLightingParamsBuffer->setElement<lite3d_light_params>(i, &light.second->getLight()->getPtr()->params);
+            mLightsWorld[i] = light.second->getLight()->getPtr()->params;
             light.second->getLight()->index(i++);
         }
     }
     
-    void Scene::validateLightingBuffer()
+    void Scene::validateLightingBuffer(const Camera &camera)
     {
-        if (!mLightingTextureBuffer)
+        if (!mLightingParamsBuffer || !mLightingIndexBuffer || mLights.size() == 0)
             return;
+
+        BufferScopedMapper indexMapper = mLightingIndexBuffer->map(LITE3D_VBO_MAP_READ_WRITE);
+        uint16_t *indexPtrBase = indexMapper.getPtr<uint16_t>();
+        uint16_t *indexPtr = indexPtrBase + 1;
+        uint16_t indexCount = 0;
 
         bool anyValidated = false;
         for (auto &light : mLights)
@@ -224,13 +236,20 @@ namespace lite3dpp
             if (light.second->needRecalcToWorld())
             {
                 lite3d_light_params wpar = light.second->lightSourceToWorld();
-                mLightingTextureBuffer->setElement<lite3d_light_params>(light.second->getLight()->index(), 
+                mLightingParamsBuffer->setElement<lite3d_light_params>(light.second->getLight()->index(), 
                     &wpar);
                 light.second->getLight()->validate();
+                mLightsWorld[light.second->getLight()->index()] = wpar;
                 anyValidated = true;
             }
+
+            if (camera.inFrustum(mLightsWorld[light.second->getLight()->index()]))
+                indexPtr[indexCount++] = light.second->getLight()->index();
         }
         
+        // the first index contain index count, max 16k
+        *indexPtrBase = indexCount;
+
         if (anyValidated)
             Material::setIntGlobalParameter(getName() + "_numLights", mLights.size());
     }
@@ -427,11 +446,12 @@ namespace lite3dpp
 
         try
         {
-            reinterpret_cast<Scene *>(scene->userdata)->validateLightingBuffer();
+            Camera *cameraObj = reinterpret_cast<Camera *>(camera->userdata);
+            reinterpret_cast<Scene *>(scene->userdata)->validateLightingBuffer(*cameraObj);
             
             LITE3D_EXT_OBSERVER_NOTIFY_CHECK_2(reinterpret_cast<Scene *>(scene->userdata), beginSceneRender, 
                 reinterpret_cast<Scene *>(scene->userdata),
-                reinterpret_cast<Camera *>(camera->userdata));
+                cameraObj);
             LITE3D_EXT_OBSERVER_RETURN;
         }
         catch(std::exception &ex)

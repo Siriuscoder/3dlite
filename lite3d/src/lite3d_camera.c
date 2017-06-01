@@ -21,6 +21,7 @@
 #include <lite3d/lite3d_gl.h>
 #include <lite3d/lite3d_camera.h>
 #include <lite3d/lite3d_shader_params.h>
+#include <lite3d/lite3d_buffers_manip.h>
 
 static uint16_t gCurPolygonMode = 0;
 static uint8_t gBackFaceCullingOn = 0x99;
@@ -29,28 +30,8 @@ void lite3d_camera_update_view(lite3d_camera *camera)
 {
     SDL_assert(camera);
 
-    /* In OpenGL ES, GL_FILL is the only available polygon mode. */
-#ifndef GLES
-    if (gCurPolygonMode != camera->polygonMode)
-    {
-        glPolygonMode(GL_FRONT_AND_BACK, camera->polygonMode);
-        gCurPolygonMode = camera->polygonMode;
-    }
-#endif
-    if (gBackFaceCullingOn != camera->cullBackFaces)
-    {
-        if (camera->cullBackFaces)
-        {
-            glEnable(GL_CULL_FACE);
-            glCullFace(GL_BACK);
-        }
-        else
-        {
-            glDisable(GL_CULL_FACE);
-        }
-
-        gBackFaceCullingOn = camera->cullBackFaces;
-    }
+    lite3d_polygon_mode(camera->polygonMode);
+    lite3d_backface_culling(camera->cullBackFaces);
 
     /* camera link to node */
     lite3d_camera_link_to(camera, camera->linkNode, camera->linkType);
@@ -77,12 +58,12 @@ void lite3d_camera_ortho(lite3d_camera *camera, float near,
     SDL_assert(camera);
     memset(&camera->frustum, 0, sizeof(camera->frustum));
     camera->isOrtho = LITE3D_TRUE;
-    camera->projectionParams.ortho.near = near;
-    camera->projectionParams.ortho.far = far;
-    camera->projectionParams.ortho.left = left;
-    camera->projectionParams.ortho.right = right;
-    camera->projectionParams.ortho.bottom = bottom;
-    camera->projectionParams.ortho.top = top;
+    camera->projectionParams.near = near;
+    camera->projectionParams.far = far;
+    camera->projectionParams.left = left;
+    camera->projectionParams.right = right;
+    camera->projectionParams.bottom = bottom;
+    camera->projectionParams.top = top;
     kmMat4OrthographicProjection(&camera->projection, left, right, bottom, top, near, far);
     camera->cameraNode.invalidated = LITE3D_TRUE;
 }
@@ -92,11 +73,16 @@ void lite3d_camera_perspective(lite3d_camera *camera, float znear,
 {
     SDL_assert(camera);
     camera->isOrtho = LITE3D_FALSE;
-    camera->projectionParams.perspective.znear = znear;
-    camera->projectionParams.perspective.zfar = zfar;
-    camera->projectionParams.perspective.fovy = fovy;
-    camera->projectionParams.perspective.aspect = aspect;
+    camera->projectionParams.near = znear;
+    camera->projectionParams.far = zfar;
+    camera->projectionParams.fovy = fovy;
+    camera->projectionParams.aspect = aspect;
     kmMat4PerspectiveProjection(&camera->projection, fovy, aspect, znear, zfar);
+    camera->projectionParams.bottom = znear * (camera->projection.mat[9] - 1) / camera->projection.mat[5];
+    camera->projectionParams.top = znear * (camera->projection.mat[9] + 1) / camera->projection.mat[5];
+    camera->projectionParams.left = znear * (camera->projection.mat[8] - 1) / camera->projection.mat[0];
+    camera->projectionParams.right = znear * (camera->projection.mat[8] + 1) / camera->projection.mat[0];
+
     camera->cameraNode.invalidated = LITE3D_TRUE;
 }
 

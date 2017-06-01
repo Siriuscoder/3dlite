@@ -212,20 +212,17 @@ int lite3d_material_pass_is_empty(
     return pass->passNo == 0;
 }
 
-void lite3d_material_pass_render(lite3d_material *material, uint16_t no,
-    lite3d_pass_render_t passrender, void *data)
+lite3d_material_pass *lite3d_material_apply(lite3d_material *material, uint16_t no)
 {
     lite3d_material_pass *pass;
 
-    if (material->passesSize < no)
-        return;
-
     material->textureUnitsBinded = 0;
-    pass = &material->passes[no - 1];
+    pass = lite3d_material_get_pass(material, no);
 
+    SDL_assert(pass);
     /* ignode empty pass */
     if (pass->passNo == 0)
-        return;
+        return pass;
 
     /* bind current shander first */
     if (gActProg != pass->program)
@@ -246,7 +243,7 @@ void lite3d_material_pass_render(lite3d_material *material, uint16_t no,
 
     lite3d_blending(pass->blending);
     lite3d_blending_mode_set(pass->blendingMode);
-    passrender(pass, data);
+    return pass;
 }
 
 void lite3d_material_pass_set_params(lite3d_material *material,
