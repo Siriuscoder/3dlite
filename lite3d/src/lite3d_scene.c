@@ -24,6 +24,8 @@
 #include <lite3d/lite3d_buffers_manip.h>
 #include <lite3d/lite3d_scene.h>
 
+#include "lite3d_list.h"
+
 typedef struct _mqr_unit
 {
     lite3d_list_node queued;
@@ -260,17 +262,15 @@ static void mqr_unit_render(lite3d_scene *scene, _mqr_unit *mqrUnit, uint16_t pa
         mqrNode = LITE3D_MEMBERCAST(_mqr_node, mqrListNode, unit);
         if (lite3d_material_pass_is_blend(mqrUnit->material, pass))
         {
-            if (!mqr_node_approve(scene, mqrNode))
-                continue;
-            /* add to second stage */
-            LITE3D_ARR_ADD_ELEM(&scene->stageTwoNodes, _mqr_node *, mqrNode);
+            if (mqr_node_approve(scene, mqrNode) && (flags & LITE3D_RENDER_STAGE_SECOND))
+                /* add to second stage */
+                LITE3D_ARR_ADD_ELEM(&scene->stageTwoNodes, _mqr_node *, mqrNode);
         }
-        else if (flags & LITE3D_RENDER_STAGE_FIRST)
+        else
         {
-            if (!mqr_node_approve(scene, mqrNode))
-                continue;
-            /* add to first stage */
-            LITE3D_ARR_ADD_ELEM(&scene->stageOneNodes, _mqr_node *, mqrNode);
+            if (mqr_node_approve(scene, mqrNode) && (flags & LITE3D_RENDER_STAGE_FIRST))
+                /* add to first stage */
+                LITE3D_ARR_ADD_ELEM(&scene->stageOneNodes, _mqr_node *, mqrNode);
         }
     }
 
@@ -486,6 +486,8 @@ void lite3d_scene_purge(lite3d_scene *scene)
         lite3d_free_pooled(LITE3D_POOL_NO1, mqrUnit);
     }
 
+    lite3d_array_purge(&scene->seriesMatrixes);
+    lite3d_array_purge(&scene->stageOneNodes);
     lite3d_array_purge(&scene->stageTwoNodes);
     lite3d_array_purge(&scene->invalidatedUnits);
 }

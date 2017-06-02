@@ -43,7 +43,6 @@
             <in>vec3.c</in>
             <in>vec4.c</in>
           </df>
-          <in>lite3d_7z_loader.c</in>
           <in>lite3d_alloc.c</in>
           <in>lite3d_array.c</in>
           <in>lite3d_buffers_manip.c</in>
@@ -57,7 +56,6 @@
           <in>lite3d_main.c</in>
           <in>lite3d_material.c</in>
           <in>lite3d_mesh.c</in>
-          <in>lite3d_mesh_assimp_loader.c</in>
           <in>lite3d_mesh_codec.c</in>
           <in>lite3d_mesh_loader.c</in>
           <in>lite3d_misc.c</in>
@@ -71,7 +69,6 @@
           <in>lite3d_shader_params.c</in>
           <in>lite3d_shader_program.c</in>
           <in>lite3d_tbo.c</in>
-          <in>lite3d_texture_unit.c</in>
           <in>lite3d_timer.c</in>
           <in>lite3d_vao.c</in>
           <in>lite3d_vbo.c</in>
@@ -137,17 +134,12 @@
           <in>lite3dpp_buffer_mapper.cpp</in>
           <in>lite3dpp_camera.cpp</in>
           <in>lite3dpp_config_reader.cpp</in>
-          <in>lite3dpp_config_writer.cpp</in>
-          <in>lite3dpp_light_source.cpp</in>
-          <in>lite3dpp_main.cpp</in>
           <in>lite3dpp_manageable.cpp</in>
           <in>lite3dpp_material.cpp</in>
           <in>lite3dpp_mesh.cpp</in>
           <in>lite3dpp_render_target.cpp</in>
           <in>lite3dpp_resource.cpp</in>
           <in>lite3dpp_resource_manager.cpp</in>
-          <in>lite3dpp_scene.cpp</in>
-          <in>lite3dpp_scene_node.cpp</in>
           <in>lite3dpp_scene_object.cpp</in>
           <in>lite3dpp_script.cpp</in>
           <in>lite3dpp_script_as.cpp</in>
@@ -177,9 +169,6 @@
       <df name="samples">
         <df name="sample_cellwallerkiller">
           <in>lite3dpp_cellwallerkiller.cpp</in>
-        </df>
-        <df name="sample_common">
-          <in>lite3dpp_common.cpp</in>
         </df>
         <df name="sample_deferred_shading">
           <in>lite3dpp_main.cpp</in>
@@ -233,11 +222,8 @@
       </df>
       <df name="tools">
         <df name="mtool">
-          <in>mtool_command.cpp</in>
           <in>mtool_converter.cpp</in>
           <in>mtool_create_dirs.cpp</in>
-          <in>mtool_generator.cpp</in>
-          <in>mtool_m_info.cpp</in>
           <in>mtool_main.cpp</in>
           <in>mtool_utils.cpp</in>
         </df>
