@@ -180,19 +180,6 @@ static int mqr_node_approve(lite3d_scene *scene,
     SDL_assert(mqrNode->node);
     SDL_assert(mqrNode->matUnit);
     SDL_assert(mqrNode->matUnit->currentCamera);
-
-    if (mqrNode->node->invalidated)
-    {
-        /* recalc bounding volume if node begin invalidated (position or rotation changed)*/
-        lite3d_bounding_vol_translate(&mqrNode->boundingVol,
-            &mqrNode->meshChunk->boundingVol,
-            &mqrNode->node->worldView);
-    }
-
-    if (mqrNode->node->invalidated || mqrNode->matUnit->currentCamera->cameraNode.invalidated)
-    {
-        mqrNode->distanceToCamera = lite3d_camera_distance(mqrNode->matUnit->currentCamera, &mqrNode->boundingVol.sphereCenter);
-    }
     
     if (!mqrNode->node->renderable)
         return LITE3D_FALSE;
@@ -260,15 +247,29 @@ static void mqr_unit_render(lite3d_scene *scene, _mqr_unit *mqrUnit, uint16_t pa
         mqrListNode != &mqrUnit->nodes.l; mqrListNode = lite3d_list_next(mqrListNode))
     {
         mqrNode = LITE3D_MEMBERCAST(_mqr_node, mqrListNode, unit);
+        
+        if (mqrNode->node->invalidated)
+        {
+            /* recalc bounding volume if node begin invalidated (position or rotation changed)*/
+            lite3d_bounding_vol_translate(&mqrNode->boundingVol,
+                &mqrNode->meshChunk->boundingVol,
+                &mqrNode->node->worldView);
+        }
+
+        if (mqrNode->node->invalidated || mqrNode->matUnit->currentCamera->cameraNode.invalidated)
+        {
+            mqrNode->distanceToCamera = lite3d_camera_distance(mqrNode->matUnit->currentCamera, &mqrNode->boundingVol.sphereCenter);
+        }
+        
         if (lite3d_material_pass_is_blend(mqrUnit->material, pass))
         {
-            if (mqr_node_approve(scene, mqrNode) && (flags & LITE3D_RENDER_STAGE_SECOND))
+            if ((flags & LITE3D_RENDER_STAGE_SECOND) && mqr_node_approve(scene, mqrNode))
                 /* add to second stage */
                 LITE3D_ARR_ADD_ELEM(&scene->stageTwoNodes, _mqr_node *, mqrNode);
         }
         else
         {
-            if (mqr_node_approve(scene, mqrNode) && (flags & LITE3D_RENDER_STAGE_FIRST))
+            if ((flags & LITE3D_RENDER_STAGE_FIRST) && mqr_node_approve(scene, mqrNode))
                 /* add to first stage */
                 LITE3D_ARR_ADD_ELEM(&scene->stageOneNodes, _mqr_node *, mqrNode);
         }
