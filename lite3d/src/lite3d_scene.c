@@ -100,12 +100,12 @@ static void mqr_render_batch(lite3d_material_pass *pass, _mqr_node *mqrNode)
     scene->stats.verticesRendered += mqrNode->meshChunk->vao.verticesCount * mqrNode->instancesCount;
 }
 
-static int mqr_render_series_params(lite3d_vbo *params, uint32_t index, const void *param, size_t psize)
+static int mqr_render_series_params(lite3d_vbo *buffer, const void *param, size_t psize)
 {
     /* setup global parameters (model normal) */
-    if (((index+1) * psize) > params->size)
+    if (psize > buffer->size)
     {
-        if(!lite3d_vbo_extend(params, ((index+1) * psize) - params->size, LITE3D_VBO_DYNAMIC_DRAW))
+        if(!lite3d_vbo_extend(buffer, psize - buffer->size, LITE3D_VBO_DYNAMIC_DRAW))
         {
             SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "%s: Unable to extend buffer for store batch series",
                 LITE3D_CURRENT_FUNCTION);
@@ -113,7 +113,7 @@ static int mqr_render_series_params(lite3d_vbo *params, uint32_t index, const vo
         }
     }
     
-    if (!lite3d_vbo_subbuffer(params, param, index * psize, psize))
+    if (!lite3d_vbo_subbuffer(buffer, param, 0, psize))
     {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "%s: Unable to write batch series to buffer",
             LITE3D_CURRENT_FUNCTION);
@@ -122,7 +122,6 @@ static int mqr_render_series_params(lite3d_vbo *params, uint32_t index, const vo
 
     return LITE3D_TRUE;
 }
-
 
 static void mqr_render_batch_series(lite3d_material_pass *pass, _mqr_node *mqrNode, uint32_t continuedId, uint8_t batchCrop)
 {
@@ -136,13 +135,17 @@ static void mqr_render_batch_series(lite3d_material_pass *pass, _mqr_node *mqrNo
         mqrNode->meshChunk, mqrNode->matUnit->material))
             return;
 
-    if (!mqr_render_series_params(mqrNode->meshChunk->mesh->auxBuffer, continuedId,
-        &mqrNode->node->worldView, sizeof(kmMat4)))
-        return;
-
+    LITE3D_ARR_ADD_ELEM(&scene->seriesMatrixes, kmMat4, mqrNode->node->worldView);
     /* call rendering current chunk */
     if (batchCrop)
     {
+        if (!mqr_render_series_params(mqrNode->meshChunk->mesh->auxBuffer, 
+            scene->seriesMatrixes.data, scene->seriesMatrixes.size * scene->seriesMatrixes.elemSize))
+        {
+            lite3d_array_clean(&scene->seriesMatrixes);
+            return;
+        }
+
         /* bind meshChunk */
         if (scene->bindedMeshChunk != mqrNode->meshChunk)
         {
@@ -156,6 +159,7 @@ static void mqr_render_batch_series(lite3d_material_pass *pass, _mqr_node *mqrNo
         scene->stats.batchesCalled++;
         scene->stats.trianglesRendered += mqrNode->meshChunk->vao.elementsCount * (continuedId+1);
         scene->stats.verticesRendered += mqrNode->meshChunk->vao.verticesCount * (continuedId+1);
+        lite3d_array_clean(&scene->seriesMatrixes);
     }
 }
 
@@ -459,6 +463,7 @@ void lite3d_scene_init(lite3d_scene *scene)
     lite3d_array_init(&scene->stageOneNodes, sizeof(_mqr_node *), 2);
     lite3d_array_init(&scene->stageTwoNodes, sizeof(_mqr_node *), 2);
     lite3d_array_init(&scene->invalidatedUnits, sizeof(lite3d_scene_node *), 2);
+    lite3d_array_init(&scene->seriesMatrixes, sizeof(kmMat4), 10);
 }
 
 void lite3d_scene_purge(lite3d_scene *scene)

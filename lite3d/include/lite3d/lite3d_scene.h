@@ -59,6 +59,7 @@ typedef struct lite3d_scene
     lite3d_array stageOneNodes;
     lite3d_array stageTwoNodes;
     lite3d_array invalidatedUnits;
+    lite3d_array seriesMatrixes;
     lite3d_mesh_chunk *bindedMeshChunk;
     uint8_t instancingRender;
     void *userdata;
