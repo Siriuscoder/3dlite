@@ -16,12 +16,6 @@
       "Name":"viewMatrix"
     },
     {
-      "Name":"normalMatrix"
-    },
-    {
-      "Name":"modelMatrix"
-    },
-    {
       "Name":"diffuse",
       "TextureName":"vfloor03.texture",
       "TexturePath":"vault:textures/json/vfloor03.json",

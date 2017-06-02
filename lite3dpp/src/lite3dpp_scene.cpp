@@ -169,6 +169,7 @@ namespace lite3dpp
 
         mLights.insert(std::make_pair(light->getName(), light));
         rebuildLightingBuffer();
+
         return light;
     }
     
@@ -207,9 +208,6 @@ namespace lite3dpp
             mLightingParamsBuffer->extendTextureBuffer(sizeof(lite3d_light_params) * mLights.size() / 
                 mLightingParamsBuffer->getTexelSize());
 
-        if (mLightingIndexBuffer->textureBufferTexelsCount() < mLights.size()+1)
-            mLightingIndexBuffer->extendTextureBuffer(mLights.size()-mLightingIndexBuffer->textureBufferTexelsCount()+1);
-
         mLightsWorld.resize(mLights.size());
 
         for (auto &light : mLights)
@@ -225,11 +223,12 @@ namespace lite3dpp
         if (!mLightingParamsBuffer || !mLightingIndexBuffer || mLights.size() == 0)
             return;
 
-        BufferScopedMapper indexMapper = mLightingIndexBuffer->map(LITE3D_VBO_MAP_READ_WRITE);
-        uint16_t *indexPtrBase = indexMapper.getPtr<uint16_t>();
-        uint16_t *indexPtr = indexPtrBase + 1;
-        uint16_t indexCount = 0;
+        // check index buffer size, extend it if needed
+        if (mLightingIndexBuffer->textureBufferTexelsCount() < mLights.size()+1)
+            mLightingIndexBuffer->extendTextureBuffer(mLights.size()-mLightingIndexBuffer->textureBufferTexelsCount()+1);
+        mLightsIndexes.resize(mLights.size()+1);
 
+        uint16_t indexCount = 1;
         bool anyValidated = false;
         for (auto &light : mLights)
         {
@@ -244,11 +243,13 @@ namespace lite3dpp
             }
 
             if (camera.inFrustum(mLightsWorld[light.second->getLight()->index()]))
-                indexPtr[indexCount++] = light.second->getLight()->index();
+                mLightsIndexes[indexCount++] = light.second->getLight()->index();
         }
         
-        // the first index contain index count, max 16k
-        *indexPtrBase = indexCount;
+        // the first index contain indexes count, max 16k
+        mLightsIndexes[0] = mLightsIndexes.size()-1;
+        // upload indexes
+        mLightingIndexBuffer->setData(&mLightsIndexes[0], 0, mLightsIndexes.size() * sizeof(LightsIndexesStore::value_type));
 
         if (anyValidated)
             Material::setIntGlobalParameter(getName() + "_numLights", mLights.size());
@@ -344,6 +345,11 @@ namespace lite3dpp
             if(cameraJson.has(L"LookAt"))
                 camera->lookAt(cameraJson.getVec3(L"LookAt"));
         }
+    }
+
+    void Scene::instancingMode(bool flag)
+    {
+        mScene.instancingRender = flag ? 1 : 0;
     }
 
     int Scene::beginDrawBatch(struct lite3d_scene *scene, 

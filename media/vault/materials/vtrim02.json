@@ -16,12 +16,6 @@
       "Name":"viewMatrix"
     },
     {
-      "Name":"normalMatrix"
-    },
-    {
-      "Name":"modelMatrix"
-    },
-    {
       "Name":"diffuse",
       "TextureName":"vtrim02.texture",
       "TexturePath":"vault:textures/json/vtrim02.json",

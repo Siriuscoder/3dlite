@@ -16,12 +16,6 @@
       "Name":"viewMatrix"
     },
     {
-      "Name":"normalMatrix"
-    },
-    {
-      "Name":"modelMatrix"
-    },
-    {
       "Name":"diffuse",
       "TextureName":"vconcrete01.texture",
       "TexturePath":"vault:textures/json/vconcrete01.json",

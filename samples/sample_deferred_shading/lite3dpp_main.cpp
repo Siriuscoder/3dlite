@@ -32,6 +32,8 @@ public:
     {
         Scene *scene = getMain().getResourceManager()->queryResource<Scene>("Warship",
             "warship:scenes/warship_prepass.json");
+        scene->instancingMode(true);
+
         setMainCamera(scene->getCamera("MainCamera"));
         addFlashlight(scene);
         

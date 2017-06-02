@@ -3,13 +3,5 @@
     [
         "warship:shaders/sources/prepass.vs",
         "warship:shaders/sources/prepass.ps"
-    ],
-    
-    "AttributesOrder":
-    [
-        "vertex",
-        "normal",
-        "uv",
-        "tang"
     ]
 }

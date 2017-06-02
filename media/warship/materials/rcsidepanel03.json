@@ -16,12 +16,6 @@
       "Name":"viewMatrix"
     },
     {
-      "Name":"normalMatrix"
-    },
-    {
-      "Name":"modelMatrix"
-    },
-    {
       "Name":"diffuse",
       "TextureName":"rcsidepanel03.texture",
       "TexturePath":"warship:textures/json/rcsidepanel03.json",

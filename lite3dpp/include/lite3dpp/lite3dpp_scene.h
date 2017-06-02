@@ -37,6 +37,7 @@ namespace lite3dpp
         typedef stl<String, SceneObject::Ptr>::map Objects;
         typedef stl<String, LightSceneNode *>::map Lights;
         typedef stl<lite3d_light_params>::vector LightsStore;
+        typedef stl<uint16_t>::vector LightsIndexesStore;
 
 
         Scene(const String &name, 
@@ -58,6 +59,7 @@ namespace lite3dpp
         void removeCamera(const String &name);
         void removeAllObjects();
         void removeObject(const String &name);
+        void instancingMode(bool flag);
         
         LightSceneNode *addLightNode(LightSceneNode *light);
         LightSceneNode *getLightNode(const String &name) const;
@@ -108,6 +110,7 @@ namespace lite3dpp
         TextureBuffer *mLightingParamsBuffer;
         TextureBuffer *mLightingIndexBuffer;
         LightsStore mLightsWorld;
+        LightsIndexesStore mLightsIndexes;
     };
 }
 

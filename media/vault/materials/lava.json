@@ -16,12 +16,6 @@
       "Name":"viewMatrix"
     },
     {
-      "Name":"normalMatrix"
-    },
-    {
-      "Name":"modelMatrix"
-    },
-    {
       "Name":"animcounter",
       "Type":"float",
       "Value": 0,

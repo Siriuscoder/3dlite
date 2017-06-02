@@ -54,6 +54,8 @@ public:
         lite3dpp::Material::setIntGlobalParameter("FXAA", 1);
         // optimize: window clean not needed, because all pixels in last render target always be updated
         getMain().window()->setBuffersCleanBit(false, false, false);
+        // use instancing by default
+        mVaultScene->instancingMode(true);
     }
 
     // setup lighting at once before light compute scene begin rendering first time

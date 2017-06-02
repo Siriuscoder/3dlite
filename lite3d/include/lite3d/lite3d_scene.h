@@ -56,9 +56,11 @@ typedef struct lite3d_scene
     lite3d_scene_node rootNode;
     lite3d_scene_stats stats;
     lite3d_list materialRenderUnits;
-    lite3d_array sortedNodesByDistance;
+    lite3d_array stageOneNodes;
+    lite3d_array stageTwoNodes;
     lite3d_array invalidatedUnits;
     lite3d_mesh_chunk *bindedMeshChunk;
+    uint8_t instancingRender;
     void *userdata;
     int (*beginDrawBatch)(struct lite3d_scene *scene, 
         struct lite3d_scene_node *node, struct lite3d_mesh_chunk *meshChunk, struct lite3d_material *material);

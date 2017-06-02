@@ -52,6 +52,7 @@ typedef struct lite3d_mesh
     uint32_t version;
     lite3d_vbo vertexBuffer;
     lite3d_vbo indexBuffer;
+    lite3d_vbo *auxBuffer;
     size_t verticesCount;
     size_t elementsCount;
     size_t chunkCount;
@@ -69,13 +70,13 @@ typedef struct lite3d_mesh_chunk
     uint32_t materialIndex;
     uint8_t hasIndexes;
     lite3d_bounding_vol boundingVol;
+    lite3d_mesh *mesh;
 } lite3d_mesh_chunk;
 
 LITE3D_CEXPORT int lite3d_mesh_init(struct lite3d_mesh *mesh);
 LITE3D_CEXPORT void lite3d_mesh_purge(struct lite3d_mesh *mesh);
 LITE3D_CEXPORT int lite3d_mesh_extend(struct lite3d_mesh *mesh, 
     size_t verticesSize, size_t indexesSize, uint16_t access);
-LITE3D_CEXPORT void lite3d_mesh_draw(struct lite3d_mesh *mesh, size_t instancesCount);
 
 LITE3D_CEXPORT lite3d_mesh_chunk *lite3d_mesh_append_chunk(lite3d_mesh *mesh,
     const lite3d_mesh_layout *layout,
@@ -92,7 +93,8 @@ LITE3D_CEXPORT lite3d_mesh_chunk *lite3d_mesh_append_chunk(lite3d_mesh *mesh,
 LITE3D_CEXPORT int lite3d_mesh_chunk_init(struct lite3d_mesh_chunk *meshChunk, uint8_t indexed);
 LITE3D_CEXPORT void lite3d_mesh_chunk_purge(struct lite3d_mesh_chunk *meshChunk);
 LITE3D_CEXPORT void lite3d_mesh_chunk_bind(struct lite3d_mesh_chunk *meshChunk);
-LITE3D_CEXPORT void lite3d_mesh_chunk_draw(struct lite3d_mesh_chunk *meshChunk, size_t instancesCount);
+LITE3D_CEXPORT void lite3d_mesh_chunk_draw(struct lite3d_mesh_chunk *meshChunk);
+LITE3D_CEXPORT void lite3d_mesh_chunk_draw_instanced(struct lite3d_mesh_chunk *meshChunk, size_t instancesCount);
 LITE3D_CEXPORT void lite3d_mesh_chunk_unbind(struct lite3d_mesh_chunk *meshChunk);
 LITE3D_CEXPORT lite3d_mesh_chunk *lite3d_mesh_chunk_get_by_index(struct lite3d_mesh *mesh, 
     uint32_t materialIndex);

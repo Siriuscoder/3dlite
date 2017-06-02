@@ -26,12 +26,6 @@
       "Name":"viewMatrix"
     },
     {
-      "Name":"normalMatrix"
-    },
-    {
-      "Name":"modelMatrix"
-    },
-    {
       "Name":"Vault_numLights",
       "Type":"int",
       "Value": 0,

@@ -3,13 +3,5 @@
     [
         "vaultmat:shaders/sources/prepass.vs",
         "vaultmat:shaders/sources/prepass.ps,vaultmat:shaders/sources/def/illum.def"
-    ],
-    
-    "AttributesOrder":
-    [
-        "ivertex",
-        "inormal",
-        "iuv",
-        "tang"
     ]
 }
