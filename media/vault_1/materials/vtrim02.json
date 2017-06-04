@@ -1,0 +1,31 @@
+{
+  "Passes":[
+    {
+      "Pass":1.0000000000,
+      "Program":{
+        "Name":"prepass.program",
+        "Path":"vaultmat:shaders/json/prepass.json"
+      }
+    }
+  ],
+  "Uniforms":[
+    {
+      "Name":"projectionMatrix"
+    },
+    {
+      "Name":"viewMatrix"
+    },
+    {
+      "Name":"diffuse",
+      "TextureName":"vtrim02.texture",
+      "TexturePath":"vault:textures/json/vtrim02.json",
+      "Type":"sampler"
+    },
+    {
+      "Name":"normals",
+      "TextureName":"vtrim02_n.texture",
+      "TexturePath":"vault:textures/json/vtrim02_n.json",
+      "Type":"sampler"
+    }
+  ]
+}

@@ -1,0 +1,35 @@
+{
+    "Width": 0, // use screen wight
+    "Height": 0, // use screen height
+    "BackgroundColor": [0.0, 0.0, 0.0, 1.0],
+    "Priority": 1, // render first
+    "CleanColorBuf": true,
+    "CleanDepthBuf": true,
+    "CleanStencilBuf": false,
+    
+    "ColorAttachments":
+    {
+        "Attachments":
+        [
+            {
+                "TextureName": "fragmentWorldCoords.texture",
+                "TexturePath": "vault:textures/json/rgba16f.json"
+            },
+            {
+                "TextureName": "normalsWorld.texture",
+                "TexturePath": "vault:textures/json/rgba16f.json"
+            },
+            {
+                "TextureName": "diffuseMap.texture",
+                "TexturePath": "vault:textures/json/rgba.json"
+            }
+        ]
+    },
+    
+    "DepthAttachments":
+    {
+        "TextureName": "prepassDepth.texture",
+        "TexturePath": "vault:textures/json/depth.json"
+    }
+}
+

@@ -56,7 +56,7 @@ namespace lite3dpp
                 "{\"BufferFormat\": \"RGBA32F\", \"Dynamic\": true}");
             mLightingIndexBuffer = mMain->getResourceManager()->
                 queryResourceFromJson<TextureBuffer>(getName() + "_lightingIndexBuffer",
-                "{\"BufferFormat\": \"R16UI\", \"Dynamic\": true}");
+                "{\"BufferFormat\": \"R16I\", \"Dynamic\": true}");
         }
         catch(std::exception &ex)
         {
@@ -226,9 +226,9 @@ namespace lite3dpp
         // check index buffer size, extend it if needed
         if (mLightingIndexBuffer->textureBufferTexelsCount() < mLights.size()+1)
             mLightingIndexBuffer->extendTextureBuffer(mLights.size()-mLightingIndexBuffer->textureBufferTexelsCount()+1);
-        mLightsIndexes.resize(mLights.size()+1);
-
-        uint16_t indexCount = 1;
+        mLightsIndexes.clear();
+        mLightsIndexes.push_back(0); // reserve first index for size
+        
         bool anyValidated = false;
         for (auto &light : mLights)
         {
@@ -243,7 +243,7 @@ namespace lite3dpp
             }
 
             if (camera.inFrustum(mLightsWorld[light.second->getLight()->index()]))
-                mLightsIndexes[indexCount++] = light.second->getLight()->index();
+                mLightsIndexes.push_back(light.second->getLight()->index());
         }
         
         // the first index contain indexes count, max 16k

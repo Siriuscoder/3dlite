@@ -144,7 +144,7 @@ namespace lite3dpp
 
     bool Camera::inFrustum(const lite3d_bounding_vol &vol) const
     {
-        return true;
+        return lite3d_frustum_test_sphere(&mCamera.frustum, &vol) == LITE3D_TRUE;
     }
 
     bool Camera::inFrustum(const lite3d_light_params &lp) const

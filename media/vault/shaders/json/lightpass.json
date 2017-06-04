@@ -1,9 +1,9 @@
 {
     "Sources": 
     [
-        "vaultmat:shaders/sources/triangle.vs",
-        "vaultmat:shaders/sources/lightpass.ps",
-        "vaultmat:shaders/sources/blinn.ps"
+        "vaultmat:shaders/sources/triangle.vs,vaultmat:shaders/sources/def/version.def",
+        "vaultmat:shaders/sources/lightpass.ps,vaultmat:shaders/sources/def/version.def",
+        "vaultmat:shaders/sources/blinn.ps,vaultmat:shaders/sources/def/version.def"
     ],
     
     "AttributesOrder":

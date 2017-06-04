@@ -23,9 +23,6 @@
 #include <lite3d/lite3d_shader_params.h>
 #include <lite3d/lite3d_buffers_manip.h>
 
-static uint16_t gCurPolygonMode = 0;
-static uint8_t gBackFaceCullingOn = 0x99;
-
 void lite3d_camera_update_view(lite3d_camera *camera)
 {
     SDL_assert(camera);

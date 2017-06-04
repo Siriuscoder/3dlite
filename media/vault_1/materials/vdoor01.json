@@ -1,0 +1,59 @@
+{
+  "Passes":[
+    {
+      "Pass":1.0000000000,
+      "Program":{
+        "Name":"combine_blend.program",
+        "Path":"vaultmat:shaders/json/combine_blend.json"
+      },
+      "Blending":true,
+      //  
+      // Traditional blend algorithm:
+      // Orgb = Sa * Srgb + (1 - Sa) * Drgb
+      // Oa = 1 * Sa + 0 * Da = Sa
+      //
+      // Traditional blend algorithm with alpha blend: (TraditionalWithAlpha)
+      // Orgb = Sa * Srgb + (1 - Sa) * Drgb
+      // Oa = 1 * Sa + (1 - Sa) * Da
+      "BlendingMode":"traditional"
+    }
+  ],
+  "Uniforms":[
+    {
+      "Name":"projectionMatrix"
+    },
+    {
+      "Name":"viewMatrix"
+    },
+    {
+      "Name":"eye",
+      "Type":"v3",
+      "Value":[
+        0,0,0
+      ],
+      "Scope":"global"
+    },
+    {
+      "Name":"diffuse",
+      "TextureName":"vdoor01.texture",
+      "TexturePath":"vault:textures/json/vdoor01.json",
+      "Type":"sampler"
+    },
+    {
+      "Name":"normals",
+      "TextureName":"vdoor01_n.texture",
+      "TexturePath":"vault:textures/json/vdoor01_n.json",
+      "Type":"sampler"
+    },
+    {
+      "Name":"lightSources",
+      "TextureName": "Vault_lightingBufferObject",
+      "Type":"samplerBuffer"
+    },
+    {
+      "Name":"lightIndexes",
+      "TextureName": "Vault_lightingIndexBuffer",
+      "Type":"samplerBuffer"
+    }
+  ]
+}
