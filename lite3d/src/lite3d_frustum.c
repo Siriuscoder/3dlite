@@ -44,7 +44,7 @@ void lite3d_frustum_compute(struct lite3d_frustum *frustum,
     kmMat4ExtractPlane(&frustum->clipPlains[5], clip, KM_PLANE_NEAR);
 }
 
-int lite3d_frustum_test_sphere(struct lite3d_frustum *frustum,
+int lite3d_frustum_test_sphere(const struct lite3d_frustum *frustum,
     const struct lite3d_bounding_vol *vol)
 {
     int i;
@@ -58,7 +58,7 @@ int lite3d_frustum_test_sphere(struct lite3d_frustum *frustum,
     return LITE3D_TRUE;
 }
 
-int lite3d_frustum_test_box(struct lite3d_frustum *frustum,
+int lite3d_frustum_test_box(const struct lite3d_frustum *frustum,
     const struct lite3d_bounding_vol *vol)
 {
     int i, j;
@@ -77,7 +77,7 @@ int lite3d_frustum_test_box(struct lite3d_frustum *frustum,
     return LITE3D_TRUE;
 }
 
-int lite3d_frustum_test(struct lite3d_frustum *frustum,
+int lite3d_frustum_test(const struct lite3d_frustum *frustum,
     const struct lite3d_bounding_vol *vol)
 {
     SDL_assert(frustum);
@@ -167,7 +167,7 @@ void lite3d_bounding_vol_translate(struct lite3d_bounding_vol *volOut,
 }
 
 
-float lite3d_frustum_distance(struct lite3d_frustum *frustum, 
+float lite3d_frustum_distance(const struct lite3d_frustum *frustum, 
     const kmVec3 *point)
 {
     SDL_assert(frustum);
@@ -176,7 +176,7 @@ float lite3d_frustum_distance(struct lite3d_frustum *frustum,
     return kmPlaneDistance(&frustum->clipPlains[5], point);
 }
 
-float lite3d_frustum_distance_bounding_vol(struct lite3d_frustum *frustum, 
+float lite3d_frustum_distance_bounding_vol(const struct lite3d_frustum *frustum, 
     const struct lite3d_bounding_vol *vol)
 {
     SDL_assert(frustum);

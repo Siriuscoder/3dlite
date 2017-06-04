@@ -1,8 +1,8 @@
 {
     "Sources": 
     [
-        "vaultmat:shaders/sources/triangle.vs",
-        "vaultmat:shaders/sources/combine.ps"
+        "vaultmat:shaders/sources/triangle.vs,vaultmat:shaders/sources/def/version.def",
+        "vaultmat:shaders/sources/combine.ps,vaultmat:shaders/sources/def/version.def"
     ],
     
     "AttributesOrder":

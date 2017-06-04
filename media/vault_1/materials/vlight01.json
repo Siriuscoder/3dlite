@@ -1,0 +1,37 @@
+{
+  "Passes":[
+    {
+      "Pass":1.0000000000,
+      "Program":{
+        "Name":"prepass_illum.program",
+        "Path":"vaultmat:shaders/json/prepass_illum.json"
+      }
+    }
+  ],
+  "Uniforms":[
+    {
+      "Name":"projectionMatrix"
+    },
+    {
+      "Name":"viewMatrix"
+    },
+    {
+      "Name":"diffuse",
+      "TextureName":"vlight01.texture",
+      "TexturePath":"vault:textures/json/vlight01.json",
+      "Type":"sampler"
+    },
+    {
+      "Name":"glow",
+      "TextureName":"vlight01_g.texture",
+      "TexturePath":"vault:textures/json/vlight01_g.json",
+      "Type":"sampler"
+    },
+    {
+      "Name":"normals",
+      "TextureName":"vlight01_n.texture",
+      "TexturePath":"vault:textures/json/vlight01_n.json",
+      "Type":"sampler"
+    }
+  ]
+}
