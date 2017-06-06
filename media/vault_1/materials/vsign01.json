@@ -3,8 +3,8 @@
     {
       "Pass":1.0000000000,
       "Program":{
-        "Name":"combine_blend_illum.program",
-        "Path":"vaultmat:shaders/json/combine_blend_illum.json"
+        "Name":"prepass_illum.program",
+        "Path":"vaultmat:shaders/json/prepass_illum.json"
       },
       "Blending":true,
       //  

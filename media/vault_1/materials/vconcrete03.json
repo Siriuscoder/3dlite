@@ -26,6 +26,24 @@
       "TextureName":"vconcrete03_n.texture",
       "TexturePath":"vault:textures/json/vconcrete03_n.json",
       "Type":"sampler"
+    },
+    {
+      "Name":"lightSources",
+      "TextureName": "Vault_lightingBufferObject",
+      "Type":"samplerBuffer"
+    },
+    {
+      "Name":"lightIndexes",
+      "TextureName": "Vault_lightingIndexBuffer",
+      "Type":"samplerBuffer"
+    },
+    {
+      "Name":"eye",
+      "Type":"v3",
+      "Value":[
+        0,0,0
+      ],
+      "Scope":"global"
     }
   ]
 }

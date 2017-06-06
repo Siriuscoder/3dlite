@@ -1,8 +1,0 @@
-{
-    "Sources": 
-    [
-        "vaultmat:shaders/sources/prepass.vs,vaultmat:shaders/sources/def/version.def",
-        "vaultmat:shaders/sources/combine_blend.ps,vaultmat:shaders/sources/def/illum.def",
-        "vaultmat:shaders/sources/blinn.ps,vaultmat:shaders/sources/def/version.def"
-    ]
-}

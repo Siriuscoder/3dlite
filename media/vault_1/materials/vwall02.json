@@ -45,6 +45,16 @@
       "TextureName":"vwall02_n.texture",
       "TexturePath":"vault:textures/json/vwall02_n.json",
       "Type":"sampler"
+    },
+    {
+      "Name":"lightSources",
+      "TextureName": "Vault_lightingBufferObject",
+      "Type":"samplerBuffer"
+    },
+    {
+      "Name":"lightIndexes",
+      "TextureName": "Vault_lightingIndexBuffer",
+      "Type":"samplerBuffer"
     }
   ]
 }
