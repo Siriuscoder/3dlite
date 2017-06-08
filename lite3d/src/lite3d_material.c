@@ -110,10 +110,10 @@ lite3d_material_pass* lite3d_material_add_pass(
 
         material->passes = pass;
         material->passesCapacity = no * 2;
-        material->passesSize = no;
     }
 
     pass = &material->passes[no - 1];
+    material->passesSize = no;
     lite3d_material_pass_init(pass);
 
     pass->passNo = no;

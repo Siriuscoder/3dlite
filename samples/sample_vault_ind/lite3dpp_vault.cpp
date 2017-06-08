@@ -46,6 +46,7 @@ public:
         lite3dpp::Material::setIntGlobalParameter("FXAA", 1);
         // optimize: window clean not needed, because all pixels in last render target always be updated
         getMain().window()->setBuffersCleanBit(false, false, false);
+        getMain().window()->depthTestFunc(LITE3D_TEST_LEQUAL);
         // use instancing by default
         mVaultScene->instancingMode(true);
     }

@@ -10,11 +10,11 @@
     // Video settings
     // Window size, caption, color settings, etc
     "VideoSettings": {
-        "Width": 800,
-        "Height": 600,
+        "Width": 0,
+        "Height": 0,
         "Caption": "Vault Scene",
         "ColorBits": 24,
-        "Fullscreen": false,
+        "Fullscreen": true,
         "MSAA": 1,
         "VSync": false
     },
