@@ -19,13 +19,13 @@
                     "Name": "RenderDepth",
                     "Path": "vaultmat:targets/depth.json",
                     "Priority": 0,
-                    "TexturePass": 1,
+                    "TexturePass": 2,
                     "RenderSecondStage": false,
                     "DepthTest": true,
                     "ColorOutput": false,
                     "DepthOutput": true
                 },
-                // draw only non transparent objects and calculate lighting
+                // draw all objects and calculate lighting
                 {
                     "Name": "RenderDirect",
                     "Path": "vaultmat:targets/combine.json",

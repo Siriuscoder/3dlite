@@ -1,12 +1,15 @@
 uniform sampler2D diffuse;
 uniform sampler2D normals;
+uniform samplerBuffer lightSources;
+uniform isamplerBuffer lightIndexes;
+uniform vec3 eye;
+
 #ifdef CALC_ILLUM
 uniform sampler2D glow;
 #endif
 
 #ifdef CALC_PARALLAX
 uniform sampler2D depth;
-uniform vec3 eye;
 uniform float pscale;
 #endif
 
@@ -14,6 +17,18 @@ in vec2 iuv;
 in vec3 ivv;
 in mat3 itbn;
 in vec3 wnorm;
+
+const vec3 ambient = vec3(0.05, 0.05, 0.05);
+const float wrapAroundFactor = 0.1;
+#ifdef GLASS
+const float specPower = 180.0;
+#else
+const float specPower = 40.0;
+#endif
+
+vec3 blinn_multiple(samplerBuffer source, isamplerBuffer indexes, vec3 ambient, vec3 fragPos, 
+    vec3 fragNormal, vec3 eye, float specularFactor, 
+    float wrapAroundFactor, float specPower, inout vec3 linearSpec);
 
 bool vec3zero(vec3 vec)
 {
@@ -69,19 +84,23 @@ void main()
 #endif
 
     // sampling diffuse color 
-    vec4 fragDiffuse = vec4(texture2D(diffuse, tc).rgb, 0.0);
+    vec4 fragDiffuse = texture2D(diffuse, tc);
 
 #ifdef CALC_ILLUM
     // sampling glow texture and check colors
     vec3 fragGlow = texture2D(glow, tc).rgb;
     if (!vec3zero(fragGlow))
     {
-        fragDiffuse = vec4(fragGlow, 1.0);
+        gl_FragColor = vec4(fragGlow + (fragDiffuse.rgb/3), fragDiffuse.a);
+        return;
     }
 #endif
 
     // sampling normal from normal map
     vec4 nval = texture2D(normals, tc);
+#ifdef GLASS
+    nval.w = 2.5;
+#endif
     // put normal in [-1,1] range in tangent space 
     // and trasform normal to world space 
     vec3 nw = normalize(itbn * normalize(2*nval.rgb-1));
@@ -90,7 +109,13 @@ void main()
     if (vec3zero(nw))
         nw = wnorm;
 
-    gl_FragData[0] = vec4(ivv, gl_FragCoord.z / gl_FragCoord.w);
-    gl_FragData[1] = vec4(nw, nval.a);
-    gl_FragData[2] = fragDiffuse;
+    vec3 linearSpec;
+    vec3 linear = blinn_multiple(lightSources, lightIndexes, ambient, ivv, nw,
+        eye, nval.w, wrapAroundFactor, specPower, linearSpec);
+
+#ifdef GLASS
+    fragDiffuse.a = mix(fragDiffuse.a, 1.0, length(linearSpec.rgb));
+#endif
+
+    gl_FragColor = vec4(linear * fragDiffuse.rgb, fragDiffuse.a);
 }

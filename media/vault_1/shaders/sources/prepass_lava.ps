@@ -8,8 +8,5 @@ in vec3 wnorm;
 void main()
 {
     // sampling diffuse color 
-    vec4 fragDiffuse = vec4(texture2D(diffuse, vec2(iuv.x, iuv.y + animcounter)).rgb, 1.0);
-    gl_FragData[0] = vec4(ivv, gl_FragCoord.z / gl_FragCoord.w);
-    gl_FragData[1] = vec4(wnorm, 0);
-    gl_FragData[2] = fragDiffuse;
+    gl_FragColor = vec4(texture2D(diffuse, vec2(iuv.x, iuv.y + animcounter)).rgb, 1.0);
 }

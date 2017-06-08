@@ -1,10 +1,31 @@
 {
   "Passes":[
     {
-      "Pass":1.0000000000,
+      "Pass":1,
       "Program":{
         "Name":"lava.program",
         "Path":"vaultmat:shaders/json/lava.json"
+      },
+      "Uniforms":[
+        {
+          "Name":"animcounter",
+          "Type":"float",
+          "Value": 0,
+          "Scope":"global"
+        },
+        {
+          "Name":"diffuse",
+          "TextureName":"lava.texture",
+          "TexturePath":"vault:textures/json/lava.json",
+          "Type":"sampler"
+        }
+      ]
+    },
+    {
+      "Pass":2,
+      "Program":{
+        "Name":"prepass_depth.program",
+        "Path":"vaultmat:shaders/json/prepass_depth.json"
       }
     }
   ],
@@ -14,18 +35,6 @@
     },
     {
       "Name":"viewMatrix"
-    },
-    {
-      "Name":"animcounter",
-      "Type":"float",
-      "Value": 0,
-      "Scope":"global"
-    },
-    {
-      "Name":"diffuse",
-      "TextureName":"lava.texture",
-      "TexturePath":"vault:textures/json/lava.json",
-      "Type":"sampler"
     }
   ]
 }
