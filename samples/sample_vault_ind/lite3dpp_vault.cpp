@@ -33,13 +33,10 @@ public:
 
     void createScene() override
     {
-        // load main scene as precompute step
+        // load main scene, direct render depth and then calculate lighting
         mVaultScene = getMain().getResourceManager()->queryResource<Scene>("Vault",
-            "vaultmat:scenes/prepass.json");
+            "vaultmat:scenes/directrender.json");
         setMainCamera(mVaultScene->getCamera("MainCamera"));
-        // Scene that combines lightmap from previous step and textures and draw all transparent objects at end of step.
-        getMain().getResourceManager()->queryResource<Scene>("VaultCombineStep",
-            "vaultmat:scenes/combine.json");
         // postprocess step, fxaa, gamma correcion, draw directly info window. 
         getMain().getResourceManager()->queryResource<Scene>("VaultPostprocessStep",
             "vaultmat:scenes/postprocess.json");

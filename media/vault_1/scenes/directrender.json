@@ -1,0 +1,50 @@
+{
+    "Cameras":
+    [
+        {
+            "Name": "MainCamera",
+
+            "Position": [0,380,140],
+            "LookAt": [0,0,140],
+            "Perspective": 
+            {
+                "Znear": 10,
+                "Zfar": 5000,
+                "Fov": 65
+            },
+            "RenderTargets":
+            [
+                // draw only non transparent objects to depth
+                {
+                    "Name": "RenderDepth",
+                    "Path": "vaultmat:targets/depth.json",
+                    "Priority": 0,
+                    "TexturePass": 1,
+                    "RenderSecondStage": false,
+                    "DepthTest": true,
+                    "ColorOutput": false,
+                    "DepthOutput": true
+                },
+                // draw only non transparent objects and calculate lighting
+                {
+                    "Name": "RenderDirect",
+                    "Path": "vaultmat:targets/combine.json",
+                    "Priority": 0,
+                    "TexturePass": 1,
+                    "DepthTest": true,
+                    "ColorOutput": true,
+                    "DepthOutput": true
+                }
+            ]
+        }
+    ],
+    
+    "Objects":
+    [
+        {
+            "Name": "Vault",
+            "Object": "vault:objects/vault_static.json"
+        }
+    ]
+}
+
