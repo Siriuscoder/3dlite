@@ -18,13 +18,8 @@ in vec3 ivv;
 in mat3 itbn;
 in vec3 wnorm;
 
-<<<<<<< HEAD
 const vec3 ambient = vec3(0.03, 0.03, 0.03);
 const float wrapAroundFactor = 0.04;
-=======
-const vec3 ambient = vec3(0.05, 0.05, 0.05);
-const float wrapAroundFactor = 0.1;
->>>>>>> 616633622128311494559a2b5823d8821f13bfa6
 #ifdef GLASS
 const float specPower = 180.0;
 #else
@@ -103,13 +98,6 @@ void main()
 
     // sampling normal from normal map
     vec4 nval = texture2D(normals, tc);
-#ifdef GLASS
-<<<<<<< HEAD
-    //nval.w = 2.5;
-=======
-    nval.w = 2.5;
->>>>>>> 616633622128311494559a2b5823d8821f13bfa6
-#endif
     // put normal in [-1,1] range in tangent space 
     // and trasform normal to world space 
     vec3 nw = normalize(itbn * normalize(2*nval.rgb-1));
@@ -120,11 +108,7 @@ void main()
 
     vec3 linearSpec;
     vec3 linear = blinn_multiple(lightSources, lightIndexes, ambient, ivv, nw,
-<<<<<<< HEAD
         eye, nval.w * 2, wrapAroundFactor, specPower, linearSpec);
-=======
-        eye, nval.w, wrapAroundFactor, specPower, linearSpec);
->>>>>>> 616633622128311494559a2b5823d8821f13bfa6
 
 #ifdef GLASS
     fragDiffuse.a = mix(fragDiffuse.a, 1.0, length(linearSpec.rgb));
