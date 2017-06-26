@@ -28,7 +28,8 @@ public:
     Vault() : 
         mGammaFactor(1.0f),
         mVaultScene(NULL),
-        mAnimCounter(0)
+        mAnimCounter(0),
+        mAnimPi(0)
     {}
 
     void createScene() override
@@ -49,6 +50,9 @@ public:
         getMain().window()->depthTestFunc(LITE3D_TEST_LEQUAL);
         // use instancing by default
         mVaultScene->instancingMode(true);
+
+        mReactLamp01 = mVaultScene->getLightNode("ReactorLamp_01.node");
+        mReactLamp02 = mVaultScene->getLightNode("ReactorLamp_02.node");
     }
     
     void timerTick(lite3d_timer *timerid) override
@@ -58,8 +62,16 @@ public:
         
         if (timerid == getMain().getFixedUpdateTimer())
         {
-            mAnimCounter = mAnimCounter >= 1.0f ? 0.0f : mAnimCounter + 0.005f;           
+            mAnimCounter = mAnimCounter >= 1.0f ? 0.0f : mAnimCounter + 0.005f;
+            mAnimPi = mAnimPi >= 2 * M_PI ? 0.0f : mAnimPi + 0.23f;
+            
             lite3dpp::Material::setFloatGlobalParameter("animcounter", mAnimCounter);
+
+            kmVec4 attenuation = mReactLamp01->getLight()->getAttenuation();
+            attenuation.x = (cos(mAnimPi) + 1) / 2;
+            attenuation.y = attenuation.x / 100;
+            mReactLamp01->getLight()->setAttenuation(attenuation);
+            mReactLamp02->getLight()->setAttenuation(attenuation);
         }
     }
 
@@ -96,6 +108,9 @@ private:
     float mGammaFactor;
     Scene *mVaultScene;
     float mAnimCounter;
+    float mAnimPi;
+    LightSceneNode *mReactLamp01;
+    LightSceneNode *mReactLamp02;
 };
 
 }}

@@ -143,6 +143,11 @@ void Sample::processEvent(SDL_Event *e)
     {
         mMainCamera->rotateZ((e->motion.x - mCenterXPos) * 0.003f);
         mMainCamera->pitch((e->motion.y - mCenterYPos) * 0.003f);
+        // rotation limitation
+        //float pangle = mMainCamera->getPitch();
+        //if (pangle > M_PI || pangle < 0)
+        //    mMainCamera->pitch(-(e->motion.y - mCenterYPos) * 0.003f);
+
         lite3d_video_set_mouse_pos(mCenterXPos, mCenterYPos);
         mainCameraChanged();
     }

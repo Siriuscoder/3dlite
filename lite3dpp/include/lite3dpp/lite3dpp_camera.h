@@ -72,6 +72,9 @@ namespace lite3dpp
         void yaw(float angle);
         void pitch(float angle);
         void roll(float angle);
+        float getYaw() const;
+        float getPitch() const;
+        float getRoll() const;
         void rotateY(float angle);
         void rotateX(float angle);
         void rotateZ(float angle);

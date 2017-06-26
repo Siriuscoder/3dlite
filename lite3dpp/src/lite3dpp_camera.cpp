@@ -157,5 +157,20 @@ namespace lite3dpp
         volToCheck.sphereCenter.z = lp.block1.y;
         return inFrustum(volToCheck);
     }
+
+    float Camera::getYaw() const
+    {
+        return kmQuaternionGetYaw(&mCamera.cameraNode.rotation);
+    }
+
+    float Camera::getPitch() const
+    {
+        return kmQuaternionGetPitch(&mCamera.cameraNode.rotation);
+    }
+
+    float Camera::getRoll() const
+    {
+        return kmQuaternionGetRoll(&mCamera.cameraNode.rotation);
+    }
 }
 

@@ -30,6 +30,7 @@ static uint8_t gDepthOutOn = 0xff;
 static uint8_t gStencilOutOn = 0xff;
 static uint16_t gPolygonMode = 0;
 static uint8_t gBackFaceCullingOn = 0x99;
+static uint32_t gDeptTestFunc = 0;
 
 void lite3d_depth_test(uint8_t on)
 {
@@ -42,7 +43,11 @@ void lite3d_depth_test(uint8_t on)
 
 void lite3d_depth_test_func(uint32_t func)
 {
-    glDepthFunc(func);
+    if (func != gDeptTestFunc)
+    {
+        glDepthFunc(func);
+        gDeptTestFunc = func;
+    }
 }
 
 void lite3d_stencil_test(uint8_t on)

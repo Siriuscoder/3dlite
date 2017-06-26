@@ -18,6 +18,7 @@ in vec3 ivv;
 in mat3 itbn;
 in vec3 wnorm;
 
+const vec3 fogColor = vec3(0.0, 0.95, 0.89);
 const vec3 ambient = vec3(0.03, 0.03, 0.03);
 const float wrapAroundFactor = 0.04;
 #ifdef GLASS
@@ -74,6 +75,16 @@ vec2 ParallaxMapping(vec2 tc, vec3 viewDir)
 }
 #endif
 
+vec3 fogFunc(vec3 frag, vec3 fc)
+{
+    const float density = 0.0003;
+    const float LOG2 = 1.442695;
+
+    float zfactor = gl_FragCoord.z / gl_FragCoord.w;
+    float fogFactor = clamp(exp2(-density * density * zfactor * zfactor * LOG2), 0.0, 1.0);
+    return mix(fc, frag, fogFactor);
+}
+
 void main()
 {
     vec2 tc = iuv;
@@ -91,7 +102,7 @@ void main()
     vec3 fragGlow = texture2D(glow, tc).rgb;
     if (!vec3zero(fragGlow))
     {
-        gl_FragColor = vec4(fragGlow + (fragDiffuse.rgb/3), fragDiffuse.a);
+        gl_FragColor = vec4(fogFunc(fragGlow + (fragDiffuse.rgb/3), fogColor), fragDiffuse.a);
         return;
     }
 #endif
@@ -114,5 +125,6 @@ void main()
     fragDiffuse.a = mix(fragDiffuse.a, 1.0, length(linearSpec.rgb));
 #endif
 
-    gl_FragColor = vec4(linear * fragDiffuse.rgb, fragDiffuse.a);
+    /* calculate fog factor */
+    gl_FragColor = vec4(fogFunc(linear * fragDiffuse.rgb, fogColor), fragDiffuse.a);
 }
