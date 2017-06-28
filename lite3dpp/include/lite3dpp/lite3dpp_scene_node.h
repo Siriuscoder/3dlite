@@ -51,12 +51,17 @@ namespace lite3dpp
         
 
         void setPosition(const kmVec3 &position);
+        void setPosX(float x);
+        void setPosY(float y);
+        void setPosZ(float z);
         void move(const kmVec3 &position);
         void setRotation(const kmQuaternion &quat);
         void rotate(const kmQuaternion &quat);
         void rotateAngle(const kmVec3 &axis, float angle);
         void scale(const kmVec3 &scale);
         void setTransform(const kmMat4 &mat);
+        void setVisible(bool flag);
+        bool isVisible() const;
 
         virtual void addToScene(Scene *scene);
         virtual void removeFromScene(Scene *scene);

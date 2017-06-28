@@ -63,10 +63,11 @@ public:
     {
         SDL_assert(mVaultScene);
         /* check scene already fullup */
-        if (scene->getObjects().size() > 0)
-            return true;;
-
-        setupLightPassScene(mVaultScene, scene);
+        if (scene->getObjects().size() == 0)
+            setupLightPassScene(mVaultScene, scene);
+        
+        setLightLayersVisibility(mVaultScene, scene);
+        
         return true;
     }
 
@@ -75,6 +76,20 @@ public:
         /* disable lightpass after lightmap recalc complete */
         SDL_assert(mLightComputeStep);
         mLightComputeStep->disable();
+    }
+    
+    void setLightLayersVisibility(Scene *prepass, Scene *scene)
+    {
+        for (const auto &light : prepass->getLights())
+        {
+            SceneObject *lo = scene->getObject(light.first);
+            SDL_assert(lo);
+            
+            if (light.second->isVisible())
+                lo->enable();
+            else
+                lo->disable();
+        }       
     }
     
     void setupLightPassScene(Scene *prepass, Scene *scene)

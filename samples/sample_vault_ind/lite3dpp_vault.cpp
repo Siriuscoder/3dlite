@@ -53,6 +53,9 @@ public:
 
         mReactLamp01 = mVaultScene->getLightNode("ReactorLamp_01.node");
         mReactLamp02 = mVaultScene->getLightNode("ReactorLamp_02.node");
+        mMinigun = mVaultScene->getObject("Minigun");
+        mGatling = mVaultScene->getObject("Gatling");
+        mLazer = mVaultScene->getObject("Lazer");
     }
     
     void timerTick(lite3d_timer *timerid) override
@@ -72,6 +75,17 @@ public:
             attenuation.y = attenuation.x / 100;
             mReactLamp01->getLight()->setAttenuation(attenuation);
             mReactLamp02->getLight()->setAttenuation(attenuation);
+            
+            float soarDelta = cos(mAnimPi) * 5;
+            mGatling->getRoot()->rotateAngle(KM_VEC3_POS_Z, 0.05f);
+            mGatling->getRoot()->setPosZ(-225 + soarDelta);
+            
+            mMinigun->getRoot()->rotateAngle(KM_VEC3_POS_Z, 0.05f);
+            mMinigun->getRoot()->setPosZ(-225 + soarDelta);
+            mMinigun->getNode("MinigunBurrel.node")->rotateAngle(KM_VEC3_POS_X, 0.23f);
+            
+            mLazer->getRoot()->rotateAngle(KM_VEC3_POS_Z, 0.05f);
+            mLazer->getRoot()->setPosZ(-225 + soarDelta);
         }
     }
 
@@ -111,6 +125,9 @@ private:
     float mAnimPi;
     LightSceneNode *mReactLamp01;
     LightSceneNode *mReactLamp02;
+    SceneObject *mMinigun;
+    SceneObject *mGatling;
+    SceneObject *mLazer;
 };
 
 }}

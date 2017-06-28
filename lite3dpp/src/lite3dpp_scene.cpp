@@ -243,7 +243,14 @@ namespace lite3dpp
             }
 
             if (camera.inFrustum(mLightsWorld[light.second->getLight()->index()]))
+            {
+                light.second->setVisible(true);
                 mLightsIndexes.push_back(light.second->getLight()->index());
+            }
+            else
+            {
+                light.second->setVisible(false);
+            }
         }
         
         // the first index contain indexes count, max 16k

@@ -43,6 +43,7 @@
             <in>vec3.c</in>
             <in>vec4.c</in>
           </df>
+          <in>lite3d_7z_loader.c</in>
           <in>lite3d_alloc.c</in>
           <in>lite3d_array.c</in>
           <in>lite3d_buffers_manip.c</in>
@@ -70,6 +71,7 @@
           <in>lite3d_shader_params.c</in>
           <in>lite3d_shader_program.c</in>
           <in>lite3d_tbo.c</in>
+          <in>lite3d_texture_unit.c</in>
           <in>lite3d_timer.c</in>
           <in>lite3d_vao.c</in>
           <in>lite3d_vbo.c</in>
@@ -135,6 +137,8 @@
           <in>lite3dpp_buffer_mapper.cpp</in>
           <in>lite3dpp_camera.cpp</in>
           <in>lite3dpp_config_reader.cpp</in>
+          <in>lite3dpp_config_writer.cpp</in>
+          <in>lite3dpp_light_source.cpp</in>
           <in>lite3dpp_main.cpp</in>
           <in>lite3dpp_manageable.cpp</in>
           <in>lite3dpp_material.cpp</in>
@@ -536,6 +540,10 @@
         <cTool flags="3">
         </cTool>
       </item>
+      <item path="lite3d/src/lite3d_7z_loader.c" ex="false" tool="0" flavor2="3">
+        <cTool flags="3">
+        </cTool>
+      </item>
       <item path="lite3d/src/lite3d_alloc.c" ex="false" tool="0" flavor2="3">
         <cTool flags="3">
         </cTool>
@@ -644,6 +652,10 @@
         </cTool>
       </item>
       <item path="lite3d/src/lite3d_tbo.c" ex="false" tool="0" flavor2="3">
+        <cTool flags="3">
+        </cTool>
+      </item>
+      <item path="lite3d/src/lite3d_texture_unit.c" ex="false" tool="0" flavor2="3">
         <cTool flags="3">
         </cTool>
       </item>
@@ -939,6 +951,20 @@
         </ccTool>
       </item>
       <item path="lite3dpp/src/lite3dpp_config_reader.cpp"
+            ex="false"
+            tool="1"
+            flavor2="8">
+        <ccTool flags="1">
+        </ccTool>
+      </item>
+      <item path="lite3dpp/src/lite3dpp_config_writer.cpp"
+            ex="false"
+            tool="1"
+            flavor2="8">
+        <ccTool flags="1">
+        </ccTool>
+      </item>
+      <item path="lite3dpp/src/lite3dpp_light_source.cpp"
             ex="false"
             tool="1"
             flavor2="8">

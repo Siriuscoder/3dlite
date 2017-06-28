@@ -190,12 +190,14 @@ static int mqr_node_approve(lite3d_scene *scene,
     /* frustum test */
     if (mqrNode->node->frustumTest && !lite3d_frustum_test(&mqrNode->matUnit->currentCamera->frustum, &mqrNode->boundingVol))
     {
+        mqrNode->node->visible = LITE3D_FALSE;
         if (scene->nodeOutOfFrustum)
             scene->nodeOutOfFrustum(scene, mqrNode->node,
             mqrNode->meshChunk, mqrNode->matUnit->material, &mqrNode->boundingVol, mqrNode->matUnit->currentCamera);
         return LITE3D_FALSE;
     }
     
+    mqrNode->node->visible = LITE3D_TRUE;
     if (mqrNode->node->frustumTest && scene->nodeInFrustum)
         scene->nodeInFrustum(scene, mqrNode->node,
         mqrNode->meshChunk, mqrNode->matUnit->material, &mqrNode->boundingVol, mqrNode->matUnit->currentCamera);
