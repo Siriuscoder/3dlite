@@ -38,6 +38,9 @@ public:
         mVaultScene = getMain().getResourceManager()->queryResource<Scene>("Vault",
             "vaultmat:scenes/directrender.json");
         setMainCamera(mVaultScene->getCamera("MainCamera"));
+        // init flashlight
+        addFlashlight(mVaultScene);
+
         // postprocess step, fxaa, gamma correcion, draw directly info window. 
         getMain().getResourceManager()->queryResource<Scene>("VaultPostprocessStep",
             "vaultmat:scenes/postprocess.json");
@@ -62,7 +65,8 @@ public:
     {
         Sample::timerTick(timerid);
         lite3dpp::Material::setFloatv3GlobalParameter("eye", getMainCamera().getPosition());
-        
+        mFlashLight->setPosition(getMainCamera().getPosition());
+
         if (timerid == getMain().getFixedUpdateTimer())
         {
             mAnimCounter = mAnimCounter >= 1.0f ? 0.0f : mAnimCounter + 0.005f;
@@ -87,6 +91,27 @@ public:
             mLazer->getRoot()->rotateAngle(KM_VEC3_POS_Z, 0.05f);
             mLazer->getRoot()->setPosZ(-225 + soarDelta);
         }
+    }
+
+    void addFlashlight(Scene *scene)
+    {
+        kmVec3 spotFactor = { 0.80f, 1.0f, 0.0f };
+        kmVec4 attenuation = { 0.12, 0.005, 0.00002, 1000.0f };
+        String flashLightParams = ConfigurationWriter().set(L"Name", "FlashLight.node").set(L"Light", 
+            ConfigurationWriter().set(L"Ambient", KM_VEC3_ZERO)
+            .set(L"Diffuse", KM_VEC3_ONE)
+            .set(L"Position", KM_VEC3_ZERO)
+            .set(L"Name", "FlashLight")
+            .set(L"Specular", KM_VEC3_ONE)
+            .set(L"SpotDirection", KM_VEC3_NEG_Z)
+            .set(L"Type", "Spot")
+            .set(L"SpotFactor", spotFactor)
+            .set(L"Attenuation", attenuation)).write(true);
+
+        mFlashLight.reset(new LightSceneNode(ConfigurationReader(flashLightParams.data(), flashLightParams.size()), NULL, &getMain()));
+        mFlashLight->addToScene(scene);
+        mFlashLight->getLight()->enabled(false);
+        mFlashLight->frustumTest(false);
     }
 
     void processEvent(SDL_Event *e) override
@@ -114,6 +139,16 @@ public:
                 fxaaEnabled = !fxaaEnabled;
                 lite3dpp::Material::setIntGlobalParameter("FXAA", fxaaEnabled ? 1 : 0);
             }
+            else if (e->key.keysym.sym == SDLK_l)
+            {
+                static bool flashLightEnabled = false;
+                flashLightEnabled = !flashLightEnabled;
+                mFlashLight->getLight()->enabled(flashLightEnabled);
+            }
+        }
+        else if (e->type == SDL_MOUSEMOTION)
+        {
+            mFlashLight->setRotation(getMainCamera().getRotation());
         }
     }
     
@@ -128,6 +163,7 @@ private:
     SceneObject *mMinigun;
     SceneObject *mGatling;
     SceneObject *mLazer;
+    std::unique_ptr<LightSceneNode> mFlashLight;
 };
 
 }}

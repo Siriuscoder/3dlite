@@ -242,7 +242,7 @@ namespace lite3dpp
                 anyValidated = true;
             }
 
-            if (camera.inFrustum(mLightsWorld[light.second->getLight()->index()]))
+            if (!light.second->frustumTest() || camera.inFrustum(mLightsWorld[light.second->getLight()->index()]))
             {
                 light.second->setVisible(true);
                 mLightsIndexes.push_back(light.second->getLight()->index());

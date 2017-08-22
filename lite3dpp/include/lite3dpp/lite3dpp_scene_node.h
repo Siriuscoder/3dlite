@@ -48,6 +48,8 @@ namespace lite3dpp
         { return &mNode; }
         inline void frustumTest(bool flag)
         { mNode.frustumTest = flag ? LITE3D_TRUE : LITE3D_FALSE; }
+        inline const bool frustumTest() const
+        { return mNode.frustumTest == LITE3D_TRUE; }
         
 
         void setPosition(const kmVec3 &position);

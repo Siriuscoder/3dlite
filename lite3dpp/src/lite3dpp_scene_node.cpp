@@ -125,7 +125,7 @@ namespace lite3dpp
     
     bool SceneNode::isVisible() const
     {
-        return mNode.visible;
+        return mNode.visible == LITE3D_TRUE;
     }
     
     MeshSceneNode::MeshSceneNode() : 

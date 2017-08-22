@@ -623,27 +623,32 @@ int lite3d_texture_unit_allocate(lite3d_texture_unit *textureUnit,
     textureUnit->texFormat = format;
 
     /* determine internal format */
-    switch (textureUnit->imageBPP)
+    if (iformat > 0)
+        internalFormat = iformat;
+    else
     {
-        case 3:
-            internalFormat = gTextureSettings.useGLCompression ?
-                GL_COMPRESSED_RGB_S3TC_DXT1_EXT : (iformat > 0 ? iformat : GL_RGB);
-            break;
-        case 4:
-            internalFormat = format == LITE3D_TEXTURE_FORMAT_DEPTH ? GL_DEPTH_COMPONENT :
-                (gTextureSettings.useGLCompression ? GL_COMPRESSED_RGBA_S3TC_DXT5_EXT : (iformat > 0 ? iformat : GL_RGBA));
-            break;
-        case 1:
-            internalFormat = gTextureSettings.useGLCompression ?
-                GL_COMPRESSED_RED_RGTC1_EXT : (iformat > 0 ? iformat : GL_R);
-            break;
-        case 2:
-            internalFormat = gTextureSettings.useGLCompression ?
-                GL_COMPRESSED_RED_GREEN_RGTC2_EXT : (iformat > 0 ? iformat : GL_RGB);
-            break;
-        default:
-            internalFormat = iformat;
-            break;
+        switch (textureUnit->imageBPP)
+        {
+            case 3:
+                internalFormat = gTextureSettings.useGLCompression ?
+                    GL_COMPRESSED_RGB_S3TC_DXT1_EXT : GL_RGB;
+                break;
+            case 4:
+                internalFormat = format == LITE3D_TEXTURE_FORMAT_DEPTH ? GL_DEPTH_COMPONENT :
+                    (gTextureSettings.useGLCompression ? GL_COMPRESSED_RGBA_S3TC_DXT5_EXT : GL_RGBA);
+                break;
+            case 1:
+                internalFormat = gTextureSettings.useGLCompression ?
+                    GL_COMPRESSED_RED_RGTC1_EXT : GL_R;
+                break;
+            case 2:
+                internalFormat = gTextureSettings.useGLCompression ?
+                    GL_COMPRESSED_RED_GREEN_RGTC2_EXT : GL_RG;
+                break;
+            default:
+                internalFormat = iformat;
+                break;
+        }
     }
 
     textureUnit->texiFormat = internalFormat;
@@ -737,7 +742,9 @@ int lite3d_texture_unit_allocate(lite3d_texture_unit *textureUnit,
 
     /* calculate texture total size */
     if (internalFormat == GL_COMPRESSED_RGB_S3TC_DXT1_EXT || 
-        internalFormat == GL_COMPRESSED_RGBA_S3TC_DXT5_EXT)
+        internalFormat == GL_COMPRESSED_RGBA_S3TC_DXT5_EXT || 
+        internalFormat == GL_COMPRESSED_RED_RGTC1_EXT || 
+        internalFormat == GL_COMPRESSED_RED_GREEN_RGTC2_EXT)
     {
         size_t levelSize = 0;
         uint8_t li = 0;
