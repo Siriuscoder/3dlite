@@ -17,10 +17,15 @@
  *******************************************************************************/
 #include <ctime>
 #include <iostream>
+#include <algorithm>
 #include <SDL_log.h>
 #include <SDL_assert.h>
 
 #include <sample_common/lite3dpp_common.h>
+
+#define VELOCITY_MAX    200.0f
+#define ACCEL           40.0f
+#define ACCEL_RESIST    20.0f
 
 namespace lite3dpp {
 namespace samples {
@@ -31,8 +36,11 @@ Sample::Sample() :
     mMainWindow(NULL),
     mStatTexture(NULL),
     mStatTimer(NULL),
-    mCenterXPos(0),
-    mCenterYPos(0)
+    mWCenter(KM_VEC2_ZERO),
+    mCamAngles(KM_VEC2_ZERO),
+    mSensitivity(0.001f),
+    mVelocity(KM_VEC2_ZERO),
+    mAccel(KM_VEC2_ZERO)
 {
     mMain.addObserver(this);
 }
@@ -65,40 +73,50 @@ void Sample::init()
     mMain.showSystemCursor(false);
 }
 
+void Sample::frameBegin()
+{
+    moveCamera();
+}
+
 void Sample::timerTick(lite3d_timer *timerid)
 {
-    if(mMainCamera && timerid == mMain.getFixedUpdateTimer())
+    if (timerid == mMain.getFixedUpdateTimer())
     {
-        const Uint8 *state = SDL_GetKeyboardState(NULL);
-        if(state[SDL_SCANCODE_W])
-        {
-            kmVec3 vec3 = {0, 0, -6};
-            mMainCamera->moveRelative(vec3);
-            mainCameraChanged();
-        }
+        const Uint8 *kstate = SDL_GetKeyboardState(NULL);
+        if (kstate[SDL_SCANCODE_W])
+            mAccel.x = -ACCEL;
+        if (kstate[SDL_SCANCODE_S])
+            mAccel.x = ACCEL;
+        if (kstate[SDL_SCANCODE_A])
+            mAccel.y = -ACCEL;
+        if (kstate[SDL_SCANCODE_D])
+            mAccel.y = ACCEL;
         
-        if(state[SDL_SCANCODE_S])
-        {
-            kmVec3 vec3 = {0, 0, 6};
-            mMainCamera->moveRelative(vec3);
-            mainCameraChanged();
-        }
+        if (!kstate[SDL_SCANCODE_W] && !kstate[SDL_SCANCODE_S])
+            mAccel.x = 0.0f;
+        if (!kstate[SDL_SCANCODE_A] && !kstate[SDL_SCANCODE_D])
+            mAccel.y = 0.0f;
         
-        if(state[SDL_SCANCODE_A])
-        {
-            kmVec3 vec3 = {-6, 0, 0};
-            mMainCamera->moveRelative(vec3);
-            mainCameraChanged();
-        }
+        kmVec2Add(&mVelocity, &mVelocity, &mAccel);
+        if (mVelocity.x > 0)
+            mVelocity.x -= ACCEL_RESIST;
+        if (mVelocity.x < 0)
+            mVelocity.x += ACCEL_RESIST;
+        if (mVelocity.y > 0)
+            mVelocity.y -= ACCEL_RESIST;
+        if (mVelocity.y < 0)
+            mVelocity.y += ACCEL_RESIST;
         
-        if(state[SDL_SCANCODE_D])
-        {
-            kmVec3 vec3 = {6, 0, 0};
-            mMainCamera->moveRelative(vec3);
-            mainCameraChanged();
-        }
+        if (mVelocity.x > VELOCITY_MAX)
+            mVelocity.x = VELOCITY_MAX;
+        if (mVelocity.y > VELOCITY_MAX)
+            mVelocity.y = VELOCITY_MAX;
+        if (mVelocity.x < -VELOCITY_MAX)
+            mVelocity.x = -VELOCITY_MAX;
+        if (mVelocity.y < -VELOCITY_MAX)
+            mVelocity.y = -VELOCITY_MAX;
     }
-    else if(timerid == mStatTimer)
+    else if (timerid == mStatTimer)
         updateGuiStats();
 }
 
@@ -141,14 +159,26 @@ void Sample::processEvent(SDL_Event *e)
     }
     else if(mMainCamera && e->type == SDL_MOUSEMOTION)
     {
-        mMainCamera->rotateZ((e->motion.x - mCenterXPos) * 0.003f);
-        mMainCamera->pitch((e->motion.y - mCenterYPos) * 0.003f);
-        // rotation limitation
-        //float pangle = mMainCamera->getPitch();
-        //if (pangle > M_PI || pangle < 0)
-        //    mMainCamera->pitch(-(e->motion.y - mCenterYPos) * 0.003f);
+        mCamAngles.x += (e->motion.x - mWCenter.x) * mSensitivity;
+        mCamAngles.y += (e->motion.y - mWCenter.y) * mSensitivity;
+        
+        // angles restrictions
+        if (mCamAngles.y < -M_PI)
+            mCamAngles.y = -M_PI;
+        if (mCamAngles.y > 0)
+            mCamAngles.y = 0;
+        if (mCamAngles.x > M_PI * 2)
+            mCamAngles.x = 0;
+        
+        kmQuaternion camZQuat, camPQuat, sumQuat;
+        kmQuaternionRotationAxisAngle(&camZQuat, &KM_VEC3_POS_Z, mCamAngles.x);
+        kmQuaternionRotationAxisAngle(&camPQuat, &KM_VEC3_POS_X, mCamAngles.y);
+        kmQuaternionMultiply(&sumQuat, &camPQuat, &camZQuat);
 
-        lite3d_video_set_mouse_pos(mCenterXPos, mCenterYPos);
+        //mMainCamera->rotateZ(e->motion.xrel * 0.003f);
+        //mMainCamera->pitch(e->motion.yrel * 0.003f);
+        lite3d_video_set_mouse_pos(mWCenter.x, mWCenter.y);
+        mMainCamera->setRotation(sumQuat);
         mainCameraChanged();
     }
 }
@@ -171,9 +201,10 @@ void Sample::setGuiSize(int32_t width, int32_t height)
 void Sample::adjustMainCamera(int32_t width, int32_t height)
 {
     SDL_assert(mMainCamera);
-    mCenterXPos = mMainWindow->width() >> 1;
-    mCenterYPos = mMainWindow->height() >> 1;
-    lite3d_video_set_mouse_pos(mCenterXPos, mCenterYPos);
+    mWCenter.x = width >> 1;
+    mWCenter.y = height >> 1;
+    lite3d_video_set_mouse_pos(mWCenter.x, mWCenter.y);
+    //lite3d_video_relative_mouse_mode(LITE3D_TRUE);
     mMainCamera->setAspect(mMainWindow->computeCameraAspect());
 }
 
@@ -289,5 +320,20 @@ int Sample::start(const char *config)
 
 void Sample::mainCameraChanged()
 {}
+
+void Sample::moveCamera()
+{    
+    if (mVelocity.x != 0.0f || mVelocity.y != 0.0f)
+    {
+        lite3d_render_stats *stats = lite3d_render_stats_get();    
+        kmVec3 step;
+        
+        step.x = mVelocity.y * (stats->lastFrameMs / 1000);
+        step.y = 0.0f;
+        step.z = mVelocity.x * (stats->lastFrameMs / 1000);
+        mMainCamera->moveRelative(step);
+        mainCameraChanged();
+    }
+}
 
 }}

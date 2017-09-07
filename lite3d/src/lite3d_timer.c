@@ -70,7 +70,7 @@ void lite3d_timer_induce(uint64_t timeMark, uint64_t freq)
         if (timer->lastTimeUpdate == 0)
             timer->lastTimeUpdate = timeMark;
         
-        timer->lag += timeMark - timer->lastTimeUpdate; 
+        timer->lag += timeMark - timer->lastTimeUpdate;
         timer->lastTimeUpdate = timeMark;
         
         while (timer->lag >= (freq * timer->interval))

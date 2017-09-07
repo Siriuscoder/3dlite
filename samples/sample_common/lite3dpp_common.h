@@ -34,6 +34,7 @@ public:
     void init() override;
     void timerTick(lite3d_timer *timerid) override;
     void processEvent(SDL_Event *e) override;
+    void frameBegin() override;
 
     int start(const char *config);
 
@@ -43,6 +44,8 @@ public:
     { return mMain; }
     WindowRenderTarget &getMainWindow();
     Camera &getMainCamera();
+    inline void setSensitivity(float s)
+    { mSensitivity = s; }
 
     void resizeMainWindow(int32_t width, int32_t height);
     void saveScreenshot();
@@ -54,6 +57,7 @@ protected:
     void initGui();
     void printRenderStats();
     void printMemoryStats();
+    void moveCamera();
 
     void updateGuiStats();
 
@@ -69,8 +73,11 @@ private:
     WindowRenderTarget *mMainWindow;
     lite3dpp_font::FontTexture *mStatTexture;
     lite3d_timer *mStatTimer;
-    int mCenterXPos;
-    int mCenterYPos;
+    kmVec2 mWCenter;
+    kmVec2 mCamAngles;
+    float mSensitivity;
+    kmVec2 mVelocity;
+    kmVec2 mAccel;
 };
 
 }}
