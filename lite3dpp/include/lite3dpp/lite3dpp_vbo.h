@@ -17,48 +17,27 @@
  *******************************************************************************/
 #pragma once
 
-#include <lite3d/lite3d_texture_unit.h>
-
-#include <lite3dpp/lite3dpp_common.h>
-#include <lite3dpp/lite3dpp_config_reader.h>
-#include <lite3dpp/lite3dpp_resource.h>
-#include <lite3dpp/lite3dpp_texture.h>
 #include <lite3dpp/lite3dpp_buffer_base.h>
 
 namespace lite3dpp
 {
-    class LITE3DPP_EXPORT TextureBuffer : public Texture, public BufferBase
+    class LITE3DPP_EXPORT VBO : public BufferBase
     {
     public:
 
         using BufferBase::getData;
         using BufferBase::setData;
 
-        TextureBuffer(const String &name, 
-            const String &path, Main *main);
+        VBO(lite3d_vbo &vbo);
 
-        ~TextureBuffer();
-
-        size_t bufferSizeTexels() const;
-        uint8_t getTexelSize() const;
-        
         size_t bufferSizeBytes() const override;
         void extendBufferBytes(size_t addsize) override;
         void setData(const void *buffer, size_t offset, size_t size) override;
         void getData(void *buffer, size_t offset, size_t size) const override;
         BufferScopedMapper map(uint16_t lockType) override;
 
-        size_t usedVideoMemBytes() const override;
-
-    protected:
-
-        virtual void loadFromConfigImpl(const ConfigurationReader &helper) override;
-        virtual void reloadFromConfigImpl(const ConfigurationReader &helper) override;
-        virtual void unloadImpl() override;
-
     private:
 
-        PixelsData mTexelsBackup;
+        lite3d_vbo &mVBO;
     };
 }
-

@@ -282,7 +282,7 @@ int lite3d_vbo_subbuffer(struct lite3d_vbo *vbo,
     return LITE3D_TRUE;
 }
 
-int lite3d_vbo_get_buffer(struct lite3d_vbo *vbo,
+int lite3d_vbo_get_buffer(const struct lite3d_vbo *vbo,
     void *buffer, size_t offset, size_t size)
 {
     SDL_assert(vbo);

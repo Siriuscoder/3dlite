@@ -85,23 +85,25 @@ namespace lite3dpp
                     matMap.getObject(L"Material").getString(L"Material")));
         }
 
-        setUsedVideoMem(mMesh.indexBuffer.size + mMesh.vertexBuffer.size);
         mMesh.userdata = this;
+    }
+
+    size_t Mesh::usedVideoMemBytes() const
+    {
+        return mMesh.indexBuffer.size + mMesh.vertexBuffer.size;
     }
 
     void Mesh::unloadImpl()
     {
         /* store buffers data */
-        mVertexData = getVertexData<unsigned char>();
-        mIndexData = getIndexData<unsigned char>();
+        vertexBuffer().getData(mVertexData, 0, mMesh.vertexBuffer.size);
+        indexBuffer().getData(mIndexData, 0, mMesh.indexBuffer.size);
 
         /* unload vbo from vmem */
         if (mMesh.vertexBuffer.size > 0)
             lite3d_vbo_buffer(&mMesh.vertexBuffer, NULL, 0, mMesh.vertexBuffer.access);
         if (mMesh.indexBuffer.size > 0)
             lite3d_vbo_buffer(&mMesh.indexBuffer, NULL, 0, mMesh.indexBuffer.access);
-        
-        setUsedVideoMem(0);
     }
 
     void Mesh::reloadFromConfigImpl(const ConfigurationReader &helper)
@@ -120,22 +122,6 @@ namespace lite3dpp
     void Mesh::mapMaterial(int unit, Material *material)
     {
         mMaterialMapping[unit] = material;
-    }
-
-    BufferScopedMapper Mesh::mapVertexBuffer(uint16_t lockType)
-    {
-        if(mMesh.vertexBuffer.size > 0)
-            return BufferScopedMapper(mMesh.vertexBuffer, lockType);
-
-        LITE3D_THROW(getName() << " Could`t map vertex buffer.. it is empty..");
-    }
-
-    BufferScopedMapper Mesh::mapIndexBuffer(uint16_t lockType)
-    {
-        if(mMesh.indexBuffer.size > 0)
-            return BufferScopedMapper(mMesh.indexBuffer, lockType);
-
-        LITE3D_THROW(getName() << " Could`t map vertex buffer.. it is empty..");
     }
 
     void Mesh::genPlain(const kmVec2 &size, bool dynamic)

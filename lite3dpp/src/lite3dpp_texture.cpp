@@ -35,7 +35,11 @@ namespace lite3dpp
     void Texture::unloadImpl()
     {
         lite3d_texture_unit_purge(&mTexture);
-        setUsedVideoMem(0);
+    }
+
+    size_t Texture::usedVideoMemBytes() const
+    {
+        return mTexture.totalSize;
     }
 
     TextureImage::TextureImage(const String &name, 
@@ -135,7 +139,6 @@ namespace lite3dpp
         }
 
         mTexture.userdata = this;
-        setUsedVideoMem(mTexture.totalSize);
     }
 
     void TextureImage::reloadFromConfigImpl(const ConfigurationReader &helper)

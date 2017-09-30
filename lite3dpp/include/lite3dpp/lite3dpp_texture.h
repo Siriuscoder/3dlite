@@ -29,7 +29,6 @@ namespace lite3dpp
     {
     public:
 
-        typedef stl<uint8_t>::vector PixelsData;
         typedef stl<PixelsData>::vector LayersData;
 
         ~Texture();
@@ -41,6 +40,8 @@ namespace lite3dpp
 
         inline bool isTextureBuffer()
         { return mTexture.isTextureBuffer == LITE3D_TRUE; }
+
+        size_t usedVideoMemBytes() const override;
 
     protected:
 

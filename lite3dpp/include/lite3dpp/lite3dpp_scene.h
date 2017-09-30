@@ -69,6 +69,8 @@ namespace lite3dpp
         inline const Lights &getLights() const 
         { return mLights; }
 
+        size_t usedVideoMemBytes() const override;
+
     protected:
 
         virtual void loadFromConfigImpl(const ConfigurationReader &helper) override;

@@ -89,7 +89,7 @@ public:
     
     void updateTextureData()
     {
-        lite3dpp::TextureImage::PixelsData pixels;
+        lite3dpp::PixelsData pixels;
         for(int8_t i = 0; i <= mBoxTexture->getLevelsNum(); ++i)
         {
             mBoxTexture->getPixels(i, pixels);
@@ -115,7 +115,7 @@ public:
     void updateMesh()
     {
         vertexPod *vertices;
-        lite3dpp::BufferScopedMapper vmap = mBoxMesh->mapVertexBuffer(LITE3D_VBO_MAP_READ_WRITE);
+        lite3dpp::BufferScopedMapper vmap = mBoxMesh->vertexBuffer().map(LITE3D_VBO_MAP_READ_WRITE);
         
         vertices = vmap.getPtr<vertexPod>();
         for(uint32_t i = 0; i < vmap.getSize(); i += sizeof(vertexPod), ++vertices)

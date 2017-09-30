@@ -23,7 +23,7 @@
 #include <lite3dpp/lite3dpp_resource.h>
 #include <lite3dpp/lite3dpp_config_reader.h>
 #include <lite3dpp/lite3dpp_material.h>
-#include <lite3dpp/lite3dpp_buffer_mapper.h>
+#include <lite3dpp/lite3dpp_vbo.h>
 
 namespace lite3dpp
 {
@@ -31,7 +31,6 @@ namespace lite3dpp
     {
     public:
         
-        typedef stl<unsigned char>::vector BufferData;
         typedef stl<lite3d_mesh_layout>::vector BufferLayout; 
         typedef stl<int, Material *>::map MaterialMapping;
 
@@ -44,36 +43,11 @@ namespace lite3dpp
         { return mMaterialMapping; }
         inline lite3d_mesh *getPtr()
         { return &mMesh; }
-        
-        template<class T>
-        typename stl<T>::vector getVertexData()
-        {
-            typename stl<T>::vector buffer;
-            if(mMesh.vertexBuffer.size > 0)
-            {
-                BufferScopedMapper lock = mapVertexBuffer(LITE3D_VBO_MAP_READ_ONLY);
-                buffer.resize(lock.getSize() / sizeof(T));
 
-                memcpy(&buffer[0], lock.getPtr<void>(), buffer.size());
-            }
-            
-            return buffer;
-        }
-        
-        template<class T>
-        typename stl<T>::vector getIndexData()
-        {
-            typename stl<T>::vector buffer;
-            if(mMesh.indexBuffer.size > 0)
-            {
-                BufferScopedMapper lock = mapIndexBuffer(LITE3D_VBO_MAP_READ_ONLY);
-                buffer.resize(lock.getSize() / sizeof(T));
-
-                memcpy(&buffer[0], lock.getPtr<void>(), buffer.size());
-            }
-            
-            return buffer;
-        }
+        inline VBO vertexBuffer()
+        { return VBO(mMesh.vertexBuffer); }
+        inline VBO indexBuffer()
+        { return VBO(mMesh.indexBuffer); }
         
         template<class V, class Indx>
         void addTriangleMeshChunk(const typename stl<V>::vector &vertices,
@@ -94,8 +68,7 @@ namespace lite3dpp
                 LITE3D_THROW(getName() << " append mesh chunk failed..");
         }
         
-        BufferScopedMapper mapVertexBuffer(uint16_t lockType);
-        BufferScopedMapper mapIndexBuffer(uint16_t lockType);
+        size_t usedVideoMemBytes() const override;
 
     protected:
 

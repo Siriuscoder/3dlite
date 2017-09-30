@@ -107,14 +107,8 @@ void Sample::timerTick(lite3d_timer *timerid)
         if (mVelocity.y < 0)
             mVelocity.y += ACCEL_RESIST;
         
-        if (mVelocity.x > VELOCITY_MAX)
-            mVelocity.x = VELOCITY_MAX;
-        if (mVelocity.y > VELOCITY_MAX)
-            mVelocity.y = VELOCITY_MAX;
-        if (mVelocity.x < -VELOCITY_MAX)
-            mVelocity.x = -VELOCITY_MAX;
-        if (mVelocity.y < -VELOCITY_MAX)
-            mVelocity.y = -VELOCITY_MAX;
+        mVelocity.x = std::max(-VELOCITY_MAX, std::min(mVelocity.x, VELOCITY_MAX));
+        mVelocity.y = std::max(-VELOCITY_MAX, std::min(mVelocity.y, VELOCITY_MAX));
     }
     else if (timerid == mStatTimer)
         updateGuiStats();
@@ -163,10 +157,7 @@ void Sample::processEvent(SDL_Event *e)
         mCamAngles.y += (e->motion.y - mWCenter.y) * mSensitivity;
         
         // angles restrictions
-        if (mCamAngles.y < -M_PI)
-            mCamAngles.y = -M_PI;
-        if (mCamAngles.y > 0)
-            mCamAngles.y = 0;
+        mCamAngles.y = std::max((float)-M_PI, std::min(mCamAngles.y, 0.0f));
         if (mCamAngles.x > M_PI * 2)
             mCamAngles.x = 0;
         

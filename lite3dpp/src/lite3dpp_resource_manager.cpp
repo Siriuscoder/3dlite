@@ -150,7 +150,7 @@ namespace lite3dpp
         Resources::const_iterator resIt = mResources.begin();
         for (; resIt != mResources.end(); ++resIt)
         {
-            stats.usedVideoMem += resIt->second->getUsedVideoMem();
+            stats.usedVideoMem += resIt->second->usedVideoMemBytes();
             stats.totalObjectsCount++;
             switch(resIt->second->getType())
             {

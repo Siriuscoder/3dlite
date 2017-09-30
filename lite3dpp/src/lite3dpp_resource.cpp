@@ -41,7 +41,6 @@ namespace lite3dpp
         mType(type),
         mName(name),
         mPath(path),
-        mUsedVideoMem(0),
         mMain(main)
     {}
 
@@ -88,6 +87,16 @@ namespace lite3dpp
             
             logState();
         }
+    }
+
+    size_t AbstractResource::usedVideoMemBytes() const
+    {
+        return 0;
+    }
+
+    size_t AbstractResource::fullVideoMemBytes() const 
+    {
+        return 0;
     }
 
     ConfigurableResource::ConfigurableResource(const String &name, 

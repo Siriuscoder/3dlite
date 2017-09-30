@@ -69,7 +69,7 @@ LITE3D_CEXPORT void lite3d_texture_buffer_unmap(lite3d_texture_unit *textureUnit
 LITE3D_CEXPORT int lite3d_texture_buffer(lite3d_texture_unit *textureUnit,
     const void *buffer, size_t offset, size_t size);
 
-LITE3D_CEXPORT int lite3d_texture_buffer_get(lite3d_texture_unit *textureUnit,
+LITE3D_CEXPORT int lite3d_texture_buffer_get(const lite3d_texture_unit *textureUnit,
     void *buffer, size_t offset, size_t size);
 
 LITE3D_CEXPORT int lite3d_texture_buffer_extend(lite3d_texture_unit *textureUnit, 

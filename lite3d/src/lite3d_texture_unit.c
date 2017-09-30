@@ -796,6 +796,7 @@ void lite3d_texture_unit_purge(lite3d_texture_unit *textureUnit)
     SDL_assert(textureUnit);
     glDeleteTextures(1, &textureUnit->textureID);
     textureUnit->textureID = 0;
+    textureUnit->totalSize = 0;
 }
 
 void lite3d_texture_unit_bind(lite3d_texture_unit *textureUnit, uint16_t layer)

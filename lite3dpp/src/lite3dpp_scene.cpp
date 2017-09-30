@@ -35,7 +35,12 @@ namespace lite3dpp
     Scene::~Scene()
     {}
 
-    void Scene::loadFromConfigImpl(const ConfigurationReader &helper)       
+    size_t Scene::usedVideoMemBytes() const
+    {
+        return 0;
+    }
+
+    void Scene::loadFromConfigImpl(const ConfigurationReader &helper)
     {
         lite3d_scene_init(&mScene);
         mScene.userdata = this;
@@ -48,20 +53,28 @@ namespace lite3dpp
         mScene.nodeOutOfFrustum = nodeOutOfFrustum;
         mScene.beforeUpdateNodes = beforeUpdateNodes;
         
+        String lightingTechnique = helper.getString(L"LightingTechnique", "TextureBuffer");
         try
         {
-            /* default name of lighting buffer is scene name + "LightingBufferObject" */
-            mLightingParamsBuffer = mMain->getResourceManager()->
-                queryResourceFromJson<TextureBuffer>(getName() + "_lightingBufferObject",
-                "{\"BufferFormat\": \"RGBA32F\", \"Dynamic\": true}");
-            mLightingIndexBuffer = mMain->getResourceManager()->
-                queryResourceFromJson<TextureBuffer>(getName() + "_lightingIndexBuffer",
-                "{\"BufferFormat\": \"R16I\", \"Dynamic\": true}");
+            if (lightingTechnique == "TextureBuffer")
+            {
+                /* default name of lighting buffer is scene name + "LightingBufferObject" */
+                mLightingParamsBuffer = mMain->getResourceManager()->
+                    queryResourceFromJson<TextureBuffer>(getName() + "_lightingBufferObject",
+                    "{\"BufferFormat\": \"RGBA32F\", \"Dynamic\": true}");
+                mLightingIndexBuffer = mMain->getResourceManager()->
+                    queryResourceFromJson<TextureBuffer>(getName() + "_lightingIndexBuffer",
+                    "{\"BufferFormat\": \"R16I\", \"Dynamic\": true}");
+            }
+
+            SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
+                "Using lighting technique '%s' for scene %s", lightingTechnique.c_str(), getName().c_str());
         }
         catch(std::exception &ex)
         {
             SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
-                "%s: %s, default lighting will be disabled", LITE3D_CURRENT_FUNCTION, ex.what());
+                "Failed to setup lighting technique '%s' for scene %s, %s, build-in lighting will be disabled", lightingTechnique.c_str(), 
+                getName().c_str(), ex.what());
         }
 
         setupObjects(helper.getObjects(L"Objects"), NULL);
@@ -204,9 +217,8 @@ namespace lite3dpp
 
         uint32_t i = 0;
 
-        if (mLightingParamsBuffer->textureBufferSize() < (mLights.size() * sizeof(lite3d_light_params)))
-            mLightingParamsBuffer->extendTextureBuffer(sizeof(lite3d_light_params) * mLights.size() / 
-                mLightingParamsBuffer->getTexelSize());
+        if (mLightingParamsBuffer->bufferSizeBytes() < (mLights.size() * sizeof(lite3d_light_params)))
+            mLightingParamsBuffer->extendBufferBytes(sizeof(lite3d_light_params) * mLights.size());
 
         mLightsWorld.resize(mLights.size());
 
@@ -224,8 +236,8 @@ namespace lite3dpp
             return;
 
         // check index buffer size, extend it if needed
-        if (mLightingIndexBuffer->textureBufferTexelsCount() < mLights.size()+1)
-            mLightingIndexBuffer->extendTextureBuffer(mLights.size()-mLightingIndexBuffer->textureBufferTexelsCount()+1);
+        if (mLightingIndexBuffer->bufferSizeTexels() < mLights.size()+1)
+            mLightingIndexBuffer->extendBufferBytes(mLights.size()-mLightingIndexBuffer->bufferSizeTexels()+1);
         mLightsIndexes.clear();
         mLightsIndexes.push_back(0); // reserve first index for size
         

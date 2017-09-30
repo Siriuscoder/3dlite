@@ -24,6 +24,7 @@
 
 namespace lite3dpp
 {
+    typedef stl<uint8_t>::vector PixelsData, BufferData;
     class LITE3DPP_EXPORT AbstractResource : public Manageable
     {
     public:
@@ -59,8 +60,8 @@ namespace lite3dpp
         void unload();
 
         /* allocated size in video memory (when resource LOADED_MAPPED) */
-        inline size_t getUsedVideoMem() const
-        { return mUsedVideoMem; }
+        virtual size_t usedVideoMemBytes() const;
+        virtual size_t fullVideoMemBytes() const;
 
         inline ResourceState getState() const
         { return mState; }
@@ -77,9 +78,6 @@ namespace lite3dpp
         virtual void reloadImpl() = 0;
         virtual void unloadImpl() = 0;
 
-        inline void setUsedVideoMem(size_t size)
-        { mUsedVideoMem = size; }
-
     private:
         
         void logState();
@@ -88,7 +86,6 @@ namespace lite3dpp
         ResourceType mType;
         String mName;
         String mPath;
-        size_t mUsedVideoMem;
 
     protected:
         Main *mMain;
