@@ -32,6 +32,8 @@ int lite3d_check_map_buffer();
 int lite3d_check_gl_version();
 int lite3d_init_gl_extensions_binding();
 int lite3d_check_tbo();
+int lite3d_check_uniform_buffer();
+int lite3d_check_ssbo();
 
 /* stub functions */
 void glTexSubImage3D_stub(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLenum format, GLenum type, const void *pixels);

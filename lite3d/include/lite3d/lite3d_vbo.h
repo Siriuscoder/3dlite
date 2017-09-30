@@ -40,11 +40,20 @@ typedef struct lite3d_vbo
     uint32_t vboID;
     size_t size;
     uint16_t access;
+    uint16_t role;
 } lite3d_vbo;
 
 LITE3D_CEXPORT int lite3d_vbo_technique_init(void);
 
+/* use this to init vertex buffer object */
 LITE3D_CEXPORT int lite3d_vbo_init(struct lite3d_vbo *vbo);
+/* use this to init index buffer object */
+LITE3D_CEXPORT int lite3d_ibo_init(struct lite3d_vbo *vbo);
+/* use this to init shader storage buffer object */
+LITE3D_CEXPORT int lite3d_ssbo_init(struct lite3d_vbo *vbo);
+/* use this to init uniform buffer object */
+LITE3D_CEXPORT int lite3d_ubo_init(struct lite3d_vbo *vbo);
+
 LITE3D_CEXPORT void lite3d_vbo_purge(struct lite3d_vbo *vbo);
 LITE3D_CEXPORT void *lite3d_vbo_map(struct lite3d_vbo *vbo,
     uint16_t access);

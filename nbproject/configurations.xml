@@ -134,6 +134,7 @@
             <in>JSON.cpp</in>
             <in>JSONValue.cpp</in>
           </df>
+          <in>lite3dpp_buffer_base.cpp</in>
           <in>lite3dpp_buffer_mapper.cpp</in>
           <in>lite3dpp_camera.cpp</in>
           <in>lite3dpp_config_reader.cpp</in>
@@ -163,6 +164,7 @@
           <in>lite3dpp_texture.cpp</in>
           <in>lite3dpp_texture_buffer.cpp</in>
           <in>lite3dpp_texture_render_target.cpp</in>
+          <in>lite3dpp_vbo.cpp</in>
         </df>
       </df>
       <df name="lite3dpp_font">
@@ -939,6 +941,13 @@
         <ccTool flags="1">
         </ccTool>
       </item>
+      <item path="lite3dpp/src/lite3dpp_buffer_base.cpp"
+            ex="false"
+            tool="1"
+            flavor2="8">
+        <ccTool flags="1">
+        </ccTool>
+      </item>
       <item path="lite3dpp/src/lite3dpp_buffer_mapper.cpp"
             ex="false"
             tool="1"
@@ -1115,6 +1124,10 @@
             ex="false"
             tool="1"
             flavor2="8">
+        <ccTool flags="1">
+        </ccTool>
+      </item>
+      <item path="lite3dpp/src/lite3dpp_vbo.cpp" ex="false" tool="1" flavor2="8">
         <ccTool flags="1">
         </ccTool>
       </item>

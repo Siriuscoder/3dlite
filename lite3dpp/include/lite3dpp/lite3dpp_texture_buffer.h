@@ -40,7 +40,7 @@ namespace lite3dpp
         ~TextureBuffer();
 
         size_t bufferSizeTexels() const;
-        uint8_t getTexelSize() const;
+        uint8_t texelSize() const;
         
         size_t bufferSizeBytes() const override;
         void extendBufferBytes(size_t addsize) override;

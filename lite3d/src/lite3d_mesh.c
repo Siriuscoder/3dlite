@@ -58,7 +58,7 @@ int lite3d_mesh_init(struct lite3d_mesh *mesh)
         return LITE3D_FALSE;
 
     /* gen buffer for store index data */
-    if (!lite3d_vbo_init(&mesh->indexBuffer))
+    if (!lite3d_ibo_init(&mesh->indexBuffer))
     {
         lite3d_vbo_purge(&mesh->vertexBuffer);
         return LITE3D_FALSE;
@@ -211,7 +211,7 @@ lite3d_mesh_chunk *lite3d_mesh_append_chunk(lite3d_mesh *mesh,
     /* VAO set current */
     glBindVertexArray(meshChunk->vao.vaoID);
     /* use single VBO to store all data */
-    glBindBuffer(GL_ARRAY_BUFFER, mesh->vertexBuffer.vboID);
+    glBindBuffer(mesh->vertexBuffer.role, mesh->vertexBuffer.vboID);
     /* bind all arrays and attribs into the current VAO */
     for (; i < layoutCount; ++i)
     {
@@ -226,7 +226,7 @@ lite3d_mesh_chunk *lite3d_mesh_append_chunk(lite3d_mesh *mesh,
     // setup buffers for instancing rendering 
     if (mesh->auxBuffer)
     {
-        glBindBuffer(GL_ARRAY_BUFFER, mesh->auxBuffer->vboID);
+        glBindBuffer(mesh->vertexBuffer.role, mesh->auxBuffer->vboID);
         for(i = 0; i < 4; ++i)
         {
             glEnableVertexAttribArray(attribIndex);
@@ -237,7 +237,7 @@ lite3d_mesh_chunk *lite3d_mesh_append_chunk(lite3d_mesh *mesh,
 
     if (indexesCount > 0 && indexesSize > 0)
     {
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->indexBuffer.vboID);
+        glBindBuffer(mesh->indexBuffer.role, mesh->indexBuffer.vboID);
         meshChunk->hasIndexes = LITE3D_TRUE;
     }
     else

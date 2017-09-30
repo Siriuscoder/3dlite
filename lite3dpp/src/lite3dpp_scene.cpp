@@ -237,7 +237,8 @@ namespace lite3dpp
 
         // check index buffer size, extend it if needed
         if (mLightingIndexBuffer->bufferSizeTexels() < mLights.size()+1)
-            mLightingIndexBuffer->extendBufferBytes(mLights.size()-mLightingIndexBuffer->bufferSizeTexels()+1);
+            mLightingIndexBuffer->extendBufferBytes(((mLights.size()+1) * mLightingIndexBuffer->texelSize())-
+            mLightingIndexBuffer->bufferSizeBytes());
         mLightsIndexes.clear();
         mLightsIndexes.push_back(0); // reserve first index for size
         

@@ -69,7 +69,7 @@ int lite3d_shader_compile(
 
     /* allocate string and copy compile info log into it */
     glGetShaderiv(shader->shaderID, GL_INFO_LOG_LENGTH, &maxLogLength);
-    shader->statusString = (char *) lite3d_malloc(maxLogLength);
+    shader->statusString = maxLogLength > 0 ? (char *) lite3d_calloc(maxLogLength) : NULL;
     glGetShaderInfoLog(shader->shaderID, maxLogLength, &maxLogLength, shader->statusString);
 
     return shader->success;

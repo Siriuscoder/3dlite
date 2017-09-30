@@ -147,7 +147,7 @@ namespace lite3dpp
         Texture::unloadImpl();
     }
     
-    uint8_t TextureBuffer::getTexelSize() const
+    uint8_t TextureBuffer::texelSize() const
     {
         return lite3d_texture_buffer_texel_size(mTexture.texFormat);
     }
@@ -159,10 +159,10 @@ namespace lite3dpp
     
     size_t TextureBuffer::bufferSizeTexels() const
     {
-        if (lite3d_texture_buffer_texel_size(mTexture.texFormat) == 0)
+        if (texelSize() == 0)
             LITE3D_THROW(getName() << " unsupported texture buffer format");
         
-        return mTexture.totalSize / lite3d_texture_buffer_texel_size(mTexture.texFormat);
+        return bufferSizeBytes() / texelSize();
     }
     
     void TextureBuffer::extendBufferBytes(size_t addSize)

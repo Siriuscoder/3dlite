@@ -91,7 +91,7 @@ namespace lite3dpp
             if (source.find_first_of(',') != String::npos)
                 defPath = source.substr(source.find_first_of(',')+1);
 
-            if(!lite3d_shader_init(&shaders.back(), 
+            if (!lite3d_shader_init(&shaders.back(), 
                 sourcePath.find(".vs") != String::npos ? LITE3D_SHADER_TYPE_VERTEX : LITE3D_SHADER_TYPE_FRAGMENT))
                 LITE3D_THROW("Shader init failed..");
 
@@ -109,9 +109,14 @@ namespace lite3dpp
             SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
                 "Compiling \"%s\" ...", sourcePath.c_str());
 
-            if(!lite3d_shader_compile(&shaders.back(), sources.size(),
+            if (!lite3d_shader_compile(&shaders.back(), sources.size(),
                 &sources[0], &sourcesLen[0]))
                 LITE3D_THROW(sourcePath << " compile: \"" << shaders.back().statusString << "\"");
+            if (shaders.back().statusString && shaders.back().statusString[0] != 0)
+            {
+                SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
+                    "%s compile: \"%s\"", sourcePath.c_str(), shaders.back().statusString);
+            }
         }
     }
 

@@ -80,6 +80,28 @@ int lite3d_check_copy_buffer()
 #endif
 }
 
+int lite3d_check_uniform_buffer()
+{
+#ifdef GLES
+#   ifdef WITH_GLES2
+    return LITE3D_FALSE;
+#   else
+    return LITE3D_TRUE;
+#   endif
+#else
+    return GLEW_ARB_uniform_buffer_object;
+#endif
+}
+
+int lite3d_check_ssbo()
+{
+#ifdef GLES
+    return LITE3D_FALSE;
+#else
+    return GLEW_ARB_shader_storage_buffer_object;
+#endif
+}
+
 int lite3d_check_texture_compression()
 {
 #ifdef GLES
