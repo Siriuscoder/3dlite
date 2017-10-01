@@ -159,12 +159,12 @@ static int initMaterials(void)
     lite3d_shader_parameter_init(&mRenderTextureSampler);
     strcpy(mRenderTextureSampler.name, "diffuse");
     mRenderTextureSampler.type = LITE3D_SHADER_PARAMETER_SAMPLER;
-    mRenderTextureSampler.parameter.valsampler.texture = &mRenderTextureUnit;
+    mRenderTextureSampler.parameter.texture = &mRenderTextureUnit;
     /* init parameter with texture */
     lite3d_shader_parameter_init(&mBoxTextureSampler);
     strcpy(mBoxTextureSampler.name, "diffuse");
     mBoxTextureSampler.type = LITE3D_SHADER_PARAMETER_SAMPLER;
-    mBoxTextureSampler.parameter.valsampler.texture = &mBoxUnit;
+    mBoxTextureSampler.parameter.texture = &mBoxUnit;
 
     /* try to compile material shaders */
     lite3d_shader_init(&shaders[0], LITE3D_SHADER_TYPE_VERTEX);

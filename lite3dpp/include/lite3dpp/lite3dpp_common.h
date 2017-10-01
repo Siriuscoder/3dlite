@@ -79,3 +79,13 @@ class asIScriptEngine;
 class asIScriptModule;
 class asIScriptFunction;
 class asIScriptContext;
+
+#define LITE3D_DECLARE_PTR_METHODS(type, param) \
+    inline type *getPtr() \
+    { return &param; } \
+    inline const type *getPtr() const \
+    { return &param; } \
+    inline operator type *() \
+    { return getPtr(); } \
+    inline operator type *() const \
+    { return const_cast<type *>(getPtr()); }

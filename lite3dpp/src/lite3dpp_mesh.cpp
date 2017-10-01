@@ -25,8 +25,7 @@
 
 namespace lite3dpp
 {
-    Mesh::Mesh(const String &name, 
-        const String &path, Main *main) : 
+    Mesh::Mesh(const String &name, const String &path, Main *main) : 
         ConfigurableResource(name, path, main, AbstractResource::MESH)
     {}
 
@@ -54,7 +53,7 @@ namespace lite3dpp
             if(!lite3d_mesh_load_from_m_file(&mMesh, 
                 mMain->getResourceManager()->loadFileToMemory(helper.getString(L"Model")),
                 helper.getBool(L"Dynamic", false) ? LITE3D_VBO_DYNAMIC_DRAW : LITE3D_VBO_STATIC_DRAW))
-                LITE3D_THROW("Mesh bad format..");
+                LITE3D_THROW(getName() << ": could not load mesh chunk, bad format");
         }
 #ifdef INCLUDE_ASSIMP
         else
@@ -70,7 +69,7 @@ namespace lite3dpp
                 helper.getString(L"ModelName").c_str(), 
                 helper.getBool(L"Dynamic", false) ? LITE3D_VBO_DYNAMIC_DRAW : LITE3D_VBO_STATIC_DRAW,
                 flags))
-                LITE3D_THROW("mesh bad format..");
+                LITE3D_THROW(getName() << ": could not load mesh chunk, bad format");
         }
 #endif
 
@@ -109,12 +108,14 @@ namespace lite3dpp
     void Mesh::reloadFromConfigImpl(const ConfigurationReader &helper)
     {
         /* restore data */
-        if(mVertexData.size() > 0)
-            lite3d_vbo_buffer(&mMesh.vertexBuffer, &mVertexData[0], mVertexData.size(), mMesh.vertexBuffer.access);
+        if (mVertexData.size() > 0)
+            if (!lite3d_vbo_buffer(&mMesh.vertexBuffer, &mVertexData[0], mVertexData.size(), mMesh.vertexBuffer.access))
+                LITE3D_THROW(getName() << ": failed to reload vertex buffer");
 
-        if(mIndexData.size() > 0)
-            lite3d_vbo_buffer(&mMesh.indexBuffer, &mIndexData[0], mIndexData.size(), mMesh.indexBuffer.access);
-
+        if (mIndexData.size() > 0)
+            if (!lite3d_vbo_buffer(&mMesh.indexBuffer, &mIndexData[0], mIndexData.size(), mMesh.indexBuffer.access))
+                LITE3D_THROW(getName() << ": failed to reload index buffer");
+        
         mVertexData.clear();
         mIndexData.clear();
     }
@@ -169,4 +170,3 @@ namespace lite3dpp
         lite3d_bounding_vol_setup(&meshChunk->boundingVol, &vmin, &vmax);
     }
 }
-

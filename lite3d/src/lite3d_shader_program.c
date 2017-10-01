@@ -23,16 +23,11 @@
 #include <lite3d/lite3d_misc.h>
 #include <lite3d/lite3d_shader_program.h>
 
-static int maxTextureSize;
-static int maxTextureImageUnits;
-static int maxCombinedTextureImageUnits;
+typedef int (*lite3d_uniform_set_func)(lite3d_shader_program *, lite3d_shader_parameter_container *);
+
 
 int lite3d_shader_program_technique_init()
 {
-    glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &maxTextureImageUnits);
-    glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTextureSize);
-    glGetIntegerv(GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS, &maxCombinedTextureImageUnits);
-
     return LITE3D_TRUE;
 }
 
@@ -43,7 +38,7 @@ int lite3d_shader_program_init(lite3d_shader_program *program)
     program->statusString = NULL;
     program->success = 0;
     program->validated = 0;
-
+    
     lite3d_misc_gl_error_stack_clean();
     if (glIsProgram(program->programID))
     {
@@ -165,94 +160,175 @@ void lite3d_shader_program_unbind(
     glUseProgram(0);
 }
 
-int32_t lite3d_shader_program_uniform_set(
-    lite3d_shader_program *program, lite3d_shader_parameter *param,
-    int32_t location)
+static int lite3d_shader_program_sampler_set(
+    lite3d_shader_program *program, lite3d_shader_parameter_container *p)
 {
     SDL_assert(program);
     SDL_assert(program->success == LITE3D_TRUE);
-
-    if (location < -1)
-        return location;
-
-    if (location == -1)
+    SDL_assert(p->parameter->parameter.texture);
+    /* -1  mean what location unknown yet */
+    if (p->location == -1)
     {
-        location = glGetUniformLocation(program->programID, param->name);
-        if (location < 0)
+        p->location = glGetUniformLocation(program->programID, p->parameter->name);
+        if (p->location < 0)
         {
+            p->location = -2;
             SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
-                "%s: uniform %s not found in program %p",
-                LITE3D_CURRENT_FUNCTION, param->name, (void *)program);
-            return -2;
+                "%s: sampler '%s' not found in program %p",
+                LITE3D_CURRENT_FUNCTION, p->parameter->name, (void *)program);
+            return LITE3D_FALSE;
         }
     }
+    else if (p->location == -2)
+        return LITE3D_FALSE;
+    
+    if (p->binding < 0)
+        p->binding = p->bindContext->textureBindingsCount++;
+    
+    glUniform1i(p->location, p->binding);
+    lite3d_texture_unit_bind(p->parameter->parameter.texture, p->binding);
+    return LITE3D_TRUE;
+}
 
-    switch (param->type)
+static int lite3d_shader_program_ssbo_set(
+    lite3d_shader_program *program, lite3d_shader_parameter_container *p)
+{
+    SDL_assert(program);
+    SDL_assert(program->success == LITE3D_TRUE);
+    SDL_assert(p->parameter->parameter.vbo);
+
+    /* -1  mean what location unknown yet */
+    if (p->location == -1)
+    {
+        p->location = glGetProgramResourceIndex(program->programID, 
+            GL_SHADER_STORAGE_BLOCK, p->parameter->name);
+        if (p->location < 0)
+        {
+            p->location = -2;
+            SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
+                "%s: resource block '%s' not found in program %p",
+                LITE3D_CURRENT_FUNCTION, p->parameter->name, (void *)program);
+            return LITE3D_FALSE;
+        }
+    }
+    else if (p->location == -2)
+        return LITE3D_FALSE;
+    
+    if (p->binding < 0)
+    {
+        p->binding = p->bindContext->blockBindingsCount++;
+        glShaderStorageBlockBinding(program->programID, p->location, p->binding);
+    }
+    
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, p->binding, p->parameter->parameter.vbo->vboID);
+    return LITE3D_TRUE;
+}
+
+static int lite3d_shader_program_ubo_set(
+    lite3d_shader_program *program, lite3d_shader_parameter_container *p)
+{
+    SDL_assert(program);
+    SDL_assert(program->success == LITE3D_TRUE);
+    SDL_assert(p->parameter->parameter.vbo);
+
+    /* -1  mean what location unknown yet */
+    if (p->location == -1)
+    {
+        p->location = glGetUniformBlockIndex(program->programID, p->parameter->name);
+        if (p->location < 0)
+        {
+            p->location = -2;
+            SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
+                "%s: resource block '%s' not found in program %p",
+                LITE3D_CURRENT_FUNCTION, p->parameter->name, (void *)program);
+            return LITE3D_FALSE;
+        }
+    }
+    else if (p->location == -2)
+        return LITE3D_FALSE;
+    
+    if (p->binding < 0)
+    {
+        p->binding = p->bindContext->blockBindingsCount++;
+        glUniformBlockBinding(program->programID, p->location, p->binding);
+    }
+    
+    glBindBufferBase(GL_UNIFORM_BUFFER, p->binding, p->parameter->parameter.vbo->vboID);
+    return LITE3D_TRUE;
+}
+
+static int lite3d_shader_program_simple_uniform_set(
+    lite3d_shader_program *program, lite3d_shader_parameter_container *p)
+{
+    SDL_assert(program);
+    SDL_assert(program->success == LITE3D_TRUE);
+    
+    if (p->location == -1)
+    {
+        p->location = glGetUniformLocation(program->programID, p->parameter->name);
+        if (p->location < 0)
+        {
+            p->location = -2; // not found 
+            SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
+                "%s: uniform '%s' not found in program %p",
+                LITE3D_CURRENT_FUNCTION, p->parameter->name, (void *)program);
+            return LITE3D_FALSE;
+        }
+    }
+    else if (p->location == -2) // not found in past
+        return LITE3D_FALSE;
+
+    switch (p->parameter->type)
     {
         case LITE3D_SHADER_PARAMETER_INT:
-            glUniform1i(location, param->parameter.valint);
+            glUniform1i(p->location, p->parameter->parameter.valint);
             break;
         case LITE3D_SHADER_PARAMETER_FLOAT:
-            glUniform1f(location, param->parameter.valfloat);
+            glUniform1f(p->location, p->parameter->parameter.valfloat);
             break;
         case LITE3D_SHADER_PARAMETER_FLOATV3:
-            glUniform3fv(location, 1, &param->parameter.valvec3.x);
+            glUniform3fv(p->location, 1, &p->parameter->parameter.valvec3.x);
             break;
         case LITE3D_SHADER_PARAMETER_FLOATV4:
-            glUniform4fv(location, 1, &param->parameter.valvec4.x);
+            glUniform4fv(p->location, 1, &p->parameter->parameter.valvec4.x);
             break;
         case LITE3D_SHADER_PARAMETER_FLOATM3:
-            glUniformMatrix3fv(location, 1, GL_FALSE, param->parameter.valmat3.mat);
+            glUniformMatrix3fv(p->location, 1, GL_FALSE, p->parameter->parameter.valmat3.mat);
             break;
         case LITE3D_SHADER_PARAMETER_FLOATM4:
-            glUniformMatrix4fv(location, 1, GL_FALSE, param->parameter.valmat4.mat);
+            glUniformMatrix4fv(p->location, 1, GL_FALSE, p->parameter->parameter.valmat4.mat);
             break;
         default:
         {
             SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
                 "%s: unknown type for parameter %s",
-                LITE3D_CURRENT_FUNCTION, param->name);
-            return -2;
+                LITE3D_CURRENT_FUNCTION, p->parameter->name);
+            return LITE3D_FALSE;
         }
     }
 
-    return location;
+    return LITE3D_TRUE;
 }
 
-int32_t lite3d_shader_program_sampler_set(
-    lite3d_shader_program *program, lite3d_shader_parameter *param,
-    int32_t location, uint16_t texUnit)
+static lite3d_uniform_set_func uniformsMethodsTable[] = {
+    NULL,
+    lite3d_shader_program_simple_uniform_set,
+    lite3d_shader_program_simple_uniform_set,
+    lite3d_shader_program_simple_uniform_set,
+    lite3d_shader_program_simple_uniform_set,
+    lite3d_shader_program_simple_uniform_set,
+    lite3d_shader_program_simple_uniform_set,
+    lite3d_shader_program_sampler_set,
+    lite3d_shader_program_ssbo_set,
+    lite3d_shader_program_ubo_set
+};
+
+int lite3d_shader_program_uniform_set(
+    lite3d_shader_program *program, lite3d_shader_parameter_container *p)
 {
-    SDL_assert(program);
-    SDL_assert(program->success == LITE3D_TRUE);
-
-    if (location < -1)
-        return location;
-
-    if (param->type != LITE3D_SHADER_PARAMETER_SAMPLER)
-    {
-        SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
-            "%s: uniform %s not a sampler..",
-            LITE3D_CURRENT_FUNCTION, param->name);
-        return -2;
-    }
-
-    /* -1  mean what location unknown yet */
-    if (location == -1)
-    {
-        location = glGetUniformLocation(program->programID, param->name);
-        if (location < 0)
-        {
-            SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
-                "%s: sampler %s not found in program %p",
-                LITE3D_CURRENT_FUNCTION, param->name, (void *)program);
-            return -2;
-        }
-    }
-
-    glUniform1i(location, texUnit);
-    lite3d_texture_unit_bind(param->parameter.valsampler.texture, texUnit);
-    return location;
+    SDL_assert(p);
+    SDL_assert(p->parameter);
+    return uniformsMethodsTable[p->parameter->type](program, p);
 }
 
 void lite3d_shader_program_attribute_index(

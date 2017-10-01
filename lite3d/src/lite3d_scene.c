@@ -218,7 +218,8 @@ static void mqr_unit_queue_render(lite3d_scene *scene, lite3d_array *queue, uint
         if (curUnit != (*mqrNode)->matUnit)
         {
             matPass = lite3d_material_apply((*mqrNode)->matUnit->material, pass);
-            scene->stats.textureUnitsBinded += (*mqrNode)->matUnit->material->textureUnitsBinded;
+            scene->stats.textureUnitsBinded += matPass->bindContext.textureBindingsCount;
+            scene->stats.blockUnitsBinded += matPass->bindContext.blockBindingsCount;
             scene->stats.materialPassed++;
             curUnit = (*mqrNode)->matUnit;
         }

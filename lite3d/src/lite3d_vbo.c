@@ -266,7 +266,8 @@ void lite3d_vbo_purge(struct lite3d_vbo *vbo)
 {
     SDL_assert(vbo);
 
-    glDeleteBuffers(1, &vbo->vboID);
+    if (vbo->vboID > 0)
+        glDeleteBuffers(1, &vbo->vboID);
 
     vbo->vboID = 0;
     vbo->size = 0;

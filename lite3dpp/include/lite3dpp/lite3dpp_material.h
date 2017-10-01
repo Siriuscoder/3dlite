@@ -26,10 +26,18 @@
 #include <lite3dpp/lite3dpp_resource.h>
 #include <lite3dpp/lite3dpp_texture.h>
 #include <lite3dpp/lite3dpp_texture_buffer.h>
+#include <lite3dpp/lite3dpp_ssbo.h>
 #include <lite3dpp/lite3dpp_shader_program.h>
 
 namespace lite3dpp
 {
+#define LITE3D_MATERIAL_DECLARE_PARAMETER(ptype, intype, outype) \
+    void set##ptype##Parameter(uint16_t pass, const String &name, const intype &value, bool isGlobal = false);\
+    outype get##ptype##Parameter(const String &name) const; \
+    static void set##ptype##GlobalParameter(const String &name, const intype &value); \
+    static outype get##ptype##GlobalParameter(const String &name);\
+    static outype get##ptype##ParameterFromMap(const String &name, const String &matName, const MaterialParameters &params);
+    
     class LITE3DPP_EXPORT Material : public ConfigurableResource, public Noncopiable
     {
     public:
@@ -43,47 +51,24 @@ namespace lite3dpp
 
         ~Material();
 
-        inline lite3d_material *getPtr()
-        { return &mMaterial; }
+        LITE3D_DECLARE_PTR_METHODS(lite3d_material, mMaterial)
 
         void addPass(uint16_t passNo);
         void removePass(uint16_t pass); 
         void setPassProgram(uint16_t pass, ShaderProgram *program);
         void setPassBlendMode(uint16_t pass, bool blendEnable, uint8_t mode);
-        /* if pass == 0 parameter will be used for all passes */
-        void setFloatParameter(uint16_t pass, const String &name, float value, bool isGlobal);
-        void setIntParameter(uint16_t pass, const String &name, int32_t value, bool isGlobal);
-        void setFloatv3Parameter(uint16_t pass, const String &name, const kmVec3 &value, bool isGlobal = false);
-        void setFloatv4Parameter(uint16_t pass, const String &name, const kmVec4 &value, bool isGlobal = false);
-        void setFloatm3Parameter(uint16_t pass, const String &name, const kmMat3 &value, bool isGlobal = false);
-        void setFloatm4Parameter(uint16_t pass, const String &name, const kmMat4 &value, bool isGlobal = false);
-        void setSamplerTextureParameter(uint16_t pass, const String &name, Texture *texture, bool isGlobal = false);
-        
         ShaderProgram *getPassProgram(uint16_t pass) const;
-        float getFloatParameter(const String &name) const;
-        int32_t getIntParameter(const String &name) const;
-        kmVec3 getFloatv3Parameter(const String &name) const;
-        kmVec4 getFloatv4Parameter(const String &name) const;
-        kmMat3 getFloatm3Parameter(const String &name) const;
-        kmMat4 getFloatm4Parameter(const String &name) const;
-        Texture *getSamplerTextureParameter(const String &name) const;
         
-        static void setFloatGlobalParameter(const String &name, float value);
-        static void setIntGlobalParameter(const String &name, int32_t value);
-        static void setFloatv3GlobalParameter(const String &name, const kmVec3 &value);
-        static void setFloatv4GlobalParameter(const String &name, const kmVec4 &value);
-        static void setFloatm3GlobalParameter(const String &name, const kmMat3 &value);
-        static void setFloatm4GlobalParameter(const String &name, const kmMat4 &value);
-        static void setSamplerTextureGlobalParameter(const String &name, Texture *texture);
-        
-        static float getFloatGlobalParameter(const String &name);
-        static int32_t getIntGlobalParameter(const String &name);
-        static kmVec3 getFloatv3GlobalParameter(const String &name);
-        static kmVec4 getFloatv4GlobalParameter(const String &name);
-        static kmMat3 getFloatm3GlobalParameter(const String &name);
-        static kmMat4 getFloatm4GlobalParameter(const String &name);
-        static Texture *getSamplerTextureGlobalParameter(const String &name);
-        
+        /* if pass == 0 parameter will be used for all passes */
+        LITE3D_MATERIAL_DECLARE_PARAMETER(Float, float, float)
+        LITE3D_MATERIAL_DECLARE_PARAMETER(Int, int32_t, int32_t)
+        LITE3D_MATERIAL_DECLARE_PARAMETER(Floatv3, kmVec3, kmVec3)
+        LITE3D_MATERIAL_DECLARE_PARAMETER(Floatv4, kmVec4, kmVec4)
+        LITE3D_MATERIAL_DECLARE_PARAMETER(Floatm3, kmMat3, kmMat3)
+        LITE3D_MATERIAL_DECLARE_PARAMETER(Floatm4, kmMat4, kmMat4)
+        LITE3D_MATERIAL_DECLARE_PARAMETER(Sampler, Texture, Texture *)
+        LITE3D_MATERIAL_DECLARE_PARAMETER(SSBO, SSBO, SSBO *)
+
     protected:
 
         virtual void loadFromConfigImpl(const ConfigurationReader &helper) override;
@@ -98,14 +83,6 @@ namespace lite3dpp
         
         static lite3d_shader_parameter *getGlobalParameter(const String &name, 
             uint8_t type);
-
-        static float getFloatParameterFromMap(const String &name, const String &matName, const MaterialParameters &params);
-        static int32_t getIntParameterFromMap(const String &name, const String &matName, const MaterialParameters &params);
-        static kmVec3 getFloatv3ParameterFromMap(const String &name, const String &matName, const MaterialParameters &params);
-        static kmVec4 getFloatv4ParameterFromMap(const String &name, const String &matName, const MaterialParameters &params);
-        static kmMat3 getFloatm3ParameterFromMap(const String &name, const String &matName, const MaterialParameters &params);
-        static kmMat4 getFloatm4ParameterFromMap(const String &name, const String &matName, const MaterialParameters &params);
-        static Texture *getSamplerTextureParameterFromMap(const String &name, const String &matName, const MaterialParameters &params);
         
     private:
 

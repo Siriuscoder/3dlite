@@ -189,6 +189,11 @@ namespace lite3dpp
                 if (resIt->second->getState() == AbstractResource::LOADED)
                     stats.shaderProgramsLoadedCount++;
                 break;
+            case AbstractResource::SHADER_STORAGE:
+                stats.ssboCount++;
+                if (resIt->second->getState() == AbstractResource::LOADED)
+                    stats.ssboLoadedCount++;
+                break;
             }
         }
 

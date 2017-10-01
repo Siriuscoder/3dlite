@@ -33,6 +33,8 @@
             ]
         }
     ],
+
+    "LightingTechnique": "tbuf",
     
     "Objects":
     [

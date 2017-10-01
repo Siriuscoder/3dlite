@@ -53,10 +53,10 @@ namespace lite3dpp
         mScene.nodeOutOfFrustum = nodeOutOfFrustum;
         mScene.beforeUpdateNodes = beforeUpdateNodes;
         
-        String lightingTechnique = helper.getString(L"LightingTechnique", "TextureBuffer");
+        String lightingTechnique = helper.getString(L"LightingTechnique", "none");
         try
         {
-            if (lightingTechnique == "TextureBuffer")
+            if (lightingTechnique == "tbuf")
             {
                 /* default name of lighting buffer is scene name + "LightingBufferObject" */
                 mLightingParamsBuffer = mMain->getResourceManager()->

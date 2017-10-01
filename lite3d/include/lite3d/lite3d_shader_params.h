@@ -29,15 +29,10 @@
 #define LITE3D_SHADER_PARAMETER_FLOATV4     0x3
 #define LITE3D_SHADER_PARAMETER_FLOATM3     0x4
 #define LITE3D_SHADER_PARAMETER_FLOATM4     0x5
-#define LITE3D_SHADER_PARAMETER_SAMPLER     0x6
-#define LITE3D_SHADER_PARAMETER_INT         0x7
-
-
-typedef struct lite3d_sampler
-{
-    lite3d_texture_unit *texture;
-    uint32_t textureUnit;
-} lite3d_sampler;
+#define LITE3D_SHADER_PARAMETER_INT         0x6
+#define LITE3D_SHADER_PARAMETER_SAMPLER     0x7
+#define LITE3D_SHADER_PARAMETER_SSBO        0x8
+#define LITE3D_SHADER_PARAMETER_UBO         0x9
 
 typedef struct lite3d_shader_parameter
 {
@@ -49,7 +44,8 @@ typedef struct lite3d_shader_parameter
     {
         int32_t valint; 
         float valfloat;
-        lite3d_sampler valsampler;
+        lite3d_texture_unit *texture;
+        lite3d_vbo *vbo;
         kmVec3 valvec3;
         kmVec4 valvec4;
         kmMat3 valmat3;

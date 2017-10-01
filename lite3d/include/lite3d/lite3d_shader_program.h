@@ -32,6 +32,22 @@ typedef struct lite3d_shader_program
     void *userdata;
 } lite3d_shader_program;
 
+typedef struct lite3d_shader_binding_context
+{
+    int16_t textureBindingsCount;
+    int16_t blockBindingsCount;  
+} lite3d_shader_binding_context;
+
+typedef struct lite3d_shader_parameter_container
+{
+    lite3d_list_node parameterLink;
+    lite3d_shader_parameter *parameter;
+    lite3d_shader_binding_context *bindContext;
+    /* uniform location in shader program attached to this pass */
+    int32_t location;
+    int16_t binding;
+} lite3d_shader_parameter_container;
+
 LITE3D_CEXPORT int lite3d_shader_program_technique_init();
 LITE3D_CEXPORT int lite3d_shader_program_init(lite3d_shader_program *program);
 LITE3D_CEXPORT int lite3d_shader_program_link(
@@ -46,12 +62,8 @@ LITE3D_CEXPORT int lite3d_shader_program_validate(
     lite3d_shader_program *program);
 
 /* set uniform or sampler params to shader, shader must be bind */
-LITE3D_CEXPORT int32_t lite3d_shader_program_uniform_set(
-    lite3d_shader_program *program, lite3d_shader_parameter *param, 
-    int32_t location);
-LITE3D_CEXPORT int32_t lite3d_shader_program_sampler_set(
-    lite3d_shader_program *program, lite3d_shader_parameter *param, 
-    int32_t location, uint16_t texUnit);
+LITE3D_CEXPORT int lite3d_shader_program_uniform_set(
+    lite3d_shader_program *program, lite3d_shader_parameter_container *p);
 
 LITE3D_CEXPORT void lite3d_shader_program_attribute_index(
     lite3d_shader_program *program, const char *name, int32_t location);

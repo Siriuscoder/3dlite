@@ -41,6 +41,7 @@ typedef struct lite3d_vbo
     size_t size;
     uint16_t access;
     uint16_t role;
+    void *userdata;
 } lite3d_vbo;
 
 LITE3D_CEXPORT int lite3d_vbo_technique_init(void);

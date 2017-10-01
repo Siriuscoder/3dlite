@@ -33,10 +33,7 @@ namespace lite3dpp
 
         ~Texture();
 
-        inline lite3d_texture_unit *getPtr()
-        { return &mTexture; }
-        inline const lite3d_texture_unit *getPtr() const
-        { return &mTexture; }
+        LITE3D_DECLARE_PTR_METHODS(lite3d_texture_unit, mTexture)
 
         inline bool isTextureBuffer()
         { return mTexture.isTextureBuffer == LITE3D_TRUE; }

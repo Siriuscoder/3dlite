@@ -119,17 +119,17 @@ static int initMaterials(void)
     lite3d_shader_parameter_init(&mRifleTextureUnitA);
     strcpy(mRifleTextureUnitA.name, "diffuse");
     mRifleTextureUnitA.type = LITE3D_SHADER_PARAMETER_SAMPLER;
-    mRifleTextureUnitA.parameter.valsampler.texture = &mRifleTextureA;
+    mRifleTextureUnitA.parameter.texture = &mRifleTextureA;
     /* init parameter with texture */
     lite3d_shader_parameter_init(&mRifleTextureUnitB);
     strcpy(mRifleTextureUnitB.name, "diffuse");
     mRifleTextureUnitB.type = LITE3D_SHADER_PARAMETER_SAMPLER;
-    mRifleTextureUnitB.parameter.valsampler.texture = &mRifleTextureB;
+    mRifleTextureUnitB.parameter.texture = &mRifleTextureB;
     /* init parameter with texture */
     lite3d_shader_parameter_init(&mBattTextureUnit);
     strcpy(mBattTextureUnit.name, "diffuse");
     mBattTextureUnit.type = LITE3D_SHADER_PARAMETER_SAMPLER;
-    mBattTextureUnit.parameter.valsampler.texture = &mBattTexture;
+    mBattTextureUnit.parameter.texture = &mBattTexture;
 
     /* try to compile material shaders */
     lite3d_shader_init(&shaders[0], LITE3D_SHADER_TYPE_VERTEX);

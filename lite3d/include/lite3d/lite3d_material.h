@@ -22,21 +22,13 @@
 #include <lite3d/lite3d_shader_program.h>
 #include <lite3d/lite3d_list.h>
 
-typedef struct lite3d_material_pass_parameter
-{
-    lite3d_list_node parameterLink;
-    lite3d_shader_parameter *parameter;
-    /* uniform location in shader program attached to this pass */
-    int32_t uniformLocation;
-    int16_t textureUnit;
-} lite3d_material_pass_parameter;
-
 typedef struct lite3d_material_pass
 {
     uint32_t passNo;
     /* shader must be linked before set parameters */
     lite3d_shader_program *program;
-    /* list lite3d_material_pass_parameter */
+    lite3d_shader_binding_context bindContext;
+    /* list lite3d_shader_parameter_container */
     lite3d_list parameters;
     /* blending */
     uint8_t blending;
@@ -48,7 +40,6 @@ typedef struct lite3d_material
     lite3d_material_pass *passes;
     uint32_t passesSize;
     uint32_t passesCapacity;
-    uint32_t textureUnitsBinded;
     void *userdata;
 } lite3d_material;
 

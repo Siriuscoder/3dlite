@@ -101,7 +101,7 @@ static int initMaterials(void)
     lite3d_shader_parameter_init(&mMinigunTextureUnit);
     strcpy(mMinigunTextureUnit.name, "diffuse");
     mMinigunTextureUnit.type = LITE3D_SHADER_PARAMETER_SAMPLER;
-    mMinigunTextureUnit.parameter.valsampler.texture = &mMinigunTexture;
+    mMinigunTextureUnit.parameter.texture = &mMinigunTexture;
 
     /* try to compile material shaders */
     lite3d_shader_init(&shaders[0], LITE3D_SHADER_TYPE_VERTEX);

@@ -238,6 +238,7 @@ void Sample::printMemoryStats()
         "Meshes: %d/%d\n"
         "Shaders: %d/%d\n"
         "Render targets: %d/%d\n"
+        "SSBO: %d/%d\n"
         "File cache: %d/%lu bytes\n",
         memStats.usedVideoMem,
         memStats.totalObjectsCount,
@@ -248,6 +249,7 @@ void Sample::printMemoryStats()
         memStats.meshesLoadedCount, memStats.meshesCount,
         memStats.shaderProgramsLoadedCount, memStats.shaderProgramsCount,
         memStats.renderTargetsLoadedCount, memStats.renderTargetsCount,
+        memStats.ssboLoadedCount, memStats.ssboCount,
         memStats.fileCachesCount, memStats.totalCachedFilesMemSize);
 }
 

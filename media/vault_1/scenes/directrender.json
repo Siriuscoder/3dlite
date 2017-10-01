@@ -38,6 +38,8 @@
             ]
         }
     ],
+
+    "LightingTechnique": "tbuf",
     
     "Objects":
     [

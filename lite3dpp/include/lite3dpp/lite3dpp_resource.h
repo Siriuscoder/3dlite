@@ -47,7 +47,8 @@ namespace lite3dpp
             MATERIAL,
             TEXTURE,
             SHADER_PROGRAM,
-            RENDER_TARGET
+            RENDER_TARGET,
+            SHADER_STORAGE
         };
 
         AbstractResource(const String &name, 

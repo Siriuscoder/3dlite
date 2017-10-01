@@ -79,6 +79,11 @@
         </df>
       </df>
       <df name="lite3dpp">
+        <df name="include">
+          <df name="lite3dpp">
+            <in>lite3dpp_ssbo.h</in>
+          </df>
+        </df>
         <df name="src">
           <df name="as">
             <in>as_atomic.cpp</in>
@@ -161,6 +166,7 @@
           <in>lite3dpp_script_vec3.cpp</in>
           <in>lite3dpp_script_vec4.cpp</in>
           <in>lite3dpp_shader_program.cpp</in>
+          <in>lite3dpp_ssbo.cpp</in>
           <in>lite3dpp_texture.cpp</in>
           <in>lite3dpp_texture_buffer.cpp</in>
           <in>lite3dpp_texture_render_target.cpp</in>
@@ -677,6 +683,11 @@
         <cTool flags="3">
         </cTool>
       </item>
+      <item path="lite3dpp/include/lite3dpp/lite3dpp_ssbo.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
       <item path="lite3dpp/src/as/as_atomic.cpp" ex="false" tool="1" flavor2="8">
         <ccTool flags="1">
         </ccTool>
@@ -1108,6 +1119,8 @@
             flavor2="8">
         <ccTool flags="1">
         </ccTool>
+      </item>
+      <item path="lite3dpp/src/lite3dpp_ssbo.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="lite3dpp/src/lite3dpp_texture.cpp" ex="false" tool="1" flavor2="8">
         <ccTool flags="1">
