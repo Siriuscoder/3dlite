@@ -12,7 +12,7 @@
     "VideoSettings": {
         "Width": 640,
         "Height": 480,
-        "Caption": "Vault Scene",
+        "Caption": "Vault Scene - Deferred shading",
         "ColorBits": 24,
         "Fullscreen": false,
         "MSAA": 1,

@@ -1,6 +1,6 @@
 {
     // common settings
-    "LogLevel": 3,
+    "LogLevel": 2,
 	"LogFlushAlways": true,
     "LogFile": "lite3d.log",
     "TextureSettings": {
@@ -12,7 +12,7 @@
     "VideoSettings": {
         "Width": 640,
         "Height": 480,
-        "Caption": "Vault Scene",
+        "Caption": "Vault Scene - Direct render",
         "ColorBits": 24,
         "Fullscreen": false,
         "MSAA": 1,

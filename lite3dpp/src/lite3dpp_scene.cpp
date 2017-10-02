@@ -87,9 +87,8 @@ namespace lite3dpp
             }
             catch(std::exception &ex)
             {
-                SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
-                    "Failed to setup lighting technique '%s' for scene %s, %s, build-in lighting will be disabled", lightingTechnique.c_str(), 
-                    getName().c_str(), ex.what());
+                LITE3D_THROW("Failed to setup lighting technique '" << lightingTechnique << "' for scene '" << getName() 
+                    << "', " << ex.what());
             }
         }
 
