@@ -109,8 +109,8 @@ namespace lite3dpp
         Cameras mCameras;
         Objects mObjects;
         Lights mLights;
-        TextureBuffer *mLightingParamsBuffer;
-        TextureBuffer *mLightingIndexBuffer;
+        BufferBase *mLightingParamsBuffer;
+        BufferBase *mLightingIndexBuffer;
         LightsStore mLightsWorld;
         LightsIndexesStore mLightsIndexes;
     };

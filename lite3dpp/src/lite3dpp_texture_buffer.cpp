@@ -111,7 +111,7 @@ namespace lite3dpp
             else
                 LITE3D_THROW(getName() << " unsupported texture buffer format");
             
-            if (!lite3d_texture_buffer_allocate(&mTexture, helper.getInt(L"TexelsCount", 0), NULL, 
+            if (!lite3d_texture_buffer_init(&mTexture, helper.getInt(L"TexelsCount", 0), NULL, 
                 tbf, helper.getBool(L"Dynamic", false) ? LITE3D_VBO_DYNAMIC_DRAW : LITE3D_VBO_STATIC_DRAW))
             {
                 LITE3D_THROW(getName() << " texture buffer allocation failed, probably it is not supported");
@@ -121,6 +121,15 @@ namespace lite3dpp
             LITE3D_THROW(getName() << " texture buffer bad parameters");
 
         mTexture.userdata = this;
+    }
+
+    void TextureBuffer::setBufferSizeBytes(size_t size)
+    {
+        if (getState() != AbstractResource::LOADED)
+            LITE3D_THROW(getName() << " resource unavailable");
+
+        if (!lite3d_vbo_buffer(&mTexture.tbo, NULL, size, mTexture.tbo.access))
+            LITE3D_THROW(getName() << " failed to resize texture buffer up to " << size << " bytes");
     }
 
     void TextureBuffer::reloadFromConfigImpl(const ConfigurationReader &helper)

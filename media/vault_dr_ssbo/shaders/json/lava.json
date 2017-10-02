@@ -1,0 +1,7 @@
+{
+    "Sources": 
+    [
+        "vaultmat:shaders/sources/prepass.vs,vaultmat:shaders/sources/def/version.def",
+        "vaultmat:shaders/sources/prepass_lava.ps,vaultmat:shaders/sources/def/version.def"
+    ]
+}

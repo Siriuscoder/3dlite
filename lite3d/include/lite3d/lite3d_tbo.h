@@ -55,7 +55,7 @@
 #define LITE3D_TB_RGBA32UI  0x8D70
 
 
-LITE3D_CEXPORT int lite3d_texture_buffer_allocate(lite3d_texture_unit *textureUnit, 
+LITE3D_CEXPORT int lite3d_texture_buffer_init(lite3d_texture_unit *textureUnit, 
     uint32_t texelsCount, const void *data, uint16_t bf, uint16_t access);
 
 LITE3D_CEXPORT int lite3d_texture_buffer_purge(lite3d_texture_unit *textureUnit);

@@ -54,27 +54,43 @@ namespace lite3dpp
         mScene.beforeUpdateNodes = beforeUpdateNodes;
         
         String lightingTechnique = helper.getString(L"LightingTechnique", "none");
-        try
+        if (lightingTechnique != "none")
         {
-            if (lightingTechnique == "tbuf")
+            try
             {
-                /* default name of lighting buffer is scene name + "LightingBufferObject" */
-                mLightingParamsBuffer = mMain->getResourceManager()->
-                    queryResourceFromJson<TextureBuffer>(getName() + "_lightingBufferObject",
-                    "{\"BufferFormat\": \"RGBA32F\", \"Dynamic\": true}");
-                mLightingIndexBuffer = mMain->getResourceManager()->
-                    queryResourceFromJson<TextureBuffer>(getName() + "_lightingIndexBuffer",
-                    "{\"BufferFormat\": \"R16I\", \"Dynamic\": true}");
-            }
+                if (lightingTechnique == "TBO")
+                {
+                    /* default name of lighting buffer is scene name + "LightingBufferObject" */
+                    mLightingParamsBuffer = mMain->getResourceManager()->
+                        queryResourceFromJson<TextureBuffer>(getName() + "_lightingBufferObject",
+                        "{\"BufferFormat\": \"RGBA32F\", \"Dynamic\": true}");
+                    /* 2-bytes index, about 16k light sources support  */
+                    mLightingIndexBuffer = mMain->getResourceManager()->
+                        queryResourceFromJson<TextureBuffer>(getName() + "_lightingIndexBuffer",
+                        "{\"BufferFormat\": \"R16I\", \"Dynamic\": true}");
+                }
+                else if (lightingTechnique == "SSBO")
+                {
+                    /* default name of lighting buffer is scene name + "LightingBufferObject" */
+                    mLightingParamsBuffer = mMain->getResourceManager()->
+                        queryResourceFromJson<SSBO>(getName() + "_lightingBufferObject",
+                        "{\"Dynamic\": true}");
 
-            SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
-                "Using lighting technique '%s' for scene %s", lightingTechnique.c_str(), getName().c_str());
-        }
-        catch(std::exception &ex)
-        {
-            SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
-                "Failed to setup lighting technique '%s' for scene %s, %s, build-in lighting will be disabled", lightingTechnique.c_str(), 
-                getName().c_str(), ex.what());
+                    /* 2-bytes index, about 16k light sources support  */
+                    mLightingIndexBuffer = mMain->getResourceManager()->
+                        queryResourceFromJson<TextureBuffer>(getName() + "_lightingIndexBuffer",
+                        "{\"BufferFormat\": \"R16I\", \"Dynamic\": true}");
+                }
+
+                SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
+                    "Using lighting technique '%s' for scene %s", lightingTechnique.c_str(), getName().c_str());
+            }
+            catch(std::exception &ex)
+            {
+                SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
+                    "Failed to setup lighting technique '%s' for scene %s, %s, build-in lighting will be disabled", lightingTechnique.c_str(), 
+                    getName().c_str(), ex.what());
+            }
         }
 
         setupObjects(helper.getObjects(L"Objects"), NULL);
@@ -236,8 +252,8 @@ namespace lite3dpp
             return;
 
         // check index buffer size, extend it if needed
-        if (mLightingIndexBuffer->bufferSizeTexels() < mLights.size()+1)
-            mLightingIndexBuffer->extendBufferBytes(((mLights.size()+1) * mLightingIndexBuffer->texelSize())-
+        if (mLightingIndexBuffer->bufferSizeBytes() < (mLights.size()+1)*sizeof(LightsIndexesStore::value_type))
+            mLightingIndexBuffer->extendBufferBytes(((mLights.size()+1)*sizeof(LightsIndexesStore::value_type))-
             mLightingIndexBuffer->bufferSizeBytes());
         mLightsIndexes.clear();
         mLightsIndexes.push_back(0); // reserve first index for size

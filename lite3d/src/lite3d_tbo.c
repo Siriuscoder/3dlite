@@ -58,7 +58,7 @@ Overview
     dividing the size of the buffer object by the size of each texel.
 */
 
-int lite3d_texture_buffer_allocate(lite3d_texture_unit *textureUnit, 
+int lite3d_texture_buffer_init(lite3d_texture_unit *textureUnit, 
     uint32_t texelsCount, const void *data, uint16_t bf, uint16_t access)
 {
     if (!lite3d_check_tbo())

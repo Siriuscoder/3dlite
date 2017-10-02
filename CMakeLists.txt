@@ -106,7 +106,7 @@ else()
     set(GRAPHIC_BACKEND "GLEW")
 endif()
 
-message(STATUS "Graphic backend: ${GRAPHIC_BACKEND}")
+message(STATUS "GPU frontend: ${GRAPHIC_BACKEND}")
 
 find_package(DevIL)
 if(NOT IL_FOUND)

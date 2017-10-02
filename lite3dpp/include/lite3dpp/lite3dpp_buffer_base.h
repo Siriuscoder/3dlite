@@ -31,6 +31,7 @@ namespace lite3dpp
 
         virtual size_t bufferSizeBytes() const = 0;
         virtual void extendBufferBytes(size_t addsize) = 0;
+        virtual void setBufferSizeBytes(size_t size) = 0;
         virtual void setData(const void *buffer, size_t offset, size_t size) = 0;
         virtual void getData(void *buffer, size_t offset, size_t size) const = 0;
         virtual void getData(BufferData &buffer, size_t offset, size_t size) const;

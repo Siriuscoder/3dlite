@@ -32,6 +32,7 @@ namespace lite3dpp
 
         size_t bufferSizeBytes() const override;
         void extendBufferBytes(size_t addsize) override;
+        void setBufferSizeBytes(size_t size) override;
         void setData(const void *buffer, size_t offset, size_t size) override;
         void getData(void *buffer, size_t offset, size_t size) const override;
         BufferScopedMapper map(uint16_t lockType) override;

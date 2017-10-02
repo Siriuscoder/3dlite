@@ -45,6 +45,7 @@ namespace lite3dpp
         size_t size;
         if ((size = helper.getInt(L"Size", 0)) > 0)
         {
+            mSSBO.access = helper.getBool(L"Dynamic", true) ? LITE3D_VBO_DYNAMIC_DRAW : LITE3D_VBO_STATIC_DRAW;
             if (!lite3d_vbo_buffer(&mSSBO, NULL, size, helper.
                 getBool(L"Dynamic", true) ? LITE3D_VBO_DYNAMIC_DRAW : LITE3D_VBO_STATIC_DRAW))
                 LITE3D_THROW(getName() << ": failed to allocate SSBO to " << size << " bytes");

@@ -1,0 +1,47 @@
+{
+    "Cameras":
+    [
+        {
+            "Name": "MainCamera",
+
+            "Position": [0,380,140],
+            "LookAt": [0,0,140],
+            "Perspective": 
+            {
+                "Znear": 10,
+                "Zfar": 5000,
+                "Fov": 65
+            },
+            "RenderTargets":
+            [
+                // draw only non transparent objects to MRT prepass
+                {
+                    "Name": "RenderPrepass",
+                    "Path": "vaultmat:targets/prepass.json",
+                    "Priority": 0,
+                    "TexturePass": 1,
+                    "RenderSecondStage": false
+                },
+                // draw only transparent objects at end of combine pass
+                {
+                    "Name": "RenderCombineStep",
+                    "Path": "vaultmat:targets/combine.json",
+                    "Priority": 2, // render after light combine step of combine pass
+                    "TexturePass": 1,
+                    "RenderFirstStage": false
+                }
+            ]
+        }
+    ],
+
+    "LightingTechnique": "TBO",
+    
+    "Objects":
+    [
+        {
+            "Name": "Vault",
+            "Object": "vault:objects/vault_static.json"
+        }
+    ]
+}
+

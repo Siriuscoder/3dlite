@@ -32,7 +32,7 @@
         }
     ],
 
-    "LightingTechnique": "tbuf",
+    "LightingTechnique": "TBO",
     
     "Objects":
     [

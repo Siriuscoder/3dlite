@@ -1,0 +1,8 @@
+{
+    "Sources": 
+    [
+        "vaultmat:shaders/sources/prepass.vs,vaultmat:shaders/sources/def/parallax.def",
+        "vaultmat:shaders/sources/prepass.ps,vaultmat:shaders/sources/def/parallax.def",
+        "vaultmat:shaders/sources/blinn.ps,vaultmat:shaders/sources/def/version.def"
+    ]
+}

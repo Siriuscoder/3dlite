@@ -1,0 +1,52 @@
+{
+  "Passes":[
+    {
+      "Pass":1,
+      "Program":{
+        "Name":"combine.program",
+        "Path":"vaultmat:shaders/json/combine.json"
+      }
+    }
+  ],
+  "Uniforms":[
+    {
+      "Name":"projectionMatrix"
+    },
+    {
+      "Name":"viewMatrix"
+    },
+    {
+      "Name":"eye",
+      "Type":"v3",
+      "Value":[
+        0,0,0
+      ],
+      "Scope":"global"
+    },
+    {
+      "Name":"fragMap",
+      "TextureName": "fragmentWorldCoords.texture",
+      "Type":"sampler"
+    },
+    {
+      "Name":"normalMap",
+      "TextureName": "normalsWorld.texture",
+      "Type":"sampler"
+    },
+    {
+      "Name":"diffuseMap",
+      "TextureName": "diffuseMap.texture",
+      "Type":"sampler"
+    },
+    {
+      "Name":"lightSources",
+      "TextureName": "Vault_lightingBufferObject",
+      "Type":"samplerBuffer"
+    },
+    {
+      "Name":"lightIndexes",
+      "TextureName": "Vault_lightingIndexBuffer",
+      "Type":"samplerBuffer"
+    }
+  ]
+}

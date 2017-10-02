@@ -36,8 +36,17 @@ namespace lite3dpp
 
         if (!lite3d_vbo_extend(&mVBO, addSize, mVBO.access))
         {
-            LITE3D_THROW("vertex buffer extend failed, probably it is not supported");
+            LITE3D_THROW("GPU buffer extend failed, probably this function does not supported");
         }
+    }
+
+    void VBO::setBufferSizeBytes(size_t size)
+    {
+        if (!mVBO.vboID)
+            LITE3D_THROW("resource unavailable");
+
+        if (!lite3d_vbo_buffer(&mVBO, NULL, size, mVBO.access))
+            LITE3D_THROW("failed to resize GPU buffer up to " << size << " bytes");
     }
 
     void VBO::setData(const void *buffer, size_t offset, size_t size)
@@ -48,9 +57,9 @@ namespace lite3dpp
         if (size > 0)
         {
             if ((offset + size) > bufferSizeBytes())
-                LITE3D_THROW("operation may cause buffer overflow");
+                LITE3D_THROW("operation may cause GPU buffer overflow");
             if (!lite3d_vbo_subbuffer(&mVBO, buffer, offset, size))
-                LITE3D_THROW("failed to upload data to vertex buffer");
+                LITE3D_THROW("failed to upload data to GPU");
         }
     }
 
@@ -62,9 +71,9 @@ namespace lite3dpp
         if (size > 0)
         {
             if ((offset + size) > bufferSizeBytes())
-                LITE3D_THROW("vertex buffer read out of bounds: " << (offset + size) << " of " << bufferSizeBytes());
+                LITE3D_THROW("GPU buffer read out of bounds: " << (offset + size) << " of " << bufferSizeBytes());
             if (!lite3d_vbo_get_buffer(&mVBO, buffer, offset, size))
-                LITE3D_THROW("failed to read data from vertex buffer");
+                LITE3D_THROW("failed to read data from GPU buffer");
         }
     }
     

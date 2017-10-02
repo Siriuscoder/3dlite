@@ -1,0 +1,13 @@
+{
+    "Sources": 
+    [
+        "vaultmat:shaders/sources/postprocess.vs,vaultmat:shaders/sources/def/version.def",
+        "vaultmat:shaders/sources/postprocess.ps,vaultmat:shaders/sources/def/version.def",
+        "vaultmat:shaders/sources/fxaa.ps,vaultmat:shaders/sources/def/version.def"
+    ],
+    
+    "AttributesOrder":
+    [
+        "ivertex"
+    ]
+}
