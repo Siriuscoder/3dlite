@@ -45,13 +45,13 @@
         },
         {
           "Name":"lightSources",
-          "TextureName": "Vault_lightingBufferObject",
-          "Type":"samplerBuffer"
+          "SSBOName": "Vault_lightingBufferObject",
+          "Type":"SSBO"
         },
         {
           "Name":"lightIndexes",
-          "TextureName": "Vault_lightingIndexBuffer",
-          "Type":"samplerBuffer"
+          "SSBOName": "Vault_lightingIndexBuffer",
+          "Type":"SSBO"
         }
       ]
     },

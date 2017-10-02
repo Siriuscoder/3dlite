@@ -41,6 +41,6 @@ int main(int agrc, char *args[])
     }
 
     lite3dpp::samples::VaultDF sample;
-    return sample.start("vault_1/config/config_vault.json");
+    return sample.start("vault_df/config/config_vault.json");
 }
 
