@@ -78,8 +78,8 @@ namespace lite3dpp
 
                     /* 2-bytes index, about 16k light sources support  */
                     mLightingIndexBuffer = mMain->getResourceManager()->
-                        queryResourceFromJson<TextureBuffer>(getName() + "_lightingIndexBuffer",
-                        "{\"BufferFormat\": \"R16I\", \"Dynamic\": true}");
+                        queryResourceFromJson<SSBO>(getName() + "_lightingIndexBuffer",
+                        "{\"Dynamic\": true}");
                 }
 
                 SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,

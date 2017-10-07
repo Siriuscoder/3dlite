@@ -17,27 +17,26 @@
 cmake_minimum_required(VERSION 2.8.9)
 project(lite3dpp)
 
-################################################################
 unset(SOURCES_LIST)
 unset(HEADERS_LIST)
 
-source_files("src/as")
-headers_files("include/lite3dpp/as")
-
-if(UNIX AND AS_ARM)
-	list(APPEND SOURCES_LIST src/as/as_callfunc_arm_gcc.S
-		src/as/as_callfunc_arm_vita.S
-		src/as/as_callfunc_arm_xcode.S)
-elseif(MSVC AND AS_ARM)
-	list(APPEND src/as/as_callfunc_arm_msvc.asm)
-endif()
-
+################################################################
+#source_files("src/as")
+#headers_files("include/lite3dpp/as")
+#
+#if(UNIX AND AS_ARM)
+#	list(APPEND SOURCES_LIST src/as/as_callfunc_arm_gcc.S
+#		src/as/as_callfunc_arm_vita.S
+#		src/as/as_callfunc_arm_xcode.S)
+#elseif(MSVC AND AS_ARM)
+#	list(APPEND src/as/as_callfunc_arm_msvc.asm)
+#endif()
+#source_files("src/as_helpers")
+#headers_files("include/lite3dpp/as_helpers")
 ################################################################
 source_files("src")
-source_files("src/as_helpers")
 source_files("src/json")
 headers_files("include/lite3dpp")
-headers_files("include/lite3dpp/as_helpers")
 headers_files("include/lite3dpp/json")
 
 if(MSVC)
@@ -53,8 +52,7 @@ endif()
 
 target_include_directories(lite3dpp PRIVATE 
 "$<BUILD_INTERFACE:${SDL2_INCLUDE_DIR}>"
-"$<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/winres/>"
-"$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include/lite3dpp/as>")
+"$<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/winres/>")
 
 target_link_libraries(lite3dpp
 lite3d)

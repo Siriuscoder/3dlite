@@ -21,7 +21,6 @@
 #include <lite3dpp/lite3dpp_manageable.h>
 #include <lite3dpp/lite3dpp_resource_manager.h>
 #include <lite3dpp/lite3dpp_script.h>
-#include <lite3dpp/lite3dpp_script_as.h>
 
 namespace lite3dpp
 {

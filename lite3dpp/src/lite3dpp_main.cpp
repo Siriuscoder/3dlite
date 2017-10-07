@@ -144,8 +144,6 @@ namespace lite3dpp
         if(!mConfig)
             LITE3D_THROW("Bad configuration");
         
-        /* init scripting */
-        AsScript::engineInit();
         /* basic initialization */
         initResourceLocations();
 
@@ -166,7 +164,6 @@ namespace lite3dpp
 
         mResourceManager.releaseAllResources();
         mResourceManager.releaseFileCache();
-        AsScript::engineShut();
     }
 
     WindowRenderTarget *Main::window()
