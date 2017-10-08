@@ -1,7 +1,5 @@
 uniform sampler2D diffuse;
 uniform sampler2D normals;
-uniform samplerBuffer lightSources;
-uniform isamplerBuffer lightIndexes;
 uniform vec3 eye;
 
 #ifdef CALC_ILLUM
@@ -18,6 +16,8 @@ in vec3 ivv;
 in mat3 itbn;
 in vec3 wnorm;
 
+out vec4 fragColor;
+
 const vec3 fogColor = vec3(0.0, 0.95, 0.89);
 const vec3 ambient = vec3(0.03, 0.03, 0.03);
 const float wrapAroundFactor = 0.04;
@@ -27,8 +27,7 @@ const float specPower = 180.0;
 const float specPower = 40.0;
 #endif
 
-vec3 blinn_multiple(samplerBuffer source, isamplerBuffer indexes, vec3 ambient, vec3 fragPos, 
-    vec3 fragNormal, vec3 eye, float specularFactor, 
+vec3 blinn_multiple(vec3 ambient, vec3 fragPos, vec3 fragNormal, vec3 eye, float specularFactor, 
     float wrapAroundFactor, float specPower, inout vec3 linearSpec);
 
 bool vec3zero(vec3 vec)
@@ -102,7 +101,7 @@ void main()
     vec3 fragGlow = texture2D(glow, tc).rgb;
     if (!vec3zero(fragGlow))
     {
-        gl_FragColor = vec4(fogFunc(fragGlow + (fragDiffuse.rgb/3), fogColor), fragDiffuse.a);
+        fragColor = vec4(fogFunc(fragGlow + (fragDiffuse.rgb/3), fogColor), fragDiffuse.a);
         return;
     }
 #endif
@@ -118,13 +117,13 @@ void main()
         nw = wnorm;
 
     vec3 linearSpec;
-    vec3 linear = blinn_multiple(lightSources, lightIndexes, ambient, ivv, nw,
-        eye, nval.w * 2, wrapAroundFactor, specPower, linearSpec);
+    vec3 linear = blinn_multiple(ambient, ivv, nw, eye, nval.w * 2, 
+        wrapAroundFactor, specPower, linearSpec);
 
 #ifdef GLASS
     fragDiffuse.a = mix(fragDiffuse.a, 1.0, length(linearSpec.rgb));
 #endif
 
     /* calculate fog factor */
-    gl_FragColor = vec4(fogFunc(linear * fragDiffuse.rgb, fogColor), fragDiffuse.a);
+    fragColor = vec4(fogFunc(linear * fragDiffuse.rgb, fogColor), fragDiffuse.a);
 }

@@ -18,6 +18,8 @@ in vec3 ivv;
 in mat3 itbn;
 in vec3 wnorm;
 
+out vec4 fragColor;
+
 const vec3 fogColor = vec3(0.0, 0.95, 0.89);
 const vec3 ambient = vec3(0.03, 0.03, 0.03);
 const float wrapAroundFactor = 0.04;
@@ -102,7 +104,7 @@ void main()
     vec3 fragGlow = texture2D(glow, tc).rgb;
     if (!vec3zero(fragGlow))
     {
-        gl_FragColor = vec4(fogFunc(fragGlow + (fragDiffuse.rgb/3), fogColor), fragDiffuse.a);
+        fragColor = vec4(fogFunc(fragGlow + (fragDiffuse.rgb/3), fogColor), fragDiffuse.a);
         return;
     }
 #endif
@@ -126,5 +128,5 @@ void main()
 #endif
 
     /* calculate fog factor */
-    gl_FragColor = vec4(fogFunc(linear * fragDiffuse.rgb, fogColor), fragDiffuse.a);
+    fragColor = vec4(fogFunc(linear * fragDiffuse.rgb, fogColor), fragDiffuse.a);
 }

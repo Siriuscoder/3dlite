@@ -63,23 +63,35 @@ namespace lite3dpp
                     /* default name of lighting buffer is scene name + "LightingBufferObject" */
                     mLightingParamsBuffer = mMain->getResourceManager()->
                         queryResourceFromJson<TextureBuffer>(getName() + "_lightingBufferObject",
-                        "{\"BufferFormat\": \"RGBA32F\", \"Dynamic\": true}");
+                        "{\"BufferFormat\": \"RGBA32F\", \"Dynamic\": false}");
                     /* 2-bytes index, about 16k light sources support  */
                     mLightingIndexBuffer = mMain->getResourceManager()->
                         queryResourceFromJson<TextureBuffer>(getName() + "_lightingIndexBuffer",
-                        "{\"BufferFormat\": \"R16I\", \"Dynamic\": true}");
+                        "{\"BufferFormat\": \"R32I\", \"Dynamic\": true}");
                 }
                 else if (lightingTechnique == "SSBO")
                 {
                     /* default name of lighting buffer is scene name + "LightingBufferObject" */
                     mLightingParamsBuffer = mMain->getResourceManager()->
                         queryResourceFromJson<SSBO>(getName() + "_lightingBufferObject",
-                        "{\"Dynamic\": true}");
+                        "{\"Dynamic\": false}");
 
                     /* 2-bytes index, about 16k light sources support  */
                     mLightingIndexBuffer = mMain->getResourceManager()->
-                        queryResourceFromJson<TextureBuffer>(getName() + "_lightingIndexBuffer",
-                        "{\"BufferFormat\": \"R16I\", \"Dynamic\": true}");
+                        queryResourceFromJson<SSBO>(getName() + "_lightingIndexBuffer",
+                        "{\"Dynamic\": true}");
+                }
+                else if (lightingTechnique == "UBO")
+                {
+                    /* default name of lighting buffer is scene name + "LightingBufferObject" */
+                    mLightingParamsBuffer = mMain->getResourceManager()->
+                        queryResourceFromJson<UBO>(getName() + "_lightingBufferObject",
+                        "{\"Dynamic\": false}");
+
+                    /* 2-bytes index, about 16k light sources support  */
+                    mLightingIndexBuffer = mMain->getResourceManager()->
+                        queryResourceFromJson<UBO>(getName() + "_lightingIndexBuffer",
+                        "{\"Dynamic\": true}");
                 }
 
                 SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,

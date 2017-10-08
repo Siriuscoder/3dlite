@@ -158,6 +158,10 @@ namespace lite3dpp
                     setSSBOParameter(passNo, paramName, 
                         *mMain->getResourceManager()->queryResource<SSBO>(uniformParamJson.getString(L"SSBOName"),
                         uniformParamJson.getString(L"SSBOPath")), scope == "global");
+                else if(paramType == "UBO")
+                    setUBOParameter(passNo, paramName, 
+                        *mMain->getResourceManager()->queryResource<UBO>(uniformParamJson.getString(L"UBOName"),
+                        uniformParamJson.getString(L"UBOPath")), scope == "global");
             }
         }
     }
@@ -318,5 +322,6 @@ namespace lite3dpp
     LITE3D_IMPLEMENT_MAT_PARAMETER(Floatm4, kmMat4, kmMat4, LITE3D_SHADER_PARAMETER_FLOATM4, valmat4, valmat4)
     LITE3D_IMPLEMENT_MAT_PARAMETER(Sampler, Texture, Texture *, LITE3D_SHADER_PARAMETER_SAMPLER, texture, texture->userdata)
     LITE3D_IMPLEMENT_MAT_PARAMETER(SSBO, SSBO, SSBO *, LITE3D_SHADER_PARAMETER_SSBO, vbo, vbo->userdata)
+    LITE3D_IMPLEMENT_MAT_PARAMETER(UBO, UBO, UBO *, LITE3D_SHADER_PARAMETER_UBO, vbo, vbo->userdata)
 }
 

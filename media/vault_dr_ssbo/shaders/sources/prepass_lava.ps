@@ -5,6 +5,8 @@ in vec2 iuv;
 in vec3 ivv;
 in vec3 wnorm;
 
+out vec4 fragColor;
+
 const vec3 fogColor = vec3(0.0, 0.95, 0.89);
 
 vec3 fogFunc(vec3 frag, vec3 fc)
@@ -20,5 +22,5 @@ vec3 fogFunc(vec3 frag, vec3 fc)
 void main()
 {
     /* calculate fog factor */
-    gl_FragColor = vec4(fogFunc(texture2D(diffuse, vec2(iuv.x, iuv.y + animcounter)).rgb, fogColor), 1.0);
+    fragColor = vec4(fogFunc(texture2D(diffuse, vec2(iuv.x, iuv.y + animcounter)).rgb, fogColor), 1.0);
 }

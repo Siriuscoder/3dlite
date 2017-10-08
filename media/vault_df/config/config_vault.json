@@ -10,8 +10,8 @@
     // Video settings
     // Window size, caption, color settings, etc
     "VideoSettings": {
-        "Width": 640,
-        "Height": 480,
+        "Width": 1024,
+        "Height": 768,
         "Caption": "Vault Scene - Deferred shading",
         "ColorBits": 24,
         "Fullscreen": false,

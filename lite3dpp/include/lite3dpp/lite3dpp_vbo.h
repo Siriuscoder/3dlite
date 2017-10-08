@@ -41,4 +41,31 @@ namespace lite3dpp
 
         lite3d_vbo &mVBO;
     };
+    
+    class LITE3DPP_EXPORT VBOResource : public ConfigurableResource, public VBO, public Noncopiable
+    {
+    public:
+
+        using BufferBase::getData;
+        using BufferBase::setData;
+        
+        VBOResource(const String &name, const String &path, Main *main,
+            AbstractResource::ResourceType type);
+        ~VBOResource();
+        
+        LITE3D_DECLARE_PTR_METHODS(lite3d_vbo, mVBO)
+        
+        size_t usedVideoMemBytes() const override;
+        
+    protected:
+        
+        virtual void loadFromConfigImpl(const ConfigurationReader &helper) override;
+        virtual void unloadImpl() override;
+        virtual void reloadFromConfigImpl(const ConfigurationReader &helper) override;
+        
+    private:
+
+        lite3d_vbo mVBO;
+        BufferData mVBOData;
+    };
 }

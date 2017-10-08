@@ -21,29 +21,14 @@
 
 namespace lite3dpp
 {
-    class LITE3DPP_EXPORT SSBO : public ConfigurableResource, public VBO, public Noncopiable
+    class LITE3DPP_EXPORT SSBO : public VBOResource
     {
     public:
-
-        using BufferBase::getData;
-        using BufferBase::setData;
         
         SSBO(const String &name, const String &path, Main *main);
-        ~SSBO();
-        
-        LITE3D_DECLARE_PTR_METHODS(lite3d_vbo, mSSBO)
-        
-        size_t usedVideoMemBytes() const override;
         
     protected:
         
         virtual void loadFromConfigImpl(const ConfigurationReader &helper) override;
-        virtual void unloadImpl() override;
-        virtual void reloadFromConfigImpl(const ConfigurationReader &helper) override;
-        
-    private:
-
-        lite3d_vbo mSSBO;
-        BufferData mSSBOData;
     };
 }

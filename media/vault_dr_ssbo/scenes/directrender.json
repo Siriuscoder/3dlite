@@ -39,7 +39,7 @@
         }
     ],
 
-    "LightingTechnique": "SSBO",
+    "LightingTechnique": "UBO",
     
     "Objects":
     [

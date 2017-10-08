@@ -48,7 +48,8 @@ namespace lite3dpp
             TEXTURE,
             SHADER_PROGRAM,
             RENDER_TARGET,
-            SHADER_STORAGE
+            SHADER_STORAGE,
+            UNIFORM_BUFFER
         };
 
         AbstractResource(const String &name, 

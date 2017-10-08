@@ -37,7 +37,7 @@ namespace lite3dpp
         typedef stl<String, SceneObject::Ptr>::map Objects;
         typedef stl<String, LightSceneNode *>::map Lights;
         typedef stl<lite3d_light_params>::vector LightsStore;
-        typedef stl<int16_t>::vector LightsIndexesStore;
+        typedef stl<int32_t>::vector LightsIndexesStore;
 
 
         Scene(const String &name, 

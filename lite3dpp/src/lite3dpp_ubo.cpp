@@ -1,6 +1,6 @@
 /******************************************************************************
  *	This file is part of lite3d (Light-weight 3d engine).
- *	Copyright (C) 2016  Sirius (Korolev Nikita)
+ *	Copyright (C) 2015  Sirius (Korolev Nikita)
  *
  *	Lite3D is free software: you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -15,32 +15,21 @@
  *	You should have received a copy of the GNU General Public License
  *	along with Lite3D.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
-#include "src/lite3dpp_vault_deferred_shading.cpp"
-#include "src/lite3dpp_vault_directrender.cpp"
+#include <lite3dpp/lite3dpp_main.h>
+#include <lite3dpp/lite3dpp_ubo.h>
 
-
-int main(int agrc, char *args[])
+namespace lite3dpp
 {
-    if (agrc > 1)
+    UBO::UBO(const String &name, const String &path, Main *main) : 
+        VBOResource(name, path, main, AbstractResource::UNIFORM_BUFFER)
+    {}
+    
+    void UBO::loadFromConfigImpl(const ConfigurationReader &helper)
     {
-        if (std::string(args[1]) == "DF")
-        {
-            lite3dpp::samples::VaultDF sample;
-            return sample.start("vault_df/config/config_vault.json");
-        }
-        else if (std::string(args[1]) == "DR")
-        {
-            lite3dpp::samples::VaultDR sample;
-            return sample.start("vault_dr/config/config_vault.json");
-        }
-        else if (std::string(args[1]) == "DRU")
-        {
-            lite3dpp::samples::VaultDR sample;
-            return sample.start("vault_dr_ubo/config/config_vault.json");
-        }
+        if (!lite3d_ubo_init(getPtr()))
+            LITE3D_THROW(getName() << ": failed to create SSBO");
+        
+        VBOResource::loadFromConfigImpl(helper);
     }
-
-    lite3dpp::samples::VaultDF sample;
-    return sample.start("vault_df/config/config_vault.json");
 }
 
