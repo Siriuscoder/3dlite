@@ -1,2 +1,2 @@
-#version 430 core
+#version 330
 #define CALC_PARALLAX

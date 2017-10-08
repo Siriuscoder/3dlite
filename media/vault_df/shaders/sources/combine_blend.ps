@@ -13,6 +13,8 @@ in vec3 ivv;
 in mat3 itbn;
 in vec3 wnorm;
 
+out vec4 fragColor;
+
 const float wrapAroundFactor = 0.1;
 const vec3 ambient = vec3(0.02, 0.02, 0.02);
 #ifdef GLASS
@@ -39,7 +41,7 @@ void main()
     vec3 fragGlow = texture2D(glow, iuv).rgb;
     if (!vec3zero(fragGlow))
     {
-        gl_FragColor = vec4(fragGlow, fragTexture.a);
+        fragColor = vec4(fragGlow, fragTexture.a);
         return;
     }
 #endif
@@ -65,5 +67,5 @@ void main()
     fragTexture.a = mix(fragTexture.a, 1.0, length(linearSpec.rgb));
 #endif
 
-    gl_FragColor = vec4(linear * fragTexture.rgb, fragTexture.a);
+    fragColor = vec4(linear * fragTexture.rgb, fragTexture.a);
 }

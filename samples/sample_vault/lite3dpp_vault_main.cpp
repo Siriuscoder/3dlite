@@ -40,7 +40,13 @@ int main(int agrc, char *args[])
         }
     }
 
-    lite3dpp::samples::VaultDF sample;
-    return sample.start("vault_df/config/config_vault.json");
+    std::cout << "Usage: " << std::endl;
+    std::cout << "\tsample_vault [MODE] " << std::endl << std::endl;
+    std::cout << "\tMODE: " << std::endl;
+    std::cout << "\tDF : Deferred Shading Render with lightmap pass" << std::endl;
+    std::cout << "\tDR : Direct Render with TBO(Texture Buffer Object) lighting" << std::endl;
+    std::cout << "\tDRU: Direct Render with UBO(Uniform Buffer Object) lighting" << std::endl;
+    
+    return -1;
 }
 
