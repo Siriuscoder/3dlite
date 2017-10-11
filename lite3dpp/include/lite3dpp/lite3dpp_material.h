@@ -27,6 +27,7 @@
 #include <lite3dpp/lite3dpp_texture.h>
 #include <lite3dpp/lite3dpp_texture_buffer.h>
 #include <lite3dpp/lite3dpp_ssbo.h>
+#include <lite3dpp/lite3dpp_ubo.h>
 #include <lite3dpp/lite3dpp_shader_program.h>
 
 namespace lite3dpp
@@ -68,6 +69,7 @@ namespace lite3dpp
         LITE3D_MATERIAL_DECLARE_PARAMETER(Floatm4, kmMat4, kmMat4)
         LITE3D_MATERIAL_DECLARE_PARAMETER(Sampler, Texture, Texture *)
         LITE3D_MATERIAL_DECLARE_PARAMETER(SSBO, SSBO, SSBO *)
+        LITE3D_MATERIAL_DECLARE_PARAMETER(UBO, UBO, UBO *)
 
     protected:
 

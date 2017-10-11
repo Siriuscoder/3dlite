@@ -1,0 +1,70 @@
+{
+    "Cameras":
+    [
+        {
+            "Name": "MainCamera",
+
+            "Position": [0,380,140],
+            "LookAt": [0,0,140],
+            "Perspective": 
+            {
+                "Znear": 10,
+                "Zfar": 2300,
+                "Fov": 65
+            },
+            "RenderTargets":
+            [
+                // draw only non transparent objects to depth
+                {
+                    "Name": "RenderDepth",
+                    "Path": "vaultmat:targets/depth.json",
+                    "Priority": 0,
+                    "TexturePass": 2,
+                    "RenderSecondStage": false,
+                    "DepthTest": true,
+                    "ColorOutput": false,
+                    "DepthOutput": true
+                },
+                // draw all objects and calculate lighting
+                {
+                    "Name": "RenderDirect",
+                    "Path": "vaultmat:targets/combine.json",
+                    "Priority": 0,
+                    "TexturePass": 1,
+                    "DepthTest": true,
+                    "ColorOutput": true,
+                    "DepthOutput": true
+                }
+            ]
+        }
+    ],
+
+    "LightingTechnique": "UBO",
+    
+    "Objects":
+    [
+        {
+            "Name": "Vault",
+            "Object": "vault:objects/vault_static.json"
+        },
+        {
+            "Name": "Minigun",
+            "Object": "vault:objects/minigun.json",
+
+            "Position": [0,-1100,-230]
+        },
+        {
+            "Name": "Gatling",
+            "Object": "vault:objects/gatling.json",
+
+            "Position": [1250,-1150,-230]
+        },
+        {
+            "Name": "Lazer",
+            "Object": "vault:objects/lazer.json",
+
+            "Position": [270,-2700,-230]
+        }
+    ]
+}
+

@@ -1,4 +1,4 @@
-vec3 blinn_single(int type, vec3 lightDir, vec3 eyeDir, vec3 ambient, vec3 diffuse, 
+vec3 blinn_single(int type, vec3 lightDir, vec3 eyeDir, vec3 diffuse, 
     vec3 specular, vec3 normal, vec3 spotDirection, vec2 spotFactor, vec3 attenuation, 
     float specularFactor, float wrapAroundFactor, float specPower, inout vec3 linearSpec)
 {
@@ -28,9 +28,7 @@ vec3 blinn_single(int type, vec3 lightDir, vec3 eyeDir, vec3 ambient, vec3 diffu
 
     linearSpec = specular * specRatio * attenuationFactor;
     /* calculate linear color factor */
-    return (ambient * attenuationFactor) + 
-        (diffuse * lambRatio * attenuationFactor) + 
-        linearSpec;
+    return (diffuse * lambRatio * attenuationFactor) + linearSpec;
 }
 
 vec3 blinn_multiple(samplerBuffer source, isamplerBuffer lightIndexes, vec3 ambient, vec3 fragPos, 
@@ -100,7 +98,7 @@ vec3 blinn_multiple(samplerBuffer source, isamplerBuffer lightIndexes, vec3 ambi
         //vec3 lattenuation = vec3(0.5, 0.001, 0.00006);
 
         vec3 curSpec;
-        linear += blinn_single(int(blocks[0].x), lightDir, eyeDir, lambient, ldiffuse, lspecular, fragNormal, 
+        linear += blinn_single(int(blocks[0].x), lightDir, eyeDir, ldiffuse, lspecular, fragNormal, 
             lspotDirection, lspotFactor, lattenuation, specularFactor, wrapAroundFactor, specPower, curSpec);
         linearSpec += curSpec;
     }

@@ -194,6 +194,11 @@ namespace lite3dpp
                 if (resIt->second->getState() == AbstractResource::LOADED)
                     stats.ssboLoadedCount++;
                 break;
+            case AbstractResource::UNIFORM_BUFFER:
+                stats.uboCount++;
+                if (resIt->second->getState() == AbstractResource::LOADED)
+                    stats.uboLoadedCount++;
+                break;
             }
         }
 

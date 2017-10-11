@@ -52,6 +52,8 @@ namespace lite3dpp
             uint32_t renderTargetsLoadedCount;
             uint32_t ssboCount;
             uint32_t ssboLoadedCount;
+            uint32_t uboCount;
+            uint32_t uboLoadedCount;
             uint32_t fileCachesCount;
             size_t totalCachedFilesMemSize;
         } ResourceManagerStats;

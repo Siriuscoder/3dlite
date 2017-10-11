@@ -21,54 +21,15 @@
 namespace lite3dpp
 {
     SSBO::SSBO(const String &name, const String &path, Main *main) : 
-        ConfigurableResource(name, path, main, AbstractResource::SHADER_STORAGE),
-        VBO(mSSBO)
-    {
-        mSSBO.userdata = this;
-    }
-    
-    SSBO::~SSBO()
-    {
-        lite3d_vbo_purge(&mSSBO);
-    }
-    
-    size_t SSBO::usedVideoMemBytes() const
-    {
-        return mSSBO.size;
-    }
+        VBOResource(name, path, main, AbstractResource::SHADER_STORAGE)
+    {}
     
     void SSBO::loadFromConfigImpl(const ConfigurationReader &helper)
     {
-        if (!lite3d_ssbo_init(&mSSBO))
+        if (!lite3d_ssbo_init(getPtr()))
             LITE3D_THROW(getName() << ": failed to create SSBO");
         
-        size_t size;
-        if ((size = helper.getInt(L"Size", 0)) > 0)
-        {
-            mSSBO.access = helper.getBool(L"Dynamic", true) ? LITE3D_VBO_DYNAMIC_DRAW : LITE3D_VBO_STATIC_DRAW;
-            if (!lite3d_vbo_buffer(&mSSBO, NULL, size, helper.
-                getBool(L"Dynamic", true) ? LITE3D_VBO_DYNAMIC_DRAW : LITE3D_VBO_STATIC_DRAW))
-                LITE3D_THROW(getName() << ": failed to allocate SSBO to " << size << " bytes");
-        }
-    }
-    
-    void SSBO::unloadImpl()
-    {
-        if (bufferSizeBytes() > 0)
-        {
-            /* load data into host memory */
-            getData(mSSBOData, 0, bufferSizeBytes());
-            lite3d_vbo_buffer(&mSSBO, NULL, 0, mSSBO.access);
-        }
-    }
-    
-    void SSBO::reloadFromConfigImpl(const ConfigurationReader &helper)
-    {
-        if (mSSBOData.size() > 0)
-        {
-            if (!lite3d_vbo_buffer(&mSSBO, &mSSBOData[0], mSSBOData.size(), mSSBO.access))
-                LITE3D_THROW(getName() << ": failed to reload vertex buffer");
-        }
+        VBOResource::loadFromConfigImpl(helper);
     }
 }
 

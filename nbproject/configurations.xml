@@ -79,11 +79,6 @@
         </df>
       </df>
       <df name="lite3dpp">
-        <df name="include">
-          <df name="lite3dpp">
-            <in>lite3dpp_ssbo.h</in>
-          </df>
-        </df>
         <df name="src">
           <df name="as">
             <in>as_atomic.cpp</in>
@@ -170,6 +165,7 @@
           <in>lite3dpp_texture.cpp</in>
           <in>lite3dpp_texture_buffer.cpp</in>
           <in>lite3dpp_texture_render_target.cpp</in>
+          <in>lite3dpp_ubo.cpp</in>
           <in>lite3dpp_vbo.cpp</in>
         </df>
       </df>
@@ -188,9 +184,6 @@
         </df>
         <df name="sample_common">
           <in>lite3dpp_common.cpp</in>
-        </df>
-        <df name="sample_deferred_shading">
-          <in>lite3dpp_main.cpp</in>
         </df>
         <df name="sample_dynamic_cube">
           <in>lite3dpp_dynamic_cube.cpp</in>
@@ -220,10 +213,14 @@
           <in>lite3dpp_sponza.cpp</in>
         </df>
         <df name="sample_vault">
-          <in>lite3dpp_vault.cpp</in>
+          <df name="src">
+            <in>lite3dpp_vault_deferred_shading.cpp</in>
+            <in>lite3dpp_vault_directrender.cpp</in>
+          </df>
+          <in>lite3dpp_vault_main.cpp</in>
         </df>
-        <df name="sample_vault_ind">
-          <in>lite3dpp_vault.cpp</in>
+        <df name="sample_warship">
+          <in>lite3dpp_main.cpp</in>
         </df>
       </df>
       <df name="tests">
@@ -293,7 +290,7 @@
           <buildCommandWorkingDir>build</buildCommandWorkingDir>
           <buildCommand>${MAKE} -f Makefile</buildCommand>
           <cleanCommand>${MAKE} -f Makefile clean</cleanCommand>
-          <executablePath>build/bin/Debug/sample_vault_ind</executablePath>
+          <executablePath>build/bin/Debug/sample_vault</executablePath>
           <ccTool>
             <incDir>
               <pElem>lite3d/include</pElem>
@@ -682,11 +679,6 @@
       <item path="lite3d/src/lite3d_video.c" ex="false" tool="0" flavor2="3">
         <cTool flags="3">
         </cTool>
-      </item>
-      <item path="lite3dpp/include/lite3dpp/lite3dpp_ssbo.h"
-            ex="false"
-            tool="3"
-            flavor2="0">
       </item>
       <item path="lite3dpp/src/as/as_atomic.cpp" ex="false" tool="1" flavor2="8">
         <ccTool flags="1">
@@ -1120,7 +1112,9 @@
         <ccTool flags="1">
         </ccTool>
       </item>
-      <item path="lite3dpp/src/lite3dpp_ssbo.cpp" ex="false" tool="1" flavor2="0">
+      <item path="lite3dpp/src/lite3dpp_ssbo.cpp" ex="false" tool="1" flavor2="8">
+        <ccTool flags="1">
+        </ccTool>
       </item>
       <item path="lite3dpp/src/lite3dpp_texture.cpp" ex="false" tool="1" flavor2="8">
         <ccTool flags="1">
@@ -1139,6 +1133,8 @@
             flavor2="8">
         <ccTool flags="1">
         </ccTool>
+      </item>
+      <item path="lite3dpp/src/lite3dpp_ubo.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="lite3dpp/src/lite3dpp_vbo.cpp" ex="false" tool="1" flavor2="8">
         <ccTool flags="1">
@@ -1175,13 +1171,6 @@
         </ccTool>
       </item>
       <item path="samples/sample_common/lite3dpp_common.cpp"
-            ex="false"
-            tool="1"
-            flavor2="8">
-        <ccTool flags="0">
-        </ccTool>
-      </item>
-      <item path="samples/sample_deferred_shading/lite3dpp_main.cpp"
             ex="false"
             tool="1"
             flavor2="8">
@@ -1251,14 +1240,14 @@
         <ccTool flags="0">
         </ccTool>
       </item>
-      <item path="samples/sample_vault/lite3dpp_vault.cpp"
+      <item path="samples/sample_vault/lite3dpp_vault_main.cpp"
             ex="false"
             tool="1"
             flavor2="8">
         <ccTool flags="0">
         </ccTool>
       </item>
-      <item path="samples/sample_vault_ind/lite3dpp_vault.cpp"
+      <item path="samples/sample_warship/lite3dpp_main.cpp"
             ex="false"
             tool="1"
             flavor2="8">
