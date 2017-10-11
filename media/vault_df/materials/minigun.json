@@ -1,0 +1,31 @@
+{
+  "Passes":[
+    {
+      "Pass":1,
+      "Program":{
+        "Name":"prepass.program",
+        "Path":"vaultmat:shaders/json/prepass.json"
+      }
+    }
+  ],
+  "Uniforms":[
+    {
+      "Name":"projectionMatrix"
+    },
+    {
+      "Name":"viewMatrix"
+    },
+    {
+      "Name":"diffuse",
+      "TextureName":"minigun.texture",
+      "TexturePath":"vault:textures/json/minigun.json",
+      "Type":"sampler"
+    },
+    {
+      "Name":"normals",
+      "TextureName":"minigun_n.texture",
+      "TexturePath":"vault:textures/json/minigun_n.json",
+      "Type":"sampler"
+    }
+  ]
+}

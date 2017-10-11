@@ -170,6 +170,15 @@ int lite3d_check_tbo()
 #endif    
 }
 
+int lite3d_check_seamless_cube_map()
+{
+#ifdef GLES
+    return LITE3D_FALSE;
+#else 
+    return GLEW_ARB_seamless_cube_map || GLEW_ARB_seamless_cubemap_per_texture;
+#endif      
+}
+
 int lite3d_init_gl_extensions_binding()
 {
 #ifndef GLES

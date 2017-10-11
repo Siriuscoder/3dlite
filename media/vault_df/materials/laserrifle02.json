@@ -1,0 +1,31 @@
+{
+  "Passes":[
+    {
+      "Pass":1,
+      "Program":{
+        "Name":"prepass.program",
+        "Path":"vaultmat:shaders/json/prepass.json"
+      }
+    }
+  ],
+  "Uniforms":[
+    {
+      "Name":"projectionMatrix"
+    },
+    {
+      "Name":"viewMatrix"
+    },
+    {
+      "Name":"diffuse",
+      "TextureName":"laserrifle02.texture",
+      "TexturePath":"vault:textures/json/laserrifle02.json",
+      "Type":"sampler"
+    },
+    {
+      "Name":"normals",
+      "TextureName":"laserrifle02_n.texture",
+      "TexturePath":"vault:textures/json/laserrifle02_n.json",
+      "Type":"sampler"
+    }
+  ]
+}

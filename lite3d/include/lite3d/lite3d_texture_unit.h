@@ -37,6 +37,7 @@
 #define LITE3D_TEXTURE_1D         0x0DE0
 #define LITE3D_TEXTURE_2D         0x0DE1
 #define LITE3D_TEXTURE_3D         0x806F
+#define LITE3D_TEXTURE_CUBE       0x8513
 #define LITE3D_TEXTURE_BUFFER     0x8C2A
 /* pre-loading texture manipulation */
 #define LITE3D_ALIENIFY_FILTER      0x0001
@@ -180,16 +181,24 @@ LITE3D_CEXPORT void lite3d_texture_technique_shut(void);
 
 /* texture mipmap level size */
 LITE3D_CEXPORT int32_t lite3d_texture_unit_get_level_width(lite3d_texture_unit *textureUnit,
-    int8_t level);
+    int8_t level, uint8_t cubeface);
 LITE3D_CEXPORT int32_t lite3d_texture_unit_get_level_height(lite3d_texture_unit *textureUnit,
-    int8_t level);
+    int8_t level, uint8_t cubeface);
 LITE3D_CEXPORT int32_t lite3d_texture_unit_get_level_depth(lite3d_texture_unit *textureUnit,
-    int8_t level);
+    int8_t level, uint8_t cubeface);
 
 /* load texture from resource file using Devil */
+/* CUBEFACE description (takes in account for LITE3D_TEXTURE_CUBE textures only )
+    GL_TEXTURE_CUBE_MAP_POSITIVE_X	Right   = 0
+    GL_TEXTURE_CUBE_MAP_NEGATIVE_X	Left    = 1 
+    GL_TEXTURE_CUBE_MAP_POSITIVE_Y	Top     = 2
+    GL_TEXTURE_CUBE_MAP_NEGATIVE_Y	Bottom  = 3
+    GL_TEXTURE_CUBE_MAP_POSITIVE_Z	Back    = 4
+    GL_TEXTURE_CUBE_MAP_NEGATIVE_Z	Front   = 5
+*/
 LITE3D_CEXPORT int lite3d_texture_unit_from_resource(lite3d_texture_unit *textureUnit, 
     const lite3d_file *resource, uint32_t imageType, uint32_t textureTarget, 
-    int8_t quality, uint8_t wrapping);
+    int8_t quality, uint8_t wrapping, uint8_t cubeface);
 
 /* allocate empty texture object */
 /* set iformat = 0 to specify what internal format does not matter */
@@ -201,25 +210,25 @@ LITE3D_CEXPORT int lite3d_texture_unit_allocate(lite3d_texture_unit *textureUnit
 LITE3D_CEXPORT int lite3d_texture_unit_set_pixels(lite3d_texture_unit *textureUnit, 
     int32_t widthOff, int32_t heightOff, int32_t depthOff, 
     int32_t width, int32_t height, int32_t depth,
-    int8_t level, const void *pixels);
+    int8_t level, uint8_t cubeface, const void *pixels);
 
 /* update specified mipmap compressed level */
 LITE3D_CEXPORT int lite3d_texture_unit_set_compressed_pixels(lite3d_texture_unit *textureUnit, 
     int32_t widthOff, int32_t heightOff, int32_t depthOff, 
     int32_t width, int32_t height, int32_t depth,
-    int8_t level, size_t pixelsSize, const void *pixels);
+    int8_t level, uint8_t cubeface, size_t pixelsSize, const void *pixels);
 
 /* get data from mipmap level */
 LITE3D_CEXPORT int lite3d_texture_unit_get_pixels(lite3d_texture_unit *textureUnit, 
-    int8_t level, void *pixels);
+    int8_t level, uint8_t cubeface, void *pixels);
 LITE3D_CEXPORT int lite3d_texture_unit_get_compressed_pixels(lite3d_texture_unit *textureUnit, 
-    int8_t level, void *pixels);
+    int8_t level, uint8_t cubeface, void *pixels);
 
 /* size of mipmap levels */
 LITE3D_CEXPORT int lite3d_texture_unit_get_level_size(lite3d_texture_unit *textureUnit, 
-    int8_t level, size_t *size);
+    int8_t level, uint8_t cubeface, size_t *size);
 LITE3D_CEXPORT int lite3d_texture_unit_get_compressed_level_size(lite3d_texture_unit *textureUnit, 
-    int8_t level, size_t *size);
+    int8_t level, uint8_t cubeface, size_t *size);
 /* regenerate mipmaps */
 LITE3D_CEXPORT int lite3d_texture_unit_generate_mipmaps(lite3d_texture_unit *textureUnit);
 

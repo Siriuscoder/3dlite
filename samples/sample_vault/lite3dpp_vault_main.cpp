@@ -15,8 +15,8 @@
  *	You should have received a copy of the GNU General Public License
  *	along with Lite3D.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
-#include "src/lite3dpp_vault_deferred_shading.cpp"
-#include "src/lite3dpp_vault_directrender.cpp"
+#include "lite3dpp_vault_deferred_shading.h"
+#include "lite3dpp_vault_directrender.h"
 
 
 int main(int agrc, char *args[])

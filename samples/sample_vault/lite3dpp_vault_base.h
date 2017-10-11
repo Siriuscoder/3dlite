@@ -15,42 +15,39 @@
  *	You should have received a copy of the GNU General Public License
  *	along with Lite3D.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
+#pragma once
+
 #include <SDL_assert.h>
 #include <sample_common/lite3dpp_common.h>
 
 namespace lite3dpp {
 namespace samples {
 
-class VaultDR : public Sample
+class VaultBase : public Sample
 {
 public:
     
-    VaultDR() :
+    VaultBase() :
         mGammaFactor(1.0f),
         mVaultScene(NULL),
         mAnimCounter(0),
         mAnimPi(0)
     {}
+        
+    virtual void createPipeline() = 0;
 
     void createScene() override
     {
-        // load main scene, direct render depth and then calculate lighting
-        mVaultScene = getMain().getResourceManager()->queryResource<Scene>("Vault",
-            "vaultmat:scenes/directrender.json");
+        createPipeline();
+        SDL_assert(mVaultScene);
         setMainCamera(mVaultScene->getCamera("MainCamera"));
+        
         // init flashlight
         addFlashlight(mVaultScene);
-
-        // postprocess step, fxaa, gamma correcion, draw directly info window. 
-        getMain().getResourceManager()->queryResource<Scene>("VaultPostprocessStep",
-            "vaultmat:scenes/postprocess.json");
         
         kmVec3 resolution = { (float)getMain().window()->width(), (float)getMain().window()->height(), 0 };
         lite3dpp::Material::setFloatv3GlobalParameter("screenResolution", resolution);
         lite3dpp::Material::setIntGlobalParameter("FXAA", 1);
-        // optimize: window clean not needed, because all pixels in last render target always be updated
-        getMain().window()->setBuffersCleanBit(false, false, false);
-        getMain().window()->depthTestFunc(LITE3D_TEST_LEQUAL);
         // use instancing by default
         mVaultScene->instancingMode(true);
 
@@ -113,6 +110,24 @@ public:
         mFlashLight->getLight()->enabled(false);
         mFlashLight->frustumTest(false);
     }
+    
+    virtual void lampsSwitchOn(bool flag)
+    {
+        for (const auto &light : mVaultScene->getLights())
+        {
+            if (light.first.find("Lamp_") != String::npos &&
+                light.first.find("Spot") == String::npos &&
+                light.first.find("Reactor") == String::npos)
+            {
+                light.second->getLight()->enabled(flag);
+            }
+        }
+    }
+    
+    virtual void flashLightSwitchOn(bool flag)
+    {
+        mFlashLight->getLight()->enabled(flag);
+    }
 
     void processEvent(SDL_Event *e) override
     {
@@ -143,7 +158,13 @@ public:
             {
                 static bool flashLightEnabled = false;
                 flashLightEnabled = !flashLightEnabled;
-                mFlashLight->getLight()->enabled(flashLightEnabled);
+                flashLightSwitchOn(flashLightEnabled);
+            }
+            else if (e->key.keysym.sym == SDLK_t)
+            {
+                static bool LampsEnabled = false;
+                LampsEnabled = !LampsEnabled;
+                lampsSwitchOn(LampsEnabled);
             }
         }
         else if (e->type == SDL_MOUSEMOTION)
@@ -152,7 +173,7 @@ public:
         }
     }
     
-private:
+protected:
     
     float mGammaFactor;
     Scene *mVaultScene;
@@ -166,6 +187,6 @@ private:
     std::unique_ptr<LightSceneNode> mFlashLight;
 };
 
-}}
 
+}}
 

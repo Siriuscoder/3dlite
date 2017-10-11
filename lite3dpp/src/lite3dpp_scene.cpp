@@ -272,6 +272,9 @@ namespace lite3dpp
         bool anyValidated = false;
         for (auto &light : mLights)
         {
+            if (!light.second->getLight()->enabled())
+                continue;
+            
             if (light.second->needRecalcToWorld())
             {
                 lite3d_light_params wpar = light.second->lightSourceToWorld();

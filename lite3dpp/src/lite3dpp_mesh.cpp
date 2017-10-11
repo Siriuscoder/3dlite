@@ -169,4 +169,65 @@ namespace lite3dpp
         lite3d_mesh_chunk *meshChunk = LITE3D_MEMBERCAST(lite3d_mesh_chunk, lite3d_list_last_link(&mMesh.chunks), node);
         lite3d_bounding_vol_setup(&meshChunk->boundingVol, &vmin, &vmax);
     }
+    
+    void Mesh::genBox(const kmVec3 &center, const kmVec3 &size, bool dynamic)
+    {
+        const float skyboxVertices[] = {
+            // positions          
+            center.x-(size.x/2),  center.y+(size.y/2), center.z-(size.z/2),
+            center.x-(size.x/2),  center.y-(size.y/2), center.z-(size.z/2),
+            center.x+(size.x/2),  center.y-(size.y/2), center.z-(size.z/2),
+            center.x+(size.x/2),  center.y-(size.y/2), center.z-(size.z/2),
+            center.x+(size.x/2),  center.y+(size.y/2), center.z-(size.z/2),
+            center.x-(size.x/2),  center.y+(size.y/2), center.z-(size.z/2),
+
+            center.x-(size.x/2),  center.y-(size.y/2), center.z+(size.z/2),
+            center.x-(size.x/2),  center.y-(size.y/2), center.z-(size.z/2),
+            center.x-(size.x/2),  center.y+(size.y/2), center.z-(size.z/2),
+            center.x-(size.x/2),  center.y+(size.y/2), center.z-(size.z/2),
+            center.x-(size.x/2),  center.y+(size.y/2), center.z+(size.z/2),
+            center.x-(size.x/2),  center.y-(size.y/2), center.z+(size.z/2),
+
+            center.x+(size.x/2),  center.y-(size.y/2), center.z-(size.z/2),
+            center.x+(size.x/2),  center.y-(size.y/2), center.z+(size.z/2),
+            center.x+(size.x/2),  center.y+(size.y/2), center.z+(size.z/2),
+            center.x+(size.x/2),  center.y+(size.y/2), center.z+(size.z/2),
+            center.x+(size.x/2),  center.y+(size.y/2), center.z-(size.z/2),
+            center.x+(size.x/2),  center.y-(size.y/2), center.z-(size.z/2),
+
+            center.x-(size.x/2),  center.y-(size.y/2), center.z+(size.z/2),
+            center.x-(size.x/2),  center.y+(size.y/2), center.z+(size.z/2),
+            center.x+(size.x/2),  center.y+(size.y/2), center.z+(size.z/2),
+            center.x+(size.x/2),  center.y+(size.y/2), center.z+(size.z/2),
+            center.x+(size.x/2),  center.y-(size.y/2), center.z+(size.z/2),
+            center.x-(size.x/2),  center.y-(size.y/2), center.z+(size.z/2),
+
+            center.x-(size.x/2),  center.y+(size.y/2), center.z-(size.z/2),
+            center.x+(size.x/2),  center.y+(size.y/2), center.z-(size.z/2),
+            center.x+(size.x/2),  center.y+(size.y/2), center.z+(size.z/2),
+            center.x+(size.x/2),  center.y+(size.y/2), center.z+(size.z/2),
+            center.x-(size.x/2),  center.y+(size.y/2), center.z+(size.z/2),
+            center.x-(size.x/2),  center.y+(size.y/2), center.z-(size.z/2),
+
+            center.x-(size.x/2),  center.y-(size.y/2), center.z-(size.z/2),
+            center.x-(size.x/2),  center.y-(size.y/2), center.z+(size.z/2),
+            center.x+(size.x/2),  center.y-(size.y/2), center.z-(size.z/2),
+            center.x+(size.x/2),  center.y-(size.y/2), center.z-(size.z/2),
+            center.x-(size.x/2),  center.y-(size.y/2), center.z+(size.z/2),
+            center.x+(size.x/2),  center.y-(size.y/2), center.z+(size.z/2)
+        };
+        
+        const lite3d_mesh_layout layout[] = {
+            { LITE3D_BUFFER_BINDING_ATTRIBUTE, 3}
+        };
+        
+        kmVec3 vmax = {center.x+(size.x/2), center.y+(size.y/2), center.z+(size.z/2)}, 
+            vmin = {center.x-(size.x/2), center.y-(size.y/2), center.z-(size.z/2)};
+        
+        if (!lite3d_mesh_load_from_memory(&mMesh, skyboxVertices, 36, layout, 1, dynamic ? LITE3D_VBO_DYNAMIC_DRAW : LITE3D_VBO_STATIC_DRAW))
+            LITE3D_THROW("Failed to create Box");
+
+        lite3d_mesh_chunk *meshChunk = LITE3D_MEMBERCAST(lite3d_mesh_chunk, lite3d_list_last_link(&mMesh.chunks), node);
+        lite3d_bounding_vol_setup(&meshChunk->boundingVol, &vmin, &vmax);
+    }
 }

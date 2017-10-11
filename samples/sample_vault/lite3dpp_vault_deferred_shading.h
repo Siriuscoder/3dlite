@@ -15,29 +15,26 @@
  *	You should have received a copy of the GNU General Public License
  *	along with Lite3D.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
-#include <SDL_assert.h>
-#include <sample_common/lite3dpp_common.h>
+#pragma once
+
+#include "lite3dpp_vault_base.h"
 
 namespace lite3dpp {
 namespace samples {
 
-class VaultDF : public Sample, public SceneObserver
+class VaultDF : public VaultBase, public SceneObserver
 {
 public:
     
     VaultDF() : 
-        mGammaFactor(1.0f),
-        mVaultScene(NULL),
-        mLightComputeStep(NULL),
-        mAnimCounter(0)
+        mLightComputeStep(NULL)
     {}
 
-    void createScene() override
+    void createPipeline() override
     {
         // load main scene as precompute step
         mVaultScene = getMain().getResourceManager()->queryResource<Scene>("Vault",
             "vaultmat:scenes/prepass.json");
-        setMainCamera(mVaultScene->getCamera("MainCamera"));
         // load intermediate light compute scene
         getMain().getResourceManager()->queryResource<Scene>("VaultLightComputeStep",
             "vaultmat:scenes/lightpass.json")->addObserver(this);
@@ -49,13 +46,8 @@ public:
         getMain().getResourceManager()->queryResource<Scene>("VaultPostprocessStep",
             "vaultmat:scenes/postprocess.json");
         
-        kmVec3 resolution = { (float)getMain().window()->width(), (float)getMain().window()->height(), 0 };
-        lite3dpp::Material::setFloatv3GlobalParameter("screenResolution", resolution);
-        lite3dpp::Material::setIntGlobalParameter("FXAA", 1);
         // optimize: window clean not needed, because all pixels in last render target always be updated
         getMain().window()->setBuffersCleanBit(false, false, false);
-        // use instancing by default
-        mVaultScene->instancingMode(true);
     }
 
     // setup lighting at once before light compute scene begin rendering first time
@@ -122,46 +114,6 @@ public:
             mnode->replaceMaterial(0, material);
         }
     }
-    
-    void timerTick(lite3d_timer *timerid) override
-    {
-        Sample::timerTick(timerid);
-        lite3dpp::Material::setFloatv3GlobalParameter("eye", getMainCamera().getPosition());
-        
-        if (timerid == getMain().getFixedUpdateTimer())
-        {
-            mAnimCounter = mAnimCounter >= 1.0f ? 0.0f : mAnimCounter + 0.005f;           
-            lite3dpp::Material::setFloatGlobalParameter("animcounter", mAnimCounter);
-        }
-    }
-
-    void processEvent(SDL_Event *e) override
-    {
-        Sample::processEvent(e);
-        if (e->type == SDL_KEYDOWN)
-        {
-            if (e->key.keysym.sym == SDLK_KP_PLUS)
-            {
-                mGammaFactor += 0.02;
-                if (mGammaFactor > 2.2)
-                    mGammaFactor = 2.2;
-                lite3dpp::Material::setFloatGlobalParameter("GammaFactor", mGammaFactor);
-            }
-            else if (e->key.keysym.sym == SDLK_KP_MINUS)
-            {
-                mGammaFactor -= 0.02;
-                if (mGammaFactor < 1.0)
-                    mGammaFactor = 1.0;
-                lite3dpp::Material::setFloatGlobalParameter("GammaFactor", mGammaFactor);
-            }
-            else if (e->key.keysym.sym == SDLK_o)
-            {
-                static bool fxaaEnabled = true;
-                fxaaEnabled = !fxaaEnabled;
-                lite3dpp::Material::setIntGlobalParameter("FXAA", fxaaEnabled ? 1 : 0);
-            }
-        }
-    }
 
     /* enable lightpass then the main camera state changed to recalc lightmap */
     void mainCameraChanged() override
@@ -172,10 +124,7 @@ public:
     
 private:
     
-    float mGammaFactor;
-    Scene *mVaultScene;
     RenderTarget *mLightComputeStep;
-    float mAnimCounter;
 };
 
 }}

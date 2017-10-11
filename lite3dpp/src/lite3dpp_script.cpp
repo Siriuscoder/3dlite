@@ -18,7 +18,6 @@
 #include <SDL_assert.h>
 #include <SDL_log.h>
 
-#include <lite3dpp/as_helpers/scriptbuilder.h>
 #include <lite3dpp/lite3dpp_main.h>
 
 

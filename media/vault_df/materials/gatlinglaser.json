@@ -1,0 +1,37 @@
+{
+  "Passes":[
+    {
+      "Pass":1,
+      "Program":{
+        "Name":"prepass_illum.program",
+        "Path":"vaultmat:shaders/json/prepass_illum.json"
+      }
+    }
+  ],
+  "Uniforms":[
+    {
+      "Name":"projectionMatrix"
+    },
+    {
+      "Name":"viewMatrix"
+    },
+    {
+      "Name":"diffuse",
+      "TextureName":"gatlinglaser.texture",
+      "TexturePath":"vault:textures/json/gatlinglaser.json",
+      "Type":"sampler"
+    },
+    {
+      "Name":"glow",
+      "TextureName":"gatlinglaser_g.texture",
+      "TexturePath":"vault:textures/json/gatlinglaser_g.json",
+      "Type":"sampler"
+    },
+    {
+      "Name":"normals",
+      "TextureName":"gatlinglaser_n.texture",
+      "TexturePath":"vault:textures/json/gatlinglaser_n.json",
+      "Type":"sampler"
+    }
+  ]
+}

@@ -41,6 +41,24 @@
         {
             "Name": "Vault",
             "Object": "vault:objects/vault_static.json"
+        },
+        {
+            "Name": "Minigun",
+            "Object": "vault:objects/minigun.json",
+
+            "Position": [0,-1100,-230]
+        },
+        {
+            "Name": "Gatling",
+            "Object": "vault:objects/gatling.json",
+
+            "Position": [1250,-1150,-230]
+        },
+        {
+            "Name": "Lazer",
+            "Object": "vault:objects/lazer.json",
+
+            "Position": [270,-2700,-230]
         }
     ]
 }

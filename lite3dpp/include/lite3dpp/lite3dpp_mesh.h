@@ -74,6 +74,7 @@ namespace lite3dpp
 
         void genPlain(const kmVec2 &size, bool dynamic);
         void genBigTriangle(bool dynamic);
+        void genBox(const kmVec3 &center, const kmVec3 &size, bool dynamic);
 
         virtual void loadFromConfigImpl(const ConfigurationReader &helper) override;
         virtual void unloadImpl() override;

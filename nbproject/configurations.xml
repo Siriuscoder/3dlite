@@ -213,10 +213,9 @@
           <in>lite3dpp_sponza.cpp</in>
         </df>
         <df name="sample_vault">
-          <df name="src">
-            <in>lite3dpp_vault_deferred_shading.cpp</in>
-            <in>lite3dpp_vault_directrender.cpp</in>
-          </df>
+          <in>lite3dpp_vault_base.h</in>
+          <in>lite3dpp_vault_deferred_shading.h</in>
+          <in>lite3dpp_vault_directrender.h</in>
           <in>lite3dpp_vault_main.cpp</in>
         </df>
         <df name="sample_warship">
@@ -346,12 +345,33 @@
           <incDir>
             <pElem>/usr/include/SDL2</pElem>
             <pElem>winres</pElem>
-            <pElem>lite3dpp/include/lite3dpp/as</pElem>
-            <pElem>build/lite3dpp</pElem>
           </incDir>
           <preprocessorList>
             <Elem>lite3dpp_EXPORTS</Elem>
           </preprocessorList>
+        </ccTool>
+      </folder>
+      <folder path="0/lite3dpp/src/as">
+        <ccTool>
+          <incDir>
+            <pElem>lite3dpp/include/lite3dpp/as</pElem>
+            <pElem>build/lite3dpp</pElem>
+          </incDir>
+        </ccTool>
+      </folder>
+      <folder path="0/lite3dpp/src/as_helpers">
+        <ccTool>
+          <incDir>
+            <pElem>lite3dpp/include/lite3dpp/as</pElem>
+            <pElem>build/lite3dpp</pElem>
+          </incDir>
+        </ccTool>
+      </folder>
+      <folder path="0/lite3dpp/src/json">
+        <ccTool>
+          <incDir>
+            <pElem>build/lite3dpp</pElem>
+          </incDir>
         </ccTool>
       </folder>
       <folder path="0/lite3dpp_font">
@@ -949,6 +969,9 @@
             tool="1"
             flavor2="8">
         <ccTool flags="1">
+          <incDir>
+            <pElem>build/lite3dpp</pElem>
+          </incDir>
         </ccTool>
       </item>
       <item path="lite3dpp/src/lite3dpp_buffer_mapper.cpp"
@@ -956,10 +979,17 @@
             tool="1"
             flavor2="8">
         <ccTool flags="1">
+          <incDir>
+            <pElem>lite3dpp/include/lite3dpp/as</pElem>
+            <pElem>build/lite3dpp</pElem>
+          </incDir>
         </ccTool>
       </item>
       <item path="lite3dpp/src/lite3dpp_camera.cpp" ex="false" tool="1" flavor2="8">
         <ccTool flags="1">
+          <incDir>
+            <pElem>build/lite3dpp</pElem>
+          </incDir>
         </ccTool>
       </item>
       <item path="lite3dpp/src/lite3dpp_config_reader.cpp"
@@ -967,6 +997,10 @@
             tool="1"
             flavor2="8">
         <ccTool flags="1">
+          <incDir>
+            <pElem>lite3dpp/include/lite3dpp/as</pElem>
+            <pElem>build/lite3dpp</pElem>
+          </incDir>
         </ccTool>
       </item>
       <item path="lite3dpp/src/lite3dpp_config_writer.cpp"
@@ -974,6 +1008,10 @@
             tool="1"
             flavor2="8">
         <ccTool flags="1">
+          <incDir>
+            <pElem>lite3dpp/include/lite3dpp/as</pElem>
+            <pElem>build/lite3dpp</pElem>
+          </incDir>
         </ccTool>
       </item>
       <item path="lite3dpp/src/lite3dpp_light_source.cpp"
@@ -981,10 +1019,17 @@
             tool="1"
             flavor2="8">
         <ccTool flags="1">
+          <incDir>
+            <pElem>lite3dpp/include/lite3dpp/as</pElem>
+            <pElem>build/lite3dpp</pElem>
+          </incDir>
         </ccTool>
       </item>
       <item path="lite3dpp/src/lite3dpp_main.cpp" ex="false" tool="1" flavor2="8">
         <ccTool flags="1">
+          <incDir>
+            <pElem>build/lite3dpp</pElem>
+          </incDir>
         </ccTool>
       </item>
       <item path="lite3dpp/src/lite3dpp_manageable.cpp"
@@ -992,14 +1037,24 @@
             tool="1"
             flavor2="8">
         <ccTool flags="1">
+          <incDir>
+            <pElem>lite3dpp/include/lite3dpp/as</pElem>
+            <pElem>build/lite3dpp</pElem>
+          </incDir>
         </ccTool>
       </item>
       <item path="lite3dpp/src/lite3dpp_material.cpp" ex="false" tool="1" flavor2="8">
         <ccTool flags="1">
+          <incDir>
+            <pElem>build/lite3dpp</pElem>
+          </incDir>
         </ccTool>
       </item>
       <item path="lite3dpp/src/lite3dpp_mesh.cpp" ex="false" tool="1" flavor2="8">
         <ccTool flags="1">
+          <incDir>
+            <pElem>build/lite3dpp</pElem>
+          </incDir>
         </ccTool>
       </item>
       <item path="lite3dpp/src/lite3dpp_render_target.cpp"
@@ -1007,10 +1062,17 @@
             tool="1"
             flavor2="8">
         <ccTool flags="1">
+          <incDir>
+            <pElem>build/lite3dpp</pElem>
+          </incDir>
         </ccTool>
       </item>
       <item path="lite3dpp/src/lite3dpp_resource.cpp" ex="false" tool="1" flavor2="8">
         <ccTool flags="1">
+          <incDir>
+            <pElem>lite3dpp/include/lite3dpp/as</pElem>
+            <pElem>build/lite3dpp</pElem>
+          </incDir>
         </ccTool>
       </item>
       <item path="lite3dpp/src/lite3dpp_resource_manager.cpp"
@@ -1018,10 +1080,16 @@
             tool="1"
             flavor2="8">
         <ccTool flags="1">
+          <incDir>
+            <pElem>build/lite3dpp</pElem>
+          </incDir>
         </ccTool>
       </item>
       <item path="lite3dpp/src/lite3dpp_scene.cpp" ex="false" tool="1" flavor2="8">
         <ccTool flags="1">
+          <incDir>
+            <pElem>build/lite3dpp</pElem>
+          </incDir>
         </ccTool>
       </item>
       <item path="lite3dpp/src/lite3dpp_scene_node.cpp"
@@ -1029,6 +1097,9 @@
             tool="1"
             flavor2="8">
         <ccTool flags="1">
+          <incDir>
+            <pElem>build/lite3dpp</pElem>
+          </incDir>
         </ccTool>
       </item>
       <item path="lite3dpp/src/lite3dpp_scene_object.cpp"
@@ -1036,10 +1107,16 @@
             tool="1"
             flavor2="8">
         <ccTool flags="1">
+          <incDir>
+            <pElem>build/lite3dpp</pElem>
+          </incDir>
         </ccTool>
       </item>
       <item path="lite3dpp/src/lite3dpp_script.cpp" ex="false" tool="1" flavor2="8">
         <ccTool flags="1">
+          <incDir>
+            <pElem>build/lite3dpp</pElem>
+          </incDir>
         </ccTool>
       </item>
       <item path="lite3dpp/src/lite3dpp_script_as.cpp"
@@ -1047,6 +1124,10 @@
             tool="1"
             flavor2="8">
         <ccTool flags="1">
+          <incDir>
+            <pElem>lite3dpp/include/lite3dpp/as</pElem>
+            <pElem>build/lite3dpp</pElem>
+          </incDir>
         </ccTool>
       </item>
       <item path="lite3dpp/src/lite3dpp_script_dispatcher.cpp"
@@ -1054,6 +1135,9 @@
             tool="1"
             flavor2="8">
         <ccTool flags="1">
+          <incDir>
+            <pElem>build/lite3dpp</pElem>
+          </incDir>
         </ccTool>
       </item>
       <item path="lite3dpp/src/lite3dpp_script_log.cpp"
@@ -1061,6 +1145,10 @@
             tool="1"
             flavor2="8">
         <ccTool flags="1">
+          <incDir>
+            <pElem>lite3dpp/include/lite3dpp/as</pElem>
+            <pElem>build/lite3dpp</pElem>
+          </incDir>
         </ccTool>
       </item>
       <item path="lite3dpp/src/lite3dpp_script_mat3.cpp"
@@ -1068,6 +1156,10 @@
             tool="1"
             flavor2="8">
         <ccTool flags="1">
+          <incDir>
+            <pElem>lite3dpp/include/lite3dpp/as</pElem>
+            <pElem>build/lite3dpp</pElem>
+          </incDir>
         </ccTool>
       </item>
       <item path="lite3dpp/src/lite3dpp_script_mat4.cpp"
@@ -1075,6 +1167,10 @@
             tool="1"
             flavor2="8">
         <ccTool flags="1">
+          <incDir>
+            <pElem>lite3dpp/include/lite3dpp/as</pElem>
+            <pElem>build/lite3dpp</pElem>
+          </incDir>
         </ccTool>
       </item>
       <item path="lite3dpp/src/lite3dpp_script_quat.cpp"
@@ -1082,6 +1178,10 @@
             tool="1"
             flavor2="8">
         <ccTool flags="1">
+          <incDir>
+            <pElem>lite3dpp/include/lite3dpp/as</pElem>
+            <pElem>build/lite3dpp</pElem>
+          </incDir>
         </ccTool>
       </item>
       <item path="lite3dpp/src/lite3dpp_script_types.cpp"
@@ -1089,6 +1189,10 @@
             tool="1"
             flavor2="8">
         <ccTool flags="1">
+          <incDir>
+            <pElem>lite3dpp/include/lite3dpp/as</pElem>
+            <pElem>build/lite3dpp</pElem>
+          </incDir>
         </ccTool>
       </item>
       <item path="lite3dpp/src/lite3dpp_script_vec3.cpp"
@@ -1096,6 +1200,10 @@
             tool="1"
             flavor2="8">
         <ccTool flags="1">
+          <incDir>
+            <pElem>lite3dpp/include/lite3dpp/as</pElem>
+            <pElem>build/lite3dpp</pElem>
+          </incDir>
         </ccTool>
       </item>
       <item path="lite3dpp/src/lite3dpp_script_vec4.cpp"
@@ -1103,6 +1211,10 @@
             tool="1"
             flavor2="8">
         <ccTool flags="1">
+          <incDir>
+            <pElem>lite3dpp/include/lite3dpp/as</pElem>
+            <pElem>build/lite3dpp</pElem>
+          </incDir>
         </ccTool>
       </item>
       <item path="lite3dpp/src/lite3dpp_shader_program.cpp"
@@ -1110,14 +1222,23 @@
             tool="1"
             flavor2="8">
         <ccTool flags="1">
+          <incDir>
+            <pElem>build/lite3dpp</pElem>
+          </incDir>
         </ccTool>
       </item>
       <item path="lite3dpp/src/lite3dpp_ssbo.cpp" ex="false" tool="1" flavor2="8">
         <ccTool flags="1">
+          <incDir>
+            <pElem>build/lite3dpp</pElem>
+          </incDir>
         </ccTool>
       </item>
       <item path="lite3dpp/src/lite3dpp_texture.cpp" ex="false" tool="1" flavor2="8">
         <ccTool flags="1">
+          <incDir>
+            <pElem>build/lite3dpp</pElem>
+          </incDir>
         </ccTool>
       </item>
       <item path="lite3dpp/src/lite3dpp_texture_buffer.cpp"
@@ -1125,6 +1246,9 @@
             tool="1"
             flavor2="8">
         <ccTool flags="1">
+          <incDir>
+            <pElem>build/lite3dpp</pElem>
+          </incDir>
         </ccTool>
       </item>
       <item path="lite3dpp/src/lite3dpp_texture_render_target.cpp"
@@ -1132,12 +1256,23 @@
             tool="1"
             flavor2="8">
         <ccTool flags="1">
+          <incDir>
+            <pElem>build/lite3dpp</pElem>
+          </incDir>
         </ccTool>
       </item>
-      <item path="lite3dpp/src/lite3dpp_ubo.cpp" ex="false" tool="1" flavor2="0">
+      <item path="lite3dpp/src/lite3dpp_ubo.cpp" ex="false" tool="1" flavor2="8">
+        <ccTool flags="1">
+          <incDir>
+            <pElem>build/lite3dpp</pElem>
+          </incDir>
+        </ccTool>
       </item>
       <item path="lite3dpp/src/lite3dpp_vbo.cpp" ex="false" tool="1" flavor2="8">
         <ccTool flags="1">
+          <incDir>
+            <pElem>build/lite3dpp</pElem>
+          </incDir>
         </ccTool>
       </item>
       <item path="lite3dpp_font/src/font.cpp" ex="false" tool="1" flavor2="8">
@@ -1239,6 +1374,21 @@
             flavor2="8">
         <ccTool flags="0">
         </ccTool>
+      </item>
+      <item path="samples/sample_vault/lite3dpp_vault_base.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="samples/sample_vault/lite3dpp_vault_deferred_shading.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="samples/sample_vault/lite3dpp_vault_directrender.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
       </item>
       <item path="samples/sample_vault/lite3dpp_vault_main.cpp"
             ex="false"
