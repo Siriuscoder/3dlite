@@ -15,6 +15,7 @@
  *	You should have received a copy of the GNU General Public License
  *	along with Lite3D.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
+#include <algorithm>
 #include <SDL_log.h>
 
 #include <lite3dpp/lite3dpp_main.h>
@@ -66,8 +67,8 @@ namespace lite3dpp
         uint8_t wrapping = wrappingStr == "ClampToEdge" ? LITE3D_TEXTURE_CLAMP_TO_EDGE : 
             (wrappingStr == "Repeat" ? LITE3D_TEXTURE_REPEAT : 0);
 
-        /* load texture from image */
-        if (helper.getString(L"Image").size() > 0)
+
+        auto loadImage = [this, textureType, quality, wrapping](const ConfigurationReader &helper)
         {
             String imageFormatStr = helper.getUpperString(L"ImageFormat", "ANY");
             uint32_t imageType = imageFormatStr == "BMP" ? LITE3D_IMAGE_BMP : 
@@ -104,8 +105,21 @@ namespace lite3dpp
             }
 
             if(!lite3d_texture_unit_from_resource(&mTexture, mMain->getResourceManager()->loadFileToMemory(helper.getString(L"Image")),
-                imageType, textureType, quality, wrapping, 0))
-                LITE3D_THROW(getName() << " texture load failed..");
+                imageType, textureType, quality, wrapping, helper.getInt(L"CubeFace")))
+                LITE3D_THROW(getName() << ": failed to load texture");
+        };
+
+
+        /* load texture from image */
+        if (helper.getString(L"Image").size() > 0)
+        {
+            loadImage(helper);
+        }
+        /* load cubemap texture */
+        else if (helper.getObjects(L"Image").size() > 0)
+        {
+            auto &cubeFaces = helper.getObjects(L"Image");
+            std::for_each(cubeFaces.begin(), cubeFaces.end(), loadImage);
         }
         else
         {
@@ -132,7 +146,7 @@ namespace lite3dpp
 
             if(!lite3d_texture_unit_allocate(&mTexture, textureType, quality, wrapping, textureFormat, helper.getInt(L"InternalFormat", 0),
                 width, height, depth))
-                LITE3D_THROW(getName() << " texture allocation failed..");
+                LITE3D_THROW(getName() << " failed to allocate new texture");
             
             if(helper.has(L"BlankColor"))
                 setBlankColor(helper.getVec4(L"BlankColor"));

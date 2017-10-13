@@ -265,13 +265,17 @@ int lite3d_texture_unit_from_resource(lite3d_texture_unit *textureUnit,
     imageDepth = ilGetInteger(IL_IMAGE_DEPTH);
     /* matches openGL texture format */
     imageFormat = ilGetInteger(IL_IMAGE_FORMAT);
-    /* allocate texture surface */
-    if (!lite3d_texture_unit_allocate(textureUnit, textureTarget, quality,
-        wrapping, imageFormat, 0, imageWidth, imageHeight, imageDepth))
+    /* allocate texture surface if not allocated yet */
+    if (textureUnit->imageWidth != imageWidth || textureUnit->imageHeight != imageHeight ||
+        textureUnit->imageDepth != imageDepth)
     {
-        /* release IL image */
-        ilDeleteImage(imageDesc);
-        return LITE3D_FALSE;
+        if (!lite3d_texture_unit_allocate(textureUnit, textureTarget, quality,
+            wrapping, imageFormat, 0, imageWidth, imageHeight, imageDepth))
+        {
+            /* release IL image */
+            ilDeleteImage(imageDesc);
+            return LITE3D_FALSE;
+        }
     }
 
     if (imageType == LITE3D_IMAGE_ANY)
@@ -472,9 +476,6 @@ int lite3d_texture_unit_get_level_size(lite3d_texture_unit *textureUnit,
     SDL_assert(size);
     if (textureUnit->generatedMipmaps < level)
         return LITE3D_FALSE;
-    
-    /* make texture active */
-    glBindTexture(textureUnit->textureTarget, textureUnit->textureID);
 
     imageWidth = lite3d_texture_unit_get_level_width(textureUnit, level, cubeface);
     imageHeight = lite3d_texture_unit_get_level_height(textureUnit, level, cubeface);
@@ -609,20 +610,31 @@ int lite3d_texture_unit_allocate(lite3d_texture_unit *textureUnit,
         case LITE3D_TEXTURE_FORMAT_RGB:
         case LITE3D_TEXTURE_FORMAT_BRG:
             textureUnit->imageBPP = 3;
+            internalFormat = gTextureSettings.useGLCompression ? GL_COMPRESSED_RGB_S3TC_DXT1_EXT : GL_RGB;
+            textureUnit->compressed = gTextureSettings.useGLCompression;
+            break;
+        case LITE3D_TEXTURE_FORMAT_DEPTH:
+            textureUnit->imageBPP = 3; // is it 24 bits per pixel?
+            internalFormat = GL_DEPTH_COMPONENT;
             break;
         case LITE3D_TEXTURE_FORMAT_RGBA:
         case LITE3D_TEXTURE_FORMAT_BRGA:
-        case LITE3D_TEXTURE_FORMAT_DEPTH:
             textureUnit->imageBPP = 4;
+            internalFormat = gTextureSettings.useGLCompression ? GL_COMPRESSED_RGBA_S3TC_DXT5_EXT : GL_RGBA;
+            textureUnit->compressed = gTextureSettings.useGLCompression;
             break;
         case LITE3D_TEXTURE_FORMAT_ALPHA:
         case LITE3D_TEXTURE_FORMAT_RED:
         case LITE3D_TEXTURE_FORMAT_LUMINANCE_ALPHA:
         case LITE3D_TEXTURE_FORMAT_LUMINANCE:
             textureUnit->imageBPP = 1;
+            internalFormat = gTextureSettings.useGLCompression ? GL_COMPRESSED_RED_RGTC1_EXT : GL_R;
+            textureUnit->compressed = gTextureSettings.useGLCompression;
             break;
         case LITE3D_TEXTURE_FORMAT_RG:
             textureUnit->imageBPP = 2;
+            internalFormat = gTextureSettings.useGLCompression ? GL_COMPRESSED_RED_GREEN_RGTC2_EXT : GL_RG;
+            textureUnit->compressed = gTextureSettings.useGLCompression;
             break;
         default:
             SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
@@ -631,42 +643,15 @@ int lite3d_texture_unit_allocate(lite3d_texture_unit *textureUnit,
             return LITE3D_FALSE;
     }
 
+    if (iformat > 0)
+        internalFormat = iformat;
+
     textureUnit->imageSize = width * height * depth * textureUnit->imageBPP;
     textureUnit->loadedMipmaps = 0;
     textureUnit->generatedMipmaps = 0;
     textureUnit->textureTarget = textureTarget;
     textureUnit->wrapping = wrapping;
     textureUnit->texFormat = format;
-
-    /* determine internal format */
-    if (iformat > 0)
-        internalFormat = iformat;
-    else
-    {
-        switch (textureUnit->imageBPP)
-        {
-            case 3:
-                internalFormat = gTextureSettings.useGLCompression ?
-                    GL_COMPRESSED_RGB_S3TC_DXT1_EXT : GL_RGB;
-                break;
-            case 4:
-                internalFormat = format == LITE3D_TEXTURE_FORMAT_DEPTH ? GL_DEPTH_COMPONENT :
-                    (gTextureSettings.useGLCompression ? GL_COMPRESSED_RGBA_S3TC_DXT5_EXT : GL_RGBA);
-                break;
-            case 1:
-                internalFormat = gTextureSettings.useGLCompression ?
-                    GL_COMPRESSED_RED_RGTC1_EXT : GL_R;
-                break;
-            case 2:
-                internalFormat = gTextureSettings.useGLCompression ?
-                    GL_COMPRESSED_RED_GREEN_RGTC2_EXT : GL_RG;
-                break;
-            default:
-                internalFormat = iformat;
-                break;
-        }
-    }
-
     textureUnit->texiFormat = internalFormat;
 
     /* check depth texture consistency */
@@ -753,7 +738,8 @@ int lite3d_texture_unit_allocate(lite3d_texture_unit *textureUnit,
             break;
         case LITE3D_TEXTURE_CUBE:
         {
-            for (int icube = 0; icube < 6; icube++)
+            int icube = 0;
+            for (icube = 0; icube < 6; icube++)
             {
                 glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + icube, 0, internalFormat, width,
                     height, 0, format, GL_UNSIGNED_BYTE, NULL);
@@ -771,40 +757,24 @@ int lite3d_texture_unit_allocate(lite3d_texture_unit *textureUnit,
         glGenerateMipmap(textureTarget);
 
     /* calculate texture total size */
-    if (internalFormat == GL_COMPRESSED_RGB_S3TC_DXT1_EXT || 
-        internalFormat == GL_COMPRESSED_RGBA_S3TC_DXT5_EXT || 
-        internalFormat == GL_COMPRESSED_RED_RGTC1_EXT || 
-        internalFormat == GL_COMPRESSED_RED_GREEN_RGTC2_EXT)
     {
+        typedef int (*tsizefunc)(lite3d_texture_unit *, int8_t, uint8_t, size_t *);
+        tsizefunc sf;
         size_t levelSize = 0;
         uint8_t li = 0;
+        int icube = 0;
         textureUnit->totalSize = 0;
+
+        sf = textureUnit->compressed ? lite3d_texture_unit_get_compressed_level_size : 
+            lite3d_texture_unit_get_level_size;
         
-        for (int icube = 0; icube < 6; icube++)
+        for (icube = 0; icube < 6; icube++)
         {
-            while(lite3d_texture_unit_get_compressed_level_size(textureUnit, li++, icube, &levelSize))
+            while(sf(textureUnit, li++, icube, &levelSize))
                 textureUnit->totalSize += levelSize;
             if (textureUnit->textureTarget != LITE3D_TEXTURE_CUBE)
                 break;
         }
-
-        textureUnit->compressed = LITE3D_TRUE;
-    }
-    else
-    {
-        size_t levelSize = 0;
-        uint8_t li = 0;
-        textureUnit->totalSize = 0;
-
-        for (int icube = 0; icube < 6; icube++)
-        {
-            while(lite3d_texture_unit_get_level_size(textureUnit, li++, icube, &levelSize))
-                textureUnit->totalSize += levelSize;
-            if (textureUnit->textureTarget != LITE3D_TEXTURE_CUBE)
-                break;
-        }
-
-        textureUnit->compressed = LITE3D_FALSE;
     }
 
     if (lite3d_misc_check_gl_error())
