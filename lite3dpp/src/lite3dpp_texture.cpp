@@ -60,7 +60,8 @@ namespace lite3dpp
         String filteringStr = helper.getString(L"Filtering", "None");
         String wrappingStr = helper.getString(L"Wrapping", "ClampToEdge");
         uint32_t textureType = textureTypeStr == "1D" ? LITE3D_TEXTURE_1D : 
-            (textureTypeStr == "2D" ? LITE3D_TEXTURE_2D : LITE3D_TEXTURE_3D);
+            (textureTypeStr == "2D" ? LITE3D_TEXTURE_2D : 
+            (textureTypeStr == "Cube" ? LITE3D_TEXTURE_CUBE : LITE3D_TEXTURE_3D));
         uint8_t quality = filteringStr == "None" ? LITE3D_TEXTURE_QL_LOW : 
             (filteringStr == "Linear" ? LITE3D_TEXTURE_QL_MEDIUM : 
             (filteringStr == "Trilinear" ? LITE3D_TEXTURE_QL_NICEST : 0));
@@ -93,11 +94,12 @@ namespace lite3dpp
                     (filterTypeStr == "CONTRAST" ? LITE3D_CONTRAST_FILTER : 
                     (filterTypeStr == "GAMMACORRECT" ? LITE3D_GAMMACORRECT_FILTER :
                     (filterTypeStr == "MIRROR" ? LITE3D_MIRROR_FILTER :
+                    (filterTypeStr == "FLIP" ? LITE3D_FLIP_FILTER :
                     (filterTypeStr == "NEGATIVE" ? LITE3D_NEGATIVE_FILTER : 
                     (filterTypeStr == "NOISIFY" ? LITE3D_NOISIFY_FILTER :
                     (filterTypeStr == "PIXELIZE" ? LITE3D_PIXELIZE_FILTER :
                     (filterTypeStr == "WAVE" ? LITE3D_WAVE_FILTER :
-                    (filterTypeStr == "SHARPEN" ? LITE3D_SHARPEN_FILTER : 0))))))))));
+                    (filterTypeStr == "SHARPEN" ? LITE3D_SHARPEN_FILTER : 0)))))))))));
 
                 filter.param1 = (float)filterConfig.getDouble(L"Param1");
                 filter.param2 = (float)filterConfig.getDouble(L"Param2");
@@ -109,18 +111,13 @@ namespace lite3dpp
                 LITE3D_THROW(getName() << ": failed to load texture");
         };
 
-
+        auto cubeFaces = helper.getObjects(L"Image");
         /* load texture from image */
         if (helper.getString(L"Image").size() > 0)
-        {
             loadImage(helper);
-        }
         /* load cubemap texture */
         else if (helper.getObjects(L"Image").size() > 0)
-        {
-            auto &cubeFaces = helper.getObjects(L"Image");
             std::for_each(cubeFaces.begin(), cubeFaces.end(), loadImage);
-        }
         else
         {
             String textureFormatStr = helper.getUpperString(L"TextureFormat", "RGB");

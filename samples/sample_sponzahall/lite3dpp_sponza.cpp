@@ -27,8 +27,9 @@ public:
     void createScene() override
     {
         Scene *scene = getMain().getResourceManager()->queryResource<Scene>("SponzaHall",
-            "samples:scenes/sponza.json");
+            "sponza:scenes/sponza.json");
         setMainCamera(scene->getCamera("MyCamera"));
+        getMain().window()->depthTestFunc(LITE3D_TEST_LEQUAL);
     }
 };
 
@@ -37,5 +38,5 @@ public:
 int main(int agrc, char *args[])
 {
     lite3dpp::samples::SponzaHall sample;
-    return sample.start("samples/config/config_sponza.json");
+    return sample.start("sponza/config/config_sponza.json");
 }

@@ -112,6 +112,9 @@ static void apply_image_filters(void)
             case LITE3D_GAMMACORRECT_FILTER:
                 iluGammaCorrect(gFilters[i].param1);
                 break;
+            case LITE3D_FLIP_FILTER:
+                iluFlipImage();
+                break;                
             case LITE3D_MIRROR_FILTER:
                 iluMirror();
                 break;

@@ -1,0 +1,7 @@
+{
+    "Sources": 
+    [
+        "sponzamat:shaders/sources/skybox.vs",
+        "sponzamat:shaders/sources/skybox.ps"
+    ]
+}

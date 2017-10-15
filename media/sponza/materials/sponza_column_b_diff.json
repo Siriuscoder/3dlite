@@ -1,0 +1,31 @@
+{
+  "Passes":[
+    {
+      "Pass":1.0000000000,
+      "Program":{
+        "Name":"sponza_shading.program",
+        "Path":"sponzamat:shaders/json/sponza_shading.json"
+      }
+    }
+  ],
+  "Uniforms":[
+    {
+      "Name":"projectionMatrix"
+    },
+    {
+      "Name":"viewMatrix"
+    },
+    {
+      "Name":"normalMatrix"
+    },
+    {
+      "Name":"modelMatrix"
+    },
+    {
+      "Name":"diffuseSampler",
+      "TextureName":"sponza_column_b_diff.texture",
+      "TexturePath":"sponza:textures/json/sponza_column_b_diff.json",
+      "Type":"sampler"
+    }
+  ]
+}

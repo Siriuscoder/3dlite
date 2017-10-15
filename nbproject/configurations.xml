@@ -213,9 +213,6 @@
           <in>lite3dpp_sponza.cpp</in>
         </df>
         <df name="sample_vault">
-          <in>lite3dpp_vault_base.h</in>
-          <in>lite3dpp_vault_deferred_shading.h</in>
-          <in>lite3dpp_vault_directrender.h</in>
           <in>lite3dpp_vault_main.cpp</in>
         </df>
         <df name="sample_warship">
@@ -289,7 +286,7 @@
           <buildCommandWorkingDir>build</buildCommandWorkingDir>
           <buildCommand>${MAKE} -f Makefile</buildCommand>
           <cleanCommand>${MAKE} -f Makefile clean</cleanCommand>
-          <executablePath>build/bin/Debug/sample_vault</executablePath>
+          <executablePath>build/bin/Debug/sample_sponzahall</executablePath>
           <ccTool>
             <incDir>
               <pElem>lite3d/include</pElem>
@@ -980,7 +977,6 @@
             flavor2="8">
         <ccTool flags="1">
           <incDir>
-            <pElem>lite3dpp/include/lite3dpp/as</pElem>
             <pElem>build/lite3dpp</pElem>
           </incDir>
         </ccTool>
@@ -1020,7 +1016,6 @@
             flavor2="8">
         <ccTool flags="1">
           <incDir>
-            <pElem>lite3dpp/include/lite3dpp/as</pElem>
             <pElem>build/lite3dpp</pElem>
           </incDir>
         </ccTool>
@@ -1070,7 +1065,6 @@
       <item path="lite3dpp/src/lite3dpp_resource.cpp" ex="false" tool="1" flavor2="8">
         <ccTool flags="1">
           <incDir>
-            <pElem>lite3dpp/include/lite3dpp/as</pElem>
             <pElem>build/lite3dpp</pElem>
           </incDir>
         </ccTool>
@@ -1374,21 +1368,6 @@
             flavor2="8">
         <ccTool flags="0">
         </ccTool>
-      </item>
-      <item path="samples/sample_vault/lite3dpp_vault_base.h"
-            ex="false"
-            tool="3"
-            flavor2="0">
-      </item>
-      <item path="samples/sample_vault/lite3dpp_vault_deferred_shading.h"
-            ex="false"
-            tool="3"
-            flavor2="0">
-      </item>
-      <item path="samples/sample_vault/lite3dpp_vault_directrender.h"
-            ex="false"
-            tool="3"
-            flavor2="0">
       </item>
       <item path="samples/sample_vault/lite3dpp_vault_main.cpp"
             ex="false"

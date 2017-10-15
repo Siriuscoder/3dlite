@@ -1,0 +1,14 @@
+#version 330
+
+uniform sampler2D diffuseSampler;
+
+in vec2 iuv;
+in vec3 ivn;
+out vec4 fragColor;
+
+void main()
+{
+    vec3 lightDir = vec3(0.0, 1.0, 1.0);
+    float nDotL = clamp(dot(ivn, lightDir), 0.2, 1);
+    fragColor = texture(diffuseSampler, iuv) * nDotL;
+}

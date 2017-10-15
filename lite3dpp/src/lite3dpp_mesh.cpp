@@ -37,20 +37,25 @@ namespace lite3dpp
     void Mesh::loadFromConfigImpl(const ConfigurationReader &helper)
     {
         lite3d_mesh_init(&mMesh);
-        if(helper.isEmpty())
+        if (helper.isEmpty())
             return;
 
-        if(helper.getString(L"Model") == "Plain")
+        if (helper.getString(L"Model") == "Plain")
         {
             genPlain(helper.getVec2(L"PlainSize"), helper.getBool(L"Dynamic", false));
         }
-        else if(helper.getString(L"Model") == "BigTriangle")
+        else if (helper.getString(L"Model") == "BigTriangle")
         {
             genBigTriangle(helper.getBool(L"Dynamic", false));
         }
-        else if(helper.getString(L"Codec", "m") == "m")
+        else if (helper.getString(L"Model") == "Skybox")
         {
-            if(!lite3d_mesh_load_from_m_file(&mMesh, 
+            genSkybox(helper.getVec3(L"Center"), helper.getVec3(L"Size"), 
+                helper.getBool(L"Dynamic", false));
+        }
+        else if (helper.getString(L"Codec", "m") == "m")
+        {
+            if (!lite3d_mesh_load_from_m_file(&mMesh, 
                 mMain->getResourceManager()->loadFileToMemory(helper.getString(L"Model")),
                 helper.getBool(L"Dynamic", false) ? LITE3D_VBO_DYNAMIC_DRAW : LITE3D_VBO_STATIC_DRAW))
                 LITE3D_THROW(getName() << ": could not load mesh chunk, bad format");
@@ -170,7 +175,7 @@ namespace lite3dpp
         lite3d_bounding_vol_setup(&meshChunk->boundingVol, &vmin, &vmax);
     }
     
-    void Mesh::genBox(const kmVec3 &center, const kmVec3 &size, bool dynamic)
+    void Mesh::genSkybox(const kmVec3 &center, const kmVec3 &size, bool dynamic)
     {
         const float skyboxVertices[] = {
             // positions          

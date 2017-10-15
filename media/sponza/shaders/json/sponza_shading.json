@@ -1,0 +1,7 @@
+{
+    "Sources": 
+    [
+        "sponzamat:shaders/sources/sponza_shading.vs",
+        "sponzamat:shaders/sources/sponza_shading.ps"
+    ]
+}

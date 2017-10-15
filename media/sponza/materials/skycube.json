@@ -1,0 +1,25 @@
+{
+  "Passes":[
+    {
+      "Pass":1.0000000000,
+      "Program":{
+        "Name":"skybox.program",
+        "Path":"sponzamat:shaders/json/skybox.json"
+      }
+    }
+  ],
+  "Uniforms":[
+    {
+      "Name":"projectionMatrix"
+    },
+    {
+      "Name":"viewMatrix"
+    },
+    {
+      "Name":"skybox",
+      "TextureName":"skybox.texture",
+      "TexturePath":"sponza:textures/json/skybox.json",
+      "Type":"sampler"
+    }
+  ]
+}

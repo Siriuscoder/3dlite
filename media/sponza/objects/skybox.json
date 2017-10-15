@@ -1,0 +1,29 @@
+{
+    "Root":
+    {
+        "Name": "skybox.root",
+        "Nodes": [
+            {
+                "Name": "skybox.node",
+                "FrustumTest":false,
+                "Mesh": 
+                {
+                    "Name": "skybox.mesh",
+                    "Mesh": "samples:models/json/skybox.json",
+                    "MaterialMapping": 
+                    [
+                        {
+                            "MaterialIndex": 0,
+                            "Material":
+                            {
+                                "Name": "skycube.material",
+                                "Material": "sponza:materials/skycube.json"
+                            }
+                        }
+                    ]
+                }
+            }
+        ]
+    }
+}
+

@@ -51,6 +51,7 @@
 #define LITE3D_PIXELIZE_FILTER      0x0009
 #define LITE3D_WAVE_FILTER          0x000A
 #define LITE3D_SHARPEN_FILTER       0x000B
+#define LITE3D_FLIP_FILTER          0x000C
 
 #define LITE3D_MAX_FILTERS          10
 
