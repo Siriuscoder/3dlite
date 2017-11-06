@@ -764,7 +764,6 @@ int lite3d_texture_unit_allocate(lite3d_texture_unit *textureUnit,
         typedef int (*tsizefunc)(lite3d_texture_unit *, int8_t, uint8_t, size_t *);
         tsizefunc sf;
         size_t levelSize = 0;
-        uint8_t li = 0;
         int icube = 0;
         textureUnit->totalSize = 0;
 
@@ -773,6 +772,7 @@ int lite3d_texture_unit_allocate(lite3d_texture_unit *textureUnit,
         
         for (icube = 0; icube < 6; icube++)
         {
+            uint8_t li = 0;
             while(sf(textureUnit, li++, icube, &levelSize))
                 textureUnit->totalSize += levelSize;
             if (textureUnit->textureTarget != LITE3D_TEXTURE_CUBE)

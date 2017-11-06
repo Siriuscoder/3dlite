@@ -27,7 +27,7 @@ public:
     void createScene() override
     {
         Scene *scene = getMain().getResourceManager()->queryResource<Scene>("SponzaHall",
-            "sponza:scenes/sponza.json");
+            "sponzamat:scenes/sponza.json");
         setMainCamera(scene->getCamera("MyCamera"));
         getMain().window()->depthTestFunc(LITE3D_TEST_LEQUAL);
     }
