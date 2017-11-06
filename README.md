@@ -41,7 +41,7 @@ Samples
 ---------
 After successfully compiling you can find some samples in bin directory. To provide samples work correctly you must download 
 resources pack [vault.pkg](https://cloud.mail.ru/public/47uC/RgnBfCbXA) and put it to media/vault/packs also 
-[sponza.pkg](https://cloud.mail.ru/public/5spg/Efb3FLsRL) to media/samples/packs/
+[sponza.pkg](https://cloud.mail.ru/public/5spg/Efb3FLsRL) to media/sponza/packs/
 
 Screenshots
 -----------
