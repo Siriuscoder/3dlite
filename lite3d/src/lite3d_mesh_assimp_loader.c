@@ -478,7 +478,7 @@ int lite3d_assimp_mesh_load(lite3d_mesh *mesh, const lite3d_file *resource,
         return LITE3D_FALSE;
     }
 
-    SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "MESH: %s (%s) loaded, cv/ce/cb/ %d/%d/%d",
+    SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "MESH: %s (%s) loaded, cv/ce/cb/ %ld/%ld/%ld",
         resource->name, targetNode->mName.data, mesh->verticesCount, mesh->elementsCount, mesh->chunkCount);
     aiReleaseImport(scene);
     aiReleasePropertyStore(importProrerties);
