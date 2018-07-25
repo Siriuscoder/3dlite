@@ -87,7 +87,10 @@ typedef struct lite3d_render_target
 } lite3d_render_target;
 
 LITE3D_CEXPORT void lite3d_render_loop(lite3d_render_listeners *callbacks);
+/* to be more flaxible it`s process only one event, return LITE3D_FALSE if no events available */
+LITE3D_CEXPORT int lite3d_render_loop_pump_event(void);
 LITE3D_CEXPORT lite3d_render_stats *lite3d_render_stats_get(void);
+LITE3D_CEXPORT int lite3d_render_frame(void);
 
 LITE3D_CEXPORT int lite3d_render_target_init(lite3d_render_target *rt, 
     int32_t width, int32_t height);

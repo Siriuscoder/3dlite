@@ -31,6 +31,8 @@
 #include <lite3d/lite3d_misc.h>
 #include <lite3d/lite3d_main.h>
 
+#define LITE3D_LIMSTATS_SKIP_PER_FRAMES  10000
+
 typedef struct lookUnit
 {
     lite3d_list_node rtLink;
@@ -40,9 +42,10 @@ typedef struct lookUnit
     uint32_t renderFlags;
 } lookUnit;
 
-static uint64_t gLastMark = 0;
 static uint64_t gPerfFreq = 0;
+static uint64_t gBeginFrameMark = 0;
 static int32_t gFPSCounter = 0;
+static int64_t gFrameCounter = 0;
 static lite3d_list gRenderTargets;
 static lite3d_render_listeners gRenderListeners;
 static uint8_t gRenderStarted = LITE3D_TRUE;
@@ -53,47 +56,39 @@ static lite3d_render_target gScreenRt;
 static void refresh_render_stats(uint64_t beginFrame, uint64_t endFrame)
 {
     gFPSCounter++;
+    gFrameCounter++;
     gRenderStats.lastFrameMs = ((float) (endFrame - beginFrame) / (float) gPerfFreq) * 1000.0;
 
-    if (gRenderStats.bestFrameMs == 0)
+    if (gRenderStats.bestFrameMs == 0 || gFrameCounter % LITE3D_LIMSTATS_SKIP_PER_FRAMES)
         gRenderStats.bestFrameMs = gRenderStats.lastFrameMs;
-    if (gRenderStats.worstFrameMs == 0)
+    if (gRenderStats.worstFrameMs == 0 || gFrameCounter % LITE3D_LIMSTATS_SKIP_PER_FRAMES)
         gRenderStats.worstFrameMs = gRenderStats.lastFrameMs;
-    if (gRenderStats.avrFrameMs == 0)
-        gRenderStats.avrFrameMs = gRenderStats.lastFrameMs;
+    if (gRenderStats.bestFPS == 0 || gFrameCounter % LITE3D_LIMSTATS_SKIP_PER_FRAMES)
+        gRenderStats.bestFPS = gRenderStats.lastFPS;
+    if (gRenderStats.worstFPS == 0 || gFrameCounter % LITE3D_LIMSTATS_SKIP_PER_FRAMES)
+        gRenderStats.worstFPS = gRenderStats.lastFPS;
 
-    if (gRenderStats.bestFrameMs > gRenderStats.lastFrameMs)
-        gRenderStats.bestFrameMs = gRenderStats.lastFrameMs;
-
-    if (gRenderStats.worstFrameMs < gRenderStats.lastFrameMs)
-        gRenderStats.worstFrameMs = gRenderStats.lastFrameMs;
-
-    gRenderStats.avrFrameMs = (gRenderStats.lastFrameMs + gRenderStats.avrFrameMs) / 2;
+    gRenderStats.bestFrameMs = min(gRenderStats.lastFrameMs, gRenderStats.bestFrameMs);
+    gRenderStats.worstFrameMs = max(gRenderStats.lastFrameMs, gRenderStats.worstFrameMs);
 
     gRenderStats.triangleByBatch = gRenderStats.batchedByFrame ? gRenderStats.trianglesByFrame / gRenderStats.batchedByFrame : 0;
     gRenderStats.triangleMs = gRenderStats.trianglesByFrame ? (float) gRenderStats.lastFrameMs / (float) gRenderStats.trianglesByFrame : 0;
+}
 
-    /* second elapsed */
-    if ((endFrame - gLastMark) > gPerfFreq)
-    {
-        gLastMark = endFrame;
-        gRenderStats.lastFPS = gFPSCounter;
-        gFPSCounter = 0;
+static void timer_render_stats_tick(lite3d_timer *timer)
+{
+    gRenderStats.lastFPS = gFPSCounter;
+    gFPSCounter = 0;
 
-        if (gRenderStats.avrFPS == 0)
-            gRenderStats.avrFPS = gRenderStats.lastFPS;
-        if (gRenderStats.bestFPS == 0)
-            gRenderStats.bestFPS = gRenderStats.lastFPS;
-        if (gRenderStats.worstFPS == 0)
-            gRenderStats.worstFPS = gRenderStats.lastFPS;
+    if (gRenderStats.avrFPS == 0)
+        gRenderStats.avrFPS = gRenderStats.lastFPS;
+    if (gRenderStats.avrFrameMs == 0)
+        gRenderStats.avrFrameMs = gRenderStats.lastFrameMs;
 
-        if (gRenderStats.bestFPS < gRenderStats.lastFPS)
-            gRenderStats.bestFPS = gRenderStats.lastFPS;
-        if (gRenderStats.worstFPS > gRenderStats.lastFPS || gRenderStats.worstFPS <= 1)
-            gRenderStats.worstFPS = gRenderStats.lastFPS;
-
-        gRenderStats.avrFPS = (gRenderStats.avrFPS + gRenderStats.lastFPS) / 2;
-    }
+    gRenderStats.bestFPS = max(gRenderStats.lastFPS, gRenderStats.bestFPS);
+    gRenderStats.worstFPS = min(gRenderStats.lastFPS, gRenderStats.worstFPS);
+    gRenderStats.avrFrameMs = (gRenderStats.bestFrameMs + gRenderStats.worstFrameMs + (1000 / gRenderStats.lastFPS)) / 3;
+    gRenderStats.avrFPS = (gRenderStats.bestFPS + gRenderStats.worstFPS + gRenderStats.lastFPS) / 3;
 }
 
 static void update_render_target(lite3d_render_target *target)
@@ -166,10 +161,69 @@ static int update_render_targets(void)
     return targetsCount ? LITE3D_TRUE : LITE3D_FALSE;
 }
 
-void lite3d_render_loop(lite3d_render_listeners *callbacks)
+int lite3d_render_loop_pump_event(void)
 {
     SDL_Event wevent;
+
+    // process only one event
+    if (SDL_PollEvent(&wevent))
+    {
+        if (gRenderListeners.processEvent &&
+            !gRenderListeners.processEvent(&wevent, gRenderListeners.userdata))
+        {
+            lite3d_render_stop();
+            return LITE3D_FALSE;
+        }
+
+        return LITE3D_TRUE;
+    }
+
+    return LITE3D_FALSE;
+}
+
+int lite3d_render_frame(void)
+{
+    gRenderStats.trianglesByFrame =
+        gRenderStats.nodesTotal =
+        gRenderStats.batchesTotal =
+        gRenderStats.batchedByFrame =
+        gRenderStats.materialsTotal =
+        gRenderStats.materialsPassedByFrame =
+        gRenderStats.textureUnitsByFrame =
+        gRenderStats.verticesByFrame = 0;
+
+    if (gRenderActive)
+    {
+        if (gRenderListeners.preFrame &&
+            !gRenderListeners.preFrame(gRenderListeners.userdata))
+            return LITE3D_FALSE;
+        if (!gRenderStarted)
+            return LITE3D_FALSE;
+        if (!update_render_targets())
+            return LITE3D_FALSE;
+        if (gRenderListeners.postFrame &&
+            !gRenderListeners.postFrame(gRenderListeners.userdata))
+            return LITE3D_FALSE;
+    }
+
+    /* refresh render statistic, render time span used */
+    refresh_render_stats(gBeginFrameMark, SDL_GetPerformanceCounter());
+    /* get time mark */
+    gBeginFrameMark = SDL_GetPerformanceCounter();
+    /* induce timers */
+    lite3d_timer_induce(gBeginFrameMark, gPerfFreq);
+
+    /* pump all available events */
+    while (lite3d_render_loop_pump_event());
+    /* finish gl operations and swap buffers */
+    lite3d_video_swap_buffers();
+    return LITE3D_TRUE;
+}
+
+void lite3d_render_loop(lite3d_render_listeners *callbacks)
+{
     uint64_t beginFrameMark;
+    lite3d_timer *frameStatsTimer = NULL;
     gRenderListeners = *callbacks;
 
     gPerfFreq = SDL_GetPerformanceFrequency();
@@ -193,64 +247,28 @@ void lite3d_render_loop(lite3d_render_listeners *callbacks)
     lite3d_list_init(&gRenderTargets);
     lite3d_render_target_add(&gScreenRt, 0xFFFFFFF);
 
+    /* launch frame statistic compute timer */
+    frameStatsTimer = lite3d_timer_add(1000, timer_render_stats_tick, NULL);
+
     /* start user initialization */
     if (!gRenderListeners.preRender || (gRenderListeners.preRender &&
         gRenderListeners.preRender(gRenderListeners.userdata)))
     {
         /* get time mark */
-        beginFrameMark = SDL_GetPerformanceCounter();
+        gBeginFrameMark = SDL_GetPerformanceCounter();
         
         /* begin render loop */
         while (gRenderStarted)
         {
-            gRenderStats.trianglesByFrame =
-                gRenderStats.nodesTotal =
-                gRenderStats.batchesTotal =
-                gRenderStats.batchedByFrame = 
-                gRenderStats.materialsTotal =
-                gRenderStats.materialsPassedByFrame =
-                gRenderStats.textureUnitsByFrame =
-                gRenderStats.verticesByFrame = 0;
-
-            if (gRenderActive)
-            {
-                if (gRenderListeners.preFrame &&
-                    !gRenderListeners.preFrame(gRenderListeners.userdata))
-                    break;
-                if (!gRenderStarted)
-                    break;
-                if (!update_render_targets())
-                    break;
-                if (gRenderListeners.postFrame &&
-                    !gRenderListeners.postFrame(gRenderListeners.userdata))
-                    break;
-            }
-            
-            /* refresh render statistic, render time span used */
-            refresh_render_stats(beginFrameMark, SDL_GetPerformanceCounter());
-            /* get time mark */
-            beginFrameMark = SDL_GetPerformanceCounter();
-            /* induce timers */
-            lite3d_timer_induce(beginFrameMark, gPerfFreq);
-
-            while (SDL_PollEvent(&wevent))
-            {
-                if (gRenderListeners.processEvent &&
-                    !gRenderListeners.processEvent(&wevent, gRenderListeners.userdata))
-                {
-                    lite3d_render_stop();
-                    break;
-                }
-            }
-            
-            /* finish gl operations and swap buffers */
-            lite3d_video_swap_buffers();
+            if (!lite3d_render_frame())
+                break;
         }
     }
 
     if (gRenderListeners.postRender)
         gRenderListeners.postRender(gRenderListeners.userdata);
 
+    lite3d_timer_purge(frameStatsTimer);
     lite3d_render_target_erase_all();
     lite3d_render_target_purge(&gScreenRt);
 }

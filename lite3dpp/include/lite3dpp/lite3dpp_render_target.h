@@ -31,7 +31,7 @@ namespace lite3dpp
 
         RenderTarget(const String &name, 
             const String &path, Main *main);
-        ~RenderTarget();
+        virtual ~RenderTarget();
 
         bool isEnabled() const;
         void enable();
@@ -57,6 +57,8 @@ namespace lite3dpp
         void clear(bool color, bool depth, bool stencil);
         void saveScreenshot(const String &filename);
 
+        virtual void resize(int32_t width, int32_t height);
+
         inline lite3d_render_target *getPtr()
         { return mRenderTargetPtr; }
 
@@ -76,7 +78,7 @@ namespace lite3dpp
             const String &path, Main *main);
         ~WindowRenderTarget();
 
-        void resize(int32_t width, int32_t height);
+        virtual void resize(int32_t width, int32_t height) override;
         void fullscreen(bool flag);
         float computeCameraAspect() const;
 

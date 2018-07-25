@@ -172,6 +172,16 @@ namespace lite3dpp
         return mResourceManager.queryResource<WindowRenderTarget>("MainWindow");
     }
 
+    void Main::renderFrame()
+    {
+        lite3d_render_frame();
+    }
+
+    void Main::processEvents()
+    {
+        while (lite3d_render_loop_pump_event());
+    }
+
     /* callbackes */
     int Main::onInit(void *userdata)
     {

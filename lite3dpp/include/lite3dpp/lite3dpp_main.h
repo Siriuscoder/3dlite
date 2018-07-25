@@ -64,6 +64,8 @@ namespace lite3dpp
         inline const lite3d_render_stats *getRenderStats() const
         { return lite3d_render_stats_get(); }
         void showSystemCursor(bool ok);
+        void processEvents();
+        void renderFrame();
 
         void run();
         void stop();

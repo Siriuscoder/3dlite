@@ -148,6 +148,9 @@ namespace lite3dpp
         lite3d_render_target_screenshot(mRenderTargetPtr, filename.c_str());
     }
 
+    void RenderTarget::resize(int32_t width, int32_t height)
+    {}
+
     WindowRenderTarget::WindowRenderTarget(const String &name, 
         const String &path, Main *main) : 
         RenderTarget(name, path, main)
