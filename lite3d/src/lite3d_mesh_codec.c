@@ -162,7 +162,7 @@ int lite3d_mesh_m_decode(lite3d_mesh *mesh,
     SDL_assert(mesh);
 
     /* open memory stream */
-    stream = SDL_RWFromConstMem(buffer, size);
+    stream = SDL_RWFromConstMem(buffer, (int)size);
 
     if (SDL_RWread(stream, &mheader, sizeof (mheader), 1) != 1)
     {
@@ -197,7 +197,7 @@ int lite3d_mesh_m_decode(lite3d_mesh *mesh,
     for (i = 0; i < mheader.chunkCount; ++i)
     {
         register int32_t j = 0;
-        size_t stride = 0;   
+        uint32_t stride = 0;   
         
         if (SDL_RWseek(stream, sizeof (mheader) + chunkSectionOffset, RW_SEEK_SET) < 0)
         {
@@ -277,8 +277,8 @@ int lite3d_mesh_m_encode(lite3d_mesh *mesh,
 
     mheader.sig = LITE3D_M_SIGNATURE;
     mheader.version = LITE3D_VERSION_NUM;
-    mheader.vertexSectionSize = mesh->vertexBuffer.size;
-    mheader.indexSectionSize = mesh->indexBuffer.size;
+    mheader.vertexSectionSize = (int32_t)mesh->vertexBuffer.size;
+    mheader.indexSectionSize = (int32_t)mesh->indexBuffer.size;
     mheader.chunkCount = mesh->chunkCount;
     mheader.chunkSectionSize = 0;
 
@@ -292,7 +292,7 @@ int lite3d_mesh_m_encode(lite3d_mesh *mesh,
     }
 
     /* open memory stream */
-    stream = SDL_RWFromMem(buffer, size);
+    stream = SDL_RWFromMem(buffer, (int)size);
     /* write header */
     if (SDL_RWwrite(stream, &mheader, sizeof (mheader), 1) != 1)
     {
@@ -312,11 +312,11 @@ int lite3d_mesh_m_encode(lite3d_mesh *mesh,
             sizeof (lite3d_m_chunk_layout) * meshChunk->layoutEntriesCount;
         mchunk.chunkLayoutCount = meshChunk->layoutEntriesCount;
         mchunk.indexesCount = meshChunk->vao.indexesCount;
-        mchunk.indexesSize = meshChunk->vao.indexesSize;
-        mchunk.indexesOffset = meshChunk->vao.indexesOffset;
+        mchunk.indexesSize = (int32_t)meshChunk->vao.indexesSize;
+        mchunk.indexesOffset = (int32_t)meshChunk->vao.indexesOffset;
         mchunk.verticesCount = meshChunk->vao.verticesCount;
-        mchunk.verticesSize = meshChunk->vao.verticesSize;
-        mchunk.verticesOffset = meshChunk->vao.verticesOffset;
+        mchunk.verticesSize = (int32_t)meshChunk->vao.verticesSize;
+        mchunk.verticesOffset = (int32_t)meshChunk->vao.verticesOffset;
         mchunk.indexElemSize = lite3d_size_by_index_type(meshChunk->vao.indexType);
         mchunk.materialIndex = meshChunk->materialIndex;
         mchunk.boundingVol = meshChunk->boundingVol;

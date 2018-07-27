@@ -115,7 +115,7 @@ void lite3d_vao_draw_indexed_instanced(struct lite3d_vao *vao, size_t count)
         return;
     SDL_assert(vao);
     glDrawElementsInstanced(GL_TRIANGLES, vao->indexesCount,
-        vao->indexType, (void *) vao->indexesOffset, count);
+        vao->indexType, (void *) vao->indexesOffset, (GLsizei)count);
 }
 
 void lite3d_vao_draw(struct lite3d_vao *vao)
@@ -129,7 +129,7 @@ void lite3d_vao_draw_instanced(struct lite3d_vao *vao, size_t count)
         return;
     SDL_assert(vao);
     glDrawArraysInstanced(GL_TRIANGLES, 0,
-        vao->verticesCount, count);
+        vao->verticesCount, (GLsizei)count);
 }
 
 void lite3d_vao_bind(struct lite3d_vao *vao)

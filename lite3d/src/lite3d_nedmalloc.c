@@ -29,6 +29,7 @@ DEALINGS IN THE SOFTWARE.
 #ifdef _MSC_VER
 /* Enable full aliasing on MSVC */
 /*#pragma optimize("a", on)*/
+#pragma warning(disable:4267)
 #endif
 
 /*#define FULLSANITYCHECKS*/

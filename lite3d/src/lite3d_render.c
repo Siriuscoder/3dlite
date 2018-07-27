@@ -222,7 +222,6 @@ int lite3d_render_frame(void)
 
 void lite3d_render_loop(lite3d_render_listeners *callbacks)
 {
-    uint64_t beginFrameMark;
     lite3d_timer *frameStatsTimer = NULL;
     gRenderListeners = *callbacks;
 

@@ -69,7 +69,7 @@ static int init_platform_gl_extensions(lite3d_video_settings *settings)
 static int init_gl_extensions(lite3d_video_settings *settings)
 {
     const char *extensionsStr;
-    int32_t extensionsStrLength;
+    size_t extensionsStrLength;
 
     if (!lite3d_init_gl_extensions_binding())
         return LITE3D_FALSE;

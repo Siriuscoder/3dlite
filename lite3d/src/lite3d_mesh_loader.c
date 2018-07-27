@@ -26,16 +26,16 @@
 
 int lite3d_mesh_indexed_load_from_memory(lite3d_mesh *mesh,
     const void *vertices,
-    size_t verticesCount,
+    uint32_t verticesCount,
     const lite3d_mesh_layout *layout,
-    size_t layoutCount,
+    uint32_t layoutCount,
     const void *indexes,
-    size_t elementsCount,
+    uint32_t elementsCount,
     uint8_t indexComponentSize,
     uint16_t access)
 {
-    size_t verticesSize = 0, indexesSize = 0,
-        stride = 0, i;
+    size_t verticesSize = 0, indexesSize = 0;
+    uint32_t stride = 0, i;
 
     SDL_assert(mesh && layout);
 
@@ -66,17 +66,16 @@ int lite3d_mesh_indexed_load_from_memory(lite3d_mesh *mesh,
 
 int lite3d_mesh_indexed_extend_from_memory(lite3d_mesh *mesh,
     const void *vertices,
-    size_t verticesCount,
+    uint32_t verticesCount,
     const lite3d_mesh_layout *layout,
-    size_t layoutCount,
+    uint32_t layoutCount,
     const void *indexes,
-    size_t elementsCount,
+    uint32_t elementsCount,
     uint8_t indexComponentSize,
     uint16_t access)
 {
-    size_t verticesSize = 0, indexesSize = 0,
-        stride = 0, i, offsetVertices = 0,
-        offsetIndexes = 0;
+    size_t verticesSize = 0, indexesSize = 0, offsetVertices = 0, offsetIndexes = 0;
+    uint32_t stride = 0, i;
 
     SDL_assert(mesh && layout);
 
@@ -119,13 +118,13 @@ int lite3d_mesh_indexed_extend_from_memory(lite3d_mesh *mesh,
 
 int lite3d_mesh_load_from_memory(lite3d_mesh *mesh,
     const void *vertices,
-    size_t verticesCount,
+    uint32_t verticesCount,
     const lite3d_mesh_layout *layout,
-    size_t layoutCount,
+    uint32_t layoutCount,
     uint16_t access)
 {
-    size_t verticesSize = 0,
-        stride = 0, i;
+    size_t verticesSize = 0;
+    uint32_t stride = 0, i;
 
     SDL_assert(mesh && layout);
 
@@ -149,13 +148,13 @@ int lite3d_mesh_load_from_memory(lite3d_mesh *mesh,
 
 int lite3d_mesh_extend_from_memory(lite3d_mesh *mesh,
     const void *vertices,
-    size_t verticesCount,
+    uint32_t verticesCount,
     const lite3d_mesh_layout *layout,
-    size_t layoutCount,
+    uint32_t layoutCount,
     uint16_t access)
 {
-    size_t verticesSize = 0,
-        stride = 0, i, offsetVertices = 0;
+    size_t verticesSize = 0, offsetVertices = 0;
+    uint32_t stride = 0, i;
 
     SDL_assert(mesh && layout);
 

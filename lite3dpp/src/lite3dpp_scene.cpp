@@ -297,12 +297,12 @@ namespace lite3dpp
         }
         
         // the first index contain indexes count, max 16k
-        mLightsIndexes[0] = mLightsIndexes.size()-1;
+        mLightsIndexes[0] = static_cast<int32_t>(mLightsIndexes.size()-1);
         // upload indexes
         mLightingIndexBuffer->setData(&mLightsIndexes[0], 0, mLightsIndexes.size() * sizeof(LightsIndexesStore::value_type));
 
         if (anyValidated)
-            Material::setIntGlobalParameter(getName() + "_numLights", mLights.size());
+            Material::setIntGlobalParameter(getName() + "_numLights", static_cast<int32_t>(mLights.size()));
     }
     
     SceneObject::Ptr Scene::createObject(const String &name, SceneObject *parent)

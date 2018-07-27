@@ -97,7 +97,7 @@ namespace lite3dpp
                     (uint8_t *)fontFile->fileBuff + fontFile->fileSize);
                 
                 mFont.reset(new nw::Font(gFontLib, helper.getString(L"Font"), &mFontBuffer[0], 
-                    fontFile->fileSize, helper.getInt(L"FontSize")));
+                    static_cast<signed long>(fontFile->fileSize), helper.getInt(L"FontSize")));
                 mFont->setLogger(&gFontLibLogger);
 
                 mText.reset(new nw::Text(*mFont, ""));

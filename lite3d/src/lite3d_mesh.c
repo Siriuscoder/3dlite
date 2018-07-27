@@ -180,19 +180,18 @@ lite3d_mesh_chunk *lite3d_mesh_chunk_get_by_index(struct lite3d_mesh *mesh,
 
 lite3d_mesh_chunk *lite3d_mesh_append_chunk(lite3d_mesh *mesh,
     const lite3d_mesh_layout *layout,
-    size_t layoutCount,
-    size_t stride,
+    uint32_t layoutCount,
+    uint32_t stride,
     uint16_t componentType,
-    size_t indexesCount,
+    uint32_t indexesCount,
     size_t indexesSize,
     size_t indexesOffset,
-    size_t verticesCount,
+    uint32_t verticesCount,
     size_t verticesSize,
     size_t verticesOffset)
 {
     lite3d_mesh_chunk *meshChunk;
-    uint32_t attribIndex = 0;
-    size_t i = 0;
+    uint32_t attribIndex = 0, i = 0;
     size_t vOffset = verticesOffset;
 
     meshChunk = (lite3d_mesh_chunk *) lite3d_malloc_pooled(LITE3D_POOL_NO1, sizeof (lite3d_mesh_chunk));

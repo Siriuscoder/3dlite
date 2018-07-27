@@ -254,7 +254,7 @@ int lite3d_texture_unit_from_resource(lite3d_texture_unit *textureUnit,
     /* Bind IL image */
     ilBindImage(imageDesc);
     /* Load IL image from memory */
-    if (!ilLoadL(imageType, resource->fileBuff, resource->fileSize))
+    if (!ilLoadL(imageType, resource->fileBuff, (ILuint)resource->fileSize))
     {
         lite3d_misc_check_il_error();
         return LITE3D_FALSE;
@@ -451,19 +451,19 @@ int lite3d_texture_unit_set_compressed_pixels(lite3d_texture_unit *textureUnit,
     {
         case LITE3D_TEXTURE_1D:
             glCompressedTexSubImage1D(textureUnit->textureTarget, level, widthOff,
-                width, textureUnit->texFormat, pixelsSize, pixels);
+                width, textureUnit->texFormat, (GLsizei)pixelsSize, pixels);
             break;
         case LITE3D_TEXTURE_2D:
         case LITE3D_TEXTURE_CUBE:
             glCompressedTexSubImage2D(textureUnit->textureTarget == LITE3D_TEXTURE_CUBE ? 
                 GL_TEXTURE_CUBE_MAP_POSITIVE_X + cubeface : textureUnit->textureTarget, 
                 level, widthOff, heightOff, width, height, textureUnit->texFormat,
-                pixelsSize, pixels);
+                (GLsizei)pixelsSize, pixels);
             break;
         case LITE3D_TEXTURE_3D:
             glCompressedTexSubImage3D(textureUnit->textureTarget, level, widthOff,
                 heightOff, depthOff, width, height, depth,
-                textureUnit->texFormat, pixelsSize, pixels);
+                textureUnit->texFormat, (GLsizei)pixelsSize, pixels);
             break;
     }
 

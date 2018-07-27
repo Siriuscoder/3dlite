@@ -56,7 +56,7 @@ static int ai_node_load_to_vbo(lite3d_mesh *meshInst, const struct aiScene *scen
 {
     uint8_t componentSize;
     lite3d_mesh_layout layout[4 + AI_MAX_NUMBER_OF_COLOR_SETS + AI_MAX_NUMBER_OF_TEXTURECOORDS];
-    size_t layoutCount;
+    uint32_t layoutCount;
     size_t verticesSize;
     size_t indexesSize;
     void *vertices;
@@ -394,7 +394,7 @@ static const struct aiScene *ai_load_scene(const lite3d_file *resource, uint32_t
         aiComponent_BONEWEIGHTS);
     /* parse scene from memory buffered file */
     scene = aiImportFileFromMemoryWithProperties(resource->fileBuff,
-        resource->fileSize, aiProcess_RemoveComponent, NULL, importProrerties);
+        (unsigned int)resource->fileSize, aiProcess_RemoveComponent, NULL, importProrerties);
     if (!scene)
     {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "MESH: %s import failed.. %s",

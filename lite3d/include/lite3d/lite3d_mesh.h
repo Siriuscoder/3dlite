@@ -53,9 +53,9 @@ typedef struct lite3d_mesh
     lite3d_vbo vertexBuffer;
     lite3d_vbo indexBuffer;
     lite3d_vbo *auxBuffer;
-    size_t verticesCount;
-    size_t elementsCount;
-    size_t chunkCount;
+    uint32_t verticesCount;
+    uint32_t elementsCount;
+    uint32_t chunkCount;
     lite3d_list chunks;
     void *userdata;
 } lite3d_mesh;
@@ -64,7 +64,7 @@ typedef struct lite3d_mesh_chunk
 {
     lite3d_list_node node;
     lite3d_vao vao;
-    size_t layoutEntriesCount;
+    uint32_t layoutEntriesCount;
     lite3d_mesh_layout *layout;
     /* material index */
     uint32_t materialIndex;
@@ -80,13 +80,13 @@ LITE3D_CEXPORT int lite3d_mesh_extend(struct lite3d_mesh *mesh,
 
 LITE3D_CEXPORT lite3d_mesh_chunk *lite3d_mesh_append_chunk(lite3d_mesh *mesh,
     const lite3d_mesh_layout *layout,
-    size_t layoutCount,
-    size_t stride,
+    uint32_t layoutCount,
+    uint32_t stride,
     uint16_t componentType,
-    size_t indexesCount,
+    uint32_t indexesCount,
     size_t indexesSize,
     size_t indexesOffset,
-    size_t verticesCount,
+    uint32_t verticesCount,
     size_t verticesSize,
     size_t verticesOffset);
 

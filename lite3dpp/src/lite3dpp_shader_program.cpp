@@ -99,17 +99,17 @@ namespace lite3dpp
             if (defPath.size() > 0)
             {
                 sources.push_back((const char *)mMain->getResourceManager()->loadFileToMemory(defPath, &slen));
-                sourcesLen.push_back(slen);
+                sourcesLen.push_back(static_cast<int32_t>(slen));
             }
 
             // load main shader source
             sources.push_back((const char *)mMain->getResourceManager()->loadFileToMemory(sourcePath, &slen));
-            sourcesLen.push_back(slen);
+            sourcesLen.push_back(static_cast<int32_t>(slen));
 
             SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
                 "Compiling \"%s\" ...", sourcePath.c_str());
 
-            if (!lite3d_shader_compile(&shaders.back(), sources.size(),
+            if (!lite3d_shader_compile(&shaders.back(), static_cast<int32_t>(sources.size()),
                 &sources[0], &sourcesLen[0]))
                 LITE3D_THROW(sourcePath << " compile: \"" << shaders.back().statusString << "\"");
             if (shaders.back().statusString && shaders.back().statusString[0] != 0)

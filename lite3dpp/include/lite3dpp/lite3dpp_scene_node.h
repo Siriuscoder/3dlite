@@ -87,7 +87,7 @@ namespace lite3dpp
         inline const Mesh *getMesh() const
         { return mMesh; }
         
-        inline void instances(size_t count)
+        inline void instances(uint32_t count)
         { mInstances = count; }
         
         virtual void addToScene(Scene *scene) override;
@@ -103,7 +103,7 @@ namespace lite3dpp
         
         Mesh::MaterialMapping mMaterialMappingReplacement;
         Mesh *mMesh;
-        size_t mInstances;
+        uint32_t mInstances;
     };
     
     class LITE3DPP_EXPORT LightSceneNode : public SceneNode
