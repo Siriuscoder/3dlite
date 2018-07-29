@@ -45,7 +45,6 @@ typedef struct lookUnit
 static uint64_t gPerfFreq = 0;
 static uint64_t gBeginFrameMark = 0;
 static int32_t gFPSCounter = 0;
-static int64_t gFrameCounter = 0;
 static lite3d_list gRenderTargets;
 static lite3d_render_listeners gRenderListeners;
 static uint8_t gRenderStarted = LITE3D_TRUE;
@@ -56,20 +55,20 @@ static lite3d_render_target gScreenRt;
 static void refresh_render_stats(uint64_t beginFrame, uint64_t endFrame)
 {
     gFPSCounter++;
-    gFrameCounter++;
+    gRenderStats.framesCount++;
     gRenderStats.lastFrameMs = ((float) (endFrame - beginFrame) / (float) gPerfFreq) * 1000.0;
 
-    if (gRenderStats.bestFrameMs == 0 || gFrameCounter % LITE3D_LIMSTATS_SKIP_PER_FRAMES)
+    if (gRenderStats.bestFrameMs == 0 || !(gRenderStats.framesCount % LITE3D_LIMSTATS_SKIP_PER_FRAMES))
         gRenderStats.bestFrameMs = gRenderStats.lastFrameMs;
-    if (gRenderStats.worstFrameMs == 0 || gFrameCounter % LITE3D_LIMSTATS_SKIP_PER_FRAMES)
+    if (gRenderStats.worstFrameMs == 0 || !(gRenderStats.framesCount % LITE3D_LIMSTATS_SKIP_PER_FRAMES))
         gRenderStats.worstFrameMs = gRenderStats.lastFrameMs;
-    if (gRenderStats.bestFPS == 0 || gFrameCounter % LITE3D_LIMSTATS_SKIP_PER_FRAMES)
+    if (gRenderStats.bestFPS == 0 || !(gRenderStats.framesCount % LITE3D_LIMSTATS_SKIP_PER_FRAMES))
         gRenderStats.bestFPS = gRenderStats.lastFPS;
-    if (gRenderStats.worstFPS == 0 || gFrameCounter % LITE3D_LIMSTATS_SKIP_PER_FRAMES)
+    if (gRenderStats.worstFPS == 0 || !(gRenderStats.framesCount % LITE3D_LIMSTATS_SKIP_PER_FRAMES))
         gRenderStats.worstFPS = gRenderStats.lastFPS;
 
-    gRenderStats.bestFrameMs = min(gRenderStats.lastFrameMs, gRenderStats.bestFrameMs);
-    gRenderStats.worstFrameMs = max(gRenderStats.lastFrameMs, gRenderStats.worstFrameMs);
+    gRenderStats.bestFrameMs = LITE3D_MIN(gRenderStats.lastFrameMs, gRenderStats.bestFrameMs);
+    gRenderStats.worstFrameMs = LITE3D_MAX(gRenderStats.lastFrameMs, gRenderStats.worstFrameMs);
 
     gRenderStats.triangleByBatch = gRenderStats.batchedByFrame ? gRenderStats.trianglesByFrame / gRenderStats.batchedByFrame : 0;
     gRenderStats.triangleMs = gRenderStats.trianglesByFrame ? (float) gRenderStats.lastFrameMs / (float) gRenderStats.trianglesByFrame : 0;
@@ -85,9 +84,9 @@ static void timer_render_stats_tick(lite3d_timer *timer)
     if (gRenderStats.avrFrameMs == 0)
         gRenderStats.avrFrameMs = gRenderStats.lastFrameMs;
 
-    gRenderStats.bestFPS = max(gRenderStats.lastFPS, gRenderStats.bestFPS);
-    gRenderStats.worstFPS = min(gRenderStats.lastFPS, gRenderStats.worstFPS);
-    gRenderStats.avrFrameMs = (gRenderStats.bestFrameMs + gRenderStats.worstFrameMs + (1000 / gRenderStats.lastFPS)) / 3;
+    gRenderStats.bestFPS = LITE3D_MAX(gRenderStats.lastFPS, gRenderStats.bestFPS);
+    gRenderStats.worstFPS = LITE3D_MIN(gRenderStats.lastFPS, gRenderStats.worstFPS);
+    gRenderStats.avrFrameMs = (gRenderStats.bestFrameMs + gRenderStats.worstFrameMs + gRenderStats.lastFrameMs) / 3;
     gRenderStats.avrFPS = (gRenderStats.bestFPS + gRenderStats.worstFPS + gRenderStats.lastFPS) / 3;
 }
 

@@ -213,13 +213,14 @@ void Sample::printRenderStats()
     lite3d_render_stats *stats = lite3d_render_stats_get();
     SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
         "==== Render statistics ========\n"
+        "Fames: %lld\n"
         "last FPS\tavr FPS\t\tbest FPS\tworst FPS\n"
         "%d\t\t%d\t\t%d\t\t%d\n"
         "last frame ms\tavr frame ms\tbest frame ms\tworst frame ms\n"
         "%f\t%f\t%f\t%f\n"
         "nodes total\tbatches total\tbatches called\tfaces\n"
         "%d\t\t%d\t\t%d\t\t%d\n",
-        stats->lastFPS, stats->avrFPS, stats->bestFPS, stats->worstFPS,
+        stats->framesCount, stats->lastFPS, stats->avrFPS, stats->bestFPS, stats->worstFPS,
         stats->lastFrameMs, stats->avrFrameMs, stats->bestFrameMs, stats->worstFrameMs,
         stats->nodesTotal, stats->batchesTotal, stats->batchedByFrame, stats->trianglesByFrame);
 }
@@ -229,7 +230,7 @@ void Sample::printMemoryStats()
     ResourceManager::ResourceManagerStats memStats = mMain.getResourceManager()->getStats();
     SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
         "==== Memory statistics ========\n"
-        "Video memory: %lu bytes\n"
+        "Video memory: %zu bytes\n"
         "Total objects: %d\n"
         "Textures: %d/%d\n"
         "Materials: %d/%d\n"
@@ -239,7 +240,7 @@ void Sample::printMemoryStats()
         "Shaders: %d/%d\n"
         "Render targets: %d/%d\n"
         "SSBO: %d/%d\n"
-        "File cache: %d/%lu bytes\n",
+        "File cache: %d/%zu bytes\n",
         memStats.usedVideoMem,
         memStats.totalObjectsCount,
         memStats.texturesLoadedCount, memStats.texturesCount,

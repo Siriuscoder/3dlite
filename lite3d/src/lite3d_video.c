@@ -69,7 +69,7 @@ static int init_platform_gl_extensions(lite3d_video_settings *settings)
 static int init_gl_extensions(lite3d_video_settings *settings)
 {
     const char *extensionsStr;
-    size_t extensionsStrLength;
+    int32_t extensionsStrLength;
 
     if (!lite3d_init_gl_extensions_binding())
         return LITE3D_FALSE;
@@ -85,7 +85,7 @@ static int init_gl_extensions(lite3d_video_settings *settings)
         "%s: GL Renderer: %s", LITE3D_CURRENT_FUNCTION, (const char *) glGetString(GL_RENDERER));
     
     extensionsStr = (const char *) glGetString(GL_EXTENSIONS);
-    extensionsStrLength = strlen(extensionsStr);
+    extensionsStrLength = (int32_t)strlen(extensionsStr);
 
     while (extensionsStrLength >= 0)
     {
