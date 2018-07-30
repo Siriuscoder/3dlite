@@ -113,6 +113,11 @@ if(NOT IL_FOUND)
     message(FATAL_ERROR "DevIL library not found..")
 endif()
 
+find_package(ODE)
+if(NOT ODE_FOUND)
+    message(WARNING "ODE library not found.. Physics simulation sample will be disabled")
+endif()
+
 include_directories("${PROJECT_SOURCE_DIR}/lite3d/include")
 include_directories("${PROJECT_SOURCE_DIR}/lite3dpp/include")
 include_directories("${PROJECT_SOURCE_DIR}/lite3dpp_font/include")

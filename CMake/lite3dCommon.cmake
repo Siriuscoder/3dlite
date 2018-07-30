@@ -81,7 +81,8 @@ macro(define_sample SAMPLE_NAME SAMPLE_DIRECTORY)
 
 	target_include_directories(${SAMPLE_NAME} PRIVATE 
 		"$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}>"
-		"$<BUILD_INTERFACE:${SDL2_INCLUDE_DIR}>")
+		"$<BUILD_INTERFACE:${SDL2_INCLUDE_DIR}>"
+        "$<BUILD_INTERFACE:${SAMPLE_ADDON_INCLUDES}>")
 			
 	if(MSVC)
 		target_compile_definitions(${SAMPLE_NAME} PRIVATE
@@ -96,7 +97,8 @@ macro(define_sample SAMPLE_NAME SAMPLE_DIRECTORY)
 	target_link_libraries(${SAMPLE_NAME} 
 		lite3d
 		lite3dpp
-		lite3dpp_font)
+		lite3dpp_font
+        ${SAMPLE_ADDON_LIBS})
 		
 endmacro()
 

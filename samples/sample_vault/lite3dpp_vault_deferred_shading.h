@@ -67,7 +67,11 @@ public:
     {
         /* disable lightpass after lightmap recalc complete */
         SDL_assert(mLightComputeStep);
-        mLightComputeStep->disable();
+
+        if (!mMinigun->getRoot()->isVisible() && 
+            !mGatling->getRoot()->isVisible() &&
+            !mLazer->getRoot()->isVisible())
+            mLightComputeStep->disable();
     }
     
     void setLightLayersVisibility(Scene *prepass, Scene *scene)
