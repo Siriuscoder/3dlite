@@ -2,7 +2,7 @@
 #  ODE_INCLUDE_DIR - the ODE include directory
 #  ODE_LIBRARY - Link these to use ODE
 
-set(ODE_LIB_NAME "ode_single")
+set(ODE_LIB_NAME "ode")
 
 FIND_PATH(ODE_INCLUDE_DIR ode/ode.h
 	$ENV{ODE_HOME}/include
