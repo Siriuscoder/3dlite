@@ -1,0 +1,29 @@
+{
+	"Root":
+	{
+		"Name": "cube30.root",		
+		"Nodes": [
+			{
+				"Name": "cube30.node",
+				"FrustumTest":true,
+				"Mesh": 
+				{
+					"Name": "cube30.mesh",
+					"Mesh": "samples:models/json/cube30.json",
+					"MaterialMapping": 
+					[
+						{
+							"MaterialIndex": 0,
+							"Material":
+							{
+								"Name": "box2.material",
+								"Material": "samples:materials/box2.json"
+							}
+						}
+					]
+				}
+			}
+		]
+	}
+}
+

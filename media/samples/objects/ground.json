@@ -1,0 +1,25 @@
+{
+  "Root":{
+        "Name":"ground.root",
+        "Nodes":[
+            {
+                "Mesh":{
+                    "Mesh":"samples:models/json/Ground.json",
+                    "Name":"Ground.mesh",
+                    "MaterialMapping": 
+                    [
+                        {
+                            "MaterialIndex": 2,
+                            "Material":
+                            {
+                                "Name": "floor.material",
+                                "Material": "samples:materials/vfloor.json"
+                            }
+                        }
+                    ]
+                },
+                "Name":"Ground.node"
+            }
+        ]
+    }
+}

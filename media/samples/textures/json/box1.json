@@ -1,0 +1,7 @@
+{
+  "Filtering":"Trilinear",
+  "Image":"samples:textures/images/box1.jpg",
+  "ImageFormat":"jpg",
+  "TextureType":"2D",
+  "Wrapping":"Repeat"
+}

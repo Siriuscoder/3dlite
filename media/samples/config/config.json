@@ -11,7 +11,7 @@
     "VideoSettings": {
         "Width": 1024,
         "Height": 768,
-        "Caption": "My test window",
+        "Caption": "Sample scene",
         "ColorBits": 24,
         "Fullscreen": false,
         "MSAA": 4,
