@@ -76,41 +76,61 @@ namespace lite3dpp
         lite3d_shader_program_purge(&mProgram);
     }
 
+    uint8_t ShaderProgram::determineShaderType(const String &filepath)
+    {
+        if (filepath.find(".vs") != String::npos)
+            return LITE3D_SHADER_TYPE_VERTEX;
+        else if (filepath.find(".ps") != String::npos || filepath.find(".fs") != String::npos)
+            return LITE3D_SHADER_TYPE_FRAGMENT;
+        else if (filepath.find(".gs") != String::npos)
+            return LITE3D_SHADER_TYPE_GEOMETRY;
+
+        // will cause error in lite3d_shader_init
+        return 0;
+    }
+
     void ShaderProgram::loadShaders(stl<lite3d_shader>::vector &shaders)
     {
-        for(String &source : getJson().getStrings(L"Sources"))
+        for (String &source : getJson().getStrings(L"Sources"))
         {
             String sourcePath;
             String defPath;
-            size_t slen;
-            stl<const char *>::vector sources;
-            stl<int32_t>::vector sourcesLen;
+            size_t flen;
+            String shaderCode;
 
             shaders.resize(shaders.size()+1);
             sourcePath = source.substr(0, source.find_first_of(','));
             if (source.find_first_of(',') != String::npos)
                 defPath = source.substr(source.find_first_of(',')+1);
 
-            if (!lite3d_shader_init(&shaders.back(), 
-                sourcePath.find(".vs") != String::npos ? LITE3D_SHADER_TYPE_VERTEX : LITE3D_SHADER_TYPE_FRAGMENT))
+           
+            if (!lite3d_shader_init(&shaders.back(), determineShaderType(sourcePath)))
                 LITE3D_THROW("Shader init failed..");
 
             // load definition source
             if (defPath.size() > 0)
             {
-                sources.push_back((const char *)mMain->getResourceManager()->loadFileToMemory(defPath, &slen));
-                sourcesLen.push_back(static_cast<int32_t>(slen));
+                shaderCode.append(static_cast<const char *>(mMain->getResourceManager()->loadFileToMemory(defPath, &flen)));
+                shaderCode.append("\n");
             }
 
             // load main shader source
-            sources.push_back((const char *)mMain->getResourceManager()->loadFileToMemory(sourcePath, &slen));
-            sourcesLen.push_back(static_cast<int32_t>(slen));
+            shaderCode.append(static_cast<const char *>(mMain->getResourceManager()->loadFileToMemory(sourcePath, &flen)));
+
+            SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
+                "Preprocessing \"%s\" ...", sourcePath.c_str());
+            shaderCode = preprocessShaderCode(shaderCode);
+
+            SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
+                "Optimizing \"%s\" ...", sourcePath.c_str());
+            shaderCode = optimizeShaderCode(shaderCode);
 
             SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
                 "Compiling \"%s\" ...", sourcePath.c_str());
 
-            if (!lite3d_shader_compile(&shaders.back(), static_cast<int32_t>(sources.size()),
-                &sources[0], &sourcesLen[0]))
+            int32_t finalShaderLen[] = { static_cast<int32_t>(shaderCode.length()) };
+            const char* finalShaderCode[] = { shaderCode.c_str() };
+            if (!lite3d_shader_compile(&shaders.back(), 1, finalShaderCode, finalShaderLen))
                 LITE3D_THROW(sourcePath << " compile: \"" << shaders.back().statusString << "\"");
             if (shaders.back().statusString && shaders.back().statusString[0] != 0)
             {
@@ -136,6 +156,17 @@ namespace lite3dpp
             lite3d_shader_program_attribute_index(&mProgram, name.c_str(), location);
             location++;
         }
+    }
+
+    String ShaderProgram::preprocessShaderCode(String sourceCode)
+    {
+        return sourceCode;
+    }
+
+    String ShaderProgram::optimizeShaderCode(String sourceCode)
+    {
+        /* do nothing yet */
+        return sourceCode;
     }
 }
 

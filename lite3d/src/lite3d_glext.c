@@ -179,6 +179,15 @@ int lite3d_check_seamless_cube_map()
 #endif      
 }
 
+int lite3d_check_geometry_shader()
+{
+#ifdef GLES
+    return LITE3D_FALSE;
+#else 
+    return GLEW_ARB_geometry_shader4 || GLEW_VERSION_3_2;
+#endif 
+}
+
 int lite3d_init_gl_extensions_binding()
 {
 #ifndef GLES

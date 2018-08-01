@@ -16,8 +16,10 @@
  *	along with Lite3D.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
 #include <SDL_assert.h>
+#include <SDL_log.h>
 
 #include <lite3d/lite3d_gl.h>
+#include <lite3d/lite3d_glext.h>
 #include <lite3d/lite3d_misc.h>
 #include <lite3d/lite3d_alloc.h>
 #include <lite3d/lite3d_shader.h>
@@ -30,12 +32,30 @@ int lite3d_shader_init(lite3d_shader *shader, uint8_t type)
     /* cleanup shader firt */
     if (glIsShader(shader->shaderID))
         lite3d_shader_purge(shader);
-
+        
     /* craate new shader object */
-    shader->shaderID = glCreateShader(type == LITE3D_SHADER_TYPE_VERTEX ?
-        GL_VERTEX_SHADER : GL_FRAGMENT_SHADER);
-    shader->type = type;
+    switch (type)
+    {
+    case LITE3D_SHADER_TYPE_VERTEX:
+        shader->shaderID = glCreateShader(GL_VERTEX_SHADER);
+        break;
+    case LITE3D_SHADER_TYPE_FRAGMENT:
+        shader->shaderID = glCreateShader(GL_FRAGMENT_SHADER);
+        break;
+    case LITE3D_SHADER_TYPE_GEOMETRY:
+        if (!lite3d_check_geometry_shader())
+        {
+            SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "%s: Geometry shaders are not supported", LITE3D_CURRENT_FUNCTION);
+            return LITE3D_FALSE;
+        }
+        shader->shaderID = glCreateShader(GL_GEOMETRY_SHADER);
+        break;
+    default:
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "%s: Unknown shader type '%d'", LITE3D_CURRENT_FUNCTION, type);
+        return LITE3D_FALSE;
+    }
 
+    shader->type = type;
     if (lite3d_misc_check_gl_error())
     {
         glDeleteShader(shader->shaderID);

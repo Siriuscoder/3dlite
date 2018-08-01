@@ -23,6 +23,7 @@
 
 #define LITE3D_SHADER_TYPE_VERTEX       0x1
 #define LITE3D_SHADER_TYPE_FRAGMENT     0x2
+#define LITE3D_SHADER_TYPE_GEOMETRY     0x3
 
 typedef struct lite3d_shader
 {
