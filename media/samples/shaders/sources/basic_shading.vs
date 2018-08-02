@@ -13,7 +13,7 @@ vec3 rntransform(vec3 normal);
 
 void main()
 {
-	tcoords = texCoordAttr;
-	vnormal = rntransform(normalAttr);
-	gl_Position = rtransform(vertexAttr);
+    tcoords = texCoordAttr;
+    vnormal = rntransform(normalAttr);
+    gl_Position = rtransform(vertexAttr);
 }

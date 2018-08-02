@@ -1,16 +1,15 @@
 {
-	"Sources": 
-	[
-		//"samples:shaders/sources/common.vs",
-		//"samples:shaders/sources/common.ps",
-		"samples:shaders/sources/basic_shading.vs",
-		"samples:shaders/sources/basic_shading.ps"
-	],
-	
-	"AttributesOrder":
-	[
-		"vertexAttr",
-		"normalAttr",
-		"texCoordAttr"
-	]
+    "Sources": 
+    [
+        "samples:shaders/sources/common.vs",
+        "samples:shaders/sources/basic_shading.vs",
+        "samples:shaders/sources/basic_shading.ps"
+    ],
+    
+    "AttributesOrder":
+    [
+        "vertexAttr",
+        "normalAttr",
+        "texCoordAttr"
+    ]
 }

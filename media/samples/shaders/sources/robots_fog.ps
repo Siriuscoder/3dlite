@@ -20,10 +20,10 @@ void main()
 {
     vec3 lightDir = vec3(-1.0, -1.0, 1.0);
     float nDotL = clamp(dot(vnormal, lightDir), 0.2, 1);
-	vec4 diffColor = texture2D(diffuseSampler, tcoords.st) * nDotL;
-	
+    vec4 diffColor = texture2D(diffuseSampler, tcoords.st) * nDotL;
+    
     float z = gl_FragCoord.z / gl_FragCoord.w;
-	float fogFactor = exp2(-density * density * z * z * LOG2);
-	fogFactor = clamp(fogFactor, 0.0, 1.0);    
-	fragcolor = mix(fogColor, diffColor, fogFactor);
+    float fogFactor = exp2(-density * density * z * z * LOG2);
+    fogFactor = clamp(fogFactor, 0.0, 1.0);    
+    fragcolor = mix(fogColor, diffColor, fogFactor);
 }

@@ -10,6 +10,6 @@ vec4 rtransform(vec4 v1);
 
 void main()
 {
-	tcoords = texCoordAttr;
-	gl_Position = rtransform(vertexAttr);
+    tcoords = texCoordAttr;
+    gl_Position = rtransform(vertexAttr);
 }

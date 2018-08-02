@@ -18,11 +18,11 @@ const int rowCount = 10;
 
 void main()
 {
-	tcoords = texCoordAttr;
-	vnormal = rntransform(normalAttr);
-	
-	float xOffset = mod(gl_InstanceID, rowCount) * offset;
-	float yOffset = int(gl_InstanceID / rowCount) * offset;
-	
-	gl_Position = rtransform(vertexAttr + vec4(startPosition.x + xOffset, startPosition.y + yOffset, startPosition.z, 0));
+    tcoords = texCoordAttr;
+    vnormal = rntransform(normalAttr);
+    
+    float xOffset = mod(gl_InstanceID, rowCount) * offset;
+    float yOffset = int(gl_InstanceID / rowCount) * offset;
+    
+    gl_Position = rtransform(vertexAttr + vec4(startPosition.x + xOffset, startPosition.y + yOffset, startPosition.z, 0));
 }
