@@ -10,6 +10,6 @@ varying vec3 vnormal;
 void main()
 {
     vec3 lightDir = vec3(0.0, 1.0, 1.0);
-    float nDotL = clamp(dot(vnormal, lightDir), 0.2, 1);
+    float nDotL = clamp(dot(vnormal, lightDir), 0.2, 1.0);
 	gl_FragColor = texture2D(diffuseSampler, tcoords.st) * nDotL;
 }

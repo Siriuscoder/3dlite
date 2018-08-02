@@ -96,6 +96,7 @@ namespace lite3dpp
             String sourcePath;
             String defPath;
             size_t flen;
+            const char *rawdata;
             String shaderCode;
 
             shaders.resize(shaders.size()+1);
@@ -110,12 +111,14 @@ namespace lite3dpp
             // load definition source
             if (defPath.size() > 0)
             {
-                shaderCode.append(static_cast<const char *>(mMain->getResourceManager()->loadFileToMemory(defPath, &flen)));
+                rawdata = static_cast<const char *>(mMain->getResourceManager()->loadFileToMemory(defPath, &flen));
+                shaderCode.append(rawdata, flen);
                 shaderCode.append("\n");
             }
 
             // load main shader source
-            shaderCode.append(static_cast<const char *>(mMain->getResourceManager()->loadFileToMemory(sourcePath, &flen)));
+            rawdata = static_cast<const char *>(mMain->getResourceManager()->loadFileToMemory(sourcePath, &flen));
+            shaderCode.append(rawdata, flen);
 
             SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
                 "Preprocessing \"%s\" ...", sourcePath.c_str());
