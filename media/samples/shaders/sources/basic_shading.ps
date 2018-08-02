@@ -1,7 +1,11 @@
+#version 330
+
 uniform sampler2D diffuseTexture;
-varying vec2 tcoords;
+
+in vec2 tcoords;
+out vec4 fragcolor;
 
 void main()
 {
-	gl_FragColor = texture2D(diffuseTexture, tcoords.st);
+	fragcolor = texture2D(diffuseTexture, tcoords.st);
 }

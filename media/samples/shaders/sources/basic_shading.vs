@@ -1,15 +1,19 @@
+#version 330
+
 in vec4 vertexAttr;
 in vec3 normalAttr;
 in vec2 texCoordAttr;
 
-uniform mat4 projectionMatrix;
-uniform mat4 viewMatrix;
-uniform mat4 modelMatrix;
+out vec2 tcoords;
+out vec3 vnormal;
 
-varying vec2 tcoords;
+// common functions
+vec4 rtransform(vec4 v1);
+vec3 rntransform(vec3 normal);
 
 void main()
 {
 	tcoords = texCoordAttr;
-	gl_Position = projectionMatrix * viewMatrix * modelMatrix * vertexAttr;
+	vnormal = rntransform(normalAttr);
+	gl_Position = rtransform(vertexAttr);
 }

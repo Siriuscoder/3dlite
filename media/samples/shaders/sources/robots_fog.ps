@@ -1,3 +1,5 @@
+#version 330
+
 uniform sampler2D diffuseSampler;
 uniform vec4 ambient;
 uniform vec4 diffuse;
@@ -5,8 +7,10 @@ uniform vec4 specular;
 uniform vec4 emissive;
 uniform vec4 fogColor;
 
-varying vec2 tcoords;
-varying vec3 vnormal;
+in vec2 tcoords;
+in vec3 vnormal;
+
+out vec4 fragcolor;
 
 vec4 fColor;
 float density = 0.0005;
@@ -21,5 +25,5 @@ void main()
     float z = gl_FragCoord.z / gl_FragCoord.w;
 	float fogFactor = exp2(-density * density * z * z * LOG2);
 	fogFactor = clamp(fogFactor, 0.0, 1.0);    
-	gl_FragColor = mix(fogColor, diffColor, fogFactor);
+	fragcolor = mix(fogColor, diffColor, fogFactor);
 }

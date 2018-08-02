@@ -1,0 +1,28 @@
+{
+  "Passes":[
+    {
+      "Pass":1.0000000000,
+      "Program":{
+        "Name":"cube30.program",
+        "Path":"samples:shaders/json/cube_gen.json"
+      }
+    }
+  ],
+  "Uniforms":[
+    {
+      "Name":"projectionMatrix"
+    },
+    {
+      "Name":"viewMatrix"
+    },
+    {
+      "Name":"modelMatrix"
+    },
+    {
+      "Name":"diffuseSampler",
+      "TextureName":"vfloor03.texture",
+      "TexturePath":"samples:textures/json/box1.json",
+      "Type":"sampler"
+    }
+  ]
+}
