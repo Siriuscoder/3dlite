@@ -51,6 +51,7 @@ public:
     void saveScreenshot();
 
     virtual void createScene() = 0;
+    virtual void fixedUpdateTimerTick();
 
 protected:
 

@@ -15,6 +15,8 @@
  *	You should have received a copy of the GNU General Public License
  *	along with Lite3D.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
+#include <ctime>
+
 #define dSINGLE
 #include <ode/ode.h>
 #include <sample_common/lite3dpp_common.h>
@@ -28,14 +30,48 @@ public:
     
     void createScene() override
     {
+        // init random seed 
+        srand(time(NULL));
         // load empty scene with floor plane only
-        Scene *scene = getMain().getResourceManager()->queryResource<lite3dpp::Scene>("SampleScene",
+        mScene = getMain().getResourceManager()->queryResource<lite3dpp::Scene>("SampleScene",
             "samples:scenes/ground.json");
-        setMainCamera(scene->getCamera("MyCamera"));
+        setMainCamera(mScene->getCamera("MyCamera"));
+    }
+
+    void processEvent(SDL_Event *e) override
+    {
+        Sample::processEvent(e);
+        if (e->type == SDL_KEYDOWN)
+        {
+            if (e->key.keysym.sym == SDLK_c)
+            {
+                SceneObject *ground = mScene->getObject("Ground");
+                String cubeName("Cube");
+                cubeName.append(std::to_string(mCubes.size()));
+
+                SceneObject *cube = mScene->addObject(cubeName, "samples:objects/cube.json", ground);
+                mCubes.push_back(cubeName);
+
+                kmVec3 pos = { rand() % 600, rand() % 600, (rand() % 600) + 10 };
+                cube->getRoot()->setPosition(pos);
+            }
+        }
+    }
+
+    void fixedUpdateTimerTick() override
+    {
+        int cubesCount = 0;
+        for (String &cubeName : mCubes)
+        {
+            SceneObject *cube = mScene->getObject(cubeName);
+            cube->getRoot()->rotateAngle(KM_VEC3_POS_Z, 0.01f + (++cubesCount / 600.0f));
+        }
     }
     
 private:
 
+    Scene *mScene;
+    stl<String>::list mCubes;
 };
 
 }}

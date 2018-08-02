@@ -3,7 +3,7 @@
     {
       "Pass":1.0000000000,
       "Program":{
-        "Name":"cube30.program",
+        "Name":"cube_gen.program",
         "Path":"samples:shaders/json/cube_gen.json"
       }
     }
@@ -20,7 +20,7 @@
     },
     {
       "Name":"diffuseSampler",
-      "TextureName":"vfloor03.texture",
+      "TextureName":"box1.texture",
       "TexturePath":"samples:textures/json/box1.json",
       "Type":"sampler"
     }

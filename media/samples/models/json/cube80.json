@@ -1,0 +1,15 @@
+{
+    "Model": "Array",
+    "Dynamic": false,
+    "Data": [ // data for cube generation in geometry shader
+        {
+            "point": [0, 0, 0] // it may be cube center
+        },
+        {
+            "point": [80, 80, 80] // it may be sizes
+        },
+        {
+            "point": [0, 0, 0] // it is empty, 3 points must be at least
+        }
+    ]
+}
