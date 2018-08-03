@@ -27,15 +27,20 @@ namespace samples {
 class BoxesColliderSample : public Sample
 {
 public:
-    
-    void createScene() override
+
+    BoxesColliderSample()
     {
         // init random seed 
         srand(time(NULL));
+    }
+    
+    void createScene() override
+    {
         // load empty scene with floor plane only
         mScene = getMain().getResourceManager()->queryResource<lite3dpp::Scene>("SampleScene",
             "samples:scenes/ground.json");
         setMainCamera(mScene->getCamera("MyCamera"));
+        mScene->instancingMode(true);
     }
 
     void processEvent(SDL_Event *e) override
@@ -52,7 +57,7 @@ public:
                 SceneObject *cube = mScene->addObject(cubeName, "samples:objects/cube.json", ground);
                 mCubes.push_back(cubeName);
 
-                kmVec3 pos = { rand() % 600, rand() % 600, (rand() % 600) + 10 };
+                kmVec3 pos = { rand() % 1000, rand() % 1000, (rand() % 1000) + 10 };
                 cube->getRoot()->setPosition(pos);
             }
         }
@@ -61,10 +66,11 @@ public:
     void fixedUpdateTimerTick() override
     {
         int cubesCount = 0;
+        kmVec3 axis = { 1.0f, 1.0f, 1.0f };
         for (String &cubeName : mCubes)
         {
             SceneObject *cube = mScene->getObject(cubeName);
-            cube->getRoot()->rotateAngle(KM_VEC3_POS_Z, 0.01f + (++cubesCount / 600.0f));
+            cube->getRoot()->rotateAngle(axis, 0.01f + (++cubesCount / 600.0f));
         }
     }
     
@@ -76,6 +82,7 @@ private:
 
 }}
 
+/*
 
 // some constants
 #define LENGTH 0.7  // chassis length
@@ -186,13 +193,13 @@ static void simLoop (int pause)
  // dGeomBoxGetLengths (ground_box,ss);
  // dsDrawBox (dGeomGetPosition(ground_box),dGeomGetRotation(ground_box),ss);
 
-  /*
-  printf ("%.10f %.10f %.10f %.10f\n",
-      dJointGetHingeAngle (joint[1]),
-      dJointGetHingeAngle (joint[2]),
-      dJointGetHingeAngleRate (joint[1]),
-      dJointGetHingeAngleRate (joint[2]));
-  */
+  
+  //printf ("%.10f %.10f %.10f %.10f\n",
+  //    dJointGetHingeAngle (joint[1]),
+  //    dJointGetHingeAngle (joint[2]),
+  //    dJointGetHingeAngleRate (joint[1]),
+  //    dJointGetHingeAngleRate (joint[2]));
+  //
 }
 
 
@@ -235,14 +242,14 @@ int xxx (int argc, char **argv)
   dBodySetPosition (body[3],-0.5*LENGTH,-WIDTH*0.5,STARTZ-HEIGHT*0.5);
 
   // front wheel hinge
-  /*
+
   joint[0] = dJointCreateHinge2 (world,0);
   dJointAttach (joint[0],body[0],body[1]);
   const dReal *a = dBodyGetPosition (body[1]);
   dJointSetHinge2Anchor (joint[0],a[0],a[1],a[2]);
   dJointSetHinge2Axis1 (joint[0],0,0,1);
   dJointSetHinge2Axis2 (joint[0],0,1,0);
-  */
+
 
   // front and back wheel hinges
   for (i=0; i<3; i++) {
@@ -298,7 +305,7 @@ int xxx (int argc, char **argv)
   dCloseODE();
   return 0;
 }
-
+*/
 
 int main(int agrc, char *args[])
 {

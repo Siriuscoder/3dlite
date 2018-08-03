@@ -148,6 +148,10 @@ static void mqr_render_batch_series(lite3d_material_pass *pass, _mqr_node *mqrNo
             return;
         }
 
+        /* setup global parameters (model and normal for one instance) */
+        lite3d_shader_set_model_matrix(&mqrNode->node->worldView);
+        lite3d_shader_set_normal_matrix(&mqrNode->node->normalModel);
+
         /* bind meshChunk */
         if (scene->bindedMeshChunk != mqrNode->meshChunk)
         {

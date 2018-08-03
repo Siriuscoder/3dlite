@@ -58,10 +58,10 @@ namespace lite3dpp
             stl<kmVec3>::vector points;
             for (auto &point : helper.getObjects(L"Data"))
             {
-                points.push_back(point.getVec3(L"point"));
+                points.push_back(point.getVec3(L"Point"));
             }
 
-            genArray(points, helper.getBool(L"Dynamic", false));
+            genArray(points, helper.getVec3(L"BBMin"), helper.getVec3(L"BBMax"), helper.getBool(L"Dynamic", false));
         }
         else if (helper.getString(L"Codec", "m") == "m")
         {
@@ -246,7 +246,7 @@ namespace lite3dpp
         lite3d_bounding_vol_setup(&meshChunk->boundingVol, &vmin, &vmax);
     }
 
-    void Mesh::genArray(const stl<kmVec3>::vector &points, bool dynamic)
+    void Mesh::genArray(const stl<kmVec3>::vector &points, const kmVec3 &bbmin, const kmVec3 &bbmax, bool dynamic)
     {
         const lite3d_mesh_layout layout[] = {
             { LITE3D_BUFFER_BINDING_ATTRIBUTE, 3 }
@@ -255,5 +255,8 @@ namespace lite3dpp
         if (!lite3d_mesh_load_from_memory(&mMesh, &points[0], static_cast<uint32_t>(points.size()), 
             layout, 1, dynamic ? LITE3D_VBO_DYNAMIC_DRAW : LITE3D_VBO_STATIC_DRAW))
             LITE3D_THROW("Failed to create mesh");
+
+        lite3d_mesh_chunk *meshChunk = LITE3D_MEMBERCAST(lite3d_mesh_chunk, lite3d_list_last_link(&mMesh.chunks), node);
+        lite3d_bounding_vol_setup(&meshChunk->boundingVol, &bbmin, &bbmax);
     }
 }

@@ -5,7 +5,7 @@
         "Nodes": [
             {
                 "Name": "cube30.node",
-                "FrustumTest":false,
+                "FrustumTest": true,
                 "Mesh": 
                 {
                     "Name": "cube30.mesh",

@@ -75,7 +75,7 @@ namespace lite3dpp
         void genPlain(const kmVec2 &size, bool dynamic);
         void genBigTriangle(bool dynamic);
         void genSkybox(const kmVec3 &center, const kmVec3 &size, bool dynamic);
-        void genArray(const stl<kmVec3>::vector &points, bool dynamic);
+        void genArray(const stl<kmVec3>::vector &points, const kmVec3 &bbmin, const kmVec3 &bbmax, bool dynamic);
 
         virtual void loadFromConfigImpl(const ConfigurationReader &helper) override;
         virtual void unloadImpl() override;

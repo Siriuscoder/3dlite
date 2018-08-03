@@ -47,60 +47,60 @@ void main()
     vec4 v1 = vec4(center.x-(size.x/2), center.y+(size.y/2), center.z-(size.z/2), 1.0);
     vec4 v2 = vec4(center.x-(size.x/2), center.y-(size.y/2), center.z-(size.z/2), 1.0);
     vec4 v3 = vec4(center.x+(size.x/2), center.y-(size.y/2), center.z-(size.z/2), 1.0);
-    EmitPrimitive(v1, v2, v3, vec2(0.0, 0.0), vec2(1.0, 0.0), vec2(1.0, 1.0));
+    EmitPrimitive(v3, v2, v1, vec2(0.0, 0.0), vec2(1.0, 0.0), vec2(1.0, 1.0));
 /////////////////////////////////////////////////////////////////////////////////////
     v1 = vec4(center.x+(size.x/2), center.y-(size.y/2), center.z-(size.z/2), 1.0);
     v2 = vec4(center.x+(size.x/2), center.y+(size.y/2), center.z-(size.z/2), 1.0);
     v3 = vec4(center.x-(size.x/2), center.y+(size.y/2), center.z-(size.z/2), 1.0);
-    EmitPrimitive(v1, v2, v3, vec2(1.0, 1.0), vec2(0.0, 1.0), vec2(0.0, 0.0));
+    EmitPrimitive(v3, v2, v1, vec2(1.0, 1.0), vec2(0.0, 1.0), vec2(0.0, 0.0));
 /////////////////////////////////////////////////////////////////////////////////////
     v1 = vec4(center.x-(size.x/2), center.y-(size.y/2), center.z+(size.z/2), 1.0);
     v2 = vec4(center.x-(size.x/2), center.y-(size.y/2), center.z-(size.z/2), 1.0);
     v3 = vec4(center.x-(size.x/2), center.y+(size.y/2), center.z-(size.z/2), 1.0);
-    EmitPrimitive(v1, v2, v3, vec2(0.0, 0.0), vec2(1.0, 0.0), vec2(1.0, 1.0));
+    EmitPrimitive(v3, v2, v1, vec2(0.0, 0.0), vec2(1.0, 0.0), vec2(1.0, 1.0));
 /////////////////////////////////////////////////////////////////////////////////////
     v1 = vec4(center.x-(size.x/2), center.y+(size.y/2), center.z-(size.z/2), 1.0);
     v2 = vec4(center.x-(size.x/2), center.y+(size.y/2), center.z+(size.z/2), 1.0);
     v3 = vec4(center.x-(size.x/2), center.y-(size.y/2), center.z+(size.z/2), 1.0);
-    EmitPrimitive(v1, v2, v3, vec2(1.0, 1.0), vec2(0.0, 1.0), vec2(0.0, 0.0));
+    EmitPrimitive(v3, v2, v1, vec2(1.0, 1.0), vec2(0.0, 1.0), vec2(0.0, 0.0));
 /////////////////////////////////////////////////////////////////////////////////////
     v1 = vec4(center.x+(size.x/2), center.y-(size.y/2), center.z-(size.z/2), 1.0);
     v2 = vec4(center.x+(size.x/2), center.y-(size.y/2), center.z+(size.z/2), 1.0);
     v3 = vec4(center.x+(size.x/2), center.y+(size.y/2), center.z+(size.z/2), 1.0);
-    EmitPrimitive(v1, v2, v3, vec2(0.0, 0.0), vec2(1.0, 0.0), vec2(1.0, 1.0));
+    EmitPrimitive(v3, v2, v1, vec2(0.0, 0.0), vec2(1.0, 0.0), vec2(1.0, 1.0));
 /////////////////////////////////////////////////////////////////////////////////////
     v1 = vec4(center.x+(size.x/2), center.y+(size.y/2), center.z+(size.z/2), 1.0);
     v2 = vec4(center.x+(size.x/2), center.y+(size.y/2), center.z-(size.z/2), 1.0);
     v3 = vec4(center.x+(size.x/2), center.y-(size.y/2), center.z-(size.z/2), 1.0);
-    EmitPrimitive(v1, v2, v3, vec2(1.0, 1.0), vec2(0.0, 1.0), vec2(0.0, 0.0));
+    EmitPrimitive(v3, v2, v1, vec2(1.0, 1.0), vec2(0.0, 1.0), vec2(0.0, 0.0));
 /////////////////////////////////////////////////////////////////////////////////////
     v1 = vec4(center.x-(size.x/2), center.y-(size.y/2), center.z+(size.z/2), 1.0);
     v2 = vec4(center.x-(size.x/2), center.y+(size.y/2), center.z+(size.z/2), 1.0);
     v3 = vec4(center.x+(size.x/2), center.y+(size.y/2), center.z+(size.z/2), 1.0);
-    EmitPrimitive(v1, v2, v3, vec2(0.0, 0.0), vec2(1.0, 0.0), vec2(1.0, 1.0));
+    EmitPrimitive(v3, v2, v1, vec2(0.0, 0.0), vec2(1.0, 0.0), vec2(1.0, 1.0));
 /////////////////////////////////////////////////////////////////////////////////////
     v1 = vec4(center.x+(size.x/2), center.y+(size.y/2), center.z+(size.z/2), 1.0);
     v2 = vec4(center.x+(size.x/2), center.y-(size.y/2), center.z+(size.z/2), 1.0);
     v3 = vec4(center.x-(size.x/2), center.y-(size.y/2), center.z+(size.z/2), 1.0);
-    EmitPrimitive(v1, v2, v3, vec2(1.0, 1.0), vec2(0.0, 1.0), vec2(0.0, 0.0));
+    EmitPrimitive(v3, v2, v1, vec2(1.0, 1.0), vec2(0.0, 1.0), vec2(0.0, 0.0));
 /////////////////////////////////////////////////////////////////////////////////////
     v1 = vec4(center.x-(size.x/2), center.y+(size.y/2), center.z-(size.z/2), 1.0);
     v2 = vec4(center.x+(size.x/2), center.y+(size.y/2), center.z-(size.z/2), 1.0);
     v3 = vec4(center.x+(size.x/2), center.y+(size.y/2), center.z+(size.z/2), 1.0);
-    EmitPrimitive(v1, v2, v3, vec2(0.0, 0.0), vec2(1.0, 0.0), vec2(1.0, 1.0));
+    EmitPrimitive(v3, v2, v1, vec2(0.0, 0.0), vec2(1.0, 0.0), vec2(1.0, 1.0));
 /////////////////////////////////////////////////////////////////////////////////////
     v1 = vec4(center.x+(size.x/2), center.y+(size.y/2), center.z+(size.z/2), 1.0);
     v2 = vec4(center.x-(size.x/2), center.y+(size.y/2), center.z+(size.z/2), 1.0);
     v3 = vec4(center.x-(size.x/2), center.y+(size.y/2), center.z-(size.z/2), 1.0);
-    EmitPrimitive(v1, v2, v3, vec2(1.0, 1.0), vec2(0.0, 1.0), vec2(0.0, 0.0));
-/////////////////////////////////////////////////////////////////////////////////////
-    v1 = vec4(center.x-(size.x/2), center.y-(size.y/2), center.z-(size.z/2), 1.0);
-    v2 = vec4(center.x-(size.x/2), center.y-(size.y/2), center.z+(size.z/2), 1.0);
-    v3 = vec4(center.x+(size.x/2), center.y-(size.y/2), center.z-(size.z/2), 1.0);
-    EmitPrimitive(v1, v2, v3, vec2(0.0, 0.0), vec2(1.0, 0.0), vec2(1.0, 1.0));
+    EmitPrimitive(v3, v2, v1, vec2(1.0, 1.0), vec2(0.0, 1.0), vec2(0.0, 0.0));
 /////////////////////////////////////////////////////////////////////////////////////
     v1 = vec4(center.x+(size.x/2), center.y-(size.y/2), center.z-(size.z/2), 1.0);
-    v2 = vec4(center.x-(size.x/2), center.y-(size.y/2), center.z+(size.z/2), 1.0);
-    v3 = vec4(center.x+(size.x/2), center.y-(size.y/2), center.z+(size.z/2), 1.0);
-    EmitPrimitive(v1, v2, v3, vec2(1.0, 1.0), vec2(0.0, 1.0), vec2(0.0, 0.0));
+    v2 = vec4(center.x-(size.x/2), center.y-(size.y/2), center.z-(size.z/2), 1.0);
+    v3 = vec4(center.x-(size.x/2), center.y-(size.y/2), center.z+(size.z/2), 1.0);
+    EmitPrimitive(v3, v2, v1, vec2(0.0, 0.0), vec2(1.0, 0.0), vec2(1.0, 1.0));
+/////////////////////////////////////////////////////////////////////////////////////
+    v1 = vec4(center.x-(size.x/2), center.y-(size.y/2), center.z+(size.z/2), 1.0);
+    v2 = vec4(center.x+(size.x/2), center.y-(size.y/2), center.z+(size.z/2), 1.0);
+    v3 = vec4(center.x+(size.x/2), center.y-(size.y/2), center.z-(size.z/2), 1.0);
+    EmitPrimitive(v3, v2, v1, vec2(1.0, 1.0), vec2(0.0, 1.0), vec2(0.0, 0.0));
 }
