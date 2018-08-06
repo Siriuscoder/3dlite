@@ -51,10 +51,14 @@ int lite3d_check_vertex_array_object()
 
 int lite3d_check_instanced_arrays()
 {
-#ifdef WITH_GLES2
+#ifdef GLES
+#   ifdef WITH_GLES2
     return SDL_GL_ExtensionSupported("GL_ANGLE_instanced_arrays") == SDL_TRUE;
-#else
+#   else
     return LITE3D_TRUE;
+#   endif
+#else
+    return GLEW_VERSION_3_3 || GLEW_ARB_instanced_arrays;
 #endif
 }
 

@@ -21,6 +21,7 @@
 #include <SDL_log.h>
 
 #include <lite3d/lite3d_alloc.h>
+#include <lite3d/lite3d_glext.h>
 #include <lite3d/lite3d_buffers_manip.h>
 #include <lite3d/lite3d_scene.h>
 
@@ -557,6 +558,14 @@ int lite3d_scene_node_touch_material(
     SDL_assert(node);
     SDL_assert(material);
 
+    if (instancesCount > 0 && !lite3d_check_instanced_arrays())
+    {
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+            "%s: Could not add node to scene with instancesCount %u, instancing not supported", 
+            LITE3D_CURRENT_FUNCTION, instancesCount);
+        return LITE3D_FALSE;
+    }
+
     scene = (lite3d_scene *) node->scene;
 
     for (mqrUnitNode = scene->materialRenderUnits.l.next;
@@ -609,6 +618,19 @@ int lite3d_scene_node_touch_material(
     mqrNode->node->recalc = LITE3D_TRUE;
     mqr_unit_add_node(mqrUnit, mqrNode);
 
+    return LITE3D_TRUE;
+}
+
+int lite3d_scene_instancing_mode(lite3d_scene *scene, uint8_t flag)
+{
+    if (flag && !lite3d_check_instanced_arrays())
+    {
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+            "%s: instancing not supported", LITE3D_CURRENT_FUNCTION);
+        return LITE3D_FALSE;
+    }
+
+    scene->instancingRender = flag;
     return LITE3D_TRUE;
 }
 

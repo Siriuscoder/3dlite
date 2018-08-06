@@ -70,7 +70,7 @@ public:
         for (String &cubeName : mCubes)
         {
             SceneObject *cube = mScene->getObject(cubeName);
-            cube->getRoot()->rotateAngle(axis, 0.01f + (++cubesCount / 600.0f));
+            cube->getRoot()->rotateAngle(axis, 0.01f);
         }
     }
     
