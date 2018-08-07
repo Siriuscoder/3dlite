@@ -19,29 +19,14 @@
 
 #define dSINGLE
 #include <ode/ode.h>
-#include <sample_common/lite3dpp_common.h>
+#include "lite3dpp_base.h"
 
 namespace lite3dpp {
 namespace samples {
 
-class BoxesColliderSample : public Sample
+class BoxesColliderSample : public PhysicSampleBase
 {
 public:
-
-    BoxesColliderSample()
-    {
-        // init random seed 
-        srand(time(NULL));
-    }
-    
-    void createScene() override
-    {
-        // load empty scene with floor plane only
-        mScene = getMain().getResourceManager()->queryResource<lite3dpp::Scene>("SampleScene",
-            "samples:scenes/ground.json");
-        setMainCamera(mScene->getCamera("MyCamera"));
-        mScene->instancingMode(true);
-    }
 
     void processEvent(SDL_Event *e) override
     {
@@ -50,34 +35,36 @@ public:
         {
             if (e->key.keysym.sym == SDLK_c)
             {
-                SceneObject *ground = mScene->getObject("Ground");
+                if (mCubes.size() > 150)
+                {
+                    // delete oldest boxc
+                    mCubes.pop_front();
+                }
+
                 String cubeName("Cube");
-                cubeName.append(std::to_string(mCubes.size()));
+                cubeName.append(std::to_string(mBoxCounter++));
 
-                SceneObject *cube = mScene->addObject(cubeName, "samples:objects/cube.json", ground);
-                mCubes.push_back(cubeName);
+                BaseBody::Ptr box = createBox(cubeName);
+                mCubes.push_back(box);
 
-                kmVec3 pos = { rand() % 1000, rand() % 1000, (rand() % 1000) + 10 };
-                cube->getRoot()->setPosition(pos);
+                kmVec3 pos = { rand() % 1000, rand() % 1000, (rand() % 1000) + 1000 };
+                kmQuaternion rot = { 1.0f, 1.0f, 1.0f, (rand() % 1000)/1000.0f };
+                box->setPosition(pos);
+                box->setRotation(rot);
             }
         }
     }
 
-    void fixedUpdateTimerTick() override
+    void shut() override
     {
-        int cubesCount = 0;
-        kmVec3 axis = { 1.0f, 1.0f, 1.0f };
-        for (String &cubeName : mCubes)
-        {
-            SceneObject *cube = mScene->getObject(cubeName);
-            cube->getRoot()->rotateAngle(axis, 0.01f);
-        }
+        // delete all objects
+        mCubes.clear();
     }
     
 private:
 
-    Scene *mScene;
-    stl<String>::list mCubes;
+    stl<BaseBody::Ptr>::list mCubes;
+    int mBoxCounter = 0;
 };
 
 }}
@@ -309,6 +296,13 @@ int xxx (int argc, char **argv)
 
 int main(int agrc, char *args[])
 {
-    lite3dpp::samples::BoxesColliderSample sample;
-    return sample.start("samples/config/config.json");
+    lite3dpp::samples::PhysicSampleBase::initODE();
+
+    {
+        lite3dpp::samples::BoxesColliderSample sample;
+        sample.start("samples/config/config.json");
+    }
+
+    lite3dpp::samples::PhysicSampleBase::shutODE();
+    return 0;
 }
