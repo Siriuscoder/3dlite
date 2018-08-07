@@ -35,7 +35,7 @@ public:
         {
             if (e->key.keysym.sym == SDLK_c)
             {
-                if (mCubes.size() > 150)
+                if (mCubes.size() > 120)
                 {
                     // delete oldest boxc
                     mCubes.pop_front();
@@ -55,6 +55,7 @@ public:
         }
     }
 
+    // been called after exit from render loop, before release any resources
     void shut() override
     {
         // delete all objects

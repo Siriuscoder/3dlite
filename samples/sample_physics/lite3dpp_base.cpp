@@ -27,7 +27,7 @@ namespace samples {
         // init random seed 
         srand(time(NULL));
 
-        dAllocateODEDataForThread(dAllocateMaskAll);
+        //dAllocateODEDataForThread(dAllocateMaskAll);
         dInitODE2(0);
     }
 
@@ -75,7 +75,7 @@ namespace samples {
 
     void PhysicSampleBase::potentiallyColliding(dGeomID o1, dGeomID o2)
     {
-        const int N = 10;
+        const int N = 20;
         dContact contact[N];
 
 //        BaseBody *body1 = static_cast<BaseBody *>(dGeomGetData(o1));
@@ -89,13 +89,15 @@ namespace samples {
         {
             for (int i = 0; i < contactsCount; i++)
             {
-                contact[i].surface.mode = dContactSlip1 | dContactSlip2 |
-                    dContactSoftERP | dContactSoftCFM | dContactApprox1;
+                contact[i].surface.mode = dContactSlip1 | dContactSlip2 | 
+                    dContactMu2 | dContactBounce | dContactSoftCFM | dContactApprox1;
                 contact[i].surface.mu = dInfinity;
-                contact[i].surface.slip1 = 0.1f;// body1->surfaceSlip();
-                contact[i].surface.slip2 = 0.1f;// body2->surfaceSlip();
-                contact[i].surface.soft_erp = 0.5f;
-                contact[i].surface.soft_cfm = 0.3f;
+                contact[i].surface.mu2 = dInfinity;
+                contact[i].surface.slip1 = 0.7f;// body1->surfaceSlip();
+                contact[i].surface.slip2 = 0.7f;// body2->surfaceSlip();
+                contact[i].surface.bounce = 0.2;
+                contact[i].surface.bounce_vel = 0.2;
+                contact[i].surface.soft_cfm = 0.01;
                 dJointID c = dJointCreateContact(mWorld, mContactGroup, &contact[i]);
                 dJointAttach(c, dGeomGetBody(contact[i].geom.g1), dGeomGetBody(contact[i].geom.g2));
             }
