@@ -27,9 +27,6 @@ namespace samples {
     {
     public:
 
-        static void initODE();
-        static void shutODE();
-
         PhysicSampleBase();
         virtual ~PhysicSampleBase();
 

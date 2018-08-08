@@ -69,7 +69,7 @@ namespace samples {
     {
         //dBodySetPosition(body[0], 0, 0, STARTZ);
         dMassSetBox(&mMass, 1, 80.0f, 80.0f, 80.0f);
-        dMassAdjust(&mMass, 1);
+        dMassAdjust(&mMass, 1.85f);
         dBodySetMass(mBody, &mMass);
         mGeom = dCreateBox(sample.getGlobalColliderSpace(), 80.0f, 80.0f, 80.0f);
         dGeomSetData(mGeom, this);

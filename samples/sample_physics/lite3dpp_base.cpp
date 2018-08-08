@@ -22,26 +22,17 @@
 namespace lite3dpp {
 namespace samples {
 
-    void PhysicSampleBase::initODE()
+    PhysicSampleBase::PhysicSampleBase()
     {
         // init random seed 
         srand(time(NULL));
 
-        //dAllocateODEDataForThread(dAllocateMaskAll);
         dInitODE2(0);
-    }
-
-    void PhysicSampleBase::shutODE()
-    {
-        dCloseODE();
-    }
-
-    PhysicSampleBase::PhysicSampleBase()
-    {
         mWorld = dWorldCreate();
+        dWorldSetQuickStepNumIterations(mWorld, 20);
         mGlobalColliderSpace = dHashSpaceCreate(0);
         mContactGroup = dJointGroupCreate(0);
-        dWorldSetGravity(mWorld, 0.0f, 0.0f, -0.5);
+        dWorldSetGravity(mWorld, 0.0f, 0.0f, -0.9);
         mGroundPlane = dCreatePlane(mGlobalColliderSpace, 0.0f, 0.0f, 1.0f, 0.0f);
     }
 
@@ -51,6 +42,7 @@ namespace samples {
         dJointGroupDestroy(mContactGroup);
         dSpaceDestroy(mGlobalColliderSpace);
         dWorldDestroy(mWorld);
+        dCloseODE();
     }
 
     void PhysicSampleBase::createScene()
@@ -67,7 +59,7 @@ namespace samples {
         // do colliding detection
         dSpaceCollide(mGlobalColliderSpace, this, &nearCallback);
         // do simulation
-        dWorldStep(mWorld, 0.85);
+        dWorldQuickStep(mWorld, 0.85);
 
         // remove all contact joints
         dJointGroupEmpty(mContactGroup);
@@ -90,13 +82,14 @@ namespace samples {
             for (int i = 0; i < contactsCount; i++)
             {
                 contact[i].surface.mode = dContactSlip1 | dContactSlip2 | 
-                    dContactMu2 | dContactBounce | dContactSoftCFM | dContactApprox1;
+                    dContactSoftERP | dContactSoftCFM | dContactApprox1;
                 contact[i].surface.mu = dInfinity;
                 contact[i].surface.mu2 = dInfinity;
-                contact[i].surface.slip1 = 0.7f;// body1->surfaceSlip();
-                contact[i].surface.slip2 = 0.7f;// body2->surfaceSlip();
-                contact[i].surface.bounce = 0.2;
-                contact[i].surface.bounce_vel = 0.2;
+                contact[i].surface.slip1 = 0.4f;// body1->surfaceSlip();
+                contact[i].surface.slip2 = 0.4f;// body2->surfaceSlip();
+                contact[i].surface.bounce = 0.01;
+                contact[i].surface.bounce_vel = 0.01;
+                contact[i].surface.soft_erp = 0.8;
                 contact[i].surface.soft_cfm = 0.01;
                 dJointID c = dJointCreateContact(mWorld, mContactGroup, &contact[i]);
                 dJointAttach(c, dGeomGetBody(contact[i].geom.g1), dGeomGetBody(contact[i].geom.g2));

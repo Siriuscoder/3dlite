@@ -35,7 +35,7 @@ public:
         {
             if (e->key.keysym.sym == SDLK_c)
             {
-                if (mCubes.size() > 120)
+                if (mCubes.size() > 500)
                 {
                     // delete oldest boxc
                     mCubes.pop_front();
@@ -297,13 +297,6 @@ int xxx (int argc, char **argv)
 
 int main(int agrc, char *args[])
 {
-    lite3dpp::samples::PhysicSampleBase::initODE();
-
-    {
-        lite3dpp::samples::BoxesColliderSample sample;
-        sample.start("samples/config/config.json");
-    }
-
-    lite3dpp::samples::PhysicSampleBase::shutODE();
-    return 0;
+    lite3dpp::samples::BoxesColliderSample sample;
+    return sample.start("samples/config/config.json");
 }
