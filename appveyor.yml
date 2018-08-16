@@ -13,7 +13,7 @@ install:
   - sh: sudo apt-get update
   - sh: sudo apt-get install -y libdevil-dev libassimp-dev libsdl2-dev libfreetype6-dev libbullet-dev
   
-build:
+build_script:
   - sh: mkdir -p /home/appveyor/builds/lite3d
   - sh: cd /home/appveyor/builds/lite3d
   - sh: cmake -DCMAKE_BUILD_TYPE=Release /home/appveyor/projects/3dlite
