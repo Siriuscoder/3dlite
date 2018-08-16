@@ -1,0 +1,20 @@
+image: ubuntu
+version: '1.0.{build}'
+
+hosts:
+  localhost: 127.0.0.1
+  db.server.com: 127.0.0.2
+  
+init:
+  - sh: gcc -v
+  - sh: cmake --version
+  
+install:
+  - sh: sudo apt-get update
+  - sh: sudo apt-get install -y libdevil-dev libassimp-dev libsdl2-dev libfreetype6-dev libbullet-dev
+  
+build:
+  - sh: mkdir -p /home/appveyor/builds/lite3d
+  - sh: cd /home/appveyor/builds/lite3d
+  - sh: cmake -DCMAKE_BUILD_TYPE=Release /home/appveyor/projects/3dlite
+  - sh: make
