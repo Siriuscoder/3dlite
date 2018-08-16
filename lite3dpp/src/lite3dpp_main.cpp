@@ -189,7 +189,6 @@ namespace lite3dpp
         {
             Main *mainObj = reinterpret_cast<Main *> (userdata);
             mainObj->init();
-
             LITE3D_EXT_OBSERVER_NOTIFY(mainObj, init);
         }
         catch (std::exception &ex)
@@ -206,9 +205,8 @@ namespace lite3dpp
         try
         {
             Main *mainObj = reinterpret_cast<Main *> (userdata);
-            mainObj->shut();
-
             LITE3D_EXT_OBSERVER_NOTIFY(mainObj, shut);
+            mainObj->shut();
         }
         catch (std::exception &ex)
         {

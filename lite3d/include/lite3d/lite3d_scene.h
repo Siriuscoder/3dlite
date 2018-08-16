@@ -85,6 +85,7 @@ LITE3D_CEXPORT void lite3d_scene_render(lite3d_scene *scene, lite3d_camera *came
     uint16_t pass, uint32_t flags);
 LITE3D_CEXPORT void lite3d_scene_init(lite3d_scene *scene);
 LITE3D_CEXPORT void lite3d_scene_purge(lite3d_scene *scene);
+LITE3D_CEXPORT int lite3d_scene_instancing_mode(lite3d_scene *scene, uint8_t flag);
 
 
 LITE3D_CEXPORT int lite3d_scene_add_node(lite3d_scene *scene, 

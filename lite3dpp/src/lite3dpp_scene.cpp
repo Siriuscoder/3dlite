@@ -399,7 +399,8 @@ namespace lite3dpp
 
     void Scene::instancingMode(bool flag)
     {
-        mScene.instancingRender = flag ? 1 : 0;
+        if (!lite3d_scene_instancing_mode(&mScene, flag ? LITE3D_TRUE : LITE3D_FALSE))
+            LITE3D_THROW("Instancing not supported");
     }
 
     int Scene::beginDrawBatch(struct lite3d_scene *scene, 

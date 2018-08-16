@@ -37,8 +37,8 @@ typedef struct lite3d_camera
 
     struct
     {
-        float near;
-        float far;
+        float znear;
+        float zfar;
         float left;
         float right;
         float bottom;
@@ -61,8 +61,8 @@ LITE3D_CEXPORT void lite3d_camera_link_to(lite3d_camera *camera,
 LITE3D_CEXPORT void lite3d_camera_tracking(lite3d_camera *camera, 
     const lite3d_scene_node *target);
 LITE3D_CEXPORT void lite3d_camera_update_view(lite3d_camera *camera);
-LITE3D_CEXPORT void lite3d_camera_ortho(lite3d_camera *camera, float near,
-    float far, float left, float right, float bottom, float top);
+LITE3D_CEXPORT void lite3d_camera_ortho(lite3d_camera *camera, float znear,
+    float zfar, float left, float right, float bottom, float top);
 LITE3D_CEXPORT void lite3d_camera_perspective(lite3d_camera *camera, float znear,
     float zfar, float fovy, float aspect);
 LITE3D_CEXPORT void lite3d_camera_lookAt(lite3d_camera *camera, const kmVec3 *pointTo);

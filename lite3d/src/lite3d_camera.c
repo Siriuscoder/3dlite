@@ -49,19 +49,19 @@ void lite3d_camera_update_view(lite3d_camera *camera)
     }
 }
 
-void lite3d_camera_ortho(lite3d_camera *camera, float near,
-    float far, float left, float right, float bottom, float top)
+void lite3d_camera_ortho(lite3d_camera *camera, float znear,
+    float zfar, float left, float right, float bottom, float top)
 {
     SDL_assert(camera);
     memset(&camera->frustum, 0, sizeof(camera->frustum));
     camera->isOrtho = LITE3D_TRUE;
-    camera->projectionParams.near = near;
-    camera->projectionParams.far = far;
+    camera->projectionParams.znear = znear;
+    camera->projectionParams.zfar = zfar;
     camera->projectionParams.left = left;
     camera->projectionParams.right = right;
     camera->projectionParams.bottom = bottom;
     camera->projectionParams.top = top;
-    kmMat4OrthographicProjection(&camera->projection, left, right, bottom, top, near, far);
+    kmMat4OrthographicProjection(&camera->projection, left, right, bottom, top, znear, zfar);
     camera->cameraNode.invalidated = LITE3D_TRUE;
 }
 
@@ -70,8 +70,8 @@ void lite3d_camera_perspective(lite3d_camera *camera, float znear,
 {
     SDL_assert(camera);
     camera->isOrtho = LITE3D_FALSE;
-    camera->projectionParams.near = znear;
-    camera->projectionParams.far = zfar;
+    camera->projectionParams.znear = znear;
+    camera->projectionParams.zfar = zfar;
     camera->projectionParams.fovy = fovy;
     camera->projectionParams.aspect = aspect;
     kmMat4PerspectiveProjection(&camera->projection, fovy, aspect, znear, zfar);

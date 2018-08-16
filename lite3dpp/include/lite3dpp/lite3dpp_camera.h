@@ -50,7 +50,7 @@ namespace lite3dpp
         { mCamera.cullBackFaces = flag ? LITE3D_TRUE : LITE3D_FALSE; }
 
         /* camera projection modes */
-        void setupOrtho(float near, float far, float left, float right, 
+        void setupOrtho(float znear, float zfar, float left, float right, 
             float bottom, float top);
         void setupPerspective(float znear, float zfar, float fovy, float aspect);
         void setAspect(float aspect);

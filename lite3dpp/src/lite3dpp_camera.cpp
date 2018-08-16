@@ -31,10 +31,10 @@ namespace lite3dpp
     Camera::~Camera()
     {}
 
-    void Camera::setupOrtho(float near, float far, float left, float right, 
+    void Camera::setupOrtho(float znear, float zfar, float left, float right, 
         float bottom, float top)
     {
-        lite3d_camera_ortho(&mCamera, near, far, left, right, bottom, top);
+        lite3d_camera_ortho(&mCamera, znear, zfar, left, right, bottom, top);
     }
 
     void Camera::setupPerspective(float znear, float zfar, float fovy, float aspect)
@@ -44,8 +44,8 @@ namespace lite3dpp
 
     void Camera::setAspect(float aspect)
     {
-        lite3d_camera_perspective(&mCamera, mCamera.projectionParams.near,
-            mCamera.projectionParams.far,
+        lite3d_camera_perspective(&mCamera, mCamera.projectionParams.znear,
+            mCamera.projectionParams.zfar,
             mCamera.projectionParams.fovy,
             aspect);
     }
