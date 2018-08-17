@@ -12,17 +12,16 @@ configuration:
   
 init:
   - sh: mkdir -p /home/appveyor/builds/lite3d
-  - sh: cd /home/appveyor/builds/lite3d
   - ps: mkdir C:\builds\lite3d
-  - ps: cd C:\builds\lite3d
   
 install:
   - sh: sudo apt-get update
   - sh: sudo apt-get install -y libdevil-dev libassimp-dev libsdl2-dev libfreetype6-dev libbullet-dev
   
-  
 before_build:
+  - sh: cd /home/appveyor/builds/lite3d
   - sh: cmake -DCMAKE_BUILD_TYPE=Release /home/appveyor/projects/3dlite
+  - ps: cd C:\builds\lite3d
   - ps: cmake -G "Visual Studio 14 2015 Win64" C:\projects\3dlite
 
 build:
