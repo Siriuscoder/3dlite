@@ -65,9 +65,11 @@
 # (To distribute this file outside of CMake, substitute the full
 #  License text for the above reference.)
 
+IF(MSVC)
 SET(SDL2_SEARCH_PATHS
-  ~/Library/Frameworks
-  /Library/Frameworks
+  "${CMAKE_SOURCE_DIR}/deps/SDL2")
+ELSE()
+SET(SDL2_SEARCH_PATHS
   /usr/local
   /usr
   /sw # Fink
@@ -75,6 +77,7 @@ SET(SDL2_SEARCH_PATHS
   /opt/csw # Blastwave
   /opt
 )
+ENDIF()
 
 FIND_PATH(SDL2_INCLUDE_DIR SDL.h
   HINTS
@@ -87,7 +90,7 @@ FIND_LIBRARY(SDL2_LIBRARY_TEMP
   NAMES SDL2
   HINTS
   $ENV{SDL2DIR}
-  PATH_SUFFIXES lib64 lib
+  PATH_SUFFIXES lib64 lib lib/x64
   PATHS ${SDL2_SEARCH_PATHS}
 )
 
@@ -101,7 +104,7 @@ IF(NOT SDL2_BUILDING_LIBRARY)
       NAMES SDL2main
       HINTS
       $ENV{SDL2DIR}
-      PATH_SUFFIXES lib64 lib
+      PATH_SUFFIXES lib64 lib lib/x64
       PATHS ${SDL2_SEARCH_PATHS}
     )
   ENDIF(NOT ${SDL2_INCLUDE_DIR} MATCHES ".framework")

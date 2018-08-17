@@ -12,6 +12,7 @@ set(_assimp_INCLUDE_SEARCH_DIRS_SYSTEM
     "$ENV{ProgramFiles}/assimp/include"
     "$ENV{ProgramFiles}/assimp"
     "/sw/local/include"
+    "${CMAKE_SOURCE_DIR}/deps/Assimp"
   )
 
 set(_assimp_LIB_SEARCH_DIRS_SYSTEM
@@ -20,6 +21,7 @@ set(_assimp_LIB_SEARCH_DIRS_SYSTEM
     "$ENV{ProgramFiles}/assimp/lib"
     "$ENV{ProgramFiles}/assimp"
     "/sw/local/lib"
+    "${CMAKE_SOURCE_DIR}/deps/Assimp/lib/x64"
   )
 
 FIND_PATH(ASSIMP_INCLUDE_DIR assimp/ai_assert.h
@@ -44,7 +46,7 @@ FIND_PATH(ASSIMP_INCLUDE_DIR assimp/ai_assert.h
 	)
 
 FIND_LIBRARY(ASSIMP_LIBRARY_RELEASE 
-	NAMES assimp
+	NAMES assimp assimp-vc140-mt
 	PATHS
 	$ENV{ASSIMPSDIR}/lib
 	/usr/local/lib
