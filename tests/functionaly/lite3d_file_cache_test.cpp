@@ -29,7 +29,7 @@ static void TestCommon(lite3d_pack *pack)
     ASSERT_TRUE(resource1 != NULL);
     EXPECT_TRUE(resource1->isLoaded == 1);
     EXPECT_TRUE(resource1->fileBuff != NULL);
-    EXPECT_EQ(resource1->fileSize, 89149);
+    EXPECT_EQ(resource1->fileSize, 89149u);
 
     lite3d_file *resource2 = lite3d_pack_file_load(pack,
         "pack/normandy/ref.jpg");
@@ -37,16 +37,16 @@ static void TestCommon(lite3d_pack *pack)
     ASSERT_TRUE(resource2 != NULL);
     EXPECT_TRUE(resource2->isLoaded == 1);
     EXPECT_TRUE(resource2->fileBuff != NULL);
-    EXPECT_EQ(resource2->fileSize, 229837);
+    EXPECT_EQ(resource2->fileSize, 229837u);
 
-    EXPECT_EQ(pack->memoryUsed, 89149 + 229837);
+    EXPECT_EQ(pack->memoryUsed, 89149u + 229837u);
 
     lite3d_pack_file_purge(resource1);
 
     EXPECT_TRUE(resource1->isLoaded == 0);
     EXPECT_TRUE(resource1->fileBuff == NULL);
-    EXPECT_EQ(resource1->fileSize, 0);
-    EXPECT_EQ(pack->memoryUsed, 229837);
+    EXPECT_EQ(resource1->fileSize, 0u);
+    EXPECT_EQ(pack->memoryUsed, 229837u);
 
     lite3d_file *resource3 = lite3d_pack_file_load(pack,
         "pack/pack.0");
@@ -54,7 +54,7 @@ static void TestCommon(lite3d_pack *pack)
     ASSERT_TRUE(resource3 != NULL);
     EXPECT_TRUE(resource3->isLoaded == 1);
     EXPECT_TRUE(resource3->fileBuff != NULL);
-    EXPECT_EQ(resource3->fileSize, 380065);
+    EXPECT_EQ(resource3->fileSize, 380065u);
 
     lite3d_file *resource4 = lite3d_pack_file_load(pack,
         "pack/normandy/ref.jpg");
@@ -62,9 +62,9 @@ static void TestCommon(lite3d_pack *pack)
     ASSERT_TRUE(resource4 != NULL);
     EXPECT_TRUE(resource4->isLoaded == 1);
     EXPECT_TRUE(resource4->fileBuff != NULL);
-    EXPECT_EQ(resource4->fileSize, 229837);
+    EXPECT_EQ(resource4->fileSize, 229837u);
     EXPECT_EQ((size_t) resource2, (size_t) resource4);
-    EXPECT_EQ(pack->memoryUsed, 380065 + 229837);
+    EXPECT_EQ(pack->memoryUsed, 380065u + 229837u);
 
     /* memory limit reached in this point */
     /* expecting purged tail resource */
@@ -74,8 +74,8 @@ static void TestCommon(lite3d_pack *pack)
     ASSERT_TRUE(resource5 != NULL);
     EXPECT_TRUE(resource5->isLoaded == 1);
     EXPECT_TRUE(resource5->fileBuff != NULL);
-    EXPECT_EQ(resource5->fileSize, 122167);
-    EXPECT_EQ(pack->memoryUsed, 229837 + 122167);
+    EXPECT_EQ(resource5->fileSize, 122167u);
+    EXPECT_EQ(pack->memoryUsed, 229837u + 122167u);
 }
 
 static void TestPerfomanceIndex(lite3d_pack *pack)
@@ -88,7 +88,7 @@ static void TestPerfomanceIndex(lite3d_pack *pack)
         ASSERT_TRUE(resource != NULL);
         EXPECT_TRUE(resource->isLoaded == 1);
         EXPECT_TRUE(resource->fileBuff != NULL);
-        EXPECT_EQ(resource->fileSize, 380065);
+        EXPECT_EQ(resource->fileSize, 380065u);
     
         lite3d_file *resource2 = lite3d_pack_file_load(pack,
             "pack/normandy/ref.jpg");
@@ -96,7 +96,7 @@ static void TestPerfomanceIndex(lite3d_pack *pack)
         ASSERT_TRUE(resource2 != NULL);
         EXPECT_TRUE(resource2->isLoaded == 1);
         EXPECT_TRUE(resource2->fileBuff != NULL);
-        EXPECT_EQ(resource2->fileSize, 229837);
+        EXPECT_EQ(resource2->fileSize, 229837u);
     }
 }
 
@@ -110,13 +110,13 @@ static void TestPerfomanceLoad(lite3d_pack *pack)
         ASSERT_TRUE(resource != NULL);
         EXPECT_TRUE(resource->isLoaded == 1);
         EXPECT_TRUE(resource->fileBuff != NULL);
-        EXPECT_EQ(resource->fileSize, i % 2 ? 380065 : 229837);
+        EXPECT_EQ(resource->fileSize, i % 2 ? 380065u : 229837u);
 
         lite3d_pack_file_purge(resource);
 
         EXPECT_TRUE(resource->isLoaded == 0);
         EXPECT_TRUE(resource->fileBuff == NULL);
-        EXPECT_EQ(resource->fileSize, 0);
+        EXPECT_EQ(resource->fileSize, 0u);
     }
 }
 
