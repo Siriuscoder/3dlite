@@ -218,7 +218,7 @@ void Sample::printRenderStats()
     lite3d_render_stats *stats = lite3d_render_stats_get();
     SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
         "==== Render statistics ========\n"
-        "Fames: %lld\n"
+        "Fames: %ld\n"
         "last FPS\tavr FPS\t\tbest FPS\tworst FPS\n"
         "%d\t\t%d\t\t%d\t\t%d\n"
         "last frame ms\tavr frame ms\tbest frame ms\tworst frame ms\n"

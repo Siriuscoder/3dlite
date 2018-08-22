@@ -1,20 +1,37 @@
-image: ubuntu
 version: '1.0.{build}'
+
+image: 
+  - Visual Studio 2015
+  - Ubuntu
 
 hosts:
   localhost: 127.0.0.1
-  db.server.com: 127.0.0.2
+  
+configuration:
+  - Release
   
 init:
-  - sh: gcc -v
-  - sh: cmake --version
+  - sh: mkdir -p /home/appveyor/builds/lite3d_linux
+  - cmd: mkdir C:\builds\lite3d_win
   
 install:
   - sh: sudo apt-get update
   - sh: sudo apt-get install -y libdevil-dev libassimp-dev libsdl2-dev libfreetype6-dev libbullet-dev
   
-build_script:
-  - sh: mkdir -p /home/appveyor/builds/lite3d
-  - sh: cd /home/appveyor/builds/lite3d
+before_build:
+  - sh: cd /home/appveyor/builds/lite3d_linux
   - sh: cmake -DCMAKE_BUILD_TYPE=Release /home/appveyor/projects/3dlite
-  - sh: make
+  - cmd: cd C:\builds\lite3d_win
+  - cmd: cmake -G "Visual Studio 14 2015 Win64" C:\projects\3dlite
+
+build:
+  project: C:\builds\lite3d_win\lite3d.sln
+  
+for:
+-
+  matrix:
+    only:
+      - image: Ubuntu
+
+  build_script:
+  - sh: make all

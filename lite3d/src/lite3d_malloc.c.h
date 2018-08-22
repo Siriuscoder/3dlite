@@ -481,6 +481,11 @@ MAX_RELEASE_CHECK_RATE   default: 4095 unless not HAVE_MMAP
   improvement at the expense of carrying around more memory.
 */
 
+#ifdef __GNUC__
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-value"
+#endif /* __GNUC__ */
+
 /* Version identifier to allow people to support multiple versions */
 #ifndef DLMALLOC_VERSION
 #define DLMALLOC_VERSION 20804
@@ -5425,6 +5430,10 @@ int mspace_mallopt(int param_number, int value) {
 }
 
 #endif /* MSPACES */
+
+#ifdef __GNUC__
+#pragma GCC diagnostic pop
+#endif /* __GNUC__ */
 
 /* -------------------- Alternative MORECORE functions ------------------- */
 

@@ -47,7 +47,12 @@ public:
                 BaseBody::Ptr box = createBox(cubeName);
                 mCubes.push_back(box);
 
-                kmVec3 pos = { rand() % 1000, rand() % 1000, (rand() % 1000) + 1000 };
+                kmVec3 pos = {
+                    static_cast<float>(rand() % 1000),
+                    static_cast<float>(rand() % 1000),
+                    static_cast<float>((rand() % 1000) + 1000)
+                };
+
                 kmQuaternion rot = { 1.0f, 1.0f, 1.0f, (rand() % 1000)/1000.0f };
                 box->setPosition(pos);
                 box->setRotation(rot);

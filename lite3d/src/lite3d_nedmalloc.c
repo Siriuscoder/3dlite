@@ -32,6 +32,13 @@ DEALINGS IN THE SOFTWARE.
 #pragma warning(disable:4267)
 #endif
 
+#ifdef __GNUC__
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-value"
+#pragma GCC diagnostic ignored "-Wsequence-point"
+#pragma GCC diagnostic ignored "-Wmisleading-indentation"
+#endif /* __GNUC__ */
+
 /*#define FULLSANITYCHECKS*/
 
 #include <lite3d/lite3d_nedmalloc.h>
@@ -953,3 +960,8 @@ void **nedpindependent_comalloc(nedpool *p, size_t elems, size_t *sizes, void **
 #if defined(__cplusplus)
 }
 #endif
+
+
+#ifdef __GNUC__
+#pragma GCC diagnostic pop
+#endif /* __GNUC__ */
