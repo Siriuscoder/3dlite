@@ -64,7 +64,7 @@ elseif(MSVC)
 
     add_definitions(/fp:fast /W3 /D_CRT_SECURE_NO_WARNINGS /D_SCL_SECURE_NO_WARNINGS)
     if(MSVC11)
-    	add_definitions(/DGTEST_HAS_TR1_TUPLE=0 /DGTEST_USE_OWN_TR1_TUPLE=1)
+        add_definitions(/DGTEST_HAS_TR1_TUPLE=0 /DGTEST_USE_OWN_TR1_TUPLE=1)
     endif()
     add_definitions(/D${PLATFORM_TYPE})
 endif()

@@ -71,7 +71,7 @@ void lite3d_logger_set_logParams(int8_t level, int8_t flushAlways)
     SDL_LogSetAllPriority(level == LITE3D_LOGLEVEL_ERROR ? SDL_LOG_PRIORITY_WARN :
         (level == LITE3D_LOGLEVEL_INFO ? SDL_LOG_PRIORITY_INFO : SDL_LOG_PRIORITY_VERBOSE));
 
-    flushAlways = flushAlways;
+    gFlushAlways = flushAlways;
 #ifdef INCLUDE_ASSIMP
     lite3d_assimp_logging_level(level);
 #endif

@@ -34,8 +34,6 @@
 # TODO: Add version support.
 # Tested under Linux and Windows (MSVC)
 
-include(FindPackageHandleStandardArgs)
-
 if(MSVC)
 set(DEVIL_SEARCH_PATHS "${CMAKE_SOURCE_DIR}/deps/DevIL/")
 endif()
@@ -75,8 +73,12 @@ find_library(ILU_LIBRARIES
 
 #message("ILU_LIBRARIES is ${ILU_LIBRARIES}")
 
-FIND_PACKAGE_HANDLE_STANDARD_ARGS(DevIL DEFAULT_MSG
-                                  IL_LIBRARIES ILU_LIBRARIES
-                                  IL_INCLUDE_DIR)
+#include(FindPackageHandleStandardArgs)
+#FIND_PACKAGE_HANDLE_STANDARD_ARGS(DevIL DEFAULT_MSG IL_INCLUDE_DIR IL_LIBRARIES ILU_LIBRARIES ILUT_LIBRARIES)
+if(IL_INCLUDE_DIR AND IL_LIBRARIES AND ILU_LIBRARIES AND ILUT_LIBRARIES)
+set(DevIL_FOUND TRUE)
+endif()
+
+# message("IL_FOUND is ${DevIL_FOUND}")
 # provide legacy variable for compatibility
 set(IL_FOUND ${DevIL_FOUND})

@@ -144,7 +144,7 @@ if(FREETYPE_INCLUDE_DIR_freetype2 AND FREETYPE_H)
       if(VLINE MATCHES "^#[\t ]*define[\t ]+FREETYPE_${VPART}[\t ]+([0-9]+)$")
         set(FREETYPE_VERSION_PART "${CMAKE_MATCH_1}")
         if(FREETYPE_VERSION_STRING)
-          string(APPEND FREETYPE_VERSION_STRING ".${FREETYPE_VERSION_PART}")
+          set(FREETYPE_VERSION_STRING "${FREETYPE_VERSION_STRING}.${FREETYPE_VERSION_PART}")
         else()
           set(FREETYPE_VERSION_STRING "${FREETYPE_VERSION_PART}")
         endif()
@@ -154,16 +154,9 @@ if(FREETYPE_INCLUDE_DIR_freetype2 AND FREETYPE_H)
   endforeach()
 endif()
 
-include(FindPackageHandleStandardArgs)
-
-find_package_handle_standard_args(
-  Freetype
-  REQUIRED_VARS
-    FREETYPE_LIBRARY
-    FREETYPE_INCLUDE_DIRS
-  VERSION_VAR
-    FREETYPE_VERSION_STRING
-)
+if(FREETYPE_LIBRARY AND FREETYPE_INCLUDE_DIRS AND FREETYPE_VERSION_STRING)
+set(Freetype_FOUND TRUE)
+endif()
 
 mark_as_advanced(
   FREETYPE_INCLUDE_DIR_freetype2
