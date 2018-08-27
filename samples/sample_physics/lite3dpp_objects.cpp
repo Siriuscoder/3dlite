@@ -15,6 +15,8 @@
  *	You should have received a copy of the GNU General Public License
  *	along with Lite3D.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
+#include <SDL_assert.h>
+
 #include "lite3dpp_objects.h"
 #include "lite3dpp_base.h"
 
@@ -23,61 +25,106 @@ namespace samples {
 
     BaseBody::BaseBody(PhysicSampleBase &sample, const String &name,
         const String &templ) :
-        mScene(sample.getScene())
+        mBase(sample),
+        mObj(NULL),
+        mDynamic(false)
     {
-        mObj = mScene->addObject(name, templ, NULL);
-        mBody = dBodyCreate(sample.getWorld());
-        dBodySetData(mBody, this);
-        mScene->addObserver(this);
+        mObj = mBase.getScene()->addObject(name, templ, NULL);
     }
-
-    BaseBody::BaseBody(const BaseBody &other)
-    {}
 
     void BaseBody::setPosition(const kmVec3 &pos)
     {
-        dBodySetPosition(mBody, pos.x, pos.y, pos.z);
+        btVector3 newPos(pos.x, pos.y, pos.z);
+        mBody->getWorldTransform().setOrigin(newPos);
         mObj->getRoot()->setPosition(pos);
     }
 
     void BaseBody::setRotation(const kmQuaternion &rot)
     {
-        dBodySetQuaternion(mBody, &rot.x);
+        btQuaternion newRot(rot.x, rot.y, rot.z, rot.w);
+        mBody->getWorldTransform().setRotation(newRot);
         mObj->getRoot()->setRotation(rot);
     }
 
     bool BaseBody::beginSceneRender(Scene *scene, Camera *camera)
     {
-        // update object position and rotation then render begins on this scene
-        const kmVec3 *pos = reinterpret_cast<const kmVec3 *>(dBodyGetPosition(mBody));
-        const kmQuaternion *rot = reinterpret_cast<const kmQuaternion *>(dBodyGetQuaternion(mBody));
+        if (mDynamic)
+        {
+            // update object position and rotation then render begins on this scene
+            btVector3 bulletPos = mBody->getWorldTransform().getOrigin();
+            btQuaternion bulletRot = mBody->getWorldTransform().getRotation();
 
-        mObj->getRoot()->setPosition(*pos);
-        mObj->getRoot()->setRotation(*rot);
+            kmVec3 vpos = { bulletPos.getX(), bulletPos.getY(), bulletPos.getZ() };
+            kmQuaternion vrot = { bulletRot.getX(), bulletRot.getY(), bulletRot.getZ(), bulletRot.getW() };
+            mObj->getRoot()->setPosition(vpos);
+            mObj->getRoot()->setRotation(vrot);
+        }
+
         return true;
+    }
+
+    void BaseBody::constructBody(float mass)
+    {
+        // create physical shape of object
+        mShape.reset(createShape());
+        SDL_assert(mShape);
+
+        //rigidbody is dynamic if and only if mass is non zero, otherwise static
+        mDynamic = (mass != 0.0f);
+        btVector3 localInertia(0, 0, 0);
+        if (mDynamic)
+            mShape->calculateLocalInertia(mass, localInertia);
+
+        btTransform startTransform;
+        startTransform.setIdentity();
+        mMotionState.reset(new btDefaultMotionState(startTransform));
+
+        // create rigit body
+        btRigidBody::btRigidBodyConstructionInfo cInfo(mass, mMotionState.get(), mShape.get(), localInertia);
+        reviewRigidBodyConstructionInfo(cInfo);
+        mBody.reset(new btRigidBody(cInfo));
+
+        mShape->setUserPointer(this);
+        mBody->setUserPointer(this);
+        mBase.getScene()->addObserver(this);
+
+        mBase.getWorld()->addRigidBody(mBody.get());
     }
 
     BaseBody::~BaseBody()
     {
-        mScene->removeObserver(this);
-        dBodyDestroy(mBody);
-        mScene->removeObject(mObj->getName());
+        mBase.getWorld()->removeRigidBody(mBody.get());
+        mBase.getScene()->removeObserver(this);
+        mBase.getScene()->removeObject(mObj->getName());
     }
 
     BoxBody::BoxBody(PhysicSampleBase &sample, const String &name) :
         BaseBody(sample, name, "samples:objects/cube.json")
     {
-        //dBodySetPosition(body[0], 0, 0, STARTZ);
-        dMassSetBox(&mMass, 1, 80.0f, 80.0f, 80.0f);
-        dMassAdjust(&mMass, 1.85f);
-        dBodySetMass(mBody, &mMass);
-        mGeom = dCreateBox(sample.getGlobalColliderSpace(), 80.0f, 80.0f, 80.0f);
-        dGeomSetData(mGeom, this);
-        dGeomSetBody(mGeom, mBody);
+        constructBody(1.0f);
     }
 
-    BoxBody::~BoxBody()
+    btCollisionShape *BoxBody::createShape()
     {
-        dGeomDestroy(mGeom);
+        btVector3 half(40.0f, 40.0f, 40.0f);
+        return new btBoxShape(half);
     }
+
+    void BoxBody::reviewRigidBodyConstructionInfo(btRigidBody::btRigidBodyConstructionInfo &info)
+    {}
+
+    GroundPlaneBody::GroundPlaneBody(PhysicSampleBase &sample, const String &name) :
+        BaseBody(sample, name, "samples:objects/ground.json")
+    {
+        constructBody(0.0f); // ZeroMass
+    }
+
+    btCollisionShape *GroundPlaneBody::createShape()
+    {
+        btVector3 normal(0.0f, 0.0f, 1.0f);
+        return new btStaticPlaneShape(normal, 0.0f);
+    }
+
+    void GroundPlaneBody::reviewRigidBodyConstructionInfo(btRigidBody::btRigidBodyConstructionInfo &info)
+    {}
 }}

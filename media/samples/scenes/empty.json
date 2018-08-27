@@ -21,14 +21,6 @@
                 }
             ]
         }
-    ],
-    
-    "Objects":
-    [
-        {
-            "Name": "Ground",
-            "Object": "samples:objects/ground.json"
-        }
     ]
 }
 
