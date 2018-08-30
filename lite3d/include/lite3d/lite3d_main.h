@@ -40,8 +40,9 @@ typedef struct lite3d_global_settings
     lite3d_render_listeners renderLisneters;
     
     size_t maxFileCacheSize;
-    int8_t logLevel;
-    int8_t logFlushAlways;
+    int logLevel;
+    int logFlushAlways;
+    int logMuteStd;
     char logFile[50];
 } lite3d_global_settings;
 

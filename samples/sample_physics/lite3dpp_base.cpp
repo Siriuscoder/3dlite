@@ -15,7 +15,9 @@
  *	You should have received a copy of the GNU General Public License
  *	along with Lite3D.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
+#include <algorithm>
 #include <SDL_assert.h>
+#include <SDL_log.h>
 
 #include "lite3dpp_base.h"
 
@@ -34,7 +36,8 @@ namespace samples {
         mWorld.reset(new btDiscreteDynamicsWorld(mCollisionDispatcher.get(), mBroadphase.get(), 
             mConstraintSolver.get(), mCollisionConfig.get()));
 
-        mWorld->setGravity(btVector3(0.0f, 0.0f, -15.0f));
+        mWorld->setGravity(btVector3(0.0f, 0.0f, -20.0f));
+        mWorld->setLatencyMotionStateInterpolation(true);
     }
 
     PhysicSampleBase::~PhysicSampleBase()
@@ -57,10 +60,21 @@ namespace samples {
         mGroundPlane.reset();
     }
 
-    void PhysicSampleBase::fixedUpdateTimerTick()
+    void PhysicSampleBase::fixedUpdateTimerTick(int32_t firedPerRound, uint64_t deltaMs)
     {
         SDL_assert(mWorld);
-        mWorld->stepSimulation(0.1f, 1, 0.1f);
+
+        if (firedPerRound == 1)
+        {
+            float stepFactor = 1.0f;
+            float fixedStep = 1.0f / 60.0f * stepFactor;
+            float step = (deltaMs / 1000.0f) * stepFactor;
+            int maxSubSteps = std::min(std::max(static_cast<int>(step / fixedStep), 1), 3);
+
+            //SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "mWorld->stepSimulation(), FPS %d, firedPerRound %d, step %f, maxSubSteps %d",
+            //    getMain().getRenderStats()->lastFPS, firedPerRound, step, maxSubSteps);
+            mWorld->stepSimulation(step, maxSubSteps, fixedStep);
+        }
     }
 
     BaseBody::Ptr PhysicSampleBase::createBox(const String &name)

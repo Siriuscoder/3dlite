@@ -77,7 +77,7 @@ int lite3d_main(const lite3d_global_settings *settings)
         lite3d_logger_setup_file(settings->logFile);
     
     lite3d_logger_set_logParams(gGlobalSettings.logLevel,
-        gGlobalSettings.logFlushAlways);
+        gGlobalSettings.logFlushAlways, gGlobalSettings.logMuteStd);
 
     SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
         "====== lite3d %s ======", LITE3D_FULL_VERSION);
@@ -90,7 +90,7 @@ int lite3d_main(const lite3d_global_settings *settings)
     }
 
     /* setup video */
-    if (!lite3d_video_open(&gGlobalSettings.videoSettings))
+    if (!lite3d_video_open(&gGlobalSettings.videoSettings, !settings->logMuteStd))
     {
         ret = LITE3D_FALSE;
         goto ret3;

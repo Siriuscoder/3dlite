@@ -107,12 +107,17 @@ static int init_gl_extensions(lite3d_video_settings *settings)
     return init_platform_gl_extensions(settings);
 }
 
-int lite3d_video_open(lite3d_video_settings *settings)
+int lite3d_video_open(lite3d_video_settings *settings, int hideConsole)
 {
     uint32_t windowFlags;
     SDL_DisplayMode displayMode;
 
     SDL_assert(settings);
+
+#ifdef PLATFORM_Windows
+    if (hideConsole)
+        FreeConsole();
+#endif
 
     SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
     SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);

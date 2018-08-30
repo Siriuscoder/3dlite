@@ -29,6 +29,8 @@ typedef struct lite3d_timer
     uint64_t lastTimeUpdate;
     uint8_t enabled;
     int32_t lag;
+    int32_t firedPerRound;
+    uint64_t deltaMs;
     void *userdata;
 } lite3d_timer;
 

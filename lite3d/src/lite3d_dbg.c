@@ -19,6 +19,7 @@
 #include <lite3d/lite3d_dbg.h>
 
 #if defined(PLATFORM_Windows) && defined(_DEBUG)
+#pragma warning(disable : 4091)
 #include <Windows.h>
 #include <DbgHelp.h>
 #pragma comment(lib,"DbgHelp.lib")
@@ -58,6 +59,7 @@ void lite3d_dbg_enable_coredump(void)
 
 #else
 
+/* in UNIX systems coredumps may be enabled by changing ulimits max core size parameter */
 void lite3d_dbg_enable_coredump(void)
 {}
 

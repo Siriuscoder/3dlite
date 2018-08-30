@@ -25,8 +25,9 @@
 #include <lite3d/lite3d_logger.h>
 #include <lite3d/lite3d_mesh_assimp_loader.h>
 
-static uint8_t gFlushAlways = LITE3D_FALSE;
+static int gFlushAlways = LITE3D_FALSE;
 static FILE *gOutFile = NULL;
+static int gMuteStd = LITE3D_FALSE;
 
 static void log_to_file(FILE *desc, int category,
     SDL_LogPriority priority, const char* message)
@@ -52,6 +53,8 @@ static void std_output_function(void* userdata, int category,
     SDL_LogPriority priority, const char* message)
 {
     FILE *outdesc = stdout;
+    if (gMuteStd)
+        return;
 
     if (priority >= SDL_LOG_PRIORITY_ERROR)
         outdesc = stderr;
@@ -66,12 +69,13 @@ static void file_output_function(void* userdata, int category,
     log_to_file(gOutFile, category, priority, message);
 }
 
-void lite3d_logger_set_logParams(int8_t level, int8_t flushAlways)
+void lite3d_logger_set_logParams(int level, int flushAlways, int muteStd)
 {
     SDL_LogSetAllPriority(level == LITE3D_LOGLEVEL_ERROR ? SDL_LOG_PRIORITY_WARN :
         (level == LITE3D_LOGLEVEL_INFO ? SDL_LOG_PRIORITY_INFO : SDL_LOG_PRIORITY_VERBOSE));
 
     gFlushAlways = flushAlways;
+    gMuteStd = muteStd;
 #ifdef INCLUDE_ASSIMP
     lite3d_assimp_logging_level(level);
 #endif
