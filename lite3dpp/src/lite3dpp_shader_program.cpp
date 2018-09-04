@@ -122,11 +122,11 @@ namespace lite3dpp
 
             SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
                 "Preprocessing \"%s\" ...", sourcePath.c_str());
-            shaderCode = preprocessShaderCode(shaderCode);
+            preprocessShaderCode(shaderCode);
 
             SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
                 "Optimizing \"%s\" ...", sourcePath.c_str());
-            shaderCode = optimizeShaderCode(shaderCode);
+            optimizeShaderCode(shaderCode);
 
             SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
                 "Compiling \"%s\" ...", sourcePath.c_str());
@@ -161,15 +161,32 @@ namespace lite3dpp
         }
     }
 
-    String ShaderProgram::preprocessShaderCode(String sourceCode)
+    void ShaderProgram::preprocessShaderCode(String &sourceCode)
     {
-        return sourceCode;
+        auto includePos = sourceCode.find("#include");
+        if (includePos != std::string::npos)
+        {
+            auto braceOpen = sourceCode.find_first_of("\"\n", includePos);
+            if (sourceCode[braceOpen] == '\n')
+                LITE3D_THROW(getName() << ": include statement syntax error");
+
+            auto braceClose = sourceCode.find_first_of("\"\n", braceOpen+1);
+            if (sourceCode[braceClose] == '\n')
+                LITE3D_THROW(getName() << ": include statement syntax error");
+
+            auto includePath = sourceCode.substr(braceOpen + 1, braceClose - (braceOpen + 1));
+            size_t flen;
+            const char *rawdata = static_cast<const char *>(mMain->getResourceManager()->loadFileToMemory(includePath, &flen));
+            sourceCode.erase(includePos, braceClose - includePos + 1);
+            sourceCode.insert(includePos, rawdata, flen);
+            // do it recursively
+            preprocessShaderCode(sourceCode);
+        }
     }
 
-    String ShaderProgram::optimizeShaderCode(String sourceCode)
+    void  ShaderProgram::optimizeShaderCode(String &sourceCode)
     {
         /* do nothing yet */
-        return sourceCode;
     }
 }
 
