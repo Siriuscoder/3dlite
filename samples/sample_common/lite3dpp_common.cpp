@@ -78,7 +78,7 @@ void Sample::frameBegin()
     moveCamera();
 }
 
-void Sample::fixedUpdateTimerTick()
+void Sample::fixedUpdateTimerTick(int32_t firedPerRound, uint64_t deltaMs)
 {}
 
 void Sample::timerTick(lite3d_timer *timerid)
@@ -113,7 +113,7 @@ void Sample::timerTick(lite3d_timer *timerid)
         mVelocity.x = std::max(-VELOCITY_MAX, std::min(mVelocity.x, VELOCITY_MAX));
         mVelocity.y = std::max(-VELOCITY_MAX, std::min(mVelocity.y, VELOCITY_MAX));
 
-        fixedUpdateTimerTick();
+        fixedUpdateTimerTick(timerid->firedPerRound, timerid->deltaMs);
     }
     else if (timerid == mStatTimer)
         updateGuiStats();

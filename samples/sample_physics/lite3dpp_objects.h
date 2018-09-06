@@ -17,8 +17,7 @@
  *******************************************************************************/
 #pragma once
 
-#define dSINGLE
-#include <ode/ode.h>
+#include <btBulletDynamicsCommon.h>
 #include <sample_common/lite3dpp_common.h>
 
 namespace lite3dpp {
@@ -27,34 +26,37 @@ namespace samples {
     class PhysicSampleBase;
     class BaseBody : SceneObserver
     {
-    private:
-
-        BaseBody(const BaseBody &other);
-
     public:
 
         typedef std::shared_ptr<BaseBody> Ptr;
     
         BaseBody(PhysicSampleBase &sample, const String &name,
             const String &templ);
+        BaseBody(const BaseBody &other) = delete;
 
         virtual ~BaseBody();
-    
-        inline float surfaceSlip()
-        { return 0.1; }
 
         void setPosition(const kmVec3 &pos);
         void setRotation(const kmQuaternion &rot);
 
         bool beginSceneRender(Scene *scene, Camera *camera) override;
+        virtual btCollisionShape *createShape() = 0;
+        virtual void reviewRigidBodyConstructionInfo(btRigidBody::btRigidBodyConstructionInfo &info) = 0;
+
+        inline bool isDynamic()
+        { return mDynamic; }
 
     protected:
-    
-        dMass mMass;
-        dBodyID mBody;
-        dGeomID mGeom;
+
+        virtual void constructBody(float mass);
+
+        PhysicSampleBase &mBase;
+        std::unique_ptr<btCollisionShape> mShape;
+        std::unique_ptr<btMotionState> mMotionState;
+        std::unique_ptr<btRigidBody> mBody;
         SceneObject *mObj;
-        Scene *mScene;
+        bool mDynamic;
+        btVector3 mLocalInertia;
     };
 
     class BoxBody : public BaseBody
@@ -62,6 +64,18 @@ namespace samples {
     public:
 
         BoxBody(PhysicSampleBase &sample, const String &name);
-        ~BoxBody();
+
+        virtual btCollisionShape *createShape() override;
+        virtual void reviewRigidBodyConstructionInfo(btRigidBody::btRigidBodyConstructionInfo &info) override;
+    };
+
+    class GroundPlaneBody: public BaseBody
+    {
+    public:
+
+        GroundPlaneBody(PhysicSampleBase &sample, const String &name);
+
+        virtual btCollisionShape *createShape() override;
+        virtual void reviewRigidBodyConstructionInfo(btRigidBody::btRigidBodyConstructionInfo &info) override;
     };
 }}

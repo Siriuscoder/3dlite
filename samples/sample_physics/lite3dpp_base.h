@@ -30,33 +30,29 @@ namespace samples {
         PhysicSampleBase();
         virtual ~PhysicSampleBase();
 
+        // load initial scene
         void createScene() override;
-        void fixedUpdateTimerTick() override;
-        // this is called by dSpaceCollide when two objects in space are
-        // potentially colliding.
-        virtual void potentiallyColliding(dGeomID o1, dGeomID o2);
+        // performed when engine stops working
+        void shut() override;
+        void fixedUpdateTimerTick(int32_t firedPerRound, uint64_t deltaMs) override;
 
-        inline dWorldID getWorld()
-        { return mWorld; }
-
-        inline dSpaceID getGlobalColliderSpace()
-        { return mGlobalColliderSpace; }
+        inline btDiscreteDynamicsWorld *getWorld()
+        { return mWorld.get(); }
 
         inline Scene *getScene()
         { return mScene; }
 
         BaseBody::Ptr createBox(const String &name);
-
-    private:
-
-        static void nearCallback(void *data, dGeomID o1, dGeomID o2);
+        BaseBody::Ptr createGroundPlane(const String &name);
 
     protected:
 
-        dWorldID mWorld;
-        dSpaceID mGlobalColliderSpace;
-        dJointGroupID mContactGroup;
-        dGeomID mGroundPlane;
+        std::unique_ptr<btCollisionConfiguration> mCollisionConfig;
+        std::unique_ptr<btCollisionDispatcher> mCollisionDispatcher;
+        std::unique_ptr<btBroadphaseInterface> mBroadphase;
+        std::unique_ptr<btConstraintSolver> mConstraintSolver;
+        std::unique_ptr<btDiscreteDynamicsWorld> mWorld;
+        BaseBody::Ptr mGroundPlane;
         Scene *mScene;
     };
 }}

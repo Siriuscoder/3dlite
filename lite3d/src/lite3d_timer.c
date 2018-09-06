@@ -58,6 +58,7 @@ void lite3d_timer_induce(uint64_t timeMark, uint64_t freq)
 {
     lite3d_list_node *link;
     lite3d_timer *timer;
+    uint64_t delta;
 
     freq /= 1000;
     /* check all timers */
@@ -70,15 +71,22 @@ void lite3d_timer_induce(uint64_t timeMark, uint64_t freq)
         if (timer->lastTimeUpdate == 0)
             timer->lastTimeUpdate = timeMark;
         
-        timer->lag += timeMark - timer->lastTimeUpdate;
+        delta = timeMark - timer->lastTimeUpdate;
+        timer->lag += delta;
         timer->lastTimeUpdate = timeMark;
-        
+        timer->firedPerRound = 0;
+        timer->deltaMs += delta / freq;
+
         while (timer->lag >= (freq * timer->interval))
         {
+            timer->firedPerRound++;
             if (timer->ontimer)
                 timer->ontimer(timer);
 
             timer->lag -= freq * timer->interval;
         }
+
+        if (timer->firedPerRound > 0)
+            timer->deltaMs = 0;
     }
 }

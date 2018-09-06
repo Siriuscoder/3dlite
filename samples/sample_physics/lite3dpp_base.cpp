@@ -15,7 +15,9 @@
  *	You should have received a copy of the GNU General Public License
  *	along with Lite3D.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
+#include <algorithm>
 #include <SDL_assert.h>
+#include <SDL_log.h>
 
 #include "lite3dpp_base.h"
 
@@ -26,84 +28,62 @@ namespace samples {
     {
         // init random seed 
         srand(time(NULL));
+        mCollisionConfig.reset(new btDefaultCollisionConfiguration());
+        mCollisionDispatcher.reset(new btCollisionDispatcher(mCollisionConfig.get()));
+        mBroadphase.reset(new btDbvtBroadphase());
+        // the default constraint solver. For parallel processing you can use a different solver (see Extras/BulletMultiThreaded)
+        mConstraintSolver.reset(new btSequentialImpulseConstraintSolver());
+        mWorld.reset(new btDiscreteDynamicsWorld(mCollisionDispatcher.get(), mBroadphase.get(), 
+            mConstraintSolver.get(), mCollisionConfig.get()));
 
-        dInitODE2(0);
-        mWorld = dWorldCreate();
-        dWorldSetQuickStepNumIterations(mWorld, 20);
-        mGlobalColliderSpace = dHashSpaceCreate(0);
-        mContactGroup = dJointGroupCreate(0);
-        dWorldSetGravity(mWorld, 0.0f, 0.0f, -0.9);
-        mGroundPlane = dCreatePlane(mGlobalColliderSpace, 0.0f, 0.0f, 1.0f, 0.0f);
+        mWorld->setGravity(btVector3(0.0f, 0.0f, -20.0f));
+        mWorld->setLatencyMotionStateInterpolation(true);
     }
 
     PhysicSampleBase::~PhysicSampleBase()
     {
-        dGeomDestroy(mGroundPlane);
-        dJointGroupDestroy(mContactGroup);
-        dSpaceDestroy(mGlobalColliderSpace);
-        dWorldDestroy(mWorld);
-        dCloseODE();
     }
 
     void PhysicSampleBase::createScene()
     {
         // load empty scene with floor plane only
         mScene = getMain().getResourceManager()->queryResource<lite3dpp::Scene>("SampleScene",
-            "samples:scenes/ground.json");
+            "samples:scenes/empty.json");
         setMainCamera(mScene->getCamera("MyCamera"));
         mScene->instancingMode(true);
+
+        mGroundPlane = createGroundPlane("Ground");
     }
 
-    void PhysicSampleBase::fixedUpdateTimerTick()
+    void PhysicSampleBase::shut()
     {
-        // do colliding detection
-        dSpaceCollide(mGlobalColliderSpace, this, &nearCallback);
-        // do simulation
-        dWorldQuickStep(mWorld, 0.85);
-
-        // remove all contact joints
-        dJointGroupEmpty(mContactGroup);
+        mGroundPlane.reset();
     }
 
-    void PhysicSampleBase::potentiallyColliding(dGeomID o1, dGeomID o2)
+    void PhysicSampleBase::fixedUpdateTimerTick(int32_t firedPerRound, uint64_t deltaMs)
     {
-        const int N = 20;
-        dContact contact[N];
+        SDL_assert(mWorld);
 
-//        BaseBody *body1 = static_cast<BaseBody *>(dGeomGetData(o1));
-//        BaseBody *body2 = static_cast<BaseBody *>(dGeomGetData(o2));
-
-//        SDL_assert(body1);
-//        SDL_assert(body2);
-
-        int contactsCount = dCollide(o1, o2, N, &contact[0].geom, sizeof(dContact));
-        if (contactsCount > 0)
+        if (firedPerRound == 1)
         {
-            for (int i = 0; i < contactsCount; i++)
-            {
-                contact[i].surface.mode = dContactSlip1 | dContactSlip2 | 
-                    dContactSoftERP | dContactSoftCFM | dContactApprox1;
-                contact[i].surface.mu = dInfinity;
-                contact[i].surface.mu2 = dInfinity;
-                contact[i].surface.slip1 = 0.4f;// body1->surfaceSlip();
-                contact[i].surface.slip2 = 0.4f;// body2->surfaceSlip();
-                contact[i].surface.bounce = 0.01;
-                contact[i].surface.bounce_vel = 0.01;
-                contact[i].surface.soft_erp = 0.8;
-                contact[i].surface.soft_cfm = 0.01;
-                dJointID c = dJointCreateContact(mWorld, mContactGroup, &contact[i]);
-                dJointAttach(c, dGeomGetBody(contact[i].geom.g1), dGeomGetBody(contact[i].geom.g2));
-            }
-        }
-    }
+            float stepFactor = 1.0f;
+            float fixedStep = 1.0f / 60.0f * stepFactor;
+            float step = (deltaMs / 1000.0f) * stepFactor;
+            int maxSubSteps = std::min(std::max(static_cast<int>(step / fixedStep), 1), 3);
 
-    void PhysicSampleBase::nearCallback(void *data, dGeomID o1, dGeomID o2)
-    {
-        static_cast<PhysicSampleBase *>(data)->potentiallyColliding(o1, o2);
+            //SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "mWorld->stepSimulation(), FPS %d, firedPerRound %d, step %f, maxSubSteps %d",
+            //    getMain().getRenderStats()->lastFPS, firedPerRound, step, maxSubSteps);
+            mWorld->stepSimulation(step, maxSubSteps, fixedStep);
+        }
     }
 
     BaseBody::Ptr PhysicSampleBase::createBox(const String &name)
     {
         return std::make_shared<BoxBody>(*this, name);
+    }
+
+    BaseBody::Ptr PhysicSampleBase::createGroundPlane(const String &name)
+    {
+        return std::make_shared<GroundPlaneBody>(*this, name);
     }
 }}

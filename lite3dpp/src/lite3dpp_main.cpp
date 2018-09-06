@@ -60,6 +60,7 @@ namespace lite3dpp
         mSettings.maxFileCacheSize = 0x100000;
 
         mSettings.logLevel = mConfig->getInt(L"LogLevel", LITE3D_LOGLEVEL_ERROR);
+        mSettings.logMuteStd = mConfig->getBool(L"logMuteStd", false) ? LITE3D_TRUE : LITE3D_FALSE;
         mSettings.logFlushAlways = mConfig->getBool(L"LogFlushAlways", false) ? LITE3D_TRUE : LITE3D_FALSE;
         mConfig->getString(L"LogFile").copy(mSettings.logFile, sizeof(mSettings.logFile)-1);
 

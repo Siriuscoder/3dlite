@@ -26,7 +26,7 @@
 
 LITE3D_CEXPORT void lite3d_logger_setup_stdout(void);
 LITE3D_CEXPORT void lite3d_logger_setup_file(const char *logfile);
-LITE3D_CEXPORT void lite3d_logger_set_logParams(int8_t level, int8_t flushAlways);
+LITE3D_CEXPORT void lite3d_logger_set_logParams(int level, int flushAlways, int muteStd);
 LITE3D_CEXPORT void lite3d_logger_release(void);
 
 #endif	/* LOGGER_H */
