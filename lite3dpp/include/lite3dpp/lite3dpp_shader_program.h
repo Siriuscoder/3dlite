@@ -48,8 +48,8 @@ namespace lite3dpp
         void unloadShaders(stl<lite3d_shader>::vector &shaders);
         void bindAttributeLocations();
         uint8_t determineShaderType(const String &filepath);
-        String preprocessShaderCode(String sourceCode);
-        String optimizeShaderCode(String sourceCode);
+        void preprocessShaderCode(String &sourceCode);
+        void optimizeShaderCode(String &sourceCode);
 
     private:
 

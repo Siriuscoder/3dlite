@@ -250,7 +250,7 @@ namespace lite3dpp
         else if((packIt = mPacks.find(packageName)) != mPacks.end())
             mLastUsed = packIt->second;
         else
-            LITE3D_THROW("Package not found: " << packageName << ", \"" << path << "\"");
+            LITE3D_THROW("Package not found: \"" << packageName << "\" while loading path \"" << path << "\"");
 
         if(!mLastUsed)
             LITE3D_THROW("Package not specified: \"" << path << "\"");
