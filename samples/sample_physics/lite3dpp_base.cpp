@@ -37,7 +37,7 @@ namespace samples {
             mConstraintSolver.get(), mCollisionConfig.get()));
 
         mWorld->setGravity(btVector3(0.0f, 0.0f, -20.0f));
-        mWorld->setLatencyMotionStateInterpolation(true);
+        //mWorld->setLatencyMotionStateInterpolation(true);
     }
 
     PhysicSampleBase::~PhysicSampleBase()
@@ -66,14 +66,9 @@ namespace samples {
 
         if (firedPerRound == 1)
         {
-            float stepFactor = 1.0f;
-            float fixedStep = 1.0f / 60.0f * stepFactor;
-            float step = (deltaMs / 1000.0f) * stepFactor;
-            int maxSubSteps = std::min(std::max(static_cast<int>(step / fixedStep), 1), 3);
-
             //SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "mWorld->stepSimulation(), FPS %d, firedPerRound %d, step %f, maxSubSteps %d",
             //    getMain().getRenderStats()->lastFPS, firedPerRound, step, maxSubSteps);
-            mWorld->stepSimulation(step, maxSubSteps, fixedStep);
+            mWorld->stepSimulation(0.03, 0);
         }
     }
 
