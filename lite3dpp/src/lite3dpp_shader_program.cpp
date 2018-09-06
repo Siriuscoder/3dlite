@@ -164,14 +164,14 @@ namespace lite3dpp
     void ShaderProgram::preprocessShaderCode(String &sourceCode)
     {
         auto includePos = sourceCode.find("#include");
-        if (includePos != std::string::npos)
+        if (includePos != String::npos)
         {
             auto braceOpen = sourceCode.find_first_of("\"\n", includePos);
-            if (sourceCode[braceOpen] == '\n')
+            if (braceOpen == String::npos || sourceCode[braceOpen] == '\n')
                 LITE3D_THROW(getName() << ": include statement syntax error");
 
             auto braceClose = sourceCode.find_first_of("\"\n", braceOpen+1);
-            if (sourceCode[braceClose] == '\n')
+            if (braceClose == String::npos || sourceCode[braceClose] == '\n')
                 LITE3D_THROW(getName() << ": include statement syntax error");
 
             auto includePath = sourceCode.substr(braceOpen + 1, braceClose - (braceOpen + 1));
