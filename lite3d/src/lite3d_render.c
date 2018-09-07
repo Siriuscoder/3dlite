@@ -30,6 +30,7 @@
 #include <lite3d/lite3d_buffers_manip.h>
 #include <lite3d/lite3d_misc.h>
 #include <lite3d/lite3d_main.h>
+#include <lite3d/lite3d_metrics.h>
 
 #define LITE3D_LIMSTATS_SKIP_PER_FRAMES  10000
 
@@ -118,7 +119,7 @@ static void update_render_target(lite3d_render_target *target)
             lite3d_depth_output((look->renderFlags & LITE3D_RENDER_DEPTH_OUTPUT) ? LITE3D_TRUE : LITE3D_FALSE);
             lite3d_stencil_output((look->renderFlags & LITE3D_RENDER_STENCIL_OUTPUT) ? LITE3D_TRUE : LITE3D_FALSE);
             
-            lite3d_scene_render(scene, look->camera, look->pass, look->renderFlags);
+            LITE3D_METRIC_CALL(lite3d_scene_render, (scene, look->camera, look->pass, look->renderFlags))
 
             /* accamulate statistics */
             gRenderStats.trianglesByFrame += scene->stats.trianglesRendered;
@@ -148,7 +149,7 @@ static int update_render_targets(void)
         if (target->preUpdate && !target->preUpdate(target))
             continue;
 
-        update_render_target(target);
+        LITE3D_METRIC_CALL(update_render_target, (target))
 
         if (target->postUpdate)
             target->postUpdate(target);
@@ -195,14 +196,26 @@ int lite3d_render_frame(void)
     {
         if (gRenderListeners.preFrame &&
             !gRenderListeners.preFrame(gRenderListeners.userdata))
+        {
+            lite3d_render_stop();
             return LITE3D_FALSE;
+        }
+
         if (!gRenderStarted)
             return LITE3D_FALSE;
+
         if (!update_render_targets())
+        {
+            lite3d_render_stop();
             return LITE3D_FALSE;
+        }
+
         if (gRenderListeners.postFrame &&
             !gRenderListeners.postFrame(gRenderListeners.userdata))
+        {
+            lite3d_render_stop();
             return LITE3D_FALSE;
+        }
     }
 
     /* refresh render statistic, render time span used */
@@ -210,12 +223,12 @@ int lite3d_render_frame(void)
     /* get time mark */
     gBeginFrameMark = SDL_GetPerformanceCounter();
     /* induce timers */
-    lite3d_timer_induce(gBeginFrameMark, gPerfFreq);
+    LITE3D_METRIC_CALL(lite3d_timer_induce, (gBeginFrameMark, gPerfFreq))
 
     /* pump all available events */
     while (lite3d_render_loop_pump_event());
     /* finish gl operations and swap buffers */
-    lite3d_video_swap_buffers();
+    LITE3D_METRIC_CALL(lite3d_video_swap_buffers, ())
     return LITE3D_TRUE;
 }
 
@@ -258,8 +271,7 @@ void lite3d_render_loop(lite3d_render_listeners *callbacks)
         /* begin render loop */
         while (gRenderStarted)
         {
-            if (!lite3d_render_frame())
-                break;
+            LITE3D_METRIC_CALL(lite3d_render_frame, ())
         }
     }
 

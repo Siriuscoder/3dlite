@@ -67,7 +67,7 @@ void *lite3d_malloc(size_t size)
     {
         if ((newmem = gAlloca_f.mallocf(size)) == NULL)
             SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
-                "%s: no more memory needed to allocate %lu bytes", LITE3D_CURRENT_FUNCTION, size);
+                "%s: failed to allocate %lu bytes", LITE3D_CURRENT_FUNCTION, size);
     }
 
     return newmem;
