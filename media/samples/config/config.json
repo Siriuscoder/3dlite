@@ -2,8 +2,7 @@
     // common settings
     "LogLevel": 2,
 	"LogFlushAlways": false,
-    "logMuteStd": true,
-    "LogFile": "lite3d.log",
+    "logMuteStd": false,
     "TextureSettings": {
         "Anisotropy": 8,
         "Compression": true
