@@ -19,6 +19,7 @@
 #include <SDL.h>
 
 #include <lite3d/lite3d_main.h>
+#include <lite3d/lite3d_metrics.h>
 
 static lite3d_global_settings gGlobalSettings;
 
@@ -79,6 +80,12 @@ int lite3d_main(const lite3d_global_settings *settings)
     lite3d_logger_set_logParams(gGlobalSettings.logLevel,
         gGlobalSettings.logFlushAlways, gGlobalSettings.logMuteStd);
 
+    if (!lite3d_metrics_global_init())
+    {
+        ret = LITE3D_FALSE;
+        goto ret4;
+    }
+
     SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
         "====== lite3d %s ======", LITE3D_FULL_VERSION);
 
@@ -86,7 +93,7 @@ int lite3d_main(const lite3d_global_settings *settings)
     if (!sdl_init())
     {
         ret = LITE3D_FALSE;
-        goto ret4;
+        goto ret_met;
     }
 
     /* setup video */
@@ -142,12 +149,18 @@ int lite3d_main(const lite3d_global_settings *settings)
     /* start main loop */
     lite3d_render_loop(&gGlobalSettings.renderLisneters);
 
+#ifdef LITE3D_WITH_METRICS
+    lite3d_metrics_global_write_to_log();
+#endif
+
 ret1:
     lite3d_texture_technique_shut();
 ret2:
     lite3d_video_close();
 ret3:
     SDL_Quit();
+ret_met:
+    lite3d_metrics_global_purge();
 ret4:
     lite3d_logger_release();
 

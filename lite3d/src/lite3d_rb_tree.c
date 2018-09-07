@@ -538,13 +538,13 @@ static void lite3d_rb_tree_iterate_help(lite3d_rb_tree* tree,
     lite3d_rb_node* nil = tree->nil;
     if (x != nil)
     {
-        lite3d_rb_tree_destroy_help(tree, x->left);
-        lite3d_rb_tree_destroy_help(tree, x->right);
+        lite3d_rb_tree_iterate_help(tree, x->left, func);
+        lite3d_rb_tree_iterate_help(tree, x->right, func);
         func(tree, x);
     }
 }
 
 void lite3d_rb_tree_iterate(lite3d_rb_tree *tree, lite3d_rb_node_iter func)
 {
-    lite3d_rb_tree_iterate_help(tree, tree->root, func);   
+    lite3d_rb_tree_iterate_help(tree, tree->root->left, func);
 }
