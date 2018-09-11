@@ -28,6 +28,7 @@ static lite3d_metrics globalMetrics = { NULL };
 static void metric_node_delete(lite3d_rb_node *x)
 {
     lite3d_metric_node *node = LITE3D_MEMBERCAST(lite3d_metric_node, x, cached);
+    lite3d_array_purge(&node->measurements);
     lite3d_free(node);
 }
 
@@ -48,6 +49,36 @@ int lite3d_metrics_purge(lite3d_metrics *metrics)
     return LITE3D_TRUE;
 }
 
+static void lite3d_metrics_recalc_distrib(lite3d_metric_node *node)
+{
+    int i = 0, count = sizeof(node->distribution) / sizeof(node->distribution[0]);
+    uint64_t interval = (node->maxMcs - node->minMcs) / count;
+    uint64_t *mi;
+
+    for (; i < count; i++)
+    {
+        node->distribution[i].lo = node->minMcs + (i * interval);
+        node->distribution[i].hi = node->distribution[i].lo + interval - 1;
+        node->distribution[i].hit = 0;
+        node->distribution[i].percentage = 0.0;
+    }
+
+    node->maxMcs = node->minMcs = node->avgMcs;
+
+    LITE3D_ARR_FOREACH(&node->measurements, uint64_t, mi)
+    {
+        for (i = 0; i < count; i++)
+        {
+            if (*mi >= node->distribution[i].lo && *mi <= node->distribution[i].hi)
+            {
+                node->distribution[i].hit++;
+                node->distribution[i].percentage = (float)node->distribution[i].hit / LITE3D_MEASUREMENTS_MAX * 100.0f;
+                break;
+            }
+        }
+    }
+}
+
 int lite3d_metrics_insert(lite3d_metrics *metrics, const char *name, uint64_t mcs)
 {
     lite3d_rb_node *indexNode;
@@ -62,8 +93,15 @@ int lite3d_metrics_insert(lite3d_metrics *metrics, const char *name, uint64_t mc
         node = LITE3D_MEMBERCAST(lite3d_metric_node, indexNode, cached);
         node->maxMcs = LITE3D_MAX(node->maxMcs, mcs);
         node->minMcs = LITE3D_MIN(node->minMcs, mcs);
-        node->avgMcs = mcs;
+        node->avgMcs = (node->avgMcs + mcs) / 2;
         node->count++;
+        
+        LITE3D_ARR_ADD_ELEM(&node->measurements, uint64_t, mcs);
+        if (node->measurements.size == LITE3D_MEASUREMENTS_MAX)
+        {
+            lite3d_metrics_recalc_distrib(node);
+            lite3d_array_clean(&node->measurements);
+        }
 
         return LITE3D_TRUE;
     }
@@ -77,6 +115,8 @@ int lite3d_metrics_insert(lite3d_metrics *metrics, const char *name, uint64_t mc
     node->maxMcs = mcs;
     node->avgMcs = mcs;
     node->count++;
+    lite3d_array_init(&node->measurements, sizeof(uint64_t), LITE3D_MEASUREMENTS_MAX);
+    LITE3D_ARR_ADD_ELEM(&node->measurements, uint64_t, mcs);
     return lite3d_rb_tree_insert(metrics->metricsCache, &node->cached) ? LITE3D_TRUE : LITE3D_FALSE;
 }
 
@@ -103,16 +143,22 @@ int lite3d_metrics_global_insert(const char *name, uint64_t mcs)
 static void node_write_to_log(lite3d_rb_tree* tree, lite3d_rb_node *x)
 {
     lite3d_metric_node *node = LITE3D_MEMBERCAST(lite3d_metric_node, x, cached);
-    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "%-30s |%20lld |%20lld |%20lld |%20lld |",
+    int i = 0, count = sizeof(node->distribution) / sizeof(node->distribution[0]);
+
+    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "%30s | min %7lld mcs | max %7lld mcs | avg %7lld mcs | %10lld called |",
         node->name, node->avgMcs, node->minMcs, node->maxMcs, node->count);
+
+    for (i = 0; i < count; i++)
+    {
+        SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "%17lld - %6lld mcs |%16lld |%15.2f%% |",
+            node->distribution[i].lo, node->distribution[i].hi, node->distribution[i].hit, node->distribution[i].percentage);
+    }
 }
 
 int lite3d_metrics_write_to_log(lite3d_metrics *metrics)
 {
     SDL_assert(metrics);
     SDL_assert(metrics->metricsCache);
-    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "%-30s |%20s |%20s |%20s |%20s |", "Latency Metrics", 
-        "avg mcs", "min mcs", "tmax mcs", "times");
     lite3d_rb_tree_iterate(metrics->metricsCache, node_write_to_log);
     return LITE3D_TRUE;
 }

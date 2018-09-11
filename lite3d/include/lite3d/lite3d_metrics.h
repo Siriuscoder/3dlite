@@ -21,6 +21,10 @@
 #include <lite3d/lite3d_common.h>
 #include <lite3d/lite3d_list.h>
 #include <lite3d/lite3d_rb_tree.h>
+#include <lite3d/lite3d_array.h>
+
+#define LITE3D_MEASUREMENTS_MAX 3000
+#define LITE3D_MEASUREMENTS_GROUPS 7
 
 typedef struct lite3d_metric_node
 {
@@ -31,6 +35,16 @@ typedef struct lite3d_metric_node
     uint64_t minMcs;
     uint64_t avgMcs;
     uint64_t count;
+
+    struct lite3d_metric_distribution 
+    {
+        uint64_t lo;
+        uint64_t hi;
+        uint64_t hit;
+        float percentage;
+    } distribution[LITE3D_MEASUREMENTS_GROUPS];
+
+    lite3d_array measurements;
 } lite3d_metric_node;
 
 typedef struct lite3d_metrics
