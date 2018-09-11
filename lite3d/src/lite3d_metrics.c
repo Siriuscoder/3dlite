@@ -15,6 +15,7 @@
  *	You should have received a copy of the GNU General Public License
  *	along with Lite3D.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
+#include <stdio.h>
 #include <string.h>
 
 #include <SDL_log.h>
@@ -143,16 +144,19 @@ int lite3d_metrics_global_insert(const char *name, uint64_t mcs)
 static void node_write_to_log(lite3d_rb_tree* tree, lite3d_rb_node *x)
 {
     lite3d_metric_node *node = LITE3D_MEMBERCAST(lite3d_metric_node, x, cached);
-    int i = 0, count = sizeof(node->distribution) / sizeof(node->distribution[0]);
+    int i = 0, count = sizeof(node->distribution) / sizeof(node->distribution[0]), wr;
+    char output[2048];
 
-    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "%30s | min %7lld mcs | max %7lld mcs | avg %7lld mcs | %10lld called |",
+    wr = sprintf(output, "\n%30s | min %7llu mcs | max %7llu mcs | avg %7llu mcs | %10llu called |\n",
         node->name, node->avgMcs, node->minMcs, node->maxMcs, node->count);
 
-    for (i = 0; i < count; i++)
+    for (i = 0; i < count && wr < sizeof(output); i++)
     {
-        SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "%17lld - %6lld mcs |%16lld |%15.2f%% |",
+        wr += sprintf(output + wr, "%17llu - %6llu mcs |%16llu |%16.2f |\n",
             node->distribution[i].lo, node->distribution[i].hi, node->distribution[i].hit, node->distribution[i].percentage);
     }
+
+    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, output);
 }
 
 int lite3d_metrics_write_to_log(lite3d_metrics *metrics)
