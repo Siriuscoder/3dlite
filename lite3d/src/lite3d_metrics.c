@@ -15,6 +15,7 @@
  *	You should have received a copy of the GNU General Public License
  *	along with Lite3D.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
+#include <inttypes.h>
 #include <stdio.h>
 #include <string.h>
 
@@ -147,12 +148,12 @@ static void node_write_to_log(lite3d_rb_tree* tree, lite3d_rb_node *x)
     int i = 0, count = sizeof(node->distribution) / sizeof(node->distribution[0]), wr;
     char output[2048];
 
-    wr = sprintf(output, "\n%30s | min %7llu mcs | max %7llu mcs | avg %7llu mcs | %10llu called |\n",
+    wr = snprintf(output, sizeof(output), "\n%30s | min %7"PRIu64" mcs | max %7"PRIu64" mcs | avg %7"PRIu64" mcs | %10"PRIu64" called |\n",
         node->name, node->avgMcs, node->minMcs, node->maxMcs, node->count);
 
     for (i = 0; i < count && wr < sizeof(output); i++)
     {
-        wr += sprintf(output + wr, "%17llu - %6llu mcs |%16llu |%16.2f |\n",
+        wr += snprintf(output + wr, sizeof(output) - wr, "%17"PRIu64" - %6"PRIu64" mcs |%16"PRIu64" |%16.2f |\n",
             node->distribution[i].lo, node->distribution[i].hi, node->distribution[i].hit, node->distribution[i].percentage);
     }
 
