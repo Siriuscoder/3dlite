@@ -101,7 +101,7 @@ namespace samples {
     BoxBody::BoxBody(PhysicSampleBase &sample, const String &name) :
         BaseBody(sample, name, "samples:objects/cube.json")
     {
-        constructBody(28.0f);
+        constructBody(10.0f);
     }
 
     btCollisionShape *BoxBody::createShape()

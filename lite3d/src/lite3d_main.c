@@ -90,7 +90,7 @@ int lite3d_main(const lite3d_global_settings *settings)
     }
 
     /* setup video */
-    if (!lite3d_video_open(&gGlobalSettings.videoSettings, !settings->logMuteStd))
+    if (!lite3d_video_open(&gGlobalSettings.videoSettings, settings->logMuteStd))
     {
         ret = LITE3D_FALSE;
         goto ret3;
