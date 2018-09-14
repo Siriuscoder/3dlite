@@ -168,11 +168,16 @@ int lite3d_render_loop_pump_event(void)
     // process only one event
     if (SDL_PollEvent(&wevent))
     {
-        if (gRenderListeners.processEvent &&
-            !gRenderListeners.processEvent(&wevent, gRenderListeners.userdata))
+        if (gRenderListeners.processEvent)
         {
-            lite3d_render_stop();
-            return LITE3D_FALSE;
+            int res;
+            LITE3D_METRIC_CALLRET(gRenderListeners.processEvent, res, (&wevent, gRenderListeners.userdata))
+
+            if (!res)
+            {
+                lite3d_render_stop();
+                return LITE3D_FALSE;
+            }
         }
 
         return LITE3D_TRUE;
