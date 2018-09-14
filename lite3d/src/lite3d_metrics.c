@@ -57,6 +57,9 @@ static void lite3d_metrics_recalc_distrib(lite3d_metric_node *node)
     uint64_t interval = (node->maxMcs - node->minMcs) / count;
     uint64_t *mi;
 
+    if (interval == 0)
+        return;
+
     for (; i < count; i++)
     {
         node->distribution[i].lo = node->minMcs + (i * interval);
@@ -149,7 +152,7 @@ static void node_write_to_log(lite3d_rb_tree* tree, lite3d_rb_node *x)
     char output[2048];
 
     wr = snprintf(output, sizeof(output), "\n%30s | min %7"PRIu64" mcs | max %7"PRIu64" mcs | avg %7"PRIu64" mcs | %10"PRIu64" called |\n",
-        node->name, node->avgMcs, node->minMcs, node->maxMcs, node->count);
+        node->name, node->minMcs, node->maxMcs, node->avgMcs, node->count);
 
     for (i = 0; i < count && wr < sizeof(output); i++)
     {

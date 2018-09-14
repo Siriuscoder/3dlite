@@ -72,8 +72,18 @@ LITE3D_CEXPORT int lite3d_metrics_write_to_log(lite3d_metrics *metrics);
         call_delta_ = (SDL_GetPerformanceCounter() - call_bt_) / (SDL_GetPerformanceFrequency() / 1000000); \
         lite3d_metrics_global_insert(STR(method), call_delta_); \
     }
+
+#define LITE3D_METRIC_CALLRET(method, ret, args) \
+    { \
+        uint64_t call_delta_; \
+        uint64_t call_bt_ = SDL_GetPerformanceCounter(); \
+        ret = method args; \
+        call_delta_ = (SDL_GetPerformanceCounter() - call_bt_) / (SDL_GetPerformanceFrequency() / 1000000); \
+        lite3d_metrics_global_insert(STR(method), call_delta_); \
+    }
 #else
 #define LITE3D_METRIC_CALL(method, args) method args;
+#define LITE3D_METRIC_CALLRET(method, ret, args) ret = method args;
 #endif
 
 #endif	/* LITE3D_METRICS_H */

@@ -19,11 +19,13 @@
 #include <string.h>
 #include <SDL_assert.h>
 #include <SDL_log.h>
+#include <SDL_timer.h>
 
 #include <lite3d/lite3d_alloc.h>
 #include <lite3d/lite3d_glext.h>
 #include <lite3d/lite3d_buffers_manip.h>
 #include <lite3d/lite3d_scene.h>
+#include <lite3d/lite3d_metrics.h>
 
 #include "lite3d_list.h"
 
@@ -94,9 +96,9 @@ static void mqr_render_batch(lite3d_material_pass *pass, _mqr_node *mqrNode)
     
     /* do render batch */
     if (mqrNode->instancesCount > 1)
-        lite3d_mesh_chunk_draw_instanced(mqrNode->meshChunk, mqrNode->instancesCount);
+        LITE3D_METRIC_CALL(lite3d_mesh_chunk_draw_instanced, (mqrNode->meshChunk, mqrNode->instancesCount))
     else
-        lite3d_mesh_chunk_draw(mqrNode->meshChunk);
+        LITE3D_METRIC_CALL(lite3d_mesh_chunk_draw, (mqrNode->meshChunk))
     
     scene->stats.batchesCalled++;
     scene->stats.trianglesRendered += mqrNode->meshChunk->vao.elementsCount * mqrNode->instancesCount;
@@ -161,7 +163,7 @@ static void mqr_render_batch_series(lite3d_material_pass *pass, _mqr_node *mqrNo
         }
         
         /* do render batch */
-        lite3d_mesh_chunk_draw_instanced(mqrNode->meshChunk, continuedId+1);
+        LITE3D_METRIC_CALL(lite3d_mesh_chunk_draw_instanced, (mqrNode->meshChunk, continuedId+1))
         
         scene->stats.batchesCalled++;
         scene->stats.trianglesRendered += mqrNode->meshChunk->vao.elementsCount * (continuedId+1);
@@ -173,9 +175,9 @@ static void mqr_render_batch_series(lite3d_material_pass *pass, _mqr_node *mqrNo
 static void mqr_render_node(lite3d_material_pass *pass, _mqr_node *mqrNode, uint32_t continuedId, uint8_t batchCrop)
 {
     if(((lite3d_scene *) mqrNode->node->scene)->instancingRender)
-        mqr_render_batch_series(pass, mqrNode, continuedId, batchCrop);
+        LITE3D_METRIC_CALL(mqr_render_batch_series, (pass, mqrNode, continuedId, batchCrop))
     else
-        mqr_render_batch(pass, mqrNode);
+        LITE3D_METRIC_CALL(mqr_render_batch, (pass, mqrNode))
 }
 
 static int mqr_node_approve(lite3d_scene *scene, 
@@ -219,7 +221,7 @@ static void mqr_unit_queue_render(lite3d_scene *scene, lite3d_array *queue, uint
 
     LITE3D_ARR_FOREACH(queue, _mqr_node *, mqrNode)
     {
-        uint8_t batchCrop = 0;
+        uint8_t batchCrop = LITE3D_FALSE;
         if (curUnit != (*mqrNode)->matUnit)
         {
             matPass = lite3d_material_apply((*mqrNode)->matUnit->material, pass);
@@ -231,17 +233,17 @@ static void mqr_unit_queue_render(lite3d_scene *scene, lite3d_array *queue, uint
 
         // check it last node 
         if (LITE3D_ARR_IS_LAST(queue, _mqr_node *, mqrNode))
-            batchCrop = 1;
+            batchCrop = LITE3D_TRUE;
         else
         {
             if ((*mqrNode)->meshChunk != (*(mqrNode+1))->meshChunk)
-                batchCrop = 1;
+                batchCrop = LITE3D_TRUE;
             if ((*mqrNode)->matUnit != (*(mqrNode+1))->matUnit)
-                batchCrop = 1;
+                batchCrop = LITE3D_TRUE;
         }
 
-        mqr_render_node(matPass, *mqrNode, continuedId, batchCrop);
-        continuedId = batchCrop > 0 ? 0 : continuedId+1;
+        LITE3D_METRIC_CALL(mqr_render_node, (matPass, *mqrNode, continuedId, batchCrop))
+        continuedId = batchCrop ? 0 : continuedId+1;
     }
 }
 
@@ -284,7 +286,7 @@ static void mqr_unit_render(lite3d_scene *scene, _mqr_unit *mqrUnit, uint16_t pa
     }
 
 
-    mqr_unit_queue_render(scene, &scene->stageOneNodes, pass);
+    LITE3D_METRIC_CALL(mqr_unit_queue_render, (scene, &scene->stageOneNodes, pass))
     // cleanup last rendered queue
     lite3d_array_clean(&scene->stageOneNodes);
 }
@@ -298,7 +300,7 @@ static void mqr_render_stage_first(struct lite3d_scene *scene, lite3d_camera *ca
     LITE3D_ARR_ADD_ELEM(&scene->invalidatedUnits, lite3d_scene_node *, &camera->cameraNode);
 
     if (scene->beginFirstStageRender && (flags & LITE3D_RENDER_STAGE_FIRST))
-        scene->beginFirstStageRender(scene, camera);
+        LITE3D_METRIC_CALL(scene->beginFirstStageRender, (scene, camera))
 
     for (mqrUnitNode = scene->materialRenderUnits.l.next;
         mqrUnitNode != &scene->materialRenderUnits.l; mqrUnitNode = lite3d_list_next(mqrUnitNode))
@@ -309,7 +311,7 @@ static void mqr_render_stage_first(struct lite3d_scene *scene, lite3d_camera *ca
         if (!lite3d_list_is_empty(&mqrUnit->nodes))
         {
             scene->stats.materialBlocks++;
-            mqr_unit_render(scene, mqrUnit, pass, flags);
+            LITE3D_METRIC_CALL(mqr_unit_render, (scene, mqrUnit, pass, flags))
         }
     }
 }
@@ -431,19 +433,19 @@ void lite3d_scene_render(lite3d_scene *scene, lite3d_camera *camera,
     memset(&scene->stats, 0, sizeof (scene->stats));
 
     if (scene->beforeUpdateNodes)
-        scene->beforeUpdateNodes(scene, camera);
+        LITE3D_METRIC_CALL(scene->beforeUpdateNodes, (scene, camera))
     /* update camera projection & transformation */
-    lite3d_camera_update_view(camera);
+    LITE3D_METRIC_CALL(lite3d_camera_update_view, (camera))
     /* update scene tree */
-    scene_recursive_nodes_update(scene, &scene->rootNode, camera);
+    LITE3D_METRIC_CALL(scene_recursive_nodes_update, (scene, &scene->rootNode, camera))
 
     if (scene->beginSceneRender && !scene->beginSceneRender(scene, camera))
         return;
 
     /* render common objects */
-    mqr_render_stage_first(scene, camera, pass, flags);
+    LITE3D_METRIC_CALL(mqr_render_stage_first, (scene, camera, pass, flags))
     /* render transparent objects */
-    mqr_render_stage_second(scene, camera, pass, flags);
+    LITE3D_METRIC_CALL(mqr_render_stage_second, (scene, camera, pass, flags))
     
 
     if (scene->bindedMeshChunk)
@@ -453,10 +455,10 @@ void lite3d_scene_render(lite3d_scene *scene, lite3d_camera *camera,
     }
 
     if (scene->endSceneRender)
-        scene->endSceneRender(scene, camera);
+        LITE3D_METRIC_CALL(scene->endSceneRender, (scene, camera))
 
-    scene_updated_nodes_validate(scene);
-    mqr_render_cleanup(scene);
+    LITE3D_METRIC_CALL(scene_updated_nodes_validate, (scene))
+    LITE3D_METRIC_CALL(mqr_render_cleanup, (scene))
 }
 
 void lite3d_scene_init(lite3d_scene *scene)
