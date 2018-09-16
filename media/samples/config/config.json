@@ -1,7 +1,7 @@
 {
     // common settings
     "LogLevel": 2,
-	"LogFlushAlways": false,
+    "LogFlushAlways": false,
     "logMuteStd": false,
     "TextureSettings": {
         "Anisotropy": 8,

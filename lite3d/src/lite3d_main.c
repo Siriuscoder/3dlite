@@ -96,6 +96,12 @@ int lite3d_main(const lite3d_global_settings *settings)
         goto ret_met;
     }
 
+    if (SDL_SetThreadPriority(SDL_THREAD_PRIORITY_HIGH))
+    {
+        SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION, "Could not insrease thread priority %s",
+            SDL_GetError());
+    }
+
     /* setup video */
     if (!lite3d_video_open(&gGlobalSettings.videoSettings, settings->logMuteStd))
     {
