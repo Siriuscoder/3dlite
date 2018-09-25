@@ -271,6 +271,10 @@ static void mqr_unit_render(lite3d_scene *scene, _mqr_unit *mqrUnit, uint16_t pa
             mqrNode->distanceToCamera = lite3d_camera_distance(mqrNode->matUnit->currentCamera, &mqrNode->boundingVol.sphereCenter);
         }
         
+        /* ignore this entry if material pass not exist or empty */
+        if (!lite3d_material_get_pass(mqrUnit->material, pass) || lite3d_material_pass_is_empty(mqrUnit->material, pass))
+            continue;
+
         if (lite3d_material_pass_is_blend(mqrUnit->material, pass))
         {
             if ((flags & LITE3D_RENDER_STAGE_SECOND) && mqr_node_approve(scene, mqrNode))
