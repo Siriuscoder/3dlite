@@ -28,7 +28,7 @@
         {
             "Name": "vault",
             "FileCacheMaxSize": 10240000,
-            "Path": "vault_df/packs/vault.pkg"
+            "Path": "packs/vault.pkg"
         },
         {
             "Name": "vaultmat",
