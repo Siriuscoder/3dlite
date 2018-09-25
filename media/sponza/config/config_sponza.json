@@ -28,7 +28,7 @@
         {
             "Name": "sponza",
             "FileCacheMaxSize": 10240000,
-            "Path": "sponza/packs/sponza.pkg"
+            "Path": "packs/sponza.pkg"
         },
         {
             "Name": "sponzamat",
