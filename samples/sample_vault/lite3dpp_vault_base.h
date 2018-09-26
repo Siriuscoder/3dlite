@@ -40,7 +40,7 @@ public:
     {
         createPipeline();
         SDL_assert(mVaultScene);
-        setMainCamera(mVaultScene->getCamera("MainCamera"));
+        setMainCamera(getMain().getCamera("MainCamera"));
         
         // init flashlight
         addFlashlight(mVaultScene);

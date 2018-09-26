@@ -301,8 +301,6 @@ static void mqr_render_stage_first(struct lite3d_scene *scene, lite3d_camera *ca
     _mqr_unit *mqrUnit = NULL;
     lite3d_list_node *mqrUnitNode = NULL;
 
-    LITE3D_ARR_ADD_ELEM(&scene->invalidatedUnits, lite3d_scene_node *, &camera->cameraNode);
-
     if (scene->beginFirstStageRender && (flags & LITE3D_RENDER_STAGE_FIRST))
         LITE3D_METRIC_CALL(scene->beginFirstStageRender, (scene, camera))
 

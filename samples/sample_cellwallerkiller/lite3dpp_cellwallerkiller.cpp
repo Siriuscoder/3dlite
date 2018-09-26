@@ -26,9 +26,9 @@ public:
 
     void createScene() override
     {
-        Scene *scene = getMain().getResourceManager()->queryResource<lite3dpp::Scene>("InstancedRobots",
+        getMain().getResourceManager()->queryResource<lite3dpp::Scene>("InstancedRobots",
             "samples:scenes/robots.json");
-        setMainCamera(scene->getCamera("MyCamera"));
+        setMainCamera(getMain().getCamera("MyCamera"));
 
         kmVec4 bColor = { 0.05, 0.38, 0.45, 1.0 };
         getMainWindow().setBackgroundColor(bColor);

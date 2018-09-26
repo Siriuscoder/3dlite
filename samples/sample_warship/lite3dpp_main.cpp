@@ -34,7 +34,7 @@ public:
             "warship:scenes/warship_prepass.json");
         scene->instancingMode(true);
 
-        setMainCamera(scene->getCamera("MainCamera"));
+        setMainCamera(getMain().getCamera("MainCamera"));
         addFlashlight(scene);
         
         scene = getMain().getResourceManager()->queryResource<Scene>("WarshipCombine",

@@ -183,6 +183,40 @@ namespace lite3dpp
         while (lite3d_render_loop_pump_event());
     }
 
+    Camera *Main::addCamera(const String &name)
+    {
+        Cameras::iterator it = mCameras.find(name);
+        if (it != mCameras.end())
+            LITE3D_THROW("Camera \"" << name << "\" already exists..");
+
+        std::shared_ptr<Camera> camera = std::make_shared<Camera>(name, this);
+        mCameras.insert(std::make_pair(name, camera));
+        return camera.get();
+    }
+
+    Camera *Main::getCamera(const String &name) const
+    {
+        Cameras::const_iterator it = mCameras.find(name);
+        if (it != mCameras.end())
+            return it->second.get();
+
+        return NULL;
+    }
+
+    void Main::removeAllCameras()
+    {
+        mCameras.clear();
+    }
+
+    void Main::removeCamera(const String &name)
+    {
+        Cameras::iterator it = mCameras.find(name);
+        if (it != mCameras.end())
+        {
+            mCameras.erase(it);
+        }
+    }
+
     /* callbackes */
     int Main::onInit(void *userdata)
     {

@@ -33,7 +33,6 @@ namespace lite3dpp
     {
     public:
 
-        typedef stl<String, Camera::Ptr>::map Cameras;
         typedef stl<String, SceneObject::Ptr>::map Objects;
         typedef stl<String, LightSceneNode *>::map Lights;
         typedef stl<lite3d_light_params>::vector LightsStore;
@@ -47,16 +46,12 @@ namespace lite3dpp
         inline lite3d_scene *getPtr()
         { return &mScene; }
 
-        Camera *addCamera(const String &name);
         SceneObject *addObject(const String &name,
             const String &templatePath, SceneObject *parent);
         SceneObject *getObject(const String &name) const;
-        Camera *getCamera(const String &name) const;
         inline const Objects &getObjects() const
         { return mObjects; }
 
-        void removeAllCameras();
-        void removeCamera(const String &name);
         void removeAllObjects();
         void removeObject(const String &name);
         void instancingMode(bool flag);
@@ -106,7 +101,6 @@ namespace lite3dpp
         static void beginSecondStageRender(struct lite3d_scene *scene, struct lite3d_camera *camera);
 
         lite3d_scene mScene;
-        Cameras mCameras;
         Objects mObjects;
         Lights mLights;
         BufferBase *mLightingParamsBuffer;

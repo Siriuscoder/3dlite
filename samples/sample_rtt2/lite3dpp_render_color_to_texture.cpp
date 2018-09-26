@@ -38,7 +38,7 @@ public:
 
         scene = getMain().getResourceManager()->queryResource<Scene>("BoxScene",
             "samples:scenes/scene_rtt_box.json");
-        setMainCamera(scene->getCamera("MyCamera"));
+        setMainCamera(getMain().getCamera("MyCamera"));
 
         mBox = scene->getObject("Box");
     }

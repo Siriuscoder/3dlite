@@ -29,10 +29,6 @@
         {
             "Name": "SponzaHall",
             "Object": "sponza:objects/sponzahall.json"
-        },
-        {
-            "Name": "Sky",
-            "Object": "sponza:objects/skybox.json"
         }
     ]
 }

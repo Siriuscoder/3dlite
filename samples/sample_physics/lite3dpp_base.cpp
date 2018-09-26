@@ -49,7 +49,7 @@ namespace samples {
         // load empty scene with floor plane only
         mScene = getMain().getResourceManager()->queryResource<lite3dpp::Scene>("SampleScene",
             "samples:scenes/empty.json");
-        setMainCamera(mScene->getCamera("MyCamera"));
+        setMainCamera(getMain().getCamera("MyCamera"));
         mScene->instancingMode(true);
 
         mGroundPlane = createGroundPlane("Ground");

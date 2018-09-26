@@ -1,10 +1,49 @@
 {
   "Passes":[
     {
-      "Pass":1.0000000000,
+      "Pass":2,
       "Program":{
-        "Name":"sponza_shading.program",
-        "Path":"sponzamat:shaders/json/sponza_shading.json"
+        "Name":"normap.program",
+        "Path":"sponzamat:shaders/json/normap.json"
+      },
+      "Uniforms":[
+        {
+          "Name":"diffuse",
+          "TextureName":"lion.texture",
+          "TexturePath":"sponza:textures/json/lion.json",
+          "Type":"sampler"
+        },
+        {
+          "Name":"normals",
+          "TextureName":"lion_ddn.texture",
+          "TexturePath":"sponza:textures/json/lion_ddn.json",
+          "Type":"sampler"
+        },
+        {
+          "Name":"lightSources",
+          "UBOName": "Sponza_lightingBufferObject",
+          "Type":"UBO"
+        },
+        {
+          "Name":"lightIndexes",
+          "UBOName": "Sponza_lightingIndexBuffer",
+          "Type":"UBO"
+        },
+        {
+          "Name":"eye",
+          "Type":"v3",
+          "Value":[
+            0,0,0
+          ],
+          "Scope":"global"
+        }
+      ]
+    },
+    {
+      "Pass":1,
+      "Program":{
+        "Name":"depth_only.program",
+        "Path":"sponzamat:shaders/json/depth_only.json"
       }
     }
   ],
@@ -20,12 +59,6 @@
     },
     {
       "Name":"modelMatrix"
-    },
-    {
-      "Name":"diffuseSampler",
-      "TextureName":"lion.texture",
-      "TexturePath":"sponza:textures/json/lion.json",
-      "Type":"sampler"
     }
   ]
 }

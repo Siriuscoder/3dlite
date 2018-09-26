@@ -2,7 +2,7 @@
 	"Cameras":
 	[
 		{
-			"Name": "MyCamera",
+			"Name": "SubRenderCamera",
 
 			"Position": [50,50,50],
 			"LookAt": [0,0,0],

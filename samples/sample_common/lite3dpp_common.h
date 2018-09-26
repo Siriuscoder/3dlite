@@ -71,6 +71,7 @@ private:
     Main mMain;
     Camera *mMainCamera;
     Camera *mGuiCamera;
+    Scene *mGuiScene;
     WindowRenderTarget *mMainWindow;
     lite3dpp_font::FontTexture *mStatTexture;
     lite3d_timer *mStatTimer;
