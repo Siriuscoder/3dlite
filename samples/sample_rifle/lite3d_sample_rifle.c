@@ -255,8 +255,8 @@ static int init(void *userdata)
     lite3d_scene_node_touch_material(&mRifleNode, lite3d_mesh_chunk_get_by_index(&mRifle, 4), &mRifleMaterialB, 1);
     lite3d_scene_node_touch_material(&mBattNode, lite3d_mesh_chunk_get_by_index(&mRifleBatt, 0), &mBattMaterial, 1);
 
-    lite3d_scene_add_node(&mScene, &mCamera01.cameraNode, NULL);
-    lite3d_render_target_screen_attach_camera(&mCamera01, 1, 0, LITE3D_RENDER_DEFAULT);
+    //lite3d_scene_add_node(&mScene, &mCamera01.cameraNode, NULL);
+    lite3d_render_target_screen_attach_camera(&mCamera01, &mScene, 1, 0, LITE3D_RENDER_DEFAULT);
     lite3d_camera_lookAt(&mCamera01, &viewPos);
 
     return LITE3D_TRUE;

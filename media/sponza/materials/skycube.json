@@ -1,7 +1,7 @@
 {
   "Passes":[
     {
-      "Pass":1.0000000000,
+      "Pass":2,
       "Program":{
         "Name":"skybox.program",
         "Path":"sponzamat:shaders/json/skybox.json"

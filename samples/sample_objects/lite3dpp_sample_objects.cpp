@@ -33,7 +33,7 @@ public:
     {
         Scene *scene = getMain().getResourceManager()->queryResource<Scene>("SimpleScene",
             "samples:scenes/scene.json");
-        setMainCamera(scene->getCamera("MyCamera"));
+        setMainCamera(getMain().getCamera("MyCamera"));
         mMinigun = scene->getObject("Minigun");
         mPlasmagun = scene->getObject("Plasmagun");
     }

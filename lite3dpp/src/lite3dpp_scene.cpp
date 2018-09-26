@@ -110,51 +110,9 @@ namespace lite3dpp
 
     void Scene::unloadImpl()
     {
-        removeAllCameras();
         removeAllObjects();
         removeAllLights();
         lite3d_scene_purge(&mScene);
-    }
-
-    Camera *Scene::addCamera(const String &name)
-    {
-        Cameras::iterator it = mCameras.find(name);
-        if(it != mCameras.end())
-            LITE3D_THROW("Camera \"" << name << "\" already exists..");
-
-        std::shared_ptr<Camera> camera = std::make_shared<Camera>(name, mMain);
-        lite3d_scene_add_node(&mScene, &camera->getPtr()->cameraNode, NULL);
-        mCameras.insert(std::make_pair(name, camera));
-        return camera.get();
-    }
-
-    Camera *Scene::getCamera(const String &name) const
-    {
-        Cameras::const_iterator it = mCameras.find(name);
-        if(it != mCameras.end())
-            return it->second.get();
-
-        LITE3D_THROW("Camera " << name << " not found..");
-    }
-
-    void Scene::removeAllCameras()
-    {
-        std::for_each(mCameras.begin(), mCameras.end(), [this](Cameras::value_type &camera)
-        {
-            lite3d_scene_remove_node(&mScene, &camera.second->getPtr()->cameraNode);
-        });
-
-        mCameras.clear();
-    }
-
-    void Scene::removeCamera(const String &name)
-    {
-        Cameras::iterator it = mCameras.find(name);
-        if(it != mCameras.end())
-        {
-            lite3d_scene_remove_node(&mScene, &it->second->getPtr()->cameraNode);
-            mCameras.erase(it);
-        }
     }
 
     SceneObject *Scene::addObject(const String &name,
@@ -331,7 +289,10 @@ namespace lite3dpp
     {
         for(const ConfigurationReader &cameraJson : cameras)
         {
-            Camera *camera = addCamera(cameraJson.getString(L"Name"));
+            Camera *camera = NULL;
+            if ((camera = mMain->getCamera(cameraJson.getString(L"Name"))) == NULL)
+                camera = mMain->addCamera(cameraJson.getString(L"Name"));
+
             RenderTarget *renderTarget = NULL;
 
             for(const ConfigurationReader &renderTargetJson : cameraJson.getObjects(L"RenderTargets"))
@@ -366,7 +327,7 @@ namespace lite3dpp
                 if (renderTargetJson.getBool(L"StencilOutput", false))
                     renderFlags |= LITE3D_RENDER_STENCIL_OUTPUT;
         
-                renderTarget->addCamera(camera, renderTargetJson.getInt(L"TexturePass"),
+                renderTarget->addCamera(camera, this, renderTargetJson.getInt(L"TexturePass"),
                     renderTargetJson.getInt(L"Priority"), renderFlags);
             }
 

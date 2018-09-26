@@ -44,7 +44,7 @@ public:
             "samples:scenes/scene_rtt_box.json");
 
         mBoxTexture = getMain().getResourceManager()->queryResource<TextureImage>("color512x512.texture");
-        setMainCamera(scene->getCamera("MyCamera"));
+        setMainCamera(getMain().getCamera("MyCamera"));
         mBox = scene->getObject("Box");
         mBoxMesh = getMain().getResourceManager()->queryResource<Mesh>("box.mesh");
 

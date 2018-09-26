@@ -33,6 +33,7 @@ namespace samples {
 Sample::Sample() : 
     mMainCamera(NULL),
     mGuiCamera(NULL),
+    mGuiScene(NULL),
     mMainWindow(NULL),
     mStatTexture(NULL),
     mStatTimer(NULL),
@@ -52,10 +53,10 @@ void Sample::initGui()
         queryResource<lite3dpp_font::FontTexture>("arial256x128.texture",
         "samples:textures/json/arial256x128.json");
     
-    Scene *gui = mMain.getResourceManager()->queryResource<Scene>("GUI",
+    mGuiScene = mMain.getResourceManager()->queryResource<Scene>("GUI",
         "samples:scenes/gui.json");
     
-    mGuiCamera = gui->getCamera("GuiCamera");
+    mGuiCamera = getMain().getCamera("GuiCamera");
     //mGuiCamera->cullBackFaces(false);
     setGuiSize(mMainWindow->width(), mMainWindow->height());
     
@@ -182,6 +183,8 @@ void Sample::processEvent(SDL_Event *e)
 void Sample::setGuiSize(int32_t width, int32_t height)
 {
     SDL_assert(mGuiCamera);
+    SDL_assert(mGuiScene);
+
     mGuiCamera->setupOrtho(0, 20, 0, mMainWindow->width(),
         0, mMainWindow->height());
     
@@ -189,7 +192,7 @@ void Sample::setGuiSize(int32_t width, int32_t height)
     mGuiCamera->setPosition(cameraPos);
     mGuiCamera->lookAt(KM_VEC3_ZERO);
     
-    SceneObject *sOverlay = mGuiCamera->getScene().getObject("StatOverlay");
+    SceneObject *sOverlay = mGuiScene->getObject("StatOverlay");
     kmVec3 sOverlayPos = { float(mMainWindow->width()-270), float(mMainWindow->height())-14, 0 };
     sOverlay->getRoot()->setPosition(sOverlayPos);
 }

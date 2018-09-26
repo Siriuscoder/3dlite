@@ -26,11 +26,11 @@
 #include <lite3d/lite3d_alloc.h>
 #include <lite3d/lite3d_render.h>
 #include <lite3d/lite3d_video.h>
-#include <lite3d/lite3d_scene.h>
 #include <lite3d/lite3d_buffers_manip.h>
 #include <lite3d/lite3d_misc.h>
 #include <lite3d/lite3d_main.h>
 #include <lite3d/lite3d_metrics.h>
+#include <lite3d/lite3d_array.h>
 
 #define LITE3D_LIMSTATS_SKIP_PER_FRAMES  10000
 
@@ -38,6 +38,7 @@ typedef struct lookUnit
 {
     lite3d_list_node rtLink;
     lite3d_camera *camera;
+    lite3d_scene *scene;
     uint16_t pass;
     int priority;
     uint32_t renderFlags;
@@ -52,6 +53,18 @@ static uint8_t gRenderStarted = LITE3D_TRUE;
 static uint8_t gRenderActive = LITE3D_TRUE;
 static lite3d_render_stats gRenderStats;
 static lite3d_render_target gScreenRt;
+static lite3d_array gInvalidatedCameras;
+
+static void validate_cameras(void)
+{
+    lite3d_camera **camera;
+    LITE3D_ARR_FOREACH(&gInvalidatedCameras, lite3d_camera*, camera)
+    {
+        (*camera)->cameraNode.invalidated = LITE3D_FALSE;
+    }
+
+    lite3d_array_clean(&gInvalidatedCameras);
+}
 
 static void refresh_render_stats(uint64_t beginFrame, uint64_t endFrame)
 {
@@ -94,7 +107,6 @@ static void timer_render_stats_tick(lite3d_timer *timer)
 static void update_render_target(lite3d_render_target *target)
 {
     lite3d_list_node *node;
-    lite3d_scene *scene;
     lookUnit *look;
     /* switch target framebuffer */
     lite3d_framebuffer_switch(&target->fb);
@@ -106,7 +118,6 @@ static void update_render_target(lite3d_render_target *target)
     for (node = target->lookSequence.l.next; node != &target->lookSequence.l; node = lite3d_list_next(node))
     {
         look = LITE3D_MEMBERCAST(lookUnit, node, rtLink);
-        scene = (lite3d_scene *) look->camera->cameraNode.scene;
 
         if(look->camera->cameraNode.enabled)
         {
@@ -119,17 +130,20 @@ static void update_render_target(lite3d_render_target *target)
             lite3d_depth_output((look->renderFlags & LITE3D_RENDER_DEPTH_OUTPUT) ? LITE3D_TRUE : LITE3D_FALSE);
             lite3d_stencil_output((look->renderFlags & LITE3D_RENDER_STENCIL_OUTPUT) ? LITE3D_TRUE : LITE3D_FALSE);
             
-            LITE3D_METRIC_CALL(lite3d_scene_render, (scene, look->camera, look->pass, look->renderFlags))
+            LITE3D_METRIC_CALL(lite3d_scene_render, (look->scene, look->camera, look->pass, look->renderFlags))
+
+            if (look->camera->cameraNode.invalidated)
+                LITE3D_ARR_ADD_ELEM(&gInvalidatedCameras, lite3d_camera *, look->camera);
 
             /* accamulate statistics */
-            gRenderStats.trianglesByFrame += scene->stats.trianglesRendered;
-            gRenderStats.verticesByFrame += scene->stats.verticesRendered;
-            gRenderStats.nodesTotal += scene->stats.nodesTotal;
-            gRenderStats.batchesTotal += scene->stats.batchesTotal;
-            gRenderStats.batchedByFrame += scene->stats.batchesCalled;
-            gRenderStats.materialsTotal += scene->stats.materialBlocks;
-            gRenderStats.materialsPassedByFrame += scene->stats.materialPassed;
-            gRenderStats.textureUnitsByFrame += scene->stats.textureUnitsBinded;
+            gRenderStats.trianglesByFrame += look->scene->stats.trianglesRendered;
+            gRenderStats.verticesByFrame += look->scene->stats.verticesRendered;
+            gRenderStats.nodesTotal += look->scene->stats.nodesTotal;
+            gRenderStats.batchesTotal += look->scene->stats.batchesTotal;
+            gRenderStats.batchedByFrame += look->scene->stats.batchesCalled;
+            gRenderStats.materialsTotal += look->scene->stats.materialBlocks;
+            gRenderStats.materialsPassedByFrame += look->scene->stats.materialPassed;
+            gRenderStats.textureUnitsByFrame += look->scene->stats.textureUnitsBinded;
         }
     }
 }
@@ -156,6 +170,8 @@ static int update_render_targets(void)
 
         targetsCount++;
     }
+
+    validate_cameras();
 
     gRenderStats.renderTargets = targetsCount;
     return targetsCount ? LITE3D_TRUE : LITE3D_FALSE;
@@ -262,6 +278,7 @@ void lite3d_render_loop(lite3d_render_listeners *callbacks)
 
     lite3d_list_init(&gRenderTargets);
     lite3d_render_target_add(&gScreenRt, 0xFFFFFFF);
+    lite3d_array_init(&gInvalidatedCameras, sizeof(lite3d_camera *), 1);
 
     /* launch frame statistic compute timer */
     frameStatsTimer = lite3d_timer_add(1000, timer_render_stats_tick, NULL);
@@ -286,6 +303,7 @@ void lite3d_render_loop(lite3d_render_listeners *callbacks)
     lite3d_timer_purge(frameStatsTimer);
     lite3d_render_target_erase_all();
     lite3d_render_target_purge(&gScreenRt);
+    lite3d_array_purge(&gInvalidatedCameras);
 }
 
 lite3d_render_stats *lite3d_render_stats_get(void)
@@ -390,14 +408,15 @@ void lite3d_render_stop(void)
     gRenderStarted = LITE3D_FALSE;
 }
 
-int lite3d_render_target_attach_camera(lite3d_render_target *target, lite3d_camera *camera,
+int lite3d_render_target_attach_camera(lite3d_render_target *target, lite3d_camera *camera, lite3d_scene *scene,
     uint16_t pass, int priority, uint32_t renderFlags)
 {
     lookUnit *look = NULL;
     lookUnit *lookIns = NULL;
     lite3d_list_node *node = NULL;
-    SDL_assert(target && camera);
-
+    SDL_assert(target);
+    SDL_assert(scene);
+    SDL_assert(camera);
 
     lookIns = (lookUnit *) lite3d_calloc_pooled(LITE3D_POOL_NO1, sizeof (lookUnit));
     SDL_assert_release(lookIns);
@@ -405,6 +424,7 @@ int lite3d_render_target_attach_camera(lite3d_render_target *target, lite3d_came
     lookIns->camera = camera;
     lookIns->pass = pass;
     lookIns->priority = priority;
+    lookIns->scene = scene;
     lookIns->renderFlags = renderFlags;
     lite3d_list_link_init(&lookIns->rtLink);
 
@@ -413,8 +433,7 @@ int lite3d_render_target_attach_camera(lite3d_render_target *target, lite3d_came
     while ((node = lite3d_list_next(node)) != &target->lookSequence.l)
     {
         look = LITE3D_MEMBERCAST(lookUnit, node, rtLink);
-        if (look->camera == camera && look->pass == pass &&
-            look->priority == priority)
+        if (look->priority == priority)
         {
             lite3d_free_pooled(LITE3D_POOL_NO1, lookIns);
             return LITE3D_FALSE;
@@ -431,20 +450,19 @@ int lite3d_render_target_attach_camera(lite3d_render_target *target, lite3d_came
     return LITE3D_TRUE;
 }
 
-int lite3d_render_target_dettach_camera(lite3d_render_target *rt, lite3d_camera *camera,
-    uint16_t pass, int priority)
+int lite3d_render_target_dettach_camera(lite3d_render_target *rt, lite3d_camera *camera, int priority)
 {
     lookUnit *look = NULL;
     lite3d_list_node *node = NULL;
-    SDL_assert(rt && camera);
+    SDL_assert(rt);
+    SDL_assert(camera);
 
     /* lookup for the camera */
     node = &rt->lookSequence.l;
     while ((node = lite3d_list_next(node)) != &rt->lookSequence.l)
     {
         look = LITE3D_MEMBERCAST(lookUnit, node, rtLink);
-        if (look->camera == camera && look->pass == pass &&
-            look->priority == priority)
+        if (look->camera == camera && look->priority == priority)
         {
             lite3d_list_unlink_link(node);
             lite3d_free_pooled(LITE3D_POOL_NO1, look);
@@ -455,18 +473,16 @@ int lite3d_render_target_dettach_camera(lite3d_render_target *rt, lite3d_camera 
     return LITE3D_TRUE;
 }
 
-int lite3d_render_target_screen_attach_camera(lite3d_camera *camera,
+int lite3d_render_target_screen_attach_camera(lite3d_camera *camera, lite3d_scene *scene,
     uint16_t pass, int priority, uint32_t renderFlags)
 {
-    return lite3d_render_target_attach_camera(&gScreenRt, camera,
+    return lite3d_render_target_attach_camera(&gScreenRt, camera, scene,
         pass, priority, renderFlags);
 }
 
-int lite3d_render_target_screen_dettach_camera(lite3d_camera *camera,
-    uint16_t pass, int priority)
+int lite3d_render_target_screen_dettach_camera(lite3d_camera *camera, int priority)
 {
-    return lite3d_render_target_dettach_camera(&gScreenRt, camera,
-        pass, priority);
+    return lite3d_render_target_dettach_camera(&gScreenRt, camera, priority);
 }
 
 lite3d_render_target *lite3d_render_target_screen_get(void)
