@@ -1,7 +1,7 @@
 {
     // common settings
-    "LogLevel": 2,
-    "LogFlushAlways": true,
+    "LogLevel": 3,
+    "LogFlushAlways": false,
     "LogFile": "lite3d.log",
     "TextureSettings": {
         "Anisotropy": 8,
@@ -15,7 +15,7 @@
         "Caption": "Sponza",
         "ColorBits": 24,
         "Fullscreen": false,
-        "MSAA": 4,
+        "MSAA": 1,
         "VSync": false
     },
     // resource locations

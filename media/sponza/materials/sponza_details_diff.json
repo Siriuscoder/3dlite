@@ -1,6 +1,13 @@
 {
   "Passes":[
     {
+      "Pass":1,
+      "Program":{
+        "Name":"depth_only.program",
+        "Path":"sponzamat:shaders/json/depth_only.json"
+      }
+    },
+    {
       "Pass":2,
       "Program":{
         "Name":"basicspec.program",
@@ -38,13 +45,6 @@
           "Scope":"global"
         }
       ]
-    },
-    {
-      "Pass":1,
-      "Program":{
-        "Name":"depth_only.program",
-        "Path":"sponzamat:shaders/json/depth_only.json"
-      }
     }
   ],
   "Uniforms":[

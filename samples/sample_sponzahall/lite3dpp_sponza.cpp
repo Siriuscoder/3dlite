@@ -26,11 +26,53 @@ public:
 
     void createScene() override
     {
-        getMain().getResourceManager()->queryResource<Scene>("SponzaHall",
+        mMainScene = getMain().getResourceManager()->queryResource<Scene>("Sponza",
             "sponzamat:scenes/sponza.json");
+        getMain().getResourceManager()->queryResource<Scene>("SkyScene",
+            "sponzamat:scenes/sky.json");
+        getMain().getResourceManager()->queryResource<Scene>("PostprocessScene",
+            "sponzamat:scenes/postprocess.json");
+
         setMainCamera(getMain().getCamera("MyCamera"));
+
         getMain().window()->depthTestFunc(LITE3D_TEST_LEQUAL);
+
+        kmVec3 resolution = { (float)getMain().window()->width(), (float)getMain().window()->height(), 0 };
+        lite3dpp::Material::setFloatv3GlobalParameter("screenResolution", resolution);
+        lite3dpp::Material::setIntGlobalParameter("FXAA", 1);
+        lite3dpp::Material::setFloatv3GlobalParameter("eye", getMainCamera().getPosition());
+
+        addSunlight();
     }
+
+    void mainCameraChanged() override
+    {
+        Sample::mainCameraChanged();
+        lite3dpp::Material::setFloatv3GlobalParameter("eye", getMainCamera().getPosition());
+    }
+
+    void addSunlight()
+    {
+        kmVec3 spotDirection = { 0.0f, 0.0f, -1.0f };
+        String lightParams = ConfigurationWriter().set(L"Name", "SunLight.node").set(L"Light",
+            ConfigurationWriter().set(L"Ambient", KM_VEC3_ZERO)
+            .set(L"Diffuse", KM_VEC3_ONE)
+            .set(L"Position", KM_VEC3_ZERO)
+            .set(L"Name", "SunLight")
+            .set(L"Specular", KM_VEC3_ONE)
+            .set(L"SpotDirection", spotDirection)
+            .set(L"Type", "Directional")).write(true);
+
+        mSunLight.reset(new LightSceneNode(ConfigurationReader(lightParams.data(), lightParams.size()), NULL, &getMain()));
+        mSunLight->addToScene(mMainScene);
+        mSunLight->getLight()->enabled(true);
+        mSunLight->frustumTest(false);
+    }
+
+private:
+
+    std::unique_ptr<LightSceneNode> mSunLight;
+    Scene *mMainScene;
 };
 
 }}

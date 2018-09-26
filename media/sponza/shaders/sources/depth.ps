@@ -1,11 +1,8 @@
 #include "sponzamat:shaders/sources/common/version.def"
 
-uniform samplerCube skybox;
-
-in vec3 iuv;
 out vec4 fragColor;
 
 void main()
 {
-    fragColor = texture(skybox, iuv);
+    fragColor = vec4(0.0, 0.0, 0.0, 1.0);
 }

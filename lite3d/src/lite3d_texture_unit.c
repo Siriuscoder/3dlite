@@ -628,8 +628,6 @@ int lite3d_texture_unit_allocate(lite3d_texture_unit *textureUnit,
             break;
         case LITE3D_TEXTURE_FORMAT_ALPHA:
         case LITE3D_TEXTURE_FORMAT_RED:
-        case LITE3D_TEXTURE_FORMAT_LUMINANCE_ALPHA:
-        case LITE3D_TEXTURE_FORMAT_LUMINANCE:
             textureUnit->imageBPP = 1;
             internalFormat = gTextureSettings.useGLCompression ? GL_COMPRESSED_RED_RGTC1_EXT : GL_R;
             textureUnit->compressed = gTextureSettings.useGLCompression;
@@ -638,6 +636,16 @@ int lite3d_texture_unit_allocate(lite3d_texture_unit *textureUnit,
             textureUnit->imageBPP = 2;
             internalFormat = gTextureSettings.useGLCompression ? GL_COMPRESSED_RED_GREEN_RGTC2_EXT : GL_RG;
             textureUnit->compressed = gTextureSettings.useGLCompression;
+            break;
+        case LITE3D_TEXTURE_FORMAT_LUMINANCE:
+            textureUnit->imageBPP = 1;
+            internalFormat = GL_LUMINANCE;
+            textureUnit->compressed = LITE3D_FALSE;
+            break;
+        case LITE3D_TEXTURE_FORMAT_LUMINANCE_ALPHA:
+            textureUnit->imageBPP = 2;
+            internalFormat = GL_LUMINANCE_ALPHA;
+            textureUnit->compressed = LITE3D_FALSE;
             break;
         default:
             SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,

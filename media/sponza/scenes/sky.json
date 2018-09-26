@@ -1,0 +1,29 @@
+{
+    "Cameras":
+    [
+        {
+            "Name": "MyCamera",
+            "RenderTargets":
+            [
+                {
+                    "Name": "RenderDirect",
+                    "Path": "sponzamat:targets/render.json",
+                    "Priority": 1, // Invoke after sponza scene be rendered
+                    "TexturePass": 2,
+                    "DepthTest": true,
+                    "ColorOutput": true,
+                    "DepthOutput": false
+                }
+            ]
+        }
+    ],
+    
+    "Objects":
+    [
+        {
+            "Name": "Sky",
+            "Object": "sponza:objects/skybox.json"
+        }
+    ]
+}
+

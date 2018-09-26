@@ -1,14 +1,66 @@
-#version 330
-
-uniform sampler2D diffuseSampler;
+uniform sampler2D diffuse;
+#ifdef NORMAL_MAP
+uniform sampler2D normals;
+#endif
+#ifdef SPECULAR_MAP
+uniform sampler2D specular;
+#endif
+uniform vec3 eye;
 
 in vec2 iuv;
-in vec3 ivn;
+in vec3 ivv;
+in mat3 itbn;
+in vec3 wnorm;
+
 out vec4 fragColor;
+
+const vec3 ambient = vec3(0.1, 0.1, 0.1);
+const float wrapAroundFactor = 0.04;
+const float specPower = 40.0;
+
+vec3 blinn_multiple(vec3 ambient, vec3 fragPos, vec3 fragNormal, vec3 eye, float specularFactor, 
+    float wrapAroundFactor, float specPower, inout vec3 linearSpec);
+vec3 blinn_single(int type, vec3 lightDir, vec3 eyeDir, vec3 diffuse, 
+    vec3 specular, vec3 normal, vec3 spotDirection, vec2 spotFactor, vec3 attenuation, 
+    float specularFactor, float wrapAroundFactor, float specPower, inout vec3 linearSpec);
+
+bool vec3zero(vec3 vec)
+{
+    float prec = 0.000001;
+    return ((1.0-step(prec, vec.x)) * (1.0-step(prec, vec.y)) * (1.0-step(prec, vec.z))) == 1.0;
+}
 
 void main()
 {
-    vec3 lightDir = vec3(0.0, 1.0, 1.0);
-    float nDotL = clamp(dot(ivn, lightDir), 0.2, 1);
-    fragColor = texture(diffuseSampler, iuv) * nDotL;
+    vec2 tc = iuv;
+    vec3 nw = wnorm;
+    vec3 spec = vec3(0.0, 0.0, 0.0);
+
+    // sampling diffuse color 
+    vec4 fragDiffuse = texture2D(diffuse, tc);
+
+#ifdef NORMAL_MAP
+    // sampling normal from normal map
+    vec4 nval = texture2D(normals, tc);
+    // put normal in [-1,1] range in tangent space 
+    // and trasform normal to world space 
+    nw = normalize(itbn * normalize(2*nval.rgb-1));
+
+    // fix bad normals
+    if (vec3zero(nw))
+        nw = wnorm;
+#endif
+
+#ifdef SPECULAR_MAP
+    spec = texture2D(specular, tc).xyz;
+#endif
+
+    vec3 linearSpec;
+    vec3 linear = blinn_single(2, vec3(0, 0, 0), normalize(eye - ivv), vec3(1, 1, 1), vec3(1, 1, 1), nw, vec3(1, 1, -1), vec2(0, 0), vec3(0, 0, 0), spec.x, wrapAroundFactor, specPower, linearSpec);
+
+    //vec3 linearSpec;
+    //vec3 linear = blinn_multiple(ambient, ivv, nw, eye, spec.x, 
+    //    wrapAroundFactor, specPower, linearSpec);
+
+    fragColor = vec4(linear * fragDiffuse.rgb, 0.0);
 }
