@@ -1,0 +1,8 @@
+{
+    "Sources": 
+    [
+        "sponzamat:shaders/sources/sponza_shading.vs,sponzamat:shaders/sources/common/basic.def",
+        "sponzamat:shaders/sources/sponza_shading.ps,sponzamat:shaders/sources/common/basic.def",
+        "sponzamat:shaders/sources/blinn.ps,sponzamat:shaders/sources/common/basic.def"
+    ]
+}

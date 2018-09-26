@@ -15,14 +15,32 @@
             },
             "RenderTargets":
             [
+                // draw only non transparent objects to depth
                 {
-                    "Name": "Window",
+                    "Name": "RenderDepth",
+                    "Path": "sponzamat:targets/depth.json",
                     "Priority": 0,
-                    "TexturePass": 1
+                    "TexturePass": 1,
+                    "RenderSecondStage": false,
+                    "DepthTest": true,
+                    "ColorOutput": false,
+                    "DepthOutput": true
+                },
+                // draw all objects and calculate lighting
+                {
+                    "Name": "RenderDirect",
+                    "Path": "sponzamat:targets/render.json",
+                    "Priority": 0,
+                    "TexturePass": 2,
+                    "DepthTest": true,
+                    "ColorOutput": true,
+                    "DepthOutput": false
                 }
             ]
         }
     ],
+    
+    "LightingTechnique": "UBO", 
     
     "Objects":
     [

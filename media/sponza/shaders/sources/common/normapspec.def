@@ -1,0 +1,4 @@
+#include "sponzamat:shaders/sources/common/version.def"
+
+#define NORMAL_MAP
+#define SPECULAR_MAP

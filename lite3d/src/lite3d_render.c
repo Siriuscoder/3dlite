@@ -466,11 +466,11 @@ int lite3d_render_target_dettach_camera(lite3d_render_target *rt, lite3d_camera 
         {
             lite3d_list_unlink_link(node);
             lite3d_free_pooled(LITE3D_POOL_NO1, look);
-            return LITE3D_FALSE;
+            return LITE3D_TRUE;
         }
     }
 
-    return LITE3D_TRUE;
+    return LITE3D_FALSE;
 }
 
 int lite3d_render_target_screen_attach_camera(lite3d_camera *camera, lite3d_scene *scene,

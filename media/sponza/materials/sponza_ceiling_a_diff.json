@@ -1,22 +1,23 @@
 {
   "Passes":[
     {
+      "Pass":1,
+      "Program":{
+        "Name":"depth_only.program",
+        "Path":"sponzamat:shaders/json/depth_only.json"
+      }
+    },
+    {
       "Pass":2,
       "Program":{
-        "Name":"normapspec.program",
-        "Path":"sponzamat:shaders/json/normapspec.json"
+        "Name":"basicspec.program",
+        "Path":"sponzamat:shaders/json/basicspec.json"
       },
       "Uniforms":[
         {
           "Name":"diffuse",
           "TextureName":"sponza_ceiling_a_diff.texture",
           "TexturePath":"sponza:textures/json/sponza_ceiling_a_diff.json",
-          "Type":"sampler"
-        },
-        {
-          "Name":"normals",
-          "TextureName":"sponza_ceiling_a_ddn.texture",
-          "TexturePath":"sponza:textures/json/sponza_ceiling_a_ddn.json",
           "Type":"sampler"
         },
         {
@@ -44,13 +45,6 @@
           "Scope":"global"
         }
       ]
-    },
-    {
-      "Pass":1,
-      "Program":{
-        "Name":"depth_only.program",
-        "Path":"sponzamat:shaders/json/depth_only.json"
-      }
     }
   ],
   "Uniforms":[

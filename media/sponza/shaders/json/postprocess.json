@@ -1,0 +1,8 @@
+{
+    "Sources": 
+    [
+        "sponzamat:shaders/sources/postprocess.vs",
+        "sponzamat:shaders/sources/postprocess.ps",
+        "sponzamat:shaders/sources/fxaa.ps"
+    ]
+}
