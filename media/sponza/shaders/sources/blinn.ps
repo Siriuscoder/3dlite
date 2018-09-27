@@ -91,8 +91,8 @@ vec3 blinn_multiple(vec3 ambient, vec3 fragPos,
         vec3 lightDir = lposition - fragPos;
         /* distance to light */
         float dist = length(lightDir);
-        /* check light distance */
-        if (dist > lights[index+0].z)
+        /* do not check light distance for directional lights */
+        if (lights[index+0].x != 2 && dist > lights[index+0].z)
             continue;
 
         /* ambient color */

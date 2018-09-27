@@ -53,7 +53,7 @@ public:
 
     void addSunlight()
     {
-        kmVec3 spotDirection = { 0.0f, 0.0f, -1.0f };
+        kmVec3 spotDirection = { 2.0f, -1.0f, -2.3f };
         String lightParams = ConfigurationWriter().set(L"Name", "SunLight.node").set(L"Light",
             ConfigurationWriter().set(L"Ambient", KM_VEC3_ZERO)
             .set(L"Diffuse", KM_VEC3_ONE)
