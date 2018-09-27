@@ -49,6 +49,7 @@ Screenshots
 ![](/media/screenshots/sponza.png "Sponza")
 ![](/media/screenshots/sponza1.png "Sponza")
 ![](/media/screenshots/sponza2.png "Sponza")
+![](/media/screenshots/sponza3.png "Sponza")
 ![](/media/screenshots/vault.png "Vault")
 ![](/media/screenshots/vault1.png "Vault")
 ![](/media/screenshots/vault2.png "Vault")

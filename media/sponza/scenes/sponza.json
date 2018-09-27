@@ -5,8 +5,7 @@
             "Name": "MyCamera",
 
             "Position": [700,0,-400],
-            //"LookAt": [0,0,0],
-            //"Position": [0,0,0],
+            "LookAt": [-700,0,-400],
             "Perspective": 
             {
                 "Znear": 10,
