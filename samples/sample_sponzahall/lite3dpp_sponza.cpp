@@ -37,8 +37,6 @@ public:
 
         getMain().window()->depthTestFunc(LITE3D_TEST_LEQUAL);
 
-        kmVec3 resolution = { (float)getMain().window()->width(), (float)getMain().window()->height(), 0 };
-        lite3dpp::Material::setFloatv3GlobalParameter("screenResolution", resolution);
         lite3dpp::Material::setIntGlobalParameter("FXAA", 1);
         lite3dpp::Material::setFloatv3GlobalParameter("eye", getMainCamera().getPosition());
 

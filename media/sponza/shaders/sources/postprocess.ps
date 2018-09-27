@@ -3,7 +3,6 @@
 uniform sampler2D combined;
 uniform int FXAA;
 uniform float GammaFactor;
-uniform vec3 screenResolution;
 
 in vec2 iuv;
 in vec2 irgbNW;
@@ -23,8 +22,9 @@ const vec3 correction = vec3(0.95, 0.99, 1.04);
 
 void main()
 {
+    vec2 sr = textureSize(combined, 0);
     // apply FXAA
-    vec4 finalColor = FXAA > 0 ? fxaa(combined, iuv * screenResolution.xy, screenResolution.xy, irgbNW, irgbNE, irgbSW, irgbSE, irgbM) : texture2D(combined, iuv);
+    vec4 finalColor = FXAA > 0 ? fxaa(combined, iuv * sr.xy, sr.xy, irgbNW, irgbNE, irgbSW, irgbSE, irgbM) : texture2D(combined, iuv);
 
     // apply gamma correction 
     finalColor.rgb = pow(finalColor.rgb, vec3(1/GammaFactor));
