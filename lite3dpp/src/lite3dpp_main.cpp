@@ -165,6 +165,7 @@ namespace lite3dpp
 
         mResourceManager.releaseAllResources();
         mResourceManager.releaseFileCache();
+        removeAllCameras();
     }
 
     WindowRenderTarget *Main::window()

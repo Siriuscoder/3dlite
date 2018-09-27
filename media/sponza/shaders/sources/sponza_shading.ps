@@ -62,5 +62,5 @@ void main()
     vec3 linear = blinn_multiple(ambient, ivv, nw, eye, spec.x/1.7, 
         wrapAroundFactor, specPower, linearSpec);
 
-    fragColor = vec4(linear * fragDiffuse.rgb, 0.0);
+    fragColor = vec4(linear * fragDiffuse.rgb, 1.0);
 }

@@ -22,14 +22,6 @@
       "Scope":"global"
     },
     {
-      "Name":"screenResolution",
-      "Type":"v3",
-      "Value":[
-        0,0,0
-      ],
-      "Scope":"global"
-    },
-    {
       "Name":"GammaFactor",
       "Type":"float",
       "Value": 1.0,
