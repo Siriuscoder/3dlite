@@ -52,6 +52,9 @@ int lite3d_shader_program_init(lite3d_shader_program *program)
         return LITE3D_FALSE;
     }
 
+    SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "shader program 0x%p created",
+        (void *)program);
+
     return LITE3D_TRUE;
 }
 
