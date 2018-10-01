@@ -10,7 +10,7 @@
     "DepthAttachments":
     {
         "TextureName": "prepassDepth.texture",
-        "TexturePath": "sponza:textures/json/depth.json"
+        "TexturePath": "samples:textures/json/depth.json"
     }
 }
 

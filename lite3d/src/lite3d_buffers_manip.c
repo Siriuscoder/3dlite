@@ -28,9 +28,21 @@ static uint8_t gBlendigMode = 0xff;
 static uint8_t gColorOutOn = 0xff;
 static uint8_t gDepthOutOn = 0xff;
 static uint8_t gStencilOutOn = 0xff;
-static uint16_t gPolygonMode = 0;
+static uint8_t gPolygonMode = 0;
 static uint8_t gBackFaceCullingOn = 0x99;
-static uint32_t gDeptTestFunc = 0;
+static uint8_t gDeptTestFunc = 0;
+
+static GLenum polygonModeEnum[] = {
+    GL_POINT, GL_LINE, GL_FILL
+};
+
+static GLenum testFuncEnum[] = {
+    GL_NEVER, GL_LESS, GL_EQUAL, GL_LEQUAL, GL_GREATER, GL_NOTEQUAL, GL_GEQUAL, GL_ALWAYS
+};
+
+static GLenum cullfaceModeEnum[] = {
+    0x0, GL_FRONT, GL_BACK, GL_FRONT_AND_BACK
+};
 
 void lite3d_depth_test(uint8_t on)
 {
@@ -41,11 +53,11 @@ void lite3d_depth_test(uint8_t on)
     }
 }
 
-void lite3d_depth_test_func(uint32_t func)
+void lite3d_depth_test_func(uint8_t func)
 {
     if (func != gDeptTestFunc)
     {
-        glDepthFunc(func);
+        glDepthFunc(testFuncEnum[func]);
         gDeptTestFunc = func;
     }
 }
@@ -59,9 +71,9 @@ void lite3d_stencil_test(uint8_t on)
     }
 }
 
-void lite3d_stencil_test_func(uint32_t func, int32_t value)
+void lite3d_stencil_test_func(uint8_t func, int32_t refValue)
 {
-    glStencilFunc(func, value, 0xFF);
+    glStencilFunc(testFuncEnum[func], refValue, 0xFF);
 }
 
 void lite3d_depth_output(uint8_t on)
@@ -192,32 +204,32 @@ void lite3d_blending_mode_set(uint8_t mode)
     }
 }
 
-void lite3d_polygon_mode(uint16_t flag)
+void lite3d_polygon_mode(uint8_t mode)
 {
     /* In OpenGL ES, GL_FILL is the only available polygon mode. */
 #ifndef GLES
-    if (gPolygonMode != flag)
+    if (gPolygonMode != mode)
     {
-        glPolygonMode(GL_FRONT_AND_BACK, flag);
-        gPolygonMode = flag;
+        glPolygonMode(GL_FRONT_AND_BACK, polygonModeEnum[mode]);
+        gPolygonMode = mode;
     }
 #endif
 }
 
-void lite3d_backface_culling(uint8_t on)
+void lite3d_backface_culling(uint8_t mode)
 {
-    if (gBackFaceCullingOn != on)
+    if (gBackFaceCullingOn != mode)
     {
-        if (on)
+        if (mode != LITE3D_CULLFACE_NEVER)
         {
             glEnable(GL_CULL_FACE);
-            glCullFace(GL_BACK);
+            glCullFace(cullfaceModeEnum[mode]);
         }
         else
         {
             glDisable(GL_CULL_FACE);
         }
 
-        gBackFaceCullingOn = on;
+        gBackFaceCullingOn = mode;
     }
 }

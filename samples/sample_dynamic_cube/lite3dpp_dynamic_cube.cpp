@@ -68,8 +68,8 @@ public:
             if (e->key.keysym.sym == SDLK_v)
             {
                 mWireftameView = !mWireftameView;
-                getMainCamera().showWireframe(mWireftameView);
-                getMainCamera().cullBackFaces(!mWireftameView);
+                getMainCamera().setPolygonMode(mWireftameView ? Camera::PolygonLine : Camera::PolygonFill);
+                getMainCamera().setCullFaceMode(mWireftameView ? Camera::CullFaceNever : Camera::CullFaceBack);
             }
             else if (e->key.keysym.sym == SDLK_r)
             {

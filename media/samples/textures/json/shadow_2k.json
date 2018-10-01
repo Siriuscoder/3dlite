@@ -1,0 +1,9 @@
+{
+    "TextureType": "2D",
+    "Filtering": "None",
+    "Wrapping": "Repeat",
+    "Compression": false,
+    "TextureFormat": "DEPTH",
+    "Height": 2048,
+    "Width": 2048
+}

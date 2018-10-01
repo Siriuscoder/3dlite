@@ -31,8 +31,8 @@ typedef struct lite3d_camera
     lite3d_scene_node cameraNode;
     kmMat4 projection;
 
-    uint8_t cullBackFaces;
-    uint16_t polygonMode;
+    uint8_t cullFaceMode;
+    uint8_t polygonMode;
     uint8_t isOrtho;
 
     struct

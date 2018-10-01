@@ -31,6 +31,21 @@ namespace lite3dpp
         
         typedef std::shared_ptr<Camera> Ptr;
 
+        enum CullFaceMode : uint8_t
+        {
+            CullFaceNever = LITE3D_CULLFACE_NEVER,
+            CullFaceFront = LITE3D_CULLFACE_FRONT,
+            CullFaceBack = LITE3D_CULLFACE_BACK,
+            CullFaceFrontAndBack = LITE3D_CULLFACE_FRONT_AND_BACK
+        };
+
+        enum PolygonMode : uint8_t
+        {
+            PolygonPoint = LITE3D_POLYMODE_POINT,
+            PolygonLine = LITE3D_POLYMODE_LINE,
+            PolygonFill = LITE3D_POLYMODE_FILL
+        };
+
         Camera(const String &name, Main *main);
         ~Camera();
 
@@ -44,10 +59,8 @@ namespace lite3dpp
 
         inline String getName()
         { return mName; }
-        inline void showWireframe(bool flag)
-        { mCamera.polygonMode = flag ? LITE3D_POLYMODE_LINE : LITE3D_POLYMODE_FILL; }
-        inline void cullBackFaces(bool flag)
-        { mCamera.cullBackFaces = flag ? LITE3D_TRUE : LITE3D_FALSE; }
+        inline void setPolygonMode(PolygonMode mode)
+        { mCamera.polygonMode = mode; }
 
         /* camera projection modes */
         void setupOrtho(float znear, float zfar, float left, float right, 
@@ -59,6 +72,8 @@ namespace lite3dpp
 
         inline void setEnabled(bool enabled)
         { mCamera.cameraNode.enabled = enabled ? LITE3D_TRUE : LITE3D_FALSE; }
+        inline void setCullFaceMode(CullFaceMode mode)
+        { mCamera.cullFaceMode = mode; }
         
         inline kmVec3 getPosition() const
         { return mCamera.cameraNode.position; }

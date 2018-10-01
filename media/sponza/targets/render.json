@@ -13,7 +13,7 @@
         [
             {
                 "TextureName": "combined.texture",
-                "TexturePath": "sponza:textures/json/rgba32f.json"
+                "TexturePath": "samples:textures/json/rgba32f.json"
             }
         ]
     },
