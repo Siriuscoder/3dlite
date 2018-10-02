@@ -38,6 +38,7 @@ static void lite3d_material_pass_purge(lite3d_material_pass *pass)
     }
 }
 
+
 static lite3d_shader_parameter_container *lite3d_material_pass_find_parameter(
     lite3d_material_pass *pass, const char *name)
 {
@@ -49,16 +50,22 @@ static lite3d_shader_parameter_container *lite3d_material_pass_find_parameter(
         parameterNode != &pass->parameters.l;
         parameterNode = lite3d_list_next(parameterNode))
     {
-        parameter = LITE3D_MEMBERCAST(lite3d_shader_parameter_container, parameterNode, parameterLink);
+        parameter = LITE3D_MEMBERCAST(
+            lite3d_shader_parameter_container,
+            parameterNode,
+            parameterLink);
+
         if (strcmp(parameter->parameter->name, name) == 0)
+        {
             return parameter;
+        }
     }
 
     return NULL;
 }
 
-void lite3d_material_init(
-    lite3d_material *material)
+
+void lite3d_material_init(lite3d_material *material)
 {
     SDL_assert(material);
     material->passes = NULL;
@@ -66,12 +73,11 @@ void lite3d_material_init(
     material->passesCapacity = 0;
 }
 
-void lite3d_material_purge(
-    lite3d_material *material)
+void lite3d_material_purge(lite3d_material *material)
 {
-    uint32_t i;
     SDL_assert(material);
 
+    uint32_t i;
     for (i = 0; i < material->passesSize; ++i)
     {
         lite3d_material_pass_purge(&material->passes[i]);
@@ -80,11 +86,10 @@ void lite3d_material_purge(
     lite3d_free(material->passes);
 }
 
-void lite3d_material_pass_init(
-    lite3d_material_pass *pass)
+void lite3d_material_pass_init(lite3d_material_pass *pass)
 {
     SDL_assert(pass);
-    memset(pass, 0, sizeof (lite3d_material_pass));
+    memset(pass, 0, sizeof(lite3d_material_pass));
     lite3d_list_init(&pass->parameters);
 }
 
@@ -212,7 +217,8 @@ int lite3d_material_pass_is_empty(
     return pass->passNo == 0;
 }
 
-lite3d_material_pass *lite3d_material_apply(lite3d_material *material, uint16_t no)
+lite3d_material_pass *lite3d_material_apply(
+    lite3d_material *material, uint16_t no)
 {
     lite3d_material_pass *pass;
 

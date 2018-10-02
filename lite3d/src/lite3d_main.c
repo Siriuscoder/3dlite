@@ -98,13 +98,18 @@ int lite3d_main(const lite3d_global_settings *settings)
 
     if (SDL_SetThreadPriority(SDL_THREAD_PRIORITY_HIGH))
     {
-        SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION, "Could not insrease thread priority %s",
+        SDL_LogWarn(
+            SDL_LOG_CATEGORY_APPLICATION,
+            "Could not insrease thread priority %s",
             SDL_GetError());
     }
 
     /* setup video */
     if (!lite3d_video_open(&gGlobalSettings.videoSettings, settings->logMuteStd))
     {
+        SDL_LogWarn(
+            SDL_LOG_CATEGORY_APPLICATION,
+            "Could not setup video");
         ret = LITE3D_FALSE;
         goto ret3;
     }
@@ -112,6 +117,10 @@ int lite3d_main(const lite3d_global_settings *settings)
     /* setup textures technique */
     if (!lite3d_texture_technique_init(&gGlobalSettings.textureSettings))
     {
+        SDL_LogWarn(
+            SDL_LOG_CATEGORY_APPLICATION,
+            "Could not setup textures technique "
+            "(lite3d_texture_technique_init)");
         ret = LITE3D_FALSE;
         goto ret2;
     }
@@ -119,6 +128,9 @@ int lite3d_main(const lite3d_global_settings *settings)
     /* setup textures technique */
     if (!lite3d_vbo_technique_init())
     {
+        SDL_LogWarn(
+            SDL_LOG_CATEGORY_APPLICATION,
+            "Could not setup textures technique (lite3d_vbo_technique_init)");
         ret = LITE3D_FALSE;
         goto ret1;
     }
@@ -126,6 +138,9 @@ int lite3d_main(const lite3d_global_settings *settings)
     /* setup textures technique */
     if (!lite3d_vao_technique_init())
     {
+        SDL_LogWarn(
+            SDL_LOG_CATEGORY_APPLICATION,
+            "Could not setup textures technique (lite3d_vao_technique_init)");
         ret = LITE3D_FALSE;
         goto ret1;
     }
@@ -133,12 +148,18 @@ int lite3d_main(const lite3d_global_settings *settings)
     /* setup shaders technique */
     if (!lite3d_shader_program_technique_init())
     {
+        SDL_LogWarn(
+            SDL_LOG_CATEGORY_APPLICATION,
+            "Could not setup shaders technique");
         ret = LITE3D_FALSE;
         goto ret1;
     }
 
     if (!lite3d_timer_technique_init())
     {
+        SDL_LogWarn(
+            SDL_LOG_CATEGORY_APPLICATION,
+            "Could not setup lite3d_timer_technique_init");
         ret = LITE3D_FALSE;
         goto ret1;
     }
@@ -148,6 +169,9 @@ int lite3d_main(const lite3d_global_settings *settings)
 
     if (!lite3d_framebuffer_technique_init())
     {
+        SDL_LogWarn(
+            SDL_LOG_CATEGORY_APPLICATION,
+            "Could not setup lite3d_framebuffer_technique_init");
         ret = LITE3D_FALSE;
         goto ret1;
     }
