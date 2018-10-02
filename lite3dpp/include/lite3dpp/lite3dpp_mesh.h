@@ -52,7 +52,7 @@ namespace lite3dpp
         template<class V, class Indx>
         void addTriangleMeshChunk(const typename stl<V>::vector &vertices,
             const typename stl<Indx>::vector &indices, const BufferLayout &layout, 
-            int indexSize, int mode = LITE3D_VBO_DYNAMIC_DRAW)
+            int indexSize, VBO::VBOMode mode = VBO::ModeDynamicDraw)
         {
             if(!lite3d_mesh_indexed_extend_from_memory(&mMesh, &vertices[0], vertices.size(),
                 &layout[0], layout.size(), &indices[0], indices.size(), indexSize, mode))
@@ -61,7 +61,7 @@ namespace lite3dpp
 
         template<class V>
         void addTriangleMeshChunk(const typename stl<V>::vector &vertices,
-            const BufferLayout &layout, int mode = LITE3D_VBO_DYNAMIC_DRAW)
+            const BufferLayout &layout, VBO::VBOMode mode = VBO::ModeDynamicDraw)
         {
             if(!lite3d_mesh_extend_from_memory(&mMesh, &vertices[0], vertices.size(),
                 &layout[0], layout.size(), mode))

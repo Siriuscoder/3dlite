@@ -22,10 +22,12 @@
 #include <lite3dpp/lite3dpp_common.h>
 #include <lite3dpp/lite3dpp_resource.h>
 #include <lite3dpp/lite3dpp_camera.h>
+#include <lite3dpp/lite3dpp_observer.h>
 
 namespace lite3dpp
 {
-    class LITE3DPP_EXPORT RenderTarget : public ConfigurableResource, public Noncopiable
+    class LITE3DPP_EXPORT RenderTarget : public Observable<RenderTargetObserver>, 
+        public ConfigurableResource, public Noncopiable
     {
     public:
 
@@ -66,6 +68,9 @@ namespace lite3dpp
         void removeCamera(Camera *camera, int priority);
 
     protected:
+
+        static int beginUpdate(lite3d_render_target *target);
+        static void postUpdate(lite3d_render_target *target);
 
         lite3d_render_target *mRenderTargetPtr;
     };

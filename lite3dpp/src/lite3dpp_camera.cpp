@@ -73,6 +73,17 @@ namespace lite3dpp
         lite3d_camera_set_rotation(&mCamera, &orietation);
     }
 
+    void Camera::setDirection(const kmVec3 &direction)
+    {
+        kmQuaternion rot;
+        kmVec3 up = {
+            0.0f, 0.0f, 1.0f
+        };
+
+        kmQuaternionLookRotation(&rot, &direction, &up);
+        setRotation(rot);
+    }
+
     void Camera::rotate(const kmQuaternion &orietation)
     {
         lite3d_camera_set_rotation(&mCamera, &orietation);

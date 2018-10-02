@@ -83,6 +83,7 @@ namespace lite3dpp
         void lookAt(const kmVec3 &pointTo);
         void setPosition(const kmVec3 &position);
         void setRotation(const kmQuaternion &orietation);
+        void setDirection(const kmVec3 &direction);
         void rotate(const kmQuaternion &orietation);
         void yaw(float angle);
         void pitch(float angle);

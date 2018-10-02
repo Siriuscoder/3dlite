@@ -31,7 +31,15 @@ namespace lite3dpp
         BufferScopedMapper(const BufferScopedMapper &other);
         
     public:
-        BufferScopedMapper(lite3d_vbo &source, uint16_t lockType);
+
+        enum BufferScopedMapperLockType : uint16_t
+        {
+            LockTypeRead = LITE3D_VBO_MAP_READ_ONLY,
+            LockTypeWrite = LITE3D_VBO_MAP_WRITE_ONLY,
+            LockTypeReadWrite = LITE3D_VBO_MAP_READ_WRITE
+        };
+
+        BufferScopedMapper(lite3d_vbo &source, BufferScopedMapperLockType lockType);
         BufferScopedMapper(BufferScopedMapper &&other);
         ~BufferScopedMapper();
 

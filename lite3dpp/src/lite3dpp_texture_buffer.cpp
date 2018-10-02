@@ -214,7 +214,7 @@ namespace lite3dpp
         }
     }
     
-    BufferScopedMapper TextureBuffer::map(uint16_t lockType)
+    BufferScopedMapper TextureBuffer::map(BufferScopedMapper::BufferScopedMapperLockType lockType)
     {
         if (getState() != AbstractResource::LOADED)
             LITE3D_THROW(getName() << " resource unavailable");

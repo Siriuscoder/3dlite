@@ -104,6 +104,16 @@ namespace lite3dpp
         virtual void beginSecondStageRender(Scene *scene, Camera *camera) {}
     };
 
+    class RenderTargetObserver
+    {
+    public:
+
+        virtual ~RenderTargetObserver() {}
+
+        virtual bool beginUpdate(RenderTarget *rt) { return true; }
+        virtual void postUpdate(RenderTarget *rt) {}
+    };
+
 #define LITE3D_EXT_OBSERVER_NOTIFY(obj, func)                                     { for(auto o : (obj)->getObservers()) o->func(); }
 #define LITE3D_EXT_OBSERVER_NOTIFY_1(obj, func, p1)                               { for(auto o : (obj)->getObservers()) o->func(p1); }
 #define LITE3D_EXT_OBSERVER_NOTIFY_2(obj, func, p1, p2)                           { for(auto o : (obj)->getObservers()) o->func(p1, p2); }

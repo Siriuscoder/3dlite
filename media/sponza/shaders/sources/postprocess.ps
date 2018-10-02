@@ -1,6 +1,7 @@
 #include "sponzamat:shaders/sources/common/version.def"
 
 uniform sampler2D combined;
+uniform sampler2D shadowmap;
 uniform int FXAA;
 uniform float GammaFactor;
 
@@ -22,11 +23,12 @@ const vec3 correction = vec3(0.95, 0.99, 1.04);
 
 void main()
 {
-    vec2 sr = textureSize(combined, 0);
+    //vec2 sr = textureSize(combined, 0);
     // apply FXAA
-    vec4 finalColor = FXAA > 0 ? fxaa(combined, iuv * sr.xy, sr.xy, irgbNW, irgbNE, irgbSW, irgbSE, irgbM) : texture2D(combined, iuv);
+    //vec4 finalColor = FXAA > 0 ? fxaa(combined, iuv * sr.xy, sr.xy, irgbNW, irgbNE, irgbSW, irgbSE, irgbM) : texture2D(combined, iuv);
 
     // apply gamma correction 
-    finalColor.rgb = pow(finalColor.rgb, vec3(1/GammaFactor));
-    fragColor = vec4(finalColor.rgb * correction, 1.0);
+    //finalColor.rgb = pow(finalColor.rgb, vec3(1/GammaFactor));
+    //fragColor = vec4(finalColor.rgb * correction, 1.0);
+    fragColor = vec4(texture2D(shadowmap, iuv).xxx, 1.0);
 }

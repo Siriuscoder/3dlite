@@ -16,6 +16,7 @@
  *	along with Lite3D.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
 #include <SDL_assert.h>
+#include <SDL_log.h>
 
 #include <algorithm>
 
@@ -155,12 +156,39 @@ namespace lite3dpp
     void RenderTarget::resize(int32_t width, int32_t height)
     {}
 
+    int RenderTarget::beginUpdate(lite3d_render_target *target)
+    {
+        try
+        {
+            LITE3D_EXT_OBSERVER_NOTIFY_CHECK_1(reinterpret_cast<RenderTarget *>(target->userdata), beginUpdate,
+                reinterpret_cast<RenderTarget *>(target->userdata));
+            LITE3D_EXT_OBSERVER_RETURN
+        }
+        catch (std::exception &ex)
+        {
+            SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION, ex.what());
+        }
+
+        return LITE3D_FALSE;
+    }
+
+    void RenderTarget::postUpdate(lite3d_render_target *target)
+    {
+        try
+        {
+            LITE3D_EXT_OBSERVER_NOTIFY_1(reinterpret_cast<RenderTarget *>(target->userdata), postUpdate,
+                reinterpret_cast<RenderTarget *>(target->userdata));
+        }
+        catch (std::exception &ex)
+        {
+            SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION, ex.what());
+        }
+    }
+
     WindowRenderTarget::WindowRenderTarget(const String &name, 
         const String &path, Main *main) : 
         RenderTarget(name, path, main)
-    {
-
-    }
+    {}
 
     WindowRenderTarget::~WindowRenderTarget()
     {}
@@ -169,6 +197,8 @@ namespace lite3dpp
     {
         mRenderTargetPtr = lite3d_render_target_screen_get();
         mRenderTargetPtr->userdata = this;
+        mRenderTargetPtr->preUpdate = beginUpdate;
+        mRenderTargetPtr->postUpdate = postUpdate;
     }
     
     void WindowRenderTarget::unloadImpl()

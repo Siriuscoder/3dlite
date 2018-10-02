@@ -1,0 +1,16 @@
+{
+    "Width": 2048,
+    "Height": 2048,
+    "BackgroundColor": [0.0, 0.0, 0.0, 1.0],
+    "Priority": 1, // render first
+    "CleanColorBuf": false,
+    "CleanDepthBuf": true,
+    "CleanStencilBuf": false,
+        
+    "DepthAttachments":
+    {
+        "TextureName": "ShadowMap.texture",
+        "TexturePath": "samples:textures/json/shadow_2k.json"
+    }
+}
+

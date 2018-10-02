@@ -29,7 +29,6 @@ namespace lite3dpp
         RenderTarget(name, path, main)
     {
         mRenderTargetPtr = &mRenderTarget;
-        mRenderTargetPtr->userdata = this;
     }
 
     TextureRenderTarget::~TextureRenderTarget()
@@ -54,6 +53,10 @@ namespace lite3dpp
         }
 
         lite3d_render_target_init(mRenderTargetPtr, width, height);
+        mRenderTargetPtr->userdata = this;
+        mRenderTargetPtr->preUpdate = beginUpdate;
+        mRenderTargetPtr->postUpdate = postUpdate;
+
         setBackgroundColor(helper.getVec4(L"BackgroundColor"));
         setBuffersCleanBit(helper.getBool(L"CleanColorBuf", true),
             helper.getBool(L"CleanDepthBuf", true), helper.getBool(L"CleanStencilBuf", true));
