@@ -70,8 +70,10 @@ namespace lite3dpp
 
         Scene &getScene();
 
-        inline void setEnabled(bool enabled)
-        { mCamera.cameraNode.enabled = enabled ? LITE3D_TRUE : LITE3D_FALSE; }
+        inline void disable()
+        { mCamera.cameraNode.enabled = LITE3D_FALSE; }
+        inline void enable()
+        { mCamera.cameraNode.enabled = LITE3D_TRUE; }
         inline void setCullFaceMode(CullFaceMode mode)
         { mCamera.cullFaceMode = mode; }
         

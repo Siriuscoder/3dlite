@@ -31,11 +31,6 @@
       "Name":"combined",
       "TextureName": "combined.texture",
       "Type":"sampler"
-    },
-    {
-      "Name":"shadowmap",
-      "TextureName": "ShadowMap.texture",
-      "Type":"sampler"
     }
   ]
 }
