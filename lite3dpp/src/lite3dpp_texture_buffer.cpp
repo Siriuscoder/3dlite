@@ -40,7 +40,7 @@ namespace lite3dpp
         if (helper.getString(L"BufferFormat").size() > 0)
         {
             uint16_t tbf = 0;
-            String tbfString = helper.getString(L"BufferFormat");
+            String tbfString = helper.getUpperString(L"BufferFormat");
 
             if (tbfString == "R8")
                 tbf = LITE3D_TB_R8;

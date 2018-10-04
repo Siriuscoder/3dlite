@@ -153,6 +153,19 @@ namespace lite3dpp
         return inverseRot;
     }
 
+    kmMat4 Camera::getTransformMatrix()
+    {
+        lite3d_scene_node_update(&mCamera.cameraNode);
+        return mCamera.cameraNode.worldView;
+    }
+
+    kmMat4 Camera::getProjTransformMatrix()
+    {
+        kmMat4 result = getTransformMatrix();
+        kmMat4Multiply(&result, &mCamera.projection, &result);
+        return result;
+    }
+
     bool Camera::inFrustum(const lite3d_bounding_vol &vol) const
     {
         return lite3d_frustum_test_sphere(&mCamera.frustum, &vol) == LITE3D_TRUE;

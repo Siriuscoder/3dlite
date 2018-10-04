@@ -81,6 +81,8 @@ namespace lite3dpp
         { return mCamera.cameraNode.position; }
         kmQuaternion getRotation() const;
         kmVec3 getDirection() const;
+        kmMat4 getTransformMatrix();
+        kmMat4 getProjTransformMatrix();
 
         void lookAt(const kmVec3 &pointTo);
         void setPosition(const kmVec3 &position);
@@ -102,6 +104,7 @@ namespace lite3dpp
         void linkWithSceneObject(const SceneObject &sceneObj);
         bool inFrustum(const lite3d_bounding_vol &vol) const;
         bool inFrustum(const lite3d_light_params &lp) const;
+
 
     private:
 

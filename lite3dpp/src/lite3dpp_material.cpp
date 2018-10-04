@@ -91,10 +91,26 @@ namespace lite3dpp
             setPassProgram(passNo, mMain->getResourceManager()->queryResource<ShaderProgram>(programJson.getString(L"Name"),
                 programJson.getString(L"Path")));
             
-            lite3dpp::String bMode = passJson.getString(L"BlendingMode", "traditional");
-            setPassBlendMode(passNo, passJson.getBool(L"Blending", false), 
-                bMode == "traditional" ? LITE3D_BLENDING_MODE_TRADITIONAL : 
-               (bMode == "additive" ? LITE3D_BLENDING_MODE_ADDITIVE : LITE3D_BLENDING_MODE_TRADITIONAL_WITH_ALPHA_BLEND));
+            lite3dpp::String bMode = passJson.getUpperString(L"BlendingMode", "TRADITIONAL");
+            if (bMode == "TRADITIONAL")
+            {
+                setPassBlendMode(passNo, passJson.getBool(L"Blending", false), 
+                    LITE3D_BLENDING_MODE_TRADITIONAL);
+            }
+            else if (bMode == "ADDITIVE")
+            {
+                setPassBlendMode(passNo, passJson.getBool(L"Blending", false), 
+                    LITE3D_BLENDING_MODE_ADDITIVE);
+            }
+            else if (bMode == "TRADITIONALWITHALPHA")
+            {
+                setPassBlendMode(passNo, passJson.getBool(L"Blending", false), 
+                    LITE3D_BLENDING_MODE_TRADITIONAL_WITH_ALPHA_BLEND);
+            }
+            else
+            {
+                LITE3D_THROW(getName() << " unsupported BlendingMode");
+            }
 
             parseParameteres(passJson, passNo);
         }

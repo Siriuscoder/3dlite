@@ -41,10 +41,12 @@ public:
         mShadowMap = getMain().getResourceManager()->queryResource<TextureRenderTarget>("RenderShadowMap");
         mShadowMap->addObserver(this);
 
-        Camera *shadowPassCamera = getMain().getCamera("ShadowCamera");
-        shadowPassCamera->setDirection(sunLightDirection);
-        shadowPassCamera->setCullFaceMode(Camera::CullFaceFront);
+        Camera *shadowView = getMain().getCamera("ShadowCamera");
+        shadowView->setDirection(sunLightDirection);
+        shadowView->setCullFaceMode(Camera::CullFaceFront);
+        
 
+        lite3dpp::Material::setFloatm4GlobalParameter("shadowMatrix", shadowView->getProjTransformMatrix());
         lite3dpp::Material::setIntGlobalParameter("FXAA", 1);
         lite3dpp::Material::setFloatv3GlobalParameter("eye", getMainCamera().getPosition());
 
