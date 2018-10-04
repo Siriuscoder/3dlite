@@ -35,7 +35,7 @@ float shadow_func()
     float closestDepth = texture(shadowmap, psf.xy).r;
     float currentDepth = psf.z;
     
-    return currentDepth > closestDepth  ? 1.0 : 0.0;
+    return currentDepth < closestDepth  ? 0.8 : 0.0;
 }
 
 bool vec3zero(vec3 vec)
@@ -51,11 +51,11 @@ void main()
     vec3 spec = vec3(0.0, 0.0, 0.0);
 
     // sampling diffuse color 
-    vec4 fragDiffuse = texture2D(diffuse, tc);
+    vec4 fragDiffuse = texture(diffuse, tc);
 
 #ifdef NORMAL_MAP
     // sampling normal from normal map
-    vec4 nval = texture2D(normals, tc);
+    vec4 nval = texture(normals, tc);
     // put normal in [-1,1] range in tangent space 
     // and trasform normal to world space 
     nw = normalize(itbn * normalize(2*nval.rgb-1));
@@ -66,7 +66,7 @@ void main()
 #endif
 
 #ifdef SPECULAR_MAP
-    spec = texture2D(specular, tc).xyz;
+    spec = texture(specular, tc).xyz;
 #endif
 
     //vec3 linearSpec;

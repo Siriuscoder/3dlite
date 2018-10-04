@@ -1,6 +1,6 @@
 {
     // common settings
-    "LogLevel": 3,
+    "LogLevel": 1,
     "LogFlushAlways": false,
     "LogFile": "lite3d.log",
     "TextureSettings": {
@@ -32,7 +32,7 @@
         },
         {
             "Name": "sponzamat",
-            "FileCacheMaxSize": 1024000,
+            "FileCacheMaxSize": 52428800,
             "Path": "sponza/"
         }
     ],

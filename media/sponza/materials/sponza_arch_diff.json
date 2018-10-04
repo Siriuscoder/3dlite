@@ -48,6 +48,9 @@
           "Type":"sampler"
         },
         {
+          "Name":"normalMatrix"
+        },
+        {
           "Name":"eye",
           "Type":"v3",
           "Value":[
@@ -69,9 +72,6 @@
     },
     {
       "Name":"viewMatrix"
-    },
-    {
-      "Name":"normalMatrix"
     },
     {
       "Name":"modelMatrix"

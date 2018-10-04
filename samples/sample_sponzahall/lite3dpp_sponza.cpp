@@ -51,6 +51,8 @@ public:
         lite3dpp::Material::setFloatv3GlobalParameter("eye", getMainCamera().getPosition());
 
         addSunlight();
+
+        getMain().getResourceManager()->releaseFileCache();
     }
 
     void mainCameraChanged() override
