@@ -67,7 +67,7 @@ int lite3d_check_vertex_buffer_object()
 #ifdef GLES
     return LITE3D_TRUE;
 #else
-    return GLEW_ARB_vertex_buffer_object;
+    return GL_ARB_vertex_buffer_object;
 #endif
 }
 

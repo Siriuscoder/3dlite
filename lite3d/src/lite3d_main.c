@@ -149,6 +149,15 @@ int lite3d_main(const lite3d_global_settings *settings)
         goto ret_video_close;
     }
 
+    /* setup textures technique */
+    if (!lite3d_vbo_technique_init())
+    {
+        SDL_LogWarn(
+            SDL_LOG_CATEGORY_APPLICATION,
+            "Could not setup VBO technique");
+        goto ret_texture_shut;
+    }
+
     /* setup vao technique */
     if (!lite3d_vao_technique_init())
     {

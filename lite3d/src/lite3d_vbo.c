@@ -14,7 +14,7 @@
  *
  *	You should have received a copy of the GNU General Public License
  *	along with Lite3D.  If not, see <http://www.gnu.org/licenses/>.
- *******************************************************************************/
+ *****************************************************************************/
 #include <string.h>
 
 #include <SDL_log.h>
@@ -99,11 +99,13 @@ static int vbo_buffer_extend(uint32_t vboID, size_t expandSize, uint16_t access)
 {
     int32_t originSize;
     uint32_t tmpVbo;
-    
+
     if (!lite3d_check_copy_buffer())
     {
-        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
-            "%s: Ability of fast coping buffers via GPU memory not supported", LITE3D_CURRENT_FUNCTION);
+        SDL_LogError(
+            SDL_LOG_CATEGORY_APPLICATION,
+            "%s: Ability of fast coping buffers via GPU memory not supported",
+            LITE3D_CURRENT_FUNCTION);
         return LITE3D_FALSE;
     }
 
@@ -112,10 +114,13 @@ static int vbo_buffer_extend(uint32_t vboID, size_t expandSize, uint16_t access)
 
     glGenBuffers(1, &tmpVbo);
     glBindBuffer(GL_COPY_WRITE_BUFFER, tmpVbo);
+
     /* allocate tmp buffer */
     glBufferData(GL_COPY_WRITE_BUFFER, originSize, NULL, GL_STATIC_COPY);
+
     /* copy data to tmp buffer */
-    glCopyBufferSubData(GL_COPY_READ_BUFFER, GL_COPY_WRITE_BUFFER, 0, 0, originSize);
+    glCopyBufferSubData(
+        GL_COPY_READ_BUFFER, GL_COPY_WRITE_BUFFER, 0, 0, originSize);
 
     if (lite3d_misc_check_gl_error())
     {
@@ -125,14 +130,18 @@ static int vbo_buffer_extend(uint32_t vboID, size_t expandSize, uint16_t access)
 
     glBindBuffer(GL_COPY_READ_BUFFER, tmpVbo);
     glBindBuffer(GL_COPY_WRITE_BUFFER, vboID);
+
     /* reallocate our buffer */
     glGetBufferParameteriv(GL_COPY_READ_BUFFER, GL_BUFFER_SIZE, &originSize);
     glBufferData(GL_COPY_WRITE_BUFFER, originSize + expandSize, NULL, access);
+
     /* copy data back to our buffer */
-    glCopyBufferSubData(GL_COPY_READ_BUFFER, GL_COPY_WRITE_BUFFER, 0, 0, originSize);
+    glCopyBufferSubData(
+        GL_COPY_READ_BUFFER, GL_COPY_WRITE_BUFFER, 0, 0, originSize);
 
     glBindBuffer(GL_COPY_READ_BUFFER, 0);
     glBindBuffer(GL_COPY_WRITE_BUFFER, 0);
+
     /* wait until async operation will be completed */
     glFinish();
     glDeleteBuffers(1, &tmpVbo);
@@ -145,61 +154,140 @@ int lite3d_vbo_technique_init(void)
     int var;
     if (!lite3d_check_vertex_buffer_object())
     {
-        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
-            "%s: GL_ARB_vertex_buffer_object not supported..", LITE3D_CURRENT_FUNCTION);
+        SDL_LogError(
+            SDL_LOG_CATEGORY_APPLICATION,
+            "%s: GL_ARB_vertex_buffer_object not supported...",
+            LITE3D_CURRENT_FUNCTION);
         return LITE3D_FALSE;
     }
-    
+
     if (!lite3d_check_map_buffer())
     {
-        SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
-            "%s: !!! Buffer mapping not supported !!!", LITE3D_CURRENT_FUNCTION);
+        SDL_LogWarn(
+            SDL_LOG_CATEGORY_APPLICATION,
+            "%s: !!! Buffer mapping not supported !!!",
+            LITE3D_CURRENT_FUNCTION);
     }
-    
+
     glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &var);
-    SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "GL_MAX_VERTEX_ATTRIBS: %d", var);
+
+    SDL_LogDebug(
+        SDL_LOG_CATEGORY_APPLICATION,
+        "GL_MAX_VERTEX_ATTRIBS: %d",
+        var);
+
     if (lite3d_check_uniform_buffer())
     {
         glGetIntegerv(GL_MAX_VERTEX_UNIFORM_BLOCKS, &var);
-        SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "GL_MAX_VERTEX_UNIFORM_BLOCKS: %d", var);
+        SDL_LogDebug(
+            SDL_LOG_CATEGORY_APPLICATION,
+            "GL_MAX_VERTEX_UNIFORM_BLOCKS: %d",
+            var);
+
         glGetIntegerv(GL_MAX_GEOMETRY_UNIFORM_BLOCKS, &var);
-        SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "GL_MAX_GEOMETRY_UNIFORM_BLOCKS: %d", var);
+        SDL_LogDebug(
+            SDL_LOG_CATEGORY_APPLICATION,
+            "GL_MAX_GEOMETRY_UNIFORM_BLOCKS: %d",
+            var);
+
         glGetIntegerv(GL_MAX_FRAGMENT_UNIFORM_BLOCKS, &var);
-        SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "GL_MAX_FRAGMENT_UNIFORM_BLOCKS: %d", var);
+        SDL_LogDebug(
+            SDL_LOG_CATEGORY_APPLICATION,
+            "GL_MAX_FRAGMENT_UNIFORM_BLOCKS: %d",
+            var);
+
         glGetIntegerv(GL_MAX_COMBINED_UNIFORM_BLOCKS, &var);
-        SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "GL_MAX_COMBINED_UNIFORM_BLOCKS: %d", var);
+        SDL_LogDebug(
+            SDL_LOG_CATEGORY_APPLICATION,
+            "GL_MAX_COMBINED_UNIFORM_BLOCKS: %d",
+            var);
+
         glGetIntegerv(GL_MAX_UNIFORM_BUFFER_BINDINGS, &var);
-        SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "GL_MAX_UNIFORM_BUFFER_BINDINGS: %d", var);
+        SDL_LogDebug(
+            SDL_LOG_CATEGORY_APPLICATION,
+            "GL_MAX_UNIFORM_BUFFER_BINDINGS: %d",
+            var);
+
         glGetIntegerv(GL_MAX_UNIFORM_BLOCK_SIZE, &var);
-        SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "GL_MAX_UNIFORM_BLOCK_SIZE: %d", var);
+        SDL_LogDebug(
+            SDL_LOG_CATEGORY_APPLICATION,
+            "GL_MAX_UNIFORM_BLOCK_SIZE: %d",
+            var);
+
         glGetIntegerv(GL_MAX_COMBINED_VERTEX_UNIFORM_COMPONENTS, &var);
-        SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "GL_MAX_COMBINED_VERTEX_UNIFORM_COMPONENTS: %d", var);
+        SDL_LogDebug(
+            SDL_LOG_CATEGORY_APPLICATION,
+            "GL_MAX_COMBINED_VERTEX_UNIFORM_COMPONENTS: %d",
+            var);
+
         glGetIntegerv(GL_MAX_COMBINED_GEOMETRY_UNIFORM_COMPONENTS, &var);
-        SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "GL_MAX_COMBINED_GEOMETRY_UNIFORM_COMPONENTS: %d", var);
+        SDL_LogDebug(
+            SDL_LOG_CATEGORY_APPLICATION,
+            "GL_MAX_COMBINED_GEOMETRY_UNIFORM_COMPONENTS: %d",
+            var);
+
         glGetIntegerv(GL_MAX_COMBINED_FRAGMENT_UNIFORM_COMPONENTS, &var);
-        SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "GL_MAX_COMBINED_FRAGMENT_UNIFORM_COMPONENTS: %d", var);
+        SDL_LogDebug(
+            SDL_LOG_CATEGORY_APPLICATION,
+            "GL_MAX_COMBINED_FRAGMENT_UNIFORM_COMPONENTS: %d",
+            var);
     }
-    
+
     if (lite3d_check_ssbo())
     {
         glGetIntegerv(GL_MAX_VERTEX_SHADER_STORAGE_BLOCKS, &var);
-        SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "GL_MAX_VERTEX_SHADER_STORAGE_BLOCKS: %d", var);
+        SDL_LogDebug(
+            SDL_LOG_CATEGORY_APPLICATION,
+            "GL_MAX_VERTEX_SHADER_STORAGE_BLOCKS: %d",
+             var);
+
         glGetIntegerv(GL_MAX_GEOMETRY_SHADER_STORAGE_BLOCKS, &var);
-        SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "GL_MAX_GEOMETRY_SHADER_STORAGE_BLOCKS: %d", var);
+        SDL_LogDebug(
+            SDL_LOG_CATEGORY_APPLICATION,
+            "GL_MAX_GEOMETRY_SHADER_STORAGE_BLOCKS: %d",
+             var);
+
         glGetIntegerv(GL_MAX_TESS_CONTROL_SHADER_STORAGE_BLOCKS, &var);
-        SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "GL_MAX_TESS_CONTROL_SHADER_STORAGE_BLOCKS: %d", var);
+        SDL_LogDebug(
+            SDL_LOG_CATEGORY_APPLICATION,
+            "GL_MAX_TESS_CONTROL_SHADER_STORAGE_BLOCKS: %d",
+             var);
+
         glGetIntegerv(GL_MAX_TESS_EVALUATION_SHADER_STORAGE_BLOCKS, &var);
-        SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "GL_MAX_TESS_EVALUATION_SHADER_STORAGE_BLOCKS: %d", var);
+        SDL_LogDebug(
+            SDL_LOG_CATEGORY_APPLICATION,
+            "GL_MAX_TESS_EVALUATION_SHADER_STORAGE_BLOCKS: %d",
+             var);
+
         glGetIntegerv(GL_MAX_FRAGMENT_SHADER_STORAGE_BLOCKS, &var);
-        SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "GL_MAX_FRAGMENT_SHADER_STORAGE_BLOCKS: %d", var);
+        SDL_LogDebug(
+            SDL_LOG_CATEGORY_APPLICATION,
+            "GL_MAX_FRAGMENT_SHADER_STORAGE_BLOCKS: %d",
+             var);
+
         glGetIntegerv(GL_MAX_COMPUTE_SHADER_STORAGE_BLOCKS, &var);
-        SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "GL_MAX_COMPUTE_SHADER_STORAGE_BLOCKS: %d", var);
+        SDL_LogDebug(
+            SDL_LOG_CATEGORY_APPLICATION,
+            "GL_MAX_COMPUTE_SHADER_STORAGE_BLOCKS: %d",
+             var);
+
         glGetIntegerv(GL_MAX_COMBINED_SHADER_STORAGE_BLOCKS, &var);
-        SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "GL_MAX_COMBINED_SHADER_STORAGE_BLOCKS: %d", var);
+        SDL_LogDebug(
+            SDL_LOG_CATEGORY_APPLICATION,
+            "GL_MAX_COMBINED_SHADER_STORAGE_BLOCKS: %d",
+             var);
+
         glGetIntegerv(GL_MAX_SHADER_STORAGE_BUFFER_BINDINGS, &var);
-        SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "GL_MAX_SHADER_STORAGE_BUFFER_BINDINGS: %d", var);
+        SDL_LogDebug(
+            SDL_LOG_CATEGORY_APPLICATION,
+            "GL_MAX_SHADER_STORAGE_BUFFER_BINDINGS: %d",
+             var);
+
         glGetIntegerv(GL_MAX_SHADER_STORAGE_BLOCK_SIZE, &var);
-        SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "GL_MAX_SHADER_STORAGE_BLOCK_SIZE: %d", var);
+        SDL_LogDebug(
+            SDL_LOG_CATEGORY_APPLICATION,
+            "GL_MAX_SHADER_STORAGE_BLOCK_SIZE: %d",
+             var);
     }
 
     return LITE3D_TRUE;
@@ -212,21 +300,29 @@ int lite3d_vbo_init(struct lite3d_vbo *vbo)
     memset(vbo, 0, sizeof (lite3d_vbo));
 
     lite3d_misc_gl_error_stack_clean();
+
     /* gen buffer for store data */
     glGenBuffers(1, &vbo->vboID);
+
     if (lite3d_misc_check_gl_error())
+    {
         return LITE3D_FALSE;
+    }
 
     vbo->role = GL_ARRAY_BUFFER;
+
     return LITE3D_TRUE;
 }
 
 int lite3d_ibo_init(struct lite3d_vbo *vbo)
 {
     if (!lite3d_vbo_init(vbo))
+    {
         return LITE3D_FALSE;
-    
+    }
+
     vbo->role = GL_ELEMENT_ARRAY_BUFFER;
+
     return LITE3D_TRUE;
 }
 
@@ -234,14 +330,19 @@ int lite3d_ssbo_init(struct lite3d_vbo *vbo)
 {
     if (!lite3d_check_ssbo())
     {
-        SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
-            "%s: Sorry, but SSBO not supported", LITE3D_CURRENT_FUNCTION);        
+        SDL_LogWarn(
+            SDL_LOG_CATEGORY_APPLICATION,
+            "%s: Sorry, but SSBO not supported",
+            LITE3D_CURRENT_FUNCTION);
+
         return LITE3D_FALSE;
     }
-    
+
     if (!lite3d_vbo_init(vbo))
+    {
         return LITE3D_FALSE;
-    
+    }
+
     vbo->role = GL_SHADER_STORAGE_BUFFER;
     return LITE3D_TRUE;
 }
@@ -250,15 +351,21 @@ int lite3d_ubo_init(struct lite3d_vbo *vbo)
 {
     if (!lite3d_check_uniform_buffer())
     {
-        SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
-            "%s: Sorry, but uniform buffers not supported", LITE3D_CURRENT_FUNCTION);        
+        SDL_LogWarn(
+            SDL_LOG_CATEGORY_APPLICATION,
+            "%s: Sorry, but uniform buffers not supported",
+            LITE3D_CURRENT_FUNCTION);
+
         return LITE3D_FALSE;
     }
-    
+
     if (!lite3d_vbo_init(vbo))
+    {
         return LITE3D_FALSE;
-    
+    }
+
     vbo->role = GL_UNIFORM_BUFFER;
+
     return LITE3D_TRUE;
 }
 
@@ -267,7 +374,9 @@ void lite3d_vbo_purge(struct lite3d_vbo *vbo)
     SDL_assert(vbo);
 
     if (vbo->vboID > 0)
+    {
         glDeleteBuffers(1, &vbo->vboID);
+    }
 
     vbo->vboID = 0;
     vbo->size = 0;
@@ -283,14 +392,19 @@ int lite3d_vbo_extend(struct lite3d_vbo *vbo, size_t addSize, uint16_t access)
     if (vbo->size > 0)
     {
         if (!vbo_buffer_extend(vbo->vboID, addSize, access))
+        {
             return LITE3D_FALSE;
+        }
+
         vbo->size += addSize;
     }
-    // relocate not needed, overwise may cause crash on some hardware
     else
     {
+        // relocate not needed, overwise may cause crash on some hardware
         if (!lite3d_vbo_buffer(vbo, NULL, addSize, access))
+        {
             return LITE3D_FALSE;
+        }
     }
 
     return LITE3D_TRUE;
@@ -302,11 +416,14 @@ void *lite3d_vbo_map(struct lite3d_vbo *vbo, uint16_t access)
 
     if (!lite3d_check_map_buffer())
     {
-        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
-            "%s: Ability of mapping buffers to host memory not supported", LITE3D_CURRENT_FUNCTION);
+        SDL_LogError(
+            SDL_LOG_CATEGORY_APPLICATION,
+            "%s: Ability of mapping buffers to host memory not supported",
+            LITE3D_CURRENT_FUNCTION);
+
         return NULL;
     }
-    
+
     SDL_assert(vbo);
     lite3d_misc_gl_error_stack_clean();
 
@@ -338,16 +455,21 @@ int lite3d_vbo_buffer(struct lite3d_vbo *vbo,
 
     glBindBuffer(vbo->role, vbo->vboID);
     if (lite3d_misc_check_gl_error())
+    {
         return LITE3D_FALSE;
+    }
 
     /* store data to GPU memory */
     vbo->access = access;
     glBufferData(vbo->role, size, buffer, access);
     if (lite3d_misc_check_gl_error())
+    {
         return LITE3D_FALSE;
+    }
 
     vbo->size = size;
     glBindBuffer(vbo->role, 0);
+
     return LITE3D_TRUE;
 }
 
@@ -361,7 +483,9 @@ int lite3d_vbo_subbuffer(struct lite3d_vbo *vbo,
     glBindBuffer(vbo->role, vbo->vboID);
     glBufferSubData(vbo->role, offset, size, buffer);
     if (lite3d_misc_check_gl_error())
+    {
         return LITE3D_FALSE;
+    }
 
     glBindBuffer(vbo->role, 0);
     return LITE3D_TRUE;
@@ -377,7 +501,9 @@ int lite3d_vbo_get_buffer(const struct lite3d_vbo *vbo,
     glBindBuffer(vbo->role, vbo->vboID);
     glGetBufferSubData(vbo->role, offset, size, buffer);
     if (lite3d_misc_check_gl_error())
+    {
         return LITE3D_FALSE;
+    }
 
     glBindBuffer(vbo->role, 0);
     return LITE3D_TRUE;
