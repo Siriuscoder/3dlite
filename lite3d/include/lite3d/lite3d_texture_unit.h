@@ -23,22 +23,24 @@
 #include <lite3d/lite3d_vbo.h>
 
 // Image types (IL enum compatible)
-#define LITE3D_IMAGE_ANY          0x0000
-#define LITE3D_IMAGE_BMP          0x0420  //Microsoft Windows Bitmap - .bmp extension
-#define LITE3D_IMAGE_JPG          0x0425  //JPEG - .jpg, .jpe and .jpeg extensions
-#define LITE3D_IMAGE_PNG          0x042A  //Portable Network Graphics - .png extension
-#define LITE3D_IMAGE_TGA          0x042D  //TrueVision Targa File - .tga, .vda, .icb and .vst extensions
-#define LITE3D_IMAGE_TIF          0x042E  //Tagged Image File Format - .tif and .tiff extensions
-#define LITE3D_IMAGE_GIF          0x0436  //Graphics Interchange Format - .gif extension
-#define LITE3D_IMAGE_DDS          0x0437  //DirectDraw Surface - .dds extension
-#define LITE3D_IMAGE_PSD          0x0439  //Adobe PhotoShop - .psd extension
-#define LITE3D_IMAGE_HDR          0x043F  //Radiance High Dynamic Range - .hdr extension
+#define LITE3D_IMAGE_ANY          0x00
+#define LITE3D_IMAGE_BMP          0x01  //Microsoft Windows Bitmap - .bmp extension
+#define LITE3D_IMAGE_JPG          0x02  //JPEG - .jpg, .jpe and .jpeg extensions
+#define LITE3D_IMAGE_PNG          0x03  //Portable Network Graphics - .png extension
+#define LITE3D_IMAGE_TGA          0x04  //TrueVision Targa File - .tga, .vda, .icb and .vst extensions
+#define LITE3D_IMAGE_TIF          0x05  //Tagged Image File Format - .tif and .tiff extensions
+#define LITE3D_IMAGE_GIF          0x06  //Graphics Interchange Format - .gif extension
+#define LITE3D_IMAGE_DDS          0x07  //DirectDraw Surface - .dds extension
+#define LITE3D_IMAGE_PSD          0x08  //Adobe PhotoShop - .psd extension
+#define LITE3D_IMAGE_HDR          0x09  //Radiance High Dynamic Range - .hdr extension
 
-#define LITE3D_TEXTURE_1D         0x0DE0
-#define LITE3D_TEXTURE_2D         0x0DE1
-#define LITE3D_TEXTURE_3D         0x806F
-#define LITE3D_TEXTURE_CUBE       0x8513
-#define LITE3D_TEXTURE_BUFFER     0x8C2A
+#define LITE3D_TEXTURE_1D               0x00
+#define LITE3D_TEXTURE_2D               0x01
+#define LITE3D_TEXTURE_3D               0x02
+#define LITE3D_TEXTURE_CUBE             0x03
+#define LITE3D_TEXTURE_BUFFER           0x04
+#define LITE3D_TEXTURE_2D_MULTISAMPLE   0x05
+#define LITE3D_TEXTURE_3D_MULTISAMPLE   0x06
 /* pre-loading texture manipulation */
 #define LITE3D_ALIENIFY_FILTER      0x0001
 #define LITE3D_BLURAVG_FILTER       0x0002
@@ -55,7 +57,7 @@
 
 #define LITE3D_MAX_FILTERS          10
 
-#define LITE3D_TEXTURE_QL_NICEST    0x0001
+#define LITE3D_TEXTURE_QL_NICEST    0x0001 // mipmapping + anisotropic filter
 #define LITE3D_TEXTURE_QL_LOW       0x0002
 #define LITE3D_TEXTURE_QL_MEDIUM    0x0003
 
@@ -205,7 +207,7 @@ LITE3D_CEXPORT int lite3d_texture_unit_from_resource(lite3d_texture_unit *textur
 /* set iformat = 0 to specify what internal format does not matter */
 LITE3D_CEXPORT int lite3d_texture_unit_allocate(lite3d_texture_unit *textureUnit, 
     uint32_t textureTarget, int8_t quality, uint8_t wrapping, uint16_t format,
-    uint16_t iformat, int32_t width, int32_t height, int32_t depth);
+    uint16_t iformat, int32_t width, int32_t height, int32_t depth, int32_t samples);
 
 /* update specified mipmap level */
 LITE3D_CEXPORT int lite3d_texture_unit_set_pixels(lite3d_texture_unit *textureUnit, 

@@ -205,6 +205,19 @@ int lite3d_check_renderbuffer_storage_multisample()
 #endif 
 }
 
+int lite3d_check_texture_multisample()
+{
+#ifdef GLES
+#   ifdef GL_ES_VERSION_2_0
+    return LITE3D_FALSE;
+#   else
+    return LITE3D_TRUE;
+#   endif
+#else
+    return GLEW_ARB_texture_multisample || GLEW_VERSION_3_2;
+#endif 
+}
+
 int lite3d_init_gl_extensions_binding()
 {
 #ifndef GLES
@@ -317,4 +330,16 @@ void glRenderbufferStorageMultisample_stub(GLenum target, GLsizei samples, GLenu
 {
     SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
         "%s: glRenderbufferStorageMultisample not supported..", LITE3D_CURRENT_FUNCTION);
+}
+
+void glTexImage2DMultisample_stub(GLenum target, GLsizei samples, GLenum internalformat, GLsizei width, GLsizei height, GLboolean fixedsamplelocations)
+{
+    SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
+        "%s: glTexImage2DMultisample not supported..", LITE3D_CURRENT_FUNCTION);
+}
+
+void glTexImage3DMultisample_stub(GLenum target, GLsizei samples, GLenum internalformat, GLsizei width, GLsizei height, GLsizei depth, GLboolean fixedsamplelocations)
+{
+    SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
+        "%s: glTexImage3DMultisample not supported..", LITE3D_CURRENT_FUNCTION);
 }

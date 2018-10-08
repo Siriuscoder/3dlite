@@ -350,7 +350,7 @@ int lite3d_framebuffer_setup(lite3d_framebuffer *fb,
                 {
                     glFramebufferTexture2D(GL_FRAMEBUFFER,
                         GL_COLOR_ATTACHMENT0 + i,
-                        colorAttachments[i]->textureTarget,
+                        GL_TEXTURE_2D,
                         colorAttachments[i]->textureID,
                         0);
                     colorAttachments[i]->isFbAttachment = LITE3D_TRUE;

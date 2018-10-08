@@ -142,7 +142,7 @@ namespace lite3dpp
             }
 
             if(!lite3d_texture_unit_allocate(&mTexture, textureType, quality, wrapping, textureFormat, helper.getInt(L"InternalFormat", 0),
-                width, height, depth))
+                width, height, depth, 1))
                 LITE3D_THROW(getName() << " failed to allocate new texture");
             
             if(helper.has(L"BlankColor"))

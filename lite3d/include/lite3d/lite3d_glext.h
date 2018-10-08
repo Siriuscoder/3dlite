@@ -37,6 +37,7 @@ int lite3d_check_ssbo();
 int lite3d_check_seamless_cube_map();
 int lite3d_check_geometry_shader();
 int lite3d_check_renderbuffer_storage_multisample();
+int lite3d_check_texture_multisample();
 
 
 /* stub functions */
@@ -51,6 +52,9 @@ void glUnmapBuffer_stub(GLenum target);
 void glGetBufferPointerv_stub(GLenum target, GLenum pname, void** params);
 void glTexBuffer_stub(GLenum target, GLenum internalFormat, GLuint buffer);
 void glRenderbufferStorageMultisample_stub(GLenum target, GLsizei samples, GLenum internalformat, GLsizei width, GLsizei height);
+void glTexImage2DMultisample_stub(GLenum target, GLsizei samples, GLenum internalformat, GLsizei width, GLsizei height, GLboolean fixedsamplelocations);
+void glTexImage3DMultisample_stub(GLenum target, GLsizei samples, GLenum internalformat, GLsizei width, GLsizei height, GLsizei depth, GLboolean fixedsamplelocations);
+
 
 #ifdef GLES
 
@@ -98,6 +102,8 @@ extern PFNGLVERTEXATTRIBDIVISORANGLEPROC glVertexAttribDivisorPtr;
 #   define glCompressedTexSubImage1D glCompressedTexSubImage1D_stub
 #   define glTexBuffer glTexBuffer_stub
 #   define glRenderbufferStorageMultisample glRenderbufferStorageMultisample_stub
+#   define glTexImage2DMultisample glTexImage2DMultisample_stub
+#   define glTexImage3DMultisample glTexImage3DMultisample_stub
 #endif
 
 #   define glBindVertexArray glBindVertexArrayPtr
