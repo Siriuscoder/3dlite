@@ -32,6 +32,8 @@ static int gMaxDrawBuffers = 1;
 static int gMaxFramebufferSize = 0;
 static int gMaxFramebufferSamples = 1;
 
+extern const GLenum textureTargetEnum[];
+
 #ifndef GLES
 static GLenum gDrawBuffersArr[16] = {
     GL_COLOR_ATTACHMENT0,
@@ -271,7 +273,7 @@ int lite3d_framebuffer_init(lite3d_framebuffer *fb,
 
     glGenFramebuffers(1, &fb->framebufferId);
     fb->status = LITE3D_FRAMEBUFFER_STATUS_EMPTY;
-    fb->internalFormat = GL_RGBA4;
+    fb->rbIntFormat = GL_RGBA4;
     if (lite3d_misc_check_gl_error())
     {
         glDeleteFramebuffers(1, &fb->framebufferId);
@@ -344,22 +346,12 @@ int lite3d_framebuffer_setup(lite3d_framebuffer *fb,
             fb->colorAttachmentsCount = 0;
             for (; i < colorAttachmentsCount; i++, fb->colorAttachmentsCount++)
             {
-                switch (colorAttachments[i]->textureTarget)
-                {
-                case LITE3D_TEXTURE_2D:
-                {
-                    glFramebufferTexture2D(GL_FRAMEBUFFER,
-                        GL_COLOR_ATTACHMENT0 + i,
-                        GL_TEXTURE_2D,
-                        colorAttachments[i]->textureID,
-                        0);
-                    colorAttachments[i]->isFbAttachment = LITE3D_TRUE;
-                }
-                break;
-                default:
-                    /* other texture types not supported yet */
-                    return LITE3D_FALSE;
-                }
+                glFramebufferTexture2D(GL_FRAMEBUFFER,
+                    GL_COLOR_ATTACHMENT0 + i,
+                    textureTargetEnum[colorAttachments[i]->textureTarget],
+                    colorAttachments[i]->textureID,
+                    0);
+                colorAttachments[i]->isFbAttachment = LITE3D_TRUE;
             }
         }
         else
@@ -371,11 +363,11 @@ int lite3d_framebuffer_setup(lite3d_framebuffer *fb,
             if (fb->samples > 1)
             {
                 glRenderbufferStorageMultisample(GL_RENDERBUFFER, fb->samples, 
-                    fb->internalFormat, fb->width, fb->height);
+                    fb->rbIntFormat, fb->width, fb->height);
             }
             else
             {
-                glRenderbufferStorage(GL_RENDERBUFFER, fb->internalFormat, fb->width,
+                glRenderbufferStorage(GL_RENDERBUFFER, fb->rbIntFormat, fb->width,
                     fb->height);
             }
 
@@ -398,11 +390,9 @@ int lite3d_framebuffer_setup(lite3d_framebuffer *fb,
     {
         if (depthAttachments)
         {
-            if (depthAttachments->textureTarget != LITE3D_TEXTURE_2D)
-                return LITE3D_FALSE;
-
             glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
-                GL_TEXTURE_2D, depthAttachments->textureID, 0);
+                textureTargetEnum[depthAttachments->textureTarget],
+                depthAttachments->textureID, 0);
             depthAttachments->isFbAttachment = LITE3D_TRUE;
         }
 #ifdef GL_DEPTH24_STENCIL8

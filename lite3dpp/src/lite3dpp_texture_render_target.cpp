@@ -67,7 +67,16 @@ namespace lite3dpp
                     targetJson.getString(L"TextureName"), targetJson.getString(L"TexturePath"))->getPtr());
             }
 
-            if (attachmentJson.getBool(L"Renderbuffer", false) || colorAttachments.size() > 0)
+            if (attachmentJson.getBool(L"Renderbuffer", false))
+            {
+                flags |= LITE3D_FRAMEBUFFER_USE_COLOR_BUFFER;
+                if (helper.has(L"RenderbufferInternalFormat"))
+                {
+                    mRenderTargetPtr->fb.rbIntFormat = helper.getInt(L"RenderbufferInternalFormat");
+                }
+            }
+
+            if (colorAttachments.size() > 0)
             {
                 flags |= LITE3D_FRAMEBUFFER_USE_COLOR_BUFFER;
             }
@@ -109,11 +118,6 @@ namespace lite3dpp
             break;
         }
 
-        if (helper.has(L"InternalFormat"))
-        {
-            mRenderTargetPtr->fb.internalFormat = helper.getInt(L"InternalFormat");
-        }
-
         /* setup render target framebuffer */
         if (!lite3d_framebuffer_setup(&mRenderTargetPtr->fb,
             colorAttachments.size() > 0 ? &colorAttachments[0] : NULL,
@@ -123,13 +127,15 @@ namespace lite3dpp
             LITE3D_THROW(getName() << " framebuffer setup failed.. ");
         }
 
-        lite3d_render_target_add(mRenderTargetPtr, helper.getInt(L"Priority"));
+        // -1 is detached render target
+        int32_t priority = helper.getInt(L"Priority", -1);
+        if (priority >= 0)
+            lite3d_render_target_add(mRenderTargetPtr, priority);
     }
 
     void TextureRenderTarget::unloadImpl()
     {
         lite3d_render_target_purge(mRenderTargetPtr);
     }
-
 }
 

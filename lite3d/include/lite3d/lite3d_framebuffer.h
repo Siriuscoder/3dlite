@@ -51,7 +51,7 @@ typedef struct lite3d_framebuffer
     int32_t width;
     uint8_t status;
     int32_t samples;
-    int32_t internalFormat;
+    int32_t rbIntFormat;
 } lite3d_framebuffer;
 
 LITE3D_CEXPORT int lite3d_framebuffer_technique_init(void);
