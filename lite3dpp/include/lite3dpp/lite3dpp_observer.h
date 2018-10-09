@@ -65,7 +65,7 @@ namespace lite3dpp
         Observers mObservers;
     };
 
-    class LifecycleObserver
+    class LITE3DPP_EXPORT LifecycleObserver
     {
     public:
 
@@ -78,7 +78,7 @@ namespace lite3dpp
         virtual void processEvent(SDL_Event *e) {}
     };
 
-    class SceneObserver
+    class LITE3DPP_EXPORT SceneObserver
     {
     public:
 
@@ -104,7 +104,7 @@ namespace lite3dpp
         virtual void beginSecondStageRender(Scene *scene, Camera *camera) {}
     };
 
-    class RenderTargetObserver
+    class LITE3DPP_EXPORT RenderTargetObserver
     {
     public:
 

@@ -26,13 +26,17 @@ namespace lite3dpp
 {
     TextureRenderTarget::TextureRenderTarget(const String &name, 
         const String &path, Main *main) : 
-        RenderTarget(name, path, main)
+        RenderTarget(name, path, main),
+        mRenderTargetBlitTo(nullptr)
     {
         mRenderTargetPtr = &mRenderTarget;
+        addObserver(this);
     }
 
     TextureRenderTarget::~TextureRenderTarget()
-    {}
+    {
+        removeObserver(this);
+    }
 
     void TextureRenderTarget::loadFromConfigImpl(const ConfigurationReader &helper)
     {
@@ -52,8 +56,8 @@ namespace lite3dpp
 
         lite3d_render_target_init(mRenderTargetPtr, width, height);
         mRenderTargetPtr->userdata = this;
-        mRenderTargetPtr->preUpdate = beginUpdate;
-        mRenderTargetPtr->postUpdate = postUpdate;
+        mRenderTargetPtr->preUpdate = RenderTarget::beginUpdate;
+        mRenderTargetPtr->postUpdate = RenderTarget::postUpdate;
 
         setBackgroundColor(helper.getVec4(L"BackgroundColor"));
         setBuffersCleanBit(helper.getBool(L"CleanColorBuf", true),
@@ -127,10 +131,34 @@ namespace lite3dpp
             LITE3D_THROW(getName() << " framebuffer setup failed.. ");
         }
 
+        if (helper.has(L"BlitResultTo"))
+        {
+            ConfigurationReader rtConf = helper.getObject(L"BlitResultTo");
+            if (rtConf.getString(L"Name") == "Window")
+                mRenderTargetBlitTo = mMain->window();
+            else
+            {
+                mRenderTargetBlitTo = mMain->getResourceManager()->queryResource<TextureRenderTarget>(
+                    rtConf.getString(L"Name"),
+                    rtConf.getString(L"Path"));
+            }
+        }
+
         // -1 is detached render target
         int32_t priority = helper.getInt(L"Priority", -1);
         if (priority >= 0)
             lite3d_render_target_add(mRenderTargetPtr, priority);
+    }
+
+    void TextureRenderTarget::postUpdate(RenderTarget *rt)
+    {
+        if (mRenderTargetBlitTo && mRenderTargetBlitTo->getPtr())
+        {
+            if (getPtr())
+            {
+                lite3d_framebuffer_blit(&getPtr()->fb, &mRenderTargetBlitTo->getPtr()->fb);
+            }
+        }
     }
 
     void TextureRenderTarget::unloadImpl()

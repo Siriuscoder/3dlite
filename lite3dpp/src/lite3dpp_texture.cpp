@@ -59,9 +59,10 @@ namespace lite3dpp
         String textureTypeStr = helper.getString(L"TextureType", "2D");
         String filteringStr = helper.getString(L"Filtering", "None");
         String wrappingStr = helper.getString(L"Wrapping", "ClampToEdge");
-        uint32_t textureType = textureTypeStr == "1D" ? LITE3D_TEXTURE_1D : 
-            (textureTypeStr == "2D" ? LITE3D_TEXTURE_2D : 
-            (textureTypeStr == "Cube" ? LITE3D_TEXTURE_CUBE : LITE3D_TEXTURE_3D));
+        uint32_t textureType = textureTypeStr == "1D" ? LITE3D_TEXTURE_1D :
+            (textureTypeStr == "2D" ? LITE3D_TEXTURE_2D :
+            (textureTypeStr == "Cube" ? LITE3D_TEXTURE_CUBE :
+            (textureTypeStr == "3D" ? LITE3D_TEXTURE_3D : 0xff)));
         uint8_t quality = filteringStr == "None" ? LITE3D_TEXTURE_QL_LOW : 
             (filteringStr == "Linear" ? LITE3D_TEXTURE_QL_MEDIUM : 
             (filteringStr == "Trilinear" ? LITE3D_TEXTURE_QL_NICEST : 0));
@@ -141,8 +142,15 @@ namespace lite3dpp
                 height = mMain->window()->height() / scale;
             }
 
-            if(!lite3d_texture_unit_allocate(&mTexture, textureType, quality, wrapping, textureFormat, helper.getInt(L"InternalFormat", 0),
-                width, height, depth, 1))
+            int32_t samples;
+            if ((samples = helper.getInt(L"Samples", 1)) > 1)
+            {
+                textureType = textureType == LITE3D_TEXTURE_2D ? LITE3D_TEXTURE_2D_MULTISAMPLE :
+                    (textureType == LITE3D_TEXTURE_3D ? LITE3D_TEXTURE_3D_MULTISAMPLE : textureType);
+            }
+
+            if (!lite3d_texture_unit_allocate(&mTexture, textureType, quality, wrapping, textureFormat, helper.getInt(L"InternalFormat", 0),
+                width, height, depth, samples))
                 LITE3D_THROW(getName() << " failed to allocate new texture");
             
             if(helper.has(L"BlankColor"))

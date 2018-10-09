@@ -30,7 +30,7 @@ namespace lite3dpp
     RenderTarget::RenderTarget(const String &name, 
         const String &path, Main *main) : 
         ConfigurableResource(name, path, main, AbstractResource::RENDER_TARGET),
-        mRenderTargetPtr(NULL)
+        mRenderTargetPtr(nullptr)
     {}
 
     RenderTarget::~RenderTarget()

@@ -662,6 +662,13 @@ int lite3d_texture_unit_allocate(lite3d_texture_unit *textureUnit,
     textureUnit->imageHeight = height;
     textureUnit->imageDepth = depth;
 
+    if (textureTarget >= (sizeof(textureTargetEnum) / sizeof(textureTargetEnum[0])))
+    {
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "%s: Invalid texture target %d",
+            LITE3D_CURRENT_FUNCTION, textureTarget);
+        return LITE3D_FALSE;
+    }
+
     /* what BPP ? */
     switch (format)
     {
