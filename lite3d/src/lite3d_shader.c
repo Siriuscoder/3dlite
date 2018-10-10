@@ -56,7 +56,7 @@ int lite3d_shader_init(lite3d_shader *shader, uint8_t type)
     }
 
     shader->type = type;
-    if (lite3d_misc_check_gl_error())
+    if (LITE3D_CHECK_GL_ERROR)
     {
         glDeleteShader(shader->shaderID);
         shader->shaderID = 0;
@@ -81,7 +81,7 @@ int lite3d_shader_compile(
     glShaderSource(shader->shaderID, sources, source, length ? (GLint *)length : NULL);
     glCompileShader(shader->shaderID);
 
-    lite3d_misc_check_gl_error();
+    LITE3D_CHECK_GL_ERROR;
 
     /* check compile status */
     glGetShaderiv(shader->shaderID, GL_COMPILE_STATUS, &isCompiled);

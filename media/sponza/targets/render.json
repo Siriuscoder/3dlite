@@ -6,21 +6,23 @@
     "CleanColorBuf": true,
     "CleanDepthBuf": false,
     "CleanStencilBuf": false,
+    "MSAA": 8, // Enable RenderBuffer mutlisampling, not effect on texture attachments
     
     "ColorAttachments":
     {
-        "Attachments":
-        [
-            {
-                "TextureName": "combined.texture",
-                "TexturePath": "samples:textures/json/rgba32f.json"
-            }
-        ]
+        "Renderbuffer": true,
+        "RenderbufferInternalFormat": 34836 // LITE3D_TEXTURE_INTERNAL_RGBA32F 
     },
     
     "DepthAttachments":
     {
-        "TextureName": "prepassDepth.texture"
+        "TextureName": "prepassMultisample4Depth.texture"
+    },
+    
+    "BlitResultTo":
+    {
+        "Name": "PostRender",
+        "Path": "sponzamat:targets/postrender.json"
     }
 }
 

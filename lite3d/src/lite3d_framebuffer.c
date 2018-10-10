@@ -274,7 +274,7 @@ int lite3d_framebuffer_init(lite3d_framebuffer *fb,
     glGenFramebuffers(1, &fb->framebufferId);
     fb->status = LITE3D_FRAMEBUFFER_STATUS_EMPTY;
     fb->rbIntFormat = GL_RGBA4;
-    if (lite3d_misc_check_gl_error())
+    if (LITE3D_CHECK_GL_ERROR)
     {
         glDeleteFramebuffers(1, &fb->framebufferId);
         return LITE3D_FALSE;
@@ -379,7 +379,7 @@ int lite3d_framebuffer_setup(lite3d_framebuffer *fb,
         }
     }
 
-    if (lite3d_misc_check_gl_error())
+    if (LITE3D_CHECK_GL_ERROR)
     {
         lite3d_framebuffer_purge(fb);
         return LITE3D_FALSE;
@@ -451,7 +451,7 @@ int lite3d_framebuffer_setup(lite3d_framebuffer *fb,
     }
 
     /* check errors */
-    if (lite3d_misc_check_gl_error())
+    if (LITE3D_CHECK_GL_ERROR)
     {
         lite3d_framebuffer_purge(fb);
         return LITE3D_FALSE;
@@ -588,7 +588,7 @@ int lite3d_framebuffer_read(lite3d_framebuffer *fb,
     if (gCurrentFb)
         glBindFramebuffer(GL_FRAMEBUFFER, gCurrentFb->framebufferId);
     
-    return !lite3d_misc_check_gl_error();
+    return !LITE3D_CHECK_GL_ERROR;
 }
 
 size_t lite3d_framebuffer_size(lite3d_framebuffer *fb,
@@ -609,5 +609,5 @@ int lite3d_framebuffer_blit(lite3d_framebuffer *from, lite3d_framebuffer *to)
     glBlitFramebuffer(0, 0, from->width, from->height, 0, 0, 
         to->width, to->height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
 
-    return !lite3d_misc_check_gl_error();
+    return !LITE3D_CHECK_GL_ERROR;
 }

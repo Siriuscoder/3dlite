@@ -312,7 +312,7 @@ int lite3d_texture_unit_from_resource(lite3d_texture_unit *textureUnit,
     lite3d_misc_il_error_stack_clean();
     /* gen IL image */
     imageDesc = ilGenImage();
-    if (lite3d_misc_check_il_error())
+    if (LITE3D_CHECK_IL_ERROR)
         return LITE3D_FALSE;
 
     /* Bind IL image */
@@ -320,7 +320,7 @@ int lite3d_texture_unit_from_resource(lite3d_texture_unit *textureUnit,
     /* Load IL image from memory */
     if (!ilLoadL(imageTypeEnum[imageType], resource->fileBuff, (ILuint)resource->fileSize))
     {
-        lite3d_misc_check_il_error();
+        LITE3D_CHECK_IL_ERROR;
         return LITE3D_FALSE;
     }
 
@@ -409,7 +409,7 @@ int lite3d_texture_unit_from_resource(lite3d_texture_unit *textureUnit,
     if (textureUnit->loadedMipmaps == 0 && quality == LITE3D_TEXTURE_QL_NICEST)
         glGenerateMipmap(textureTargetEnum[textureTarget]);
 
-    if (lite3d_misc_check_gl_error())
+    if (LITE3D_CHECK_GL_ERROR)
     {
         ilDeleteImages(1, &imageDesc);
         lite3d_texture_unit_purge(textureUnit);
@@ -470,7 +470,7 @@ int lite3d_texture_unit_set_pixels(lite3d_texture_unit *textureUnit,
             break;
     }
     
-    return lite3d_misc_check_gl_error() ? LITE3D_FALSE : LITE3D_TRUE;
+    return LITE3D_CHECK_GL_ERROR ? LITE3D_FALSE : LITE3D_TRUE;
 }
 
 int lite3d_texture_unit_set_compressed_pixels(lite3d_texture_unit *textureUnit, 
@@ -522,7 +522,7 @@ int lite3d_texture_unit_set_compressed_pixels(lite3d_texture_unit *textureUnit,
             break;
     }
 
-    return lite3d_misc_check_gl_error() ? LITE3D_FALSE : LITE3D_TRUE;  
+    return LITE3D_CHECK_GL_ERROR ? LITE3D_FALSE : LITE3D_TRUE;  
 }
 
 int lite3d_texture_unit_get_level_size(lite3d_texture_unit *textureUnit, 
@@ -592,7 +592,7 @@ int lite3d_texture_unit_get_pixels(lite3d_texture_unit *textureUnit,
         GL_TEXTURE_CUBE_MAP_POSITIVE_X + cubeface : textureTargetEnum[textureUnit->textureTarget],
         level, textureUnit->texFormat, GL_UNSIGNED_BYTE, pixels);
 
-    return lite3d_misc_check_gl_error() ? LITE3D_FALSE : LITE3D_TRUE;
+    return LITE3D_CHECK_GL_ERROR ? LITE3D_FALSE : LITE3D_TRUE;
 #else
     SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "%s texture dumping is not supported..",
         LITE3D_CURRENT_FUNCTION);
@@ -624,7 +624,7 @@ int lite3d_texture_unit_get_compressed_pixels(lite3d_texture_unit *textureUnit,
     glGetCompressedTexImage(textureUnit->textureTarget == LITE3D_TEXTURE_CUBE ? 
         GL_TEXTURE_CUBE_MAP_POSITIVE_X + cubeface : textureTargetEnum[textureUnit->textureTarget],
         level, pixels);
-    return lite3d_misc_check_gl_error() ? LITE3D_FALSE : LITE3D_TRUE;
+    return LITE3D_CHECK_GL_ERROR ? LITE3D_FALSE : LITE3D_TRUE;
 #else
     SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "%s texture dumping does not supported..",
         LITE3D_CURRENT_FUNCTION);
@@ -735,8 +735,8 @@ int lite3d_texture_unit_allocate(lite3d_texture_unit *textureUnit,
     textureUnit->texFormat = format;
     textureUnit->texiFormat = internalFormat;
 
-    if (textureTarget >= LITE3D_TEXTURE_BUFFER && textureTarget <= LITE3D_TEXTURE_3D_MULTISAMPLE &&
-        quality == LITE3D_TEXTURE_QL_NICEST)
+    if ((textureTarget >= LITE3D_TEXTURE_BUFFER && textureTarget <= LITE3D_TEXTURE_3D_MULTISAMPLE) &&
+        quality != LITE3D_TEXTURE_QL_LOW)
     {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
             "%s: mipmaping not supported for %s",
@@ -745,7 +745,7 @@ int lite3d_texture_unit_allocate(lite3d_texture_unit *textureUnit,
 
     /* enable texture target */
     glGenTextures(1, &textureUnit->textureID);
-    if (lite3d_misc_check_gl_error())
+    if (LITE3D_CHECK_GL_ERROR)
     {
         return LITE3D_FALSE;
     }
@@ -753,55 +753,65 @@ int lite3d_texture_unit_allocate(lite3d_texture_unit *textureUnit,
     /* make texture active */
     glBindTexture(textureTargetEnum[textureTarget], textureUnit->textureID);
 
-    if (quality == LITE3D_TEXTURE_QL_NICEST)
+    if (textureTarget < LITE3D_TEXTURE_BUFFER)
     {
-        /* check  mipmaps consistency */
+        if (quality == LITE3D_TEXTURE_QL_NICEST)
+        {
+            /* check  mipmaps consistency */
 #ifdef GL_TEXTURE_MAX_LEVEL
-        glGetTexParameteriv(textureTargetEnum[textureTarget], GL_TEXTURE_MAX_LEVEL, &textureMaxLevels);
+            glGetTexParameteriv(textureTargetEnum[textureTarget], GL_TEXTURE_MAX_LEVEL, &textureMaxLevels);
 #else
-        textureMaxLevels = 1000;
+            textureMaxLevels = 1000;
 #endif
-        textureUnit->generatedMipmaps = max_mipmaps_count(width,
-            height, depth, textureMaxLevels);
+            textureUnit->generatedMipmaps = max_mipmaps_count(width,
+                height, depth, textureMaxLevels);
 
-        if (textureUnit->generatedMipmaps == 0)
+            if (textureUnit->generatedMipmaps == 0)
+            {
+                SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
+                    "%s: mipmaps not supported for this dimensions %dx%dx%d",
+                    texture_target_string(textureUnit),
+                    width, height, depth);
+
+                quality = LITE3D_TEXTURE_QL_MEDIUM;
+            }
+        }
+
+
+        textureUnit->minFilter = (quality == LITE3D_TEXTURE_QL_NICEST ?
+            GL_LINEAR_MIPMAP_LINEAR : (quality == LITE3D_TEXTURE_QL_LOW ?
+                GL_NEAREST : GL_LINEAR));
+
+        textureUnit->magFilter = (quality == LITE3D_TEXTURE_QL_LOW ?
+            GL_NEAREST : GL_LINEAR);
+
+        glTexParameteri(textureTargetEnum[textureTarget], GL_TEXTURE_MIN_FILTER, textureUnit->minFilter);
+        glTexParameteri(textureTargetEnum[textureTarget], GL_TEXTURE_MAG_FILTER, textureUnit->magFilter);
+        glTexParameteri(textureTargetEnum[textureTarget], GL_TEXTURE_WRAP_S,
+            textureUnit->wrapping == LITE3D_TEXTURE_REPEAT ? GL_REPEAT : GL_CLAMP_TO_EDGE);
+        glTexParameteri(textureTargetEnum[textureTarget], GL_TEXTURE_WRAP_T,
+            textureUnit->wrapping == LITE3D_TEXTURE_REPEAT ? GL_REPEAT : GL_CLAMP_TO_EDGE);
+        if (textureTarget == LITE3D_TEXTURE_CUBE)
         {
-            SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
-                "%s: mipmaps not supported for this dimensions %dx%dx%d",
-                texture_target_string(textureUnit),
-                width, height, depth);
+            glTexParameteri(textureTargetEnum[textureTarget], GL_TEXTURE_WRAP_R,
+                textureUnit->wrapping == LITE3D_TEXTURE_REPEAT ? GL_REPEAT : GL_CLAMP_TO_EDGE);
+        }
 
-            quality = LITE3D_TEXTURE_QL_MEDIUM;
+        if (quality == LITE3D_TEXTURE_QL_NICEST)
+        {
+            if (gTextureSettings.anisotropy > 1)
+            {
+                /* set anisotropic angle */
+                glTexParameteri(textureTargetEnum[textureTarget], GL_TEXTURE_MAX_ANISOTROPY_EXT,
+                    gTextureSettings.anisotropy);
+            }
         }
     }
 
-    textureUnit->minFilter = (quality == LITE3D_TEXTURE_QL_NICEST ?
-        GL_LINEAR_MIPMAP_LINEAR : (quality == LITE3D_TEXTURE_QL_LOW ?
-        GL_NEAREST : GL_LINEAR));
-
-    textureUnit->magFilter = (quality == LITE3D_TEXTURE_QL_LOW ?
-        GL_NEAREST : GL_LINEAR);
-
-    glTexParameteri(textureTargetEnum[textureTarget], GL_TEXTURE_MIN_FILTER, textureUnit->minFilter);
-    glTexParameteri(textureTargetEnum[textureTarget], GL_TEXTURE_MAG_FILTER, textureUnit->magFilter);
-    glTexParameteri(textureTargetEnum[textureTarget], GL_TEXTURE_WRAP_S,
-        textureUnit->wrapping == LITE3D_TEXTURE_REPEAT ? GL_REPEAT : GL_CLAMP_TO_EDGE);
-    glTexParameteri(textureTargetEnum[textureTarget], GL_TEXTURE_WRAP_T,
-        textureUnit->wrapping == LITE3D_TEXTURE_REPEAT ? GL_REPEAT : GL_CLAMP_TO_EDGE);
-    if (textureTarget == LITE3D_TEXTURE_CUBE)
+    if (LITE3D_CHECK_GL_ERROR)
     {
-        glTexParameteri(textureTargetEnum[textureTarget], GL_TEXTURE_WRAP_R,
-            textureUnit->wrapping == LITE3D_TEXTURE_REPEAT ? GL_REPEAT : GL_CLAMP_TO_EDGE);        
-    }
-    
-    if (quality == LITE3D_TEXTURE_QL_NICEST)
-    {
-        if (gTextureSettings.anisotropy > 1)
-        {
-            /* set anisotropic angle */
-            glTexParameteri(textureTargetEnum[textureTarget], GL_TEXTURE_MAX_ANISOTROPY_EXT,
-                gTextureSettings.anisotropy);
-        }
+        lite3d_texture_unit_purge(textureUnit);
+        return LITE3D_FALSE;
     }
 
     /* allocate texture memory */
@@ -868,7 +878,7 @@ int lite3d_texture_unit_allocate(lite3d_texture_unit *textureUnit,
         }
     }
 
-    if (lite3d_misc_check_gl_error())
+    if (LITE3D_CHECK_GL_ERROR)
     {
         lite3d_texture_unit_purge(textureUnit);
         return LITE3D_FALSE;
