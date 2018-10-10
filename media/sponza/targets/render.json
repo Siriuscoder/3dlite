@@ -16,7 +16,7 @@
     
     "DepthAttachments":
     {
-        "TextureName": "prepassMultisample4Depth.texture"
+        "TextureName": "prepassMultisample8Depth.texture"
     },
     
     "BlitResultTo":

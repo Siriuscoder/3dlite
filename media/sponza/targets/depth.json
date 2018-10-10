@@ -9,7 +9,7 @@
         
     "DepthAttachments":
     {
-        "TextureName": "prepassMultisample4Depth.texture",
+        "TextureName": "prepassMultisample8Depth.texture",
         "TexturePath": "samples:textures/json/multisample8Depth.json"
     }
 }
