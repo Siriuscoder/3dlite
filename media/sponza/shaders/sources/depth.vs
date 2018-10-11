@@ -8,7 +8,6 @@ layout(location = 3) in vec3 tang;
 uniform mat4 projectionMatrix;
 uniform mat4 viewMatrix;
 uniform mat4 modelMatrix;
-uniform mat3 normalMatrix;
 
 void main()
 {

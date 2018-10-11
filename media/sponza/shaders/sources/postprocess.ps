@@ -39,6 +39,6 @@ void main()
     //    finalColor = blur5(combined, iuv, sr, vec2(1, 1));
 
     // apply gamma correction 
-    finalColor.rgb = pow(finalColor.rgb, vec3(1/GammaFactor));
-    fragColor = vec4(finalColor.rgb * correction, 1.0);
+    finalColor.rgb = pow(finalColor.rgb, vec3(1/GammaFactor)) * correction;
+    fragColor = vec4(finalColor.rgb, 1.0);
 }

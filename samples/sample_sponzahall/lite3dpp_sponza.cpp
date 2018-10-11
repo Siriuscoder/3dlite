@@ -87,6 +87,20 @@ public:
         }
     }
 
+    void processEvent(SDL_Event *e) override
+    {
+        Sample::processEvent(e);
+        if (e->type == SDL_KEYDOWN)
+        {
+            if (e->key.keysym.sym == SDLK_o)
+            {
+                static bool fxaaEnabled = true;
+                fxaaEnabled = !fxaaEnabled;
+                lite3dpp::Material::setIntGlobalParameter("FXAA", fxaaEnabled ? 1 : 0);
+            }
+        }
+    }
+
 private:
 
     std::unique_ptr<LightSceneNode> mSunLight;
