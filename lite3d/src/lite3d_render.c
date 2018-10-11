@@ -534,7 +534,7 @@ void lite3d_render_target_screenshot(lite3d_render_target *rt, const char *filen
     
     lite3d_misc_il_error_stack_clean();
     imageId = ilGenImage();
-    if (lite3d_misc_check_il_error())
+    if (LITE3D_CHECK_IL_ERROR)
     {
         lite3d_free(pixels);
         return;
@@ -544,12 +544,12 @@ void lite3d_render_target_screenshot(lite3d_render_target *rt, const char *filen
     ilTexImage(rt->fb.width, rt->fb.height, 1, 3, IL_RGB, IL_UNSIGNED_BYTE, pixels);
     lite3d_free(pixels);
     
-    if (lite3d_misc_check_il_error())
+    if (LITE3D_CHECK_IL_ERROR)
         return;
 
     ilEnable(IL_FILE_OVERWRITE);
     ilSaveImage(filename);
-    if (lite3d_misc_check_il_error())
+    if (LITE3D_CHECK_IL_ERROR)
     {
         ilDeleteImage(imageId);
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,

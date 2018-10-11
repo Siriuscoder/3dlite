@@ -154,7 +154,7 @@ int lite3d_vao_init(struct lite3d_vao *vao)
     lite3d_misc_gl_error_stack_clean();
     glGenVertexArrays(1, &vao->vaoID);
 
-    return !lite3d_misc_check_gl_error();
+    return !LITE3D_CHECK_GL_ERROR;
 }
 
 void lite3d_vao_purge(struct lite3d_vao *vao)

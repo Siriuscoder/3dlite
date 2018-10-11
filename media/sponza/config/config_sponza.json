@@ -15,7 +15,6 @@
         "Caption": "Sponza",
         "ColorBits": 24,
         "Fullscreen": false,
-        "MSAA": 1,
         "VSync": false
     },
     // resource locations

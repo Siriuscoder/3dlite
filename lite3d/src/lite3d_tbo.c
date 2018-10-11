@@ -94,7 +94,7 @@ int lite3d_texture_buffer_init(lite3d_texture_unit *textureUnit,
     glBindTexture(textureUnit->textureTarget, textureUnit->textureID);
     glTexBuffer(textureUnit->textureTarget, bf, textureUnit->tbo.vboID);
     
-    if (lite3d_misc_check_gl_error())
+    if (LITE3D_CHECK_GL_ERROR)
     {
         lite3d_vbo_purge(&textureUnit->tbo);
         lite3d_texture_unit_purge(textureUnit);

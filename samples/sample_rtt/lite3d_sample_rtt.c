@@ -327,7 +327,7 @@ static int init(void *userdata)
     lite3d_texture_unit_compression(LITE3D_FALSE);
     if (!lite3d_texture_unit_allocate(&mRenderTextureUnit, LITE3D_TEXTURE_2D,
         LITE3D_TEXTURE_QL_MEDIUM, LITE3D_TEXTURE_REPEAT, LITE3D_TEXTURE_FORMAT_RGBA, 0,
-        RENDER_TEXTURE_WIDTH, RENDER_TEXTURE_HEIGHT, 1))
+        RENDER_TEXTURE_WIDTH, RENDER_TEXTURE_HEIGHT, 1, 1))
         return LITE3D_FALSE;
     /* then texture allocated we can enable it */
     lite3d_texture_unit_compression(LITE3D_TRUE);
@@ -378,8 +378,8 @@ static int init(void *userdata)
     lite3d_render_target_attach_camera(&mRTT, &mCamera01, &mScene, 1, 0, LITE3D_RENDER_DEFAULT);
     /* setup render target framebuffer */
     colorTextureArr[0] = &mRenderTextureUnit;
-    if (!lite3d_framebuffer_setup(&mRTT.fb, colorTextureArr, 1,
-        LITE3D_FALSE, NULL, LITE3D_TRUE, LITE3D_FALSE))
+    if (!lite3d_framebuffer_setup(&mRTT.fb, colorTextureArr, 1, NULL, 
+        LITE3D_FRAMEBUFFER_USE_COLOR_BUFFER | LITE3D_FRAMEBUFFER_USE_DEPTH_BUFFER))
         return LITE3D_FALSE;
 
     /* setup clear color to render texture */

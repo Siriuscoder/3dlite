@@ -1,0 +1,20 @@
+{
+    "Width": 0, // use screen wight
+    "Height": 0, // use screen height
+    "Priority": -1, // detached - do not render at all, but may use as blit target
+    "CleanColorBuf": false,
+    "CleanDepthBuf": false,
+    "CleanStencilBuf": false,
+    
+    "ColorAttachments":
+    {
+        "Attachments":
+        [
+            {
+                "TextureName": "combined.texture",
+                "TexturePath": "samples:textures/json/rgba32f.json"
+            }
+        ]
+    }
+}
+

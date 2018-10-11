@@ -103,7 +103,7 @@ static int check_pack_memory_limit(lite3d_pack *pack, size_t size)
     /* validate memory limit */
     while ((pack->memoryUsed + size) > pack->memoryLimit)
     {
-        SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
+        SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION,
             "%s: memory limit is reached "
             "(%d bytes vs %d bytes limit) cleanup old data..", LITE3D_CURRENT_FUNCTION,
             (int)(pack->memoryUsed + size), (int)pack->memoryLimit);

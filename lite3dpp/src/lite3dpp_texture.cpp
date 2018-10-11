@@ -52,62 +52,104 @@ namespace lite3dpp
     TextureImage::~TextureImage()
     {}
 
+    uint32_t TextureImage::textureType(const String &s)
+    {
+        return s == "1D" ? LITE3D_TEXTURE_1D :
+            (s == "2D" ? LITE3D_TEXTURE_2D :
+            (s == "CUBE" ? LITE3D_TEXTURE_CUBE :
+            (s == "3D" ? LITE3D_TEXTURE_3D : 0xff)));
+    }
+
+    uint32_t TextureImage::textureFiltering(const String &s)
+    {
+        return s == "NONE" ? LITE3D_TEXTURE_QL_LOW :
+            (s == "LINEAR" ? LITE3D_TEXTURE_QL_MEDIUM :
+            (s == "TRILINEAR" ? LITE3D_TEXTURE_QL_NICEST : 0));
+    }
+
+    uint32_t TextureImage::textureWrap(const String &s)
+    {
+        return s == "CLAMPTOEDGE" ? LITE3D_TEXTURE_CLAMP_TO_EDGE :
+            (s == "REPEAT" ? LITE3D_TEXTURE_REPEAT : 0);
+    }
+
+    uint32_t TextureImage::textureImageFormat(const String &s)
+    {
+        return s == "BMP" ? LITE3D_IMAGE_BMP :
+            (s == "JPG" ? LITE3D_IMAGE_JPG :
+            (s == "PNG" ? LITE3D_IMAGE_PNG :
+            (s == "TGA" ? LITE3D_IMAGE_TGA :
+            (s == "TIF" ? LITE3D_IMAGE_TIF :
+            (s == "GIF" ? LITE3D_IMAGE_GIF :
+            (s == "DDS" ? LITE3D_IMAGE_DDS :
+            (s == "PSD" ? LITE3D_IMAGE_PSD :
+            (s == "HDR" ? LITE3D_IMAGE_HDR :
+            (s == "ANY" ? LITE3D_IMAGE_ANY : 0)))))))));
+    }
+
+    uint32_t TextureImage::textureFilterType(const String &s)
+    {
+        return s == "ALIENIFY" ? LITE3D_ALIENIFY_FILTER :
+            (s == "BLURAVG" ? LITE3D_BLURAVG_FILTER :
+            (s == "BLURGAUSSIAN" ? LITE3D_BLURGAUSSIAN_FILTER :
+            (s == "CONTRAST" ? LITE3D_CONTRAST_FILTER :
+            (s == "GAMMACORRECT" ? LITE3D_GAMMACORRECT_FILTER :
+            (s == "MIRROR" ? LITE3D_MIRROR_FILTER :
+            (s == "FLIP" ? LITE3D_FLIP_FILTER :
+            (s == "NEGATIVE" ? LITE3D_NEGATIVE_FILTER :
+            (s == "NOISIFY" ? LITE3D_NOISIFY_FILTER :
+            (s == "PIXELIZE" ? LITE3D_PIXELIZE_FILTER :
+            (s == "WAVE" ? LITE3D_WAVE_FILTER :
+            (s == "SHARPEN" ? LITE3D_SHARPEN_FILTER : 0)))))))))));
+    }
+
+    uint32_t TextureImage::textureFormat(const String &s)
+    {
+        return s == "ALPHA" ? LITE3D_TEXTURE_FORMAT_ALPHA :
+            (s == "RGB" ? LITE3D_TEXTURE_FORMAT_RGB :
+            (s == "RGBA" ? LITE3D_TEXTURE_FORMAT_RGBA :
+            (s == "BRG" ? LITE3D_TEXTURE_FORMAT_BRG :
+            (s == "BRGA" ? LITE3D_TEXTURE_FORMAT_BRGA :
+            (s == "LUMINANCE" ? LITE3D_TEXTURE_FORMAT_LUMINANCE :
+            (s == "LUMINANCE_ALPHA" ? LITE3D_TEXTURE_FORMAT_LUMINANCE_ALPHA :
+            (s == "DEPTH" ? LITE3D_TEXTURE_FORMAT_DEPTH : 0)))))));
+    }
+
+    uint32_t TextureImage::textureInternalFormat(const String &s)
+    {
+        if (s.empty())
+            return 0;
+
+        return std::stoi(s);
+    }
+
     void TextureImage::loadFromConfigImpl(const ConfigurationReader &helper)
     {
         lite3d_texture_unit_compression(helper.getBool(L"Compression", true) ? LITE3D_TRUE : LITE3D_FALSE);
 
-        String textureTypeStr = helper.getString(L"TextureType", "2D");
-        String filteringStr = helper.getString(L"Filtering", "None");
-        String wrappingStr = helper.getString(L"Wrapping", "ClampToEdge");
-        uint32_t textureType = textureTypeStr == "1D" ? LITE3D_TEXTURE_1D : 
-            (textureTypeStr == "2D" ? LITE3D_TEXTURE_2D : 
-            (textureTypeStr == "Cube" ? LITE3D_TEXTURE_CUBE : LITE3D_TEXTURE_3D));
-        uint8_t quality = filteringStr == "None" ? LITE3D_TEXTURE_QL_LOW : 
-            (filteringStr == "Linear" ? LITE3D_TEXTURE_QL_MEDIUM : 
-            (filteringStr == "Trilinear" ? LITE3D_TEXTURE_QL_NICEST : 0));
-        uint8_t wrapping = wrappingStr == "ClampToEdge" ? LITE3D_TEXTURE_CLAMP_TO_EDGE : 
-            (wrappingStr == "Repeat" ? LITE3D_TEXTURE_REPEAT : 0);
+        uint32_t type = textureType(helper.getUpperString(L"TextureType", "2D"));
+        uint32_t quality = textureFiltering(helper.getUpperString(L"Filtering", "NONE"));
+        uint32_t wrapping = textureWrap(helper.getUpperString(L"Wrapping", "CLAMPTOEDGE"));
 
-
-        auto loadImage = [this, textureType, quality, wrapping](const ConfigurationReader &helper)
+        auto loadImage = [this, type, quality, wrapping](const ConfigurationReader &helper)
         {
-            String imageFormatStr = helper.getUpperString(L"ImageFormat", "ANY");
-            uint32_t imageType = imageFormatStr == "BMP" ? LITE3D_IMAGE_BMP : 
-                (imageFormatStr == "JPG" ? LITE3D_IMAGE_JPG : 
-                (imageFormatStr == "PNG" ? LITE3D_IMAGE_PNG : 
-                (imageFormatStr == "TGA" ? LITE3D_IMAGE_TGA : 
-                (imageFormatStr == "TIF" ? LITE3D_IMAGE_TIF :
-                (imageFormatStr == "GIF" ? LITE3D_IMAGE_GIF :
-                (imageFormatStr == "DDS" ? LITE3D_IMAGE_DDS : 
-                (imageFormatStr == "PSD" ? LITE3D_IMAGE_PSD : 
-                (imageFormatStr == "HDR" ? LITE3D_IMAGE_HDR : 
-                (imageFormatStr == "ANY" ? LITE3D_IMAGE_ANY : 0)))))))));
-
             lite3d_texture_technique_reset_filters();
             for(const ConfigurationReader &filterConfig : helper.getObjects(L"ProcessingFilters"))
             {
                 lite3d_image_filter filter;
-                String filterTypeStr = filterConfig.getUpperString(L"Type");
-                filter.filterID = filterTypeStr == "ALIENIFY" ? LITE3D_ALIENIFY_FILTER :
-                    (filterTypeStr == "BLURAVG" ? LITE3D_BLURAVG_FILTER :
-                    (filterTypeStr == "BLURGAUSSIAN" ? LITE3D_BLURGAUSSIAN_FILTER :
-                    (filterTypeStr == "CONTRAST" ? LITE3D_CONTRAST_FILTER : 
-                    (filterTypeStr == "GAMMACORRECT" ? LITE3D_GAMMACORRECT_FILTER :
-                    (filterTypeStr == "MIRROR" ? LITE3D_MIRROR_FILTER :
-                    (filterTypeStr == "FLIP" ? LITE3D_FLIP_FILTER :
-                    (filterTypeStr == "NEGATIVE" ? LITE3D_NEGATIVE_FILTER : 
-                    (filterTypeStr == "NOISIFY" ? LITE3D_NOISIFY_FILTER :
-                    (filterTypeStr == "PIXELIZE" ? LITE3D_PIXELIZE_FILTER :
-                    (filterTypeStr == "WAVE" ? LITE3D_WAVE_FILTER :
-                    (filterTypeStr == "SHARPEN" ? LITE3D_SHARPEN_FILTER : 0)))))))))));
-
+                filter.filterID = textureFilterType(filterConfig.getUpperString(L"Type"));
                 filter.param1 = (float)filterConfig.getDouble(L"Param1");
                 filter.param2 = (float)filterConfig.getDouble(L"Param2");
                 lite3d_texture_technique_add_image_filter(&filter);
             }
 
-            if(!lite3d_texture_unit_from_resource(&mTexture, mMain->getResourceManager()->loadFileToMemory(helper.getString(L"Image")),
-                imageType, textureType, quality, wrapping, helper.getInt(L"CubeFace")))
+            if(!lite3d_texture_unit_from_resource(&mTexture, 
+                mMain->getResourceManager()->loadFileToMemory(helper.getString(L"Image")),
+                textureImageFormat(helper.getUpperString(L"ImageFormat", "ANY")),
+                type, 
+                quality, 
+                wrapping, 
+                helper.getInt(L"CubeFace")))
                 LITE3D_THROW(getName() << ": failed to load texture");
         };
 
@@ -116,33 +158,38 @@ namespace lite3dpp
         if (helper.getString(L"Image").size() > 0)
             loadImage(helper);
         /* load cubemap texture */
-        else if (helper.getObjects(L"Image").size() > 0)
+        else if (cubeFaces.size() > 0)
             std::for_each(cubeFaces.begin(), cubeFaces.end(), loadImage);
         else
         {
-            String textureFormatStr = helper.getUpperString(L"TextureFormat", "RGB");
-            uint16_t textureFormat = textureFormatStr == "ALPHA" ? LITE3D_TEXTURE_FORMAT_ALPHA :
-                (textureFormatStr == "RGB" ? LITE3D_TEXTURE_FORMAT_RGB : 
-                (textureFormatStr == "RGBA" ? LITE3D_TEXTURE_FORMAT_RGBA : 
-                (textureFormatStr == "BRG" ? LITE3D_TEXTURE_FORMAT_BRG : 
-                (textureFormatStr == "BRGA" ? LITE3D_TEXTURE_FORMAT_BRGA : 
-                (textureFormatStr == "LUMINANCE" ? LITE3D_TEXTURE_FORMAT_LUMINANCE : 
-                (textureFormatStr == "LUMINANCE_ALPHA" ? LITE3D_TEXTURE_FORMAT_LUMINANCE_ALPHA :
-                (textureFormatStr == "DEPTH" ? LITE3D_TEXTURE_FORMAT_DEPTH : 0)))))));
-            
             int32_t width = helper.getInt(L"Width", 0), 
                 height = helper.getInt(L"Height", 0),
                 depth = helper.getInt(L"Depth", 1);
-            int32_t scale = helper.getInt(L"Scale", 1);
             /* use screen size if not specified */
             if(width == 0 && height == 0)
             {
+                int32_t scale = helper.getInt(L"Scale", 1);
                 width = mMain->window()->width() / scale;
                 height = mMain->window()->height() / scale;
             }
 
-            if(!lite3d_texture_unit_allocate(&mTexture, textureType, quality, wrapping, textureFormat, helper.getInt(L"InternalFormat", 0),
-                width, height, depth))
+            int32_t samples;
+            if ((samples = helper.getInt(L"Samples", 1)) > 1)
+            {
+                type = type == LITE3D_TEXTURE_2D ? LITE3D_TEXTURE_2D_MULTISAMPLE :
+                    (type == LITE3D_TEXTURE_3D ? LITE3D_TEXTURE_3D_MULTISAMPLE : type);
+            }
+
+            if (!lite3d_texture_unit_allocate(&mTexture, 
+                type, 
+                quality, 
+                wrapping, 
+                textureFormat(helper.getUpperString(L"TextureFormat", "RGB")),
+                textureInternalFormat(helper.getUpperString(L"InternalFormat")),
+                width, 
+                height, 
+                depth, 
+                samples))
                 LITE3D_THROW(getName() << " failed to allocate new texture");
             
             if(helper.has(L"BlankColor"))
