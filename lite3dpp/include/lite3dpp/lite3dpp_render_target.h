@@ -31,6 +31,18 @@ namespace lite3dpp
     {
     public:
 
+        enum TestFunc : uint32_t
+        {
+            TestFuncNever = LITE3D_TEST_NEVER,
+            TestFuncLess = LITE3D_TEST_LESS,
+            TestFuncEqual = LITE3D_TEST_EQUAL,
+            TestFuncLEqual = LITE3D_TEST_LEQUAL,
+            TestFuncGreater = LITE3D_TEST_GREATER,
+            TestFuncNotEqual = LITE3D_TEST_NOTEQUAL,
+            TestFuncGEqual = LITE3D_TEST_GEQUAL,
+            TestFuncAlways = LITE3D_TEST_ALWAYS
+        };
+
         RenderTarget(const String &name, 
             const String &path, Main *main);
         virtual ~RenderTarget();
@@ -52,9 +64,9 @@ namespace lite3dpp
         void stencilOutput(bool flag);
         /* Buffer testing control */
         void depthTest(bool flag);
-        void depthTestFunc(uint32_t func);
+        void depthTestFunc(TestFunc func);
         void stencilTest(bool flag);
-        void stencilTestFunc(uint32_t func, int32_t value);
+        void stencilTestFunc(TestFunc func, int32_t value);
         /* clean buffers immediately */
         void clear(bool color, bool depth, bool stencil);
         void saveScreenshot(const String &filename);

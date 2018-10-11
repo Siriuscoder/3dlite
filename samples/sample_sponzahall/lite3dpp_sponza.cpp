@@ -36,7 +36,7 @@ public:
 
         setMainCamera(getMain().getCamera("MyCamera"));
 
-        getMain().window()->depthTestFunc(LITE3D_TEST_LEQUAL);
+        getMain().window()->depthTestFunc(RenderTarget::TestFuncLEqual);
         // get shadowmap render target, it was been loaded with Sponza scene
         mShadowMap = getMain().getResourceManager()->queryResource<TextureRenderTarget>("RenderShadowMap");
         mShadowMap->addObserver(this);

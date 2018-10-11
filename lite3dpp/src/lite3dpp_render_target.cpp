@@ -106,7 +106,7 @@ namespace lite3dpp
         lite3d_depth_test(flag ? LITE3D_TRUE : LITE3D_FALSE);
     }
 
-    void RenderTarget::depthTestFunc(uint32_t func)
+    void RenderTarget::depthTestFunc(TestFunc func)
     {
         lite3d_depth_test_func(func);
     }
@@ -116,7 +116,7 @@ namespace lite3dpp
         lite3d_stencil_test(flag ? LITE3D_TRUE : LITE3D_FALSE);
     }
 
-    void RenderTarget::stencilTestFunc(uint32_t func, int32_t value)
+    void RenderTarget::stencilTestFunc(TestFunc func, int32_t value)
     {
         lite3d_stencil_test_func(func, value);
     }
