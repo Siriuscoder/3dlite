@@ -32,6 +32,8 @@ typedef struct lite3d_video_settings
     char caption[LITE3D_CAPTION_MAX];
     int8_t vsync;
     int8_t hidden;
+    int8_t glVersionMajor;
+    int8_t glVersionMinor;
 } lite3d_video_settings;
 
 LITE3D_CEXPORT int lite3d_video_open(lite3d_video_settings *settings, int hideConsole);

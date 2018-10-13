@@ -84,7 +84,23 @@ namespace lite3dpp
             videoSettings.getBool(L"Fullscreen", false) ? LITE3D_TRUE : LITE3D_FALSE;
         videoSettings.getString(L"Caption", "TEST window").copy(mSettings.videoSettings.caption,
             sizeof(mSettings.videoSettings.caption)-1);
-        mSettings.videoSettings.hidden = videoSettings.getBool(L"Hidden", false) ? LITE3D_TRUE : LITE3D_FALSE;
+
+        // GL Version
+        {
+            int8_t glVersionMajor = videoSettings.getInt(L"GLVersionMajor", 0);
+            int8_t glVersionMinor = videoSettings.getInt(L"GLVersionMinor", 0);
+
+            if (glVersionMajor && glVersionMinor)
+            {
+                mSettings.videoSettings.glVersionMajor = glVersionMajor;
+                mSettings.videoSettings.glVersionMinor = glVersionMinor;
+            }
+            else
+            {
+                mSettings.videoSettings.glVersionMajor = 3;
+                mSettings.videoSettings.glVersionMinor = 3;
+            }
+        }
 
         mSettings.renderLisneters.userdata = reinterpret_cast<void *> (this);
         mSettings.renderLisneters.preRender = Main::onInit;

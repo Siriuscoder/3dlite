@@ -152,14 +152,6 @@ static int vbo_buffer_extend(uint32_t vboID, size_t expandSize, uint16_t access)
 int lite3d_vbo_technique_init(void)
 {
     int var;
-    if (!lite3d_check_vertex_buffer_object())
-    {
-        SDL_LogError(
-            SDL_LOG_CATEGORY_APPLICATION,
-            "%s: GL_ARB_vertex_buffer_object not supported...",
-            LITE3D_CURRENT_FUNCTION);
-        return LITE3D_FALSE;
-    }
 
     if (!lite3d_check_map_buffer())
     {
