@@ -84,6 +84,7 @@ namespace lite3dpp
             videoSettings.getBool(L"Fullscreen", false) ? LITE3D_TRUE : LITE3D_FALSE;
         videoSettings.getString(L"Caption", "TEST window").copy(mSettings.videoSettings.caption,
             sizeof(mSettings.videoSettings.caption)-1);
+        mSettings.videoSettings.hidden = videoSettings.getBool(L"Hidden", false) ? LITE3D_TRUE : LITE3D_FALSE;
 
         // GL Version
         {
