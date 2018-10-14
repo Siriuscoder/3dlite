@@ -65,7 +65,7 @@ namespace lite3dpp
         Observers mObservers;
     };
 
-    class LifecycleObserver
+    class LITE3DPP_EXPORT LifecycleObserver
     {
     public:
 
@@ -78,7 +78,7 @@ namespace lite3dpp
         virtual void processEvent(SDL_Event *e) {}
     };
 
-    class SceneObserver
+    class LITE3DPP_EXPORT SceneObserver
     {
     public:
 
@@ -102,6 +102,16 @@ namespace lite3dpp
         virtual void endSceneRender(Scene *scene, Camera *camera) {}
         virtual void beginFirstStageRender(Scene *scene, Camera *camera) {}
         virtual void beginSecondStageRender(Scene *scene, Camera *camera) {}
+    };
+
+    class LITE3DPP_EXPORT RenderTargetObserver
+    {
+    public:
+
+        virtual ~RenderTargetObserver() {}
+
+        virtual bool beginUpdate(RenderTarget *rt) { return true; }
+        virtual void postUpdate(RenderTarget *rt) {}
     };
 
 #define LITE3D_EXT_OBSERVER_NOTIFY(obj, func)                                     { for(auto o : (obj)->getObservers()) o->func(); }

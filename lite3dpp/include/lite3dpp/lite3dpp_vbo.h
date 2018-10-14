@@ -25,6 +25,21 @@ namespace lite3dpp
     {
     public:
 
+        enum VBOMode : uint16_t
+        {
+            ModeStreamDraw = LITE3D_VBO_STREAM_DRAW,
+            ModeStreamRead = LITE3D_VBO_STREAM_READ,
+            ModeStreamCopy = LITE3D_VBO_STREAM_COPY,
+
+            ModeStaticDraw = LITE3D_VBO_STATIC_DRAW,
+            ModeStaticRead = LITE3D_VBO_STATIC_READ,
+            ModeStaticCopy = LITE3D_VBO_STATIC_COPY,
+
+            ModeDynamicDraw = LITE3D_VBO_DYNAMIC_DRAW,
+            ModeDynamicRead = LITE3D_VBO_DYNAMIC_READ,
+            ModeDynamicCopy = LITE3D_VBO_DYNAMIC_COPY
+        };
+
         using BufferBase::getData;
         using BufferBase::setData;
 
@@ -35,7 +50,7 @@ namespace lite3dpp
         void setBufferSizeBytes(size_t size) override;
         void setData(const void *buffer, size_t offset, size_t size) override;
         void getData(void *buffer, size_t offset, size_t size) const override;
-        BufferScopedMapper map(uint16_t lockType) override;
+        BufferScopedMapper map(BufferScopedMapper::BufferScopedMapperLockType lockType) override;
 
     private:
 

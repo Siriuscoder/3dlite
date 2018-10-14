@@ -1,0 +1,6 @@
+{
+    "TextureType": "2D",
+    "Compression": false,
+    "TextureFormat": "DEPTH",
+    "Samples": 4
+}

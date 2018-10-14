@@ -37,11 +37,24 @@
           "Type":"UBO"
         },
         {
+          "Name":"shadowmap",
+          "TextureName": "ShadowMap.texture",
+          "Type":"sampler"
+        },
+        {
+          "Name":"normalMatrix"
+        },
+        {
           "Name":"eye",
           "Type":"v3",
           "Value":[
             0,0,0
           ],
+          "Scope":"global"
+        },
+        {
+          "Name":"shadowMatrix",
+          "Type":"m4",
           "Scope":"global"
         }
       ]
@@ -53,9 +66,6 @@
     },
     {
       "Name":"viewMatrix"
-    },
-    {
-      "Name":"normalMatrix"
     },
     {
       "Name":"modelMatrix"

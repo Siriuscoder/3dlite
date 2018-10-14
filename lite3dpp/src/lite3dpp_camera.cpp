@@ -73,6 +73,17 @@ namespace lite3dpp
         lite3d_camera_set_rotation(&mCamera, &orietation);
     }
 
+    void Camera::setDirection(const kmVec3 &direction)
+    {
+        kmQuaternion rot;
+        kmVec3 up = {
+            0.0f, 0.0f, 1.0f
+        };
+
+        kmQuaternionLookRotation(&rot, &direction, &up);
+        setRotation(rot);
+    }
+
     void Camera::rotate(const kmQuaternion &orietation)
     {
         lite3d_camera_set_rotation(&mCamera, &orietation);
@@ -140,6 +151,19 @@ namespace lite3dpp
         kmQuaternion inverseRot;
         kmQuaternionInverse(&inverseRot, &mCamera.cameraNode.rotation);
         return inverseRot;
+    }
+
+    kmMat4 Camera::getTransformMatrix()
+    {
+        lite3d_scene_node_update(&mCamera.cameraNode);
+        return mCamera.cameraNode.worldView;
+    }
+
+    kmMat4 Camera::getProjTransformMatrix()
+    {
+        kmMat4 result = getTransformMatrix();
+        kmMat4Multiply(&result, &mCamera.projection, &result);
+        return result;
     }
 
     bool Camera::inFrustum(const lite3d_bounding_vol &vol) const

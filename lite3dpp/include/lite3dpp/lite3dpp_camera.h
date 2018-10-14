@@ -31,6 +31,21 @@ namespace lite3dpp
         
         typedef std::shared_ptr<Camera> Ptr;
 
+        enum CullFaceMode : uint8_t
+        {
+            CullFaceNever = LITE3D_CULLFACE_NEVER,
+            CullFaceFront = LITE3D_CULLFACE_FRONT,
+            CullFaceBack = LITE3D_CULLFACE_BACK,
+            CullFaceFrontAndBack = LITE3D_CULLFACE_FRONT_AND_BACK
+        };
+
+        enum PolygonMode : uint8_t
+        {
+            PolygonPoint = LITE3D_POLYMODE_POINT,
+            PolygonLine = LITE3D_POLYMODE_LINE,
+            PolygonFill = LITE3D_POLYMODE_FILL
+        };
+
         Camera(const String &name, Main *main);
         ~Camera();
 
@@ -44,10 +59,8 @@ namespace lite3dpp
 
         inline String getName()
         { return mName; }
-        inline void showWireframe(bool flag)
-        { mCamera.polygonMode = flag ? LITE3D_POLYMODE_LINE : LITE3D_POLYMODE_FILL; }
-        inline void cullBackFaces(bool flag)
-        { mCamera.cullBackFaces = flag ? LITE3D_TRUE : LITE3D_FALSE; }
+        inline void setPolygonMode(PolygonMode mode)
+        { mCamera.polygonMode = mode; }
 
         /* camera projection modes */
         void setupOrtho(float znear, float zfar, float left, float right, 
@@ -57,17 +70,24 @@ namespace lite3dpp
 
         Scene &getScene();
 
-        inline void setEnabled(bool enabled)
-        { mCamera.cameraNode.enabled = enabled ? LITE3D_TRUE : LITE3D_FALSE; }
+        inline void disable()
+        { mCamera.cameraNode.enabled = LITE3D_FALSE; }
+        inline void enable()
+        { mCamera.cameraNode.enabled = LITE3D_TRUE; }
+        inline void setCullFaceMode(CullFaceMode mode)
+        { mCamera.cullFaceMode = mode; }
         
         inline kmVec3 getPosition() const
         { return mCamera.cameraNode.position; }
         kmQuaternion getRotation() const;
         kmVec3 getDirection() const;
+        kmMat4 getTransformMatrix();
+        kmMat4 getProjTransformMatrix();
 
         void lookAt(const kmVec3 &pointTo);
         void setPosition(const kmVec3 &position);
         void setRotation(const kmQuaternion &orietation);
+        void setDirection(const kmVec3 &direction);
         void rotate(const kmQuaternion &orietation);
         void yaw(float angle);
         void pitch(float angle);
@@ -84,6 +104,7 @@ namespace lite3dpp
         void linkWithSceneObject(const SceneObject &sceneObj);
         bool inFrustum(const lite3d_bounding_vol &vol) const;
         bool inFrustum(const lite3d_light_params &lp) const;
+
 
     private:
 

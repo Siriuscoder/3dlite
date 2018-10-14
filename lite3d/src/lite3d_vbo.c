@@ -26,6 +26,16 @@
 #include <lite3d/lite3d_misc.h>
 #include <lite3d/lite3d_vbo.h>
 
+static GLenum vboModeEnum[] = {
+    GL_STREAM_DRAW, GL_STREAM_READ, GL_STREAM_COPY, GL_STATIC_DRAW, 
+    GL_STATIC_READ, GL_STATIC_COPY, GL_DYNAMIC_DRAW, GL_DYNAMIC_READ, 
+    GL_DYNAMIC_COPY
+};
+
+static GLenum vboMapModeEnum[] = {
+    GL_READ_ONLY, GL_WRITE_ONLY, GL_READ_WRITE
+};
+
 /*
 Name
 
@@ -117,7 +127,7 @@ static int vbo_buffer_extend(uint32_t vboID, size_t expandSize, uint16_t access)
     /* copy data to tmp buffer */
     glCopyBufferSubData(GL_COPY_READ_BUFFER, GL_COPY_WRITE_BUFFER, 0, 0, originSize);
 
-    if (lite3d_misc_check_gl_error())
+    if (LITE3D_CHECK_GL_ERROR)
     {
         glDeleteBuffers(1, &tmpVbo);
         return LITE3D_FALSE;
@@ -127,7 +137,7 @@ static int vbo_buffer_extend(uint32_t vboID, size_t expandSize, uint16_t access)
     glBindBuffer(GL_COPY_WRITE_BUFFER, vboID);
     /* reallocate our buffer */
     glGetBufferParameteriv(GL_COPY_READ_BUFFER, GL_BUFFER_SIZE, &originSize);
-    glBufferData(GL_COPY_WRITE_BUFFER, originSize + expandSize, NULL, access);
+    glBufferData(GL_COPY_WRITE_BUFFER, originSize + expandSize, NULL, vboModeEnum[access]);
     /* copy data back to our buffer */
     glCopyBufferSubData(GL_COPY_READ_BUFFER, GL_COPY_WRITE_BUFFER, 0, 0, originSize);
 
@@ -214,7 +224,7 @@ int lite3d_vbo_init(struct lite3d_vbo *vbo)
     lite3d_misc_gl_error_stack_clean();
     /* gen buffer for store data */
     glGenBuffers(1, &vbo->vboID);
-    if (lite3d_misc_check_gl_error())
+    if (LITE3D_CHECK_GL_ERROR)
         return LITE3D_FALSE;
 
     vbo->role = GL_ARRAY_BUFFER;
@@ -311,8 +321,8 @@ void *lite3d_vbo_map(struct lite3d_vbo *vbo, uint16_t access)
     lite3d_misc_gl_error_stack_clean();
 
     glBindBuffer(vbo->role, vbo->vboID);
-    mapped = glMapBuffer(vbo->role, access);
-    if (lite3d_misc_check_gl_error())
+    mapped = glMapBuffer(vbo->role, vboMapModeEnum[access]);
+    if (LITE3D_CHECK_GL_ERROR)
     {
         glBindBuffer(vbo->role, 0);
         return NULL;
@@ -337,13 +347,13 @@ int lite3d_vbo_buffer(struct lite3d_vbo *vbo,
     lite3d_misc_gl_error_stack_clean();
 
     glBindBuffer(vbo->role, vbo->vboID);
-    if (lite3d_misc_check_gl_error())
+    if (LITE3D_CHECK_GL_ERROR)
         return LITE3D_FALSE;
 
     /* store data to GPU memory */
     vbo->access = access;
-    glBufferData(vbo->role, size, buffer, access);
-    if (lite3d_misc_check_gl_error())
+    glBufferData(vbo->role, size, buffer, vboModeEnum[access]);
+    if (LITE3D_CHECK_GL_ERROR)
         return LITE3D_FALSE;
 
     vbo->size = size;
@@ -360,7 +370,7 @@ int lite3d_vbo_subbuffer(struct lite3d_vbo *vbo,
     /* copy vertices to the end of the vertex buffer */
     glBindBuffer(vbo->role, vbo->vboID);
     glBufferSubData(vbo->role, offset, size, buffer);
-    if (lite3d_misc_check_gl_error())
+    if (LITE3D_CHECK_GL_ERROR)
         return LITE3D_FALSE;
 
     glBindBuffer(vbo->role, 0);
@@ -376,7 +386,7 @@ int lite3d_vbo_get_buffer(const struct lite3d_vbo *vbo,
     /* copy vertices to the end of the vertex buffer */
     glBindBuffer(vbo->role, vbo->vboID);
     glGetBufferSubData(vbo->role, offset, size, buffer);
-    if (lite3d_misc_check_gl_error())
+    if (LITE3D_CHECK_GL_ERROR)
         return LITE3D_FALSE;
 
     glBindBuffer(vbo->role, 0);

@@ -1,6 +1,6 @@
 {
     // common settings
-    "LogLevel": 3,
+    "LogLevel": 1,
     "LogFlushAlways": false,
     "LogFile": "lite3d.log",
     "TextureSettings": {
@@ -15,7 +15,6 @@
         "Caption": "Sponza",
         "ColorBits": 24,
         "Fullscreen": false,
-        "MSAA": 1,
         "VSync": false
     },
     // resource locations
@@ -32,7 +31,7 @@
         },
         {
             "Name": "sponzamat",
-            "FileCacheMaxSize": 1024000,
+            "FileCacheMaxSize": 52428800,
             "Path": "sponza/"
         }
     ],

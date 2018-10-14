@@ -36,7 +36,7 @@ namespace lite3dpp
         virtual void getData(void *buffer, size_t offset, size_t size) const = 0;
         virtual void getData(BufferData &buffer, size_t offset, size_t size) const;
         virtual void setData(const BufferData &buffer, size_t offset);
-        virtual BufferScopedMapper map(uint16_t lockType) = 0;
+        virtual BufferScopedMapper map(BufferScopedMapper::BufferScopedMapperLockType lockType) = 0;
 
         /* type align must be related with texel size */
         template<class T>

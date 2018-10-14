@@ -46,11 +46,14 @@ int lite3d_shader_program_init(lite3d_shader_program *program)
     }
 
     program->programID = glCreateProgram();
-    if (lite3d_misc_check_gl_error())
+    if (LITE3D_CHECK_GL_ERROR)
     {
         glDeleteProgram(program->programID);
         return LITE3D_FALSE;
     }
+
+    SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "shader program 0x%p created",
+        (void *)program);
 
     return LITE3D_TRUE;
 }
@@ -85,7 +88,7 @@ int lite3d_shader_program_link(
     /* linking process */
     glLinkProgram(program->programID);
 
-    lite3d_misc_check_gl_error();
+    LITE3D_CHECK_GL_ERROR;
 
     glGetProgramiv(program->programID, GL_LINK_STATUS, &isLinked);
     program->success = isLinked == GL_TRUE ? LITE3D_TRUE : LITE3D_FALSE;

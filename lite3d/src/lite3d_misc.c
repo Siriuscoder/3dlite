@@ -36,7 +36,7 @@ void lite3d_misc_il_error_stack_clean(void)
     while (ilGetError() != IL_NO_ERROR);
 }
 
-int lite3d_misc_check_gl_error(void)
+int lite3d_misc_check_gl_error(const char *func, int line)
 {
     GLenum errNo;
     uint8_t err = LITE3D_FALSE;
@@ -44,13 +44,13 @@ int lite3d_misc_check_gl_error(void)
     while ((errNo = glGetError()) != GL_NO_ERROR)
     {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
-            "GL: code %d(%s)", errNo,
+            "%s:%d %s (0x%X)", func, line,
             errNo == GL_INVALID_ENUM ? "GL_INVALID_ENUM" :
             (errNo == GL_INVALID_VALUE ? "GL_INVALID_VALUE" :
             (errNo == GL_INVALID_OPERATION ? "GL_INVALID_OPERATION" :
             (errNo == GL_INVALID_FRAMEBUFFER_OPERATION ? "GL_INVALID_FRAMEBUFFER_OPERATION" :
             (errNo == GL_OUT_OF_MEMORY ? "GL_OUT_OF_MEMORY" :
-            (errNo == GL_STACK_UNDERFLOW ? "GL_STACK_UNDERFLOW" : "GL_STACK_OVERFLOW"))))));
+            (errNo == GL_STACK_UNDERFLOW ? "GL_STACK_UNDERFLOW" : "GL_STACK_OVERFLOW"))))), errNo);
 
         if (errNo == GL_OUT_OF_MEMORY)
             glOutOfMemory = LITE3D_TRUE;
@@ -63,7 +63,7 @@ int lite3d_misc_check_gl_error(void)
     return err;
 }
 
-int lite3d_misc_check_il_error(void)
+int lite3d_misc_check_il_error(const char *func, int line)
 {
     ILenum errNo;
     uint8_t err = LITE3D_FALSE;
@@ -71,7 +71,7 @@ int lite3d_misc_check_il_error(void)
     while ((errNo = ilGetError()) != IL_NO_ERROR)
     {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
-            "IL: %s", iluErrorString(errNo));
+            "%s:%d IL %s", func, line, iluErrorString(errNo));
 
         err = LITE3D_TRUE;
     }
