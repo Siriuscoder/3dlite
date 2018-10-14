@@ -19,7 +19,7 @@
 
 namespace lite3dpp
 {
-    BufferScopedMapper::BufferScopedMapper(lite3d_vbo &source, uint16_t lockType) : 
+    BufferScopedMapper::BufferScopedMapper(lite3d_vbo &source, BufferScopedMapperLockType lockType) :
         mSource(source)
     {
         if((mPtr = lite3d_vbo_map(&source, lockType)) == NULL)

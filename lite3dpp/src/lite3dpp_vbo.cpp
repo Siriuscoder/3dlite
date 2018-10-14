@@ -77,7 +77,7 @@ namespace lite3dpp
         }
     }
     
-    BufferScopedMapper VBO::map(uint16_t lockType)
+    BufferScopedMapper VBO::map(BufferScopedMapper::BufferScopedMapperLockType lockType)
     {
         if (!mVBO.vboID)
             LITE3D_THROW("resource unavailable");

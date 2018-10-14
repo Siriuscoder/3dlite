@@ -88,6 +88,14 @@ namespace lite3dpp
         inline int32_t getDepth()
         { return mTexture.imageDepth; }
 
+        static uint32_t textureType(const String &s);
+        static uint32_t textureFiltering(const String &s);
+        static uint32_t textureWrap(const String &s);
+        static uint32_t textureImageFormat(const String &s);
+        static uint32_t textureFilterType(const String &s);
+        static uint32_t textureFormat(const String &s);
+        static uint32_t textureInternalFormat(const String &s);
+
     protected:
 
         virtual void loadFromConfigImpl(const ConfigurationReader &helper) override;

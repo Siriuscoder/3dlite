@@ -20,9 +20,10 @@
 namespace lite3dpp {
 namespace samples {
 
-class SponzaHall : public Sample
+class SponzaHall : public Sample, public RenderTargetObserver
 {
 public:
+    const kmVec3 sunLightDirection = { 2.0f, -1.0f, -2.3f };
 
     void createScene() override
     {
@@ -35,12 +36,23 @@ public:
 
         setMainCamera(getMain().getCamera("MyCamera"));
 
-        getMain().window()->depthTestFunc(LITE3D_TEST_LEQUAL);
+        getMain().window()->depthTestFunc(RenderTarget::TestFuncLEqual);
+        // get shadowmap render target, it was been loaded with Sponza scene
+        mShadowMap = getMain().getResourceManager()->queryResource<TextureRenderTarget>("RenderShadowMap");
+        mShadowMap->addObserver(this);
 
+        Camera *shadowView = getMain().getCamera("ShadowCamera");
+        shadowView->setDirection(sunLightDirection);
+        shadowView->setCullFaceMode(Camera::CullFaceFront);
+        
+
+        lite3dpp::Material::setFloatm4GlobalParameter("shadowMatrix", shadowView->getProjTransformMatrix());
         lite3dpp::Material::setIntGlobalParameter("FXAA", 1);
         lite3dpp::Material::setFloatv3GlobalParameter("eye", getMainCamera().getPosition());
 
         addSunlight();
+
+        getMain().getResourceManager()->releaseFileCache();
     }
 
     void mainCameraChanged() override
@@ -51,14 +63,13 @@ public:
 
     void addSunlight()
     {
-        kmVec3 spotDirection = { 2.0f, -1.0f, -2.3f };
         String lightParams = ConfigurationWriter().set(L"Name", "SunLight.node").set(L"Light",
             ConfigurationWriter().set(L"Ambient", KM_VEC3_ZERO)
             .set(L"Diffuse", KM_VEC3_ONE)
             .set(L"Position", KM_VEC3_ZERO)
             .set(L"Name", "SunLight")
             .set(L"Specular", KM_VEC3_ONE)
-            .set(L"SpotDirection", spotDirection)
+            .set(L"SpotDirection", sunLightDirection)
             .set(L"Type", "Directional")).write(true);
 
         mSunLight.reset(new LightSceneNode(ConfigurationReader(lightParams.data(), lightParams.size()), NULL, &getMain()));
@@ -67,10 +78,34 @@ public:
         mSunLight->frustumTest(false);
     }
 
+    void postUpdate(RenderTarget *rt) override
+    {
+        if (rt == mShadowMap)
+        {
+            // render shadow map at once
+            rt->disable();
+        }
+    }
+
+    void processEvent(SDL_Event *e) override
+    {
+        Sample::processEvent(e);
+        if (e->type == SDL_KEYDOWN)
+        {
+            if (e->key.keysym.sym == SDLK_o)
+            {
+                static bool fxaaEnabled = true;
+                fxaaEnabled = !fxaaEnabled;
+                lite3dpp::Material::setIntGlobalParameter("FXAA", fxaaEnabled ? 1 : 0);
+            }
+        }
+    }
+
 private:
 
     std::unique_ptr<LightSceneNode> mSunLight;
     Scene *mMainScene;
+    RenderTarget *mShadowMap;
 };
 
 }}

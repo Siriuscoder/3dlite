@@ -47,7 +47,7 @@ namespace lite3dpp
         void setBufferSizeBytes(size_t size) override;
         void setData(const void *buffer, size_t offset, size_t size) override;
         void getData(void *buffer, size_t offset, size_t size) const override;
-        BufferScopedMapper map(uint16_t lockType) override;
+        BufferScopedMapper map(BufferScopedMapper::BufferScopedMapperLockType lockType) override;
 
         size_t usedVideoMemBytes() const override;
 

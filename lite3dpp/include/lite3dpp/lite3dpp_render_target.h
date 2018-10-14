@@ -22,12 +22,26 @@
 #include <lite3dpp/lite3dpp_common.h>
 #include <lite3dpp/lite3dpp_resource.h>
 #include <lite3dpp/lite3dpp_camera.h>
+#include <lite3dpp/lite3dpp_observer.h>
 
 namespace lite3dpp
 {
-    class LITE3DPP_EXPORT RenderTarget : public ConfigurableResource, public Noncopiable
+    class LITE3DPP_EXPORT RenderTarget : public Observable<RenderTargetObserver>, 
+        public ConfigurableResource, public Noncopiable
     {
     public:
+
+        enum TestFunc : uint32_t
+        {
+            TestFuncNever = LITE3D_TEST_NEVER,
+            TestFuncLess = LITE3D_TEST_LESS,
+            TestFuncEqual = LITE3D_TEST_EQUAL,
+            TestFuncLEqual = LITE3D_TEST_LEQUAL,
+            TestFuncGreater = LITE3D_TEST_GREATER,
+            TestFuncNotEqual = LITE3D_TEST_NOTEQUAL,
+            TestFuncGEqual = LITE3D_TEST_GEQUAL,
+            TestFuncAlways = LITE3D_TEST_ALWAYS
+        };
 
         RenderTarget(const String &name, 
             const String &path, Main *main);
@@ -50,9 +64,9 @@ namespace lite3dpp
         void stencilOutput(bool flag);
         /* Buffer testing control */
         void depthTest(bool flag);
-        void depthTestFunc(uint32_t func);
+        void depthTestFunc(TestFunc func);
         void stencilTest(bool flag);
-        void stencilTestFunc(uint32_t func, int32_t value);
+        void stencilTestFunc(TestFunc func, int32_t value);
         /* clean buffers immediately */
         void clear(bool color, bool depth, bool stencil);
         void saveScreenshot(const String &filename);
@@ -66,6 +80,9 @@ namespace lite3dpp
         void removeCamera(Camera *camera, int priority);
 
     protected:
+
+        static int beginUpdate(lite3d_render_target *target);
+        static void postUpdate(lite3d_render_target *target);
 
         lite3d_render_target *mRenderTargetPtr;
     };

@@ -7,11 +7,13 @@ uniform mat4 projectionMatrix;
 uniform mat4 viewMatrix;
 uniform mat4 modelMatrix;
 uniform mat3 normalMatrix;
+uniform mat4 shadowMatrix;
 
 out vec2 iuv;
 out vec3 ivv;
 out mat3 itbn;
 out vec3 wnorm;
+out vec4 svv;
 
 void main()
 {
@@ -28,6 +30,8 @@ void main()
     vec3 worldBinorm = cross(wnorm, worldTang);
     // TBN matrix to transform normal from tangent space to world space
     itbn = mat3(worldTang, worldBinorm, wnorm);
+    // Shadow space transformation
+    svv = shadowMatrix * vec4(vertex, 1);
 
     gl_Position = projectionMatrix * viewMatrix * wv;
 }

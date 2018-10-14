@@ -24,6 +24,7 @@ Dependencies
 * [DevIL](http://example.net/)
 * [Assimp](https://www.libsdl.org/index.php)
 * [SDL2](http://assimp.sourceforge.net/)
+* [Bullet](https://github.com/bulletphysics/bullet3)
 * Also Lite3d use [Angelscript](http://www.angelcode.com/angelscript/) for scripting and
 some other libraries (see [LICENCE](LICENCE.3rdparty))
 
@@ -40,7 +41,7 @@ You can use cmake to generate Visual Studio projects on windows.
 Samples
 ---------
 After successfully compiling you can find some samples in bin directory. To provide samples work correctly you must download 
-resources packs [vault.pkg](https://cloud.mail.ru/public/8eAZ/BAjJhjqYE) and [sponza.pkg](https://cloud.mail.ru/public/EijZ/tHkWtW9Qs) and put its to media/packs/
+resources packs [vault.pkg](https://cloud.mail.ru/public/8eAZ/BAjJhjqYE) and [sponza.pkg](https://cloud.mail.ru/public/AJiq/HpapxfZCc) and put its to media/packs/
 
 Screenshots
 -----------
@@ -50,6 +51,7 @@ Screenshots
 ![](/media/screenshots/sponza1.png "Sponza")
 ![](/media/screenshots/sponza2.png "Sponza")
 ![](/media/screenshots/sponza3.png "Sponza")
+![](/media/screenshots/sponza4.png "Sponza")
 ![](/media/screenshots/vault.png "Vault")
 ![](/media/screenshots/vault1.png "Vault")
 ![](/media/screenshots/vault2.png "Vault")

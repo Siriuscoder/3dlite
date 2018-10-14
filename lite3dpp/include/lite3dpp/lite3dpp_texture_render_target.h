@@ -25,7 +25,7 @@
 
 namespace lite3dpp
 {
-    class LITE3DPP_EXPORT TextureRenderTarget : public RenderTarget
+    class LITE3DPP_EXPORT TextureRenderTarget : public RenderTarget, public RenderTargetObserver
     {
     public:
 
@@ -37,9 +37,11 @@ namespace lite3dpp
 
         virtual void loadFromConfigImpl(const ConfigurationReader &helper) override;
         virtual void unloadImpl() override;
+        virtual void postUpdate(RenderTarget *rt) override;
 
     private:
 
         lite3d_render_target mRenderTarget;
+        RenderTarget *mRenderTargetBlitTo;
     };
 }

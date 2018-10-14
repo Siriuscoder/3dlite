@@ -21,31 +21,36 @@
 #include <lite3d/lite3d_common.h>
 #include <lite3d/kazmath/vec4.h>
 
-#define LITE3D_TEST_NEVER 0x0200
-#define LITE3D_TEST_LESS 0x0201
-#define LITE3D_TEST_EQUAL 0x0202
-#define LITE3D_TEST_LEQUAL 0x0203
-#define LITE3D_TEST_GREATER 0x0204
-#define LITE3D_TEST_NOTEQUAL 0x0205
-#define LITE3D_TEST_GEQUAL 0x0206
-#define LITE3D_TEST_ALWAYS 0x0207
+#define LITE3D_TEST_NEVER           0x0
+#define LITE3D_TEST_LESS            0x1
+#define LITE3D_TEST_EQUAL           0x2
+#define LITE3D_TEST_LEQUAL          0x3
+#define LITE3D_TEST_GREATER         0x4
+#define LITE3D_TEST_NOTEQUAL        0x5
+#define LITE3D_TEST_GEQUAL          0x6
+#define LITE3D_TEST_ALWAYS          0x7
 
 #define LITE3D_BLENDING_MODE_TRADITIONAL                        0
 #define LITE3D_BLENDING_MODE_TRADITIONAL_WITH_ALPHA_BLEND       1
 #define LITE3D_BLENDING_MODE_ADDITIVE                           2
 
-#define LITE3D_POLYMODE_POINT        0x1B00
-#define LITE3D_POLYMODE_LINE         0x1B01
-#define LITE3D_POLYMODE_FILL         0x1B02
+#define LITE3D_POLYMODE_POINT        0x0
+#define LITE3D_POLYMODE_LINE         0x1
+#define LITE3D_POLYMODE_FILL         0x2
+
+#define LITE3D_CULLFACE_NEVER                   0x0
+#define LITE3D_CULLFACE_FRONT                   0x1
+#define LITE3D_CULLFACE_BACK                    0x2
+#define LITE3D_CULLFACE_FRONT_AND_BACK          0x3
 
 typedef void (*lite3d_blend_mode_t)(void);
 
 LITE3D_CEXPORT void lite3d_depth_test(uint8_t on);
-LITE3D_CEXPORT void lite3d_depth_test_func(uint32_t func);
+LITE3D_CEXPORT void lite3d_depth_test_func(uint8_t func);
 LITE3D_CEXPORT void lite3d_depth_output(uint8_t on);
 
 LITE3D_CEXPORT void lite3d_stencil_test(uint8_t on);
-LITE3D_CEXPORT void lite3d_stencil_test_func(uint32_t func, int32_t value);
+LITE3D_CEXPORT void lite3d_stencil_test_func(uint8_t func, int32_t refValue);
 LITE3D_CEXPORT void lite3d_stencil_output(uint8_t on);
 LITE3D_CEXPORT void lite3d_stencil_value(int32_t value);
 
@@ -72,8 +77,8 @@ LITE3D_CEXPORT void lite3d_buffers_clear_values(const kmVec4 *color, float depth
 LITE3D_CEXPORT void lite3d_blending_mode_set(uint8_t mode);
 LITE3D_CEXPORT void lite3d_blending(uint8_t on);
 
-LITE3D_CEXPORT void lite3d_polygon_mode(uint16_t flag);
-LITE3D_CEXPORT void lite3d_backface_culling(uint8_t on);
+LITE3D_CEXPORT void lite3d_polygon_mode(uint8_t mode);
+LITE3D_CEXPORT void lite3d_backface_culling(uint8_t mode);
 
 
 #endif	/* LITE3D_BUFFERS_MANIP_H */

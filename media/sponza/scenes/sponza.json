@@ -36,6 +36,32 @@
                     "DepthOutput": false
                 }
             ]
+        },
+        {
+            "Name": "ShadowCamera",
+            "Ortho": 
+            {
+                "Near": -2000,
+                "Far": 2000,
+                "Left": -1000,
+                "Right": 1000,
+                "Bottom": -600,
+                "Top": 1400
+            },
+            "RenderTargets":
+            [
+                // draw only non transparent objects to shadow map
+                {
+                    "Name": "RenderShadowMap",
+                    "Path": "sponzamat:targets/shadow.json",
+                    "Priority": 0,
+                    "TexturePass": 1,
+                    "RenderSecondStage": false,
+                    "DepthTest": true,
+                    "ColorOutput": false,
+                    "DepthOutput": true
+                }
+            ]
         }
     ],
     

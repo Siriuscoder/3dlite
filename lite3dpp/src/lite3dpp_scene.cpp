@@ -104,8 +104,8 @@ namespace lite3dpp
             }
         }
 
-        setupObjects(helper.getObjects(L"Objects"), NULL);
         setupCameras(helper.getObjects(L"Cameras"));
+        setupObjects(helper.getObjects(L"Objects"), NULL);
     }
 
     void Scene::unloadImpl()

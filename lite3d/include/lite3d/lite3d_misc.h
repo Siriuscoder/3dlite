@@ -20,11 +20,17 @@
 
 #include <lite3d/lite3d_common.h>
 
+#define LITE3D_CHECK_GL_ERROR \
+    lite3d_misc_check_gl_error(LITE3D_CURRENT_FUNCTION, __LINE__)
+
+#define LITE3D_CHECK_IL_ERROR \
+    lite3d_misc_check_il_error(LITE3D_CURRENT_FUNCTION, __LINE__)
+
 LITE3D_CEXPORT void lite3d_misc_gl_error_stack_clean(void);
 LITE3D_CEXPORT void lite3d_misc_il_error_stack_clean(void);
 
-LITE3D_CEXPORT int lite3d_misc_check_gl_error(void);
-LITE3D_CEXPORT int lite3d_misc_check_il_error(void);
+LITE3D_CEXPORT int lite3d_misc_check_gl_error(const char *func, int line);
+LITE3D_CEXPORT int lite3d_misc_check_il_error(const char *func, int line);
 
 LITE3D_CEXPORT int lite3d_misc_check_gl_out_of_mem(void);
 LITE3D_CEXPORT void lite3d_misc_gl_out_of_mem_reset(void);

@@ -139,6 +139,12 @@ void Sample::processEvent(SDL_Event *e)
         {
             saveScreenshot();
         }
+        else if (e->key.keysym.sym == SDLK_4)
+        {
+            static bool showStats = true;
+            showStats = !showStats;
+            showStats ? mGuiCamera->enable() : mGuiCamera->disable();
+        }
         else if (mMainWindow && mMainCamera && e->key.keysym.sym == SDLK_f)
         {
             static bool scRes = false;
