@@ -112,21 +112,11 @@ namespace lite3dpp
         }
 
         // GL Version
-        {
-            int8_t glVersionMajor = videoSettings.getInt(L"GLVersionMajor", 0);
-            int8_t glVersionMinor = videoSettings.getInt(L"GLVersionMinor", 0);
+        mSettings.videoSettings.glVersionMajor = \
+            videoSettings.getInt(L"GLVersionMajor", 0);
 
-            if (glVersionMajor && glVersionMinor)
-            {
-                mSettings.videoSettings.glVersionMajor = glVersionMajor;
-                mSettings.videoSettings.glVersionMinor = glVersionMinor;
-            }
-            else
-            {
-                mSettings.videoSettings.glVersionMajor = 0;
-                mSettings.videoSettings.glVersionMinor = 0;
-            }
-        }
+        mSettings.videoSettings.glVersionMinor = \
+            videoSettings.getInt(L"GLVersionMinor", 0);
 
         mSettings.renderLisneters.userdata = reinterpret_cast<void *> (this);
         mSettings.renderLisneters.preRender = Main::onInit;
