@@ -86,6 +86,31 @@ namespace lite3dpp
             sizeof(mSettings.videoSettings.caption)-1);
         mSettings.videoSettings.hidden = videoSettings.getBool(L"Hidden", false) ? LITE3D_TRUE : LITE3D_FALSE;
 
+        // GL Profile
+        {
+            std::string glProfile = videoSettings.getString(L"GLProfile", "");
+
+            if (
+                    glProfile == "Core" ||
+                    glProfile == "core")
+            {
+                mSettings.videoSettings.glProfile = LITE3D_GL_PROFILE_CORE;
+            }
+            else if (
+                    glProfile == "Compatibility" ||
+                    glProfile == "compatibility" ||
+                    glProfile == "Compat" ||
+                    glProfile == "compat")
+            {
+                mSettings.videoSettings.glProfile = \
+                    LITE3D_GL_PROFILE_COMPATIBILITY;
+            }
+            else
+            {
+                mSettings.videoSettings.glProfile = LITE3D_GL_PROFILE_DEFAULT;
+            }
+        }
+
         // GL Version
         {
             int8_t glVersionMajor = videoSettings.getInt(L"GLVersionMajor", 0);
@@ -98,8 +123,8 @@ namespace lite3dpp
             }
             else
             {
-                mSettings.videoSettings.glVersionMajor = 3;
-                mSettings.videoSettings.glVersionMinor = 3;
+                mSettings.videoSettings.glVersionMajor = 0;
+                mSettings.videoSettings.glVersionMinor = 0;
             }
         }
 
