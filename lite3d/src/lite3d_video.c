@@ -187,6 +187,20 @@ static int init_gl_extensions(lite3d_video_settings *settings)
     return init_platform_gl_extensions(settings);
 }
 
+void set_opengl_version(lite3d_video_settings *settings)
+{
+    SDL_LogInfo(
+          SDL_LOG_CATEGORY_APPLICATION,
+          "Setting OpenGL Version: %d.%d",
+          settings->glVersionMajor,
+          settings->glVersionMinor);
+
+      SDL_GL_SetAttribute(
+          SDL_GL_CONTEXT_MAJOR_VERSION, settings->glVersionMajor);
+      SDL_GL_SetAttribute(
+          SDL_GL_CONTEXT_MINOR_VERSION, settings->glVersionMinor);
+}
+
 int lite3d_video_open(lite3d_video_settings *settings, int hideConsole)
 {
     uint32_t windowFlags;
@@ -233,6 +247,8 @@ int lite3d_video_open(lite3d_video_settings *settings, int hideConsole)
       SDL_GL_SetAttribute(
           SDL_GL_CONTEXT_PROFILE_MASK,
           SDL_GL_CONTEXT_PROFILE_CORE);
+
+      set_opengl_version(settings);
     }
     else if (settings->glProfile == LITE3D_GL_PROFILE_COMPATIBILITY)
     {
@@ -243,29 +259,15 @@ int lite3d_video_open(lite3d_video_settings *settings, int hideConsole)
       SDL_GL_SetAttribute(
           SDL_GL_CONTEXT_PROFILE_MASK,
           SDL_GL_CONTEXT_PROFILE_COMPATIBILITY);
+
+      set_opengl_version(settings);
     }
     else
     {
       SDL_LogInfo(
           SDL_LOG_CATEGORY_APPLICATION,
           "Using Default OpenGL Profile");
-    }
 
-    if (settings->glVersionMajor && settings->glVersionMinor)
-    {
-        SDL_LogInfo(
-            SDL_LOG_CATEGORY_APPLICATION,
-            "Setting OpenGL Version: %d.%d",
-            settings->glVersionMajor,
-            settings->glVersionMinor);
-
-        SDL_GL_SetAttribute(
-            SDL_GL_CONTEXT_MAJOR_VERSION, settings->glVersionMajor);
-        SDL_GL_SetAttribute(
-            SDL_GL_CONTEXT_MINOR_VERSION, settings->glVersionMinor);
-    }
-    else
-    {
       SDL_LogInfo(
           SDL_LOG_CATEGORY_APPLICATION,
           "Using Default OpenGL Version");
