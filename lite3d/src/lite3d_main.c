@@ -14,22 +14,26 @@
  *
  *	You should have received a copy of the GNU General Public License
  *	along with Lite3D.  If not, see <http://www.gnu.org/licenses/>.
- *******************************************************************************/
+ *****************************************************************************/
+
+
 #include <stdlib.h>
 #include <SDL.h>
 
 #include <lite3d/lite3d_main.h>
 #include <lite3d/lite3d_metrics.h>
 
+
 static lite3d_global_settings gGlobalSettings;
+
 
 static int sdl_init(void)
 {
     uint32_t subSystems = SDL_INIT_VIDEO |
-        SDL_INIT_TIMER |
-        SDL_INIT_EVENTS |
-        SDL_INIT_JOYSTICK |
-        SDL_INIT_GAMECONTROLLER;
+                          SDL_INIT_TIMER |
+                          SDL_INIT_EVENTS |
+                          SDL_INIT_JOYSTICK |
+                          SDL_INIT_GAMECONTROLLER;
 
     SDL_version compiledVers, linkedVers;
 
@@ -37,8 +41,10 @@ static int sdl_init(void)
     {
         if (SDL_Init(subSystems) != 0)
         {
-            SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION,
-                "%s: SDL startup error..", LITE3D_CURRENT_FUNCTION);
+            SDL_LogCritical(
+                SDL_LOG_CATEGORY_APPLICATION,
+                "%s: SDL startup error..",
+                LITE3D_CURRENT_FUNCTION);
             return LITE3D_FALSE;
         }
     }
@@ -48,99 +54,137 @@ static int sdl_init(void)
 
     if (compiledVers.major != linkedVers.major)
     {
-        SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION,
+        SDL_LogCritical(
+            SDL_LOG_CATEGORY_APPLICATION,
             "SDL version mismatch..");
 
         SDL_Quit();
         return LITE3D_FALSE;
     }
 
-    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
-        "SDL Version %d.%d.%d", (int) linkedVers.major,
-        (int) linkedVers.minor, (int) linkedVers.patch);
+    SDL_LogInfo(
+        SDL_LOG_CATEGORY_APPLICATION,
+        "SDL Version %d.%d.%d",
+        (int) linkedVers.major,
+        (int) linkedVers.minor,
+        (int) linkedVers.patch);
 
     return LITE3D_TRUE;
 }
 
+
 int lite3d_main(const lite3d_global_settings *settings)
 {
-    int ret = LITE3D_TRUE;
+    int ret = LITE3D_FALSE;
+
     gGlobalSettings = *settings;
+
     /* begin lite3d initialization */
+
     /* setup memory */
     lite3d_memory_init(&gGlobalSettings.userAllocator);
+
     /* cleanup engine memory at exit */
     atexit(lite3d_memory_cleanup);
+
     /* setup logger */
     if(settings->logFile[0] == 0)
+    {
         lite3d_logger_setup_stdout();
+    }
     else
+    {
         lite3d_logger_setup_file(settings->logFile);
-    
-    lite3d_logger_set_logParams(gGlobalSettings.logLevel,
-        gGlobalSettings.logFlushAlways, gGlobalSettings.logMuteStd);
+    }
+
+    lite3d_logger_set_logParams(
+        gGlobalSettings.logLevel,
+        gGlobalSettings.logFlushAlways,
+        gGlobalSettings.logMuteStd);
 
     if (!lite3d_metrics_global_init())
     {
-        ret = LITE3D_FALSE;
-        goto ret4;
+        goto ret_release_logger;
     }
 
-    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
-        "====== lite3d %s ======", LITE3D_FULL_VERSION);
+    SDL_LogInfo(
+        SDL_LOG_CATEGORY_APPLICATION,
+        "====== lite3d %s ======",
+        LITE3D_FULL_VERSION);
 
     /* setup SDL */
     if (!sdl_init())
     {
-        ret = LITE3D_FALSE;
-        goto ret_met;
+        goto ret_metrics;
     }
 
     if (SDL_SetThreadPriority(SDL_THREAD_PRIORITY_HIGH))
     {
-        SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION, "Could not insrease thread priority %s",
+        SDL_LogWarn(
+            SDL_LOG_CATEGORY_APPLICATION,
+            "Could not insrease thread priority %s",
             SDL_GetError());
     }
 
     /* setup video */
-    if (!lite3d_video_open(&gGlobalSettings.videoSettings, settings->logMuteStd))
+    if (!lite3d_video_open(
+          &gGlobalSettings.videoSettings,
+          settings->logMuteStd))
     {
-        ret = LITE3D_FALSE;
-        goto ret3;
+        SDL_LogWarn(
+            SDL_LOG_CATEGORY_APPLICATION,
+            "Could not setup video");
+
+        goto ret_sdl_quit;
     }
 
     /* setup textures technique */
     if (!lite3d_texture_technique_init(&gGlobalSettings.textureSettings))
     {
-        ret = LITE3D_FALSE;
-        goto ret2;
+        SDL_LogWarn(
+            SDL_LOG_CATEGORY_APPLICATION,
+            "Could not setup textures technique "
+            "(lite3d_texture_technique_init)");
+
+        goto ret_video_close;
     }
 
     /* setup textures technique */
     if (!lite3d_vbo_technique_init())
     {
-        ret = LITE3D_FALSE;
-        goto ret1;
+        SDL_LogWarn(
+            SDL_LOG_CATEGORY_APPLICATION,
+            "Could not setup VBO technique");
+        goto ret_texture_shut;
     }
 
-    /* setup textures technique */
+    /* setup vao technique */
     if (!lite3d_vao_technique_init())
     {
-        ret = LITE3D_FALSE;
-        goto ret1;
+        SDL_LogWarn(
+            SDL_LOG_CATEGORY_APPLICATION,
+            "Could not setup VAO technique");
+
+        goto ret_texture_shut;
     }
 
     /* setup shaders technique */
     if (!lite3d_shader_program_technique_init())
     {
-        ret = LITE3D_FALSE;
-        goto ret1;
+        SDL_LogWarn(
+            SDL_LOG_CATEGORY_APPLICATION,
+            "Could not setup shaders technique");
+
+        goto ret_texture_shut;
     }
 
     if (!lite3d_timer_technique_init())
     {
-        ret = LITE3D_FALSE;
-        goto ret1;
+        SDL_LogWarn(
+            SDL_LOG_CATEGORY_APPLICATION,
+            "Could not setup timer technique");
+
+        goto ret_texture_shut;
     }
 
     /* init shader global parameters */
@@ -148,33 +192,41 @@ int lite3d_main(const lite3d_global_settings *settings)
 
     if (!lite3d_framebuffer_technique_init())
     {
-        ret = LITE3D_FALSE;
-        goto ret1;
+        SDL_LogWarn(
+            SDL_LOG_CATEGORY_APPLICATION,
+            "Could not setup framebuffer techique");
+
+        goto ret_texture_shut;
     }
 
     /* start main loop */
     lite3d_render_loop(&gGlobalSettings.renderLisneters);
+    ret = LITE3D_TRUE;
 
 #ifdef LITE3D_WITH_METRICS
     lite3d_metrics_global_write_to_log();
 #endif
 
-ret1:
+ret_texture_shut:
     lite3d_texture_technique_shut();
-ret2:
+
+ret_video_close:
     lite3d_video_close();
-ret3:
+
+ret_sdl_quit:
     SDL_Quit();
-ret_met:
+
+ret_metrics:
     lite3d_metrics_global_purge();
-ret4:
+
+ret_release_logger:
     lite3d_logger_release();
 
     return ret;
 }
 
+
 const lite3d_global_settings *lite3d_get_global_settings(void)
 {
     return &gGlobalSettings;
 }
-

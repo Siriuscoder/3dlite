@@ -16,7 +16,8 @@
 *	along with Lite3D.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
 #ifndef LITE3D_MAIN_H
-#define	LITE3D_MAIN_H
+#define LITE3D_MAIN_H
+
 
 #include <lite3d/lite3d_common.h>
 #include <lite3d/lite3d_video.h>
@@ -29,8 +30,10 @@
 #include <lite3d/lite3d_scene.h>
 #include <lite3d/lite3d_timer.h>
 
+
 typedef int (*lite3d_user_init_completed_t)(void *userdata);
 typedef int (*lite3d_user_shut_t)(void *userdata);
+
 
 typedef struct lite3d_global_settings
 {
@@ -38,7 +41,7 @@ typedef struct lite3d_global_settings
     lite3d_texture_technique_settings textureSettings;
     lite3d_alloca_f userAllocator;
     lite3d_render_listeners renderLisneters;
-    
+
     size_t maxFileCacheSize;
     int logLevel;
     int logFlushAlways;
@@ -46,9 +49,9 @@ typedef struct lite3d_global_settings
     char logFile[50];
 } lite3d_global_settings;
 
+
 LITE3D_CEXPORT int lite3d_main(const lite3d_global_settings *settings);
 LITE3D_CEXPORT const lite3d_global_settings *lite3d_get_global_settings(void);
 
 
 #endif	/* MAIN_H */
-

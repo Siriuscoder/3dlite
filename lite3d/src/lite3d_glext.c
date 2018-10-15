@@ -62,15 +62,6 @@ int lite3d_check_instanced_arrays()
 #endif
 }
 
-int lite3d_check_vertex_buffer_object()
-{
-#ifdef GLES
-    return LITE3D_TRUE;
-#else
-    return GLEW_ARB_vertex_buffer_object;
-#endif
-}
-
 int lite3d_check_copy_buffer()
 {
 #ifdef GLES
