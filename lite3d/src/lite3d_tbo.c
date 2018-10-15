@@ -24,6 +24,8 @@
 #include <lite3d/lite3d_misc.h>
 #include <lite3d/lite3d_tbo.h>
 
+extern GLenum textureTargetEnum[];
+
 /*
 Overview
 
@@ -84,15 +86,15 @@ int lite3d_texture_buffer_init(lite3d_texture_unit *textureUnit,
     }
 
     textureUnit->totalSize = textureUnit->imageSize = texelsCount * textureUnit->imageBPP;
-    textureUnit->textureTarget = GL_TEXTURE_BUFFER;
+    textureUnit->textureTarget = LITE3D_TEXTURE_BUFFER;
     if (!lite3d_vbo_init(&textureUnit->tbo))
         return LITE3D_FALSE;
-    if (!lite3d_vbo_buffer(&textureUnit->tbo, data, textureUnit->imageSize, LITE3D_VBO_DYNAMIC_DRAW))
+    if (!lite3d_vbo_buffer(&textureUnit->tbo, data, textureUnit->imageSize, access))
         return LITE3D_FALSE;
     
     glGenTextures(1, &textureUnit->textureID);
-    glBindTexture(textureUnit->textureTarget, textureUnit->textureID);
-    glTexBuffer(textureUnit->textureTarget, bf, textureUnit->tbo.vboID);
+    glBindTexture(textureTargetEnum[textureUnit->textureTarget], textureUnit->textureID);
+    glTexBuffer(textureTargetEnum[textureUnit->textureTarget], bf, textureUnit->tbo.vboID);
     
     if (LITE3D_CHECK_GL_ERROR)
     {

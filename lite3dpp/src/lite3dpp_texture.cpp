@@ -185,7 +185,7 @@ namespace lite3dpp
                 quality, 
                 wrapping, 
                 textureFormat(helper.getUpperString(L"TextureFormat", "RGB")),
-                textureInternalFormat(helper.getUpperString(L"InternalFormat")),
+                helper.getInt(L"InternalFormat"),
                 width, 
                 height, 
                 depth, 
