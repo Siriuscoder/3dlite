@@ -83,18 +83,16 @@ static const char *image_format_string(const lite3d_texture_unit *texture)
         case GL_BGRA:
             return "BGRA";
 #endif
-        case GL_ALPHA:
-            return "ALPHA";
         case GL_RGB:
             return "RGB";
         case GL_RGBA:
             return "RGBA";
-        case GL_LUMINANCE:
-            return "LUMINANCE";
-        case GL_LUMINANCE_ALPHA:
-            return "LUMINANCE_ALPHA";
         case GL_DEPTH_COMPONENT:
             return "DEPTH_COMPONENT";
+        case GL_RED:
+            return "RED";
+        case GL_RG:
+            return "RG";
         default:
             return "UNKNOWN";
     }
@@ -688,26 +686,20 @@ int lite3d_texture_unit_allocate(lite3d_texture_unit *textureUnit,
             internalFormat = gTextureSettings.useGLCompression ? GL_COMPRESSED_RGBA_S3TC_DXT5_EXT : GL_RGBA;
             textureUnit->compressed = gTextureSettings.useGLCompression;
             break;
+        case LITE3D_TEXTURE_FORMAT_LUMINANCE:
         case LITE3D_TEXTURE_FORMAT_ALPHA:
         case LITE3D_TEXTURE_FORMAT_RED:
+            format = GL_RED;
             textureUnit->imageBPP = 1;
-            internalFormat = gTextureSettings.useGLCompression ? GL_COMPRESSED_RED_RGTC1_EXT : GL_R;
+            internalFormat = gTextureSettings.useGLCompression ? GL_COMPRESSED_RED_RGTC1_EXT : GL_RED;
             textureUnit->compressed = gTextureSettings.useGLCompression;
             break;
+        case LITE3D_TEXTURE_FORMAT_LUMINANCE_ALPHA:
         case LITE3D_TEXTURE_FORMAT_RG:
+            format = GL_RG;
             textureUnit->imageBPP = 2;
             internalFormat = gTextureSettings.useGLCompression ? GL_COMPRESSED_RED_GREEN_RGTC2_EXT : GL_RG;
             textureUnit->compressed = gTextureSettings.useGLCompression;
-            break;
-        case LITE3D_TEXTURE_FORMAT_LUMINANCE:
-            textureUnit->imageBPP = 1;
-            internalFormat = GL_LUMINANCE;
-            textureUnit->compressed = LITE3D_FALSE;
-            break;
-        case LITE3D_TEXTURE_FORMAT_LUMINANCE_ALPHA:
-            textureUnit->imageBPP = 2;
-            internalFormat = GL_LUMINANCE_ALPHA;
-            textureUnit->compressed = LITE3D_FALSE;
             break;
         default:
             SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
@@ -716,7 +708,7 @@ int lite3d_texture_unit_allocate(lite3d_texture_unit *textureUnit,
             return LITE3D_FALSE;
     }
 
-    if ((format == LITE3D_TEXTURE_2D_MULTISAMPLE || format == LITE3D_TEXTURE_3D_MULTISAMPLE) && 
+    if ((textureTarget == LITE3D_TEXTURE_2D_MULTISAMPLE || textureTarget == LITE3D_TEXTURE_3D_MULTISAMPLE) &&
         !lite3d_check_texture_multisample())
     {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "%s: Multisample texture not supported",
@@ -847,6 +839,12 @@ int lite3d_texture_unit_allocate(lite3d_texture_unit *textureUnit,
             }
             break;
         }
+    }
+
+    if (LITE3D_CHECK_GL_ERROR)
+    {
+        lite3d_texture_unit_purge(textureUnit);
+        return LITE3D_FALSE;
     }
 
     /*
