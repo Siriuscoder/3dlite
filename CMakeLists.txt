@@ -18,8 +18,9 @@
 cmake_minimum_required(VERSION 2.8.9)
 project(lite3d)
 
-include(${CMAKE_SOURCE_DIR}/CMake/lite3dCommon.cmake)
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/CMake/")
+set(CMAKE_LITE3D_TOP_DIR ${PROJECT_SOURCE_DIR})
+include(${CMAKE_LITE3D_TOP_DIR}/CMake/lite3dCommon.cmake)
+set(CMAKE_MODULE_PATH ${CMAKE_LITE3D_TOP_DIR} "${PROJECT_SOURCE_DIR}/CMake/")
 
 enable_testing()
 
@@ -122,6 +123,8 @@ if(NOT IL_FOUND)
     message(FATAL_ERROR "DevIL library not found..")
 endif()
 
+option(BUILD_ENGINE_ONLY "Do not build samples, tests and other staff" OFF)
+
 include_directories("${PROJECT_SOURCE_DIR}/lite3d/include")
 include_directories("${PROJECT_SOURCE_DIR}/lite3dpp/include")
 include_directories("${PROJECT_SOURCE_DIR}/lite3dpp_font/include")
@@ -129,9 +132,12 @@ include_directories("${PROJECT_SOURCE_DIR}/lite3dpp_font/include")
 add_subdirectory("${PROJECT_SOURCE_DIR}/lite3d/")
 add_subdirectory("${PROJECT_SOURCE_DIR}/lite3dpp/")
 add_subdirectory("${PROJECT_SOURCE_DIR}/lite3dpp_font/")
+
+if(NOT BUILD_ENGINE_ONLY)
 add_subdirectory("${PROJECT_SOURCE_DIR}/tests/")
 add_subdirectory("${PROJECT_SOURCE_DIR}/samples/")
 add_subdirectory("${PROJECT_SOURCE_DIR}/tools/")
+endif()
 
 option(SHOW_STATS "Show cmake variables" OFF)
 if(SHOW_STATS)

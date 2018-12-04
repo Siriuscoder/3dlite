@@ -3,7 +3,7 @@
 #  ODE_LIBRARY - Link these to use ODE
 
 if(MSVC)
-set(ODE_SEARCH_PATHS "${CMAKE_SOURCE_DIR}/deps/ode-0.13/")
+set(ODE_SEARCH_PATHS "${CMAKE_LITE3D_TOP_DIR}/deps/ode-0.13/")
 endif()
 
 FIND_PATH(ODE_INCLUDE_DIR ode/ode.h

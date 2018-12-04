@@ -35,7 +35,7 @@
 # Tested under Linux and Windows (MSVC)
 
 if(MSVC)
-set(DEVIL_SEARCH_PATHS "${CMAKE_SOURCE_DIR}/deps/DevIL/")
+set(DEVIL_SEARCH_PATHS "${CMAKE_LITE3D_TOP_DIR}/deps/DevIL/")
 endif()
 
 find_path(IL_INCLUDE_DIR IL/il.h

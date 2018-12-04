@@ -40,7 +40,7 @@ headers_files("include/lite3dpp")
 headers_files("include/lite3dpp/json")
 
 if(MSVC)
-set(SOURCES_LIST ${SOURCES_LIST} ${CMAKE_SOURCE_DIR}/winres/Resource.rc)
+set(SOURCES_LIST ${SOURCES_LIST} ${CMAKE_LITE3D_TOP_DIR}/winres/Resource.rc)
 endif()
 
 add_library(lite3dpp SHARED ${SOURCES_LIST} ${HEADERS_LIST})
@@ -52,7 +52,7 @@ endif()
 
 target_include_directories(lite3dpp PRIVATE 
 "$<BUILD_INTERFACE:${SDL2_INCLUDE_DIR}>"
-"$<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/winres/>")
+"$<BUILD_INTERFACE:${CMAKE_LITE3D_TOP_DIR}/winres/>")
 
 target_link_libraries(lite3dpp
 lite3d)
