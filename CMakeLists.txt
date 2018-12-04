@@ -133,7 +133,7 @@ add_subdirectory("${PROJECT_SOURCE_DIR}/lite3d/")
 add_subdirectory("${PROJECT_SOURCE_DIR}/lite3dpp/")
 add_subdirectory("${PROJECT_SOURCE_DIR}/lite3dpp_font/")
 
-if(BUILD_ENGINE_ONLY)
+if(NOT BUILD_ENGINE_ONLY)
 add_subdirectory("${PROJECT_SOURCE_DIR}/tests/")
 add_subdirectory("${PROJECT_SOURCE_DIR}/samples/")
 add_subdirectory("${PROJECT_SOURCE_DIR}/tools/")
