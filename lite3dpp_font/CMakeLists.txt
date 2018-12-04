@@ -30,7 +30,7 @@ headers_files("include/lite3dpp_font")
 headers_files("include")
 ################################################################
 if(MSVC)
-set(SOURCES_LIST ${SOURCES_LIST} ${CMAKE_SOURCE_DIR}/winres/Resource.rc)
+set(SOURCES_LIST ${SOURCES_LIST} ${CMAKE_LITE3D_TOP_DIR}/winres/Resource.rc)
 endif()
 
 add_library(lite3dpp_font SHARED ${SOURCES_LIST} ${HEADERS_LIST})
@@ -45,7 +45,7 @@ target_include_directories(lite3dpp_font PRIVATE
 "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include/lite3dpp_font/>"
 "$<BUILD_INTERFACE:${FREETYPE_INCLUDE_DIRS}>"
 "$<BUILD_INTERFACE:${SDL2_INCLUDE_DIR}>"
-"$<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/winres/>")
+"$<BUILD_INTERFACE:${CMAKE_LITE3D_TOP_DIR}/winres/>")
 
 target_link_libraries(lite3dpp_font
 ${FREETYPE_LIBRARIES}

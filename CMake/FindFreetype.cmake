@@ -66,7 +66,7 @@ set(FREETYPE_FIND_ARGS
     ENV GTKMM_BASEPATH
     [HKEY_CURRENT_USER\\SOFTWARE\\gtkmm\\2.4;Path]
     [HKEY_LOCAL_MACHINE\\SOFTWARE\\gtkmm\\2.4;Path]
-    "${CMAKE_SOURCE_DIR}/deps/freetype/"
+    "${CMAKE_LITE3D_TOP_DIR}/deps/freetype/"
 )
 
 find_path(

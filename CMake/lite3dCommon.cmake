@@ -74,7 +74,7 @@ macro(define_sample SAMPLE_NAME SAMPLE_DIRECTORY)
     endif()
 	
 	if(MSVC)
-		set(SOURCES_LIST ${SOURCES_LIST} ${CMAKE_SOURCE_DIR}/winres/ResourceSample.rc)
+		set(SOURCES_LIST ${SOURCES_LIST} ${CMAKE_LITE3D_TOP_DIR}/winres/ResourceSample.rc)
 	endif()
 
 	add_executable(${SAMPLE_NAME} ${SOURCES_LIST} ${HEADERS_LIST})
@@ -88,7 +88,7 @@ macro(define_sample SAMPLE_NAME SAMPLE_DIRECTORY)
 		target_compile_definitions(${SAMPLE_NAME} PRIVATE
 			"$<BUILD_INTERFACE:_WINEXE>")
 		target_include_directories(${SAMPLE_NAME} PRIVATE 
-			"$<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/winres/>")
+			"$<BUILD_INTERFACE:${CMAKE_LITE3D_TOP_DIR}/winres/>")
 	else()
 		target_compile_options(${SAMPLE_NAME} PRIVATE 
 			"$<BUILD_INTERFACE:${SDL2_CFLAGS}>")
@@ -112,7 +112,7 @@ MESSAGE( STATUS "")
 # if you are building in-source, this is the same as CMAKE_SOURCE_DIR, otherwise 
 # this is the top level directory of your build tree 
 MESSAGE( STATUS "CMAKE_BINARY_DIR:         " ${CMAKE_BINARY_DIR} )
-
+MESSAGE( STATUS "CMAKE_LITE3D_TOP_DIR:     " ${CMAKE_LITE3D_TOP_DIR} )
 # if you are building in-source, this is the same as CMAKE_CURRENT_SOURCE_DIR, otherwise this 
 # is the directory where the compiled or generated files from the current CMakeLists.txt will go to 
 MESSAGE( STATUS "CMAKE_CURRENT_BINARY_DIR: " ${CMAKE_CURRENT_BINARY_DIR} )
