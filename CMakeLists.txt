@@ -27,7 +27,7 @@ enable_testing()
 # Configuration
 set(CMAKE_CONFIGURATION_TYPES Debug Release)
 # Platform configuration
-set(PLATFORM_TYPE PLATFORM_${CMAKE_SYSTEM_NAME})
+set(PLATFORM_TYPE PLATFORM_${CMAKE_SYSTEM_NAME} CACHE INTERNAL "PLATFORM_TYPE")
 
 # Specify build paths
 if(MSVC)
