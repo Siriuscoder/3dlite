@@ -55,7 +55,7 @@ void Command::run(int argc, char *args[])
     writer.set(L"VideoSettings", video);
     writer.set(L"TextureSettings", texture);
 
-    mMain.initFromConfigString(writer.write(true).c_str());
+    mMain.initFromConfigString(writer.write().c_str());
 
     mMain.run();
 }

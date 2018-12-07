@@ -126,7 +126,7 @@ void JsonGenerator::generateNode(const lite3d_mesh *mesh, const lite3dpp::String
         nodeMeshConfig.set(L"Mesh", mOptions.meshPackname + relativeMeshConfigPath);
         nodeConfig.set(L"Mesh", nodeMeshConfig);
 
-        Utils::saveTextFile(meshConfig.write(true), fullMeshConfigPath);
+        Utils::saveTextFile(meshConfig.write(), fullMeshConfigPath);
     }
 
     generatePositionRotation(nodeConfig, transform);
@@ -195,7 +195,7 @@ void JsonGenerator::popNodeTree()
             lite3dpp::ConfigurationWriter objectConfig;
             objectConfig.set(L"Root", rootObject);
 
-            Utils::saveTextFile(objectConfig.write(true),
+            Utils::saveTextFile(objectConfig.write(),
                 Utils::makeFullPath(mOptions.outputFolder, Utils::makeRelativePath("objects/", mOptions.objectName, "json")));
         }
     }
@@ -273,7 +273,7 @@ void JsonGenerator::generateMaterial(const lite3dpp::String &name,
 
     material.set(L"Uniforms", uniforms);
     material.set(L"Passes", passes);
-    Utils::saveTextFile(material.write(true), matFull);
+    Utils::saveTextFile(material.write(), matFull);
 
     mMaterials.insert(std::make_pair(matIdx, matName));
 }
@@ -301,7 +301,7 @@ void JsonGenerator::generateUniformSampler(lite3dpp::stl<lite3dpp::Configuration
         texture.set(L"Image", mOptions.imgPackname + Utils::makeRelativePath("textures/images/", Utils::getFileNameWithoutExt(fileName), Utils::getFileExt(fileName)));
         texture.set(L"ImageFormat", Utils::getFileExt(fileName));
     
-        Utils::saveTextFile(texture.write(true), texFull);
+        Utils::saveTextFile(texture.write(), texFull);
     }
 }
 
