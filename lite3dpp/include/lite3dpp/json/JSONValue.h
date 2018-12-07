@@ -46,7 +46,6 @@ class JSONValue : public lite3dpp::Manageable
         JSONValue(float m_number_value);
         JSONValue(const JSONArray &m_array_value);
         JSONValue(const JSONObject &m_object_value);
-        ~JSONValue();
 
         void setValue(/*NULL*/);
         void setValue(const wchar_t *m_char_value);
@@ -72,15 +71,15 @@ class JSONValue : public lite3dpp::Manageable
 
         std::size_t CountChildren() const;
         bool HasChild(std::size_t index) const;
-        JSONValue *Child(std::size_t index);
+        std::shared_ptr<JSONValue> Child(std::size_t index);
         bool HasChild(const wchar_t* name) const;
-        JSONValue *Child(const wchar_t* name);
+        std::shared_ptr<JSONValue> Child(const wchar_t* name);
         std::vector<lite3dpp::WString> ObjectKeys() const;
 
         lite3dpp::WString Stringify(bool const prettyprint = false) const;
 
     protected:
-        static JSONValue *Parse(const wchar_t **data);
+        static std::shared_ptr<JSONValue> Parse(const wchar_t **data);
 
     private:
         static lite3dpp::WString StringifyString(const lite3dpp::WString &str);

@@ -53,7 +53,7 @@ namespace lite3dpp
 
         void remove(const WString &name);
         /* WARNING: if true passed then internal state will be released (effect like clear call) */
-        String write(bool fin);
+        String write();
         void clear();
 
     private:
