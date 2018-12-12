@@ -15,11 +15,11 @@
  *	You should have received a copy of the GNU General Public License
  *	along with Lite3D.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
-#include <SDL_log.h>
-
 #include <font.h>
 #include <texture.h>
 #include <log/logger.h>
+
+#include <SDL_log.h>
 
 #include <lite3dpp/lite3dpp_main.h>
 #include <lite3dpp_font/lite3dpp_font_texture.h>
