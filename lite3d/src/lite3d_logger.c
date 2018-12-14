@@ -81,7 +81,7 @@ void lite3d_logger_set_logParams(int level, int flushAlways, int muteStd)
 #endif
 }
 
-void lite3d_logger_setup_stdout(void)
+static void lite3d_logger_setup_stdout(void)
 {
     SDL_LogSetOutputFunction(std_output_function, NULL);
 
@@ -91,7 +91,7 @@ void lite3d_logger_setup_stdout(void)
 
 }
 
-void lite3d_logger_setup_file(const char *logfile)
+static void lite3d_logger_setup_file(const char *logfile)
 {
     SDL_LogSetOutputFunction(file_output_function, NULL);
     if ((gOutFile = fopen(logfile, "a")) == NULL)
@@ -101,6 +101,17 @@ void lite3d_logger_setup_file(const char *logfile)
 #ifdef INCLUDE_ASSIMP
     lite3d_assimp_logging_init();
 #endif
+}
+
+void lite3d_logger_setup(const char *logfile)
+{
+    if (logfile[0])
+    {
+        lite3d_logger_setup_file(logfile);
+        return;
+    }
+
+    lite3d_logger_setup_stdout();
 }
 
 void lite3d_logger_release(void)
