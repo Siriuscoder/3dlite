@@ -105,7 +105,7 @@ static void lite3d_logger_setup_file(const char *logfile)
 
 void lite3d_logger_setup(const char *logfile)
 {
-    if (logfile[0])
+    if (logfile && logfile[0])
     {
         lite3d_logger_setup_file(logfile);
         return;
