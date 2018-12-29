@@ -120,6 +120,11 @@ namespace lite3dpp
 
         mObjectRoot->getPtr()->enabled = LITE3D_TRUE;
     }
+
+    bool SceneObject::isEnabled() const
+    {
+        return mObjectRoot->getPtr()->enabled == LITE3D_TRUE;
+    }
     
     SceneNode::Ptr SceneObject::createNode(const ConfigurationReader &nodeconf, SceneNode *base)
     {

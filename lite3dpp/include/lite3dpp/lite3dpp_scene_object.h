@@ -53,8 +53,7 @@ namespace lite3dpp
 
         void loadFromTemplate(const String &templatePath);
 
-        inline bool isEnabled() const
-        { return mEnabled; }
+        bool isEnabled() const;
 
         void disable();
         void enable();
