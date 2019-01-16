@@ -89,8 +89,8 @@ static inline bool simplejson_wcsnlen(const wchar_t *s, size_t n) {
 
 // Custom types
 class JSONValue;
-typedef std::vector<JSONValue*> JSONArray;
-typedef std::map<lite3dpp::WString, JSONValue*> JSONObject;
+typedef std::vector<std::shared_ptr<JSONValue>> JSONArray;
+typedef std::map<lite3dpp::WString, std::shared_ptr<JSONValue>> JSONObject;
 
 #include <lite3dpp/json/JSONValue.h>
 
@@ -100,9 +100,9 @@ class JSON
     friend class JSONValue;
     
     public:
-        static JSONValue* Parse(const char *data);
-        static JSONValue* Parse(const wchar_t *data);
-        static lite3dpp::WString Stringify(const JSONValue *value);
+        static std::shared_ptr<JSONValue> Parse(const char *data);
+        static std::shared_ptr<JSONValue> Parse(const wchar_t *data);
+        static lite3dpp::WString Stringify(const std::shared_ptr<JSONValue> &value);
         static lite3dpp::String wStringToString(const lite3dpp::WString &str);
         
     protected:

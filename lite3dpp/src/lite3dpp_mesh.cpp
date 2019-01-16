@@ -37,6 +37,8 @@ namespace lite3dpp
     void Mesh::loadFromConfigImpl(const ConfigurationReader &helper)
     {
         lite3d_mesh_init(&mMesh);
+        mMesh.userdata = this;
+
         if (helper.isEmpty())
             return;
 
@@ -98,8 +100,6 @@ namespace lite3dpp
                     matMap.getObject(L"Material").getString(L"Name"),
                     matMap.getObject(L"Material").getString(L"Material")));
         }
-
-        mMesh.userdata = this;
     }
 
     size_t Mesh::usedVideoMemBytes() const

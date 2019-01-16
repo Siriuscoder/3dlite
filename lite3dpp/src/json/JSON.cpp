@@ -44,7 +44,7 @@ JSON::JSON()
  *
  * @return JSONValue* Returns a JSON Value representing the root, or NULL on error
  */
-JSONValue *JSON::Parse(const char *data)
+std::shared_ptr<JSONValue> JSON::Parse(const char *data)
 {
     size_t length = strlen(data) + 1;
     wchar_t *w_data = (wchar_t*)malloc(length * sizeof(wchar_t));
@@ -68,7 +68,7 @@ JSONValue *JSON::Parse(const char *data)
         }
     #endif
     
-    JSONValue *value = JSON::Parse(w_data);
+    std::shared_ptr<JSONValue> value = JSON::Parse(w_data);
     free(w_data);
     return value;
 }
@@ -82,22 +82,21 @@ JSONValue *JSON::Parse(const char *data)
  *
  * @return JSONValue* Returns a JSON Value representing the root, or NULL on error
  */
-JSONValue *JSON::Parse(const wchar_t *data)
+std::shared_ptr<JSONValue> JSON::Parse(const wchar_t *data)
 {
     // Skip any preceding whitespace, end of data = no JSON = fail
     if (!SkipWhitespaceAndComments(&data))
         return NULL;
 
     // We need the start of a value here now...
-    JSONValue *value = JSONValue::Parse(&data);
-    if (value == NULL)
-        return NULL;
+    std::shared_ptr<JSONValue> value = JSONValue::Parse(&data);
+    if (value)
+        return value;
     
     // Can be white space now and should be at the end of the string then...
     if (SkipWhitespaceAndComments(&data))
     {
-        delete value;
-        return NULL;
+        return std::shared_ptr<JSONValue>();
     }
     
     // We're now at the end of the string
@@ -113,9 +112,9 @@ JSONValue *JSON::Parse(const wchar_t *data)
  *
  * @return lite3dpp::lited3dpp_wstring Returns a JSON encoded string representation of the given value
  */
-lite3dpp::WString JSON::Stringify(const JSONValue *value)
+lite3dpp::WString JSON::Stringify(const std::shared_ptr<JSONValue> &value)
 {
-    if (value != NULL)
+    if (value)
         return value->Stringify();
     else
         return L"";

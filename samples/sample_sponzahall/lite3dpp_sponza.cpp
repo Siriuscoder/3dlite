@@ -70,7 +70,7 @@ public:
             .set(L"Name", "SunLight")
             .set(L"Specular", KM_VEC3_ONE)
             .set(L"SpotDirection", sunLightDirection)
-            .set(L"Type", "Directional")).write(true);
+            .set(L"Type", "Directional")).write();
 
         mSunLight.reset(new LightSceneNode(ConfigurationReader(lightParams.data(), lightParams.size()), NULL, &getMain()));
         mSunLight->addToScene(mMainScene);

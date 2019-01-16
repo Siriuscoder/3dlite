@@ -33,10 +33,6 @@
 
 #include <lite3dpp/json/JSONValue.h>
 
-// Macros to free an array/object
-#define FREE_ARRAY(x) { JSONArray::iterator iter; for (iter = x.begin(); iter != x.end(); iter++) { delete *iter; } }
-#define FREE_OBJECT(x) { JSONObject::iterator iter; for (iter = x.begin(); iter != x.end(); iter++) { delete (*iter).second; } }
-
 /**
  * Parses a JSON encoded value to a JSONValue object
  *
@@ -46,7 +42,7 @@
  *
  * @return JSONValue* Returns a pointer to a JSONValue object on success, NULL on error
  */
-JSONValue *JSONValue::Parse(const wchar_t **data)
+std::shared_ptr<JSONValue> JSONValue::Parse(const wchar_t **data)
 {
     // Is it a string?
     if (**data == '"')
@@ -55,7 +51,7 @@ JSONValue *JSONValue::Parse(const wchar_t **data)
         if (!JSON::ExtractString(&(++(*data)), str))
             return NULL;
         else
-            return new JSONValue(str);
+            return std::make_shared<JSONValue>(str);
     }
 
     // Is it a boolean?
@@ -63,14 +59,14 @@ JSONValue *JSONValue::Parse(const wchar_t **data)
     {
         bool value = wcsncasecmp(*data, L"true", 4) == 0;
         (*data) += value ? 4 : 5;
-        return new JSONValue(value);
+        return std::make_shared<JSONValue>(value);
     }
 
     // Is it a null?
     else if (simplejson_wcsnlen(*data, 4) && wcsncasecmp(*data, L"null", 4) == 0)
     {
         (*data) += 4;
-        return new JSONValue();
+        return std::make_shared<JSONValue>();
     }
 
     // Is it a number?
@@ -88,7 +84,7 @@ JSONValue *JSONValue::Parse(const wchar_t **data)
         else if (**data >= L'1' && **data <= L'9')
             number = JSON::ParseInt(data);
         else
-            return NULL;
+            return std::shared_ptr<JSONValue>();
 
         // Could be a decimal now...
         if (**data == '.')
@@ -97,7 +93,7 @@ JSONValue *JSONValue::Parse(const wchar_t **data)
 
             // Not get any digits?
             if (!(**data >= L'0' && **data <= L'9'))
-                return NULL;
+                return std::shared_ptr<JSONValue>();
 
             // Find the decimal and sort the decimal place out
             // Use ParseDecimal as ParseInt won't work with decimals less than 0.1
@@ -123,7 +119,7 @@ JSONValue *JSONValue::Parse(const wchar_t **data)
 
             // Not get any digits?
             if (!(**data >= L'0' && **data <= L'9'))
-                return NULL;
+                return std::shared_ptr<JSONValue>();
 
             // Sort the expo out
             float expo = JSON::ParseInt(data);
@@ -134,7 +130,7 @@ JSONValue *JSONValue::Parse(const wchar_t **data)
         // Was it neg?
         if (neg) number *= -1;
 
-        return new JSONValue(number);
+        return std::make_shared<JSONValue>(number);
     }
 
     // An object?
@@ -149,86 +145,74 @@ JSONValue *JSONValue::Parse(const wchar_t **data)
             // Whitespace at the start?
             if (!JSON::SkipWhitespaceAndComments(data))
             {
-                FREE_OBJECT(object);
-                return NULL;
+                return std::shared_ptr<JSONValue>();
             }
 
             // Special case - empty object
             if (object.size() == 0 && **data == L'}')
             {
                 (*data)++;
-                return new JSONValue(object);
+                return std::make_shared<JSONValue>(object);
             }
 
             // We want a string now...
             lite3dpp::WString name;
             if (!JSON::ExtractString(&(++(*data)), name))
             {
-                FREE_OBJECT(object);
-                return NULL;
+                return std::shared_ptr<JSONValue>();
             }
 
             // More whitespace?
             if (!JSON::SkipWhitespaceAndComments(data))
             {
-                FREE_OBJECT(object);
-                return NULL;
+                return std::shared_ptr<JSONValue>();
             }
 
             // Need a : now
             if (*((*data)++) != L':')
             {
-                FREE_OBJECT(object);
-                return NULL;
+                return std::shared_ptr<JSONValue>();
             }
 
             // More whitespace?
             if (!JSON::SkipWhitespaceAndComments(data))
             {
-                FREE_OBJECT(object);
-                return NULL;
+                return std::shared_ptr<JSONValue>();
             }
 
             // The value is here
-            JSONValue *value = Parse(data);
-            if (value == NULL)
+            std::shared_ptr<JSONValue> value = Parse(data);
+            if (!value)
             {
-                FREE_OBJECT(object);
-                return NULL;
+                return value;
             }
 
-            // Add the name:value
-            if (object.find(name) != object.end())
-                delete object[name];
             object[name] = value;
 
             // More whitespace?
             if (!JSON::SkipWhitespaceAndComments(data))
             {
-                FREE_OBJECT(object);
-                return NULL;
+                return std::shared_ptr<JSONValue>();
             }
 
             // End of object?
             if (**data == L'}')
             {
                 (*data)++;
-                return new JSONValue(object);
+                return std::make_shared<JSONValue>(object);
             }
 
             // Want a , now
             if (**data != L',')
             {
-                FREE_OBJECT(object);
-                return NULL;
+                return std::shared_ptr<JSONValue>();
             }
 
             (*data)++;
         }
 
         // Only here if we ran out of data
-        FREE_OBJECT(object);
-        return NULL;
+        return std::shared_ptr<JSONValue>();
     }
 
     // An array?
@@ -243,23 +227,21 @@ JSONValue *JSONValue::Parse(const wchar_t **data)
             // Whitespace at the start?
             if (!JSON::SkipWhitespaceAndComments(data))
             {
-                FREE_ARRAY(array);
-                return NULL;
+                return std::shared_ptr<JSONValue>();
             }
 
             // Special case - empty array
             if (array.size() == 0 && **data == L']')
             {
                 (*data)++;
-                return new JSONValue(array);
+                return std::make_shared<JSONValue>(array);
             }
 
             // Get the value
-            JSONValue *value = Parse(data);
-            if (value == NULL)
+            std::shared_ptr<JSONValue> value = Parse(data);
+            if (!value)
             {
-                FREE_ARRAY(array);
-                return NULL;
+                return value;
             }
 
             // Add the value
@@ -268,36 +250,33 @@ JSONValue *JSONValue::Parse(const wchar_t **data)
             // More whitespace?
             if (!JSON::SkipWhitespaceAndComments(data))
             {
-                FREE_ARRAY(array);
-                return NULL;
+                return std::shared_ptr<JSONValue>();
             }
 
             // End of array?
             if (**data == L']')
             {
                 (*data)++;
-                return new JSONValue(array);
+                return std::make_shared<JSONValue>(array);
             }
 
             // Want a , now
             if (**data != L',')
             {
-                FREE_ARRAY(array);
-                return NULL;
+                return std::shared_ptr<JSONValue>();
             }
 
             (*data)++;
         }
 
         // Only here if we ran out of data
-        FREE_ARRAY(array);
-        return NULL;
+        return std::shared_ptr<JSONValue>();
     }
 
     // Ran out of possibilites, it's bad!
     else
     {
-        return NULL;
+        return std::shared_ptr<JSONValue>();
     }
 }
 
@@ -423,30 +402,6 @@ JSONValue::JSONValue(const JSONArray &m_array_value)
 JSONValue::JSONValue(const JSONObject &m_object_value)
 {
     setValue(m_object_value);
-}
-
-/**
- * The destructor for the JSON Value object
- * Handles deleting the objects in the array or the object value
- *
- * @access public
- */
-JSONValue::~JSONValue()
-{
-    if (type == JSONType_Array)
-    {
-        JSONArray::iterator iter;
-        for (iter = array_value.begin(); iter != array_value.end(); iter++)
-            delete *iter;
-    }
-    else if (type == JSONType_Object)
-    {
-        JSONObject::iterator iter;
-        for (iter = object_value.begin(); iter != object_value.end(); iter++)
-        {
-            delete (*iter).second;
-        }
-    }
 }
 
 /**
@@ -642,7 +597,7 @@ bool JSONValue::HasChild(std::size_t index) const
  * @return JSONValue* Returns JSONValue at the given index or NULL
  *                    if it doesn't exist.
  */
-JSONValue *JSONValue::Child(std::size_t index)
+std::shared_ptr<JSONValue> JSONValue::Child(std::size_t index)
 {
     if (index < array_value.size())
     {
@@ -650,7 +605,7 @@ JSONValue *JSONValue::Child(std::size_t index)
     }
     else
     {
-        return NULL;
+        return std::shared_ptr<JSONValue>();
     }
 }
 
@@ -683,7 +638,7 @@ bool JSONValue::HasChild(const wchar_t* name) const
  * @return JSONValue* Returns JSONValue for the given key in the object
  *                    or NULL if it doesn't exist.
  */
-JSONValue* JSONValue::Child(const wchar_t* name)
+std::shared_ptr<JSONValue> JSONValue::Child(const wchar_t* name)
 {
     JSONObject::const_iterator it = object_value.find(name);
     if (it != object_value.end())
@@ -692,7 +647,7 @@ JSONValue* JSONValue::Child(const wchar_t* name)
     }
     else
     {
-        return NULL;
+        return std::shared_ptr<JSONValue>();
     }
 }
 

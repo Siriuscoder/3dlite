@@ -120,6 +120,11 @@ namespace lite3dpp
 
         mObjectRoot->getPtr()->enabled = LITE3D_TRUE;
     }
+
+    bool SceneObject::isEnabled() const
+    {
+        return mObjectRoot->getPtr()->enabled == LITE3D_TRUE;
+    }
     
     SceneNode::Ptr SceneObject::createNode(const ConfigurationReader &nodeconf, SceneNode *base)
     {
@@ -129,6 +134,18 @@ namespace lite3dpp
             return std::shared_ptr<LightSceneNode>(new LightSceneNode(nodeconf, base, mMain));
         
         return std::shared_ptr<SceneNode>(new SceneNode(nodeconf, base, mMain));
+    }
+
+    lite3d_bounding_vol SceneObject::calculateBoudingBox()
+    {
+        lite3d_bounding_vol bv;
+        return bv;
+    }
+
+    lite3d_bounding_vol SceneObject::calculateBoudingBoxWorld()
+    {
+        lite3d_bounding_vol bv;
+        return bv;
     }
 }
 

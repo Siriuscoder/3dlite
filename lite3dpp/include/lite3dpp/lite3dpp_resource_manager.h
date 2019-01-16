@@ -87,15 +87,16 @@ namespace lite3dpp
         }
         
         template<class T>
-        T *queryResource(String name, 
+        T *queryResource(const String &name, 
             const void *data, size_t size)
         {
-            if(name.size() == 0)
-                name = generateResourceName();
+            String resName = name;
+            if(resName.size() == 0)
+                resName = generateResourceName();
 
             /* resource not found.. create one */
-            std::shared_ptr<T> result(new T(name, "", mMain));
-            loadResource(name, data, size, result);
+            std::shared_ptr<T> result(new T(resName, "", mMain));
+            loadResource(resName, data, size, result);
 
             return result.get();
         }

@@ -89,7 +89,7 @@ namespace lite3dpp
     {
         String bufCopy(data, size);
         /* Parse data from buffer */
-        mRoot.reset(JSON::Parse(bufCopy.c_str()));
+        mRoot = JSON::Parse(bufCopy.c_str());
 
         if (!mRoot)
             return false;
