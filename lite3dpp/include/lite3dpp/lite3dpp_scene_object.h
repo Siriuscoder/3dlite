@@ -57,7 +57,10 @@ namespace lite3dpp
 
         void disable();
         void enable();
-        
+
+        lite3d_bounding_vol calculateBoudingBox();
+        lite3d_bounding_vol calculateBoudingBoxWorld();
+
     protected:
         
         virtual SceneNode::Ptr createNode(const ConfigurationReader &nodeconf, SceneNode *base);

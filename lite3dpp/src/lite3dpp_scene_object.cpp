@@ -135,5 +135,17 @@ namespace lite3dpp
         
         return std::shared_ptr<SceneNode>(new SceneNode(nodeconf, base, mMain));
     }
+
+    lite3d_bounding_vol SceneObject::calculateBoudingBox()
+    {
+        lite3d_bounding_vol bv;
+        return bv;
+    }
+
+    lite3d_bounding_vol SceneObject::calculateBoudingBoxWorld()
+    {
+        lite3d_bounding_vol bv;
+        return bv;
+    }
 }
 
