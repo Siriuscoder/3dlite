@@ -103,7 +103,7 @@ public:
             .set(L"SpotDirection", KM_VEC3_NEG_Z)
             .set(L"Type", "Spot")
             .set(L"SpotFactor", spotFactor)
-            .set(L"Attenuation", attenuation)).write(true);
+            .set(L"Attenuation", attenuation)).write();
 
         mFlashLight.reset(new LightSceneNode(ConfigurationReader(flashLightParams.data(), flashLightParams.size()), NULL, &getMain()));
         mFlashLight->addToScene(scene);

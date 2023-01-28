@@ -73,7 +73,11 @@ namespace lite3dpp
         { return mName; }
         inline const String &getPath() const
         { return mPath; }
-        
+        inline Main &getMain()
+        { return *mMain; }
+        inline const Main &getMain() const
+        { return *mMain; }
+
     protected:
 
         virtual void loadImpl(const void *buffer, size_t size) = 0;

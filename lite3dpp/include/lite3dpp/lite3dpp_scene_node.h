@@ -57,6 +57,7 @@ namespace lite3dpp
         void setPosY(float y);
         void setPosZ(float z);
         void move(const kmVec3 &position);
+        void moveRelative(const kmVec3 &p);
         void setRotation(const kmQuaternion &quat);
         void rotate(const kmQuaternion &quat);
         void rotateAngle(const kmVec3 &axis, float angle);

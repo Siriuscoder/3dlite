@@ -59,7 +59,7 @@ TEST_F(Lite3dpp_ConfWriterTest, ConfigGenerate)
         .set(L"TextureSettings", lite3dpp::ConfigurationWriter()
             .set(L"Anisotropy", 8)
             .set(L"Compression", true))
-        .set(L"ResourceLocations", reslocationArr).write(true);
+        .set(L"ResourceLocations", reslocationArr).write();
 
     EXPECT_NO_THROW(mMain.initFromConfigString(code.c_str()));
 }
