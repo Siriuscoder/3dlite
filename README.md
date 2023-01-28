@@ -1,5 +1,6 @@
 Lite 3d rendering engine
 ========================
+[![Build status](https://ci.appveyor.com/api/projects/status/o83rtxvu3g8dvd0g?svg=true)](https://ci.appveyor.com/project/Siriuscoder/3dlite)
 
 About
 -----

@@ -91,7 +91,7 @@ namespace lite3dpp
             if(n == 0)
                 return NULL;
 
-            return (pointer) Manageable::alloc(sizeof (value_type) * n);
+            return static_cast<pointer>(Manageable::alloc(sizeof (value_type) * n));
         }
 
         void deallocate(pointer p, size_type n)

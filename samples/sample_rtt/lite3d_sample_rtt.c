@@ -303,6 +303,7 @@ static int initCube(void)
         return LITE3D_FALSE;
     if (!lite3d_mesh_indexed_load_from_memory(&mCubeVbo, cubeVertices, 24, layout, 2, cubeIndices, 12, sizeof(uint8_t), LITE3D_VBO_STATIC_DRAW))
         return LITE3D_FALSE;
+    
     saveCube();
 
     return LITE3D_TRUE;

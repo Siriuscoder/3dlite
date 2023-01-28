@@ -15,8 +15,6 @@
 #	You should have received a copy of the GNU General Public License
 #	along with Lite3D.  If not, see <http://www.gnu.org/licenses/>.
 
-cmake_minimum_required(VERSION 2.8.9)
-
 define_sample(sample_scene_node sample_scene_node)
 define_sample(sample_minigun sample_minigun)
 define_sample(sample_rifle sample_rifle)

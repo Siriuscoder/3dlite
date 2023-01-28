@@ -46,7 +46,7 @@ FIND_PATH(ASSIMP_INCLUDE_DIR assimp/ai_assert.h
 	)
 
 FIND_LIBRARY(ASSIMP_LIBRARY_RELEASE 
-	NAMES assimp assimp-vc140-mt
+	NAMES assimp assimp-vc143-mt
 	PATHS
 	$ENV{ASSIMPSDIR}/lib
 	/usr/local/lib
