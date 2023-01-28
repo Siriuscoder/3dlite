@@ -150,7 +150,8 @@ void Sample::processEvent(SDL_Event *e)
             static bool scRes = false;
             if(scRes)
             {
-                resizeMainWindow(1024, 768);
+                resizeMainWindow(lite3d_get_global_settings()->videoSettings.screenWidth, 
+                    lite3d_get_global_settings()->videoSettings.screenHeight);
                 mMainWindow->fullscreen(false);
             }
             else

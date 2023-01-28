@@ -24,8 +24,11 @@ namespace lite3dpp
 {
     void *Manageable::allocPulled(size_t size)
     {
-        void *mem = lite3d_malloc_pooled(LITE3D_POOL_NO2, size);
-        SDL_assert_release(mem);
+        void *mem = nullptr;
+        if (!(mem = lite3d_malloc_pooled(LITE3D_POOL_NO2, size)))
+        {
+            throw std::bad_alloc();
+        }
 
         return mem;
     }
@@ -39,8 +42,11 @@ namespace lite3dpp
 
     void *Manageable::alloc(size_t size)
     {
-        void *mem = lite3d_malloc(size);
-        SDL_assert_release(mem);
+        void *mem = nullptr;
+        if (!(mem = lite3d_malloc(size)))
+        {
+            throw std::bad_alloc();
+        }
 
         return mem;
     }
@@ -53,17 +59,23 @@ namespace lite3dpp
 
     void *Manageable::callocPulled(size_t size)
     {
-        void *mem = lite3d_calloc_pooled(LITE3D_POOL_NO2, size);
-        SDL_assert_release(mem);
+        void *mem = nullptr;
+        if (!(mem = lite3d_calloc_pooled(LITE3D_POOL_NO2, size)))
+        {
+            throw std::bad_alloc();
+        }
 
         return mem;
     }
 
     void *Manageable::calloc(size_t size)
     {
-        void *mem = lite3d_calloc(size);
-        SDL_assert_release(mem);
-
+        void *mem = nullptr;
+        if (!(mem = lite3d_calloc(size)))
+        {
+            throw std::bad_alloc();
+        }
+        
         return mem;
     }
 

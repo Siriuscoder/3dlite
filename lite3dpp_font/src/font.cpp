@@ -3,10 +3,14 @@
 #include <algorithm>
 #include "math.h"
 
+#ifdef PLATFORM_Linux
 #pragma GCC diagnostic push 
 #pragma GCC diagnostic ignored "-Wshadow"
-#include "utf8.h"
+#   include "utf8.h"
 #pragma GCC diagnostic pop
+#else
+#   include "utf8.h"
+#endif
 
 namespace
 {
@@ -256,11 +260,11 @@ namespace nw
         }
 
         m_scaler.face_id = static_cast<FTC_FaceID>(&m_faceId);
-        m_scaler.width = _size * 64;
-        m_scaler.height = _size * 64;
+        m_scaler.width = static_cast<FT_UInt>(_size * 64);
+        m_scaler.height = static_cast<FT_UInt>(_size * 64);
         m_scaler.pixel = 0;
-        m_scaler.x_res = m_fontLib.hDPI();
-        m_scaler.y_res = m_fontLib.vDPI();
+        m_scaler.x_res = static_cast<FT_UInt>(m_fontLib.hDPI());
+        m_scaler.y_res = static_cast<FT_UInt>(m_fontLib.vDPI());
     }
 
     Font::Font(const Font& _copy) :
@@ -329,8 +333,8 @@ namespace nw
 
     void Font::setSize(size_t _size)
     {
-        m_scaler.width = _size * 64;
-        m_scaler.height = _size * 64;
+        m_scaler.width = static_cast<FT_UInt>(_size * 64);
+        m_scaler.height = static_cast<FT_UInt>(_size * 64);
     }
 
     bool Font::hasKerning() const
@@ -617,13 +621,13 @@ namespace nw
             if (m_text[i] == '\n')
             {
                 pen.x = 0;
-                pen.y -= m_font.toNextOrigin() * 64 * 1.75;
+                pen.y -= static_cast<FT_Pos>(m_font.toNextOrigin() * 64 * 1.75);
                 prevIndex = 0;
             }
             else if ((pen.x >> 6) > m_width)
             {
                 pen.x = 0;
-                pen.y -= m_font.toNextOrigin() * 64;
+                pen.y -= static_cast<FT_Pos>(m_font.toNextOrigin() * 64);
                 prevIndex = 0;
             }
 

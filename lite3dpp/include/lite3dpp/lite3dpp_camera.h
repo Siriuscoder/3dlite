@@ -85,6 +85,7 @@ namespace lite3dpp
         kmMat4 getProjTransformMatrix();
 
         void lookAt(const kmVec3 &pointTo);
+        void lookAt(const SceneObject &obj);
         void setPosition(const kmVec3 &position);
         void setRotation(const kmQuaternion &orietation);
         void setDirection(const kmVec3 &direction);

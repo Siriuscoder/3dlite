@@ -62,6 +62,11 @@ namespace lite3dpp
     {
         lite3d_scene_node_set_position(&mNode, &position);
     }
+
+    const kmVec3& SceneNode::getPosition() const
+    {
+        return mNode.position;
+    }
     
     void SceneNode::setPosX(float x)
     {
@@ -94,6 +99,11 @@ namespace lite3dpp
     void SceneNode::setRotation(const kmQuaternion &quat)
     {
         lite3d_scene_node_set_rotation(&mNode, &quat);
+    }
+
+    const kmQuaternion& SceneNode::getRotation() const
+    {
+        return mNode.rotation;
     }
 
     void SceneNode::rotate(const kmQuaternion &quat)

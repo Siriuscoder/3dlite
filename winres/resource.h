@@ -26,3 +26,5 @@
 #endif
 #endif
 
+#define VS_VERSION_INFO 1
+
