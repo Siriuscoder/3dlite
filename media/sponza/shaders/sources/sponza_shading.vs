@@ -31,7 +31,7 @@ void main()
     // TBN matrix to transform normal from tangent space to world space
     itbn = mat3(worldTang, worldBinorm, wnorm);
     // Shadow space transformation
-    svv = shadowMatrix * vec4(vertex, 1);
+    svv = shadowMatrix * wv;
 
     gl_Position = projectionMatrix * viewMatrix * wv;
 }

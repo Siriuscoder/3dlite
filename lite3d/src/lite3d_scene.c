@@ -395,22 +395,27 @@ static void mqr_unit_add_node(_mqr_unit *unit, _mqr_node *node)
 }
 
 static void scene_recursive_nodes_update(lite3d_scene *scene,
-    lite3d_scene_node *node, lite3d_camera *camera)
+    lite3d_scene_node *node)
 {
     lite3d_list_node *nodeLink;
     lite3d_scene_node *child;
     uint8_t recalcNode;
 
     if ((recalcNode = lite3d_scene_node_update(node)) == LITE3D_TRUE)
-        LITE3D_ARR_ADD_ELEM(&scene->invalidatedUnits, lite3d_scene_node *, node);
-
-    /* render all childrens firts */
+    {
+        if (!node->isCamera)
+        {
+            LITE3D_ARR_ADD_ELEM(&scene->invalidatedUnits, lite3d_scene_node *, node);
+        }
+    }
+    
+    /* render all childrens first */
     for (nodeLink = node->childNodes.l.next;
         nodeLink != &node->childNodes.l; nodeLink = lite3d_list_next(nodeLink))
     {
         child = LITE3D_MEMBERCAST(lite3d_scene_node, nodeLink, nodeLink);
         child->recalc = recalcNode ? LITE3D_TRUE : child->recalc;
-        scene_recursive_nodes_update(scene, child, camera);
+        scene_recursive_nodes_update(scene, child);
     }
 
     scene->stats.nodesTotal++;
@@ -436,10 +441,10 @@ void lite3d_scene_render(lite3d_scene *scene, lite3d_camera *camera,
 
     if (scene->beforeUpdateNodes)
         LITE3D_METRIC_CALL(scene->beforeUpdateNodes, (scene, camera))
+    /* update scene tree */
+    LITE3D_METRIC_CALL(scene_recursive_nodes_update, (scene, &scene->rootNode))
     /* update camera projection & transformation */
     LITE3D_METRIC_CALL(lite3d_camera_update_view, (camera))
-    /* update scene tree */
-    LITE3D_METRIC_CALL(scene_recursive_nodes_update, (scene, &scene->rootNode, camera))
 
     if (scene->beginSceneRender && !scene->beginSceneRender(scene, camera))
         return;

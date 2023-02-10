@@ -110,6 +110,7 @@ namespace lite3dpp
 
     void Scene::unloadImpl()
     {
+        detachAllCameras();
         removeAllObjects();
         removeAllLights();
         lite3d_scene_purge(&mScene);
@@ -529,6 +530,48 @@ namespace lite3dpp
         {
             SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION, ex.what());
         }
+    }
+
+    void Scene::attachCamera(Camera* camera, SceneObject *parent)
+    {
+        auto scene = camera->getScene();
+        if (scene)
+        {
+            LITE3D_THROW("Camera '" << camera->getName() << "' already attached to scene " << scene->getName());
+        }
+
+        /* attach node to scene */
+        if (!lite3d_scene_add_node(getPtr(), &camera->getPtr()->cameraNode, 
+            parent ? parent->getRoot()->getPtr() : &getPtr()->rootNode))
+        {
+            LITE3D_THROW("Camera '" << camera->getName() << "' failed to attach to scene " << getName());
+        }
+
+        mCameras.emplace(camera->getName(), camera);
+    }
+
+    void Scene::detachCamera(Camera* camera)
+    {
+        auto scene = camera->getScene();
+        if (scene != this)
+        {
+            LITE3D_THROW("Camera '" << camera->getName() << "' attached to another scene " << scene->getName());
+        }
+
+        if (!lite3d_scene_remove_node(getPtr(), &camera->getPtr()->cameraNode))
+            LITE3D_THROW("Camera '" << camera->getName() << "' failed to detach from scene " << getName());
+
+        mCameras.erase(camera->getName());
+    }
+
+    void Scene::detachAllCameras()
+    {
+        for (auto &camera: mCameras)
+        {
+            lite3d_scene_remove_node(getPtr(), &camera.second->getPtr()->cameraNode);
+        }
+
+        mCameras.clear();
     }
 }
 

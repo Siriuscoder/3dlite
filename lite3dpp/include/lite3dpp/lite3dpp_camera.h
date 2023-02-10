@@ -29,8 +29,6 @@ namespace lite3dpp
     {
     public:
         
-        typedef std::shared_ptr<Camera> Ptr;
-
         enum CullFaceMode : uint8_t
         {
             CullFaceNever = LITE3D_CULLFACE_NEVER,
@@ -68,7 +66,7 @@ namespace lite3dpp
         void setupPerspective(float znear, float zfar, float fovy, float aspect);
         void setAspect(float aspect);
 
-        Scene &getScene();
+        Scene *getScene();
 
         inline void disable()
         { mCamera.cameraNode.enabled = LITE3D_FALSE; }

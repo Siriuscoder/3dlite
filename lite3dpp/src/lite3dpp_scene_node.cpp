@@ -93,7 +93,7 @@ namespace lite3dpp
 
     void SceneNode::moveRelative(const kmVec3 &p)
     {
-
+        lite3d_scene_node_move_relative(&mNode, &p);
     }
 
     void SceneNode::setRotation(const kmQuaternion &quat)
