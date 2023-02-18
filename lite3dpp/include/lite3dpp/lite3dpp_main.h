@@ -35,7 +35,7 @@ namespace lite3dpp
     {
     public:
         typedef stl<String, lite3d_timer *>::map Timers;
-        typedef stl<String, Camera::Ptr>::map Cameras;
+        typedef stl<String, Camera>::map Cameras;
 
         static const char fixedUpdateTimerName[];
 
@@ -69,7 +69,7 @@ namespace lite3dpp
         void renderFrame();
 
         Camera *addCamera(const String &name);
-        Camera *getCamera(const String &name) const;
+        Camera *getCamera(const String &name);
         void removeAllCameras();
         void removeCamera(const String &name);
 

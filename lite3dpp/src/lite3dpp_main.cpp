@@ -222,18 +222,17 @@ namespace lite3dpp
         if (it != mCameras.end())
             LITE3D_THROW("Camera \"" << name << "\" already exists..");
 
-        std::shared_ptr<Camera> camera = std::make_shared<Camera>(name, this);
-        mCameras.insert(std::make_pair(name, camera));
-        return camera.get();
+        auto emplaced = mCameras.try_emplace(name, name, this);
+        return &emplaced.first->second;
     }
 
-    Camera *Main::getCamera(const String &name) const
+    Camera *Main::getCamera(const String &name)
     {
-        Cameras::const_iterator it = mCameras.find(name);
+        auto it = mCameras.find(name);
         if (it != mCameras.end())
-            return it->second.get();
+            return &it->second;
 
-        return NULL;
+        return nullptr;
     }
 
     void Main::removeAllCameras()

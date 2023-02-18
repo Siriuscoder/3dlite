@@ -39,12 +39,12 @@ void lite3d_camera_update_view(lite3d_camera *camera)
     /* update global shader proj matrix */
     lite3d_shader_set_projection_matrix(&camera->projection);
     /* update global camera view matrix */
-    lite3d_shader_set_view_matrix(&camera->cameraNode.localView);
+    lite3d_shader_set_view_matrix(&camera->cameraNode.worldView);
 
     if (camera->cameraNode.invalidated)
     {
         kmMat4 clip;
-        kmMat4Multiply(&clip, &camera->projection, &camera->cameraNode.localView);
+        kmMat4Multiply(&clip, &camera->projection, &camera->cameraNode.worldView);
         lite3d_frustum_compute(&camera->frustum, &clip);
     }
 }

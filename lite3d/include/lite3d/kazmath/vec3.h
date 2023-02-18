@@ -77,5 +77,6 @@ static const kmVec3 KM_VEC3_NEG_X = { -1, 0, 0 };
 static const kmVec3 KM_VEC3_POS_X = { 1, 0, 0 };
 static const kmVec3 KM_VEC3_ZERO = { 0, 0, 0 };
 static const kmVec3 KM_VEC3_ONE = { 1, 1, 1 };
+static const kmVec3 KM_VEC3_MINUS_ONE = { -1, -1, -1 };
 
 #endif /* VEC3_H_INCLUDED */

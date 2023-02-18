@@ -44,7 +44,10 @@ public:
         Camera *shadowView = getMain().getCamera("ShadowCamera");
         shadowView->setDirection(sunLightDirection);
         shadowView->setCullFaceMode(Camera::CullFaceFront);
-        
+
+        // Привязываем главную камеру к обьекту SponzaHall чтобы она крутилась вместе с ним 
+        mSponzahall = mMainScene->getObject("SponzaHall");
+        mMainScene->attachCamera(&getMainCamera(), mSponzahall);
 
         lite3dpp::Material::setFloatm4GlobalParameter("shadowMatrix", shadowView->getProjTransformMatrix());
         lite3dpp::Material::setIntGlobalParameter("FXAA", 1);
@@ -87,6 +90,19 @@ public:
         }
     }
 
+    void timerTick(lite3d_timer *timerid) override
+    {
+        Sample::timerTick(timerid);
+
+        if(timerid == getMain().getFixedUpdateTimer())
+        {
+            // Имитируем вращение неба и солнца, но на самом деле крутится только здание
+            mSponzahall->getRoot()->rotateAngle(KM_VEC3_POS_Z, 0.002f);
+            // Перересуем тень после поворота, в след кадре
+            mShadowMap->enable();
+        }
+    }
+
     void processEvent(SDL_Event *e) override
     {
         Sample::processEvent(e);
@@ -105,6 +121,7 @@ private:
 
     std::unique_ptr<LightSceneNode> mSunLight;
     Scene *mMainScene;
+    SceneObject *mSponzahall;
     RenderTarget *mShadowMap;
 };
 

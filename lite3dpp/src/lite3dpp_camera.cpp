@@ -50,12 +50,15 @@ namespace lite3dpp
             aspect);
     }
 
-    Scene &Camera::getScene()
+    Scene *Camera::getScene()
     {
-        SDL_assert(mCamera.cameraNode.scene);
-        lite3d_scene *scene = (lite3d_scene *)mCamera.cameraNode.scene;
-        SDL_assert(scene->userdata);
-        return *reinterpret_cast<Scene *>(scene->userdata);
+        lite3d_scene *scene = static_cast<lite3d_scene *>(mCamera.cameraNode.scene);
+        if (!scene)
+        {
+            return nullptr;
+        }
+
+        return reinterpret_cast<Scene *>(scene->userdata);
     }
 
     void Camera::lookAt(const kmVec3 &pointTo)
