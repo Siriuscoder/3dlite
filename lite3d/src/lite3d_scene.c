@@ -70,6 +70,22 @@ static int mqr_node_distance_comparator(const void *a, const void *b)
     return 1;
 }
 
+static void mqr_node_set_shader_params(lite3d_material_pass *pass, _mqr_node *mqrNode)
+{
+    kmMat4 screen;
+
+    /* setup global parameters (model) */
+    lite3d_shader_set_model_matrix(&mqrNode->node->worldView);
+    lite3d_shader_set_normal_matrix(&mqrNode->node->normalModel);
+
+    /* calc screen matrix */
+    kmMat4Multiply(&screen, &mqrNode->matUnit->currentCamera->screen, &mqrNode->node->worldView);
+    lite3d_shader_set_screen_matrix(&screen);
+
+    /* setup changed uniforms parameters */
+    lite3d_material_pass_set_params(mqrNode->matUnit->material, pass, LITE3D_FALSE);
+}
+
 static void mqr_render_batch(lite3d_material_pass *pass, _mqr_node *mqrNode)
 {
     lite3d_scene *scene = (lite3d_scene *) mqrNode->node->scene;
@@ -81,11 +97,7 @@ static void mqr_render_batch(lite3d_material_pass *pass, _mqr_node *mqrNode)
         mqrNode->meshChunk, mqrNode->matUnit->material))
             return;
 
-    /* setup global parameters (model) */
-    lite3d_shader_set_model_matrix(&mqrNode->node->worldView);
-    lite3d_shader_set_normal_matrix(&mqrNode->node->normalModel);
-    /* setup changed uniforms parameters */
-    lite3d_material_pass_set_params(mqrNode->matUnit->material, pass, LITE3D_FALSE);
+    mqr_node_set_shader_params(pass, mqrNode);
     /* call rendering current chunk */
     /* bind meshChunk */
     if (scene->bindedMeshChunk != mqrNode->meshChunk)
@@ -151,9 +163,7 @@ static void mqr_render_batch_series(lite3d_material_pass *pass, _mqr_node *mqrNo
             return;
         }
 
-        /* setup global parameters (model and normal for one instance) */
-        lite3d_shader_set_model_matrix(&mqrNode->node->worldView);
-        lite3d_shader_set_normal_matrix(&mqrNode->node->normalModel);
+        mqr_node_set_shader_params(pass, mqrNode);
 
         /* bind meshChunk */
         if (scene->bindedMeshChunk != mqrNode->meshChunk)

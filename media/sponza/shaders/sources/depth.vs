@@ -5,13 +5,10 @@ layout(location = 1) in vec3 normal;
 layout(location = 2) in vec2 uv;
 layout(location = 3) in vec3 tang;
 
-uniform mat4 projectionMatrix;
-uniform mat4 viewMatrix;
-uniform mat4 modelMatrix;
+uniform mat4 screenMatrix;
 
 void main()
 {
     // vertex coordinate in world space 
-    vec4 wv = modelMatrix * vec4(vertex, 1);
-    gl_Position = projectionMatrix * viewMatrix * wv;
+    gl_Position = screenMatrix * vec4(vertex, 1);
 }

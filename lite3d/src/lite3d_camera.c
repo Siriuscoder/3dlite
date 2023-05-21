@@ -40,7 +40,9 @@ void lite3d_camera_update_view(lite3d_camera *camera)
     lite3d_shader_set_projection_matrix(&camera->projection);
     /* update global camera view matrix */
     lite3d_shader_set_view_matrix(&camera->cameraNode.worldView);
-
+    /* compute screen martix */
+    kmMat4Multiply(&camera->screen, &camera->projection, &camera->cameraNode.worldView);
+    /* compute frustum planes */
     if (camera->cameraNode.invalidated)
     {
         kmMat4 clip;
@@ -93,6 +95,7 @@ void lite3d_camera_init(lite3d_camera *camera)
     camera->cameraNode.renderable = LITE3D_FALSE;
     camera->cameraNode.isCamera = LITE3D_TRUE;
     kmMat4Identity(&camera->projection);
+    kmMat4Identity(&camera->screen);
 
     camera->cullFaceMode = LITE3D_CULLFACE_BACK;
     camera->polygonMode = LITE3D_POLYMODE_FILL;
