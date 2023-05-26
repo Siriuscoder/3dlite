@@ -57,11 +57,18 @@ typedef struct lite3d_shader_parameter
 
 typedef struct lite3d_global_parameters
 {
+    // Матрица проекции, из координат камеры в экранные координаты
     lite3d_shader_parameter projectionMatrix;
-    lite3d_shader_parameter viewMatrix;
-    lite3d_shader_parameter modelMatrix;
-    lite3d_shader_parameter normalMatrix;
+    // Матрица камеры, из мировых координат в координаты камеры
+    lite3d_shader_parameter viewMatrix; 
+    // Матрица преобразования из локальных координат в мировые
+    lite3d_shader_parameter modelMatrix; 
+    // Матрица нормалей, для преобразования номалей из локальных координат в мировые
+    lite3d_shader_parameter normalMatrix; 
+    // Экранная матрица, из локальных координат обьектов в экранные координаты
     lite3d_shader_parameter screenMatrix;
+    // Марица преобразования из мировых координат в экранные
+    lite3d_shader_parameter projViewMatrix;
 } lite3d_global_parameters;
 
 LITE3D_CEXPORT void lite3d_shader_parameter_init(
@@ -76,6 +83,7 @@ LITE3D_CEXPORT void lite3d_shader_set_view_matrix(kmMat4 *mat);
 LITE3D_CEXPORT void lite3d_shader_set_model_matrix(kmMat4 *mat);
 LITE3D_CEXPORT void lite3d_shader_set_normal_matrix(kmMat3 *mat);
 LITE3D_CEXPORT void lite3d_shader_set_screen_matrix(kmMat4 *mat);
+LITE3D_CEXPORT void lite3d_shader_set_projview_matrix(kmMat4 *mat);
 
 #endif	/* LITE3D_SHADER_PARAMS_H */
 

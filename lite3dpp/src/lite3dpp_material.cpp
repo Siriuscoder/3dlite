@@ -140,6 +140,9 @@ namespace lite3dpp
             else if(paramName == "screenMatrix")
                 addParameter(lite3d_material_get_pass(&mMaterial, passNo),
                     &lite3d_shader_global_parameters()->screenMatrix);
+            else if(paramName == "projViewMatrix")
+                addParameter(lite3d_material_get_pass(&mMaterial, passNo),
+                    &lite3d_shader_global_parameters()->projViewMatrix);
             else
             /* user parameters */
             {

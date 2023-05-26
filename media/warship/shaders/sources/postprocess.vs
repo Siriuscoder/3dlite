@@ -2,8 +2,7 @@
 
 in vec2 ivertex;
 
-uniform mat4 projectionMatrix;
-uniform mat4 viewMatrix;
+uniform mat4 screenMatrix;
 uniform vec3 screenResolution;
 
 out vec2 iuv;
@@ -30,7 +29,7 @@ void texcoords(vec2 fragCoord, vec2 resolution,
 void main()
 {
     iuv = ivertex;
-    gl_Position = projectionMatrix * viewMatrix * vec4(ivertex.xy, 0.0, 1.0);
+    gl_Position = screenMatrix * vec4(ivertex.xy, 0.0, 1.0);
 
     texcoords(iuv * screenResolution.xy, screenResolution.xy, irgbNW, irgbNE, irgbSW, irgbSE, irgbM);
 }

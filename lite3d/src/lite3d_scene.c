@@ -34,7 +34,6 @@ typedef struct _mqr_unit
     lite3d_list_node queued;
     lite3d_material *material;
     lite3d_list nodes;
-    lite3d_camera *currentCamera;
 } _mqr_unit;
 
 typedef struct _mqr_node
@@ -70,7 +69,7 @@ static int mqr_node_distance_comparator(const void *a, const void *b)
     return 1;
 }
 
-static void mqr_node_set_shader_params(lite3d_material_pass *pass, _mqr_node *mqrNode)
+static void mqr_node_set_shader_params(lite3d_scene *scene, lite3d_material_pass *pass, _mqr_node *mqrNode)
 {
     kmMat4 screen;
 
@@ -79,7 +78,7 @@ static void mqr_node_set_shader_params(lite3d_material_pass *pass, _mqr_node *mq
     lite3d_shader_set_normal_matrix(&mqrNode->node->normalModel);
 
     /* calc screen matrix */
-    kmMat4Multiply(&screen, &mqrNode->matUnit->currentCamera->screen, &mqrNode->node->worldView);
+    kmMat4Multiply(&screen, &scene->currentCamera->screen, &mqrNode->node->worldView);
     lite3d_shader_set_screen_matrix(&screen);
 
     /* setup changed uniforms parameters */
@@ -97,7 +96,7 @@ static void mqr_render_batch(lite3d_material_pass *pass, _mqr_node *mqrNode)
         mqrNode->meshChunk, mqrNode->matUnit->material))
             return;
 
-    mqr_node_set_shader_params(pass, mqrNode);
+    mqr_node_set_shader_params(scene, pass, mqrNode);
     /* call rendering current chunk */
     /* bind meshChunk */
     if (scene->bindedMeshChunk != mqrNode->meshChunk)
@@ -163,7 +162,7 @@ static void mqr_render_batch_series(lite3d_material_pass *pass, _mqr_node *mqrNo
             return;
         }
 
-        mqr_node_set_shader_params(pass, mqrNode);
+        mqr_node_set_shader_params(scene, pass, mqrNode);
 
         /* bind meshChunk */
         if (scene->bindedMeshChunk != mqrNode->meshChunk)
@@ -196,7 +195,7 @@ static int mqr_node_approve(lite3d_scene *scene,
     SDL_assert(scene);
     SDL_assert(mqrNode->node);
     SDL_assert(mqrNode->matUnit);
-    SDL_assert(mqrNode->matUnit->currentCamera);
+    SDL_assert(scene->currentCamera);
     
     if (!mqrNode->node->renderable)
         return LITE3D_FALSE;
@@ -205,19 +204,19 @@ static int mqr_node_approve(lite3d_scene *scene,
 
     scene->stats.batchesTotal++;
     /* frustum test */
-    if (mqrNode->node->frustumTest && !lite3d_frustum_test(&mqrNode->matUnit->currentCamera->frustum, &mqrNode->boundingVol))
+    if (mqrNode->node->frustumTest && !lite3d_frustum_test(&scene->currentCamera->frustum, &mqrNode->boundingVol))
     {
         mqrNode->node->visible = LITE3D_FALSE;
         if (scene->nodeOutOfFrustum)
             scene->nodeOutOfFrustum(scene, mqrNode->node,
-            mqrNode->meshChunk, mqrNode->matUnit->material, &mqrNode->boundingVol, mqrNode->matUnit->currentCamera);
+            mqrNode->meshChunk, mqrNode->matUnit->material, &mqrNode->boundingVol, scene->currentCamera);
         return LITE3D_FALSE;
     }
     
     mqrNode->node->visible = LITE3D_TRUE;
     if (mqrNode->node->frustumTest && scene->nodeInFrustum)
         scene->nodeInFrustum(scene, mqrNode->node,
-        mqrNode->meshChunk, mqrNode->matUnit->material, &mqrNode->boundingVol, mqrNode->matUnit->currentCamera);
+        mqrNode->meshChunk, mqrNode->matUnit->material, &mqrNode->boundingVol, scene->currentCamera);
 
     return LITE3D_TRUE;
 }
@@ -276,9 +275,9 @@ static void mqr_unit_render(lite3d_scene *scene, _mqr_unit *mqrUnit, uint16_t pa
                 &mqrNode->node->worldView);
         }
 
-        if (mqrNode->node->invalidated || mqrNode->matUnit->currentCamera->cameraNode.invalidated)
+        if (mqrNode->node->invalidated || scene->currentCamera->cameraNode.invalidated)
         {
-            mqrNode->distanceToCamera = lite3d_camera_distance(mqrNode->matUnit->currentCamera, &mqrNode->boundingVol.sphereCenter);
+            mqrNode->distanceToCamera = lite3d_camera_distance(scene->currentCamera, &mqrNode->boundingVol.sphereCenter);
         }
         
         /* ignore this entry if material pass not exist or empty */
@@ -318,7 +317,6 @@ static void mqr_render_stage_first(struct lite3d_scene *scene, lite3d_camera *ca
         mqrUnitNode != &scene->materialRenderUnits.l; mqrUnitNode = lite3d_list_next(mqrUnitNode))
     {
         mqrUnit = LITE3D_MEMBERCAST(_mqr_unit, mqrUnitNode, queued);
-        mqrUnit->currentCamera = camera;
 
         if (!lite3d_list_is_empty(&mqrUnit->nodes))
         {
@@ -459,6 +457,7 @@ void lite3d_scene_render(lite3d_scene *scene, lite3d_camera *camera,
     if (scene->beginSceneRender && !scene->beginSceneRender(scene, camera))
         return;
 
+    scene->currentCamera = camera;
     /* render common objects */
     LITE3D_METRIC_CALL(mqr_render_stage_first, (scene, camera, pass, flags))
     /* render transparent objects */

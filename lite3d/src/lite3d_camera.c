@@ -36,19 +36,20 @@ void lite3d_camera_update_view(lite3d_camera *camera)
     lite3d_camera_tracking(camera, camera->trackNode);
     /* compute local camera matrix */
     lite3d_scene_node_update(&camera->cameraNode);
-    /* update global shader proj matrix */
+    /* update global shader projection matrix */
     lite3d_shader_set_projection_matrix(&camera->projection);
     /* update global camera view matrix */
     lite3d_shader_set_view_matrix(&camera->cameraNode.worldView);
-    /* compute screen martix */
-    kmMat4Multiply(&camera->screen, &camera->projection, &camera->cameraNode.worldView);
     /* compute frustum planes */
     if (camera->cameraNode.invalidated)
     {
-        kmMat4 clip;
-        kmMat4Multiply(&clip, &camera->projection, &camera->cameraNode.worldView);
-        lite3d_frustum_compute(&camera->frustum, &clip);
+        kmMat4Multiply(&camera->screen, &camera->projection, &camera->cameraNode.worldView);
+        lite3d_frustum_compute(&camera->frustum, &camera->screen);
+        /* compute screen martix */
     }
+
+    /* update global projection view matrix */
+    lite3d_shader_set_projview_matrix(&camera->screen);
 }
 
 void lite3d_camera_ortho(lite3d_camera *camera, float znear,
