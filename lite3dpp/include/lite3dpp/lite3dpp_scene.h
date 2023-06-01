@@ -33,9 +33,9 @@ namespace lite3dpp
     {
     public:
 
-        typedef stl<String, SceneObject::Ptr>::map Objects;
-        typedef stl<String, LightSceneNode *>::map Lights;
-        typedef stl<String, Camera*>::map Cameras;
+        typedef stl<String, SceneObject::Ptr>::unordered_map Objects;
+        typedef stl<String, LightSceneNode *>::unordered_map Lights;
+        typedef stl<String, Camera*>::unordered_map Cameras;
         typedef stl<lite3d_light_params>::vector LightsStore;
         typedef stl<int32_t>::vector LightsIndexesStore;
 

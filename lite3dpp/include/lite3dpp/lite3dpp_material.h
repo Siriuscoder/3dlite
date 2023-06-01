@@ -43,8 +43,8 @@ namespace lite3dpp
     {
     public:
 
-        typedef stl<String, std::tuple<lite3d_material_pass *, lite3d_shader_parameter> >::map MaterialParameters;
-        typedef stl<String, lite3d_material_pass *>::map MaterialGlobalParametersNames;
+        typedef stl<String, std::tuple<lite3d_material_pass *, lite3d_shader_parameter> >::unordered_map MaterialParameters;
+        typedef stl<String, lite3d_material_pass *>::unordered_map MaterialGlobalParametersNames;
         typedef stl<uint16_t,  lite3d_material_pass *>::map Passes;
         
         Material(const String &name, 

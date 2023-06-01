@@ -352,7 +352,7 @@ namespace lite3dpp
             return timer;
 
         timer = lite3d_timer_add(millisec, onTimerTick, this);
-        mTimers.insert(std::make_pair(name, timer));
+        mTimers.emplace(name, timer);
         return timer;
     }
 

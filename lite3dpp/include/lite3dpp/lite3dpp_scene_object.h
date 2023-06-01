@@ -31,7 +31,7 @@ namespace lite3dpp
     public:
 
         typedef std::shared_ptr<SceneObject> Ptr;
-        typedef stl<String, SceneNode::Ptr>::map Nodes;
+        typedef stl<String, SceneNode::Ptr>::unordered_map Nodes;
 
         SceneObject(const String &name, 
             SceneObject *parent, Main *main);

@@ -275,7 +275,7 @@ void JsonGenerator::generateMaterial(const lite3dpp::String &name,
     material.set(L"Passes", passes);
     Utils::saveTextFile(material.write(), matFull);
 
-    mMaterials.insert(std::make_pair(matIdx, matName));
+    mMaterials.emplace(matIdx, matName);
 }
 
 void JsonGenerator::generateUniformSampler(lite3dpp::stl<lite3dpp::ConfigurationWriter>::vector &uniforms, const char *fileName)

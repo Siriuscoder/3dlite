@@ -125,7 +125,7 @@ namespace lite3dpp
         SceneObject::Ptr sceneObject = createObject(name, parent);
         sceneObject->loadFromTemplate(templatePath);
         sceneObject->addToScene(this);
-        mObjects.insert(std::make_pair(name, sceneObject));
+        mObjects.emplace(name, sceneObject);
         return sceneObject.get();
     }
 
@@ -166,7 +166,7 @@ namespace lite3dpp
         if(!light->getLight())
             LITE3D_THROW("Node \"" << light->getName() << "\" do not contain light source");
 
-        mLights.insert(std::make_pair(light->getName(), light));
+        mLights.emplace(light->getName(), light);
         rebuildLightingBuffer();
 
         return light;
