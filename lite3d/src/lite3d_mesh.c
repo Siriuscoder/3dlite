@@ -262,8 +262,8 @@ lite3d_mesh_chunk *lite3d_mesh_append_chunk(lite3d_mesh *mesh,
     lite3d_list_add_last_link(&meshChunk->node, &mesh->chunks);
     mesh->chunkCount++;
 
-    SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "MESH: %p: chunk %p: %s, cv/ov/sv %d/%ldb/%udb, ci/oi %d/%ldb",
-        (void *) mesh, (void *) meshChunk, "TRIANGLES",
+    SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "MESH: 0x%016llx: chunk 0x%016llx: %s, cv/ov/sv %d/%zub/%udb, ci/oi %d/%zub",
+        (uint64_t)mesh, (uint64_t)meshChunk, "TRIANGLES",
         meshChunk->vao.verticesCount, meshChunk->vao.verticesOffset, stride, meshChunk->vao.indexesCount, meshChunk->vao.indexesOffset);
 
     return meshChunk;
