@@ -358,6 +358,8 @@ void lite3d_render_target_purge(lite3d_render_target *rt)
         look = LITE3D_MEMBERCAST(lookUnit, node, rtLink);
         lite3d_free_pooled(LITE3D_POOL_NO1, look);
     }
+
+    lite3d_render_target_erase(rt);
 }
 
 void lite3d_render_target_add(lite3d_render_target *newRt, int priority)
