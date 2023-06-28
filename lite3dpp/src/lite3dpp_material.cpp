@@ -199,6 +199,9 @@ namespace lite3dpp
     {
         lite3d_material_pass *passPtr;
         
+        if (passNo > LITE3D_PASSNO_MAX)
+            LITE3D_THROW("Material \"" << getName() << "\" maximum valid passNo is " << LITE3D_PASSNO_MAX);
+        
         if(!(passPtr = lite3d_material_add_pass(&mMaterial, passNo)))
             LITE3D_THROW("Material \"" << getName() << "\" add pass failed..");
         
@@ -222,7 +225,7 @@ namespace lite3dpp
             }
         }
         
-        mPasses.insert(std::make_pair(mMaterial.passesSize, passPtr));
+        mPasses.emplace(passNo, passPtr);
     }
     
     void Material::removePass(uint16_t pass)
@@ -284,13 +287,13 @@ namespace lite3dpp
 
         if(isGlobal)
         {
-            mGlobalParamNames.insert(std::make_pair(name, passPtr));
+            mGlobalParamNames.emplace(name, passPtr);
             return getGlobalParameter(name, type);
         }
 
         if((it = mMaterialParameters.find(name)) == mMaterialParameters.end())
         {
-            auto result = mMaterialParameters.insert(std::make_pair(name, std::make_tuple(passPtr, lite3d_shader_parameter())));
+            auto result = mMaterialParameters.try_emplace(name, passPtr, lite3d_shader_parameter());
             it = result.first;
             
             lite3d_shader_parameter_init(&std::get<1>(it->second));
@@ -311,8 +314,7 @@ namespace lite3dpp
 
         if((it = mGlobalParameters.find(name)) == mGlobalParameters.end())
         {
-            auto result = mGlobalParameters.insert(std::make_pair(name, 
-                std::make_tuple(passPtr, lite3d_shader_parameter())));
+            auto result = mGlobalParameters.try_emplace(name, passPtr, lite3d_shader_parameter());
             it = result.first;
             
             lite3d_shader_parameter_init(&std::get<1>(it->second));
