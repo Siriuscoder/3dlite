@@ -53,7 +53,7 @@ int lite3d_shader_program_init(lite3d_shader_program *program)
     }
 
     SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "shader program 0x%016llx created",
-        (uint64_t)program);
+        (unsigned long long)program);
 
     return LITE3D_TRUE;
 }
@@ -178,7 +178,7 @@ static int lite3d_shader_program_sampler_set(
             p->location = -2;
             SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
                 "%s: sampler '%s' not found in program 0x%016llx",
-                LITE3D_CURRENT_FUNCTION, p->parameter->name, (uint64_t)program);
+                LITE3D_CURRENT_FUNCTION, p->parameter->name, (unsigned long long)program);
             return LITE3D_FALSE;
         }
     }
@@ -210,7 +210,7 @@ static int lite3d_shader_program_ssbo_set(
             p->location = -2;
             SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
                 "%s: resource block '%s' not found in program 0x%016llx",
-                LITE3D_CURRENT_FUNCTION, p->parameter->name, (void *)program);
+                LITE3D_CURRENT_FUNCTION, p->parameter->name, (unsigned long long)program);
             return LITE3D_FALSE;
         }
     }
@@ -243,7 +243,7 @@ static int lite3d_shader_program_ubo_set(
             p->location = -2;
             SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
                 "%s: resource block '%s' not found in program 0x%016llx",
-                LITE3D_CURRENT_FUNCTION, p->parameter->name, (uint64_t)program);
+                LITE3D_CURRENT_FUNCTION, p->parameter->name, (unsigned long long)program);
             return LITE3D_FALSE;
         }
     }
@@ -274,7 +274,7 @@ static int lite3d_shader_program_simple_uniform_set(
             p->location = -2; // not found 
             SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
                 "%s: uniform '%s' not found in program 0x%016llx",
-                LITE3D_CURRENT_FUNCTION, p->parameter->name, (uint64_t)program);
+                LITE3D_CURRENT_FUNCTION, p->parameter->name, (unsigned long long)program);
             return LITE3D_FALSE;
         }
     }
@@ -342,7 +342,7 @@ void lite3d_shader_program_attribute_index(
 
     SDL_LogVerbose(SDL_LOG_CATEGORY_APPLICATION,
         "%s: bind attribute %s:%d for program 0x%016llx",
-        LITE3D_CURRENT_FUNCTION, name, location, (uint64_t)program);
+        LITE3D_CURRENT_FUNCTION, name, location, (unsigned long long)program);
 
     glBindAttribLocation(program->programID, location, name);
 }
