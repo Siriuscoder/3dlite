@@ -238,7 +238,7 @@ lite3d_material_pass *lite3d_material_apply(
     {
         SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
             "%s: validate program 0x%016llx: %s", LITE3D_CURRENT_FUNCTION, 
-            (uint64_t)gActProg, gActProg->statusString);
+            (unsigned long long)gActProg, gActProg->statusString);
     }
 
     lite3d_blending(pass->blending);
