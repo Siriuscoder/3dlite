@@ -10,10 +10,7 @@
   ],
   "Uniforms":[
     {
-      "Name":"projectionMatrix"
-    },
-    {
-      "Name":"viewMatrix"
+      "Name":"screenMatrix"
     },
     {
       "Name":"FXAA",

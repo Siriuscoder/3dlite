@@ -37,7 +37,7 @@ namespace lite3dpp
         if(mScripts.find(script->getName()) != mScripts.end())
             LITE3D_THROW(script->getName() << " script already registered");
 
-        mPendingScripts.insert(std::make_pair(script->getName(), script));
+        mPendingScripts.emplace(script->getName(), script);
     }
 
     void ScriptDispatcher::unregisterScript(Script *script)

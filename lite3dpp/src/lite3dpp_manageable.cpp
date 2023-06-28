@@ -118,11 +118,5 @@ namespace lite3dpp
     {
         Manageable::free(p);
     }
-
-    Noncopiable::Noncopiable()
-    {}
-
-    Noncopiable::Noncopiable(const Noncopiable &other)
-    {}
 }
 

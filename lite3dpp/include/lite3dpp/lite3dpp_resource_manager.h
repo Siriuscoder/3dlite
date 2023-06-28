@@ -80,7 +80,7 @@ namespace lite3dpp
                 resName = generateResourceName();
 
             /* resource not found.. create one */
-            std::shared_ptr<T> result(new T(resName, path, mMain));
+            auto result = std::make_shared<T>(resName, path, mMain);
             loadResource(resName, path, result);
 
             return result.get();
@@ -95,7 +95,7 @@ namespace lite3dpp
                 resName = generateResourceName();
 
             /* resource not found.. create one */
-            std::shared_ptr<T> result(new T(resName, "", mMain));
+            auto result = std::make_shared<T>(resName, "", mMain);
             loadResource(resName, data, size, result);
 
             return result.get();

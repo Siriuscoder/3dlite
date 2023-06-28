@@ -2,8 +2,7 @@
 
 layout(location = 0) in vec2 ivertex;
 
-uniform mat4 projectionMatrix;
-uniform mat4 viewMatrix;
+uniform mat4 screenMatrix;
 uniform sampler2D combined;
 
 out vec2 irgbNW;
@@ -29,7 +28,7 @@ void texcoords(vec2 fragCoord, vec2 resolution,
 void main()
 {
     vec2 sr = textureSize(combined, 0);
-    gl_Position = projectionMatrix * viewMatrix * vec4(ivertex.xy, 0.0, 1.0);
+    gl_Position = screenMatrix * vec4(ivertex.xy, 0.0, 1.0);
 
     texcoords(ivertex * sr, sr, irgbNW, irgbNE, irgbSW, irgbSE, irgbM);
 }

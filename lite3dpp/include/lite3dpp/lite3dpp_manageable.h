@@ -68,10 +68,9 @@ namespace lite3dpp
     {
     public:
 
-        Noncopiable();
-    private:
-
-        Noncopiable(const Noncopiable &other);
+        Noncopiable() = default;
+        Noncopiable(const Noncopiable &other) = delete;
+        Noncopiable(Noncopiable &&other) = delete;
     };
 
 #ifdef LITE3DPP_USE_STL_ALLOCATOR

@@ -84,7 +84,7 @@ namespace lite3dpp
         }
 
         /* just insert resource */
-        mResources.insert(std::make_pair(name, resource));     
+        mResources.emplace(name, resource);
     }
 
     void ResourceManager::releaseAllResources()
@@ -225,7 +225,7 @@ namespace lite3dpp
             LITE3D_THROW("Location open failed.. " << 
                 name << " :: " << path);
 
-        mPacks.insert(std::make_pair(name, pack));
+        mPacks.emplace(name, pack);
     }
 
     const void *ResourceManager::loadFileToMemory(const String &path, size_t *size)

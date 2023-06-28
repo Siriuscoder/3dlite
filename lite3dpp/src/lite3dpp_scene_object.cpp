@@ -60,8 +60,7 @@ namespace lite3dpp
 
             SceneNode::Ptr sceneNode = createNode(nodeHelper, base);
             /* create and initialize new node then store it */
-            mNodes.insert(std::make_pair(sceneNode->getName(),
-                sceneNode));
+            mNodes.emplace(sceneNode->getName(), sceneNode);
 
             stl<ConfigurationReader>::vector nodesSubRange = nodeHelper.getObjects(L"Nodes");
             if(nodesSubRange.size() > 0)

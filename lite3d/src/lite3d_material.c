@@ -28,16 +28,12 @@ lite3d_shader_program *gActProg = NULL;
 
 static void lite3d_material_pass_purge(lite3d_material_pass *pass)
 {
-    lite3d_list_node *parameterNode;
-
-    while ((parameterNode = lite3d_list_remove_first_link(&pass->parameters)) != NULL)
-    {
-        lite3d_free_pooled(LITE3D_POOL_NO1,
-            LITE3D_MEMBERCAST(lite3d_shader_parameter_container,
-            parameterNode, parameterLink));
-    }
+    if (!pass->passNo)
+        return;
+    
+    lite3d_material_pass_remove_all_parameters(pass);
+    pass->passNo = 0;
 }
-
 
 static lite3d_shader_parameter_container *lite3d_material_pass_find_parameter(
     lite3d_material_pass *pass, const char *name)
@@ -68,9 +64,8 @@ static lite3d_shader_parameter_container *lite3d_material_pass_find_parameter(
 void lite3d_material_init(lite3d_material *material)
 {
     SDL_assert(material);
-    material->passes = NULL;
-    material->passesSize = 0;
-    material->passesCapacity = 0;
+    lite3d_array_init(&material->passes, sizeof (lite3d_material_pass), LITE3D_PASSNO_MAX);
+    material->userdata = NULL;
 }
 
 void lite3d_material_purge(lite3d_material *material)
@@ -78,49 +73,43 @@ void lite3d_material_purge(lite3d_material *material)
     SDL_assert(material);
 
     uint32_t i;
-    for (i = 0; i < material->passesSize; ++i)
+    for (i = 0; i < material->passes.size; ++i)
     {
-        lite3d_material_pass_purge(&material->passes[i]);
+        lite3d_material_pass_purge(lite3d_array_get(&material->passes, i));
     }
 
-    lite3d_free(material->passes);
+    lite3d_array_purge(&material->passes);
 }
 
-void lite3d_material_pass_init(lite3d_material_pass *pass)
+void lite3d_material_pass_init(lite3d_material_pass *pass, uint32_t no)
 {
     SDL_assert(pass);
     memset(pass, 0, sizeof(lite3d_material_pass));
     lite3d_list_init(&pass->parameters);
+    pass->passNo = no;
 }
 
 lite3d_material_pass* lite3d_material_add_pass(
     lite3d_material *material, uint32_t no)
 {
     lite3d_material_pass *pass;
+    size_t i;
 
     SDL_assert(material);
 
-    if (!no || no >= 0xff)
+    if (!no || no > material->passes.capacity)
         return NULL;
 
-    if (material->passesCapacity < no)
+    if (no > material->passes.size)
     {
-        pass = (lite3d_material_pass *)
-            lite3d_calloc(sizeof (lite3d_material_pass) * no * 2);
-        SDL_assert_release(pass);
-
-        if (material->passes)
-            memcpy(pass, material->passes, sizeof (lite3d_material_pass) * material->passesSize);
-
-        material->passes = pass;
-        material->passesCapacity = no * 2;
+        size_t addcount = no - material->passes.size;
+        for(i = 0; i < addcount; ++i)
+            memset(lite3d_array_add(&material->passes), 0, sizeof (lite3d_material_pass));
     }
 
-    pass = &material->passes[no - 1];
-    material->passesSize = no;
-    lite3d_material_pass_init(pass);
+    pass = lite3d_array_get(&material->passes, no - 1);
+    lite3d_material_pass_init(pass, no);
 
-    pass->passNo = no;
     return pass;
 }
 
@@ -176,7 +165,13 @@ int lite3d_material_pass_remove_parameter(lite3d_material_pass *pass,
 
 void lite3d_material_pass_remove_all_parameters(lite3d_material_pass *pass)
 {
-    lite3d_material_pass_purge(pass);
+    lite3d_list_node *parameterNode;
+    while ((parameterNode = lite3d_list_remove_first_link(&pass->parameters)) != NULL)
+    {
+        lite3d_free_pooled(LITE3D_POOL_NO1,
+            LITE3D_MEMBERCAST(lite3d_shader_parameter_container,
+            parameterNode, parameterLink));
+    }
 }
 
 lite3d_shader_parameter *lite3d_material_pass_get_parameter(
@@ -193,10 +188,10 @@ lite3d_material_pass *lite3d_material_get_pass(
 {
     SDL_assert(material);
 
-    if (material->passesSize < no || !no)
+    if (material->passes.size < no || !no)
         return NULL;
 
-    return &material->passes[no - 1];
+    return lite3d_array_get(&((lite3d_material *)material)->passes, no - 1);
 }
 
 int lite3d_material_pass_is_blend(
@@ -242,8 +237,8 @@ lite3d_material_pass *lite3d_material_apply(
     if (!lite3d_shader_program_validate(gActProg))
     {
         SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
-            "%s: validate shader %p: %s", LITE3D_CURRENT_FUNCTION, 
-            (void *)gActProg, gActProg->statusString);
+            "%s: validate program 0x%016llx: %s", LITE3D_CURRENT_FUNCTION, 
+            (uint64_t)gActProg, gActProg->statusString);
     }
 
     lite3d_blending(pass->blending);

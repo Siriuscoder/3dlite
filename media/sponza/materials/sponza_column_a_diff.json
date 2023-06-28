@@ -62,19 +62,16 @@
           "Name":"shadowMatrix",
           "Type":"m4",
           "Scope":"global"
+        },
+        {
+          "Name":"modelMatrix"
         }
       ]
     }
   ],
   "Uniforms":[
     {
-      "Name":"projectionMatrix"
-    },
-    {
-      "Name":"viewMatrix"
-    },
-    {
-      "Name":"modelMatrix"
+      "Name":"screenMatrix"
     }
   ]
 }

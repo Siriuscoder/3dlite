@@ -29,7 +29,7 @@ namespace lite3dpp
         friend class AsScript;
     public:
 
-        typedef stl<String, Script *>::map Scripts;
+        typedef stl<String, Script *>::unordered_map Scripts;
 
         ScriptDispatcher(Main *main);
         virtual ~ScriptDispatcher();

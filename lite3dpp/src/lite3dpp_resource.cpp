@@ -54,7 +54,7 @@ namespace lite3dpp
         SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
             "Resource %s %s \"%s\" %s", ResourceTypeName[mType], 
                 mName.c_str(), 
-                mPath.size() == 0 ? "(none)" : mPath.c_str(), 
+                mPath.size() == 0 ? "" : mPath.c_str(), 
                 mState == LOADED ? "LOADED" : "UNLOADED");
     }
 
@@ -113,7 +113,7 @@ namespace lite3dpp
     {
         SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
             "Parsing json (%s) \"%s\" ...", getName().c_str(), 
-            getPath().size() == 0 ? "(none)" : getPath().c_str()); 
+            getPath().size() == 0 ? "" : getPath().c_str()); 
 
         mConfiguration.reset(new ConfigurationReader(static_cast<const char *>(buffer), size));
         SDL_assert_release(mConfiguration);

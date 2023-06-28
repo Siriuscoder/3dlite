@@ -34,8 +34,8 @@ namespace lite3dpp
     class LITE3DPP_EXPORT Main : public Observable<LifecycleObserver>, public Noncopiable
     {
     public:
-        typedef stl<String, lite3d_timer *>::map Timers;
-        typedef stl<String, Camera>::map Cameras;
+        typedef stl<String, lite3d_timer *>::unordered_map Timers;
+        typedef stl<String, Camera>::unordered_map Cameras;
 
         static const char fixedUpdateTimerName[];
 

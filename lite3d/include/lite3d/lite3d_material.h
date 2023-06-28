@@ -21,6 +21,9 @@
 #include <lite3d/lite3d_common.h>
 #include <lite3d/lite3d_shader_program.h>
 #include <lite3d/lite3d_list.h>
+#include <lite3d/lite3d_array.h>
+
+#define LITE3D_PASSNO_MAX  16
 
 typedef struct lite3d_material_pass
 {
@@ -37,9 +40,7 @@ typedef struct lite3d_material_pass
 
 typedef struct lite3d_material
 {
-    lite3d_material_pass *passes;
-    uint32_t passesSize;
-    uint32_t passesCapacity;
+    lite3d_array passes;
     void *userdata;
 } lite3d_material;
 
@@ -48,7 +49,7 @@ LITE3D_CEXPORT void lite3d_material_init(
 LITE3D_CEXPORT void lite3d_material_purge(
     lite3d_material *material);
 LITE3D_CEXPORT void lite3d_material_pass_init(
-    lite3d_material_pass *pass);
+    lite3d_material_pass *pass, uint32_t no);
 LITE3D_CEXPORT lite3d_material_pass* lite3d_material_add_pass(
     lite3d_material *material, uint32_t no);
 LITE3D_CEXPORT int lite3d_material_remove_pass(
