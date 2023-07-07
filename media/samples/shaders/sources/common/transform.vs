@@ -1,4 +1,4 @@
-#version 330
+#include "samples:shaders/sources/common/version.def"
 
 uniform mat4 projectionMatrix;
 uniform mat4 viewMatrix;

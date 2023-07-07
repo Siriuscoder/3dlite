@@ -6,7 +6,7 @@
 		{ "Name": "viewMatrix" },
 		
 		{
-			"Name": "diffuseTexture",
+			"Name": "diffuseSampler",
 			"Type": "sampler",
 			"TextureName": "plasmagun_a.texture",
 			"TexturePath": "samples:textures/json/plasmagun_a.json"

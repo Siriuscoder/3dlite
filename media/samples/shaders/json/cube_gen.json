@@ -1,15 +1,8 @@
 {
     "Sources": 
     [
-        "samples:shaders/sources/basic_forward_instanced.vs",
+        "samples:shaders/sources/basic_shading_instanced_no_normals.vs",
         "samples:shaders/sources/cube_generator.gs",
-        "samples:shaders/sources/basic_light_shading.ps"
-    ],
-    
-    "AttributesOrder":
-    [
-        "vertexAttr",
-        "normalAttr",
-        "texCoordAttr"
+        "samples:shaders/sources/basic_shading_light.fs"
     ]
 }

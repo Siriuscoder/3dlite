@@ -1,10 +1,6 @@
-#version 330
+#include "samples:shaders/sources/common/version.def"
 
-uniform vec4 ambient;
 uniform vec4 diffuse;
-uniform vec4 specular;
-uniform vec4 emissive;
-
 out vec4 fragcolor;
 
 void main()

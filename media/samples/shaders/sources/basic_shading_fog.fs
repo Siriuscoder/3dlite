@@ -1,14 +1,10 @@
-#version 330
+#include "samples:shaders/sources/common/version.def"
 
 uniform sampler2D diffuseSampler;
-uniform vec4 ambient;
-uniform vec4 diffuse;
-uniform vec4 specular;
-uniform vec4 emissive;
 uniform vec4 fogColor;
 
-in vec2 tcoords;
-in vec3 vnormal;
+in vec2 uv;
+in vec3 wn;
 
 out vec4 fragcolor;
 
@@ -19,8 +15,8 @@ const float LOG2 = 1.442695;
 void main()
 {
     vec3 lightDir = vec3(-1.0, -1.0, 1.0);
-    float nDotL = clamp(dot(vnormal, lightDir), 0.2, 1);
-    vec4 diffColor = texture2D(diffuseSampler, tcoords.st) * nDotL;
+    float nDotL = clamp(dot(wn, lightDir), 0.2, 1);
+    vec4 diffColor = texture2D(diffuseSampler, uv.st) * nDotL;
     
     float z = gl_FragCoord.z / gl_FragCoord.w;
     float fogFactor = exp2(-density * density * z * z * LOG2);
