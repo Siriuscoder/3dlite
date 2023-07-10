@@ -1,10 +1,8 @@
-#version 330
+#include "samples:shaders/sources/common/version.def"
 
 uniform sampler2D fragMap;
 uniform sampler2D normalMap;
 uniform sampler2D diffuseMap;
-uniform samplerBuffer lightSources;
-uniform int Warship_numLights;
 uniform vec3 eye;
 
 in vec2 iuv;
@@ -16,9 +14,9 @@ const float density = 0.0005;
 const float LOG2 = 1.442695;
 const vec3 fogColor = vec3(0.5, 0.5, 0.2);
 
-vec3 blinn_calculate(samplerBuffer source, int num, vec3 ambient, vec3 fragPos, 
+vec3 calc_lighting(vec3 fragPos, 
     vec3 fragNormal, vec3 eye, float specularFactor, 
-    float wrapAroundFactor, float specPower);
+    float wrapAroundFactor, float specPower, inout vec3 linearSpec);
 
 void main()
 {
@@ -34,13 +32,13 @@ void main()
     /* sampling normal and specular factor (w)*/
     vec4 fragNormalAndSpecular = texture2D(normalMap, iuv);
 
-    vec3 linear = blinn_calculate(lightSources, Warship_numLights, ambient, fragXYZW.xyz, fragNormalAndSpecular.xyz,
-        eye, fragNormalAndSpecular.w, wrapAroundFactor, specPower);
-
+    vec3 linearSpec = vec3(0.0);
+    vec3 linear = calc_lighting(fragXYZW.xyz, fragNormalAndSpecular.xyz,
+        eye, fragNormalAndSpecular.w * 2.0, wrapAroundFactor, specPower, linearSpec);
 
     /* calculate fog factor */
     float fogFactor = clamp(exp2(-density * density * fragXYZW.w * fragXYZW.w * LOG2), 0.0, 1.0);
-    vec3 rcolor = mix(fogColor, linear * fragTexture.rgb, fogFactor);
+    vec3 rcolor = mix(fogColor, (ambient + linear) * fragTexture.rgb, fogFactor);
     /* result color in LDR */
     gl_FragColor = vec4(rcolor, 1.0);
 }

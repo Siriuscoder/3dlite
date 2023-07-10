@@ -2,12 +2,8 @@
     "Sources": 
     [
         "warship:shaders/sources/combine.vs",
-        "warship:shaders/sources/combine.ps",
-        "warship:shaders/sources/blinn.ps"
-    ],
-    
-    "AttributesOrder":
-    [
-        "ivertex"
+        "warship:shaders/sources/combine.fs",
+        "samples:shaders/sources/lighting/phong_blinn_single.fs",
+        "samples:shaders/sources/lighting/lighting_tbo.fs,samples:shaders/sources/lighting/phong_blinn.def"
     ]
 }

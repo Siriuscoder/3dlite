@@ -1,6 +1,6 @@
-#version 330
+#include "samples:shaders/sources/common/version.def"
 
-in vec2 ivertex;
+layout(location = 0) in vec2 ivertex;
 
 uniform mat4 screenMatrix;
 

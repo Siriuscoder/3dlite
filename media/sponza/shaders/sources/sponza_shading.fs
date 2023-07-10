@@ -22,7 +22,7 @@ const float specPower = 35.0;
 const float shadowBias = 0.0000;
 
 vec3 calc_lighting(vec3 fragPos, vec3 fragNormal, vec3 eye, float specularFactor, 
-    float wrapAroundFactor, float specPower);
+    float wrapAroundFactor, float specPower, inout vec3 linearSpec);
 
 float shadow_PCF()
 {
@@ -85,8 +85,9 @@ void main()
         spec = texture(specular, tc).xyz;
 #endif
 
+        vec3 linearSpec = vec3(0.0);
         linear = calc_lighting(ivv, nw, eye, spec.x/1.7, 
-            wrapAroundFactor, specPower);
+            wrapAroundFactor, specPower, linearSpec);
     }
 
     vec3 final = ambient + (shadowFactor * linear);

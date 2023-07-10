@@ -2,7 +2,7 @@
 
 vec3 phong_blinn_single(int type, vec3 lightDir, vec3 eyeDir, vec3 diffuse, 
     vec3 specular, vec3 normal, vec3 spotDirection, vec2 spotFactor, vec3 attenuation, 
-    float specularFactor, float wrapAroundFactor, float specPower)
+    float specularFactor, float wrapAroundFactor, float specPower, inout vec3 linearSpec)
 {
     vec3 ldir = normalize(lightDir);
     float ldist = length(lightDir);
@@ -33,7 +33,7 @@ vec3 phong_blinn_single(int type, vec3 lightDir, vec3 eyeDir, vec3 diffuse,
     /* calculate specular ratio */
     float specRatio = pow(max(dot(normal, normalize(ldir + eyeDir)), 0.0), specPower) * specularFactor;
 
-    vec3 linearSpec = specular * specRatio * attenuationFactor;
+    linearSpec = specular * specRatio * attenuationFactor;
     /* calculate linear color factor */
     return (diffuse * lambRatio * attenuationFactor) + linearSpec;
 }
