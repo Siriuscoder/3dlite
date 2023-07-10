@@ -1,8 +1,9 @@
 {
     "Sources": 
     [
-        "sponzamat:shaders/sources/sponza_shading.vs,sponzamat:shaders/sources/common/basic.def",
-        "sponzamat:shaders/sources/sponza_shading.ps,sponzamat:shaders/sources/common/basic.def",
-        "sponzamat:shaders/sources/blinn.ps,sponzamat:shaders/sources/common/basic.def"
+        "sponzamat:shaders/sources/sponza_shading.vs,samples:shaders/sources/common/version.def",
+        "sponzamat:shaders/sources/sponza_shading.fs,samples:shaders/sources/common/version.def",
+        "samples:shaders/sources/lighting/phong_blinn_single.fs",
+        "samples:shaders/sources/lighting/lighting_ubo.fs,samples:shaders/sources/lighting/phong_blinn.def"
     ]
 }

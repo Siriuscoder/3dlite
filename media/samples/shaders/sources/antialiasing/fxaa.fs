@@ -1,4 +1,4 @@
-#include "sponzamat:shaders/sources/common/version.def"
+#include "samples:shaders/sources/common/version.def"
 
 /**
 Basic FXAA implementation based on the code on geeks3d.com with the

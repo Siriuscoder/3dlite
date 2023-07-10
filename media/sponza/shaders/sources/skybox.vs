@@ -1,4 +1,4 @@
-#include "sponzamat:shaders/sources/common/version.def"
+#include "samples:shaders/sources/common/version.def"
 
 layout(location = 0) in vec3 vertex;
 

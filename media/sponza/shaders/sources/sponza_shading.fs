@@ -21,7 +21,7 @@ const float wrapAroundFactor = -0.04;
 const float specPower = 35.0;
 const float shadowBias = 0.0000;
 
-vec3 blinn_multiple(vec3 fragPos, vec3 fragNormal, vec3 eye, float specularFactor, 
+vec3 calc_lighting(vec3 fragPos, vec3 fragNormal, vec3 eye, float specularFactor, 
     float wrapAroundFactor, float specPower);
 
 float shadow_PCF()
@@ -85,7 +85,7 @@ void main()
         spec = texture(specular, tc).xyz;
 #endif
 
-        linear = blinn_multiple(ivv, nw, eye, spec.x/1.7, 
+        linear = calc_lighting(ivv, nw, eye, spec.x/1.7, 
             wrapAroundFactor, specPower);
     }
 

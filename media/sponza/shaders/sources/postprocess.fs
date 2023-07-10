@@ -1,4 +1,4 @@
-#include "sponzamat:shaders/sources/common/version.def"
+#include "samples:shaders/sources/common/version.def"
 
 uniform sampler2D combined;
 uniform int FXAA;

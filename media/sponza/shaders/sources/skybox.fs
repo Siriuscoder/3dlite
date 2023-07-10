@@ -1,4 +1,4 @@
-#include "sponzamat:shaders/sources/common/version.def"
+#include "samples:shaders/sources/common/version.def"
 
 uniform samplerCube skybox;
 
