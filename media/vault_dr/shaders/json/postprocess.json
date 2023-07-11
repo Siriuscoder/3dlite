@@ -1,13 +1,9 @@
 {
     "Sources": 
     [
-        "vaultmat:shaders/sources/postprocess.vs,vaultmat:shaders/sources/def/version.def",
-        "vaultmat:shaders/sources/postprocess.ps,vaultmat:shaders/sources/def/version.def",
-        "vaultmat:shaders/sources/fxaa.ps,vaultmat:shaders/sources/def/version.def"
-    ],
-    
-    "AttributesOrder":
-    [
-        "ivertex"
+        "vaultmat:shaders/sources/postprocess.vs",
+        "vaultmat:shaders/sources/postprocess.fs",
+        "samples:shaders/sources/antialiasing/fxaa.fs",
+        "samples:shaders/sources/antialiasing/fxaa_texcoords.vs"
     ]
 }

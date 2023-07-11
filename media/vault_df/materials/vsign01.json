@@ -26,12 +26,6 @@
       "Name":"viewMatrix"
     },
     {
-      "Name":"Vault_numLights",
-      "Type":"int",
-      "Value": 0,
-      "Scope":"global"
-    },
-    {
       "Name":"eye",
       "Type":"v3",
       "Value":[
@@ -60,6 +54,11 @@
     {
       "Name":"lightSources",
       "TextureName": "Vault_lightingBufferObject",
+      "Type":"samplerBuffer"
+    },
+    {
+      "Name":"lightIndexes",
+      "TextureName": "Vault_lightingIndexBuffer",
       "Type":"samplerBuffer"
     }
   ]

@@ -1,4 +1,6 @@
-in vec2 ivertex;
+#include "samples:shaders/sources/common/version.def"
+
+layout(location = 0) in vec2 ivertex;
 
 uniform mat4 projectionMatrix;
 uniform mat4 viewMatrix;

@@ -27,7 +27,8 @@ const float specPower = 180.0;
 const float specPower = 40.0;
 #endif
 
-vec3 blinn_multiple(vec3 ambient, vec3 fragPos, vec3 fragNormal, vec3 eye, float specularFactor, 
+vec3 calc_lighting(vec3 fragPos, 
+    vec3 fragNormal, vec3 eye, float specularFactor, 
     float wrapAroundFactor, float specPower, inout vec3 linearSpec);
 
 bool vec3zero(vec3 vec)
@@ -117,13 +118,13 @@ void main()
         nw = wnorm;
 
     vec3 linearSpec;
-    vec3 linear = blinn_multiple(ambient, ivv, nw, eye, nval.w * 2, 
-        wrapAroundFactor, specPower, linearSpec);
+    vec3 linear = calc_lighting(ivv, nw,
+        eye, nval.w * 2, wrapAroundFactor, specPower, linearSpec);
 
 #ifdef GLASS
     fragDiffuse.a = mix(fragDiffuse.a, 1.0, length(linearSpec.rgb));
 #endif
 
     /* calculate fog factor */
-    fragColor = vec4(fogFunc(linear * fragDiffuse.rgb, fogColor), fragDiffuse.a);
+    fragColor = vec4(fogFunc((ambient + linear) * fragDiffuse.rgb, fogColor), fragDiffuse.a);
 }

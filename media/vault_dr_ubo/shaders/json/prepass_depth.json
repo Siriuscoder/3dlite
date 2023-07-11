@@ -1,7 +1,7 @@
 {
     "Sources": 
     [
-        "vaultmat:shaders/sources/depth.vs,vaultmat:shaders/sources/def/version.def",
-        "vaultmat:shaders/sources/depth.ps,vaultmat:shaders/sources/def/version.def"
+        "vaultshader:shaders/sources/depth.vs",
+        "vaultshader:shaders/sources/depth.fs"
     ]
 }

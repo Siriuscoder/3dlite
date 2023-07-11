@@ -1,3 +1,5 @@
+#include "samples:shaders/sources/common/version.def"
+
 uniform sampler2D fragMap;
 uniform sampler2D normalMap;
 uniform vec3 eye;
@@ -23,7 +25,7 @@ out vec4 fragColor;
 const float wrapAroundFactor = 0.1;
 const float specPower = 40.0;
 
-vec3 blinn_single(int type, vec3 lightDir, vec3 eyeDir, vec3 diffuse, 
+vec3 phong_blinn_single(int type, vec3 lightDir, vec3 eyeDir, vec3 diffuse, 
     vec3 specular, vec3 normal, vec3 spotDirection, vec2 spotFactor, vec3 attenuation, 
     float specularFactor, float wrapAroundFactor, float specPower, inout vec3 linearSpec);
 
@@ -47,7 +49,7 @@ void main()
     vec3 eyeDir = normalize(eye - frag);
 
     vec3 linearSpec;
-    vec3 linear = blinn_single(light.type, lightDir, eyeDir, light.diffuse, light.specular, normal.xyz, 
+    vec3 linear = phong_blinn_single(light.type, lightDir, eyeDir, light.diffuse, light.specular, normal.xyz, 
         light.direction, light.spotfactor.xy, light.attenuation.xyz, normal.w, wrapAroundFactor, specPower, linearSpec);
 
     /* result color in HDR */

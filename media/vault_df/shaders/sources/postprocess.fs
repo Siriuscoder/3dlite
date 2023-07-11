@@ -1,3 +1,5 @@
+#include "samples:shaders/sources/common/version.def"
+
 uniform sampler2D combined;
 uniform int FXAA;
 uniform float GammaFactor;
@@ -17,8 +19,6 @@ vec4 fxaa(sampler2D tex, vec2 fragCoord, vec2 resolution,
     vec2 v_rgbSW, vec2 v_rgbSE, 
     vec2 v_rgbM);
 
-const vec3 correction = vec3(0.95, 0.99, 1.04);
-
 void main()
 {
     // apply FXAA
@@ -26,5 +26,5 @@ void main()
 
     // apply gamma correction 
     finalColor.rgb = pow(finalColor.rgb, vec3(1/GammaFactor));
-    fragColor = vec4(finalColor.rgb * correction, 1.0);
+    fragColor = vec4(finalColor.rgb, 1.0);
 }

@@ -4,8 +4,6 @@ uniform sampler2D normals;
 uniform sampler2D glow;
 #endif
 
-uniform samplerBuffer lightSources;
-uniform int Vault_numLights;
 uniform vec3 eye;
 
 in vec2 iuv;
@@ -29,7 +27,7 @@ bool vec3zero(vec3 vec)
     return ((1.0-step(prec, vec.x)) * (1.0-step(prec, vec.y)) * (1.0-step(prec, vec.z))) == 1.0;
 }
 
-vec3 blinn_multiple(samplerBuffer source, int num, vec3 ambient, vec3 fragPos, 
+vec3 calc_lighting(vec3 fragPos, 
     vec3 fragNormal, vec3 eye, float specularFactor, 
     float wrapAroundFactor, float specPower, inout vec3 linearSpec);
 
@@ -60,12 +58,12 @@ void main()
         nw = wnorm;
 
     vec3 linearSpec;
-    vec3 linear = blinn_multiple(lightSources, Vault_numLights, ambient, ivv, nw,
+    vec3 linear = calc_lighting(ivv, nw,
         eye, fragNormalAndSpecular.w, wrapAroundFactor, specPower, linearSpec);
 
 #ifdef GLASS
     fragTexture.a = mix(fragTexture.a, 1.0, length(linearSpec.rgb));
 #endif
 
-    fragColor = vec4(linear * fragTexture.rgb, fragTexture.a);
+    fragColor = vec4((ambient + linear) * fragTexture.rgb, fragTexture.a);
 }

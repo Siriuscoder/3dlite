@@ -1,2 +1,3 @@
-#version 330
+#include "samples:shaders/sources/common/version.def"
+
 #define GLASS

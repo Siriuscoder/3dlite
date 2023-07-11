@@ -1,8 +1,9 @@
 {
     "Sources": 
     [
-        "vaultmat:shaders/sources/prepass.vs,vaultmat:shaders/sources/def/version.def",
-        "vaultmat:shaders/sources/prepass.ps,vaultmat:shaders/sources/def/illum.def",
-        "vaultmat:shaders/sources/blinn.ps,vaultmat:shaders/sources/def/version.def"
+        "vaultmat:shaders/sources/prepass.vs",
+        "vaultmat:shaders/sources/prepass.fs,vaultmat:shaders/sources/def/illum.def",
+        "samples:shaders/sources/lighting/phong_blinn_single.fs",
+        "samples:shaders/sources/lighting/lighting_tbo.fs,samples:shaders/sources/lighting/phong_blinn.def"
     ]
 }

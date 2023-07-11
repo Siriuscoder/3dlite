@@ -1,3 +1,5 @@
+#include "samples:shaders/sources/common/version.def"
+
 uniform sampler2D diffuse;
 uniform float animcounter; // [0..1]
 

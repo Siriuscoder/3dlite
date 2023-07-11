@@ -1,3 +1,5 @@
+#include "samples:shaders/sources/common/version.def"
+
 uniform sampler2D lightMap;
 uniform sampler2D diffuseMap;
 
