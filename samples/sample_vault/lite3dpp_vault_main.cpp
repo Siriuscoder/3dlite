@@ -38,6 +38,11 @@ int main(int agrc, char *args[])
             lite3dpp::samples::VaultDR sample;
             return sample.start("vault_dr_ubo/config/config_vault.json");
         }
+        else if (std::string(args[1]) == "DRS")
+        {
+            lite3dpp::samples::VaultDR sample;
+            return sample.start("vault_dr_ssbo/config/config_vault.json");
+        }
     }
 
     std::cout << "Usage: " << std::endl;
@@ -46,7 +51,8 @@ int main(int agrc, char *args[])
     std::cout << "\tDF : Deferred Shading Render with lightmap pass" << std::endl;
     std::cout << "\tDR : Direct Render with TBO(Texture Buffer Object) lighting" << std::endl;
     std::cout << "\tDRU: Direct Render with UBO(Uniform Buffer Object) lighting" << std::endl;
-    
+    std::cout << "\tDRS: Direct Render with SSBO(Shader Storage Buffer Object) lighting" << std::endl;
+
     return -1;
 }
 

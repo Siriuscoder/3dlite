@@ -1,0 +1,3 @@
+#include "samples:shaders/sources/common/version_43.def"
+
+#define PHONG_BLINN
