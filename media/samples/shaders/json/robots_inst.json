@@ -1,15 +1,8 @@
 {
     "Sources": 
     [
-        "samples:shaders/sources/common.vs",
-        "samples:shaders/sources/instancing.vs",
-        "samples:shaders/sources/robots_fog.ps"
-    ],
-    
-    "AttributesOrder":
-    [
-        "vertexAttr",
-        "normalAttr",
-        "texCoordAttr"
+        "samples:shaders/sources/common/transform.vs",
+        "samples:shaders/sources/vertex_instancing.vs",
+        "samples:shaders/sources/basic_shading_fog.fs"
     ]
 }

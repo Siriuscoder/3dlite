@@ -17,7 +17,7 @@
                             "Material":
                             {
                                 "Name": "box2.material",
-                                "Material": "samples:materials/cube2.json"
+                                "Material": "samples:materials/cube1.json"
                             }
                         }
                     ]

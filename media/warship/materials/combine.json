@@ -13,12 +13,6 @@
       "Name":"screenMatrix"
     },
     {
-      "Name":"Warship_numLights",
-      "Type":"int",
-      "Value": 0,
-      "Scope":"global"
-    },
-    {
       "Name":"eye",
       "Type":"v3",
       "Value":[
@@ -44,6 +38,11 @@
     {
       "Name":"lightSources",
       "TextureName": "Warship_lightingBufferObject",
+      "Type":"samplerBuffer"
+    },
+    {
+      "Name":"lightIndexes",
+      "TextureName": "Warship_lightingIndexBuffer",
       "Type":"samplerBuffer"
     }
   ]

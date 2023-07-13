@@ -50,8 +50,8 @@ public:
     
     void addFlashlight(Scene *scene)
     {
-        kmVec3 spotFactor = { 0.35f, 0.52f, 0.0f };
-        kmVec4 attenuation = { 0.0f, 1.0f, 0.0f, 1000.0f };
+        kmVec3 spotFactor = { 0.70f, 1.04f, 0.0f };
+        kmVec4 attenuation = { 0.0f, 0.005f, 0.000003f, 1000.0f };
         String flashLightParams = ConfigurationWriter().set(L"Name", "FlashLight.node").set(L"Light", 
             ConfigurationWriter().set(L"Ambient", KM_VEC3_ZERO)
             .set(L"Diffuse", KM_VEC3_ONE)

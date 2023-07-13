@@ -32,8 +32,13 @@
         },
         {
             "Name": "vaultmat",
-            "FileCacheMaxSize": 1024000,
+            "FileCacheMaxSize": 102400,
             "Path": "vault_dr_ubo/"
+        },
+        {
+            "Name": "vaultshader",
+            "FileCacheMaxSize": 10240,
+            "Path": "vault_dr/"
         }
     ],
 

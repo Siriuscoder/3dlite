@@ -1,15 +1,15 @@
-#version 330
+#include "samples:shaders/sources/common/version.def"
 
-in vec4 vertexAttr;
-in vec2 texCoordAttr;
+layout(location = 0) in vec4 v;
+layout(location = 1) in vec2 tc;
 
-out vec2 tcoords;
+out vec2 uv;
 
 // common functions
 vec4 rtransform(vec4 v1);
 
 void main()
 {
-    tcoords = texCoordAttr;
-    gl_Position = rtransform(vertexAttr);
+    uv = tc;
+    gl_Position = rtransform(v);
 }

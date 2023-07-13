@@ -9,7 +9,7 @@
                 {
                     "Name": "overlay_plain.mesh",
                     "Mesh": "samples:models/json/plain256x128.json",
-					"MaterialMapping": 
+                    "MaterialMapping": 
                     [
                         {
                             "MaterialIndex": 0,

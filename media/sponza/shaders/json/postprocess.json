@@ -2,7 +2,8 @@
     "Sources": 
     [
         "sponzamat:shaders/sources/postprocess.vs",
-        "sponzamat:shaders/sources/postprocess.ps",
-        "sponzamat:shaders/sources/fxaa.ps"
+        "sponzamat:shaders/sources/postprocess.fs",
+        "samples:shaders/sources/antialiasing/fxaa.fs",
+        "samples:shaders/sources/antialiasing/fxaa_texcoords.vs"
     ]
 }

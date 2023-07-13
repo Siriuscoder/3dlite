@@ -3,8 +3,8 @@
     {
       "Pass":1.0000000000,
       "Program":{
-        "Name":"sponza_shading.program",
-        "Path":"samples:shaders/json/sponza_shading.json"
+        "Name":"basic_shading_light.program",
+        "Path":"samples:shaders/json/basic_shading_light.json"
       }
     }
   ],

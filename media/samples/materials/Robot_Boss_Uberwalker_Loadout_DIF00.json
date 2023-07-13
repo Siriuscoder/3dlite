@@ -27,34 +27,6 @@
       "Scope":"global"
     },
     {
-      "Name":"ambient",
-      "Type":"v4",
-      "Value":[
-        0.5879999995,0.5879999995,0.5879999995,1.0000000000
-      ]
-    },
-    {
-      "Name":"diffuse",
-      "Type":"v4",
-      "Value":[
-        0.5879999995,0.5879999995,0.5879999995,1.0000000000
-      ]
-    },
-    {
-      "Name":"specular",
-      "Type":"v4",
-      "Value":[
-        0.8999999762,0.8999999762,0.8999999762,1.0000000000
-      ]
-    },
-    {
-      "Name":"emissive",
-      "Type":"v4",
-      "Value":[
-        0.0000000000,0.0000000000,0.0000000000,1.0000000000
-      ]
-    },
-    {
       "Name":"diffuseSampler",
       "TextureName":"Robot_Boss_Uberwalker_Loadout_DIF00.texture",
       "TexturePath":"samples:textures/json/Robot_Boss_Uberwalker_Loadout_DIF00.json",

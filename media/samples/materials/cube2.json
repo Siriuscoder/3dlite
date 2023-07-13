@@ -16,9 +16,6 @@
       "Name":"viewMatrix"
     },
     {
-      "Name":"modelMatrix"
-    },
-    {
       "Name":"diffuseSampler",
       "TextureName":"box2.texture",
       "TexturePath":"samples:textures/json/box2.json",
