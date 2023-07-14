@@ -2,15 +2,19 @@ version: '1.0.{build}'
 
 image: 
   - Visual Studio 2022
-  - Ubuntu
+  - Ubuntu2004
 
 hosts:
   localhost: 127.0.0.1
   
 configuration:
-  - Release
+  - Debug
+
+platform:
+  - x64
   
 init:
+  - sh: cat /etc/apt/sources.list
   - sh: mkdir -p /home/appveyor/builds/lite3d_linux
   - cmd: mkdir C:\builds\lite3d_win
   
@@ -20,9 +24,9 @@ install:
   
 before_build:
   - sh: cd /home/appveyor/builds/lite3d_linux
-  - sh: cmake -DCMAKE_BUILD_TYPE=Release /home/appveyor/projects/3dlite
+  - sh: cmake -DCMAKE_BUILD_TYPE=Debug -DENABLE_METRICS=ON /home/appveyor/projects/3dlite
   - cmd: cd C:\builds\lite3d_win
-  - cmd: cmake -DCMAKE_BUILD_TYPE=Release C:\projects\3dlite
+  - cmd: cmake -DCMAKE_BUILD_TYPE=Debug -DENABLE_METRICS=ON C:\projects\3dlite
 
 build:
   project: C:\builds\lite3d_win\lite3d.sln
@@ -31,7 +35,7 @@ for:
 -
   matrix:
     only:
-      - image: Ubuntu
+      - image: Ubuntu2004
 
   build_script:
   - sh: make all

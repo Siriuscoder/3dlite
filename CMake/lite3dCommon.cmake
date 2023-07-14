@@ -64,7 +64,7 @@ macro(define_sample SAMPLE_NAME)
     source_files(${SAMPLE_NAME})
     headers_files(${SAMPLE_NAME})
     
-    set(EXTRA_ADDON_LIBS ${ARGN})
+    set(ARG_LIBS ${ARGN})
     
     if(MSVC)
         set(SOURCES_LIST ${SOURCES_LIST} ${CMAKE_LITE3D_TOP_DIR}/winres/ResourceSample.rc)
@@ -83,10 +83,11 @@ macro(define_sample SAMPLE_NAME)
         target_include_directories(${SAMPLE_NAME} PRIVATE 
             "$<BUILD_INTERFACE:${CMAKE_LITE3D_TOP_DIR}/winres/>")
     endif()
-    
-    target_link_libraries(${SAMPLE_NAME} 
-        lite3d
-        ${EXTRA_ADDON_LIBS})
+
+    target_link_libraries(${SAMPLE_NAME} lite3d)
+    foreach(argLib IN LISTS ARG_LIBS)
+        target_link_libraries(${SAMPLE_NAME} ${argLib})
+    endforeach()
         
 endmacro()
 
