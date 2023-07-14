@@ -39,6 +39,7 @@ int lite3d_check_geometry_shader();
 int lite3d_check_renderbuffer_storage_multisample();
 int lite3d_check_texture_multisample();
 int lite3d_check_framebuffer_blit();
+int lite3d_check_occlusion_query();
 
 
 /* stub functions */

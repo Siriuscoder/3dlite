@@ -309,10 +309,10 @@ namespace lite3dpp
                 }
                 
                 uint32_t renderFlags = 0;
-                if (renderTargetJson.getBool(L"RenderFirstStage", true))
-                    renderFlags |= LITE3D_RENDER_STAGE_FIRST;
-                if (renderTargetJson.getBool(L"RenderSecondStage", true))
-                    renderFlags |= LITE3D_RENDER_STAGE_SECOND;
+                if (renderTargetJson.getBool(L"RenderOpaque", true))
+                    renderFlags |= LITE3D_RENDER_OPAQUE;
+                if (renderTargetJson.getBool(L"RenderBlend", true))
+                    renderFlags |= LITE3D_RENDER_BLEND;
                 if (renderTargetJson.getBool(L"CleanColorBuffer", false))
                     renderFlags |= LITE3D_RENDER_CLEAN_COLOR_BUF;
                 if (renderTargetJson.getBool(L"CleanDepthBuffer", false))
@@ -327,6 +327,12 @@ namespace lite3dpp
                     renderFlags |= LITE3D_RENDER_DEPTH_OUTPUT;
                 if (renderTargetJson.getBool(L"StencilOutput", false))
                     renderFlags |= LITE3D_RENDER_STENCIL_OUTPUT;
+                if (renderTargetJson.getBool(L"RenderInstancing", false))
+                    renderFlags |= LITE3D_RENDER_INSTANCING;
+                if (renderTargetJson.getBool(L"OcclusionQuery", false))
+                    renderFlags |= LITE3D_RENDER_OCCLUSION_QUERY;
+                if (renderTargetJson.getBool(L"OcclusionCulling", false))
+                    renderFlags |= LITE3D_RENDER_OCCLUSION_CULLING;
         
                 renderTarget->addCamera(camera, this, renderTargetJson.getInt(L"TexturePass"),
                     renderTargetJson.getInt(L"Priority"), renderFlags);
@@ -357,12 +363,6 @@ namespace lite3dpp
             if(cameraJson.has(L"LookAt"))
                 camera->lookAt(cameraJson.getVec3(L"LookAt"));
         }
-    }
-
-    void Scene::instancingMode(bool flag)
-    {
-        if (!lite3d_scene_instancing_mode(&mScene, flag ? LITE3D_TRUE : LITE3D_FALSE))
-            LITE3D_THROW("Instancing not supported");
     }
 
     int Scene::beginDrawBatch(struct lite3d_scene *scene, 

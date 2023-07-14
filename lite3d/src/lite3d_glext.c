@@ -212,6 +212,19 @@ int lite3d_check_texture_multisample()
 #endif 
 }
 
+int lite3d_check_occlusion_query()
+{
+#ifdef GLES
+#   ifdef WITH_GLES2
+    return SDL_GL_ExtensionSupported("GL_EXT_occlusion_query_boolean") == SDL_TRUE;
+#   else
+    return LITE3D_TRUE;
+#   endif
+#else
+    return GLEW_ARB_occlusion_query2 || GLEW_VERSION_3_3;
+#endif 
+}
+
 int lite3d_check_framebuffer_blit()
 {
 #ifdef GLES

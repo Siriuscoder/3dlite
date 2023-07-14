@@ -58,7 +58,6 @@ namespace lite3dpp
         void removeAllObjects();
         void removeObject(const String &name);
         void detachAllCameras();
-        void instancingMode(bool flag);
         
         LightSceneNode *addLightNode(LightSceneNode *light);
         LightSceneNode *getLightNode(const String &name) const;

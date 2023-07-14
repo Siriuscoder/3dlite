@@ -20,10 +20,11 @@
                     "Path": "vaultmat:targets/depth.json",
                     "Priority": 0,
                     "TexturePass": 2,
-                    "RenderSecondStage": false,
+                    "RenderBlend": false,
                     "DepthTest": true,
                     "ColorOutput": false,
-                    "DepthOutput": true
+                    "DepthOutput": true,
+                    "RenderInstancing": true
                 },
                 // draw all objects and calculate lighting
                 {
@@ -33,7 +34,8 @@
                     "TexturePass": 1,
                     "DepthTest": true,
                     "ColorOutput": true,
-                    "DepthOutput": true
+                    "DepthOutput": true,
+                    "RenderInstancing": true
                 }
             ]
         }

@@ -108,7 +108,6 @@ public:
             material->setFloatv3Parameter(1, "light.spotfactor", lsw.getSpotFactor(), false);
             material->setFloatv3Parameter(1, "light.position", lsw.getPosition(), false);
             material->setFloatv3Parameter(1, "light.diffuse", lsw.getDiffuse(), false);
-            material->setFloatv3Parameter(1, "light.ambient", lsw.getAmbient(), false);
             material->setFloatv3Parameter(1, "light.specular", lsw.getSpecular(), false);
             material->setFloatv3Parameter(1, "light.direction", lsw.getSpotDirection(), false);
             material->setFloatv4Parameter(1, "light.attenuation", lsw.getAttenuation(), false);

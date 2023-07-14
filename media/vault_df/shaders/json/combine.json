@@ -3,10 +3,5 @@
     [
         "vaultmat:shaders/sources/triangle.vs",
         "vaultmat:shaders/sources/combine.fs"
-    ],
-    
-    "AttributesOrder":
-    [
-        "ivertex"
     ]
 }

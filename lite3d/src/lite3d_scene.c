@@ -181,16 +181,16 @@ static void mqr_render_batch_series(lite3d_material_pass *pass, _mqr_node *mqrNo
     }
 }
 
-static void mqr_render_node(lite3d_material_pass *pass, _mqr_node *mqrNode, uint32_t continuedId, uint8_t batchCrop)
+static void mqr_render_node(lite3d_material_pass *pass, _mqr_node *mqrNode, uint32_t continuedId, uint8_t batchCrop, uint32_t flags)
 {
-    if(((lite3d_scene *) mqrNode->node->scene)->instancingRender)
+    if (flags & LITE3D_RENDER_INSTANCING)
         LITE3D_METRIC_CALL(mqr_render_batch_series, (pass, mqrNode, continuedId, batchCrop))
     else
         LITE3D_METRIC_CALL(mqr_render_batch, (pass, mqrNode))
 }
 
 static int mqr_node_approve(lite3d_scene *scene, 
-    _mqr_node *mqrNode)
+    _mqr_node *mqrNode, uint32_t flags)
 {
     SDL_assert(scene);
     SDL_assert(mqrNode->node);
@@ -221,7 +221,7 @@ static int mqr_node_approve(lite3d_scene *scene,
     return LITE3D_TRUE;
 }
 
-static void mqr_unit_queue_render(lite3d_scene *scene, lite3d_array *queue, uint16_t pass)
+static void mqr_unit_queue_render(lite3d_scene *scene, lite3d_array *queue, uint16_t pass, uint32_t flags)
 {
     _mqr_node **mqrNode = NULL;
     _mqr_unit *curUnit = NULL;
@@ -251,7 +251,7 @@ static void mqr_unit_queue_render(lite3d_scene *scene, lite3d_array *queue, uint
                 batchCrop = LITE3D_TRUE;
         }
 
-        LITE3D_METRIC_CALL(mqr_render_node, (matPass, *mqrNode, continuedId, batchCrop))
+        LITE3D_METRIC_CALL(mqr_render_node, (matPass, *mqrNode, continuedId, batchCrop, flags))
         continuedId = batchCrop ? 0 : continuedId+1;
     }
 }
@@ -286,31 +286,31 @@ static void mqr_unit_render(lite3d_scene *scene, _mqr_unit *mqrUnit, uint16_t pa
 
         if (lite3d_material_pass_is_blend(mqrUnit->material, pass))
         {
-            if ((flags & LITE3D_RENDER_STAGE_SECOND) && mqr_node_approve(scene, mqrNode))
+            if ((flags & LITE3D_RENDER_BLEND) && mqr_node_approve(scene, mqrNode, flags))
                 /* add to second stage */
-                LITE3D_ARR_ADD_ELEM(&scene->stageTwoNodes, _mqr_node *, mqrNode);
+                LITE3D_ARR_ADD_ELEM(&scene->stageBlend, _mqr_node *, mqrNode);
         }
         else
         {
-            if ((flags & LITE3D_RENDER_STAGE_FIRST) && mqr_node_approve(scene, mqrNode))
+            if ((flags & LITE3D_RENDER_OPAQUE) && mqr_node_approve(scene, mqrNode, flags))
                 /* add to first stage */
-                LITE3D_ARR_ADD_ELEM(&scene->stageOneNodes, _mqr_node *, mqrNode);
+                LITE3D_ARR_ADD_ELEM(&scene->stageOpague, _mqr_node *, mqrNode);
         }
     }
 
 
-    LITE3D_METRIC_CALL(mqr_unit_queue_render, (scene, &scene->stageOneNodes, pass))
+    LITE3D_METRIC_CALL(mqr_unit_queue_render, (scene, &scene->stageOpague, pass, flags))
     // cleanup last rendered queue
-    lite3d_array_clean(&scene->stageOneNodes);
+    lite3d_array_clean(&scene->stageOpague);
 }
 
-static void mqr_render_stage_first(struct lite3d_scene *scene, lite3d_camera *camera, 
+static void mqr_render_stage_opague(struct lite3d_scene *scene, lite3d_camera *camera, 
     uint16_t pass, uint32_t flags)
 {
     _mqr_unit *mqrUnit = NULL;
     lite3d_list_node *mqrUnitNode = NULL;
 
-    if (scene->beginFirstStageRender && (flags & LITE3D_RENDER_STAGE_FIRST))
+    if (scene->beginFirstStageRender && (flags & LITE3D_RENDER_OPAQUE))
         LITE3D_METRIC_CALL(scene->beginFirstStageRender, (scene, camera))
 
     for (mqrUnitNode = scene->materialRenderUnits.l.next;
@@ -326,24 +326,24 @@ static void mqr_render_stage_first(struct lite3d_scene *scene, lite3d_camera *ca
     }
 }
 
-static void mqr_render_stage_second(struct lite3d_scene *scene, lite3d_camera *camera, uint16_t pass, uint32_t flags)
+static void mqr_render_stage_blend(struct lite3d_scene *scene, lite3d_camera *camera, uint16_t pass, uint32_t flags)
 {
-    if (!(flags & LITE3D_RENDER_STAGE_SECOND))
+    if (!(flags & LITE3D_RENDER_BLEND))
         return;
-    if (scene->stageTwoNodes.size == 0)
+    if (scene->stageBlend.size == 0)
         return;
 
-    lite3d_array_qsort(&scene->stageTwoNodes, mqr_node_distance_comparator);
+    lite3d_array_qsort(&scene->stageBlend, mqr_node_distance_comparator);
 
     if (scene->beginSecondStageRender)
         scene->beginSecondStageRender(scene, camera);
 
-    mqr_unit_queue_render(scene, &scene->stageTwoNodes, pass);
+    mqr_unit_queue_render(scene, &scene->stageBlend, pass, flags);
 }
 
 static void mqr_render_cleanup(struct lite3d_scene *scene)
 {
-    lite3d_array_clean(&scene->stageTwoNodes);
+    lite3d_array_clean(&scene->stageBlend);
 }
 
 static _mqr_node *mqr_check_mesh_chunk_exist(_mqr_unit *unit,
@@ -459,9 +459,9 @@ void lite3d_scene_render(lite3d_scene *scene, lite3d_camera *camera,
 
     scene->currentCamera = camera;
     /* render common objects */
-    LITE3D_METRIC_CALL(mqr_render_stage_first, (scene, camera, pass, flags))
+    LITE3D_METRIC_CALL(mqr_render_stage_opague, (scene, camera, pass, flags))
     /* render transparent objects */
-    LITE3D_METRIC_CALL(mqr_render_stage_second, (scene, camera, pass, flags))
+    LITE3D_METRIC_CALL(mqr_render_stage_blend, (scene, camera, pass, flags))
     
 
     if (scene->bindedMeshChunk)
@@ -487,8 +487,8 @@ void lite3d_scene_init(lite3d_scene *scene)
     scene->rootNode.renderable = LITE3D_FALSE;
     lite3d_list_init(&scene->materialRenderUnits);
 
-    lite3d_array_init(&scene->stageOneNodes, sizeof(_mqr_node *), 2);
-    lite3d_array_init(&scene->stageTwoNodes, sizeof(_mqr_node *), 2);
+    lite3d_array_init(&scene->stageOpague, sizeof(_mqr_node *), 2);
+    lite3d_array_init(&scene->stageBlend, sizeof(_mqr_node *), 2);
     lite3d_array_init(&scene->invalidatedUnits, sizeof(lite3d_scene_node *), 2);
     lite3d_array_init(&scene->seriesMatrixes, sizeof(kmMat4), 10);
 }
@@ -514,8 +514,8 @@ void lite3d_scene_purge(lite3d_scene *scene)
     }
 
     lite3d_array_purge(&scene->seriesMatrixes);
-    lite3d_array_purge(&scene->stageOneNodes);
-    lite3d_array_purge(&scene->stageTwoNodes);
+    lite3d_array_purge(&scene->stageOpague);
+    lite3d_array_purge(&scene->stageBlend);
     lite3d_array_purge(&scene->invalidatedUnits);
 }
 
@@ -638,17 +638,3 @@ int lite3d_scene_node_touch_material(
 
     return LITE3D_TRUE;
 }
-
-int lite3d_scene_instancing_mode(lite3d_scene *scene, uint8_t flag)
-{
-    if (flag && !lite3d_check_instanced_arrays())
-    {
-        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
-            "%s: instancing not supported", LITE3D_CURRENT_FUNCTION);
-        return LITE3D_FALSE;
-    }
-
-    scene->instancingRender = flag;
-    return LITE3D_TRUE;
-}
-

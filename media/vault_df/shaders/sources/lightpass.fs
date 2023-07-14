@@ -9,7 +9,6 @@ struct lightSource
     int enabled;
     int type;
     vec3 position;
-    vec3 ambient;
     vec3 diffuse;
     vec3 specular;
     vec3 direction;

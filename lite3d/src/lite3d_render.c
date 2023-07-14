@@ -23,6 +23,7 @@
 #include <IL/il.h>
 
 #include <lite3d/lite3d_gl.h>
+#include <lite3d/lite3d_glext.h>
 #include <lite3d/lite3d_alloc.h>
 #include <lite3d/lite3d_render.h>
 #include <lite3d/lite3d_video.h>
@@ -64,6 +65,41 @@ static void validate_cameras(void)
     }
 
     lite3d_array_clean(&gInvalidatedCameras);
+}
+
+static int validate_renderflags(uint32_t *renderFlags)
+{
+    if (*renderFlags & LITE3D_RENDER_INSTANCING)
+    {
+        if (!lite3d_check_instanced_arrays())
+        {
+            SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
+                "%s: GLEW_ARB_instanced_arrays is not supported", LITE3D_CURRENT_FUNCTION);
+            *renderFlags &= ~LITE3D_RENDER_INSTANCING;
+        }
+    }
+
+    if (*renderFlags & LITE3D_RENDER_OCCLUSION_QUERY)
+    {
+        if (!lite3d_check_occlusion_query())
+        {
+            SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
+                "%s: GLEW_ARB_occlusion_query2 is not supported", LITE3D_CURRENT_FUNCTION);
+            *renderFlags &= ~LITE3D_RENDER_OCCLUSION_QUERY;
+        }
+    }
+
+    if (*renderFlags & LITE3D_RENDER_OCCLUSION_CULLING)
+    {
+        if (!lite3d_check_occlusion_query())
+        {
+            SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
+                "%s: GLEW_ARB_occlusion_query2 is not supported", LITE3D_CURRENT_FUNCTION);
+            *renderFlags &= ~LITE3D_RENDER_OCCLUSION_CULLING;
+        }
+    }
+
+    return LITE3D_TRUE;
 }
 
 static void refresh_render_stats(uint64_t beginFrame, uint64_t endFrame)
@@ -419,6 +455,9 @@ int lite3d_render_target_attach_camera(lite3d_render_target *target, lite3d_came
     SDL_assert(target);
     SDL_assert(scene);
     SDL_assert(camera);
+
+    if (!validate_renderflags(&renderFlags))
+        return LITE3D_FALSE;
 
     lookIns = (lookUnit *) lite3d_calloc_pooled(LITE3D_POOL_NO1, sizeof (lookUnit));
     SDL_assert_release(lookIns);
