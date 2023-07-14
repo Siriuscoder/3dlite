@@ -15,4 +15,16 @@
 #	You should have received a copy of the GNU General Public License
 #	along with Lite3D.  If not, see <http://www.gnu.org/licenses/>.
 
-define_sample(mtool lite3dpp)
+project(sample_common)
+
+unset(SOURCES_LIST)
+unset(HEADERS_LIST)
+
+######################### Sample Common Source ########################################
+source_files(".")
+headers_files(".")
+
+add_library(${PROJECT_NAME} STATIC ${SOURCES_LIST} ${HEADERS_LIST})
+
+target_include_directories(${PROJECT_NAME} PRIVATE 
+    "$<BUILD_INTERFACE:${SDL2_INCLUDE_DIR}>")

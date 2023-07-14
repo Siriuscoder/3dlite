@@ -17,89 +17,77 @@
 
 # setup sources 
 macro(source_files DIRECTORY)
-	set(SOURCES_DIR	"${PROJECT_SOURCE_DIR}/${DIRECTORY}")
-	message(STATUS "Source location: ${SOURCES_DIR}")
-	
-	file(GLOB SRC_C_FILES "${SOURCES_DIR}/*.c")
-	file(GLOB SRC_CPP_FILES "${SOURCES_DIR}/*.cpp")
-	
-	list(APPEND SOURCES_LIST ${SRC_C_FILES})
-	list(APPEND SOURCES_LIST ${SRC_CPP_FILES})
-	
-	get_filename_component(DIR_NAME ${DIRECTORY} NAME)
-	
-	if(${DIR_NAME} STREQUAL "src" OR ${DIRECTORY} STREQUAL ".")
-		unset(DIR_NAME)
-	endif()
-	
-	source_group("Source Files\\${DIR_NAME}" FILES ${SRC_C_FILES} ${SRC_CPP_FILES})
+    set(SOURCES_DIR	"${PROJECT_SOURCE_DIR}/${DIRECTORY}")
+    message(STATUS "Source location: ${SOURCES_DIR}")
+    
+    file(GLOB SRC_C_FILES "${SOURCES_DIR}/*.c")
+    file(GLOB SRC_CPP_FILES "${SOURCES_DIR}/*.cpp")
+    
+    list(APPEND SOURCES_LIST ${SRC_C_FILES})
+    list(APPEND SOURCES_LIST ${SRC_CPP_FILES})
+    
+    get_filename_component(DIR_NAME ${DIRECTORY} NAME)
+    
+    if(${DIR_NAME} STREQUAL "src" OR ${DIRECTORY} STREQUAL ".")
+        unset(DIR_NAME)
+    endif()
+    
+    source_group("Source Files\\${DIR_NAME}" FILES ${SRC_C_FILES} ${SRC_CPP_FILES})
 endmacro()
 
 macro(headers_files DIRECTORY)
-	set(SOURCES_DIR	"${PROJECT_SOURCE_DIR}/${DIRECTORY}")
-	message(STATUS "Headers location: ${SOURCES_DIR}")
-	
-	file(GLOB H_C_FILES "${SOURCES_DIR}/*.h")
-	file(GLOB H_CPP_FILES "${SOURCES_DIR}/*.hpp")
-	
-	list(APPEND HEADERS_LIST ${H_C_FILES})
-	list(APPEND HEADERS_LIST ${H_CPP_FILES})
-	
-	get_filename_component(DIR_NAME ${DIRECTORY} NAME)
-	
-	if(${DIR_NAME} MATCHES "lite3d" OR ${DIRECTORY} STREQUAL ".")
-		unset(DIR_NAME)
-	endif()
-	
-	source_group("Header Files\\${DIR_NAME}" FILES ${H_C_FILES} ${H_CPP_FILES})
+    set(SOURCES_DIR	"${PROJECT_SOURCE_DIR}/${DIRECTORY}")
+    message(STATUS "Headers location: ${SOURCES_DIR}")
+    
+    file(GLOB H_C_FILES "${SOURCES_DIR}/*.h")
+    file(GLOB H_CPP_FILES "${SOURCES_DIR}/*.hpp")
+    
+    list(APPEND HEADERS_LIST ${H_C_FILES})
+    list(APPEND HEADERS_LIST ${H_CPP_FILES})
+    
+    get_filename_component(DIR_NAME ${DIRECTORY} NAME)
+    
+    if(${DIR_NAME} MATCHES "lite3d" OR ${DIRECTORY} STREQUAL ".")
+        unset(DIR_NAME)
+    endif()
+    
+    source_group("Header Files\\${DIR_NAME}" FILES ${H_C_FILES} ${H_CPP_FILES})
 endmacro()
 
-macro(define_sample SAMPLE_NAME SAMPLE_DIRECTORY)
-	message(STATUS "Sample: ${SAMPLE_NAME}")
-	
-	project(${SAMPLE_NAME})
-	unset(SOURCES_LIST)
-	unset(HEADERS_LIST)
-	source_files(${SAMPLE_DIRECTORY})
-	headers_files(${SAMPLE_DIRECTORY})
-	
-	set(EXTRA_ARGS ${ARGN})
-
-    # Did we get any optional args?
-    list(LENGTH EXTRA_ARGS NUM_EXTRA_ARGS)
-    if (${NUM_EXTRA_ARGS} GREATER 0)
-		list(GET EXTRA_ARGS 0 COMMON_DIRECTORY)
-		source_files(${COMMON_DIRECTORY})
-		headers_files(${COMMON_DIRECTORY})
+# Сборка сампла, первый параметр папка где лежит сампл (имя сампла будет такое же), далее идет список библиотек для линковки.
+macro(define_sample SAMPLE_NAME)
+    message(STATUS "Sample: ${SAMPLE_NAME}")
+    
+    project(${SAMPLE_NAME})
+    unset(SOURCES_LIST)
+    unset(HEADERS_LIST)
+    source_files(${SAMPLE_NAME})
+    headers_files(${SAMPLE_NAME})
+    
+    set(EXTRA_ADDON_LIBS ${ARGN})
+    
+    if(MSVC)
+        set(SOURCES_LIST ${SOURCES_LIST} ${CMAKE_LITE3D_TOP_DIR}/winres/ResourceSample.rc)
     endif()
-	
-	if(MSVC)
-		set(SOURCES_LIST ${SOURCES_LIST} ${CMAKE_LITE3D_TOP_DIR}/winres/ResourceSample.rc)
-	endif()
 
-	add_executable(${SAMPLE_NAME} ${SOURCES_LIST} ${HEADERS_LIST})
+    add_executable(${SAMPLE_NAME} ${SOURCES_LIST} ${HEADERS_LIST})
 
-	target_include_directories(${SAMPLE_NAME} PRIVATE 
-		"$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}>"
-		"$<BUILD_INTERFACE:${SDL2_INCLUDE_DIR}>"
+    target_include_directories(${SAMPLE_NAME} PRIVATE 
+        "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}>"
+        "$<BUILD_INTERFACE:${SDL2_INCLUDE_DIR}>"
         "$<BUILD_INTERFACE:${SAMPLE_ADDON_INCLUDES}>")
-			
-	if(MSVC)
-		target_compile_definitions(${SAMPLE_NAME} PRIVATE
-			"$<BUILD_INTERFACE:_WINEXE>")
-		target_include_directories(${SAMPLE_NAME} PRIVATE 
-			"$<BUILD_INTERFACE:${CMAKE_LITE3D_TOP_DIR}/winres/>")
-	else()
-		target_compile_options(${SAMPLE_NAME} PRIVATE 
-			"$<BUILD_INTERFACE:${SDL2_CFLAGS}>")
-	endif()
-	
-	target_link_libraries(${SAMPLE_NAME} 
-		lite3d
-		lite3dpp
-		lite3dpp_font
-        ${SAMPLE_ADDON_LIBS})
-		
+            
+    if(MSVC)
+        target_compile_definitions(${SAMPLE_NAME} PRIVATE
+            "$<BUILD_INTERFACE:_WINEXE>")
+        target_include_directories(${SAMPLE_NAME} PRIVATE 
+            "$<BUILD_INTERFACE:${CMAKE_LITE3D_TOP_DIR}/winres/>")
+    endif()
+    
+    target_link_libraries(${SAMPLE_NAME} 
+        lite3d
+        ${EXTRA_ADDON_LIBS})
+        
 endmacro()
 
 macro(print_build_info)

@@ -21,7 +21,7 @@
 #include <SDL_log.h>
 #include <SDL_assert.h>
 
-#include <sample_common/lite3dpp_common.h>
+#include "lite3dpp_common.h"
 
 #define VELOCITY_MAX    200.0f
 #define ACCEL           40.0f
