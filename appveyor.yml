@@ -2,19 +2,21 @@ version: '1.0.{build}'
 
 image: 
   - Visual Studio 2022
-  - Ubuntu2004
+  - Ubuntu
 
 hosts:
   localhost: 127.0.0.1
   
 configuration:
   - Debug
+  - DebugLinux
+  - DebugLinuxGLES2
+  - DebugLinuxGLES3
 
 platform:
   - x64
   
 init:
-  - sh: cat /etc/apt/sources.list
   - sh: mkdir -p /home/appveyor/builds/lite3d_linux
   - cmd: mkdir C:\builds\lite3d_win
   
@@ -23,19 +25,53 @@ install:
   - sh: sudo apt-get install -y libdevil-dev libassimp-dev libsdl2-dev libfreetype6-dev libbullet-dev
   
 before_build:
-  - sh: cd /home/appveyor/builds/lite3d_linux
-  - sh: cmake -DCMAKE_BUILD_TYPE=Debug -DENABLE_METRICS=ON /home/appveyor/projects/3dlite
   - cmd: cd C:\builds\lite3d_win
-  - cmd: cmake -DCMAKE_BUILD_TYPE=Debug -DENABLE_METRICS=ON C:\projects\3dlite
+  - cmd: cmake -A x64 -DCMAKE_BUILD_TYPE=Debug -DENABLE_METRICS=ON C:\projects\3dlite
 
 build:
   project: C:\builds\lite3d_win\lite3d.sln
   
 for:
--
-  matrix:
-    only:
-      - image: Ubuntu2004
+- matrix:
+    exclude:
+      - configuration: Debug
+        image: Ubuntu
+      - configuration: DebugLinux
+        image: Visual Studio 2022
+      - configuration: DebugLinuxGLES2
+        image: Visual Studio 2022
+      - configuration: DebugLinuxGLES3
+        image: Visual Studio 2022
 
+- matrix:
+    only:
+      - configuration: DebugLinux
+
+  before_build:
+    - sh: cd /home/appveyor/builds/lite3d_linux
+    - sh: cmake -DCMAKE_BUILD_TYPE=Debug -DENABLE_METRICS=ON /home/appveyor/projects/3dlite
+
+  build_script:
+  - sh: make all
+
+- matrix:
+    only:
+      - configuration: DebugLinuxGLES2
+
+  before_build:
+    - sh: cd /home/appveyor/builds/lite3d_linux
+    - sh: cmake -DGRAPHIC_BACKEND=GLES2 -DCMAKE_BUILD_TYPE=Debug -DENABLE_METRICS=ON /home/appveyor/projects/3dlite -Wno-dev
+
+  build_script:
+  - sh: make all
+
+- matrix:
+    only:
+      - configuration: DebugLinuxGLES3
+
+  before_build:
+    - sh: cd /home/appveyor/builds/lite3d_linux
+    - sh: cmake -DGRAPHIC_BACKEND=GLES3 -DCMAKE_BUILD_TYPE=Debug -DENABLE_METRICS=ON /home/appveyor/projects/3dlite -Wno-dev
+  
   build_script:
   - sh: make all

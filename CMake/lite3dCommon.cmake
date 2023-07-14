@@ -83,11 +83,14 @@ macro(define_sample SAMPLE_NAME)
         target_include_directories(${SAMPLE_NAME} PRIVATE 
             "$<BUILD_INTERFACE:${CMAKE_LITE3D_TOP_DIR}/winres/>")
     endif()
-
-    target_link_libraries(${SAMPLE_NAME} lite3d)
+    
     foreach(argLib IN LISTS ARG_LIBS)
         target_link_libraries(${SAMPLE_NAME} ${argLib})
     endforeach()
+
+    target_link_libraries(${SAMPLE_NAME} 
+        lite3d
+        ${SAMPLE_ADDON_LIBRARIES})
         
 endmacro()
 

@@ -32,9 +32,11 @@ static uint8_t gPolygonMode = 0;
 static uint8_t gBackFaceCullingOn = 0x99;
 static uint8_t gDeptTestFunc = 0;
 
+#ifndef GLES
 static GLenum polygonModeEnum[] = {
     GL_POINT, GL_LINE, GL_FILL
 };
+#endif
 
 static GLenum testFuncEnum[] = {
     GL_NEVER, GL_LESS, GL_EQUAL, GL_LEQUAL, GL_GREATER, GL_NOTEQUAL, GL_GEQUAL, GL_ALWAYS
