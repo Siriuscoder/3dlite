@@ -90,17 +90,12 @@ public:
         }
     }
 
-    void timerTick(lite3d_timer *timerid) override
+    void fixedUpdateTimerTick(int32_t firedPerRound, uint64_t deltaMcs, float deltaRetard) override
     {
-        Sample::timerTick(timerid);
-
-        if(timerid == getMain().getFixedUpdateTimer())
-        {
-            // Имитируем вращение неба и солнца, но на самом деле крутится только здание
-            mSponzahall->getRoot()->rotateAngle(KM_VEC3_POS_Z, 0.002f);
-            // Перересуем тень после поворота, в след кадре
-            mShadowMap->enable();
-        }
+        // Имитируем вращение неба и солнца, но на самом деле крутится только здание
+        mSponzahall->getRoot()->rotateAngle(KM_VEC3_POS_Z, 0.002f * deltaRetard);
+        // Перересуем тень после поворота, в след кадре
+        mShadowMap->enable();
     }
 
     void processEvent(SDL_Event *e) override

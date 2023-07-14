@@ -25,12 +25,12 @@ typedef struct lite3d_timer
 {
     lite3d_list_node link;
     void (*ontimer)(struct lite3d_timer *timer);
-    int32_t interval;
+    int32_t interval; // Интервал в милисекундах
     uint64_t lastTimeUpdate;
     uint8_t enabled;
     int32_t lag;
-    int32_t firedPerRound;
-    uint64_t deltaMs;
+    int32_t firedPerRound; // Количество вызовов за раз в случае догонки отставания
+    uint64_t deltaMcs; // Количество микросекунду прошедшее с прошлого вызова
     void *userdata;
 } lite3d_timer;
 

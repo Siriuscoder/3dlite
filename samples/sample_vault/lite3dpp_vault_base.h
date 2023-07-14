@@ -57,37 +57,38 @@ public:
         mGatling = mVaultScene->getObject("Gatling");
         mLazer = mVaultScene->getObject("Lazer");
     }
-    
-    void timerTick(lite3d_timer *timerid) override
+
+    void mainCameraChanged() override
     {
-        Sample::timerTick(timerid);
         lite3dpp::Material::setFloatv3GlobalParameter("eye", getMainCamera().getPosition());
         mFlashLight->setPosition(getMainCamera().getPosition());
+    }
 
-        if (timerid == getMain().getFixedUpdateTimer())
-        {
-            mAnimCounter = mAnimCounter >= 1.0f ? 0.0f : mAnimCounter + 0.005f;
-            mAnimPi = mAnimPi >= 2 * M_PI ? 0.0f : mAnimPi + 0.23f;
-            
-            lite3dpp::Material::setFloatGlobalParameter("animcounter", mAnimCounter);
+    void fixedUpdateTimerTick(int32_t firedPerRound, uint64_t deltaMcs, float deltaRetard) override
+    {
+        float animCounterNew = mAnimCounter + (0.005f * deltaRetard);
+        float animPiNew = mAnimPi + (0.23f * deltaRetard);
 
-            kmVec4 attenuation = mReactLamp01->getLight()->getAttenuation();
-            attenuation.x = (cos(mAnimPi) + 1) / 2;
-            attenuation.y = attenuation.x / 100;
-            mReactLamp01->getLight()->setAttenuation(attenuation);
-            mReactLamp02->getLight()->setAttenuation(attenuation);
-            
-            float soarDelta = cos(mAnimPi) * 5;
-            mGatling->getRoot()->rotateAngle(KM_VEC3_POS_Z, 0.05f);
-            mGatling->getRoot()->setPosZ(-225 + soarDelta);
-            
-            mMinigun->getRoot()->rotateAngle(KM_VEC3_POS_Z, 0.05f);
-            mMinigun->getRoot()->setPosZ(-225 + soarDelta);
-            mMinigun->getNode("MinigunBurrel.node")->rotateAngle(KM_VEC3_POS_X, 0.23f);
-            
-            mLazer->getRoot()->rotateAngle(KM_VEC3_POS_Z, 0.05f);
-            mLazer->getRoot()->setPosZ(-225 + soarDelta);
-        }
+        mAnimCounter = animCounterNew >= 1.0f ? animCounterNew - mAnimCounter : animCounterNew;
+        mAnimPi = animPiNew >= 2 * M_PI ? animPiNew - mAnimPi : animPiNew;
+
+        lite3dpp::Material::setFloatGlobalParameter("animcounter", mAnimCounter);
+        kmVec4 attenuation = mReactLamp01->getLight()->getAttenuation();
+        attenuation.x = (cos(mAnimPi) + 1) / 2;
+        attenuation.y = attenuation.x / 100;
+        mReactLamp01->getLight()->setAttenuation(attenuation);
+        mReactLamp02->getLight()->setAttenuation(attenuation);
+        
+        float soarDelta = cos(mAnimPi) * 5;
+        mGatling->getRoot()->rotateAngle(KM_VEC3_POS_Z, 0.05f);
+        mGatling->getRoot()->setPosZ(-225 + soarDelta);
+        
+        mMinigun->getRoot()->rotateAngle(KM_VEC3_POS_Z, 0.05f);
+        mMinigun->getRoot()->setPosZ(-225 + soarDelta);
+        mMinigun->getNode("MinigunBurrel.node")->rotateAngle(KM_VEC3_POS_X, 0.23f);
+        
+        mLazer->getRoot()->rotateAngle(KM_VEC3_POS_Z, 0.05f);
+        mLazer->getRoot()->setPosZ(-225 + soarDelta);
     }
 
     void addFlashlight(Scene *scene)

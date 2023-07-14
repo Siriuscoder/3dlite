@@ -51,13 +51,9 @@ public:
         updateTextureData();
     }
     
-    void timerTick(lite3d_timer *timerid) override
+    void fixedUpdateTimerTick(int32_t firedPerRound, uint64_t deltaMcs, float deltaRetard) override
     {
-        Sample::timerTick(timerid);
-        if(timerid == getMain().getFixedUpdateTimer())
-        {
-            mBox->getRoot()->rotateAngle(KM_VEC3_NEG_Z, 0.01f);
-        }
+        mBox->getRoot()->rotateAngle(KM_VEC3_NEG_Z, 0.01f * deltaRetard);
     }
 
     void processEvent(SDL_Event *e) override

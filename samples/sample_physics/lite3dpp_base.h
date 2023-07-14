@@ -34,7 +34,7 @@ namespace samples {
         void createScene() override;
         // performed when engine stops working
         void shut() override;
-        void fixedUpdateTimerTick(int32_t firedPerRound, uint64_t deltaMs) override;
+        void fixedUpdateTimerTick(int32_t firedPerRound, uint64_t deltaMcs, float deltaRetard) override;
 
         inline btDiscreteDynamicsWorld *getWorld()
         { return mWorld.get(); }

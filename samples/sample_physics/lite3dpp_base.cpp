@@ -60,7 +60,7 @@ namespace samples {
         mGroundPlane.reset();
     }
 
-    void PhysicSampleBase::fixedUpdateTimerTick(int32_t firedPerRound, uint64_t deltaMs)
+    void PhysicSampleBase::fixedUpdateTimerTick(int32_t firedPerRound, uint64_t deltaMcs, float deltaRetard)
     {
         SDL_assert(mWorld);
 

@@ -79,7 +79,7 @@ void Sample::frameBegin()
     moveCamera();
 }
 
-void Sample::fixedUpdateTimerTick(int32_t firedPerRound, uint64_t deltaMs)
+void Sample::fixedUpdateTimerTick(int32_t firedPerRound, uint64_t deltaMcs, float deltaRetard)
 {}
 
 void Sample::timerTick(lite3d_timer *timerid)
@@ -114,7 +114,9 @@ void Sample::timerTick(lite3d_timer *timerid)
         mVelocity.x = std::max(-VELOCITY_MAX, std::min(mVelocity.x, VELOCITY_MAX));
         mVelocity.y = std::max(-VELOCITY_MAX, std::min(mVelocity.y, VELOCITY_MAX));
 
-        fixedUpdateTimerTick(timerid->firedPerRound, timerid->deltaMs);
+        // Считаем запаздывание таймера как отношение фактического времени к интервалу
+        float deltaRetard = static_cast<float>(static_cast<double>(timerid->deltaMcs) / (timerid->interval * 1000.0));
+        fixedUpdateTimerTick(timerid->firedPerRound, timerid->deltaMcs, deltaRetard);
     }
     else if (timerid == mStatTimer)
         updateGuiStats();
