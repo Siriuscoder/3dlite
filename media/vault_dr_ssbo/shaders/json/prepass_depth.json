@@ -1,0 +1,7 @@
+{
+    "Sources": 
+    [
+        "vaultshader:shaders/sources/depth.vs",
+        "vaultshader:shaders/sources/depth.fs"
+    ]
+}
