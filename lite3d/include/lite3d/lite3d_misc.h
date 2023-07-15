@@ -36,5 +36,7 @@ LITE3D_CEXPORT int lite3d_misc_check_gl_out_of_mem(void);
 LITE3D_CEXPORT void lite3d_misc_gl_out_of_mem_reset(void);
 LITE3D_CEXPORT int lite3d_misc_check_gl_stack_corruption(void);
 LITE3D_CEXPORT void lite3d_misc_gl_stack_corruption_reset(void);
+LITE3D_CEXPORT void lite3d_misc_gl_set_not_supported(void);
+
 #endif	/* LITE3D_MISC_H */
 

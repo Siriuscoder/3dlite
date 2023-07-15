@@ -21,6 +21,7 @@
 
 #include <lite3d/lite3d_common.h>
 #include <lite3d/lite3d_glext.h>
+#include <lite3d/lite3d_misc.h>
 
 #ifdef GLES
 
@@ -37,13 +38,19 @@ PFNGLGETBUFFERPOINTERVOESPROC glGetBufferPointervPtr = NULL;
 PFNGLDRAWARRAYSINSTANCEDANGLEPROC glDrawArraysInstancedPtr = NULL;
 PFNGLDRAWELEMENTSINSTANCEDANGLEPROC glDrawElementsInstancedPtr = NULL;
 PFNGLVERTEXATTRIBDIVISORANGLEPROC glVertexAttribDivisorPtr = NULL;
+/* GL_ANGLE_framebuffer_blit */
+PFNGLBLITFRAMEBUFFERANGLEPROC glBlitFramebufferPtr = NULL;
 
 #endif
 
 int lite3d_check_vertex_array_object()
 {
 #ifdef GLES
+#   ifdef WITH_GLES2
     return SDL_GL_ExtensionSupported("GL_OES_vertex_array_object") == SDL_TRUE;
+#   else
+    return LITE3D_TRUE;
+#   endif
 #else
     return GLEW_ARB_vertex_array_object;
 #endif
@@ -93,7 +100,7 @@ int lite3d_check_ssbo()
 #ifdef GLES
     return LITE3D_FALSE;
 #else
-    return GLEW_ARB_shader_storage_buffer_object;
+    return GLEW_ARB_shader_storage_buffer_object || GLEW_VERSION_4_2;
 #endif
 }
 
@@ -155,11 +162,7 @@ int lite3d_check_gl_version()
 int lite3d_check_tbo()
 {
 #ifdef GLES
-#   ifdef GL_ES_VERSION_3_2
-    return LITE3D_TRUE;
-#   else
     return LITE3D_FALSE;
-#   endif
 #else 
     return GLEW_VERSION_3_1;
 #endif    
@@ -177,7 +180,7 @@ int lite3d_check_seamless_cube_map()
 int lite3d_check_geometry_shader()
 {
 #ifdef GLES
-    return LITE3D_FALSE;
+    return SDL_GL_ExtensionSupported("GL_OES_geometry_shader") == SDL_TRUE;
 #else 
     return GLEW_ARB_geometry_shader4 || GLEW_VERSION_3_2;
 #endif 
@@ -186,7 +189,7 @@ int lite3d_check_geometry_shader()
 int lite3d_check_renderbuffer_storage_multisample()
 {
 #ifdef GLES
-#   ifdef GL_ES_VERSION_2_0
+#   ifdef WITH_GLES2
     return LITE3D_FALSE;
 #   else
     return LITE3D_TRUE;
@@ -199,7 +202,7 @@ int lite3d_check_renderbuffer_storage_multisample()
 int lite3d_check_texture_multisample()
 {
 #ifdef GLES
-#   ifdef GL_ES_VERSION_2_0
+#   ifdef WITH_GLES2
     return LITE3D_FALSE;
 #   else
     return LITE3D_TRUE;
@@ -208,6 +211,24 @@ int lite3d_check_texture_multisample()
     return GLEW_ARB_texture_multisample || GLEW_VERSION_3_2;
 #endif 
 }
+
+int lite3d_check_framebuffer_blit()
+{
+#ifdef GLES
+#   ifdef WITH_GLES2
+    return SDL_GL_ExtensionSupported("GL_ANGLE_framebuffer_blit") == SDL_TRUE;
+#   else
+    return LITE3D_TRUE;
+#   endif
+#else
+    return GLEW_EXT_framebuffer_blit || GLEW_VERSION_3_0;
+#endif 
+}
+
+#ifdef __GNUC__
+#   pragma GCC diagnostic push
+#   pragma GCC diagnostic ignored "-Wpedantic"
+#endif
 
 int lite3d_init_gl_extensions_binding()
 {
@@ -222,14 +243,7 @@ int lite3d_init_gl_extensions_binding()
     
     return LITE3D_TRUE;
 #else
-    if(lite3d_check_vertex_array_object())
-    {
-        glBindVertexArrayPtr = SDL_GL_GetProcAddress("glBindVertexArrayOES");
-        glDeleteVertexArraysPtr = SDL_GL_GetProcAddress("glDeleteVertexArraysOES");
-        glGenVertexArraysPtr = SDL_GL_GetProcAddress("glGenVertexArraysOES");
-        glIsVertexArrayPtr = SDL_GL_GetProcAddress("glIsVertexArrayOES");
-    }
-    
+
     if(lite3d_check_map_buffer())
     {
         glMapBufferPtr = SDL_GL_GetProcAddress("glMapBufferOES");
@@ -250,87 +264,138 @@ int lite3d_init_gl_extensions_binding()
         glDrawElementsInstancedPtr = SDL_GL_GetProcAddress("glDrawElementsInstancedANGLE");
         glVertexAttribDivisorPtr = SDL_GL_GetProcAddress("glVertexAttribDivisorANGLE");
     }
+
+    if(lite3d_check_vertex_array_object())
+    {
+        glBindVertexArrayPtr = SDL_GL_GetProcAddress("glBindVertexArrayOES");
+        glDeleteVertexArraysPtr = SDL_GL_GetProcAddress("glDeleteVertexArraysOES");
+        glGenVertexArraysPtr = SDL_GL_GetProcAddress("glGenVertexArraysOES");
+        glIsVertexArrayPtr = SDL_GL_GetProcAddress("glIsVertexArrayOES");
+    }
+
+    if(lite3d_check_framebuffer_blit())
+    {
+        glBlitFramebufferPtr = SDL_GL_GetProcAddress("glBlitFramebufferANGLE");
+    }
+    else
+    {
+        glBlitFramebufferPtr = glBlitFramebuffer_stub;
+    }
+
 #endif
     
     return LITE3D_TRUE;
 #endif
 }
 
+#ifdef __GNUC__
+#   pragma GCC diagnostic pop
+#endif
+
 /* stub functions */
 void glTexSubImage3D_stub(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLenum format, GLenum type, const void *pixels)
 {
-    SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
-        "%s: glTexSubImage3D not supported..", LITE3D_CURRENT_FUNCTION);    
+    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+        "%s: glTexSubImage3D is not supported..", LITE3D_CURRENT_FUNCTION);
+    lite3d_misc_gl_set_not_supported();
 }
 
 void glTexImage3D_stub(GLenum target, GLint level, GLint internalFormat, GLsizei width, GLsizei height, GLsizei depth, GLint border, GLenum format, GLenum type, const void *pixels)
 {
-    SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
-        "%s: glTexImage3D not supported..", LITE3D_CURRENT_FUNCTION);       
+    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+        "%s: glTexImage3D is not supported..", LITE3D_CURRENT_FUNCTION);
+    lite3d_misc_gl_set_not_supported();
 }
 
 void glCompressedTexSubImage3D_stub(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLenum format, GLsizei imageSize, const void *data)
 {
-    SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
-        "%s: glCompressedTexSubImage3D not supported..", LITE3D_CURRENT_FUNCTION);       
+    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+        "%s: glCompressedTexSubImage3D is not supported..", LITE3D_CURRENT_FUNCTION);
+    lite3d_misc_gl_set_not_supported();
 }
 
 void glTexSubImage1D_stub(GLenum target, GLint level, GLint xoffset, GLsizei width, GLenum format, GLenum type, const void *pixels)
 {
-    SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
-        "%s: glTexSubImage1D not supported..", LITE3D_CURRENT_FUNCTION);       
+    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+        "%s: glTexSubImage1D is not supported..", LITE3D_CURRENT_FUNCTION);
+    lite3d_misc_gl_set_not_supported();
 }
 
 void glTexImage1D_stub(GLenum target, GLint level, GLint internalformat, GLsizei width, GLint border, GLenum format, GLenum type, const void *pixels)
 {
-    SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
-        "%s: glTexImage1D not supported..", LITE3D_CURRENT_FUNCTION);       
+    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+        "%s: glTexImage1D is not supported..", LITE3D_CURRENT_FUNCTION);
+    lite3d_misc_gl_set_not_supported();
 }
 
 void glCompressedTexSubImage1D_stub(GLenum target, GLint level, GLint xoffset, GLsizei width, GLenum format, GLsizei imageSize, const void *data)
 {
-    SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
-        "%s: glCompressedTexSubImage1D not supported..", LITE3D_CURRENT_FUNCTION);       
+    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+        "%s: glCompressedTexSubImage1D is not supported..", LITE3D_CURRENT_FUNCTION);
+    lite3d_misc_gl_set_not_supported();
 }
 
-void glMapBuffer_stub(GLenum target, GLenum access)
+void* glMapBuffer_stub(GLenum target, GLenum access)
 {
-    SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
-        "%s: glMapBuffer not supported..", LITE3D_CURRENT_FUNCTION);   
+    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+        "%s: glMapBuffer is not supported..", LITE3D_CURRENT_FUNCTION);
+    lite3d_misc_gl_set_not_supported();
+    return NULL;
 }
 
-void glUnmapBuffer_stub(GLenum target)
+GLboolean glUnmapBuffer_stub(GLenum target)
 {
-    SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
-        "%s: glUnmapBuffer not supported..", LITE3D_CURRENT_FUNCTION);   
+    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+        "%s: glUnmapBuffer is not supported..", LITE3D_CURRENT_FUNCTION);
+    lite3d_misc_gl_set_not_supported();
+    return GL_FALSE;
 }
 
 void glGetBufferPointerv_stub(GLenum target, GLenum pname, void** params)
 {
-    SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
-        "%s: glGetBufferPointerv not supported..", LITE3D_CURRENT_FUNCTION);
+    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+        "%s: glGetBufferPointerv is not supported..", LITE3D_CURRENT_FUNCTION);
+    lite3d_misc_gl_set_not_supported();
 }
 
 void glTexBuffer_stub(GLenum target, GLenum internalFormat, GLuint buffer)
 {
-    SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
-        "%s: glTexBuffer not supported..", LITE3D_CURRENT_FUNCTION);
+    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+        "%s: glTexBuffer is ot supported..", LITE3D_CURRENT_FUNCTION);
+    lite3d_misc_gl_set_not_supported();
 }
 
 void glRenderbufferStorageMultisample_stub(GLenum target, GLsizei samples, GLenum internalformat, GLsizei width, GLsizei height)
 {
-    SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
-        "%s: glRenderbufferStorageMultisample not supported..", LITE3D_CURRENT_FUNCTION);
+    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+        "%s: glRenderbufferStorageMultisample is not supported..", LITE3D_CURRENT_FUNCTION);
+    lite3d_misc_gl_set_not_supported();
 }
 
 void glTexImage2DMultisample_stub(GLenum target, GLsizei samples, GLenum internalformat, GLsizei width, GLsizei height, GLboolean fixedsamplelocations)
 {
-    SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
-        "%s: glTexImage2DMultisample not supported..", LITE3D_CURRENT_FUNCTION);
+    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+        "%s: glTexImage2DMultisample is not supported..", LITE3D_CURRENT_FUNCTION);
+    lite3d_misc_gl_set_not_supported();
 }
 
 void glTexImage3DMultisample_stub(GLenum target, GLsizei samples, GLenum internalformat, GLsizei width, GLsizei height, GLsizei depth, GLboolean fixedsamplelocations)
 {
-    SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
-        "%s: glTexImage3DMultisample not supported..", LITE3D_CURRENT_FUNCTION);
+    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+        "%s: glTexImage3DMultisample is not supported..", LITE3D_CURRENT_FUNCTION);
+    lite3d_misc_gl_set_not_supported();
+}
+
+void glBlitFramebuffer_stub(GLint srcX0, GLint srcY0, GLint srcX1, GLint srcY1, GLint dstX0, GLint dstY0, GLint dstX1, GLint dstY1, GLbitfield mask, GLenum filter)
+{
+    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+        "%s: glBlitFramebuffer is not supported..", LITE3D_CURRENT_FUNCTION);
+    lite3d_misc_gl_set_not_supported();
+}
+
+void glCopyBufferSubData_stub(GLenum readTarget, GLenum writeTarget, GLintptr readOffset, GLintptr writeOffset, GLsizeiptr size)
+{
+    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+        "%s: glCopyBufferSubData is not supported..", LITE3D_CURRENT_FUNCTION);
+    lite3d_misc_gl_set_not_supported();
 }

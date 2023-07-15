@@ -25,9 +25,11 @@
 
 static uint8_t glOutOfMemory = LITE3D_FALSE;
 static uint8_t glStackCorruption = LITE3D_FALSE;
+static uint8_t glNotSupported = LITE3D_FALSE;
 
 void lite3d_misc_gl_error_stack_clean(void)
 {
+    glNotSupported = LITE3D_FALSE;
     while (glGetError() != GL_NO_ERROR);
 }
 
@@ -40,6 +42,12 @@ int lite3d_misc_check_gl_error(const char *func, int line)
 {
     GLenum errNo;
     uint8_t err = LITE3D_FALSE;
+
+    if (glNotSupported)
+    {
+        glNotSupported = LITE3D_FALSE;
+        return LITE3D_TRUE;
+    }
 
     while ((errNo = glGetError()) != GL_NO_ERROR)
     {
@@ -97,4 +105,9 @@ void lite3d_misc_gl_out_of_mem_reset(void)
 void lite3d_misc_gl_stack_corruption_reset(void)
 {
     glStackCorruption = LITE3D_FALSE;
+}
+
+void lite3d_misc_gl_set_not_supported(void)
+{
+    glNotSupported = LITE3D_TRUE;
 }

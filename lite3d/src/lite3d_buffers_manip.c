@@ -16,6 +16,7 @@
  *	along with Lite3D.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
 #include <SDL_assert.h>
+#include <SDL_log.h>
 #include <lite3d/lite3d_gl.h>
 #include <lite3d/lite3d_glext.h>
 
@@ -28,11 +29,11 @@ static uint8_t gBlendigMode = 0xff;
 static uint8_t gColorOutOn = 0xff;
 static uint8_t gDepthOutOn = 0xff;
 static uint8_t gStencilOutOn = 0xff;
-static uint8_t gPolygonMode = 0;
 static uint8_t gBackFaceCullingOn = 0x99;
 static uint8_t gDeptTestFunc = 0;
 
 #ifndef GLES
+static uint8_t gPolygonMode = 0;
 static GLenum polygonModeEnum[] = {
     GL_POINT, GL_LINE, GL_FILL
 };
@@ -215,6 +216,8 @@ void lite3d_polygon_mode(uint8_t mode)
         glPolygonMode(GL_FRONT_AND_BACK, polygonModeEnum[mode]);
         gPolygonMode = mode;
     }
+#else
+    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "glPolygonMode is not supported in GLES");
 #endif
 }
 

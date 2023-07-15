@@ -15,12 +15,11 @@
  *	You should have received a copy of the GNU General Public License
  *	along with Lite3D.  If not, see <http://www.gnu.org/licenses/>.
  *****************************************************************************/
-
-
 #include <SDL_log.h>
 #include <SDL_syswm.h>
 #include <SDL_assert.h>
 
+#include <lite3d/lite3d_alloc.h>
 #include <lite3d/lite3d_gl.h>
 #include <lite3d/lite3d_glext.h>
 #include <lite3d/lite3d_render.h>
@@ -30,10 +29,29 @@
 static SDL_Window *gRenderWindow = NULL;
 static SDL_GLContext gGLContext = NULL;
 
+#ifndef GLES
+static void print_extensions_string(const char *label, const char *extensionString)
+{
+    if (extensionString)
+    {
+        char *extensionStringCopy = lite3d_strdup(extensionString);
+        char *extension = strtok(extensionStringCopy, " ");
+
+        while (extension) 
+        {
+            SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "%s: %s Extensions %s", 
+                LITE3D_CURRENT_FUNCTION, label, extension);
+            extension = strtok(NULL, " ");
+        }
+
+        lite3d_free(extensionStringCopy);
+    }
+}
 
 static int init_platform_gl_extensions(lite3d_video_settings *settings)
 {
     SDL_SysWMinfo wminfo;
+
     SDL_VERSION(&wminfo.version);
     if (!SDL_GetWindowWMInfo(gRenderWindow, &wminfo))
     {
@@ -45,8 +63,7 @@ static int init_platform_gl_extensions(lite3d_video_settings *settings)
         return LITE3D_FALSE;
     }
 
-#ifndef GLES
-# ifdef PLATFORM_Windows
+#ifdef PLATFORM_Windows
 
     if (!WGLEW_ARB_extensions_string)
     {
@@ -58,13 +75,9 @@ static int init_platform_gl_extensions(lite3d_video_settings *settings)
         return LITE3D_FALSE;
     }
 
-    SDL_LogDebug(
-        SDL_LOG_CATEGORY_APPLICATION,
-        "%s: WGL Extensions %s",
-        LITE3D_CURRENT_FUNCTION,
-        (char *) wglGetExtensionsStringARB(GetDC(wminfo.info.win.window)));
+    print_extensions_string("WGL", wglGetExtensionsStringARB(GetDC(wminfo.info.win.window)));
 
-# elif defined PLATFORM_Linux
+#elif defined PLATFORM_Linux
 
     if (!GLXEW_VERSION_1_3)
     {
@@ -88,17 +101,13 @@ static int init_platform_gl_extensions(lite3d_video_settings *settings)
         LITE3D_CURRENT_FUNCTION,
         (char *) glXQueryServerString(wminfo.info.x11.display, 0, 1));
 
-    SDL_LogDebug(
-        SDL_LOG_CATEGORY_APPLICATION,
-        "%s: GLX Extensions %s",
-        LITE3D_CURRENT_FUNCTION,
-        (char *) glXQueryExtensionsString(wminfo.info.x11.display, 0));
+    print_extensions_string("GLX", glXQueryExtensionsString(wminfo.info.x11.display, 0));
 
-# endif
 #endif
 
     return LITE3D_TRUE;
 }
+#endif
 
 static int init_gl_extensions(lite3d_video_settings *settings)
 {
@@ -140,51 +149,52 @@ static int init_gl_extensions(lite3d_video_settings *settings)
         LITE3D_CURRENT_FUNCTION,
         (const char *) glGetString(GL_RENDERER));
 
-    const char *extensionsStr = (const char *) glGetString(GL_EXTENSIONS);
-    if (extensionsStr)
-    {
-      int32_t extensionsStrLength = (int32_t)strlen(extensionsStr);
-      while (extensionsStrLength >= 0)
-      {
-          SDL_LogDebug(
-              SDL_LOG_CATEGORY_APPLICATION,
-              "%s: GL Extensions: %s",
-              LITE3D_CURRENT_FUNCTION,
-              extensionsStr);
-
-          extensionsStr += SDL_MAX_LOG_MESSAGE;
-          extensionsStrLength -= SDL_MAX_LOG_MESSAGE;
-      }
-
-    }
-    else
-    {
-      GLint ext_id = 0, numExtensions = 0;
-      glGetIntegerv(GL_NUM_EXTENSIONS, &numExtensions);
-      for (ext_id = 0; ext_id < numExtensions; ++ext_id)
-      {
-          SDL_LogDebug(
-              SDL_LOG_CATEGORY_APPLICATION,
-              "%s: GL Extension (%u): %s",
-              LITE3D_CURRENT_FUNCTION,
-              ext_id,
-              glGetStringi(GL_EXTENSIONS, ext_id));
-      }
-    }
-
     SDL_LogDebug(
         SDL_LOG_CATEGORY_APPLICATION,
         "%s: GL Shading Lang %s",
         LITE3D_CURRENT_FUNCTION,
         (const char *) glGetString(GL_SHADING_LANGUAGE_VERSION));
 
+#ifdef WITH_GLES2
+    const char *extensionsStr = (const char *) glGetString(GL_EXTENSIONS);
+    if (extensionsStr)
+    {
+        int32_t extensionsStrLength = (int32_t)strlen(extensionsStr);
+        while (extensionsStrLength >= 0)
+        {
+            SDL_LogDebug(
+                SDL_LOG_CATEGORY_APPLICATION,
+                "%s: GL Extensions: %s",
+                LITE3D_CURRENT_FUNCTION,
+                extensionsStr);
+
+            extensionsStr += SDL_MAX_LOG_MESSAGE;
+            extensionsStrLength -= SDL_MAX_LOG_MESSAGE;
+        }
+    }
+#else
+    GLint ext_id = 0, numExtensions = 0;
+    glGetIntegerv(GL_NUM_EXTENSIONS, &numExtensions);
+    for (ext_id = 0; ext_id < numExtensions; ++ext_id)
+    {
+        SDL_LogDebug(
+            SDL_LOG_CATEGORY_APPLICATION,
+            "%s: GL Extension (%u): %s",
+            LITE3D_CURRENT_FUNCTION, ext_id,
+            glGetStringi(GL_EXTENSIONS, ext_id));
+    }
+#endif
+
 #ifndef GLES
     /* enable multisample buffers */
     if (settings->FSAA > 1 && GLEW_ARB_multisample)
         glEnable(GL_MULTISAMPLE_ARB);
-#endif
 
     return init_platform_gl_extensions(settings);
+
+#else
+    return LITE3D_TRUE;
+#endif
 }
 
 void set_opengl_version(lite3d_video_settings *settings)

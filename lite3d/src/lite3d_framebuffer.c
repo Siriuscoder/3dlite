@@ -571,12 +571,15 @@ int lite3d_framebuffer_read(lite3d_framebuffer *fb,
         
     lite3d_misc_gl_error_stack_clean();
     glBindFramebuffer(GL_FRAMEBUFFER, fb->framebufferId);
+
+#ifndef GLES
     /* if it is screen framebuffer we can read only back buffer  */
     if (fb->framebufferId == 0)
         glReadBuffer(GL_BACK);
     else if (fb->colorAttachmentsCount > 0)
         glReadBuffer(GL_COLOR_ATTACHMENT0 + index);
-    
+#endif
+
     glReadPixels(0, 0, fb->width, fb->height, 
         format == LITE3D_FRAMEBUFFER_READ_RGB_INT8 ? GL_RGB : 
         (format == LITE3D_FRAMEBUFFER_READ_RGBA_INT8 ? GL_RGBA : GL_DEPTH_COMPONENT),
