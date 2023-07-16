@@ -39,12 +39,17 @@ static void print_extensions_string(const char *label, const char *extensionStri
 
         while (extension) 
         {
-            SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "%s: %s Extensions %s", 
+            SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "%s: %s Extension %s", 
                 LITE3D_CURRENT_FUNCTION, label, extension);
             extension = strtok(NULL, " ");
         }
 
         lite3d_free(extensionStringCopy);
+    }
+    else
+    {
+        SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION, "%s: %s extension string is null", 
+            LITE3D_CURRENT_FUNCTION, label);
     }
 }
 
@@ -57,10 +62,10 @@ static int init_platform_gl_extensions(lite3d_video_settings *settings)
     {
         SDL_LogWarn(
             SDL_LOG_CATEGORY_APPLICATION,
-            "SDL_GetWindowWMInfo: %s",
+            "SDL_GetWindowWMInfo failed: %s",
             SDL_GetError());
 
-        return LITE3D_FALSE;
+        return LITE3D_TRUE;
     }
 
 #ifdef PLATFORM_Windows
@@ -69,10 +74,9 @@ static int init_platform_gl_extensions(lite3d_video_settings *settings)
     {
         SDL_LogWarn(
             SDL_LOG_CATEGORY_APPLICATION,
-            "SDL_GetWindowWMInfo: %s",
-            SDL_GetError());
+            "WGLEW_ARB_extensions_string is not supported");
 
-        return LITE3D_FALSE;
+        return LITE3D_TRUE;
     }
 
     print_extensions_string("WGL", wglGetExtensionsStringARB(GetDC(wminfo.info.win.window)));
@@ -93,13 +97,13 @@ static int init_platform_gl_extensions(lite3d_video_settings *settings)
         SDL_LOG_CATEGORY_APPLICATION,
         "%s: GLX Client %s",
         LITE3D_CURRENT_FUNCTION,
-        (char *) glXGetClientString(wminfo.info.x11.display, 1));
+        glXGetClientString(wminfo.info.x11.display, 1));
 
     SDL_LogDebug(
         SDL_LOG_CATEGORY_APPLICATION,
         "%s: GLX Server %s",
         LITE3D_CURRENT_FUNCTION,
-        (char *) glXQueryServerString(wminfo.info.x11.display, 0, 1));
+        glXQueryServerString(wminfo.info.x11.display, 0, 1));
 
     print_extensions_string("GLX", glXQueryExtensionsString(wminfo.info.x11.display, 0));
 

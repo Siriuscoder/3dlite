@@ -9,12 +9,16 @@ hosts:
   
 configuration:
   - Debug
-  - DebugLinux
-  - DebugLinuxGLES2
-  - DebugLinuxGLES3
+# - Release
 
 platform:
   - x64
+
+environment:
+  matrix:
+    - GL_PROVIDER: GLEW
+    - GL_PROVIDER: GLES2
+    - GL_PROVIDER: GLES3
   
 init:
   - sh: mkdir -p /home/appveyor/builds/lite3d_linux
@@ -26,7 +30,7 @@ install:
   
 before_build:
   - cmd: cd C:\builds\lite3d_win
-  - cmd: cmake -A x64 -DCMAKE_BUILD_TYPE=Debug -DENABLE_METRICS=ON C:\projects\3dlite
+  - cmd: cmake -A x64 -DCMAKE_BUILD_TYPE=%CONFIGURATION% -DENABLE_METRICS=ON C:\projects\3dlite
 
 build:
   project: C:\builds\lite3d_win\lite3d.sln
@@ -34,44 +38,18 @@ build:
 for:
 - matrix:
     exclude:
-      - configuration: Debug
-        image: Ubuntu
-      - configuration: DebugLinux
-        image: Visual Studio 2022
-      - configuration: DebugLinuxGLES2
-        image: Visual Studio 2022
-      - configuration: DebugLinuxGLES3
-        image: Visual Studio 2022
+      - image: Visual Studio 2022
+        GL_PROVIDER: GLES2
+      - image: Visual Studio 2022
+        GL_PROVIDER: GLES3
 
 - matrix:
     only:
-      - configuration: DebugLinux
+      - image: Ubuntu
 
   before_build:
     - sh: cd /home/appveyor/builds/lite3d_linux
-    - sh: cmake -DCMAKE_BUILD_TYPE=Debug -DENABLE_METRICS=ON /home/appveyor/projects/3dlite
+    - sh: cmake -DCMAKE_BUILD_TYPE=$CONFIGURATION -DGRAPHIC_BACKEND=$GL_PROVIDER -DENABLE_METRICS=ON /home/appveyor/projects/3dlite -Wno-dev
 
-  build_script:
-  - sh: make all
-
-- matrix:
-    only:
-      - configuration: DebugLinuxGLES2
-
-  before_build:
-    - sh: cd /home/appveyor/builds/lite3d_linux
-    - sh: cmake -DGRAPHIC_BACKEND=GLES2 -DCMAKE_BUILD_TYPE=Debug -DENABLE_METRICS=ON /home/appveyor/projects/3dlite -Wno-dev
-
-  build_script:
-  - sh: make all
-
-- matrix:
-    only:
-      - configuration: DebugLinuxGLES3
-
-  before_build:
-    - sh: cd /home/appveyor/builds/lite3d_linux
-    - sh: cmake -DGRAPHIC_BACKEND=GLES3 -DCMAKE_BUILD_TYPE=Debug -DENABLE_METRICS=ON /home/appveyor/projects/3dlite -Wno-dev
-  
   build_script:
   - sh: make all
