@@ -40,6 +40,14 @@ PFNGLDRAWELEMENTSINSTANCEDANGLEPROC glDrawElementsInstancedPtr = NULL;
 PFNGLVERTEXATTRIBDIVISORANGLEPROC glVertexAttribDivisorPtr = NULL;
 /* GL_ANGLE_framebuffer_blit */
 PFNGLBLITFRAMEBUFFERANGLEPROC glBlitFramebufferPtr = NULL;
+/* GL_EXT_occlusion_query_boolean */
+PFNGLGENQUERIESEXTPROC glGenQueriesPtr = NULL;
+PFNGLDELETEQUERIESEXTPROC glDeleteQueriesPtr = NULL;
+PFNGLISQUERYEXTPROC glIsQueryPtr = NULL;
+PFNGLBEGINQUERYEXTPROC glBeginQueryPtr = NULL;
+PFNGLENDQUERYEXTPROC glEndQueryPtr = NULL;
+PFNGLGETQUERYIVEXTPROC glGetQueryivPtr = NULL;
+PFNGLGETQUERYOBJECTUIVEXTPROC glGetQueryObjectuivPtr = NULL;
 
 #endif
 
@@ -247,7 +255,7 @@ int lite3d_init_gl_extensions_binding()
 {
 #ifndef GLES
     GLenum err;
-    if((err = glewInit()) != GLEW_OK)
+    if ((err = glewInit()) != GLEW_OK)
     {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
             "%s: glewInit failed: %s", LITE3D_CURRENT_FUNCTION, glewGetErrorString(err));
@@ -257,7 +265,7 @@ int lite3d_init_gl_extensions_binding()
     return LITE3D_TRUE;
 #else
 
-    if(lite3d_check_map_buffer())
+    if (lite3d_check_map_buffer())
     {
         glMapBufferPtr = SDL_GL_GetProcAddress("glMapBufferOES");
         glUnmapBufferPtr = SDL_GL_GetProcAddress("glUnmapBufferOES");
@@ -271,14 +279,14 @@ int lite3d_init_gl_extensions_binding()
     }
     
 #ifdef WITH_GLES2
-    if(lite3d_check_instanced_arrays())
+    if (lite3d_check_instanced_arrays())
     {
         glDrawArraysInstancedPtr = SDL_GL_GetProcAddress("glDrawArraysInstancedANGLE");
         glDrawElementsInstancedPtr = SDL_GL_GetProcAddress("glDrawElementsInstancedANGLE");
         glVertexAttribDivisorPtr = SDL_GL_GetProcAddress("glVertexAttribDivisorANGLE");
     }
 
-    if(lite3d_check_vertex_array_object())
+    if (lite3d_check_vertex_array_object())
     {
         glBindVertexArrayPtr = SDL_GL_GetProcAddress("glBindVertexArrayOES");
         glDeleteVertexArraysPtr = SDL_GL_GetProcAddress("glDeleteVertexArraysOES");
@@ -286,13 +294,34 @@ int lite3d_init_gl_extensions_binding()
         glIsVertexArrayPtr = SDL_GL_GetProcAddress("glIsVertexArrayOES");
     }
 
-    if(lite3d_check_framebuffer_blit())
+    if (lite3d_check_framebuffer_blit())
     {
         glBlitFramebufferPtr = SDL_GL_GetProcAddress("glBlitFramebufferANGLE");
     }
     else
     {
         glBlitFramebufferPtr = glBlitFramebuffer_stub;
+    }
+
+    if (lite3d_check_occlusion_query())
+    {
+        glGenQueriesPtr = SDL_GL_GetProcAddress("glGenQueriesEXT");
+        glDeleteQueriesPtr = SDL_GL_GetProcAddress("glDeleteQueriesEXT");
+        glIsQueryPtr = SDL_GL_GetProcAddress("glIsQueryEXT");
+        glBeginQueryPtr = SDL_GL_GetProcAddress("glBeginQueryEXT");
+        glEndQueryPtr = SDL_GL_GetProcAddress("glEndQueryEXT");
+        glGetQueryivPtr = SDL_GL_GetProcAddress("glGetQueryivEXT");
+        glGetQueryObjectuivPtr = SDL_GL_GetProcAddress("glGetQueryObjectuivEXT");
+    }
+    else
+    {
+        glGenQueriesPtr = glGenQueries_stub;
+        glDeleteQueriesPtr = glDeleteQueries_stub;
+        glIsQueryPtr = glIsQuery_stub;
+        glBeginQueryPtr = glBeginQuery_stub;
+        glEndQueryPtr = glEndQuery_stub;
+        glGetQueryivPtr = glGetQueryiv_stub;
+        glGetQueryObjectuivPtr = glGetQueryObjectuiv_stub;
     }
 
 #endif
@@ -410,5 +439,55 @@ void glCopyBufferSubData_stub(GLenum readTarget, GLenum writeTarget, GLintptr re
 {
     SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
         "%s: glCopyBufferSubData is not supported..", LITE3D_CURRENT_FUNCTION);
+    lite3d_misc_gl_set_not_supported();
+}
+
+void glGenQueries_stub(GLsizei n, GLuint *ids)
+{
+    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+        "%s: glGenQueries is not supported..", LITE3D_CURRENT_FUNCTION);
+    lite3d_misc_gl_set_not_supported();
+}
+
+void glDeleteQueries_stub(GLsizei n, const GLuint *ids)
+{
+    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+        "%s: glDeleteQueries is not supported..", LITE3D_CURRENT_FUNCTION);
+    lite3d_misc_gl_set_not_supported();
+}
+
+GLboolean glIsQuery_stub(GLuint id)
+{
+    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+        "%s: glIsQuery is not supported..", LITE3D_CURRENT_FUNCTION);
+    lite3d_misc_gl_set_not_supported();
+    return GL_FALSE;
+}
+
+void glBeginQuery_stub(GLenum target, GLuint id)
+{
+    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+        "%s: glBeginQuery is not supported..", LITE3D_CURRENT_FUNCTION);
+    lite3d_misc_gl_set_not_supported();
+}
+
+void glEndQuery_stub(GLenum target)
+{
+    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+        "%s: glEndQuery is not supported..", LITE3D_CURRENT_FUNCTION);
+    lite3d_misc_gl_set_not_supported();
+}
+
+void glGetQueryiv_stub(GLenum target, GLenum pname, GLint *params)
+{
+    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+        "%s: glGetQueryiv is not supported..", LITE3D_CURRENT_FUNCTION);
+    lite3d_misc_gl_set_not_supported();
+}
+
+void glGetQueryObjectuiv_stub(GLuint id, GLenum pname, GLuint *params)
+{
+    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+        "%s: glGetQueryObjectuiv is not supported..", LITE3D_CURRENT_FUNCTION);
     lite3d_misc_gl_set_not_supported();
 }
