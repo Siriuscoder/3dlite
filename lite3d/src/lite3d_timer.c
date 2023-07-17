@@ -16,6 +16,7 @@
  *	along with Lite3D.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
 #include <SDL_assert.h>
+#include <SDL_timer.h>
 
 #include <lite3d/lite3d_alloc.h>
 #include <lite3d/lite3d_timer.h>
@@ -59,8 +60,9 @@ void lite3d_timer_induce(uint64_t timeMark, uint64_t freq)
     lite3d_list_node *link;
     lite3d_timer *timer;
     uint64_t delta;
-
-    freq /= 1000;
+    uint64_t tickPerMs = freq / 1000;
+    uint64_t tickPerMcs = freq / 1000000;
+    uint64_t timerSeriesTimeMark = 0;
     /* check all timers */
     for (link = gTimers.l.next; link != &gTimers.l; link = lite3d_list_next(link))
     {
@@ -75,18 +77,21 @@ void lite3d_timer_induce(uint64_t timeMark, uint64_t freq)
         timer->lag += delta;
         timer->lastTimeUpdate = timeMark;
         timer->firedPerRound = 0;
-        timer->deltaMs += delta / freq;
+        timer->deltaMcs += delta / tickPerMcs;
 
-        while (timer->lag >= (freq * timer->interval))
+        while (timer->lag >= (tickPerMs * timer->interval))
         {
             timer->firedPerRound++;
+            // В случае последущих срабатываний подсчитываем количество микросекунд с прошлого вызова
+            if (timerSeriesTimeMark > 0 && timer->firedPerRound > 1)
+                timer->deltaMcs = (SDL_GetPerformanceCounter() - timerSeriesTimeMark) / tickPerMcs;
+
             if (timer->ontimer)
                 timer->ontimer(timer);
 
-            timer->lag -= freq * timer->interval;
+            timer->deltaMcs = 0;
+            timerSeriesTimeMark = SDL_GetPerformanceCounter();
+            timer->lag -= tickPerMs * timer->interval;
         }
-
-        if (timer->firedPerRound > 0)
-            timer->deltaMs = 0;
     }
 }

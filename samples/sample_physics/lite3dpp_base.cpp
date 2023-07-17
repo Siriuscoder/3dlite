@@ -36,7 +36,7 @@ namespace samples {
         mWorld.reset(new btDiscreteDynamicsWorld(mCollisionDispatcher.get(), mBroadphase.get(), 
             mConstraintSolver.get(), mCollisionConfig.get()));
 
-        mWorld->setGravity(btVector3(0.0f, 0.0f, -20.0f));
+        mWorld->setGravity(btVector3(0.0f, 0.0f, -100.0f));
         //mWorld->setLatencyMotionStateInterpolation(true);
     }
 
@@ -59,16 +59,14 @@ namespace samples {
         mGroundPlane.reset();
     }
 
-    void PhysicSampleBase::fixedUpdateTimerTick(int32_t firedPerRound, uint64_t deltaMs)
+    void PhysicSampleBase::fixedUpdateTimerTick(int32_t firedPerRound, uint64_t deltaMcs, float deltaRetard)
     {
         SDL_assert(mWorld);
 
-        if (firedPerRound == 1)
-        {
-            //SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "mWorld->stepSimulation(), FPS %d, firedPerRound %d, step %f, maxSubSteps %d",
-            //    getMain().getRenderStats()->lastFPS, firedPerRound, step, maxSubSteps);
-            mWorld->stepSimulation(0.03, 0);
-        }
+        //SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "mWorld->stepSimulation(), FPS %d, firedPerRound %d, step %f, maxSubSteps %d",
+        //    getMain().getRenderStats()->lastFPS, firedPerRound, step, maxSubSteps);
+        float timeStepSec = (deltaMcs / 1000000.0f);
+        mWorld->stepSimulation(timeStepSec, 10);
     }
 
     BaseBody::Ptr PhysicSampleBase::createBox(const String &name)

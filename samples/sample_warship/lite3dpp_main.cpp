@@ -66,10 +66,9 @@ public:
         mFlashLight->addToScene(scene);
         mFlashLight->getLight()->enabled(false);
     }
-    
-    void timerTick(lite3d_timer *timerid) override
+
+    void mainCameraChanged() override
     {
-        Sample::timerTick(timerid);
         lite3dpp::Material::setFloatv3GlobalParameter("eye", getMainCamera().getPosition());
         mFlashLight->setPosition(getMainCamera().getPosition());
     }

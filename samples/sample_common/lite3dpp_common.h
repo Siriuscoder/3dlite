@@ -51,7 +51,7 @@ public:
     void saveScreenshot();
 
     virtual void createScene() = 0;
-    virtual void fixedUpdateTimerTick(int32_t firedPerRound, uint64_t deltaMs);
+    virtual void fixedUpdateTimerTick(int32_t firedPerRound, uint64_t deltaMcs, float deltaRetard);
 
 protected:
 

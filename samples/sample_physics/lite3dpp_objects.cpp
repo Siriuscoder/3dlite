@@ -70,7 +70,7 @@ namespace samples {
         SDL_assert(mShape);
 
         //rigidbody is dynamic if and only if mass is non zero, otherwise static
-        mDynamic = (mass != 0.0f);
+        mDynamic = fabs(mass) > std::numeric_limits<float>::epsilon();
         btVector3 localInertia(0, 0, 0);
         if (mDynamic)
             mShape->calculateLocalInertia(mass, localInertia);
@@ -101,7 +101,7 @@ namespace samples {
     BoxBody::BoxBody(PhysicSampleBase &sample, const String &name) :
         BaseBody(sample, name, "samples:objects/cube.json")
     {
-        constructBody(10.0f);
+        constructBody(100.0f);
     }
 
     btCollisionShape *BoxBody::createShape()
