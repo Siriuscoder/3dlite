@@ -75,32 +75,28 @@ static const char *image_format_string(const lite3d_texture_unit *texture)
 {
     switch (texture->texFormat)
     {
-#ifndef GLES
-        case GL_COLOR_INDEX:
-            return "COLOR_INDEX";
-        case GL_BGR:
+        case LITE3D_TEXTURE_FORMAT_BRG:
             return "BGR";
-        case GL_BGRA:
+        case LITE3D_TEXTURE_FORMAT_BRGA:
             return "BGRA";
-#endif
-        case GL_RGB:
+        case LITE3D_TEXTURE_FORMAT_RGB:
             return "RGB";
-        case GL_RGBA:
+        case LITE3D_TEXTURE_FORMAT_RGBA:
             return "RGBA";
-        case GL_DEPTH_COMPONENT:
+        case LITE3D_TEXTURE_FORMAT_DEPTH:
             return "DEPTH_COMPONENT";
-        case GL_RED:
+        case LITE3D_TEXTURE_FORMAT_RED:
             return "RED";
-        case GL_RG:
+        case LITE3D_TEXTURE_FORMAT_RG:
             return "RG";
         default:
             return "UNKNOWN";
     }
 }
 
-static const char *texture_target_string(const lite3d_texture_unit *texture)
+static const char *texture_target_string(uint32_t textureTarget)
 {
-    switch (textureTargetEnum[texture->textureTarget])
+    switch (textureTargetEnum[textureTarget])
     {
     case GL_TEXTURE_1D:
         return "TEXTURE_1D";
@@ -213,6 +209,117 @@ static int8_t max_mipmaps_count(int32_t width, int32_t height, int32_t depth,
     return count;
 }
 
+static int checkTextureTarget(uint32_t textureTarget)
+{
+    if (textureTarget >= (sizeof(textureTargetEnum) / sizeof(textureTargetEnum[0])))
+    {
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "%s: Invalid texture target %d",
+            LITE3D_CURRENT_FUNCTION, textureTarget);
+        return LITE3D_FALSE;
+    }
+
+#ifdef GLES
+    switch (textureTargetEnum[textureTarget])
+    {
+        case GL_TEXTURE_1D:
+        case GL_TEXTURE_BUFFER:
+        case GL_TEXTURE_2D_MULTISAMPLE:
+        case GL_TEXTURE_2D_MULTISAMPLE_ARRAY:
+        {
+            SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "%s: Texture target %s(%d) is not supported in GLES",
+                LITE3D_CURRENT_FUNCTION, texture_target_string(textureTarget), textureTarget);
+            return LITE3D_FALSE;
+        }
+    }
+#endif
+
+    return LITE3D_TRUE;
+}
+
+static int set_internal_format(lite3d_texture_unit *textureUnit, uint16_t *format,
+    uint16_t iformat, uint32_t *internalFormat)
+{
+#ifdef GLES
+    switch (*format)
+    {
+        case LITE3D_TEXTURE_FORMAT_BRG:
+        case LITE3D_TEXTURE_FORMAT_BRGA:
+#ifdef WITH_GLES2
+        case LITE3D_TEXTURE_FORMAT_LUMINANCE:
+        case LITE3D_TEXTURE_FORMAT_ALPHA:
+        case LITE3D_TEXTURE_FORMAT_RED:
+        case LITE3D_TEXTURE_FORMAT_LUMINANCE_ALPHA:
+        case LITE3D_TEXTURE_FORMAT_RG:
+#endif
+        {
+            SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "%s: Texture format %d is not supported in GLES",
+                LITE3D_CURRENT_FUNCTION, *format);
+            return LITE3D_FALSE;
+        }
+    }
+#endif
+
+    /* what BPP ? */
+    switch (*format)
+    {
+        case LITE3D_TEXTURE_FORMAT_RGB:
+        case LITE3D_TEXTURE_FORMAT_BRG:
+        {
+            textureUnit->imageBPP = 3;
+            *internalFormat = gTextureSettings.useGLCompression ? GL_COMPRESSED_RGB_S3TC_DXT1_EXT : GL_RGB;
+            textureUnit->compressed = gTextureSettings.useGLCompression;
+            break;
+        }
+        case LITE3D_TEXTURE_FORMAT_DEPTH:
+        {
+            textureUnit->imageBPP = 3; // is it 24 bits per pixel?
+            *internalFormat = GL_DEPTH_COMPONENT;
+            break;
+        }
+        case LITE3D_TEXTURE_FORMAT_RGBA:
+        case LITE3D_TEXTURE_FORMAT_BRGA:
+        {
+            textureUnit->imageBPP = 4;
+            *internalFormat = gTextureSettings.useGLCompression ? GL_COMPRESSED_RGBA_S3TC_DXT5_EXT : GL_RGBA;
+            textureUnit->compressed = gTextureSettings.useGLCompression;
+            break;
+        }
+        case LITE3D_TEXTURE_FORMAT_LUMINANCE:
+        case LITE3D_TEXTURE_FORMAT_ALPHA:
+        case LITE3D_TEXTURE_FORMAT_RED:
+        {
+            *format = GL_RED;
+            textureUnit->imageBPP = 1;
+            *internalFormat = gTextureSettings.useGLCompression ? GL_COMPRESSED_RED_RGTC1_EXT : GL_RED;
+            textureUnit->compressed = gTextureSettings.useGLCompression;
+            break;
+        }
+        case LITE3D_TEXTURE_FORMAT_LUMINANCE_ALPHA:
+        case LITE3D_TEXTURE_FORMAT_RG:
+        {
+            *format = GL_RG;
+            textureUnit->imageBPP = 2;
+            *internalFormat = gTextureSettings.useGLCompression ? GL_COMPRESSED_RED_GREEN_RGTC2_EXT : GL_RG;
+            textureUnit->compressed = gTextureSettings.useGLCompression;
+            break;
+        }
+        default:
+        {
+            SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+                "%s: Unknown texture format %d",
+                LITE3D_CURRENT_FUNCTION, *format);
+            return LITE3D_FALSE;
+        }
+    }
+
+    if (iformat > 0)
+    {
+        *internalFormat = iformat;
+    }
+
+    return LITE3D_TRUE;
+}
+
 void lite3d_texture_technique_add_image_filter(lite3d_image_filter *filter)
 {
     SDL_assert(filter);
@@ -303,7 +410,7 @@ int lite3d_texture_unit_from_resource(lite3d_texture_unit *textureUnit,
     {
         textureUnit->textureTarget = textureTarget;
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "%s not supplied by %s method",
-            texture_target_string(textureUnit), LITE3D_CURRENT_FUNCTION);
+            texture_target_string(textureUnit->textureTarget), LITE3D_CURRENT_FUNCTION);
         return LITE3D_FALSE;
     }
 
@@ -354,7 +461,7 @@ int lite3d_texture_unit_from_resource(lite3d_texture_unit *textureUnit,
     {
         SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION, "%s: %s: "
             "representable image BPP does not mached with IL image BPP (%d-%d)",
-            texture_target_string(textureUnit),
+            texture_target_string(textureUnit->textureTarget),
             resource->name, textureUnit->imageBPP,
             ilGetInteger(IL_IMAGE_BYTES_PER_PIXEL));
     }
@@ -363,7 +470,7 @@ int lite3d_texture_unit_from_resource(lite3d_texture_unit *textureUnit,
     {
         SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION, "%s: %s: "
             "representable image size does not mached with IL image size (%d-%d)",
-            texture_target_string(textureUnit),
+            texture_target_string(textureUnit->textureTarget),
             resource->name, textureUnit->imageBPP,
             ilGetInteger(IL_IMAGE_SIZE_OF_DATA));
     }
@@ -417,7 +524,7 @@ int lite3d_texture_unit_from_resource(lite3d_texture_unit *textureUnit,
     SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "%s: %s, "
         "%dx%dx%d, build-in/%s mipmaps %d/%d, %s, "
         "format %s",
-        texture_target_string(textureUnit),
+        texture_target_string(textureUnit->textureTarget),
         resource->name,
         textureUnit->imageWidth,
         textureUnit->imageHeight,
@@ -660,52 +767,9 @@ int lite3d_texture_unit_allocate(lite3d_texture_unit *textureUnit,
     textureUnit->imageHeight = height;
     textureUnit->imageDepth = depth;
 
-    if (textureTarget >= (sizeof(textureTargetEnum) / sizeof(textureTargetEnum[0])))
+    if (!checkTextureTarget(textureTarget))
     {
-        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "%s: Invalid texture target %d",
-            LITE3D_CURRENT_FUNCTION, textureTarget);
         return LITE3D_FALSE;
-    }
-
-    /* what BPP ? */
-    switch (format)
-    {
-        case LITE3D_TEXTURE_FORMAT_RGB:
-        case LITE3D_TEXTURE_FORMAT_BRG:
-            textureUnit->imageBPP = 3;
-            internalFormat = gTextureSettings.useGLCompression ? GL_COMPRESSED_RGB_S3TC_DXT1_EXT : GL_RGB;
-            textureUnit->compressed = gTextureSettings.useGLCompression;
-            break;
-        case LITE3D_TEXTURE_FORMAT_DEPTH:
-            textureUnit->imageBPP = 3; // is it 24 bits per pixel?
-            internalFormat = GL_DEPTH_COMPONENT;
-            break;
-        case LITE3D_TEXTURE_FORMAT_RGBA:
-        case LITE3D_TEXTURE_FORMAT_BRGA:
-            textureUnit->imageBPP = 4;
-            internalFormat = gTextureSettings.useGLCompression ? GL_COMPRESSED_RGBA_S3TC_DXT5_EXT : GL_RGBA;
-            textureUnit->compressed = gTextureSettings.useGLCompression;
-            break;
-        case LITE3D_TEXTURE_FORMAT_LUMINANCE:
-        case LITE3D_TEXTURE_FORMAT_ALPHA:
-        case LITE3D_TEXTURE_FORMAT_RED:
-            format = GL_RED;
-            textureUnit->imageBPP = 1;
-            internalFormat = gTextureSettings.useGLCompression ? GL_COMPRESSED_RED_RGTC1_EXT : GL_RED;
-            textureUnit->compressed = gTextureSettings.useGLCompression;
-            break;
-        case LITE3D_TEXTURE_FORMAT_LUMINANCE_ALPHA:
-        case LITE3D_TEXTURE_FORMAT_RG:
-            format = GL_RG;
-            textureUnit->imageBPP = 2;
-            internalFormat = gTextureSettings.useGLCompression ? GL_COMPRESSED_RED_GREEN_RGTC2_EXT : GL_RG;
-            textureUnit->compressed = gTextureSettings.useGLCompression;
-            break;
-        default:
-            SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
-                "%s: Unknown texture format %d",
-                LITE3D_CURRENT_FUNCTION, format);
-            return LITE3D_FALSE;
     }
 
     if ((textureTarget == LITE3D_TEXTURE_2D_MULTISAMPLE || textureTarget == LITE3D_TEXTURE_3D_MULTISAMPLE) &&
@@ -716,8 +780,10 @@ int lite3d_texture_unit_allocate(lite3d_texture_unit *textureUnit,
         return LITE3D_FALSE;
     }
 
-    if (iformat > 0)
-        internalFormat = iformat;
+    if (!set_internal_format(textureUnit, &format, iformat, &internalFormat))
+    {
+        return LITE3D_FALSE;
+    }
 
     textureUnit->imageSize = width * height * depth * textureUnit->imageBPP;
     textureUnit->loadedMipmaps = 0;
@@ -732,7 +798,7 @@ int lite3d_texture_unit_allocate(lite3d_texture_unit *textureUnit,
     {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
             "%s: mipmaping not supported for %s",
-            LITE3D_CURRENT_FUNCTION, texture_target_string(textureUnit));
+            LITE3D_CURRENT_FUNCTION, texture_target_string(textureUnit->textureTarget));
     }
 
     /* enable texture target */
@@ -762,7 +828,7 @@ int lite3d_texture_unit_allocate(lite3d_texture_unit *textureUnit,
             {
                 SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
                     "%s: mipmaps not supported for this dimensions %dx%dx%d",
-                    texture_target_string(textureUnit),
+                    texture_target_string(textureUnit->textureTarget),
                     width, height, depth);
 
                 quality = LITE3D_TEXTURE_QL_MEDIUM;
@@ -783,7 +849,7 @@ int lite3d_texture_unit_allocate(lite3d_texture_unit *textureUnit,
             textureUnit->wrapping == LITE3D_TEXTURE_REPEAT ? GL_REPEAT : GL_CLAMP_TO_EDGE);
         glTexParameteri(textureTargetEnum[textureTarget], GL_TEXTURE_WRAP_T,
             textureUnit->wrapping == LITE3D_TEXTURE_REPEAT ? GL_REPEAT : GL_CLAMP_TO_EDGE);
-        if (textureTarget == LITE3D_TEXTURE_CUBE)
+        if (textureTarget == LITE3D_TEXTURE_3D)
         {
             glTexParameteri(textureTargetEnum[textureTarget], GL_TEXTURE_WRAP_R,
                 textureUnit->wrapping == LITE3D_TEXTURE_REPEAT ? GL_REPEAT : GL_CLAMP_TO_EDGE);
@@ -885,7 +951,7 @@ int lite3d_texture_unit_allocate(lite3d_texture_unit *textureUnit,
     SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "%s: "
         "%dx%dx%d surface allocated (%lu bytes), levels %d, %s, "
         "format %s",
-        texture_target_string(textureUnit),
+        texture_target_string(textureUnit->textureTarget),
         textureUnit->imageWidth,
         textureUnit->imageHeight,
         textureUnit->imageDepth,

@@ -196,6 +196,7 @@ static int lite3d_shader_program_sampler_set(
 static int lite3d_shader_program_ssbo_set(
     lite3d_shader_program *program, lite3d_shader_parameter_container *p)
 {
+#ifndef GLES
     SDL_assert(program);
     SDL_assert(program->success == LITE3D_TRUE);
     SDL_assert(p->parameter->parameter.vbo);
@@ -225,11 +226,18 @@ static int lite3d_shader_program_ssbo_set(
     
     glBindBufferBase(GL_SHADER_STORAGE_BUFFER, p->binding, p->parameter->parameter.vbo->vboID);
     return LITE3D_TRUE;
+#else
+    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+        "%s: Can`t set parameter '%s', SSBO is not supported in GLES, program 0x%016llx",
+        LITE3D_CURRENT_FUNCTION, p->parameter->name, (unsigned long long)program);
+    return LITE3D_FALSE;
+#endif
 }
 
 static int lite3d_shader_program_ubo_set(
     lite3d_shader_program *program, lite3d_shader_parameter_container *p)
 {
+#ifndef WITH_GLES2
     SDL_assert(program);
     SDL_assert(program->success == LITE3D_TRUE);
     SDL_assert(p->parameter->parameter.vbo);
@@ -258,6 +266,12 @@ static int lite3d_shader_program_ubo_set(
     
     glBindBufferBase(GL_UNIFORM_BUFFER, p->binding, p->parameter->parameter.vbo->vboID);
     return LITE3D_TRUE;
+#else
+    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+        "%s: Can`t set parameter '%s', UBO is not supported in GLES2, program 0x%016llx",
+        LITE3D_CURRENT_FUNCTION, p->parameter->name, (unsigned long long)program);
+    return LITE3D_FALSE;
+#endif
 }
 
 static int lite3d_shader_program_simple_uniform_set(

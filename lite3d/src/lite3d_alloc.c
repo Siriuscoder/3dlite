@@ -115,3 +115,15 @@ void lite3d_free_pooled(uint8_t pollNo, void *p)
     SDL_assert_release(pollNo < LITE3D_POOL_MAX);
     nedpfree(globalMemPools[pollNo], p);
 }
+
+char *lite3d_strdup(const char *str)
+{
+    void *strmem = lite3d_malloc(strlen(str) + 1);
+    if (!strmem)
+    {
+        return NULL;
+    }
+
+    strcpy(strmem, str);
+    return strmem;
+}

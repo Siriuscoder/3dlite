@@ -137,13 +137,13 @@ namespace lite3dpp
 
     lite3d_bounding_vol SceneObject::calculateBoudingBox()
     {
-        lite3d_bounding_vol bv;
+        lite3d_bounding_vol bv = {};
         return bv;
     }
 
     lite3d_bounding_vol SceneObject::calculateBoudingBoxWorld()
     {
-        lite3d_bounding_vol bv;
+        lite3d_bounding_vol bv = {};
         return bv;
     }
 }
