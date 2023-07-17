@@ -4,10 +4,5 @@
         "vaultmat:shaders/sources/triangle.vs",
         "vaultmat:shaders/sources/lightpass.fs",
         "samples:shaders/sources/lighting/phong_blinn_single.fs"
-    ],
-    
-    "AttributesOrder":
-    [
-        "ivertex"
     ]
 }

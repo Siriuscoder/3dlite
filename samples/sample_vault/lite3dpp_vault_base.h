@@ -48,8 +48,6 @@ public:
         kmVec3 resolution = { (float)getMain().window()->width(), (float)getMain().window()->height(), 0 };
         lite3dpp::Material::setFloatv3GlobalParameter("screenResolution", resolution);
         lite3dpp::Material::setIntGlobalParameter("FXAA", 1);
-        // use instancing by default
-        mVaultScene->instancingMode(true);
 
         mReactLamp01 = mVaultScene->getLightNode("ReactorLamp_01.node");
         mReactLamp02 = mVaultScene->getLightNode("ReactorLamp_02.node");

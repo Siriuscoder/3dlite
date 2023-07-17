@@ -17,7 +17,8 @@
                 {
                     "Name": "Window",
                     "Priority": 0,
-                    "TexturePass": 1
+                    "TexturePass": 1,
+                    "RenderInstancing": true
                 }
             ]
         }

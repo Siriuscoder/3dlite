@@ -50,7 +50,6 @@ namespace samples {
         mScene = getMain().getResourceManager()->queryResource<lite3dpp::Scene>("SampleScene",
             "samples:scenes/empty.json");
         setMainCamera(getMain().getCamera("MyCamera"));
-        mScene->instancingMode(true);
 
         mGroundPlane = createGroundPlane("Ground");
     }

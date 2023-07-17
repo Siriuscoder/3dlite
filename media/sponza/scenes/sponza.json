@@ -20,7 +20,7 @@
                     "Path": "sponzamat:targets/depth.json",
                     "Priority": 0,
                     "TexturePass": 1,
-                    "RenderSecondStage": false,
+                    "RenderBlend": false,
                     "DepthTest": true,
                     "ColorOutput": false,
                     "DepthOutput": true
@@ -56,7 +56,7 @@
                     "Path": "sponzamat:targets/shadow.json",
                     "Priority": 0,
                     "TexturePass": 1,
-                    "RenderSecondStage": false,
+                    "RenderBlend": false,
                     "DepthTest": true,
                     "ColorOutput": false,
                     "DepthOutput": true

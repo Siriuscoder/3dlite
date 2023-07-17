@@ -26,17 +26,20 @@
 #include <lite3d/lite3d_array.h>
 #include <lite3d/lite3d_lighting.h>
 
-#define LITE3D_RENDER_STAGE_FIRST       0x1
-#define LITE3D_RENDER_STAGE_SECOND      (LITE3D_RENDER_STAGE_FIRST << 1)
-#define LITE3D_RENDER_CLEAN_COLOR_BUF   (LITE3D_RENDER_STAGE_FIRST << 2)
-#define LITE3D_RENDER_CLEAN_DEPTH_BUF   (LITE3D_RENDER_STAGE_FIRST << 3)
-#define LITE3D_RENDER_CLEAN_STENCIL_BUF (LITE3D_RENDER_STAGE_FIRST << 4)
-#define LITE3D_RENDER_DEPTH_TEST        (LITE3D_RENDER_STAGE_FIRST << 5)
-#define LITE3D_RENDER_COLOR_OUTPUT      (LITE3D_RENDER_STAGE_FIRST << 6)
-#define LITE3D_RENDER_DEPTH_OUTPUT      (LITE3D_RENDER_STAGE_FIRST << 7)
-#define LITE3D_RENDER_STENCIL_OUTPUT    (LITE3D_RENDER_STAGE_FIRST << 8)
+#define LITE3D_RENDER_OPAQUE            ((uint32_t)0x1)
+#define LITE3D_RENDER_BLEND             ((uint32_t)0x1 << 1)
+#define LITE3D_RENDER_CLEAN_COLOR_BUF   ((uint32_t)0x1 << 2)
+#define LITE3D_RENDER_CLEAN_DEPTH_BUF   ((uint32_t)0x1 << 3)
+#define LITE3D_RENDER_CLEAN_STENCIL_BUF ((uint32_t)0x1 << 4)
+#define LITE3D_RENDER_DEPTH_TEST        ((uint32_t)0x1 << 5)
+#define LITE3D_RENDER_COLOR_OUTPUT      ((uint32_t)0x1 << 6)
+#define LITE3D_RENDER_DEPTH_OUTPUT      ((uint32_t)0x1 << 7)
+#define LITE3D_RENDER_STENCIL_OUTPUT    ((uint32_t)0x1 << 8)
+#define LITE3D_RENDER_INSTANCING        ((uint32_t)0x1 << 9)
+#define LITE3D_RENDER_OCCLUSION_QUERY   ((uint32_t)0x1 << 10)
+#define LITE3D_RENDER_OCCLUSION_CULLING ((uint32_t)0x1 << 11)
 
-#define LITE3D_RENDER_DEFAULT           (LITE3D_RENDER_STAGE_FIRST | LITE3D_RENDER_STAGE_SECOND | \
+#define LITE3D_RENDER_DEFAULT           (LITE3D_RENDER_OPAQUE | LITE3D_RENDER_BLEND | \
     LITE3D_RENDER_DEPTH_TEST | LITE3D_RENDER_COLOR_OUTPUT | LITE3D_RENDER_DEPTH_OUTPUT)
 
 typedef struct lite3d_scene_stats
@@ -57,13 +60,12 @@ typedef struct lite3d_scene
     lite3d_scene_node rootNode;
     lite3d_scene_stats stats;
     lite3d_list materialRenderUnits;
-    lite3d_array stageOneNodes;
-    lite3d_array stageTwoNodes;
+    lite3d_array stageOpague;
+    lite3d_array stageBlend;
     lite3d_array invalidatedUnits;
     lite3d_array seriesMatrixes;
     lite3d_mesh_chunk *bindedMeshChunk;
     lite3d_camera *currentCamera;
-    uint8_t instancingRender;
     void *userdata;
     int (*beginDrawBatch)(struct lite3d_scene *scene, 
         struct lite3d_scene_node *node, struct lite3d_mesh_chunk *meshChunk, struct lite3d_material *material);
@@ -86,8 +88,6 @@ LITE3D_CEXPORT void lite3d_scene_render(lite3d_scene *scene, lite3d_camera *came
     uint16_t pass, uint32_t flags);
 LITE3D_CEXPORT void lite3d_scene_init(lite3d_scene *scene);
 LITE3D_CEXPORT void lite3d_scene_purge(lite3d_scene *scene);
-LITE3D_CEXPORT int lite3d_scene_instancing_mode(lite3d_scene *scene, uint8_t flag);
-
 
 LITE3D_CEXPORT int lite3d_scene_add_node(lite3d_scene *scene, 
     lite3d_scene_node *node, 

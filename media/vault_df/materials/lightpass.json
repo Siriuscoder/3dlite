@@ -46,13 +46,6 @@
       ]
     },
     {
-      "Name":"light.ambient",
-      "Type":"v3",
-      "Value":[
-        0,0,0
-      ]
-    },
-    {
       "Name":"light.diffuse",
       "Type":"v3",
       "Value":[

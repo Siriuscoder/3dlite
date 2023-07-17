@@ -39,6 +39,7 @@ int lite3d_check_geometry_shader();
 int lite3d_check_renderbuffer_storage_multisample();
 int lite3d_check_texture_multisample();
 int lite3d_check_framebuffer_blit();
+int lite3d_check_occlusion_query();
 
 
 /* stub functions */
@@ -57,6 +58,13 @@ void glTexImage2DMultisample_stub(GLenum target, GLsizei samples, GLenum interna
 void glTexImage3DMultisample_stub(GLenum target, GLsizei samples, GLenum internalformat, GLsizei width, GLsizei height, GLsizei depth, GLboolean fixedsamplelocations);
 void glBlitFramebuffer_stub(GLint srcX0, GLint srcY0, GLint srcX1, GLint srcY1, GLint dstX0, GLint dstY0, GLint dstX1, GLint dstY1, GLbitfield mask, GLenum filter);
 void glCopyBufferSubData_stub(GLenum readTarget, GLenum writeTarget, GLintptr readOffset, GLintptr writeOffset, GLsizeiptr size);
+void glGenQueries_stub(GLsizei n, GLuint *ids);
+void glDeleteQueries_stub(GLsizei n, const GLuint *ids);
+GLboolean glIsQuery_stub(GLuint id);
+void glBeginQuery_stub(GLenum target, GLuint id);
+void glEndQuery_stub(GLenum target);
+void glGetQueryiv_stub(GLenum target, GLenum pname, GLint *params);
+void glGetQueryObjectuiv_stub(GLuint id, GLenum pname, GLuint *params);
 
 #ifdef GLES
 
@@ -123,6 +131,14 @@ extern PFNGLDRAWELEMENTSINSTANCEDANGLEPROC glDrawElementsInstancedPtr;
 extern PFNGLVERTEXATTRIBDIVISORANGLEPROC glVertexAttribDivisorPtr;
 /* GL_ANGLE_framebuffer_blit */
 extern PFNGLBLITFRAMEBUFFERANGLEPROC glBlitFramebufferPtr;
+/* GL_EXT_occlusion_query_boolean */
+extern PFNGLGENQUERIESEXTPROC glGenQueriesPtr;
+extern PFNGLDELETEQUERIESEXTPROC glDeleteQueriesPtr;
+extern PFNGLISQUERYEXTPROC glIsQueryPtr;
+extern PFNGLBEGINQUERYEXTPROC glBeginQueryPtr;
+extern PFNGLENDQUERYEXTPROC glEndQueryPtr;
+extern PFNGLGETQUERYIVEXTPROC glGetQueryivPtr;
+extern PFNGLGETQUERYOBJECTUIVEXTPROC glGetQueryObjectuivPtr;
 
 #   ifdef WITH_GLES2
 #       define glDrawArraysInstanced glDrawArraysInstancedPtr
@@ -141,6 +157,14 @@ extern PFNGLBLITFRAMEBUFFERANGLEPROC glBlitFramebufferPtr;
 #       define glCompressedTexSubImage3D glCompressedTexSubImage3D_stub
 #       define glRenderbufferStorageMultisample glRenderbufferStorageMultisample_stub
 #       define glCopyBufferSubData glCopyBufferSubData_stub
+
+#       define glGenQueries glGenQueriesPtr
+#       define glDeleteQueries glDeleteQueriesPtr
+#       define glIsQuery glIsQueryPtr
+#       define glBeginQuery glBeginQueryPtr
+#       define glEndQuery glEndQueryPtr
+#       define glGetQueryiv glGetQueryivPtr
+#       define glGetQueryObjectuiv glGetQueryObjectuivPtr
 
 #       ifndef GL_READ_FRAMEBUFFER
 #           define GL_READ_FRAMEBUFFER GL_READ_FRAMEBUFFER_ANGLE
@@ -196,6 +220,26 @@ extern PFNGLBLITFRAMEBUFFERANGLEPROC glBlitFramebufferPtr;
 
 #       ifndef GL_DYNAMIC_COPY
 #           define GL_DYNAMIC_COPY 0x88EA
+#       endif
+
+#       ifndef GL_ANY_SAMPLES_PASSED
+#           define GL_ANY_SAMPLES_PASSED 0x8C2F
+#       endif
+
+#       ifndef GL_ANY_SAMPLES_PASSED_CONSERVATIVE
+#           define GL_ANY_SAMPLES_PASSED_CONSERVATIVE 0x8D6A
+#       endif
+
+#       ifndef GL_CURRENT_QUERY
+#           define GL_CURRENT_QUERY 0x8865
+#       endif
+
+#       ifndef GL_QUERY_RESULT
+#           define GL_QUERY_RESULT 0x8866
+#       endif
+
+#       ifndef GL_QUERY_RESULT_AVAILABLE
+#           define GL_QUERY_RESULT_AVAILABLE 0x8867
 #       endif
 
 #   endif

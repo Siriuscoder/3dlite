@@ -19,14 +19,16 @@
                     "Path": "warship:targets/prepass.json",
                     "Priority": 0,
                     "TexturePass": 1,
-                    "RenderSecondStage": false
+                    "RenderBlend": false,
+                    "RenderInstancing": true
                 },
                 {
                     "Name": "CombinePass",
                     "Path": "warship:targets/combine.json",
                     "Priority": 2, // render second in combine pass
                     "TexturePass": 1,
-                    "RenderFirstStage": false
+                    "RenderOpaque": false,
+                    "RenderInstancing": true
                 }
             ]
         }
