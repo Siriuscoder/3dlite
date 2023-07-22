@@ -153,15 +153,33 @@ void JsonGenerator::generateLight(const lite3dpp::String &lightName,
                 liConfig.set(L"Type", "Undefined");
 
             liConfig.set(L"Name", lightName);
-            liConfig.set(L"Ambient", *((kmVec3 *)&params->block2.z));
-            liConfig.set(L"Diffuse", *((kmVec3 *)&params->block3.y));
-            liConfig.set(L"Specular", *((kmVec3 *)&params->block4.x));
-            kmVec4 att = { params->block6.x, params->block6.y, params->block6.z,
-                params->block1.z };
-            liConfig.set(L"Attenuation", att);
-            liConfig.set(L"Position", *((kmVec3 *)&params->block1.w));
-            liConfig.set(L"SpotDirection", *((kmVec3 *)&params->block4.w));
-            liConfig.set(L"SpotFactor", *((kmVec3 *)&params->block5.z));
+            liConfig.set(L"Diffuse", *reinterpret_cast<const kmVec3 *>(&params->block2.x));
+            liConfig.set(L"Radiance", params->block2.w);
+
+            if (params->block1.x == LITE3D_LIGHT_POINT || params->block1.x == LITE3D_LIGHT_SPOT)
+            {
+                liConfig.set(L"Position", *reinterpret_cast<const kmVec3 *>(&params->block3.x));
+                liConfig.set(L"LightSize", params->block3.w);
+
+                liConfig.set(L"Attenuation", lite3dpp::ConfigurationWriter()
+                    .set(L"Constant", params->block4.w)
+                    .set(L"Linear", params->block5.x)
+                    .set(L"Quadratic", params->block5.y)
+                    .set(L"InfluenceDistance", params->block1.z)
+                    .set(L"InfluenceMinRadiance", params->block1.w));
+
+                if (params->block1.x == LITE3D_LIGHT_SPOT)
+                {
+                    liConfig.set(L"SpotFactor", lite3dpp::ConfigurationWriter()
+                        .set(L"AngleInnerCone", params->block5.z)
+                        .set(L"AngleOuterCone", params->block5.w));
+                }
+            }
+
+            if (params->block1.x == LITE3D_LIGHT_DIRECTIONAL || params->block1.x == LITE3D_LIGHT_SPOT)
+            {
+                liConfig.set(L"Direction", *reinterpret_cast<const kmVec3 *>(&params->block4.x));
+            }
 
             lastNode.set(L"Light", liConfig);
         }

@@ -38,6 +38,36 @@ namespace lite3dpp
         mLightSource.params = ls;
         mLightSource.userdata = this;
     }
+
+    LightSource::LightSource(const ConfigurationReader &json, Main *main)
+    {
+        String lightType = json.getString(L"Type", "Point");
+        setType(lightType == "Directional" ? LITE3D_LIGHT_DIRECTIONAL : 
+            (lightType == "Spot" ? LITE3D_LIGHT_SPOT : LITE3D_LIGHT_POINT));
+        
+        setPosition(json.getVec3(L"Position"));
+        setDirection(json.getVec3(L"SpotDirection"));
+        setDiffuse(json.getVec3(L"Diffuse"));
+        setLightSize(json.getDouble(L"LightSize"));
+        setRadiance(json.getDouble(L"Radiance"));
+        
+        auto attenuation = json.getObject(L"Attenuation");
+        if (!attenuation.isEmpty())
+        {
+            setAttenuationConstant(attenuation.getDouble(L"Constant"));
+            setAttenuationLeaner(attenuation.getDouble(L"Leaner"));
+            setAttenuationQuadratic(attenuation.getDouble(L"Quadratic"));
+            setInfluenceDistance(attenuation.getDouble(L"InfluenceDistance"));
+            setInfluenceMinRadiance(attenuation.getDouble(L"InfluenceMinRadiance"));
+        }
+
+        auto spotFactor = json.getObject(L"SpotFactor");
+        if (!spotFactor.isEmpty())
+        {
+            setAngleInnerCone(json.getDouble(L"AngleInnerCone"));
+            setAngleOuterCone(json.getDouble(L"AngleOuterCone"));
+        }
+    }
     
     LightSource::~LightSource()
     {}
@@ -56,60 +86,28 @@ namespace lite3dpp
     
     void LightSource::setPosition(const kmVec3 &v)
     {
-        mLightSource.params.block1.w = v.x;
-        mLightSource.params.block2.x = v.y;
-        mLightSource.params.block2.y = v.z;
+        mLightSource.params.block3.x = v.x;
+        mLightSource.params.block3.y = v.y;
+        mLightSource.params.block3.z = v.z;
         mUpdated = true;
     }
     
-    void LightSource::setSpotDirection(const kmVec3 &v)
-    {
-        mLightSource.params.block4.w = v.x;
-        mLightSource.params.block5.x = v.y;
-        mLightSource.params.block5.y = v.z;
-        mUpdated = true;
-    }
-    
-    void LightSource::setAmbient(const kmVec3 &v)
-    {
-        mLightSource.params.block2.z = v.x;
-        mLightSource.params.block2.w = v.y;
-        mLightSource.params.block3.x = v.z;
-        mUpdated = true;      
-    }
-    
-    void LightSource::setDiffuse(const kmVec3 &v)
-    {
-        mLightSource.params.block3.y = v.x;
-        mLightSource.params.block3.z = v.y;
-        mLightSource.params.block3.w = v.z;
-        mUpdated = true;   
-    }
-    
-    void LightSource::setSpecular(const kmVec3 &v)
+    void LightSource::setDirection(const kmVec3 &v)
     {
         mLightSource.params.block4.x = v.x;
         mLightSource.params.block4.y = v.y;
         mLightSource.params.block4.z = v.z;
+        mUpdated = true;
+    }
+    
+    void LightSource::setDiffuse(const kmVec3 &v)
+    {
+        mLightSource.params.block2.x = v.x;
+        mLightSource.params.block2.y = v.y;
+        mLightSource.params.block2.z = v.z;
         mUpdated = true;   
     }
     
-    void LightSource::setAttenuation(const kmVec4 &v)
-    {
-        mLightSource.params.block1.z = v.w;
-        mLightSource.params.block6.x = v.x;
-        mLightSource.params.block6.y = v.y;
-        mLightSource.params.block6.z = v.z;
-        mUpdated = true;   
-    }
-    
-    void LightSource::setSpotFactor(const kmVec3 &v)
-    {
-        mLightSource.params.block5.z = v.x;
-        mLightSource.params.block5.w = v.y;
-        mUpdated = true;   
-    }
-
     uint8_t LightSource::getType() const
     {
         return mLightSource.params.block1.x;
@@ -120,50 +118,109 @@ namespace lite3dpp
         return mLightSource.params.block1.y == 1;
     }
 
+    void LightSource::setAttenuationConstant(float value)
+    {
+        mLightSource.params.block4.w = value;
+    }
+
+    void LightSource::setAttenuationLeaner(float value)
+    {
+        mLightSource.params.block5.x = value;
+    }
+
+    void LightSource::setAttenuationQuadratic(float value)
+    {
+        mLightSource.params.block5.y = value;
+    }
+
+    void LightSource::setInfluenceDistance(float value)
+    {
+        mLightSource.params.block1.z = value;
+    }
+
+    void LightSource::setInfluenceMinRadiance(float value)
+    {
+        mLightSource.params.block1.w = value;
+    }
+
+    void LightSource::setRadiance(float value)
+    {
+        mLightSource.params.block2.w = value;
+    }
+
+    void LightSource::setLightSize(float value)
+    {
+        mLightSource.params.block3.w = value;
+    }
+
+    void LightSource::setAngleInnerCone(float value)
+    {
+        mLightSource.params.block5.z = value;
+    }
+
+    void LightSource::setAngleOuterCone(float value)
+    {
+        mLightSource.params.block5.w = value;
+    }
+
     const kmVec3 &LightSource::getPosition() const
     {
-        return *(kmVec3 *)&mLightSource.params.block1.w;
+        return *reinterpret_cast<const kmVec3 *>(&mLightSource.params.block3.x);
     }
 
-    const kmVec3 &LightSource::getSpotDirection() const
+    const kmVec3 &LightSource::getDirection() const
     {
-        return *(kmVec3 *)&mLightSource.params.block4.w;
-    }
-
-    const kmVec3 &LightSource::getAmbient() const
-    {
-        return *(kmVec3 *)&mLightSource.params.block2.z;
+        return *reinterpret_cast<const kmVec3 *>(&mLightSource.params.block4.x);
     }
 
     const kmVec3 &LightSource::getDiffuse() const
     {
-        return *(kmVec3 *)&mLightSource.params.block3.y;
+        return *reinterpret_cast<const kmVec3 *>(&mLightSource.params.block2.x);
     }
 
-    const kmVec3 &LightSource::getSpecular() const
+    float LightSource::getAttenuationConstant() const
     {
-        return *(kmVec3 *)&mLightSource.params.block4.x;
+        return mLightSource.params.block4.w;
     }
 
-    kmVec4 LightSource::getAttenuation() const
+    float LightSource::getAttenuationLeaner() const
     {
-        kmVec4 vec4 = {
-            mLightSource.params.block6.x, 
-            mLightSource.params.block6.y,
-            mLightSource.params.block6.z,
-            mLightSource.params.block1.z
-        };
-        return vec4;
+        return mLightSource.params.block5.x;
     }
 
-    kmVec3 LightSource::getSpotFactor() const
+    float LightSource::getAttenuationQuadratic() const
     {
-        kmVec3 vec3 = {
-            mLightSource.params.block5.z,
-            mLightSource.params.block5.w,
-            0
-        };
-        return vec3;
+        return mLightSource.params.block5.y;
+    }
+
+    float LightSource::getInfluenceDistance() const
+    {
+        return mLightSource.params.block1.x;
+    }
+
+    float LightSource::getInfluenceMinRadiance() const
+    {
+        return mLightSource.params.block1.w;
+    }
+
+    float LightSource::getRadiance() const
+    {
+        return mLightSource.params.block2.w;
+    }
+
+    float LightSource::getLightSize() const
+    {
+        return mLightSource.params.block3.w;
+    }
+
+    float LightSource::getAngleInnerCone() const
+    {
+        return mLightSource.params.block5.z;
+    }
+
+    float LightSource::getAngleOuterCone() const
+    {
+        return mLightSource.params.block5.w;
     }
 }
 

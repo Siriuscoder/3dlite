@@ -35,39 +35,33 @@ typedef struct lite3d_light_params
 {
     /* block1.x - type */
     /* block1.y - enabled */
-    /* block1.z - affect radius */
-    /* block1.w - position.x */
+    /* block1.z - influence distance */
+    /* block1.w - influence min radiance */
     kmVec4 block1;
 
-    /* block2.x - position.y */
-    /* block2.y - position.z  */
-    /* block2.z - ambient.r */
-    /* block2.w - ambient.g */
+    /* block2.x - diffuse.r */
+    /* block2.y - diffuse.g  */
+    /* block2.z - diffuse.b */
+    /* block2.w - radiance */
     kmVec4 block2;
 
-    /* block3.x - ambient.b */
-    /* block3.y - diffuse.r */
-    /* block3.z - diffuse.g */
-    /* block3.w - diffuse.b */
+    /* block3.x - position.x */
+    /* block3.y - position.y */
+    /* block3.z - position.z */
+    /* block3.w - size */
     kmVec4 block3;
 
-    /* block4.x - specular.r */
-    /* block4.y - specular.g */
-    /* block4.z - specular.b */
-    /* block4.w - spot directional.x */
+    /* block4.x - direction.x */
+    /* block4.y - direction.y */
+    /* block4.z - direction.z */
+    /* block4.w - attenuation constant */
     kmVec4 block4;
 
-    /* block5.x - spot directional.y */
-    /* block5.y - spot directional.z */
-    /* block5.z - spot cutoff */
-    /* block5.w - spot cutoff exponent */
+    /* block5.x - attenuation linear */
+    /* block5.y - attenuation quadratic */
+    /* block5.z - angle inner cone */
+    /* block5.w - angle outer cone */
     kmVec4 block5;
-
-    /* attenuation factor */
-    /* block6.x - constant attenuation */
-    /* block6.y - linear attenuation */
-    /* block6.z - quadratic attenuation */
-    kmVec4 block6;
 
 } lite3d_light_params;
 #pragma pack(pop)

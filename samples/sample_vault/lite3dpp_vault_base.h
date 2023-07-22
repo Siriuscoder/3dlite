@@ -71,11 +71,9 @@ public:
         mAnimPi = animPiNew >= 2 * M_PI ? animPiNew - mAnimPi : animPiNew;
 
         lite3dpp::Material::setFloatGlobalParameter("animcounter", mAnimCounter);
-        kmVec4 attenuation = mReactLamp01->getLight()->getAttenuation();
-        attenuation.x = (cos(mAnimPi) + 1) / 2;
-        attenuation.y = attenuation.x / 100;
-        mReactLamp01->getLight()->setAttenuation(attenuation);
-        mReactLamp02->getLight()->setAttenuation(attenuation);
+        float attenuationConstant = (cos(mAnimPi) + 1.0f) / 2.0f;
+        mReactLamp01->getLight()->setAttenuationConstant(attenuationConstant);
+        mReactLamp01->getLight()->setAttenuationLeaner(attenuationConstant / 100.0f);
         
         float soarDelta = cos(mAnimPi) * 5;
         mGatling->getRoot()->rotateAngle(KM_VEC3_POS_Z, 0.05f);

@@ -105,12 +105,14 @@ public:
             LightSource lsw(light.second->lightSourceToWorld(), NULL);
             material->setIntParameter(1, "light.enabled", lsw.enabled() ? 1 : 0, false);
             material->setIntParameter(1, "light.type", lsw.getType(), false);
-            material->setFloatv3Parameter(1, "light.spotfactor", lsw.getSpotFactor(), false);
             material->setFloatv3Parameter(1, "light.position", lsw.getPosition(), false);
             material->setFloatv3Parameter(1, "light.diffuse", lsw.getDiffuse(), false);
-            material->setFloatv3Parameter(1, "light.specular", lsw.getSpecular(), false);
-            material->setFloatv3Parameter(1, "light.direction", lsw.getSpotDirection(), false);
-            material->setFloatv4Parameter(1, "light.attenuation", lsw.getAttenuation(), false);
+            material->setFloatv3Parameter(1, "light.direction", lsw.getDirection(), false);
+            material->setFloatParameter(1, "light.attenuationContant", lsw.getAttenuationConstant(), false);
+            material->setFloatParameter(1, "light.attenuationLinear", lsw.getAttenuationLeaner(), false);
+            material->setFloatParameter(1, "light.attenuationQuadratic", lsw.getAttenuationQuadratic(), false);
+            material->setFloatParameter(1, "light.innercone", lsw.getAngleInnerCone(), false);
+            material->setFloatParameter(1, "light.outercone", lsw.getAngleOuterCone(), false);
 
             mnode->frustumTest(false);
             mnode->setName(light.first);

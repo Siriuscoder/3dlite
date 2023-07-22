@@ -212,19 +212,7 @@ namespace lite3dpp
         auto lightHelper = json.getObject(L"Light");
         if (!lightHelper.isEmpty())
         {
-            mLight.reset(new LightSource(lightHelper.getString(L"Name"), main));
-
-            String lightType = lightHelper.getString(L"Type", "Point");
-            mLight->setType(lightType == "Directional" ? LITE3D_LIGHT_DIRECTIONAL : 
-                (lightType == "Spot" ? LITE3D_LIGHT_SPOT : LITE3D_LIGHT_POINT));
-            
-            mLight->setPosition(lightHelper.getVec3(L"Position"));
-            mLight->setSpotDirection(lightHelper.getVec3(L"SpotDirection"));
-            mLight->setSpotFactor(lightHelper.getVec3(L"SpotFactor"));
-            mLight->setAmbient(lightHelper.getVec3(L"Ambient"));
-            mLight->setDiffuse(lightHelper.getVec3(L"Diffuse"));
-            mLight->setSpecular(lightHelper.getVec3(L"Specular"));
-            mLight->setAttenuation(lightHelper.getVec4(L"Attenuation"));
+            mLight = std::make_unique<LightSource>(lightHelper, main);
         }
     }
     
@@ -232,7 +220,7 @@ namespace lite3dpp
     {
         SceneNode::addToScene(scene);
 
-        if (mLight) 
+        if (mLight)
             scene->addLightNode(this);
     }
 
