@@ -15,6 +15,8 @@
  *	You should have received a copy of the GNU General Public License
  *	along with Lite3D.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
+#include <lite3dpp/lite3dpp_light_source.h>
+
 #include <mtool/mtool_generator.h>
 #include <mtool/mtool_utils.h>
 
@@ -142,45 +144,8 @@ void JsonGenerator::generateLight(const lite3dpp::String &lightName,
         {
             auto &lastNode = mNodesStack.top().back();
             lite3dpp::ConfigurationWriter liConfig;
-            
-            if (params->block1.x == LITE3D_LIGHT_POINT)
-                liConfig.set(L"Type", "Point");
-            else if (params->block1.x == LITE3D_LIGHT_DIRECTIONAL)
-                liConfig.set(L"Type", "Directional");
-            else if (params->block1.x == LITE3D_LIGHT_SPOT)
-                liConfig.set(L"Type", "Spot");
-            else
-                liConfig.set(L"Type", "Undefined");
-
-            liConfig.set(L"Name", lightName);
-            liConfig.set(L"Diffuse", *reinterpret_cast<const kmVec3 *>(&params->block2.x));
-            liConfig.set(L"Radiance", params->block2.w);
-
-            if (params->block1.x == LITE3D_LIGHT_POINT || params->block1.x == LITE3D_LIGHT_SPOT)
-            {
-                liConfig.set(L"Position", *reinterpret_cast<const kmVec3 *>(&params->block3.x));
-                liConfig.set(L"LightSize", params->block3.w);
-
-                liConfig.set(L"Attenuation", lite3dpp::ConfigurationWriter()
-                    .set(L"Constant", params->block4.w)
-                    .set(L"Linear", params->block5.x)
-                    .set(L"Quadratic", params->block5.y)
-                    .set(L"InfluenceDistance", params->block1.z)
-                    .set(L"InfluenceMinRadiance", params->block1.w));
-
-                if (params->block1.x == LITE3D_LIGHT_SPOT)
-                {
-                    liConfig.set(L"SpotFactor", lite3dpp::ConfigurationWriter()
-                        .set(L"AngleInnerCone", params->block5.z)
-                        .set(L"AngleOuterCone", params->block5.w));
-                }
-            }
-
-            if (params->block1.x == LITE3D_LIGHT_DIRECTIONAL || params->block1.x == LITE3D_LIGHT_SPOT)
-            {
-                liConfig.set(L"Direction", *reinterpret_cast<const kmVec3 *>(&params->block4.x));
-            }
-
+            lite3dpp::LightSource light(*params, nullptr);
+            light.toJson(liConfig);
             lastNode.set(L"Light", liConfig);
         }
     }

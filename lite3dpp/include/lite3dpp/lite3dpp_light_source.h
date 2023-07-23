@@ -18,10 +18,13 @@
 #pragma once
 
 #include <lite3d/lite3d_lighting.h>
+#include <lite3d/lite3d_frustum.h>
 
 #include <lite3dpp/lite3dpp_common.h>
 #include <lite3dpp/lite3dpp_config_reader.h>
+#include <lite3dpp/lite3dpp_config_writer.h>
 #include <lite3dpp/lite3dpp_manageable.h>
+#include <lite3dpp/lite3dpp_buffer_base.h>
 
 namespace lite3dpp
 {
@@ -32,7 +35,7 @@ namespace lite3dpp
         LightSource(const String &name, Main *main);
         LightSource(const lite3d_light_params &ls, Main *main);
         LightSource(const ConfigurationReader &json, Main *main);
-        ~LightSource();
+        ~LightSource() = default;
 
         inline lite3d_light_source *getPtr()
         { return &mLightSource; }
@@ -52,6 +55,8 @@ namespace lite3dpp
         { return mUpdated; }
         inline void validate()
         { mUpdated = false; }
+
+        void toJson(ConfigurationWriter &writer) const;
         
         void setType(uint8_t t);
         void enabled(bool f);
@@ -71,7 +76,9 @@ namespace lite3dpp
         uint8_t getType() const;
         bool enabled() const;
         const kmVec3 &getPosition() const;
+        const kmVec3 &getPositionWorld() const;
         const kmVec3 &getDirection() const;
+        const kmVec3 &getDirectionWorld() const;
         const kmVec3 &getDiffuse() const;
         float getAttenuationConstant() const;
         float getAttenuationLeaner() const;
@@ -83,11 +90,16 @@ namespace lite3dpp
         float getAngleInnerCone() const;
         float getAngleOuterCone() const;
 
+        void translateToWorld(const kmMat4 &worldView);
+        void writeToBuffer(BufferBase &buffer);
+        lite3d_bounding_vol getBoundingVolume() const;
+
     private:
 
         String mName;
         Main *mMain;
         lite3d_light_source mLightSource;
+        lite3d_light_source mLightSourceWorld;
         uint32_t mBufferIndex;
         bool mUpdated;
     };

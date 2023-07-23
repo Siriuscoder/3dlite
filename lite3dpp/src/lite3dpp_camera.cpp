@@ -174,20 +174,10 @@ namespace lite3dpp
         return result;
     }
 
-    bool Camera::inFrustum(const lite3d_bounding_vol &vol) const
+    bool Camera::inFrustum(const LightSource &light) const
     {
-        return lite3d_frustum_test_sphere(&mCamera.frustum, &vol) == LITE3D_TRUE;
-    }
-
-    bool Camera::inFrustum(const lite3d_light_params &lp) const
-    {
-        lite3d_bounding_vol volToCheck;
-        memset(&volToCheck, 0, sizeof(volToCheck));
-        volToCheck.radius = lp.block1.z;
-        volToCheck.sphereCenter.x = lp.block1.w;
-        volToCheck.sphereCenter.y = lp.block2.x;
-        volToCheck.sphereCenter.z = lp.block1.y;
-        return inFrustum(volToCheck);
+        auto volToCheck = light.getBoundingVolume();
+        return lite3d_frustum_test_sphere(&mCamera.frustum, &volToCheck) == LITE3D_TRUE;
     }
 
     float Camera::getYaw() const

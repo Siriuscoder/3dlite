@@ -231,18 +231,10 @@ namespace lite3dpp
             scene->removeLight(mLight->getName());
     }
 
-    lite3d_light_params LightSceneNode::lightSourceToWorld() const
+    void LightSceneNode::translateToWorld()
     {
-        lite3d_light_params res = mLight->getPtr()->params;
-        kmVec3TransformCoord((kmVec3 *)&res.block1.w, (kmVec3 *)&res.block1.w, &getPtr()->worldView);
-        if (res.block1.x == LITE3D_LIGHT_DIRECTIONAL || res.block1.x == LITE3D_LIGHT_SPOT)
-        {
-            kmVec3 direction = KM_VEC3_ZERO;
-            kmVec3TransformNormal(&direction, (kmVec3 *)&res.block4.w, &getPtr()->worldView);
-            kmVec3Normalize((kmVec3 *)&res.block4.w, &direction);
-        }
-
-        return res;
+        SDL_assert(mLight);
+        mLight->translateToWorld(getPtr()->worldView);
     }
 
     bool LightSceneNode::needRecalcToWorld() const

@@ -122,7 +122,7 @@ namespace lite3dpp
         virtual void addToScene(Scene *scene) override;
         virtual void removeFromScene(Scene *scene) override;
 
-        lite3d_light_params lightSourceToWorld() const;
+        void translateToWorld();
         bool needRecalcToWorld() const;
 
     private:
