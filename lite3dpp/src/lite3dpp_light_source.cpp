@@ -133,7 +133,7 @@ namespace lite3dpp
         mLightSource.params.block3.x = v.x;
         mLightSource.params.block3.y = v.y;
         mLightSource.params.block3.z = v.z;
-        mUpdated = true;
+        mUpdated = mPosDirectionChanged = true;
     }
     
     void LightSource::setDirection(const kmVec3 &v)
@@ -141,7 +141,7 @@ namespace lite3dpp
         mLightSource.params.block4.x = v.x;
         mLightSource.params.block4.y = v.y;
         mLightSource.params.block4.z = v.z;
-        mUpdated = true;
+        mUpdated = mPosDirectionChanged = true;
     }
     
     void LightSource::setDiffuse(const kmVec3 &v)
@@ -165,46 +165,61 @@ namespace lite3dpp
     void LightSource::setAttenuationConstant(float value)
     {
         mLightSource.params.block4.w = value;
+        calcDistanceMinRadiance();
+        mUpdated = true;
     }
 
     void LightSource::setAttenuationLeaner(float value)
     {
         mLightSource.params.block5.x = value;
+        calcDistanceMinRadiance();
+        mUpdated = true;
     }
 
     void LightSource::setAttenuationQuadratic(float value)
     {
         mLightSource.params.block5.y = value;
+        calcDistanceMinRadiance();
+        mUpdated = true;
     }
 
     void LightSource::setInfluenceDistance(float value)
     {
         mLightSource.params.block1.z = value;
+        calcDistanceMinRadiance();
+        mUpdated = true;
     }
 
     void LightSource::setInfluenceMinRadiance(float value)
     {
         mLightSource.params.block1.w = value;
+        calcDistanceMinRadiance();
+        mUpdated = true;
     }
 
     void LightSource::setRadiance(float value)
     {
         mLightSource.params.block2.w = value;
+        calcDistanceMinRadiance();
+        mUpdated = true;
     }
 
     void LightSource::setLightSize(float value)
     {
         mLightSource.params.block3.w = value;
+        mUpdated = true;
     }
 
     void LightSource::setAngleInnerCone(float value)
     {
         mLightSource.params.block5.z = value;
+        mUpdated = true;
     }
 
     void LightSource::setAngleOuterCone(float value)
     {
         mLightSource.params.block5.w = value;
+        mUpdated = true;
     }
 
     const kmVec3 &LightSource::getPosition() const
@@ -279,16 +294,23 @@ namespace lite3dpp
 
     void LightSource::translateToWorld(const kmMat4 &worldView)
     {
-        mLightSourceWorld = mLightSource;
-        kmVec3TransformCoord(reinterpret_cast<kmVec3 *>(&mLightSourceWorld.params.block3.x), 
-            reinterpret_cast<kmVec3 *>(&mLightSourceWorld.params.block3.x), &worldView);
+        if (!isUpdated())
+            return;
 
-        if (getType() == LITE3D_LIGHT_DIRECTIONAL || getType() == LITE3D_LIGHT_SPOT)
+        mLightSourceWorld = mLightSource;
+
+        if (mPosDirectionChanged)
         {
-            kmVec3 direction = KM_VEC3_ZERO;
-            kmVec3TransformNormal(&direction, 
-                reinterpret_cast<kmVec3 *>(&mLightSourceWorld.params.block4.x), &worldView);
-            kmVec3Normalize(reinterpret_cast<kmVec3 *>(&mLightSourceWorld.params.block4.x), &direction);
+            kmVec3TransformCoord(reinterpret_cast<kmVec3 *>(&mLightSourceWorld.params.block3.x), 
+                reinterpret_cast<kmVec3 *>(&mLightSourceWorld.params.block3.x), &worldView);
+
+            if (getType() == LITE3D_LIGHT_DIRECTIONAL || getType() == LITE3D_LIGHT_SPOT)
+            {
+                kmVec3 direction = KM_VEC3_ZERO;
+                kmVec3TransformNormal(&direction, 
+                    reinterpret_cast<kmVec3 *>(&mLightSourceWorld.params.block4.x), &worldView);
+                kmVec3Normalize(reinterpret_cast<kmVec3 *>(&mLightSourceWorld.params.block4.x), &direction);
+            }
         }
 
         validate();
@@ -299,12 +321,42 @@ namespace lite3dpp
         buffer.setElement<lite3d_light_params>(index(), &mLightSourceWorld.params);
     }
 
-    lite3d_bounding_vol LightSource::getBoundingVolume() const
+    lite3d_bounding_vol LightSource::getBoundingVolumeWorld() const
     {
         lite3d_bounding_vol volume = {};
         volume.radius = getInfluenceDistance();
         volume.sphereCenter = *reinterpret_cast<const kmVec3 *>(&mLightSourceWorld.params.block3.x);
         return volume;
+    }
+
+    lite3d_bounding_vol LightSource::getBoundingVolume() const
+    {
+        lite3d_bounding_vol volume = {};
+        volume.radius = getInfluenceDistance();
+        volume.sphereCenter = *reinterpret_cast<const kmVec3 *>(&mLightSource.params.block3.x);
+        return volume;
+    }
+
+    void LightSource::calcDistanceMinRadiance()
+    {
+        if (std::fabs(getInfluenceDistance()) <= std::numeric_limits<float>::epsilon() && 
+            std::fabs(getInfluenceMinRadiance()) > std::numeric_limits<float>::epsilon())
+        {
+            const auto radianceCoeff = getInfluenceMinRadiance() / getRadiance();
+            const auto a = getAttenuationQuadratic() * radianceCoeff;
+            const auto b = getAttenuationLeaner() * radianceCoeff;
+            const auto c = getAttenuationConstant() * radianceCoeff - 1.0f;
+
+            const auto D = (b * b) - (4 * a * c);
+            if (D > std::numeric_limits<float>::epsilon())
+            {
+                const auto dist = (-b + std::sqrt(D)) / (2.0f * a);
+                if (dist > std::numeric_limits<float>::epsilon())
+                {
+                    setInfluenceDistance(dist);
+                }
+            }
+        }
     }
 }
 

@@ -54,7 +54,7 @@ namespace lite3dpp
         inline bool isUpdated() const 
         { return mUpdated; }
         inline void validate()
-        { mUpdated = false; }
+        { mUpdated = mPosDirectionChanged = false; }
 
         void toJson(ConfigurationWriter &writer) const;
         
@@ -92,16 +92,20 @@ namespace lite3dpp
 
         void translateToWorld(const kmMat4 &worldView);
         void writeToBuffer(BufferBase &buffer);
+        lite3d_bounding_vol getBoundingVolumeWorld() const;
         lite3d_bounding_vol getBoundingVolume() const;
 
     private:
+
+        void calcDistanceMinRadiance();
 
         String mName;
         Main *mMain;
         lite3d_light_source mLightSource;
         lite3d_light_source mLightSourceWorld;
-        uint32_t mBufferIndex;
-        bool mUpdated;
+        uint32_t mBufferIndex = 0;
+        bool mUpdated = false;
+        bool mPosDirectionChanged = false;
     };
 }
 
