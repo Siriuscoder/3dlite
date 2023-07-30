@@ -133,7 +133,7 @@ namespace lite3dpp
         mLightSource.params.block3.x = v.x;
         mLightSource.params.block3.y = v.y;
         mLightSource.params.block3.z = v.z;
-        mUpdated = mPosDirectionChanged = true;
+        mUpdated = true;
     }
     
     void LightSource::setDirection(const kmVec3 &v)
@@ -141,7 +141,7 @@ namespace lite3dpp
         mLightSource.params.block4.x = v.x;
         mLightSource.params.block4.y = v.y;
         mLightSource.params.block4.z = v.z;
-        mUpdated = mPosDirectionChanged = true;
+        mUpdated = true;
     }
     
     void LightSource::setDiffuse(const kmVec3 &v)
@@ -186,7 +186,16 @@ namespace lite3dpp
     void LightSource::setInfluenceDistance(float value)
     {
         mLightSource.params.block1.z = value;
-        calcDistanceMinRadiance();
+        if (std::fabs(value) > std::numeric_limits<float>::epsilon())
+        {
+            mInfluenceDistance = value;
+        }
+        else
+        {
+            mInfluenceDistance = std::nullopt;
+            calcDistanceMinRadiance();
+        }
+
         mUpdated = true;
     }
 
@@ -299,18 +308,15 @@ namespace lite3dpp
 
         mLightSourceWorld = mLightSource;
 
-        if (mPosDirectionChanged)
-        {
-            kmVec3TransformCoord(reinterpret_cast<kmVec3 *>(&mLightSourceWorld.params.block3.x), 
-                reinterpret_cast<kmVec3 *>(&mLightSourceWorld.params.block3.x), &worldView);
+        kmVec3TransformCoord(reinterpret_cast<kmVec3 *>(&mLightSourceWorld.params.block3.x), 
+            reinterpret_cast<kmVec3 *>(&mLightSourceWorld.params.block3.x), &worldView);
 
-            if (getType() == LITE3D_LIGHT_DIRECTIONAL || getType() == LITE3D_LIGHT_SPOT)
-            {
-                kmVec3 direction = KM_VEC3_ZERO;
-                kmVec3TransformNormal(&direction, 
-                    reinterpret_cast<kmVec3 *>(&mLightSourceWorld.params.block4.x), &worldView);
-                kmVec3Normalize(reinterpret_cast<kmVec3 *>(&mLightSourceWorld.params.block4.x), &direction);
-            }
+        if (getType() == LITE3D_LIGHT_DIRECTIONAL || getType() == LITE3D_LIGHT_SPOT)
+        {
+            kmVec3 direction = KM_VEC3_ZERO;
+            kmVec3TransformNormal(&direction, 
+                reinterpret_cast<kmVec3 *>(&mLightSourceWorld.params.block4.x), &worldView);
+            kmVec3Normalize(reinterpret_cast<kmVec3 *>(&mLightSourceWorld.params.block4.x), &direction);
         }
 
         validate();
@@ -339,21 +345,20 @@ namespace lite3dpp
 
     void LightSource::calcDistanceMinRadiance()
     {
-        if (std::fabs(getInfluenceDistance()) <= std::numeric_limits<float>::epsilon() && 
+        if (!mInfluenceDistance && 
             std::fabs(getInfluenceMinRadiance()) > std::numeric_limits<float>::epsilon())
         {
-            const auto radianceCoeff = getInfluenceMinRadiance() / getRadiance();
-            const auto a = getAttenuationQuadratic() * radianceCoeff;
-            const auto b = getAttenuationLeaner() * radianceCoeff;
-            const auto c = getAttenuationConstant() * radianceCoeff - 1.0f;
+            const auto a = getAttenuationQuadratic();
+            const auto b = getAttenuationLeaner();
+            const auto c = getAttenuationConstant() - (getRadiance() / getInfluenceMinRadiance());
 
             const auto D = (b * b) - (4 * a * c);
-            if (D > std::numeric_limits<float>::epsilon())
+            if (std::fabs(D) > std::numeric_limits<float>::epsilon())
             {
-                const auto dist = (-b + std::sqrt(D)) / (2.0f * a);
-                if (dist > std::numeric_limits<float>::epsilon())
+                const auto nom = -b + std::sqrt(D);
+                if (std::fabs(nom) > std::numeric_limits<float>::epsilon())
                 {
-                    setInfluenceDistance(dist);
+                    mLightSource.params.block1.z = (2.0f * c) / nom;
                 }
             }
         }

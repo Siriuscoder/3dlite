@@ -17,6 +17,8 @@
  *******************************************************************************/
 #pragma once
 
+#include <optional>
+
 #include <lite3d/lite3d_lighting.h>
 #include <lite3d/lite3d_frustum.h>
 
@@ -54,7 +56,7 @@ namespace lite3dpp
         inline bool isUpdated() const 
         { return mUpdated; }
         inline void validate()
-        { mUpdated = mPosDirectionChanged = false; }
+        { mUpdated = false; }
 
         void toJson(ConfigurationWriter &writer) const;
         
@@ -105,7 +107,7 @@ namespace lite3dpp
         lite3d_light_source mLightSourceWorld;
         uint32_t mBufferIndex = 0;
         bool mUpdated = false;
-        bool mPosDirectionChanged = false;
+        std::optional<float> mInfluenceDistance;
     };
 }
 
