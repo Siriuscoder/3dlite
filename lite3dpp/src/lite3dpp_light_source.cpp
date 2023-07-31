@@ -186,7 +186,7 @@ namespace lite3dpp
     void LightSource::setInfluenceDistance(float value)
     {
         mLightSource.params.block1.z = value;
-        if (std::fabs(value) > std::numeric_limits<float>::epsilon())
+        if (nonzero(value))
         {
             mInfluenceDistance = value;
         }
@@ -273,7 +273,7 @@ namespace lite3dpp
 
     float LightSource::getInfluenceDistance() const
     {
-        return mLightSource.params.block1.x;
+        return mLightSource.params.block1.z;
     }
 
     float LightSource::getInfluenceMinRadiance() const
@@ -345,21 +345,23 @@ namespace lite3dpp
 
     void LightSource::calcDistanceMinRadiance()
     {
-        if (!mInfluenceDistance && 
-            std::fabs(getInfluenceMinRadiance()) > std::numeric_limits<float>::epsilon())
+        if (!mInfluenceDistance && nonzero(getInfluenceMinRadiance()))
         {
             const auto a = getAttenuationQuadratic();
             const auto b = getAttenuationLeaner();
             const auto c = getAttenuationConstant() - (getRadiance() / getInfluenceMinRadiance());
 
+            // R / (a * d * d + b * d + c) = Rmin
+            // a * d * d + b * d + (c - R / Rmin) = 0
+
             const auto D = (b * b) - (4 * a * c);
-            if (std::fabs(D) > std::numeric_limits<float>::epsilon())
+            if (iszero(D) || D > 0.0f)
             {
-                const auto nom = -b + std::sqrt(D);
-                if (std::fabs(nom) > std::numeric_limits<float>::epsilon())
-                {
-                    mLightSource.params.block1.z = (2.0f * c) / nom;
-                }
+                const auto nomRoot1 = -b + std::sqrt(D);
+                const auto nomRoot2 = -b - std::sqrt(D);
+                const auto root1 = nonzero(nomRoot1) ? (2.0f * c) / nomRoot1 : -std::numeric_limits<float>::max();
+                const auto root2 = nonzero(nomRoot2) ? (2.0f * c) / nomRoot2 : -std::numeric_limits<float>::max();
+                mLightSource.params.block1.z = std::max(std::max(root1, root2), 0.0f);
             }
         }
     }
