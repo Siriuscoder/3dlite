@@ -80,9 +80,7 @@ namespace lite3dpp
     {
         if (filepath.find(".vs") != String::npos)
             return LITE3D_SHADER_TYPE_VERTEX;
-        else if (filepath.find(".ps") != String::npos || 
-            filepath.find(".fs") != String::npos || 
-            filepath.find(".glsl") != String::npos)
+        else if (filepath.find(".ps") != String::npos || filepath.find(".fs") != String::npos)
             return LITE3D_SHADER_TYPE_FRAGMENT;
         else if (filepath.find(".gs") != String::npos)
             return LITE3D_SHADER_TYPE_GEOMETRY;

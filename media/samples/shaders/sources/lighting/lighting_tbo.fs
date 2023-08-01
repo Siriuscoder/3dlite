@@ -38,7 +38,7 @@ vec3 calc_lighting(vec3 fragPos, vec3 fragNormal, vec3 eye, float specularFactor
             blocks[2] = texelFetch(lightSources, texel + 2);
     
             /* light position */
-            vec3 lposition = vec3(blocks[2].x, blocks[2].y, blocks[2].z);
+            vec3 lposition = blocks[2].xyz;
             /* calculate direction from fragment to light */
             lightDir = lposition - fragPos;
             /* distance to light */

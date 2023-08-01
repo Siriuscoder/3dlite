@@ -1,3 +1,5 @@
+#include "samples:shaders/sources/lighting/lighting_inc.glsl"
+
 uniform sampler2D diffuse;
 #ifdef NORMAL_MAP
 uniform sampler2D normals;
@@ -20,9 +22,6 @@ const vec3 ambient = vec3(0.33, 0.33, 0.33);
 const float wrapAroundFactor = -0.04;
 const float specPower = 35.0;
 const float shadowBias = 0.0000;
-
-vec3 calc_lighting(vec3 fragPos, vec3 fragNormal, vec3 eye, float specularFactor, 
-    float wrapAroundFactor, float specPower, inout vec3 linearSpec);
 
 float shadow_PCF()
 {
