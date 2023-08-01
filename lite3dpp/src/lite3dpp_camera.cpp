@@ -176,7 +176,7 @@ namespace lite3dpp
 
     bool Camera::inFrustum(const LightSource &light) const
     {
-        auto volToCheck = light.getBoundingVolume();
+        auto volToCheck = light.getBoundingVolumeWorld();
         return lite3d_frustum_test_sphere(&mCamera.frustum, &volToCheck) == LITE3D_TRUE;
     }
 

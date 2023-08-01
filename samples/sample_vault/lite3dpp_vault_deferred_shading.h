@@ -110,7 +110,7 @@ public:
             material->setFloatv3Parameter(1, "light.diffuse", lightSource.getDiffuse(), false);
             material->setFloatv3Parameter(1, "light.direction", lightSource.getDirectionWorld(), false);
             material->setFloatParameter(1, "light.attenuationContant", lightSource.getAttenuationConstant(), false);
-            material->setFloatParameter(1, "light.attenuationLinear", lightSource.getAttenuationLeaner(), false);
+            material->setFloatParameter(1, "light.attenuationLinear", lightSource.getAttenuationLinear(), false);
             material->setFloatParameter(1, "light.attenuationQuadratic", lightSource.getAttenuationQuadratic(), false);
             material->setFloatParameter(1, "light.innercone", lightSource.getAngleInnerCone(), false);
             material->setFloatParameter(1, "light.outercone", lightSource.getAngleOuterCone(), false);

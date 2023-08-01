@@ -26,7 +26,7 @@ class LightSourceParams
 public:
 
     float attenuationConstant = 0.0f; 
-    float attenuationLeaner = 0.0f;
+    float attenuationLinear = 0.0f;
     float attenuationQuadratic = 0.0f;
     float radiance = 1.0f;
     float influenceMinRadiance = 0.001f;
@@ -46,7 +46,7 @@ protected:
     {
         const auto distance = mLight.getInfluenceDistance();
         const auto attenuation = mLight.getAttenuationQuadratic() * distance * distance + 
-            mLight.getAttenuationLeaner() * distance + 
+            mLight.getAttenuationLinear() * distance + 
             mLight.getAttenuationConstant();
 
         return mLight.getRadiance() / attenuation;
@@ -59,7 +59,7 @@ TEST_P(LightSourceAttenuation_Test, CalcInfluenceByAttenuation01)
 {
     const auto &params = GetParam();
     mLight.setAttenuationConstant(params.attenuationConstant);
-    mLight.setAttenuationLeaner(params.attenuationLeaner);
+    mLight.setAttenuationLinear(params.attenuationLinear);
     mLight.setAttenuationQuadratic(params.attenuationQuadratic);
     mLight.setRadiance(params.radiance);
     mLight.setInfluenceMinRadiance(params.influenceMinRadiance);
@@ -72,7 +72,7 @@ TEST_P(LightSourceAttenuation_Test, CalcInfluenceByAttenuation02)
     mLight.setRadiance(params.radiance);
     mLight.setInfluenceMinRadiance(params.influenceMinRadiance);
     mLight.setAttenuationConstant(params.attenuationConstant);
-    mLight.setAttenuationLeaner(params.attenuationLeaner);
+    mLight.setAttenuationLinear(params.attenuationLinear);
     mLight.setAttenuationQuadratic(params.attenuationQuadratic);
     EXPECT_TRUE(lite3dpp::near(mLight.getInfluenceMinRadiance(), calcRadiance()));
 }
@@ -81,7 +81,7 @@ TEST_P(LightSourceAttenuation_Test, CalcInfluenceByAttenuation03)
 {
     const auto &params = GetParam();
     mLight.setAttenuationConstant(params.attenuationConstant);
-    mLight.setAttenuationLeaner(params.attenuationLeaner);
+    mLight.setAttenuationLinear(params.attenuationLinear);
     mLight.setAttenuationQuadratic(params.attenuationQuadratic);
     mLight.setInfluenceMinRadiance(params.influenceMinRadiance);
     mLight.setRadiance(params.radiance);
@@ -94,19 +94,19 @@ TEST_P(LightSourceAttenuation_Test, CalcInfluenceByAttenuation04)
     mLight.setInfluenceMinRadiance(params.influenceMinRadiance);
     mLight.setRadiance(params.radiance);
 
-    mLight.setAttenuationLeaner(6.5);
+    mLight.setAttenuationLinear(6.5);
     mLight.setAttenuationQuadratic(0.70);
     EXPECT_TRUE(lite3dpp::near(mLight.getInfluenceMinRadiance(), calcRadiance()));
 
-    mLight.setAttenuationLeaner(8.5);
+    mLight.setAttenuationLinear(8.5);
     mLight.setAttenuationQuadratic(0.002);
     EXPECT_TRUE(lite3dpp::near(mLight.getInfluenceMinRadiance(), calcRadiance()));
 
-    mLight.setAttenuationLeaner(0.0);
+    mLight.setAttenuationLinear(0.0);
     mLight.setAttenuationQuadratic(0.05);
     EXPECT_TRUE(lite3dpp::near(mLight.getInfluenceMinRadiance(), calcRadiance()));
 
-    mLight.setAttenuationLeaner(0.1);
+    mLight.setAttenuationLinear(0.1);
     mLight.setAttenuationQuadratic(6.10);
     EXPECT_TRUE(lite3dpp::near(mLight.getInfluenceMinRadiance(), calcRadiance()));
 }

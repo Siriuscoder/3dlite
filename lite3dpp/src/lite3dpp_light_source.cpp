@@ -29,7 +29,7 @@ namespace lite3dpp
         memset(&mLightSource, 0, sizeof(mLightSource));
         mLightSource.userdata = this;
         /* enabled by default */
-        mLightSource.params.block1.y = 1;
+        mLightSource.params.block1.y = 1.0f;
         mLightSourceWorld = mLightSource;
     }
 
@@ -48,7 +48,7 @@ namespace lite3dpp
             (lightType == "Spot" ? LITE3D_LIGHT_SPOT : LITE3D_LIGHT_POINT));
         
         setPosition(json.getVec3(L"Position"));
-        setDirection(json.getVec3(L"SpotDirection"));
+        setDirection(json.getVec3(L"Direction"));
         setDiffuse(json.getVec3(L"Diffuse"));
         setLightSize(json.getDouble(L"LightSize"));
         setRadiance(json.getDouble(L"Radiance"));
@@ -57,7 +57,7 @@ namespace lite3dpp
         if (!attenuation.isEmpty())
         {
             setAttenuationConstant(attenuation.getDouble(L"Constant"));
-            setAttenuationLeaner(attenuation.getDouble(L"Leaner"));
+            setAttenuationLinear(attenuation.getDouble(L"Linear"));
             setAttenuationQuadratic(attenuation.getDouble(L"Quadratic"));
             setInfluenceDistance(attenuation.getDouble(L"InfluenceDistance"));
             setInfluenceMinRadiance(attenuation.getDouble(L"InfluenceMinRadiance"));
@@ -66,21 +66,22 @@ namespace lite3dpp
         auto spotFactor = json.getObject(L"SpotFactor");
         if (!spotFactor.isEmpty())
         {
-            setAngleInnerCone(json.getDouble(L"AngleInnerCone"));
-            setAngleOuterCone(json.getDouble(L"AngleOuterCone"));
+            setAngleInnerCone(spotFactor.getDouble(L"AngleInnerCone"));
+            setAngleOuterCone(spotFactor.getDouble(L"AngleOuterCone"));
         }
 
+        mLightSource.params.block1.y = 1.0f;
         mLightSource.userdata = this;
         mLightSourceWorld = mLightSource;
     }
     
     void LightSource::toJson(ConfigurationWriter &writer) const
     {
-        if (mLightSource.params.block1.x == LITE3D_LIGHT_POINT)
+        if (getType() == LITE3D_LIGHT_POINT)
             writer.set(L"Type", "Point");
-        else if (mLightSource.params.block1.x == LITE3D_LIGHT_DIRECTIONAL)
+        else if (getType() == LITE3D_LIGHT_DIRECTIONAL)
             writer.set(L"Type", "Directional");
-        else if (mLightSource.params.block1.x == LITE3D_LIGHT_SPOT)
+        else if (getType() == LITE3D_LIGHT_SPOT)
             writer.set(L"Type", "Spot");
         else
             writer.set(L"Type", "Undefined");
@@ -89,8 +90,8 @@ namespace lite3dpp
         writer.set(L"Diffuse", *reinterpret_cast<const kmVec3 *>(&mLightSource.params.block2.x));
         writer.set(L"Radiance", mLightSource.params.block2.w);
 
-        if (mLightSource.params.block1.x == LITE3D_LIGHT_POINT || 
-            mLightSource.params.block1.x == LITE3D_LIGHT_SPOT)
+        if (getType() == LITE3D_LIGHT_POINT || 
+            getType() == LITE3D_LIGHT_SPOT)
         {
             writer.set(L"Position", *reinterpret_cast<const kmVec3 *>(&mLightSource.params.block3.x));
             writer.set(L"LightSize", mLightSource.params.block3.w);
@@ -101,7 +102,7 @@ namespace lite3dpp
                 .set(L"InfluenceDistance", mLightSource.params.block1.z)
                 .set(L"InfluenceMinRadiance", mLightSource.params.block1.w));
 
-            if (mLightSource.params.block1.x == LITE3D_LIGHT_SPOT)
+            if (getType() == LITE3D_LIGHT_SPOT)
             {
                 writer.set(L"SpotFactor", lite3dpp::ConfigurationWriter()
                     .set(L"AngleInnerCone", mLightSource.params.block5.z)
@@ -109,11 +110,11 @@ namespace lite3dpp
             }
         }
 
-        if (mLightSource.params.block1.x == LITE3D_LIGHT_DIRECTIONAL || 
-            mLightSource.params.block1.x == LITE3D_LIGHT_SPOT)
+        if (getType() == LITE3D_LIGHT_DIRECTIONAL || 
+            getType() == LITE3D_LIGHT_SPOT)
         {
             writer.set(L"Direction", *reinterpret_cast<const kmVec3 *>(&mLightSource.params.block4.x));
-        }      
+        }
     }
 
     void LightSource::setType(uint8_t t)
@@ -124,7 +125,7 @@ namespace lite3dpp
     
     void LightSource::enabled(bool f)
     {
-        mLightSource.params.block1.y = f ? 1 : 0;
+        mLightSource.params.block1.y = f ? 1.0f : 0.0f;
         mUpdated = true;  
     }
     
@@ -154,12 +155,19 @@ namespace lite3dpp
     
     uint8_t LightSource::getType() const
     {
-        return mLightSource.params.block1.x;
+        if (near(mLightSource.params.block1.x, 1.0f))
+            return LITE3D_LIGHT_POINT;
+        else if (near(mLightSource.params.block1.x, 2.0f))
+            return LITE3D_LIGHT_DIRECTIONAL;
+        else if (near(mLightSource.params.block1.x, 3.0f))
+            return LITE3D_LIGHT_SPOT;
+
+        return LITE3D_LIGHT_UNDEFINED;
     }
 
     bool LightSource::enabled() const
     {
-        return mLightSource.params.block1.y == 1;
+        return near(mLightSource.params.block1.y, 1.0f);
     }
 
     void LightSource::setAttenuationConstant(float value)
@@ -169,7 +177,7 @@ namespace lite3dpp
         mUpdated = true;
     }
 
-    void LightSource::setAttenuationLeaner(float value)
+    void LightSource::setAttenuationLinear(float value)
     {
         mLightSource.params.block5.x = value;
         calcDistanceMinRadiance();
@@ -261,7 +269,7 @@ namespace lite3dpp
         return mLightSource.params.block4.w;
     }
 
-    float LightSource::getAttenuationLeaner() const
+    float LightSource::getAttenuationLinear() const
     {
         return mLightSource.params.block5.x;
     }
@@ -303,9 +311,6 @@ namespace lite3dpp
 
     void LightSource::translateToWorld(const kmMat4 &worldView)
     {
-        if (!isUpdated())
-            return;
-
         mLightSourceWorld = mLightSource;
 
         kmVec3TransformCoord(reinterpret_cast<kmVec3 *>(&mLightSourceWorld.params.block3.x), 
@@ -348,7 +353,7 @@ namespace lite3dpp
         if (!mInfluenceDistance && nonzero(getInfluenceMinRadiance()))
         {
             const auto a = getAttenuationQuadratic();
-            const auto b = getAttenuationLeaner();
+            const auto b = getAttenuationLinear();
             const auto c = getAttenuationConstant() - (getRadiance() / getInfluenceMinRadiance());
 
             // R / (a * d * d + b * d + c) = Rmin

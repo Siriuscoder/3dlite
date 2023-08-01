@@ -1,81 +1,90 @@
+#include "samples:shaders/sources/common/utils_inc.glsl"
+#include "samples:shaders/sources/lighting/lighting_inc.glsl"
+
 uniform samplerBuffer lightSources;
 uniform isamplerBuffer lightIndexes;
 
-#ifdef PHONG_BLINN
-vec3 phong_blinn_single(int type, vec3 lightDir, vec3 eyeDir, vec3 diffuse, 
-    vec3 specular, vec3 normal, vec3 spotDirection, vec2 spotFactor, vec3 attenuation, 
-    float specularFactor, float wrapAroundFactor, float specPower, inout vec3 linearSpec);
-#endif
-
-vec3 calc_lighting(vec3 fragPos, 
-    vec3 fragNormal, vec3 eye, float specularFactor, 
+vec3 calc_lighting(vec3 fragPos, vec3 fragNormal, vec3 eye, float specularFactor, 
     float wrapAroundFactor, float specPower, inout vec3 linearSpec)
 {
     vec3 linear = vec3(0.0);
     linearSpec = vec3(0.0);
-    vec4 blocks[6];
+    vec3 lightDir = vec3(0.0);
+    vec4 blocks[5];
+
+    /* calculate direction from fragment to eye */
+    vec3 eyeDir = normalize(eye - fragPos);
 
     int count = texelFetch(lightIndexes, 0).r;
-    for(int i = 0; i < count; i++)
+    for (int i = 0; i < count; i++)
     {
-        int texel = texelFetch(lightIndexes, i+1).r * 6;
+        int texel = texelFetch(lightIndexes, i+1).r * 5;
 
-        /* blocks[0].x - type */
-        /* blocks[0].y - enabled */
-        /* blocks[0].z - affect radius */
-        /* blocks[0].w - position.x */
+        /* block0.x - type */
+        /* block0.y - enabled */
+        /* block0.z - influence distance */
+        /* block0.w - influence min radiance */
         blocks[0] = texelFetch(lightSources, texel + 0);
-        if (blocks[0].y == 0)
+        if (fiszero(blocks[0].y))
             continue;
 
-        /* blocks[1].x - position.y */
-        /* blocks[1].y - position.z  */
-        /* blocks[1].z - ambient.r */
-        /* blocks[1].w - ambient.g */
+        /* Read Position and check distance for spot and point light only */
+        if (fnear(blocks[0].x, LITE3D_LIGHT_POINT) || fnear(blocks[0].x, LITE3D_LIGHT_SPOT))
+        {
+            /* block2.x - position.x */
+            /* block2.y - position.y */
+            /* block2.z - position.z */
+            /* block2.w - size */
+            blocks[2] = texelFetch(lightSources, texel + 2);
+    
+            /* light position */
+            vec3 lposition = vec3(blocks[2].x, blocks[2].y, blocks[2].z);
+            /* calculate direction from fragment to light */
+            lightDir = lposition - fragPos;
+            /* distance to light */
+            float dist = length(lightDir);
+            /* check light distance */
+            if (dist > blocks[0].z)
+                continue;
+        }
+        else
+        {
+            blocks[2] = vec4(0.0);
+        }
+    
+        /* block1.x - diffuse.r */
+        /* block1.y - diffuse.g  */
+        /* block1.z - diffuse.b */
+        /* block1.w - radiance */
         blocks[1] = texelFetch(lightSources, texel + 1);
-
-
-        /* light position */
-        vec3 lposition = vec3(blocks[0].w, blocks[1].x, blocks[1].y);
-        /* calculate direction from fragment to light */
-        vec3 lightDir = lposition - fragPos;
-        /* distance to light */
-        float dist = length(lightDir);
-        /* check light distance */
-        if (dist > blocks[0].z)
-            continue;
-
-        blocks[2] = texelFetch(lightSources, texel + 2);
+        /* block3.x - direction.x */
+        /* block3.y - direction.y */
+        /* block3.z - direction.z */
+        /* block3.w - attenuation constant */
         blocks[3] = texelFetch(lightSources, texel + 3);
+        /* block4.x - attenuation linear */
+        /* block4.y - attenuation quadratic */
+        /* block4.z - angle inner cone */
+        /* block4.w - angle outer cone */
         blocks[4] = texelFetch(lightSources, texel + 4);
-        blocks[5] = texelFetch(lightSources, texel + 5);
-        /* ambient color */
-        vec3 lambient = vec3(blocks[1].z, blocks[1].w, blocks[2].x);
+
         /* diffuse color */
-        vec3 ldiffuse = vec3(blocks[2].y, blocks[2].z, blocks[2].w);
-        /* specular color */
-        vec3 lspecular = vec3(blocks[3].x, blocks[3].y, blocks[3].z);
+        vec3 ldiffuse = blocks[1].xyz;
 
         /* spot directional */
         /* take effect with spot and directional light */
-        vec3 lspotDirection = vec3(blocks[3].w, blocks[4].x, blocks[4].y);
+        vec3 lspotDirection = blocks[3].xyz;
         /* x - spot cutoff */
         /* y - spot cutoff exponent */
-        vec2 lspotFactor = vec2(blocks[4].z, blocks[4].w);
+        vec2 lspotFactor = blocks[4].zw;
 
-        /* calculate direction from fragment to eye */
-        vec3 eyeDir = normalize(eye - fragPos);
         /* attenuation factor */
-        /* blocks[5].x - constant attenuation */
-        /* blocks[5].y - linear attenuation */
-        /* blocks[5].z - quadratic attenuation */
-        vec3 lattenuation = vec3(blocks[5].x, blocks[5].y, blocks[5].z);
-        //vec3 lattenuation = vec3(0.5, 0.001, 0.00006);
+        vec3 lattenuation = vec3(blocks[3].w, blocks[4].xy);
 
         vec3 curSpec = vec3(0.0);
 #ifdef PHONG_BLINN
-        linear += phong_blinn_single(int(blocks[0].x), lightDir, eyeDir, ldiffuse, lspecular, fragNormal, 
-            lspotDirection, lspotFactor, lattenuation, specularFactor, wrapAroundFactor, specPower, curSpec);
+        linear += phong_blinn_single(blocks[0].x, lightDir, eyeDir, ldiffuse, fragNormal, lspotDirection, lspotFactor, 
+            lattenuation, specularFactor, wrapAroundFactor, specPower, curSpec);
 #endif
         linearSpec += curSpec;
     }

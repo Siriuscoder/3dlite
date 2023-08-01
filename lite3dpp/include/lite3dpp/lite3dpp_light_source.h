@@ -66,7 +66,7 @@ namespace lite3dpp
         void setDirection(const kmVec3 &v);
         void setDiffuse(const kmVec3 &v);
         void setAttenuationConstant(float value);
-        void setAttenuationLeaner(float value);
+        void setAttenuationLinear(float value);
         void setAttenuationQuadratic(float value);
         void setInfluenceDistance(float value);
         void setInfluenceMinRadiance(float value);
@@ -83,7 +83,7 @@ namespace lite3dpp
         const kmVec3 &getDirectionWorld() const;
         const kmVec3 &getDiffuse() const;
         float getAttenuationConstant() const;
-        float getAttenuationLeaner() const;
+        float getAttenuationLinear() const;
         float getAttenuationQuadratic() const;
         float getInfluenceDistance() const;
         float getInfluenceMinRadiance() const;

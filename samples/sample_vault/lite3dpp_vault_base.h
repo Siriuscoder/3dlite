@@ -73,7 +73,7 @@ public:
         lite3dpp::Material::setFloatGlobalParameter("animcounter", mAnimCounter);
         float attenuationConstant = (cos(mAnimPi) + 1.0f) / 2.0f;
         mReactLamp01->getLight()->setAttenuationConstant(attenuationConstant);
-        mReactLamp01->getLight()->setAttenuationLeaner(attenuationConstant / 100.0f);
+        mReactLamp01->getLight()->setAttenuationLinear(attenuationConstant / 100.0f);
         
         float soarDelta = cos(mAnimPi) * 5;
         mGatling->getRoot()->rotateAngle(KM_VEC3_POS_Z, 0.05f);
