@@ -36,7 +36,7 @@
     {
       "Name":"light.type",
       "Type":"int",
-      "Value": 0.0
+      "Value": 0
     },
     {
       "Name":"light.position",
@@ -53,13 +53,6 @@
       ]
     },
     {
-      "Name":"light.specular",
-      "Type":"v3",
-      "Value":[
-        0,0,0
-      ]
-    },
-    {
       "Name":"light.direction",
       "Type":"v3",
       "Value":[
@@ -67,20 +60,35 @@
       ]
     },
     {
-      "Name":"light.spotfactor",
-      "Type":"v3",
-      "Value":[
-        0,0,0
-      ]
+      "Name":"light.influenceDistance",
+      "Type":"float",
+      "Value": 0.0
     },
     {
-      "Name":"light.attenuation",
-      "Type":"v4",
-      "Value":[
-        0,0,0,0
-      ]
+      "Name":"light.attenuationContant",
+      "Type":"float",
+      "Value": 0.0
     },
-
+    {
+      "Name":"light.attenuationLinear",
+      "Type":"float",
+      "Value": 0.0
+    },
+    {
+      "Name":"light.attenuationQuadratic",
+      "Type":"float",
+      "Value": 0.0
+    },
+    {
+      "Name":"light.innercone",
+      "Type":"float",
+      "Value": 0.0
+    },
+    {
+      "Name":"light.outercone",
+      "Type":"float",
+      "Value": 0.0
+    },
     {
       "Name":"fragMap",
       "TextureName": "fragmentWorldCoords.texture",

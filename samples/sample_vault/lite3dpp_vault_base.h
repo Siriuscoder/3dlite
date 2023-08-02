@@ -89,19 +89,21 @@ public:
 
     void addFlashlight(Scene *scene)
     {
-        kmVec3 spotFactor = { 0.80f, 1.0f, 0.0f };
-        kmVec4 attenuation = { 0.12, 0.005, 0.00002, 1000.0f };
-        String flashLightParams = ConfigurationWriter().set(L"Name", "FlashLight.node").set(L"Light", 
-            ConfigurationWriter().set(L"Ambient", KM_VEC3_ZERO)
-            .set(L"Diffuse", KM_VEC3_ONE)
-            .set(L"Position", KM_VEC3_ZERO)
-            .set(L"Name", "FlashLight")
-            .set(L"Specular", KM_VEC3_ONE)
-            .set(L"SpotDirection", KM_VEC3_NEG_Z)
-            .set(L"Type", "Spot")
-            .set(L"SpotFactor", spotFactor)
-            .set(L"Attenuation", attenuation)).write();
+        ConfigurationWriter flashlightJson;
+        LightSource flashlight("FlashLight", nullptr);
+        flashlight.setAttenuationConstant(0.12f);
+        flashlight.setAttenuationLinear(0.005f);
+        flashlight.setAttenuationQuadratic(0.00002f);
+        flashlight.setInfluenceDistance(1000.0f);
+        flashlight.setAngleInnerCone(0.80f);
+        flashlight.setAngleOuterCone(1.00f);
+        flashlight.setDiffuse(KM_VEC3_ONE);
+        flashlight.setDirection(KM_VEC3_NEG_Z);
+        flashlight.setPosition(KM_VEC3_ZERO);
+        flashlight.setType(LITE3D_LIGHT_SPOT);
+        flashlight.toJson(flashlightJson);
 
+        String flashLightParams = ConfigurationWriter().set(L"Name", "FlashLight.node").set(L"Light", flashlightJson).write();
         mFlashLight.reset(new LightSceneNode(ConfigurationReader(flashLightParams.data(), flashLightParams.size()), NULL, &getMain()));
         mFlashLight->addToScene(scene);
         mFlashLight->getLight()->enabled(false);

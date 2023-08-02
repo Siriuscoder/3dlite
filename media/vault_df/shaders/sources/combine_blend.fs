@@ -1,3 +1,6 @@
+#include "samples:shaders/sources/common/utils_inc.glsl"
+#include "samples:shaders/sources/lighting/lighting_inc.glsl"
+
 uniform sampler2D diffuse;
 uniform sampler2D normals;
 #ifdef CALC_ILLUM
@@ -21,23 +24,13 @@ const float specPower = 180.0;
 const float specPower = 40.0;
 #endif
 
-bool vec3zero(vec3 vec)
-{
-    float prec = 0.000001;
-    return ((1.0-step(prec, vec.x)) * (1.0-step(prec, vec.y)) * (1.0-step(prec, vec.z))) == 1.0;
-}
-
-vec3 calc_lighting(vec3 fragPos, 
-    vec3 fragNormal, vec3 eye, float specularFactor, 
-    float wrapAroundFactor, float specPower, inout vec3 linearSpec);
-
 void main()
 {
     vec4 fragTexture = texture2D(diffuse, iuv);
 #ifdef CALC_ILLUM
     // sampling glow texture and check colors
     vec3 fragGlow = texture2D(glow, iuv).rgb;
-    if (!vec3zero(fragGlow))
+    if (!fiszero(fragGlow))
     {
         fragColor = vec4(fragGlow, fragTexture.a);
         return;
@@ -54,7 +47,7 @@ void main()
     // and trasform normal to world space 
     vec3 nw = normalize(itbn * normalize(2*fragNormalAndSpecular.xyz-1));
     // fix bad normals
-    if (vec3zero(fragNormalAndSpecular.xyz))
+    if (fiszero(fragNormalAndSpecular.xyz))
         nw = wnorm;
 
     vec3 linearSpec;

@@ -31,7 +31,7 @@ some other libraries (see [LICENCE](LICENCE.3rdparty))
 
 Compiling
 ---------
-Use [cmake](http://www.cmake.org/) 2.8.10 or higher.
+Use [cmake](http://www.cmake.org/) 3.12.0 or higher.
 ```
 $ mkdir build
 $ cmake /path/to/3dlite/sources
@@ -42,7 +42,7 @@ You can use cmake to generate Visual Studio projects on windows.
 Samples
 ---------
 After successfully compiling you can find some samples in bin directory. To provide samples work correctly you must download 
-resources packs [vault.pkg](https://cloud.mail.ru/public/8eAZ/BAjJhjqYE) and [sponza.pkg](https://cloud.mail.ru/public/AJiq/HpapxfZCc) and put its to media/packs/
+resources packs [vault.pkg](https://drive.google.com/file/d/1JhsirjKwMq51IBg7GknUeZLGvrVKp1Sz/view?usp=sharing) and [sponza.pkg](https://drive.google.com/file/d/1GGtPep7soS1wPJsf4Y2FTiF23E-JXFQ9/view?usp=sharing) and put its to media/packs/
 
 Screenshots
 -----------
@@ -61,4 +61,4 @@ Screenshots
 
 ***
 Check branch work to fetch recent changes =)
-> Copyright © 2014-2016 Nikita Korolev (Sirius)
+> Copyright © 2014-2023 Nikita Korolev (Sirius)
