@@ -16,16 +16,38 @@ class Lite3dExport(bpy.types.Operator, ExportHelper):
     packageName: StringProperty(name = "Package Name", default = "samples")
     filename_ext = ""
     filter_glob: StringProperty(default = "", options = {'HIDDEN'})
-    saveTangent: BoolProperty(defaut = True, description = "Calculate and save tangents to models data")
-    saveBiTangent: BoolProperty(defaut = False, description = "Calculate and save bitangents to models data")
-    copyTexImage: BoolProperty(defaut = True, description = "Try to copy texture images to textures/images/, use absolute path while loading textures in Blender to works it correct")
-    removeDoubles: BoolProperty(defaut = False, description = "Optimize mesh, remove double vertices")
-    triangulate: BoolProperty(defaut = False, description = "Convert quads faces to tris")
-    defaultConstantAttenuation: FloatProperty(defaut = 0.0, description = "Default light constant attenuation")
-    defaultLinearAttenuation: FloatProperty(defaut = 0.01, description = "Default light linear attenuation")
-    defaultQuadraticAttenuation: FloatProperty(defaut = 0.0001, description = "Default light quadratic attenuation")
-    defaultInfluenceDistance: FloatProperty(defaut = 0.0, description = "Default light influence distance all sources")
-    defaultInfluenceMinRadiance: FloatProperty(defaut = 0.001, description = "Default minimum light radiance which considered in light computation")
+    saveTangent: BoolProperty(name = "Save Tangents", default = True, description = "Calculate and save tangents to models data")
+    saveBiTangent: BoolProperty(name = "Save BiTangents", default = False, description = "Calculate and save bitangents to models data")
+    copyTexImages: BoolProperty(name = "Copy Texture Images", default = True, description = "Try to copy texture images to textures/images/, use absolute path while loading textures in Blender to works it correct")
+    removeDoubles: BoolProperty(name = "Remove Doubles", default = False, description = "Optimize mesh, remove double vertices")
+    triangulate: BoolProperty(name = "Triangulate", default = False, description = "Convert quads faces to tris")
+    defaultConstantAttenuation: FloatProperty(name = "Default Attenuation Constant", precision = 6, default = 0.0, description = "Default light constant attenuation")
+    defaultLinearAttenuation: FloatProperty(name = "Default Attenuation Linear", precision = 6, default = 0.01, description = "Default light linear attenuation")
+    defaultQuadraticAttenuation: FloatProperty(name = "Default Attenuation Quadratic", precision = 6, default = 0.0001, description = "Default light quadratic attenuation")
+    defaultInfluenceDistance: FloatProperty(name = "Default Influence Distance", precision = 6, default = 0.0, description = "Default influence distance for light source")
+    defaultInfluenceMinRadiance: FloatProperty(name = "Default Influence Minimum Radiance", precision = 6, default = 0.001, description = "Default minimum light radiance which considered in light computation")
+    materialTemplate: StringProperty(name = "Material template name", default = "CommonMaterialTemplate", description = "Name of material template file used by default to generate material")
+
+    def draw(self, context):
+        layout = self.layout
+
+        box = layout.box()
+        box.label(text = "Common:")
+        box.prop(self, "packageName")
+        box.label(text = "Mesh:")
+        box.prop(self, "triangulate")
+        box.prop(self, "removeDoubles")
+        box.prop(self, "saveTangent")
+        box.prop(self, "saveBiTangent")
+        box.label(text = "Materials:")
+        box.prop(self, "copyTexImages")
+        box.prop(self, "materialTemplate")
+        box.label(text = "Lighting:")
+        box.prop(self, "defaultConstantAttenuation")
+        box.prop(self, "defaultLinearAttenuation")
+        box.prop(self, "defaultQuadraticAttenuation")
+        box.prop(self, "defaultInfluenceDistance")
+        box.prop(self, "defaultInfluenceMinRadiance")
 
     def execute(self, context):
         start = time.perf_counter()
@@ -36,14 +58,16 @@ class Lite3dExport(bpy.types.Operator, ExportHelper):
                           self.packageName, 
                           saveTangent = self.saveTangent, 
                           saveBiTangent = self.saveBiTangent,
-                          copyTexImage = self.copyTexImage,
+                          copyTexImages = self.copyTexImages,
                           removeDoubles = self.removeDoubles,
                           triangulate = self.triangulate,
                           defaultConstantAttenuation = self.defaultConstantAttenuation,
                           defaultLinearAttenuation = self.defaultLinearAttenuation,
                           defaultQuadraticAttenuation = self.defaultQuadraticAttenuation,
                           defaultInfluenceDistance = self.defaultInfluenceDistance,
-                          defaultInfluenceMinRadiance = self.defaultInfluenceMinRadiance)
+                          defaultInfluenceMinRadiance = self.defaultInfluenceMinRadiance,
+                          materialTemplate = self.materialTemplate)
+            
             scene.exportScene()
         except Exception as ex:
             log.error(traceback.format_exc())

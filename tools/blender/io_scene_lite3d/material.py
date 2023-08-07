@@ -18,7 +18,7 @@ class Material:
     def getRelativeTemplatePath(self):
         template = self.material.get("Template")
         if template is None:
-            template = self.scene.option["MaterialTemplate"]
+            template = self.scene.options["materialTemplate"]
         return PurePosixPath("materials/") / f"{template}.json"
     
     def considerBSDF(self, node):

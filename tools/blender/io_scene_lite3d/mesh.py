@@ -105,7 +105,7 @@ class Mesh:
             chunksIndexes = sorted(self.chunks.keys())
             for chunkIndex in chunksIndexes:
                 chunk = self.chunks[chunkIndex]
-                chunk.saveChunksInfo(chunk, indexesOffset, verticesOffset, file)
+                chunk.saveChunkHeader(indexesOffset, verticesOffset, file)
                 indexesOffset += chunk.indexesSize
                 verticesOffset += chunk.verticesSize
         

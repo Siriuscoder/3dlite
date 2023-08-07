@@ -30,7 +30,7 @@ class MeshChunk:
     def __init__(self, materialID, opts):
         self.materialID = materialID
         self.saveTangent = opts["saveTangent"]
-        self.saveBiTangent = opts["saveBitangent"]
+        self.saveBiTangent = opts["saveBiTangent"]
         self.vertices = []
         self.indexes = []
         self.normalsSplit = {}
@@ -70,7 +70,7 @@ class MeshChunk:
                 
             normalSplit.append((n, lv))
                 
-        self.insertByIndex(lv, v, n, uv, t)
+        self.insertByIndex(lv, v, n, uv, t, bt)
         self.minmaxVec(v.co)
         
     def minmaxVec(self, co):
@@ -118,7 +118,7 @@ class MeshChunk:
         file.write(struct.pack("=2B", 0x3, 2)) # LITE3D_BUFFER_BINDING_TEXCOORD
         if self.saveTangent:
             file.write(struct.pack("=2B", 0x5, 3)) # LITE3D_BUFFER_BINDING_TANGENT
-        if self.saveBiTangen:
+        if self.saveBiTangent:
             file.write(struct.pack("=2B", 0x6, 3)) # LITE3D_BUFFER_BINDING_BINORMAL
         
     def saveDataBlock(self, file):
