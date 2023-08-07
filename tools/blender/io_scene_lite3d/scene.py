@@ -1,13 +1,14 @@
 import bpy
 from pathlib import PurePosixPath
-from io_scene_lite3d.logger import log
 from io_scene_lite3d.mesh import Mesh
 from io_scene_lite3d.material import Material
 from io_scene_lite3d.image import Image
 from io_scene_lite3d.io import IO
 
 class Scene:
-    def __init__(self, name, path, package):
+    ExportTypes = ["MESH", "LIGHT", "EMPTY"]
+
+    def __init__(self, name, path, package, **opts):
         self.name = name
         self.path = path
         self.package = package
@@ -16,7 +17,8 @@ class Scene:
         self.savedObjects = []
         self.images = {}
         self.materials = {}
-        
+        self.options = opts
+
     def saveMaterial(self, material):
         if material.name in self.materials.keys():
             return self.materials[material.name]
@@ -81,7 +83,7 @@ class Scene:
     def exportMesh(self, obj, node):
         mesh = None
         if not obj.data.name in self.meshes:
-            mesh = Mesh(obj.data, self)
+            mesh = Mesh(obj, self)
             mesh.save()
             self.meshes[obj.data.name] = mesh
         else:
@@ -113,19 +115,19 @@ class Scene:
         
         lightJson["Radiance"] = light.energy
         if light.type in ["POINT", "SPOT"]:
-            ac = light.get("AttenuationConstant")
-            al = light.get("AttenuationLinear")
-            aq = light.get("AttenuationQuadratic")
-            d = light.get("InfluenceDistance")
-            md = light.get("InfluenceMinRadiance")
+            ac = light.get("AttenuationConstant", self.options["defaultConstantAttenuation"])
+            al = light.get("AttenuationLinear", self.options["defaultLinearAttenuation"])
+            aq = light.get("AttenuationQuadratic", self.options["defaultQuadraticAttenuation"])
+            d = light.get("InfluenceDistance", self.options["defaultInfluenceDistance"])
+            md = light.get("InfluenceMinRadiance", self.options["defaultInfluenceMinRadiance"])
             
             lightJson["LightSize"] = 0.0
             lightJson["Attenuation"] = {
-                "Constant": ac if ac is not None else 0.0,
-                "Linear": al if al is not None else 0.1,
-                "Quadratic": aq if aq is not None else 0.0001,
-                "InfluenceDistance": d if d is not None else 0.0,
-                "InfluenceMinRadiance": md if md is not None else 0.001,
+                "Constant": ac,
+                "Linear": al,
+                "Quadratic": aq,
+                "InfluenceDistance": d,
+                "InfluenceMinRadiance": md
             }
             
             if light.type == "SPOT":
@@ -145,7 +147,7 @@ class Scene:
         node["Light"] = lightJson
 
     def exportNode(self, obj, node):
-        if obj.type not in ["MESH", "LIGHT", "EMPTY"]:
+        if obj.type not in Scene.ExportTypes:
             return
         
         node["Name"] = obj.name
@@ -168,7 +170,7 @@ class Scene:
                     node["Nodes"] = [childNode]
                 
     def exportObject(self, obj):
-        if obj.type not in ["MESH", "LIGHT", "EMPTY", "CAMERA"]:
+        if obj.type not in Scene.ExportTypes:
             return
         # originObject можно указать имя обьекта который мы хотим переиспользовать 
         objectName = obj.get("originObject")

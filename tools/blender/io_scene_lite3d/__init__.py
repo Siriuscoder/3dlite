@@ -1,7 +1,7 @@
 bl_info = {
     "name": "Lite3d Scene Exporter",
     "author": "Nikita Korolev, Sirius",
-    "version": ( 2, 80, 0 ),
+    "version": (1, 0, 7),  # can't read from VERSION, blender wants it hardcoded,
     "blender": ( 2, 80, 0 ),
     "api": 36079,
     "location": "File > Export > Lite3d Scene Export",

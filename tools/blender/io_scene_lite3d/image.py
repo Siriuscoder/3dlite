@@ -37,11 +37,13 @@ class Image:
         }
         
         IO.saveJson(self.scene.getAbsSysPath(self.getRelativePath()), imageJson)
-        # Copy raw image
-        destPath = self.scene.getAbsSysPath(self.getRelativeImagePath())
-        if self.imagePath.is_file():
-            shutil.copyfile(self.imagePath, destPath)
-            log.info(f"{self.imagePath} copied to {destPath}")
-        else:
-            self.image.save(filepath = destPath)
-            log.info(f"{self.imagePath} not found, saved image to {destPath}")
+
+        if self.scene.options["copyTexImages"]:
+            # Copy raw image
+            destPath = self.scene.getAbsSysPath(self.getRelativeImagePath())
+            if self.imagePath.is_file():
+                shutil.copyfile(self.imagePath, destPath)
+                log.info(f"{self.imagePath} copied to {destPath}")
+            else:
+                self.image.save(filepath = destPath)
+                log.info(f"{self.imagePath} not found, saved image to {destPath}")

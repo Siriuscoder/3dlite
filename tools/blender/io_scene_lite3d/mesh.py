@@ -1,3 +1,4 @@
+import bpy
 import struct
 from pathlib import PurePosixPath
 from io_scene_lite3d.mesh_chunk import MeshChunk
@@ -7,33 +8,49 @@ from io_scene_lite3d.logger import log
 class Mesh:
     sig = 0xBEEB0001
     version = (1 << 16) | (0 << 8) | 1
-    chunkSize = (149 + (2 * 4))
-    vertexSize = 4 * (3 + 3 + 2 + 3)
-    indexSize = 4
-    layoutCount = 4
     
-    def __init__(self, data, scene):
-        self.mesh = data
-        self.name = data.name + ".mesh"
+    def __init__(self, obj, scene):
+        self.mesh = obj.data
+        self.name = obj.data.name + ".mesh"
+        self.object = obj
         self.scene = scene
         self.chunks = {}
-        self.indexesOffset = 0
-        self.verticesOffset = 0
-        
-        self.mesh.calc_tangents()
+
+        self.prepareMesh()
+
         for poly in self.mesh.polygons:
+            if poly.loop_total != 3:
+                raise Exception("Wrong faces format, triangulate faces and try again")
+
             uvLayer = self.mesh.uv_layers.active.data
             
             meshChunk = self.chunks.get(poly.material_index, None)
             if meshChunk is None:
-                meshChunk = MeshChunk(poly.material_index)
+                meshChunk = MeshChunk(poly.material_index, self.scene.options)
                 self.chunks[poly.material_index] = meshChunk
             
             for loopIndex in range(poly.loop_start, poly.loop_start + poly.loop_total):
                 loop = self.mesh.loops[loopIndex]
                 vertex = self.mesh.vertices[loop.vertex_index]
                 uv = uvLayer[loopIndex].uv
-                meshChunk.appendVertex(vertex, loop.normal, uv, loop.tangent)
+                meshChunk.appendVertex(vertex, loop.normal, uv, loop.tangent, loop.bitangent)
+
+    def prepareMesh(self):
+        if self.scene.options["removeDoubles"]:
+            bpy.context.view_layer.objects.active = self.object
+            bpy.ops.object.mode_set(mode = 'EDIT')
+            bpy.ops.mesh.select_all(action = 'SELECT')
+            bpy.ops.mesh.remove_doubles()
+            bpy.ops.object.mode_set(mode = 'OBJECT')
+        if self.scene.options["triangulate"]:
+            bpy.context.view_layer.objects.active = self.object
+            bpy.ops.object.mode_set(mode = 'EDIT')
+            bpy.ops.mesh.select_all(action = 'SELECT')
+            bpy.ops.mesh.quads_convert_to_tris()
+            bpy.ops.object.mode_set(mode = 'OBJECT')
+
+        # calc tangents anyway
+        self.mesh.calc_tangents()
                 
     def printStats(self):
         log.debug("Mesh {}: chunks {}".format(self.name, len(self.chunks)))
@@ -72,41 +89,28 @@ class Mesh:
         
     def saveHeader(self, file):
         chunkCount = len(self.chunks)
-        chunkSectionSize = chunkCount * Mesh.chunkSize
-        vertexSectionSize = Mesh.vertexSize * sum([len(chunk.vertices) for chunk in self.chunks.values()])
-        indexSectionSize = Mesh.indexSize * sum([len(chunk.indexes) for chunk in self.chunks.values()])
+        chunkSectionSize = sum([chunk.chunkHeaderSize() for chunk in self.chunks.values()])
+        vertexSectionSize = sum([chunk.verticesSize for chunk in self.chunks.values()])
+        indexSectionSize = sum([chunk.indexesSize for chunk in self.chunks.values()])
         file.write(struct.pack("=I5i", Mesh.sig, Mesh.version, chunkSectionSize, vertexSectionSize,
             indexSectionSize, chunkCount))
-        
-    def saveChunksInfo(self, chunk, file):
-        indexesCount = len(chunk.indexes)
-        indexesSize = indexesCount * Mesh.indexSize
-        verticesCount = len(chunk.vertices)
-        verticesSize = verticesCount * Mesh.vertexSize
-        file.write(struct.pack("=8iBI", Mesh.chunkSize, Mesh.layoutCount, indexesCount, 
-            indexesSize, self.indexesOffset, verticesCount, verticesSize, self.verticesOffset, 
-            self.indexSize, chunk.materialID))
-            
-        self.indexesOffset += indexesSize
-        self.verticesOffset += verticesSize
-        
-        chunk.saveBoundingVol(file)
-        chunk.saveLayout(file)
         
     def saveModel(self):
         path = self.scene.getAbsSysPath(self.getRelativePath())
         with open(path, "wb") as file:
             self.saveHeader(file)
             
-            self.indexesOffset = 0
-            self.verticesOffset = 0
+            indexesOffset = 0
+            verticesOffset = 0
             chunksIndexes = sorted(self.chunks.keys())
             for chunkIndex in chunksIndexes:
                 chunk = self.chunks[chunkIndex]
-                self.saveChunksInfo(chunk, file)
+                chunk.saveChunksInfo(chunk, indexesOffset, verticesOffset, file)
+                indexesOffset += chunk.indexesSize
+                verticesOffset += chunk.verticesSize
         
             for chunkIndex in chunksIndexes:
                 chunk = self.chunks[chunkIndex]
-                chunk.save(file)
+                chunk.saveDataBlock(file)
                 
             log.info(f"saved ok {path}")

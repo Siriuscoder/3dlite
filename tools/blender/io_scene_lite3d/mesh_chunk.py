@@ -6,49 +6,72 @@ from io_scene_lite3d.io import IO
 from io_scene_lite3d.logger import log
 
 class Vertex:
-    def __init__(self, v, n, uv, t):
-        self.v = v      # vertex
-        self.n = n      # normal
-        self.uv = uv    # UV
-        self.t = t      # tangent
+    def __init__(self, v, n, uv, t, bt, saveTangent, saveBiTangent):
+        # vertex, normal, UV
+        self.block = [v.x, v.y, v.z, n.x, n.y, n.z, uv.x, uv.y]
+        if saveTangent:
+            # tangent optional
+            self.block.extend([t.x, t.y, t.z])
+        if saveBiTangent:
+            # bitangent optional
+            self.block.extend([bt.x, bt.y, bt.z])
+
+        self.format = f"={len(self.block)}f"
+
+    def size(self):
+        return struct.calcsize(self.format)
         
     def save(self, file):
-        file.write(struct.pack("=11f", self.v.x, self.v.y, self.v.z,
-            self.n.x, self.n.y, self.n.z, self.uv.x, self.uv.y, 
-            self.t.x, self.t.y, self.t.z))
+        file.write(struct.pack(self.format, *self.block))
 
 class MeshChunk:
-    def __init__(self, materialID):
+    indexSize = 4
+
+    def __init__(self, materialID, opts):
         self.materialID = materialID
+        self.saveTangent = opts["saveTangent"]
+        self.saveBiTangent = opts["saveBitangent"]
         self.vertices = []
         self.indexes = []
         self.normalsSplit = {}
         self.minVec = mathutils.Vector([sys.float_info.max] * 3)
         self.maxVec = mathutils.Vector([sys.float_info.min] * 3)
+        self.verticesSize = 0
+        self.indexesSize = 0
+        self.layoutCount = 3
+        self.layoutCount += 1 if self.saveTangent else 0
+        self.layoutCount += 1 if self.saveBiTangent else 0
+        self.chunkHeaderFormat = "=8iBI"
+
+    def chunkHeaderSize(self):
+        boundingVolSize = struct.calcsize("=28f")
+        return struct.calcsize(f"={self.layoutCount * 2}B") + struct.calcsize(self.chunkHeaderFormat) + boundingVolSize
         
     def compareNear(a, b):
         return math.isclose(a.x, b.x) and math.isclose(a.y, b.y) and math.isclose(a.z, b.z)
         
-    def insertByIndex(self, vi, vertex, n, uv, t):
+    def insertByIndex(self, vi, v, n, uv, t, bt):
         self.indexes.append(vi)
+        self.indexesSize += MeshChunk.indexSize
         if vi >= len(self.vertices):
-            self.vertices.append(Vertex(vertex.co, n, uv, t))
+            self.vertices.append(Vertex(v.co, n, uv, t, bt, self.saveTangent, self.saveBiTangent))
+            self.verticesSize += self.vertices[-1].size()
         
-    def appendVertex(self, vertex, n, uv, t): 
+    def appendVertex(self, v, n, uv, t, bt): 
         lv = len(self.vertices)
-        if not vertex.index in self.normalsSplit.keys():
-            self.normalsSplit[vertex.index] = [(n, lv)]
+        if not v.index in self.normalsSplit.keys():
+            self.normalsSplit[v.index] = [(n, lv)]
         else:
-            normalSplit = self.normalsSplit[vertex.index]
+            normalSplit = self.normalsSplit[v.index]
             for ins in normalSplit:
                 if MeshChunk.compareNear(ins[0], n):
-                    self.insertByIndex(ins[1], vertex, n, uv, t)
+                    self.insertByIndex(ins[1], v, n, uv, t, bt)
                     return
                 
             normalSplit.append((n, lv))
                 
-        self.insertByIndex(lv, vertex, n, uv, t)
-        self.minmaxVec(vertex.co)
+        self.insertByIndex(lv, v, n, uv, t)
+        self.minmaxVec(v.co)
         
     def minmaxVec(self, co):
         self.minVec.x = min(self.minVec.x, co.x)
@@ -58,6 +81,14 @@ class MeshChunk:
         self.maxVec.x = max(self.maxVec.x, co.x)
         self.maxVec.y = max(self.maxVec.y, co.y)
         self.maxVec.z = max(self.maxVec.z, co.z)
+
+    def saveChunkHeader(self, indexesOffset, verticesOffset, file):
+        file.write(struct.pack(self.chunkHeaderFormat, self.chunkHeaderSize(), self.layoutCount, len(self.indexes), 
+            self.indexesSize, indexesOffset, len(self.vertices), self.verticesSize, verticesOffset, 
+            self.indexSize, self.materialID))
+        
+        self.saveBoundingVol(file)
+        self.saveLayout(file)
         
     def saveBoundingVol(self, file):
         vmin = self.minVec
@@ -85,9 +116,12 @@ class MeshChunk:
         file.write(struct.pack("=2B", 0x0, 3)) # LITE3D_BUFFER_BINDING_VERTEX
         file.write(struct.pack("=2B", 0x2, 3)) # LITE3D_BUFFER_BINDING_NORMAL
         file.write(struct.pack("=2B", 0x3, 2)) # LITE3D_BUFFER_BINDING_TEXCOORD
-        file.write(struct.pack("=2B", 0x5, 3)) # LITE3D_BUFFER_BINDING_TANGENT
+        if self.saveTangent:
+            file.write(struct.pack("=2B", 0x5, 3)) # LITE3D_BUFFER_BINDING_TANGENT
+        if self.saveBiTangen:
+            file.write(struct.pack("=2B", 0x6, 3)) # LITE3D_BUFFER_BINDING_BINORMAL
         
-    def save(self, file):
+    def saveDataBlock(self, file):
         for v in self.vertices:
             v.save(file)
         for i in self.indexes:
