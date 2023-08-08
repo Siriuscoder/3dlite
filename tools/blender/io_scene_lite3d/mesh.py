@@ -109,8 +109,14 @@ class Mesh:
                 indexesOffset += chunk.indexesSize
                 verticesOffset += chunk.verticesSize
         
+            # Save vertex data for each chunk one by one
             for chunkIndex in chunksIndexes:
                 chunk = self.chunks[chunkIndex]
-                chunk.saveDataBlock(file)
+                chunk.saveVertexBlock(file)
+
+            # Save index data for each chunk one by one
+            for chunkIndex in chunksIndexes:
+                chunk = self.chunks[chunkIndex]
+                chunk.saveIndexBlock(file)
                 
             log.info(f"saved ok {path}")

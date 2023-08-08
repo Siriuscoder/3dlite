@@ -1,0 +1,25 @@
+{
+  "Passes":[
+    {
+      "Pass": 1,
+      "Program": {
+        "Name":"basic_shading_solid_color.program",
+        "Path":"samples:shaders/json/basic_shading_solid_color.json"
+      }
+    }
+  ],
+  "Uniforms":[
+    {
+      "Name":"projectionMatrix"
+    },
+    {
+      "Name":"viewMatrix"
+    },
+    {
+      "Name":"modelMatrix"
+    },
+    {
+      "Name":"<Albedo>"
+    }
+  ]
+}

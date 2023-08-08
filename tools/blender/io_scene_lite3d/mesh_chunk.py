@@ -121,11 +121,12 @@ class MeshChunk:
         if self.saveBiTangent:
             file.write(struct.pack("=2B", 0x6, 3)) # LITE3D_BUFFER_BINDING_BINORMAL
         
-    def saveDataBlock(self, file):
+    def saveVertexBlock(self, file):
         for v in self.vertices:
             v.save(file)
-        for i in self.indexes:
-            file.write(struct.pack("=I", i))
+
+    def saveIndexBlock(self, file):
+        file.write(struct.pack(f"={len(self.indexes)}I", *self.indexes))
         
     def printStat(self):
         log.debug("  - ID {}, Vertices: {}, Indexes {}".format(self.materialID, len(self.vertices), len(self.indexes)))
