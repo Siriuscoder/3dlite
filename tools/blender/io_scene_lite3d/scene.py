@@ -1,13 +1,12 @@
+import json
 import bpy
-from pathlib import PurePosixPath
+from pathlib import PurePosixPath, Path
 from io_scene_lite3d.mesh import Mesh
 from io_scene_lite3d.material import Material
 from io_scene_lite3d.image import Image
 from io_scene_lite3d.io import IO
 
 class Scene:
-    ExportTypes = ["MESH", "LIGHT", "EMPTY"]
-
     def __init__(self, name, path, package, **opts):
         self.name = name
         self.path = path
@@ -18,6 +17,11 @@ class Scene:
         self.images = {}
         self.materials = {}
         self.options = opts
+        self.exportTypes = ["MESH", "EMPTY"]
+        self.sceneJson = {}
+
+        if self.options["exportLights"]:
+            self.exportTypes.append("LIGHT")
 
     def saveMaterial(self, material):
         if material.name in self.materials.keys():
@@ -56,7 +60,8 @@ class Scene:
         self.savedObjects.append(obj.name)
     
     def saveScene(self):
-        IO.saveJson(self.getAbsSysPath(self.getRelativePathScene(self.name)), self.objectsList)
+        self.sceneJson["Objects"] = self.objectsList
+        IO.saveJson(self.getAbsSysPath(self.getRelativePathScene(self.name)), self.sceneJson)
     
     @staticmethod
     def orietation(obj, node):
@@ -147,7 +152,7 @@ class Scene:
         node["Light"] = lightJson
 
     def exportNode(self, obj, node):
-        if obj.type not in Scene.ExportTypes:
+        if obj.type not in self.exportTypes:
             return
         
         node["Name"] = obj.name
@@ -170,7 +175,7 @@ class Scene:
                     node["Nodes"] = [childNode]
                 
     def exportObject(self, obj):
-        if obj.type not in Scene.ExportTypes:
+        if obj.type not in self.exportTypes:
             return
         # originObject можно указать имя обьекта который мы хотим переиспользовать 
         objectName = obj.get("originObject")
@@ -187,8 +192,16 @@ class Scene:
         
         Scene.orietation(obj, object)
         self.objectsList.append(object)
+
+    def preloadScene(self):
+        sceneFilePath = self.getAbsSysPath(self.getRelativePathScene(self.name))
+        if Path(sceneFilePath).is_file():
+            with open(sceneFilePath, 'r') as file:
+                self.sceneJson = json.load(file)
         
     def exportScene(self):
+        self.preloadScene()
+
         scene = bpy.context.scene
         for obj in scene.objects:
             if obj.parent is None:

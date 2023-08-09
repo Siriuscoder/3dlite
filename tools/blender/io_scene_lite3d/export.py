@@ -16,11 +16,12 @@ class Lite3dExport(bpy.types.Operator, ExportHelper):
     packageName: StringProperty(name = "Package Name", default = "samples")
     filename_ext = ""
     filter_glob: StringProperty(default = "", options = {'HIDDEN'})
-    saveTangent: BoolProperty(name = "Save Tangents", default = True, description = "Calculate and save tangents to models data")
-    saveBiTangent: BoolProperty(name = "Save BiTangents", default = False, description = "Calculate and save bitangents to models data")
+    saveTangent: BoolProperty(name = "Tangents", default = True, description = "Calculate and save tangents to models data")
+    saveBiTangent: BoolProperty(name = "BiTangents", default = False, description = "Calculate and save bitangents to models data")
     copyTexImages: BoolProperty(name = "Copy Texture Images", default = True, description = "Try to copy texture images to textures/images/, use absolute path while loading textures in Blender to works it correct")
     removeDoubles: BoolProperty(name = "Remove Doubles", default = False, description = "Optimize mesh, remove double vertices")
     triangulate: BoolProperty(name = "Triangulate", default = False, description = "Convert quads faces to tris")
+    exportLights: BoolProperty(name = "Lights", default = True, description = "Export light sources")
     defaultConstantAttenuation: FloatProperty(name = "Default Attenuation Constant", precision = 6, default = 0.0, description = "Default light constant attenuation")
     defaultLinearAttenuation: FloatProperty(name = "Default Attenuation Linear", precision = 6, default = 0.01, description = "Default light linear attenuation")
     defaultQuadraticAttenuation: FloatProperty(name = "Default Attenuation Quadratic", precision = 6, default = 0.0001, description = "Default light quadratic attenuation")
@@ -43,6 +44,7 @@ class Lite3dExport(bpy.types.Operator, ExportHelper):
         box.prop(self, "copyTexImages")
         box.prop(self, "materialTemplate")
         box.label(text = "Lighting:")
+        box.prop(self, "exportLights")
         box.prop(self, "defaultConstantAttenuation")
         box.prop(self, "defaultLinearAttenuation")
         box.prop(self, "defaultQuadraticAttenuation")
@@ -66,7 +68,8 @@ class Lite3dExport(bpy.types.Operator, ExportHelper):
                           defaultQuadraticAttenuation = self.defaultQuadraticAttenuation,
                           defaultInfluenceDistance = self.defaultInfluenceDistance,
                           defaultInfluenceMinRadiance = self.defaultInfluenceMinRadiance,
-                          materialTemplate = self.materialTemplate)
+                          materialTemplate = self.materialTemplate,
+                          exportLights = self.exportLights)
             
             scene.exportScene()
         except Exception as ex:

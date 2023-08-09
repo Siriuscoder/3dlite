@@ -32,7 +32,7 @@ public:
 
     void createScene() override
     {
-        Scene *scene = getMain().getResourceManager()->queryResource<Scene>("MonkeysScene", mSceneName.c_str());
+        getMain().getResourceManager()->queryResource<Scene>("MonkeysScene", mSceneName.c_str());
         setMainCamera(getMain().getCamera("MyCamera"));
     }
 
