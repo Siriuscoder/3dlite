@@ -109,7 +109,6 @@ namespace lite3dpp
         Cameras mCameras;
         BufferBase *mLightingParamsBuffer;
         BufferBase *mLightingIndexBuffer;
-        LightsStore mLightsWorld;
         LightsIndexesStore mLightsIndexes;
     };
 }

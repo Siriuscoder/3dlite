@@ -229,7 +229,7 @@ void Sample::printRenderStats()
 {
     lite3d_render_stats *stats = lite3d_render_stats_get();
     SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
-        "==== Render statistics ========\n"
+        "\n==== Render statistics ========\n"
         "Fames: %ld\n"
         "last FPS\tavr FPS\t\tbest FPS\tworst FPS\n"
         "%d\t\t%d\t\t%d\t\t%d\n"
@@ -246,19 +246,19 @@ void Sample::printMemoryStats()
 {
     ResourceManager::ResourceManagerStats memStats = mMain.getResourceManager()->getStats();
     SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
-        "==== Memory statistics ========\n"
-        "Video memory: %zu bytes\n"
-        "Total objects: %d\n"
-        "Textures: %d/%d\n"
-        "Materials: %d/%d\n"
-        "Scenes: %d/%d\n"
-        "Scripts: %d/%d\n"
-        "Meshes: %d/%d\n"
-        "Shaders: %d/%d\n"
-        "Render targets: %d/%d\n"
-        "SSBO: %d/%d\n"
-        "File cache: %d/%zu bytes\n",
-        memStats.usedVideoMem,
+        "\n==== Memory statistics ========\n"
+        "Video memory:\t%d kB\n"
+        "Total objects:\t%d\n"
+        "Textures:\t%d/%d\n"
+        "Materials:\t%d/%d\n"
+        "Scenes:\t\t%d/%d\n"
+        "Scripts:\t%d/%d\n"
+        "Meshes:\t\t%d/%d\n"
+        "Shaders:\t%d/%d\n"
+        "Render targets:\t%d/%d\n"
+        "SSBO:\t\t%d/%d\n"
+        "File cache:\t%d kB in %d files\n",
+        static_cast<uint32_t>(memStats.usedVideoMem / 1024),
         memStats.totalObjectsCount,
         memStats.texturesLoadedCount, memStats.texturesCount,
         memStats.materialsLoadedCount, memStats.materialsCount,
@@ -268,7 +268,7 @@ void Sample::printMemoryStats()
         memStats.shaderProgramsLoadedCount, memStats.shaderProgramsCount,
         memStats.renderTargetsLoadedCount, memStats.renderTargetsCount,
         memStats.ssboLoadedCount, memStats.ssboCount,
-        memStats.fileCachesCount, memStats.totalCachedFilesMemSize);
+        static_cast<uint32_t>(memStats.totalCachedFilesMemSize / 1024), memStats.fileCachesCount);
 }
 
 void Sample::updateGuiStats()

@@ -206,12 +206,9 @@ namespace lite3dpp
         if (mLightingParamsBuffer->bufferSizeBytes() < (mLights.size() * sizeof(lite3d_light_params)))
             mLightingParamsBuffer->extendBufferBytes(sizeof(lite3d_light_params) * mLights.size());
 
-        mLightsWorld.resize(mLights.size());
-
         for (auto &light : mLights)
         {
             mLightingParamsBuffer->setElement<lite3d_light_params>(i, &light.second->getLight()->getPtr()->params);
-            mLightsWorld[i] = light.second->getLight()->getPtr()->params;
             light.second->getLight()->index(i++);
         }
     }
@@ -236,15 +233,12 @@ namespace lite3dpp
             
             if (light.second->needRecalcToWorld())
             {
-                lite3d_light_params wpar = light.second->lightSourceToWorld();
-                mLightingParamsBuffer->setElement<lite3d_light_params>(light.second->getLight()->index(), 
-                    &wpar);
-                light.second->getLight()->validate();
-                mLightsWorld[light.second->getLight()->index()] = wpar;
+                light.second->translateToWorld();
+                light.second->getLight()->writeToBuffer(*mLightingParamsBuffer);
                 anyValidated = true;
             }
 
-            if (!light.second->frustumTest() || camera.inFrustum(mLightsWorld[light.second->getLight()->index()]))
+            if (!light.second->frustumTest() || camera.inFrustum(*light.second->getLight()))
             {
                 light.second->setVisible(true);
                 mLightsIndexes.push_back(light.second->getLight()->index());

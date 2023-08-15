@@ -269,26 +269,25 @@ static int ai_load_light(const struct aiScene *scene, const struct aiNode *node,
 
     /* enabled */
     params.block1.y = LITE3D_TRUE;
-    params.block1.w = light->mPosition.x;
-    params.block2.x = light->mPosition.y;
-    params.block2.y = light->mPosition.z;
-    params.block2.z = light->mColorAmbient.r;
-    params.block2.w = light->mColorAmbient.g;
-    params.block3.x = light->mColorAmbient.b;
-    params.block3.y = light->mColorDiffuse.r;
-    params.block3.z = light->mColorDiffuse.g;
-    params.block3.w = light->mColorDiffuse.b;
-    params.block4.x = light->mColorSpecular.r;
-    params.block4.y = light->mColorSpecular.g;
-    params.block4.z = light->mColorSpecular.b;
-    params.block4.w = light->mDirection.x;
-    params.block5.x = light->mDirection.y;
-    params.block5.y = light->mDirection.z;
+    
+    params.block2.x = light->mColorDiffuse.r;
+    params.block2.y = light->mColorDiffuse.g;
+    params.block2.z = light->mColorDiffuse.b;
+    params.block2.w = 1.0f;
+
+    params.block3.x = light->mPosition.x;
+    params.block3.y = light->mPosition.y;
+    params.block3.z = light->mPosition.z;
+
+    params.block4.x = light->mDirection.x;
+    params.block4.y = light->mDirection.y;
+    params.block4.z = light->mDirection.z;
+    params.block4.w = light->mAttenuationConstant;
+  
+    params.block5.x = light->mAttenuationLinear;
+    params.block5.y = light->mAttenuationQuadratic;
     params.block5.z = light->mAngleInnerCone;
     params.block5.w = light->mAngleOuterCone;
-    params.block6.x = light->mAttenuationConstant;
-    params.block6.y = light->mAttenuationLinear;
-    params.block6.z = light->mAttenuationQuadratic;
 
     if (ctx.onLight)
         ctx.onLight(node->mName.data, &params, &transform, ctx.userdata);

@@ -17,6 +17,9 @@
 *******************************************************************************/
 #pragma once
 
+#include <limits>
+#include <cmath>
+
 #include <lite3d/lite3d_common.h>
 
 #ifdef PLATFORM_Windows
@@ -63,9 +66,9 @@
 #define LITE3D_THROW(mess) { lite3dpp::Stringstream exmess; exmess << __FILE__ << ":" << \
     LITE3D_CURRENT_FUNCTION << ":" << __LINE__ << ": " << mess; throw std::runtime_error(exmess.str()); }
 
-/* Main engine class */
 namespace lite3dpp
 {
+    /* Main engine class */
     class LITE3DPP_EXPORT Main;
     class LITE3DPP_EXPORT Scene;
     class LITE3DPP_EXPORT Camera;
@@ -73,6 +76,24 @@ namespace lite3dpp
     class LITE3DPP_EXPORT Material;
     class LITE3DPP_EXPORT Texture;
     class LITE3DPP_EXPORT RenderTarget;
+
+    /* epsilon */
+    const constexpr auto epsilon = std::numeric_limits<float>::epsilon();
+
+    inline bool nonzero(float num)
+    {
+        return std::fabs(num) >= epsilon; 
+    }
+
+    inline bool iszero(float num)
+    {
+        return !nonzero(num);
+    }
+
+    inline bool near(float a, float b)
+    {
+        return std::fabs(a - b) <= epsilon;
+    }
 }
 
 class JSONValue;

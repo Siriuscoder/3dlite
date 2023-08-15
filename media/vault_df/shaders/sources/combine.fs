@@ -1,4 +1,5 @@
 #include "samples:shaders/sources/common/version.def"
+#include "samples:shaders/sources/common/utils_inc.glsl"
 
 uniform sampler2D lightMap;
 uniform sampler2D diffuseMap;
@@ -13,7 +14,7 @@ void main()
     /* fragment coordinate */
     vec4 diff = texture2D(diffuseMap, iuv);
     /* check fragment not shaded or self-illum material */
-    if (diff.w == 1.0)
+    if (fnear(diff.w, 1.0))
     {
         fragColor = vec4(diff.xyz, 1.0);
         return;

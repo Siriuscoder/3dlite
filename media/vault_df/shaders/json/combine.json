@@ -2,6 +2,7 @@
     "Sources": 
     [
         "vaultmat:shaders/sources/triangle.vs",
-        "vaultmat:shaders/sources/combine.fs"
+        "vaultmat:shaders/sources/combine.fs",
+        "samples:shaders/sources/common/utils.fs"
     ]
 }

@@ -66,15 +66,14 @@ public:
 
     void addSunlight()
     {
-        String lightParams = ConfigurationWriter().set(L"Name", "SunLight.node").set(L"Light",
-            ConfigurationWriter().set(L"Ambient", KM_VEC3_ZERO)
-            .set(L"Diffuse", KM_VEC3_ONE)
-            .set(L"Position", KM_VEC3_ZERO)
-            .set(L"Name", "SunLight")
-            .set(L"Specular", KM_VEC3_ONE)
-            .set(L"SpotDirection", sunLightDirection)
-            .set(L"Type", "Directional")).write();
+        ConfigurationWriter sunJson;
+        LightSource sunlight("SunLight", nullptr);
+        sunlight.setDiffuse(KM_VEC3_ONE);
+        sunlight.setDirection(sunLightDirection);
+        sunlight.setType(LITE3D_LIGHT_DIRECTIONAL);
+        sunlight.toJson(sunJson);
 
+        String lightParams = ConfigurationWriter().set(L"Name", "SunLight.node").set(L"Light", sunJson).write();
         mSunLight.reset(new LightSceneNode(ConfigurationReader(lightParams.data(), lightParams.size()), NULL, &getMain()));
         mSunLight->addToScene(mMainScene);
         mSunLight->getLight()->enabled(true);

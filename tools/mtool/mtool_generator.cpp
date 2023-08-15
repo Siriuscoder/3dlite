@@ -15,6 +15,8 @@
  *	You should have received a copy of the GNU General Public License
  *	along with Lite3D.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
+#include <lite3dpp/lite3dpp_light_source.h>
+
 #include <mtool/mtool_generator.h>
 #include <mtool/mtool_utils.h>
 
@@ -142,27 +144,8 @@ void JsonGenerator::generateLight(const lite3dpp::String &lightName,
         {
             auto &lastNode = mNodesStack.top().back();
             lite3dpp::ConfigurationWriter liConfig;
-            
-            if (params->block1.x == LITE3D_LIGHT_POINT)
-                liConfig.set(L"Type", "Point");
-            else if (params->block1.x == LITE3D_LIGHT_DIRECTIONAL)
-                liConfig.set(L"Type", "Directional");
-            else if (params->block1.x == LITE3D_LIGHT_SPOT)
-                liConfig.set(L"Type", "Spot");
-            else
-                liConfig.set(L"Type", "Undefined");
-
-            liConfig.set(L"Name", lightName);
-            liConfig.set(L"Ambient", *((kmVec3 *)&params->block2.z));
-            liConfig.set(L"Diffuse", *((kmVec3 *)&params->block3.y));
-            liConfig.set(L"Specular", *((kmVec3 *)&params->block4.x));
-            kmVec4 att = { params->block6.x, params->block6.y, params->block6.z,
-                params->block1.z };
-            liConfig.set(L"Attenuation", att);
-            liConfig.set(L"Position", *((kmVec3 *)&params->block1.w));
-            liConfig.set(L"SpotDirection", *((kmVec3 *)&params->block4.w));
-            liConfig.set(L"SpotFactor", *((kmVec3 *)&params->block5.z));
-
+            lite3dpp::LightSource light(*params, nullptr);
+            light.toJson(liConfig);
             lastNode.set(L"Light", liConfig);
         }
     }

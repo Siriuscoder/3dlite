@@ -1,3 +1,6 @@
+#include "samples:shaders/sources/common/utils_inc.glsl"
+#include "samples:shaders/sources/lighting/lighting_inc.glsl"
+
 uniform sampler2D diffuse;
 uniform sampler2D normals;
 uniform vec3 eye;
@@ -26,16 +29,6 @@ const float specPower = 180.0;
 #else
 const float specPower = 40.0;
 #endif
-
-vec3 calc_lighting(vec3 fragPos, 
-    vec3 fragNormal, vec3 eye, float specularFactor, 
-    float wrapAroundFactor, float specPower, inout vec3 linearSpec);
-
-bool vec3zero(vec3 vec)
-{
-    float prec = 0.000001;
-    return ((1.0-step(prec, vec.x)) * (1.0-step(prec, vec.y)) * (1.0-step(prec, vec.z))) == 1.0;
-}
 
 #ifdef CALC_PARALLAX
 vec2 ParallaxMapping(vec2 tc, vec3 viewDir)
@@ -100,7 +93,7 @@ void main()
 #ifdef CALC_ILLUM
     // sampling glow texture and check colors
     vec3 fragGlow = texture2D(glow, tc).rgb;
-    if (!vec3zero(fragGlow))
+    if (!fiszero(fragGlow))
     {
         fragColor = vec4(fogFunc(fragGlow + (fragDiffuse.rgb/3), fogColor), fragDiffuse.a);
         return;
@@ -114,7 +107,7 @@ void main()
     vec3 nw = normalize(itbn * normalize(2*nval.rgb-1));
 
     // fix bad normals
-    if (vec3zero(nw))
+    if (fiszero(nw))
         nw = wnorm;
 
     vec3 linearSpec;

@@ -1,3 +1,5 @@
+#include "samples:shaders/sources/common/utils_inc.glsl"
+
 uniform sampler2D diffuse;
 uniform sampler2D normals;
 #ifdef CALC_ILLUM
@@ -18,12 +20,6 @@ in vec3 wnorm;
 layout(location = 0) out vec4 coord;
 layout(location = 1) out vec4 norm;
 layout(location = 2) out vec4 color;
-
-bool vec3zero(vec3 vec)
-{
-    float prec = 0.000001;
-    return ((1.0-step(prec, vec.x)) * (1.0-step(prec, vec.y)) * (1.0-step(prec, vec.z))) == 1.0;
-}
 
 #ifdef CALC_PARALLAX
 vec2 ParallaxMapping(vec2 tc, vec3 viewDir)
@@ -78,7 +74,7 @@ void main()
 #ifdef CALC_ILLUM
     // sampling glow texture and check colors
     vec3 fragGlow = texture2D(glow, tc).rgb;
-    if (!vec3zero(fragGlow))
+    if (!fiszero(fragGlow))
     {
         fragDiffuse = vec4(fragGlow, 1.0);
     }
@@ -91,7 +87,7 @@ void main()
     vec3 nw = normalize(itbn * normalize(2*nval.rgb-1));
 
     // fix bad normals
-    if (vec3zero(nw))
+    if (fiszero(nw))
         nw = wnorm;
 
     coord = vec4(ivv, gl_FragCoord.z / gl_FragCoord.w);

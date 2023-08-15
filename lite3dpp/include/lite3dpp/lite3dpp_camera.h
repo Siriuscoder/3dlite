@@ -101,8 +101,7 @@ namespace lite3dpp
         void moveRelative(const kmVec3 &value);
         void holdOnSceneObject(const SceneObject &sceneObj);
         void linkWithSceneObject(const SceneObject &sceneObj);
-        bool inFrustum(const lite3d_bounding_vol &vol) const;
-        bool inFrustum(const lite3d_light_params &lp) const;
+        bool inFrustum(const LightSource &light) const;
 
 
     private:
