@@ -27,7 +27,10 @@ class Material:
                 continue
             if socket.name == "Base Color":
                 self.params["Albedo"] = [x for x in socket.default_value] # Color 4i
-            if socket.name == "Emission":
+                alphaSocket = node.inputs["Alpha"]
+                if not alphaSocket.is_linked and not socket.is_unavailable and socket.enabled:
+                    self.params["Albedo"][3] = float(alphaSocket.default_value)
+            elif socket.name == "Emission":
                 self.params["Emission"] = [x for x in socket.default_value] # Color 4i
             elif socket.name in ["Metallic", "Specular", "Roughness", "IOR"]:
                 self.params[socket.name] = float(socket.default_value)
