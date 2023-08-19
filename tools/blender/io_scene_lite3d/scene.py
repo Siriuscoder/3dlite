@@ -50,6 +50,14 @@ class Scene:
     def getAbsPath(self, relPath):
         return f"{self.package}:{relPath}"
     
+    def getAbsImagePath(self, relPath):
+        imagePackageName = self.options["imagePackageName"]
+        return f"{imagePackageName}:{relPath}"
+    
+    def getAbsMeshPath(self, relPath):
+        meshPackageName = self.options["meshPackageName"]
+        return f"{meshPackageName}:{relPath}"
+    
     def getAbsSysPath(self, relPath):
         path = self.path.joinpath(relPath)
         path.parent.mkdir(parents = True, exist_ok = True)
@@ -95,7 +103,7 @@ class Scene:
             mesh = self.meshes[obj.data.name]
             
         node["Mesh"] = {
-            "Mesh": self.getAbsPath(mesh.getRelativePathJson()), 
+            "Mesh": self.getAbsMeshPath(mesh.getRelativePathJson()), 
             "Name": mesh.name
         }
         

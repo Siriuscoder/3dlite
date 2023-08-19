@@ -66,7 +66,7 @@ class Mesh:
     def save(self):
         meshJson = {
             "Codec": "m",
-            "Model": self.scene.getAbsPath(self.getRelativePath())
+            "Model": self.scene.getAbsMeshPath(self.getRelativePath())
         }
         
         materialMapping = []

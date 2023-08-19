@@ -14,6 +14,8 @@ class Lite3dExport(bpy.types.Operator, ExportHelper):
 
     filepath: StringProperty(subtype="FILE_PATH")
     packageName: StringProperty(name = "Package Name", default = "samples")
+    imagePackageName: StringProperty(name = "Image Package Name", default = "samples")
+    meshPackageName: StringProperty(name = "Mesh Package Name", default = "samples")
     filename_ext = ""
     filter_glob: StringProperty(default = "", options = {'HIDDEN'})
     saveTangent: BoolProperty(name = "Tangents", default = True, description = "Calculate and save tangents to models data")
@@ -22,6 +24,7 @@ class Lite3dExport(bpy.types.Operator, ExportHelper):
     removeDoubles: BoolProperty(name = "Remove Doubles", default = False, description = "Optimize mesh, remove double vertices")
     triangulate: BoolProperty(name = "Triangulate", default = False, description = "Convert quads faces to tris")
     exportLights: BoolProperty(name = "Lights", default = True, description = "Export light sources")
+    flipUV: BoolProperty(name = "Flip UVs", default = False, description = "Flip UVs if needed (uv.y = 1.0 - uv.y)")
     defaultConstantAttenuation: FloatProperty(name = "Default Attenuation Constant", precision = 6, default = 0.0, description = "Default light constant attenuation")
     defaultLinearAttenuation: FloatProperty(name = "Default Attenuation Linear", precision = 6, default = 0.01, description = "Default light linear attenuation")
     defaultQuadraticAttenuation: FloatProperty(name = "Default Attenuation Quadratic", precision = 6, default = 0.0001, description = "Default light quadratic attenuation")
@@ -35,11 +38,14 @@ class Lite3dExport(bpy.types.Operator, ExportHelper):
         box = layout.box()
         box.label(text = "Common:")
         box.prop(self, "packageName")
+        box.prop(self, "imagePackageName")
+        box.prop(self, "meshPackageName")
         box.label(text = "Mesh:")
         box.prop(self, "triangulate")
         box.prop(self, "removeDoubles")
         box.prop(self, "saveTangent")
         box.prop(self, "saveBiTangent")
+        box.prop(self, "flipUV")
         box.label(text = "Materials:")
         box.prop(self, "copyTexImages")
         box.prop(self, "materialTemplate")
@@ -58,11 +64,14 @@ class Lite3dExport(bpy.types.Operator, ExportHelper):
             scene = Scene(exportPath.stem, 
                           exportPath.parent, 
                           self.packageName, 
+                          imagePackageName = self.imagePackageName,
+                          meshPackageName = self.meshPackageName, 
                           saveTangent = self.saveTangent, 
                           saveBiTangent = self.saveBiTangent,
                           copyTexImages = self.copyTexImages,
                           removeDoubles = self.removeDoubles,
                           triangulate = self.triangulate,
+                          flipUV = self.flipUV,
                           defaultConstantAttenuation = self.defaultConstantAttenuation,
                           defaultLinearAttenuation = self.defaultLinearAttenuation,
                           defaultQuadraticAttenuation = self.defaultQuadraticAttenuation,

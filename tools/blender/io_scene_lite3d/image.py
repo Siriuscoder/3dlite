@@ -33,7 +33,7 @@ class Image:
             "ImageFormat": self.imagePath.suffix.strip(".").upper(),
             "TextureType": "2D",
             "Wrapping": "Repeat" if self.extension == "REPEAT" else "ClampToEdge",
-            "Image": self.scene.getAbsPath(self.getRelativeImagePath())
+            "Image": self.scene.getAbsImagePath(self.getRelativeImagePath())
         }
         
         IO.saveJson(self.scene.getAbsSysPath(self.getRelativePath()), imageJson)

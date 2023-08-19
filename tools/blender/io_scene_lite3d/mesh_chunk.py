@@ -6,9 +6,9 @@ from io_scene_lite3d.io import IO
 from io_scene_lite3d.logger import log
 
 class Vertex:
-    def __init__(self, v, n, uv, t, bt, saveTangent, saveBiTangent):
+    def __init__(self, v, n, uv, t, bt, saveTangent, saveBiTangent, flipUV):
         # vertex, normal, UV
-        self.block = [v.x, v.y, v.z, n.x, n.y, n.z, uv.x, uv.y]
+        self.block = [v.x, v.y, v.z, n.x, n.y, n.z, uv.x, 1.0 - uv.y if flipUV else uv.y]
         if saveTangent:
             # tangent optional
             self.block.extend([t.x, t.y, t.z])
@@ -31,6 +31,7 @@ class MeshChunk:
         self.materialID = materialID
         self.saveTangent = opts["saveTangent"]
         self.saveBiTangent = opts["saveBiTangent"]
+        self.flipUV = opts["flipUV"]
         self.vertices = []
         self.indexes = []
         self.normalsSplit = {}
@@ -54,7 +55,7 @@ class MeshChunk:
         self.indexes.append(vi)
         self.indexesSize += MeshChunk.indexSize
         if vi >= len(self.vertices):
-            self.vertices.append(Vertex(v.co, n, uv, t, bt, self.saveTangent, self.saveBiTangent))
+            self.vertices.append(Vertex(v.co, n, uv, t, bt, self.saveTangent, self.saveBiTangent, self.flipUV))
             self.verticesSize += self.vertices[-1].size()
         
     def appendVertex(self, v, n, uv, t, bt): 

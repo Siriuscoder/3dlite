@@ -58,7 +58,7 @@ class Material:
             template[key] = keyParam
             template["Type"] = "sampler"
             template["TextureName"] = image.name
-            template["TextureName"] = self.scene.getAbsPath(image.getRelativePath())
+            template["TexturePath"] = self.scene.getAbsImagePath(image.getRelativePath())
         else:
             template[key] = keyParam
             template["Type"] = f"v{len(param)}" if isinstance(param, list) else "float"
