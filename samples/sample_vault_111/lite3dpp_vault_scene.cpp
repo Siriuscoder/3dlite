@@ -22,11 +22,11 @@
 namespace lite3dpp {
 namespace samples {
 
-class SampleViewer : public Sample
+class SampleMonkeys : public Sample
 {
 public:
 
-    SampleViewer(const std::string &scene) : 
+    SampleMonkeys(const std::string &scene) : 
         mSceneName(scene)
     {}
 
@@ -45,13 +45,7 @@ private:
 
 int main(int agrc, char *args[])
 {
-    if (agrc != 2)
-    {
-        std::cerr << "Wrong options, path to scene file must be specifed" << std::endl;
-        return 1;
-    }
-
-    lite3dpp::samples::SampleViewer sample(std::string("samples:") + args[1]);
-    return sample.start("samples/config/config.json");
+    lite3dpp::samples::SampleMonkeys sample(std::string("samples:") + args[1]);
+    return sample.start("vault_111/config/config.json");
 }
 

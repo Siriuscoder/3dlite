@@ -19,7 +19,7 @@
       "Name":"modelMatrix"
     },
     {
-      "Name":"diffuseSampler",
+      "Name":"Albedo",
       "TextureName":"sponza_ceiling_a_diff.texture",
       "TexturePath":"sponza:textures/json/sponza_ceiling_a_diff.json",
       "Type":"sampler"

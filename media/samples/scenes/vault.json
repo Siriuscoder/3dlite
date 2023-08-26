@@ -1,0 +1,271 @@
+{
+  "Cameras": [
+    {
+      "Name": "MyCamera",
+      "Position": [
+        0,
+        -500,
+        100
+      ],
+      "LookAt": [
+        0,
+        0,
+        200
+      ],
+      "Perspective": {
+        "Znear": 10,
+        "Zfar": 5000,
+        "Fov": 60
+      },
+      "RenderTargets": [
+        {
+          "Name": "Window",
+          "Priority": 0,
+          "TexturePass": 1
+        }
+      ]
+    }
+  ],
+  "Objects": [
+    {
+      "Name": "VaultStatic",
+      "Object": "samples:objects/VaultStatic.json",
+      "Position": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "Rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "Scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "Name": "Door",
+      "Object": "samples:objects/Door.json",
+      "Position": [
+        -1216.0,
+        640.0,
+        0.0
+      ],
+      "Rotation": [
+        0.0,
+        0.0,
+        0.7071067690849304,
+        0.7071068286895752
+      ],
+      "Scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "Name": "DoorSpecial",
+      "Object": "samples:objects/DoorSpecial.json",
+      "Position": [
+        -1216.0,
+        -384.0,
+        0.0
+      ],
+      "Rotation": [
+        0.0,
+        0.0,
+        0.7071067690849304,
+        0.7071067690849304
+      ],
+      "Scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "Name": "Door.001",
+      "Object": "samples:objects/Door.json",
+      "Position": [
+        -1216.0,
+        -1536.0,
+        0.0
+      ],
+      "Rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "Scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "Name": "Door.002",
+      "Object": "samples:objects/Door.json",
+      "Position": [
+        2112.0,
+        -512.0,
+        -128.0
+      ],
+      "Rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "Scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "Name": "Door.003",
+      "Object": "samples:objects/Door.json",
+      "Position": [
+        1088.0,
+        128.0,
+        0.0
+      ],
+      "Rotation": [
+        0.0,
+        0.0,
+        0.7071067690849304,
+        0.7071068286895752
+      ],
+      "Scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "Name": "Door.004",
+      "Object": "samples:objects/Door.json",
+      "Position": [
+        -2240.0,
+        -1536.0,
+        0.0
+      ],
+      "Rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "Scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "Name": "Door.005",
+      "Object": "samples:objects/Door.json",
+      "Position": [
+        -192.0,
+        -1280.0,
+        0.0
+      ],
+      "Rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "Scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "Name": "Door.006",
+      "Object": "samples:objects/Door.json",
+      "Position": [
+        -832.0,
+        -1920.0,
+        0.0
+      ],
+      "Rotation": [
+        0.0,
+        0.0,
+        0.7071067690849304,
+        0.7071068286895752
+      ],
+      "Scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "Name": "DoorSpecial.001",
+      "Object": "samples:objects/DoorSpecial.json",
+      "Position": [
+        448.0,
+        -768.0,
+        0.0
+      ],
+      "Rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "Scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "Name": "MinigunTurret",
+      "Object": "samples:objects/MinigunTurret.json",
+      "Position": [
+        407.0664978027344,
+        42.75658416748047,
+        0.0
+      ],
+      "Rotation": [
+        0.0,
+        0.0,
+        0.5489334464073181,
+        0.8358660936355591
+      ],
+      "Scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "Name": "MinigunTurret.001",
+      "Object": "samples:objects/MinigunTurret.json",
+      "Position": [
+        -77.88658905029297,
+        -211.94451904296875,
+        0.0
+      ],
+      "Rotation": [
+        0.0,
+        0.0,
+        0.5489334464073181,
+        0.8358660936355591
+      ],
+      "Scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    }
+  ]
+}

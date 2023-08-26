@@ -6,7 +6,7 @@
         { "Name": "viewMatrix" },
         
         {
-            "Name": "diffuseSampler",
+            "Name": "Albedo",
             "Type": "sampler",
             "TextureName": "arial256x128.texture",
             "TexturePath": "samples:textures/json/arial256x128.json"

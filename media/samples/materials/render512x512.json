@@ -6,7 +6,7 @@
 		{ "Name": "viewMatrix" },
 		
 		{
-			"Name": "diffuseSampler",
+			"Name": "Albedo",
 			"Type": "sampler",
 			"TextureName": "color512x512.texture",
 			"TexturePath": "samples:textures/json/color512x512.json"

@@ -27,7 +27,7 @@
       "Scope":"global"
     },
     {
-      "Name":"diffuseSampler",
+      "Name":"Albedo",
       "TextureName":"T_UberWalker_Dif.texture",
       "TexturePath":"samples:textures/json/T_UberWalker_Dif.json",
       "Type":"sampler"

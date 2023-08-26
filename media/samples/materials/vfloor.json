@@ -19,7 +19,7 @@
       "Name":"modelMatrix"
     },
     {
-      "Name":"diffuseSampler",
+      "Name":"Albedo",
       "TextureName":"vfloor03.texture",
       "TexturePath":"samples:textures/json/vfloor03.json",
       "Type":"sampler"
