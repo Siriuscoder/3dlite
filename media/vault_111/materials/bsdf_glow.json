@@ -1,0 +1,25 @@
+{
+  "Passes":[
+    {
+      "Pass": 1,
+      "Program": {
+        "Name":"basic_shading_albedo.program",
+        "Path":"samples:shaders/json/basic_shading_albedo.json"
+      }
+    }
+  ],
+  "Uniforms":[
+    {
+      "Name":"projectionMatrix"
+    },
+    {
+      "Name":"viewMatrix"
+    },
+    {
+      "Name":"modelMatrix"
+    },
+    {
+      "Name":"<Albedo>"
+    }
+  ]
+}

@@ -22,17 +22,13 @@
 namespace lite3dpp {
 namespace samples {
 
-class SampleMonkeys : public Sample
+class SampleVault111 : public Sample
 {
 public:
 
-    SampleMonkeys(const std::string &scene) : 
-        mSceneName(scene)
-    {}
-
     void createScene() override
     {
-        getMain().getResourceManager()->queryResource<Scene>("ViewScene", mSceneName.c_str());
+        getMain().getResourceManager()->queryResource<Scene>("Vault111Scene", "vault_111:scenes/vault_111.json");
         setMainCamera(getMain().getCamera("MyCamera"));
     }
 
@@ -45,7 +41,7 @@ private:
 
 int main(int agrc, char *args[])
 {
-    lite3dpp::samples::SampleMonkeys sample(std::string("samples:") + args[1]);
+    lite3dpp::samples::SampleVault111 sample;
     return sample.start("vault_111/config/config.json");
 }
 
