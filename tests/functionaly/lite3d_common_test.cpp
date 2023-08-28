@@ -36,11 +36,6 @@ Lite3dCommon::Lite3dCommon()
     mSettings.videoSettings.hidden = LITE3D_TRUE;
 }
 
-Lite3dCommon::~Lite3dCommon()
-{
-
-}
-
 bool Lite3dCommon::main()
 {
     return lite3d_main(&mSettings) == LITE3D_TRUE;

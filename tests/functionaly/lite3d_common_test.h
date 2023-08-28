@@ -15,24 +15,27 @@
  *	You should have received a copy of the GNU General Public License
  *	along with Lite3D.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
+#include <gtest/gtest.h>
 #include <lite3d/lite3d_main.h>
 
 #define LITE3D_GTEST_DECLARE(testCase, test, func) \
     TEST_F(testCase, test) \
     { \
-        mlite3dCommon.settings().renderLisneters.preRender = func; \
-        mlite3dCommon.main(); \
+        settings().renderLisneters.preRender = func; \
+        main(); \
     }
 
-class Lite3dCommon
+class Lite3dCommon : public ::testing::Test
 {
 public:
 
     Lite3dCommon();
-    ~Lite3dCommon();
+    ~Lite3dCommon() = default;
 
     bool main();
 
+    inline const lite3d_global_settings &settings() const
+    { return mSettings; }
     inline lite3d_global_settings &settings()
     { return mSettings; }
 

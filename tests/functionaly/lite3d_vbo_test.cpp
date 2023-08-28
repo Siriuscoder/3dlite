@@ -15,15 +15,13 @@
  *	You should have received a copy of the GNU General Public License
  *	along with Lite3D.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
-#include <gtest/gtest.h>
-
 #include <lite3d/lite3d_mesh_codec.h>
 #include <lite3d/lite3d_mesh_assimp_loader.h>
 #include "lite3d_common_test.h"
 
 #ifdef INCLUDE_ASSIMP
 
-class VBO_Test : public ::testing::Test
+class VBO_Test : public Lite3dCommon
 {
 public:
 
@@ -93,9 +91,6 @@ public:
         /* quit immediatly */
         return LITE3D_FALSE;
     }
-
-protected:
-    Lite3dCommon mlite3dCommon;
 };
 
 LITE3D_GTEST_DECLARE(VBO_Test, meshLoading, meshLoadingTest)

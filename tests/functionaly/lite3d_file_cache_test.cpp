@@ -148,13 +148,13 @@ protected:
 
 public:
 
-    virtual void SetUp()
+    void SetUp() override
     {
         mFileSysPack = lite3d_pack_open("tests/", 0, 700000);
         ASSERT_TRUE(mFileSysPack != NULL);
     }
 
-    virtual void TearDown()
+    void TearDown() override
     {
         lite3d_pack_close(mFileSysPack);
     }
@@ -207,13 +207,13 @@ protected:
 
 public:
 
-    virtual void SetUp()
+    void SetUp() override
     {
         mFile7zPack = lite3d_pack_open("tests/pack/pack.1", 1, 700000);
         ASSERT_TRUE(mFile7zPack != NULL);
     }
 
-    virtual void TearDown()
+    void TearDown() override
     {
         lite3d_pack_close(mFile7zPack);
     }

@@ -41,6 +41,7 @@
 #define LITE3D_TEXTURE_BUFFER           0x04
 #define LITE3D_TEXTURE_2D_MULTISAMPLE   0x05
 #define LITE3D_TEXTURE_3D_MULTISAMPLE   0x06
+#define LITE3D_TEXTURE_2D_SHADOW        0x07
 /* pre-loading texture manipulation */
 #define LITE3D_ALIENIFY_FILTER      0x0001
 #define LITE3D_BLURAVG_FILTER       0x0002
@@ -57,9 +58,9 @@
 
 #define LITE3D_MAX_FILTERS          10
 
-#define LITE3D_TEXTURE_QL_NICEST    0x0001 // mipmapping + anisotropic filter
-#define LITE3D_TEXTURE_QL_LOW       0x0002
-#define LITE3D_TEXTURE_QL_MEDIUM    0x0003
+#define LITE3D_TEXTURE_QL_LOW       0x0001
+#define LITE3D_TEXTURE_QL_MEDIUM    0x0002
+#define LITE3D_TEXTURE_QL_NICEST    0x0003 // mipmapping + anisotropic filter
 
 #define LITE3D_TEXTURE_CLAMP_TO_EDGE    0x0001
 #define LITE3D_TEXTURE_REPEAT           0x0002
@@ -198,6 +199,9 @@ LITE3D_CEXPORT int32_t lite3d_texture_unit_get_level_depth(lite3d_texture_unit *
     GL_TEXTURE_CUBE_MAP_NEGATIVE_Y	Bottom  = 3
     GL_TEXTURE_CUBE_MAP_POSITIVE_Z	Back    = 4
     GL_TEXTURE_CUBE_MAP_NEGATIVE_Z	Front   = 5
+   Notice: if native image supports multiple faces and textureTarget == LITE3D_TEXTURE_CUBE engine will try to 
+   load available faces from the image by single call of lite3d_texture_unit_from_resource and 'cubeface' param will not 
+   effect is this case.
 */
 LITE3D_CEXPORT int lite3d_texture_unit_from_resource(lite3d_texture_unit *textureUnit, 
     const lite3d_file *resource, uint32_t imageType, uint32_t textureTarget, 
