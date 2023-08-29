@@ -1,0 +1,22 @@
+{
+  "Passes":[
+    {
+      "Pass":1,
+      "Program":{
+        "Name":"skybox.program",
+        "Path":"samples:shaders/json/skybox.json"
+      }
+    }
+  ],
+  "Uniforms":[
+    {
+      "Name":"screenMatrix"
+    },
+    {
+      "Name":"skybox",
+      "TextureName":"skybox.texture",
+      "TexturePath":"samples:textures/json/skybox.json",
+      "Type":"sampler"
+    }
+  ]
+}

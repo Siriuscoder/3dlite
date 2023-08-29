@@ -29,6 +29,7 @@ define_sample(sample_vault sample_common lite3dpp_font lite3dpp)
 define_sample(sample_warship sample_common lite3dpp_font lite3dpp)
 define_sample(sample_viewer sample_common lite3dpp_font lite3dpp)
 define_sample(sample_vault_111 sample_common lite3dpp_font lite3dpp)
+define_sample(sample_reflection_sky sample_common lite3dpp_font lite3dpp)
 
 find_package(Bullet)
 if(NOT BULLET_FOUND)

@@ -1,0 +1,36 @@
+{
+  "Passes": [
+    {
+      "Pass": 1,
+      "Program": {
+        "Name": "reflection_cube.program",
+        "Path": "samples:shaders/json/reflection_cube.json"
+      }
+    }
+  ],
+  "Uniforms": [
+    {
+      "Name": "projectionMatrix"
+    },
+    {
+      "Name": "viewMatrix"
+    },
+    {
+      "Name": "modelMatrix"
+    },
+    {
+      "Name":"eye",
+      "Type":"v3",
+      "Value":[
+        0,0,0
+      ],
+      "Scope":"global"
+    },
+    {
+      "Name":"cube",
+      "TextureName":"skybox.texture",
+      "TexturePath":"samples:textures/json/skybox.json",
+      "Type":"sampler"
+    }
+  ]
+}

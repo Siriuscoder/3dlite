@@ -25,12 +25,12 @@ public:
     static int cubemapLoadingTest(void *userdata)
     {
         lite3d_texture_unit cubemap = {};
-        lite3d_pack *fileSysPack = lite3d_pack_open("tests/", 0, 1000000);
+        lite3d_pack *fileSysPack = lite3d_pack_open("samples/", 0, 1000000);
         EXPECT_TRUE(fileSysPack);
         if (!fileSysPack)
             return LITE3D_FALSE;
 
-        lite3d_file *ddsFile = lite3d_pack_file_load(fileSysPack, "pack/Vault111CryoCube.dds");
+        lite3d_file *ddsFile = lite3d_pack_file_load(fileSysPack, "textures/images/skymap/Vault111CryoCube.dds");
         EXPECT_TRUE(ddsFile);
         if (!ddsFile)
             return LITE3D_FALSE;
