@@ -112,7 +112,7 @@ static const char *texture_target_string(uint32_t textureTarget)
     case GL_TEXTURE_2D_MULTISAMPLE:
         return "TEXTURE_2D_MULTISAMPLE";
     case GL_TEXTURE_2D_MULTISAMPLE_ARRAY:
-        return "GL_TEXTURE_2D_MULTISAMPLE_ARRAY";
+        return "TEXTURE_2D_MULTISAMPLE_ARRAY";
     default:
         return "INVALID";
     }
@@ -275,8 +275,16 @@ static int set_internal_format(lite3d_texture_unit *textureUnit, uint16_t *forma
         }
         case LITE3D_TEXTURE_FORMAT_DEPTH:
         {
-            textureUnit->imageBPP = 3;
-            *internalFormat = GL_DEPTH_COMPONENT32;
+            if (gTextureSettings.useDepthFormat == LITE3D_TEXTURE_IFORMAT_DEPTH_32)
+            {
+                textureUnit->imageBPP = 4;
+                *internalFormat = GL_DEPTH_COMPONENT32;
+            }
+            else
+            {
+                textureUnit->imageBPP = 3;
+                *internalFormat = GL_DEPTH_COMPONENT;
+            }
             break;
         }
         case LITE3D_TEXTURE_FORMAT_RGBA:
@@ -369,6 +377,11 @@ int lite3d_texture_technique_init(const lite3d_texture_technique_settings *setti
 
     if (lite3d_check_seamless_cube_map())
         glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
+
+    if (gTextureSettings.useDepthFormat == LITE3D_TEXTURE_IFORMAT_DEPTH_32 && !lite3d_check_depth32())
+    {
+        gTextureSettings.useDepthFormat = LITE3D_TEXTURE_IFORMAT_DEPTH_DEFAULT;
+    }
     
     glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &maxTextureImageUnits);
     glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTextureSize);
@@ -788,6 +801,13 @@ int lite3d_texture_unit_allocate(lite3d_texture_unit *textureUnit,
         !lite3d_check_texture_multisample())
     {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "%s: Multisample texture not supported",
+            LITE3D_CURRENT_FUNCTION);
+        return LITE3D_FALSE;
+    }
+
+    if (textureTarget == LITE3D_TEXTURE_2D_SHADOW && !lite3d_check_shadow_samplers())
+    {
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "%s: Shadow2D textures not supported",
             LITE3D_CURRENT_FUNCTION);
         return LITE3D_FALSE;
     }

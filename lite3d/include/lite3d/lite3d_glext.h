@@ -40,7 +40,8 @@ int lite3d_check_renderbuffer_storage_multisample();
 int lite3d_check_texture_multisample();
 int lite3d_check_framebuffer_blit();
 int lite3d_check_occlusion_query();
-
+int lite3d_check_depth32();
+int lite3d_check_shadow_samplers();
 
 /* stub functions */
 void glTexSubImage3D_stub(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLenum format, GLenum type, const void *pixels);
@@ -114,6 +115,10 @@ void glGetQueryObjectuiv_stub(GLuint id, GLenum pname, GLuint *params);
 
 #   ifndef GL_MAX_COMBINED_GEOMETRY_UNIFORM_COMPONENTS
 #       define GL_MAX_COMBINED_GEOMETRY_UNIFORM_COMPONENTS GL_MAX_COMBINED_GEOMETRY_UNIFORM_COMPONENTS_EXT
+#   endif
+
+#   ifndef GL_DEPTH_COMPONENT32
+#       define GL_DEPTH_COMPONENT32 GL_DEPTH_COMPONENT32_OES
 #   endif
 
 /* GL_OES_vertex_array_object */    
@@ -223,23 +228,35 @@ extern PFNGLGETQUERYOBJECTUIVEXTPROC glGetQueryObjectuivPtr;
 #       endif
 
 #       ifndef GL_ANY_SAMPLES_PASSED
-#           define GL_ANY_SAMPLES_PASSED 0x8C2F
+#           define GL_ANY_SAMPLES_PASSED GL_ANY_SAMPLES_PASSED_EXT
 #       endif
 
 #       ifndef GL_ANY_SAMPLES_PASSED_CONSERVATIVE
-#           define GL_ANY_SAMPLES_PASSED_CONSERVATIVE 0x8D6A
+#           define GL_ANY_SAMPLES_PASSED_CONSERVATIVE GL_ANY_SAMPLES_PASSED_CONSERVATIVE_EXT
 #       endif
 
 #       ifndef GL_CURRENT_QUERY
-#           define GL_CURRENT_QUERY 0x8865
+#           define GL_CURRENT_QUERY GL_CURRENT_QUERY_EXT
 #       endif
 
 #       ifndef GL_QUERY_RESULT
-#           define GL_QUERY_RESULT 0x8866
+#           define GL_QUERY_RESULT GL_QUERY_RESULT_EXT
 #       endif
 
 #       ifndef GL_QUERY_RESULT_AVAILABLE
-#           define GL_QUERY_RESULT_AVAILABLE 0x8867
+#           define GL_QUERY_RESULT_AVAILABLE GL_QUERY_RESULT_AVAILABLE_EXT
+#       endif
+
+#       ifndef GL_TEXTURE_COMPARE_MODE
+#           define GL_TEXTURE_COMPARE_MODE GL_TEXTURE_COMPARE_MODE_EXT
+#       endif
+
+#       ifndef GL_COMPARE_REF_TO_TEXTURE
+#           define GL_COMPARE_REF_TO_TEXTURE GL_COMPARE_REF_TO_TEXTURE_EXT
+#       endif
+
+#       ifndef GL_TEXTURE_COMPARE_FUNC
+#           define GL_TEXTURE_COMPARE_FUNC GL_TEXTURE_COMPARE_FUNC_EXT
 #       endif
 
 #   endif

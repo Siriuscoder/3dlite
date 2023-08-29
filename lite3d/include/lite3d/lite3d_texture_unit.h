@@ -34,6 +34,10 @@
 #define LITE3D_IMAGE_PSD          0x08  //Adobe PhotoShop - .psd extension
 #define LITE3D_IMAGE_HDR          0x09  //Radiance High Dynamic Range - .hdr extension
 
+#define LITE3D_TEXTURE_IFORMAT_DEPTH_DEFAULT    0x00
+#define LITE3D_TEXTURE_IFORMAT_DEPTH_32         0x01
+#define LITE3D_TEXTURE_IFORMAT_DEPTH_32F        0x02
+
 #define LITE3D_TEXTURE_1D               0x00
 #define LITE3D_TEXTURE_2D               0x01
 #define LITE3D_TEXTURE_3D               0x02
@@ -150,6 +154,7 @@ typedef struct lite3d_texture_technique_settings
     int32_t anisotropy;
     int32_t maxAnisotropy;
     uint8_t useGLCompression;
+    uint8_t useDepthFormat;
 } lite3d_texture_technique_settings;
 
 typedef struct lite3d_texture_unit
