@@ -48,6 +48,8 @@ Screenshots
 -----------
 ![](/media/screenshots/robots.png "Robots")
 ![](/media/screenshots/robots1.png "Robots")
+![](/media/screenshots/reflection1.png "ReflectionSky")
+![](/media/screenshots/reflection2.png "ReflectionSky")
 ![](/media/screenshots/sponza.png "Sponza")
 ![](/media/screenshots/sponza1.png "Sponza")
 ![](/media/screenshots/sponza2.png "Sponza")
@@ -60,5 +62,5 @@ Screenshots
 ![](/media/screenshots/vault4.png "Vault")
 
 ***
-Check branch work to fetch recent changes =)
+Check branch master to fetch stable changes =)
 > Copyright © 2014-2023 Nikita Korolev (Sirius)

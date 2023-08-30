@@ -21,7 +21,7 @@
     "ResourceLocations": [
         {
             "Name": "samples",
-            "FileCacheMaxSize": 1024000,
+            "FileCacheMaxSize": 10240000,
             "Path": "samples/"
         },
         {

@@ -23,7 +23,7 @@ namespace samples {
 class SponzaHall : public Sample, public RenderTargetObserver
 {
 public:
-    const kmVec3 sunLightDirection = { 2.0f, -1.0f, -2.3f };
+    const kmVec3 sunLightDirection = { -2.0f, -1.0f, -2.3f };
 
     void createScene() override
     {

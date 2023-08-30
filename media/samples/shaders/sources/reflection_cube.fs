@@ -8,11 +8,11 @@ in vec3 wn;
 in vec3 wv;
 out vec4 fragcolor;
 
-const vec3 lightDir = vec3(0.0, -1.0, 1.0);
+const vec3 lightDir = vec3(0.45, -1.0, 1.0);
 
 void main()
 {
-	vec3 reflected = reflect(normalize(eye - wv), wn).xzy;
+	vec3 reflected = reflect(normalize(eye - wv), wn);
     vec4 dreflect = texture(cube, reflected);
 
     float nDotL = clamp(dot(wn, lightDir), 0.32, 1.0);
