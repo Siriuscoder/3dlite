@@ -76,8 +76,8 @@ namespace lite3dpp
 
         auto depthFormat = textureSettings.getString(L"DepthFormat", "Default");
         mSettings.textureSettings.useDepthFormat =
-            depthFormat == "32" ? LITE3D_TEXTURE_IFORMAT_DEPTH_32 : (
-            depthFormat == "32F" ? LITE3D_TEXTURE_IFORMAT_DEPTH_32F : LITE3D_TEXTURE_IFORMAT_DEPTH_DEFAULT);
+            depthFormat == "Depth32" ? LITE3D_TEXTURE_IFORMAT_DEPTH_32 : (
+            depthFormat == "Depth32F" ? LITE3D_TEXTURE_IFORMAT_DEPTH_32F : LITE3D_TEXTURE_IFORMAT_DEPTH_DEFAULT);
 
         mSettings.videoSettings.screenWidth = videoSettings.getInt(L"Width", 0);
         mSettings.videoSettings.screenHeight = videoSettings.getInt(L"Height", 0);

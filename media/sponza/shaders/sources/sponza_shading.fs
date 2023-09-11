@@ -8,7 +8,7 @@ uniform sampler2D normals;
 uniform sampler2D specular;
 #endif
 uniform vec3 eye;
-uniform sampler2D shadowmap;
+uniform sampler2DShadow shadowmap;
 
 in vec2 iuv;
 in vec3 ivv;
@@ -31,16 +31,15 @@ float shadow_PCF()
 
     float shadow = 0.0;
     vec2 texelSize = 1.0 / textureSize(shadowmap, 0);
-    for(int x = -1; x <= 1; ++x)
+    for (int x = -1; x <= 1; ++x)
     {
-        for(int y = -1; y <= 1; ++y)
+        for (int y = -1; y <= 1; ++y)
         {
             vec2 psf_sft = psf.xy + (vec2(x, y) * texelSize);
-            if (psf_sft.x < 0 || psf_sft.x > 1 || psf_sft.y < 0 || psf_sft.y > 1 || psf.z > 1)
+            if (psf_sft.x < 0.0 || psf_sft.x > 1.0 || psf_sft.y < 0.0 || psf_sft.y > 1.0 || psf.z > 1.0)
                 continue;
 
-            float pcfDepth = texture(shadowmap, psf_sft).r;
-            shadow += psf.z - shadowBias < pcfDepth ? 1.0 : 0.0;
+            shadow += texture(shadowmap, vec3(psf_sft, psf.z - shadowBias));
         }
     }
 

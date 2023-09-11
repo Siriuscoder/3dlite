@@ -380,6 +380,8 @@ int lite3d_texture_technique_init(const lite3d_texture_technique_settings *setti
 
     if (gTextureSettings.useDepthFormat == LITE3D_TEXTURE_IFORMAT_DEPTH_32 && !lite3d_check_depth32())
     {
+        SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
+            "%s: Format depth32 is not supported, setting default depth format", LITE3D_CURRENT_FUNCTION);
         gTextureSettings.useDepthFormat = LITE3D_TEXTURE_IFORMAT_DEPTH_DEFAULT;
     }
     
@@ -924,6 +926,7 @@ int lite3d_texture_unit_allocate(lite3d_texture_unit *textureUnit,
                 0, format, GL_UNSIGNED_BYTE, NULL);
             break;
         case LITE3D_TEXTURE_2D:
+        case LITE3D_TEXTURE_2D_SHADOW:
             glTexImage2D(textureTargetEnum[textureTarget], 0, internalFormat, width,
                 height, 0, format, GL_UNSIGNED_BYTE, NULL);
             break;
