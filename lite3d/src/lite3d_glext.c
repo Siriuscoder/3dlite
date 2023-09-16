@@ -246,6 +246,28 @@ int lite3d_check_framebuffer_blit()
 #endif 
 }
 
+int lite3d_check_depth32()
+{
+#ifdef GLES
+    return SDL_GL_ExtensionSupported("GL_OES_depth32") == SDL_TRUE;
+#else
+    return GLEW_VERSION_1_4;
+#endif 
+}
+
+int lite3d_check_shadow_samplers()
+{
+#ifdef GLES
+#   ifdef WITH_GLES2
+    return SDL_GL_ExtensionSupported("GL_EXT_shadow_samplers") == SDL_TRUE;
+#   else
+    return LITE3D_TRUE;
+#   endif
+#else
+    return GLEW_VERSION_3_0;
+#endif 
+}
+
 #ifdef __GNUC__
 #   pragma GCC diagnostic push
 #   pragma GCC diagnostic ignored "-Wpedantic"

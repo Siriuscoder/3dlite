@@ -1,0 +1,30 @@
+{
+  "Passes":[
+    {
+      "Pass": 1,
+      "Program": {
+        "Name":"basic_shading_light_alpha.program",
+        "Path":"samples:shaders/json/basic_shading_light_alpha.json"
+      },
+      "Blending":true,
+      "Blendingmode":"traditional"
+    }
+  ],
+  "Uniforms":[
+    {
+      "Name":"projectionMatrix"
+    },
+    {
+      "Name":"viewMatrix"
+    },
+    {
+      "Name":"modelMatrix"
+    },
+    {
+      "Name":"<Albedo>"
+    },
+    {
+      "Name":"<AlbedoMask>"
+    }
+  ]
+}

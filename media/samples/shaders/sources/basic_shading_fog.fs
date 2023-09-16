@@ -1,6 +1,6 @@
 #include "samples:shaders/sources/common/version.def"
 
-uniform sampler2D diffuseSampler;
+uniform sampler2D Albedo;
 uniform vec4 fogColor;
 
 in vec2 uv;
@@ -16,7 +16,7 @@ void main()
 {
     vec3 lightDir = vec3(-1.0, -1.0, 1.0);
     float nDotL = clamp(dot(wn, lightDir), 0.2, 1);
-    vec4 diffColor = texture2D(diffuseSampler, uv.st) * nDotL;
+    vec4 diffColor = texture2D(Albedo, uv.st) * nDotL;
     
     float z = gl_FragCoord.z / gl_FragCoord.w;
     float fogFactor = exp2(-density * density * z * z * LOG2);

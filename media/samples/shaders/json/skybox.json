@@ -1,0 +1,7 @@
+{
+    "Sources": 
+    [
+        "samples:shaders/sources/skybox.vs",
+        "samples:shaders/sources/skybox.fs"
+    ]
+}

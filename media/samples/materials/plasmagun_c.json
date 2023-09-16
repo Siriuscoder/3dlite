@@ -6,7 +6,7 @@
 		{ "Name": "viewMatrix" },
 		
 		{
-			"Name": "diffuseSampler",
+			"Name": "Albedo",
 			"Type": "sampler",
 			"TextureName": "plasmagun_c.texture",
 			"TexturePath": "samples:textures/json/plasmagun_c.json"
@@ -20,7 +20,7 @@
 			"Program": 
 			{
 				"Name": "BasicShading",
-				"Path": "samples:shaders/json/basic_shading.json"
+				"Path": "samples:shaders/json/basic_shading_albedo.json"
 			}
 		}
 	]

@@ -16,7 +16,7 @@
       "Name":"viewMatrix"
     },
     {
-      "Name":"diffuseSampler",
+      "Name":"Albedo",
       "TextureName":"box2.texture",
       "TexturePath":"samples:textures/json/box2.json",
       "Type":"sampler"

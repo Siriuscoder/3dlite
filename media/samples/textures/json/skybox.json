@@ -1,0 +1,37 @@
+{
+  "Filtering":"Linear",
+  "Image": [
+    {
+        "Image":"samples:textures/images/skymap/miramar_lf.tga",
+        "CubeFace": 0,
+        "ImageFormat":"tga"
+    },
+    {
+        "Image":"samples:textures/images/skymap/miramar_rt.tga",
+        "CubeFace": 1,
+        "ImageFormat":"tga"
+    },
+    {
+        "Image":"samples:textures/images/skymap/miramar_bk.tga",
+        "CubeFace": 2,
+        "ImageFormat":"tga"
+    },
+    {
+        "Image":"samples:textures/images/skymap/miramar_ft.tga",
+        "CubeFace": 3,
+        "ImageFormat":"tga"
+    },
+    {
+        "Image":"samples:textures/images/skymap/miramar_dn.tga",
+        "CubeFace": 4,
+        "ImageFormat":"tga"
+    },
+    {
+        "Image":"samples:textures/images/skymap/miramar_up.tga",
+        "CubeFace": 5,
+        "ImageFormat":"tga"
+    }
+  ],
+  "TextureType":"Cube",
+  "Wrapping":"ClampToEdge"
+}

@@ -1,6 +1,6 @@
 #include "samples:shaders/sources/common/version.def"
 
-uniform sampler2D diffuseSampler;
+uniform sampler2D Albedo;
 
 in vec2 uv;
 in vec3 wn;
@@ -10,5 +10,6 @@ void main()
 {
     vec3 lightDir = vec3(0.0, 1.0, 1.0);
     float nDotL = clamp(dot(wn, lightDir), 0.2, 1.0);
-    fragcolor = texture2D(diffuseSampler, uv.st) * nDotL;
+    vec4 d = texture2D(Albedo, uv.st);
+    fragcolor = vec4(d.xyz * nDotL, d.w);
 }

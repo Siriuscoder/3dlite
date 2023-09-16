@@ -1,0 +1,9 @@
+{
+  "Root": {
+    "Name": "ComplexShape",
+    "Mesh": {
+      "Mesh": "samples:models/json/ComplexShape.json",
+      "Name": "ComplexShape.mesh"
+    }
+  }
+}

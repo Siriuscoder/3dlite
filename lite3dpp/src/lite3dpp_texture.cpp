@@ -56,8 +56,9 @@ namespace lite3dpp
     {
         return s == "1D" ? LITE3D_TEXTURE_1D :
             (s == "2D" ? LITE3D_TEXTURE_2D :
+            (s == "SHADOW2D" ? LITE3D_TEXTURE_2D_SHADOW :
             (s == "CUBE" ? LITE3D_TEXTURE_CUBE :
-            (s == "3D" ? LITE3D_TEXTURE_3D : 0xff)));
+            (s == "3D" ? LITE3D_TEXTURE_3D : 0xff))));
     }
 
     uint32_t TextureImage::textureFiltering(const String &s)

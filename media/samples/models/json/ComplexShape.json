@@ -1,0 +1,13 @@
+{
+  "Codec": "m",
+  "Model": "samples:models/meshes/ComplexShape.m",
+  "MaterialMapping": [
+    {
+      "Material": {
+        "Name": "reflection.material",
+        "Material": "samples:materials/reflection.json"
+      },
+      "MaterialIndex": 0
+    }
+  ]
+}

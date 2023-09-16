@@ -27,7 +27,7 @@
       "Scope":"global"
     },
     {
-      "Name":"diffuseSampler",
+      "Name":"Albedo",
       "TextureName":"Robot_Boss_Uberwalker_Loadout_DIF00.texture",
       "TexturePath":"samples:textures/json/Robot_Boss_Uberwalker_Loadout_DIF00.json",
       "Type":"sampler"

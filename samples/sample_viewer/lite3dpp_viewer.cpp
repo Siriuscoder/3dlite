@@ -22,11 +22,11 @@
 namespace lite3dpp {
 namespace samples {
 
-class SampleMonkeys : public Sample
+class SampleViewer : public Sample
 {
 public:
 
-    SampleMonkeys(const std::string &scene) : 
+    SampleViewer(const std::string &scene) : 
         mSceneName(scene)
     {}
 
@@ -51,7 +51,7 @@ int main(int agrc, char *args[])
         return 1;
     }
 
-    lite3dpp::samples::SampleMonkeys sample(std::string("samples:") + args[1]);
+    lite3dpp::samples::SampleViewer sample(std::string("samples:") + args[1]);
     return sample.start("samples/config/config.json");
 }
 

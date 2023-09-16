@@ -1,6 +1,6 @@
 {
-    "TextureType": "2D",
-    "Filtering": "None",
+    "TextureType": "SHADOW2D",
+    "Filtering": "Linear",
     "Wrapping": "ClampToEdge",
     "Compression": false,
     "TextureFormat": "DEPTH",

@@ -1,0 +1,39 @@
+{
+  "Cameras": [
+    {
+      "Name": "MyCamera",
+      "Position": [
+        0,
+        -200,
+        100
+      ],
+      "LookAt": [
+        0,
+        0,
+        0
+      ],
+      "Perspective": {
+        "Znear": 10,
+        "Zfar": 1500,
+        "Fov": 60
+      },
+      "RenderTargets": [
+        {
+          "Name": "Window",
+          "Priority": 0,
+          "TexturePass": 1
+        }
+      ]
+    }
+  ],
+  "Objects": [
+    {
+      "Name": "ComplexShape",
+      "Object": "samples:objects/ComplexShape.json"
+    },
+	{
+      "Name": "Sky",
+      "Object": "samples:objects/skybox.json"
+    }
+  ]
+}

@@ -24,7 +24,7 @@
 
 #ifdef INCLUDE_ASSIMP
 
-class MeshCompare_Test : public ::testing::Test
+class MeshCompare_Test : public Lite3dCommon
 {
 public:
 
@@ -176,10 +176,6 @@ public:
         /* quit immediatly */
         return LITE3D_FALSE;
     }
-
-protected:
-
-    Lite3dCommon mlite3dCommon;
 };
 
 LITE3D_GTEST_DECLARE(MeshCompare_Test, CompareVertices, compareVertices)

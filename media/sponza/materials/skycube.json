@@ -4,7 +4,7 @@
       "Pass":2,
       "Program":{
         "Name":"skybox.program",
-        "Path":"sponzamat:shaders/json/skybox.json"
+        "Path":"samples:shaders/json/skybox.json"
       }
     }
   ],
@@ -15,7 +15,7 @@
     {
       "Name":"skybox",
       "TextureName":"skybox.texture",
-      "TexturePath":"sponza:textures/json/skybox.json",
+      "TexturePath":"samples:textures/json/skybox.json",
       "Type":"sampler"
     }
   ]
