@@ -3,6 +3,6 @@
     "Filtering": "None",
     "Wrapping": "ClampToEdge",
     "Compression": false,
-    "TextureFormat": "RGBA",
-    "InternalFormat": 34842 // LITE3D_TEXTURE_INTERNAL_RGBA16F
+    "TextureFormat": "RGB",
+    "InternalFormat": 34837 // LITE3D_TEXTURE_INTERNAL_RGB32F
 }

@@ -35,6 +35,9 @@ class Image:
             "Wrapping": "Repeat" if self.extension == "REPEAT" else "ClampToEdge",
             "Image": self.scene.getAbsImagePath(self.getRelativeImagePath())
         }
+
+        if self.image.colorspace_settings.name == "sRGB":
+            imageJson["sRGB"] = True
         
         IO.saveJson(self.scene.getAbsSysPath(self.getRelativePath()), imageJson)
 

@@ -287,11 +287,11 @@ static int init(void *userdata)
         return LITE3D_FALSE;
 
     if (!lite3d_texture_unit_from_resource(&mBoxUnit, file1, LITE3D_IMAGE_JPG,
-        LITE3D_TEXTURE_2D, LITE3D_TEXTURE_QL_NICEST, LITE3D_TEXTURE_REPEAT, 0))
+        LITE3D_TEXTURE_2D, LITE3D_FALSE, LITE3D_TEXTURE_QL_NICEST, LITE3D_TEXTURE_REPEAT, 0))
         return LITE3D_FALSE;
 
     if (!lite3d_texture_unit_from_resource(&mVintageBoxUnit, file2, LITE3D_IMAGE_JPG,
-        LITE3D_TEXTURE_2D, LITE3D_TEXTURE_QL_LOW, LITE3D_TEXTURE_REPEAT, 0))
+        LITE3D_TEXTURE_2D, LITE3D_FALSE, LITE3D_TEXTURE_QL_LOW, LITE3D_TEXTURE_REPEAT, 0))
         return LITE3D_FALSE;
 
     if (!initCube())

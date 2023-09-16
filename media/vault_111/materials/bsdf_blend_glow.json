@@ -5,7 +5,9 @@
       "Program": {
         "Name":"basic_shading_albedo.program",
         "Path":"samples:shaders/json/basic_shading_albedo.json"
-      }
+      },
+      "Blending":true,
+      "Blendingmode":"traditional"
     }
   ],
   "Uniforms":[

@@ -268,6 +268,15 @@ int lite3d_check_shadow_samplers()
 #endif 
 }
 
+int lite3d_check_srgb()
+{
+#ifdef GLES
+    return SDL_GL_ExtensionSupported("GL_EXT_sRGB") == SDL_TRUE;
+#else
+    return GLEW_VERSION_2_1;
+#endif 
+}
+
 #ifdef __GNUC__
 #   pragma GCC diagnostic push
 #   pragma GCC diagnostic ignored "-Wpedantic"

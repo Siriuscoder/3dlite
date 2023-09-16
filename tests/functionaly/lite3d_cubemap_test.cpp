@@ -38,6 +38,7 @@ public:
         EXPECT_TRUE(lite3d_texture_unit_from_resource(&cubemap, ddsFile,
             LITE3D_IMAGE_DDS,
             LITE3D_TEXTURE_CUBE, 
+            LITE3D_FALSE,
             LITE3D_TEXTURE_QL_NICEST, 
             LITE3D_TEXTURE_CLAMP_TO_EDGE, 
             0));

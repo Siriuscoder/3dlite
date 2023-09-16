@@ -61,14 +61,14 @@ namespace lite3dpp
             (s == "3D" ? LITE3D_TEXTURE_3D : 0xff))));
     }
 
-    uint32_t TextureImage::textureFiltering(const String &s)
+    uint8_t TextureImage::textureFiltering(const String &s)
     {
         return s == "NONE" ? LITE3D_TEXTURE_QL_LOW :
             (s == "LINEAR" ? LITE3D_TEXTURE_QL_MEDIUM :
             (s == "TRILINEAR" ? LITE3D_TEXTURE_QL_NICEST : 0));
     }
 
-    uint32_t TextureImage::textureWrap(const String &s)
+    uint8_t TextureImage::textureWrap(const String &s)
     {
         return s == "CLAMPTOEDGE" ? LITE3D_TEXTURE_CLAMP_TO_EDGE :
             (s == "REPEAT" ? LITE3D_TEXTURE_REPEAT : 0);
@@ -104,24 +104,28 @@ namespace lite3dpp
             (s == "SHARPEN" ? LITE3D_SHARPEN_FILTER : 0)))))))))));
     }
 
-    uint32_t TextureImage::textureFormat(const String &s)
+    uint16_t TextureImage::textureFormat(const String &s)
     {
         return s == "ALPHA" ? LITE3D_TEXTURE_FORMAT_ALPHA :
             (s == "RGB" ? LITE3D_TEXTURE_FORMAT_RGB :
             (s == "RGBA" ? LITE3D_TEXTURE_FORMAT_RGBA :
+            (s == "SRGB" ? LITE3D_TEXTURE_FORMAT_SRGB :
+            (s == "SRGBA" ? LITE3D_TEXTURE_FORMAT_SRGBA :
             (s == "BRG" ? LITE3D_TEXTURE_FORMAT_BRG :
             (s == "BRGA" ? LITE3D_TEXTURE_FORMAT_BRGA :
             (s == "LUMINANCE" ? LITE3D_TEXTURE_FORMAT_LUMINANCE :
             (s == "LUMINANCE_ALPHA" ? LITE3D_TEXTURE_FORMAT_LUMINANCE_ALPHA :
-            (s == "DEPTH" ? LITE3D_TEXTURE_FORMAT_DEPTH : 0)))))));
+            (s == "DEPTH" ? LITE3D_TEXTURE_FORMAT_DEPTH : 0)))))))));
     }
 
-    uint32_t TextureImage::textureInternalFormat(const String &s)
+    uint16_t TextureImage::textureInternalFormat(int iformat)
     {
-        if (s.empty())
-            return 0;
+        if (iformat < 0 || iformat > std::numeric_limits<uint16_t>::max())
+        {
+            LITE3D_THROW("Invalid Texture Internal Format: " << iformat);
+        }
 
-        return std::stoi(s);
+        return iformat;
     }
 
     void TextureImage::loadFromConfigImpl(const ConfigurationReader &helper)
@@ -129,10 +133,11 @@ namespace lite3dpp
         lite3d_texture_unit_compression(helper.getBool(L"Compression", true) ? LITE3D_TRUE : LITE3D_FALSE);
 
         uint32_t type = textureType(helper.getUpperString(L"TextureType", "2D"));
-        uint32_t quality = textureFiltering(helper.getUpperString(L"Filtering", "NONE"));
-        uint32_t wrapping = textureWrap(helper.getUpperString(L"Wrapping", "CLAMPTOEDGE"));
+        bool srgb = helper.getBool(L"sRGB", false);
+        uint8_t quality = textureFiltering(helper.getUpperString(L"Filtering", "NONE"));
+        uint8_t wrapping = textureWrap(helper.getUpperString(L"Wrapping", "CLAMPTOEDGE"));
 
-        auto loadImage = [this, type, quality, wrapping](const ConfigurationReader &helper)
+        auto loadImage = [this, type, srgb, quality, wrapping](const ConfigurationReader &helper)
         {
             lite3d_texture_technique_reset_filters();
             for(const ConfigurationReader &filterConfig : helper.getObjects(L"ProcessingFilters"))
@@ -148,6 +153,7 @@ namespace lite3dpp
                 mMain->getResourceManager()->loadFileToMemory(helper.getString(L"Image")),
                 textureImageFormat(helper.getUpperString(L"ImageFormat", "ANY")),
                 type, 
+                srgb ? LITE3D_TRUE : LITE3D_FALSE,
                 quality, 
                 wrapping, 
                 helper.getInt(L"CubeFace")))
@@ -186,7 +192,7 @@ namespace lite3dpp
                 quality, 
                 wrapping, 
                 textureFormat(helper.getUpperString(L"TextureFormat", "RGB")),
-                helper.getInt(L"InternalFormat"),
+                textureInternalFormat(helper.getInt(L"InternalFormat")),
                 width, 
                 height, 
                 depth, 

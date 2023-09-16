@@ -74,6 +74,8 @@
 #define LITE3D_TEXTURE_FORMAT_RG                0x8227
 #define LITE3D_TEXTURE_FORMAT_RGB               0x1907
 #define LITE3D_TEXTURE_FORMAT_RGBA              0x1908
+#define LITE3D_TEXTURE_FORMAT_SRGB              0x8C40
+#define LITE3D_TEXTURE_FORMAT_SRGBA             0x8C42
 #define LITE3D_TEXTURE_FORMAT_BRG               0x80E0
 #define LITE3D_TEXTURE_FORMAT_BRGA              0x80E1
 #define LITE3D_TEXTURE_FORMAT_LUMINANCE         0x1909
@@ -209,7 +211,7 @@ LITE3D_CEXPORT int32_t lite3d_texture_unit_get_level_depth(lite3d_texture_unit *
    effect is this case.
 */
 LITE3D_CEXPORT int lite3d_texture_unit_from_resource(lite3d_texture_unit *textureUnit, 
-    const lite3d_file *resource, uint32_t imageType, uint32_t textureTarget, 
+    const lite3d_file *resource, uint32_t imageType, uint32_t textureTarget, int8_t srgb,
     int8_t quality, uint8_t wrapping, uint8_t cubeface);
 
 /* allocate empty texture object */

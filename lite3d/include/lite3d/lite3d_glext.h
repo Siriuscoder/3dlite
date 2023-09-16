@@ -42,6 +42,7 @@ int lite3d_check_framebuffer_blit();
 int lite3d_check_occlusion_query();
 int lite3d_check_depth32();
 int lite3d_check_shadow_samplers();
+int lite3d_check_srgb();
 
 /* stub functions */
 void glTexSubImage3D_stub(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLenum format, GLenum type, const void *pixels);
@@ -119,6 +120,10 @@ void glGetQueryObjectuiv_stub(GLuint id, GLenum pname, GLuint *params);
 
 #   ifndef GL_DEPTH_COMPONENT32
 #       define GL_DEPTH_COMPONENT32 GL_DEPTH_COMPONENT32_OES
+#   endif
+
+#   ifndef GL_SRGB_ALPHA
+#       define GL_SRGB_ALPHA GL_SRGB_ALPHA_EXT
 #   endif
 
 /* GL_OES_vertex_array_object */    
@@ -257,6 +262,10 @@ extern PFNGLGETQUERYOBJECTUIVEXTPROC glGetQueryObjectuivPtr;
 
 #       ifndef GL_TEXTURE_COMPARE_FUNC
 #           define GL_TEXTURE_COMPARE_FUNC GL_TEXTURE_COMPARE_FUNC_EXT
+#       endif
+
+#       ifndef GL_SRGB
+#           define GL_SRGB GL_SRGB_EXT
 #       endif
 
 #   endif

@@ -84,6 +84,10 @@ static const char *image_format_string(const lite3d_texture_unit *texture)
             return "RGB";
         case LITE3D_TEXTURE_FORMAT_RGBA:
             return "RGBA";
+        case LITE3D_TEXTURE_FORMAT_SRGB:
+            return "SRGB";
+        case LITE3D_TEXTURE_FORMAT_SRGBA:
+            return "SRGBA";
         case LITE3D_TEXTURE_FORMAT_DEPTH:
             return "DEPTH_COMPONENT";
         case LITE3D_TEXTURE_FORMAT_RED:
@@ -245,6 +249,10 @@ static int set_internal_format(lite3d_texture_unit *textureUnit, uint16_t *forma
 #ifdef GLES
     switch (*format)
     {
+        case LITE3D_TEXTURE_FORMAT_SRGB:
+        case LITE3D_TEXTURE_FORMAT_SRGBA:
+            if (lite3d_check_srgb())
+                break;
         case LITE3D_TEXTURE_FORMAT_BRG:
         case LITE3D_TEXTURE_FORMAT_BRGA:
 #ifdef WITH_GLES2
@@ -266,6 +274,7 @@ static int set_internal_format(lite3d_texture_unit *textureUnit, uint16_t *forma
     switch (*format)
     {
         case LITE3D_TEXTURE_FORMAT_RGB:
+        case LITE3D_TEXTURE_FORMAT_SRGB:
         case LITE3D_TEXTURE_FORMAT_BRG:
         {
             textureUnit->imageBPP = 3;
@@ -288,6 +297,7 @@ static int set_internal_format(lite3d_texture_unit *textureUnit, uint16_t *forma
             break;
         }
         case LITE3D_TEXTURE_FORMAT_RGBA:
+        case LITE3D_TEXTURE_FORMAT_SRGBA:
         case LITE3D_TEXTURE_FORMAT_BRGA:
         {
             textureUnit->imageBPP = 4;
@@ -410,8 +420,8 @@ void lite3d_texture_technique_shut(void)
 }
 
 int lite3d_texture_unit_from_resource(lite3d_texture_unit *textureUnit,
-    const lite3d_file *resource, uint32_t imageType,
-    uint32_t textureTarget, int8_t quality, uint8_t wrapping, uint8_t cubeface)
+    const lite3d_file *resource, uint32_t imageType, uint32_t textureTarget, 
+    int8_t srgb, int8_t quality, uint8_t wrapping, uint8_t cubeface)
 {
     ILuint imageDesc = 0, imageFormat;
     GLint mipLevel = 0;
@@ -455,8 +465,14 @@ int lite3d_texture_unit_from_resource(lite3d_texture_unit *textureUnit,
     imageWidth = ilGetInteger(IL_IMAGE_WIDTH);
     imageHeight = ilGetInteger(IL_IMAGE_HEIGHT);
     imageDepth = ilGetInteger(IL_IMAGE_DEPTH);
+
     /* matches openGL texture format */
     imageFormat = ilGetInteger(IL_IMAGE_FORMAT);
+    if (srgb && imageFormat == LITE3D_TEXTURE_FORMAT_RGB)
+        imageFormat = LITE3D_TEXTURE_FORMAT_SRGB;
+    else if (srgb && imageFormat == LITE3D_TEXTURE_FORMAT_RGBA)
+        imageFormat = LITE3D_TEXTURE_FORMAT_SRGBA;
+
     /* allocate texture surface if not allocated yet */
     if (textureUnit->imageWidth != imageWidth || textureUnit->imageHeight != imageHeight ||
         textureUnit->imageDepth != imageDepth)
