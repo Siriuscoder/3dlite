@@ -37,9 +37,7 @@
       ]
     }
   ],
-
   "LightingTechnique": "UBO",
-
   "Objects": [
     {
       "Name": "VaultStatic",

@@ -1,0 +1,43 @@
+{
+  "Passes": [
+    {
+      "Pass": 1,
+      "Program": {
+        "Name": "depth.program",
+        "Path": "vault_111:shaders/json/depth.json"
+      }
+    },
+    {
+      "Pass": 2,
+      "Program": {
+        "Name": "bsdf_prepare.program",
+        "Path": "vault_111:shaders/json/bsdf_prepare.json"
+      },
+      "Uniforms": [
+        {
+          "Name": "Albedo",
+          "Type": "sampler",
+          "TextureName": "V111GearDoor01_d.texture",
+          "TexturePath": "vault_111:textures/json/V111GearDoor01_d.json"
+        },
+        {
+          "Name": "Normal",
+          "Type": "sampler",
+          "TextureName": "V111GearDoor01_n.texture",
+          "TexturePath": "vault_111:textures/json/V111GearDoor01_n.json"
+        },
+        {
+          "Name": "Specular",
+          "Type": "sampler",
+          "TextureName": "V111GearDoor01_s.texture",
+          "TexturePath": "vault_111:textures/json/V111GearDoor01_s.json"
+        }
+      ]
+    }
+  ],
+  "Uniforms": [
+    {
+      "Name": "projViewMatrix"
+    }
+  ]
+}

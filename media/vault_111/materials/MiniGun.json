@@ -1,0 +1,43 @@
+{
+  "Passes": [
+    {
+      "Pass": 1,
+      "Program": {
+        "Name": "depth.program",
+        "Path": "vault_111:shaders/json/depth.json"
+      }
+    },
+    {
+      "Pass": 2,
+      "Program": {
+        "Name": "bsdf_prepare.program",
+        "Path": "vault_111:shaders/json/bsdf_prepare.json"
+      },
+      "Uniforms": [
+        {
+          "Name": "Albedo",
+          "Type": "sampler",
+          "TextureName": "MiniGun_d.texture",
+          "TexturePath": "vault_111:textures/json/MiniGun_d.json"
+        },
+        {
+          "Name": "Normal",
+          "Type": "sampler",
+          "TextureName": "MiniGun_n.texture",
+          "TexturePath": "vault_111:textures/json/MiniGun_n.json"
+        },
+        {
+          "Name": "Specular",
+          "Type": "sampler",
+          "TextureName": "MiniGun_s.texture",
+          "TexturePath": "vault_111:textures/json/MiniGun_s.json"
+        }
+      ]
+    }
+  ],
+  "Uniforms": [
+    {
+      "Name": "projViewMatrix"
+    }
+  ]
+}

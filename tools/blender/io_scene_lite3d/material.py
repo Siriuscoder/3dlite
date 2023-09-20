@@ -55,15 +55,14 @@ class Material:
         
         if isinstance(param, bpy.types.ShaderNodeTexImage):
             image = self.scene.saveImage(param)
-            template[key] = keyParam
+            template[key] = keyParam.replace(" ", "")
             template["Type"] = "sampler"
             template["TextureName"] = image.name
             template["TexturePath"] = self.scene.getAbsImagePath(image.getRelativePath())
         else:
-            template[key] = keyParam
+            template[key] = keyParam.replace(" ", "")
             template["Type"] = f"v{len(param)}" if isinstance(param, list) else "float"
             template["Value"] = param
-
     
     def processTemplate(self, template):
         for key, val in template.items():

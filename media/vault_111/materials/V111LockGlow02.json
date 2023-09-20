@@ -1,0 +1,53 @@
+{
+  "Passes": [
+    {
+      "Pass": 1,
+      "Program": {
+        "Name": "depth.program",
+        "Path": "vault_111:shaders/json/depth.json"
+      },
+      "Blending": true
+    },
+    {
+      "Pass": 2,
+      "Program": {
+        "Name": "bsdf_glow_circles.program",
+        "Path": "vault_111:shaders/json/bsdf_glow_circles.json"
+      },
+      "Uniforms": [
+        {
+          "Name": "Specular",
+          "Type": "float",
+          "Value": 1.0
+        },
+        {
+          "Name": "Roughness",
+          "Type": "float",
+          "Value": 0.8183409571647644
+        },
+        {
+          "Name": "Emission",
+          "Type": "v4",
+          "Value": [
+            0.5647115707397461,
+            0.006995412986725569,
+            0.0,
+            1.0
+          ]
+        },
+        {
+          "Name": "EmissionStrength",
+          "Type": "float",
+          "Value": 3.0
+        }
+      ],
+      "Blending": true,
+      "Blendingmode": "traditional"
+    }
+  ],
+  "Uniforms": [
+    {
+      "Name": "projViewMatrix"
+    }
+  ]
+}

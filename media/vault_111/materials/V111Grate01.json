@@ -1,0 +1,67 @@
+{
+  "Passes": [
+    {
+      "Pass": 1,
+      "Program": {
+        "Name": "depth.program",
+        "Path": "vault_111:shaders/json/depth.json"
+      },
+      "Blending": true
+    },
+    {
+      "Pass": 2,
+      "Program": {
+        "Name": "bsdf_direct_alpha.program",
+        "Path": "vault_111:shaders/json/bsdf_direct_alpha.json"
+      },
+      "Uniforms": [
+        {
+          "Name": "Albedo",
+          "Type": "sampler",
+          "TextureName": "V111Grate01_d.texture",
+          "TexturePath": "vault_111:textures/json/V111Grate01_d.json"
+        },
+        {
+          "Name": "Normal",
+          "Type": "sampler",
+          "TextureName": "V111Grate01_n.texture",
+          "TexturePath": "vault_111:textures/json/V111Grate01_n.json"
+        },
+        {
+          "Name": "Specular",
+          "Type": "sampler",
+          "TextureName": "V111Grate01_s.texture",
+          "TexturePath": "vault_111:textures/json/V111Grate01_s.json"
+        },
+        {
+          "Name": "Environment",
+          "TextureName": "environment.texture",
+          "TexturePath": "samples:textures/json/skybox_cryo_mip.json",
+          "Type": "sampler"
+        },
+        {
+          "Name": "lightSources",
+          "UBOName": "Vault_111_lightingBufferObject",
+          "Type": "UBO"
+        },
+        {
+          "Name": "lightIndexes",
+          "UBOName": "Vault_111_lightingIndexBuffer",
+          "Type": "UBO"
+        },
+        {
+          "Name": "eye",
+          "Type": "v3",
+          "Scope": "global"
+        }
+      ],
+      "Blending": true,
+      "Blendingmode": "traditional"
+    }
+  ],
+  "Uniforms": [
+    {
+      "Name": "projViewMatrix"
+    }
+  ]
+}

@@ -1,0 +1,59 @@
+{
+  "Root": {
+    "Name": "MinigunTurret",
+    "Mesh": {
+      "Mesh": "vault_111:models/json/MinigunTurret.json",
+      "Name": "MinigunTurret.mesh"
+    },
+    "Nodes": [
+      {
+        "Name": "Minigun",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/Minigun.json",
+          "Name": "Minigun.mesh"
+        },
+        "Position": [
+          0.11737060546875,
+          20.6920166015625,
+          68.60726165771484
+        ],
+        "Rotation": [
+          0.0,
+          -0.0,
+          -0.28798002004623413,
+          0.9576364159584045
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "Nodes": [
+          {
+            "Name": "MinigunBarrel",
+            "Mesh": {
+              "Mesh": "vault_111:models/json/MinigunBarrel.json",
+              "Name": "MinigunBarrel.mesh"
+            },
+            "Position": [
+              -0.17138671875,
+              76.7977294921875,
+              14.799072265625
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

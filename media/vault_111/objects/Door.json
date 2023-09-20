@@ -1,0 +1,103 @@
+{
+  "Root": {
+    "Name": "Door",
+    "Mesh": {
+      "Mesh": "vault_111:models/json/DoorFrame.json",
+      "Name": "DoorFrame.mesh"
+    },
+    "Nodes": [
+      {
+        "Name": "DoorLiftBottom",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/DoorLiftBottom.json",
+          "Name": "DoorLiftBottom.mesh"
+        },
+        "Position": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "DoorLiftUpper",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/DoorLiftUpper.json",
+          "Name": "DoorLiftUpper.mesh"
+        },
+        "Position": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "Floorslat01",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/Floorslat01.json",
+          "Name": "Floorslat01.mesh"
+        },
+        "Position": [
+          -1.6101072333185584e-06,
+          21.32651710510254,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "Floorslat02",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/Floorslat02.json",
+          "Name": "Floorslat02.mesh"
+        },
+        "Position": [
+          1.610013896424789e-06,
+          -21.325281143188477,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      }
+    ]
+  }
+}

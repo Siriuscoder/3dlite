@@ -1,0 +1,70 @@
+{
+  "Passes": [
+    {
+      "Pass": 1,
+      "Program": {
+        "Name": "depth.program",
+        "Path": "vault_111:shaders/json/depth.json"
+      },
+      "Blending": true
+    },
+    {
+      "Pass": 2,
+      "Program": {
+        "Name": "bsdf_direct_glow.program",
+        "Path": "vault_111:shaders/json/bsdf_direct_glow.json"
+      },
+      "Uniforms": [
+        {
+          "Name": "Specular",
+          "Type": "float",
+          "Value": 0.8823626637458801
+        },
+        {
+          "Name": "Roughness",
+          "Type": "float",
+          "Value": 0.8183409571647644
+        },
+        {
+          "Name": "Emission",
+          "Type": "sampler",
+          "TextureName": "V111GearKeyGlowy01_g.texture",
+          "TexturePath": "vault_111:textures/json/V111GearKeyGlowy01_g.json"
+        },
+        {
+          "Name": "EmissionStrength",
+          "Type": "float",
+          "Value": 8.0
+        },
+        {
+          "Name": "Environment",
+          "TextureName": "environment.texture",
+          "TexturePath": "samples:textures/json/skybox_cryo_mip.json",
+          "Type": "sampler"
+        },
+        {
+          "Name": "lightSources",
+          "UBOName": "Vault_111_lightingBufferObject",
+          "Type": "UBO"
+        },
+        {
+          "Name": "lightIndexes",
+          "UBOName": "Vault_111_lightingIndexBuffer",
+          "Type": "UBO"
+        },
+        {
+          "Name": "eye",
+          "Type": "v3",
+          "Scope": "global"
+        }
+      ],
+      "Blending": true,
+      "Blendingmode": "traditional"
+    }
+  ],
+  "Uniforms": [
+    {
+      "Name": "projViewMatrix"
+    }
+  ]
+}
