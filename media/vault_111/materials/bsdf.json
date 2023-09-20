@@ -3,23 +3,32 @@
     {
       "Pass": 1,
       "Program": {
-        "Name":"basic_shading_light.program",
-        "Path":"samples:shaders/json/basic_shading_light.json"
+        "Name":"depth.program",
+        "Path":"vault_111:shaders/json/depth.json"
       }
+    },
+    {
+      "Pass": 2,
+      "Program": {
+        "Name":"bsdf_prepare.program",
+        "Path":"vault_111:shaders/json/bsdf_prepare.json"
+      },
+      "Uniforms":[
+        {
+          "Name":"<Albedo>"
+        },
+        {
+          "Name":"<Normal>"
+        },
+        {
+          "Name":"<Specular>"
+        }
+      ]
     }
   ],
   "Uniforms":[
     {
-      "Name":"projectionMatrix"
-    },
-    {
-      "Name":"viewMatrix"
-    },
-    {
-      "Name":"modelMatrix"
-    },
-    {
-      "Name":"<Albedo>"
+      "Name":"projViewMatrix"
     }
   ]
 }

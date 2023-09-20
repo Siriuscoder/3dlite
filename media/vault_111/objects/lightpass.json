@@ -1,0 +1,12 @@
+{
+    "Root":
+    {
+        "Name": "BigTriangle.root",
+        "Mesh": 
+        {
+            "Name": "BigTriangle.mesh",
+            "Mesh": "samples:models/json/BigTriangle.json"
+        }
+    }
+}
+

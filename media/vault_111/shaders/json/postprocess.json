@@ -1,0 +1,7 @@
+{
+    "Sources": 
+    [
+        "vault_111:shaders/sources/postprocess.vs",
+        "vault_111:shaders/sources/postprocess.fs"
+    ]
+}

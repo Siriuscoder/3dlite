@@ -3,23 +3,35 @@
     {
       "Pass": 1,
       "Program": {
-        "Name":"basic_shading_solid_color.program",
-        "Path":"samples:shaders/json/basic_shading_solid_color.json"
+        "Name":"depth.program",
+        "Path":"vault_111:shaders/json/depth.json"
       }
+    },
+    {
+      "Pass": 2,
+      "Program": {
+        "Name":"bsdf_glow_prepare.program",
+        "Path":"vault_111:shaders/json/bsdf_glow_prepare.json"
+      },
+      "Uniforms":[
+        {
+          "Name":"<Specular>"
+        },
+        {
+          "Name":"<Roughness>"
+        },
+        {
+          "Name":"<Emission>"
+        },
+        {
+          "Name":"<Emission Strength>"
+        }
+      ]
     }
   ],
   "Uniforms":[
     {
-      "Name":"projectionMatrix"
-    },
-    {
-      "Name":"viewMatrix"
-    },
-    {
-      "Name":"modelMatrix"
-    },
-    {
-      "Name":"<Albedo>"
+      "Name":"projViewMatrix"
     }
   ]
 }

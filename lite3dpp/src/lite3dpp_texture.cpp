@@ -133,7 +133,7 @@ namespace lite3dpp
         lite3d_texture_unit_compression(helper.getBool(L"Compression", true) ? LITE3D_TRUE : LITE3D_FALSE);
 
         uint32_t type = textureType(helper.getUpperString(L"TextureType", "2D"));
-        bool srgb = helper.getBool(L"sRGB", false);
+        uint8_t srgb = helper.getBool(L"sRGB", false) ? LITE3D_TRUE : LITE3D_FALSE;
         uint8_t quality = textureFiltering(helper.getUpperString(L"Filtering", "NONE"));
         uint8_t wrapping = textureWrap(helper.getUpperString(L"Wrapping", "CLAMPTOEDGE"));
 
@@ -153,7 +153,7 @@ namespace lite3dpp
                 mMain->getResourceManager()->loadFileToMemory(helper.getString(L"Image")),
                 textureImageFormat(helper.getUpperString(L"ImageFormat", "ANY")),
                 type, 
-                srgb ? LITE3D_TRUE : LITE3D_FALSE,
+                srgb,
                 quality, 
                 wrapping, 
                 helper.getInt(L"CubeFace")))

@@ -1,0 +1,27 @@
+{
+  "Passes":[
+    {
+      "Pass":1,
+      "Program":{
+        "Name":"postprocess.program",
+        "Path":"vault_111:shaders/json/postprocess.json"
+      }
+    }
+  ],
+  "Uniforms":[
+    {
+      "Name":"screenMatrix"
+    },
+    {
+      "Name":"GammaFactor",
+      "Type":"float",
+      "Value": 2.2,
+      "Scope":"global"
+    },
+    {
+      "Name":"combined",
+      "TextureName": "combined.texture",
+      "Type":"sampler"
+    }
+  ]
+}

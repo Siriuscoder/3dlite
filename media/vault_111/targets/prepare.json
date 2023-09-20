@@ -32,6 +32,7 @@
     
     "DepthAttachments":
     {
-        "TextureName": "mainDepth.texture"
+        "TextureName": "mainDepth.texture",
+        "TexturePath": "samples:textures/json/depth.json"
     }
 }
