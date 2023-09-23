@@ -3,11 +3,15 @@
 uniform sampler2D combined;
 uniform float GammaFactor;
 
+in vec2 iuv;
+
 void main()
 {
-    vec4 finalColor = texture2D(combined, iuv);
+    vec3 hdr = texture2D(combined, iuv).xyz;
+    // tonemapping
+    vec3 ldr = hdr / (hdr + vec3(1.0));
+    // gamma correction 
+    ldr = pow(ldr, vec3(1.0 / GammaFactor));
 
-    // apply gamma correction 
-    finalColor.rgb = pow(finalColor.rgb, vec3(1/GammaFactor));
-    gl_FragColor = vec4(finalColor.rgb, 1.0);
+    gl_FragColor = vec4(ldr.rgb, 1.0);
 }

@@ -1,8 +1,0 @@
-{
-    "Sources": 
-    [
-        "samples:shaders/sources/common/transform.vs",
-        "samples:shaders/sources/basic_shading.vs",
-        "samples:shaders/sources/basic_shading_albedo.fs"
-    ]
-}

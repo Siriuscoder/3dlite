@@ -1,0 +1,8 @@
+{
+    "Sources": 
+    [
+        "vault_111:shaders/sources/common.vs",
+        "vault_111:shaders/sources/mask_alpha.fs",
+        "samples:shaders/sources/common/utils.fs"
+    ]
+}

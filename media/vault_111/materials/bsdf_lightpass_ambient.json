@@ -1,0 +1,53 @@
+{
+  "Passes":[
+    {
+      "Pass": 1,
+      "Program": {
+        "Name":"bsdf_lightpass_ambient.program",
+        "Path":"vault_111:shaders/json/bsdf_lightpass_ambient.json"
+      },
+      "Uniforms":[
+        {
+          "Name":"Albedo",
+          "TextureName":"screen_albedo.texture",
+          "Type":"sampler"
+        },
+        {
+          "Name":"Specular",
+          "TextureName":"screen_specular.texture",
+          "Type":"sampler"
+        },
+        {
+          "Name":"VwMap",
+          "TextureName":"screen_vw.texture",
+          "Type":"sampler"
+        },
+        {
+          "Name":"NwMap",
+          "TextureName":"screen_nw.texture",
+          "Type":"sampler"
+        },
+        {
+          "Name":"Environment",
+          "TextureName":"environment.texture",
+          "TexturePath":"samples:textures/json/skybox_cryo_mip.json",
+          "Type":"sampler"
+        },
+        {
+          "Name":"eye",
+          "Type":"v3",
+          "Scope":"global"
+        }
+      ],
+      "Blending":true,
+      // Orgb = 1 * Srgb + 1 * Drgb
+      // Oa = 1 * Sa + 0 * Da = Sa
+      "BlendingMode":"additive"
+    }
+  ],
+  "Uniforms":[
+    {
+      "Name":"projViewMatrix"
+    }
+  ]
+}

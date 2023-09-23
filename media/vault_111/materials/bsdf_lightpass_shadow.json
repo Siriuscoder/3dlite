@@ -3,8 +3,8 @@
     {
       "Pass": 1,
       "Program": {
-        "Name":"bsdf_lightpass.program",
-        "Path":"vault_111:shaders/json/bsdf_lightpass.json"
+        "Name":"bsdf_lightpass_shadow.program",
+        "Path":"vault_111:shaders/json/bsdf_lightpass_shadow.json"
       },
       "Uniforms":[
         {

@@ -10,8 +10,8 @@
     {
       "Pass": 2,
       "Program": {
-        "Name":"bsdf_glow_prepare.program",
-        "Path":"vault_111:shaders/json/bsdf_glow_prepare.json"
+        "Name":"bsdf_glow_solid_prepare.program",
+        "Path":"vault_111:shaders/json/bsdf_glow_solid_prepare.json"
       },
       "Uniforms":[
         {

@@ -28,8 +28,31 @@ public:
 
     void createScene() override
     {
-        getMain().getResourceManager()->queryResource<Scene>("Vault111Scene", "vault_111:scenes/vault_111.json");
+        getMain().getResourceManager()->queryResource<Scene>("Vault_111", "vault_111:scenes/vault_111.json");
         setMainCamera(getMain().getCamera("MyCamera"));
+
+        // load intermediate light compute scene
+        auto lightCompute = getMain().getResourceManager()->queryResource<Scene>("Vault_111_LightCompute",
+            "vault_111:scenes/lightpass.json");
+        // postprocess step, fxaa, gamma correcion, draw directly info window. 
+        getMain().getResourceManager()->queryResource<Scene>("Vault_111_Postprocess",
+            "vault_111:scenes/postprocess.json");
+
+        SceneObject *ambientLayer = lightCompute->addObject("lightpass_ambient_layer", "vault_111:objects/lightpass.json", NULL);
+        Material *materialAmbientLayer = getMain().getResourceManager()->queryResource<Material>("lightpass_ambient.material",
+            "vault_111:materials/bsdf_lightpass_ambient.json");
+
+        auto mnode = dynamic_cast<MeshSceneNode *>(ambientLayer->getRoot());
+        mnode->setName("lightpass_ambient_layer_node");
+        mnode->replaceMaterial(0, materialAmbientLayer);
+        
+        // optimize: window clean not needed, because all pixels in last render target always be updated
+        getMain().window()->setBuffersCleanBit(false, false, false);
+    }
+
+    void mainCameraChanged() override
+    {
+        lite3dpp::Material::setFloatv3GlobalParameter("eye", getMainCamera().getPosition());
     }
 
 private:
