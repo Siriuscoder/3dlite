@@ -48,6 +48,9 @@ public:
         
         // optimize: window clean not needed, because all pixels in last render target always be updated
         getMain().window()->setBuffersCleanBit(false, false, false);
+        getMain().window()->depthTestFunc(RenderTarget::TestFuncLEqual);
+
+        getMain().getResourceManager()->releaseFileCache();
     }
 
     void mainCameraChanged() override

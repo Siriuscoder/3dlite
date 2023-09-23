@@ -39,6 +39,27 @@
           "Name": "EmissionStrength",
           "Type": "float",
           "Value": 3.0
+        },
+        {
+          "Name": "Environment",
+          "TextureName": "environment.texture",
+          "TexturePath": "samples:textures/json/skybox_cryo_mip.json",
+          "Type": "sampler"
+        },
+        {
+          "Name": "lightSources",
+          "UBOName": "Vault_111_lightingBufferObject",
+          "Type": "UBO"
+        },
+        {
+          "Name": "lightIndexes",
+          "UBOName": "Vault_111_lightingIndexBuffer",
+          "Type": "UBO"
+        },
+        {
+          "Name": "eye",
+          "Type": "v3",
+          "Scope": "global"
         }
       ],
       "Blending": true,

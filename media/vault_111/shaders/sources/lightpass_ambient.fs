@@ -33,8 +33,8 @@ void main()
 
     vec3 kS = fresnelSchlickRoughness(NdotV, F0, specular.y) * specular.x; 
     vec3 kD = 1.0 - kS;
-    vec3 globalIrradiance = texture(Environment, nw).rgb;
-    vec3 ambientIrradiance = kD * globalIrradiance * albedo.xyz * albedo.w;
+    vec3 globalIrradiance = textureLod(Environment, nw, specular.y * 3.0 + 2.0).rgb;
+    vec3 ambientAndEmission = (kD * globalIrradiance + albedo.w) * albedo.xyz;
 
-    gl_FragColor = vec4(ambientIrradiance, 1.0);
+    gl_FragColor = vec4(ambientAndEmission, 1.0);
 }

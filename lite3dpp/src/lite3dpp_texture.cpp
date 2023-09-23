@@ -109,13 +109,11 @@ namespace lite3dpp
         return s == "ALPHA" ? LITE3D_TEXTURE_FORMAT_ALPHA :
             (s == "RGB" ? LITE3D_TEXTURE_FORMAT_RGB :
             (s == "RGBA" ? LITE3D_TEXTURE_FORMAT_RGBA :
-            (s == "SRGB" ? LITE3D_TEXTURE_FORMAT_SRGB :
-            (s == "SRGBA" ? LITE3D_TEXTURE_FORMAT_SRGBA :
             (s == "BRG" ? LITE3D_TEXTURE_FORMAT_BRG :
             (s == "BRGA" ? LITE3D_TEXTURE_FORMAT_BRGA :
             (s == "LUMINANCE" ? LITE3D_TEXTURE_FORMAT_LUMINANCE :
             (s == "LUMINANCE_ALPHA" ? LITE3D_TEXTURE_FORMAT_LUMINANCE_ALPHA :
-            (s == "DEPTH" ? LITE3D_TEXTURE_FORMAT_DEPTH : 0)))))))));
+            (s == "DEPTH" ? LITE3D_TEXTURE_FORMAT_DEPTH : 0)))))));
     }
 
     uint16_t TextureImage::textureInternalFormat(int iformat)

@@ -10,5 +10,7 @@ uniform mat4 projViewMatrix;
 
 void main()
 {
-    gl_Position = projViewMatrix * modelMatrix * vec4(vertex, 1.0);
+    // vertex coordinate in world space 
+    vec4 wv = modelMatrix * vec4(vertex, 1.0);
+    gl_Position = projViewMatrix * wv;
 }

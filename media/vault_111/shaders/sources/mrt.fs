@@ -11,10 +11,12 @@ in mat3 itbn;
 void main()
 {
     // sampling normal from normal map
-    vec4 n = texture(Normal, iuv);
-    // put normal in [-1,1] range in tangent space 
+    // put normal in [-1,1] range in tangent space
+    vec3 n = normalize(2.0 * (1.0 - texture(Normal, iuv).rgb) - 1.0);
+    // Calculate missing blue channel
+	n.b = sqrt(1.0 - dot(n.rg, n.rg));
     // and trasform normal to world space 
-    vec3 nw = normalize(itbn * normalize((2.0 * n.rgb) - 1.0));
+    vec3 nw = normalize(itbn * n);
     // sampling albedo 
     vec4 albedo = texture(Albedo, iuv);
     // sampling specular
@@ -24,6 +26,6 @@ void main()
 
     gl_FragData[0] = vec4(ivv, gl_FragCoord.z / gl_FragCoord.w);
     gl_FragData[1] = vec4(nw, 0.0);
-    gl_FragData[2] = vec4(albedo.rgb, 1.0);
+    gl_FragData[2] = vec4(albedo.rgb, 0.0);
     gl_FragData[3] = specular;
 }

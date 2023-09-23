@@ -20,8 +20,8 @@ void main()
     vec4 wv = modelMatrix * vec4(vertex, 1.0);
     ivv = wv.xyz / wv.w;
     // calculate tangent, normal, binormal in world space
-    vec3 worldTang = normalize(modelMatrix * vec4(tang, 0)).xyz;
-    vec3 worldNorm = normalize(modelMatrix * vec4(normal, 0)).xyz;
+    vec3 worldTang = normalize((modelMatrix * vec4(tang, 0.0)).xyz);
+    vec3 worldNorm = normalize((modelMatrix * vec4(normal, 0.0)).xyz);
     // re-orthogonalize T with respect to N
     worldTang = normalize(worldTang - dot(worldTang, worldNorm) * worldNorm);
     vec3 worldBinorm = cross(worldNorm, worldTang);

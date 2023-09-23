@@ -84,10 +84,6 @@ static const char *image_format_string(const lite3d_texture_unit *texture)
             return "RGB";
         case LITE3D_TEXTURE_FORMAT_RGBA:
             return "RGBA";
-        case LITE3D_TEXTURE_FORMAT_SRGB:
-            return "SRGB";
-        case LITE3D_TEXTURE_FORMAT_SRGBA:
-            return "SRGBA";
         case LITE3D_TEXTURE_FORMAT_DEPTH:
             return "DEPTH_COMPONENT";
         case LITE3D_TEXTURE_FORMAT_RED:
@@ -249,10 +245,6 @@ static int set_internal_format(lite3d_texture_unit *textureUnit, uint16_t *forma
 #ifdef GLES
     switch (*format)
     {
-        case LITE3D_TEXTURE_FORMAT_SRGB:
-        case LITE3D_TEXTURE_FORMAT_SRGBA:
-            if (lite3d_check_srgb())
-                break;
         case LITE3D_TEXTURE_FORMAT_BRG:
         case LITE3D_TEXTURE_FORMAT_BRGA:
 #ifdef WITH_GLES2
@@ -268,13 +260,26 @@ static int set_internal_format(lite3d_texture_unit *textureUnit, uint16_t *forma
             return LITE3D_FALSE;
         }
     }
+
+    switch (iformat)
+    {
+        case LITE3D_TEXTURE_INTERNAL_SRGB:
+        case LITE3D_TEXTURE_INTERNAL_SRGBA:
+            if (lite3d_check_srgb())
+                break;
+        default:
+        {
+            SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "%s: Texture internal format %d is not supported in GLES",
+                LITE3D_CURRENT_FUNCTION, iformat);
+            return LITE3D_FALSE;
+        }
+    }
 #endif
 
     /* what BPP ? */
     switch (*format)
     {
         case LITE3D_TEXTURE_FORMAT_RGB:
-        case LITE3D_TEXTURE_FORMAT_SRGB:
         case LITE3D_TEXTURE_FORMAT_BRG:
         {
             textureUnit->imageBPP = 3;
@@ -297,7 +302,6 @@ static int set_internal_format(lite3d_texture_unit *textureUnit, uint16_t *forma
             break;
         }
         case LITE3D_TEXTURE_FORMAT_RGBA:
-        case LITE3D_TEXTURE_FORMAT_SRGBA:
         case LITE3D_TEXTURE_FORMAT_BRGA:
         {
             textureUnit->imageBPP = 4;
@@ -423,7 +427,7 @@ int lite3d_texture_unit_from_resource(lite3d_texture_unit *textureUnit,
     const lite3d_file *resource, uint32_t imageType, uint32_t textureTarget, 
     int8_t srgb, int8_t quality, uint8_t wrapping, uint8_t cubeface)
 {
-    ILuint imageDesc = 0, imageFormat;
+    ILuint imageDesc = 0, imageFormat = 0, internalFormat = 0;
     GLint mipLevel = 0;
     int32_t imageWidth, imageHeight, imageDepth;
     int8_t totalLevels = 0;
@@ -469,16 +473,16 @@ int lite3d_texture_unit_from_resource(lite3d_texture_unit *textureUnit,
     /* matches openGL texture format */
     imageFormat = ilGetInteger(IL_IMAGE_FORMAT);
     if (srgb && imageFormat == LITE3D_TEXTURE_FORMAT_RGB)
-        imageFormat = LITE3D_TEXTURE_FORMAT_SRGB;
+        internalFormat = LITE3D_TEXTURE_INTERNAL_SRGB;
     else if (srgb && imageFormat == LITE3D_TEXTURE_FORMAT_RGBA)
-        imageFormat = LITE3D_TEXTURE_FORMAT_SRGBA;
+        internalFormat = LITE3D_TEXTURE_INTERNAL_SRGBA;
 
     /* allocate texture surface if not allocated yet */
     if (textureUnit->imageWidth != imageWidth || textureUnit->imageHeight != imageHeight ||
         textureUnit->imageDepth != imageDepth)
     {
         if (!lite3d_texture_unit_allocate(textureUnit, textureTarget, quality,
-            wrapping, imageFormat, 0, imageWidth, imageHeight, imageDepth, 1))
+            wrapping, imageFormat, internalFormat, imageWidth, imageHeight, imageDepth, 1))
         {
             /* release IL image */
             ilDeleteImage(imageDesc);

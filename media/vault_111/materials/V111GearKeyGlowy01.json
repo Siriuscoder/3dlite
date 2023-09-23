@@ -11,10 +11,16 @@
     {
       "Pass": 2,
       "Program": {
-        "Name": "bsdf_direct_glow.program",
-        "Path": "vault_111:shaders/json/bsdf_direct_glow.json"
+        "Name": "bsdf_direct_glow_alpha.program",
+        "Path": "vault_111:shaders/json/bsdf_direct_glow_alpha.json"
       },
       "Uniforms": [
+        {
+          "Name": "Albedo",
+          "Type": "sampler",
+          "TextureName": "V111GearKeyGlowy01_d.texture",
+          "TexturePath": "vault_111:textures/json/V111GearKeyGlowy01_d.json"
+        },
         {
           "Name": "Specular",
           "Type": "float",

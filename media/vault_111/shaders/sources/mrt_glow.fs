@@ -15,7 +15,7 @@ in mat3 itbn;
 void main()
 {
 #ifdef USE_GLOW_SOLID
-    vec4 albedo = Emission
+    vec4 albedo = Emission;
 #else
     // sampling albedo 
     vec4 albedo = texture(Emission, iuv);
