@@ -11,8 +11,8 @@
     // Video settings
     // Window size, caption, color settings, etc
     "VideoSettings": {
-	    "Width": 800,
-        "Height": 600,
+	    "Width": 640,
+        "Height": 480,
         "Caption": "Vault 111 PBR complex scene",
         "ColorBits": 24,
         "Fullscreen": false,

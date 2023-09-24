@@ -17,50 +17,65 @@
  *******************************************************************************/
 #include <iostream>
 #include <string>
-#include <sample_common/lite3dpp_common.h>
+
+#include "lite3dpp_vault_lightpass.h"
 
 namespace lite3dpp {
 namespace samples {
 
-class SampleVault111 : public Sample
+class SampleVault111 : public Sample, public SceneObserver
 {
 public:
 
+    SampleVault111() : 
+        mLightPassScene(getMain())
+    {}
+
     void createScene() override
     {
-        getMain().getResourceManager()->queryResource<Scene>("Vault_111", "vault_111:scenes/vault_111.json");
+        mVaultScene = getMain().getResourceManager()->queryResource<Scene>("Vault_111", "vault_111:scenes/vault_111.json");
+        mVaultScene->addObserver(this);
         setMainCamera(getMain().getCamera("MyCamera"));
 
-        // load intermediate light compute scene
-        auto lightCompute = getMain().getResourceManager()->queryResource<Scene>("Vault_111_LightCompute",
-            "vault_111:scenes/lightpass.json");
+        mLightPassScene.createScene();
+
         // postprocess step, fxaa, gamma correcion, draw directly info window. 
         getMain().getResourceManager()->queryResource<Scene>("Vault_111_Postprocess",
             "vault_111:scenes/postprocess.json");
-
-        SceneObject *ambientLayer = lightCompute->addObject("lightpass_ambient_layer", "vault_111:objects/lightpass.json", NULL);
-        Material *materialAmbientLayer = getMain().getResourceManager()->queryResource<Material>("lightpass_ambient.material",
-            "vault_111:materials/bsdf_lightpass_ambient.json");
-
-        auto mnode = dynamic_cast<MeshSceneNode *>(ambientLayer->getRoot());
-        mnode->setName("lightpass_ambient_layer_node");
-        mnode->replaceMaterial(0, materialAmbientLayer);
         
         // optimize: window clean not needed, because all pixels in last render target always be updated
         getMain().window()->setBuffersCleanBit(false, false, false);
         getMain().window()->depthTestFunc(RenderTarget::TestFuncLEqual);
 
-        getMain().getResourceManager()->releaseFileCache();
+        kmVec3 resolution = { (float)getMain().window()->width(), (float)getMain().window()->height(), 0 };
+        Material::setFloatv3GlobalParameter("screenResolution", resolution);
+    }
+
+    void initLightsPass()
+    {
+        if (!mLightPassScene.isInited())
+        {
+            for (const auto &light : mVaultScene->getLights())
+            {
+                mLightPassScene.addLightPass(light.first, light.second);
+            }
+        }
+    }
+
+    void endSceneRender(Scene *scene, Camera *camera) override
+    {
+        initLightsPass();
     }
 
     void mainCameraChanged() override
     {
-        lite3dpp::Material::setFloatv3GlobalParameter("eye", getMainCamera().getPosition());
+        Material::setFloatv3GlobalParameter("eye", getMainCamera().getPosition());
     }
 
 private:
 
-    std::string mSceneName;
+    Vault111LightPass mLightPassScene;
+    Scene* mVaultScene = nullptr;
 };
 
 }}

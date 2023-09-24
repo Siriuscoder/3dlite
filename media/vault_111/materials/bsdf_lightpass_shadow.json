@@ -28,12 +28,6 @@
           "Type":"sampler"
         },
         {
-          "Name":"Environment",
-          "TextureName":"environment.texture",
-          "TexturePath":"samples:textures/json/skybox_cryo_mip.json",
-          "Type":"sampler"
-        },
-        {
           "Name":"Light.enabled",
           "Type":"int",
           "Value": 1

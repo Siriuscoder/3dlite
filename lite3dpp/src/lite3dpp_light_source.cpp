@@ -22,9 +22,8 @@
 
 namespace lite3dpp
 {
-    LightSource::LightSource(const String &name, Main *main) : 
-        mName(name),
-        mMain(main)
+    LightSource::LightSource(const String &name) : 
+        mName(name)
     {
         memset(&mLightSource, 0, sizeof(mLightSource));
         mLightSource.userdata = this;
@@ -33,20 +32,21 @@ namespace lite3dpp
         mLightSourceWorld = mLightSource;
     }
 
-    LightSource::LightSource(const lite3d_light_params &ls, Main *main) : 
-        mMain(main)
+    LightSource::LightSource(const String &name, const lite3d_light_params &ls) : 
+        mName(name)
     {
         mLightSource.params = ls;
         mLightSource.userdata = this;
         mLightSourceWorld = mLightSource;
     }
 
-    LightSource::LightSource(const ConfigurationReader &json, Main *main)
+    LightSource::LightSource(const ConfigurationReader &json)
     {
         String lightType = json.getString(L"Type", "Point");
         setType(lightType == "Directional" ? LITE3D_LIGHT_DIRECTIONAL : 
             (lightType == "Spot" ? LITE3D_LIGHT_SPOT : LITE3D_LIGHT_POINT));
         
+        mName = json.getString(L"Name");
         setPosition(json.getVec3(L"Position"));
         setDirection(json.getVec3(L"Direction"));
         setDiffuse(json.getVec3(L"Diffuse"));

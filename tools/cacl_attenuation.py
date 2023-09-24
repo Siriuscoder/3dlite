@@ -1,5 +1,5 @@
 
-distance = 1000
-attenuation = 30.0 * distance * distance + 1500.0 * distance
-radiance = 300000.0 / attenuation
+distance = 600
+attenuation = 150.0 * distance * distance + 1500.0 * distance
+radiance = 120000.0 / attenuation
 print(f"radiance: {radiance}")

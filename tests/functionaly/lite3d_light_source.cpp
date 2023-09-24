@@ -37,7 +37,7 @@ class LightSourceAttenuation_Test : public ::testing::TestWithParam<LightSourceP
 public:
 
     LightSourceAttenuation_Test() : 
-        mLight("Test1", nullptr)
+        mLight("Test1")
     {}
 
 protected:

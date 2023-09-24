@@ -50,7 +50,7 @@ public:
     void addFlashlight(Scene *scene)
     {
         ConfigurationWriter flashlightJson;
-        LightSource flashlight("FlashLight", nullptr);
+        LightSource flashlight("FlashLight");
         flashlight.setAttenuationLinear(0.005f);
         flashlight.setAttenuationQuadratic(0.000003f);
         flashlight.setInfluenceDistance(1000.0f);

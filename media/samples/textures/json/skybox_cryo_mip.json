@@ -3,5 +3,6 @@
   "ImageFormat":"DDS",
   "Image": "samples:textures/images/skymap/Vault111CryoCube.dds",
   "TextureType":"Cube",
-  "Wrapping":"ClampToEdge"
+  "Wrapping":"ClampToEdge",
+  "sRGB": true
 }

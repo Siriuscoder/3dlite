@@ -92,7 +92,7 @@ public:
     void addFlashlight(Scene *scene)
     {
         ConfigurationWriter flashlightJson;
-        LightSource flashlight("FlashLight", nullptr);
+        LightSource flashlight("FlashLight");
         flashlight.setAttenuationConstant(0.12f);
         flashlight.setAttenuationLinear(0.005f);
         flashlight.setAttenuationQuadratic(0.00002f);

@@ -896,10 +896,10 @@
               "LightSize": 0.0,
               "Attenuation": {
                 "Constant": 0.0,
-                "Linear": 1500.0,
-                "Quadratic": 30.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.009999999776482582
+                "InfluenceMinRadiance": 0.003000000026077032
               },
               "Direction": [
                 0.0,
@@ -968,10 +968,10 @@
               "LightSize": 0.0,
               "Attenuation": {
                 "Constant": 0.0,
-                "Linear": 1500.0,
-                "Quadratic": 30.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.009999999776482582
+                "InfluenceMinRadiance": 0.003000000026077032
               },
               "Direction": [
                 0.0,
@@ -1040,10 +1040,10 @@
               "LightSize": 0.0,
               "Attenuation": {
                 "Constant": 0.0,
-                "Linear": 1500.0,
-                "Quadratic": 30.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.009999999776482582
+                "InfluenceMinRadiance": 0.003000000026077032
               },
               "Direction": [
                 0.0,
@@ -1112,10 +1112,10 @@
               "LightSize": 0.0,
               "Attenuation": {
                 "Constant": 0.0,
-                "Linear": 1500.0,
-                "Quadratic": 30.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.009999999776482582
+                "InfluenceMinRadiance": 0.003000000026077032
               },
               "Direction": [
                 0.0,
@@ -1184,10 +1184,10 @@
               "LightSize": 0.0,
               "Attenuation": {
                 "Constant": 0.0,
-                "Linear": 1500.0,
-                "Quadratic": 30.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.009999999776482582
+                "InfluenceMinRadiance": 0.003000000026077032
               },
               "Direction": [
                 0.0,
@@ -1256,10 +1256,10 @@
               "LightSize": 0.0,
               "Attenuation": {
                 "Constant": 0.0,
-                "Linear": 1500.0,
-                "Quadratic": 30.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.009999999776482582
+                "InfluenceMinRadiance": 0.003000000026077032
               },
               "Direction": [
                 0.0,
@@ -1328,10 +1328,10 @@
               "LightSize": 0.0,
               "Attenuation": {
                 "Constant": 0.0,
-                "Linear": 1500.0,
-                "Quadratic": 30.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.009999999776482582
+                "InfluenceMinRadiance": 0.003000000026077032
               },
               "Direction": [
                 0.0,
@@ -1400,10 +1400,10 @@
               "LightSize": 0.0,
               "Attenuation": {
                 "Constant": 0.0,
-                "Linear": 1500.0,
-                "Quadratic": 30.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.009999999776482582
+                "InfluenceMinRadiance": 0.003000000026077032
               },
               "Direction": [
                 0.0,
@@ -1472,10 +1472,10 @@
               "LightSize": 0.0,
               "Attenuation": {
                 "Constant": 0.0,
-                "Linear": 1500.0,
-                "Quadratic": 30.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.009999999776482582
+                "InfluenceMinRadiance": 0.003000000026077032
               },
               "Direction": [
                 0.0,
@@ -1544,10 +1544,10 @@
               "LightSize": 0.0,
               "Attenuation": {
                 "Constant": 0.0,
-                "Linear": 1500.0,
-                "Quadratic": 30.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.009999999776482582
+                "InfluenceMinRadiance": 0.003000000026077032
               },
               "Direction": [
                 0.0,
@@ -1616,10 +1616,10 @@
               "LightSize": 0.0,
               "Attenuation": {
                 "Constant": 0.0,
-                "Linear": 1500.0,
-                "Quadratic": 30.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.009999999776482582
+                "InfluenceMinRadiance": 0.003000000026077032
               },
               "Direction": [
                 0.0,
@@ -1688,10 +1688,10 @@
               "LightSize": 0.0,
               "Attenuation": {
                 "Constant": 0.0,
-                "Linear": 1500.0,
-                "Quadratic": 30.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.009999999776482582
+                "InfluenceMinRadiance": 0.003000000026077032
               },
               "Direction": [
                 0.0,
@@ -1760,10 +1760,10 @@
               "LightSize": 0.0,
               "Attenuation": {
                 "Constant": 0.0,
-                "Linear": 1500.0,
-                "Quadratic": 30.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.009999999776482582
+                "InfluenceMinRadiance": 0.003000000026077032
               },
               "Direction": [
                 0.0,
@@ -1832,10 +1832,10 @@
               "LightSize": 0.0,
               "Attenuation": {
                 "Constant": 0.0,
-                "Linear": 1500.0,
-                "Quadratic": 30.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.009999999776482582
+                "InfluenceMinRadiance": 0.003000000026077032
               },
               "Direction": [
                 0.0,
@@ -1904,10 +1904,10 @@
               "LightSize": 0.0,
               "Attenuation": {
                 "Constant": 0.0,
-                "Linear": 1500.0,
-                "Quadratic": 30.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.009999999776482582
+                "InfluenceMinRadiance": 0.003000000026077032
               },
               "Direction": [
                 0.0,
@@ -1976,10 +1976,10 @@
               "LightSize": 0.0,
               "Attenuation": {
                 "Constant": 0.0,
-                "Linear": 1500.0,
-                "Quadratic": 30.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.009999999776482582
+                "InfluenceMinRadiance": 0.003000000026077032
               },
               "Direction": [
                 0.0,
@@ -2048,10 +2048,10 @@
               "LightSize": 0.0,
               "Attenuation": {
                 "Constant": 0.0,
-                "Linear": 1500.0,
-                "Quadratic": 30.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.009999999776482582
+                "InfluenceMinRadiance": 0.003000000026077032
               },
               "Direction": [
                 0.0,
@@ -2120,10 +2120,10 @@
               "LightSize": 0.0,
               "Attenuation": {
                 "Constant": 0.0,
-                "Linear": 1500.0,
-                "Quadratic": 30.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.009999999776482582
+                "InfluenceMinRadiance": 0.003000000026077032
               },
               "Direction": [
                 0.0,
@@ -2192,10 +2192,10 @@
               "LightSize": 0.0,
               "Attenuation": {
                 "Constant": 0.0,
-                "Linear": 1500.0,
-                "Quadratic": 30.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.009999999776482582
+                "InfluenceMinRadiance": 0.003000000026077032
               },
               "Direction": [
                 0.0,
@@ -2264,10 +2264,10 @@
               "LightSize": 0.0,
               "Attenuation": {
                 "Constant": 0.0,
-                "Linear": 1500.0,
-                "Quadratic": 30.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.009999999776482582
+                "InfluenceMinRadiance": 0.003000000026077032
               },
               "Direction": [
                 0.0,
@@ -2336,10 +2336,10 @@
               "LightSize": 0.0,
               "Attenuation": {
                 "Constant": 0.0,
-                "Linear": 1500.0,
-                "Quadratic": 30.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.009999999776482582
+                "InfluenceMinRadiance": 0.003000000026077032
               },
               "Direction": [
                 0.0,
@@ -2408,10 +2408,10 @@
               "LightSize": 0.0,
               "Attenuation": {
                 "Constant": 0.0,
-                "Linear": 1500.0,
-                "Quadratic": 30.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.009999999776482582
+                "InfluenceMinRadiance": 0.003000000026077032
               },
               "Direction": [
                 0.0,
@@ -2480,10 +2480,10 @@
               "LightSize": 0.0,
               "Attenuation": {
                 "Constant": 0.0,
-                "Linear": 1500.0,
-                "Quadratic": 30.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.009999999776482582
+                "InfluenceMinRadiance": 0.003000000026077032
               },
               "Direction": [
                 0.0,
@@ -2552,10 +2552,10 @@
               "LightSize": 0.0,
               "Attenuation": {
                 "Constant": 0.0,
-                "Linear": 1500.0,
-                "Quadratic": 30.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.009999999776482582
+                "InfluenceMinRadiance": 0.003000000026077032
               },
               "Direction": [
                 0.0,
@@ -2624,10 +2624,10 @@
               "LightSize": 0.0,
               "Attenuation": {
                 "Constant": 0.0,
-                "Linear": 1500.0,
-                "Quadratic": 30.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.009999999776482582
+                "InfluenceMinRadiance": 0.003000000026077032
               },
               "Direction": [
                 0.0,
@@ -2696,10 +2696,10 @@
               "LightSize": 0.0,
               "Attenuation": {
                 "Constant": 0.0,
-                "Linear": 1500.0,
-                "Quadratic": 30.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.009999999776482582
+                "InfluenceMinRadiance": 0.003000000026077032
               },
               "Direction": [
                 0.0,
@@ -2768,10 +2768,10 @@
               "LightSize": 0.0,
               "Attenuation": {
                 "Constant": 0.0,
-                "Linear": 1500.0,
-                "Quadratic": 30.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.009999999776482582
+                "InfluenceMinRadiance": 0.003000000026077032
               },
               "Direction": [
                 0.0,
@@ -2840,10 +2840,10 @@
               "LightSize": 0.0,
               "Attenuation": {
                 "Constant": 0.0,
-                "Linear": 1500.0,
-                "Quadratic": 30.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.009999999776482582
+                "InfluenceMinRadiance": 0.003000000026077032
               },
               "Direction": [
                 0.0,
@@ -2912,10 +2912,10 @@
               "LightSize": 0.0,
               "Attenuation": {
                 "Constant": 0.0,
-                "Linear": 1500.0,
-                "Quadratic": 30.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.009999999776482582
+                "InfluenceMinRadiance": 0.003000000026077032
               },
               "Direction": [
                 0.0,
@@ -2984,10 +2984,10 @@
               "LightSize": 0.0,
               "Attenuation": {
                 "Constant": 0.0,
-                "Linear": 1500.0,
-                "Quadratic": 30.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.009999999776482582
+                "InfluenceMinRadiance": 0.003000000026077032
               },
               "Direction": [
                 0.0,
@@ -3056,10 +3056,10 @@
               "LightSize": 0.0,
               "Attenuation": {
                 "Constant": 0.0,
-                "Linear": 1500.0,
-                "Quadratic": 30.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.009999999776482582
+                "InfluenceMinRadiance": 0.003000000026077032
               },
               "Direction": [
                 0.0,
@@ -3128,10 +3128,10 @@
               "LightSize": 0.0,
               "Attenuation": {
                 "Constant": 0.0,
-                "Linear": 1500.0,
-                "Quadratic": 30.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.009999999776482582
+                "InfluenceMinRadiance": 0.003000000026077032
               },
               "Direction": [
                 0.0,
@@ -3200,10 +3200,10 @@
               "LightSize": 0.0,
               "Attenuation": {
                 "Constant": 0.0,
-                "Linear": 1500.0,
-                "Quadratic": 30.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.009999999776482582
+                "InfluenceMinRadiance": 0.003000000026077032
               },
               "Direction": [
                 0.0,
@@ -3272,10 +3272,10 @@
               "LightSize": 0.0,
               "Attenuation": {
                 "Constant": 0.0,
-                "Linear": 1500.0,
-                "Quadratic": 30.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.009999999776482582
+                "InfluenceMinRadiance": 0.003000000026077032
               },
               "Direction": [
                 0.0,
@@ -3344,10 +3344,10 @@
               "LightSize": 0.0,
               "Attenuation": {
                 "Constant": 0.0,
-                "Linear": 1500.0,
-                "Quadratic": 30.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.009999999776482582
+                "InfluenceMinRadiance": 0.003000000026077032
               },
               "Direction": [
                 0.0,
@@ -3416,10 +3416,10 @@
               "LightSize": 0.0,
               "Attenuation": {
                 "Constant": 0.0,
-                "Linear": 1500.0,
-                "Quadratic": 30.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.009999999776482582
+                "InfluenceMinRadiance": 0.003000000026077032
               },
               "Direction": [
                 0.0,
@@ -3488,10 +3488,10 @@
               "LightSize": 0.0,
               "Attenuation": {
                 "Constant": 0.0,
-                "Linear": 1500.0,
-                "Quadratic": 30.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.009999999776482582
+                "InfluenceMinRadiance": 0.003000000026077032
               },
               "Direction": [
                 0.0,
@@ -3560,10 +3560,10 @@
               "LightSize": 0.0,
               "Attenuation": {
                 "Constant": 0.0,
-                "Linear": 1500.0,
-                "Quadratic": 30.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.009999999776482582
+                "InfluenceMinRadiance": 0.003000000026077032
               },
               "Direction": [
                 0.0,
@@ -3632,10 +3632,10 @@
               "LightSize": 0.0,
               "Attenuation": {
                 "Constant": 0.0,
-                "Linear": 1500.0,
-                "Quadratic": 30.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.009999999776482582
+                "InfluenceMinRadiance": 0.003000000026077032
               },
               "Direction": [
                 0.0,
@@ -3704,10 +3704,10 @@
               "LightSize": 0.0,
               "Attenuation": {
                 "Constant": 0.0,
-                "Linear": 1500.0,
-                "Quadratic": 30.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.009999999776482582
+                "InfluenceMinRadiance": 0.003000000026077032
               },
               "Direction": [
                 0.0,
@@ -3776,10 +3776,10 @@
               "LightSize": 0.0,
               "Attenuation": {
                 "Constant": 0.0,
-                "Linear": 1500.0,
-                "Quadratic": 30.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.009999999776482582
+                "InfluenceMinRadiance": 0.003000000026077032
               },
               "Direction": [
                 0.0,
@@ -3848,10 +3848,10 @@
               "LightSize": 0.0,
               "Attenuation": {
                 "Constant": 0.0,
-                "Linear": 1500.0,
-                "Quadratic": 30.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.009999999776482582
+                "InfluenceMinRadiance": 0.003000000026077032
               },
               "Direction": [
                 0.0,
@@ -3920,10 +3920,10 @@
               "LightSize": 0.0,
               "Attenuation": {
                 "Constant": 0.0,
-                "Linear": 1500.0,
-                "Quadratic": 30.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.009999999776482582
+                "InfluenceMinRadiance": 0.003000000026077032
               },
               "Direction": [
                 0.0,
@@ -3992,10 +3992,10 @@
               "LightSize": 0.0,
               "Attenuation": {
                 "Constant": 0.0,
-                "Linear": 1500.0,
-                "Quadratic": 30.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.009999999776482582
+                "InfluenceMinRadiance": 0.003000000026077032
               },
               "Direction": [
                 0.0,
@@ -4064,10 +4064,10 @@
               "LightSize": 0.0,
               "Attenuation": {
                 "Constant": 0.0,
-                "Linear": 1500.0,
-                "Quadratic": 30.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.009999999776482582
+                "InfluenceMinRadiance": 0.003000000026077032
               },
               "Direction": [
                 0.0,
@@ -4136,10 +4136,10 @@
               "LightSize": 0.0,
               "Attenuation": {
                 "Constant": 0.0,
-                "Linear": 1500.0,
-                "Quadratic": 30.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.009999999776482582
+                "InfluenceMinRadiance": 0.003000000026077032
               },
               "Direction": [
                 0.0,
@@ -4208,10 +4208,10 @@
               "LightSize": 0.0,
               "Attenuation": {
                 "Constant": 0.0,
-                "Linear": 1500.0,
-                "Quadratic": 30.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.009999999776482582
+                "InfluenceMinRadiance": 0.003000000026077032
               },
               "Direction": [
                 0.0,
@@ -4280,10 +4280,10 @@
               "LightSize": 0.0,
               "Attenuation": {
                 "Constant": 0.0,
-                "Linear": 1500.0,
-                "Quadratic": 30.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.009999999776482582
+                "InfluenceMinRadiance": 0.003000000026077032
               },
               "Direction": [
                 0.0,
@@ -4352,10 +4352,10 @@
               "LightSize": 0.0,
               "Attenuation": {
                 "Constant": 0.0,
-                "Linear": 1500.0,
-                "Quadratic": 30.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.009999999776482582
+                "InfluenceMinRadiance": 0.003000000026077032
               },
               "Direction": [
                 0.0,
@@ -4424,10 +4424,10 @@
               "LightSize": 0.0,
               "Attenuation": {
                 "Constant": 0.0,
-                "Linear": 1500.0,
-                "Quadratic": 30.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.009999999776482582
+                "InfluenceMinRadiance": 0.003000000026077032
               },
               "Direction": [
                 0.0,
@@ -4496,10 +4496,10 @@
               "LightSize": 0.0,
               "Attenuation": {
                 "Constant": 0.0,
-                "Linear": 1500.0,
-                "Quadratic": 30.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.009999999776482582
+                "InfluenceMinRadiance": 0.003000000026077032
               },
               "Direction": [
                 0.0,
@@ -4568,10 +4568,10 @@
               "LightSize": 0.0,
               "Attenuation": {
                 "Constant": 0.0,
-                "Linear": 1500.0,
-                "Quadratic": 30.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.009999999776482582
+                "InfluenceMinRadiance": 0.003000000026077032
               },
               "Direction": [
                 0.0,
@@ -4640,10 +4640,10 @@
               "LightSize": 0.0,
               "Attenuation": {
                 "Constant": 0.0,
-                "Linear": 1500.0,
-                "Quadratic": 30.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.009999999776482582
+                "InfluenceMinRadiance": 0.003000000026077032
               },
               "Direction": [
                 0.0,
@@ -4712,10 +4712,10 @@
               "LightSize": 0.0,
               "Attenuation": {
                 "Constant": 0.0,
-                "Linear": 1500.0,
-                "Quadratic": 30.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.009999999776482582
+                "InfluenceMinRadiance": 0.003000000026077032
               },
               "Direction": [
                 0.0,
@@ -4784,10 +4784,10 @@
               "LightSize": 0.0,
               "Attenuation": {
                 "Constant": 0.0,
-                "Linear": 1500.0,
-                "Quadratic": 30.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.009999999776482582
+                "InfluenceMinRadiance": 0.003000000026077032
               },
               "Direction": [
                 0.0,
@@ -4856,10 +4856,10 @@
               "LightSize": 0.0,
               "Attenuation": {
                 "Constant": 0.0,
-                "Linear": 1500.0,
-                "Quadratic": 30.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.009999999776482582
+                "InfluenceMinRadiance": 0.003000000026077032
               },
               "Direction": [
                 0.0,
@@ -4928,10 +4928,10 @@
               "LightSize": 0.0,
               "Attenuation": {
                 "Constant": 0.0,
-                "Linear": 1500.0,
-                "Quadratic": 30.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.009999999776482582
+                "InfluenceMinRadiance": 0.003000000026077032
               },
               "Direction": [
                 0.0,
@@ -5000,10 +5000,10 @@
               "LightSize": 0.0,
               "Attenuation": {
                 "Constant": 0.0,
-                "Linear": 1500.0,
-                "Quadratic": 30.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.009999999776482582
+                "InfluenceMinRadiance": 0.003000000026077032
               },
               "Direction": [
                 0.0,
@@ -5072,10 +5072,10 @@
               "LightSize": 0.0,
               "Attenuation": {
                 "Constant": 0.0,
-                "Linear": 1500.0,
-                "Quadratic": 30.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.009999999776482582
+                "InfluenceMinRadiance": 0.003000000026077032
               },
               "Direction": [
                 0.0,
@@ -5144,10 +5144,10 @@
               "LightSize": 0.0,
               "Attenuation": {
                 "Constant": 0.0,
-                "Linear": 1500.0,
-                "Quadratic": 30.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.009999999776482582
+                "InfluenceMinRadiance": 0.003000000026077032
               },
               "Direction": [
                 0.0,
@@ -5216,10 +5216,10 @@
               "LightSize": 0.0,
               "Attenuation": {
                 "Constant": 0.0,
-                "Linear": 1500.0,
-                "Quadratic": 30.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.009999999776482582
+                "InfluenceMinRadiance": 0.003000000026077032
               },
               "Direction": [
                 0.0,
@@ -5288,10 +5288,10 @@
               "LightSize": 0.0,
               "Attenuation": {
                 "Constant": 0.0,
-                "Linear": 1500.0,
-                "Quadratic": 30.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.009999999776482582
+                "InfluenceMinRadiance": 0.003000000026077032
               },
               "SpotFactor": {
                 "AngleInnerCone": 2.038544477066111,
@@ -5364,10 +5364,10 @@
               "LightSize": 0.0,
               "Attenuation": {
                 "Constant": 0.0,
-                "Linear": 1500.0,
-                "Quadratic": 30.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.009999999776482582
+                "InfluenceMinRadiance": 0.003000000026077032
               },
               "SpotFactor": {
                 "AngleInnerCone": 2.038544477066111,
@@ -5440,10 +5440,10 @@
               "LightSize": 0.0,
               "Attenuation": {
                 "Constant": 0.0,
-                "Linear": 1500.0,
-                "Quadratic": 30.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.009999999776482582
+                "InfluenceMinRadiance": 0.003000000026077032
               },
               "SpotFactor": {
                 "AngleInnerCone": 2.038544477066111,
@@ -5516,10 +5516,10 @@
               "LightSize": 0.0,
               "Attenuation": {
                 "Constant": 0.0,
-                "Linear": 1500.0,
-                "Quadratic": 30.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.009999999776482582
+                "InfluenceMinRadiance": 0.003000000026077032
               },
               "SpotFactor": {
                 "AngleInnerCone": 2.038544477066111,
@@ -5592,10 +5592,10 @@
               "LightSize": 0.0,
               "Attenuation": {
                 "Constant": 0.0,
-                "Linear": 1500.0,
-                "Quadratic": 30.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.009999999776482582
+                "InfluenceMinRadiance": 0.003000000026077032
               },
               "SpotFactor": {
                 "AngleInnerCone": 2.038544477066111,
@@ -5668,10 +5668,10 @@
               "LightSize": 0.0,
               "Attenuation": {
                 "Constant": 0.0,
-                "Linear": 1500.0,
-                "Quadratic": 30.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.009999999776482582
+                "InfluenceMinRadiance": 0.003000000026077032
               },
               "SpotFactor": {
                 "AngleInnerCone": 2.038544477066111,
@@ -5744,10 +5744,10 @@
               "LightSize": 0.0,
               "Attenuation": {
                 "Constant": 0.0,
-                "Linear": 1500.0,
-                "Quadratic": 30.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.009999999776482582
+                "InfluenceMinRadiance": 0.003000000026077032
               },
               "SpotFactor": {
                 "AngleInnerCone": 2.038544477066111,
@@ -5820,10 +5820,10 @@
               "LightSize": 0.0,
               "Attenuation": {
                 "Constant": 0.0,
-                "Linear": 1500.0,
-                "Quadratic": 30.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.009999999776482582
+                "InfluenceMinRadiance": 0.003000000026077032
               },
               "SpotFactor": {
                 "AngleInnerCone": 2.038544477066111,
@@ -5896,10 +5896,10 @@
               "LightSize": 0.0,
               "Attenuation": {
                 "Constant": 0.0,
-                "Linear": 1500.0,
-                "Quadratic": 30.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.009999999776482582
+                "InfluenceMinRadiance": 0.003000000026077032
               },
               "SpotFactor": {
                 "AngleInnerCone": 2.038544477066111,
@@ -5972,10 +5972,10 @@
               "LightSize": 0.0,
               "Attenuation": {
                 "Constant": 0.0,
-                "Linear": 1500.0,
-                "Quadratic": 30.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.009999999776482582
+                "InfluenceMinRadiance": 0.003000000026077032
               },
               "SpotFactor": {
                 "AngleInnerCone": 2.038544477066111,
@@ -6048,10 +6048,10 @@
               "LightSize": 0.0,
               "Attenuation": {
                 "Constant": 0.0,
-                "Linear": 1500.0,
-                "Quadratic": 30.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.009999999776482582
+                "InfluenceMinRadiance": 0.003000000026077032
               },
               "SpotFactor": {
                 "AngleInnerCone": 2.038544477066111,
@@ -6124,10 +6124,10 @@
               "LightSize": 0.0,
               "Attenuation": {
                 "Constant": 0.0,
-                "Linear": 1500.0,
-                "Quadratic": 30.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.009999999776482582
+                "InfluenceMinRadiance": 0.003000000026077032
               },
               "SpotFactor": {
                 "AngleInnerCone": 2.038544477066111,
@@ -6200,10 +6200,10 @@
               "LightSize": 0.0,
               "Attenuation": {
                 "Constant": 0.0,
-                "Linear": 1500.0,
-                "Quadratic": 30.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.009999999776482582
+                "InfluenceMinRadiance": 0.003000000026077032
               },
               "SpotFactor": {
                 "AngleInnerCone": 2.038544477066111,
@@ -6276,10 +6276,10 @@
               "LightSize": 0.0,
               "Attenuation": {
                 "Constant": 0.0,
-                "Linear": 1500.0,
-                "Quadratic": 30.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.009999999776482582
+                "InfluenceMinRadiance": 0.003000000026077032
               },
               "SpotFactor": {
                 "AngleInnerCone": 2.038544477066111,
@@ -6352,10 +6352,10 @@
               "LightSize": 0.0,
               "Attenuation": {
                 "Constant": 0.0,
-                "Linear": 1500.0,
-                "Quadratic": 30.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.009999999776482582
+                "InfluenceMinRadiance": 0.003000000026077032
               },
               "SpotFactor": {
                 "AngleInnerCone": 2.038544477066111,
@@ -6428,10 +6428,10 @@
               "LightSize": 0.0,
               "Attenuation": {
                 "Constant": 0.0,
-                "Linear": 1500.0,
-                "Quadratic": 30.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.009999999776482582
+                "InfluenceMinRadiance": 0.003000000026077032
               },
               "Direction": [
                 0.0,
@@ -6500,10 +6500,10 @@
               "LightSize": 0.0,
               "Attenuation": {
                 "Constant": 0.0,
-                "Linear": 1500.0,
-                "Quadratic": 30.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.009999999776482582
+                "InfluenceMinRadiance": 0.003000000026077032
               },
               "Direction": [
                 0.0,
@@ -6572,10 +6572,10 @@
               "LightSize": 0.0,
               "Attenuation": {
                 "Constant": 0.0,
-                "Linear": 1500.0,
-                "Quadratic": 30.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.009999999776482582
+                "InfluenceMinRadiance": 0.003000000026077032
               },
               "Direction": [
                 0.0,
@@ -6644,10 +6644,10 @@
               "LightSize": 0.0,
               "Attenuation": {
                 "Constant": 0.0,
-                "Linear": 1500.0,
-                "Quadratic": 30.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.009999999776482582
+                "InfluenceMinRadiance": 0.003000000026077032
               },
               "Direction": [
                 0.0,
@@ -6716,10 +6716,10 @@
               "LightSize": 0.0,
               "Attenuation": {
                 "Constant": 0.0,
-                "Linear": 1500.0,
-                "Quadratic": 30.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.009999999776482582
+                "InfluenceMinRadiance": 0.003000000026077032
               },
               "Direction": [
                 0.0,
@@ -6784,14 +6784,14 @@
                 0.9673858880996704,
                 0.4937739968299866
               ],
-              "Radiance": 6000000.0,
+              "Radiance": 15000000.0,
               "LightSize": 0.0,
               "Attenuation": {
                 "Constant": 0.0,
-                "Linear": 1500.0,
-                "Quadratic": 30.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.009999999776482582
+                "InfluenceMinRadiance": 0.003000000026077032
               },
               "SpotFactor": {
                 "AngleInnerCone": 0.4398230012187554,
@@ -6860,14 +6860,14 @@
                 0.9673858880996704,
                 0.4937739968299866
               ],
-              "Radiance": 6000000.0,
+              "Radiance": 15000000.0,
               "LightSize": 0.0,
               "Attenuation": {
                 "Constant": 0.0,
-                "Linear": 1500.0,
-                "Quadratic": 30.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.009999999776482582
+                "InfluenceMinRadiance": 0.003000000026077032
               },
               "SpotFactor": {
                 "AngleInnerCone": 0.4398230012187554,
@@ -6936,14 +6936,14 @@
                 0.9673858880996704,
                 0.4937739968299866
               ],
-              "Radiance": 6000000.0,
+              "Radiance": 15000000.0,
               "LightSize": 0.0,
               "Attenuation": {
                 "Constant": 0.0,
-                "Linear": 1500.0,
-                "Quadratic": 30.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.009999999776482582
+                "InfluenceMinRadiance": 0.003000000026077032
               },
               "SpotFactor": {
                 "AngleInnerCone": 0.4398230012187554,
@@ -8971,10 +8971,10 @@
               "LightSize": 0.0,
               "Attenuation": {
                 "Constant": 0.0,
-                "Linear": 1500.0,
-                "Quadratic": 30.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.009999999776482582
+                "InfluenceMinRadiance": 0.003000000026077032
               },
               "Direction": [
                 0.0,

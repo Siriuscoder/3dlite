@@ -13,15 +13,23 @@
       "Name":"screenMatrix"
     },
     {
+      "Name":"combined",
+      "TextureName": "combined.texture",
+      "Type":"sampler"
+    },
+    {
       "Name":"GammaFactor",
       "Type":"float",
       "Value": 2.2,
       "Scope":"global"
     },
     {
-      "Name":"combined",
-      "TextureName": "combined.texture",
-      "Type":"sampler"
+      "Name":"screenResolution",
+      "Type":"v3",
+      "Value":[
+        0,0,0
+      ],
+      "Scope":"global"
     }
   ]
 }

@@ -14,7 +14,7 @@
       ],
       "Perspective": {
         "Znear": 10,
-        "Zfar": 4000,
+        "Zfar": 4500,
         "Fov": 60
       },
       "RenderTargets": [

@@ -1,7 +1,9 @@
 {
     "Sources": 
     [
-        "vault_111:shaders/sources/bigtriangle.vs,vault_111:shaders/sources/inc/common.def",
-        "vault_111:shaders/sources/postprocess.fs"
+        "vault_111:shaders/sources/postprocess.vs",
+        "vault_111:shaders/sources/postprocess.fs",
+        "samples:shaders/sources/antialiasing/fxaa.fs",
+        "samples:shaders/sources/antialiasing/fxaa_texcoords.vs"
     ]
 }

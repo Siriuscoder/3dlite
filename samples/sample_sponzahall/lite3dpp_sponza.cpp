@@ -67,7 +67,7 @@ public:
     void addSunlight()
     {
         ConfigurationWriter sunJson;
-        LightSource sunlight("SunLight", nullptr);
+        LightSource sunlight("SunLight");
         sunlight.setDiffuse(KM_VEC3_ONE);
         sunlight.setDirection(sunLightDirection);
         sunlight.setType(LITE3D_LIGHT_DIRECTIONAL);

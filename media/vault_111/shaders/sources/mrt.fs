@@ -22,7 +22,10 @@ void main()
     // sampling specular
     vec4 specular = texture(Specular, iuv);
     // Transform Specular, Roughness, Metalic 
-    specular = vec4(specular.x, 1.0 - specular.y, 1.0 - specular.z, 0.0);
+    specular = vec4(specular.g,
+        clamp(1.0 - specular.r, 0.0, 1.0), 
+        clamp(1.0 - specular.b, 0.0, 1.0), 
+        0.0);
 
     gl_FragData[0] = vec4(ivv, gl_FragCoord.z / gl_FragCoord.w);
     gl_FragData[1] = vec4(nw, 0.0);

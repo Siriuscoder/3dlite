@@ -144,7 +144,7 @@ void JsonGenerator::generateLight(const lite3dpp::String &lightName,
         {
             auto &lastNode = mNodesStack.top().back();
             lite3dpp::ConfigurationWriter liConfig;
-            lite3dpp::LightSource light(*params, nullptr);
+            lite3dpp::LightSource light(lightName, *params);
             light.toJson(liConfig);
             lastNode.set(L"Light", liConfig);
         }
