@@ -28,65 +28,20 @@
           "Type":"sampler"
         },
         {
-          "Name":"Light.enabled",
-          "Type":"int",
-          "Value": 1
+          "Name":"Environment",
+          "TextureName":"environment.texture",
+          "TexturePath":"samples:textures/json/skybox_cryo_mip.json",
+          "Type":"sampler"
         },
         {
-          "Name":"Light.type",
-          "Type":"int",
-          "Value": 0
+          "Name":"lightSources",
+          "UBOName": "Vault_111_lightingBufferObject",
+          "Type":"UBO"
         },
         {
-          "Name":"Light.position",
-          "Type":"v3",
-          "Value":[
-            0,0,0
-          ]
-        },
-        {
-          "Name":"Light.diffuse",
-          "Type":"v3",
-          "Value":[
-            0,0,0
-          ]
-        },
-        {
-          "Name":"Light.direction",
-          "Type":"v3",
-          "Value":[
-            0,0,0
-          ]
-        },
-        {
-          "Name":"Light.influenceDistance",
-          "Type":"float",
-          "Value": 0.0
-        },
-        {
-          "Name":"Light.attenuationContant",
-          "Type":"float",
-          "Value": 0.0
-        },
-        {
-          "Name":"Light.attenuationLinear",
-          "Type":"float",
-          "Value": 0.0
-        },
-        {
-          "Name":"Light.attenuationQuadratic",
-          "Type":"float",
-          "Value": 0.0
-        },
-        {
-          "Name":"Light.innercone",
-          "Type":"float",
-          "Value": 0.0
-        },
-        {
-          "Name":"Light.outercone",
-          "Type":"float",
-          "Value": 0.0
+          "Name":"lightIndexes",
+          "UBOName": "Vault_111_lightingIndexBuffer",
+          "Type":"UBO"
         },
         {
           "Name":"eye",
@@ -102,7 +57,7 @@
   ],
   "Uniforms":[
     {
-      "Name":"projViewMatrix"
+      "Name":"screenMatrix"
     }
   ]
 }

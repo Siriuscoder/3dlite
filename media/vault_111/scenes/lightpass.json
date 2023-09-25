@@ -23,10 +23,17 @@
                     "Priority": 0,
                     "TexturePass": 1,
                     "DepthTest": false,
-                    "DepthOutput": false,
-                    "RenderInstancing": true
+                    "DepthOutput": false
                 }
             ]
+        }
+    ],
+
+    "Objects":
+    [
+        {
+            "Name": "BigTriangleGeom",
+            "Object": "vault_111:objects/lightpass.json"
         }
     ]
 }

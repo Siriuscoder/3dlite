@@ -99,17 +99,6 @@ public:
         // load intermediate light compute scene
         mLightComputeScene = mRender.getResourceManager()->queryResource<Scene>("Vault_111_LightCompute",
             "vault_111:scenes/lightpass.json");
-        mLightComputeScene->addObserver(this);
-
-        mAmbientLayer = mLightComputeScene->addObject("lightpass_ambient_layer", "vault_111:objects/lightpass.json", NULL);
-        Material *materialAmbientLayer = mRender.getResourceManager()->queryResource<Material>("lightpass_ambient.material",
-            "vault_111:materials/bsdf_lightpass_ambient.json");
-
-        auto mnode = dynamic_cast<MeshSceneNode *>(mAmbientLayer->getRoot());
-        SDL_assert(mnode);
-
-        mnode->setName("lightpass_ambient_layer_node");
-        mnode->replaceMaterial(0, materialAmbientLayer);
     }
 
     void addLightPass(const String& name, LightSceneNode *node)

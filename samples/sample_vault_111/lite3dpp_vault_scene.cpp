@@ -34,7 +34,6 @@ public:
     void createScene() override
     {
         mVaultScene = getMain().getResourceManager()->queryResource<Scene>("Vault_111", "vault_111:scenes/vault_111.json");
-        mVaultScene->addObserver(this);
         setMainCamera(getMain().getCamera("MyCamera"));
 
         mLightPassScene.createScene();
@@ -51,20 +50,8 @@ public:
         Material::setFloatv3GlobalParameter("screenResolution", resolution);
     }
 
-    void initLightsPass()
-    {
-        if (!mLightPassScene.isInited())
-        {
-            for (const auto &light : mVaultScene->getLights())
-            {
-                mLightPassScene.addLightPass(light.first, light.second);
-            }
-        }
-    }
-
     void endSceneRender(Scene *scene, Camera *camera) override
     {
-        initLightsPass();
     }
 
     void mainCameraChanged() override
