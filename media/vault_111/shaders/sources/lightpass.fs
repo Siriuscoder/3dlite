@@ -23,7 +23,7 @@ in vec2 iuv;
 
 #define M_PI 3.1415926535897932384626433832795
 #define FLT_EPSILON 1.192092896e-07F
-const float ambientStrength = 0.35;
+const float ambientStrength = 0.1;
 
 #define LITE3D_LIGHT_UNDEFINED          0.0
 #define LITE3D_LIGHT_POINT              1.0

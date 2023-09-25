@@ -16,31 +16,23 @@ vec4 fxaa(sampler2D tex, vec2 fragCoord, vec2 resolution,
     vec2 v_rgbSW, vec2 v_rgbSE, 
     vec2 v_rgbM); 
 
-vec3 tonemapCoeff(vec3 x)
+// Reinhard tone mapping
+vec3 ReinhardTonemapping(vec3 x)
 {
-    float _A = 0.15;
-    float _B = 0.50;
-    float _C = 0.10;
-    float _D = 0.20;
-    float _E = 0.02;
-    float _F = 0.30;
-
-    return ((x*(_A*x+_C*_B)+_D*_E)/(x*(_A*x+_B)+_D*_F))-_E/_F;
+    return x / (x + 1.0);
 }
 
-vec3 tonemapping(vec3 x)
+// exposure tone mapping
+vec3 ExposureTonemapping(vec3 x, float exposure)
 {
-    vec3 coeffone = tonemapCoeff(vec3(1.0));
-
-    x = tonemapCoeff(x);
-    return x / (x + coeffone);
+    return 1.0 - exp(-x * exposure);
 }
 
 void main()
 {
     vec3 hdr = fxaa(combined, iuv * screenResolution.xy, screenResolution.xy, irgbNW, irgbNE, irgbSW, irgbSE, irgbM).xyz;
-    // tonemapping
-    vec3 ldr = tonemapping(hdr);
+    // Reinhard tone mapping
+    vec3 ldr = ExposureTonemapping(hdr, 1.5);
     // gamma correction 
     ldr = pow(ldr, vec3(1.0 / GammaFactor));
 
