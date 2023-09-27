@@ -376,7 +376,7 @@ static int init(void *userdata)
 
     /* create new render target and attach cam1 to it */
     lite3d_render_target_init(&mRTT, RENDER_TEXTURE_WIDTH, RENDER_TEXTURE_HEIGHT);
-    lite3d_render_target_attach_camera(&mRTT, &mCamera01, &mScene, 1, 0, LITE3D_RENDER_DEFAULT);
+    lite3d_render_target_attach_camera(&mRTT, &mCamera01, &mScene, 1, NULL, 0, 0, LITE3D_RENDER_DEFAULT);
     /* setup render target framebuffer */
     colorTextureArr[0] = &mRenderTextureUnit;
     if (!lite3d_framebuffer_setup(&mRTT.fb, colorTextureArr, 1, NULL, 

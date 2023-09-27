@@ -20,6 +20,7 @@
 
 #include <lite3d/lite3d_common.h>
 #include <lite3d/lite3d_list.h>
+#include <lite3d/lite3d_array.h>
 #include <lite3d/lite3d_texture_unit.h>
 
 #define LITE3D_FRAMEBUFFER_STATUS_OK                0x0
@@ -39,20 +40,26 @@
 #define LITE3D_FRAMEBUFFER_USE_MSAA_X8              0x20
 #define LITE3D_FRAMEBUFFER_USE_MSAA_X16             0x40
 
-
 typedef struct lite3d_framebuffer
 {
     uint32_t framebufferId;
     uint32_t renderBuffersIds[3];
     int8_t renderBuffersCount;
-    int8_t colorAttachmentsCount;
     uint32_t flags;
     int32_t height;
     int32_t width;
     uint8_t status;
     int32_t samples;
     int32_t rbIntFormat;
+    lite3d_array colorAttachments;
+    lite3d_texture_unit *depthAttachment;
 } lite3d_framebuffer;
+
+typedef struct lite3d_framebuffer_layer
+{
+    uint8_t attachmentType;
+    int32_t layer;
+} lite3d_framebuffer_layer;
 
 LITE3D_CEXPORT int lite3d_framebuffer_technique_init(void);
 LITE3D_CEXPORT int lite3d_framebuffer_init(lite3d_framebuffer *fb,
@@ -80,6 +87,9 @@ LITE3D_CEXPORT size_t lite3d_framebuffer_size(lite3d_framebuffer *fb,
     uint8_t format);
 
 LITE3D_CEXPORT int lite3d_framebuffer_blit(lite3d_framebuffer *from, lite3d_framebuffer *to);
+
+LITE3D_CEXPORT void lite3d_framebuffer_switch_layer(lite3d_framebuffer *fb, const lite3d_framebuffer_layer *layer, 
+    size_t layerCount);
 
 #endif	/* LITE3D_FRAMEBUFFER_H */
 

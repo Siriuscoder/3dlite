@@ -308,11 +308,11 @@ namespace lite3dpp
                 if (renderTargetJson.getBool(L"RenderBlend", true))
                     renderFlags |= LITE3D_RENDER_BLEND;
                 if (renderTargetJson.getBool(L"CleanColorBuffer", false))
-                    renderFlags |= LITE3D_RENDER_CLEAN_COLOR_BUF;
+                    renderFlags |= LITE3D_RENDER_CLEAN_COLOR_BUFF;
                 if (renderTargetJson.getBool(L"CleanDepthBuffer", false))
-                    renderFlags |= LITE3D_RENDER_CLEAN_DEPTH_BUF;
+                    renderFlags |= LITE3D_RENDER_CLEAN_DEPTH_BUFF;
                 if (renderTargetJson.getBool(L"CleanStencilBuffer", false))
-                    renderFlags |= LITE3D_RENDER_CLEAN_STENCIL_BUF;
+                    renderFlags |= LITE3D_RENDER_CLEAN_STENCIL_BUFF;
                 if (renderTargetJson.getBool(L"DepthTest", true))
                     renderFlags |= LITE3D_RENDER_DEPTH_TEST;
                 if (renderTargetJson.getBool(L"ColorOutput", true))

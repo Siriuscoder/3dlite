@@ -106,7 +106,7 @@ LITE3D_CEXPORT void lite3d_render_suspend(void);
 LITE3D_CEXPORT void lite3d_render_stop(void);
 
 LITE3D_CEXPORT int lite3d_render_target_attach_camera(lite3d_render_target *rt, lite3d_camera *camera, lite3d_scene *scene, 
-    uint16_t pass, int priority, uint32_t renderFlags);
+    uint16_t pass, const lite3d_framebuffer_layer *layer, size_t layersCount, int priority, uint32_t renderFlags);
 LITE3D_CEXPORT int lite3d_render_target_dettach_camera(lite3d_render_target *rt, lite3d_camera *camera, int priority);
 LITE3D_CEXPORT int lite3d_render_target_screen_attach_camera(lite3d_camera *camera, lite3d_scene *scene, uint16_t pass, int priority, uint32_t renderFlags);
 LITE3D_CEXPORT int lite3d_render_target_screen_dettach_camera(lite3d_camera *camera, int priority);

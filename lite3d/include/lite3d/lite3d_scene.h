@@ -28,9 +28,9 @@
 
 #define LITE3D_RENDER_OPAQUE            ((uint32_t)0x1)
 #define LITE3D_RENDER_BLEND             ((uint32_t)0x1 << 1)
-#define LITE3D_RENDER_CLEAN_COLOR_BUF   ((uint32_t)0x1 << 2)
-#define LITE3D_RENDER_CLEAN_DEPTH_BUF   ((uint32_t)0x1 << 3)
-#define LITE3D_RENDER_CLEAN_STENCIL_BUF ((uint32_t)0x1 << 4)
+#define LITE3D_RENDER_CLEAN_COLOR_BUFF   ((uint32_t)0x1 << 2)
+#define LITE3D_RENDER_CLEAN_DEPTH_BUFF   ((uint32_t)0x1 << 3)
+#define LITE3D_RENDER_CLEAN_STENCIL_BUFF ((uint32_t)0x1 << 4)
 #define LITE3D_RENDER_DEPTH_TEST        ((uint32_t)0x1 << 5)
 #define LITE3D_RENDER_COLOR_OUTPUT      ((uint32_t)0x1 << 6)
 #define LITE3D_RENDER_DEPTH_OUTPUT      ((uint32_t)0x1 << 7)

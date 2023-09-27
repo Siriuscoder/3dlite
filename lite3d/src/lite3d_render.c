@@ -43,6 +43,7 @@ typedef struct lookUnit
     uint16_t pass;
     int priority;
     uint32_t renderFlags;
+    lite3d_framebuffer_layer layer[2];
 } lookUnit;
 
 static uint64_t gPerfFreq = 0;
@@ -155,12 +156,14 @@ static void update_render_target(lite3d_render_target *target)
     {
         look = LITE3D_MEMBERCAST(lookUnit, node, rtLink);
 
-        if(look->camera->cameraNode.enabled)
+        if (look->camera->cameraNode.enabled)
         {
-            lite3d_buffers_clear((look->renderFlags & LITE3D_RENDER_CLEAN_COLOR_BUF) ? LITE3D_TRUE : LITE3D_FALSE,
-                (look->renderFlags & LITE3D_RENDER_CLEAN_DEPTH_BUF) ? LITE3D_TRUE : LITE3D_FALSE,
-                (look->renderFlags & LITE3D_RENDER_CLEAN_STENCIL_BUF) ? LITE3D_TRUE : LITE3D_FALSE);
-            
+            lite3d_framebuffer_switch_layer(&target->fb, look->layer, sizeof(look->layer) / sizeof(lite3d_framebuffer_layer));
+
+            lite3d_buffers_clear((look->renderFlags & LITE3D_RENDER_CLEAN_COLOR_BUFF) ? LITE3D_TRUE : LITE3D_FALSE,
+                (look->renderFlags & LITE3D_RENDER_CLEAN_DEPTH_BUFF) ? LITE3D_TRUE : LITE3D_FALSE,
+                (look->renderFlags & LITE3D_RENDER_CLEAN_STENCIL_BUFF) ? LITE3D_TRUE : LITE3D_FALSE);
+
             lite3d_depth_test((look->renderFlags & LITE3D_RENDER_DEPTH_TEST) ? LITE3D_TRUE : LITE3D_FALSE);
             lite3d_color_output((look->renderFlags & LITE3D_RENDER_COLOR_OUTPUT) ? LITE3D_TRUE : LITE3D_FALSE);
             lite3d_depth_output((look->renderFlags & LITE3D_RENDER_DEPTH_OUTPUT) ? LITE3D_TRUE : LITE3D_FALSE);
@@ -447,7 +450,7 @@ void lite3d_render_stop(void)
 }
 
 int lite3d_render_target_attach_camera(lite3d_render_target *target, lite3d_camera *camera, lite3d_scene *scene,
-    uint16_t pass, int priority, uint32_t renderFlags)
+    uint16_t pass, const lite3d_framebuffer_layer *layer, size_t layersCount, int priority, uint32_t renderFlags)
 {
     lookUnit *look = NULL;
     lookUnit *lookIns = NULL;
@@ -467,6 +470,8 @@ int lite3d_render_target_attach_camera(lite3d_render_target *target, lite3d_came
     lookIns->priority = priority;
     lookIns->scene = scene;
     lookIns->renderFlags = renderFlags;
+    memset(lookIns->layer, 0, sizeof(lookIns->layer));
+    memcpy(lookIns->layer, layer, LITE3D_MIN(layersCount * sizeof(lite3d_framebuffer_layer), sizeof(lookIns->layer)));
     lite3d_list_link_init(&lookIns->rtLink);
 
     /* check camera already attached to the render target */
@@ -518,7 +523,7 @@ int lite3d_render_target_screen_attach_camera(lite3d_camera *camera, lite3d_scen
     uint16_t pass, int priority, uint32_t renderFlags)
 {
     return lite3d_render_target_attach_camera(&gScreenRt, camera, scene,
-        pass, priority, renderFlags);
+        pass, NULL, 0, priority, renderFlags);
 }
 
 int lite3d_render_target_screen_dettach_camera(lite3d_camera *camera, int priority)
