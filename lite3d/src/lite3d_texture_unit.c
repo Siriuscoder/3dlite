@@ -115,6 +115,8 @@ static const char *texture_target_string(uint32_t textureTarget)
         return "TEXTURE_2D_MULTISAMPLE";
     case GL_TEXTURE_2D_MULTISAMPLE_ARRAY:
         return "TEXTURE_2D_MULTISAMPLE_ARRAY";
+    case GL_TEXTURE_2D_ARRAY:
+        return "TEXTURE_2D_ARRAY";
     default:
         return "INVALID";
     }
@@ -962,6 +964,8 @@ int lite3d_texture_unit_allocate(lite3d_texture_unit *textureUnit,
                 height, 0, format, GL_UNSIGNED_BYTE, NULL);
             break;
         case LITE3D_TEXTURE_3D:
+        case LITE3D_TEXTURE_2D_ARRAY:
+        case LITE3D_TEXTURE_2D_SHADOW_ARRAY:
             glTexImage3D(textureTargetEnum[textureTarget], 0, internalFormat, width,
                 height, depth, 0, format, GL_UNSIGNED_BYTE, NULL);
             break;

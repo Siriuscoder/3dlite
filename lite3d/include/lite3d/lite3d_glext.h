@@ -43,11 +43,13 @@ int lite3d_check_occlusion_query();
 int lite3d_check_depth32();
 int lite3d_check_shadow_samplers();
 int lite3d_check_srgb();
+int lite3d_check_texture3D();
 
 /* stub functions */
 void glTexSubImage3D_stub(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLenum format, GLenum type, const void *pixels);
-void glTexImage3D_stub(GLenum target, GLint level, GLint internalFormat, GLsizei width, GLsizei height, GLsizei depth, GLint border, GLenum format, GLenum type, const void *pixels);
+void glTexImage3D_stub(GLenum target, GLint level, GLenum internalformat, GLsizei width, GLsizei height, GLsizei depth, GLint border, GLenum format, GLenum type, const void *pixels);
 void glCompressedTexSubImage3D_stub(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLenum format, GLsizei imageSize, const void *data);
+void glFramebufferTexture3D_stub(GLenum target, GLenum attachment, GLenum textarget, GLuint texture, GLint level, GLint zoffset);
 void glTexSubImage1D_stub(GLenum target, GLint level, GLint xoffset, GLsizei width, GLenum format, GLenum type, const void *pixels);
 void glTexImage1D_stub(GLenum target, GLint level, GLint internalformat, GLsizei width, GLint border, GLenum format, GLenum type, const void *pixels);
 void glCompressedTexSubImage1D_stub(GLenum target, GLint level, GLint xoffset, GLsizei width, GLenum format, GLsizei imageSize, const void *data);
@@ -67,6 +69,7 @@ void glBeginQuery_stub(GLenum target, GLuint id);
 void glEndQuery_stub(GLenum target);
 void glGetQueryiv_stub(GLenum target, GLenum pname, GLint *params);
 void glGetQueryObjectuiv_stub(GLuint id, GLenum pname, GLuint *params);
+void glFramebufferTextureLayer_stub(GLenum target, GLenum attachment, GLuint texture, GLint level, GLint layer);
 
 #ifdef GLES
 
@@ -149,6 +152,10 @@ extern PFNGLBEGINQUERYEXTPROC glBeginQueryPtr;
 extern PFNGLENDQUERYEXTPROC glEndQueryPtr;
 extern PFNGLGETQUERYIVEXTPROC glGetQueryivPtr;
 extern PFNGLGETQUERYOBJECTUIVEXTPROC glGetQueryObjectuivPtr;
+extern PFNGLTEXIMAGE3DOESPROC glTexImage3DPtr;
+extern PFNGLTEXSUBIMAGE3DOESPROC glTexSubImage3DPtr;
+extern PFNGLCOMPRESSEDTEXSUBIMAGE3DOESPROC glCompressedTexSubImage3DPtr;
+extern PFNGLFRAMEBUFFERTEXTURE3DOESPROC glFramebufferTexture3DPtr;
 
 #   ifdef WITH_GLES2
 #       define glDrawArraysInstanced glDrawArraysInstancedPtr
@@ -162,11 +169,12 @@ extern PFNGLGETQUERYOBJECTUIVEXTPROC glGetQueryObjectuivPtr;
 
 #       define glBlitFramebuffer glBlitFramebufferPtr 
 
-#       define glTexSubImage3D glTexSubImage3D_stub
-#       define glTexImage3D glTexImage3D_stub
-#       define glCompressedTexSubImage3D glCompressedTexSubImage3D_stub
+#       define glTexSubImage3D glTexSubImage3DPtr
+#       define glTexImage3D glTexImage3DPtr
+#       define glCompressedTexSubImage3D glCompressedTexSubImage3DPtr
 #       define glRenderbufferStorageMultisample glRenderbufferStorageMultisample_stub
 #       define glCopyBufferSubData glCopyBufferSubData_stub
+#       define glFramebufferTextureLayer glFramebufferTextureLayer_stub
 
 #       define glGenQueries glGenQueriesPtr
 #       define glDeleteQueries glDeleteQueriesPtr
@@ -268,11 +276,16 @@ extern PFNGLGETQUERYOBJECTUIVEXTPROC glGetQueryObjectuivPtr;
 #           define GL_SRGB GL_SRGB_EXT
 #       endif
 
+#       ifndef GL_TEXTURE_3D
+#           define GL_TEXTURE_3D GL_TEXTURE_3D_OES
+#       endif
+
 #   endif
 
 #   define glMapBuffer glMapBufferPtr
 #   define glUnmapBuffer glUnmapBufferPtr
 #   define glGetBufferPointerv glGetBufferPointervPtr
+#   define glFramebufferTexture3D glFramebufferTexture3DPtr
 #   define glTexBuffer glTexBuffer_stub /* TODO GL_OES_texture_buffer */
 /* Not supported at all in GLES */
 #   define glTexSubImage1D glTexSubImage1D_stub

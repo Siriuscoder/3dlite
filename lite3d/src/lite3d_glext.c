@@ -48,6 +48,11 @@ PFNGLBEGINQUERYEXTPROC glBeginQueryPtr = NULL;
 PFNGLENDQUERYEXTPROC glEndQueryPtr = NULL;
 PFNGLGETQUERYIVEXTPROC glGetQueryivPtr = NULL;
 PFNGLGETQUERYOBJECTUIVEXTPROC glGetQueryObjectuivPtr = NULL;
+/* GL_OES_texture_3D */
+PFNGLTEXIMAGE3DOESPROC glTexImage3DPtr = NULL;
+PFNGLTEXSUBIMAGE3DOESPROC glTexSubImage3DPtr = NULL;
+PFNGLCOMPRESSEDTEXSUBIMAGE3DOESPROC glCompressedTexSubImage3DPtr = NULL;
+PFNGLFRAMEBUFFERTEXTURE3DOESPROC glFramebufferTexture3DPtr = NULL;
 
 #endif
 
@@ -277,6 +282,15 @@ int lite3d_check_srgb()
 #endif 
 }
 
+int lite3d_check_texture3D()
+{
+#ifdef GLES
+    return SDL_GL_ExtensionSupported("GL_OES_texture_3D") == SDL_TRUE;
+#else
+    return GLEW_VERSION_3_0;
+#endif 
+}
+
 #ifdef __GNUC__
 #   pragma GCC diagnostic push
 #   pragma GCC diagnostic ignored "-Wpedantic"
@@ -307,6 +321,21 @@ int lite3d_init_gl_extensions_binding()
         glMapBufferPtr = glMapBuffer_stub;
         glUnmapBufferPtr = glUnmapBuffer_stub;
         glGetBufferPointervPtr = glGetBufferPointerv_stub;
+    }
+
+    if (lite3d_check_texture3D())
+    {
+        glTexImage3DPtr = SDL_GL_GetProcAddress("glTexImage3DOES");
+        glTexSubImage3DPtr = SDL_GL_GetProcAddress("glTexSubImage3DOES");
+        glCompressedTexSubImage3DPtr = SDL_GL_GetProcAddress("glCompressedTexSubImage3DOES");
+        glFramebufferTexture3DPtr = SDL_GL_GetProcAddress("glFramebufferTexture3DOES");
+    }
+    else
+    {
+        glTexImage3DPtr = glTexImage3D_stub;
+        glTexSubImage3DPtr = glTexSubImage3D_stub;
+        glCompressedTexSubImage3DPtr = glCompressedTexSubImage3D_stub;
+        glFramebufferTexture3DPtr = glFramebufferTexture3D_stub;
     }
     
 #ifdef WITH_GLES2
@@ -373,7 +402,7 @@ void glTexSubImage3D_stub(GLenum target, GLint level, GLint xoffset, GLint yoffs
     lite3d_misc_gl_set_not_supported();
 }
 
-void glTexImage3D_stub(GLenum target, GLint level, GLint internalFormat, GLsizei width, GLsizei height, GLsizei depth, GLint border, GLenum format, GLenum type, const void *pixels)
+void glTexImage3D_stub(GLenum target, GLint level, GLenum internalformat, GLsizei width, GLsizei height, GLsizei depth, GLint border, GLenum format, GLenum type, const void *pixels)
 {
     SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
         "%s: glTexImage3D is not supported..", LITE3D_CURRENT_FUNCTION);
@@ -385,6 +414,13 @@ void glCompressedTexSubImage3D_stub(GLenum target, GLint level, GLint xoffset, G
     SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
         "%s: glCompressedTexSubImage3D is not supported..", LITE3D_CURRENT_FUNCTION);
     lite3d_misc_gl_set_not_supported();
+}
+
+void glFramebufferTexture3D_stub(GLenum target, GLenum attachment, GLenum textarget, GLuint texture, GLint level, GLint zoffset)
+{
+    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+        "%s: glFramebufferTexture3D is not supported..", LITE3D_CURRENT_FUNCTION);
+    lite3d_misc_gl_set_not_supported();   
 }
 
 void glTexSubImage1D_stub(GLenum target, GLint level, GLint xoffset, GLsizei width, GLenum format, GLenum type, const void *pixels)
@@ -520,5 +556,12 @@ void glGetQueryObjectuiv_stub(GLuint id, GLenum pname, GLuint *params)
 {
     SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
         "%s: glGetQueryObjectuiv is not supported..", LITE3D_CURRENT_FUNCTION);
+    lite3d_misc_gl_set_not_supported();
+}
+
+void glFramebufferTextureLayer_stub(GLenum target, GLenum attachment, GLuint texture, GLint level, GLint layer)
+{
+    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+        "%s: glFramebufferTextureLayer is not supported..", LITE3D_CURRENT_FUNCTION);
     lite3d_misc_gl_set_not_supported();
 }
