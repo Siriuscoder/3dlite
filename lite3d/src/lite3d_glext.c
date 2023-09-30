@@ -53,6 +53,8 @@ PFNGLTEXIMAGE3DOESPROC glTexImage3DPtr = NULL;
 PFNGLTEXSUBIMAGE3DOESPROC glTexSubImage3DPtr = NULL;
 PFNGLCOMPRESSEDTEXSUBIMAGE3DOESPROC glCompressedTexSubImage3DPtr = NULL;
 PFNGLFRAMEBUFFERTEXTURE3DOESPROC glFramebufferTexture3DPtr = NULL;
+/* GL_OES_geometry_shader */
+PFNGLFRAMEBUFFERTEXTUREOESPROC glFramebufferTexturePtr = NULL;
 
 #endif
 
@@ -337,6 +339,15 @@ int lite3d_init_gl_extensions_binding()
         glCompressedTexSubImage3DPtr = glCompressedTexSubImage3D_stub;
         glFramebufferTexture3DPtr = glFramebufferTexture3D_stub;
     }
+
+    if (lite3d_check_geometry_shader())
+    {
+        glFramebufferTexturePtr = SDL_GL_GetProcAddress("glFramebufferTextureOES");
+    }
+    else
+    {
+        glFramebufferTexturePtr = glFramebufferTexture_stub;
+    }
     
 #ifdef WITH_GLES2
     if (lite3d_check_instanced_arrays())
@@ -563,5 +574,12 @@ void glFramebufferTextureLayer_stub(GLenum target, GLenum attachment, GLuint tex
 {
     SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
         "%s: glFramebufferTextureLayer is not supported..", LITE3D_CURRENT_FUNCTION);
+    lite3d_misc_gl_set_not_supported();
+}
+
+void glFramebufferTexture_stub(GLenum target, GLenum attachment, GLuint texture, GLint level)
+{
+    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+        "%s: glFramebufferTexture is not supported..", LITE3D_CURRENT_FUNCTION);
     lite3d_misc_gl_set_not_supported();
 }

@@ -60,6 +60,7 @@ const GLenum textureTargetEnum[] = {
 static lite3d_image_filter gFilters[LITE3D_MAX_FILTERS];
 static int8_t gFiltersCount = 0;
 static int maxTextureSize;
+static int maxTexture3DSize;
 static int maxTextureImageUnits;
 static int maxCombinedTextureImageUnits;
 static int textureCompression = LITE3D_TRUE;
@@ -405,6 +406,7 @@ int lite3d_texture_technique_init(const lite3d_texture_technique_settings *setti
     
     glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &maxTextureImageUnits);
     glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTextureSize);
+    glGetIntegerv(GL_MAX_3D_TEXTURE_SIZE, &maxTexture3DSize);
     glGetIntegerv(GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS, &maxCombinedTextureImageUnits);
 
     SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "GL_MAX_TEXTURE_IMAGE_UNITS: %d",
@@ -413,6 +415,8 @@ int lite3d_texture_technique_init(const lite3d_texture_technique_settings *setti
         maxCombinedTextureImageUnits);
     SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "GL_MAX_TEXTURE_SIZE: %d",
         maxTextureSize);
+    SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "GL_MAX_3D_TEXTURE_SIZE: %d",
+        maxTexture3DSize);
 
     ilSetMemory(il_alloc, il_free);
     ilInit();
@@ -920,7 +924,8 @@ int lite3d_texture_unit_allocate(lite3d_texture_unit *textureUnit,
             textureUnit->wrapping == LITE3D_TEXTURE_REPEAT ? GL_REPEAT : GL_CLAMP_TO_EDGE);
         glTexParameteri(textureTargetEnum[textureTarget], GL_TEXTURE_WRAP_T,
             textureUnit->wrapping == LITE3D_TEXTURE_REPEAT ? GL_REPEAT : GL_CLAMP_TO_EDGE);
-        if (textureTarget == LITE3D_TEXTURE_3D)
+        if (textureTarget == LITE3D_TEXTURE_3D || textureTarget == LITE3D_TEXTURE_2D_ARRAY ||
+            textureTarget == LITE3D_TEXTURE_2D_SHADOW_ARRAY)
         {
             glTexParameteri(textureTargetEnum[textureTarget], GL_TEXTURE_WRAP_R,
                 textureUnit->wrapping == LITE3D_TEXTURE_REPEAT ? GL_REPEAT : GL_CLAMP_TO_EDGE);

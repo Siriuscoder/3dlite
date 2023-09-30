@@ -327,8 +327,21 @@ namespace lite3dpp
                     renderFlags |= LITE3D_RENDER_OCCLUSION_QUERY;
                 if (renderTargetJson.getBool(L"OcclusionCulling", false))
                     renderFlags |= LITE3D_RENDER_OCCLUSION_CULLING;
+
+                RenderTarget::RenderLayers layers;
+                auto colorLayer = renderTargetJson.getInt(L"ColorLayer", -1);
+                auto depthLayer = renderTargetJson.getInt(L"DepthLayer", -1);
+                if (colorLayer >= 0)
+                {
+                    layers.emplace_back(lite3d_framebuffer_layer { LITE3D_FRAMEBUFFER_USE_COLOR_BUFFER, colorLayer });
+                }
+
+                if (depthLayer >= 0)
+                {
+                    layers.emplace_back(lite3d_framebuffer_layer { LITE3D_FRAMEBUFFER_USE_DEPTH_BUFFER, depthLayer });
+                }
         
-                renderTarget->addCamera(camera, this, renderTargetJson.getInt(L"TexturePass"),
+                renderTarget->addCamera(camera, this, renderTargetJson.getInt(L"TexturePass"), layers,
                     renderTargetJson.getInt(L"Priority"), renderFlags);
             }
 

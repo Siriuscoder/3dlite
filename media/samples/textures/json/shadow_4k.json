@@ -1,5 +1,5 @@
 {
-    "TextureType": "SHADOW2D",
+    "TextureType": "2D_SHADOW",
     "Filtering": "Linear",
     "Wrapping": "ClampToEdge",
     "Compression": false,

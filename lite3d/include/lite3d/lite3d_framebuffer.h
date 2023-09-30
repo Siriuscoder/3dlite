@@ -39,6 +39,25 @@
 #define LITE3D_FRAMEBUFFER_USE_MSAA_X4              0x10
 #define LITE3D_FRAMEBUFFER_USE_MSAA_X8              0x20
 #define LITE3D_FRAMEBUFFER_USE_MSAA_X16             0x40
+#define LITE3D_FRAMEBUFFER_USE_LAYERED_BINDING      0x80 // Support for layered framebuffer
+
+typedef struct lite3d_framebuffer_layer
+{
+    uint8_t attachmentType;
+    int32_t layer;
+} lite3d_framebuffer_layer;
+
+typedef struct lite3d_framebuffer_attachment
+{
+    lite3d_framebuffer_layer layer;
+    lite3d_texture_unit *attachment;
+} lite3d_framebuffer_attachment;
+
+typedef struct lite3d_framebuffer_attachment_binding
+{
+    lite3d_framebuffer_attachment attachment;
+    int32_t bindedLayer;
+} lite3d_framebuffer_attachment_binding;
 
 typedef struct lite3d_framebuffer
 {
@@ -52,14 +71,8 @@ typedef struct lite3d_framebuffer
     int32_t samples;
     int32_t rbIntFormat;
     lite3d_array colorAttachments;
-    lite3d_texture_unit *depthAttachment;
+    lite3d_framebuffer_attachment_binding depthAttachment;
 } lite3d_framebuffer;
-
-typedef struct lite3d_framebuffer_layer
-{
-    uint8_t attachmentType;
-    int32_t layer;
-} lite3d_framebuffer_layer;
 
 LITE3D_CEXPORT int lite3d_framebuffer_technique_init(void);
 LITE3D_CEXPORT int lite3d_framebuffer_init(lite3d_framebuffer *fb,
@@ -70,8 +83,7 @@ LITE3D_CEXPORT int lite3d_framebuffer_init(lite3d_framebuffer *fb,
  * be used if corresponding flag is present 
  */
 LITE3D_CEXPORT int lite3d_framebuffer_setup(lite3d_framebuffer *fb,
-    lite3d_texture_unit **colorAttachments, int8_t colorAttachmentsCount, 
-    lite3d_texture_unit *depthAttachment, uint32_t flags);
+    const lite3d_framebuffer_attachment *attachments, size_t attachmentsCount, uint32_t flags);
 
 LITE3D_CEXPORT int lite3d_framebuffer_screen_init(lite3d_framebuffer *fb, 
     int32_t width, int32_t height);

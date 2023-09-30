@@ -70,6 +70,7 @@ void glEndQuery_stub(GLenum target);
 void glGetQueryiv_stub(GLenum target, GLenum pname, GLint *params);
 void glGetQueryObjectuiv_stub(GLuint id, GLenum pname, GLuint *params);
 void glFramebufferTextureLayer_stub(GLenum target, GLenum attachment, GLuint texture, GLint level, GLint layer);
+void glFramebufferTexture_stub(GLenum target, GLenum attachment, GLuint texture, GLint level);
 
 #ifdef GLES
 
@@ -156,6 +157,8 @@ extern PFNGLTEXIMAGE3DOESPROC glTexImage3DPtr;
 extern PFNGLTEXSUBIMAGE3DOESPROC glTexSubImage3DPtr;
 extern PFNGLCOMPRESSEDTEXSUBIMAGE3DOESPROC glCompressedTexSubImage3DPtr;
 extern PFNGLFRAMEBUFFERTEXTURE3DOESPROC glFramebufferTexture3DPtr;
+/* GL_OES_geometry_shader */
+extern PFNGLFRAMEBUFFERTEXTUREOESPROC glFramebufferTexturePtr;
 
 #   ifdef WITH_GLES2
 #       define glDrawArraysInstanced glDrawArraysInstancedPtr
@@ -280,12 +283,17 @@ extern PFNGLFRAMEBUFFERTEXTURE3DOESPROC glFramebufferTexture3DPtr;
 #           define GL_TEXTURE_3D GL_TEXTURE_3D_OES
 #       endif
 
+#       ifndef GL_MAX_3D_TEXTURE_SIZE
+#           define GL_MAX_3D_TEXTURE_SIZE GL_MAX_3D_TEXTURE_SIZE_OES
+#       endif
+
 #   endif
 
 #   define glMapBuffer glMapBufferPtr
 #   define glUnmapBuffer glUnmapBufferPtr
 #   define glGetBufferPointerv glGetBufferPointervPtr
 #   define glFramebufferTexture3D glFramebufferTexture3DPtr
+#   define glFramebufferTexture glFramebufferTexturePtr
 #   define glTexBuffer glTexBuffer_stub /* TODO GL_OES_texture_buffer */
 /* Not supported at all in GLES */
 #   define glTexSubImage1D glTexSubImage1D_stub

@@ -44,6 +44,7 @@ typedef struct lookUnit
     int priority;
     uint32_t renderFlags;
     lite3d_framebuffer_layer layer[2];
+    size_t layersCount;
 } lookUnit;
 
 static uint64_t gPerfFreq = 0;
@@ -158,7 +159,7 @@ static void update_render_target(lite3d_render_target *target)
 
         if (look->camera->cameraNode.enabled)
         {
-            lite3d_framebuffer_switch_layer(&target->fb, look->layer, sizeof(look->layer) / sizeof(lite3d_framebuffer_layer));
+            lite3d_framebuffer_switch_layer(&target->fb, look->layer, look->layersCount);
 
             lite3d_buffers_clear((look->renderFlags & LITE3D_RENDER_CLEAN_COLOR_BUFF) ? LITE3D_TRUE : LITE3D_FALSE,
                 (look->renderFlags & LITE3D_RENDER_CLEAN_DEPTH_BUFF) ? LITE3D_TRUE : LITE3D_FALSE,
@@ -470,7 +471,7 @@ int lite3d_render_target_attach_camera(lite3d_render_target *target, lite3d_came
     lookIns->priority = priority;
     lookIns->scene = scene;
     lookIns->renderFlags = renderFlags;
-    memset(lookIns->layer, 0, sizeof(lookIns->layer));
+    lookIns->layersCount = layersCount;
     memcpy(lookIns->layer, layer, LITE3D_MIN(layersCount * sizeof(lite3d_framebuffer_layer), sizeof(lookIns->layer)));
     lite3d_list_link_init(&lookIns->rtLink);
 
