@@ -1,9 +1,6 @@
 #include "samples:shaders/sources/common/utils_inc.glsl"
 
-uniform sampler2D Albedo;
-uniform sampler2D Specular;
-uniform sampler2D VwMap;
-uniform sampler2D NwMap;
+uniform sampler2DArray PreparedRenderData;
 uniform samplerCube Environment;
 
 // declaration for UBO
@@ -106,17 +103,17 @@ vec3 Lx(vec3 albedo, vec3 radiance, vec3 L, vec3 N, vec3 V, vec3 specular, vec3 
 void main()
 {
     // sampling normal in world space from fullscreen normal map
-    vec3 nw = texture(NwMap, iuv).xyz;
+    vec3 nw = texture(PreparedRenderData, vec3(iuv, 1)).xyz;
     // Non shaded fragment
     if (fiszero(nw))
         discard;
 
     // sampling fragment position in world space from fullscreen normal map
-    vec3 vw = texture(VwMap, iuv).xyz;
+    vec3 vw = texture(PreparedRenderData, vec3(iuv, 0)).xyz;
     // sampling albedo from fullscreen map
-    vec4 albedo = texture(Albedo, iuv);
+    vec4 albedo = texture(PreparedRenderData, vec3(iuv, 2));
     // sampling specular parameters from fullscreen map
-    vec3 specular = texture(Specular, iuv).xyz;
+    vec3 specular = texture(PreparedRenderData, vec3(iuv, 3)).xyz;
     // Eye direction to current fragment 
     vec3 eyeDir = normalize(eye - vw);
     // Reflect vector for ambient specular

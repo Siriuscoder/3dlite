@@ -567,16 +567,22 @@ void lite3d_render_target_screenshot(lite3d_render_target *rt, const char *filen
 {
     ILuint imageId;
     uint8_t *pixels;
+    size_t pixelsSize = lite3d_framebuffer_size(&rt->fb, LITE3D_FRAMEBUFFER_READ_RGBA_INT8);
     
     SDL_assert(rt);
-    pixels = lite3d_malloc(lite3d_framebuffer_size(&rt->fb, LITE3D_FRAMEBUFFER_READ_RGB_INT8));
-    
-    if (!lite3d_framebuffer_read(&rt->fb, 0, LITE3D_FRAMEBUFFER_READ_RGB_INT8, pixels))
+    pixels = lite3d_malloc(pixelsSize);
+    if (!lite3d_framebuffer_read(&rt->fb, 0, LITE3D_FRAMEBUFFER_READ_RGBA_INT8, pixels))
     {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
             "%s: framebuffer read failed", LITE3D_CURRENT_FUNCTION);
         lite3d_free(pixels);
         return;
+    }
+
+    /* Reset alpha to full untransparent */
+    for (int alpha = 3; alpha < pixelsSize; alpha += 4)
+    {
+        pixels[alpha] = 255;
     }
     
     lite3d_misc_il_error_stack_clean();
@@ -588,7 +594,7 @@ void lite3d_render_target_screenshot(lite3d_render_target *rt, const char *filen
     }
     
     ilBindImage(imageId);
-    ilTexImage(rt->fb.width, rt->fb.height, 1, 3, IL_RGB, IL_UNSIGNED_BYTE, pixels);
+    ilTexImage(rt->fb.width, rt->fb.height, 1, 4, IL_RGBA, IL_UNSIGNED_BYTE, pixels);
     lite3d_free(pixels);
     
     if (LITE3D_CHECK_IL_ERROR)

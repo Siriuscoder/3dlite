@@ -12,20 +12,24 @@
         "Attachments":
         [
             {
-                "TextureName": "screen_vw.texture", // Fragment world coords
-                "TexturePath": "samples:textures/json/rgba32f.json"
+                "TextureName": "deffered_render_data.texture", // Fragment world coords
+                "TexturePath": "samples:textures/json/rgba32f_array4.json",
+                "Layer": 0
             },
             {
-                "TextureName": "screen_nw.texture", // Fragment world normal
-                "TexturePath": "samples:textures/json/rgba32f.json"
+                "TextureName": "deffered_render_data.texture", // Fragment world normal
+                "TexturePath": "samples:textures/json/rgba32f_array4.json",
+                "Layer": 1
             },
             {
-                "TextureName": "screen_albedo.texture", // Albedo, diffuse colour 
-                "TexturePath": "samples:textures/json/rgba32f.json"
+                "TextureName": "deffered_render_data.texture", // Albedo, diffuse colour 
+                "TexturePath": "samples:textures/json/rgba32f_array4.json",
+                "Layer": 2
             },
             {
-                "TextureName": "screen_specular.texture", // Specular PBR parameters
-                "TexturePath": "samples:textures/json/rgba32f.json"
+                "TextureName": "deffered_render_data.texture", // Specular PBR parameters
+                "TexturePath": "samples:textures/json/rgba32f_array4.json",
+                "Layer": 3
             }
         ]
     },
