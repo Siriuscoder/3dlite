@@ -43,6 +43,8 @@ typedef struct lookUnit
     uint16_t pass;
     int priority;
     uint32_t renderFlags;
+    lite3d_framebuffer_layer layer[2];
+    size_t layersCount;
 } lookUnit;
 
 static uint64_t gPerfFreq = 0;
@@ -155,12 +157,14 @@ static void update_render_target(lite3d_render_target *target)
     {
         look = LITE3D_MEMBERCAST(lookUnit, node, rtLink);
 
-        if(look->camera->cameraNode.enabled)
+        if (look->camera->cameraNode.enabled)
         {
-            lite3d_buffers_clear((look->renderFlags & LITE3D_RENDER_CLEAN_COLOR_BUF) ? LITE3D_TRUE : LITE3D_FALSE,
-                (look->renderFlags & LITE3D_RENDER_CLEAN_DEPTH_BUF) ? LITE3D_TRUE : LITE3D_FALSE,
-                (look->renderFlags & LITE3D_RENDER_CLEAN_STENCIL_BUF) ? LITE3D_TRUE : LITE3D_FALSE);
-            
+            lite3d_framebuffer_switch_layer(&target->fb, look->layer, look->layersCount);
+
+            lite3d_buffers_clear((look->renderFlags & LITE3D_RENDER_CLEAN_COLOR_BUFF) ? LITE3D_TRUE : LITE3D_FALSE,
+                (look->renderFlags & LITE3D_RENDER_CLEAN_DEPTH_BUFF) ? LITE3D_TRUE : LITE3D_FALSE,
+                (look->renderFlags & LITE3D_RENDER_CLEAN_STENCIL_BUFF) ? LITE3D_TRUE : LITE3D_FALSE);
+
             lite3d_depth_test((look->renderFlags & LITE3D_RENDER_DEPTH_TEST) ? LITE3D_TRUE : LITE3D_FALSE);
             lite3d_color_output((look->renderFlags & LITE3D_RENDER_COLOR_OUTPUT) ? LITE3D_TRUE : LITE3D_FALSE);
             lite3d_depth_output((look->renderFlags & LITE3D_RENDER_DEPTH_OUTPUT) ? LITE3D_TRUE : LITE3D_FALSE);
@@ -447,7 +451,7 @@ void lite3d_render_stop(void)
 }
 
 int lite3d_render_target_attach_camera(lite3d_render_target *target, lite3d_camera *camera, lite3d_scene *scene,
-    uint16_t pass, int priority, uint32_t renderFlags)
+    uint16_t pass, const lite3d_framebuffer_layer *layer, size_t layersCount, int priority, uint32_t renderFlags)
 {
     lookUnit *look = NULL;
     lookUnit *lookIns = NULL;
@@ -467,6 +471,8 @@ int lite3d_render_target_attach_camera(lite3d_render_target *target, lite3d_came
     lookIns->priority = priority;
     lookIns->scene = scene;
     lookIns->renderFlags = renderFlags;
+    lookIns->layersCount = layersCount;
+    memcpy(lookIns->layer, layer, LITE3D_MIN(layersCount * sizeof(lite3d_framebuffer_layer), sizeof(lookIns->layer)));
     lite3d_list_link_init(&lookIns->rtLink);
 
     /* check camera already attached to the render target */
@@ -518,7 +524,7 @@ int lite3d_render_target_screen_attach_camera(lite3d_camera *camera, lite3d_scen
     uint16_t pass, int priority, uint32_t renderFlags)
 {
     return lite3d_render_target_attach_camera(&gScreenRt, camera, scene,
-        pass, priority, renderFlags);
+        pass, NULL, 0, priority, renderFlags);
 }
 
 int lite3d_render_target_screen_dettach_camera(lite3d_camera *camera, int priority)
@@ -561,16 +567,22 @@ void lite3d_render_target_screenshot(lite3d_render_target *rt, const char *filen
 {
     ILuint imageId;
     uint8_t *pixels;
+    size_t pixelsSize = lite3d_framebuffer_size(&rt->fb, LITE3D_FRAMEBUFFER_READ_RGBA_INT8);
     
     SDL_assert(rt);
-    pixels = lite3d_malloc(lite3d_framebuffer_size(&rt->fb, LITE3D_FRAMEBUFFER_READ_RGB_INT8));
-    
-    if (!lite3d_framebuffer_read(&rt->fb, 0, LITE3D_FRAMEBUFFER_READ_RGB_INT8, pixels))
+    pixels = lite3d_malloc(pixelsSize);
+    if (!lite3d_framebuffer_read(&rt->fb, 0, LITE3D_FRAMEBUFFER_READ_RGBA_INT8, pixels))
     {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
             "%s: framebuffer read failed", LITE3D_CURRENT_FUNCTION);
         lite3d_free(pixels);
         return;
+    }
+
+    /* Reset alpha to full untransparent */
+    for (int alpha = 3; alpha < pixelsSize; alpha += 4)
+    {
+        pixels[alpha] = 255;
     }
     
     lite3d_misc_il_error_stack_clean();
@@ -582,7 +594,7 @@ void lite3d_render_target_screenshot(lite3d_render_target *rt, const char *filen
     }
     
     ilBindImage(imageId);
-    ilTexImage(rt->fb.width, rt->fb.height, 1, 3, IL_RGB, IL_UNSIGNED_BYTE, pixels);
+    ilTexImage(rt->fb.width, rt->fb.height, 1, 4, IL_RGBA, IL_UNSIGNED_BYTE, pixels);
     lite3d_free(pixels);
     
     if (LITE3D_CHECK_IL_ERROR)

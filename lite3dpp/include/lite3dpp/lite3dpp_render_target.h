@@ -31,6 +31,8 @@ namespace lite3dpp
     {
     public:
 
+        using RenderLayers = stl<lite3d_framebuffer_layer>::vector;
+
         enum TestFunc : uint32_t
         {
             TestFuncNever = LITE3D_TEST_NEVER,
@@ -76,7 +78,8 @@ namespace lite3dpp
         inline lite3d_render_target *getPtr()
         { return mRenderTargetPtr; }
 
-        void addCamera(Camera *camera, Scene *scene, uint16_t pass, int priority, uint32_t renderFlags);
+        void addCamera(Camera *camera, Scene *scene, uint16_t pass, const RenderLayers &layers,
+            int priority, uint32_t renderFlags);
         void removeCamera(Camera *camera, int priority);
 
     protected:

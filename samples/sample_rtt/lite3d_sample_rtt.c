@@ -312,7 +312,7 @@ static int initCube(void)
 static int init(void *userdata)
 {
     lite3d_file *file1;
-    lite3d_texture_unit *colorTextureArr[1];
+    lite3d_framebuffer_attachment colorTextureArr;
 
     if (!(mFileSysPack = lite3d_pack_open("samples/", LITE3D_FALSE, 700000)))
         return LITE3D_FALSE;
@@ -376,10 +376,12 @@ static int init(void *userdata)
 
     /* create new render target and attach cam1 to it */
     lite3d_render_target_init(&mRTT, RENDER_TEXTURE_WIDTH, RENDER_TEXTURE_HEIGHT);
-    lite3d_render_target_attach_camera(&mRTT, &mCamera01, &mScene, 1, 0, LITE3D_RENDER_DEFAULT);
+    lite3d_render_target_attach_camera(&mRTT, &mCamera01, &mScene, 1, NULL, 0, 0, LITE3D_RENDER_DEFAULT);
     /* setup render target framebuffer */
-    colorTextureArr[0] = &mRenderTextureUnit;
-    if (!lite3d_framebuffer_setup(&mRTT.fb, colorTextureArr, 1, NULL, 
+    colorTextureArr.attachment = &mRenderTextureUnit;
+    colorTextureArr.layer.attachmentType = LITE3D_FRAMEBUFFER_USE_COLOR_BUFFER;
+    colorTextureArr.layer.layer = 0;
+    if (!lite3d_framebuffer_setup(&mRTT.fb, &colorTextureArr, 1,
         LITE3D_FRAMEBUFFER_USE_COLOR_BUFFER | LITE3D_FRAMEBUFFER_USE_DEPTH_BUFFER))
         return LITE3D_FALSE;
 

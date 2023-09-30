@@ -12,7 +12,7 @@ void main()
 {
     // sampling normal from normal map
     // put normal in [-1,1] range in tangent space
-    vec3 n = normalize(2.0 * (1.0 - texture(Normal, iuv).rgb) - 1.0);
+    vec3 n = normalize(2.0 * (1.0 - texture(Normal, iuv).grb) - 1.0);
     // Calculate missing blue channel
 	n.b = sqrt(1.0 - dot(n.rg, n.rg));
     // and trasform normal to world space 

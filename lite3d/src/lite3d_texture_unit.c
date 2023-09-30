@@ -49,15 +49,18 @@ const GLenum textureTargetEnum[] = {
     GL_TEXTURE_2D,
     GL_TEXTURE_3D,
     GL_TEXTURE_CUBE_MAP,
+    GL_TEXTURE_2D_ARRAY,
     GL_TEXTURE_BUFFER,
     GL_TEXTURE_2D_MULTISAMPLE,
     GL_TEXTURE_2D_MULTISAMPLE_ARRAY,
-    GL_TEXTURE_2D
+    GL_TEXTURE_2D,
+    GL_TEXTURE_2D_ARRAY
 };
 
 static lite3d_image_filter gFilters[LITE3D_MAX_FILTERS];
 static int8_t gFiltersCount = 0;
 static int maxTextureSize;
+static int maxTexture3DSize;
 static int maxTextureImageUnits;
 static int maxCombinedTextureImageUnits;
 static int textureCompression = LITE3D_TRUE;
@@ -113,6 +116,8 @@ static const char *texture_target_string(uint32_t textureTarget)
         return "TEXTURE_2D_MULTISAMPLE";
     case GL_TEXTURE_2D_MULTISAMPLE_ARRAY:
         return "TEXTURE_2D_MULTISAMPLE_ARRAY";
+    case GL_TEXTURE_2D_ARRAY:
+        return "TEXTURE_2D_ARRAY";
     default:
         return "INVALID";
     }
@@ -401,6 +406,7 @@ int lite3d_texture_technique_init(const lite3d_texture_technique_settings *setti
     
     glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &maxTextureImageUnits);
     glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTextureSize);
+    glGetIntegerv(GL_MAX_3D_TEXTURE_SIZE, &maxTexture3DSize);
     glGetIntegerv(GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS, &maxCombinedTextureImageUnits);
 
     SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "GL_MAX_TEXTURE_IMAGE_UNITS: %d",
@@ -409,6 +415,8 @@ int lite3d_texture_technique_init(const lite3d_texture_technique_settings *setti
         maxCombinedTextureImageUnits);
     SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "GL_MAX_TEXTURE_SIZE: %d",
         maxTextureSize);
+    SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "GL_MAX_3D_TEXTURE_SIZE: %d",
+        maxTexture3DSize);
 
     ilSetMemory(il_alloc, il_free);
     ilInit();
@@ -610,12 +618,15 @@ int lite3d_texture_unit_set_pixels(lite3d_texture_unit *textureUnit,
             break;
         case LITE3D_TEXTURE_2D:
         case LITE3D_TEXTURE_CUBE:
+        case LITE3D_TEXTURE_2D_SHADOW:
             glTexSubImage2D(textureUnit->textureTarget == LITE3D_TEXTURE_CUBE ?
                 GL_TEXTURE_CUBE_MAP_POSITIVE_X + cubeface : textureTargetEnum[textureUnit->textureTarget],
                 level, widthOff, heightOff, width, height, textureUnit->texFormat,
                 GL_UNSIGNED_BYTE, pixels);
             break;
         case LITE3D_TEXTURE_3D:
+        case LITE3D_TEXTURE_2D_ARRAY:
+        case LITE3D_TEXTURE_2D_SHADOW_ARRAY:
             glTexSubImage3D(textureTargetEnum[textureUnit->textureTarget], level, widthOff,
                 heightOff, depthOff, width, height, depth,
                 textureUnit->texFormat, GL_UNSIGNED_BYTE, pixels);
@@ -662,12 +673,15 @@ int lite3d_texture_unit_set_compressed_pixels(lite3d_texture_unit *textureUnit,
             break;
         case LITE3D_TEXTURE_2D:
         case LITE3D_TEXTURE_CUBE:
+        case LITE3D_TEXTURE_2D_SHADOW:
             glCompressedTexSubImage2D(textureUnit->textureTarget == LITE3D_TEXTURE_CUBE ? 
                 GL_TEXTURE_CUBE_MAP_POSITIVE_X + cubeface : textureTargetEnum[textureUnit->textureTarget],
                 level, widthOff, heightOff, width, height, textureUnit->texFormat,
                 (GLsizei)pixelsSize, pixels);
             break;
         case LITE3D_TEXTURE_3D:
+        case LITE3D_TEXTURE_2D_ARRAY:
+        case LITE3D_TEXTURE_2D_SHADOW_ARRAY:
             glCompressedTexSubImage3D(textureTargetEnum[textureUnit->textureTarget], level, widthOff,
                 heightOff, depthOff, width, height, depth,
                 textureUnit->texFormat, (GLsizei)pixelsSize, pixels);
@@ -848,7 +862,7 @@ int lite3d_texture_unit_allocate(lite3d_texture_unit *textureUnit,
     textureUnit->texiFormat = internalFormat;
 
     if ((textureTarget >= LITE3D_TEXTURE_BUFFER && textureTarget <= LITE3D_TEXTURE_3D_MULTISAMPLE && quality > LITE3D_TEXTURE_QL_LOW) ||
-        (textureTarget == LITE3D_TEXTURE_2D_SHADOW && quality > LITE3D_TEXTURE_QL_MEDIUM))
+        (textureTarget == LITE3D_TEXTURE_2D_SHADOW && textureTarget == LITE3D_TEXTURE_2D_SHADOW_ARRAY && quality > LITE3D_TEXTURE_QL_MEDIUM))
     {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
             "%s: incorrect quality option %d for texture %s",
@@ -856,7 +870,8 @@ int lite3d_texture_unit_allocate(lite3d_texture_unit *textureUnit,
         return LITE3D_FALSE;
     }
 
-    if (textureTarget == LITE3D_TEXTURE_2D_SHADOW && format != LITE3D_TEXTURE_FORMAT_DEPTH)
+    if (textureTarget == LITE3D_TEXTURE_2D_SHADOW && textureTarget == LITE3D_TEXTURE_2D_SHADOW_ARRAY && 
+        format != LITE3D_TEXTURE_FORMAT_DEPTH)
     {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
             "%s: incorrect format %s for texture %s",
@@ -900,7 +915,8 @@ int lite3d_texture_unit_allocate(lite3d_texture_unit *textureUnit,
     textureUnit->magFilter = (quality == LITE3D_TEXTURE_QL_LOW ?
         GL_NEAREST : GL_LINEAR);
 
-    if (textureTarget < LITE3D_TEXTURE_BUFFER || textureTarget == LITE3D_TEXTURE_2D_SHADOW)
+    if (textureTarget < LITE3D_TEXTURE_BUFFER || textureTarget == LITE3D_TEXTURE_2D_SHADOW || 
+        textureTarget == LITE3D_TEXTURE_2D_SHADOW_ARRAY)
     {
         glTexParameteri(textureTargetEnum[textureTarget], GL_TEXTURE_MIN_FILTER, textureUnit->minFilter);
         glTexParameteri(textureTargetEnum[textureTarget], GL_TEXTURE_MAG_FILTER, textureUnit->magFilter);
@@ -908,7 +924,8 @@ int lite3d_texture_unit_allocate(lite3d_texture_unit *textureUnit,
             textureUnit->wrapping == LITE3D_TEXTURE_REPEAT ? GL_REPEAT : GL_CLAMP_TO_EDGE);
         glTexParameteri(textureTargetEnum[textureTarget], GL_TEXTURE_WRAP_T,
             textureUnit->wrapping == LITE3D_TEXTURE_REPEAT ? GL_REPEAT : GL_CLAMP_TO_EDGE);
-        if (textureTarget == LITE3D_TEXTURE_3D)
+        if (textureTarget == LITE3D_TEXTURE_3D || textureTarget == LITE3D_TEXTURE_2D_ARRAY ||
+            textureTarget == LITE3D_TEXTURE_2D_SHADOW_ARRAY)
         {
             glTexParameteri(textureTargetEnum[textureTarget], GL_TEXTURE_WRAP_R,
                 textureUnit->wrapping == LITE3D_TEXTURE_REPEAT ? GL_REPEAT : GL_CLAMP_TO_EDGE);
@@ -926,7 +943,8 @@ int lite3d_texture_unit_allocate(lite3d_texture_unit *textureUnit,
     }
 
     /* Enable depth texture comparison mode for shadowmaps */
-    if (textureTarget == LITE3D_TEXTURE_2D_SHADOW)
+    if (textureTarget == LITE3D_TEXTURE_2D_SHADOW || 
+        textureTarget == LITE3D_TEXTURE_2D_SHADOW_ARRAY)
     {
         glTexParameteri(textureTargetEnum[textureTarget], GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
         glTexParameteri(textureTargetEnum[textureTarget], GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
@@ -951,6 +969,8 @@ int lite3d_texture_unit_allocate(lite3d_texture_unit *textureUnit,
                 height, 0, format, GL_UNSIGNED_BYTE, NULL);
             break;
         case LITE3D_TEXTURE_3D:
+        case LITE3D_TEXTURE_2D_ARRAY:
+        case LITE3D_TEXTURE_2D_SHADOW_ARRAY:
             glTexImage3D(textureTargetEnum[textureTarget], 0, internalFormat, width,
                 height, depth, 0, format, GL_UNSIGNED_BYTE, NULL);
             break;

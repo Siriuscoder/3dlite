@@ -6,7 +6,18 @@
         "Mesh": 
         {
             "Name": "BigTriangle.mesh",
-            "Mesh": "samples:models/json/BigTriangle.json"
+            "Mesh": "samples:models/json/BigTriangle.json",
+            "MaterialMapping": 
+            [
+                {
+                    "MaterialIndex": 0,
+                    "Material":
+                    {
+                        "Name": "lightpass.material",
+                        "Material": "vault_111:materials/bsdf_lightpass.json"
+                    }
+                }
+            ]
         }
     }
 }

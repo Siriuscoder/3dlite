@@ -44,8 +44,7 @@ namespace lite3dpp
             height = helper.getInt(L"Height", 0);
         int32_t scale = helper.getInt(L"Scale", 1);
         uint32_t flags = 0;
-        stl<lite3d_texture_unit *>::vector colorAttachments;
-        lite3d_texture_unit *depthAttachment = NULL;
+        stl<lite3d_framebuffer_attachment>::vector textureAttachments;
 
         /* use screen size if not specified */
         if(width == 0 && height == 0)
@@ -67,8 +66,13 @@ namespace lite3dpp
             ConfigurationReader attachmentJson = helper.getObject(L"ColorAttachments");
             for(const ConfigurationReader &targetJson : attachmentJson.getObjects(L"Attachments"))
             {
-                colorAttachments.push_back(mMain->getResourceManager()->queryResource<TextureImage>(
-                    targetJson.getString(L"TextureName"), targetJson.getString(L"TexturePath"))->getPtr());
+                lite3d_framebuffer_attachment attachment;
+                attachment.attachment = mMain->getResourceManager()->queryResource<TextureImage>(
+                    targetJson.getString(L"TextureName"), targetJson.getString(L"TexturePath"))->getPtr();
+                attachment.layer.layer = targetJson.getInt(L"Layer", 0);
+                attachment.layer.attachmentType = LITE3D_FRAMEBUFFER_USE_COLOR_BUFFER;
+                textureAttachments.push_back(attachment);
+                flags |= LITE3D_FRAMEBUFFER_USE_COLOR_BUFFER;
             }
 
             if (attachmentJson.getBool(L"Renderbuffer", false))
@@ -79,20 +83,22 @@ namespace lite3dpp
                     mRenderTargetPtr->fb.rbIntFormat = helper.getInt(L"RenderbufferInternalFormat");
                 }
             }
-
-            if (colorAttachments.size() > 0)
-            {
-                flags |= LITE3D_FRAMEBUFFER_USE_COLOR_BUFFER;
-            }
         }
 
         {
             ConfigurationReader attachmentJson = helper.getObject(L"DepthAttachments");
             if(attachmentJson.has(L"TextureName"))
-                depthAttachment = mMain->getResourceManager()->queryResource<TextureImage>(
+            {
+                lite3d_framebuffer_attachment attachment;
+                attachment.attachment = mMain->getResourceManager()->queryResource<TextureImage>(
                     attachmentJson.getString(L"TextureName"), attachmentJson.getString(L"TexturePath"))->getPtr();
+                attachment.layer.layer = attachmentJson.getInt(L"Layer", 0);
+                attachment.layer.attachmentType = LITE3D_FRAMEBUFFER_USE_DEPTH_BUFFER;
+                textureAttachments.push_back(attachment);
+                flags |= LITE3D_FRAMEBUFFER_USE_DEPTH_BUFFER;
+            }
 
-            if (attachmentJson.getBool(L"Renderbuffer", false) || depthAttachment)
+            if (attachmentJson.getBool(L"Renderbuffer", false))
             {
                 flags |= LITE3D_FRAMEBUFFER_USE_DEPTH_BUFFER;
             }
@@ -124,9 +130,8 @@ namespace lite3dpp
 
         /* setup render target framebuffer */
         if (!lite3d_framebuffer_setup(&mRenderTargetPtr->fb,
-            colorAttachments.size() > 0 ? &colorAttachments[0] : NULL,
-            static_cast<int8_t>(colorAttachments.size()),
-            depthAttachment, flags))
+            textureAttachments.size() > 0 ? &textureAttachments[0] : NULL,
+            textureAttachments.size(),  flags))
         {
             LITE3D_THROW(getName() << " framebuffer setup failed.. ");
         }
