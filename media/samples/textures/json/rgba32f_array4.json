@@ -1,0 +1,9 @@
+{
+    "TextureType": "2D_ARRAY",
+    "Filtering": "None",
+    "Wrapping": "ClampToEdge",
+    "Compression": false,
+    "TextureFormat": "RGBA",
+    "InternalFormat": 34836, // LITE3D_TEXTURE_INTERNAL_RGBA32F
+    "Depth": 4
+}
