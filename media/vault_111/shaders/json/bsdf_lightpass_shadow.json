@@ -1,8 +1,0 @@
-{
-    "Sources": 
-    [
-        "vault_111:shaders/sources/bigtriangle.vs,vault_111:shaders/sources/inc/instancing.def",
-        "vault_111:shaders/sources/lightpass.fs,vault_111:shaders/sources/inc/shadow.def",
-        "samples:shaders/sources/common/utils.fs"
-    ]
-}

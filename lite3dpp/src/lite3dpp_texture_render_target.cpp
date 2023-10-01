@@ -128,6 +128,11 @@ namespace lite3dpp
             break;
         }
 
+        if (helper.getBool(L"LayeredFramebuffer", false))
+        {
+            flags |= LITE3D_FRAMEBUFFER_USE_LAYERED_BINDING;
+        }
+
         /* setup render target framebuffer */
         if (!lite3d_framebuffer_setup(&mRenderTargetPtr->fb,
             textureAttachments.size() > 0 ? &textureAttachments[0] : NULL,

@@ -18,25 +18,25 @@
 #include <iostream>
 #include <string>
 
-#include "lite3dpp_vault_lightpass.h"
+#include <SDL_assert.h>
+#include <sample_common/lite3dpp_common.h>
 
 namespace lite3dpp {
 namespace samples {
 
-class SampleVault111 : public Sample, public SceneObserver
+class SampleVault111 : public Sample
 {
 public:
-
-    SampleVault111() : 
-        mLightPassScene(getMain())
-    {}
 
     void createScene() override
     {
         mVaultScene = getMain().getResourceManager()->queryResource<Scene>("Vault_111", "vault_111:scenes/vault_111.json");
         setMainCamera(getMain().getCamera("MyCamera"));
 
-        mLightPassScene.createScene();
+        addFlashlight(mVaultScene);
+        // load intermediate light compute scene
+        mCombineScene = getMain().getResourceManager()->queryResource<Scene>("Vault_111_LightCompute",
+            "vault_111:scenes/lightpass.json");
 
         // postprocess step, fxaa, gamma correcion, draw directly info window. 
         getMain().getResourceManager()->queryResource<Scene>("Vault_111_Postprocess",
@@ -50,19 +50,65 @@ public:
         Material::setFloatv3GlobalParameter("screenResolution", resolution);
     }
 
-    void endSceneRender(Scene *scene, Camera *camera) override
+    void addFlashlight(Scene *scene)
     {
+        ConfigurationWriter flashlightJson;
+        LightSource flashlight("FlashLight");
+        flashlight.setAttenuationConstant(0.0f);
+        flashlight.setAttenuationLinear(50.0f);
+        flashlight.setAttenuationQuadratic(130.0f);
+        flashlight.setAngleInnerCone(0.80f);
+        flashlight.setAngleOuterCone(1.00f);
+        flashlight.setDiffuse(kmVec3 {1.0f, 233.0f / 255.0f, 173.0f / 255.0f });
+        flashlight.setDirection(KM_VEC3_NEG_Z);
+        flashlight.setPosition(KM_VEC3_ZERO);
+        flashlight.setType(LITE3D_LIGHT_SPOT);
+        flashlight.setRadiance(800000.0f);
+        flashlight.setInfluenceMinRadiance(0.001f);
+        flashlight.toJson(flashlightJson);
+
+        String flashLightParams = ConfigurationWriter().set(L"Name", "FlashLight.node").set(L"Light", flashlightJson).write();
+        mFlashLight.reset(new LightSceneNode(ConfigurationReader(flashLightParams.data(), flashLightParams.size()), NULL, &getMain()));
+        mFlashLight->addToScene(scene);
+        mFlashLight->getLight()->enabled(false);
+        mFlashLight->frustumTest(false);
     }
 
     void mainCameraChanged() override
     {
         Material::setFloatv3GlobalParameter("eye", getMainCamera().getPosition());
+        updateFlashLight();
+    }
+
+    void updateFlashLight()
+    {
+        if (mFlashLight && mFlashLight->getLight()->enabled())
+        {
+            mFlashLight->setPosition(getMainCamera().getPosition());
+            mFlashLight->setRotation(getMainCamera().getRotation());
+        }
+    }
+
+    void processEvent(SDL_Event *e) override
+    {
+        Sample::processEvent(e);
+        if (e->type == SDL_KEYDOWN)
+        {
+            if (e->key.keysym.sym == SDLK_f && mFlashLight)
+            {
+                static bool flashLightEnabled = false;
+                flashLightEnabled = !flashLightEnabled;
+                mFlashLight->getLight()->enabled(flashLightEnabled);
+                updateFlashLight();
+            }
+        }
     }
 
 private:
 
-    Vault111LightPass mLightPassScene;
+    Scene* mCombineScene = nullptr;
     Scene* mVaultScene = nullptr;
+    std::unique_ptr<LightSceneNode> mFlashLight;
 };
 
 }}
