@@ -94,7 +94,7 @@ public:
         Sample::processEvent(e);
         if (e->type == SDL_KEYDOWN)
         {
-            if (e->key.keysym.sym == SDLK_f && mFlashLight)
+            if (e->key.keysym.sym == SDLK_l && mFlashLight)
             {
                 static bool flashLightEnabled = false;
                 flashLightEnabled = !flashLightEnabled;

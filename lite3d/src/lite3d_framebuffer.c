@@ -364,8 +364,6 @@ int lite3d_framebuffer_setup(lite3d_framebuffer *fb, const lite3d_framebuffer_at
                         attachments[i].attachment->textureID,
                         0);
                     break;
-                case LITE3D_TEXTURE_3D:
-                case LITE3D_TEXTURE_3D_MULTISAMPLE:
                 case LITE3D_TEXTURE_2D_ARRAY:
                     if (flags & LITE3D_FRAMEBUFFER_USE_LAYERED_BINDING)
                     {
@@ -373,13 +371,20 @@ int lite3d_framebuffer_setup(lite3d_framebuffer *fb, const lite3d_framebuffer_at
                             attachments[i].attachment->textureID, 0);
                     }
                     else
-                    { 
-                        glFramebufferTexture3D(GL_FRAMEBUFFER,
-                            GL_COLOR_ATTACHMENT0 + i,
-                            textureTargetEnum[attachments[i].attachment->textureTarget],
-                            attachments[i].attachment->textureID,
+                    {
+                        glFramebufferTextureLayer(GL_FRAMEBUFFER, 
+                            GL_COLOR_ATTACHMENT0 + i, 
+                            attachments[i].attachment->textureID, 
                             0, binding.bindedLayer);
                     }
+                    break;
+                case LITE3D_TEXTURE_3D:
+                case LITE3D_TEXTURE_3D_MULTISAMPLE:
+                    glFramebufferTexture3D(GL_FRAMEBUFFER,
+                        GL_COLOR_ATTACHMENT0 + i,
+                        textureTargetEnum[attachments[i].attachment->textureTarget],
+                        attachments[i].attachment->textureID, 
+                        0, binding.bindedLayer);
                     break;
                 default:
                     SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Texture target %d is not supported as framebuffer color attachment", 
@@ -390,7 +395,9 @@ int lite3d_framebuffer_setup(lite3d_framebuffer *fb, const lite3d_framebuffer_at
                 LITE3D_ARR_ADD_ELEM(&fb->colorAttachments, lite3d_framebuffer_attachment_binding, binding);
             }
         }
-        else
+
+        // No color texture attachments, use render buffer instead
+        if (fb->colorAttachments.size == 0)
         {
             glGenRenderbuffers(1, &fb->renderBuffersIds[renderBuffersCount]);
             glBindRenderbuffer(GL_RENDERBUFFER,
@@ -440,12 +447,12 @@ int lite3d_framebuffer_setup(lite3d_framebuffer *fb, const lite3d_framebuffer_at
             switch (fb->depthAttachment.attachment.attachment->textureTarget)
             {
             case LITE3D_TEXTURE_2D:
+            case LITE3D_TEXTURE_2D_MULTISAMPLE:
             case LITE3D_TEXTURE_2D_SHADOW:
                 glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
                     textureTargetEnum[fb->depthAttachment.attachment.attachment->textureTarget],
                     fb->depthAttachment.attachment.attachment->textureID, 0);
                 break;
-            case LITE3D_TEXTURE_3D:
             case LITE3D_TEXTURE_2D_ARRAY:
             case LITE3D_TEXTURE_2D_SHADOW_ARRAY:
                 if (flags & LITE3D_FRAMEBUFFER_USE_LAYERED_BINDING)
@@ -455,11 +462,18 @@ int lite3d_framebuffer_setup(lite3d_framebuffer *fb, const lite3d_framebuffer_at
                 } 
                 else
                 {
-                    glFramebufferTexture3D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
-                        textureTargetEnum[fb->depthAttachment.attachment.attachment->textureTarget],
-                        fb->depthAttachment.attachment.attachment->textureID, 0, 
-                        fb->depthAttachment.bindedLayer);
+                    glFramebufferTextureLayer(GL_FRAMEBUFFER, 
+                        GL_DEPTH_ATTACHMENT,
+                        fb->depthAttachment.attachment.attachment->textureID,
+                        0, fb->depthAttachment.bindedLayer);
                 }
+                break;
+            case LITE3D_TEXTURE_3D:
+            case LITE3D_TEXTURE_3D_MULTISAMPLE:
+                glFramebufferTexture3D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
+                    textureTargetEnum[fb->depthAttachment.attachment.attachment->textureTarget],
+                    fb->depthAttachment.attachment.attachment->textureID, 0, 
+                    fb->depthAttachment.bindedLayer);
                 break;
             default:
                 SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Texture target %d is not supported as framebuffer depth attachment", 
