@@ -33,7 +33,7 @@ public:
     class ShadowCaster 
     {
     public:
-        ShadowCaster(Main& main, RenderTarget* rt, LightSceneNode* node) : 
+        ShadowCaster(Main& main, LightSceneNode* node) : 
             mLightNode(node),
             mShadowCamera(main.addCamera(node->getName()))
         {}
@@ -53,20 +53,10 @@ public:
             return mShadowCamera->getProjTransformMatrix();
         }
 
-        void rotateAngle(const kmVec3 &axis, float angle)
-        {
-            SDL_assert(mLightNode);
-            SDL_assert(mShadowRT);
-            mLightNode->rotateAngle(axis, angle);
-            // После обновления ориентации источника света надо перерисовать тени
-            mShadowRT->enable();
-        }
-
     private:
 
         LightSceneNode* mLightNode = nullptr;
         Camera* mShadowCamera = nullptr;
-        RenderTarget* mShadowRT = nullptr;
     };
 
     SampleShadowManager(Main& main) : 
@@ -76,39 +66,66 @@ public:
             "{\"Dynamic\": false}");
     }
 
+    ShadowCaster* newShadowCaster(LightSceneNode* node)
+    {
+        mShadowCasters.emplace_back(std::make_unique<ShadowCaster>(mMain, node));
+        auto index = static_cast<uint32_t>(mShadowCasters.size() - 1);
+        // Запишем в источник света индекс его теневой матрицы в UBO
+        node->getLight()->setUserIndex(index);
+        // Аллоцируем место под теневую матрицу 
+        mShadowMatrixBuffer->extendBufferBytes(sizeof(kmMat4));
+        return mShadowCasters.back().get();
+    }
+
+    // Перерисовать теневые буферы на следующем кадре
+    void rebuild()
+    {
+        if (mShadowRT)
+        {
+            mShadowRT->enable();
+        }
+    }
+
+protected:
+
     bool beginUpdate(RenderTarget *rt) override
     { 
+        mShadowRT = rt;
+        SDL_assert(mShadowMatrixBuffer);
         // Обновим матрицы по всем источникам отбрасывающим тень.
         for (uint32_t index = 0; index < mShadowCasters.size(); ++index)
         {
-            mShadowMatrixBuffer->setElement<kmMat4>(index, &mShadowCasters[index]->getMatrix());
+            auto mat = mShadowCasters[index]->getMatrix();
+            mShadowMatrixBuffer->setElement<kmMat4>(index, &mat);
         }
+
+        if (!mMainCamera)
+        {
+            mMainCamera = mMain.getCamera("MyCamera");
+            SDL_assert(mMainCamera);
+        }
+
+        // Так формально мы рендерим сцену от лица главной камеры, надо имменно для главной камеры на время рендера 
+        // теневых карт включить отсечение лицевых граней
+        mMainCamera->setCullFaceMode(Camera::CullFaceFront);
 
         return true;
     }
 
     void postUpdate(RenderTarget *rt) override
     {
+        // После рендера теневых карт возвращаем как было
+        mMainCamera->setCullFaceMode(Camera::CullFaceBack);
         // Отключим рендер теней после обновления всех теней, результаты будут валидны до тех пор пока ориентация и позиция
         // источника света и обьектов отбрасывающих тень не изменится
         rt->disable();
     }
 
-    ShadowCaster* newShadowCaster(RenderTarget* rt, LightSceneNode* node)
-    {
-        SDL_assert(mShadowMatrixBuffer);
-        mShadowCasters.emplace_back(std::make_unique<ShadowCaster>(mMain, rt, node));
-        auto index = static_cast<uint32_t>(mShadowCasters.size() - 1);
-        // Обновим UBO с теневыми матрицами
-        mShadowMatrixBuffer->setElement<kmMat4>(index, &mShadowCasters.back()->getMatrix());
-        // Запишем в источник света индекс его теневой матрицы в UBO
-        node->getLight()->setUserIndex(index);
-        return mShadowCasters.back().get();
-    }
-
 private:
 
     Main& mMain;
+    Camera* mMainCamera = nullptr;
+    RenderTarget* mShadowRT = nullptr;
     BufferBase* mShadowMatrixBuffer = nullptr;
     std::vector<std::unique_ptr<ShadowCaster>> mShadowCasters;
 };

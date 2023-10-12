@@ -2,6 +2,7 @@
 
 uniform sampler2DArray PreparedRenderData;
 uniform samplerCube Environment;
+uniform sampler2DArrayShadow ShadowMaps;
 
 // declaration for UBO
 layout(std140) uniform lightSources
@@ -17,6 +18,8 @@ layout(std140) uniform lightIndexes
 uniform vec3 eye;
 
 in vec2 iuv;
+
+out vec4 fragColor;
 
 #define M_PI 3.1415926535897932384626433832795
 #define FLT_EPSILON 1.192092896e-07F
@@ -201,5 +204,5 @@ void main()
     vec3 ambient = kD * globalIrradiance * albedo.rgb * ambientStrength;
     vec3 emission = albedo.w * albedo.rgb;
 
-    gl_FragColor = vec4(ambient + reflected + emission + totalLx, 1.0);
+    fragColor = vec4(ambient + reflected + emission + totalLx, 1.0);
 }

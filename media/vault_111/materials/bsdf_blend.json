@@ -41,6 +41,16 @@
           "Type":"UBO"
         },
         {
+          "Name":"ShadowMaps",
+          "TextureName":"shadow.texture",
+          "Type":"sampler"
+        },
+        {
+          "Name": "ShadowMatrix",
+          "UBOName": "ShadowMatrixBuffer",
+          "Type": "UBO"
+        },
+        {
           "Name":"eye",
           "Type":"v3",
           "Scope":"global"

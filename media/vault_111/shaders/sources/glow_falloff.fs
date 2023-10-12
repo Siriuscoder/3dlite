@@ -5,11 +5,13 @@ uniform float EmissionStrength;
 uniform float Roughness;
 uniform float Specular;
 
+out vec4 fragColor;
+
 in vec2 iuv;
 in vec3 ivv;
 in mat3 itbn;
 
 void main()
 {
-    gl_FragColor = vec4(Emission.rgb, 1.0);
+    fragColor = vec4(Emission.rgb, 1.0);
 }

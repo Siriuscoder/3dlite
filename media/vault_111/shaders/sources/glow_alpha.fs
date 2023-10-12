@@ -6,6 +6,8 @@ uniform float Roughness;
 uniform float Specular;
 uniform float EmissionStrength;
 
+out vec4 fragColor;
+
 in vec2 iuv;
 in vec3 ivv;
 in mat3 itbn;
@@ -14,5 +16,5 @@ void main()
 {
     vec4 mask = texture(Albedo, iuv);
     vec4 albedo = texture(Emission, iuv);
-    gl_FragColor = vec4(albedo.rgb, mask.w);
+    fragColor = vec4(albedo.rgb, mask.w);
 }

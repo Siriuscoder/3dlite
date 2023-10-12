@@ -53,9 +53,16 @@ public:
         RenderTarget* shadowUpdateRT = getMain().getResourceManager()->queryResource<TextureRenderTarget>("ShadowPass");
         shadowUpdateRT->addObserver(mShadowManager.get());
 
-        mSpot01 = mShadowManager->newShadowCaster(shadowUpdateRT, mVaultScene->getLightNode("LightSpotNode"));
-        mSpot02 = mShadowManager->newShadowCaster(shadowUpdateRT, mVaultScene->getLightNode("LightSpotNode.001"));
-        mSpot03 = mShadowManager->newShadowCaster(shadowUpdateRT, mVaultScene->getLightNode("LightSpotNode.002"));
+        auto staticScene = mVaultScene->getObject("VaultStatic");
+        // Установим тень для трех прожекторов и потом будем их вращать
+        mShadowManager->newShadowCaster(mVaultScene->getLightNode("LightSpotNode"));
+        mSpot01 = staticScene->getNode("LightSpot");
+
+        mShadowManager->newShadowCaster(mVaultScene->getLightNode("LightSpotNode.001"));
+        mSpot02 = staticScene->getNode("LightSpot.001");
+
+        mShadowManager->newShadowCaster(mVaultScene->getLightNode("LightSpotNode.002"));
+        mSpot03 = staticScene->getNode("LightSpot.002");
     }
 
     void addFlashlight()
@@ -118,9 +125,9 @@ private:
     Scene* mVaultScene = nullptr;
     std::unique_ptr<SampleShadowManager> mShadowManager;
     std::unique_ptr<LightSceneNode> mFlashLight;
-    SampleShadowManager::ShadowCaster* mSpot01 = nullptr;
-    SampleShadowManager::ShadowCaster* mSpot02 = nullptr;
-    SampleShadowManager::ShadowCaster* mSpot03 = nullptr;
+    SceneNode* mSpot01 = nullptr;
+    SceneNode* mSpot02 = nullptr;
+    SceneNode* mSpot03 = nullptr;
 };
 
 }}

@@ -4,6 +4,11 @@ uniform sampler2D Albedo;
 uniform sampler2D Normal;
 uniform sampler2D Specular;
 
+layout(location = 0) out vec4 fragWCoord;
+layout(location = 1) out vec4 fragWNormal;
+layout(location = 2) out vec4 fragAlbedo;
+layout(location = 3) out vec4 fragSpecular;
+
 in vec2 iuv;
 in vec3 ivv;
 in mat3 itbn;
@@ -44,8 +49,8 @@ void main()
         clamp(1.0 - specular.b, 0.0, 1.0), 
         0.0);
 
-    gl_FragData[0] = vec4(ivv, gl_FragCoord.z / gl_FragCoord.w);
-    gl_FragData[1] = vec4(GetFixedWorldNormal(), 0.0);
-    gl_FragData[2] = vec4(albedo.rgb, 0.0);
-    gl_FragData[3] = specular;
+    fragWCoord = vec4(ivv, gl_FragCoord.z / gl_FragCoord.w);
+    fragWNormal = vec4(GetFixedWorldNormal(), 0.0);
+    fragAlbedo = vec4(albedo.rgb, 0.0);
+    fragSpecular = specular;
 }

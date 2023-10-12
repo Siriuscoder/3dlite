@@ -8,6 +8,11 @@ uniform float EmissionStrength;
 uniform float Roughness;
 uniform float Specular;
 
+layout(location = 0) out vec4 fragWCoord;
+layout(location = 1) out vec4 fragWNormal;
+layout(location = 2) out vec4 fragAlbedo;
+layout(location = 3) out vec4 fragSpecular;
+
 in vec2 iuv;
 in vec3 ivv;
 in mat3 itbn;
@@ -26,8 +31,8 @@ void main()
     // setup specular
     vec4 specular = vec4(Specular, Roughness, 0.0, 0.0);
 
-    gl_FragData[0] = vec4(ivv, gl_FragCoord.z / gl_FragCoord.w);
-    gl_FragData[1] = vec4(nw, 0.0);
-    gl_FragData[2] = vec4(albedo.rgb, EmissionStrength);
-    gl_FragData[3] = specular;
+    fragWCoord = vec4(ivv, gl_FragCoord.z / gl_FragCoord.w);
+    fragWNormal = vec4(nw, 0.0);
+    fragAlbedo = vec4(albedo.rgb, EmissionStrength);
+    fragSpecular = specular;
 }

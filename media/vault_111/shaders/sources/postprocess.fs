@@ -4,6 +4,8 @@ uniform sampler2D combined;
 uniform float GammaFactor;
 uniform vec3 screenResolution;
 
+out vec4 fragColor;
+
 in vec2 iuv;
 in vec2 irgbNW;
 in vec2 irgbNE;
@@ -36,5 +38,5 @@ void main()
     // gamma correction 
     ldr = pow(ldr, vec3(1.0 / GammaFactor));
 
-    gl_FragColor = vec4(ldr, 1.0);
+    fragColor = vec4(ldr, 1.0);
 }
