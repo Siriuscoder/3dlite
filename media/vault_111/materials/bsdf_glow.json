@@ -2,14 +2,19 @@
   "Passes":[
     {
       "Pass": 1,
-      "Program": {
+      "Program":{
         "Name":"depth.program",
         "Path":"vault_111:shaders/json/depth.json"
-      }
+      },
+      "Uniforms":[
+        {
+          "Name":"projViewMatrix"
+        }
+      ]
     },
     {
       "Pass": 2,
-      "Program": {
+      "Program":{
         "Name":"bsdf_glow_prepare.program",
         "Path":"vault_111:shaders/json/bsdf_glow_prepare.json"
       },
@@ -25,6 +30,9 @@
         },
         {
           "Name":"<Emission Strength>"
+        },
+        {
+          "Name":"projViewMatrix"
         }
       ]
     },
@@ -41,11 +49,6 @@
           "Type":"UBO"
         }
       ]
-    }
-  ],
-  "Uniforms":[
-    {
-      "Name":"projViewMatrix"
     }
   ]
 }

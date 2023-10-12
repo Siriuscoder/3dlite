@@ -5,7 +5,12 @@
       "Program": {
         "Name": "depth.program",
         "Path": "vault_111:shaders/json/depth.json"
-      }
+      },
+      "Uniforms": [
+        {
+          "Name": "projViewMatrix"
+        }
+      ]
     },
     {
       "Pass": 2,
@@ -31,13 +36,25 @@
           "Type": "sampler",
           "TextureName": "V111GearDoor01_s.texture",
           "TexturePath": "vault_111:textures/json/V111GearDoor01_s.json"
+        },
+        {
+          "Name": "projViewMatrix"
         }
       ]
-    }
-  ],
-  "Uniforms": [
+    },
     {
-      "Name": "projViewMatrix"
+      "Pass": 3,
+      "Program": {
+        "Name": "shadow.program",
+        "Path": "vault_111:shaders/json/shadow.json"
+      },
+      "Uniforms": [
+        {
+          "Name": "ShadowMatrix",
+          "UBOName": "ShadowMatrixBuffer",
+          "Type": "UBO"
+        }
+      ]
     }
   ]
 }

@@ -2,14 +2,19 @@
   "Passes":[
     {
       "Pass": 1,
-      "Program": {
+      "Program":{
         "Name":"depth.program",
         "Path":"vault_111:shaders/json/depth.json"
-      }
+      },
+      "Uniforms":[
+        {
+          "Name":"projViewMatrix"
+        }
+      ]
     },
     {
       "Pass": 2,
-      "Program": {
+      "Program":{
         "Name":"bsdf_prepare.program",
         "Path":"vault_111:shaders/json/bsdf_prepare.json"
       },
@@ -22,12 +27,15 @@
         },
         {
           "Name":"<Specular>"
+        },
+        {
+          "Name":"projViewMatrix"
         }
       ]
     },
     {
       "Pass": 3,
-      "Program": {
+      "Program":{
         "Name":"shadow.program",
         "Path":"vault_111:shaders/json/shadow.json"
       },
@@ -38,11 +46,6 @@
           "Type":"UBO"
         }
       ]
-    }
-  ],
-  "Uniforms":[
-    {
-      "Name":"projViewMatrix"
     }
   ]
 }

@@ -32,6 +32,7 @@ class Image:
             "Filtering": "None" if self.interpolation == "Closest" else "Trilinear",
             "ImageFormat": self.imagePath.suffix.strip(".").upper(),
             "TextureType": "2D",
+            "Compression": True,
             "Wrapping": "Repeat" if self.extension == "REPEAT" else "ClampToEdge",
             "Image": self.scene.getAbsImagePath(self.getRelativeImagePath())
         }
