@@ -1,0 +1,17 @@
+{
+    "Width": 1024, // use screen wight
+    "Height": 1024, // use screen height
+    "BackgroundColor": [0.0, 0.0, 0.0, 1.0],
+    "Priority": 2, // After depth
+    "CleanColorBuf": false,
+    "CleanDepthBuf": true,
+    "CleanStencilBuf": false,
+    "LayeredFramebuffer": true,
+        
+    "DepthAttachments":
+    {
+        "TextureName": "shadow.texture",
+        "TexturePath": "samples:textures/json/shadow_1k_array3.json"
+    }
+}
+

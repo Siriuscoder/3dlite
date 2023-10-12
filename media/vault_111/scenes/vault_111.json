@@ -30,6 +30,18 @@
           "RenderInstancing": true
         },
         {
+          "Name": "ShadowPass",
+          "Path": "vault_111:targets/shadow.json",
+          "Priority": 0,
+          "TexturePass": 3,
+          "RenderBlend": false,
+          "DepthTest": true,
+          "ColorOutput": false,
+          "DepthOutput": true,
+          "FrustumCulling": false,
+          "RenderInstancing": true
+        },
+        {
           "Name": "RenderPass",
           "Path": "vault_111:targets/prepare.json",
           "Priority": 0,

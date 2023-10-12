@@ -1,0 +1,10 @@
+{
+    "TextureType": "2D_SHADOW_ARRAY",
+    "Filtering": "Linear",
+    "Wrapping": "ClampToEdge",
+    "Compression": false,
+    "TextureFormat": "DEPTH",
+    "Height": 1024,
+    "Width": 1024,
+    "Depth": 3
+}

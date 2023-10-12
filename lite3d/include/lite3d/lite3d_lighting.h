@@ -48,7 +48,7 @@ typedef struct lite3d_light_params
     /* block3.x - position.x */
     /* block3.y - position.y */
     /* block3.z - position.z */
-    /* block3.w - size */
+    /* block3.w - user index */
     kmVec4 block3;
 
     /* block4.x - direction.x */

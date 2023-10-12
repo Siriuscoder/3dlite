@@ -119,7 +119,7 @@ class Scene:
         else: 
             return
         
-        lightJson["Name"] = obj.name + light.name
+        lightJson["Name"] = light.name + "_" + obj.name
         lightJson["Diffuse"] = [
             light.color.r,
             light.color.g,

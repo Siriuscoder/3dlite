@@ -71,7 +71,7 @@ namespace lite3dpp
         void setInfluenceDistance(float value);
         void setInfluenceMinRadiance(float value);
         void setRadiance(float value);
-        void setLightSize(float value);
+        void setUserIndex(int32_t value);
         void setAngleInnerCone(float value);
         void setAngleOuterCone(float value);
 
@@ -88,7 +88,7 @@ namespace lite3dpp
         float getInfluenceDistance() const;
         float getInfluenceMinRadiance() const;
         float getRadiance() const;
-        float getLightSize() const;
+        int32_t getUserIndex() const;
         float getAngleInnerCone() const;
         float getAngleOuterCone() const;
 

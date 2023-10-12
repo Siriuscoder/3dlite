@@ -15,11 +15,7 @@
  *	You should have received a copy of the GNU General Public License
  *	along with Lite3D.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
-#include <iostream>
-#include <string>
-
-#include <SDL_assert.h>
-#include <sample_common/lite3dpp_common.h>
+#include "lite3dpp_vault_shadows.h"
 
 namespace lite3dpp {
 namespace samples {
@@ -30,10 +26,12 @@ public:
 
     void createScene() override
     {
+        mShadowManager = std::make_unique<SampleShadowManager>(getMain());
         mVaultScene = getMain().getResourceManager()->queryResource<Scene>("Vault_111", "vault_111:scenes/vault_111.json");
         setMainCamera(getMain().getCamera("MyCamera"));
 
-        addFlashlight(mVaultScene);
+        setupShadowCasters();
+        addFlashlight();
         // load intermediate light compute scene
         mCombineScene = getMain().getResourceManager()->queryResource<Scene>("Vault_111_LightCompute",
             "vault_111:scenes/lightpass.json");
@@ -50,7 +48,17 @@ public:
         Material::setFloatv3GlobalParameter("screenResolution", resolution);
     }
 
-    void addFlashlight(Scene *scene)
+    void setupShadowCasters()
+    {
+        RenderTarget* shadowUpdateRT = getMain().getResourceManager()->queryResource<TextureRenderTarget>("ShadowPass");
+        shadowUpdateRT->addObserver(mShadowManager.get());
+
+        mSpot01 = mShadowManager->newShadowCaster(shadowUpdateRT, mVaultScene->getLightNode("LightSpotNode"));
+        mSpot02 = mShadowManager->newShadowCaster(shadowUpdateRT, mVaultScene->getLightNode("LightSpotNode.001"));
+        mSpot03 = mShadowManager->newShadowCaster(shadowUpdateRT, mVaultScene->getLightNode("LightSpotNode.002"));
+    }
+
+    void addFlashlight()
     {
         ConfigurationWriter flashlightJson;
         LightSource flashlight("FlashLight");
@@ -69,7 +77,7 @@ public:
 
         String flashLightParams = ConfigurationWriter().set(L"Name", "FlashLight.node").set(L"Light", flashlightJson).write();
         mFlashLight.reset(new LightSceneNode(ConfigurationReader(flashLightParams.data(), flashLightParams.size()), NULL, &getMain()));
-        mFlashLight->addToScene(scene);
+        mFlashLight->addToScene(mVaultScene);
         mFlashLight->getLight()->enabled(false);
         mFlashLight->frustumTest(false);
     }
@@ -108,7 +116,11 @@ private:
 
     Scene* mCombineScene = nullptr;
     Scene* mVaultScene = nullptr;
+    std::unique_ptr<SampleShadowManager> mShadowManager;
     std::unique_ptr<LightSceneNode> mFlashLight;
+    SampleShadowManager::ShadowCaster* mSpot01 = nullptr;
+    SampleShadowManager::ShadowCaster* mSpot02 = nullptr;
+    SampleShadowManager::ShadowCaster* mSpot03 = nullptr;
 };
 
 }}

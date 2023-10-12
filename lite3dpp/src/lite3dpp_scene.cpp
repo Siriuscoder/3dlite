@@ -327,6 +327,8 @@ namespace lite3dpp
                     renderFlags |= LITE3D_RENDER_OCCLUSION_QUERY;
                 if (renderTargetJson.getBool(L"OcclusionCulling", false))
                     renderFlags |= LITE3D_RENDER_OCCLUSION_CULLING;
+                if (renderTargetJson.getBool(L"FrustumCulling", true))
+                    renderFlags |= LITE3D_RENDER_FRUSTUM_CULLING;
 
                 RenderTarget::RenderLayers layers;
                 auto colorLayer = renderTargetJson.getInt(L"ColorLayer", -1);

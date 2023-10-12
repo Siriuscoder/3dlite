@@ -29,6 +29,7 @@ namespace lite3dpp
         mLightSource.userdata = this;
         /* enabled by default */
         mLightSource.params.block1.y = 1.0f;
+        mLightSource.params.block3.w = -1.0f;
         mLightSourceWorld = mLightSource;
     }
 
@@ -50,7 +51,6 @@ namespace lite3dpp
         setPosition(json.getVec3(L"Position"));
         setDirection(json.getVec3(L"Direction"));
         setDiffuse(json.getVec3(L"Diffuse"));
-        setLightSize(json.getDouble(L"LightSize"));
         setRadiance(json.getDouble(L"Radiance"));
         
         auto attenuation = json.getObject(L"Attenuation");
@@ -71,6 +71,7 @@ namespace lite3dpp
         }
 
         mLightSource.params.block1.y = 1.0f;
+        mLightSource.params.block3.w = -1.0f;
         mLightSource.userdata = this;
         mLightSourceWorld = mLightSource;
     }
@@ -221,9 +222,9 @@ namespace lite3dpp
         mUpdated = true;
     }
 
-    void LightSource::setLightSize(float value)
+    void LightSource::setUserIndex(int32_t value)
     {
-        mLightSource.params.block3.w = value;
+        mLightSource.params.block3.w = static_cast<float>(value);
         mUpdated = true;
     }
 
@@ -294,9 +295,9 @@ namespace lite3dpp
         return mLightSource.params.block2.w;
     }
 
-    float LightSource::getLightSize() const
+    int32_t LightSource::getUserIndex() const
     {
-        return mLightSource.params.block3.w;
+        return static_cast<int32_t>(round(mLightSource.params.block3.w));
     }
 
     float LightSource::getAngleInnerCone() const

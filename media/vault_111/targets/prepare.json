@@ -2,7 +2,7 @@
     "Width": 0, // use screen wight
     "Height": 0, // use screen height
     "BackgroundColor": [0.0, 0.0, 0.0, 1.0],
-    "Priority": 2, // render after depth
+    "Priority": 3, // render after shadow depth
     "CleanColorBuf": true,
     "CleanDepthBuf": false,
     "CleanStencilBuf": false,

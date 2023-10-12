@@ -203,6 +203,9 @@ static int mqr_node_approve(lite3d_scene *scene,
         return LITE3D_FALSE;
 
     scene->stats.batchesTotal++;
+
+    if (!(flags & LITE3D_RENDER_FRUSTUM_CULLING))
+        return LITE3D_TRUE;
     /* frustum test */
     if (mqrNode->node->frustumTest && !lite3d_frustum_test(&scene->currentCamera->frustum, &mqrNode->boundingVol))
     {
