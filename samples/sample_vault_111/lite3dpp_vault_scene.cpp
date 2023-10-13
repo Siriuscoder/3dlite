@@ -42,7 +42,7 @@ public:
         
         // optimize: window clean not needed, because all pixels in last render target always be updated
         getMain().window()->setBuffersCleanBit(false, false, false);
-        getMain().window()->depthTestFunc(RenderTarget::TestFuncLEqual);
+        RenderTarget::depthTestFunc(RenderTarget::TestFuncLEqual);
 
         kmVec3 resolution = { (float)getMain().window()->width(), (float)getMain().window()->height(), 0 };
         Material::setFloatv3GlobalParameter("screenResolution", resolution);

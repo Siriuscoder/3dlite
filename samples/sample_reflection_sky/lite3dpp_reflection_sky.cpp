@@ -39,7 +39,7 @@ public:
         // Установка главной камеры (для перемещения)
         setMainCamera(getMain().getCamera("MyCamera"));
         // Важно для отрисовки sky cube
-        getMain().window()->depthTestFunc(RenderTarget::TestFuncLEqual);
+        RenderTarget::depthTestFunc(RenderTarget::TestFuncLEqual);
         // Позиция наблюдателя
         lite3dpp::Material::setFloatv3GlobalParameter("eye", getMainCamera().getPosition());
     }

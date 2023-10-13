@@ -61,14 +61,14 @@ namespace lite3dpp
         void setBuffersCleanBit(bool color, bool depth, bool stencil);
         /* output buffers write control */
         /* perform immediately */
-        void depthOutput(bool flag);
-        void colorOutput(bool flag);
-        void stencilOutput(bool flag);
+        static void depthOutput(bool flag);
+        static void colorOutput(bool flag);
+        static void stencilOutput(bool flag);
         /* Buffer testing control */
-        void depthTest(bool flag);
-        void depthTestFunc(TestFunc func);
-        void stencilTest(bool flag);
-        void stencilTestFunc(TestFunc func, int32_t value);
+        static void depthTest(bool flag);
+        static void depthTestFunc(TestFunc func);
+        static void stencilTest(bool flag);
+        static void stencilTestFunc(TestFunc func, int32_t value);
         /* clean buffers immediately */
         void clear(bool color, bool depth, bool stencil);
         void saveScreenshot(const String &filename);
