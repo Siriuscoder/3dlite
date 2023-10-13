@@ -21,6 +21,7 @@ class Lite3dExport(bpy.types.Operator, ExportHelper):
     saveTangent: BoolProperty(name = "Tangents", default = True, description = "Calculate and save tangents to models data")
     saveBiTangent: BoolProperty(name = "BiTangents", default = False, description = "Calculate and save bitangents to models data")
     copyTexImages: BoolProperty(name = "Copy Texture Images", default = True, description = "Try to copy texture images to textures/images/, use absolute path while loading textures in Blender to works it correct")
+    textureCompression: BoolProperty(name = "Texture Compression", default = False, description = "Use texture compression while loading images by engine")
     removeDoubles: BoolProperty(name = "Remove Doubles", default = False, description = "Optimize mesh, remove double vertices")
     triangulate: BoolProperty(name = "Triangulate", default = False, description = "Convert quads faces to tris")
     exportLights: BoolProperty(name = "Lights", default = True, description = "Export light sources")
@@ -48,6 +49,7 @@ class Lite3dExport(bpy.types.Operator, ExportHelper):
         box.prop(self, "flipUV")
         box.label(text = "Materials:")
         box.prop(self, "copyTexImages")
+        box.prop(self, "textureCompression")
         box.prop(self, "materialTemplate")
         box.label(text = "Lighting:")
         box.prop(self, "exportLights")
@@ -69,6 +71,7 @@ class Lite3dExport(bpy.types.Operator, ExportHelper):
                           saveTangent = self.saveTangent, 
                           saveBiTangent = self.saveBiTangent,
                           copyTexImages = self.copyTexImages,
+                          textureCompression = self.textureCompression,
                           removeDoubles = self.removeDoubles,
                           triangulate = self.triangulate,
                           flipUV = self.flipUV,

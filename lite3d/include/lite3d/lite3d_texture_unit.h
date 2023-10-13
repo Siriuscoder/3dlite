@@ -180,6 +180,7 @@ typedef struct lite3d_texture_unit
     int16_t magFilter;
     uint8_t wrapping;
     uint8_t compressed;
+    uint8_t compressedLoad;
     uint8_t isFbAttachment;
     lite3d_vbo tbo;
     uint8_t isTextureBuffer;
