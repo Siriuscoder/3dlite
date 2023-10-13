@@ -1,14 +1,6 @@
 {
   "Passes": [
     {
-      "Pass": 1,
-      "Program": {
-        "Name": "depth.program",
-        "Path": "vault_111:shaders/json/depth.json"
-      },
-      "Blending": true
-    },
-    {
       "Pass": 2,
       "Program": {
         "Name": "bsdf_direct_glow_alpha.program",
@@ -56,6 +48,16 @@
         {
           "Name": "lightIndexes",
           "UBOName": "Vault_111_lightingIndexBuffer",
+          "Type": "UBO"
+        },
+        {
+          "Name": "ShadowMaps",
+          "TextureName": "shadow.texture",
+          "Type": "sampler"
+        },
+        {
+          "Name": "ShadowMatrix",
+          "UBOName": "ShadowMatrixBuffer",
           "Type": "UBO"
         },
         {

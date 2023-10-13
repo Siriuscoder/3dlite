@@ -1,14 +1,6 @@
 {
   "Passes":[
     {
-      "Pass": 1,
-      "Program": {
-        "Name":"depth.program",
-        "Path":"vault_111:shaders/json/depth.json"
-      },
-      "Blending":true
-    },
-    {
       "Pass": 2,
       "Program": {
         "Name":"bsdf_direct_alpha.program",
