@@ -3,21 +3,18 @@
     {
       "Pass": 2,
       "Program": {
-        "Name":"bsdf_glow_circles.program",
-        "Path":"vault_111:shaders/json/bsdf_glow_circles.json"
+        "Name":"bsdf_direct_glass.program",
+        "Path":"vault_111:shaders/json/bsdf_direct_glass.json"
       },
       "Uniforms":[
         {
+          "Name":"<Albedo>"
+        },
+        {
+          "Name":"<Normal>"
+        },
+        {
           "Name":"<Specular>"
-        },
-        {
-          "Name":"<Roughness>"
-        },
-        {
-          "Name":"<Emission>"
-        },
-        {
-          "Name":"<Emission Strength>"
         },
         {
           "Name":"Environment",
@@ -56,7 +53,7 @@
     }
   ],
   "Uniforms":[
-    { 
+    {
       "Name":"projViewMatrix"
     }
   ]

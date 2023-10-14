@@ -3,8 +3,8 @@
     {
       "Pass": 2,
       "Program": {
-        "Name": "bsdf_direct_alpha.program",
-        "Path": "vault_111:shaders/json/bsdf_direct_alpha.json"
+        "Name": "bsdf_direct_glass.program",
+        "Path": "vault_111:shaders/json/bsdf_direct_glass.json"
       },
       "Uniforms": [
         {
@@ -58,7 +58,7 @@
         }
       ],
       "Blending": true,
-      "Blendingmode": "traditional"
+      "BlendingMode": "traditional"
     }
   ],
   "Uniforms": [

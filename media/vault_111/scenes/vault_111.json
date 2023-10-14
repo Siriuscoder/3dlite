@@ -51,6 +51,18 @@
           "ColorOutput": true,
           "DepthOutput": false,
           "RenderInstancing": true
+        },
+        {
+          "Name": "CombineStep",
+          "Path": "vault_111:targets/combine.json",
+          "Priority": 2,
+          "TexturePass": 2,
+          "RenderBlend": true,
+          "RenderOpaque": false,
+          "DepthTest": true,
+          "ColorOutput": true,
+          "DepthOutput": true,
+          "RenderInstancing": true
         }
       ]
     }

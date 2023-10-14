@@ -67,7 +67,7 @@
         }
       ],
       "Blending": true,
-      "Blendingmode": "traditional"
+      "BlendingMode": "traditional"
     }
   ],
   "Uniforms": [

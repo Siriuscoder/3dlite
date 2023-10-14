@@ -44,7 +44,10 @@ public:
         getMain().window()->setBuffersCleanBit(false, false, false);
         RenderTarget::depthTestFunc(RenderTarget::TestFuncLEqual);
 
-        kmVec3 resolution = { (float)getMain().window()->width(), (float)getMain().window()->height(), 0 };
+        kmVec3 resolution = { 
+            static_cast<float>(getMain().window()->width()), 
+            static_cast<float>(getMain().window()->height()), 0 
+        };
         Material::setFloatv3GlobalParameter("screenResolution", resolution);
 
         mMinigun01 = mVaultScene->getObject("MinigunTurret");
@@ -58,7 +61,6 @@ public:
         RenderTarget* shadowUpdateRT = getMain().getResourceManager()->queryResource<TextureRenderTarget>("ShadowPass");
         shadowUpdateRT->addObserver(mShadowManager.get());
 
-        //auto staticScene = mVaultScene->getObject("VaultStatic");
         // Установим тень для трех прожекторов и потом будем их вращать
         // Источники света получаем по ObjectName + NodeName
         mShadowManager->newShadowCaster(mVaultScene->getLightNode("LightSpotLightSpotNode"));

@@ -3,6 +3,9 @@
     [
         "vault_111:shaders/sources/common.vs",
         "vault_111:shaders/sources/glow_alpha.fs",
+        "vault_111:shaders/sources/lighting/PBR.fs",
+        "vault_111:shaders/sources/lighting/BRDF.fs",
+        "vault_111:shaders/sources/lighting/PCF.fs",
         "samples:shaders/sources/common/utils.fs"
     ]
 }

@@ -1,15 +1,12 @@
-const float eps = 0.000001;
-
 bool fnear(float a1, float a2)
 {
-    return abs(a1 - a2) < eps;
+    return abs(a1 - a2) < FLT_EPSILON;
 }
 
 bool fnear(vec3 a1, vec3 a2)
 {
-    return all(equal(a1, a2));
+    return fnear(a1.x, a2.x) && fnear(a1.y, a2.y) && fnear(a1.y, a2.y); 
 }
-
 
 bool fiszero(float a1)
 {

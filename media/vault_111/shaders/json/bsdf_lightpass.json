@@ -1,8 +1,11 @@
 {
     "Sources": 
     [
-        "vault_111:shaders/sources/bigtriangle.vs,vault_111:shaders/sources/inc/common.def",
-        "vault_111:shaders/sources/lightpass.fs,vault_111:shaders/sources/inc/common.def",
+        "vault_111:shaders/sources/bigtriangle.vs",
+        "vault_111:shaders/sources/lightpass.fs",
+        "vault_111:shaders/sources/lighting/PBR.fs",
+        "vault_111:shaders/sources/lighting/BRDF.fs",
+        "vault_111:shaders/sources/lighting/PCF.fs",
         "samples:shaders/sources/common/utils.fs"
     ]
 }

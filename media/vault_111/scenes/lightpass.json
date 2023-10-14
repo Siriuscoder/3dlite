@@ -18,7 +18,7 @@
             "RenderTargets":
             [
                 {
-                    "Name": "LightCombineStep",
+                    "Name": "CombineStep",
                     "Path": "vault_111:targets/combine.json",
                     "Priority": 0,
                     "TexturePass": 1,

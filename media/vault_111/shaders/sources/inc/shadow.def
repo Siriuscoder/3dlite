@@ -1,3 +1,0 @@
-#include "samples:shaders/sources/common/version.def"
-
-#define USE_SHADOWMAP
