@@ -49,8 +49,8 @@ public:
         lite3dpp::Material::setFloatv3GlobalParameter("screenResolution", resolution);
         lite3dpp::Material::setIntGlobalParameter("FXAA", 1);
 
-        mReactLamp01 = mVaultScene->getLightNode("ReactorLamp_01.node");
-        mReactLamp02 = mVaultScene->getLightNode("ReactorLamp_02.node");
+        mReactLamp01 = mVaultScene->getLightNode("VaultReactorLamp_01.node");
+        mReactLamp02 = mVaultScene->getLightNode("VaultReactorLamp_02.node");
         mMinigun = mVaultScene->getObject("Minigun");
         mGatling = mVaultScene->getObject("Gatling");
         mLazer = mVaultScene->getObject("Lazer");

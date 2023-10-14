@@ -362,39 +362,36 @@ static int set_internal_format(lite3d_texture_unit *textureUnit, uint16_t *forma
     return LITE3D_TRUE;
 }
 
-static ILuint determineCompressionMethod(lite3d_texture_unit *texture, uint8_t srgb, ILuint imageFormat, ILuint internalFormat)
+static int determineCompressionMethod(uint8_t srgb, ILuint imageFormat, ILuint* internalFormat)
 {
     ILint dataFormat = 0;
-    texture->compressedLoad = LITE3D_FALSE;
-    if (!gTextureSettings.useGLCompression)
-        return internalFormat;
+    if (!gTextureSettings.useGLCompression || !gTextureSettings.useCompressedDataOnLoad)
+        return LITE3D_FALSE;
     
     dataFormat = ilGetInteger(IL_DXTC_FORMAT);
     switch (dataFormat)
     {
     case IL_DXT1:
-        if (imageFormat == LITE3D_TEXTURE_FORMAT_RGB || imageFormat == LITE3D_TEXTURE_FORMAT_BRG)
+        if (imageFormat == LITE3D_TEXTURE_FORMAT_RGB)
         {
-            internalFormat = srgb ? GL_COMPRESSED_SRGB_S3TC_DXT1_EXT : GL_COMPRESSED_RGB_S3TC_DXT1_EXT;
-            texture->compressedLoad = LITE3D_TRUE;
+            *internalFormat = srgb ? GL_COMPRESSED_SRGB_S3TC_DXT1_EXT : GL_COMPRESSED_RGB_S3TC_DXT1_EXT;
+            return LITE3D_TRUE;
         }
-        else if (imageFormat == LITE3D_TEXTURE_FORMAT_RGBA || imageFormat == LITE3D_TEXTURE_FORMAT_BRGA)
+        else if (imageFormat == LITE3D_TEXTURE_FORMAT_RGBA)
         {
-            internalFormat = srgb ? GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT1_EXT : GL_COMPRESSED_RGBA_S3TC_DXT1_EXT;
-            texture->compressedLoad = LITE3D_TRUE;
+            *internalFormat = srgb ? GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT1_EXT : GL_COMPRESSED_RGBA_S3TC_DXT1_EXT;
+            return LITE3D_TRUE;
         }
         break;
     case IL_DXT3:
-        internalFormat = srgb ? GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT3_EXT : GL_COMPRESSED_RGBA_S3TC_DXT3_EXT;
-        texture->compressedLoad = LITE3D_TRUE;
-        break;
+        *internalFormat = srgb ? GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT3_EXT : GL_COMPRESSED_RGBA_S3TC_DXT3_EXT;
+        return LITE3D_TRUE;
     case IL_DXT5:
-        internalFormat = srgb ? GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT5_EXT : GL_COMPRESSED_RGBA_S3TC_DXT5_EXT;
-        texture->compressedLoad = LITE3D_TRUE;
-        break;
+        *internalFormat = srgb ? GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT5_EXT : GL_COMPRESSED_RGBA_S3TC_DXT5_EXT;
+        return LITE3D_TRUE;
     };
     
-    return internalFormat;
+    return LITE3D_FALSE;
 }
 
 void lite3d_texture_technique_add_image_filter(lite3d_image_filter *filter)
@@ -489,6 +486,7 @@ int lite3d_texture_unit_from_resource(lite3d_texture_unit *textureUnit,
     uint8_t totalFaces = 0;
     uint8_t imageFace = 0;
     void *compressedBuffer = NULL;
+    int compressedLoad = LITE3D_FALSE;
 
     SDL_assert(resource);
     SDL_assert(textureUnit);
@@ -533,7 +531,7 @@ int lite3d_texture_unit_from_resource(lite3d_texture_unit *textureUnit,
         internalFormat = LITE3D_TEXTURE_INTERNAL_SRGB;
     else if (srgb && imageFormat == LITE3D_TEXTURE_FORMAT_RGBA)
         internalFormat = LITE3D_TEXTURE_INTERNAL_SRGBA;
-    internalFormat = determineCompressionMethod(textureUnit, srgb, imageFormat, internalFormat);
+    compressedLoad = determineCompressionMethod(srgb, imageFormat, &internalFormat);
 
     /* allocate texture surface if not allocated yet */
     if (textureUnit->imageWidth != imageWidth || textureUnit->imageHeight != imageHeight ||
@@ -603,7 +601,7 @@ int lite3d_texture_unit_from_resource(lite3d_texture_unit *textureUnit,
             lHeight = ilGetInteger(IL_IMAGE_HEIGHT);
             lDepth = ilGetInteger(IL_IMAGE_DEPTH);
 
-            if (textureUnit->compressedLoad)
+            if (compressedLoad)
             {
                 ILint comressedFormat = ilGetInteger(IL_DXTC_FORMAT);
                 // Получим рпазмер запакованного слоя текстуры

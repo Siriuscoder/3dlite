@@ -1,6 +1,6 @@
 {
   "Filtering":"Linear",
-  "Compression": true,
+  "Compression": false,
   "Image": [
     {
         "Image":"samples:textures/images/skymap/miramar_lf.tga",

@@ -15,6 +15,11 @@ layout(std140) uniform lightIndexes
     ivec4 indexes[100];
 };
 
+layout(std140) uniform ShadowMatrix
+{
+    mat4 shadowMat[3];
+};
+
 uniform vec3 eye;
 
 in vec2 iuv;
@@ -24,6 +29,7 @@ out vec4 fragColor;
 #define M_PI 3.1415926535897932384626433832795
 #define FLT_EPSILON 1.192092896e-07F
 const float ambientStrength = 0.13;
+const float shadowBias = 0.00001;
 
 #define LITE3D_LIGHT_UNDEFINED          0.0
 #define LITE3D_LIGHT_POINT              1.0
@@ -103,6 +109,38 @@ vec3 Lx(vec3 albedo, vec3 radiance, vec3 L, vec3 N, vec3 V, vec3 specular, vec3 
     return BRDF(albedo, NdotL, HdotV, NdotV, NdotH, specular, F) * radiance * NdotL;
 }
 
+float PCF(float shadowIndex, vec3 vw)
+{
+    // Do not cast shadows
+    if (shadowIndex < 0.0)
+        return 1.0;
+
+    // Shadow space NDC coorts of current fragment
+    vec4 sv = shadowMat[int(shadowIndex)] * vec4(vw, 1.0);
+    // transform the NDC coordinates to the range [0,1]
+    sv = (sv.xyzw / sv.w) * 0.5 + 0.5;
+    // Z clip 
+    if (sv.z > 1.0)
+        return 0.0;
+
+    float result = 0.0;
+    vec2 texelSize = 1.0 / textureSize(ShadowMaps, 0).xy;
+    for (int x = -1; x <= 1; ++x)
+    {
+        for (int y = -1; y <= 1; ++y)
+        {
+            vec2 shift = sv.xy + (vec2(x, y) * texelSize);
+            if (shift.x < 0.0 || shift.x > 1.0 || shift.y < 0.0 || shift.y > 1.0)
+                continue;
+
+            result += texture(ShadowMaps, vec4(shift, shadowIndex, sv.z - shadowBias));
+        }
+    }
+
+    result /= 9.0;
+    return result;
+}
+
 void main()
 {
     // sampling normal in world space from fullscreen normal map
@@ -155,7 +193,7 @@ void main()
             /* block2.x - position.x */
             /* block2.y - position.y */
             /* block2.z - position.z */
-            /* block2.w - size */
+            /* block2.w - user index */
             /* calculate direction from fragment to light */
             lightDirection = lights[index+2].xyz - vw;
             float lightDistance = length(lightDirection);
@@ -185,14 +223,18 @@ void main()
             attenuationFactor = spotAttenuationFactor / 
                 (block3.w + block4.x * lightDistance + block4.y * lightDistance * lightDistance);
         }
-
+        /* User Index, at this implementation is shadow index */
+        float shadowless = PCF(lights[index+2].w, vw);
         /* block1.x - diffuse.r */
         /* block1.y - diffuse.g  */
         /* block1.z - diffuse.b */
         /* block1.w - radiance */
         vec4 block1 = lights[index+1];
         /* light source full radiance at fragment position */
-        vec3 radiance = block1.rgb * block1.w * attenuationFactor;
+        vec3 radiance = block1.rgb * block1.w * attenuationFactor * shadowless;
+        /* Radiance to small, do not take this light source in account */ 
+        if (any(lessThan(radiance, vec3(0.0001))))
+            continue;
         /* L for current lights source */ 
         totalLx += Lx(albedo.rgb, radiance, lightDirection, nw, eyeDir, specular, F, NdotV);
     }

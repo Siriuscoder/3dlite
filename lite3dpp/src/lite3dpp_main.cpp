@@ -73,6 +73,8 @@ namespace lite3dpp
         mSettings.textureSettings.anisotropy = textureSettings.getInt(L"Anisotropy", 2);
         mSettings.textureSettings.useGLCompression =
             textureSettings.getBool(L"Compression", false) ? LITE3D_TRUE : LITE3D_FALSE;
+        mSettings.textureSettings.useCompressedDataOnLoad =
+            textureSettings.getBool(L"CompressedDataOnLoad", false) ? LITE3D_TRUE : LITE3D_FALSE;
 
         auto depthFormat = textureSettings.getString(L"DepthFormat", "Default");
         mSettings.textureSettings.useDepthFormat =

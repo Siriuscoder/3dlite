@@ -4,7 +4,7 @@
     "Wrapping": "ClampToEdge",
     "Compression": false,
     "TextureFormat": "DEPTH",
-    "Height": 1024,
-    "Width": 1024,
+    "Height": 2048,
+    "Width": 2048,
     "Depth": 3
 }

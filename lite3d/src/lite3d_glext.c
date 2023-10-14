@@ -132,7 +132,8 @@ int lite3d_check_texture_compression_s3tc()
 {
 #ifdef GLES
     return SDL_GL_ExtensionSupported("GL_EXT_texture_compression_s3tc") == SDL_TRUE &&
-        SDL_GL_ExtensionSupported("GL_EXT_texture_compression_rgtc") == SDL_TRUE;
+        SDL_GL_ExtensionSupported("GL_EXT_texture_compression_rgtc") == SDL_TRUE && 
+        SDL_GL_ExtensionSupported("GL_EXT_texture_compression_s3tc_srgb") == SDL_TRUE;
 #else
     return GLEW_EXT_texture_compression_s3tc && GLEW_EXT_texture_compression_rgtc;
 #endif

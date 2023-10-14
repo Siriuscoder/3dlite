@@ -46,6 +46,11 @@ public:
 
         kmVec3 resolution = { (float)getMain().window()->width(), (float)getMain().window()->height(), 0 };
         Material::setFloatv3GlobalParameter("screenResolution", resolution);
+
+        mMinigun01 = mVaultScene->getObject("MinigunTurret");
+        mMinigun02 = mVaultScene->getObject("MinigunTurret.001");
+        mMinigun02->getNode("Minigun")->rotateAngle(KM_VEC3_POS_Z, kmDegreesToRadians(-30.0));
+        mGearKey = mVaultScene->getObject("VaultStatic")->getNode("GearKey");
     }
 
     void setupShadowCasters()
@@ -53,16 +58,18 @@ public:
         RenderTarget* shadowUpdateRT = getMain().getResourceManager()->queryResource<TextureRenderTarget>("ShadowPass");
         shadowUpdateRT->addObserver(mShadowManager.get());
 
-        auto staticScene = mVaultScene->getObject("VaultStatic");
+        //auto staticScene = mVaultScene->getObject("VaultStatic");
         // Установим тень для трех прожекторов и потом будем их вращать
-        mShadowManager->newShadowCaster(mVaultScene->getLightNode("LightSpotNode"));
-        mSpot01 = staticScene->getNode("LightSpot");
+        // Источники света получаем по ObjectName + NodeName
+        mShadowManager->newShadowCaster(mVaultScene->getLightNode("LightSpotLightSpotNode"));
+        mSpot01 = mVaultScene->getObject("LightSpot")->getNode("LightSpotLamp");
 
-        mShadowManager->newShadowCaster(mVaultScene->getLightNode("LightSpotNode.001"));
-        mSpot02 = staticScene->getNode("LightSpot.001");
+        mShadowManager->newShadowCaster(mVaultScene->getLightNode("LightSpot.002LightSpotNode"));
+        mSpot02 = mVaultScene->getObject("LightSpot.002")->getNode("LightSpotLamp");
+        mSpot02->rotateAngle(KM_VEC3_POS_Z, kmDegreesToRadians(40.0));
 
-        mShadowManager->newShadowCaster(mVaultScene->getLightNode("LightSpotNode.002"));
-        mSpot03 = staticScene->getNode("LightSpot.002");
+        mShadowManager->newShadowCaster(mVaultScene->getLightNode("LightSpot.003LightSpotNode"));
+        mSpot03 = mVaultScene->getObject("LightSpot.003")->getNode("LightSpotLamp");
     }
 
     void addFlashlight()
@@ -104,6 +111,21 @@ public:
         }
     }
 
+    void fixedUpdateTimerTick(int32_t firedPerRound, uint64_t deltaMcs, float deltaRetard) override
+    {
+        float animPiNew = mAnimPi + (0.05f * deltaRetard);
+        mAnimPi = animPiNew > (2.0 * M_PI) ? animPiNew - (2 * M_PI) : animPiNew;
+
+        float cosA = cos(mAnimPi);
+        mMinigun01->getNode("Minigun")->rotateAngle(KM_VEC3_POS_Z, cosA * 0.02);
+        mMinigun01->getNode("MinigunBarrel")->rotateAngle(KM_VEC3_POS_Y, 0.13 * deltaRetard);
+        mMinigun02->getNode("Minigun")->rotateAngle(KM_VEC3_POS_Z, -cosA * 0.02);
+        mMinigun02->getNode("MinigunBarrel")->rotateAngle(KM_VEC3_POS_Y, 0.13 * deltaRetard);
+        mSpot03->rotateAngle(KM_VEC3_POS_Z, 0.1 * deltaRetard);
+        mVaultScene->getObject("VaultStatic")->getNode("GearKeySpinner")->rotateAngle(KM_VEC3_POS_X, 0.15 * deltaRetard);
+        mShadowManager->rebuild();
+    }
+
     void processEvent(SDL_Event *e) override
     {
         Sample::processEvent(e);
@@ -115,6 +137,33 @@ public:
                 flashLightEnabled = !flashLightEnabled;
                 mFlashLight->getLight()->enabled(flashLightEnabled);
                 updateFlashLight();
+            }
+            else if (e->key.keysym.sym == SDLK_p)
+            {
+                mSpot01->rotateAngle(KM_VEC3_POS_Z, 0.10 * (e->key.keysym.mod & KMOD_LCTRL ? -1.0 : 1.0));
+                mShadowManager->rebuild();
+            }
+            else if (e->key.keysym.sym == SDLK_o)
+            {
+                mSpot02->rotateAngle(KM_VEC3_POS_Z, 0.10 * (e->key.keysym.mod & KMOD_LCTRL ? -1.0 : 1.0));
+                mShadowManager->rebuild();
+            }
+            else if (e->key.keysym.sym == SDLK_k)
+            {
+                mGearKey->move(kmVec3{10.0f * (e->key.keysym.mod & KMOD_LCTRL ? -1.0f : 1.0f), 0.0f, 0.0f});
+                auto pos = mGearKey->getPosition();
+                if (pos.x > 332.0f)
+                {
+                    pos.x = 332.0f;
+                    mGearKey->setPosition(pos);
+                }
+                else if (pos.x < -58.0f)
+                {
+                    pos.x = -58.0f;
+                    mGearKey->setPosition(pos);
+                }
+
+                mShadowManager->rebuild();
             }
         }
     }
@@ -128,6 +177,10 @@ private:
     SceneNode* mSpot01 = nullptr;
     SceneNode* mSpot02 = nullptr;
     SceneNode* mSpot03 = nullptr;
+    SceneNode* mGearKey = nullptr;
+    SceneObject* mMinigun01 = nullptr;
+    SceneObject* mMinigun02 = nullptr; 
+    float mAnimPi = 0.0f;
 };
 
 }}

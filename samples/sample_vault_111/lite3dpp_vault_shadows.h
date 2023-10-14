@@ -53,6 +53,11 @@ public:
             return mShadowCamera->getProjTransformMatrix();
         }
 
+        LightSceneNode* getNode()
+        {
+            return mLightNode;
+        }
+
     private:
 
         LightSceneNode* mLightNode = nullptr;
@@ -82,7 +87,13 @@ public:
     {
         if (mShadowRT)
         {
-            mShadowRT->enable();
+            if (std::any_of(mShadowCasters.begin(), mShadowCasters.end(), [](const std::unique_ptr<ShadowCaster>& sc)
+            {
+                return sc->getNode()->isVisible();
+            }))
+            {
+                mShadowRT->enable();
+            }
         }
     }
 

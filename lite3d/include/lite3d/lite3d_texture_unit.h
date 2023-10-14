@@ -158,6 +158,7 @@ typedef struct lite3d_texture_technique_settings
     int32_t anisotropy;
     int32_t maxAnisotropy;
     uint8_t useGLCompression;
+    uint8_t useCompressedDataOnLoad;
     uint8_t useDepthFormat;
 } lite3d_texture_technique_settings;
 
@@ -180,7 +181,6 @@ typedef struct lite3d_texture_unit
     int16_t magFilter;
     uint8_t wrapping;
     uint8_t compressed;
-    uint8_t compressedLoad;
     uint8_t isFbAttachment;
     lite3d_vbo tbo;
     uint8_t isTextureBuffer;

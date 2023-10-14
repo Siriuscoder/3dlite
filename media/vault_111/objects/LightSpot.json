@@ -1,0 +1,87 @@
+{
+  "Root": {
+    "Name": "LightSpot",
+    "Mesh": {
+      "Mesh": "vault_111:models/json/LightSpotBracing.json",
+      "Name": "LightSpotBracing.mesh"
+    },
+    "Nodes": [
+      {
+        "Name": "LightSpotLamp",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/LightSpot.json",
+          "Name": "LightSpot.mesh"
+        },
+        "Position": [
+          -4.302240371704102,
+          -3.070563616347499e-05,
+          -1.562539182486944e-07
+        ],
+        "Rotation": [
+          6.574124000735537e-08,
+          4.986951296359621e-08,
+          -0.2677325904369354,
+          0.9634932279586792
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "Nodes": [
+          {
+            "Name": "LightSpotNode",
+            "Light": {
+              "Type": "Spot",
+              "Name": "LightSpot_LightSpotNode",
+              "Diffuse": [
+                1.0,
+                0.9673858880996704,
+                0.4937739968299866
+              ],
+              "Radiance": 12000000.0,
+              "LightSize": 0.0,
+              "Attenuation": {
+                "Constant": 0.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
+                "InfluenceDistance": 1500.0,
+                "InfluenceMinRadiance": 0.003000000026077032
+              },
+              "SpotFactor": {
+                "AngleInnerCone": 0.4398230012187554,
+                "AngleOuterCone": 1.0471975803375244
+              },
+              "Direction": [
+                0.0,
+                0.0,
+                -1.0
+              ],
+              "Position": [
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "Position": [
+              7.3253173828125,
+              0.0,
+              36.01327133178711
+            ],
+            "Rotation": [
+              0.5416752099990845,
+              -0.5416752099990845,
+              -0.4545195698738098,
+              0.4545193910598755
+            ],
+            "Scale": [
+              1.0,
+              0.9999999403953552,
+              0.9999999403953552
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -886,7 +886,7 @@
             "Name": "LightBoxNode",
             "Light": {
               "Type": "Point",
-              "Name": "LightBoxNodeLightBox",
+              "Name": "LightBox_LightBoxNode",
               "Diffuse": [
                 1.0,
                 0.8794688582420349,
@@ -958,7 +958,7 @@
             "Name": "LightBoxNode.001",
             "Light": {
               "Type": "Point",
-              "Name": "LightBoxNode.001LightBox",
+              "Name": "LightBox_LightBoxNode.001",
               "Diffuse": [
                 1.0,
                 0.8794688582420349,
@@ -1030,7 +1030,7 @@
             "Name": "LightBoxNode.002",
             "Light": {
               "Type": "Point",
-              "Name": "LightBoxNode.002LightBox",
+              "Name": "LightBox_LightBoxNode.002",
               "Diffuse": [
                 1.0,
                 0.8794688582420349,
@@ -1102,7 +1102,7 @@
             "Name": "LightBoxNode.003",
             "Light": {
               "Type": "Point",
-              "Name": "LightBoxNode.003LightBox",
+              "Name": "LightBox_LightBoxNode.003",
               "Diffuse": [
                 1.0,
                 0.8794688582420349,
@@ -1174,7 +1174,7 @@
             "Name": "LightBoxNode.004",
             "Light": {
               "Type": "Point",
-              "Name": "LightBoxNode.004LightBox",
+              "Name": "LightBox_LightBoxNode.004",
               "Diffuse": [
                 1.0,
                 0.8794688582420349,
@@ -1246,7 +1246,7 @@
             "Name": "LightBoxNode.005",
             "Light": {
               "Type": "Point",
-              "Name": "LightBoxNode.005LightBox",
+              "Name": "LightBox_LightBoxNode.005",
               "Diffuse": [
                 1.0,
                 0.8794688582420349,
@@ -1318,7 +1318,7 @@
             "Name": "LightBoxNode.006",
             "Light": {
               "Type": "Point",
-              "Name": "LightBoxNode.006LightBox",
+              "Name": "LightBox_LightBoxNode.006",
               "Diffuse": [
                 1.0,
                 0.8794688582420349,
@@ -1390,7 +1390,7 @@
             "Name": "LightBoxNode.007",
             "Light": {
               "Type": "Point",
-              "Name": "LightBoxNode.007LightBox",
+              "Name": "LightBox_LightBoxNode.007",
               "Diffuse": [
                 1.0,
                 0.8794688582420349,
@@ -1462,7 +1462,7 @@
             "Name": "LightBoxNode.008",
             "Light": {
               "Type": "Point",
-              "Name": "LightBoxNode.008LightBox",
+              "Name": "LightBox_LightBoxNode.008",
               "Diffuse": [
                 1.0,
                 0.8794688582420349,
@@ -1534,7 +1534,7 @@
             "Name": "LightBoxNode.009",
             "Light": {
               "Type": "Point",
-              "Name": "LightBoxNode.009LightBox",
+              "Name": "LightBox_LightBoxNode.009",
               "Diffuse": [
                 1.0,
                 0.8794688582420349,
@@ -1606,7 +1606,7 @@
             "Name": "LightBoxNode.010",
             "Light": {
               "Type": "Point",
-              "Name": "LightBoxNode.010LightBox",
+              "Name": "LightBox_LightBoxNode.010",
               "Diffuse": [
                 1.0,
                 0.8794688582420349,
@@ -1678,7 +1678,7 @@
             "Name": "LightBoxNode.011",
             "Light": {
               "Type": "Point",
-              "Name": "LightBoxNode.011LightBox",
+              "Name": "LightBox_LightBoxNode.011",
               "Diffuse": [
                 1.0,
                 0.8794688582420349,
@@ -1750,7 +1750,7 @@
             "Name": "LightBoxNode.012",
             "Light": {
               "Type": "Point",
-              "Name": "LightBoxNode.012LightBox",
+              "Name": "LightBox_LightBoxNode.012",
               "Diffuse": [
                 1.0,
                 0.8794688582420349,
@@ -1822,7 +1822,7 @@
             "Name": "LightBoxNode.013",
             "Light": {
               "Type": "Point",
-              "Name": "LightBoxNode.013LightBox",
+              "Name": "LightBox_LightBoxNode.013",
               "Diffuse": [
                 1.0,
                 0.8794688582420349,
@@ -1894,7 +1894,7 @@
             "Name": "LightBoxNode.014",
             "Light": {
               "Type": "Point",
-              "Name": "LightBoxNode.014LightBox",
+              "Name": "LightBox_LightBoxNode.014",
               "Diffuse": [
                 1.0,
                 0.8794688582420349,
@@ -1966,7 +1966,7 @@
             "Name": "LightBoxNode.015",
             "Light": {
               "Type": "Point",
-              "Name": "LightBoxNode.015LightBox",
+              "Name": "LightBox_LightBoxNode.015",
               "Diffuse": [
                 1.0,
                 0.8794688582420349,
@@ -2038,7 +2038,7 @@
             "Name": "LightBoxNode.016",
             "Light": {
               "Type": "Point",
-              "Name": "LightBoxNode.016LightBox",
+              "Name": "LightBox_LightBoxNode.016",
               "Diffuse": [
                 1.0,
                 0.8794688582420349,
@@ -2110,7 +2110,7 @@
             "Name": "LightBoxNode.017",
             "Light": {
               "Type": "Point",
-              "Name": "LightBoxNode.017LightBox",
+              "Name": "LightBox_LightBoxNode.017",
               "Diffuse": [
                 1.0,
                 0.8794688582420349,
@@ -2182,7 +2182,7 @@
             "Name": "LightBoxNode.018",
             "Light": {
               "Type": "Point",
-              "Name": "LightBoxNode.018LightBox",
+              "Name": "LightBox_LightBoxNode.018",
               "Diffuse": [
                 1.0,
                 0.8794688582420349,
@@ -2254,7 +2254,7 @@
             "Name": "LightBoxNode.019",
             "Light": {
               "Type": "Point",
-              "Name": "LightBoxNode.019LightBox",
+              "Name": "LightBox_LightBoxNode.019",
               "Diffuse": [
                 1.0,
                 0.8794688582420349,
@@ -2326,7 +2326,7 @@
             "Name": "LightBoxNode.020",
             "Light": {
               "Type": "Point",
-              "Name": "LightBoxNode.020LightBox",
+              "Name": "LightBox_LightBoxNode.020",
               "Diffuse": [
                 1.0,
                 0.8794688582420349,
@@ -2398,7 +2398,7 @@
             "Name": "LightBoxNode.021",
             "Light": {
               "Type": "Point",
-              "Name": "LightBoxNode.021LightBox",
+              "Name": "LightBox_LightBoxNode.021",
               "Diffuse": [
                 1.0,
                 0.8794688582420349,
@@ -2470,7 +2470,7 @@
             "Name": "LightBoxNode.022",
             "Light": {
               "Type": "Point",
-              "Name": "LightBoxNode.022LightBox",
+              "Name": "LightBox_LightBoxNode.022",
               "Diffuse": [
                 1.0,
                 0.8794688582420349,
@@ -2542,7 +2542,7 @@
             "Name": "LightBoxNode.023",
             "Light": {
               "Type": "Point",
-              "Name": "LightBoxNode.023LightBox",
+              "Name": "LightBox_LightBoxNode.023",
               "Diffuse": [
                 1.0,
                 0.8794688582420349,
@@ -2614,7 +2614,7 @@
             "Name": "LightBoxNode.024",
             "Light": {
               "Type": "Point",
-              "Name": "LightBoxNode.024LightBox",
+              "Name": "LightBox_LightBoxNode.024",
               "Diffuse": [
                 1.0,
                 0.8794688582420349,
@@ -2686,7 +2686,7 @@
             "Name": "LightBoxNode.025",
             "Light": {
               "Type": "Point",
-              "Name": "LightBoxNode.025LightBox",
+              "Name": "LightBox_LightBoxNode.025",
               "Diffuse": [
                 1.0,
                 0.8794688582420349,
@@ -2758,7 +2758,7 @@
             "Name": "LightBoxNode.026",
             "Light": {
               "Type": "Point",
-              "Name": "LightBoxNode.026LightBox",
+              "Name": "LightBox_LightBoxNode.026",
               "Diffuse": [
                 1.0,
                 0.8794688582420349,
@@ -2830,7 +2830,7 @@
             "Name": "LightBoxNode.027",
             "Light": {
               "Type": "Point",
-              "Name": "LightBoxNode.027LightBox",
+              "Name": "LightBox_LightBoxNode.027",
               "Diffuse": [
                 1.0,
                 0.8794688582420349,
@@ -2902,7 +2902,7 @@
             "Name": "LightBoxNode.028",
             "Light": {
               "Type": "Point",
-              "Name": "LightBoxNode.028LightBox",
+              "Name": "LightBox_LightBoxNode.028",
               "Diffuse": [
                 1.0,
                 0.8794688582420349,
@@ -2974,7 +2974,7 @@
             "Name": "LightBoxNode.029",
             "Light": {
               "Type": "Point",
-              "Name": "LightBoxNode.029LightBox",
+              "Name": "LightBox_LightBoxNode.029",
               "Diffuse": [
                 1.0,
                 0.8794688582420349,
@@ -3046,7 +3046,7 @@
             "Name": "LightBoxNode.031",
             "Light": {
               "Type": "Point",
-              "Name": "LightBoxNode.031LightBox",
+              "Name": "LightBox_LightBoxNode.031",
               "Diffuse": [
                 1.0,
                 0.8794688582420349,
@@ -3118,7 +3118,7 @@
             "Name": "LightBoxNode.032",
             "Light": {
               "Type": "Point",
-              "Name": "LightBoxNode.032LightBox",
+              "Name": "LightBox_LightBoxNode.032",
               "Diffuse": [
                 1.0,
                 0.8794688582420349,
@@ -3190,7 +3190,7 @@
             "Name": "LightBoxNode.033",
             "Light": {
               "Type": "Point",
-              "Name": "LightBoxNode.033LightBox",
+              "Name": "LightBox_LightBoxNode.033",
               "Diffuse": [
                 1.0,
                 0.8794688582420349,
@@ -3262,7 +3262,7 @@
             "Name": "LightCageRedNode",
             "Light": {
               "Type": "Point",
-              "Name": "LightCageRedNodeLightCageRed",
+              "Name": "LightCageRed_LightCageRedNode",
               "Diffuse": [
                 1.0,
                 0.010828731581568718,
@@ -3334,7 +3334,7 @@
             "Name": "LightCageRedNode.001",
             "Light": {
               "Type": "Point",
-              "Name": "LightCageRedNode.001LightCageRed",
+              "Name": "LightCageRed_LightCageRedNode.001",
               "Diffuse": [
                 1.0,
                 0.010828731581568718,
@@ -3406,7 +3406,7 @@
             "Name": "LightCageWhiteNode",
             "Light": {
               "Type": "Point",
-              "Name": "LightCageWhiteNodeLightCageWhite",
+              "Name": "LightCageWhite_LightCageWhiteNode",
               "Diffuse": [
                 0.9269342422485352,
                 1.0,
@@ -3478,7 +3478,7 @@
             "Name": "LightCageWhiteNode.001",
             "Light": {
               "Type": "Point",
-              "Name": "LightCageWhiteNode.001LightCageWhite",
+              "Name": "LightCageWhite_LightCageWhiteNode.001",
               "Diffuse": [
                 0.9269342422485352,
                 1.0,
@@ -3550,7 +3550,7 @@
             "Name": "LightCageWhiteNode.002",
             "Light": {
               "Type": "Point",
-              "Name": "LightCageWhiteNode.002LightCageWhite",
+              "Name": "LightCageWhite_LightCageWhiteNode.002",
               "Diffuse": [
                 0.9269342422485352,
                 1.0,
@@ -3622,7 +3622,7 @@
             "Name": "LightCageWhiteNode.003",
             "Light": {
               "Type": "Point",
-              "Name": "LightCageWhiteNode.003LightCageWhite",
+              "Name": "LightCageWhite_LightCageWhiteNode.003",
               "Diffuse": [
                 0.9269342422485352,
                 1.0,
@@ -3694,7 +3694,7 @@
             "Name": "LightCageWhiteNode.004",
             "Light": {
               "Type": "Point",
-              "Name": "LightCageWhiteNode.004LightCageWhite",
+              "Name": "LightCageWhite_LightCageWhiteNode.004",
               "Diffuse": [
                 0.9269342422485352,
                 1.0,
@@ -3766,7 +3766,7 @@
             "Name": "LightCageWhiteNode.005",
             "Light": {
               "Type": "Point",
-              "Name": "LightCageWhiteNode.005LightCageWhite",
+              "Name": "LightCageWhite_LightCageWhiteNode.005",
               "Diffuse": [
                 0.9269342422485352,
                 1.0,
@@ -3838,7 +3838,7 @@
             "Name": "LightCageWhiteNode.006",
             "Light": {
               "Type": "Point",
-              "Name": "LightCageWhiteNode.006LightCageWhite",
+              "Name": "LightCageWhite_LightCageWhiteNode.006",
               "Diffuse": [
                 0.9269342422485352,
                 1.0,
@@ -3910,7 +3910,7 @@
             "Name": "LightCageWhiteNode.007",
             "Light": {
               "Type": "Point",
-              "Name": "LightCageWhiteNode.007LightCageWhite",
+              "Name": "LightCageWhite_LightCageWhiteNode.007",
               "Diffuse": [
                 0.9269342422485352,
                 1.0,
@@ -3982,7 +3982,7 @@
             "Name": "LightCageWhiteNode.008",
             "Light": {
               "Type": "Point",
-              "Name": "LightCageWhiteNode.008LightCageWhite",
+              "Name": "LightCageWhite_LightCageWhiteNode.008",
               "Diffuse": [
                 0.9269342422485352,
                 1.0,
@@ -4054,7 +4054,7 @@
             "Name": "LightCageWhiteNode.009",
             "Light": {
               "Type": "Point",
-              "Name": "LightCageWhiteNode.009LightCageWhite",
+              "Name": "LightCageWhite_LightCageWhiteNode.009",
               "Diffuse": [
                 0.9269342422485352,
                 1.0,
@@ -4126,7 +4126,7 @@
             "Name": "LightCageWhiteNode.010",
             "Light": {
               "Type": "Point",
-              "Name": "LightCageWhiteNode.010LightCageWhite",
+              "Name": "LightCageWhite_LightCageWhiteNode.010",
               "Diffuse": [
                 0.9269342422485352,
                 1.0,
@@ -4198,7 +4198,7 @@
             "Name": "LightCageWhiteNode.011",
             "Light": {
               "Type": "Point",
-              "Name": "LightCageWhiteNode.011LightCageWhite",
+              "Name": "LightCageWhite_LightCageWhiteNode.011",
               "Diffuse": [
                 0.9269342422485352,
                 1.0,
@@ -4270,7 +4270,7 @@
             "Name": "LightCageWhiteNode.012",
             "Light": {
               "Type": "Point",
-              "Name": "LightCageWhiteNode.012LightCageWhite",
+              "Name": "LightCageWhite_LightCageWhiteNode.012",
               "Diffuse": [
                 0.9269342422485352,
                 1.0,
@@ -4342,7 +4342,7 @@
             "Name": "LightCageWhiteNode.013",
             "Light": {
               "Type": "Point",
-              "Name": "LightCageWhiteNode.013LightCageWhite",
+              "Name": "LightCageWhite_LightCageWhiteNode.013",
               "Diffuse": [
                 0.9269342422485352,
                 1.0,
@@ -4414,7 +4414,7 @@
             "Name": "LightCageWhiteNode.014",
             "Light": {
               "Type": "Point",
-              "Name": "LightCageWhiteNode.014LightCageWhite",
+              "Name": "LightCageWhite_LightCageWhiteNode.014",
               "Diffuse": [
                 0.9269342422485352,
                 1.0,
@@ -4486,7 +4486,7 @@
             "Name": "LightCageWhiteNode.015",
             "Light": {
               "Type": "Point",
-              "Name": "LightCageWhiteNode.015LightCageWhite",
+              "Name": "LightCageWhite_LightCageWhiteNode.015",
               "Diffuse": [
                 0.9269342422485352,
                 1.0,
@@ -4558,7 +4558,7 @@
             "Name": "LightCageWhiteNode.016",
             "Light": {
               "Type": "Point",
-              "Name": "LightCageWhiteNode.016LightCageWhite",
+              "Name": "LightCageWhite_LightCageWhiteNode.016",
               "Diffuse": [
                 0.9269342422485352,
                 1.0,
@@ -4630,7 +4630,7 @@
             "Name": "LightCageWhiteNode.017",
             "Light": {
               "Type": "Point",
-              "Name": "LightCageWhiteNode.017LightCageWhite",
+              "Name": "LightCageWhite_LightCageWhiteNode.017",
               "Diffuse": [
                 0.9269342422485352,
                 1.0,
@@ -4702,7 +4702,7 @@
             "Name": "LightCageWhiteNode.018",
             "Light": {
               "Type": "Point",
-              "Name": "LightCageWhiteNode.018LightCageWhite",
+              "Name": "LightCageWhite_LightCageWhiteNode.018",
               "Diffuse": [
                 0.9269342422485352,
                 1.0,
@@ -4774,7 +4774,7 @@
             "Name": "LightCageWhiteNode.019",
             "Light": {
               "Type": "Point",
-              "Name": "LightCageWhiteNode.019LightCageWhite",
+              "Name": "LightCageWhite_LightCageWhiteNode.019",
               "Diffuse": [
                 0.9269342422485352,
                 1.0,
@@ -4846,7 +4846,7 @@
             "Name": "LightCageWhiteNode.020",
             "Light": {
               "Type": "Point",
-              "Name": "LightCageWhiteNode.020LightCageWhite",
+              "Name": "LightCageWhite_LightCageWhiteNode.020",
               "Diffuse": [
                 0.9269342422485352,
                 1.0,
@@ -4918,7 +4918,7 @@
             "Name": "LightCageWhiteNode.021",
             "Light": {
               "Type": "Point",
-              "Name": "LightCageWhiteNode.021LightCageWhite",
+              "Name": "LightCageWhite_LightCageWhiteNode.021",
               "Diffuse": [
                 0.9269342422485352,
                 1.0,
@@ -4990,7 +4990,7 @@
             "Name": "LightCageWhiteNode.022",
             "Light": {
               "Type": "Point",
-              "Name": "LightCageWhiteNode.022LightCageWhite",
+              "Name": "LightCageWhite_LightCageWhiteNode.022",
               "Diffuse": [
                 0.9269342422485352,
                 1.0,
@@ -5062,7 +5062,7 @@
             "Name": "LightCageWhiteNode.023",
             "Light": {
               "Type": "Point",
-              "Name": "LightCageWhiteNode.023LightCageWhite",
+              "Name": "LightCageWhite_LightCageWhiteNode.023",
               "Diffuse": [
                 0.9269342422485352,
                 1.0,
@@ -5134,7 +5134,7 @@
             "Name": "LightCageWhiteNode.024",
             "Light": {
               "Type": "Point",
-              "Name": "LightCageWhiteNode.024LightCageWhite",
+              "Name": "LightCageWhite_LightCageWhiteNode.024",
               "Diffuse": [
                 0.9269342422485352,
                 1.0,
@@ -5206,7 +5206,7 @@
             "Name": "LightCageWhiteNode.025",
             "Light": {
               "Type": "Point",
-              "Name": "LightCageWhiteNode.025LightCageWhite",
+              "Name": "LightCageWhite_LightCageWhiteNode.025",
               "Diffuse": [
                 0.9269342422485352,
                 1.0,
@@ -5278,7 +5278,7 @@
             "Name": "LightCeilNode01",
             "Light": {
               "Type": "Spot",
-              "Name": "LightCeilNode01LightCeil",
+              "Name": "LightCeil_LightCeilNode01",
               "Diffuse": [
                 0.580237865447998,
                 0.5787253379821777,
@@ -5354,7 +5354,7 @@
             "Name": "LightCeilNode01.001",
             "Light": {
               "Type": "Spot",
-              "Name": "LightCeilNode01.001LightCeil",
+              "Name": "LightCeil_LightCeilNode01.001",
               "Diffuse": [
                 0.580237865447998,
                 0.5787253379821777,
@@ -5430,7 +5430,7 @@
             "Name": "LightCeilNode01.002",
             "Light": {
               "Type": "Spot",
-              "Name": "LightCeilNode01.002LightCeil",
+              "Name": "LightCeil_LightCeilNode01.002",
               "Diffuse": [
                 0.580237865447998,
                 0.5787253379821777,
@@ -5506,7 +5506,7 @@
             "Name": "LightCeilNode01.003",
             "Light": {
               "Type": "Spot",
-              "Name": "LightCeilNode01.003LightCeil",
+              "Name": "LightCeil_LightCeilNode01.003",
               "Diffuse": [
                 0.580237865447998,
                 0.5787253379821777,
@@ -5582,7 +5582,7 @@
             "Name": "LightCeilNode01.004",
             "Light": {
               "Type": "Spot",
-              "Name": "LightCeilNode01.004LightCeil",
+              "Name": "LightCeil_LightCeilNode01.004",
               "Diffuse": [
                 0.580237865447998,
                 0.5787253379821777,
@@ -5658,7 +5658,7 @@
             "Name": "LightCeilNode01.005",
             "Light": {
               "Type": "Spot",
-              "Name": "LightCeilNode01.005LightCeil",
+              "Name": "LightCeil_LightCeilNode01.005",
               "Diffuse": [
                 0.580237865447998,
                 0.5787253379821777,
@@ -5734,7 +5734,7 @@
             "Name": "LightCeilNode01.006",
             "Light": {
               "Type": "Spot",
-              "Name": "LightCeilNode01.006LightCeil",
+              "Name": "LightCeil_LightCeilNode01.006",
               "Diffuse": [
                 0.580237865447998,
                 0.5787253379821777,
@@ -5810,7 +5810,7 @@
             "Name": "LightCeilNode01.007",
             "Light": {
               "Type": "Spot",
-              "Name": "LightCeilNode01.007LightCeil",
+              "Name": "LightCeil_LightCeilNode01.007",
               "Diffuse": [
                 0.580237865447998,
                 0.5787253379821777,
@@ -5886,7 +5886,7 @@
             "Name": "LightCeilNode01.008",
             "Light": {
               "Type": "Spot",
-              "Name": "LightCeilNode01.008LightCeil",
+              "Name": "LightCeil_LightCeilNode01.008",
               "Diffuse": [
                 0.580237865447998,
                 0.5787253379821777,
@@ -5962,7 +5962,7 @@
             "Name": "LightCeilNode01.009",
             "Light": {
               "Type": "Spot",
-              "Name": "LightCeilNode01.009LightCeil",
+              "Name": "LightCeil_LightCeilNode01.009",
               "Diffuse": [
                 0.580237865447998,
                 0.5787253379821777,
@@ -6038,7 +6038,7 @@
             "Name": "LightCeilNode01.010",
             "Light": {
               "Type": "Spot",
-              "Name": "LightCeilNode01.010LightCeil",
+              "Name": "LightCeil_LightCeilNode01.010",
               "Diffuse": [
                 0.580237865447998,
                 0.5787253379821777,
@@ -6114,7 +6114,7 @@
             "Name": "LightCeilNode01.011",
             "Light": {
               "Type": "Spot",
-              "Name": "LightCeilNode01.011LightCeil",
+              "Name": "LightCeil_LightCeilNode01.011",
               "Diffuse": [
                 0.580237865447998,
                 0.5787253379821777,
@@ -6190,7 +6190,7 @@
             "Name": "LightCeilNode01.012",
             "Light": {
               "Type": "Spot",
-              "Name": "LightCeilNode01.012LightCeil",
+              "Name": "LightCeil_LightCeilNode01.012",
               "Diffuse": [
                 0.580237865447998,
                 0.5787253379821777,
@@ -6266,7 +6266,7 @@
             "Name": "LightCeilNode01.013",
             "Light": {
               "Type": "Spot",
-              "Name": "LightCeilNode01.013LightCeil",
+              "Name": "LightCeil_LightCeilNode01.013",
               "Diffuse": [
                 0.580237865447998,
                 0.5787253379821777,
@@ -6342,7 +6342,7 @@
             "Name": "LightCeilNode01.014",
             "Light": {
               "Type": "Spot",
-              "Name": "LightCeilNode01.014LightCeil",
+              "Name": "LightCeil_LightCeilNode01.014",
               "Diffuse": [
                 0.580237865447998,
                 0.5787253379821777,
@@ -6418,7 +6418,7 @@
             "Name": "LightCorridorNode",
             "Light": {
               "Type": "Point",
-              "Name": "LightCorridorNodeLightCorridor",
+              "Name": "LightCorridor_LightCorridorNode",
               "Diffuse": [
                 0.5451382398605347,
                 0.5391340255737305,
@@ -6490,7 +6490,7 @@
             "Name": "LightCorridorNode.001",
             "Light": {
               "Type": "Point",
-              "Name": "LightCorridorNode.001LightCorridor",
+              "Name": "LightCorridor_LightCorridorNode.001",
               "Diffuse": [
                 0.5451382398605347,
                 0.5391340255737305,
@@ -6562,7 +6562,7 @@
             "Name": "LightCorridorNode.002",
             "Light": {
               "Type": "Point",
-              "Name": "LightCorridorNode.002LightCorridor",
+              "Name": "LightCorridor_LightCorridorNode.002",
               "Diffuse": [
                 0.5451382398605347,
                 0.5391340255737305,
@@ -6634,7 +6634,7 @@
             "Name": "LightCorridorNode.003",
             "Light": {
               "Type": "Point",
-              "Name": "LightCorridorNode.003LightCorridor",
+              "Name": "LightCorridor_LightCorridorNode.003",
               "Diffuse": [
                 0.5451382398605347,
                 0.5391340255737305,
@@ -6706,7 +6706,7 @@
             "Name": "LightCorridorNode.004",
             "Light": {
               "Type": "Point",
-              "Name": "LightCorridorNode.004LightCorridor",
+              "Name": "LightCorridor_LightCorridorNode.004",
               "Diffuse": [
                 0.5451382398605347,
                 0.5391340255737305,
@@ -6742,234 +6742,6 @@
               0.0,
               0.0,
               1.0
-            ],
-            "Scale": [
-              1.0,
-              1.0,
-              1.0
-            ]
-          }
-        ]
-      },
-      {
-        "Name": "LightSpot",
-        "Mesh": {
-          "Mesh": "vault_111:models/json/LightSpot.json",
-          "Name": "LightSpot.mesh"
-        },
-        "Position": [
-          387.2598876953125,
-          -43.431396484375,
-          239.0
-        ],
-        "Rotation": [
-          0.4039888381958008,
-          0.9147639274597168,
-          1.1397735732998626e-07,
-          -2.580823093012441e-07
-        ],
-        "Scale": [
-          1.0,
-          1.0,
-          1.0
-        ],
-        "Nodes": [
-          {
-            "Name": "LightSpotNode",
-            "Light": {
-              "Type": "Spot",
-              "Name": "LightSpotNodeLightSpot",
-              "Diffuse": [
-                1.0,
-                0.9673858880996704,
-                0.4937739968299866
-              ],
-              "Radiance": 15000000.0,
-              "LightSize": 0.0,
-              "Attenuation": {
-                "Constant": 0.0,
-                "Linear": 50.0,
-                "Quadratic": 130.0,
-                "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.003000000026077032
-              },
-              "SpotFactor": {
-                "AngleInnerCone": 0.4398230012187554,
-                "AngleOuterCone": 1.0471975803375244
-              },
-              "Direction": [
-                0.0,
-                0.0,
-                -1.0
-              ],
-              "Position": [
-                0.0,
-                0.0,
-                0.0
-              ]
-            },
-            "Position": [
-              3.0230770111083984,
-              -2.8410190111571865e-07,
-              36.013282775878906
-            ],
-            "Rotation": [
-              0.5416752099990845,
-              -0.5416752099990845,
-              -0.45451948046684265,
-              0.45451945066452026
-            ],
-            "Scale": [
-              1.0,
-              1.0,
-              1.0
-            ]
-          }
-        ]
-      },
-      {
-        "Name": "LightSpot.001",
-        "Mesh": {
-          "Mesh": "vault_111:models/json/LightSpot.json",
-          "Name": "LightSpot.mesh"
-        },
-        "Position": [
-          -252.7401123046875,
-          -299.431396484375,
-          239.0
-        ],
-        "Rotation": [
-          0.7501276731491089,
-          0.6612930297851562,
-          1.1566178415023387e-07,
-          -6.559685630236345e-07
-        ],
-        "Scale": [
-          1.0,
-          1.0,
-          1.0
-        ],
-        "Nodes": [
-          {
-            "Name": "LightSpotNode.001",
-            "Light": {
-              "Type": "Spot",
-              "Name": "LightSpotNode.001LightSpot",
-              "Diffuse": [
-                1.0,
-                0.9673858880996704,
-                0.4937739968299866
-              ],
-              "Radiance": 15000000.0,
-              "LightSize": 0.0,
-              "Attenuation": {
-                "Constant": 0.0,
-                "Linear": 50.0,
-                "Quadratic": 130.0,
-                "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.003000000026077032
-              },
-              "SpotFactor": {
-                "AngleInnerCone": 0.4398230012187554,
-                "AngleOuterCone": 1.0471975803375244
-              },
-              "Direction": [
-                0.0,
-                0.0,
-                -1.0
-              ],
-              "Position": [
-                0.0,
-                0.0,
-                0.0
-              ]
-            },
-            "Position": [
-              3.0230770111083984,
-              -2.8410190111571865e-07,
-              36.013282775878906
-            ],
-            "Rotation": [
-              0.5416752099990845,
-              -0.5416752099990845,
-              -0.45451948046684265,
-              0.45451945066452026
-            ],
-            "Scale": [
-              1.0,
-              1.0,
-              1.0
-            ]
-          }
-        ]
-      },
-      {
-        "Name": "LightSpot.002",
-        "Mesh": {
-          "Mesh": "vault_111:models/json/LightSpot.json",
-          "Name": "LightSpot.mesh"
-        },
-        "Position": [
-          258.4481201171875,
-          421.0967102050781,
-          411.9341735839844
-        ],
-        "Rotation": [
-          0.6476090550422668,
-          -0.7619727849960327,
-          8.081699434114853e-07,
-          3.091828659762541e-07
-        ],
-        "Scale": [
-          1.0,
-          1.0,
-          1.0
-        ],
-        "Nodes": [
-          {
-            "Name": "LightSpotNode.002",
-            "Light": {
-              "Type": "Spot",
-              "Name": "LightSpotNode.002LightSpot",
-              "Diffuse": [
-                1.0,
-                0.9673858880996704,
-                0.4937739968299866
-              ],
-              "Radiance": 15000000.0,
-              "LightSize": 0.0,
-              "Attenuation": {
-                "Constant": 0.0,
-                "Linear": 50.0,
-                "Quadratic": 130.0,
-                "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.003000000026077032
-              },
-              "SpotFactor": {
-                "AngleInnerCone": 0.4398230012187554,
-                "AngleOuterCone": 1.0471975803375244
-              },
-              "Direction": [
-                0.0,
-                0.0,
-                -1.0
-              ],
-              "Position": [
-                0.0,
-                0.0,
-                0.0
-              ]
-            },
-            "Position": [
-              3.0230770111083984,
-              -2.8410190111571865e-07,
-              36.013282775878906
-            ],
-            "Rotation": [
-              0.5416752099990845,
-              -0.5416752099990845,
-              -0.45451948046684265,
-              0.45451945066452026
             ],
             "Scale": [
               1.0,
@@ -8961,7 +8733,7 @@
             "Name": "XRayLight",
             "Light": {
               "Type": "Point",
-              "Name": "XRayLightXRayLight",
+              "Name": "XRayLight_XRayLight",
               "Diffuse": [
                 0.22316670417785645,
                 0.6332731246948242,
