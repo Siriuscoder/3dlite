@@ -12,11 +12,10 @@ in vec3 ivv;
 in mat3 itbn;
 
 vec3 ComputeIllumination(vec3 vw, vec3 nw, vec3 albedo, vec3 specular, float emissionStrength);
-vec3 GetFixedWorldNormal(mat3 itbn, vec2 iuv);
 
 void main()
 {
-    float alpha = smoothstep(0.2, 1.0, iuv.x) / 2.2;
+    float alpha = smoothstep(mix(0.01, 0.5, iuv.x), 0.8, iuv.x) / 10.0;
     // get normal from TBN
     vec3 nw = itbn[2];
     // specular PBR parameters 

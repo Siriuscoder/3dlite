@@ -20,19 +20,14 @@ in mat3 itbn;
 void main()
 {
 #ifdef USE_GLOW_SOLID
-    vec4 albedo = Emission;
+    vec4 emission = Emission;
 #else
-    // sampling albedo 
-    vec4 albedo = texture(Emission, iuv);
+    // sampling emission 
+    vec4 emission = texture(Emission, iuv);
 #endif
 
-    // get normal from tbn
-    vec3 nw = itbn[2];
-    // setup specular
-    vec4 specular = vec4(Specular, Roughness, 0.0, 0.0);
-
     fragWCoord = vec4(ivv, gl_FragCoord.z / gl_FragCoord.w);
-    fragWNormal = vec4(nw, 0.0);
-    fragAlbedo = vec4(albedo.rgb, EmissionStrength);
-    fragSpecular = specular;
+    fragWNormal = vec4(itbn[2], 0.0);
+    fragAlbedo = vec4(emission.rgb, EmissionStrength);
+    fragSpecular = vec4(Specular, Roughness, 0.0, 0.0);
 }

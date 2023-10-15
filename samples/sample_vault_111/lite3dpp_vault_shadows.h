@@ -19,6 +19,7 @@
 
 #include <iostream>
 #include <string>
+#include <algorithm>
 
 #include <SDL_assert.h>
 #include <sample_common/lite3dpp_common.h>

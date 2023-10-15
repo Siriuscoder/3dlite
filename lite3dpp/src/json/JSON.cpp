@@ -232,7 +232,7 @@ bool JSON::ExtractString(const wchar_t **data, lite3dpp::WString &str)
         else if (next_char == L'"')
         {
             (*data)++;
-            str.reserve(); // Remove unused capacity
+            str.shrink_to_fit(); // Remove unused capacity
             return true;
         }
         

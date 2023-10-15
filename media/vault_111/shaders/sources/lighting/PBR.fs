@@ -116,6 +116,7 @@ vec3 ComputeIllumination(vec3 vw, vec3 nw, vec3 albedo, vec3 specular, float emi
     }
 
     vec3 kD = 1.0 - F;
+    kD *= 1.0 - specular.z;
 
     vec3 globalIrradiance = textureLod(Environment, nw, 4).rgb;
     vec3 reflected = textureLod(Environment, R, specular.y * 7.0).rgb * F * ambientStrength;
