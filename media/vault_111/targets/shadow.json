@@ -11,7 +11,7 @@
     "DepthAttachments":
     {
         "TextureName": "shadow.texture",
-        "TexturePath": "samples:textures/json/shadow_2k_array3.json"
+        "TexturePath": "samples:textures/json/shadow_2k_array4.json"
     }
 }
 

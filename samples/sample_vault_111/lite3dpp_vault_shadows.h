@@ -48,7 +48,7 @@ public:
             // Обновим параметры теневой камеры
             mShadowCamera->setDirection(mLightNode->getLight()->getDirectionWorld());
             mShadowCamera->setPosition(mLightNode->getLight()->getPositionWorld());
-            mShadowCamera->setupPerspective(10.0f, 4000.0f, 
+            mShadowCamera->setupPerspective(1.0f, mLightNode->getLight()->getInfluenceDistance(), 
                 kmRadiansToDegrees(mLightNode->getLight()->getAngleOuterCone()), 1.0);
             // Пересчитаем теневую камеру
             return mShadowCamera->getProjTransformMatrix();

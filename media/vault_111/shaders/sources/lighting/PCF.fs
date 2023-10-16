@@ -5,7 +5,7 @@ uniform sampler2DArrayShadow ShadowMaps;
 
 layout(std140) uniform ShadowMatrix
 {
-    mat4 shadowMat[3];
+    mat4 shadowMat[4];
 };
 
 const float shadowBias = 0.00001;

@@ -6,5 +6,5 @@
     "TextureFormat": "DEPTH",
     "Height": 2048,
     "Width": 2048,
-    "Depth": 3
+    "Depth": 4
 }

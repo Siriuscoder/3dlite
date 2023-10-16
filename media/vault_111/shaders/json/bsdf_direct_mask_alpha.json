@@ -6,6 +6,8 @@
         "vault_111:shaders/sources/lighting/PBR.fs",
         "vault_111:shaders/sources/lighting/BRDF.fs",
         "vault_111:shaders/sources/lighting/PCF.fs",
+        "vault_111:shaders/sources/lighting/Normal.fs",
+        "vault_111:shaders/sources/lighting/Specular.fs",
         "samples:shaders/sources/common/utils.fs"
     ]
 }
