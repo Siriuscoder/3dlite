@@ -15,15 +15,15 @@
     {
       "Pass": 2,
       "Program": {
-        "Name": "bsdf_prepare.program",
-        "Path": "vault_111:shaders/json/bsdf_prepare.json"
+        "Name": "bsdf_palete.program",
+        "Path": "vault_111:shaders/json/bsdf_palete.json"
       },
       "Uniforms": [
         {
           "Name": "Albedo",
           "Type": "sampler",
-          "TextureName": "MachineKit15a_d.texture",
-          "TexturePath": "vault_111:textures/json/MachineKit15a_d.json"
+          "TextureName": "MachineKit15_d.texture",
+          "TexturePath": "vault_111:textures/json/MachineKit15_d.json"
         },
         {
           "Name": "Normal",

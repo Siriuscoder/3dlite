@@ -38,7 +38,7 @@
           "DepthTest": true,
           "ColorOutput": false,
           "DepthOutput": true,
-          "FrustumCulling": false,
+          "CustomVisibilityCheck": true,
           "RenderInstancing": true
         },
         {
@@ -55,7 +55,7 @@
         {
           "Name": "CombineStep",
           "Path": "vault_111:targets/combine.json",
-          "Priority": 2,
+          "Priority": 1,
           "TexturePass": 2,
           "RenderBlend": true,
           "RenderOpaque": false,

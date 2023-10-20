@@ -174,10 +174,21 @@ namespace lite3dpp
         return result;
     }
 
+    void Camera::recalcFrustum()
+    {
+        auto mat = getProjTransformMatrix();
+        lite3d_frustum_compute(&mCamera.frustum, &mat);
+    }
+
     bool Camera::inFrustum(const LightSource &light) const
     {
         auto volToCheck = light.getBoundingVolumeWorld();
         return lite3d_frustum_test_sphere(&mCamera.frustum, &volToCheck) == LITE3D_TRUE;
+    }
+
+    bool Camera::inFrustum(const lite3d_bounding_vol &vol) const
+    {
+        return lite3d_frustum_test(&mCamera.frustum, &vol) == LITE3D_TRUE;
     }
 
     float Camera::getYaw() const

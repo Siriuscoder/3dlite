@@ -2,7 +2,7 @@
     "Sources": 
     [
         "vault_111:shaders/sources/common.vs",
-        "vault_111:shaders/sources/mrt.fs,vault_111:shaders/sources/inc/common.def",
+        "vault_111:shaders/sources/mrt.fs,vault_111:shaders/sources/inc/palete_yellow.def",
         "vault_111:shaders/sources/lighting/Normal.fs",
         "vault_111:shaders/sources/lighting/Specular.fs"
     ]

@@ -27,7 +27,7 @@
 namespace lite3dpp {
 namespace samples {
 
-class SampleShadowManager : public RenderTargetObserver
+class SampleShadowManager : public RenderTargetObserver, public SceneObserver
 {
 public:
 
@@ -37,26 +37,31 @@ public:
         ShadowCaster(Main& main, LightSceneNode* node) : 
             mLightNode(node),
             mShadowCamera(main.addCamera(node->getName()))
-        {}
+        {
+            // Ставим перспективу сразу при инициализации, считаем что конус источника света не меняется 
+            mShadowCamera->setupPerspective(1.0f, mLightNode->getLight()->getInfluenceDistance(), 
+                kmRadiansToDegrees(mLightNode->getLight()->getAngleOuterCone()), 1.0);
+        }
 
         kmMat4 getMatrix()
         {
             SDL_assert(mShadowCamera);
-            SDL_assert(mLightNode);
-            // Обновим глобальные координаты источника света
-            mLightNode->translateToWorld();
             // Обновим параметры теневой камеры
             mShadowCamera->setDirection(mLightNode->getLight()->getDirectionWorld());
             mShadowCamera->setPosition(mLightNode->getLight()->getPositionWorld());
-            mShadowCamera->setupPerspective(1.0f, mLightNode->getLight()->getInfluenceDistance(), 
-                kmRadiansToDegrees(mLightNode->getLight()->getAngleOuterCone()), 1.0);
-            // Пересчитаем теневую камеру
+            mShadowCamera->recalcFrustum();
+            // Пересчитаем теневую матрицу
             return mShadowCamera->getProjTransformMatrix();
         }
 
-        LightSceneNode* getNode()
+        inline LightSceneNode* getNode()
         {
             return mLightNode;
+        }
+
+        inline Camera* getCamera()
+        {
+            return mShadowCamera;
         }
 
     private:
@@ -88,6 +93,7 @@ public:
     {
         if (mShadowRT)
         {
+            // Сделаем перересовку если только хотя бы один источник света отбрасывающий тень находится в кадре
             if (std::any_of(mShadowCasters.begin(), mShadowCasters.end(), [](const std::unique_ptr<ShadowCaster>& sc)
             {
                 return sc->getNode()->isVisible();
@@ -124,6 +130,16 @@ protected:
         return true;
     }
 
+    // Проверим виден ли обьект сцены хотябы одной теневой камерой, если нет то рисовать его смысла нет.
+    bool customVisibilityCheck(Scene *scene, SceneNode *node, lite3d_mesh_chunk *meshChunk, Material *material, 
+        lite3d_bounding_vol *boundingVol, Camera *camera) override
+    {
+        return std::any_of(mShadowCasters.begin(), mShadowCasters.end(), [boundingVol](const std::unique_ptr<ShadowCaster>& sc)
+        {
+            return sc->getCamera()->inFrustum(*boundingVol);
+        });
+    }
+
     void postUpdate(RenderTarget *rt) override
     {
         // После рендера теневых карт возвращаем как было
@@ -139,7 +155,7 @@ private:
     Camera* mMainCamera = nullptr;
     RenderTarget* mShadowRT = nullptr;
     BufferBase* mShadowMatrixBuffer = nullptr;
-    std::vector<std::unique_ptr<ShadowCaster>> mShadowCasters;
+    stl<std::unique_ptr<ShadowCaster>>::vector mShadowCasters;
 };
 
 }}

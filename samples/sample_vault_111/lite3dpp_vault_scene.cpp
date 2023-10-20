@@ -54,15 +54,17 @@ public:
         mMinigun02 = mVaultScene->getObject("MinigunTurret.001");
         mMinigun02->getNode("Minigun")->rotateAngle(KM_VEC3_POS_Z, kmDegreesToRadians(-30.0));
         mGearKey = mVaultScene->getObject("VaultStatic")->getNode("GearKey");
-        mFan01 = mVaultScene->getObject("VaultStatic")->getNode("FanRotor");
-        mFan02 = mVaultScene->getObject("VaultStatic")->getNode("FanRotor.001");
-        mFan03 = mVaultScene->getObject("VaultStatic")->getNode("FanRotor.002");
+        mFans.emplace_back(mVaultScene->getObject("VaultStatic")->getNode("FanRotor"));
+        mFans.emplace_back(mVaultScene->getObject("VaultStatic")->getNode("FanRotor.001"));
+        mFans.emplace_back(mVaultScene->getObject("VaultStatic")->getNode("FanRotor.002"));
+        mFans.emplace_back(mVaultScene->getObject("VaultStatic")->getNode("FanRotor.003"));
     }
 
     void setupShadowCasters()
     {
         RenderTarget* shadowUpdateRT = getMain().getResourceManager()->queryResource<TextureRenderTarget>("ShadowPass");
         shadowUpdateRT->addObserver(mShadowManager.get());
+        mVaultScene->addObserver(mShadowManager.get());
 
         // Установим тень для трех прожекторов и потом будем их вращать
         // Источники света получаем по ObjectName + NodeName
@@ -129,9 +131,12 @@ public:
         mMinigun02->getNode("Minigun")->rotateAngle(KM_VEC3_POS_Z, -cosA * 0.02);
         mMinigun02->getNode("MinigunBarrel")->rotateAngle(KM_VEC3_POS_Y, 0.13 * deltaRetard);
         mSpot03->rotateAngle(KM_VEC3_POS_Z, 0.1 * deltaRetard);
-        mFan01->rotateAngle(KM_VEC3_POS_Z, 0.07 * deltaRetard);
-        mFan02->rotateAngle(KM_VEC3_POS_Z, 0.07 * deltaRetard);
-        mFan03->rotateAngle(KM_VEC3_POS_Z, 0.07 * deltaRetard);
+
+        std::for_each(mFans.begin(), mFans.end(), [deltaRetard](SceneNode *fanRotor)
+        {
+            fanRotor->rotateAngle(KM_VEC3_POS_Z, 0.07 * deltaRetard);
+        });
+
         mVaultScene->getObject("VaultStatic")->getNode("GearKeySpinner")->rotateAngle(KM_VEC3_POS_X, 0.15 * deltaRetard);
         mShadowManager->rebuild();
     }
@@ -188,9 +193,7 @@ private:
     SceneNode* mSpot02 = nullptr;
     SceneNode* mSpot03 = nullptr;
     SceneNode* mGearKey = nullptr;
-    SceneNode* mFan01 = nullptr;
-    SceneNode* mFan02 = nullptr;
-    SceneNode* mFan03 = nullptr;
+    stl<SceneNode *>::vector mFans;
     SceneObject* mMinigun01 = nullptr;
     SceneObject* mMinigun02 = nullptr; 
     float mAnimPi = 0.0f;

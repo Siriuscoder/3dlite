@@ -97,11 +97,16 @@ namespace lite3dpp
             struct lite3d_material *material, struct lite3d_bounding_vol *boundingVol,
             struct lite3d_camera *camera);
 
+        static int customVisibilityCheck(struct lite3d_scene *scene, 
+            struct lite3d_scene_node *node, struct lite3d_mesh_chunk *meshChunk, 
+            struct lite3d_material *material, struct lite3d_bounding_vol *boundingVol,
+            struct lite3d_camera *camera);
+
         static void beforeUpdateNodes(struct lite3d_scene *scene, struct lite3d_camera *camera);
         static int beginSceneRender(struct lite3d_scene *scene, struct lite3d_camera *camera);
         static void endSceneRender(struct lite3d_scene *scene, struct lite3d_camera *camera);
-        static void beginFirstStageRender(struct lite3d_scene *scene, struct lite3d_camera *camera);
-        static void beginSecondStageRender(struct lite3d_scene *scene, struct lite3d_camera *camera);
+        static void beginOpaqueStageRender(struct lite3d_scene *scene, struct lite3d_camera *camera);
+        static void beginBlendingStageRender(struct lite3d_scene *scene, struct lite3d_camera *camera);
 
         lite3d_scene mScene;
         Objects mObjects;

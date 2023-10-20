@@ -1,5 +1,3 @@
-#include "samples:shaders/sources/common/version.def"
-
 uniform sampler2D Albedo;
 
 layout(location = 0) out vec4 fragWCoord;
@@ -16,8 +14,14 @@ vec3 GetSpecular(vec2 iuv);
 
 void main()
 {
+    vec3 albedo = texture(Albedo, iuv).rgb;
+
+#ifdef PALETE_YELLOW
+    albedo *= PALETE_YELLOW;
+#endif
+
     fragWCoord = vec4(ivv, gl_FragCoord.z / gl_FragCoord.w);
     fragWNormal = vec4(GetFixedWorldNormal(itbn, iuv), 0.0);
-    fragAlbedo = vec4(texture(Albedo, iuv).rgb, 0.0);
+    fragAlbedo = vec4(albedo, 0.0);
     fragSpecular = vec4(GetSpecular(iuv), 0.0);
 }
