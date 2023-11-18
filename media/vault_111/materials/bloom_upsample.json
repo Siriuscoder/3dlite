@@ -1,0 +1,22 @@
+{
+  "Passes":[
+    {
+      "Pass":1,
+      "Program":{
+        "Name":"bloom_upsample.program",
+        "Path":"vault_111:shaders/json/bloom_upsample.json"
+      }
+    }
+  ],
+  "Uniforms":[
+    {
+      "Name":"screenMatrix"
+    },
+    {
+      "Name":"Radius",
+      "Type":"float",
+      "Value": 0.005,
+      "Scope":"global"
+    }
+  ]
+}

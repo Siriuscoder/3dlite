@@ -16,6 +16,7 @@
  *	along with Lite3D.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
 #include "lite3dpp_vault_shadows.h"
+#include "lite3dpp_vault_bloom.h"
 
 namespace lite3dpp {
 namespace samples {
@@ -27,6 +28,7 @@ public:
     void createScene() override
     {
         mShadowManager = std::make_unique<SampleShadowManager>(getMain());
+        mBloomEffectRenderer = std::make_unique<SampleBloomEffect>(getMain());
         mVaultScene = getMain().getResourceManager()->queryResource<Scene>("Vault_111", "vault_111:scenes/vault_111.json");
         setMainCamera(getMain().getCamera("MyCamera"));
 
@@ -35,6 +37,9 @@ public:
         // load intermediate light compute scene
         mCombineScene = getMain().getResourceManager()->queryResource<Scene>("Vault_111_LightCompute",
             "vault_111:scenes/lightpass.json");
+
+        // Load bloom effect pipeline
+        mBloomEffectRenderer->init();
 
         // postprocess step, fxaa, gamma correcion, draw directly info window. 
         getMain().getResourceManager()->queryResource<Scene>("Vault_111_Postprocess",
@@ -188,6 +193,7 @@ private:
     Scene* mCombineScene = nullptr;
     Scene* mVaultScene = nullptr;
     std::unique_ptr<SampleShadowManager> mShadowManager;
+    std::unique_ptr<SampleBloomEffect> mBloomEffectRenderer;
     std::unique_ptr<LightSceneNode> mFlashLight;
     SceneNode* mSpot01 = nullptr;
     SceneNode* mSpot02 = nullptr;

@@ -562,7 +562,8 @@ int lite3d_framebuffer_setup(lite3d_framebuffer *fb, const lite3d_framebuffer_at
     }
 #endif
     /* Does the GPU support current FBO configuration? */
-    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+    if (flags & (LITE3D_FRAMEBUFFER_USE_COLOR_BUFFER | LITE3D_FRAMEBUFFER_USE_DEPTH_BUFFER) &&
+        glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
     {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Framebuffer configuration not supported..");
         lite3d_framebuffer_purge(fb);
@@ -573,7 +574,7 @@ int lite3d_framebuffer_setup(lite3d_framebuffer *fb, const lite3d_framebuffer_at
         "depth %s, stencil %s", fb->framebufferId, fb->width, fb->height,
         fb->flags & LITE3D_FRAMEBUFFER_USE_COLOR_BUFFER ? (fb->colorAttachments.size > 0 ? "texture" : "renderbuffer") : "none",
         fb->flags & LITE3D_FRAMEBUFFER_USE_DEPTH_BUFFER ? (fb->depthAttachment.attachment.attachment ? "texture" : "renderbuffer") : "none",
-        fb->flags % LITE3D_FRAMEBUFFER_USE_STENCIL_BUFFER ? "renderbuffer" : "none");
+        fb->flags & LITE3D_FRAMEBUFFER_USE_STENCIL_BUFFER ? "renderbuffer" : "none");
 
     /* bind screen by current FBO */
     glBindRenderbuffer(GL_RENDERBUFFER, 0);
