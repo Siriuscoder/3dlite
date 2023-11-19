@@ -293,16 +293,17 @@ void lite3d_framebuffer_purge(lite3d_framebuffer *fb)
         return;
 
     lite3d_array_purge(&fb->colorAttachments);
-    glDeleteRenderbuffers(fb->renderBuffersCount, fb->renderBuffersIds);
+    if (fb->renderBuffersCount > 0)
+    {
+        glDeleteRenderbuffers(fb->renderBuffersCount, fb->renderBuffersIds);
+    }
+
     glDeleteFramebuffers(1, &fb->framebufferId);
 }
 
-int lite3d_framebuffer_setup(lite3d_framebuffer *fb, const lite3d_framebuffer_attachment *attachments, 
+static int lite3d_framebuffer_setup_attachments(lite3d_framebuffer *fb, const lite3d_framebuffer_attachment *attachments, 
     size_t attachmentsCount, uint32_t flags)
 {
-    int8_t renderBuffersCount = 0;
-    SDL_assert(fb);
-
     fb->flags = flags;
     if ((fb->samples = flags & LITE3D_FRAMEBUFFER_USE_MSAA_X2 ? 2 :
         (flags & LITE3D_FRAMEBUFFER_USE_MSAA_X4 ? 4 :
@@ -325,21 +326,23 @@ int lite3d_framebuffer_setup(lite3d_framebuffer *fb, const lite3d_framebuffer_at
             gMaxColorAttachments);
         return LITE3D_FALSE;
     }
-    
+
     if (attachmentsCount > gMaxDrawBuffers)
     {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Maxinum draw buffers supported: %d",
             gMaxDrawBuffers);
         return LITE3D_FALSE;
     }
-    
-    if (fb->status != LITE3D_FRAMEBUFFER_STATUS_EMPTY)
-        return LITE3D_FALSE;
 
     lite3d_misc_gl_error_stack_clean();
-    glBindFramebuffer(GL_FRAMEBUFFER, fb->framebufferId);
+    
+    if (fb->renderBuffersCount > 0)
+    {
+        glDeleteRenderbuffers(fb->renderBuffersCount, fb->renderBuffersIds);
+    }
 
     lite3d_array_clean(&fb->colorAttachments);
+
     if (flags & LITE3D_FRAMEBUFFER_USE_COLOR_BUFFER)
     {
         /* setup color attachment */
@@ -399,9 +402,9 @@ int lite3d_framebuffer_setup(lite3d_framebuffer *fb, const lite3d_framebuffer_at
         // No color texture attachments, use render buffer instead
         if (fb->colorAttachments.size == 0)
         {
-            glGenRenderbuffers(1, &fb->renderBuffersIds[renderBuffersCount]);
+            glGenRenderbuffers(1, &fb->renderBuffersIds[fb->renderBuffersCount]);
             glBindRenderbuffer(GL_RENDERBUFFER,
-                fb->renderBuffersIds[renderBuffersCount]);
+                fb->renderBuffersIds[fb->renderBuffersCount]);
 
             if (fb->samples > 1)
             {
@@ -416,9 +419,9 @@ int lite3d_framebuffer_setup(lite3d_framebuffer *fb, const lite3d_framebuffer_at
 
             /* attach color buffer to FBO */
             glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
-                GL_RENDERBUFFER, fb->renderBuffersIds[renderBuffersCount]);
+                GL_RENDERBUFFER, fb->renderBuffersIds[fb->renderBuffersCount]);
 
-            renderBuffersCount++;
+            fb->renderBuffersCount++;
         }
     }
 
@@ -486,9 +489,9 @@ int lite3d_framebuffer_setup(lite3d_framebuffer *fb, const lite3d_framebuffer_at
 #ifdef GL_DEPTH24_STENCIL8
         else if (flags & LITE3D_FRAMEBUFFER_USE_STENCIL_BUFFER)
         {
-            glGenRenderbuffers(1, &fb->renderBuffersIds[renderBuffersCount]);
+            glGenRenderbuffers(1, &fb->renderBuffersIds[fb->renderBuffersCount]);
             glBindRenderbuffer(GL_RENDERBUFFER,
-                fb->renderBuffersIds[renderBuffersCount]);
+                fb->renderBuffersIds[fb->renderBuffersCount]);
 
             if (fb->samples > 1)
             {
@@ -505,19 +508,19 @@ int lite3d_framebuffer_setup(lite3d_framebuffer *fb, const lite3d_framebuffer_at
 
             /* Attach depth buffer to FBO */
             glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
-                GL_RENDERBUFFER, fb->renderBuffersIds[renderBuffersCount]);
+                GL_RENDERBUFFER, fb->renderBuffersIds[fb->renderBuffersCount]);
             /* Also attach as a stencil */
             glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT,
-                GL_RENDERBUFFER, fb->renderBuffersIds[renderBuffersCount]);
+                GL_RENDERBUFFER, fb->renderBuffersIds[fb->renderBuffersCount]);
 
-            renderBuffersCount++;
+            fb->renderBuffersCount++;
         }
 #endif
         else
         {
-            glGenRenderbuffers(1, &fb->renderBuffersIds[renderBuffersCount]);
+            glGenRenderbuffers(1, &fb->renderBuffersIds[fb->renderBuffersCount]);
             glBindRenderbuffer(GL_RENDERBUFFER,
-                fb->renderBuffersIds[renderBuffersCount]);
+                fb->renderBuffersIds[fb->renderBuffersCount]);
 
             if (fb->samples > 1)
             {
@@ -532,9 +535,9 @@ int lite3d_framebuffer_setup(lite3d_framebuffer *fb, const lite3d_framebuffer_at
 
             /* Attach depth buffer to FBO */
             glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
-                GL_RENDERBUFFER, fb->renderBuffersIds[renderBuffersCount]);
+                GL_RENDERBUFFER, fb->renderBuffersIds[fb->renderBuffersCount]);
 
-            renderBuffersCount++;
+            fb->renderBuffersCount++;
         }
     }
 
@@ -545,6 +548,24 @@ int lite3d_framebuffer_setup(lite3d_framebuffer *fb, const lite3d_framebuffer_at
         return LITE3D_FALSE;
     }
 
+    return LITE3D_TRUE;
+}
+
+int lite3d_framebuffer_setup(lite3d_framebuffer *fb, const lite3d_framebuffer_attachment *attachments, 
+    size_t attachmentsCount, uint32_t flags)
+{
+    SDL_assert(fb);
+    
+    if (fb != gCurrentFb)
+    {
+        glBindFramebuffer(GL_FRAMEBUFFER, fb->framebufferId);
+        gCurrentFb = fb;
+    }
+
+    if (!lite3d_framebuffer_setup_attachments(fb, attachments, attachmentsCount, flags))
+    {
+        return LITE3D_FALSE;
+    }
     /*
      * This is similar to the case above (Color texture, Depth texture) 
      * except that since there is no color buffer, call glDrawBuffer(GL_NONE) 
@@ -576,11 +597,26 @@ int lite3d_framebuffer_setup(lite3d_framebuffer *fb, const lite3d_framebuffer_at
         fb->flags & LITE3D_FRAMEBUFFER_USE_DEPTH_BUFFER ? (fb->depthAttachment.attachment.attachment ? "texture" : "renderbuffer") : "none",
         fb->flags & LITE3D_FRAMEBUFFER_USE_STENCIL_BUFFER ? "renderbuffer" : "none");
 
-    /* bind screen by current FBO */
-    glBindRenderbuffer(GL_RENDERBUFFER, 0);
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
     fb->status = LITE3D_FRAMEBUFFER_STATUS_OK;
+    return LITE3D_TRUE;
+}
+
+int lite3d_framebuffer_replace(lite3d_framebuffer *fb, const lite3d_framebuffer_attachment *attachments, 
+    size_t attachmentsCount, uint32_t flags)
+{
+    SDL_assert(fb);
+
+    if (fb != gCurrentFb)
+    {
+        glBindFramebuffer(GL_FRAMEBUFFER, fb->framebufferId);
+        gCurrentFb = fb;
+    }
+
+    if (!lite3d_framebuffer_setup_attachments(fb, attachments, attachmentsCount, flags))
+    {
+        return LITE3D_FALSE;
+    }
+
     return LITE3D_TRUE;
 }
 

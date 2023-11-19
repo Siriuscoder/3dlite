@@ -85,6 +85,10 @@ LITE3D_CEXPORT int lite3d_framebuffer_init(lite3d_framebuffer *fb,
 LITE3D_CEXPORT int lite3d_framebuffer_setup(lite3d_framebuffer *fb,
     const lite3d_framebuffer_attachment *attachments, size_t attachmentsCount, uint32_t flags);
 
+/* Replace framebuffer attachments, framebuffer must be active */
+LITE3D_CEXPORT int lite3d_framebuffer_replace(lite3d_framebuffer *fb,
+    const lite3d_framebuffer_attachment *attachments, size_t attachmentsCount, uint32_t flags);
+
 LITE3D_CEXPORT int lite3d_framebuffer_screen_init(lite3d_framebuffer *fb, 
     int32_t width, int32_t height);
 LITE3D_CEXPORT void lite3d_framebuffer_resize(lite3d_framebuffer *fb, 

@@ -2,7 +2,7 @@ version: '1.0.7.{build}'
 
 image: 
   - Visual Studio 2022
-  - Ubuntu
+  - Ubuntu2204
 
 hosts:
   localhost: 127.0.0.1
@@ -45,7 +45,7 @@ for:
 
 - matrix:
     only:
-      - image: Ubuntu
+      - image: Ubuntu2204
 
   before_build:
     - sh: cd /home/appveyor/builds/lite3d_linux

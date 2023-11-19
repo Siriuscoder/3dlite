@@ -31,7 +31,7 @@ public:
     SampleBloomEffect(Main& main) : 
         mMain(main)
     {
-        mMinWidth = mMain.window()->width() / 20;
+        mMinWidth = mMain.window()->width() / 40;
     }
 
     void init()
@@ -44,7 +44,32 @@ public:
 private:
 
     bool beginDrawBatch(Scene *scene, SceneNode *node, lite3d_mesh_chunk *meshChunk, Material *material) override
-    { 
+    {
+        Texture *current = mTextureChain[mChainState++];
+        stl<lite3d_framebuffer_attachment>::vector attachments = {
+            lite3d_framebuffer_attachment { 
+                {
+                    LITE3D_FRAMEBUFFER_USE_COLOR_BUFFER,
+                    0
+                },
+                current->getPtr()
+            }
+        };
+
+        // Устанавливаем текушую текстуру из цепочки в фреймбуфер, будем рендерить в нее предидущую
+        mBloomRT->replaceAttachments(attachments, LITE3D_FRAMEBUFFER_USE_COLOR_BUFFER);
+        // Размер текстуры поменялся, устанавливаем новый размер 
+        mBloomRT->resize(current->getPtr()->imageWidth, current->getPtr()->imageHeight);
+        // Активируем фрейм буфер повторно (приводит к установке viewport с новыми параметрами)
+        mBloomRT->setActive();
+
+        return true;
+    }
+
+    bool beginSceneRender(Scene *scene, Camera *camera) override
+    {
+        // Скинем индекс цепочки в 0 в началале рисования сцены
+        mChainState = 0;
         return true;
     }
 
@@ -115,9 +140,10 @@ private:
     Main& mMain;
     int32_t mMinWidth = 1;
     Scene* mBloomRernderer = nullptr;
-    RenderTarget* mBloomRT = nullptr;
+    TextureRenderTarget* mBloomRT = nullptr;
     stl<Texture*>::vector mTextureChain;
     stl<Material*>::vector mMaterialChain;
+    int mChainState = 0;
 };
 
 }}

@@ -1,6 +1,7 @@
 #include "samples:shaders/sources/common/version.def"
 
 uniform sampler2D combined;
+uniform sampler2D bloom;
 uniform float GammaFactor;
 uniform vec3 screenResolution;
 
@@ -12,6 +13,8 @@ in vec2 irgbNE;
 in vec2 irgbSW;
 in vec2 irgbSE;
 in vec2 irgbM;
+
+const float bloomStrength = 0.04f;
 
 vec4 fxaa(sampler2D tex, vec2 fragCoord, vec2 resolution,
     vec2 v_rgbNW, vec2 v_rgbNE, 
@@ -33,7 +36,9 @@ vec3 ExposureTonemapping(vec3 x, float exposure)
 void main()
 {
     vec3 hdr = fxaa(combined, iuv * screenResolution.xy, screenResolution.xy, irgbNW, irgbNE, irgbSW, irgbSE, irgbM).xyz;
-    // Reinhard tone mapping
+    vec3 blm = texture(bloom, iuv).xyz;
+    hdr = mix(hdr, blm, vec3(bloomStrength));
+    // Exposure tone mapping
     vec3 ldr = ExposureTonemapping(hdr, 1.5);
     // gamma correction 
     ldr = pow(ldr, vec3(1.0 / GammaFactor));

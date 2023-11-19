@@ -156,7 +156,9 @@ namespace lite3dpp
     }
 
     void RenderTarget::resize(int32_t width, int32_t height)
-    {}
+    {
+        lite3d_render_target_resize(mRenderTargetPtr, width, height);
+    }
 
     int RenderTarget::beginUpdate(lite3d_render_target *target)
     {
@@ -187,6 +189,11 @@ namespace lite3dpp
         }
     }
 
+    void RenderTarget::setActive()
+    {
+        lite3d_framebuffer_switch(&getPtr()->fb);
+    }
+
     WindowRenderTarget::WindowRenderTarget(const String &name, 
         const String &path, Main *main) : 
         RenderTarget(name, path, main)
@@ -205,11 +212,6 @@ namespace lite3dpp
     
     void WindowRenderTarget::unloadImpl()
     {}
-
-    void WindowRenderTarget::resize(int32_t width, int32_t height)
-    {
-        lite3d_render_target_resize(mRenderTargetPtr, width, height);
-    }
 
     void WindowRenderTarget::fullscreen(bool flag)
     {

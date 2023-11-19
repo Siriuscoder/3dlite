@@ -5,7 +5,11 @@
       "Program":{
         "Name":"bloom_upsample.program",
         "Path":"vault_111:shaders/json/bloom_upsample.json"
-      }
+      },
+      "Blending":true,
+      // Orgb = 1 * Srgb + 1 * Drgb
+      // Oa = 1 * Sa + 0 * Da = Sa
+      "BlendingMode":"additive"
     }
   ],
   "Uniforms":[
@@ -15,7 +19,7 @@
     {
       "Name":"Radius",
       "Type":"float",
-      "Value": 0.005,
+      "Value": 0.0049,
       "Scope":"global"
     }
   ]

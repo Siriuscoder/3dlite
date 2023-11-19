@@ -287,7 +287,8 @@ int lite3d_render_frame(void)
     LITE3D_METRIC_CALL(lite3d_timer_induce, (gBeginFrameMark, gPerfFreq))
 
     /* pump all available events */
-    while (lite3d_render_loop_pump_event());
+    while (lite3d_render_loop_pump_event())
+    {}
     /* finish gl operations and swap buffers */
     LITE3D_METRIC_CALL(lite3d_video_swap_buffers, ())
     return LITE3D_TRUE;
@@ -549,7 +550,11 @@ void lite3d_render_target_resize(lite3d_render_target *rt, int32_t width, int32_
 
     rt->width = width;
     rt->height = height;
-    lite3d_video_resize(width, height);
+    if (rt == &gScreenRt)
+    {
+        lite3d_video_resize(width, height);
+    }
+
     lite3d_framebuffer_resize(&rt->fb, width, height);
 }
 

@@ -18,6 +18,11 @@
       "Type":"sampler"
     },
     {
+      "Name":"bloom",
+      "TextureName": "bloom_slice_0.texture",
+      "Type":"sampler"
+    },
+    {
       "Name":"GammaFactor",
       "Type":"float",
       "Value": 2.2,

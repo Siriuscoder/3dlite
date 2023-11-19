@@ -175,5 +175,14 @@ namespace lite3dpp
     {
         lite3d_render_target_purge(mRenderTargetPtr);
     }
+
+    void TextureRenderTarget::replaceAttachments(const stl<lite3d_framebuffer_attachment>::vector& attachments, 
+        uint32_t flags)
+    {
+        if (!lite3d_framebuffer_replace(&getPtr()->fb, &attachments[0], attachments.size(), flags))
+        {
+            LITE3D_THROW(getName() << " framebuffer setup failed.. ");
+        }
+    }
 }
 
