@@ -1,7 +1,8 @@
 #include "font.h"
+#define _USE_MATH_DEFINES
+#include <math.h>
 #include <iostream>
 #include <algorithm>
-#include "math.h"
 
 #ifdef PLATFORM_Linux
 #pragma GCC diagnostic push 
