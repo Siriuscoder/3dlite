@@ -13,7 +13,6 @@ in vec3 ivv;
 in mat3 itbn;
 
 vec3 ComputeIllumination(vec3 vw, vec3 nw, vec3 albedo, vec3 specular, float emissionStrength);
-vec3 GetFixedWorldNormal(mat3 itbn, vec2 iuv);
 
 void main()
 {
