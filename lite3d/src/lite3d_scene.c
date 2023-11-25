@@ -112,6 +112,7 @@ static void mqr_render_batch(lite3d_material_pass *pass, _mqr_node *mqrNode)
         LITE3D_METRIC_CALL(lite3d_mesh_chunk_draw, (mqrNode->meshChunk))
     
     scene->stats.batchesCalled++;
+    scene->stats.batchesInstancedCalled++;
     scene->stats.trianglesRendered += mqrNode->meshChunk->vao.elementsCount * mqrNode->instancesCount;
     scene->stats.verticesRendered += mqrNode->meshChunk->vao.verticesCount * mqrNode->instancesCount;
 }
@@ -175,6 +176,7 @@ static void mqr_render_batch_series(lite3d_material_pass *pass, _mqr_node *mqrNo
         LITE3D_METRIC_CALL(lite3d_mesh_chunk_draw_instanced, (mqrNode->meshChunk, continuedId+1))
         
         scene->stats.batchesCalled++;
+        scene->stats.batchesInstancedCalled += (continuedId+1);
         scene->stats.trianglesRendered += mqrNode->meshChunk->vao.elementsCount * (continuedId+1);
         scene->stats.verticesRendered += mqrNode->meshChunk->vao.verticesCount * (continuedId+1);
         lite3d_array_clean(&scene->seriesMatrixes);

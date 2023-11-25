@@ -60,7 +60,8 @@ typedef struct lite3d_render_stats
     int32_t triangleByBatch;
     int32_t nodesTotal;
     int32_t batchesTotal;
-    int32_t batchedByFrame;
+    int32_t batchesCalled;
+    int32_t batchesInstancedCalled;
     int32_t materialsTotal;
     int32_t materialsPassedByFrame;
     int32_t textureUnitsByFrame;
