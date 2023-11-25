@@ -44,22 +44,42 @@ Samples
 After successfully compiling you can find some samples in bin directory. To provide samples work correctly you must download 
 resources packs [vault.pkg](https://drive.google.com/file/d/1JhsirjKwMq51IBg7GknUeZLGvrVKp1Sz/view?usp=sharing) and [sponza.pkg](https://drive.google.com/file/d/1GGtPep7soS1wPJsf4Y2FTiF23E-JXFQ9/view?usp=sharing) and put its to media/packs/
 
+You can download resources for Vault_111 sample from [here](https://drive.google.com/file/d/1NdWl8YrjAWy8cyKYfN3t2nI4tcj5PI82/view?usp=sharing), this 7z archive contains textures and models folders, you must copy this folders to media/vault_111 and anjoy this awesome sample.
+
 Screenshots
 -----------
+Robots instancing sample
 ![](/media/screenshots/robots.png "Robots")
 ![](/media/screenshots/robots1.png "Robots")
+Reflection via cubemap sample
 ![](/media/screenshots/reflection1.png "ReflectionSky")
 ![](/media/screenshots/reflection2.png "ReflectionSky")
+Sponza sample with MSAA render target and PCF shadows
 ![](/media/screenshots/sponza.png "Sponza")
 ![](/media/screenshots/sponza1.png "Sponza")
 ![](/media/screenshots/sponza2.png "Sponza")
 ![](/media/screenshots/sponza3.png "Sponza")
 ![](/media/screenshots/sponza4.png "Sponza")
+Vault scene (Fallout3 models) with dynamic lighting with multiple lights and big range of materials. Supports two render modes: Deffered shading and Direct shading, also supports several light buffer techniques such as UBO, TBO, SSBO.
 ![](/media/screenshots/vault.png "Vault")
 ![](/media/screenshots/vault1.png "Vault")
 ![](/media/screenshots/vault2.png "Vault")
 ![](/media/screenshots/vault3.png "Vault")
 ![](/media/screenshots/vault4.png "Vault")
+Vault 111 scene (Fallout4 models) with complete PBR lighting and HDR rendering, Deffered shading pipeline, dynamic PCF shadows from multiple light sources, Physical Bloom effect and huge range of materials and models.
+![](/media/screenshots/vault_111_0.png "Vault111")
+![](/media/screenshots/vault_111_1.png "Vault111")
+![](/media/screenshots/vault_111_2.png "Vault111")
+![](/media/screenshots/vault_111_3.png "Vault111")
+![](/media/screenshots/vault_111_4.png "Vault111")
+![](/media/screenshots/vault_111_5.png "Vault111")
+![](/media/screenshots/vault_111_6.png "Vault111")
+![](/media/screenshots/vault_111_7.png "Vault111")
+![](/media/screenshots/vault_111_8.png "Vault111")
+![](/media/screenshots/vault_111_9.png "Vault111")
+![](/media/screenshots/vault_111_10.png "Vault111")
+![](/media/screenshots/vault_111_11.png "Vault111")
+![](/media/screenshots/vault_111_12.png "Vault111")
 
 ***
 Check branch master to fetch stable changes =)
