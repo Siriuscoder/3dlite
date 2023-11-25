@@ -20,6 +20,8 @@
 
 namespace nw
 {
+    typedef float FPType;
+
     struct FaceId {
         typedef unsigned char Byte;
         typedef signed long Size;

@@ -1,0 +1,26 @@
+{
+    "Width": 0, // use screen wight
+    "Height": 0, // use screen height
+    "BackgroundColor": [0.0, 0.0, 0.0, 1.0],
+    "Priority": 4, // render after prepare step
+    "CleanColorBuf": true,
+    "CleanDepthBuf": false,
+    "CleanStencilBuf": false,
+    
+    "ColorAttachments":
+    {
+        "Attachments":
+        [
+            {
+                "TextureName": "combined.texture",
+                "TexturePath": "samples:textures/json/rgba32f.json"
+            }
+        ]
+    },
+    
+    "DepthAttachments":
+    {
+        "TextureName": "mainDepth.texture"
+    }
+}
+

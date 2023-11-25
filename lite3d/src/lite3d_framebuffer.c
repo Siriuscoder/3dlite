@@ -280,6 +280,8 @@ int lite3d_framebuffer_init(lite3d_framebuffer *fb,
         return LITE3D_FALSE;
     }
 
+    lite3d_array_init(&fb->colorAttachments, sizeof(lite3d_framebuffer_attachment_binding), 1);
+
     return LITE3D_TRUE;
 }
 
@@ -290,17 +292,18 @@ void lite3d_framebuffer_purge(lite3d_framebuffer *fb)
     if (!glIsFramebuffer(fb->framebufferId))
         return;
 
-    glDeleteRenderbuffers(fb->renderBuffersCount, fb->renderBuffersIds);
+    lite3d_array_purge(&fb->colorAttachments);
+    if (fb->renderBuffersCount > 0)
+    {
+        glDeleteRenderbuffers(fb->renderBuffersCount, fb->renderBuffersIds);
+    }
+
     glDeleteFramebuffers(1, &fb->framebufferId);
 }
 
-int lite3d_framebuffer_setup(lite3d_framebuffer *fb,
-    lite3d_texture_unit **colorAttachments, int8_t colorAttachmentsCount, 
-    lite3d_texture_unit *depthAttachments, uint32_t flags)
+static int lite3d_framebuffer_setup_attachments(lite3d_framebuffer *fb, const lite3d_framebuffer_attachment *attachments, 
+    size_t attachmentsCount, uint32_t flags)
 {
-    int8_t renderBuffersCount = 0;
-    SDL_assert(fb);
-
     fb->flags = flags;
     if ((fb->samples = flags & LITE3D_FRAMEBUFFER_USE_MSAA_X2 ? 2 :
         (flags & LITE3D_FRAMEBUFFER_USE_MSAA_X4 ? 4 :
@@ -317,48 +320,91 @@ int lite3d_framebuffer_setup(lite3d_framebuffer *fb,
         return LITE3D_FALSE;
     }
 
-    if (colorAttachmentsCount > gMaxColorAttachments)
+    if (attachmentsCount > gMaxColorAttachments)
     {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Too many color buffers to attach, maxinum supported: %d",
             gMaxColorAttachments);
         return LITE3D_FALSE;
     }
-    
-    if (colorAttachmentsCount > gMaxDrawBuffers)
+
+    if (attachmentsCount > gMaxDrawBuffers)
     {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Maxinum draw buffers supported: %d",
             gMaxDrawBuffers);
         return LITE3D_FALSE;
     }
-    
-    if (fb->status != LITE3D_FRAMEBUFFER_STATUS_EMPTY)
-        return LITE3D_FALSE;
 
     lite3d_misc_gl_error_stack_clean();
-    glBindFramebuffer(GL_FRAMEBUFFER, fb->framebufferId);
+    
+    if (fb->renderBuffersCount > 0)
+    {
+        glDeleteRenderbuffers(fb->renderBuffersCount, fb->renderBuffersIds);
+    }
+
+    lite3d_array_clean(&fb->colorAttachments);
 
     if (flags & LITE3D_FRAMEBUFFER_USE_COLOR_BUFFER)
     {
         /* setup color attachment */
-        if (colorAttachments && colorAttachmentsCount > 0)
+        if (attachments && attachmentsCount > 0)
         {
-            int8_t i = 0;
-            fb->colorAttachmentsCount = 0;
-            for (; i < colorAttachmentsCount; i++, fb->colorAttachmentsCount++)
+            lite3d_framebuffer_attachment_binding binding;
+            for (int8_t i = 0; i < attachmentsCount; ++i)
             {
-                glFramebufferTexture2D(GL_FRAMEBUFFER,
-                    GL_COLOR_ATTACHMENT0 + i,
-                    textureTargetEnum[colorAttachments[i]->textureTarget],
-                    colorAttachments[i]->textureID,
-                    0);
-                colorAttachments[i]->isFbAttachment = LITE3D_TRUE;
+                /* skip non color attachments */
+                if (attachments[i].layer.attachmentType != LITE3D_FRAMEBUFFER_USE_COLOR_BUFFER)
+                    continue;
+
+                binding.attachment = attachments[i];
+                binding.bindedLayer = binding.attachment.layer.layer;
+                switch(attachments[i].attachment->textureTarget)
+                {
+                case LITE3D_TEXTURE_2D:
+                case LITE3D_TEXTURE_2D_MULTISAMPLE:
+                    glFramebufferTexture2D(GL_FRAMEBUFFER,
+                        GL_COLOR_ATTACHMENT0 + i,
+                        textureTargetEnum[attachments[i].attachment->textureTarget],
+                        attachments[i].attachment->textureID,
+                        0);
+                    break;
+                case LITE3D_TEXTURE_2D_ARRAY:
+                    if (flags & LITE3D_FRAMEBUFFER_USE_LAYERED_BINDING)
+                    {
+                        glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i,
+                            attachments[i].attachment->textureID, 0);
+                    }
+                    else
+                    {
+                        glFramebufferTextureLayer(GL_FRAMEBUFFER, 
+                            GL_COLOR_ATTACHMENT0 + i, 
+                            attachments[i].attachment->textureID, 
+                            0, binding.bindedLayer);
+                    }
+                    break;
+                case LITE3D_TEXTURE_3D:
+                case LITE3D_TEXTURE_3D_MULTISAMPLE:
+                    glFramebufferTexture3D(GL_FRAMEBUFFER,
+                        GL_COLOR_ATTACHMENT0 + i,
+                        textureTargetEnum[attachments[i].attachment->textureTarget],
+                        attachments[i].attachment->textureID, 
+                        0, binding.bindedLayer);
+                    break;
+                default:
+                    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Texture target %d is not supported as framebuffer color attachment", 
+                        attachments[i].attachment->textureTarget);
+                    return LITE3D_FALSE;
+                }
+                binding.attachment.attachment->isFbAttachment = LITE3D_TRUE;
+                LITE3D_ARR_ADD_ELEM(&fb->colorAttachments, lite3d_framebuffer_attachment_binding, binding);
             }
         }
-        else
+
+        // No color texture attachments, use render buffer instead
+        if (fb->colorAttachments.size == 0)
         {
-            glGenRenderbuffers(1, &fb->renderBuffersIds[renderBuffersCount]);
+            glGenRenderbuffers(1, &fb->renderBuffersIds[fb->renderBuffersCount]);
             glBindRenderbuffer(GL_RENDERBUFFER,
-                fb->renderBuffersIds[renderBuffersCount]);
+                fb->renderBuffersIds[fb->renderBuffersCount]);
 
             if (fb->samples > 1)
             {
@@ -373,9 +419,9 @@ int lite3d_framebuffer_setup(lite3d_framebuffer *fb,
 
             /* attach color buffer to FBO */
             glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
-                GL_RENDERBUFFER, fb->renderBuffersIds[renderBuffersCount]);
+                GL_RENDERBUFFER, fb->renderBuffersIds[fb->renderBuffersCount]);
 
-            renderBuffersCount++;
+            fb->renderBuffersCount++;
         }
     }
 
@@ -386,21 +432,66 @@ int lite3d_framebuffer_setup(lite3d_framebuffer *fb,
     }
 
     /* setup color attachment */
+    memset(&fb->depthAttachment, 0, sizeof(fb->depthAttachment));
     if (flags & LITE3D_FRAMEBUFFER_USE_DEPTH_BUFFER)
     {
-        if (depthAttachments)
+        for (int8_t i = 0; i < attachmentsCount; ++i)
         {
-            glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
-                textureTargetEnum[depthAttachments->textureTarget],
-                depthAttachments->textureID, 0);
-            depthAttachments->isFbAttachment = LITE3D_TRUE;
+            if (attachments[i].layer.attachmentType == LITE3D_FRAMEBUFFER_USE_DEPTH_BUFFER)
+            {
+                fb->depthAttachment.attachment = attachments[i];
+                fb->depthAttachment.bindedLayer = fb->depthAttachment.attachment.layer.layer;
+                break;
+            }
+        }
+
+        if (fb->depthAttachment.attachment.attachment)
+        {
+            switch (fb->depthAttachment.attachment.attachment->textureTarget)
+            {
+            case LITE3D_TEXTURE_2D:
+            case LITE3D_TEXTURE_2D_MULTISAMPLE:
+            case LITE3D_TEXTURE_2D_SHADOW:
+                glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
+                    textureTargetEnum[fb->depthAttachment.attachment.attachment->textureTarget],
+                    fb->depthAttachment.attachment.attachment->textureID, 0);
+                break;
+            case LITE3D_TEXTURE_2D_ARRAY:
+            case LITE3D_TEXTURE_2D_SHADOW_ARRAY:
+                if (flags & LITE3D_FRAMEBUFFER_USE_LAYERED_BINDING)
+                {
+                    glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, 
+                        fb->depthAttachment.attachment.attachment->textureID, 0);
+                } 
+                else
+                {
+                    glFramebufferTextureLayer(GL_FRAMEBUFFER, 
+                        GL_DEPTH_ATTACHMENT,
+                        fb->depthAttachment.attachment.attachment->textureID,
+                        0, fb->depthAttachment.bindedLayer);
+                }
+                break;
+            case LITE3D_TEXTURE_3D:
+            case LITE3D_TEXTURE_3D_MULTISAMPLE:
+                glFramebufferTexture3D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
+                    textureTargetEnum[fb->depthAttachment.attachment.attachment->textureTarget],
+                    fb->depthAttachment.attachment.attachment->textureID, 0, 
+                    fb->depthAttachment.bindedLayer);
+                break;
+            default:
+                SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Texture target %d is not supported as framebuffer depth attachment", 
+                    fb->depthAttachment.attachment.attachment->textureTarget);
+                    return LITE3D_FALSE;
+            }
+
+            fb->depthAttachment.attachment.attachment->isFbAttachment = LITE3D_TRUE;
         }
 #ifdef GL_DEPTH24_STENCIL8
         else if (flags & LITE3D_FRAMEBUFFER_USE_STENCIL_BUFFER)
         {
-            glGenRenderbuffers(1, &fb->renderBuffersIds[renderBuffersCount]);
+            glGenRenderbuffers(1, &fb->renderBuffersIds[fb->renderBuffersCount]);
             glBindRenderbuffer(GL_RENDERBUFFER,
-                fb->renderBuffersIds[renderBuffersCount]);
+                fb->renderBuffersIds[fb->renderBuffersCount]);
 
             if (fb->samples > 1)
             {
@@ -417,19 +508,19 @@ int lite3d_framebuffer_setup(lite3d_framebuffer *fb,
 
             /* Attach depth buffer to FBO */
             glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
-                GL_RENDERBUFFER, fb->renderBuffersIds[renderBuffersCount]);
+                GL_RENDERBUFFER, fb->renderBuffersIds[fb->renderBuffersCount]);
             /* Also attach as a stencil */
             glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT,
-                GL_RENDERBUFFER, fb->renderBuffersIds[renderBuffersCount]);
+                GL_RENDERBUFFER, fb->renderBuffersIds[fb->renderBuffersCount]);
 
-            renderBuffersCount++;
+            fb->renderBuffersCount++;
         }
 #endif
         else
         {
-            glGenRenderbuffers(1, &fb->renderBuffersIds[renderBuffersCount]);
+            glGenRenderbuffers(1, &fb->renderBuffersIds[fb->renderBuffersCount]);
             glBindRenderbuffer(GL_RENDERBUFFER,
-                fb->renderBuffersIds[renderBuffersCount]);
+                fb->renderBuffersIds[fb->renderBuffersCount]);
 
             if (fb->samples > 1)
             {
@@ -444,9 +535,9 @@ int lite3d_framebuffer_setup(lite3d_framebuffer *fb,
 
             /* Attach depth buffer to FBO */
             glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
-                GL_RENDERBUFFER, fb->renderBuffersIds[renderBuffersCount]);
+                GL_RENDERBUFFER, fb->renderBuffersIds[fb->renderBuffersCount]);
 
-            renderBuffersCount++;
+            fb->renderBuffersCount++;
         }
     }
 
@@ -457,6 +548,24 @@ int lite3d_framebuffer_setup(lite3d_framebuffer *fb,
         return LITE3D_FALSE;
     }
 
+    return LITE3D_TRUE;
+}
+
+int lite3d_framebuffer_setup(lite3d_framebuffer *fb, const lite3d_framebuffer_attachment *attachments, 
+    size_t attachmentsCount, uint32_t flags)
+{
+    SDL_assert(fb);
+    
+    if (fb != gCurrentFb)
+    {
+        glBindFramebuffer(GL_FRAMEBUFFER, fb->framebufferId);
+        gCurrentFb = fb;
+    }
+
+    if (!lite3d_framebuffer_setup_attachments(fb, attachments, attachmentsCount, flags))
+    {
+        return LITE3D_FALSE;
+    }
     /*
      * This is similar to the case above (Color texture, Depth texture) 
      * except that since there is no color buffer, call glDrawBuffer(GL_NONE) 
@@ -474,7 +583,8 @@ int lite3d_framebuffer_setup(lite3d_framebuffer *fb,
     }
 #endif
     /* Does the GPU support current FBO configuration? */
-    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+    if (flags & (LITE3D_FRAMEBUFFER_USE_COLOR_BUFFER | LITE3D_FRAMEBUFFER_USE_DEPTH_BUFFER) &&
+        glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
     {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Framebuffer configuration not supported..");
         lite3d_framebuffer_purge(fb);
@@ -483,15 +593,30 @@ int lite3d_framebuffer_setup(lite3d_framebuffer *fb,
 
     SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "FBO: 0x%x validated, %dx%d, color %s, "
         "depth %s, stencil %s", fb->framebufferId, fb->width, fb->height,
-        fb->flags & LITE3D_FRAMEBUFFER_USE_COLOR_BUFFER ? (colorAttachments ? "texture" : "renderbuffer") : "none",
-        fb->flags & LITE3D_FRAMEBUFFER_USE_DEPTH_BUFFER ? (depthAttachments ? "texture" : "renderbuffer") : "none",
-        fb->flags % LITE3D_FRAMEBUFFER_USE_STENCIL_BUFFER ? "renderbuffer" : "none");
-
-    /* bind screen by current FBO */
-    glBindRenderbuffer(GL_RENDERBUFFER, 0);
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        fb->flags & LITE3D_FRAMEBUFFER_USE_COLOR_BUFFER ? (fb->colorAttachments.size > 0 ? "texture" : "renderbuffer") : "none",
+        fb->flags & LITE3D_FRAMEBUFFER_USE_DEPTH_BUFFER ? (fb->depthAttachment.attachment.attachment ? "texture" : "renderbuffer") : "none",
+        fb->flags & LITE3D_FRAMEBUFFER_USE_STENCIL_BUFFER ? "renderbuffer" : "none");
 
     fb->status = LITE3D_FRAMEBUFFER_STATUS_OK;
+    return LITE3D_TRUE;
+}
+
+int lite3d_framebuffer_replace(lite3d_framebuffer *fb, const lite3d_framebuffer_attachment *attachments, 
+    size_t attachmentsCount, uint32_t flags)
+{
+    SDL_assert(fb);
+
+    if (fb != gCurrentFb)
+    {
+        glBindFramebuffer(GL_FRAMEBUFFER, fb->framebufferId);
+        gCurrentFb = fb;
+    }
+
+    if (!lite3d_framebuffer_setup_attachments(fb, attachments, attachmentsCount, flags))
+    {
+        return LITE3D_FALSE;
+    }
+
     return LITE3D_TRUE;
 }
 
@@ -537,16 +662,16 @@ void lite3d_framebuffer_switch(lite3d_framebuffer *fb)
             glDrawBuffer(GL_NONE);
             glReadBuffer(GL_NONE);
         }
-        else if (fb->colorAttachmentsCount == 1)
+        else if (fb->colorAttachments.size == 1)
         {
             /* FBO has only one color attachment */
             glDrawBuffer(GL_COLOR_ATTACHMENT0);
             glReadBuffer(GL_COLOR_ATTACHMENT0);
         }
         /* MRT: more difficult case, not all contexts does supports this */
-        else if (fb->colorAttachmentsCount > 1)
+        else if (fb->colorAttachments.size > 1)
         {
-            glDrawBuffers(fb->colorAttachmentsCount, gDrawBuffersArr);
+            glDrawBuffers((GLsizei)fb->colorAttachments.size, gDrawBuffersArr);
         }
 #endif
     }
@@ -576,7 +701,7 @@ int lite3d_framebuffer_read(lite3d_framebuffer *fb,
     /* if it is screen framebuffer we can read only back buffer  */
     if (fb->framebufferId == 0)
         glReadBuffer(GL_BACK);
-    else if (fb->colorAttachmentsCount > 0)
+    else if (fb->colorAttachments.size > 0)
         glReadBuffer(GL_COLOR_ATTACHMENT0 + index);
 #endif
 
@@ -613,4 +738,31 @@ int lite3d_framebuffer_blit(lite3d_framebuffer *from, lite3d_framebuffer *to)
         to->width, to->height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
 
     return !LITE3D_CHECK_GL_ERROR;
+}
+
+void lite3d_framebuffer_switch_layer(lite3d_framebuffer *fb, const lite3d_framebuffer_layer *layer, size_t layerCount)
+{
+    lite3d_framebuffer_switch(fb);
+    for (size_t i = 0; i < layerCount; ++i)
+    {
+        if (layer[i].attachmentType == LITE3D_FRAMEBUFFER_USE_COLOR_BUFFER)
+        {
+            for (int ci = 0; ci < fb->colorAttachments.size; ++ci)
+            {
+                lite3d_framebuffer_attachment_binding *binding = lite3d_array_get(&fb->colorAttachments, ci);
+                if (binding->bindedLayer != layer[i].layer)
+                {
+                    glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + ci, binding->attachment.attachment->textureID, 0, layer[i].layer);
+                    binding->bindedLayer = layer[i].layer;
+                }
+            }
+        }
+        else if (layer[i].attachmentType == LITE3D_FRAMEBUFFER_USE_DEPTH_BUFFER &&
+            fb->depthAttachment.attachment.attachment && layer[i].layer != fb->depthAttachment.bindedLayer)
+        {
+            glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, fb->depthAttachment.attachment.attachment->textureID, 
+                0, layer[i].layer);
+            fb->depthAttachment.bindedLayer = layer[i].layer;
+        }
+    }
 }

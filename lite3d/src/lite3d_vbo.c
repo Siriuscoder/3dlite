@@ -36,6 +36,9 @@ static GLenum vboMapModeEnum[] = {
     GL_READ_ONLY, GL_WRITE_ONLY, GL_READ_WRITE
 };
 
+GLint gUBOMaxSize = -1;
+GLint gTBOMaxSize = -1;
+
 /*
 Name
 
@@ -254,11 +257,11 @@ int lite3d_vbo_technique_init(void)
             "GL_MAX_UNIFORM_BUFFER_BINDINGS: %d",
             var);
 
-        glGetIntegerv(GL_MAX_UNIFORM_BLOCK_SIZE, &var);
+        glGetIntegerv(GL_MAX_UNIFORM_BLOCK_SIZE, &gUBOMaxSize);
         SDL_LogDebug(
             SDL_LOG_CATEGORY_APPLICATION,
             "GL_MAX_UNIFORM_BLOCK_SIZE: %d",
-            var);
+            gUBOMaxSize);
 
         glGetIntegerv(GL_MAX_COMBINED_VERTEX_UNIFORM_COMPONENTS, &var);
         SDL_LogDebug(
@@ -331,6 +334,12 @@ int lite3d_vbo_technique_init(void)
             "GL_MAX_SHADER_STORAGE_BLOCK_SIZE: %d",
              var);
     }
+
+    if (lite3d_check_tbo())
+    {
+        glGetIntegerv(GL_MAX_TEXTURE_BUFFER_SIZE, &gTBOMaxSize);
+    }
+
 #endif
 
     return LITE3D_TRUE;
@@ -429,6 +438,14 @@ int lite3d_vbo_extend(struct lite3d_vbo *vbo, size_t addSize, uint16_t access)
 
     lite3d_misc_gl_error_stack_clean();
 
+    if (vbo->role == GL_UNIFORM_BUFFER && gUBOMaxSize > 0 && vbo->size + addSize > gUBOMaxSize)
+    {
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+            "%s: UBO is too large, limit is %d bytes, requested %zu bytes", LITE3D_CURRENT_FUNCTION,
+            gUBOMaxSize, vbo->size + addSize);
+        return LITE3D_FALSE;
+    }
+
     vbo->access = access;
     if (vbo->size > 0)
     {
@@ -517,6 +534,14 @@ int lite3d_vbo_buffer(struct lite3d_vbo *vbo,
 
     if (!check_buffer_access(access))
     {
+        return LITE3D_FALSE;
+    }
+
+    if (vbo->role == GL_UNIFORM_BUFFER && gUBOMaxSize > 0 && size > gUBOMaxSize)
+    {
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+            "%s: UBO is too large, limit is %d bytes, requested %zu bytes", LITE3D_CURRENT_FUNCTION,
+            gUBOMaxSize, size);
         return LITE3D_FALSE;
     }
 

@@ -1,0 +1,58 @@
+{
+  "Passes":[
+    {
+      "Pass": 1,
+      "Program": {
+        "Name":"bsdf_lightpass.program",
+        "Path":"vault_111:shaders/json/bsdf_lightpass.json"
+      },
+      "Uniforms":[
+        {
+          "Name":"PreparedRenderData",
+          "TextureName":"deffered_render_data.texture",
+          "Type":"sampler"
+        },
+        {
+          "Name":"Environment",
+          "TextureName":"environment.texture",
+          "TexturePath":"samples:textures/json/skybox_cryo_mip.json",
+          "Type":"sampler"
+        },
+        {
+          "Name":"lightSources",
+          "UBOName": "Vault_111_lightingBufferObject",
+          "Type":"UBO"
+        },
+        {
+          "Name":"lightIndexes",
+          "UBOName": "Vault_111_lightingIndexBuffer",
+          "Type":"UBO"
+        },
+        {
+          "Name":"ShadowMaps",
+          "TextureName":"shadow.texture",
+          "Type":"sampler"
+        },
+        {
+          "Name": "ShadowMatrix",
+          "UBOName": "ShadowMatrixBuffer",
+          "Type": "UBO"
+        },
+        {
+          "Name":"eye",
+          "Type":"v3",
+          "Scope":"global"
+        }
+      ],
+      "Blending":true,
+      // Orgb = 1 * Srgb + 1 * Drgb
+      // Oa = 1 * Sa + 0 * Da = Sa
+      "BlendingMode":"additive"
+    }
+  ],
+  "Uniforms":[
+    {
+      "Name":"screenMatrix"
+    }
+  ]
+}

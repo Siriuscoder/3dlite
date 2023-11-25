@@ -1,0 +1,63 @@
+{
+  "Passes": [
+    {
+      "Pass": 1,
+      "Program": {
+        "Name": "depth.program",
+        "Path": "vault_111:shaders/json/depth.json"
+      },
+      "Uniforms": [
+        {
+          "Name": "projViewMatrix"
+        }
+      ]
+    },
+    {
+      "Pass": 2,
+      "Program": {
+        "Name": "bsdf_glow_prepare.program",
+        "Path": "vault_111:shaders/json/bsdf_glow_prepare.json"
+      },
+      "Uniforms": [
+        {
+          "Name": "Specular",
+          "Type": "float",
+          "Value": 1.0
+        },
+        {
+          "Name": "Roughness",
+          "Type": "float",
+          "Value": 0.8183409571647644
+        },
+        {
+          "Name": "Emission",
+          "Type": "sampler",
+          "TextureName": "LightBoxGlass_g.texture",
+          "TexturePath": "vault_111:textures/json/LightBoxGlass_g.json"
+        },
+        {
+          "Name": "EmissionStrength",
+          "Type": "float",
+          "Value": 6.0
+        },
+        {
+          "Name": "projViewMatrix"
+        }
+      ]
+    },
+    {
+      "Pass": 3,
+      "Program": {
+        "Name": "shadow.program",
+        "Path": "vault_111:shaders/json/shadow.json"
+      },
+      "Uniforms": [
+        {
+          "Name": "ShadowMatrix",
+          "UBOName": "ShadowMatrixBuffer",
+          "Type": "UBO"
+        }
+      ]
+    }
+  ]
+}

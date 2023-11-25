@@ -89,12 +89,12 @@ namespace lite3dpp
         { return mTexture.imageDepth; }
 
         static uint32_t textureType(const String &s);
-        static uint32_t textureFiltering(const String &s);
-        static uint32_t textureWrap(const String &s);
+        static uint8_t textureFiltering(const String &s);
+        static uint8_t textureWrap(const String &s);
         static uint32_t textureImageFormat(const String &s);
         static uint32_t textureFilterType(const String &s);
-        static uint32_t textureFormat(const String &s);
-        static uint32_t textureInternalFormat(const String &s);
+        static uint16_t textureFormat(const String &s);
+        static uint16_t textureInternalFormat(int iformat);
 
     protected:
 

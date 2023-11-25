@@ -1,5 +1,6 @@
 #include "texture.h"
 #include "utils.h"
+
 #include <algorithm>
 #include <cstring>
 #include <iostream>

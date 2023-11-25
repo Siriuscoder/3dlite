@@ -32,7 +32,7 @@ class Material:
                     self.params["Albedo"][3] = float(alphaSocket.default_value)
             elif socket.name == "Emission":
                 self.params["Emission"] = [x for x in socket.default_value] # Color 4i
-            elif socket.name in ["Metallic", "Specular", "Roughness", "IOR"]:
+            elif socket.name in ["Metallic", "Specular", "Roughness", "IOR", "Emission Strength"]:
                 self.params[socket.name] = float(socket.default_value)
             
     def considerImage(self, node):
@@ -55,15 +55,14 @@ class Material:
         
         if isinstance(param, bpy.types.ShaderNodeTexImage):
             image = self.scene.saveImage(param)
-            template[key] = keyParam
+            template[key] = keyParam.replace(" ", "")
             template["Type"] = "sampler"
             template["TextureName"] = image.name
             template["TexturePath"] = self.scene.getAbsImagePath(image.getRelativePath())
         else:
-            template[key] = keyParam
+            template[key] = keyParam.replace(" ", "")
             template["Type"] = f"v{len(param)}" if isinstance(param, list) else "float"
             template["Value"] = param
-
     
     def processTemplate(self, template):
         for key, val in template.items():

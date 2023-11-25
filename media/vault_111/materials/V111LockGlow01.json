@@ -1,0 +1,76 @@
+{
+  "Passes": [
+    {
+      "Pass": 2,
+      "Program": {
+        "Name": "bsdf_glow_circles.program",
+        "Path": "vault_111:shaders/json/bsdf_glow_circles.json"
+      },
+      "Uniforms": [
+        {
+          "Name": "Specular",
+          "Type": "float",
+          "Value": 1.0
+        },
+        {
+          "Name": "Roughness",
+          "Type": "float",
+          "Value": 0.8183409571647644
+        },
+        {
+          "Name": "Emission",
+          "Type": "v4",
+          "Value": [
+            0.17144110798835754,
+            0.42326778173446655,
+            0.0,
+            1.0
+          ]
+        },
+        {
+          "Name": "EmissionStrength",
+          "Type": "float",
+          "Value": 3.0
+        },
+        {
+          "Name": "Environment",
+          "TextureName": "environment.texture",
+          "TexturePath": "samples:textures/json/skybox_cryo_mip.json",
+          "Type": "sampler"
+        },
+        {
+          "Name": "lightSources",
+          "UBOName": "Vault_111_lightingBufferObject",
+          "Type": "UBO"
+        },
+        {
+          "Name": "lightIndexes",
+          "UBOName": "Vault_111_lightingIndexBuffer",
+          "Type": "UBO"
+        },
+        {
+          "Name": "ShadowMaps",
+          "TextureName": "shadow.texture",
+          "Type": "sampler"
+        },
+        {
+          "Name": "ShadowMatrix",
+          "UBOName": "ShadowMatrixBuffer",
+          "Type": "UBO"
+        },
+        {
+          "Name": "eye",
+          "Type": "v3",
+          "Scope": "global"
+        }
+      ],
+      "Blending": true,
+      "BlendingMode": "traditional"
+    }
+  ],
+  "Uniforms": [
+    {
+      "Name": "projViewMatrix"
+    }
+  ]
+}

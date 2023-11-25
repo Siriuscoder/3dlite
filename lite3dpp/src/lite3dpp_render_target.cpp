@@ -131,10 +131,12 @@ namespace lite3dpp
             stencil ? LITE3D_TRUE : LITE3D_FALSE);
     }
 
-    void RenderTarget::addCamera(Camera *camera, Scene *scene, uint16_t pass, int priority, uint32_t renderFlags)
+    void RenderTarget::addCamera(Camera *camera, Scene *scene, uint16_t pass, const RenderLayers &layers,
+         int priority, uint32_t renderFlags)
     {
         SDL_assert_release(mRenderTargetPtr);
-        if (!lite3d_render_target_attach_camera(mRenderTargetPtr, camera->getPtr(), scene->getPtr(), pass, priority, renderFlags))
+        if (!lite3d_render_target_attach_camera(mRenderTargetPtr, camera->getPtr(), scene->getPtr(), pass, 
+            layers.size() > 0 ? &layers[0] : NULL, layers.size(), priority, renderFlags))
             LITE3D_THROW("Failed to add camera to render target '" << getName() << "', probably camera with priority " << 
                 priority << " already exist");
     }
@@ -154,7 +156,9 @@ namespace lite3dpp
     }
 
     void RenderTarget::resize(int32_t width, int32_t height)
-    {}
+    {
+        lite3d_render_target_resize(mRenderTargetPtr, width, height);
+    }
 
     int RenderTarget::beginUpdate(lite3d_render_target *target)
     {
@@ -185,6 +189,11 @@ namespace lite3dpp
         }
     }
 
+    void RenderTarget::setActive()
+    {
+        lite3d_framebuffer_switch(&getPtr()->fb);
+    }
+
     WindowRenderTarget::WindowRenderTarget(const String &name, 
         const String &path, Main *main) : 
         RenderTarget(name, path, main)
@@ -203,11 +212,6 @@ namespace lite3dpp
     
     void WindowRenderTarget::unloadImpl()
     {}
-
-    void WindowRenderTarget::resize(int32_t width, int32_t height)
-    {
-        lite3d_render_target_resize(mRenderTargetPtr, width, height);
-    }
 
     void WindowRenderTarget::fullscreen(bool flag)
     {

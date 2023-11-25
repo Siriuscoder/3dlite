@@ -31,6 +31,8 @@ namespace lite3dpp
     {
     public:
 
+        using RenderLayers = stl<lite3d_framebuffer_layer>::vector;
+
         enum TestFunc : uint32_t
         {
             TestFuncNever = LITE3D_TEST_NEVER,
@@ -42,6 +44,21 @@ namespace lite3dpp
             TestFuncGEqual = LITE3D_TEST_GEQUAL,
             TestFuncAlways = LITE3D_TEST_ALWAYS
         };
+        
+    public:
+
+        /* output buffers write control */
+        /* perform immediately */
+        static void depthOutput(bool flag);
+        static void colorOutput(bool flag);
+        static void stencilOutput(bool flag);
+        /* Buffer testing control */
+        static void depthTest(bool flag);
+        static void depthTestFunc(TestFunc func);
+        static void stencilTest(bool flag);
+        static void stencilTestFunc(TestFunc func, int32_t value);
+
+    public:
 
         RenderTarget(const String &name, 
             const String &path, Main *main);
@@ -57,27 +74,18 @@ namespace lite3dpp
         /* clean buffers control, clean operation perform then 
            this render target begin updating */
         void setBuffersCleanBit(bool color, bool depth, bool stencil);
-        /* output buffers write control */
-        /* perform immediately */
-        void depthOutput(bool flag);
-        void colorOutput(bool flag);
-        void stencilOutput(bool flag);
-        /* Buffer testing control */
-        void depthTest(bool flag);
-        void depthTestFunc(TestFunc func);
-        void stencilTest(bool flag);
-        void stencilTestFunc(TestFunc func, int32_t value);
         /* clean buffers immediately */
         void clear(bool color, bool depth, bool stencil);
         void saveScreenshot(const String &filename);
-
-        virtual void resize(int32_t width, int32_t height);
+        void resize(int32_t width, int32_t height);
 
         inline lite3d_render_target *getPtr()
         { return mRenderTargetPtr; }
 
-        void addCamera(Camera *camera, Scene *scene, uint16_t pass, int priority, uint32_t renderFlags);
+        void addCamera(Camera *camera, Scene *scene, uint16_t pass, const RenderLayers &layers,
+            int priority, uint32_t renderFlags);
         void removeCamera(Camera *camera, int priority);
+        void setActive();
 
     protected:
 
@@ -95,7 +103,6 @@ namespace lite3dpp
             const String &path, Main *main);
         ~WindowRenderTarget();
 
-        virtual void resize(int32_t width, int32_t height) override;
         void fullscreen(bool flag);
         float computeCameraAspect() const;
 

@@ -1,0 +1,69 @@
+{
+  "Passes": [
+    {
+      "Pass": 2,
+      "Program": {
+        "Name": "bsdf_direct_alpha.program",
+        "Path": "vault_111:shaders/json/bsdf_direct_alpha.json"
+      },
+      "Uniforms": [
+        {
+          "Name": "Albedo",
+          "Type": "sampler",
+          "TextureName": "MiniGunAmmo_d.texture",
+          "TexturePath": "vault_111:textures/json/MiniGunAmmo_d.json"
+        },
+        {
+          "Name": "Normal",
+          "Type": "sampler",
+          "TextureName": "MiniGunAmmo_n.texture",
+          "TexturePath": "vault_111:textures/json/MiniGunAmmo_n.json"
+        },
+        {
+          "Name": "Specular",
+          "Type": "sampler",
+          "TextureName": "MiniGunAmmo_s.texture",
+          "TexturePath": "vault_111:textures/json/MiniGunAmmo_s.json"
+        },
+        {
+          "Name": "Environment",
+          "TextureName": "environment.texture",
+          "TexturePath": "samples:textures/json/skybox_cryo_mip.json",
+          "Type": "sampler"
+        },
+        {
+          "Name": "lightSources",
+          "UBOName": "Vault_111_lightingBufferObject",
+          "Type": "UBO"
+        },
+        {
+          "Name": "lightIndexes",
+          "UBOName": "Vault_111_lightingIndexBuffer",
+          "Type": "UBO"
+        },
+        {
+          "Name": "ShadowMaps",
+          "TextureName": "shadow.texture",
+          "Type": "sampler"
+        },
+        {
+          "Name": "ShadowMatrix",
+          "UBOName": "ShadowMatrixBuffer",
+          "Type": "UBO"
+        },
+        {
+          "Name": "eye",
+          "Type": "v3",
+          "Scope": "global"
+        }
+      ],
+      "Blending": true,
+      "BlendingMode": "traditional"
+    }
+  ],
+  "Uniforms": [
+    {
+      "Name": "projViewMatrix"
+    }
+  ]
+}

@@ -1,8 +1,8 @@
 {
     "TextureType": "2D",
     "Filtering": "None",
-    "Wrapping": "Repeat",
+    "Wrapping": "ClampToEdge",
     "Compression": false,
     "TextureFormat": "RGBA",
-    "InternalFormat": 34842 // LITE3D_TEXTURE_INTERNAL_RGBA16
+    "InternalFormat": 34842 // LITE3D_TEXTURE_INTERNAL_RGBA16F
 }

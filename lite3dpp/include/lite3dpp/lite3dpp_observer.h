@@ -97,11 +97,16 @@ namespace lite3dpp
             Material *material, lite3d_bounding_vol *boundingVol,
             Camera *camera) {}
 
+        virtual bool customVisibilityCheck(Scene *scene, 
+            SceneNode *node, lite3d_mesh_chunk *meshChunk, 
+            Material *material, lite3d_bounding_vol *boundingVol,
+            Camera *camera) { return true; }
+
         virtual void beforeUpdateNodes(Scene *scene, Camera *camera) {}
         virtual bool beginSceneRender(Scene *scene, Camera *camera) { return true; }
         virtual void endSceneRender(Scene *scene, Camera *camera) {}
-        virtual void beginFirstStageRender(Scene *scene, Camera *camera) {}
-        virtual void beginSecondStageRender(Scene *scene, Camera *camera) {}
+        virtual void beginOpaqueStageRender(Scene *scene, Camera *camera) {}
+        virtual void beginBlendingStageRender(Scene *scene, Camera *camera) {}
     };
 
     class LITE3DPP_EXPORT RenderTargetObserver

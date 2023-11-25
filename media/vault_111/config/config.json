@@ -5,7 +5,8 @@
     "LogFile": "lite3d.log",
     "TextureSettings": {
         "Anisotropy": 8,
-        "Compression": true
+        "Compression": true,
+        "DepthFormat": "Depth32"
     },
     // Video settings
     // Window size, caption, color settings, etc
@@ -27,7 +28,7 @@
         },
         {
             "Name": "vault_111",
-            "FileCacheMaxSize": 10240000,
+            "FileCacheMaxSize": 51200000,
             "Path": "vault_111/"
         }
     ],

@@ -212,7 +212,7 @@ namespace lite3dpp
         auto lightHelper = json.getObject(L"Light");
         if (!lightHelper.isEmpty())
         {
-            mLight = std::make_unique<LightSource>(lightHelper, main);
+            mLight = std::make_unique<LightSource>(lightHelper);
         }
     }
     

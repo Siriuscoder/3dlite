@@ -25,6 +25,7 @@
 #include <lite3d/lite3d_tbo.h>
 
 extern GLenum textureTargetEnum[];
+extern GLint gTBOMaxSize;
 
 /*
 Overview
@@ -87,6 +88,14 @@ int lite3d_texture_buffer_init(lite3d_texture_unit *textureUnit,
 
     textureUnit->totalSize = textureUnit->imageSize = texelsCount * textureUnit->imageBPP;
     textureUnit->textureTarget = LITE3D_TEXTURE_BUFFER;
+    if (gTBOMaxSize > 0 && textureUnit->totalSize > gTBOMaxSize)
+    {
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+            "%s: TBO is too large, limit is %d bytes, requested %zu bytes", LITE3D_CURRENT_FUNCTION,
+            gTBOMaxSize, textureUnit->totalSize);
+        return LITE3D_FALSE;
+    }
+
     if (!lite3d_vbo_init(&textureUnit->tbo))
         return LITE3D_FALSE;
     if (!lite3d_vbo_buffer(&textureUnit->tbo, data, textureUnit->imageSize, access))
@@ -199,6 +208,14 @@ int lite3d_texture_buffer_extend(lite3d_texture_unit *textureUnit,
     size_t addSize, uint16_t access)
 {
     SDL_assert(textureUnit);
+    if (gTBOMaxSize > 0 && textureUnit->totalSize + addSize > gTBOMaxSize)
+    {
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+            "%s: TBO is too large, limit is %d bytes, requested %zu bytes", LITE3D_CURRENT_FUNCTION,
+            gTBOMaxSize, textureUnit->totalSize + addSize);
+        return LITE3D_FALSE;
+    }
+
     if (lite3d_vbo_extend(&textureUnit->tbo, addSize, access))
     {
         textureUnit->totalSize += addSize;

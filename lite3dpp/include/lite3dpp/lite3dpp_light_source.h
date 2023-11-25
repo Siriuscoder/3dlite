@@ -34,9 +34,9 @@ namespace lite3dpp
     {
     public:
 
-        LightSource(const String &name, Main *main);
-        LightSource(const lite3d_light_params &ls, Main *main);
-        LightSource(const ConfigurationReader &json, Main *main);
+        LightSource(const String &name);
+        LightSource(const String &name, const lite3d_light_params &ls);
+        LightSource(const ConfigurationReader &json);
         ~LightSource() = default;
 
         inline lite3d_light_source *getPtr()
@@ -71,7 +71,7 @@ namespace lite3dpp
         void setInfluenceDistance(float value);
         void setInfluenceMinRadiance(float value);
         void setRadiance(float value);
-        void setLightSize(float value);
+        void setUserIndex(int32_t value);
         void setAngleInnerCone(float value);
         void setAngleOuterCone(float value);
 
@@ -88,7 +88,7 @@ namespace lite3dpp
         float getInfluenceDistance() const;
         float getInfluenceMinRadiance() const;
         float getRadiance() const;
-        float getLightSize() const;
+        int32_t getUserIndex() const;
         float getAngleInnerCone() const;
         float getAngleOuterCone() const;
 
@@ -102,7 +102,6 @@ namespace lite3dpp
         void calcDistanceMinRadiance();
 
         String mName;
-        Main *mMain;
         lite3d_light_source mLightSource;
         lite3d_light_source mLightSourceWorld;
         uint32_t mBufferIndex = 0;

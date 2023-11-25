@@ -33,6 +33,9 @@ namespace lite3dpp
             const String &path, Main *main);
         ~TextureRenderTarget();
 
+        void replaceAttachments(const stl<lite3d_framebuffer_attachment>::vector& attachments,
+            uint32_t flags);
+
     protected:
 
         virtual void loadFromConfigImpl(const ConfigurationReader &helper) override;

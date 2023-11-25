@@ -49,8 +49,8 @@ public:
         lite3dpp::Material::setFloatv3GlobalParameter("screenResolution", resolution);
         lite3dpp::Material::setIntGlobalParameter("FXAA", 1);
 
-        mReactLamp01 = mVaultScene->getLightNode("ReactorLamp_01.node");
-        mReactLamp02 = mVaultScene->getLightNode("ReactorLamp_02.node");
+        mReactLamp01 = mVaultScene->getLightNode("VaultReactorLamp_01.node");
+        mReactLamp02 = mVaultScene->getLightNode("VaultReactorLamp_02.node");
         mMinigun = mVaultScene->getObject("Minigun");
         mGatling = mVaultScene->getObject("Gatling");
         mLazer = mVaultScene->getObject("Lazer");
@@ -92,7 +92,7 @@ public:
     void addFlashlight(Scene *scene)
     {
         ConfigurationWriter flashlightJson;
-        LightSource flashlight("FlashLight", nullptr);
+        LightSource flashlight("FlashLight");
         flashlight.setAttenuationConstant(0.12f);
         flashlight.setAttenuationLinear(0.005f);
         flashlight.setAttenuationQuadratic(0.00002f);

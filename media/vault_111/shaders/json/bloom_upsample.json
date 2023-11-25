@@ -1,0 +1,7 @@
+{
+    "Sources": 
+    [
+        "vault_111:shaders/sources/bigtriangle.vs",
+        "vault_111:shaders/sources/bloom_upsample.fs"
+    ]
+}

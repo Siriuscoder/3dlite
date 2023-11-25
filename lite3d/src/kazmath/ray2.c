@@ -85,6 +85,7 @@ kmBool kmRay2IntersectTriangle(const kmRay2* ray, const kmVec2* p1, const kmVec2
     kmVec2 normal;
     kmScalar distance = 10000.0f;
     kmBool intersected = KM_FALSE;
+    final_intersect.x = final_intersect.y = 0.0f;
  
     if(kmRay2IntersectLineSegment(ray, p1, p2, &intersect)) {
         kmVec2 tmp;

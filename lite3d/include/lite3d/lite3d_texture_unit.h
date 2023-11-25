@@ -42,10 +42,12 @@
 #define LITE3D_TEXTURE_2D               0x01
 #define LITE3D_TEXTURE_3D               0x02
 #define LITE3D_TEXTURE_CUBE             0x03
-#define LITE3D_TEXTURE_BUFFER           0x04
-#define LITE3D_TEXTURE_2D_MULTISAMPLE   0x05
-#define LITE3D_TEXTURE_3D_MULTISAMPLE   0x06
-#define LITE3D_TEXTURE_2D_SHADOW        0x07
+#define LITE3D_TEXTURE_2D_ARRAY         0x04
+#define LITE3D_TEXTURE_BUFFER           0x05
+#define LITE3D_TEXTURE_2D_MULTISAMPLE   0x06
+#define LITE3D_TEXTURE_3D_MULTISAMPLE   0x07
+#define LITE3D_TEXTURE_2D_SHADOW        0x08
+#define LITE3D_TEXTURE_2D_SHADOW_ARRAY  0x09
 /* pre-loading texture manipulation */
 #define LITE3D_ALIENIFY_FILTER      0x0001
 #define LITE3D_BLURAVG_FILTER       0x0002
@@ -107,6 +109,8 @@
 #define LITE3D_TEXTURE_INTERNAL_RGBA16          0x805B
 #define LITE3D_TEXTURE_INTERNAL_SRGB8           0x8C41
 #define LITE3D_TEXTURE_INTERNAL_SRGB8_ALPHA8    0x8C43
+#define LITE3D_TEXTURE_INTERNAL_SRGB            0x8C40
+#define LITE3D_TEXTURE_INTERNAL_SRGBA           0x8C42
 #define LITE3D_TEXTURE_INTERNAL_R16F            0x822D
 #define LITE3D_TEXTURE_INTERNAL_RG16F           0x822F
 #define LITE3D_TEXTURE_INTERNAL_RGB16F          0x881B
@@ -154,6 +158,7 @@ typedef struct lite3d_texture_technique_settings
     int32_t anisotropy;
     int32_t maxAnisotropy;
     uint8_t useGLCompression;
+    uint8_t useCompressedDataOnLoad;
     uint8_t useDepthFormat;
 } lite3d_texture_technique_settings;
 
@@ -209,7 +214,7 @@ LITE3D_CEXPORT int32_t lite3d_texture_unit_get_level_depth(lite3d_texture_unit *
    effect is this case.
 */
 LITE3D_CEXPORT int lite3d_texture_unit_from_resource(lite3d_texture_unit *textureUnit, 
-    const lite3d_file *resource, uint32_t imageType, uint32_t textureTarget, 
+    const lite3d_file *resource, uint32_t imageType, uint32_t textureTarget, int8_t srgb,
     int8_t quality, uint8_t wrapping, uint8_t cubeface);
 
 /* allocate empty texture object */

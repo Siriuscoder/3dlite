@@ -235,11 +235,12 @@ void Sample::printRenderStats()
         "%d\t\t%d\t\t%d\t\t%d\n"
         "last frame ms\tavr frame ms\tbest frame ms\tworst frame ms\n"
         "%f\t%f\t%f\t%f\n"
-        "nodes total\tbatches total\tbatches called\tfaces\n"
-        "%d\t\t%d\t\t%d\t\t%d\n",
+        "nodes total\tbatches total\tbatches called\tbatches instanced\tfaces\n"
+        "%d\t\t%d\t\t%d\t\t%d\t\t\t%d\n",
         stats->framesCount, stats->lastFPS, stats->avrFPS, stats->bestFPS, stats->worstFPS,
         stats->lastFrameMs, stats->avrFrameMs, stats->bestFrameMs, stats->worstFrameMs,
-        stats->nodesTotal, stats->batchesTotal, stats->batchedByFrame, stats->trianglesByFrame);
+        stats->nodesTotal, stats->batchesTotal, stats->batchesCalled, stats->batchesInstancedCalled,
+        stats->trianglesByFrame);
 }
 
 void Sample::printMemoryStats()
@@ -281,7 +282,7 @@ void Sample::updateGuiStats()
     kmVec4 textColor = {0.3f, 0.7f, 0.8f, 1.0f};
 
     sprintf(strbuf, "FPS: %d\nFrame time: %.2f ms\nBatches: %d/%d\nFaces: %d",
-        stats->lastFPS, stats->lastFrameMs, stats->batchedByFrame, 
+        stats->lastFPS, stats->lastFrameMs, stats->batchesCalled, 
         stats->batchesTotal, stats->trianglesByFrame);
     
     mStatTexture->clean();

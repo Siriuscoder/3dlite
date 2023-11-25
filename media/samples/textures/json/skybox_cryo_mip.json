@@ -1,0 +1,9 @@
+{
+  "Filtering":"Trilinear",
+  "ImageFormat":"DDS",
+  "Image": "samples:textures/images/skymap/Vault111CryoCube.dds",
+  "Compression": true,
+  "TextureType":"Cube",
+  "Wrapping":"ClampToEdge",
+  "sRGB": true
+}

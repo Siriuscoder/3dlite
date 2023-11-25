@@ -119,7 +119,7 @@ class Scene:
         else: 
             return
         
-        lightJson["Name"] = obj.name + light.name
+        lightJson["Name"] = light.name + "_" + obj.name
         lightJson["Diffuse"] = [
             light.color.r,
             light.color.g,
@@ -187,7 +187,7 @@ class Scene:
             return
         # originObject можно указать имя обьекта который мы хотим переиспользовать 
         objectName = obj.get("originObject")
-        if objectName is None or objectName not in self.savedObjects:
+        if objectName is None:
             objectRoot = {"Root": {}}
             self.exportNode(obj, objectRoot["Root"])
             self.saveObject(obj, objectRoot)

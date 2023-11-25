@@ -1,25 +1,63 @@
 {
   "Passes":[
     {
-      "Pass": 1,
+      "Pass": 2,
       "Program": {
-        "Name":"basic_shading_solid_color.program",
-        "Path":"samples:shaders/json/basic_shading_solid_color.json"
-      }
+        "Name":"bsdf_glow_circles.program",
+        "Path":"vault_111:shaders/json/bsdf_glow_circles.json"
+      },
+      "Uniforms":[
+        {
+          "Name":"<Specular>"
+        },
+        {
+          "Name":"<Roughness>"
+        },
+        {
+          "Name":"<Emission>"
+        },
+        {
+          "Name":"<Emission Strength>"
+        },
+        {
+          "Name":"Environment",
+          "TextureName":"environment.texture",
+          "TexturePath":"samples:textures/json/skybox_cryo_mip.json",
+          "Type":"sampler"
+        },
+        {
+          "Name":"lightSources",
+          "UBOName": "Vault_111_lightingBufferObject",
+          "Type":"UBO"
+        },
+        {
+          "Name":"lightIndexes",
+          "UBOName": "Vault_111_lightingIndexBuffer",
+          "Type":"UBO"
+        },
+        {
+          "Name":"ShadowMaps",
+          "TextureName":"shadow.texture",
+          "Type":"sampler"
+        },
+        {
+          "Name": "ShadowMatrix",
+          "UBOName": "ShadowMatrixBuffer",
+          "Type": "UBO"
+        },
+        {
+          "Name":"eye",
+          "Type":"v3",
+          "Scope":"global"
+        }
+      ],
+      "Blending":true,
+      "BlendingMode":"traditional"
     }
   ],
   "Uniforms":[
-    {
-      "Name":"projectionMatrix"
-    },
-    {
-      "Name":"viewMatrix"
-    },
-    {
-      "Name":"modelMatrix"
-    },
-    {
-      "Name":"<Albedo>"
+    { 
+      "Name":"projViewMatrix"
     }
   ]
 }

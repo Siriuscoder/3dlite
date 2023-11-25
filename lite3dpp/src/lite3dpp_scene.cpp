@@ -45,12 +45,13 @@ namespace lite3dpp
         lite3d_scene_init(&mScene);
         mScene.userdata = this;
         mScene.beginDrawBatch = beginDrawBatch;
-        mScene.beginFirstStageRender = beginFirstStageRender;
+        mScene.beginOpaqueStageRender = beginOpaqueStageRender;
         mScene.beginSceneRender = beginSceneRender;
-        mScene.beginSecondStageRender = beginSecondStageRender;
+        mScene.beginBlendingStageRender = beginBlendingStageRender;
         mScene.endSceneRender = endSceneRender;
         mScene.nodeInFrustum = nodeInFrustum;
         mScene.nodeOutOfFrustum = nodeOutOfFrustum;
+        mScene.customVisibilityCheck = customVisibilityCheck;
         mScene.beforeUpdateNodes = beforeUpdateNodes;
         
         String lightingTechnique = helper.getString(L"LightingTechnique", "none");
@@ -306,13 +307,13 @@ namespace lite3dpp
                 if (renderTargetJson.getBool(L"RenderOpaque", true))
                     renderFlags |= LITE3D_RENDER_OPAQUE;
                 if (renderTargetJson.getBool(L"RenderBlend", true))
-                    renderFlags |= LITE3D_RENDER_BLEND;
+                    renderFlags |= LITE3D_RENDER_TRANSPARENT;
                 if (renderTargetJson.getBool(L"CleanColorBuffer", false))
-                    renderFlags |= LITE3D_RENDER_CLEAN_COLOR_BUF;
+                    renderFlags |= LITE3D_RENDER_CLEAN_COLOR_BUFF;
                 if (renderTargetJson.getBool(L"CleanDepthBuffer", false))
-                    renderFlags |= LITE3D_RENDER_CLEAN_DEPTH_BUF;
+                    renderFlags |= LITE3D_RENDER_CLEAN_DEPTH_BUFF;
                 if (renderTargetJson.getBool(L"CleanStencilBuffer", false))
-                    renderFlags |= LITE3D_RENDER_CLEAN_STENCIL_BUF;
+                    renderFlags |= LITE3D_RENDER_CLEAN_STENCIL_BUFF;
                 if (renderTargetJson.getBool(L"DepthTest", true))
                     renderFlags |= LITE3D_RENDER_DEPTH_TEST;
                 if (renderTargetJson.getBool(L"ColorOutput", true))
@@ -327,8 +328,29 @@ namespace lite3dpp
                     renderFlags |= LITE3D_RENDER_OCCLUSION_QUERY;
                 if (renderTargetJson.getBool(L"OcclusionCulling", false))
                     renderFlags |= LITE3D_RENDER_OCCLUSION_CULLING;
+                if (renderTargetJson.getBool(L"FrustumCulling", true))
+                    renderFlags |= LITE3D_RENDER_FRUSTUM_CULLING;
+                if (renderTargetJson.getBool(L"CustomVisibilityCheck", false))
+                    renderFlags |= LITE3D_RENDER_CUSTOM_VISIBILITY_CHECK;
+                if (renderTargetJson.getBool(L"SortOpaque", false))
+                    renderFlags |= LITE3D_RENDER_SORT_OPAQUE;
+                if (renderTargetJson.getBool(L"SortTransparent", true))
+                    renderFlags |= LITE3D_RENDER_SORT_TRANSPARENT;
+
+                RenderTarget::RenderLayers layers;
+                auto colorLayer = renderTargetJson.getInt(L"ColorLayer", -1);
+                auto depthLayer = renderTargetJson.getInt(L"DepthLayer", -1);
+                if (colorLayer >= 0)
+                {
+                    layers.emplace_back(lite3d_framebuffer_layer { LITE3D_FRAMEBUFFER_USE_COLOR_BUFFER, colorLayer });
+                }
+
+                if (depthLayer >= 0)
+                {
+                    layers.emplace_back(lite3d_framebuffer_layer { LITE3D_FRAMEBUFFER_USE_DEPTH_BUFFER, depthLayer });
+                }
         
-                renderTarget->addCamera(camera, this, renderTargetJson.getInt(L"TexturePass"),
+                renderTarget->addCamera(camera, this, renderTargetJson.getInt(L"TexturePass"), layers,
                     renderTargetJson.getInt(L"Priority"), renderFlags);
             }
 
@@ -435,6 +457,35 @@ namespace lite3dpp
         }
     }
 
+    int Scene::customVisibilityCheck(struct lite3d_scene *scene, 
+            struct lite3d_scene_node *node, struct lite3d_mesh_chunk *meshChunk, 
+            struct lite3d_material *material, struct lite3d_bounding_vol *boundingVol,
+            struct lite3d_camera *camera)
+    {
+        SDL_assert(scene->userdata);
+        SDL_assert(material->userdata);
+        SDL_assert(node->userdata);
+        SDL_assert(camera->userdata);
+
+        try
+        {
+            LITE3D_EXT_OBSERVER_NOTIFY_CHECK_6(reinterpret_cast<Scene *>(scene->userdata), customVisibilityCheck, 
+                reinterpret_cast<Scene *>(scene->userdata),
+                reinterpret_cast<SceneNode *>(node->userdata),
+                meshChunk,
+                reinterpret_cast<Material *>(material->userdata),
+                boundingVol,
+                reinterpret_cast<Camera *>(camera->userdata));
+            LITE3D_EXT_OBSERVER_RETURN;
+        }
+        catch(std::exception &ex)
+        {
+            SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION, ex.what());
+        }
+
+        return LITE3D_FALSE;
+    }
+
     void Scene::beforeUpdateNodes(struct lite3d_scene *scene, struct lite3d_camera *camera)
     {
         SDL_assert(scene->userdata);
@@ -492,14 +543,14 @@ namespace lite3dpp
         }
     }
 
-    void Scene::beginFirstStageRender(struct lite3d_scene *scene, struct lite3d_camera *camera)
+    void Scene::beginOpaqueStageRender(struct lite3d_scene *scene, struct lite3d_camera *camera)
     {
         SDL_assert(scene->userdata);
         SDL_assert(camera->userdata);
 
         try
         {
-            LITE3D_EXT_OBSERVER_NOTIFY_2(reinterpret_cast<Scene *>(scene->userdata), beginFirstStageRender, 
+            LITE3D_EXT_OBSERVER_NOTIFY_2(reinterpret_cast<Scene *>(scene->userdata), beginOpaqueStageRender, 
                 reinterpret_cast<Scene *>(scene->userdata),
                 reinterpret_cast<Camera *>(camera->userdata));
         }
@@ -509,14 +560,14 @@ namespace lite3dpp
         }
     }
 
-    void Scene::beginSecondStageRender(struct lite3d_scene *scene, struct lite3d_camera *camera)
+    void Scene::beginBlendingStageRender(struct lite3d_scene *scene, struct lite3d_camera *camera)
     {
         SDL_assert(scene->userdata);
         SDL_assert(camera->userdata);
 
         try
         {
-            LITE3D_EXT_OBSERVER_NOTIFY_2(reinterpret_cast<Scene *>(scene->userdata), beginSecondStageRender, 
+            LITE3D_EXT_OBSERVER_NOTIFY_2(reinterpret_cast<Scene *>(scene->userdata), beginBlendingStageRender, 
                 reinterpret_cast<Scene *>(scene->userdata),
                 reinterpret_cast<Camera *>(camera->userdata));
         }

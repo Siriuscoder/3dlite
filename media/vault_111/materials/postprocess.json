@@ -1,0 +1,40 @@
+{
+  "Passes":[
+    {
+      "Pass":1,
+      "Program":{
+        "Name":"postprocess.program",
+        "Path":"vault_111:shaders/json/postprocess.json"
+      }
+    }
+  ],
+  "Uniforms":[
+    {
+      "Name":"screenMatrix"
+    },
+    {
+      "Name":"combined",
+      "TextureName": "combined.texture",
+      "Type":"sampler"
+    },
+    {
+      "Name":"bloom",
+      "TextureName": "bloom_slice_0.texture",
+      "Type":"sampler"
+    },
+    {
+      "Name":"GammaFactor",
+      "Type":"float",
+      "Value": 2.2,
+      "Scope":"global"
+    },
+    {
+      "Name":"screenResolution",
+      "Type":"v3",
+      "Value":[
+        0,0,0
+      ],
+      "Scope":"global"
+    }
+  ]
+}

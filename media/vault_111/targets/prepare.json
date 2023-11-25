@@ -1,0 +1,41 @@
+{
+    "Width": 0, // use screen wight
+    "Height": 0, // use screen height
+    "BackgroundColor": [0.0, 0.0, 0.0, 1.0],
+    "Priority": 3, // render after shadow depth
+    "CleanColorBuf": true,
+    "CleanDepthBuf": false,
+    "CleanStencilBuf": false,
+    
+    "ColorAttachments":
+    {
+        "Attachments":
+        [
+            {
+                "TextureName": "deffered_render_data.texture", // Fragment world coords
+                "TexturePath": "samples:textures/json/rgba32f_array4.json",
+                "Layer": 0
+            },
+            {
+                "TextureName": "deffered_render_data.texture", // Fragment world normal
+                "TexturePath": "samples:textures/json/rgba32f_array4.json",
+                "Layer": 1
+            },
+            {
+                "TextureName": "deffered_render_data.texture", // Albedo, diffuse colour 
+                "TexturePath": "samples:textures/json/rgba32f_array4.json",
+                "Layer": 2
+            },
+            {
+                "TextureName": "deffered_render_data.texture", // Specular PBR parameters
+                "TexturePath": "samples:textures/json/rgba32f_array4.json",
+                "Layer": 3
+            }
+        ]
+    },
+    
+    "DepthAttachments":
+    {
+        "TextureName": "mainDepth.texture"
+    }
+}

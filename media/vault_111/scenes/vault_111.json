@@ -14,18 +14,60 @@
       ],
       "Perspective": {
         "Znear": 10,
-        "Zfar": 5000,
+        "Zfar": 4500,
         "Fov": 60
       },
       "RenderTargets": [
         {
-          "Name": "Window",
+          "Name": "DepthPass",
+          "Path": "vault_111:targets/depth.json",
           "Priority": 0,
-          "TexturePass": 1
+          "TexturePass": 1,
+          "RenderBlend": false,
+          "DepthTest": true,
+          "ColorOutput": false,
+          "DepthOutput": true,
+          "RenderInstancing": true
+        },
+        {
+          "Name": "ShadowPass",
+          "Path": "vault_111:targets/shadow.json",
+          "Priority": 0,
+          "TexturePass": 3,
+          "RenderBlend": false,
+          "DepthTest": true,
+          "ColorOutput": false,
+          "DepthOutput": true,
+          "CustomVisibilityCheck": true,
+          "RenderInstancing": true
+        },
+        {
+          "Name": "RenderPass",
+          "Path": "vault_111:targets/prepare.json",
+          "Priority": 0,
+          "TexturePass": 2,
+          "RenderBlend": false,
+          "DepthTest": true,
+          "ColorOutput": true,
+          "DepthOutput": false,
+          "RenderInstancing": true
+        },
+        {
+          "Name": "CombineStep",
+          "Path": "vault_111:targets/combine.json",
+          "Priority": 1,
+          "TexturePass": 2,
+          "RenderBlend": true,
+          "RenderOpaque": false,
+          "DepthTest": true,
+          "ColorOutput": true,
+          "DepthOutput": true,
+          "RenderInstancing": true
         }
       ]
     }
   ],
+  "LightingTechnique": "UBO",
   "Objects": [
     {
       "Name": "VaultStatic",
@@ -260,6 +302,66 @@
         0.0,
         0.5489334464073181,
         0.8358660936355591
+      ],
+      "Scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "Name": "LightSpot.003",
+      "Object": "vault_111:objects/LightSpot.json",
+      "Position": [
+        258.4481201171875,
+        421.09674072265625,
+        411.9341735839844
+      ],
+      "Rotation": [
+        0.7071067690849304,
+        -0.7071067690849304,
+        2.2197247062649694e-07,
+        2.2197247062649694e-07
+      ],
+      "Scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "Name": "LightSpot",
+      "Object": "vault_111:objects/LightSpot.json",
+      "Position": [
+        387.2598876953125,
+        -43.431396484375,
+        239.0
+      ],
+      "Rotation": [
+        -0.7071067690849304,
+        -0.7071067690849304,
+        -2.2197247062649694e-07,
+        2.2197247062649694e-07
+      ],
+      "Scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "Name": "LightSpot.002",
+      "Object": "vault_111:objects/LightSpot.json",
+      "Position": [
+        -252.74000549316406,
+        -299.431396484375,
+        239.0
+      ],
+      "Rotation": [
+        -0.7071067690849304,
+        -0.7071067690849304,
+        -2.2197247062649694e-07,
+        2.2197247062649694e-07
       ],
       "Scale": [
         1.0,

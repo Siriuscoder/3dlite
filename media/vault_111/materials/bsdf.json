@@ -2,24 +2,50 @@
   "Passes":[
     {
       "Pass": 1,
-      "Program": {
-        "Name":"basic_shading_light.program",
-        "Path":"samples:shaders/json/basic_shading_light.json"
-      }
-    }
-  ],
-  "Uniforms":[
-    {
-      "Name":"projectionMatrix"
+      "Program":{
+        "Name":"depth.program",
+        "Path":"vault_111:shaders/json/depth.json"
+      },
+      "Uniforms":[
+        {
+          "Name":"projViewMatrix"
+        }
+      ]
     },
     {
-      "Name":"viewMatrix"
+      "Pass": 2,
+      "Program":{
+        "Name":"bsdf_prepare.program",
+        "Path":"vault_111:shaders/json/bsdf_prepare.json"
+      },
+      "Uniforms":[
+        {
+          "Name":"<Albedo>"
+        },
+        {
+          "Name":"<Normal>"
+        },
+        {
+          "Name":"<Specular>"
+        },
+        {
+          "Name":"projViewMatrix"
+        }
+      ]
     },
     {
-      "Name":"modelMatrix"
-    },
-    {
-      "Name":"<Albedo>"
+      "Pass": 3,
+      "Program":{
+        "Name":"shadow.program",
+        "Path":"vault_111:shaders/json/shadow.json"
+      },
+      "Uniforms":[
+        {
+          "Name":"ShadowMatrix",
+          "UBOName":"ShadowMatrixBuffer",
+          "Type":"UBO"
+        }
+      ]
     }
   ]
 }

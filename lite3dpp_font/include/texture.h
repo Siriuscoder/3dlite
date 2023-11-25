@@ -5,7 +5,6 @@
 #include <vector>
 
 #include "rect.h"
-#include "mathlib.h"
 
 namespace nw
 {

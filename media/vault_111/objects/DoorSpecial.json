@@ -1,0 +1,103 @@
+{
+  "Root": {
+    "Name": "DoorSpecial",
+    "Mesh": {
+      "Mesh": "vault_111:models/json/DoorFrame.json",
+      "Name": "DoorFrame.mesh"
+    },
+    "Nodes": [
+      {
+        "Name": "DoorLiftBottomSpecial",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/DoorLiftBottomSpecial.json",
+          "Name": "DoorLiftBottomSpecial.mesh"
+        },
+        "Position": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "DoorLiftUpperSpecial",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/DoorLiftUpperSpecial.json",
+          "Name": "DoorLiftUpperSpecial.mesh"
+        },
+        "Position": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "Floorslat01Special",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/Floorslat01.json",
+          "Name": "Floorslat01.mesh"
+        },
+        "Position": [
+          -1.6101072333185584e-06,
+          21.32651710510254,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "Floorslat02Special",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/Floorslat02.json",
+          "Name": "Floorslat02.mesh"
+        },
+        "Position": [
+          1.610013896424789e-06,
+          -21.325281143188477,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      }
+    ]
+  }
+}
