@@ -34,8 +34,8 @@
         {
           "Name": "Specular",
           "Type": "sampler",
-          "TextureName": "VMegaPanels01_s.texture",
-          "TexturePath": "vault_111:textures/json/VMegaPanels01_s.json"
+          "TextureName": "V111LabelSet03_s.texture",
+          "TexturePath": "vault_111:textures/json/V111LabelSet03_s.json"
         },
         {
           "Name": "projViewMatrix"
