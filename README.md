@@ -44,7 +44,7 @@ Samples
 After successfully compiling you can find some samples in bin directory. To provide samples work correctly you must download 
 resources packs [vault.pkg](https://drive.google.com/file/d/1JhsirjKwMq51IBg7GknUeZLGvrVKp1Sz/view?usp=sharing) and [sponza.pkg](https://drive.google.com/file/d/1GGtPep7soS1wPJsf4Y2FTiF23E-JXFQ9/view?usp=sharing) and put its to media/packs/
 
-You can download resources for Vault_111 sample from [here](https://drive.google.com/file/d/1NdWl8YrjAWy8cyKYfN3t2nI4tcj5PI82/view?usp=sharing), this 7z archive contains textures and models folders, you must copy this folders to media/vault_111 and anjoy this awesome sample.
+You can download resources for Vault_111 sample from [here](https://drive.google.com/file/d/1oxnfRbR7WcTECcI7BDKBBqPwPlCcbx9J/view?usp=sharing), this 7z archive contains textures and models folders, you must copy this folders to media/vault_111 and anjoy this awesome sample.
 
 Screenshots
 -----------

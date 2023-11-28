@@ -518,8 +518,6 @@ int lite3d_texture_unit_from_resource(lite3d_texture_unit *textureUnit,
         return LITE3D_FALSE;
     }
 
-    apply_image_filters();
-
     /* retrive */
     imageWidth = ilGetInteger(IL_IMAGE_WIDTH);
     imageHeight = ilGetInteger(IL_IMAGE_HEIGHT);
@@ -596,6 +594,8 @@ int lite3d_texture_unit_from_resource(lite3d_texture_unit *textureUnit,
             ilBindImage(imageDesc);
             ilActiveFace(imageFace);
             ilActiveMipmap(mipLevel);
+
+            apply_image_filters();
 
             lWidth = ilGetInteger(IL_IMAGE_WIDTH);
             lHeight = ilGetInteger(IL_IMAGE_HEIGHT);

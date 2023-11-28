@@ -19,7 +19,7 @@ vec3 GetFixedWorldNormal(mat3 tbn, vec2 iuv)
     // Flip Y channel to fix model texcoords flip while export models (FlipUV)
     nt.y = 1.0 - nt.y;
     // put normal in [-1,1] range in tangent space
-    nt = normalize(2.0 * nt - 1.0);
+    nt = 2.0 * clamp(nt, 0.0, 1.0) - 1.0;
     // Refix Z (may be missing)
     nt.z = sqrt(1.0 - dot(nt.xy, nt.xy));
     // trasform normal to world space using common TBN
