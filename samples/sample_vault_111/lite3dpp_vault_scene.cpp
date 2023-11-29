@@ -25,6 +25,20 @@ class SampleVault111 : public Sample
 {
 public:
 
+    struct SpotLightWithShadow
+    {
+        SceneNode* spot = nullptr;
+        SampleShadowManager::ShadowCaster* shadowCaster = nullptr;
+
+        void rotateAngle(const kmVec3 &axis, float angle)
+        {
+            spot->rotateAngle(axis, angle);
+            shadowCaster->invalidate();
+        }
+    };
+
+public:
+
     void createScene() override
     {
         mShadowManager = std::make_unique<SampleShadowManager>(getMain());
@@ -73,16 +87,21 @@ public:
 
         // Установим тень для трех прожекторов и потом будем их вращать
         // Источники света получаем по ObjectName + NodeName
-        mShadowManager->newShadowCaster(mVaultScene->getLightNode("LightSpotLightSpotNode"));
-        mSpot01 = mVaultScene->getObject("LightSpot")->getNode("LightSpotLamp");
+        mSpot01 = SpotLightWithShadow {
+            mVaultScene->getObject("LightSpot")->getNode("LightSpotLamp"),
+            mShadowManager->newShadowCaster(mVaultScene->getLightNode("LightSpotLightSpotNode"))
+        };
 
-        mShadowManager->newShadowCaster(mVaultScene->getLightNode("LightSpot.002LightSpotNode"));
-        mSpot02 = mVaultScene->getObject("LightSpot.002")->getNode("LightSpotLamp");
-        mSpot02->rotateAngle(KM_VEC3_POS_Z, kmDegreesToRadians(40.0));
+        mSpot02 = SpotLightWithShadow {
+            mVaultScene->getObject("LightSpot.002")->getNode("LightSpotLamp"),
+            mShadowManager->newShadowCaster(mVaultScene->getLightNode("LightSpot.002LightSpotNode"))
+        };
 
-        mShadowManager->newShadowCaster(mVaultScene->getLightNode("LightSpot.003LightSpotNode"));
-        mSpot03 = mVaultScene->getObject("LightSpot.003")->getNode("LightSpotLamp");
-
+        mSpot03 = SpotLightWithShadow {
+            mVaultScene->getObject("LightSpot.003")->getNode("LightSpotLamp"),
+            mShadowManager->newShadowCaster(mVaultScene->getLightNode("LightSpot.003LightSpotNode"))
+        };
+        
         mShadowManager->newShadowCaster(mVaultScene->getLightNode("VaultStaticRotorSpot"));
     }
 
@@ -135,7 +154,7 @@ public:
         mMinigun01->getNode("MinigunBarrel")->rotateAngle(KM_VEC3_POS_Y, 0.13 * deltaRetard);
         mMinigun02->getNode("Minigun")->rotateAngle(KM_VEC3_POS_Z, -cosA * 0.02);
         mMinigun02->getNode("MinigunBarrel")->rotateAngle(KM_VEC3_POS_Y, 0.13 * deltaRetard);
-        mSpot03->rotateAngle(KM_VEC3_POS_Z, 0.1 * deltaRetard);
+        mSpot03.rotateAngle(KM_VEC3_POS_Z, 0.1 * deltaRetard);
 
         std::for_each(mFans.begin(), mFans.end(), [deltaRetard](SceneNode *fanRotor)
         {
@@ -143,7 +162,6 @@ public:
         });
 
         mVaultScene->getObject("VaultStatic")->getNode("GearKeySpinner")->rotateAngle(KM_VEC3_POS_X, 0.15 * deltaRetard);
-        mShadowManager->rebuild();
     }
 
     void processEvent(SDL_Event *e) override
@@ -160,13 +178,11 @@ public:
             }
             else if (e->key.keysym.sym == SDLK_p)
             {
-                mSpot01->rotateAngle(KM_VEC3_POS_Z, 0.10 * (e->key.keysym.mod & KMOD_LCTRL ? -1.0 : 1.0));
-                mShadowManager->rebuild();
+                mSpot01.rotateAngle(KM_VEC3_POS_Z, 0.10 * (e->key.keysym.mod & KMOD_LCTRL ? -1.0 : 1.0));
             }
             else if (e->key.keysym.sym == SDLK_o)
             {
-                mSpot02->rotateAngle(KM_VEC3_POS_Z, 0.10 * (e->key.keysym.mod & KMOD_LCTRL ? -1.0 : 1.0));
-                mShadowManager->rebuild();
+                mSpot02.rotateAngle(KM_VEC3_POS_Z, 0.10 * (e->key.keysym.mod & KMOD_LCTRL ? -1.0 : 1.0));
             }
             else if (e->key.keysym.sym == SDLK_k)
             {
@@ -182,8 +198,6 @@ public:
                     pos.x = -58.0f;
                     mGearKey->setPosition(pos);
                 }
-
-                mShadowManager->rebuild();
             }
         }
     }
@@ -195,9 +209,9 @@ private:
     std::unique_ptr<SampleShadowManager> mShadowManager;
     std::unique_ptr<SampleBloomEffect> mBloomEffectRenderer;
     std::unique_ptr<LightSceneNode> mFlashLight;
-    SceneNode* mSpot01 = nullptr;
-    SceneNode* mSpot02 = nullptr;
-    SceneNode* mSpot03 = nullptr;
+    SpotLightWithShadow mSpot01;
+    SpotLightWithShadow mSpot02;
+    SpotLightWithShadow mSpot03;
     SceneNode* mGearKey = nullptr;
     stl<SceneNode *>::vector mFans;
     SceneObject* mMinigun01 = nullptr;

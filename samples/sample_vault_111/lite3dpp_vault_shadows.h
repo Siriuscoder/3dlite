@@ -30,6 +30,10 @@ class SampleShadowManager : public RenderTargetObserver, public SceneObserver
 {
 public:
 
+    using IndexVector = stl<uint32_t>::vector;
+
+public:
+
     class ShadowCaster 
     {
     public:
@@ -63,10 +67,26 @@ public:
             return mShadowCamera;
         }
 
+        inline bool invalidated() const
+        {
+            return mInvalideted;
+        }
+
+        inline void validate()
+        {
+            mInvalideted = false;
+        }
+
+        inline void invalidate()
+        {
+            mInvalideted = true;
+        }
+
     private:
 
         LightSceneNode* mLightNode = nullptr;
         Camera* mShadowCamera = nullptr;
+        bool mInvalideted = false;
     };
 
     SampleShadowManager(Main& main) : 
@@ -74,6 +94,8 @@ public:
     {
         mShadowMatrixBuffer = mMain.getResourceManager()->queryResourceFromJson<UBO>("ShadowMatrixBuffer",
             "{\"Dynamic\": false}");
+        mShadowIndexBuffer = mMain.getResourceManager()->queryResourceFromJson<UBO>("ShadowIndexBuffer",
+            "{\"Dynamic\": true}");
     }
 
     ShadowCaster* newShadowCaster(LightSceneNode* node)
@@ -87,34 +109,37 @@ public:
         return mShadowCasters.back().get();
     }
 
-    // Перерисовать теневые буферы на следующем кадре
-    void rebuild()
-    {
-        if (mShadowRT)
-        {
-            // Сделаем перересовку если только хотя бы один источник света отбрасывающий тень находится в кадре
-            if (std::any_of(mShadowCasters.begin(), mShadowCasters.end(), [](const std::unique_ptr<ShadowCaster>& sc)
-            {
-                return sc->getNode()->isVisible();
-            }))
-            {
-                mShadowRT->enable();
-            }
-        }
-    }
-
 protected:
 
     bool beginUpdate(RenderTarget *rt) override
     { 
         mShadowRT = rt;
         SDL_assert(mShadowMatrixBuffer);
-        // Обновим матрицы по всем источникам отбрасывающим тень.
+        mHostShadowIndexes.resize(1, 0); // Reserve 0 index for size
+        // Обновим матрицы по всем источникам отбрасывающим тень которые влияют на текущий кадр
         for (uint32_t index = 0; index < mShadowCasters.size(); ++index)
         {
-            auto mat = mShadowCasters[index]->getMatrix();
-            mShadowMatrixBuffer->setElement<kmMat4>(index, &mat);
+            auto &shadowCaster = mShadowCasters[index];
+            if (shadowCaster->invalidated() && shadowCaster->getNode()->isVisible())
+            {
+                auto mat = shadowCaster->getMatrix();
+                mShadowMatrixBuffer->setElement<kmMat4>(index, &mat);
+                mHostShadowIndexes.emplace_back(index);
+            }
         }
+
+        mHostShadowIndexes[0] = static_cast<IndexVector::value_type>(mHostShadowIndexes.size()-1);
+        // Если тени перересовывать не надо то просто переходим к следующией RT
+        if (mHostShadowIndexes.size() == 1)
+        {
+            return false;
+        }
+
+        // Расширяем буфер индексов если надо
+        if (mShadowIndexBuffer->bufferSizeBytes() < (mHostShadowIndexes.size() * sizeof(IndexVector::value_type)))
+            mShadowIndexBuffer->extendBufferBytes((mHostShadowIndexes.size() * sizeof(IndexVector::value_type)) - mShadowIndexBuffer->bufferSizeBytes());
+        
+        mShadowIndexBuffer->setData(&mHostShadowIndexes[0], 0, mHostShadowIndexes.size() * sizeof(IndexVector::value_type));
 
         if (!mMainCamera)
         {
@@ -135,7 +160,12 @@ protected:
     {
         return std::any_of(mShadowCasters.begin(), mShadowCasters.end(), [boundingVol](const std::unique_ptr<ShadowCaster>& sc)
         {
-            return sc->getCamera()->inFrustum(*boundingVol);
+            if (sc->invalidated())
+            {
+                return sc->getCamera()->inFrustum(*boundingVol);
+            }
+
+            return false;
         });
     }
 
@@ -143,9 +173,10 @@ protected:
     {
         // После рендера теневых карт возвращаем как было
         mMainCamera->setCullFaceMode(Camera::CullFaceBack);
-        // Отключим рендер теней после обновления всех теней, результаты будут валидны до тех пор пока ориентация и позиция
-        // источника света и обьектов отбрасывающих тень не изменится
-        rt->disable();
+        for (auto& shadowCaster : mShadowCasters)
+        {
+            shadowCaster->validate();
+        }
     }
 
 private:
@@ -154,6 +185,8 @@ private:
     Camera* mMainCamera = nullptr;
     RenderTarget* mShadowRT = nullptr;
     BufferBase* mShadowMatrixBuffer = nullptr;
+    BufferBase* mShadowIndexBuffer = nullptr;
+    IndexVector mHostShadowIndexes;
     stl<std::unique_ptr<ShadowCaster>>::vector mShadowCasters;
 };
 
