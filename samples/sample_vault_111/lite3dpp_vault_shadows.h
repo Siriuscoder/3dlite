@@ -89,6 +89,61 @@ public:
         bool mInvalideted = false;
     };
 
+    class DynamicNode
+    {
+    public:
+    
+        using ShadowCasters = stl<ShadowCaster *>::vector;
+
+        DynamicNode(SceneNode *node) : 
+            mNode(node)
+        {}
+
+        void move(const kmVec3 &value)
+        {
+            SDL_assert(mNode);
+            mNode->move(value);
+        }
+
+        void rotateAngle(const kmVec3 &axis, float angle)
+        {
+            SDL_assert(mNode);
+            mNode->rotateAngle(axis, angle);
+            invalidate();
+        }
+
+        void setPosition(const kmVec3 &pos)
+        {
+            SDL_assert(mNode);
+            mNode->setPosition(pos);
+            invalidate();
+        }
+
+        const kmVec3& getPosition() const
+        {
+            SDL_assert(mNode);
+            return mNode->getPosition();
+        }
+
+        ShadowCasters& getVisibility()
+        {
+            return mVisibility;
+        }
+
+    private:
+
+        void invalidate()
+        {
+            for (auto shadowCaster: mVisibility)
+            {
+                shadowCaster->invalidate();
+            }
+        }
+
+        SceneNode *mNode = nullptr;
+        ShadowCasters mVisibility;
+    };
+
     SampleShadowManager(Main& main) : 
         mMain(main)
     {
@@ -107,6 +162,12 @@ public:
         // Аллоцируем место под теневую матрицу 
         mShadowMatrixBuffer->extendBufferBytes(sizeof(kmMat4));
         return mShadowCasters.back().get();
+    }
+
+    DynamicNode* registerDynamicNode(SceneNode *node)
+    {
+        auto it = mDynamicNodes.emplace(node, DynamicNode(node));
+        return &it.first->second;
     }
 
 protected:
@@ -158,24 +219,42 @@ protected:
     bool customVisibilityCheck(Scene *scene, SceneNode *node, lite3d_mesh_chunk *meshChunk, Material *material, 
         lite3d_bounding_vol *boundingVol, Camera *camera) override
     {
-        return std::any_of(mShadowCasters.begin(), mShadowCasters.end(), [boundingVol](const std::unique_ptr<ShadowCaster>& sc)
+        auto it = mDynamicNodes.find(node);
+        DynamicNode* dnode = nullptr;
+        if (it != mDynamicNodes.end())
         {
-            if (sc->invalidated())
-            {
-                return sc->getCamera()->inFrustum(*boundingVol);
-            }
+            dnode = &it->second;
+            dnode->getVisibility().clear();
+        }
 
-            return false;
-        });
+        bool isVisible = false;
+        for (auto& shadowCaster: mShadowCasters)
+        {
+            if (shadowCaster->getCamera()->inFrustum(*boundingVol))
+            {
+                if (dnode)
+                {
+                    dnode->getVisibility().emplace_back(shadowCaster.get());
+                }
+
+                //if (shadowCaster->invalidated())
+                {
+                    isVisible = true;
+                }
+            }
+        }
+
+        return isVisible;
     }
 
     void postUpdate(RenderTarget *rt) override
     {
         // После рендера теневых карт возвращаем как было
         mMainCamera->setCullFaceMode(Camera::CullFaceBack);
-        for (auto& shadowCaster : mShadowCasters)
+        // Валидейтим только перересованные тени, остальные будут перерисованы потом когда попадут в область видимости
+        for (auto index : mHostShadowIndexes)
         {
-            shadowCaster->validate();
+            mShadowCasters[index]->validate();
         }
     }
 
@@ -188,6 +267,7 @@ private:
     BufferBase* mShadowIndexBuffer = nullptr;
     IndexVector mHostShadowIndexes;
     stl<std::unique_ptr<ShadowCaster>>::vector mShadowCasters;
+    stl<SceneNode *, DynamicNode>::unordered_map mDynamicNodes;
 };
 
 }}
