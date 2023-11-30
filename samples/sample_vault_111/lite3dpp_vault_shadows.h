@@ -17,9 +17,6 @@
  *******************************************************************************/
 #pragma once 
 
-#include <string>
-#include <algorithm>
-
 #include <SDL_assert.h>
 #include <sample_common/lite3dpp_common.h>
 
@@ -30,7 +27,7 @@ class SampleShadowManager : public RenderTargetObserver, public SceneObserver
 {
 public:
 
-    using IndexVector = stl<uint32_t>::vector;
+    using IndexVector = stl<int32_t>::vector;
 
 public:
 
@@ -197,9 +194,12 @@ protected:
         }
 
         // Расширяем буфер индексов если надо
-        if (mShadowIndexBuffer->bufferSizeBytes() < (mHostShadowIndexes.size() * sizeof(IndexVector::value_type)))
-            mShadowIndexBuffer->extendBufferBytes((mHostShadowIndexes.size() * sizeof(IndexVector::value_type)) - mShadowIndexBuffer->bufferSizeBytes());
-        
+        if (mShadowIndexBuffer->bufferSizeBytes() < mHostShadowIndexes.size() * sizeof(IndexVector::value_type))
+        {
+            mShadowIndexBuffer->extendBufferBytes(mHostShadowIndexes.size() * sizeof(IndexVector::value_type) - 
+                mShadowIndexBuffer->bufferSizeBytes());
+        }
+
         mShadowIndexBuffer->setData(&mHostShadowIndexes[0], 0, mHostShadowIndexes.size() * sizeof(IndexVector::value_type));
 
         if (!mMainCamera)
@@ -237,7 +237,7 @@ protected:
                     dnode->getVisibility().emplace_back(shadowCaster.get());
                 }
 
-                //if (shadowCaster->invalidated())
+                if (shadowCaster->invalidated())
                 {
                     isVisible = true;
                 }
