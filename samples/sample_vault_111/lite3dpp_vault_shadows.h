@@ -83,7 +83,7 @@ public:
 
         LightSceneNode* mLightNode = nullptr;
         Camera* mShadowCamera = nullptr;
-        bool mInvalideted = false;
+        bool mInvalideted = true;
     };
 
     class DynamicNode
@@ -100,6 +100,7 @@ public:
         {
             SDL_assert(mNode);
             mNode->move(value);
+            invalidate();
         }
 
         void rotateAngle(const kmVec3 &axis, float angle)
@@ -122,9 +123,17 @@ public:
             return mNode->getPosition();
         }
 
-        ShadowCasters& getVisibility()
+        void clearVisibility()
         {
-            return mVisibility;
+            mVisibility.clear();
+        }
+
+        void addVisibility(ShadowCaster* sc)
+        {
+            if (std::find(mVisibility.begin(), mVisibility.end(), sc) == mVisibility.end())
+            {
+                mVisibility.emplace_back(sc);
+            }
         }
 
     private:
@@ -173,14 +182,15 @@ protected:
     { 
         mShadowRT = rt;
         SDL_assert(mShadowMatrixBuffer);
+
         mHostShadowIndexes.resize(1, 0); // Reserve 0 index for size
         // Обновим матрицы по всем источникам отбрасывающим тень которые влияют на текущий кадр
         for (uint32_t index = 0; index < mShadowCasters.size(); ++index)
         {
             auto &shadowCaster = mShadowCasters[index];
+            auto mat = shadowCaster->getMatrix();
             if (shadowCaster->invalidated() && shadowCaster->getNode()->isVisible())
             {
-                auto mat = shadowCaster->getMatrix();
                 mShadowMatrixBuffer->setElement<kmMat4>(index, &mat);
                 mHostShadowIndexes.emplace_back(index);
             }
@@ -190,6 +200,7 @@ protected:
         // Если тени перересовывать не надо то просто переходим к следующией RT
         if (mHostShadowIndexes.size() == 1)
         {
+            mShadowRT = nullptr;
             return false;
         }
 
@@ -211,8 +222,31 @@ protected:
         // Так как формально мы рендерим сцену от лица главной камеры, надо имменно для главной камеры на время рендера 
         // теневых карт включить отсечение лицевых граней
         mMainCamera->setCullFaceMode(Camera::CullFaceFront);
+        // Так как мы используем texture_array для хранения теневых карт мы в режиме layered render мы не можем подчистить
+        // отдельную карту теней, а перерисовываем мы не все. Для очистки только нужных теневых карт используем предварительный 
+        // проход с BigTriangle (сцена shadow_clean) устанавливающий во все фрагменты теневого буфера значение 1.0, но дело в том что его надо 
+        // выполянть без проверки глубины, а при выключении ZTEST запись в буфер глубины невозможна, поэтому включаем 
+        // ZTEST и устанавливаем TestFuncAlways для гарантированной перезаписи буфера грубины. Но перед рендером теней надо будет 
+        // переключить обратно 
+        RenderTarget::depthTestFunc(RenderTarget::TestFuncAlways);
 
         return true;
+    }
+
+    bool beginSceneRender(Scene *scene, Camera *camera) override
+    { 
+        // Только пока теневой RT активен
+        if (mShadowRT)
+        {
+            RenderTarget::depthTestFunc(RenderTarget::TestFuncLEqual);
+            // Подчистим списки источников света для которых эта нода видима перед проверкой фрустума.
+            for (auto& node: mDynamicNodes)
+            {
+                node.second.clearVisibility();
+            }
+        }
+
+        return true; 
     }
 
     // Проверим виден ли обьект сцены хотябы одной теневой камерой, если нет то рисовать его смысла нет.
@@ -220,12 +254,7 @@ protected:
         lite3d_bounding_vol *boundingVol, Camera *camera) override
     {
         auto it = mDynamicNodes.find(node);
-        DynamicNode* dnode = nullptr;
-        if (it != mDynamicNodes.end())
-        {
-            dnode = &it->second;
-            dnode->getVisibility().clear();
-        }
+        DynamicNode* dnode = it != mDynamicNodes.end() ? &it->second : nullptr;
 
         bool isVisible = false;
         for (auto& shadowCaster: mShadowCasters)
@@ -234,7 +263,8 @@ protected:
             {
                 if (dnode)
                 {
-                    dnode->getVisibility().emplace_back(shadowCaster.get());
+                    // Текущая нода видима для этого истоника света, запомним это
+                    dnode->addVisibility(shadowCaster.get());
                 }
 
                 if (shadowCaster->invalidated())
@@ -252,10 +282,12 @@ protected:
         // После рендера теневых карт возвращаем как было
         mMainCamera->setCullFaceMode(Camera::CullFaceBack);
         // Валидейтим только перересованные тени, остальные будут перерисованы потом когда попадут в область видимости
-        for (auto index : mHostShadowIndexes)
+        for (size_t i = 1; i < mHostShadowIndexes.size(); ++i)
         {
-            mShadowCasters[index]->validate();
+            mShadowCasters[mHostShadowIndexes[i]]->validate();
         }
+
+        mShadowRT = nullptr;
     }
 
 private:

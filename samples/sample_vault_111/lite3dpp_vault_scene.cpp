@@ -79,6 +79,7 @@ public:
         mShadowManager = std::make_unique<SampleShadowManager>(getMain());
         mBloomEffectRenderer = std::make_unique<SampleBloomEffect>(getMain());
         mVaultScene = getMain().getResourceManager()->queryResource<Scene>("Vault_111", "vault_111:scenes/vault_111.json");
+        getMain().getResourceManager()->queryResource<Scene>("ShadowClean", "vault_111:scenes/shadow_clean.json");
         setMainCamera(getMain().getCamera("MyCamera"));
 
         setupShadowCasters();
@@ -234,6 +235,20 @@ public:
                     mGearKey->setPosition(pos);
                 }
             }
+            else if (e->key.keysym.sym == SDLK_KP_PLUS)
+            {
+                mGammaFactor += 0.02;
+                if (mGammaFactor > 3.0)
+                    mGammaFactor = 3.0;
+                Material::setFloatGlobalParameter("GammaFactor", mGammaFactor);
+            }
+            else if (e->key.keysym.sym == SDLK_KP_MINUS)
+            {
+                mGammaFactor -= 0.02;
+                if (mGammaFactor < 1.5)
+                    mGammaFactor = 1.5;
+                Material::setFloatGlobalParameter("GammaFactor", mGammaFactor);
+            }
         }
     }
 
@@ -253,6 +268,7 @@ private:
     MinigunObject mMinigun01;
     MinigunObject mMinigun02;
     float mAnimPi = 0.0f;
+    float mGammaFactor = 2.2f;
 };
 
 }}

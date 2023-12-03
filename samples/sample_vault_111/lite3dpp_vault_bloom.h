@@ -118,7 +118,7 @@ private:
         for (size_t i = 0; i < mTextureChain.size(); ++i)
         {
             /* Загрузим для каждого слоя свой полноэкранный треугольник (используем уже готовый postprocess, материал заменим потом) */
-            SceneObject *bloomSliceObj = mBloomRernderer->addObject(matName + std::to_string(i), "vault_111:objects/postprocess.json", NULL);
+            SceneObject *bloomSliceObj = mBloomRernderer->addObject(matName + std::to_string(i), "vault_111:objects/Postprocess.json", NULL);
             /* Загрузим для каждого слоя материал, downsample а потом upsample */
             Material *material = mMain.getResourceManager()->queryResource<Material>(matName + std::to_string(i) + ".material", 
                 (i <= mTextureChain.size() / 2) ? "vault_111:materials/bloom_downsample.json" : "vault_111:materials/bloom_upsample.json");
