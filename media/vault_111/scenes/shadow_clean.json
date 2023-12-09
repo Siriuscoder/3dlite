@@ -2,7 +2,7 @@
     "Cameras":
     [
         {
-            "Name": "PostRenderCamera",
+            "Name": "CleanShadowCamera",
 
             "Position": [0,0,0.5],
             "LookAt": [0,0,0],
@@ -18,11 +18,13 @@
             "RenderTargets":
             [
                 {
-                    "Name": "Window",
+                    "Name": "ShadowPass",
+                    "Path": "vault_111:targets/shadow.json",
                     "Priority": 0,
                     "TexturePass": 1,
-                    "DepthTest": false,
-                    "DepthOutput": false
+                    "DepthTest": true,
+                    "ColorOutput": false,
+                    "DepthOutput": true
                 }
             ]
         }
@@ -32,7 +34,7 @@
     [
         {
             "Name": "BigTriangleGeom",
-            "Object": "vault_111:objects/Postprocess.json"
+            "Object": "vault_111:objects/ShadowClean.json"
         }
     ]
 }

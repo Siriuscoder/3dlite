@@ -1,0 +1,8 @@
+{
+    "Sources": 
+    [
+        "vault_111:shaders/sources/bigtriangle.vs",
+        "vault_111:shaders/sources/shadow_clean_split.gs",
+        "vault_111:shaders/sources/depth_clean.fs"
+    ]
+}

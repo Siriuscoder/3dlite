@@ -47,6 +47,11 @@
           "Name":"ShadowMatrix",
           "UBOName":"ShadowMatrixBuffer",
           "Type":"UBO"
+        },
+        {
+          "Name":"ShadowIndex",
+          "UBOName":"ShadowIndexBuffer",
+          "Type":"UBO"
         }
       ]
     }

@@ -1,0 +1,21 @@
+{
+  "Passes":[
+    {
+      "Pass": 1,
+      "Program":{
+        "Name":"shadow_clean.program",
+        "Path":"vault_111:shaders/json/shadow_clean.json"
+      },
+      "Uniforms":[
+        {
+          "Name":"screenMatrix"
+        },
+        {
+          "Name":"ShadowIndex",
+          "UBOName":"ShadowIndexBuffer",
+          "Type":"UBO"
+        }
+      ]
+    }
+  ]
+}

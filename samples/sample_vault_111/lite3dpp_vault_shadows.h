@@ -17,9 +17,6 @@
  *******************************************************************************/
 #pragma once 
 
-#include <string>
-#include <algorithm>
-
 #include <SDL_assert.h>
 #include <sample_common/lite3dpp_common.h>
 
@@ -28,6 +25,10 @@ namespace samples {
 
 class SampleShadowManager : public RenderTargetObserver, public SceneObserver
 {
+public:
+
+    using IndexVector = stl<int32_t>::vector;
+
 public:
 
     class ShadowCaster 
@@ -63,10 +64,90 @@ public:
             return mShadowCamera;
         }
 
+        inline bool invalidated() const
+        {
+            return mInvalideted;
+        }
+
+        inline void validate()
+        {
+            mInvalideted = false;
+        }
+
+        inline void invalidate()
+        {
+            mInvalideted = true;
+        }
+
     private:
 
         LightSceneNode* mLightNode = nullptr;
         Camera* mShadowCamera = nullptr;
+        bool mInvalideted = true;
+    };
+
+    class DynamicNode
+    {
+    public:
+    
+        using ShadowCasters = stl<ShadowCaster *>::vector;
+
+        DynamicNode(SceneNode *node) : 
+            mNode(node)
+        {}
+
+        void move(const kmVec3 &value)
+        {
+            SDL_assert(mNode);
+            mNode->move(value);
+            invalidate();
+        }
+
+        void rotateAngle(const kmVec3 &axis, float angle)
+        {
+            SDL_assert(mNode);
+            mNode->rotateAngle(axis, angle);
+            invalidate();
+        }
+
+        void setPosition(const kmVec3 &pos)
+        {
+            SDL_assert(mNode);
+            mNode->setPosition(pos);
+            invalidate();
+        }
+
+        const kmVec3& getPosition() const
+        {
+            SDL_assert(mNode);
+            return mNode->getPosition();
+        }
+
+        void clearVisibility()
+        {
+            mVisibility.clear();
+        }
+
+        void addVisibility(ShadowCaster* sc)
+        {
+            if (std::find(mVisibility.begin(), mVisibility.end(), sc) == mVisibility.end())
+            {
+                mVisibility.emplace_back(sc);
+            }
+        }
+
+    private:
+
+        void invalidate()
+        {
+            for (auto shadowCaster: mVisibility)
+            {
+                shadowCaster->invalidate();
+            }
+        }
+
+        SceneNode *mNode = nullptr;
+        ShadowCasters mVisibility;
     };
 
     SampleShadowManager(Main& main) : 
@@ -74,6 +155,8 @@ public:
     {
         mShadowMatrixBuffer = mMain.getResourceManager()->queryResourceFromJson<UBO>("ShadowMatrixBuffer",
             "{\"Dynamic\": false}");
+        mShadowIndexBuffer = mMain.getResourceManager()->queryResourceFromJson<UBO>("ShadowIndexBuffer",
+            "{\"Dynamic\": true}");
     }
 
     ShadowCaster* newShadowCaster(LightSceneNode* node)
@@ -87,20 +170,10 @@ public:
         return mShadowCasters.back().get();
     }
 
-    // Перерисовать теневые буферы на следующем кадре
-    void rebuild()
+    DynamicNode* registerDynamicNode(SceneNode *node)
     {
-        if (mShadowRT)
-        {
-            // Сделаем перересовку если только хотя бы один источник света отбрасывающий тень находится в кадре
-            if (std::any_of(mShadowCasters.begin(), mShadowCasters.end(), [](const std::unique_ptr<ShadowCaster>& sc)
-            {
-                return sc->getNode()->isVisible();
-            }))
-            {
-                mShadowRT->enable();
-            }
-        }
+        auto it = mDynamicNodes.emplace(node, DynamicNode(node));
+        return &it.first->second;
     }
 
 protected:
@@ -109,12 +182,36 @@ protected:
     { 
         mShadowRT = rt;
         SDL_assert(mShadowMatrixBuffer);
-        // Обновим матрицы по всем источникам отбрасывающим тень.
+
+        mHostShadowIndexes.resize(1, 0); // Reserve 0 index for size
+        // Обновим матрицы по всем источникам отбрасывающим тень которые влияют на текущий кадр
         for (uint32_t index = 0; index < mShadowCasters.size(); ++index)
         {
-            auto mat = mShadowCasters[index]->getMatrix();
-            mShadowMatrixBuffer->setElement<kmMat4>(index, &mat);
+            auto &shadowCaster = mShadowCasters[index];
+            auto mat = shadowCaster->getMatrix();
+            if (shadowCaster->invalidated() && shadowCaster->getNode()->isVisible())
+            {
+                mShadowMatrixBuffer->setElement<kmMat4>(index, &mat);
+                mHostShadowIndexes.emplace_back(index);
+            }
         }
+
+        mHostShadowIndexes[0] = static_cast<IndexVector::value_type>(mHostShadowIndexes.size()-1);
+        // Если тени перересовывать не надо то просто переходим к следующией RT
+        if (mHostShadowIndexes.size() == 1)
+        {
+            mShadowRT = nullptr;
+            return false;
+        }
+
+        // Расширяем буфер индексов если надо
+        if (mShadowIndexBuffer->bufferSizeBytes() < mHostShadowIndexes.size() * sizeof(IndexVector::value_type))
+        {
+            mShadowIndexBuffer->extendBufferBytes(mHostShadowIndexes.size() * sizeof(IndexVector::value_type) - 
+                mShadowIndexBuffer->bufferSizeBytes());
+        }
+
+        mShadowIndexBuffer->setData(&mHostShadowIndexes[0], 0, mHostShadowIndexes.size() * sizeof(IndexVector::value_type));
 
         if (!mMainCamera)
         {
@@ -125,27 +222,72 @@ protected:
         // Так как формально мы рендерим сцену от лица главной камеры, надо имменно для главной камеры на время рендера 
         // теневых карт включить отсечение лицевых граней
         mMainCamera->setCullFaceMode(Camera::CullFaceFront);
+        // Так как мы используем texture_array для хранения теневых карт мы в режиме layered render мы не можем подчистить
+        // отдельную карту теней, а перерисовываем мы не все. Для очистки только нужных теневых карт используем предварительный 
+        // проход с BigTriangle (сцена shadow_clean) устанавливающий во все фрагменты теневого буфера значение 1.0, но дело в том что его надо 
+        // выполянть без проверки глубины, а при выключении ZTEST запись в буфер глубины невозможна, поэтому включаем 
+        // ZTEST и устанавливаем TestFuncAlways для гарантированной перезаписи буфера грубины. Но перед рендером теней надо будет 
+        // переключить обратно 
+        RenderTarget::depthTestFunc(RenderTarget::TestFuncAlways);
 
         return true;
+    }
+
+    bool beginSceneRender(Scene *scene, Camera *camera) override
+    { 
+        // Только пока теневой RT активен
+        if (mShadowRT)
+        {
+            RenderTarget::depthTestFunc(RenderTarget::TestFuncLEqual);
+            // Подчистим списки источников света для которых эта нода видима перед проверкой фрустума.
+            for (auto& node: mDynamicNodes)
+            {
+                node.second.clearVisibility();
+            }
+        }
+
+        return true; 
     }
 
     // Проверим виден ли обьект сцены хотябы одной теневой камерой, если нет то рисовать его смысла нет.
     bool customVisibilityCheck(Scene *scene, SceneNode *node, lite3d_mesh_chunk *meshChunk, Material *material, 
         lite3d_bounding_vol *boundingVol, Camera *camera) override
     {
-        return std::any_of(mShadowCasters.begin(), mShadowCasters.end(), [boundingVol](const std::unique_ptr<ShadowCaster>& sc)
+        auto it = mDynamicNodes.find(node);
+        DynamicNode* dnode = it != mDynamicNodes.end() ? &it->second : nullptr;
+
+        bool isVisible = false;
+        for (auto& shadowCaster: mShadowCasters)
         {
-            return sc->getCamera()->inFrustum(*boundingVol);
-        });
+            if (shadowCaster->getCamera()->inFrustum(*boundingVol))
+            {
+                if (dnode)
+                {
+                    // Текущая нода видима для этого истоника света, запомним это
+                    dnode->addVisibility(shadowCaster.get());
+                }
+
+                if (shadowCaster->invalidated())
+                {
+                    isVisible = true;
+                }
+            }
+        }
+
+        return isVisible;
     }
 
     void postUpdate(RenderTarget *rt) override
     {
         // После рендера теневых карт возвращаем как было
         mMainCamera->setCullFaceMode(Camera::CullFaceBack);
-        // Отключим рендер теней после обновления всех теней, результаты будут валидны до тех пор пока ориентация и позиция
-        // источника света и обьектов отбрасывающих тень не изменится
-        rt->disable();
+        // Валидейтим только перересованные тени, остальные будут перерисованы потом когда попадут в область видимости
+        for (size_t i = 1; i < mHostShadowIndexes.size(); ++i)
+        {
+            mShadowCasters[mHostShadowIndexes[i]]->validate();
+        }
+
+        mShadowRT = nullptr;
     }
 
 private:
@@ -154,7 +296,10 @@ private:
     Camera* mMainCamera = nullptr;
     RenderTarget* mShadowRT = nullptr;
     BufferBase* mShadowMatrixBuffer = nullptr;
+    BufferBase* mShadowIndexBuffer = nullptr;
+    IndexVector mHostShadowIndexes;
     stl<std::unique_ptr<ShadowCaster>>::vector mShadowCasters;
+    stl<SceneNode *, DynamicNode>::unordered_map mDynamicNodes;
 };
 
 }}

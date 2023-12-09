@@ -4,7 +4,7 @@
     "BackgroundColor": [0.0, 0.0, 0.0, 1.0],
     "Priority": 2, // After depth
     "CleanColorBuf": false,
-    "CleanDepthBuf": true,
+    "CleanDepthBuf": false, // Do not clean depth !!!
     "CleanStencilBuf": false,
     "LayeredFramebuffer": true,
         

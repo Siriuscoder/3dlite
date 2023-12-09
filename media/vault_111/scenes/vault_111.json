@@ -32,7 +32,7 @@
         {
           "Name": "ShadowPass",
           "Path": "vault_111:targets/shadow.json",
-          "Priority": 0,
+          "Priority": 1,
           "TexturePass": 3,
           "RenderBlend": false,
           "DepthTest": true,
