@@ -19,6 +19,7 @@
 #define	LITE3D_MESH_H
 
 #include <lite3d/lite3d_common.h>
+#include <lite3d/lite3d_array.h>
 #include <lite3d/lite3d_vbo.h>
 #include <lite3d/lite3d_vao.h>
 #include <lite3d/lite3d_frustum.h>
@@ -55,14 +56,12 @@ typedef struct lite3d_mesh
     lite3d_vbo *auxBuffer;
     uint32_t verticesCount;
     uint32_t elementsCount;
-    uint32_t chunkCount;
-    lite3d_list chunks;
+    lite3d_array chunks;
     void *userdata;
 } lite3d_mesh;
 
 typedef struct lite3d_mesh_chunk
 {
-    lite3d_list_node node;
     lite3d_vao vao;
     uint32_t layoutEntriesCount;
     lite3d_mesh_layout *layout;

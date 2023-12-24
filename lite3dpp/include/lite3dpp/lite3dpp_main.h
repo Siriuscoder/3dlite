@@ -21,7 +21,6 @@
 #include <lite3dpp/lite3dpp_common.h>
 #include <lite3dpp/lite3dpp_manageable.h>
 #include <lite3dpp/lite3dpp_resource_manager.h>
-#include <lite3dpp/lite3dpp_script_dispatcher.h>
 #include <lite3dpp/lite3dpp_config_reader.h>
 #include <lite3dpp/lite3dpp_scene.h>
 #include <lite3dpp/lite3dpp_render_target.h>
@@ -57,8 +56,6 @@ namespace lite3dpp
 
         inline ResourceManager *getResourceManager()
         { return &mResourceManager; }
-        inline ScriptDispatcher *getScriptDispatcher()
-        { return &mScriptDispatcher; }
         inline lite3d_timer *getFixedUpdateTimer()
         { return mFixedUpdatesTimer; }
         WindowRenderTarget *window();
@@ -94,7 +91,6 @@ namespace lite3dpp
     private:
 
         ResourceManager mResourceManager;
-        ScriptDispatcher mScriptDispatcher;
         std::unique_ptr<ConfigurationReader> mConfig;
         lite3d_global_settings mSettings;
         Timers mTimers;

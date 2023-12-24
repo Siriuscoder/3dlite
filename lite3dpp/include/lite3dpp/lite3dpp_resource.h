@@ -41,8 +41,7 @@ namespace lite3dpp
 
         enum ResourceType : int32_t
         {
-            SCRIPT = 0,
-            MESH,
+            MESH = 1,
             SCENE,
             MATERIAL,
             TEXTURE,

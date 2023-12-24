@@ -129,15 +129,13 @@ static int _load_mesh_from_stream(lite3d_mesh *mesh, SDL_RWops *stream)
 size_t lite3d_mesh_m_encode_size(lite3d_mesh *mesh)
 {
     size_t result = 0;
-    lite3d_list_node *vaoLink;
     lite3d_mesh_chunk *meshChunk;
     SDL_assert(mesh);
 
     result += sizeof (lite3d_m_header);
-    for (vaoLink = mesh->chunks.l.next;
-        vaoLink != &mesh->chunks.l; vaoLink = lite3d_list_next(vaoLink))
+
+    LITE3D_ARR_FOREACH(&mesh->chunks, lite3d_mesh_chunk, meshChunk)
     {
-        meshChunk = LITE3D_MEMBERCAST(lite3d_mesh_chunk, vaoLink, node);
         result += sizeof (lite3d_m_chunk);
         result += sizeof (lite3d_m_chunk_layout) * meshChunk->layoutEntriesCount;
     }
@@ -236,7 +234,7 @@ int lite3d_mesh_m_decode(lite3d_mesh *mesh,
             return LITE3D_FALSE;
 
         /* set material index to currently added meshChunk */
-        thisChunk = LITE3D_MEMBERCAST(lite3d_mesh_chunk, lite3d_list_last_link(&mesh->chunks), node);
+        thisChunk = lite3d_array_get(&mesh->chunks, mesh->chunks.size - 1);
         thisChunk->materialIndex = mchunk.materialIndex;
         thisChunk->boundingVol = mchunk.boundingVol;
 
@@ -267,7 +265,6 @@ int lite3d_mesh_m_decode(lite3d_mesh *mesh,
 int lite3d_mesh_m_encode(lite3d_mesh *mesh,
     void *buffer, size_t size)
 {
-    lite3d_list_node *vaoLink;
     lite3d_mesh_chunk *meshChunk;
     lite3d_m_header mheader;
     lite3d_m_chunk mchunk;
@@ -281,14 +278,12 @@ int lite3d_mesh_m_encode(lite3d_mesh *mesh,
     mheader.version = LITE3D_VERSION_NUM;
     mheader.vertexSectionSize = (int32_t)mesh->vertexBuffer.size;
     mheader.indexSectionSize = (int32_t)mesh->indexBuffer.size;
-    mheader.chunkCount = mesh->chunkCount;
+    mheader.chunkCount = mesh->chunks.size;
     mheader.chunkSectionSize = 0;
 
 
-    for (vaoLink = mesh->chunks.l.next;
-        vaoLink != &mesh->chunks.l; vaoLink = lite3d_list_next(vaoLink))
+    LITE3D_ARR_FOREACH(&mesh->chunks, lite3d_mesh_chunk, meshChunk)
     {
-        meshChunk = LITE3D_MEMBERCAST(lite3d_mesh_chunk, vaoLink, node);
         mheader.chunkSectionSize += sizeof (lite3d_m_chunk);
         mheader.chunkSectionSize += sizeof (lite3d_m_chunk_layout) * meshChunk->layoutEntriesCount;
     }
@@ -303,11 +298,9 @@ int lite3d_mesh_m_encode(lite3d_mesh *mesh,
     }
 
     /* write chunks data */
-    for (vaoLink = mesh->chunks.l.next;
-        vaoLink != &mesh->chunks.l; vaoLink = lite3d_list_next(vaoLink))
+    LITE3D_ARR_FOREACH(&mesh->chunks, lite3d_mesh_chunk, meshChunk)
     {
         int i = 0;
-        meshChunk = LITE3D_MEMBERCAST(lite3d_mesh_chunk, vaoLink, node);
 
         memset(&mchunk, 0, sizeof(mchunk));
         mchunk.chunkSize = sizeof (lite3d_m_chunk) +

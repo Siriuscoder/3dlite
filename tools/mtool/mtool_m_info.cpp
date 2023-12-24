@@ -57,7 +57,6 @@ void MeshInfoCommand::printInfo(const lite3d_file *meshFile)
 {
     lite3d_mesh mesh;
     lite3d_mesh_chunk *meshChunk;
-    lite3d_list_node *chunkNode;
     int chunksCount = 0;
 
     if (!lite3d_mesh_init(&mesh))
@@ -79,14 +78,12 @@ void MeshInfoCommand::printInfo(const lite3d_file *meshFile)
     printf("\tElements count: %u\n", mesh.elementsCount);
     printf("\tRaw size: %zu bytes\n\n", mesh.indexBuffer.size);
 
-    printf("Chunks count: %u\n\n", mesh.chunkCount);
-    for (chunkNode = mesh.chunks.l.next; chunkNode != &mesh.chunks.l;
-        chunkNode = lite3d_list_next(chunkNode), ++chunksCount)
+    printf("Chunks count: %zu\n\n", mesh.chunks.size);
+
+    LITE3D_ARR_FOREACH(&mesh.chunks, lite3d_mesh_chunk, meshChunk)
     {
         uint32_t i;
         size_t offset = 0;
-
-        meshChunk = LITE3D_MEMBERCAST(lite3d_mesh_chunk, chunkNode, node);
 
         printf("CHUNK %d\n", chunksCount);
         printf("\tMaterial index %d\n", meshChunk->materialIndex);
@@ -118,6 +115,8 @@ void MeshInfoCommand::printInfo(const lite3d_file *meshFile)
         printf("\n\tStride: %zu bytes \n", offset);
         printf("\tBounding sphere : (%f,%f,%f) radius %f\n\n", meshChunk->boundingVol.sphereCenter.x,
             meshChunk->boundingVol.sphereCenter.y, meshChunk->boundingVol.sphereCenter.z, meshChunk->boundingVol.radius);
+
+        chunksCount++;
     }
 
     lite3d_mesh_purge(&mesh);
