@@ -152,7 +152,7 @@ int lite3d_mesh_m_decode(lite3d_mesh *mesh,
     lite3d_m_header mheader;
     lite3d_m_chunk mchunk;
     lite3d_m_chunk_layout layout;
-    lite3d_mesh_layout meshLayout[CHUNK_LAYOUT_MAX_COUNT];
+    lite3d_vao_layout meshLayout[CHUNK_LAYOUT_MAX_COUNT];
     register int32_t i = 0;
     size_t indOffset = 0;
     size_t vertOffset = 0;
@@ -228,13 +228,14 @@ int lite3d_mesh_m_decode(lite3d_mesh *mesh,
         }
 
         /* append new batch */
-        if (!lite3d_mesh_append_chunk(mesh, meshLayout, mchunk.chunkLayoutCount, stride,
+        if (!(thisChunk = lite3d_mesh_append_chunk(mesh, meshLayout, mchunk.chunkLayoutCount, stride,
             lite3d_index_component_type_by_size(mchunk.indexElemSize), mchunk.indexesCount,
-            mchunk.indexesSize, indOffset, mchunk.verticesCount, mchunk.verticesSize, vertOffset))
+            mchunk.indexesSize, indOffset, mchunk.verticesCount, mchunk.verticesSize, vertOffset)))
+        {
             return LITE3D_FALSE;
+        }
 
         /* set material index to currently added meshChunk */
-        thisChunk = lite3d_array_get(&mesh->chunks, mesh->chunks.size - 1);
         thisChunk->materialIndex = mchunk.materialIndex;
         thisChunk->boundingVol = mchunk.boundingVol;
 

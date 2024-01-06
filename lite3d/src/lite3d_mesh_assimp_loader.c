@@ -55,7 +55,7 @@ static int ai_node_load_to_vbo(lite3d_mesh *meshInst, const struct aiScene *scen
     const struct aiNode *node, uint16_t access)
 {
     uint8_t componentSize;
-    lite3d_mesh_layout layout[4 + AI_MAX_NUMBER_OF_COLOR_SETS + AI_MAX_NUMBER_OF_TEXTURECOORDS];
+    lite3d_vao_layout layout[4 + AI_MAX_NUMBER_OF_COLOR_SETS + AI_MAX_NUMBER_OF_TEXTURECOORDS];
     uint32_t layoutCount;
     size_t verticesSize;
     size_t indexesSize;

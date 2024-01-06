@@ -172,7 +172,7 @@ lite3d_mesh_chunk *lite3d_mesh_chunk_get_by_index(struct lite3d_mesh *mesh,
 }
 
 lite3d_mesh_chunk *lite3d_mesh_append_chunk(lite3d_mesh *mesh,
-    const lite3d_mesh_layout *layout,
+    const lite3d_vao_layout *layout,
     uint32_t layoutCount,
     uint32_t stride,
     uint16_t componentType,
@@ -184,67 +184,32 @@ lite3d_mesh_chunk *lite3d_mesh_append_chunk(lite3d_mesh *mesh,
     size_t verticesOffset)
 {
     lite3d_mesh_chunk meshChunk;
-    uint32_t attribIndex = 0, i = 0;
-    size_t vOffset = verticesOffset;
-
     if (!lite3d_mesh_chunk_init(&meshChunk, LITE3D_TRUE))
     {
         return NULL;
     }
 
     meshChunk.mesh = mesh;
-    meshChunk.layout = (lite3d_mesh_layout *) lite3d_malloc(sizeof (lite3d_mesh_layout) * layoutCount);
-    SDL_assert_release(meshChunk.layout);
-
-    /* VAO set current */
-    glBindVertexArray(meshChunk.vao.vaoID);
-    /* use single VBO to store all data */
-    glBindBuffer(mesh->vertexBuffer.role, mesh->vertexBuffer.vboID);
-    /* bind all arrays and attribs into the current VAO */
-    for (; i < layoutCount; ++i)
+    meshChunk.layout = (lite3d_vao_layout *) lite3d_malloc(sizeof (lite3d_vao_layout) * layoutCount);
+    if (!meshChunk.layout)
     {
-        glEnableVertexAttribArray(attribIndex);
-        glVertexAttribPointer(attribIndex++, layout[i].count, GL_FLOAT,
-            GL_FALSE, stride, LITE3D_BUFFER_OFFSET(vOffset));
-
-        vOffset += layout[i].count * sizeof (GLfloat);
-        meshChunk.layout[i] = layout[i];
+        lite3d_mesh_chunk_purge(&meshChunk);
+        return NULL;
     }
 
-    // setup buffers for instancing rendering 
-    if (mesh->auxBuffer)
+    memcpy(meshChunk.layout, layout, layoutCount * sizeof(lite3d_vao_layout));
+
+    if (!lite3d_vao_init_layout(&mesh->vertexBuffer, &mesh->indexBuffer, mesh->auxBuffer, 
+        &meshChunk.vao, meshChunk.layout, layoutCount, stride, componentType, indexesCount, 
+        indexesSize, indexesOffset, verticesCount, verticesSize, verticesOffset))
     {
-        glBindBuffer(mesh->vertexBuffer.role, mesh->auxBuffer->vboID);
-        for(i = 0; i < 4; ++i)
-        {
-            glEnableVertexAttribArray(attribIndex);
-            glVertexAttribPointer(attribIndex, 4, GL_FLOAT, GL_FALSE, sizeof(kmMat4), LITE3D_BUFFER_OFFSET(i * sizeof(kmVec4)));
-            glVertexAttribDivisor(attribIndex++, 1);
-        }
+        lite3d_mesh_chunk_purge(&meshChunk);
+        return NULL;
     }
 
-    if (indexesCount > 0 && indexesSize > 0)
-    {
-        glBindBuffer(mesh->indexBuffer.role, mesh->indexBuffer.vboID);
-        meshChunk.hasIndexes = LITE3D_TRUE;
-    }
-    else
-    {
-        meshChunk.hasIndexes = LITE3D_FALSE;
-    }
-
-    /* end VAO binding */
-    glBindVertexArray(0);
-
-    meshChunk.vao.indexesOffset = indexesOffset;
-    meshChunk.vao.indexType = componentType;
-    meshChunk.vao.indexesCount = indexesCount;
-    meshChunk.vao.indexesSize = indexesSize;
-    meshChunk.vao.verticesCount = verticesCount;
-    meshChunk.vao.verticesSize = verticesSize;
-    meshChunk.vao.verticesOffset = verticesOffset;
+    meshChunk.vertexStride = stride;
     meshChunk.layoutEntriesCount = layoutCount;
-    meshChunk.vao.elementsCount = (indexesCount > 0 ? indexesCount : verticesCount) / 3;
+    meshChunk.hasIndexes = indexesCount > 0 && indexesSize > 0 ? LITE3D_TRUE : LITE3D_FALSE;
 
     LITE3D_ARR_ADD_ELEM(&mesh->chunks, lite3d_mesh_chunk, meshChunk);
 

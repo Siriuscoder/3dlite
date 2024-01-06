@@ -269,9 +269,9 @@ static int initCube(void)
         22, 23, 20
     };
 
-    const lite3d_mesh_layout layout[] = {
-        { LITE3D_BUFFER_BINDING_ATTRIBUTE, 3},
-        { LITE3D_BUFFER_BINDING_ATTRIBUTE, 2}
+    const lite3d_vao_layout layout[] = {
+        { LITE3D_BUFFER_BINDING_VERTEX, 3},
+        { LITE3D_BUFFER_BINDING_TEXCOORD, 2}
     };
 
     if (!lite3d_mesh_init(&mCubeVbo))

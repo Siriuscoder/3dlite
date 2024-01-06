@@ -24,6 +24,7 @@
 #include <lite3d/lite3d_glext.h>
 #include <lite3d/lite3d_alloc.h>
 #include <lite3d/lite3d_misc.h>
+#include <lite3d/lite3d_kazmath.h>
 #include <lite3d/lite3d_vao.h>
 
 static int instancingSupport;
@@ -164,3 +165,66 @@ void lite3d_vao_purge(struct lite3d_vao *vao)
     vao->vaoID = 0;
 }
 
+int lite3d_vao_init_layout(struct lite3d_vbo *vertexBuffer,
+    struct lite3d_vbo *indexBuffer,
+    struct lite3d_vbo *auxBuffer,
+    struct lite3d_vao *vao, 
+    const struct lite3d_vao_layout *layout, 
+    uint32_t layoutCount, 
+    uint32_t stride, 
+    uint16_t componentType,
+    uint32_t indexesCount,
+    size_t indexesSize,
+    size_t indexesOffset,
+    uint32_t verticesCount,
+    size_t verticesSize,
+    size_t verticesOffset)
+{
+    uint32_t attribIndex = 0, i = 0;
+    size_t vOffset = verticesOffset;
+
+    /* VAO set current */
+    glBindVertexArray(vao->vaoID);
+    /* use single VBO to store all data */
+    glBindBuffer(vertexBuffer->role, vertexBuffer->vboID);
+    /* bind all arrays and attribs into the current VAO */
+    for (; i < layoutCount; ++i)
+    {
+        glEnableVertexAttribArray(attribIndex);
+        glVertexAttribPointer(attribIndex++, layout[i].count, GL_FLOAT,
+            GL_FALSE, stride, LITE3D_BUFFER_OFFSET(vOffset));
+
+        vOffset += layout[i].count * sizeof (GLfloat);
+    }
+
+    // setup buffers for instancing rendering 
+    if (auxBuffer)
+    {
+        glBindBuffer(auxBuffer->role, auxBuffer->vboID);
+        for(i = 0; i < 4; ++i)
+        {
+            glEnableVertexAttribArray(attribIndex);
+            glVertexAttribPointer(attribIndex, 4, GL_FLOAT, GL_FALSE, sizeof(kmMat4), LITE3D_BUFFER_OFFSET(i * sizeof(kmVec4)));
+            glVertexAttribDivisor(attribIndex++, 1);
+        }
+    }
+
+    if (indexesCount > 0 && indexesSize > 0 && indexBuffer)
+    {
+        glBindBuffer(indexBuffer->role, indexBuffer->vboID);
+    }
+
+    /* end VAO binding */
+    glBindVertexArray(0);
+
+    vao->elementsCount = (indexesCount > 0 ? indexesCount : verticesCount) / 3;
+    vao->indexType = componentType;
+    vao->indexesOffset = indexesOffset;
+    vao->indexesCount = indexesCount;
+    vao->indexesSize = indexesSize;
+    vao->verticesCount = verticesCount;
+    vao->verticesSize = verticesSize;
+    vao->verticesOffset = verticesOffset;
+    vao->indexType = componentType;
+    return LITE3D_TRUE;
+}

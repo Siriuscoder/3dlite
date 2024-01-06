@@ -153,9 +153,9 @@ namespace lite3dpp
             size.x, 0.0f, 0.0f, 1.0f, 0.0f
         };
 
-        const lite3d_mesh_layout layout[] = {
-            { LITE3D_BUFFER_BINDING_ATTRIBUTE, 3},
-            { LITE3D_BUFFER_BINDING_ATTRIBUTE, 2}
+        const lite3d_vao_layout layout[] = {
+            { LITE3D_BUFFER_BINDING_VERTEX, 3},
+            { LITE3D_BUFFER_BINDING_TEXCOORD, 2}
         };
 
         if (!lite3d_mesh_load_from_memory(&mMesh, vertices, 6, layout, 2, dynamic ? LITE3D_VBO_DYNAMIC_DRAW : LITE3D_VBO_STATIC_DRAW))
@@ -174,8 +174,8 @@ namespace lite3dpp
             0.0f, 2.0f
         };
 
-        const lite3d_mesh_layout layout[] = {
-            { LITE3D_BUFFER_BINDING_ATTRIBUTE, 2}
+        const lite3d_vao_layout layout[] = {
+            { LITE3D_BUFFER_BINDING_VERTEX, 2}
         };
 
         if (!lite3d_mesh_load_from_memory(&mMesh, vertices, 3, layout, 1, dynamic ? LITE3D_VBO_DYNAMIC_DRAW : LITE3D_VBO_STATIC_DRAW))
@@ -232,8 +232,8 @@ namespace lite3dpp
             center.x+(size.x/2),  center.y-(size.y/2), center.z+(size.z/2)
         };
         
-        const lite3d_mesh_layout layout[] = {
-            { LITE3D_BUFFER_BINDING_ATTRIBUTE, 3}
+        const lite3d_vao_layout layout[] = {
+            { LITE3D_BUFFER_BINDING_VERTEX, 3}
         };
         
         kmVec3 vmax = {center.x+(size.x/2), center.y+(size.y/2), center.z+(size.z/2)}, 
@@ -248,8 +248,8 @@ namespace lite3dpp
 
     void Mesh::genArray(const stl<kmVec3>::vector &points, const kmVec3 &bbmin, const kmVec3 &bbmax, bool dynamic)
     {
-        const lite3d_mesh_layout layout[] = {
-            { LITE3D_BUFFER_BINDING_ATTRIBUTE, 3 }
+        const lite3d_vao_layout layout[] = {
+            { LITE3D_BUFFER_BINDING_VERTEX, 3 }
         };
 
         if (!lite3d_mesh_load_from_memory(&mMesh, &points[0], static_cast<uint32_t>(points.size()), 

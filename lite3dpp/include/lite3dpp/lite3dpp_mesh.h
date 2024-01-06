@@ -31,7 +31,7 @@ namespace lite3dpp
     {
     public:
         
-        typedef stl<lite3d_mesh_layout>::vector BufferLayout; 
+        typedef stl<lite3d_vao_layout>::vector BufferLayout; 
         typedef stl<int, Material *>::map MaterialMapping;
 
         Mesh(const String &name, 

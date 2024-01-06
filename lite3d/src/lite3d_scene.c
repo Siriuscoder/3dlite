@@ -115,7 +115,17 @@ static void mqr_render_batch(lite3d_material_pass *pass, _mqr_node *mqrNode)
         LITE3D_METRIC_CALL(lite3d_mesh_chunk_draw_instanced, (mqrNode->meshChunk, mqrNode->instancesCount))
     else
         LITE3D_METRIC_CALL(lite3d_mesh_chunk_draw, (mqrNode->meshChunk))
-    
+
+    if (lite3d_mesh_chunk_bb_exist(mqrNode->meshChunk))
+    {
+        lite3d_mesh_chunk_bind_bb(mqrNode->meshChunk);
+        lite3d_polygon_mode(LITE3D_POLYMODE_LINE);
+        lite3d_backface_culling(LITE3D_CULLFACE_NEVER);
+        LITE3D_METRIC_CALL(lite3d_mesh_chunk_draw_bb, (mqrNode->meshChunk))
+        lite3d_polygon_mode(scene->currentCamera->polygonMode);
+        lite3d_backface_culling(scene->currentCamera->cullFaceMode);
+    }
+
     scene->stats.batchCalled++;
     scene->stats.batchInstancedCalled++;
     scene->stats.trianglesRendered += mqrNode->meshChunk->vao.elementsCount * mqrNode->instancesCount;
