@@ -41,6 +41,7 @@ typedef struct _mqr_node
     lite3d_list_node unit;
     lite3d_scene_node *node;
     lite3d_mesh_chunk *meshChunk;
+    lite3d_mesh_chunk *bbMeshChunk;
     uint32_t instancesCount;
     lite3d_bounding_vol boundingVol;
     float distanceToCamera;
@@ -116,14 +117,18 @@ static void mqr_render_batch(lite3d_material_pass *pass, _mqr_node *mqrNode)
     else
         LITE3D_METRIC_CALL(lite3d_mesh_chunk_draw, (mqrNode->meshChunk))
 
-    if (lite3d_mesh_chunk_bb_exist(mqrNode->meshChunk))
+    if (mqrNode->bbMeshChunk)
     {
-        lite3d_mesh_chunk_bind_bb(mqrNode->meshChunk);
+        lite3d_mesh_chunk_bind(mqrNode->bbMeshChunk);
         lite3d_polygon_mode(LITE3D_POLYMODE_LINE);
         lite3d_backface_culling(LITE3D_CULLFACE_NEVER);
-        LITE3D_METRIC_CALL(lite3d_mesh_chunk_draw_bb, (mqrNode->meshChunk))
+        if (mqrNode->instancesCount > 1)
+            LITE3D_METRIC_CALL(lite3d_mesh_chunk_draw_instanced, (mqrNode->bbMeshChunk, mqrNode->instancesCount))
+        else
+            LITE3D_METRIC_CALL(lite3d_mesh_chunk_draw, (mqrNode->bbMeshChunk))
         lite3d_polygon_mode(scene->currentCamera->polygonMode);
         lite3d_backface_culling(scene->currentCamera->cullFaceMode);
+        scene->bindedMeshChunk = mqrNode->bbMeshChunk;
     }
 
     scene->stats.batchCalled++;
@@ -194,6 +199,17 @@ static void mqr_render_batch_series(lite3d_material_pass *pass, _mqr_node *mqrNo
 
         /* do render batch */
         LITE3D_METRIC_CALL(lite3d_mesh_chunk_draw_instanced, (mqrNode->meshChunk, continuedId+1))
+
+        if (mqrNode->bbMeshChunk)
+        {
+            lite3d_mesh_chunk_bind(mqrNode->bbMeshChunk);
+            lite3d_polygon_mode(LITE3D_POLYMODE_LINE);
+            lite3d_backface_culling(LITE3D_CULLFACE_NEVER);
+            LITE3D_METRIC_CALL(lite3d_mesh_chunk_draw_instanced, (mqrNode->bbMeshChunk, continuedId+1))
+            lite3d_polygon_mode(scene->currentCamera->polygonMode);
+            lite3d_backface_culling(scene->currentCamera->cullFaceMode);
+            scene->bindedMeshChunk = mqrNode->bbMeshChunk;
+        }
         
         scene->stats.batchCalled++;
         scene->stats.batchInstancedCalled += (continuedId+1);
@@ -602,9 +618,9 @@ int lite3d_scene_remove_node(lite3d_scene *scene, lite3d_scene_node *node)
     return LITE3D_TRUE;
 }
 
-int lite3d_scene_node_touch_material(
-    lite3d_scene_node *node, lite3d_mesh_chunk *meshChunk,
-    lite3d_material *material, uint32_t instancesCount)
+int lite3d_scene_node_touch_material(struct lite3d_scene_node *node, 
+    struct lite3d_mesh_chunk *meshChunk, struct lite3d_mesh_chunk *bbMeshChunk, 
+    struct lite3d_material *material, uint32_t instancesCount)
 {
     _mqr_unit *mqrUnit = NULL;
     _mqr_unit *mqrUnitTmp = NULL;
@@ -669,6 +685,7 @@ int lite3d_scene_node_touch_material(
     SDL_assert_release(mqrNode);
     /* relink render node */
     mqrNode->meshChunk = meshChunk;
+    mqrNode->bbMeshChunk = bbMeshChunk;
     mqrNode->boundingVol = meshChunk->boundingVol;
     mqrNode->instancesCount = instancesCount;
     mqrNode->matUnit = mqrUnit;

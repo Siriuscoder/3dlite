@@ -104,9 +104,9 @@ LITE3D_CEXPORT int lite3d_scene_add_node(lite3d_scene *scene,
 
 LITE3D_CEXPORT int lite3d_scene_remove_node(lite3d_scene *scene, lite3d_scene_node *node);
 
-LITE3D_CEXPORT int lite3d_scene_node_touch_material(
-    lite3d_scene_node *node, lite3d_mesh_chunk *meshChunk, 
-    lite3d_material *material, uint32_t instancesCount);
+LITE3D_CEXPORT int lite3d_scene_node_touch_material(struct lite3d_scene_node *node, 
+    struct lite3d_mesh_chunk *meshChunk, struct lite3d_mesh_chunk *bbMeshChunk, 
+    struct lite3d_material *material, uint32_t instancesCount);
 
 #endif	/* LITE3D_SCENE_H */
 

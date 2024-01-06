@@ -33,6 +33,7 @@ int lite3d_mesh_init(struct lite3d_mesh *mesh)
     SDL_assert(mesh);
 
     memset(mesh, 0, sizeof (lite3d_mesh));
+    mesh->version = LITE3D_VERSION_NUM;
     lite3d_array_init(&mesh->chunks, sizeof (lite3d_mesh_chunk), 1);
     
     if (lite3d_check_instanced_arrays())
@@ -41,13 +42,6 @@ int lite3d_mesh_init(struct lite3d_mesh *mesh)
         {
             if (!lite3d_vbo_init(&gAuxGlobalBuffer))
                 return LITE3D_FALSE;
-            /*
-            if (!lite3d_vbo_buffer(&gAuxGlobalBuffer, NULL, 20 * sizeof(kmMat4), LITE3D_VBO_DYNAMIC_DRAW))
-            {
-                SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "%s: Unable to setup auxiliary buffer",
-                    LITE3D_CURRENT_FUNCTION);
-                return LITE3D_FALSE;
-            }*/
         }
 
         mesh->auxBuffer = &gAuxGlobalBuffer;

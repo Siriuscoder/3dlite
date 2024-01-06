@@ -62,22 +62,6 @@ LITE3D_CEXPORT void lite3d_mesh_purge(struct lite3d_mesh *mesh);
 LITE3D_CEXPORT int lite3d_mesh_extend(struct lite3d_mesh *mesh, 
     size_t verticesSize, size_t indexesSize, uint16_t access);
 
-LITE3D_CEXPORT int lite3d_mesh_setup_vao_layout(struct lite3d_vbo *vertexBuffer,
-    struct lite3d_vbo *indexBuffer,
-    struct lite3d_vbo *auxBuffer,
-    struct lite3d_vao *vao, 
-    const struct lite3d_vao_layout *layout,
-    uint32_t layoutCount,
-    uint32_t stride,
-    uint16_t componentType,
-    uint32_t indexesCount,
-    size_t indexesSize,
-    size_t indexesOffset,
-    uint32_t verticesCount,
-    size_t verticesSize,
-    size_t verticesOffset);
-
-
 LITE3D_CEXPORT lite3d_mesh_chunk *lite3d_mesh_append_chunk(struct lite3d_mesh *mesh,
     const struct lite3d_vao_layout *layout,
     uint32_t layoutCount,

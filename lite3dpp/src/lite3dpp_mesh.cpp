@@ -32,6 +32,10 @@ namespace lite3dpp
     Mesh::~Mesh()
     {
         lite3d_mesh_purge(&mMesh);
+        if (getBBPtr())
+        {
+            lite3d_mesh_purge(&mBBMesh);
+        }
     }
 
     void Mesh::loadFromConfigImpl(const ConfigurationReader &helper)
@@ -45,6 +49,7 @@ namespace lite3dpp
         if (helper.getString(L"Model") == "Plain")
         {
             genPlain(helper.getVec2(L"PlainSize"), helper.getBool(L"Dynamic", false));
+            loadBBMesh();
         }
         else if (helper.getString(L"Model") == "BigTriangle")
         {
@@ -71,6 +76,8 @@ namespace lite3dpp
                 mMain->getResourceManager()->loadFileToMemory(helper.getString(L"Model")),
                 helper.getBool(L"Dynamic", false) ? LITE3D_VBO_DYNAMIC_DRAW : LITE3D_VBO_STATIC_DRAW))
                 LITE3D_THROW(getName() << ": could not load mesh chunk, bad format");
+            
+            loadBBMesh();
         }
 #ifdef INCLUDE_ASSIMP
         else
@@ -87,11 +94,24 @@ namespace lite3dpp
                 helper.getBool(L"Dynamic", false) ? LITE3D_VBO_DYNAMIC_DRAW : LITE3D_VBO_STATIC_DRAW,
                 flags))
                 LITE3D_THROW(getName() << ": could not load mesh chunk, bad format");
+
+            loadBBMesh();
         }
 #endif
 
         if(helper.getBool(L"MaterialMappingAutoOrdered", false))
+        {
             lite3d_mesh_order_mat_indexes(&mMesh);
+            if (getBBPtr())
+            {
+                if (mMesh.chunks.size != mBBMesh.chunks.size)
+                {
+                    LITE3D_THROW(getName() << ": Mesh and BBMesh has different chunks count, can not reorder material indexes");
+                }
+
+                lite3d_mesh_order_mat_indexes(&mBBMesh);
+            }
+        }
 
         for(auto &matMap : helper.getObjects(L"MaterialMapping"))
         {
@@ -104,7 +124,7 @@ namespace lite3dpp
 
     size_t Mesh::usedVideoMemBytes() const
     {
-        return mMesh.indexBuffer.size + mMesh.vertexBuffer.size;
+        return mMesh.indexBuffer.size + mMesh.vertexBuffer.size + mBBMesh.vertexBuffer.size;
     }
 
     void Mesh::unloadImpl()
@@ -118,6 +138,12 @@ namespace lite3dpp
             lite3d_vbo_buffer(&mMesh.vertexBuffer, NULL, 0, mMesh.vertexBuffer.access);
         if (mMesh.indexBuffer.size > 0)
             lite3d_vbo_buffer(&mMesh.indexBuffer, NULL, 0, mMesh.indexBuffer.access);
+
+        if (getBBPtr() && mBBMesh.vertexBuffer.size > 0)
+        {
+            VBO(mBBMesh.vertexBuffer).getData(mBBVertexData, 0, mBBMesh.vertexBuffer.size);
+            lite3d_vbo_buffer(&mBBMesh.vertexBuffer, NULL, 0, mBBMesh.vertexBuffer.access);
+        }
     }
 
     void Mesh::reloadFromConfigImpl(const ConfigurationReader &helper)
@@ -130,9 +156,14 @@ namespace lite3dpp
         if (mIndexData.size() > 0)
             if (!lite3d_vbo_buffer(&mMesh.indexBuffer, &mIndexData[0], mIndexData.size(), mMesh.indexBuffer.access))
                 LITE3D_THROW(getName() << ": failed to reload index buffer");
+
+        if (mBBVertexData.size() > 0)
+            if (!lite3d_vbo_buffer(&mBBMesh.vertexBuffer, &mBBVertexData[0], mBBVertexData.size(), mBBMesh.indexBuffer.access))
+                LITE3D_THROW(getName() << ": failed to reload BB vertex buffer");
         
         mVertexData.clear();
         mIndexData.clear();
+        mBBVertexData.clear();
     }
 
     void Mesh::mapMaterial(int unit, Material *material)
@@ -258,5 +289,113 @@ namespace lite3dpp
 
         lite3d_mesh_chunk *meshChunk = static_cast<lite3d_mesh_chunk *>(lite3d_array_get(&mMesh.chunks, mMesh.chunks.size - 1));
         lite3d_bounding_vol_setup(&meshChunk->boundingVol, &bbmin, &bbmax);
+    }
+
+    void Mesh::loadBBMesh()
+    {
+        lite3d_mesh_init(&mBBMesh);
+        mMesh.userdata = this;
+
+        lite3d_mesh_chunk *meshChunk;
+        BufferData vertexData;
+        const uint32_t boxVerticesCount = 36;
+
+        LITE3D_ARR_FOREACH(&mMesh.chunks, lite3d_mesh_chunk, meshChunk)
+        {
+            vertexData.resize(boxVerticesCount * meshChunk->vertexStride);
+            std::fill(vertexData.begin(), vertexData.end(), 0);
+            
+            kmVec3 vmin = meshChunk->boundingVol.box[0];
+            kmVec3 vmax = meshChunk->boundingVol.box[7];
+
+            const float bbVertices[] = {
+                vmin.x, vmin.y, vmax.z,
+                vmax.x, vmin.y, vmax.z,
+                vmax.x, vmax.y, vmax.z,
+
+                vmax.x, vmax.y, vmax.z,
+                vmin.x, vmax.y, vmax.z,
+                vmin.x, vmin.y, vmax.z,
+
+                vmin.x, vmin.y, vmin.z,
+                vmin.x, vmax.y, vmin.z,
+                vmax.x, vmax.y, vmin.z,
+
+                vmax.x, vmax.y, vmin.z,
+                vmax.x, vmin.y, vmin.z,
+                vmin.x, vmin.y, vmin.z,
+
+                vmin.x, vmax.y, vmin.z,
+                vmin.x, vmax.y, vmax.z,
+                vmax.x, vmax.y, vmax.z,
+
+                vmax.x, vmax.y, vmax.z,
+                vmax.x, vmax.y, vmin.z,
+                vmin.x, vmax.y, vmin.z,
+
+                vmin.x, vmin.y, vmin.z,
+                vmax.x, vmin.y, vmin.z,
+                vmax.x, vmin.y, vmax.z,
+
+                vmax.x, vmin.y, vmax.z,
+                vmin.x, vmin.y, vmax.z,
+                vmin.x, vmin.y, vmin.z,
+
+                vmax.x, vmin.y, vmin.z,
+                vmax.x, vmax.y, vmin.z,
+                vmax.x, vmax.y, vmax.z,
+
+                vmax.x, vmax.y, vmax.z,
+                vmax.x, vmin.y, vmax.z,
+                vmax.x, vmin.y, vmin.z,
+
+                vmin.x, vmin.y, vmin.z,
+                vmin.x, vmin.y, vmax.z,
+                vmin.x, vmax.y, vmax.z,
+
+                vmin.x, vmax.y, vmax.z,
+                vmin.x, vmax.y, vmin.z,
+                vmin.x, vmin.y, vmin.z
+            };
+
+            bool skipChunk = true;
+            size_t vOffset = 0;
+            for (uint32_t i = 0; i < meshChunk->layoutEntriesCount; ++i)
+            {
+                if (meshChunk->layout[i].binding == LITE3D_BUFFER_BINDING_VERTEX)
+                {
+                    if (meshChunk->layout[i].count >= 3)
+                    {
+                        skipChunk = false;
+                    }
+
+                    break;
+                }
+
+                vOffset += meshChunk->layout[i].count * sizeof(float);
+            }
+
+            if (skipChunk)
+            {
+                continue;
+            }
+
+            uint8_t *pBuffer = &vertexData[vOffset];
+            for (uint32_t i = 0; i < boxVerticesCount; ++i, pBuffer += meshChunk->vertexStride)
+            {
+                memcpy(pBuffer, &bbVertices[i * 3], sizeof(float) * 3);
+            }
+
+            if (!lite3d_mesh_extend_from_memory(&mBBMesh, &vertexData[0], boxVerticesCount, 
+                meshChunk->layout, meshChunk->layoutEntriesCount, LITE3D_VBO_STATIC_DRAW))
+            {
+                LITE3D_THROW("Failed to extend BB mesh chunk");
+            }
+
+            lite3d_mesh_chunk *bbMeshChunk = static_cast<lite3d_mesh_chunk *>(
+                lite3d_array_get(&mBBMesh.chunks, mBBMesh.chunks.size - 1));
+            bbMeshChunk->materialIndex = meshChunk->materialIndex;
+            bbMeshChunk->boundingVol = meshChunk->boundingVol;
+        }
     }
 }

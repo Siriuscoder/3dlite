@@ -43,6 +43,15 @@ namespace lite3dpp
         { return mMaterialMapping; }
         inline lite3d_mesh *getPtr()
         { return &mMesh; }
+        inline lite3d_mesh *getBBPtr()
+        {
+            if (mBBMesh.version > 0)
+            {
+                return &mBBMesh; 
+            }
+
+            return nullptr;
+        }
 
         inline VBO vertexBuffer()
         { return VBO(mMesh.vertexBuffer); }
@@ -80,12 +89,15 @@ namespace lite3dpp
         virtual void loadFromConfigImpl(const ConfigurationReader &helper) override;
         virtual void unloadImpl() override;
         virtual void reloadFromConfigImpl(const ConfigurationReader &helper) override;
-
+        void loadBBMesh();
+        
     private:
 
         MaterialMapping mMaterialMapping;
-        lite3d_mesh mMesh;
+        lite3d_mesh mMesh = {0};
+        lite3d_mesh mBBMesh = {0};
         BufferData mVertexData;
+        BufferData mBBVertexData;
         BufferData mIndexData;
     };
 }

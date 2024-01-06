@@ -232,12 +232,12 @@ static int init(void *userdata)
     lite3d_scene_add_node(&mScene, &mRifleNode, NULL);
     lite3d_scene_add_node(&mScene, &mBattNode, &mRifleNode);
 
-    lite3d_scene_node_touch_material(&mRifleNode, lite3d_mesh_chunk_get_by_index(&mRifle, 0), &mRifleMaterialA, 1);
-    lite3d_scene_node_touch_material(&mRifleNode, lite3d_mesh_chunk_get_by_index(&mRifle, 1), &mRifleMaterialB, 1);
-    lite3d_scene_node_touch_material(&mRifleNode, lite3d_mesh_chunk_get_by_index(&mRifle, 2), &mRifleMaterialB, 1);
-    lite3d_scene_node_touch_material(&mRifleNode, lite3d_mesh_chunk_get_by_index(&mRifle, 3), &mRifleMaterialB, 1);
-    lite3d_scene_node_touch_material(&mRifleNode, lite3d_mesh_chunk_get_by_index(&mRifle, 4), &mRifleMaterialB, 1);
-    lite3d_scene_node_touch_material(&mBattNode, lite3d_mesh_chunk_get_by_index(&mRifleBatt, 0), &mBattMaterial, 1);
+    lite3d_scene_node_touch_material(&mRifleNode, lite3d_mesh_chunk_get_by_index(&mRifle, 0), NULL, &mRifleMaterialA, 1);
+    lite3d_scene_node_touch_material(&mRifleNode, lite3d_mesh_chunk_get_by_index(&mRifle, 1), NULL, &mRifleMaterialB, 1);
+    lite3d_scene_node_touch_material(&mRifleNode, lite3d_mesh_chunk_get_by_index(&mRifle, 2), NULL, &mRifleMaterialB, 1);
+    lite3d_scene_node_touch_material(&mRifleNode, lite3d_mesh_chunk_get_by_index(&mRifle, 3), NULL, &mRifleMaterialB, 1);
+    lite3d_scene_node_touch_material(&mRifleNode, lite3d_mesh_chunk_get_by_index(&mRifle, 4), NULL, &mRifleMaterialB, 1);
+    lite3d_scene_node_touch_material(&mBattNode, lite3d_mesh_chunk_get_by_index(&mRifleBatt, 0), NULL, &mBattMaterial, 1);
 
     //lite3d_scene_add_node(&mScene, &mCamera01.cameraNode, NULL);
     lite3d_render_target_screen_attach_camera(&mCamera01, &mScene, 1, 0, LITE3D_RENDER_DEFAULT);
