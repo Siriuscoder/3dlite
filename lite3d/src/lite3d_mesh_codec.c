@@ -279,7 +279,7 @@ int lite3d_mesh_m_encode(lite3d_mesh *mesh,
     mheader.version = LITE3D_VERSION_NUM;
     mheader.vertexSectionSize = (int32_t)mesh->vertexBuffer.size;
     mheader.indexSectionSize = (int32_t)mesh->indexBuffer.size;
-    mheader.chunkCount = mesh->chunks.size;
+    mheader.chunkCount = (int32_t)mesh->chunks.size;
     mheader.chunkSectionSize = 0;
 
 

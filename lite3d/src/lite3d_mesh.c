@@ -208,10 +208,10 @@ lite3d_mesh_chunk *lite3d_mesh_append_chunk(lite3d_mesh *mesh,
     LITE3D_ARR_ADD_ELEM(&mesh->chunks, lite3d_mesh_chunk, meshChunk);
 
     SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "MESH: 0x%016llx: chunk 0x%016llx: %s, cv/ov/sv %d/%zub/%udb, ci/oi %d/%zub",
-        (unsigned long long)mesh, (unsigned long long)lite3d_array_get(&mesh->chunks, mesh->chunks.size-1), "TRIANGLES",
+        (unsigned long long)mesh, (unsigned long long)LITE3D_ARR_GET_LAST(&mesh->chunks, lite3d_mesh_chunk), "TRIANGLES",
         meshChunk.vao.verticesCount, meshChunk.vao.verticesOffset, stride, meshChunk.vao.indexesCount, meshChunk.vao.indexesOffset);
 
-    return lite3d_array_get(&mesh->chunks, mesh->chunks.size-1);
+    return LITE3D_ARR_GET_LAST(&mesh->chunks, lite3d_mesh_chunk);
 }
 
 uint16_t lite3d_index_component_type_by_size(uint8_t size)

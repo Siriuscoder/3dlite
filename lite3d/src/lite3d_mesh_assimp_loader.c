@@ -226,7 +226,7 @@ static int ai_node_load_to_vbo(lite3d_mesh *meshInst, const struct aiScene *scen
             return LITE3D_FALSE;
 
         /* set material index to currently added meshChunk */
-        thisChunk = lite3d_array_get(&meshInst->chunks, meshInst->chunks.size - 1);
+        thisChunk = LITE3D_ARR_GET_LAST(&meshInst->chunks, lite3d_mesh_chunk);
         thisChunk->materialIndex = mesh->mMaterialIndex;
         lite3d_bounding_vol_setup(&thisChunk->boundingVol, &vmin, &vmax);
 

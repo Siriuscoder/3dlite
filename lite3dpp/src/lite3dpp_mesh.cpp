@@ -192,7 +192,7 @@ namespace lite3dpp
         if (!lite3d_mesh_load_from_memory(&mMesh, vertices, 6, layout, 2, dynamic ? LITE3D_VBO_DYNAMIC_DRAW : LITE3D_VBO_STATIC_DRAW))
             LITE3D_THROW("Plain generation failed");
 
-        lite3d_mesh_chunk *meshChunk = static_cast<lite3d_mesh_chunk *>(lite3d_array_get(&mMesh.chunks, mMesh.chunks.size - 1));
+        lite3d_mesh_chunk *meshChunk = LITE3D_ARR_GET_LAST(&mMesh.chunks, lite3d_mesh_chunk);
         lite3d_bounding_vol_setup(&meshChunk->boundingVol, &vmin, &vmax);
     }
     
@@ -212,7 +212,7 @@ namespace lite3dpp
         if (!lite3d_mesh_load_from_memory(&mMesh, vertices, 3, layout, 1, dynamic ? LITE3D_VBO_DYNAMIC_DRAW : LITE3D_VBO_STATIC_DRAW))
             LITE3D_THROW("BigTriangle generation failed");
 
-        lite3d_mesh_chunk *meshChunk = static_cast<lite3d_mesh_chunk *>(lite3d_array_get(&mMesh.chunks, mMesh.chunks.size - 1));
+        lite3d_mesh_chunk *meshChunk = LITE3D_ARR_GET_LAST(&mMesh.chunks, lite3d_mesh_chunk);
         lite3d_bounding_vol_setup(&meshChunk->boundingVol, &vmin, &vmax);
     }
     
@@ -273,7 +273,7 @@ namespace lite3dpp
         if (!lite3d_mesh_load_from_memory(&mMesh, skyboxVertices, 36, layout, 1, dynamic ? LITE3D_VBO_DYNAMIC_DRAW : LITE3D_VBO_STATIC_DRAW))
             LITE3D_THROW("Failed to create mesh");
 
-        lite3d_mesh_chunk *meshChunk = static_cast<lite3d_mesh_chunk *>(lite3d_array_get(&mMesh.chunks, mMesh.chunks.size - 1));
+        lite3d_mesh_chunk *meshChunk = LITE3D_ARR_GET_LAST(&mMesh.chunks, lite3d_mesh_chunk);
         lite3d_bounding_vol_setup(&meshChunk->boundingVol, &vmin, &vmax);
     }
 
@@ -287,7 +287,7 @@ namespace lite3dpp
             layout, 1, dynamic ? LITE3D_VBO_DYNAMIC_DRAW : LITE3D_VBO_STATIC_DRAW))
             LITE3D_THROW("Failed to create mesh");
 
-        lite3d_mesh_chunk *meshChunk = static_cast<lite3d_mesh_chunk *>(lite3d_array_get(&mMesh.chunks, mMesh.chunks.size - 1));
+        lite3d_mesh_chunk *meshChunk = LITE3D_ARR_GET_LAST(&mMesh.chunks, lite3d_mesh_chunk);
         lite3d_bounding_vol_setup(&meshChunk->boundingVol, &bbmin, &bbmax);
     }
 
@@ -392,8 +392,7 @@ namespace lite3dpp
                 LITE3D_THROW("Failed to extend BB mesh chunk");
             }
 
-            lite3d_mesh_chunk *bbMeshChunk = static_cast<lite3d_mesh_chunk *>(
-                lite3d_array_get(&mBBMesh.chunks, mBBMesh.chunks.size - 1));
+            lite3d_mesh_chunk *bbMeshChunk = LITE3D_ARR_GET_LAST(&mBBMesh.chunks, lite3d_mesh_chunk);
             bbMeshChunk->materialIndex = meshChunk->materialIndex;
             bbMeshChunk->boundingVol = meshChunk->boundingVol;
         }

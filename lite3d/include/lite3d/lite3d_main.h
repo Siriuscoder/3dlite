@@ -29,6 +29,7 @@
 #include <lite3d/lite3d_mesh_loader.h>
 #include <lite3d/lite3d_scene.h>
 #include <lite3d/lite3d_timer.h>
+#include <lite3d/lite3d_query.h>
 
 
 typedef int (*lite3d_user_init_completed_t)(void *userdata);
