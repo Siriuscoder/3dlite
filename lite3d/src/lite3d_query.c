@@ -47,7 +47,7 @@ int lite3d_query_init(struct lite3d_query *query)
     lite3d_misc_gl_error_stack_clean();
 
     memset(query, 0, sizeof(lite3d_query));
-    query->isVisible = -1;
+    query->anyPassed = -1;
 
     glGenQueries(1, &query->queryID);
     return !LITE3D_CHECK_GL_ERROR;
@@ -59,7 +59,7 @@ void lite3d_query_purge(struct lite3d_query *query)
     
     glDeleteQueries(1, &query->queryID);
     memset(query, 0, sizeof(lite3d_query));
-    query->isVisible = -1;
+    query->anyPassed = -1;
 }
 
 void lite3d_query_begin(struct lite3d_query *query)
@@ -68,7 +68,7 @@ void lite3d_query_begin(struct lite3d_query *query)
 
     glBeginQuery(GL_ANY_SAMPLES_PASSED, query->queryID);
     query->inProgress = LITE3D_TRUE;
-    query->isVisible = -1;
+    query->anyPassed = -1;
 }
 
 void lite3d_query_end(struct lite3d_query *query)
@@ -81,10 +81,13 @@ void lite3d_query_end(struct lite3d_query *query)
 
 void lite3d_query_result(struct lite3d_query *query)
 {
-    GLint result;
     SDL_assert(query);
+    GLuint result;
 
-    glGetQueryObjectiv(query->queryID, GL_QUERY_RESULT, &result);
-    query->inProgress = LITE3D_FALSE;
-    query->isVisible = (result == GL_TRUE ? LITE3D_TRUE : LITE3D_FALSE);
+    if (query->inProgress)
+    {
+        glGetQueryObjectuiv(query->queryID, GL_QUERY_RESULT, &result);
+        query->inProgress = LITE3D_FALSE;
+        query->anyPassed = (result == GL_TRUE ? LITE3D_TRUE : LITE3D_FALSE);
+    }
 }

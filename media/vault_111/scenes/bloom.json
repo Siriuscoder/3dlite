@@ -26,9 +26,9 @@
                     "DepthOutput": false,
                     "ColorOutput": true,
                     "RenderBlend": true,
-                    "SortTransparent": true,
+                    "SortTransparentToNear": true,
                     "RenderOpaque": true,
-                    "SortOpaque": true
+                    "SortOpaqueToNear": true
                 }
             ]
         }

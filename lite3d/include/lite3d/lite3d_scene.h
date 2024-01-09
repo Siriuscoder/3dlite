@@ -26,24 +26,26 @@
 #include <lite3d/lite3d_array.h>
 #include <lite3d/lite3d_lighting.h>
 
-#define LITE3D_RENDER_OPAQUE                    ((uint32_t)0x1)
-#define LITE3D_RENDER_TRANSPARENT               ((uint32_t)0x1 << 1)
-#define LITE3D_RENDER_CLEAN_COLOR_BUFF          ((uint32_t)0x1 << 2)
-#define LITE3D_RENDER_CLEAN_DEPTH_BUFF          ((uint32_t)0x1 << 3)
-#define LITE3D_RENDER_CLEAN_STENCIL_BUFF        ((uint32_t)0x1 << 4)
-#define LITE3D_RENDER_DEPTH_TEST                ((uint32_t)0x1 << 5)
-#define LITE3D_RENDER_COLOR_OUTPUT              ((uint32_t)0x1 << 6)
-#define LITE3D_RENDER_DEPTH_OUTPUT              ((uint32_t)0x1 << 7)
-#define LITE3D_RENDER_STENCIL_OUTPUT            ((uint32_t)0x1 << 8)
-#define LITE3D_RENDER_INSTANCING                ((uint32_t)0x1 << 9)
-#define LITE3D_RENDER_OCCLUSION_QUERY           ((uint32_t)0x1 << 10)
-#define LITE3D_RENDER_OCCLUSION_CULLING         ((uint32_t)0x1 << 11)
-#define LITE3D_RENDER_FRUSTUM_CULLING           ((uint32_t)0x1 << 12)
-#define LITE3D_RENDER_CUSTOM_VISIBILITY_CHECK   ((uint32_t)0x1 << 13)
-#define LITE3D_RENDER_SORT_OPAQUE               ((uint32_t)0x1 << 14)
-#define LITE3D_RENDER_SORT_TRANSPARENT          ((uint32_t)0x1 << 15)
+#define LITE3D_RENDER_OPAQUE                        ((uint32_t)0x1)
+#define LITE3D_RENDER_TRANSPARENT                   ((uint32_t)0x1 << 1)
+#define LITE3D_RENDER_CLEAN_COLOR_BUFF              ((uint32_t)0x1 << 2)
+#define LITE3D_RENDER_CLEAN_DEPTH_BUFF              ((uint32_t)0x1 << 3)
+#define LITE3D_RENDER_CLEAN_STENCIL_BUFF            ((uint32_t)0x1 << 4)
+#define LITE3D_RENDER_DEPTH_TEST                    ((uint32_t)0x1 << 5)
+#define LITE3D_RENDER_COLOR_OUTPUT                  ((uint32_t)0x1 << 6)
+#define LITE3D_RENDER_DEPTH_OUTPUT                  ((uint32_t)0x1 << 7)
+#define LITE3D_RENDER_STENCIL_OUTPUT                ((uint32_t)0x1 << 8)
+#define LITE3D_RENDER_INSTANCING                    ((uint32_t)0x1 << 9)
+#define LITE3D_RENDER_OCCLUSION_QUERY               ((uint32_t)0x1 << 10)
+#define LITE3D_RENDER_OCCLUSION_CULLING             ((uint32_t)0x1 << 11)
+#define LITE3D_RENDER_FRUSTUM_CULLING               ((uint32_t)0x1 << 12)
+#define LITE3D_RENDER_CUSTOM_VISIBILITY_CHECK       ((uint32_t)0x1 << 13)
+#define LITE3D_RENDER_SORT_OPAQUE_TO_NEAR           ((uint32_t)0x1 << 14)
+#define LITE3D_RENDER_SORT_TRANSPARENT_TO_NEAR      ((uint32_t)0x1 << 15)
+#define LITE3D_RENDER_SORT_OPAQUE_FROM_NEAR         ((uint32_t)0x1 << 16)
+#define LITE3D_RENDER_SORT_TRANSPARENT_FROM_NEAR    ((uint32_t)0x1 << 17)
 
-#define LITE3D_RENDER_DEFAULT (LITE3D_RENDER_OPAQUE | LITE3D_RENDER_TRANSPARENT | LITE3D_RENDER_SORT_TRANSPARENT | \
+#define LITE3D_RENDER_DEFAULT (LITE3D_RENDER_OPAQUE | LITE3D_RENDER_TRANSPARENT | LITE3D_RENDER_SORT_TRANSPARENT_TO_NEAR | \
     LITE3D_RENDER_DEPTH_TEST | LITE3D_RENDER_COLOR_OUTPUT | LITE3D_RENDER_DEPTH_OUTPUT | LITE3D_RENDER_FRUSTUM_CULLING)
 
 typedef struct lite3d_scene_stats

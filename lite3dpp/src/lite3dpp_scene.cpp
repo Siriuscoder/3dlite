@@ -332,10 +332,14 @@ namespace lite3dpp
                     renderFlags |= LITE3D_RENDER_FRUSTUM_CULLING;
                 if (renderTargetJson.getBool(L"CustomVisibilityCheck", false))
                     renderFlags |= LITE3D_RENDER_CUSTOM_VISIBILITY_CHECK;
-                if (renderTargetJson.getBool(L"SortOpaque", false))
-                    renderFlags |= LITE3D_RENDER_SORT_OPAQUE;
-                if (renderTargetJson.getBool(L"SortTransparent", true))
-                    renderFlags |= LITE3D_RENDER_SORT_TRANSPARENT;
+                if (renderTargetJson.getBool(L"SortOpaqueToNear", false))
+                    renderFlags |= LITE3D_RENDER_SORT_OPAQUE_TO_NEAR;
+                if (renderTargetJson.getBool(L"SortTransparentToNear", true))
+                    renderFlags |= LITE3D_RENDER_SORT_TRANSPARENT_TO_NEAR;
+                if (renderTargetJson.getBool(L"SortOpaqueFromNear", false))
+                    renderFlags |= LITE3D_RENDER_SORT_OPAQUE_FROM_NEAR;
+                if (renderTargetJson.getBool(L"SortTransparentFromNear", false))
+                    renderFlags |= LITE3D_RENDER_SORT_TRANSPARENT_FROM_NEAR;
 
                 RenderTarget::RenderLayers layers;
                 auto colorLayer = renderTargetJson.getInt(L"ColorLayer", -1);

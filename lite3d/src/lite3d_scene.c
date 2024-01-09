@@ -53,17 +53,29 @@ typedef struct _mqr_node
     lite3d_bounding_vol boundingVol;
     float distanceToCamera;
     lite3d_array queries;
+    _query_unit *currentQuery;
     _mqr_unit *matUnit;
 } _mqr_node;
 
-static int mqr_node_distance_comparator(const void *a, const void *b)
+// Сортирует от дальнего к ближнему
+static int mqr_node_distance_comparator_to_near(const void *a, const void *b)
 {
-    float adist, bdist;
-    
-    adist = (*(_mqr_node **)a)->distanceToCamera;
-    bdist = (*(_mqr_node **)b)->distanceToCamera;
-
+    float adist = (*(_mqr_node **)a)->distanceToCamera;
+    float bdist = (*(_mqr_node **)b)->distanceToCamera;
     if(adist > bdist)
+        return -1;
+    if(adist == bdist)
+        return 0;
+
+    return 1;
+}
+
+// Сортирует от ближнего к дальнему
+static int mqr_node_distance_comparator_from_near(const void *a, const void *b)
+{
+    float adist = (*(_mqr_node **)a)->distanceToCamera;
+    float bdist = (*(_mqr_node **)b)->distanceToCamera;
+    if(adist < bdist)
         return -1;
     if(adist == bdist)
         return 0;
@@ -87,7 +99,36 @@ static void mqr_node_set_shader_params(lite3d_scene *scene, lite3d_material_pass
     lite3d_material_pass_set_params(mqrNode->matUnit->material, pass, LITE3D_FALSE);
 }
 
-static void mqr_render_batch(lite3d_material_pass *pass, _mqr_node *mqrNode)
+static void mqr_render_mesh_chunk(lite3d_scene *scene, lite3d_mesh_chunk *chunk, uint32_t count)
+{
+    SDL_assert(chunk);
+    SDL_assert(scene);
+
+    if (scene->bindedMeshChunk != chunk)
+    {
+        lite3d_mesh_chunk_bind(chunk);
+        scene->bindedMeshChunk = chunk;
+        /* validate current shader program */
+        if (!lite3d_shader_program_validate_current())
+        {
+            return;
+        }
+    }
+
+    if (count > 1)
+    {
+        LITE3D_METRIC_CALL(lite3d_mesh_chunk_draw_instanced, (chunk, count))
+    }
+    else
+    {
+        LITE3D_METRIC_CALL(lite3d_mesh_chunk_draw, (chunk))
+    }
+
+    scene->stats.trianglesRendered += chunk->vao.elementsCount * count;
+    scene->stats.verticesRendered += chunk->vao.verticesCount * count;
+}
+
+static void mqr_render_batch(lite3d_material_pass *pass, _mqr_node *mqrNode, uint32_t flags)
 {
     lite3d_scene *scene = (lite3d_scene *) mqrNode->node->scene;
     SDL_assert(mqrNode);
@@ -99,43 +140,36 @@ static void mqr_render_batch(lite3d_material_pass *pass, _mqr_node *mqrNode)
             return;
 
     mqr_node_set_shader_params(scene, pass, mqrNode);
-    /* call rendering current chunk */
-    /* bind meshChunk */
-    if (scene->bindedMeshChunk != mqrNode->meshChunk)
-    {
-        lite3d_mesh_chunk_bind(mqrNode->meshChunk);
-        scene->bindedMeshChunk = mqrNode->meshChunk;
-        /* validate current shader program */
-        if (!lite3d_shader_program_validate_current())
-        {
-            return;
-        }
-    }
     
-    /* do render batch */
-    if (mqrNode->instancesCount > 1)
-        LITE3D_METRIC_CALL(lite3d_mesh_chunk_draw_instanced, (mqrNode->meshChunk, mqrNode->instancesCount))
-    else
-        LITE3D_METRIC_CALL(lite3d_mesh_chunk_draw, (mqrNode->meshChunk))
-
-    if (mqrNode->bbMeshChunk)
+    /* call rendering current chunk */
+    if (flags & LITE3D_RENDER_OCCLUSION_QUERY && mqrNode->bbMeshChunk)
     {
-        lite3d_mesh_chunk_bind(mqrNode->bbMeshChunk);
-        lite3d_polygon_mode(LITE3D_POLYMODE_LINE);
-        lite3d_backface_culling(LITE3D_CULLFACE_NEVER);
-        if (mqrNode->instancesCount > 1)
-            LITE3D_METRIC_CALL(lite3d_mesh_chunk_draw_instanced, (mqrNode->bbMeshChunk, mqrNode->instancesCount))
+        SDL_assert(mqrNode->currentQuery);
+        lite3d_query_begin(&mqrNode->currentQuery->query); 
+        if (mqrNode->node->visible)
+        {
+            // Render full complex batch under occlusion query if node visible
+            mqr_render_mesh_chunk(scene, mqrNode->meshChunk, mqrNode->instancesCount);
+        }
         else
-            LITE3D_METRIC_CALL(lite3d_mesh_chunk_draw, (mqrNode->bbMeshChunk))
-        lite3d_polygon_mode(scene->currentCamera->polygonMode);
-        lite3d_backface_culling(scene->currentCamera->cullFaceMode);
-        scene->bindedMeshChunk = mqrNode->bbMeshChunk;
+        {
+            // Render simplified batch under occlusion query if node occluded
+            lite3d_depth_output(LITE3D_FALSE);
+            lite3d_backface_culling(LITE3D_CULLFACE_NEVER);
+            mqr_render_mesh_chunk(scene, mqrNode->bbMeshChunk, mqrNode->instancesCount);
+            lite3d_backface_culling(scene->currentCamera->cullFaceMode);
+            lite3d_depth_output(flags & LITE3D_RENDER_DEPTH_OUTPUT ? LITE3D_TRUE : LITE3D_FALSE);
+        }
+
+        lite3d_query_end(&mqrNode->currentQuery->query);
+    }
+    else
+    {
+        mqr_render_mesh_chunk(scene, mqrNode->meshChunk, mqrNode->instancesCount);
     }
 
     scene->stats.batchCalled++;
     scene->stats.batchInstancedCalled++;
-    scene->stats.trianglesRendered += mqrNode->meshChunk->vao.elementsCount * mqrNode->instancesCount;
-    scene->stats.verticesRendered += mqrNode->meshChunk->vao.verticesCount * mqrNode->instancesCount;
 }
 
 static int mqr_render_series_params(lite3d_vbo *buffer, const void *param, size_t psize)
@@ -185,37 +219,10 @@ static void mqr_render_batch_series(lite3d_material_pass *pass, _mqr_node *mqrNo
         }
 
         mqr_node_set_shader_params(scene, pass, mqrNode);
+        mqr_render_mesh_chunk(scene, mqrNode->meshChunk, continuedId+1);
 
-        /* bind meshChunk */
-        if (scene->bindedMeshChunk != mqrNode->meshChunk)
-        {
-            lite3d_mesh_chunk_bind(mqrNode->meshChunk);
-            scene->bindedMeshChunk = mqrNode->meshChunk;
-            /* validate current shader program */
-            if (!lite3d_shader_program_validate_current())
-            {
-                return;
-            }
-        }
-
-        /* do render batch */
-        LITE3D_METRIC_CALL(lite3d_mesh_chunk_draw_instanced, (mqrNode->meshChunk, continuedId+1))
-
-        if (mqrNode->bbMeshChunk)
-        {
-            lite3d_mesh_chunk_bind(mqrNode->bbMeshChunk);
-            lite3d_polygon_mode(LITE3D_POLYMODE_LINE);
-            lite3d_backface_culling(LITE3D_CULLFACE_NEVER);
-            LITE3D_METRIC_CALL(lite3d_mesh_chunk_draw_instanced, (mqrNode->bbMeshChunk, continuedId+1))
-            lite3d_polygon_mode(scene->currentCamera->polygonMode);
-            lite3d_backface_culling(scene->currentCamera->cullFaceMode);
-            scene->bindedMeshChunk = mqrNode->bbMeshChunk;
-        }
-        
         scene->stats.batchCalled++;
         scene->stats.batchInstancedCalled += (continuedId+1);
-        scene->stats.trianglesRendered += mqrNode->meshChunk->vao.elementsCount * (continuedId+1);
-        scene->stats.verticesRendered += mqrNode->meshChunk->vao.verticesCount * (continuedId+1);
         lite3d_array_clean(&scene->seriesMatrixes);
     }
 }
@@ -225,13 +232,13 @@ static void mqr_render_node(lite3d_material_pass *pass, _mqr_node *mqrNode, uint
     if (flags & LITE3D_RENDER_INSTANCING)
         LITE3D_METRIC_CALL(mqr_render_batch_series, (pass, mqrNode, continuedId, batchCrop))
     else
-        LITE3D_METRIC_CALL(mqr_render_batch, (pass, mqrNode))
+        LITE3D_METRIC_CALL(mqr_render_batch, (pass, mqrNode, flags))
 }
 
 static int mqr_node_occluded(lite3d_scene *scene, _mqr_node *mqrNode, uint32_t flags)
 {
     int queryFound = LITE3D_FALSE;
-    _query_unit *query = NULL;
+    mqrNode->currentQuery = NULL;
 
     if (!(flags & (LITE3D_RENDER_OCCLUSION_QUERY | LITE3D_RENDER_OCCLUSION_CULLING)))
     {
@@ -239,9 +246,9 @@ static int mqr_node_occluded(lite3d_scene *scene, _mqr_node *mqrNode, uint32_t f
     }
 
     // Find query by camera
-    LITE3D_ARR_FOREACH(&mqrNode->queries, _query_unit, query)
+    LITE3D_ARR_FOREACH(&mqrNode->queries, _query_unit, mqrNode->currentQuery)
     {
-        if (query->camera == scene->currentCamera)
+        if (mqrNode->currentQuery->camera == scene->currentCamera)
         {
             queryFound = LITE3D_TRUE;
             break;
@@ -254,21 +261,21 @@ static int mqr_node_occluded(lite3d_scene *scene, _mqr_node *mqrNode, uint32_t f
         lite3d_query_init(&newQuery.query);
         newQuery.camera = scene->currentCamera;
         LITE3D_ARR_ADD_ELEM(&mqrNode->queries, _query_unit, newQuery);
-        query = LITE3D_ARR_GET_LAST(&mqrNode->queries, _query_unit);
+        mqrNode->currentQuery = LITE3D_ARR_GET_LAST(&mqrNode->queries, _query_unit);
     }
 
-    SDL_assert(query);
+    SDL_assert(mqrNode->currentQuery);
 
     // Check query from last LITE3D_RENDER_OCCLUSION_QUERY step, normaly - last frame
     if (flags & LITE3D_RENDER_OCCLUSION_QUERY)
     {
-        if (query->query.inProgress)
+        if (mqrNode->currentQuery->query.inProgress)
         {
-            lite3d_query_result(&query->query);
+            lite3d_query_result(&mqrNode->currentQuery->query);
         }
     }
 
-    return query->query.isVisible == 0 ? LITE3D_TRUE : LITE3D_FALSE;
+    return mqrNode->currentQuery->query.anyPassed == LITE3D_FALSE ? LITE3D_TRUE : LITE3D_FALSE;
 }
 
 static int mqr_node_approve(lite3d_scene *scene, _mqr_node *mqrNode, uint32_t flags)
@@ -303,6 +310,7 @@ static int mqr_node_approve(lite3d_scene *scene, _mqr_node *mqrNode, uint32_t fl
     // Check frustum culling if needed
     if (flags & LITE3D_RENDER_FRUSTUM_CULLING)
     {
+        // Custom frustum check
         if (scene->customVisibilityCheck && flags & LITE3D_RENDER_CUSTOM_VISIBILITY_CHECK)
         {
             if (!scene->customVisibilityCheck(scene, mqrNode->node,
@@ -311,9 +319,8 @@ static int mqr_node_approve(lite3d_scene *scene, _mqr_node *mqrNode, uint32_t fl
                 nodeApproved = nodeVisible = LITE3D_FALSE;
             }
         }
-
         /* frustum test */
-        if (mqrNode->node->frustumTest && !lite3d_frustum_test(&scene->currentCamera->frustum, &mqrNode->boundingVol))
+        else if (mqrNode->node->frustumTest && !lite3d_frustum_test(&scene->currentCamera->frustum, &mqrNode->boundingVol))
         {
             nodeApproved = nodeVisible = LITE3D_FALSE;
             if (scene->nodeOutOfFrustum)
@@ -434,9 +441,13 @@ static void mqr_render_stage_opaque(struct lite3d_scene *scene, uint16_t pass, u
 {
     if (flags & LITE3D_RENDER_OPAQUE)
     {
-        if (flags & LITE3D_RENDER_SORT_OPAQUE)
+        if (flags & LITE3D_RENDER_SORT_OPAQUE_TO_NEAR)
         {
-            lite3d_array_qsort(&scene->stageOpague, mqr_node_distance_comparator);
+            lite3d_array_qsort(&scene->stageOpague, mqr_node_distance_comparator_to_near);
+        }
+        else if (flags & LITE3D_RENDER_SORT_OPAQUE_FROM_NEAR)
+        {
+            lite3d_array_qsort(&scene->stageOpague, mqr_node_distance_comparator_from_near);
         }
 
         if (scene->beginOpaqueStageRender)
@@ -452,9 +463,13 @@ static void mqr_render_stage_transparent(struct lite3d_scene *scene, uint16_t pa
 {
     if (flags & LITE3D_RENDER_TRANSPARENT)
     {
-        if (flags & LITE3D_RENDER_SORT_TRANSPARENT)
+        if (flags & LITE3D_RENDER_SORT_TRANSPARENT_TO_NEAR)
         {
-            lite3d_array_qsort(&scene->stageTransparent, mqr_node_distance_comparator);
+            lite3d_array_qsort(&scene->stageTransparent, mqr_node_distance_comparator_to_near);
+        }
+        else if (flags & LITE3D_RENDER_SORT_OPAQUE_FROM_NEAR)
+        {
+            lite3d_array_qsort(&scene->stageTransparent, mqr_node_distance_comparator_from_near);
         }
 
         if (scene->beginBlendingStageRender)

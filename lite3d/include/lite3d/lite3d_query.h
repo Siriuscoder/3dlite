@@ -24,7 +24,7 @@ typedef struct lite3d_query
 {
     uint32_t queryID;
     int32_t inProgress;
-    int32_t isVisible;
+    int32_t anyPassed;
     void *userdata;
 } lite3d_query;
 
