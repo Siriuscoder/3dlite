@@ -8,7 +8,7 @@
       },
       "Uniforms": [
         {
-          "Name": "projViewMatrix"
+          "Name": "screenMatrix"
         }
       ]
     },
@@ -41,7 +41,13 @@
           "Value": 6.0
         },
         {
-          "Name": "projViewMatrix"
+          "Name": "screenMatrix"
+        },
+        {
+          "Name": "modelMatrix"
+        },
+        {
+          "Name": "normalMatrix"
         }
       ]
     },
@@ -61,6 +67,9 @@
           "Name": "ShadowIndex",
           "UBOName": "ShadowIndexBuffer",
           "Type": "UBO"
+        },
+        {
+          "Name": "modelMatrix"
         }
       ]
     }

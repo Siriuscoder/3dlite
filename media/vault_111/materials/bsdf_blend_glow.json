@@ -60,7 +60,13 @@
   ],
   "Uniforms":[
     {
-      "Name":"projViewMatrix"
+      "Name":"screenMatrix"
+    },
+    {
+      "Name":"modelMatrix"
+    },
+    {
+      "Name":"normalMatrix"
     }
   ]
 }

@@ -729,7 +729,7 @@ int lite3d_scene_node_touch_material(struct lite3d_scene_node *node,
     SDL_assert(node);
     SDL_assert(material);
 
-    if (instancesCount > 0 && !lite3d_check_instanced_arrays())
+    if (instancesCount > 1 && !lite3d_check_instanced_arrays())
     {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
             "%s: Could not add node to scene with instancesCount %u, instancing not supported", 

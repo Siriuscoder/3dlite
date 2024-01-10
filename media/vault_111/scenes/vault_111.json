@@ -26,8 +26,7 @@
           "RenderBlend": false,
           "DepthTest": true,
           "ColorOutput": false,
-          "DepthOutput": true,
-          "RenderInstancing": true
+          "DepthOutput": true
         },
         {
           "Name": "ShadowPass",
@@ -38,8 +37,7 @@
           "DepthTest": true,
           "ColorOutput": false,
           "DepthOutput": true,
-          "CustomVisibilityCheck": true,
-          "RenderInstancing": true
+          "CustomVisibilityCheck": true
         },
         {
           "Name": "RenderPass",
@@ -49,8 +47,7 @@
           "RenderBlend": false,
           "DepthTest": true,
           "ColorOutput": true,
-          "DepthOutput": false,
-          "RenderInstancing": true
+          "DepthOutput": false
         },
         {
           "Name": "CombineStep",
@@ -61,8 +58,7 @@
           "RenderOpaque": false,
           "DepthTest": true,
           "ColorOutput": true,
-          "DepthOutput": true,
-          "RenderInstancing": true
+          "DepthOutput": true
         }
       ]
     }

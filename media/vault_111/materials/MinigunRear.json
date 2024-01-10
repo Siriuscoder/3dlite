@@ -8,7 +8,7 @@
       },
       "Uniforms": [
         {
-          "Name": "projViewMatrix"
+          "Name": "screenMatrix"
         }
       ]
     },
@@ -38,7 +38,13 @@
           "TexturePath": "vault_111:textures/json/Minigun_rear_s.json"
         },
         {
-          "Name": "projViewMatrix"
+          "Name": "screenMatrix"
+        },
+        {
+          "Name": "modelMatrix"
+        },
+        {
+          "Name": "normalMatrix"
         }
       ]
     },
@@ -58,6 +64,9 @@
           "Name": "ShadowIndex",
           "UBOName": "ShadowIndexBuffer",
           "Type": "UBO"
+        },
+        {
+          "Name": "modelMatrix"
         }
       ]
     }

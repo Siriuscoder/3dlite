@@ -5,10 +5,12 @@ layout(location = 1) in vec3 normal;
 layout(location = 2) in vec2 uv;
 layout(location = 3) in vec3 tang;
 layout(location = 4) in vec3 btang;
-layout(location = 5) in mat4 modelMatrix;
+
+uniform mat4 modelMatrix;
 
 void main()
 {
     // vertex coordinate in world space 
-    gl_Position = modelMatrix * vec4(vertex, 1.0);
+    vec4 v = vec4(vertex, 1.0);
+    gl_Position = modelMatrix * v;
 }
