@@ -24,6 +24,8 @@
           "Priority": 0,
           "TexturePass": 1,
           "RenderBlend": false,
+          "OcclusionQuery": true,
+          "SortOpaqueFromNear": true,
           "DepthTest": true,
           "ColorOutput": false,
           "DepthOutput": true
@@ -45,6 +47,7 @@
           "Priority": 0,
           "TexturePass": 2,
           "RenderBlend": false,
+          "OcclusionCulling": true,
           "DepthTest": true,
           "ColorOutput": true,
           "DepthOutput": false

@@ -146,7 +146,7 @@ static void mqr_render_batch(lite3d_material_pass *pass, _mqr_node *mqrNode, uin
     {
         SDL_assert(mqrNode->currentQuery);
         lite3d_query_begin(&mqrNode->currentQuery->query); 
-        if (mqrNode->node->visible)
+        if (mqrNode->currentQuery->query.anyPassed)
         {
             // Render full complex batch under occlusion query if node visible
             mqr_render_mesh_chunk(scene, mqrNode->meshChunk, mqrNode->instancesCount);
@@ -155,7 +155,7 @@ static void mqr_render_batch(lite3d_material_pass *pass, _mqr_node *mqrNode, uin
         {
             // Render simplified batch under occlusion query if node occluded
             lite3d_depth_output(LITE3D_FALSE);
-            lite3d_backface_culling(LITE3D_CULLFACE_NEVER);
+            lite3d_backface_culling(LITE3D_CULLFACE_FRONT);
             mqr_render_mesh_chunk(scene, mqrNode->bbMeshChunk, mqrNode->instancesCount);
             lite3d_backface_culling(scene->currentCamera->cullFaceMode);
             lite3d_depth_output(flags & LITE3D_RENDER_DEPTH_OUTPUT ? LITE3D_TRUE : LITE3D_FALSE);
@@ -336,8 +336,11 @@ static int mqr_node_approve(lite3d_scene *scene, _mqr_node *mqrNode, uint32_t fl
         }
     }
 
-    // save final visibility result and return
-    mqrNode->node->visible = nodeVisible;
+    if (nodeVisible)
+    {
+        mqrNode->node->visible = nodeVisible;
+    }
+    
     return nodeApproved;
 }
 
@@ -543,6 +546,7 @@ static void scene_recursive_nodes_update(lite3d_scene *scene,
     lite3d_scene_node *child;
     uint8_t recalcNode;
 
+    node->visible = LITE3D_FALSE; // Определим видимость далее
     if ((recalcNode = lite3d_scene_node_update(node)) == LITE3D_TRUE)
     {
         if (!node->isCamera)
@@ -657,7 +661,13 @@ void lite3d_scene_purge(lite3d_scene *scene)
         mqrUnit = LITE3D_MEMBERCAST(_mqr_unit, mqrUnitNode, queued);
         while ((mqrListNode = lite3d_list_remove_first_link(&mqrUnit->nodes)) != NULL)
         {
+            _query_unit *query;
             mqrNode = LITE3D_MEMBERCAST(_mqr_node, mqrListNode, unit);
+            LITE3D_ARR_FOREACH(&mqrNode->queries, _query_unit, query)
+            {
+                lite3d_query_purge(&query->query);
+            }
+
             lite3d_array_purge(&mqrNode->queries);
             lite3d_free_pooled(LITE3D_POOL_NO1, mqrNode);
         }
@@ -706,7 +716,12 @@ int lite3d_scene_remove_node(lite3d_scene *scene, lite3d_scene_node *node)
         /* check render unit node exist */
         while ((mqrNode = mqr_check_node_exist(mqrUnit, node)) != NULL)
         {
-            /* unlink it */
+            _query_unit *query;
+            LITE3D_ARR_FOREACH(&mqrNode->queries, _query_unit, query)
+            {
+                lite3d_query_purge(&query->query);
+            }
+
             lite3d_array_purge(&mqrNode->queries);
             lite3d_list_unlink_link(&mqrNode->unit);
             lite3d_free_pooled(LITE3D_POOL_NO1, mqrNode);

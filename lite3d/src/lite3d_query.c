@@ -68,7 +68,6 @@ void lite3d_query_begin(struct lite3d_query *query)
 
     glBeginQuery(GL_ANY_SAMPLES_PASSED, query->queryID);
     query->inProgress = LITE3D_TRUE;
-    query->anyPassed = -1;
 }
 
 void lite3d_query_end(struct lite3d_query *query)
