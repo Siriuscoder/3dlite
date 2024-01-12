@@ -126,6 +126,8 @@ static void mqr_render_mesh_chunk(lite3d_scene *scene, lite3d_mesh_chunk *chunk,
 
     scene->stats.trianglesRendered += chunk->vao.elementsCount * count;
     scene->stats.verticesRendered += chunk->vao.verticesCount * count;
+    scene->stats.batchCalled++;
+    scene->stats.batchInstancedCalled += count;
 }
 
 static void mqr_render_batch(lite3d_material_pass *pass, _mqr_node *mqrNode, uint32_t flags)
@@ -167,9 +169,6 @@ static void mqr_render_batch(lite3d_material_pass *pass, _mqr_node *mqrNode, uin
     {
         mqr_render_mesh_chunk(scene, mqrNode->meshChunk, mqrNode->instancesCount);
     }
-
-    scene->stats.batchCalled++;
-    scene->stats.batchInstancedCalled++;
 }
 
 static int mqr_render_series_params(lite3d_vbo *buffer, const void *param, size_t psize)
@@ -221,8 +220,6 @@ static void mqr_render_batch_series(lite3d_material_pass *pass, _mqr_node *mqrNo
         mqr_node_set_shader_params(scene, pass, mqrNode);
         mqr_render_mesh_chunk(scene, mqrNode->meshChunk, continuedId+1);
 
-        scene->stats.batchCalled++;
-        scene->stats.batchInstancedCalled += (continuedId+1);
         lite3d_array_clean(&scene->seriesMatrixes);
     }
 }
@@ -305,6 +302,7 @@ static int mqr_node_approve(lite3d_scene *scene, _mqr_node *mqrNode, uint32_t fl
         }
 
         nodeVisible = LITE3D_FALSE;
+        scene->stats.batchOccluded++;
     }
 
     // Check frustum culling if needed

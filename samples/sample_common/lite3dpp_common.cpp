@@ -235,12 +235,12 @@ void Sample::printRenderStats()
         "%d\t\t%d\t\t%d\t\t%d\n"
         "last frame ms\tavr frame ms\tbest frame ms\tworst frame ms\n"
         "%f\t%f\t%f\t%f\n"
-        "nodes total\tbatch total\tbatch called\tbatch instanced\tfaces\n"
-        "%d\t\t%d\t\t%d\t\t%d\t\t\t%d\n",
+        "nodes total\tbatches total\tbatches called\tbatches instanced\tbatches occluded\tfaces\n"
+        "%d\t\t%d\t\t%d\t\t%d\t\t\t%d\t\t\t%d\n",
         stats->framesCount, stats->lastFPS, stats->avrFPS, stats->bestFPS, stats->worstFPS,
         stats->lastFrameMs, stats->avrFrameMs, stats->bestFrameMs, stats->worstFrameMs,
         stats->nodesTotal, stats->batchTotal, stats->batchCalled, stats->batchInstancedCalled,
-        stats->trianglesByFrame);
+        stats->batchOccluded, stats->trianglesByFrame);
 }
 
 void Sample::printMemoryStats()

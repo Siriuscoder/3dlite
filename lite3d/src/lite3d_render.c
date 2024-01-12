@@ -182,6 +182,7 @@ static void update_render_target(lite3d_render_target *target)
             gRenderStats.batchTotal += look->scene->stats.batchTotal;
             gRenderStats.batchCalled += look->scene->stats.batchCalled;
             gRenderStats.batchInstancedCalled += look->scene->stats.batchInstancedCalled;
+            gRenderStats.batchOccluded += look->scene->stats.batchOccluded;
             gRenderStats.materialsTotal += look->scene->stats.materialBlocks;
             gRenderStats.materialsPassedByFrame += look->scene->stats.materialPassed;
             gRenderStats.textureUnitsByFrame += look->scene->stats.textureUnitsBinded;
@@ -250,6 +251,7 @@ int lite3d_render_frame(void)
         gRenderStats.batchTotal =
         gRenderStats.batchCalled =
         gRenderStats.batchInstancedCalled = 
+        gRenderStats.batchOccluded = 
         gRenderStats.materialsTotal =
         gRenderStats.materialsPassedByFrame =
         gRenderStats.textureUnitsByFrame =

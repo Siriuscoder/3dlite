@@ -62,6 +62,7 @@ typedef struct lite3d_render_stats
     int32_t batchTotal;
     int32_t batchCalled;
     int32_t batchInstancedCalled;
+    int32_t batchOccluded;
     int32_t materialsTotal;
     int32_t materialsPassedByFrame;
     int32_t textureUnitsByFrame;
