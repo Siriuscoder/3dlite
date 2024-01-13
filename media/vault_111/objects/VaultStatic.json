@@ -3,6 +3,29 @@
     "Name": "VaultStatic",
     "Nodes": [
       {
+        "Name": "CryoTanks",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/CryoTanks.json",
+          "Name": "CryoTanks.mesh"
+        },
+        "Position": [
+          192.0,
+          -2816.0,
+          -256.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.7071067094802856,
+          0.7071068286895752
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
         "Name": "DoorBeam",
         "Mesh": {
           "Mesh": "vault_111:models/json/DoorBeam.json",
@@ -41,6 +64,29 @@
           -0.0,
           -0.7071067690849304,
           0.7071067690849304
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "DoorBeam.002",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/DoorBeam.json",
+          "Name": "DoorBeam.mesh"
+        },
+        "Position": [
+          -960.0,
+          -3616.0,
+          -35.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
         ],
         "Scale": [
           1.0,
@@ -133,6 +179,213 @@
           0.0,
           1.0,
           -4.371138828673793e-08
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "DoorSignReactor",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/DoorSignReactor.json",
+          "Name": "DoorSignReactor.mesh"
+        },
+        "Position": [
+          1216.0,
+          -1112.8258056640625,
+          -95.29365539550781
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          1.0,
+          -4.371138828673793e-08
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "DoorSignReactor.001",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/DoorSignReactor.json",
+          "Name": "DoorSignReactor.mesh"
+        },
+        "Position": [
+          -1984.0,
+          -1887.303955078125,
+          51.15296936035156
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          1.0,
+          -4.371138828673793e-08
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "DuctTube",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/DuctTube.json",
+          "Name": "DuctTube.mesh"
+        },
+        "Position": [
+          64.0,
+          -3200.0,
+          -256.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.7071067094802856,
+          0.7071068286895752
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "DuctTube.001",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/DuctTube.json",
+          "Name": "DuctTube.mesh"
+        },
+        "Position": [
+          64.0,
+          -2944.0,
+          -256.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.7071067094802856,
+          0.7071068286895752
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "DuctTube.002",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/DuctTube.json",
+          "Name": "DuctTube.mesh"
+        },
+        "Position": [
+          64.0,
+          -2688.0,
+          -256.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.7071067094802856,
+          0.7071068286895752
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "DuctTube.003",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/DuctTube.json",
+          "Name": "DuctTube.mesh"
+        },
+        "Position": [
+          64.0,
+          -2432.0,
+          -256.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.7071067094802856,
+          0.7071068286895752
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "DuctTubeCap",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/DuctTubeCap.json",
+          "Name": "DuctTubeCap.mesh"
+        },
+        "Position": [
+          -64.0,
+          -3072.0,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.7071067094802856,
+          0.7071068286895752
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "DuctTubeCap.001",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/DuctTubeCap.json",
+          "Name": "DuctTubeCap.mesh"
+        },
+        "Position": [
+          -64.0,
+          -2816.0,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.7071067094802856,
+          0.7071068286895752
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "DuctTubeCap.002",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/DuctTubeCap.json",
+          "Name": "DuctTubeCap.mesh"
+        },
+        "Position": [
+          -64.0,
+          -2560.0,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.7071067094802856,
+          0.7071068286895752
         ],
         "Scale": [
           1.0,
@@ -337,7 +590,7 @@
           "Name": "Hall01.mesh"
         },
         "Position": [
-          1600.0,
+          1728.0,
           -640.0,
           -128.0
         ],
@@ -377,21 +630,113 @@
         ]
       },
       {
+        "Name": "Hall01.002",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/Hall01.json",
+          "Name": "Hall01.mesh"
+        },
+        "Position": [
+          320.0,
+          -3968.0,
+          -256.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.7071067690849304,
+          0.7071067690849304
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "Hall01.003",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/Hall01.json",
+          "Name": "Hall01.mesh"
+        },
+        "Position": [
+          1216.0,
+          -3456.0,
+          -256.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "Hall01.004",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/Hall01.json",
+          "Name": "Hall01.mesh"
+        },
+        "Position": [
+          832.0,
+          -3968.0,
+          -256.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.7071067690849304,
+          0.7071067690849304
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "Hall01.006",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/Hall01.json",
+          "Name": "Hall01.mesh"
+        },
+        "Position": [
+          1216.0,
+          -2176.0,
+          -256.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
         "Name": "Hall02",
         "Mesh": {
           "Mesh": "vault_111:models/json/Hall02.json",
           "Name": "Hall02.mesh"
         },
         "Position": [
-          1088.0,
-          -1024.0,
-          -128.0
+          1216.0,
+          -1920.0,
+          -256.0
         ],
         "Rotation": [
           0.0,
           0.0,
-          0.7071067094802856,
-          0.7071068286895752
+          0.0,
+          1.0
         ],
         "Scale": [
           1.0,
@@ -423,13 +768,59 @@
         ]
       },
       {
+        "Name": "Hall02.002",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/Hall02.json",
+          "Name": "Hall02.mesh"
+        },
+        "Position": [
+          -1984.0,
+          -3584.0,
+          -256.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "Hall02.003",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/Hall02.json",
+          "Name": "Hall02.mesh"
+        },
+        "Position": [
+          576.0,
+          -3968.0,
+          -256.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.7071067690849304,
+          0.7071067690849304
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
         "Name": "Hall3Way",
         "Mesh": {
           "Mesh": "vault_111:models/json/Hall3Way.json",
           "Name": "Hall3Way.mesh"
         },
         "Position": [
-          1600.0,
+          1728.0,
           -1024.0,
           -128.0
         ],
@@ -452,7 +843,7 @@
           "Name": "Hall3Way.mesh"
         },
         "Position": [
-          1600.0,
+          1728.0,
           128.0,
           0.0
         ],
@@ -515,13 +906,36 @@
         ]
       },
       {
+        "Name": "Hall3WayEx",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/Hall3WayEx.json",
+          "Name": "Hall3WayEx.mesh"
+        },
+        "Position": [
+          1216.0,
+          -1024.0,
+          -128.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
         "Name": "HallEnd",
         "Mesh": {
           "Mesh": "vault_111:models/json/HallEnd.json",
           "Name": "HallEnd.mesh"
         },
         "Position": [
-          1600.0,
+          1728.0,
           512.0,
           0.0
         ],
@@ -561,6 +975,52 @@
         ]
       },
       {
+        "Name": "HallEnd.002",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/HallEnd.json",
+          "Name": "HallEnd.mesh"
+        },
+        "Position": [
+          -2240.0,
+          -640.0,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          1.0,
+          -4.371138828673793e-08
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "HallEnd.003",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/HallEnd.json",
+          "Name": "HallEnd.mesh"
+        },
+        "Position": [
+          2112.0,
+          -1024.0,
+          -128.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.7071067690849304,
+          0.7071067690849304
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
         "Name": "HallEndEx",
         "Mesh": {
           "Mesh": "vault_111:models/json/HallEndEx.json",
@@ -590,9 +1050,9 @@
           "Name": "HallEndEx.mesh"
         },
         "Position": [
-          2112.0,
-          -640.0,
-          -128.0
+          -1984.0,
+          -2176.0,
+          0.0
         ],
         "Rotation": [
           0.0,
@@ -653,6 +1113,121 @@
         ]
       },
       {
+        "Name": "HallEndEx.004",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/HallEndEx.json",
+          "Name": "HallEndEx.mesh"
+        },
+        "Position": [
+          1216.0,
+          -1408.0,
+          -128.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "HallEndEx.005",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/HallEndEx.json",
+          "Name": "HallEndEx.mesh"
+        },
+        "Position": [
+          64.0,
+          -3968.0,
+          -256.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.7071067690849304,
+          0.7071067690849304
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "HallEndEx.006",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/HallEndEx.json",
+          "Name": "HallEndEx.mesh"
+        },
+        "Position": [
+          -1472.0,
+          -3968.0,
+          -256.0
+        ],
+        "Rotation": [
+          0.0,
+          -0.0,
+          -0.7071067690849304,
+          0.7071067690849304
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "HallEndEx.007",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/HallEndEx.json",
+          "Name": "HallEndEx.mesh"
+        },
+        "Position": [
+          -1216.0,
+          -2176.0,
+          -256.0
+        ],
+        "Rotation": [
+          0.0,
+          -0.0,
+          -0.7071067690849304,
+          0.7071067690849304
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "HallEndEx.008",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/HallEndEx.json",
+          "Name": "HallEndEx.mesh"
+        },
+        "Position": [
+          -1600.0,
+          -2560.0,
+          -256.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          1.0,
+          -4.371138828673793e-08
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
         "Name": "HallHalf",
         "Mesh": {
           "Mesh": "vault_111:models/json/HallHalf.json",
@@ -682,9 +1257,9 @@
           "Name": "HallHalf.mesh"
         },
         "Position": [
-          1280.0,
-          -1024.0,
-          -128.0
+          1408.0001220703125,
+          127.99993896484375,
+          0.0
         ],
         "Rotation": [
           0.0,
@@ -705,7 +1280,7 @@
           "Name": "HallHalf.mesh"
         },
         "Position": [
-          1600.0,
+          1728.0,
           -192.0,
           0.0
         ],
@@ -722,13 +1297,82 @@
         ]
       },
       {
+        "Name": "HallHalf.003",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/HallHalf.json",
+          "Name": "HallHalf.mesh"
+        },
+        "Position": [
+          1216.0,
+          -3648.0,
+          -256.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "HallHalf.004",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/HallHalf.json",
+          "Name": "HallHalf.mesh"
+        },
+        "Position": [
+          -1984.0,
+          -2880.0,
+          -256.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "HallHalf.005",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/HallHalf.json",
+          "Name": "HallHalf.mesh"
+        },
+        "Position": [
+          -1664.0,
+          -3968.0,
+          -256.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.7071067690849304,
+          0.7071067690849304
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
         "Name": "HallStairs",
         "Mesh": {
           "Mesh": "vault_111:models/json/HallStairs.json",
           "Name": "HallStairs.mesh"
         },
         "Position": [
-          1600.0,
+          1728.0,
           -384.0,
           0.0
         ],
@@ -768,21 +1412,136 @@
         ]
       },
       {
-        "Name": "HallTurn",
+        "Name": "HallStairs.002",
         "Mesh": {
-          "Mesh": "vault_111:models/json/HallTurn.json",
-          "Name": "HallTurn.mesh"
+          "Mesh": "vault_111:models/json/HallStairs.json",
+          "Name": "HallStairs.mesh"
         },
         "Position": [
-          2112.0,
-          -1024.0,
+          1216.0,
+          -1664.0,
           -128.0
         ],
         "Rotation": [
           0.0,
           0.0,
-          0.7071067094802856,
-          0.7071068286895752
+          0.0,
+          1.0
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "HallStairs.003",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/HallStairs.json",
+          "Name": "HallStairs.mesh"
+        },
+        "Position": [
+          -1984.0,
+          -2432.0,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "HallStairs.004",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/HallStairs.json",
+          "Name": "HallStairs.mesh"
+        },
+        "Position": [
+          -1984.0,
+          -2688.0,
+          -128.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "HallTurn.001",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/HallTurn.json",
+          "Name": "HallTurn.mesh"
+        },
+        "Position": [
+          1216.0,
+          -3968.0,
+          -256.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.7071067690849304,
+          0.7071067690849304
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "HallTurn.002",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/HallTurn.json",
+          "Name": "HallTurn.mesh"
+        },
+        "Position": [
+          -1984.0,
+          -3968.0,
+          -256.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "HallTurn.003",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/HallTurn.json",
+          "Name": "HallTurn.mesh"
+        },
+        "Position": [
+          -1600.0,
+          -2176.0,
+          -256.0
+        ],
+        "Rotation": [
+          0.0,
+          -0.0,
+          -0.7071067690849304,
+          0.7071067690849304
         ],
         "Scale": [
           1.0,
@@ -806,6 +1565,75 @@
           -0.0,
           -0.7071067690849304,
           0.7071067690849304
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "HallWinLong.001",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/HallWinLong.json",
+          "Name": "HallWinLong.mesh"
+        },
+        "Position": [
+          1216.0,
+          -2560.0,
+          -256.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "HallWinLong.002",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/HallWinLong.json",
+          "Name": "HallWinLong.mesh"
+        },
+        "Position": [
+          1216.0,
+          -3072.0,
+          -256.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "HallWinLong.003",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/HallWinLong.json",
+          "Name": "HallWinLong.mesh"
+        },
+        "Position": [
+          -1984.0,
+          -3200.0,
+          -256.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          1.0,
+          -4.371138828673793e-08
         ],
         "Scale": [
           1.0,
@@ -1874,9 +2702,9 @@
           "Name": "LightBox.mesh"
         },
         "Position": [
-          -1300.5540771484375,
-          -1791.9072265625,
-          241.22198486328125
+          -1856.0,
+          -3200.0,
+          -19.0
         ],
         "Rotation": [
           -0.7071068286895752,
@@ -3020,6 +3848,78 @@
         ]
       },
       {
+        "Name": "LightBox.030",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/LightBox.json",
+          "Name": "LightBox.mesh"
+        },
+        "Position": [
+          -1300.5540771484375,
+          -1791.9072265625,
+          241.22198486328125
+        ],
+        "Rotation": [
+          -0.7071068286895752,
+          -0.7071067690849304,
+          5.338507591545749e-08,
+          5.338507946817117e-08
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "Nodes": [
+          {
+            "Name": "LightBoxNode.030",
+            "Light": {
+              "Type": "Point",
+              "Name": "LightBox_LightBoxNode.030",
+              "Diffuse": [
+                1.0,
+                0.8794688582420349,
+                0.9068582653999329
+              ],
+              "Radiance": 300000.0,
+              "LightSize": 0.0,
+              "Attenuation": {
+                "Constant": 0.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
+                "InfluenceDistance": 0.0,
+                "InfluenceMinRadiance": 0.003000000026077032
+              },
+              "Direction": [
+                0.0,
+                0.0,
+                -1.0
+              ],
+              "Position": [
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "Position": [
+              4.8420156815907455e-29,
+              0.0,
+              14.242653846740723
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          }
+        ]
+      },
+      {
         "Name": "LightBox.031",
         "Mesh": {
           "Mesh": "vault_111:models/json/LightBox.json",
@@ -3236,19 +4136,1891 @@
         ]
       },
       {
+        "Name": "LightBox.034",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/LightBox.json",
+          "Name": "LightBox.mesh"
+        },
+        "Position": [
+          -1472.0,
+          -3424.0,
+          -15.0
+        ],
+        "Rotation": [
+          -0.7071068286895752,
+          -0.7071067690849304,
+          5.338507591545749e-08,
+          5.338507946817117e-08
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "Nodes": [
+          {
+            "Name": "LightBoxNode.034",
+            "Light": {
+              "Type": "Point",
+              "Name": "LightBox_LightBoxNode.034",
+              "Diffuse": [
+                1.0,
+                0.8794688582420349,
+                0.9068582653999329
+              ],
+              "Radiance": 300000.0,
+              "LightSize": 0.0,
+              "Attenuation": {
+                "Constant": 0.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
+                "InfluenceDistance": 0.0,
+                "InfluenceMinRadiance": 0.003000000026077032
+              },
+              "Direction": [
+                0.0,
+                0.0,
+                -1.0
+              ],
+              "Position": [
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "Position": [
+              4.8420156815907455e-29,
+              0.0,
+              14.242653846740723
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "LightBox.035",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/LightBox.json",
+          "Name": "LightBox.mesh"
+        },
+        "Position": [
+          -1472.0,
+          -2976.0,
+          -15.0
+        ],
+        "Rotation": [
+          -0.7071068286895752,
+          -0.7071067690849304,
+          5.338507591545749e-08,
+          5.338507946817117e-08
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "Nodes": [
+          {
+            "Name": "LightBoxNode.035",
+            "Light": {
+              "Type": "Point",
+              "Name": "LightBox_LightBoxNode.035",
+              "Diffuse": [
+                1.0,
+                0.8794688582420349,
+                0.9068582653999329
+              ],
+              "Radiance": 300000.0,
+              "LightSize": 0.0,
+              "Attenuation": {
+                "Constant": 0.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
+                "InfluenceDistance": 0.0,
+                "InfluenceMinRadiance": 0.003000000026077032
+              },
+              "Direction": [
+                0.0,
+                0.0,
+                -1.0
+              ],
+              "Position": [
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "Position": [
+              4.8420156815907455e-29,
+              0.0,
+              14.242653846740723
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "LightBox.036",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/LightBox.json",
+          "Name": "LightBox.mesh"
+        },
+        "Position": [
+          -832.0,
+          -3840.0,
+          -15.0
+        ],
+        "Rotation": [
+          -1.0,
+          5.057231384457035e-23,
+          6.698505953476458e-16,
+          7.549790126404332e-08
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "Nodes": [
+          {
+            "Name": "LightBoxNode.036",
+            "Light": {
+              "Type": "Point",
+              "Name": "LightBox_LightBoxNode.036",
+              "Diffuse": [
+                1.0,
+                0.8794688582420349,
+                0.9068582653999329
+              ],
+              "Radiance": 300000.0,
+              "LightSize": 0.0,
+              "Attenuation": {
+                "Constant": 0.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
+                "InfluenceDistance": 0.0,
+                "InfluenceMinRadiance": 0.003000000026077032
+              },
+              "Direction": [
+                0.0,
+                0.0,
+                -1.0
+              ],
+              "Position": [
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "Position": [
+              4.8420156815907455e-29,
+              0.0,
+              14.242653846740723
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "LightBox.037",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/LightBox.json",
+          "Name": "LightBox.mesh"
+        },
+        "Position": [
+          -288.0,
+          -3840.0,
+          -15.0
+        ],
+        "Rotation": [
+          -1.0,
+          5.057231384457035e-23,
+          6.698505953476458e-16,
+          7.549790126404332e-08
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "Nodes": [
+          {
+            "Name": "LightBoxNode.037",
+            "Light": {
+              "Type": "Point",
+              "Name": "LightBox_LightBoxNode.037",
+              "Diffuse": [
+                1.0,
+                0.8794688582420349,
+                0.9068582653999329
+              ],
+              "Radiance": 300000.0,
+              "LightSize": 0.0,
+              "Attenuation": {
+                "Constant": 0.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
+                "InfluenceDistance": 0.0,
+                "InfluenceMinRadiance": 0.003000000026077032
+              },
+              "Direction": [
+                0.0,
+                0.0,
+                -1.0
+              ],
+              "Position": [
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "Position": [
+              4.8420156815907455e-29,
+              0.0,
+              14.242653846740723
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "LightBox.038",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/LightBox.json",
+          "Name": "LightBox.mesh"
+        },
+        "Position": [
+          -576.0,
+          -3840.0,
+          -15.0
+        ],
+        "Rotation": [
+          -1.0,
+          5.057231384457035e-23,
+          6.698505953476458e-16,
+          7.549790126404332e-08
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "Nodes": [
+          {
+            "Name": "LightBoxNode.038",
+            "Light": {
+              "Type": "Point",
+              "Name": "LightBox_LightBoxNode.038",
+              "Diffuse": [
+                1.0,
+                0.8794688582420349,
+                0.9068582653999329
+              ],
+              "Radiance": 300000.0,
+              "LightSize": 0.0,
+              "Attenuation": {
+                "Constant": 0.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
+                "InfluenceDistance": 0.0,
+                "InfluenceMinRadiance": 0.003000000026077032
+              },
+              "Direction": [
+                0.0,
+                0.0,
+                -1.0
+              ],
+              "Position": [
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "Position": [
+              4.8420156815907455e-29,
+              0.0,
+              14.242653846740723
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "LightBox.039",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/LightBox.json",
+          "Name": "LightBox.mesh"
+        },
+        "Position": [
+          -1120.0,
+          -3840.0,
+          -15.0
+        ],
+        "Rotation": [
+          -1.0,
+          5.057231384457035e-23,
+          6.698505953476458e-16,
+          7.549790126404332e-08
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "Nodes": [
+          {
+            "Name": "LightBoxNode.039",
+            "Light": {
+              "Type": "Point",
+              "Name": "LightBox_LightBoxNode.039",
+              "Diffuse": [
+                1.0,
+                0.8794688582420349,
+                0.9068582653999329
+              ],
+              "Radiance": 300000.0,
+              "LightSize": 0.0,
+              "Attenuation": {
+                "Constant": 0.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
+                "InfluenceDistance": 0.0,
+                "InfluenceMinRadiance": 0.003000000026077032
+              },
+              "Direction": [
+                0.0,
+                0.0,
+                -1.0
+              ],
+              "Position": [
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "Position": [
+              4.8420156815907455e-29,
+              0.0,
+              14.242653846740723
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "LightBox.040",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/LightBox.json",
+          "Name": "LightBox.mesh"
+        },
+        "Position": [
+          800.0,
+          -3072.0,
+          -19.0
+        ],
+        "Rotation": [
+          -0.7071068286895752,
+          -0.7071067690849304,
+          5.338507591545749e-08,
+          5.338507946817117e-08
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "Nodes": [
+          {
+            "Name": "LightBoxNode.040",
+            "Light": {
+              "Type": "Point",
+              "Name": "LightBox_LightBoxNode.040",
+              "Diffuse": [
+                1.0,
+                0.8794688582420349,
+                0.9068582653999329
+              ],
+              "Radiance": 300000.0,
+              "LightSize": 0.0,
+              "Attenuation": {
+                "Constant": 0.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
+                "InfluenceDistance": 0.0,
+                "InfluenceMinRadiance": 0.003000000026077032
+              },
+              "Direction": [
+                0.0,
+                0.0,
+                -1.0
+              ],
+              "Position": [
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "Position": [
+              4.8420156815907455e-29,
+              0.0,
+              14.242653846740723
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "LightBox.041",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/LightBox.json",
+          "Name": "LightBox.mesh"
+        },
+        "Position": [
+          800.0,
+          -2560.0,
+          -19.0
+        ],
+        "Rotation": [
+          -0.7071068286895752,
+          -0.7071067690849304,
+          5.338507591545749e-08,
+          5.338507946817117e-08
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "Nodes": [
+          {
+            "Name": "LightBoxNode.041",
+            "Light": {
+              "Type": "Point",
+              "Name": "LightBox_LightBoxNode.041",
+              "Diffuse": [
+                1.0,
+                0.8794688582420349,
+                0.9068582653999329
+              ],
+              "Radiance": 300000.0,
+              "LightSize": 0.0,
+              "Attenuation": {
+                "Constant": 0.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
+                "InfluenceDistance": 0.0,
+                "InfluenceMinRadiance": 0.003000000026077032
+              },
+              "Direction": [
+                0.0,
+                0.0,
+                -1.0
+              ],
+              "Position": [
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "Position": [
+              4.8420156815907455e-29,
+              0.0,
+              14.242653846740723
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "LightBox.042",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/LightBox.json",
+          "Name": "LightBox.mesh"
+        },
+        "Position": [
+          1088.0,
+          -2560.0,
+          -19.0
+        ],
+        "Rotation": [
+          -0.7071068286895752,
+          -0.7071067690849304,
+          5.338507591545749e-08,
+          5.338507946817117e-08
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "Nodes": [
+          {
+            "Name": "LightBoxNode.042",
+            "Light": {
+              "Type": "Point",
+              "Name": "LightBox_LightBoxNode.042",
+              "Diffuse": [
+                1.0,
+                0.8794688582420349,
+                0.9068582653999329
+              ],
+              "Radiance": 300000.0,
+              "LightSize": 0.0,
+              "Attenuation": {
+                "Constant": 0.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
+                "InfluenceDistance": 0.0,
+                "InfluenceMinRadiance": 0.003000000026077032
+              },
+              "Direction": [
+                0.0,
+                0.0,
+                -1.0
+              ],
+              "Position": [
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "Position": [
+              4.8420156815907455e-29,
+              0.0,
+              14.242653846740723
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "LightBox.043",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/LightBox.json",
+          "Name": "LightBox.mesh"
+        },
+        "Position": [
+          1088.0,
+          -3072.0,
+          -19.0
+        ],
+        "Rotation": [
+          -0.7071068286895752,
+          -0.7071067690849304,
+          5.338507591545749e-08,
+          5.338507946817117e-08
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "Nodes": [
+          {
+            "Name": "LightBoxNode.043",
+            "Light": {
+              "Type": "Point",
+              "Name": "LightBox_LightBoxNode.043",
+              "Diffuse": [
+                1.0,
+                0.8794688582420349,
+                0.9068582653999329
+              ],
+              "Radiance": 300000.0,
+              "LightSize": 0.0,
+              "Attenuation": {
+                "Constant": 0.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
+                "InfluenceDistance": 0.0,
+                "InfluenceMinRadiance": 0.003000000026077032
+              },
+              "Direction": [
+                0.0,
+                0.0,
+                -1.0
+              ],
+              "Position": [
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "Position": [
+              4.8420156815907455e-29,
+              0.0,
+              14.242653846740723
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "LightBox.044",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/LightBox.json",
+          "Name": "LightBox.mesh"
+        },
+        "Position": [
+          384.0,
+          -2688.0,
+          37.0
+        ],
+        "Rotation": [
+          -0.7071068286895752,
+          -0.7071067690849304,
+          5.338507591545749e-08,
+          5.338507946817117e-08
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "Nodes": [
+          {
+            "Name": "LightBoxNode.044",
+            "Light": {
+              "Type": "Point",
+              "Name": "LightBox_LightBoxNode.044",
+              "Diffuse": [
+                1.0,
+                0.8794688582420349,
+                0.9068582653999329
+              ],
+              "Radiance": 300000.0,
+              "LightSize": 0.0,
+              "Attenuation": {
+                "Constant": 0.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
+                "InfluenceDistance": 0.0,
+                "InfluenceMinRadiance": 0.003000000026077032
+              },
+              "Direction": [
+                0.0,
+                0.0,
+                -1.0
+              ],
+              "Position": [
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "Position": [
+              4.8420156815907455e-29,
+              0.0,
+              14.242653846740723
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "LightBox.045",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/LightBox.json",
+          "Name": "LightBox.mesh"
+        },
+        "Position": [
+          384.0,
+          -2944.0,
+          37.0
+        ],
+        "Rotation": [
+          -0.7071068286895752,
+          -0.7071067690849304,
+          5.338507591545749e-08,
+          5.338507946817117e-08
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "Nodes": [
+          {
+            "Name": "LightBoxNode.045",
+            "Light": {
+              "Type": "Point",
+              "Name": "LightBox_LightBoxNode.045",
+              "Diffuse": [
+                1.0,
+                0.8794688582420349,
+                0.9068582653999329
+              ],
+              "Radiance": 300000.0,
+              "LightSize": 0.0,
+              "Attenuation": {
+                "Constant": 0.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
+                "InfluenceDistance": 0.0,
+                "InfluenceMinRadiance": 0.003000000026077032
+              },
+              "Direction": [
+                0.0,
+                0.0,
+                -1.0
+              ],
+              "Position": [
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "Position": [
+              4.8420156815907455e-29,
+              0.0,
+              14.242653846740723
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "LightBox.046",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/LightBox.json",
+          "Name": "LightBox.mesh"
+        },
+        "Position": [
+          0.0,
+          -2944.0,
+          37.0
+        ],
+        "Rotation": [
+          -0.7071068286895752,
+          -0.7071067690849304,
+          5.338507591545749e-08,
+          5.338507946817117e-08
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "Nodes": [
+          {
+            "Name": "LightBoxNode.046",
+            "Light": {
+              "Type": "Point",
+              "Name": "LightBox_LightBoxNode.046",
+              "Diffuse": [
+                1.0,
+                0.8794688582420349,
+                0.9068582653999329
+              ],
+              "Radiance": 300000.0,
+              "LightSize": 0.0,
+              "Attenuation": {
+                "Constant": 0.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
+                "InfluenceDistance": 0.0,
+                "InfluenceMinRadiance": 0.003000000026077032
+              },
+              "Direction": [
+                0.0,
+                0.0,
+                -1.0
+              ],
+              "Position": [
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "Position": [
+              4.8420156815907455e-29,
+              0.0,
+              14.242653846740723
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "LightBox.047",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/LightBox.json",
+          "Name": "LightBox.mesh"
+        },
+        "Position": [
+          0.0,
+          -2688.0,
+          37.0
+        ],
+        "Rotation": [
+          -0.7071068286895752,
+          -0.7071067690849304,
+          5.338507591545749e-08,
+          5.338507946817117e-08
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "Nodes": [
+          {
+            "Name": "LightBoxNode.047",
+            "Light": {
+              "Type": "Point",
+              "Name": "LightBox_LightBoxNode.047",
+              "Diffuse": [
+                1.0,
+                0.8794688582420349,
+                0.9068582653999329
+              ],
+              "Radiance": 300000.0,
+              "LightSize": 0.0,
+              "Attenuation": {
+                "Constant": 0.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
+                "InfluenceDistance": 0.0,
+                "InfluenceMinRadiance": 0.003000000026077032
+              },
+              "Direction": [
+                0.0,
+                0.0,
+                -1.0
+              ],
+              "Position": [
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "Position": [
+              4.8420156815907455e-29,
+              0.0,
+              14.242653846740723
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "LightBox.048",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/LightBox.json",
+          "Name": "LightBox.mesh"
+        },
+        "Position": [
+          -576.0,
+          -3424.0,
+          -15.0
+        ],
+        "Rotation": [
+          -1.0,
+          5.057231384457035e-23,
+          6.698505953476458e-16,
+          7.549790126404332e-08
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "Nodes": [
+          {
+            "Name": "LightBoxNode.048",
+            "Light": {
+              "Type": "Point",
+              "Name": "LightBox_LightBoxNode.048",
+              "Diffuse": [
+                1.0,
+                0.8794688582420349,
+                0.9068582653999329
+              ],
+              "Radiance": 300000.0,
+              "LightSize": 0.0,
+              "Attenuation": {
+                "Constant": 0.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
+                "InfluenceDistance": 0.0,
+                "InfluenceMinRadiance": 0.003000000026077032
+              },
+              "Direction": [
+                0.0,
+                0.0,
+                -1.0
+              ],
+              "Position": [
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "Position": [
+              4.8420156815907455e-29,
+              0.0,
+              14.242653846740723
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "LightBox.049",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/LightBox.json",
+          "Name": "LightBox.mesh"
+        },
+        "Position": [
+          650.0,
+          -2199.0,
+          2.0
+        ],
+        "Rotation": [
+          -0.5,
+          -0.5,
+          0.5,
+          0.4999999701976776
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "Nodes": [
+          {
+            "Name": "LightBoxNode.049",
+            "Light": {
+              "Type": "Point",
+              "Name": "LightBox_LightBoxNode.049",
+              "Diffuse": [
+                1.0,
+                0.8794688582420349,
+                0.9068582653999329
+              ],
+              "Radiance": 300000.0,
+              "LightSize": 0.0,
+              "Attenuation": {
+                "Constant": 0.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
+                "InfluenceDistance": 0.0,
+                "InfluenceMinRadiance": 0.003000000026077032
+              },
+              "Direction": [
+                0.0,
+                0.0,
+                -1.0
+              ],
+              "Position": [
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "Position": [
+              4.8420156815907455e-29,
+              0.0,
+              14.242653846740723
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "LightBox.050",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/LightBox.json",
+          "Name": "LightBox.mesh"
+        },
+        "Position": [
+          -352.0,
+          -3072.0,
+          -15.0
+        ],
+        "Rotation": [
+          -0.7071067690849304,
+          -0.7071067690849304,
+          5.338507946817117e-08,
+          5.338507591545749e-08
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "Nodes": [
+          {
+            "Name": "LightBoxNode.050",
+            "Light": {
+              "Type": "Point",
+              "Name": "LightBox_LightBoxNode.050",
+              "Diffuse": [
+                1.0,
+                0.8794688582420349,
+                0.9068582653999329
+              ],
+              "Radiance": 300000.0,
+              "LightSize": 0.0,
+              "Attenuation": {
+                "Constant": 0.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
+                "InfluenceDistance": 0.0,
+                "InfluenceMinRadiance": 0.003000000026077032
+              },
+              "Direction": [
+                0.0,
+                0.0,
+                -1.0
+              ],
+              "Position": [
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "Position": [
+              4.8420156815907455e-29,
+              0.0,
+              14.242653846740723
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "LightBox.051",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/LightBox.json",
+          "Name": "LightBox.mesh"
+        },
+        "Position": [
+          -266.0,
+          -2199.0,
+          2.0
+        ],
+        "Rotation": [
+          0.5,
+          0.5,
+          0.5,
+          0.4999999701976776
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "Nodes": [
+          {
+            "Name": "LightBoxNode.051",
+            "Light": {
+              "Type": "Point",
+              "Name": "LightBox_LightBoxNode.051",
+              "Diffuse": [
+                1.0,
+                0.8794688582420349,
+                0.9068582653999329
+              ],
+              "Radiance": 300000.0,
+              "LightSize": 0.0,
+              "Attenuation": {
+                "Constant": 0.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
+                "InfluenceDistance": 0.0,
+                "InfluenceMinRadiance": 0.003000000026077032
+              },
+              "Direction": [
+                0.0,
+                0.0,
+                -1.0
+              ],
+              "Position": [
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "Position": [
+              4.8420156815907455e-29,
+              0.0,
+              14.242653846740723
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "LightBox.052",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/LightBox.json",
+          "Name": "LightBox.mesh"
+        },
+        "Position": [
+          -266.0,
+          -3428.0,
+          2.0
+        ],
+        "Rotation": [
+          0.5,
+          0.5,
+          0.5,
+          0.4999999701976776
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "Nodes": [
+          {
+            "Name": "LightBoxNode.052",
+            "Light": {
+              "Type": "Point",
+              "Name": "LightBox_LightBoxNode.052",
+              "Diffuse": [
+                1.0,
+                0.8794688582420349,
+                0.9068582653999329
+              ],
+              "Radiance": 300000.0,
+              "LightSize": 0.0,
+              "Attenuation": {
+                "Constant": 0.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
+                "InfluenceDistance": 0.0,
+                "InfluenceMinRadiance": 0.003000000026077032
+              },
+              "Direction": [
+                0.0,
+                0.0,
+                -1.0
+              ],
+              "Position": [
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "Position": [
+              4.8420156815907455e-29,
+              0.0,
+              14.242653846740723
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "LightBox.053",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/LightBox.json",
+          "Name": "LightBox.mesh"
+        },
+        "Position": [
+          650.0,
+          -3428.0,
+          2.0
+        ],
+        "Rotation": [
+          -0.5,
+          -0.5,
+          0.5,
+          0.4999999701976776
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "Nodes": [
+          {
+            "Name": "LightBoxNode.053",
+            "Light": {
+              "Type": "Point",
+              "Name": "LightBox_LightBoxNode.053",
+              "Diffuse": [
+                1.0,
+                0.8794688582420349,
+                0.9068582653999329
+              ],
+              "Radiance": 300000.0,
+              "LightSize": 0.0,
+              "Attenuation": {
+                "Constant": 0.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
+                "InfluenceDistance": 0.0,
+                "InfluenceMinRadiance": 0.003000000026077032
+              },
+              "Direction": [
+                0.0,
+                0.0,
+                -1.0
+              ],
+              "Position": [
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "Position": [
+              4.8420156815907455e-29,
+              0.0,
+              14.242653846740723
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "LightBox.054",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/LightBox.json",
+          "Name": "LightBox.mesh"
+        },
+        "Position": [
+          -352.0,
+          -2816.0,
+          -15.0
+        ],
+        "Rotation": [
+          -0.7071067690849304,
+          -0.7071067690849304,
+          5.338507946817117e-08,
+          5.338507591545749e-08
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "Nodes": [
+          {
+            "Name": "LightBoxNode.054",
+            "Light": {
+              "Type": "Point",
+              "Name": "LightBox_LightBoxNode.054",
+              "Diffuse": [
+                1.0,
+                0.8794688582420349,
+                0.9068582653999329
+              ],
+              "Radiance": 300000.0,
+              "LightSize": 0.0,
+              "Attenuation": {
+                "Constant": 0.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
+                "InfluenceDistance": 0.0,
+                "InfluenceMinRadiance": 0.003000000026077032
+              },
+              "Direction": [
+                0.0,
+                0.0,
+                -1.0
+              ],
+              "Position": [
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "Position": [
+              4.8420156815907455e-29,
+              0.0,
+              14.242653846740723
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "LightBox.055",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/LightBox.json",
+          "Name": "LightBox.mesh"
+        },
+        "Position": [
+          -352.0,
+          -2560.0,
+          -15.0
+        ],
+        "Rotation": [
+          -0.7071067690849304,
+          -0.7071067690849304,
+          5.338507946817117e-08,
+          5.338507591545749e-08
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "Nodes": [
+          {
+            "Name": "LightBoxNode.055",
+            "Light": {
+              "Type": "Point",
+              "Name": "LightBox_LightBoxNode.055",
+              "Diffuse": [
+                1.0,
+                0.8794688582420349,
+                0.9068582653999329
+              ],
+              "Radiance": 300000.0,
+              "LightSize": 0.0,
+              "Attenuation": {
+                "Constant": 0.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
+                "InfluenceDistance": 0.0,
+                "InfluenceMinRadiance": 0.003000000026077032
+              },
+              "Direction": [
+                0.0,
+                0.0,
+                -1.0
+              ],
+              "Position": [
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "Position": [
+              4.8420156815907455e-29,
+              0.0,
+              14.242653846740723
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "LightBox.056",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/LightBox.json",
+          "Name": "LightBox.mesh"
+        },
+        "Position": [
+          -576.0,
+          -2208.0,
+          -15.0
+        ],
+        "Rotation": [
+          -1.0,
+          5.057231384457035e-23,
+          6.698505953476458e-16,
+          7.549790126404332e-08
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "Nodes": [
+          {
+            "Name": "LightBoxNode.056",
+            "Light": {
+              "Type": "Point",
+              "Name": "LightBox_LightBoxNode.056",
+              "Diffuse": [
+                1.0,
+                0.8794688582420349,
+                0.9068582653999329
+              ],
+              "Radiance": 300000.0,
+              "LightSize": 0.0,
+              "Attenuation": {
+                "Constant": 0.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
+                "InfluenceDistance": 0.0,
+                "InfluenceMinRadiance": 0.003000000026077032
+              },
+              "Direction": [
+                0.0,
+                0.0,
+                -1.0
+              ],
+              "Position": [
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "Position": [
+              4.8420156815907455e-29,
+              0.0,
+              14.242653846740723
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "LightBox.057",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/LightBox.json",
+          "Name": "LightBox.mesh"
+        },
+        "Position": [
+          -960.0,
+          -3424.0,
+          -15.0
+        ],
+        "Rotation": [
+          -1.0,
+          5.057231384457035e-23,
+          6.698505953476458e-16,
+          7.549790126404332e-08
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "Nodes": [
+          {
+            "Name": "LightBoxNode.057",
+            "Light": {
+              "Type": "Point",
+              "Name": "LightBox_LightBoxNode.057",
+              "Diffuse": [
+                1.0,
+                0.8794688582420349,
+                0.9068582653999329
+              ],
+              "Radiance": 300000.0,
+              "LightSize": 0.0,
+              "Attenuation": {
+                "Constant": 0.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
+                "InfluenceDistance": 0.0,
+                "InfluenceMinRadiance": 0.003000000026077032
+              },
+              "Direction": [
+                0.0,
+                0.0,
+                -1.0
+              ],
+              "Position": [
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "Position": [
+              4.8420156815907455e-29,
+              0.0,
+              14.242653846740723
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "LightBox.058",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/LightBox.json",
+          "Name": "LightBox.mesh"
+        },
+        "Position": [
+          -896.0,
+          -2176.0,
+          -3.0
+        ],
+        "Rotation": [
+          -0.7071067690849304,
+          -0.7071067690849304,
+          5.338507946817117e-08,
+          5.338507591545749e-08
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "Nodes": [
+          {
+            "Name": "LightBoxNode.058",
+            "Light": {
+              "Type": "Point",
+              "Name": "LightBox_LightBoxNode.058",
+              "Diffuse": [
+                1.0,
+                0.8794688582420349,
+                0.9068582653999329
+              ],
+              "Radiance": 300000.0,
+              "LightSize": 0.0,
+              "Attenuation": {
+                "Constant": 0.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
+                "InfluenceDistance": 0.0,
+                "InfluenceMinRadiance": 0.003000000026077032
+              },
+              "Direction": [
+                0.0,
+                0.0,
+                -1.0
+              ],
+              "Position": [
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "Position": [
+              4.8420156815907455e-29,
+              0.0,
+              14.242653846740723
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "LightBox.059",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/LightBox.json",
+          "Name": "LightBox.mesh"
+        },
+        "Position": [
+          1218.100341796875,
+          -1080.0689697265625,
+          132.65240478515625
+        ],
+        "Rotation": [
+          -1.0,
+          -0.0,
+          0.0,
+          7.549790126404332e-08
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "Nodes": [
+          {
+            "Name": "LightBoxNode.059",
+            "Light": {
+              "Type": "Point",
+              "Name": "LightBox_LightBoxNode.059",
+              "Diffuse": [
+                1.0,
+                0.8794688582420349,
+                0.9068582653999329
+              ],
+              "Radiance": 300000.0,
+              "LightSize": 0.0,
+              "Attenuation": {
+                "Constant": 0.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
+                "InfluenceDistance": 0.0,
+                "InfluenceMinRadiance": 0.003000000026077032
+              },
+              "Direction": [
+                0.0,
+                0.0,
+                -1.0
+              ],
+              "Position": [
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "Position": [
+              4.8420156815907455e-29,
+              0.0,
+              14.242653846740723
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          }
+        ]
+      },
+      {
         "Name": "LightCageRed",
         "Mesh": {
           "Mesh": "vault_111:models/json/LightCageRed.json",
           "Name": "LightCageRed.mesh"
         },
         "Position": [
-          2039.949462890625,
-          -732.0167846679688,
-          64.9590072631836
+          1144.1552734375,
+          -1567.9901123046875,
+          65.2657241821289
         ],
         "Rotation": [
-          -0.14290623366832733,
           -0.14290624856948853,
+          -0.14290626347064972,
           0.6925155520439148,
           0.6925155520439148
         ],
@@ -3314,13 +6086,13 @@
           "Name": "LightCageRed.mesh"
         },
         "Position": [
-          2183.831787109375,
-          -732.0167846679688,
-          64.9590072631836
+          1288.0048828125,
+          -1567.9901123046875,
+          65.2657241821289
         ],
         "Rotation": [
-          -0.14290623366832733,
-          0.14290624856948853,
+          -0.14290624856948853,
+          0.14290626347064972,
           -0.6925155520439148,
           0.6925155520439148
         ],
@@ -3335,6 +6107,150 @@
             "Light": {
               "Type": "Point",
               "Name": "LightCageRed_LightCageRedNode.001",
+              "Diffuse": [
+                1.0,
+                0.010828731581568718,
+                0.02102084644138813
+              ],
+              "Radiance": 120000.0,
+              "LightSize": 0.0,
+              "Attenuation": {
+                "Constant": 0.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
+                "InfluenceDistance": 0.0,
+                "InfluenceMinRadiance": 0.003000000026077032
+              },
+              "Direction": [
+                0.0,
+                0.0,
+                -1.0
+              ],
+              "Position": [
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "Position": [
+              0.0,
+              0.0,
+              -10.64657974243164
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              6.252338409423828,
+              6.252338409423828,
+              6.252338409423828
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "LightCageRed.002",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/LightCageRed.json",
+          "Name": "LightCageRed.mesh"
+        },
+        "Position": [
+          -2056.084228515625,
+          -2337.6650390625,
+          193.0459442138672
+        ],
+        "Rotation": [
+          -0.14290624856948853,
+          -0.14290626347064972,
+          0.6925155520439148,
+          0.6925155520439148
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "Nodes": [
+          {
+            "Name": "LightCageRedNode.002",
+            "Light": {
+              "Type": "Point",
+              "Name": "LightCageRed_LightCageRedNode.002",
+              "Diffuse": [
+                1.0,
+                0.010828731581568718,
+                0.02102084644138813
+              ],
+              "Radiance": 120000.0,
+              "LightSize": 0.0,
+              "Attenuation": {
+                "Constant": 0.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
+                "InfluenceDistance": 0.0,
+                "InfluenceMinRadiance": 0.003000000026077032
+              },
+              "Direction": [
+                0.0,
+                0.0,
+                -1.0
+              ],
+              "Position": [
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "Position": [
+              0.0,
+              0.0,
+              -10.64657974243164
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              6.252338409423828,
+              6.252338409423828,
+              6.252338409423828
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "LightCageRed.003",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/LightCageRed.json",
+          "Name": "LightCageRed.mesh"
+        },
+        "Position": [
+          -1912.2344970703125,
+          -2337.6650390625,
+          193.0459442138672
+        ],
+        "Rotation": [
+          -0.14290624856948853,
+          0.14290626347064972,
+          -0.6925155520439148,
+          0.6925155520439148
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "Nodes": [
+          {
+            "Name": "LightCageRedNode.003",
+            "Light": {
+              "Type": "Point",
+              "Name": "LightCageRed_LightCageRedNode.003",
               "Diffuse": [
                 1.0,
                 0.010828731581568718,
@@ -4178,7 +7094,7 @@
           "Name": "LightCageWhite.mesh"
         },
         "Position": [
-          1312.3272705078125,
+          970.0,
           -951.8775024414062,
           65.2657241821289
         ],
@@ -4250,7 +7166,7 @@
           "Name": "LightCageWhite.mesh"
         },
         "Position": [
-          974.65283203125,
+          970.0,
           -1095.770751953125,
           64.9590072631836
         ],
@@ -4322,7 +7238,7 @@
           "Name": "LightCageWhite.mesh"
         },
         "Position": [
-          1824.3751220703125,
+          1952.375,
           -951.8775024414062,
           65.2657241821289
         ],
@@ -4394,7 +7310,7 @@
           "Name": "LightCageWhite.mesh"
         },
         "Position": [
-          1436.8134765625,
+          1564.8134765625,
           -1095.770751953125,
           64.9590072631836
         ],
@@ -4466,7 +7382,7 @@
           "Name": "LightCageWhite.mesh"
         },
         "Position": [
-          1603.9537353515625,
+          1728.21337890625,
           -1095.770751953125,
           64.9590072631836
         ],
@@ -4538,7 +7454,7 @@
           "Name": "LightCageWhite.mesh"
         },
         "Position": [
-          1527.9669189453125,
+          1655.966796875,
           -790.7440185546875,
           65.2657241821289
         ],
@@ -4610,7 +7526,7 @@
           "Name": "LightCageWhite.mesh"
         },
         "Position": [
-          1671.84619140625,
+          1799.84619140625,
           -790.7440185546875,
           65.2657241821289
         ],
@@ -4682,7 +7598,7 @@
           "Name": "LightCageWhite.mesh"
         },
         "Position": [
-          1527.9669189453125,
+          1655.966796875,
           -481.143798828125,
           65.2657241821289
         ],
@@ -4754,7 +7670,7 @@
           "Name": "LightCageWhite.mesh"
         },
         "Position": [
-          1671.84619140625,
+          1799.84619140625,
           -481.143798828125,
           65.2657241821289
         ],
@@ -4826,7 +7742,7 @@
           "Name": "LightCageWhite.mesh"
         },
         "Position": [
-          1527.9669189453125,
+          1655.966796875,
           -81.28399658203125,
           192.751708984375
         ],
@@ -4898,7 +7814,7 @@
           "Name": "LightCageWhite.mesh"
         },
         "Position": [
-          1671.84619140625,
+          1799.84619140625,
           -221.16744995117188,
           192.751708984375
         ],
@@ -4970,7 +7886,7 @@
           "Name": "LightCageWhite.mesh"
         },
         "Position": [
-          1671.84619140625,
+          1799.84619140625,
           129.4425048828125,
           192.751708984375
         ],
@@ -5042,7 +7958,7 @@
           "Name": "LightCageWhite.mesh"
         },
         "Position": [
-          1343.97314453125,
+          1289.161865234375,
           199.66232299804688,
           192.751708984375
         ],
@@ -5114,7 +8030,7 @@
           "Name": "LightCageWhite.mesh"
         },
         "Position": [
-          1343.97314453125,
+          1289.161865234375,
           56.13821792602539,
           192.751708984375
         ],
@@ -5207,6 +8123,1590 @@
             "Light": {
               "Type": "Point",
               "Name": "LightCageWhite_LightCageWhiteNode.025",
+              "Diffuse": [
+                0.9269342422485352,
+                1.0,
+                0.4846072793006897
+              ],
+              "Radiance": 120000.0,
+              "LightSize": 0.0,
+              "Attenuation": {
+                "Constant": 0.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
+                "InfluenceDistance": 0.0,
+                "InfluenceMinRadiance": 0.003000000026077032
+              },
+              "Direction": [
+                0.0,
+                0.0,
+                -1.0
+              ],
+              "Position": [
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "Position": [
+              0.0,
+              0.0,
+              -10.64657974243164
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              6.252338409423828,
+              6.252338409423828,
+              6.252338409423828
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "LightCageWhite.026",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/LightCageWhite.json",
+          "Name": "LightCageWhite.mesh"
+        },
+        "Position": [
+          1144.082763671875,
+          -1840.80810546875,
+          -62.865623474121094
+        ],
+        "Rotation": [
+          -0.14290624856948853,
+          -0.14290626347064972,
+          0.6925155520439148,
+          0.6925155520439148
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "Nodes": [
+          {
+            "Name": "LightCageWhiteNode.026",
+            "Light": {
+              "Type": "Point",
+              "Name": "LightCageWhite_LightCageWhiteNode.026",
+              "Diffuse": [
+                0.9269342422485352,
+                1.0,
+                0.4846072793006897
+              ],
+              "Radiance": 120000.0,
+              "LightSize": 0.0,
+              "Attenuation": {
+                "Constant": 0.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
+                "InfluenceDistance": 0.0,
+                "InfluenceMinRadiance": 0.003000000026077032
+              },
+              "Direction": [
+                0.0,
+                0.0,
+                -1.0
+              ],
+              "Position": [
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "Position": [
+              0.0,
+              0.0,
+              -10.64657974243164
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              6.252338409423828,
+              6.252338409423828,
+              6.252338409423828
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "LightCageWhite.027",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/LightCageWhite.json",
+          "Name": "LightCageWhite.mesh"
+        },
+        "Position": [
+          1144.082763671875,
+          -2141.128173828125,
+          -62.865623474121094
+        ],
+        "Rotation": [
+          -0.14290624856948853,
+          -0.14290626347064972,
+          0.6925155520439148,
+          0.6925155520439148
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "Nodes": [
+          {
+            "Name": "LightCageWhiteNode.027",
+            "Light": {
+              "Type": "Point",
+              "Name": "LightCageWhite_LightCageWhiteNode.027",
+              "Diffuse": [
+                0.9269342422485352,
+                1.0,
+                0.4846072793006897
+              ],
+              "Radiance": 120000.0,
+              "LightSize": 0.0,
+              "Attenuation": {
+                "Constant": 0.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
+                "InfluenceDistance": 0.0,
+                "InfluenceMinRadiance": 0.003000000026077032
+              },
+              "Direction": [
+                0.0,
+                0.0,
+                -1.0
+              ],
+              "Position": [
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "Position": [
+              0.0,
+              0.0,
+              -10.64657974243164
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              6.252338409423828,
+              6.252338409423828,
+              6.252338409423828
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "LightCageWhite.028",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/LightCageWhite.json",
+          "Name": "LightCageWhite.mesh"
+        },
+        "Position": [
+          1287.7464599609375,
+          -2814.447998046875,
+          -62.865623474121094
+        ],
+        "Rotation": [
+          -0.14290624856948853,
+          0.14290626347064972,
+          -0.6925155520439148,
+          0.6925155520439148
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "Nodes": [
+          {
+            "Name": "LightCageWhiteNode.028",
+            "Light": {
+              "Type": "Point",
+              "Name": "LightCageWhite_LightCageWhiteNode.028",
+              "Diffuse": [
+                0.9269342422485352,
+                1.0,
+                0.4846072793006897
+              ],
+              "Radiance": 120000.0,
+              "LightSize": 0.0,
+              "Attenuation": {
+                "Constant": 0.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
+                "InfluenceDistance": 0.0,
+                "InfluenceMinRadiance": 0.003000000026077032
+              },
+              "Direction": [
+                0.0,
+                0.0,
+                -1.0
+              ],
+              "Position": [
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "Position": [
+              0.0,
+              0.0,
+              -10.64657974243164
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              6.252338409423828,
+              6.252338409423828,
+              6.252338409423828
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "LightCageWhite.029",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/LightCageWhite.json",
+          "Name": "LightCageWhite.mesh"
+        },
+        "Position": [
+          1287.7464599609375,
+          -3320.124267578125,
+          -62.865623474121094
+        ],
+        "Rotation": [
+          -0.14290624856948853,
+          0.14290626347064972,
+          -0.6925155520439148,
+          0.6925155520439148
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "Nodes": [
+          {
+            "Name": "LightCageWhiteNode.029",
+            "Light": {
+              "Type": "Point",
+              "Name": "LightCageWhite_LightCageWhiteNode.029",
+              "Diffuse": [
+                0.9269342422485352,
+                1.0,
+                0.4846072793006897
+              ],
+              "Radiance": 120000.0,
+              "LightSize": 0.0,
+              "Attenuation": {
+                "Constant": 0.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
+                "InfluenceDistance": 0.0,
+                "InfluenceMinRadiance": 0.003000000026077032
+              },
+              "Direction": [
+                0.0,
+                0.0,
+                -1.0
+              ],
+              "Position": [
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "Position": [
+              0.0,
+              0.0,
+              -10.64657974243164
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              6.252338409423828,
+              6.252338409423828,
+              6.252338409423828
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "LightCageWhite.030",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/LightCageWhite.json",
+          "Name": "LightCageWhite.mesh"
+        },
+        "Position": [
+          1287.7464599609375,
+          -3575.626708984375,
+          -62.865623474121094
+        ],
+        "Rotation": [
+          -0.14290624856948853,
+          0.14290626347064972,
+          -0.6925155520439148,
+          0.6925155520439148
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "Nodes": [
+          {
+            "Name": "LightCageWhiteNode.030",
+            "Light": {
+              "Type": "Point",
+              "Name": "LightCageWhite_LightCageWhiteNode.030",
+              "Diffuse": [
+                0.9269342422485352,
+                1.0,
+                0.4846072793006897
+              ],
+              "Radiance": 120000.0,
+              "LightSize": 0.0,
+              "Attenuation": {
+                "Constant": 0.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
+                "InfluenceDistance": 0.0,
+                "InfluenceMinRadiance": 0.003000000026077032
+              },
+              "Direction": [
+                0.0,
+                0.0,
+                -1.0
+              ],
+              "Position": [
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "Position": [
+              0.0,
+              0.0,
+              -10.64657974243164
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              6.252338409423828,
+              6.252338409423828,
+              6.252338409423828
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "LightCageWhite.031",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/LightCageWhite.json",
+          "Name": "LightCageWhite.mesh"
+        },
+        "Position": [
+          1144.082763671875,
+          -3747.053955078125,
+          -62.865623474121094
+        ],
+        "Rotation": [
+          -0.14290624856948853,
+          -0.14290626347064972,
+          0.6925155520439148,
+          0.6925155520439148
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "Nodes": [
+          {
+            "Name": "LightCageWhiteNode.031",
+            "Light": {
+              "Type": "Point",
+              "Name": "LightCageWhite_LightCageWhiteNode.031",
+              "Diffuse": [
+                0.9269342422485352,
+                1.0,
+                0.4846072793006897
+              ],
+              "Radiance": 120000.0,
+              "LightSize": 0.0,
+              "Attenuation": {
+                "Constant": 0.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
+                "InfluenceDistance": 0.0,
+                "InfluenceMinRadiance": 0.003000000026077032
+              },
+              "Direction": [
+                0.0,
+                0.0,
+                -1.0
+              ],
+              "Position": [
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "Position": [
+              0.0,
+              0.0,
+              -10.64657974243164
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              6.252338409423828,
+              6.252338409423828,
+              6.252338409423828
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "LightCageWhite.032",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/LightCageWhite.json",
+          "Name": "LightCageWhite.mesh"
+        },
+        "Position": [
+          949.3876953125,
+          -3896.364990234375,
+          -62.865623474121094
+        ],
+        "Rotation": [
+          -0.2020999640226364,
+          -5.718498097926093e-18,
+          -1.1800588603978698e-18,
+          0.9793648719787598
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "Nodes": [
+          {
+            "Name": "LightCageWhiteNode.032",
+            "Light": {
+              "Type": "Point",
+              "Name": "LightCageWhite_LightCageWhiteNode.032",
+              "Diffuse": [
+                0.9269342422485352,
+                1.0,
+                0.4846072793006897
+              ],
+              "Radiance": 120000.0,
+              "LightSize": 0.0,
+              "Attenuation": {
+                "Constant": 0.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
+                "InfluenceDistance": 0.0,
+                "InfluenceMinRadiance": 0.003000000026077032
+              },
+              "Direction": [
+                0.0,
+                0.0,
+                -1.0
+              ],
+              "Position": [
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "Position": [
+              0.0,
+              0.0,
+              -10.64657974243164
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              6.252338409423828,
+              6.252338409423828,
+              6.252338409423828
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "LightCageWhite.033",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/LightCageWhite.json",
+          "Name": "LightCageWhite.mesh"
+        },
+        "Position": [
+          701.7320556640625,
+          -3896.364990234375,
+          -62.865623474121094
+        ],
+        "Rotation": [
+          -0.2020999640226364,
+          -5.718498097926093e-18,
+          -1.1800588603978698e-18,
+          0.9793648719787598
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "Nodes": [
+          {
+            "Name": "LightCageWhiteNode.033",
+            "Light": {
+              "Type": "Point",
+              "Name": "LightCageWhite_LightCageWhiteNode.033",
+              "Diffuse": [
+                0.9269342422485352,
+                1.0,
+                0.4846072793006897
+              ],
+              "Radiance": 120000.0,
+              "LightSize": 0.0,
+              "Attenuation": {
+                "Constant": 0.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
+                "InfluenceDistance": 0.0,
+                "InfluenceMinRadiance": 0.003000000026077032
+              },
+              "Direction": [
+                0.0,
+                0.0,
+                -1.0
+              ],
+              "Position": [
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "Position": [
+              0.0,
+              0.0,
+              -10.64657974243164
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              6.252338409423828,
+              6.252338409423828,
+              6.252338409423828
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "LightCageWhite.034",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/LightCageWhite.json",
+          "Name": "LightCageWhite.mesh"
+        },
+        "Position": [
+          401.5210876464844,
+          -3896.364990234375,
+          -62.865623474121094
+        ],
+        "Rotation": [
+          -0.2020999640226364,
+          -5.718498097926093e-18,
+          -1.1800588603978698e-18,
+          0.9793648719787598
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "Nodes": [
+          {
+            "Name": "LightCageWhiteNode.034",
+            "Light": {
+              "Type": "Point",
+              "Name": "LightCageWhite_LightCageWhiteNode.034",
+              "Diffuse": [
+                0.9269342422485352,
+                1.0,
+                0.4846072793006897
+              ],
+              "Radiance": 120000.0,
+              "LightSize": 0.0,
+              "Attenuation": {
+                "Constant": 0.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
+                "InfluenceDistance": 0.0,
+                "InfluenceMinRadiance": 0.003000000026077032
+              },
+              "Direction": [
+                0.0,
+                0.0,
+                -1.0
+              ],
+              "Position": [
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "Position": [
+              0.0,
+              0.0,
+              -10.64657974243164
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              6.252338409423828,
+              6.252338409423828,
+              6.252338409423828
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "LightCageWhite.035",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/LightCageWhite.json",
+          "Name": "LightCageWhite.mesh"
+        },
+        "Position": [
+          148.88323974609375,
+          -3896.364990234375,
+          -62.865623474121094
+        ],
+        "Rotation": [
+          -0.2020999640226364,
+          -5.718498097926093e-18,
+          -1.1800588603978698e-18,
+          0.9793648719787598
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "Nodes": [
+          {
+            "Name": "LightCageWhiteNode.035",
+            "Light": {
+              "Type": "Point",
+              "Name": "LightCageWhite_LightCageWhiteNode.035",
+              "Diffuse": [
+                0.9269342422485352,
+                1.0,
+                0.4846072793006897
+              ],
+              "Radiance": 120000.0,
+              "LightSize": 0.0,
+              "Attenuation": {
+                "Constant": 0.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
+                "InfluenceDistance": 0.0,
+                "InfluenceMinRadiance": 0.003000000026077032
+              },
+              "Direction": [
+                0.0,
+                0.0,
+                -1.0
+              ],
+              "Position": [
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "Position": [
+              0.0,
+              0.0,
+              -10.64657974243164
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              6.252338409423828,
+              6.252338409423828,
+              6.252338409423828
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "LightCageWhite.036",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/LightCageWhite.json",
+          "Name": "LightCageWhite.mesh"
+        },
+        "Position": [
+          148.88323974609375,
+          -4039.80419921875,
+          -62.865623474121094
+        ],
+        "Rotation": [
+          8.834070364116542e-09,
+          -0.2020999640226364,
+          0.9793648719787598,
+          -4.2809400468968306e-08
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "Nodes": [
+          {
+            "Name": "LightCageWhiteNode.036",
+            "Light": {
+              "Type": "Point",
+              "Name": "LightCageWhite_LightCageWhiteNode.036",
+              "Diffuse": [
+                0.9269342422485352,
+                1.0,
+                0.4846072793006897
+              ],
+              "Radiance": 120000.0,
+              "LightSize": 0.0,
+              "Attenuation": {
+                "Constant": 0.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
+                "InfluenceDistance": 0.0,
+                "InfluenceMinRadiance": 0.003000000026077032
+              },
+              "Direction": [
+                0.0,
+                0.0,
+                -1.0
+              ],
+              "Position": [
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "Position": [
+              0.0,
+              0.0,
+              -10.64657974243164
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              6.252338409423828,
+              6.252338409423828,
+              6.252338409423828
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "LightCageWhite.037",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/LightCageWhite.json",
+          "Name": "LightCageWhite.mesh"
+        },
+        "Position": [
+          -1557.0894775390625,
+          -3896.364990234375,
+          -62.865623474121094
+        ],
+        "Rotation": [
+          -0.2020999640226364,
+          -5.718498097926093e-18,
+          -1.1800588603978698e-18,
+          0.9793648719787598
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "Nodes": [
+          {
+            "Name": "LightCageWhiteNode.037",
+            "Light": {
+              "Type": "Point",
+              "Name": "LightCageWhite_LightCageWhiteNode.037",
+              "Diffuse": [
+                0.9269342422485352,
+                1.0,
+                0.4846072793006897
+              ],
+              "Radiance": 120000.0,
+              "LightSize": 0.0,
+              "Attenuation": {
+                "Constant": 0.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
+                "InfluenceDistance": 0.0,
+                "InfluenceMinRadiance": 0.003000000026077032
+              },
+              "Direction": [
+                0.0,
+                0.0,
+                -1.0
+              ],
+              "Position": [
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "Position": [
+              0.0,
+              0.0,
+              -10.64657974243164
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              6.252338409423828,
+              6.252338409423828,
+              6.252338409423828
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "LightCageWhite.038",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/LightCageWhite.json",
+          "Name": "LightCageWhite.mesh"
+        },
+        "Position": [
+          -1557.0894775390625,
+          -4039.80419921875,
+          -62.865623474121094
+        ],
+        "Rotation": [
+          8.834070364116542e-09,
+          -0.2020999640226364,
+          0.9793648719787598,
+          -4.2809400468968306e-08
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "Nodes": [
+          {
+            "Name": "LightCageWhiteNode.038",
+            "Light": {
+              "Type": "Point",
+              "Name": "LightCageWhite_LightCageWhiteNode.038",
+              "Diffuse": [
+                0.9269342422485352,
+                1.0,
+                0.4846072793006897
+              ],
+              "Radiance": 120000.0,
+              "LightSize": 0.0,
+              "Attenuation": {
+                "Constant": 0.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
+                "InfluenceDistance": 0.0,
+                "InfluenceMinRadiance": 0.003000000026077032
+              },
+              "Direction": [
+                0.0,
+                0.0,
+                -1.0
+              ],
+              "Position": [
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "Position": [
+              0.0,
+              0.0,
+              -10.64657974243164
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              6.252338409423828,
+              6.252338409423828,
+              6.252338409423828
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "LightCageWhite.039",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/LightCageWhite.json",
+          "Name": "LightCageWhite.mesh"
+        },
+        "Position": [
+          -1758.427978515625,
+          -3896.364990234375,
+          -62.865623474121094
+        ],
+        "Rotation": [
+          -0.2020999640226364,
+          -5.718498097926093e-18,
+          -1.1800588603978698e-18,
+          0.9793648719787598
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "Nodes": [
+          {
+            "Name": "LightCageWhiteNode.039",
+            "Light": {
+              "Type": "Point",
+              "Name": "LightCageWhite_LightCageWhiteNode.039",
+              "Diffuse": [
+                0.9269342422485352,
+                1.0,
+                0.4846072793006897
+              ],
+              "Radiance": 120000.0,
+              "LightSize": 0.0,
+              "Attenuation": {
+                "Constant": 0.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
+                "InfluenceDistance": 0.0,
+                "InfluenceMinRadiance": 0.003000000026077032
+              },
+              "Direction": [
+                0.0,
+                0.0,
+                -1.0
+              ],
+              "Position": [
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "Position": [
+              0.0,
+              0.0,
+              -10.64657974243164
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              6.252338409423828,
+              6.252338409423828,
+              6.252338409423828
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "LightCageWhite.040",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/LightCageWhite.json",
+          "Name": "LightCageWhite.mesh"
+        },
+        "Position": [
+          -1911.9478759765625,
+          -3707.47314453125,
+          -62.865623474121094
+        ],
+        "Rotation": [
+          -0.14290624856948853,
+          0.14290626347064972,
+          -0.6925155520439148,
+          0.6925155520439148
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "Nodes": [
+          {
+            "Name": "LightCageWhiteNode.040",
+            "Light": {
+              "Type": "Point",
+              "Name": "LightCageWhite_LightCageWhiteNode.040",
+              "Diffuse": [
+                0.9269342422485352,
+                1.0,
+                0.4846072793006897
+              ],
+              "Radiance": 120000.0,
+              "LightSize": 0.0,
+              "Attenuation": {
+                "Constant": 0.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
+                "InfluenceDistance": 0.0,
+                "InfluenceMinRadiance": 0.003000000026077032
+              },
+              "Direction": [
+                0.0,
+                0.0,
+                -1.0
+              ],
+              "Position": [
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "Position": [
+              0.0,
+              0.0,
+              -10.64657974243164
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              6.252338409423828,
+              6.252338409423828,
+              6.252338409423828
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "LightCageWhite.041",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/LightCageWhite.json",
+          "Name": "LightCageWhite.mesh"
+        },
+        "Position": [
+          -2056.067138671875,
+          -3462.232177734375,
+          -62.865623474121094
+        ],
+        "Rotation": [
+          -0.14290624856948853,
+          -0.14290626347064972,
+          0.6925155520439148,
+          0.6925155520439148
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "Nodes": [
+          {
+            "Name": "LightCageWhiteNode.041",
+            "Light": {
+              "Type": "Point",
+              "Name": "LightCageWhite_LightCageWhiteNode.041",
+              "Diffuse": [
+                0.9269342422485352,
+                1.0,
+                0.4846072793006897
+              ],
+              "Radiance": 120000.0,
+              "LightSize": 0.0,
+              "Attenuation": {
+                "Constant": 0.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
+                "InfluenceDistance": 0.0,
+                "InfluenceMinRadiance": 0.003000000026077032
+              },
+              "Direction": [
+                0.0,
+                0.0,
+                -1.0
+              ],
+              "Position": [
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "Position": [
+              0.0,
+              0.0,
+              -10.64657974243164
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              6.252338409423828,
+              6.252338409423828,
+              6.252338409423828
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "LightCageWhite.042",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/LightCageWhite.json",
+          "Name": "LightCageWhite.mesh"
+        },
+        "Position": [
+          -2056.067138671875,
+          -2776.7099609375,
+          -62.865623474121094
+        ],
+        "Rotation": [
+          -0.14290624856948853,
+          -0.14290626347064972,
+          0.6925155520439148,
+          0.6925155520439148
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "Nodes": [
+          {
+            "Name": "LightCageWhiteNode.042",
+            "Light": {
+              "Type": "Point",
+              "Name": "LightCageWhite_LightCageWhiteNode.042",
+              "Diffuse": [
+                0.9269342422485352,
+                1.0,
+                0.4846072793006897
+              ],
+              "Radiance": 120000.0,
+              "LightSize": 0.0,
+              "Attenuation": {
+                "Constant": 0.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
+                "InfluenceDistance": 0.0,
+                "InfluenceMinRadiance": 0.003000000026077032
+              },
+              "Direction": [
+                0.0,
+                0.0,
+                -1.0
+              ],
+              "Position": [
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "Position": [
+              0.0,
+              0.0,
+              -10.64657974243164
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              6.252338409423828,
+              6.252338409423828,
+              6.252338409423828
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "LightCageWhite.043",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/LightCageWhite.json",
+          "Name": "LightCageWhite.mesh"
+        },
+        "Position": [
+          -1911.9478759765625,
+          -2776.7099609375,
+          -62.865623474121094
+        ],
+        "Rotation": [
+          -0.14290624856948853,
+          0.14290626347064972,
+          -0.6925155520439148,
+          0.6925155520439148
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "Nodes": [
+          {
+            "Name": "LightCageWhiteNode.043",
+            "Light": {
+              "Type": "Point",
+              "Name": "LightCageWhite_LightCageWhiteNode.043",
+              "Diffuse": [
+                0.9269342422485352,
+                1.0,
+                0.4846072793006897
+              ],
+              "Radiance": 120000.0,
+              "LightSize": 0.0,
+              "Attenuation": {
+                "Constant": 0.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
+                "InfluenceDistance": 0.0,
+                "InfluenceMinRadiance": 0.003000000026077032
+              },
+              "Direction": [
+                0.0,
+                0.0,
+                -1.0
+              ],
+              "Position": [
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "Position": [
+              0.0,
+              0.0,
+              -10.64657974243164
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              6.252338409423828,
+              6.252338409423828,
+              6.252338409423828
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "LightCageWhite.044",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/LightCageWhite.json",
+          "Name": "LightCageWhite.mesh"
+        },
+        "Position": [
+          -1672.067138671875,
+          -2474.7099609375,
+          -62.865623474121094
+        ],
+        "Rotation": [
+          -0.14290624856948853,
+          -0.14290626347064972,
+          0.6925155520439148,
+          0.6925155520439148
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "Nodes": [
+          {
+            "Name": "LightCageWhiteNode.044",
+            "Light": {
+              "Type": "Point",
+              "Name": "LightCageWhite_LightCageWhiteNode.044",
+              "Diffuse": [
+                0.9269342422485352,
+                1.0,
+                0.4846072793006897
+              ],
+              "Radiance": 120000.0,
+              "LightSize": 0.0,
+              "Attenuation": {
+                "Constant": 0.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
+                "InfluenceDistance": 0.0,
+                "InfluenceMinRadiance": 0.003000000026077032
+              },
+              "Direction": [
+                0.0,
+                0.0,
+                -1.0
+              ],
+              "Position": [
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "Position": [
+              0.0,
+              0.0,
+              -10.64657974243164
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              6.252338409423828,
+              6.252338409423828,
+              6.252338409423828
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "LightCageWhite.045",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/LightCageWhite.json",
+          "Name": "LightCageWhite.mesh"
+        },
+        "Position": [
+          -1527.9478759765625,
+          -2474.7099609375,
+          -62.865623474121094
+        ],
+        "Rotation": [
+          -0.14290624856948853,
+          0.14290626347064972,
+          -0.6925155520439148,
+          0.6925155520439148
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "Nodes": [
+          {
+            "Name": "LightCageWhiteNode.045",
+            "Light": {
+              "Type": "Point",
+              "Name": "LightCageWhite_LightCageWhiteNode.045",
+              "Diffuse": [
+                0.9269342422485352,
+                1.0,
+                0.4846072793006897
+              ],
+              "Radiance": 120000.0,
+              "LightSize": 0.0,
+              "Attenuation": {
+                "Constant": 0.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
+                "InfluenceDistance": 0.0,
+                "InfluenceMinRadiance": 0.003000000026077032
+              },
+              "Direction": [
+                0.0,
+                0.0,
+                -1.0
+              ],
+              "Position": [
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "Position": [
+              0.0,
+              0.0,
+              -10.64657974243164
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              6.252338409423828,
+              6.252338409423828,
+              6.252338409423828
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "LightCageWhite.046",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/LightCageWhite.json",
+          "Name": "LightCageWhite.mesh"
+        },
+        "Position": [
+          -1301.0894775390625,
+          -2104.364990234375,
+          -62.865623474121094
+        ],
+        "Rotation": [
+          -0.2020999640226364,
+          -5.718498097926093e-18,
+          -1.1800588603978698e-18,
+          0.9793648719787598
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "Nodes": [
+          {
+            "Name": "LightCageWhiteNode.046",
+            "Light": {
+              "Type": "Point",
+              "Name": "LightCageWhite_LightCageWhiteNode.046",
+              "Diffuse": [
+                0.9269342422485352,
+                1.0,
+                0.4846072793006897
+              ],
+              "Radiance": 120000.0,
+              "LightSize": 0.0,
+              "Attenuation": {
+                "Constant": 0.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
+                "InfluenceDistance": 0.0,
+                "InfluenceMinRadiance": 0.003000000026077032
+              },
+              "Direction": [
+                0.0,
+                0.0,
+                -1.0
+              ],
+              "Position": [
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "Position": [
+              0.0,
+              0.0,
+              -10.64657974243164
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              6.252338409423828,
+              6.252338409423828,
+              6.252338409423828
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "LightCageWhite.047",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/LightCageWhite.json",
+          "Name": "LightCageWhite.mesh"
+        },
+        "Position": [
+          -1301.0894775390625,
+          -2247.80419921875,
+          -62.865623474121094
+        ],
+        "Rotation": [
+          8.834070364116542e-09,
+          -0.2020999640226364,
+          0.9793648719787598,
+          -4.2809400468968306e-08
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "Nodes": [
+          {
+            "Name": "LightCageWhiteNode.047",
+            "Light": {
+              "Type": "Point",
+              "Name": "LightCageWhite_LightCageWhiteNode.047",
               "Diffuse": [
                 0.9269342422485352,
                 1.0,
@@ -6752,13 +11252,445 @@
         ]
       },
       {
+        "Name": "LightCorridor.005",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/LightCorridor.json",
+          "Name": "LightCorridor.mesh"
+        },
+        "Position": [
+          773.69677734375,
+          -2117.04833984375,
+          -87.26553344726562
+        ],
+        "Rotation": [
+          -0.5,
+          0.4999999701976776,
+          0.5,
+          0.5
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "Nodes": [
+          {
+            "Name": "LightCorridorNode.005",
+            "Light": {
+              "Type": "Point",
+              "Name": "LightCorridor_LightCorridorNode.005",
+              "Diffuse": [
+                0.5451382398605347,
+                0.5391340255737305,
+                1.0
+              ],
+              "Radiance": 140000.0,
+              "LightSize": 0.0,
+              "Attenuation": {
+                "Constant": 0.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
+                "InfluenceDistance": 0.0,
+                "InfluenceMinRadiance": 0.003000000026077032
+              },
+              "Direction": [
+                0.0,
+                0.0,
+                -1.0
+              ],
+              "Position": [
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "Position": [
+              3.015703953224147e-07,
+              0.0,
+              -15.034257888793945
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "LightCorridor.006",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/LightCorridor.json",
+          "Name": "LightCorridor.mesh"
+        },
+        "Position": [
+          773.69677734375,
+          -3514.8837890625,
+          -87.26553344726562
+        ],
+        "Rotation": [
+          0.5,
+          0.4999999701976776,
+          -0.5,
+          0.5
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "Nodes": [
+          {
+            "Name": "LightCorridorNode.006",
+            "Light": {
+              "Type": "Point",
+              "Name": "LightCorridor_LightCorridorNode.006",
+              "Diffuse": [
+                0.5451382398605347,
+                0.5391340255737305,
+                1.0
+              ],
+              "Radiance": 140000.0,
+              "LightSize": 0.0,
+              "Attenuation": {
+                "Constant": 0.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
+                "InfluenceDistance": 0.0,
+                "InfluenceMinRadiance": 0.003000000026077032
+              },
+              "Direction": [
+                0.0,
+                0.0,
+                -1.0
+              ],
+              "Position": [
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "Position": [
+              3.015703953224147e-07,
+              0.0,
+              -15.034257888793945
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "LightCorridor.007",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/LightCorridor.json",
+          "Name": "LightCorridor.mesh"
+        },
+        "Position": [
+          320.0,
+          -2135.0,
+          -284.0
+        ],
+        "Rotation": [
+          -0.5,
+          0.4999999701976776,
+          0.5,
+          0.5
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "Nodes": [
+          {
+            "Name": "LightCorridorNode.007",
+            "Light": {
+              "Type": "Point",
+              "Name": "LightCorridor_LightCorridorNode.007",
+              "Diffuse": [
+                0.5451382398605347,
+                0.5391340255737305,
+                1.0
+              ],
+              "Radiance": 140000.0,
+              "LightSize": 0.0,
+              "Attenuation": {
+                "Constant": 0.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
+                "InfluenceDistance": 0.0,
+                "InfluenceMinRadiance": 0.003000000026077032
+              },
+              "Direction": [
+                0.0,
+                0.0,
+                -1.0
+              ],
+              "Position": [
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "Position": [
+              3.015703953224147e-07,
+              0.0,
+              -15.034257888793945
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "LightCorridor.008",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/LightCorridor.json",
+          "Name": "LightCorridor.mesh"
+        },
+        "Position": [
+          64.0,
+          -2135.0,
+          -284.0
+        ],
+        "Rotation": [
+          -0.5,
+          0.4999999701976776,
+          0.5,
+          0.5
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "Nodes": [
+          {
+            "Name": "LightCorridorNode.008",
+            "Light": {
+              "Type": "Point",
+              "Name": "LightCorridor_LightCorridorNode.008",
+              "Diffuse": [
+                0.5451382398605347,
+                0.5391340255737305,
+                1.0
+              ],
+              "Radiance": 140000.0,
+              "LightSize": 0.0,
+              "Attenuation": {
+                "Constant": 0.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
+                "InfluenceDistance": 0.0,
+                "InfluenceMinRadiance": 0.003000000026077032
+              },
+              "Direction": [
+                0.0,
+                0.0,
+                -1.0
+              ],
+              "Position": [
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "Position": [
+              3.015703953224147e-07,
+              0.0,
+              -15.034257888793945
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "LightCorridor.009",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/LightCorridor.json",
+          "Name": "LightCorridor.mesh"
+        },
+        "Position": [
+          64.0,
+          -3497.0,
+          -284.0
+        ],
+        "Rotation": [
+          0.5,
+          0.4999999701976776,
+          -0.5,
+          0.5
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "Nodes": [
+          {
+            "Name": "LightCorridorNode.009",
+            "Light": {
+              "Type": "Point",
+              "Name": "LightCorridor_LightCorridorNode.009",
+              "Diffuse": [
+                0.5451382398605347,
+                0.5391340255737305,
+                1.0
+              ],
+              "Radiance": 140000.0,
+              "LightSize": 0.0,
+              "Attenuation": {
+                "Constant": 0.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
+                "InfluenceDistance": 0.0,
+                "InfluenceMinRadiance": 0.003000000026077032
+              },
+              "Direction": [
+                0.0,
+                0.0,
+                -1.0
+              ],
+              "Position": [
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "Position": [
+              3.015703953224147e-07,
+              0.0,
+              -15.034257888793945
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "LightCorridor.010",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/LightCorridor.json",
+          "Name": "LightCorridor.mesh"
+        },
+        "Position": [
+          320.0,
+          -3497.0,
+          -284.0
+        ],
+        "Rotation": [
+          0.5,
+          0.4999999701976776,
+          -0.5,
+          0.5
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "Nodes": [
+          {
+            "Name": "LightCorridorNode.010",
+            "Light": {
+              "Type": "Point",
+              "Name": "LightCorridor_LightCorridorNode.010",
+              "Diffuse": [
+                0.5451382398605347,
+                0.5391340255737305,
+                1.0
+              ],
+              "Radiance": 140000.0,
+              "LightSize": 0.0,
+              "Attenuation": {
+                "Constant": 0.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
+                "InfluenceDistance": 0.0,
+                "InfluenceMinRadiance": 0.003000000026077032
+              },
+              "Direction": [
+                0.0,
+                0.0,
+                -1.0
+              ],
+              "Position": [
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "Position": [
+              3.015703953224147e-07,
+              0.0,
+              -15.034257888793945
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          }
+        ]
+      },
+      {
         "Name": "MacFan",
         "Mesh": {
           "Mesh": "vault_111:models/json/MacFan.json",
           "Name": "MacFan.mesh"
         },
         "Position": [
-          1600.0,
+          1728.0,
           -878.5474243164062,
           131.97817993164062
         ],
@@ -6999,7 +11931,7 @@
           "Name": "MacFan.mesh"
         },
         "Position": [
-          1449.202392578125,
+          1577.202392578125,
           128.0,
           260.03564453125
         ],
@@ -7061,6 +11993,1001 @@
               1.0
             ]
           }
+        ]
+      },
+      {
+        "Name": "PitCr01",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/PitCr01.json",
+          "Name": "PitCr01.mesh"
+        },
+        "Position": [
+          -704.0,
+          -2432.0,
+          -256.0
+        ],
+        "Rotation": [
+          0.0,
+          -0.0,
+          -0.7071067690849304,
+          0.7071067690849304
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "PitCr01.001",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/PitCr01.json",
+          "Name": "PitCr01.mesh"
+        },
+        "Position": [
+          -704.0,
+          -3200.0,
+          -256.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          1.0,
+          -4.371138828673793e-08
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "PitRaisedMid01",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/PitRaisedMid01.json",
+          "Name": "PitRaisedMid01.mesh"
+        },
+        "Position": [
+          320.0,
+          -3200.0,
+          -256.0
+        ],
+        "Rotation": [
+          0.0,
+          -0.0,
+          -0.7071067690849304,
+          0.7071067690849304
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "PitRaisedMid01.001",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/PitRaisedMid01.json",
+          "Name": "PitRaisedMid01.mesh"
+        },
+        "Position": [
+          64.0,
+          -3200.0,
+          -256.0
+        ],
+        "Rotation": [
+          0.0,
+          -0.0,
+          -0.7071067690849304,
+          0.7071067690849304
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "PitRaisedMid01.002",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/PitRaisedMid01.json",
+          "Name": "PitRaisedMid01.mesh"
+        },
+        "Position": [
+          320.0,
+          -2432.0,
+          -256.0
+        ],
+        "Rotation": [
+          0.0,
+          -0.0,
+          -0.7071067690849304,
+          0.7071067690849304
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "PitRaisedMid01.003",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/PitRaisedMid01.json",
+          "Name": "PitRaisedMid01.mesh"
+        },
+        "Position": [
+          64.0,
+          -2432.0,
+          -256.0
+        ],
+        "Rotation": [
+          0.0,
+          -0.0,
+          -0.7071067690849304,
+          0.7071067690849304
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "PitRaisedMid02",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/PitRaisedMid02.json",
+          "Name": "PitRaisedMid02.mesh"
+        },
+        "Position": [
+          320.0,
+          -2688.0,
+          -256.0
+        ],
+        "Rotation": [
+          0.0,
+          -0.0,
+          -0.7071067690849304,
+          0.7071067690849304
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "PitRaisedMid02.001",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/PitRaisedMid02.json",
+          "Name": "PitRaisedMid02.mesh"
+        },
+        "Position": [
+          320.0,
+          -2944.0,
+          -256.0
+        ],
+        "Rotation": [
+          0.0,
+          -0.0,
+          -0.7071067690849304,
+          0.7071067690849304
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "PitRaisedMid02.002",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/PitRaisedMid02.json",
+          "Name": "PitRaisedMid02.mesh"
+        },
+        "Position": [
+          64.0,
+          -2688.0,
+          -256.0
+        ],
+        "Rotation": [
+          0.0,
+          -0.0,
+          -0.7071067690849304,
+          0.7071067690849304
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "PitRaisedMid02.003",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/PitRaisedMid02.json",
+          "Name": "PitRaisedMid02.mesh"
+        },
+        "Position": [
+          64.0,
+          -2944.0,
+          -256.0
+        ],
+        "Rotation": [
+          0.0,
+          -0.0,
+          -0.7071067690849304,
+          0.7071067690849304
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "PitStairRaisedMid01",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/PitStairRaisedMid01.json",
+          "Name": "PitStairRaisedMid01.mesh"
+        },
+        "Position": [
+          576.0,
+          -2432.0,
+          -256.0
+        ],
+        "Rotation": [
+          0.0,
+          -0.0,
+          -0.7071067690849304,
+          0.7071067690849304
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "PitStairRaisedMid01.001",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/PitStairRaisedMid01.json",
+          "Name": "PitStairRaisedMid01.mesh"
+        },
+        "Position": [
+          -192.0,
+          -3200.0,
+          -256.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.7071067690849304,
+          0.7071067690849304
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "PitStairRaisedMid01.002",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/PitStairRaisedMid01.json",
+          "Name": "PitStairRaisedMid01.mesh"
+        },
+        "Position": [
+          -192.0,
+          -2432.0,
+          -256.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.7071067690849304,
+          0.7071067690849304
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "PitStairRaisedMid02",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/PitStairRaisedMid02.json",
+          "Name": "PitStairRaisedMid02.mesh"
+        },
+        "Position": [
+          576.0,
+          -2688.0,
+          -256.0
+        ],
+        "Rotation": [
+          0.0,
+          -0.0,
+          -0.7071067690849304,
+          0.7071067690849304
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "PitStairRaisedMid02.001",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/PitStairRaisedMid02.json",
+          "Name": "PitStairRaisedMid02.mesh"
+        },
+        "Position": [
+          576.0,
+          -2944.0,
+          -256.0
+        ],
+        "Rotation": [
+          0.0,
+          -0.0,
+          -0.7071067690849304,
+          0.7071067690849304
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "PitStairRaisedMid02.002",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/PitStairRaisedMid02.json",
+          "Name": "PitStairRaisedMid02.mesh"
+        },
+        "Position": [
+          576.0,
+          -3200.0,
+          -256.0
+        ],
+        "Rotation": [
+          0.0,
+          -0.0,
+          -0.7071067690849304,
+          0.7071067690849304
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "PitStairRaisedMid02.003",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/PitStairRaisedMid02.json",
+          "Name": "PitStairRaisedMid02.mesh"
+        },
+        "Position": [
+          -192.0,
+          -2944.0,
+          -256.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.7071067690849304,
+          0.7071067690849304
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "PitStairRaisedMid02.004",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/PitStairRaisedMid02.json",
+          "Name": "PitStairRaisedMid02.mesh"
+        },
+        "Position": [
+          -192.0,
+          -2688.0,
+          -256.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.7071067690849304,
+          0.7071067690849304
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "PitWall01",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/PitWall01.json",
+          "Name": "PitWall01.mesh"
+        },
+        "Position": [
+          -704.0,
+          -2688.0,
+          -256.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          1.0,
+          -4.371138828673793e-08
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "PitWall01.001",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/PitWall01.json",
+          "Name": "PitWall01.mesh"
+        },
+        "Position": [
+          -704.0,
+          -2944.0,
+          -256.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          1.0,
+          -4.371138828673793e-08
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "PitWallEnd01",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/PitWallEnd01.json",
+          "Name": "PitWallEnd01.mesh"
+        },
+        "Position": [
+          576.0,
+          -3456.0,
+          -256.0
+        ],
+        "Rotation": [
+          0.0,
+          -0.0,
+          -0.7071067690849304,
+          0.7071067690849304
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "PitWallEnd01.001",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/PitWallEnd01.json",
+          "Name": "PitWallEnd01.mesh"
+        },
+        "Position": [
+          -192.0,
+          -2176.0,
+          -256.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.7071067690849304,
+          0.7071067690849304
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "PitWallEnd02",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/PitWallEnd02.json",
+          "Name": "PitWallEnd02.mesh"
+        },
+        "Position": [
+          576.0,
+          -2176.0,
+          -256.0
+        ],
+        "Rotation": [
+          0.0,
+          -0.0,
+          -0.7071067690849304,
+          0.7071067690849304
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "PitWallEnd02.001",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/PitWallEnd02.json",
+          "Name": "PitWallEnd02.mesh"
+        },
+        "Position": [
+          -192.0,
+          -3456.0,
+          -256.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.7071067690849304,
+          0.7071067690849304
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "PitWallMid01",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/PitWallMid01.json",
+          "Name": "PitWallMid01.mesh"
+        },
+        "Position": [
+          320.0,
+          -2176.0,
+          -256.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.7071067094802856,
+          0.7071068286895752
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "PitWallMid01.001",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/PitWallMid01.json",
+          "Name": "PitWallMid01.mesh"
+        },
+        "Position": [
+          64.0,
+          -3456.0,
+          -256.0
+        ],
+        "Rotation": [
+          0.0,
+          -0.0,
+          -0.7071067690849304,
+          0.7071067690849304
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "PitWallMid02",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/PitWallMid02.json",
+          "Name": "PitWallMid02.mesh"
+        },
+        "Position": [
+          320.0,
+          -3456.0,
+          -256.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.7071067094802856,
+          0.7071068286895752
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "PitWallMid02.001",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/PitWallMid02.json",
+          "Name": "PitWallMid02.mesh"
+        },
+        "Position": [
+          64.0,
+          -2176.0,
+          -256.0
+        ],
+        "Rotation": [
+          0.0,
+          -0.0,
+          -0.7071067690849304,
+          0.7071067690849304
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "PitWallTall01",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/PitWallTall01.json",
+          "Name": "PitWallTall01.mesh"
+        },
+        "Position": [
+          -960.0,
+          -2688.0,
+          -256.0
+        ],
+        "Rotation": [
+          0.0,
+          -0.0,
+          -0.7071067690849304,
+          0.7071067690849304
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "PitWallTall01.001",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/PitWallTall01.json",
+          "Name": "PitWallTall01.mesh"
+        },
+        "Position": [
+          -960.0,
+          -2944.0,
+          -256.0
+        ],
+        "Rotation": [
+          0.0,
+          -0.0,
+          -0.7071067690849304,
+          0.7071067690849304
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "PitWallTallCrl01",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/PitWallTallCrl01.json",
+          "Name": "PitWallTallCrl01.mesh"
+        },
+        "Position": [
+          -960.0,
+          -3200.0,
+          -256.0
+        ],
+        "Rotation": [
+          0.0,
+          -0.0,
+          -0.7071067690849304,
+          0.7071067690849304
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "PitWallTallCrR01",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/PitWallTallCrR01.json",
+          "Name": "PitWallTallCrR01.mesh"
+        },
+        "Position": [
+          -960.0,
+          -2432.0,
+          -256.0
+        ],
+        "Rotation": [
+          0.0,
+          -0.0,
+          -0.7071067690849304,
+          0.7071067690849304
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "Reactor01",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/Reactor01.json",
+          "Name": "Reactor01.mesh"
+        },
+        "Position": [
+          -832.0,
+          -2816.0,
+          -316.4029235839844
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "Nodes": [
+          {
+            "Name": "ReactorElectric",
+            "Light": {
+              "Type": "Point",
+              "Name": "ReactorElectric_ReactorElectric",
+              "Diffuse": [
+                0.03600001335144043,
+                0.6529598832130432,
+                1.0
+              ],
+              "Radiance": 100000.0,
+              "LightSize": 0.0,
+              "Attenuation": {
+                "Constant": 0.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
+                "InfluenceDistance": 0.0,
+                "InfluenceMinRadiance": 0.003000000026077032
+              },
+              "Direction": [
+                0.0,
+                0.0,
+                -1.0
+              ],
+              "Position": [
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "Position": [
+              64.0,
+              64.0,
+              302.0695495605469
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "ReactorElectric.001",
+            "Light": {
+              "Type": "Point",
+              "Name": "ReactorElectric.001_ReactorElectric.001",
+              "Diffuse": [
+                0.03600001335144043,
+                0.6529598832130432,
+                1.0
+              ],
+              "Radiance": 100000.0,
+              "LightSize": 0.0,
+              "Attenuation": {
+                "Constant": 0.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
+                "InfluenceDistance": 0.0,
+                "InfluenceMinRadiance": 0.003000000026077032
+              },
+              "Direction": [
+                0.0,
+                0.0,
+                -1.0
+              ],
+              "Position": [
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "Position": [
+              64.0,
+              -64.0,
+              302.0695495605469
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "ReactorElectric.002",
+            "Light": {
+              "Type": "Point",
+              "Name": "ReactorElectric.002_ReactorElectric.002",
+              "Diffuse": [
+                0.03600001335144043,
+                0.6529598832130432,
+                1.0
+              ],
+              "Radiance": 100000.0,
+              "LightSize": 0.0,
+              "Attenuation": {
+                "Constant": 0.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
+                "InfluenceDistance": 0.0,
+                "InfluenceMinRadiance": 0.003000000026077032
+              },
+              "Direction": [
+                0.0,
+                0.0,
+                -1.0
+              ],
+              "Position": [
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "Position": [
+              -64.0,
+              -64.0,
+              302.0695495605469
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "ReactorElectric.003",
+            "Light": {
+              "Type": "Point",
+              "Name": "ReactorElectric.003_ReactorElectric.003",
+              "Diffuse": [
+                0.03600001335144043,
+                0.6529598832130432,
+                1.0
+              ],
+              "Radiance": 100000.0,
+              "LightSize": 0.0,
+              "Attenuation": {
+                "Constant": 0.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
+                "InfluenceDistance": 0.0,
+                "InfluenceMinRadiance": 0.003000000026077032
+              },
+              "Direction": [
+                0.0,
+                0.0,
+                -1.0
+              ],
+              "Position": [
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "Position": [
+              -64.0,
+              64.0,
+              302.0695495605469
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "Reactor02",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/Reactor02.json",
+          "Name": "Reactor02.mesh"
+        },
+        "Position": [
+          -832.0,
+          -2496.0,
+          -320.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.7071067094802856,
+          0.7071068286895752
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "Reactor02.001",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/Reactor02.json",
+          "Name": "Reactor02.mesh"
+        },
+        "Position": [
+          -832.0,
+          -3136.0,
+          -320.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.7071067094802856,
+          0.7071068286895752
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
         ]
       },
       {
@@ -7317,6 +13244,98 @@
         ]
       },
       {
+        "Name": "WallConL01.011",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/WallConL01.json",
+          "Name": "WallConL01.mesh"
+        },
+        "Position": [
+          832.0,
+          -3456.0,
+          -256.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.7071067690849304,
+          0.7071067690849304
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "WallConL01.012",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/WallConL01.json",
+          "Name": "WallConL01.mesh"
+        },
+        "Position": [
+          -1600.0,
+          -3584.0,
+          -256.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "WallConL01.013",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/WallConL01.json",
+          "Name": "WallConL01.mesh"
+        },
+        "Position": [
+          -192.0,
+          -3712.0,
+          -256.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          1.0,
+          -4.371138828673793e-08
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "WallConL01.014",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/WallConL01.json",
+          "Name": "WallConL01.mesh"
+        },
+        "Position": [
+          -1344.0,
+          -2816.0,
+          -256.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          1.0,
+          -4.371138828673793e-08
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
         "Name": "WallConLExL01",
         "Mesh": {
           "Mesh": "vault_111:models/json/WallConLEx01.json",
@@ -7326,6 +13345,29 @@
           -704.0,
           -1920.0,
           0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "WallConLExL01.001",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/WallConLEx01.json",
+          "Name": "WallConLEx01.mesh"
+        },
+        "Position": [
+          -1216.0,
+          -3968.0,
+          -256.0
         ],
         "Rotation": [
           0.0,
@@ -7354,6 +13396,29 @@
           0.0,
           0.0,
           0.7071067690849304,
+          0.7071067690849304
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "WallConLExR01.001",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/WallConLExR01.json",
+          "Name": "WallConLExR01.mesh"
+        },
+        "Position": [
+          -960.0,
+          -2176.0,
+          -256.0
+        ],
+        "Rotation": [
+          0.0,
+          -0.0,
+          -0.7071067690849304,
           0.7071067690849304
         ],
         "Scale": [
@@ -7461,9 +13526,9 @@
           "Name": "WallConR01.mesh"
         },
         "Position": [
-          -1984.0,
-          -1920.0,
-          0.0
+          -1344.0,
+          -3584.0,
+          -256.0
         ],
         "Rotation": [
           0.0,
@@ -7570,6 +13635,52 @@
         ]
       },
       {
+        "Name": "WallConR01.009",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/WallConR01.json",
+          "Name": "WallConR01.mesh"
+        },
+        "Position": [
+          832.0,
+          -2176.0,
+          -256.0
+        ],
+        "Rotation": [
+          0.0,
+          -0.0,
+          -0.7071067690849304,
+          0.7071067690849304
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "WallConR01.010",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/WallConR01.json",
+          "Name": "WallConR01.mesh"
+        },
+        "Position": [
+          -1216.0,
+          -3712.0,
+          -256.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
         "Name": "WallConRExL01",
         "Mesh": {
           "Mesh": "vault_111:models/json/WallConRExL01.json",
@@ -7608,6 +13719,52 @@
           0.0,
           0.0,
           1.0
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "WallConRExL01.002",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/WallConRExL01.json",
+          "Name": "WallConRExL01.mesh"
+        },
+        "Position": [
+          -960.0,
+          -3456.0,
+          -256.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.7071067690849304,
+          0.7071067690849304
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "WallConRExL01.003",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/WallConRExL01.json",
+          "Name": "WallConRExL01.mesh"
+        },
+        "Position": [
+          -192.0,
+          -3968.0,
+          -256.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          1.0,
+          -4.371138828673793e-08
         ],
         "Scale": [
           1.0,
@@ -7671,6 +13828,52 @@
           -2240.0,
           -1664.0,
           0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "WallConRExR01.003",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/WallConRExR01.json",
+          "Name": "WallConRExR01.mesh"
+        },
+        "Position": [
+          -1984.0,
+          -1920.0,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          1.0,
+          -4.371138828673793e-08
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "WallConRExR01.004",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/WallConRExR01.json",
+          "Name": "WallConRExR01.mesh"
+        },
+        "Position": [
+          -1600.0,
+          -2816.0,
+          -256.0
         ],
         "Rotation": [
           0.0,
@@ -8030,6 +14233,98 @@
         ]
       },
       {
+        "Name": "WallMid.015",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/WallMid.json",
+          "Name": "WallMid.mesh"
+        },
+        "Position": [
+          -448.0,
+          -2432.0,
+          -256.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "WallMid.016",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/WallMid.json",
+          "Name": "WallMid.mesh"
+        },
+        "Position": [
+          -448.0,
+          -2688.0,
+          -256.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "WallMid.017",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/WallMid.json",
+          "Name": "WallMid.mesh"
+        },
+        "Position": [
+          -448.0,
+          -2944.0,
+          -256.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "WallMid.018",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/WallMid.json",
+          "Name": "WallMid.mesh"
+        },
+        "Position": [
+          -448.0,
+          -3200.0,
+          -256.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
         "Name": "WallMidEnd01",
         "Mesh": {
           "Mesh": "vault_111:models/json/WallMidEnd01.json",
@@ -8091,6 +14386,52 @@
           -0.0,
           -0.7071067690849304,
           0.7071067690849304
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "WallMidEnd01.003",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/WallMidEnd01.json",
+          "Name": "WallMidEnd01.mesh"
+        },
+        "Position": [
+          -704.0,
+          -2176.0,
+          -256.0
+        ],
+        "Rotation": [
+          0.0,
+          -0.0,
+          -0.7071067690849304,
+          0.7071067690849304
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "WallMidEnd01.004",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/WallMidEnd01.json",
+          "Name": "WallMidEnd01.mesh"
+        },
+        "Position": [
+          -1344.0,
+          -3072.0,
+          -256.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          1.0,
+          -4.371138828673793e-08
         ],
         "Scale": [
           1.0,
@@ -8183,6 +14524,52 @@
           -0.0,
           -0.7071067690849304,
           0.7071067690849304
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "WallMidEnd02.004",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/WallMidEnd02.json",
+          "Name": "WallMidEnd02.mesh"
+        },
+        "Position": [
+          -448.0,
+          -2176.0,
+          -256.0
+        ],
+        "Rotation": [
+          0.0,
+          -0.0,
+          -0.7071067690849304,
+          0.7071067690849304
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "WallMidEnd02.005",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/WallMidEnd02.json",
+          "Name": "WallMidEnd02.mesh"
+        },
+        "Position": [
+          -1344.0,
+          -3328.0,
+          -256.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          1.0,
+          -4.371138828673793e-08
         ],
         "Scale": [
           1.0,
@@ -8651,6 +15038,75 @@
         ]
       },
       {
+        "Name": "WallMidEnd03.020",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/Wall01.json",
+          "Name": "Wall01.mesh"
+        },
+        "Position": [
+          -960.0,
+          -3968.0,
+          -256.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          1.0,
+          -4.371138828673793e-08
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "WallMidEnd03.021",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/Wall01.json",
+          "Name": "Wall01.mesh"
+        },
+        "Position": [
+          -704.0,
+          -3968.0,
+          -256.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          1.0,
+          -4.371138828673793e-08
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "WallMidEnd03.022",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/Wall01.json",
+          "Name": "Wall01.mesh"
+        },
+        "Position": [
+          -448.0,
+          -3968.0,
+          -256.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          1.0,
+          -4.371138828673793e-08
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
         "Name": "WallMidEx01",
         "Mesh": {
           "Mesh": "vault_111:models/json/WallMidEx01.json",
@@ -8743,6 +15199,29 @@
         ]
       },
       {
+        "Name": "WallMidEx02.003",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/WallMidEx02.json",
+          "Name": "WallMidEx02.mesh"
+        },
+        "Position": [
+          -960.0,
+          -3712.0,
+          -256.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
         "Name": "WallWin01",
         "Mesh": {
           "Mesh": "vault_111:models/json/WallWin01.json",
@@ -8804,6 +15283,52 @@
           0.0,
           0.7071067690849304,
           0.7071067690849304
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "WallWin01.003",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/WallWin01.json",
+          "Name": "WallWin01.mesh"
+        },
+        "Position": [
+          -576.0,
+          -3456.0,
+          -256.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.7071067690849304,
+          0.7071067690849304
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "WallWin01.004",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/WallWin01.json",
+          "Name": "WallWin01.mesh"
+        },
+        "Position": [
+          -1600.0,
+          -3200.0,
+          -256.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
         ],
         "Scale": [
           1.0,
@@ -8896,6 +15421,75 @@
           0.0,
           0.7071067690849304,
           0.7071067690849304
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "WallWin02.004",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/WallWin02.json",
+          "Name": "WallWin02.mesh"
+        },
+        "Position": [
+          832.0,
+          -3072.0,
+          -256.0
+        ],
+        "Rotation": [
+          0.0,
+          -0.0,
+          -0.7071067690849304,
+          0.7071067690849304
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "WallWin02.005",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/WallWin02.json",
+          "Name": "WallWin02.mesh"
+        },
+        "Position": [
+          832.0,
+          -2560.0,
+          -256.0
+        ],
+        "Rotation": [
+          0.0,
+          -0.0,
+          -0.7071067690849304,
+          0.7071067690849304
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "WallWin02.006",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/WallWin02.json",
+          "Name": "WallWin02.mesh"
+        },
+        "Position": [
+          -576.0,
+          -3712.0,
+          -256.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
         ],
         "Scale": [
           1.0,
@@ -9011,6 +15605,98 @@
           0.0,
           0.0,
           1.0
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "WinGlass.005",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/WinGlass.json",
+          "Name": "WinGlass.mesh"
+        },
+        "Position": [
+          959.9998779296875,
+          -2560.0,
+          -128.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "WinGlass.006",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/WinGlass.json",
+          "Name": "WinGlass.mesh"
+        },
+        "Position": [
+          959.9998779296875,
+          -3072.0,
+          -128.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "WinGlass.007",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/WinGlass.json",
+          "Name": "WinGlass.mesh"
+        },
+        "Position": [
+          -1728.0001220703125,
+          -3200.0,
+          -128.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "WinGlass.008",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/WinGlass.json",
+          "Name": "WinGlass.mesh"
+        },
+        "Position": [
+          -576.0001220703125,
+          -3584.0,
+          -128.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.7071067690849304,
+          0.7071067690849304
         ],
         "Scale": [
           1.0,

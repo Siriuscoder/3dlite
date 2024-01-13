@@ -67,6 +67,11 @@ typedef struct lite3d_render_stats
     int32_t materialsPassedByFrame;
     int32_t textureUnitsByFrame;
     int64_t framesCount;
+    int32_t vboCount;
+    int32_t vaoCount;
+    int32_t iboCount;
+    int32_t ssboCount;
+    int32_t uboCount;
 } lite3d_render_stats;
 
 typedef struct lite3d_render_target

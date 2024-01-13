@@ -300,8 +300,14 @@ static int set_internal_format(lite3d_texture_unit *textureUnit, uint16_t *forma
         case LITE3D_TEXTURE_FORMAT_BRG:
         {
             textureUnit->imageBPP = 3;
-            *internalFormat = gTextureSettings.useGLCompression ? GL_COMPRESSED_RGB_S3TC_DXT1_EXT : GL_RGB;
+            *internalFormat = GL_RGB;
             textureUnit->compressed = gTextureSettings.useGLCompression;
+            if (gTextureSettings.useGLCompression)
+            {
+                *internalFormat = iformat == LITE3D_TEXTURE_INTERNAL_SRGB ? 
+                    GL_COMPRESSED_SRGB_S3TC_DXT1_EXT : GL_COMPRESSED_RGB_S3TC_DXT1_EXT;
+                return LITE3D_TRUE;
+            }
             break;
         }
         case LITE3D_TEXTURE_FORMAT_DEPTH:
@@ -322,8 +328,14 @@ static int set_internal_format(lite3d_texture_unit *textureUnit, uint16_t *forma
         case LITE3D_TEXTURE_FORMAT_BRGA:
         {
             textureUnit->imageBPP = 4;
-            *internalFormat = gTextureSettings.useGLCompression ? GL_COMPRESSED_RGBA_S3TC_DXT5_EXT : GL_RGBA;
+            *internalFormat = GL_RGBA;
             textureUnit->compressed = gTextureSettings.useGLCompression;
+            if (gTextureSettings.useGLCompression)
+            {
+                *internalFormat = iformat == LITE3D_TEXTURE_INTERNAL_SRGBA ? 
+                    GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT5_EXT : GL_COMPRESSED_RGBA_S3TC_DXT5_EXT;
+                return LITE3D_TRUE;
+            }
             break;
         }
         case LITE3D_TEXTURE_FORMAT_LUMINANCE:

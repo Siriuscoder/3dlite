@@ -25,6 +25,7 @@
 #include <lite3d/lite3d_alloc.h>
 #include <lite3d/lite3d_misc.h>
 #include <lite3d/lite3d_kazmath.h>
+#include <lite3d/lite3d_render.h>
 #include <lite3d/lite3d_vao.h>
 
 static int instancingSupport;
@@ -155,13 +156,20 @@ int lite3d_vao_init(struct lite3d_vao *vao)
     lite3d_misc_gl_error_stack_clean();
     glGenVertexArrays(1, &vao->vaoID);
 
-    return !LITE3D_CHECK_GL_ERROR;
+    if (!LITE3D_CHECK_GL_ERROR)
+    {
+        lite3d_render_stats_get()->vaoCount++;
+        return LITE3D_TRUE;
+    }
+
+    return LITE3D_FALSE;
 }
 
 void lite3d_vao_purge(struct lite3d_vao *vao)
 {
     SDL_assert(vao);
     glDeleteVertexArrays(1, &vao->vaoID);
+    lite3d_render_stats_get()->vaoCount--;
     vao->vaoID = 0;
 }
 

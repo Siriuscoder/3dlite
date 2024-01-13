@@ -1,0 +1,74 @@
+{
+  "Passes":[
+    {
+      "Pass": 2,
+      "Program": {
+        "Name":"bsdf_reactor_glow.program",
+        "Path":"vault_111:shaders/json/bsdf_reactor_glow.json"
+      },
+      "Uniforms":[
+        {
+          "Name":"<Specular>"
+        },
+        {
+          "Name":"<Roughness>"
+        },
+        {
+          "Name":"<Emission>"
+        },
+        {
+          "Name":"<Emission Strength>"
+        },
+        {
+          "Name":"Alpha",
+          "Type":"float",
+          "Value": 0.5
+        },
+        {
+          "Name":"Environment",
+          "TextureName":"environment.texture",
+          "TexturePath":"samples:textures/json/skybox_cryo_mip.json",
+          "Type":"sampler"
+        },
+        {
+          "Name":"lightSources",
+          "UBOName": "Vault_111_lightingBufferObject",
+          "Type":"UBO"
+        },
+        {
+          "Name":"lightIndexes",
+          "UBOName": "Vault_111_lightingIndexBuffer",
+          "Type":"UBO"
+        },
+        {
+          "Name":"ShadowMaps",
+          "TextureName":"shadow.texture",
+          "Type":"sampler"
+        },
+        {
+          "Name": "ShadowMatrix",
+          "UBOName": "ShadowMatrixBuffer",
+          "Type": "UBO"
+        },
+        {
+          "Name":"eye",
+          "Type":"v3",
+          "Scope":"global"
+        }
+      ],
+      "Blending":true,
+      "BlendingMode":"traditional"
+    }
+  ],
+  "Uniforms":[
+    {
+      "Name":"screenMatrix"
+    },
+    {
+      "Name":"modelMatrix"
+    },
+    {
+      "Name":"normalMatrix"
+    }
+  ]
+}

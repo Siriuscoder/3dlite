@@ -24,6 +24,7 @@
 #include <lite3d/lite3d_glext.h>
 #include <lite3d/lite3d_alloc.h>
 #include <lite3d/lite3d_misc.h>
+#include <lite3d/lite3d_render.h>
 #include <lite3d/lite3d_vbo.h>
 
 static GLenum vboModeEnum[] = {
@@ -356,14 +357,14 @@ int lite3d_vbo_init(struct lite3d_vbo *vbo)
     /* gen buffer for store data */
     glGenBuffers(1, &vbo->vboID);
 
-    if (LITE3D_CHECK_GL_ERROR)
+    if (!LITE3D_CHECK_GL_ERROR)
     {
-        return LITE3D_FALSE;
+        vbo->role = GL_ARRAY_BUFFER;
+        lite3d_render_stats_get()->vboCount++;
+        return LITE3D_TRUE;
     }
 
-    vbo->role = GL_ARRAY_BUFFER;
-
-    return LITE3D_TRUE;
+    return LITE3D_FALSE;
 }
 
 int lite3d_ibo_init(struct lite3d_vbo *vbo)
@@ -374,7 +375,7 @@ int lite3d_ibo_init(struct lite3d_vbo *vbo)
     }
 
     vbo->role = GL_ELEMENT_ARRAY_BUFFER;
-
+    lite3d_render_stats_get()->iboCount++;
     return LITE3D_TRUE;
 }
 
@@ -395,6 +396,7 @@ int lite3d_ssbo_init(struct lite3d_vbo *vbo)
     }
 
     vbo->role = GL_SHADER_STORAGE_BUFFER;
+    lite3d_render_stats_get()->ssboCount++;
     return LITE3D_TRUE;
 }
 
@@ -415,7 +417,7 @@ int lite3d_ubo_init(struct lite3d_vbo *vbo)
     }
 
     vbo->role = GL_UNIFORM_BUFFER;
-
+    lite3d_render_stats_get()->uboCount++;
     return LITE3D_TRUE;
 }
 
@@ -425,11 +427,19 @@ void lite3d_vbo_purge(struct lite3d_vbo *vbo)
 
     if (vbo->vboID > 0)
     {
+        lite3d_render_stats *s = lite3d_render_stats_get();
         glDeleteBuffers(1, &vbo->vboID);
+        
+        s->vboCount--;
+        if (vbo->role == GL_ELEMENT_ARRAY_BUFFER)
+            s->iboCount--;
+        if (vbo->role == GL_SHADER_STORAGE_BUFFER)
+            s->ssboCount--;
+        if (vbo->role == GL_UNIFORM_BUFFER)
+            s->uboCount--;
     }
 
-    vbo->vboID = 0;
-    vbo->size = 0;
+    memset(vbo, 0, sizeof(lite3d_vbo));
 }
 
 int lite3d_vbo_extend(struct lite3d_vbo *vbo, size_t addSize, uint16_t access)
