@@ -463,6 +463,52 @@
             ]
           },
           {
+            "Name": "GearDoorConsole01",
+            "Mesh": {
+              "Mesh": "vault_111:models/json/GearDoorConsole01.json",
+              "Name": "GearDoorConsole01.mesh"
+            },
+            "Position": [
+              -35.403526306152344,
+              -61.087467193603516,
+              129.27317810058594
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              6.365903004734719e-08,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "GearDoorConsole02",
+            "Mesh": {
+              "Mesh": "vault_111:models/json/GearDoorConsole02.json",
+              "Name": "GearDoorConsole02.mesh"
+            },
+            "Position": [
+              33.075233459472656,
+              -54.371212005615234,
+              130.64657592773438
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              6.365903004734719e-08,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
             "Name": "GearKey",
             "Mesh": {
               "Mesh": "vault_111:models/json/GearKey.json",

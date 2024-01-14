@@ -15,38 +15,27 @@
     {
       "Pass": 2,
       "Program": {
-        "Name": "bsdf_glow_prepare.program",
-        "Path": "vault_111:shaders/json/bsdf_glow_prepare.json"
+        "Name": "bsdf_prepare.program",
+        "Path": "vault_111:shaders/json/bsdf_prepare.json"
       },
       "Uniforms": [
         {
           "Name": "Albedo",
           "Type": "sampler",
-          "TextureName": "VltLight01_d.texture",
-          "TexturePath": "vault_111:textures/json/VltLight01_d.json"
+          "TextureName": "PipPlug01_d.texture",
+          "TexturePath": "vault_111:textures/json/PipPlug01_d.json"
         },
         {
           "Name": "Normal",
           "Type": "sampler",
-          "TextureName": "FlatFlat_n.texture",
-          "TexturePath": "vault_111:textures/json/FlatFlat_n.json"
+          "TextureName": "PipPlug01_n.texture",
+          "TexturePath": "vault_111:textures/json/PipPlug01_n.json"
         },
         {
           "Name": "Specular",
           "Type": "sampler",
-          "TextureName": "V111LabelSet03_s.texture",
-          "TexturePath": "vault_111:textures/json/V111LabelSet03_s.json"
-        },
-        {
-          "Name": "Emission",
-          "Type": "sampler",
-          "TextureName": "VltLight01_g.texture",
-          "TexturePath": "vault_111:textures/json/VltLight01_g.json"
-        },
-        {
-          "Name": "EmissionStrength",
-          "Type": "float",
-          "Value": 20.0
+          "TextureName": "PipPlug01_s.texture",
+          "TexturePath": "vault_111:textures/json/PipPlug01_s.json"
         },
         {
           "Name": "screenMatrix"

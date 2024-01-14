@@ -29,7 +29,7 @@ vec3 Lx(vec3 albedo, vec3 radiance, vec3 L, vec3 N, vec3 V, vec3 specular, vec3 
 /* Fresnel equation (Schlick) */
 vec3 FresnelSchlickRoughness(float NdotV, vec3 albedo, vec3 specular);
 
-vec3 ComputeIllumination(vec3 vw, vec3 nw, vec3 albedo, vec3 specular, float emissionStrength)
+vec3 ComputeIllumination(vec3 vw, vec3 nw, vec3 albedo, vec3 emission, vec3 specular)
 {
     // Eye direction to current fragment 
     vec3 eyeDir = normalize(eye - vw);
@@ -121,7 +121,6 @@ vec3 ComputeIllumination(vec3 vw, vec3 nw, vec3 albedo, vec3 specular, float emi
     vec3 globalIrradiance = textureLod(Environment, nw, 4).rgb;
     vec3 reflected = textureLod(Environment, R, specular.y * 7.0).rgb * F * ambientStrength;
     vec3 ambient = kD * globalIrradiance * albedo * ambientStrength;
-    vec3 emission = emissionStrength * albedo;
 
     return ambient + reflected + emission + totalLx;
 }

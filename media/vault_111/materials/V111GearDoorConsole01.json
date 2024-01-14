@@ -22,31 +22,31 @@
         {
           "Name": "Albedo",
           "Type": "sampler",
-          "TextureName": "VltLight01_d.texture",
-          "TexturePath": "vault_111:textures/json/VltLight01_d.json"
+          "TextureName": "V111GearDoorConsole01NEW_d.texture",
+          "TexturePath": "vault_111:textures/json/V111GearDoorConsole01NEW_d.json"
         },
         {
           "Name": "Normal",
           "Type": "sampler",
-          "TextureName": "FlatFlat_n.texture",
-          "TexturePath": "vault_111:textures/json/FlatFlat_n.json"
+          "TextureName": "V111GearDoorConsole01NEW_n.texture",
+          "TexturePath": "vault_111:textures/json/V111GearDoorConsole01NEW_n.json"
         },
         {
           "Name": "Specular",
           "Type": "sampler",
-          "TextureName": "V111LabelSet03_s.texture",
-          "TexturePath": "vault_111:textures/json/V111LabelSet03_s.json"
+          "TextureName": "V111GearDoorConsole01NEW_s.texture",
+          "TexturePath": "vault_111:textures/json/V111GearDoorConsole01NEW_s.json"
         },
         {
           "Name": "Emission",
           "Type": "sampler",
-          "TextureName": "VltLight01_g.texture",
-          "TexturePath": "vault_111:textures/json/VltLight01_g.json"
+          "TextureName": "V111GearDoorConsole01NEW_g.texture",
+          "TexturePath": "vault_111:textures/json/V111GearDoorConsole01NEW_g.json"
         },
         {
           "Name": "EmissionStrength",
           "Type": "float",
-          "Value": 20.0
+          "Value": 3.0
         },
         {
           "Name": "screenMatrix"
