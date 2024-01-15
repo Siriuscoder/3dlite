@@ -94,7 +94,7 @@ static const char *image_format_string(const lite3d_texture_unit *texture)
         case LITE3D_TEXTURE_FORMAT_RG:
             return "RG";
         default:
-            return "UNKNOWN";
+            return "?";
     }
 }
 
@@ -123,41 +123,190 @@ static const char *texture_target_string(uint32_t textureTarget)
     }
 }
 
-static const char *texture_internal_format_string(const lite3d_texture_unit *texture)
+static int texture_internal_format_compressed(uint32_t iformat)
 {
-    if (texture->compressed)
+    switch (iformat)
     {
-        switch (texture->texiFormat)
-        {
-        case GL_COMPRESSED_RGB_S3TC_DXT1_EXT:
-            return "Compressed RGB DXT1";
-        case GL_COMPRESSED_SRGB_S3TC_DXT1_EXT:
-            return "Compressed sRGB DXT1";
-        case GL_COMPRESSED_RGBA_S3TC_DXT1_EXT:
-            return "Compressed RGBA DXT1";
-        case GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT1_EXT:
-            return "Compressed sRGBA DXT1";
-        case GL_COMPRESSED_RGBA_S3TC_DXT3_EXT:
-            return "Compressed RGBA DXT3";
-        case GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT3_EXT:
-            return "Compressed sRGBA DXT3";
-        case GL_COMPRESSED_RGBA_S3TC_DXT5_EXT:
-            return "Compressed RGBA DXT5";
-        case GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT5_EXT:
-            return "Compressed sRGBA DXT5";
-        case GL_COMPRESSED_RED_RGTC1_EXT:
-            return "Compressed RGTC1";
-        case GL_COMPRESSED_RED_GREEN_RGTC2_EXT:
-            return "Compressed RGTC2";
-        default:
-            return "Compressed";
-        }
+    case GL_COMPRESSED_RGB_S3TC_DXT1_EXT:
+    case GL_COMPRESSED_SRGB_S3TC_DXT1_EXT:
+    case GL_COMPRESSED_RGBA_S3TC_DXT1_EXT:
+    case GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT1_EXT:
+    case GL_COMPRESSED_RGBA_S3TC_DXT3_EXT:
+    case GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT3_EXT:
+    case GL_COMPRESSED_RGBA_S3TC_DXT5_EXT:
+    case GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT5_EXT:
+    case GL_COMPRESSED_RED_RGTC1_EXT:
+    case GL_COMPRESSED_RED_GREEN_RGTC2_EXT:
+        return LITE3D_TRUE;
     }
 
+    return LITE3D_FALSE;
+}
+
+static const char *texture_internal_format_string(const lite3d_texture_unit *texture)
+{
     switch (texture->texiFormat)
     {
+    case GL_COMPRESSED_RGB_S3TC_DXT1_EXT:
+        return "Compressed RGB DXT1";
+    case GL_COMPRESSED_SRGB_S3TC_DXT1_EXT:
+        return "Compressed sRGB DXT1";
+    case GL_COMPRESSED_RGBA_S3TC_DXT1_EXT:
+        return "Compressed RGBA DXT1";
+    case GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT1_EXT:
+        return "Compressed sRGBA DXT1";
+    case GL_COMPRESSED_RGBA_S3TC_DXT3_EXT:
+        return "Compressed RGBA DXT3";
+    case GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT3_EXT:
+        return "Compressed sRGBA DXT3";
+    case GL_COMPRESSED_RGBA_S3TC_DXT5_EXT:
+        return "Compressed RGBA DXT5";
+    case GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT5_EXT:
+        return "Compressed sRGBA DXT5";
+    case GL_COMPRESSED_RED_RGTC1_EXT:
+        return "Compressed RGTC1";
+    case GL_COMPRESSED_RED_GREEN_RGTC2_EXT:
+        return "Compressed RGTC2";
+    case LITE3D_TEXTURE_FORMAT_RGB:
+        return "RGB";
+    case LITE3D_TEXTURE_FORMAT_RGBA:
+        return "RGBA";
+    case LITE3D_TEXTURE_FORMAT_DEPTH:
+        return "DEPTH_COMPONENT";
+    case GL_DEPTH_COMPONENT32:
+        return "DEPTH_COMPONENT32";
+    case LITE3D_TEXTURE_FORMAT_RED:
+        return "RED";
+    case LITE3D_TEXTURE_FORMAT_RG:
+        return "RG";
+    case LITE3D_TEXTURE_INTERNAL_R8:
+        return "R8";
+    case LITE3D_TEXTURE_INTERNAL_R8_SNORM:
+        return "R8_SNORM";
+    case LITE3D_TEXTURE_INTERNAL_R16:
+        return "R16";
+    case LITE3D_TEXTURE_INTERNAL_R16_SNORM:
+        return "R16_SNORM";
+    case LITE3D_TEXTURE_INTERNAL_RG8:
+        return "RG8";
+    case LITE3D_TEXTURE_INTERNAL_RG8_SNORM:
+        return "RG8_SNORM";
+    case LITE3D_TEXTURE_INTERNAL_RG16:
+        return "RG16";
+    case LITE3D_TEXTURE_INTERNAL_RG16_SNORM:
+        return "RG16_SNORM";
+    case LITE3D_TEXTURE_INTERNAL_R3_G3_B2:
+        return "R3_G3_B2";
+    case LITE3D_TEXTURE_INTERNAL_RGB4:
+        return "RGB4";
+    case LITE3D_TEXTURE_INTERNAL_RGB5:
+        return "RGB5";
+    case LITE3D_TEXTURE_INTERNAL_RGB8:
+        return "RGB8";
+    case LITE3D_TEXTURE_INTERNAL_RGB8_SNORM:
+        return "RGB8_SNORM";
+    case LITE3D_TEXTURE_INTERNAL_RGB10:
+        return "RGB10";
+    case LITE3D_TEXTURE_INTERNAL_RGB12:
+        return "RGB12";
+    case LITE3D_TEXTURE_INTERNAL_RGB16_SNORM:
+        return "RGB16_SNORM";
+    case LITE3D_TEXTURE_INTERNAL_RGBA2:
+        return "RGBA2";
+    case LITE3D_TEXTURE_INTERNAL_RGBA4:
+        return "RGBA4";
+    case LITE3D_TEXTURE_INTERNAL_RGB5_A1:
+        return "RGB5_A1";
+    case LITE3D_TEXTURE_INTERNAL_RGBA8:
+        return "RGBA8";
+    case LITE3D_TEXTURE_INTERNAL_RGBA8_SNORM:
+        return "RGBA8_SNORM";
+    case LITE3D_TEXTURE_INTERNAL_RGB10_A2:
+        return "RGB10_A2";
+    case LITE3D_TEXTURE_INTERNAL_RGB10_A2UI:
+        return "RGB10_A2UI";
+    case LITE3D_TEXTURE_INTERNAL_RGBA12: 
+        return "RGBA12";
+    case LITE3D_TEXTURE_INTERNAL_RGBA16: 
+        return "RGBA16";
+    case LITE3D_TEXTURE_INTERNAL_SRGB8:
+        return "SRGB8";
+    case LITE3D_TEXTURE_INTERNAL_SRGB8_ALPHA8:
+        return "SRGB8_ALPHA8";
+    case LITE3D_TEXTURE_INTERNAL_SRGB:
+        return "SRGB";
+    case LITE3D_TEXTURE_INTERNAL_SRGBA:
+        return "SRGBA";
+    case LITE3D_TEXTURE_INTERNAL_R16F: 
+        return "R16F";
+    case LITE3D_TEXTURE_INTERNAL_RG16F:
+        return "RG16F";
+    case LITE3D_TEXTURE_INTERNAL_RGB16F: 
+        return "RGB16F";
+    case LITE3D_TEXTURE_INTERNAL_RGBA16F:
+        return "RGBA16F";
+    case LITE3D_TEXTURE_INTERNAL_R32F: 
+        return "R32F";
+    case LITE3D_TEXTURE_INTERNAL_RG32F:
+        return "RG32F";
+    case LITE3D_TEXTURE_INTERNAL_RGB32F: 
+        return "RGB32F";
+    case LITE3D_TEXTURE_INTERNAL_RGBA32F:
+        return "RGBA32F";
+    case LITE3D_TEXTURE_INTERNAL_R11F_G11F_B10F:
+        return "R11F_G11F_B10F";
+    case LITE3D_TEXTURE_INTERNAL_RGB9_E5:
+        return "RGB9_E5";
+    case LITE3D_TEXTURE_INTERNAL_R8I:
+        return "R8I";
+    case LITE3D_TEXTURE_INTERNAL_R8UI: 
+        return "R8UI";
+    case LITE3D_TEXTURE_INTERNAL_R16I: 
+        return "R16I";
+    case LITE3D_TEXTURE_INTERNAL_R16UI:
+        return "R16UI";
+    case LITE3D_TEXTURE_INTERNAL_R32I: 
+        return "R32I";
+    case LITE3D_TEXTURE_INTERNAL_R32UI:
+        return "R32UI";
+    case LITE3D_TEXTURE_INTERNAL_RG8I: 
+        return "RG8I";
+    case LITE3D_TEXTURE_INTERNAL_RG8UI:
+        return "RG8UI";
+    case LITE3D_TEXTURE_INTERNAL_RG16I:
+        return "RG16I";
+    case LITE3D_TEXTURE_INTERNAL_RG16UI:
+        return "RG16UI";
+    case LITE3D_TEXTURE_INTERNAL_RG32I:
+        return "RG32I";
+    case LITE3D_TEXTURE_INTERNAL_RG32UI:
+        return "RG32UI";
+    case LITE3D_TEXTURE_INTERNAL_RGB8I:
+        return "RGB8I";
+    case LITE3D_TEXTURE_INTERNAL_RGB8UI:
+        return "RGB8UI";
+    case LITE3D_TEXTURE_INTERNAL_RGB16I:
+        return "RGB16I";
+    case LITE3D_TEXTURE_INTERNAL_RGB16UI:
+        return "RGB16UI";
+    case LITE3D_TEXTURE_INTERNAL_RGB32I:
+        return "RGB32I";
+    case LITE3D_TEXTURE_INTERNAL_RGB32UI:
+        return "RGB32UI";
+    case LITE3D_TEXTURE_INTERNAL_RGBA8I:
+        return "RGBA8I";
+    case LITE3D_TEXTURE_INTERNAL_RGBA8UI:
+        return "RGBA8UI";
+    case LITE3D_TEXTURE_INTERNAL_RGBA16I:
+        return "RGBA16I";
+    case LITE3D_TEXTURE_INTERNAL_RGBA16UI:
+        return "RGBA16UI";
+    case LITE3D_TEXTURE_INTERNAL_RGBA32I:
+        return "RGBA32I";
+    case LITE3D_TEXTURE_INTERNAL_RGBA32UI:
+        return "RGBA32UI";
     default:
-        return "Not compressed";
+        return "?";
     }
 }
 
@@ -256,24 +405,21 @@ static int checkTextureTarget(uint32_t textureTarget)
     return LITE3D_TRUE;
 }
 
-static int set_internal_format(lite3d_texture_unit *textureUnit, uint16_t *format,
+static int set_internal_format(lite3d_texture_unit *textureUnit, uint16_t format,
     uint16_t iformat, uint32_t *internalFormat)
 {
 #ifdef GLES
-    switch (*format)
+    switch (format)
     {
         case LITE3D_TEXTURE_FORMAT_BRG:
         case LITE3D_TEXTURE_FORMAT_BRGA:
 #ifdef WITH_GLES2
-        case LITE3D_TEXTURE_FORMAT_LUMINANCE:
-        case LITE3D_TEXTURE_FORMAT_ALPHA:
         case LITE3D_TEXTURE_FORMAT_RED:
-        case LITE3D_TEXTURE_FORMAT_LUMINANCE_ALPHA:
         case LITE3D_TEXTURE_FORMAT_RG:
 #endif
         {
             SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "%s: Texture format %d is not supported in GLES",
-                LITE3D_CURRENT_FUNCTION, *format);
+                LITE3D_CURRENT_FUNCTION, format);
             return LITE3D_FALSE;
         }
     }
@@ -282,31 +428,34 @@ static int set_internal_format(lite3d_texture_unit *textureUnit, uint16_t *forma
     {
         case LITE3D_TEXTURE_INTERNAL_SRGB:
         case LITE3D_TEXTURE_INTERNAL_SRGBA:
-            if (lite3d_check_srgb())
-                break;
-        default:
-        {
-            SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "%s: Texture internal format %d is not supported in GLES",
-                LITE3D_CURRENT_FUNCTION, iformat);
-            return LITE3D_FALSE;
-        }
+            if (!lite3d_check_srgb())
+            {
+                SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "%s: Texture internal format %d is not supported in GLES",
+                    LITE3D_CURRENT_FUNCTION, iformat);
+                return LITE3D_FALSE;
+            }
+            break;
     }
 #endif
 
     /* what BPP ? */
-    switch (*format)
+    switch (format)
     {
         case LITE3D_TEXTURE_FORMAT_RGB:
         case LITE3D_TEXTURE_FORMAT_BRG:
         {
             textureUnit->imageBPP = 3;
             *internalFormat = GL_RGB;
-            textureUnit->compressed = gTextureSettings.useGLCompression;
-            if (gTextureSettings.useGLCompression)
+            if (textureCompression)
             {
-                *internalFormat = iformat == LITE3D_TEXTURE_INTERNAL_SRGB ? 
-                    GL_COMPRESSED_SRGB_S3TC_DXT1_EXT : GL_COMPRESSED_RGB_S3TC_DXT1_EXT;
-                return LITE3D_TRUE;
+                if (iformat == LITE3D_TEXTURE_INTERNAL_SRGB)
+                {
+                    iformat = GL_COMPRESSED_SRGB_S3TC_DXT1_EXT;
+                }
+                else if (iformat == 0)
+                {
+                    iformat = GL_COMPRESSED_RGB_S3TC_DXT1_EXT;
+                }
             }
             break;
         }
@@ -329,39 +478,44 @@ static int set_internal_format(lite3d_texture_unit *textureUnit, uint16_t *forma
         {
             textureUnit->imageBPP = 4;
             *internalFormat = GL_RGBA;
-            textureUnit->compressed = gTextureSettings.useGLCompression;
-            if (gTextureSettings.useGLCompression)
+            if (textureCompression)
             {
-                *internalFormat = iformat == LITE3D_TEXTURE_INTERNAL_SRGBA ? 
-                    GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT5_EXT : GL_COMPRESSED_RGBA_S3TC_DXT5_EXT;
-                return LITE3D_TRUE;
+                if (iformat == LITE3D_TEXTURE_INTERNAL_SRGBA)
+                {
+                    iformat = GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT5_EXT;
+                }
+                else if (iformat == 0)
+                {
+                    iformat = GL_COMPRESSED_RGBA_S3TC_DXT5_EXT;
+                }
             }
             break;
         }
-        case LITE3D_TEXTURE_FORMAT_LUMINANCE:
-        case LITE3D_TEXTURE_FORMAT_ALPHA:
         case LITE3D_TEXTURE_FORMAT_RED:
         {
-            *format = GL_RED;
             textureUnit->imageBPP = 1;
-            *internalFormat = gTextureSettings.useGLCompression ? GL_COMPRESSED_RED_RGTC1_EXT : GL_RED;
-            textureUnit->compressed = gTextureSettings.useGLCompression;
+            *internalFormat = GL_RED;
+            if (textureCompression && iformat == 0)
+            {
+                iformat = GL_COMPRESSED_RED_RGTC1_EXT;
+            }
             break;
         }
-        case LITE3D_TEXTURE_FORMAT_LUMINANCE_ALPHA:
         case LITE3D_TEXTURE_FORMAT_RG:
         {
-            *format = GL_RG;
             textureUnit->imageBPP = 2;
-            *internalFormat = gTextureSettings.useGLCompression ? GL_COMPRESSED_RED_GREEN_RGTC2_EXT : GL_RG;
-            textureUnit->compressed = gTextureSettings.useGLCompression;
+            *internalFormat = GL_RG;
+            if (textureCompression && iformat == 0)
+            {
+                iformat = GL_COMPRESSED_RED_GREEN_RGTC2_EXT;
+            }
             break;
         }
         default:
         {
             SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
                 "%s: Unknown texture format %d",
-                LITE3D_CURRENT_FUNCTION, *format);
+                LITE3D_CURRENT_FUNCTION, format);
             return LITE3D_FALSE;
         }
     }
@@ -371,6 +525,7 @@ static int set_internal_format(lite3d_texture_unit *textureUnit, uint16_t *forma
         *internalFormat = iformat;
     }
 
+    textureUnit->compressed = texture_internal_format_compressed(*internalFormat);
     return LITE3D_TRUE;
 }
 
@@ -432,9 +587,10 @@ int lite3d_texture_technique_init(const lite3d_texture_technique_settings *setti
     {
         SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
             "%s: Texture compression not supported, skiping", LITE3D_CURRENT_FUNCTION);
-        textureCompression = LITE3D_FALSE;
         gTextureSettings.useGLCompression = LITE3D_FALSE;
     }
+
+    textureCompression = gTextureSettings.useGLCompression;
 
     if (!lite3d_check_texture_filter_anisotropic())
     {
@@ -670,8 +826,8 @@ int lite3d_texture_unit_from_resource(lite3d_texture_unit *textureUnit,
     }
 
     SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "%s: %s, "
-        "%dx%dx%d, build-in/%s mipmaps %d/%d, %s, "
-        "format %s",
+        "%dx%dx%d, build-in/%s mipmaps %d/%d, storage: %s, "
+        "data: %s",
         texture_target_string(textureUnit->textureTarget),
         resource->name,
         textureUnit->imageWidth,
@@ -798,8 +954,30 @@ int lite3d_texture_unit_get_level_size(lite3d_texture_unit *textureUnit,
     imageHeight = lite3d_texture_unit_get_level_height(textureUnit, level, cubeface);
     imageDepth = lite3d_texture_unit_get_level_depth(textureUnit, level, cubeface);
 
+#ifndef GLES
+    {
+        GLenum levelType = textureUnit->textureTarget == LITE3D_TEXTURE_CUBE ? 
+            GL_TEXTURE_CUBE_MAP_POSITIVE_X + cubeface : textureTargetEnum[textureUnit->textureTarget];
+            
+        if (textureUnit->texFormat == LITE3D_TEXTURE_FORMAT_DEPTH)
+        {
+            int32_t sizeDepth;
+            glGetTexLevelParameteriv(levelType, level, GL_TEXTURE_DEPTH_SIZE, &sizeDepth);
+            *size = imageWidth * imageHeight * imageDepth * sizeDepth / 8;
+        }
+        else
+        {
+            int32_t sizeR, sizeG, sizeB, sizeA;
+            glGetTexLevelParameteriv(levelType, level, GL_TEXTURE_RED_SIZE, &sizeR);
+            glGetTexLevelParameteriv(levelType, level, GL_TEXTURE_GREEN_SIZE, &sizeG);
+            glGetTexLevelParameteriv(levelType, level, GL_TEXTURE_BLUE_SIZE, &sizeB);
+            glGetTexLevelParameteriv(levelType, level, GL_TEXTURE_ALPHA_SIZE, &sizeA);
+            *size = imageWidth * imageHeight * imageDepth * (sizeR + sizeG + sizeB + sizeA) / 8;
+        }
+    }
+#else
     *size = imageWidth * imageHeight * imageDepth * textureUnit->imageBPP;
-
+#endif
     return LITE3D_TRUE;
 }
 
@@ -941,7 +1119,7 @@ int lite3d_texture_unit_allocate(lite3d_texture_unit *textureUnit,
         return LITE3D_FALSE;
     }
 
-    if (!set_internal_format(textureUnit, &format, iformat, &internalFormat))
+    if (!set_internal_format(textureUnit, format, iformat, &internalFormat))
     {
         return LITE3D_FALSE;
     }
@@ -1129,8 +1307,8 @@ int lite3d_texture_unit_allocate(lite3d_texture_unit *textureUnit,
     }
 
     SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "%s: "
-        "%dx%dx%d surface allocated (%lu bytes), levels %d, %s, "
-        "format %s",
+        "%dx%dx%d surface allocated (%lu bytes), levels %d, storage: %s, "
+        "data: %s",
         texture_target_string(textureUnit->textureTarget),
         textureUnit->imageWidth,
         textureUnit->imageHeight,
@@ -1176,14 +1354,13 @@ void lite3d_texture_unit_unbind(lite3d_texture_unit *textureUnit, uint16_t layer
 
 void lite3d_texture_unit_compression(uint8_t on)
 {
-    /* skip if not supported */
-    if (!textureCompression)
+    /* skip if not supported or disabled */
+    if (!gTextureSettings.useGLCompression)
     {
-        gTextureSettings.useGLCompression = textureCompression;
         return;
     }
 
-    gTextureSettings.useGLCompression = on;
+    textureCompression = on;
 }
 
 int32_t lite3d_texture_unit_get_level_width(lite3d_texture_unit *textureUnit,

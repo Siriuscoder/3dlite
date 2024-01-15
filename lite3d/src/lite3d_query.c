@@ -21,6 +21,7 @@
 #include <lite3d/lite3d_gl.h>
 #include <lite3d/lite3d_glext.h>
 #include <lite3d/lite3d_misc.h>
+#include <lite3d/lite3d_render.h>
 #include <lite3d/lite3d_query.h>
 
 int gQueryObjectSupported = LITE3D_FALSE;
@@ -50,7 +51,13 @@ int lite3d_query_init(struct lite3d_query *query)
     query->anyPassed = -1;
 
     glGenQueries(1, &query->queryID);
-    return !LITE3D_CHECK_GL_ERROR;
+    if (!LITE3D_CHECK_GL_ERROR)
+    {
+        lite3d_render_stats_get()->queryCount++;
+        return LITE3D_TRUE;
+    }
+
+    return LITE3D_FALSE;
 }
 
 void lite3d_query_purge(struct lite3d_query *query)
@@ -60,6 +67,7 @@ void lite3d_query_purge(struct lite3d_query *query)
     glDeleteQueries(1, &query->queryID);
     memset(query, 0, sizeof(lite3d_query));
     query->anyPassed = -1;
+    lite3d_render_stats_get()->queryCount--;
 }
 
 void lite3d_query_begin(struct lite3d_query *query)

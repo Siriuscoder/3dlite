@@ -262,6 +262,8 @@ void Sample::printMemoryStats()
         "UBO:\t\t%d/%d\n"
         "VBO:\t\t%d\n"
         "IBO:\t\t%d\n"
+        "VAO:\t\t%d\n"
+        "QUERIES:\t%d\n"
         "File cache:\t%d kB in %d files\n",
         static_cast<uint32_t>(memStats.usedVideoMem / 1024),
         memStats.totalObjectsCount,
@@ -273,7 +275,7 @@ void Sample::printMemoryStats()
         memStats.renderTargetsLoadedCount, memStats.renderTargetsCount,
         memStats.ssboLoadedCount, memStats.ssboCount,
         memStats.uboLoadedCount, memStats.uboCount,
-        renderStats->vboCount, renderStats->iboCount,
+        renderStats->vboCount, renderStats->iboCount, renderStats->vaoCount, renderStats->queryCount,
         static_cast<uint32_t>(memStats.totalCachedFilesMemSize / 1024), memStats.fileCachesCount);
 }
 
