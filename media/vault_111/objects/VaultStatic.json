@@ -11592,9 +11592,9 @@
           "Name": "LightCorridor.mesh"
         },
         "Position": [
-          64.0,
-          -3497.0,
-          -284.0
+          91.48200988769531,
+          -3390.569091796875,
+          -206.8166961669922
         ],
         "Rotation": [
           0.5,
@@ -11664,9 +11664,9 @@
           "Name": "LightCorridor.mesh"
         },
         "Position": [
-          320.0,
-          -3497.0,
-          -284.0
+          294.0048828125,
+          -3393.6474609375,
+          -206.8166961669922
         ],
         "Rotation": [
           0.5,
@@ -12039,6 +12039,351 @@
               1.0
             ]
           }
+        ]
+      },
+      {
+        "Name": "OxygenTank01",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/OxygenTank01.json",
+          "Name": "OxygenTank01.mesh"
+        },
+        "Position": [
+          -197.9348602294922,
+          -2153.4091796875,
+          -290.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.6459228992462158,
+          -0.7634027004241943
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "OxygenTank01.001",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/OxygenTank01.json",
+          "Name": "OxygenTank01.mesh"
+        },
+        "Position": [
+          -165.9348602294922,
+          -2153.4091796875,
+          -290.0
+        ],
+        "Rotation": [
+          0.0,
+          -0.0,
+          -0.3659197986125946,
+          0.9306464195251465
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "OxygenTank01.002",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/OxygenTank01.json",
+          "Name": "OxygenTank01.mesh"
+        },
+        "Position": [
+          -180.8394012451172,
+          -2177.531494140625,
+          -290.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.425351619720459,
+          0.9050281643867493
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "OxygenTank01.003",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/OxygenTank01.json",
+          "Name": "OxygenTank01.mesh"
+        },
+        "Position": [
+          -110.03229522705078,
+          -2152.260498046875,
+          -290.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.0011125204619020224,
+          0.9999994039535522
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "OxygenTank01.004",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/OxygenTank01.json",
+          "Name": "OxygenTank01.mesh"
+        },
+        "Position": [
+          582.1917724609375,
+          -2672.093994140625,
+          -259.9672546386719
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.6644244194030762,
+          0.7473554611206055
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "OxygenTank01.005",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/OxygenTank01.json",
+          "Name": "OxygenTank01.mesh"
+        },
+        "Position": [
+          551.4070434570312,
+          -2695.067626953125,
+          -259.9672546386719
+        ],
+        "Rotation": [
+          0.0,
+          -0.0,
+          -0.47781383991241455,
+          0.8784611225128174
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "OxygenTank01.006",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/OxygenTank01.json",
+          "Name": "OxygenTank01.mesh"
+        },
+        "Position": [
+          506.378662109375,
+          -2668.418212890625,
+          -259.9672546386719
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.0011125204619020224,
+          0.9999994039535522
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "OxygenTank01.007",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/OxygenTank01.json",
+          "Name": "OxygenTank01.mesh"
+        },
+        "Position": [
+          519.93310546875,
+          -2699.89208984375,
+          -259.9672546386719
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.42664605379104614,
+          0.9044187068939209
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "OxygenTank01.008",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/OxygenTank01.json",
+          "Name": "OxygenTank01.mesh"
+        },
+        "Position": [
+          581.7322387695312,
+          -2794.083984375,
+          -259.9672546386719
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.7447861433029175,
+          0.667303204536438
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "OxygenTank01.009",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/OxygenTank01.json",
+          "Name": "OxygenTank01.mesh"
+        },
+        "Position": [
+          505.000244140625,
+          -2761.46142578125,
+          -259.9672546386719
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.0011125204619020224,
+          0.9999994039535522
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "OxygenTank01.010",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/OxygenTank01.json",
+          "Name": "OxygenTank01.mesh"
+        },
+        "Position": [
+          562.2046508789062,
+          -2754.5693359375,
+          -290.7674255371094
+        ],
+        "Rotation": [
+          0.6002062559127808,
+          0.37383484840393066,
+          -0.600206196308136,
+          0.37383487820625305
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "Pipes01",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/Pipes01.json",
+          "Name": "Pipes01.mesh"
+        },
+        "Position": [
+          -160.0,
+          -2656.0,
+          -300.0
+        ],
+        "Rotation": [
+          0.0,
+          -0.0,
+          -0.7071067690849304,
+          0.7071067690849304
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "Pipes01.001",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/Pipes01.json",
+          "Name": "Pipes01.mesh"
+        },
+        "Position": [
+          544.0,
+          -2912.0,
+          -300.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.7071067690849304,
+          0.7071067690849304
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "Pipes02",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/Pipes02.json",
+          "Name": "Pipes02.mesh"
+        },
+        "Position": [
+          -160.0,
+          -2944.0,
+          -300.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.7071067094802856,
+          0.7071068286895752
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "Pipes03",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/Pipes03.json",
+          "Name": "Pipes03.mesh"
+        },
+        "Position": [
+          -32.0,
+          -3008.0,
+          -300.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          -1.0,
+          7.549790126404332e-08
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
         ]
       },
       {
@@ -12778,6 +13123,102 @@
         ]
       },
       {
+        "Name": "PowerGenerator01",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/PowerGenerator01.json",
+          "Name": "PowerGenerator01.mesh"
+        },
+        "Position": [
+          -32.0,
+          -3424.0,
+          -330.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          -0.7071067690849304,
+          0.7071068286895752
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "Nodes": [
+          {
+            "Name": "PowerGeneratorSpinner01",
+            "Mesh": {
+              "Mesh": "vault_111:models/json/PowerGeneratorSpinner01.json",
+              "Name": "PowerGeneratorSpinner01.mesh"
+            },
+            "Position": [
+              -1.140994906425476,
+              97.97074127197266,
+              42.758148193359375
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "PowerGenerator02",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/PowerGenerator02.json",
+          "Name": "PowerGenerator02.mesh"
+        },
+        "Position": [
+          416.0,
+          -3424.0,
+          -330.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.7071067094802856,
+          0.7071068286895752
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "Nodes": [
+          {
+            "Name": "PowerGeneratorSpinner02",
+            "Mesh": {
+              "Mesh": "vault_111:models/json/PowerGeneratorSpinner02.json",
+              "Name": "PowerGeneratorSpinner02.mesh"
+            },
+            "Position": [
+              -1.1402698755264282,
+              0.6363825798034668,
+              42.761470794677734
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          }
+        ]
+      },
+      {
         "Name": "Reactor01",
         "Mesh": {
           "Mesh": "vault_111:models/json/Reactor01.json",
@@ -12810,7 +13251,7 @@
                 0.6529598832130432,
                 1.0
               ],
-              "Radiance": 100000.0,
+              "Radiance": 350000.0,
               "LightSize": 0.0,
               "Attenuation": {
                 "Constant": 0.0,
@@ -12857,7 +13298,7 @@
                 0.6529598832130432,
                 1.0
               ],
-              "Radiance": 100000.0,
+              "Radiance": 350000.0,
               "LightSize": 0.0,
               "Attenuation": {
                 "Constant": 0.0,
@@ -12904,7 +13345,7 @@
                 0.6529598832130432,
                 1.0
               ],
-              "Radiance": 100000.0,
+              "Radiance": 350000.0,
               "LightSize": 0.0,
               "Attenuation": {
                 "Constant": 0.0,
@@ -12951,7 +13392,7 @@
                 0.6529598832130432,
                 1.0
               ],
-              "Radiance": 100000.0,
+              "Radiance": 350000.0,
               "LightSize": 0.0,
               "Attenuation": {
                 "Constant": 0.0,
