@@ -332,6 +332,8 @@ void lite3d_render_loop(lite3d_render_listeners *callbacks)
     if (!gRenderListeners.preRender || (gRenderListeners.preRender &&
         gRenderListeners.preRender(gRenderListeners.userdata)))
     {
+        /* wait for async resources load operations */
+        lite3d_video_wait_async_complete();
         /* get time mark */
         gBeginFrameMark = SDL_GetPerformanceCounter();
         
@@ -345,6 +347,8 @@ void lite3d_render_loop(lite3d_render_listeners *callbacks)
     if (gRenderListeners.postRender)
         gRenderListeners.postRender(gRenderListeners.userdata);
 
+    /* wait for opengl async shutdown operations */
+    lite3d_video_wait_async_complete();
     lite3d_timer_purge(frameStatsTimer);
     lite3d_render_target_erase_all();
     lite3d_render_target_purge(&gScreenRt);

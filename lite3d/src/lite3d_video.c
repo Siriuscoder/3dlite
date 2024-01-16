@@ -458,3 +458,8 @@ void lite3d_video_view_system_cursor(int8_t flag)
 {
     SDL_ShowCursor(flag == LITE3D_TRUE ? 1 : 0);
 }
+
+void lite3d_video_wait_async_complete()
+{
+    glFinish();
+}

@@ -51,6 +51,7 @@ LITE3D_CEXPORT void lite3d_video_resize(int32_t width, int32_t height);
 LITE3D_CEXPORT int lite3d_video_get_display_size(int32_t *width, int32_t *height);
 LITE3D_CEXPORT void lite3d_video_set_fullscreen(int8_t flag);
 LITE3D_CEXPORT void lite3d_video_view_system_cursor(int8_t flag);
+LITE3D_CEXPORT void lite3d_video_wait_async_complete();
 
 
 #endif	/* VIDEO_H */

@@ -1,11 +1,11 @@
-#include "samples:shaders/sources/common/version.def"
+#include "vault_111:shaders/sources/inc/common.def"
 #include "samples:shaders/sources/common/utils_inc.glsl"
 
 uniform sampler2DArrayShadow ShadowMaps;
 
 layout(std140) uniform ShadowMatrix
 {
-    mat4 shadowMat[4];
+    mat4 shadowMat[MAX_SHADOW_LAYERS];
 };
 
 const float shadowBias = 0.0000001;

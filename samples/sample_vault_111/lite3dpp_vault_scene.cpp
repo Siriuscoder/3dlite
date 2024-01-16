@@ -111,6 +111,8 @@ public:
 
         mGearKey = mShadowManager->registerDynamicNode(mVaultScene->getObject("VaultStatic")->getNode("GearKey"));
         mGearKeySpinner = mShadowManager->registerDynamicNode(mVaultScene->getObject("VaultStatic")->getNode("GearKeySpinner"));
+        mGeneratorSpinner01 = mShadowManager->registerDynamicNode(mVaultScene->getObject("VaultStatic")->getNode("PowerGeneratorSpinner01"));
+        mGeneratorSpinner02 = mShadowManager->registerDynamicNode(mVaultScene->getObject("VaultStatic")->getNode("PowerGeneratorSpinner02"));
         mFans.emplace_back(mShadowManager->registerDynamicNode(mVaultScene->getObject("VaultStatic")->getNode("FanRotor")));
         mFans.emplace_back(mShadowManager->registerDynamicNode(mVaultScene->getObject("VaultStatic")->getNode("FanRotor.001")));
         mFans.emplace_back(mShadowManager->registerDynamicNode(mVaultScene->getObject("VaultStatic")->getNode("FanRotor.002")));
@@ -125,9 +127,14 @@ public:
 
         // Установим тень для трех прожекторов и потом будем их вращать
         // Источники света получаем по ObjectName + NodeName
-        mSpot01 = SpotLightWithShadow {
+        mSpot = SpotLightWithShadow {
             mShadowManager->registerDynamicNode(mVaultScene->getObject("LightSpot")->getNode("LightSpotLamp")),
             mShadowManager->newShadowCaster(mVaultScene->getLightNode("LightSpotLightSpotNode"))
+        };
+
+        mSpot01 = SpotLightWithShadow {
+            mShadowManager->registerDynamicNode(mVaultScene->getObject("LightSpot.001")->getNode("LightSpotLamp")),
+            mShadowManager->newShadowCaster(mVaultScene->getLightNode("LightSpot.001LightSpotNode"))
         };
 
         mSpot02 = SpotLightWithShadow {
@@ -197,7 +204,9 @@ public:
             fanRotor->rotateAngle(KM_VEC3_POS_Z, 0.07 * deltaRetard);
         });
 
-        mGearKeySpinner->rotateAngle(KM_VEC3_POS_X, 0.15 * deltaRetard);
+        mGearKeySpinner->rotateAngle(KM_VEC3_POS_X, 0.1 * deltaRetard);
+        mGeneratorSpinner01->rotateAngle(KM_VEC3_POS_Y, 0.025 * deltaRetard);
+        mGeneratorSpinner02->rotateAngle(KM_VEC3_POS_Y, -0.025 * deltaRetard);
     }
 
     void processEvent(SDL_Event *e) override
@@ -213,6 +222,10 @@ public:
                 updateFlashLight();
             }
             else if (e->key.keysym.sym == SDLK_p)
+            {
+                mSpot.rotateAngle(KM_VEC3_POS_Z, 0.10 * (e->key.keysym.mod & KMOD_LCTRL ? -1.0 : 1.0));
+            }
+            else if (e->key.keysym.sym == SDLK_i)
             {
                 mSpot01.rotateAngle(KM_VEC3_POS_Z, 0.10 * (e->key.keysym.mod & KMOD_LCTRL ? -1.0 : 1.0));
             }
@@ -259,11 +272,14 @@ private:
     std::unique_ptr<SampleShadowManager> mShadowManager;
     std::unique_ptr<SampleBloomEffect> mBloomEffectRenderer;
     std::unique_ptr<LightSceneNode> mFlashLight;
+    SpotLightWithShadow mSpot;
     SpotLightWithShadow mSpot01;
     SpotLightWithShadow mSpot02;
     SpotLightWithShadow mSpot03;
     SampleShadowManager::DynamicNode* mGearKey = nullptr;
     SampleShadowManager::DynamicNode* mGearKeySpinner = nullptr;
+    SampleShadowManager::DynamicNode* mGeneratorSpinner01 = nullptr;
+    SampleShadowManager::DynamicNode* mGeneratorSpinner02 = nullptr;
     stl<SampleShadowManager::DynamicNode*>::vector mFans;
     MinigunObject mMinigun01;
     MinigunObject mMinigun02;
