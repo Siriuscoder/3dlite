@@ -3,6 +3,2191 @@
     "Name": "VaultStatic",
     "Nodes": [
       {
+        "Name": "Bed2Level",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/Bed2Level.json",
+          "Name": "Bed2Level.mesh"
+        },
+        "Position": [
+          -2080.0,
+          -512.0,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.7071067094802856,
+          0.7071068286895752
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "Bed2Level.001",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/Bed2Level.json",
+          "Name": "Bed2Level.mesh"
+        },
+        "Position": [
+          -2080.0,
+          -256.0,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.7071067094802856,
+          0.7071068286895752
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "Bed2Level.002",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/Bed2Level.json",
+          "Name": "Bed2Level.mesh"
+        },
+        "Position": [
+          -2080.0,
+          0.0,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.7071067094802856,
+          0.7071068286895752
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "Bed2Level.003",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/Bed2Level.json",
+          "Name": "Bed2Level.mesh"
+        },
+        "Position": [
+          -2080.0,
+          256.0,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.7071067094802856,
+          0.7071068286895752
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "Bed2Level.004",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/Bed2Level.json",
+          "Name": "Bed2Level.mesh"
+        },
+        "Position": [
+          -2080.0,
+          512.0,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.7071067094802856,
+          0.7071068286895752
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "Bed2Level.005",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/Bed2Level.json",
+          "Name": "Bed2Level.mesh"
+        },
+        "Position": [
+          -2080.0,
+          768.0,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.7071067094802856,
+          0.7071068286895752
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "Bed2Level.006",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/Bed2Level.json",
+          "Name": "Bed2Level.mesh"
+        },
+        "Position": [
+          -1856.0,
+          -512.0,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.7071067094802856,
+          0.7071068286895752
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "Bed2Level.007",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/Bed2Level.json",
+          "Name": "Bed2Level.mesh"
+        },
+        "Position": [
+          -1856.0,
+          -256.0,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.7071067094802856,
+          0.7071068286895752
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "Bed2Level.008",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/Bed2Level.json",
+          "Name": "Bed2Level.mesh"
+        },
+        "Position": [
+          -1856.0,
+          0.0,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.7071067094802856,
+          0.7071068286895752
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "Bed2Level.009",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/Bed2Level.json",
+          "Name": "Bed2Level.mesh"
+        },
+        "Position": [
+          -1856.0,
+          256.0,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.7071067094802856,
+          0.7071068286895752
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "Bed2Level.010",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/Bed2Level.json",
+          "Name": "Bed2Level.mesh"
+        },
+        "Position": [
+          -1856.0,
+          512.0,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.7071067094802856,
+          0.7071068286895752
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "Bed2Level.011",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/Bed2Level.json",
+          "Name": "Bed2Level.mesh"
+        },
+        "Position": [
+          -1856.0,
+          768.0,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.7071067094802856,
+          0.7071068286895752
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "Bed2Level.012",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/Bed2Level.json",
+          "Name": "Bed2Level.mesh"
+        },
+        "Position": [
+          -1600.0,
+          -512.0,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.7071067094802856,
+          0.7071068286895752
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "Bed2Level.013",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/Bed2Level.json",
+          "Name": "Bed2Level.mesh"
+        },
+        "Position": [
+          -1600.0,
+          -256.0,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.7071067094802856,
+          0.7071068286895752
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "Bed2Level.014",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/Bed2Level.json",
+          "Name": "Bed2Level.mesh"
+        },
+        "Position": [
+          -1600.0,
+          0.0,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.7071067094802856,
+          0.7071068286895752
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "Bed2Level.015",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/Bed2Level.json",
+          "Name": "Bed2Level.mesh"
+        },
+        "Position": [
+          -1600.0,
+          256.0,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.7071067094802856,
+          0.7071068286895752
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "Bed2Level.016",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/Bed2Level.json",
+          "Name": "Bed2Level.mesh"
+        },
+        "Position": [
+          -1600.0,
+          512.0,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.7071067094802856,
+          0.7071068286895752
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "Bed2Level.017",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/Bed2Level.json",
+          "Name": "Bed2Level.mesh"
+        },
+        "Position": [
+          -1600.0,
+          768.0,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.7071067094802856,
+          0.7071068286895752
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "Bench",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/Bench.json",
+          "Name": "Bench.mesh"
+        },
+        "Position": [
+          -987.5245971679688,
+          -665.4426879882812,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "Bench.001",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/Bench.json",
+          "Name": "Bench.mesh"
+        },
+        "Position": [
+          -1856.0,
+          -704.0,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "Bench.002",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/Bench.json",
+          "Name": "Bench.mesh"
+        },
+        "Position": [
+          -1600.0,
+          -704.0,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "Bench.003",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/Bench.json",
+          "Name": "Bench.mesh"
+        },
+        "Position": [
+          -1856.0,
+          -384.0,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "Bench.004",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/Bench.json",
+          "Name": "Bench.mesh"
+        },
+        "Position": [
+          -1600.0,
+          -384.0,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "Bench.005",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/Bench.json",
+          "Name": "Bench.mesh"
+        },
+        "Position": [
+          -1856.0,
+          -128.0,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "Bench.006",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/Bench.json",
+          "Name": "Bench.mesh"
+        },
+        "Position": [
+          -1600.0,
+          -128.0,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "Bench.007",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/Bench.json",
+          "Name": "Bench.mesh"
+        },
+        "Position": [
+          -1856.0,
+          128.0,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "Bench.008",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/Bench.json",
+          "Name": "Bench.mesh"
+        },
+        "Position": [
+          -1600.0,
+          128.0,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "Bench.009",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/Bench.json",
+          "Name": "Bench.mesh"
+        },
+        "Position": [
+          -1856.0,
+          384.0,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "Bench.010",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/Bench.json",
+          "Name": "Bench.mesh"
+        },
+        "Position": [
+          -1600.0,
+          384.0,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "Bench.011",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/Bench.json",
+          "Name": "Bench.mesh"
+        },
+        "Position": [
+          -1856.0,
+          640.0,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "Bench.012",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/Bench.json",
+          "Name": "Bench.mesh"
+        },
+        "Position": [
+          -1600.0,
+          640.0,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "Bench.013",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/Bench.json",
+          "Name": "Bench.mesh"
+        },
+        "Position": [
+          -1856.0,
+          914.643310546875,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "Bench.014",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/Bench.json",
+          "Name": "Bench.mesh"
+        },
+        "Position": [
+          -1600.0,
+          914.643310546875,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "BenchShort",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/BenchShort.json",
+          "Name": "BenchShort.mesh"
+        },
+        "Position": [
+          -2144.0,
+          -448.0,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.7071067094802856,
+          0.7071068286895752
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "BenchShort.001",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/BenchShort.json",
+          "Name": "BenchShort.mesh"
+        },
+        "Position": [
+          -2144.0,
+          -192.0,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.7071067094802856,
+          0.7071068286895752
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "BenchShort.002",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/BenchShort.json",
+          "Name": "BenchShort.mesh"
+        },
+        "Position": [
+          -2144.0,
+          -324.5925598144531,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.7071067094802856,
+          0.7071068286895752
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "BenchShort.003",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/BenchShort.json",
+          "Name": "BenchShort.mesh"
+        },
+        "Position": [
+          -2144.0,
+          64.0,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.7071067094802856,
+          0.7071068286895752
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "BenchShort.004",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/BenchShort.json",
+          "Name": "BenchShort.mesh"
+        },
+        "Position": [
+          -2144.0,
+          -68.59255981445312,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.7071067094802856,
+          0.7071068286895752
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "BenchShort.005",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/BenchShort.json",
+          "Name": "BenchShort.mesh"
+        },
+        "Position": [
+          -2144.0,
+          320.0,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.7071067094802856,
+          0.7071068286895752
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "BenchShort.006",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/BenchShort.json",
+          "Name": "BenchShort.mesh"
+        },
+        "Position": [
+          -2144.0,
+          187.40744018554688,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.7071067094802856,
+          0.7071068286895752
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "BenchShort.007",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/BenchShort.json",
+          "Name": "BenchShort.mesh"
+        },
+        "Position": [
+          -2144.0,
+          576.0,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.7071067094802856,
+          0.7071068286895752
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "BenchShort.008",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/BenchShort.json",
+          "Name": "BenchShort.mesh"
+        },
+        "Position": [
+          -2144.0,
+          443.4074401855469,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.7071067094802856,
+          0.7071068286895752
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "BenchShort.009",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/BenchShort.json",
+          "Name": "BenchShort.mesh"
+        },
+        "Position": [
+          -2144.0,
+          832.0,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.7071067094802856,
+          0.7071068286895752
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "BenchShort.010",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/BenchShort.json",
+          "Name": "BenchShort.mesh"
+        },
+        "Position": [
+          -2144.0,
+          699.407470703125,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.7071067094802856,
+          0.7071068286895752
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "BenchShort.011",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/BenchShort.json",
+          "Name": "BenchShort.mesh"
+        },
+        "Position": [
+          -1920.0,
+          -448.0,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.7071067094802856,
+          0.7071068286895752
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "BenchShort.012",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/BenchShort.json",
+          "Name": "BenchShort.mesh"
+        },
+        "Position": [
+          -1920.0,
+          -192.0,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.7071067094802856,
+          0.7071068286895752
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "BenchShort.013",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/BenchShort.json",
+          "Name": "BenchShort.mesh"
+        },
+        "Position": [
+          -1920.0,
+          -324.5925598144531,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.7071067094802856,
+          0.7071068286895752
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "BenchShort.014",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/BenchShort.json",
+          "Name": "BenchShort.mesh"
+        },
+        "Position": [
+          -1920.0,
+          64.0,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.7071067094802856,
+          0.7071068286895752
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "BenchShort.015",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/BenchShort.json",
+          "Name": "BenchShort.mesh"
+        },
+        "Position": [
+          -1920.0,
+          -68.59255981445312,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.7071067094802856,
+          0.7071068286895752
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "BenchShort.016",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/BenchShort.json",
+          "Name": "BenchShort.mesh"
+        },
+        "Position": [
+          -1920.0,
+          320.0,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.7071067094802856,
+          0.7071068286895752
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "BenchShort.017",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/BenchShort.json",
+          "Name": "BenchShort.mesh"
+        },
+        "Position": [
+          -1920.0,
+          187.40744018554688,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.7071067094802856,
+          0.7071068286895752
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "BenchShort.018",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/BenchShort.json",
+          "Name": "BenchShort.mesh"
+        },
+        "Position": [
+          -1920.0,
+          576.0,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.7071067094802856,
+          0.7071068286895752
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "BenchShort.019",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/BenchShort.json",
+          "Name": "BenchShort.mesh"
+        },
+        "Position": [
+          -1920.0,
+          443.4074401855469,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.7071067094802856,
+          0.7071068286895752
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "BenchShort.020",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/BenchShort.json",
+          "Name": "BenchShort.mesh"
+        },
+        "Position": [
+          -1920.0,
+          832.0,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.7071067094802856,
+          0.7071068286895752
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "BenchShort.021",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/BenchShort.json",
+          "Name": "BenchShort.mesh"
+        },
+        "Position": [
+          -1920.0,
+          699.407470703125,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.7071067094802856,
+          0.7071068286895752
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "BenchShort.022",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/BenchShort.json",
+          "Name": "BenchShort.mesh"
+        },
+        "Position": [
+          -1664.0,
+          -448.0,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.7071067094802856,
+          0.7071068286895752
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "BenchShort.023",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/BenchShort.json",
+          "Name": "BenchShort.mesh"
+        },
+        "Position": [
+          -1664.0,
+          -192.0,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.7071067094802856,
+          0.7071068286895752
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "BenchShort.024",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/BenchShort.json",
+          "Name": "BenchShort.mesh"
+        },
+        "Position": [
+          -1664.0,
+          -324.5925598144531,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.7071067094802856,
+          0.7071068286895752
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "BenchShort.025",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/BenchShort.json",
+          "Name": "BenchShort.mesh"
+        },
+        "Position": [
+          -1664.0,
+          64.0,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.7071067094802856,
+          0.7071068286895752
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "BenchShort.026",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/BenchShort.json",
+          "Name": "BenchShort.mesh"
+        },
+        "Position": [
+          -1664.0,
+          -68.59255981445312,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.7071067094802856,
+          0.7071068286895752
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "BenchShort.027",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/BenchShort.json",
+          "Name": "BenchShort.mesh"
+        },
+        "Position": [
+          -1664.0,
+          320.0,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.7071067094802856,
+          0.7071068286895752
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "BenchShort.028",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/BenchShort.json",
+          "Name": "BenchShort.mesh"
+        },
+        "Position": [
+          -1664.0,
+          187.40744018554688,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.7071067094802856,
+          0.7071068286895752
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "BenchShort.029",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/BenchShort.json",
+          "Name": "BenchShort.mesh"
+        },
+        "Position": [
+          -1664.0,
+          576.0,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.7071067094802856,
+          0.7071068286895752
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "BenchShort.030",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/BenchShort.json",
+          "Name": "BenchShort.mesh"
+        },
+        "Position": [
+          -1664.0,
+          443.4074401855469,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.7071067094802856,
+          0.7071068286895752
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "BenchShort.031",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/BenchShort.json",
+          "Name": "BenchShort.mesh"
+        },
+        "Position": [
+          -1664.0,
+          832.0,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.7071067094802856,
+          0.7071068286895752
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "BenchShort.032",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/BenchShort.json",
+          "Name": "BenchShort.mesh"
+        },
+        "Position": [
+          -1664.0,
+          699.407470703125,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.7071067094802856,
+          0.7071068286895752
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "BenchShort.033",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/BenchShort.json",
+          "Name": "BenchShort.mesh"
+        },
+        "Position": [
+          -975.2310180664062,
+          462.65496826171875,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.7071067094802856,
+          0.7071068286895752
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "BenchShort.034",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/BenchShort.json",
+          "Name": "BenchShort.mesh"
+        },
+        "Position": [
+          -976.6314086914062,
+          311.8762512207031,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.7071067094802856,
+          0.7071068286895752
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "BenchShort.035",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/BenchShort.json",
+          "Name": "BenchShort.mesh"
+        },
+        "Position": [
+          -976.9266967773438,
+          203.20465087890625,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.6700422763824463,
+          0.7423229217529297
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "BenchShort.036",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/BenchShort.json",
+          "Name": "BenchShort.mesh"
+        },
+        "Position": [
+          -978.10791015625,
+          53.190582275390625,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.7594456076622009,
+          0.650570809841156
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "Box01",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/Box01.json",
+          "Name": "Box01.mesh"
+        },
+        "Position": [
+          -1156.8624267578125,
+          467.86376953125,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.871472179889679,
+          0.49044495820999146
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "BoxOpen01",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/BoxOpen01.json",
+          "Name": "BoxOpen01.mesh"
+        },
+        "Position": [
+          -1158.5335693359375,
+          468.36761474609375,
+          28.260936737060547
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.6481085419654846,
+          0.7615479826927185
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "Cart01",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/Cart01.json",
+          "Name": "Cart01.mesh"
+        },
+        "Position": [
+          516.0786743164062,
+          -453.32415771484375,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.7071067094802856,
+          0.7071068286895752
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "Cart01.001",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/Cart01.json",
+          "Name": "Cart01.mesh"
+        },
+        "Position": [
+          -1723.92138671875,
+          -709.3241577148438,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "Cart01.002",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/Cart01.json",
+          "Name": "Cart01.mesh"
+        },
+        "Position": [
+          -2139.92138671875,
+          -613.3241577148438,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.7071067690849304,
+          0.7071068286895752
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "Chair",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/Chair.json",
+          "Name": "Chair.mesh"
+        },
+        "Position": [
+          -998.7835083007812,
+          -114.33887481689453,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.6097692251205444,
+          0.7925789952278137
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "Chair.001",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/Chair.json",
+          "Name": "Chair.mesh"
+        },
+        "Position": [
+          -898.2947387695312,
+          -90.6806869506836,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.5405348539352417,
+          -0.841321587562561
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "Chair.002",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/Chair.json",
+          "Name": "Chair.mesh"
+        },
+        "Position": [
+          -908.8997192382812,
+          605.2254638671875,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.7591487765312195,
+          -0.650917112827301
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "Chair01",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/Chair01.json",
+          "Name": "Chair01.mesh"
+        },
+        "Position": [
+          -1152.804443359375,
+          169.871337890625,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          -0.0,
+          -0.6201887130737305,
+          0.7844526171684265
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "Chair01.001",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/Chair01.json",
+          "Name": "Chair01.mesh"
+        },
+        "Position": [
+          -1157.293212890625,
+          225.61883544921875,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          -0.0,
+          -0.8183559775352478,
+          0.5747116804122925
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "Chair01.002",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/Chair01.json",
+          "Name": "Chair01.mesh"
+        },
+        "Position": [
+          -1277.5272216796875,
+          307.6007385253906,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.6764180064201355,
+          0.7365179657936096
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "Chair01.003",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/Chair01.json",
+          "Name": "Chair01.mesh"
+        },
+        "Position": [
+          -1278.8662109375,
+          383.771240234375,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.8228126764297485,
+          0.5683126449584961
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "Crate01",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/Crate01.json",
+          "Name": "Crate01.mesh"
+        },
+        "Position": [
+          -494.8337097167969,
+          -664.272705078125,
+          74.1197738647461
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          -0.044235508888959885,
+          0.9990211129188538
+        ],
+        "Scale": [
+          0.9999999403953552,
+          0.9999999403953552,
+          1.0
+        ]
+      },
+      {
+        "Name": "Crate01.001",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/Crate01.json",
+          "Name": "Crate01.mesh"
+        },
+        "Position": [
+          -752.8543090820312,
+          -356.8238525390625,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "Crate01.002",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/Crate01.json",
+          "Name": "Crate01.mesh"
+        },
+        "Position": [
+          -678.3207397460938,
+          -353.62384033203125,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "Crate01.003",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/Crate01.json",
+          "Name": "Crate01.mesh"
+        },
+        "Position": [
+          -498.9297180175781,
+          -356.45086669921875,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.17361237108707428,
+          0.9848140478134155
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "Crate01.004",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/Crate01.json",
+          "Name": "Crate01.mesh"
+        },
+        "Position": [
+          -1159.503662109375,
+          51.27370071411133,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.6684695482254028,
+          0.7437395453453064
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "Crate01.005",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/Crate01.json",
+          "Name": "Crate01.mesh"
+        },
+        "Position": [
+          -1161.7174072265625,
+          51.866050720214844,
+          41.202003479003906
+        ],
+        "Rotation": [
+          0.0,
+          -0.0,
+          -0.7332379817962646,
+          0.6799721121788025
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "Crate02",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/Crate02.json",
+          "Name": "Crate02.mesh"
+        },
+        "Position": [
+          -643.6476440429688,
+          -651.3770751953125,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.8550069332122803,
+          0.5186165571212769
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "Crate02.001",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/Crate02.json",
+          "Name": "Crate02.mesh"
+        },
+        "Position": [
+          -494.4865417480469,
+          -663.5602416992188,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "Crate02.002",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/Crate02.json",
+          "Name": "Crate02.mesh"
+        },
+        "Position": [
+          -424.3511962890625,
+          -663.23095703125,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "Crate03",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/Crate03.json",
+          "Name": "Crate03.mesh"
+        },
+        "Position": [
+          -730.3936767578125,
+          -666.94287109375,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "Crate03.001",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/Crate03.json",
+          "Name": "Crate03.mesh"
+        },
+        "Position": [
+          -1362.7392578125,
+          -635.3054809570312,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "Crate03.002",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/Crate03.json",
+          "Name": "Crate03.mesh"
+        },
+        "Position": [
+          -1352.2589111328125,
+          -575.7579956054688,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.05224902555346489,
+          0.9986340999603271
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "Crate03.003",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/Crate03.json",
+          "Name": "Crate03.mesh"
+        },
+        "Position": [
+          -1364.0096435546875,
+          -523.5150146484375,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.0883270874619484,
+          0.9960915446281433
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
         "Name": "CryoTanks",
         "Mesh": {
           "Mesh": "vault_111:models/json/CryoTanks.json",
@@ -9826,11 +12011,11 @@
               "Type": "Spot",
               "Name": "LightCeil_LightCeilNode01",
               "Diffuse": [
-                0.580237865447998,
-                0.5787253379821777,
-                1.0
+                1.0,
+                0.8691930770874023,
+                0.6527404189109802
               ],
-              "Radiance": 400000.0,
+              "Radiance": 920000.0,
               "LightSize": 0.0,
               "Attenuation": {
                 "Constant": 0.0,
@@ -9902,11 +12087,11 @@
               "Type": "Spot",
               "Name": "LightCeil_LightCeilNode01.001",
               "Diffuse": [
-                0.580237865447998,
-                0.5787253379821777,
-                1.0
+                1.0,
+                0.8691930770874023,
+                0.6527404189109802
               ],
-              "Radiance": 400000.0,
+              "Radiance": 920000.0,
               "LightSize": 0.0,
               "Attenuation": {
                 "Constant": 0.0,
@@ -9978,11 +12163,11 @@
               "Type": "Spot",
               "Name": "LightCeil_LightCeilNode01.002",
               "Diffuse": [
-                0.580237865447998,
-                0.5787253379821777,
-                1.0
+                1.0,
+                0.8691930770874023,
+                0.6527404189109802
               ],
-              "Radiance": 400000.0,
+              "Radiance": 920000.0,
               "LightSize": 0.0,
               "Attenuation": {
                 "Constant": 0.0,
@@ -10054,11 +12239,11 @@
               "Type": "Spot",
               "Name": "LightCeil_LightCeilNode01.003",
               "Diffuse": [
-                0.580237865447998,
-                0.5787253379821777,
-                1.0
+                1.0,
+                0.8691930770874023,
+                0.6527404189109802
               ],
-              "Radiance": 400000.0,
+              "Radiance": 920000.0,
               "LightSize": 0.0,
               "Attenuation": {
                 "Constant": 0.0,
@@ -10130,11 +12315,11 @@
               "Type": "Spot",
               "Name": "LightCeil_LightCeilNode01.004",
               "Diffuse": [
-                0.580237865447998,
-                0.5787253379821777,
-                1.0
+                1.0,
+                0.8691930770874023,
+                0.6527404189109802
               ],
-              "Radiance": 400000.0,
+              "Radiance": 920000.0,
               "LightSize": 0.0,
               "Attenuation": {
                 "Constant": 0.0,
@@ -10206,11 +12391,11 @@
               "Type": "Spot",
               "Name": "LightCeil_LightCeilNode01.005",
               "Diffuse": [
-                0.580237865447998,
-                0.5787253379821777,
-                1.0
+                1.0,
+                0.8691930770874023,
+                0.6527404189109802
               ],
-              "Radiance": 400000.0,
+              "Radiance": 920000.0,
               "LightSize": 0.0,
               "Attenuation": {
                 "Constant": 0.0,
@@ -10282,11 +12467,11 @@
               "Type": "Spot",
               "Name": "LightCeil_LightCeilNode01.006",
               "Diffuse": [
-                0.580237865447998,
-                0.5787253379821777,
-                1.0
+                1.0,
+                0.8691930770874023,
+                0.6527404189109802
               ],
-              "Radiance": 400000.0,
+              "Radiance": 920000.0,
               "LightSize": 0.0,
               "Attenuation": {
                 "Constant": 0.0,
@@ -10358,11 +12543,11 @@
               "Type": "Spot",
               "Name": "LightCeil_LightCeilNode01.007",
               "Diffuse": [
-                0.580237865447998,
-                0.5787253379821777,
-                1.0
+                1.0,
+                0.8691930770874023,
+                0.6527404189109802
               ],
-              "Radiance": 400000.0,
+              "Radiance": 920000.0,
               "LightSize": 0.0,
               "Attenuation": {
                 "Constant": 0.0,
@@ -10434,11 +12619,11 @@
               "Type": "Spot",
               "Name": "LightCeil_LightCeilNode01.008",
               "Diffuse": [
-                0.580237865447998,
-                0.5787253379821777,
-                1.0
+                1.0,
+                0.8691930770874023,
+                0.6527404189109802
               ],
-              "Radiance": 400000.0,
+              "Radiance": 920000.0,
               "LightSize": 0.0,
               "Attenuation": {
                 "Constant": 0.0,
@@ -10510,11 +12695,11 @@
               "Type": "Spot",
               "Name": "LightCeil_LightCeilNode01.009",
               "Diffuse": [
-                0.580237865447998,
-                0.5787253379821777,
-                1.0
+                1.0,
+                0.8691930770874023,
+                0.6527404189109802
               ],
-              "Radiance": 400000.0,
+              "Radiance": 920000.0,
               "LightSize": 0.0,
               "Attenuation": {
                 "Constant": 0.0,
@@ -10586,11 +12771,11 @@
               "Type": "Spot",
               "Name": "LightCeil_LightCeilNode01.010",
               "Diffuse": [
-                0.580237865447998,
-                0.5787253379821777,
-                1.0
+                1.0,
+                0.8691930770874023,
+                0.6527404189109802
               ],
-              "Radiance": 400000.0,
+              "Radiance": 920000.0,
               "LightSize": 0.0,
               "Attenuation": {
                 "Constant": 0.0,
@@ -10662,11 +12847,11 @@
               "Type": "Spot",
               "Name": "LightCeil_LightCeilNode01.011",
               "Diffuse": [
-                0.580237865447998,
-                0.5787253379821777,
-                1.0
+                1.0,
+                0.8691930770874023,
+                0.6527404189109802
               ],
-              "Radiance": 400000.0,
+              "Radiance": 920000.0,
               "LightSize": 0.0,
               "Attenuation": {
                 "Constant": 0.0,
@@ -10738,11 +12923,11 @@
               "Type": "Spot",
               "Name": "LightCeil_LightCeilNode01.012",
               "Diffuse": [
-                0.580237865447998,
-                0.5787253379821777,
-                1.0
+                1.0,
+                0.8691930770874023,
+                0.6527404189109802
               ],
-              "Radiance": 400000.0,
+              "Radiance": 920000.0,
               "LightSize": 0.0,
               "Attenuation": {
                 "Constant": 0.0,
@@ -10814,11 +12999,11 @@
               "Type": "Spot",
               "Name": "LightCeil_LightCeilNode01.013",
               "Diffuse": [
-                0.580237865447998,
-                0.5787253379821777,
-                1.0
+                1.0,
+                0.8691930770874023,
+                0.6527404189109802
               ],
-              "Radiance": 400000.0,
+              "Radiance": 920000.0,
               "LightSize": 0.0,
               "Attenuation": {
                 "Constant": 0.0,
@@ -10890,11 +13075,11 @@
               "Type": "Spot",
               "Name": "LightCeil_LightCeilNode01.014",
               "Diffuse": [
-                0.580237865447998,
-                0.5787253379821777,
-                1.0
+                1.0,
+                0.8691930770874023,
+                0.6527404189109802
               ],
-              "Radiance": 400000.0,
+              "Radiance": 920000.0,
               "LightSize": 0.0,
               "Attenuation": {
                 "Constant": 0.0,
@@ -11730,6 +13915,75 @@
         ]
       },
       {
+        "Name": "LVStand",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/LVStand.json",
+          "Name": "LVStand.mesh"
+        },
+        "Position": [
+          -810.2593383789062,
+          392.18365478515625,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.5161267518997192,
+          0.856512188911438
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "LVStand.001",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/LVStand.json",
+          "Name": "LVStand.mesh"
+        },
+        "Position": [
+          -829.2149047851562,
+          132.04881286621094,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.07501950114965439,
+          0.9971820712089539
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "LVStand.002",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/LVStand.json",
+          "Name": "LVStand.mesh"
+        },
+        "Position": [
+          -867.1260986328125,
+          123.17598724365234,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          -0.0,
+          -0.1741696000099182,
+          0.9847156405448914
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
         "Name": "MacFan",
         "Mesh": {
           "Mesh": "vault_111:models/json/MacFan.json",
@@ -12039,6 +14293,190 @@
               1.0
             ]
           }
+        ]
+      },
+      {
+        "Name": "MedicalBed",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/MedicalBed.json",
+          "Name": "MedicalBed.mesh"
+        },
+        "Position": [
+          -867.8854370117188,
+          51.54841613769531,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.7071067094802856,
+          0.7071068286895752
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "MedicalBed.001",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/MedicalBed.json",
+          "Name": "MedicalBed.mesh"
+        },
+        "Position": [
+          -867.8854370117188,
+          203.9997100830078,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.7071067094802856,
+          0.7071068286895752
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "MedicalBed.002",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/MedicalBed.json",
+          "Name": "MedicalBed.mesh"
+        },
+        "Position": [
+          -867.8854370117188,
+          307.97027587890625,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.7071067094802856,
+          0.7071068286895752
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "MedicalBed.003",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/MedicalBed.json",
+          "Name": "MedicalBed.mesh"
+        },
+        "Position": [
+          -867.8854370117188,
+          460.42156982421875,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.7071067094802856,
+          0.7071068286895752
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "Microfiche",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/Microfiche.json",
+          "Name": "Microfiche.mesh"
+        },
+        "Position": [
+          -837.9951171875,
+          560.6538696289062,
+          55.38716125488281
+        ],
+        "Rotation": [
+          0.0,
+          -0.0,
+          -0.7071067690849304,
+          0.7071067690849304
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "Microfiche.001",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/Microfiche.json",
+          "Name": "Microfiche.mesh"
+        },
+        "Position": [
+          -837.9951171875,
+          637.1430053710938,
+          55.38716125488281
+        ],
+        "Rotation": [
+          0.0,
+          -0.0,
+          -0.7071067690849304,
+          0.7071067690849304
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "OxygenTank",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/OxygenTank.json",
+          "Name": "OxygenTank.mesh"
+        },
+        "Position": [
+          -910.6798095703125,
+          670.8731689453125,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "OxygenTank.001",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/OxygenTank.json",
+          "Name": "OxygenTank.mesh"
+        },
+        "Position": [
+          -965.1942749023438,
+          676.9573974609375,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.1476820409297943,
+          0.98903489112854
+        ],
+        "Scale": [
+          0.9999999403953552,
+          0.9999999403953552,
+          1.0
         ]
       },
       {
@@ -12356,6 +14794,213 @@
           0.0,
           0.4046170711517334,
           -0.9144862294197083
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "OxygenTank01.014",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/OxygenTank01.json",
+          "Name": "OxygenTank01.mesh"
+        },
+        "Position": [
+          515.48828125,
+          -30.52144432067871,
+          40.66450500488281
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.6644244194030762,
+          0.7473554611206055
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "OxygenTank01.015",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/OxygenTank01.json",
+          "Name": "OxygenTank01.mesh"
+        },
+        "Position": [
+          520.6597290039062,
+          -52.64792251586914,
+          40.66450500488281
+        ],
+        "Rotation": [
+          0.0,
+          -0.0,
+          -0.47781383991241455,
+          0.8784611225128174
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "OxygenTank01.016",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/OxygenTank01.json",
+          "Name": "OxygenTank01.mesh"
+        },
+        "Position": [
+          493.74456787109375,
+          -46.814971923828125,
+          40.66450500488281
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.0011125204619020224,
+          0.9999994039535522
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "OxygenTank01.017",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/OxygenTank01.json",
+          "Name": "OxygenTank01.mesh"
+        },
+        "Position": [
+          487.42852783203125,
+          -24.49005889892578,
+          40.66450500488281
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.42664605379104614,
+          0.9044187068939209
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "OxygenTank01.018",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/OxygenTank01.json",
+          "Name": "OxygenTank01.mesh"
+        },
+        "Position": [
+          -759.1529541015625,
+          -844.4403076171875,
+          40.66450500488281
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.6644244194030762,
+          0.7473554611206055
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "OxygenTank01.019",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/OxygenTank01.json",
+          "Name": "OxygenTank01.mesh"
+        },
+        "Position": [
+          -747.2011108398438,
+          -867.8963623046875,
+          40.66450500488281
+        ],
+        "Rotation": [
+          0.0,
+          -0.0,
+          -0.47781383991241455,
+          0.8784611225128174
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "OxygenTank01.020",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/OxygenTank01.json",
+          "Name": "OxygenTank01.mesh"
+        },
+        "Position": [
+          -778.5037231445312,
+          -863.6588745117188,
+          40.66450500488281
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.0011125204619020224,
+          0.9999994039535522
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "OxygenTank01.021",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/OxygenTank01.json",
+          "Name": "OxygenTank01.mesh"
+        },
+        "Position": [
+          -800.7735595703125,
+          -847.0506591796875,
+          40.66450500488281
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.42664605379104614,
+          0.9044187068939209
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "OxygenTank01.022",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/OxygenTank01.json",
+          "Name": "OxygenTank01.mesh"
+        },
+        "Position": [
+          -857.3427124023438,
+          -844.780029296875,
+          40.66450500488281
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.4262534976005554,
+          0.9046038389205933
         ],
         "Scale": [
           1.0,
@@ -13579,6 +16224,959 @@
           -832.0,
           -3136.0,
           -320.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.7071067094802856,
+          0.7071068286895752
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "Shelf01",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/Shelf01.json",
+          "Name": "Shelf01.mesh"
+        },
+        "Position": [
+          -2084.077392578125,
+          893.9425048828125,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "Nodes": [
+          {
+            "Name": "Box01.003",
+            "Mesh": {
+              "Mesh": "vault_111:models/json/Box01.json",
+              "Name": "Box01.mesh"
+            },
+            "Position": [
+              -22.37939453125,
+              -0.18463134765625,
+              87.3696517944336
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.6985060572624207,
+              0.7156041860580444
+            ],
+            "Scale": [
+              0.9999999403953552,
+              0.9999999403953552,
+              1.0
+            ]
+          },
+          {
+            "Name": "Box01.004",
+            "Mesh": {
+              "Mesh": "vault_111:models/json/Box01.json",
+              "Name": "Box01.mesh"
+            },
+            "Position": [
+              27.434326171875,
+              -2.6033935546875,
+              87.3696517944336
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.6394537687301636,
+              0.7688295841217041
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "Box01.005",
+            "Mesh": {
+              "Mesh": "vault_111:models/json/Box01.json",
+              "Name": "Box01.mesh"
+            },
+            "Position": [
+              -22.37939453125,
+              -0.18463134765625,
+              124.2755126953125
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.7185362577438354,
+              0.6954895257949829
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "Box01.006",
+            "Mesh": {
+              "Mesh": "vault_111:models/json/Box01.json",
+              "Name": "Box01.mesh"
+            },
+            "Position": [
+              32.035888671875,
+              1.246826171875,
+              124.2755126953125
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.7602498531341553,
+              0.6496309041976929
+            ],
+            "Scale": [
+              0.9999999403953552,
+              0.9999999403953552,
+              1.0
+            ]
+          },
+          {
+            "Name": "Box01.007",
+            "Mesh": {
+              "Mesh": "vault_111:models/json/Box01.json",
+              "Name": "Box01.mesh"
+            },
+            "Position": [
+              -26.01904296875,
+              -0.35394287109375,
+              48.96990966796875
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.6542353630065918,
+              0.7562910914421082
+            ],
+            "Scale": [
+              0.9999999403953552,
+              0.9999999403953552,
+              1.0
+            ]
+          },
+          {
+            "Name": "Box01.008",
+            "Mesh": {
+              "Mesh": "vault_111:models/json/Box01.json",
+              "Name": "Box01.mesh"
+            },
+            "Position": [
+              28.53466796875,
+              1.628662109375,
+              48.96990966796875
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.8444828987121582,
+              0.5355825424194336
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "Shelf01.001",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/Shelf01.json",
+          "Name": "Shelf01.mesh"
+        },
+        "Position": [
+          -1084.6376953125,
+          728.3845825195312,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "Nodes": [
+          {
+            "Name": "Box01.001",
+            "Mesh": {
+              "Mesh": "vault_111:models/json/Box01.json",
+              "Name": "Box01.mesh"
+            },
+            "Position": [
+              -22.978515625,
+              -2.02496337890625,
+              87.3696517944336
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.6985060572624207,
+              0.7156041860580444
+            ],
+            "Scale": [
+              0.9999999403953552,
+              0.9999999403953552,
+              1.0
+            ]
+          },
+          {
+            "Name": "Box01.002",
+            "Mesh": {
+              "Mesh": "vault_111:models/json/Box01.json",
+              "Name": "Box01.mesh"
+            },
+            "Position": [
+              26.8349609375,
+              -4.4437255859375,
+              87.3696517944336
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.7267451286315918,
+              0.6869072318077087
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "BoxOpen01.001",
+            "Mesh": {
+              "Mesh": "vault_111:models/json/BoxOpen01.json",
+              "Name": "BoxOpen01.mesh"
+            },
+            "Position": [
+              -16.474609375,
+              -1.86541748046875,
+              124.89911651611328
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.8279587030410767,
+              0.5607891082763672
+            ],
+            "Scale": [
+              0.9999999403953552,
+              0.9999999403953552,
+              1.0
+            ]
+          },
+          {
+            "Name": "FirstAid.004",
+            "Mesh": {
+              "Mesh": "vault_111:models/json/FirstAid.json",
+              "Name": "FirstAid.mesh"
+            },
+            "Position": [
+              -23.40283203125,
+              -2.29840087890625,
+              49.04512023925781
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.953885555267334,
+              0.30017051100730896
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "FirstAid.005",
+            "Mesh": {
+              "Mesh": "vault_111:models/json/FirstAid.json",
+              "Name": "FirstAid.mesh"
+            },
+            "Position": [
+              36.297607421875,
+              -1.0980224609375,
+              49.04512023925781
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.9952654838562012,
+              0.0971936583518982
+            ],
+            "Scale": [
+              0.9999999403953552,
+              0.9999999403953552,
+              1.0
+            ]
+          },
+          {
+            "Name": "FirstAid.006",
+            "Mesh": {
+              "Mesh": "vault_111:models/json/FirstAid.json",
+              "Name": "FirstAid.mesh"
+            },
+            "Position": [
+              -18.0009765625,
+              -2.8319091796875,
+              10.700786590576172
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              -0.9796221852302551,
+              0.20084905624389648
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "FirstAid.007",
+            "Mesh": {
+              "Mesh": "vault_111:models/json/FirstAid.json",
+              "Name": "FirstAid.mesh"
+            },
+            "Position": [
+              36.9644775390625,
+              -6.43316650390625,
+              10.700786590576172
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              -0.9967363476753235,
+              0.08072566986083984
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "Shelf02",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/Shelf02.json",
+          "Name": "Shelf02.mesh"
+        },
+        "Position": [
+          -1332.5999755859375,
+          847.6205444335938,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.7071067094802856,
+          0.7071068286895752
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "Nodes": [
+          {
+            "Name": "BoxOpen01.002",
+            "Mesh": {
+              "Mesh": "vault_111:models/json/BoxOpen01.json",
+              "Name": "BoxOpen01.mesh"
+            },
+            "Position": [
+              -32.24920654296875,
+              3.912841796875,
+              111.23749542236328
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              -0.5509493350982666,
+              0.8345386981964111
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "BoxOpen01.003",
+            "Mesh": {
+              "Mesh": "vault_111:models/json/BoxOpen01.json",
+              "Name": "BoxOpen01.mesh"
+            },
+            "Position": [
+              40.447998046875,
+              4.48974609375,
+              111.23749542236328
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.9134775996208191,
+              0.40688905119895935
+            ],
+            "Scale": [
+              1.0000001192092896,
+              1.0000001192092896,
+              1.0
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "Table01",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/Table01.json",
+          "Name": "Table01.mesh"
+        },
+        "Position": [
+          704.0,
+          -1792.0,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.7071067094802856,
+          0.7071068286895752
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "Table01.001",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/Table01.json",
+          "Name": "Table01.mesh"
+        },
+        "Position": [
+          704.0,
+          -1536.0,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.7071067094802856,
+          0.7071068286895752
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "Table01.002",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/Table01.json",
+          "Name": "Table01.mesh"
+        },
+        "Position": [
+          448.0,
+          -1792.0,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.7071067094802856,
+          0.7071068286895752
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "Table01.003",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/Table01.json",
+          "Name": "Table01.mesh"
+        },
+        "Position": [
+          448.0,
+          -1536.0,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.7071067094802856,
+          0.7071068286895752
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "Table01.004",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/Table01.json",
+          "Name": "Table01.mesh"
+        },
+        "Position": [
+          192.0,
+          -1792.0,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.7071067094802856,
+          0.7071068286895752
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "Table01.005",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/Table01.json",
+          "Name": "Table01.mesh"
+        },
+        "Position": [
+          192.0,
+          -1536.0,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.7071067094802856,
+          0.7071068286895752
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "Table01.006",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/Table01.json",
+          "Name": "Table01.mesh"
+        },
+        "Position": [
+          -64.0,
+          -1792.0,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.7071067094802856,
+          0.7071068286895752
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "Table01.007",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/Table01.json",
+          "Name": "Table01.mesh"
+        },
+        "Position": [
+          -64.0,
+          -1536.0,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.7071067094802856,
+          0.7071068286895752
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "Table01.008",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/Table01.json",
+          "Name": "Table01.mesh"
+        },
+        "Position": [
+          -320.0,
+          -1792.0,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.7071067094802856,
+          0.7071068286895752
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "Table01.009",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/Table01.json",
+          "Name": "Table01.mesh"
+        },
+        "Position": [
+          -320.0,
+          -1536.0,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.7071067094802856,
+          0.7071068286895752
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "Table01.010",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/Table01.json",
+          "Name": "Table01.mesh"
+        },
+        "Position": [
+          -576.0,
+          -1792.0,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.7071067094802856,
+          0.7071068286895752
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "Table01.011",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/Table01.json",
+          "Name": "Table01.mesh"
+        },
+        "Position": [
+          -576.0,
+          -1536.0,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.7071067094802856,
+          0.7071068286895752
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "Table02",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/Table02.json",
+          "Name": "Table02.mesh"
+        },
+        "Position": [
+          -840.7573852539062,
+          -89.56356811523438,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.7071067094802856,
+          0.7071068286895752
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "Nodes": [
+          {
+            "Name": "FirstAid",
+            "Mesh": {
+              "Mesh": "vault_111:models/json/FirstAid.json",
+              "Name": "FirstAid.mesh"
+            },
+            "Position": [
+              38.01688766479492,
+              -16.0762939453125,
+              55.75925064086914
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              -0.09218098968267441,
+              0.9957422614097595
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "FirstAid.001",
+            "Mesh": {
+              "Mesh": "vault_111:models/json/FirstAid.json",
+              "Name": "FirstAid.mesh"
+            },
+            "Position": [
+              23.39788055419922,
+              18.80413818359375,
+              55.75925064086914
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.06873791664838791,
+              0.997634768486023
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "FirstAid.002",
+            "Mesh": {
+              "Mesh": "vault_111:models/json/FirstAid.json",
+              "Name": "FirstAid.mesh"
+            },
+            "Position": [
+              -7.122474670410156,
+              -10.1773681640625,
+              55.75925064086914
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.33196935057640076,
+              0.9432901740074158
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "FirstAid.003",
+            "Mesh": {
+              "Mesh": "vault_111:models/json/FirstAid.json",
+              "Name": "FirstAid.mesh"
+            },
+            "Position": [
+              -31.87218475341797,
+              15.854736328125,
+              55.75925064086914
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              -0.11681603640317917,
+              0.9931535720825195
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "Table02.001",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/Table02.json",
+          "Name": "Table02.mesh"
+        },
+        "Position": [
+          -1071.0841064453125,
+          -89.56356811523438,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.7071067690849304,
+          0.7071067690849304
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "Nodes": [
+          {
+            "Name": "FirstAid.008",
+            "Mesh": {
+              "Mesh": "vault_111:models/json/FirstAid.json",
+              "Name": "FirstAid.mesh"
+            },
+            "Position": [
+              3.9422988891601562,
+              -10.690673828125,
+              55.75925064086914
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              -0.9558094143867493,
+              0.29398706555366516
+            ],
+            "Scale": [
+              0.9999998807907104,
+              0.9999998807907104,
+              1.0
+            ]
+          },
+          {
+            "Name": "FirstAid.009",
+            "Mesh": {
+              "Mesh": "vault_111:models/json/FirstAid.json",
+              "Name": "FirstAid.mesh"
+            },
+            "Position": [
+              -18.651290893554688,
+              19.1202392578125,
+              55.75925064086914
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.9944952130317688,
+              0.10478200763463974
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "Microscope",
+            "Mesh": {
+              "Mesh": "vault_111:models/json/Microscope.json",
+              "Name": "Microscope.mesh"
+            },
+            "Position": [
+              -38.55723571777344,
+              -12.0172119140625,
+              55.43578338623047
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.7071067690849304,
+              0.7071068286895752
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "Microscope.001",
+            "Mesh": {
+              "Mesh": "vault_111:models/json/Microscope.json",
+              "Name": "Microscope.mesh"
+            },
+            "Position": [
+              37.10823059082031,
+              -12.0172119140625,
+              55.43578338623047
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.7071067690849304,
+              0.7071068286895752
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "Table02.002",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/Table02.json",
+          "Name": "Table02.mesh"
+        },
+        "Position": [
+          -840.7573852539062,
+          599.9010009765625,
+          0.0
         ],
         "Rotation": [
           0.0,
