@@ -583,7 +583,7 @@ static uint32_t scene_correct_render_flags(uint32_t flags)
         flags &= ~(LITE3D_RENDER_OCCLUSION_CULLING | LITE3D_RENDER_OCCLUSION_QUERY);
     }
 
-    if (flags & LITE3D_RENDER_OCCLUSION_CULLING || flags & LITE3D_RENDER_OCCLUSION_QUERY)
+    if (flags & LITE3D_RENDER_OCCLUSION_QUERY)
     {
         flags &= ~LITE3D_RENDER_INSTANCING;
     }

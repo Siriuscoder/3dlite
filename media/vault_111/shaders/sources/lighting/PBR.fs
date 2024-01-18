@@ -108,7 +108,7 @@ vec3 ComputeIllumination(vec3 vw, vec3 nw, vec3 albedo, vec3 emission, vec3 spec
         vec4 block1 = lights[index+1];
         /* light source full radiance at fragment position */
         vec3 radiance = block1.rgb * block1.w * attenuationFactor * shadowless;
-        /* Radiance to small, do not take this light source in account */ 
+        /* Radiance too small, do not take this light source in account */ 
         if (all(lessThan(radiance, vec3(0.0001))))
             continue;
         /* L for current lights source */ 

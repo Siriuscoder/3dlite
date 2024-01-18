@@ -39,7 +39,8 @@
           "DepthTest": true,
           "ColorOutput": false,
           "DepthOutput": true,
-          "CustomVisibilityCheck": true
+          "CustomVisibilityCheck": true,
+          "RenderInstancing": true
         },
         {
           "Name": "RenderPass",
@@ -50,7 +51,8 @@
           "OcclusionCulling": true,
           "DepthTest": true,
           "ColorOutput": true,
-          "DepthOutput": false
+          "DepthOutput": false,
+          "RenderInstancing": true
         },
         {
           "Name": "CombineStep",
@@ -61,7 +63,8 @@
           "RenderOpaque": false,
           "DepthTest": true,
           "ColorOutput": true,
-          "DepthOutput": true
+          "DepthOutput": true,
+          "RenderInstancing": true
         }
       ]
     }

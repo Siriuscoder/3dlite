@@ -8,7 +8,10 @@
       },
       "Uniforms": [
         {
-          "Name": "screenMatrix"
+          "Name": "projViewMatrix"
+        },
+        {
+          "Name": "modelMatrix"
         }
       ]
     },
@@ -38,13 +41,7 @@
           "TexturePath": "vault_111:textures/json/V111Metal03_s.json"
         },
         {
-          "Name": "screenMatrix"
-        },
-        {
-          "Name": "modelMatrix"
-        },
-        {
-          "Name": "normalMatrix"
+          "Name": "projViewMatrix"
         }
       ]
     },
@@ -64,9 +61,6 @@
           "Name": "ShadowIndex",
           "UBOName": "ShadowIndexBuffer",
           "Type": "UBO"
-        },
-        {
-          "Name": "modelMatrix"
         }
       ]
     }

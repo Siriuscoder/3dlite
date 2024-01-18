@@ -6,10 +6,11 @@ layout(location = 2) in vec2 uv;
 layout(location = 3) in vec3 tang;
 layout(location = 4) in vec3 btang;
 
-uniform mat4 screenMatrix;
+uniform mat4 modelMatrix;
+uniform mat4 projViewMatrix;
 
 void main()
 {
-    vec4 v = vec4(vertex, 1.0);
-    gl_Position = screenMatrix * v;
+    vec4 wv = modelMatrix * vec4(vertex, 1.0);
+    gl_Position = projViewMatrix * wv;
 }
