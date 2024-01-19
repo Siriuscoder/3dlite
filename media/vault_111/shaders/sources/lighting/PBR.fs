@@ -25,7 +25,7 @@ uniform vec3 eye;
 /* Shadow compute module */
 float PCF(float shadowIndex, vec3 vw);
 /* Illumination compute module */
-vec3 Lx(vec3 albedo, vec3 radiance, vec3 L, vec3 N, vec3 V, vec3 specular, vec3 F, float NdotV);
+vec3 Lx(vec3 albedo, vec3 radiance, vec3 L, vec3 N, vec3 V, vec3 specular, float NdotV);
 /* Fresnel equation (Schlick) */
 vec3 FresnelSchlickRoughness(float NdotV, vec3 albedo, vec3 specular);
 
@@ -35,7 +35,7 @@ vec3 ComputeIllumination(vec3 vw, vec3 nw, vec3 albedo, vec3 emission, vec3 spec
     vec3 eyeDir = normalize(eye - vw);
     // Reflect vector for ambient specular
     vec3 R = reflect(eyeDir, nw);
-    // NdotV for Fresnel
+    // HdotV for Fresnel
     float NdotV = max(dot(nw, eyeDir), FLT_EPSILON);
     // Fresnel by Schlick aproxx
     vec3 F = FresnelSchlickRoughness(NdotV, albedo, specular);
@@ -112,7 +112,7 @@ vec3 ComputeIllumination(vec3 vw, vec3 nw, vec3 albedo, vec3 emission, vec3 spec
         if (all(lessThan(radiance, vec3(0.0001))))
             continue;
         /* L for current lights source */ 
-        totalLx += Lx(albedo, radiance, lightDirection, nw, eyeDir, specular, F, NdotV);
+        totalLx += Lx(albedo, radiance, lightDirection, nw, eyeDir, specular, NdotV);
     }
 
     vec3 kD = 1.0 - F;

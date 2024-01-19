@@ -94,7 +94,10 @@ public:
         // postprocess step, fxaa, gamma correcion, draw directly info window. 
         getMain().getResourceManager()->queryResource<Scene>("Vault_111_Postprocess",
             "vault_111:scenes/postprocess.json");
-        
+
+        // Release unnecessary cache
+        getMain().getResourceManager()->releaseFileCache();
+
         // optimize: window clean not needed, because all pixels in last render target always be updated
         getMain().window()->setBuffersCleanBit(false, false, false);
         RenderTarget::depthTestFunc(RenderTarget::TestFuncLEqual);

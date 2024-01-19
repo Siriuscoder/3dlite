@@ -235,8 +235,8 @@ static const char *texture_internal_format_string(const lite3d_texture_unit *tex
         return "SRGB8_ALPHA8";
     case LITE3D_TEXTURE_INTERNAL_SRGB:
         return "SRGB";
-    case LITE3D_TEXTURE_INTERNAL_SRGBA:
-        return "SRGBA";
+    case LITE3D_TEXTURE_INTERNAL_SRGB_ALPHA:
+        return "SRGB_ALPHA";
     case LITE3D_TEXTURE_INTERNAL_R16F: 
         return "R16F";
     case LITE3D_TEXTURE_INTERNAL_RG16F:
@@ -427,7 +427,7 @@ static int set_internal_format(lite3d_texture_unit *textureUnit, uint16_t format
     switch (iformat)
     {
         case LITE3D_TEXTURE_INTERNAL_SRGB:
-        case LITE3D_TEXTURE_INTERNAL_SRGBA:
+        case LITE3D_TEXTURE_INTERNAL_SRGB_ALPHA:
             if (!lite3d_check_srgb())
             {
                 SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "%s: Texture internal format %d is not supported in GLES",
@@ -480,7 +480,7 @@ static int set_internal_format(lite3d_texture_unit *textureUnit, uint16_t format
             *internalFormat = GL_RGBA;
             if (textureCompression)
             {
-                if (iformat == LITE3D_TEXTURE_INTERNAL_SRGBA)
+                if (iformat == LITE3D_TEXTURE_INTERNAL_SRGB_ALPHA)
                 {
                     iformat = GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT5_EXT;
                 }
@@ -694,9 +694,9 @@ int lite3d_texture_unit_from_resource(lite3d_texture_unit *textureUnit,
     /* matches openGL texture format */
     imageFormat = ilGetInteger(IL_IMAGE_FORMAT);
     if (srgb && imageFormat == LITE3D_TEXTURE_FORMAT_RGB)
-        internalFormat = LITE3D_TEXTURE_INTERNAL_SRGB;
+        internalFormat = LITE3D_TEXTURE_INTERNAL_SRGB8;
     else if (srgb && imageFormat == LITE3D_TEXTURE_FORMAT_RGBA)
-        internalFormat = LITE3D_TEXTURE_INTERNAL_SRGBA;
+        internalFormat = LITE3D_TEXTURE_INTERNAL_SRGB8_ALPHA8;
     compressedLoad = determineCompressionMethod(srgb, imageFormat, &internalFormat);
 
     /* allocate texture surface if not allocated yet */
