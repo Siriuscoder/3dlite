@@ -66,6 +66,14 @@ void main()
     albedo *= PALETE_YELLOW;
 #endif
 
+#ifdef PALETE_RED
+    albedo *= PALETE_RED;
+#endif
+
+#ifdef PALETE_BLUE
+    albedo *= PALETE_BLUE;
+#endif
+
 #ifdef EMISSION_GREEN
     emission *= EMISSION_GREEN;
 #endif

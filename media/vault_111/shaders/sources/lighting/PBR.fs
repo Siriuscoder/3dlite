@@ -1,6 +1,8 @@
 #include "samples:shaders/sources/common/version.def"
 #include "samples:shaders/sources/common/utils_inc.glsl"
 
+#define MAX_LIGHTS  200 // 16kb storage needed
+
 const float ambientStrength = 0.13;
 
 #define LITE3D_LIGHT_UNDEFINED          0.0
@@ -12,12 +14,12 @@ uniform samplerCube Environment;
 
 layout(std140) uniform lightSources
 {
-    vec4 lights[5 * 100];
+    vec4 lights[5 * MAX_LIGHTS];
 };
 
 layout(std140) uniform lightIndexes
 {
-    ivec4 indexes[100];
+    ivec4 indexes[MAX_LIGHTS];
 };
 
 uniform vec3 eye;

@@ -25,20 +25,20 @@
         {
           "Name": "Albedo",
           "Type": "sampler",
-          "TextureName": "OxygenTank_d.texture",
-          "TexturePath": "vault_111:textures/json/OxygenTank_d.json"
+          "TextureName": "Vault_Crate_03_d.texture",
+          "TexturePath": "vault_111:textures/json/Vault_Crate_03_d.json"
         },
         {
           "Name": "Normal",
           "Type": "sampler",
-          "TextureName": "OxygenTank_n.texture",
-          "TexturePath": "vault_111:textures/json/OxygenTank_n.json"
+          "TextureName": "Vault_Crate_01_n.texture",
+          "TexturePath": "vault_111:textures/json/Vault_Crate_01_n.json"
         },
         {
           "Name": "Specular",
           "Type": "sampler",
-          "TextureName": "OxygenTank_s.texture",
-          "TexturePath": "vault_111:textures/json/OxygenTank_s.json"
+          "TextureName": "Vault_Crate_01_s.texture",
+          "TexturePath": "vault_111:textures/json/Vault_Crate_01_s.json"
         },
         {
           "Name": "projViewMatrix"
