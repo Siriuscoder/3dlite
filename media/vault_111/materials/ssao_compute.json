@@ -1,0 +1,39 @@
+{
+  "Passes":[
+    {
+      "Pass": 1,
+      "Program": {
+        "Name":"ssao.program",
+        "Path":"vault_111:shaders/json/ssao.json"
+      },
+      "Uniforms":[
+        {
+          "Name":"GBuffer",
+          "TextureName":"geometry_data.texture",
+          "Type":"sampler"
+        },
+        {
+          "Name":"SSAORadius",
+          "Type":"float",
+          "Value": 10.0,
+          "Scope":"global"
+        },
+        {
+          "Name":"MainCameraViewProjection",
+          "Type":"m4",
+          "Scope":"global"
+        },
+        {
+          "Name":"RandomSeed",
+          "Type":"float",
+          "Scope":"global"
+        }
+      ]
+    }
+  ],
+  "Uniforms":[
+    {
+      "Name":"screenMatrix"
+    }
+  ]
+}

@@ -7,7 +7,7 @@
 // Remember to use a floating-point texture format (for HDR)!
 // Remember to use edge clamping for this texture!
 uniform sampler2D Source;
-uniform float Radius;
+uniform float BloomRadius;
 
 in vec2 iuv;
 out vec3 upsample;

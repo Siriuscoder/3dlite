@@ -2,7 +2,7 @@
     "Width": 0, // use screen wight
     "Height": 0, // use screen height
     "BackgroundColor": [0.0, 0.0, 0.0, 1.0],
-    "Priority": 5, // render after SSAO step
+    "Priority": 4, // render after prepare step
     "CleanColorBuf": true,
     "CleanDepthBuf": false,
     "CleanStencilBuf": false,
@@ -12,15 +12,10 @@
         "Attachments":
         [
             {
-                "TextureName": "combined.texture",
-                "TexturePath": "samples:textures/json/rgba32f.json"
+                "TextureName": "ssao.texture",
+                "TexturePath": "samples:textures/json/r16f.json"
             }
         ]
-    },
-    
-    "DepthAttachments":
-    {
-        "TextureName": "mainDepth.texture"
     }
 }
 

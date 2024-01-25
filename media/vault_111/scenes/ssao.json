@@ -2,7 +2,7 @@
     "Cameras":
     [
         {
-            "Name": "LightPassCamera",
+            "Name": "SSAOPassCamera",
 
             "Position": [0,0,0.5],
             "LookAt": [0,0,0],
@@ -18,8 +18,8 @@
             "RenderTargets":
             [
                 {
-                    "Name": "CombineStep",
-                    "Path": "vault_111:targets/combine.json",
+                    "Name": "SSAOStep",
+                    "Path": "vault_111:targets/ssao.json",
                     "Priority": 0,
                     "TexturePass": 1,
                     "DepthTest": false,
@@ -33,7 +33,7 @@
     [
         {
             "Name": "BigTriangleGeom",
-            "Object": "vault_111:objects/LightPass.json"
+            "Object": "vault_111:objects/SSAO.json"
         }
     ]
 }

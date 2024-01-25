@@ -7,8 +7,6 @@
         "Path":"vault_111:shaders/json/bloom_upsample.json"
       },
       "Blending":true,
-      // Orgb = 1 * Srgb + 1 * Drgb
-      // Oa = 1 * Sa + 0 * Da = Sa
       "BlendingMode":"additive"
     }
   ],
@@ -17,7 +15,7 @@
       "Name":"screenMatrix"
     },
     {
-      "Name":"Radius",
+      "Name":"BloomRadius",
       "Type":"float",
       "Value": 0.005,
       "Scope":"global"

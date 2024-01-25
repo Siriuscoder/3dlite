@@ -1,0 +1,8 @@
+{
+    "TextureType": "2D",
+    "Filtering": "None",
+    "Wrapping": "ClampToEdge",
+    "Compression": false,
+    "TextureFormat": "RED",
+    "InternalFormat": 33325 // LITE3D_TEXTURE_INTERNAL_R16F
+}

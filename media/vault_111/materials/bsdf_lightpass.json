@@ -8,8 +8,8 @@
       },
       "Uniforms":[
         {
-          "Name":"PreparedRenderData",
-          "TextureName":"deffered_render_data.texture",
+          "Name":"GBuffer",
+          "TextureName":"geometry_data.texture",
           "Type":"sampler"
         },
         {
