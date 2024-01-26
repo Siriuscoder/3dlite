@@ -17,7 +17,17 @@
  *******************************************************************************/
 #pragma once
 
+#ifdef __clang__
+#   pragma clang diagnostic push
+#   pragma clang diagnostic ignored "-Wunused-but-set-variable"
+#endif
+
 #include <btBulletDynamicsCommon.h>
+
+#ifdef __clang__
+#   pragma clang diagnostic pop
+#endif
+
 #include <sample_common/lite3dpp_common.h>
 
 namespace lite3dpp {

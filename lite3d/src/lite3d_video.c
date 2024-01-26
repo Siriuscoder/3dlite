@@ -117,7 +117,7 @@ static int init_gl_extensions(lite3d_video_settings *settings)
 {
     if (!lite3d_init_gl_extensions_binding())
     {
-        SDL_LogWarn(
+        SDL_LogCritical(
           SDL_LOG_CATEGORY_APPLICATION,
           "%s: lite3d_init_gl_extensions_binding failed",
           LITE3D_CURRENT_FUNCTION);
@@ -127,7 +127,7 @@ static int init_gl_extensions(lite3d_video_settings *settings)
 
     if (!lite3d_check_gl_version())
     {
-        SDL_LogWarn(
+        SDL_LogCritical(
           SDL_LOG_CATEGORY_APPLICATION,
           "%s: lite3d_check_gl_version failed",
           LITE3D_CURRENT_FUNCTION);
@@ -135,25 +135,25 @@ static int init_gl_extensions(lite3d_video_settings *settings)
         return LITE3D_FALSE;
     }
 
-    SDL_LogDebug(
+    SDL_LogInfo(
         SDL_LOG_CATEGORY_APPLICATION,
         "%s: GL Version: %s",
         LITE3D_CURRENT_FUNCTION,
         (const char *) glGetString(GL_VERSION));
 
-    SDL_LogDebug(
+    SDL_LogInfo(
         SDL_LOG_CATEGORY_APPLICATION,
         "%s: GL Vendor: %s",
         LITE3D_CURRENT_FUNCTION,
         (const char *) glGetString(GL_VENDOR));
 
-    SDL_LogDebug(
+    SDL_LogInfo(
         SDL_LOG_CATEGORY_APPLICATION,
         "%s: GL Renderer: %s",
         LITE3D_CURRENT_FUNCTION,
         (const char *) glGetString(GL_RENDERER));
 
-    SDL_LogDebug(
+    SDL_LogInfo(
         SDL_LOG_CATEGORY_APPLICATION,
         "%s: GL Shading Lang %s",
         LITE3D_CURRENT_FUNCTION,
@@ -233,15 +233,8 @@ int lite3d_video_open(lite3d_video_settings *settings, int hideConsole)
     SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
     SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
     SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, settings->colorBits > 24 ? 8 : 0);
-
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-
-    // SDL_GL_SetAttribute(SDL_GL_ACCUM_RED_SIZE, 16);
-    // SDL_GL_SetAttribute(SDL_GL_ACCUM_GREEN_SIZE, 16);
-    // SDL_GL_SetAttribute(SDL_GL_ACCUM_BLUE_SIZE, 16);
-    // SDL_GL_SetAttribute(SDL_GL_ACCUM_ALPHA_SIZE, 16);
-
     SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
 
 #ifndef GLES
@@ -339,8 +332,9 @@ int lite3d_video_open(lite3d_video_settings *settings, int hideConsole)
     {
         SDL_LogCritical(
             SDL_LOG_CATEGORY_APPLICATION,
-            "%s: SDL_CreateWindow failed..",
-            LITE3D_CURRENT_FUNCTION);
+            "%s: SDL_CreateWindow failed: %s",
+            LITE3D_CURRENT_FUNCTION,
+            SDL_GetError());
 
         return LITE3D_FALSE;
     }

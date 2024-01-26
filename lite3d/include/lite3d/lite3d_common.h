@@ -30,7 +30,7 @@
 #define STR_HELPER(x) #x
 #define STR(x) STR_HELPER(x)
 
-#ifdef _MSC_VER
+#if defined(_MSC_VER) || defined(RC_INVOKED)
 
 #   pragma warning(disable:4244)
 

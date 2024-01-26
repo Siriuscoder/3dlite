@@ -52,8 +52,14 @@ endif()
 message(STATUS "Build configuration (${PROJECT_NAME}): ${CMAKE_BUILD_TYPE} : ${PLATFORM_TYPE}")
 
 set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
 
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+    if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+        set(CMAKE_CXX_FLAGS "-stdlib=libc++")
+    endif()
+    
     set(DEBUG_GCC_COMPILER_FLAGS "-g3 -O0 -fstack-protector-all")
     set(RELEASE_GCC_COMPILER_FLAGS "-g0 -O3")
     set(CMAKE_C_FLAGS "-std=c99")
