@@ -45,6 +45,7 @@ class Generator
 public:
 
     Generator(const GeneratorOptions &options);
+    virtual ~Generator() = default;
 
     virtual void generateNode(const lite3d_mesh *mesh, const lite3dpp::String &name, const kmMat4 *transform,
         bool meshExist) = 0;

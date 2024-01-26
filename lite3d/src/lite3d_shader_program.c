@@ -26,7 +26,7 @@
 typedef int (*lite3d_uniform_set_func)(lite3d_shader_program *, lite3d_shader_parameter_container *);
 
 
-int lite3d_shader_program_technique_init()
+int lite3d_shader_program_technique_init(void)
 {
     return LITE3D_TRUE;
 }

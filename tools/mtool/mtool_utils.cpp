@@ -19,17 +19,12 @@
 #include <algorithm>
 #include <cctype>
 
-#ifdef PLATFORM_Windows
+#ifdef _MSC_VER
 #   include <Windows.h>
 #   define MKDIR(folder, name) \
     if(CreateDirectory(MAKE_PATH(folder, name), NULL)) \
         printf("Make directory %s\n", MAKE_PATH(folder, name));
-#elif PLATFORM_Linux
-#   include <sys/stat.h>
-#   define MKDIR(folder, name) \
-    if(mkdir(MAKE_PATH(folder, name), 0755) == 0) \
-        printf("Make directory %s\n", MAKE_PATH(folder, name));
-#elif PLATFORM_Darwin
+#elif defined(__GNUC__) || defined(__clang__)
 #   include <sys/stat.h>
 #   define MKDIR(folder, name) \
     if(mkdir(MAKE_PATH(folder, name), 0755) == 0) \

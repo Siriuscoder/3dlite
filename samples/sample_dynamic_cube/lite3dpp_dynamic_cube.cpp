@@ -30,13 +30,6 @@ typedef struct vertexPod
 class DynamicCude : public Sample
 {
 public:
-    
-    DynamicCude() : 
-        mBox(NULL),
-        mWireftameView(false),
-        mDepthTest(true),
-        mKof(1)
-    {}
 
     void createScene() override
     {
@@ -127,13 +120,12 @@ public:
     
 private:
     
-    SceneObject *mBox;
-    TextureImage *mBoxTexture;
-    Mesh *mBoxMesh;
+    SceneObject *mBox = nullptr;
+    TextureImage *mBoxTexture = nullptr;
+    Mesh *mBoxMesh = nullptr;
 
-    bool mWireftameView;
-    bool mDepthTest;
-    int8_t mKof;    
+    bool mWireftameView = false;
+    int8_t mKof = 1;
 };
 
 }}

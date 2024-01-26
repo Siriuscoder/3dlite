@@ -31,12 +31,12 @@ namespace lite3dpp {
 namespace samples {
 
 Sample::Sample() : 
-    mMainCamera(NULL),
-    mGuiCamera(NULL),
-    mGuiScene(NULL),
-    mMainWindow(NULL),
-    mStatTexture(NULL),
-    mStatTimer(NULL),
+    mMainCamera(nullptr),
+    mGuiCamera(nullptr),
+    mGuiScene(nullptr),
+    mMainWindow(nullptr),
+    mStatTexture(nullptr),
+    mStatTimer(nullptr),
     mWCenter(KM_VEC2_ZERO),
     mCamAngles(KM_VEC2_ZERO),
     mSensitivity(0.001f),

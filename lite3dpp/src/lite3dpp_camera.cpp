@@ -20,9 +20,8 @@
 
 namespace lite3dpp
 {
-    Camera::Camera(const String &name, Main *main) : 
-        mName(name),
-        mMain(main)
+    Camera::Camera(const String &name) : 
+        mName(name)
     {
         lite3d_camera_init(&mCamera);
         mCamera.userdata = this;

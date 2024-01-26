@@ -19,11 +19,7 @@
 
 #include <lite3d/lite3d_common.h>
 
-#ifdef PLATFORM_Windows
-
-#   if !defined(_MSC_VER) && !defined(__GNUC__)
-#       error "GCC or MSVC compiller requred.."
-#   endif
+#ifdef _MSC_VER
 
 #   ifdef WIN_3DLITEPP_FONT_DLL
 // When making the DLL, export tagged symbols, so they appear
@@ -34,21 +30,8 @@
 #   define LITE3DPP_FONT_EXPORT __declspec(dllimport)
 #   endif
 
-#elif PLATFORM_Linux
-    // If not Windows, we assume some sort of Unixy build environment,
-    // where autotools is used.  (This includes Cygwin!)  #include the
-    // config.h file only if this file was included from a non-header
-    // file, because headers must not be dependent on config.h.
-#   if !defined(__GNUC__)
-#       error "GCC compiler requred.."
-#   endif
-
+#elif defined(__GNUC__) || defined(__clang__)
 #   define LITE3DPP_FONT_EXPORT
-
-#elif PLATFORM_Darwin
-
-#   define LITE3DPP_FONT_EXPORT
-
 #endif
 
 namespace nw

@@ -212,7 +212,7 @@ static int initMaterials(void)
     return LITE3D_TRUE;
 }
 
-static void saveCube()
+static void saveCube(void)
 {
     SDL_RWops *descr;
     size_t encodeBufferSize;

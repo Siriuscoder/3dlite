@@ -18,7 +18,7 @@
 #include <lite3d/lite3d_common.h>
 #include <lite3d/lite3d_dbg.h>
 
-#if defined(PLATFORM_Windows) && defined(_DEBUG)
+#if defined(PLATFORM_Windows) && defined(_DEBUG) && defined(_MSC_VER)
 #pragma warning(disable : 4091)
 #include <Windows.h>
 #include <DbgHelp.h>

@@ -23,7 +23,7 @@
 
 lite3d_list gTimers;
 
-int lite3d_timer_technique_init()
+int lite3d_timer_technique_init(void)
 {
     lite3d_list_init(&gTimers);
     return LITE3D_TRUE;

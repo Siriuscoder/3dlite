@@ -44,7 +44,7 @@ namespace lite3dpp
             PolygonFill = LITE3D_POLYMODE_FILL
         };
 
-        Camera(const String &name, Main *main);
+        Camera(const String &name);
         ~Camera();
 
         inline lite3d_camera *getPtr()
@@ -109,7 +109,6 @@ namespace lite3dpp
     private:
 
         String mName; 
-        Main *mMain;
         lite3d_camera mCamera;
     };
 }

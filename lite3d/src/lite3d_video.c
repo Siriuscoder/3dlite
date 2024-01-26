@@ -81,7 +81,7 @@ static int init_platform_gl_extensions(lite3d_video_settings *settings)
 
     print_extensions_string("WGL", wglGetExtensionsStringARB(GetDC(wminfo.info.win.window)));
 
-#elif defined PLATFORM_Linux
+#elif defined(PLATFORM_Linux)
 
     if (!GLXEW_VERSION_1_3)
     {
