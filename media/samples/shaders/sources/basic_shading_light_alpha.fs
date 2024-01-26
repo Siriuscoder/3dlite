@@ -11,7 +11,7 @@ void main()
 {
     vec3 lightDir = vec3(0.0, 1.0, 1.0);
     float nDotL = clamp(dot(wn, lightDir), 0.2, 1.0);
-    vec4 a = texture2D(AlbedoMask, uv.st);
+    vec4 a = texture(AlbedoMask, uv.st);
     vec3 d = Albedo.xyz * nDotL;
     fragcolor = vec4(d, a.w);
 }

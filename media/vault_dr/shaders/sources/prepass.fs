@@ -43,14 +43,14 @@ vec2 ParallaxMapping(vec2 tc, vec3 viewDir)
     vec2 deltaTexCoords = viewDir.xy * pscale / numLayers;
 
     vec2 currentTexCoords = tc;
-    float currentDepthMapValue = texture2D(depth, currentTexCoords).r;
+    float currentDepthMapValue = texture(depth, currentTexCoords).r;
   
     while(currentLayerDepth < currentDepthMapValue)
     {
         // shift texture coordinates along direction of P
         currentTexCoords -= deltaTexCoords;
         // get depthmap value at current texture coordinates
-        currentDepthMapValue = texture2D(depth, currentTexCoords).r;
+        currentDepthMapValue = texture(depth, currentTexCoords).r;
         // get depth of next layer
         currentLayerDepth += layerDepth;
     }
@@ -60,7 +60,7 @@ vec2 ParallaxMapping(vec2 tc, vec3 viewDir)
 
     // get depth after and before collision for linear interpolation
     float afterDepth  = currentDepthMapValue - currentLayerDepth;
-    float beforeDepth = texture2D(depth, prevTexCoords).r - currentLayerDepth + layerDepth;
+    float beforeDepth = texture(depth, prevTexCoords).r - currentLayerDepth + layerDepth;
      
     // interpolation of texture coordinates
     float weight = afterDepth / (afterDepth - beforeDepth);
@@ -88,11 +88,11 @@ void main()
 #endif
 
     // sampling diffuse color 
-    vec4 fragDiffuse = texture2D(diffuse, tc);
+    vec4 fragDiffuse = texture(diffuse, tc);
 
 #ifdef CALC_ILLUM
     // sampling glow texture and check colors
-    vec3 fragGlow = texture2D(glow, tc).rgb;
+    vec3 fragGlow = texture(glow, tc).rgb;
     if (!fiszero(fragGlow))
     {
         fragColor = vec4(fogFunc(fragGlow + (fragDiffuse.rgb/3), fogColor), fragDiffuse.a);
@@ -101,7 +101,7 @@ void main()
 #endif
 
     // sampling normal from normal map
-    vec4 nval = texture2D(normals, tc);
+    vec4 nval = texture(normals, tc);
     // put normal in [-1,1] range in tangent space 
     // and trasform normal to world space 
     vec3 nw = normalize(itbn * normalize(2*nval.rgb-1));

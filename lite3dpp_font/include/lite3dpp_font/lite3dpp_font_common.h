@@ -45,6 +45,10 @@
 
 #   define LITE3DPP_FONT_EXPORT
 
+#elif PLATFORM_Darwin
+
+#   define LITE3DPP_FONT_EXPORT
+
 #endif
 
 namespace nw

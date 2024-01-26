@@ -20,7 +20,7 @@ vec4 fxaa(sampler2D tex, vec2 fragCoord, vec2 resolution,
 void main()
 {
     // apply FXAA
-    vec4 finalColor = FXAA > 0 ? fxaa(combined, iuv * screenResolution.xy, screenResolution.xy, irgbNW, irgbNE, irgbSW, irgbSE, irgbM) : texture2D(combined, iuv);
+    vec4 finalColor = FXAA > 0 ? fxaa(combined, iuv * screenResolution.xy, screenResolution.xy, irgbNW, irgbNE, irgbSW, irgbSE, irgbM) : texture(combined, iuv);
 
     // apply gamma correction 
     finalColor.rgb = pow(finalColor.rgb, vec3(1/GammaFactor));

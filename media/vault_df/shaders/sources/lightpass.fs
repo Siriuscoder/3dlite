@@ -34,12 +34,12 @@ void main()
     if (light.enabled == 0)
         discard;
     /* sampling normal and specular factor (w)*/
-    vec4 normal = texture2D(normalMap, iuv);
+    vec4 normal = texture(normalMap, iuv);
     if (fiszero(normal.xyz))
         discard;
 
     /* fragment coordinate */
-    vec3 frag = texture2D(fragMap, iuv).xyz;
+    vec3 frag = texture(fragMap, iuv).xyz;
     vec3 lightDir = light.position - frag;
     /* check light distance */
     if (length(lightDir) > light.influenceDistance)

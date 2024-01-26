@@ -66,6 +66,8 @@ int lite3d_check_vertex_array_object()
 #   else
     return LITE3D_TRUE;
 #   endif
+#elif PLATFORM_Darwin
+    return 1;
 #else
     return GLEW_ARB_vertex_array_object;
 #endif
@@ -169,6 +171,8 @@ int lite3d_check_map_buffer()
 int lite3d_check_gl_version()
 {
 #ifdef GLES
+    return LITE3D_TRUE;
+#elif PLATFORM_Darwin
     return LITE3D_TRUE;
 #else
     return GLEW_VERSION_3_1;

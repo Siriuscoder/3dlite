@@ -18,8 +18,8 @@ const vec3 fogColor = vec3(0.5, 0.5, 0.2);
 void main()
 {
     /* fragment coordinate */
-    vec4 fragXYZW = texture2D(fragMap, iuv);
-    vec4 fragTexture = texture2D(diffuseMap, iuv);
+    vec4 fragXYZW = texture(fragMap, iuv);
+    vec4 fragTexture = texture(diffuseMap, iuv);
     /* check fragment not shaded or self-illum material */
     if (fragXYZW.w == 1.0 || fragTexture.w == 1.0)
     {
@@ -27,7 +27,7 @@ void main()
         return;
     }
     /* sampling normal and specular factor (w)*/
-    vec4 fragNormalAndSpecular = texture2D(normalMap, iuv);
+    vec4 fragNormalAndSpecular = texture(normalMap, iuv);
 
     vec3 linearSpec = vec3(0.0);
     vec3 linear = calc_lighting(fragXYZW.xyz, fragNormalAndSpecular.xyz,

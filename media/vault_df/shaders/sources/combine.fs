@@ -12,7 +12,7 @@ const vec3 ambient = vec3(0.07, 0.07, 0.07);
 void main()
 {
     /* fragment coordinate */
-    vec4 diff = texture2D(diffuseMap, iuv);
+    vec4 diff = texture(diffuseMap, iuv);
     /* check fragment not shaded or self-illum material */
     if (fnear(diff.w, 1.0))
     {
@@ -20,7 +20,7 @@ void main()
         return;
     }
 
-    vec3 linear = texture2D(lightMap, iuv).rgb;
+    vec3 linear = texture(lightMap, iuv).rgb;
     /* result color in LDR */
     fragColor = vec4(diff.rgb * (ambient + linear), 1.0);
 }

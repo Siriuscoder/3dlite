@@ -16,8 +16,8 @@ bool vec3zero(vec3 vec)
 
 void main()
 {
-    vec4 fragDiffuse = vec4(texture2D(diffuse, iuv).rgb, 0.0);
-    vec3 fragGlow = texture2D(glow, iuv).xyz;
+    vec4 fragDiffuse = vec4(texture(diffuse, iuv).rgb, 0.0);
+    vec3 fragGlow = texture(glow, iuv).xyz;
     if (!vec3zero(fragGlow))
     {
         fragDiffuse = vec4(fragGlow, 1.0);
@@ -25,7 +25,7 @@ void main()
 
 
     // sampling normal from normal map
-    vec4 nval = texture2D(normals, iuv);
+    vec4 nval = texture(normals, iuv);
     // put normal in [-1,1] range in tangent space 
     // and trasform normal to world space 
     vec3 nw = normalize(itbn * normalize(2*nval.rgb-1));

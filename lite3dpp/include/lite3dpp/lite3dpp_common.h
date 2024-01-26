@@ -57,6 +57,10 @@
 
 #   define LITE3DPP_EXPORT
 
+#elif PLATFORM_Darwin
+
+#   define LITE3DPP_EXPORT
+
 #endif
 
 //#define LITE3DPP_USE_STL_ALLOCATOR

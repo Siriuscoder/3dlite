@@ -7,5 +7,5 @@ out vec4 fragcolor;
 
 void main()
 {
-    fragcolor = texture2D(Albedo, uv.st);
+    fragcolor = texture(Albedo, uv.st);
 }

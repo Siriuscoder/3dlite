@@ -75,6 +75,20 @@
 #   define LITE3D_STRUCT_PACKED(x) __attribute__ ((aligned(x)));
 #   define LITE3D_INLINE inline
 #   define LITE3D_DEVIL_CALL
+#elif PLATFORM_Darwin
+    // If not Windows, we assume some sort of Unixy build environment,
+    // where autotools is used.  (This includes Cygwin!)  #include the
+    // config.h file only if this file was included from a non-header
+    // file, because headers must not be dependent on config.h.
+#   if !defined(__GNUC__)
+#       error "GCC compiler requred.."
+#   endif
+
+#   define LITE3D_EXPORT
+#   define LITE3D_CLASS_EXPORT
+#   define LITE3D_STRUCT_PACKED(x) __attribute__ ((aligned(x)));
+#   define LITE3D_INLINE inline
+#   define LITE3D_DEVIL_CALL
 #else
 #   error "Unknown target platform"
 #endif
