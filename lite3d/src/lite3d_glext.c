@@ -173,7 +173,7 @@ int lite3d_check_gl_version()
 #ifdef GLES
     return LITE3D_TRUE;
 #elif PLATFORM_Darwin
-    return LITE3D_TRUE;
+    return GLEW_VERSION_3_1;
 #else
     return GLEW_VERSION_3_1;
 #endif
