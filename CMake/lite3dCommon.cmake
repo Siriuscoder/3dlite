@@ -1,6 +1,6 @@
 
 #	This file is part of 3dlite (Light-weight 3d engine).
-#	Copyright (C) 2014  Sirius (Korolev Nikita)
+#	Copyright (C) 2024 Sirius (Korolev Nikita)
 #
 #	Foobar is free software: you can redistribute it and/or modify
 #	it under the terms of the GNU General Public License as published by
