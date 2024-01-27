@@ -24,8 +24,6 @@
 #include <lite3d/lite3d_buffers_manip.h>
 #include <lite3d/lite3d_material.h>
 
-lite3d_shader_program *gActProg = NULL;
-
 static void lite3d_material_pass_purge(lite3d_material_pass *pass)
 {
     if (!pass->passNo)
@@ -225,12 +223,7 @@ lite3d_material_pass *lite3d_material_apply(
         return pass;
 
     /* bind current shander first */
-    if (gActProg != pass->program)
-    {
-        lite3d_shader_program_bind(pass->program);
-        gActProg = pass->program;
-    }
-
+    lite3d_shader_program_bind(pass->program);
     /* set up uniforms if shader changed */
     lite3d_material_pass_set_params(material, pass, LITE3D_TRUE);
     lite3d_blending(pass->blending);

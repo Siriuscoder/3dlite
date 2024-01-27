@@ -11,8 +11,8 @@
     // Window size, caption, color settings, etc
     "VideoSettings": {
         "GLProfile": "core",
-        "GLVersionMajor": 2,
-        "GLVersionMinor": 1,
+        "GLVersionMajor": 3,
+        "GLVersionMinor": 3,
         "Width": 1024,
         "Height": 768,
         "Caption": "Sample scene",

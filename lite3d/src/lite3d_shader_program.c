@@ -25,7 +25,7 @@
 
 typedef int (*lite3d_uniform_set_func)(lite3d_shader_program *, lite3d_shader_parameter_container *);
 
-extern lite3d_shader_program *gActProg;
+lite3d_shader_program *gActProg = NULL;
 
 int lite3d_shader_program_technique_init(void)
 {
@@ -169,13 +169,18 @@ void lite3d_shader_program_bind(
 {
     SDL_assert(program);
     SDL_assert(program->success == LITE3D_TRUE);
-    glUseProgram(program->programID);
+    if (gActProg != program)
+    {
+        glUseProgram(program->programID);
+        gActProg = program;
+    }
 }
 
 void lite3d_shader_program_unbind(
     lite3d_shader_program *program)
 {
     glUseProgram(0);
+    gActProg = NULL;
 }
 
 static int lite3d_shader_program_sampler_set(

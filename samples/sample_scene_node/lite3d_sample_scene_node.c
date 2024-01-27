@@ -343,6 +343,9 @@ int main(int argc, char *args[])
     settings.videoSettings.screenWidth = DEFAULT_WIDTH;
     settings.videoSettings.screenHeight = DEFAULT_HEIGHT;
     settings.videoSettings.vsync = LITE3D_TRUE;
+    settings.videoSettings.glProfile = LITE3D_GL_PROFILE_CORE;
+    settings.videoSettings.glVersionMajor = 3;
+    settings.videoSettings.glVersionMinor = 3;
     settings.renderLisneters.processEvent = process_events;
     settings.renderLisneters.preRender = init;
     settings.renderLisneters.postRender = shutdown;
