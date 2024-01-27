@@ -122,7 +122,7 @@ static void refresh_render_stats(uint64_t beginFrame, uint64_t endFrame)
     gRenderStats.bestFrameMs = LITE3D_MIN(gRenderStats.lastFrameMs, gRenderStats.bestFrameMs);
     gRenderStats.worstFrameMs = LITE3D_MAX(gRenderStats.lastFrameMs, gRenderStats.worstFrameMs);
 
-    gRenderStats.triangleByBatch = gRenderStats.batchesCalled ? gRenderStats.trianglesByFrame / gRenderStats.batchesCalled : 0;
+    gRenderStats.triangleByBatch = gRenderStats.batchCalled ? gRenderStats.trianglesByFrame / gRenderStats.batchCalled : 0;
     gRenderStats.triangleMs = gRenderStats.trianglesByFrame ? (float) gRenderStats.lastFrameMs / (float) gRenderStats.trianglesByFrame : 0;
 }
 
@@ -179,9 +179,9 @@ static void update_render_target(lite3d_render_target *target)
             gRenderStats.trianglesByFrame += look->scene->stats.trianglesRendered;
             gRenderStats.verticesByFrame += look->scene->stats.verticesRendered;
             gRenderStats.nodesTotal += look->scene->stats.nodesTotal;
-            gRenderStats.batchesTotal += look->scene->stats.batchesTotal;
-            gRenderStats.batchesCalled += look->scene->stats.batchesCalled;
-            gRenderStats.batchesInstancedCalled += look->scene->stats.batchesInstancedCalled;
+            gRenderStats.batchTotal += look->scene->stats.batchTotal;
+            gRenderStats.batchCalled += look->scene->stats.batchCalled;
+            gRenderStats.batchInstancedCalled += look->scene->stats.batchInstancedCalled;
             gRenderStats.materialsTotal += look->scene->stats.materialBlocks;
             gRenderStats.materialsPassedByFrame += look->scene->stats.materialPassed;
             gRenderStats.textureUnitsByFrame += look->scene->stats.textureUnitsBinded;
@@ -247,9 +247,9 @@ int lite3d_render_frame(void)
 {
     gRenderStats.trianglesByFrame =
         gRenderStats.nodesTotal =
-        gRenderStats.batchesTotal =
-        gRenderStats.batchesCalled =
-        gRenderStats.batchesInstancedCalled = 
+        gRenderStats.batchTotal =
+        gRenderStats.batchCalled =
+        gRenderStats.batchInstancedCalled = 
         gRenderStats.materialsTotal =
         gRenderStats.materialsPassedByFrame =
         gRenderStats.textureUnitsByFrame =

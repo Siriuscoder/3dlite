@@ -51,9 +51,9 @@ typedef struct lite3d_scene_stats
     int32_t trianglesRendered;
     int32_t verticesRendered;
     int32_t nodesTotal;
-    int32_t batchesCalled;
-    int32_t batchesInstancedCalled;
-    int32_t batchesTotal;
+    int32_t batchCalled;
+    int32_t batchInstancedCalled;
+    int32_t batchTotal;
     int32_t materialBlocks;
     int32_t textureUnitsBinded;
     int32_t blockUnitsBinded;

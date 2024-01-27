@@ -68,5 +68,7 @@ LITE3D_CEXPORT int lite3d_shader_program_uniform_set(
 LITE3D_CEXPORT void lite3d_shader_program_attribute_index(
     lite3d_shader_program *program, const char *name, int32_t location);
 
+LITE3D_CEXPORT int lite3d_shader_program_validate_current(void);
+
 #endif	/* LITE3D_SHADER_PROGRAM_H */
 

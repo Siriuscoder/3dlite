@@ -25,6 +25,7 @@
 
 typedef int (*lite3d_uniform_set_func)(lite3d_shader_program *, lite3d_shader_parameter_container *);
 
+extern lite3d_shader_program *gActProg;
 
 int lite3d_shader_program_technique_init(void)
 {
@@ -129,6 +130,20 @@ int lite3d_shader_program_validate(
 
     program->statusString = (char *) lite3d_malloc(maxLogLength);
     glGetProgramInfoLog(program->programID, maxLogLength, &maxLogLength, program->statusString);
+
+    if (program->validated)
+    {
+        SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "%s: validate program 0x%016llx: OK", 
+            LITE3D_CURRENT_FUNCTION, (unsigned long long)program);
+    }
+    else
+    {
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+            "%s: validate program 0x%016llx: %s", LITE3D_CURRENT_FUNCTION, 
+            (unsigned long long)program, program->statusString);
+        return LITE3D_FALSE;
+    }
+
     return program->validated;
 }
 
@@ -359,4 +374,14 @@ void lite3d_shader_program_attribute_index(
         LITE3D_CURRENT_FUNCTION, name, location, (unsigned long long)program);
 
     glBindAttribLocation(program->programID, location, name);
+}
+
+int lite3d_shader_program_validate_current(void)
+{
+    if (!gActProg)
+    {
+        return LITE3D_FALSE;
+    }
+
+    return lite3d_shader_program_validate(gActProg);
 }

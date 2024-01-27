@@ -233,14 +233,6 @@ lite3d_material_pass *lite3d_material_apply(
 
     /* set up uniforms if shader changed */
     lite3d_material_pass_set_params(material, pass, LITE3D_TRUE);
-    /* validate shader program */
-    if (!lite3d_shader_program_validate(gActProg))
-    {
-        SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
-            "%s: validate program 0x%016llx: %s", LITE3D_CURRENT_FUNCTION, 
-            (unsigned long long)gActProg, gActProg->statusString);
-    }
-
     lite3d_blending(pass->blending);
     lite3d_blending_mode_set(pass->blendingMode);
     return pass;

@@ -103,6 +103,11 @@ static void mqr_render_batch(lite3d_material_pass *pass, _mqr_node *mqrNode)
     {
         lite3d_mesh_chunk_bind(mqrNode->meshChunk);
         scene->bindedMeshChunk = mqrNode->meshChunk;
+        /* validate current shader program */
+        if (!lite3d_shader_program_validate_current())
+        {
+            return;
+        }
     }
     
     /* do render batch */
@@ -111,8 +116,8 @@ static void mqr_render_batch(lite3d_material_pass *pass, _mqr_node *mqrNode)
     else
         LITE3D_METRIC_CALL(lite3d_mesh_chunk_draw, (mqrNode->meshChunk))
     
-    scene->stats.batchesCalled++;
-    scene->stats.batchesInstancedCalled++;
+    scene->stats.batchCalled++;
+    scene->stats.batchInstancedCalled++;
     scene->stats.trianglesRendered += mqrNode->meshChunk->vao.elementsCount * mqrNode->instancesCount;
     scene->stats.verticesRendered += mqrNode->meshChunk->vao.verticesCount * mqrNode->instancesCount;
 }
@@ -170,13 +175,18 @@ static void mqr_render_batch_series(lite3d_material_pass *pass, _mqr_node *mqrNo
         {
             lite3d_mesh_chunk_bind(mqrNode->meshChunk);
             scene->bindedMeshChunk = mqrNode->meshChunk;
+            /* validate current shader program */
+            if (!lite3d_shader_program_validate_current())
+            {
+                return;
+            }
         }
-        
+
         /* do render batch */
         LITE3D_METRIC_CALL(lite3d_mesh_chunk_draw_instanced, (mqrNode->meshChunk, continuedId+1))
         
-        scene->stats.batchesCalled++;
-        scene->stats.batchesInstancedCalled += (continuedId+1);
+        scene->stats.batchCalled++;
+        scene->stats.batchInstancedCalled += (continuedId+1);
         scene->stats.trianglesRendered += mqrNode->meshChunk->vao.elementsCount * (continuedId+1);
         scene->stats.verticesRendered += mqrNode->meshChunk->vao.verticesCount * (continuedId+1);
         lite3d_array_clean(&scene->seriesMatrixes);
@@ -204,7 +214,7 @@ static int mqr_node_approve(lite3d_scene *scene,
     if (!mqrNode->node->enabled)
         return LITE3D_FALSE;
 
-    scene->stats.batchesTotal++;
+    scene->stats.batchTotal++;
 
     if (!(flags & LITE3D_RENDER_FRUSTUM_CULLING))
         return LITE3D_TRUE;
