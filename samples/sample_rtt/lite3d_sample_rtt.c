@@ -21,6 +21,7 @@
 #include <lite3d/lite3d_main.h>
 #include <lite3d/lite3d_scene.h>
 #include <lite3d/lite3d_mesh_codec.h>
+#include <sample_common/lite3d_builtin_shaders.h>
 
 #define DEFAULT_WIDTH           800
 #define DEFAULT_HEIGHT          600
@@ -62,32 +63,6 @@ static lite3d_scene_node mSceneNode[2];
 
 static lite3d_scene mScene;
 static lite3d_scene mSceneMain;
-
-static const char *vs = "#ifdef GL_ES\n"
-        "precision mediump float;\n"
-        "#endif\n"
-        "in vec3 vertexAttr; "
-        "in vec2 texCoordAttr; "
-        "uniform mat4 projectionMatrix; "
-        "uniform mat4 modelMatrix; "
-        "uniform mat4 viewMatrix; "
-        "varying vec2 vTexCoord; "
-        "void main() "
-        "{"
-        "   vTexCoord = texCoordAttr; "
-        "   vec4 vertex = vec4(vertexAttr, 1.0); "
-        "   gl_Position = projectionMatrix * viewMatrix * modelMatrix * vertex; "
-        "}";
-
-static const char *fs = "#ifdef GL_ES\n"
-        "precision mediump float;\n"
-        "#endif\n"
-        "uniform sampler2D diffuse; "
-        "varying vec2 vTexCoord; "
-        "void main() "
-        "{"
-        "   gl_FragColor = texture2D(diffuse, vTexCoord.st); "
-        "}";
 
 static int process_events(SDL_Event *levent, void *userdata)
 {
@@ -168,10 +143,10 @@ static int initMaterials(void)
 
     /* try to compile material shaders */
     lite3d_shader_init(&shaders[0], LITE3D_SHADER_TYPE_VERTEX);
-    if (!lite3d_shader_compile(&shaders[0], 1, &vs, 0))
+    if (!lite3d_shader_compile(&shaders[0], 1, &vs_builtin, 0))
         return LITE3D_FALSE;
     lite3d_shader_init(&shaders[1], LITE3D_SHADER_TYPE_FRAGMENT);
-    if (!lite3d_shader_compile(&shaders[1], 1, &fs, 0))
+    if (!lite3d_shader_compile(&shaders[1], 1, &fs_builtin, 0))
         return LITE3D_FALSE;
 
     lite3d_shader_program_init(&mProgram);

@@ -19,6 +19,7 @@
 
 #include <SDL_log.h>
 #include <lite3d/lite3d_main.h>
+#include <sample_common/lite3d_builtin_shaders.h>
 
 #define DEFAULT_WIDTH           800
 #define DEFAULT_HEIGHT          600
@@ -41,32 +42,6 @@ static lite3d_shader_program mProgram;
 static lite3d_scene_node mRifleNode;
 static lite3d_scene_node mBattNode;
 static lite3d_scene mScene;
-
-static const char *vs = "#ifdef GL_ES\n"
-        "precision mediump float;\n"
-        "#endif\n"
-        "in vec4 vertexAttr; "
-        "in vec3 normalAttr; "
-        "in vec2 texCoordAttr; "
-        "uniform mat4 projectionMatrix; "
-        "uniform mat4 modelMatrix; "
-        "uniform mat4 viewMatrix; "
-        "varying vec2 vTexCoord; "
-        "void main() "
-        "{"
-        "   vTexCoord = texCoordAttr; "
-        "   gl_Position = projectionMatrix * viewMatrix * modelMatrix * vertexAttr; "
-        "}";
-
-static const char *fs = "#ifdef GL_ES\n"
-        "precision mediump float;\n"
-        "#endif\n"
-        "uniform sampler2D diffuse; "
-        "varying vec2 vTexCoord; "
-        "void main() "
-        "{"
-        "   gl_FragColor = texture2D(diffuse, vTexCoord.st); "
-        "}";
 
 static int process_events(SDL_Event *levent, void *userdata)
 {
@@ -133,12 +108,18 @@ static int initMaterials(void)
 
     /* try to compile material shaders */
     lite3d_shader_init(&shaders[0], LITE3D_SHADER_TYPE_VERTEX);
-    if (!lite3d_shader_compile(&shaders[0], 1, &vs, 0))
+    if (!lite3d_shader_compile(&shaders[0], 1, &vs_builtin, 0))
+    {
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Shader compile error: %s", shaders[0].statusString);
         return LITE3D_FALSE;
+    }
 
     lite3d_shader_init(&shaders[1], LITE3D_SHADER_TYPE_FRAGMENT);
-    if (!lite3d_shader_compile(&shaders[1], 1, &fs, 0))
+    if (!lite3d_shader_compile(&shaders[1], 1, &fs_builtin, 0))
+    {
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Shader compile error: %s", shaders[1].statusString);
         return LITE3D_FALSE;
+    }
 
     lite3d_shader_program_init(&mProgram);
     /* setup attributes indexes like layout in VBO */
@@ -150,7 +131,10 @@ static int initMaterials(void)
     lite3d_shader_program_attribute_index(&mProgram, "texCoordAttr", 2);
     
     if (!lite3d_shader_program_link(&mProgram, shaders, 2))
+    {
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Shader compile error: %s", mProgram.statusString);
         return LITE3D_FALSE;
+    }
 
     lite3d_shader_purge(&shaders[0]);
     lite3d_shader_purge(&shaders[1]);
