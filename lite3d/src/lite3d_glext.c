@@ -67,7 +67,7 @@ int lite3d_check_vertex_array_object(void)
     return LITE3D_TRUE;
 #   endif
 #else
-    return GLEW_ARB_vertex_array_object || GLEW_VERSION_3_0;
+    return GLEW_ARB_vertex_array_object || GLEW_APPLE_vertex_array_object || GLEW_VERSION_3_0;
 #endif
 }
 
@@ -106,7 +106,7 @@ int lite3d_check_uniform_buffer(void)
     return LITE3D_TRUE;
 #   endif
 #else
-    return GLEW_ARB_uniform_buffer_object;
+    return GLEW_ARB_uniform_buffer_object || GLEW_VERSION_3_0;
 #endif
 }
 
