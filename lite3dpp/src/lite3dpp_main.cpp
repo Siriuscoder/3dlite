@@ -94,22 +94,15 @@ namespace lite3dpp
 
         // GL Profile
         {
-            std::string glProfile = videoSettings.getString(L"GLProfile", "");
+            auto glProfile = videoSettings.getUpperString(L"GLProfile", "");
 
-            if (
-                    glProfile == "Core" ||
-                    glProfile == "core")
+            if (glProfile == "CORE")
             {
                 mSettings.videoSettings.glProfile = LITE3D_GL_PROFILE_CORE;
             }
-            else if (
-                    glProfile == "Compatibility" ||
-                    glProfile == "compatibility" ||
-                    glProfile == "Compat" ||
-                    glProfile == "compat")
+            else if (glProfile == "COMPATIBILITY")
             {
-                mSettings.videoSettings.glProfile = \
-                    LITE3D_GL_PROFILE_COMPATIBILITY;
+                mSettings.videoSettings.glProfile = LITE3D_GL_PROFILE_COMPATIBILITY;
             }
             else
             {

@@ -19,6 +19,11 @@
           "Type":"sampler"
         },
         {
+          "Name":"AOMap",
+          "TextureName":"ssao.texture",
+          "Type":"sampler"
+        },
+        {
           "Name":"lightSources",
           "UBOName": "Vault_111_lightingBufferObject",
           "Type":"UBO"

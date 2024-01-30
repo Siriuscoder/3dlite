@@ -39,7 +39,7 @@ void main()
     vec3 blm = texture(bloom, iuv).xyz;
     hdr = mix(hdr, blm, vec3(bloomStrength));
     // Exposure tone mapping
-    vec3 ldr = ExposureTonemapping(hdr, 1.5);
+    vec3 ldr = ExposureTonemapping(hdr, 1.1);
     // gamma correction 
     ldr = pow(ldr, vec3(1.0 / GammaFactor));
 

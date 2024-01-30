@@ -1,7 +1,8 @@
 {
     "Width": 0, // use screen wight
     "Height": 0, // use screen height
-    "BackgroundColor": [0.0, 0.0, 0.0, 1.0],
+    "Scale": 4, // Reduce size at half of screen 
+    "BackgroundColor": [1.0, 0.0, 0.0, 1.0],
     "Priority": 4, // render after prepare step
     "CleanColorBuf": true,
     "CleanDepthBuf": false,
@@ -13,7 +14,7 @@
         [
             {
                 "TextureName": "ssao.texture",
-                "TexturePath": "samples:textures/json/r16f.json"
+                "TexturePath": "samples:textures/json/r16fs4.json"
             }
         ]
     }

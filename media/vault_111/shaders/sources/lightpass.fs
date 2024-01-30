@@ -6,7 +6,8 @@ uniform sampler2DArray GBuffer;
 in vec2 iuv;
 out vec4 fragColor;
 
-vec3 ComputeIllumination(vec3 vw, vec3 nw, vec3 albedo, vec3 emission, vec3 specular);
+vec3 ComputeIllumination(vec3 vw, vec3 nw, vec3 albedo, vec3 emission, vec3 specular, float aoFactor);
+float GetAO(vec2 uv);
 
 void main()
 {
@@ -22,10 +23,12 @@ void main()
     vec4 albedo = texture(GBuffer, vec3(iuv, 2));
     // sampling specular parameters from fullscreen map
     vec4 specular = texture(GBuffer, vec3(iuv, 3));
+    // sampling AO
+    float aoFactor = GetAO(iuv);
     // Emission
     vec3 emission = vec3(nw.w, albedo.w, specular.w);
     // Compute total illumination 
-    vec3 total = ComputeIllumination(vw, nw.xyz, albedo.rgb, emission, specular.xyz);
+    vec3 total = ComputeIllumination(vw, nw.xyz, albedo.rgb, emission, specular.xyz, aoFactor);
 
     fragColor = vec4(total, 1.0);
 }

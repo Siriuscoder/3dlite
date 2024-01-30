@@ -15,6 +15,8 @@
  *	You should have received a copy of the GNU General Public License
  *	along with Lite3D.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
+#include <ctime>
+
 #include "lite3dpp_vault_shadows.h"
 #include "lite3dpp_vault_bloom.h"
 
@@ -74,6 +76,12 @@ public:
 
 public:
 
+    SampleVault111()
+    {
+        // use current time as seed for random generator
+        std::srand(std::time(nullptr));
+    }
+
     void createScene() override
     {
         mShadowManager = std::make_unique<SampleShadowManager>(getMain());
@@ -84,6 +92,9 @@ public:
 
         setupShadowCasters();
         addFlashlight();
+        // load SSAO effect pipeline before ligth compute step, because SSAO texture needed to ambient light compute  
+        getMain().getResourceManager()->queryResource<Scene>("Vault_111_SSAO", "vault_111:scenes/ssao.json");
+        mSSAOShader = getMain().getResourceManager()->queryResource<Material>("ssao_compute.material");
         // load intermediate light compute scene
         mCombineScene = getMain().getResourceManager()->queryResource<Scene>("Vault_111_LightCompute",
             "vault_111:scenes/lightpass.json");
@@ -91,7 +102,7 @@ public:
         // Load bloom effect pipeline
         mBloomEffectRenderer->init();
 
-        // postprocess step, fxaa, gamma correcion, draw directly info window. 
+        // postprocess step, fxaa, gamma correcion, draw directly info render window. 
         getMain().getResourceManager()->queryResource<Scene>("Vault_111_Postprocess",
             "vault_111:scenes/postprocess.json");
 
@@ -107,6 +118,7 @@ public:
             static_cast<float>(getMain().window()->height()), 0 
         };
         Material::setFloatv3GlobalParameter("screenResolution", resolution);
+        Material::setFloatGlobalParameter("RandomSeed", static_cast<float>(rand()) / RAND_MAX);
 
         mMinigun01 = MinigunObject(mVaultScene, mShadowManager.get(), "MinigunTurret");
         mMinigun02 = MinigunObject(mVaultScene, mShadowManager.get(), "MinigunTurret.001");
@@ -179,8 +191,16 @@ public:
 
     void mainCameraChanged() override
     {
-        Material::setFloatv3GlobalParameter("eye", getMainCamera().getPosition());
+        updateShaderParams();
         updateFlashLight();
+    }
+
+    void updateShaderParams()
+    {
+        SDL_assert(mSSAOShader);
+        Material::setFloatv3GlobalParameter("eye", getMainCamera().getPosition());
+        mSSAOShader->setFloatm4Parameter(1, "CameraView", getMainCamera().getTransformMatrix());
+        mSSAOShader->setFloatm4Parameter(1, "CameraProjection", getMainCamera().getProjMatrix());
     }
 
     void updateFlashLight()
@@ -272,6 +292,7 @@ private:
 
     Scene* mCombineScene = nullptr;
     Scene* mVaultScene = nullptr;
+    Material* mSSAOShader = nullptr;
     std::unique_ptr<SampleShadowManager> mShadowManager;
     std::unique_ptr<SampleBloomEffect> mBloomEffectRenderer;
     std::unique_ptr<LightSceneNode> mFlashLight;

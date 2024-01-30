@@ -17,3 +17,18 @@ bool fiszero(vec3 a1)
 {
     return fnear(a1, vec3(0.0));
 }
+
+// Gold Noise ©2015 dcerisano@standard3d.com
+// - based on the Golden Ratio
+// - uniform normalized distribution
+// - fastest static noise generator function (also runs at low precision)
+// - use with indicated fractional seeding method
+float goldNoise(vec2 xy, float seed)
+{
+    return fract(tan(distance(xy * PHI, xy) * seed) * xy.x);
+}
+
+float lerp(float a, float b, float f)
+{
+    return a + f * (b - a);
+}

@@ -3,7 +3,8 @@
 
 #define MAX_LIGHTS  200 // 16kb storage needed
 
-const float ambientStrength = 0.13;
+const float specularStrength = 0.22;
+const float diffuseStrength = 0.29;
 
 #define LITE3D_LIGHT_UNDEFINED          0.0
 #define LITE3D_LIGHT_POINT              1.0
@@ -31,7 +32,7 @@ vec3 Lx(vec3 albedo, vec3 radiance, vec3 L, vec3 N, vec3 V, vec3 specular, float
 /* Fresnel equation (Schlick) */
 vec3 FresnelSchlickRoughness(float NdotV, vec3 albedo, vec3 specular);
 
-vec3 ComputeIllumination(vec3 vw, vec3 nw, vec3 albedo, vec3 emission, vec3 specular)
+vec3 ComputeIllumination(vec3 vw, vec3 nw, vec3 albedo, vec3 emission, vec3 specular, float aoFactor)
 {
     // Eye direction to current fragment 
     vec3 eyeDir = normalize(eye - vw);
@@ -109,7 +110,7 @@ vec3 ComputeIllumination(vec3 vw, vec3 nw, vec3 albedo, vec3 emission, vec3 spec
         /* block1.w - radiance */
         vec4 block1 = lights[index+1];
         /* light source full radiance at fragment position */
-        vec3 radiance = block1.rgb * block1.w * attenuationFactor * shadowless;
+        vec3 radiance = block1.rgb * block1.w * attenuationFactor * shadowless * aoFactor;
         /* Radiance too small, do not take this light source in account */ 
         if (all(lessThan(radiance, vec3(0.0001))))
             continue;
@@ -121,8 +122,9 @@ vec3 ComputeIllumination(vec3 vw, vec3 nw, vec3 albedo, vec3 emission, vec3 spec
     kD *= 1.0 - specular.z;
 
     vec3 globalIrradiance = textureLod(Environment, nw, 4).rgb;
-    vec3 reflected = textureLod(Environment, R, specular.y * 7.0).rgb * F * ambientStrength;
-    vec3 ambient = kD * globalIrradiance * albedo * ambientStrength;
+    vec3 specularAmbient = textureLod(Environment, R, specular.y * 7.0).rgb * F * specularStrength;
+    vec3 diffuseAmbient = kD * globalIrradiance * albedo * diffuseStrength;
+    vec3 totalAmbient = (diffuseAmbient + specularAmbient) * aoFactor;
 
-    return ambient + reflected + emission + totalLx;
+    return totalAmbient + totalLx + emission;
 }
