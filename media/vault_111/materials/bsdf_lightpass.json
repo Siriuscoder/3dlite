@@ -47,6 +47,12 @@
           "Name":"eye",
           "Type":"v3",
           "Scope":"global"
+        },
+        {
+          "Name":"AOEnabled",
+          "Type":"int",
+          "Value": 1,
+          "Scope":"global"
         }
       ]
     }

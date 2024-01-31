@@ -1,10 +1,16 @@
 #include "samples:shaders/sources/common/version.def"
 
 uniform sampler2D AOMap;
+uniform int AOEnabled;
 
 // Get fragment precalculated Ambient Occlusion with PCF filtration 
 float GetAO(vec2 iuv)
 {
+    if (AOEnabled == 0)
+    {
+        return 1.0;
+    }
+
     vec2 texelSize = 1.0 / vec2(textureSize(AOMap, 0));
 
     float result = 0.0;

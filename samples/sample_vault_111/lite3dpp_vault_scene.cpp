@@ -285,6 +285,14 @@ public:
                     mGammaFactor = 1.5;
                 Material::setFloatGlobalParameter("GammaFactor", mGammaFactor);
             }
+            else if (e->key.keysym.sym == SDLK_u)
+            {
+                static bool ssaoEnabled = true;
+                ssaoEnabled = !ssaoEnabled;
+                Material::setIntGlobalParameter("AOEnabled", ssaoEnabled ? 1 : 0);
+                auto ssaoRenderTarget = getMain().getResourceManager()->queryResource<TextureRenderTarget>("SSAOStep");
+                ssaoEnabled ? ssaoRenderTarget->enable() : ssaoRenderTarget->disable();
+            }
         }
     }
 
