@@ -3,8 +3,8 @@
 
 #define MAX_LIGHTS  200 // 16kb storage needed
 
-const float specularStrength = 0.22;
-const float diffuseStrength = 0.29;
+const float specularStrength = 0.14;
+const float diffuseStrength = 0.05;
 
 #define LITE3D_LIGHT_UNDEFINED          0.0
 #define LITE3D_LIGHT_POINT              1.0
