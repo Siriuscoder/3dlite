@@ -245,7 +245,7 @@ std::shared_ptr<JSONValue> JSONValue::Parse(const wchar_t **data)
             }
 
             // Add the value
-            array.push_back(value);
+            array.emplace_back(value);
 
             // More whitespace?
             if (!JSON::SkipWhitespaceAndComments(data))
@@ -668,7 +668,7 @@ std::vector<lite3dpp::WString> JSONValue::ObjectKeys() const
         JSONObject::const_iterator iter = object_value.begin();
         while (iter != object_value.end())
         {
-            keys.push_back(iter->first);
+            keys.emplace_back(iter->first);
 
             iter++;
         }

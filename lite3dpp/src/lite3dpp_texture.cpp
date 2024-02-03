@@ -238,7 +238,7 @@ namespace lite3dpp
                 else
                     getPixels(level, pixels);
 
-                mLayersBackup.push_back(std::move(pixels));
+                mLayersBackup.emplace_back(pixels);
             }
         }
 

@@ -65,7 +65,7 @@ namespace lite3dpp
             stl<kmVec3>::vector points;
             for (auto &point : helper.getObjects(L"Data"))
             {
-                points.push_back(point.getVec3(L"Point"));
+                points.emplace_back(point.getVec3(L"Point"));
             }
 
             genArray(points, helper.getVec3(L"BBMin"), helper.getVec3(L"BBMax"), helper.getBool(L"Dynamic", false));

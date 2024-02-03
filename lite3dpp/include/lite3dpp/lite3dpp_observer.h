@@ -44,7 +44,7 @@ namespace lite3dpp
                     LITE3D_THROW("Observer already exist");
             }
 
-            mObservers.push_back(observer);
+            mObservers.emplace_back(observer);
         }
 
         void removeObserver(T *observer)

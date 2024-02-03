@@ -224,7 +224,7 @@ namespace lite3dpp
             mLightingIndexBuffer->extendBufferBytes(((mLights.size()+1)*sizeof(LightsIndexesStore::value_type))-
             mLightingIndexBuffer->bufferSizeBytes());
         mLightsIndexes.clear();
-        mLightsIndexes.push_back(0); // reserve first index for size
+        mLightsIndexes.emplace_back(0); // reserve first index for size
         
         bool anyValidated = false;
         for (auto &light : mLights)
@@ -242,7 +242,7 @@ namespace lite3dpp
             if (!light.second->frustumTest() || camera.inFrustum(*light.second->getLight()))
             {
                 light.second->setVisible(true);
-                mLightsIndexes.push_back(light.second->getLight()->index());
+                mLightsIndexes.emplace_back(light.second->getLight()->index());
             }
             else
             {

@@ -71,7 +71,7 @@ namespace lite3dpp
                     targetJson.getString(L"TextureName"), targetJson.getString(L"TexturePath"))->getPtr();
                 attachment.layer.layer = targetJson.getInt(L"Layer", 0);
                 attachment.layer.attachmentType = LITE3D_FRAMEBUFFER_USE_COLOR_BUFFER;
-                textureAttachments.push_back(attachment);
+                textureAttachments.emplace_back(attachment);
                 flags |= LITE3D_FRAMEBUFFER_USE_COLOR_BUFFER;
             }
 
@@ -94,7 +94,7 @@ namespace lite3dpp
                     attachmentJson.getString(L"TextureName"), attachmentJson.getString(L"TexturePath"))->getPtr();
                 attachment.layer.layer = attachmentJson.getInt(L"Layer", 0);
                 attachment.layer.attachmentType = LITE3D_FRAMEBUFFER_USE_DEPTH_BUFFER;
-                textureAttachments.push_back(attachment);
+                textureAttachments.emplace_back(attachment);
                 flags |= LITE3D_FRAMEBUFFER_USE_DEPTH_BUFFER;
             }
 
