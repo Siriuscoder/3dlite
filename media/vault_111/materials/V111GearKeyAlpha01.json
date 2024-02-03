@@ -1,10 +1,31 @@
 {
   "Passes": [
     {
+      "Pass": 1,
+      "Program": {
+        "Name": "depth_alpha.program",
+        "Path": "vault_111:shaders/json/depth_alpha.json"
+      },
+      "Uniforms": [
+        {
+          "Name": "Albedo",
+          "Type": "sampler",
+          "TextureName": "V111GearKey01_d.texture",
+          "TexturePath": "vault_111:textures/json/V111GearKey01_d.json"
+        },
+        {
+          "Name": "projViewMatrix"
+        },
+        {
+          "Name": "modelMatrix"
+        }
+      ]
+    },
+    {
       "Pass": 2,
       "Program": {
-        "Name": "bsdf_direct_alpha.program",
-        "Path": "vault_111:shaders/json/bsdf_direct_alpha.json"
+        "Name": "bsdf_prepare.program",
+        "Path": "vault_111:shaders/json/bsdf_prepare.json"
       },
       "Uniforms": [
         {
@@ -26,25 +47,22 @@
           "TexturePath": "vault_111:textures/json/V111GearKey01_s.json"
         },
         {
-          "Name": "Environment",
-          "TextureName": "environment.texture",
-          "TexturePath": "samples:textures/json/skybox_cryo_mip.json",
-          "Type": "sampler"
-        },
+          "Name": "projViewMatrix"
+        }
+      ]
+    },
+    {
+      "Pass": 3,
+      "Program": {
+        "Name": "shadow_alpha.program",
+        "Path": "vault_111:shaders/json/shadow_alpha.json"
+      },
+      "Uniforms": [
         {
-          "Name": "lightSources",
-          "UBOName": "Vault_111_lightingBufferObject",
-          "Type": "UBO"
-        },
-        {
-          "Name": "lightIndexes",
-          "UBOName": "Vault_111_lightingIndexBuffer",
-          "Type": "UBO"
-        },
-        {
-          "Name": "ShadowMaps",
-          "TextureName": "shadow.texture",
-          "Type": "sampler"
+          "Name": "Albedo",
+          "Type": "sampler",
+          "TextureName": "V111GearKey01_d.texture",
+          "TexturePath": "vault_111:textures/json/V111GearKey01_d.json"
         },
         {
           "Name": "ShadowMatrix",
@@ -52,18 +70,11 @@
           "Type": "UBO"
         },
         {
-          "Name": "eye",
-          "Type": "v3",
-          "Scope": "global"
+          "Name": "ShadowIndex",
+          "UBOName": "ShadowIndexBuffer",
+          "Type": "UBO"
         }
-      ],
-      "Blending": true,
-      "BlendingMode": "traditional"
-    }
-  ],
-  "Uniforms": [
-    {
-      "Name": "projViewMatrix"
+      ]
     }
   ]
 }

@@ -1,0 +1,9 @@
+{
+    "Sources": 
+    [
+        "vault_111:shaders/sources/shadow.vs",
+        "vault_111:shaders/sources/shadow_split.gs",
+        "vault_111:shaders/sources/depth_alpha.fs",
+        "samples:shaders/sources/common/utils.fs"
+    ]
+}

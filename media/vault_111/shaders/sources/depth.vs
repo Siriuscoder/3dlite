@@ -9,8 +9,11 @@ layout(location = 4) in vec3 btang;
 uniform mat4 modelMatrix;
 uniform mat4 projViewMatrix;
 
+out vec2 iuv;
+
 void main()
 {
+    iuv = uv;
     vec4 wv = modelMatrix * vec4(vertex, 1.0);
     gl_Position = projViewMatrix * wv;
 }

@@ -1,3 +1,5 @@
+#include "samples:shaders/sources/common/utils_inc.glsl"
+
 #if defined(MRT_WITH_EMISSION)
 
 uniform sampler2D Albedo;
@@ -29,11 +31,20 @@ in mat3 itbn;
 vec3 GetFixedWorldNormal(mat3 itbn, vec2 iuv);
 vec3 GetSpecular(vec2 iuv);
 
+vec3 CheckAlbedo(vec4 albedo)
+{
+    // check albedo alpha and discard full transparent fragments
+    if (fiszero(albedo.a))
+        discard;
+    
+    return albedo.rgb;
+}
+
 void main()
 {
 #if defined(MRT_WITH_EMISSION)
     // sampling albedo 
-    vec3 albedo = texture(Albedo, iuv).rgb;
+    vec3 albedo = CheckAlbedo(texture(Albedo, iuv));
     // sampling emission 
     vec3 emission = texture(Emission, iuv).rgb * EmissionStrength;
     // Get Fixed normal
@@ -51,7 +62,7 @@ void main()
 #else
 
     // sampling albedo 
-    vec3 albedo = texture(Albedo, iuv).rgb;
+    vec3 albedo = CheckAlbedo(texture(Albedo, iuv));
     // Non emission material 
     vec3 emission = vec3(0.0);
     // Get Fixed normal

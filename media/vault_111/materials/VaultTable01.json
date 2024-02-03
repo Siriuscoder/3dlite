@@ -3,10 +3,16 @@
     {
       "Pass": 1,
       "Program": {
-        "Name": "depth.program",
-        "Path": "vault_111:shaders/json/depth.json"
+        "Name": "depth_alpha.program",
+        "Path": "vault_111:shaders/json/depth_alpha.json"
       },
       "Uniforms": [
+        {
+          "Name": "Albedo",
+          "Type": "sampler",
+          "TextureName": "Vault_Table_01_d.texture",
+          "TexturePath": "vault_111:textures/json/Vault_Table_01_d.json"
+        },
         {
           "Name": "projViewMatrix"
         },
@@ -48,10 +54,16 @@
     {
       "Pass": 3,
       "Program": {
-        "Name": "shadow.program",
-        "Path": "vault_111:shaders/json/shadow.json"
+        "Name": "shadow_alpha.program",
+        "Path": "vault_111:shaders/json/shadow_alpha.json"
       },
       "Uniforms": [
+        {
+          "Name": "Albedo",
+          "Type": "sampler",
+          "TextureName": "Vault_Table_01_d.texture",
+          "TexturePath": "vault_111:textures/json/Vault_Table_01_d.json"
+        },
         {
           "Name": "ShadowMatrix",
           "UBOName": "ShadowMatrixBuffer",
