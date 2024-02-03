@@ -1,0 +1,78 @@
+{
+  "Passes": [
+    {
+      "Pass": 2,
+      "Program": {
+        "Name": "bsdf_direct_glow_alpha.program",
+        "Path": "vault_111:shaders/json/bsdf_direct_glow_alpha.json"
+      },
+      "Uniforms": [
+        {
+          "Name": "Albedo",
+          "Type": "sampler",
+          "TextureName": "ComputerTerminal01_VentFX_d.texture",
+          "TexturePath": "vault_111:textures/json/ComputerTerminal01_VentFX_d.json"
+        },
+        {
+          "Name": "Specular",
+          "Type": "float",
+          "Value": 0.5970441102981567
+        },
+        {
+          "Name": "Roughness",
+          "Type": "float",
+          "Value": 1.0
+        },
+        {
+          "Name": "Emission",
+          "Type": "sampler",
+          "TextureName": "PipBoyScreen_g.texture",
+          "TexturePath": "vault_111:textures/json/PipBoyScreen_g.json"
+        },
+        {
+          "Name": "EmissionStrength",
+          "Type": "float",
+          "Value": 2.0999999046325684
+        },
+        {
+          "Name": "Environment",
+          "TextureName": "environment.texture",
+          "TexturePath": "samples:textures/json/skybox_cryo_mip.json",
+          "Type": "sampler"
+        },
+        {
+          "Name": "lightSources",
+          "UBOName": "Vault_111_lightingBufferObject",
+          "Type": "UBO"
+        },
+        {
+          "Name": "lightIndexes",
+          "UBOName": "Vault_111_lightingIndexBuffer",
+          "Type": "UBO"
+        },
+        {
+          "Name": "ShadowMaps",
+          "TextureName": "shadow.texture",
+          "Type": "sampler"
+        },
+        {
+          "Name": "ShadowMatrix",
+          "UBOName": "ShadowMatrixBuffer",
+          "Type": "UBO"
+        },
+        {
+          "Name": "eye",
+          "Type": "v3",
+          "Scope": "global"
+        }
+      ],
+      "Blending": true,
+      "BlendingMode": "traditional"
+    }
+  ],
+  "Uniforms": [
+    {
+      "Name": "projViewMatrix"
+    }
+  ]
+}

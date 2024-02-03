@@ -18,27 +18,38 @@
     {
       "Pass": 2,
       "Program": {
-        "Name": "bsdf_prepare.program",
-        "Path": "vault_111:shaders/json/bsdf_prepare.json"
+        "Name": "bsdf_glow_prepare.program",
+        "Path": "vault_111:shaders/json/bsdf_glow_prepare.json"
       },
       "Uniforms": [
         {
           "Name": "Albedo",
           "Type": "sampler",
-          "TextureName": "V111GearKey01_d.texture",
-          "TexturePath": "vault_111:textures/json/V111GearKey01_d.json"
+          "TextureName": "HospitalLights_d.texture",
+          "TexturePath": "vault_111:textures/json/HospitalLights_d.json"
         },
         {
           "Name": "Normal",
           "Type": "sampler",
-          "TextureName": "V111GearKey01_n.texture",
-          "TexturePath": "vault_111:textures/json/V111GearKey01_n.json"
+          "TextureName": "HospitalLights_n.texture",
+          "TexturePath": "vault_111:textures/json/HospitalLights_n.json"
         },
         {
           "Name": "Specular",
           "Type": "sampler",
-          "TextureName": "V111GearKey01_s.texture",
-          "TexturePath": "vault_111:textures/json/V111GearKey01_s.json"
+          "TextureName": "HospitalLights_s.texture",
+          "TexturePath": "vault_111:textures/json/HospitalLights_s.json"
+        },
+        {
+          "Name": "Emission",
+          "Type": "sampler",
+          "TextureName": "HospitalLights_g.texture",
+          "TexturePath": "vault_111:textures/json/HospitalLights_g.json"
+        },
+        {
+          "Name": "EmissionStrength",
+          "Type": "float",
+          "Value": 6.0
         },
         {
           "Name": "projViewMatrix"

@@ -18,38 +18,27 @@
     {
       "Pass": 2,
       "Program": {
-        "Name": "bsdf_glow_prepare.program",
-        "Path": "vault_111:shaders/json/bsdf_glow_prepare.json"
+        "Name": "bsdf_prepare.program",
+        "Path": "vault_111:shaders/json/bsdf_prepare.json"
       },
       "Uniforms": [
         {
           "Name": "Albedo",
           "Type": "sampler",
-          "TextureName": "Black01_d.texture",
-          "TexturePath": "vault_111:textures/json/Black01_d.json"
+          "TextureName": "ConScanner01_d.texture",
+          "TexturePath": "vault_111:textures/json/ConScanner01_d.json"
         },
         {
           "Name": "Normal",
           "Type": "sampler",
-          "TextureName": "FlatFlat_n.texture",
-          "TexturePath": "vault_111:textures/json/FlatFlat_n.json"
+          "TextureName": "ConScanner01_n.texture",
+          "TexturePath": "vault_111:textures/json/ConScanner01_n.json"
         },
         {
           "Name": "Specular",
           "Type": "sampler",
-          "TextureName": "V111LabelSet03_s.texture",
-          "TexturePath": "vault_111:textures/json/V111LabelSet03_s.json"
-        },
-        {
-          "Name": "Emission",
-          "Type": "sampler",
-          "TextureName": "VltSignage01Nav_g.texture",
-          "TexturePath": "vault_111:textures/json/VltSignage01Nav_g.json"
-        },
-        {
-          "Name": "EmissionStrength",
-          "Type": "float",
-          "Value": 3.0
+          "TextureName": "ConScanner01_s.texture",
+          "TexturePath": "vault_111:textures/json/ConScanner01_s.json"
         },
         {
           "Name": "projViewMatrix"

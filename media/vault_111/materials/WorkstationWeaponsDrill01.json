@@ -25,20 +25,20 @@
         {
           "Name": "Albedo",
           "Type": "sampler",
-          "TextureName": "MachineKitQuad04a_d.texture",
-          "TexturePath": "vault_111:textures/json/MachineKitQuad04a_d.json"
+          "TextureName": "WorkstationWeaponsDrill01_d.texture",
+          "TexturePath": "vault_111:textures/json/WorkstationWeaponsDrill01_d.json"
         },
         {
           "Name": "Normal",
           "Type": "sampler",
-          "TextureName": "MachineKitQuad04_n.texture",
-          "TexturePath": "vault_111:textures/json/MachineKitQuad04_n.json"
+          "TextureName": "WorkstationWeaponsDrill01_n.texture",
+          "TexturePath": "vault_111:textures/json/WorkstationWeaponsDrill01_n.json"
         },
         {
           "Name": "Specular",
           "Type": "sampler",
-          "TextureName": "MachineKitQuad04_s.texture",
-          "TexturePath": "vault_111:textures/json/MachineKitQuad04_s.json"
+          "TextureName": "WorkstationWeaponsDrill01_s.texture",
+          "TexturePath": "vault_111:textures/json/WorkstationWeaponsDrill01_s.json"
         },
         {
           "Name": "projViewMatrix"
