@@ -1,6 +1,6 @@
 /******************************************************************************
  *	This file is part of lite3d (Light-weight 3d engine).
- *	Copyright (C) 2015  Sirius (Korolev Nikita)
+ *	Copyright (C) 2024 Sirius (Korolev Nikita)
  *
  *	Lite3D is free software: you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -19,12 +19,12 @@
 #include <algorithm>
 #include <cctype>
 
-#ifdef PLATFORM_Windows
+#ifdef _MSC_VER
 #   include <Windows.h>
 #   define MKDIR(folder, name) \
     if(CreateDirectory(MAKE_PATH(folder, name), NULL)) \
         printf("Make directory %s\n", MAKE_PATH(folder, name));
-#elif PLATFORM_Linux
+#elif defined(__GNUC__) || defined(__clang__)
 #   include <sys/stat.h>
 #   define MKDIR(folder, name) \
     if(mkdir(MAKE_PATH(folder, name), 0755) == 0) \

@@ -1,6 +1,6 @@
 /******************************************************************************
  *	This file is part of lite3d (Light-weight 3d engine).
- *	Copyright (C) 2015  Sirius (Korolev Nikita)
+ *	Copyright (C) 2024 Sirius (Korolev Nikita)
  *
  *	Lite3D is free software: you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -44,7 +44,7 @@ namespace lite3dpp
             PolygonFill = LITE3D_POLYMODE_FILL
         };
 
-        Camera(const String &name, Main *main);
+        Camera(const String &name);
         ~Camera();
 
         inline lite3d_camera *getPtr()
@@ -109,7 +109,6 @@ namespace lite3dpp
     private:
 
         String mName; 
-        Main *mMain;
         lite3d_camera mCamera;
     };
 }

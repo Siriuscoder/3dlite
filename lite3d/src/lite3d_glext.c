@@ -1,6 +1,6 @@
 /******************************************************************************
  *	This file is part of lite3d (Light-weight 3d engine).
- *	Copyright (C) 2016  Sirius (Korolev Nikita)
+ *	Copyright (C) 2024 Sirius (Korolev Nikita)
  *
  *	Lite3D is free software: you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -58,7 +58,7 @@ PFNGLFRAMEBUFFERTEXTUREOESPROC glFramebufferTexturePtr = NULL;
 
 #endif
 
-int lite3d_check_vertex_array_object()
+int lite3d_check_vertex_array_object(void)
 {
 #ifdef GLES
 #   ifdef WITH_GLES2
@@ -67,11 +67,11 @@ int lite3d_check_vertex_array_object()
     return LITE3D_TRUE;
 #   endif
 #else
-    return GLEW_ARB_vertex_array_object;
+    return GLEW_ARB_vertex_array_object || GLEW_APPLE_vertex_array_object || GLEW_VERSION_3_0;
 #endif
 }
 
-int lite3d_check_instanced_arrays()
+int lite3d_check_instanced_arrays(void)
 {
 #ifdef GLES
 #   ifdef WITH_GLES2
@@ -84,7 +84,7 @@ int lite3d_check_instanced_arrays()
 #endif
 }
 
-int lite3d_check_copy_buffer()
+int lite3d_check_copy_buffer(void)
 {
 #ifdef GLES
 #   ifdef WITH_GLES2
@@ -97,7 +97,7 @@ int lite3d_check_copy_buffer()
 #endif
 }
 
-int lite3d_check_uniform_buffer()
+int lite3d_check_uniform_buffer(void)
 {
 #ifdef GLES
 #   ifdef WITH_GLES2
@@ -106,11 +106,11 @@ int lite3d_check_uniform_buffer()
     return LITE3D_TRUE;
 #   endif
 #else
-    return GLEW_ARB_uniform_buffer_object;
+    return GLEW_ARB_uniform_buffer_object || GLEW_VERSION_3_0;
 #endif
 }
 
-int lite3d_check_ssbo()
+int lite3d_check_ssbo(void)
 {
 #ifdef GLES
     return LITE3D_FALSE;
@@ -119,7 +119,7 @@ int lite3d_check_ssbo()
 #endif
 }
 
-int lite3d_check_texture_compression()
+int lite3d_check_texture_compression(void)
 {
 #ifdef GLES
     return LITE3D_TRUE;
@@ -128,7 +128,7 @@ int lite3d_check_texture_compression()
 #endif
 }
 
-int lite3d_check_texture_compression_s3tc()
+int lite3d_check_texture_compression_s3tc(void)
 {
 #ifdef GLES
     return SDL_GL_ExtensionSupported("GL_EXT_texture_compression_s3tc") == SDL_TRUE &&
@@ -139,7 +139,7 @@ int lite3d_check_texture_compression_s3tc()
 #endif
 }
 
-int lite3d_check_texture_compression_dxt1()
+int lite3d_check_texture_compression_dxt1(void)
 {
 #ifdef GLES
     return SDL_GL_ExtensionSupported("GL_EXT_texture_compression_dxt1") == SDL_TRUE;
@@ -148,7 +148,7 @@ int lite3d_check_texture_compression_dxt1()
 #endif
 }
 
-int lite3d_check_texture_filter_anisotropic()
+int lite3d_check_texture_filter_anisotropic(void)
 {
 #ifdef GLES
     return SDL_GL_ExtensionSupported("GL_EXT_texture_filter_anisotropic") == SDL_TRUE;
@@ -157,7 +157,7 @@ int lite3d_check_texture_filter_anisotropic()
 #endif
 }
 
-int lite3d_check_map_buffer()
+int lite3d_check_map_buffer(void)
 {
 #ifdef GLES
     return SDL_GL_ExtensionSupported("GL_OES_mapbuffer") == SDL_TRUE;
@@ -166,7 +166,7 @@ int lite3d_check_map_buffer()
 #endif    
 }
 
-int lite3d_check_gl_version()
+int lite3d_check_gl_version(void)
 {
 #ifdef GLES
     return LITE3D_TRUE;
@@ -175,7 +175,7 @@ int lite3d_check_gl_version()
 #endif
 }
 
-int lite3d_check_tbo()
+int lite3d_check_tbo(void)
 {
 #ifdef GLES
     return LITE3D_FALSE;
@@ -184,7 +184,7 @@ int lite3d_check_tbo()
 #endif    
 }
 
-int lite3d_check_seamless_cube_map()
+int lite3d_check_seamless_cube_map(void)
 {
 #ifdef GLES
     return LITE3D_FALSE;
@@ -193,7 +193,7 @@ int lite3d_check_seamless_cube_map()
 #endif      
 }
 
-int lite3d_check_geometry_shader()
+int lite3d_check_geometry_shader(void)
 {
 #ifdef GLES
     return SDL_GL_ExtensionSupported("GL_OES_geometry_shader") == SDL_TRUE;
@@ -202,7 +202,7 @@ int lite3d_check_geometry_shader()
 #endif 
 }
 
-int lite3d_check_renderbuffer_storage_multisample()
+int lite3d_check_renderbuffer_storage_multisample(void)
 {
 #ifdef GLES
 #   ifdef WITH_GLES2
@@ -215,7 +215,7 @@ int lite3d_check_renderbuffer_storage_multisample()
 #endif 
 }
 
-int lite3d_check_texture_multisample()
+int lite3d_check_texture_multisample(void)
 {
 #ifdef GLES
 #   ifdef WITH_GLES2
@@ -228,7 +228,7 @@ int lite3d_check_texture_multisample()
 #endif 
 }
 
-int lite3d_check_occlusion_query()
+int lite3d_check_occlusion_query(void)
 {
 #ifdef GLES
 #   ifdef WITH_GLES2
@@ -241,7 +241,7 @@ int lite3d_check_occlusion_query()
 #endif 
 }
 
-int lite3d_check_framebuffer_blit()
+int lite3d_check_framebuffer_blit(void)
 {
 #ifdef GLES
 #   ifdef WITH_GLES2
@@ -254,7 +254,7 @@ int lite3d_check_framebuffer_blit()
 #endif 
 }
 
-int lite3d_check_depth32()
+int lite3d_check_depth32(void)
 {
 #ifdef GLES
     return SDL_GL_ExtensionSupported("GL_OES_depth32") == SDL_TRUE;
@@ -263,7 +263,7 @@ int lite3d_check_depth32()
 #endif 
 }
 
-int lite3d_check_shadow_samplers()
+int lite3d_check_shadow_samplers(void)
 {
 #ifdef GLES
 #   ifdef WITH_GLES2
@@ -276,7 +276,7 @@ int lite3d_check_shadow_samplers()
 #endif 
 }
 
-int lite3d_check_srgb()
+int lite3d_check_srgb(void)
 {
 #ifdef GLES
     return SDL_GL_ExtensionSupported("GL_EXT_sRGB") == SDL_TRUE;
@@ -285,7 +285,7 @@ int lite3d_check_srgb()
 #endif 
 }
 
-int lite3d_check_texture3D()
+int lite3d_check_texture3D(void)
 {
 #ifdef GLES
     return SDL_GL_ExtensionSupported("GL_OES_texture_3D") == SDL_TRUE;
@@ -299,7 +299,7 @@ int lite3d_check_texture3D()
 #   pragma GCC diagnostic ignored "-Wpedantic"
 #endif
 
-int lite3d_init_gl_extensions_binding()
+int lite3d_init_gl_extensions_binding(void)
 {
 #ifndef GLES
     GLenum err;

@@ -26,10 +26,10 @@ const float specPower = 40.0;
 
 void main()
 {
-    vec4 fragTexture = texture2D(diffuse, iuv);
+    vec4 fragTexture = texture(diffuse, iuv);
 #ifdef CALC_ILLUM
     // sampling glow texture and check colors
-    vec3 fragGlow = texture2D(glow, iuv).rgb;
+    vec3 fragGlow = texture(glow, iuv).rgb;
     if (!fiszero(fragGlow))
     {
         fragColor = vec4(fragGlow, fragTexture.a);
@@ -38,7 +38,7 @@ void main()
 #endif
 
     /* sampling normal and specular factor (w)*/
-    vec4 fragNormalAndSpecular = texture2D(normals, iuv);
+    vec4 fragNormalAndSpecular = texture(normals, iuv);
 #ifdef GLASS
     fragNormalAndSpecular.w = 2.5;
 #endif

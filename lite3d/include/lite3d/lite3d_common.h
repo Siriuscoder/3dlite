@@ -1,6 +1,6 @@
 /******************************************************************************
 *	This file is part of lite3d (Light-weight 3d engine).
-*	Copyright (C) 2014  Sirius (Korolev Nikita)
+*	Copyright (C) 2024  Sirius (Korolev Nikita)
 *
 *	Lite3D is free software: you can redistribute it and/or modify
 *	it under the terms of the GNU General Public License as published by
@@ -30,23 +30,19 @@
 #define STR_HELPER(x) #x
 #define STR(x) STR_HELPER(x)
 
-#ifdef PLATFORM_Windows
-
-#   if !defined(_MSC_VER) && !defined(__GNUC__) && !defined(RC_INVOKED)
-#       error "GCC or MSVC compiller requred.."
-#   endif
+#if defined(_MSC_VER) || defined(RC_INVOKED)
 
 #   pragma warning(disable:4244)
 
 #   ifdef WIN_3DLITE_DLL
 // When making the DLL, export tagged symbols, so they appear
 // in the import library.
-#   define LITE3D_EXPORT __declspec(dllexport)
-#   define LITE3D_CLASS_EXPORT LITE3D_EXPORT
+#       define LITE3D_EXPORT __declspec(dllexport)
+#       define LITE3D_CLASS_EXPORT LITE3D_EXPORT
 #   else
 // We must be _using_ the DLL, so import symbols instead.
-#   define LITE3D_EXPORT
-#   define LITE3D_CLASS_EXPORT __declspec(dllimport)
+#       define LITE3D_EXPORT
+#       define LITE3D_CLASS_EXPORT __declspec(dllimport)
 #   endif
 
 #   define LITE3D_STRUCT_PACKED(x) __declspec(align(x))
@@ -61,25 +57,21 @@
 #   undef far
 #   endif
 
-#elif PLATFORM_Linux
-    // If not Windows, we assume some sort of Unixy build environment,
-    // where autotools is used.  (This includes Cygwin!)  #include the
-    // config.h file only if this file was included from a non-header
-    // file, because headers must not be dependent on config.h.
-#   if !defined(__GNUC__)
-#       error "GCC compiler requred.."
-#   endif
-
+#elif defined(__GNUC__) || defined(__clang__)
 #   define LITE3D_EXPORT
 #   define LITE3D_CLASS_EXPORT
 #   define LITE3D_STRUCT_PACKED(x) __attribute__ ((aligned(x)));
 #   define LITE3D_INLINE inline
 #   define LITE3D_DEVIL_CALL
 #else
-#   error "Unknown target platform"
+#   error "Unknown target compiler"
 #endif
 
-#ifdef __GNUC__
+#ifdef __clang__
+#   define LITE3D_COMPILER_VERSION "CLANG " STR(__clang_major__) "." \
+    STR(__clang_minor__) "." STR(__clang_patchlevel__)
+#   define LITE3D_CURRENT_FUNCTION __func__
+#elif defined(__GNUC__)
 #   define LITE3D_COMPILER_VERSION "GCC " STR(__GNUC__) "." \
     STR(__GNUC_MINOR__) "." STR(__GNUC_PATCHLEVEL__)
 #   define LITE3D_CURRENT_FUNCTION __func__

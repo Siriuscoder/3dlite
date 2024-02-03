@@ -1,6 +1,6 @@
 /******************************************************************************
 *	This file is part of lite3d (Light-weight 3d engine).
-*	Copyright (C) 2014  Sirius (Korolev Nikita)
+*	Copyright (C) 2024  Sirius (Korolev Nikita)
 *
 *	Lite3D is free software: you can redistribute it and/or modify
 *	it under the terms of the GNU General Public License as published by
@@ -22,20 +22,12 @@
 
 #include <lite3d/lite3d_common.h>
 
-#ifdef PLATFORM_Windows
+#ifdef _MSC_VER
 
-#   if !defined(_MSC_VER) && !defined(__GNUC__)
-#       error "GCC or MSVC compiller requred.."
-#   endif
-
-// Stuff for Visual C++ only
-#   if defined(_MSC_VER)
 // Disable whining about using 'this' as a member initializer on VC++.
-#       pragma warning(disable: 4355)
-#       pragma warning(disable: 4127)
-#       pragma warning(disable: 4251)
-#   endif
-
+#   pragma warning(disable: 4355)
+#   pragma warning(disable: 4127)
+#   pragma warning(disable: 4251)
 
 #   ifdef WIN_3DLITEPP_DLL
 // When making the DLL, export tagged symbols, so they appear
@@ -46,17 +38,10 @@
 #   define LITE3DPP_EXPORT __declspec(dllimport)
 #   endif
 
-#elif PLATFORM_Linux
-    // If not Windows, we assume some sort of Unixy build environment,
-    // where autotools is used.  (This includes Cygwin!)  #include the
-    // config.h file only if this file was included from a non-header
-    // file, because headers must not be dependent on config.h.
-#   if !defined(__GNUC__)
-#       error "GCC compiler requred.."
-#   endif
-
+#elif defined(__GNUC__) || defined(__clang__)
 #   define LITE3DPP_EXPORT
-
+#else
+#   error "Unknown target compiler"
 #endif
 
 //#define LITE3DPP_USE_STL_ALLOCATOR

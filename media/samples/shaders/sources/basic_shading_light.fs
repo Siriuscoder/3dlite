@@ -10,6 +10,6 @@ void main()
 {
     vec3 lightDir = vec3(0.0, 1.0, 1.0);
     float nDotL = clamp(dot(wn, lightDir), 0.2, 1.0);
-    vec4 d = texture2D(Albedo, uv.st);
+    vec4 d = texture(Albedo, uv.st);
     fragcolor = vec4(d.xyz * nDotL, d.w);
 }

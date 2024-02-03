@@ -1,6 +1,6 @@
 /******************************************************************************
  *	This file is part of lite3d (Light-weight 3d engine).
- *	Copyright (C) 2014  Sirius (Korolev Nikita)
+ *	Copyright (C) 2024  Sirius (Korolev Nikita)
  *
  *	Lite3D is free software: you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 #include <lite3d/lite3d_common.h>
 #include <lite3d/lite3d_dbg.h>
 
-#if defined(PLATFORM_Windows) && defined(_DEBUG)
+#if defined(PLATFORM_Windows) && defined(_DEBUG) && defined(_MSC_VER)
 #pragma warning(disable : 4091)
 #include <Windows.h>
 #include <DbgHelp.h>

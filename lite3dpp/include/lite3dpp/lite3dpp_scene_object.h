@@ -1,6 +1,6 @@
 /******************************************************************************
  *	This file is part of lite3d (Light-weight 3d engine).
- *	Copyright (C) 2015  Sirius (Korolev Nikita)
+ *	Copyright (C) 2024 Sirius (Korolev Nikita)
  *
  *	Lite3D is free software: you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -35,7 +35,7 @@ namespace lite3dpp
 
         SceneObject(const String &name, 
             SceneObject *parent, Main *main);
-        ~SceneObject();
+        virtual ~SceneObject() = default;
 
         inline const Nodes &getNodes() const
         { return mNodes; }
@@ -58,9 +58,6 @@ namespace lite3dpp
         void disable();
         void enable();
 
-        lite3d_bounding_vol calculateBoudingBox();
-        lite3d_bounding_vol calculateBoudingBoxWorld();
-
     protected:
         
         virtual SceneNode::Ptr createNode(const ConfigurationReader &nodeconf, SceneNode *base);
@@ -77,7 +74,6 @@ namespace lite3dpp
         SceneObject *mParent;
         Main *mMain;
         Scene *mScene;
-        bool mEnabled;
         std::unique_ptr<ConfigurationReader> mConfiguration;
     };
 }

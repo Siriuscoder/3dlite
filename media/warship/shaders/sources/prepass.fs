@@ -3,6 +3,10 @@
 uniform sampler2D diffuse;
 uniform sampler2D normals;
 
+layout(location = 0) out vec4 fragWCoord;
+layout(location = 1) out vec4 fragWNormal;
+layout(location = 2) out vec4 fragAlbedo;
+
 in vec2 iuv;
 in vec3 ivv;
 in mat3 itbn;
@@ -10,14 +14,14 @@ in mat3 itbn;
 void main()
 {
     // sampling normal from normal map
-    vec4 nval = texture2D(normals, iuv);
+    vec4 nval = texture(normals, iuv);
     // put normal in [-1,1] range in tangent space 
     // and trasform normal to world space 
     vec3 nw = normalize(itbn * normalize(2*nval.rgb-1));
     // sampling diffuse color 
-    vec4 fragDiffuse = texture2D(diffuse, iuv);
+    vec4 fragDiffuse = texture(diffuse, iuv);
 
-    gl_FragData[0] = vec4(ivv, gl_FragCoord.z / gl_FragCoord.w);
-    gl_FragData[1] = vec4(nw, nval.a);
-    gl_FragData[2] = vec4(fragDiffuse.rgb, 0.0);
+    fragWCoord = vec4(ivv, gl_FragCoord.z / gl_FragCoord.w);
+    fragWNormal = vec4(nw, nval.a);
+    fragAlbedo = vec4(fragDiffuse.rgb, 0.0);
 }

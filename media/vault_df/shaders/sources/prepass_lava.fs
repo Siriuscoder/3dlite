@@ -14,7 +14,7 @@ layout(location = 2) out vec4 color;
 void main()
 {
     // sampling diffuse color 
-    vec4 fragDiffuse = vec4(texture2D(diffuse, vec2(iuv.x, iuv.y + animcounter)).rgb, 1.0);
+    vec4 fragDiffuse = vec4(texture(diffuse, vec2(iuv.x, iuv.y + animcounter)).rgb, 1.0);
     coord = vec4(ivv, gl_FragCoord.z / gl_FragCoord.w);
     norm = vec4(wnorm, 0);
     color = fragDiffuse;

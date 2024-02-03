@@ -30,6 +30,10 @@
 ** THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+#ifdef __clang__
+#  pragma clang diagnostic ignored "-Wstrict-prototypes"
+#endif
+
 #ifndef GLEW_INCLUDE
 #include <GL/glew.h>
 #else

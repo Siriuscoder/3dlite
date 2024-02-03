@@ -24,5 +24,5 @@ vec3 fogFunc(vec3 frag, vec3 fc)
 void main()
 {
     /* calculate fog factor */
-    fragColor = vec4(fogFunc(texture2D(diffuse, vec2(iuv.x, iuv.y + animcounter)).rgb, fogColor), 1.0);
+    fragColor = vec4(fogFunc(texture(diffuse, vec2(iuv.x, iuv.y + animcounter)).rgb, fogColor), 1.0);
 }

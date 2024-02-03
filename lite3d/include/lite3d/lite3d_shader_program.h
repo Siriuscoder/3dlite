@@ -1,6 +1,6 @@
 /******************************************************************************
 *	This file is part of lite3d (Light-weight 3d engine).
-*	Copyright (C) 2014  Sirius (Korolev Nikita)
+*	Copyright (C) 2024  Sirius (Korolev Nikita)
 *
 *	Lite3D is free software: you can redistribute it and/or modify
 *	it under the terms of the GNU General Public License as published by
@@ -48,7 +48,7 @@ typedef struct lite3d_shader_parameter_container
     int16_t binding;
 } lite3d_shader_parameter_container;
 
-LITE3D_CEXPORT int lite3d_shader_program_technique_init();
+LITE3D_CEXPORT int lite3d_shader_program_technique_init(void);
 LITE3D_CEXPORT int lite3d_shader_program_init(lite3d_shader_program *program);
 LITE3D_CEXPORT int lite3d_shader_program_link(
     lite3d_shader_program *program, lite3d_shader *shaders, size_t count);
@@ -67,6 +67,8 @@ LITE3D_CEXPORT int lite3d_shader_program_uniform_set(
 
 LITE3D_CEXPORT void lite3d_shader_program_attribute_index(
     lite3d_shader_program *program, const char *name, int32_t location);
+
+LITE3D_CEXPORT int lite3d_shader_program_validate_current(void);
 
 #endif	/* LITE3D_SHADER_PROGRAM_H */
 

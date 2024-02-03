@@ -1,6 +1,6 @@
 /******************************************************************************
  *	This file is part of lite3d (Light-weight 3d engine).
- *	Copyright (C) 2015  Sirius (Korolev Nikita)
+ *	Copyright (C) 2024 Sirius (Korolev Nikita)
  *
  *	Lite3D is free software: you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -31,12 +31,12 @@ namespace lite3dpp {
 namespace samples {
 
 Sample::Sample() : 
-    mMainCamera(NULL),
-    mGuiCamera(NULL),
-    mGuiScene(NULL),
-    mMainWindow(NULL),
-    mStatTexture(NULL),
-    mStatTimer(NULL),
+    mMainCamera(nullptr),
+    mGuiCamera(nullptr),
+    mGuiScene(nullptr),
+    mMainWindow(nullptr),
+    mStatTexture(nullptr),
+    mStatTimer(nullptr),
     mWCenter(KM_VEC2_ZERO),
     mCamAngles(KM_VEC2_ZERO),
     mSensitivity(0.001f),
@@ -235,11 +235,11 @@ void Sample::printRenderStats()
         "%d\t\t%d\t\t%d\t\t%d\n"
         "last frame ms\tavr frame ms\tbest frame ms\tworst frame ms\n"
         "%f\t%f\t%f\t%f\n"
-        "nodes total\tbatches total\tbatches called\tbatches instanced\tfaces\n"
+        "nodes total\tbatch total\tbatch called\tbatch instanced\tfaces\n"
         "%d\t\t%d\t\t%d\t\t%d\t\t\t%d\n",
         stats->framesCount, stats->lastFPS, stats->avrFPS, stats->bestFPS, stats->worstFPS,
         stats->lastFrameMs, stats->avrFrameMs, stats->bestFrameMs, stats->worstFrameMs,
-        stats->nodesTotal, stats->batchesTotal, stats->batchesCalled, stats->batchesInstancedCalled,
+        stats->nodesTotal, stats->batchTotal, stats->batchCalled, stats->batchInstancedCalled,
         stats->trianglesByFrame);
 }
 
@@ -278,12 +278,12 @@ void Sample::updateGuiStats()
     const lite3d_render_stats *stats = mMain.getRenderStats();
     
     char strbuf[150];
-    kmVec2 textPos = {15, 20};
+    kmVec2 textPos = {24, 25};
     kmVec4 textColor = {0.3f, 0.7f, 0.8f, 1.0f};
 
-    sprintf(strbuf, "FPS: %d\nFrame time: %.2f ms\nBatches: %d/%d\nFaces: %d",
-        stats->lastFPS, stats->lastFrameMs, stats->batchesCalled, 
-        stats->batchesTotal, stats->trianglesByFrame);
+    sprintf(strbuf, "FPS: %d\nFrame time: %.2f ms\nBatching: %d/%d\nFaces: %d",
+        stats->lastFPS, stats->lastFrameMs, stats->batchCalled, 
+        stats->batchTotal, stats->trianglesByFrame);
     
     mStatTexture->clean();
     mStatTexture->drawText(strbuf, textPos, textColor);

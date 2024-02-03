@@ -1,6 +1,6 @@
 /******************************************************************************
  *	This file is part of lite3d (Light-weight 3d engine).
- *	Copyright (C) 2015  Sirius (Korolev Nikita)
+ *	Copyright (C) 2024 Sirius (Korolev Nikita)
  *
  *	Lite3D is free software: you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -23,8 +23,6 @@
 #include <lite3d/lite3d_alloc.h>
 #include <lite3d/lite3d_buffers_manip.h>
 #include <lite3d/lite3d_material.h>
-
-lite3d_shader_program *gActProg = NULL;
 
 static void lite3d_material_pass_purge(lite3d_material_pass *pass)
 {
@@ -225,22 +223,9 @@ lite3d_material_pass *lite3d_material_apply(
         return pass;
 
     /* bind current shander first */
-    if (gActProg != pass->program)
-    {
-        lite3d_shader_program_bind(pass->program);
-        gActProg = pass->program;
-    }
-
+    lite3d_shader_program_bind(pass->program);
     /* set up uniforms if shader changed */
     lite3d_material_pass_set_params(material, pass, LITE3D_TRUE);
-    /* validate shader program */
-    if (!lite3d_shader_program_validate(gActProg))
-    {
-        SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
-            "%s: validate program 0x%016llx: %s", LITE3D_CURRENT_FUNCTION, 
-            (unsigned long long)gActProg, gActProg->statusString);
-    }
-
     lite3d_blending(pass->blending);
     lite3d_blending_mode_set(pass->blendingMode);
     return pass;

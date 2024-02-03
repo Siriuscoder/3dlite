@@ -1,6 +1,6 @@
 /******************************************************************************
  *	This file is part of lite3d (Light-weight 3d engine).
- *	Copyright (C) 2015  Sirius (Korolev Nikita)
+ *	Copyright (C) 2024 Sirius (Korolev Nikita)
  *
  *	Lite3D is free software: you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -36,7 +36,7 @@ typedef struct lite3d_timer
 
 typedef void (*lite3d_timer_func)(lite3d_timer *timer);
 
-LITE3D_CEXPORT int lite3d_timer_technique_init();
+LITE3D_CEXPORT int lite3d_timer_technique_init(void);
 LITE3D_CEXPORT lite3d_timer *lite3d_timer_add(int32_t milli, 
     lite3d_timer_func timerCallback, void *userdata);
 LITE3D_CEXPORT void lite3d_timer_purge(lite3d_timer *timer);

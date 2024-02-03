@@ -1,6 +1,6 @@
 /******************************************************************************
  *	This file is part of lite3d (Light-weight 3d engine).
- *	Copyright (C) 2015  Sirius (Korolev Nikita)
+ *	Copyright (C) 2024 Sirius (Korolev Nikita)
  *
  *	Lite3D is free software: you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -30,18 +30,14 @@ namespace lite3dpp
         mName(name),
         mParent(parent),
         mMain(main),
-        mScene(NULL),
-        mEnabled(true)
-    {}
-
-    SceneObject::~SceneObject()
+        mScene(NULL)
     {}
 
     void SceneObject::loadFromTemplate(const String &templatePath)
     {
         size_t fileSize = 0;
         const void *fileData = mMain->getResourceManager()->loadFileToMemory(templatePath, &fileSize);
-        mConfiguration.reset(new ConfigurationReader(static_cast<const char *>(fileData), fileSize));
+        mConfiguration = std::make_unique<ConfigurationReader>(static_cast<const char *>(fileData), fileSize);
 
         ConfigurationReader rootNodeHelper = mConfiguration->getObject(L"Root");
         if(rootNodeHelper.isEmpty())
@@ -128,27 +124,15 @@ namespace lite3dpp
     SceneNode::Ptr SceneObject::createNode(const ConfigurationReader &nodeconf, SceneNode *base)
     {
         if (nodeconf.has(L"Mesh"))
-            return std::shared_ptr<MeshSceneNode>(new MeshSceneNode(nodeconf, base, mMain));
+            return std::make_shared<MeshSceneNode>(nodeconf, base, mMain);
         else if (nodeconf.has(L"Light"))
         {
-            auto lightNode = std::shared_ptr<LightSceneNode>(new LightSceneNode(nodeconf, base, mMain));
+            auto lightNode = std::make_shared<LightSceneNode>(nodeconf, base, mMain);
             lightNode->setName(getName() + lightNode->getName());
             return lightNode;
         }
         
-        return std::shared_ptr<SceneNode>(new SceneNode(nodeconf, base, mMain));
-    }
-
-    lite3d_bounding_vol SceneObject::calculateBoudingBox()
-    {
-        lite3d_bounding_vol bv = {};
-        return bv;
-    }
-
-    lite3d_bounding_vol SceneObject::calculateBoudingBoxWorld()
-    {
-        lite3d_bounding_vol bv = {};
-        return bv;
+        return std::make_shared<SceneNode>(nodeconf, base, mMain);
     }
 }
 

@@ -1,6 +1,6 @@
 /******************************************************************************
 *	This file is part of lite3d (Light-weight 3d engine).
-*	Copyright (C) 2014  Sirius (Korolev Nikita)
+*	Copyright (C) 2024  Sirius (Korolev Nikita)
 *
 *	Lite3D is free software: you can redistribute it and/or modify
 *	it under the terms of the GNU General Public License as published by
@@ -59,9 +59,9 @@ typedef struct lite3d_render_stats
     float triangleMs;
     int32_t triangleByBatch;
     int32_t nodesTotal;
-    int32_t batchesTotal;
-    int32_t batchesCalled;
-    int32_t batchesInstancedCalled;
+    int32_t batchTotal;
+    int32_t batchCalled;
+    int32_t batchInstancedCalled;
     int32_t materialsTotal;
     int32_t materialsPassedByFrame;
     int32_t textureUnitsByFrame;

@@ -1,6 +1,6 @@
 /******************************************************************************
  *	This file is part of lite3d (Light-weight 3d engine).
- *	Copyright (C) 2015  Sirius (Korolev Nikita)
+ *	Copyright (C) 2024 Sirius (Korolev Nikita)
  *
  *	Lite3D is free software: you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -20,9 +20,8 @@
 
 namespace lite3dpp
 {
-    Camera::Camera(const String &name, Main *main) : 
-        mName(name),
-        mMain(main)
+    Camera::Camera(const String &name) : 
+        mName(name)
     {
         lite3d_camera_init(&mCamera);
         mCamera.userdata = this;

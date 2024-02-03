@@ -1,6 +1,6 @@
 /******************************************************************************
  *	This file is part of lite3d (Light-weight 3d engine).
- *	Copyright (C) 2015  Sirius (Korolev Nikita)
+ *	Copyright (C) 2024 Sirius (Korolev Nikita)
  *
  *	Lite3D is free software: you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -296,7 +296,7 @@ namespace lite3dpp
             for (uint32_t i = 0; i < jarray.size(); ++i)
             {
                 if(jarray[i]->IsObject())
-                    result.push_back(ConfigurationReader(jarray[i]->AsObject()));
+                    result.emplace_back(ConfigurationReader(jarray[i]->AsObject()));
             }
         }
 
@@ -314,7 +314,7 @@ namespace lite3dpp
             for (uint32_t i = 0; i < jarray.size(); ++i)
             {
                 if(jarray[i]->IsString())
-                    result.push_back(std::move(JSON::wStringToString(jarray[i]->AsString())));
+                    result.emplace_back(JSON::wStringToString(jarray[i]->AsString()));
             }
         }
 
@@ -332,7 +332,7 @@ namespace lite3dpp
             for (uint32_t i = 0; i < jarray.size(); ++i)
             {
                 if(jarray[i]->IsNumber())
-                    result.push_back(jarray[i]->AsInt());
+                    result.emplace_back(jarray[i]->AsInt());
             }
         }
 
@@ -350,7 +350,7 @@ namespace lite3dpp
             for (uint32_t i = 0; i < jarray.size(); ++i)
             {
                 if(jarray[i]->IsNumber())
-                    result.push_back(jarray[i]->AsNumber());
+                    result.emplace_back(jarray[i]->AsNumber());
             }
         }
 
@@ -368,7 +368,7 @@ namespace lite3dpp
             for (uint32_t i = 0; i < jarray.size(); ++i)
             {
                 if(jarray[i]->IsNumber())
-                    result.push_back(jarray[i]->AsBool());
+                    result.emplace_back(jarray[i]->AsBool());
             }
         }
 

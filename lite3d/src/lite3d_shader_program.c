@@ -1,6 +1,6 @@
 /******************************************************************************
  *	This file is part of lite3d (Light-weight 3d engine).
- *	Copyright (C) 2014  Sirius (Korolev Nikita)
+ *	Copyright (C) 2024  Sirius (Korolev Nikita)
  *
  *	Lite3D is free software: you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -25,8 +25,9 @@
 
 typedef int (*lite3d_uniform_set_func)(lite3d_shader_program *, lite3d_shader_parameter_container *);
 
+lite3d_shader_program *gActProg = NULL;
 
-int lite3d_shader_program_technique_init()
+int lite3d_shader_program_technique_init(void)
 {
     return LITE3D_TRUE;
 }
@@ -129,6 +130,20 @@ int lite3d_shader_program_validate(
 
     program->statusString = (char *) lite3d_malloc(maxLogLength);
     glGetProgramInfoLog(program->programID, maxLogLength, &maxLogLength, program->statusString);
+
+    if (program->validated)
+    {
+        SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "%s: validate program 0x%016llx: OK", 
+            LITE3D_CURRENT_FUNCTION, (unsigned long long)program);
+    }
+    else
+    {
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+            "%s: validate program 0x%016llx: %s", LITE3D_CURRENT_FUNCTION, 
+            (unsigned long long)program, program->statusString);
+        return LITE3D_FALSE;
+    }
+
     return program->validated;
 }
 
@@ -154,13 +169,18 @@ void lite3d_shader_program_bind(
 {
     SDL_assert(program);
     SDL_assert(program->success == LITE3D_TRUE);
-    glUseProgram(program->programID);
+    if (gActProg != program)
+    {
+        glUseProgram(program->programID);
+        gActProg = program;
+    }
 }
 
 void lite3d_shader_program_unbind(
     lite3d_shader_program *program)
 {
     glUseProgram(0);
+    gActProg = NULL;
 }
 
 static int lite3d_shader_program_sampler_set(
@@ -359,4 +379,14 @@ void lite3d_shader_program_attribute_index(
         LITE3D_CURRENT_FUNCTION, name, location, (unsigned long long)program);
 
     glBindAttribLocation(program->programID, location, name);
+}
+
+int lite3d_shader_program_validate_current(void)
+{
+    if (!gActProg)
+    {
+        return LITE3D_FALSE;
+    }
+
+    return lite3d_shader_program_validate(gActProg);
 }

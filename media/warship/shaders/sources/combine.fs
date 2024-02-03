@@ -6,6 +6,7 @@ uniform sampler2D normalMap;
 uniform sampler2D diffuseMap;
 uniform vec3 eye;
 
+out vec4 fragColor;
 in vec2 iuv;
 
 const vec3 ambient = vec3(0.02, 0.02, 0.02);
@@ -18,16 +19,16 @@ const vec3 fogColor = vec3(0.5, 0.5, 0.2);
 void main()
 {
     /* fragment coordinate */
-    vec4 fragXYZW = texture2D(fragMap, iuv);
-    vec4 fragTexture = texture2D(diffuseMap, iuv);
+    vec4 fragXYZW = texture(fragMap, iuv);
+    vec4 fragTexture = texture(diffuseMap, iuv);
     /* check fragment not shaded or self-illum material */
     if (fragXYZW.w == 1.0 || fragTexture.w == 1.0)
     {
-        gl_FragColor = vec4(fragTexture.xyz, 1.0);
+        fragColor = vec4(fragTexture.xyz, 1.0);
         return;
     }
     /* sampling normal and specular factor (w)*/
-    vec4 fragNormalAndSpecular = texture2D(normalMap, iuv);
+    vec4 fragNormalAndSpecular = texture(normalMap, iuv);
 
     vec3 linearSpec = vec3(0.0);
     vec3 linear = calc_lighting(fragXYZW.xyz, fragNormalAndSpecular.xyz,
@@ -37,5 +38,5 @@ void main()
     float fogFactor = clamp(exp2(-density * density * fragXYZW.w * fragXYZW.w * LOG2), 0.0, 1.0);
     vec3 rcolor = mix(fogColor, (ambient + linear) * fragTexture.rgb, fogFactor);
     /* result color in LDR */
-    gl_FragColor = vec4(rcolor, 1.0);
+    fragColor = vec4(rcolor, 1.0);
 }

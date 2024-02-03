@@ -1,6 +1,6 @@
 /******************************************************************************
  *	This file is part of lite3d (Light-weight 3d engine).
- *	Copyright (C) 2014  Sirius (Korolev Nikita)
+ *	Copyright (C) 2024  Sirius (Korolev Nikita)
  *
  *	Lite3D is free software: you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -81,7 +81,7 @@ static int init_platform_gl_extensions(lite3d_video_settings *settings)
 
     print_extensions_string("WGL", wglGetExtensionsStringARB(GetDC(wminfo.info.win.window)));
 
-#elif defined PLATFORM_Linux
+#elif defined(PLATFORM_Linux)
 
     if (!GLXEW_VERSION_1_3)
     {
@@ -117,7 +117,7 @@ static int init_gl_extensions(lite3d_video_settings *settings)
 {
     if (!lite3d_init_gl_extensions_binding())
     {
-        SDL_LogDebug(
+        SDL_LogCritical(
           SDL_LOG_CATEGORY_APPLICATION,
           "%s: lite3d_init_gl_extensions_binding failed",
           LITE3D_CURRENT_FUNCTION);
@@ -127,7 +127,7 @@ static int init_gl_extensions(lite3d_video_settings *settings)
 
     if (!lite3d_check_gl_version())
     {
-        SDL_LogDebug(
+        SDL_LogCritical(
           SDL_LOG_CATEGORY_APPLICATION,
           "%s: lite3d_check_gl_version failed",
           LITE3D_CURRENT_FUNCTION);
@@ -135,25 +135,25 @@ static int init_gl_extensions(lite3d_video_settings *settings)
         return LITE3D_FALSE;
     }
 
-    SDL_LogDebug(
+    SDL_LogInfo(
         SDL_LOG_CATEGORY_APPLICATION,
         "%s: GL Version: %s",
         LITE3D_CURRENT_FUNCTION,
         (const char *) glGetString(GL_VERSION));
 
-    SDL_LogDebug(
+    SDL_LogInfo(
         SDL_LOG_CATEGORY_APPLICATION,
         "%s: GL Vendor: %s",
         LITE3D_CURRENT_FUNCTION,
         (const char *) glGetString(GL_VENDOR));
 
-    SDL_LogDebug(
+    SDL_LogInfo(
         SDL_LOG_CATEGORY_APPLICATION,
         "%s: GL Renderer: %s",
         LITE3D_CURRENT_FUNCTION,
         (const char *) glGetString(GL_RENDERER));
 
-    SDL_LogDebug(
+    SDL_LogInfo(
         SDL_LOG_CATEGORY_APPLICATION,
         "%s: GL Shading Lang %s",
         LITE3D_CURRENT_FUNCTION,
@@ -204,15 +204,15 @@ static int init_gl_extensions(lite3d_video_settings *settings)
 void set_opengl_version(lite3d_video_settings *settings)
 {
     SDL_LogInfo(
-          SDL_LOG_CATEGORY_APPLICATION,
-          "Setting OpenGL Version: %d.%d",
-          settings->glVersionMajor,
-          settings->glVersionMinor);
+        SDL_LOG_CATEGORY_APPLICATION,
+        "Setting OpenGL Version: %d.%d",
+        settings->glVersionMajor,
+        settings->glVersionMinor);
 
-      SDL_GL_SetAttribute(
-          SDL_GL_CONTEXT_MAJOR_VERSION, settings->glVersionMajor);
-      SDL_GL_SetAttribute(
-          SDL_GL_CONTEXT_MINOR_VERSION, settings->glVersionMinor);
+    SDL_GL_SetAttribute(
+        SDL_GL_CONTEXT_MAJOR_VERSION, settings->glVersionMajor);
+    SDL_GL_SetAttribute(
+        SDL_GL_CONTEXT_MINOR_VERSION, settings->glVersionMinor);
 }
 
 int lite3d_video_open(lite3d_video_settings *settings, int hideConsole)
@@ -233,15 +233,8 @@ int lite3d_video_open(lite3d_video_settings *settings, int hideConsole)
     SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
     SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
     SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, settings->colorBits > 24 ? 8 : 0);
-
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-
-    SDL_GL_SetAttribute(SDL_GL_ACCUM_RED_SIZE, 16);
-    SDL_GL_SetAttribute(SDL_GL_ACCUM_GREEN_SIZE, 16);
-    SDL_GL_SetAttribute(SDL_GL_ACCUM_BLUE_SIZE, 16);
-    SDL_GL_SetAttribute(SDL_GL_ACCUM_ALPHA_SIZE, 16);
-
     SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
 
 #ifndef GLES
@@ -254,37 +247,37 @@ int lite3d_video_open(lite3d_video_settings *settings, int hideConsole)
 
     if (settings->glProfile == LITE3D_GL_PROFILE_CORE)
     {
-      SDL_LogInfo(
-          SDL_LOG_CATEGORY_APPLICATION,
-          "Setting Core OpenGL Profile");
+        SDL_LogInfo(
+            SDL_LOG_CATEGORY_APPLICATION,
+            "Setting Core OpenGL Profile");
 
-      SDL_GL_SetAttribute(
-          SDL_GL_CONTEXT_PROFILE_MASK,
-          SDL_GL_CONTEXT_PROFILE_CORE);
+        SDL_GL_SetAttribute(
+            SDL_GL_CONTEXT_PROFILE_MASK,
+            SDL_GL_CONTEXT_PROFILE_CORE);
 
-      set_opengl_version(settings);
+        set_opengl_version(settings);
     }
     else if (settings->glProfile == LITE3D_GL_PROFILE_COMPATIBILITY)
     {
-      SDL_LogInfo(
-          SDL_LOG_CATEGORY_APPLICATION,
-          "Setting Compatibility OpenGL Profile");
+        SDL_LogInfo(
+            SDL_LOG_CATEGORY_APPLICATION,
+            "Setting Compatibility OpenGL Profile");
 
-      SDL_GL_SetAttribute(
-          SDL_GL_CONTEXT_PROFILE_MASK,
-          SDL_GL_CONTEXT_PROFILE_COMPATIBILITY);
+        SDL_GL_SetAttribute(
+            SDL_GL_CONTEXT_PROFILE_MASK,
+            SDL_GL_CONTEXT_PROFILE_COMPATIBILITY);
 
-      set_opengl_version(settings);
+        set_opengl_version(settings);
     }
     else
     {
-      SDL_LogInfo(
-          SDL_LOG_CATEGORY_APPLICATION,
-          "Using Default OpenGL Profile");
+        SDL_LogInfo(
+            SDL_LOG_CATEGORY_APPLICATION,
+            "Using Default OpenGL Profile");
 
-      SDL_LogInfo(
-          SDL_LOG_CATEGORY_APPLICATION,
-          "Using Default OpenGL Version");
+        SDL_LogInfo(
+            SDL_LOG_CATEGORY_APPLICATION,
+            "Using Default OpenGL Version");
     }
 #endif
 
@@ -315,12 +308,12 @@ int lite3d_video_open(lite3d_video_settings *settings, int hideConsole)
     if (settings->screenWidth == 0 || settings->screenHeight == 0)
     {
         if (!lite3d_video_get_display_size(
-              &settings->screenWidth,
-              &settings->screenHeight))
+            &settings->screenWidth,
+            &settings->screenHeight))
         {
-          SDL_LogWarn(
-              SDL_LOG_CATEGORY_APPLICATION,
-              "lite3d_video_get_display_size failed");
+            SDL_LogWarn(
+                SDL_LOG_CATEGORY_APPLICATION,
+                "lite3d_video_get_display_size failed");
 
             return LITE3D_FALSE;
         }
@@ -339,8 +332,9 @@ int lite3d_video_open(lite3d_video_settings *settings, int hideConsole)
     {
         SDL_LogCritical(
             SDL_LOG_CATEGORY_APPLICATION,
-            "%s: SDL_CreateWindow failed..",
-            LITE3D_CURRENT_FUNCTION);
+            "%s: SDL_CreateWindow failed: %s",
+            LITE3D_CURRENT_FUNCTION,
+            SDL_GetError());
 
         return LITE3D_FALSE;
     }
@@ -359,8 +353,9 @@ int lite3d_video_open(lite3d_video_settings *settings, int hideConsole)
     {
         SDL_LogCritical(
             SDL_LOG_CATEGORY_APPLICATION,
-            "%s: GL Context create failed..",
-            LITE3D_CURRENT_FUNCTION);
+            "%s: GL Context create failed: %s",
+            LITE3D_CURRENT_FUNCTION,
+            SDL_GetError());
 
         return LITE3D_FALSE;
     }

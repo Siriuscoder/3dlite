@@ -1,6 +1,6 @@
 /******************************************************************************
  *	This file is part of lite3d (Light-weight 3d engine).
- *	Copyright (C) 2016  Sirius (Korolev Nikita)
+ *	Copyright (C) 2024 Sirius (Korolev Nikita)
  *
  *	Lite3D is free software: you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -20,30 +20,30 @@
 
 #include <lite3d/lite3d_gl.h>
 
-int lite3d_check_vertex_array_object();
-int lite3d_check_instanced_arrays();
-int lite3d_check_vertex_buffer_object();
-int lite3d_check_copy_buffer();
-int lite3d_check_texture_compression();
-int lite3d_check_texture_compression_s3tc();
-int lite3d_check_texture_compression_dxt1();
-int lite3d_check_texture_filter_anisotropic();
-int lite3d_check_map_buffer();
-int lite3d_check_gl_version();
-int lite3d_init_gl_extensions_binding();
-int lite3d_check_tbo();
-int lite3d_check_uniform_buffer();
-int lite3d_check_ssbo();
-int lite3d_check_seamless_cube_map();
-int lite3d_check_geometry_shader();
-int lite3d_check_renderbuffer_storage_multisample();
-int lite3d_check_texture_multisample();
-int lite3d_check_framebuffer_blit();
-int lite3d_check_occlusion_query();
-int lite3d_check_depth32();
-int lite3d_check_shadow_samplers();
-int lite3d_check_srgb();
-int lite3d_check_texture3D();
+int lite3d_check_vertex_array_object(void);
+int lite3d_check_instanced_arrays(void);
+int lite3d_check_vertex_buffer_object(void);
+int lite3d_check_copy_buffer(void);
+int lite3d_check_texture_compression(void);
+int lite3d_check_texture_compression_s3tc(void);
+int lite3d_check_texture_compression_dxt1(void);
+int lite3d_check_texture_filter_anisotropic(void);
+int lite3d_check_map_buffer(void);
+int lite3d_check_gl_version(void);
+int lite3d_init_gl_extensions_binding(void);
+int lite3d_check_tbo(void);
+int lite3d_check_uniform_buffer(void);
+int lite3d_check_ssbo(void);
+int lite3d_check_seamless_cube_map(void);
+int lite3d_check_geometry_shader(void);
+int lite3d_check_renderbuffer_storage_multisample(void);
+int lite3d_check_texture_multisample(void);
+int lite3d_check_framebuffer_blit(void);
+int lite3d_check_occlusion_query(void);
+int lite3d_check_depth32(void);
+int lite3d_check_shadow_samplers(void);
+int lite3d_check_srgb(void);
+int lite3d_check_texture3D(void);
 
 /* stub functions */
 void glTexSubImage3D_stub(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLenum format, GLenum type, const void *pixels);
