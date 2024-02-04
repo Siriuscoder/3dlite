@@ -118,7 +118,7 @@ public:
             static_cast<float>(getMain().window()->height()), 0 
         };
         Material::setFloatv3GlobalParameter("screenResolution", resolution);
-        Material::setFloatGlobalParameter("RandomSeed", static_cast<float>(rand()) / RAND_MAX);
+        Material::setFloatGlobalParameter("RandomSeed", static_cast<float>(rand()) / static_cast<float>(RAND_MAX));
 
         mMinigun01 = MinigunObject(mVaultScene, mShadowManager.get(), "MinigunTurret");
         mMinigun02 = MinigunObject(mVaultScene, mShadowManager.get(), "MinigunTurret.001");

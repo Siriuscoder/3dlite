@@ -532,7 +532,7 @@ static int set_internal_format(lite3d_texture_unit *textureUnit, uint16_t format
 static int determineCompressionMethod(uint8_t srgb, ILuint imageFormat, ILuint* internalFormat)
 {
     ILint dataFormat = 0;
-    if (!gTextureSettings.useGLCompression || !gTextureSettings.useCompressedDataOnLoad)
+    if (!textureCompression || !gTextureSettings.useCompressedDataOnLoad)
         return LITE3D_FALSE;
     
     dataFormat = ilGetInteger(IL_DXTC_FORMAT);
@@ -694,9 +694,9 @@ int lite3d_texture_unit_from_resource(lite3d_texture_unit *textureUnit,
     /* matches openGL texture format */
     imageFormat = ilGetInteger(IL_IMAGE_FORMAT);
     if (srgb && imageFormat == LITE3D_TEXTURE_FORMAT_RGB)
-        internalFormat = LITE3D_TEXTURE_INTERNAL_SRGB8;
+        internalFormat = LITE3D_TEXTURE_INTERNAL_SRGB;
     else if (srgb && imageFormat == LITE3D_TEXTURE_FORMAT_RGBA)
-        internalFormat = LITE3D_TEXTURE_INTERNAL_SRGB8_ALPHA8;
+        internalFormat = LITE3D_TEXTURE_INTERNAL_SRGB_ALPHA;
     compressedLoad = determineCompressionMethod(srgb, imageFormat, &internalFormat);
 
     /* allocate texture surface if not allocated yet */
