@@ -192,7 +192,7 @@ int main(int argc, char *args[])
     settings.logLevel = LITE3D_LOGLEVEL_VERBOSE;
     settings.textureSettings.anisotropy = 8;
     settings.textureSettings.useGLCompression = LITE3D_TRUE;
-    settings.videoSettings.FSAA = 4;
+    settings.videoSettings.MSAA = 4;
     strcpy(settings.videoSettings.caption, "TEST window");
     settings.videoSettings.colorBits = 32;
     settings.videoSettings.fullscreen = LITE3D_FALSE;

@@ -423,19 +423,6 @@ static int set_internal_format(lite3d_texture_unit *textureUnit, uint16_t format
             return LITE3D_FALSE;
         }
     }
-
-    switch (iformat)
-    {
-        case LITE3D_TEXTURE_INTERNAL_SRGB:
-        case LITE3D_TEXTURE_INTERNAL_SRGB_ALPHA:
-            if (!lite3d_check_srgb())
-            {
-                SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "%s: Texture internal format %d is not supported in GLES",
-                    LITE3D_CURRENT_FUNCTION, iformat);
-                return LITE3D_FALSE;
-            }
-            break;
-    }
 #endif
 
     /* what BPP ? */
@@ -446,7 +433,7 @@ static int set_internal_format(lite3d_texture_unit *textureUnit, uint16_t format
         {
             textureUnit->imageBPP = 3;
             *internalFormat = GL_RGB;
-            if (textureCompression)
+            if (textureCompression && lite3d_check_texture_compression_s3tc())
             {
                 if (iformat == LITE3D_TEXTURE_INTERNAL_SRGB)
                 {
@@ -478,7 +465,7 @@ static int set_internal_format(lite3d_texture_unit *textureUnit, uint16_t format
         {
             textureUnit->imageBPP = 4;
             *internalFormat = GL_RGBA;
-            if (textureCompression)
+            if (textureCompression && lite3d_check_texture_compression_s3tc())
             {
                 if (iformat == LITE3D_TEXTURE_INTERNAL_SRGB_ALPHA)
                 {
@@ -495,7 +482,7 @@ static int set_internal_format(lite3d_texture_unit *textureUnit, uint16_t format
         {
             textureUnit->imageBPP = 1;
             *internalFormat = GL_RED;
-            if (textureCompression && iformat == 0)
+            if (textureCompression && iformat == 0 && lite3d_check_texture_compression_rgtc())
             {
                 iformat = GL_COMPRESSED_RED_RGTC1_EXT;
             }
@@ -505,7 +492,7 @@ static int set_internal_format(lite3d_texture_unit *textureUnit, uint16_t format
         {
             textureUnit->imageBPP = 2;
             *internalFormat = GL_RG;
-            if (textureCompression && iformat == 0)
+            if (textureCompression && iformat == 0 && lite3d_check_texture_compression_rgtc())
             {
                 iformat = GL_COMPRESSED_RED_GREEN_RGTC2_EXT;
             }
@@ -533,6 +520,8 @@ static int determineCompressionMethod(uint8_t srgb, ILuint imageFormat, ILuint* 
 {
     ILint dataFormat = 0;
     if (!textureCompression || !gTextureSettings.useCompressedDataOnLoad)
+        return LITE3D_FALSE;
+    if (!lite3d_check_texture_compression_s3tc())
         return LITE3D_FALSE;
     
     dataFormat = ilGetInteger(IL_DXTC_FORMAT);
@@ -582,12 +571,16 @@ int lite3d_texture_technique_init(const lite3d_texture_technique_settings *setti
     gTextureSettings = *settings;
 
     /* check compression extentions */
-    if (!lite3d_check_texture_compression() || !lite3d_check_texture_compression_s3tc()
-        || !lite3d_check_texture_compression_dxt1())
+    if (!lite3d_check_texture_compression_s3tc())
     {
         SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
-            "%s: Texture compression not supported, skiping", LITE3D_CURRENT_FUNCTION);
-        gTextureSettings.useGLCompression = LITE3D_FALSE;
+            "%s: Texture compression s3tc not supported", LITE3D_CURRENT_FUNCTION);
+    }
+
+    if (!lite3d_check_texture_compression_rgtc())
+    {
+        SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
+            "%s: Texture compression rgtc not supported", LITE3D_CURRENT_FUNCTION);
     }
 
     textureCompression = gTextureSettings.useGLCompression;
@@ -596,7 +589,7 @@ int lite3d_texture_technique_init(const lite3d_texture_technique_settings *setti
     {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
             "%s: EXT_texture_filter_anisotropic not supported..", LITE3D_CURRENT_FUNCTION);
-        return LITE3D_FALSE;
+        gTextureSettings.anisotropy = 0;
     }
     else
     {
@@ -607,7 +600,9 @@ int lite3d_texture_technique_init(const lite3d_texture_technique_settings *setti
     }
 
     if (lite3d_check_seamless_cube_map())
+    {
         glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
+    }
 
     if (gTextureSettings.useDepthFormat == LITE3D_TEXTURE_IFORMAT_DEPTH_32 && !lite3d_check_depth32())
     {
@@ -661,6 +656,13 @@ int lite3d_texture_unit_from_resource(lite3d_texture_unit *textureUnit,
 
     if (!resource->isLoaded || resource->fileSize == 0)
         return LITE3D_FALSE;
+
+    if (!lite3d_check_srgb())
+    {
+        SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION, "%s sRGB format is not supported",
+            texture_target_string(textureUnit->textureTarget));
+        srgb = LITE3D_FALSE;
+    }
 
     if (textureTarget > LITE3D_TEXTURE_CUBE)
     {

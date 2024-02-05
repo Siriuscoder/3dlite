@@ -26,7 +26,7 @@ Lite3dCommon::Lite3dCommon()
     mSettings.logLevel = LITE3D_LOGLEVEL_ERROR;
     mSettings.textureSettings.anisotropy = 1;
     mSettings.textureSettings.useGLCompression = LITE3D_TRUE;
-    mSettings.videoSettings.FSAA = 1;
+    mSettings.videoSettings.MSAA = 1;
     strcpy(mSettings.videoSettings.caption, "TEST window");
     mSettings.videoSettings.colorBits = 32;
     mSettings.videoSettings.fullscreen = LITE3D_FALSE;

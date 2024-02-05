@@ -32,7 +32,7 @@ typedef struct lite3d_video_settings
     int8_t colorBits; /* 24 or 32 valid */
     int32_t screenHeight;
     int32_t screenWidth;
-    int8_t FSAA;
+    int8_t MSAA;
     int8_t fullscreen;
     char caption[LITE3D_CAPTION_MAX];
     int8_t vsync;
