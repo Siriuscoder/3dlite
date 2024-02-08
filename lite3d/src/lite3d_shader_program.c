@@ -27,6 +27,23 @@ typedef int (*lite3d_uniform_set_func)(lite3d_shader_program *, lite3d_shader_pa
 
 lite3d_shader_program *gActProg = NULL;
 
+static void lite3d_shader_program_get_log(lite3d_shader_program *program)
+{
+    GLint maxLogLength = 0;
+    if (program->statusString)
+    {
+        lite3d_free(program->statusString);
+        program->statusString = NULL;
+    }
+
+    glGetProgramiv(program->programID, GL_INFO_LOG_LENGTH, &maxLogLength);
+    if (maxLogLength > 0)
+    {
+        program->statusString = (char *) lite3d_malloc(maxLogLength);
+        glGetProgramInfoLog(program->programID, maxLogLength, &maxLogLength, program->statusString);
+    }
+}
+
 int lite3d_shader_program_technique_init(void)
 {
     return LITE3D_TRUE;
@@ -35,26 +52,18 @@ int lite3d_shader_program_technique_init(void)
 int lite3d_shader_program_init(lite3d_shader_program *program)
 {
     SDL_assert(program);
-    
-    program->statusString = NULL;
-    program->success = 0;
-    program->validated = 0;
-    
-    lite3d_misc_gl_error_stack_clean();
-    if (glIsProgram(program->programID))
-    {
-        lite3d_shader_program_purge(program);
-    }
 
+    lite3d_misc_gl_error_stack_clean();
+    memset(program, 0, sizeof(lite3d_shader_program));
     program->programID = glCreateProgram();
     if (LITE3D_CHECK_GL_ERROR)
     {
-        glDeleteProgram(program->programID);
+        lite3d_shader_program_purge(program);
         return LITE3D_FALSE;
     }
 
-    SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "shader program 0x%016llx created",
-        (unsigned long long)program);
+    SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "shader program 0x%016llx created(%d)",
+        (unsigned long long)program, program->programID);
 
     return LITE3D_TRUE;
 }
@@ -64,43 +73,52 @@ int lite3d_shader_program_link(
 {
     uint32_t i;
     GLint isLinked = 0;
-    GLint maxLogLength = 0;
-
     SDL_assert(program);
 
-    lite3d_misc_gl_error_stack_clean();
     if (!glIsProgram(program->programID))
     {
-        program->programID = glCreateProgram();
+        return LITE3D_FALSE;
     }
-    else
-    {
-        /*  if is program already created - relocate log string 
-            before relink program */
-        if (program->statusString)
-        {
-            lite3d_free(program->statusString);
-            program->statusString = NULL;
-        }
-    }
+
+    lite3d_misc_gl_error_stack_clean();
 
     for (i = 0; i < count; ++i)
         glAttachShader(program->programID, shaders[i].shaderID);
     /* linking process */
     glLinkProgram(program->programID);
 
-    LITE3D_CHECK_GL_ERROR;
+    if (LITE3D_CHECK_GL_ERROR)
+    {
+        return LITE3D_FALSE;
+    }
 
     glGetProgramiv(program->programID, GL_LINK_STATUS, &isLinked);
     program->success = isLinked == GL_TRUE ? LITE3D_TRUE : LITE3D_FALSE;
 
     /* get informaion log */
-    glGetProgramiv(program->programID, GL_INFO_LOG_LENGTH, &maxLogLength);
-    program->statusString = (char *) lite3d_malloc(maxLogLength);
-    glGetProgramInfoLog(program->programID, maxLogLength, &maxLogLength, program->statusString);
+    lite3d_shader_program_get_log(program);
 
     for (i = 0; i < count; ++i)
         glDetachShader(program->programID, shaders[i].shaderID);
+
+    if (program->success)
+    {
+        if (program->statusString)
+        {
+            SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION, "shader program(%d) 0x%016llx link OK: %s", 
+                program->programID, (unsigned long long)program, program->statusString);
+        }
+        else
+        {
+            SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "shader program(%d) 0x%016llx link OK",
+                program->programID, (unsigned long long)program);
+        }
+    }
+    else
+    {
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "shader program(%d) 0x%016llx link FAILED: %s", 
+            program->programID, (unsigned long long)program, program->statusString ? program->statusString : "No info");
+    }
 
     return program->success;
 }
@@ -109,8 +127,6 @@ int lite3d_shader_program_validate(
     lite3d_shader_program *program)
 {
     GLint isValidated = 0;
-    GLint maxLogLength = 0;
-
     SDL_assert(program);
 
     /* validationg process */
@@ -119,29 +135,35 @@ int lite3d_shader_program_validate(
     if (program->validated)
         return LITE3D_TRUE;
 
+    if (!glIsProgram(program->programID))
+    {
+        return LITE3D_FALSE;
+    }
+
     glValidateProgram(program->programID);
     glGetProgramiv(program->programID, GL_VALIDATE_STATUS, &isValidated);
     program->validated = isValidated == GL_TRUE ? LITE3D_TRUE : LITE3D_FALSE;
 
     /* get informaion log */
-    glGetProgramiv(program->programID, GL_INFO_LOG_LENGTH, &maxLogLength);
-    if (program->statusString)
-        lite3d_free(program->statusString);
-
-    program->statusString = (char *) lite3d_malloc(maxLogLength);
-    glGetProgramInfoLog(program->programID, maxLogLength, &maxLogLength, program->statusString);
+    lite3d_shader_program_get_log(program);
 
     if (program->validated)
     {
-        SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "%s: validate program 0x%016llx: OK", 
-            LITE3D_CURRENT_FUNCTION, (unsigned long long)program);
+        if (program->statusString)
+        {
+            SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION, "shader program(%d) 0x%016llx validate OK: %s", 
+                program->programID, (unsigned long long)program, program->statusString);
+        }
+        else
+        {
+            SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "shader program(%d) 0x%016llx validate OK",
+                program->programID, (unsigned long long)program);
+        }
     }
     else
     {
-        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
-            "%s: validate program 0x%016llx: %s", LITE3D_CURRENT_FUNCTION, 
-            (unsigned long long)program, program->statusString);
-        return LITE3D_FALSE;
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "shader program(%d) 0x%016llx validate FAILED: %s", 
+            program->programID, (unsigned long long)program, program->statusString ? program->statusString : "No info");
     }
 
     return program->validated;
@@ -197,8 +219,8 @@ static int lite3d_shader_program_sampler_set(
         {
             p->location = -2;
             SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
-                "%s: sampler '%s' not found in program 0x%016llx",
-                LITE3D_CURRENT_FUNCTION, p->parameter->name, (unsigned long long)program);
+                "%s: sampler '%s' not found in program(%d) 0x%016llx",
+                LITE3D_CURRENT_FUNCTION, p->parameter->name, program->programID, (unsigned long long)program);
             return LITE3D_FALSE;
         }
     }
@@ -230,8 +252,8 @@ static int lite3d_shader_program_ssbo_set(
         {
             p->location = -2;
             SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
-                "%s: resource block '%s' not found in program 0x%016llx",
-                LITE3D_CURRENT_FUNCTION, p->parameter->name, (unsigned long long)program);
+                "%s: resource block '%s' not found in program(%d) 0x%016llx",
+                LITE3D_CURRENT_FUNCTION, p->parameter->name, program->programID, (unsigned long long)program);
             return LITE3D_FALSE;
         }
     }
@@ -270,8 +292,8 @@ static int lite3d_shader_program_ubo_set(
         {
             p->location = -2;
             SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
-                "%s: resource block '%s' not found in program 0x%016llx",
-                LITE3D_CURRENT_FUNCTION, p->parameter->name, (unsigned long long)program);
+                "%s: resource block '%s' not found in program(%d) 0x%016llx",
+                LITE3D_CURRENT_FUNCTION, p->parameter->name, program->programID, (unsigned long long)program);
             return LITE3D_FALSE;
         }
     }
@@ -307,8 +329,8 @@ static int lite3d_shader_program_simple_uniform_set(
         {
             p->location = -2; // not found 
             SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
-                "%s: uniform '%s' not found in program 0x%016llx",
-                LITE3D_CURRENT_FUNCTION, p->parameter->name, (unsigned long long)program);
+                "%s: uniform '%s' not found in program(%d) 0x%016llx",
+                LITE3D_CURRENT_FUNCTION, p->parameter->name, program->programID, (unsigned long long)program);
             return LITE3D_FALSE;
         }
     }
@@ -375,8 +397,8 @@ void lite3d_shader_program_attribute_index(
     SDL_assert(glIsProgram(program->programID));
 
     SDL_LogVerbose(SDL_LOG_CATEGORY_APPLICATION,
-        "%s: bind attribute %s:%d for program 0x%016llx",
-        LITE3D_CURRENT_FUNCTION, name, location, (unsigned long long)program);
+        "%s: bind attribute %s:%d for program(%d) 0x%016llx",
+        LITE3D_CURRENT_FUNCTION, name, location, program->programID, (unsigned long long)program);
 
     glBindAttribLocation(program->programID, location, name);
 }

@@ -760,15 +760,25 @@ int lite3d_scene_node_touch_material(struct lite3d_scene_node *node,
             mqrUnit = mqrUnitTmp;
 
         /* check render unit node exist */
-        if ((mqrNode = mqr_check_mesh_chunk_exist(mqrUnitTmp, node, meshChunk)) != NULL)
-            /* unlink it */
-            lite3d_list_unlink_link(&mqrNode->unit);
+        if (!mqrNode)
+        {
+            if ((mqrNode = mqr_check_mesh_chunk_exist(mqrUnitTmp, node, meshChunk)) != NULL)
+            {
+                /* unlink it and remap to new material later */
+                lite3d_list_unlink_link(&mqrNode->unit);
+            }
+        }
+
+        /* all found, nothing to do */
+        if (mqrNode && mqrUnit)
+        {
+            break;
+        }
     }
 
     if (mqrUnit == NULL)
     {
-        mqrUnit = (_mqr_unit *) lite3d_calloc_pooled(LITE3D_POOL_NO1,
-            sizeof (_mqr_unit));
+        mqrUnit = (_mqr_unit *) lite3d_calloc_pooled(LITE3D_POOL_NO1, sizeof (_mqr_unit));
         lite3d_list_init(&mqrUnit->nodes);
         lite3d_list_link_init(&mqrUnit->queued);
         mqrUnit->material = material;
@@ -787,8 +797,7 @@ int lite3d_scene_node_touch_material(struct lite3d_scene_node *node,
             return LITE3D_FALSE;
         }
 
-        mqrNode = (_mqr_node *) lite3d_calloc_pooled(LITE3D_POOL_NO1,
-            sizeof (_mqr_node));
+        mqrNode = (_mqr_node *) lite3d_calloc_pooled(LITE3D_POOL_NO1, sizeof (_mqr_node));
         lite3d_list_link_init(&mqrNode->unit);
         lite3d_array_init(&mqrNode->queries, sizeof(_query_unit), 1);
         mqrNode->node = node;

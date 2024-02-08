@@ -685,6 +685,7 @@ int lite3d_texture_unit_from_resource(lite3d_texture_unit *textureUnit,
     if (!ilLoadL(imageTypeEnum[imageType], resource->fileBuff, (ILuint)resource->fileSize))
     {
         LITE3D_CHECK_IL_ERROR;
+        ilDeleteImage(imageDesc);
         return LITE3D_FALSE;
     }
 
@@ -789,7 +790,7 @@ int lite3d_texture_unit_from_resource(lite3d_texture_unit *textureUnit,
                 if (!lite3d_texture_unit_set_compressed_pixels(textureUnit, 0, 0, 0, lWidth, lHeight, lDepth, mipLevel,
                     totalFaces == 0 ? cubeface : imageFace, compressedBufferSize, compressedBuffer))
                 {
-                    ilDeleteImages(1, &imageDesc);
+                    ilDeleteImage(imageDesc);
                     lite3d_texture_unit_purge(textureUnit);
                     lite3d_free(compressedBuffer);
                     return LITE3D_FALSE;
@@ -800,7 +801,7 @@ int lite3d_texture_unit_from_resource(lite3d_texture_unit *textureUnit,
                 if (!lite3d_texture_unit_set_pixels(textureUnit, 0, 0, 0, 
                     lWidth, lHeight, lDepth, mipLevel, totalFaces == 0 ? cubeface : imageFace, ilGetData()))
                 {
-                    ilDeleteImages(1, &imageDesc);
+                    ilDeleteImage(imageDesc);
                     lite3d_texture_unit_purge(textureUnit);
                     return LITE3D_FALSE;
                 }
@@ -822,7 +823,7 @@ int lite3d_texture_unit_from_resource(lite3d_texture_unit *textureUnit,
 
     if (LITE3D_CHECK_GL_ERROR)
     {
-        ilDeleteImages(1, &imageDesc);
+        ilDeleteImage(imageDesc);
         lite3d_texture_unit_purge(textureUnit);
         return LITE3D_FALSE;
     }
