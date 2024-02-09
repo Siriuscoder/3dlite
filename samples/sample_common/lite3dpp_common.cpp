@@ -235,17 +235,19 @@ void Sample::printRenderStats()
         "%d\t\t%d\t\t%d\t\t%d\n"
         "last frame ms\tavr frame ms\tbest frame ms\tworst frame ms\n"
         "%f\t%f\t%f\t%f\n"
-        "nodes total\tbatch total\tbatch called\tbatch instanced\tfaces\n"
-        "%d\t\t%d\t\t%d\t\t%d\t\t\t%d\n",
+        "nodes total\tbatches total\tbatches called\tbatches instanced\tbatches occluded\tfaces\n"
+        "%d\t\t%d\t\t%d\t\t%d\t\t\t%d\t\t\t%d\n",
         stats->framesCount, stats->lastFPS, stats->avrFPS, stats->bestFPS, stats->worstFPS,
         stats->lastFrameMs, stats->avrFrameMs, stats->bestFrameMs, stats->worstFrameMs,
         stats->nodesTotal, stats->batchTotal, stats->batchCalled, stats->batchInstancedCalled,
-        stats->trianglesByFrame);
+        stats->batchOccluded, stats->trianglesByFrame);
 }
 
 void Sample::printMemoryStats()
 {
     ResourceManager::ResourceManagerStats memStats = mMain.getResourceManager()->getStats();
+    lite3d_render_stats *renderStats = lite3d_render_stats_get();
+
     SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
         "\n==== Memory statistics ========\n"
         "Video memory:\t%d kB\n"
@@ -253,22 +255,27 @@ void Sample::printMemoryStats()
         "Textures:\t%d/%d\n"
         "Materials:\t%d/%d\n"
         "Scenes:\t\t%d/%d\n"
-        "Scripts:\t%d/%d\n"
         "Meshes:\t\t%d/%d\n"
         "Shaders:\t%d/%d\n"
         "Render targets:\t%d/%d\n"
         "SSBO:\t\t%d/%d\n"
+        "UBO:\t\t%d/%d\n"
+        "VBO:\t\t%d\n"
+        "IBO:\t\t%d\n"
+        "VAO:\t\t%d\n"
+        "QUERIES:\t%d\n"
         "File cache:\t%d kB in %d files\n",
         static_cast<uint32_t>(memStats.usedVideoMem / 1024),
         memStats.totalObjectsCount,
         memStats.texturesLoadedCount, memStats.texturesCount,
         memStats.materialsLoadedCount, memStats.materialsCount,
         memStats.scenesLoadedCount, memStats.scenesCount,
-        memStats.scriptsLoadedCount, memStats.scriptsCount,
         memStats.meshesLoadedCount, memStats.meshesCount,
         memStats.shaderProgramsLoadedCount, memStats.shaderProgramsCount,
         memStats.renderTargetsLoadedCount, memStats.renderTargetsCount,
         memStats.ssboLoadedCount, memStats.ssboCount,
+        memStats.uboLoadedCount, memStats.uboCount,
+        renderStats->vboCount, renderStats->iboCount, renderStats->vaoCount, renderStats->queryCount,
         static_cast<uint32_t>(memStats.totalCachedFilesMemSize / 1024), memStats.fileCachesCount);
 }
 

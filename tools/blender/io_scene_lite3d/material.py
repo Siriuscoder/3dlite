@@ -30,9 +30,11 @@ class Material:
                 alphaSocket = node.inputs["Alpha"]
                 if not alphaSocket.is_linked and not socket.is_unavailable and socket.enabled:
                     self.params["Albedo"][3] = float(alphaSocket.default_value)
-            elif socket.name == "Emission":
+            elif socket.name == "Emission Color":
                 self.params["Emission"] = [x for x in socket.default_value] # Color 4i
-            elif socket.name in ["Metallic", "Specular", "Roughness", "IOR", "Emission Strength"]:
+            elif socket.name == "Specular IOR Level":
+                self.params["Specular"] = float(socket.default_value)
+            elif socket.name in ["Metallic", "Roughness", "IOR", "Emission Strength"]:
                 self.params[socket.name] = float(socket.default_value)
             
     def considerImage(self, node):

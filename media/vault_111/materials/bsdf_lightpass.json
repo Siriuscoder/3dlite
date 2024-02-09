@@ -8,14 +8,19 @@
       },
       "Uniforms":[
         {
-          "Name":"PreparedRenderData",
-          "TextureName":"deffered_render_data.texture",
+          "Name":"GBuffer",
+          "TextureName":"geometry_data.texture",
           "Type":"sampler"
         },
         {
           "Name":"Environment",
           "TextureName":"environment.texture",
           "TexturePath":"samples:textures/json/skybox_cryo_mip.json",
+          "Type":"sampler"
+        },
+        {
+          "Name":"AOMap",
+          "TextureName":"ssao.texture",
           "Type":"sampler"
         },
         {
@@ -41,6 +46,12 @@
         {
           "Name":"eye",
           "Type":"v3",
+          "Scope":"global"
+        },
+        {
+          "Name":"AOEnabled",
+          "Type":"int",
+          "Value": 1,
           "Scope":"global"
         }
       ]

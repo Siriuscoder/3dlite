@@ -182,6 +182,7 @@ static void update_render_target(lite3d_render_target *target)
             gRenderStats.batchTotal += look->scene->stats.batchTotal;
             gRenderStats.batchCalled += look->scene->stats.batchCalled;
             gRenderStats.batchInstancedCalled += look->scene->stats.batchInstancedCalled;
+            gRenderStats.batchOccluded += look->scene->stats.batchOccluded;
             gRenderStats.materialsTotal += look->scene->stats.materialBlocks;
             gRenderStats.materialsPassedByFrame += look->scene->stats.materialPassed;
             gRenderStats.textureUnitsByFrame += look->scene->stats.textureUnitsBinded;
@@ -250,6 +251,7 @@ int lite3d_render_frame(void)
         gRenderStats.batchTotal =
         gRenderStats.batchCalled =
         gRenderStats.batchInstancedCalled = 
+        gRenderStats.batchOccluded = 
         gRenderStats.materialsTotal =
         gRenderStats.materialsPassedByFrame =
         gRenderStats.textureUnitsByFrame =
@@ -330,6 +332,8 @@ void lite3d_render_loop(lite3d_render_listeners *callbacks)
     if (!gRenderListeners.preRender || (gRenderListeners.preRender &&
         gRenderListeners.preRender(gRenderListeners.userdata)))
     {
+        /* wait for async resources load operations */
+        lite3d_video_wait_async_complete();
         /* get time mark */
         gBeginFrameMark = SDL_GetPerformanceCounter();
         
@@ -343,6 +347,8 @@ void lite3d_render_loop(lite3d_render_listeners *callbacks)
     if (gRenderListeners.postRender)
         gRenderListeners.postRender(gRenderListeners.userdata);
 
+    /* wait for opengl async shutdown operations */
+    lite3d_video_wait_async_complete();
     lite3d_timer_purge(frameStatsTimer);
     lite3d_render_target_erase_all();
     lite3d_render_target_purge(&gScreenRt);

@@ -108,20 +108,16 @@ public:
     {
         lite3d_mesh ubrMesh;
         lite3d_mesh brMesh;
-        lite3d_pack *fileSysPack;
+        lite3d_pack *fileSysPack = nullptr;
+        lite3d_mesh_chunk *ubrChunk = nullptr, *brChunk = nullptr;
         loadMeshes(&ubrMesh, &brMesh, &fileSysPack);
 
         /* check chunks data */
-        EXPECT_TRUE(ubrMesh.chunkCount == brMesh.chunkCount);
-        lite3d_list_node *ubrChunkNode, *brChunkNode;
-        size_t i;
-        for(i = 0, ubrChunkNode = ubrMesh.chunks.l.next, brChunkNode = brMesh.chunks.l.next; 
-            i < ubrMesh.chunkCount; 
-            ++i, ubrChunkNode = lite3d_list_next(ubrChunkNode), brChunkNode = lite3d_list_next(brChunkNode))
+        EXPECT_TRUE(ubrMesh.chunks.size == brMesh.chunks.size);
+        for(size_t i = 0; i < ubrMesh.chunks.size; ++i)
         {
-            lite3d_mesh_chunk *ubrChunk, *brChunk;
-            ubrChunk = LITE3D_MEMBERCAST(lite3d_mesh_chunk, ubrChunkNode, node);
-            brChunk = LITE3D_MEMBERCAST(lite3d_mesh_chunk, brChunkNode, node);
+            ubrChunk = static_cast<lite3d_mesh_chunk *>(lite3d_array_get(&ubrMesh.chunks, i));
+            brChunk = static_cast<lite3d_mesh_chunk *>(lite3d_array_get(&brMesh.chunks, i));
 
             EXPECT_TRUE(ubrChunk->vao.elementsCount == brChunk->vao.elementsCount);
             EXPECT_TRUE(ubrChunk->vao.indexesCount == brChunk->vao.indexesCount);
@@ -141,7 +137,8 @@ public:
     {
         lite3d_mesh ubrMesh;
         lite3d_mesh brMesh;
-        lite3d_pack *fileSysPack;
+        lite3d_pack *fileSysPack = nullptr;
+        lite3d_mesh_chunk *ubrChunk = nullptr, *brChunk = nullptr;
         loadMeshes(&ubrMesh, &brMesh, &fileSysPack);
 
         char *ubrIndexBuffer = (char *)lite3d_vbo_map(&ubrMesh.indexBuffer, LITE3D_VBO_MAP_READ_ONLY);
@@ -150,16 +147,11 @@ public:
         EXPECT_TRUE(brIndexBuffer != NULL);
 
         /* check chunks data */
-        EXPECT_TRUE(ubrMesh.chunkCount == brMesh.chunkCount);
-        lite3d_list_node *ubrChunkNode, *brChunkNode;
-        size_t i;
-        for(i = 0, ubrChunkNode = ubrMesh.chunks.l.next, brChunkNode = brMesh.chunks.l.next; 
-            i < ubrMesh.chunkCount; 
-            ++i, ubrChunkNode = lite3d_list_next(ubrChunkNode), brChunkNode = lite3d_list_next(brChunkNode))
+        EXPECT_TRUE(ubrMesh.chunks.size == brMesh.chunks.size);
+        for(size_t i = 0; i < ubrMesh.chunks.size; ++i)
         {
-            lite3d_mesh_chunk *ubrChunk, *brChunk;
-            ubrChunk = LITE3D_MEMBERCAST(lite3d_mesh_chunk, ubrChunkNode, node);
-            brChunk = LITE3D_MEMBERCAST(lite3d_mesh_chunk, brChunkNode, node);
+            ubrChunk = static_cast<lite3d_mesh_chunk *>(lite3d_array_get(&ubrMesh.chunks, i));
+            brChunk = static_cast<lite3d_mesh_chunk *>(lite3d_array_get(&brMesh.chunks, i));
 
             /* check index data */
             EXPECT_TRUE(compareIndex(ubrIndexBuffer + ubrChunk->vao.indexesOffset, 

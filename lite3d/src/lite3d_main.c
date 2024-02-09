@@ -113,7 +113,7 @@ int lite3d_main(const lite3d_global_settings *settings)
 
     if (SDL_SetThreadPriority(SDL_THREAD_PRIORITY_HIGH))
     {
-        SDL_LogWarn(
+        SDL_LogError(
             SDL_LOG_CATEGORY_APPLICATION,
             "Could not insrease thread priority %s",
             SDL_GetError());
@@ -124,7 +124,7 @@ int lite3d_main(const lite3d_global_settings *settings)
           &gGlobalSettings.videoSettings,
           settings->logMuteStd))
     {
-        SDL_LogWarn(
+        SDL_LogError(
             SDL_LOG_CATEGORY_APPLICATION,
             "Could not setup video");
 
@@ -134,7 +134,7 @@ int lite3d_main(const lite3d_global_settings *settings)
     /* setup textures technique */
     if (!lite3d_texture_technique_init(&gGlobalSettings.textureSettings))
     {
-        SDL_LogWarn(
+        SDL_LogError(
             SDL_LOG_CATEGORY_APPLICATION,
             "Could not setup textures technique "
             "(lite3d_texture_technique_init)");
@@ -145,7 +145,7 @@ int lite3d_main(const lite3d_global_settings *settings)
     /* setup textures technique */
     if (!lite3d_vbo_technique_init())
     {
-        SDL_LogWarn(
+        SDL_LogError(
             SDL_LOG_CATEGORY_APPLICATION,
             "Could not setup VBO technique");
         goto ret_texture_shut;
@@ -154,7 +154,7 @@ int lite3d_main(const lite3d_global_settings *settings)
     /* setup vao technique */
     if (!lite3d_vao_technique_init())
     {
-        SDL_LogWarn(
+        SDL_LogError(
             SDL_LOG_CATEGORY_APPLICATION,
             "Could not setup VAO technique");
 
@@ -164,7 +164,7 @@ int lite3d_main(const lite3d_global_settings *settings)
     /* setup shaders technique */
     if (!lite3d_shader_program_technique_init())
     {
-        SDL_LogWarn(
+        SDL_LogError(
             SDL_LOG_CATEGORY_APPLICATION,
             "Could not setup shaders technique");
 
@@ -173,7 +173,7 @@ int lite3d_main(const lite3d_global_settings *settings)
 
     if (!lite3d_timer_technique_init())
     {
-        SDL_LogWarn(
+        SDL_LogError(
             SDL_LOG_CATEGORY_APPLICATION,
             "Could not setup timer technique");
 
@@ -185,12 +185,14 @@ int lite3d_main(const lite3d_global_settings *settings)
 
     if (!lite3d_framebuffer_technique_init())
     {
-        SDL_LogWarn(
+        SDL_LogError(
             SDL_LOG_CATEGORY_APPLICATION,
             "Could not setup framebuffer techique");
 
         goto ret_texture_shut;
     }
+
+    lite3d_query_technique_init();
 
     /* start main loop */
     lite3d_render_loop(&gGlobalSettings.renderLisneters);

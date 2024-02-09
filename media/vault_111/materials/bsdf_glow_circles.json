@@ -56,7 +56,7 @@
     }
   ],
   "Uniforms":[
-    { 
+    {
       "Name":"projViewMatrix"
     }
   ]

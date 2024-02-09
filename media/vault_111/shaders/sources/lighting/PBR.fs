@@ -1,7 +1,10 @@
 #include "samples:shaders/sources/common/version.def"
 #include "samples:shaders/sources/common/utils_inc.glsl"
 
-const float ambientStrength = 0.13;
+#define MAX_LIGHTS  200 // 16kb storage needed
+
+const float specularStrength = 0.14;
+const float diffuseStrength = 0.05;
 
 #define LITE3D_LIGHT_UNDEFINED          0.0
 #define LITE3D_LIGHT_POINT              1.0
@@ -12,12 +15,12 @@ uniform samplerCube Environment;
 
 layout(std140) uniform lightSources
 {
-    vec4 lights[5 * 100];
+    vec4 lights[5 * MAX_LIGHTS];
 };
 
 layout(std140) uniform lightIndexes
 {
-    ivec4 indexes[100];
+    ivec4 indexes[MAX_LIGHTS];
 };
 
 uniform vec3 eye;
@@ -25,17 +28,17 @@ uniform vec3 eye;
 /* Shadow compute module */
 float PCF(float shadowIndex, vec3 vw);
 /* Illumination compute module */
-vec3 Lx(vec3 albedo, vec3 radiance, vec3 L, vec3 N, vec3 V, vec3 specular, vec3 F, float NdotV);
+vec3 Lx(vec3 albedo, vec3 radiance, vec3 L, vec3 N, vec3 V, vec3 specular, float NdotV);
 /* Fresnel equation (Schlick) */
 vec3 FresnelSchlickRoughness(float NdotV, vec3 albedo, vec3 specular);
 
-vec3 ComputeIllumination(vec3 vw, vec3 nw, vec3 albedo, vec3 specular, float emissionStrength)
+vec3 ComputeIllumination(vec3 vw, vec3 nw, vec3 albedo, vec3 emission, vec3 specular, float aoFactor)
 {
     // Eye direction to current fragment 
     vec3 eyeDir = normalize(eye - vw);
     // Reflect vector for ambient specular
     vec3 R = reflect(eyeDir, nw);
-    // NdotV for Fresnel
+    // HdotV for Fresnel
     float NdotV = max(dot(nw, eyeDir), FLT_EPSILON);
     // Fresnel by Schlick aproxx
     vec3 F = FresnelSchlickRoughness(NdotV, albedo, specular);
@@ -107,21 +110,21 @@ vec3 ComputeIllumination(vec3 vw, vec3 nw, vec3 albedo, vec3 specular, float emi
         /* block1.w - radiance */
         vec4 block1 = lights[index+1];
         /* light source full radiance at fragment position */
-        vec3 radiance = block1.rgb * block1.w * attenuationFactor * shadowless;
-        /* Radiance to small, do not take this light source in account */ 
+        vec3 radiance = block1.rgb * block1.w * attenuationFactor * shadowless * aoFactor;
+        /* Radiance too small, do not take this light source in account */ 
         if (all(lessThan(radiance, vec3(0.0001))))
             continue;
         /* L for current lights source */ 
-        totalLx += Lx(albedo, radiance, lightDirection, nw, eyeDir, specular, F, NdotV);
+        totalLx += Lx(albedo, radiance, lightDirection, nw, eyeDir, specular, NdotV);
     }
 
     vec3 kD = 1.0 - F;
     kD *= 1.0 - specular.z;
 
     vec3 globalIrradiance = textureLod(Environment, nw, 4).rgb;
-    vec3 reflected = textureLod(Environment, R, specular.y * 7.0).rgb * F * ambientStrength;
-    vec3 ambient = kD * globalIrradiance * albedo * ambientStrength;
-    vec3 emission = emissionStrength * albedo;
+    vec3 specularAmbient = textureLod(Environment, R, specular.y * 7.0).rgb * F * specularStrength;
+    vec3 diffuseAmbient = kD * globalIrradiance * albedo * diffuseStrength;
+    vec3 totalAmbient = (diffuseAmbient + specularAmbient) * aoFactor;
 
-    return ambient + reflected + emission + totalLx;
+    return totalAmbient + totalLx + emission;
 }

@@ -27,7 +27,7 @@
 int lite3d_mesh_indexed_load_from_memory(lite3d_mesh *mesh,
     const void *vertices,
     uint32_t verticesCount,
-    const lite3d_mesh_layout *layout,
+    const lite3d_vao_layout *layout,
     uint32_t layoutCount,
     const void *indexes,
     uint32_t elementsCount,
@@ -67,7 +67,7 @@ int lite3d_mesh_indexed_load_from_memory(lite3d_mesh *mesh,
 int lite3d_mesh_indexed_extend_from_memory(lite3d_mesh *mesh,
     const void *vertices,
     uint32_t verticesCount,
-    const lite3d_mesh_layout *layout,
+    const lite3d_vao_layout *layout,
     uint32_t layoutCount,
     const void *indexes,
     uint32_t elementsCount,
@@ -79,9 +79,11 @@ int lite3d_mesh_indexed_extend_from_memory(lite3d_mesh *mesh,
 
     SDL_assert(mesh && layout);
 
-    if (lite3d_list_is_empty(&mesh->chunks))
+    if (!mesh->chunks.size)
+    {
         return lite3d_mesh_indexed_load_from_memory(mesh, vertices, verticesCount,
-        layout, layoutCount, indexes, elementsCount, indexComponentSize, access);
+            layout, layoutCount, indexes, elementsCount, indexComponentSize, access);
+    }
 
     /* calculate buffer parameters */
     for (i = 0; i < layoutCount; ++i)
@@ -119,7 +121,7 @@ int lite3d_mesh_indexed_extend_from_memory(lite3d_mesh *mesh,
 int lite3d_mesh_load_from_memory(lite3d_mesh *mesh,
     const void *vertices,
     uint32_t verticesCount,
-    const lite3d_mesh_layout *layout,
+    const lite3d_vao_layout *layout,
     uint32_t layoutCount,
     uint16_t access)
 {
@@ -149,7 +151,7 @@ int lite3d_mesh_load_from_memory(lite3d_mesh *mesh,
 int lite3d_mesh_extend_from_memory(lite3d_mesh *mesh,
     const void *vertices,
     uint32_t verticesCount,
-    const lite3d_mesh_layout *layout,
+    const lite3d_vao_layout *layout,
     uint32_t layoutCount,
     uint16_t access)
 {
@@ -158,9 +160,11 @@ int lite3d_mesh_extend_from_memory(lite3d_mesh *mesh,
 
     SDL_assert(mesh && layout);
 
-    if (lite3d_list_is_empty(&mesh->chunks))
+    if (!mesh->chunks.size)
+    {
         return lite3d_mesh_load_from_memory(mesh, vertices, verticesCount,
-        layout, layoutCount, access);
+            layout, layoutCount, access);
+    }
 
     /* calculate buffer parameters */
     for (i = 0; i < layoutCount; ++i)
@@ -188,15 +192,13 @@ int lite3d_mesh_extend_from_memory(lite3d_mesh *mesh,
 
 void lite3d_mesh_order_mat_indexes(lite3d_mesh *mesh)
 {
-    lite3d_list_node *vaoLink;
+    lite3d_mesh_chunk *meshChunk;
     uint32_t materialIndex = 0;
     SDL_assert(mesh);
 
-    for (vaoLink = mesh->chunks.l.next;
-        vaoLink != &mesh->chunks.l; vaoLink = lite3d_list_next(vaoLink))
+    LITE3D_ARR_FOREACH(&mesh->chunks, lite3d_mesh_chunk, meshChunk)
     {
-        LITE3D_MEMBERCAST(lite3d_mesh_chunk, vaoLink, node)->
-            materialIndex = materialIndex++;
+        meshChunk->materialIndex = materialIndex++;
     }
 }
 
@@ -206,7 +208,6 @@ int lite3d_mesh_load_from_m_file(lite3d_mesh *mesh, const lite3d_file *resource,
     if (!resource->isLoaded)
         return LITE3D_FALSE;
 
-    return lite3d_mesh_m_decode(mesh, resource->fileBuff, resource->fileSize,
-        access);
+    return lite3d_mesh_m_decode(mesh, resource->fileBuff, resource->fileSize, access);
 }
 

@@ -24,10 +24,11 @@
           "Priority": 0,
           "TexturePass": 1,
           "RenderBlend": false,
+          "OcclusionQuery": true,
+          "SortOpaqueFromNear": true,
           "DepthTest": true,
           "ColorOutput": false,
-          "DepthOutput": true,
-          "RenderInstancing": true
+          "DepthOutput": true
         },
         {
           "Name": "ShadowPass",
@@ -47,6 +48,7 @@
           "Priority": 0,
           "TexturePass": 2,
           "RenderBlend": false,
+          "OcclusionCulling": true,
           "DepthTest": true,
           "ColorOutput": true,
           "DepthOutput": false,
@@ -153,8 +155,8 @@
       "Name": "Door.002",
       "Object": "vault_111:objects/Door.json",
       "Position": [
-        2112.0,
-        -512.0,
+        1216.0,
+        -1280.0,
         -128.0
       ],
       "Rotation": [
@@ -270,6 +272,126 @@
       ]
     },
     {
+      "Name": "Door.007",
+      "Object": "vault_111:objects/Door.json",
+      "Position": [
+        -960.0,
+        -3584.0,
+        -256.0
+      ],
+      "Rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "Scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "Name": "Door.008",
+      "Object": "vault_111:objects/Door.json",
+      "Position": [
+        -64.0,
+        -3968.0,
+        -256.0
+      ],
+      "Rotation": [
+        0.0,
+        0.0,
+        0.7071067690849304,
+        0.7071067690849304
+      ],
+      "Scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "Name": "Door.009",
+      "Object": "vault_111:objects/Door.json",
+      "Position": [
+        -1344.0,
+        -3968.0,
+        -256.0
+      ],
+      "Rotation": [
+        0.0,
+        0.0,
+        0.7071067690849304,
+        0.7071067690849304
+      ],
+      "Scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "Name": "Door.010",
+      "Object": "vault_111:objects/Door.json",
+      "Position": [
+        -1984.0,
+        -2048.0,
+        0.0
+      ],
+      "Rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "Scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "Name": "Door.011",
+      "Object": "vault_111:objects/Door.json",
+      "Position": [
+        -1088.0,
+        -2176.0,
+        -256.0
+      ],
+      "Rotation": [
+        0.0,
+        0.0,
+        0.7071067690849304,
+        0.7071067690849304
+      ],
+      "Scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "Name": "Door.012",
+      "Object": "vault_111:objects/Door.json",
+      "Position": [
+        -1600.0,
+        -2688.0,
+        -256.0
+      ],
+      "Rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "Scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
       "Name": "MinigunTurret",
       "Object": "vault_111:objects/MinigunTurret.json",
       "Position": [
@@ -362,6 +484,26 @@
         -0.7071067690849304,
         -2.2197247062649694e-07,
         2.2197247062649694e-07
+      ],
+      "Scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "Name": "LightSpot.001",
+      "Object": "vault_111:objects/LightSpot.json",
+      "Position": [
+        -283.1053466796875,
+        -2815.666015625,
+        -16.8345890045166
+      ],
+      "Rotation": [
+        1.0,
+        4.371138828673793e-08,
+        3.1391647326017846e-07,
+        -1.3721725375414641e-14
       ],
       "Scale": [
         1.0,

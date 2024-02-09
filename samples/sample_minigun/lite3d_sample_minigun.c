@@ -156,7 +156,7 @@ static int init(void *userdata)
     lite3d_scene_init(&mScene);
     lite3d_scene_node_init(&mSceneNode);
     lite3d_scene_add_node(&mScene, &mSceneNode, NULL);
-    lite3d_scene_node_touch_material(&mSceneNode, lite3d_mesh_chunk_get_by_index(&mModel, 0), &mMinigunMaterial, 1);
+    lite3d_scene_node_touch_material(&mSceneNode, lite3d_mesh_chunk_get_by_index(&mModel, 0), NULL, &mMinigunMaterial, 1);
 
     //lite3d_scene_add_node(&mScene, &mCamera01.cameraNode, NULL);
     lite3d_render_target_screen_attach_camera(&mCamera01, &mScene, 1, 0, LITE3D_RENDER_DEFAULT);
@@ -192,7 +192,7 @@ int main(int argc, char *args[])
     settings.logLevel = LITE3D_LOGLEVEL_VERBOSE;
     settings.textureSettings.anisotropy = 8;
     settings.textureSettings.useGLCompression = LITE3D_TRUE;
-    settings.videoSettings.FSAA = 4;
+    settings.videoSettings.MSAA = 4;
     strcpy(settings.videoSettings.caption, "TEST window");
     settings.videoSettings.colorBits = 32;
     settings.videoSettings.fullscreen = LITE3D_FALSE;

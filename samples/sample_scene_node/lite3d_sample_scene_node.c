@@ -236,9 +236,9 @@ static int initCube(void)
         22, 23, 20
     };
 
-    const lite3d_mesh_layout layout[] = {
-        { LITE3D_BUFFER_BINDING_ATTRIBUTE, 3},
-        { LITE3D_BUFFER_BINDING_ATTRIBUTE, 2}
+    const lite3d_vao_layout layout[] = {
+        { LITE3D_BUFFER_BINDING_VERTEX, 3},
+        { LITE3D_BUFFER_BINDING_TEXCOORD, 2}
     };
 
     if (!lite3d_mesh_init(&mCubeVbo))
@@ -301,10 +301,10 @@ static int init(void *userdata)
         lite3d_scene_node_scale(&mSceneNodeInherited[i], &nodeScale[i]);
 
         lite3d_scene_add_node(&mScene, &mSceneNode[i], NULL);
-        lite3d_scene_node_touch_material(&mSceneNode[i], lite3d_mesh_chunk_get_by_index(&mCubeVbo, 0), &mVintageBoxMaterial, 1);
+        lite3d_scene_node_touch_material(&mSceneNode[i], lite3d_mesh_chunk_get_by_index(&mCubeVbo, 0), NULL, &mVintageBoxMaterial, 1);
 
         lite3d_scene_add_node(&mScene, &mSceneNodeInherited[i], &mSceneNode[i]);
-        lite3d_scene_node_touch_material(&mSceneNodeInherited[i], lite3d_mesh_chunk_get_by_index(&mCubeVbo, 0), &mBoxMaterial, 1);
+        lite3d_scene_node_touch_material(&mSceneNodeInherited[i], lite3d_mesh_chunk_get_by_index(&mCubeVbo, 0), NULL, &mBoxMaterial, 1);
     }
 
     //lite3d_scene_add_node(&mScene, &mCamera01.cameraNode, NULL);
@@ -336,7 +336,7 @@ int main(int argc, char *args[])
     settings.logLevel = LITE3D_LOGLEVEL_VERBOSE;
     settings.textureSettings.anisotropy = 8;
     settings.textureSettings.useGLCompression = LITE3D_TRUE;
-    settings.videoSettings.FSAA = 4;
+    settings.videoSettings.MSAA = 4;
     strcpy(settings.videoSettings.caption, "TEST window");
     settings.videoSettings.colorBits = 32;
     settings.videoSettings.fullscreen = LITE3D_FALSE;

@@ -160,23 +160,26 @@ namespace lite3dpp
         return inverseRot;
     }
 
-    kmMat4 Camera::getTransformMatrix()
+    const kmMat4& Camera::getTransformMatrix()
     {
         lite3d_scene_node_update(&mCamera.cameraNode);
         return mCamera.cameraNode.worldView;
     }
 
-    kmMat4 Camera::getProjTransformMatrix()
+    const kmMat4& Camera::getProjMatrix() const
     {
-        kmMat4 result = getTransformMatrix();
-        kmMat4Multiply(&result, &mCamera.projection, &result);
-        return result;
+        return mCamera.projection;
+    }
+
+    const kmMat4& Camera::getProjTransformMatrix()
+    {
+        kmMat4Multiply(&mCamera.screen, &getProjMatrix(), &getTransformMatrix());
+        return mCamera.screen;
     }
 
     void Camera::recalcFrustum()
     {
-        auto mat = getProjTransformMatrix();
-        lite3d_frustum_compute(&mCamera.frustum, &mat);
+        lite3d_frustum_compute(&mCamera.frustum, &getProjTransformMatrix());
     }
 
     bool Camera::inFrustum(const LightSource &light) const

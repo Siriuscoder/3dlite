@@ -26,8 +26,6 @@ Dependencies
 * [Assimp](https://www.libsdl.org/index.php)
 * [SDL2](http://assimp.sourceforge.net/)
 * [Bullet](https://github.com/bulletphysics/bullet3)
-* Also Lite3d use [Angelscript](http://www.angelcode.com/angelscript/) for scripting and
-some other libraries (see [LICENCE](LICENCE.3rdparty))
 
 Compiling
 ---------
@@ -44,7 +42,7 @@ Samples
 After successfully compiling you can find some samples in bin directory. To provide samples work correctly you must download 
 resources packs [vault.pkg](https://drive.google.com/file/d/1JhsirjKwMq51IBg7GknUeZLGvrVKp1Sz/view?usp=sharing) and [sponza.pkg](https://drive.google.com/file/d/1GGtPep7soS1wPJsf4Y2FTiF23E-JXFQ9/view?usp=sharing) and put its to media/packs/
 
-You can download resources for Vault_111 sample from [here](https://drive.google.com/file/d/1oxnfRbR7WcTECcI7BDKBBqPwPlCcbx9J/view?usp=sharing), this 7z archive contains textures and models folders, you must copy this folders to media/vault_111 and anjoy this awesome sample.
+You can download resources for Vault_111 sample from [here](https://drive.google.com/file/d/17WfHr5ExozZz9G-IAYwG97Gq8tohWT1k/view?usp=sharing), this 7z archive contains textures and models folders, you must copy this folders to media/vault_111 and anjoy this awesome sample.
 
 Screenshots
 -----------
@@ -80,6 +78,20 @@ Vault 111 scene (Fallout4 models) with complete PBR lighting and HDR rendering, 
 ![](/media/screenshots/vault_111_10.png "Vault111")
 ![](/media/screenshots/vault_111_11.png "Vault111")
 ![](/media/screenshots/vault_111_12.png "Vault111")
+![](/media/screenshots/vault_111_13.png "Vault111")
+![](/media/screenshots/vault_111_14.png "Vault111")
+![](/media/screenshots/vault_111_15.png "Vault111")
+![](/media/screenshots/vault_111_16.png "Vault111")
+![](/media/screenshots/vault_111_17.png "Vault111")
+![](/media/screenshots/vault_111_18.png "Vault111")
+![](/media/screenshots/vault_111_19.png "Vault111")
+![](/media/screenshots/vault_111_20.png "Vault111")
+![](/media/screenshots/vault_111_21.png "Vault111")
+![](/media/screenshots/vault_111_22.png "Vault111")
+![](/media/screenshots/vault_111_23.png "Vault111")
+![](/media/screenshots/vault_111_24.png "Vault111")
+![](/media/screenshots/vault_111_25.png "Vault111")
+![](/media/screenshots/vault_111_26.png "Vault111")
 
 ***
 Check branch master to fetch stable changes =)

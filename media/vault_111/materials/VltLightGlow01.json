@@ -9,6 +9,9 @@
       "Uniforms": [
         {
           "Name": "projViewMatrix"
+        },
+        {
+          "Name": "modelMatrix"
         }
       ]
     },
@@ -20,14 +23,22 @@
       },
       "Uniforms": [
         {
-          "Name": "Specular",
-          "Type": "float",
-          "Value": 1.0
+          "Name": "Albedo",
+          "Type": "sampler",
+          "TextureName": "VltLight01_d.texture",
+          "TexturePath": "vault_111:textures/json/VltLight01_d.json"
         },
         {
-          "Name": "Roughness",
-          "Type": "float",
-          "Value": 0.8183409571647644
+          "Name": "Normal",
+          "Type": "sampler",
+          "TextureName": "FlatFlat_n.texture",
+          "TexturePath": "vault_111:textures/json/FlatFlat_n.json"
+        },
+        {
+          "Name": "Specular",
+          "Type": "sampler",
+          "TextureName": "V111LabelSet03_s.texture",
+          "TexturePath": "vault_111:textures/json/V111LabelSet03_s.json"
         },
         {
           "Name": "Emission",

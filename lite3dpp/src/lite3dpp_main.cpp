@@ -31,8 +31,7 @@ namespace lite3dpp
     const char Main::fixedUpdateTimerName[] = "fixedTimer";
 
     Main::Main() :
-        mResourceManager(this),
-        mScriptDispatcher(this)
+        mResourceManager(this)
     {
         /* init memory model first
          * json parser used lite3d allocator model,
@@ -84,7 +83,7 @@ namespace lite3dpp
         mSettings.videoSettings.screenWidth = videoSettings.getInt(L"Width", 0);
         mSettings.videoSettings.screenHeight = videoSettings.getInt(L"Height", 0);
         mSettings.videoSettings.colorBits = videoSettings.getInt(L"ColorBits", 24);
-        mSettings.videoSettings.FSAA = videoSettings.getInt(L"MSAA", 1);
+        mSettings.videoSettings.MSAA = videoSettings.getInt(L"MSAA", 1);
         mSettings.videoSettings.vsync =
             videoSettings.getBool(L"VSync", true) ? LITE3D_TRUE : LITE3D_FALSE;
         mSettings.videoSettings.fullscreen =
@@ -95,22 +94,15 @@ namespace lite3dpp
 
         // GL Profile
         {
-            std::string glProfile = videoSettings.getString(L"GLProfile", "");
+            auto glProfile = videoSettings.getUpperString(L"GLProfile", "");
 
-            if (
-                    glProfile == "Core" ||
-                    glProfile == "core")
+            if (glProfile == "CORE")
             {
                 mSettings.videoSettings.glProfile = LITE3D_GL_PROFILE_CORE;
             }
-            else if (
-                    glProfile == "Compatibility" ||
-                    glProfile == "compatibility" ||
-                    glProfile == "Compat" ||
-                    glProfile == "compat")
+            else if (glProfile == "COMPATIBILITY")
             {
-                mSettings.videoSettings.glProfile = \
-                    LITE3D_GL_PROFILE_COMPATIBILITY;
+                mSettings.videoSettings.glProfile = LITE3D_GL_PROFILE_COMPATIBILITY;
             }
             else
             {

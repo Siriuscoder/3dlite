@@ -2,7 +2,7 @@
     "Width": 0, // use screen wight
     "Height": 0, // use screen height
     "BackgroundColor": [0.0, 0.0, 0.0, 1.0],
-    "Priority": 4, // render after prepare step
+    "Priority": 5, // render after SSAO step
     "CleanColorBuf": true,
     "CleanDepthBuf": false,
     "CleanStencilBuf": false,

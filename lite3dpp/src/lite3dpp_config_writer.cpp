@@ -91,7 +91,7 @@ namespace lite3dpp
         JSONArray jarray;
         for(const ConfigurationWriter& object : objects)
         {
-            jarray.push_back(std::make_shared<JSONValue>(object.mObject));
+            jarray.emplace_back(std::make_shared<JSONValue>(object.mObject));
         }
 
         mObject[name] = std::make_shared<JSONValue>(jarray);
@@ -103,7 +103,7 @@ namespace lite3dpp
         JSONArray jarray;
         for(const WString& object : strings)
         {
-            jarray.push_back(std::make_shared<JSONValue>(object));
+            jarray.emplace_back(std::make_shared<JSONValue>(object));
         }
 
         mObject[name] = std::make_shared<JSONValue>(jarray);
@@ -115,7 +115,7 @@ namespace lite3dpp
         JSONArray jarray;
         for(const int32_t object : ints)
         {
-            jarray.push_back(std::make_shared<JSONValue>((float)object));
+            jarray.emplace_back(std::make_shared<JSONValue>((float)object));
         }
 
         mObject[name] = std::make_shared<JSONValue>(jarray);
@@ -127,7 +127,7 @@ namespace lite3dpp
         JSONArray jarray;
         for(const float object : floats)
         {
-            jarray.push_back(std::make_shared<JSONValue>(object));
+            jarray.emplace_back(std::make_shared<JSONValue>(object));
         }
 
         mObject[name] = std::make_shared<JSONValue>(jarray);
@@ -139,7 +139,7 @@ namespace lite3dpp
         JSONArray jarray;
         for(const bool object : bools)
         {
-            jarray.push_back(std::make_shared<JSONValue>(object));
+            jarray.emplace_back(std::make_shared<JSONValue>(object));
         }
 
         mObject[name] = std::make_shared<JSONValue>(jarray);

@@ -169,11 +169,6 @@ namespace lite3dpp
                 if (resIt->second->getState() == AbstractResource::LOADED)
                     stats.scenesLoadedCount++;
                 break;
-            case AbstractResource::SCRIPT:
-                stats.scriptsCount++;
-                if (resIt->second->getState() == AbstractResource::LOADED)
-                    stats.scriptsCount++;
-                break;
             case AbstractResource::MESH:
                 stats.meshesCount++;
                 if (resIt->second->getState() == AbstractResource::LOADED)

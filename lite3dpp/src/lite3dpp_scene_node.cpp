@@ -198,9 +198,15 @@ namespace lite3dpp
             /* touch material and mesh chunk to node */ 
             for (auto &material : mMaterialMappingReplacement)
             {
+                lite3d_mesh_chunk *meshChunk = lite3d_mesh_chunk_get_by_index(mMesh->getPtr(), material.first);
+                lite3d_mesh_chunk *bbMeshChunk = mMesh->getBBPtr() ? 
+                    lite3d_mesh_chunk_get_by_index(mMesh->getBBPtr(), material.first) : nullptr;
+
                 if(!lite3d_scene_node_touch_material(getPtr(), 
-                    lite3d_mesh_chunk_get_by_index(mMesh->getPtr(), material.first), material.second->getPtr(), mInstances))
+                    meshChunk, bbMeshChunk, material.second->getPtr(), mInstances))
+                {
                     LITE3D_THROW("Linking node failed..");
+                }
             }
         }
     }

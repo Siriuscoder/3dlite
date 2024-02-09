@@ -9,6 +9,9 @@
       "Uniforms":[
         {
           "Name":"projViewMatrix"
+        },
+        {
+          "Name":"modelMatrix"
         }
       ]
     },
@@ -20,10 +23,13 @@
       },
       "Uniforms":[
         {
-          "Name":"<Specular>"
+          "Name":"<Albedo>"
         },
         {
-          "Name":"<Roughness>"
+          "Name":"<Normal>"
+        },
+        {
+          "Name":"<Specular>"
         },
         {
           "Name":"<Emission>"

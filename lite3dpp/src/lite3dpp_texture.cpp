@@ -108,14 +108,13 @@ namespace lite3dpp
 
     uint16_t TextureImage::textureFormat(const String &s)
     {
-        return s == "ALPHA" ? LITE3D_TEXTURE_FORMAT_ALPHA :
+        return s == "RED" ? LITE3D_TEXTURE_FORMAT_RED :
             (s == "RGB" ? LITE3D_TEXTURE_FORMAT_RGB :
             (s == "RGBA" ? LITE3D_TEXTURE_FORMAT_RGBA :
             (s == "BRG" ? LITE3D_TEXTURE_FORMAT_BRG :
             (s == "BRGA" ? LITE3D_TEXTURE_FORMAT_BRGA :
-            (s == "LUMINANCE" ? LITE3D_TEXTURE_FORMAT_LUMINANCE :
-            (s == "LUMINANCE_ALPHA" ? LITE3D_TEXTURE_FORMAT_LUMINANCE_ALPHA :
-            (s == "DEPTH" ? LITE3D_TEXTURE_FORMAT_DEPTH : 0)))))));
+            (s == "RG" ? LITE3D_TEXTURE_FORMAT_RG :
+            (s == "DEPTH" ? LITE3D_TEXTURE_FORMAT_DEPTH : 0))))));
     }
 
     uint16_t TextureImage::textureInternalFormat(int iformat)
@@ -239,7 +238,7 @@ namespace lite3dpp
                 else
                     getPixels(level, pixels);
 
-                mLayersBackup.push_back(std::move(pixels));
+                mLayersBackup.emplace_back(pixels);
             }
         }
 

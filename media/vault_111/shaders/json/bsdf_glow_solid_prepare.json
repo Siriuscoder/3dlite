@@ -2,6 +2,7 @@
     "Sources": 
     [
         "vault_111:shaders/sources/common.vs",
-        "vault_111:shaders/sources/mrt_glow.fs,vault_111:shaders/sources/inc/glow_solid.def"
+        "vault_111:shaders/sources/mrt.fs,vault_111:shaders/sources/inc/glow_solid.def",
+        "samples:shaders/sources/common/utils.fs"
     ]
 }

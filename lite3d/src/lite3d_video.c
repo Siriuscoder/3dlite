@@ -191,7 +191,7 @@ static int init_gl_extensions(lite3d_video_settings *settings)
 
 #ifndef GLES
     /* enable multisample buffers */
-    if (settings->FSAA > 1 && GLEW_ARB_multisample)
+    if (settings->MSAA > 1 && GLEW_ARB_multisample)
         glEnable(GL_MULTISAMPLE_ARB);
 
     return init_platform_gl_extensions(settings);
@@ -239,10 +239,10 @@ int lite3d_video_open(lite3d_video_settings *settings, int hideConsole)
 
 #ifndef GLES
     /* Specify openGL context */
-    if (settings->FSAA > 1)
+    if (settings->MSAA > 1)
     {
         SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
-        SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, settings->FSAA);
+        SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, settings->MSAA);
     }
 
     if (settings->glProfile == LITE3D_GL_PROFILE_CORE)
@@ -457,4 +457,9 @@ int lite3d_video_get_display_size(int32_t *width, int32_t *height)
 void lite3d_video_view_system_cursor(int8_t flag)
 {
     SDL_ShowCursor(flag == LITE3D_TRUE ? 1 : 0);
+}
+
+void lite3d_video_wait_async_complete(void)
+{
+    glFinish();
 }

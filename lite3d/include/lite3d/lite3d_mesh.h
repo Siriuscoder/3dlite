@@ -19,19 +19,10 @@
 #define	LITE3D_MESH_H
 
 #include <lite3d/lite3d_common.h>
+#include <lite3d/lite3d_array.h>
 #include <lite3d/lite3d_vbo.h>
 #include <lite3d/lite3d_vao.h>
 #include <lite3d/lite3d_frustum.h>
-
-/* legacy types, now not used  */
-#define LITE3D_BUFFER_BINDING_VERTEX          0x0
-#define LITE3D_BUFFER_BINDING_COLOR           0x1
-#define LITE3D_BUFFER_BINDING_NORMAL          0x2
-#define LITE3D_BUFFER_BINDING_TEXCOORD        0x3
-/* may be more then one, attribute index will be increased */
-#define LITE3D_BUFFER_BINDING_ATTRIBUTE       0x4
-#define LITE3D_BUFFER_BINDING_TANGENT         0x5
-#define LITE3D_BUFFER_BINDING_BINORMAL        0x6
 
 #define LITE3D_INDEX_UNSIGNED_BYTE  0x1401
 #define LITE3D_INDEX_UNSIGNED_SHORT 0x1403
@@ -41,12 +32,6 @@
 #define LITE3D_PRIMITIVE_LINE       0x0001
 #define LITE3D_PRIMITIVE_TRIANGLE   0x0004
 
-typedef struct lite3d_mesh_layout
-{
-    uint8_t binding;
-    uint8_t count; /* count elements in component */
-} lite3d_mesh_layout;
-
 typedef struct lite3d_mesh
 {
     uint32_t version;
@@ -55,17 +40,16 @@ typedef struct lite3d_mesh
     lite3d_vbo *auxBuffer;
     uint32_t verticesCount;
     uint32_t elementsCount;
-    uint32_t chunkCount;
-    lite3d_list chunks;
+    lite3d_array chunks;
     void *userdata;
 } lite3d_mesh;
 
 typedef struct lite3d_mesh_chunk
 {
-    lite3d_list_node node;
     lite3d_vao vao;
     uint32_t layoutEntriesCount;
-    lite3d_mesh_layout *layout;
+    lite3d_vao_layout *layout;
+    uint32_t vertexStride;
     /* material index */
     uint32_t materialIndex;
     uint8_t hasIndexes;
@@ -78,8 +62,8 @@ LITE3D_CEXPORT void lite3d_mesh_purge(struct lite3d_mesh *mesh);
 LITE3D_CEXPORT int lite3d_mesh_extend(struct lite3d_mesh *mesh, 
     size_t verticesSize, size_t indexesSize, uint16_t access);
 
-LITE3D_CEXPORT lite3d_mesh_chunk *lite3d_mesh_append_chunk(lite3d_mesh *mesh,
-    const lite3d_mesh_layout *layout,
+LITE3D_CEXPORT lite3d_mesh_chunk *lite3d_mesh_append_chunk(struct lite3d_mesh *mesh,
+    const struct lite3d_vao_layout *layout,
     uint32_t layoutCount,
     uint32_t stride,
     uint16_t componentType,

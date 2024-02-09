@@ -26,6 +26,10 @@
     for (i = (arrtype *)(arr)->data; (size_t)(i - (arrtype *)(arr)->data) < (arr)->size; ++i)
 #define LITE3D_ARR_IS_LAST(arr, arrtype, i) \
     ((size_t)(i - (arrtype *)(arr)->data) == ((arr)->size-1))
+#define LITE3D_ARR_GET_LAST(arr, arrtype) \
+    ((arrtype *)lite3d_array_get(arr, (arr)->size - 1))
+#define LITE3D_ARR_GET_FIRST(arr, arrtype) \
+    ((arrtype *)lite3d_array_get(arr, 0))
 
 typedef struct lite3d_array
 {

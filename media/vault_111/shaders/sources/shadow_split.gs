@@ -13,6 +13,9 @@ layout(std140) uniform ShadowIndex
     ivec4 shadowIndex[MAX_SHADOW_LAYERS / 4 + 1];
 };
 
+in vec2 vsUV[];
+out vec2 iuv;
+
 void main()
 {
     int count = shadowIndex[0].x;
@@ -24,6 +27,7 @@ void main()
         for (int j = 0; j < 3; ++j)
         {
             gl_Position = shadowMat[index] * gl_in[j].gl_Position;
+            iuv = vsUV[j];
             EmitVertex();
         }
         EndPrimitive();

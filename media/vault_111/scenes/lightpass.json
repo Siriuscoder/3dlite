@@ -33,7 +33,7 @@
     [
         {
             "Name": "BigTriangleGeom",
-            "Object": "vault_111:objects/lightpass.json"
+            "Object": "vault_111:objects/LightPass.json"
         }
     ]
 }

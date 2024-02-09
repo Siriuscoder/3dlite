@@ -261,6 +261,7 @@ lite3d_file *lite3d_pack_file_load(lite3d_pack *pack, const char *file)
                 "%s: %s : %s",
                 LITE3D_CURRENT_FUNCTION, fullPath, SDL_GetError());
             SDL_RWclose(desc);
+            lite3d_free(fileBuffer);
             return NULL;
         }
 

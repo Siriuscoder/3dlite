@@ -119,12 +119,12 @@ int lite3d_check_ssbo(void)
 #endif
 }
 
-int lite3d_check_texture_compression(void)
+int lite3d_check_texture_compression_rgtc(void)
 {
 #ifdef GLES
-    return LITE3D_TRUE;
+    return SDL_GL_ExtensionSupported("GL_EXT_texture_compression_rgtc") == SDL_TRUE;
 #else
-    return GLEW_ARB_texture_compression;
+    return GLEW_EXT_texture_compression_rgtc || GLEW_ARB_texture_compression_rgtc;
 #endif
 }
 
@@ -132,19 +132,9 @@ int lite3d_check_texture_compression_s3tc(void)
 {
 #ifdef GLES
     return SDL_GL_ExtensionSupported("GL_EXT_texture_compression_s3tc") == SDL_TRUE &&
-        SDL_GL_ExtensionSupported("GL_EXT_texture_compression_rgtc") == SDL_TRUE && 
         SDL_GL_ExtensionSupported("GL_EXT_texture_compression_s3tc_srgb") == SDL_TRUE;
 #else
-    return GLEW_EXT_texture_compression_s3tc && GLEW_EXT_texture_compression_rgtc;
-#endif
-}
-
-int lite3d_check_texture_compression_dxt1(void)
-{
-#ifdef GLES
-    return SDL_GL_ExtensionSupported("GL_EXT_texture_compression_dxt1") == SDL_TRUE;
-#else
-    return GLEW_EXT_texture_compression_dxt1;
+    return GLEW_EXT_texture_compression_s3tc || GLEW_NV_texture_compression_s3tc;
 #endif
 }
 
@@ -153,7 +143,7 @@ int lite3d_check_texture_filter_anisotropic(void)
 #ifdef GLES
     return SDL_GL_ExtensionSupported("GL_EXT_texture_filter_anisotropic") == SDL_TRUE;
 #else
-    return GLEW_EXT_texture_filter_anisotropic;
+    return GLEW_EXT_texture_filter_anisotropic || GLEW_ARB_texture_filter_anisotropic;
 #endif
 }
 

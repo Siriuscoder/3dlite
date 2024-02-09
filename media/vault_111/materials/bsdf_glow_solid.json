@@ -9,6 +9,9 @@
       "Uniforms":[
         {
           "Name":"projViewMatrix"
+        },
+        {
+          "Name":"modelMatrix"
         }
       ]
     },

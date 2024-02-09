@@ -1,14 +1,14 @@
-#include "samples:shaders/sources/common/version.def"
+#include "vault_111:shaders/sources/inc/common.def"
 #include "samples:shaders/sources/common/utils_inc.glsl"
 
 uniform sampler2DArrayShadow ShadowMaps;
 
 layout(std140) uniform ShadowMatrix
 {
-    mat4 shadowMat[4];
+    mat4 shadowMat[MAX_SHADOW_LAYERS];
 };
 
-const float shadowBias = 0.0000001;
+const float shadowBias = 0.00001;
 
 float PCF(float shadowIndex, vec3 vw)
 {
@@ -19,9 +19,9 @@ float PCF(float shadowIndex, vec3 vw)
     // Shadow space NDC coorts of current fragment
     vec4 sv = shadowMat[int(shadowIndex)] * vec4(vw, 1.0);
     // transform the NDC coordinates to the range [0,1]
-    sv = (sv.xyzw / sv.w) * 0.5 + 0.5;
+    sv = (sv / sv.w) * 0.5 + 0.5;
     // Z clip 
-    if (sv.z > 1.0)
+    if (sv.z > 1.0 || sv.z < 0.0)
         return 0.0;
 
     float result = 0.0;

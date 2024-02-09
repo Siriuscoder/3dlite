@@ -15,6 +15,8 @@
  *	You should have received a copy of the GNU General Public License
  *	along with Lite3D.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
+#include <ctime>
+
 #include "lite3dpp_vault_shadows.h"
 #include "lite3dpp_vault_bloom.h"
 
@@ -74,6 +76,12 @@ public:
 
 public:
 
+    SampleVault111()
+    {
+        // use current time as seed for random generator
+        std::srand(std::time(nullptr));
+    }
+
     void createScene() override
     {
         mShadowManager = std::make_unique<SampleShadowManager>(getMain());
@@ -84,6 +92,9 @@ public:
 
         setupShadowCasters();
         addFlashlight();
+        // load SSAO effect pipeline before ligth compute step, because SSAO texture needed to ambient light compute  
+        getMain().getResourceManager()->queryResource<Scene>("Vault_111_SSAO", "vault_111:scenes/ssao.json");
+        mSSAOShader = getMain().getResourceManager()->queryResource<Material>("ssao_compute.material");
         // load intermediate light compute scene
         mCombineScene = getMain().getResourceManager()->queryResource<Scene>("Vault_111_LightCompute",
             "vault_111:scenes/lightpass.json");
@@ -91,10 +102,13 @@ public:
         // Load bloom effect pipeline
         mBloomEffectRenderer->init();
 
-        // postprocess step, fxaa, gamma correcion, draw directly info window. 
+        // postprocess step, fxaa, gamma correcion, draw directly info render window. 
         getMain().getResourceManager()->queryResource<Scene>("Vault_111_Postprocess",
             "vault_111:scenes/postprocess.json");
-        
+
+        // Release unnecessary cache
+        getMain().getResourceManager()->releaseFileCache();
+
         // optimize: window clean not needed, because all pixels in last render target always be updated
         getMain().window()->setBuffersCleanBit(false, false, false);
         RenderTarget::depthTestFunc(RenderTarget::TestFuncLEqual);
@@ -104,6 +118,7 @@ public:
             static_cast<float>(getMain().window()->height()), 0 
         };
         Material::setFloatv3GlobalParameter("screenResolution", resolution);
+        Material::setFloatGlobalParameter("RandomSeed", static_cast<float>(rand()) / static_cast<float>(RAND_MAX));
 
         mMinigun01 = MinigunObject(mVaultScene, mShadowManager.get(), "MinigunTurret");
         mMinigun02 = MinigunObject(mVaultScene, mShadowManager.get(), "MinigunTurret.001");
@@ -111,6 +126,8 @@ public:
 
         mGearKey = mShadowManager->registerDynamicNode(mVaultScene->getObject("VaultStatic")->getNode("GearKey"));
         mGearKeySpinner = mShadowManager->registerDynamicNode(mVaultScene->getObject("VaultStatic")->getNode("GearKeySpinner"));
+        mGeneratorSpinner01 = mShadowManager->registerDynamicNode(mVaultScene->getObject("VaultStatic")->getNode("PowerGeneratorSpinner01"));
+        mGeneratorSpinner02 = mShadowManager->registerDynamicNode(mVaultScene->getObject("VaultStatic")->getNode("PowerGeneratorSpinner02"));
         mFans.emplace_back(mShadowManager->registerDynamicNode(mVaultScene->getObject("VaultStatic")->getNode("FanRotor")));
         mFans.emplace_back(mShadowManager->registerDynamicNode(mVaultScene->getObject("VaultStatic")->getNode("FanRotor.001")));
         mFans.emplace_back(mShadowManager->registerDynamicNode(mVaultScene->getObject("VaultStatic")->getNode("FanRotor.002")));
@@ -125,9 +142,14 @@ public:
 
         // Установим тень для трех прожекторов и потом будем их вращать
         // Источники света получаем по ObjectName + NodeName
-        mSpot01 = SpotLightWithShadow {
+        mSpot = SpotLightWithShadow {
             mShadowManager->registerDynamicNode(mVaultScene->getObject("LightSpot")->getNode("LightSpotLamp")),
             mShadowManager->newShadowCaster(mVaultScene->getLightNode("LightSpotLightSpotNode"))
+        };
+
+        mSpot01 = SpotLightWithShadow {
+            mShadowManager->registerDynamicNode(mVaultScene->getObject("LightSpot.001")->getNode("LightSpotLamp")),
+            mShadowManager->newShadowCaster(mVaultScene->getLightNode("LightSpot.001LightSpotNode"))
         };
 
         mSpot02 = SpotLightWithShadow {
@@ -169,8 +191,16 @@ public:
 
     void mainCameraChanged() override
     {
-        Material::setFloatv3GlobalParameter("eye", getMainCamera().getPosition());
+        updateShaderParams();
         updateFlashLight();
+    }
+
+    void updateShaderParams()
+    {
+        SDL_assert(mSSAOShader);
+        Material::setFloatv3GlobalParameter("eye", getMainCamera().getPosition());
+        mSSAOShader->setFloatm4Parameter(1, "CameraView", getMainCamera().getTransformMatrix());
+        mSSAOShader->setFloatm4Parameter(1, "CameraProjection", getMainCamera().getProjMatrix());
     }
 
     void updateFlashLight()
@@ -197,7 +227,9 @@ public:
             fanRotor->rotateAngle(KM_VEC3_POS_Z, 0.07 * deltaRetard);
         });
 
-        mGearKeySpinner->rotateAngle(KM_VEC3_POS_X, 0.15 * deltaRetard);
+        mGearKeySpinner->rotateAngle(KM_VEC3_POS_X, 0.1 * deltaRetard);
+        mGeneratorSpinner01->rotateAngle(KM_VEC3_POS_Y, 0.025 * deltaRetard);
+        mGeneratorSpinner02->rotateAngle(KM_VEC3_POS_Y, -0.025 * deltaRetard);
     }
 
     void processEvent(SDL_Event *e) override
@@ -213,6 +245,10 @@ public:
                 updateFlashLight();
             }
             else if (e->key.keysym.sym == SDLK_p)
+            {
+                mSpot.rotateAngle(KM_VEC3_POS_Z, 0.10 * (e->key.keysym.mod & KMOD_LCTRL ? -1.0 : 1.0));
+            }
+            else if (e->key.keysym.sym == SDLK_i)
             {
                 mSpot01.rotateAngle(KM_VEC3_POS_Z, 0.10 * (e->key.keysym.mod & KMOD_LCTRL ? -1.0 : 1.0));
             }
@@ -249,6 +285,14 @@ public:
                     mGammaFactor = 1.5;
                 Material::setFloatGlobalParameter("GammaFactor", mGammaFactor);
             }
+            else if (e->key.keysym.sym == SDLK_u)
+            {
+                static bool ssaoEnabled = true;
+                ssaoEnabled = !ssaoEnabled;
+                Material::setIntGlobalParameter("AOEnabled", ssaoEnabled ? 1 : 0);
+                auto ssaoRenderTarget = getMain().getResourceManager()->queryResource<TextureRenderTarget>("SSAOStep");
+                ssaoEnabled ? ssaoRenderTarget->enable() : ssaoRenderTarget->disable();
+            }
         }
     }
 
@@ -256,14 +300,18 @@ private:
 
     Scene* mCombineScene = nullptr;
     Scene* mVaultScene = nullptr;
+    Material* mSSAOShader = nullptr;
     std::unique_ptr<SampleShadowManager> mShadowManager;
     std::unique_ptr<SampleBloomEffect> mBloomEffectRenderer;
     std::unique_ptr<LightSceneNode> mFlashLight;
+    SpotLightWithShadow mSpot;
     SpotLightWithShadow mSpot01;
     SpotLightWithShadow mSpot02;
     SpotLightWithShadow mSpot03;
     SampleShadowManager::DynamicNode* mGearKey = nullptr;
     SampleShadowManager::DynamicNode* mGearKeySpinner = nullptr;
+    SampleShadowManager::DynamicNode* mGeneratorSpinner01 = nullptr;
+    SampleShadowManager::DynamicNode* mGeneratorSpinner02 = nullptr;
     stl<SampleShadowManager::DynamicNode*>::vector mFans;
     MinigunObject mMinigun01;
     MinigunObject mMinigun02;

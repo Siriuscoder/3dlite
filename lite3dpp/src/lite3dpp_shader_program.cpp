@@ -29,9 +29,6 @@ namespace lite3dpp
         ConfigurableResource(name, path, main, AbstractResource::SHADER_PROGRAM)
     {}
 
-    ShaderProgram::~ShaderProgram()
-    {}
-
     void ShaderProgram::loadFromConfigImpl(const ConfigurationReader &helper)
     {
         stl<lite3d_shader>::vector shaders;
@@ -59,7 +56,7 @@ namespace lite3dpp
                 "Linking \"%s\" ...", getPath().c_str());
 
             if(!lite3d_shader_program_link(&mProgram, &shaders[0], shaders.size()))
-                LITE3D_THROW(getPath() << " link: \"" << mProgram.statusString << "\"");
+                LITE3D_THROW(getPath() << " link failed...");
         }
         catch(std::exception &)
         {
@@ -131,15 +128,9 @@ namespace lite3dpp
             SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
                 "Compiling \"%s\" ...", sourcePath.c_str());
 
-            int32_t finalShaderLen[] = { static_cast<int32_t>(shaderCode.length()) };
             const char* finalShaderCode[] = { shaderCode.c_str() };
-            if (!lite3d_shader_compile(&shaders.back(), 1, finalShaderCode, finalShaderLen))
-                LITE3D_THROW(sourcePath << " compile: \"" << shaders.back().statusString << "\"");
-            if (shaders.back().statusString && shaders.back().statusString[0] != 0)
-            {
-                SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
-                    "%s compile: \"%s\"", sourcePath.c_str(), shaders.back().statusString);
-            }
+            if (!lite3d_shader_compile(&shaders.back(), 1, finalShaderCode, NULL))
+                LITE3D_THROW(sourcePath << " compile failed...");
         }
     }
 

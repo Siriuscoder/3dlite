@@ -29,10 +29,7 @@ int lite3d_shader_init(lite3d_shader *shader, uint8_t type)
     SDL_assert(shader);
     
     lite3d_misc_gl_error_stack_clean();
-    /* cleanup shader firt */
-    if (glIsShader(shader->shaderID))
-        lite3d_shader_purge(shader);
-        
+    memset(shader, 0, sizeof(lite3d_shader));
     /* craate new shader object */
     switch (type)
     {
@@ -58,8 +55,7 @@ int lite3d_shader_init(lite3d_shader *shader, uint8_t type)
     shader->type = type;
     if (LITE3D_CHECK_GL_ERROR)
     {
-        glDeleteShader(shader->shaderID);
-        shader->shaderID = 0;
+        lite3d_shader_purge(shader);
         return LITE3D_FALSE;
     }
 
@@ -78,19 +74,53 @@ int lite3d_shader_compile(
         return LITE3D_FALSE;
 
     /* setup source and compile it */
-    glShaderSource(shader->shaderID, sources, source, length ? (GLint *)length : NULL);
+    glShaderSource(shader->shaderID, sources, source, (GLint *)length);
     glCompileShader(shader->shaderID);
 
-    LITE3D_CHECK_GL_ERROR;
+    if (LITE3D_CHECK_GL_ERROR)
+    {
+        return LITE3D_FALSE;
+    }
 
     /* check compile status */
     glGetShaderiv(shader->shaderID, GL_COMPILE_STATUS, &isCompiled);
     shader->success = isCompiled == GL_TRUE ? LITE3D_TRUE : LITE3D_FALSE;
 
+    if (shader->statusString)
+    {
+        lite3d_free(shader->statusString);
+        shader->statusString = NULL;
+    }
+
     /* allocate string and copy compile info log into it */
     glGetShaderiv(shader->shaderID, GL_INFO_LOG_LENGTH, &maxLogLength);
-    shader->statusString = maxLogLength > 0 ? (char *) lite3d_calloc(maxLogLength) : NULL;
-    glGetShaderInfoLog(shader->shaderID, maxLogLength, &maxLogLength, shader->statusString);
+    if (maxLogLength > 0)
+    {
+        shader->statusString = (char *) lite3d_calloc(maxLogLength);
+        glGetShaderInfoLog(shader->shaderID, maxLogLength, &maxLogLength, shader->statusString);
+    }
+
+    if (shader->success)
+    {
+        if (maxLogLength > 0)
+        {
+            SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
+                "%s: compile shader(%d) 0x%016llx OK: %s", LITE3D_CURRENT_FUNCTION, shader->shaderID, 
+                (unsigned long long)shader, shader->statusString);
+        }
+        else
+        {
+            SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION,
+                "%s: compile shader(%d) 0x%016llx OK", LITE3D_CURRENT_FUNCTION, shader->shaderID, 
+                (unsigned long long)shader);
+        }
+    }
+    else
+    {
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+            "%s: compile shader(%d) 0x%016llx FAILED: %s", LITE3D_CURRENT_FUNCTION, shader->shaderID, 
+            (unsigned long long)shader, maxLogLength > 0 ? shader->statusString : "No info");
+    }
 
     return shader->success;
 }
@@ -102,8 +132,13 @@ void lite3d_shader_purge(
 
     if (glIsShader(shader->shaderID))
     {
-        lite3d_free(shader->statusString);
         glDeleteShader(shader->shaderID);
         shader->shaderID = 0;
+
+        if (shader->statusString)
+        {
+            lite3d_free(shader->statusString);
+            shader->statusString = NULL;
+        }
     }
 }

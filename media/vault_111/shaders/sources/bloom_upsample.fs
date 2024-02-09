@@ -7,7 +7,7 @@
 // Remember to use a floating-point texture format (for HDR)!
 // Remember to use edge clamping for this texture!
 uniform sampler2D Source;
-uniform float Radius;
+uniform float BloomRadius;
 
 in vec2 iuv;
 out vec3 upsample;
@@ -16,8 +16,8 @@ void main()
 {
     // The filter kernel is applied with a radius, specified in texture
     // coordinates, so that the radius will vary across mip resolutions.
-    float x = Radius;
-    float y = Radius;
+    float x = BloomRadius;
+    float y = BloomRadius;
 
     // Take 9 samples around current texel:
     // a - b - c

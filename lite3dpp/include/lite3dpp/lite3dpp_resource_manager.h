@@ -40,8 +40,6 @@ namespace lite3dpp
             uint32_t texturesLoadedCount;
             uint32_t materialsCount;
             uint32_t materialsLoadedCount;
-            uint32_t scriptsCount;
-            uint32_t scriptsLoadedCount;
             uint32_t meshesCount;
             uint32_t meshesLoadedCount;
             uint32_t scenesCount;

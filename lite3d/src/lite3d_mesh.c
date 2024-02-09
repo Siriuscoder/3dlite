@@ -33,7 +33,8 @@ int lite3d_mesh_init(struct lite3d_mesh *mesh)
     SDL_assert(mesh);
 
     memset(mesh, 0, sizeof (lite3d_mesh));
-    lite3d_list_init(&mesh->chunks);
+    mesh->version = LITE3D_VERSION_NUM;
+    lite3d_array_init(&mesh->chunks, sizeof (lite3d_mesh_chunk), 1);
     
     if (lite3d_check_instanced_arrays())
     {
@@ -41,13 +42,6 @@ int lite3d_mesh_init(struct lite3d_mesh *mesh)
         {
             if (!lite3d_vbo_init(&gAuxGlobalBuffer))
                 return LITE3D_FALSE;
-            /*
-            if (!lite3d_vbo_buffer(&gAuxGlobalBuffer, NULL, 20 * sizeof(kmMat4), LITE3D_VBO_DYNAMIC_DRAW))
-            {
-                SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "%s: Unable to setup auxiliary buffer",
-                    LITE3D_CURRENT_FUNCTION);
-                return LITE3D_FALSE;
-            }*/
         }
 
         mesh->auxBuffer = &gAuxGlobalBuffer;
@@ -69,19 +63,17 @@ int lite3d_mesh_init(struct lite3d_mesh *mesh)
 
 void lite3d_mesh_purge(struct lite3d_mesh *mesh)
 {
-    lite3d_list_node *vaoLink;
+    lite3d_mesh_chunk *meshChunk;
     SDL_assert(mesh);
 
-    while ((vaoLink = lite3d_list_first_link(&mesh->chunks)) != NULL)
+    LITE3D_ARR_FOREACH(&mesh->chunks, lite3d_mesh_chunk, meshChunk)
     {
-        lite3d_list_unlink_link(vaoLink);
-        lite3d_mesh_chunk_purge(LITE3D_MEMBERCAST(lite3d_mesh_chunk, vaoLink, node));
+        lite3d_mesh_chunk_purge(meshChunk);
     }
 
+    lite3d_array_purge(&mesh->chunks);
     lite3d_vbo_purge(&mesh->vertexBuffer);
     lite3d_vbo_purge(&mesh->indexBuffer);
-
-    mesh->chunkCount = 0;
 }
 
 int lite3d_mesh_extend(struct lite3d_mesh *mesh, size_t verticesSize,
@@ -145,7 +137,6 @@ int lite3d_mesh_chunk_init(struct lite3d_mesh_chunk *meshChunk, uint8_t indexed)
     SDL_assert(meshChunk);
 
     memset(meshChunk, 0, sizeof (lite3d_mesh_chunk));
-    lite3d_list_link_init(&meshChunk->node);
     meshChunk->hasIndexes = indexed;
 
     return lite3d_vao_init(&meshChunk->vao);
@@ -157,20 +148,16 @@ void lite3d_mesh_chunk_purge(struct lite3d_mesh_chunk *meshChunk)
     lite3d_vao_purge(&meshChunk->vao);
     if (meshChunk->layoutEntriesCount > 0)
         lite3d_free(meshChunk->layout);
-    lite3d_free_pooled(LITE3D_POOL_NO1, meshChunk);
 }
 
 lite3d_mesh_chunk *lite3d_mesh_chunk_get_by_index(struct lite3d_mesh *mesh,
     uint32_t materialIndex)
 {
-    lite3d_list_node *vaoLink;
     lite3d_mesh_chunk *meshChunk;
     SDL_assert(mesh);
 
-    for (vaoLink = mesh->chunks.l.next;
-        vaoLink != &mesh->chunks.l; vaoLink = lite3d_list_next(vaoLink))
+    LITE3D_ARR_FOREACH(&mesh->chunks, lite3d_mesh_chunk, meshChunk)
     {
-        meshChunk = LITE3D_MEMBERCAST(lite3d_mesh_chunk, vaoLink, node);
         if (meshChunk->materialIndex == materialIndex)
             return meshChunk;
     }
@@ -179,7 +166,7 @@ lite3d_mesh_chunk *lite3d_mesh_chunk_get_by_index(struct lite3d_mesh *mesh,
 }
 
 lite3d_mesh_chunk *lite3d_mesh_append_chunk(lite3d_mesh *mesh,
-    const lite3d_mesh_layout *layout,
+    const lite3d_vao_layout *layout,
     uint32_t layoutCount,
     uint32_t stride,
     uint16_t componentType,
@@ -190,83 +177,41 @@ lite3d_mesh_chunk *lite3d_mesh_append_chunk(lite3d_mesh *mesh,
     size_t verticesSize,
     size_t verticesOffset)
 {
-    lite3d_mesh_chunk *meshChunk;
-    uint32_t attribIndex = 0, i = 0;
-    size_t vOffset = verticesOffset;
-
-    meshChunk = (lite3d_mesh_chunk *) lite3d_malloc_pooled(LITE3D_POOL_NO1, sizeof (lite3d_mesh_chunk));
-    SDL_assert_release(meshChunk);
-
-    if (!lite3d_mesh_chunk_init(meshChunk, LITE3D_TRUE))
+    lite3d_mesh_chunk meshChunk;
+    if (!lite3d_mesh_chunk_init(&meshChunk, LITE3D_TRUE))
     {
-        lite3d_free_pooled(LITE3D_POOL_NO1, meshChunk);
         return NULL;
     }
 
-    meshChunk->mesh = mesh;
-    meshChunk->layout = (lite3d_mesh_layout *) lite3d_malloc(sizeof (lite3d_mesh_layout) * layoutCount);
-    SDL_assert_release(meshChunk->layout);
-
-    /* VAO set current */
-    glBindVertexArray(meshChunk->vao.vaoID);
-    /* use single VBO to store all data */
-    glBindBuffer(mesh->vertexBuffer.role, mesh->vertexBuffer.vboID);
-    /* bind all arrays and attribs into the current VAO */
-    for (; i < layoutCount; ++i)
+    meshChunk.mesh = mesh;
+    meshChunk.layout = (lite3d_vao_layout *) lite3d_malloc(sizeof (lite3d_vao_layout) * layoutCount);
+    if (!meshChunk.layout)
     {
-        glEnableVertexAttribArray(attribIndex);
-        glVertexAttribPointer(attribIndex++, layout[i].count, GL_FLOAT,
-            GL_FALSE, stride, LITE3D_BUFFER_OFFSET(vOffset));
-
-        vOffset += layout[i].count * sizeof (GLfloat);
-        meshChunk->layout[i] = layout[i];
+        lite3d_mesh_chunk_purge(&meshChunk);
+        return NULL;
     }
 
-    // setup buffers for instancing rendering 
-    if (mesh->auxBuffer)
+    memcpy(meshChunk.layout, layout, layoutCount * sizeof(lite3d_vao_layout));
+
+    if (!lite3d_vao_init_layout(&mesh->vertexBuffer, &mesh->indexBuffer, mesh->auxBuffer, 
+        &meshChunk.vao, meshChunk.layout, layoutCount, stride, componentType, indexesCount, 
+        indexesSize, indexesOffset, verticesCount, verticesSize, verticesOffset))
     {
-        glBindBuffer(mesh->vertexBuffer.role, mesh->auxBuffer->vboID);
-        for(i = 0; i < 4; ++i)
-        {
-            glEnableVertexAttribArray(attribIndex);
-            glVertexAttribPointer(attribIndex, 4, GL_FLOAT, GL_FALSE, sizeof(kmMat4), LITE3D_BUFFER_OFFSET(i * sizeof(kmVec4)));
-            glVertexAttribDivisor(attribIndex++, 1);
-        }
+        lite3d_mesh_chunk_purge(&meshChunk);
+        return NULL;
     }
 
-    if (indexesCount > 0 && indexesSize > 0)
-    {
-        glBindBuffer(mesh->indexBuffer.role, mesh->indexBuffer.vboID);
-        meshChunk->hasIndexes = LITE3D_TRUE;
-    }
-    else
-    {
-        meshChunk->hasIndexes = LITE3D_FALSE;
-    }
+    meshChunk.vertexStride = stride;
+    meshChunk.layoutEntriesCount = layoutCount;
+    meshChunk.hasIndexes = indexesCount > 0 && indexesSize > 0 ? LITE3D_TRUE : LITE3D_FALSE;
 
-    /* end VAO binding */
-    glBindVertexArray(0);
-
-    meshChunk->vao.indexesOffset = indexesOffset;
-    meshChunk->vao.indexType = componentType;
-    meshChunk->vao.indexesCount = indexesCount;
-    meshChunk->vao.indexesSize = indexesSize;
-    meshChunk->vao.verticesCount = verticesCount;
-    meshChunk->vao.verticesSize = verticesSize;
-    meshChunk->vao.verticesOffset = verticesOffset;
-    meshChunk->layoutEntriesCount = layoutCount;
-    meshChunk->vao.elementsCount = (indexesCount > 0 ? indexesCount : verticesCount) / 3;
-
-    memset(&meshChunk->boundingVol, 0, sizeof (meshChunk->boundingVol));
-
-    lite3d_list_add_last_link(&meshChunk->node, &mesh->chunks);
-    mesh->chunkCount++;
+    LITE3D_ARR_ADD_ELEM(&mesh->chunks, lite3d_mesh_chunk, meshChunk);
 
     SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "MESH: 0x%016llx: chunk 0x%016llx: %s, cv/ov/sv %d/%zub/%udb, ci/oi %d/%zub",
-        (unsigned long long)mesh, (unsigned long long)meshChunk, "TRIANGLES",
-        meshChunk->vao.verticesCount, meshChunk->vao.verticesOffset, stride, meshChunk->vao.indexesCount, meshChunk->vao.indexesOffset);
+        (unsigned long long)mesh, (unsigned long long)LITE3D_ARR_GET_LAST(&mesh->chunks, lite3d_mesh_chunk), "TRIANGLES",
+        meshChunk.vao.verticesCount, meshChunk.vao.verticesOffset, stride, meshChunk.vao.indexesCount, meshChunk.vao.indexesOffset);
 
-    return meshChunk;
+    return LITE3D_ARR_GET_LAST(&mesh->chunks, lite3d_mesh_chunk);
 }
 
 uint16_t lite3d_index_component_type_by_size(uint8_t size)

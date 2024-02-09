@@ -91,7 +91,7 @@ private:
                 .set(L"Height", height)
                 .set(L"Filtering", "Linear")
                 .set(L"Wrapping", "ClampToEdge")
-                .set(L"Compression", true)
+                .set(L"Compression", false)
                 .set(L"TextureFormat", "RGB")
                 .set(L"InternalFormat", LITE3D_TEXTURE_INTERNAL_RGB32F).write();
 
