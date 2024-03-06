@@ -640,7 +640,7 @@ void lite3d_texture_technique_shut(void)
 
 int lite3d_texture_unit_from_resource(lite3d_texture_unit *textureUnit,
     const lite3d_file *resource, uint32_t imageType, uint32_t textureTarget, 
-    int8_t srgb, int8_t quality, uint8_t wrapping, uint8_t cubeface)
+    int8_t srgb, int8_t filtering, uint8_t wrapping, uint8_t cubeface)
 {
     ILuint imageDesc = 0, imageFormat = 0, internalFormat = 0;
     GLint mipLevel = 0;
@@ -706,7 +706,7 @@ int lite3d_texture_unit_from_resource(lite3d_texture_unit *textureUnit,
     if (textureUnit->imageWidth != imageWidth || textureUnit->imageHeight != imageHeight ||
         textureUnit->imageDepth != imageDepth)
     {
-        if (!lite3d_texture_unit_allocate(textureUnit, textureTarget, quality,
+        if (!lite3d_texture_unit_allocate(textureUnit, textureTarget, filtering,
             wrapping, imageFormat, internalFormat, imageWidth, imageHeight, imageDepth, 1))
         {
             /* release IL image */
@@ -818,7 +818,7 @@ int lite3d_texture_unit_from_resource(lite3d_texture_unit *textureUnit,
     /* make texture active */
     glBindTexture(textureTargetEnum[textureTarget], textureUnit->textureID);
     /* ganerate mipmaps if not loaded */
-    if (textureUnit->loadedMipmaps == 0 && quality == LITE3D_TEXTURE_QL_NICEST)
+    if (textureUnit->loadedMipmaps == 0 && filtering == LITE3D_TEXTURE_FILTER_TRILINEAR)
         glGenerateMipmap(textureTargetEnum[textureTarget]);
 
     if (LITE3D_CHECK_GL_ERROR)
@@ -1085,7 +1085,7 @@ int lite3d_texture_unit_generate_mipmaps(lite3d_texture_unit *textureUnit)
 }
 
 int lite3d_texture_unit_allocate(lite3d_texture_unit *textureUnit,
-    uint32_t textureTarget, int8_t quality, uint8_t wrapping, uint16_t format,
+    uint32_t textureTarget, int8_t filtering, uint8_t wrapping, uint16_t format,
     uint16_t iformat, int32_t width, int32_t height, int32_t depth, int32_t samples)
 {
     uint32_t internalFormat;
@@ -1135,12 +1135,12 @@ int lite3d_texture_unit_allocate(lite3d_texture_unit *textureUnit,
     textureUnit->texFormat = format;
     textureUnit->texiFormat = internalFormat;
 
-    if ((textureTarget >= LITE3D_TEXTURE_BUFFER && textureTarget <= LITE3D_TEXTURE_3D_MULTISAMPLE && quality > LITE3D_TEXTURE_QL_LOW) ||
-        (textureTarget == LITE3D_TEXTURE_2D_SHADOW && textureTarget == LITE3D_TEXTURE_2D_SHADOW_ARRAY && quality > LITE3D_TEXTURE_QL_MEDIUM))
+    if ((textureTarget >= LITE3D_TEXTURE_BUFFER && textureTarget <= LITE3D_TEXTURE_3D_MULTISAMPLE && filtering > LITE3D_TEXTURE_FILTER_NEAREST) ||
+        (textureTarget == LITE3D_TEXTURE_2D_SHADOW && textureTarget == LITE3D_TEXTURE_2D_SHADOW_ARRAY && filtering > LITE3D_TEXTURE_FILTER_BILINEAR))
     {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
-            "%s: incorrect quality option %d for texture %s",
-            LITE3D_CURRENT_FUNCTION, quality, texture_target_string(textureUnit->textureTarget));
+            "%s: incorrect filtering option %d for texture %s",
+            LITE3D_CURRENT_FUNCTION, filtering, texture_target_string(textureUnit->textureTarget));
         return LITE3D_FALSE;
     }
 
@@ -1163,7 +1163,7 @@ int lite3d_texture_unit_allocate(lite3d_texture_unit *textureUnit,
     /* make texture active */
     glBindTexture(textureTargetEnum[textureTarget], textureUnit->textureID);
 
-    if (quality == LITE3D_TEXTURE_QL_NICEST && textureTarget < LITE3D_TEXTURE_BUFFER)
+    if (filtering == LITE3D_TEXTURE_FILTER_TRILINEAR && textureTarget < LITE3D_TEXTURE_BUFFER)
     {
         /* check  mipmaps consistency */
 #ifdef GL_TEXTURE_MAX_LEVEL
@@ -1179,14 +1179,14 @@ int lite3d_texture_unit_allocate(lite3d_texture_unit *textureUnit,
                 "%s: mipmaps not supported for this dimensions %dx%dx%d",
                 texture_target_string(textureUnit->textureTarget),
                 width, height, depth);
-            quality = LITE3D_TEXTURE_QL_MEDIUM;
+            filtering = LITE3D_TEXTURE_FILTER_BILINEAR;
         }
     }
 
-    textureUnit->minFilter = (quality == LITE3D_TEXTURE_QL_NICEST ?
-        GL_LINEAR_MIPMAP_LINEAR : (quality == LITE3D_TEXTURE_QL_LOW ?
+    textureUnit->minFilter = (filtering == LITE3D_TEXTURE_FILTER_TRILINEAR ?
+        GL_LINEAR_MIPMAP_LINEAR : (filtering == LITE3D_TEXTURE_FILTER_NEAREST ?
             GL_NEAREST : GL_LINEAR));
-    textureUnit->magFilter = (quality == LITE3D_TEXTURE_QL_LOW ?
+    textureUnit->magFilter = (filtering == LITE3D_TEXTURE_FILTER_NEAREST ?
         GL_NEAREST : GL_LINEAR);
 
     if (textureTarget < LITE3D_TEXTURE_BUFFER || textureTarget == LITE3D_TEXTURE_2D_SHADOW || 
@@ -1205,7 +1205,7 @@ int lite3d_texture_unit_allocate(lite3d_texture_unit *textureUnit,
                 textureUnit->wrapping == LITE3D_TEXTURE_REPEAT ? GL_REPEAT : GL_CLAMP_TO_EDGE);
         }
 
-        if (quality == LITE3D_TEXTURE_QL_NICEST)
+        if (filtering == LITE3D_TEXTURE_FILTER_TRILINEAR)
         {
             if (gTextureSettings.anisotropy > 1)
             {
@@ -1279,7 +1279,7 @@ int lite3d_texture_unit_allocate(lite3d_texture_unit *textureUnit,
      * series of calls to glTexImage2D or use glGenerateMipmap(GL_TEXTURE_2D).
      * Here, we'll use :
      */
-    if (quality == LITE3D_TEXTURE_QL_NICEST)
+    if (filtering == LITE3D_TEXTURE_FILTER_TRILINEAR)
         glGenerateMipmap(textureTargetEnum[textureTarget]);
 
     /* calculate texture total size */

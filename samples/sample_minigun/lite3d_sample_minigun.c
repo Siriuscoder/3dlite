@@ -69,7 +69,7 @@ static int initMaterials(void)
     if (!(file1 = lite3d_pack_file_load(mFileSysPack, "textures/images/minigun.dds")))
         return LITE3D_FALSE;
     if (!lite3d_texture_unit_from_resource(&mMinigunTexture, file1, LITE3D_IMAGE_DDS,
-        LITE3D_TEXTURE_2D, LITE3D_FALSE, LITE3D_TEXTURE_QL_NICEST, LITE3D_TEXTURE_REPEAT, 0))
+        LITE3D_TEXTURE_2D, LITE3D_FALSE, LITE3D_TEXTURE_FILTER_TRILINEAR, LITE3D_TEXTURE_REPEAT, 0))
         return LITE3D_FALSE;
 
     /* init parameter with texture */

@@ -39,7 +39,7 @@ public:
             LITE3D_IMAGE_DDS,
             LITE3D_TEXTURE_CUBE, 
             LITE3D_FALSE,
-            LITE3D_TEXTURE_QL_NICEST, 
+            LITE3D_TEXTURE_FILTER_TRILINEAR, 
             LITE3D_TEXTURE_CLAMP_TO_EDGE, 
             0));
 

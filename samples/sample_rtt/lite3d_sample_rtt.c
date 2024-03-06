@@ -295,14 +295,14 @@ static int init(void *userdata)
         return LITE3D_FALSE;
 
     if (!lite3d_texture_unit_from_resource(&mBoxUnit, file1, LITE3D_IMAGE_JPG,
-        LITE3D_TEXTURE_2D, LITE3D_FALSE, LITE3D_TEXTURE_QL_NICEST, LITE3D_TEXTURE_REPEAT, 0))
+        LITE3D_TEXTURE_2D, LITE3D_FALSE, LITE3D_TEXTURE_FILTER_TRILINEAR, LITE3D_TEXTURE_REPEAT, 0))
         return LITE3D_FALSE;
 
     /* allocate texture for render */
     /* framebuffers not support texture compression, we mast turn off it */
     lite3d_texture_unit_compression(LITE3D_FALSE);
     if (!lite3d_texture_unit_allocate(&mRenderTextureUnit, LITE3D_TEXTURE_2D,
-        LITE3D_TEXTURE_QL_MEDIUM, LITE3D_TEXTURE_REPEAT, LITE3D_TEXTURE_FORMAT_RGBA, 0,
+        LITE3D_TEXTURE_FILTER_BILINEAR, LITE3D_TEXTURE_REPEAT, LITE3D_TEXTURE_FORMAT_RGBA, 0,
         RENDER_TEXTURE_WIDTH, RENDER_TEXTURE_HEIGHT, 1, 1))
         return LITE3D_FALSE;
     /* then texture allocated we can enable it */

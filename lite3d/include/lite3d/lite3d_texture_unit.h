@@ -64,9 +64,9 @@
 
 #define LITE3D_MAX_FILTERS          10
 
-#define LITE3D_TEXTURE_QL_LOW       0x0001
-#define LITE3D_TEXTURE_QL_MEDIUM    0x0002
-#define LITE3D_TEXTURE_QL_NICEST    0x0003 // mipmapping + anisotropic filter
+#define LITE3D_TEXTURE_FILTER_NEAREST       0x0001
+#define LITE3D_TEXTURE_FILTER_BILINEAR    0x0002
+#define LITE3D_TEXTURE_FILTER_TRILINEAR    0x0003 // mipmapping + anisotropic filter
 
 #define LITE3D_TEXTURE_CLAMP_TO_EDGE    0x0001
 #define LITE3D_TEXTURE_REPEAT           0x0002
@@ -212,12 +212,12 @@ LITE3D_CEXPORT int32_t lite3d_texture_unit_get_level_depth(lite3d_texture_unit *
 */
 LITE3D_CEXPORT int lite3d_texture_unit_from_resource(lite3d_texture_unit *textureUnit, 
     const lite3d_file *resource, uint32_t imageType, uint32_t textureTarget, int8_t srgb,
-    int8_t quality, uint8_t wrapping, uint8_t cubeface);
+    int8_t filtering, uint8_t wrapping, uint8_t cubeface);
 
 /* allocate empty texture object */
 /* set iformat = 0 to specify what internal format does not matter */
 LITE3D_CEXPORT int lite3d_texture_unit_allocate(lite3d_texture_unit *textureUnit, 
-    uint32_t textureTarget, int8_t quality, uint8_t wrapping, uint16_t format,
+    uint32_t textureTarget, int8_t filtering, uint8_t wrapping, uint16_t format,
     uint16_t iformat, int32_t width, int32_t height, int32_t depth, int32_t samples);
 
 /* update specified mipmap level */
