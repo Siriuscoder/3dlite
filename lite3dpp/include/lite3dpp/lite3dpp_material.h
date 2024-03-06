@@ -59,6 +59,7 @@ namespace lite3dpp
         void setPassProgram(uint16_t pass, ShaderProgram *program);
         void setPassBlendMode(uint16_t pass, bool blendEnable, uint8_t mode);
         ShaderProgram *getPassProgram(uint16_t pass) const;
+        bool hasParameter(const String &name, bool isGlobal = false) const;
         
         /* if pass == 0 parameter will be used for all passes */
         LITE3D_MATERIAL_DECLARE_PARAMETER(Float, float, float)

@@ -17,8 +17,11 @@
  *******************************************************************************/
 #include <ctime>
 
+#include <SDL_log.h>
+
 #include "lite3dpp_vault_shadows.h"
 #include "lite3dpp_vault_bloom.h"
+#include "lite3dpp_vault_light_anim.h"
 
 namespace lite3dpp {
 namespace samples {
@@ -48,7 +51,7 @@ public:
 
         MinigunObject() = default;
 
-        MinigunObject(Scene* scene, SampleShadowManager* shadowManager, String name) : 
+        MinigunObject(Scene* scene, SampleShadowManager* shadowManager, const String& name) : 
             mMinigunObj(scene->getObject(name))
         {
             mMinigun = shadowManager->registerDynamicNode(mMinigunObj->getNode("Minigun"));
@@ -86,12 +89,14 @@ public:
     {
         mShadowManager = std::make_unique<SampleShadowManager>(getMain());
         mBloomEffectRenderer = std::make_unique<SampleBloomEffect>(getMain());
+        mLightAnimEffects = std::make_unique<SampleLightEffectManager>();
         mVaultScene = getMain().getResourceManager()->queryResource<Scene>("Vault_111", "vault_111:scenes/vault_111.json");
         getMain().getResourceManager()->queryResource<Scene>("ShadowClean", "vault_111:scenes/shadow_clean.json");
         setMainCamera(getMain().getCamera("MyCamera"));
 
         setupShadowCasters();
         addFlashlight();
+        setupLightAnim();
         // load SSAO effect pipeline before ligth compute step, because SSAO texture needed to ambient light compute  
         getMain().getResourceManager()->queryResource<Scene>("Vault_111_SSAO", "vault_111:scenes/ssao.json");
         mSSAOShader = getMain().getResourceManager()->queryResource<Material>("ssao_compute.material");
@@ -165,6 +170,72 @@ public:
         mShadowManager->newShadowCaster(mVaultScene->getLightNode("VaultStaticRotorSpot"));
     }
 
+    void setupLightAnim()
+    {
+        for (auto &lightNode: mVaultScene->getLights())
+        {
+            if (lightNode.first.starts_with("LightSpot") ||
+                lightNode.first.starts_with("VaultStaticHospitalLight") || 
+                lightNode.first == "VaultStaticLightBoxNode.012" || 
+                lightNode.first == "VaultStaticLightCageWhiteNode.022" ||
+                lightNode.first == "VaultStaticLightCeilNode01.002" ||
+                lightNode.first == "VaultStaticLightCeilNode01.004" ||
+                lightNode.first == "VaultStaticLightBoxNode.012" ||
+                lightNode.first == "VaultStaticLightBoxNode.056" ||
+                lightNode.first == "VaultStaticLightCageWhiteNode.003")
+            {
+                lightNode.second->getLight()->setInfluenceMinRadiance(0.0008); // To avoid threshold artifacts
+                mLightAnimEffects->registerLight(lightNode.second, SampleLightEffectManager::EffectType::Trembling);
+            }
+            else if (lightNode.first == "VaultStaticLightBoxNode.018" ||
+                lightNode.first == "VaultStaticLightBoxNode.040" ||
+                lightNode.first == "VaultStaticLightCageWhiteNode.008" ||
+                lightNode.first == "VaultStaticLightCeilNode01.001" ||
+                lightNode.first == "VaultStaticLightCageWhiteNode.013" ||
+                lightNode.first == "VaultStaticLightCageRedNode.001" ||
+                lightNode.first == "VaultStaticLightCeilNode01.010" ||
+                lightNode.first == "VaultStaticLightCeilNode01.006")
+            {
+                // Создаем новый материал для выбранных источников света чтобы сделать эффект мигания каджой отдельной лампочки 
+                auto material = getMain().getResourceManager()->queryResource<Material>(lightNode.first + "_BlinkGlow.material", 
+                    "vault_111:materials/VltLightGlow01.json");
+                mLightAnimEffects->registerLight(lightNode.second, SampleLightEffectManager::EffectType::Blink, material);
+                // Присваиваем новый натериал к родителю (MeshNode)
+                auto parent = lightNode.second->getParent();
+                if (parent)
+                {
+                    // ВНИМАНИЕ! Для выбранных источников света чанк всегда первый, но для других источников это может быть не так. 
+                    MeshSceneNode *meshNode = static_cast<MeshSceneNode*>(parent);
+                    meshNode->replaceMaterial(1, material);
+                }
+            }
+            else if (lightNode.first == "VaultStaticReactorElectric")
+            {
+                Material *reactorGlow = getMain().getResourceManager()->queryResource<Material>("V111ReactorGlow01.material");
+                mLightAnimEffects->registerLight(lightNode.second, SampleLightEffectManager::EffectType::Trembling, reactorGlow);
+                mLightAnimEffects->registerLight(lightNode.second, SampleLightEffectManager::EffectType::Blink, reactorGlow);
+            }
+            else if (lightNode.first == "VaultStaticReactorElectric.001")
+            {
+                Material *reactorGlow = getMain().getResourceManager()->queryResource<Material>("V111ReactorGlow02.material");
+                mLightAnimEffects->registerLight(lightNode.second, SampleLightEffectManager::EffectType::Trembling, reactorGlow);
+                mLightAnimEffects->registerLight(lightNode.second, SampleLightEffectManager::EffectType::Blink, reactorGlow);
+            }
+            else if (lightNode.first == "VaultStaticReactorElectric.002")
+            {
+                Material *reactorGlow = getMain().getResourceManager()->queryResource<Material>("V111ReactorGlow03.material");
+                mLightAnimEffects->registerLight(lightNode.second, SampleLightEffectManager::EffectType::Trembling, reactorGlow);
+                mLightAnimEffects->registerLight(lightNode.second, SampleLightEffectManager::EffectType::Blink, reactorGlow);
+            }
+            else if (lightNode.first == "VaultStaticReactorElectric.003")
+            {
+                Material *reactorGlow = getMain().getResourceManager()->queryResource<Material>("V111ReactorGlow04.material");
+                mLightAnimEffects->registerLight(lightNode.second, SampleLightEffectManager::EffectType::Trembling, reactorGlow);
+                mLightAnimEffects->registerLight(lightNode.second, SampleLightEffectManager::EffectType::Blink, reactorGlow);
+            }
+        }
+    }
+
     void addFlashlight()
     {
         ConfigurationWriter flashlightJson;
@@ -230,6 +301,8 @@ public:
         mGearKeySpinner->rotateAngle(KM_VEC3_POS_X, 0.1 * deltaRetard);
         mGeneratorSpinner01->rotateAngle(KM_VEC3_POS_Y, 0.025 * deltaRetard);
         mGeneratorSpinner02->rotateAngle(KM_VEC3_POS_Y, -0.025 * deltaRetard);
+
+        mLightAnimEffects->amin(deltaMcs, deltaRetard);
     }
 
     void processEvent(SDL_Event *e) override
@@ -276,14 +349,14 @@ public:
                 mGammaFactor += 0.02;
                 if (mGammaFactor > 3.0)
                     mGammaFactor = 3.0;
-                Material::setFloatGlobalParameter("GammaFactor", mGammaFactor);
+                Material::setFloatGlobalParameter("gamma", mGammaFactor);
             }
             else if (e->key.keysym.sym == SDLK_KP_MINUS)
             {
                 mGammaFactor -= 0.02;
                 if (mGammaFactor < 1.5)
                     mGammaFactor = 1.5;
-                Material::setFloatGlobalParameter("GammaFactor", mGammaFactor);
+                Material::setFloatGlobalParameter("gamma", mGammaFactor);
             }
             else if (e->key.keysym.sym == SDLK_u)
             {
@@ -303,6 +376,7 @@ private:
     Material* mSSAOShader = nullptr;
     std::unique_ptr<SampleShadowManager> mShadowManager;
     std::unique_ptr<SampleBloomEffect> mBloomEffectRenderer;
+    std::unique_ptr<SampleLightEffectManager> mLightAnimEffects;
     std::unique_ptr<LightSceneNode> mFlashLight;
     SpotLightWithShadow mSpot;
     SpotLightWithShadow mSpot01;

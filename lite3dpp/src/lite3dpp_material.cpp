@@ -42,8 +42,6 @@ lite3dpp::Material::MaterialParameters lite3dpp::Material::mGlobalParameters;
     }\
     outtype Material::get##ptype##Parameter(const String &name) const \
     { \
-        if(mGlobalParamNames.count(name) > 0) \
-            return get##ptype##ParameterFromMap(name, getName(), mGlobalParameters); \
         return get##ptype##ParameterFromMap(name, getName(), mMaterialParameters); \
     }\
     void Material::set##ptype##GlobalParameter(const String &name, const intype &value) \
@@ -60,7 +58,7 @@ lite3dpp::Material::MaterialParameters lite3dpp::Material::mGlobalParameters;
     outtype Material::get##ptype##ParameterFromMap(const String &name, const String &matName, const MaterialParameters &params)\
     {\
         MaterialParameters::const_iterator it;\
-        if((it = params.find(name)) == params.end()) \
+        if((it = params.find(name)) != params.end()) \
         {\
             if(std::get<1>(it->second).type != enums)\
                 LITE3D_THROW("Material \"" << matName << "\" parameter " << name << " type mismatch");\
@@ -304,6 +302,16 @@ namespace lite3dpp
         }
 
         return &std::get<1>(it->second);
+    }
+
+    bool Material::hasParameter(const String &name, bool isGlobal) const
+    {
+        if(isGlobal)
+        {
+            return mGlobalParamNames.count(name) > 0;
+        }
+
+        return mMaterialParameters.count(name) > 0;
     }
     
     lite3d_shader_parameter *Material::getGlobalParameter(const String &name, 
