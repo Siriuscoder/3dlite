@@ -28,6 +28,7 @@
 #include <lite3d/lite3d_alloc.h>
 #include <lite3d/lite3d_misc.h>
 #include <lite3d/lite3d_texture_unit.h>
+#include <lite3d/lite3d_texture_dds.h>
 
 static lite3d_texture_technique_settings gTextureSettings;
 
@@ -378,7 +379,7 @@ static int8_t max_mipmaps_count(int32_t width, int32_t height, int32_t depth,
     return count;
 }
 
-static int checkTextureTarget(uint32_t textureTarget)
+static int check_texture_target(uint32_t textureTarget)
 {
     if (textureTarget >= (sizeof(textureTargetEnum) / sizeof(textureTargetEnum[0])))
     {
@@ -516,40 +517,6 @@ static int set_internal_format(lite3d_texture_unit *textureUnit, uint16_t format
     return LITE3D_TRUE;
 }
 
-static int determineCompressionMethod(uint8_t srgb, ILuint imageFormat, ILuint* internalFormat)
-{
-    ILint dataFormat = 0;
-    if (!textureCompression || !gTextureSettings.useCompressedDataOnLoad)
-        return LITE3D_FALSE;
-    if (!lite3d_check_texture_compression_s3tc())
-        return LITE3D_FALSE;
-    
-    dataFormat = ilGetInteger(IL_DXTC_FORMAT);
-    switch (dataFormat)
-    {
-    case IL_DXT1:
-        if (imageFormat == LITE3D_TEXTURE_FORMAT_RGB)
-        {
-            *internalFormat = srgb ? GL_COMPRESSED_SRGB_S3TC_DXT1_EXT : GL_COMPRESSED_RGB_S3TC_DXT1_EXT;
-            return LITE3D_TRUE;
-        }
-        else if (imageFormat == LITE3D_TEXTURE_FORMAT_RGBA)
-        {
-            *internalFormat = srgb ? GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT1_EXT : GL_COMPRESSED_RGBA_S3TC_DXT1_EXT;
-            return LITE3D_TRUE;
-        }
-        break;
-    case IL_DXT3:
-        *internalFormat = srgb ? GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT3_EXT : GL_COMPRESSED_RGBA_S3TC_DXT3_EXT;
-        return LITE3D_TRUE;
-    case IL_DXT5:
-        *internalFormat = srgb ? GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT5_EXT : GL_COMPRESSED_RGBA_S3TC_DXT5_EXT;
-        return LITE3D_TRUE;
-    };
-    
-    return LITE3D_FALSE;
-}
-
 void lite3d_texture_technique_add_image_filter(lite3d_image_filter *filter)
 {
     SDL_assert(filter);
@@ -648,8 +615,6 @@ int lite3d_texture_unit_from_resource(lite3d_texture_unit *textureUnit,
     int8_t totalLevels = 0;
     uint8_t totalFaces = 0;
     uint8_t imageFace = 0;
-    void *compressedBuffer = NULL;
-    int compressedLoad = LITE3D_FALSE;
 
     SDL_assert(resource);
     SDL_assert(textureUnit);
@@ -657,7 +622,7 @@ int lite3d_texture_unit_from_resource(lite3d_texture_unit *textureUnit,
     if (!resource->isLoaded || resource->fileSize == 0)
         return LITE3D_FALSE;
 
-    if (!lite3d_check_srgb())
+    if (srgb && !lite3d_check_srgb())
     {
         SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION, "%s sRGB format is not supported",
             texture_target_string(textureUnit->textureTarget));
@@ -672,6 +637,14 @@ int lite3d_texture_unit_from_resource(lite3d_texture_unit *textureUnit,
         return LITE3D_FALSE;
     }
 
+    if (textureCompression && gTextureSettings.useCompressedDataOnLoad && imageType == LITE3D_IMAGE_DDS)
+    {
+        if (lite3d_texture_unit_dds_fast_load(textureUnit, resource, textureTarget, srgb, filtering, wrapping, cubeface))
+        {
+            return LITE3D_TRUE;
+        }
+    }
+
     lite3d_misc_il_error_stack_clean();
     /* gen IL image */
     imageDesc = ilGenImage();
@@ -680,7 +653,6 @@ int lite3d_texture_unit_from_resource(lite3d_texture_unit *textureUnit,
 
     /* Bind IL image */
     ilBindImage(imageDesc);
-    ilEnable(IL_KEEP_DXTC_DATA);
     /* Load IL image from memory */
     if (!ilLoadL(imageTypeEnum[imageType], resource->fileBuff, (ILuint)resource->fileSize))
     {
@@ -700,7 +672,6 @@ int lite3d_texture_unit_from_resource(lite3d_texture_unit *textureUnit,
         internalFormat = LITE3D_TEXTURE_INTERNAL_SRGB;
     else if (srgb && imageFormat == LITE3D_TEXTURE_FORMAT_RGBA)
         internalFormat = LITE3D_TEXTURE_INTERNAL_SRGB_ALPHA;
-    compressedLoad = determineCompressionMethod(srgb, imageFormat, &internalFormat);
 
     /* allocate texture surface if not allocated yet */
     if (textureUnit->imageWidth != imageWidth || textureUnit->imageHeight != imageHeight ||
@@ -772,47 +743,14 @@ int lite3d_texture_unit_from_resource(lite3d_texture_unit *textureUnit,
             lHeight = ilGetInteger(IL_IMAGE_HEIGHT);
             lDepth = ilGetInteger(IL_IMAGE_DEPTH);
 
-            if (compressedLoad)
+            if (!lite3d_texture_unit_set_pixels(textureUnit, 0, 0, 0, 
+                lWidth, lHeight, lDepth, mipLevel, totalFaces == 0 ? cubeface : imageFace, ilGetData()))
             {
-                ILint comressedFormat = ilGetInteger(IL_DXTC_FORMAT);
-                // Получим рпазмер запакованного слоя текстуры
-                ILuint compressedBufferSize = ilGetDXTCData(NULL, 0, comressedFormat);
-                if (!compressedBuffer)
-                {
-                    // Выделяем буффер под слой текстуры один раз, берем максимальный размер
-                    compressedBuffer = lite3d_malloc(LITE3D_MAX(compressedBufferSize, textureUnit->imageSize));
-                }
-                // Копируем запакованный слой текстуры из DevIL в промежуточный буфер
-                memset(compressedBuffer, 0, compressedBufferSize);
-                ilGetDXTCData(compressedBuffer, compressedBufferSize, comressedFormat);
-
-                // Загружаем запакованный слой в видео память из промежуточного буфера
-                if (!lite3d_texture_unit_set_compressed_pixels(textureUnit, 0, 0, 0, lWidth, lHeight, lDepth, mipLevel,
-                    totalFaces == 0 ? cubeface : imageFace, compressedBufferSize, compressedBuffer))
-                {
-                    ilDeleteImage(imageDesc);
-                    lite3d_texture_unit_purge(textureUnit);
-                    lite3d_free(compressedBuffer);
-                    return LITE3D_FALSE;
-                }
-            }
-            else
-            {
-                if (!lite3d_texture_unit_set_pixels(textureUnit, 0, 0, 0, 
-                    lWidth, lHeight, lDepth, mipLevel, totalFaces == 0 ? cubeface : imageFace, ilGetData()))
-                {
-                    ilDeleteImage(imageDesc);
-                    lite3d_texture_unit_purge(textureUnit);
-                    return LITE3D_FALSE;
-                }
+                ilDeleteImage(imageDesc);
+                lite3d_texture_unit_purge(textureUnit);
+                return LITE3D_FALSE;
             }
         }
-    }
-
-    // Данные загружены, больше не требуется
-    if (compressedBuffer)
-    {
-        lite3d_free(compressedBuffer);
     }
 
     /* make texture active */
@@ -1102,7 +1040,7 @@ int lite3d_texture_unit_allocate(lite3d_texture_unit *textureUnit,
     textureUnit->imageHeight = height;
     textureUnit->imageDepth = depth;
 
-    if (!checkTextureTarget(textureTarget))
+    if (!check_texture_target(textureTarget))
     {
         return LITE3D_FALSE;
     }
