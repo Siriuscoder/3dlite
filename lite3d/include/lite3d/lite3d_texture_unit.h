@@ -252,4 +252,8 @@ LITE3D_CEXPORT void lite3d_texture_unit_unbind(lite3d_texture_unit *texture, uin
 
 LITE3D_CEXPORT void lite3d_texture_unit_compression(uint8_t on);
 
+LITE3D_CEXPORT const char *lite3d_texture_unit_format_string(const lite3d_texture_unit *texture);
+LITE3D_CEXPORT const char *lite3d_texture_unit_target_string(uint32_t textureTarget);
+LITE3D_CEXPORT const char *lite3d_texture_unit_internal_format_string(const lite3d_texture_unit *texture);
+
 #endif

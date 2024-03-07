@@ -20,6 +20,7 @@
 
 #include <lite3d/lite3d_alloc.h>
 #include <lite3d/lite3d_glext.h>
+#include <lite3d/lite3d_misc.h>
 #include <lite3d/lite3d_texture_unit.h>
 #include <lite3d/lite3d_texture_dds.h>
 
@@ -56,10 +57,20 @@
 #define DDS_CUBEMAP_NEGATIVEY   0x00002000L
 #define DDS_CUBEMAP_POSITIVEZ   0x00004000L
 #define DDS_CUBEMAP_NEGATIVEZ   0x00008000L
+#define DDS_CUBEMAP_SIDES       6
 
 #define DDS_MAKEFOURCC(ch0, ch1, ch2, ch3)  \
     ((int32_t)(int8_t)(ch0) | ((int32_t)(int8_t)(ch1) << 8) |   \
     ((int32_t)(int8_t)(ch2) << 16) | ((int32_t)(int8_t)(ch3) << 24 ))
+
+uint32_t CubemapDirections[DDS_CUBEMAP_SIDES] = {
+    DDS_CUBEMAP_POSITIVEX,
+    DDS_CUBEMAP_NEGATIVEX,
+    DDS_CUBEMAP_POSITIVEY,
+    DDS_CUBEMAP_NEGATIVEY,
+    DDS_CUBEMAP_POSITIVEZ,
+    DDS_CUBEMAP_NEGATIVEZ
+};
 
 #pragma pack(push, 1)
 typedef struct lite3d_dds_pixelformat
@@ -95,6 +106,23 @@ typedef struct lite3d_dds_head
 } lite3d_dds_head;
 #pragma pack(pop)
 
+static const char *lite3d_dds_get_format_string(int compFormat)
+{
+    switch (compFormat)
+    {
+        case DDS_PF_DXT1:
+            return "DXT1";
+        case DDS_PF_DXT3:
+            return "DXT3";
+        case DDS_PF_DXT5:
+            return "DXT5";
+        case DDS_PF_RXGB:
+            return "RXGB";
+    }
+
+    return "Unknown";
+}
+
 static int lite3d_check_dds_head(const struct lite3d_dds_head *head)
 {
     if (strncmp(head->Signature, "DDS ", 4))
@@ -126,10 +154,16 @@ static int lite3d_check_dds_head(const struct lite3d_dds_head *head)
         return LITE3D_FALSE;
     }
 
+    if (!(head->ddsCaps1 & DDS_TEXTURE))
+    {
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "%s: DDS is not a texture", LITE3D_CURRENT_FUNCTION);
+        return LITE3D_FALSE;
+    }
+
     return LITE3D_TRUE;
 }
 
-static size_t lite3d_read_and_validate_dds_head(const void *buffer, size_t size, struct lite3d_dds_head *head, int *compFormat)
+static size_t lite3d_read_and_validate_dds_head(const uint8_t *buffer, size_t size, struct lite3d_dds_head *head, int *compFormat)
 {
     if (sizeof(lite3d_dds_head) > size)
     {
@@ -180,31 +214,40 @@ static size_t lite3d_read_and_validate_dds_head(const void *buffer, size_t size,
     return sizeof(lite3d_dds_head);
 }
 
-static void lite3d_fixup_dds_header(struct lite3d_dds_head *head)
+static uint32_t lite3d_get_linear_size(uint32_t width, uint32_t height, uint32_t depth, int compFormat)
 {
-    if (head->Depth == 0 || !(head->ddsCaps2 & DDS_VOLUME))
-        head->Depth = 1;
-}
-
-static void lite3d_dds_header_set_linear_size(struct lite3d_dds_head *head, int compFormat)
-{
-    head->Flags |= DDS_LINEARSIZE;
-    head->LinearSize = ((head->Width+3)/4) * ((head->Height+3)/4) * head->Depth;
+    uint32_t linearSize = ((width+3)/4) * ((height+3)/4) * depth;
 
     switch (compFormat)
     {
         case DDS_PF_DXT1:
-            head->LinearSize *= 8;
+            linearSize *= 8;
             break;
         case DDS_PF_DXT3:
         case DDS_PF_DXT5:
         case DDS_PF_RXGB:
-            head->LinearSize *= 16;
+            linearSize *= 16;
             break;
     }
+
+    return linearSize;
 }
 
-static void lite3d_dds_header_get_format(struct lite3d_dds_head *head, int8_t srgb, int compFormat, uint16_t *imageFormat, 
+static void lite3d_fixup_dds_header(struct lite3d_dds_head *head, int compFormat)
+{
+    if (head->Depth == 0 || !(head->ddsCaps2 & DDS_VOLUME))
+        head->Depth = 1;
+
+    if (!(head->Flags & DDS_MIPMAPCOUNT) || head->MipMapCount == 0) 
+    {
+        head->MipMapCount = 1;
+    }
+
+    head->Flags |= DDS_LINEARSIZE;
+    head->LinearSize = lite3d_get_linear_size(head->Width, head->Height, head->Depth, compFormat);
+}
+
+static void lite3d_dds_header_get_format(const struct lite3d_dds_head *head, int8_t srgb, int compFormat, uint16_t *imageFormat, 
     uint16_t *internalFormat)
 {
     switch (compFormat)
@@ -235,6 +278,62 @@ static void lite3d_dds_header_get_format(struct lite3d_dds_head *head, int8_t sr
     }
 }
 
+static uint8_t lite3d_dds_header_get_num_cubefaces(const struct lite3d_dds_head *head)
+{
+    uint8_t validCubeFaces = 0; 
+    for (int i = 0; i < DDS_CUBEMAP_SIDES; i++) 
+    {
+        if (head->ddsCaps2 & CubemapDirections[i])
+        {
+            validCubeFaces++;
+        }
+    }
+
+    return validCubeFaces;
+}
+
+static size_t lite3d_dds_load_face(struct lite3d_texture_unit *textureUnit, const struct lite3d_dds_head *head, 
+    const uint8_t *buffer, size_t size, uint8_t face, int compFormat)
+{
+    uint32_t Width = head->Width, Height = head->Height, Depth = head->Depth;
+    size_t originSize = size;
+
+    for (uint32_t mip = 0; mip < head->MipMapCount; ++mip)
+    {
+        size_t linearSize = lite3d_get_linear_size(Width, Height, Depth, compFormat);
+        if (linearSize > size)
+        {
+            SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "%s: Invalid DDS file size", LITE3D_CURRENT_FUNCTION);
+            return 0;
+        }
+
+        size -= linearSize;
+        /* use only 0 level and skip others if texture do not support mipmaps */
+        if (mip > 0 && textureUnit->generatedMipmaps == 0)
+            continue;
+
+        if (!lite3d_texture_unit_set_compressed_pixels(textureUnit, 0, 0, 0, Width, Height, Depth, mip, face, linearSize, buffer))
+        {
+            return 0;
+        }
+
+        buffer += linearSize;
+
+        Depth = Depth / 2;
+        Width = Width / 2;
+        Height = Height / 2;
+
+        if (Depth == 0) 
+            Depth = 1;
+        if (Width == 0) 
+            Width = 1;
+        if (Height == 0) 
+            Height = 1;
+    }
+
+    return originSize - size;
+}
+
 int lite3d_texture_unit_dds_fast_load(struct lite3d_texture_unit *textureUnit, const struct lite3d_file *resource, 
     uint32_t textureTarget, int8_t srgb, int8_t filtering, uint8_t wrapping, uint8_t cubeface)
 {
@@ -242,17 +341,21 @@ int lite3d_texture_unit_dds_fast_load(struct lite3d_texture_unit *textureUnit, c
     int compFormat;
     size_t processed = 0, remains = resource->fileSize;
     uint16_t imageFormat, internalFormat;
+    const uint8_t *buffer = (const uint8_t*)resource->fileBuff;
+    uint8_t cubefacesNum = 0;
 
     if (!lite3d_check_texture_compression_s3tc())
         return LITE3D_FALSE;
 
-    if ((processed = lite3d_read_and_validate_dds_head(resource->fileBuff, resource->fileSize, &head, &compFormat)) == 0)
+    if ((processed = lite3d_read_and_validate_dds_head(buffer, remains, &head, &compFormat)) == 0)
     {
         return LITE3D_FALSE;
     }
 
+    textureUnit->imageType = LITE3D_IMAGE_DDS;
     remains -= processed;
-    lite3d_fixup_dds_header(&head);
+
+    lite3d_fixup_dds_header(&head, compFormat);
     lite3d_dds_header_get_format(&head, srgb, compFormat, &imageFormat, &internalFormat);
 
     /* allocate texture surface if not allocated yet */
@@ -266,7 +369,76 @@ int lite3d_texture_unit_dds_fast_load(struct lite3d_texture_unit *textureUnit, c
         }
     }
 
-    lite3d_dds_header_set_linear_size(&head, compFormat);
-    
+    /* check mipmaps consistency */
+    if (head.Flags & DDS_MIPMAPCOUNT && textureUnit->generatedMipmaps > 0)
+    {
+        if (head.MipMapCount != textureUnit->generatedMipmaps)
+        {
+            SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "%s: DDS mipmap count mismatch, expected %d, fact %d", 
+                LITE3D_CURRENT_FUNCTION, textureUnit->generatedMipmaps, head.MipMapCount);
+            lite3d_texture_unit_purge(textureUnit);
+            return LITE3D_FALSE;
+        }
+
+        textureUnit->loadedMipmaps = head.MipMapCount;
+    }
+
+    do 
+    {
+        /* For CubeMap textures */
+        if (textureTarget == LITE3D_TEXTURE_CUBE && head.ddsCaps1 & DDS_COMPLEX && head.ddsCaps2 & DDS_CUBEMAP)
+        {
+            cubefacesNum = lite3d_dds_header_get_num_cubefaces(&head);
+            if (cubefacesNum == DDS_CUBEMAP_SIDES) // All faces are present
+            {
+                for (uint8_t face = 0; face < cubefacesNum; ++face)
+                {
+                    if ((processed = lite3d_dds_load_face(textureUnit, &head, buffer, remains, face, compFormat)) == 0)
+                    {
+                        lite3d_texture_unit_purge(textureUnit);
+                        return LITE3D_FALSE;
+                    }
+
+                    remains -= processed;
+                }
+
+                break;
+            }
+        }
+
+        /* Load regular image or requested face of cubemap */
+        if ((processed = lite3d_dds_load_face(textureUnit, &head, buffer, remains, cubeface, compFormat)) == 0)
+        {
+            lite3d_texture_unit_purge(textureUnit);
+            return LITE3D_FALSE;
+        }
+        
+        remains -= processed;
+    } while(LITE3D_FALSE);
+
+    /* ganerate mipmaps if not loaded */
+    if (textureUnit->loadedMipmaps == 0)
+        lite3d_texture_unit_generate_mipmaps(textureUnit);
+
+    if (LITE3D_CHECK_GL_ERROR)
+    {
+        lite3d_texture_unit_purge(textureUnit);
+        return LITE3D_FALSE;
+    }
+
+    SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "FastDDS: %s: %s, "
+        "%dx%dx%d, %d mipmaps %s, cubefaces %u, image: %s, storage: %s, data: %s",
+        lite3d_texture_unit_target_string(textureUnit->textureTarget),
+        resource->name,
+        textureUnit->imageWidth,
+        textureUnit->imageHeight,
+        textureUnit->imageDepth,
+        textureUnit->generatedMipmaps,
+        textureUnit->loadedMipmaps == 0 ? "generated" : "loaded",
+        cubefacesNum, 
+        lite3d_dds_get_format_string(compFormat),
+        lite3d_texture_unit_internal_format_string(textureUnit),
+        lite3d_texture_unit_format_string(textureUnit));
+
     return LITE3D_TRUE;
 }
