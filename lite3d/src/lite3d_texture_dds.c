@@ -28,6 +28,8 @@
 #define DDS_PF_DXT3 0x3
 #define DDS_PF_DXT5 0x5
 #define DDS_PF_RXGB 0x6 // Doom3 normal maps
+#define DDS_PF_BC4  0x7 // 3DC/BC4
+#define DDS_PF_BC5  0x8 // 3DC/BC5
 
 #define DDS_CAPS                0x00000001L
 #define DDS_HEIGHT              0x00000002L
@@ -118,6 +120,10 @@ static const char *lite3d_dds_get_format_string(int compFormat)
             return "DXT5";
         case DDS_PF_RXGB:
             return "RXGB";
+        case DDS_PF_BC4:
+            return "3DC/BC4";
+        case DDS_PF_BC5:
+            return "3DC/BC5";
     }
 
     return "Unknown";
@@ -194,6 +200,12 @@ static size_t lite3d_read_and_validate_dds_head(const uint8_t *buffer, size_t si
             case DDS_MAKEFOURCC('R', 'X', 'G', 'B'):
                 *compFormat = DDS_PF_RXGB;
                 break;
+            case DDS_MAKEFOURCC('A', 'T', 'I', '1'):
+                *compFormat = DDS_PF_BC4;
+                break;
+            case DDS_MAKEFOURCC('A', 'T', 'I', '2'):
+                *compFormat = DDS_PF_BC5;
+                break;
             default:
             {
                 SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, 
@@ -221,11 +233,13 @@ static uint32_t lite3d_get_linear_size(uint32_t width, uint32_t height, uint32_t
     switch (compFormat)
     {
         case DDS_PF_DXT1:
+        case DDS_PF_BC4:
             linearSize *= 8;
             break;
         case DDS_PF_DXT3:
         case DDS_PF_DXT5:
         case DDS_PF_RXGB:
+        case DDS_PF_BC5:
             linearSize *= 16;
             break;
     }
@@ -271,9 +285,20 @@ static void lite3d_dds_header_get_format(const struct lite3d_dds_head *head, int
             *internalFormat = srgb ? GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT3_EXT : GL_COMPRESSED_RGBA_S3TC_DXT3_EXT;
             break;
         case DDS_PF_DXT5:
-        case DDS_PF_RXGB:
             *imageFormat = LITE3D_TEXTURE_FORMAT_RGBA;
             *internalFormat = srgb ? GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT5_EXT : GL_COMPRESSED_RGBA_S3TC_DXT5_EXT;
+            break;
+        case DDS_PF_RXGB:
+            *imageFormat = LITE3D_TEXTURE_FORMAT_RGB;
+            *internalFormat = GL_COMPRESSED_RGBA_S3TC_DXT5_EXT;
+            break;
+        case DDS_PF_BC4:
+            *imageFormat = LITE3D_TEXTURE_FORMAT_RED;
+            *internalFormat = GL_COMPRESSED_RED_RGTC1_EXT;
+            break;
+        case DDS_PF_BC5:
+            *imageFormat = LITE3D_TEXTURE_FORMAT_RG;
+            *internalFormat = GL_COMPRESSED_RED_GREEN_RGTC2_EXT;
             break;
     }
 }
@@ -307,16 +332,17 @@ static size_t lite3d_dds_load_face(struct lite3d_texture_unit *textureUnit, cons
             return 0;
         }
 
-        size -= linearSize;
         /* use only 0 level and skip others if texture do not support mipmaps */
-        if (mip > 0 && textureUnit->generatedMipmaps == 0)
-            continue;
-
-        if (!lite3d_texture_unit_set_compressed_pixels(textureUnit, 0, 0, 0, Width, Height, Depth, mip, face, linearSize, buffer))
+        if (mip == 0 || textureUnit->generatedMipmaps > 0)
         {
-            return 0;
+            if (!lite3d_texture_unit_set_compressed_pixels(textureUnit, 0, 0, 0, Width, Height, Depth, mip, face, 
+                linearSize, buffer))
+            {
+                return 0;
+            }
         }
 
+        size -= linearSize;
         buffer += linearSize;
 
         Depth = Depth / 2;
@@ -343,26 +369,25 @@ int lite3d_texture_unit_dds_fast_load(struct lite3d_texture_unit *textureUnit, c
     uint16_t imageFormat, internalFormat;
     const uint8_t *buffer = (const uint8_t*)resource->fileBuff;
     uint8_t cubefacesNum = 0;
-
-    if (!lite3d_check_texture_compression_s3tc())
-        return LITE3D_FALSE;
+    lite3d_texture_unit textureUnitCopy = *textureUnit;
 
     if ((processed = lite3d_read_and_validate_dds_head(buffer, remains, &head, &compFormat)) == 0)
     {
         return LITE3D_FALSE;
     }
 
-    textureUnit->imageType = LITE3D_IMAGE_DDS;
+    textureUnitCopy.imageType = LITE3D_IMAGE_DDS;
     remains -= processed;
+    buffer += processed;
 
     lite3d_fixup_dds_header(&head, compFormat);
     lite3d_dds_header_get_format(&head, srgb, compFormat, &imageFormat, &internalFormat);
 
     /* allocate texture surface if not allocated yet */
-    if (textureUnit->imageWidth != head.Width || textureUnit->imageHeight != head.Height ||
-        textureUnit->imageDepth != head.Depth)
+    if (textureUnitCopy.imageWidth != head.Width || textureUnitCopy.imageHeight != head.Height ||
+        textureUnitCopy.imageDepth != head.Depth)
     {
-        if (!lite3d_texture_unit_allocate(textureUnit, textureTarget, filtering,
+        if (!lite3d_texture_unit_allocate(&textureUnitCopy, textureTarget, filtering,
             wrapping, imageFormat, internalFormat, head.Width, head.Height, head.Depth, 1))
         {
             return LITE3D_FALSE;
@@ -370,17 +395,17 @@ int lite3d_texture_unit_dds_fast_load(struct lite3d_texture_unit *textureUnit, c
     }
 
     /* check mipmaps consistency */
-    if (head.Flags & DDS_MIPMAPCOUNT && textureUnit->generatedMipmaps > 0)
+    if (head.Flags & DDS_MIPMAPCOUNT && textureUnitCopy.generatedMipmaps > 0)
     {
-        if (head.MipMapCount != textureUnit->generatedMipmaps)
+        if (head.MipMapCount != (textureUnitCopy.generatedMipmaps + 1))
         {
             SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "%s: DDS mipmap count mismatch, expected %d, fact %d", 
-                LITE3D_CURRENT_FUNCTION, textureUnit->generatedMipmaps, head.MipMapCount);
-            lite3d_texture_unit_purge(textureUnit);
+                LITE3D_CURRENT_FUNCTION, textureUnitCopy.generatedMipmaps, head.MipMapCount);
+            lite3d_texture_unit_purge(&textureUnitCopy);
             return LITE3D_FALSE;
         }
 
-        textureUnit->loadedMipmaps = head.MipMapCount;
+        textureUnitCopy.loadedMipmaps = textureUnitCopy.generatedMipmaps;
     }
 
     do 
@@ -393,13 +418,14 @@ int lite3d_texture_unit_dds_fast_load(struct lite3d_texture_unit *textureUnit, c
             {
                 for (uint8_t face = 0; face < cubefacesNum; ++face)
                 {
-                    if ((processed = lite3d_dds_load_face(textureUnit, &head, buffer, remains, face, compFormat)) == 0)
+                    if ((processed = lite3d_dds_load_face(&textureUnitCopy, &head, buffer, remains, face, compFormat)) == 0)
                     {
-                        lite3d_texture_unit_purge(textureUnit);
+                        lite3d_texture_unit_purge(&textureUnitCopy);
                         return LITE3D_FALSE;
                     }
 
                     remains -= processed;
+                    buffer += processed;
                 }
 
                 break;
@@ -407,26 +433,28 @@ int lite3d_texture_unit_dds_fast_load(struct lite3d_texture_unit *textureUnit, c
         }
 
         /* Load regular image or requested face of cubemap */
-        if ((processed = lite3d_dds_load_face(textureUnit, &head, buffer, remains, cubeface, compFormat)) == 0)
+        if ((processed = lite3d_dds_load_face(&textureUnitCopy, &head, buffer, remains, cubeface, compFormat)) == 0)
         {
-            lite3d_texture_unit_purge(textureUnit);
+            lite3d_texture_unit_purge(&textureUnitCopy);
             return LITE3D_FALSE;
         }
         
         remains -= processed;
+        buffer += processed;
     } while(LITE3D_FALSE);
 
     /* ganerate mipmaps if not loaded */
-    if (textureUnit->loadedMipmaps == 0)
-        lite3d_texture_unit_generate_mipmaps(textureUnit);
+    if (textureUnitCopy.loadedMipmaps == 0)
+        lite3d_texture_unit_generate_mipmaps(&textureUnitCopy);
 
     if (LITE3D_CHECK_GL_ERROR)
     {
-        lite3d_texture_unit_purge(textureUnit);
+        lite3d_texture_unit_purge(&textureUnitCopy);
         return LITE3D_FALSE;
     }
 
-    SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "FastDDS: %s: %s, "
+    *textureUnit = textureUnitCopy;
+    SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "%s(FastDDS): %s, "
         "%dx%dx%d, %d mipmaps %s, cubefaces %u, image: %s, storage: %s, data: %s",
         lite3d_texture_unit_target_string(textureUnit->textureTarget),
         resource->name,

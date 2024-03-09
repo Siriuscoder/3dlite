@@ -74,6 +74,10 @@ static int initMaterials(void)
     lite3d_material_pass *matPass;
     lite3d_shader shaders[2];
 
+    memset(&mRifleTextureA, 0, sizeof(lite3d_texture_unit));
+    memset(&mRifleTextureB, 0, sizeof(lite3d_texture_unit));
+    memset(&mBattTexture, 0, sizeof(lite3d_texture_unit));
+
     if (!(file1 = lite3d_pack_file_load(mFileSysPack, "textures/images/plasmarif02a.dds")))
         return LITE3D_FALSE;
     if (!lite3d_texture_unit_from_resource(&mRifleTextureA, file1, LITE3D_IMAGE_DDS,

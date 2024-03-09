@@ -124,26 +124,6 @@ const char *lite3d_texture_unit_target_string(uint32_t textureTarget)
     }
 }
 
-static int texture_internal_format_compressed(uint32_t iformat)
-{
-    switch (iformat)
-    {
-    case GL_COMPRESSED_RGB_S3TC_DXT1_EXT:
-    case GL_COMPRESSED_SRGB_S3TC_DXT1_EXT:
-    case GL_COMPRESSED_RGBA_S3TC_DXT1_EXT:
-    case GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT1_EXT:
-    case GL_COMPRESSED_RGBA_S3TC_DXT3_EXT:
-    case GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT3_EXT:
-    case GL_COMPRESSED_RGBA_S3TC_DXT5_EXT:
-    case GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT5_EXT:
-    case GL_COMPRESSED_RED_RGTC1_EXT:
-    case GL_COMPRESSED_RED_GREEN_RGTC2_EXT:
-        return LITE3D_TRUE;
-    }
-
-    return LITE3D_FALSE;
-}
-
 const char *lite3d_texture_unit_internal_format_string(const lite3d_texture_unit *texture)
 {
     switch (texture->texiFormat)
@@ -508,12 +488,44 @@ static int set_internal_format(lite3d_texture_unit *textureUnit, uint16_t format
         }
     }
 
+    textureUnit->compressed = LITE3D_FALSE;
+    switch (iformat)
+    {
+        case GL_COMPRESSED_RED_RGTC1_EXT:
+        case GL_COMPRESSED_RED_GREEN_RGTC2_EXT:
+            if (!lite3d_check_texture_compression_rgtc())
+            {
+                SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+                    "%s: RGTC compression is not supported: %d",
+                    LITE3D_CURRENT_FUNCTION, iformat);
+                return LITE3D_FALSE;
+            }
+            textureUnit->compressed = LITE3D_TRUE;
+            break;
+        case GL_COMPRESSED_RGB_S3TC_DXT1_EXT:
+        case GL_COMPRESSED_SRGB_S3TC_DXT1_EXT:
+        case GL_COMPRESSED_RGBA_S3TC_DXT1_EXT:
+        case GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT1_EXT:
+        case GL_COMPRESSED_RGBA_S3TC_DXT3_EXT:
+        case GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT3_EXT:
+        case GL_COMPRESSED_RGBA_S3TC_DXT5_EXT:
+        case GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT5_EXT:
+            if (!lite3d_check_texture_compression_s3tc())
+            {
+                SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+                    "%s: S3TC compression is not supported: %d",
+                    LITE3D_CURRENT_FUNCTION, iformat);
+                return LITE3D_FALSE;
+            }
+            textureUnit->compressed = LITE3D_TRUE;
+            break;
+    }
+
     if (iformat > 0)
     {
         *internalFormat = iformat;
     }
 
-    textureUnit->compressed = texture_internal_format_compressed(*internalFormat);
     return LITE3D_TRUE;
 }
 
@@ -625,15 +637,14 @@ int lite3d_texture_unit_from_resource(lite3d_texture_unit *textureUnit,
     if (srgb && !lite3d_check_srgb())
     {
         SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION, "%s sRGB format is not supported",
-            lite3d_texture_unit_target_string(textureUnit->textureTarget));
+            lite3d_texture_unit_target_string(textureTarget));
         srgb = LITE3D_FALSE;
     }
 
     if (textureTarget > LITE3D_TEXTURE_CUBE)
     {
-        textureUnit->textureTarget = textureTarget;
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "%s not supplied by %s method",
-            lite3d_texture_unit_target_string(textureUnit->textureTarget), LITE3D_CURRENT_FUNCTION);
+            lite3d_texture_unit_target_string(textureTarget), LITE3D_CURRENT_FUNCTION);
         return LITE3D_FALSE;
     }
 

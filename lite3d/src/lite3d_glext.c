@@ -124,7 +124,7 @@ int lite3d_check_texture_compression_rgtc(void)
 #ifdef GLES
     return SDL_GL_ExtensionSupported("GL_EXT_texture_compression_rgtc") == SDL_TRUE;
 #else
-    return GLEW_EXT_texture_compression_rgtc || GLEW_ARB_texture_compression_rgtc;
+    return GLEW_EXT_texture_compression_rgtc || GLEW_ARB_texture_compression_rgtc || GLEW_VERSION_3_0;
 #endif
 }
 

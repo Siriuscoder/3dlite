@@ -17,8 +17,6 @@
  *******************************************************************************/
 #include <ctime>
 
-#include <SDL_log.h>
-
 #include "lite3dpp_vault_shadows.h"
 #include "lite3dpp_vault_bloom.h"
 #include "lite3dpp_vault_light_anim.h"
@@ -184,7 +182,7 @@ public:
                 lightNode.first == "VaultStaticLightBoxNode.056" ||
                 lightNode.first == "VaultStaticLightCageWhiteNode.003")
             {
-                lightNode.second->getLight()->setInfluenceMinRadiance(0.0008); // To avoid threshold artifacts
+                lightNode.second->getLight()->setInfluenceMinRadiance(0.001); // To avoid threshold artifacts
                 mLightAnimEffects->registerLight(lightNode.second, SampleLightEffectManager::EffectType::Trembling);
             }
             else if (lightNode.first == "VaultStaticLightBoxNode.018" ||

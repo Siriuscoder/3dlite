@@ -5,8 +5,8 @@
     "LogFile": "lite3d.log",
     "TextureSettings": {
         "Anisotropy": 8,
-        "Compression": false,
-        "CompressedDataOnLoad": false,
+        "Compression": true,
+        "CompressedDataOnLoad": true,
         "DepthFormat": "Depth32"
     },
     // Video settings

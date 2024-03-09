@@ -24,7 +24,7 @@ public:
 
     static int cubemapLoadingTest(void *userdata)
     {
-        lite3d_texture_unit cubemap = {};
+        lite3d_texture_unit cubemap = {0};
         lite3d_pack *fileSysPack = lite3d_pack_open("samples/", 0, 1000000);
         EXPECT_TRUE(fileSysPack);
         if (!fileSysPack)
