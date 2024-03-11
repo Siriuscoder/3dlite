@@ -163,8 +163,8 @@ typedef struct lite3d_texture_unit
 {
     uint32_t textureID;
     uint32_t textureTarget;
-    int32_t texFormat;
-    int32_t texiFormat;
+    int32_t dataFormat;
+    int32_t internalFormat;
     int32_t imageType;
     int32_t imageHeight;
     int32_t imageWidth;
@@ -178,6 +178,7 @@ typedef struct lite3d_texture_unit
     int16_t magFilter;
     uint8_t wrapping;
     uint8_t compressed;
+    int32_t samples;
     uint8_t isFbAttachment;
     lite3d_vbo tbo;
     uint8_t isTextureBuffer;

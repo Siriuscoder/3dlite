@@ -113,7 +113,7 @@ int lite3d_texture_buffer_init(lite3d_texture_unit *textureUnit,
     }
     
     textureUnit->isTextureBuffer = LITE3D_TRUE;
-    textureUnit->texFormat = bf;
+    textureUnit->internalFormat = bf;
     return LITE3D_TRUE;
 }
 

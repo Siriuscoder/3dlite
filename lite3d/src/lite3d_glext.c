@@ -284,6 +284,41 @@ int lite3d_check_texture3D(void)
 #endif 
 }
 
+int lite3d_check_texture_swizzle(void)
+{
+#ifdef GLES
+#   ifdef WITH_GLES2
+    return LITE3D_FALSE;
+#   else
+    return LITE3D_TRUE;
+#   endif
+#else
+    return GLEW_ARB_texture_swizzle || GLEW_EXT_texture_swizzle || GLEW_VERSION_3_3;
+#endif 
+}
+
+int lite3d_check_texture_storage(void)
+{
+#ifdef GLES
+#   ifdef WITH_GLES2
+    return LITE3D_FALSE;
+#   else
+    return LITE3D_TRUE;
+#   endif
+#else
+    return GLEW_ARB_texture_storage || GLEW_VERSION_4_2;
+#endif 
+}
+
+int lite3d_check_texture_storage_multisample(void)
+{
+#ifdef GLES
+    return LITE3D_FALSE;
+#else
+    return GLEW_ARB_texture_storage_multisample || GLEW_VERSION_4_3;
+#endif 
+}
+
 #ifdef __GNUC__
 #   pragma GCC diagnostic push
 #   pragma GCC diagnostic ignored "-Wpedantic"
@@ -569,6 +604,13 @@ void glFramebufferTextureLayer_stub(GLenum target, GLenum attachment, GLuint tex
 }
 
 void glFramebufferTexture_stub(GLenum target, GLenum attachment, GLuint texture, GLint level)
+{
+    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+        "%s: glFramebufferTexture is not supported..", LITE3D_CURRENT_FUNCTION);
+    lite3d_misc_gl_set_not_supported();
+}
+
+void glTexStorage1D_stub(GLenum target, GLsizei levels, GLenum internalformat, GLsizei width)
 {
     SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
         "%s: glFramebufferTexture is not supported..", LITE3D_CURRENT_FUNCTION);
