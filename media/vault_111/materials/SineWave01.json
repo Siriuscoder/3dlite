@@ -3,32 +3,41 @@
     {
       "Pass": 2,
       "Program": {
-        "Name": "bsdf_direct_glass.program",
-        "Path": "vault_111:shaders/json/bsdf_direct_glass.json"
+        "Name": "bsdf_direct_glow_alpha.program",
+        "Path": "vault_111:shaders/json/bsdf_direct_glow_alpha.json"
       },
       "Uniforms": [
         {
           "Name": "Albedo",
           "Type": "sampler",
-          "TextureName": "V111Glass01_d.texture",
-          "TexturePath": "vault_111:textures/json/V111Glass01_d.json"
-        },
-        {
-          "Name": "Normal",
-          "Type": "sampler",
-          "TextureName": "V111Glass01_n.texture",
-          "TexturePath": "vault_111:textures/json/V111Glass01_n.json"
+          "TextureName": "SineWave01_d.texture",
+          "TexturePath": "vault_111:textures/json/SineWave01_d.json"
         },
         {
           "Name": "Specular",
+          "Type": "float",
+          "Value": 0.5
+        },
+        {
+          "Name": "Roughness",
+          "Type": "float",
+          "Value": 1.0
+        },
+        {
+          "Name": "Emission",
           "Type": "sampler",
-          "TextureName": "V111Glass01_s.texture",
-          "TexturePath": "vault_111:textures/json/V111Glass01_s.json"
+          "TextureName": "SineWave01_d.texture",
+          "TexturePath": "vault_111:textures/json/SineWave01_d.json"
+        },
+        {
+          "Name": "EmissionStrength",
+          "Type": "float",
+          "Value": 3.0
         },
         {
           "Name": "Environment",
-          "TextureName": "skybox_metal_chrome.texture",
-          "TexturePath": "samples:textures/json/skybox_metal_chrome.json",
+          "TextureName": "environment.texture",
+          "TexturePath": "samples:textures/json/skybox_cryo_mip.json",
           "Type": "sampler"
         },
         {

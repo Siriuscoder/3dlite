@@ -345,16 +345,9 @@ static size_t lite3d_dds_load_face(struct lite3d_texture_unit *textureUnit, cons
         size -= linearSize;
         buffer += linearSize;
 
-        Depth = Depth / 2;
-        Width = Width / 2;
-        Height = Height / 2;
-
-        if (Depth == 0) 
-            Depth = 1;
-        if (Width == 0) 
-            Width = 1;
-        if (Height == 0) 
-            Height = 1;
+        Width = LITE3D_MAX(1, Width / 2);
+        Height = LITE3D_MAX(1, Height / 2);
+        Depth = LITE3D_MAX(1, Depth / 2);
     }
 
     return originSize - size;

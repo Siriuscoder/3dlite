@@ -25,20 +25,20 @@
         {
           "Name": "Albedo",
           "Type": "sampler",
-          "TextureName": "Vault_Crate_03_d.texture",
-          "TexturePath": "vault_111:textures/json/Vault_Crate_03_d.json"
+          "TextureName": "ComputerConsolePanels02a_d.texture",
+          "TexturePath": "vault_111:textures/json/ComputerConsolePanels02a_d.json"
         },
         {
           "Name": "Normal",
           "Type": "sampler",
-          "TextureName": "Vault_Crate_01_n.texture",
-          "TexturePath": "vault_111:textures/json/Vault_Crate_01_n.json"
+          "TextureName": "ComputerConsolePanels02a_n.texture",
+          "TexturePath": "vault_111:textures/json/ComputerConsolePanels02a_n.json"
         },
         {
           "Name": "Specular",
           "Type": "sampler",
-          "TextureName": "Vault_Crate_02_s.texture",
-          "TexturePath": "vault_111:textures/json/Vault_Crate_02_s.json"
+          "TextureName": "ComputerConsolePanels02a_s.texture",
+          "TexturePath": "vault_111:textures/json/ComputerConsolePanels02a_s.json"
         },
         {
           "Name": "projViewMatrix"

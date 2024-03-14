@@ -18,8 +18,8 @@
         },
         {
           "Name":"Environment",
-          "TextureName":"environment.texture",
-          "TexturePath":"samples:textures/json/skybox_cryo_mip.json",
+          "TextureName":"skybox_metal_chrome.texture",
+          "TexturePath":"samples:textures/json/skybox_metal_chrome.json",
           "Type":"sampler"
         },
         {
