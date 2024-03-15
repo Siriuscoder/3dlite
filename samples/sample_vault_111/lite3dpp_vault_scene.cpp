@@ -174,20 +174,18 @@ public:
         {
             if (lightNode.first.starts_with("LightSpot") ||
                 lightNode.first.starts_with("VaultStaticHospitalLight") || 
+                lightNode.first == "VaultStaticLightCageWhiteNode.008" ||
+                lightNode.first == "VaultStaticLightBoxNode.018" ||
                 lightNode.first == "VaultStaticLightBoxNode.012" || 
                 lightNode.first == "VaultStaticLightCageWhiteNode.022" ||
                 lightNode.first == "VaultStaticLightCeilNode01.002" ||
                 lightNode.first == "VaultStaticLightCeilNode01.004" ||
-                lightNode.first == "VaultStaticLightBoxNode.012" ||
                 lightNode.first == "VaultStaticLightBoxNode.056" ||
                 lightNode.first == "VaultStaticLightCageWhiteNode.003")
             {
-                lightNode.second->getLight()->setInfluenceMinRadiance(0.001); // To avoid threshold artifacts
-                mLightAnimEffects->registerLight(lightNode.second, SampleLightEffectManager::EffectType::Trembling);
+                mLightAnimEffects->registerLight(lightNode.second, SampleLightEffectManager::EffectTypeTrembling);
             }
-            else if (lightNode.first == "VaultStaticLightBoxNode.018" ||
-                lightNode.first == "VaultStaticLightBoxNode.040" ||
-                lightNode.first == "VaultStaticLightCageWhiteNode.008" ||
+            else if (lightNode.first == "VaultStaticLightBoxNode.040" ||
                 lightNode.first == "VaultStaticLightCeilNode01.001" ||
                 lightNode.first == "VaultStaticLightCageWhiteNode.013" ||
                 lightNode.first == "VaultStaticLightCageRedNode.001" ||
@@ -197,7 +195,7 @@ public:
                 // Создаем новый материал для выбранных источников света чтобы сделать эффект мигания каджой отдельной лампочки 
                 auto material = getMain().getResourceManager()->queryResource<Material>(lightNode.first + "_BlinkGlow.material", 
                     "vault_111:materials/VltLightGlow01.json");
-                mLightAnimEffects->registerLight(lightNode.second, SampleLightEffectManager::EffectType::Blink, material);
+                mLightAnimEffects->registerLight(lightNode.second, SampleLightEffectManager::EffectTypeBlink, material, 1'200'000, 550'000, 80'000);
                 // Присваиваем новый натериал к родителю (MeshNode)
                 auto parent = lightNode.second->getParent();
                 if (parent)
@@ -210,28 +208,31 @@ public:
             else if (lightNode.first == "VaultStaticReactorElectric")
             {
                 Material *reactorGlow = getMain().getResourceManager()->queryResource<Material>("V111ReactorGlow01.material");
-                mLightAnimEffects->registerLight(lightNode.second, SampleLightEffectManager::EffectType::Trembling, reactorGlow);
-                mLightAnimEffects->registerLight(lightNode.second, SampleLightEffectManager::EffectType::Blink, reactorGlow);
+                mLightAnimEffects->registerLight(lightNode.second, SampleLightEffectManager::EffectTypeTrembling, reactorGlow);
+                mLightAnimEffects->registerLight(lightNode.second, SampleLightEffectManager::EffectTypeBlink, reactorGlow);
             }
             else if (lightNode.first == "VaultStaticReactorElectric.001")
             {
                 Material *reactorGlow = getMain().getResourceManager()->queryResource<Material>("V111ReactorGlow02.material");
-                mLightAnimEffects->registerLight(lightNode.second, SampleLightEffectManager::EffectType::Trembling, reactorGlow);
-                mLightAnimEffects->registerLight(lightNode.second, SampleLightEffectManager::EffectType::Blink, reactorGlow);
+                mLightAnimEffects->registerLight(lightNode.second, SampleLightEffectManager::EffectTypeTrembling, reactorGlow);
+                mLightAnimEffects->registerLight(lightNode.second, SampleLightEffectManager::EffectTypeBlink, reactorGlow);
             }
             else if (lightNode.first == "VaultStaticReactorElectric.002")
             {
                 Material *reactorGlow = getMain().getResourceManager()->queryResource<Material>("V111ReactorGlow03.material");
-                mLightAnimEffects->registerLight(lightNode.second, SampleLightEffectManager::EffectType::Trembling, reactorGlow);
-                mLightAnimEffects->registerLight(lightNode.second, SampleLightEffectManager::EffectType::Blink, reactorGlow);
+                mLightAnimEffects->registerLight(lightNode.second, SampleLightEffectManager::EffectTypeTrembling, reactorGlow);
+                mLightAnimEffects->registerLight(lightNode.second, SampleLightEffectManager::EffectTypeBlink, reactorGlow);
             }
             else if (lightNode.first == "VaultStaticReactorElectric.003")
             {
                 Material *reactorGlow = getMain().getResourceManager()->queryResource<Material>("V111ReactorGlow04.material");
-                mLightAnimEffects->registerLight(lightNode.second, SampleLightEffectManager::EffectType::Trembling, reactorGlow);
-                mLightAnimEffects->registerLight(lightNode.second, SampleLightEffectManager::EffectType::Blink, reactorGlow);
+                mLightAnimEffects->registerLight(lightNode.second, SampleLightEffectManager::EffectTypeTrembling, reactorGlow);
+                mLightAnimEffects->registerLight(lightNode.second, SampleLightEffectManager::EffectTypeBlink, reactorGlow);
             }
         }
+
+        Material *sineWave = getMain().getResourceManager()->queryResource<Material>("SineWave01.material");
+        mLightAnimEffects->registerLight(nullptr, SampleLightEffectManager::EffectTypeTrembling, sineWave);
     }
 
     void addFlashlight()

@@ -23,6 +23,12 @@
 namespace lite3dpp {
 namespace samples {
 
+template<class T>
+struct _enumType
+{
+    using etype = T;
+};
+
 class LightAminPreset
 {
 public:
@@ -50,23 +56,32 @@ protected:
 class LightAminTremblingPreset : public LightAminPreset
 {
 public:
-    LightAminTremblingPreset(LightSceneNode *node, Material *material) : 
+    LightAminTremblingPreset(LightSceneNode *node, Material *material = nullptr) : 
         LightAminPreset(node, material)
     {
         float rNum = static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
         mAnimPi = rNum * 2.0 * M_PI;
-        mMaxRadiance = node->getLight()->getRadiance();
+        
+        if (mNode)
+        {
+            mMaxRadiance = node->getLight()->getRadiance();
+        }
     }
 
     void anim(uint64_t deltaMcs, float deltaRetard) override
     {
-        SDL_assert(mNode);
+        bool nodeEnabled = true;
         float animPiNew = mAnimPi + (0.3f * deltaRetard);
         mAnimPi = animPiNew > (2.0 * M_PI) ? animPiNew - (2 * M_PI) : animPiNew;
         float k = 1.0 - cos(mAnimPi) * 0.15;
-        mNode->getLight()->setRadiance(mMaxRadiance * k);
 
-        if (mMaterial && mNode->getLight()->enabled())
+        if (mNode)
+        {
+            mNode->getLight()->setRadiance(mMaxRadiance * k);
+            nodeEnabled = mNode->getLight()->enabled();
+        }
+
+        if (mMaterial && nodeEnabled)
         {
             if (mMaterial->hasParameter("Alpha"))
             {
@@ -90,20 +105,27 @@ private:
 class LightAminBlinkPreset : public LightAminPreset
 {
 public:
-    LightAminBlinkPreset(LightSceneNode *node, Material *material) : 
-        LightAminPreset(node, material)
+    LightAminBlinkPreset(LightSceneNode *node, 
+        Material *material = nullptr, 
+        uint64_t onMaxThresholdMcs = 4'200'000,
+        uint64_t offMaxThresholdMcs = 850'000,
+        uint64_t minThresholdMcs = 100'000) : 
+        LightAminPreset(node, material),
+        mOnMaxThresholdMcs(onMaxThresholdMcs),
+        mOffMaxThresholdMcs(offMaxThresholdMcs),
+        mMinThresholdMcs(minThresholdMcs)
     {}
 
     void anim(uint64_t deltaMcs, float deltaRetard) override
     {
         SDL_assert(mNode);
-        counterMcs += deltaMcs;
-        if (counterMcs > thresholdMcs)
+        mCounterMcs += deltaMcs;
+        if (mCounterMcs > mThresholdMcs)
         {
-            counterMcs = 0;
+            mCounterMcs = 0;
 
             float frand = static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
-            thresholdMcs = frand * (mNode->getLight()->enabled() ? offMaxThresholdMcs : onMaxThresholdMcs) + minThresholdMcs;
+            mThresholdMcs = frand * (mNode->getLight()->enabled() ? mOffMaxThresholdMcs : mOnMaxThresholdMcs) + mMinThresholdMcs;
             mNode->getLight()->enabled(!mNode->getLight()->enabled());
 
             if (mMaterial)
@@ -124,30 +146,25 @@ public:
 
 private:
 
-    uint64_t counterMcs = 0;
-    uint64_t thresholdMcs = 0;
+    uint64_t mCounterMcs = 0;
+    uint64_t mThresholdMcs = 0;
 
-    uint64_t onMaxThresholdMcs = 4'200'000;
-    uint64_t offMaxThresholdMcs = 850'000;
-    uint64_t minThresholdMcs = 100'000;
+    uint64_t mOnMaxThresholdMcs;
+    uint64_t mOffMaxThresholdMcs;
+    uint64_t mMinThresholdMcs;
 };
 
 class SampleLightEffectManager
 {
 public:
 
-    enum EffectType
-    {
-        Trembling = 1,
-        Blink = 2
-    };
+    static const constexpr _enumType<LightAminTremblingPreset> EffectTypeTrembling {};
+    static const constexpr _enumType<LightAminBlinkPreset> EffectTypeBlink {};
 
-    void registerLight(LightSceneNode *node, EffectType type, Material *material = nullptr)
+    template<class T, class... Params>
+    void registerLight(LightSceneNode *node, const T&, Params... args)
     {
-        if (type == Trembling)
-            mLights.emplace_back(std::make_unique<LightAminTremblingPreset>(node, material));
-        else if (type == Blink)
-            mLights.emplace_back(std::make_unique<LightAminBlinkPreset>(node, material));
+        mLights.emplace_back(std::make_unique<typename T::etype>(node, std::forward<Params>(args)...));
     }
 
     void amin(uint64_t deltaMcs, float deltaRetard)
