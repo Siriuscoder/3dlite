@@ -435,7 +435,7 @@ static int lite3d_set_internal_format(lite3d_texture_unit *textureUnit, uint16_t
             else
             {
                 textureUnit->imageBPP = 3;
-                *internalFormat = GL_DEPTH_COMPONENT;
+                *internalFormat = GL_DEPTH_COMPONENT24;
             }
             break;
         }

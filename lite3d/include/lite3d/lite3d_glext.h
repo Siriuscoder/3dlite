@@ -306,6 +306,10 @@ extern PFNGLFRAMEBUFFERTEXTUREOESPROC glFramebufferTexturePtr;
 #           define GL_MAX_3D_TEXTURE_SIZE GL_MAX_3D_TEXTURE_SIZE_OES
 #       endif
 
+#       ifndef GL_DEPTH_COMPONENT24
+#           define GL_DEPTH_COMPONENT24 GL_DEPTH_COMPONENT
+#       endif
+
 #   endif
 
 #   define glMapBuffer glMapBufferPtr

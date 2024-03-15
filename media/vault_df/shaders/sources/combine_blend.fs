@@ -39,13 +39,14 @@ void main()
 
     /* sampling normal and specular factor (w)*/
     vec4 fragNormalAndSpecular = texture(normals, iuv);
+    fragNormalAndSpecular.y = 1.0 - fragNormalAndSpecular.y;
 #ifdef GLASS
     fragNormalAndSpecular.w = 2.5;
 #endif
 
     // put normal in [-1,1] range in tangent space 
     // and trasform normal to world space 
-    vec3 nw = normalize(itbn * normalize(2*fragNormalAndSpecular.xyz-1));
+    vec3 nw = normalize(itbn * normalize(2.0 * fragNormalAndSpecular.xyz - 1.0));
     // fix bad normals
     if (fiszero(fragNormalAndSpecular.xyz))
         nw = wnorm;
