@@ -149,33 +149,33 @@ void lite3d_buffers_clear_values(const kmVec4 *color, float depth, int stencil)
 }
 
 /* 
-    Traditional blend algorithm:
+    LITE3D_BLENDING_MODE_RGB_LINEAR_SOURCE_ALPHA:
     Orgb = Sa * Srgb + (1 - Sa) * Drgb
     Oa = 1 * Sa + 0 * Da = Sa
 */
-static void blending_mode_traditional(void)
+static void blending_mode_rgb_linear_source_alpha(void)
 {
     glBlendEquationSeparate(GL_FUNC_ADD, GL_FUNC_ADD);
     glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ZERO);
 }
 
 /* 
-    Additive blend algorithm:
+    LITE3D_BLENDING_MODE_RGB_ADDITIVE:
     Orgb = 1 * Srgb + 1 * Drgb
     Oa = 1 * Sa + 0 * Da = Sa
 */
-static void blending_mode_additive(void)
+static void blending_mode_rgb_additive(void)
 {
     glBlendEquationSeparate(GL_FUNC_ADD, GL_FUNC_ADD);
     glBlendFuncSeparate(GL_ONE, GL_ONE, GL_ONE, GL_ZERO);
 }
 
 /* 
-    Traditional blend algorithm with alpha blend:
+    LITE3D_BLENDING_MODE_RGBA_LINEAR_SOURCE_ALPHA:
     Orgb = Sa * Srgb + (1 - Sa) * Drgb
     Oa = 1 * Sa + (1 - Sa) * Da = Sa
 */
-static void blending_mode_traditional_alpha_blend(void)
+static void blending_mode_rgba_linear_source_alpha(void)
 {
     glBlendEquationSeparate(GL_FUNC_ADD, GL_FUNC_ADD);
     glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
@@ -191,9 +191,9 @@ void lite3d_blending(uint8_t on)
 }
 
 lite3d_blend_mode_t gBlendModes[] = {
-    blending_mode_traditional,
-    blending_mode_traditional_alpha_blend,
-    blending_mode_additive
+    blending_mode_rgb_linear_source_alpha,
+    blending_mode_rgba_linear_source_alpha,
+    blending_mode_rgb_additive
 };
 
 void lite3d_blending_mode_set(uint8_t mode)

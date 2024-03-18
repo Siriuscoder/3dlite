@@ -94,6 +94,10 @@ const char *lite3d_texture_unit_format_string(const lite3d_texture_unit *texture
             return "RED";
         case LITE3D_TEXTURE_FORMAT_RG:
             return "RG";
+        case LITE3D_TEXTURE_FORMAT_LUMINANCE:
+            return "LUMINANCE";
+        case LITE3D_TEXTURE_FORMAT_LUMINANCE_ALPHA:
+            return "LUMINANCE_ALPHA";
         default:
             return "?";
     }
@@ -156,6 +160,10 @@ const char *lite3d_texture_unit_internal_format_string(const lite3d_texture_unit
         return "DEPTH_COMPONENT";
     case GL_DEPTH_COMPONENT32:
         return "DEPTH_COMPONENT32";
+#ifndef WITH_GLES2
+    case GL_DEPTH_COMPONENT24:
+        return "DEPTH_COMPONENT24";
+#endif
     case LITE3D_TEXTURE_FORMAT_RED:
         return "RED";
     case LITE3D_TEXTURE_FORMAT_RG:
@@ -384,11 +392,11 @@ static int lite3d_check_texture_target(uint32_t textureTarget)
     return LITE3D_TRUE;
 }
 
-static int lite3d_set_internal_format(lite3d_texture_unit *textureUnit, uint16_t format,
+static int lite3d_set_internal_format(lite3d_texture_unit *textureUnit, uint16_t *format,
     uint16_t iformat, uint32_t *internalFormat)
 {
 #ifdef GLES
-    switch (format)
+    switch (*format)
     {
         case LITE3D_TEXTURE_FORMAT_BRG:
         case LITE3D_TEXTURE_FORMAT_BRGA:
@@ -398,14 +406,14 @@ static int lite3d_set_internal_format(lite3d_texture_unit *textureUnit, uint16_t
 #endif
         {
             SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "%s: Texture format %d is not supported in GLES",
-                LITE3D_CURRENT_FUNCTION, format);
+                LITE3D_CURRENT_FUNCTION, *format);
             return LITE3D_FALSE;
         }
     }
 #endif
 
     /* what BPP ? */
-    switch (format)
+    switch (*format)
     {
         case LITE3D_TEXTURE_FORMAT_RGB:
         case LITE3D_TEXTURE_FORMAT_BRG:
@@ -458,9 +466,11 @@ static int lite3d_set_internal_format(lite3d_texture_unit *textureUnit, uint16_t
             break;
         }
         case LITE3D_TEXTURE_FORMAT_RED:
+        case LITE3D_TEXTURE_FORMAT_LUMINANCE:
         {
             textureUnit->imageBPP = 1;
             *internalFormat = GL_R8;
+            *format = LITE3D_TEXTURE_FORMAT_RED;
             if (textureCompression && iformat == 0 && lite3d_check_texture_compression_rgtc())
             {
                 iformat = GL_COMPRESSED_RED_RGTC1_EXT;
@@ -468,9 +478,11 @@ static int lite3d_set_internal_format(lite3d_texture_unit *textureUnit, uint16_t
             break;
         }
         case LITE3D_TEXTURE_FORMAT_RG:
+        case LITE3D_TEXTURE_FORMAT_LUMINANCE_ALPHA:
         {
             textureUnit->imageBPP = 2;
             *internalFormat = GL_RG8;
+            *format = LITE3D_TEXTURE_FORMAT_RG;
             if (textureCompression && iformat == 0 && lite3d_check_texture_compression_rgtc())
             {
                 iformat = GL_COMPRESSED_RED_GREEN_RGTC2_EXT;
@@ -481,7 +493,7 @@ static int lite3d_set_internal_format(lite3d_texture_unit *textureUnit, uint16_t
         {
             SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
                 "%s: Unknown texture format %d",
-                LITE3D_CURRENT_FUNCTION, format);
+                LITE3D_CURRENT_FUNCTION, *format);
             return LITE3D_FALSE;
         }
     }
@@ -1180,7 +1192,7 @@ int lite3d_texture_unit_allocate(lite3d_texture_unit *textureUnit,
         return LITE3D_FALSE;
     }
 
-    if (!lite3d_set_internal_format(textureUnit, format, iformat, &internalFormat))
+    if (!lite3d_set_internal_format(textureUnit, &format, iformat, &internalFormat))
     {
         return LITE3D_FALSE;
     }

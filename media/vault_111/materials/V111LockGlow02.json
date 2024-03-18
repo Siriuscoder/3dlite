@@ -65,7 +65,7 @@
         }
       ],
       "Blending": true,
-      "BlendingMode": "traditional"
+      "BlendingMode": "RGB_LINEAR_SOURCE_ALPHA"
     }
   ],
   "Uniforms": [
