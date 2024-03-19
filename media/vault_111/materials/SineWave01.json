@@ -14,16 +14,6 @@
           "TexturePath": "vault_111:textures/json/SineWave01_d.json"
         },
         {
-          "Name": "Specular",
-          "Type": "float",
-          "Value": 0.5
-        },
-        {
-          "Name": "Roughness",
-          "Type": "float",
-          "Value": 1.0
-        },
-        {
           "Name": "Emission",
           "Type": "sampler",
           "TextureName": "SineWave01_d.texture",
@@ -37,7 +27,7 @@
         {
           "Name": "Environment",
           "TextureName": "environment.texture",
-          "TexturePath": "samples:textures/json/skybox_cryo_mip.json",
+          "TexturePath": "samples:textures/json/skybox_metal_chrome.json",
           "Type": "sampler"
         },
         {

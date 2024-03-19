@@ -8,12 +8,6 @@
       },
       "Uniforms":[
         {
-          "Name":"<Specular>"
-        },
-        {
-          "Name":"<Roughness>"
-        },
-        {
           "Name":"<Emission>"
         },
         {

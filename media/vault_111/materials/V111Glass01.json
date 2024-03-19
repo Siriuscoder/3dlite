@@ -26,9 +26,24 @@
           "TexturePath": "vault_111:textures/json/V111Glass01_s.json"
         },
         {
+          "Name": "SpecularFactor",
+          "Type": "float",
+          "Value": 1.0
+        },
+        {
+          "Name": "MetallicFactor",
+          "Type": "float",
+          "Value": 0.12999999523162842
+        },
+        {
+          "Name": "SpecularAmbientFactor",
+          "Type": "float",
+          "Value": 0.45
+        },
+        {
           "Name": "Environment",
-          "TextureName": "skybox_metal_chrome.texture",
-          "TexturePath": "samples:textures/json/skybox_metal_chrome.json",
+          "TextureName": "skybox_cryo_mip.texture",
+          "TexturePath": "samples:textures/json/skybox_cryo_mip.json",
           "Type": "sampler"
         },
         {

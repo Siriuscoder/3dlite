@@ -5888,7 +5888,7 @@
                     "Linear": 50.0,
                     "Quadratic": 130.0,
                     "InfluenceDistance": 0.0,
-                    "InfluenceMinRadiance": 0.004999999888241291
+                    "InfluenceMinRadiance": 0.0044999998062849045
                   },
                   "SpotFactor": {
                     "AngleInnerCone": 0.07136649854169264,
@@ -5939,7 +5939,7 @@
                     "Linear": 50.0,
                     "Quadratic": 130.0,
                     "InfluenceDistance": 0.0,
-                    "InfluenceMinRadiance": 0.004999999888241291
+                    "InfluenceMinRadiance": 0.0044999998062849045
                   },
                   "SpotFactor": {
                     "AngleInnerCone": 0.07136649854169264,
@@ -5990,7 +5990,7 @@
                     "Linear": 50.0,
                     "Quadratic": 130.0,
                     "InfluenceDistance": 0.0,
-                    "InfluenceMinRadiance": 0.004999999888241291
+                    "InfluenceMinRadiance": 0.0044999998062849045
                   },
                   "SpotFactor": {
                     "AngleInnerCone": 0.07136649854169264,
@@ -6041,7 +6041,7 @@
                     "Linear": 50.0,
                     "Quadratic": 130.0,
                     "InfluenceDistance": 0.0,
-                    "InfluenceMinRadiance": 0.004999999888241291
+                    "InfluenceMinRadiance": 0.0044999998062849045
                   },
                   "SpotFactor": {
                     "AngleInnerCone": 0.07136649854169264,
@@ -7223,7 +7223,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "SpotFactor": {
                 "AngleInnerCone": 0.17584194637387895,
@@ -7299,7 +7299,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "SpotFactor": {
                 "AngleInnerCone": 0.17584194637387895,
@@ -7375,7 +7375,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "SpotFactor": {
                 "AngleInnerCone": 0.17584194637387895,
@@ -7819,7 +7819,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "Direction": [
                 0.0,
@@ -7891,7 +7891,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "Direction": [
                 0.0,
@@ -7963,7 +7963,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "Direction": [
                 0.0,
@@ -8035,7 +8035,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "Direction": [
                 0.0,
@@ -8107,7 +8107,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "Direction": [
                 0.0,
@@ -8179,7 +8179,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "Direction": [
                 0.0,
@@ -8251,7 +8251,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "Direction": [
                 0.0,
@@ -8323,7 +8323,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "Direction": [
                 0.0,
@@ -8395,7 +8395,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "Direction": [
                 0.0,
@@ -8467,7 +8467,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "Direction": [
                 0.0,
@@ -8539,7 +8539,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "Direction": [
                 0.0,
@@ -8611,7 +8611,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "Direction": [
                 0.0,
@@ -8683,7 +8683,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "Direction": [
                 0.0,
@@ -8755,7 +8755,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "Direction": [
                 0.0,
@@ -8827,7 +8827,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "Direction": [
                 0.0,
@@ -8899,7 +8899,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "Direction": [
                 0.0,
@@ -8971,7 +8971,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "Direction": [
                 0.0,
@@ -9043,7 +9043,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "Direction": [
                 0.0,
@@ -9115,7 +9115,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "Direction": [
                 0.0,
@@ -9187,7 +9187,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "Direction": [
                 0.0,
@@ -9259,7 +9259,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "Direction": [
                 0.0,
@@ -9331,7 +9331,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "Direction": [
                 0.0,
@@ -9403,7 +9403,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "Direction": [
                 0.0,
@@ -9475,7 +9475,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "Direction": [
                 0.0,
@@ -9547,7 +9547,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "Direction": [
                 0.0,
@@ -9619,7 +9619,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "Direction": [
                 0.0,
@@ -9691,7 +9691,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "Direction": [
                 0.0,
@@ -9763,7 +9763,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "Direction": [
                 0.0,
@@ -9835,7 +9835,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "Direction": [
                 0.0,
@@ -9907,7 +9907,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "Direction": [
                 0.0,
@@ -9979,7 +9979,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "Direction": [
                 0.0,
@@ -10051,7 +10051,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "Direction": [
                 0.0,
@@ -10123,7 +10123,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "Direction": [
                 0.0,
@@ -10195,7 +10195,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "Direction": [
                 0.0,
@@ -10267,7 +10267,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "Direction": [
                 0.0,
@@ -10339,7 +10339,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "Direction": [
                 0.0,
@@ -10411,7 +10411,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "Direction": [
                 0.0,
@@ -10483,7 +10483,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "Direction": [
                 0.0,
@@ -10555,7 +10555,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "Direction": [
                 0.0,
@@ -10627,7 +10627,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "Direction": [
                 0.0,
@@ -10699,7 +10699,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "Direction": [
                 0.0,
@@ -10771,7 +10771,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "Direction": [
                 0.0,
@@ -10843,7 +10843,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "Direction": [
                 0.0,
@@ -10915,7 +10915,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "Direction": [
                 0.0,
@@ -10987,7 +10987,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "Direction": [
                 0.0,
@@ -11059,7 +11059,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "Direction": [
                 0.0,
@@ -11131,7 +11131,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "Direction": [
                 0.0,
@@ -11203,7 +11203,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "Direction": [
                 0.0,
@@ -11275,7 +11275,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "Direction": [
                 0.0,
@@ -11347,7 +11347,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "Direction": [
                 0.0,
@@ -11419,7 +11419,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "Direction": [
                 0.0,
@@ -11491,7 +11491,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "Direction": [
                 0.0,
@@ -11563,7 +11563,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "Direction": [
                 0.0,
@@ -11635,7 +11635,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "Direction": [
                 0.0,
@@ -11707,7 +11707,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "Direction": [
                 0.0,
@@ -11779,7 +11779,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "Direction": [
                 0.0,
@@ -11851,7 +11851,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "Direction": [
                 0.0,
@@ -11923,7 +11923,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "Direction": [
                 0.0,
@@ -11995,7 +11995,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "Direction": [
                 0.0,
@@ -12067,7 +12067,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "Direction": [
                 0.0,
@@ -12139,7 +12139,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "Direction": [
                 0.0,
@@ -12211,7 +12211,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "Direction": [
                 0.0,
@@ -12283,7 +12283,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "Direction": [
                 0.0,
@@ -12355,7 +12355,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "Direction": [
                 0.0,
@@ -12427,7 +12427,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "Direction": [
                 0.0,
@@ -12499,7 +12499,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "Direction": [
                 0.0,
@@ -12571,7 +12571,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "Direction": [
                 0.0,
@@ -12643,7 +12643,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "Direction": [
                 0.0,
@@ -12715,7 +12715,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "Direction": [
                 0.0,
@@ -12787,7 +12787,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "Direction": [
                 0.0,
@@ -12859,7 +12859,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "Direction": [
                 0.0,
@@ -12931,7 +12931,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "Direction": [
                 0.0,
@@ -13003,7 +13003,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "Direction": [
                 0.0,
@@ -13075,7 +13075,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "Direction": [
                 0.0,
@@ -13147,7 +13147,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "Direction": [
                 0.0,
@@ -13219,7 +13219,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "Direction": [
                 0.0,
@@ -13291,7 +13291,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "Direction": [
                 0.0,
@@ -13363,7 +13363,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "Direction": [
                 0.0,
@@ -13435,7 +13435,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "Direction": [
                 0.0,
@@ -13507,7 +13507,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "Direction": [
                 0.0,
@@ -13579,7 +13579,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "Direction": [
                 0.0,
@@ -13651,7 +13651,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "Direction": [
                 0.0,
@@ -13723,7 +13723,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "Direction": [
                 0.0,
@@ -13795,7 +13795,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "Direction": [
                 0.0,
@@ -13867,7 +13867,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "Direction": [
                 0.0,
@@ -13939,7 +13939,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "Direction": [
                 0.0,
@@ -14011,7 +14011,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "Direction": [
                 0.0,
@@ -14083,7 +14083,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "Direction": [
                 0.0,
@@ -14155,7 +14155,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "Direction": [
                 0.0,
@@ -14227,7 +14227,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "Direction": [
                 0.0,
@@ -14299,7 +14299,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "Direction": [
                 0.0,
@@ -14371,7 +14371,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "Direction": [
                 0.0,
@@ -14443,7 +14443,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "Direction": [
                 0.0,
@@ -14515,7 +14515,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "Direction": [
                 0.0,
@@ -14587,7 +14587,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "Direction": [
                 0.0,
@@ -14659,7 +14659,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "Direction": [
                 0.0,
@@ -14731,7 +14731,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "Direction": [
                 0.0,
@@ -14803,7 +14803,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "Direction": [
                 0.0,
@@ -14875,7 +14875,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "Direction": [
                 0.0,
@@ -14947,7 +14947,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "Direction": [
                 0.0,
@@ -15019,7 +15019,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "Direction": [
                 0.0,
@@ -15091,7 +15091,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "Direction": [
                 0.0,
@@ -15163,7 +15163,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "Direction": [
                 0.0,
@@ -15235,7 +15235,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "Direction": [
                 0.0,
@@ -15307,7 +15307,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "Direction": [
                 0.0,
@@ -15379,7 +15379,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "Direction": [
                 0.0,
@@ -15451,7 +15451,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "Direction": [
                 0.0,
@@ -15523,7 +15523,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "Direction": [
                 0.0,
@@ -15595,7 +15595,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "Direction": [
                 0.0,
@@ -15667,7 +15667,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "Direction": [
                 0.0,
@@ -15739,7 +15739,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "Direction": [
                 0.0,
@@ -15811,7 +15811,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "Direction": [
                 0.0,
@@ -15883,7 +15883,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "SpotFactor": {
                 "AngleInnerCone": 2.038544477066111,
@@ -15959,7 +15959,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "SpotFactor": {
                 "AngleInnerCone": 2.038544477066111,
@@ -16035,7 +16035,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "SpotFactor": {
                 "AngleInnerCone": 2.038544477066111,
@@ -16111,7 +16111,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "SpotFactor": {
                 "AngleInnerCone": 2.038544477066111,
@@ -16187,7 +16187,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "SpotFactor": {
                 "AngleInnerCone": 2.038544477066111,
@@ -16263,7 +16263,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "SpotFactor": {
                 "AngleInnerCone": 2.038544477066111,
@@ -16339,7 +16339,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "SpotFactor": {
                 "AngleInnerCone": 2.038544477066111,
@@ -16415,7 +16415,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "SpotFactor": {
                 "AngleInnerCone": 2.038544477066111,
@@ -16491,7 +16491,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "SpotFactor": {
                 "AngleInnerCone": 2.038544477066111,
@@ -16567,7 +16567,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "SpotFactor": {
                 "AngleInnerCone": 2.038544477066111,
@@ -16643,7 +16643,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "SpotFactor": {
                 "AngleInnerCone": 2.038544477066111,
@@ -16719,7 +16719,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "SpotFactor": {
                 "AngleInnerCone": 2.038544477066111,
@@ -16795,7 +16795,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "SpotFactor": {
                 "AngleInnerCone": 2.038544477066111,
@@ -16871,7 +16871,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "SpotFactor": {
                 "AngleInnerCone": 2.038544477066111,
@@ -16947,7 +16947,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "SpotFactor": {
                 "AngleInnerCone": 2.038544477066111,
@@ -17023,7 +17023,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "Direction": [
                 0.0,
@@ -17095,7 +17095,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "Direction": [
                 0.0,
@@ -17167,7 +17167,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "Direction": [
                 0.0,
@@ -17239,7 +17239,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "Direction": [
                 0.0,
@@ -17311,7 +17311,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "Direction": [
                 0.0,
@@ -17383,7 +17383,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "Direction": [
                 0.0,
@@ -17455,7 +17455,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "Direction": [
                 0.0,
@@ -17527,7 +17527,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "Direction": [
                 0.0,
@@ -17599,7 +17599,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "Direction": [
                 0.0,
@@ -17671,7 +17671,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "Direction": [
                 0.0,
@@ -17743,7 +17743,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "Direction": [
                 0.0,
@@ -18095,7 +18095,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 400.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "SpotFactor": {
                 "AngleInnerCone": 0.5235987901687622,
@@ -19534,7 +19534,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "Direction": [
                 0.0,
@@ -19581,7 +19581,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "Direction": [
                 0.0,
@@ -19628,7 +19628,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "Direction": [
                 0.0,
@@ -19675,7 +19675,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "Direction": [
                 0.0,
@@ -24693,7 +24693,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 0.0,
-                "InfluenceMinRadiance": 0.004999999888241291
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "Direction": [
                 0.0,

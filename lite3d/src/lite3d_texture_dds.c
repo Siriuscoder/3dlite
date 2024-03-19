@@ -357,9 +357,9 @@ int lite3d_texture_unit_dds_fast_load(struct lite3d_texture_unit *textureUnit, c
     uint32_t textureTarget, int8_t srgb, int8_t filtering, uint8_t wrapping, uint8_t cubeface)
 {
     lite3d_dds_head head;
-    int compFormat;
+    int compFormat = 0;
     size_t processed = 0, remains = resource->fileSize;
-    uint16_t imageFormat, internalFormat;
+    uint16_t imageFormat = 0, internalFormat = 0;
     const uint8_t *buffer = (const uint8_t*)resource->fileBuff;
     uint8_t cubefacesNum = 0;
     lite3d_texture_unit textureUnitCopy = *textureUnit;

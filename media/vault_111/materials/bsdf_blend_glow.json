@@ -11,12 +11,6 @@
           "Name":"<Albedo>"
         },
         {
-          "Name":"<Specular>"
-        },
-        {
-          "Name":"<Roughness>"
-        },
-        {
           "Name":"<Emission>"
         },
         {
@@ -25,7 +19,7 @@
         {
           "Name":"Environment",
           "TextureName":"environment.texture",
-          "TexturePath":"samples:textures/json/skybox_cryo_mip.json",
+          "TexturePath":"samples:textures/json/skybox_metal_chrome.json",
           "Type":"sampler"
         },
         {

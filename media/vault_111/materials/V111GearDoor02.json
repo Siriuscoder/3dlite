@@ -41,6 +41,21 @@
           "TexturePath": "vault_111:textures/json/V111GearDoor02_s.json"
         },
         {
+          "Name": "SpecularFactor",
+          "Type": "float",
+          "Value": 1.0
+        },
+        {
+          "Name": "MetallicFactor",
+          "Type": "float",
+          "Value": 0.9399999976158142
+        },
+        {
+          "Name": "SpecularAmbientFactor",
+          "Type": "float",
+          "Value": 0.44999998807907104
+        },
+        {
           "Name": "projViewMatrix"
         }
       ]

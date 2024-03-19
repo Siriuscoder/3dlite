@@ -3,7 +3,6 @@
 
 #define MAX_LIGHTS  200 // 16kb storage needed
 
-const float specularStrength = 0.10;
 const float diffuseStrength = 0.05;
 
 #define LITE3D_LIGHT_UNDEFINED          0.0
@@ -32,7 +31,8 @@ vec3 Lx(vec3 albedo, vec3 radiance, vec3 L, vec3 N, vec3 V, vec3 specular, float
 /* Fresnel equation (Schlick) */
 vec3 FresnelSchlickRoughness(float NdotV, vec3 albedo, vec3 specular);
 
-vec3 ComputeIllumination(vec3 vw, vec3 nw, vec3 albedo, vec3 emission, vec3 specular, float aoFactor)
+vec3 ComputeIllumination(vec3 vw, vec3 nw, vec3 albedo, vec3 emission, vec3 specular, float aoFactor, 
+    float saFactor)
 {
     // Eye direction to current fragment 
     vec3 eyeDir = normalize(eye - vw);
@@ -123,7 +123,7 @@ vec3 ComputeIllumination(vec3 vw, vec3 nw, vec3 albedo, vec3 emission, vec3 spec
     kD *= 1.0 - specular.z;
 
     vec3 globalIrradiance = textureLod(Environment, nw, 4).rgb;
-    vec3 specularAmbient = textureLod(Environment, R, specular.y * 7.0).rgb * F * specularStrength;
+    vec3 specularAmbient = textureLod(Environment, R, specular.y * 7.0).rgb * F * saFactor;
     vec3 diffuseAmbient = kD * globalIrradiance * albedo * diffuseStrength;
     vec3 totalAmbient = (diffuseAmbient + specularAmbient) * aoFactor;
 
