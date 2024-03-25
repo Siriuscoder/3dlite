@@ -74,20 +74,24 @@ static int initMaterials(void)
     lite3d_material_pass *matPass;
     lite3d_shader shaders[2];
 
+    memset(&mRifleTextureA, 0, sizeof(lite3d_texture_unit));
+    memset(&mRifleTextureB, 0, sizeof(lite3d_texture_unit));
+    memset(&mBattTexture, 0, sizeof(lite3d_texture_unit));
+
     if (!(file1 = lite3d_pack_file_load(mFileSysPack, "textures/images/plasmarif02a.dds")))
         return LITE3D_FALSE;
     if (!lite3d_texture_unit_from_resource(&mRifleTextureA, file1, LITE3D_IMAGE_DDS,
-        LITE3D_TEXTURE_2D, LITE3D_FALSE, LITE3D_TEXTURE_QL_NICEST, LITE3D_TEXTURE_REPEAT, 0))
+        LITE3D_TEXTURE_2D, LITE3D_FALSE, LITE3D_TEXTURE_FILTER_TRILINEAR, LITE3D_TEXTURE_REPEAT, 0))
         return LITE3D_FALSE;
     if (!(file1 = lite3d_pack_file_load(mFileSysPack, "textures/images/plasmarif02b.dds")))
         return LITE3D_FALSE;
     if (!lite3d_texture_unit_from_resource(&mRifleTextureB, file1, LITE3D_IMAGE_DDS,
-        LITE3D_TEXTURE_2D, LITE3D_FALSE, LITE3D_TEXTURE_QL_NICEST, LITE3D_TEXTURE_REPEAT, 0))
+        LITE3D_TEXTURE_2D, LITE3D_FALSE, LITE3D_TEXTURE_FILTER_TRILINEAR, LITE3D_TEXTURE_REPEAT, 0))
         return LITE3D_FALSE;
     if (!(file1 = lite3d_pack_file_load(mFileSysPack, "textures/images/plasmarif02c.dds")))
         return LITE3D_FALSE;
     if (!lite3d_texture_unit_from_resource(&mBattTexture, file1, LITE3D_IMAGE_DDS,
-        LITE3D_TEXTURE_2D, LITE3D_FALSE, LITE3D_TEXTURE_QL_NICEST, LITE3D_TEXTURE_REPEAT, 0))
+        LITE3D_TEXTURE_2D, LITE3D_FALSE, LITE3D_TEXTURE_FILTER_TRILINEAR, LITE3D_TEXTURE_REPEAT, 0))
         return LITE3D_FALSE;
 
     /* init parameter with texture */

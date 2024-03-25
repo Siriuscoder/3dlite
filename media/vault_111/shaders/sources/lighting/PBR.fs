@@ -3,7 +3,6 @@
 
 #define MAX_LIGHTS  200 // 16kb storage needed
 
-const float specularStrength = 0.14;
 const float diffuseStrength = 0.05;
 
 #define LITE3D_LIGHT_UNDEFINED          0.0
@@ -32,7 +31,8 @@ vec3 Lx(vec3 albedo, vec3 radiance, vec3 L, vec3 N, vec3 V, vec3 specular, float
 /* Fresnel equation (Schlick) */
 vec3 FresnelSchlickRoughness(float NdotV, vec3 albedo, vec3 specular);
 
-vec3 ComputeIllumination(vec3 vw, vec3 nw, vec3 albedo, vec3 emission, vec3 specular, float aoFactor)
+vec3 ComputeIllumination(vec3 vw, vec3 nw, vec3 albedo, vec3 emission, vec3 specular, float aoFactor, 
+    float saFactor)
 {
     // Eye direction to current fragment 
     vec3 eyeDir = normalize(eye - vw);
@@ -94,12 +94,13 @@ vec3 ComputeIllumination(vec3 vw, vec3 nw, vec3 albedo, vec3 emission, vec3 spec
                 spotAttenuationFactor = clamp(1.0 - spotConeAttenuation, 0.0, 1.0);
             }
 
+            float edgeFallof = (block0.z - clamp(lightDistance, block0.z * 0.9, block0.z)) / (block0.z * 0.1);
             /* attenuation factor */
             /* block3.w - attenuation constant */
             /* block4.x - attenuation linear */
             /* block4.y - attenuation quadratic */
             /* calculate full attenuation */
-            attenuationFactor = spotAttenuationFactor / 
+            attenuationFactor = spotAttenuationFactor * edgeFallof / 
                 (block3.w + block4.x * lightDistance + block4.y * lightDistance * lightDistance);
         }
         /* User Index, at this implementation is shadow index */
@@ -112,7 +113,7 @@ vec3 ComputeIllumination(vec3 vw, vec3 nw, vec3 albedo, vec3 emission, vec3 spec
         /* light source full radiance at fragment position */
         vec3 radiance = block1.rgb * block1.w * attenuationFactor * shadowless * aoFactor;
         /* Radiance too small, do not take this light source in account */ 
-        if (all(lessThan(radiance, vec3(0.0001))))
+        if (fiszero(radiance))
             continue;
         /* L for current lights source */ 
         totalLx += Lx(albedo, radiance, lightDirection, nw, eyeDir, specular, NdotV);
@@ -122,7 +123,7 @@ vec3 ComputeIllumination(vec3 vw, vec3 nw, vec3 albedo, vec3 emission, vec3 spec
     kD *= 1.0 - specular.z;
 
     vec3 globalIrradiance = textureLod(Environment, nw, 4).rgb;
-    vec3 specularAmbient = textureLod(Environment, R, specular.y * 7.0).rgb * F * specularStrength;
+    vec3 specularAmbient = textureLod(Environment, R, specular.y * 7.0).rgb * F * saFactor;
     vec3 diffuseAmbient = kD * globalIrradiance * albedo * diffuseStrength;
     vec3 totalAmbient = (diffuseAmbient + specularAmbient) * aoFactor;
 

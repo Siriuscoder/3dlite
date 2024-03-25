@@ -80,7 +80,7 @@ namespace lite3dpp
         {
             TextureImage::loadFromConfigImpl(helper);
             
-            if(getPtr()->texFormat != LITE3D_TEXTURE_FORMAT_RGBA)
+            if(getPtr()->dataFormat != LITE3D_TEXTURE_FORMAT_RGBA)
                 LITE3D_THROW("Font texture must be in RGBA format");
             if(!helper.has(L"BlankColor"))
                 LITE3D_THROW("BlankColor parameter not found");

@@ -158,7 +158,7 @@ namespace lite3dpp
     
     uint8_t TextureBuffer::texelSize() const
     {
-        return lite3d_texture_buffer_texel_size(mTexture.texFormat);
+        return lite3d_texture_buffer_texel_size(mTexture.internalFormat);
     }
 
     size_t TextureBuffer::bufferSizeBytes() const

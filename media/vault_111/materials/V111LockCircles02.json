@@ -52,6 +52,16 @@
           "Value": 6.0
         },
         {
+          "Name": "SpecularFactor",
+          "Type": "float",
+          "Value": 1.0
+        },
+        {
+          "Name": "MetallicFactor",
+          "Type": "float",
+          "Value": 0.1
+        },
+        {
           "Name": "projViewMatrix"
         }
       ]

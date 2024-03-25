@@ -23,9 +23,27 @@
       "Type":"sampler"
     },
     {
-      "Name":"GammaFactor",
+      "Name":"gamma",
       "Type":"float",
       "Value": 2.2,
+      "Scope":"global"
+    },
+    {
+      "Name":"exposure",
+      "Type":"float",
+      "Value": 3.4,
+      "Scope":"global"
+    },
+    {
+      "Name":"contrast",
+      "Type":"float",
+      "Value": 1.005,
+      "Scope":"global"
+    },
+    {
+      "Name":"saturation",
+      "Type":"float",
+      "Value": 1.20,
       "Scope":"global"
     },
     {

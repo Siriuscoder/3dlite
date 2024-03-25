@@ -20,9 +20,24 @@
           "Name":"<Normal>"
         },
         {
+          "Name":"SpecularFactor",
+          "Type":"float",
+          "Value": 1.0
+        },
+        {
+          "Name":"SpecularAmbientFactor",
+          "Type":"float",
+          "Value": 0.1
+        },
+        {
+          "Name":"MetallicFactor",
+          "Type":"float",
+          "Value": 0.1
+        },
+        {
           "Name":"Environment",
           "TextureName":"environment.texture",
-          "TexturePath":"samples:textures/json/skybox_cryo_mip.json",
+          "TexturePath":"samples:textures/json/skybox_metal_chrome.json",
           "Type":"sampler"
         },
         {
@@ -52,7 +67,7 @@
         }
       ],
       "Blending":true,
-      "BlendingMode":"traditional"
+      "BlendingMode": "RGB_LINEAR_SOURCE_ALPHA"
     }
   ],
   "Uniforms":[

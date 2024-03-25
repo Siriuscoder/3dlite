@@ -41,6 +41,21 @@
           "TexturePath": "vault_111:textures/json/V111Door01_s.json"
         },
         {
+          "Name": "SpecularFactor",
+          "Type": "float",
+          "Value": 1.0
+        },
+        {
+          "Name": "MetallicFactor",
+          "Type": "float",
+          "Value": 0.3400000035762787
+        },
+        {
+          "Name": "SpecularAmbientFactor",
+          "Type": "float",
+          "Value": 0.1
+        },
+        {
           "Name": "projViewMatrix"
         }
       ]

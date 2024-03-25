@@ -8,12 +8,6 @@
       },
       "Uniforms":[
         {
-          "Name":"<Specular>"
-        },
-        {
-          "Name":"<Roughness>"
-        },
-        {
           "Name":"<Emission>"
         },
         {
@@ -22,7 +16,7 @@
         {
           "Name":"Environment",
           "TextureName":"environment.texture",
-          "TexturePath":"samples:textures/json/skybox_cryo_mip.json",
+          "TexturePath":"samples:textures/json/skybox_metal_chrome.json",
           "Type":"sampler"
         },
         {
@@ -52,7 +46,7 @@
         }
       ],
       "Blending":true,
-      "BlendingMode":"traditional"
+      "BlendingMode": "RGB_LINEAR_SOURCE_ALPHA"
     }
   ],
   "Uniforms":[

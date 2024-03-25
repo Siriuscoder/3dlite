@@ -10,12 +10,11 @@ uniform float EmissionStrength;
 
 uniform vec4 Emission;
 uniform float EmissionStrength;
-uniform float Roughness;
-uniform float Specular;
 
 #else
 
 uniform sampler2D Albedo;
+uniform float SpecularAmbientFactor;
 
 #endif
 
@@ -51,13 +50,17 @@ void main()
     vec3 normal = GetFixedWorldNormal(itbn, iuv);
     // Get Specular params
     vec3 specular = GetSpecular(iuv);
+    // SAFac
+    float SpecularAmbientFactor = 0.1;
 
 #elif defined(MRT_WITH_EMISSION_SOLID)
 
     vec3 albedo = Emission.rgb;
     vec3 emission = Emission.rgb * EmissionStrength;
     vec3 normal = itbn[2];
-    vec3 specular = vec3(Specular, Roughness, 0.0);
+    vec3 specular = vec3(0.5, 1.0, 0.0);
+    // SAFac
+    float SpecularAmbientFactor = 0.1;
 
 #else
 
@@ -89,7 +92,7 @@ void main()
     emission *= EMISSION_GREEN;
 #endif
 
-    fragWCoord = vec4(ivv, gl_FragCoord.z / gl_FragCoord.w);
+    fragWCoord = vec4(ivv, SpecularAmbientFactor);
     fragWNormal = vec4(normal, emission.r);
     fragAlbedo = vec4(albedo, emission.g);
     fragSpecular = vec4(specular, emission.b);

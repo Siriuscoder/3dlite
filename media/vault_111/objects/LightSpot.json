@@ -42,11 +42,11 @@
               "Radiance": 12000000.0,
               "LightSize": 0.0,
               "Attenuation": {
-                "Constant": 0.0,
+                "Constant": 1.0,
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 1500.0,
-                "InfluenceMinRadiance": 0.003000000026077032
+                "InfluenceMinRadiance": 0.0044999998062849045
               },
               "SpotFactor": {
                 "AngleInnerCone": 0.4398230012187554,

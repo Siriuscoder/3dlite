@@ -41,6 +41,21 @@
           "TexturePath": "vault_111:textures/json/Vault_VaultSuitBox_02_s.json"
         },
         {
+          "Name": "SpecularFactor",
+          "Type": "float",
+          "Value": 0.5600000023841858
+        },
+        {
+          "Name": "MetallicFactor",
+          "Type": "float",
+          "Value": 0.1
+        },
+        {
+          "Name": "SpecularAmbientFactor",
+          "Type": "float",
+          "Value": 0.1
+        },
+        {
           "Name": "projViewMatrix"
         }
       ]

@@ -24,14 +24,14 @@
             },
             "Blending":true,
             //  
-            // Traditional blend algorithm:
+            // RGB_LINEAR_SOURCE_ALPHA blend algorithm:
             // Orgb = Sa * Srgb + (1 - Sa) * Drgb
             // Oa = 1 * Sa + 0 * Da = Sa
             //
-            // Traditional blend algorithm with alpha blend: (TraditionalWithAlpha)
+            // RGB_LINEAR_SOURCE_ALPHA blend algorithm with alpha blend: (RGBA_LINEAR_SOURCE_ALPHA)
             // Orgb = Sa * Srgb + (1 - Sa) * Drgb
             // Oa = 1 * Sa + (1 - Sa) * Da
-            "BlendingMode":"traditional"
+            "BlendingMode": "RGB_LINEAR_SOURCE_ALPHA"
         }
     ]
 }

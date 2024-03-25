@@ -43,6 +43,9 @@ int lite3d_check_depth32(void);
 int lite3d_check_shadow_samplers(void);
 int lite3d_check_srgb(void);
 int lite3d_check_texture3D(void);
+int lite3d_check_texture_swizzle(void);
+int lite3d_check_texture_storage(void);
+int lite3d_check_texture_storage_multisample(void);
 
 /* stub functions */
 void glTexSubImage3D_stub(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLenum format, GLenum type, const void *pixels);
@@ -70,6 +73,7 @@ void glGetQueryiv_stub(GLenum target, GLenum pname, GLint *params);
 void glGetQueryObjectuiv_stub(GLuint id, GLenum pname, GLuint *params);
 void glFramebufferTextureLayer_stub(GLenum target, GLenum attachment, GLuint texture, GLint level, GLint layer);
 void glFramebufferTexture_stub(GLenum target, GLenum attachment, GLuint texture, GLint level);
+void glTexStorage1D_stub(GLenum target, GLsizei levels, GLenum internalformat, GLsizei width);
 
 #ifdef GLES
 
@@ -198,8 +202,24 @@ extern PFNGLFRAMEBUFFERTEXTUREOESPROC glFramebufferTexturePtr;
 #           define GL_RED 0x1903
 #       endif
 
+#       ifndef GL_R8
+#           define GL_R8 GL_RED
+#       endif
+
 #       ifndef GL_RG
 #           define GL_RG 0x8227
+#       endif
+
+#       ifndef GL_RG8
+#           define GL_RG8 GL_RG
+#       endif
+
+#       ifndef GL_RGB8
+#           define GL_RGB8 GL_RGB
+#       endif
+
+#       ifndef GL_RGBA8
+#           define GL_RGBA8 GL_RGBA
 #       endif
 
 #       ifndef GL_TEXTURE_WRAP_R
@@ -286,6 +306,10 @@ extern PFNGLFRAMEBUFFERTEXTUREOESPROC glFramebufferTexturePtr;
 #           define GL_MAX_3D_TEXTURE_SIZE GL_MAX_3D_TEXTURE_SIZE_OES
 #       endif
 
+#       ifndef GL_DEPTH_COMPONENT24
+#           define GL_DEPTH_COMPONENT24 GL_DEPTH_COMPONENT
+#       endif
+
 #   endif
 
 #   define glMapBuffer glMapBufferPtr
@@ -300,6 +324,7 @@ extern PFNGLFRAMEBUFFERTEXTUREOESPROC glFramebufferTexturePtr;
 #   define glCompressedTexSubImage1D glCompressedTexSubImage1D_stub
 #   define glTexImage2DMultisample glTexImage2DMultisample_stub
 #   define glTexImage3DMultisample glTexImage3DMultisample_stub
+#   define glTexStorage1D glTexStorage1D_stub
 #endif
 
 #endif

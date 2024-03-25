@@ -1,0 +1,9 @@
+{
+  "Filtering":"Trilinear",
+  "ImageFormat":"DDS",
+  "Image": "samples:textures/images/skymap/MetalBronzeCube_e.dds",
+  "Compression": true,
+  "TextureType":"Cube",
+  "Wrapping":"ClampToEdge",
+  "sRGB": true
+}

@@ -4,8 +4,9 @@
     "LogFlushAlways": true,
     "LogFile": "lite3d.log",
     "TextureSettings": {
-        "Anisotropy": 16,
-        "Compression": true
+        "Anisotropy": 8,
+        "Compression": true,
+        "CompressedDataOnLoad": true
     },
     // Video settings
     // Window size, caption, color settings, etc
