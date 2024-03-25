@@ -22,49 +22,32 @@
 #include <lite3dpp/lite3dpp_main.h>
 #include <lite3dpp/lite3dpp_material.h>
 
-lite3dpp::Material::MaterialParameters lite3dpp::Material::mGlobalParameters;
+lite3dpp::Material::PassParameters lite3dpp::Material::mGlobalParameters;
 
 #define LITE3D_IMPLEMENT_MAT_PARAMETER(ptype, intype, outtype, enums, valto, valfrom) \
-    void Material::set##ptype##Parameter(uint16_t pass, const String &name, const intype &value, bool isGlobal) \
+    void Material::set##ptype##Parameter(uint16_t passNo, const String &name, const intype &value, bool isGlobal) \
     { \
-        lite3d_material_pass *passPtr = NULL; \
-        lite3d_shader_parameter *parameterPtr; \
-        if(pass > 0) \
-        { \
-            passPtr = lite3d_material_get_pass(&mMaterial, pass); \
-            if(!passPtr) \
-                LITE3D_THROW("Material \"" << getName() << "\" pass not found.."); \
-        } \
-        parameterPtr = getParameter(name, enums, passPtr, isGlobal); \
-        SDL_assert_release(parameterPtr); \
+        lite3d_shader_parameter *parameterPtr = getParameter(name, enums, passNo, isGlobal, true); \
         parameterPtr->parameter.valto = value; \
-        addParameter(passPtr, parameterPtr); \
-    }\
-    outtype Material::get##ptype##Parameter(const String &name) const \
+    } \
+    outtype Material::get##ptype##Parameter(const String &name, uint16_t passNo) \
     { \
-        return get##ptype##ParameterFromMap(name, getName(), mMaterialParameters); \
-    }\
+        lite3d_shader_parameter *parameterPtr = getParameter(name, enums, passNo, false, false); \
+        if (parameterPtr->type != enums) \
+            LITE3D_THROW("Material \"" << getName() << "\" parameter " << name << " type mismatch"); \
+        return static_cast<outtype>(parameterPtr->parameter.valfrom); \
+    } \
     void Material::set##ptype##GlobalParameter(const String &name, const intype &value) \
     { \
-        lite3d_shader_parameter *parameterPtr; \
-        parameterPtr = getGlobalParameter(name, enums); \
-        SDL_assert_release(parameterPtr); \
-        parameterPtr->parameter.valto = value;\
-    }\
-    outtype Material::get##ptype##GlobalParameter(const String &name)\
-    {\
-        return get##ptype##ParameterFromMap(name, "...", mGlobalParameters);\
-    }\
-    outtype Material::get##ptype##ParameterFromMap(const String &name, const String &matName, const MaterialParameters &params)\
-    {\
-        MaterialParameters::const_iterator it;\
-        if((it = params.find(name)) != params.end()) \
-        {\
-            if(std::get<1>(it->second).type != enums)\
-                LITE3D_THROW("Material \"" << matName << "\" parameter " << name << " type mismatch");\
-            return static_cast<outtype>(std::get<1>(it->second).parameter.valfrom);\
-        }\
-        LITE3D_THROW("Material \"" << matName << "\" parameter " << name << " not found..");\
+        lite3d_shader_parameter *parameterPtr = getGlobalParameter(name, enums, true); \
+        parameterPtr->parameter.valto = value; \
+    } \
+    outtype Material::get##ptype##GlobalParameter(const String &name) \
+    { \
+        lite3d_shader_parameter *parameterPtr = getGlobalParameter(name, enums, false); \
+        if (parameterPtr->type != enums) \
+            LITE3D_THROW("Material global parameter " << name << " type mismatch"); \
+        return static_cast<outtype>(parameterPtr->parameter.valfrom); \
     }
 
 namespace lite3dpp
@@ -72,9 +55,6 @@ namespace lite3dpp
     Material::Material(const String &name, 
         const String &path, Main *main) : 
         ConfigurableResource(name, path, main, AbstractResource::MATERIAL)
-    {}
-
-    Material::~Material()
     {}
 
     void Material::loadFromConfigImpl(const ConfigurationReader &helper)
@@ -111,10 +91,11 @@ namespace lite3dpp
             }
 
             parseParameteres(passJson, passNo);
+            parseParameteres(helper, passNo);
         }
 
         mMaterial.userdata = this;
-        parseParameteres(helper, 0);
+        
     }
 
     void Material::parseParameteres(const ConfigurationReader &passJson, uint16_t passNo)
@@ -123,24 +104,15 @@ namespace lite3dpp
         {
             String paramName = uniformParamJson.getString(L"Name");
             /* check for built-in parameters */
-            if(paramName == "projectionMatrix")
-                addParameter(lite3d_material_get_pass(&mMaterial, passNo),
-                    &lite3d_shader_global_parameters()->projectionMatrix);
-            else if(paramName == "viewMatrix")
-                addParameter(lite3d_material_get_pass(&mMaterial, passNo),
-                    &lite3d_shader_global_parameters()->viewMatrix);
-            else if(paramName == "modelMatrix")
-                addParameter(lite3d_material_get_pass(&mMaterial, passNo),
-                    &lite3d_shader_global_parameters()->modelMatrix);
-            else if(paramName == "normalMatrix")
-                addParameter(lite3d_material_get_pass(&mMaterial, passNo),
-                    &lite3d_shader_global_parameters()->normalMatrix);
-            else if(paramName == "screenMatrix")
-                addParameter(lite3d_material_get_pass(&mMaterial, passNo),
-                    &lite3d_shader_global_parameters()->screenMatrix);
-            else if(paramName == "projViewMatrix")
-                addParameter(lite3d_material_get_pass(&mMaterial, passNo),
-                    &lite3d_shader_global_parameters()->projViewMatrix);
+            if (paramName == "projectionMatrix" ||
+                paramName == "viewMatrix" ||
+                paramName == "modelMatrix" ||
+                paramName == "normalMatrix" ||
+                paramName == "screenMatrix" ||
+                paramName == "projViewMatrix")
+            {
+                getParameter(paramName, 0, passNo, true, true);
+            }
             else
             /* user parameters */
             {
@@ -189,7 +161,6 @@ namespace lite3dpp
     void Material::unloadImpl()
     {
         lite3d_material_purge(&mMaterial);
-        mMaterialParameters.clear();
         mPasses.clear();
     }
     
@@ -203,46 +174,14 @@ namespace lite3dpp
         if(!(passPtr = lite3d_material_add_pass(&mMaterial, passNo)))
             LITE3D_THROW("Material \"" << getName() << "\" add pass failed..");
         
-        /* add local parameters to new pass */
-        for(auto &parameter : mMaterialParameters)
-        {
-            /* meant that this parameter must used in all passes */
-            if(std::get<0>(parameter.second) == NULL)
-            {
-                lite3d_material_pass_add_parameter(passPtr, &std::get<1>(parameter.second));
-            }
-        }
-        
-        /* add global parameters to new pass */
-        for(auto &nameParam : mGlobalParamNames)
-        {
-            /* meant that this parameter must used in all passes */
-            if(nameParam.second == NULL)
-            {
-                lite3d_material_pass_add_parameter(passPtr, &std::get<1>(mGlobalParameters[nameParam.first]));
-            }
-        }
-        
-        mPasses.emplace(passNo, passPtr);
+        mPasses.try_emplace(passNo, PassParameters(), GlobalPassParameters());
     }
     
     void Material::removePass(uint16_t pass)
     {
         lite3d_material_pass *passPtr = lite3d_material_get_pass(&mMaterial, pass);
         if(!passPtr)
-            LITE3D_THROW("Material \"" << getName() << "\" pass not found..");
-
-        /* remove all parameters associated with this pass */
-        MaterialParameters::iterator it = mMaterialParameters.begin();
-        for(; it != mMaterialParameters.end();)
-        {
-            if(std::get<0>(it->second) == passPtr)
-            {
-                it = mMaterialParameters.erase(it);
-            }
-            else
-                it++;
-        }
+            LITE3D_THROW("Material \"" << getName() << "\" pass is not found..");
 
         lite3d_material_remove_pass(&mMaterial, pass);
         mPasses.erase(pass);
@@ -252,7 +191,7 @@ namespace lite3dpp
     {
         lite3d_material_pass *passPtr = lite3d_material_get_pass(&mMaterial, pass);
         if(!passPtr)
-            LITE3D_THROW("Material \"" << getName() << "\" pass not found..");
+            LITE3D_THROW("Material \"" << getName() << "\" pass is not found..");
         
         passPtr->blending = blendEnable ? LITE3D_TRUE : LITE3D_FALSE;
         passPtr->blendingMode = mode;
@@ -262,7 +201,7 @@ namespace lite3dpp
     {
         lite3d_material_pass *passPtr = lite3d_material_get_pass(&mMaterial, pass);
         if(!passPtr)
-            LITE3D_THROW("Material \"" << getName() << "\" pass not found..");
+            LITE3D_THROW("Material \"" << getName() << "\" pass is not found..");
         
         passPtr->program = program->getPtr();
     }
@@ -271,79 +210,112 @@ namespace lite3dpp
     {
         const lite3d_material_pass *passPtr = lite3d_material_get_pass(&mMaterial, pass);
         if(!passPtr)
-            LITE3D_THROW("Material \"" << getName() << "\" pass not found..");
+            LITE3D_THROW("Material \"" << getName() << "\" pass is not found..");
         if(!passPtr->program)
-            LITE3D_THROW("Material \"" << getName() << "\" program not specified..");
+            LITE3D_THROW("Material \"" << getName() << "\" program is not specified..");
         
         return static_cast<ShaderProgram *>(passPtr->program->userdata);
     }
 
     lite3d_shader_parameter *Material::getParameter(const String &name, 
-        uint8_t type, lite3d_material_pass *passPtr, bool isGlobal)
+        uint8_t type, uint16_t passNo, bool isGlobal, bool createIfNotExist)
     {
-        MaterialParameters::iterator it;
-
-        if(isGlobal)
-        {
-            mGlobalParamNames.emplace(name, passPtr);
-            return getGlobalParameter(name, type);
+        auto passIt = mPasses.find(passNo);
+        if (passIt == mPasses.end())
+        {  
+            LITE3D_THROW("Material \"" << getName() << "\" pass is not found..");
         }
 
-        if((it = mMaterialParameters.find(name)) == mMaterialParameters.end())
+        auto passPtr = lite3d_material_get_pass(&mMaterial, passNo);
+        if (!passPtr)
+        {  
+            LITE3D_THROW("Material \"" << getName() << "\" pass is not found..");
+        }
+
+        if (isGlobal)
         {
-            auto result = mMaterialParameters.try_emplace(name, passPtr, lite3d_shader_parameter());
+            auto param = getGlobalParameter(name, type, createIfNotExist);
+            if (std::get<1>(passIt->second).count(name) == 0)
+            {
+                std::get<1>(passIt->second).emplace(name);
+                lite3d_material_pass_add_parameter(passPtr, param);
+            }
+
+            return param;
+        }
+
+        auto &passParams = std::get<0>(passIt->second);
+        PassParameters::iterator it;
+        if ((it = passParams.find(name)) == passParams.end())
+        {
+            if (!createIfNotExist)
+            {
+                LITE3D_THROW("Material \"" << getName() << "\" parameter " << name << " is not found..");
+            }
+
+            auto result = passParams.emplace(name, lite3d_shader_parameter());
             it = result.first;
             
-            lite3d_shader_parameter_init(&std::get<1>(it->second));
-            
-            std::get<0>(it->second) = passPtr;
-            name.copy(std::get<1>(it->second).name, sizeof(std::get<1>(it->second).name)-1);
-            std::get<1>(it->second).type = type;
+            lite3d_shader_parameter_init(&it->second);
+            name.copy(it->second.name, sizeof(it->second.name)-1);
+            it->second.type = type;
+            lite3d_material_pass_add_parameter(passPtr, &it->second);
         }
 
-        return &std::get<1>(it->second);
+        return &it->second;
     }
 
-    bool Material::hasParameter(const String &name, bool isGlobal) const
+    bool Material::hasParameter(const String &name, uint16_t passNo, bool isGlobal) const
     {
-        if(isGlobal)
+        auto passIt = mPasses.find(passNo);
+        if (passIt == mPasses.end())
         {
-            return mGlobalParamNames.count(name) > 0;
+            return false;
         }
 
-        return mMaterialParameters.count(name) > 0;
+        if(isGlobal)
+        {
+            return std::get<1>(passIt->second).count(name) > 0;
+        }
+
+        return std::get<0>(passIt->second).count(name) > 0;
     }
     
     lite3d_shader_parameter *Material::getGlobalParameter(const String &name, 
-        uint8_t type)
+        uint8_t type, bool createIfNotExist)
     {
-        MaterialParameters::iterator it;
-        lite3d_material_pass *passPtr = NULL;
+        PassParameters::iterator it;
+        /* built-in global parameters */
+        if(name == "projectionMatrix")
+            return &lite3d_shader_global_parameters()->projectionMatrix;
+        else if(name == "viewMatrix")
+            return &lite3d_shader_global_parameters()->viewMatrix;
+        else if(name == "modelMatrix")
+            return &lite3d_shader_global_parameters()->modelMatrix;
+        else if(name == "normalMatrix")
+            return &lite3d_shader_global_parameters()->normalMatrix;
+        else if(name == "screenMatrix")
+            return &lite3d_shader_global_parameters()->screenMatrix;
+        else if(name == "projViewMatrix")
+            return &lite3d_shader_global_parameters()->projViewMatrix;
 
+        /* User global parameters */
         if((it = mGlobalParameters.find(name)) == mGlobalParameters.end())
         {
-            auto result = mGlobalParameters.try_emplace(name, passPtr, lite3d_shader_parameter());
+            if (!createIfNotExist)
+            {
+                LITE3D_THROW("Material global parameter " << name << " is not found..");
+            }
+
+            auto result = mGlobalParameters.try_emplace(name, lite3d_shader_parameter());
             it = result.first;
             
-            lite3d_shader_parameter_init(&std::get<1>(it->second));
-            
-            name.copy(std::get<1>(it->second).name, sizeof(std::get<1>(it->second).name)-1);
-            std::get<1>(it->second).type = type;
+            lite3d_shader_parameter_init(&it->second);
+            name.copy(it->second.name, sizeof(it->second.name)-1);
+            it->second.type = type;
         }
 
-        return &std::get<1>(it->second);
-    }
-    
-
-    void Material::addParameter(lite3d_material_pass *passPtr, lite3d_shader_parameter *parameterPtr)
-    {
-        if(passPtr)
-            lite3d_material_pass_add_parameter(passPtr, parameterPtr);
-        else
-        {
-            for(Passes::value_type &passEntry : mPasses)
-                lite3d_material_pass_add_parameter(passEntry.second, parameterPtr);
-        }
+        return &it->second;
     }
     
     LITE3D_IMPLEMENT_MAT_PARAMETER(Float, float, float, LITE3D_SHADER_PARAMETER_FLOAT, valfloat, valfloat)

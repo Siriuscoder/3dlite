@@ -39,9 +39,9 @@ public:
         mNode(node),
         mMaterial(material)
     {
-        if (mMaterial && mMaterial->hasParameter("EmissionStrength"))
+        if (mMaterial && mMaterial->hasParameter("EmissionStrength", 2))
         {
-            mEmissionStrength = mMaterial->getFloatParameter("EmissionStrength");
+            mEmissionStrength = mMaterial->getFloatParameter("EmissionStrength", 2);
         }
     }
 
@@ -83,12 +83,12 @@ public:
 
         if (mMaterial && nodeEnabled)
         {
-            if (mMaterial->hasParameter("Alpha"))
+            if (mMaterial->hasParameter("Alpha", 2))
             {
                 mMaterial->setFloatParameter(2, "Alpha", k);
             }
 
-            if (mMaterial->hasParameter("EmissionStrength"))
+            if (mMaterial->hasParameter("EmissionStrength", 2))
             {
                 float emission = mEmissionStrength * k;
                 mMaterial->setFloatParameter(2, "EmissionStrength", emission);
@@ -130,12 +130,12 @@ public:
 
             if (mMaterial)
             {
-                if (mMaterial->hasParameter("Alpha"))
+                if (mMaterial->hasParameter("Alpha", 2))
                 {
                     mMaterial->setFloatParameter(2, "Alpha", mNode->getLight()->enabled() ? 1.0 : 0.0);
                 }
 
-                if (mMaterial->hasParameter("EmissionStrength"))
+                if (mMaterial->hasParameter("EmissionStrength", 2))
                 {
                     float emission = mEmissionStrength * (mNode->getLight()->enabled() ? 1.0 : 0.0);
                     mMaterial->setFloatParameter(2, "EmissionStrength", emission);
