@@ -29,7 +29,8 @@
 
 namespace lite3dpp
 {
-    class LITE3DPP_EXPORT Scene : public Observable<SceneObserver>, public ConfigurableResource, public Noncopiable
+    class LITE3DPP_EXPORT Scene : public Observable<SceneObserver>, 
+        public SceneObserver, public ConfigurableResource, public Noncopiable
     {
     public:
 
@@ -73,7 +74,8 @@ namespace lite3dpp
 
         virtual void loadFromConfigImpl(const ConfigurationReader &helper) override;
         virtual void unloadImpl() override;
-            
+        
+        void setupCallbacks();
         void rebuildLightingBuffer();
         void validateLightingBuffer(const Camera &camera);
         
@@ -84,29 +86,29 @@ namespace lite3dpp
         void setupObjects(const stl<ConfigurationReader>::vector &objects, SceneObject *base);
         void setupCameras(const stl<ConfigurationReader>::vector &cameras);
 
-        static int beginDrawBatch(struct lite3d_scene *scene, 
+        static int beginDrawBatchEntry(struct lite3d_scene *scene, 
             struct lite3d_scene_node *node, struct lite3d_mesh_chunk *meshChunk, struct lite3d_material *material);
 
-        static void nodeInFrustum(struct lite3d_scene *scene, 
+        static void nodeInFrustumEntry(struct lite3d_scene *scene, 
             struct lite3d_scene_node *node, struct lite3d_mesh_chunk *meshChunk, 
             struct lite3d_material *material, struct lite3d_bounding_vol *boundingVol, 
             struct lite3d_camera *camera);
 
-        static void nodeOutOfFrustum(struct lite3d_scene *scene, 
+        static void nodeOutOfFrustumEntry(struct lite3d_scene *scene, 
             struct lite3d_scene_node *node, struct lite3d_mesh_chunk *meshChunk, 
             struct lite3d_material *material, struct lite3d_bounding_vol *boundingVol,
             struct lite3d_camera *camera);
 
-        static int customVisibilityCheck(struct lite3d_scene *scene, 
+        static int customVisibilityCheckEntry(struct lite3d_scene *scene, 
             struct lite3d_scene_node *node, struct lite3d_mesh_chunk *meshChunk, 
             struct lite3d_material *material, struct lite3d_bounding_vol *boundingVol,
             struct lite3d_camera *camera);
 
-        static void beforeUpdateNodes(struct lite3d_scene *scene, struct lite3d_camera *camera);
-        static int beginSceneRender(struct lite3d_scene *scene, struct lite3d_camera *camera);
-        static void endSceneRender(struct lite3d_scene *scene, struct lite3d_camera *camera);
-        static void beginOpaqueStageRender(struct lite3d_scene *scene, struct lite3d_camera *camera);
-        static void beginBlendingStageRender(struct lite3d_scene *scene, struct lite3d_camera *camera);
+        static void beforeUpdateNodesEntry(struct lite3d_scene *scene, struct lite3d_camera *camera);
+        static int beginSceneRenderEntry(struct lite3d_scene *scene, struct lite3d_camera *camera);
+        static void endSceneRenderEntry(struct lite3d_scene *scene, struct lite3d_camera *camera);
+        static void beginOpaqueStageRenderEntry(struct lite3d_scene *scene, struct lite3d_camera *camera);
+        static void beginBlendingStageRenderEntry(struct lite3d_scene *scene, struct lite3d_camera *camera);
 
         lite3d_scene mScene;
         Objects mObjects;

@@ -30,12 +30,6 @@ namespace lite3dpp
         mRenderTargetBlitTo(nullptr)
     {
         mRenderTargetPtr = &mRenderTarget;
-        addObserver(this);
-    }
-
-    TextureRenderTarget::~TextureRenderTarget()
-    {
-        removeObserver(this);
     }
 
     void TextureRenderTarget::loadFromConfigImpl(const ConfigurationReader &helper)
@@ -54,9 +48,7 @@ namespace lite3dpp
         }
 
         lite3d_render_target_init(mRenderTargetPtr, width, height);
-        mRenderTargetPtr->userdata = this;
-        mRenderTargetPtr->preUpdate = RenderTarget::beginUpdate;
-        mRenderTargetPtr->postUpdate = RenderTarget::postUpdate;
+        setupCallbacks();
 
         setBackgroundColor(helper.getVec4(L"BackgroundColor"));
         setBuffersCleanBit(helper.getBool(L"CleanColorBuf", true),
@@ -160,7 +152,7 @@ namespace lite3dpp
             lite3d_render_target_add(mRenderTargetPtr, priority);
     }
 
-    void TextureRenderTarget::postUpdate(RenderTarget *rt)
+    void TextureRenderTarget::postUpdate(RenderTarget *target)
     {
         if (mRenderTargetBlitTo && mRenderTargetBlitTo->getPtr())
         {
