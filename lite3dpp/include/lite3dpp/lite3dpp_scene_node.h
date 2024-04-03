@@ -70,6 +70,11 @@ namespace lite3dpp
         virtual void addToScene(Scene *scene);
         virtual void removeFromScene(Scene *scene);
 
+        inline SceneNode *getParent()
+        { return mBaseNode; }
+        inline const SceneNode *getParent() const
+        { return mBaseNode; }
+
     private:
 
         lite3d_scene_node mNode;

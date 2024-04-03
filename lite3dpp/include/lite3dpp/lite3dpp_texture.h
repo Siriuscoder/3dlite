@@ -47,7 +47,7 @@ namespace lite3dpp
 
         virtual void unloadImpl() override;
 
-        lite3d_texture_unit mTexture;
+        lite3d_texture_unit mTexture = {0};
     };
 
     class LITE3DPP_EXPORT TextureImage : public Texture

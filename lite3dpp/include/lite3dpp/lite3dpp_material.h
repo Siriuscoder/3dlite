@@ -34,23 +34,19 @@ namespace lite3dpp
 {
 #define LITE3D_MATERIAL_DECLARE_PARAMETER(ptype, intype, outype) \
     void set##ptype##Parameter(uint16_t pass, const String &name, const intype &value, bool isGlobal = false);\
-    outype get##ptype##Parameter(const String &name) const; \
+    outype get##ptype##Parameter(const String &name, uint16_t passNo); \
     static void set##ptype##GlobalParameter(const String &name, const intype &value); \
-    static outype get##ptype##GlobalParameter(const String &name);\
-    static outype get##ptype##ParameterFromMap(const String &name, const String &matName, const MaterialParameters &params);
+    static outype get##ptype##GlobalParameter(const String &name);
     
     class LITE3DPP_EXPORT Material : public ConfigurableResource, public Noncopiable
     {
     public:
 
-        typedef stl<String, std::tuple<lite3d_material_pass *, lite3d_shader_parameter> >::unordered_map MaterialParameters;
-        typedef stl<String, lite3d_material_pass *>::unordered_map MaterialGlobalParametersNames;
-        typedef stl<uint16_t,  lite3d_material_pass *>::map Passes;
+        using PassParameters = stl<String, lite3d_shader_parameter>::unordered_map;
+        using GlobalPassParameters = stl<String>::set;
+        using Passes = stl<uint16_t, std::tuple<PassParameters, GlobalPassParameters>>::map;
         
-        Material(const String &name, 
-            const String &path, Main *main);
-
-        ~Material();
+        Material(const String &name, const String &path, Main *main);
 
         LITE3D_DECLARE_PTR_METHODS(lite3d_material, mMaterial)
 
@@ -59,6 +55,7 @@ namespace lite3dpp
         void setPassProgram(uint16_t pass, ShaderProgram *program);
         void setPassBlendMode(uint16_t pass, bool blendEnable, uint8_t mode);
         ShaderProgram *getPassProgram(uint16_t pass) const;
+        bool hasParameter(const String &name, uint16_t passNo, bool isGlobal = false) const;
         
         /* if pass == 0 parameter will be used for all passes */
         LITE3D_MATERIAL_DECLARE_PARAMETER(Float, float, float)
@@ -79,19 +76,16 @@ namespace lite3dpp
     private:
 
         lite3d_shader_parameter *getParameter(const String &name, 
-            uint8_t type, lite3d_material_pass *passPtr, bool isGlobal);
-        void addParameter(lite3d_material_pass *passPtr, lite3d_shader_parameter *parameterPtr);
+            uint8_t type, uint16_t passNo, bool isGlobal, bool createIfNotExist);
         void parseParameteres(const ConfigurationReader &passJson, uint16_t passNo);
         
         static lite3d_shader_parameter *getGlobalParameter(const String &name, 
-            uint8_t type);
+            uint8_t type, bool createIfNotExist);
         
     private:
 
         lite3d_material mMaterial;
-        MaterialParameters mMaterialParameters;
         Passes mPasses;
-        MaterialGlobalParametersNames mGlobalParamNames;
-        static MaterialParameters mGlobalParameters;
+        static PassParameters mGlobalParameters;
     };
 }

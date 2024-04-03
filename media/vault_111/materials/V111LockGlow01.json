@@ -8,16 +8,6 @@
       },
       "Uniforms": [
         {
-          "Name": "Specular",
-          "Type": "float",
-          "Value": 1.0
-        },
-        {
-          "Name": "Roughness",
-          "Type": "float",
-          "Value": 0.8183409571647644
-        },
-        {
           "Name": "Emission",
           "Type": "v4",
           "Value": [
@@ -35,7 +25,7 @@
         {
           "Name": "Environment",
           "TextureName": "environment.texture",
-          "TexturePath": "samples:textures/json/skybox_cryo_mip.json",
+          "TexturePath": "samples:textures/json/skybox_metal_chrome.json",
           "Type": "sampler"
         },
         {
@@ -65,7 +55,7 @@
         }
       ],
       "Blending": true,
-      "BlendingMode": "traditional"
+      "BlendingMode": "RGB_LINEAR_SOURCE_ALPHA"
     }
   ],
   "Uniforms": [

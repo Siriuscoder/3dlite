@@ -65,9 +65,9 @@ namespace lite3dpp
 
     uint8_t TextureImage::textureFiltering(const String &s)
     {
-        return s == "NONE" ? LITE3D_TEXTURE_QL_LOW :
-            (s == "LINEAR" ? LITE3D_TEXTURE_QL_MEDIUM :
-            (s == "TRILINEAR" ? LITE3D_TEXTURE_QL_NICEST : 0));
+        return s == "NONE" ? LITE3D_TEXTURE_FILTER_NEAREST :
+            (s == "LINEAR" ? LITE3D_TEXTURE_FILTER_BILINEAR :
+            (s == "TRILINEAR" ? LITE3D_TEXTURE_FILTER_TRILINEAR : 0));
     }
 
     uint8_t TextureImage::textureWrap(const String &s)
@@ -133,10 +133,10 @@ namespace lite3dpp
 
         uint32_t type = textureType(helper.getUpperString(L"TextureType", "2D"));
         uint8_t srgb = helper.getBool(L"sRGB", false) ? LITE3D_TRUE : LITE3D_FALSE;
-        uint8_t quality = textureFiltering(helper.getUpperString(L"Filtering", "NONE"));
+        uint8_t filtering = textureFiltering(helper.getUpperString(L"Filtering", "NONE"));
         uint8_t wrapping = textureWrap(helper.getUpperString(L"Wrapping", "CLAMPTOEDGE"));
 
-        auto loadImage = [this, type, srgb, quality, wrapping](const ConfigurationReader &helper)
+        auto loadImage = [this, type, srgb, filtering, wrapping](const ConfigurationReader &helper)
         {
             lite3d_texture_technique_reset_filters();
             for(const ConfigurationReader &filterConfig : helper.getObjects(L"ProcessingFilters"))
@@ -153,7 +153,7 @@ namespace lite3dpp
                 textureImageFormat(helper.getUpperString(L"ImageFormat", "ANY")),
                 type, 
                 srgb,
-                quality, 
+                filtering, 
                 wrapping, 
                 helper.getInt(L"CubeFace")))
                 LITE3D_THROW(getName() << ": failed to load texture");
@@ -188,7 +188,7 @@ namespace lite3dpp
 
             if (!lite3d_texture_unit_allocate(&mTexture, 
                 type, 
-                quality, 
+                filtering, 
                 wrapping, 
                 textureFormat(helper.getUpperString(L"TextureFormat", "RGB")),
                 textureInternalFormat(helper.getInt(L"InternalFormat")),

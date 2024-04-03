@@ -15,9 +15,10 @@ void main()
 {
     // sampling normal from normal map
     vec4 nval = texture(normals, iuv);
+    nval.y = 1.0 - nval.y;
     // put normal in [-1,1] range in tangent space 
     // and trasform normal to world space 
-    vec3 nw = normalize(itbn * normalize(2*nval.rgb-1));
+    vec3 nw = normalize(itbn * normalize(2.0 * nval.xyz - 1.0));
     // sampling diffuse color 
     vec4 fragDiffuse = texture(diffuse, iuv);
 

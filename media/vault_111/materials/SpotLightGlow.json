@@ -23,16 +23,6 @@
       },
       "Uniforms": [
         {
-          "Name": "Specular",
-          "Type": "float",
-          "Value": 1.0
-        },
-        {
-          "Name": "Roughness",
-          "Type": "float",
-          "Value": 0.8183409571647644
-        },
-        {
           "Name": "Emission",
           "Type": "v4",
           "Value": [

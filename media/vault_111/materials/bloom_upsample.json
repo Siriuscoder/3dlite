@@ -7,7 +7,7 @@
         "Path":"vault_111:shaders/json/bloom_upsample.json"
       },
       "Blending":true,
-      "BlendingMode":"additive"
+      "BlendingMode": "RGB_ADDITIVE"
     }
   ],
   "Uniforms":[

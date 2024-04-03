@@ -64,15 +64,17 @@
 
 #define LITE3D_MAX_FILTERS          10
 
-#define LITE3D_TEXTURE_QL_LOW       0x0001
-#define LITE3D_TEXTURE_QL_MEDIUM    0x0002
-#define LITE3D_TEXTURE_QL_NICEST    0x0003 // mipmapping + anisotropic filter
+#define LITE3D_TEXTURE_FILTER_NEAREST       0x0001
+#define LITE3D_TEXTURE_FILTER_BILINEAR    0x0002
+#define LITE3D_TEXTURE_FILTER_TRILINEAR    0x0003 // mipmapping + anisotropic filter
 
 #define LITE3D_TEXTURE_CLAMP_TO_EDGE    0x0001
 #define LITE3D_TEXTURE_REPEAT           0x0002
 
 #define LITE3D_TEXTURE_FORMAT_RED               0x1903
+#define LITE3D_TEXTURE_FORMAT_LUMINANCE         0x1909 // legacy, replacted to LITE3D_TEXTURE_FORMAT_RED
 #define LITE3D_TEXTURE_FORMAT_RG                0x8227
+#define LITE3D_TEXTURE_FORMAT_LUMINANCE_ALPHA   0x190A // legacy, replacted to LITE3D_TEXTURE_FORMAT_RG
 #define LITE3D_TEXTURE_FORMAT_RGB               0x1907
 #define LITE3D_TEXTURE_FORMAT_RGBA              0x1908
 #define LITE3D_TEXTURE_FORMAT_BRG               0x80E0
@@ -163,8 +165,8 @@ typedef struct lite3d_texture_unit
 {
     uint32_t textureID;
     uint32_t textureTarget;
-    int32_t texFormat;
-    int32_t texiFormat;
+    int32_t dataFormat;
+    int32_t internalFormat;
     int32_t imageType;
     int32_t imageHeight;
     int32_t imageWidth;
@@ -178,6 +180,7 @@ typedef struct lite3d_texture_unit
     int16_t magFilter;
     uint8_t wrapping;
     uint8_t compressed;
+    int32_t samples;
     uint8_t isFbAttachment;
     lite3d_vbo tbo;
     uint8_t isTextureBuffer;
@@ -212,12 +215,12 @@ LITE3D_CEXPORT int32_t lite3d_texture_unit_get_level_depth(lite3d_texture_unit *
 */
 LITE3D_CEXPORT int lite3d_texture_unit_from_resource(lite3d_texture_unit *textureUnit, 
     const lite3d_file *resource, uint32_t imageType, uint32_t textureTarget, int8_t srgb,
-    int8_t quality, uint8_t wrapping, uint8_t cubeface);
+    int8_t filtering, uint8_t wrapping, uint8_t cubeface);
 
 /* allocate empty texture object */
 /* set iformat = 0 to specify what internal format does not matter */
 LITE3D_CEXPORT int lite3d_texture_unit_allocate(lite3d_texture_unit *textureUnit, 
-    uint32_t textureTarget, int8_t quality, uint8_t wrapping, uint16_t format,
+    uint32_t textureTarget, int8_t filtering, uint8_t wrapping, uint16_t format,
     uint16_t iformat, int32_t width, int32_t height, int32_t depth, int32_t samples);
 
 /* update specified mipmap level */
@@ -251,5 +254,9 @@ LITE3D_CEXPORT void lite3d_texture_unit_bind(lite3d_texture_unit *texture, uint1
 LITE3D_CEXPORT void lite3d_texture_unit_unbind(lite3d_texture_unit *texture, uint16_t layer);
 
 LITE3D_CEXPORT void lite3d_texture_unit_compression(uint8_t on);
+
+LITE3D_CEXPORT const char *lite3d_texture_unit_format_string(const lite3d_texture_unit *texture);
+LITE3D_CEXPORT const char *lite3d_texture_unit_target_string(uint32_t textureTarget);
+LITE3D_CEXPORT const char *lite3d_texture_unit_internal_format_string(const lite3d_texture_unit *texture);
 
 #endif

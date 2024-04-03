@@ -5,9 +5,9 @@ from io_scene_lite3d.io import IO
 from io_scene_lite3d.logger import log
 
 class Material:
-    def __init__(self, mat, scene):
-        self.material = mat
-        self.name = mat.name + ".material"
+    def __init__(self, material, scene):
+        self.material = material
+        self.name = material.name + ".material"
         self.scene = scene
         self.params = {}
         self.template = {}
@@ -65,8 +65,17 @@ class Material:
             template[key] = keyParam.replace(" ", "")
             template["Type"] = f"v{len(param)}" if isinstance(param, list) else "float"
             template["Value"] = param
+
+    def processParams(self, val):
+        if "Name" in val and "Type" in val:
+            paramName = val["Name"]
+            paramType = val["Type"].lower()
+            paramValue = self.material.get(paramName)
+            if paramType == "float" and paramValue is not None:
+                val["Value"] = float(paramValue)
     
     def processTemplate(self, template):
+        self.processParams(template)
         for key, val in template.items():
             if isinstance(val, str):
                 if len(val) > 2 and val[0] == '<' and val[-1] == '>':
@@ -79,7 +88,7 @@ class Material:
             elif isinstance(val, list):
                 for lval in val:
                     self.processTemplate(lval)
-                    
+
     def save(self):
         if not self.loadTemplate():
             return

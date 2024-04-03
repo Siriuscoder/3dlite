@@ -41,6 +41,21 @@
           "TexturePath": "vault_111:textures/json/MiniGun_s.json"
         },
         {
+          "Name": "SpecularFactor",
+          "Type": "float",
+          "Value": 1.0
+        },
+        {
+          "Name": "MetallicFactor",
+          "Type": "float",
+          "Value": 0.8399999737739563
+        },
+        {
+          "Name": "SpecularAmbientFactor",
+          "Type": "float",
+          "Value": 0.30000001192092896
+        },
+        {
           "Name": "projViewMatrix"
         }
       ]

@@ -15,7 +15,7 @@ vec3 GetFixedWorldNormal(mat3 tbn, vec2 iuv)
     // This behavour is not been expected for me.. So lets try to fix this.
 
     // sampling normal from normal map with swap XY
-    vec3 nt = texture(Normal, iuv).grb;
+    vec3 nt = texture(Normal, iuv).rgb;
     // Flip Y channel to fix model texcoords flip while export models (FlipUV)
     nt.y = 1.0 - nt.y;
     // put normal in [-1,1] range in tangent space

@@ -8,12 +8,6 @@
       },
       "Uniforms":[
         {
-          "Name":"<Specular>"
-        },
-        {
-          "Name":"<Roughness>"
-        },
-        {
           "Name":"<Emission>"
         },
         {
@@ -57,7 +51,7 @@
         }
       ],
       "Blending":true,
-      "BlendingMode":"traditional"
+      "BlendingMode": "RGB_LINEAR_SOURCE_ALPHA"
     }
   ],
   "Uniforms":[

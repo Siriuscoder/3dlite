@@ -41,6 +41,21 @@
           "TexturePath": "vault_111:textures/json/OxygenTank_s.json"
         },
         {
+          "Name": "SpecularFactor",
+          "Type": "float",
+          "Value": 0.23999999463558197
+        },
+        {
+          "Name": "MetallicFactor",
+          "Type": "float",
+          "Value": 0.1
+        },
+        {
+          "Name": "SpecularAmbientFactor",
+          "Type": "float",
+          "Value": 0.1
+        },
+        {
           "Name": "projViewMatrix"
         }
       ]

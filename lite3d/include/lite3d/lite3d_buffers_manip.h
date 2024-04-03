@@ -30,9 +30,9 @@
 #define LITE3D_TEST_GEQUAL          0x6
 #define LITE3D_TEST_ALWAYS          0x7
 
-#define LITE3D_BLENDING_MODE_TRADITIONAL                        0
-#define LITE3D_BLENDING_MODE_TRADITIONAL_WITH_ALPHA_BLEND       1
-#define LITE3D_BLENDING_MODE_ADDITIVE                           2
+#define LITE3D_BLENDING_MODE_RGB_LINEAR_SOURCE_ALPHA        0
+#define LITE3D_BLENDING_MODE_RGBA_LINEAR_SOURCE_ALPHA       1
+#define LITE3D_BLENDING_MODE_RGB_ADDITIVE                   2
 
 #define LITE3D_POLYMODE_POINT        0x0
 #define LITE3D_POLYMODE_LINE         0x1
@@ -60,19 +60,17 @@ LITE3D_CEXPORT void lite3d_buffers_clear(uint8_t color, uint8_t depth, uint8_t s
 LITE3D_CEXPORT void lite3d_buffers_clear_values(const kmVec4 *color, float depth, int stencil);
 
 /* 
-    0 - Traditional, 1 - Traditional with alpha blend, 2 additive
-
-    Traditional blend algorithm:
+    LITE3D_BLENDING_MODE_RGB_LINEAR_SOURCE_ALPHA
     Orgb = Sa * Srgb + (1 - Sa) * Drgb
     Oa = 1 * Sa + 0 * Da = Sa
 
-    Traditional blend algorithm with alpha blend:
+    LITE3D_BLENDING_MODE_RGBA_LINEAR_SOURCE_ALPHA
     Orgb = Sa * Srgb + (1 - Sa) * Drgb
     Oa = 1 * Sa + (1 - Sa) * Da
     
-    Additive blend algorithm:
+    LITE3D_BLENDING_MODE_RGB_ADDITIVE
     Orgb = 1 * Srgb + 1 * Drgb
-    Oa = 1 * Sa + (1 - Sa) * Da
+    Oa = 1 * Sa + 0 * Da = Sa
  */
 LITE3D_CEXPORT void lite3d_blending_mode_set(uint8_t mode);
 LITE3D_CEXPORT void lite3d_blending(uint8_t on);

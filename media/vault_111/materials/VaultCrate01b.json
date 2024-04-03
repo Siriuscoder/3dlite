@@ -37,8 +37,23 @@
         {
           "Name": "Specular",
           "Type": "sampler",
-          "TextureName": "Vault_Crate_01_s.texture",
-          "TexturePath": "vault_111:textures/json/Vault_Crate_01_s.json"
+          "TextureName": "Vault_Crate_02_s.texture",
+          "TexturePath": "vault_111:textures/json/Vault_Crate_02_s.json"
+        },
+        {
+          "Name": "SpecularFactor",
+          "Type": "float",
+          "Value": 1.0
+        },
+        {
+          "Name": "MetallicFactor",
+          "Type": "float",
+          "Value": 0.1
+        },
+        {
+          "Name": "SpecularAmbientFactor",
+          "Type": "float",
+          "Value": 0.1
         },
         {
           "Name": "projViewMatrix"

@@ -2,7 +2,10 @@
 
 uniform sampler2D combined;
 uniform sampler2D bloom;
-uniform float GammaFactor;
+uniform float gamma;
+uniform float exposure;
+uniform float contrast;
+uniform float saturation;
 uniform vec3 screenResolution;
 
 out vec4 fragColor;
@@ -30,33 +33,33 @@ vec3 ReinhardTonemapping(vec3 x)
 }
 
 // exposure tone mapping
-vec3 ExposureTonemapping(vec3 x, float exposure)
+vec3 ExposureTonemapping(vec3 x, float e)
 {
-    return 1.0 - exp(-x * exposure);
+    return 1.0 - exp(-x * e);
 }
 
-mat4 contrastMatrix(float contrast)
+mat4 contrastMatrix(float c)
 {
-	float t = (1.0 - contrast) / 2.0;
-    return mat4(contrast, 0, 0, 0,
-                0, contrast, 0, 0,
-                0, 0, contrast, 0,
+	float t = (1.0 - c) / 2.0;
+    return mat4(c, 0, 0, 0,
+                0, c, 0, 0,
+                0, 0, c, 0,
                 t, t, t, 1);
 }
 
-mat4 saturationMatrix(float saturation)
+mat4 saturationMatrix(float s)
 {
     vec3 luminance = vec3(0.2126, 0.7152, 0.0722);
-    float oneMinusSat = 1.0 - saturation;
+    float oneMinusSat = 1.0 - s;
 
     vec3 red = vec3(luminance.x * oneMinusSat);
-    red += vec3(saturation, 0, 0);
+    red += vec3(s, 0, 0);
     
     vec3 green = vec3(luminance.y * oneMinusSat);
-    green += vec3(0, saturation, 0);
+    green += vec3(0, s, 0);
     
     vec3 blue = vec3(luminance.z * oneMinusSat);
-    blue += vec3(0, 0, saturation);
+    blue += vec3(0, 0, s);
     
     return mat4(red,     0,
                 green,   0,
@@ -72,11 +75,11 @@ void main()
     vec3 blm = texture(bloom, iuv).rgb;
     hdr = mix(hdr, blm, vec3(BloomStrength));
     // Exposure tone mapping
-    vec4 ldr = vec4(ExposureTonemapping(hdr, 2.4), 1.0);
+    vec4 ldr = vec4(ExposureTonemapping(hdr, exposure), 1.0);
     // Color correction
-    ldr = contrastMatrix(Contrast) * saturationMatrix(Saturation) * ldr;
+    ldr = contrastMatrix(contrast) * saturationMatrix(saturation) * ldr;
     // Gamma correction 
-    ldr.rgb = pow(ldr.rgb, vec3(1.0 / GammaFactor));
+    ldr.rgb = pow(ldr.rgb, vec3(1.0 / gamma));
     // Final Color
     fragColor = vec4(ldr.rgb, 1.0);
 }
