@@ -91,8 +91,6 @@ namespace lite3dpp
         ResourceType mType;
         String mName;
         String mPath;
-
-    protected:
         Main *mMain;
     };
 

@@ -1,15 +1,27 @@
 {
     "Root":
     {
-        "Name": "cube30.root",
+        "Name": "cube80.root",
+        "Physics": 
+        {
+            // Static, Dynamic, Kinematic
+            "Type": "Dynamic", 
+            "Mass": 100.0
+        },
         "Nodes": [
             {
-                "Name": "cube30.node",
+                "Name": "cube80.node",
                 "FrustumTest": true,
                 "Mesh": 
                 {
-                    "Name": "cube30.mesh",
+                    "Name": "cube80.mesh",
                     "Mesh": "samples:models/json/cube80.json",
+                    "CollisionShape":
+                    {
+                        // Box, Sphere, StaticPlane, Cylinder, Capsule, Cone, ConvexHullShape, StaticTriangleMeshShape, GimpactTriangleMeshShape
+                        "Type": "Box",
+                        "BoxHalfExtents": [40.0, 40.0, 40.0]
+                    },
                     "MaterialMapping": 
                     [
                         {

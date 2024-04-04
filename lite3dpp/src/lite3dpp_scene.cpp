@@ -71,35 +71,35 @@ namespace lite3dpp
                 if (lightingTechnique == "TBO")
                 {
                     /* default name of lighting buffer is scene name + "LightingBufferObject" */
-                    mLightingParamsBuffer = mMain->getResourceManager()->
+                    mLightingParamsBuffer = getMain().getResourceManager()->
                         queryResourceFromJson<TextureBuffer>(getName() + "_lightingBufferObject",
                         "{\"BufferFormat\": \"RGBA32F\", \"Dynamic\": false}");
                     /* 2-bytes index, about 16k light sources support  */
-                    mLightingIndexBuffer = mMain->getResourceManager()->
+                    mLightingIndexBuffer = getMain().getResourceManager()->
                         queryResourceFromJson<TextureBuffer>(getName() + "_lightingIndexBuffer",
                         "{\"BufferFormat\": \"R32I\", \"Dynamic\": true}");
                 }
                 else if (lightingTechnique == "SSBO")
                 {
                     /* default name of lighting buffer is scene name + "LightingBufferObject" */
-                    mLightingParamsBuffer = mMain->getResourceManager()->
+                    mLightingParamsBuffer = getMain().getResourceManager()->
                         queryResourceFromJson<SSBO>(getName() + "_lightingBufferObject",
                         "{\"Dynamic\": false}");
 
                     /* 2-bytes index, about 16k light sources support  */
-                    mLightingIndexBuffer = mMain->getResourceManager()->
+                    mLightingIndexBuffer = getMain().getResourceManager()->
                         queryResourceFromJson<SSBO>(getName() + "_lightingIndexBuffer",
                         "{\"Dynamic\": true}");
                 }
                 else if (lightingTechnique == "UBO")
                 {
                     /* default name of lighting buffer is scene name + "LightingBufferObject" */
-                    mLightingParamsBuffer = mMain->getResourceManager()->
+                    mLightingParamsBuffer = getMain().getResourceManager()->
                         queryResourceFromJson<UBO>(getName() + "_lightingBufferObject",
                         "{\"Dynamic\": false}");
 
                     /* 2-bytes index, about 16k light sources support  */
-                    mLightingIndexBuffer = mMain->getResourceManager()->
+                    mLightingIndexBuffer = getMain().getResourceManager()->
                         queryResourceFromJson<UBO>(getName() + "_lightingIndexBuffer",
                         "{\"Dynamic\": true}");
                 }
@@ -270,7 +270,7 @@ namespace lite3dpp
     
     SceneObject::Ptr Scene::createObject(const String &name, SceneObject *parent)
     {
-        return std::shared_ptr<SceneObject>(new SceneObject(name, parent, mMain));
+        return std::shared_ptr<SceneObject>(new SceneObject(name, parent, &getMain()));
     }
 
     void Scene::setupObjects(const stl<ConfigurationReader>::vector &objects, SceneObject *base)
@@ -295,8 +295,8 @@ namespace lite3dpp
         for(const ConfigurationReader &cameraJson : cameras)
         {
             Camera *camera = NULL;
-            if ((camera = mMain->getCamera(cameraJson.getString(L"Name"))) == NULL)
-                camera = mMain->addCamera(cameraJson.getString(L"Name"));
+            if ((camera = getMain().getCamera(cameraJson.getString(L"Name"))) == NULL)
+                camera = getMain().addCamera(cameraJson.getString(L"Name"));
 
             RenderTarget *renderTarget = NULL;
 
@@ -304,10 +304,10 @@ namespace lite3dpp
             {
                 String renderTargetName = renderTargetJson.getString(L"Name");
                 if(renderTargetName == "Window") 
-                    renderTarget = mMain->window();
+                    renderTarget = getMain().window();
                 else
                 {
-                    renderTarget = mMain->getResourceManager()->queryResource<TextureRenderTarget>(
+                    renderTarget = getMain().getResourceManager()->queryResource<TextureRenderTarget>(
                         renderTargetJson.getString(L"Name"),
                         renderTargetJson.getString(L"Path"));
                 }

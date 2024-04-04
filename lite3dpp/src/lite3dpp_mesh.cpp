@@ -73,7 +73,7 @@ namespace lite3dpp
         else if (helper.getString(L"Codec", "m") == "m")
         {
             if (!lite3d_mesh_load_from_m_file(&mMesh, 
-                mMain->getResourceManager()->loadFileToMemory(helper.getString(L"Model")),
+                getMain().getResourceManager()->loadFileToMemory(helper.getString(L"Model")),
                 helper.getBool(L"Dynamic", false) ? LITE3D_VBO_DYNAMIC_DRAW : LITE3D_VBO_STATIC_DRAW))
                 LITE3D_THROW(getName() << ": could not load mesh chunk, bad format");
             
@@ -89,7 +89,7 @@ namespace lite3dpp
                 flags |= LITE3D_FLIP_UV_FLAG;
 
             if(!lite3d_assimp_mesh_load(&mMesh, 
-                mMain->getResourceManager()->loadFileToMemory(helper.getString(L"Model")),
+                getMain().getResourceManager()->loadFileToMemory(helper.getString(L"Model")),
                 helper.getString(L"ModelName").c_str(), 
                 helper.getBool(L"Dynamic", false) ? LITE3D_VBO_DYNAMIC_DRAW : LITE3D_VBO_STATIC_DRAW,
                 flags))
@@ -116,7 +116,7 @@ namespace lite3dpp
         for(auto &matMap : helper.getObjects(L"MaterialMapping"))
         {
             mapMaterial(matMap.getInt(L"MaterialIndex"), 
-                mMain->getResourceManager()->queryResource<Material>(
+                getMain().getResourceManager()->queryResource<Material>(
                     matMap.getObject(L"Material").getString(L"Name"),
                     matMap.getObject(L"Material").getString(L"Material")));
         }

@@ -149,7 +149,7 @@ namespace lite3dpp
             }
 
             if(!lite3d_texture_unit_from_resource(&mTexture, 
-                mMain->getResourceManager()->loadFileToMemory(helper.getString(L"Image")),
+                getMain().getResourceManager()->loadFileToMemory(helper.getString(L"Image")),
                 textureImageFormat(helper.getUpperString(L"ImageFormat", "ANY")),
                 type, 
                 srgb,
@@ -175,8 +175,8 @@ namespace lite3dpp
             if(width == 0 && height == 0)
             {
                 int32_t scale = helper.getInt(L"Scale", 1);
-                width = mMain->window()->width() / scale;
-                height = mMain->window()->height() / scale;
+                width = getMain().window()->width() / scale;
+                height = getMain().window()->height() / scale;
             }
 
             int32_t samples;

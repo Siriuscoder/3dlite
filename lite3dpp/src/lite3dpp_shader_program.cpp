@@ -108,13 +108,13 @@ namespace lite3dpp
             // load definition source
             if (defPath.size() > 0)
             {
-                rawdata = static_cast<const char *>(mMain->getResourceManager()->loadFileToMemory(defPath, &flen));
+                rawdata = static_cast<const char *>(getMain().getResourceManager()->loadFileToMemory(defPath, &flen));
                 shaderCode.append(rawdata, flen);
                 shaderCode.append("\n");
             }
 
             // load main shader source
-            rawdata = static_cast<const char *>(mMain->getResourceManager()->loadFileToMemory(sourcePath, &flen));
+            rawdata = static_cast<const char *>(getMain().getResourceManager()->loadFileToMemory(sourcePath, &flen));
             shaderCode.append(rawdata, flen);
 
             SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
@@ -167,7 +167,7 @@ namespace lite3dpp
 
             auto includePath = sourceCode.substr(braceOpen + 1, braceClose - (braceOpen + 1));
             size_t flen;
-            const char *rawdata = static_cast<const char *>(mMain->getResourceManager()->loadFileToMemory(includePath, &flen));
+            const char *rawdata = static_cast<const char *>(getMain().getResourceManager()->loadFileToMemory(includePath, &flen));
             sourceCode.erase(includePos, braceClose - includePos + 1);
             sourceCode.insert(includePos, rawdata, flen);
             // do it recursively
