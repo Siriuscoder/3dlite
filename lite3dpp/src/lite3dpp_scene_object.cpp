@@ -172,6 +172,14 @@ namespace lite3dpp
             removeMeshNode(mMeshNodes.begin()->first);
         }
     }
+
+    void SceneObject::detachAllNodes()
+    {
+        for (auto& node : mNodes)
+        {
+            node.second->detachNode();
+        }
+    }
     
     LightSceneNode* SceneObject::getLightNode(const String &name) const
     {

@@ -35,11 +35,6 @@ namespace lite3dpp
         mScene->addLightSource(this);
     }
 
-    LightSceneNode::~LightSceneNode()
-    {
-        mScene->removeLightSource(this);
-    }
-
     void LightSceneNode::translateToWorld()
     {
         SDL_assert(mLight);
@@ -49,5 +44,11 @@ namespace lite3dpp
     bool LightSceneNode::needRecalcToWorld() const
     {
         return mLight->isUpdated() || getPtr()->invalidated;
+    }
+
+    void LightSceneNode::detachNode()
+    {
+        mScene->removeLightSource(this);
+        SceneNode::detachNode();
     }
 }

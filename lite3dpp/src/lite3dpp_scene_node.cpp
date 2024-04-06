@@ -52,11 +52,6 @@ namespace lite3dpp
             LITE3D_THROW("Attaching node failed..");
     }
 
-    SceneNode::~SceneNode()
-    {
-        lite3d_scene_remove_node(mScene->getPtr(), &mNode);
-    }
-
     void SceneNode::setPosition(const kmVec3 &position)
     {
         lite3d_scene_node_set_position(&mNode, &position);
@@ -128,6 +123,11 @@ namespace lite3dpp
     bool SceneNode::isVisible() const
     {
         return mNode.visible == LITE3D_TRUE;
+    }
+
+    void SceneNode::detachNode()
+    {
+        lite3d_scene_remove_node(mScene->getPtr(), &mNode);
     }
 }
 
