@@ -56,6 +56,8 @@ namespace lite3dpp
         String write();
         void clear();
 
+        ConfigurationWriter& operator=(const ConfigurationWriter& other);
+
     private:
 
         ConfigurationWriter(const JSONObject &fromObject);

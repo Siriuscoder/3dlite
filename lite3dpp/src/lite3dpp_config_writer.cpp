@@ -196,4 +196,10 @@ namespace lite3dpp
     {
         mObject.clear();
     }
+
+    ConfigurationWriter& ConfigurationWriter::operator=(const ConfigurationWriter& other)
+    {
+        mObject = other.mObject;
+        return *this;
+    }
 }

@@ -78,10 +78,10 @@ public:
     {
         for (const auto &light : prepass->getLights())
         {
-            SceneObject *lo = scene->getObject(light.first);
+            SceneObject *lo = scene->getObject(light->getName());
             SDL_assert(lo);
             
-            if (light.second->isVisible())
+            if (light->isVisible())
                 lo->enable();
             else
                 lo->disable();
@@ -93,17 +93,17 @@ public:
         for (const auto &light : prepass->getLights())
         {
             /* load per light big triangle */
-            SceneObject *lo = scene->addObject(light.first, "vault:objects/lightpass_tri.json", NULL);
+            SceneObject *lo = scene->addObject(light->getName(), "vault:objects/lightpass_tri.json");
             /* load per light big triangle material and setup light properties as uniform parameters */
-            Material *material = getMain().getResourceManager()->queryResource<Material>(light.first + ".material",
+            Material *material = getMain().getResourceManager()->queryResource<Material>(light->getName() + ".material",
                 "vaultmat:materials/lightpass.json");
 
             MeshSceneNode *mnode = (MeshSceneNode *)lo->getRoot();
             SDL_assert(mnode);
 
 
-            light.second->translateToWorld();
-            const auto &lightSource = *light.second->getLight();
+            light->translateToWorld();
+            const auto &lightSource = *light->getLight();
             material->setIntParameter(1, "light.enabled", lightSource.enabled() ? 1 : 0, false);
             material->setIntParameter(1, "light.type", lightSource.getType(), false);
             material->setFloatv3Parameter(1, "light.position", lightSource.getPositionWorld(), false);
@@ -117,7 +117,7 @@ public:
             material->setFloatParameter(1, "light.outercone", lightSource.getAngleOuterCone(), false);
 
             mnode->frustumTest(false);
-            mnode->setName(light.first);
+            mnode->setName(light->getName());
             mnode->replaceMaterial(0, material);
         }
     }

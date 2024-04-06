@@ -32,14 +32,13 @@ namespace lite3dpp
     class LITE3DPP_EXPORT Scene : public Observable<SceneObserver>, 
         public SceneObserver, public ConfigurableResource, public Noncopiable
     {
+        friend LightSceneNode;
     public:
 
-        typedef stl<String, SceneObject::Ptr>::unordered_map Objects;
-        typedef stl<String, LightSceneNode *>::unordered_map Lights;
-        typedef stl<String, Camera*>::unordered_map Cameras;
-        typedef stl<lite3d_light_params>::vector LightsStore;
-        typedef stl<int32_t>::vector LightsIndexesStore;
-
+        using SceneObjects = stl<String, SceneObject::Ptr>::unordered_map;
+        using SceneLights = stl<LightSceneNode *>::unordered_set;
+        using SceneCameras = stl<String, Camera*>::unordered_map;
+        using LightsIndexesStore = stl<int32_t>::vector;
 
         Scene(const String &name, 
             const String &path, Main *main);
@@ -48,24 +47,22 @@ namespace lite3dpp
         inline lite3d_scene *getPtr()
         { return &mScene; }
 
-        SceneObject *addObject(const String &name,
-            const String &templatePath, SceneObject *parent);
-        void attachCamera(Camera* camera, SceneObject *parent);
+        SceneObject *addObject(const String &name, const String &templatePath, 
+            SceneObject *parent = nullptr);
+        SceneObject *addObject(const String &name, const ConfigurationReader &conf, 
+            SceneObject *parent = nullptr);
+
+        void attachCamera(Camera* camera, SceneObject *parent = nullptr);
         void detachCamera(Camera* camera);
         SceneObject *getObject(const String &name) const;
-        inline const Objects &getObjects() const
+        inline const SceneObjects &getObjects() const
         { return mObjects; }
 
         void removeAllObjects();
         void removeObject(const String &name);
         void detachAllCameras();
-        
-        LightSceneNode *addLightNode(LightSceneNode *light);
-        LightSceneNode *getLightNode(const String &name) const;
-        void removeLight(const String &name);
-        void removeAllLights();
 
-        inline const Lights &getLights() const 
+        inline const SceneLights &getLights() const 
         { return mLights; }
 
         size_t usedVideoMemBytes() const override;
@@ -78,6 +75,8 @@ namespace lite3dpp
         void setupCallbacks();
         void rebuildLightingBuffer();
         void validateLightingBuffer(const Camera &camera);
+        void addLightSource(LightSceneNode *node);
+        void removeLightSource(LightSceneNode *node);
         
         virtual SceneObject::Ptr createObject(const String &name, SceneObject *parent);
 
@@ -111,9 +110,9 @@ namespace lite3dpp
         static void beginBlendingStageRenderEntry(struct lite3d_scene *scene, struct lite3d_camera *camera);
 
         lite3d_scene mScene;
-        Objects mObjects;
-        Lights mLights;
-        Cameras mCameras;
+        SceneObjects mObjects;
+        SceneLights mLights;
+        SceneCameras mCameras;
         BufferBase *mLightingParamsBuffer;
         BufferBase *mLightingIndexBuffer;
         LightsIndexesStore mLightsIndexes;

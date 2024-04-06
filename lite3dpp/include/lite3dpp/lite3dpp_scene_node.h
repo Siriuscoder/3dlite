@@ -21,8 +21,6 @@
 
 #include <lite3dpp/lite3dpp_common.h>
 #include <lite3dpp/lite3dpp_config_reader.h>
-#include <lite3dpp/lite3dpp_mesh.h>
-#include <lite3dpp/lite3dpp_light_source.h>
 
 namespace lite3dpp
 {
@@ -30,10 +28,9 @@ namespace lite3dpp
     {
     public:
         
-        typedef std::shared_ptr<SceneNode> Ptr;
+        using Ptr = std::shared_ptr<SceneNode>;
 
-        SceneNode();
-        SceneNode(const ConfigurationReader &json, SceneNode *base, Main *main);
+        SceneNode(const ConfigurationReader &json, SceneNode *parent, Scene *scene, Main *main);
         virtual ~SceneNode();
 
         inline void setName(const String &name)
@@ -67,72 +64,20 @@ namespace lite3dpp
         void setVisible(bool flag);
         bool isVisible() const;
 
-        virtual void addToScene(Scene *scene);
-        virtual void removeFromScene(Scene *scene);
-
         inline SceneNode *getParent()
-        { return mBaseNode; }
+        { return mParentNode; }
         inline const SceneNode *getParent() const
-        { return mBaseNode; }
+        { return mParentNode; }
 
-    private:
-
-        lite3d_scene_node mNode;
-        String mName;
-        SceneNode *mBaseNode;
-    };
-    
-    class LITE3DPP_EXPORT MeshSceneNode : public SceneNode
-    {
-    public:
-        
-        MeshSceneNode();
-        MeshSceneNode(const ConfigurationReader &json, SceneNode *base, Main *main);
-        
-        inline Mesh *getMesh()
-        { return mMesh; }
-        inline const Mesh *getMesh() const
-        { return mMesh; }
-        
-        inline void instances(uint32_t count)
-        { mInstances = count; }
-        
-        virtual void addToScene(Scene *scene) override;
-        
-        void replaceMaterial(int chunkNo, Material *material);
-            
     protected:
 
-        void setMesh(Mesh *mesh);
-        void applyMaterials();
-        
-    private:
-        
-        Mesh::MaterialMapping mMaterialMappingReplacement;
-        Mesh *mMesh;
-        uint32_t mInstances;
-    };
-    
-    class LITE3DPP_EXPORT LightSceneNode : public SceneNode
-    {
-    public:
-        
-        LightSceneNode(const ConfigurationReader &json, SceneNode *base, Main *main);
-        
-        inline LightSource *getLight()
-        { return mLight.get(); }
-        inline const LightSource *getLight() const 
-        { return mLight.get(); }
-        
-        virtual void addToScene(Scene *scene) override;
-        virtual void removeFromScene(Scene *scene) override;
-
-        void translateToWorld();
-        bool needRecalcToWorld() const;
+        lite3d_scene_node mNode;
+        SceneNode *mParentNode = nullptr;
+        Scene *mScene = nullptr;
+        Main *mMain = nullptr;
 
     private:
-        
-        std::unique_ptr<LightSource> mLight;
+
+        String mName;
     };
 }
-

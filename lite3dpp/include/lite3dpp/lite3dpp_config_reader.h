@@ -54,6 +54,8 @@ namespace lite3dpp
         bool has(const WString &name) const;
         bool isEmpty() const;
 
+        ConfigurationReader& operator=(const ConfigurationReader& other);
+
     private:
 
         ConfigurationReader();

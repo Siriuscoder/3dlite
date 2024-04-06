@@ -16,12 +16,6 @@
                 {
                     "Name": "cube80.mesh",
                     "Mesh": "samples:models/json/cube80.json",
-                    "CollisionShape":
-                    {
-                        // Box, Sphere, StaticPlane, Cylinder, Capsule, Cone, ConvexHullShape, StaticTriangleMeshShape, GimpactTriangleMeshShape
-                        "Type": "Box",
-                        "BoxHalfExtents": [40.0, 40.0, 40.0]
-                    },
                     "MaterialMapping": 
                     [
                         {
@@ -33,7 +27,18 @@
                             }
                         }
                     ]
-                }
+                },
+                "Nodes": [
+                    {
+                        "Name": "cube80.collision",
+                        "CollisionShape":
+                        {
+                            // Box, Sphere, StaticPlane, Cylinder, Capsule, Cone, ConvexHullShape, StaticTriangleMeshShape, GimpactTriangleMeshShape
+                            "Type": "Box",
+                            "BoxHalfExtents": [40.0, 40.0, 40.0]
+                        }
+                    }
+                ]
             }
         ]
     }

@@ -66,18 +66,9 @@ public:
 
     void addSunlight()
     {
-        ConfigurationWriter sunJson;
-        LightSource sunlight("SunLight");
-        sunlight.setDiffuse(KM_VEC3_ONE);
-        sunlight.setDirection(sunLightDirection);
-        sunlight.setType(LITE3D_LIGHT_DIRECTIONAL);
-        sunlight.toJson(sunJson);
-
-        String lightParams = ConfigurationWriter().set(L"Name", "SunLight.node").set(L"Light", sunJson).write();
-        mSunLight.reset(new LightSceneNode(ConfigurationReader(lightParams.data(), lightParams.size()), NULL, &getMain()));
-        mSunLight->addToScene(mMainScene);
-        mSunLight->getLight()->enabled(true);
-        mSunLight->frustumTest(false);
+        auto sunlightObject = mMainScene->addObject("SunLight", "samples:objects/sunlight.json");
+        mSunLight = sunlightObject->getLightNode("SunLight.node");
+        mSunLight->getLight()->setDirection(sunLightDirection);
     }
 
     void postUpdate(RenderTarget *rt) override
@@ -113,7 +104,7 @@ public:
 
 private:
 
-    std::unique_ptr<LightSceneNode> mSunLight;
+    LightSceneNode *mSunLight;
     Scene *mMainScene;
     SceneObject *mSponzahall;
     RenderTarget *mShadowMap;

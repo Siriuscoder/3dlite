@@ -1,0 +1,26 @@
+{
+    "Root":
+    {
+        "Name": "SunLight.root",
+        "Nodes": [
+            {
+                "Name": "SunLight.node",
+                "FrustumTest":false,
+                "Light": {
+                    "Type": "Directional",
+                    "Name": "SunLight",
+                    "Diffuse": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "Direction": [
+                        0.0,
+                        0.0,
+                        -1.0
+                    ]
+                }
+            }
+        ]
+    }
+}

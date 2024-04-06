@@ -27,6 +27,7 @@
 #include <list>
 #include <stack>
 #include <unordered_map>
+#include <unordered_set>
 
 #include <lite3dpp/lite3dpp_common.h>
 
@@ -136,6 +137,8 @@ namespace lite3dpp
         typedef std::stack<T> stack;
         
         typedef std::unordered_map<T, Y> unordered_map;
+
+        typedef std::unordered_set<T> unordered_set;
     };
     
     typedef std::string String;

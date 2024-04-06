@@ -26,13 +26,6 @@ namespace samples {
 class VaultBase : public Sample
 {
 public:
-    
-    VaultBase() :
-        mGammaFactor(1.0f),
-        mVaultScene(NULL),
-        mAnimCounter(0),
-        mAnimPi(0)
-    {}
         
     virtual void createPipeline() = 0;
 
@@ -40,6 +33,7 @@ public:
     {
         createPipeline();
         SDL_assert(mVaultScene);
+
         setMainCamera(getMain().getCamera("MainCamera"));
         
         // init flashlight
@@ -49,8 +43,9 @@ public:
         lite3dpp::Material::setFloatv3GlobalParameter("screenResolution", resolution);
         lite3dpp::Material::setIntGlobalParameter("FXAA", 1);
 
-        mReactLamp01 = mVaultScene->getLightNode("VaultReactorLamp_01.node");
-        mReactLamp02 = mVaultScene->getLightNode("VaultReactorLamp_02.node");
+        auto vaultObject = mVaultScene->getObject("Vault");
+        mReactLamp01 = vaultObject->getLightNode("ReactorLamp_01.node");
+        mReactLamp02 = vaultObject->getLightNode("ReactorLamp_02.node");
         mMinigun = mVaultScene->getObject("Minigun");
         mGatling = mVaultScene->getObject("Gatling");
         mLazer = mVaultScene->getObject("Lazer");
@@ -91,36 +86,25 @@ public:
 
     void addFlashlight(Scene *scene)
     {
-        ConfigurationWriter flashlightJson;
-        LightSource flashlight("FlashLight");
-        flashlight.setAttenuationConstant(0.12f);
-        flashlight.setAttenuationLinear(0.005f);
-        flashlight.setAttenuationQuadratic(0.00002f);
-        flashlight.setInfluenceDistance(1000.0f);
-        flashlight.setAngleInnerCone(0.80f);
-        flashlight.setAngleOuterCone(1.00f);
-        flashlight.setDiffuse(KM_VEC3_ONE);
-        flashlight.setDirection(KM_VEC3_NEG_Z);
-        flashlight.setPosition(KM_VEC3_ZERO);
-        flashlight.setType(LITE3D_LIGHT_SPOT);
-        flashlight.toJson(flashlightJson);
-
-        String flashLightParams = ConfigurationWriter().set(L"Name", "FlashLight.node").set(L"Light", flashlightJson).write();
-        mFlashLight.reset(new LightSceneNode(ConfigurationReader(flashLightParams.data(), flashLightParams.size()), NULL, &getMain()));
-        mFlashLight->addToScene(scene);
+        auto flashLightObject = scene->addObject("FlashLight", "samples:objects/flashlight.json");
+        mFlashLight = flashLightObject->getLightNode("FlashLight.node");
+        mFlashLight->getLight()->setAttenuationConstant(0.12f);
+        mFlashLight->getLight()->setAttenuationLinear(0.005f);
+        mFlashLight->getLight()->setAttenuationQuadratic(0.00002f);
+        mFlashLight->getLight()->setInfluenceDistance(1000.0f);
+        mFlashLight->getLight()->setDiffuse(KM_VEC3_ONE);
         mFlashLight->getLight()->enabled(false);
-        mFlashLight->frustumTest(false);
     }
     
     virtual void lampsSwitchOn(bool flag)
     {
         for (const auto &light : mVaultScene->getLights())
         {
-            if (light.first.find("Lamp_") != String::npos &&
-                light.first.find("Spot") == String::npos &&
-                light.first.find("Reactor") == String::npos)
+            if (light->getName().find("Lamp_") != String::npos &&
+                light->getName().find("Spot") == String::npos &&
+                light->getName().find("Reactor") == String::npos)
             {
-                light.second->getLight()->enabled(flag);
+                light->getLight()->enabled(flag);
             }
         }
     }
@@ -176,16 +160,16 @@ public:
     
 protected:
     
-    float mGammaFactor;
-    Scene *mVaultScene;
-    float mAnimCounter;
-    float mAnimPi;
-    LightSceneNode *mReactLamp01;
-    LightSceneNode *mReactLamp02;
-    SceneObject *mMinigun;
-    SceneObject *mGatling;
-    SceneObject *mLazer;
-    std::unique_ptr<LightSceneNode> mFlashLight;
+    float mGammaFactor = 1.0f;
+    Scene *mVaultScene = nullptr;
+    float mAnimCounter = 0.0f;
+    float mAnimPi = 0.0f;
+    LightSceneNode *mReactLamp01 = nullptr;
+    LightSceneNode *mReactLamp02 = nullptr;
+    SceneObject *mMinigun = nullptr;
+    SceneObject *mGatling = nullptr;
+    SceneObject *mLazer = nullptr;
+    LightSceneNode *mFlashLight = nullptr;
 };
 
 

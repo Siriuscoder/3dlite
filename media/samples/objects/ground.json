@@ -9,16 +9,11 @@
         },
         "Nodes":[
             {
+                "Name":"Ground.node",
+                "FrustumTest": true,
                 "Mesh":{
                     "Mesh":"samples:models/json/Ground.json",
                     "Name":"Ground.mesh",
-                    "CollisionShape":
-                    {
-                        // Box, Sphere, StaticPlane, Cylinder, Capsule, Cone, ConvexHullShape, StaticTriangleMeshShape, GimpactTriangleMeshShape
-                        "Type": "StaticPlane",
-                        "PlaneNormal": [0.0, 0.0, 1.0],
-                        "PlaneConstant": 0.0
-                    },
                     "MaterialMapping": 
                     [
                         {
@@ -31,7 +26,18 @@
                         }
                     ]
                 },
-                "Name":"Ground.node"
+                "Nodes": [
+                    {
+                        "Name": "Ground.collision",
+                        "CollisionShape":
+                        {
+                            // Box, Sphere, StaticPlane, Cylinder, Capsule, Cone, ConvexHullShape, StaticTriangleMeshShape, GimpactTriangleMeshShape
+                            "Type": "StaticPlane",
+                            "PlaneNormal": [0.0, 0.0, 1.0],
+                            "PlaneConstant": 0.0
+                        }
+                    }
+                ]
             }
         ]
     }

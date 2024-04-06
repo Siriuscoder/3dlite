@@ -1,0 +1,34 @@
+{
+    "Root":
+    {
+        "Name": "FlashLight.root",
+        "Nodes": [
+            {
+                "Name": "FlashLight.node",
+                "FrustumTest":false,
+                "Light": {
+                    "Type": "Spot",
+                    "Name": "FlashLight",
+                    "Diffuse": [
+                        1.0,
+                        0.913,
+                        0.678
+                    ],
+                    "Attenuation": {
+                        "Constant": 1.0,
+                        "InfluenceMinRadiance": 0.001
+                    },
+                    "SpotFactor": {
+                        "AngleInnerCone": 0.8,
+                        "AngleOuterCone": 1.0
+                    },
+                    "Direction": [
+                        0.0,
+                        0.0,
+                        -1.0
+                    ]
+                }
+            }
+        ]
+    }
+}

@@ -34,9 +34,9 @@ public:
     class ShadowCaster 
     {
     public:
-        ShadowCaster(Main& main, LightSceneNode* node) : 
+        ShadowCaster(Main& main, const String& name, LightSceneNode* node) : 
             mLightNode(node),
-            mShadowCamera(main.addCamera(node->getName()))
+            mShadowCamera(main.addCamera(name))
         {
             // Ставим перспективу сразу при инициализации, считаем что конус источника света не меняется 
             mShadowCamera->setupPerspective(1.0f, mLightNode->getLight()->getInfluenceDistance(), 
@@ -161,8 +161,8 @@ public:
 
     ShadowCaster* newShadowCaster(LightSceneNode* node)
     {
-        mShadowCasters.emplace_back(std::make_unique<ShadowCaster>(mMain, node));
-        auto index = static_cast<uint32_t>(mShadowCasters.size() - 1);
+        auto index = static_cast<uint32_t>(mShadowCasters.size());
+        mShadowCasters.emplace_back(std::make_unique<ShadowCaster>(mMain, node->getName() + std::to_string(index), node));
         // Запишем в источник света индекс его теневой матрицы в UBO
         node->getLight()->setUserIndex(index);
         // Аллоцируем место под теневую матрицу 

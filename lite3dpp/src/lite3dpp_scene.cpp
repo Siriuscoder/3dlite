@@ -28,8 +28,8 @@ namespace lite3dpp
     Scene::Scene(const String &name, 
         const String &path, Main *main) : 
         ConfigurableResource(name, path, main, AbstractResource::SCENE),
-        mLightingParamsBuffer(NULL),
-        mLightingIndexBuffer(NULL)
+        mLightingParamsBuffer(nullptr),
+        mLightingIndexBuffer(nullptr)
     {
         addObserver(this);
     }
@@ -115,33 +115,56 @@ namespace lite3dpp
         }
 
         setupCameras(helper.getObjects(L"Cameras"));
-        setupObjects(helper.getObjects(L"Objects"), NULL);
+        setupObjects(helper.getObjects(L"Objects"), nullptr);
     }
 
     void Scene::unloadImpl()
     {
+        /* release lighting technique buffers */
+        if (mLightingParamsBuffer)
+        {
+            getMain().getResourceManager()->releaseResource(getName() + "_lightingBufferObject");
+            mLightingParamsBuffer = nullptr;
+        }
+
+        if (mLightingIndexBuffer)
+        {
+            getMain().getResourceManager()->releaseResource(getName() + "_lightingIndexBuffer");
+            mLightingIndexBuffer = nullptr;
+        }
+
         detachAllCameras();
         removeAllObjects();
-        removeAllLights();
         lite3d_scene_purge(&mScene);
     }
 
-    SceneObject *Scene::addObject(const String &name,
-        const String &templatePath, SceneObject *parent)
+    SceneObject *Scene::addObject(const String &name, const String &templatePath, 
+        SceneObject *parent)
     {
         if(mObjects.find(name) != mObjects.end())
             LITE3D_THROW(name << " make object failed.. already exist");
 
         SceneObject::Ptr sceneObject = createObject(name, parent);
         sceneObject->loadFromTemplate(templatePath);
-        sceneObject->addToScene(this);
+        mObjects.emplace(name, sceneObject);
+        return sceneObject.get();
+    }
+
+    SceneObject *Scene::addObject(const String &name, const ConfigurationReader &conf, 
+        SceneObject *parent)
+    {
+        if(mObjects.find(name) != mObjects.end())
+            LITE3D_THROW(name << " make object failed.. already exist");
+
+        SceneObject::Ptr sceneObject = createObject(name, parent);
+        sceneObject->loadFromTemplate(conf);
         mObjects.emplace(name, sceneObject);
         return sceneObject.get();
     }
 
     SceneObject *Scene::getObject(const String &name) const
     {
-        Objects::const_iterator it;
+        SceneObjects::const_iterator it;
         if((it = mObjects.find(name)) != mObjects.end())
             return it->second.get();
 
@@ -150,60 +173,16 @@ namespace lite3dpp
 
     void Scene::removeAllObjects()
     {
-        for(Objects::value_type &object : mObjects)
-        {
-            object.second->removeFromScene(this);
-        }
-
         mObjects.clear();
     }
 
     void Scene::removeObject(const String &name)
     {
-        Objects::iterator it;
+        SceneObjects::const_iterator it;
         if((it = mObjects.find(name)) == mObjects.end())
             LITE3D_THROW(name << " remove object failed.. not found");
-        it->second->removeFromScene(this);
 
         mObjects.erase(it);
-    }
-    
-    LightSceneNode *Scene::addLightNode(LightSceneNode *light)
-    {
-        Lights::iterator it = mLights.find(light->getName());
-        if(it != mLights.end())
-            LITE3D_THROW("LightSource \"" << light->getName() << "\" already exists..");
-        if(!light->getLight())
-            LITE3D_THROW("Node \"" << light->getName() << "\" do not contain light source");
-
-        mLights.emplace(light->getName(), light);
-        rebuildLightingBuffer();
-
-        return light;
-    }
-    
-    void Scene::removeLight(const String &name)
-    {
-        Lights::iterator it = mLights.find(name);
-        if(it != mLights.end())
-        {
-            mLights.erase(it);
-            rebuildLightingBuffer();
-        }
-    }
-    
-    void Scene::removeAllLights()
-    {
-        mLights.clear();
-    }
-    
-    LightSceneNode *Scene::getLightNode(const String &name) const
-    {
-        Lights::const_iterator it;
-        if((it = mLights.find(name)) != mLights.end())
-            return it->second;
-
-        LITE3D_THROW(name << " object not found");
     }
     
     void Scene::rebuildLightingBuffer()
@@ -218,8 +197,8 @@ namespace lite3dpp
 
         for (auto &light : mLights)
         {
-            mLightingParamsBuffer->setElement<lite3d_light_params>(i, &light.second->getLight()->getPtr()->params);
-            light.second->getLight()->index(i++);
+            mLightingParamsBuffer->setElement<lite3d_light_params>(i, &light->getLight()->getPtr()->params);
+            light->getLight()->index(i++);
         }
     }
     
@@ -238,24 +217,24 @@ namespace lite3dpp
         bool anyValidated = false;
         for (auto &light : mLights)
         {
-            if (!light.second->getLight()->enabled())
+            if (!light->getLight()->enabled())
                 continue;
             
-            if (light.second->needRecalcToWorld())
+            if (light->needRecalcToWorld())
             {
-                light.second->translateToWorld();
-                light.second->getLight()->writeToBuffer(*mLightingParamsBuffer);
+                light->translateToWorld();
+                light->getLight()->writeToBuffer(*mLightingParamsBuffer);
                 anyValidated = true;
             }
 
-            if (!light.second->frustumTest() || camera.inFrustum(*light.second->getLight()))
+            if (!light->frustumTest() || camera.inFrustum(*light->getLight()))
             {
-                light.second->setVisible(true);
-                mLightsIndexes.emplace_back(light.second->getLight()->index());
+                light->setVisible(true);
+                mLightsIndexes.emplace_back(light->getLight()->index());
             }
             else
             {
-                light.second->setVisible(false);
+                light->setVisible(false);
             }
         }
         
@@ -270,7 +249,19 @@ namespace lite3dpp
     
     SceneObject::Ptr Scene::createObject(const String &name, SceneObject *parent)
     {
-        return std::shared_ptr<SceneObject>(new SceneObject(name, parent, &getMain()));
+        return std::shared_ptr<SceneObject>(new SceneObject(name, parent, this, &getMain()));
+    }
+
+    void Scene::addLightSource(LightSceneNode *node)
+    {
+        mLights.emplace(node);
+        rebuildLightingBuffer();
+    }
+
+    void Scene::removeLightSource(LightSceneNode *node)
+    {
+        mLights.erase(node);
+        rebuildLightingBuffer();
     }
 
     void Scene::setupObjects(const stl<ConfigurationReader>::vector &objects, SceneObject *base)
@@ -294,11 +285,11 @@ namespace lite3dpp
     {
         for(const ConfigurationReader &cameraJson : cameras)
         {
-            Camera *camera = NULL;
-            if ((camera = getMain().getCamera(cameraJson.getString(L"Name"))) == NULL)
+            Camera *camera = nullptr;
+            if ((camera = getMain().getCamera(cameraJson.getString(L"Name"))) == nullptr)
                 camera = getMain().addCamera(cameraJson.getString(L"Name"));
 
-            RenderTarget *renderTarget = NULL;
+            RenderTarget *renderTarget = nullptr;
 
             for(const ConfigurationReader &renderTargetJson : cameraJson.getObjects(L"RenderTargets"))
             {

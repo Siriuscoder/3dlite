@@ -379,4 +379,10 @@ namespace lite3dpp
     {
         return mObject.find(name) != mObject.end();
     }
+
+    ConfigurationReader& ConfigurationReader::operator=(const ConfigurationReader& other)
+    {
+        mObject = other.mObject;
+        return *this;
+    }
 }
