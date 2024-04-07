@@ -27,14 +27,34 @@ namespace lite3dpp_phisics {
     public:
 
         using Ptr = std::shared_ptr<PhysicsCollisionShapeSceneNode>;
+        enum CollisionShapeType
+        {
+            Unknown,
+            Box,
+            Sphere,
+            StaticPlane,
+            Cylinder,
+            Capsule,
+            Cone,
+            ConvexHull,
+            StaticTriangleMesh,
+            GimpactTriangleMesh
+        };
 
-        PhysicsCollisionShapeSceneNode(const ConfigurationReader &json, SceneNode *parent, Scene *scene, Main *main);
+        PhysicsCollisionShapeSceneNode(const ConfigurationReader &conf, SceneNode *parent, Scene *scene, Main *main);
 
         inline btCollisionShape *getCollisionShape() { return mCollisionShape.get(); }
+        inline btScalar getMass() const { return mShapeMass; }
 
     protected:
 
+        void setupBoxCollisionShape(const ConfigurationReader& conf);
+        void setupStaticPlaneCollisionShape(const ConfigurationReader& conf);
+        void setupSphereCollisionShape(const ConfigurationReader& conf);
+
         std::unique_ptr<btCollisionShape> mCollisionShape;
+        btScalar mShapeMass = 0.0f;
+        CollisionShapeType mCollisionShapeType = Unknown;
     };
 
 }}

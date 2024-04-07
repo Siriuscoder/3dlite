@@ -25,7 +25,8 @@ namespace lite3dpp_phisics {
 
     PhysicsRigidBodySceneObject::PhysicsRigidBodySceneObject(const String &name, SceneObject *parent, Scene *scene, Main *main) : 
         SceneObject(name, parent, scene, main),
-        mWorld(static_cast<PhysicsScene *>(scene)->getWorld())
+        mWorld(static_cast<PhysicsScene *>(scene)->getWorld()),
+        mMotionState(this)
     {}
 
     void PhysicsRigidBodySceneObject::loadFromTemplate(const ConfigurationReader& conf)
@@ -45,19 +46,45 @@ namespace lite3dpp_phisics {
             LITE3D_THROW("RigidBodySceneObject: '" << getName() << "' at least one collision shape must be provided");
         }
 
+        /* Придание физической формы для симуляуии, форма может быть составная из нескольких примитивов  */
         mCompoundCollisionShape = std::make_unique<btCompoundShape>(true, mCollisionNodes.size());
+        stl<btScalar>::vector shapesMass;
         for (auto &collisionNode : mCollisionNodes)
         {
             /* Расчитаем трансформацию всех коллайдеров относительно корня обьекта */
             btTransform relativeTransform = calcRelativeTransform(collisionNode.second.get());
             mCompoundCollisionShape->addChildShape(relativeTransform, collisionNode.second->getCollisionShape());
+            shapesMass.push_back(collisionNode.second->getMass());
         }
+
+        btVector3 inertiaTensor(0, 0, 0);
+        btScalar mass = 0.0f;
+        if (mBodyType == BodyDynamic)
+        {
+            mass = physicsConfig.getDouble(L"Mass");
+            mCompoundCollisionShape->calculateLocalInertia(mass, inertiaTensor);
+        }
+
+        btRigidBody::btRigidBodyConstructionInfo cInfo(mass, &mMotionState, mCompoundCollisionShape.get(), inertiaTensor);
+        fillRigidBodyInfo(cInfo, physicsConfig);
+        mBody = std::make_unique<btRigidBody>(cInfo);
+
+        mCompoundCollisionShape->setUserPointer(this);
+        mBody->setUserPointer(this);
+        mWorld->addRigidBody(mBody.get());
     }
 
     btTransform PhysicsRigidBodySceneObject::calcRelativeTransform(const SceneNode *node)
     {
+        if (!node)
+        {
+            btTransform nodeTransform;
+            nodeTransform.setIdentity();
+            return nodeTransform;
+        }
+
         btTransform nodeTransform(BulletUtils::convert(node->getRotation()), BulletUtils::convert(node->getPosition()));
-        if (node == getRoot())
+        if (node->getParent() == getRoot())
         {
             return nodeTransform;
         }
@@ -96,5 +123,29 @@ namespace lite3dpp_phisics {
         }
 
         return SceneObject::createNode(conf, parent);
+    }
+
+    void PhysicsRigidBodySceneObject::fillRigidBodyInfo(btRigidBody::btRigidBodyConstructionInfo &info, 
+        const ConfigurationReader& conf)
+    {
+
+    }
+
+    void PhysicsRigidBodySceneObject::setPosition(const kmVec3 &position)
+    {
+        SceneObject::setPosition(position);
+        if (mBody && mBodyType != BodyKinematic)
+        {
+            mBody->getWorldTransform().setOrigin(BulletUtils::convert(position));
+        }
+    }
+
+    void PhysicsRigidBodySceneObject::setRotation(const kmQuaternion &quat)
+    {
+        SceneObject::setRotation(quat);
+        if (mBody && mBodyType != BodyKinematic)
+        {
+            mBody->getWorldTransform().setRotation(BulletUtils::convert(quat));
+        }
     }
 }}

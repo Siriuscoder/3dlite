@@ -25,7 +25,7 @@
     ],
     "Physics": 
     {
-        "Gravity": [0.0, 0.0, 980.0],
+        "Gravity": [0.0, 0.0, -98.0],
         "MaxSubStepCount": 10
         //"ManualFixedStepIntervalMs": 16
     },

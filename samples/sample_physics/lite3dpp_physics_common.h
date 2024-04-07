@@ -32,48 +32,49 @@
 #include <lite3dpp/lite3dpp_scene.h>
 
 namespace lite3dpp {
+namespace lite3dpp_phisics {
 
-class BulletUtils 
-{
-public:
-
-    static inline btVector3 convert(const kmVec3& v)
+    class BulletUtils 
     {
-        return btVector3 {
-            v.x,
-            v.y, 
-            v.z
-        };
-    }
+    public:
 
-    static inline kmVec3 convert(const btVector3& v)
-    {
-        return kmVec3 {
-            v.getX(),
-            v.getY(), 
-            v.getZ()
-        };
-    }
+        static inline btVector3 convert(const kmVec3& v)
+        {
+            return btVector3 {
+                v.x,
+                v.y, 
+                v.z
+            };
+        }
 
-    static inline btQuaternion convert(const kmQuaternion& q)
-    {
-        return btQuaternion {
-            q.x,
-            q.y, 
-            q.z,
-            q.w,
-        };
-    }
+        static inline kmVec3 convert(const btVector3& v)
+        {
+            return kmVec3 {
+                v.getX(),
+                v.getY(), 
+                v.getZ()
+            };
+        }
 
-    static inline kmQuaternion convert(const btQuaternion& q)
-    {
-        return kmQuaternion {
-            q.getX(),
-            q.getY(), 
-            q.getZ(),
-            q.getW()
-        };
-    }
-};
+        static inline btQuaternion convert(const kmQuaternion& q)
+        {
+            return btQuaternion {
+                q.x,
+                q.y, 
+                q.z,
+                q.w,
+            };
+        }
 
-}
+        static inline kmQuaternion convert(const btQuaternion& q)
+        {
+            return kmQuaternion {
+                q.getX(),
+                q.getY(), 
+                q.getZ(),
+                q.getW()
+            };
+        }
+    };
+
+}}

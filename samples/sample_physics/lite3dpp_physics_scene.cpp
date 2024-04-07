@@ -33,9 +33,9 @@ PhysicsScene::~PhysicsScene()
     getMain().removeObserver(this);
 }
 
-void PhysicsScene::loadFromConfigImpl(const ConfigurationReader &helper)
+void PhysicsScene::loadFromConfigImpl(const ConfigurationReader &conf)
 {
-    auto physicsConfig = helper.getObject(L"Physics");
+    auto physicsConfig = conf.getObject(L"Physics");
 
     createCollisionConfiguration(physicsConfig);
     createCollisionSolver(physicsConfig);
@@ -44,6 +44,7 @@ void PhysicsScene::loadFromConfigImpl(const ConfigurationReader &helper)
         mConstraintSolver.get(), mCollisionConfig.get());
 
     mWorld->setGravity(BulletUtils::convert(physicsConfig.getVec3(L"Gravity")));
+    mWorld->setLatencyMotionStateInterpolation(true);
     mMaxSubStepCount = physicsConfig.getInt(L"MaxSubStepCount", MaxSubStepCount);
     if (physicsConfig.has(L"ManualFixedStepIntervalMs"))
     {
@@ -54,9 +55,12 @@ void PhysicsScene::loadFromConfigImpl(const ConfigurationReader &helper)
         auto defaultFixedIntervalTimer = getMain().getFixedUpdateTimer();
         if (defaultFixedIntervalTimer)
         {
-            mFixedTimeStep = 1000.0f / defaultFixedIntervalTimer->interval;
+            mFixedTimeStep = defaultFixedIntervalTimer->interval / 1000.0f;
         }
     }
+
+    Scene::loadFromConfigImpl(conf);
+    mLastSimulationTime = std::chrono::steady_clock::now();
 }
 
 void PhysicsScene::unloadImpl()
@@ -69,23 +73,28 @@ void PhysicsScene::unloadImpl()
     mCollisionConfig.reset();
 }
 
-void PhysicsScene::createCollisionConfiguration(const ConfigurationReader &helper)
+void PhysicsScene::createCollisionConfiguration(const ConfigurationReader &conf)
 {
     mCollisionConfig = std::make_unique<btDefaultCollisionConfiguration>();
 }
 
-void PhysicsScene::createCollisionSolver(const ConfigurationReader &helper)
+void PhysicsScene::createCollisionSolver(const ConfigurationReader &conf)
 {
     mCollisionDispatcher = std::make_unique<btCollisionDispatcher>(mCollisionConfig.get());
     mConstraintSolver = std::make_unique<btSequentialImpulseConstraintSolver>();
 }
 
-void PhysicsScene::timerTick(lite3d_timer *timerid)
+void PhysicsScene::frameEnd()
 {
+    /* run simulation at end if the frame */
     if (mWorld)
     {
-        btScalar deltaSec = timerid->deltaMcs / 1000000.0f;
-        mWorld->stepSimulation(deltaSec, mMaxSubStepCount, mFixedTimeStep);
+        auto timeNow = std::chrono::steady_clock::now();
+        btScalar elapsedSec = std::chrono::duration_cast<std::chrono::microseconds>(timeNow - 
+            mLastSimulationTime).count() / 1000000.0f;
+
+        mLastSimulationTime = timeNow;
+        mWorld->stepSimulation(elapsedSec, mMaxSubStepCount, mFixedTimeStep);
     }
 }
 

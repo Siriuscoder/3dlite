@@ -18,6 +18,7 @@
 #pragma once
 
 #include "lite3dpp_physics_scene_node.h"
+#include "lite3dpp_physics_motion_state.h"
 
 namespace lite3dpp {
 namespace lite3dpp_phisics {
@@ -43,11 +44,17 @@ namespace lite3dpp_phisics {
         void detachAllNodes() override;
 
         virtual SceneNode* addCollisiuonShapeNode(const ConfigurationReader &nodeconf, SceneNode *parent);
-        
+        /* Для динамических и статических обьектов желательно устанавливать только начальную позицию, для кинематик 
+           обьектов можно смело вызывать так как физика на них не влияет */
+        void setPosition(const kmVec3 &position) override;
+        void setRotation(const kmQuaternion &quat) override;
+
     protected:
         
         SceneNode* createNode(const ConfigurationReader &conf, SceneNode *parent) override;
         btTransform calcRelativeTransform(const SceneNode *node);
+        virtual void fillRigidBodyInfo(btRigidBody::btRigidBodyConstructionInfo &info, const ConfigurationReader& conf);
+
     private:
 
         BodyType mBodyType = BadBodyType;
@@ -58,6 +65,7 @@ namespace lite3dpp_phisics {
         std::unique_ptr<btCompoundShape> mCompoundCollisionShape;
         btDiscreteDynamicsWorld *mWorld;
         CollisionNodes mCollisionNodes;
+        PhysicsObjectMotionState mMotionState;
     };
 
 }}

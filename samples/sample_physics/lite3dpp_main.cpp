@@ -17,14 +17,23 @@
  *******************************************************************************/
 #include <ctime>
 
-#include "lite3dpp_base.h"
+#include <sample_common/lite3dpp_common.h>
+#include "lite3dpp_physics_scene.h"
 
 namespace lite3dpp {
 namespace samples {
 
-class BoxesColliderSample : public PhysicSampleBase
+class BoxesColliderSample : public Sample
 {
 public:
+
+    void createScene() override
+    {
+        // load empty scene with floor plane only
+        mScene = getMain().getResourceManager()->queryResource<lite3dpp_phisics::PhysicsScene>("SamplePhysicsScene",
+            "samples:scenes/physic_simple.json");
+        setMainCamera(getMain().getCamera("MyCamera"));
+    }
 
     void processEvent(SDL_Event *e) override
     {
@@ -35,15 +44,14 @@ public:
             {
                 if (mCubes.size() > 500)
                 {
-                    // delete oldest boxc
+                    // delete oldest box
+                    mScene->removeObject(mCubes.front()->getName());
                     mCubes.pop_front();
                 }
 
                 String cubeName("Cube");
                 cubeName.append(std::to_string(mBoxCounter++));
-
-                BaseBody::Ptr box = createBox(cubeName);
-                mCubes.push_back(box);
+                auto cubeObject = mScene->addObject(cubeName, "samples:objects/cube.json");
 
                 kmVec3 pos = {
                     static_cast<float>(rand() % 1000),
@@ -52,23 +60,17 @@ public:
                 };
 
                 kmQuaternion rot = { 1.0f, 1.0f, 1.0f, (rand() % 1000)/1000.0f };
-                box->setPosition(pos);
-                box->setRotation(rot);
+                cubeObject->setPosition(pos);
+                cubeObject->setRotation(rot);
+                mCubes.push_back(cubeObject);
             }
         }
-    }
-
-    // been called after exit from render loop, before release any resources
-    void shut() override
-    {
-        PhysicSampleBase::shut();
-        // delete all objects
-        mCubes.clear();
     }
     
 private:
 
-    stl<BaseBody::Ptr>::list mCubes;
+    stl<SceneObject *>::list mCubes;
+    Scene *mScene = nullptr;
     int mBoxCounter = 0;
 };
 

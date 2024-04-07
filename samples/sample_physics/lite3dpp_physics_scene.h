@@ -17,6 +17,8 @@
  *******************************************************************************/
 #pragma once
 
+#include <chrono>
+
 #include "lite3dpp_physics_scene_rigid_body_object.h"
 
 namespace lite3dpp {
@@ -36,11 +38,11 @@ namespace lite3dpp_phisics {
 
     protected:
 
-        virtual void loadFromConfigImpl(const ConfigurationReader &helper) override;
+        virtual void loadFromConfigImpl(const ConfigurationReader &conf) override;
         virtual void unloadImpl() override;
-        virtual void createCollisionConfiguration(const ConfigurationReader &helper);
-        virtual void createCollisionSolver(const ConfigurationReader &helper);
-        virtual void timerTick(lite3d_timer *timerid) override;
+        virtual void createCollisionConfiguration(const ConfigurationReader &conf);
+        virtual void createCollisionSolver(const ConfigurationReader &conf);
+        virtual void frameEnd() override;
         virtual SceneObject::Ptr createObject(const String &name, SceneObject *parent) override;
 
     protected:
@@ -52,6 +54,7 @@ namespace lite3dpp_phisics {
         std::unique_ptr<btDiscreteDynamicsWorld> mWorld;
         int mMaxSubStepCount = MaxSubStepCount;
         btScalar mFixedTimeStep = FixedTimeStep;
+        std::chrono::steady_clock::time_point mLastSimulationTime;
     };
 
 }}
