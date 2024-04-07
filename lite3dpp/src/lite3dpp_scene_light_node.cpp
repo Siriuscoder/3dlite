@@ -30,25 +30,35 @@ namespace lite3dpp
         if (!lightHelper.isEmpty())
         {
             mLight = std::make_unique<LightSource>(lightHelper);
+            mScene->addLightSource(this);
         }
-
-        mScene->addLightSource(this);
     }
 
     void LightSceneNode::translateToWorld()
     {
-        SDL_assert(mLight);
-        mLight->translateToWorld(getPtr()->worldView);
+        if (mLight)
+        {
+            mLight->translateToWorld(getPtr()->worldView);
+        }
     }
 
     bool LightSceneNode::needRecalcToWorld() const
     {
-        return mLight->isUpdated() || getPtr()->invalidated;
+        if (mLight)
+        {
+            return mLight->isUpdated() || getPtr()->invalidated;
+        }
+
+        return getPtr()->invalidated;
     }
 
     void LightSceneNode::detachNode()
     {
-        mScene->removeLightSource(this);
+        if (mLight)
+        {
+            mScene->removeLightSource(this);
+        }
+        
         SceneNode::detachNode();
     }
 }

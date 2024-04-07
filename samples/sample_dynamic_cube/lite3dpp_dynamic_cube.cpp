@@ -46,7 +46,7 @@ public:
     
     void fixedUpdateTimerTick(int32_t firedPerRound, uint64_t deltaMcs, float deltaRetard) override
     {
-        mBox->getRoot()->rotateAngle(KM_VEC3_NEG_Z, 0.01f * deltaRetard);
+        mBox->rotateAngle(KM_VEC3_NEG_Z, 0.01f * deltaRetard);
     }
 
     void processEvent(SDL_Event *e) override

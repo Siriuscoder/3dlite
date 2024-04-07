@@ -83,7 +83,7 @@ public:
     void fixedUpdateTimerTick(int32_t firedPerRound, uint64_t deltaMcs, float deltaRetard) override
     {
         // Имитируем вращение неба и солнца, но на самом деле крутится только здание
-        mSponzahall->getRoot()->rotateAngle(KM_VEC3_POS_Z, 0.002f * deltaRetard);
+        mSponzahall->rotateAngle(KM_VEC3_POS_Z, 0.002f * deltaRetard);
         // Перересуем тень после поворота, в след кадре
         mShadowMap->enable();
     }

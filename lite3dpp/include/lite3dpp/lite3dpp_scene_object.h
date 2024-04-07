@@ -48,6 +48,19 @@ namespace lite3dpp
         { return mObjectRoot; }
         inline const String &getName() const 
         { return mName; }
+        inline Main *getMain()
+        { return mMain; }
+        
+        const kmVec3& getPosition() const;
+        const kmQuaternion& getRotation() const;
+
+        virtual void setPosition(const kmVec3 &position);
+        virtual void move(const kmVec3 &position);
+        virtual void moveRelative(const kmVec3 &p);
+        virtual void setRotation(const kmQuaternion &quat);
+        virtual void rotate(const kmQuaternion &quat);
+        virtual void rotateAngle(const kmVec3 &axis, float angle);
+        virtual void scale(const kmVec3 &scale);
 
         SceneNode *getNode(const String &name);
         LightSceneNode* getLightNode(const String &name) const;
@@ -69,25 +82,25 @@ namespace lite3dpp
         void removeLightNode(const String &name);
         void removeAllLightNodes();
         void removeAllMeshNodes();
-        void detachAllNodes();
+        virtual void detachAllNodes();
 
     protected:
         
         virtual SceneNode* createNode(const ConfigurationReader &conf, SceneNode *parent);
-
-    private:
-
         void setupNodes(const stl<ConfigurationReader>::vector &nodesRange, SceneNode *parent);
 
     private:
 
         String mName;
+        Main *mMain;
+
+    protected:
+
         Nodes mNodes;
         LightNodes mLightNodes;
         MeshNodes mMeshNodes;
         SceneNode* mObjectRoot;
         SceneObject *mParent;
-        Main *mMain;
         Scene *mScene;
     };
 }

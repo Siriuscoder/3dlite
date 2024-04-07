@@ -17,18 +17,22 @@
  *******************************************************************************/
 #pragma once
 
-#include "lite3dpp_physics_common.h"
+#include "lite3dpp_physics_scene_rigid_body_object.h"
 
 namespace lite3dpp {
+namespace lite3dpp_phisics {
 
-    class PhysicsScene : public Scene
+    class PhysicsScene : public Scene, public LifecycleObserver
     {
     public:
 
         static constexpr const int MaxSubStepCount = 10;
-        static constexpr const float FixedTimeStep = 1.0 / 60.0;
+        static constexpr const btScalar FixedTimeStep = 1.0 / 60.0;
 
         PhysicsScene(const String &name, const String &path, Main *main);
+        ~PhysicsScene();
+
+        inline btDiscreteDynamicsWorld *getWorld() { return mWorld.get(); } 
 
     protected:
 
@@ -36,6 +40,10 @@ namespace lite3dpp {
         virtual void unloadImpl() override;
         virtual void createCollisionConfiguration(const ConfigurationReader &helper);
         virtual void createCollisionSolver(const ConfigurationReader &helper);
+        virtual void timerTick(lite3d_timer *timerid) override;
+        virtual SceneObject::Ptr createObject(const String &name, SceneObject *parent) override;
+
+    protected:
 
         std::unique_ptr<btCollisionConfiguration> mCollisionConfig;
         std::unique_ptr<btCollisionDispatcher> mCollisionDispatcher;
@@ -43,7 +51,7 @@ namespace lite3dpp {
         std::unique_ptr<btConstraintSolver> mConstraintSolver;
         std::unique_ptr<btDiscreteDynamicsWorld> mWorld;
         int mMaxSubStepCount = MaxSubStepCount;
-        float mFixedTimeStep = FixedTimeStep;
+        btScalar mFixedTimeStep = FixedTimeStep;
     };
 
-}
+}}

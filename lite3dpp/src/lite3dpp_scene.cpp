@@ -255,7 +255,7 @@ namespace lite3dpp
     
     SceneObject::Ptr Scene::createObject(const String &name, SceneObject *parent)
     {
-        return std::shared_ptr<SceneObject>(new SceneObject(name, parent, this, &getMain()));
+        return std::make_shared<SceneObject>(name, parent, this, &getMain());
     }
 
     void Scene::addLightSource(LightSceneNode *node)
@@ -279,9 +279,9 @@ namespace lite3dpp
             SceneObject *sceneObj = addObject(objHelper.getString(L"Name"),
                 objHelper.getString(L"Object"), base);
 
-            sceneObj->getRoot()->setPosition(objHelper.getVec3(L"Position"));
-            sceneObj->getRoot()->setRotation(objHelper.getQuaternion(L"Rotation"));
-            sceneObj->getRoot()->scale(objHelper.getVec3(L"Scale", KM_VEC3_ONE));
+            sceneObj->setPosition(objHelper.getVec3(L"Position"));
+            sceneObj->setRotation(objHelper.getQuaternion(L"Rotation"));
+            sceneObj->scale(objHelper.getVec3(L"Scale", KM_VEC3_ONE));
 
             setupObjects(objHelper.getObjects(L"Objects"), sceneObj);
         }

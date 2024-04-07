@@ -206,7 +206,7 @@ void Sample::setGuiSize(int32_t width, int32_t height)
     
     SceneObject *sOverlay = mGuiScene->getObject("StatOverlay");
     kmVec3 sOverlayPos = { float(mMainWindow->width()-270), float(mMainWindow->height())-14, 0 };
-    sOverlay->getRoot()->setPosition(sOverlayPos);
+    sOverlay->setPosition(sOverlayPos);
 }
 
 void Sample::adjustMainCamera(int32_t width, int32_t height)

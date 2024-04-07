@@ -67,7 +67,7 @@ namespace lite3dpp
 
     void Camera::lookAt(const SceneObject &obj)
     {
-        lookAt(obj.getRoot()->getPosition());
+        lookAt(obj.getPosition());
     }
 
     void Camera::setPosition(const kmVec3 &position)

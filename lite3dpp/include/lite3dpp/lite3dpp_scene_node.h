@@ -50,9 +50,6 @@ namespace lite3dpp
         
 
         void setPosition(const kmVec3 &position);
-        void setPosX(float x);
-        void setPosY(float y);
-        void setPosZ(float z);
         const kmVec3& getPosition() const;
         void move(const kmVec3 &position);
         void moveRelative(const kmVec3 &p);

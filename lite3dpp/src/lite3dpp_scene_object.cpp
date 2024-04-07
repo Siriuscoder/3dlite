@@ -29,8 +29,8 @@ namespace lite3dpp
     SceneObject::SceneObject(const String &name, 
         SceneObject *parent, Scene *scene, Main *main) : 
         mName(name),
-        mParent(parent),
         mMain(main),
+        mParent(parent),
         mScene(scene)
     {}
 
@@ -108,7 +108,7 @@ namespace lite3dpp
     SceneNode* SceneObject::addNode(const ConfigurationReader &conf, SceneNode *parent)
     {
         auto node = std::make_shared<SceneNode>(conf, parent, mScene, mMain);
-        if (mLightNodes.count(node->getName()))
+        if (mNodes.count(node->getName()))
             LITE3D_THROW("SceneNode '" << node->getName() << "' already exists..");
 
         mNodes.emplace(node->getName(), node);
@@ -118,7 +118,7 @@ namespace lite3dpp
     MeshSceneNode* SceneObject::addMeshNode(const ConfigurationReader &conf, SceneNode *parent)
     {
         auto meshNode = std::make_shared<MeshSceneNode>(conf, parent, mScene, mMain);
-        if (mLightNodes.count(meshNode->getName()))
+        if (mNodes.count(meshNode->getName()))
             LITE3D_THROW("MeshNode '" << meshNode->getName() << "' already exists..");
 
         mMeshNodes.emplace(meshNode->getName(), meshNode);
@@ -129,7 +129,7 @@ namespace lite3dpp
     LightSceneNode* SceneObject::addLightNode(const ConfigurationReader &conf, SceneNode *parent)
     {
         auto lightNode = std::make_shared<LightSceneNode>(conf, parent, mScene, mMain);
-        if (mLightNodes.count(lightNode->getName()))
+        if (mNodes.count(lightNode->getName()))
             LITE3D_THROW("LightSource '" << lightNode->getName() << " already exists..");
 
         mLightNodes.emplace(lightNode->getName(), lightNode);
@@ -197,6 +197,51 @@ namespace lite3dpp
             return it->second.get();
 
         LITE3D_THROW("MeshNode '" << name << "' is not found");
+    }
+
+    const kmVec3& SceneObject::getPosition() const
+    {
+        return getRoot()->getPosition();
+    }
+
+    const kmQuaternion& SceneObject::getRotation() const
+    {
+        return getRoot()->getRotation();
+    }
+
+    void SceneObject::setPosition(const kmVec3 &position)
+    {
+        getRoot()->setPosition(position);
+    }
+
+    void SceneObject::move(const kmVec3 &position)
+    {
+        getRoot()->move(position);
+    }
+
+    void SceneObject::moveRelative(const kmVec3 &offset)
+    {
+        getRoot()->moveRelative(offset);
+    }
+
+    void SceneObject::setRotation(const kmQuaternion &quat)
+    {
+        getRoot()->setRotation(quat);
+    }
+
+    void SceneObject::rotate(const kmQuaternion &quat)
+    {
+        getRoot()->rotate(quat);
+    }
+
+    void SceneObject::rotateAngle(const kmVec3 &axis, float angle)
+    {
+        getRoot()->rotateAngle(axis, angle);
+    }
+
+    void SceneObject::scale(const kmVec3 &scale)
+    {
+        getRoot()->scale(scale);
     }
 }
 

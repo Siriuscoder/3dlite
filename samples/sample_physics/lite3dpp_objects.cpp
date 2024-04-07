@@ -36,14 +36,14 @@ namespace samples {
     {
         btVector3 newPos(pos.x, pos.y, pos.z);
         mBody->getWorldTransform().setOrigin(newPos);
-        mObj->getRoot()->setPosition(pos);
+        mObj->setPosition(pos);
     }
 
     void BaseBody::setRotation(const kmQuaternion &rot)
     {
         btQuaternion newRot(rot.x, rot.y, rot.z, rot.w);
         mBody->getWorldTransform().setRotation(newRot);
-        mObj->getRoot()->setRotation(rot);
+        mObj->setRotation(rot);
     }
 
     bool BaseBody::beginSceneRender(Scene *scene, Camera *camera)
@@ -56,8 +56,8 @@ namespace samples {
 
             kmVec3 vpos = { bulletPos.getX(), bulletPos.getY(), bulletPos.getZ() };
             kmQuaternion vrot = { bulletRot.getX(), bulletRot.getY(), bulletRot.getZ(), bulletRot.getW() };
-            mObj->getRoot()->setPosition(vpos);
-            mObj->getRoot()->setRotation(vrot);
+            mObj->setPosition(vpos);
+            mObj->setRotation(vrot);
         }
 
         return true;

@@ -42,7 +42,7 @@ namespace lite3dpp
 
         Scene(const String &name, 
             const String &path, Main *main);
-        ~Scene();
+        virtual ~Scene();
 
         inline lite3d_scene *getPtr()
         { return &mScene; }

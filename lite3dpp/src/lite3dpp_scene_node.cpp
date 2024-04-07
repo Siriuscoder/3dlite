@@ -61,24 +61,6 @@ namespace lite3dpp
     {
         return mNode.position;
     }
-    
-    void SceneNode::setPosX(float x)
-    {
-        mNode.position.x = x;
-        mNode.recalc = LITE3D_TRUE;
-    }
-    
-    void SceneNode::setPosY(float y)
-    {
-        mNode.position.y = y;
-        mNode.recalc = LITE3D_TRUE;        
-    }
-    
-    void SceneNode::setPosZ(float z)
-    {
-        mNode.position.z = z;
-        mNode.recalc = LITE3D_TRUE;
-    }
 
     void SceneNode::move(const kmVec3 &position)
     {

@@ -54,6 +54,26 @@ public:
             v.getZ()
         };
     }
+
+    static inline btQuaternion convert(const kmQuaternion& q)
+    {
+        return btQuaternion {
+            q.x,
+            q.y, 
+            q.z,
+            q.w,
+        };
+    }
+
+    static inline kmQuaternion convert(const btQuaternion& q)
+    {
+        return kmQuaternion {
+            q.getX(),
+            q.getY(), 
+            q.getZ(),
+            q.getW()
+        };
+    }
 };
 
 }

@@ -20,10 +20,18 @@
 #include <lite3dpp/lite3dpp_main.h>
 
 namespace lite3dpp {
+namespace lite3dpp_phisics {
 
 PhysicsScene::PhysicsScene(const String &name, const String &path, Main *main) : 
     Scene(name, path, main)
-{}
+{
+    getMain().addObserver(this);
+}
+
+PhysicsScene::~PhysicsScene()
+{
+    getMain().removeObserver(this);
+}
 
 void PhysicsScene::loadFromConfigImpl(const ConfigurationReader &helper)
 {
@@ -72,4 +80,18 @@ void PhysicsScene::createCollisionSolver(const ConfigurationReader &helper)
     mConstraintSolver = std::make_unique<btSequentialImpulseConstraintSolver>();
 }
 
+void PhysicsScene::timerTick(lite3d_timer *timerid)
+{
+    if (mWorld)
+    {
+        btScalar deltaSec = timerid->deltaMcs / 1000000.0f;
+        mWorld->stepSimulation(deltaSec, mMaxSubStepCount, mFixedTimeStep);
+    }
 }
+
+SceneObject::Ptr PhysicsScene::createObject(const String &name, SceneObject *parent)
+{
+    return std::make_shared<PhysicsRigidBodySceneObject>(name, parent, this, &getMain());
+}
+
+}}
