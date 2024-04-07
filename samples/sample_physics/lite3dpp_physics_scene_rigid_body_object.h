@@ -36,7 +36,8 @@ namespace lite3dpp_phisics {
             BodyKinematic
         };
 
-        PhysicsRigidBodySceneObject(const String &name, SceneObject *parent, Scene *scene, Main *main);
+        PhysicsRigidBodySceneObject(const String &name, Scene *scene, SceneObject *parent,
+            const kmVec3 &initialPosition, const kmQuaternion &initialRotation, const kmVec3 &initialScale);
 
         inline BodyType getBodyType() const { return mBodyType; }
 
@@ -44,10 +45,6 @@ namespace lite3dpp_phisics {
         void detachAllNodes() override;
 
         virtual SceneNode* addCollisiuonShapeNode(const ConfigurationReader &nodeconf, SceneNode *parent);
-        /* Для динамических и статических обьектов желательно устанавливать только начальную позицию, для кинематик 
-           обьектов можно смело вызывать так как физика на них не влияет */
-        void setPosition(const kmVec3 &position) override;
-        void setRotation(const kmQuaternion &quat) override;
 
     protected:
         

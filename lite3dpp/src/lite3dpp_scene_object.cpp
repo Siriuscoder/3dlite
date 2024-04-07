@@ -26,18 +26,20 @@
 
 namespace lite3dpp
 {
-    SceneObject::SceneObject(const String &name, 
-        SceneObject *parent, Scene *scene, Main *main) : 
+    SceneObject::SceneObject(const String &name, Scene *scene, SceneObject *parent, const kmVec3 &initialPosition, 
+        const kmQuaternion &initialRotation, const kmVec3 &initialScale) : 
         mName(name),
-        mMain(main),
         mParent(parent),
-        mScene(scene)
+        mScene(scene),
+        mInitialPosition(initialPosition),
+        mInitialRotation(initialRotation),
+        mInitialScale(initialScale)
     {}
 
     void SceneObject::loadFromTemplate(const String &templatePath)
     {
         size_t fileSize = 0;
-        const void *fileData = mMain->getResourceManager()->loadFileToMemory(templatePath, &fileSize);
+        const void *fileData = getMain()->getResourceManager()->loadFileToMemory(templatePath, &fileSize);
         ConfigurationReader conf(static_cast<const char *>(fileData), fileSize);
         loadFromTemplate(conf);
     }
@@ -50,6 +52,10 @@ namespace lite3dpp
 
         mObjectRoot = createNode(rootNodeHelper, mParent ? mParent->getRoot() : nullptr);
         setupNodes(rootNodeHelper.getObjects(L"Nodes"), mObjectRoot);
+
+        setPosition(mInitialPosition);
+        setRotation(mInitialRotation);
+        scale(mInitialScale);
     }
 
     void SceneObject::setupNodes(const stl<ConfigurationReader>::vector &nodesRange, SceneNode *parent)
@@ -68,6 +74,11 @@ namespace lite3dpp
     {
         Nodes::iterator it = mNodes.find(name);
         return it == mNodes.end() ? nullptr : it->second.get(); 
+    }
+
+    Main *SceneObject::getMain()
+    { 
+        return &mScene->getMain(); 
     }
 
     void SceneObject::disable()
@@ -107,7 +118,7 @@ namespace lite3dpp
 
     SceneNode* SceneObject::addNode(const ConfigurationReader &conf, SceneNode *parent)
     {
-        auto node = std::make_shared<SceneNode>(conf, parent, mScene, mMain);
+        auto node = std::make_shared<SceneNode>(conf, parent, mScene, getMain());
         if (mNodes.count(node->getName()))
             LITE3D_THROW("SceneNode '" << node->getName() << "' already exists..");
 
@@ -117,7 +128,7 @@ namespace lite3dpp
 
     MeshSceneNode* SceneObject::addMeshNode(const ConfigurationReader &conf, SceneNode *parent)
     {
-        auto meshNode = std::make_shared<MeshSceneNode>(conf, parent, mScene, mMain);
+        auto meshNode = std::make_shared<MeshSceneNode>(conf, parent, mScene, getMain());
         if (mNodes.count(meshNode->getName()))
             LITE3D_THROW("MeshNode '" << meshNode->getName() << "' already exists..");
 
@@ -128,7 +139,7 @@ namespace lite3dpp
 
     LightSceneNode* SceneObject::addLightNode(const ConfigurationReader &conf, SceneNode *parent)
     {
-        auto lightNode = std::make_shared<LightSceneNode>(conf, parent, mScene, mMain);
+        auto lightNode = std::make_shared<LightSceneNode>(conf, parent, mScene, getMain());
         if (mNodes.count(lightNode->getName()))
             LITE3D_THROW("LightSource '" << lightNode->getName() << " already exists..");
 

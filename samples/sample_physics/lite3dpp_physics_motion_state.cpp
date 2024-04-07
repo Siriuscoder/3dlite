@@ -36,10 +36,8 @@ void PhysicsObjectMotionState::getWorldTransform(btTransform& worldTrans) const
 void PhysicsObjectMotionState::setWorldTransform(const btTransform& worldTrans)
 {
     SDL_assert(mSceneObject);
-    // Обновляем позицию именно по конрневой ноде чтобы не вызывать setPosition/setRotation
-    // у самого обьекта, так как он обновляет позицию у RigidBody
-    mSceneObject->getRoot()->setPosition(BulletUtils::convert(worldTrans.getOrigin()));
-    mSceneObject->getRoot()->setRotation(BulletUtils::convert(worldTrans.getRotation()));
+    mSceneObject->setPosition(BulletUtils::convert(worldTrans.getOrigin()));
+    mSceneObject->setRotation(BulletUtils::convert(worldTrans.getRotation()));
 }
 
 }}

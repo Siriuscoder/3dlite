@@ -98,9 +98,11 @@ void PhysicsScene::frameEnd()
     }
 }
 
-SceneObject::Ptr PhysicsScene::createObject(const String &name, SceneObject *parent)
+SceneObject::Ptr PhysicsScene::createObject(const String &name, SceneObject *parent, const kmVec3 &initialPosition, 
+    const kmQuaternion &initialRotation, const kmVec3 &initialScale)
 {
-    return std::make_shared<PhysicsRigidBodySceneObject>(name, parent, this, &getMain());
+    return std::make_shared<PhysicsRigidBodySceneObject>(name, this, parent, initialPosition, initialRotation,
+        initialScale);
 }
 
 }}

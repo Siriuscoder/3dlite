@@ -48,9 +48,11 @@ namespace lite3dpp
         { return &mScene; }
 
         SceneObject *addObject(const String &name, const String &templatePath, 
-            SceneObject *parent = nullptr);
+            SceneObject *parent = nullptr, const kmVec3 &initialPosition = KM_VEC3_ZERO, 
+            const kmQuaternion &initialRotation = KM_QUATERNION_IDENTITY, const kmVec3 &initialScale = KM_VEC3_ONE);
         SceneObject *addObject(const String &name, const ConfigurationReader &conf, 
-            SceneObject *parent = nullptr);
+            SceneObject *parent = nullptr, const kmVec3 &initialPosition = KM_VEC3_ZERO, 
+            const kmQuaternion &initialRotation = KM_QUATERNION_IDENTITY, const kmVec3 &initialScale = KM_VEC3_ONE);
 
         void attachCamera(Camera* camera, SceneObject *parent = nullptr);
         void detachCamera(Camera* camera);
@@ -78,7 +80,8 @@ namespace lite3dpp
         void addLightSource(LightSceneNode *node);
         void removeLightSource(LightSceneNode *node);
         
-        virtual SceneObject::Ptr createObject(const String &name, SceneObject *parent);
+        virtual SceneObject::Ptr createObject(const String &name, SceneObject *parent, const kmVec3 &initialPosition, 
+            const kmQuaternion &initialRotation, const kmVec3 &initialScale);
 
     private:
 

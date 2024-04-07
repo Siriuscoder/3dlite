@@ -32,8 +32,8 @@ namespace lite3dpp
         using LightNodes = stl<String, LightSceneNode::Ptr>::unordered_map;
         using MeshNodes = stl<String, MeshSceneNode::Ptr>::unordered_map;
 
-        SceneObject(const String &name, 
-            SceneObject *parent, Scene *scene, Main *main);
+        SceneObject(const String &name, Scene *scene, SceneObject *parent, const kmVec3 &initialPosition, 
+            const kmQuaternion &initialRotation, const kmVec3 &initialScale);
         virtual ~SceneObject() = default;
 
         inline const Nodes &getNodes() const
@@ -48,8 +48,7 @@ namespace lite3dpp
         { return mObjectRoot; }
         inline const String &getName() const 
         { return mName; }
-        inline Main *getMain()
-        { return mMain; }
+        Main *getMain();
         
         const kmVec3& getPosition() const;
         const kmQuaternion& getRotation() const;
@@ -92,7 +91,6 @@ namespace lite3dpp
     private:
 
         String mName;
-        Main *mMain;
 
     protected:
 
@@ -102,6 +100,9 @@ namespace lite3dpp
         SceneNode* mObjectRoot;
         SceneObject *mParent;
         Scene *mScene;
+        kmVec3 mInitialPosition;
+        kmQuaternion mInitialRotation;
+        kmVec3 mInitialScale;
     };
 }
 

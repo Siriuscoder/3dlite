@@ -23,8 +23,9 @@
 namespace lite3dpp {
 namespace lite3dpp_phisics {
 
-    PhysicsRigidBodySceneObject::PhysicsRigidBodySceneObject(const String &name, SceneObject *parent, Scene *scene, Main *main) : 
-        SceneObject(name, parent, scene, main),
+    PhysicsRigidBodySceneObject::PhysicsRigidBodySceneObject(const String &name, Scene *scene, SceneObject *parent,
+        const kmVec3 &initialPosition, const kmQuaternion &initialRotation, const kmVec3 &initialScale) : 
+        SceneObject(name, scene, parent, initialPosition, initialRotation, initialScale),
         mWorld(static_cast<PhysicsScene *>(scene)->getWorld()),
         mMotionState(this)
     {}
@@ -127,25 +128,5 @@ namespace lite3dpp_phisics {
 
     void PhysicsRigidBodySceneObject::fillRigidBodyInfo(btRigidBody::btRigidBodyConstructionInfo &info, 
         const ConfigurationReader& conf)
-    {
-
-    }
-
-    void PhysicsRigidBodySceneObject::setPosition(const kmVec3 &position)
-    {
-        SceneObject::setPosition(position);
-        if (mBody && mBodyType != BodyKinematic)
-        {
-            mBody->getWorldTransform().setOrigin(BulletUtils::convert(position));
-        }
-    }
-
-    void PhysicsRigidBodySceneObject::setRotation(const kmQuaternion &quat)
-    {
-        SceneObject::setRotation(quat);
-        if (mBody && mBodyType != BodyKinematic)
-        {
-            mBody->getWorldTransform().setRotation(BulletUtils::convert(quat));
-        }
-    }
+    {}
 }}

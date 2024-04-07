@@ -139,24 +139,26 @@ namespace lite3dpp
     }
 
     SceneObject *Scene::addObject(const String &name, const String &templatePath, 
-        SceneObject *parent)
+        SceneObject *parent, const kmVec3 &initialPosition, const kmQuaternion &initialRotation, 
+        const kmVec3 &initialScale)
     {
         if(mObjects.find(name) != mObjects.end())
             LITE3D_THROW(name << " make object failed.. already exist");
 
-        SceneObject::Ptr sceneObject = createObject(name, parent);
+        SceneObject::Ptr sceneObject = createObject(name, parent, initialPosition, initialRotation, initialScale);
         sceneObject->loadFromTemplate(templatePath);
         mObjects.emplace(name, sceneObject);
         return sceneObject.get();
     }
 
     SceneObject *Scene::addObject(const String &name, const ConfigurationReader &conf, 
-        SceneObject *parent)
+        SceneObject *parent, const kmVec3 &initialPosition, const kmQuaternion &initialRotation, 
+        const kmVec3 &initialScale)
     {
         if(mObjects.find(name) != mObjects.end())
             LITE3D_THROW(name << " make object failed.. already exist");
 
-        SceneObject::Ptr sceneObject = createObject(name, parent);
+        SceneObject::Ptr sceneObject = createObject(name, parent, initialPosition, initialRotation, initialScale);
         sceneObject->loadFromTemplate(conf);
         mObjects.emplace(name, sceneObject);
         return sceneObject.get();
@@ -253,9 +255,10 @@ namespace lite3dpp
             Material::setIntGlobalParameter(getName() + "_numLights", static_cast<int32_t>(mLights.size()));
     }
     
-    SceneObject::Ptr Scene::createObject(const String &name, SceneObject *parent)
+    SceneObject::Ptr Scene::createObject(const String &name, SceneObject *parent, const kmVec3 &initialPosition, 
+        const kmQuaternion &initialRotation, const kmVec3 &initialScale)
     {
-        return std::make_shared<SceneObject>(name, parent, this, &getMain());
+        return std::make_shared<SceneObject>(name, this, parent, initialPosition, initialRotation, initialScale);
     }
 
     void Scene::addLightSource(LightSceneNode *node)
@@ -272,16 +275,18 @@ namespace lite3dpp
 
     void Scene::setupObjects(const stl<ConfigurationReader>::vector &objects, SceneObject *base)
     {
-        for(const ConfigurationReader &objHelper : objects)
+        for (const ConfigurationReader &objHelper : objects)
         {
-            if(objHelper.isEmpty())
+            if (objHelper.isEmpty())
                 continue;
-            SceneObject *sceneObj = addObject(objHelper.getString(L"Name"),
-                objHelper.getString(L"Object"), base);
 
-            sceneObj->setPosition(objHelper.getVec3(L"Position"));
-            sceneObj->setRotation(objHelper.getQuaternion(L"Rotation"));
-            sceneObj->scale(objHelper.getVec3(L"Scale", KM_VEC3_ONE));
+            SceneObject *sceneObj = addObject(
+                objHelper.getString(L"Name"),
+                objHelper.getString(L"Object"), 
+                base, 
+                objHelper.getVec3(L"Position"),
+                objHelper.getQuaternion(L"Rotation"),
+                objHelper.getVec3(L"Scale", KM_VEC3_ONE));
 
             setupObjects(objHelper.getObjects(L"Objects"), sceneObj);
         }

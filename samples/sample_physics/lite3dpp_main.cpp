@@ -51,7 +51,6 @@ public:
 
                 String cubeName("Cube");
                 cubeName.append(std::to_string(mBoxCounter++));
-                auto cubeObject = mScene->addObject(cubeName, "samples:objects/cube.json");
 
                 kmVec3 pos = {
                     static_cast<float>(rand() % 1000),
@@ -60,9 +59,7 @@ public:
                 };
 
                 kmQuaternion rot = { 1.0f, 1.0f, 1.0f, (rand() % 1000)/1000.0f };
-                cubeObject->setPosition(pos);
-                cubeObject->setRotation(rot);
-                mCubes.push_back(cubeObject);
+                mCubes.push_back(mScene->addObject(cubeName, "samples:objects/cube.json", nullptr, pos, rot));
             }
         }
     }
