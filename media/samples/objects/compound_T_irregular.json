@@ -1,0 +1,181 @@
+{
+    "Root":
+    {
+        "Name": "compound_Tcube_irregular.root",
+        "Physics": 
+        {
+            // Static, Dynamic, Kinematic
+            "Type": "Dynamic", 
+            "Mass": 70.0,
+            "CalcCenterOfMass": true
+        },
+        "Nodes": [
+            {
+                "Name": "cube80_1.node",
+                "FrustumTest": true,
+                "Mesh": 
+                {
+                    "Name": "cube80.mesh",
+                    "Mesh": "samples:models/json/cube80.json",
+                    "MaterialMapping": 
+                    [
+                        {
+                            "MaterialIndex": 0,
+                            "Material":
+                            {
+                                "Name": "cube2.material",
+                                "Material": "samples:materials/cube2.json"
+                            }
+                        }
+                    ]
+                },
+                "Nodes": [
+                    {
+                        "Name": "cube80_1.collision",
+                        "CollisionShape":
+                        {
+                            // Box, Sphere, StaticPlane, Cylinder, Capsule, Cone, ConvexHull, StaticTriangleMesh, GimpactTriangleMesh
+                            "Type": "Box",
+                            "BoxHalfExtents": [40.0, 40.0, 40.0],
+                            "Mass": 10
+                        }
+                    }
+                ],
+                "Position": [0,0,0]
+            },
+            {
+                "Name": "cube80_2.node",
+                "FrustumTest": true,
+                "Mesh": 
+                {
+                    "Name": "cube80.mesh",
+                    "Mesh": "samples:models/json/cube80.json",
+                    "MaterialMapping": 
+                    [
+                        {
+                            "MaterialIndex": 0,
+                            "Material":
+                            {
+                                "Name": "cube2.material",
+                                "Material": "samples:materials/cube2.json"
+                            }
+                        }
+                    ]
+                },
+                "Nodes": [
+                    {
+                        "Name": "cube80_2.collision",
+                        "CollisionShape":
+                        {
+                            // Box, Sphere, StaticPlane, Cylinder, Capsule, Cone, ConvexHull, StaticTriangleMesh, GimpactTriangleMesh
+                            "Type": "Box",
+                            "BoxHalfExtents": [40.0, 40.0, 40.0],
+                            "Mass": 10
+                        }
+                    }
+                ],
+                "Position": [0,80,0]
+            },
+            {
+                "Name": "cube80_3.node",
+                "FrustumTest": true,
+                "Mesh": 
+                {
+                    "Name": "cube80.mesh",
+                    "Mesh": "samples:models/json/cube80.json",
+                    "MaterialMapping": 
+                    [
+                        {
+                            "MaterialIndex": 0,
+                            "Material":
+                            {
+                                "Name": "cube2.material",
+                                "Material": "samples:materials/cube2.json"
+                            }
+                        }
+                    ]
+                },
+                "Nodes": [
+                    {
+                        "Name": "cube80_3.collision",
+                        "CollisionShape":
+                        {
+                            // Box, Sphere, StaticPlane, Cylinder, Capsule, Cone, ConvexHull, StaticTriangleMesh, GimpactTriangleMesh
+                            "Type": "Box",
+                            "BoxHalfExtents": [40.0, 40.0, 40.0],
+                            "Mass": 10
+                        }
+                    }
+                ],
+                "Position": [0,160,0]
+            },
+            {
+                "Name": "cube80_4.node",
+                "FrustumTest": true,
+                "Mesh": 
+                {
+                    "Name": "cube80.mesh",
+                    "Mesh": "samples:models/json/cube80.json",
+                    "MaterialMapping": 
+                    [
+                        {
+                            "MaterialIndex": 0,
+                            "Material":
+                            {
+                                "Name": "cube1.material",
+                                "Material": "samples:materials/cube1.json"
+                            }
+                        }
+                    ]
+                },
+                "Nodes": [
+                    {
+                        "Name": "cube80_4.collision",
+                        "CollisionShape":
+                        {
+                            // Box, Sphere, StaticPlane, Cylinder, Capsule, Cone, ConvexHull, StaticTriangleMesh, GimpactTriangleMesh
+                            "Type": "Box",
+                            "BoxHalfExtents": [40.0, 40.0, 40.0],
+                            "Mass": 30
+                        }
+                    }
+                ],
+                "Position": [80,160,0]
+            },
+            {
+                "Name": "cube80_5.node",
+                "FrustumTest": true,
+                "Mesh": 
+                {
+                    "Name": "cube80.mesh",
+                    "Mesh": "samples:models/json/cube80.json",
+                    "MaterialMapping": 
+                    [
+                        {
+                            "MaterialIndex": 0,
+                            "Material":
+                            {
+                                "Name": "cube2.material",
+                                "Material": "samples:materials/cube2.json"
+                            }
+                        }
+                    ]
+                },
+                "Nodes": [
+                    {
+                        "Name": "cube80_5.collision",
+                        "CollisionShape":
+                        {
+                            // Box, Sphere, StaticPlane, Cylinder, Capsule, Cone, ConvexHull, StaticTriangleMesh, GimpactTriangleMesh
+                            "Type": "Box",
+                            "BoxHalfExtents": [40.0, 40.0, 40.0],
+                            "Mass": 10
+                        }
+                    }
+                ],
+                "Position": [-80,160,0]
+            }
+        ]
+    }
+}
+

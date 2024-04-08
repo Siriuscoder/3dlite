@@ -86,7 +86,7 @@ void PhysicsScene::createCollisionSolver(const ConfigurationReader &conf)
 
 void PhysicsScene::frameEnd()
 {
-    /* run simulation at end if the frame */
+    /* run simulation at the end of the frame */
     if (mWorld)
     {
         auto timeNow = std::chrono::steady_clock::now();

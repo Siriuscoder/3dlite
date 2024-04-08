@@ -57,6 +57,11 @@ namespace lite3dpp_phisics {
             LITE3D_THROW("CollisionShapeSceneNode: '" << getName() << "' Unknown collision shape type");
 
         mShapeMass = collisionShapeConf.getDouble(L"Mass");
+
+        if (mCollisionShape)
+        {
+            mCollisionShape->setUserPointer(this);
+        }
     }
 
     void PhysicsCollisionShapeSceneNode::setupBoxCollisionShape(const ConfigurationReader& conf)

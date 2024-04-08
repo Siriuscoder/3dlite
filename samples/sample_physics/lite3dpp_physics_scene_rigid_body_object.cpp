@@ -63,7 +63,17 @@ namespace lite3dpp_phisics {
         if (mBodyType == BodyDynamic)
         {
             mass = physicsConfig.getDouble(L"Mass");
-            mCompoundCollisionShape->calculateLocalInertia(mass, inertiaTensor);
+            if (physicsConfig.getBool(L"CalcCenterOfMass", false))
+            {
+                btTransform centerOfMassTransform;
+                mCompoundCollisionShape->calculatePrincipalAxisTransform(&shapesMass[0],
+                    centerOfMassTransform, inertiaTensor);
+                changeOrigin(centerOfMassTransform.getOrigin());
+            }
+            else
+            {
+                mCompoundCollisionShape->calculateLocalInertia(mass, inertiaTensor);
+            }
         }
 
         btRigidBody::btRigidBodyConstructionInfo cInfo(mass, &mMotionState, mCompoundCollisionShape.get(), inertiaTensor);
@@ -91,6 +101,28 @@ namespace lite3dpp_phisics {
         }
 
         return calcRelativeTransform(node->getParent()) * nodeTransform;
+    }
+
+    void PhysicsRigidBodySceneObject::changeOrigin(const btVector3 &origin)
+    {
+        btTransform originTransform(BulletUtils::convert(KM_QUATERNION_IDENTITY), origin);
+        originTransform = originTransform.inverse();
+
+        // Поменяем origin у всех привязанных формах в обьекте
+        for (int i = 0; i < mCompoundCollisionShape->getNumChildShapes(); ++i)
+        {
+            auto localTransform = mCompoundCollisionShape->getChildTransform(i);
+            mCompoundCollisionShape->updateChildTransform(i, localTransform * originTransform);
+        }
+
+        for (auto &node : mNodes)
+        {
+            // Трансформации подлежат только ноды первого уровня, остальные получют трасформацию автоматически
+            if (node.second->getParent() == getRoot())
+            {
+                node.second->move(BulletUtils::convert(originTransform.getOrigin()));
+            }
+        }
     }
 
     void PhysicsRigidBodySceneObject::detachAllNodes()

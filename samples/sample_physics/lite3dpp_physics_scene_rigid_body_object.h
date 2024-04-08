@@ -50,6 +50,9 @@ namespace lite3dpp_phisics {
         
         SceneNode* createNode(const ConfigurationReader &conf, SceneNode *parent) override;
         btTransform calcRelativeTransform(const SceneNode *node);
+        /* Используется если нужно совместить начало координат локальной системы обьекта с центром масс в 
+           случае если задана опция пересчета центра масс */
+        void changeOrigin(const btVector3 &origin);
         virtual void fillRigidBodyInfo(btRigidBody::btRigidBodyConstructionInfo &info, const ConfigurationReader& conf);
 
     private:

@@ -40,7 +40,10 @@ public:
         Sample::processEvent(e);
         if (e->type == SDL_KEYDOWN)
         {
-            if (e->key.keysym.sym == SDLK_c)
+            if (e->key.keysym.sym == SDLK_c || 
+                e->key.keysym.sym == SDLK_e || 
+                e->key.keysym.sym == SDLK_x || 
+                e->key.keysym.sym == SDLK_q)
             {
                 if (mCubes.size() > 500)
                 {
@@ -59,7 +62,12 @@ public:
                 };
 
                 kmQuaternion rot = { 1.0f, 1.0f, 1.0f, (rand() % 1000)/1000.0f };
-                mCubes.push_back(mScene->addObject(cubeName, "samples:objects/cube.json", nullptr, pos, rot));
+                mCubes.push_back(mScene->addObject(cubeName, 
+                    e->key.keysym.sym == SDLK_c ? "samples:objects/cube.json" : 
+                    (e->key.keysym.sym == SDLK_e ? "samples:objects/compound_cross.json" : 
+                    (e->key.keysym.sym == SDLK_x ? "samples:objects/compound_T.json" : 
+                    "samples:objects/compound_T_irregular.json")),
+                    nullptr, pos, rot));
             }
         }
     }
