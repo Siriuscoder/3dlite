@@ -1,12 +1,12 @@
 {
     "Root":
     {
-        "Name": "compound_Tcube.root",
+        "Name": "compound_T.root",
         "Physics": 
         {
             // Static, Dynamic, Kinematic
             "Type": "Dynamic", 
-            "Mass": 50.0
+            "CalcCenterOfMass": true
         },
         "Nodes": [
             {
@@ -22,8 +22,8 @@
                             "MaterialIndex": 0,
                             "Material":
                             {
-                                "Name": "cube1.material",
-                                "Material": "samples:materials/cube1.json"
+                                "Name": "cube2.material",
+                                "Material": "samples:materials/cube2.json"
                             }
                         }
                     ]
@@ -35,7 +35,8 @@
                         {
                             // Box, Sphere, StaticPlane, Cylinder, Capsule, Cone, ConvexHull, StaticTriangleMesh, GimpactTriangleMesh
                             "Type": "Box",
-                            "BoxHalfExtents": [40.0, 40.0, 40.0]
+                            "BoxHalfExtents": [40.0, 40.0, 40.0],
+                            "Mass": 10
                         }
                     }
                 ],
@@ -67,7 +68,8 @@
                         {
                             // Box, Sphere, StaticPlane, Cylinder, Capsule, Cone, ConvexHull, StaticTriangleMesh, GimpactTriangleMesh
                             "Type": "Box",
-                            "BoxHalfExtents": [40.0, 40.0, 40.0]
+                            "BoxHalfExtents": [40.0, 40.0, 40.0],
+                            "Mass": 10
                         }
                     }
                 ],
@@ -99,7 +101,8 @@
                         {
                             // Box, Sphere, StaticPlane, Cylinder, Capsule, Cone, ConvexHull, StaticTriangleMesh, GimpactTriangleMesh
                             "Type": "Box",
-                            "BoxHalfExtents": [40.0, 40.0, 40.0]
+                            "BoxHalfExtents": [40.0, 40.0, 40.0],
+                            "Mass": 10
                         }
                     }
                 ],
@@ -118,8 +121,8 @@
                             "MaterialIndex": 0,
                             "Material":
                             {
-                                "Name": "cube2.material",
-                                "Material": "samples:materials/cube2.json"
+                                "Name": "cube1.material",
+                                "Material": "samples:materials/cube1.json"
                             }
                         }
                     ]
@@ -131,7 +134,8 @@
                         {
                             // Box, Sphere, StaticPlane, Cylinder, Capsule, Cone, ConvexHull, StaticTriangleMesh, GimpactTriangleMesh
                             "Type": "Box",
-                            "BoxHalfExtents": [40.0, 40.0, 40.0]
+                            "BoxHalfExtents": [40.0, 40.0, 40.0],
+                            "Mass": 30
                         }
                     }
                 ],
@@ -163,7 +167,8 @@
                         {
                             // Box, Sphere, StaticPlane, Cylinder, Capsule, Cone, ConvexHull, StaticTriangleMesh, GimpactTriangleMesh
                             "Type": "Box",
-                            "BoxHalfExtents": [40.0, 40.0, 40.0]
+                            "BoxHalfExtents": [40.0, 40.0, 40.0],
+                            "Mass": 10
                         }
                     }
                 ],

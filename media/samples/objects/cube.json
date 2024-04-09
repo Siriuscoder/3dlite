@@ -5,8 +5,7 @@
         "Physics": 
         {
             // Static, Dynamic, Kinematic
-            "Type": "Dynamic", 
-            "Mass": 10.0
+            "Type": "Dynamic"
         },
         "Nodes": [
             {
@@ -22,7 +21,7 @@
                             "MaterialIndex": 0,
                             "Material":
                             {
-                                "Name": "box2.material",
+                                "Name": "cube1.material",
                                 "Material": "samples:materials/cube1.json"
                             }
                         }
@@ -35,7 +34,8 @@
                         {
                             // Box, Sphere, StaticPlane, Cylinder, Capsule, Cone, ConvexHull, StaticTriangleMesh, GimpactTriangleMesh
                             "Type": "Box",
-                            "BoxHalfExtents": [40.0, 40.0, 40.0]
+                            "BoxHalfExtents": [40.0, 40.0, 40.0],
+                            "Mass": 10
                         }
                     }
                 ]

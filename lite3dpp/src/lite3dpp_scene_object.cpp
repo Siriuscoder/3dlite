@@ -50,6 +50,9 @@ namespace lite3dpp
         if(rootNodeHelper.isEmpty())
             return;
 
+        SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Loading object '%s' to scene '%s' ...", 
+            getName().c_str(), mScene->getName().c_str());
+
         mObjectRoot = createNode(rootNodeHelper, mParent ? mParent->getRoot() : nullptr);
         setupNodes(rootNodeHelper.getObjects(L"Nodes"), mObjectRoot);
 

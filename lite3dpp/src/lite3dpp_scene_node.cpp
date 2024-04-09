@@ -40,7 +40,7 @@ namespace lite3dpp
             LITE3D_THROW("SceneNode with empty name is not allowed..");
 
         SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
-            "Parsing node %s ...", mName.c_str());
+            "Parsing node '%s' ...", mName.c_str());
         
         frustumTest(json.getBool(L"FrustumTest", true));
         setPosition(json.getVec3(L"Position"));

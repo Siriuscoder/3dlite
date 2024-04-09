@@ -65,8 +65,8 @@ public:
                 mCubes.push_back(mScene->addObject(cubeName, 
                     e->key.keysym.sym == SDLK_c ? "samples:objects/cube.json" : 
                     (e->key.keysym.sym == SDLK_e ? "samples:objects/compound_cross.json" : 
-                    (e->key.keysym.sym == SDLK_x ? "samples:objects/compound_T.json" : 
-                    "samples:objects/compound_T_irregular.json")),
+                    (e->key.keysym.sym == SDLK_x ? "samples:objects/compound_Z.json" : 
+                    "samples:objects/compound_T.json")),
                     nullptr, pos, rot));
             }
         }

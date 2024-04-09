@@ -15,6 +15,7 @@
  *	You should have received a copy of the GNU General Public License
  *	along with Lite3D.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
+#include <numeric>
 #include <SDL_assert.h>
 
 #include "lite3dpp_physics_scene_rigid_body_object.h"
@@ -62,7 +63,7 @@ namespace lite3dpp_phisics {
         btScalar mass = 0.0f;
         if (mBodyType == BodyDynamic)
         {
-            mass = physicsConfig.getDouble(L"Mass");
+            mass = std::accumulate(shapesMass.begin(), shapesMass.end(), 0.0f);
             if (physicsConfig.getBool(L"CalcCenterOfMass", false))
             {
                 btTransform centerOfMassTransform;
