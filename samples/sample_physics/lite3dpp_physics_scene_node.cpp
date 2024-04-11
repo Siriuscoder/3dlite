@@ -79,7 +79,7 @@ namespace lite3dpp_phisics {
 
     void PhysicsCollisionShapeSceneNode::setupSphereCollisionShape(const ConfigurationReader& conf)
     {
-        btScalar sphereRadius = conf.getDouble(L"SphereRadius");
+        btScalar sphereRadius = conf.getDouble(L"Radius");
         mCollisionShape = std::make_unique<btSphereShape>(sphereRadius);
     }
 }}

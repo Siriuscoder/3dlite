@@ -19,6 +19,18 @@ class Scene:
         self.options = opts
         self.exportTypes = ["MESH", "EMPTY"]
         self.sceneJson = {}
+        self.physicsObjectTypes = ["Dynamic", "Static", "Kinematic"]
+        self.physicsCollisionsTypes = [
+            "Box", 
+            "Sphere", 
+            "StaticPlane", 
+            "Cylinder", 
+            "Capsule", 
+            "Cone", 
+            "ConvexHull", 
+            "StaticTriangleMesh", 
+            "GimpactTriangleMesh"
+        ]
 
         if self.options["exportLights"]:
             self.exportTypes.append("LIGHT")
@@ -101,11 +113,12 @@ class Scene:
             self.meshes[obj.data.name] = mesh
         else:
             mesh = self.meshes[obj.data.name]
-            
-        node["Mesh"] = {
-            "Mesh": self.getAbsMeshPath(mesh.getRelativePathJson()), 
-            "Name": mesh.name
-        }
+
+        if not self.exportPhysicsInfo(obj, node, mesh):
+            node["Mesh"] = {
+                "Mesh": self.getAbsMeshPath(mesh.getRelativePathJson()), 
+                "Name": mesh.name
+            }
         
     def exportLight(self, obj, node):
         light = obj.data
@@ -181,6 +194,40 @@ class Scene:
                     node["Nodes"].append(childNode)
                 else:
                     node["Nodes"] = [childNode]
+
+    def exportPhysicsInfo(self, obj, node, mesh = None):
+        if self.options["physics"]:
+            objType = obj.get("physicsObjectType", "")
+            objCollisionType = obj.get("physicsCollisionType", "")
+
+            if objType in self.physicsObjectTypes:
+                physicsConf = {}
+                physicsConf["Type"] = objType
+                for optName in obj.keys():
+                    if optName in ["physicsFriction", "physicsRollingFriction", "physicsSpinningFriction", "physicsRestitution"]:
+                        physicsConf[optName.replace("physics", "")] = obj.get(optName)
+                node["Physics"] = physicsConf
+                return True
+
+            elif objCollisionType in self.physicsCollisionsTypes:
+                collisionShapeConf = {}
+                collisionShapeConf["Type"] = objCollisionType
+                for optName in obj.keys():
+                    if optName in ["physicsCollisionMass", "physicsCollisionRadius", "physicsCollisionHeight", "physicsCollisionPlaneConstant"]:
+                        collisionShapeConf[optName.replace("physicsCollision", "")] = obj.get(optName)
+                    elif optName in ["physicsCollisionHalfExtents", "physicsCollisionPlaneNormal"]:
+                        collisionShapeConf[optName.replace("physicsCollision", "")] = [x for x in obj.get(optName)]
+
+                if objCollisionType in ["ConvexHull", "StaticTriangleMesh", "GimpactTriangleMesh"]:
+                    if mesh is not None:
+                        collisionShapeConf["CollisionMesh"] = {
+                            "Mesh": self.getAbsMeshPath(mesh.getRelativePathJson()), 
+                            "Name": mesh.name
+                        }
+                node["CollisionShape"] = collisionShapeConf
+                return True
+        return False
+
                 
     def exportObject(self, obj):
         if obj.type not in self.exportTypes:
@@ -189,6 +236,7 @@ class Scene:
         objectName = obj.get("originObject")
         if objectName is None:
             objectRoot = {"Root": {}}
+            self.exportPhysicsInfo(obj, objectRoot["Root"])
             self.exportNode(obj, objectRoot["Root"])
             self.saveObject(obj, objectRoot)
             objectName = obj.name

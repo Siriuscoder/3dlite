@@ -81,6 +81,12 @@ namespace lite3dpp_phisics {
         fillRigidBodyInfo(cInfo, physicsConfig);
         mBody = std::make_unique<btRigidBody>(cInfo);
 
+        if (mBodyType == BodyKinematic)
+        {
+            mBody->setCollisionFlags(mBody->getCollisionFlags() | btCollisionObject::CF_KINEMATIC_OBJECT);
+            mBody->setActivationState(DISABLE_DEACTIVATION);
+        }
+
         mCompoundCollisionShape->setUserPointer(this);
         mBody->setUserPointer(this);
         mWorld->addRigidBody(mBody.get());
@@ -161,5 +167,10 @@ namespace lite3dpp_phisics {
 
     void PhysicsRigidBodySceneObject::fillRigidBodyInfo(btRigidBody::btRigidBodyConstructionInfo &info, 
         const ConfigurationReader& conf)
-    {}
+    {
+        info.m_friction = conf.getDouble(L"Friction", 0.5f);
+        info.m_rollingFriction = conf.getDouble(L"RollingFriction", 0.0f);
+        info.m_spinningFriction = conf.getDouble(L"SpinningFriction", 0.0f);
+        info.m_restitution = conf.getDouble(L"Restitution", 0.0f);
+    }
 }}
