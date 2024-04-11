@@ -1,0 +1,1438 @@
+{
+  "Root": {
+    "Physics": {
+      "Type": "Static"
+    },
+    "Name": "VaultRoom",
+    "Nodes": [
+      {
+        "Name": "VltCeiling03Util",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/VltCeiling03Util.json",
+          "Name": "VltCeiling03Util.mesh"
+        },
+        "Position": [
+          -320.0,
+          0.0,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "Nodes": [
+          {
+            "Name": "VltCeiling02Util.Collider",
+            "CollisionShape": {
+              "Type": "StaticTriangleMesh",
+              "CollisionMesh": {
+                "Mesh": "vault_111:models/json/VltCeilingCollider.json",
+                "Name": "VltCeilingCollider.mesh"
+              }
+            },
+            "Position": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "VltCeiling03Util.001",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/VltCeiling03Util.json",
+          "Name": "VltCeiling03Util.mesh"
+        },
+        "Position": [
+          -64.0,
+          0.0,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "Nodes": [
+          {
+            "Name": "VltCeiling02Util.Collider.001",
+            "CollisionShape": {
+              "Type": "StaticTriangleMesh",
+              "CollisionMesh": {
+                "Mesh": "vault_111:models/json/VltCeilingCollider.json",
+                "Name": "VltCeilingCollider.mesh"
+              }
+            },
+            "Position": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "VltCeiling03Util.002",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/VltCeiling03Util.json",
+          "Name": "VltCeiling03Util.mesh"
+        },
+        "Position": [
+          192.0,
+          0.0,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "Nodes": [
+          {
+            "Name": "VltCeiling02Util.Collider.002",
+            "CollisionShape": {
+              "Type": "StaticTriangleMesh",
+              "CollisionMesh": {
+                "Mesh": "vault_111:models/json/VltCeilingCollider.json",
+                "Name": "VltCeilingCollider.mesh"
+              }
+            },
+            "Position": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "VltCeiling03Util.003",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/VltCeiling03Util.json",
+          "Name": "VltCeiling03Util.mesh"
+        },
+        "Position": [
+          448.0,
+          0.0,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "Nodes": [
+          {
+            "Name": "VltCeiling02Util.Collider.003",
+            "CollisionShape": {
+              "Type": "StaticTriangleMesh",
+              "CollisionMesh": {
+                "Mesh": "vault_111:models/json/VltCeilingCollider.json",
+                "Name": "VltCeilingCollider.mesh"
+              }
+            },
+            "Position": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "VltCeiling03Util.004",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/VltCeiling03Util.json",
+          "Name": "VltCeiling03Util.mesh"
+        },
+        "Position": [
+          192.0,
+          512.0,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "Nodes": [
+          {
+            "Name": "VltCeiling02Util.Collider.004",
+            "CollisionShape": {
+              "Type": "StaticTriangleMesh",
+              "CollisionMesh": {
+                "Mesh": "vault_111:models/json/VltCeilingCollider.json",
+                "Name": "VltCeilingCollider.mesh"
+              }
+            },
+            "Position": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "VltCeiling03Util.005",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/VltCeiling03Util.json",
+          "Name": "VltCeiling03Util.mesh"
+        },
+        "Position": [
+          -64.0,
+          512.0,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "Nodes": [
+          {
+            "Name": "VltCeiling02Util.Collider.005",
+            "CollisionShape": {
+              "Type": "StaticTriangleMesh",
+              "CollisionMesh": {
+                "Mesh": "vault_111:models/json/VltCeilingCollider.json",
+                "Name": "VltCeilingCollider.mesh"
+              }
+            },
+            "Position": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "VltFloor01Trimmed",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/VltFloor01Trimmed.json",
+          "Name": "VltFloor01Trimmed.mesh"
+        },
+        "Position": [
+          448.0,
+          0.0,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "Nodes": [
+          {
+            "Name": "VltFloor01Trimmed.Collider",
+            "CollisionShape": {
+              "Type": "StaticTriangleMesh",
+              "CollisionMesh": {
+                "Mesh": "vault_111:models/json/VltFloorCollider.json",
+                "Name": "VltFloorCollider.mesh"
+              }
+            },
+            "Position": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "VltFloor02Util",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/VltFloor02Util.json",
+          "Name": "VltFloor02Util.mesh"
+        },
+        "Position": [
+          192.0,
+          0.0,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "Nodes": [
+          {
+            "Name": "VltFloor02Util.Collider",
+            "CollisionShape": {
+              "Type": "StaticTriangleMesh",
+              "CollisionMesh": {
+                "Mesh": "vault_111:models/json/VltFloorCollider.json",
+                "Name": "VltFloorCollider.mesh"
+              }
+            },
+            "Position": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "VltFloor02Util.001",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/VltFloor02Util.json",
+          "Name": "VltFloor02Util.mesh"
+        },
+        "Position": [
+          -64.0,
+          0.0,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "Nodes": [
+          {
+            "Name": "VltFloor02Util.Collider.001",
+            "CollisionShape": {
+              "Type": "StaticTriangleMesh",
+              "CollisionMesh": {
+                "Mesh": "vault_111:models/json/VltFloorCollider.json",
+                "Name": "VltFloorCollider.mesh"
+              }
+            },
+            "Position": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "VltFloor02Util.002",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/VltFloor02Util.json",
+          "Name": "VltFloor02Util.mesh"
+        },
+        "Position": [
+          -320.0,
+          0.0,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "Nodes": [
+          {
+            "Name": "VltFloor02Util.Collider.002",
+            "CollisionShape": {
+              "Type": "StaticTriangleMesh",
+              "CollisionMesh": {
+                "Mesh": "vault_111:models/json/VltFloorCollider.json",
+                "Name": "VltFloorCollider.mesh"
+              }
+            },
+            "Position": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "VltFloor02Util.003",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/VltFloor02Util.json",
+          "Name": "VltFloor02Util.mesh"
+        },
+        "Position": [
+          192.0,
+          512.0,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "Nodes": [
+          {
+            "Name": "VltFloor02Util.Collider.003",
+            "CollisionShape": {
+              "Type": "StaticTriangleMesh",
+              "CollisionMesh": {
+                "Mesh": "vault_111:models/json/VltFloorCollider.json",
+                "Name": "VltFloorCollider.mesh"
+              }
+            },
+            "Position": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "VltFloor02Util.004",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/VltFloor02Util.json",
+          "Name": "VltFloor02Util.mesh"
+        },
+        "Position": [
+          -64.0,
+          512.0,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "Nodes": [
+          {
+            "Name": "VltFloor02Util.Collider.004",
+            "CollisionShape": {
+              "Type": "StaticTriangleMesh",
+              "CollisionMesh": {
+                "Mesh": "vault_111:models/json/VltFloorCollider.json",
+                "Name": "VltFloorCollider.mesh"
+              }
+            },
+            "Position": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "VltHallResCorIn01",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/VltHallResCorIn01.json",
+          "Name": "VltHallResCorIn01.mesh"
+        },
+        "Position": [
+          576.0,
+          128.0,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          -0.0,
+          -0.7071067690849304,
+          0.7071067690849304
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "Nodes": [
+          {
+            "Name": "VltHallResCorIn01.Collider",
+            "CollisionShape": {
+              "Type": "StaticTriangleMesh",
+              "CollisionMesh": {
+                "Mesh": "vault_111:models/json/VltHallUtilCorInCollider.json",
+                "Name": "VltHallUtilCorInCollider.mesh"
+              }
+            },
+            "Position": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "VltHallResCorIn01.001",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/VltHallResCorIn01.json",
+          "Name": "VltHallResCorIn01.mesh"
+        },
+        "Position": [
+          576.0,
+          -128.0,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          1.0,
+          -4.371138828673793e-08
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "Nodes": [
+          {
+            "Name": "VltHallResCorIn01.Collider.001",
+            "CollisionShape": {
+              "Type": "StaticTriangleMesh",
+              "CollisionMesh": {
+                "Mesh": "vault_111:models/json/VltHallUtilCorInCollider.json",
+                "Name": "VltHallUtilCorInCollider.mesh"
+              }
+            },
+            "Position": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "VltHallResWall01",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/VltHallResWall01.json",
+          "Name": "VltHallResWall01.mesh"
+        },
+        "Position": [
+          320.0,
+          -128.0,
+          0.0
+        ],
+        "Rotation": [
+          -0.0,
+          0.0,
+          1.0,
+          -4.371138828673793e-08
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "Nodes": [
+          {
+            "Name": "VltHallResWall01.Collider",
+            "CollisionShape": {
+              "Type": "StaticTriangleMesh",
+              "CollisionMesh": {
+                "Mesh": "vault_111:models/json/VltHallResWallCollider.json",
+                "Name": "VltHallResWallCollider.mesh"
+              }
+            },
+            "Position": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "VltHallResWall01.001",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/VltHallResWall01.json",
+          "Name": "VltHallResWall01.mesh"
+        },
+        "Position": [
+          64.0,
+          -128.0,
+          0.0
+        ],
+        "Rotation": [
+          -0.0,
+          0.0,
+          1.0,
+          -4.371138828673793e-08
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "Nodes": [
+          {
+            "Name": "VltHallResWall01.Collider.001",
+            "CollisionShape": {
+              "Type": "StaticTriangleMesh",
+              "CollisionMesh": {
+                "Mesh": "vault_111:models/json/VltHallResWallCollider.json",
+                "Name": "VltHallResWallCollider.mesh"
+              }
+            },
+            "Position": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "VltHallUtilCorIn01",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/VltHallUtilCorIn01.json",
+          "Name": "VltHallUtilCorIn01.mesh"
+        },
+        "Position": [
+          -448.0,
+          128.0,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "Nodes": [
+          {
+            "Name": "VltHallUtilCorIn01.Collider",
+            "CollisionShape": {
+              "Type": "StaticTriangleMesh",
+              "CollisionMesh": {
+                "Mesh": "vault_111:models/json/VltHallUtilCorInCollider.json",
+                "Name": "VltHallUtilCorInCollider.mesh"
+              }
+            },
+            "Position": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "VltHallUtilCorIn01.001",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/VltHallUtilCorIn01.json",
+          "Name": "VltHallUtilCorIn01.mesh"
+        },
+        "Position": [
+          -448.0,
+          -128.0,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.7071067690849304,
+          0.7071067690849304
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "Nodes": [
+          {
+            "Name": "VltHallUtilCorIn01.Collider.001",
+            "CollisionShape": {
+              "Type": "StaticTriangleMesh",
+              "CollisionMesh": {
+                "Mesh": "vault_111:models/json/VltHallUtilCorInCollider.json",
+                "Name": "VltHallUtilCorInCollider.mesh"
+              }
+            },
+            "Position": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "VltHallUtilCorIn01.002",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/VltHallUtilCorIn01.json",
+          "Name": "VltHallUtilCorIn01.mesh"
+        },
+        "Position": [
+          -192.0,
+          384.0,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.7071067690849304,
+          0.7071067690849304
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "Nodes": [
+          {
+            "Name": "VltHallUtilCorIn01.Collider.002",
+            "CollisionShape": {
+              "Type": "StaticTriangleMesh",
+              "CollisionMesh": {
+                "Mesh": "vault_111:models/json/VltHallUtilCorInCollider.json",
+                "Name": "VltHallUtilCorInCollider.mesh"
+              }
+            },
+            "Position": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "VltHallUtilCorIn01.003",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/VltHallUtilCorIn01.json",
+          "Name": "VltHallUtilCorIn01.mesh"
+        },
+        "Position": [
+          -192.0,
+          640.0,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "Nodes": [
+          {
+            "Name": "VltHallUtilCorIn01.Collider.003",
+            "CollisionShape": {
+              "Type": "StaticTriangleMesh",
+              "CollisionMesh": {
+                "Mesh": "vault_111:models/json/VltHallUtilCorInCollider.json",
+                "Name": "VltHallUtilCorInCollider.mesh"
+              }
+            },
+            "Position": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "VltHallUtilCorIn01.004",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/VltHallUtilCorIn01.json",
+          "Name": "VltHallUtilCorIn01.mesh"
+        },
+        "Position": [
+          320.0,
+          640.0,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          -0.0,
+          -0.7071067690849304,
+          0.7071067690849304
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "Nodes": [
+          {
+            "Name": "VltHallUtilCorIn01.Collider.004",
+            "CollisionShape": {
+              "Type": "StaticTriangleMesh",
+              "CollisionMesh": {
+                "Mesh": "vault_111:models/json/VltHallUtilCorInCollider.json",
+                "Name": "VltHallUtilCorInCollider.mesh"
+              }
+            },
+            "Position": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "VltHallUtilCorIn01.005",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/VltHallUtilCorIn01.json",
+          "Name": "VltHallUtilCorIn01.mesh"
+        },
+        "Position": [
+          320.0,
+          384.0,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          1.0,
+          -4.371138828673793e-08
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "Nodes": [
+          {
+            "Name": "VltHallUtilCorIn01.Collider.005",
+            "CollisionShape": {
+              "Type": "StaticTriangleMesh",
+              "CollisionMesh": {
+                "Mesh": "vault_111:models/json/VltHallUtilCorInCollider.json",
+                "Name": "VltHallUtilCorInCollider.mesh"
+              }
+            },
+            "Position": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "VltHallUtilDoor01",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/VltHallUtilDoor01.json",
+          "Name": "VltHallUtilDoor01.mesh"
+        },
+        "Position": [
+          64.0,
+          128.0,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "Nodes": [
+          {
+            "Name": "VltHallUtilDoor01.Collider",
+            "CollisionShape": {
+              "Type": "StaticTriangleMesh",
+              "CollisionMesh": {
+                "Mesh": "vault_111:models/json/VltHallResDoorCollider.json",
+                "Name": "VltHallResDoorCollider.mesh"
+              }
+            },
+            "Position": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "VltHallUtilDoor01.001",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/VltHallUtilDoor01.json",
+          "Name": "VltHallUtilDoor01.mesh"
+        },
+        "Position": [
+          64.0,
+          384.0,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          1.0,
+          -4.371138828673793e-08
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "Nodes": [
+          {
+            "Name": "VltHallUtilDoor01.Collider.001",
+            "CollisionShape": {
+              "Type": "StaticTriangleMesh",
+              "CollisionMesh": {
+                "Mesh": "vault_111:models/json/VltHallResDoorCollider.json",
+                "Name": "VltHallResDoorCollider.mesh"
+              }
+            },
+            "Position": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "VltHallUtilWall01",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/VltHallUtilWall01.json",
+          "Name": "VltHallUtilWall01.mesh"
+        },
+        "Position": [
+          -192.0,
+          128.0,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "Nodes": [
+          {
+            "Name": "VltHallUtilWall01.Collider",
+            "CollisionShape": {
+              "Type": "StaticTriangleMesh",
+              "CollisionMesh": {
+                "Mesh": "vault_111:models/json/VltHallResWallCollider.json",
+                "Name": "VltHallResWallCollider.mesh"
+              }
+            },
+            "Position": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "VltHallUtilWall01.001",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/VltHallUtilWall01.json",
+          "Name": "VltHallUtilWall01.mesh"
+        },
+        "Position": [
+          64.0,
+          640.0,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "Nodes": [
+          {
+            "Name": "VltHallUtilWall01.Collider.001",
+            "CollisionShape": {
+              "Type": "StaticTriangleMesh",
+              "CollisionMesh": {
+                "Mesh": "vault_111:models/json/VltHallResWallCollider.json",
+                "Name": "VltHallResWallCollider.mesh"
+              }
+            },
+            "Position": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "VltHallUtilWallTransL01",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/VltHallUtilWallTransL01.json",
+          "Name": "VltHallUtilWallTransL01.mesh"
+        },
+        "Position": [
+          320.0,
+          128.0,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "Nodes": [
+          {
+            "Name": "VltHallUtilWallTransL01.Collider",
+            "CollisionShape": {
+              "Type": "StaticTriangleMesh",
+              "CollisionMesh": {
+                "Mesh": "vault_111:models/json/VltHallResWallCollider.json",
+                "Name": "VltHallResWallCollider.mesh"
+              }
+            },
+            "Position": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "VltHallUtilWallTransR01",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/VltHallUtilWallTransR01.json",
+          "Name": "VltHallUtilWallTransR01.mesh"
+        },
+        "Position": [
+          -192.0,
+          -128.0,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          1.0,
+          -4.371138828673793e-08
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "Nodes": [
+          {
+            "Name": "VltHallUtilWallTransL01.Collider.001",
+            "CollisionShape": {
+              "Type": "StaticTriangleMesh",
+              "CollisionMesh": {
+                "Mesh": "vault_111:models/json/VltHallResWallCollider.json",
+                "Name": "VltHallResWallCollider.mesh"
+              }
+            },
+            "Position": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

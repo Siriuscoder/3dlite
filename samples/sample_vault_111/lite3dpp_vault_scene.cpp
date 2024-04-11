@@ -239,7 +239,7 @@ public:
     {
         auto flashLightObject = mVaultScene->addObject("FlashLight", "samples:objects/flashlight.json", nullptr);
         mFlashLight = flashLightObject->getLightNode("FlashLight.node");
-        mFlashLight->getLight()->setAttenuationConstant(0.0f);
+        mFlashLight->getLight()->setAttenuationConstant(1.0f);
         mFlashLight->getLight()->setAttenuationLinear(50.0f);
         mFlashLight->getLight()->setAttenuationQuadratic(130.0f);
         mFlashLight->getLight()->setRadiance(800000.0f);

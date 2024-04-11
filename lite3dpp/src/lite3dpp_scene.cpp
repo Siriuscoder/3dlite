@@ -205,8 +205,8 @@ namespace lite3dpp
 
         for (auto &light : mLights)
         {
-            mLightingParamsBuffer->setElement<lite3d_light_params>(i, &light->getLight()->getPtr()->params);
             light->getLight()->index(i++);
+            light->getLight()->writeToBuffer(*mLightingParamsBuffer);
         }
     }
     
