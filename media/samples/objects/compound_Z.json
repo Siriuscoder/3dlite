@@ -35,7 +35,7 @@
                         {
                             // Box, Sphere, StaticPlane, Cylinder, Capsule, Cone, ConvexHull, StaticTriangleMesh, GimpactTriangleMesh
                             "Type": "Box",
-                            "BoxHalfExtents": [40.0, 40.0, 40.0],
+                            "HalfExtents": [40.0, 40.0, 40.0],
                             "Mass": 10
                         }
                     }
@@ -68,7 +68,7 @@
                         {
                             // Box, Sphere, StaticPlane, Cylinder, Capsule, Cone, ConvexHull, StaticTriangleMesh, GimpactTriangleMesh
                             "Type": "Box",
-                            "BoxHalfExtents": [40.0, 40.0, 40.0],
+                            "HalfExtents": [40.0, 40.0, 40.0],
                             "Mass": 10
                         }
                     }
@@ -101,7 +101,7 @@
                         {
                             // Box, Sphere, StaticPlane, Cylinder, Capsule, Cone, ConvexHull, StaticTriangleMesh, GimpactTriangleMesh
                             "Type": "Box",
-                            "BoxHalfExtents": [40.0, 40.0, 40.0],
+                            "HalfExtents": [40.0, 40.0, 40.0],
                             "Mass": 10
                         }
                     }
@@ -134,7 +134,7 @@
                         {
                             // Box, Sphere, StaticPlane, Cylinder, Capsule, Cone, ConvexHull, StaticTriangleMesh, GimpactTriangleMesh
                             "Type": "Box",
-                            "BoxHalfExtents": [40.0, 40.0, 40.0],
+                            "HalfExtents": [40.0, 40.0, 40.0],
                             "Mass": 10
                         }
                     }
@@ -167,7 +167,7 @@
                         {
                             // Box, Sphere, StaticPlane, Cylinder, Capsule, Cone, ConvexHull, StaticTriangleMesh, GimpactTriangleMesh
                             "Type": "Box",
-                            "BoxHalfExtents": [40.0, 40.0, 40.0],
+                            "HalfExtents": [40.0, 40.0, 40.0],
                             "Mass": 20
                         }
                     }
@@ -200,7 +200,7 @@
                         {
                             // Box, Sphere, StaticPlane, Cylinder, Capsule, Cone, ConvexHull, StaticTriangleMesh, GimpactTriangleMesh
                             "Type": "Box",
-                            "BoxHalfExtents": [40.0, 40.0, 40.0],
+                            "HalfExtents": [40.0, 40.0, 40.0],
                             "Mass": 20
                         }
                     }

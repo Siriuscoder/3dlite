@@ -34,7 +34,12 @@
                         {
                             // Box, Sphere, StaticPlane, Cylinder, Capsule, Cone, ConvexHull, StaticTriangleMesh, GimpactTriangleMesh
                             "Type": "Box",
-                            "BoxHalfExtents": [40.0, 40.0, 40.0],
+                            // Shape parameters
+                            "HalfExtents": [40.0, 40.0, 40.0], // Box, Cylinder
+                            // "Radius": 10 // Cone, Sphere, Capsule
+                            // "Height": 10 // Cone, Capsule
+                            // "PlaneNormal": [0.0, 0.0, 1.0] // StaticPlane
+                            // "PlaneConstant": 10 // StaticPlane
                             "Mass": 10
                         }
                     }

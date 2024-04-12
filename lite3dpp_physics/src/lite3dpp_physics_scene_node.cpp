@@ -66,7 +66,7 @@ namespace lite3dpp_phisics {
 
     void PhysicsCollisionShapeSceneNode::setupBoxCollisionShape(const ConfigurationReader& conf)
     {
-        btVector3 halfExtents = BulletUtils::convert(conf.getVec3(L"BoxHalfExtents", KM_VEC3_ONE));
+        btVector3 halfExtents = BulletUtils::convert(conf.getVec3(L"HalfExtents", KM_VEC3_ONE));
         mCollisionShape = std::make_unique<btBoxShape>(halfExtents);
     }
 
