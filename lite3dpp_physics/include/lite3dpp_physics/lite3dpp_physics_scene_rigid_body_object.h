@@ -17,8 +17,8 @@
  *******************************************************************************/
 #pragma once
 
-#include "lite3dpp_physics_scene_node.h"
-#include "lite3dpp_physics_motion_state.h"
+#include <lite3dpp_physics/lite3dpp_physics_scene_node.h>
+#include <lite3dpp_physics/lite3dpp_physics_motion_state.h>
 
 namespace lite3dpp {
 namespace lite3dpp_phisics {

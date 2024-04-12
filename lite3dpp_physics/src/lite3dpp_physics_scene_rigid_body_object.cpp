@@ -18,8 +18,8 @@
 #include <numeric>
 #include <SDL_assert.h>
 
-#include "lite3dpp_physics_scene_rigid_body_object.h"
-#include "lite3dpp_physics_scene.h"
+#include <lite3dpp_physics/lite3dpp_physics_scene_rigid_body_object.h>
+#include <lite3dpp_physics/lite3dpp_physics_scene.h>
 
 namespace lite3dpp {
 namespace lite3dpp_phisics {
@@ -49,7 +49,7 @@ namespace lite3dpp_phisics {
         }
 
         /* Придание физической формы для симуляуии, форма может быть составная из нескольких примитивов  */
-        mCompoundCollisionShape = std::make_unique<btCompoundShape>(true, mCollisionNodes.size());
+        mCompoundCollisionShape = std::make_unique<btCompoundShape>(true, static_cast<int>(mCollisionNodes.size()));
         stl<btScalar>::vector shapesMass;
         for (auto &collisionNode : mCollisionNodes)
         {

@@ -69,19 +69,20 @@ class Mesh:
             "Model": self.scene.getAbsMeshPath(self.getRelativePath())
         }
         
-        materialMapping = []
-        for chunkIndex in sorted(self.chunks.keys()):
-            chunk = self.chunks[chunkIndex]
-            material = self.scene.saveMaterial(self.mesh.materials[chunk.materialID])
-            materialMapping.append({
-                "Material": {
-                    "Name": material.name,
-                    "Material": self.scene.getAbsPath(material.getRelativePath())
-                },
-                "MaterialIndex": chunk.materialID
-            })
-            
-        meshJson["MaterialMapping"] = materialMapping
+        if len(self.mesh.materials) > 0:
+            materialMapping = []
+            for chunkIndex in sorted(self.chunks.keys()):
+                chunk = self.chunks[chunkIndex]
+                material = self.scene.saveMaterial(self.mesh.materials[chunk.materialID])
+                materialMapping.append({
+                    "Material": {
+                        "Name": material.name,
+                        "Material": self.scene.getAbsPath(material.getRelativePath())
+                    },
+                    "MaterialIndex": chunk.materialID
+                })
+            meshJson["MaterialMapping"] = materialMapping
+
         IO.saveJson(self.scene.getAbsSysPath(self.getRelativePathJson()), meshJson)
         
         self.saveModel()

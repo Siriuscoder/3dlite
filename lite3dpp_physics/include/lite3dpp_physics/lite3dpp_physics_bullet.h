@@ -28,7 +28,6 @@
 #   pragma clang diagnostic pop
 #endif
 
-#include <lite3dpp/lite3dpp_common.h>
 #include <lite3dpp/lite3dpp_scene.h>
 
 namespace lite3dpp {

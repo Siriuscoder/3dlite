@@ -19,17 +19,18 @@
 
 #include <chrono>
 
-#include "lite3dpp_physics_scene_rigid_body_object.h"
+#include <lite3dpp_physics/lite3dpp_physics_common.h>
+#include <lite3dpp/lite3dpp_scene.h>
 
 namespace lite3dpp {
 namespace lite3dpp_phisics {
 
-    class PhysicsScene : public Scene, public LifecycleObserver
+    class LITE3DPP_PHYSICS_EXPORT PhysicsScene : public Scene, public LifecycleObserver
     {
     public:
 
         static constexpr const int MaxSubStepCount = 10;
-        static constexpr const btScalar FixedTimeStep = 1.0 / 60.0;
+        static constexpr const float FixedTimeStep = 1.0 / 60.0;
 
         PhysicsScene(const String &name, const String &path, Main *main);
         ~PhysicsScene();
@@ -54,8 +55,7 @@ namespace lite3dpp_phisics {
         std::unique_ptr<btConstraintSolver> mConstraintSolver;
         std::unique_ptr<btDiscreteDynamicsWorld> mWorld;
         int mMaxSubStepCount = MaxSubStepCount;
-        btScalar mFixedTimeStep = FixedTimeStep;
+        float mFixedTimeStep = FixedTimeStep;
         std::chrono::steady_clock::time_point mLastSimulationTime;
     };
-
 }}

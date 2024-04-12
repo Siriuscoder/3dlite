@@ -15,25 +15,29 @@
  *	You should have received a copy of the GNU General Public License
  *	along with Lite3D.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
-#pragma once
+#include <SDL_assert.h>
 
-#include "lite3dpp_physics_common.h"
+#include <lite3dpp_physics/lite3dpp_physics_motion_state.h>
 
 namespace lite3dpp {
 namespace lite3dpp_phisics {
 
-    class PhysicsObjectMotionState : public btMotionState
-    {
-    public:
+PhysicsObjectMotionState::PhysicsObjectMotionState(SceneObject *o) : 
+    mSceneObject(o)
+{}
 
-        PhysicsObjectMotionState(SceneObject *o);
+void PhysicsObjectMotionState::getWorldTransform(btTransform& worldTrans) const
+{
+    SDL_assert(mSceneObject);
+    worldTrans.setOrigin(BulletUtils::convert(mSceneObject->getPosition()));
+    worldTrans.setRotation(BulletUtils::convert(mSceneObject->getRotation()));
+}
 
-        void getWorldTransform(btTransform& worldTrans) const override;
-        //Bullet only calls the update of worldtransform for active objects
-        void setWorldTransform(const btTransform& worldTrans) override;
+void PhysicsObjectMotionState::setWorldTransform(const btTransform& worldTrans)
+{
+    SDL_assert(mSceneObject);
+    mSceneObject->setPosition(BulletUtils::convert(worldTrans.getOrigin()));
+    mSceneObject->setRotation(BulletUtils::convert(worldTrans.getRotation()));
+}
 
-    private:
-
-        SceneObject *mSceneObject;
-    };
 }}

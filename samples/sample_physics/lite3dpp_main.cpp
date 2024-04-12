@@ -18,7 +18,7 @@
 #include <ctime>
 
 #include <sample_common/lite3dpp_common.h>
-#include "lite3dpp_physics_scene.h"
+#include <lite3dpp_physics/lite3dpp_physics_scene.h>
 
 namespace lite3dpp {
 namespace samples {

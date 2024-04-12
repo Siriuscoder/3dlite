@@ -15,8 +15,8 @@
  *	You should have received a copy of the GNU General Public License
  *	along with Lite3D.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
-#include "lite3dpp_physics_scene.h"
-
+#include <lite3dpp_physics/lite3dpp_physics_scene.h>
+#include <lite3dpp_physics/lite3dpp_physics_scene_rigid_body_object.h>
 #include <lite3dpp/lite3dpp_main.h>
 
 namespace lite3dpp {

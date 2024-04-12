@@ -17,7 +17,7 @@
  *******************************************************************************/
 #pragma once
 
-#include "lite3dpp_physics_common.h"
+#include <lite3dpp_physics/lite3dpp_physics_bullet.h>
 
 namespace lite3dpp {
 namespace lite3dpp_phisics {
