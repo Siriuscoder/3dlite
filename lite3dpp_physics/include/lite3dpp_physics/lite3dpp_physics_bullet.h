@@ -19,10 +19,13 @@
 
 #ifdef __clang__
 #   pragma clang diagnostic push
-#   pragma clang diagnostic ignored "-Wunused-but-set-variable"
+#   pragma clang diagnostic ignored "-Wunused-but-set-variable" 
+#   pragma clang diagnostic ignored "-Winvalid-utf8"
 #endif
 
 #include <btBulletDynamicsCommon.h>
+#include <BulletCollision/Gimpact/btGImpactShape.h>
+#include <BulletCollision/CollisionShapes/btShapeHull.h>
 
 #ifdef __clang__
 #   pragma clang diagnostic pop
@@ -75,5 +78,4 @@ namespace lite3dpp_phisics {
             };
         }
     };
-
 }}

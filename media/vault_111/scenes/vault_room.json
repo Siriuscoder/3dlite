@@ -98,6 +98,66 @@
         1.0,
         1.0
       ]
+    },
+    {
+      "Name": "CannonBall",
+      "Object": "vault_111:objects/CannonBall.json",
+      "Position": [
+        -240.0,
+        0.0,
+        160.0
+      ],
+      "Rotation": [
+        0.0,
+        0.0,
+        0.7071067690849304,
+        0.7071068286895752
+      ],
+      "Scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "Name": "LightCapsule",
+      "Object": "vault_111:objects/LightCapsule.json",
+      "Position": [
+        400.0,
+        48.0,
+        160.0
+      ],
+      "Rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "Scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "Name": "Ball",
+      "Object": "vault_111:objects/Ball.json",
+      "Position": [
+        64.0,
+        544.0,
+        144.0
+      ],
+      "Rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "Scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
     }
   ]
 }

@@ -19,8 +19,8 @@
 
 #include <chrono>
 
-#include <lite3dpp_physics/lite3dpp_physics_common.h>
 #include <lite3dpp/lite3dpp_scene.h>
+#include <lite3dpp_physics/lite3dpp_physics_scene_object.h>
 
 namespace lite3dpp {
 namespace lite3dpp_phisics {
@@ -36,6 +36,13 @@ namespace lite3dpp_phisics {
         ~PhysicsScene();
 
         inline btDiscreteDynamicsWorld *getWorld() { return mWorld.get(); } 
+
+        PhysicsSceneObject *addPhysicsObject(const String &name, const String &templatePath, 
+            SceneObject *parent = nullptr, const kmVec3 &initialPosition = KM_VEC3_ZERO, 
+            const kmQuaternion &initialRotation = KM_QUATERNION_IDENTITY, const kmVec3 &initialScale = KM_VEC3_ONE);
+        PhysicsSceneObject *addPhysicsObject(const String &name, const ConfigurationReader &conf, 
+            SceneObject *parent = nullptr, const kmVec3 &initialPosition = KM_VEC3_ZERO, 
+            const kmQuaternion &initialRotation = KM_QUATERNION_IDENTITY, const kmVec3 &initialScale = KM_VEC3_ONE);
 
     protected:
 

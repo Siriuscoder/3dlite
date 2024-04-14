@@ -26,7 +26,7 @@ namespace lite3dpp_phisics {
 
     PhysicsRigidBodySceneObject::PhysicsRigidBodySceneObject(const String &name, Scene *scene, SceneObject *parent,
         const kmVec3 &initialPosition, const kmQuaternion &initialRotation, const kmVec3 &initialScale) : 
-        SceneObject(name, scene, parent, initialPosition, initialRotation, initialScale),
+        PhysicsSceneObject(name, scene, parent, initialPosition, initialRotation, initialScale),
         mWorld(static_cast<PhysicsScene *>(scene)->getWorld()),
         mMotionState(this)
     {}
@@ -172,5 +172,23 @@ namespace lite3dpp_phisics {
         info.m_rollingFriction = conf.getDouble(L"RollingFriction", 0.0f);
         info.m_spinningFriction = conf.getDouble(L"SpinningFriction", 0.0f);
         info.m_restitution = conf.getDouble(L"Restitution", 0.0f);
+    }
+
+    void PhysicsRigidBodySceneObject::applyCentralImpulse(const kmVec3 &impulse)
+    {
+        SDL_assert(mBody);
+        mBody->applyCentralImpulse(BulletUtils::convert(impulse));
+    }
+
+    void PhysicsRigidBodySceneObject::applyImpulse(const kmVec3 &impulse, const kmVec3 &relativeOffset)
+    {
+        SDL_assert(mBody);
+        mBody->applyImpulse(BulletUtils::convert(impulse), BulletUtils::convert(relativeOffset));
+    }
+
+    void PhysicsRigidBodySceneObject::setLinearVelocity(const kmVec3 &velocity)
+    {
+        SDL_assert(mBody);
+        mBody->setLinearVelocity(BulletUtils::convert(velocity));
     }
 }}

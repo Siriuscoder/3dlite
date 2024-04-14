@@ -1,0 +1,40 @@
+{
+  "Root": {
+    "Physics": {
+      "Type": "Dynamic",
+      "Restitution": 1.2,
+      "RollingFriction": 1
+    },
+    "Name": "Ball",
+    "Mesh": {
+      "Mesh": "vault_111:models/json/Ball.json",
+      "Name": "Ball.mesh"
+    },
+    "Nodes": [
+      {
+        "Name": "Ball.Collider",
+        "CollisionShape": {
+          "Type": "Sphere",
+          "Radius": 20.8700008392334,
+          "Mass": 3.0
+        },
+        "Position": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      }
+    ]
+  }
+}

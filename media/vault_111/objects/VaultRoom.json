@@ -1,10 +1,904 @@
 {
   "Root": {
     "Physics": {
-      "Type": "Static"
+      "Type": "Static",
+      "Restitution": 0.15,
+      "RollingFriction": 0.8,
+      "Friction": 0.6
     },
     "Name": "VaultRoom",
     "Nodes": [
+      {
+        "Name": "LightBox",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/LightBox.json",
+          "Name": "LightBox.mesh"
+        },
+        "Position": [
+          -395.1351318359375,
+          239.7233428955078,
+          160.0
+        ],
+        "Rotation": [
+          0.7071067690849304,
+          0.0,
+          0.0,
+          0.7071067690849304
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "Nodes": [
+          {
+            "Name": "LightBox.Collider",
+            "CollisionShape": {
+              "Type": "Box",
+              "HalfExtents": [
+                24.024999618530273,
+                5.190000057220459,
+                14.03499984741211
+              ]
+            },
+            "Position": [
+              0.0,
+              2.6451405688021623e-07,
+              6.0513763427734375
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "LightBoxGlow",
+            "Light": {
+              "Type": "Point",
+              "Name": "LightBoxGlow_LightBoxGlow",
+              "Diffuse": [
+                0.9962801933288574,
+                1.0,
+                0.3344825804233551
+              ],
+              "Radiance": 370000.0,
+              "LightSize": 0.0,
+              "Attenuation": {
+                "Constant": 1.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
+                "InfluenceDistance": 0.0,
+                "InfluenceMinRadiance": 0.004000000189989805
+              },
+              "Direction": [
+                0.0,
+                0.0,
+                -1.0
+              ],
+              "Position": [
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "Position": [
+              2.091492857355694e-21,
+              1.9984014443252818e-15,
+              9.0
+            ],
+            "Rotation": [
+              -0.4999999701976776,
+              -0.5,
+              -0.5,
+              0.5
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "LightBox.001",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/LightBox.json",
+          "Name": "LightBox.mesh"
+        },
+        "Position": [
+          534.962646484375,
+          227.2088623046875,
+          160.0
+        ],
+        "Rotation": [
+          0.7071067690849304,
+          0.0,
+          0.0,
+          0.7071067690849304
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "Nodes": [
+          {
+            "Name": "LightBox.Collider.001",
+            "CollisionShape": {
+              "Type": "Box",
+              "HalfExtents": [
+                24.024999618530273,
+                5.190000057220459,
+                14.03499984741211
+              ]
+            },
+            "Position": [
+              0.0,
+              2.6451405688021623e-07,
+              6.0513763427734375
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "LightBoxGlow.001",
+            "Light": {
+              "Type": "Point",
+              "Name": "LightBoxGlow_LightBoxGlow.001",
+              "Diffuse": [
+                0.9962801933288574,
+                1.0,
+                0.3344825804233551
+              ],
+              "Radiance": 370000.0,
+              "LightSize": 0.0,
+              "Attenuation": {
+                "Constant": 1.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
+                "InfluenceDistance": 0.0,
+                "InfluenceMinRadiance": 0.004000000189989805
+              },
+              "Direction": [
+                0.0,
+                0.0,
+                -1.0
+              ],
+              "Position": [
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "Position": [
+              2.091492857355694e-21,
+              1.9984014443252818e-15,
+              9.0
+            ],
+            "Rotation": [
+              -0.4999999701976776,
+              -0.5,
+              -0.5,
+              0.5
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "LightBox.002",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/LightBox.json",
+          "Name": "LightBox.mesh"
+        },
+        "Position": [
+          534.962646484375,
+          -227.507080078125,
+          160.0
+        ],
+        "Rotation": [
+          -3.0908619663705394e-08,
+          0.7071067690849304,
+          0.7071067690849304,
+          -3.0908619663705394e-08
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "Nodes": [
+          {
+            "Name": "LightBox.Collider.002",
+            "CollisionShape": {
+              "Type": "Box",
+              "HalfExtents": [
+                24.024999618530273,
+                5.190000057220459,
+                14.03499984741211
+              ]
+            },
+            "Position": [
+              0.0,
+              2.6451405688021623e-07,
+              6.0513763427734375
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "LightBoxGlow.002",
+            "Light": {
+              "Type": "Point",
+              "Name": "LightBoxGlow_LightBoxGlow.002",
+              "Diffuse": [
+                0.9962801933288574,
+                1.0,
+                0.3344825804233551
+              ],
+              "Radiance": 370000.0,
+              "LightSize": 0.0,
+              "Attenuation": {
+                "Constant": 1.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
+                "InfluenceDistance": 0.0,
+                "InfluenceMinRadiance": 0.004000000189989805
+              },
+              "Direction": [
+                0.0,
+                0.0,
+                -1.0
+              ],
+              "Position": [
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "Position": [
+              2.091492857355694e-21,
+              1.9984014443252818e-15,
+              9.0
+            ],
+            "Rotation": [
+              -0.4999999701976776,
+              -0.5,
+              -0.5,
+              0.5
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "LightBox.003",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/LightBox.json",
+          "Name": "LightBox.mesh"
+        },
+        "Position": [
+          64.07412719726562,
+          -227.507080078125,
+          160.0
+        ],
+        "Rotation": [
+          -3.0908619663705394e-08,
+          0.7071067690849304,
+          0.7071067690849304,
+          -3.0908619663705394e-08
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "Nodes": [
+          {
+            "Name": "LightBox.Collider.003",
+            "CollisionShape": {
+              "Type": "Box",
+              "HalfExtents": [
+                24.024999618530273,
+                5.190000057220459,
+                14.03499984741211
+              ]
+            },
+            "Position": [
+              0.0,
+              2.6451405688021623e-07,
+              6.0513763427734375
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "LightBoxGlow.003",
+            "Light": {
+              "Type": "Point",
+              "Name": "LightBoxGlow_LightBoxGlow.003",
+              "Diffuse": [
+                0.9962801933288574,
+                1.0,
+                0.3344825804233551
+              ],
+              "Radiance": 370000.0,
+              "LightSize": 0.0,
+              "Attenuation": {
+                "Constant": 1.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
+                "InfluenceDistance": 0.0,
+                "InfluenceMinRadiance": 0.004000000189989805
+              },
+              "Direction": [
+                0.0,
+                0.0,
+                -1.0
+              ],
+              "Position": [
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "Position": [
+              2.091492857355694e-21,
+              1.9984014443252818e-15,
+              9.0
+            ],
+            "Rotation": [
+              -0.4999999701976776,
+              -0.5,
+              -0.5,
+              0.5
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "LightBox.004",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/LightBox.json",
+          "Name": "LightBox.mesh"
+        },
+        "Position": [
+          -395.1351318359375,
+          -239.64010620117188,
+          160.0
+        ],
+        "Rotation": [
+          -3.0908619663705394e-08,
+          0.7071067690849304,
+          0.7071067690849304,
+          -3.0908619663705394e-08
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "Nodes": [
+          {
+            "Name": "LightBox.Collider.004",
+            "CollisionShape": {
+              "Type": "Box",
+              "HalfExtents": [
+                24.024999618530273,
+                5.190000057220459,
+                14.03499984741211
+              ]
+            },
+            "Position": [
+              0.0,
+              2.6451405688021623e-07,
+              6.0513763427734375
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "LightBoxGlow.004",
+            "Light": {
+              "Type": "Point",
+              "Name": "LightBoxGlow_LightBoxGlow.004",
+              "Diffuse": [
+                0.9962801933288574,
+                1.0,
+                0.3344825804233551
+              ],
+              "Radiance": 370000.0,
+              "LightSize": 0.0,
+              "Attenuation": {
+                "Constant": 1.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
+                "InfluenceDistance": 0.0,
+                "InfluenceMinRadiance": 0.004000000189989805
+              },
+              "Direction": [
+                0.0,
+                0.0,
+                -1.0
+              ],
+              "Position": [
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "Position": [
+              2.091492857355694e-21,
+              1.9984014443252818e-15,
+              9.0
+            ],
+            "Rotation": [
+              -0.4999999701976776,
+              -0.5,
+              -0.5,
+              0.5
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "LightBox.005",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/LightBox.json",
+          "Name": "LightBox.mesh"
+        },
+        "Position": [
+          -140.53555297851562,
+          751.5037841796875,
+          160.0
+        ],
+        "Rotation": [
+          0.7071067690849304,
+          0.0,
+          0.0,
+          0.7071067690849304
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "Nodes": [
+          {
+            "Name": "LightBox.Collider.005",
+            "CollisionShape": {
+              "Type": "Box",
+              "HalfExtents": [
+                24.024999618530273,
+                5.190000057220459,
+                14.03499984741211
+              ]
+            },
+            "Position": [
+              0.0,
+              2.6451405688021623e-07,
+              6.0513763427734375
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "LightBoxGlow.005",
+            "Light": {
+              "Type": "Point",
+              "Name": "LightBoxGlow_LightBoxGlow.005",
+              "Diffuse": [
+                0.9962801933288574,
+                1.0,
+                0.3344825804233551
+              ],
+              "Radiance": 370000.0,
+              "LightSize": 0.0,
+              "Attenuation": {
+                "Constant": 1.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
+                "InfluenceDistance": 0.0,
+                "InfluenceMinRadiance": 0.004000000189989805
+              },
+              "Direction": [
+                0.0,
+                0.0,
+                -1.0
+              ],
+              "Position": [
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "Position": [
+              2.091492857355694e-21,
+              1.9984014443252818e-15,
+              9.0
+            ],
+            "Rotation": [
+              -0.4999999701976776,
+              -0.5,
+              -0.5,
+              0.5
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "LightBox.006",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/LightBox.json",
+          "Name": "LightBox.mesh"
+        },
+        "Position": [
+          268.85296630859375,
+          751.5037841796875,
+          160.0
+        ],
+        "Rotation": [
+          0.7071067690849304,
+          0.0,
+          0.0,
+          0.7071067690849304
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "Nodes": [
+          {
+            "Name": "LightBox.Collider.006",
+            "CollisionShape": {
+              "Type": "Box",
+              "HalfExtents": [
+                24.024999618530273,
+                5.190000057220459,
+                14.03499984741211
+              ]
+            },
+            "Position": [
+              0.0,
+              2.6451405688021623e-07,
+              6.0513763427734375
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "LightBoxGlow.006",
+            "Light": {
+              "Type": "Point",
+              "Name": "LightBoxGlow_LightBoxGlow.006",
+              "Diffuse": [
+                0.9962801933288574,
+                1.0,
+                0.3344825804233551
+              ],
+              "Radiance": 370000.0,
+              "LightSize": 0.0,
+              "Attenuation": {
+                "Constant": 1.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
+                "InfluenceDistance": 0.0,
+                "InfluenceMinRadiance": 0.004000000189989805
+              },
+              "Direction": [
+                0.0,
+                0.0,
+                -1.0
+              ],
+              "Position": [
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "Position": [
+              2.091492857355694e-21,
+              1.9984014443252818e-15,
+              9.0
+            ],
+            "Rotation": [
+              -0.4999999701976776,
+              -0.5,
+              -0.5,
+              0.5
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "LightBox.007",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/LightBox.json",
+          "Name": "LightBox.mesh"
+        },
+        "Position": [
+          -304.0112609863281,
+          435.739013671875,
+          160.0
+        ],
+        "Rotation": [
+          0.5,
+          0.5,
+          0.5,
+          0.4999999701976776
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "Nodes": [
+          {
+            "Name": "LightBox.Collider.007",
+            "CollisionShape": {
+              "Type": "Box",
+              "HalfExtents": [
+                24.024999618530273,
+                5.190000057220459,
+                14.03499984741211
+              ]
+            },
+            "Position": [
+              0.0,
+              2.6451405688021623e-07,
+              6.0513763427734375
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "LightBoxGlow.007",
+            "Light": {
+              "Type": "Point",
+              "Name": "LightBoxGlow_LightBoxGlow.007",
+              "Diffuse": [
+                0.9962801933288574,
+                1.0,
+                0.3344825804233551
+              ],
+              "Radiance": 370000.0,
+              "LightSize": 0.0,
+              "Attenuation": {
+                "Constant": 1.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
+                "InfluenceDistance": 0.0,
+                "InfluenceMinRadiance": 0.004000000189989805
+              },
+              "Direction": [
+                0.0,
+                0.0,
+                -1.0
+              ],
+              "Position": [
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "Position": [
+              2.091492857355694e-21,
+              1.9984014443252818e-15,
+              9.0
+            ],
+            "Rotation": [
+              -0.4999999701976776,
+              -0.5,
+              -0.5,
+              0.5
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "LightBox.008",
+        "Mesh": {
+          "Mesh": "vault_111:models/json/LightBox.json",
+          "Name": "LightBox.mesh"
+        },
+        "Position": [
+          431.4966735839844,
+          435.739013671875,
+          160.0
+        ],
+        "Rotation": [
+          0.5,
+          -0.5,
+          -0.5,
+          0.4999999701976776
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "Nodes": [
+          {
+            "Name": "LightBox.Collider.008",
+            "CollisionShape": {
+              "Type": "Box",
+              "HalfExtents": [
+                24.024999618530273,
+                5.190000057220459,
+                14.03499984741211
+              ]
+            },
+            "Position": [
+              0.0,
+              2.6451405688021623e-07,
+              6.0513763427734375
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "LightBoxGlow.008",
+            "Light": {
+              "Type": "Point",
+              "Name": "LightBoxGlow_LightBoxGlow.008",
+              "Diffuse": [
+                0.9962801933288574,
+                1.0,
+                0.3344825804233551
+              ],
+              "Radiance": 370000.0,
+              "LightSize": 0.0,
+              "Attenuation": {
+                "Constant": 1.0,
+                "Linear": 50.0,
+                "Quadratic": 130.0,
+                "InfluenceDistance": 0.0,
+                "InfluenceMinRadiance": 0.004000000189989805
+              },
+              "Direction": [
+                0.0,
+                0.0,
+                -1.0
+              ],
+              "Position": [
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "Position": [
+              2.091492857355694e-21,
+              1.9984014443252818e-15,
+              9.0
+            ],
+            "Rotation": [
+              -0.4999999701976776,
+              -0.5,
+              -0.5,
+              0.5
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          }
+        ]
+      },
       {
         "Name": "VltCeiling03Util",
         "Mesh": {

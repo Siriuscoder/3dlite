@@ -71,7 +71,7 @@ namespace lite3dpp
 
         Noncopiable() = default;
         Noncopiable(const Noncopiable &other) = delete;
-        Noncopiable(Noncopiable &&other) = delete;
+        Noncopiable& operator=(const Noncopiable&) = delete;
     };
 
 #ifdef LITE3DPP_USE_STL_ALLOCATOR

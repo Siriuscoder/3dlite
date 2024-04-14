@@ -1,0 +1,89 @@
+{
+  "Passes": [
+    {
+      "Pass": 1,
+      "Program": {
+        "Name": "depth.program",
+        "Path": "vault_111:shaders/json/depth.json"
+      },
+      "Uniforms": [
+        {
+          "Name": "projViewMatrix"
+        },
+        {
+          "Name": "modelMatrix"
+        }
+      ]
+    },
+    {
+      "Pass": 2,
+      "Program": {
+        "Name": "bsdf_glow_prepare.program",
+        "Path": "vault_111:shaders/json/bsdf_glow_prepare.json"
+      },
+      "Uniforms": [
+        {
+          "Name": "Albedo",
+          "Type": "sampler",
+          "TextureName": "Blue_d.texture",
+          "TexturePath": "vault_111:textures/json/Blue_d.json"
+        },
+        {
+          "Name": "Normal",
+          "Type": "sampler",
+          "TextureName": "FlatFlat_n.texture",
+          "TexturePath": "vault_111:textures/json/FlatFlat_n.json"
+        },
+        {
+          "Name": "Specular",
+          "Type": "sampler",
+          "TextureName": "White01_s.texture",
+          "TexturePath": "vault_111:textures/json/White01_s.json"
+        },
+        {
+          "Name": "Emission",
+          "Type": "sampler",
+          "TextureName": "Blue_d.texture",
+          "TexturePath": "vault_111:textures/json/Blue_d.json"
+        },
+        {
+          "Name": "EmissionStrength",
+          "Type": "float",
+          "Value": 4.0
+        },
+        {
+          "Name": "SpecularFactor",
+          "Type": "float",
+          "Value": 1.0
+        },
+        {
+          "Name": "MetallicFactor",
+          "Type": "float",
+          "Value": 0.1
+        },
+        {
+          "Name": "projViewMatrix"
+        }
+      ]
+    },
+    {
+      "Pass": 3,
+      "Program": {
+        "Name": "shadow.program",
+        "Path": "vault_111:shaders/json/shadow.json"
+      },
+      "Uniforms": [
+        {
+          "Name": "ShadowMatrix",
+          "UBOName": "ShadowMatrixBuffer",
+          "Type": "UBO"
+        },
+        {
+          "Name": "ShadowIndex",
+          "UBOName": "ShadowIndexBuffer",
+          "Type": "UBO"
+        }
+      ]
+    }
+  ]
+}

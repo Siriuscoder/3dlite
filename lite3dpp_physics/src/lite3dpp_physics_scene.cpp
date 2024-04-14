@@ -105,4 +105,16 @@ SceneObject::Ptr PhysicsScene::createObject(const String &name, SceneObject *par
         initialScale);
 }
 
+PhysicsSceneObject *PhysicsScene::addPhysicsObject(const String &name, const String &templatePath, 
+    SceneObject *parent, const kmVec3 &initialPosition, const kmQuaternion &initialRotation, const kmVec3 &initialScale)
+{
+    return static_cast<PhysicsSceneObject *>(addObject(name, templatePath, parent, initialPosition, initialRotation, initialScale));
+}
+
+PhysicsSceneObject *PhysicsScene::addPhysicsObject(const String &name, const ConfigurationReader &conf, 
+    SceneObject *parent, const kmVec3 &initialPosition, const kmQuaternion &initialRotation, const kmVec3 &initialScale)
+{
+    return static_cast<PhysicsSceneObject *>(addObject(name, conf, parent, initialPosition, initialRotation, initialScale));
+}
+
 }}

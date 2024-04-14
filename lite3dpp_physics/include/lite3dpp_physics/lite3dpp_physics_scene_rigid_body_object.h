@@ -17,34 +17,30 @@
  *******************************************************************************/
 #pragma once
 
+#include <lite3dpp_physics/lite3dpp_physics_scene_object.h>
 #include <lite3dpp_physics/lite3dpp_physics_scene_node.h>
 #include <lite3dpp_physics/lite3dpp_physics_motion_state.h>
 
 namespace lite3dpp {
 namespace lite3dpp_phisics {
 
-    class PhysicsRigidBodySceneObject : public SceneObject
+    class PhysicsRigidBodySceneObject : public PhysicsSceneObject
     {
     public:
 
         using CollisionNodes = stl<String, PhysicsCollisionShapeSceneNode::Ptr>::unordered_map;
 
-        enum BodyType {
-            BadBodyType,
-            BodyStatic = 1,
-            BodyDynamic, 
-            BodyKinematic
-        };
-
         PhysicsRigidBodySceneObject(const String &name, Scene *scene, SceneObject *parent,
             const kmVec3 &initialPosition, const kmQuaternion &initialRotation, const kmVec3 &initialScale);
-
-        inline BodyType getBodyType() const { return mBodyType; }
 
         void loadFromTemplate(const ConfigurationReader& conf) override;
         void detachAllNodes() override;
 
         virtual SceneNode* addCollisiuonShapeNode(const ConfigurationReader &nodeconf, SceneNode *parent);
+
+        void applyCentralImpulse(const kmVec3 &impulse) override;
+        void applyImpulse(const kmVec3 &impulse, const kmVec3 &relativeOffset) override;
+        void setLinearVelocity(const kmVec3 &velocity) override;
 
     protected:
         
@@ -54,10 +50,6 @@ namespace lite3dpp_phisics {
            случае если задана опция пересчета центра масс */
         void changeOrigin(const btVector3 &origin);
         virtual void fillRigidBodyInfo(btRigidBody::btRigidBodyConstructionInfo &info, const ConfigurationReader& conf);
-
-    private:
-
-        BodyType mBodyType = BadBodyType;
 
     protected:
 

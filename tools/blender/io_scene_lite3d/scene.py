@@ -181,6 +181,8 @@ class Scene:
             self.exportMesh(obj, node)
         elif obj.type == "LIGHT":
             self.exportLight(obj, node)
+        else:
+            self.exportPhysicsInfo(obj, node)
         
         if obj.parent is not None:
             Scene.orietation(obj, node)
@@ -207,7 +209,7 @@ class Scene:
                     if optName in ["physicsFriction", "physicsRollingFriction", "physicsSpinningFriction", "physicsRestitution"]:
                         physicsConf[optName.replace("physics", "")] = obj.get(optName)
                 node["Physics"] = physicsConf
-                return True
+                return False
 
             elif objCollisionType in self.physicsCollisionsTypes:
                 collisionShapeConf = {}
@@ -226,14 +228,15 @@ class Scene:
                         }
                 node["CollisionShape"] = collisionShapeConf
                 return True
+            
         return False
-
                 
     def exportObject(self, obj):
         if obj.type not in self.exportTypes:
             return
         # originObject можно указать имя обьекта который мы хотим переиспользовать 
         objectName = obj.get("originObject")
+        visible = obj.get("visible", True)
         if objectName is None:
             objectRoot = {"Root": {}}
             self.exportPhysicsInfo(obj, objectRoot["Root"])
@@ -241,13 +244,14 @@ class Scene:
             self.saveObject(obj, objectRoot)
             objectName = obj.name
         
-        object = {
-            "Name": obj.name,
-            "Object": self.getAbsPath(self.getRelativePathObject(objectName))
-        }
-        
-        Scene.orietation(obj, object)
-        self.objectsList.append(object)
+        if visible:
+            object = {
+                "Name": obj.name,
+                "Object": self.getAbsPath(self.getRelativePathObject(objectName))
+            }
+            
+            Scene.orietation(obj, object)
+            self.objectsList.append(object)
 
     def preloadScene(self):
         sceneFilePath = self.getAbsSysPath(self.getRelativePathScene(self.name))

@@ -19,6 +19,7 @@
 
 #include "../sample_vault_111/lite3dpp_vault_shadows.h"
 #include "../sample_vault_111/lite3dpp_vault_bloom.h"
+#include <lite3dpp_physics/lite3dpp_physics_scene.h>
 
 namespace lite3dpp {
 namespace samples {
@@ -54,7 +55,7 @@ public:
     {
         mShadowManager = std::make_unique<SampleShadowManager>(getMain());
         mBloomEffectRenderer = std::make_unique<SampleBloomEffect>(getMain());
-        mVaultScene = getMain().getResourceManager()->queryResource<Scene>("Vault_111", "vault_111:scenes/vault_room.json");
+        mVaultScene = getMain().getResourceManager()->queryResource<lite3dpp_phisics::PhysicsScene>("Vault_111", "vault_111:scenes/vault_room.json");
         getMain().getResourceManager()->queryResource<Scene>("ShadowClean", "vault_111:scenes/shadow_clean.json");
         setMainCamera(getMain().getCamera("MyCamera"));
 
@@ -109,7 +110,7 @@ public:
         auto sparkObject = mVaultScene->addObject("Spark_" + std::to_string(++mSparkCounter), 
             "samples:objects/light_spark.json", nullptr, getMainCamera().getPosition());
         auto node = sparkObject->getLightNode("PointLightSpark.node");
-        node->getLight()->setAttenuationConstant(0.0f);
+        node->getLight()->setAttenuationConstant(1.0f);
         node->getLight()->setAttenuationLinear(50.0f);
         node->getLight()->setAttenuationQuadratic(130.0f);
         node->getLight()->setRadiance(400000.0f);
@@ -169,6 +170,26 @@ public:
             {
                 addSpark();
             }
+            else if (e->key.keysym.sym == SDLK_q)
+            {
+                auto lightCapsule = mVaultScene->addPhysicsObject("Capsule_" + std::to_string(++mSparkCounter), 
+                    "vault_111:objects/LightCapsule.json", nullptr,
+                    getMainCamera().getPosition());
+
+                auto impulse = getMainCamera().getDirection();
+                kmVec3Scale(&impulse, &impulse, 850.0f);
+                lightCapsule->applyCentralImpulse(impulse);
+            }
+            else if (e->key.keysym.sym == SDLK_e)
+            {
+                auto ball = mVaultScene->addPhysicsObject("Capsule_" + std::to_string(++mSparkCounter), 
+                    "vault_111:objects/Ball.json", nullptr,
+                    getMainCamera().getPosition());
+
+                auto impulse = getMainCamera().getDirection();
+                kmVec3Scale(&impulse, &impulse, 850.0f);
+                ball->applyCentralImpulse(impulse);
+            }
             else if (e->key.keysym.sym == SDLK_u)
             {
                 static bool ssaoEnabled = true;
@@ -183,7 +204,7 @@ public:
 private:
 
     Scene* mCombineScene = nullptr;
-    Scene* mVaultScene = nullptr;
+    lite3dpp_phisics::PhysicsScene* mVaultScene = nullptr;
     Material* mSSAOShader = nullptr;
     std::unique_ptr<SampleShadowManager> mShadowManager;
     std::unique_ptr<SampleBloomEffect> mBloomEffectRenderer;
