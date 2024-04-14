@@ -48,12 +48,12 @@
         {
           "Name": "MetallicFactor",
           "Type": "float",
-          "Value": 0.1
+          "Value": 0.85
         },
         {
           "Name": "SpecularAmbientFactor",
           "Type": "float",
-          "Value": 0.1
+          "Value": 0.33
         },
         {
           "Name": "projViewMatrix"

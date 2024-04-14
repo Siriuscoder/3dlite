@@ -2,8 +2,8 @@
   "Root": {
     "Physics": {
       "Type": "Dynamic",
-      "Restitution": 0.6,
-      "RollingFriction": 0.6
+      "Restitution": 0.5,
+      "RollingFriction": 1.85
     },
     "Name": "LightCapsule",
     "Mesh": {
