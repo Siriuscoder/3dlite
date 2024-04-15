@@ -3,7 +3,9 @@
     "Physics": {
       "Type": "Dynamic",
       "Restitution": 0.9,
-      "RollingFriction": 1.0
+      "RollingFriction": 25,
+      "SpinningFriction": 25,
+      "AngularDamping": 0.45
     },
     "Name": "CannonBall",
     "Mesh": {

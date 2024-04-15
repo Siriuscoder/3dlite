@@ -49,14 +49,14 @@
             1.0000240802764893,
             0.9300949573516846
           ],
-          "Radiance": 70000.0,
+          "Radiance": 30000.0,
           "LightSize": 0.0,
           "Attenuation": {
             "Constant": 1.0,
             "Linear": 50.0,
             "Quadratic": 130.0,
             "InfluenceDistance": 0.0,
-            "InfluenceMinRadiance": 0.004000000189989805
+            "InfluenceMinRadiance": 0.02
           },
           "Direction": [
             0.0,

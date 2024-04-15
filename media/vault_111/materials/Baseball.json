@@ -43,7 +43,7 @@
         {
           "Name": "SpecularFactor",
           "Type": "float",
-          "Value": 0.8
+          "Value": 0.75
         },
         {
           "Name": "MetallicFactor",
