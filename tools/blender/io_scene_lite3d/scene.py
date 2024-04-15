@@ -206,7 +206,8 @@ class Scene:
                 physicsConf = {}
                 physicsConf["Type"] = objType
                 for optName in obj.keys():
-                    if optName in ["physicsFriction", "physicsRollingFriction", "physicsSpinningFriction", "physicsRestitution"]:
+                    if optName in ["physicsFriction", "physicsRollingFriction", "physicsSpinningFriction", "physicsRestitution",
+                                   "physicsLinearDamping", "physicsAngularDamping", "physicsLinearSleepingThreshold", "physicsAngularSleepingThreshold"]:
                         physicsConf[optName.replace("physics", "")] = obj.get(optName)
                 node["Physics"] = physicsConf
                 return False

@@ -172,6 +172,10 @@ namespace lite3dpp_phisics {
         info.m_rollingFriction = conf.getDouble(L"RollingFriction", 0.0f);
         info.m_spinningFriction = conf.getDouble(L"SpinningFriction", 0.0f);
         info.m_restitution = conf.getDouble(L"Restitution", 0.0f);
+        info.m_linearDamping = conf.getDouble(L"LinearDamping", 0.0f);
+        info.m_angularDamping = conf.getDouble(L"AngularDamping", 0.0f);
+        info.m_linearSleepingThreshold = conf.getDouble(L"LinearSleepingThreshold", 0.8f);
+        info.m_angularSleepingThreshold = conf.getDouble(L"AngularSleepingThreshold", 0.8f);
     }
 
     void PhysicsRigidBodySceneObject::applyCentralImpulse(const kmVec3 &impulse)
