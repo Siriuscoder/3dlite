@@ -90,6 +90,11 @@ namespace lite3dpp_phisics {
         mCompoundCollisionShape->setUserPointer(this);
         mBody->setUserPointer(this);
         mWorld->addRigidBody(mBody.get());
+
+        if (physicsConfig.has(L"Gravity"))
+        {
+            mBody->setGravity(BulletUtils::convert(physicsConfig.getVec3(L"Gravity")));
+        }
     }
 
     btTransform PhysicsRigidBodySceneObject::calcRelativeTransform(const SceneNode *node)

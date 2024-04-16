@@ -35,6 +35,8 @@ namespace lite3dpp
         friend LightSceneNode;
     public:
 
+        static const constexpr size_t InitialLightCount = 10; 
+
         using SceneObjects = stl<String, SceneObject::Ptr>::unordered_map;
         using SceneLights = stl<LightSceneNode *>::unordered_set;
         using SceneCameras = stl<String, Camera*>::unordered_map;

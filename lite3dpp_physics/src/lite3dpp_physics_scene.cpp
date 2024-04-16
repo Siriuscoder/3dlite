@@ -44,11 +44,11 @@ void PhysicsScene::loadFromConfigImpl(const ConfigurationReader &conf)
         mConstraintSolver.get(), mCollisionConfig.get());
 
     mWorld->setGravity(BulletUtils::convert(physicsConfig.getVec3(L"Gravity")));
-    mWorld->setLatencyMotionStateInterpolation(true);
+    //mWorld->setLatencyMotionStateInterpolation(true);
     mMaxSubStepCount = physicsConfig.getInt(L"MaxSubStepCount", MaxSubStepCount);
     if (physicsConfig.has(L"ManualFixedStepIntervalMs"))
     {
-        mFixedTimeStep = 1000.0f / physicsConfig.getInt(L"ManualFixedStepIntervalMs");
+        mFixedTimeStep = physicsConfig.getInt(L"ManualFixedStepIntervalMs") / 1000.0f;
     }
     else
     {

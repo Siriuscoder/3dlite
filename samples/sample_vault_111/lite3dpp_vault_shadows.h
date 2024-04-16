@@ -150,13 +150,18 @@ public:
         ShadowCasters mVisibility;
     };
 
-    SampleShadowManager(Main& main) : 
+    SampleShadowManager(Main& main, size_t initialShadowCastersCount = 1) : 
         mMain(main)
     {
         mShadowMatrixBuffer = mMain.getResourceManager()->queryResourceFromJson<UBO>("ShadowMatrixBuffer",
             "{\"Dynamic\": false}");
         mShadowIndexBuffer = mMain.getResourceManager()->queryResourceFromJson<UBO>("ShadowIndexBuffer",
             "{\"Dynamic\": true}");
+
+        mShadowMatrixBuffer->extendBufferBytes(sizeof(kmMat4) * initialShadowCastersCount);
+        mShadowIndexBuffer->extendBufferBytes(sizeof(IndexVector::value_type) * (initialShadowCastersCount + 1));
+        IndexVector::value_type initialZero = 0;
+        mShadowIndexBuffer->setElement<IndexVector::value_type>(0, &initialZero);
     }
 
     ShadowCaster* newShadowCaster(LightSceneNode* node)
@@ -166,7 +171,11 @@ public:
         // Запишем в источник света индекс его теневой матрицы в UBO
         node->getLight()->setUserIndex(index);
         // Аллоцируем место под теневую матрицу 
-        mShadowMatrixBuffer->extendBufferBytes(sizeof(kmMat4));
+        if (mShadowMatrixBuffer->bufferSizeBytes() < mShadowCasters.size() * sizeof(kmMat4))
+        {
+            mShadowMatrixBuffer->extendBufferBytes(sizeof(kmMat4));
+        }
+
         return mShadowCasters.back().get();
     }
 

@@ -66,52 +66,51 @@ namespace lite3dpp
         String lightingTechnique = helper.getString(L"LightingTechnique", "none");
         if (lightingTechnique != "none")
         {
-            try
+            if (lightingTechnique == "TBO")
             {
-                if (lightingTechnique == "TBO")
-                {
-                    /* default name of lighting buffer is scene name + "LightingBufferObject" */
-                    mLightingParamsBuffer = getMain().getResourceManager()->
-                        queryResourceFromJson<TextureBuffer>(getName() + "_lightingBufferObject",
-                        "{\"BufferFormat\": \"RGBA32F\", \"Dynamic\": false}");
-                    /* 2-bytes index, about 16k light sources support  */
-                    mLightingIndexBuffer = getMain().getResourceManager()->
-                        queryResourceFromJson<TextureBuffer>(getName() + "_lightingIndexBuffer",
-                        "{\"BufferFormat\": \"R32I\", \"Dynamic\": true}");
-                }
-                else if (lightingTechnique == "SSBO")
-                {
-                    /* default name of lighting buffer is scene name + "LightingBufferObject" */
-                    mLightingParamsBuffer = getMain().getResourceManager()->
-                        queryResourceFromJson<SSBO>(getName() + "_lightingBufferObject",
-                        "{\"Dynamic\": false}");
-
-                    /* 2-bytes index, about 16k light sources support  */
-                    mLightingIndexBuffer = getMain().getResourceManager()->
-                        queryResourceFromJson<SSBO>(getName() + "_lightingIndexBuffer",
-                        "{\"Dynamic\": true}");
-                }
-                else if (lightingTechnique == "UBO")
-                {
-                    /* default name of lighting buffer is scene name + "LightingBufferObject" */
-                    mLightingParamsBuffer = getMain().getResourceManager()->
-                        queryResourceFromJson<UBO>(getName() + "_lightingBufferObject",
-                        "{\"Dynamic\": false}");
-
-                    /* 2-bytes index, about 16k light sources support  */
-                    mLightingIndexBuffer = getMain().getResourceManager()->
-                        queryResourceFromJson<UBO>(getName() + "_lightingIndexBuffer",
-                        "{\"Dynamic\": true}");
-                }
-
-                SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
-                    "Using lighting technique '%s' for scene %s", lightingTechnique.c_str(), getName().c_str());
+                /* default name of lighting buffer is scene name + "LightingBufferObject" */
+                mLightingParamsBuffer = getMain().getResourceManager()->
+                    queryResourceFromJson<TextureBuffer>(getName() + "_lightingBufferObject",
+                    "{\"BufferFormat\": \"RGBA32F\", \"Dynamic\": false}");
+                /* 2-bytes index, about 16k light sources support  */
+                mLightingIndexBuffer = getMain().getResourceManager()->
+                    queryResourceFromJson<TextureBuffer>(getName() + "_lightingIndexBuffer",
+                    "{\"BufferFormat\": \"R32I\", \"Dynamic\": true}");
             }
-            catch(std::exception &ex)
+            else if (lightingTechnique == "SSBO")
             {
-                LITE3D_THROW("Failed to setup lighting technique '" << lightingTechnique << "' for scene '" << getName() 
-                    << "', " << ex.what());
+                /* default name of lighting buffer is scene name + "LightingBufferObject" */
+                mLightingParamsBuffer = getMain().getResourceManager()->
+                    queryResourceFromJson<SSBO>(getName() + "_lightingBufferObject",
+                    "{\"Dynamic\": false}");
+                /* 2-bytes index, about 16k light sources support  */
+                mLightingIndexBuffer = getMain().getResourceManager()->
+                    queryResourceFromJson<SSBO>(getName() + "_lightingIndexBuffer",
+                    "{\"Dynamic\": true}");
             }
+            else if (lightingTechnique == "UBO")
+            {
+                /* default name of lighting buffer is scene name + "LightingBufferObject" */
+                mLightingParamsBuffer = getMain().getResourceManager()->
+                    queryResourceFromJson<UBO>(getName() + "_lightingBufferObject",
+                    "{\"Dynamic\": false}");
+                /* 2-bytes index, about 16k light sources support  */
+                mLightingIndexBuffer = getMain().getResourceManager()->
+                    queryResourceFromJson<UBO>(getName() + "_lightingIndexBuffer",
+                    "{\"Dynamic\": true}");
+            }
+            else
+            {
+                LITE3D_THROW("Unknown lighting technique '" << lightingTechnique << "' method, scene '" << getName() << "'");
+            }
+
+            mLightingParamsBuffer->extendBufferBytes(sizeof(lite3d_light_params) * InitialLightCount);
+            mLightingIndexBuffer->extendBufferBytes(sizeof(LightsIndexesStore::value_type) * (InitialLightCount + 1));
+            LightsIndexesStore::value_type initialZero = 0;
+            mLightingIndexBuffer->setElement<LightsIndexesStore::value_type>(0, &initialZero);
+
+            SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
+                "Using lighting technique '%s' for scene %s", lightingTechnique.c_str(), getName().c_str());
         }
 
         setupCameras(helper.getObjects(L"Cameras"));
@@ -200,8 +199,12 @@ namespace lite3dpp
 
         uint32_t i = 0;
 
+        // check light sources buffer size, extend it if needed
         if (mLightingParamsBuffer->bufferSizeBytes() < (mLights.size() * sizeof(lite3d_light_params)))
-            mLightingParamsBuffer->extendBufferBytes(sizeof(lite3d_light_params) * mLights.size());
+        {
+            mLightingParamsBuffer->extendBufferBytes(sizeof(lite3d_light_params) * mLights.size() - 
+                mLightingParamsBuffer->bufferSizeBytes());
+        }
 
         for (auto &light : mLights)
         {
@@ -217,8 +220,11 @@ namespace lite3dpp
 
         // check index buffer size, extend it if needed
         if (mLightingIndexBuffer->bufferSizeBytes() < (mLights.size()+1)*sizeof(LightsIndexesStore::value_type))
-            mLightingIndexBuffer->extendBufferBytes(((mLights.size()+1)*sizeof(LightsIndexesStore::value_type))-
-            mLightingIndexBuffer->bufferSizeBytes());
+        {
+            mLightingIndexBuffer->extendBufferBytes(((mLights.size()+1) * sizeof(LightsIndexesStore::value_type)) -
+                mLightingIndexBuffer->bufferSizeBytes());
+        }
+
         mLightsIndexes.clear();
         mLightsIndexes.emplace_back(0); // reserve first index for size
         

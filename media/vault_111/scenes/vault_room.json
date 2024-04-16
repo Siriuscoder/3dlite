@@ -76,7 +76,8 @@
       0.0,
       -98.0
     ],
-    "MaxSubStepCount": 10
+    "MaxSubStepCount": 10,
+    "ManualFixedStepIntervalMs": 6
   },
   "Objects": [
     {

@@ -85,7 +85,7 @@ public:
 
     void createScene() override
     {
-        mShadowManager = std::make_unique<SampleShadowManager>(getMain());
+        mShadowManager = std::make_unique<SampleShadowManager>(getMain(), 5);
         mBloomEffectRenderer = std::make_unique<SampleBloomEffect>(getMain());
         mLightAnimEffects = std::make_unique<SampleLightEffectManager>();
         mVaultScene = getMain().getResourceManager()->queryResource<Scene>("Vault_111", "vault_111:scenes/vault_111.json");
