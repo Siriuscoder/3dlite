@@ -2,7 +2,7 @@
   "Root": {
     "Physics": {
       "Type": "Static",
-      "Restitution": 0.25,
+      "Restitution": 0.32,
       "RollingFriction": 0.8,
       "SpinningFriction": 0.8,
       "Friction": 0.85

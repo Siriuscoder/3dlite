@@ -4,7 +4,8 @@
       "Type": "Dynamic",
       "Restitution": 1.2,
       "RollingFriction": 12,
-      "SpinningFriction": 12
+      "SpinningFriction": 12,
+      "LinearDamping": 0.1
     },
     "Name": "Ball",
     "Mesh": {
