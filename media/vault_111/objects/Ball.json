@@ -2,10 +2,10 @@
   "Root": {
     "Physics": {
       "Type": "Dynamic",
-      "Restitution": 1.2,
-      "RollingFriction": 12,
-      "SpinningFriction": 12,
-      "LinearDamping": 0.1
+      "Restitution": 1.2000000476837158,
+      "RollingFriction": 12.0,
+      "SpinningFriction": 12.0,
+      "LinearDamping": 0.10000000149011612
     },
     "Name": "Ball",
     "Mesh": {

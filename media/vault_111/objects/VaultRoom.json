@@ -2,10 +2,10 @@
   "Root": {
     "Physics": {
       "Type": "Static",
-      "Restitution": 0.32,
-      "RollingFriction": 0.8,
-      "SpinningFriction": 0.8,
-      "Friction": 0.85
+      "Restitution": 0.3199999928474426,
+      "RollingFriction": 0.800000011920929,
+      "Friction": 0.8500000238418579,
+      "SpinningFriction": 0.800000011920929
     },
     "Name": "VaultRoom",
     "Nodes": [

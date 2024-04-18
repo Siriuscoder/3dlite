@@ -1,6 +1,7 @@
 #include "samples:shaders/sources/common/version.def"
 
 uniform sampler2D Normal;
+uniform vec3 NormalScale;
 
 vec3 GetFixedWorldNormal(mat3 tbn, vec2 iuv)
 {
@@ -16,12 +17,10 @@ vec3 GetFixedWorldNormal(mat3 tbn, vec2 iuv)
 
     // sampling normal from normal map with swap XY
     vec3 nt = texture(Normal, iuv).rgb;
-    // Flip Y channel to fix model texcoords flip while export models (FlipUV)
-    nt.y = 1.0 - nt.y;
     // put normal in [-1,1] range in tangent space
     nt = 2.0 * clamp(nt, 0.0, 1.0) - 1.0;
     // Refix Z (may be missing)
     nt.z = sqrt(1.0 - dot(nt.xy, nt.xy));
     // trasform normal to world space using common TBN
-    return normalize(tbn * nt);
+    return normalize(tbn * (nt * NormalScale));
 }

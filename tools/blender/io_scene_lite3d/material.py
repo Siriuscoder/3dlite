@@ -73,8 +73,13 @@ class Material:
             paramValue = self.material.get(paramName)
             if paramType == "float" and paramValue is not None:
                 val["Value"] = float(paramValue)
+            elif paramType == "v3" and paramValue is not None:
+                val["Value"] = [float(x) for x in paramValue]
     
     def processTemplate(self, template):
+        if not isinstance(template, dict):
+            return
+        
         self.processParams(template)
         for key, val in template.items():
             if isinstance(val, str):
