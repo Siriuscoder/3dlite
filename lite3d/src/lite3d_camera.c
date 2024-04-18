@@ -218,16 +218,23 @@ void lite3d_camera_move(lite3d_camera *camera, const kmVec3 *value)
     lite3d_scene_node_move(&camera->cameraNode, value);
 }
 
+void lite3d_camera_transform_to_world(lite3d_camera *camera, 
+    const kmVec3 *local, kmVec3 *world)
+{
+    kmQuaternion inverse;
+    SDL_assert(camera);
+
+    kmQuaternionInverse(&inverse, &camera->cameraNode.rotation);
+    kmQuaternionMultiplyVec3(world, &inverse, local);
+}
+
 void lite3d_camera_move_relative(lite3d_camera *camera,
     const kmVec3 *vec)
 {
-    kmVec3 vecLocalCamera;
-    kmQuaternion inverseRot;
-
-    SDL_assert(camera);
-    kmQuaternionInverse(&inverseRot, &camera->cameraNode.rotation);
-    kmQuaternionMultiplyVec3(&vecLocalCamera, &inverseRot, vec);
-    lite3d_scene_node_move(&camera->cameraNode, &vecLocalCamera);
+    kmVec3 worldRelativeMove;
+    
+    lite3d_camera_transform_to_world(camera, vec, &worldRelativeMove);
+    lite3d_scene_node_move(&camera->cameraNode, &worldRelativeMove);
 }
 
 void lite3d_camera_direction(const lite3d_camera *camera,

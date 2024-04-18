@@ -23,25 +23,10 @@
 
 #include "lite3dpp_common.h"
 
-#define VELOCITY_MAX    200.0f
-#define ACCEL           40.0f
-#define ACCEL_RESIST    20.0f
-
 namespace lite3dpp {
 namespace samples {
 
-Sample::Sample() : 
-    mMainCamera(nullptr),
-    mGuiCamera(nullptr),
-    mGuiScene(nullptr),
-    mMainWindow(nullptr),
-    mStatTexture(nullptr),
-    mStatTimer(nullptr),
-    mWCenter(KM_VEC2_ZERO),
-    mCamAngles(KM_VEC2_ZERO),
-    mSensitivity(0.001f),
-    mVelocity(KM_VEC2_ZERO),
-    mAccel(KM_VEC2_ZERO)
+Sample::Sample()
 {
     mMain.addObserver(this);
 }
@@ -74,11 +59,6 @@ void Sample::init()
     mMain.showSystemCursor(false);
 }
 
-void Sample::frameBegin()
-{
-    moveCamera();
-}
-
 void Sample::fixedUpdateTimerTick(int32_t firedPerRound, uint64_t deltaMcs, float deltaRetard)
 {}
 
@@ -86,36 +66,9 @@ void Sample::timerTick(lite3d_timer *timerid)
 {
     if (timerid == mMain.getFixedUpdateTimer())
     {
-        const Uint8 *kstate = SDL_GetKeyboardState(NULL);
-        if (kstate[SDL_SCANCODE_W])
-            mAccel.x = -ACCEL;
-        if (kstate[SDL_SCANCODE_S])
-            mAccel.x = ACCEL;
-        if (kstate[SDL_SCANCODE_A])
-            mAccel.y = -ACCEL;
-        if (kstate[SDL_SCANCODE_D])
-            mAccel.y = ACCEL;
-        
-        if (!kstate[SDL_SCANCODE_W] && !kstate[SDL_SCANCODE_S])
-            mAccel.x = 0.0f;
-        if (!kstate[SDL_SCANCODE_A] && !kstate[SDL_SCANCODE_D])
-            mAccel.y = 0.0f;
-        
-        kmVec2Add(&mVelocity, &mVelocity, &mAccel);
-        if (mVelocity.x > 0)
-            mVelocity.x -= ACCEL_RESIST;
-        if (mVelocity.x < 0)
-            mVelocity.x += ACCEL_RESIST;
-        if (mVelocity.y > 0)
-            mVelocity.y -= ACCEL_RESIST;
-        if (mVelocity.y < 0)
-            mVelocity.y += ACCEL_RESIST;
-        
-        mVelocity.x = std::max(-VELOCITY_MAX, std::min(mVelocity.x, VELOCITY_MAX));
-        mVelocity.y = std::max(-VELOCITY_MAX, std::min(mVelocity.y, VELOCITY_MAX));
-
         // Считаем запаздывание таймера как отношение фактического времени к интервалу
         float deltaRetard = static_cast<float>(static_cast<double>(timerid->deltaMcs) / (timerid->interval * 1000.0));
+        moveCamera(deltaRetard);
         fixedUpdateTimerTick(timerid->firedPerRound, timerid->deltaMcs, deltaRetard);
     }
     else if (timerid == mStatTimer)
@@ -170,19 +123,19 @@ void Sample::processEvent(SDL_Event *e)
     {
         if (e->motion.x != mWCenter.x || e->motion.y != mWCenter.y)
         {
-            mCamAngles.x += (e->motion.x - mWCenter.x) * mSensitivity;
-            mCamAngles.y += (e->motion.y - mWCenter.y) * mSensitivity;
-            
+            mCameraAngles.x += (e->motion.x - mWCenter.x) * mCameraSensitivity;
+            mCameraAngles.y += (e->motion.y - mWCenter.y) * mCameraSensitivity;
+
             // angles restrictions
-            mCamAngles.y = std::max((float)-M_PI, std::min(mCamAngles.y, 0.0f));
-            if (mCamAngles.x > M_PI * 2)
-                mCamAngles.x = 0;
-            
+            mCameraAngles.y = std::max((float)-M_PI, std::min(mCameraAngles.y, 0.0f));
+            if (mCameraAngles.x > M_PI * 2)
+                mCameraAngles.x = 0;
+
             kmQuaternion camZQuat, camPQuat, sumQuat;
-            kmQuaternionRotationAxisAngle(&camZQuat, &KM_VEC3_POS_Z, mCamAngles.x);
-            kmQuaternionRotationAxisAngle(&camPQuat, &KM_VEC3_POS_X, mCamAngles.y);
+            kmQuaternionRotationAxisAngle(&camZQuat, &KM_VEC3_POS_Z, mCameraAngles.x);
+            kmQuaternionRotationAxisAngle(&camPQuat, &KM_VEC3_POS_X, mCameraAngles.y);
             kmQuaternionMultiply(&sumQuat, &camPQuat, &camZQuat);
-    
+
             //mMainCamera->rotateZ(e->motion.xrel * 0.003f);
             //mMainCamera->pitch(e->motion.yrel * 0.003f);
             lite3d_video_set_mouse_pos(mWCenter.x, mWCenter.y);
@@ -343,19 +296,44 @@ int Sample::start(const char *config)
 void Sample::mainCameraChanged()
 {}
 
-void Sample::moveCamera()
-{    
-    if (mVelocity.x != 0.0f || mVelocity.y != 0.0f)
+void Sample::moveCamera(float deltaRetard)
+{
+    const Uint8 *kstate = SDL_GetKeyboardState(NULL);
+    kmVec2 accel = KM_VEC2_ZERO;
+
+    if (kstate[SDL_SCANCODE_W])
+        accel.x = -mCameraAccel * deltaRetard;
+    if (kstate[SDL_SCANCODE_S])
+        accel.x = mCameraAccel * deltaRetard;
+    if (kstate[SDL_SCANCODE_A])
+        accel.y = -mCameraAccel * deltaRetard;
+    if (kstate[SDL_SCANCODE_D])
+        accel.y = mCameraAccel * deltaRetard;
+    
+    kmVec2Add(&mCameraVelocityVector, &mCameraVelocityVector, &accel);
+    if (mCameraVelocityVector.x > 0)
+        mCameraVelocityVector.x -= std::min(mCameraAccelResistance * deltaRetard, mCameraVelocityVector.x);
+    if (mCameraVelocityVector.x < 0)
+        mCameraVelocityVector.x += std::min(mCameraAccelResistance * deltaRetard, std::abs(mCameraVelocityVector.x));
+    if (mCameraVelocityVector.y > 0)
+        mCameraVelocityVector.y -= std::min(mCameraAccelResistance * deltaRetard, mCameraVelocityVector.y);
+    if (mCameraVelocityVector.y < 0)
+        mCameraVelocityVector.y += std::min(mCameraAccelResistance * deltaRetard, std::abs(mCameraVelocityVector.y));
+    
+    mCameraVelocityVector.x = std::max(-mCameraVelocityMax, std::min(mCameraVelocityVector.x, mCameraVelocityMax));
+    mCameraVelocityVector.y = std::max(-mCameraVelocityMax, std::min(mCameraVelocityVector.y, mCameraVelocityMax));
+    
+    if (near(mCameraVelocityVector.x, 0.0f) && near(mCameraVelocityVector.y, 0.0f))
     {
-        lite3d_render_stats *stats = lite3d_render_stats_get();    
-        kmVec3 step;
-        
-        step.x = mVelocity.y * (stats->lastFrameMs / 1000);
-        step.y = 0.0f;
-        step.z = mVelocity.x * (stats->lastFrameMs / 1000);
-        mMainCamera->moveRelative(step);
-        mainCameraChanged();
+        return;
     }
+
+    setCameraVelocity(kmVec3 { mCameraVelocityVector.y, 0.0f, mCameraVelocityVector.x });
+}
+
+void Sample::setCameraVelocity(const kmVec3& velocity)
+{
+    mMainCamera->moveRelative(velocity);
 }
 
 }}

@@ -86,6 +86,8 @@ LITE3D_CEXPORT float lite3d_camera_distance(lite3d_camera *camera,
     const kmVec3 *point);
 LITE3D_CEXPORT void lite3d_camera_direction(const lite3d_camera *camera,
     kmVec3 *vec);
+LITE3D_CEXPORT void lite3d_camera_transform_to_world(lite3d_camera *camera, 
+    const kmVec3 *local, kmVec3 *world);
 
 #endif	/* LITE3D_CAMERA_H */
 

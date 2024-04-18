@@ -172,23 +172,15 @@ public:
             }
             else if (e->key.keysym.sym == SDLK_q)
             {
-                auto lightCapsule = mVaultScene->addPhysicsObject("Capsule_" + std::to_string(++mSparkCounter), 
+                dropObject(mVaultScene->addPhysicsObject("Capsule_" + std::to_string(++mSparkCounter), 
                     "vault_111:objects/LightCapsule.json", nullptr,
-                    getMainCamera().getPosition());
-
-                auto impulse = getMainCamera().getDirection();
-                kmVec3Scale(&impulse, &impulse, 850.0f);
-                lightCapsule->applyCentralImpulse(impulse);
+                    getMainCamera().getPosition()));
             }
             else if (e->key.keysym.sym == SDLK_e)
             {
-                auto ball = mVaultScene->addPhysicsObject("Capsule_" + std::to_string(++mSparkCounter), 
+                dropObject(mVaultScene->addPhysicsObject("Capsule_" + std::to_string(++mSparkCounter), 
                     "vault_111:objects/Ball.json", nullptr,
-                    getMainCamera().getPosition());
-
-                auto impulse = getMainCamera().getDirection();
-                kmVec3Scale(&impulse, &impulse, 850.0f);
-                ball->applyCentralImpulse(impulse);
+                    getMainCamera().getPosition()));
             }
             else if (e->key.keysym.sym == SDLK_u)
             {
@@ -201,6 +193,21 @@ public:
         }
     }
 
+    void dropObject(lite3dpp_phisics::PhysicsSceneObject *o)
+    {
+        auto impulse = getMainCamera().getDirection();
+        kmVec3Scale(&impulse, &impulse, 850.0f);
+        o->applyCentralImpulse(impulse);
+
+        if (mObjects.size() >= 400)
+        {
+            mVaultScene->removeObject(mObjects.front()->getName());
+            mObjects.pop_front();
+        }
+
+        mObjects.push_back(o);
+    }
+
 private:
 
     Scene* mCombineScene = nullptr;
@@ -209,6 +216,7 @@ private:
     std::unique_ptr<SampleShadowManager> mShadowManager;
     std::unique_ptr<SampleBloomEffect> mBloomEffectRenderer;
     LightSceneNode* mFlashLight;
+    stl<lite3dpp_phisics::PhysicsSceneObject *>::list mObjects;
     float mGammaFactor = 2.2;
     int mSparkCounter = 0;
 };
