@@ -41,13 +41,12 @@ public:
         // Важно для отрисовки sky cube
         RenderTarget::depthTestFunc(RenderTarget::TestFuncLEqual);
         // Позиция наблюдателя
-        lite3dpp::Material::setFloatv3GlobalParameter("eye", getMainCamera().getPosition());
+        lite3dpp::Material::setFloatv3GlobalParameter("eye", getMainCamera().getWorldPosition());
     }
 
     void mainCameraChanged() override
     {
-        Sample::mainCameraChanged();
-        lite3dpp::Material::setFloatv3GlobalParameter("eye", getMainCamera().getPosition());
+        lite3dpp::Material::setFloatv3GlobalParameter("eye", getMainCamera().getWorldPosition());
     }
 
     void processEvent(SDL_Event *e) override

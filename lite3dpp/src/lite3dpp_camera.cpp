@@ -60,6 +60,12 @@ namespace lite3dpp
         return reinterpret_cast<Scene *>(scene->userdata);
     }
 
+    void Camera::resetView()
+    {
+        mCamera.cameraNode.rotation = KM_QUATERNION_IDENTITY;
+        mCamera.cameraNode.recalc = LITE3D_TRUE;
+    }
+
     void Camera::lookAt(const kmVec3 &pointTo)
     {
         lite3d_camera_lookAt(&mCamera, &pointTo);
@@ -82,13 +88,7 @@ namespace lite3dpp
 
     void Camera::setDirection(const kmVec3 &direction)
     {
-        kmQuaternion rot;
-        kmVec3 up = {
-            0.0f, 0.0f, 1.0f
-        };
-
-        kmQuaternionLookRotation(&rot, &direction, &up);
-        setRotation(rot);
+        lite3d_camera_set_direction(&mCamera, &direction);
     }
 
     void Camera::rotate(const kmQuaternion &orietation)
@@ -96,19 +96,41 @@ namespace lite3dpp
         lite3d_camera_set_rotation(&mCamera, &orietation);
     }
 
-    void Camera::yaw(float angle)
+    void Camera::yaw(float angleDelta)
     {
-        lite3d_camera_yaw(&mCamera, angle);
+        lite3d_camera_yaw(&mCamera, angleDelta);
     }
 
-    void Camera::pitch(float angle)
+    void Camera::pitch(float angleDelta)
     {
-        lite3d_camera_pitch(&mCamera, angle);
+        lite3d_camera_pitch(&mCamera, angleDelta);
     }
 
-    void Camera::roll(float angle)
+    void Camera::roll(float angleDelta)
     {
-        lite3d_camera_roll(&mCamera, angle);
+        lite3d_camera_roll(&mCamera, angleDelta);
+    }
+
+    void Camera::setYawPitchRoll(float yaw, float pitch, float roll)
+    {
+        lite3d_camera_set_yaw_pitch_roll(&mCamera, yaw, pitch, roll);
+    }
+
+    void Camera::setOrientationAngles(float ZW, float XW)
+    {
+        resetView();
+        roll(ZW);
+        pitch(XW);
+    }
+
+    float Camera::getZW() const
+    {
+        return getRoll();
+    }
+
+    float Camera::getXW() const
+    {
+        return getPitch();
     }
 
     void Camera::move(const kmVec3 &value)
@@ -116,19 +138,19 @@ namespace lite3dpp
         lite3d_camera_move(&mCamera, &value);
     }
     
-    void Camera::rotateY(float angle)
+    void Camera::rotateY(float angleDelta)
     {
-        lite3d_camera_rotate_y(&mCamera, angle);
+        lite3d_camera_rotate_y(&mCamera, angleDelta);
     }
     
-    void Camera::rotateX(float angle)
+    void Camera::rotateX(float angleDelta)
     {
-        lite3d_camera_rotate_x(&mCamera, angle);
+        lite3d_camera_rotate_x(&mCamera, angleDelta);
     }
     
-    void Camera::rotateZ(float angle)
+    void Camera::rotateZ(float angleDelta)
     {
-        lite3d_camera_rotate_z(&mCamera, angle);
+        lite3d_camera_rotate_z(&mCamera, angleDelta);
     }
 
     void Camera::moveRelative(const kmVec3 &value)
@@ -152,18 +174,33 @@ namespace lite3dpp
         lite3d_camera_direction(&mCamera, &direction);
         return direction;
     }
-    
-    kmQuaternion Camera::getRotation() const 
+
+    kmVec3 Camera::getWorldDirection() const
     {
-        kmQuaternion inverseRot;
-        kmQuaternionInverse(&inverseRot, &mCamera.cameraNode.rotation);
-        return inverseRot;
+        kmVec3 direction;
+        lite3d_camera_world_direction(&mCamera, &direction);
+        return direction;
     }
 
-    const kmMat4& Camera::getTransformMatrix()
+    kmVec3 Camera::getWorldPosition() const
+    {
+        kmVec3 position;
+        lite3d_camera_world_position(&mCamera, &position);
+        return position;
+    }
+
+    kmQuaternion Camera::getWorldRotation() const
+    {
+        kmQuaternion q;
+        lite3d_camera_world_rotation(&mCamera, &q);
+        return q;
+    }
+
+    const kmMat4& Camera::refreshViewMatrix()
     {
         lite3d_scene_node_update(&mCamera.cameraNode);
-        return mCamera.cameraNode.worldView;
+        lite3d_camera_compute_view(&mCamera);
+        return mCamera.view;
     }
 
     const kmMat4& Camera::getProjMatrix() const
@@ -171,15 +208,15 @@ namespace lite3dpp
         return mCamera.projection;
     }
 
-    const kmMat4& Camera::getProjTransformMatrix()
+    const kmMat4& Camera::refreshProjViewMatrix()
     {
-        kmMat4Multiply(&mCamera.screen, &getProjMatrix(), &getTransformMatrix());
+        kmMat4Multiply(&mCamera.screen, &getProjMatrix(), &refreshViewMatrix());
         return mCamera.screen;
     }
 
     void Camera::recalcFrustum()
     {
-        lite3d_frustum_compute(&mCamera.frustum, &getProjTransformMatrix());
+        lite3d_frustum_compute(&mCamera.frustum, &refreshProjViewMatrix());
     }
 
     bool Camera::inFrustum(const LightSource &light) const

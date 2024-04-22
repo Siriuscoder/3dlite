@@ -255,8 +255,8 @@ public:
     void updateShaderParams()
     {
         SDL_assert(mSSAOShader);
-        Material::setFloatv3GlobalParameter("eye", getMainCamera().getPosition());
-        mSSAOShader->setFloatm4Parameter(1, "CameraView", getMainCamera().getTransformMatrix());
+        Material::setFloatv3GlobalParameter("eye", getMainCamera().getWorldPosition());
+        mSSAOShader->setFloatm4Parameter(1, "CameraView", getMainCamera().refreshViewMatrix());
         mSSAOShader->setFloatm4Parameter(1, "CameraProjection", getMainCamera().getProjMatrix());
     }
 
@@ -264,8 +264,8 @@ public:
     {
         if (mFlashLight && mFlashLight->getLight()->enabled())
         {
-            mFlashLight->setPosition(getMainCamera().getPosition());
-            mFlashLight->setRotation(getMainCamera().getRotation());
+            mFlashLight->setPosition(getMainCamera().getWorldPosition());
+            mFlashLight->setRotation(getMainCamera().getWorldRotation());
         }
     }
 

@@ -57,9 +57,9 @@ kmMat4* kmMat4Fill(kmMat4* pOut, const kmScalar* pMat)
  */
 kmMat4* kmMat4Identity(kmMat4* pOut)
 {
-	memset(pOut->mat, 0, sizeof(kmScalar) * 16);
-	pOut->mat[0] = pOut->mat[5] = pOut->mat[10] = pOut->mat[15] = 1.0f;
-	return pOut;
+    memset(pOut->mat, 0, sizeof(kmScalar) * 16);
+    pOut->mat[0] = pOut->mat[5] = pOut->mat[10] = pOut->mat[15] = 1.0f;
+    return pOut;
 }
 
 /**
@@ -204,13 +204,13 @@ kmMat4* kmMat4Inverse(kmMat4* pOut, const kmMat4* pM) {
  */
 int  kmMat4IsIdentity(const kmMat4* pIn)
 {
-	static kmScalar identity [] = { 	1.0f, 0.0f, 0.0f, 0.0f,
-	                                    0.0f, 1.0f, 0.0f, 0.0f,
-	                                    0.0f, 0.0f, 1.0f, 0.0f,
-	                                    0.0f, 0.0f, 0.0f, 1.0f
-	                                 };
+    static kmScalar identity [] = { 	1.0f, 0.0f, 0.0f, 0.0f,
+                                        0.0f, 1.0f, 0.0f, 0.0f,
+                                        0.0f, 0.0f, 1.0f, 0.0f,
+                                        0.0f, 0.0f, 0.0f, 1.0f
+                                     };
 
-	return (memcmp(identity, pIn->mat, sizeof(kmScalar) * 16) == 0);
+    return (memcmp(identity, pIn->mat, sizeof(kmScalar) * 16) == 0);
 }
 
 /**
@@ -222,7 +222,7 @@ kmMat4* kmMat4Transpose(kmMat4* pOut, const kmMat4* pIn)
 
     for (z = 0; z < 4; ++z) {
         for (x = 0; x < 4; ++x) {
-	    pOut->mat[(z * 4) + x] = pIn->mat[(x * 4) + z];
+        pOut->mat[(z * 4) + x] = pIn->mat[(x * 4) + z];
         }
     }
 
@@ -234,34 +234,34 @@ kmMat4* kmMat4Transpose(kmMat4* pOut, const kmMat4* pIn)
  */
 kmMat4* kmMat4Multiply(kmMat4* pOut, const kmMat4* pM1, const kmMat4* pM2)
 {
-	kmScalar mat[16];
+    kmScalar mat[16];
 
-	const kmScalar *m1 = pM1->mat, *m2 = pM2->mat;
+    const kmScalar *m1 = pM1->mat, *m2 = pM2->mat;
 
-	mat[0] = m1[0] * m2[0] + m1[4] * m2[1] + m1[8] * m2[2] + m1[12] * m2[3];
-	mat[1] = m1[1] * m2[0] + m1[5] * m2[1] + m1[9] * m2[2] + m1[13] * m2[3];
-	mat[2] = m1[2] * m2[0] + m1[6] * m2[1] + m1[10] * m2[2] + m1[14] * m2[3];
-	mat[3] = m1[3] * m2[0] + m1[7] * m2[1] + m1[11] * m2[2] + m1[15] * m2[3];
+    mat[0] = m1[0] * m2[0] + m1[4] * m2[1] + m1[8] * m2[2] + m1[12] * m2[3];
+    mat[1] = m1[1] * m2[0] + m1[5] * m2[1] + m1[9] * m2[2] + m1[13] * m2[3];
+    mat[2] = m1[2] * m2[0] + m1[6] * m2[1] + m1[10] * m2[2] + m1[14] * m2[3];
+    mat[3] = m1[3] * m2[0] + m1[7] * m2[1] + m1[11] * m2[2] + m1[15] * m2[3];
 
-	mat[4] = m1[0] * m2[4] + m1[4] * m2[5] + m1[8] * m2[6] + m1[12] * m2[7];
-	mat[5] = m1[1] * m2[4] + m1[5] * m2[5] + m1[9] * m2[6] + m1[13] * m2[7];
-	mat[6] = m1[2] * m2[4] + m1[6] * m2[5] + m1[10] * m2[6] + m1[14] * m2[7];
-	mat[7] = m1[3] * m2[4] + m1[7] * m2[5] + m1[11] * m2[6] + m1[15] * m2[7];
+    mat[4] = m1[0] * m2[4] + m1[4] * m2[5] + m1[8] * m2[6] + m1[12] * m2[7];
+    mat[5] = m1[1] * m2[4] + m1[5] * m2[5] + m1[9] * m2[6] + m1[13] * m2[7];
+    mat[6] = m1[2] * m2[4] + m1[6] * m2[5] + m1[10] * m2[6] + m1[14] * m2[7];
+    mat[7] = m1[3] * m2[4] + m1[7] * m2[5] + m1[11] * m2[6] + m1[15] * m2[7];
 
-	mat[8] = m1[0] * m2[8] + m1[4] * m2[9] + m1[8] * m2[10] + m1[12] * m2[11];
-	mat[9] = m1[1] * m2[8] + m1[5] * m2[9] + m1[9] * m2[10] + m1[13] * m2[11];
-	mat[10] = m1[2] * m2[8] + m1[6] * m2[9] + m1[10] * m2[10] + m1[14] * m2[11];
-	mat[11] = m1[3] * m2[8] + m1[7] * m2[9] + m1[11] * m2[10] + m1[15] * m2[11];
+    mat[8] = m1[0] * m2[8] + m1[4] * m2[9] + m1[8] * m2[10] + m1[12] * m2[11];
+    mat[9] = m1[1] * m2[8] + m1[5] * m2[9] + m1[9] * m2[10] + m1[13] * m2[11];
+    mat[10] = m1[2] * m2[8] + m1[6] * m2[9] + m1[10] * m2[10] + m1[14] * m2[11];
+    mat[11] = m1[3] * m2[8] + m1[7] * m2[9] + m1[11] * m2[10] + m1[15] * m2[11];
 
-	mat[12] = m1[0] * m2[12] + m1[4] * m2[13] + m1[8] * m2[14] + m1[12] * m2[15];
-	mat[13] = m1[1] * m2[12] + m1[5] * m2[13] + m1[9] * m2[14] + m1[13] * m2[15];
-	mat[14] = m1[2] * m2[12] + m1[6] * m2[13] + m1[10] * m2[14] + m1[14] * m2[15];
-	mat[15] = m1[3] * m2[12] + m1[7] * m2[13] + m1[11] * m2[14] + m1[15] * m2[15];
+    mat[12] = m1[0] * m2[12] + m1[4] * m2[13] + m1[8] * m2[14] + m1[12] * m2[15];
+    mat[13] = m1[1] * m2[12] + m1[5] * m2[13] + m1[9] * m2[14] + m1[13] * m2[15];
+    mat[14] = m1[2] * m2[12] + m1[6] * m2[13] + m1[10] * m2[14] + m1[14] * m2[15];
+    mat[15] = m1[3] * m2[12] + m1[7] * m2[13] + m1[11] * m2[14] + m1[15] * m2[15];
 
 
-	memcpy(pOut->mat, mat, sizeof(kmScalar)*16);
+    memcpy(pOut->mat, mat, sizeof(kmScalar)*16);
 
-	return pOut;
+    return pOut;
 }
 
 /**
@@ -269,11 +269,11 @@ kmMat4* kmMat4Multiply(kmMat4* pOut, const kmMat4* pM1, const kmMat4* pM2)
  */
 kmMat4* kmMat4Assign(kmMat4* pOut, const kmMat4* pIn)
 {
-	assert(pOut != pIn && "You have tried to self-assign!!");
+    assert(pOut != pIn && "You have tried to self-assign!!");
 
-	memcpy(pOut->mat, pIn->mat, sizeof(kmScalar)*16);
+    memcpy(pOut->mat, pIn->mat, sizeof(kmScalar)*16);
 
-	return pOut;
+    return pOut;
 }
 
 kmMat4* kmMat4AssignMat3(kmMat4* pOut, const kmMat3* pIn) {
@@ -305,17 +305,17 @@ int kmMat4AreEqual(const kmMat4* pMat1, const kmMat4* pMat2)
 {
     int i = 0;
 
-	assert(pMat1 != pMat2 && "You are comparing the same thing!");
+    assert(pMat1 != pMat2 && "You are comparing the same thing!");
 
-	for (i = 0; i < 16; ++i)
-	{
-		if (!(pMat1->mat[i] + kmEpsilon > pMat2->mat[i] &&
+    for (i = 0; i < 16; ++i)
+    {
+        if (!(pMat1->mat[i] + kmEpsilon > pMat2->mat[i] &&
             pMat1->mat[i] - kmEpsilon < pMat2->mat[i])) {
-			return KM_FALSE;
+            return KM_FALSE;
         }
-	}
+    }
 
-	return KM_TRUE;
+    return KM_TRUE;
 }
 
 /**
@@ -335,35 +335,35 @@ kmMat4* kmMat4RotationAxisAngle(kmMat4* pOut, const kmVec3* axis, kmScalar radia
  */
 kmMat4* kmMat4RotationX(kmMat4* pOut, const kmScalar radians)
 {
-	/*
-		 |  1  0       0       0 |
-	 M = |  0  cos(A) -sin(A)  0 |
-	     |  0  sin(A)  cos(A)  0 |
-	     |  0  0       0       1 |
+    /*
+         |  1  0       0       0 |
+     M = |  0  cos(A) -sin(A)  0 |
+         |  0  sin(A)  cos(A)  0 |
+         |  0  0       0       1 |
 
-	*/
+    */
 
-	pOut->mat[0] = 1.0f;
-	pOut->mat[1] = 0.0f;
-	pOut->mat[2] = 0.0f;
-	pOut->mat[3] = 0.0f;
+    pOut->mat[0] = 1.0f;
+    pOut->mat[1] = 0.0f;
+    pOut->mat[2] = 0.0f;
+    pOut->mat[3] = 0.0f;
 
-	pOut->mat[4] = 0.0f;
-	pOut->mat[5] = cosf(radians);
-	pOut->mat[6] = sinf(radians);
-	pOut->mat[7] = 0.0f;
+    pOut->mat[4] = 0.0f;
+    pOut->mat[5] = cosf(radians);
+    pOut->mat[6] = sinf(radians);
+    pOut->mat[7] = 0.0f;
 
-	pOut->mat[8] = 0.0f;
-	pOut->mat[9] = -sinf(radians);
-	pOut->mat[10] = cosf(radians);
-	pOut->mat[11] = 0.0f;
+    pOut->mat[8] = 0.0f;
+    pOut->mat[9] = -sinf(radians);
+    pOut->mat[10] = cosf(radians);
+    pOut->mat[11] = 0.0f;
 
-	pOut->mat[12] = 0.0f;
-	pOut->mat[13] = 0.0f;
-	pOut->mat[14] = 0.0f;
-	pOut->mat[15] = 1.0f;
+    pOut->mat[12] = 0.0f;
+    pOut->mat[13] = 0.0f;
+    pOut->mat[14] = 0.0f;
+    pOut->mat[15] = 1.0f;
 
-	return pOut;
+    return pOut;
 }
 
 /**
@@ -372,34 +372,34 @@ kmMat4* kmMat4RotationX(kmMat4* pOut, const kmScalar radians)
  */
 kmMat4* kmMat4RotationY(kmMat4* pOut, const kmScalar radians)
 {
-	/*
-	     |  cos(A)  0   sin(A)  0 |
-	 M = |  0       1   0       0 |
-	     | -sin(A)  0   cos(A)  0 |
-	     |  0       0   0       1 |
-	*/
+    /*
+         |  cos(A)  0   sin(A)  0 |
+     M = |  0       1   0       0 |
+         | -sin(A)  0   cos(A)  0 |
+         |  0       0   0       1 |
+    */
 
-	pOut->mat[0] = cosf(radians);
-	pOut->mat[1] = 0.0f;
-	pOut->mat[2] = -sinf(radians);
-	pOut->mat[3] = 0.0f;
+    pOut->mat[0] = cosf(radians);
+    pOut->mat[1] = 0.0f;
+    pOut->mat[2] = -sinf(radians);
+    pOut->mat[3] = 0.0f;
 
-	pOut->mat[4] = 0.0f;
-	pOut->mat[5] = 1.0f;
-	pOut->mat[6] = 0.0f;
-	pOut->mat[7] = 0.0f;
+    pOut->mat[4] = 0.0f;
+    pOut->mat[5] = 1.0f;
+    pOut->mat[6] = 0.0f;
+    pOut->mat[7] = 0.0f;
 
-	pOut->mat[8] = sinf(radians);
-	pOut->mat[9] = 0.0f;
-	pOut->mat[10] = cosf(radians);
-	pOut->mat[11] = 0.0f;
+    pOut->mat[8] = sinf(radians);
+    pOut->mat[9] = 0.0f;
+    pOut->mat[10] = cosf(radians);
+    pOut->mat[11] = 0.0f;
 
-	pOut->mat[12] = 0.0f;
-	pOut->mat[13] = 0.0f;
-	pOut->mat[14] = 0.0f;
-	pOut->mat[15] = 1.0f;
+    pOut->mat[12] = 0.0f;
+    pOut->mat[13] = 0.0f;
+    pOut->mat[14] = 0.0f;
+    pOut->mat[15] = 1.0f;
 
-	return pOut;
+    return pOut;
 }
 
 /**
@@ -408,34 +408,34 @@ kmMat4* kmMat4RotationY(kmMat4* pOut, const kmScalar radians)
  */
 kmMat4* kmMat4RotationZ(kmMat4* pOut, const kmScalar radians)
 {
-	/*
-	     |  cos(A)  -sin(A)   0   0 |
-	 M = |  sin(A)   cos(A)   0   0 |
-	     |  0        0        1   0 |
-	     |  0        0        0   1 |
-	*/
+    /*
+         |  cos(A)  -sin(A)   0   0 |
+     M = |  sin(A)   cos(A)   0   0 |
+         |  0        0        1   0 |
+         |  0        0        0   1 |
+    */
 
-	pOut->mat[0] = cosf(radians);
-	pOut->mat[1] = sinf(radians);
-	pOut->mat[2] = 0.0f;
-	pOut->mat[3] = 0.0f;
+    pOut->mat[0] = cosf(radians);
+    pOut->mat[1] = sinf(radians);
+    pOut->mat[2] = 0.0f;
+    pOut->mat[3] = 0.0f;
 
-	pOut->mat[4] = -sinf(radians);
-	pOut->mat[5] = cosf(radians);
-	pOut->mat[6] = 0.0f;
-	pOut->mat[7] = 0.0f;
+    pOut->mat[4] = -sinf(radians);
+    pOut->mat[5] = cosf(radians);
+    pOut->mat[6] = 0.0f;
+    pOut->mat[7] = 0.0f;
 
-	pOut->mat[8] = 0.0f;
-	pOut->mat[9] = 0.0f;
-	pOut->mat[10] = 1.0f;
-	pOut->mat[11] = 0.0f;
+    pOut->mat[8] = 0.0f;
+    pOut->mat[9] = 0.0f;
+    pOut->mat[10] = 1.0f;
+    pOut->mat[11] = 0.0f;
 
-	pOut->mat[12] = 0.0f;
-	pOut->mat[13] = 0.0f;
-	pOut->mat[14] = 0.0f;
-	pOut->mat[15] = 1.0f;
+    pOut->mat[12] = 0.0f;
+    pOut->mat[13] = 0.0f;
+    pOut->mat[14] = 0.0f;
+    pOut->mat[15] = 1.0f;
 
-	return pOut;
+    return pOut;
 }
 
 /**
@@ -502,13 +502,13 @@ kmMat4* kmMat4RotationQuaternion(kmMat4* pOut, const kmQuaternion* pQ)
 kmMat4* kmMat4Scaling(kmMat4* pOut, const kmScalar x, const kmScalar y,
                       const kmScalar z)
 {
-	memset(pOut->mat, 0, sizeof(kmScalar) * 16);
-	pOut->mat[0] = x;
-	pOut->mat[5] = y;
-	pOut->mat[10] = z;
-	pOut->mat[15] = 1.0f;
+    memset(pOut->mat, 0, sizeof(kmScalar) * 16);
+    pOut->mat[0] = x;
+    pOut->mat[5] = y;
+    pOut->mat[10] = z;
+    pOut->mat[15] = 1.0f;
 
-	return pOut;
+    return pOut;
 }
 
 /**
@@ -570,7 +570,7 @@ kmVec3* kmMat4GetForwardVec3LH(kmVec3* pOut, const kmMat4* pIn)
 {
     kmVec3MultiplyMat4(pOut, &KM_VEC3_POS_Z, pIn);
     kmVec3Normalize(pOut, pOut);
-	return pOut;
+    return pOut;
 }
 
 /**
@@ -581,27 +581,27 @@ kmMat4* kmMat4PerspectiveProjection(kmMat4* pOut, kmScalar fovY,
                                     kmScalar aspect, kmScalar zNear,
                                     kmScalar zFar)
 {
-	kmScalar r = kmDegreesToRadians(fovY / 2);
-	kmScalar deltaZ = zFar - zNear;
-	kmScalar s = sin(r);
+    kmScalar r = kmDegreesToRadians(fovY / 2);
+    kmScalar deltaZ = zFar - zNear;
+    kmScalar s = sin(r);
     kmScalar cotangent = 0;
 
-	if (deltaZ == 0 || s == 0 || aspect == 0) {
-		return NULL;
-	}
+    if (deltaZ == 0 || s == 0 || aspect == 0) {
+        return NULL;
+    }
 
     /*cos(r) / sin(r) = cot(r)*/
-	cotangent = cos(r) / s;
+    cotangent = cos(r) / s;
 
-	kmMat4Identity(pOut);
-	pOut->mat[0] = cotangent / aspect;
-	pOut->mat[5] = cotangent;
-	pOut->mat[10] = -(zFar + zNear) / deltaZ;
-	pOut->mat[11] = -1;
-	pOut->mat[14] = -2 * zNear * zFar / deltaZ;
-	pOut->mat[15] = 0;
+    kmMat4Identity(pOut);
+    pOut->mat[0] = cotangent / aspect;
+    pOut->mat[5] = cotangent;
+    pOut->mat[10] = -(zFar + zNear) / deltaZ;
+    pOut->mat[11] = -1;
+    pOut->mat[14] = -2 * zNear * zFar / deltaZ;
+    pOut->mat[15] = 0;
 
-	return pOut;
+    return pOut;
 }
 
 /** Creates an orthographic projection matrix like glOrtho */
@@ -610,19 +610,19 @@ kmMat4* kmMat4OrthographicProjection(kmMat4* pOut, kmScalar left,
                                      kmScalar top, kmScalar nearVal,
                                      kmScalar farVal)
 {
-	kmScalar tx = -((right + left) / (right - left));
-	kmScalar ty = -((top + bottom) / (top - bottom));
-	kmScalar tz = -((farVal + nearVal) / (farVal - nearVal));
+    kmScalar tx = -((right + left) / (right - left));
+    kmScalar ty = -((top + bottom) / (top - bottom));
+    kmScalar tz = -((farVal + nearVal) / (farVal - nearVal));
 
-	kmMat4Identity(pOut);
-	pOut->mat[0] = 2 / (right - left);
-	pOut->mat[5] = 2 / (top - bottom);
-	pOut->mat[10] = -2 / (farVal - nearVal);
-	pOut->mat[12] = tx;
-	pOut->mat[13] = ty;
-	pOut->mat[14] = tz;
+    kmMat4Identity(pOut);
+    pOut->mat[0] = 2 / (right - left);
+    pOut->mat[5] = 2 / (top - bottom);
+    pOut->mat[10] = -2 / (farVal - nearVal);
+    pOut->mat[12] = tx;
+    pOut->mat[13] = ty;
+    pOut->mat[14] = tz;
 
-	return pOut;
+    return pOut;
 }
 
 /**
@@ -645,7 +645,7 @@ kmMat4* kmMat4LookAt(kmMat4* pOut, const kmVec3* pEye,
     kmVec3Normalize(&s, &s);
 
     kmVec3Cross(&u, &s, &f);
-    kmVec3Normalize(&s, &s);
+    kmVec3Normalize(&u, &u);
 
     kmMat4Identity(pOut);
 

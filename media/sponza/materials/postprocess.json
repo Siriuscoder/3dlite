@@ -13,7 +13,7 @@
       "Name":"screenMatrix"
     },
     {
-      "Name":"FXAA",
+      "Name":"SwitchView",
       "Type":"int",
       "Value": 0,
       "Scope":"global"
@@ -23,6 +23,11 @@
       "Type":"float",
       "Value": 1.0,
       "Scope":"global"
+    },
+    {
+      "Name":"shadowmap",
+      "TextureName": "ShadowMap.texture",
+      "Type":"sampler"
     },
     {
       "Name":"combined",

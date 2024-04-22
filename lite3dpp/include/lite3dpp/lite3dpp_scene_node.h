@@ -51,10 +51,12 @@ namespace lite3dpp
 
         void setPosition(const kmVec3 &position);
         const kmVec3& getPosition() const;
+        const kmVec3 getWorldPosition() const;
         void move(const kmVec3 &position);
         void moveRelative(const kmVec3 &p);
         void setRotation(const kmQuaternion &quat);
         const kmQuaternion& getRotation() const;
+        const kmQuaternion getWorldRotation() const;
         void rotate(const kmQuaternion &quat);
         void rotateAngle(const kmVec3 &axis, float angle);
         void scale(const kmVec3 &scale);

@@ -53,8 +53,9 @@ public:
 
     void mainCameraChanged() override
     {
-        lite3dpp::Material::setFloatv3GlobalParameter("eye", getMainCamera().getPosition());
-        mFlashLight->setPosition(getMainCamera().getPosition());
+        lite3dpp::Material::setFloatv3GlobalParameter("eye", getMainCamera().getWorldPosition());
+        mFlashLight->setPosition(getMainCamera().getWorldPosition());
+        mFlashLight->setRotation(getMainCamera().getWorldRotation());
     }
 
     void fixedUpdateTimerTick(int32_t firedPerRound, uint64_t deltaMcs, float deltaRetard) override
@@ -157,10 +158,6 @@ public:
                 LampsEnabled = !LampsEnabled;
                 lampsSwitchOn(LampsEnabled);
             }
-        }
-        else if (e->type == SDL_MOUSEMOTION)
-        {
-            mFlashLight->setRotation(getMainCamera().getRotation());
         }
     }
     

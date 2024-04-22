@@ -20,7 +20,7 @@
 
 #include <lite3d/lite3d_scene_node.h>
 
-lite3d_scene_node *lite3d_scene_node_init(lite3d_scene_node *node)
+void lite3d_scene_node_init(lite3d_scene_node *node)
 {
     SDL_assert(node);
     memset(node, 0, sizeof (lite3d_scene_node));
@@ -40,38 +40,30 @@ lite3d_scene_node *lite3d_scene_node_init(lite3d_scene_node *node)
     node->visible = LITE3D_TRUE;
     node->frustumTest = LITE3D_TRUE;
     lite3d_list_init(&node->childNodes);
-
-    return node;
 }
 
-lite3d_scene_node *lite3d_scene_node_set_position(lite3d_scene_node *node, const kmVec3 *position)
+void lite3d_scene_node_set_position(lite3d_scene_node *node, const kmVec3 *position)
 {
     SDL_assert(node && position);
     node->position = *position;
     node->recalc = LITE3D_TRUE;
-
-    return node;
 }
 
-lite3d_scene_node *lite3d_scene_node_set_rotation(lite3d_scene_node *node, const kmQuaternion *quat)
+void lite3d_scene_node_set_rotation(lite3d_scene_node *node, const kmQuaternion *quat)
 {
     SDL_assert(node && quat);
     node->rotation = *quat;
     node->recalc = LITE3D_TRUE;
-
-    return node;
 }
 
-lite3d_scene_node *lite3d_scene_node_move(lite3d_scene_node *node, const kmVec3 *position)
+void lite3d_scene_node_move(lite3d_scene_node *node, const kmVec3 *position)
 {
     SDL_assert(node && position);
     kmVec3Add(&node->position, &node->position, position);
     node->recalc = LITE3D_TRUE;
-
-    return node;
 }
 
-lite3d_scene_node *lite3d_scene_node_move_relative(lite3d_scene_node *node, const kmVec3 *vec)
+void lite3d_scene_node_move_relative(lite3d_scene_node *node, const kmVec3 *vec)
 {
     kmVec3 relative;
 
@@ -79,61 +71,58 @@ lite3d_scene_node *lite3d_scene_node_move_relative(lite3d_scene_node *node, cons
     kmQuaternionMultiplyVec3(&relative, &node->rotation, vec);
     lite3d_scene_node_move(node, &relative);
     node->recalc = LITE3D_TRUE;
-
-    return node;
 }
 
-lite3d_scene_node *lite3d_scene_node_rotate(lite3d_scene_node *node, const kmQuaternion *quat)
+void lite3d_scene_node_rotate(lite3d_scene_node *node, const kmQuaternion *quat)
 {
     SDL_assert(node && quat);
     kmQuaternionMultiply(&node->rotation, &node->rotation, quat);
     node->recalc = LITE3D_TRUE;
-
-    return node;
 }
 
-lite3d_scene_node *lite3d_scene_node_rotate_by(lite3d_scene_node *node, const kmQuaternion *quat)
-{
-    SDL_assert(node && quat);
-    kmQuaternionMultiply(&node->rotation, quat, &node->rotation);
-    node->recalc = LITE3D_TRUE;
-
-    return node;
-}
-
-lite3d_scene_node *lite3d_scene_node_rotate_angle(lite3d_scene_node *node, const kmVec3 *axis, float angle)
+void lite3d_scene_node_rotate_angle(lite3d_scene_node *node, const kmVec3 *axis, float angle)
 {
     kmQuaternion tmpQuat;
     SDL_assert(node && axis);
     kmQuaternionRotationAxisAngle(&tmpQuat, axis, angle);
     lite3d_scene_node_rotate(node, &tmpQuat);
-
-    return node;
 }
 
-lite3d_scene_node *lite3d_scene_node_scale(lite3d_scene_node *node, const kmVec3 *scale)
+void lite3d_scene_node_scale(lite3d_scene_node *node, const kmVec3 *scale)
 {
     SDL_assert(node && scale);
     node->scale = *scale;
     node->recalc = LITE3D_TRUE;
-
-    return node;
 }
 
-kmVec3 *lite3d_scene_node_world_position(lite3d_scene_node *node, kmVec3 *pos)
+void lite3d_scene_node_get_world_position(const lite3d_scene_node *node, kmVec3 *pos)
 {
     SDL_assert(node && pos);
 
     if (node->baseNode)
     {
-        kmVec3Transform(pos, &node->position, &node->baseNode->worldView);
+        kmMat4ExtractPosition(pos, &node->worldView);
     }
     else
     {
         *pos = node->position;
     }
-    
-    return pos;
+}
+
+void lite3d_scene_node_get_world_rotation(const lite3d_scene_node *node, kmQuaternion *q)
+{
+    SDL_assert(node && q);
+
+    if (node->baseNode)
+    {
+        kmMat3 rotationMat;
+        kmMat4ExtractRotation(&rotationMat, &node->worldView);
+        kmQuaternionRotationMatrix(q, &rotationMat);
+    }
+    else
+    {
+        *q = node->rotation;
+    }
 }
 
 static void scene_node_update(lite3d_scene_node *node)
@@ -171,29 +160,6 @@ static void scene_node_update(lite3d_scene_node *node)
     kmMat3NormalMatrix(&node->normalModel, &node->worldView);
 }
 
-static void scene_node_update_camera(lite3d_scene_node *node)
-{
-    kmMat4 rotationLocal;
-    kmMat4 translationLocal;
-
-    kmQuaternionNormalize(&node->rotation, &node->rotation);
-    kmMat4RotationQuaternion(&rotationLocal, &node->rotation);
-    kmMat4Translation(&translationLocal, -node->position.x, -node->position.y, -node->position.z);
-    kmMat4Multiply(&node->localView, &rotationLocal, &translationLocal);
-
-    if (node->baseNode)
-    {
-        kmMat4 baseWorldInverse;
-
-        kmMat4Inverse(&baseWorldInverse, &node->baseNode->worldView);
-        kmMat4Multiply(&node->worldView, &node->localView, &baseWorldInverse);
-    }
-    else
-    {
-        node->worldView = node->localView;
-    }
-}
-
 uint8_t lite3d_scene_node_update(lite3d_scene_node *node)
 {
     uint8_t updated = LITE3D_FALSE;
@@ -201,7 +167,7 @@ uint8_t lite3d_scene_node_update(lite3d_scene_node *node)
     
     if (node->recalc)
     {
-        node->isCamera ? scene_node_update_camera(node) : scene_node_update(node);
+        scene_node_update(node);
         node->recalc = LITE3D_FALSE;
         node->invalidated = LITE3D_TRUE;
         updated = LITE3D_TRUE;

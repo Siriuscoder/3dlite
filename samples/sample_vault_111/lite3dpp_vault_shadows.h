@@ -39,7 +39,7 @@ public:
             mShadowCamera(main.addCamera(name))
         {
             // Ставим перспективу сразу при инициализации, считаем что конус источника света не меняется 
-            mShadowCamera->setupPerspective(1.0f, mLightNode->getLight()->getInfluenceDistance(), 
+            mShadowCamera->setupPerspective(1.0f, 1500.0f, 
                 kmRadiansToDegrees(mLightNode->getLight()->getAngleOuterCone()), 1.0);
         }
 
@@ -47,11 +47,11 @@ public:
         {
             SDL_assert(mShadowCamera);
             // Обновим параметры теневой камеры
-            mShadowCamera->setDirection(mLightNode->getLight()->getDirectionWorld());
-            mShadowCamera->setPosition(mLightNode->getLight()->getPositionWorld());
+            mShadowCamera->setDirection(mLightNode->getLight()->getWorldDirection());
+            mShadowCamera->setPosition(mLightNode->getLight()->getWorldPosition());
             mShadowCamera->recalcFrustum();
             // Пересчитаем теневую матрицу
-            return mShadowCamera->getProjTransformMatrix();
+            return mShadowCamera->refreshProjViewMatrix();
         }
 
         inline LightSceneNode* getNode()

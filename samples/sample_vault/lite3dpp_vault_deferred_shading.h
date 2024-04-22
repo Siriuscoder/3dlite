@@ -106,9 +106,9 @@ public:
             const auto &lightSource = *light->getLight();
             material->setIntParameter(1, "light.enabled", lightSource.enabled() ? 1 : 0, false);
             material->setIntParameter(1, "light.type", lightSource.getType(), false);
-            material->setFloatv3Parameter(1, "light.position", lightSource.getPositionWorld(), false);
+            material->setFloatv3Parameter(1, "light.position", lightSource.getWorldPosition(), false);
             material->setFloatv3Parameter(1, "light.diffuse", lightSource.getDiffuse(), false);
-            material->setFloatv3Parameter(1, "light.direction", lightSource.getDirectionWorld(), false);
+            material->setFloatv3Parameter(1, "light.direction", lightSource.getWorldDirection(), false);
             material->setFloatParameter(1, "light.influenceDistance", lightSource.getInfluenceDistance(), false);
             material->setFloatParameter(1, "light.attenuationContant", lightSource.getAttenuationConstant(), false);
             material->setFloatParameter(1, "light.attenuationLinear", lightSource.getAttenuationLinear(), false);

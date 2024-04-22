@@ -77,27 +77,39 @@ namespace lite3dpp
         
         inline kmVec3 getPosition() const
         { return mCamera.cameraNode.position; }
-        kmQuaternion getRotation() const;
+        kmVec3 getWorldPosition() const;
+        inline kmQuaternion getRotation() const
+        { return mCamera.cameraNode.rotation; }
+        kmQuaternion getWorldRotation() const;
         kmVec3 getDirection() const;
-        const kmMat4& getTransformMatrix();
+        kmVec3 getWorldDirection() const;
         const kmMat4& getProjMatrix() const;
-        const kmMat4& getProjTransformMatrix();
 
+        const kmMat4& refreshViewMatrix();
+        const kmMat4& refreshProjViewMatrix();
+
+        void resetView();
         void lookAt(const kmVec3 &pointTo);
         void lookAt(const SceneObject &obj);
         void setPosition(const kmVec3 &position);
         void setRotation(const kmQuaternion &orietation);
         void setDirection(const kmVec3 &direction);
         void rotate(const kmQuaternion &orietation);
-        void yaw(float angle);
-        void pitch(float angle);
-        void roll(float angle);
+        void yaw(float angleDelta);
+        void pitch(float angleDelta);
+        void roll(float angleDelta);
+        // Установка углов свободной камеры в локальном пространстве камеры
+        void setYawPitchRoll(float yaw, float pitch, float roll);
+        // Установка углов свободной камеры в мировых осях ZW вправо влево, XW вниз вверх
+        void setOrientationAngles(float ZW, float XW);
         float getYaw() const;
         float getPitch() const;
         float getRoll() const;
-        void rotateY(float angle);
-        void rotateX(float angle);
-        void rotateZ(float angle);
+        float getZW() const;
+        float getXW() const;
+        void rotateY(float angleDelta);
+        void rotateX(float angleDelta);
+        void rotateZ(float angleDelta);
         void move(const kmVec3 &value);
         void moveRelative(const kmVec3 &value);
         void holdOnSceneObject(const SceneObject &sceneObj);

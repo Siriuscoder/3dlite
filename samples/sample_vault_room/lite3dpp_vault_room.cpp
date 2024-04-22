@@ -108,7 +108,7 @@ public:
     void addSpark()
     {
         auto sparkObject = mVaultScene->addObject("Spark_" + std::to_string(++mSparkCounter), 
-            "samples:objects/light_spark.json", nullptr, getMainCamera().getPosition());
+            "samples:objects/light_spark.json", nullptr, getMainCamera().getWorldPosition());
         auto node = sparkObject->getLightNode("PointLightSpark.node");
         node->getLight()->setAttenuationConstant(1.0f);
         node->getLight()->setAttenuationLinear(50.0f);
@@ -126,8 +126,8 @@ public:
     void updateShaderParams()
     {
         SDL_assert(mSSAOShader);
-        Material::setFloatv3GlobalParameter("eye", getMainCamera().getPosition());
-        mSSAOShader->setFloatm4Parameter(1, "CameraView", getMainCamera().getTransformMatrix());
+        Material::setFloatv3GlobalParameter("eye", getMainCamera().getWorldPosition());
+        mSSAOShader->setFloatm4Parameter(1, "CameraView", getMainCamera().refreshViewMatrix());
         mSSAOShader->setFloatm4Parameter(1, "CameraProjection", getMainCamera().getProjMatrix());
     }
 
@@ -135,8 +135,8 @@ public:
     {
         if (mFlashLight && mFlashLight->getLight()->enabled())
         {
-            mFlashLight->setPosition(getMainCamera().getPosition());
-            mFlashLight->setRotation(getMainCamera().getRotation());
+            mFlashLight->setPosition(getMainCamera().getWorldPosition());
+            mFlashLight->setRotation(getMainCamera().getWorldRotation());
         }
     }
 
@@ -174,13 +174,13 @@ public:
             {
                 dropObject(mVaultScene->addPhysicsObject("Capsule_" + std::to_string(++mSparkCounter), 
                     "vault_111:objects/LightCapsule.json", nullptr,
-                    getMainCamera().getPosition()));
+                    getMainCamera().getWorldPosition()));
             }
             else if (e->key.keysym.sym == SDLK_e)
             {
                 dropObject(mVaultScene->addPhysicsObject("Capsule_" + std::to_string(++mSparkCounter), 
                     "vault_111:objects/Ball.json", nullptr,
-                    getMainCamera().getPosition()));
+                    getMainCamera().getWorldPosition()));
             }
             else if (e->key.keysym.sym == SDLK_u)
             {

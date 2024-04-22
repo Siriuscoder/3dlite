@@ -250,12 +250,12 @@ namespace lite3dpp
         return *reinterpret_cast<const kmVec3 *>(&mLightSource.params.block4.x);
     }
 
-    const kmVec3 &LightSource::getPositionWorld() const
+    const kmVec3 &LightSource::getWorldPosition() const
     {
         return *reinterpret_cast<const kmVec3 *>(&mLightSourceWorld.params.block3.x);
     }
 
-    const kmVec3 &LightSource::getDirectionWorld() const
+    const kmVec3 &LightSource::getWorldDirection() const
     {
         return *reinterpret_cast<const kmVec3 *>(&mLightSourceWorld.params.block4.x);
     }

@@ -49,9 +49,9 @@ public:
         mSponzahall = mMainScene->getObject("SponzaHall");
         mMainScene->attachCamera(&getMainCamera(), mSponzahall);
 
-        lite3dpp::Material::setFloatm4GlobalParameter("shadowMatrix", shadowView->getProjTransformMatrix());
-        lite3dpp::Material::setIntGlobalParameter("FXAA", 1);
-        lite3dpp::Material::setFloatv3GlobalParameter("eye", getMainCamera().getPosition());
+        lite3dpp::Material::setFloatm4GlobalParameter("shadowMatrix", shadowView->refreshProjViewMatrix());
+        lite3dpp::Material::setIntGlobalParameter("SwitchView", 0);
+        lite3dpp::Material::setFloatv3GlobalParameter("eye", getMainCamera().getWorldPosition());
 
         addSunlight();
 
@@ -60,8 +60,7 @@ public:
 
     void mainCameraChanged() override
     {
-        Sample::mainCameraChanged();
-        lite3dpp::Material::setFloatv3GlobalParameter("eye", getMainCamera().getPosition());
+        lite3dpp::Material::setFloatv3GlobalParameter("eye", getMainCamera().getWorldPosition());
     }
 
     void addSunlight()
@@ -95,9 +94,9 @@ public:
         {
             if (e->key.keysym.sym == SDLK_o)
             {
-                static bool fxaaEnabled = true;
-                fxaaEnabled = !fxaaEnabled;
-                lite3dpp::Material::setIntGlobalParameter("FXAA", fxaaEnabled ? 1 : 0);
+                static bool SwitchView = false;
+                SwitchView = !SwitchView;
+                lite3dpp::Material::setIntGlobalParameter("SwitchView", SwitchView ? 1 : 0);
             }
         }
     }

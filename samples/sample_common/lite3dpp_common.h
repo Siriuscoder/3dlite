@@ -18,6 +18,7 @@
 #pragma once
 
 #include <iostream>
+#include <chrono>
 
 #include <lite3dpp/lite3dpp_main.h>
 #include <lite3dpp_font/lite3dpp_font_texture.h>
@@ -39,6 +40,7 @@ public:
     void init() override;
     void timerTick(lite3d_timer *timerid) override;
     void processEvent(SDL_Event *e) override;
+    void frameEnd() override;
 
     int start(const char *config);
 
@@ -62,14 +64,14 @@ public:
 
     virtual void createScene() = 0;
     virtual void fixedUpdateTimerTick(int32_t firedPerRound, uint64_t deltaMcs, float deltaRetard);
-    virtual void setCameraVelocity(const kmVec3& velocity);
+    virtual void updateCameraVelocity(const kmVec3& velocity);
 
 protected:
 
     void initGui();
     void printRenderStats();
     void printMemoryStats();
-    void moveCamera(float deltaRetard);
+    void moveCamera();
 
     void updateGuiStats();
 
@@ -87,12 +89,13 @@ private:
     lite3dpp_font::FontTexture *mStatTexture = nullptr;
     lite3d_timer *mStatTimer = nullptr;
     kmVec2 mWCenter = KM_VEC2_ZERO;
-    kmVec2 mCameraAngles = KM_VEC2_ZERO;
+    std::optional<kmVec2> mCameraAngles;
     float mCameraSensitivity = CAMERA_DEFAULT_SENSITIVITY;
     kmVec2 mCameraVelocityVector = KM_VEC2_ZERO;
     float mCameraVelocityMax = CAMERA_DEFAULT_VELOCITY_MAX;
     float mCameraAccel = CAMERA_DEFAULT_ACCEL;
     float mCameraAccelResistance = CAMERA_DEFAULT_ACCEL_RESIST;
+    std::chrono::steady_clock::time_point mLastFrameTime;
 };
 
 }}
