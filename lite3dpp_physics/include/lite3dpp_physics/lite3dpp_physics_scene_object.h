@@ -34,7 +34,7 @@ namespace lite3dpp_phisics {
             BodyKinematic
         };
 
-        PhysicsSceneObject(const String &name, Scene *scene, SceneObject *parent,
+        PhysicsSceneObject(const String &name, Scene *scene, SceneObjectBase *parent,
             const kmVec3 &initialPosition, const kmQuaternion &initialRotation, const kmVec3 &initialScale) : 
             SceneObject(name, scene, parent, initialPosition, initialRotation, initialScale)
         {}

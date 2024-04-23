@@ -65,6 +65,9 @@ LITE3D_CEXPORT void lite3d_scene_node_rotate_angle(lite3d_scene_node *node, cons
 LITE3D_CEXPORT void lite3d_scene_node_scale(lite3d_scene_node *node, const kmVec3 *scale);
 LITE3D_CEXPORT void lite3d_scene_node_get_world_position(const lite3d_scene_node *node, kmVec3 *pos);
 LITE3D_CEXPORT void lite3d_scene_node_get_world_rotation(const lite3d_scene_node *node, kmQuaternion *q);
+LITE3D_CEXPORT void lite3d_scene_node_rotate_y(lite3d_scene_node *node, float angle);
+LITE3D_CEXPORT void lite3d_scene_node_rotate_x(lite3d_scene_node *node, float angle);
+LITE3D_CEXPORT void lite3d_scene_node_rotate_z(lite3d_scene_node *node, float angle);
 
 LITE3D_CEXPORT uint8_t lite3d_scene_node_update(lite3d_scene_node *node);
 

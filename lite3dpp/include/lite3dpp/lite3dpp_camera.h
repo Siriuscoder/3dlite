@@ -90,7 +90,7 @@ namespace lite3dpp
 
         void resetView();
         void lookAt(const kmVec3 &pointTo);
-        void lookAt(const SceneObject &obj);
+        void lookAt(const SceneObjectBase &obj);
         void setPosition(const kmVec3 &position);
         void setRotation(const kmQuaternion &orietation);
         void setDirection(const kmVec3 &direction);
@@ -107,13 +107,10 @@ namespace lite3dpp
         float getRoll() const;
         float getZW() const;
         float getXW() const;
-        void rotateY(float angleDelta);
-        void rotateX(float angleDelta);
-        void rotateZ(float angleDelta);
         void move(const kmVec3 &value);
         void moveRelative(const kmVec3 &value);
-        void holdOnSceneObject(const SceneObject &sceneObj);
-        void linkWithSceneObject(const SceneObject &sceneObj);
+        void holdOnSceneObject(const SceneObjectBase &sceneObj);
+        void linkWithSceneObject(const SceneObjectBase &sceneObj);
         void recalcFrustum();
         bool inFrustum(const LightSource &light) const;
         bool inFrustum(const lite3d_bounding_vol &vol) const;

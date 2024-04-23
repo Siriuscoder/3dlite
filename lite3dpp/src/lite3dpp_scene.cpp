@@ -138,7 +138,7 @@ namespace lite3dpp
     }
 
     SceneObject *Scene::addObject(const String &name, const String &templatePath, 
-        SceneObject *parent, const kmVec3 &initialPosition, const kmQuaternion &initialRotation, 
+        SceneObjectBase *parent, const kmVec3 &initialPosition, const kmQuaternion &initialRotation, 
         const kmVec3 &initialScale)
     {
         if(mObjects.find(name) != mObjects.end())
@@ -151,7 +151,7 @@ namespace lite3dpp
     }
 
     SceneObject *Scene::addObject(const String &name, const ConfigurationReader &conf, 
-        SceneObject *parent, const kmVec3 &initialPosition, const kmQuaternion &initialRotation, 
+        SceneObjectBase *parent, const kmVec3 &initialPosition, const kmQuaternion &initialRotation, 
         const kmVec3 &initialScale)
     {
         if(mObjects.find(name) != mObjects.end())
@@ -261,7 +261,7 @@ namespace lite3dpp
             Material::setIntGlobalParameter(getName() + "_numLights", static_cast<int32_t>(mLights.size()));
     }
     
-    SceneObject::Ptr Scene::createObject(const String &name, SceneObject *parent, const kmVec3 &initialPosition, 
+    SceneObject::Ptr Scene::createObject(const String &name, SceneObjectBase *parent, const kmVec3 &initialPosition, 
         const kmQuaternion &initialRotation, const kmVec3 &initialScale)
     {
         return std::make_shared<SceneObject>(name, this, parent, initialPosition, initialRotation, initialScale);
@@ -279,7 +279,7 @@ namespace lite3dpp
         rebuildLightingBuffer();
     }
 
-    void Scene::setupObjects(const stl<ConfigurationReader>::vector &objects, SceneObject *base)
+    void Scene::setupObjects(const stl<ConfigurationReader>::vector &objects, SceneObjectBase *base)
     {
         for (const ConfigurationReader &objHelper : objects)
         {

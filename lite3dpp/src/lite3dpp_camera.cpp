@@ -71,7 +71,7 @@ namespace lite3dpp
         lite3d_camera_lookAt(&mCamera, &pointTo);
     }
 
-    void Camera::lookAt(const SceneObject &obj)
+    void Camera::lookAt(const SceneObjectBase &obj)
     {
         lookAt(obj.getPosition());
     }
@@ -158,12 +158,12 @@ namespace lite3dpp
         lite3d_camera_move_relative(&mCamera, &value);
     }
 
-    void Camera::holdOnSceneObject(const SceneObject &sceneObj)
+    void Camera::holdOnSceneObject(const SceneObjectBase &sceneObj)
     {
         lite3d_camera_tracking(&mCamera, sceneObj.getRoot()->getPtr());
     }
 
-    void Camera::linkWithSceneObject(const SceneObject &sceneObj)
+    void Camera::linkWithSceneObject(const SceneObjectBase &sceneObj)
     {
         lite3d_camera_link_to(&mCamera, sceneObj.getRoot()->getPtr(), LITE3D_CAMERA_LINK_POSITION);
     }

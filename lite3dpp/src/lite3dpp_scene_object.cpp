@@ -15,6 +15,8 @@
  *	You should have received a copy of the GNU General Public License
  *	along with Lite3D.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
+#include <lite3dpp/lite3dpp_scene_object.h>
+
 #include <algorithm>
 
 #include <SDL_log.h>
@@ -22,18 +24,12 @@
 
 #include <lite3dpp/lite3dpp_main.h>
 #include <lite3dpp/lite3dpp_scene.h>
-#include <lite3dpp/lite3dpp_scene_object.h>
 
 namespace lite3dpp
 {
-    SceneObject::SceneObject(const String &name, Scene *scene, SceneObject *parent, const kmVec3 &initialPosition, 
+    SceneObject::SceneObject(const String &name, Scene *scene, SceneObjectBase *parent, const kmVec3 &initialPosition, 
         const kmQuaternion &initialRotation, const kmVec3 &initialScale) : 
-        mName(name),
-        mParent(parent),
-        mScene(scene),
-        mInitialPosition(initialPosition),
-        mInitialRotation(initialRotation),
-        mInitialScale(initialScale)
+        SceneObjectBase(name, scene, parent, initialPosition, initialRotation, initialScale)
     {}
 
     void SceneObject::loadFromTemplate(const String &templatePath)
@@ -77,11 +73,6 @@ namespace lite3dpp
     {
         Nodes::iterator it = mNodes.find(name);
         return it == mNodes.end() ? nullptr : it->second.get(); 
-    }
-
-    Main *SceneObject::getMain()
-    { 
-        return &mScene->getMain(); 
     }
 
     void SceneObject::disable()
@@ -212,50 +203,4 @@ namespace lite3dpp
 
         LITE3D_THROW("MeshNode '" << name << "' is not found");
     }
-
-    const kmVec3& SceneObject::getPosition() const
-    {
-        return getRoot()->getPosition();
-    }
-
-    const kmQuaternion& SceneObject::getRotation() const
-    {
-        return getRoot()->getRotation();
-    }
-
-    void SceneObject::setPosition(const kmVec3 &position)
-    {
-        getRoot()->setPosition(position);
-    }
-
-    void SceneObject::move(const kmVec3 &position)
-    {
-        getRoot()->move(position);
-    }
-
-    void SceneObject::moveRelative(const kmVec3 &offset)
-    {
-        getRoot()->moveRelative(offset);
-    }
-
-    void SceneObject::setRotation(const kmQuaternion &quat)
-    {
-        getRoot()->setRotation(quat);
-    }
-
-    void SceneObject::rotate(const kmQuaternion &quat)
-    {
-        getRoot()->rotate(quat);
-    }
-
-    void SceneObject::rotateAngle(const kmVec3 &axis, float angle)
-    {
-        getRoot()->rotateAngle(axis, angle);
-    }
-
-    void SceneObject::scale(const kmVec3 &scale)
-    {
-        getRoot()->scale(scale);
-    }
 }
-

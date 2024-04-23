@@ -112,18 +112,33 @@ namespace lite3dpp
         lite3d_scene_remove_node(mScene->getPtr(), &mNode);
     }
 
-    const kmVec3 SceneNode::getWorldPosition() const
+    kmVec3 SceneNode::getWorldPosition() const
     {
         kmVec3 position;
         lite3d_scene_node_get_world_position(&mNode, &position);
         return position;
     }
 
-    const kmQuaternion SceneNode::getWorldRotation() const
+    kmQuaternion SceneNode::getWorldRotation() const
     {
         kmQuaternion rotation;
         lite3d_scene_node_get_world_rotation(&mNode, &rotation);
         return rotation;
+    }
+
+    void SceneNode::rotateY(float angleDelta)
+    {
+        lite3d_scene_node_rotate_y(&mNode, angleDelta);
+    }
+
+    void SceneNode::rotateX(float angleDelta)
+    {
+        lite3d_scene_node_rotate_x(&mNode, angleDelta);
+    }
+
+    void SceneNode::rotateZ(float angleDelta)
+    {
+        lite3d_scene_node_rotate_z(&mNode, angleDelta);
     }
 }
 

@@ -50,10 +50,10 @@ namespace lite3dpp
         { return &mScene; }
 
         SceneObject *addObject(const String &name, const String &templatePath, 
-            SceneObject *parent = nullptr, const kmVec3 &initialPosition = KM_VEC3_ZERO, 
+            SceneObjectBase *parent = nullptr, const kmVec3 &initialPosition = KM_VEC3_ZERO, 
             const kmQuaternion &initialRotation = KM_QUATERNION_IDENTITY, const kmVec3 &initialScale = KM_VEC3_ONE);
         SceneObject *addObject(const String &name, const ConfigurationReader &conf, 
-            SceneObject *parent = nullptr, const kmVec3 &initialPosition = KM_VEC3_ZERO, 
+            SceneObjectBase *parent = nullptr, const kmVec3 &initialPosition = KM_VEC3_ZERO, 
             const kmQuaternion &initialRotation = KM_QUATERNION_IDENTITY, const kmVec3 &initialScale = KM_VEC3_ONE);
 
         void attachCamera(Camera* camera, SceneObject *parent = nullptr);
@@ -82,12 +82,12 @@ namespace lite3dpp
         void addLightSource(LightSceneNode *node);
         void removeLightSource(LightSceneNode *node);
         
-        virtual SceneObject::Ptr createObject(const String &name, SceneObject *parent, const kmVec3 &initialPosition, 
+        virtual SceneObject::Ptr createObject(const String &name, SceneObjectBase *parent, const kmVec3 &initialPosition, 
             const kmQuaternion &initialRotation, const kmVec3 &initialScale);
 
     private:
 
-        void setupObjects(const stl<ConfigurationReader>::vector &objects, SceneObject *base);
+        void setupObjects(const stl<ConfigurationReader>::vector &objects, SceneObjectBase *base);
         void setupCameras(const stl<ConfigurationReader>::vector &cameras);
 
         static int beginDrawBatchEntry(struct lite3d_scene *scene, 
