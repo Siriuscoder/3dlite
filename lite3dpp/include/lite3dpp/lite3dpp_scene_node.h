@@ -17,74 +17,23 @@
  *******************************************************************************/
 #pragma once
 
-#include <lite3d/lite3d_scene.h>
-
-#include <lite3dpp/lite3dpp_common.h>
-#include <lite3dpp/lite3dpp_config_reader.h>
+#include <lite3dpp/lite3dpp_scene_node_base.h>
 
 namespace lite3dpp
 {
-    class LITE3DPP_EXPORT SceneNode : public Manageable, public Noncopiable
+    class LITE3DPP_EXPORT SceneNode : public SceneNodeBase
     {
     public:
         
         using Ptr = std::shared_ptr<SceneNode>;
 
-        SceneNode(const ConfigurationReader &json, SceneNode *parent, Scene *scene, Main *main);
+        SceneNode(const ConfigurationReader &json, SceneNodeBase *parent, Scene *scene);
         virtual ~SceneNode() = default;
-
-        inline void setName(const String &name)
-        { mName = name; }
-
-        inline String getName() const
-        { return mName; }
-
-        inline lite3d_scene_node *getPtr()
-        { return &mNode; }
-        inline const lite3d_scene_node *getPtr() const
-        { return &mNode; }
-        inline void frustumTest(bool flag)
-        { mNode.frustumTest = flag ? LITE3D_TRUE : LITE3D_FALSE; }
-        inline const bool frustumTest() const
-        { return mNode.frustumTest == LITE3D_TRUE; }
-        
-
-        void setPosition(const kmVec3 &position);
-        const kmVec3& getPosition() const;
-        kmVec3 getWorldPosition() const;
-        void move(const kmVec3 &position);
-        void moveRelative(const kmVec3 &p);
-        
-        void setRotation(const kmQuaternion &quat);
-        const kmQuaternion& getRotation() const;
-        kmQuaternion getWorldRotation() const;
-        void rotate(const kmQuaternion &quat);
-        void rotateAngle(const kmVec3 &axis, float angle);
-        void rotateY(float angleDelta);
-        void rotateX(float angleDelta);
-        void rotateZ(float angleDelta);
-        
-        void scale(const kmVec3 &scale);
-
-        void setVisible(bool flag);
-        bool isVisible() const;
-
-        inline SceneNode *getParent()
-        { return mParentNode; }
-        inline const SceneNode *getParent() const
-        { return mParentNode; }
 
         virtual void detachNode();
 
     protected:
 
         lite3d_scene_node mNode;
-        SceneNode *mParentNode = nullptr;
-        Scene *mScene = nullptr;
-        Main *mMain = nullptr;
-
-    private:
-
-        String mName;
     };
 }

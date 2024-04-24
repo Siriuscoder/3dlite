@@ -17,7 +17,7 @@
  *******************************************************************************/
 #pragma once
 
-#include <lite3dpp/lite3dpp_scene_node.h>
+#include <lite3dpp/lite3dpp_scene_node_base.h>
 
 namespace lite3dpp
 {
@@ -29,10 +29,16 @@ namespace lite3dpp
             const kmQuaternion &initialRotation, const kmVec3 &initialScale);
         virtual ~SceneObjectBase() = default;
 
-        inline SceneNode *getRoot()
+        inline SceneNodeBase *getRoot()
         { return mObjectRoot; }
-        inline const SceneNode *getRoot() const
+        inline const SceneNodeBase *getRoot() const
         { return mObjectRoot; }
+        inline SceneObjectBase *getParent()
+        { return mParent; }
+        inline const SceneObjectBase *getParent() const
+        { return mParent; }
+        inline void setParent(SceneObjectBase *parent)
+        { mParent = parent; }
         inline const String &getName() const 
         { return mName; }
         Main *getMain();
@@ -54,7 +60,7 @@ namespace lite3dpp
         virtual void rotateX(float angleDelta);
         virtual void rotateZ(float angleDelta);
 
-        virtual void loadFromTemplate(const String &templateJsonPath) = 0;
+        void loadFromTemplate(const String &templateJsonPath);
         virtual void loadFromTemplate(const ConfigurationReader& conf) = 0;
 
         virtual void rebase(SceneObjectBase *parent);
@@ -63,15 +69,20 @@ namespace lite3dpp
         virtual void disable();
         virtual void enable();
 
+    protected:
+
+        inline void setRoot(SceneNodeBase *root)
+        { mObjectRoot = root; }
+
     private:
 
         String mName;
         Scene *mScene = nullptr;
-
+        SceneNodeBase *mObjectRoot = nullptr;
+        SceneObjectBase *mParent = nullptr;
+        
     protected:
 
-        SceneNode* mObjectRoot = nullptr;
-        SceneObjectBase *mParent = nullptr;
         kmVec3 mInitialPosition;
         kmQuaternion mInitialRotation;
         kmVec3 mInitialScale;

@@ -308,10 +308,10 @@ namespace lite3dpp
 
             RenderTarget *renderTarget = nullptr;
 
-            for(const ConfigurationReader &renderTargetJson : cameraJson.getObjects(L"RenderTargets"))
+            for (const ConfigurationReader &renderTargetJson : cameraJson.getObjects(L"RenderTargets"))
             {
                 String renderTargetName = renderTargetJson.getString(L"Name");
-                if(renderTargetName == "Window") 
+                if (renderTargetName == "Window") 
                     renderTarget = getMain().window();
                 else
                 {
@@ -375,30 +375,7 @@ namespace lite3dpp
                     renderTargetJson.getInt(L"Priority"), renderFlags);
             }
 
-            ConfigurationReader perspectiveOptionsJson = cameraJson.getObject(L"Perspective");
-            ConfigurationReader orthoOptionsJson = cameraJson.getObject(L"Ortho");
-            if(!perspectiveOptionsJson.isEmpty())
-            {
-                camera->setupPerspective(perspectiveOptionsJson.getDouble(L"Znear"),
-                    perspectiveOptionsJson.getDouble(L"Zfar"),
-                    perspectiveOptionsJson.getDouble(L"Fov"),
-                    perspectiveOptionsJson.getDouble(L"Aspect", -1.0) < 0 ? 
-                    (float)renderTarget->width() / (float)renderTarget->height() : cameraJson.getDouble(L"Aspect"));
-            }
-            else if(!orthoOptionsJson.isEmpty())
-            {
-                camera->setupOrtho(orthoOptionsJson.getDouble(L"Near"),
-                    orthoOptionsJson.getDouble(L"Far"),
-                    orthoOptionsJson.getDouble(L"Left"),
-                    orthoOptionsJson.getDouble(L"Right"),
-                    orthoOptionsJson.getDouble(L"Bottom"),
-                    orthoOptionsJson.getDouble(L"Top"));
-            }
-
-            if(cameraJson.has(L"Position"))
-                camera->setPosition(cameraJson.getVec3(L"Position"));
-            if(cameraJson.has(L"LookAt"))
-                camera->lookAt(cameraJson.getVec3(L"LookAt"));
+            camera->loadFromTemplate(cameraJson);
         }
     }
 
@@ -598,7 +575,7 @@ namespace lite3dpp
         }
     }
 
-    void Scene::attachCamera(Camera* camera, SceneObject *parent)
+    void Scene::attachCamera(Camera* camera, SceneObjectBase *parent)
     {
         auto scene = camera->getScene();
         if (scene)
@@ -613,6 +590,7 @@ namespace lite3dpp
             LITE3D_THROW("Camera '" << camera->getName() << "' failed to attach to scene " << getName());
         }
 
+        camera->setParent(parent);
         mCameras.emplace(camera->getName(), camera);
     }
 
@@ -627,6 +605,7 @@ namespace lite3dpp
         if (!lite3d_scene_remove_node(getPtr(), &camera->getPtr()->cameraNode))
             LITE3D_THROW("Camera '" << camera->getName() << "' failed to detach from scene " << getName());
 
+        camera->setParent(nullptr);
         mCameras.erase(camera->getName());
     }
 

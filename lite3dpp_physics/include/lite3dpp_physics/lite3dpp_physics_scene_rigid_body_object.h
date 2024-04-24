@@ -36,7 +36,7 @@ namespace lite3dpp_phisics {
         void loadFromTemplate(const ConfigurationReader& conf) override;
         void detachAllNodes() override;
 
-        virtual SceneNode* addCollisiuonShapeNode(const ConfigurationReader &nodeconf, SceneNode *parent);
+        virtual SceneNode* addCollisiuonShapeNode(const ConfigurationReader &nodeconf, SceneNodeBase *parent);
 
         void applyCentralImpulse(const kmVec3 &impulse) override;
         void applyImpulse(const kmVec3 &impulse, const kmVec3 &relativeOffset) override;
@@ -44,8 +44,8 @@ namespace lite3dpp_phisics {
 
     protected:
         
-        SceneNode* createNode(const ConfigurationReader &conf, SceneNode *parent) override;
-        btTransform calcRelativeTransform(const SceneNode *node);
+        SceneNode* createNode(const ConfigurationReader &conf, SceneNodeBase *parent) override;
+        btTransform calcRelativeTransform(const SceneNodeBase *node);
         /* Используется если нужно совместить начало координат локальной системы обьекта с центром масс в 
            случае если задана опция пересчета центра масс */
         void changeOrigin(const btVector3 &origin);

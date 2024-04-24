@@ -39,50 +39,65 @@ namespace lite3dpp
 
     Main *SceneObjectBase::getMain()
     { 
-        SDL_assert(mObjectRoot);
-        return &mScene->getMain(); 
+        if (getScene())
+        {
+            return &getScene()->getMain();
+        }
+
+        return nullptr;
     }
 
     Scene *SceneObjectBase::getScene()
     {
-        if (mScene)
+        if (getRoot() && getRoot()->getScene())
         {
-            return mScene;
+            if (mScene != getRoot()->getScene())
+            {
+                mScene = getRoot()->getScene();
+            }
         }
 
-        SDL_assert(mObjectRoot);
-        lite3d_scene *scene = static_cast<lite3d_scene *>(mObjectRoot->getPtr()->scene);
-        return reinterpret_cast<Scene *>(scene->userdata);
+        return mScene;
     }
 
     void SceneObjectBase::rebase(SceneObjectBase *parent)
     {
-        if (mObjectRoot && parent->mObjectRoot && mScene)
+        if (getRoot() && parent->getRoot() && mScene)
         {
-            if (!lite3d_scene_rebase_node(mScene->getPtr(), mObjectRoot->getPtr(), parent->mObjectRoot->getPtr()))
+            if (!lite3d_scene_rebase_node(getScene()->getPtr(), getRoot()->getPtr(), getParent()->getRoot()->getPtr()))
             {
-                LITE3D_THROW("Fail to rebase node '" << mObjectRoot->getName() << "', parent object '" << parent->getName() << 
-                    "' was attached to another scene '" << parent->mScene->getName() << "'");
+                LITE3D_THROW("Fail to rebase node '" << getRoot()->getName() << "', parent object '" << getParent()->getName() 
+                    << "' was attached to another scene '" << getParent()->getScene()->getName() << "'");
             }
         }
     }
 
+    void SceneObjectBase::loadFromTemplate(const String &templatePath)
+    {
+        SDL_assert(getMain());
+
+        size_t fileSize = 0;
+        const void *fileData = getMain()->getResourceManager()->loadFileToMemory(templatePath, &fileSize);
+        ConfigurationReader conf(static_cast<const char *>(fileData), fileSize);
+        loadFromTemplate(conf);
+    }
+
     bool SceneObjectBase::isEnabled() const
     {
-        SDL_assert(mObjectRoot);
-        return mObjectRoot->getPtr()->enabled == LITE3D_TRUE;
+        SDL_assert(getRoot());
+        return getRoot()->getPtr()->enabled == LITE3D_TRUE;
     }
 
     void SceneObjectBase::enable()
     {
-        SDL_assert(mObjectRoot);
-        mObjectRoot->getPtr()->enabled = LITE3D_TRUE;
+        SDL_assert(getRoot());
+        getRoot()->getPtr()->enabled = LITE3D_TRUE;
     }
 
     void SceneObjectBase::disable()
     {
-        SDL_assert(mObjectRoot);
-        mObjectRoot->getPtr()->enabled = LITE3D_FALSE;
+        SDL_assert(getRoot());
+        getRoot()->getPtr()->enabled = LITE3D_FALSE;
     }
     
     const kmVec3& SceneObjectBase::getPosition() const

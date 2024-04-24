@@ -52,12 +52,11 @@ namespace lite3dpp
         LightSceneNode* getLightNode(const String &name) const;
         MeshSceneNode* getMeshNode(const String &name) const;
 
-        void loadFromTemplate(const String &templateJsonPath) override;
         void loadFromTemplate(const ConfigurationReader& conf) override;
 
-        virtual SceneNode* addNode(const ConfigurationReader &nodeconf, SceneNode *parent);
-        virtual MeshSceneNode* addMeshNode(const ConfigurationReader &nodeconf, SceneNode *parent);
-        virtual LightSceneNode* addLightNode(const ConfigurationReader &nodeconf, SceneNode *parent);
+        virtual SceneNode* addNode(const ConfigurationReader &nodeconf, SceneNodeBase *parent);
+        virtual MeshSceneNode* addMeshNode(const ConfigurationReader &nodeconf, SceneNodeBase *parent);
+        virtual LightSceneNode* addLightNode(const ConfigurationReader &nodeconf, SceneNodeBase *parent);
         
         void removeNode(const String &name);
         void removeMeshNode(const String &name);
@@ -68,8 +67,8 @@ namespace lite3dpp
 
     protected:
         
-        virtual SceneNode* createNode(const ConfigurationReader &conf, SceneNode *parent);
-        void setupNodes(const stl<ConfigurationReader>::vector &nodesRange, SceneNode *parent);
+        virtual SceneNode* createNode(const ConfigurationReader &conf, SceneNodeBase *parent);
+        void setupNodes(const stl<ConfigurationReader>::vector &nodesRange, SceneNodeBase *parent);
 
     protected:
 

@@ -56,7 +56,7 @@ namespace lite3dpp
             SceneObjectBase *parent = nullptr, const kmVec3 &initialPosition = KM_VEC3_ZERO, 
             const kmQuaternion &initialRotation = KM_QUATERNION_IDENTITY, const kmVec3 &initialScale = KM_VEC3_ONE);
 
-        void attachCamera(Camera* camera, SceneObject *parent = nullptr);
+        void attachCamera(Camera* camera, SceneObjectBase *parent = nullptr);
         void detachCamera(Camera* camera);
         SceneObject *getObject(const String &name) const;
         inline const SceneObjects &getObjects() const

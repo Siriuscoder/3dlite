@@ -41,7 +41,7 @@ namespace lite3dpp_phisics {
             GimpactTriangleMesh
         };
 
-        PhysicsCollisionShapeSceneNode(const ConfigurationReader &conf, SceneNode *parent, Scene *scene, Main *main);
+        PhysicsCollisionShapeSceneNode(const ConfigurationReader &conf, SceneNodeBase *parent, Scene *scene);
 
         inline btCollisionShape *getCollisionShape() { return mCollisionShape.get(); }
         inline btScalar getMass() const { return mNodeMass; }

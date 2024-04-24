@@ -28,7 +28,7 @@ namespace lite3dpp
 
         using Ptr = std::shared_ptr<LightSceneNode>;
         
-        LightSceneNode(const ConfigurationReader &json, SceneNode *parent, Scene *scene, Main *main);
+        LightSceneNode(const ConfigurationReader &json, SceneNodeBase *parent, Scene *scene);
         
         inline LightSource *getLight()
         { return mLight.get(); }

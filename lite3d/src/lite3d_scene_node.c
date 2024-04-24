@@ -112,19 +112,19 @@ void lite3d_scene_node_get_world_rotation(const lite3d_scene_node *node, kmQuate
 void lite3d_scene_node_rotate_y(lite3d_scene_node *node, float angle)
 {
     SDL_assert(node);
-    lite3d_scene_node_rotate_angle(&node, &KM_VEC3_POS_Y, angle);
+    lite3d_scene_node_rotate_angle(node, &KM_VEC3_POS_Y, angle);
 }
 
 void lite3d_scene_node_rotate_x(lite3d_scene_node *node, float angle)
 {
     SDL_assert(node);
-    lite3d_scene_node_rotate_angle(&node, &KM_VEC3_POS_X, angle);
+    lite3d_scene_node_rotate_angle(node, &KM_VEC3_POS_X, angle);
 }
 
 void lite3d_scene_node_rotate_z(lite3d_scene_node *node, float angle)
 {
     SDL_assert(node);
-    lite3d_scene_node_rotate_angle(&node, &KM_VEC3_POS_Z, angle);
+    lite3d_scene_node_rotate_angle(node, &KM_VEC3_POS_Z, angle);
 }
 
 static void scene_node_update(lite3d_scene_node *node)

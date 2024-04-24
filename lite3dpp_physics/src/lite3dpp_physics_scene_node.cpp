@@ -25,9 +25,9 @@
 namespace lite3dpp {
 namespace lite3dpp_phisics {
 
-    PhysicsCollisionShapeSceneNode::PhysicsCollisionShapeSceneNode(const ConfigurationReader &conf, SceneNode *parent, 
-        Scene *scene, Main *main) : 
-        SceneNode(conf, parent, scene, main)
+    PhysicsCollisionShapeSceneNode::PhysicsCollisionShapeSceneNode(const ConfigurationReader &conf, SceneNodeBase *parent, 
+        Scene *scene) : 
+        SceneNode(conf, parent, scene)
     {
         ConfigurationReader collisionShapeConf = conf.getObject(L"CollisionShape");
         auto typeString = collisionShapeConf.getUpperString(L"Type");
@@ -152,8 +152,9 @@ namespace lite3dpp_phisics {
     
     void PhysicsCollisionShapeSceneNode::setupTriangleMeshArray(const ConfigurationReader& conf)
     {
+        SDL_assert(getMain());
         /* load collision mesh into GPU memory */
-        auto rawMesh = mMain->getResourceManager()->queryResource<Mesh>(conf.getObject(L"CollisionMesh").getString(L"Name"),
+        auto rawMesh = getMain()->getResourceManager()->queryResource<Mesh>(conf.getObject(L"CollisionMesh").getString(L"Name"),
             conf.getObject(L"CollisionMesh").getString(L"Mesh"));
 
         if (rawMesh->getPtr()->chunks.size == 0)

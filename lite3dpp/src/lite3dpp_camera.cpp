@@ -15,13 +15,16 @@
  *	You should have received a copy of the GNU General Public License
  *	along with Lite3D.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
-#include <SDL_assert.h>
 #include <lite3dpp/lite3dpp_camera.h>
+
+#include <SDL_assert.h>
+#include <lite3dpp/lite3dpp_main.h>
 
 namespace lite3dpp
 {
     Camera::Camera(const String &name) : 
-        SceneObjectBase(name, nullptr, nullptr, KM_VEC3_ZERO, KM_QUATERNION_IDENTITY, KM_VEC3_ONE)
+        SceneObjectBase(name, nullptr, nullptr, KM_VEC3_ZERO, KM_QUATERNION_IDENTITY, KM_VEC3_ONE),
+        mNode(&mCamera.cameraNode)
     {
         lite3d_camera_init(&mCamera);
         mCamera.userdata = this;
@@ -44,17 +47,6 @@ namespace lite3dpp
             mCamera.projectionParams.zfar,
             mCamera.projectionParams.fovy,
             aspect);
-    }
-
-    Scene *Camera::getScene()
-    {
-        lite3d_scene *scene = static_cast<lite3d_scene *>(mCamera.cameraNode.scene);
-        if (!scene)
-        {
-            return nullptr;
-        }
-
-        return reinterpret_cast<Scene *>(scene->userdata);
     }
 
     void Camera::resetView()
@@ -191,6 +183,35 @@ namespace lite3dpp
     float Camera::getRoll() const
     {
         return kmQuaternionGetRoll(&mCamera.cameraNode.rotation);
+    }
+
+    void Camera::loadFromTemplate(const ConfigurationReader& conf)
+    {
+        SDL_assert(getMain());
+        ConfigurationReader perspectiveOptionsJson = conf.getObject(L"Perspective");
+        ConfigurationReader orthoOptionsJson = conf.getObject(L"Ortho");
+        if (!perspectiveOptionsJson.isEmpty())
+        {
+            auto aspect = static_cast<float>(getMain()->window()->width()) / getMain()->window()->height();
+            setupPerspective(perspectiveOptionsJson.getDouble(L"Znear"),
+                perspectiveOptionsJson.getDouble(L"Zfar"),
+                perspectiveOptionsJson.getDouble(L"Fov"),
+                perspectiveOptionsJson.getDouble(L"Aspect", aspect));
+        }
+        else if (!orthoOptionsJson.isEmpty())
+        {
+            setupOrtho(orthoOptionsJson.getDouble(L"Near"),
+                orthoOptionsJson.getDouble(L"Far"),
+                orthoOptionsJson.getDouble(L"Left"),
+                orthoOptionsJson.getDouble(L"Right"),
+                orthoOptionsJson.getDouble(L"Bottom"),
+                orthoOptionsJson.getDouble(L"Top"));
+        }
+
+        if (conf.has(L"Position"))
+            setPosition(conf.getVec3(L"Position"));
+        if (conf.has(L"LookAt"))
+            lookAtLocal(conf.getVec3(L"LookAt"));
     }
 }
 

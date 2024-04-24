@@ -62,6 +62,8 @@ namespace lite3dpp
             float bottom, float top);
         void setupPerspective(float znear, float zfar, float fovy, float aspect);
         void setAspect(float aspect);
+        inline float getAspect()
+        { return mCamera.projectionParams.aspect; }
 
         inline void setCullFaceMode(CullFaceMode mode)
         { mCamera.cullFaceMode = mode; }
@@ -96,8 +98,11 @@ namespace lite3dpp
         bool inFrustum(const LightSource &light) const;
         bool inFrustum(const lite3d_bounding_vol &vol) const;
 
+        virtual void loadFromTemplate(const ConfigurationReader& conf);
+
     private:
 
+        SceneNodeBase mNode;
         lite3d_camera mCamera;
     };
 }

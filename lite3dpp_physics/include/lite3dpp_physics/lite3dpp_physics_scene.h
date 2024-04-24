@@ -51,7 +51,7 @@ namespace lite3dpp_phisics {
         virtual void createCollisionConfiguration(const ConfigurationReader &conf);
         virtual void createCollisionSolver(const ConfigurationReader &conf);
         virtual void frameEnd() override;
-        virtual SceneObject::Ptr createObject(const String &name, SceneObject *parent, const kmVec3 &initialPosition, 
+        virtual SceneObject::Ptr createObject(const String &name, SceneObjectBase *parent, const kmVec3 &initialPosition, 
             const kmQuaternion &initialRotation, const kmVec3 &initialScale) override;
 
     protected:

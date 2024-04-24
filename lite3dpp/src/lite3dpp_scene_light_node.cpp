@@ -15,22 +15,22 @@
  *	You should have received a copy of the GNU General Public License
  *	along with Lite3D.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
-#include <SDL_assert.h>
-
 #include <lite3dpp/lite3dpp_scene_light_node.h>
+
+#include <SDL_assert.h>
 #include <lite3dpp/lite3dpp_scene.h>
 
 namespace lite3dpp
 {
-    LightSceneNode::LightSceneNode(const ConfigurationReader &json, SceneNode *parent, Scene *scene, Main *main) : 
-        SceneNode(json, parent, scene, main)
+    LightSceneNode::LightSceneNode(const ConfigurationReader &json, SceneNodeBase *parent, Scene *scene) : 
+        SceneNode(json, parent, scene)
     {
         /* setup object lighting */
         auto lightHelper = json.getObject(L"Light");
         if (!lightHelper.isEmpty())
         {
             mLight = std::make_unique<LightSource>(lightHelper);
-            mScene->addLightSource(this);
+            getScene()->addLightSource(this);
         }
     }
 
@@ -56,7 +56,7 @@ namespace lite3dpp
     {
         if (mLight)
         {
-            mScene->removeLightSource(this);
+            getScene()->removeLightSource(this);
         }
         
         SceneNode::detachNode();

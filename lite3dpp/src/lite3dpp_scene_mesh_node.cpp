@@ -15,29 +15,30 @@
  *	You should have received a copy of the GNU General Public License
  *	along with Lite3D.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
-#include <SDL_assert.h>
-
 #include <lite3dpp/lite3dpp_scene_mesh_node.h>
+
+#include <SDL_assert.h>
 #include <lite3dpp/lite3dpp_main.h>
 
 namespace lite3dpp
 {
-    MeshSceneNode::MeshSceneNode(const ConfigurationReader &json, SceneNode *parent, Scene *scene, Main *main) : 
-        SceneNode(json, parent, scene, main)
+    MeshSceneNode::MeshSceneNode(const ConfigurationReader &json, SceneNodeBase *parent, Scene *scene) : 
+        SceneNode(json, parent, scene)
     {
         instances(json.getInt(L"Instances", 1));
+        SDL_assert(getMain());
 
         auto meshHelper = json.getObject(L"Mesh");
         if(!meshHelper.isEmpty())
         {
-            setMesh(mMain->getResourceManager()->queryResource<Mesh>(
+            setMesh(getMain()->getResourceManager()->queryResource<Mesh>(
                 meshHelper.getString(L"Name"),
                 meshHelper.getString(L"Mesh")));
 
             for (auto &matMap : meshHelper.getObjects(L"MaterialMapping"))
             {
                 mMaterialMappingReplacement[matMap.getInt(L"MaterialIndex")] = 
-                    mMain->getResourceManager()->queryResource<Material>(
+                    getMain()->getResourceManager()->queryResource<Material>(
                     matMap.getObject(L"Material").getString(L"Name"),
                     matMap.getObject(L"Material").getString(L"Material"));
             }

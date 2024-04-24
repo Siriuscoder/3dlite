@@ -97,7 +97,7 @@ namespace lite3dpp_phisics {
         }
     }
 
-    btTransform PhysicsRigidBodySceneObject::calcRelativeTransform(const SceneNode *node)
+    btTransform PhysicsRigidBodySceneObject::calcRelativeTransform(const SceneNodeBase *node)
     {
         if (!node)
         {
@@ -149,9 +149,9 @@ namespace lite3dpp_phisics {
         }
     }
 
-    SceneNode* PhysicsRigidBodySceneObject::addCollisiuonShapeNode(const ConfigurationReader &conf, SceneNode *parent)
+    SceneNode* PhysicsRigidBodySceneObject::addCollisiuonShapeNode(const ConfigurationReader &conf, SceneNodeBase *parent)
     {
-        auto node = std::make_shared<PhysicsCollisionShapeSceneNode>(conf, parent, getScene(), getMain());
+        auto node = std::make_shared<PhysicsCollisionShapeSceneNode>(conf, parent, getScene());
         if (mNodes.count(node->getName()))
             LITE3D_THROW("CollisionShapeSceneNode '" << node->getName() << "' already exists..");
 
@@ -160,7 +160,7 @@ namespace lite3dpp_phisics {
         return node.get();
     }
 
-    SceneNode* PhysicsRigidBodySceneObject::createNode(const ConfigurationReader &conf, SceneNode *parent)
+    SceneNode* PhysicsRigidBodySceneObject::createNode(const ConfigurationReader &conf, SceneNodeBase *parent)
     {
         if (conf.has(L"CollisionShape"))
         {
