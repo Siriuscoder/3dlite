@@ -71,6 +71,8 @@ LITE3D_CEXPORT void lite3d_camera_ortho(lite3d_camera *camera, float znear,
 LITE3D_CEXPORT void lite3d_camera_perspective(lite3d_camera *camera, float znear, float zfar, float fovy, float aspect);
 /* lookat rotation, pointTo задан в локальной системе координат камеры */
 LITE3D_CEXPORT void lite3d_camera_lookAt(lite3d_camera *camera, const kmVec3 *pointTo);
+/* lookat rotation, pointTo задан в мировой системе координат */
+LITE3D_CEXPORT void lite3d_camera_lookAt_world(lite3d_camera *camera, const kmVec3 *pointTo);
 /* direction задан в локальной системе координат камеры */
 LITE3D_CEXPORT void lite3d_camera_set_direction(lite3d_camera *camera, const kmVec3 *direction);
 LITE3D_CEXPORT void lite3d_camera_direction(const lite3d_camera *camera, kmVec3 *vec);
@@ -92,7 +94,7 @@ LITE3D_CEXPORT void lite3d_camera_set_yaw_pitch_roll(lite3d_camera *camera, floa
 LITE3D_CEXPORT void lite3d_camera_move(lite3d_camera *camera, const kmVec3 *value);
 /* Перемещение в локальной системе координат относительно осей камеры  */
 LITE3D_CEXPORT void lite3d_camera_move_relative(lite3d_camera *camera, const kmVec3 *value);
-/* point задан в локальной системе координат камеры */
+/* point задан в мировой системе координат */
 LITE3D_CEXPORT float lite3d_camera_distance(const lite3d_camera *camera, const kmVec3 *point);
 /* Получение позиции и вращения в мировой системе координат */
 LITE3D_CEXPORT void lite3d_camera_world_position(const lite3d_camera *camera, kmVec3 *pos);

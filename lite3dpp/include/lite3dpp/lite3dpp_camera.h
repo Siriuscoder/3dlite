@@ -25,7 +25,7 @@
 
 namespace lite3dpp
 {
-    class LITE3DPP_EXPORT Camera : public Noncopiable, public Manageable
+    class LITE3DPP_EXPORT Camera : public SceneObjectBase
     {
     public:
         
@@ -45,7 +45,7 @@ namespace lite3dpp
         };
 
         Camera(const String &name);
-        ~Camera();
+        virtual ~Camera() = default;
 
         inline lite3d_camera *getPtr()
         { return &mCamera; }
@@ -54,9 +54,6 @@ namespace lite3dpp
 
         inline bool isOrtho()
         { return mCamera.isOrtho == LITE3D_TRUE; }
-
-        inline String getName()
-        { return mName; }
         inline void setPolygonMode(PolygonMode mode)
         { mCamera.polygonMode = mode; }
 
@@ -66,35 +63,21 @@ namespace lite3dpp
         void setupPerspective(float znear, float zfar, float fovy, float aspect);
         void setAspect(float aspect);
 
-        Scene *getScene();
-
-        inline void disable()
-        { mCamera.cameraNode.enabled = LITE3D_FALSE; }
-        inline void enable()
-        { mCamera.cameraNode.enabled = LITE3D_TRUE; }
         inline void setCullFaceMode(CullFaceMode mode)
         { mCamera.cullFaceMode = mode; }
         
-        inline kmVec3 getPosition() const
-        { return mCamera.cameraNode.position; }
-        kmVec3 getWorldPosition() const;
-        inline kmQuaternion getRotation() const
-        { return mCamera.cameraNode.rotation; }
-        kmQuaternion getWorldRotation() const;
         kmVec3 getDirection() const;
         kmVec3 getWorldDirection() const;
-        const kmMat4& getProjMatrix() const;
+        void setDirection(const kmVec3 &direction);
+        void lookAtLocal(const kmVec3 &pointTo);
+        void lookAtWorld(const kmVec3 &pointTo);
+        void lookAtWorld(const SceneObjectBase &obj);
 
+        const kmMat4& getProjMatrix() const;
         const kmMat4& refreshViewMatrix();
         const kmMat4& refreshProjViewMatrix();
 
         void resetView();
-        void lookAt(const kmVec3 &pointTo);
-        void lookAt(const SceneObjectBase &obj);
-        void setPosition(const kmVec3 &position);
-        void setRotation(const kmQuaternion &orietation);
-        void setDirection(const kmVec3 &direction);
-        void rotate(const kmQuaternion &orietation);
         void yaw(float angleDelta);
         void pitch(float angleDelta);
         void roll(float angleDelta);
@@ -107,18 +90,14 @@ namespace lite3dpp
         float getRoll() const;
         float getZW() const;
         float getXW() const;
-        void move(const kmVec3 &value);
-        void moveRelative(const kmVec3 &value);
         void holdOnSceneObject(const SceneObjectBase &sceneObj);
         void linkWithSceneObject(const SceneObjectBase &sceneObj);
         void recalcFrustum();
         bool inFrustum(const LightSource &light) const;
         bool inFrustum(const lite3d_bounding_vol &vol) const;
 
-
     private:
 
-        String mName; 
         lite3d_camera mCamera;
     };
 }

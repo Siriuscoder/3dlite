@@ -21,14 +21,11 @@
 namespace lite3dpp
 {
     Camera::Camera(const String &name) : 
-        mName(name)
+        SceneObjectBase(name, nullptr, nullptr, KM_VEC3_ZERO, KM_QUATERNION_IDENTITY, KM_VEC3_ONE)
     {
         lite3d_camera_init(&mCamera);
         mCamera.userdata = this;
     }
-
-    Camera::~Camera()
-    {}
 
     void Camera::setupOrtho(float znear, float zfar, float left, float right, 
         float bottom, float top)
@@ -66,34 +63,24 @@ namespace lite3dpp
         mCamera.cameraNode.recalc = LITE3D_TRUE;
     }
 
-    void Camera::lookAt(const kmVec3 &pointTo)
+    void Camera::lookAtLocal(const kmVec3 &pointTo)
     {
         lite3d_camera_lookAt(&mCamera, &pointTo);
     }
 
-    void Camera::lookAt(const SceneObjectBase &obj)
+    void Camera::lookAtWorld(const SceneObjectBase &obj)
     {
-        lookAt(obj.getPosition());
+        lookAtWorld(obj.getWorldPosition());
     }
 
-    void Camera::setPosition(const kmVec3 &position)
+    void Camera::lookAtWorld(const kmVec3 &pointTo)
     {
-        lite3d_camera_set_position(&mCamera, &position);
-    }
-
-    void Camera::setRotation(const kmQuaternion &orietation)
-    {
-        lite3d_camera_set_rotation(&mCamera, &orietation);
+        lite3d_camera_lookAt_world(&mCamera, &pointTo);
     }
 
     void Camera::setDirection(const kmVec3 &direction)
     {
         lite3d_camera_set_direction(&mCamera, &direction);
-    }
-
-    void Camera::rotate(const kmQuaternion &orietation)
-    {
-        lite3d_camera_set_rotation(&mCamera, &orietation);
     }
 
     void Camera::yaw(float angleDelta)
@@ -133,31 +120,6 @@ namespace lite3dpp
         return getPitch();
     }
 
-    void Camera::move(const kmVec3 &value)
-    {
-        lite3d_camera_move(&mCamera, &value);
-    }
-    
-    void Camera::rotateY(float angleDelta)
-    {
-        lite3d_camera_rotate_y(&mCamera, angleDelta);
-    }
-    
-    void Camera::rotateX(float angleDelta)
-    {
-        lite3d_camera_rotate_x(&mCamera, angleDelta);
-    }
-    
-    void Camera::rotateZ(float angleDelta)
-    {
-        lite3d_camera_rotate_z(&mCamera, angleDelta);
-    }
-
-    void Camera::moveRelative(const kmVec3 &value)
-    {
-        lite3d_camera_move_relative(&mCamera, &value);
-    }
-
     void Camera::holdOnSceneObject(const SceneObjectBase &sceneObj)
     {
         lite3d_camera_tracking(&mCamera, sceneObj.getRoot()->getPtr());
@@ -180,20 +142,6 @@ namespace lite3dpp
         kmVec3 direction;
         lite3d_camera_world_direction(&mCamera, &direction);
         return direction;
-    }
-
-    kmVec3 Camera::getWorldPosition() const
-    {
-        kmVec3 position;
-        lite3d_camera_world_position(&mCamera, &position);
-        return position;
-    }
-
-    kmQuaternion Camera::getWorldRotation() const
-    {
-        kmQuaternion q;
-        lite3d_camera_world_rotation(&mCamera, &q);
-        return q;
     }
 
     const kmMat4& Camera::refreshViewMatrix()

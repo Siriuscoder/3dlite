@@ -44,17 +44,16 @@ namespace lite3dpp
         { return mLightNodes; }
         inline const MeshNodes& getMeshNodes() const 
         { return mMeshNodes; }
+
+        void disable() override;
+        void enable() override;
         
         SceneNode *getNode(const String &name);
         LightSceneNode* getLightNode(const String &name) const;
         MeshSceneNode* getMeshNode(const String &name) const;
 
-        virtual void loadFromTemplate(const String &templateJsonPath);
-        virtual void loadFromTemplate(const ConfigurationReader& conf);
-
-        bool isEnabled() const;
-        void disable();
-        void enable();
+        void loadFromTemplate(const String &templateJsonPath) override;
+        void loadFromTemplate(const ConfigurationReader& conf) override;
 
         virtual SceneNode* addNode(const ConfigurationReader &nodeconf, SceneNode *parent);
         virtual MeshSceneNode* addMeshNode(const ConfigurationReader &nodeconf, SceneNode *parent);

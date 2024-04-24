@@ -39,76 +39,133 @@ namespace lite3dpp
 
     Main *SceneObjectBase::getMain()
     { 
+        SDL_assert(mObjectRoot);
         return &mScene->getMain(); 
+    }
+
+    Scene *SceneObjectBase::getScene()
+    {
+        if (mScene)
+        {
+            return mScene;
+        }
+
+        SDL_assert(mObjectRoot);
+        lite3d_scene *scene = static_cast<lite3d_scene *>(mObjectRoot->getPtr()->scene);
+        return reinterpret_cast<Scene *>(scene->userdata);
+    }
+
+    void SceneObjectBase::rebase(SceneObjectBase *parent)
+    {
+        if (mObjectRoot && parent->mObjectRoot && mScene)
+        {
+            if (!lite3d_scene_rebase_node(mScene->getPtr(), mObjectRoot->getPtr(), parent->mObjectRoot->getPtr()))
+            {
+                LITE3D_THROW("Fail to rebase node '" << mObjectRoot->getName() << "', parent object '" << parent->getName() << 
+                    "' was attached to another scene '" << parent->mScene->getName() << "'");
+            }
+        }
+    }
+
+    bool SceneObjectBase::isEnabled() const
+    {
+        SDL_assert(mObjectRoot);
+        return mObjectRoot->getPtr()->enabled == LITE3D_TRUE;
+    }
+
+    void SceneObjectBase::enable()
+    {
+        SDL_assert(mObjectRoot);
+        mObjectRoot->getPtr()->enabled = LITE3D_TRUE;
+    }
+
+    void SceneObjectBase::disable()
+    {
+        SDL_assert(mObjectRoot);
+        mObjectRoot->getPtr()->enabled = LITE3D_FALSE;
     }
     
     const kmVec3& SceneObjectBase::getPosition() const
     {
+        SDL_assert(getRoot());
         return getRoot()->getPosition();
     }
 
     const kmQuaternion& SceneObjectBase::getRotation() const
     {
+        SDL_assert(getRoot());
         return getRoot()->getRotation();
     }
 
     kmVec3 SceneObjectBase::getWorldPosition() const
     {
+        SDL_assert(getRoot());
         return getRoot()->getWorldPosition();
     }
 
     kmQuaternion SceneObjectBase::getWorldRotation() const
     {
+        SDL_assert(getRoot());
         return getRoot()->getWorldRotation();
     }
 
     void SceneObjectBase::setPosition(const kmVec3 &position)
     {
+        SDL_assert(getRoot());
         getRoot()->setPosition(position);
     }
 
     void SceneObjectBase::move(const kmVec3 &position)
     {
+        SDL_assert(getRoot());
         getRoot()->move(position);
     }
 
     void SceneObjectBase::moveRelative(const kmVec3 &offset)
     {
+        SDL_assert(getRoot());
         getRoot()->moveRelative(offset);
     }
 
     void SceneObjectBase::setRotation(const kmQuaternion &quat)
     {
+        SDL_assert(getRoot());
         getRoot()->setRotation(quat);
     }
 
     void SceneObjectBase::rotate(const kmQuaternion &quat)
     {
+        SDL_assert(getRoot());
         getRoot()->rotate(quat);
     }
 
     void SceneObjectBase::rotateAngle(const kmVec3 &axis, float angle)
     {
+        SDL_assert(getRoot());
         getRoot()->rotateAngle(axis, angle);
     }
 
     void SceneObjectBase::scale(const kmVec3 &scale)
     {
+        SDL_assert(getRoot());
         getRoot()->scale(scale);
     }
 
     void SceneObjectBase::rotateY(float angleDelta)
     {
+        SDL_assert(getRoot());
         getRoot()->rotateY(angleDelta);
     }
 
     void SceneObjectBase::rotateX(float angleDelta)
     {
+        SDL_assert(getRoot());
         getRoot()->rotateX(angleDelta);
     }
 
     void SceneObjectBase::rotateZ(float angleDelta)
     {
+        SDL_assert(getRoot());
         getRoot()->rotateZ(angleDelta);
     }
 }

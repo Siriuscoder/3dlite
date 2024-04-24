@@ -151,7 +151,7 @@ namespace lite3dpp_phisics {
 
     SceneNode* PhysicsRigidBodySceneObject::addCollisiuonShapeNode(const ConfigurationReader &conf, SceneNode *parent)
     {
-        auto node = std::make_shared<PhysicsCollisionShapeSceneNode>(conf, parent, mScene, getMain());
+        auto node = std::make_shared<PhysicsCollisionShapeSceneNode>(conf, parent, getScene(), getMain());
         if (mNodes.count(node->getName()))
             LITE3D_THROW("CollisionShapeSceneNode '" << node->getName() << "' already exists..");
 

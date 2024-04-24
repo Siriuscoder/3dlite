@@ -146,6 +146,17 @@ void lite3d_camera_lookAt(lite3d_camera *camera, const kmVec3 *pointTo)
     lite3d_camera_set_direction(camera, &direction);
 }
 
+void lite3d_camera_lookAt_world(lite3d_camera *camera, const kmVec3 *pointTo)
+{
+    kmVec3 direction;
+    kmVec3 worldPos;
+    SDL_assert(camera && pointTo);
+
+    lite3d_camera_world_position(camera, &worldPos);
+    kmVec3Subtract(&direction, pointTo, &worldPos);
+    lite3d_camera_set_direction(camera, &direction);
+}
+
 void lite3d_camera_set_direction(lite3d_camera *camera, const kmVec3 *direction)
 {
     kmQuaternion q;
@@ -255,10 +266,12 @@ float lite3d_camera_distance(const lite3d_camera *camera,
     const kmVec3 *point)
 {
     kmVec3 pointDir;
+    kmVec3 worldCameraPos;
     SDL_assert(camera);
     SDL_assert(point);
 
-    kmVec3Subtract(&pointDir, point, &camera->cameraNode.position);
+    lite3d_camera_world_position(camera, &worldCameraPos);
+    kmVec3Subtract(&pointDir, point, &worldCameraPos);
     return kmVec3Length(&pointDir);
 }
 

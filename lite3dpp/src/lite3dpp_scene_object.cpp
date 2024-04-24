@@ -47,7 +47,7 @@ namespace lite3dpp
             return;
 
         SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Loading object '%s' to scene '%s' ...", 
-            getName().c_str(), mScene->getName().c_str());
+            getName().c_str(), getScene()->getName().c_str());
 
         mObjectRoot = createNode(rootNodeHelper, mParent ? mParent->getRoot() : nullptr);
         setupNodes(rootNodeHelper.getObjects(L"Nodes"), mObjectRoot);
@@ -77,6 +77,7 @@ namespace lite3dpp
 
     void SceneObject::disable()
     {
+        SDL_assert(mObjectRoot);
         for(Nodes::value_type &node : mNodes)
         {
             node.second->getPtr()->enabled = LITE3D_FALSE;
@@ -87,17 +88,13 @@ namespace lite3dpp
 
     void SceneObject::enable()
     {
+        SDL_assert(mObjectRoot);
         for(Nodes::value_type &node : mNodes)
         {
             node.second->getPtr()->enabled = LITE3D_TRUE;
         }
 
         mObjectRoot->getPtr()->enabled = LITE3D_TRUE;
-    }
-
-    bool SceneObject::isEnabled() const
-    {
-        return mObjectRoot->getPtr()->enabled == LITE3D_TRUE;
     }
     
     SceneNode* SceneObject::createNode(const ConfigurationReader &conf, SceneNode *parent)
@@ -112,7 +109,7 @@ namespace lite3dpp
 
     SceneNode* SceneObject::addNode(const ConfigurationReader &conf, SceneNode *parent)
     {
-        auto node = std::make_shared<SceneNode>(conf, parent, mScene, getMain());
+        auto node = std::make_shared<SceneNode>(conf, parent, getScene(), getMain());
         if (mNodes.count(node->getName()))
             LITE3D_THROW("SceneNode '" << node->getName() << "' already exists..");
 
@@ -122,7 +119,7 @@ namespace lite3dpp
 
     MeshSceneNode* SceneObject::addMeshNode(const ConfigurationReader &conf, SceneNode *parent)
     {
-        auto meshNode = std::make_shared<MeshSceneNode>(conf, parent, mScene, getMain());
+        auto meshNode = std::make_shared<MeshSceneNode>(conf, parent, getScene(), getMain());
         if (mNodes.count(meshNode->getName()))
             LITE3D_THROW("MeshNode '" << meshNode->getName() << "' already exists..");
 
@@ -133,7 +130,7 @@ namespace lite3dpp
 
     LightSceneNode* SceneObject::addLightNode(const ConfigurationReader &conf, SceneNode *parent)
     {
-        auto lightNode = std::make_shared<LightSceneNode>(conf, parent, mScene, getMain());
+        auto lightNode = std::make_shared<LightSceneNode>(conf, parent, getScene(), getMain());
         if (mNodes.count(lightNode->getName()))
             LITE3D_THROW("LightSource '" << lightNode->getName() << " already exists..");
 

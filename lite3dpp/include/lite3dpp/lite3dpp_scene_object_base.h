@@ -36,6 +36,7 @@ namespace lite3dpp
         inline const String &getName() const 
         { return mName; }
         Main *getMain();
+        Scene *getScene();
         
         virtual const kmVec3& getPosition() const;
         virtual kmVec3 getWorldPosition() const;
@@ -56,14 +57,20 @@ namespace lite3dpp
         virtual void loadFromTemplate(const String &templateJsonPath) = 0;
         virtual void loadFromTemplate(const ConfigurationReader& conf) = 0;
 
+        virtual void rebase(SceneObjectBase *parent);
+
+        bool isEnabled() const;
+        virtual void disable();
+        virtual void enable();
+
     private:
 
         String mName;
+        Scene *mScene = nullptr;
 
     protected:
 
         SceneNode* mObjectRoot = nullptr;
-        Scene *mScene = nullptr;
         SceneObjectBase *mParent = nullptr;
         kmVec3 mInitialPosition;
         kmQuaternion mInitialRotation;
