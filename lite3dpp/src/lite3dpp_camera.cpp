@@ -22,12 +22,14 @@
 
 namespace lite3dpp
 {
-    Camera::Camera(const String &name) : 
-        SceneObjectBase(name, nullptr, nullptr, KM_VEC3_ZERO, KM_QUATERNION_IDENTITY, KM_VEC3_ONE),
+    Camera::Camera(const String &name, Main *main) : 
+        SceneObjectBase(name, nullptr, main, nullptr, KM_VEC3_ZERO, KM_QUATERNION_IDENTITY, KM_VEC3_ONE),
         mNode(&mCamera.cameraNode)
     {
         lite3d_camera_init(&mCamera);
         mCamera.userdata = this;
+
+        setRoot(&mNode);
     }
 
     void Camera::setupOrtho(float znear, float zfar, float left, float right, 
@@ -187,12 +189,11 @@ namespace lite3dpp
 
     void Camera::loadFromTemplate(const ConfigurationReader& conf)
     {
-        SDL_assert(getMain());
         ConfigurationReader perspectiveOptionsJson = conf.getObject(L"Perspective");
         ConfigurationReader orthoOptionsJson = conf.getObject(L"Ortho");
         if (!perspectiveOptionsJson.isEmpty())
         {
-            auto aspect = static_cast<float>(getMain()->window()->width()) / getMain()->window()->height();
+            auto aspect = static_cast<float>(getMain().window()->width()) / getMain().window()->height();
             setupPerspective(perspectiveOptionsJson.getDouble(L"Znear"),
                 perspectiveOptionsJson.getDouble(L"Zfar"),
                 perspectiveOptionsJson.getDouble(L"Fov"),

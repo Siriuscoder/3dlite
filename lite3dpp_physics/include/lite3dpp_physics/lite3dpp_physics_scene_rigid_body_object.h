@@ -30,7 +30,7 @@ namespace lite3dpp_phisics {
 
         using CollisionNodes = stl<String, PhysicsCollisionShapeSceneNode::Ptr>::unordered_map;
 
-        PhysicsRigidBodySceneObject(const String &name, Scene *scene, SceneObjectBase *parent,
+        PhysicsRigidBodySceneObject(const String &name, Scene *scene, Main *main, SceneObjectBase *parent,
             const kmVec3 &initialPosition, const kmQuaternion &initialRotation, const kmVec3 &initialScale);
 
         void loadFromTemplate(const ConfigurationReader& conf) override;

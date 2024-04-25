@@ -25,7 +25,7 @@ namespace lite3dpp
     {
     public:
 
-        SceneObjectBase(const String &name, Scene *scene, SceneObjectBase *parent, const kmVec3 &initialPosition, 
+        SceneObjectBase(const String &name, Scene *scene, Main *main, SceneObjectBase *parent, const kmVec3 &initialPosition, 
             const kmQuaternion &initialRotation, const kmVec3 &initialScale);
         virtual ~SceneObjectBase() = default;
 
@@ -41,7 +41,9 @@ namespace lite3dpp
         { mParent = parent; }
         inline const String &getName() const 
         { return mName; }
-        Main *getMain();
+        const Main &getMain() const;
+        Main &getMain();
+
         Scene *getScene();
         
         virtual const kmVec3& getPosition() const;
@@ -60,7 +62,7 @@ namespace lite3dpp
         virtual void rotateX(float angleDelta);
         virtual void rotateZ(float angleDelta);
 
-        void loadFromTemplate(const String &templateJsonPath);
+        void loadFromTemplateFromFile(const String &templateJsonPath);
         virtual void loadFromTemplate(const ConfigurationReader& conf) = 0;
 
         virtual void rebase(SceneObjectBase *parent);
@@ -78,6 +80,7 @@ namespace lite3dpp
 
         String mName;
         Scene *mScene = nullptr;
+        Main *mMain = nullptr;
         SceneNodeBase *mObjectRoot = nullptr;
         SceneObjectBase *mParent = nullptr;
         

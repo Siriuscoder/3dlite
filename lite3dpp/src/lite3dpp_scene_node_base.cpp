@@ -42,7 +42,12 @@ namespace lite3dpp
     {
         SDL_assert(mNodePtr);
         lite3d_scene *scene = static_cast<lite3d_scene *>(mNodePtr->scene);
-        return reinterpret_cast<Scene *>(scene->userdata);
+        if (scene)
+        {
+            return reinterpret_cast<Scene *>(scene->userdata);
+        }
+
+        return nullptr;
     }
 
     void SceneNodeBase::frustumTest(bool flag)

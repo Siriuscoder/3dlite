@@ -145,7 +145,7 @@ namespace lite3dpp
             LITE3D_THROW(name << " make object failed.. already exist");
 
         SceneObject::Ptr sceneObject = createObject(name, parent, initialPosition, initialRotation, initialScale);
-        sceneObject->loadFromTemplate(templatePath);
+        sceneObject->loadFromTemplateFromFile(templatePath);
         mObjects.emplace(name, sceneObject);
         return sceneObject.get();
     }
@@ -264,7 +264,7 @@ namespace lite3dpp
     SceneObject::Ptr Scene::createObject(const String &name, SceneObjectBase *parent, const kmVec3 &initialPosition, 
         const kmQuaternion &initialRotation, const kmVec3 &initialScale)
     {
-        return std::make_shared<SceneObject>(name, this, parent, initialPosition, initialRotation, initialScale);
+        return std::make_shared<SceneObject>(name, this, &getMain(), parent, initialPosition, initialRotation, initialScale);
     }
 
     void Scene::addLightSource(LightSceneNode *node)
@@ -585,7 +585,7 @@ namespace lite3dpp
 
         /* attach node to scene */
         if (!lite3d_scene_add_node(getPtr(), &camera->getPtr()->cameraNode, 
-            parent ? parent->getRoot()->getPtr() : &getPtr()->rootNode))
+            parent ? parent->getRoot()->getPtr() : nullptr))
         {
             LITE3D_THROW("Camera '" << camera->getName() << "' failed to attach to scene " << getName());
         }

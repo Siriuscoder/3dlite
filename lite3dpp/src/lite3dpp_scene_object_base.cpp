@@ -27,24 +27,27 @@
 
 namespace lite3dpp
 {
-    SceneObjectBase::SceneObjectBase(const String &name, Scene *scene, SceneObjectBase *parent, const kmVec3 &initialPosition, 
-        const kmQuaternion &initialRotation, const kmVec3 &initialScale) : 
+    SceneObjectBase::SceneObjectBase(const String &name, Scene *scene, Main *main, SceneObjectBase *parent, 
+        const kmVec3 &initialPosition, const kmQuaternion &initialRotation, const kmVec3 &initialScale) : 
         mName(name),
         mScene(scene),
+        mMain(main),
         mParent(parent),
         mInitialPosition(initialPosition),
         mInitialRotation(initialRotation),
         mInitialScale(initialScale)
     {}
 
-    Main *SceneObjectBase::getMain()
-    { 
-        if (getScene())
-        {
-            return &getScene()->getMain();
-        }
+    const Main &SceneObjectBase::getMain() const
+    {
+        SDL_assert(mMain);
+        return *mMain; 
+    }
 
-        return nullptr;
+    Main &SceneObjectBase::getMain()
+    { 
+        SDL_assert(mMain);
+        return *mMain;
     }
 
     Scene *SceneObjectBase::getScene()
@@ -72,12 +75,10 @@ namespace lite3dpp
         }
     }
 
-    void SceneObjectBase::loadFromTemplate(const String &templatePath)
+    void SceneObjectBase::loadFromTemplateFromFile(const String &templatePath)
     {
-        SDL_assert(getMain());
-
         size_t fileSize = 0;
-        const void *fileData = getMain()->getResourceManager()->loadFileToMemory(templatePath, &fileSize);
+        const void *fileData = getMain().getResourceManager()->loadFileToMemory(templatePath, &fileSize);
         ConfigurationReader conf(static_cast<const char *>(fileData), fileSize);
         loadFromTemplate(conf);
     }

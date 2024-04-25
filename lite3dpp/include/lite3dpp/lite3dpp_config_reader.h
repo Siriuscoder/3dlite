@@ -26,8 +26,8 @@ namespace lite3dpp
     {
     public:
 
-        ConfigurationReader(const String &file);
-        ConfigurationReader(const char *data, size_t size);
+        explicit ConfigurationReader(const String &file);
+        explicit ConfigurationReader(const char *data, size_t size);
         ConfigurationReader(const ConfigurationReader &other);
         ~ConfigurationReader();
 

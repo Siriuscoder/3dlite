@@ -101,7 +101,7 @@ void PhysicsScene::frameEnd()
 SceneObject::Ptr PhysicsScene::createObject(const String &name, SceneObjectBase *parent, const kmVec3 &initialPosition, 
     const kmQuaternion &initialRotation, const kmVec3 &initialScale)
 {
-    return std::make_shared<PhysicsRigidBodySceneObject>(name, this, parent, initialPosition, initialRotation,
+    return std::make_shared<PhysicsRigidBodySceneObject>(name, this, &getMain(), parent, initialPosition, initialRotation,
         initialScale);
 }
 

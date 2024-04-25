@@ -85,35 +85,35 @@ static int process_events(SDL_Event *levent, void *userdata)
         }
         else if (levent->key.keysym.sym == SDLK_UP)
         {
-            lite3d_camera_pitch(&mCamera01, kmDegreesToRadians(-5));
+            lite3d_camera_pitch(&mCamera01, kmDegreesToRadians(5));
         }
         else if (levent->key.keysym.sym == SDLK_DOWN)
         {
-            lite3d_camera_pitch(&mCamera01, kmDegreesToRadians(5));
+            lite3d_camera_pitch(&mCamera01, kmDegreesToRadians(-5));
         }
         else if (levent->key.keysym.sym == SDLK_LEFT)
         {
-            lite3d_camera_yaw(&mCamera01, kmDegreesToRadians(-5));
+            lite3d_camera_yaw(&mCamera01, kmDegreesToRadians(5));
         }
         else if (levent->key.keysym.sym == SDLK_RIGHT)
         {
-            lite3d_camera_yaw(&mCamera01, kmDegreesToRadians(5));
+            lite3d_camera_yaw(&mCamera01, kmDegreesToRadians(-5));
         }
         else if (levent->key.keysym.sym == SDLK_w)
         {
-            lite3d_camera_move_relative(&mCamera01, &KM_VEC3_POS_Z);
+            lite3d_camera_move_relative(&mCamera01, &KM_VEC3_NEG_Z);
         }
         else if (levent->key.keysym.sym == SDLK_s)
         {
-            lite3d_camera_move_relative(&mCamera01, &KM_VEC3_NEG_Z);
+            lite3d_camera_move_relative(&mCamera01, &KM_VEC3_POS_Z);
         }
         else if (levent->key.keysym.sym == SDLK_a)
         {
-            lite3d_camera_move_relative(&mCamera01, &KM_VEC3_POS_X);
+            lite3d_camera_move_relative(&mCamera01, &KM_VEC3_NEG_X);
         }
         else if (levent->key.keysym.sym == SDLK_d)
         {
-            lite3d_camera_move_relative(&mCamera01, &KM_VEC3_NEG_X);
+            lite3d_camera_move_relative(&mCamera01, &KM_VEC3_POS_X);
         }
         else if (levent->key.keysym.sym == SDLK_q)
         {

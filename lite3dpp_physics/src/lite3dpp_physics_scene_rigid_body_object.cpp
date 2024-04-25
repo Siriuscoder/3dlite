@@ -24,9 +24,9 @@
 namespace lite3dpp {
 namespace lite3dpp_phisics {
 
-    PhysicsRigidBodySceneObject::PhysicsRigidBodySceneObject(const String &name, Scene *scene, SceneObjectBase *parent,
-        const kmVec3 &initialPosition, const kmQuaternion &initialRotation, const kmVec3 &initialScale) : 
-        PhysicsSceneObject(name, scene, parent, initialPosition, initialRotation, initialScale),
+    PhysicsRigidBodySceneObject::PhysicsRigidBodySceneObject(const String &name, Scene *scene, Main *main, 
+        SceneObjectBase *parent, const kmVec3 &initialPosition, const kmQuaternion &initialRotation, const kmVec3 &initialScale) : 
+        PhysicsSceneObject(name, scene, main, parent, initialPosition, initialRotation, initialScale),
         mWorld(static_cast<PhysicsScene *>(scene)->getWorld()),
         mMotionState(this)
     {}

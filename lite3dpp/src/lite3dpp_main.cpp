@@ -221,7 +221,7 @@ namespace lite3dpp
         if (it != mCameras.end())
             LITE3D_THROW("Camera \"" << name << "\" already exists..");
 
-        auto emplaced = mCameras.try_emplace(name, name);
+        auto emplaced = mCameras.try_emplace(name, name, this);
         return &emplaced.first->second;
     }
 
