@@ -30,6 +30,7 @@ define_sample(sample_warship sample_common lite3dpp_font lite3dpp)
 define_sample(sample_viewer sample_common lite3dpp_font lite3dpp)
 define_sample(sample_vault_111 sample_common lite3dpp_font lite3dpp)
 define_sample(sample_reflection_sky sample_common lite3dpp_font lite3dpp)
+define_sample(sample_camera sample_common lite3dpp_font lite3dpp)
 
 if(BULLET_FOUND)
     define_sample(sample_physics sample_common lite3dpp_font lite3dpp lite3dpp_physics)

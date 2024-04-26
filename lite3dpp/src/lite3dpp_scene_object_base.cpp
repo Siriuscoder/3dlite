@@ -65,13 +65,15 @@ namespace lite3dpp
 
     void SceneObjectBase::rebase(SceneObjectBase *parent)
     {
-        if (getRoot() && parent->getRoot() && mScene)
+        if (getRoot() && parent->getRoot() && getScene())
         {
-            if (!lite3d_scene_rebase_node(getScene()->getPtr(), getRoot()->getPtr(), getParent()->getRoot()->getPtr()))
+            if (!lite3d_scene_rebase_node(getScene()->getPtr(), getRoot()->getPtr(), parent->getRoot()->getPtr()))
             {
                 LITE3D_THROW("Fail to rebase node '" << getRoot()->getName() << "', parent object '" << getParent()->getName() 
                     << "' was attached to another scene '" << getParent()->getScene()->getName() << "'");
             }
+
+            setParent(parent);
         }
     }
 
