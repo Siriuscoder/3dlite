@@ -42,14 +42,21 @@ public:
         auto camera = getMain().getCamera("MyCamera");
         setMainCamera(camera);
 
+        const kmVec3 arrowScale{ 2.4, 2.4, 2.4 };
         /* Добавляем пол */
         mGround = scene->addObject("Ground", "samples:objects/ground.json");
         /* Центральный кубик */
         mCenterBox = scene->addObject("CenterBox", "samples:objects/cube.json", mGround, kmVec3 {0.0f, 0.0f, 40.0f});
+        scene->addObject("CenterBoxArrow", "samples:objects/coord_arrows.json", mCenterBox, KM_VEC3_ZERO, 
+            KM_QUATERNION_IDENTITY, arrowScale);
         /* Еще кубики */
-        mBox1 = scene->addObject("box1", "samples:objects/cube.json", mGround, kmVec3 {100.0f, 400.0f, 40.0f});
-        mBox2 = scene->addObject("box2", "samples:objects/cube.json", mCenterBox, kmVec3 {0.0f, 800.0f, 100.0f});
-        mBox3 = scene->addObject("box3", "samples:objects/cube.json", mGround, kmVec3 {0.0f, 0.0f, 400.0f});
+        mBox1 = scene->addObject("Box1", "samples:objects/cube.json", mGround, kmVec3 {100.0f, 400.0f, 40.0f});
+        mBox2 = scene->addObject("Box2", "samples:objects/cube.json", mCenterBox, kmVec3 {0.0f, 800.0f, 100.0f});
+        mBox3 = scene->addObject("Box3", "samples:objects/cube.json", mGround, kmVec3 {0.0f, 0.0f, 400.0f});
+        scene->addObject("Box2Arrow", "samples:objects/coord_arrows.json", mBox2, KM_VEC3_ZERO, 
+            KM_QUATERNION_IDENTITY, arrowScale);
+        scene->addObject("Box3Arrow", "samples:objects/coord_arrows.json", mBox3, KM_VEC3_ZERO, 
+            KM_QUATERNION_IDENTITY, arrowScale);
         /* По умолчанию привязвыем камеру к полу */
         scene->attachCamera(camera, mGround);
         mCameraCurrentBound = mGround;

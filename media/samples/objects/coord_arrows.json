@@ -1,0 +1,9 @@
+{
+  "Root": {
+    "Name": "CoordArrows",
+    "Mesh": {
+      "Mesh": "samples:models/json/CoordArrows.json",
+      "Name": "CoordArrows.mesh"
+    }
+  }
+}

@@ -1,0 +1,7 @@
+{
+    "Sources": 
+    [
+        "samples:shaders/sources/coord_arrows.vs",
+        "samples:shaders/sources/coord_arrows.fs"
+    ]
+}
