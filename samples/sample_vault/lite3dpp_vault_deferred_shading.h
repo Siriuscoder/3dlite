@@ -26,8 +26,8 @@ class VaultDF : public VaultBase, public SceneObserver
 {
 public:
     
-    VaultDF() : 
-        mLightComputeStep(NULL)
+    VaultDF(const std::string_view &helpString) : 
+        VaultBase(helpString)
     {}
 
     void createPipeline() override
@@ -132,7 +132,7 @@ public:
     
 private:
     
-    RenderTarget *mLightComputeStep;
+    RenderTarget *mLightComputeStep = nullptr;
 };
 
 }}

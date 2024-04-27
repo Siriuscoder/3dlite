@@ -20,12 +20,18 @@
 namespace lite3dpp {
 namespace samples {
 
+static const char *helpString = 
+    "Press '+' to increse gamma\n"
+    "Press '-' to decrese gamma\n"
+    "Press 'l' to enable/disable flashlight\n"
+    "Press 'o' to enable/disable FXAA\n";
+
 class DeferredShadingSample : public Sample
 {
 public:
     
     DeferredShadingSample() : 
-        mGammaFactor(1.0f)
+        Sample(helpString)
     {}
 
     void createScene() override
@@ -104,8 +110,8 @@ public:
     
 private:
                     
-    float mGammaFactor;
-    LightSceneNode* mFlashLight;
+    float mGammaFactor = 1.0f;
+    LightSceneNode* mFlashLight = nullptr;
 };
 
 }}

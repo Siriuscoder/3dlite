@@ -24,6 +24,18 @@
 namespace lite3dpp {
 namespace samples {
 
+static const char *helpString = 
+    "Press '+' to increse gamma\n"
+    "Press '-' to decrese gamma\n"
+    "Press 'o,p' to rotate lamp in gear room\n"
+    "            (hold ctrl to reverse)\n"
+    "Press 'i' to rotate lamp in reactor room\n"
+    "            (hold ctrl to reverse)\n"
+    "Press 'l' to enable/disable flashlight\n"
+    "Press 'k' to move gear key\n"
+    "            (hold ctrl to reverse)\n"
+    "Press 'u' to enable/disable SSAO\n";
+
 class SampleVault111 : public Sample
 {
 public:
@@ -77,7 +89,8 @@ public:
 
 public:
 
-    SampleVault111()
+    SampleVault111() : 
+        Sample(helpString)
     {
         // use current time as seed for random generator
         std::srand(std::time(nullptr));

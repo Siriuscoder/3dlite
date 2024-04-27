@@ -20,10 +20,17 @@
 namespace lite3dpp {
 namespace samples {
 
+static const char *helpString = 
+    "Press 'e' to show shadow map\n";
+
 class SponzaHall : public Sample, public RenderTargetObserver
 {
 public:
     const kmVec3 sunLightDirection = { -2.0f, -1.0f, -2.3f };
+
+    SponzaHall() : 
+        Sample(helpString)
+    {}
 
     void createScene() override
     {
@@ -92,7 +99,7 @@ public:
         Sample::processEvent(e);
         if (e->type == SDL_KEYDOWN)
         {
-            if (e->key.keysym.sym == SDLK_o)
+            if (e->key.keysym.sym == SDLK_e)
             {
                 static bool SwitchView = false;
                 SwitchView = !SwitchView;

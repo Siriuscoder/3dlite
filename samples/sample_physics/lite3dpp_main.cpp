@@ -23,9 +23,19 @@
 namespace lite3dpp {
 namespace samples {
 
+static const char *helpString = 
+    "Press 'c' to drop simple box\n"
+    "Press 'e' to drop compound coss body\n"
+    "Press 'x' to drop compound Z body\n"
+    "Press 'q' to drop compound T body\n";
+
 class BoxesColliderSample : public Sample
 {
 public:
+
+    BoxesColliderSample() : 
+        Sample(helpString)
+    {}
 
     void createScene() override
     {

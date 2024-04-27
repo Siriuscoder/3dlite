@@ -26,6 +26,10 @@ class VaultDR : public VaultBase
 {
 public:
 
+    VaultDR(const std::string_view &helpString) : 
+        VaultBase(helpString)
+    {}
+
     void createPipeline() override
     {
         // load main scene, direct render depth and then calculate lighting

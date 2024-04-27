@@ -26,7 +26,57 @@
 namespace lite3dpp {
 namespace samples {
 
-Sample::Sample()
+static const char *commonHelpString = 
+    "============= LITE3D v%s ==================\n"
+    "HELP:\n"
+    "Press '1' to show/hide this menu\n"
+    "Press '2' to go to render and memory stats\n"
+    "Press '3' to show/hide stats\n"
+    "Press '4' to make screenshot\n"
+    "Press 'f' to fullscreen\n"
+    "Press 'w','s','a','d' to move\n"
+    "\n"
+    "Sample: %s\n"
+    "%s";
+
+static const char *resourceStatsString = 
+    "============= Resource statistics =============\n"
+    "Estimated video memory:         %d kB\n"
+    "Total resources in cache:       %d\n"
+    "Textures:                       %d/%d\n"
+    "Materials:                      %d/%d\n"
+    "Scenes:                         %d/%d\n"
+    "Meshes:                         %d/%d\n"
+    "Shaders:                        %d/%d\n"
+    "Render targets:                 %d/%d\n"
+    "SSBO:                           %d/%d\n"
+    "UBO:                            %d/%d\n"
+    "VBO:                            %d\n"
+    "IBO:                            %d\n"
+    "VAO:                            %d\n"
+    "QUERIES:                        %d\n\n"
+    "File cache: %d kB in %d files\n";
+
+static const char *renderStatsString = 
+    "============= Render statistics ===============\n"
+    "Frames:                         %ld\n"
+    "Last FPS:                       %d\n"
+    "Average FPS:                    %d\n"
+    "Best FPS:                       %d\n"
+    "Worst FPS:                      %d\n"
+    "Last frame time:                %f ms\n"
+    "Average frame time:             %f ms\n"
+    "Best frame time:                %f ms\n"
+    "Worst frame time:               %f ms\n"
+    "Total Nodes:                    %d\n"
+    "Batches total:                  %d\n"
+    "Batches draw called:            %d\n"
+    "Batches draw instanced:         %d\n"
+    "Batches draw occluded:          %d\n"
+    "Draw faces:                     %d\n";
+
+Sample::Sample(const std::string_view &sampleHelpString) : 
+   mSampleHelpString(sampleHelpString)
 {
     mMain.addObserver(this);
 }
@@ -39,13 +89,14 @@ void Sample::initGui()
         "samples:textures/json/arial256x128.json");
     mHelpTexture = mMain.getResourceManager()->
         queryResource<lite3dpp_font::FontTexture>("arial512x512.texture",
-        "samples:textures/json/arial256x128.json");
+        "samples:textures/json/arial512x512.json");
     
     mGuiScene = mMain.getResourceManager()->queryResource<Scene>("GUI",
         "samples:scenes/gui.json");
     
     mGuiCamera = getMain().getCamera("GuiCamera");
-    //mGuiCamera->cullBackFaces(false);
+    mStatOverlay = mGuiScene->getObject("StatOverlay");
+    mHelpOverlay = mGuiScene->getObject("HelpOverlay");
     setGuiSize(mMainWindow->width(), mMainWindow->height());
     
     mStatTimer = mMain.addTimer("StatTimer", 500);
@@ -56,7 +107,7 @@ void Sample::init()
     mMainWindow = mMain.window();
     initGui();
     createScene();
-    updateGuiStats();
+    updateGui();
     
     adjustMainCamera(mMainWindow->width(), mMainWindow->height());
     mMain.showSystemCursor(false);
@@ -91,7 +142,7 @@ void Sample::timerTick(lite3d_timer *timerid)
         fixedUpdateTimerTick(timerid->firedPerRound, timerid->deltaMcs, deltaRetard);
     }
     else if (timerid == mStatTimer)
-        updateGuiStats();
+        updateGui();
 }
 
 void Sample::processEvent(SDL_Event *e)
@@ -103,21 +154,23 @@ void Sample::processEvent(SDL_Event *e)
             mMain.stop();
         else if (e->key.keysym.sym == SDLK_1)
         {
-            printRenderStats();
+            SDL_assert(mHelpOverlay);
+            mHelpOverlay->isEnabled() ? mHelpOverlay->disable() : mHelpOverlay->enable();
         }
         else if (e->key.keysym.sym == SDLK_2)
         {
-            printMemoryStats();
+            mHelpState = mHelpState == SHOW_HELP ? SHOW_RENDER : 
+                (mHelpState == SHOW_RENDER ? SHOW_RESOURCES : SHOW_HELP);
+            updateGui();
         }
         else if (e->key.keysym.sym == SDLK_3)
         {
-            saveScreenshot();
+            SDL_assert(mGuiCamera);
+            mGuiCamera->isEnabled() ? mGuiCamera->disable() : mGuiCamera->enable();
         }
         else if (e->key.keysym.sym == SDLK_4)
         {
-            static bool showStats = true;
-            showStats = !showStats;
-            showStats ? mGuiCamera->enable() : mGuiCamera->disable();
+            saveScreenshot();
         }
         else if (mMainWindow && mMainCamera && e->key.keysym.sym == SDLK_f)
         {
@@ -207,76 +260,67 @@ void Sample::resizeMainWindow(int32_t width, int32_t height)
     adjustMainCamera(mMainWindow->width(), mMainWindow->height());
 }
 
-void Sample::printRenderStats()
-{
-    lite3d_render_stats *stats = lite3d_render_stats_get();
-    SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
-        "\n==== Render statistics ========\n"
-        "Fames: %ld\n"
-        "last FPS\tavr FPS\t\tbest FPS\tworst FPS\n"
-        "%d\t\t%d\t\t%d\t\t%d\n"
-        "last frame ms\tavr frame ms\tbest frame ms\tworst frame ms\n"
-        "%f\t%f\t%f\t%f\n"
-        "nodes total\tbatches total\tbatches called\tbatches instanced\tbatches occluded\tfaces\n"
-        "%d\t\t%d\t\t%d\t\t%d\t\t\t%d\t\t\t%d\n",
-        stats->framesCount, stats->lastFPS, stats->avrFPS, stats->bestFPS, stats->worstFPS,
-        stats->lastFrameMs, stats->avrFrameMs, stats->bestFrameMs, stats->worstFrameMs,
-        stats->nodesTotal, stats->batchTotal, stats->batchCalled, stats->batchInstancedCalled,
-        stats->batchOccluded, stats->trianglesByFrame);
-}
-
-void Sample::printMemoryStats()
-{
-    ResourceManager::ResourceManagerStats memStats = mMain.getResourceManager()->getStats();
-    lite3d_render_stats *renderStats = lite3d_render_stats_get();
-
-    SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
-        "\n==== Memory statistics ========\n"
-        "Video memory:\t%d kB\n"
-        "Total objects:\t%d\n"
-        "Textures:\t%d/%d\n"
-        "Materials:\t%d/%d\n"
-        "Scenes:\t\t%d/%d\n"
-        "Meshes:\t\t%d/%d\n"
-        "Shaders:\t%d/%d\n"
-        "Render targets:\t%d/%d\n"
-        "SSBO:\t\t%d/%d\n"
-        "UBO:\t\t%d/%d\n"
-        "VBO:\t\t%d\n"
-        "IBO:\t\t%d\n"
-        "VAO:\t\t%d\n"
-        "QUERIES:\t%d\n"
-        "File cache:\t%d kB in %d files\n",
-        static_cast<uint32_t>(memStats.usedVideoMem / 1024),
-        memStats.totalObjectsCount,
-        memStats.texturesLoadedCount, memStats.texturesCount,
-        memStats.materialsLoadedCount, memStats.materialsCount,
-        memStats.scenesLoadedCount, memStats.scenesCount,
-        memStats.meshesLoadedCount, memStats.meshesCount,
-        memStats.shaderProgramsLoadedCount, memStats.shaderProgramsCount,
-        memStats.renderTargetsLoadedCount, memStats.renderTargetsCount,
-        memStats.ssboLoadedCount, memStats.ssboCount,
-        memStats.uboLoadedCount, memStats.uboCount,
-        renderStats->vboCount, renderStats->iboCount, renderStats->vaoCount, renderStats->queryCount,
-        static_cast<uint32_t>(memStats.totalCachedFilesMemSize / 1024), memStats.fileCachesCount);
-}
-
-void Sample::updateGuiStats()
+void Sample::updateGui()
 {
     SDL_assert(mStatTexture);
-    const lite3d_render_stats *stats = mMain.getRenderStats();
+    SDL_assert(mHelpTexture);
+    const lite3d_render_stats *renderStats = mMain.getRenderStats();
     
-    char strbuf[150];
-    kmVec2 textPos = {24, 25};
-    kmVec4 textColor = {0.3f, 0.7f, 0.8f, 1.0f};
+    char strbuf[1024];
+    const kmVec2 textPos = {24, 25};
+    
+    if (mStatOverlay->isEnabled())
+    {
+        const kmVec4 textColor = {0.3f, 0.7f, 0.8f, 1.0f};
 
-    sprintf(strbuf, "FPS: %d\nFrame time: %.2f ms\nBatching: %d/%d\nFaces: %d",
-        stats->lastFPS, stats->lastFrameMs, stats->batchCalled, 
-        stats->batchTotal, stats->trianglesByFrame);
-    
-    mStatTexture->clean();
-    mStatTexture->drawText(strbuf, textPos, textColor);
-    mStatTexture->uploadChanges();
+        sprintf(strbuf, "FPS: %d\nFrame time: %.2f ms\nBatching: %d/%d\nFaces: %d",
+            renderStats->lastFPS, renderStats->lastFrameMs, renderStats->batchCalled, 
+            renderStats->batchTotal, renderStats->trianglesByFrame);
+
+        mStatTexture->clean();
+        mStatTexture->drawText(strbuf, textPos, textColor);
+        mStatTexture->uploadChanges();
+    }
+
+    if (mHelpOverlay->isEnabled())
+    {
+        const kmVec4 textColor = {0.812f, 0.796f, 0.086f, 1.0f};
+        if (mHelpState == SHOW_HELP)
+        {
+            sprintf(strbuf, commonHelpString, LITE3D_VERSION_STRING, mMain.getSettings().videoSettings.caption, 
+                mSampleHelpString.c_str());
+        }
+        else if (mHelpState == SHOW_RESOURCES)
+        {
+            ResourceManager::ResourceManagerStats memStats = mMain.getResourceManager()->getStats();
+            sprintf(strbuf, resourceStatsString, 
+                static_cast<uint32_t>(memStats.usedVideoMem / 1024),
+                memStats.totalObjectsCount,
+                memStats.texturesLoadedCount, memStats.texturesCount,
+                memStats.materialsLoadedCount, memStats.materialsCount,
+                memStats.scenesLoadedCount, memStats.scenesCount,
+                memStats.meshesLoadedCount, memStats.meshesCount,
+                memStats.shaderProgramsLoadedCount, memStats.shaderProgramsCount,
+                memStats.renderTargetsLoadedCount, memStats.renderTargetsCount,
+                memStats.ssboLoadedCount, memStats.ssboCount,
+                memStats.uboLoadedCount, memStats.uboCount,
+                renderStats->vboCount, renderStats->iboCount, renderStats->vaoCount, renderStats->queryCount,
+                static_cast<uint32_t>(memStats.totalCachedFilesMemSize / 1024), memStats.fileCachesCount);
+        }
+        else
+        {
+            sprintf(strbuf, renderStatsString, 
+                renderStats->framesCount, renderStats->lastFPS, renderStats->avrFPS, renderStats->bestFPS, renderStats->worstFPS,
+                renderStats->lastFrameMs, renderStats->avrFrameMs, renderStats->bestFrameMs, renderStats->worstFrameMs,
+                renderStats->nodesTotal, renderStats->batchTotal, renderStats->batchCalled, 
+                renderStats->batchInstancedCalled - renderStats->batchCalled, renderStats->batchOccluded, 
+                renderStats->trianglesByFrame);
+        }
+
+        mHelpTexture->clean();
+        mHelpTexture->drawText(strbuf, textPos, textColor);
+        mHelpTexture->uploadChanges();
+    }
 }
 
 void Sample::saveScreenshot()

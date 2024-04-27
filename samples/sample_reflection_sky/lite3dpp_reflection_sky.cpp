@@ -22,9 +22,16 @@
 namespace lite3dpp {
 namespace samples {
 
+static const char *helpString = 
+    "Press 'e' to switch background\n";
+
 class SampleReflectionSky : public Sample
 {
 public:
+
+    SampleReflectionSky() : 
+        Sample(helpString)
+    {}
 
     void createScene() override
     {

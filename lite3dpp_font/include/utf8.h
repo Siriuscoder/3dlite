@@ -30,5 +30,6 @@ DEALINGS IN THE SOFTWARE.
 
 #include "utf8/checked.h"
 #include "utf8/unchecked.h"
+#include "utf8/cpp17.h"
 
 #endif // header guard

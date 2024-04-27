@@ -29,6 +29,10 @@ public:
         
     virtual void createPipeline() = 0;
 
+    VaultBase(const std::string_view &helpString) : 
+        Sample(helpString)
+    {}
+
     void createScene() override
     {
         createPipeline();

@@ -18,6 +18,12 @@
 #include "lite3dpp_vault_deferred_shading.h"
 #include "lite3dpp_vault_directrender.h"
 
+static const char *helpString = 
+    "Press '+' to increse gamma\n"
+    "Press '-' to decrese gamma\n"
+    "Press 'o' to enable/disable FXAA\n"
+    "Press 'l' to enable/disable flashlight\n"
+    "Press 't' to on/off lamps\n";
 
 int main(int agrc, char *args[])
 {
@@ -25,22 +31,22 @@ int main(int agrc, char *args[])
     {
         if (std::string(args[1]) == "DF")
         {
-            lite3dpp::samples::VaultDF sample;
+            lite3dpp::samples::VaultDF sample(helpString);
             return sample.start("vault_df/config/config_vault.json");
         }
         else if (std::string(args[1]) == "DR")
         {
-            lite3dpp::samples::VaultDR sample;
+            lite3dpp::samples::VaultDR sample(helpString);
             return sample.start("vault_dr/config/config_vault.json");
         }
         else if (std::string(args[1]) == "DRU")
         {
-            lite3dpp::samples::VaultDR sample;
+            lite3dpp::samples::VaultDR sample(helpString);
             return sample.start("vault_dr_ubo/config/config_vault.json");
         }
         else if (std::string(args[1]) == "DRS")
         {
-            lite3dpp::samples::VaultDR sample;
+            lite3dpp::samples::VaultDR sample(helpString);
             return sample.start("vault_dr_ssbo/config/config_vault.json");
         }
     }

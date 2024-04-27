@@ -22,9 +22,17 @@
 namespace lite3dpp {
 namespace samples {
 
+static const char *helpString = 
+    "Press 'e' to change camera parent node\n"
+    "Press 'q' to set camera as box parent\n"; 
+
 class CameraSample : public Sample
 {
 public:
+
+    CameraSample() : 
+        Sample(helpString)
+    {}
 
     void createScene() override
     {

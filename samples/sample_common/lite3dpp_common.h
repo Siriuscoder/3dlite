@@ -35,7 +35,13 @@ class Sample : public LifecycleObserver
 {
 public:
 
-    Sample();
+    enum HelpOverlayState {
+        SHOW_HELP,
+        SHOW_RESOURCES,
+        SHOW_RENDER
+    };
+
+    Sample(const std::string_view &sampleHelpString = "");
 
     void init() override;
     void timerTick(lite3d_timer *timerid) override;
@@ -73,7 +79,7 @@ protected:
     void printMemoryStats();
     void moveCamera();
 
-    void updateGuiStats();
+    void updateGui();
 
     void setGuiSize(int32_t width, int32_t height);
     void adjustMainCamera(int32_t width, int32_t height);
@@ -85,6 +91,8 @@ private:
     Camera *mMainCamera = nullptr;
     Camera *mGuiCamera = nullptr;
     Scene *mGuiScene = nullptr;
+    SceneObject *mStatOverlay = nullptr;
+    SceneObject *mHelpOverlay = nullptr;
     WindowRenderTarget *mMainWindow = nullptr;
     lite3dpp_font::FontTexture *mStatTexture = nullptr;
     lite3dpp_font::FontTexture *mHelpTexture = nullptr;
@@ -97,6 +105,8 @@ private:
     float mCameraAccel = CAMERA_DEFAULT_ACCEL;
     float mCameraAccelResistance = CAMERA_DEFAULT_ACCEL_RESIST;
     std::chrono::steady_clock::time_point mLastFrameTime;
+    HelpOverlayState mHelpState = SHOW_HELP;
+    std::string mSampleHelpString;
 };
 
 }}

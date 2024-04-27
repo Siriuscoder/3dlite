@@ -24,6 +24,15 @@
 namespace lite3dpp {
 namespace samples {
 
+static const char *helpString = 
+    "Press '+' to increse gamma\n"
+    "Press '-' to decrese gamma\n"
+    "Press 'l' to enable/disable flashlight\n"
+    "Press 'u' to enable/disable SSAO\n"
+    "Press 'r' to add light spark\n"
+    "Press 'q' to drop light capsule\n"
+    "Press 'e' to drop ball\n";
+
 class SampleVaultRoom : public Sample
 {
 public:
@@ -45,7 +54,8 @@ public:
 
 public:
 
-    SampleVaultRoom()
+    SampleVaultRoom() : 
+        Sample(helpString)
     {
         // use current time as seed for random generator
         std::srand(std::time(nullptr));
@@ -107,7 +117,7 @@ public:
 
     void addSpark()
     {
-        auto sparkObject = mVaultScene->addObject("Spark_" + std::to_string(++mSparkCounter), 
+        auto sparkObject = mVaultScene->addObject("Spark_" + std::to_string(++mObjectCounter), 
             "samples:objects/light_spark.json", nullptr, getMainCamera().getWorldPosition());
         auto node = sparkObject->getLightNode("PointLightSpark.node");
         node->getLight()->setAttenuationConstant(1.0f);
@@ -172,13 +182,13 @@ public:
             }
             else if (e->key.keysym.sym == SDLK_q)
             {
-                dropObject(mVaultScene->addPhysicsObject("Capsule_" + std::to_string(++mSparkCounter), 
+                dropObject(mVaultScene->addPhysicsObject("Capsule_" + std::to_string(++mObjectCounter), 
                     "vault_111:objects/LightCapsule.json", nullptr,
                     getMainCamera().getWorldPosition()));
             }
             else if (e->key.keysym.sym == SDLK_e)
             {
-                dropObject(mVaultScene->addPhysicsObject("Capsule_" + std::to_string(++mSparkCounter), 
+                dropObject(mVaultScene->addPhysicsObject("Ball_" + std::to_string(++mObjectCounter), 
                     "vault_111:objects/Ball.json", nullptr,
                     getMainCamera().getWorldPosition()));
             }
@@ -218,7 +228,7 @@ private:
     LightSceneNode* mFlashLight;
     stl<lite3dpp_phisics::PhysicsSceneObject *>::list mObjects;
     float mGammaFactor = 2.2;
-    int mSparkCounter = 0;
+    int mObjectCounter = 0;
 };
 
 }}
