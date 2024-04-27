@@ -59,9 +59,7 @@ public:
         {
             if (e->key.keysym.sym == SDLK_e)
             {
-                auto next = mCameraCurrentBound == mGround ? mCenterBox : 
-                    (mCameraCurrentBound == mCenterBox ? mBox1 : 
-                    (mCameraCurrentBound == mBox1 ? mBox2 : mGround));
+                auto next = mCameraCurrentBound == mGround ? mBox2 : mGround;
                 /* перепривязка камеры к кубику */
                 getMainCamera().rebase(next);
                 mCameraCurrentBound = next;

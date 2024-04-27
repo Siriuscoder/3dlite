@@ -1,0 +1,37 @@
+{
+    "Uniforms":
+    [
+        { "Name": "projectionMatrix" },
+        { "Name": "modelMatrix" },
+        { "Name": "viewMatrix" },
+        
+        {
+            "Name": "Albedo",
+            "Type": "sampler",
+            "TextureName": "arial512x512.texture",
+            "TexturePath": "samples:textures/json/arial512x512.json"
+        }
+    ],
+    
+    "Passes": 
+    [
+        {
+            "Pass": 1,
+            "Program": 
+            {
+                "Name": "BasicShadingNoNormals",
+                "Path": "samples:shaders/json/basic_shading_no_normals.json"
+            },
+            "Blending":true,
+            //  
+            // RGB_LINEAR_SOURCE_ALPHA blend algorithm:
+            // Orgb = Sa * Srgb + (1 - Sa) * Drgb
+            // Oa = 1 * Sa + 0 * Da = Sa
+            //
+            // RGB_LINEAR_SOURCE_ALPHA blend algorithm with alpha blend: (RGBA_LINEAR_SOURCE_ALPHA)
+            // Orgb = Sa * Srgb + (1 - Sa) * Drgb
+            // Oa = 1 * Sa + (1 - Sa) * Da
+            "BlendingMode": "RGB_LINEAR_SOURCE_ALPHA"
+        }
+    ]
+}

@@ -26,7 +26,8 @@ namespace lite3dpp
     {
     public:
 
-        explicit ConfigurationReader(const String &file);
+        explicit ConfigurationReader(const std::string_view &filePath);
+        /* must be null terminated */
         explicit ConfigurationReader(const char *data, size_t size);
         ConfigurationReader(const ConfigurationReader &other);
         ~ConfigurationReader();
@@ -60,8 +61,8 @@ namespace lite3dpp
 
         ConfigurationReader();
         ConfigurationReader(const JSONObject &fromJsonObject);
-        void parseFromFile(const String &file);
-        bool parseFromBuffer(const char *data, size_t size);
+        void parseFromFile(const std::string_view &filePath);
+        bool parseFromString(const std::string_view &s);
 
         std::shared_ptr<JSONValue> mRoot;
         JSONObject mObject;

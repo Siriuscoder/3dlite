@@ -61,6 +61,6 @@ TEST_F(Lite3dpp_ConfWriterTest, ConfigGenerate)
             .set(L"Compression", true))
         .set(L"ResourceLocations", reslocationArr).write();
 
-    EXPECT_NO_THROW(mMain.initFromConfigString(code.c_str()));
+    EXPECT_NO_THROW(mMain.initFromConfigString(code));
 }
 

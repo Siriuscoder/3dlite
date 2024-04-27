@@ -33,9 +33,12 @@ Sample::Sample()
 
 void Sample::initGui()
 {
-    /* preload font texture */
+    /* preload font textures */
     mStatTexture = mMain.getResourceManager()->
         queryResource<lite3dpp_font::FontTexture>("arial256x128.texture",
+        "samples:textures/json/arial256x128.json");
+    mHelpTexture = mMain.getResourceManager()->
+        queryResource<lite3dpp_font::FontTexture>("arial512x512.texture",
         "samples:textures/json/arial256x128.json");
     
     mGuiScene = mMain.getResourceManager()->queryResource<Scene>("GUI",
@@ -178,8 +181,10 @@ void Sample::setGuiSize(int32_t width, int32_t height)
     mGuiCamera->lookAtLocal(KM_VEC3_ZERO);
     
     SceneObject *sOverlay = mGuiScene->getObject("StatOverlay");
-    kmVec3 sOverlayPos = { float(mMainWindow->width()-270), float(mMainWindow->height())-14, 0 };
-    sOverlay->setPosition(sOverlayPos);
+    sOverlay->setPosition(kmVec3 { mMainWindow->width()-270.0f, mMainWindow->height()-14.0f, 0.0f });
+
+    sOverlay = mGuiScene->getObject("HelpOverlay");
+    sOverlay->setPosition(kmVec3 { 14.0f, mMainWindow->height()-14.0f, 0.0f });
 }
 
 void Sample::adjustMainCamera(int32_t width, int32_t height)
@@ -298,7 +303,7 @@ Camera &Sample::getMainCamera()
     return *mMainCamera;    
 }
 
-int Sample::start(const char *config)
+int Sample::start(const std::string_view &config)
 {
     try
     {

@@ -23,16 +23,7 @@
  */
 
 #include <lite3dpp/json/JSON.h>
-
-/**
- * Blocks off the public constructor
- *
- * @access private
- *
- */
-JSON::JSON()
-{
-}
+#include <lite3d/lite3d_alloc.h>
 
 /**
  * Parses a complete JSON encoded string
@@ -44,32 +35,32 @@ JSON::JSON()
  *
  * @return JSONValue* Returns a JSON Value representing the root, or NULL on error
  */
-std::shared_ptr<JSONValue> JSON::Parse(const char *data)
+std::shared_ptr<JSONValue> JSON::Parse(const char *data, size_t size)
 {
-    size_t length = strlen(data) + 1;
-    wchar_t *w_data = (wchar_t*)malloc(length * sizeof(wchar_t));
-    
+    size_t length = size + 1;
+    wchar_t *w_data = static_cast<wchar_t*>(lite3d_malloc(length * sizeof(wchar_t)));
     #if defined(WIN32) && !defined(__GNUC__)
         size_t ret_value = 0;
-        if (mbstowcs_s(&ret_value, w_data, length, data, length) != 0)
+        if (mbstowcs_s(&ret_value, w_data, length, data, size) != 0)
         {
-            free(w_data);
-            return NULL;
+            lite3d_free(w_data);
+            return nullptr;
         }
     #elif defined(ANDROID)
         // mbstowcs seems to misbehave on android
-        for(size_t i = 0; i<length; i++)
+        for(size_t i = 0; i<size; i++)
             w_data[i] = (wchar_t)data[i];
     #else
-        if (mbstowcs(w_data, data, length) == (size_t)-1)
+        if (mbstowcs(w_data, data, size) == (size_t)-1)
         {
-            free(w_data);
+            lite3d_free(w_data);
             return NULL;
         }
     #endif
     
+    w_data[size] = 0;
     std::shared_ptr<JSONValue> value = JSON::Parse(w_data);
-    free(w_data);
+    lite3d_free(w_data);
     return value;
 }
 

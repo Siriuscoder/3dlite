@@ -42,7 +42,7 @@ public:
     void processEvent(SDL_Event *e) override;
     void frameEnd() override;
 
-    int start(const char *config);
+    int start(const std::string_view &config);
 
     inline void setMainCamera(Camera *camera)
     { mMainCamera = camera; }
@@ -87,6 +87,7 @@ private:
     Scene *mGuiScene = nullptr;
     WindowRenderTarget *mMainWindow = nullptr;
     lite3dpp_font::FontTexture *mStatTexture = nullptr;
+    lite3dpp_font::FontTexture *mHelpTexture = nullptr;
     lite3d_timer *mStatTimer = nullptr;
     kmVec2 mWCenter = KM_VEC2_ZERO;
     std::optional<kmVec2> mCameraAngles;

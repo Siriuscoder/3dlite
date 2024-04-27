@@ -1,22 +1,22 @@
 {
     "Root":
     {
-        "Name": "StatOverlay.root",
+        "Name": "HelpOverlay.root",
         "Nodes": [
             {
                 "Name": "Overlay.node",
                 "Mesh": 
                 {
-                    "Name": "overlay_plain_256x128.mesh",
-                    "Mesh": "samples:models/json/plain256x128.json",
+                    "Name": "overlay_plain_512x512.mesh",
+                    "Mesh": "samples:models/json/plain512x512.json",
                     "MaterialMapping": 
                     [
                         {
                             "MaterialIndex": 0,
                             "Material":
                             {
-                                "Name": "arial256x128.material",
-                                "Material": "samples:materials/arial256x128.json"
+                                "Name": "arial512x512.material",
+                                "Material": "samples:materials/arial512x512.json"
                             }
                         }
                     ]
