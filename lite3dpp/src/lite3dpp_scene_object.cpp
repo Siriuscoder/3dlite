@@ -168,14 +168,6 @@ namespace lite3dpp
         }
     }
 
-    void SceneObject::detachAllNodes()
-    {
-        for (auto& node : mNodes)
-        {
-            node.second->detachNode();
-        }
-    }
-    
     LightSceneNode* SceneObject::getLightNode(const String &name) const
     {
         LightNodes::const_iterator it;

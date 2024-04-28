@@ -29,7 +29,8 @@ namespace lite3dpp
         using Ptr = std::shared_ptr<LightSceneNode>;
         
         LightSceneNode(const ConfigurationReader &json, SceneNodeBase *parent, Scene *scene);
-        
+        ~LightSceneNode();
+
         inline LightSource *getLight()
         { return mLight.get(); }
         inline const LightSource *getLight() const 
@@ -37,8 +38,6 @@ namespace lite3dpp
 
         void translateToWorld();
         bool needRecalcToWorld() const;
-
-        void detachNode() override;
 
     private:
         

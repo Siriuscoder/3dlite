@@ -63,7 +63,6 @@ namespace lite3dpp
         void removeLightNode(const String &name);
         void removeAllLightNodes();
         void removeAllMeshNodes();
-        virtual void detachAllNodes();
 
     protected:
         

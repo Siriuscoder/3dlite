@@ -31,6 +31,16 @@ namespace lite3dpp_phisics {
         mMotionState(this)
     {}
 
+    PhysicsRigidBodySceneObject::~PhysicsRigidBodySceneObject()
+    {
+        SDL_assert(mWorld);
+
+        if (mBody)
+        {
+            mWorld->removeRigidBody(mBody.get());
+        }
+    }
+
     void PhysicsRigidBodySceneObject::loadFromTemplate(const ConfigurationReader& conf)
     {
         SDL_assert(mWorld);
@@ -134,18 +144,6 @@ namespace lite3dpp_phisics {
             {
                 node.second->move(BulletUtils::convert(originTransform.getOrigin()));
             }
-        }
-    }
-
-    void PhysicsRigidBodySceneObject::detachAllNodes()
-    {
-        SDL_assert(mWorld);
-
-        SceneObject::detachAllNodes();
-
-        if (mBody)
-        {
-            mWorld->removeRigidBody(mBody.get());
         }
     }
 

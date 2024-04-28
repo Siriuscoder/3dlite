@@ -590,8 +590,8 @@ namespace nw
             if (error)
             {
                 NW_WARNING(
-                    "FreeType2 get glyph failed for char '" << std::hex
-                    << static_cast<uint32_t>(m_text[i]) << "'")
+                    "FreeType2 get glyph failed for char 0x" << std::hex
+                    << static_cast<uint32_t>(m_text[i]))
                 continue;
             }
             FT_Glyph_Copy(m_glyphs[i], &m_glyphs[i]);

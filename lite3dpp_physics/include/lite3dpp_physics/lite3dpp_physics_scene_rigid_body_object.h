@@ -32,9 +32,9 @@ namespace lite3dpp_phisics {
 
         PhysicsRigidBodySceneObject(const String &name, Scene *scene, Main *main, SceneObjectBase *parent,
             const kmVec3 &initialPosition, const kmQuaternion &initialRotation, const kmVec3 &initialScale);
+        ~PhysicsRigidBodySceneObject();
 
         void loadFromTemplate(const ConfigurationReader& conf) override;
-        void detachAllNodes() override;
 
         virtual SceneNode* addCollisiuonShapeNode(const ConfigurationReader &nodeconf, SceneNodeBase *parent);
 

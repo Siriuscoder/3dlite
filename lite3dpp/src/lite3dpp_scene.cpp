@@ -174,11 +174,6 @@ namespace lite3dpp
 
     void Scene::removeAllObjects()
     {
-        for (auto& object : mObjects)
-        {
-            object.second->detachAllNodes();
-        }
-        
         mObjects.clear();
     }
 
@@ -188,7 +183,6 @@ namespace lite3dpp
         if((it = mObjects.find(name)) == mObjects.end())
             LITE3D_THROW(name << " remove object failed.. not found");
 
-        it->second->detachAllNodes();
         mObjects.erase(it);
     }
     

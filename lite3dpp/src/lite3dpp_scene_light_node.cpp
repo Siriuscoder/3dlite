@@ -52,13 +52,11 @@ namespace lite3dpp
         return getPtr()->invalidated;
     }
 
-    void LightSceneNode::detachNode()
+    LightSceneNode::~LightSceneNode()
     {
         if (mLight)
         {
             getScene()->removeLightSource(this);
         }
-        
-        SceneNode::detachNode();
     }
 }

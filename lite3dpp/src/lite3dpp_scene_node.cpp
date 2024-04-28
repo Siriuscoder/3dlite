@@ -51,7 +51,7 @@ namespace lite3dpp
         }
     }
 
-    void SceneNode::detachNode()
+    SceneNode::~SceneNode()
     {
         lite3d_scene_remove_node(getScene()->getPtr(), &mNode);
     }

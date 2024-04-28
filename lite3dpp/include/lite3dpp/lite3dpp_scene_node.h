@@ -28,9 +28,7 @@ namespace lite3dpp
         using Ptr = std::shared_ptr<SceneNode>;
 
         SceneNode(const ConfigurationReader &json, SceneNodeBase *parent, Scene *scene);
-        virtual ~SceneNode() = default;
-
-        virtual void detachNode();
+        virtual ~SceneNode();
 
     protected:
 
