@@ -62,6 +62,11 @@ namespace lite3dpp
         virtual void rotateX(float angleDelta);
         virtual void rotateZ(float angleDelta);
 
+        virtual kmVec3 transformCoordToWorld(const kmVec3 &point);
+        virtual kmVec3 transformVecToWorld(const kmVec3 &vec);
+        virtual kmVec3 transformCoordFromWorldToLocal(const kmVec3 &point);
+        virtual kmVec3 transformVecFromWorldToLocal(const kmVec3 &vec);
+
         void loadFromTemplateFromFile(const String &templateJsonPath);
         virtual void loadFromTemplate(const ConfigurationReader& conf) = 0;
 

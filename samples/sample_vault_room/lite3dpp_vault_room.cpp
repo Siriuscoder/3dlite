@@ -31,27 +31,11 @@ static const char *helpString =
     "Press 'u' to enable/disable SSAO\n"
     "Press 'r' to add light spark\n"
     "Press 'q' to drop light capsule\n"
-    "Press 'e' to drop ball\n";
+    "Press 'e' to drop ball\n"
+    "Press 'space' to jump\n";
 
 class SampleVaultRoom : public Sample
 {
-public:
-
-    struct SpotLightWithShadow
-    {
-        SampleShadowManager::DynamicNode* spot = nullptr;
-        SampleShadowManager::ShadowCaster* shadowCaster = nullptr;
-
-        void rotateAngle(const kmVec3 &axis, float angle)
-        {
-            SDL_assert(spot);
-            SDL_assert(shadowCaster);
-
-            spot->rotateAngle(axis, angle);
-            shadowCaster->invalidate();
-        }
-    };
-
 public:
 
     SampleVaultRoom() : 
@@ -70,6 +54,7 @@ public:
         setMainCamera(getMain().getCamera("MyCamera"));
 
         setupShadowCasters();
+        setupPlayer();
         addFlashlight();
         // load SSAO effect pipeline before ligth compute step, because SSAO texture needed to ambient light compute  
         getMain().getResourceManager()->queryResource<Scene>("VaultRoom_SSAO", "vault_111:scenes/ssao.json");
@@ -95,6 +80,14 @@ public:
         };
         Material::setFloatv3GlobalParameter("screenResolution", resolution);
         Material::setFloatGlobalParameter("RandomSeed", static_cast<float>(rand()) / static_cast<float>(RAND_MAX));
+    }
+
+    void setupPlayer()
+    {
+        mPlayer = mVaultScene->addPhysicsObject("Player", "vault_111:objects/Player.json", nullptr, kmVec3 { 0.0, 0.0, 50.0 });
+        mVaultScene->attachCamera(&getMainCamera(), mPlayer);
+        /* позиция камеры отнгосительно капсулы плеера (приподнимаем камеру)*/
+        getMainCamera().setPosition(kmVec3 {0.0, 0.0, 100.0f});
     }
 
     void setupShadowCasters()
@@ -133,12 +126,25 @@ public:
         updateFlashLight();
     }
 
+    void updateCameraVelocity(const kmVec3& velocity) override
+    {
+        kmVec3 velRelative;
+        kmVec3 scale = {15.5f, 15.5f, 15.0f }; 
+        auto rotation = getMainCamera().getWorldRotation();
+        kmQuaternionMultiplyVec3(&velRelative, &rotation, &velocity);
+        kmVec3Mul(&velRelative, &velRelative, &scale);
+
+        /* не модифицируем скорость по z (модет быть в прыжке) */
+        velRelative.z = mPlayer->getLinearVelocity().z;
+        mPlayer->setLinearVelocity(velRelative);
+    }
+
     void updateShaderParams()
     {
         SDL_assert(mSSAOShader);
-        Material::setFloatv3GlobalParameter("eye", getMainCamera().getWorldPosition());
         mSSAOShader->setFloatm4Parameter(1, "CameraView", getMainCamera().refreshViewMatrix());
         mSSAOShader->setFloatm4Parameter(1, "CameraProjection", getMainCamera().getProjMatrix());
+        Material::setFloatv3GlobalParameter("eye", getMainCamera().getWorldPosition());
     }
 
     void updateFlashLight()
@@ -182,15 +188,25 @@ public:
             }
             else if (e->key.keysym.sym == SDLK_q)
             {
-                dropObject(mVaultScene->addPhysicsObject("Capsule_" + std::to_string(++mObjectCounter), 
+                dropObject(mVaultScene->addPhysicsObject("LightCapsule_" + std::to_string(++mObjectCounter), 
                     "vault_111:objects/LightCapsule.json", nullptr,
-                    getMainCamera().getWorldPosition()));
+                    getCameraPositionForObject()));
             }
             else if (e->key.keysym.sym == SDLK_e)
             {
                 dropObject(mVaultScene->addPhysicsObject("Ball_" + std::to_string(++mObjectCounter), 
                     "vault_111:objects/Ball.json", nullptr,
-                    getMainCamera().getWorldPosition()));
+                    getCameraPositionForObject()));
+            }
+            else if (e->key.keysym.sym == SDLK_SPACE)
+            {
+                kmVec3 currVel = mPlayer->getLinearVelocity();
+                 /* не модифицируем скорость по x,y (может быть в движении) */
+                if (near(currVel.z, 0.0))
+                {
+                    currVel.z = 100.0f;
+                    mPlayer->setLinearVelocity(currVel);
+                }
             }
             else if (e->key.keysym.sym == SDLK_u)
             {
@@ -203,9 +219,14 @@ public:
         }
     }
 
+    kmVec3 getCameraPositionForObject()
+    {
+        return getMainCamera().transformCoordToWorld(kmVec3 {0.0, 0.0, -50.0});
+    }
+
     void dropObject(lite3dpp_phisics::PhysicsSceneObject *o)
     {
-        auto impulse = getMainCamera().getDirection();
+        auto impulse = getMainCamera().getWorldDirection();
         kmVec3Scale(&impulse, &impulse, 850.0f);
         o->applyCentralImpulse(impulse);
 
@@ -227,6 +248,7 @@ private:
     std::unique_ptr<SampleBloomEffect> mBloomEffectRenderer;
     LightSceneNode* mFlashLight;
     stl<lite3dpp_phisics::PhysicsSceneObject *>::list mObjects;
+    lite3dpp_phisics::PhysicsSceneObject *mPlayer = nullptr;
     float mGammaFactor = 2.2;
     int mObjectCounter = 0;
 };

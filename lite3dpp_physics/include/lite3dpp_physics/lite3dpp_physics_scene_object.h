@@ -46,6 +46,7 @@ namespace lite3dpp_phisics {
         virtual void applyCentralImpulse(const kmVec3 &impulse) = 0;
         virtual void applyImpulse(const kmVec3 &impulse, const kmVec3 &relativeOffset) = 0;
         virtual void setLinearVelocity(const kmVec3 &velocity) = 0;
+        virtual kmVec3 getLinearVelocity() = 0;
 
     protected:
 

@@ -1,0 +1,22 @@
+{
+  "Root": {
+    "Physics": {
+      "Type": "Dynamic",
+      "Friction": 0.1,
+      "RollingFriction": 1.0,
+      "SpinningFriction": 1.0,
+      "LinearDamping": 0.15,
+      // Block rotation for all axis 
+      "AngularFactor": [0.0, 0.0, 0.0],
+      // Disable deactivation
+      "AlwaysActive": true 
+    },
+    "Name": "Player.Collider",
+    "CollisionShape": {
+      "Type": "Capsule",
+      "Radius": 25.0,
+      "Height": 100.0,
+      "Mass": 20.0
+    }
+  }
+}

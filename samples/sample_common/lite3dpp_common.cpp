@@ -389,7 +389,7 @@ void Sample::moveCamera()
         return;
     }
 
-    updateCameraVelocity(kmVec3 { mCameraVelocityVector.y * deltaRetard, 0.0f, mCameraVelocityVector.x * deltaRetard});
+    updateCameraVelocity(kmVec3 { mCameraVelocityVector.y, 0.0f, mCameraVelocityVector.x});
     mainCameraChanged();
 }
 

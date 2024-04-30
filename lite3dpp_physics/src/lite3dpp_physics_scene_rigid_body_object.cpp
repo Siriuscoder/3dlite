@@ -91,19 +91,29 @@ namespace lite3dpp_phisics {
         fillRigidBodyInfo(cInfo, physicsConfig);
         mBody = std::make_unique<btRigidBody>(cInfo);
 
+        mCompoundCollisionShape->setUserPointer(this);
+        mBody->setUserPointer(this);
+        mWorld->addRigidBody(mBody.get());
+
         if (mBodyType == BodyKinematic)
         {
             mBody->setCollisionFlags(mBody->getCollisionFlags() | btCollisionObject::CF_KINEMATIC_OBJECT);
             mBody->setActivationState(DISABLE_DEACTIVATION);
         }
 
-        mCompoundCollisionShape->setUserPointer(this);
-        mBody->setUserPointer(this);
-        mWorld->addRigidBody(mBody.get());
-
         if (physicsConfig.has(L"Gravity"))
         {
             mBody->setGravity(BulletUtils::convert(physicsConfig.getVec3(L"Gravity")));
+        }
+
+        if (physicsConfig.has(L"AngularFactor"))
+        {
+            mBody->setAngularFactor(BulletUtils::convert(physicsConfig.getVec3(L"AngularFactor")));
+        }
+
+        if (physicsConfig.getBool(L"AlwaysActive", false))
+        {
+            mBody->setActivationState(DISABLE_DEACTIVATION);
         }
     }
 
@@ -197,5 +207,10 @@ namespace lite3dpp_phisics {
     {
         SDL_assert(mBody);
         mBody->setLinearVelocity(BulletUtils::convert(velocity));
+    }
+
+    kmVec3 PhysicsRigidBodySceneObject::getLinearVelocity()
+    {
+        return BulletUtils::convert(mBody->getLinearVelocity());
     }
 }}
