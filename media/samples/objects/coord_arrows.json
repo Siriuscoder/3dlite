@@ -1,6 +1,7 @@
 {
   "Root": {
     "Name": "CoordArrows",
+    "FrustumTest":false,
     "Mesh": {
       "Mesh": "samples:models/json/CoordArrows.json",
       "Name": "CoordArrows.mesh"

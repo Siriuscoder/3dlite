@@ -1,0 +1,43 @@
+{
+  "Root": {
+    "Physics": {
+      "Type": "Dynamic",
+      "Restitution": 0.30000001192092896,
+      "Friction": 0.8999999761581421
+    },
+    "Name": "Crate01b",
+    "Mesh": {
+      "Mesh": "vault_111:models/json/Crate01d.json",
+      "Name": "Crate01d.mesh"
+    },
+    "Nodes": [
+      {
+        "Name": "Crate01b.Collider",
+        "CollisionShape": {
+          "Type": "ConvexHull",
+          "Mass": 28.0,
+          "CollisionMesh": {
+            "Mesh": "vault_111:models/json/Crate01d.json",
+            "Name": "Crate01d.mesh"
+          }
+        },
+        "Position": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      }
+    ]
+  }
+}

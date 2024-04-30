@@ -70,7 +70,7 @@ public:
 
     virtual void createScene() = 0;
     virtual void fixedUpdateTimerTick(int32_t firedPerRound, uint64_t deltaMcs, float deltaRetard);
-    virtual void updateCameraVelocity(const kmVec3& velocity);
+    virtual void updateCameraVelocity(const kmVec3& velocity, float deltaRetard);
 
 protected:
 

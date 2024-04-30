@@ -121,12 +121,12 @@
       ]
     },
     {
-      "Name": "LightCapsule",
-      "Object": "vault_111:objects/LightCapsule.json",
+      "Name": "FirstAid",
+      "Object": "vault_111:objects/FirstAid.json",
       "Position": [
-        400.0,
-        48.0,
-        160.0
+        148.80099487304688,
+        592.7958374023438,
+        67.70708465576172
       ],
       "Rotation": [
         0.0,
@@ -141,12 +141,292 @@
       ]
     },
     {
-      "Name": "Ball",
-      "Object": "vault_111:objects/Ball.json",
+      "Name": "Table",
+      "Object": "vault_111:objects/Table.json",
       "Position": [
-        64.0,
-        544.0,
-        144.0
+        -64.0,
+        608.0,
+        43.462562561035156
+      ],
+      "Rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "Scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "Name": "Crate01b",
+      "Object": "vault_111:objects/Crate01b.json",
+      "Position": [
+        -98.85443878173828,
+        607.8720703125,
+        81.51599884033203
+      ],
+      "Rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "Scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "Name": "Table.001",
+      "Object": "vault_111:objects/Table.json",
+      "Position": [
+        192.0,
+        608.0,
+        43.872737884521484
+      ],
+      "Rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "Scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "Name": "Crate01b.001",
+      "Object": "vault_111:objects/Crate01b.json",
+      "Position": [
+        -27.01898193359375,
+        607.4814453125,
+        80.13597106933594
+      ],
+      "Rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "Scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "Name": "FirstAid.001",
+      "Object": "vault_111:objects/FirstAid.json",
+      "Position": [
+        192.93756103515625,
+        592.671142578125,
+        67.70708465576172
+      ],
+      "Rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "Scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "Name": "FirstAid.002",
+      "Object": "vault_111:objects/FirstAid.json",
+      "Position": [
+        235.95201110839844,
+        592.4218139648438,
+        67.70708465576172
+      ],
+      "Rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "Scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "Name": "FirstAid.003",
+      "Object": "vault_111:objects/FirstAid.json",
+      "Position": [
+        236.2013702392578,
+        624.215087890625,
+        67.70708465576172
+      ],
+      "Rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "Scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "Name": "FirstAid.004",
+      "Object": "vault_111:objects/FirstAid.json",
+      "Position": [
+        191.94012451171875,
+        624.0903930664062,
+        67.70708465576172
+      ],
+      "Rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "Scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "Name": "FirstAid.005",
+      "Object": "vault_111:objects/FirstAid.json",
+      "Position": [
+        148.92567443847656,
+        624.963134765625,
+        67.70708465576172
+      ],
+      "Rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "Scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "Name": "FirstAid.006",
+      "Object": "vault_111:objects/FirstAid.json",
+      "Position": [
+        148.80099487304688,
+        624.963134765625,
+        84.7881851196289
+      ],
+      "Rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "Scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "Name": "FirstAid.007",
+      "Object": "vault_111:objects/FirstAid.json",
+      "Position": [
+        191.81544494628906,
+        624.589111328125,
+        84.7881851196289
+      ],
+      "Rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "Scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "Name": "FirstAid.008",
+      "Object": "vault_111:objects/FirstAid.json",
+      "Position": [
+        236.07669067382812,
+        624.7138061523438,
+        84.7881851196289
+      ],
+      "Rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "Scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "Name": "FirstAid.009",
+      "Object": "vault_111:objects/FirstAid.json",
+      "Position": [
+        236.07669067382812,
+        593.1698608398438,
+        84.7881851196289
+      ],
+      "Rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "Scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "Name": "FirstAid.010",
+      "Object": "vault_111:objects/FirstAid.json",
+      "Position": [
+        193.06224060058594,
+        593.045166015625,
+        84.7881851196289
+      ],
+      "Rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "Scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "Name": "FirstAid.011",
+      "Object": "vault_111:objects/FirstAid.json",
+      "Position": [
+        148.5516357421875,
+        591.9230346679688,
+        84.7881851196289
       ],
       "Rotation": [
         0.0,

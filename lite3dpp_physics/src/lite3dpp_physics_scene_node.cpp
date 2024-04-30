@@ -87,6 +87,12 @@ namespace lite3dpp_phisics {
         mCollisionShape->setUserPointer(this);
     }
 
+    PhysicsCollisionShapeSceneNode::~PhysicsCollisionShapeSceneNode()
+    {
+        mCollisionShape.reset();
+        purgeMeshData();
+    }
+
     void PhysicsCollisionShapeSceneNode::setupBoxCollisionShape(const ConfigurationReader& conf)
     {
         btVector3 halfExtents = BulletUtils::convert(conf.getVec3(L"HalfExtents", KM_VEC3_ONE));
@@ -198,6 +204,8 @@ namespace lite3dpp_phisics {
 
         /* load hull to shape */
         auto convexHullShape = std::make_unique<btConvexHullShape>();
+        auto xxx = hullOptimizer.numIndices();
+        (void)xxx;
         for (int i = 0; i < hullOptimizer.numIndices(); ++i)
         {
             convexHullShape->addPoint(hullOptimizer.getVertexPointer()[hullOptimizer.getIndexPointer()[i]]);
@@ -221,7 +229,10 @@ namespace lite3dpp_phisics {
         setupTriangleMeshArray(conf);
         SDL_assert(mCollisionMeshInfo);
         
-        mCollisionShape = std::make_unique<btGImpactMeshShape>(mCollisionMeshInfo.get());
+        auto collisionShape = std::make_unique<btGImpactMeshShape>(mCollisionMeshInfo.get());
+        collisionShape->updateBound();
+        mCollisionShape = std::move(collisionShape);
+        mIsGimpact = true;
     }
 
     void PhysicsCollisionShapeSceneNode::purgeMeshData()

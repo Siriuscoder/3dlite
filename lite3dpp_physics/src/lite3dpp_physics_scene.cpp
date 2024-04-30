@@ -59,6 +59,8 @@ void PhysicsScene::loadFromConfigImpl(const ConfigurationReader &conf)
         }
     }
 
+    btGImpactCollisionAlgorithm::registerAlgorithm(static_cast<btCollisionDispatcher*>(mWorld->getDispatcher()));
+
     Scene::loadFromConfigImpl(conf);
     mLastSimulationTime = std::chrono::steady_clock::now();
 }

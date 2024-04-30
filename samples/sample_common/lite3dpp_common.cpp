@@ -389,7 +389,7 @@ void Sample::moveCamera()
         return;
     }
 
-    updateCameraVelocity(kmVec3 { mCameraVelocityVector.y, 0.0f, mCameraVelocityVector.x});
+    updateCameraVelocity(kmVec3 { mCameraVelocityVector.y, 0.0f, mCameraVelocityVector.x}, deltaRetard);
     mainCameraChanged();
 }
 
@@ -398,9 +398,11 @@ void Sample::frameEnd()
     moveCamera();
 }
 
-void Sample::updateCameraVelocity(const kmVec3& velocity)
+void Sample::updateCameraVelocity(const kmVec3& velocity, float deltaRetard)
 {
-    mMainCamera->moveRelative(velocity);
+    kmVec3 offsetPosition;
+    kmVec3Scale(&offsetPosition, &velocity, deltaRetard);
+    mMainCamera->moveRelative(offsetPosition);
 }
 
 }}

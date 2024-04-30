@@ -26,6 +26,7 @@
 
 #include <btBulletDynamicsCommon.h>
 #include <BulletCollision/Gimpact/btGImpactShape.h>
+#include <BulletCollision/Gimpact/btGImpactCollisionAlgorithm.h>
 #include <BulletCollision/CollisionShapes/btShapeHull.h>
 
 #ifdef __clang__

@@ -37,13 +37,13 @@
         {
           "Name": "Specular",
           "Type": "sampler",
-          "TextureName": "Baseball_s.texture",
-          "TexturePath": "vault_111:textures/json/Baseball_s.json"
+          "TextureName": "V111LabelSet03_s.texture",
+          "TexturePath": "vault_111:textures/json/V111LabelSet03_s.json"
         },
         {
           "Name": "SpecularFactor",
           "Type": "float",
-          "Value": 0.10999999940395355
+          "Value": 1.0
         },
         {
           "Name": "MetallicFactor",

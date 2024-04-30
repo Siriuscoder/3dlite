@@ -1,0 +1,45 @@
+{
+  "Root": {
+    "Physics": {
+      "Type": "Dynamic",
+      "Friction": 1.100000023841858,
+      "LinearDamping": 0.3499999940395355,
+      "AngularDamping": 0.3499999940395355,
+      "Restitution": 0.44999998807907104
+    },
+    "Name": "Table",
+    "Mesh": {
+      "Mesh": "vault_111:models/json/Table_b.json",
+      "Name": "Table_b.mesh"
+    },
+    "Nodes": [
+      {
+        "Name": "Table.Collision",
+        "CollisionShape": {
+          "Type": "GimpactTriangleMesh",
+          "Mass": 60.0,
+          "CollisionMesh": {
+            "Mesh": "vault_111:models/json/TableCollider.json",
+            "Name": "TableCollider.mesh"
+          }
+        },
+        "Position": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      }
+    ]
+  }
+}

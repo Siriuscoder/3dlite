@@ -87,7 +87,7 @@ public:
         mPlayer = mVaultScene->addPhysicsObject("Player", "vault_111:objects/Player.json", nullptr, kmVec3 { 0.0, 0.0, 50.0 });
         mVaultScene->attachCamera(&getMainCamera(), mPlayer);
         /* позиция камеры отнгосительно капсулы плеера (приподнимаем камеру)*/
-        getMainCamera().setPosition(kmVec3 {0.0, 0.0, 100.0f});
+        getMainCamera().setPosition(kmVec3 {0.0, 0.0, 110.0f});
     }
 
     void setupShadowCasters()
@@ -120,13 +120,13 @@ public:
         node->getLight()->enabled(true);
     }
 
-    void mainCameraChanged() override
+    void frameBegin() override
     {
         updateShaderParams();
         updateFlashLight();
     }
 
-    void updateCameraVelocity(const kmVec3& velocity) override
+    void updateCameraVelocity(const kmVec3& velocity, float /*deltaRetard*/) override
     {
         kmVec3 velRelative;
         kmVec3 scale = {15.5f, 15.5f, 15.0f }; 
@@ -230,7 +230,7 @@ public:
         kmVec3Scale(&impulse, &impulse, 850.0f);
         o->applyCentralImpulse(impulse);
 
-        if (mObjects.size() >= 400)
+        if (mObjects.size() >= 200)
         {
             mVaultScene->removeObject(mObjects.front()->getName());
             mObjects.pop_front();

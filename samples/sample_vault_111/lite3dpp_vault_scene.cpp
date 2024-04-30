@@ -268,9 +268,9 @@ public:
     void updateShaderParams()
     {
         SDL_assert(mSSAOShader);
-        Material::setFloatv3GlobalParameter("eye", getMainCamera().getWorldPosition());
         mSSAOShader->setFloatm4Parameter(1, "CameraView", getMainCamera().refreshViewMatrix());
         mSSAOShader->setFloatm4Parameter(1, "CameraProjection", getMainCamera().getProjMatrix());
+        Material::setFloatv3GlobalParameter("eye", getMainCamera().getWorldPosition());
     }
 
     void updateFlashLight()

@@ -50,7 +50,6 @@ public:
         scene->addObject("CenterBoxArrow", "samples:objects/coord_arrows.json", mCenterBox, KM_VEC3_ZERO, 
             KM_QUATERNION_IDENTITY, arrowScale);
         /* Еще кубики */
-        mBox1 = scene->addObject("Box1", "samples:objects/cube.json", mGround, kmVec3 {100.0f, 400.0f, 40.0f});
         mBox2 = scene->addObject("Box2", "samples:objects/cube.json", mCenterBox, kmVec3 {0.0f, 800.0f, 100.0f});
         mBox3 = scene->addObject("Box3", "samples:objects/cube.json", mGround, kmVec3 {0.0f, 0.0f, 400.0f});
         scene->addObject("Box2Arrow", "samples:objects/coord_arrows.json", mBox2, KM_VEC3_ZERO, 
@@ -101,7 +100,6 @@ private:
     SceneObject *mCameraCurrentBound = nullptr;
     SceneObject *mGround = nullptr;
     SceneObject *mCenterBox = nullptr;
-    SceneObject *mBox1 = nullptr;
     SceneObject *mBox2 = nullptr;
     SceneObject *mBox3 = nullptr;
 };

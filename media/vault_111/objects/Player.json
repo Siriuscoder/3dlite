@@ -14,8 +14,8 @@
     "Name": "Player.Collider",
     "CollisionShape": {
       "Type": "Capsule",
-      "Radius": 25.0,
-      "Height": 100.0,
+      "Radius": 10.0,
+      "Height": 110.0,
       "Mass": 20.0
     }
   }

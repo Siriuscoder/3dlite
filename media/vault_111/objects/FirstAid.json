@@ -1,0 +1,43 @@
+{
+  "Root": {
+    "Physics": {
+      "Type": "Dynamic",
+      "Restitution": 0.30000001192092896,
+      "Friction": 0.800000011920929
+    },
+    "Name": "FirstAid",
+    "Mesh": {
+      "Mesh": "vault_111:models/json/FirstAid01.json",
+      "Name": "FirstAid01.mesh"
+    },
+    "Nodes": [
+      {
+        "Name": "FirstAid.Collider",
+        "CollisionShape": {
+          "Type": "ConvexHull",
+          "Mass": 2.0,
+          "CollisionMesh": {
+            "Mesh": "vault_111:models/json/FirstAid01.json",
+            "Name": "FirstAid01.mesh"
+          }
+        },
+        "Position": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      }
+    ]
+  }
+}

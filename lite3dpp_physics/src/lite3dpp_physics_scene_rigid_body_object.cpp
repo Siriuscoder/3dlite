@@ -39,6 +39,8 @@ namespace lite3dpp_phisics {
         {
             mWorld->removeRigidBody(mBody.get());
         }
+
+        mCompoundCollisionShape.reset();
     }
 
     void PhysicsRigidBodySceneObject::loadFromTemplate(const ConfigurationReader& conf)
@@ -60,21 +62,32 @@ namespace lite3dpp_phisics {
 
         /* Придание физической формы для симуляуии, форма может быть составная из нескольких примитивов  */
         mCompoundCollisionShape = std::make_unique<btCompoundShape>(true, static_cast<int>(mCollisionNodes.size()));
+        btCollisionShape *collisionShape = mCompoundCollisionShape.get();
         stl<btScalar>::vector shapesMass;
         for (auto &collisionNode : mCollisionNodes)
         {
-            /* Расчитаем трансформацию всех коллайдеров относительно корня обьекта */
-            btTransform relativeTransform = calcRelativeTransform(collisionNode.second.get());
-            mCompoundCollisionShape->addChildShape(relativeTransform, collisionNode.second->getCollisionShape());
             shapesMass.push_back(collisionNode.second->getMass());
+            /* GimpactTriangleMeshShape does not support btCompoundShape hierarchy */
+            if (collisionNode.second->isGimpact())
+            {
+                collisionShape = collisionNode.second->getCollisionShape();
+                mCompoundCollisionShape.reset();
+                break;
+            }
+            else
+            {
+                /* Расчитаем трансформацию всех коллайдеров относительно корня обьекта */
+                btTransform relativeTransform = calcRelativeTransform(collisionNode.second.get());
+                mCompoundCollisionShape->addChildShape(relativeTransform, collisionNode.second->getCollisionShape());
+            }
         }
-
+        
         btVector3 inertiaTensor(0, 0, 0);
         btScalar mass = 0.0f;
         if (mBodyType == BodyDynamic)
         {
             mass = std::accumulate(shapesMass.begin(), shapesMass.end(), 0.0f);
-            if (physicsConfig.getBool(L"CalcCenterOfMass", false))
+            if (physicsConfig.getBool(L"CalcCenterOfMass", false) && mCompoundCollisionShape)
             {
                 btTransform centerOfMassTransform;
                 mCompoundCollisionShape->calculatePrincipalAxisTransform(&shapesMass[0],
@@ -83,23 +96,31 @@ namespace lite3dpp_phisics {
             }
             else
             {
-                mCompoundCollisionShape->calculateLocalInertia(mass, inertiaTensor);
+                collisionShape->calculateLocalInertia(mass, inertiaTensor);
             }
         }
 
-        btRigidBody::btRigidBodyConstructionInfo cInfo(mass, &mMotionState, mCompoundCollisionShape.get(), inertiaTensor);
+        btRigidBody::btRigidBodyConstructionInfo cInfo(mass, &mMotionState, collisionShape, inertiaTensor);
         fillRigidBodyInfo(cInfo, physicsConfig);
         mBody = std::make_unique<btRigidBody>(cInfo);
 
-        mCompoundCollisionShape->setUserPointer(this);
-        mBody->setUserPointer(this);
-        mWorld->addRigidBody(mBody.get());
-
+        mBody->setCollisionFlags(btCollisionObject::CF_DISABLE_VISUALIZE_OBJECT);
+        bool defaultDisableDeactivation = false;
         if (mBodyType == BodyKinematic)
         {
-            mBody->setCollisionFlags(mBody->getCollisionFlags() | btCollisionObject::CF_KINEMATIC_OBJECT);
+            mBody->setCollisionFlags(mBody->getCollisionFlags() | btCollisionObject::CF_KINEMATIC_OBJECT | 
+                btCollisionObject::CF_DISABLE_VISUALIZE_OBJECT);
+            defaultDisableDeactivation = true;
+        }
+
+        if (physicsConfig.getBool(L"AlwaysActive", defaultDisableDeactivation))
+        {
             mBody->setActivationState(DISABLE_DEACTIVATION);
         }
+
+        collisionShape->setUserPointer(this);
+        mBody->setUserPointer(this);
+        mWorld->addRigidBody(mBody.get());
 
         if (physicsConfig.has(L"Gravity"))
         {
@@ -109,11 +130,6 @@ namespace lite3dpp_phisics {
         if (physicsConfig.has(L"AngularFactor"))
         {
             mBody->setAngularFactor(BulletUtils::convert(physicsConfig.getVec3(L"AngularFactor")));
-        }
-
-        if (physicsConfig.getBool(L"AlwaysActive", false))
-        {
-            mBody->setActivationState(DISABLE_DEACTIVATION);
         }
     }
 
@@ -209,7 +225,7 @@ namespace lite3dpp_phisics {
         mBody->setLinearVelocity(BulletUtils::convert(velocity));
     }
 
-    kmVec3 PhysicsRigidBodySceneObject::getLinearVelocity()
+    kmVec3 PhysicsRigidBodySceneObject::getLinearVelocity() const 
     {
         return BulletUtils::convert(mBody->getLinearVelocity());
     }

@@ -42,9 +42,11 @@ namespace lite3dpp_phisics {
         };
 
         PhysicsCollisionShapeSceneNode(const ConfigurationReader &conf, SceneNodeBase *parent, Scene *scene);
+        ~PhysicsCollisionShapeSceneNode();
 
         inline btCollisionShape *getCollisionShape() { return mCollisionShape.get(); }
         inline btScalar getMass() const { return mNodeMass; }
+        inline bool isGimpact() const { return mIsGimpact; }
 
     protected:
 
@@ -69,6 +71,7 @@ namespace lite3dpp_phisics {
         CollisionShapeType mCollisionShapeType = Unknown;
         BufferData mCollisionMeshVertexData;
         BufferData mCollisionMeshIndexData;
+        bool mIsGimpact = false;
     };
 
 }}
