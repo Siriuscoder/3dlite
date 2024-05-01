@@ -40,4 +40,6 @@ class btCollisionConfiguration;
 class btCollisionDispatcher;
 class btBroadphaseInterface;
 class btConstraintSolver;
+class btCollisionShape;
+class btTriangleIndexVertexArray;
 

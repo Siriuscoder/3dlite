@@ -21,6 +21,7 @@
 
 #include <lite3dpp/lite3dpp_scene.h>
 #include <lite3dpp_physics/lite3dpp_physics_scene_object.h>
+#include <lite3dpp_physics/lite3dpp_physics_collision_shape_manager.h>
 
 namespace lite3dpp {
 namespace lite3dpp_phisics {
@@ -44,6 +45,11 @@ namespace lite3dpp_phisics {
             SceneObject *parent = nullptr, const kmVec3 &initialPosition = KM_VEC3_ZERO, 
             const kmQuaternion &initialRotation = KM_QUATERNION_IDENTITY, const kmVec3 &initialScale = KM_VEC3_ONE);
 
+        inline PhysicsCollisionShapeManager &getCollisionShapeManager()
+        { return mCollisionShapeManager; }
+        
+        void setGravity(const kmVec3 &gravity);
+
     protected:
 
         virtual void loadFromConfigImpl(const ConfigurationReader &conf) override;
@@ -64,5 +70,6 @@ namespace lite3dpp_phisics {
         int mMaxSubStepCount = MaxSubStepCount;
         float mFixedTimeStep = FixedTimeStep;
         std::chrono::steady_clock::time_point mLastSimulationTime;
+        PhysicsCollisionShapeManager mCollisionShapeManager;
     };
 }}

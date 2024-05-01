@@ -27,16 +27,14 @@ namespace lite3dpp {
 namespace samples {
 
 static const char *commonHelpString = 
-    "============= LITE3D v%s ==================\n"
-    "HELP:\n"
+    "============= LITE3D v%s ===================\n"
+    "Help:\n"
     "Press '1' to show/hide this menu\n"
     "Press '2' to go to render and memory stats\n"
     "Press '3' to show/hide stats\n"
     "Press '4' to make screenshot\n"
     "Press 'f' to fullscreen\n"
     "Press 'w','s','a','d' to move\n"
-    "\n"
-    "Sample: %s\n"
     "%s";
 
 static const char *resourceStatsString = 
@@ -287,8 +285,7 @@ void Sample::updateGui()
         const kmVec4 textColor = {0.812f, 0.796f, 0.086f, 1.0f};
         if (mHelpState == SHOW_HELP)
         {
-            sprintf(strbuf, commonHelpString, LITE3D_VERSION_STRING, mMain.getSettings().videoSettings.caption, 
-                mSampleHelpString.c_str());
+            sprintf(strbuf, commonHelpString, LITE3D_VERSION_STRING, mSampleHelpString.c_str());
         }
         else if (mHelpState == SHOW_RESOURCES)
         {

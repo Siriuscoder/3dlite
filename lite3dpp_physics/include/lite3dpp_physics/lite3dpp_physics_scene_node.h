@@ -42,11 +42,12 @@ namespace lite3dpp_phisics {
         };
 
         PhysicsCollisionShapeSceneNode(const ConfigurationReader &conf, SceneNodeBase *parent, Scene *scene);
-        ~PhysicsCollisionShapeSceneNode();
+        ~PhysicsCollisionShapeSceneNode() = default;
 
-        inline btCollisionShape *getCollisionShape() { return mCollisionShape.get(); }
+        btCollisionShape *getCollisionShape();
         inline btScalar getMass() const { return mNodeMass; }
-        inline bool isGimpact() const { return mIsGimpact; }
+        inline CollisionShapeType getCollisionShapeType() const 
+        { return mCollisionShapeType; }
 
     protected:
 
@@ -56,22 +57,14 @@ namespace lite3dpp_phisics {
         void setupConeCollisionShape(const ConfigurationReader& conf);
         void setupCapsuleCollisionShape(const ConfigurationReader& conf);
         void setupCylinderCollisionShape(const ConfigurationReader& conf);
-        void setupTriangleMeshArray(const ConfigurationReader& conf);
         void setupConvexHullCollisionShape(const ConfigurationReader& conf);
         void setupStaticTriangleMeshCollisionShape(const ConfigurationReader& conf);
         void setupGimpactTriangleMeshCollisionShape(const ConfigurationReader& conf);
 
-        size_t validateChunkAndCalcVertexOffset(const lite3d_mesh_chunk *chunk);
-        void purgeMeshData();
-
     private:
-        std::unique_ptr<btCollisionShape> mCollisionShape;
-        std::unique_ptr<btTriangleIndexVertexArray> mCollisionMeshInfo;
+        std::unique_ptr<btCollisionShape> mSimpleCollisionShape;
+        btCollisionShape *mTriangleCollisionShape = nullptr;
         btScalar mNodeMass = 0.0f;
         CollisionShapeType mCollisionShapeType = Unknown;
-        BufferData mCollisionMeshVertexData;
-        BufferData mCollisionMeshIndexData;
-        bool mIsGimpact = false;
     };
-
 }}

@@ -21,6 +21,7 @@
 
 #include <lite3dpp/lite3dpp_main.h>
 #include <lite3dpp/lite3dpp_mesh.h>
+#include <lite3dpp_physics/lite3dpp_physics_scene.h>
 
 namespace lite3dpp {
 namespace lite3dpp_phisics {
@@ -83,163 +84,78 @@ namespace lite3dpp_phisics {
         }
 
         mNodeMass = collisionShapeConf.getDouble(L"Mass");
-        mCollisionShape->setMargin(collisionShapeConf.getDouble(L"Margin", 0.5));
-        mCollisionShape->setUserPointer(this);
-    }
-
-    PhysicsCollisionShapeSceneNode::~PhysicsCollisionShapeSceneNode()
-    {
-        mCollisionShape.reset();
-        purgeMeshData();
+        getCollisionShape()->setMargin(collisionShapeConf.getDouble(L"Margin", 0.5));
+        getCollisionShape()->setUserPointer(this);
     }
 
     void PhysicsCollisionShapeSceneNode::setupBoxCollisionShape(const ConfigurationReader& conf)
     {
         btVector3 halfExtents = BulletUtils::convert(conf.getVec3(L"HalfExtents", KM_VEC3_ONE));
-        mCollisionShape = std::make_unique<btBoxShape>(halfExtents);
+        mSimpleCollisionShape = std::make_unique<btBoxShape>(halfExtents);
     }
 
     void PhysicsCollisionShapeSceneNode::setupStaticPlaneCollisionShape(const ConfigurationReader& conf)
     {
         btVector3 normal = BulletUtils::convert(conf.getVec3(L"PlaneNormal", KM_VEC3_POS_Z));
         btScalar planeConstant = conf.getDouble(L"PlaneConstant");
-        mCollisionShape = std::make_unique<btStaticPlaneShape>(normal, planeConstant);
+        mSimpleCollisionShape = std::make_unique<btStaticPlaneShape>(normal, planeConstant);
     }
 
     void PhysicsCollisionShapeSceneNode::setupSphereCollisionShape(const ConfigurationReader& conf)
     {
         btScalar sphereRadius = conf.getDouble(L"Radius");
-        mCollisionShape = std::make_unique<btSphereShape>(sphereRadius);
+        mSimpleCollisionShape = std::make_unique<btSphereShape>(sphereRadius);
     }
 
     void PhysicsCollisionShapeSceneNode::setupConeCollisionShape(const ConfigurationReader& conf)
     {
         btScalar coneRadius = conf.getDouble(L"Radius");
         btScalar coneHeight = conf.getDouble(L"Height");
-        mCollisionShape = std::make_unique<btConeShapeZ>(coneRadius, coneHeight);
+        mSimpleCollisionShape = std::make_unique<btConeShapeZ>(coneRadius, coneHeight);
     }
 
     void PhysicsCollisionShapeSceneNode::setupCapsuleCollisionShape(const ConfigurationReader& conf)
     {
         btScalar coneRadius = conf.getDouble(L"Radius");
         btScalar coneHeight = conf.getDouble(L"Height");
-        mCollisionShape = std::make_unique<btCapsuleShapeZ>(coneRadius, coneHeight);
+        mSimpleCollisionShape = std::make_unique<btCapsuleShapeZ>(coneRadius, coneHeight);
     }
 
     void PhysicsCollisionShapeSceneNode::setupCylinderCollisionShape(const ConfigurationReader& conf)
     {
         btVector3 halfExtents = BulletUtils::convert(conf.getVec3(L"HalfExtents", KM_VEC3_ONE));
-        mCollisionShape = std::make_unique<btCylinderShapeZ>(halfExtents);
-    }
-
-    size_t PhysicsCollisionShapeSceneNode::validateChunkAndCalcVertexOffset(const lite3d_mesh_chunk *chunk)
-    {
-        size_t offset = 0;
-        if (!chunk->hasIndexes)
-        {
-            LITE3D_THROW("validateChunkAndCalcVertexOffset: '" << getName() << "' only indexed meshes supported");
-        }
-
-        for (uint32_t i = 0; i < chunk->layoutEntriesCount; ++i)
-        {
-            if (chunk->layout[i].binding != LITE3D_BUFFER_BINDING_VERTEX)
-            {
-                offset += chunk->layout[i].count * sizeof(float);
-            }
-            else
-            {
-                return chunk->vao.verticesOffset + offset;
-            }
-        }
-
-        LITE3D_THROW("validateChunkAndCalcVertexOffset: '" << getName() << "' vertex data not found..");
-        return 0;
-    }
-    
-    void PhysicsCollisionShapeSceneNode::setupTriangleMeshArray(const ConfigurationReader& conf)
-    {
-        SDL_assert(getMain());
-        /* load collision mesh into GPU memory */
-        auto rawMesh = getMain()->getResourceManager()->queryResource<Mesh>(conf.getObject(L"CollisionMesh").getString(L"Name"),
-            conf.getObject(L"CollisionMesh").getString(L"Mesh"));
-
-        if (rawMesh->getPtr()->chunks.size == 0)
-        {
-            LITE3D_THROW("setupTriangleMeshArray: '" << getName() << "' collision mesh is empty");
-        }
-
-        mCollisionMeshInfo = std::make_unique<btTriangleIndexVertexArray>();
-
-        /* copy vertex and index GPU buffers to host memory */
-        rawMesh->vertexBuffer().getData(mCollisionMeshVertexData, 0, rawMesh->vertexBuffer().bufferSizeBytes());
-        rawMesh->indexBuffer().getData(mCollisionMeshIndexData, 0, rawMesh->indexBuffer().bufferSizeBytes());
-
-        lite3d_mesh_chunk *chunk = static_cast<lite3d_mesh_chunk *>(rawMesh->getPtr()->chunks.data);
-        for (size_t i = 0; i < rawMesh->getPtr()->chunks.size; ++i)
-        {
-            /* calc initial vertex data offset */
-            auto vertexOffset = validateChunkAndCalcVertexOffset(chunk + i);
-
-            btIndexedMesh triangleArrayChunk;
-            triangleArrayChunk.m_indexType = PHY_ScalarType::PHY_INTEGER;
-            triangleArrayChunk.m_numTriangles = chunk[i].vao.elementsCount;
-            triangleArrayChunk.m_triangleIndexBase = &mCollisionMeshIndexData[chunk[i].vao.indexesOffset];
-            triangleArrayChunk.m_triangleIndexStride = sizeof(int32_t) * 3;
-            triangleArrayChunk.m_numVertices = chunk[i].vao.verticesCount;
-            triangleArrayChunk.m_vertexBase = &mCollisionMeshVertexData[vertexOffset];
-            triangleArrayChunk.m_vertexStride = chunk[i].vertexStride;
-            mCollisionMeshInfo->addIndexedMesh(triangleArrayChunk);
-        }
+        mSimpleCollisionShape = std::make_unique<btCylinderShapeZ>(halfExtents);
     }
 
     void PhysicsCollisionShapeSceneNode::setupConvexHullCollisionShape(const ConfigurationReader& conf)
     {
-        setupTriangleMeshArray(conf);
-
-        SDL_assert(mCollisionMeshInfo);
-        /* build optimize hull */
-        btConvexTriangleMeshShape convexTriangleShape(mCollisionMeshInfo.get());
-        btShapeHull hullOptimizer(&convexTriangleShape);
-        hullOptimizer.buildHull(conf.getDouble(L"Margin", 0.5));
-
-        /* load hull to shape */
-        auto convexHullShape = std::make_unique<btConvexHullShape>();
-        auto xxx = hullOptimizer.numIndices();
-        (void)xxx;
-        for (int i = 0; i < hullOptimizer.numIndices(); ++i)
-        {
-            convexHullShape->addPoint(hullOptimizer.getVertexPointer()[hullOptimizer.getIndexPointer()[i]]);
-        }
-
-        mCollisionShape = std::move(convexHullShape);
-        /* vertex data not needed yet */
-        purgeMeshData();
+        SDL_assert(getScene());
+        auto &shapeManager = static_cast<PhysicsScene *>(getScene())->getCollisionShapeManager();
+        mTriangleCollisionShape = shapeManager.getCollisionShape(PhysicsTriangleCollisionShape::ConvexHull, conf);
     }
 
     void PhysicsCollisionShapeSceneNode::setupStaticTriangleMeshCollisionShape(const ConfigurationReader& conf)
     {
-        setupTriangleMeshArray(conf);
-        SDL_assert(mCollisionMeshInfo);
-
-        mCollisionShape = std::make_unique<btBvhTriangleMeshShape>(mCollisionMeshInfo.get(), true, true);
+        SDL_assert(getScene());
+        auto &shapeManager = static_cast<PhysicsScene *>(getScene())->getCollisionShapeManager();
+        mTriangleCollisionShape = shapeManager.getCollisionShape(PhysicsTriangleCollisionShape::StaticTriangleMesh, conf);
     }
 
     void PhysicsCollisionShapeSceneNode::setupGimpactTriangleMeshCollisionShape(const ConfigurationReader& conf)
     {
-        setupTriangleMeshArray(conf);
-        SDL_assert(mCollisionMeshInfo);
-        
-        auto collisionShape = std::make_unique<btGImpactMeshShape>(mCollisionMeshInfo.get());
-        collisionShape->updateBound();
-        mCollisionShape = std::move(collisionShape);
-        mIsGimpact = true;
+        SDL_assert(getScene());
+        auto &shapeManager = static_cast<PhysicsScene *>(getScene())->getCollisionShapeManager();
+        mTriangleCollisionShape = shapeManager.getCollisionShape(PhysicsTriangleCollisionShape::GimpactTriangleMesh, conf);
     }
 
-    void PhysicsCollisionShapeSceneNode::purgeMeshData()
+    btCollisionShape *PhysicsCollisionShapeSceneNode::getCollisionShape()
     {
-        BufferData vertexEmpty;
-        BufferData indexEmpty;
-        mCollisionMeshVertexData.swap(vertexEmpty);
-        mCollisionMeshIndexData.swap(indexEmpty);
+        if (mTriangleCollisionShape)
+        {
+            return mTriangleCollisionShape;
+        }
+
+        SDL_assert(mSimpleCollisionShape);
+        return mSimpleCollisionShape.get();
     }
 }}

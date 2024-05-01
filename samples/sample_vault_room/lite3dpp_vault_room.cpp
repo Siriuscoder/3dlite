@@ -32,6 +32,8 @@ static const char *helpString =
     "Press 'r' to add light spark\n"
     "Press 'q' to drop light capsule\n"
     "Press 'e' to drop ball\n"
+    "Press 'z' to drop heavy cannon ball\n"
+    "Press 'g' to disable/enable gravity\n"
     "Press 'space' to jump\n";
 
 class SampleVaultRoom : public Sample
@@ -190,19 +192,37 @@ public:
             {
                 dropObject(mVaultScene->addPhysicsObject("LightCapsule_" + std::to_string(++mObjectCounter), 
                     "vault_111:objects/LightCapsule.json", nullptr,
-                    getCameraPositionForObject()));
+                    getCameraPositionForObject()), 850.0f);
             }
             else if (e->key.keysym.sym == SDLK_e)
             {
                 dropObject(mVaultScene->addPhysicsObject("Ball_" + std::to_string(++mObjectCounter), 
                     "vault_111:objects/Ball.json", nullptr,
-                    getCameraPositionForObject()));
+                    getCameraPositionForObject()), 850.0f);
+            }
+            else if (e->key.keysym.sym == SDLK_z)
+            {
+                dropObject(mVaultScene->addPhysicsObject("CannonBall_" + std::to_string(++mObjectCounter), 
+                    "vault_111:objects/CannonBall.json", nullptr,
+                    getCameraPositionForObject()), 7000.0f);
+            }
+            else if (e->key.keysym.sym == SDLK_g)
+            {
+                mGravityEnabled = !mGravityEnabled;
+                if (mGravityEnabled)
+                {
+                    mVaultScene->setGravity(kmVec3 {0.0, 0.0, -98.0f});
+                }
+                else
+                {
+                    mVaultScene->setGravity(kmVec3 {0.0, 0.0, 0.0f});
+                }
             }
             else if (e->key.keysym.sym == SDLK_SPACE)
             {
                 kmVec3 currVel = mPlayer->getLinearVelocity();
                  /* не модифицируем скорость по x,y (может быть в движении) */
-                if (near(currVel.z, 0.0))
+                if (std::abs(currVel.z) < 0.1)
                 {
                     currVel.z = 100.0f;
                     mPlayer->setLinearVelocity(currVel);
@@ -224,11 +244,11 @@ public:
         return getMainCamera().transformCoordToWorld(kmVec3 {0.0, 0.0, -50.0});
     }
 
-    void dropObject(lite3dpp_phisics::PhysicsSceneObject *o)
+    void dropObject(lite3dpp_phisics::PhysicsSceneObject *o, float impulse)
     {
-        auto impulse = getMainCamera().getWorldDirection();
-        kmVec3Scale(&impulse, &impulse, 850.0f);
-        o->applyCentralImpulse(impulse);
+        auto impulseRelative = getMainCamera().getWorldDirection();
+        kmVec3Scale(&impulseRelative, &impulseRelative, impulse);
+        o->applyCentralImpulse(impulseRelative);
 
         if (mObjects.size() >= 200)
         {
@@ -251,6 +271,7 @@ private:
     lite3dpp_phisics::PhysicsSceneObject *mPlayer = nullptr;
     float mGammaFactor = 2.2;
     int mObjectCounter = 0;
+    bool mGravityEnabled = true;
 };
 
 }}
