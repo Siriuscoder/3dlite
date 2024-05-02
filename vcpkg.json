@@ -1,0 +1,9 @@
+{
+  "dependencies": [
+    "assimp",
+    "bullet3",
+    "devil",
+    "sdl2",
+    "freetype"
+  ]
+}

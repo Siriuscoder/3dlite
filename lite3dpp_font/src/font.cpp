@@ -4,7 +4,7 @@
 #include <iostream>
 #include <algorithm>
 
-#ifdef PLATFORM_Linux
+#ifdef __GNUC__
 #pragma GCC diagnostic push 
 #pragma GCC diagnostic ignored "-Wshadow"
 #   include "utf8.h"
