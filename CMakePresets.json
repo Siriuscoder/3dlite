@@ -1,100 +1,11 @@
 {
-    "version": 2,
-    "configurePresets": [
-        {
-            "name": "Windows64_ci_debug",
-            "description": "Windows64_ci_debug",
-            "displayName": "Windows64_ci_debug",
-            "generator": "Visual Studio 17 2022",
-            "binaryDir": "${sourceDir}/build",
-            "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "Debug"
-            }
-        },
-        {
-            "name": "Windows64_ci_release",
-            "description": "Windows64_ci_release",
-            "displayName": "Windows64_ci_release",
-            "generator": "Visual Studio 17 2022",
-            "binaryDir": "${sourceDir}/build",
-            "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "Release"
-            }
-        },
-        {
-            "name": "Linux64_ci_debug",
-            "description": "Linux64_ci_debug",
-            "displayName": "Linux64_ci_debug",
-            "generator": "Ninja",
-            "binaryDir": "${sourceDir}/build",
-            "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "Debug"
-            }
-        },
-        {
-            "name": "Linux64_ci_release",
-            "description": "Linux64_ci_release",
-            "displayName": "Linux64_ci_release",
-            "generator": "Ninja",
-            "binaryDir": "${sourceDir}/build",
-            "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "Release"
-            }
-        },
-        {
-            "name": "Linux64_vcpkg",
-            "inherits": "Linux64_ci_release",
-            "description": "Linux64_vcpkg",
-            "displayName": "Linux64_vcpkg",
-            "cacheVariables": {
-                "CMAKE_TOOLCHAIN_FILE": "${sourceDir}/vcpkg/scripts/buildsystems/vcpkg.cmake",
-                "VCPKG_TARGET_TRIPLET": "x64-linux-dynamic"
-            }
-        },
-        {
-            "name": "Windows64_vcpkg",
-            "inherits": "Windows64_ci_release",
-            "description": "Windows64_vcpkg",
-            "displayName": "Windows64_vcpkg",
-            "cacheVariables": {
-                "CMAKE_TOOLCHAIN_FILE": "${sourceDir}/vcpkg/scripts/buildsystems/vcpkg.cmake",
-                "VCPKG_TARGET_TRIPLET": "x64-windows-custom-static",
-                "VCPKG_OVERLAY_TRIPLETS": "CMake"
-            }
-        }
-    ],
-    "buildPresets": [
-        {
-            "name": "Windows64_ci_build_debug",
-            "description": "Windows64_ci_build_debug",
-            "displayName": "Windows64_ci_build_debug",
-            "configuration": "Debug",
-            "jobs": 6,
-            "configurePreset": "Windows64_ci_debug"
-        },
-        {
-            "name": "Windows64_ci_build_release",
-            "description": "Windows64_ci_build_release",
-            "displayName": "Windows64_ci_build_release",
-            "configuration": "Release",
-            "jobs": 6,
-            "configurePreset": "Windows64_ci_release"
-        },
-        {
-            "name": "Linux64_ci_build_debug",
-            "description": "Linux64_ci_build_debug",
-            "displayName": "Linux64_ci_build_debug",
-            "configuration": "Debug",
-            "jobs": 6,
-            "configurePreset": "Linux64_ci_debug"
-        },
-        {
-            "name": "Linux64_ci_build_release",
-            "description": "Linux64_ci_build_release",
-            "displayName": "Linux64_ci_build_release",
-            "configuration": "Release",
-            "jobs": 6,
-            "configurePreset": "Linux64_ci_release"
-        }
+    "version": 4,
+    "cmakeMinimumRequired": {
+        "major": 3,
+        "minor": 23,
+        "patch": 0
+    },
+    "include": [
+        "CMake/ConfigurePresets.json"
     ]
 }

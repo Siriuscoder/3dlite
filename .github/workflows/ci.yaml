@@ -26,42 +26,22 @@ jobs:
       # To add more build types (Release, Debug, RelWithDebInfo, etc.) customize the build_type list.
       matrix:
         os: [ubuntu-latest, windows-latest]
-        c_compiler: [gcc, clang, cl]
-        gl_backend: [GLEW, GLES2, GLES3]
+        preset: [Windows64_ci_debug, Linux64_ci_gcc_debug, Linux64_ci_clang_debug]
+        backend: [GLEW, GLES2, GLES3]
         include:
           - os: windows-latest
-            c_compiler: cl
-            cpp_compiler: cl
-            gl_backend: GLEW
-            presetConfig: Windows64_ci_debug
-            presetBuild: Windows64_ci_build_debug
-          - os: ubuntu-latest
-            c_compiler: gcc
-            cpp_compiler: g++
-            presetConfig: Linux64_ci_debug
-            presetBuild: Linux64_ci_build_debug
-          - os: ubuntu-latest
-            c_compiler: clang
-            cpp_compiler: clang++
-            presetConfig: Linux64_ci_debug
-            presetBuild: Linux64_ci_build_debug
+            backend: GLEW
+            preset: Windows64_ci_debug
         exclude:
           - os: windows-latest
           - os: ubuntu-latest
-            c_compiler: cl
+            preset: Windows64_ci_debug
 
     steps:
     - uses: actions/checkout@v4
       with:
         submodules: recursive
         token: ${{ secrets.CHECKOUT_PAT }}
-
-    - name: Set reusable strings
-      # Turn repeated input strings (such as the build output directory) into step outputs. These step outputs can be used throughout the workflow file.
-      id: strings
-      shell: bash
-      run: |
-        echo "build-output-dir=${{ github.workspace }}/build" >> "$GITHUB_OUTPUT"
 
     - name: Install Linux dependencies
       if: runner.os == 'Linux'
@@ -72,16 +52,11 @@ jobs:
 
     - name: Configure CMake
       run: >
-        cmake --preset=${{ matrix.presetConfig }}
-        -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }}
-        -DCMAKE_C_COMPILER=${{ matrix.c_compiler }}
-        -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+        cmake --preset=${{ matrix.preset }}
         -DSHOW_STATS=ON 
-        -DENABLE_METRICS=ON
-        -DGRAPHIC_BACKEND=${{ matrix.gl_backend }}
+        -DGRAPHIC_BACKEND=${{ matrix.backend }}
         -Wno-dev
 
     - name: Build
       # Build your program with the given configuration. Note that --config is needed because the default Windows generator is a multi-config generator (Visual Studio generator).
-      run: cmake --build ${{ steps.strings.outputs.build-output-dir }} --preset=${{ matrix.presetBuild }}
-
+      run: cmake --build ${{ github.workspace }}/build --config Debug

@@ -1,0 +1,55 @@
+{
+    "version": 4,
+    "configurePresets": [
+        {
+            "name": "Directory_base",
+            "binaryDir": "${sourceDir}/build",
+            "hidden": true
+        },
+        {
+            "name": "Debug_base",
+            "hidden": true,
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug",
+                "ENABLE_METRICS": "ON"
+            }
+        },
+        {
+            "name": "Release_base",
+            "hidden": true,
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release"
+            }
+        },
+        {
+            "name": "Windows64_base",
+            "hidden": true,
+            "generator": "Visual Studio 17 2022",
+            "inherits": ["Directory_base"]
+        },
+        {
+            "name": "Linux64_base",
+            "hidden": true,
+            "generator": "Ninja",
+            "inherits": ["Directory_base"]
+        },
+        {
+            "name": "Linux64_gcc_base",
+            "hidden": true,
+            "inherits": ["Linux64_base"],
+            "cacheVariables": {
+                "CMAKE_C_COMPILER": "gcc",
+                "CMAKE_CXX_COMPILER": "g++"
+            }
+        },
+        {
+            "name": "Linux64_clang_base",
+            "hidden": true,
+            "inherits": ["Linux64_base"],
+            "cacheVariables": {
+                "CMAKE_C_COMPILER": "clang",
+                "CMAKE_CXX_COMPILER": "clang++"
+            }
+        }
+    ]
+}
