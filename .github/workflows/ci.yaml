@@ -26,7 +26,6 @@ jobs:
       # To add more build types (Release, Debug, RelWithDebInfo, etc.) customize the build_type list.
       matrix:
         os: [ubuntu-latest, windows-latest]
-        build_type: [Debug]
         c_compiler: [gcc, clang, cl]
         gl_backend: [GLEW, GLES2, GLES3]
         include:
@@ -34,16 +33,18 @@ jobs:
             c_compiler: cl
             cpp_compiler: cl
             gl_backend: GLEW
-            build_type: Debug
-            preset: Windows64_ci
+            presetConfig: Windows64_ci_debug
+            presetBuild: Windows64_ci_build_debug
           - os: ubuntu-latest
             c_compiler: gcc
             cpp_compiler: g++
-            preset: Linux64_ci
+            presetConfig: Linux64_ci_debug
+            presetBuild: Linux64_ci_build_debug
           - os: ubuntu-latest
             c_compiler: clang
             cpp_compiler: clang++
-            preset: Linux64_ci
+            presetConfig: Linux64_ci_debug
+            presetBuild: Linux64_ci_build_debug
         exclude:
           - os: windows-latest
           - os: ubuntu-latest
@@ -71,7 +72,7 @@ jobs:
 
     - name: Configure CMake
       run: >
-        cmake --preset=${{ matrix.preset }}
+        cmake --preset=${{ matrix.presetConfig }}
         -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }}
         -DCMAKE_C_COMPILER=${{ matrix.c_compiler }}
         -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
@@ -82,5 +83,5 @@ jobs:
 
     - name: Build
       # Build your program with the given configuration. Note that --config is needed because the default Windows generator is a multi-config generator (Visual Studio generator).
-      run: cmake --build ${{ steps.strings.outputs.build-output-dir }} --config ${{ matrix.build_type }}
+      run: cmake --build ${{ steps.strings.outputs.build-output-dir }} --preset=${{ matrix.presetBuild }}
 

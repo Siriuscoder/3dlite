@@ -15,7 +15,7 @@
 #	You should have received a copy of the GNU General Public License
 #	along with Lite3D.  If not, see <http://www.gnu.org/licenses/>.
 
-cmake_minimum_required(VERSION 3.12.0)
+cmake_minimum_required(VERSION 3.21.0)
 project(lite3d)
 
 option(BUILD_TESTS "Enable test build" ON)
