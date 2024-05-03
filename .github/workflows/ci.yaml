@@ -35,12 +35,15 @@ jobs:
             cpp_compiler: cl
             gl_backend: GLEW
             build_type: Debug
+            preset: Windows64_ci
           - os: ubuntu-latest
             c_compiler: gcc
             cpp_compiler: g++
+            preset: Linux64_ci
           - os: ubuntu-latest
             c_compiler: clang
             cpp_compiler: clang++
+            preset: Linux64_ci
         exclude:
           - os: windows-latest
           - os: ubuntu-latest
@@ -48,6 +51,9 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+      with:
+        submodules: recursive
+        token: ${{ secrets.CHECKOUT_PAT }}
 
     - name: Set reusable strings
       # Turn repeated input strings (such as the build output directory) into step outputs. These step outputs can be used throughout the workflow file.
@@ -61,18 +67,18 @@ jobs:
       shell: bash
       run: |
         sudo apt-get update
-        sudo apt-get install -y clang libc++-dev libc++abi-dev libstdc++-13-dev libdevil-dev libassimp-dev libsdl2-dev libfreetype6-dev libbullet-dev
+        sudo apt-get install -y ninja-build clang libc++-dev libc++abi-dev libstdc++-13-dev libdevil-dev libassimp-dev libsdl2-dev libfreetype6-dev libbullet-dev
 
     - name: Configure CMake
       run: >
-        cmake -B ${{ steps.strings.outputs.build-output-dir }}
+        cmake --preset=${{ matrix.preset }}
         -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }}
         -DCMAKE_C_COMPILER=${{ matrix.c_compiler }}
         -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
         -DSHOW_STATS=ON 
         -DENABLE_METRICS=ON
         -DGRAPHIC_BACKEND=${{ matrix.gl_backend }}
-        -S ${{ github.workspace }} -Wno-dev
+        -Wno-dev
 
     - name: Build
       # Build your program with the given configuration. Note that --config is needed because the default Windows generator is a multi-config generator (Visual Studio generator).

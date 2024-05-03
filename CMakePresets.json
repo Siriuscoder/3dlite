@@ -2,11 +2,30 @@
     "version": 2,
     "configurePresets": [
       {
-        "name": "default",
+        "name": "Windows64_ci",
+        "generator": "Visual Studio 17 2022",
+        "binaryDir": "${sourceDir}/build"
+      },
+      {
+        "name": "Linux64_ci",
         "generator": "Ninja",
-        "binaryDir": "${sourceDir}/build_vcpkg",
+        "binaryDir": "${sourceDir}/build"
+      },
+      {
+        "name": "Linux64_vcpkg",
+        "inherits": "Linux64_ci",
         "cacheVariables": {
-          "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
+          "CMAKE_TOOLCHAIN_FILE": "${sourceDir}/vcpkg/scripts/buildsystems/vcpkg.cmake",
+          "VCPKG_TARGET_TRIPLET": "x64-linux-dynamic"
+        }
+      },
+      {
+        "name": "Windows64_vcpkg",
+        "inherits": "Windows64_ci",
+        "cacheVariables": {
+          "CMAKE_TOOLCHAIN_FILE": "${sourceDir}/vcpkg/scripts/buildsystems/vcpkg.cmake",
+          "VCPKG_TARGET_TRIPLET": "x64-windows-custom-static",
+          "VCPKG_OVERLAY_TRIPLETS": "CMake"
         }
       }
     ]
