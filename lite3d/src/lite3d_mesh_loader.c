@@ -41,7 +41,7 @@ int lite3d_mesh_indexed_load_from_memory(lite3d_mesh *mesh,
 
     for (i = 0; i < layoutCount; ++i)
         stride += layout[i].count * sizeof (float);
-    verticesSize = stride * verticesCount;
+    verticesSize = (size_t)stride * (size_t)verticesCount;
 
     /* store vertex data to GPU memory */
     if (!lite3d_vbo_buffer(&mesh->vertexBuffer, vertices, verticesSize, access))
@@ -88,7 +88,7 @@ int lite3d_mesh_indexed_extend_from_memory(lite3d_mesh *mesh,
     /* calculate buffer parameters */
     for (i = 0; i < layoutCount; ++i)
         stride += layout[i].count * sizeof (float);
-    verticesSize = stride * verticesCount;
+    verticesSize = (size_t)stride * (size_t)verticesCount;
     indexesSize = 3 * indexComponentSize * elementsCount;
     /* expand VBO */
     offsetVertices = mesh->vertexBuffer.size;
@@ -132,7 +132,7 @@ int lite3d_mesh_load_from_memory(lite3d_mesh *mesh,
 
     for (i = 0; i < layoutCount; ++i)
         stride += layout[i].count * sizeof (float);
-    verticesSize = stride * verticesCount;
+    verticesSize = (size_t)stride * (size_t)verticesCount;
 
     /* store vertex data to GPU memory */
     if (!lite3d_vbo_buffer(&mesh->vertexBuffer, vertices, verticesSize, access))
@@ -169,7 +169,7 @@ int lite3d_mesh_extend_from_memory(lite3d_mesh *mesh,
     /* calculate buffer parameters */
     for (i = 0; i < layoutCount; ++i)
         stride += layout[i].count * sizeof (float);
-    verticesSize = stride * verticesCount;
+    verticesSize = (size_t)stride * (size_t)verticesCount;
     /* expand VBO */
     offsetVertices = mesh->vertexBuffer.size;
     if (!lite3d_mesh_extend(mesh, verticesSize, 0, access))
