@@ -1,4 +1,4 @@
-name: Lite3D Build Workflow
+name: Lite3D Build
 
 on:
   push:

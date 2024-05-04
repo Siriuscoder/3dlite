@@ -349,7 +349,7 @@ static int lite3d_framebuffer_setup_attachments(lite3d_framebuffer *fb, const li
         if (attachments && attachmentsCount > 0)
         {
             lite3d_framebuffer_attachment_binding binding;
-            for (size_t i = 0; i < attachmentsCount; ++i)
+            for (uint32_t i = 0; i < attachmentsCount; ++i)
             {
                 /* skip non color attachments */
                 if (attachments[i].layer.attachmentType != LITE3D_FRAMEBUFFER_USE_COLOR_BUFFER)
@@ -435,7 +435,7 @@ static int lite3d_framebuffer_setup_attachments(lite3d_framebuffer *fb, const li
     memset(&fb->depthAttachment, 0, sizeof(fb->depthAttachment));
     if (flags & LITE3D_FRAMEBUFFER_USE_DEPTH_BUFFER)
     {
-        for (size_t i = 0; i < attachmentsCount; ++i)
+        for (uint32_t i = 0; i < attachmentsCount; ++i)
         {
             if (attachments[i].layer.attachmentType == LITE3D_FRAMEBUFFER_USE_DEPTH_BUFFER)
             {
