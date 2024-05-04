@@ -1197,7 +1197,7 @@ int lite3d_texture_unit_allocate(lite3d_texture_unit *textureUnit,
         return LITE3D_FALSE;
     }
 
-    textureUnit->imageSize = width * height * depth * textureUnit->imageBPP;
+    textureUnit->imageSize = (size_t)width * (size_t)height * (size_t)depth * textureUnit->imageBPP;
     textureUnit->loadedMipmaps = 0;
     textureUnit->generatedMipmaps = 0;
     textureUnit->textureTarget = textureTarget;

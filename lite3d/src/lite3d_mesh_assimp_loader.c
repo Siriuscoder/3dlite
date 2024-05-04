@@ -22,10 +22,19 @@
 #include <SDL_log.h>
 #include <SDL_assert.h>
 
+#ifdef __GNUC__
+#   pragma GCC diagnostic push 
+#   pragma GCC diagnostic ignored "-Wpedantic"
+#endif
+
 #include <assimp/config.h>
 #include <assimp/cimport.h>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
+
+#ifdef __GNUC__
+#   pragma GCC diagnostic pop
+#endif
 
 #include <lite3d/lite3d_alloc.h>
 #include <lite3d/lite3d_logger.h>

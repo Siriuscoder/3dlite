@@ -50,7 +50,7 @@ namespace nw
     {
         m_width = _width;
         m_height = _height;
-        m_data.resize(m_width * m_height);
+        m_data.resize(static_cast<size_t>(m_width) * static_cast<size_t>(m_height));
     }
 
     void Texture::fill(const RGBA& _color)
@@ -67,8 +67,8 @@ namespace nw
         for (; y < ym; ++y)
         {
             std::fill(
-                m_data.begin() + y * m_width + x,
-                m_data.begin() + y * m_width + xm,
+                m_data.begin() + static_cast<size_t>(y * m_width + x),
+                m_data.begin() + static_cast<size_t>(y * m_width + xm),
                 _color);
         }
     }

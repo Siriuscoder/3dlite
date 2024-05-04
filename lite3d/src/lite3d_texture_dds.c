@@ -65,7 +65,7 @@
     ((int32_t)(int8_t)(ch0) | ((int32_t)(int8_t)(ch1) << 8) |   \
     ((int32_t)(int8_t)(ch2) << 16) | ((int32_t)(int8_t)(ch3) << 24 ))
 
-uint32_t CubemapDirections[DDS_CUBEMAP_SIDES] = {
+static uint32_t CubemapDirections[DDS_CUBEMAP_SIDES] = {
     DDS_CUBEMAP_POSITIVEX,
     DDS_CUBEMAP_NEGATIVEX,
     DDS_CUBEMAP_POSITIVEY,
