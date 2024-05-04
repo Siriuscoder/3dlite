@@ -89,13 +89,12 @@ jobs:
           echo "tag=$name" >> $GITHUB_OUTPUT
 
       - name: Genarate Changelog
-        id: changelog
-        uses: requarks/changelog-action@v1
-        with:
-          token: ${{ secrets.CHECKOUT_PAT }}
-          fromTag: ${{ github.ref_name }}
-          toTag: ${{ steps.previousTag.outputs.tag }}
-          writeToFile: false
+        id: genChangelog
+        run: |
+          changelog=$(git log ${{ steps.previousTag.outputs.tag }}..${{ github.ref_name }} --pretty="* %s" --no-merges | sort | uniq)
+          echo "changes<<EOF" >> $GITHUB_OUTPUT
+          echo "$changelog" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
 
       - name: Collecting Artifacts
         uses: actions/download-artifact@v4 
@@ -109,8 +108,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.CHECKOUT_PAT }}
         with:
           tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref_name }}
-          body: ${{ steps.changelog.outputs.changes }}
+          release_name: ${{ github.ref_name }}
+          body: ${{ steps.genChangelog.outputs.changes }}
           draft: false
           prerelease: false
 

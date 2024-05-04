@@ -1,6 +1,9 @@
 Lite 3d rendering engine
 ========================
-[![Build status](https://ci.appveyor.com/api/projects/status/o83rtxvu3g8dvd0g?svg=true)](https://ci.appveyor.com/project/Siriuscoder/3dlite)
+
+![Build status](https://github.com/Siriuscoder/3dlite/actions/workflows/ci.yaml/badge.svg)
+![CodeQL](https://github.com/Siriuscoder/3dlite/actions/workflows/codeql.yaml/badge.svg)
+![Release](https://github.com/Siriuscoder/3dlite/actions/workflows/release.yaml/badge.svg?event=push)
 
 About
 -----
