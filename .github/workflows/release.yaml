@@ -18,11 +18,11 @@ jobs:
       shell: bash
       run: |
         sudo apt-get update
-        sudo apt-get install -y ninja-build clang libc++-dev libc++abi-dev libstdc++-13-dev libdevil-dev libassimp-dev libsdl2-dev libfreetype6-dev libbullet-dev
+        sudo apt-get install -y ninja-build 
 
     - name: Configure CMake
       run: >
-        cmake --preset=Linux64_ci_gcc_release
+        cmake --preset=Linux64_vcpkg
         -DSHOW_STATS=ON 
         -DGRAPHIC_BACKEND=GLEW
         -Wno-dev
@@ -33,6 +33,8 @@ jobs:
     - name: Compressing Artifacts
       run: |
         mv ${{ github.workspace }}/media/* ${{ github.workspace }}/build/bin/Release/
+        mv ${{ github.workspace }}/build/vcpkg_installed/x64-linux-custom-static/lib/*.so* ${{ github.workspace }}/build/bin/Release/
+        mv ${{ github.workspace }}/build/lib/Release/*.so* ${{ github.workspace }}/build/bin/Release/
         cd ${{ github.workspace }}/build/bin/
         zip -r ${{ github.workspace }}/linux-build-${{ github.ref_name }}.zip Release
 
@@ -52,7 +54,7 @@ jobs:
 
     - name: Configure CMake
       run: >
-        cmake --preset=Windows64_ci_release
+        cmake --preset=Windows64_vcpkg
         -DSHOW_STATS=ON 
         -DGRAPHIC_BACKEND=GLEW
         -Wno-dev

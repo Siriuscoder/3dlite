@@ -45,23 +45,20 @@
         },
         {
             "name": "Linux64_vcpkg",
-            "inherits": "Linux64_ci_gcc_release",
+            "inherits": ["Linux64_ci_gcc_release", "Vcpkg_base"],
             "description": "Linux64_vcpkg",
             "displayName": "Linux64_vcpkg",
             "cacheVariables": {
-                "CMAKE_TOOLCHAIN_FILE": "${sourceDir}/vcpkg/scripts/buildsystems/vcpkg.cmake",
-                "VCPKG_TARGET_TRIPLET": "x64-linux-dynamic"
+                "VCPKG_TARGET_TRIPLET": "x64-linux-custom-static"
             }
         },
         {
             "name": "Windows64_vcpkg",
-            "inherits": "Windows64_ci_release",
+            "inherits": ["Windows64_ci_release", "Vcpkg_base"],
             "description": "Windows64_vcpkg",
             "displayName": "Windows64_vcpkg",
             "cacheVariables": {
-                "CMAKE_TOOLCHAIN_FILE": "${sourceDir}/vcpkg/scripts/buildsystems/vcpkg.cmake",
-                "VCPKG_TARGET_TRIPLET": "x64-windows-custom-static",
-                "VCPKG_OVERLAY_TRIPLETS": "CMake"
+                "VCPKG_TARGET_TRIPLET": "x64-windows-custom-static"
             }
         }
     ]
