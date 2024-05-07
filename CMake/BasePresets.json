@@ -56,7 +56,7 @@
             "hidden": true,
             "cacheVariables": {
                 "CMAKE_TOOLCHAIN_FILE": "${sourceDir}/vcpkg/scripts/buildsystems/vcpkg.cmake",
-                "VCPKG_OVERLAY_TRIPLETS": "CMake"
+                "VCPKG_OVERLAY_TRIPLETS": "${sourceDir}/CMake"
             }
         }
     ]

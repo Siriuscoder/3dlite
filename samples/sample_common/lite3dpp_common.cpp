@@ -168,24 +168,27 @@ void Sample::processEvent(SDL_Event *e)
     }
     else if(mMainCamera && e->type == SDL_MOUSEMOTION)
     {
-        mCamAngles.x += (e->motion.x - mWCenter.x) * mSensitivity;
-        mCamAngles.y += (e->motion.y - mWCenter.y) * mSensitivity;
-        
-        // angles restrictions
-        mCamAngles.y = std::max((float)-M_PI, std::min(mCamAngles.y, 0.0f));
-        if (mCamAngles.x > M_PI * 2)
-            mCamAngles.x = 0;
-        
-        kmQuaternion camZQuat, camPQuat, sumQuat;
-        kmQuaternionRotationAxisAngle(&camZQuat, &KM_VEC3_POS_Z, mCamAngles.x);
-        kmQuaternionRotationAxisAngle(&camPQuat, &KM_VEC3_POS_X, mCamAngles.y);
-        kmQuaternionMultiply(&sumQuat, &camPQuat, &camZQuat);
-
-        //mMainCamera->rotateZ(e->motion.xrel * 0.003f);
-        //mMainCamera->pitch(e->motion.yrel * 0.003f);
-        lite3d_video_set_mouse_pos(mWCenter.x, mWCenter.y);
-        mMainCamera->setRotation(sumQuat);
-        mainCameraChanged();
+        if (e->motion.x != mWCenter.x || e->motion.y != mWCenter.y)
+        {
+            mCamAngles.x += (e->motion.x - mWCenter.x) * mSensitivity;
+            mCamAngles.y += (e->motion.y - mWCenter.y) * mSensitivity;
+            
+            // angles restrictions
+            mCamAngles.y = std::max((float)-M_PI, std::min(mCamAngles.y, 0.0f));
+            if (mCamAngles.x > M_PI * 2)
+                mCamAngles.x = 0;
+            
+            kmQuaternion camZQuat, camPQuat, sumQuat;
+            kmQuaternionRotationAxisAngle(&camZQuat, &KM_VEC3_POS_Z, mCamAngles.x);
+            kmQuaternionRotationAxisAngle(&camPQuat, &KM_VEC3_POS_X, mCamAngles.y);
+            kmQuaternionMultiply(&sumQuat, &camPQuat, &camZQuat);
+    
+            //mMainCamera->rotateZ(e->motion.xrel * 0.003f);
+            //mMainCamera->pitch(e->motion.yrel * 0.003f);
+            lite3d_video_set_mouse_pos(mWCenter.x, mWCenter.y);
+            mMainCamera->setRotation(sumQuat);
+            mainCameraChanged();
+        }
     }
 }
 
