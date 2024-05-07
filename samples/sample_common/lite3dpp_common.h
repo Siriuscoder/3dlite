@@ -18,6 +18,7 @@
 #pragma once
 
 #include <iostream>
+#include <chrono>
 
 #include <lite3dpp/lite3dpp_main.h>
 #include <lite3dpp_font/lite3dpp_font_texture.h>
@@ -25,18 +26,29 @@
 namespace lite3dpp {
 namespace samples {
 
+#define CAMERA_DEFAULT_SENSITIVITY      0.001f
+#define CAMERA_DEFAULT_VELOCITY_MAX     8.0f
+#define CAMERA_DEFAULT_ACCEL            2.0f
+#define CAMERA_DEFAULT_ACCEL_RESIST     1.0f
+
 class Sample : public LifecycleObserver
 {
 public:
 
-    Sample();
+    enum HelpOverlayState {
+        SHOW_HELP,
+        SHOW_RESOURCES,
+        SHOW_RENDER
+    };
+
+    Sample(const std::string_view &sampleHelpString = "");
 
     void init() override;
     void timerTick(lite3d_timer *timerid) override;
     void processEvent(SDL_Event *e) override;
-    void frameBegin() override;
+    void frameEnd() override;
 
-    int start(const char *config);
+    int start(const std::string_view &config);
 
     inline void setMainCamera(Camera *camera)
     { mMainCamera = camera; }
@@ -44,14 +56,21 @@ public:
     { return mMain; }
     WindowRenderTarget &getMainWindow();
     Camera &getMainCamera();
-    inline void setSensitivity(float s)
-    { mSensitivity = s; }
+    inline void setCameraSensitivity(float v)
+    { mCameraSensitivity = v; }
+    inline void setCameraVelocityMax(float v)
+    { mCameraVelocityMax = v; }
+    inline void setCameraAcceleration(float v)
+    { mCameraAccel = v; }
+    inline void setCameraResistance(float v)
+    { mCameraAccelResistance = v; }
 
     void resizeMainWindow(int32_t width, int32_t height);
     void saveScreenshot();
 
     virtual void createScene() = 0;
     virtual void fixedUpdateTimerTick(int32_t firedPerRound, uint64_t deltaMcs, float deltaRetard);
+    virtual void updateCameraVelocity(const kmVec3& velocity, float deltaRetard);
 
 protected:
 
@@ -60,7 +79,7 @@ protected:
     void printMemoryStats();
     void moveCamera();
 
-    void updateGuiStats();
+    void updateGui();
 
     void setGuiSize(int32_t width, int32_t height);
     void adjustMainCamera(int32_t width, int32_t height);
@@ -69,17 +88,25 @@ protected:
 private:
 
     Main mMain;
-    Camera *mMainCamera;
-    Camera *mGuiCamera;
-    Scene *mGuiScene;
-    WindowRenderTarget *mMainWindow;
-    lite3dpp_font::FontTexture *mStatTexture;
-    lite3d_timer *mStatTimer;
-    kmVec2 mWCenter;
-    kmVec2 mCamAngles;
-    float mSensitivity;
-    kmVec2 mVelocity;
-    kmVec2 mAccel;
+    Camera *mMainCamera = nullptr;
+    Camera *mGuiCamera = nullptr;
+    Scene *mGuiScene = nullptr;
+    SceneObject *mStatOverlay = nullptr;
+    SceneObject *mHelpOverlay = nullptr;
+    WindowRenderTarget *mMainWindow = nullptr;
+    lite3dpp_font::FontTexture *mStatTexture = nullptr;
+    lite3dpp_font::FontTexture *mHelpTexture = nullptr;
+    lite3d_timer *mStatTimer = nullptr;
+    kmVec2 mWCenter = KM_VEC2_ZERO;
+    std::optional<kmVec2> mCameraAngles;
+    float mCameraSensitivity = CAMERA_DEFAULT_SENSITIVITY;
+    kmVec2 mCameraVelocityVector = KM_VEC2_ZERO;
+    float mCameraVelocityMax = CAMERA_DEFAULT_VELOCITY_MAX;
+    float mCameraAccel = CAMERA_DEFAULT_ACCEL;
+    float mCameraAccelResistance = CAMERA_DEFAULT_ACCEL_RESIST;
+    std::chrono::steady_clock::time_point mLastFrameTime;
+    HelpOverlayState mHelpState = SHOW_HELP;
+    std::string mSampleHelpString;
 };
 
 }}

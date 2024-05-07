@@ -31,10 +31,14 @@ namespace lite3dpp
         const String &path, Main *main) : 
         ConfigurableResource(name, path, main, AbstractResource::RENDER_TARGET),
         mRenderTargetPtr(nullptr)
-    {}
+    {
+        addObserver(this);
+    }
 
     RenderTarget::~RenderTarget()
-    {}
+    {
+        removeObserver(this);
+    }
 
     bool RenderTarget::isEnabled() const
     {
@@ -160,8 +164,10 @@ namespace lite3dpp
         lite3d_render_target_resize(mRenderTargetPtr, width, height);
     }
 
-    int RenderTarget::beginUpdate(lite3d_render_target *target)
+    int RenderTarget::beginUpdateEntry(lite3d_render_target *target)
     {
+        SDL_assert(target);
+        
         try
         {
             LITE3D_EXT_OBSERVER_NOTIFY_CHECK_1(reinterpret_cast<RenderTarget *>(target->userdata), beginUpdate,
@@ -176,8 +182,10 @@ namespace lite3dpp
         return LITE3D_FALSE;
     }
 
-    void RenderTarget::postUpdate(lite3d_render_target *target)
+    void RenderTarget::postUpdateEntry(lite3d_render_target *target)
     {
+        SDL_assert(target);
+
         try
         {
             LITE3D_EXT_OBSERVER_NOTIFY_1(reinterpret_cast<RenderTarget *>(target->userdata), postUpdate,
@@ -189,9 +197,21 @@ namespace lite3dpp
         }
     }
 
+    void RenderTarget::setupCallbacks()
+    {
+        mRenderTargetPtr->userdata = this;
+        mRenderTargetPtr->preUpdate = beginUpdateEntry;
+        mRenderTargetPtr->postUpdate = postUpdateEntry;
+    }
+
     void RenderTarget::setActive()
     {
         lite3d_framebuffer_switch(&getPtr()->fb);
+    }
+
+    float RenderTarget::computeCameraAspect() const
+    {
+        return static_cast<float>(width()) / height();
     }
 
     WindowRenderTarget::WindowRenderTarget(const String &name, 
@@ -205,9 +225,7 @@ namespace lite3dpp
     void WindowRenderTarget::loadFromConfigImpl(const ConfigurationReader &helper)
     {
         mRenderTargetPtr = lite3d_render_target_screen_get();
-        mRenderTargetPtr->userdata = this;
-        mRenderTargetPtr->preUpdate = beginUpdate;
-        mRenderTargetPtr->postUpdate = postUpdate;
+        setupCallbacks();
     }
     
     void WindowRenderTarget::unloadImpl()
@@ -216,11 +234,6 @@ namespace lite3dpp
     void WindowRenderTarget::fullscreen(bool flag)
     {
         lite3d_render_target_fullscreen(mRenderTargetPtr, flag);
-    }
-
-    float WindowRenderTarget::computeCameraAspect() const
-    {
-        return (float)width() / (float)height();
     }
 }
 

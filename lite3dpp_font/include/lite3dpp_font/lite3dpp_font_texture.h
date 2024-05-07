@@ -37,7 +37,7 @@ namespace lite3dpp
             void clean();
             void uploadChanges();
 
-            void drawText(const String &text, const kmVec2 &pos, const kmVec4 &color);
+            void drawText(const std::string_view &text, const kmVec2 &pos, const kmVec4 &color);
 
         protected:
 

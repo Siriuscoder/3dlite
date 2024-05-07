@@ -30,12 +30,6 @@ namespace lite3dpp
         mRenderTargetBlitTo(nullptr)
     {
         mRenderTargetPtr = &mRenderTarget;
-        addObserver(this);
-    }
-
-    TextureRenderTarget::~TextureRenderTarget()
-    {
-        removeObserver(this);
     }
 
     void TextureRenderTarget::loadFromConfigImpl(const ConfigurationReader &helper)
@@ -49,14 +43,12 @@ namespace lite3dpp
         /* use screen size if not specified */
         if(width == 0 && height == 0)
         {
-            width = mMain->window()->width() / scale;
-            height = mMain->window()->height() / scale;
+            width = getMain().window()->width() / scale;
+            height = getMain().window()->height() / scale;
         }
 
         lite3d_render_target_init(mRenderTargetPtr, width, height);
-        mRenderTargetPtr->userdata = this;
-        mRenderTargetPtr->preUpdate = RenderTarget::beginUpdate;
-        mRenderTargetPtr->postUpdate = RenderTarget::postUpdate;
+        setupCallbacks();
 
         setBackgroundColor(helper.getVec4(L"BackgroundColor"));
         setBuffersCleanBit(helper.getBool(L"CleanColorBuf", true),
@@ -67,7 +59,7 @@ namespace lite3dpp
             for(const ConfigurationReader &targetJson : attachmentJson.getObjects(L"Attachments"))
             {
                 lite3d_framebuffer_attachment attachment;
-                attachment.attachment = mMain->getResourceManager()->queryResource<TextureImage>(
+                attachment.attachment = getMain().getResourceManager()->queryResource<TextureImage>(
                     targetJson.getString(L"TextureName"), targetJson.getString(L"TexturePath"))->getPtr();
                 attachment.layer.layer = targetJson.getInt(L"Layer", 0);
                 attachment.layer.attachmentType = LITE3D_FRAMEBUFFER_USE_COLOR_BUFFER;
@@ -90,7 +82,7 @@ namespace lite3dpp
             if(attachmentJson.has(L"TextureName"))
             {
                 lite3d_framebuffer_attachment attachment;
-                attachment.attachment = mMain->getResourceManager()->queryResource<TextureImage>(
+                attachment.attachment = getMain().getResourceManager()->queryResource<TextureImage>(
                     attachmentJson.getString(L"TextureName"), attachmentJson.getString(L"TexturePath"))->getPtr();
                 attachment.layer.layer = attachmentJson.getInt(L"Layer", 0);
                 attachment.layer.attachmentType = LITE3D_FRAMEBUFFER_USE_DEPTH_BUFFER;
@@ -145,10 +137,10 @@ namespace lite3dpp
         {
             ConfigurationReader rtConf = helper.getObject(L"BlitResultTo");
             if (rtConf.getString(L"Name") == "Window")
-                mRenderTargetBlitTo = mMain->window();
+                mRenderTargetBlitTo = getMain().window();
             else
             {
-                mRenderTargetBlitTo = mMain->getResourceManager()->queryResource<TextureRenderTarget>(
+                mRenderTargetBlitTo = getMain().getResourceManager()->queryResource<TextureRenderTarget>(
                     rtConf.getString(L"Name"),
                     rtConf.getString(L"Path"));
             }
@@ -160,7 +152,7 @@ namespace lite3dpp
             lite3d_render_target_add(mRenderTargetPtr, priority);
     }
 
-    void TextureRenderTarget::postUpdate(RenderTarget *rt)
+    void TextureRenderTarget::postUpdate(RenderTarget *target)
     {
         if (mRenderTargetBlitTo && mRenderTargetBlitTo->getPtr())
         {

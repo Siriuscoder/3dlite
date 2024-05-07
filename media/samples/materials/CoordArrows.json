@@ -1,0 +1,16 @@
+{
+  "Passes": [
+    {
+      "Pass": 1,
+      "Program": {
+        "Name": "coord_arrows.program",
+        "Path": "samples:shaders/json/coord_arrows.json"
+      }
+    }
+  ],
+  "Uniforms": [
+    {
+      "Name": "projViewMatrix"
+    }
+  ]
+}

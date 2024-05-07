@@ -13,10 +13,12 @@ class Lite3dExport(bpy.types.Operator, ExportHelper):
     __doc__ = "Lite3d format scene export"
 
     filepath: StringProperty(subtype="FILE_PATH")
+    filename_ext = ""
+    
     packageName: StringProperty(name = "Package Name", default = "samples")
     imagePackageName: StringProperty(name = "Image Package Name", default = "samples")
     meshPackageName: StringProperty(name = "Mesh Package Name", default = "samples")
-    filename_ext = ""
+    physics: BoolProperty(name = "Physics", default = False, description = "Export physics parameters and collision shapes")
     filter_glob: StringProperty(default = "", options = {'HIDDEN'})
     saveTangent: BoolProperty(name = "Tangents", default = True, description = "Calculate and save tangents to models data")
     saveBiTangent: BoolProperty(name = "BiTangents", default = False, description = "Calculate and save bitangents to models data")
@@ -41,6 +43,7 @@ class Lite3dExport(bpy.types.Operator, ExportHelper):
         box.prop(self, "packageName")
         box.prop(self, "imagePackageName")
         box.prop(self, "meshPackageName")
+        box.prop(self, "physics")
         box.label(text = "Mesh:")
         box.prop(self, "triangulate")
         box.prop(self, "removeDoubles")
@@ -81,7 +84,8 @@ class Lite3dExport(bpy.types.Operator, ExportHelper):
                           defaultInfluenceDistance = self.defaultInfluenceDistance,
                           defaultInfluenceMinRadiance = self.defaultInfluenceMinRadiance,
                           materialTemplate = self.materialTemplate,
-                          exportLights = self.exportLights)
+                          exportLights = self.exportLights,
+                          physics = self.physics)
             
             scene.exportScene()
         except Exception as ex:

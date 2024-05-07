@@ -43,8 +43,8 @@ namespace lite3dpp
         Main();
         ~Main();
 
-        void initFromConfig(const char *config);
-        void initFromConfigString(const char *config);
+        void initFromConfig(const std::string_view &config);
+        void initFromConfigString(const std::string_view &config);
         const lite3d_global_settings &getSettings() const;
 
         void setResourceLocation(const String &name, 

@@ -29,42 +29,44 @@
 
 namespace lite3dpp
 {
-    class LITE3DPP_EXPORT Scene : public Observable<SceneObserver>, public ConfigurableResource, public Noncopiable
+    class LITE3DPP_EXPORT Scene : public Observable<SceneObserver>, 
+        public SceneObserver, public ConfigurableResource, public Noncopiable
     {
+        friend LightSceneNode;
     public:
 
-        typedef stl<String, SceneObject::Ptr>::unordered_map Objects;
-        typedef stl<String, LightSceneNode *>::unordered_map Lights;
-        typedef stl<String, Camera*>::unordered_map Cameras;
-        typedef stl<lite3d_light_params>::vector LightsStore;
-        typedef stl<int32_t>::vector LightsIndexesStore;
+        static const constexpr size_t InitialLightCount = 10; 
 
+        using SceneObjects = stl<String, SceneObject::Ptr>::unordered_map;
+        using SceneLights = stl<LightSceneNode *>::unordered_set;
+        using SceneCameras = stl<String, Camera*>::unordered_map;
+        using LightsIndexesStore = stl<int32_t>::vector;
 
         Scene(const String &name, 
             const String &path, Main *main);
-        ~Scene();
+        virtual ~Scene();
 
         inline lite3d_scene *getPtr()
         { return &mScene; }
 
-        SceneObject *addObject(const String &name,
-            const String &templatePath, SceneObject *parent);
-        void attachCamera(Camera* camera, SceneObject *parent);
+        SceneObject *addObject(const String &name, const String &templatePath, 
+            SceneObjectBase *parent = nullptr, const kmVec3 &initialPosition = KM_VEC3_ZERO, 
+            const kmQuaternion &initialRotation = KM_QUATERNION_IDENTITY, const kmVec3 &initialScale = KM_VEC3_ONE);
+        SceneObject *addObject(const String &name, const ConfigurationReader &conf, 
+            SceneObjectBase *parent = nullptr, const kmVec3 &initialPosition = KM_VEC3_ZERO, 
+            const kmQuaternion &initialRotation = KM_QUATERNION_IDENTITY, const kmVec3 &initialScale = KM_VEC3_ONE);
+
+        void attachCamera(Camera* camera, SceneObjectBase *parent = nullptr);
         void detachCamera(Camera* camera);
         SceneObject *getObject(const String &name) const;
-        inline const Objects &getObjects() const
+        inline const SceneObjects &getObjects() const
         { return mObjects; }
 
         void removeAllObjects();
         void removeObject(const String &name);
         void detachAllCameras();
-        
-        LightSceneNode *addLightNode(LightSceneNode *light);
-        LightSceneNode *getLightNode(const String &name) const;
-        void removeLight(const String &name);
-        void removeAllLights();
 
-        inline const Lights &getLights() const 
+        inline const SceneLights &getLights() const 
         { return mLights; }
 
         size_t usedVideoMemBytes() const override;
@@ -73,45 +75,49 @@ namespace lite3dpp
 
         virtual void loadFromConfigImpl(const ConfigurationReader &helper) override;
         virtual void unloadImpl() override;
-            
+        
+        void setupCallbacks();
         void rebuildLightingBuffer();
         void validateLightingBuffer(const Camera &camera);
+        void addLightSource(LightSceneNode *node);
+        void removeLightSource(LightSceneNode *node);
         
-        virtual SceneObject::Ptr createObject(const String &name, SceneObject *parent);
+        virtual SceneObject::Ptr createObject(const String &name, SceneObjectBase *parent, const kmVec3 &initialPosition, 
+            const kmQuaternion &initialRotation, const kmVec3 &initialScale);
 
     private:
 
-        void setupObjects(const stl<ConfigurationReader>::vector &objects, SceneObject *base);
+        void setupObjects(const stl<ConfigurationReader>::vector &objects, SceneObjectBase *base);
         void setupCameras(const stl<ConfigurationReader>::vector &cameras);
 
-        static int beginDrawBatch(struct lite3d_scene *scene, 
+        static int beginDrawBatchEntry(struct lite3d_scene *scene, 
             struct lite3d_scene_node *node, struct lite3d_mesh_chunk *meshChunk, struct lite3d_material *material);
 
-        static void nodeInFrustum(struct lite3d_scene *scene, 
+        static void nodeInFrustumEntry(struct lite3d_scene *scene, 
             struct lite3d_scene_node *node, struct lite3d_mesh_chunk *meshChunk, 
             struct lite3d_material *material, struct lite3d_bounding_vol *boundingVol, 
             struct lite3d_camera *camera);
 
-        static void nodeOutOfFrustum(struct lite3d_scene *scene, 
+        static void nodeOutOfFrustumEntry(struct lite3d_scene *scene, 
             struct lite3d_scene_node *node, struct lite3d_mesh_chunk *meshChunk, 
             struct lite3d_material *material, struct lite3d_bounding_vol *boundingVol,
             struct lite3d_camera *camera);
 
-        static int customVisibilityCheck(struct lite3d_scene *scene, 
+        static int customVisibilityCheckEntry(struct lite3d_scene *scene, 
             struct lite3d_scene_node *node, struct lite3d_mesh_chunk *meshChunk, 
             struct lite3d_material *material, struct lite3d_bounding_vol *boundingVol,
             struct lite3d_camera *camera);
 
-        static void beforeUpdateNodes(struct lite3d_scene *scene, struct lite3d_camera *camera);
-        static int beginSceneRender(struct lite3d_scene *scene, struct lite3d_camera *camera);
-        static void endSceneRender(struct lite3d_scene *scene, struct lite3d_camera *camera);
-        static void beginOpaqueStageRender(struct lite3d_scene *scene, struct lite3d_camera *camera);
-        static void beginBlendingStageRender(struct lite3d_scene *scene, struct lite3d_camera *camera);
+        static void beforeUpdateNodesEntry(struct lite3d_scene *scene, struct lite3d_camera *camera);
+        static int beginSceneRenderEntry(struct lite3d_scene *scene, struct lite3d_camera *camera);
+        static void endSceneRenderEntry(struct lite3d_scene *scene, struct lite3d_camera *camera);
+        static void beginOpaqueStageRenderEntry(struct lite3d_scene *scene, struct lite3d_camera *camera);
+        static void beginBlendingStageRenderEntry(struct lite3d_scene *scene, struct lite3d_camera *camera);
 
         lite3d_scene mScene;
-        Objects mObjects;
-        Lights mLights;
-        Cameras mCameras;
+        SceneObjects mObjects;
+        SceneLights mLights;
+        SceneCameras mCameras;
         BufferBase *mLightingParamsBuffer;
         BufferBase *mLightingIndexBuffer;
         LightsIndexesStore mLightsIndexes;

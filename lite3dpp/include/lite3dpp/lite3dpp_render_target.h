@@ -27,7 +27,7 @@
 namespace lite3dpp
 {
     class LITE3DPP_EXPORT RenderTarget : public Observable<RenderTargetObserver>, 
-        public ConfigurableResource, public Noncopiable
+        public RenderTargetObserver, public ConfigurableResource, public Noncopiable
     {
     public:
 
@@ -78,6 +78,7 @@ namespace lite3dpp
         void clear(bool color, bool depth, bool stencil);
         void saveScreenshot(const String &filename);
         void resize(int32_t width, int32_t height);
+        float computeCameraAspect() const;
 
         inline lite3d_render_target *getPtr()
         { return mRenderTargetPtr; }
@@ -89,8 +90,10 @@ namespace lite3dpp
 
     protected:
 
-        static int beginUpdate(lite3d_render_target *target);
-        static void postUpdate(lite3d_render_target *target);
+        void setupCallbacks();
+
+        static int beginUpdateEntry(lite3d_render_target *target);
+        static void postUpdateEntry(lite3d_render_target *target);
 
         lite3d_render_target *mRenderTargetPtr;
     };
@@ -104,7 +107,6 @@ namespace lite3dpp
         ~WindowRenderTarget();
 
         void fullscreen(bool flag);
-        float computeCameraAspect() const;
 
     protected:
 

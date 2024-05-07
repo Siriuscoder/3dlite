@@ -91,7 +91,7 @@ namespace lite3dpp
                 
             if(!mFont)
             {
-                const lite3d_file *fontFile = mMain->getResourceManager()->loadFileToMemory(helper.getString(L"Font"));
+                const lite3d_file *fontFile = getMain().getResourceManager()->loadFileToMemory(helper.getString(L"Font"));
                 mFontBuffer.insert(mFontBuffer.begin(), (uint8_t *)fontFile->fileBuff, 
                     (uint8_t *)fontFile->fileBuff + fontFile->fileSize);
                 
@@ -134,7 +134,7 @@ namespace lite3dpp
             generateMipmaps();
         }
         
-        void FontTexture::drawText(const String &text, const kmVec2 &pos, const kmVec4 &color)
+        void FontTexture::drawText(const std::string_view &text, const kmVec2 &pos, const kmVec4 &color)
         {
             if(!mText)
                 LITE3D_THROW("Resource is not initialized");

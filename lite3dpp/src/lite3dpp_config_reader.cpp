@@ -26,14 +26,14 @@
 
 namespace lite3dpp
 {
-    ConfigurationReader::ConfigurationReader(const String &file)
+    ConfigurationReader::ConfigurationReader(const std::string_view &filePath)
     {
-        parseFromFile(file);
+        parseFromFile(filePath);
     }
 
     ConfigurationReader::ConfigurationReader(const char *data, size_t size)
     {
-        if(!parseFromBuffer(data, size))
+        if(!parseFromString({data, size}))
             LITE3D_THROW("json parse failed..");
     }
 
@@ -54,42 +54,41 @@ namespace lite3dpp
         mObject(other.mObject)
     {}
 
-    void ConfigurationReader::parseFromFile(const String &file)
+    void ConfigurationReader::parseFromFile(const std::string_view &filePath)
     {
         SDL_RWops *desc = NULL;
         size_t fileSize;
         char *json;
         /* check open file */
-        desc = SDL_RWFromFile(file.c_str(), "r");
+        desc = SDL_RWFromFile(filePath.data(), "r");
         if (!desc)
-            LITE3D_THROW(file << " file open failed..");
+            LITE3D_THROW(filePath << " file open failed..");
 
         fileSize = static_cast<size_t>(SDL_RWsize(desc));
-        json = (char *) Manageable::alloc(fileSize);
+        json = static_cast<char *>(Manageable::alloc(fileSize + 1));
         /* read whole file */
         if (SDL_RWread(desc, json, fileSize, 1) == 0)
         {
             Manageable::free(json);
             SDL_RWclose(desc);
-            LITE3D_THROW(file << " file read failed..");
+            LITE3D_THROW(filePath << " file read failed..");
         }
 
         SDL_RWclose(desc);
         
-        if(!parseFromBuffer(json, fileSize))
+        if (!parseFromString({json, fileSize}))
         {
             Manageable::free(json);
-            LITE3D_THROW(file << " file parse failed..");
+            LITE3D_THROW(filePath << " file parse failed..");
         }
 
         Manageable::free(json);
     }
 
-    bool ConfigurationReader::parseFromBuffer(const char *data, size_t size)
+    bool ConfigurationReader::parseFromString(const std::string_view &s)
     {
-        String bufCopy(data, size);
         /* Parse data from buffer */
-        mRoot = JSON::Parse(bufCopy.c_str());
+        mRoot = JSON::Parse(s.data(), s.size());
 
         if (!mRoot)
             return false;
@@ -378,5 +377,11 @@ namespace lite3dpp
     bool ConfigurationReader::has(const WString &name) const
     {
         return mObject.find(name) != mObject.end();
+    }
+
+    ConfigurationReader& ConfigurationReader::operator=(const ConfigurationReader& other)
+    {
+        mObject = other.mObject;
+        return *this;
     }
 }

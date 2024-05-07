@@ -352,7 +352,7 @@ namespace nw
     }
 
     // Text
-    Text::Text(const Font& _font, const std::string& _text) :
+    Text::Text(const Font& _font, const std::string_view& _text) :
         Loggable(),
         m_font(_font),
         m_text(),
@@ -405,11 +405,9 @@ namespace nw
         return m_text;
     }
 
-    void Text::setText(const std::string& _text)
+    void Text::setText(const std::string_view& _text)
     {
-        m_text.resize(0);
-        utf8::unchecked::utf8to32(
-            _text.begin(), _text.end(), back_inserter(m_text));
+        m_text = utf8::utf8to32(_text);
         if (m_useSelection)
         {
             select(m_selBegin, m_selEnd);
@@ -592,8 +590,8 @@ namespace nw
             if (error)
             {
                 NW_WARNING(
-                    "FreeType2 get glyph failed for char '"
-                    << m_text[i] << "'")
+                    "FreeType2 get glyph failed for char 0x" << std::hex
+                    << static_cast<uint32_t>(m_text[i]))
                 continue;
             }
             FT_Glyph_Copy(m_glyphs[i], &m_glyphs[i]);

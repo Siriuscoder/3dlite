@@ -1,8 +1,9 @@
 #include "samples:shaders/sources/common/version.def"
 
 uniform sampler2D combined;
-uniform int FXAA;
+uniform int SwitchView;
 uniform float GammaFactor;
+uniform sampler2D shadowmap;
 
 in vec2 irgbNW;
 in vec2 irgbNE;
@@ -32,13 +33,20 @@ vec4 blur5(sampler2D image, vec2 uv, vec2 resolution, vec2 direction)
 void main()
 {
     vec2 sr = textureSize(combined, 0);
-    // apply FXAA
-    vec4 finalColor = FXAA > 0 ? fxaa(combined, gl_FragCoord.xy, sr, irgbNW, irgbNE, irgbSW, irgbSE, irgbM) : texture(combined, gl_FragCoord.xy / sr);
+    vec4 finalColor = vec4(0.0);
     
+    if (SwitchView == 0)
+    {
+        finalColor = fxaa(combined, gl_FragCoord.xy, sr, irgbNW, irgbNE, irgbSW, irgbSE, irgbM);
+        // apply gamma correction 
+        finalColor.rgb = pow(finalColor.rgb, vec3(1/GammaFactor)) * correction;
+    }
+    else
+    {
+        finalColor = texture(shadowmap, gl_FragCoord.xy / sr).rrrr;
+    }
+        
     //if (length(finalColor) >= 1.2)
     //    finalColor = blur5(combined, iuv, sr, vec2(1, 1));
-
-    // apply gamma correction 
-    finalColor.rgb = pow(finalColor.rgb, vec3(1/GammaFactor)) * correction;
     fragColor = vec4(finalColor.rgb, 1.0);
 }

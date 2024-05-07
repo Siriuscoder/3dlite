@@ -34,9 +34,9 @@ struct kmMat3;
 struct kmPlane;
 
 typedef struct kmVec3 {
-	kmScalar x;
-	kmScalar y;
-	kmScalar z;
+    kmScalar x;
+    kmScalar y;
+    kmScalar z;
 } kmVec3;
 
 LITE3D_CEXPORT kmVec3* kmVec3Fill(kmVec3* pOut, kmScalar x, kmScalar y, kmScalar z);

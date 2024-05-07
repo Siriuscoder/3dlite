@@ -1,0 +1,42 @@
+{
+  "Root": {
+    "Physics": {
+      "Type": "Dynamic",
+      "Restitution": 0.8999999761581421,
+      "RollingFriction": 25.0,
+      "SpinningFriction": 25.0,
+      "AngularDamping": 0.44999998807907104
+    },
+    "Name": "CannonBall",
+    "Mesh": {
+      "Mesh": "vault_111:models/json/CannonBall.json",
+      "Name": "CannonBall.mesh"
+    },
+    "Nodes": [
+      {
+        "Name": "CannonBall.Collider",
+        "CollisionShape": {
+          "Type": "Sphere",
+          "Radius": 14.270000457763672,
+          "Mass": 40.0
+        },
+        "Position": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      }
+    ]
+  }
+}

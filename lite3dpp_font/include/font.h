@@ -129,7 +129,7 @@ namespace nw
     class Text : public Loggable
     {
         public:
-            typedef std::basic_string<uint32_t> UString;
+            typedef std::u32string UString;
             typedef std::vector<FT_Glyph>::iterator GlyphIterator;
 
         private:
@@ -158,7 +158,7 @@ namespace nw
             Rect<int> m_rect;
 
         public:
-            Text(const Font& _font, const std::string& _text);
+            Text(const Font& _font, const std::string_view& _text);
             virtual ~Text();
             void release();
 
@@ -166,7 +166,7 @@ namespace nw
             void setFont(const Font& _font);
 
             const UString& text() const;
-            void setText(const std::string& _text);
+            void setText(const std::string_view& _text);
 
             const Pos2d<int>& pos() const;
             void setPos(int _x, int _y);

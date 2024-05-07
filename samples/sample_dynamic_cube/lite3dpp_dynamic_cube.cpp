@@ -27,9 +27,18 @@ typedef struct vertexPod
 } vertexPod;
 #pragma pack(pop)
 
+static const char *helpString = 
+    "Press 'v' to set wireframe view\n"
+    "Press 'r' to reload box texture pixels\n"
+    "Press 'a' to deform box (hold ctrl to reverse)\n";
+
 class DynamicCude : public Sample
 {
 public:
+
+    DynamicCude() : 
+        Sample(helpString)
+    {}
 
     void createScene() override
     {
@@ -46,7 +55,7 @@ public:
     
     void fixedUpdateTimerTick(int32_t firedPerRound, uint64_t deltaMcs, float deltaRetard) override
     {
-        mBox->getRoot()->rotateAngle(KM_VEC3_NEG_Z, 0.01f * deltaRetard);
+        mBox->rotateAngle(KM_VEC3_NEG_Z, 0.01f * deltaRetard);
     }
 
     void processEvent(SDL_Event *e) override
@@ -56,9 +65,9 @@ public:
         {
             if (e->key.keysym.sym == SDLK_v)
             {
-                mWireftameView = !mWireftameView;
-                getMainCamera().setPolygonMode(mWireftameView ? Camera::PolygonLine : Camera::PolygonFill);
-                getMainCamera().setCullFaceMode(mWireftameView ? Camera::CullFaceNever : Camera::CullFaceBack);
+                mWireframeView = !mWireframeView;
+                getMainCamera().setPolygonMode(mWireframeView ? Camera::PolygonLine : Camera::PolygonFill);
+                getMainCamera().setCullFaceMode(mWireframeView ? Camera::CullFaceNever : Camera::CullFaceBack);
             }
             else if (e->key.keysym.sym == SDLK_r)
             {
@@ -124,7 +133,7 @@ private:
     TextureImage *mBoxTexture = nullptr;
     Mesh *mBoxMesh = nullptr;
 
-    bool mWireftameView = false;
+    bool mWireframeView = false;
     int8_t mKof = 1;
 };
 

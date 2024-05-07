@@ -1,0 +1,91 @@
+{
+  "Root": {
+    "Physics": {
+      "Type": "Dynamic",
+      "Restitution": 0.5,
+      "RollingFriction": 1.850000023841858
+    },
+    "Name": "LightCapsule",
+    "Mesh": {
+      "Mesh": "vault_111:models/json/LightCapsule.json",
+      "Name": "LightCapsule.mesh"
+    },
+    "Nodes": [
+      {
+        "Name": "LightCapsule.Collider",
+        "CollisionShape": {
+          "Type": "Cylinder",
+          "HalfExtents": [
+            4.21999979019165,
+            4.21999979019165,
+            9.199999809265137
+          ],
+          "Mass": 5.0
+        },
+        "Position": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "LightCapsuleGlow",
+        "Light": {
+          "Type": "Point",
+          "Name": "LightCapsuleGlow_LightCapsuleGlow",
+          "Diffuse": [
+            0.0,
+            1.0000240802764893,
+            0.9300949573516846
+          ],
+          "Radiance": 45000.0,
+          "LightSize": 0.0,
+          "Attenuation": {
+            "Constant": 1.0,
+            "Linear": 50.0,
+            "Quadratic": 130.0,
+            "InfluenceDistance": 0.0,
+            "InfluenceMinRadiance": 0.019999999552965164
+          },
+          "Direction": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "Position": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "Position": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      }
+    ]
+  }
+}

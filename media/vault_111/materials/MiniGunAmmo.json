@@ -41,6 +41,15 @@
           "Value": 0.3400000035762787
         },
         {
+          "Name": "NormalScale",
+          "Type": "v3",
+          "Value": [
+            1.0,
+            -1.0,
+            1.0
+          ]
+        },
+        {
           "Name": "Environment",
           "TextureName": "environment.texture",
           "TexturePath": "samples:textures/json/skybox_metal_chrome.json",

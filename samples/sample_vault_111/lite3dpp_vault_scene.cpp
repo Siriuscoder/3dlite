@@ -24,6 +24,18 @@
 namespace lite3dpp {
 namespace samples {
 
+static const char *helpString = 
+    "Press '+' to increse gamma\n"
+    "Press '-' to decrese gamma\n"
+    "Press 'o,p' to rotate lamp in gear room\n"
+    "            (hold ctrl to reverse)\n"
+    "Press 'i' to rotate lamp in reactor room\n"
+    "            (hold ctrl to reverse)\n"
+    "Press 'l' to enable/disable flashlight\n"
+    "Press 'k' to move gear key\n"
+    "            (hold ctrl to reverse)\n"
+    "Press 'u' to enable/disable SSAO\n";
+
 class SampleVault111 : public Sample
 {
 public:
@@ -77,7 +89,8 @@ public:
 
 public:
 
-    SampleVault111()
+    SampleVault111() : 
+        Sample(helpString)
     {
         // use current time as seed for random generator
         std::srand(std::time(nullptr));
@@ -85,7 +98,7 @@ public:
 
     void createScene() override
     {
-        mShadowManager = std::make_unique<SampleShadowManager>(getMain());
+        mShadowManager = std::make_unique<SampleShadowManager>(getMain(), 5);
         mBloomEffectRenderer = std::make_unique<SampleBloomEffect>(getMain());
         mLightAnimEffects = std::make_unique<SampleLightEffectManager>();
         mVaultScene = getMain().getResourceManager()->queryResource<Scene>("Vault_111", "vault_111:scenes/vault_111.json");
@@ -147,57 +160,57 @@ public:
         // Источники света получаем по ObjectName + NodeName
         mSpot = SpotLightWithShadow {
             mShadowManager->registerDynamicNode(mVaultScene->getObject("LightSpot")->getNode("LightSpotLamp")),
-            mShadowManager->newShadowCaster(mVaultScene->getLightNode("LightSpotLightSpotNode"))
+            mShadowManager->newShadowCaster(mVaultScene->getObject("LightSpot")->getLightNode("LightSpotNode"))
         };
 
         mSpot01 = SpotLightWithShadow {
             mShadowManager->registerDynamicNode(mVaultScene->getObject("LightSpot.001")->getNode("LightSpotLamp")),
-            mShadowManager->newShadowCaster(mVaultScene->getLightNode("LightSpot.001LightSpotNode"))
+            mShadowManager->newShadowCaster(mVaultScene->getObject("LightSpot.001")->getLightNode("LightSpotNode"))
         };
 
         mSpot02 = SpotLightWithShadow {
             mShadowManager->registerDynamicNode(mVaultScene->getObject("LightSpot.002")->getNode("LightSpotLamp")),
-            mShadowManager->newShadowCaster(mVaultScene->getLightNode("LightSpot.002LightSpotNode"))
+            mShadowManager->newShadowCaster(mVaultScene->getObject("LightSpot.002")->getLightNode("LightSpotNode"))
         };
 
         mSpot03 = SpotLightWithShadow {
             mShadowManager->registerDynamicNode(mVaultScene->getObject("LightSpot.003")->getNode("LightSpotLamp")),
-            mShadowManager->newShadowCaster(mVaultScene->getLightNode("LightSpot.003LightSpotNode"))
+            mShadowManager->newShadowCaster(mVaultScene->getObject("LightSpot.003")->getLightNode("LightSpotNode"))
         };
         
-        mShadowManager->newShadowCaster(mVaultScene->getLightNode("VaultStaticRotorSpot"));
+        mShadowManager->newShadowCaster(mVaultScene->getObject("VaultStatic")->getLightNode("RotorSpot"));
     }
 
     void setupLightAnim()
     {
         for (auto &lightNode: mVaultScene->getLights())
         {
-            if (lightNode.first.starts_with("LightSpot") ||
-                lightNode.first.starts_with("VaultStaticHospitalLight") || 
-                lightNode.first == "VaultStaticLightCageWhiteNode.008" ||
-                lightNode.first == "VaultStaticLightBoxNode.018" ||
-                lightNode.first == "VaultStaticLightBoxNode.012" || 
-                lightNode.first == "VaultStaticLightCageWhiteNode.022" ||
-                lightNode.first == "VaultStaticLightCeilNode01.002" ||
-                lightNode.first == "VaultStaticLightCeilNode01.004" ||
-                lightNode.first == "VaultStaticLightBoxNode.056" ||
-                lightNode.first == "VaultStaticLightCageWhiteNode.003")
+            if (lightNode->getName().starts_with("LightSpot") ||
+                lightNode->getName().starts_with("HospitalLight") || 
+                lightNode->getName() == "LightCageWhiteNode.008" ||
+                lightNode->getName() == "LightBoxNode.018" ||
+                lightNode->getName() == "LightBoxNode.012" || 
+                lightNode->getName() == "LightCageWhiteNode.022" ||
+                lightNode->getName() == "LightCeilNode01.002" ||
+                lightNode->getName() == "LightCeilNode01.004" ||
+                lightNode->getName() == "LightBoxNode.056" ||
+                lightNode->getName() == "LightCageWhiteNode.003")
             {
-                mLightAnimEffects->registerLight(lightNode.second, SampleLightEffectManager::EffectTypeTrembling);
+                mLightAnimEffects->registerLight(lightNode, SampleLightEffectManager::EffectTypeTrembling);
             }
-            else if (lightNode.first == "VaultStaticLightBoxNode.040" ||
-                lightNode.first == "VaultStaticLightCeilNode01.001" ||
-                lightNode.first == "VaultStaticLightCageWhiteNode.013" ||
-                lightNode.first == "VaultStaticLightCageRedNode.001" ||
-                lightNode.first == "VaultStaticLightCeilNode01.010" ||
-                lightNode.first == "VaultStaticLightCeilNode01.006")
+            else if (lightNode->getName() == "LightBoxNode.040" ||
+                lightNode->getName() == "LightCeilNode01.001" ||
+                lightNode->getName() == "LightCageWhiteNode.013" ||
+                lightNode->getName() == "LightCageRedNode.001" ||
+                lightNode->getName() == "LightCeilNode01.010" ||
+                lightNode->getName() == "LightCeilNode01.006")
             {
                 // Создаем новый материал для выбранных источников света чтобы сделать эффект мигания каджой отдельной лампочки 
-                auto material = getMain().getResourceManager()->queryResource<Material>(lightNode.first + "_BlinkGlow.material", 
+                auto material = getMain().getResourceManager()->queryResource<Material>(lightNode->getName() + "_BlinkGlow.material", 
                     "vault_111:materials/VltLightGlow01.json");
-                mLightAnimEffects->registerLight(lightNode.second, SampleLightEffectManager::EffectTypeBlink, material, 1'200'000, 550'000, 80'000);
+                mLightAnimEffects->registerLight(lightNode, SampleLightEffectManager::EffectTypeBlink, material, 1'200'000, 550'000, 80'000);
                 // Присваиваем новый натериал к родителю (MeshNode)
-                auto parent = lightNode.second->getParent();
+                auto parent = lightNode->getParent();
                 if (parent)
                 {
                     // ВНИМАНИЕ! Для выбранных источников света чанк всегда первый, но для других источников это может быть не так. 
@@ -205,29 +218,29 @@ public:
                     meshNode->replaceMaterial(1, material);
                 }
             }
-            else if (lightNode.first == "VaultStaticReactorElectric")
+            else if (lightNode->getName() == "ReactorElectric")
             {
                 Material *reactorGlow = getMain().getResourceManager()->queryResource<Material>("V111ReactorGlow01.material");
-                mLightAnimEffects->registerLight(lightNode.second, SampleLightEffectManager::EffectTypeTrembling, reactorGlow);
-                mLightAnimEffects->registerLight(lightNode.second, SampleLightEffectManager::EffectTypeBlink, reactorGlow);
+                mLightAnimEffects->registerLight(lightNode, SampleLightEffectManager::EffectTypeTrembling, reactorGlow);
+                mLightAnimEffects->registerLight(lightNode, SampleLightEffectManager::EffectTypeBlink, reactorGlow);
             }
-            else if (lightNode.first == "VaultStaticReactorElectric.001")
+            else if (lightNode->getName() == "ReactorElectric.001")
             {
                 Material *reactorGlow = getMain().getResourceManager()->queryResource<Material>("V111ReactorGlow02.material");
-                mLightAnimEffects->registerLight(lightNode.second, SampleLightEffectManager::EffectTypeTrembling, reactorGlow);
-                mLightAnimEffects->registerLight(lightNode.second, SampleLightEffectManager::EffectTypeBlink, reactorGlow);
+                mLightAnimEffects->registerLight(lightNode, SampleLightEffectManager::EffectTypeTrembling, reactorGlow);
+                mLightAnimEffects->registerLight(lightNode, SampleLightEffectManager::EffectTypeBlink, reactorGlow);
             }
-            else if (lightNode.first == "VaultStaticReactorElectric.002")
+            else if (lightNode->getName() == "ReactorElectric.002")
             {
                 Material *reactorGlow = getMain().getResourceManager()->queryResource<Material>("V111ReactorGlow03.material");
-                mLightAnimEffects->registerLight(lightNode.second, SampleLightEffectManager::EffectTypeTrembling, reactorGlow);
-                mLightAnimEffects->registerLight(lightNode.second, SampleLightEffectManager::EffectTypeBlink, reactorGlow);
+                mLightAnimEffects->registerLight(lightNode, SampleLightEffectManager::EffectTypeTrembling, reactorGlow);
+                mLightAnimEffects->registerLight(lightNode, SampleLightEffectManager::EffectTypeBlink, reactorGlow);
             }
-            else if (lightNode.first == "VaultStaticReactorElectric.003")
+            else if (lightNode->getName() == "ReactorElectric.003")
             {
                 Material *reactorGlow = getMain().getResourceManager()->queryResource<Material>("V111ReactorGlow04.material");
-                mLightAnimEffects->registerLight(lightNode.second, SampleLightEffectManager::EffectTypeTrembling, reactorGlow);
-                mLightAnimEffects->registerLight(lightNode.second, SampleLightEffectManager::EffectTypeBlink, reactorGlow);
+                mLightAnimEffects->registerLight(lightNode, SampleLightEffectManager::EffectTypeTrembling, reactorGlow);
+                mLightAnimEffects->registerLight(lightNode, SampleLightEffectManager::EffectTypeBlink, reactorGlow);
             }
         }
 
@@ -237,26 +250,13 @@ public:
 
     void addFlashlight()
     {
-        ConfigurationWriter flashlightJson;
-        LightSource flashlight("FlashLight");
-        flashlight.setAttenuationConstant(0.0f);
-        flashlight.setAttenuationLinear(50.0f);
-        flashlight.setAttenuationQuadratic(130.0f);
-        flashlight.setAngleInnerCone(0.80f);
-        flashlight.setAngleOuterCone(1.00f);
-        flashlight.setDiffuse(kmVec3 {1.0f, 233.0f / 255.0f, 173.0f / 255.0f });
-        flashlight.setDirection(KM_VEC3_NEG_Z);
-        flashlight.setPosition(KM_VEC3_ZERO);
-        flashlight.setType(LITE3D_LIGHT_SPOT);
-        flashlight.setRadiance(800000.0f);
-        flashlight.setInfluenceMinRadiance(0.001f);
-        flashlight.toJson(flashlightJson);
-
-        String flashLightParams = ConfigurationWriter().set(L"Name", "FlashLight.node").set(L"Light", flashlightJson).write();
-        mFlashLight.reset(new LightSceneNode(ConfigurationReader(flashLightParams.data(), flashLightParams.size()), NULL, &getMain()));
-        mFlashLight->addToScene(mVaultScene);
+        auto flashLightObject = mVaultScene->addObject("FlashLight", "samples:objects/flashlight.json", nullptr);
+        mFlashLight = flashLightObject->getLightNode("FlashLight.node");
+        mFlashLight->getLight()->setAttenuationConstant(1.0f);
+        mFlashLight->getLight()->setAttenuationLinear(50.0f);
+        mFlashLight->getLight()->setAttenuationQuadratic(130.0f);
+        mFlashLight->getLight()->setRadiance(800000.0f);
         mFlashLight->getLight()->enabled(false);
-        mFlashLight->frustumTest(false);
     }
 
     void mainCameraChanged() override
@@ -268,17 +268,17 @@ public:
     void updateShaderParams()
     {
         SDL_assert(mSSAOShader);
-        Material::setFloatv3GlobalParameter("eye", getMainCamera().getPosition());
-        mSSAOShader->setFloatm4Parameter(1, "CameraView", getMainCamera().getTransformMatrix());
+        mSSAOShader->setFloatm4Parameter(1, "CameraView", getMainCamera().refreshViewMatrix());
         mSSAOShader->setFloatm4Parameter(1, "CameraProjection", getMainCamera().getProjMatrix());
+        Material::setFloatv3GlobalParameter("eye", getMainCamera().getWorldPosition());
     }
 
     void updateFlashLight()
     {
         if (mFlashLight && mFlashLight->getLight()->enabled())
         {
-            mFlashLight->setPosition(getMainCamera().getPosition());
-            mFlashLight->setRotation(getMainCamera().getRotation());
+            mFlashLight->setPosition(getMainCamera().getWorldPosition());
+            mFlashLight->setRotation(getMainCamera().getWorldRotation());
         }
     }
 
@@ -376,7 +376,7 @@ private:
     std::unique_ptr<SampleShadowManager> mShadowManager;
     std::unique_ptr<SampleBloomEffect> mBloomEffectRenderer;
     std::unique_ptr<SampleLightEffectManager> mLightAnimEffects;
-    std::unique_ptr<LightSceneNode> mFlashLight;
+    LightSceneNode* mFlashLight;
     SpotLightWithShadow mSpot;
     SpotLightWithShadow mSpot01;
     SpotLightWithShadow mSpot02;

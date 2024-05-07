@@ -23,41 +23,78 @@
 
 #include "lite3dpp_common.h"
 
-#define VELOCITY_MAX    200.0f
-#define ACCEL           40.0f
-#define ACCEL_RESIST    20.0f
-
 namespace lite3dpp {
 namespace samples {
 
-Sample::Sample() : 
-    mMainCamera(nullptr),
-    mGuiCamera(nullptr),
-    mGuiScene(nullptr),
-    mMainWindow(nullptr),
-    mStatTexture(nullptr),
-    mStatTimer(nullptr),
-    mWCenter(KM_VEC2_ZERO),
-    mCamAngles(KM_VEC2_ZERO),
-    mSensitivity(0.001f),
-    mVelocity(KM_VEC2_ZERO),
-    mAccel(KM_VEC2_ZERO)
+static const char *commonHelpString = 
+    "============= LITE3D v%s ===================\n"
+    "Help:\n"
+    "Press '1' to show/hide this menu\n"
+    "Press '2' to go to render and memory stats\n"
+    "Press '3' to show/hide stats\n"
+    "Press '4' to make screenshot\n"
+    "Press 'f' to fullscreen\n"
+    "Press 'w','s','a','d' to move\n"
+    "%s";
+
+static const char *resourceStatsString = 
+    "============= Resource statistics =============\n"
+    "Estimated video memory:         %d kB\n"
+    "Total resources in cache:       %d\n"
+    "Textures:                       %d/%d\n"
+    "Materials:                      %d/%d\n"
+    "Scenes:                         %d/%d\n"
+    "Meshes:                         %d/%d\n"
+    "Shaders:                        %d/%d\n"
+    "Render targets:                 %d/%d\n"
+    "SSBO:                           %d/%d\n"
+    "UBO:                            %d/%d\n"
+    "VBO:                            %d\n"
+    "IBO:                            %d\n"
+    "VAO:                            %d\n"
+    "QUERIES:                        %d\n\n"
+    "File cache: %d kB in %d files\n";
+
+static const char *renderStatsString = 
+    "============= Render statistics ===============\n"
+    "Frames:                         %ld\n"
+    "Last FPS:                       %d\n"
+    "Average FPS:                    %d\n"
+    "Best FPS:                       %d\n"
+    "Worst FPS:                      %d\n"
+    "Last frame time:                %f ms\n"
+    "Average frame time:             %f ms\n"
+    "Best frame time:                %f ms\n"
+    "Worst frame time:               %f ms\n"
+    "Total Nodes:                    %d\n"
+    "Batches total:                  %d\n"
+    "Batches draw called:            %d\n"
+    "Batches draw instanced:         %d\n"
+    "Batches draw occluded:          %d\n"
+    "Draw faces:                     %d\n";
+
+Sample::Sample(const std::string_view &sampleHelpString) : 
+   mSampleHelpString(sampleHelpString)
 {
     mMain.addObserver(this);
 }
 
 void Sample::initGui()
 {
-    /* preload font texture */
+    /* preload font textures */
     mStatTexture = mMain.getResourceManager()->
         queryResource<lite3dpp_font::FontTexture>("arial256x128.texture",
         "samples:textures/json/arial256x128.json");
+    mHelpTexture = mMain.getResourceManager()->
+        queryResource<lite3dpp_font::FontTexture>("arial512x512.texture",
+        "samples:textures/json/arial512x512.json");
     
     mGuiScene = mMain.getResourceManager()->queryResource<Scene>("GUI",
         "samples:scenes/gui.json");
     
     mGuiCamera = getMain().getCamera("GuiCamera");
-    //mGuiCamera->cullBackFaces(false);
+    mStatOverlay = mGuiScene->getObject("StatOverlay");
+    mHelpOverlay = mGuiScene->getObject("HelpOverlay");
     setGuiSize(mMainWindow->width(), mMainWindow->height());
     
     mStatTimer = mMain.addTimer("StatTimer", 500);
@@ -68,15 +105,10 @@ void Sample::init()
     mMainWindow = mMain.window();
     initGui();
     createScene();
-    updateGuiStats();
+    updateGui();
     
     adjustMainCamera(mMainWindow->width(), mMainWindow->height());
     mMain.showSystemCursor(false);
-}
-
-void Sample::frameBegin()
-{
-    moveCamera();
 }
 
 void Sample::fixedUpdateTimerTick(int32_t firedPerRound, uint64_t deltaMcs, float deltaRetard)
@@ -86,40 +118,29 @@ void Sample::timerTick(lite3d_timer *timerid)
 {
     if (timerid == mMain.getFixedUpdateTimer())
     {
-        const Uint8 *kstate = SDL_GetKeyboardState(NULL);
-        if (kstate[SDL_SCANCODE_W])
-            mAccel.x = -ACCEL;
-        if (kstate[SDL_SCANCODE_S])
-            mAccel.x = ACCEL;
-        if (kstate[SDL_SCANCODE_A])
-            mAccel.y = -ACCEL;
-        if (kstate[SDL_SCANCODE_D])
-            mAccel.y = ACCEL;
-        
-        if (!kstate[SDL_SCANCODE_W] && !kstate[SDL_SCANCODE_S])
-            mAccel.x = 0.0f;
-        if (!kstate[SDL_SCANCODE_A] && !kstate[SDL_SCANCODE_D])
-            mAccel.y = 0.0f;
-        
-        kmVec2Add(&mVelocity, &mVelocity, &mAccel);
-        if (mVelocity.x > 0)
-            mVelocity.x -= ACCEL_RESIST;
-        if (mVelocity.x < 0)
-            mVelocity.x += ACCEL_RESIST;
-        if (mVelocity.y > 0)
-            mVelocity.y -= ACCEL_RESIST;
-        if (mVelocity.y < 0)
-            mVelocity.y += ACCEL_RESIST;
-        
-        mVelocity.x = std::max(-VELOCITY_MAX, std::min(mVelocity.x, VELOCITY_MAX));
-        mVelocity.y = std::max(-VELOCITY_MAX, std::min(mVelocity.y, VELOCITY_MAX));
-
         // Считаем запаздывание таймера как отношение фактического времени к интервалу
         float deltaRetard = static_cast<float>(static_cast<double>(timerid->deltaMcs) / (timerid->interval * 1000.0));
+        // Обработка плавного движения камеры
+        const Uint8 *kstate = SDL_GetKeyboardState(NULL);
+        kmVec2 accel = KM_VEC2_ZERO;
+
+        if (kstate[SDL_SCANCODE_W])
+            accel.x = -mCameraAccel * deltaRetard;
+        if (kstate[SDL_SCANCODE_S])
+            accel.x = mCameraAccel * deltaRetard;
+        if (kstate[SDL_SCANCODE_A])
+            accel.y = -mCameraAccel * deltaRetard;
+        if (kstate[SDL_SCANCODE_D])
+            accel.y = mCameraAccel * deltaRetard;
+
+        kmVec2Add(&mCameraVelocityVector, &mCameraVelocityVector, &accel);
+        mCameraVelocityVector.x = std::max(-mCameraVelocityMax, std::min(mCameraVelocityVector.x, mCameraVelocityMax));
+        mCameraVelocityVector.y = std::max(-mCameraVelocityMax, std::min(mCameraVelocityVector.y, mCameraVelocityMax));
+
         fixedUpdateTimerTick(timerid->firedPerRound, timerid->deltaMcs, deltaRetard);
     }
     else if (timerid == mStatTimer)
-        updateGuiStats();
+        updateGui();
 }
 
 void Sample::processEvent(SDL_Event *e)
@@ -131,21 +152,23 @@ void Sample::processEvent(SDL_Event *e)
             mMain.stop();
         else if (e->key.keysym.sym == SDLK_1)
         {
-            printRenderStats();
+            SDL_assert(mHelpOverlay);
+            mHelpOverlay->isEnabled() ? mHelpOverlay->disable() : mHelpOverlay->enable();
         }
         else if (e->key.keysym.sym == SDLK_2)
         {
-            printMemoryStats();
+            mHelpState = mHelpState == SHOW_HELP ? SHOW_RENDER : 
+                (mHelpState == SHOW_RENDER ? SHOW_RESOURCES : SHOW_HELP);
+            updateGui();
         }
         else if (e->key.keysym.sym == SDLK_3)
         {
-            saveScreenshot();
+            SDL_assert(mGuiCamera);
+            mGuiCamera->isEnabled() ? mGuiCamera->disable() : mGuiCamera->enable();
         }
         else if (e->key.keysym.sym == SDLK_4)
         {
-            static bool showStats = true;
-            showStats = !showStats;
-            showStats ? mGuiCamera->enable() : mGuiCamera->disable();
+            saveScreenshot();
         }
         else if (mMainWindow && mMainCamera && e->key.keysym.sym == SDLK_f)
         {
@@ -170,23 +193,27 @@ void Sample::processEvent(SDL_Event *e)
     {
         if (e->motion.x != mWCenter.x || e->motion.y != mWCenter.y)
         {
-            mCamAngles.x += (e->motion.x - mWCenter.x) * mSensitivity;
-            mCamAngles.y += (e->motion.y - mWCenter.y) * mSensitivity;
-            
+            if (!mCameraAngles)
+            {
+                mCameraAngles = kmVec2 {
+                    -mMainCamera->getZW(),
+                    -mMainCamera->getXW()
+                };
+
+                lite3d_video_set_mouse_pos(mWCenter.x, mWCenter.y);
+                return;
+            }
+
+            mCameraAngles->x += (e->motion.x - mWCenter.x) * mCameraSensitivity;
+            mCameraAngles->y += (e->motion.y - mWCenter.y) * mCameraSensitivity;
+
             // angles restrictions
-            mCamAngles.y = std::max((float)-M_PI, std::min(mCamAngles.y, 0.0f));
-            if (mCamAngles.x > M_PI * 2)
-                mCamAngles.x = 0;
-            
-            kmQuaternion camZQuat, camPQuat, sumQuat;
-            kmQuaternionRotationAxisAngle(&camZQuat, &KM_VEC3_POS_Z, mCamAngles.x);
-            kmQuaternionRotationAxisAngle(&camPQuat, &KM_VEC3_POS_X, mCamAngles.y);
-            kmQuaternionMultiply(&sumQuat, &camPQuat, &camZQuat);
-    
-            //mMainCamera->rotateZ(e->motion.xrel * 0.003f);
-            //mMainCamera->pitch(e->motion.yrel * 0.003f);
+            mCameraAngles->y = std::max((float)-M_PI, std::min(mCameraAngles->y, 0.0f));
+            if (mCameraAngles->x >= M_PI * 2 || mCameraAngles->x <= -M_PI * 2)
+                mCameraAngles->x = 0;
+
+            mMainCamera->setOrientationAngles(-mCameraAngles->x, -mCameraAngles->y);
             lite3d_video_set_mouse_pos(mWCenter.x, mWCenter.y);
-            mMainCamera->setRotation(sumQuat);
             mainCameraChanged();
         }
     }
@@ -202,11 +229,13 @@ void Sample::setGuiSize(int32_t width, int32_t height)
     
     kmVec3 cameraPos = { 0, 0, 10 };
     mGuiCamera->setPosition(cameraPos);
-    mGuiCamera->lookAt(KM_VEC3_ZERO);
+    mGuiCamera->lookAtLocal(KM_VEC3_ZERO);
     
     SceneObject *sOverlay = mGuiScene->getObject("StatOverlay");
-    kmVec3 sOverlayPos = { float(mMainWindow->width()-270), float(mMainWindow->height())-14, 0 };
-    sOverlay->getRoot()->setPosition(sOverlayPos);
+    sOverlay->setPosition(kmVec3 { mMainWindow->width()-270.0f, mMainWindow->height()-14.0f, 0.0f });
+
+    sOverlay = mGuiScene->getObject("HelpOverlay");
+    sOverlay->setPosition(kmVec3 { 14.0f, mMainWindow->height()-14.0f, 0.0f });
 }
 
 void Sample::adjustMainCamera(int32_t width, int32_t height)
@@ -214,6 +243,7 @@ void Sample::adjustMainCamera(int32_t width, int32_t height)
     SDL_assert(mMainCamera);
     mWCenter.x = width >> 1;
     mWCenter.y = height >> 1;
+    
     lite3d_video_set_mouse_pos(mWCenter.x, mWCenter.y);
     //lite3d_video_relative_mouse_mode(LITE3D_TRUE);
     mMainCamera->setAspect(mMainWindow->computeCameraAspect());
@@ -228,76 +258,66 @@ void Sample::resizeMainWindow(int32_t width, int32_t height)
     adjustMainCamera(mMainWindow->width(), mMainWindow->height());
 }
 
-void Sample::printRenderStats()
-{
-    lite3d_render_stats *stats = lite3d_render_stats_get();
-    SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
-        "\n==== Render statistics ========\n"
-        "Fames: %ld\n"
-        "last FPS\tavr FPS\t\tbest FPS\tworst FPS\n"
-        "%d\t\t%d\t\t%d\t\t%d\n"
-        "last frame ms\tavr frame ms\tbest frame ms\tworst frame ms\n"
-        "%f\t%f\t%f\t%f\n"
-        "nodes total\tbatches total\tbatches called\tbatches instanced\tbatches occluded\tfaces\n"
-        "%d\t\t%d\t\t%d\t\t%d\t\t\t%d\t\t\t%d\n",
-        stats->framesCount, stats->lastFPS, stats->avrFPS, stats->bestFPS, stats->worstFPS,
-        stats->lastFrameMs, stats->avrFrameMs, stats->bestFrameMs, stats->worstFrameMs,
-        stats->nodesTotal, stats->batchTotal, stats->batchCalled, stats->batchInstancedCalled,
-        stats->batchOccluded, stats->trianglesByFrame);
-}
-
-void Sample::printMemoryStats()
-{
-    ResourceManager::ResourceManagerStats memStats = mMain.getResourceManager()->getStats();
-    lite3d_render_stats *renderStats = lite3d_render_stats_get();
-
-    SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
-        "\n==== Memory statistics ========\n"
-        "Video memory:\t%d kB\n"
-        "Total objects:\t%d\n"
-        "Textures:\t%d/%d\n"
-        "Materials:\t%d/%d\n"
-        "Scenes:\t\t%d/%d\n"
-        "Meshes:\t\t%d/%d\n"
-        "Shaders:\t%d/%d\n"
-        "Render targets:\t%d/%d\n"
-        "SSBO:\t\t%d/%d\n"
-        "UBO:\t\t%d/%d\n"
-        "VBO:\t\t%d\n"
-        "IBO:\t\t%d\n"
-        "VAO:\t\t%d\n"
-        "QUERIES:\t%d\n"
-        "File cache:\t%d kB in %d files\n",
-        static_cast<uint32_t>(memStats.usedVideoMem / 1024),
-        memStats.totalObjectsCount,
-        memStats.texturesLoadedCount, memStats.texturesCount,
-        memStats.materialsLoadedCount, memStats.materialsCount,
-        memStats.scenesLoadedCount, memStats.scenesCount,
-        memStats.meshesLoadedCount, memStats.meshesCount,
-        memStats.shaderProgramsLoadedCount, memStats.shaderProgramsCount,
-        memStats.renderTargetsLoadedCount, memStats.renderTargetsCount,
-        memStats.ssboLoadedCount, memStats.ssboCount,
-        memStats.uboLoadedCount, memStats.uboCount,
-        renderStats->vboCount, renderStats->iboCount, renderStats->vaoCount, renderStats->queryCount,
-        static_cast<uint32_t>(memStats.totalCachedFilesMemSize / 1024), memStats.fileCachesCount);
-}
-
-void Sample::updateGuiStats()
+void Sample::updateGui()
 {
     SDL_assert(mStatTexture);
-    const lite3d_render_stats *stats = mMain.getRenderStats();
+    SDL_assert(mHelpTexture);
+    const lite3d_render_stats *renderStats = mMain.getRenderStats();
     
-    char strbuf[150];
-    kmVec2 textPos = {24, 25};
-    kmVec4 textColor = {0.3f, 0.7f, 0.8f, 1.0f};
+    char strbuf[1024];
+    const kmVec2 textPos = {24, 25};
+    
+    if (mStatOverlay->isEnabled())
+    {
+        const kmVec4 textColor = {0.3f, 0.7f, 0.8f, 1.0f};
 
-    sprintf(strbuf, "FPS: %d\nFrame time: %.2f ms\nBatching: %d/%d\nFaces: %d",
-        stats->lastFPS, stats->lastFrameMs, stats->batchCalled, 
-        stats->batchTotal, stats->trianglesByFrame);
-    
-    mStatTexture->clean();
-    mStatTexture->drawText(strbuf, textPos, textColor);
-    mStatTexture->uploadChanges();
+        sprintf(strbuf, "FPS: %d\nFrame time: %.2f ms\nBatching: %d/%d\nFaces: %d",
+            renderStats->lastFPS, renderStats->lastFrameMs, renderStats->batchCalled, 
+            renderStats->batchTotal, renderStats->trianglesByFrame);
+
+        mStatTexture->clean();
+        mStatTexture->drawText(strbuf, textPos, textColor);
+        mStatTexture->uploadChanges();
+    }
+
+    if (mHelpOverlay->isEnabled())
+    {
+        const kmVec4 textColor = {0.812f, 0.796f, 0.086f, 1.0f};
+        if (mHelpState == SHOW_HELP)
+        {
+            sprintf(strbuf, commonHelpString, LITE3D_VERSION_STRING, mSampleHelpString.c_str());
+        }
+        else if (mHelpState == SHOW_RESOURCES)
+        {
+            ResourceManager::ResourceManagerStats memStats = mMain.getResourceManager()->getStats();
+            sprintf(strbuf, resourceStatsString, 
+                static_cast<uint32_t>(memStats.usedVideoMem / 1024),
+                memStats.totalObjectsCount,
+                memStats.texturesLoadedCount, memStats.texturesCount,
+                memStats.materialsLoadedCount, memStats.materialsCount,
+                memStats.scenesLoadedCount, memStats.scenesCount,
+                memStats.meshesLoadedCount, memStats.meshesCount,
+                memStats.shaderProgramsLoadedCount, memStats.shaderProgramsCount,
+                memStats.renderTargetsLoadedCount, memStats.renderTargetsCount,
+                memStats.ssboLoadedCount, memStats.ssboCount,
+                memStats.uboLoadedCount, memStats.uboCount,
+                renderStats->vboCount, renderStats->iboCount, renderStats->vaoCount, renderStats->queryCount,
+                static_cast<uint32_t>(memStats.totalCachedFilesMemSize / 1024), memStats.fileCachesCount);
+        }
+        else
+        {
+            sprintf(strbuf, renderStatsString, 
+                renderStats->framesCount, renderStats->lastFPS, renderStats->avrFPS, renderStats->bestFPS, renderStats->worstFPS,
+                renderStats->lastFrameMs, renderStats->avrFrameMs, renderStats->bestFrameMs, renderStats->worstFrameMs,
+                renderStats->nodesTotal, renderStats->batchTotal, renderStats->batchCalled, 
+                renderStats->batchInstancedCalled - renderStats->batchCalled, renderStats->batchOccluded, 
+                renderStats->trianglesByFrame);
+        }
+
+        mHelpTexture->clean();
+        mHelpTexture->drawText(strbuf, textPos, textColor);
+        mHelpTexture->uploadChanges();
+    }
 }
 
 void Sample::saveScreenshot()
@@ -324,7 +344,7 @@ Camera &Sample::getMainCamera()
     return *mMainCamera;    
 }
 
-int Sample::start(const char *config)
+int Sample::start(const std::string_view &config)
 {
     try
     {
@@ -344,18 +364,42 @@ void Sample::mainCameraChanged()
 {}
 
 void Sample::moveCamera()
-{    
-    if (mVelocity.x != 0.0f || mVelocity.y != 0.0f)
+{
+    auto timeNow = std::chrono::steady_clock::now();
+    float elapsedMilliSec = std::chrono::duration_cast<std::chrono::microseconds>(timeNow - mLastFrameTime).count() / 1000.0f;
+    mLastFrameTime = timeNow;
+
+    // Отношение прошедшего времени с прошлого кадра к интервалу таймера
+    float deltaRetard = elapsedMilliSec / mMain.getFixedUpdateTimer()->interval;
+
+    if (mCameraVelocityVector.x > 0)
+        mCameraVelocityVector.x -= std::min(mCameraAccelResistance * deltaRetard, mCameraVelocityVector.x);
+    if (mCameraVelocityVector.x < 0)
+        mCameraVelocityVector.x += std::min(mCameraAccelResistance * deltaRetard, std::abs(mCameraVelocityVector.x));
+    if (mCameraVelocityVector.y > 0)
+        mCameraVelocityVector.y -= std::min(mCameraAccelResistance * deltaRetard, mCameraVelocityVector.y);
+    if (mCameraVelocityVector.y < 0)
+        mCameraVelocityVector.y += std::min(mCameraAccelResistance * deltaRetard, std::abs(mCameraVelocityVector.y));
+    
+    if (near(mCameraVelocityVector.x, 0.0f) && near(mCameraVelocityVector.y, 0.0f))
     {
-        lite3d_render_stats *stats = lite3d_render_stats_get();    
-        kmVec3 step;
-        
-        step.x = mVelocity.y * (stats->lastFrameMs / 1000);
-        step.y = 0.0f;
-        step.z = mVelocity.x * (stats->lastFrameMs / 1000);
-        mMainCamera->moveRelative(step);
-        mainCameraChanged();
+        return;
     }
+
+    updateCameraVelocity(kmVec3 { mCameraVelocityVector.y, 0.0f, mCameraVelocityVector.x}, deltaRetard);
+    mainCameraChanged();
+}
+
+void Sample::frameEnd()
+{
+    moveCamera();
+}
+
+void Sample::updateCameraVelocity(const kmVec3& velocity, float deltaRetard)
+{
+    kmVec3 offsetPosition;
+    kmVec3Scale(&offsetPosition, &velocity, deltaRetard);
+    mMainCamera->moveRelative(offsetPosition);
 }
 
 }}

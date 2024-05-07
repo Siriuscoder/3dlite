@@ -20,12 +20,18 @@
 namespace lite3dpp {
 namespace samples {
 
+static const char *helpString = 
+    "Press '+' to increse gamma\n"
+    "Press '-' to decrese gamma\n"
+    "Press 'l' to enable/disable flashlight\n"
+    "Press 'o' to enable/disable FXAA\n";
+
 class DeferredShadingSample : public Sample
 {
 public:
     
     DeferredShadingSample() : 
-        mGammaFactor(1.0f)
+        Sample(helpString)
     {}
 
     void createScene() override
@@ -49,29 +55,23 @@ public:
     
     void addFlashlight(Scene *scene)
     {
-        ConfigurationWriter flashlightJson;
-        LightSource flashlight("FlashLight");
-        flashlight.setAttenuationLinear(0.005f);
-        flashlight.setAttenuationQuadratic(0.000003f);
-        flashlight.setInfluenceDistance(1000.0f);
-        flashlight.setAngleInnerCone(0.70f);
-        flashlight.setAngleOuterCone(1.04f);
-        flashlight.setDiffuse(KM_VEC3_ONE);
-        flashlight.setDirection(KM_VEC3_NEG_Z);
-        flashlight.setPosition(KM_VEC3_ZERO);
-        flashlight.setType(LITE3D_LIGHT_SPOT);
-        flashlight.toJson(flashlightJson);
-
-        String flashLightParams = ConfigurationWriter().set(L"Name", "FlashLight.node").set(L"Light", flashlightJson).write();
-        mFlashLight.reset(new LightSceneNode(ConfigurationReader(flashLightParams.data(), flashLightParams.size()), NULL, &getMain()));
-        mFlashLight->addToScene(scene);
+        auto flashLightObject = scene->addObject("FlashLight", "samples:objects/flashlight.json", nullptr);
+        mFlashLight = flashLightObject->getLightNode("FlashLight.node");
+        mFlashLight->getLight()->setAttenuationConstant(0.0f);
+        mFlashLight->getLight()->setAttenuationLinear(0.005f);
+        mFlashLight->getLight()->setAttenuationQuadratic(0.000003f);
+        mFlashLight->getLight()->setInfluenceDistance(1000.0f);
+        mFlashLight->getLight()->setAngleInnerCone(0.70f);
+        mFlashLight->getLight()->setAngleOuterCone(1.24f);
+        mFlashLight->getLight()->setDiffuse(KM_VEC3_ONE);
         mFlashLight->getLight()->enabled(false);
     }
 
     void mainCameraChanged() override
     {
-        lite3dpp::Material::setFloatv3GlobalParameter("eye", getMainCamera().getPosition());
-        mFlashLight->setPosition(getMainCamera().getPosition());
+        lite3dpp::Material::setFloatv3GlobalParameter("eye", getMainCamera().getWorldPosition());
+        mFlashLight->setPosition(getMainCamera().getWorldPosition());
+        mFlashLight->setRotation(getMainCamera().getWorldRotation());
     }
 
     void processEvent(SDL_Event *e) override
@@ -106,16 +106,12 @@ public:
                 mFlashLight->getLight()->enabled(flashLightEnabled);
             }
         }
-        else if (e->type == SDL_MOUSEMOTION)
-        {
-            mFlashLight->setRotation(getMainCamera().getRotation());
-        }
     }
     
 private:
                     
-    float mGammaFactor;
-    std::unique_ptr<LightSceneNode> mFlashLight;
+    float mGammaFactor = 1.0f;
+    LightSceneNode* mFlashLight = nullptr;
 };
 
 }}

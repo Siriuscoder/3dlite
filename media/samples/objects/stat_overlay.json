@@ -7,7 +7,7 @@
                 "Name": "Overlay.node",
                 "Mesh": 
                 {
-                    "Name": "overlay_plain.mesh",
+                    "Name": "overlay_plain_256x128.mesh",
                     "Mesh": "samples:models/json/plain256x128.json",
                     "MaterialMapping": 
                     [

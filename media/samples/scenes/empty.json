@@ -4,7 +4,7 @@
         {
             "Name": "MyCamera",
 
-            "Position": [0,100,100],
+            "Position": [400,400,400],
             "LookAt": [0,0,0],
             "Perspective": 
             {

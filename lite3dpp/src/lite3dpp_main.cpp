@@ -41,15 +41,15 @@ namespace lite3dpp
         lite3d_memory_init(NULL);
     }
 
-    void Main::initFromConfig(const char *config)
+    void Main::initFromConfig(const std::string_view &config)
     {           
         mConfig.reset(new ConfigurationReader(config));
         parseConfig();
     }
 
-    void Main::initFromConfigString(const char *config)
+    void Main::initFromConfigString(const std::string_view &config)
     {           
-        mConfig.reset(new ConfigurationReader(config, strlen(config)));
+        mConfig.reset(new ConfigurationReader(config.data(), config.size()));
         parseConfig();
     }
     
@@ -221,7 +221,7 @@ namespace lite3dpp
         if (it != mCameras.end())
             LITE3D_THROW("Camera \"" << name << "\" already exists..");
 
-        auto emplaced = mCameras.try_emplace(name, name);
+        auto emplaced = mCameras.try_emplace(name, name, this);
         return &emplaced.first->second;
     }
 

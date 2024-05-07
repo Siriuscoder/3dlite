@@ -21,18 +21,18 @@ class Material:
             template = self.scene.options["materialTemplate"]
         return PurePosixPath("materials/") / f"{template}.json"
     
-    def considerBSDF(self, node):
+    def considerShader(self, node):
         for socket in node.inputs:
             if socket.is_linked or socket.is_unavailable or not socket.enabled:
                 continue
-            if socket.name == "Base Color":
+            if socket.name in ["Base Color", "Albedo"]:
                 self.params["Albedo"] = [x for x in socket.default_value] # Color 4i
                 alphaSocket = node.inputs["Alpha"]
                 if not alphaSocket.is_linked and not socket.is_unavailable and socket.enabled:
                     self.params["Albedo"][3] = float(alphaSocket.default_value)
-            elif socket.name == "Emission Color":
+            elif socket.name in ["Emission Color", "Emission"]:
                 self.params["Emission"] = [x for x in socket.default_value] # Color 4i
-            elif socket.name == "Specular IOR Level":
+            elif socket.name in ["Specular IOR Level"]:
                 self.params["Specular"] = float(socket.default_value)
             elif socket.name in ["Metallic", "Roughness", "IOR", "Emission Strength"]:
                 self.params[socket.name] = float(socket.default_value)
@@ -73,8 +73,13 @@ class Material:
             paramValue = self.material.get(paramName)
             if paramType == "float" and paramValue is not None:
                 val["Value"] = float(paramValue)
+            elif paramType == "v3" and paramValue is not None:
+                val["Value"] = [float(x) for x in paramValue]
     
     def processTemplate(self, template):
+        if not isinstance(template, dict):
+            return
+        
         self.processParams(template)
         for key, val in template.items():
             if isinstance(val, str):
@@ -94,8 +99,8 @@ class Material:
             return
         
         for node in self.material.node_tree.nodes:
-            if node.type == "BSDF_PRINCIPLED":
-                self.considerBSDF(node)
+            if node.label.startswith("MaterialShader"):
+                self.considerShader(node)
         for node in self.material.node_tree.nodes:
             if node.type == "TEX_IMAGE":
                 self.considerImage(node)

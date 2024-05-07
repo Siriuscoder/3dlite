@@ -684,12 +684,37 @@ int lite3d_scene_add_node(lite3d_scene *scene, lite3d_scene_node *node,
 {
     SDL_assert(scene && node);
 
+    // linked already
+    if (node->scene)
+        return LITE3D_FALSE;
+
     /* mean root node */
     if (!baseNode)
         baseNode = &scene->rootNode;
 
+    node->recalc = LITE3D_TRUE;
     node->baseNode = baseNode;
     node->scene = scene;
+    lite3d_list_add_last_link(&node->nodeLink, &baseNode->childNodes);
+    return LITE3D_TRUE;
+}
+
+int lite3d_scene_rebase_node(lite3d_scene *scene, lite3d_scene_node *node,
+    lite3d_scene_node *baseNode)
+{
+    SDL_assert(scene && node);
+
+    // not linked or linked to another scene
+    if (node->scene != scene)
+        return LITE3D_FALSE;
+
+    /* mean root node */
+    if (!baseNode)
+        baseNode = &scene->rootNode;
+
+    node->recalc = LITE3D_TRUE;
+    node->baseNode = baseNode;
+    lite3d_list_unlink_link(&node->nodeLink);
     lite3d_list_add_last_link(&node->nodeLink, &baseNode->childNodes);
     return LITE3D_TRUE;
 }
@@ -698,10 +723,19 @@ int lite3d_scene_remove_node(lite3d_scene *scene, lite3d_scene_node *node)
 {
     _mqr_unit *mqrUnit = NULL;
     lite3d_list_node *mqrUnitNode = NULL;
+    lite3d_list_node *nodeLink = NULL;
     _mqr_node *mqrNode = NULL;
 
     if (node->scene != scene)
         return LITE3D_FALSE;
+
+    /* move all child to parent node */
+    for (nodeLink = node->childNodes.l.next;
+        nodeLink != &node->childNodes.l; nodeLink = node->childNodes.l.next)
+    {
+        lite3d_scene_node *sceneNode = LITE3D_MEMBERCAST(lite3d_scene_node, nodeLink, nodeLink);
+        lite3d_scene_rebase_node(scene, sceneNode, node->baseNode);
+    }
 
     lite3d_list_unlink_link(&node->nodeLink);
     node->baseNode = NULL;

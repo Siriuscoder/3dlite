@@ -1,0 +1,13 @@
+{
+  "Codec": "m",
+  "Model": "samples:models/meshes/CoordArrows.m",
+  "MaterialMapping": [
+    {
+      "Material": {
+        "Name": "CoordArrows.material",
+        "Material": "samples:materials/CoordArrows.json"
+      },
+      "MaterialIndex": 0
+    }
+  ]
+}

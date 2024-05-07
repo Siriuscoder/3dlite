@@ -34,22 +34,56 @@ void lite3d_camera_update_view(lite3d_camera *camera)
     lite3d_camera_link_to(camera, camera->linkNode, camera->linkType);
     /* camera track object */
     lite3d_camera_tracking(camera, camera->trackNode);
-    /* compute local camera matrix */
+    /* compute world matrix */
     lite3d_scene_node_update(&camera->cameraNode);
+    /* compute view matrix */
+    lite3d_camera_compute_view(camera);
     /* update global shader projection matrix */
     lite3d_shader_set_projection_matrix(&camera->projection);
     /* update global camera view matrix */
-    lite3d_shader_set_view_matrix(&camera->cameraNode.worldView);
+    lite3d_shader_set_view_matrix(&camera->view);
     /* compute frustum planes */
     if (camera->cameraNode.invalidated)
     {
-        kmMat4Multiply(&camera->screen, &camera->projection, &camera->cameraNode.worldView);
-        lite3d_frustum_compute(&camera->frustum, &camera->screen);
         /* compute screen martix */
+        kmMat4Multiply(&camera->screen, &camera->projection, &camera->view);
+        /* compute frustum */
+        lite3d_frustum_compute(&camera->frustum, &camera->screen);
     }
 
     /* update global projection view matrix */
     lite3d_shader_set_projview_matrix(&camera->screen);
+}
+
+void lite3d_camera_compute_view(lite3d_camera *camera)
+{
+    kmVec3 forward, up, right, worldPosition;
+    kmMat3 worldRotation;
+    kmMat4 translate;
+    kmMat4ExtractRotation(&worldRotation, &camera->cameraNode.worldView);
+    kmMat4ExtractPosition(&worldPosition, &camera->cameraNode.worldView);
+    kmVec3MultiplyMat3(&forward, &KM_VEC3_NEG_Z, &worldRotation);
+    kmVec3MultiplyMat3(&up, &KM_VEC3_POS_Y, &worldRotation);
+    kmVec3MultiplyMat3(&right, &KM_VEC3_POS_X, &worldRotation);
+    kmVec3Normalize(&forward, &forward);
+    kmVec3Normalize(&up, &up);
+    kmVec3Normalize(&right, &right);
+
+    kmMat4Identity(&camera->view);
+    camera->view.mat[0] = right.x;
+    camera->view.mat[4] = right.y;
+    camera->view.mat[8] = right.z;
+
+    camera->view.mat[1] = up.x;
+    camera->view.mat[5] = up.y;
+    camera->view.mat[9] = up.z;
+
+    camera->view.mat[2] = -forward.x;
+    camera->view.mat[6] = -forward.y;
+    camera->view.mat[10] = -forward.z;
+
+    kmMat4Translation(&translate, -worldPosition.x, -worldPosition.y, -worldPosition.z);
+    kmMat4Multiply(&camera->view, &camera->view, &translate);
 }
 
 void lite3d_camera_ortho(lite3d_camera *camera, float znear,
@@ -92,9 +126,10 @@ void lite3d_camera_init(lite3d_camera *camera)
 
     memset(camera, 0, sizeof (lite3d_camera));
     lite3d_scene_node_init(&camera->cameraNode);
-    camera->cameraNode.rotationCentered = LITE3D_FALSE;
+    camera->cameraNode.rotationCentered = LITE3D_TRUE;
     camera->cameraNode.renderable = LITE3D_FALSE;
     camera->cameraNode.isCamera = LITE3D_TRUE;
+    kmMat4Identity(&camera->view);
     kmMat4Identity(&camera->projection);
     kmMat4Identity(&camera->screen);
 
@@ -105,16 +140,29 @@ void lite3d_camera_init(lite3d_camera *camera)
 void lite3d_camera_lookAt(lite3d_camera *camera, const kmVec3 *pointTo)
 {
     kmVec3 direction;
-    kmVec3 up = {
-        0.0f, 0.0f, 1.0f
-    };
-
     SDL_assert(camera && pointTo);
 
     kmVec3Subtract(&direction, pointTo, &camera->cameraNode.position);
-    kmQuaternionLookRotation(&camera->cameraNode.rotation, &direction, &up);
-    camera->cameraNode.recalc = LITE3D_TRUE;
-    camera->cameraNode.invalidated = LITE3D_TRUE;
+    lite3d_camera_set_direction(camera, &direction);
+}
+
+void lite3d_camera_lookAt_world(lite3d_camera *camera, const kmVec3 *pointTo)
+{
+    kmVec3 direction;
+    kmVec3 worldPos;
+    SDL_assert(camera && pointTo);
+
+    lite3d_camera_world_position(camera, &worldPos);
+    kmVec3Subtract(&direction, pointTo, &worldPos);
+    lite3d_camera_set_direction(camera, &direction);
+}
+
+void lite3d_camera_set_direction(lite3d_camera *camera, const kmVec3 *direction)
+{
+    kmQuaternion q;
+    kmQuaternionLookRotation(&q, direction, &KM_VEC3_POS_Z);
+    kmQuaternionInverse(&q, &q);
+    lite3d_camera_set_rotation(camera, &q);
 }
 
 void lite3d_camera_link_to(lite3d_camera *camera,
@@ -169,47 +217,29 @@ void lite3d_camera_rotate(lite3d_camera *camera,
 
 void lite3d_camera_yaw(lite3d_camera *camera, float angle)
 {
-    kmQuaternion quat;
-
     SDL_assert(camera);
-    kmQuaternionRotationAxisAngle(&quat, &KM_VEC3_POS_Y, angle);
-    lite3d_scene_node_rotate_by(&camera->cameraNode, &quat);
+    lite3d_scene_node_rotate_y(&camera->cameraNode, angle);
 }
 
 void lite3d_camera_pitch(lite3d_camera *camera, float angle)
 {
-    kmQuaternion quat;
-
     SDL_assert(camera);
-    kmQuaternionRotationAxisAngle(&quat, &KM_VEC3_POS_X, angle);
-    lite3d_scene_node_rotate_by(&camera->cameraNode, &quat);
+    lite3d_scene_node_rotate_x(&camera->cameraNode, angle);
 }
 
 void lite3d_camera_roll(lite3d_camera *camera, float angle)
 {
-    kmQuaternion quat;
-
     SDL_assert(camera);
-    kmQuaternionRotationAxisAngle(&quat, &KM_VEC3_POS_Z, angle);
-    lite3d_scene_node_rotate_by(&camera->cameraNode, &quat);
+    lite3d_scene_node_rotate_z(&camera->cameraNode, angle);
 }
 
-void lite3d_camera_rotate_y(lite3d_camera *camera, float angle)
+void lite3d_camera_set_yaw_pitch_roll(lite3d_camera *camera, float yaw, float pitch, float roll)
 {
-    SDL_assert(camera);
-    lite3d_scene_node_rotate_angle(&camera->cameraNode, &KM_VEC3_POS_Y, angle);
-}
+    kmQuaternion rotation;
 
-void lite3d_camera_rotate_x(lite3d_camera *camera, float angle)
-{
     SDL_assert(camera);
-    lite3d_scene_node_rotate_angle(&camera->cameraNode, &KM_VEC3_POS_X, angle);
-}
-
-void lite3d_camera_rotate_z(lite3d_camera *camera, float angle)
-{
-    SDL_assert(camera);
-    lite3d_scene_node_rotate_angle(&camera->cameraNode, &KM_VEC3_POS_Z, angle);
+    kmQuaternionRotationPitchYawRoll(&rotation, pitch, yaw, roll);
+    lite3d_scene_node_set_rotation(&camera->cameraNode, &rotation);
 }
 
 void lite3d_camera_move(lite3d_camera *camera, const kmVec3 *value)
@@ -221,33 +251,44 @@ void lite3d_camera_move(lite3d_camera *camera, const kmVec3 *value)
 void lite3d_camera_move_relative(lite3d_camera *camera,
     const kmVec3 *vec)
 {
-    kmVec3 vecLocalCamera;
-    kmQuaternion inverseRot;
-
-    SDL_assert(camera);
-    kmQuaternionInverse(&inverseRot, &camera->cameraNode.rotation);
-    kmQuaternionMultiplyVec3(&vecLocalCamera, &inverseRot, vec);
-    lite3d_scene_node_move(&camera->cameraNode, &vecLocalCamera);
+    lite3d_scene_node_move_relative(&camera->cameraNode, vec);
 }
 
 void lite3d_camera_direction(const lite3d_camera *camera,
     kmVec3 *vec)
 {
-    kmQuaternion inverseRot;
-
     SDL_assert(camera && vec);
-    kmQuaternionInverse(&inverseRot, &camera->cameraNode.rotation);
-    kmQuaternionMultiplyVec3(vec, &inverseRot, &KM_VEC3_NEG_Z);
+    kmQuaternionMultiplyVec3(vec, &camera->cameraNode.rotation, &KM_VEC3_NEG_Z);
+    kmVec3Normalize(vec, vec);
 }
 
-float lite3d_camera_distance(lite3d_camera *camera, 
+float lite3d_camera_distance(const lite3d_camera *camera, 
     const kmVec3 *point)
 {
     kmVec3 pointDir;
+    kmVec3 worldCameraPos;
     SDL_assert(camera);
     SDL_assert(point);
 
-    kmVec3Subtract(&pointDir, point, &camera->cameraNode.position);
+    lite3d_camera_world_position(camera, &worldCameraPos);
+    kmVec3Subtract(&pointDir, point, &worldCameraPos);
     return kmVec3Length(&pointDir);
 }
 
+void lite3d_camera_world_direction(const lite3d_camera *camera, kmVec3 *vec)
+{
+    kmMat3 worldRotation;
+    kmMat4ExtractRotation(&worldRotation, &camera->cameraNode.worldView);
+    kmVec3MultiplyMat3(vec, &KM_VEC3_NEG_Z, &worldRotation);
+    kmVec3Normalize(vec, vec);
+}
+
+void lite3d_camera_world_position(const lite3d_camera *camera, kmVec3 *pos)
+{
+    lite3d_scene_node_get_world_position(&camera->cameraNode, pos);
+}
+
+void lite3d_camera_world_rotation(const lite3d_camera *camera, kmQuaternion *q)
+{
+    lite3d_scene_node_get_world_rotation(&camera->cameraNode, q);
+}

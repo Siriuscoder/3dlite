@@ -20,10 +20,17 @@
 namespace lite3dpp {
 namespace samples {
 
+static const char *helpString = 
+    "Press 'e' to show shadow map\n";
+
 class SponzaHall : public Sample, public RenderTargetObserver
 {
 public:
     const kmVec3 sunLightDirection = { -2.0f, -1.0f, -2.3f };
+
+    SponzaHall() : 
+        Sample(helpString)
+    {}
 
     void createScene() override
     {
@@ -49,9 +56,9 @@ public:
         mSponzahall = mMainScene->getObject("SponzaHall");
         mMainScene->attachCamera(&getMainCamera(), mSponzahall);
 
-        lite3dpp::Material::setFloatm4GlobalParameter("shadowMatrix", shadowView->getProjTransformMatrix());
-        lite3dpp::Material::setIntGlobalParameter("FXAA", 1);
-        lite3dpp::Material::setFloatv3GlobalParameter("eye", getMainCamera().getPosition());
+        lite3dpp::Material::setFloatm4GlobalParameter("shadowMatrix", shadowView->refreshProjViewMatrix());
+        lite3dpp::Material::setIntGlobalParameter("SwitchView", 0);
+        lite3dpp::Material::setFloatv3GlobalParameter("eye", getMainCamera().getWorldPosition());
 
         addSunlight();
 
@@ -60,24 +67,14 @@ public:
 
     void mainCameraChanged() override
     {
-        Sample::mainCameraChanged();
-        lite3dpp::Material::setFloatv3GlobalParameter("eye", getMainCamera().getPosition());
+        lite3dpp::Material::setFloatv3GlobalParameter("eye", getMainCamera().getWorldPosition());
     }
 
     void addSunlight()
     {
-        ConfigurationWriter sunJson;
-        LightSource sunlight("SunLight");
-        sunlight.setDiffuse(KM_VEC3_ONE);
-        sunlight.setDirection(sunLightDirection);
-        sunlight.setType(LITE3D_LIGHT_DIRECTIONAL);
-        sunlight.toJson(sunJson);
-
-        String lightParams = ConfigurationWriter().set(L"Name", "SunLight.node").set(L"Light", sunJson).write();
-        mSunLight.reset(new LightSceneNode(ConfigurationReader(lightParams.data(), lightParams.size()), NULL, &getMain()));
-        mSunLight->addToScene(mMainScene);
-        mSunLight->getLight()->enabled(true);
-        mSunLight->frustumTest(false);
+        auto sunlightObject = mMainScene->addObject("SunLight", "samples:objects/sunlight.json");
+        mSunLight = sunlightObject->getLightNode("SunLight.node");
+        mSunLight->getLight()->setDirection(sunLightDirection);
     }
 
     void postUpdate(RenderTarget *rt) override
@@ -92,7 +89,7 @@ public:
     void fixedUpdateTimerTick(int32_t firedPerRound, uint64_t deltaMcs, float deltaRetard) override
     {
         // Имитируем вращение неба и солнца, но на самом деле крутится только здание
-        mSponzahall->getRoot()->rotateAngle(KM_VEC3_POS_Z, 0.002f * deltaRetard);
+        mSponzahall->rotateAngle(KM_VEC3_POS_Z, 0.002f * deltaRetard);
         // Перересуем тень после поворота, в след кадре
         mShadowMap->enable();
     }
@@ -102,18 +99,18 @@ public:
         Sample::processEvent(e);
         if (e->type == SDL_KEYDOWN)
         {
-            if (e->key.keysym.sym == SDLK_o)
+            if (e->key.keysym.sym == SDLK_e)
             {
-                static bool fxaaEnabled = true;
-                fxaaEnabled = !fxaaEnabled;
-                lite3dpp::Material::setIntGlobalParameter("FXAA", fxaaEnabled ? 1 : 0);
+                static bool SwitchView = false;
+                SwitchView = !SwitchView;
+                lite3dpp::Material::setIntGlobalParameter("SwitchView", SwitchView ? 1 : 0);
             }
         }
     }
 
 private:
 
-    std::unique_ptr<LightSceneNode> mSunLight;
+    LightSceneNode *mSunLight;
     Scene *mMainScene;
     SceneObject *mSponzahall;
     RenderTarget *mShadowMap;

@@ -78,9 +78,9 @@ namespace lite3dpp
         uint8_t getType() const;
         bool enabled() const;
         const kmVec3 &getPosition() const;
-        const kmVec3 &getPositionWorld() const;
+        const kmVec3 &getWorldPosition() const;
         const kmVec3 &getDirection() const;
-        const kmVec3 &getDirectionWorld() const;
+        const kmVec3 &getWorldDirection() const;
         const kmVec3 &getDiffuse() const;
         float getAttenuationConstant() const;
         float getAttenuationLinear() const;

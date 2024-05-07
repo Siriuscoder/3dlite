@@ -48,6 +48,11 @@
           "Value": 0.1
         },
         {
+          "Name":"NormalScale",
+          "Type":"v3",
+          "Value": [1.0, -1.0, 1.0]
+        },
+        {
           "Name":"projViewMatrix"
         }
       ]

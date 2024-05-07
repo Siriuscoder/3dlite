@@ -17,64 +17,63 @@
  *******************************************************************************/
 #pragma once
 
-#include <lite3d/lite3d_scene.h>
+#include <lite3dpp/lite3dpp_scene_object_base.h>
+#include <lite3dpp/lite3dpp_scene_mesh_node.h>
+#include <lite3dpp/lite3dpp_scene_light_node.h>
+#include <lite3dpp/lite3dpp_scene_light_node.h>
 
-#include <lite3dpp/lite3dpp_common.h>
-#include <lite3dpp/lite3dpp_resource.h>
-#include <lite3dpp/lite3dpp_config_reader.h>
-#include <lite3dpp/lite3dpp_scene_node.h>
 
 namespace lite3dpp
 {
-    class LITE3DPP_EXPORT SceneObject : public Manageable, public Noncopiable
+    class LITE3DPP_EXPORT SceneObject : public SceneObjectBase
     {
     public:
 
-        typedef std::shared_ptr<SceneObject> Ptr;
-        typedef stl<String, SceneNode::Ptr>::unordered_map Nodes;
+        using Ptr = std::shared_ptr<SceneObject>;
+        using Nodes = stl<String, SceneNode::Ptr>::unordered_map;
+        using LightNodes = stl<String, LightSceneNode::Ptr>::unordered_map;
+        using MeshNodes = stl<String, MeshSceneNode::Ptr>::unordered_map;
 
-        SceneObject(const String &name, 
-            SceneObject *parent, Main *main);
+        SceneObject(const String &name, Scene *scene, Main *main, SceneObjectBase *parent, const kmVec3 &initialPosition, 
+            const kmQuaternion &initialRotation, const kmVec3 &initialScale);
         virtual ~SceneObject() = default;
 
         inline const Nodes &getNodes() const
         { return mNodes; }
-        inline SceneNode *getRoot()
-        { return mObjectRoot.get(); }
-        inline const SceneNode *getRoot() const
-        { return mObjectRoot.get(); }
-        inline const String &getName() const 
-        { return mName; }
+        inline const LightNodes& getLightNodes() const 
+        { return mLightNodes; }
+        inline const MeshNodes& getMeshNodes() const 
+        { return mMeshNodes; }
 
+        void disable() override;
+        void enable() override;
+        
         SceneNode *getNode(const String &name);
+        LightSceneNode* getLightNode(const String &name) const;
+        MeshSceneNode* getMeshNode(const String &name) const;
 
-        void addToScene(Scene *scene);
-        void removeFromScene(Scene *scene);
+        void loadFromTemplate(const ConfigurationReader& conf) override;
 
-        void loadFromTemplate(const String &templatePath);
-
-        bool isEnabled() const;
-
-        void disable();
-        void enable();
+        virtual SceneNode* addNode(const ConfigurationReader &nodeconf, SceneNodeBase *parent);
+        virtual MeshSceneNode* addMeshNode(const ConfigurationReader &nodeconf, SceneNodeBase *parent);
+        virtual LightSceneNode* addLightNode(const ConfigurationReader &nodeconf, SceneNodeBase *parent);
+        
+        void removeNode(const String &name);
+        void removeMeshNode(const String &name);
+        void removeLightNode(const String &name);
+        void removeAllLightNodes();
+        void removeAllMeshNodes();
 
     protected:
         
-        virtual SceneNode::Ptr createNode(const ConfigurationReader &nodeconf, SceneNode *base);
+        virtual SceneNode* createNode(const ConfigurationReader &conf, SceneNodeBase *parent);
+        void setupNodes(const stl<ConfigurationReader>::vector &nodesRange, SceneNodeBase *parent);
 
-    private:
+    protected:
 
-        void setupNodes(const stl<ConfigurationReader>::vector &nodesRange, SceneNode *base);
-
-    private:
-
-        String mName;
         Nodes mNodes;
-        SceneNode::Ptr mObjectRoot;
-        SceneObject *mParent;
-        Main *mMain;
-        Scene *mScene;
-        std::unique_ptr<ConfigurationReader> mConfiguration;
+        LightNodes mLightNodes;
+        MeshNodes mMeshNodes;
     };
 }
 

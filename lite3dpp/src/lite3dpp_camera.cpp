@@ -15,20 +15,22 @@
  *	You should have received a copy of the GNU General Public License
  *	along with Lite3D.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
-#include <SDL_assert.h>
 #include <lite3dpp/lite3dpp_camera.h>
+
+#include <SDL_assert.h>
+#include <lite3dpp/lite3dpp_main.h>
 
 namespace lite3dpp
 {
-    Camera::Camera(const String &name) : 
-        mName(name)
+    Camera::Camera(const String &name, Main *main) : 
+        SceneObjectBase(name, nullptr, main, nullptr, KM_VEC3_ZERO, KM_QUATERNION_IDENTITY, KM_VEC3_ONE),
+        mNode(&mCamera.cameraNode)
     {
         lite3d_camera_init(&mCamera);
         mCamera.userdata = this;
-    }
 
-    Camera::~Camera()
-    {}
+        setRoot(&mNode);
+    }
 
     void Camera::setupOrtho(float znear, float zfar, float left, float right, 
         float bottom, float top)
@@ -49,99 +51,75 @@ namespace lite3dpp
             aspect);
     }
 
-    Scene *Camera::getScene()
+    void Camera::resetView()
     {
-        lite3d_scene *scene = static_cast<lite3d_scene *>(mCamera.cameraNode.scene);
-        if (!scene)
-        {
-            return nullptr;
-        }
-
-        return reinterpret_cast<Scene *>(scene->userdata);
+        mCamera.cameraNode.rotation = KM_QUATERNION_IDENTITY;
+        mCamera.cameraNode.recalc = LITE3D_TRUE;
     }
 
-    void Camera::lookAt(const kmVec3 &pointTo)
+    void Camera::lookAtLocal(const kmVec3 &pointTo)
     {
         lite3d_camera_lookAt(&mCamera, &pointTo);
     }
 
-    void Camera::lookAt(const SceneObject &obj)
+    void Camera::lookAtWorld(const SceneObjectBase &obj)
     {
-        lookAt(obj.getRoot()->getPosition());
+        lookAtWorld(obj.getWorldPosition());
     }
 
-    void Camera::setPosition(const kmVec3 &position)
+    void Camera::lookAtWorld(const kmVec3 &pointTo)
     {
-        lite3d_camera_set_position(&mCamera, &position);
-    }
-
-    void Camera::setRotation(const kmQuaternion &orietation)
-    {
-        lite3d_camera_set_rotation(&mCamera, &orietation);
+        lite3d_camera_lookAt_world(&mCamera, &pointTo);
     }
 
     void Camera::setDirection(const kmVec3 &direction)
     {
-        kmQuaternion rot;
-        kmVec3 up = {
-            0.0f, 0.0f, 1.0f
-        };
-
-        kmQuaternionLookRotation(&rot, &direction, &up);
-        setRotation(rot);
+        lite3d_camera_set_direction(&mCamera, &direction);
     }
 
-    void Camera::rotate(const kmQuaternion &orietation)
+    void Camera::yaw(float angleDelta)
     {
-        lite3d_camera_set_rotation(&mCamera, &orietation);
+        lite3d_camera_yaw(&mCamera, angleDelta);
     }
 
-    void Camera::yaw(float angle)
+    void Camera::pitch(float angleDelta)
     {
-        lite3d_camera_yaw(&mCamera, angle);
+        lite3d_camera_pitch(&mCamera, angleDelta);
     }
 
-    void Camera::pitch(float angle)
+    void Camera::roll(float angleDelta)
     {
-        lite3d_camera_pitch(&mCamera, angle);
+        lite3d_camera_roll(&mCamera, angleDelta);
     }
 
-    void Camera::roll(float angle)
+    void Camera::setYawPitchRoll(float yaw, float pitch, float roll)
     {
-        lite3d_camera_roll(&mCamera, angle);
+        lite3d_camera_set_yaw_pitch_roll(&mCamera, yaw, pitch, roll);
     }
 
-    void Camera::move(const kmVec3 &value)
+    void Camera::setOrientationAngles(float ZW, float XW)
     {
-        lite3d_camera_move(&mCamera, &value);
-    }
-    
-    void Camera::rotateY(float angle)
-    {
-        lite3d_camera_rotate_y(&mCamera, angle);
-    }
-    
-    void Camera::rotateX(float angle)
-    {
-        lite3d_camera_rotate_x(&mCamera, angle);
-    }
-    
-    void Camera::rotateZ(float angle)
-    {
-        lite3d_camera_rotate_z(&mCamera, angle);
+        resetView();
+        roll(ZW);
+        pitch(XW);
     }
 
-    void Camera::moveRelative(const kmVec3 &value)
+    float Camera::getZW() const
     {
-        lite3d_camera_move_relative(&mCamera, &value);
+        return getRoll();
     }
 
-    void Camera::holdOnSceneObject(const SceneObject &sceneObj)
+    float Camera::getXW() const
+    {
+        return getPitch();
+    }
+
+    void Camera::holdOnSceneObject(const SceneObjectBase &sceneObj)
     {
         lite3d_camera_tracking(&mCamera, sceneObj.getRoot()->getPtr());
     }
 
-    void Camera::linkWithSceneObject(const SceneObject &sceneObj)
+    void Camera::linkWithSceneObject(const SceneObjectBase &sceneObj)
     {
         lite3d_camera_link_to(&mCamera, sceneObj.getRoot()->getPtr(), LITE3D_CAMERA_LINK_POSITION);
     }
@@ -152,18 +130,19 @@ namespace lite3dpp
         lite3d_camera_direction(&mCamera, &direction);
         return direction;
     }
-    
-    kmQuaternion Camera::getRotation() const 
+
+    kmVec3 Camera::getWorldDirection() const
     {
-        kmQuaternion inverseRot;
-        kmQuaternionInverse(&inverseRot, &mCamera.cameraNode.rotation);
-        return inverseRot;
+        kmVec3 direction;
+        lite3d_camera_world_direction(&mCamera, &direction);
+        return direction;
     }
 
-    const kmMat4& Camera::getTransformMatrix()
+    const kmMat4& Camera::refreshViewMatrix()
     {
         lite3d_scene_node_update(&mCamera.cameraNode);
-        return mCamera.cameraNode.worldView;
+        lite3d_camera_compute_view(&mCamera);
+        return mCamera.view;
     }
 
     const kmMat4& Camera::getProjMatrix() const
@@ -171,15 +150,15 @@ namespace lite3dpp
         return mCamera.projection;
     }
 
-    const kmMat4& Camera::getProjTransformMatrix()
+    const kmMat4& Camera::refreshProjViewMatrix()
     {
-        kmMat4Multiply(&mCamera.screen, &getProjMatrix(), &getTransformMatrix());
+        kmMat4Multiply(&mCamera.screen, &getProjMatrix(), &refreshViewMatrix());
         return mCamera.screen;
     }
 
     void Camera::recalcFrustum()
     {
-        lite3d_frustum_compute(&mCamera.frustum, &getProjTransformMatrix());
+        lite3d_frustum_compute(&mCamera.frustum, &refreshProjViewMatrix());
     }
 
     bool Camera::inFrustum(const LightSource &light) const
@@ -206,6 +185,34 @@ namespace lite3dpp
     float Camera::getRoll() const
     {
         return kmQuaternionGetRoll(&mCamera.cameraNode.rotation);
+    }
+
+    void Camera::loadFromTemplate(const ConfigurationReader& conf)
+    {
+        ConfigurationReader perspectiveOptionsJson = conf.getObject(L"Perspective");
+        ConfigurationReader orthoOptionsJson = conf.getObject(L"Ortho");
+        if (!perspectiveOptionsJson.isEmpty())
+        {
+            auto aspect = static_cast<float>(getMain().window()->width()) / getMain().window()->height();
+            setupPerspective(perspectiveOptionsJson.getDouble(L"Znear"),
+                perspectiveOptionsJson.getDouble(L"Zfar"),
+                perspectiveOptionsJson.getDouble(L"Fov"),
+                perspectiveOptionsJson.getDouble(L"Aspect", aspect));
+        }
+        else if (!orthoOptionsJson.isEmpty())
+        {
+            setupOrtho(orthoOptionsJson.getDouble(L"Near"),
+                orthoOptionsJson.getDouble(L"Far"),
+                orthoOptionsJson.getDouble(L"Left"),
+                orthoOptionsJson.getDouble(L"Right"),
+                orthoOptionsJson.getDouble(L"Bottom"),
+                orthoOptionsJson.getDouble(L"Top"));
+        }
+
+        if (conf.has(L"Position"))
+            setPosition(conf.getVec3(L"Position"));
+        if (conf.has(L"LookAt"))
+            lookAtLocal(conf.getVec3(L"LookAt"));
     }
 }
 

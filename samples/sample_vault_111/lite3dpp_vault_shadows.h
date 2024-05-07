@@ -34,12 +34,12 @@ public:
     class ShadowCaster 
     {
     public:
-        ShadowCaster(Main& main, LightSceneNode* node) : 
+        ShadowCaster(Main& main, const String& name, LightSceneNode* node) : 
             mLightNode(node),
-            mShadowCamera(main.addCamera(node->getName()))
+            mShadowCamera(main.addCamera(name))
         {
             // Ставим перспективу сразу при инициализации, считаем что конус источника света не меняется 
-            mShadowCamera->setupPerspective(1.0f, mLightNode->getLight()->getInfluenceDistance(), 
+            mShadowCamera->setupPerspective(1.0f, 1500.0f, 
                 kmRadiansToDegrees(mLightNode->getLight()->getAngleOuterCone()), 1.0);
         }
 
@@ -47,11 +47,11 @@ public:
         {
             SDL_assert(mShadowCamera);
             // Обновим параметры теневой камеры
-            mShadowCamera->setDirection(mLightNode->getLight()->getDirectionWorld());
-            mShadowCamera->setPosition(mLightNode->getLight()->getPositionWorld());
+            mShadowCamera->setDirection(mLightNode->getLight()->getWorldDirection());
+            mShadowCamera->setPosition(mLightNode->getLight()->getWorldPosition());
             mShadowCamera->recalcFrustum();
             // Пересчитаем теневую матрицу
-            return mShadowCamera->getProjTransformMatrix();
+            return mShadowCamera->refreshProjViewMatrix();
         }
 
         inline LightSceneNode* getNode()
@@ -150,23 +150,32 @@ public:
         ShadowCasters mVisibility;
     };
 
-    SampleShadowManager(Main& main) : 
+    SampleShadowManager(Main& main, size_t initialShadowCastersCount = 1) : 
         mMain(main)
     {
         mShadowMatrixBuffer = mMain.getResourceManager()->queryResourceFromJson<UBO>("ShadowMatrixBuffer",
             "{\"Dynamic\": false}");
         mShadowIndexBuffer = mMain.getResourceManager()->queryResourceFromJson<UBO>("ShadowIndexBuffer",
             "{\"Dynamic\": true}");
+
+        mShadowMatrixBuffer->extendBufferBytes(sizeof(kmMat4) * initialShadowCastersCount);
+        mShadowIndexBuffer->extendBufferBytes(sizeof(IndexVector::value_type) * (initialShadowCastersCount + 1));
+        IndexVector::value_type initialZero = 0;
+        mShadowIndexBuffer->setElement<IndexVector::value_type>(0, &initialZero);
     }
 
     ShadowCaster* newShadowCaster(LightSceneNode* node)
     {
-        mShadowCasters.emplace_back(std::make_unique<ShadowCaster>(mMain, node));
-        auto index = static_cast<uint32_t>(mShadowCasters.size() - 1);
+        auto index = static_cast<uint32_t>(mShadowCasters.size());
+        mShadowCasters.emplace_back(std::make_unique<ShadowCaster>(mMain, node->getName() + std::to_string(index), node));
         // Запишем в источник света индекс его теневой матрицы в UBO
         node->getLight()->setUserIndex(index);
         // Аллоцируем место под теневую матрицу 
-        mShadowMatrixBuffer->extendBufferBytes(sizeof(kmMat4));
+        if (mShadowMatrixBuffer->bufferSizeBytes() < mShadowCasters.size() * sizeof(kmMat4))
+        {
+            mShadowMatrixBuffer->extendBufferBytes(sizeof(kmMat4));
+        }
+
         return mShadowCasters.back().get();
     }
 

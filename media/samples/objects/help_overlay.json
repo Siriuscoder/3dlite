@@ -1,0 +1,28 @@
+{
+    "Root":
+    {
+        "Name": "HelpOverlay.root",
+        "Nodes": [
+            {
+                "Name": "Overlay.node",
+                "Mesh": 
+                {
+                    "Name": "overlay_plain_512x512.mesh",
+                    "Mesh": "samples:models/json/plain512x512.json",
+                    "MaterialMapping": 
+                    [
+                        {
+                            "MaterialIndex": 0,
+                            "Material":
+                            {
+                                "Name": "arial512x512.material",
+                                "Material": "samples:materials/arial512x512.json"
+                            }
+                        }
+                    ]
+                }
+            }
+        ]
+    }
+}
+

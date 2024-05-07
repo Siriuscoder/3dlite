@@ -101,10 +101,8 @@ LITE3D_CEXPORT void lite3d_scene_render(lite3d_scene *scene, lite3d_camera *came
 LITE3D_CEXPORT void lite3d_scene_init(lite3d_scene *scene);
 LITE3D_CEXPORT void lite3d_scene_purge(lite3d_scene *scene);
 
-LITE3D_CEXPORT int lite3d_scene_add_node(lite3d_scene *scene, 
-    lite3d_scene_node *node, 
-    lite3d_scene_node *baseNode);
-
+LITE3D_CEXPORT int lite3d_scene_add_node(lite3d_scene *scene, lite3d_scene_node *node, lite3d_scene_node *baseNode);
+LITE3D_CEXPORT int lite3d_scene_rebase_node(lite3d_scene *scene, lite3d_scene_node *node, lite3d_scene_node *baseNode);
 LITE3D_CEXPORT int lite3d_scene_remove_node(lite3d_scene *scene, lite3d_scene_node *node);
 
 LITE3D_CEXPORT int lite3d_scene_node_touch_material(struct lite3d_scene_node *node, 

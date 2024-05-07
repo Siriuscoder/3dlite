@@ -1,0 +1,12 @@
+{
+    "TextureType": "2D",
+    "Filtering": "None",
+    "Wrapping": "ClampToEdge",
+    "Compression": false,
+    "TextureFormat": "RGBA",
+    "Width": 512,
+    "Height": 512,
+    "Font": "samples:fonts/arial.ttf",
+    "FontSize": 12,
+    "BlankColor": [ 0.2, 0.2, 0.2, 0.4 ]
+}

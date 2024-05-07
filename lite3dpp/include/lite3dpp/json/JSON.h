@@ -100,7 +100,7 @@ class JSON
     friend class JSONValue;
     
     public:
-        static std::shared_ptr<JSONValue> Parse(const char *data);
+        static std::shared_ptr<JSONValue> Parse(const char *data, size_t size);
         static std::shared_ptr<JSONValue> Parse(const wchar_t *data);
         static lite3dpp::WString Stringify(const std::shared_ptr<JSONValue> &value);
         static lite3dpp::String wStringToString(const lite3dpp::WString &str);
@@ -112,7 +112,7 @@ class JSON
         static float ParseInt(const wchar_t **data);
         static float ParseDecimal(const wchar_t **data);
     private:
-        JSON();
+        JSON() = delete;
 };
 
 #endif

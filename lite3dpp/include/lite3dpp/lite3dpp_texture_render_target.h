@@ -25,13 +25,13 @@
 
 namespace lite3dpp
 {
-    class LITE3DPP_EXPORT TextureRenderTarget : public RenderTarget, public RenderTargetObserver
+    class LITE3DPP_EXPORT TextureRenderTarget : public RenderTarget
     {
     public:
 
         TextureRenderTarget(const String &name, 
             const String &path, Main *main);
-        ~TextureRenderTarget();
+        ~TextureRenderTarget() = default;
 
         void replaceAttachments(const stl<lite3d_framebuffer_attachment>::vector& attachments,
             uint32_t flags);

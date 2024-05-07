@@ -17,33 +17,55 @@
  *******************************************************************************/
 #include <ctime>
 
-#include "lite3dpp_base.h"
+#include <sample_common/lite3dpp_common.h>
+#include <lite3dpp_physics/lite3dpp_physics_scene.h>
 
 namespace lite3dpp {
 namespace samples {
 
-class BoxesColliderSample : public PhysicSampleBase
+static const char *helpString = 
+    "Press 'c' to drop simple box\n"
+    "Press 'e' to drop compound coss body\n"
+    "Press 'x' to drop compound Z body\n"
+    "Press 'q' to drop compound T body\n"
+    "Press 'r' to show/hide coord arrows\n";
+
+class BoxesColliderSample : public Sample
 {
 public:
+
+    BoxesColliderSample() : 
+        Sample(helpString)
+    {}
+
+    void createScene() override
+    {
+        // load empty scene with floor plane only
+        mScene = getMain().getResourceManager()->queryResource<lite3dpp_phisics::PhysicsScene>("SamplePhysicsScene",
+            "samples:scenes/physic_simple.json");
+        setMainCamera(getMain().getCamera("MyCamera"));
+    }
 
     void processEvent(SDL_Event *e) override
     {
         Sample::processEvent(e);
         if (e->type == SDL_KEYDOWN)
         {
-            if (e->key.keysym.sym == SDLK_c)
+            if (e->key.keysym.sym == SDLK_c || 
+                e->key.keysym.sym == SDLK_e || 
+                e->key.keysym.sym == SDLK_x || 
+                e->key.keysym.sym == SDLK_q)
             {
                 if (mCubes.size() > 500)
                 {
-                    // delete oldest boxc
+                    // delete oldest box
+                    mScene->removeObject(mCubes.front()->getName() + "_arrows");
+                    mScene->removeObject(mCubes.front()->getName());
                     mCubes.pop_front();
                 }
 
                 String cubeName("Cube");
                 cubeName.append(std::to_string(mBoxCounter++));
-
-                BaseBody::Ptr box = createBox(cubeName);
-                mCubes.push_back(box);
 
                 kmVec3 pos = {
                     static_cast<float>(rand() % 1000),
@@ -52,24 +74,40 @@ public:
                 };
 
                 kmQuaternion rot = { 1.0f, 1.0f, 1.0f, (rand() % 1000)/1000.0f };
-                box->setPosition(pos);
-                box->setRotation(rot);
+                auto newObject = mScene->addObject(cubeName, 
+                    e->key.keysym.sym == SDLK_c ? "samples:objects/cube.json" : 
+                    (e->key.keysym.sym == SDLK_e ? "samples:objects/compound_cross.json" : 
+                    (e->key.keysym.sym == SDLK_x ? "samples:objects/compound_Z.json" : 
+                    "samples:objects/compound_T.json")),
+                    nullptr, pos, rot);
+
+                auto arrowObject = mScene->addObject(cubeName + "_arrows", "samples:objects/coord_arrows.json",
+                    newObject, KM_VEC3_ZERO, KM_QUATERNION_IDENTITY, kmVec3 { 2.4, 2.4, 2.4 });
+                mArrowsEnabled ? arrowObject->enable() : arrowObject->disable();
+                
+                mCubes.push_back(newObject);
+            }
+            else if (e->key.keysym.sym == SDLK_r)
+            {
+                mArrowsEnabled = !mArrowsEnabled;
+                for (auto &o : mScene->getObjects())
+                {
+                    if (o.first.find("_arrows") != std::string::npos)
+                    {
+                        mArrowsEnabled ? o.second->enable() : o.second->disable();
+                    }
+                }
             }
         }
-    }
-
-    // been called after exit from render loop, before release any resources
-    void shut() override
-    {
-        PhysicSampleBase::shut();
-        // delete all objects
-        mCubes.clear();
     }
     
 private:
 
-    stl<BaseBody::Ptr>::list mCubes;
+    stl<SceneObject *>::list mCubes;
+    Scene *mScene = nullptr;
     int mBoxCounter = 0;
+    bool mArrowsEnabled = true;
+
 };
 
 }}

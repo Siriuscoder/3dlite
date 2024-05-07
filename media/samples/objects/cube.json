@@ -1,14 +1,19 @@
 {
     "Root":
     {
-        "Name": "cube30.root",
+        "Name": "cube80.root",
+        "Physics": 
+        {
+            // Static, Dynamic, Kinematic
+            "Type": "Dynamic"
+        },
         "Nodes": [
             {
-                "Name": "cube30.node",
+                "Name": "cube80.node",
                 "FrustumTest": true,
                 "Mesh": 
                 {
-                    "Name": "cube30.mesh",
+                    "Name": "cube80.mesh",
                     "Mesh": "samples:models/json/cube80.json",
                     "MaterialMapping": 
                     [
@@ -16,12 +21,29 @@
                             "MaterialIndex": 0,
                             "Material":
                             {
-                                "Name": "box2.material",
+                                "Name": "cube1.material",
                                 "Material": "samples:materials/cube1.json"
                             }
                         }
                     ]
-                }
+                },
+                "Nodes": [
+                    {
+                        "Name": "cube80.collision",
+                        "CollisionShape":
+                        {
+                            // Box, Sphere, StaticPlane, Cylinder, Capsule, Cone, ConvexHull, StaticTriangleMesh, GimpactTriangleMesh
+                            "Type": "Box",
+                            // Shape parameters
+                            "HalfExtents": [40.0, 40.0, 40.0], // Box, Cylinder
+                            // "Radius": 10 // Cone, Sphere, Capsule
+                            // "Height": 10 // Cone, Capsule
+                            // "PlaneNormal": [0.0, 0.0, 1.0] // StaticPlane
+                            // "PlaneConstant": 10 // StaticPlane
+                            "Mass": 10
+                        }
+                    }
+                ]
             }
         ]
     }

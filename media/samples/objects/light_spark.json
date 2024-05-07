@@ -1,0 +1,25 @@
+{
+    "Root":
+    {
+        "Name": "PointLightSpark.root",
+        "Nodes": [
+            {
+                "Name": "PointLightSpark.node",
+                "FrustumTest":false,
+                "Light": {
+                    "Type": "Point",
+                    "Name": "PointLightSpark",
+                    "Diffuse": [
+                        1.0,
+                        0.913,
+                        0.678
+                    ],
+                    "Attenuation": {
+                        "Constant": 1.0,
+                        "InfluenceMinRadiance": 0.005
+                    }
+                }
+            }
+        ]
+    }
+}

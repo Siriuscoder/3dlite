@@ -25,11 +25,21 @@
 typedef struct  lite3d_scene_node
 {
     lite3d_list_node nodeLink;
+    // Локальная трансформация обьекта, включает в себя транформацию позиции, маштаба и вращения заданные с помощью 
+    // set_rotation и set_position и scale
     kmMat4 localView;
-    kmMat4 worldView;
+    // Матрица преобразования из локальной системы координат в мировую систему координат (world space). 
+    // Явзяется комбинацией матрицы worldView базовой ноды и локальной матрицы трансформации localView
+    kmMat4 worldView; 
+    // Normal матрица, специальная матрица для корректного преобразования нормалей в случае масштабирования обьекта. 
+    // Может быть использована для преобразования нормалей в мировую систему координат из локальной системы координат модели. 
+    // Если масштабирование не применяется то для этого можно использовать worldView.
     kmMat3 normalModel;
+    // Локальное вращение обьекта
     kmQuaternion rotation;
+    // Локальная позиция обьекта
     kmVec3 position;
+    // Масштаб обьекта
     kmVec3 scale;
     uint8_t recalc;
     uint8_t invalidated;
@@ -45,16 +55,19 @@ typedef struct  lite3d_scene_node
     void *userdata;
 } lite3d_scene_node;
 
-LITE3D_CEXPORT lite3d_scene_node *lite3d_scene_node_init(lite3d_scene_node *node);
-LITE3D_CEXPORT lite3d_scene_node *lite3d_scene_node_set_position(lite3d_scene_node *node, const kmVec3 *position);
-LITE3D_CEXPORT lite3d_scene_node *lite3d_scene_node_move(lite3d_scene_node *node, const kmVec3 *position);
-LITE3D_CEXPORT lite3d_scene_node *lite3d_scene_node_move_relative(lite3d_scene_node *node, const kmVec3 *vec);
-LITE3D_CEXPORT lite3d_scene_node *lite3d_scene_node_set_rotation(lite3d_scene_node *node, const kmQuaternion *quat);
-LITE3D_CEXPORT lite3d_scene_node *lite3d_scene_node_rotate(lite3d_scene_node *node, const kmQuaternion *quat);
-LITE3D_CEXPORT lite3d_scene_node *lite3d_scene_node_rotate_by(lite3d_scene_node *node, const kmQuaternion *quat);
-LITE3D_CEXPORT lite3d_scene_node *lite3d_scene_node_rotate_angle(lite3d_scene_node *node, const kmVec3 *axis, float angle);
-LITE3D_CEXPORT lite3d_scene_node *lite3d_scene_node_scale(lite3d_scene_node *node, const kmVec3 *scale);
-LITE3D_CEXPORT kmVec3 *lite3d_scene_node_world_position(lite3d_scene_node *node, kmVec3 *pos);
+LITE3D_CEXPORT void lite3d_scene_node_init(lite3d_scene_node *node);
+LITE3D_CEXPORT void lite3d_scene_node_set_position(lite3d_scene_node *node, const kmVec3 *position);
+LITE3D_CEXPORT void lite3d_scene_node_move(lite3d_scene_node *node, const kmVec3 *position);
+LITE3D_CEXPORT void lite3d_scene_node_move_relative(lite3d_scene_node *node, const kmVec3 *vec);
+LITE3D_CEXPORT void lite3d_scene_node_set_rotation(lite3d_scene_node *node, const kmQuaternion *quat);
+LITE3D_CEXPORT void lite3d_scene_node_rotate(lite3d_scene_node *node, const kmQuaternion *quat);
+LITE3D_CEXPORT void lite3d_scene_node_rotate_angle(lite3d_scene_node *node, const kmVec3 *axis, float angle);
+LITE3D_CEXPORT void lite3d_scene_node_scale(lite3d_scene_node *node, const kmVec3 *scale);
+LITE3D_CEXPORT void lite3d_scene_node_get_world_position(const lite3d_scene_node *node, kmVec3 *pos);
+LITE3D_CEXPORT void lite3d_scene_node_get_world_rotation(const lite3d_scene_node *node, kmQuaternion *q);
+LITE3D_CEXPORT void lite3d_scene_node_rotate_y(lite3d_scene_node *node, float angle);
+LITE3D_CEXPORT void lite3d_scene_node_rotate_x(lite3d_scene_node *node, float angle);
+LITE3D_CEXPORT void lite3d_scene_node_rotate_z(lite3d_scene_node *node, float angle);
 
 LITE3D_CEXPORT uint8_t lite3d_scene_node_update(lite3d_scene_node *node);
 
