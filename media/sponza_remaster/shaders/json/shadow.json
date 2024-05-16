@@ -1,0 +1,7 @@
+{
+    "Sources": 
+    [
+        "sponza:shaders/sources/shadow.vs",
+        "sponza:shaders/sources/depth.fs"
+    ]
+}

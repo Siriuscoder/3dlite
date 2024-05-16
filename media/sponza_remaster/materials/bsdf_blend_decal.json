@@ -1,0 +1,60 @@
+{
+  "Passes":[
+    {
+      "Pass": 2,
+      "Program": {
+        "Name":"bsdf_direct_decal.program",
+        "Path":"sponza:shaders/json/bsdf_direct_decal.json"
+      },
+      "Uniforms":[
+        {
+          "Name":"<Albedo>"
+        },
+        {
+          "Name":"Environment",
+          "TextureName":"environment.texture",
+          "TexturePath":"samples:textures/json/skybox.json",
+          "Type":"sampler"
+        },
+        {
+          "Name":"lightSources",
+          "UBOName": "Sponza_lightingBufferObject",
+          "Type":"UBO"
+        },
+        {
+          "Name":"lightIndexes",
+          "UBOName": "Sponza_lightingIndexBuffer",
+          "Type":"UBO"
+        },
+        {
+          "Name":"ShadowMaps",
+          "TextureName":"shadow.texture",
+          "Type":"sampler"
+        },
+        {
+          "Name": "ShadowMatrix",
+          "UBOName": "ShadowMatrixBuffer",
+          "Type": "UBO"
+        },
+        {
+          "Name":"eye",
+          "Type":"v3",
+          "Scope":"global"
+        }
+      ],
+      "Blending":true,
+      "BlendingMode": "RGB_LINEAR_SOURCE_ALPHA"
+    }
+  ],
+  "Uniforms":[
+    {
+      "Name":"screenMatrix"
+    },
+    {
+      "Name":"modelMatrix"
+    },
+    {
+      "Name":"normalMatrix"
+    }
+  ]
+}

@@ -1,0 +1,57 @@
+{
+  "Passes":[
+    {
+      "Pass": 1,
+      "Program":{
+        "Name":"depth.program",
+        "Path":"sponza:shaders/json/depth.json"
+      },
+      "Uniforms":[
+        {
+          "Name":"screenMatrix"
+        }
+      ]
+    },
+    {
+      "Pass": 2,
+      "Program":{
+        "Name":"bsdf_glow_prepare.program",
+        "Path":"sponza:shaders/json/bsdf_glow_prepare.json"
+      },
+      "Uniforms":[
+        {
+          "Name":"<Emission>"
+        },
+        {
+          "Name":"<Emission Strength>"
+        },
+        {
+          "Name":"screenMatrix"
+        },
+        {
+          "Name":"modelMatrix"
+        },
+        {
+          "Name":"normalMatrix"
+        }
+      ]
+    },
+    {
+      "Pass": 3,
+      "Program": {
+        "Name":"shadow.program",
+        "Path":"sponza:shaders/json/shadow.json"
+      },
+      "Uniforms":[
+        {
+          "Name":"ShadowMatrix",
+          "UBOName":"ShadowMatrixBuffer",
+          "Type":"UBO"
+        },
+        {
+          "Name":"modelMatrix"
+        }
+      ]
+    }
+  ]
+}

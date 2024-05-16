@@ -34,7 +34,7 @@ class Material:
                 self.params["Emission"] = [x for x in socket.default_value] # Color 4i
             elif socket.name in ["Specular IOR Level"]:
                 self.params["Specular"] = float(socket.default_value)
-            elif socket.name in ["Metallic", "Roughness", "IOR", "Emission Strength"]:
+            elif socket.name in ["Metallic", "Roughness", "IOR", "Emission Strength", "Alpha"]:
                 self.params[socket.name] = float(socket.default_value)
             
     def considerImage(self, node):

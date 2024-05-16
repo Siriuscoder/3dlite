@@ -1,0 +1,65 @@
+{
+  "Passes":[
+    {
+      "Pass": 1,
+      "Program": {
+        "Name":"bsdf_lightpass.program",
+        "Path":"sponza:shaders/json/bsdf_lightpass.json"
+      },
+      "Uniforms":[
+        {
+          "Name":"GBuffer",
+          "TextureName":"geometry_data.texture",
+          "Type":"sampler"
+        },
+        {
+          "Name":"Environment",
+          "TextureName":"environment.texture",
+          "TexturePath":"samples:textures/json/skybox.json",
+          "Type":"sampler"
+        },
+        {
+          "Name":"AOMap",
+          "TextureName":"ssao.texture",
+          "Type":"sampler"
+        },
+        {
+          "Name":"lightSources",
+          "UBOName": "Sponza_lightingBufferObject",
+          "Type":"UBO"
+        },
+        {
+          "Name":"lightIndexes",
+          "UBOName": "Sponza_lightingIndexBuffer",
+          "Type":"UBO"
+        },
+        {
+          "Name":"ShadowMaps",
+          "TextureName":"shadow.texture",
+          "Type":"sampler"
+        },
+        {
+          "Name": "ShadowMatrix",
+          "UBOName": "ShadowMatrixBuffer",
+          "Type": "UBO"
+        },
+        {
+          "Name":"eye",
+          "Type":"v3",
+          "Scope":"global"
+        },
+        {
+          "Name":"AOEnabled",
+          "Type":"int",
+          "Value": 1,
+          "Scope":"global"
+        }
+      ]
+    }
+  ],
+  "Uniforms":[
+    {
+      "Name":"screenMatrix"
+    }
+  ]
+}

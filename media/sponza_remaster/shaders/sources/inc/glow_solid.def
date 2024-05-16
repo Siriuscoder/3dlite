@@ -1,0 +1,3 @@
+#include "samples:shaders/sources/common/version.def"
+
+#define MRT_WITH_EMISSION_SOLID

@@ -1,0 +1,8 @@
+{
+    "Sources": 
+    [
+        "sponza:shaders/sources/common.vs",
+        "sponza:shaders/sources/mrt.fs,sponza:shaders/sources/inc/glow_solid.def",
+        "samples:shaders/sources/common/utils.fs"
+    ]
+}

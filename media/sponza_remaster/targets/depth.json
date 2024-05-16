@@ -1,0 +1,16 @@
+{
+    "Width": 0, // use screen wight
+    "Height": 0, // use screen height
+    "BackgroundColor": [0.0, 0.0, 0.0, 1.0],
+    "Priority": 1, // render first
+    "CleanColorBuf": false,
+    "CleanDepthBuf": true,
+    "CleanStencilBuf": false,
+        
+    "DepthAttachments":
+    {
+        "TextureName": "mainDepth.texture",
+        "TexturePath": "samples:textures/json/depth.json"
+    }
+}
+

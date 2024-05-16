@@ -1,0 +1,16 @@
+{
+  "Passes":[
+    {
+      "Pass":1,
+      "Program":{
+        "Name":"bloom_downsample.program",
+        "Path":"sponza:shaders/json/bloom_downsample.json"
+      }
+    }
+  ],
+  "Uniforms":[
+    {
+      "Name":"screenMatrix"
+    }
+  ]
+}

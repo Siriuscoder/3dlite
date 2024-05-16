@@ -1,0 +1,11 @@
+{
+    "Width": 0, // use screen wight
+    "Height": 0, // use screen height
+    "Scale": 2, // Reduce size at half of screen 
+    "BackgroundColor": [0.0, 0.0, 0.0, 1.0],
+    "Priority": 6, // render after combine step
+    "CleanColorBuf": true,
+    "CleanDepthBuf": false,
+    "CleanStencilBuf": false
+}
+

@@ -1,0 +1,11 @@
+{
+    "Sources": 
+    [
+        "sponza:shaders/sources/common.vs",
+        "sponza:shaders/sources/direct_decal.fs",
+        "sponza:shaders/sources/lighting/PBR.fs",
+        "sponza:shaders/sources/lighting/BRDF.fs",
+        "sponza:shaders/sources/lighting/PCF.fs",
+        "samples:shaders/sources/common/utils.fs"
+    ]
+}

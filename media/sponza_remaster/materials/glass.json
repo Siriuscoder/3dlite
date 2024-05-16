@@ -1,0 +1,77 @@
+{
+  "Passes": [
+    {
+      "Pass": 2,
+      "Program": {
+        "Name": "bsdf_direct_alpha.program",
+        "Path": "sponza:shaders/json/bsdf_direct_alpha.json"
+      },
+      "Uniforms": [
+        {
+          "Name": "Albedo",
+          "Type": "v4",
+          "Value": [
+            0.018703151494264603,
+            0.018703151494264603,
+            0.018703151494264603,
+            0.7599999904632568
+          ]
+        },
+        {
+          "Name": "Metallic",
+          "Type": "float",
+          "Value": 0.0
+        },
+        {
+          "Name": "Roughness",
+          "Type": "float",
+          "Value": 0.019999999552965164
+        },
+        {
+          "Name": "Environment",
+          "TextureName": "environment.texture",
+          "TexturePath": "samples:textures/json/skybox.json",
+          "Type": "sampler"
+        },
+        {
+          "Name": "lightSources",
+          "UBOName": "Sponza_lightingBufferObject",
+          "Type": "UBO"
+        },
+        {
+          "Name": "lightIndexes",
+          "UBOName": "Sponza_lightingIndexBuffer",
+          "Type": "UBO"
+        },
+        {
+          "Name": "ShadowMaps",
+          "TextureName": "shadow.texture",
+          "Type": "sampler"
+        },
+        {
+          "Name": "ShadowMatrix",
+          "UBOName": "ShadowMatrixBuffer",
+          "Type": "UBO"
+        },
+        {
+          "Name": "eye",
+          "Type": "v3",
+          "Scope": "global"
+        }
+      ],
+      "Blending": true,
+      "BlendingMode": "RGB_LINEAR_SOURCE_ALPHA"
+    }
+  ],
+  "Uniforms": [
+    {
+      "Name": "screenMatrix"
+    },
+    {
+      "Name": "modelMatrix"
+    },
+    {
+      "Name": "normalMatrix"
+    }
+  ]
+}
