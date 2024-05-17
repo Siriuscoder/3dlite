@@ -1,0 +1,41 @@
+{
+    // common settings
+    "LogLevel": 3,
+    "LogFlushAlways": true,
+    "LogFile": "lite3d.log",
+    "TextureSettings": {
+        "Anisotropy": 8,
+        "Compression": false,
+        "CompressedDataOnLoad": false,
+        "DepthFormat": "Depth32"
+    },
+    // Video settings
+    // Window size, caption, color settings, etc
+    "VideoSettings": {
+        "GLProfile": "core",
+        "GLVersionMajor": 3,
+        "GLVersionMinor": 3,
+	    "Width": 1024,
+        "Height": 768,
+        "Caption": "Sponza hall PBR complex scene",
+        "ColorBits": 24,
+        "Fullscreen": false,
+        "MSAA": 1,
+        "VSync": false
+    },
+    // resource locations
+    "ResourceLocations": [
+        {
+            "Name": "samples",
+            "FileCacheMaxSize": 51200000,
+            "Path": "samples/"
+        },
+        {
+            "Name": "sponza",
+            "FileCacheMaxSize": 51200000,
+            "Path": "sponza_remaster/"
+        }
+    ],
+
+    "FixedUpdatesInterval": 30
+}

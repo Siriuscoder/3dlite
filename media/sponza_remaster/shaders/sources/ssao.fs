@@ -79,6 +79,6 @@ void main()
         aoFactor += (surfaceDepth >= (sample.z + SSAO_SAMPLE_BIAS) ? 1.0 : 0.0) * rangeCheck;
     }
 
-    aoFactor = 1.0 - aoFactor / float(SSAO_MAX_DEPTH_SAMPLES);
+    aoFactor = 1.0 - pow(aoFactor / float(SSAO_MAX_DEPTH_SAMPLES), 0.5);
     outColor = vec4(vec3(aoFactor), 1.0);
 }

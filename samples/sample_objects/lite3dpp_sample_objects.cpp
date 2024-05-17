@@ -41,8 +41,8 @@ public:
     void fixedUpdateTimerTick(int32_t firedPerRound, uint64_t deltaMcs, float deltaRetard) override
     {
         const float deltaRotate = 0.01f * deltaRetard;
-        mMinigun->rotateAngle(KM_VEC3_POS_Z, deltaRotate);
-        mPlasmagun->rotateAngle(KM_VEC3_NEG_Z, deltaRotate);
+        mMinigun->rotateZ(deltaRotate);
+        mPlasmagun->rotateZ(deltaRotate);
     }
 
 private:

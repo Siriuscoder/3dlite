@@ -108,7 +108,7 @@ private:
 
     void initBoomScene()
     {
-        mBloomRernderer = mMain.getResourceManager()->queryResource<Scene>("BloomEffectRenderer", "vault_111:scenes/bloom.json");
+        mBloomRernderer = mMain.getResourceManager()->queryResource<Scene>("BloomEffectRenderer", "sponza:scenes/bloom.json");
         mBloomRernderer->addObserver(this);
 
         String matName("bloom_slice_");
@@ -118,10 +118,10 @@ private:
         for (size_t i = 0; i < mTextureChain.size(); ++i)
         {
             /* Загрузим для каждого слоя свой полноэкранный треугольник (используем уже готовый postprocess, материал заменим потом) */
-            SceneObject *bloomSliceObj = mBloomRernderer->addObject(matName + std::to_string(i), "vault_111:objects/Postprocess.json", NULL);
+            SceneObject *bloomSliceObj = mBloomRernderer->addObject(matName + std::to_string(i), "sponza:objects/Postprocess.json", NULL);
             /* Загрузим для каждого слоя материал, downsample а потом upsample */
             Material *material = mMain.getResourceManager()->queryResource<Material>(matName + std::to_string(i) + ".material", 
-                (i <= mTextureChain.size() / 2) ? "vault_111:materials/bloom_downsample.json" : "vault_111:materials/bloom_upsample.json");
+                (i <= mTextureChain.size() / 2) ? "sponza:materials/bloom_downsample.json" : "sponza:materials/bloom_upsample.json");
 
             /* Установим исходную текстуру для каждого bloom прохода, каждый проход берет результат предидущего */
             material->setSamplerParameter(1, "Source", i == 0 ? *combinedLightTexture : *mTextureChain[i-1]);

@@ -75,7 +75,7 @@ void main()
     vec3 blm = texture(bloom, iuv).rgb;
     hdr = mix(hdr, blm, vec3(BloomStrength));
     // Exposure tone mapping
-    vec4 ldr = vec4(ExposureTonemapping(hdr, exposure), 1.0);
+    vec4 ldr = vec4(ExposureTonemapping(hdr, exposure), 1.5);
     // Color correction
     ldr = contrastMatrix(contrast) * saturationMatrix(saturation) * ldr;
     // Gamma correction 

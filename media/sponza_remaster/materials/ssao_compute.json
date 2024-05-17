@@ -1,0 +1,42 @@
+{
+  "Passes":[
+    {
+      "Pass": 1,
+      "Program": {
+        "Name":"ssao.program",
+        "Path":"sponza:shaders/json/ssao.json"
+      },
+      "Uniforms":[
+        {
+          "Name":"GBuffer",
+          "TextureName":"geometry_data.texture",
+          "Type":"sampler"
+        },
+        {
+          "Name":"AORadius",
+          "Type":"float",
+          "Value": 0.55,
+          "Scope":"global"
+        },
+        {
+          "Name":"CameraView",
+          "Type":"m4"
+        },
+        {
+          "Name":"CameraProjection",
+          "Type":"m4"
+        },
+        {
+          "Name":"RandomSeed",
+          "Type":"float",
+          "Scope":"global"
+        }
+      ]
+    }
+  ],
+  "Uniforms":[
+    {
+      "Name":"screenMatrix"
+    }
+  ]
+}

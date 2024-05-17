@@ -19,7 +19,7 @@
             [
                 {
                     "Name": "SSAOStep",
-                    "Path": "vault_111:targets/ssao.json",
+                    "Path": "sponza:targets/ssao.json",
                     "Priority": 0,
                     "TexturePass": 1,
                     "DepthTest": false,
@@ -33,7 +33,7 @@
     [
         {
             "Name": "BigTriangleGeom",
-            "Object": "vault_111:objects/SSAO.json"
+            "Object": "sponza:objects/SSAO.json"
         }
     ]
 }

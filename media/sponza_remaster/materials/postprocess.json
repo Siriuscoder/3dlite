@@ -4,7 +4,7 @@
       "Pass":1,
       "Program":{
         "Name":"postprocess.program",
-        "Path":"vault_111:shaders/json/postprocess.json"
+        "Path":"sponza:shaders/json/postprocess.json"
       }
     }
   ],
@@ -43,7 +43,7 @@
     {
       "Name":"saturation",
       "Type":"float",
-      "Value": 1.20,
+      "Value": 1.07,
       "Scope":"global"
     },
     {

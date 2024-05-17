@@ -78,18 +78,18 @@ public:
         mReactLamp02->getLight()->setAttenuationLinear(attenuationConstant / 100.0f);
         
         float soarDelta = cos(mAnimPi) * 5;
-        mGatling->rotateAngle(KM_VEC3_POS_Z, 0.05f);
+        mGatling->rotateZ(0.05f);
         auto pos = mGatling->getPosition();
         pos.z = -225 + soarDelta;
         mGatling->setPosition(pos);
         
-        mMinigun->rotateAngle(KM_VEC3_POS_Z, 0.05f);
+        mMinigun->rotateZ(0.05f);
         pos = mMinigun->getPosition();
         pos.z = -225 + soarDelta;
         mMinigun->setPosition(pos);
-        mMinigun->getNode("MinigunBurrel.node")->rotateAngle(KM_VEC3_POS_X, 0.23f);
+        mMinigun->getNode("MinigunBurrel.node")->rotateX(0.23f);
         
-        mLazer->rotateAngle(KM_VEC3_POS_Z, 0.05f);
+        mLazer->rotateZ(0.05f);
         pos = mLazer->getPosition();
         pos.z = -225 + soarDelta;
         mLazer->setPosition(pos);
