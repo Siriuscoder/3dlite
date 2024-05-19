@@ -17,7 +17,7 @@ out mat3 itbn;
 void main()
 {
     // texture coordinate 
-    iuv = vec2(uv.x, 1.0 - uv.y);
+    iuv = uv;
     // vertex coordinate in world space 
     vec4 wv = modelMatrix * vertex;
     ivv = wv.xyz / wv.w;

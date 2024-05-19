@@ -8,7 +8,7 @@ layout(std140) uniform ShadowMatrix
     mat4 shadowMat[1];
 };
 
-const float shadowBias = 0.0001;
+const float shadowBias = 0.0005;
 
 float PCF(float shadowIndex, vec3 vw)
 {

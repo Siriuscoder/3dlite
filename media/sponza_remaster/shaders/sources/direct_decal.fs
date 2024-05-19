@@ -19,7 +19,7 @@ void main()
     // sampling specular PBR parameters
     vec3 specular = vec3(1.0, 0.77, 0.0);
     // Compute total illumination 
-    vec3 total = ComputeIllumination(ivv, nw, albedo.rgb, vec3(0.0), specular, 1.0, 0.0);
+    vec3 total = ComputeIllumination(ivv, nw, albedo.rgb, vec3(0.0), specular, 1.0, 0.05);
 
-    fragColor = vec4(total, albedo.a * 0.5);
+    fragColor = vec4(total, albedo.a * 0.68);
 }

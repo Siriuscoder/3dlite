@@ -422,7 +422,7 @@ static int lite3d_set_internal_format(lite3d_texture_unit *textureUnit, uint16_t
             *internalFormat = GL_RGB8;
             if (textureCompression && lite3d_check_texture_compression_s3tc())
             {
-                if (iformat == LITE3D_TEXTURE_INTERNAL_SRGB)
+                if (iformat == LITE3D_TEXTURE_INTERNAL_SRGB8)
                 {
                     iformat = GL_COMPRESSED_SRGB_S3TC_DXT1_EXT;
                 }
@@ -454,7 +454,7 @@ static int lite3d_set_internal_format(lite3d_texture_unit *textureUnit, uint16_t
             *internalFormat = GL_RGBA8;
             if (textureCompression && lite3d_check_texture_compression_s3tc())
             {
-                if (iformat == LITE3D_TEXTURE_INTERNAL_SRGB_ALPHA)
+                if (iformat == LITE3D_TEXTURE_INTERNAL_SRGB8_ALPHA8)
                 {
                     iformat = GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT5_EXT;
                 }
@@ -805,9 +805,9 @@ int lite3d_texture_unit_from_resource(lite3d_texture_unit *textureUnit,
     /* matches openGL texture format */
     imageFormat = ilGetInteger(IL_IMAGE_FORMAT);
     if (srgb && imageFormat == LITE3D_TEXTURE_FORMAT_RGB)
-        internalFormat = LITE3D_TEXTURE_INTERNAL_SRGB;
+        internalFormat = LITE3D_TEXTURE_INTERNAL_SRGB8;
     else if (srgb && imageFormat == LITE3D_TEXTURE_FORMAT_RGBA)
-        internalFormat = LITE3D_TEXTURE_INTERNAL_SRGB_ALPHA;
+        internalFormat = LITE3D_TEXTURE_INTERNAL_SRGB8_ALPHA8;
 
     /* allocate texture surface if not allocated yet */
     if (textureUnit->imageWidth != imageWidth || textureUnit->imageHeight != imageHeight ||

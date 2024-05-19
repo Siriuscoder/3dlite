@@ -20,7 +20,7 @@ void main()
     // sampling specular PBR parameters
     vec3 specular = vec3(1.0, Roughness, Metallic);
     // Compute total illumination 
-    vec3 total = ComputeIllumination(ivv, nw, Albedo.rgb, vec3(0.0), specular, 1.0, 0.0);
+    vec3 total = ComputeIllumination(ivv, nw, Albedo.rgb, vec3(0.0), specular, 1.0, 0.14);
 
     fragColor = vec4(total, Albedo.a);
 }

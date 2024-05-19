@@ -269,7 +269,11 @@ int lite3d_check_shadow_samplers(void)
 int lite3d_check_srgb(void)
 {
 #ifdef GLES
-    return SDL_GL_ExtensionSupported("GL_EXT_sRGB") == SDL_TRUE;
+#   ifdef WITH_GLES2
+    return LITE3D_FALSE;
+#   else
+    return LITE3D_TRUE;
+#   endif
 #else
     return GLEW_VERSION_2_1;
 #endif 

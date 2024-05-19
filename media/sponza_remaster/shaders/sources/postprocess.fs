@@ -8,6 +8,8 @@ uniform float contrast;
 uniform float saturation;
 uniform vec3 screenResolution;
 
+uniform sampler2D ShadowMaps;
+
 out vec4 fragColor;
 
 in vec2 iuv;
@@ -75,11 +77,12 @@ void main()
     vec3 blm = texture(bloom, iuv).rgb;
     hdr = mix(hdr, blm, vec3(BloomStrength));
     // Exposure tone mapping
-    vec4 ldr = vec4(ExposureTonemapping(hdr, exposure), 1.5);
+    vec4 ldr = vec4(ExposureTonemapping(hdr, exposure), 1.0);
     // Color correction
     ldr = contrastMatrix(contrast) * saturationMatrix(saturation) * ldr;
     // Gamma correction 
     ldr.rgb = pow(ldr.rgb, vec3(1.0 / gamma));
     // Final Color
+    //fragColor = vec4(texture(ShadowMaps, iuv).rrr, 1.0);
     fragColor = vec4(ldr.rgb, 1.0);
 }

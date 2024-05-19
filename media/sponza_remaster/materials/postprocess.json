@@ -31,7 +31,7 @@
     {
       "Name":"exposure",
       "Type":"float",
-      "Value": 3.4,
+      "Value": 2.0,
       "Scope":"global"
     },
     {
@@ -43,8 +43,13 @@
     {
       "Name":"saturation",
       "Type":"float",
-      "Value": 1.07,
+      "Value": 1.10,
       "Scope":"global"
+    },
+    {
+      "Name":"ShadowMaps",
+      "TextureName":"shadow.texture",
+      "Type":"sampler"
     },
     {
       "Name":"screenResolution",

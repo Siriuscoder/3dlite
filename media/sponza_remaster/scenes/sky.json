@@ -1,0 +1,29 @@
+{
+    "Cameras":
+    [
+        {
+            "Name": "MyCamera",
+            "RenderTargets":
+            [
+                {
+                    "Name": "CombineStep",
+                    "Path": "sponza:targets/combine.json",
+                    "Priority": 2,
+                    "TexturePass": 2,
+                    "DepthTest": true,
+                    "ColorOutput": true,
+                    "DepthOutput": false
+                }
+            ]
+        }
+    ],
+    
+    "Objects":
+    [
+        {
+            "Name": "Sky",
+            "Object": "sponza:objects/skybox.json"
+        }
+    ]
+}
+

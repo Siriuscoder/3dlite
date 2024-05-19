@@ -19,7 +19,7 @@
         {
           "Name":"Environment",
           "TextureName":"environment.texture",
-          "TexturePath":"samples:textures/json/skybox.json",
+          "TexturePath":"samples:textures/json/skybox_metal_chrome.json",
           "Type":"sampler"
         },
         {

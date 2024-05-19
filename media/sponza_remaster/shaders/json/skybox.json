@@ -1,0 +1,7 @@
+{
+    "Sources": 
+    [
+        "sponza:shaders/sources/skybox.vs",
+        "sponza:shaders/sources/skybox.fs"
+    ]
+}

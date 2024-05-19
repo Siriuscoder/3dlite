@@ -3,7 +3,7 @@
 
 #define MAX_LIGHTS  200 // 16kb storage needed
 
-const float diffuseStrength = 0.0;
+const float diffuseStrength = 0.30;
 
 #define LITE3D_LIGHT_UNDEFINED          0.0
 #define LITE3D_LIGHT_POINT              1.0
@@ -102,6 +102,10 @@ vec3 ComputeIllumination(vec3 vw, vec3 nw, vec3 albedo, vec3 emission, vec3 spec
             /* calculate full attenuation */
             attenuationFactor = spotAttenuationFactor * edgeFallof / 
                 (block3.w + block4.x * lightDistance + block4.y * lightDistance * lightDistance);
+        }
+        else
+        {
+            lightDirection *= -1.0;
         }
         /* User Index, at this implementation is shadow index */
         float shadowless = PCF(lights[index+2].w, vw);

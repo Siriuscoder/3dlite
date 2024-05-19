@@ -39,8 +39,10 @@ public:
             mShadowCamera(main.addCamera(name))
         {
             // Ставим перспективу сразу при инициализации, считаем что конус источника света не меняется 
-            mShadowCamera->setupPerspective(1.0f, 1500.0f, 
-                kmRadiansToDegrees(mLightNode->getLight()->getAngleOuterCone()), 1.0);
+            //mShadowCamera->setupPerspective(1.0f, 1500.0f, 
+            //    kmRadiansToDegrees(mLightNode->getLight()->getAngleOuterCone()), 1.0);
+            mShadowCamera->setupOrtho(1.0f, 100.0f, -20.0f, 20.0f, -20.0f, 20.0f);
+            //    kmRadiansToDegrees(mLightNode->getLight()->getAngleOuterCone()), 1.0);
         }
 
         kmMat4 getMatrix()

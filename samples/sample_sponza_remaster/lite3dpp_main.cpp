@@ -38,7 +38,7 @@ public:
     {
         // use current time as seed for random generator
         std::srand(std::time(nullptr));
-        setCameraVelocityMax(0.2);
+        setCameraVelocityMax(0.15);
         setCameraAcceleration(0.02);
         setCameraResistance(0.01);
     }
@@ -47,7 +47,7 @@ public:
     {
         mShadowManager = std::make_unique<SampleShadowManager>(getMain());
         mBloomEffectRenderer = std::make_unique<SampleBloomEffect>(getMain());
-        mVaultScene = getMain().getResourceManager()->queryResource<Scene>("Sponza", "sponza:scenes/sponza.json");
+        mSponzaScene = getMain().getResourceManager()->queryResource<Scene>("Sponza", "sponza:scenes/sponza.json");
         setMainCamera(getMain().getCamera("MyCamera"));
 
         setupShadowCasters();
@@ -58,6 +58,8 @@ public:
         // load intermediate light compute scene
         mCombineScene = getMain().getResourceManager()->queryResource<Scene>("Sponza_LightCompute",
             "sponza:scenes/lightpass.json");
+
+        getMain().getResourceManager()->queryResource<Scene>("SponzaSky", "sponza:scenes/sky.json");
 
         // Load bloom effect pipeline
         mBloomEffectRenderer->init();
@@ -82,12 +84,14 @@ public:
     {
         RenderTarget* shadowUpdateRT = getMain().getResourceManager()->queryResource<TextureRenderTarget>("ShadowPass");
         shadowUpdateRT->addObserver(mShadowManager.get());
-        mVaultScene->addObserver(mShadowManager.get());
+        mSponzaScene->addObserver(mShadowManager.get());
+
+        mShadowManager->newShadowCaster(mSponzaScene->getObject("Sponza")->getLightNode("SUN"));
     }
 
     void addFlashlight()
     {
-        auto flashLightObject = mVaultScene->addObject("FlashLight", "samples:objects/flashlight.json", nullptr);
+        auto flashLightObject = mSponzaScene->addObject("FlashLight", "samples:objects/flashlight.json", nullptr);
         mFlashLight = flashLightObject->getLightNode("FlashLight.node");
         mFlashLight->getLight()->setAttenuationConstant(1.0f);
         mFlashLight->getLight()->setAttenuationLinear(15.23f);
@@ -160,7 +164,7 @@ public:
 private:
 
     Scene* mCombineScene = nullptr;
-    lite3dpp::Scene* mVaultScene = nullptr;
+    lite3dpp::Scene* mSponzaScene = nullptr;
     Material* mSSAOShader = nullptr;
     std::unique_ptr<SampleShadowManager> mShadowManager;
     std::unique_ptr<SampleBloomEffect> mBloomEffectRenderer;

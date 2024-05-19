@@ -8,6 +8,8 @@ vec3 GetFixedWorldNormal(mat3 tbn, vec2 iuv)
     vec3 nt = texture(Normal, iuv).rgb;
     // put normal in [-1,1] range in tangent space
     nt = 2.0 * clamp(nt, 0.0, 1.0) - 1.0;
+    // Reverse Y
+    nt.y *= -1.0;
     // trasform normal to world space using common TBN
-    return normalize(tbn * nt);
+    return normalize(tbn * normalize(nt));
 }
