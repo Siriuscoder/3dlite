@@ -41,6 +41,11 @@ public:
         mBloomRT = mMain.getResourceManager()->queryResource<TextureRenderTarget>("BloomComputeStep");
     }
 
+    Texture *getMiddleTexture()
+    {
+        return mMiddleTexture;
+    }
+
 private:
 
     bool beginDrawBatch(Scene *scene, SceneNode *node, lite3d_mesh_chunk *meshChunk, Material *material) override
@@ -100,6 +105,7 @@ private:
                 textureData.data(), textureData.size()));
         }
 
+        mMiddleTexture = textureChainTmp.back();
         // Перекладываем в основную цепочку, Downsampling
         mTextureChain.insert(mTextureChain.begin(), textureChainTmp.begin(), textureChainTmp.end());
         // Upsampling
@@ -143,6 +149,7 @@ private:
     TextureRenderTarget* mBloomRT = nullptr;
     stl<Texture*>::vector mTextureChain;
     stl<Material*>::vector mMaterialChain;
+    Texture *mMiddleTexture = nullptr;
     int mChainState = 0;
 };
 

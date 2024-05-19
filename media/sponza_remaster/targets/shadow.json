@@ -1,6 +1,6 @@
 {
-    "Width": 4096, // use screen wight
-    "Height": 4096, // use screen height
+    "Width": 2048, // use screen wight
+    "Height": 2048, // use screen height
     "BackgroundColor": [0.0, 0.0, 0.0, 1.0],
     "Priority": 2, // After depth
     "CleanColorBuf": false,
@@ -10,7 +10,7 @@
     "DepthAttachments":
     {
         "TextureName": "shadow.texture",
-        "TexturePath": "samples:textures/json/shadow_4k.json"
+        "TexturePath": "samples:textures/json/shadow_2k.json"
     }
 }
 

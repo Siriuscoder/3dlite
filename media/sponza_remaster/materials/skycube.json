@@ -13,6 +13,12 @@
       "Name":"screenMatrix"
     },
     {
+      "Name": "Strength",
+      "Type": "float",
+      //"Value": 0.002
+      "Value": 12.0
+    },
+    {
       "Name":"skybox",
       "TextureName":"skybox.texture",
       "TexturePath":"samples:textures/json/skybox.json",

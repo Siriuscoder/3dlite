@@ -106,6 +106,24 @@ public:
         updateFlashLight();
     }
 
+    void fixedUpdateTimerTick(int32_t firedPerRound, uint64_t deltaMcs, float deltaRetard) override
+    {
+        auto texture = static_cast<TextureImage *>(mBloomEffectRenderer->getMiddleTexture());
+        texture->getPixels(0, mBloomPixels);
+
+        auto it = mBloomPixels.begin();
+        kmVec3 rgbAverage = KM_VEC3_ZERO;
+        for (; it != mBloomPixels.end(); )
+        {
+            rgbAverage.x += *reinterpret_cast<float *>(&(*it)); it += sizeof(float);
+            rgbAverage.y += *reinterpret_cast<float *>(&(*it)); it += sizeof(float);
+            rgbAverage.z += *reinterpret_cast<float *>(&(*it)); it += sizeof(float);
+        }
+
+        kmVec3Scale(&rgbAverage, &rgbAverage, 1.0f / (mBloomPixels.size() / (3 * sizeof(float))));
+        Material::setFloatGlobalParameter("exposure", 0.15f / kmVec3Length(&rgbAverage));
+    }
+
     void updateShaderParams()
     {
         SDL_assert(mSSAOShader);
@@ -172,6 +190,7 @@ private:
     float mGammaFactor = 2.2;
     int mObjectCounter = 0;
     bool mGravityEnabled = true;
+    PixelsData mBloomPixels;
 };
 
 }}

@@ -45,7 +45,7 @@ void main()
 #endif
 
 
-    fragWCoord = vec4(ivv, 0.03);
+    fragWCoord = vec4(ivv, 0.10);
     fragWNormal = vec4(normal, emission.r);
     fragAlbedo = vec4(albedo, emission.g);
     fragSpecular = vec4(specular, emission.b);

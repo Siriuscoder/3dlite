@@ -1100,7 +1100,7 @@ int lite3d_texture_unit_get_pixels(lite3d_texture_unit *textureUnit,
 
     glGetTexImage(textureUnit->textureTarget == LITE3D_TEXTURE_CUBE ? 
         GL_TEXTURE_CUBE_MAP_POSITIVE_X + cubeface : textureTargetEnum[textureUnit->textureTarget],
-        level, textureUnit->dataFormat, GL_UNSIGNED_BYTE, pixels);
+        level, textureUnit->dataFormat, GL_FLOAT, pixels);
 
     return LITE3D_CHECK_GL_ERROR ? LITE3D_FALSE : LITE3D_TRUE;
 #else

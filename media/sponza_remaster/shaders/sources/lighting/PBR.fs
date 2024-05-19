@@ -3,7 +3,7 @@
 
 #define MAX_LIGHTS  200 // 16kb storage needed
 
-const float diffuseStrength = 0.30;
+const float diffuseStrength = 0.05;
 
 #define LITE3D_LIGHT_UNDEFINED          0.0
 #define LITE3D_LIGHT_POINT              1.0
