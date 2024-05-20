@@ -194,6 +194,9 @@ namespace lite3dpp
                 if (resIt->second->getState() == AbstractResource::LOADED)
                     stats.uboLoadedCount++;
                 break;
+            case AbstractResource::PIPELINE:
+                stats.pipelinesCount++;
+                break;
             }
         }
 

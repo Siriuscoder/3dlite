@@ -34,7 +34,8 @@ namespace lite3dpp
         "SHADER_PROGRAM",
         "RENDER_TARGET",
         "SHADER_STORAGE",
-        "UNIFORM_BUFFER"
+        "UNIFORM_BUFFER",
+        "PIPELINE"
     };
     
     AbstractResource::AbstractResource(const String &name,

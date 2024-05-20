@@ -188,8 +188,6 @@ private:
     std::unique_ptr<SampleBloomEffect> mBloomEffectRenderer;
     LightSceneNode* mFlashLight;
     float mGammaFactor = 2.2;
-    int mObjectCounter = 0;
-    bool mGravityEnabled = true;
     PixelsData mBloomPixels;
 };
 

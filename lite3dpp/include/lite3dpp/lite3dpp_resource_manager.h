@@ -53,6 +53,7 @@ namespace lite3dpp
             uint32_t uboCount;
             uint32_t uboLoadedCount;
             uint32_t fileCachesCount;
+            uint32_t pipelinesCount;
             size_t totalCachedFilesMemSize;
         } ResourceManagerStats;
 

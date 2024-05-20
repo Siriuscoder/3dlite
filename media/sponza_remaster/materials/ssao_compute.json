@@ -15,7 +15,7 @@
         {
           "Name":"AORadius",
           "Type":"float",
-          "Value": 0.40,
+          "Value": 0.30,
           "Scope":"global"
         },
         {

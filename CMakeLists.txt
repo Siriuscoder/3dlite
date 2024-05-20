@@ -140,10 +140,12 @@ endif()
 include_directories("${PROJECT_SOURCE_DIR}/lite3d/include")
 include_directories("${PROJECT_SOURCE_DIR}/lite3dpp/include")
 include_directories("${PROJECT_SOURCE_DIR}/lite3dpp_font/include")
+include_directories("${PROJECT_SOURCE_DIR}/lite3dpp_pipeline/include")
 
 add_subdirectory("${PROJECT_SOURCE_DIR}/lite3d/")
 add_subdirectory("${PROJECT_SOURCE_DIR}/lite3dpp/")
 add_subdirectory("${PROJECT_SOURCE_DIR}/lite3dpp_font/")
+add_subdirectory("${PROJECT_SOURCE_DIR}/lite3dpp_pipeline/")
 
 if(BULLET_FOUND)
     include_directories("${PROJECT_SOURCE_DIR}/lite3dpp_physics/include")
