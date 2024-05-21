@@ -40,12 +40,15 @@ namespace lite3dpp_pipeline {
         virtual void createMainScene(const std::string_view& name, const std::string_view& json) = 0;
         virtual void loadFromConfigImpl(const ConfigurationReader &helper) override;
         virtual void unloadImpl() override;
+        virtual void constructCameraPipeline(const ConfigurationReader &pipelineConfig, 
+            ConfigurationWriter &cameraPipelineConfig);
 
     protected:
 
         Scene *mMainScene = nullptr;
         Scene *mSkyBox = nullptr;
         String mShaderPackage;
+        String mMainCamera;
         std::unique_ptr<ShadowManager> mShadowManager;
         std::unique_ptr<BloomEffect> mBloomEffect;
         Scene *mSSAO = nullptr;

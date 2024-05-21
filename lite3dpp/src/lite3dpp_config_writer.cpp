@@ -40,6 +40,12 @@ namespace lite3dpp
         mObject = reader.mObject;
     }
 
+    ConfigurationWriter::ConfigurationWriter(const char *data, size_t size)
+    {
+        ConfigurationReader reader(data, size);
+        mObject = reader.mObject;
+    }
+
     ConfigurationWriter &ConfigurationWriter::set(const WString &name, int32_t value)
     {
         mObject[name] = std::make_shared<JSONValue>((float)value);

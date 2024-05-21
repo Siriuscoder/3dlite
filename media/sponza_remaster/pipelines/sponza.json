@@ -1,7 +1,11 @@
 {
     "ShaderPackage": "sponza",
     "MainScenePath": "sponza:scenes/sponza.json",
-    "MainCameraName": "MyCamera",
+    "Cameras": [
+        {
+            "Main": "MyCamera"
+        }
+    ],
     "LightingTechnique": "UBO",
     "SkyBox": 
     {

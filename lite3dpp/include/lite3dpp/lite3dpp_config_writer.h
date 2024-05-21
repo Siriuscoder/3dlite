@@ -30,6 +30,7 @@ namespace lite3dpp
         ConfigurationWriter(const ConfigurationWriter &other);
         // Загрузить начальное состояние из файла
         explicit ConfigurationWriter(const std::string_view &filePath);
+        explicit ConfigurationWriter(const char *data, size_t size);
         ~ConfigurationWriter() = default;
 
         ConfigurationWriter &set(const WString &name, int32_t value);

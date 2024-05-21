@@ -38,9 +38,77 @@ namespace lite3dpp_pipeline {
         return *mSkyBox;
     }
 
-    void PipelineBase::loadFromConfigImpl(const ConfigurationReader &helper)
+    ShadowManager& PipelineBase::getShadowManager()
     {
-        mShaderPackage = helper.getString(L"ShaderPackage");
+        SDL_assert(mShadowManager);
+        return *mShadowManager.get();
+    }
+
+    void PipelineBase::loadFromConfigImpl(const ConfigurationReader &pipelineConfig)
+    {
+        mShaderPackage = pipelineConfig.getString(L"ShaderPackage");
+        for (const auto &cameraConfig : pipelineConfig.getObjects(L"Cameras"))
+        {
+            if (cameraConfig.has(L"Main"))
+            {
+                mMainCamera = cameraConfig.getString(L"Main");
+            }
+        }
+
+        if (mMainCamera.empty())
+        {
+            LITE3D_THROW("Pipeline " << getName() << ": Main camera is not set");
+        }
+
+        auto lightingTechnique = pipelineConfig.getString(L"LightingTechnique");
+        auto mainScenePath = pipelineConfig.getString(L"MainScenePath");
+        auto sceneJsonData = getMain().getResourceManager()->loadFileToMemory(mainScenePath);
+        ConfigurationWriter sceneGeneratedConfig(static_cast<const char *>(sceneJsonData->fileBuff), sceneJsonData->fileSize);
+        ConfigurationReader sceneConfig(static_cast<const char *>(sceneJsonData->fileBuff), sceneJsonData->fileSize);
+
+        if (!lightingTechnique.empty())
+        {
+            sceneGeneratedConfig.set(L"LightingTechnique", lightingTechnique);
+        }
+
+        stl<ConfigurationWriter>::vector camerasPipelinesConfigs;
+        for (const auto &cameraConfig : sceneConfig.getObjects(L"Cameras"))
+        {
+            if (mMainCamera != cameraConfig.getString(L"Name"))
+                continue;
+
+            ConfigurationWriter cameraPipelineConfig;
+            cameraPipelineConfig.set(L"Name", cameraConfig.getString(L"Name"))
+                .set(L"Position", cameraConfig.getVec3(L"Position"))
+                .set(L"LookAt", cameraConfig.getVec3(L"LookAt"));
+
+            if (cameraConfig.has(L"Perspective"))
+            {
+                cameraPipelineConfig.set(L"Perspective", ConfigurationWriter()
+                    .set(L"Znear", cameraConfig.getObject(L"Perspective").getDouble(L"Znear"))
+                    .set(L"Zfar", cameraConfig.getObject(L"Perspective").getDouble(L"Zfar"))
+                    .set(L"Fov", cameraConfig.getObject(L"Perspective").getDouble(L"Fov")));
+            }
+            else if (cameraConfig.has(L"Ortho"))
+            {
+                cameraPipelineConfig.set(L"Ortho", ConfigurationWriter()
+                    .set(L"Near", cameraConfig.getObject(L"Ortho").getDouble(L"Near"))
+                    .set(L"Far", cameraConfig.getObject(L"Ortho").getDouble(L"Far"))
+                    .set(L"Left", cameraConfig.getObject(L"Ortho").getDouble(L"Left"))
+                    .set(L"Right", cameraConfig.getObject(L"Ortho").getDouble(L"Right"))
+                    .set(L"Bottom", cameraConfig.getObject(L"Ortho").getDouble(L"Bottom"))
+                    .set(L"Top", cameraConfig.getObject(L"Ortho").getDouble(L"Top")));
+            }
+            else
+            {
+                LITE3D_THROW("Pipeline " << getName() << ": Main camera has incorrect configuration");
+            }
+
+            constructCameraPipeline(pipelineConfig, cameraPipelineConfig);
+            camerasPipelinesConfigs.emplace_back(cameraPipelineConfig);
+        }
+
+        sceneGeneratedConfig.set(L"Cameras", camerasPipelinesConfigs);
         
     }
 
@@ -49,4 +117,9 @@ namespace lite3dpp_pipeline {
 
     }
 
+    void PipelineBase::constructCameraPipeline(const ConfigurationReader &pipelineConfig, 
+        ConfigurationWriter &cameraPipelineConfig)
+    {
+
+    }
 }}
