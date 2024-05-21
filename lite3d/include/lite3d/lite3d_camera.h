@@ -41,7 +41,7 @@ typedef struct lite3d_camera
     uint8_t polygonMode;
     uint8_t isOrtho;
 
-    struct
+    struct projectionParamsStruct
     {
         float znear;
         float zfar;

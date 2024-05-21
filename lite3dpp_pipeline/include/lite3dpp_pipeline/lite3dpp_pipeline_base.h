@@ -17,8 +17,9 @@
  *******************************************************************************/
 #pragma once
 
-#include <lite3dpp/lite3dpp_main.h>
 #include <lite3dpp_pipeline/lite3dpp_pipeline_common.h>
+#include <lite3dpp_pipeline/lite3dpp_bloom.h>
+#include <lite3dpp_pipeline/lite3dpp_shadow_manager.h>
 
 namespace lite3dpp {
 namespace lite3dpp_pipeline {
@@ -32,6 +33,7 @@ namespace lite3dpp_pipeline {
 
         Scene &getMainScene();
         Scene &getSkyBoxScene();
+        ShadowManager& getShadowManager();
 
     protected:
 
@@ -43,5 +45,9 @@ namespace lite3dpp_pipeline {
 
         Scene *mMainScene = nullptr;
         Scene *mSkyBox = nullptr;
+        String mShaderPackage;
+        std::unique_ptr<ShadowManager> mShadowManager;
+        std::unique_ptr<BloomEffect> mBloomEffect;
+        Scene *mSSAO = nullptr;
     };
 }}

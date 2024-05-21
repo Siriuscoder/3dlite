@@ -15,38 +15,37 @@
  *	You should have received a copy of the GNU General Public License
  *	along with Lite3D.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
-#include <lite3dpp_pipeline/lite3dpp_pipeline_base.h>
+#pragma once 
 
-#include <SDL_assert.h>
+#include <lite3dpp/lite3dpp_main.h>
 
 namespace lite3dpp {
 namespace lite3dpp_pipeline {
 
-    PipelineBase::PipelineBase(const String &name, const String &path, Main *main) : 
-        ConfigurableResource(name, path, main, AbstractResource::PIPELINE)
-    {}
+class BloomEffect : public SceneObserver
+{
+public:
 
-    Scene &PipelineBase::getMainScene()
-    {
-        SDL_assert(mMainScene);
-        return *mMainScene;
-    }
+    BloomEffect(Main& main);
+    ~BloomEffect();
+    void init();
 
-    Scene &PipelineBase::getSkyBoxScene()
-    {
-        SDL_assert(mSkyBox);
-        return *mSkyBox;
-    }
+private:
 
-    void PipelineBase::loadFromConfigImpl(const ConfigurationReader &helper)
-    {
-        mShaderPackage = helper.getString(L"ShaderPackage");
-        
-    }
+    bool beginDrawBatch(Scene *scene, SceneNode *node, lite3d_mesh_chunk *meshChunk, Material *material) override;
+    bool beginSceneRender(Scene *scene, Camera *camera) override;
 
-    void PipelineBase::unloadImpl()
-    {
+    void initTextureChain();
+    void initBoomScene();
 
-    }
+    Main& mMain;
+    int32_t mMinWidth = 1;
+    Scene* mBloomRernderer = nullptr;
+    TextureRenderTarget* mBloomRT = nullptr;
+    stl<Texture*>::vector mTextureChain;
+    stl<Material*>::vector mMaterialChain;
+    Texture *mMiddleTexture = nullptr;
+    int mChainState = 0;
+};
 
 }}

@@ -24,13 +24,14 @@ namespace lite3dpp
 {
     class LITE3DPP_EXPORT ConfigurationReader : public Manageable
     {
+        friend ConfigurationWriter;
     public:
 
         explicit ConfigurationReader(const std::string_view &filePath);
         /* must be null terminated */
         explicit ConfigurationReader(const char *data, size_t size);
         ConfigurationReader(const ConfigurationReader &other);
-        ~ConfigurationReader();
+        ~ConfigurationReader() = default;
 
         int32_t getInt(const WString &name, int32_t def = 0) const;
         float getDouble(const WString &name, float def = 0) const;
@@ -59,7 +60,7 @@ namespace lite3dpp
 
     private:
 
-        ConfigurationReader();
+        ConfigurationReader() = default;
         ConfigurationReader(const JSONObject &fromJsonObject);
         void parseFromFile(const std::string_view &filePath);
         bool parseFromString(const std::string_view &s);

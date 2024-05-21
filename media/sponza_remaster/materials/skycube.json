@@ -13,7 +13,7 @@
       "Name":"screenMatrix"
     },
     {
-      "Name": "Strength",
+      "Name": "EmissionStrength",
       "Type": "float",
       //"Value": 0.002
       "Value": 12.0

@@ -61,6 +61,8 @@ namespace lite3dpp
     class LITE3DPP_EXPORT Material;
     class LITE3DPP_EXPORT Texture;
     class LITE3DPP_EXPORT RenderTarget;
+    class LITE3DPP_EXPORT ConfigurationWriter;
+    class LITE3DPP_EXPORT ConfigurationReader;
 
     /* epsilon */
     const constexpr auto epsilon = std::numeric_limits<float>::epsilon();

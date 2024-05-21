@@ -392,6 +392,25 @@ static int lite3d_check_texture_target(uint32_t textureTarget)
     return LITE3D_TRUE;
 }
 
+static int lite3d_internal_format_float(lite3d_texture_unit *textureUnit)
+{
+    switch (textureUnit->internalFormat)
+    {
+        case LITE3D_TEXTURE_INTERNAL_R16F:
+        case LITE3D_TEXTURE_INTERNAL_RG16F:
+        case LITE3D_TEXTURE_INTERNAL_RGB16F:
+        case LITE3D_TEXTURE_INTERNAL_RGBA16F:
+        case LITE3D_TEXTURE_INTERNAL_R32F:
+        case LITE3D_TEXTURE_INTERNAL_RG32F:
+        case LITE3D_TEXTURE_INTERNAL_RGB32F:
+        case LITE3D_TEXTURE_INTERNAL_RGBA32F:
+        case LITE3D_TEXTURE_INTERNAL_R11F_G11F_B10F:
+            return LITE3D_TRUE;
+    }
+
+    return LITE3D_FALSE;
+}
+
 static int lite3d_set_internal_format(lite3d_texture_unit *textureUnit, uint16_t *format,
     uint16_t iformat, uint32_t *internalFormat)
 {
@@ -1100,7 +1119,8 @@ int lite3d_texture_unit_get_pixels(lite3d_texture_unit *textureUnit,
 
     glGetTexImage(textureUnit->textureTarget == LITE3D_TEXTURE_CUBE ? 
         GL_TEXTURE_CUBE_MAP_POSITIVE_X + cubeface : textureTargetEnum[textureUnit->textureTarget],
-        level, textureUnit->dataFormat, GL_FLOAT, pixels);
+        level, textureUnit->dataFormat, 
+        lite3d_internal_format_float(textureUnit) ? GL_FLOAT : GL_UNSIGNED_BYTE, pixels);
 
     return LITE3D_CHECK_GL_ERROR ? LITE3D_FALSE : LITE3D_TRUE;
 #else

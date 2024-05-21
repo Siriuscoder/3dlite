@@ -227,7 +227,6 @@ namespace lite3dpp
 
     void TextureImage::unloadImpl()
     {
-        /*
         if(mModifyed)
         {
             for(int8_t level = 0; level <= getLevelsNum(); ++level)
@@ -241,7 +240,7 @@ namespace lite3dpp
 
                 mLayersBackup.emplace_back(pixels);
             }
-        }*/
+        }
 
         Texture::unloadImpl();
     }
