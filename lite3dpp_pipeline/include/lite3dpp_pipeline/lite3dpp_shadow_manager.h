@@ -95,7 +95,8 @@ public:
         ShadowCasters mVisibility;
     };
 
-    ShadowManager(Main& main, const ConfigurationReader& conf);
+    ShadowManager(Main& main, const String& pipelineName, const ConfigurationReader& conf);
+    ~ShadowManager();
 
     ShadowCaster* newShadowCaster(LightSceneNode* node);
     DynamicShadowReceiver* registerShadowReceiver(SceneNode *node);
@@ -103,25 +104,29 @@ public:
 protected:
 
     bool beginUpdate(RenderTarget *rt) override;
+    void postUpdate(RenderTarget *rt) override;
     bool beginSceneRender(Scene *scene, Camera *camera) override;
+    void endSceneRender(Scene *scene, Camera *camera) override;
 
     // Проверим виден ли обьект сцены хотябы одной теневой камерой, если нет то рисовать его смысла нет.
     bool customVisibilityCheck(Scene *scene, SceneNode *node, lite3d_mesh_chunk *meshChunk, Material *material, 
         lite3d_bounding_vol *boundingVol, Camera *camera) override;
 
-    void postUpdate(RenderTarget *rt) override;
+    void createShadowRenderPipeline(const String& pipelineName, int width, int height, int shadowsCastersMaxCount);
+    void createAuxiliaryBuffers(const String& pipelineName, int shadowsCastersMaxCount);
 
 private:
 
     Main& mMain;
-    Camera* mMainCamera = nullptr;
-    RenderTarget* mShadowRT = nullptr;
-    BufferBase* mShadowMatrixBuffer = nullptr;
-    BufferBase* mShadowIndexBuffer = nullptr;
+    RenderTarget* mShadowPass = nullptr;
+    VBOResource* mShadowMatrixBuffer = nullptr;
+    VBOResource* mShadowIndexBuffer = nullptr;
     IndexVector mHostShadowIndexes;
     stl<std::unique_ptr<ShadowCaster>>::vector mShadowCasters;
     stl<SceneNode *, DynamicShadowReceiver>::unordered_map mDynamicNodes;
     lite3d_camera::projectionParamsStruct mProjection = {};
+    Scene *mCleanStage = nullptr;
+
 };
 
 }}

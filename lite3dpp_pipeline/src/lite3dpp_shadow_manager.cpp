@@ -19,6 +19,7 @@
 
 #include <algorithm>
 #include <SDL_assert.h>
+#include <lite3dpp_pipeline/lite3dpp_generator.h>
 
 namespace lite3dpp {
 namespace lite3dpp_pipeline {
@@ -100,10 +101,10 @@ namespace lite3dpp_pipeline {
         }
     }
 
-    ShadowManager::ShadowManager(Main& main, const ConfigurationReader& conf) : 
+    ShadowManager::ShadowManager(Main& main, const String& pipelineName, const ConfigurationReader& conf) : 
         mMain(main)
     {
-        int initialShadowCastersCount = conf.getInt(L"MaxCount", 1);
+        int shadowsCastersMaxCount = conf.getInt(L"MaxCount", 1);
         int width = conf.getInt(L"Width", 1024);
         int height = conf.getInt(L"Height", 1024);
         mProjection.znear = conf.getInt(L"NearClipPlane", 1.0);
@@ -114,15 +115,20 @@ namespace lite3dpp_pipeline {
         mProjection.top = conf.getObject(L"DirectionLightShadowParams").getInt(L"TopClipPlane");
         mProjection.aspect = static_cast<float>(width) / static_cast<float>(height);
 
-        mShadowMatrixBuffer = mMain.getResourceManager()->queryResourceFromJson<UBO>("ShadowMatrixBuffer",
-            "{\"Dynamic\": false}");
-        mShadowIndexBuffer = mMain.getResourceManager()->queryResourceFromJson<UBO>("ShadowIndexBuffer",
-            "{\"Dynamic\": true}");
+        createShadowRenderPipeline(pipelineName, width, height, shadowsCastersMaxCount);
+    }
 
-        mShadowMatrixBuffer->extendBufferBytes(sizeof(kmMat4) * initialShadowCastersCount);
-        mShadowIndexBuffer->extendBufferBytes(sizeof(IndexVector::value_type) * (initialShadowCastersCount + 1));
-        IndexVector::value_type initialZero = 0;
-        mShadowIndexBuffer->setElement<IndexVector::value_type>(0, &initialZero);
+    ShadowManager::~ShadowManager()
+    {
+        if (mShadowMatrixBuffer)
+        {
+            mMain.getResourceManager()->releaseResource(mShadowMatrixBuffer->getName());
+        }
+
+        if (mShadowIndexBuffer)
+        {
+            mMain.getResourceManager()->releaseResource(mShadowIndexBuffer->getName());
+        }
     }
 
     ShadowManager::ShadowCaster* ShadowManager::newShadowCaster(LightSceneNode* node)
@@ -132,12 +138,6 @@ namespace lite3dpp_pipeline {
             node, mProjection));
         // Запишем в источник света индекс его теневой матрицы в UBO
         node->getLight()->setUserIndex(index);
-        // Аллоцируем место под теневую матрицу 
-        if (mShadowMatrixBuffer->bufferSizeBytes() < mShadowCasters.size() * sizeof(kmMat4))
-        {
-            mShadowMatrixBuffer->extendBufferBytes(sizeof(kmMat4));
-        }
-
         return mShadowCasters.back().get();
     }
 
@@ -149,8 +149,8 @@ namespace lite3dpp_pipeline {
 
     bool ShadowManager::beginUpdate(RenderTarget *rt)
     { 
-        mShadowRT = rt;
         SDL_assert(mShadowMatrixBuffer);
+        SDL_assert(mShadowIndexBuffer);
 
         mHostShadowIndexes.resize(1, 0); // Reserve 0 index for size
         // Обновим матрицы по всем источникам отбрасывающим тень которые влияют на текущий кадр
@@ -169,40 +169,33 @@ namespace lite3dpp_pipeline {
         // Если тени перересовывать не надо то просто переходим к следующией RT
         if (mHostShadowIndexes.size() == 1)
         {
-            mShadowRT = nullptr;
             return false;
         }
 
-        // Расширяем буфер индексов если надо
-        if (mShadowIndexBuffer->bufferSizeBytes() < mHostShadowIndexes.size() * sizeof(IndexVector::value_type))
-        {
-            mShadowIndexBuffer->extendBufferBytes(mHostShadowIndexes.size() * sizeof(IndexVector::value_type) - 
-                mShadowIndexBuffer->bufferSizeBytes());
-        }
-
         mShadowIndexBuffer->setData(&mHostShadowIndexes[0], 0, mHostShadowIndexes.size() * sizeof(IndexVector::value_type));
-
-        if (!mMainCamera)
-        {
-            mMainCamera = mMain.getCamera("MyCamera");
-            SDL_assert(mMainCamera);
-        }
-
-        // Так как мы используем texture_array для хранения теневых карт мы в режиме layered render мы не можем подчистить
-        // отдельную карту теней, а перерисовываем мы не все. Для очистки только нужных теневых карт используем предварительный 
-        // проход с BigTriangle (сцена shadow_clean) устанавливающий во все фрагменты теневого буфера значение 1.0, но дело в том что его надо 
-        // выполянть без проверки глубины, а при выключении ZTEST запись в буфер глубины невозможна, поэтому включаем 
-        // ZTEST и устанавливаем TestFuncAlways для гарантированной перезаписи буфера грубины. Но перед рендером теней надо будет 
-        // переключить обратно 
-        RenderTarget::depthTestFunc(RenderTarget::TestFuncAlways);
-
         return true;
     }
 
     bool ShadowManager::beginSceneRender(Scene *scene, Camera *camera)
-    { 
-        // Только пока теневой RT активен
-        if (mShadowRT)
+    {
+        if (scene == mCleanStage)
+        {
+            // Так как мы используем texture_array для хранения теневых карт мы в режиме layered render мы не можем подчистить
+            // отдельную карту теней, а перерисовываем мы не все. Для очистки только нужных теневых карт используем предварительный 
+            // проход с BigTriangle (сцена shadow_clean) устанавливающий во все фрагменты теневого буфера значение 1.0, но дело в том что его надо 
+            // выполянть без проверки глубины, а при выключении ZTEST запись в буфер глубины невозможна, поэтому включаем 
+            // ZTEST и устанавливаем TestFuncAlways для гарантированной перезаписи буфера грубины. Но перед рендером основной сцены надо будет 
+            // переключить обратно 
+            RenderTarget::depthTestFunc(RenderTarget::TestFuncAlways);
+        }
+
+        return true; 
+    }
+
+    void ShadowManager::endSceneRender(Scene *scene, Camera *camera)
+    {
+        // После очистки теневых карт готовимся к перерисовке теней.
+        if (scene == mCleanStage)
         {
             RenderTarget::depthTestFunc(RenderTarget::TestFuncLEqual);
             // Подчистим списки источников света для которых эта нода видима перед проверкой фрустума.
@@ -211,8 +204,6 @@ namespace lite3dpp_pipeline {
                 node.second.clearVisibility();
             }
         }
-
-        return true; 
     }
 
     // Проверим виден ли обьект сцены хотябы одной теневой камерой, если нет то рисовать его смысла нет.
@@ -250,7 +241,25 @@ namespace lite3dpp_pipeline {
         {
             mShadowCasters[mHostShadowIndexes[i]]->validate();
         }
+    }
 
-        mShadowRT = nullptr;
+    void ShadowManager::createAuxiliaryBuffers(const String& pipelineName, int shadowsCastersMaxCount)
+    {
+        mShadowMatrixBuffer = mMain.getResourceManager()->queryResourceFromJson<UBO>(pipelineName + "_ShadowMatrixBuffer",
+            "{\"Dynamic\": false}");
+        mShadowIndexBuffer = mMain.getResourceManager()->queryResourceFromJson<UBO>(pipelineName + "_ShadowIndexBuffer",
+            "{\"Dynamic\": true}");
+
+        mShadowMatrixBuffer->extendBufferBytes(sizeof(kmMat4) * shadowsCastersMaxCount);
+        mShadowIndexBuffer->extendBufferBytes(sizeof(IndexVector::value_type) * (shadowsCastersMaxCount + 1));
+        IndexVector::value_type initialZero = 0;
+        mShadowIndexBuffer->setElement<IndexVector::value_type>(0, &initialZero);
+    }
+
+    void ShadowManager::createShadowRenderPipeline(const String& pipelineName, int width, int height, 
+        int shadowsCastersMaxCount)
+    {
+        createAuxiliaryBuffers(pipelineName, shadowsCastersMaxCount);
+
     }
 }}

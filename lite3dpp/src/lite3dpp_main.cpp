@@ -140,11 +140,6 @@ namespace lite3dpp
             fileCacheMaxSize);
     }
 
-    Main::~Main()
-    {
-
-    }
-
     void Main::run()
     {
         if (!lite3d_main(&mSettings))
