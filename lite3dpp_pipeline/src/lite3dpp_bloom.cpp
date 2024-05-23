@@ -29,6 +29,11 @@ namespace lite3dpp_pipeline {
         mMinWidth = mMain.window()->width() / 40;
     }
 
+    BloomEffect::~BloomEffect()
+    {
+        
+    }
+
     void BloomEffect::init()
     {
         initTextureChain();

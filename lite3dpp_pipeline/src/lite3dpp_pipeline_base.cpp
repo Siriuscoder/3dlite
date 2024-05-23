@@ -66,6 +66,9 @@ namespace lite3dpp_pipeline {
         ConfigurationWriter sceneGeneratedConfig(static_cast<const char *>(sceneJsonData->fileBuff), sceneJsonData->fileSize);
         ConfigurationReader sceneConfig(static_cast<const char *>(sceneJsonData->fileBuff), sceneJsonData->fileSize);
 
+        // Создание "Полноэкранного треугольника" для использования в служебных сценах Postprocess, SSAO, и тд.
+        createBigTriangleMesh();
+
         if (!lightingTechnique.empty())
         {
             sceneGeneratedConfig.set(L"LightingTechnique", lightingTechnique);
@@ -115,6 +118,12 @@ namespace lite3dpp_pipeline {
     void PipelineBase::unloadImpl()
     {
 
+    }
+
+    void PipelineBase::createBigTriangleMesh()
+    {
+        getMain().getResourceManager()->queryResourceFromJson<Mesh>("BigTriangle.mesh",
+            ConfigurationWriter().set(L"Model", "BigTriangle").set(L"Dynamic", false).write());
     }
 
     void PipelineBase::constructCameraPipeline(const ConfigurationReader &pipelineConfig, 

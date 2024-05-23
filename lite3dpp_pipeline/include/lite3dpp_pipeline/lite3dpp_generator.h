@@ -17,10 +17,23 @@
  *******************************************************************************/
 #pragma once
 
-#include <lite3dpp_pipeline/lite3dpp_pipeline_deffered.h>
+#include <lite3dpp/lite3dpp_main.h>
 
 namespace lite3dpp {
 namespace lite3dpp_pipeline {
+
+    enum class RenderPassPriority
+    {
+        ShadowMap = 1,
+        MainDepth = 2
+    };
+
+    enum class TexturePassTypes
+    {
+        Depth = 1,
+        CommonRender = 2,
+        Shadow = 1
+    };
 
     class SceneGenerator 
     {
@@ -32,8 +45,8 @@ namespace lite3dpp_pipeline {
 
         ConfigurationWriter generate();
         virtual ConfigurationWriter& generateFromExisting(ConfigurationWriter& sceneConfig);
-        void addCamera(const String& cameraName, const ConfigurationWriter& conf);
-        void addRenderTarget(const String& cameraName, const ConfigurationWriter& conf);
+        void addCamera(const String& cameraName, ConfigurationWriter& conf);
+        void addRenderTarget(const String& cameraName, const String& renderTargetName, ConfigurationWriter& conf);
 
     protected:
 
@@ -51,5 +64,20 @@ namespace lite3dpp_pipeline {
         {}
 
         ConfigurationWriter& generateFromExisting(ConfigurationWriter& sceneConfig) override;
+    };
+
+    class BigTriObjectGenerator
+    {
+    public:
+    
+        BigTriObjectGenerator(const String& materialName) : 
+            mMaterialName(materialName)
+        {}
+
+        ConfigurationReader generate();
+
+    private:
+
+        String mMaterialName;
     };
 }}

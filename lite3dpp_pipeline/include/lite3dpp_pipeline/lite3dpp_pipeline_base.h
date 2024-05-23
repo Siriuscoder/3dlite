@@ -42,6 +42,8 @@ namespace lite3dpp_pipeline {
         virtual void unloadImpl() override;
         virtual void constructCameraPipeline(const ConfigurationReader &pipelineConfig, 
             ConfigurationWriter &cameraPipelineConfig);
+        
+        void createBigTriangleMesh();
 
     protected:
 

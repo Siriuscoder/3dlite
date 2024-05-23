@@ -101,6 +101,11 @@ public:
     ShadowCaster* newShadowCaster(LightSceneNode* node);
     DynamicShadowReceiver* registerShadowReceiver(SceneNode *node);
 
+    inline RenderTarget& getShadowPass()
+    {
+        return *mShadowPass;
+    }
+
 protected:
 
     bool beginUpdate(RenderTarget *rt) override;
@@ -112,13 +117,16 @@ protected:
     bool customVisibilityCheck(Scene *scene, SceneNode *node, lite3d_mesh_chunk *meshChunk, Material *material, 
         lite3d_bounding_vol *boundingVol, Camera *camera) override;
 
-    void createShadowRenderPipeline(const String& pipelineName, int width, int height, int shadowsCastersMaxCount);
+    void createShadowRenderPipeline(const String& pipelineName, const String& shaderPackage, int width, int height, 
+        int shadowsCastersMaxCount);
+    void createShadowRenderTarget(const String& pipelineName, int width, int height, int shadowsCastersMaxCount);
     void createAuxiliaryBuffers(const String& pipelineName, int shadowsCastersMaxCount);
 
 private:
 
     Main& mMain;
     RenderTarget* mShadowPass = nullptr;
+    Texture* mShadowMap = nullptr;
     VBOResource* mShadowMatrixBuffer = nullptr;
     VBOResource* mShadowIndexBuffer = nullptr;
     IndexVector mHostShadowIndexes;
@@ -126,7 +134,7 @@ private:
     stl<SceneNode *, DynamicShadowReceiver>::unordered_map mDynamicNodes;
     lite3d_camera::projectionParamsStruct mProjection = {};
     Scene *mCleanStage = nullptr;
-
+    Material *mCleanStageMaterial = nullptr;
 };
 
 }}

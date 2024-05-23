@@ -104,31 +104,29 @@ namespace lite3dpp_pipeline {
     ShadowManager::ShadowManager(Main& main, const String& pipelineName, const ConfigurationReader& conf) : 
         mMain(main)
     {
-        int shadowsCastersMaxCount = conf.getInt(L"MaxCount", 1);
-        int width = conf.getInt(L"Width", 1024);
-        int height = conf.getInt(L"Height", 1024);
-        mProjection.znear = conf.getInt(L"NearClipPlane", 1.0);
-        mProjection.zfar = conf.getInt(L"FarClipPlane", 100.0);
-        mProjection.left = conf.getObject(L"DirectionLightShadowParams").getInt(L"LeftClipPlane");
-        mProjection.right = conf.getObject(L"DirectionLightShadowParams").getInt(L"RightClipPlane");
-        mProjection.bottom = conf.getObject(L"DirectionLightShadowParams").getInt(L"BottomClipPlane");
-        mProjection.top = conf.getObject(L"DirectionLightShadowParams").getInt(L"TopClipPlane");
+        auto shadowConf = conf.getObject(L"ShadowMaps");
+        int shadowsCastersMaxCount = shadowConf.getInt(L"MaxCount", 1);
+        int width = shadowConf.getInt(L"Width", 1024);
+        int height = shadowConf.getInt(L"Height", 1024);
+        mProjection.znear = shadowConf.getInt(L"NearClipPlane", 1.0);
+        mProjection.zfar = shadowConf.getInt(L"FarClipPlane", 100.0);
+        mProjection.left = shadowConf.getObject(L"DirectionLightShadowParams").getInt(L"LeftClipPlane");
+        mProjection.right = shadowConf.getObject(L"DirectionLightShadowParams").getInt(L"RightClipPlane");
+        mProjection.bottom = shadowConf.getObject(L"DirectionLightShadowParams").getInt(L"BottomClipPlane");
+        mProjection.top = shadowConf.getObject(L"DirectionLightShadowParams").getInt(L"TopClipPlane");
         mProjection.aspect = static_cast<float>(width) / static_cast<float>(height);
 
-        createShadowRenderPipeline(pipelineName, width, height, shadowsCastersMaxCount);
+        createShadowRenderPipeline(pipelineName, conf.getString(L"ShaderPackage"), width, height, shadowsCastersMaxCount);
     }
 
     ShadowManager::~ShadowManager()
     {
-        if (mShadowMatrixBuffer)
-        {
-            mMain.getResourceManager()->releaseResource(mShadowMatrixBuffer->getName());
-        }
-
-        if (mShadowIndexBuffer)
-        {
-            mMain.getResourceManager()->releaseResource(mShadowIndexBuffer->getName());
-        }
+        mMain.getResourceManager()->releaseResource(mCleanStage->getName());
+        mMain.getResourceManager()->releaseResource(mCleanStageMaterial->getName());
+        mMain.getResourceManager()->releaseResource(mShadowPass->getName());
+        mMain.getResourceManager()->releaseResource(mShadowMap->getName());
+        mMain.getResourceManager()->releaseResource(mShadowMatrixBuffer->getName());
+        mMain.getResourceManager()->releaseResource(mShadowIndexBuffer->getName());
     }
 
     ShadowManager::ShadowCaster* ShadowManager::newShadowCaster(LightSceneNode* node)
@@ -256,10 +254,79 @@ namespace lite3dpp_pipeline {
         mShadowIndexBuffer->setElement<IndexVector::value_type>(0, &initialZero);
     }
 
-    void ShadowManager::createShadowRenderPipeline(const String& pipelineName, int width, int height, 
+    void ShadowManager::createShadowRenderTarget(const String& pipelineName, int width, int height, int shadowsCastersMaxCount)
+    {
+        auto shadowMapName = pipelineName + "_ShadowMap.texture";
+        ConfigurationWriter shadowTextureConfig;
+        shadowTextureConfig.set(L"TextureType", "2D_SHADOW_ARRAY")
+            .set(L"Filtering", "Linear")
+            .set(L"Wrapping", "ClampToEdge")
+            .set(L"Compression", false)
+            .set(L"TextureFormat", "DEPTH")
+            .set(L"Height", height)
+            .set(L"Width", width)
+            .set(L"Depth", shadowsCastersMaxCount);
+
+        mShadowMap = mMain.getResourceManager()->queryResourceFromJson<TextureImage>(shadowMapName, shadowTextureConfig.write());
+
+        ConfigurationWriter shadowRenderTargetConfig;
+        BigTriSceneGenerator stageGenerator(pipelineName);
+        shadowRenderTargetConfig.set(L"Width", width)
+            .set(L"Width", height)
+            .set(L"Height", width)
+            .set(L"BackgroundColor", kmVec4 { 0.0f, 0.0f, 0.0f, 1.0f })
+            .set(L"Priority", static_cast<int>(RenderPassPriority::ShadowMap))
+            .set(L"CleanColorBuf", false)
+            .set(L"CleanDepthBuf", false)
+            .set(L"CleanStencilBuf", false)
+            .set(L"DepthAttachments", ConfigurationWriter()
+                .set(L"TextureName", shadowMapName));
+
+        mShadowPass = mMain.getResourceManager()->queryResourceFromJson<TextureRenderTarget>(pipelineName + "_ShadowPass",
+            shadowRenderTargetConfig.write());
+    }
+
+    void ShadowManager::createShadowRenderPipeline(const String& pipelineName, const String& shaderPackage, int width, int height, 
         int shadowsCastersMaxCount)
     {
         createAuxiliaryBuffers(pipelineName, shadowsCastersMaxCount);
+        createShadowRenderTarget(pipelineName, width, height, shadowsCastersMaxCount);
 
+        // Создание специальной сцены для предварительной частичной очистки теневых карт которые надо перерисовать в текущем кадре.
+        BigTriSceneGenerator stageGenerator(pipelineName);
+        stageGenerator.addRenderTarget("FullScreenView", mShadowPass->getName(), ConfigurationWriter()
+            .set(L"Priority", 0) // Самая первая в очереди на этапе построения теней
+            .set(L"TexturePass", static_cast<int>(TexturePassTypes::Shadow))
+            .set(L"DepthTest", true)
+            .set(L"ColorOutput", false)
+            .set(L"DepthOutput", true)
+            .set(L"RenderBlend", false)
+            .set(L"RenderOpaque", true));
+            
+        mCleanStage = mMain.getResourceManager()->queryResourceFromJson<Scene>(pipelineName + "_ShadowCleanStage",
+            stageGenerator.generate().write());
+
+        ConfigurationWriter cleanStageMaterialConfig;
+        cleanStageMaterialConfig.set(L"Passes", stl<ConfigurationWriter>::vector {
+            ConfigurationWriter().set(L"Pass", static_cast<int>(TexturePassTypes::Shadow))
+                .set(L"Program", ConfigurationWriter()
+                    .set(L"Name", "ShadowMapClean.program")
+                    .set(L"Path", shaderPackage + ":shaders/json/shadow_map_clean.json"))
+                .set(L"Uniforms", stl<ConfigurationWriter>::vector {
+                    ConfigurationWriter()
+                        .set(L"Name", "screenMatrix"),
+                    ConfigurationWriter()
+                        .set(L"Name", "ShadowIndex")
+                        .set(L"UBOName", mShadowIndexBuffer->getName())
+                        .set(L"Type", "UBO")
+                })
+        });
+        
+        // Создаем служебный шейдер отвечающий за очистку теневых карт
+        mCleanStageMaterial = mMain.getResourceManager()->queryResourceFromJson<Material>(
+            pipelineName + "_ShadowCleanStage.material", cleanStageMaterialConfig.write());
+
+        // Добавляем шейдер очистки на сцену 
+        mCleanStage->addObject("ShadowCleanBigTri", BigTriObjectGenerator(mCleanStageMaterial->getName()).generate());
     }
 }}

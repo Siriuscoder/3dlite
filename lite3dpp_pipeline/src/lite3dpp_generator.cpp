@@ -45,21 +45,23 @@ namespace lite3dpp_pipeline {
         return sceneConfig;
     }
 
-    void SceneGenerator::addCamera(const String& cameraName, const ConfigurationWriter& conf)
+    void SceneGenerator::addCamera(const String& cameraName, ConfigurationWriter& conf)
     {
-        mCameras.emplace(cameraName, conf);
+        auto cameraFullName = mName + "_" + cameraName;
+        conf.set(L"Name", cameraFullName);
+        mCameras.emplace(cameraFullName, conf);
     }
 
-    void SceneGenerator::addRenderTarget(const String& cameraName, const ConfigurationWriter& conf)
+    void SceneGenerator::addRenderTarget(const String& cameraName, const String& renderTargetName, ConfigurationWriter& conf)
     {
-        mRenderTargets[cameraName].emplace_back(conf);
+        auto cameraFullName = mName + "_" + cameraName;
+        conf.set(L"Name", renderTargetName);
+        mRenderTargets[cameraFullName].emplace_back(conf);
     }
 
     ConfigurationWriter& BigTriSceneGenerator::generateFromExisting(ConfigurationWriter& sceneConfig)
     {
-        auto cameraName = mName + "_Camera";
-        addCamera(cameraName, ConfigurationWriter()
-            .set(L"Name", cameraName)
+        addCamera("FullScreenView", ConfigurationWriter()
             .set(L"Position", kmVec3 { 0.0f, 0.0f, 0.5f })
             .set(L"LookAt", KM_VEC3_ZERO)
             .set(L"Ortho", ConfigurationWriter()
@@ -71,5 +73,25 @@ namespace lite3dpp_pipeline {
                 .set(L"Top", 1.0f)));
 
         return SceneGenerator::generateFromExisting(sceneConfig);
+    }
+
+    ConfigurationReader BigTriObjectGenerator::generate()
+    {
+        auto data = ConfigurationWriter().set(L"Root", ConfigurationWriter()
+            .set(L"Name", "BigTriangle.root")
+            .set(L"FrustumTest", false)
+            .set(L"Mesh", ConfigurationWriter()
+                .set(L"Name", "BigTriangle.mesh")
+                .set(L"MaterialMapping", stl<ConfigurationWriter>::vector {
+                    ConfigurationWriter()
+                        .set(L"MaterialIndex", 0)
+                        .set(L"Material", ConfigurationWriter()
+                            .set(L"Name", mMaterialName)
+                        )
+                })
+            )
+        ).write();
+
+        return ConfigurationReader(data.data(), data.size());
     }
 }}
