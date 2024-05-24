@@ -392,6 +392,7 @@ static int lite3d_check_texture_target(uint32_t textureTarget)
     return LITE3D_TRUE;
 }
 
+#ifndef GLES
 static int lite3d_internal_format_float(lite3d_texture_unit *textureUnit)
 {
     switch (textureUnit->internalFormat)
@@ -410,6 +411,7 @@ static int lite3d_internal_format_float(lite3d_texture_unit *textureUnit)
 
     return LITE3D_FALSE;
 }
+#endif
 
 static int lite3d_set_internal_format(lite3d_texture_unit *textureUnit, uint16_t *format,
     uint16_t iformat, uint32_t *internalFormat)
