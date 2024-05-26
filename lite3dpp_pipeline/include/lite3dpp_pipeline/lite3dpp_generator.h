@@ -28,11 +28,18 @@ namespace lite3dpp_pipeline {
         MainDepth = 2
     };
 
+    enum class RenderPassStagePriority
+    {
+        ShadowCleanStage = 0,
+        ShadowBuildStage = 1,
+        DepthBuildStage = 0
+    };
+
     enum class TexturePassTypes
     {
         Depth = 1,
-        CommonRender = 2,
-        Shadow = 1
+        RenderPass = 2,
+        Shadow = 3
     };
 
     class SceneGenerator 
@@ -47,6 +54,11 @@ namespace lite3dpp_pipeline {
         virtual ConfigurationWriter& generateFromExisting(ConfigurationWriter& sceneConfig);
         void addCamera(const String& cameraName, ConfigurationWriter& conf);
         void addRenderTarget(const String& cameraName, const String& renderTargetName, ConfigurationWriter& conf);
+
+        inline String &getName()
+        {
+            return mName;
+        }
 
     protected:
 

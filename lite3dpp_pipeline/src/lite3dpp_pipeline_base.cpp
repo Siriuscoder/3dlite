@@ -32,56 +32,61 @@ namespace lite3dpp_pipeline {
         return *mMainScene;
     }
 
-    Scene &PipelineBase::getSkyBoxScene()
+    Scene *PipelineBase::getSkyBoxScene()
     {
-        SDL_assert(mSkyBox);
-        return *mSkyBox;
+        return mSkyBox;
     }
 
-    ShadowManager& PipelineBase::getShadowManager()
+    ShadowManager* PipelineBase::getShadowManager()
     {
-        SDL_assert(mShadowManager);
-        return *mShadowManager.get();
+        if (mShadowManager)
+        {
+            return mShadowManager.get();
+        }
+
+        return nullptr;
+    }
+
+    Camera &PipelineBase::getMainCamera()
+    {
+        SDL_assert(mMainCamera);
+        return *mMainCamera;
     }
 
     void PipelineBase::loadFromConfigImpl(const ConfigurationReader &pipelineConfig)
     {
+        String mainCameraName;
         mShaderPackage = pipelineConfig.getString(L"ShaderPackage");
-        for (const auto &cameraConfig : pipelineConfig.getObjects(L"Cameras"))
-        {
-            if (cameraConfig.has(L"Main"))
-            {
-                mMainCamera = cameraConfig.getString(L"Main");
-            }
-        }
-
-        if (mMainCamera.empty())
-        {
-            LITE3D_THROW("Pipeline " << getName() << ": Main camera is not set");
-        }
-
         auto lightingTechnique = pipelineConfig.getString(L"LightingTechnique");
         auto mainScenePath = pipelineConfig.getString(L"MainScenePath");
         auto sceneJsonData = getMain().getResourceManager()->loadFileToMemory(mainScenePath);
         ConfigurationWriter sceneGeneratedConfig(static_cast<const char *>(sceneJsonData->fileBuff), sceneJsonData->fileSize);
         ConfigurationReader sceneConfig(static_cast<const char *>(sceneJsonData->fileBuff), sceneJsonData->fileSize);
 
-        // Создание "Полноэкранного треугольника" для использования в служебных сценах Postprocess, SSAO, и тд.
-        createBigTriangleMesh();
-
         if (!lightingTechnique.empty())
         {
             sceneGeneratedConfig.set(L"LightingTechnique", lightingTechnique);
         }
 
-        stl<ConfigurationWriter>::vector camerasPipelinesConfigs;
+        if (!sceneConfig.has(L"Cameras"))
+        {
+            LITE3D_THROW("Pipeline " << getName() << ": 'Cameras' section does not found");
+        }
+
+        // Создание "Полноэкранного треугольника" для использования в служебных сценах Postprocess, SSAO, и тд.
+        createBigTriangleMesh();
+
+        SceneGenerator mainSceneGenerator(getName() + "_MainScene");
         for (const auto &cameraConfig : sceneConfig.getObjects(L"Cameras"))
         {
-            if (mMainCamera != cameraConfig.getString(L"Name"))
-                continue;
-
             ConfigurationWriter cameraPipelineConfig;
-            cameraPipelineConfig.set(L"Name", cameraConfig.getString(L"Name"))
+            auto cameraName = cameraConfig.getString(L"Name");
+            if (mainCameraName.empty())
+            {
+                mainCameraName = mainSceneGenerator.getName() + "_" + cameraName;
+            }
+
+            cameraPipelineConfig
                 .set(L"Position", cameraConfig.getVec3(L"Position"))
                 .set(L"LookAt", cameraConfig.getVec3(L"LookAt"));
 
@@ -107,12 +112,15 @@ namespace lite3dpp_pipeline {
                 LITE3D_THROW("Pipeline " << getName() << ": Main camera has incorrect configuration");
             }
 
-            constructCameraPipeline(pipelineConfig, cameraPipelineConfig);
-            camerasPipelinesConfigs.emplace_back(cameraPipelineConfig);
+            mainSceneGenerator.addCamera(cameraName, cameraPipelineConfig);
+            constructShadowManager(pipelineConfig, cameraName, mainSceneGenerator);
+            constructCameraPipeline(pipelineConfig, cameraName, mainSceneGenerator);
+            break;
         }
 
-        sceneGeneratedConfig.set(L"Cameras", camerasPipelinesConfigs);
-        
+        /* Создание главной сцены в самом конце, все остальные обьекты должны быть созданы до этого момента */
+        createMainScene(mainSceneGenerator.getName(), mainSceneGenerator.generateFromExisting(sceneGeneratedConfig).write());
+        mMainCamera = getMain().getCamera(mainCameraName);
     }
 
     void PipelineBase::unloadImpl()
@@ -126,9 +134,76 @@ namespace lite3dpp_pipeline {
             ConfigurationWriter().set(L"Model", "BigTriangle").set(L"Dynamic", false).write());
     }
 
-    void PipelineBase::constructCameraPipeline(const ConfigurationReader &pipelineConfig, 
-        ConfigurationWriter &cameraPipelineConfig)
-    {
+    void PipelineBase::constructCameraPipeline(const ConfigurationReader &pipelineConfig, const String &cameraName,
+        SceneGenerator &sceneGenerator)
+    {}
 
+    void PipelineBase::constructCameraDepthPass(const ConfigurationReader &pipelineConfig, const String &cameraName,
+        SceneGenerator &sceneGenerator)
+    {
+        auto depthTextureName = getName() + "_" + cameraName + "_mainDepth.texture";
+        ConfigurationWriter depthTextureConfig;
+        depthTextureConfig.set(L"TextureType", "2D")
+            .set(L"Filtering", "None")
+            .set(L"Wrapping", "ClampToEdge")
+            .set(L"Compression", false)
+            .set(L"TextureFormat", "DEPTH");
+
+        mDepthTexture = getMain().getResourceManager()->queryResourceFromJson<TextureImage>(depthTextureName, 
+            depthTextureConfig.write());
+
+        ConfigurationWriter depthPassConfig;
+        depthPassConfig.set(L"BackgroundColor", kmVec4 { 0.0f, 0.0f, 0.0f, 1.0f })
+            .set(L"Priority", static_cast<int>(RenderPassPriority::MainDepth))
+            .set(L"CleanColorBuf", false)
+            .set(L"CleanDepthBuf", true)
+            .set(L"CleanStencilBuf", false)
+            .set(L"DepthAttachments", ConfigurationWriter()
+                .set(L"TextureName", depthTextureName));
+
+        mDepthPass = getMain().getResourceManager()->queryResourceFromJson<TextureRenderTarget>(
+            getName() + "_" + cameraName + "_DepthPass", depthPassConfig.write());
+
+        ConfigurationWriter depthPassGeneratedConfig;
+        depthPassGeneratedConfig
+            .set(L"Priority", static_cast<int>(RenderPassStagePriority::DepthBuildStage))
+            .set(L"TexturePass", static_cast<int>(TexturePassTypes::Depth))
+            .set(L"DepthTest", true)
+            .set(L"ColorOutput", false)
+            .set(L"DepthOutput", true)
+            .set(L"RenderBlend", false)
+            .set(L"RenderOpaque", true);
+
+        depthPassGeneratedConfig.set(L"RenderInstancing", pipelineConfig.getBool(L"Instancing", true));
+        if (pipelineConfig.getBool(L"OcclusionQuery", true))
+        {
+            depthPassGeneratedConfig.set(L"OcclusionQuery", true)
+                .set(L"SortOpaqueFromNear", true)
+                .set(L"RenderInstancing", false);
+        }
+
+        sceneGenerator.addRenderTarget(cameraName, mDepthPass->getName(), depthPassGeneratedConfig);
+    }
+
+    void PipelineBase::constructShadowManager(const ConfigurationReader &pipelineConfig, const String &cameraName,
+        SceneGenerator &sceneGenerator)
+    {
+        /* ShadowManager создается только один раз на пайплайн, не важно сколько камер  */
+        if (mShadowManager || !pipelineConfig.has(L"ShadowMaps"))
+        {
+            return;
+        }
+
+        mShadowManager = std::make_unique<ShadowManager>(getMain(), getName(), pipelineConfig);
+        sceneGenerator.addRenderTarget(cameraName, mShadowManager->getShadowPass().getName(), ConfigurationWriter()
+            .set(L"Priority", static_cast<int>(RenderPassStagePriority::ShadowBuildStage))
+            .set(L"TexturePass", static_cast<int>(TexturePassTypes::Shadow))
+            .set(L"DepthTest", true)
+            .set(L"ColorOutput", false)
+            .set(L"DepthOutput", true)
+            .set(L"RenderBlend", false)
+            .set(L"RenderOpaque", true)
+            .set(L"CustomVisibilityCheck", true)
+            .set(L"RenderInstancing", pipelineConfig.getBool(L"Instancing", true)));
     }
 }}

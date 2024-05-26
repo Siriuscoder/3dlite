@@ -1,11 +1,8 @@
 {
     "ShaderPackage": "sponza",
     "MainScenePath": "sponza:scenes/sponza.json",
-    "Cameras": [
-        {
-            "Main": "MyCamera"
-        }
-    ],
+    "Instancing": false,
+    "OcclusionQuery": true,
     "LightingTechnique": "UBO",
     "SkyBox": 
     {

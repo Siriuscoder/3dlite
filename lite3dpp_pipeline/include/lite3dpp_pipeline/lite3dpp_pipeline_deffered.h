@@ -28,5 +28,8 @@ namespace lite3dpp_pipeline {
 
         PipelineDeffered(const String &name, const String &path, Main *main);
 
+    protected:
+
+        Scene *mSSAO = nullptr;
     };
 }}

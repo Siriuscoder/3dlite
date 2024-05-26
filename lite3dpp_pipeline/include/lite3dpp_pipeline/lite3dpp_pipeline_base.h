@@ -20,6 +20,7 @@
 #include <lite3dpp_pipeline/lite3dpp_pipeline_common.h>
 #include <lite3dpp_pipeline/lite3dpp_bloom.h>
 #include <lite3dpp_pipeline/lite3dpp_shadow_manager.h>
+#include <lite3dpp_pipeline/lite3dpp_generator.h>
 
 namespace lite3dpp {
 namespace lite3dpp_pipeline {
@@ -32,16 +33,21 @@ namespace lite3dpp_pipeline {
         PipelineBase(const String &name, const String &path, Main *main);
 
         Scene &getMainScene();
-        Scene &getSkyBoxScene();
-        ShadowManager& getShadowManager();
+        Scene *getSkyBoxScene();
+        ShadowManager *getShadowManager();
+        Camera &getMainCamera();
 
     protected:
 
         virtual void createMainScene(const std::string_view& name, const std::string_view& json) = 0;
         virtual void loadFromConfigImpl(const ConfigurationReader &helper) override;
         virtual void unloadImpl() override;
-        virtual void constructCameraPipeline(const ConfigurationReader &pipelineConfig, 
-            ConfigurationWriter &cameraPipelineConfig);
+        virtual void constructShadowManager(const ConfigurationReader &pipelineConfig, const String &cameraName,
+            SceneGenerator &sceneGenerator);
+        virtual void constructCameraDepthPass(const ConfigurationReader &pipelineConfig, const String &cameraName,
+            SceneGenerator &sceneGenerator);
+        virtual void constructCameraPipeline(const ConfigurationReader &pipelineConfig, const String &cameraName,
+            SceneGenerator &sceneGenerator);
         
         void createBigTriangleMesh();
 
@@ -50,9 +56,10 @@ namespace lite3dpp_pipeline {
         Scene *mMainScene = nullptr;
         Scene *mSkyBox = nullptr;
         String mShaderPackage;
-        String mMainCamera;
         std::unique_ptr<ShadowManager> mShadowManager;
         std::unique_ptr<BloomEffect> mBloomEffect;
-        Scene *mSSAO = nullptr;
+        Camera *mMainCamera = nullptr;
+        RenderTarget *mDepthPass = nullptr;
+        Texture *mDepthTexture = nullptr;
     };
 }}

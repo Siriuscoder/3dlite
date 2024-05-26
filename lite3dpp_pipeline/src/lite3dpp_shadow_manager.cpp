@@ -270,10 +270,8 @@ namespace lite3dpp_pipeline {
         mShadowMap = mMain.getResourceManager()->queryResourceFromJson<TextureImage>(shadowMapName, shadowTextureConfig.write());
 
         ConfigurationWriter shadowRenderTargetConfig;
-        BigTriSceneGenerator stageGenerator(pipelineName);
         shadowRenderTargetConfig.set(L"Width", width)
-            .set(L"Width", height)
-            .set(L"Height", width)
+            .set(L"Height", height)
             .set(L"BackgroundColor", kmVec4 { 0.0f, 0.0f, 0.0f, 1.0f })
             .set(L"Priority", static_cast<int>(RenderPassPriority::ShadowMap))
             .set(L"CleanColorBuf", false)
@@ -295,7 +293,7 @@ namespace lite3dpp_pipeline {
         // Создание специальной сцены для предварительной частичной очистки теневых карт которые надо перерисовать в текущем кадре.
         BigTriSceneGenerator stageGenerator(pipelineName);
         stageGenerator.addRenderTarget("FullScreenView", mShadowPass->getName(), ConfigurationWriter()
-            .set(L"Priority", 0) // Самая первая в очереди на этапе построения теней
+            .set(L"Priority", static_cast<int>(RenderPassStagePriority::ShadowCleanStage))
             .set(L"TexturePass", static_cast<int>(TexturePassTypes::Shadow))
             .set(L"DepthTest", true)
             .set(L"ColorOutput", false)
