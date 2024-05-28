@@ -38,15 +38,17 @@ namespace lite3dpp_pipeline {
 
     protected:
 
-        virtual void createMainScene(const std::string_view& name, const std::string_view& json) = 0;
-        virtual void loadFromConfigImpl(const ConfigurationReader &helper) override;
-        virtual void unloadImpl() override;
+        void loadFromConfigImpl(const ConfigurationReader &helper) override;
+        void unloadImpl() override;
+
+        virtual void createMainScene(const String& name, const String &sceneConfig);
         virtual void constructShadowManager(const ConfigurationReader &pipelineConfig, const String &cameraName,
             SceneGenerator &sceneGenerator);
         virtual void constructCameraDepthPass(const ConfigurationReader &pipelineConfig, const String &cameraName,
             SceneGenerator &sceneGenerator);
         virtual void constructCameraPipeline(const ConfigurationReader &pipelineConfig, const String &cameraName,
             SceneGenerator &sceneGenerator);
+        virtual void constructBloomPass(const ConfigurationReader &pipelineConfig, const String &cameraName);
         
         void createBigTriangleMesh();
 

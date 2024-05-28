@@ -125,19 +125,19 @@ namespace lite3dpp_pipeline {
         stl<TextureImage*>::vector textureChainTmp;
         for (int i = 0; width > mMinWidth; width /= 2, height /= 2, ++i)
         {
-            ConfigurationWriter textureJson;
-            auto textureData = textureJson.set(L"TextureType", "2D")
+            ConfigurationWriter textureConfig;
+            textureConfig.set(L"TextureType", "2D")
                 .set(L"Width", width)
                 .set(L"Height", height)
                 .set(L"Filtering", "Linear")
                 .set(L"Wrapping", "ClampToEdge")
                 .set(L"Compression", false)
                 .set(L"TextureFormat", "RGB")
-                .set(L"InternalFormat", LITE3D_TEXTURE_INTERNAL_RGB32F).write();
+                .set(L"InternalFormat", LITE3D_TEXTURE_INTERNAL_RGB32F);
 
             textureChainTmp.emplace_back(
-                mMain.getResourceManager()->queryResource<TextureImage>(textureName + std::to_string(i) + ".texture", 
-                textureData.data(), textureData.size()));
+                mMain.getResourceManager()->queryResourceFromJson<TextureImage>(textureName + std::to_string(i) + ".texture", 
+                textureConfig.write()));
         }
 
         mMiddleTexture = textureChainTmp.back();
@@ -155,7 +155,7 @@ namespace lite3dpp_pipeline {
             mPipelineName + "_" + mCameraName + "_combined.texture");
 
         BigTriSceneGenerator bloomSceneConfig(mPipelineName + "_" + mCameraName + "_BloomStage");
-        mBloomRernderer = mMain.getResourceManager()->queryResource<Scene>(bloomSceneConfig.getName(), 
+        mBloomRernderer = mMain.getResourceManager()->queryResourceFromJson<Scene>(bloomSceneConfig.getName(), 
             bloomSceneConfig.generate().write());
         mBloomRernderer->addObserver(this);
 
@@ -194,7 +194,7 @@ namespace lite3dpp_pipeline {
                 });
             }
 
-            Material *material = mMain.getResourceManager()->queryResource<Material>(matName + std::to_string(i) + ".material",
+            Material *material = mMain.getResourceManager()->queryResourceFromJson<Material>(matName + std::to_string(i) + ".material",
                 bloomSampleMaterialConfig.write());
             /* Установим исходную текстуру для каждого bloom прохода, каждый проход берет результат предидущего */
             material->setSamplerParameter(1, "Source", i == 0 ? *combinedTexture : *mTextureChain[i-1]);

@@ -30,9 +30,22 @@ namespace lite3dpp_pipeline {
 
         void constructCameraPipeline(const ConfigurationReader &pipelineConfig, const String &cameraName,
             SceneGenerator &sceneGenerator) override;
+        void unloadImpl() override;
+
+    protected:
+
+        virtual void constructGBufferPass(const ConfigurationReader &pipelineConfig, const String &cameraName,
+            SceneGenerator &sceneGenerator);
+        virtual void constructCombinedPass(const ConfigurationReader &pipelineConfig, const String &cameraName,
+            SceneGenerator &sceneGenerator);
+        virtual void constructSSBOPass(const ConfigurationReader &pipelineConfig, const String &cameraName);
+        virtual void constructPostProcessPass(const ConfigurationReader &pipelineConfig, const String &cameraName,
+            SceneGenerator &sceneGenerator);
 
     protected:
 
         Scene *mSSAO = nullptr;
+        Texture *mGBufferTexture = nullptr;
+        RenderTarget *mGBufferPass = nullptr;
     };
 }}

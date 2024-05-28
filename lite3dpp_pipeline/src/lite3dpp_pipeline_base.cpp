@@ -148,6 +148,7 @@ namespace lite3dpp_pipeline {
         }
 
         mShadowManager.reset();
+        mBloomEffect.reset();
     }
 
     void PipelineBase::createBigTriangleMesh()
@@ -197,7 +198,7 @@ namespace lite3dpp_pipeline {
             .set(L"RenderOpaque", true);
 
         depthPassGeneratedConfig.set(L"RenderInstancing", pipelineConfig.getBool(L"Instancing", true));
-        if (pipelineConfig.getBool(L"OcclusionQuery", true))
+        if (pipelineConfig.getBool(L"OcclusionCulling", true))
         {
             depthPassGeneratedConfig.set(L"OcclusionQuery", true)
                 .set(L"SortOpaqueFromNear", true)
@@ -227,5 +228,18 @@ namespace lite3dpp_pipeline {
             .set(L"RenderOpaque", true)
             .set(L"CustomVisibilityCheck", true)
             .set(L"RenderInstancing", pipelineConfig.getBool(L"Instancing", true)));
+    }
+    
+    void PipelineBase::constructBloomPass(const ConfigurationReader &pipelineConfig, const String &cameraName)
+    {
+        if (pipelineConfig.has(L"BLOOM"))
+        {
+            mBloomEffect = std::make_unique<BloomEffect>(getMain(), getName(), cameraName, pipelineConfig);
+        }
+    }
+
+    void PipelineBase::createMainScene(const String& name, const String &sceneConfig)
+    {
+        mMainScene = getMain().getResourceManager()->queryResourceFromJson<Scene>(name, sceneConfig);
     }
 }}

@@ -29,6 +29,96 @@ namespace lite3dpp_pipeline {
     void PipelineDeffered::constructCameraPipeline(const ConfigurationReader &pipelineConfig, const String &cameraName,
         SceneGenerator &sceneGenerator)
     {
-        
+        constructGBufferPass(pipelineConfig, cameraName, sceneGenerator);
+        constructBloomPass(pipelineConfig, cameraName);
+        constructSSBOPass(pipelineConfig, cameraName);
+        constructCombinedPass(pipelineConfig, cameraName, sceneGenerator);
+        constructPostProcessPass(pipelineConfig, cameraName, sceneGenerator);
+    }
+
+    void PipelineDeffered::unloadImpl()
+    {
+        PipelineBase::unloadImpl();
+
+        if (mGBufferPass)
+        {
+            getMain().getResourceManager()->releaseResource(mGBufferPass->getName());
+        }
+
+        if (mGBufferTexture)
+        {
+            getMain().getResourceManager()->releaseResource(mGBufferTexture->getName());
+        }
+    }
+
+    void PipelineDeffered::constructGBufferPass(const ConfigurationReader &pipelineConfig, const String &cameraName,
+        SceneGenerator &sceneGenerator)
+    {
+        // Создание GeometryBuffer
+        // Полноэкранная текстура состоязая из 4х слоев для записи данных о геометрии в каждой точке экрана
+        ConfigurationWriter gBufferTextureConfig;
+        gBufferTextureConfig.set(L"TextureType", "2D_ARRAY")
+            .set(L"Filtering", "None")
+            .set(L"Wrapping", "ClampToEdge")
+            .set(L"Compression", false)
+            .set(L"TextureFormat", "RGBA")
+            .set(L"InternalFormat", LITE3D_TEXTURE_INTERNAL_RGBA32F)
+            .set(L"Depth", 4);
+
+        mGBufferTexture = getMain().getResourceManager()->queryResourceFromJson<TextureImage>(
+            getName() + "_" + cameraName + "_geometry_data.texture", gBufferTextureConfig.write());
+
+        ConfigurationWriter gBufferTargetConfig;
+        stl<ConfigurationWriter>::vector gBufferColorAttachmentsConfig;
+        gBufferTargetConfig.set(L"BackgroundColor", kmVec4 { 0.0f, 0.0f, 0.0f, 1.0f })
+            .set(L"Priority", static_cast<int>(RenderPassPriority::GBuffer))
+            .set(L"CleanColorBuf", true)
+            .set(L"CleanDepthBuf", false)
+            .set(L"CleanStencilBuf", false);
+
+        for (int i = 0; i < 4; ++i)
+        {
+            gBufferColorAttachmentsConfig.emplace_back(ConfigurationWriter()
+                .set(L"TextureName", mGBufferTexture->getName())
+                .set(L"Layer", i));
+        }
+
+        SDL_assert(mDepthTexture);
+        gBufferTargetConfig.set(L"ColorAttachments", ConfigurationWriter()
+            .set(L"Attachments", gBufferColorAttachmentsConfig))
+            .set(L"DepthAttachments", ConfigurationWriter()
+            .set(L"TextureName", mDepthTexture->getName()));
+
+        mGBufferPass = getMain().getResourceManager()->queryResourceFromJson<TextureRenderTarget>(
+            getName() + "_" + cameraName + "_GBufferPass",
+            gBufferTargetConfig.write());
+
+        sceneGenerator.addRenderTarget(cameraName, mGBufferPass->getName(), ConfigurationWriter()
+            .set(L"Priority", static_cast<int>(RenderPassStagePriority::GBufferBuildStage))
+            .set(L"TexturePass", static_cast<int>(TexturePassTypes::RenderPass))
+            .set(L"DepthTest", true)
+            .set(L"ColorOutput", true)
+            .set(L"DepthOutput", false)
+            .set(L"RenderBlend", false)
+            .set(L"RenderOpaque", true)
+            .set(L"OcclusionCulling", pipelineConfig.getBool(L"OcclusionCulling", true))
+            .set(L"RenderInstancing", pipelineConfig.getBool(L"Instancing", true)));
+    }
+
+    void PipelineDeffered::constructCombinedPass(const ConfigurationReader &pipelineConfig, const String &cameraName,
+        SceneGenerator &sceneGenerator)
+    {
+
+    }
+
+    void PipelineDeffered::constructSSBOPass(const ConfigurationReader &pipelineConfig, const String &cameraName)
+    {
+
+    }
+
+    void PipelineDeffered::constructPostProcessPass(const ConfigurationReader &pipelineConfig, const String &cameraName,
+        SceneGenerator &sceneGenerator)
+    {
+
     }
 }}

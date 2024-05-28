@@ -23,24 +23,25 @@ namespace lite3dpp {
 namespace lite3dpp_pipeline {
 
     template<class PipelineImpl, class SceneImpl>
-    class Pipeline : public PipelineImpl
+    class CustomScenePipeline : public PipelineImpl
     {
     public:
 
-        Pipeline(const String &name, const String &path, Main *main) : 
-            PipelineImpl(name, path, main)
+        using SceneType = typename SceneImpl;
+        using PipelineType = typename PipelineImpl;
+
+        CustomScenePipeline(const String &name, const String &path, Main *main) : 
+            SceneType(name, path, main)
         {}
 
-        void createMainScene(const std::string_view& name, const std::string_view& json) override
+        void createMainScene(const std::String& name, const std::String& sceneConfig) override
         {
-            mMainScene = getMain().getResourceManager()->queryResource<SceneImpl>(name, json.data(), json.size());
+            mMainScene = getMain().getResourceManager()->queryResourceFromJson<SceneType>(name, sceneConfig);
         }
 
         SceneImpl &getMainScene()
         {
-            return static_cast<SceneImpl&>(PipelineImpl::getMainScene());
+            return static_cast<SceneType&>(PipelineType::getMainScene());
         }
     };
-
-    using PipelineDefferedDefault = Pipeline<PipelineDeffered, Scene>;
 }}

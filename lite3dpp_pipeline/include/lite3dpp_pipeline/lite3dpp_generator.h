@@ -41,6 +41,7 @@ namespace lite3dpp_pipeline {
         DepthBuildStage = 0,
         BloomBuildStage = 0,
         LightComputeStage = 0,
+        GBufferBuildStage = 0,
         BlendDecalStage = 1
     };
 
