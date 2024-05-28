@@ -18,6 +18,7 @@
 #pragma once
 
 #include <lite3dpp/lite3dpp_main.h>
+#include <lite3dpp_pipeline/lite3dpp_pipeline_common.h>
 
 namespace lite3dpp {
 namespace lite3dpp_pipeline {
@@ -25,14 +26,22 @@ namespace lite3dpp_pipeline {
     enum class RenderPassPriority
     {
         ShadowMap = 1,
-        MainDepth = 2
+        MainDepth = 2,
+        GBuffer = 3,
+        Combine = 4,
+        SSAO = 5,
+        BLOOM = 6,
+        PostProcess = 7
     };
 
     enum class RenderPassStagePriority
     {
         ShadowCleanStage = 0,
         ShadowBuildStage = 1,
-        DepthBuildStage = 0
+        DepthBuildStage = 0,
+        BloomBuildStage = 0,
+        LightComputeStage = 0,
+        BlendDecalStage = 1
     };
 
     enum class TexturePassTypes
@@ -42,7 +51,7 @@ namespace lite3dpp_pipeline {
         Shadow = 3
     };
 
-    class SceneGenerator 
+    class LITE3DPP_PIPELINE_EXPORT SceneGenerator 
     {
     public:
 
@@ -67,7 +76,7 @@ namespace lite3dpp_pipeline {
         stl<String, stl<ConfigurationWriter>::vector>::map mRenderTargets;
     };
 
-    class BigTriSceneGenerator : public SceneGenerator
+    class LITE3DPP_PIPELINE_EXPORT BigTriSceneGenerator : public SceneGenerator
     {
     public:
 
@@ -78,7 +87,7 @@ namespace lite3dpp_pipeline {
         ConfigurationWriter& generateFromExisting(ConfigurationWriter& sceneConfig) override;
     };
 
-    class BigTriObjectGenerator
+    class LITE3DPP_PIPELINE_EXPORT BigTriObjectGenerator
     {
     public:
     

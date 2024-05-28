@@ -245,7 +245,7 @@ namespace lite3dpp
         Texture::unloadImpl();
     }
 
-    void TextureImage::getPixels(int8_t level, PixelsData &pixels)
+    void TextureImage::getPixels(int8_t level, PixelsData &pixels) const
     {
         size_t size;
         if(!lite3d_texture_unit_get_level_size(&mTexture, level, 0, &size))
@@ -256,7 +256,7 @@ namespace lite3dpp
             LITE3D_THROW("Could`n get level " << level << " for texture ");
     }
 
-    void TextureImage::getPixels(int8_t level, void *pixels)
+    void TextureImage::getPixels(int8_t level, void *pixels) const
     {
         if(!lite3d_texture_unit_get_pixels(&mTexture, level, 0, pixels))
             LITE3D_THROW("Could`n get level " << level << " for texture ");

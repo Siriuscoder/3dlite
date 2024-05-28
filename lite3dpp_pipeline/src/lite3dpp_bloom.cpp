@@ -19,26 +19,68 @@
 
 #include <algorithm>
 #include <SDL_assert.h>
+#include <lite3dpp_pipeline/lite3dpp_generator.h>
 
 namespace lite3dpp {
 namespace lite3dpp_pipeline {
 
-    BloomEffect::BloomEffect(Main& main) : 
-        mMain(main)
+    BloomEffect::BloomEffect(Main& main, const String &pipelineName, const String &cameraName, 
+        const ConfigurationReader &pipelineConfig) : 
+        mMain(main),
+        mPipelineName(pipelineName),
+        mCameraName(cameraName)
     {
         mMinWidth = mMain.window()->width() / 40;
+        mBloomRadius = pipelineConfig.getObject(L"BLOOM").getDouble(L"BloomRadius", mBloomRadius);
+        mShaderPackage = pipelineConfig.getString(L"ShaderPackage");
+        init();
     }
 
     BloomEffect::~BloomEffect()
     {
-        
+        mMain.getResourceManager()->releaseResource(mBloomRernderer->getName());
+
+        for (auto material : mMaterialChain)
+        {
+            mMain.getResourceManager()->releaseResource(material->getName());
+        }
+
+        for (auto texture : mTextureChain)
+        {
+            mMain.getResourceManager()->releaseResource(texture->getName());
+        }
+
+        mMain.getResourceManager()->releaseResource(mBloomRT->getName());
+    }
+
+    TextureRenderTarget &BloomEffect::getRenderTarget()
+    {
+        SDL_assert(mBloomRT);
+        return *mBloomRT;
+    }
+
+    Texture &BloomEffect::getLastTexture()
+    {
+        SDL_assert(mTextureChain.size() > 0);
+        return *mTextureChain.back();
     }
 
     void BloomEffect::init()
     {
+        ConfigurationWriter bloomRenderTargetConfig;
+        bloomRenderTargetConfig.set(L"Scale", 2.0f) // Первый слой блума в 2 раза меньше чем размер окна.
+            .set(L"BackgroundColor", kmVec4 { 0.0f, 0.0f, 0.0f, 1.0f })
+            .set(L"Priority", static_cast<int>(RenderPassPriority::BLOOM))
+            .set(L"CleanColorBuf", true)
+            .set(L"CleanDepthBuf", false)
+            .set(L"CleanStencilBuf", false);
+
+        mBloomRT = mMain.getResourceManager()->queryResourceFromJson<TextureRenderTarget>(
+            mPipelineName + "_" + mCameraName + "_BloomPass",
+            bloomRenderTargetConfig.write());
+
         initTextureChain();
         initBoomScene();
-        mBloomRT = mMain.getResourceManager()->queryResource<TextureRenderTarget>("BloomComputeStep");
     }
 
     bool BloomEffect::beginDrawBatch(Scene *scene, SceneNode *node, lite3d_mesh_chunk *meshChunk, Material *material)
@@ -75,12 +117,12 @@ namespace lite3dpp_pipeline {
     {
         auto width = mMain.window()->width() / 2;
         auto height = mMain.window()->height() / 2;
-        String textureName("bloom_slice_");
+        String textureName = mPipelineName + "_" + mCameraName + "_bloom_slice_";
 
         // Аллоцируем цепочку текстур под bloom, каждая в 2 раза меньше чем предидущая. 
         // Фильтрация линейная, это нам поможет более качественно сделать эффект сглаживания света
         // Альфа канал не нужен, но текстура должна быть float формата так как блумить будем HDR изображение  
-        stl<Texture*>::vector textureChainTmp;
+        stl<TextureImage*>::vector textureChainTmp;
         for (int i = 0; width > mMinWidth; width /= 2, height /= 2, ++i)
         {
             ConfigurationWriter textureJson;
@@ -107,32 +149,79 @@ namespace lite3dpp_pipeline {
 
     void BloomEffect::initBoomScene()
     {
-        mBloomRernderer = mMain.getResourceManager()->queryResource<Scene>("BloomEffectRenderer", "sponza:scenes/bloom.json");
-        mBloomRernderer->addObserver(this);
-
-        String matName("bloom_slice_");
+        String matName = mPipelineName + "_" + mCameraName + "_bloom_slice_";
         // Получим финишную HDR текстру сцены после прогона освещения, будем ее блумить
-        Texture *combinedLightTexture = mMain.getResourceManager()->queryResource<TextureImage>("combined.texture");
+        Texture *combinedTexture = mMain.getResourceManager()->queryResource<TextureImage>(
+            mPipelineName + "_" + mCameraName + "_combined.texture");
+
+        BigTriSceneGenerator bloomSceneConfig(mPipelineName + "_" + mCameraName + "_BloomStage");
+        mBloomRernderer = mMain.getResourceManager()->queryResource<Scene>(bloomSceneConfig.getName(), 
+            bloomSceneConfig.generate().write());
+        mBloomRernderer->addObserver(this);
 
         for (size_t i = 0; i < mTextureChain.size(); ++i)
         {
-            /* Загрузим для каждого слоя свой полноэкранный треугольник (используем уже готовый postprocess, материал заменим потом) */
-            SceneObject *bloomSliceObj = mBloomRernderer->addObject(matName + std::to_string(i), "sponza:objects/Postprocess.json", NULL);
-            /* Загрузим для каждого слоя материал, downsample а потом upsample */
-            Material *material = mMain.getResourceManager()->queryResource<Material>(matName + std::to_string(i) + ".material", 
-                (i <= mTextureChain.size() / 2) ? "sponza:materials/bloom_downsample.json" : "sponza:materials/bloom_upsample.json");
+            /* Загрузим для каждого слоя шейдер, downsample а потом upsample */
+            ConfigurationWriter bloomSampleMaterialConfig;
+            if (i <= mTextureChain.size() / 2)
+            {
+                bloomSampleMaterialConfig.set(L"Passes", stl<ConfigurationWriter>::vector {
+                    ConfigurationWriter().set(L"Pass", static_cast<int>(TexturePassTypes::RenderPass))
+                        .set(L"Program", ConfigurationWriter()
+                            .set(L"Name", "BloomDownSample.program")
+                            .set(L"Path", mShaderPackage + ":shaders/json/bloom_downsample.json"))
+                        .set(L"Uniforms", stl<ConfigurationWriter>::vector {
+                            ConfigurationWriter()
+                                .set(L"Name", "screenMatrix")
+                        })
+                });
+            }
+            else
+            {
+                bloomSampleMaterialConfig.set(L"Passes", stl<ConfigurationWriter>::vector {
+                    ConfigurationWriter().set(L"Pass", static_cast<int>(TexturePassTypes::RenderPass))
+                        .set(L"Program", ConfigurationWriter()
+                            .set(L"Name", "BloomUpSample.program")
+                            .set(L"Path", mShaderPackage + ":shaders/json/bloom_upsample.json"))
+                        .set(L"Uniforms", stl<ConfigurationWriter>::vector {
+                            ConfigurationWriter()
+                                .set(L"Name", "screenMatrix"),
+                            ConfigurationWriter()
+                                .set(L"Name", "BloomRadius")
+                                .set(L"Type", "float")
+                                .set(L"Value", mBloomRadius)
+                        })
+                });
+            }
 
+            Material *material = mMain.getResourceManager()->queryResource<Material>(matName + std::to_string(i) + ".material",
+                bloomSampleMaterialConfig.write());
             /* Установим исходную текстуру для каждого bloom прохода, каждый проход берет результат предидущего */
-            material->setSamplerParameter(1, "Source", i == 0 ? *combinedLightTexture : *mTextureChain[i-1]);
+            material->setSamplerParameter(1, "Source", i == 0 ? *combinedTexture : *mTextureChain[i-1]);
 
-            /* Выставим параметры полноэкранного треугольника и подменим материал */
-            MeshSceneNode *bigTriangleMeshNode = static_cast<MeshSceneNode *>(bloomSliceObj->getRoot());
-            bigTriangleMeshNode->frustumTest(false);
-            bigTriangleMeshNode->replaceMaterial(0, material);
-            mMaterialChain.emplace_back(material);
-
+            /* Загрузим для каждого слоя свой полноэкранный треугольник с только что созданным шейдером */
+            BigTriObjectGenerator triObject(material->getName());
+            SceneObject *bloomSliceObj = mBloomRernderer->addObject(matName + std::to_string(i), triObject.generate());
             /* Спозиционируем треугольники чтобы они шли один за одним и рендерились в строгом порядке */
-            bigTriangleMeshNode->setPosition(kmVec3 { 0.0f, 0.0f, i * (0.5f / mTextureChain.size()) });
+            bloomSliceObj->setPosition(kmVec3 { 0.0f, 0.0f, i * (0.5f / mTextureChain.size()) });
+            mMaterialChain.emplace_back(material);
         }
+    }
+
+    kmVec3 BloomEffect::getLumaAverage() const
+    {
+        SDL_assert(mMiddleTexture);
+        mMiddleTexture->getPixels(0, mBloomPixels);
+
+        auto it = mBloomPixels.cbegin();
+        kmVec3 lumaAverage = KM_VEC3_ZERO;
+        for (; it != mBloomPixels.cend(); it += sizeof(kmVec3))
+        {
+            const kmVec3 *texel = reinterpret_cast<const kmVec3 *>(&(*it));
+            kmVec3Add(&lumaAverage, &lumaAverage, texel);
+        }
+
+        kmVec3Scale(&lumaAverage, &lumaAverage, 1.0f / (mBloomPixels.size() / (3 * sizeof(float))));
+        return lumaAverage;
     }
 }}

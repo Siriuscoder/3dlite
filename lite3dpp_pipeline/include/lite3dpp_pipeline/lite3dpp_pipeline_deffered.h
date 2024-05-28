@@ -28,6 +28,9 @@ namespace lite3dpp_pipeline {
 
         PipelineDeffered(const String &name, const String &path, Main *main);
 
+        void constructCameraPipeline(const ConfigurationReader &pipelineConfig, const String &cameraName,
+            SceneGenerator &sceneGenerator) override;
+
     protected:
 
         Scene *mSSAO = nullptr;

@@ -26,4 +26,9 @@ namespace lite3dpp_pipeline {
         PipelineBase(name, path, main)
     {}
 
+    void PipelineDeffered::constructCameraPipeline(const ConfigurationReader &pipelineConfig, const String &cameraName,
+        SceneGenerator &sceneGenerator)
+    {
+        
+    }
 }}

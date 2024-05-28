@@ -84,7 +84,10 @@ namespace lite3dpp
         }
 
         /* just insert resource */
-        mResources.emplace(name, resource);
+        if (!mResources.emplace(name, resource).second)
+        {
+            LITE3D_THROW("Resource '" << name << "' already exists");
+        }
     }
 
     void ResourceManager::releaseAllResources()

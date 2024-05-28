@@ -17,7 +17,6 @@
  *******************************************************************************/
 #pragma once
 
-#include <lite3dpp_pipeline/lite3dpp_pipeline_common.h>
 #include <lite3dpp_pipeline/lite3dpp_bloom.h>
 #include <lite3dpp_pipeline/lite3dpp_shadow_manager.h>
 #include <lite3dpp_pipeline/lite3dpp_generator.h>

@@ -18,34 +18,46 @@
 #pragma once 
 
 #include <lite3dpp/lite3dpp_main.h>
+#include <lite3dpp_pipeline/lite3dpp_pipeline_common.h>
 
 namespace lite3dpp {
 namespace lite3dpp_pipeline {
 
-class BloomEffect : public SceneObserver
+class LITE3DPP_PIPELINE_EXPORT BloomEffect : public SceneObserver, public Noncopiable
 {
 public:
 
-    BloomEffect(Main& main);
+    BloomEffect(Main& main, const String &pipelineName, const String &cameraName, const ConfigurationReader &pipelineConfig);
     ~BloomEffect();
-    void init();
+
+    TextureRenderTarget &getRenderTarget();
+    Texture &getLastTexture();
+    kmVec3 getLumaAverage() const;
 
 private:
 
     bool beginDrawBatch(Scene *scene, SceneNode *node, lite3d_mesh_chunk *meshChunk, Material *material) override;
     bool beginSceneRender(Scene *scene, Camera *camera) override;
 
+    void init();
     void initTextureChain();
     void initBoomScene();
 
+private:
+
     Main& mMain;
+    String mPipelineName;
+    String mCameraName;
+    String mShaderPackage;
     int32_t mMinWidth = 1;
     Scene* mBloomRernderer = nullptr;
     TextureRenderTarget* mBloomRT = nullptr;
     stl<Texture*>::vector mTextureChain;
     stl<Material*>::vector mMaterialChain;
-    Texture *mMiddleTexture = nullptr;
+    TextureImage *mMiddleTexture = nullptr;
     int mChainState = 0;
+    float mBloomRadius = 0.005;
+    mutable PixelsData mBloomPixels;
 };
 
 }}

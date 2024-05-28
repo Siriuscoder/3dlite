@@ -282,6 +282,7 @@ namespace lite3dpp_pipeline {
 
         mShadowPass = mMain.getResourceManager()->queryResourceFromJson<TextureRenderTarget>(pipelineName + "_ShadowPass",
             shadowRenderTargetConfig.write());
+        mShadowPass->addObserver(this);
     }
 
     void ShadowManager::createShadowRenderPipeline(const String& pipelineName, const String& shaderPackage, int width, int height, 

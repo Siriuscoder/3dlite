@@ -114,6 +114,7 @@ namespace lite3dpp_pipeline {
 
             mainSceneGenerator.addCamera(cameraName, cameraPipelineConfig);
             constructShadowManager(pipelineConfig, cameraName, mainSceneGenerator);
+            constructCameraDepthPass(pipelineConfig, cameraName, mainSceneGenerator);
             constructCameraPipeline(pipelineConfig, cameraName, mainSceneGenerator);
             break;
         }
@@ -121,11 +122,32 @@ namespace lite3dpp_pipeline {
         /* Создание главной сцены в самом конце, все остальные обьекты должны быть созданы до этого момента */
         createMainScene(mainSceneGenerator.getName(), mainSceneGenerator.generateFromExisting(sceneGeneratedConfig).write());
         mMainCamera = getMain().getCamera(mainCameraName);
+
+        if (mShadowManager)
+        {
+            SDL_assert(mMainScene);
+            mMainScene->addObserver(mShadowManager.get());
+        }
     }
 
     void PipelineBase::unloadImpl()
     {
+        if (mMainScene)
+        {
+            getMain().getResourceManager()->releaseResource(mMainScene->getName());
+        }
 
+        if (mDepthPass)
+        {
+            getMain().getResourceManager()->releaseResource(mDepthPass->getName());
+        }
+
+        if (mDepthTexture)
+        {
+            getMain().getResourceManager()->releaseResource(mDepthTexture->getName());
+        }
+
+        mShadowManager.reset();
     }
 
     void PipelineBase::createBigTriangleMesh()

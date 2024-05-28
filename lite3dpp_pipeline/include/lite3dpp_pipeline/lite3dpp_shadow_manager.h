@@ -18,11 +18,12 @@
 #pragma once 
 
 #include <lite3dpp/lite3dpp_main.h>
+#include <lite3dpp_pipeline/lite3dpp_pipeline_common.h>
 
 namespace lite3dpp {
 namespace lite3dpp_pipeline {
 
-class ShadowManager : public RenderTargetObserver, public SceneObserver
+class LITE3DPP_PIPELINE_EXPORT ShadowManager : public RenderTargetObserver, public SceneObserver, public Noncopiable
 {
 public:
 
@@ -30,12 +31,13 @@ public:
 
 public:
 
-    class ShadowCaster 
+    class LITE3DPP_PIPELINE_EXPORT ShadowCaster 
     {
     public:
         
         ShadowCaster(Main& main, const String& name, LightSceneNode* node, 
             const lite3d_camera::projectionParamsStruct &params);
+
         kmMat4 getMatrix();
 
         inline LightSceneNode* getNode()
@@ -70,7 +72,7 @@ public:
         bool mInvalideted = true;
     };
 
-    class DynamicShadowReceiver
+    class LITE3DPP_PIPELINE_EXPORT DynamicShadowReceiver
     {
     public:
     
