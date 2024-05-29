@@ -28,8 +28,8 @@ namespace lite3dpp_pipeline {
         ShadowMap = 1,
         MainDepth = 2,
         GBuffer = 3,
-        Combine = 4,
-        SSAO = 5,
+        SSAO = 4,
+        Combine = 5,
         BLOOM = 6,
         PostProcess = 7
     };

@@ -30,9 +30,9 @@ namespace lite3dpp_pipeline {
         SceneGenerator &sceneGenerator)
     {
         constructGBufferPass(pipelineConfig, cameraName, sceneGenerator);
-        constructBloomPass(pipelineConfig, cameraName);
         constructSSBOPass(pipelineConfig, cameraName);
         constructCombinedPass(pipelineConfig, cameraName, sceneGenerator);
+        constructBloomPass(pipelineConfig, cameraName);
         constructPostProcessPass(pipelineConfig, cameraName, sceneGenerator);
     }
 
@@ -45,9 +45,19 @@ namespace lite3dpp_pipeline {
             getMain().getResourceManager()->releaseResource(mGBufferPass->getName());
         }
 
+        if (mCombinePass)
+        {
+            getMain().getResourceManager()->releaseResource(mCombinePass->getName());
+        }
+
         if (mGBufferTexture)
         {
             getMain().getResourceManager()->releaseResource(mGBufferTexture->getName());
+        }
+
+        if (mCombinedTexture)
+        {
+            getMain().getResourceManager()->releaseResource(mCombinedTexture->getName());
         }
     }
 
@@ -90,8 +100,7 @@ namespace lite3dpp_pipeline {
             .set(L"TextureName", mDepthTexture->getName()));
 
         mGBufferPass = getMain().getResourceManager()->queryResourceFromJson<TextureRenderTarget>(
-            getName() + "_" + cameraName + "_GBufferPass",
-            gBufferTargetConfig.write());
+            getName() + "_" + cameraName + "_GBufferPass", gBufferTargetConfig.write());
 
         sceneGenerator.addRenderTarget(cameraName, mGBufferPass->getName(), ConfigurationWriter()
             .set(L"Priority", static_cast<int>(RenderPassStagePriority::GBufferBuildStage))
@@ -108,7 +117,45 @@ namespace lite3dpp_pipeline {
     void PipelineDeffered::constructCombinedPass(const ConfigurationReader &pipelineConfig, const String &cameraName,
         SceneGenerator &sceneGenerator)
     {
+        // Создание Combined текстуры
+        // Содержит промежуточные результаты HDR рендера 
+        ConfigurationWriter combinedTextureConfig;
+        combinedTextureConfig.set(L"TextureType", "2D")
+            .set(L"Filtering", "None")
+            .set(L"Wrapping", "ClampToEdge")
+            .set(L"Compression", false)
+            .set(L"TextureFormat", "RGBA")
+            .set(L"InternalFormat", "RGBA32F");
 
+        mCombinedTexture = getMain().getResourceManager()->queryResourceFromJson<TextureImage>(
+            getName() + "_" + cameraName + "_combined.texture", combinedTextureConfig.write());
+
+        SDL_assert(mDepthTexture);
+        ConfigurationWriter combinedTargetConfig;
+        combinedTargetConfig.set(L"BackgroundColor", kmVec4 { 0.0f, 0.0f, 0.0f, 1.0f })
+            .set(L"Priority", static_cast<int>(RenderPassPriority::Combine))
+            .set(L"CleanColorBuf", true)
+            .set(L"CleanDepthBuf", false)
+            .set(L"CleanStencilBuf", false)
+            .set(L"ColorAttachments", ConfigurationWriter()
+                .set(L"Attachments", stl<ConfigurationWriter>::vector {
+                    ConfigurationWriter().set(L"TextureName", mCombinedTexture->getName())
+                }))
+            .set(L"DepthAttachments", ConfigurationWriter()
+                .set(L"TextureName", mDepthTexture->getName()));
+
+        mCombinePass = getMain().getResourceManager()->queryResourceFromJson<TextureRenderTarget>(
+            getName() + "_" + cameraName + "_CombinePass", combinedTargetConfig.write());
+
+        sceneGenerator.addRenderTarget(cameraName, mGBufferPass->getName(), ConfigurationWriter()
+            .set(L"Priority", static_cast<int>(RenderPassStagePriority::BlendDecalStage))
+            .set(L"TexturePass", static_cast<int>(TexturePassTypes::RenderPass))
+            .set(L"DepthTest", true)
+            .set(L"ColorOutput", true)
+            .set(L"DepthOutput", true)
+            .set(L"RenderBlend", true)
+            .set(L"RenderOpaque", false)
+            .set(L"RenderInstancing", pipelineConfig.getBool(L"Instancing", true)));
     }
 
     void PipelineDeffered::constructSSBOPass(const ConfigurationReader &pipelineConfig, const String &cameraName)

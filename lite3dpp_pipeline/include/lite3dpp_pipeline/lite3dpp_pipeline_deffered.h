@@ -46,6 +46,8 @@ namespace lite3dpp_pipeline {
 
         Scene *mSSAO = nullptr;
         Texture *mGBufferTexture = nullptr;
+        Texture *mCombinedTexture = nullptr;
         RenderTarget *mGBufferPass = nullptr;
+        RenderTarget *mCombinePass = nullptr;
     };
 }}
