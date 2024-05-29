@@ -62,7 +62,7 @@ namespace lite3dpp_pipeline {
             .set(L"Wrapping", "ClampToEdge")
             .set(L"Compression", false)
             .set(L"TextureFormat", "RGBA")
-            .set(L"InternalFormat", LITE3D_TEXTURE_INTERNAL_RGBA32F)
+            .set(L"InternalFormat", "RGBA32F")
             .set(L"Depth", 4);
 
         mGBufferTexture = getMain().getResourceManager()->queryResourceFromJson<TextureImage>(

@@ -94,7 +94,7 @@ namespace lite3dpp
         static uint32_t textureImageFormat(const String &s);
         static uint32_t textureFilterType(const String &s);
         static uint16_t textureFormat(const String &s);
-        static uint16_t textureInternalFormat(int iformat);
+        static uint16_t textureInternalFormat(const String& s);
 
     protected:
 

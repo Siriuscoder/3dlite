@@ -98,7 +98,7 @@ private:
                 .set(L"Wrapping", "ClampToEdge")
                 .set(L"Compression", false)
                 .set(L"TextureFormat", "RGB")
-                .set(L"InternalFormat", LITE3D_TEXTURE_INTERNAL_RGB32F).write();
+                .set(L"InternalFormat", "RGB32F").write();
 
             textureChainTmp.emplace_back(
                 mMain.getResourceManager()->queryResource<TextureImage>(textureName + std::to_string(i) + ".texture", 

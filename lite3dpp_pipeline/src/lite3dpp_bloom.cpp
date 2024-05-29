@@ -133,7 +133,7 @@ namespace lite3dpp_pipeline {
                 .set(L"Wrapping", "ClampToEdge")
                 .set(L"Compression", false)
                 .set(L"TextureFormat", "RGB")
-                .set(L"InternalFormat", LITE3D_TEXTURE_INTERNAL_RGB32F);
+                .set(L"InternalFormat", "RGB32F");
 
             textureChainTmp.emplace_back(
                 mMain.getResourceManager()->queryResourceFromJson<TextureImage>(textureName + std::to_string(i) + ".texture", 

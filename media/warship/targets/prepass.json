@@ -13,15 +13,15 @@
         [
             {
                 "TextureName": "fragmentWorldCoords.texture",
-                "TexturePath": "warship:textures/json/rgba32f.json"
+                "TexturePath": "samples:textures/json/rgba32f.json"
             },
             {
                 "TextureName": "normalsWorld.texture",
-                "TexturePath": "warship:textures/json/rgba32f.json"
+                "TexturePath": "samples:textures/json/rgba32f.json"
             },
             {
                 "TextureName": "diffuseMap.texture",
-                "TexturePath": "warship:textures/json/rgba32f.json"
+                "TexturePath": "samples:textures/json/rgba32f.json"
             }
         ]
     },
@@ -29,7 +29,7 @@
     "DepthAttachments":
     {
         "TextureName": "prepassDepth.texture",
-        "TexturePath": "warship:textures/json/depth.json"
+        "TexturePath": "samples:textures/json/depth.json"
     }
 }
 
