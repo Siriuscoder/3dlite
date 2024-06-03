@@ -293,7 +293,7 @@ namespace lite3dpp_pipeline {
 
         // Создание специальной сцены для предварительной частичной очистки теневых карт которые надо перерисовать в текущем кадре.
         BigTriSceneGenerator stageGenerator(pipelineName);
-        stageGenerator.addRenderTarget("FullScreenView", mShadowPass->getName(), ConfigurationWriter()
+        stageGenerator.addRenderTarget("ShadowCleanView", mShadowPass->getName(), ConfigurationWriter()
             .set(L"Priority", static_cast<int>(RenderPassStagePriority::ShadowCleanStage))
             .set(L"TexturePass", static_cast<int>(TexturePassTypes::Shadow))
             .set(L"DepthTest", true)

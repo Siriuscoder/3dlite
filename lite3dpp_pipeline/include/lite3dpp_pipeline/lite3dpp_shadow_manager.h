@@ -108,6 +108,21 @@ public:
         return *mShadowPass;
     }
 
+    inline Texture* getShadowMapTexture()
+    {
+        return mShadowMap;
+    }
+
+    inline VBOResource* getShadowMatrixBuffer()
+    {
+        return mShadowMatrixBuffer;
+    }
+
+    inline VBOResource* getShadowIndexBuffer()
+    {
+        return mShadowIndexBuffer;
+    }
+
 protected:
 
     bool beginUpdate(RenderTarget *rt) override;

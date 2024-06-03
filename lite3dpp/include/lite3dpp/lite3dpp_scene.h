@@ -71,6 +71,16 @@ namespace lite3dpp
 
         size_t usedVideoMemBytes() const override;
 
+        inline BufferBase *getLightParamsBuffer()
+        {
+            return mLightingParamsBuffer;
+        }
+
+        inline BufferBase *getLightIndexBuffer()
+        {
+            return mLightingIndexBuffer;
+        }
+
     protected:
 
         virtual void loadFromConfigImpl(const ConfigurationReader &helper) override;

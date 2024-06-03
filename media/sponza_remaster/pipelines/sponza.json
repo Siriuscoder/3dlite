@@ -4,6 +4,7 @@
     "Instancing": false,
     "OcclusionCulling": true,
     "LightingTechnique": "UBO",
+    "LightComputeEnvinmentTexture": "samples:textures/json/skybox_metal_chrome.json",
     "SkyBox": 
     {
         "Texture": "samples:textures/json/skybox.json",
@@ -31,7 +32,13 @@
     },
     "BLOOM": 
     {
-        "BloomRadius": 0.005,
+        "BloomRadius": 0.005
+    },
+    "PostProcess":
+    {
+        "Gamma": 2.2,
+        "Contrast": 1.005,
+        "Saturation": 1.10,
         "DynamicExposure":
         {
             "ExposureMax": 3.5,
@@ -39,5 +46,4 @@
             "ExposureBase": 0.15
         }
     }
-
 }

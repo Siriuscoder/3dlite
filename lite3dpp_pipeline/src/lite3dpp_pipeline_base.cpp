@@ -135,16 +135,25 @@ namespace lite3dpp_pipeline {
         if (mMainScene)
         {
             getMain().getResourceManager()->releaseResource(mMainScene->getName());
+            mMainScene = nullptr;
+        }
+
+        if (mSkyBox)
+        {
+            getMain().getResourceManager()->releaseResource(mSkyBox->getName());
+            mSkyBox = nullptr;
         }
 
         if (mDepthPass)
         {
             getMain().getResourceManager()->releaseResource(mDepthPass->getName());
+            mDepthPass = nullptr;
         }
 
         if (mDepthTexture)
         {
             getMain().getResourceManager()->releaseResource(mDepthTexture->getName());
+            mDepthTexture = nullptr;
         }
 
         mShadowManager.reset();

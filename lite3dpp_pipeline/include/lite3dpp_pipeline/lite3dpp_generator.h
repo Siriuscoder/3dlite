@@ -42,7 +42,9 @@ namespace lite3dpp_pipeline {
         BloomBuildStage = 0,
         LightComputeStage = 0,
         GBufferBuildStage = 0,
-        BlendDecalStage = 1
+        BlendDecalStage = 1,
+        SSAOBuildStage = 0,
+        PostProcessStage = 0
     };
 
     enum class TexturePassTypes
