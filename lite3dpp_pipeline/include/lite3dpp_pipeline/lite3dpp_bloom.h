@@ -31,7 +31,8 @@ public:
     ~BloomEffect();
 
     TextureRenderTarget &getRenderTarget();
-    Texture &getLastTexture();
+    TextureImage &getLastTexture();
+    TextureImage &getMiddleTexture();
     kmVec3 getLumaAverage() const;
 
 private:
@@ -52,7 +53,7 @@ private:
     int32_t mMinWidth = 1;
     Scene* mBloomRernderer = nullptr;
     TextureRenderTarget* mBloomRT = nullptr;
-    stl<Texture*>::vector mTextureChain;
+    stl<TextureImage*>::vector mTextureChain;
     stl<Material*>::vector mMaterialChain;
     TextureImage *mMiddleTexture = nullptr;
     int mChainState = 0;

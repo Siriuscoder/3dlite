@@ -37,7 +37,6 @@ public:
         Sample(helpString)
     {
         // use current time as seed for random generator
-        std::srand(std::time(nullptr));
         setCameraVelocityMax(0.15);
         setCameraAcceleration(0.02);
         setCameraResistance(0.01);
@@ -45,48 +44,16 @@ public:
 
     void createScene() override
     {
-        mShadowManager = std::make_unique<SampleShadowManager>(getMain());
-        mBloomEffectRenderer = std::make_unique<SampleBloomEffect>(getMain());
         mSponzaScene = getMain().getResourceManager()->queryResource<Scene>("Sponza", "sponza:scenes/sponza.json");
+        
         setMainCamera(getMain().getCamera("MyCamera"));
-
         setupShadowCasters();
         addFlashlight();
-        // load SSAO effect pipeline before ligth compute step, because SSAO texture needed to ambient light compute  
-        getMain().getResourceManager()->queryResource<Scene>("Sponza_SSAO", "sponza:scenes/ssao.json");
-        mSSAOShader = getMain().getResourceManager()->queryResource<Material>("ssao_compute.material");
-        // load intermediate light compute scene
-        mCombineScene = getMain().getResourceManager()->queryResource<Scene>("Sponza_LightCompute",
-            "sponza:scenes/lightpass.json");
-
-        getMain().getResourceManager()->queryResource<Scene>("SponzaSky", "sponza:scenes/sky.json");
-
-        // Load bloom effect pipeline
-        mBloomEffectRenderer->init();
-
-        // postprocess step, fxaa, gamma correcion, draw directly info render window. 
-        getMain().getResourceManager()->queryResource<Scene>("SponzaRoom_Postprocess",
-            "sponza:scenes/postprocess.json");
-
-        // optimize: window clean not needed, because all pixels in last render target always be updated
-        getMain().window()->setBuffersCleanBit(false, false, false);
-        RenderTarget::depthTestFunc(RenderTarget::TestFuncLEqual);
-
-        kmVec3 resolution = { 
-            static_cast<float>(getMain().window()->width()), 
-            static_cast<float>(getMain().window()->height()), 0 
-        };
-        Material::setFloatv3GlobalParameter("screenResolution", resolution);
-        Material::setFloatGlobalParameter("RandomSeed", static_cast<float>(rand()) / static_cast<float>(RAND_MAX));
     }
 
     void setupShadowCasters()
     {
-        RenderTarget* shadowUpdateRT = getMain().getResourceManager()->queryResource<TextureRenderTarget>("ShadowPass");
-        shadowUpdateRT->addObserver(mShadowManager.get());
-        mSponzaScene->addObserver(mShadowManager.get());
-
-        mShadowManager->newShadowCaster(mSponzaScene->getObject("Sponza")->getLightNode("SUN"));
+       // mShadowManager->newShadowCaster(mSponzaScene->getObject("Sponza")->getLightNode("SUN"));
     }
 
     void addFlashlight()
@@ -102,34 +69,7 @@ public:
 
     void frameBegin() override
     {
-        updateShaderParams();
         updateFlashLight();
-    }
-
-    void fixedUpdateTimerTick(int32_t firedPerRound, uint64_t deltaMcs, float deltaRetard) override
-    {
-        auto texture = static_cast<TextureImage *>(mBloomEffectRenderer->getMiddleTexture());
-        texture->getPixels(0, mBloomPixels);
-
-        auto it = mBloomPixels.begin();
-        kmVec3 rgbAverage = KM_VEC3_ZERO;
-        for (; it != mBloomPixels.end(); )
-        {
-            rgbAverage.x += *reinterpret_cast<float *>(&(*it)); it += sizeof(float);
-            rgbAverage.y += *reinterpret_cast<float *>(&(*it)); it += sizeof(float);
-            rgbAverage.z += *reinterpret_cast<float *>(&(*it)); it += sizeof(float);
-        }
-
-        kmVec3Scale(&rgbAverage, &rgbAverage, 1.0f / (mBloomPixels.size() / (3 * sizeof(float))));
-        Material::setFloatGlobalParameter("exposure", 0.15f / kmVec3Length(&rgbAverage));
-    }
-
-    void updateShaderParams()
-    {
-        SDL_assert(mSSAOShader);
-        mSSAOShader->setFloatm4Parameter(1, "CameraView", getMainCamera().refreshViewMatrix());
-        mSSAOShader->setFloatm4Parameter(1, "CameraProjection", getMainCamera().getProjMatrix());
-        Material::setFloatv3GlobalParameter("eye", getMainCamera().getWorldPosition());
     }
 
     void updateFlashLight()
@@ -181,14 +121,9 @@ public:
 
 private:
 
-    Scene* mCombineScene = nullptr;
     lite3dpp::Scene* mSponzaScene = nullptr;
-    Material* mSSAOShader = nullptr;
-    std::unique_ptr<SampleShadowManager> mShadowManager;
-    std::unique_ptr<SampleBloomEffect> mBloomEffectRenderer;
     LightSceneNode* mFlashLight;
     float mGammaFactor = 2.2;
-    PixelsData mBloomPixels;
 };
 
 }}

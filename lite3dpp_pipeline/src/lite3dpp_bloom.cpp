@@ -59,10 +59,16 @@ namespace lite3dpp_pipeline {
         return *mBloomRT;
     }
 
-    Texture &BloomEffect::getLastTexture()
+    TextureImage &BloomEffect::getLastTexture()
     {
         SDL_assert(mTextureChain.size() > 0);
         return *mTextureChain.back();
+    }
+
+    TextureImage &BloomEffect::getMiddleTexture()
+    {
+        SDL_assert(mMiddleTexture);
+        return *mMiddleTexture;
     }
 
     void BloomEffect::init()

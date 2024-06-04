@@ -24,7 +24,17 @@ namespace lite3dpp_pipeline {
 
     PipelineBase::PipelineBase(const String &name, const String &path, Main *main) : 
         ConfigurableResource(name, path, main, AbstractResource::PIPELINE)
-    {}
+    {
+        std::srand(std::time(nullptr));
+        mRandomSeed = static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
+
+        main->addObserver(this);
+    }
+
+    PipelineBase::~PipelineBase()
+    {
+        getMain().removeObserver(this);
+    }
 
     Scene &PipelineBase::getMainScene()
     {
@@ -116,11 +126,13 @@ namespace lite3dpp_pipeline {
             constructShadowManager(pipelineConfig, cameraName, mainSceneGenerator);
             constructCameraDepthPass(pipelineConfig, cameraName, mainSceneGenerator);
             constructCameraPipeline(pipelineConfig, cameraName, mainSceneGenerator);
+            constructPostProcessPass(pipelineConfig, cameraName, mainSceneGenerator);
             break;
         }
 
         /* Создание главной сцены в самом конце, все остальные обьекты должны быть созданы до этого момента */
         createMainScene(mainSceneGenerator.getName(), mainSceneGenerator.generateFromExisting(sceneGeneratedConfig).write());
+        mResourcesList.emplace_back(mMainScene);
         mMainCamera = getMain().getCamera(mainCameraName);
 
         if (mShadowManager)
@@ -128,32 +140,17 @@ namespace lite3dpp_pipeline {
             SDL_assert(mMainScene);
             mMainScene->addObserver(mShadowManager.get());
         }
+
+        // optimize: window clean not needed, because all pixels in last render target always will be updated
+        getMain().window()->setBuffersCleanBit(false, false, false);
+        RenderTarget::depthTestFunc(RenderTarget::TestFuncLEqual);
     }
 
     void PipelineBase::unloadImpl()
     {
-        if (mMainScene)
+        for (auto it = mResourcesList.rbegin(); it != mResourcesList.rend(); ++it)
         {
-            getMain().getResourceManager()->releaseResource(mMainScene->getName());
-            mMainScene = nullptr;
-        }
-
-        if (mSkyBox)
-        {
-            getMain().getResourceManager()->releaseResource(mSkyBox->getName());
-            mSkyBox = nullptr;
-        }
-
-        if (mDepthPass)
-        {
-            getMain().getResourceManager()->releaseResource(mDepthPass->getName());
-            mDepthPass = nullptr;
-        }
-
-        if (mDepthTexture)
-        {
-            getMain().getResourceManager()->releaseResource(mDepthTexture->getName());
-            mDepthTexture = nullptr;
+            getMain().getResourceManager()->releaseResource((*it)->getName());
         }
 
         mShadowManager.reset();
@@ -183,6 +180,7 @@ namespace lite3dpp_pipeline {
 
         mDepthTexture = getMain().getResourceManager()->queryResourceFromJson<TextureImage>(depthTextureName, 
             depthTextureConfig.write());
+        mResourcesList.emplace_back(mDepthTexture);
 
         ConfigurationWriter depthPassConfig;
         depthPassConfig.set(L"BackgroundColor", kmVec4 { 0.0f, 0.0f, 0.0f, 1.0f })
@@ -195,6 +193,7 @@ namespace lite3dpp_pipeline {
 
         mDepthPass = getMain().getResourceManager()->queryResourceFromJson<TextureRenderTarget>(
             getName() + "_" + cameraName + "_DepthPass", depthPassConfig.write());
+        mResourcesList.emplace_back(mDepthPass);
 
         ConfigurationWriter depthPassGeneratedConfig;
         depthPassGeneratedConfig
@@ -247,8 +246,115 @@ namespace lite3dpp_pipeline {
         }
     }
 
+    void PipelineBase::constructPostProcessPass(const ConfigurationReader &pipelineConfig, const String &cameraName,
+        SceneGenerator &sceneGenerator)
+    {
+        BigTriSceneGenerator stageGenerator(getName());
+        stageGenerator.addRenderTarget("PostProcessView", "Window", ConfigurationWriter()
+            .set(L"Priority", static_cast<int>(RenderPassStagePriority::PostProcessStage))
+            .set(L"TexturePass", static_cast<int>(TexturePassTypes::RenderPass))
+            .set(L"DepthTest", false)
+            .set(L"ColorOutput", true)
+            .set(L"DepthOutput", false));
+            
+        mPostProcessStage = getMain().getResourceManager()->queryResourceFromJson<Scene>(getName() + "_PostProcessStage",
+            stageGenerator.generate().write());
+        mResourcesList.emplace_back(mPostProcessStage);
+
+        SDL_assert(mCombinedTexture);
+
+        ConfigurationWriter postProcessMaterialConfig;
+        auto postProcessConfig = pipelineConfig.getObject(L"PostProcess");
+        stl<ConfigurationWriter>::vector postProcessMaterialUniforms;
+
+        postProcessMaterialUniforms.emplace_back(ConfigurationWriter()
+            .set(L"Name", "screenMatrix"));
+        postProcessMaterialUniforms.emplace_back(ConfigurationWriter()
+            .set(L"Name", "Combined")
+            .set(L"TextureName", mCombinedTexture->getName())
+            .set(L"Type", "sampler"));
+        postProcessMaterialUniforms.emplace_back(ConfigurationWriter()
+            .set(L"Name", "Gamma")
+            .set(L"Value", postProcessConfig.getDouble(L"Gamma", 2.2f))
+            .set(L"Type", "float")
+            .set(L"Scope", "global"));
+        postProcessMaterialUniforms.emplace_back(ConfigurationWriter()
+            .set(L"Name", "Exposure")
+            .set(L"Value", postProcessConfig.getDouble(L"Exposure", 1.0f))
+            .set(L"Type", "float"));
+        postProcessMaterialUniforms.emplace_back(ConfigurationWriter()
+            .set(L"Name", "Contrast")
+            .set(L"Value", postProcessConfig.getDouble(L"Contrast", 1.0f))
+            .set(L"Type", "float"));
+        postProcessMaterialUniforms.emplace_back(ConfigurationWriter()
+            .set(L"Name", "Saturation")
+            .set(L"Value", postProcessConfig.getDouble(L"Saturation", 1.0f))
+            .set(L"Type", "float"));
+        postProcessMaterialUniforms.emplace_back(ConfigurationWriter()
+            .set(L"Name", "ScreenResolution")
+            .set(L"Value", kmVec3 { static_cast<float>(getMain().window()->width()), 
+                static_cast<float>(getMain().window()->height()), 0.0f })
+            .set(L"Type", "v3"));
+
+        if (mBloomEffect)
+        {
+            postProcessMaterialUniforms.emplace_back(ConfigurationWriter()
+                .set(L"Name", "Bloom")
+                .set(L"Type", "sampler")
+                .set(L"TextureName", mBloomEffect->getLastTexture().getName()));
+        }
+
+        auto shaderPath = mBloomEffect ? (mShaderPackage + ":shaders/json/post_process_bloom.json") : 
+            (mShaderPackage + ":shaders/json/post_process.json");
+        
+        postProcessMaterialConfig.set(L"Passes", stl<ConfigurationWriter>::vector {
+            ConfigurationWriter().set(L"Pass", static_cast<int>(TexturePassTypes::RenderPass))
+                .set(L"Program", ConfigurationWriter()
+                    .set(L"Name", "PostProcess.program")
+                    .set(L"Path", shaderPath))
+                .set(L"Uniforms", postProcessMaterialUniforms)
+        });
+
+        // Создаем шейдер постпроцессинга финального изображения
+        mPostProcessStageMaterial = getMain().getResourceManager()->queryResourceFromJson<Material>(
+            getName() + "_PostProcessStage.material", postProcessMaterialConfig.write());
+        mResourcesList.emplace_back(mPostProcessStageMaterial);
+
+        // Добавляем шейдер постпроцессинга финального изображения 
+        mPostProcessStage->addObject("PostProcessBigTri", 
+            BigTriObjectGenerator(mPostProcessStageMaterial->getName()).generate());
+    }
+
     void PipelineBase::createMainScene(const String& name, const String &sceneConfig)
     {
         mMainScene = getMain().getResourceManager()->queryResourceFromJson<Scene>(name, sceneConfig);
+    }
+
+    void PipelineBase::updateExposure()
+    {
+        if (!mBloomEffect || !mPostProcessStageMaterial)
+        {
+            return;
+        }
+
+        mBloomEffect->getMiddleTexture().getPixels(0, mBloomPixels);
+
+        auto it = mBloomPixels.begin();
+        kmVec3 rgbAverage = KM_VEC3_ZERO;
+        for (; it != mBloomPixels.end(); )
+        {
+            rgbAverage.x += *reinterpret_cast<float *>(&(*it)); it += sizeof(float);
+            rgbAverage.y += *reinterpret_cast<float *>(&(*it)); it += sizeof(float);
+            rgbAverage.z += *reinterpret_cast<float *>(&(*it)); it += sizeof(float);
+        }
+
+        kmVec3Scale(&rgbAverage, &rgbAverage, 1.0f / (mBloomPixels.size() / (3 * sizeof(float))));
+        mPostProcessStageMaterial->setFloatParameter(static_cast<int>(TexturePassTypes::RenderPass),
+            "Exposure", 0.15f / kmVec3Length(&rgbAverage));
+    }
+
+    void PipelineBase::timerTick(lite3d_timer *timerid)
+    {
+        updateExposure();
     }
 }}

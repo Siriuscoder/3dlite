@@ -30,6 +30,7 @@ namespace lite3dpp_pipeline {
     public:
 
         PipelineBase(const String &name, const String &path, Main *main);
+        virtual ~PipelineBase();
 
         Scene &getMainScene();
         Scene *getSkyBoxScene();
@@ -40,6 +41,7 @@ namespace lite3dpp_pipeline {
 
         void loadFromConfigImpl(const ConfigurationReader &helper) override;
         void unloadImpl() override;
+        void timerTick(lite3d_timer *timerid) override;
 
         virtual void createMainScene(const String& name, const String &sceneConfig);
         virtual void constructShadowManager(const ConfigurationReader &pipelineConfig, const String &cameraName,
@@ -49,18 +51,28 @@ namespace lite3dpp_pipeline {
         virtual void constructCameraPipeline(const ConfigurationReader &pipelineConfig, const String &cameraName,
             SceneGenerator &sceneGenerator);
         virtual void constructBloomPass(const ConfigurationReader &pipelineConfig, const String &cameraName);
+        virtual void constructPostProcessPass(const ConfigurationReader &pipelineConfig, const String &cameraName,
+            SceneGenerator &sceneGenerator);
         
         void createBigTriangleMesh();
+        void updateExposure();
 
     protected:
 
         Scene *mMainScene = nullptr;
         Scene *mSkyBox = nullptr;
+        Scene *mPostProcessStage = nullptr;
         String mShaderPackage;
         std::unique_ptr<ShadowManager> mShadowManager;
         std::unique_ptr<BloomEffect> mBloomEffect;
         Camera *mMainCamera = nullptr;
         RenderTarget *mDepthPass = nullptr;
+        RenderTarget *mCombinePass = nullptr;
         Texture *mDepthTexture = nullptr;
+        Texture *mCombinedTexture = nullptr;
+        Material *mPostProcessStageMaterial = nullptr;
+        float mRandomSeed;
+        stl<AbstractResource *>::list mResourcesList;
+        PixelsData mBloomPixels;
     };
 }}
