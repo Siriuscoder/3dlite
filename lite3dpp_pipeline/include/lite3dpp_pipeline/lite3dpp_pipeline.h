@@ -27,22 +27,24 @@ namespace lite3dpp_pipeline {
     {
     public:
 
-        using SceneType = typename SceneImpl;
-        using PipelineType = typename PipelineImpl;
+        using SceneType = SceneImpl;
+        using PipelineType = PipelineImpl;
 
         CustomScenePipeline(const String &name, const String &path, Main *main) : 
             SceneType(name, path, main)
         {}
 
-        void createMainScene(const String& name, const String& sceneConfig) override
-        {
-            PipelineType::mMainScene = PipelineType::getMain().getResourceManager()->
-                queryResourceFromJson<SceneType>(name, sceneConfig);
-        }
-
         SceneImpl &getMainScene()
         {
             return static_cast<SceneType&>(PipelineType::getMainScene());
+        }
+
+    protected:
+
+        void createMainScene(const String& name, const String& sceneConfig) override
+        {
+            PipelineType::mMainScene = PipelineType::getMain().getResourceManager()->
+                template queryResourceFromJson<SceneType>(name, sceneConfig);
         }
     };
 }}

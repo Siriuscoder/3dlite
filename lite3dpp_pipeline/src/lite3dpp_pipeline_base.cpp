@@ -17,6 +17,7 @@
  *******************************************************************************/
 #include <lite3dpp_pipeline/lite3dpp_pipeline_base.h>
 
+#include <ctime>
 #include <SDL_assert.h>
 
 namespace lite3dpp {
