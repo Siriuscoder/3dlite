@@ -1,14 +1,12 @@
 #include "samples:shaders/sources/common/version.def"
 
-uniform sampler2D combined;
-uniform sampler2D bloom;
-uniform float gamma;
-uniform float exposure;
-uniform float contrast;
-uniform float saturation;
-uniform vec3 screenResolution;
-
-uniform sampler2D ShadowMaps;
+uniform sampler2D Combined;
+uniform sampler2D Bloom;
+uniform float Gamma;
+uniform float Exposure;
+uniform float Contrast;
+uniform float Saturation;
+uniform vec3 ScreenResolution;
 
 out vec4 fragColor;
 
@@ -20,8 +18,6 @@ in vec2 irgbSE;
 in vec2 irgbM;
 
 const float BloomStrength = 0.04;
-const float Contrast = 1.002;
-const float Saturation = 1.18;
 
 vec4 fxaa(sampler2D tex, vec2 fragCoord, vec2 resolution,
     vec2 v_rgbNW, vec2 v_rgbNE, 
@@ -34,7 +30,7 @@ vec3 ReinhardTonemapping(vec3 x)
     return x / (x + 1.0);
 }
 
-// exposure tone mapping
+// Exposure tone mapping
 vec3 ExposureTonemapping(vec3 x, float e)
 {
     return 1.0 - exp(-x * e);
@@ -72,17 +68,16 @@ mat4 saturationMatrix(float s)
 void main()
 {
     // FSAA 
-    vec3 hdr = fxaa(combined, iuv * screenResolution.xy, screenResolution.xy, irgbNW, irgbNE, irgbSW, irgbSE, irgbM).rgb;
+    vec3 hdr = fxaa(Combined, iuv * ScreenResolution.xy, ScreenResolution.xy, irgbNW, irgbNE, irgbSW, irgbSE, irgbM).rgb;
     // Apply bloom
-    vec3 blm = texture(bloom, iuv).rgb;
+    vec3 blm = texture(Bloom, iuv).rgb;
     hdr = mix(hdr, blm, vec3(BloomStrength));
     // Exposure tone mapping
-    vec4 ldr = vec4(ExposureTonemapping(hdr, clamp(exposure, 0.1, 3.5)), 1.0);
+    vec4 ldr = vec4(ExposureTonemapping(hdr, clamp(Exposure, 0.1, 3.5)), 1.0);
     // Color correction
-    ldr = contrastMatrix(contrast) * saturationMatrix(saturation) * ldr;
+    ldr = contrastMatrix(Contrast) * saturationMatrix(Saturation) * ldr;
     // Gamma correction 
-    ldr.rgb = pow(ldr.rgb, vec3(1.0 / gamma));
+    ldr.rgb = pow(ldr.rgb, vec3(1.0 / Gamma));
     // Final Color
-    //fragColor = vec4(texture(ShadowMaps, iuv).rrr, 1.0);
     fragColor = vec4(ldr.rgb, 1.0);
 }

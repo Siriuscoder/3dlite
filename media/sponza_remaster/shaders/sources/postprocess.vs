@@ -3,7 +3,7 @@
 layout(location = 0) in vec2 vertex;
 
 uniform mat4 screenMatrix;
-uniform vec3 screenResolution;
+uniform vec3 ScreenResolution;
 
 out vec2 iuv;
 out vec2 irgbNW;
@@ -22,6 +22,6 @@ void main()
 {
     iuv = vertex;
 
-    texcoords(iuv * screenResolution.xy, screenResolution.xy, irgbNW, irgbNE, irgbSW, irgbSE, irgbM);
+    texcoords(iuv * ScreenResolution.xy, ScreenResolution.xy, irgbNW, irgbNE, irgbSW, irgbSE, irgbM);
     gl_Position = screenMatrix * vec4(vertex.xy, 0.0, 1.0);
 }

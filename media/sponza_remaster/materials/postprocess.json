@@ -48,7 +48,7 @@
     },
     {
       "Name":"ShadowMaps",
-      "TextureName":"shadow.texture",
+      "TextureName":"SponzaDeffered_ShadowMap.texture",
       "Type":"sampler"
     },
     {

@@ -277,6 +277,7 @@ namespace lite3dpp_pipeline {
             .set(L"CleanColorBuf", false)
             .set(L"CleanDepthBuf", false)
             .set(L"CleanStencilBuf", false)
+            .set(L"LayeredFramebuffer", true)
             .set(L"DepthAttachments", ConfigurationWriter()
                 .set(L"TextureName", shadowMapName));
 
@@ -292,8 +293,8 @@ namespace lite3dpp_pipeline {
         createShadowRenderTarget(pipelineName, width, height, shadowsCastersMaxCount);
 
         // Создание специальной сцены для предварительной частичной очистки теневых карт которые надо перерисовать в текущем кадре.
-        BigTriSceneGenerator stageGenerator(pipelineName);
-        stageGenerator.addRenderTarget("ShadowCleanView", mShadowPass->getName(), ConfigurationWriter()
+        BigTriSceneGenerator stageGenerator;
+        stageGenerator.addRenderTarget(mShadowPass->getName(), ConfigurationWriter()
             .set(L"Priority", static_cast<int>(RenderPassStagePriority::ShadowCleanStage))
             .set(L"TexturePass", static_cast<int>(TexturePassTypes::Shadow))
             .set(L"DepthTest", true)
@@ -327,5 +328,6 @@ namespace lite3dpp_pipeline {
 
         // Добавляем шейдер очистки на сцену 
         mCleanStage->addObject("ShadowCleanBigTri", BigTriObjectGenerator(mCleanStageMaterial->getName()).generate());
+        mCleanStage->addObserver(this);
     }
 }}

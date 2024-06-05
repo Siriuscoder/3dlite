@@ -1,15 +1,14 @@
 #include "samples:shaders/sources/common/version.def"
 
 layout(location = 0) in vec4 vertex;
+layout(location = 2) in vec2 uv;
 
 uniform mat4 modelMatrix;
-
-layout(std140) uniform ShadowMatrix
-{
-    mat4 shadowMat[1];
-};
+out vec2 vsUV;
 
 void main()
 {
-    gl_Position = shadowMat[0] * modelMatrix * vertex;
+    vsUV = uv;
+    // vertex coordinate in world space 
+    gl_Position = modelMatrix * vertex;
 }

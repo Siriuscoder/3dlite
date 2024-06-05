@@ -9,7 +9,7 @@
         
     "DepthAttachments":
     {
-        "TextureName": "shadow.texture",
+        "TextureName": "SponzaDeffered_ShadowMap.texture",
         "TexturePath": "samples:textures/json/shadow_2k.json"
     }
 }

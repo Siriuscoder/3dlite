@@ -17,8 +17,8 @@
  *******************************************************************************/
 #include <ctime>
 
-#include "../sample_vault_111/lite3dpp_vault_shadows.h"
-#include "../sample_vault_111/lite3dpp_vault_bloom.h"
+#include <sample_common/lite3dpp_common.h>
+#include <lite3dpp_pipeline/lite3dpp_pipeline.h>
 
 namespace lite3dpp {
 namespace samples {
@@ -36,7 +36,6 @@ public:
     SampleSponza() : 
         Sample(helpString)
     {
-        // use current time as seed for random generator
         setCameraVelocityMax(0.15);
         setCameraAcceleration(0.02);
         setCameraResistance(0.01);
@@ -44,16 +43,18 @@ public:
 
     void createScene() override
     {
-        mSponzaScene = getMain().getResourceManager()->queryResource<Scene>("Sponza", "sponza:scenes/sponza.json");
+        mPipeline = getMain().getResourceManager()->queryResource<lite3dpp_pipeline::PipelineDeffered>("SponzaDeffered", 
+            "sponza:pipelines/sponza.json");
+        mSponzaScene = &mPipeline->getMainScene();
         
-        setMainCamera(getMain().getCamera("MyCamera"));
+        setMainCamera(&mPipeline->getMainCamera());
         setupShadowCasters();
         addFlashlight();
     }
 
     void setupShadowCasters()
     {
-       // mShadowManager->newShadowCaster(mSponzaScene->getObject("Sponza")->getLightNode("SUN"));
+        mPipeline->getShadowManager()->newShadowCaster(mSponzaScene->getObject("Sponza")->getLightNode("SUN"));
     }
 
     void addFlashlight()
@@ -121,7 +122,8 @@ public:
 
 private:
 
-    lite3dpp::Scene* mSponzaScene = nullptr;
+    Scene* mSponzaScene = nullptr;
+    lite3dpp_pipeline::PipelineDeffered* mPipeline = nullptr;
     LightSceneNode* mFlashLight;
     float mGammaFactor = 2.2;
 };

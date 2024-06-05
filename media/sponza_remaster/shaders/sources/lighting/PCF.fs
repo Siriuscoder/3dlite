@@ -1,14 +1,14 @@
 #include "sponza:shaders/sources/inc/common.def"
 #include "samples:shaders/sources/common/utils_inc.glsl"
 
-uniform sampler2DShadow ShadowMaps;
+uniform sampler2DArrayShadow ShadowMaps;
 
 layout(std140) uniform ShadowMatrix
 {
-    mat4 shadowMat[1];
+    mat4 shadowMat[MAX_SHADOW_LAYERS];
 };
 
-const float shadowBias = 0.0005;
+const float shadowBias = 0.0001;
 
 float PCF(float shadowIndex, vec3 vw)
 {
@@ -34,7 +34,7 @@ float PCF(float shadowIndex, vec3 vw)
             if (shift.x < 0.0 || shift.x > 1.0 || shift.y < 0.0 || shift.y > 1.0)
                 continue;
 
-            result += texture(ShadowMaps, vec3(shift, sv.z - shadowBias));
+            result += texture(ShadowMaps, vec4(shift, shadowIndex, sv.z - shadowBias));
         }
     }
 

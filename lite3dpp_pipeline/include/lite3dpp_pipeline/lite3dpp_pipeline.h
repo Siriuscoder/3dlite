@@ -34,9 +34,10 @@ namespace lite3dpp_pipeline {
             SceneType(name, path, main)
         {}
 
-        void createMainScene(const std::String& name, const std::String& sceneConfig) override
+        void createMainScene(const String& name, const String& sceneConfig) override
         {
-            mMainScene = getMain().getResourceManager()->queryResourceFromJson<SceneType>(name, sceneConfig);
+            PipelineType::mMainScene = PipelineType::getMain().getResourceManager()->
+                queryResourceFromJson<SceneType>(name, sceneConfig);
         }
 
         SceneImpl &getMainScene()

@@ -1,0 +1,8 @@
+{
+    "Sources": 
+    [
+        "sponza:shaders/sources/bigtriangle.vs",
+        "sponza:shaders/sources/shadow_clean_split.gs",
+        "sponza:shaders/sources/depth_clean.fs"
+    ]
+}

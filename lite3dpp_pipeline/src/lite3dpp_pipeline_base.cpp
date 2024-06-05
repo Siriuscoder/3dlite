@@ -33,6 +33,8 @@ namespace lite3dpp_pipeline {
 
     PipelineBase::~PipelineBase()
     {
+        // В случае если загрузка пайплайна не прошла, удаляем что успело загрузиться в деструкторе
+        unloadImpl();
         getMain().removeObserver(this);
     }
 
@@ -153,6 +155,7 @@ namespace lite3dpp_pipeline {
             getMain().getResourceManager()->releaseResource((*it)->getName());
         }
 
+        mResourcesList.clear();
         mShadowManager.reset();
         mBloomEffect.reset();
     }
@@ -249,16 +252,16 @@ namespace lite3dpp_pipeline {
     void PipelineBase::constructPostProcessPass(const ConfigurationReader &pipelineConfig, const String &cameraName,
         SceneGenerator &sceneGenerator)
     {
-        BigTriSceneGenerator stageGenerator(getName());
-        stageGenerator.addRenderTarget("PostProcessView", "Window", ConfigurationWriter()
+        BigTriSceneGenerator stageGenerator;
+        stageGenerator.addRenderTarget("Window", ConfigurationWriter()
             .set(L"Priority", static_cast<int>(RenderPassStagePriority::PostProcessStage))
             .set(L"TexturePass", static_cast<int>(TexturePassTypes::RenderPass))
             .set(L"DepthTest", false)
             .set(L"ColorOutput", true)
             .set(L"DepthOutput", false));
             
-        mPostProcessStage = getMain().getResourceManager()->queryResourceFromJson<Scene>(getName() + "_PostProcessStage",
-            stageGenerator.generate().write());
+        mPostProcessStage = getMain().getResourceManager()->queryResourceFromJson<Scene>(
+            getName() + "_" + cameraName + "_PostProcessStage", stageGenerator.generate().write());
         mResourcesList.emplace_back(mPostProcessStage);
 
         SDL_assert(mCombinedTexture);
@@ -323,6 +326,15 @@ namespace lite3dpp_pipeline {
         // Добавляем шейдер постпроцессинга финального изображения 
         mPostProcessStage->addObject("PostProcessBigTri", 
             BigTriObjectGenerator(mPostProcessStageMaterial->getName()).generate());
+
+        if (postProcessConfig.has(L"DynamicExposure"))
+        {
+            mDynamicExposureEnabled = true;
+            auto dynamicExposureConfig = postProcessConfig.getObject(L"DynamicExposure");
+            mExposureMax = dynamicExposureConfig.getDouble(L"ExposureMax", 1.0);
+            mExposureMin = dynamicExposureConfig.getDouble(L"ExposureMin", 1.0);
+            mExposureBase = dynamicExposureConfig.getDouble(L"ExposureBase", 1.0);
+        }
     }
 
     void PipelineBase::createMainScene(const String& name, const String &sceneConfig)
@@ -332,7 +344,7 @@ namespace lite3dpp_pipeline {
 
     void PipelineBase::updateExposure()
     {
-        if (!mBloomEffect || !mPostProcessStageMaterial)
+        if (!mBloomEffect || !mPostProcessStageMaterial || !mDynamicExposureEnabled)
         {
             return;
         }
@@ -349,8 +361,9 @@ namespace lite3dpp_pipeline {
         }
 
         kmVec3Scale(&rgbAverage, &rgbAverage, 1.0f / (mBloomPixels.size() / (3 * sizeof(float))));
-        mPostProcessStageMaterial->setFloatParameter(static_cast<int>(TexturePassTypes::RenderPass),
-            "Exposure", 0.15f / kmVec3Length(&rgbAverage));
+        auto exposure = mExposureBase / kmVec3Length(&rgbAverage);
+        exposure = std::max(mExposureMin, std::min(mExposureMax, exposure));
+        mPostProcessStageMaterial->setFloatParameter(static_cast<int>(TexturePassTypes::RenderPass), "Exposure", exposure);
     }
 
     void PipelineBase::timerTick(lite3d_timer *timerid)

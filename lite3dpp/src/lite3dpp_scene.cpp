@@ -300,7 +300,10 @@ namespace lite3dpp
         {
             Camera *camera = nullptr;
             if ((camera = getMain().getCamera(cameraJson.getString(L"Name"))) == nullptr)
+            {
                 camera = getMain().addCamera(cameraJson.getString(L"Name"));
+                camera->loadFromTemplate(cameraJson);
+            }
 
             RenderTarget *renderTarget = nullptr;
 
@@ -370,8 +373,6 @@ namespace lite3dpp
                 renderTarget->addCamera(camera, this, renderTargetJson.getInt(L"TexturePass"), layers,
                     renderTargetJson.getInt(L"Priority"), renderFlags);
             }
-
-            camera->loadFromTemplate(cameraJson);
         }
     }
 

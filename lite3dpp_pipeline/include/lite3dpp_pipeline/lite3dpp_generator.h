@@ -25,8 +25,8 @@ namespace lite3dpp_pipeline {
 
     enum class RenderPassPriority
     {
-        ShadowMap = 1,
         MainDepth = 2,
+        ShadowMap = 1,
         GBuffer = 3,
         SSAO = 4,
         Combine = 5,
@@ -83,11 +83,12 @@ namespace lite3dpp_pipeline {
     {
     public:
 
-        BigTriSceneGenerator(const String& sceneName) : 
-            SceneGenerator(sceneName)
+        BigTriSceneGenerator() : 
+            SceneGenerator("")
         {}
 
         ConfigurationWriter& generateFromExisting(ConfigurationWriter& sceneConfig) override;
+        void addRenderTarget(const String& renderTargetName, ConfigurationWriter& conf);
     };
 
     class LITE3DPP_PIPELINE_EXPORT BigTriObjectGenerator

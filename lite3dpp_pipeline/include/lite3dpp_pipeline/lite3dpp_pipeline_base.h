@@ -71,8 +71,13 @@ namespace lite3dpp_pipeline {
         Texture *mDepthTexture = nullptr;
         Texture *mCombinedTexture = nullptr;
         Material *mPostProcessStageMaterial = nullptr;
-        float mRandomSeed;
         stl<AbstractResource *>::list mResourcesList;
         PixelsData mBloomPixels;
+
+        float mRandomSeed;
+        float mExposureMax = 1.0;
+        float mExposureMin = 1.0;
+        float mExposureBase = 1.0;
+        bool mDynamicExposureEnabled = false;
     };
 }}

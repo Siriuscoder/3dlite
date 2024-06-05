@@ -1,6 +1,6 @@
 #include "samples:shaders/sources/common/version.def"
 
-uniform samplerCube skybox;
+uniform samplerCube Skybox;
 uniform float EmissionStrength;
 
 in vec3 iuv;

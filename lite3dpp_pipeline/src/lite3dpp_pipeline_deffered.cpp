@@ -33,7 +33,6 @@ namespace lite3dpp_pipeline {
         constructSSBOPass(pipelineConfig, cameraName);
         constructCombinedPass(pipelineConfig, cameraName, sceneGenerator);
         constructBloomPass(pipelineConfig, cameraName);
-        constructPostProcessPass(pipelineConfig, cameraName, sceneGenerator);
     }
 
     void PipelineDeffered::loadFromConfigImpl(const ConfigurationReader &pipelineConfig)
@@ -55,9 +54,10 @@ namespace lite3dpp_pipeline {
     void PipelineDeffered::constructLightComputePass(const ConfigurationReader &pipelineConfig)
     {
         SDL_assert(mMainScene);
+        SDL_assert(mCombinePass);
 
-        BigTriSceneGenerator stageGenerator(getName());
-        stageGenerator.addRenderTarget("LightComputeView", mCombinePass->getName(), ConfigurationWriter()
+        BigTriSceneGenerator stageGenerator;
+        stageGenerator.addRenderTarget(mCombinePass->getName(), ConfigurationWriter()
             .set(L"Priority", static_cast<int>(RenderPassStagePriority::LightComputeStage))
             .set(L"TexturePass", static_cast<int>(TexturePassTypes::RenderPass))
             .set(L"DepthTest", false)
@@ -130,7 +130,7 @@ namespace lite3dpp_pipeline {
                 .set(L"Type", "sampler"));
             lightComputeMaterialUniforms.emplace_back(ConfigurationWriter()
                 .set(L"Name", "ShadowMatrix")
-                .set(L"TextureName", mShadowManager->getShadowMatrixBuffer()->getName())
+                .set(L"UBOName", mShadowManager->getShadowMatrixBuffer()->getName())
                 .set(L"Type", "UBO"));
         }
 
@@ -304,18 +304,18 @@ namespace lite3dpp_pipeline {
                 }));
 
         mSSAOPass = getMain().getResourceManager()->queryResourceFromJson<TextureRenderTarget>(
-            getName() + "_" + cameraName + "_CombinePass", ssaoTargetConfig.write());
+            getName() + "_" + cameraName + "_SSAOPass", ssaoTargetConfig.write());
         mResourcesList.emplace_back(mSSAOPass);
 
-        BigTriSceneGenerator stageGenerator(getName());
-        stageGenerator.addRenderTarget("SSAOView", mCombinePass->getName(), ConfigurationWriter()
+        BigTriSceneGenerator stageGenerator;
+        stageGenerator.addRenderTarget(mSSAOPass->getName(), ConfigurationWriter()
             .set(L"Priority", static_cast<int>(RenderPassStagePriority::SSAOBuildStage))
             .set(L"TexturePass", static_cast<int>(TexturePassTypes::RenderPass))
             .set(L"DepthTest", false)
             .set(L"ColorOutput", true)
             .set(L"DepthOutput", false));
             
-        mSSAOStage = getMain().getResourceManager()->queryResourceFromJson<Scene>(getName() + "_SSAOStage",
+        mSSAOStage = getMain().getResourceManager()->queryResourceFromJson<Scene>(getName() + "_" + cameraName + "_SSAOStage",
             stageGenerator.generate().write());
         mResourcesList.emplace_back(mSSAOStage);
 
@@ -340,6 +340,7 @@ namespace lite3dpp_pipeline {
                         .set(L"Type", "float"),
                     ConfigurationWriter()
                         .set(L"Name", "RandomSeed")
+                        .set(L"Value", mRandomSeed)
                         .set(L"Type", "float"),
                     ConfigurationWriter()
                         .set(L"Name", "CameraView")
@@ -352,7 +353,7 @@ namespace lite3dpp_pipeline {
 
         // Создаем служебный шейдер отвечающий за расчет SSAO
         mSSAOStageMaterial = getMain().getResourceManager()->queryResourceFromJson<Material>(
-            getName() + "_SSAOStage.material", ssaoMaterialConfig.write());
+            getName() + "_" + cameraName + "_SSAOStage.material", ssaoMaterialConfig.write());
         mResourcesList.emplace_back(mSSAOStageMaterial);
 
         // Добавляем шейдер расчета SSAO

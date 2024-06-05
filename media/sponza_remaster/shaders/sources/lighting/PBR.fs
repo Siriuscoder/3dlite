@@ -12,17 +12,17 @@ const float diffuseStrength = 0.05;
 
 uniform samplerCube Environment;
 
-layout(std140) uniform lightSources
+layout(std140) uniform LightSources
 {
     vec4 lights[5 * MAX_LIGHTS];
 };
 
-layout(std140) uniform lightIndexes
+layout(std140) uniform LightIndexes
 {
     ivec4 indexes[MAX_LIGHTS];
 };
 
-uniform vec3 eye;
+uniform vec3 Eye;
 
 /* Shadow compute module */
 float PCF(float shadowIndex, vec3 vw);
@@ -35,7 +35,7 @@ vec3 ComputeIllumination(vec3 vw, vec3 nw, vec3 albedo, vec3 emission, vec3 spec
     float saFactor)
 {
     // Eye direction to current fragment 
-    vec3 eyeDir = normalize(eye - vw);
+    vec3 eyeDir = normalize(Eye - vw);
     // Reflect vector for ambient specular
     vec3 R = reflect(eyeDir, nw);
     // HdotV for Fresnel

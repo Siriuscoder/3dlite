@@ -61,7 +61,7 @@ namespace lite3dpp_pipeline {
 
     ConfigurationWriter& BigTriSceneGenerator::generateFromExisting(ConfigurationWriter& sceneConfig)
     {
-        addCamera("FullScreenView", ConfigurationWriter()
+        addCamera("BigTriView", ConfigurationWriter()
             .set(L"Position", kmVec3 { 0.0f, 0.0f, 0.5f })
             .set(L"LookAt", KM_VEC3_ZERO)
             .set(L"Ortho", ConfigurationWriter()
@@ -73,6 +73,11 @@ namespace lite3dpp_pipeline {
                 .set(L"Top", 1.0f)));
 
         return SceneGenerator::generateFromExisting(sceneConfig);
+    }
+
+    void BigTriSceneGenerator::addRenderTarget(const String& renderTargetName, ConfigurationWriter& conf)
+    {
+        SceneGenerator::addRenderTarget("BigTriView", renderTargetName, conf);
     }
 
     ConfigurationReader BigTriObjectGenerator::generate()

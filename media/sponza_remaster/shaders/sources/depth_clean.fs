@@ -1,3 +1,6 @@
 #include "samples:shaders/sources/common/version.def"
 
-#define MAX_SHADOW_LAYERS 1
+void main()
+{
+    gl_FragDepth = 1.0;
+}

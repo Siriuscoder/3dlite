@@ -54,7 +54,7 @@
       "Uniforms": [
         {
           "Name": "ShadowMatrix",
-          "UBOName": "ShadowMatrixBuffer",
+          "UBOName": "SponzaDeffered_ShadowMatrixBuffer",
           "Type": "UBO"
         },
         {

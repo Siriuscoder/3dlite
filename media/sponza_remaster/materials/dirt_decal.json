@@ -20,27 +20,27 @@
           "Type": "sampler"
         },
         {
-          "Name": "lightSources",
-          "UBOName": "Sponza_lightingBufferObject",
+          "Name": "LightSources",
+          "UBOName": "SponzaDeffered_MainScene_lightingBufferObject",
           "Type": "UBO"
         },
         {
-          "Name": "lightIndexes",
-          "UBOName": "Sponza_lightingIndexBuffer",
+          "Name": "LightIndexes",
+          "UBOName": "SponzaDeffered_MainScene_lightingIndexBuffer",
           "Type": "UBO"
         },
         {
           "Name": "ShadowMaps",
-          "TextureName": "shadow.texture",
+          "TextureName": "SponzaDeffered_ShadowMap.texture",
           "Type": "sampler"
         },
         {
           "Name": "ShadowMatrix",
-          "UBOName": "ShadowMatrixBuffer",
+          "UBOName": "SponzaDeffered_ShadowMatrixBuffer",
           "Type": "UBO"
         },
         {
-          "Name": "eye",
+          "Name": "Eye",
           "Type": "v3",
           "Scope": "global"
         }

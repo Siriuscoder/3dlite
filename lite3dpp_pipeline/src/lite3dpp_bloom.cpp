@@ -48,6 +48,11 @@ namespace lite3dpp_pipeline {
         for (auto texture : mTextureChain)
         {
             mMain.getResourceManager()->releaseResource(texture->getName());
+            /* Так как в mTextureChain текстуры дублируются, удаляем только до середины */
+            if (texture == mMiddleTexture)
+            {
+                break;
+            }
         }
 
         mMain.getResourceManager()->releaseResource(mBloomRT->getName());
@@ -160,8 +165,20 @@ namespace lite3dpp_pipeline {
         Texture *combinedTexture = mMain.getResourceManager()->queryResource<TextureImage>(
             mPipelineName + "_" + mCameraName + "_combined.texture");
 
-        BigTriSceneGenerator bloomSceneConfig(mPipelineName + "_" + mCameraName + "_BloomStage");
-        mBloomRernderer = mMain.getResourceManager()->queryResourceFromJson<Scene>(bloomSceneConfig.getName(), 
+        BigTriSceneGenerator bloomSceneConfig;
+        bloomSceneConfig.addRenderTarget(mBloomRT->getName(), ConfigurationWriter()
+            .set(L"Priority", static_cast<int>(RenderPassStagePriority::BloomBuildStage))
+            .set(L"TexturePass", static_cast<int>(TexturePassTypes::RenderPass))
+            .set(L"DepthTest", false)
+            .set(L"ColorOutput", true)
+            .set(L"DepthOutput", false)
+            .set(L"RenderBlend", true)
+            .set(L"RenderOpaque", true)
+            .set(L"SortTransparentToNear", true)
+            .set(L"SortOpaqueToNear", true));
+
+        mBloomRernderer = mMain.getResourceManager()->queryResourceFromJson<Scene>(
+            mPipelineName + "_" + mCameraName + "_BloomStage",
             bloomSceneConfig.generate().write());
         mBloomRernderer->addObserver(this);
 
@@ -200,10 +217,12 @@ namespace lite3dpp_pipeline {
                 });
             }
 
-            Material *material = mMain.getResourceManager()->queryResourceFromJson<Material>(matName + std::to_string(i) + ".material",
-                bloomSampleMaterialConfig.write());
-            /* Установим исходную текстуру для каждого bloom прохода, каждый проход берет результат предидущего */
-            material->setSamplerParameter(1, "Source", i == 0 ? *combinedTexture : *mTextureChain[i-1]);
+            /* создание шейдера */
+            Material *material = mMain.getResourceManager()->queryResourceFromJson<Material>(
+                matName + std::to_string(i) + ".material", bloomSampleMaterialConfig.write());
+            /* Установим исходную текстуру для каждого bloom шейдера, каждый проход берет результат предидущего */
+            material->setSamplerParameter(static_cast<int>(TexturePassTypes::RenderPass), "Source", 
+                i == 0 ? *combinedTexture : *mTextureChain[i-1]);
 
             /* Загрузим для каждого слоя свой полноэкранный треугольник с только что созданным шейдером */
             BigTriObjectGenerator triObject(material->getName());

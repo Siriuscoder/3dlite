@@ -71,18 +71,9 @@ namespace lite3dpp
         const void *buffer, size_t size,
         std::shared_ptr<AbstractResource> resource)
     {
+        SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "RESOURCE %s\n%s", name.c_str(), String((const char *)buffer, size).c_str());
         /* load resource from memory chunk */
-        try
-        {
-            resource->load(buffer, size);
-        }
-        catch(std::exception &)
-        {
-            /* to prevent reource leak */
-            resource->unload();
-            throw;
-        }
-
+        resource->load(buffer, size);
         /* just insert resource */
         if (!mResources.emplace(name, resource).second)
         {
