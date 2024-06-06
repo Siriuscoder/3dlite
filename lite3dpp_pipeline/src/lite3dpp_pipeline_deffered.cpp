@@ -42,11 +42,11 @@ namespace lite3dpp_pipeline {
         constructLightComputePass(pipelineConfig);
     }
 
-    void PipelineDeffered::enableAO(bool flag)
+    void PipelineDeffered::enableSSAO(bool flag)
     {
-        if (mSSAOStageMaterial && mSSAOPass)
+        if (mLightComputeStageMaterial && mSSAOPass)
         {
-            mSSAOStageMaterial->setIntParameter(static_cast<uint16_t>(TexturePassTypes::RenderPass), "AOEnabled", flag ? 1 : 0);
+            mLightComputeStageMaterial->setIntParameter(static_cast<uint16_t>(TexturePassTypes::RenderPass), "AOEnabled", flag);
             flag ? mSSAOPass->enable() : mSSAOPass->disable();
         }
     }
@@ -143,8 +143,7 @@ namespace lite3dpp_pipeline {
             lightComputeMaterialUniforms.emplace_back(ConfigurationWriter()
                 .set(L"Name", "AOEnabled")
                 .set(L"Value", 1)
-                .set(L"Type", "int")
-                .set(L"Scope", "global"));
+                .set(L"Type", "int"));
         }
 
         auto shaderPath = mSSAOTexture ? (mShaderPackage + ":shaders/json/lightpass_ssao.json") : 

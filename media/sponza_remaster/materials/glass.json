@@ -54,6 +54,11 @@
           "Type": "UBO"
         },
         {
+          "Name": "ShadowIndex",
+          "UBOName": "SponzaDeffered_ShadowIndexBuffer",
+          "Type": "UBO"
+        },
+        {
           "Name": "Eye",
           "Type": "v3",
           "Scope": "global"

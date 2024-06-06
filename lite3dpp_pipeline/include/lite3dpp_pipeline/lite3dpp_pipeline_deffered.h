@@ -28,7 +28,7 @@ namespace lite3dpp_pipeline {
 
         PipelineDeffered(const String &name, const String &path, Main *main);
 
-        void enableAO(bool flag);
+        void enableSSAO(bool flag);
 
     protected:
         

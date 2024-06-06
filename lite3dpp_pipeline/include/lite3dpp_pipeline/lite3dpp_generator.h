@@ -25,8 +25,8 @@ namespace lite3dpp_pipeline {
 
     enum class RenderPassPriority
     {
-        MainDepth = 2,
-        ShadowMap = 1,
+        MainDepth = 1,
+        ShadowMap = 2,
         GBuffer = 3,
         SSAO = 4,
         Combine = 5,

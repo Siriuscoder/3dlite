@@ -37,6 +37,10 @@ namespace lite3dpp_pipeline {
         ShadowManager *getShadowManager();
         Camera &getMainCamera();
 
+        void setGamma(float gamma);
+        void setContrast(float contrast);
+        void setSaturation(float saturation);
+
     protected:
 
         void loadFromConfigImpl(const ConfigurationReader &helper) override;

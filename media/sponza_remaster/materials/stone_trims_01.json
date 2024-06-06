@@ -61,6 +61,11 @@
           "Type": "UBO"
         },
         {
+          "Name": "ShadowIndex",
+          "UBOName": "SponzaDeffered_ShadowIndexBuffer",
+          "Type": "UBO"
+        },
+        {
           "Name": "modelMatrix"
         }
       ]

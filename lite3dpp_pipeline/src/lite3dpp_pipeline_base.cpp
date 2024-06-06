@@ -66,6 +66,22 @@ namespace lite3dpp_pipeline {
         return *mMainCamera;
     }
 
+    void PipelineBase::setGamma(float gamma)
+    {
+        mPostProcessStageMaterial->setFloatParameter(static_cast<uint16_t>(TexturePassTypes::RenderPass), "Gamma", gamma);
+    }
+
+    void PipelineBase::setContrast(float contrast)
+    {
+        mPostProcessStageMaterial->setFloatParameter(static_cast<uint16_t>(TexturePassTypes::RenderPass), "Contrast", contrast);
+    }
+
+    void PipelineBase::setSaturation(float saturation)
+    {
+        mPostProcessStageMaterial->setFloatParameter(static_cast<uint16_t>(TexturePassTypes::RenderPass), "saturation", 
+            saturation);
+    }
+
     void PipelineBase::loadFromConfigImpl(const ConfigurationReader &pipelineConfig)
     {
         String mainCameraName;

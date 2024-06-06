@@ -96,25 +96,23 @@ public:
             }
             else if (e->key.keysym.sym == SDLK_KP_PLUS)
             {
-                mGammaFactor += 0.02;
-                if (mGammaFactor > 3.0)
-                    mGammaFactor = 3.0;
-                Material::setFloatGlobalParameter("gamma", mGammaFactor);
+                mGamma += 0.02;
+                if (mGamma > 3.0)
+                    mGamma = 3.0;
+                mPipeline->setGamma(mGamma);
             }
             else if (e->key.keysym.sym == SDLK_KP_MINUS)
             {
-                mGammaFactor -= 0.02;
-                if (mGammaFactor < 1.5)
-                    mGammaFactor = 1.5;
-                Material::setFloatGlobalParameter("gamma", mGammaFactor);
+                mGamma -= 0.02;
+                if (mGamma < 1.5)
+                    mGamma = 1.5;
+                mPipeline->setGamma(mGamma);
             }
             else if (e->key.keysym.sym == SDLK_u)
             {
                 static bool ssaoEnabled = true;
                 ssaoEnabled = !ssaoEnabled;
-                Material::setIntGlobalParameter("AOEnabled", ssaoEnabled ? 1 : 0);
-                auto ssaoRenderTarget = getMain().getResourceManager()->queryResource<TextureRenderTarget>("SSAOStep");
-                ssaoEnabled ? ssaoRenderTarget->enable() : ssaoRenderTarget->disable();
+                mPipeline->enableSSAO(ssaoEnabled);
             }
         }
     }
@@ -125,7 +123,7 @@ private:
     Scene* mSponzaScene = nullptr;
     lite3dpp_pipeline::PipelineDeffered* mPipeline = nullptr;
     LightSceneNode* mFlashLight;
-    float mGammaFactor = 2.2;
+    float mGamma = 2.2;
 };
 
 }}
