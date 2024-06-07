@@ -40,6 +40,7 @@ namespace lite3dpp_pipeline {
         void setGamma(float gamma);
         void setContrast(float contrast);
         void setSaturation(float saturation);
+        void setSkyBoxEmission(float emission);
 
     protected:
 
@@ -57,6 +58,8 @@ namespace lite3dpp_pipeline {
         virtual void constructBloomPass(const ConfigurationReader &pipelineConfig, const String &cameraName);
         virtual void constructPostProcessPass(const ConfigurationReader &pipelineConfig, const String &cameraName,
             SceneGenerator &sceneGenerator);
+        virtual void constructSkyBoxPass(const ConfigurationReader &pipelineConfig, const String &cameraName,
+            const ConfigurationWriter &mainCameraConfig);
         
         void createBigTriangleMesh();
         void updateExposure();
@@ -64,7 +67,7 @@ namespace lite3dpp_pipeline {
     protected:
 
         Scene *mMainScene = nullptr;
-        Scene *mSkyBox = nullptr;
+        Scene *mSkyBoxStage = nullptr;
         Scene *mPostProcessStage = nullptr;
         String mShaderPackage;
         std::unique_ptr<ShadowManager> mShadowManager;
@@ -75,7 +78,8 @@ namespace lite3dpp_pipeline {
         Texture *mDepthTexture = nullptr;
         Texture *mCombinedTexture = nullptr;
         Material *mPostProcessStageMaterial = nullptr;
-        stl<AbstractResource *>::list mResourcesList;
+        Material *mSkyBoxStageMaterial = nullptr;
+        stl<String>::list mResourcesList;
         PixelsData mBloomPixels;
 
         float mRandomSeed;

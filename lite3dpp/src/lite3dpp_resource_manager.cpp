@@ -29,11 +29,8 @@
 namespace lite3dpp
 {
     ResourceManager::ResourceManager(Main *main) : 
-        mMain(main),
-        mLastUsed(NULL)
-    {
-
-    }
+        mMain(main)
+    {}
 
     ResourceManager::~ResourceManager()
     {
@@ -51,7 +48,12 @@ namespace lite3dpp
             return it->second.get();
         }
 
-        return NULL;
+        return nullptr;
+    }
+
+    bool ResourceManager::resourceExists(const String &name)
+    {
+        return mResources.count(name) > 0;
     }
 
     void ResourceManager::loadResource(const String &name,

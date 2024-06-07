@@ -67,19 +67,19 @@ namespace lite3dpp
     /* epsilon */
     const constexpr auto epsilon = std::numeric_limits<float>::epsilon();
 
-    inline bool nonzero(float num)
-    {
-        return std::fabs(num) >= epsilon; 
-    }
-
     inline bool iszero(float num)
     {
-        return !nonzero(num);
+        return kmAlmostEqual(num, 0.0f);
+    }
+
+    inline bool nonzero(float num)
+    {
+        return !iszero(num);
     }
 
     inline bool near(float a, float b)
     {
-        return std::fabs(a - b) <= epsilon;
+        return kmAlmostEqual(a, b);
     }
 }
 

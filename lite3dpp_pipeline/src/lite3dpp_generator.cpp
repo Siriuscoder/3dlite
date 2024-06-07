@@ -80,13 +80,13 @@ namespace lite3dpp_pipeline {
         SceneGenerator::addRenderTarget("BigTriView", renderTargetName, conf);
     }
 
-    ConfigurationReader BigTriObjectGenerator::generate()
+    ConfigurationReader SimpleObjectGenerator::generate()
     {
         auto data = ConfigurationWriter().set(L"Root", ConfigurationWriter()
-            .set(L"Name", "BigTriangle.root")
+            .set(L"Name", mMeshName + ".root")
             .set(L"FrustumTest", false)
             .set(L"Mesh", ConfigurationWriter()
-                .set(L"Name", "BigTriangle.mesh")
+                .set(L"Name", mMeshName)
                 .set(L"MaterialMapping", stl<ConfigurationWriter>::vector {
                     ConfigurationWriter()
                         .set(L"MaterialIndex", 0)

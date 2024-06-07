@@ -47,7 +47,7 @@ namespace lite3dpp_pipeline {
 
     Scene *PipelineBase::getSkyBoxScene()
     {
-        return mSkyBox;
+        return mSkyBoxStage;
     }
 
     ShadowManager* PipelineBase::getShadowManager()
@@ -78,8 +78,17 @@ namespace lite3dpp_pipeline {
 
     void PipelineBase::setSaturation(float saturation)
     {
-        mPostProcessStageMaterial->setFloatParameter(static_cast<uint16_t>(TexturePassTypes::RenderPass), "saturation", 
+        mPostProcessStageMaterial->setFloatParameter(static_cast<uint16_t>(TexturePassTypes::RenderPass), "Saturation", 
             saturation);
+    }
+
+    void PipelineBase::setSkyBoxEmission(float emission)
+    {
+        if (mSkyBoxStageMaterial)
+        {
+            mSkyBoxStageMaterial->setFloatParameter(static_cast<uint16_t>(TexturePassTypes::RenderPass), "EmissionStrength",
+                emission);
+        }
     }
 
     void PipelineBase::loadFromConfigImpl(const ConfigurationReader &pipelineConfig)
@@ -146,12 +155,13 @@ namespace lite3dpp_pipeline {
             constructCameraDepthPass(pipelineConfig, cameraName, mainSceneGenerator);
             constructCameraPipeline(pipelineConfig, cameraName, mainSceneGenerator);
             constructPostProcessPass(pipelineConfig, cameraName, mainSceneGenerator);
+            constructSkyBoxPass(pipelineConfig, cameraName, cameraPipelineConfig);
             break;
         }
 
         /* Создание главной сцены в самом конце, все остальные обьекты должны быть созданы до этого момента */
         createMainScene(mainSceneGenerator.getName(), mainSceneGenerator.generateFromExisting(sceneGeneratedConfig).write());
-        mResourcesList.emplace_back(mMainScene);
+        mResourcesList.emplace_back(mMainScene->getName());
         mMainCamera = getMain().getCamera(mainCameraName);
 
         if (mShadowManager)
@@ -169,7 +179,7 @@ namespace lite3dpp_pipeline {
     {
         for (auto it = mResourcesList.rbegin(); it != mResourcesList.rend(); ++it)
         {
-            getMain().getResourceManager()->releaseResource((*it)->getName());
+            getMain().getResourceManager()->releaseResource(*it);
         }
 
         mResourcesList.clear();
@@ -179,8 +189,11 @@ namespace lite3dpp_pipeline {
 
     void PipelineBase::createBigTriangleMesh()
     {
-        getMain().getResourceManager()->queryResourceFromJson<Mesh>("BigTriangle.mesh",
-            ConfigurationWriter().set(L"Model", "BigTriangle").set(L"Dynamic", false).write());
+        if (!getMain().getResourceManager()->resourceExists("BigTriangle.mesh"))
+        {
+            getMain().getResourceManager()->queryResourceFromJson<Mesh>("BigTriangle.mesh",
+                ConfigurationWriter().set(L"Model", "BigTriangle").set(L"Dynamic", false).write());
+        }
     }
 
     void PipelineBase::constructCameraPipeline(const ConfigurationReader &pipelineConfig, const String &cameraName,
@@ -200,7 +213,7 @@ namespace lite3dpp_pipeline {
 
         mDepthTexture = getMain().getResourceManager()->queryResourceFromJson<TextureImage>(depthTextureName, 
             depthTextureConfig.write());
-        mResourcesList.emplace_back(mDepthTexture);
+        mResourcesList.emplace_back(mDepthTexture->getName());
 
         ConfigurationWriter depthPassConfig;
         depthPassConfig.set(L"BackgroundColor", kmVec4 { 0.0f, 0.0f, 0.0f, 1.0f })
@@ -213,7 +226,7 @@ namespace lite3dpp_pipeline {
 
         mDepthPass = getMain().getResourceManager()->queryResourceFromJson<TextureRenderTarget>(
             getName() + "_" + cameraName + "_DepthPass", depthPassConfig.write());
-        mResourcesList.emplace_back(mDepthPass);
+        mResourcesList.emplace_back(mDepthPass->getName());
 
         ConfigurationWriter depthPassGeneratedConfig;
         depthPassGeneratedConfig
@@ -279,7 +292,7 @@ namespace lite3dpp_pipeline {
             
         mPostProcessStage = getMain().getResourceManager()->queryResourceFromJson<Scene>(
             getName() + "_" + cameraName + "_PostProcessStage", stageGenerator.generate().write());
-        mResourcesList.emplace_back(mPostProcessStage);
+        mResourcesList.emplace_back(mPostProcessStage->getName());
 
         SDL_assert(mCombinedTexture);
 
@@ -337,8 +350,8 @@ namespace lite3dpp_pipeline {
 
         // Создаем шейдер постпроцессинга финального изображения
         mPostProcessStageMaterial = getMain().getResourceManager()->queryResourceFromJson<Material>(
-            getName() + "_PostProcessStage.material", postProcessMaterialConfig.write());
-        mResourcesList.emplace_back(mPostProcessStageMaterial);
+            getName() + "_" + cameraName + "_PostProcessStage.material", postProcessMaterialConfig.write());
+        mResourcesList.emplace_back(mPostProcessStageMaterial->getName());
 
         // Добавляем шейдер постпроцессинга финального изображения 
         mPostProcessStage->addObject("PostProcessBigTri", 
@@ -352,6 +365,72 @@ namespace lite3dpp_pipeline {
             mExposureMin = dynamicExposureConfig.getDouble(L"ExposureMin", 1.0);
             mExposureBase = dynamicExposureConfig.getDouble(L"ExposureBase", 1.0);
         }
+    }
+
+    void PipelineBase::constructSkyBoxPass(const ConfigurationReader &pipelineConfig, const String &cameraName, 
+        const ConfigurationWriter &mainCameraConfig)
+    {
+        if (!pipelineConfig.has(L"SkyBox"))
+        {
+            return;
+        }
+
+        // Создаем built-in Skybox mesh, если еще не создан 
+        if (!getMain().getResourceManager()->resourceExists("SkyBox.mesh"))
+        {
+            getMain().getResourceManager()->queryResourceFromJson<Mesh>("SkyBox.mesh",
+                ConfigurationWriter().set(L"Model", "Skybox")
+                    .set(L"Dynamic", false)
+                    .set(L"Size", kmVec3 { 2.0f, 2.0f, 2.0f})
+                    .write());
+        }
+
+        SDL_assert(mCombinePass);
+
+        // Нужно чтобы название камеры вышло такое же как на главной сцене (так как камера должна быть общая)
+        SceneGenerator stageGenerator(getName() + "_MainScene");
+        auto mainConfCopy = mainCameraConfig;
+        stageGenerator.addCamera(cameraName, mainConfCopy);
+        stageGenerator.addRenderTarget(cameraName, mCombinePass->getName(), ConfigurationWriter()
+            .set(L"Priority", static_cast<int>(RenderPassStagePriority::SkyBoxStage))
+            .set(L"TexturePass", static_cast<int>(TexturePassTypes::RenderPass))
+            .set(L"DepthTest", true)
+            .set(L"ColorOutput", true)
+            .set(L"DepthOutput", false));
+            
+        mSkyBoxStage = getMain().getResourceManager()->queryResourceFromJson<Scene>(
+            getName() + "_" + cameraName + "_SkyBoxStage", stageGenerator.generate().write());
+        mResourcesList.emplace_back(mSkyBoxStage->getName());
+
+        ConfigurationWriter skyBoxMaterialConfig;
+        auto skyBoxConfig = pipelineConfig.getObject(L"SkyBox");
+        skyBoxMaterialConfig.set(L"Passes", stl<ConfigurationWriter>::vector {
+            ConfigurationWriter().set(L"Pass", static_cast<int>(TexturePassTypes::RenderPass))
+                .set(L"Program", ConfigurationWriter()
+                    .set(L"Name", "SkyBox.program")
+                    .set(L"Path", mShaderPackage + ":shaders/json/skybox.json"))
+                .set(L"Uniforms", stl<ConfigurationWriter>::vector {
+                    ConfigurationWriter()
+                        .set(L"Name", "screenMatrix"),
+                    ConfigurationWriter()
+                        .set(L"Name", "EmissionStrength")
+                        .set(L"Type", "float")
+                        .set(L"Value", skyBoxConfig.getDouble(L"EmissionStrength")),
+                    ConfigurationWriter()
+                        .set(L"Name", "Skybox")
+                        .set(L"Type", "sampler")
+                        .set(L"TextureName", getName() + "_skybox.texture")
+                        .set(L"TexturePath", skyBoxConfig.getString(L"Texture")),
+                })
+        });
+
+        // Создаем шейдер skybox
+        mSkyBoxStageMaterial = getMain().getResourceManager()->queryResourceFromJson<Material>(
+            getName() + "_" + cameraName + "_SkyBoxStage.material", skyBoxMaterialConfig.write());
+        mResourcesList.emplace_back(mSkyBoxStageMaterial->getName());
+
+        // Добавляем шейдер skybox
+        mSkyBoxStage->addObject("SkyBox", SkyBoxObjectGenerator(mSkyBoxStageMaterial->getName()).generate());
     }
 
     void PipelineBase::createMainScene(const String& name, const String &sceneConfig)

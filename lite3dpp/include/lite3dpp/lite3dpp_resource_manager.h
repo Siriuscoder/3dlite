@@ -125,7 +125,7 @@ namespace lite3dpp
         void releaseResource(const String &name);
         void releaseFileCache();
         void releaseFileCache(const String &location);
-
+        bool resourceExists(const String &name);
         
         ResourceManagerStats getStats() const;
 
@@ -149,10 +149,10 @@ namespace lite3dpp
 
     private:
 
-        Main *mMain;
+        Main *mMain = nullptr;
         Resources mResources;
         Packs mPacks;
-        lite3d_pack *mLastUsed;
+        lite3d_pack *mLastUsed = nullptr;
     };
 }
 

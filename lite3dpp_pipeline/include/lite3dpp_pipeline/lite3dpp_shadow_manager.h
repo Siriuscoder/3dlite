@@ -97,7 +97,7 @@ public:
         ShadowCasters mVisibility;
     };
 
-    ShadowManager(Main& main, const String& pipelineName, const ConfigurationReader& conf);
+    ShadowManager(Main& main, const String& pipelineName, const ConfigurationReader& pipelineConf);
     ~ShadowManager();
 
     ShadowCaster* newShadowCaster(LightSceneNode* node);

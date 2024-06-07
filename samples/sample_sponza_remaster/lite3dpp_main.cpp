@@ -54,7 +54,23 @@ public:
 
     void setupShadowCasters()
     {
-        mPipeline->getShadowManager()->newShadowCaster(mSponzaScene->getObject("Sponza")->getLightNode("SUN"));
+        mSUN = mSponzaScene->getObject("Sponza")->getLightNode("SUN");
+        mAmbient01 = mSponzaScene->getObject("Sponza")->getLightNode("ambient_light_day_01");
+        mAmbient02 = mSponzaScene->getObject("Sponza")->getLightNode("ambient_light_day_02");
+        mSUNNode = mSponzaScene->getObject("Sponza")->getNode("SUN_actor");
+        mSUBShadowCaster = mPipeline->getShadowManager()->newShadowCaster(mSUN);
+    }
+
+    void fixedUpdateTimerTick(int32_t firedPerRound, uint64_t deltaMcs, float deltaRetard) override
+    {
+        if (mDayNightMode)
+        {
+            // Крутим источник света
+            mSUNNode->rotateZ(0.0005f * deltaRetard);
+            //mSUN->rotateX(0.00005f * deltaRetard);
+            // Помечаем что надо перерисовать тени в следубщий кадр
+            mSUBShadowCaster->invalidate();
+        }
     }
 
     void addFlashlight()
@@ -69,11 +85,6 @@ public:
     }
 
     void frameBegin() override
-    {
-        updateFlashLight();
-    }
-
-    void updateFlashLight()
     {
         if (mFlashLight && mFlashLight->getLight()->enabled())
         {
@@ -92,7 +103,6 @@ public:
                 static bool flashLightEnabled = false;
                 flashLightEnabled = !flashLightEnabled;
                 mFlashLight->getLight()->enabled(flashLightEnabled);
-                updateFlashLight();
             }
             else if (e->key.keysym.sym == SDLK_KP_PLUS)
             {
@@ -114,6 +124,14 @@ public:
                 ssaoEnabled = !ssaoEnabled;
                 mPipeline->enableSSAO(ssaoEnabled);
             }
+            else if (e->key.keysym.sym == SDLK_r)
+            {
+                mDayNightMode = !mDayNightMode;
+                mSUN->getLight()->enabled(mDayNightMode);
+                mAmbient01->getLight()->enabled(mDayNightMode);
+                mAmbient02->getLight()->enabled(mDayNightMode);
+                mPipeline->setSkyBoxEmission(mDayNightMode ? 12.0f : 0.008f);
+            }
         }
     }
 
@@ -122,7 +140,13 @@ private:
 
     Scene* mSponzaScene = nullptr;
     lite3dpp_pipeline::PipelineDeffered* mPipeline = nullptr;
+    lite3dpp_pipeline::ShadowManager::ShadowCaster *mSUBShadowCaster = nullptr;
     LightSceneNode* mFlashLight;
+    LightSceneNode* mSUN;
+    LightSceneNode* mAmbient01;
+    LightSceneNode* mAmbient02;
+    SceneNode* mSUNNode = nullptr;
+    bool mDayNightMode = true;
     float mGamma = 2.2;
 };
 

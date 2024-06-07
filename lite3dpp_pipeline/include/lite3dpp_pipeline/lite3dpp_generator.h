@@ -42,9 +42,10 @@ namespace lite3dpp_pipeline {
         BloomBuildStage = 0,
         LightComputeStage = 0,
         GBufferBuildStage = 0,
-        BlendDecalStage = 1,
+        BlendDecalStage = 2,
         SSAOBuildStage = 0,
-        PostProcessStage = 0
+        PostProcessStage = 0,
+        SkyBoxStage = 1
     };
 
     enum class TexturePassTypes
@@ -91,12 +92,13 @@ namespace lite3dpp_pipeline {
         void addRenderTarget(const String& renderTargetName, ConfigurationWriter& conf);
     };
 
-    class LITE3DPP_PIPELINE_EXPORT BigTriObjectGenerator
+    class LITE3DPP_PIPELINE_EXPORT SimpleObjectGenerator
     {
     public:
     
-        BigTriObjectGenerator(const String& materialName) : 
-            mMaterialName(materialName)
+        SimpleObjectGenerator(const String& materialName, const String& meshName) : 
+            mMaterialName(materialName),
+            mMeshName(meshName)
         {}
 
         ConfigurationReader generate();
@@ -104,5 +106,24 @@ namespace lite3dpp_pipeline {
     private:
 
         String mMaterialName;
+        String mMeshName;
+    };
+
+    class LITE3DPP_PIPELINE_EXPORT BigTriObjectGenerator : public SimpleObjectGenerator
+    {
+    public:
+    
+        BigTriObjectGenerator(const String& materialName) : 
+            SimpleObjectGenerator(materialName, "BigTriangle.mesh")
+        {}
+    };
+
+    class LITE3DPP_PIPELINE_EXPORT SkyBoxObjectGenerator : public SimpleObjectGenerator
+    {
+    public:
+    
+        SkyBoxObjectGenerator(const String& materialName) : 
+            SimpleObjectGenerator(materialName, "SkyBox.mesh")
+        {}
     };
 }}
