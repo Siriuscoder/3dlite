@@ -1,10 +1,11 @@
 #include "samples:shaders/sources/common/version.def"
 
-layout(location = 0) in vec2 ivertex;
+layout(location = 0) in vec2 vertex;
 
 uniform mat4 screenMatrix;
-uniform sampler2D combined;
+uniform vec3 ScreenResolution;
 
+out vec2 iuv;
 out vec2 irgbNW;
 out vec2 irgbNE;
 out vec2 irgbSW;
@@ -15,12 +16,12 @@ out vec2 irgbM;
 void texcoords(vec2 fragCoord, vec2 resolution,
     out vec2 rgbNW, out vec2 rgbNE,
     out vec2 rgbSW, out vec2 rgbSE,
-    out vec2 rgbM);
+    out vec2 rgbM); 
 
 void main()
 {
-    vec2 sr = textureSize(combined, 0);
-    gl_Position = screenMatrix * vec4(ivertex.xy, 0.0, 1.0);
+    iuv = vertex;
 
-    texcoords(ivertex * sr, sr, irgbNW, irgbNE, irgbSW, irgbSE, irgbM);
+    texcoords(iuv * ScreenResolution.xy, ScreenResolution.xy, irgbNW, irgbNE, irgbSW, irgbSE, irgbM);
+    gl_Position = screenMatrix * vec4(vertex.xy, 0.0, 1.0);
 }

@@ -155,6 +155,6 @@ private:
 int main(int agrc, char *args[])
 {
     lite3dpp::samples::SampleSponza sample;
-    return sample.start("sponza_remaster/config/config.json");
+    return sample.start("sponza/config/config.json");
 }
 

@@ -2,7 +2,7 @@
 #include "samples:shaders/sources/common/utils_inc.glsl"
 
 #define SSAO_MAX_DEPTH_SAMPLES 80
-#define SSAO_SAMPLE_BIAS 0.085
+#define SSAO_SAMPLE_BIAS 0.030
 
 uniform sampler2DArray GBuffer;
 uniform mat4 CameraView;
