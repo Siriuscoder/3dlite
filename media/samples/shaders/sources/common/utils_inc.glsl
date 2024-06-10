@@ -15,3 +15,4 @@ bool fiszero(vec3 a1);
 // - use with indicated fractional seeding method
 float goldNoise(vec2 xy, float seed);
 float lerp(float a, float b, float f);
+float noiseInterleavedGradient(vec2 xy, float seed);

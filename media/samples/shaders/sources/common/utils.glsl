@@ -32,3 +32,9 @@ float lerp(float a, float b, float f)
 {
     return a + f * (b - a);
 }
+
+float noiseInterleavedGradient(vec2 xy, float seed)
+{
+    vec3 magic = vec3(0.06711056, 0.00583715, 52.9829189);
+    return fract(magic.z * fract(dot(xy * seed, magic.xy)));
+}

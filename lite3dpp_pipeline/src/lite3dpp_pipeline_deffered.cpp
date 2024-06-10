@@ -132,6 +132,13 @@ namespace lite3dpp_pipeline {
                 .set(L"Name", "ShadowMatrix")
                 .set(L"UBOName", mShadowManager->getShadowMatrixBuffer()->getName())
                 .set(L"Type", "UBO"));
+                
+            lightComputeMaterialUniforms.emplace_back(ConfigurationWriter()
+                .set(L"Name", "CameraView")
+                .set(L"Type", "m4"));
+            lightComputeMaterialUniforms.emplace_back(ConfigurationWriter()
+                .set(L"Name", "CameraProjection")
+                .set(L"Type", "m4"));
         }
 
         if (mSSAOTexture)
@@ -361,12 +368,23 @@ namespace lite3dpp_pipeline {
 
     void PipelineDeffered::frameBegin()
     {
+        auto viewMatrix = getMainCamera().refreshViewMatrix();
+        auto projMatrix = getMainCamera().getProjMatrix();
+
         if (mSSAOStageMaterial)
         {
             mSSAOStageMaterial->setFloatm4Parameter(static_cast<uint16_t>(TexturePassTypes::RenderPass), 
-                "CameraView", getMainCamera().refreshViewMatrix());
+                "CameraView", viewMatrix);
             mSSAOStageMaterial->setFloatm4Parameter(static_cast<uint16_t>(TexturePassTypes::RenderPass), 
-                "CameraProjection", getMainCamera().getProjMatrix());
+                "CameraProjection", projMatrix);
+        }
+
+        if (mLightComputeStageMaterial)
+        {
+            mLightComputeStageMaterial->setFloatm4Parameter(static_cast<uint16_t>(TexturePassTypes::RenderPass), 
+                "CameraView", viewMatrix);
+            mLightComputeStageMaterial->setFloatm4Parameter(static_cast<uint16_t>(TexturePassTypes::RenderPass), 
+                "CameraProjection", projMatrix);
         }
 
         Material::setFloatv3GlobalParameter("Eye", getMainCamera().getWorldPosition());

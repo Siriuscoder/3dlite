@@ -10,7 +10,7 @@ layout(std140) uniform ShadowMatrix
 
 const float shadowBias = 0.001;
 
-float PCF(float shadowIndex, vec3 vw)
+float PCF(float shadowIndex, vec3 vw, vec3 N, vec3 L)
 {
     // Do not cast shadows
     if (shadowIndex < 0.0)
@@ -39,5 +39,5 @@ float PCF(float shadowIndex, vec3 vw)
     }
 
     result /= 9.0;
-    return result;
+    return 0.0;
 }

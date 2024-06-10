@@ -12,8 +12,8 @@
     },
     "ShadowMaps":
     {
-        "Width": 2048,
-        "Height": 2048,
+        "Width": 4096,
+        "Height": 4096,
         "MaxCount": 1,
         "NearClipPlane": 1.0,
         "FarClipPlane": 100.0,

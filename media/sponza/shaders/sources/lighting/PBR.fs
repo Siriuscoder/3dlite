@@ -25,7 +25,7 @@ layout(std140) uniform LightIndexes
 uniform vec3 Eye;
 
 /* Shadow compute module */
-float PCF(float shadowIndex, vec3 vw);
+float PCF(float shadowIndex, vec3 vw, vec3 N, vec3 L);
 /* Illumination compute module */
 vec3 Lx(vec3 albedo, vec3 radiance, vec3 L, vec3 N, vec3 V, vec3 specular, float NdotV);
 /* Fresnel equation (Schlick) */
@@ -108,7 +108,7 @@ vec3 ComputeIllumination(vec3 vw, vec3 nw, vec3 albedo, vec3 emission, vec3 spec
             lightDirection *= -1.0;
         }
         /* User Index, at this implementation is shadow index */
-        float shadowless = PCF(lights[index+2].w, vw);
+        float shadowless = PCF(lights[index+2].w, vw, nw, lightDirection);
         /* block1.x - diffuse.r */
         /* block1.y - diffuse.g  */
         /* block1.z - diffuse.b */
