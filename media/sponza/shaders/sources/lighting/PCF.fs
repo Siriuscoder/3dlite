@@ -8,7 +8,9 @@ layout(std140) uniform ShadowMatrix
     mat4 shadowMat[MAX_SHADOW_LAYERS];
 };
 
-const float shadowBias = 0.001;
+const float shadowBiasMax       = 0.0028;
+const float shadowBiasMin       = 0.0008;
+const float shadowFilterSize    = 1.12;
 
 float PCF(float shadowIndex, vec3 vw, vec3 N, vec3 L)
 {
@@ -24,20 +26,23 @@ float PCF(float shadowIndex, vec3 vw, vec3 N, vec3 L)
     if (sv.z > 1.0 || sv.z < 0.0)
         return 0.0;
 
-    float result = 0.0;
+    float visibility = 0.0;
     vec2 texelSize = 1.0 / textureSize(ShadowMaps, 0).xy;
-    for (int x = -1; x <= 1; ++x)
+    // Adaptive bias
+    float bias = max(shadowBiasMax * (1.0 - dot(N, L)), shadowBiasMin);
+
+    for (float x = -1.5; x <= 1.5; x += 1.0)
     {
-        for (int y = -1; y <= 1; ++y)
+        for (float y = -1.5; y <= 1.5; y += 1.0)
         {
-            vec2 shift = sv.xy + (vec2(x, y) * texelSize);
-            if (shift.x < 0.0 || shift.x > 1.0 || shift.y < 0.0 || shift.y > 1.0)
+            vec2 shift = sv.xy + (vec2(x, y) * texelSize * shadowFilterSize);
+            if (!isValidUV(shift))
                 continue;
 
-            result += texture(ShadowMaps, vec4(shift, shadowIndex, sv.z - shadowBias));
+            visibility += texture(ShadowMaps, vec4(shift, shadowIndex, sv.z - bias));
         }
     }
 
-    result /= 9.0;
+    visibility /= 16.0;
     return 0.0;
 }

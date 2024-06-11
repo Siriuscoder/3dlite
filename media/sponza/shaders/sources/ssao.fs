@@ -5,28 +5,24 @@
 #define SSAO_SAMPLE_BIAS 0.030
 
 uniform sampler2DArray GBuffer;
-uniform mat4 CameraView;
-uniform mat4 CameraProjection;
 uniform float AORadius;
-uniform float RandomSeed; /* 0.0 - 1.0 */
 
 in vec2 iuv;
 out vec4 outColor;
 
-vec3 viewSpacePosition(vec2 uv)
+vec3 sampleViewSpacePosition(vec2 uv)
 {
-    vec4 pos = CameraView * vec4(texture(GBuffer, vec3(uv, 0)).xyz, 1.0);
-    return pos.xyz / pos.w;
+    return worldToViewSpacePosition(texture(GBuffer, vec3(uv, 0)).xyz);
 }
 
-vec3 viewSpaceNormal(vec2 uv)
+vec3 sampleViewSpaceNormal(vec2 uv)
 {
     vec3 nw = texture(GBuffer, vec3(uv, 1)).xyz;
     // Non shaded fragment
     if (fiszero(nw))
         discard;
 
-    return normalize((CameraView * vec4(nw, 0.0)).xyz);
+    return worldToViewSpaceDirection(nw);
 }
 
 void main()
@@ -34,14 +30,14 @@ void main()
     float aoFactor = 0.0;
     float rc = 1.0; // For more randomization
     // sampling fragment normal in view space
-    vec3 nv = viewSpaceNormal(iuv);
+    vec3 nv = sampleViewSpaceNormal(iuv);
     // sampling fragment position in view space
-    vec3 vv = viewSpacePosition(iuv);
+    vec3 vv = sampleViewSpacePosition(iuv);
 
     // Take a xy-random base for more variative TBN basis
     vec3 baseRv = vec3(
-        goldNoise(iuv * rc++, RandomSeed) * 2.0 - 1.0, // x = -1.0 to 1.0
-        goldNoise(iuv * rc++, RandomSeed) * 2.0 - 1.0, // y = -1.0 to 1.0
+        goldNoise(iuv * rc++) * 2.0 - 1.0, // x = -1.0 to 1.0
+        goldNoise(iuv * rc++) * 2.0 - 1.0, // y = -1.0 to 1.0
         0.0
     );
 
@@ -55,9 +51,9 @@ void main()
     {
         // Random test sample in half hemisphere at tangent space 
         vec3 sample = normalize(vec3(
-            goldNoise(iuv * rc++, RandomSeed) * 2.0 - 1.0, // x = -1.0 to 1.0
-            goldNoise(iuv * rc++, RandomSeed) * 2.0 - 1.0, // y = -1.0 to 1.0
-            goldNoise(iuv * rc++, RandomSeed) // z = 0.0 to 1.0
+            goldNoise(iuv * rc++) * 2.0 - 1.0, // x = -1.0 to 1.0
+            goldNoise(iuv * rc++) * 2.0 - 1.0, // y = -1.0 to 1.0
+            goldNoise(iuv * rc++)              // z = 0.0 to 1.0
         ));
 
         // set sampler closer and closer to actual fragment 
@@ -68,11 +64,9 @@ void main()
 
         // Get Screen UV coordinate to sample surface depth in GBuffer
         // Convert sample view pos to clip-space
-        vec4 offsetUV = CameraProjection * vec4(sample, 1.0);
-        offsetUV /= offsetUV.w;             // perspective divide
-        offsetUV = offsetUV * 0.5 + 0.5;    // transform to range 0.0 - 1.0  
+        vec2 offsetUV = viewPositionToUV(sample);
         // Get surface world position at sample from GBuffer and translate to view space
-        float surfaceDepth = viewSpacePosition(offsetUV.xy).z;
+        float surfaceDepth = sampleViewSpacePosition(offsetUV).z;
         // Check sample depth respect to surface depth in view-space with range check
         //float rangeCheck = abs(vv.z - surfaceDepth) < AORadius ? 1.0 : 0.0;
         float rangeCheck = smoothstep(0.0, 1.0, AORadius / max(abs(vv.z - surfaceDepth), FLT_EPSILON));
