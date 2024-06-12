@@ -6,7 +6,7 @@
         "samples:shaders/sources/pipeline/forward_pass/forward.fs",
         "samples:shaders/sources/pbr/pbr.fs,sponza:shaders/sources/inc/pbr_params.def",
         "samples:shaders/sources/pbr/brdf.fs,sponza:shaders/sources/inc/pbr_params.def",
-        "samples:shaders/sources/shadow/pcf4x4.fs,sponza:shaders/sources/inc/shadow_params.def",
+        "samples:shaders/sources/shadow/pcf3x3.fs,sponza:shaders/sources/inc/shadow_params.def",
         "samples:shaders/sources/common/utils.fs",
         // Sample specific shaders
         "sponza:shaders/sources/glass.fs"

@@ -8,4 +8,5 @@ const float shadowFilterSize    = 1.12;
 const int   sssMaxSteps         = 20;     // Max ray steps, affects quality and performance.
 const float sssMaxRayDistance   = 0.75;   // Max shadow length, longer shadows are less accurate.
 const float sssDepthThickness   = 0.5;    // Depth testing thickness.
+const float sssMaxDepthVariance = 1.0;    
 const float sssStepLength       = sssMaxRayDistance / float(sssMaxSteps);

@@ -34,7 +34,7 @@ float SSS(vec3 vw, vec3 L)
         float depth = worldToViewSpacePosition(texture(GBuffer, vec3(rayUV, 0)).xyz).z;
         float depthDelta = depth - rayPos.z;
 
-        if (depthDelta > 0.0 && depthDelta < sssDepthThickness && abs(depthOriginal - rayPos.z) < 1.0)
+        if (depthDelta > 0.0 && depthDelta < sssDepthThickness && abs(depthOriginal - rayPos.z) < sssMaxDepthVariance)
         {
             // Mark as occluded
             occlusion = fadeScreenEdge(rayUV);

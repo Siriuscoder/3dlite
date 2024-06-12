@@ -54,20 +54,20 @@ float ShadowVisibility(float shadowIndex, vec3 vw, vec3 N, vec3 L)
     if (sv.z > 1.0 || sv.z < 0.0)
         return 0.0;
 
-    float result = 0.0;
+    float visibility = 0.0;
     vec2 texelSize = 1.0 / textureSize(ShadowMaps, 0).xy;
     // Adaptive bias
     float bias = max(shadowBiasMax * (1.0 - dot(N, L)), shadowBiasMin);
 
     for (int i = 0; i < 30; ++i)
     {
-        vec2 shift = sv.xy + (PoissonPoints[i] * texelSize);
+        vec2 shift = sv.xy + (PoissonPoints[i] * texelSize * shadowFilterSize);
         if (!isValidUV(shift))
             continue;
 
-        result += texture(ShadowMaps, vec4(shift, shadowIndex, sv.z - bias));
+        visibility += texture(ShadowMaps, vec4(shift, shadowIndex, sv.z - bias));
     }
 
-    result /= 30.0;
-    return result;
+    visibility /= 30.0;
+    return visibility;
 }

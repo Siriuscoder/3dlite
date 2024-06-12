@@ -7,7 +7,7 @@ layout(std140) uniform ShadowMatrix
     mat4 shadowMat[MAX_SHADOW_LAYERS];
 };
 
-float PCF(float shadowIndex, vec3 vw, vec3 N, vec3 L)
+float ShadowVisibility(float shadowIndex, vec3 vw, vec3 N, vec3 L)
 {
     // Do not cast shadows
     if (shadowIndex < 0.0)

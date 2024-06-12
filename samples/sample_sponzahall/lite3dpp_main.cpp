@@ -27,7 +27,9 @@ static const char *helpString =
     "Press '+' to increse gamma\n"
     "Press '-' to decrese gamma\n"
     "Press 'l' to enable/disable flashlight\n"
-    "Press 'u' to enable/disable SSAO\n";
+    "Press 'u' to enable/disable SSAO\n"
+    "Press 'r' to enable/disable night mode\n"
+    "Press 'e' to enable/disable sun rotation\n";
 
 class SampleSponza : public Sample
 {
@@ -58,18 +60,18 @@ public:
         mAmbient01 = mSponzaScene->getObject("Sponza")->getLightNode("ambient_light_day_01");
         mAmbient02 = mSponzaScene->getObject("Sponza")->getLightNode("ambient_light_day_02");
         mSUNNode = mSponzaScene->getObject("Sponza")->getNode("SUN_actor");
-        mSUBShadowCaster = mPipeline->getShadowManager()->newShadowCaster(mSUN);
+        mSUNShadowCaster = mPipeline->getShadowManager()->newShadowCaster(mSUN);
     }
 
     void fixedUpdateTimerTick(int32_t firedPerRound, uint64_t deltaMcs, float deltaRetard) override
     {
-        if (mDayNightMode)
+        if (mDayNightMode && mSunRotation)
         {
             // Крутим источник света
             mSUNNode->rotateZ(0.0005f * deltaRetard);
             //mSUN->rotateX(0.00005f * deltaRetard);
             // Помечаем что надо перерисовать тени в следубщий кадр
-            mSUBShadowCaster->invalidate();
+            mSUNShadowCaster->invalidate();
         }
     }
 
@@ -132,6 +134,10 @@ public:
                 mAmbient02->getLight()->enabled(mDayNightMode);
                 mPipeline->setSkyBoxEmission(mDayNightMode ? 12.0f : 0.008f);
             }
+            else if (e->key.keysym.sym == SDLK_e)
+            {
+                mSunRotation = !mSunRotation;
+            }
         }
     }
 
@@ -140,13 +146,14 @@ private:
 
     Scene* mSponzaScene = nullptr;
     lite3dpp_pipeline::PipelineDeffered* mPipeline = nullptr;
-    lite3dpp_pipeline::ShadowManager::ShadowCaster *mSUBShadowCaster = nullptr;
+    lite3dpp_pipeline::ShadowManager::ShadowCaster *mSUNShadowCaster = nullptr;
     LightSceneNode* mFlashLight;
     LightSceneNode* mSUN;
     LightSceneNode* mAmbient01;
     LightSceneNode* mAmbient02;
     SceneNode* mSUNNode = nullptr;
     bool mDayNightMode = true;
+    bool mSunRotation = false;
     float mGamma = 2.2;
 };
 
