@@ -1,5 +1,5 @@
 layout(triangles) in;
-layout(triangle_strip, max_vertices = 3) out;
+layout(triangle_strip, max_vertices = MAX_SHADOW_SPLIT_VERTICES) out;
 
 layout(std140) uniform ShadowMatrix
 {

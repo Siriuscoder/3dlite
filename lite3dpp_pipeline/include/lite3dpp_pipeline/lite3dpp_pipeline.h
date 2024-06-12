@@ -31,7 +31,7 @@ namespace lite3dpp_pipeline {
         using PipelineType = PipelineImpl;
 
         CustomScenePipeline(const String &name, const String &path, Main *main) : 
-            SceneType(name, path, main)
+            PipelineType(name, path, main)
         {}
 
         SceneImpl &getMainScene()

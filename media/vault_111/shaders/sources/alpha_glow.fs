@@ -1,17 +1,17 @@
 #include "samples:shaders/sources/common/version.def"
 
-uniform vec4 Emission;
+uniform sampler2D Albedo;
+uniform sampler2D Emission;
 uniform float EmissionStrength;
-uniform float Alpha;
 
 vec4 getAlbedo(vec2 uv)
 {
-    return vec4(Emission.rgb, Alpha);
+    return texture(Albedo, uv);
 }
 
 vec3 getEmission(vec2 uv)
 {
-    return Emission.rgb * EmissionStrength;
+    return texture(Emission, uv).rgb * EmissionStrength;
 }
 
 vec3 getNormal(vec2 uv, mat3 tbn)

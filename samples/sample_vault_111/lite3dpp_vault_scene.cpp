@@ -16,9 +16,9 @@
  *	along with Lite3D.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
 #include <ctime>
+#include <algorithm>
 
-#include "lite3dpp_vault_shadows.h"
-#include "lite3dpp_vault_bloom.h"
+#include <lite3dpp_pipeline/lite3dpp_pipeline.h>
 #include "lite3dpp_vault_light_anim.h"
 
 namespace lite3dpp {
@@ -42,8 +42,8 @@ public:
 
     struct SpotLightWithShadow
     {
-        SampleShadowManager::DynamicNode* spot = nullptr;
-        SampleShadowManager::ShadowCaster* shadowCaster = nullptr;
+        lite3dpp_pipeline::ShadowManager::DynamicShadowReceiver* spot = nullptr;
+        lite3dpp_pipeline::ShadowManager::ShadowCaster* shadowCaster = nullptr;
 
         void rotateAngle(const kmVec3 &axis, float angle)
         {
@@ -61,11 +61,11 @@ public:
 
         MinigunObject() = default;
 
-        MinigunObject(Scene* scene, SampleShadowManager* shadowManager, const String& name) : 
+        MinigunObject(Scene* scene, lite3dpp_pipeline::ShadowManager* shadowManager, const String& name) : 
             mMinigunObj(scene->getObject(name))
         {
-            mMinigun = shadowManager->registerDynamicNode(mMinigunObj->getNode("Minigun"));
-            mMinigunBarrel = shadowManager->registerDynamicNode(mMinigunObj->getNode("MinigunBarrel"));
+            mMinigun = shadowManager->registerShadowReceiver(mMinigunObj->getNode("Minigun"));
+            mMinigunBarrel = shadowManager->registerShadowReceiver(mMinigunObj->getNode("MinigunBarrel"));
         }
 
         void rotateAngle(const kmVec3 &axis, float angle)
@@ -83,98 +83,64 @@ public:
     private:
 
         SceneObject* mMinigunObj = nullptr;
-        SampleShadowManager::DynamicNode* mMinigun = nullptr;
-        SampleShadowManager::DynamicNode* mMinigunBarrel = nullptr;
+        lite3dpp_pipeline::ShadowManager::DynamicShadowReceiver* mMinigun = nullptr;
+        lite3dpp_pipeline::ShadowManager::DynamicShadowReceiver* mMinigunBarrel = nullptr;
     };
 
 public:
 
     SampleVault111() : 
         Sample(helpString)
-    {
-        // use current time as seed for random generator
-        std::srand(std::time(nullptr));
-    }
+    {}
 
     void createScene() override
     {
-        mShadowManager = std::make_unique<SampleShadowManager>(getMain(), 5);
-        mBloomEffectRenderer = std::make_unique<SampleBloomEffect>(getMain());
-        mLightAnimEffects = std::make_unique<SampleLightEffectManager>();
-        mVaultScene = getMain().getResourceManager()->queryResource<Scene>("Vault_111", "vault_111:scenes/vault_111.json");
-        getMain().getResourceManager()->queryResource<Scene>("ShadowClean", "vault_111:scenes/shadow_clean.json");
-        setMainCamera(getMain().getCamera("MyCamera"));
+        mPipeline = getMain().getResourceManager()->queryResource<lite3dpp_pipeline::PipelineDeffered>("Vault_111", 
+            "vault_111:pipelines/vault_111.json");
+        mVaultScene = &mPipeline->getMainScene();
+        setMainCamera(&mPipeline->getMainCamera());
+
+        mShadowManager = mPipeline->getShadowManager();
 
         setupShadowCasters();
         addFlashlight();
         setupLightAnim();
-        // load SSAO effect pipeline before ligth compute step, because SSAO texture needed to ambient light compute  
-        getMain().getResourceManager()->queryResource<Scene>("Vault_111_SSAO", "vault_111:scenes/ssao.json");
-        mSSAOShader = getMain().getResourceManager()->queryResource<Material>("ssao_compute.material");
-        // load intermediate light compute scene
-        mCombineScene = getMain().getResourceManager()->queryResource<Scene>("Vault_111_LightCompute",
-            "vault_111:scenes/lightpass.json");
 
-        // Load bloom effect pipeline
-        mBloomEffectRenderer->init();
-
-        // postprocess step, fxaa, gamma correcion, draw directly info render window. 
-        getMain().getResourceManager()->queryResource<Scene>("Vault_111_Postprocess",
-            "vault_111:scenes/postprocess.json");
-
-        // Release unnecessary cache
-        getMain().getResourceManager()->releaseFileCache();
-
-        // optimize: window clean not needed, because all pixels in last render target always be updated
-        getMain().window()->setBuffersCleanBit(false, false, false);
-        RenderTarget::depthTestFunc(RenderTarget::TestFuncLEqual);
-
-        kmVec3 resolution = { 
-            static_cast<float>(getMain().window()->width()), 
-            static_cast<float>(getMain().window()->height()), 0 
-        };
-        Material::setFloatv3GlobalParameter("screenResolution", resolution);
-        Material::setFloatGlobalParameter("RandomSeed", static_cast<float>(rand()) / static_cast<float>(RAND_MAX));
-
-        mMinigun01 = MinigunObject(mVaultScene, mShadowManager.get(), "MinigunTurret");
-        mMinigun02 = MinigunObject(mVaultScene, mShadowManager.get(), "MinigunTurret.001");
+        mMinigun01 = MinigunObject(mVaultScene, mShadowManager, "MinigunTurret");
+        mMinigun02 = MinigunObject(mVaultScene, mShadowManager, "MinigunTurret.001");
         mMinigun02.rotateAngle(KM_VEC3_POS_Z, kmDegreesToRadians(-30.0));
 
-        mGearKey = mShadowManager->registerDynamicNode(mVaultScene->getObject("VaultStatic")->getNode("GearKey"));
-        mGearKeySpinner = mShadowManager->registerDynamicNode(mVaultScene->getObject("VaultStatic")->getNode("GearKeySpinner"));
-        mGeneratorSpinner01 = mShadowManager->registerDynamicNode(mVaultScene->getObject("VaultStatic")->getNode("PowerGeneratorSpinner01"));
-        mGeneratorSpinner02 = mShadowManager->registerDynamicNode(mVaultScene->getObject("VaultStatic")->getNode("PowerGeneratorSpinner02"));
-        mFans.emplace_back(mShadowManager->registerDynamicNode(mVaultScene->getObject("VaultStatic")->getNode("FanRotor")));
-        mFans.emplace_back(mShadowManager->registerDynamicNode(mVaultScene->getObject("VaultStatic")->getNode("FanRotor.001")));
-        mFans.emplace_back(mShadowManager->registerDynamicNode(mVaultScene->getObject("VaultStatic")->getNode("FanRotor.002")));
-        mFans.emplace_back(mShadowManager->registerDynamicNode(mVaultScene->getObject("VaultStatic")->getNode("FanRotor.003")));
+        mGearKey = mShadowManager->registerShadowReceiver(mVaultScene->getObject("VaultStatic")->getNode("GearKey"));
+        mGearKeySpinner = mShadowManager->registerShadowReceiver(mVaultScene->getObject("VaultStatic")->getNode("GearKeySpinner"));
+        mGeneratorSpinner01 = mShadowManager->registerShadowReceiver(mVaultScene->getObject("VaultStatic")->getNode("PowerGeneratorSpinner01"));
+        mGeneratorSpinner02 = mShadowManager->registerShadowReceiver(mVaultScene->getObject("VaultStatic")->getNode("PowerGeneratorSpinner02"));
+        mFans.emplace_back(mShadowManager->registerShadowReceiver(mVaultScene->getObject("VaultStatic")->getNode("FanRotor")));
+        mFans.emplace_back(mShadowManager->registerShadowReceiver(mVaultScene->getObject("VaultStatic")->getNode("FanRotor.001")));
+        mFans.emplace_back(mShadowManager->registerShadowReceiver(mVaultScene->getObject("VaultStatic")->getNode("FanRotor.002")));
+        mFans.emplace_back(mShadowManager->registerShadowReceiver(mVaultScene->getObject("VaultStatic")->getNode("FanRotor.003")));
     }
 
     void setupShadowCasters()
     {
-        RenderTarget* shadowUpdateRT = getMain().getResourceManager()->queryResource<TextureRenderTarget>("ShadowPass");
-        shadowUpdateRT->addObserver(mShadowManager.get());
-        mVaultScene->addObserver(mShadowManager.get());
-
         // Установим тень для трех прожекторов и потом будем их вращать
         // Источники света получаем по ObjectName + NodeName
         mSpot = SpotLightWithShadow {
-            mShadowManager->registerDynamicNode(mVaultScene->getObject("LightSpot")->getNode("LightSpotLamp")),
+            mShadowManager->registerShadowReceiver(mVaultScene->getObject("LightSpot")->getNode("LightSpotLamp")),
             mShadowManager->newShadowCaster(mVaultScene->getObject("LightSpot")->getLightNode("LightSpotNode"))
         };
 
         mSpot01 = SpotLightWithShadow {
-            mShadowManager->registerDynamicNode(mVaultScene->getObject("LightSpot.001")->getNode("LightSpotLamp")),
+            mShadowManager->registerShadowReceiver(mVaultScene->getObject("LightSpot.001")->getNode("LightSpotLamp")),
             mShadowManager->newShadowCaster(mVaultScene->getObject("LightSpot.001")->getLightNode("LightSpotNode"))
         };
 
         mSpot02 = SpotLightWithShadow {
-            mShadowManager->registerDynamicNode(mVaultScene->getObject("LightSpot.002")->getNode("LightSpotLamp")),
+            mShadowManager->registerShadowReceiver(mVaultScene->getObject("LightSpot.002")->getNode("LightSpotLamp")),
             mShadowManager->newShadowCaster(mVaultScene->getObject("LightSpot.002")->getLightNode("LightSpotNode"))
         };
 
         mSpot03 = SpotLightWithShadow {
-            mShadowManager->registerDynamicNode(mVaultScene->getObject("LightSpot.003")->getNode("LightSpotLamp")),
+            mShadowManager->registerShadowReceiver(mVaultScene->getObject("LightSpot.003")->getNode("LightSpotLamp")),
             mShadowManager->newShadowCaster(mVaultScene->getObject("LightSpot.003")->getLightNode("LightSpotNode"))
         };
         
@@ -261,16 +227,7 @@ public:
 
     void mainCameraChanged() override
     {
-        updateShaderParams();
         updateFlashLight();
-    }
-
-    void updateShaderParams()
-    {
-        SDL_assert(mSSAOShader);
-        mSSAOShader->setFloatm4Parameter(1, "CameraView", getMainCamera().refreshViewMatrix());
-        mSSAOShader->setFloatm4Parameter(1, "CameraProjection", getMainCamera().getProjMatrix());
-        Material::setFloatv3GlobalParameter("eye", getMainCamera().getWorldPosition());
     }
 
     void updateFlashLight()
@@ -292,7 +249,7 @@ public:
         mMinigun02.animate(-cosA * 0.02, 0.13 * deltaRetard);
         mSpot03.rotateAngle(KM_VEC3_POS_Z, 0.1 * deltaRetard);
 
-        std::for_each(mFans.begin(), mFans.end(), [deltaRetard](SampleShadowManager::DynamicNode* fanRotor)
+        std::for_each(mFans.begin(), mFans.end(), [deltaRetard](lite3dpp_pipeline::ShadowManager::DynamicShadowReceiver* fanRotor)
         {
             fanRotor->rotateAngle(KM_VEC3_POS_Z, 0.07 * deltaRetard);
         });
@@ -345,51 +302,47 @@ public:
             }
             else if (e->key.keysym.sym == SDLK_KP_PLUS)
             {
-                mGammaFactor += 0.02;
-                if (mGammaFactor > 3.0)
-                    mGammaFactor = 3.0;
-                Material::setFloatGlobalParameter("gamma", mGammaFactor);
+                mGamma += 0.02;
+                if (mGamma > 3.0)
+                    mGamma = 3.0;
+                mPipeline->setGamma(mGamma);
             }
             else if (e->key.keysym.sym == SDLK_KP_MINUS)
             {
-                mGammaFactor -= 0.02;
-                if (mGammaFactor < 1.5)
-                    mGammaFactor = 1.5;
-                Material::setFloatGlobalParameter("gamma", mGammaFactor);
+                mGamma -= 0.02;
+                if (mGamma < 1.5)
+                    mGamma = 1.5;
+                mPipeline->setGamma(mGamma);
             }
             else if (e->key.keysym.sym == SDLK_u)
             {
                 static bool ssaoEnabled = true;
                 ssaoEnabled = !ssaoEnabled;
-                Material::setIntGlobalParameter("AOEnabled", ssaoEnabled ? 1 : 0);
-                auto ssaoRenderTarget = getMain().getResourceManager()->queryResource<TextureRenderTarget>("SSAOStep");
-                ssaoEnabled ? ssaoRenderTarget->enable() : ssaoRenderTarget->disable();
+                mPipeline->enableSSAO(ssaoEnabled);
             }
         }
     }
 
 private:
 
-    Scene* mCombineScene = nullptr;
     Scene* mVaultScene = nullptr;
-    Material* mSSAOShader = nullptr;
-    std::unique_ptr<SampleShadowManager> mShadowManager;
-    std::unique_ptr<SampleBloomEffect> mBloomEffectRenderer;
+    lite3dpp_pipeline::PipelineDeffered* mPipeline = nullptr;
+    lite3dpp_pipeline::ShadowManager* mShadowManager;
     std::unique_ptr<SampleLightEffectManager> mLightAnimEffects;
     LightSceneNode* mFlashLight;
     SpotLightWithShadow mSpot;
     SpotLightWithShadow mSpot01;
     SpotLightWithShadow mSpot02;
     SpotLightWithShadow mSpot03;
-    SampleShadowManager::DynamicNode* mGearKey = nullptr;
-    SampleShadowManager::DynamicNode* mGearKeySpinner = nullptr;
-    SampleShadowManager::DynamicNode* mGeneratorSpinner01 = nullptr;
-    SampleShadowManager::DynamicNode* mGeneratorSpinner02 = nullptr;
-    stl<SampleShadowManager::DynamicNode*>::vector mFans;
+    lite3dpp_pipeline::ShadowManager::DynamicShadowReceiver* mGearKey = nullptr;
+    lite3dpp_pipeline::ShadowManager::DynamicShadowReceiver* mGearKeySpinner = nullptr;
+    lite3dpp_pipeline::ShadowManager::DynamicShadowReceiver* mGeneratorSpinner01 = nullptr;
+    lite3dpp_pipeline::ShadowManager::DynamicShadowReceiver* mGeneratorSpinner02 = nullptr;
+    stl<lite3dpp_pipeline::ShadowManager::DynamicShadowReceiver*>::vector mFans;
     MinigunObject mMinigun01;
     MinigunObject mMinigun02;
     float mAnimPi = 0.0f;
-    float mGammaFactor = 2.2f;
+    float mGamma = 2.2f;
 };
 
 }}

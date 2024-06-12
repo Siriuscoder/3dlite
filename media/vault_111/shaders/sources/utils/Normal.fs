@@ -3,7 +3,7 @@
 uniform sampler2D Normal;
 uniform vec3 NormalScale;
 
-vec3 GetFixedWorldNormal(mat3 tbn, vec2 iuv)
+vec3 sampleNormal(vec2 iuv, mat3 tbn)
 {
     // There are different DDS loaders for Fallout4 or Blender loads normals 
     // directly in GRB formal but native DDS viewer show image correctly in RGB format, also 

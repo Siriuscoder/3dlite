@@ -1,3 +1,1 @@
 #include "samples:shaders/sources/common/version.def"
-
-#define MAX_SHADOW_LAYERS 5

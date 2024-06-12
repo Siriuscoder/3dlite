@@ -1,0 +1,9 @@
+{
+    "Sources": 
+    [
+        // Standard shaders with params customization
+        "samples:shaders/sources/bigtriangle.vs",
+        "samples:shaders/sources/pipeline/shadow_clean_pass/shadow_clean_split.gs,vault_111:shaders/sources/inc/shadow_params.def",
+        "samples:shaders/sources/pipeline/shadow_clean_pass/shadow_clean.fs"
+    ]
+}
