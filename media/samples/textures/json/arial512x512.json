@@ -8,5 +8,5 @@
     "Height": 512,
     "Font": "samples:fonts/arial.ttf",
     "FontSize": 12,
-    "BlankColor": [ 0.2, 0.2, 0.2, 0.4 ]
+    "BlankColor": [ 0.2, 0.2, 0.2, 0.0 ]
 }

@@ -4,7 +4,7 @@
     "Instancing": false,
     "OcclusionCulling": true,
     "LightingTechnique": "UBO",
-    "LightComputeEnvinmentTexture": "samples:textures/json/skybox_metal_chrome.json",
+    "LightComputeEnvironmentTexture": "samples:textures/json/skybox_metal_chrome.json",
     "SkyBox": 
     {
         "Texture": "samples:textures/json/skybox.json",

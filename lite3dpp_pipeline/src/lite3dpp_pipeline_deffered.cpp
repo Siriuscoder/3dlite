@@ -80,7 +80,7 @@ namespace lite3dpp_pipeline {
         lightComputeMaterialUniforms.emplace_back(ConfigurationWriter()
             .set(L"Name", "Environment")
             .set(L"TextureName", "environment.texture")
-            .set(L"TexturePath", pipelineConfig.getString(L"LightComputeEnvinmentTexture"))
+            .set(L"TexturePath", pipelineConfig.getString(L"LightComputeEnvironmentTexture"))
             .set(L"Type", "sampler"));
         lightComputeMaterialUniforms.emplace_back(ConfigurationWriter()
             .set(L"Name", "Eye")

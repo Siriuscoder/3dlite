@@ -12,7 +12,7 @@
         },
         {
           "Name":"ShadowIndex",
-          "UBOName":"ShadowIndexBuffer",
+          "UBOName":"Vault_111_ShadowIndexBuffer",
           "Type":"UBO"
         }
       ]
