@@ -336,15 +336,12 @@ namespace lite3dpp_pipeline {
                 .set(L"Type", "sampler")
                 .set(L"TextureName", mBloomEffect->getLastTexture().getName()));
         }
-
-        auto shaderPath = mBloomEffect ? (mShaderPackage + ":shaders/json/post_process_bloom.json") : 
-            (mShaderPackage + ":shaders/json/post_process.json");
         
         postProcessMaterialConfig.set(L"Passes", stl<ConfigurationWriter>::vector {
             ConfigurationWriter().set(L"Pass", static_cast<int>(TexturePassTypes::RenderPass))
                 .set(L"Program", ConfigurationWriter()
                     .set(L"Name", "PostProcess.program")
-                    .set(L"Path", shaderPath))
+                    .set(L"Path", mShaderPackage + ":shaders/json/post_process.json"))
                 .set(L"Uniforms", postProcessMaterialUniforms)
         });
 

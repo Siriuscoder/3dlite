@@ -1,4 +1,3 @@
-#include "sponza:shaders/sources/inc/common.def"
 #include "samples:shaders/sources/common/utils_inc.glsl"
 
 uniform sampler2DArrayShadow ShadowMaps;
@@ -8,9 +7,7 @@ layout(std140) uniform ShadowMatrix
     mat4 shadowMat[MAX_SHADOW_LAYERS];
 };
 
-const float shadowBias = 0.001;
-
-float PCF(float shadowIndex, vec3 vw)
+float PCF(float shadowIndex, vec3 vw, vec3 N, vec3 L)
 {
     // Do not cast shadows
     if (shadowIndex < 0.0)
@@ -24,20 +21,23 @@ float PCF(float shadowIndex, vec3 vw)
     if (sv.z > 1.0 || sv.z < 0.0)
         return 0.0;
 
-    float result = 0.0;
+    float visibility = 0.0;
     vec2 texelSize = 1.0 / textureSize(ShadowMaps, 0).xy;
+    // Adaptive bias
+    float bias = max(shadowBiasMax * (1.0 - dot(N, L)), shadowBiasMin);
+
     for (int x = -1; x <= 1; ++x)
     {
         for (int y = -1; y <= 1; ++y)
         {
-            vec2 shift = sv.xy + (vec2(x, y) * texelSize);
-            if (shift.x < 0.0 || shift.x > 1.0 || shift.y < 0.0 || shift.y > 1.0)
+            vec2 shift = sv.xy + (vec2(x, y) * texelSize * shadowFilterSize);
+            if (!isValidUV(shift))
                 continue;
 
-            result += texture(ShadowMaps, vec4(shift, shadowIndex, sv.z - shadowBias));
+            visibility += texture(ShadowMaps, vec4(shift, shadowIndex, sv.z - bias));
         }
     }
 
-    result /= 9.0;
-    return result;
+    visibility /= 9.0;
+    return visibility;
 }

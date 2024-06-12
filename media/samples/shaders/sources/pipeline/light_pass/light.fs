@@ -8,7 +8,7 @@ out vec4 fragColor;
 
 vec3 ComputeIllumination(vec3 vw, vec3 nw, vec3 albedo, vec3 emission, vec3 specular, float aoFactor, 
     float saFactor);
-float GetAO(vec2 uv);
+float getAmbientOcclusion(vec2 uv);
 
 void main()
 {
@@ -25,7 +25,7 @@ void main()
     // sampling specular parameters from fullscreen map
     vec4 specular = texture(GBuffer, vec3(iuv, 3));
     // sampling AO
-    float aoFactor = GetAO(iuv);
+    float aoFactor = getAmbientOcclusion(iuv);
     // Emission
     vec3 emission = vec3(nw.w, albedo.w, specular.w);
     // Compute total illumination 

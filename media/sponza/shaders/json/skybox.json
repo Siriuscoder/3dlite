@@ -1,7 +1,8 @@
 {
     "Sources": 
     [
-        "sponza:shaders/sources/skybox.vs",
-        "sponza:shaders/sources/skybox.fs"
+        // Standard shaders with params customization
+        "samples:shaders/sources/pipeline/skybox_pass/skybox.vs",
+        "samples:shaders/sources/pipeline/skybox_pass/skybox.fs"
     ]
 }

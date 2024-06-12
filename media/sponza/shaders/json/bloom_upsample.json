@@ -1,7 +1,7 @@
 {
     "Sources": 
     [
-        "sponza:shaders/sources/bigtriangle.vs",
-        "sponza:shaders/sources/bloom_upsample.fs"
+        "samples:shaders/sources/bigtriangle.vs",
+        "samples:shaders/sources/bloom/bloom_upsample.fs"
     ]
 }

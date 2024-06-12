@@ -1,8 +1,6 @@
-#include "samples:shaders/sources/common/version.def"
 #include "samples:shaders/sources/common/utils_inc.glsl"
 
 const vec3 BaseF0 = vec3(0.04);
-const float fresnelPower = 5.0;
 
 // Fresnel equation (Schlick)
 vec3 FresnelSchlickRoughness(float cosTheta, vec3 albedo, vec3 specular)

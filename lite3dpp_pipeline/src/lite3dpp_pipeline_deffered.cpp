@@ -153,14 +153,11 @@ namespace lite3dpp_pipeline {
                 .set(L"Type", "int"));
         }
 
-        auto shaderPath = mSSAOTexture ? (mShaderPackage + ":shaders/json/lightpass_ssao.json") : 
-            (mShaderPackage + ":shaders/json/lightpass.json");
-
         lightComputeMaterialConfig.set(L"Passes", stl<ConfigurationWriter>::vector {
             ConfigurationWriter().set(L"Pass", static_cast<int>(TexturePassTypes::RenderPass))
                 .set(L"Program", ConfigurationWriter()
                     .set(L"Name", "LightCompute.program")
-                    .set(L"Path", shaderPath))
+                    .set(L"Path", mShaderPackage + ":shaders/json/lightpass.json"))
                 .set(L"Uniforms", lightComputeMaterialUniforms)
         });
         

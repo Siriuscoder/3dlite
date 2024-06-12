@@ -1,9 +1,0 @@
-{
-    "Sources": 
-    [
-        "sponza:shaders/sources/postprocess.vs",
-        "sponza:shaders/sources/postprocess.fs",
-        "samples:shaders/sources/antialiasing/fxaa.fs",
-        "samples:shaders/sources/antialiasing/fxaa_texcoords.vs"
-    ]
-}

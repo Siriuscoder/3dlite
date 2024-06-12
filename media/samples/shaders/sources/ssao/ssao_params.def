@@ -1,0 +1,4 @@
+#include "samples:shaders/sources/common/version.def"
+
+#define SSAO_MAX_DEPTH_SAMPLES 80
+#define SSAO_SAMPLE_BIAS 0.030

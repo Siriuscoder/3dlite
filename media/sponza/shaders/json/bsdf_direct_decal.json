@@ -1,11 +1,14 @@
 {
     "Sources": 
     [
-        "sponza:shaders/sources/common.vs",
-        "sponza:shaders/sources/direct_decal.fs",
-        "sponza:shaders/sources/lighting/PBR.fs",
-        "sponza:shaders/sources/lighting/BRDF.fs",
-        "sponza:shaders/sources/lighting/PCF.fs",
-        "samples:shaders/sources/common/utils.fs"
+        // Standard shaders with params customization
+        "samples:shaders/sources/pipeline/v_tbn.vs",
+        "samples:shaders/sources/pipeline/forward_pass/forward.fs",
+        "samples:shaders/sources/pbr/pbr.fs,sponza:shaders/sources/inc/pbr_params.def",
+        "samples:shaders/sources/pbr/brdf.fs,sponza:shaders/sources/inc/pbr_params.def",
+        "samples:shaders/sources/shadow/pcf4x4.fs,sponza:shaders/sources/inc/shadow_params.def",
+        "samples:shaders/sources/common/utils.fs",
+        // Sample specific shaders
+        "sponza:shaders/sources/decal.fs"
     ]
 }

@@ -4,7 +4,7 @@ uniform sampler2D AOMap;
 uniform int AOEnabled;
 
 // Get fragment precalculated Ambient Occlusion with PCF filtration 
-float GetAO(vec2 iuv)
+float getAmbientOcclusion(vec2 uv)
 {
     if (AOEnabled == 0)
     {
@@ -19,7 +19,7 @@ float GetAO(vec2 iuv)
         for (int y = -2; y < 2; ++y) 
         {
             vec2 offset = vec2(float(x), float(y)) * texelSize;
-            result += texture(AOMap, iuv + offset).r;
+            result += texture(AOMap, uv + offset).r;
         }
     }
 

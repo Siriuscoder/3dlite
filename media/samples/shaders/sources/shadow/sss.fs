@@ -1,4 +1,3 @@
-#include "sponza:shaders/sources/inc/common.def"
 #include "samples:shaders/sources/common/utils_inc.glsl"
 
 uniform sampler2DArrayShadow ShadowMaps;
@@ -8,14 +7,6 @@ layout(std140) uniform ShadowMatrix
 {
     mat4 shadowMat[MAX_SHADOW_LAYERS];
 };
-
-const float shadowBiasMax       = 0.0028;
-const float shadowBiasMin       = 0.0008;
-const float shadowFilterSize    = 1.12;
-const int   sssMaxSteps         = 20;     // Max ray steps, affects quality and performance.
-const float sssMaxRayDistance   = 0.75;   // Max shadow length, longer shadows are less accurate.
-const float sssDepthThickness   = 0.5;   // Depth testing thickness.
-const float sssStepLength       = sssMaxRayDistance / float(sssMaxSteps);
 
 float SSS(vec3 vw, vec3 L)
 {
@@ -54,7 +45,7 @@ float SSS(vec3 vw, vec3 L)
     return 1.0 - occlusion;
 }
 
-float PCF(float shadowIndex, vec3 vw, vec3 N, vec3 L)
+float ShadowVisibility(float shadowIndex, vec3 vw, vec3 N, vec3 L)
 {
     // Do not cast shadows
     if (shadowIndex < 0.0)
