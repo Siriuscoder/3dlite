@@ -3,7 +3,7 @@
     [
         "vaultmat:shaders/sources/triangle.vs",
         "vaultmat:shaders/sources/lightpass.fs",
-        "samples:shaders/sources/lighting/phong_blinn_single.fs",
+        "samples:shaders/sources/phong/phong_blinn_single.fs",
         "samples:shaders/sources/common/utils.fs"
     ]
 }

@@ -12,40 +12,41 @@ layout(std140) uniform ShadowMatrix
 const float shadowBiasMax       = 0.0028;
 const float shadowBiasMin       = 0.0008;
 const float shadowFilterSize    = 1.12;
-const int   sssMaxSteps         = 16;     // Max ray steps, affects quality and performance.
-const float sssMaxRayDistance   = 0.55;   // Max shadow length, longer shadows are less accurate.
-const float sssDepthThickness   = 0.055;   // Depth testing thickness.
+const int   sssMaxSteps         = 20;     // Max ray steps, affects quality and performance.
+const float sssMaxRayDistance   = 0.75;   // Max shadow length, longer shadows are less accurate.
+const float sssDepthThickness   = 0.5;   // Depth testing thickness.
 const float sssStepLength       = sssMaxRayDistance / float(sssMaxSteps);
 
 float SSS(vec3 vw, vec3 L)
 {
     // Compute ray position and direction (in view-space)
-    vec3 ray_pos = worldToViewSpacePosition(vw);
-    vec3 ray_dir = worldToViewSpaceDirection(L);
+    vec3 rayPos = worldToViewSpacePosition(vw);
+    vec3 rayDir = worldToViewSpaceDirection(L);
 
     // Compute ray step
-    vec3 ray_step = ray_dir * sssStepLength;
+    vec3 rayStep = rayDir * sssStepLength;
+    float depthOriginal = rayPos.z;
 
     // Ray march towards the light
     float occlusion = 0.0;
     for (int i = 0; i < sssMaxSteps; i++)
     {
         // Step the ray
-        ray_pos += ray_step;
-        vec2 ray_uv = viewPositionToUV(ray_pos);
+        rayPos += rayStep;
+        vec2 rayUV = viewPositionToUV(rayPos);
 
         // Ensure the UV coordinates are inside the screen
-        if (!isValidUV(ray_uv))
+        if (!isValidUV(rayUV))
             return 1.0;
         
         // Compute the difference between the ray's and the camera's depth
-        float depth_z = worldToViewSpacePosition(texture(GBuffer, vec3(ray_uv, 0)).xyz).z;
-        float depth_delta = depth_z - ray_pos.z;
+        float depth = worldToViewSpacePosition(texture(GBuffer, vec3(rayUV, 0)).xyz).z;
+        float depthDelta = depth - rayPos.z;
 
-        if (depth_delta > 0.0 && depth_delta < sssDepthThickness)
+        if (depthDelta > 0.0 && depthDelta < sssDepthThickness && abs(depthOriginal - rayPos.z) < 1.0)
         {
             // Mark as occluded
-            occlusion = fadeScreenEdge(ray_uv);
+            occlusion = fadeScreenEdge(rayUV);
             break;
         }
     }
