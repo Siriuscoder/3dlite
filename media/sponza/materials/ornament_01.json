@@ -8,7 +8,10 @@
       },
       "Uniforms": [
         {
-          "Name": "screenMatrix"
+          "Name": "projViewMatrix"
+        },
+        {
+          "Name": "modelMatrix"
         }
       ]
     },
@@ -38,7 +41,7 @@
           "TexturePath": "sponza:textures/json/ornament_01_Roughnessornament_01_Metalness.json"
         },
         {
-          "Name": "screenMatrix"
+          "Name": "projViewMatrix"
         },
         {
           "Name": "modelMatrix"

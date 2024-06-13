@@ -2,11 +2,11 @@
     "Sources": 
     [
         // Standard shaders with params customization
-        "samples:shaders/sources/pipeline/shadow_pass/shadow.vs",
+        "samples:shaders/sources/pipeline/shadow_pass/shadow_inst.vs",
         "samples:shaders/sources/pipeline/shadow_pass/shadow_split.gs,vault_111:shaders/sources/inc/shadow_params.def",
         "samples:shaders/sources/pipeline/depth_pass/depth.fs",
         "samples:shaders/sources/common/utils.fs",
         // Sample specific shaders
-        "sponza:shaders/sources/alpha_depth.fs"
+        "vault_111:shaders/sources/alpha_depth.fs"
     ]
 }

@@ -16,57 +16,7 @@
         "Znear": 10,
         "Zfar": 4500,
         "Fov": 60
-      },
-      "RenderTargets": [
-        {
-          "Name": "DepthPass",
-          "Path": "vault_111:targets/depth.json",
-          "Priority": 0,
-          "TexturePass": 1,
-          "RenderBlend": false,
-          "OcclusionQuery": true,
-          "SortOpaqueFromNear": true,
-          "DepthTest": true,
-          "ColorOutput": false,
-          "DepthOutput": true
-        },
-        {
-          "Name": "ShadowPass",
-          "Path": "vault_111:targets/shadow.json",
-          "Priority": 1,
-          "TexturePass": 3,
-          "RenderBlend": false,
-          "DepthTest": true,
-          "ColorOutput": false,
-          "DepthOutput": true,
-          "CustomVisibilityCheck": true,
-          "RenderInstancing": true
-        },
-        {
-          "Name": "RenderPass",
-          "Path": "vault_111:targets/prepare.json",
-          "Priority": 0,
-          "TexturePass": 2,
-          "RenderBlend": false,
-          "OcclusionCulling": true,
-          "DepthTest": true,
-          "ColorOutput": true,
-          "DepthOutput": false,
-          "RenderInstancing": true
-        },
-        {
-          "Name": "CombineStep",
-          "Path": "vault_111:targets/combine.json",
-          "Priority": 1,
-          "TexturePass": 2,
-          "RenderBlend": true,
-          "RenderOpaque": false,
-          "DepthTest": true,
-          "ColorOutput": true,
-          "DepthOutput": true,
-          "RenderInstancing": true
-        }
-      ]
+      }
     }
   ],
   "LightingTechnique": "UBO",

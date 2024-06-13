@@ -3,7 +3,7 @@
 uniform sampler2D Normal;
 uniform vec3 NormalScale;
 
-vec3 sampleNormal(vec2 iuv, mat3 tbn)
+vec3 sampleNormal(vec2 uv, mat3 tbn)
 {
     // There are different DDS loaders for Fallout4 or Blender loads normals 
     // directly in GRB formal but native DDS viewer show image correctly in RGB format, also 
@@ -16,7 +16,7 @@ vec3 sampleNormal(vec2 iuv, mat3 tbn)
     // This behavour is not been expected for me.. So lets try to fix this.
 
     // sampling normal from normal map with swap XY
-    vec3 nt = texture(Normal, iuv).rgb;
+    vec3 nt = texture(Normal, uv).rgb;
     // put normal in [-1,1] range in tangent space
     nt = 2.0 * clamp(nt, 0.0, 1.0) - 1.0;
     // Refix Z (may be missing)

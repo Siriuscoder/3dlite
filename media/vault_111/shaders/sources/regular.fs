@@ -18,8 +18,8 @@ uniform float SpecularAmbientFactor;
 
 #endif
 
-vec3 sampleSpecular(vec2 iuv);
-vec3 sampleNormal(vec2 iuv, mat3 tbn);
+vec3 sampleSpecular(vec2 uv);
+vec3 sampleNormal(vec2 uv, mat3 tbn);
 
 vec3 CheckAlbedo(vec4 albedo)
 {
@@ -36,7 +36,7 @@ vec4 getAlbedo(vec2 uv)
 #if defined(MRT_WITH_EMISSION_SOLID)
     vec3 albedo = Emission.rgb;
 #else
-    vec3 albedo = CheckAlbedo(texture(Albedo, iuv));
+    vec3 albedo = CheckAlbedo(texture(Albedo, uv));
 #endif
 
 // Additional modifiers
@@ -58,7 +58,7 @@ vec4 getAlbedo(vec2 uv)
 vec3 getEmission(vec2 uv)
 {
 #if defined(MRT_WITH_EMISSION)
-    vec3 emission = texture(Emission, iuv).rgb * EmissionStrength;
+    vec3 emission = texture(Emission, uv).rgb * EmissionStrength;
 #elif defined(MRT_WITH_EMISSION_SOLID)
     vec3 emission = Emission.rgb * EmissionStrength;
 #else
@@ -86,7 +86,7 @@ float getSpecularAmbient(vec2 uv)
 vec3 getNormal(vec2 uv, mat3 tbn)
 {
 #if defined(MRT_WITH_EMISSION_SOLID)
-    return itbn[2];
+    return tbn[2];
 #else
     return sampleNormal(uv, tbn);
 #endif

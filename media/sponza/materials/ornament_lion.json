@@ -8,7 +8,10 @@
       },
       "Uniforms": [
         {
-          "Name": "screenMatrix"
+          "Name": "projViewMatrix"
+        },
+        {
+          "Name": "modelMatrix"
         }
       ]
     },
@@ -38,7 +41,7 @@
           "TexturePath": "sponza:textures/json/lionhead_01_Roughnesslionhead_01_Metalness.json"
         },
         {
-          "Name": "screenMatrix"
+          "Name": "projViewMatrix"
         },
         {
           "Name": "modelMatrix"

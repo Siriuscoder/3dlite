@@ -93,7 +93,7 @@
   ],
   "Uniforms": [
     {
-      "Name": "screenMatrix"
+      "Name": "projViewMatrix"
     }
   ]
 }

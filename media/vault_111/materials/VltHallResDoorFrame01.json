@@ -14,7 +14,10 @@
           "TexturePath": "vault_111:textures/json/VltHallResDoorFrame01_d.json"
         },
         {
-          "Name": "screenMatrix"
+          "Name": "projViewMatrix"
+        },
+        {
+          "Name": "modelMatrix"
         }
       ]
     },
@@ -68,7 +71,7 @@
           ]
         },
         {
-          "Name": "screenMatrix"
+          "Name": "projViewMatrix"
         }
       ]
     },

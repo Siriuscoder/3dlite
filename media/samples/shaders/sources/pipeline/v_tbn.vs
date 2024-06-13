@@ -6,7 +6,7 @@ layout(location = 2) in vec2 uv;
 layout(location = 3) in vec3 tang;
 layout(location = 4) in vec3 btang;
 
-uniform mat4 screenMatrix;
+uniform mat4 projViewMatrix;
 uniform mat4 modelMatrix;
 uniform mat3 normalMatrix;
 
@@ -31,5 +31,5 @@ void main()
     // TBN matrix to transform normal from tangent space to world space
     itbn = mat3(wTang, wBTang, wNorm);
     
-    gl_Position = screenMatrix * vertex;
+    gl_Position = projViewMatrix * wv;
 }

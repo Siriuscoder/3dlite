@@ -8,7 +8,10 @@
       },
       "Uniforms": [
         {
-          "Name": "screenMatrix"
+          "Name": "projViewMatrix"
+        },
+        {
+          "Name": "modelMatrix"
         }
       ]
     },
@@ -35,7 +38,7 @@
           "Value": 40.0
         },
         {
-          "Name": "screenMatrix"
+          "Name": "projViewMatrix"
         }
       ]
     },

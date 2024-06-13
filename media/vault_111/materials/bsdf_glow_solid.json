@@ -8,7 +8,7 @@
       },
       "Uniforms":[
         {
-          "Name":"screenMatrix"
+          "Name":"projViewMatrix"
         },
         {
           "Name":"modelMatrix"
@@ -29,7 +29,7 @@
           "Name":"<Emission Strength>"
         },
         {
-          "Name":"screenMatrix"
+          "Name":"projViewMatrix"
         }
       ]
     },

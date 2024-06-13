@@ -8,7 +8,7 @@
       },
       "Uniforms":[
         {
-          "Name":"screenMatrix"
+          "Name":"projViewMatrix"
         },
         {
           "Name":"ShadowIndex",

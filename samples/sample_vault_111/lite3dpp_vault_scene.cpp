@@ -95,6 +95,7 @@ public:
 
     void createScene() override
     {
+        mLightAnimEffects = std::make_unique<SampleLightEffectManager>();
         mPipeline = getMain().getResourceManager()->queryResource<lite3dpp_pipeline::PipelineDeffered>("Vault_111", 
             "vault_111:pipelines/vault_111.json");
         mVaultScene = &mPipeline->getMainScene();

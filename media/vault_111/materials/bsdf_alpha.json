@@ -11,7 +11,7 @@
           "Name":"<Albedo>"
         },
         {
-          "Name":"screenMatrix"
+          "Name":"projViewMatrix"
         },
         {
           "Name":"modelMatrix"
@@ -55,7 +55,7 @@
           "Value": [1.0, -1.0, 1.0]
         },
         {
-          "Name":"screenMatrix"
+          "Name":"projViewMatrix"
         }
       ]
     },

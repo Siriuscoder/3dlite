@@ -13,7 +13,7 @@ vec4 getAlbedo(vec2 uv)
     vec4 albedo = texture(Albedo, uv);
     specularTmp = sampleSpecular(uv);
 
-    float alpha = mix(albedo.a, 1.0, specular.y);
+    float alpha = mix(albedo.a, 1.0, specularTmp.y);
     return vec4(albedo.rgb, alpha);
 }
 
@@ -29,7 +29,7 @@ vec3 getNormal(vec2 uv, mat3 tbn)
 
 vec3 getSpecular(vec2 uv)
 {
-    return specularTmp;
+    return vec3(specularTmp.x, specularTmp.y / 10.0, specularTmp.z);
 }
 
 float getAmbientOcclusion(vec2 uv)
