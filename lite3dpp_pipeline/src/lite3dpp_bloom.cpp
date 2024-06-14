@@ -206,6 +206,8 @@ namespace lite3dpp_pipeline {
                         .set(L"Program", ConfigurationWriter()
                             .set(L"Name", "BloomUpSample.program")
                             .set(L"Path", mShaderPackage + ":shaders/json/bloom_upsample.json"))
+                        .set(L"Blending", true)
+                        .set(L"BlendingMode", "RGB_ADDITIVE")
                         .set(L"Uniforms", stl<ConfigurationWriter>::vector {
                             ConfigurationWriter()
                                 .set(L"Name", "screenMatrix"),

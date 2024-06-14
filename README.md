@@ -90,9 +90,11 @@ Or just call build_win_2022.bat
 ## Samples
 
 After successfully compiling you can find some samples in bin directory. To provide samples work correctly you must download 
-resources packs [vault.pkg](https://drive.google.com/file/d/1JhsirjKwMq51IBg7GknUeZLGvrVKp1Sz/view?usp=sharing) and [sponza.pkg](https://drive.google.com/file/d/1GGtPep7soS1wPJsf4Y2FTiF23E-JXFQ9/view?usp=sharing) and put its to media/packs/
+resources pack [vault.pkg](https://drive.google.com/file/d/1JhsirjKwMq51IBg7GknUeZLGvrVKp1Sz/view?usp=sharing) and put it to media/packs/
 
 You can download resources for Vault_111 and Vault room sample from [here](https://drive.google.com/file/d/10sDEAlVEK4MVDGqzJgYaqVL5O0V8kRxo/view?usp=sharing), this 7z archive contains textures and models folders, you must copy this folders to media/vault_111 and anjoy this awesome samples!
+
+Also you able to download resources for sponza remastered scene from [here](https://drive.google.com/file/d/1rhB6k-BmfULFcVFAaw4KaPaILxeD34ne/view?usp=sharing), unpack and copy textures and models folders to media/sponza.
 
 ## Screenshots
 

@@ -298,6 +298,305 @@
             ]
           },
           {
+            "Name": "curtain_01",
+            "Mesh": {
+              "Mesh": "sponza:models/json/curtain_01.json",
+              "Name": "curtain_01.mesh"
+            },
+            "Position": [
+              8.34422492980957,
+              -1.5779229402542114,
+              3.104909658432007
+            ],
+            "Rotation": [
+              0.5,
+              -0.5000001788139343,
+              -0.49999988079071045,
+              0.49999988079071045
+            ],
+            "Scale": [
+              1.000000238418579,
+              1.000000238418579,
+              1.000000238418579
+            ]
+          },
+          {
+            "Name": "curtain_02",
+            "Mesh": {
+              "Mesh": "sponza:models/json/curtain_02.json",
+              "Name": "curtain_02.mesh"
+            },
+            "Position": [
+              -5.365208148956299,
+              3.131610870361328,
+              2.2247579097747803
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "curtain_05",
+            "Mesh": {
+              "Mesh": "sponza:models/json/curtain_05.json",
+              "Name": "curtain_05.mesh"
+            },
+            "Position": [
+              -5.758246421813965,
+              3.155316114425659,
+              2.2240562438964844
+            ],
+            "Rotation": [
+              0.70710688829422,
+              0.0,
+              0.0,
+              0.7071066498756409
+            ],
+            "Scale": [
+              1.0,
+              0.9999998807907104,
+              0.9999998807907104
+            ]
+          },
+          {
+            "Name": "curtain_06",
+            "Mesh": {
+              "Mesh": "sponza:models/json/curtain_06.json",
+              "Name": "curtain_06.mesh"
+            },
+            "Position": [
+              5.670446872711182,
+              -3.044111490249634,
+              2.2247579097747803
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              -1.0,
+              4.371138828673793e-08
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "curtain_09",
+            "Mesh": {
+              "Mesh": "sponza:models/json/curtain_09.json",
+              "Name": "curtain_09.mesh"
+            },
+            "Position": [
+              6.063292503356934,
+              -3.05473256111145,
+              2.2240562438964844
+            ],
+            "Rotation": [
+              3.0908616110991716e-08,
+              -0.7071067690849304,
+              -0.7071067690849304,
+              3.0908619663705394e-08
+            ],
+            "Scale": [
+              1.0000004768371582,
+              1.000000238418579,
+              1.000000238418579
+            ]
+          },
+          {
+            "Name": "curtain_hanging_01",
+            "Mesh": {
+              "Mesh": "sponza:models/json/curtain_hanging_01.json",
+              "Name": "curtain_hanging_01.mesh"
+            },
+            "Position": [
+              4.149219036102295,
+              3.021313428878784,
+              4.828596115112305
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "curtain_hanging_02",
+            "Mesh": {
+              "Mesh": "sponza:models/json/curtain_hanging_02.json",
+              "Name": "curtain_hanging_02.mesh"
+            },
+            "Position": [
+              2.3631227016448975,
+              2.9961302280426025,
+              0.0
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "curtain_hanging_03",
+            "Mesh": {
+              "Mesh": "sponza:models/json/curtain_hanging_03.json",
+              "Name": "curtain_hanging_03.mesh"
+            },
+            "Position": [
+              -1.6478279829025269,
+              2.996843099594116,
+              0.0
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "curtain_hanging_04",
+            "Mesh": {
+              "Mesh": "sponza:models/json/curtain_hanging_04.json",
+              "Name": "curtain_hanging_04.mesh"
+            },
+            "Position": [
+              -3.8755712509155273,
+              -2.992642402648926,
+              4.828596115112305
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              -1.0,
+              4.371138828673793e-08
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "curtain_hanging_05",
+            "Mesh": {
+              "Mesh": "sponza:models/json/curtain_hanging_05.json",
+              "Name": "curtain_hanging_05.mesh"
+            },
+            "Position": [
+              -2.089474678039551,
+              -2.967458963394165,
+              0.0
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              -1.0,
+              4.371138828673793e-08
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "curtain_hanging_06",
+            "Mesh": {
+              "Mesh": "sponza:models/json/curtain_hanging_06.json",
+              "Name": "curtain_hanging_06.mesh"
+            },
+            "Position": [
+              1.921476125717163,
+              -2.9681718349456787,
+              0.0
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              -1.0,
+              4.371138828673793e-08
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "curtain_holder_01",
+            "Mesh": {
+              "Mesh": "sponza:models/json/curtain_holder_01.json",
+              "Name": "curtain_holder_01.mesh"
+            },
+            "Position": [
+              0.16456709802150726,
+              3.2706472873687744,
+              4.031385898590088
+            ],
+            "Rotation": [
+              0.70710688829422,
+              0.0,
+              0.0,
+              0.7071066498756409
+            ],
+            "Scale": [
+              1.0,
+              0.9999998807907104,
+              0.9999998807907104
+            ]
+          },
+          {
+            "Name": "curtain_holder_02",
+            "Mesh": {
+              "Mesh": "sponza:models/json/curtain_holder_02.json",
+              "Name": "curtain_holder_02.mesh"
+            },
+            "Position": [
+              0.1351805031299591,
+              -3.176191568374634,
+              4.031385898590088
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
             "Name": "decals_1st_floor",
             "Mesh": {
               "Mesh": "sponza:models/json/decals_1st_floor.json",
