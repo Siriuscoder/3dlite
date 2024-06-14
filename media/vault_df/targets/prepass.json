@@ -13,15 +13,15 @@
         [
             {
                 "TextureName": "fragmentWorldCoords.texture",
-                "TexturePath": "vault:textures/json/rgba16f.json"
+                "TexturePath": "samples:textures/json/rgba16f.json"
             },
             {
                 "TextureName": "normalsWorld.texture",
-                "TexturePath": "vault:textures/json/rgba16f.json"
+                "TexturePath": "samples:textures/json/rgba16f.json"
             },
             {
                 "TextureName": "diffuseMap.texture",
-                "TexturePath": "vault:textures/json/rgba.json"
+                "TexturePath": "samples:textures/json/rgba16f.json"
             }
         ]
     },
@@ -29,7 +29,7 @@
     "DepthAttachments":
     {
         "TextureName": "prepassDepth.texture",
-        "TexturePath": "vault:textures/json/depth.json"
+        "TexturePath": "samples:textures/json/depth.json"
     }
 }
 

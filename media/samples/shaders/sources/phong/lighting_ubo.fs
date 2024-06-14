@@ -1,5 +1,5 @@
 #include "samples:shaders/sources/common/utils_inc.glsl"
-#include "samples:shaders/sources/lighting/lighting_inc.glsl"
+#include "samples:shaders/sources/phong/lighting_inc.glsl"
 
 // declaration for UBO
 layout(std140) uniform lightSources

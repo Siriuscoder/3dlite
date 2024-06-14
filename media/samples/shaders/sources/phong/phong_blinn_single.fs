@@ -1,6 +1,6 @@
 #include "samples:shaders/sources/common/version.def"
 #include "samples:shaders/sources/common/utils_inc.glsl"
-#include "samples:shaders/sources/lighting/lighting_inc.glsl"
+#include "samples:shaders/sources/phong/lighting_inc.glsl"
 
 vec3 phong_blinn_single(float type, vec3 lightDir, vec3 eyeDir, vec3 diffuse, 
     vec3 normal, vec3 spotDirection, vec2 spotFactor, vec3 attenuation, 

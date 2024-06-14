@@ -8,19 +8,18 @@ layout(std140) uniform ShadowMatrix
 };
 
 /* 
-    Calculate the adaptive parameters depending the light angle 
+    Calculate the adaptive parameters depending the light angle to surface 
     x - bias
     y - FilterSize
-    z - SSS Depth Threshold
-    w - Step
+    z - Step
 */
-vec4 CalcAdaptiveShadowParams(vec3 N, vec3 L)
+vec3 CalcAdaptiveShadowParams(vec3 N, vec3 L)
 {
-    float NdotL = dot(N, L);
-    vec3 minV = vec3(SHADOW_MIN_ADAPTIVE_BIAS, SHADOW_MIN_ADAPTIVE_FILTER_SIZE, 0.0);
-    vec3 maxV = vec3(SHADOW_MAX_ADAPTIVE_BIAS, SHADOW_MAX_ADAPTIVE_FILTER_SIZE, SSS_MAX_ADAPTIVE_DEPTH_THRESHOLD);
-    vec3 rV = max(maxV * (1.0 - NdotL), minV);
-    return vec4(rV, max(NdotL, SHADOW_MIN_ADAPTIVE_STEP));
+    float NdotL = clamp(dot(N, L), 0.0, 1.0);
+    vec2 minV = vec2(SHADOW_MIN_ADAPTIVE_BIAS, SHADOW_MIN_ADAPTIVE_FILTER_SIZE);
+    vec2 maxV = vec2(SHADOW_MAX_ADAPTIVE_BIAS, SHADOW_MAX_ADAPTIVE_FILTER_SIZE);
+    vec2 rV = max(maxV * (1.0 - NdotL), minV);
+    return vec3(rV, max(NdotL, SHADOW_MIN_ADAPTIVE_STEP));
 }
 
 float ShadowVisibility(float shadowIndex, vec3 vw, vec3 N, vec3 L)
@@ -40,12 +39,12 @@ float ShadowVisibility(float shadowIndex, vec3 vw, vec3 N, vec3 L)
     float visibility = 0.0;
     vec2 texelSize = 1.0 / textureSize(ShadowMaps, 0).xy;
     // Adaptive bias, filter size, step
-    vec4 params = CalcAdaptiveShadowParams(N, L);
+    vec3 params = CalcAdaptiveShadowParams(N, L);
     float samples = 0.0;
 
-    for (float x = -1.5; x <= 1.5; x += params.w)
+    for (float x = -1.5; x <= 1.5; x += params.z)
     {
-        for (float y = -1.5; y <= 1.5; y += params.w)
+        for (float y = -1.5; y <= 1.5; y += params.z)
         {
             vec2 shift = sv.xy + (vec2(x, y) * texelSize * params.y);
             if (!isValidUV(shift))

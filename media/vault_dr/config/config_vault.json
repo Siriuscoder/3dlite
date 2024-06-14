@@ -1,6 +1,6 @@
 {
     // common settings
-    "LogLevel": 3,
+    "LogLevel": 2,
 	"LogFlushAlways": true,
     "LogFile": "lite3d.log",
     "TextureSettings": {

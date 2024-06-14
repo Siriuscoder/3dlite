@@ -44,7 +44,7 @@ float SSS(vec3 vw, vec3 L, float minDepthThreshold)
 }
 
 /* 
-    Calculate the adaptive parameters depending the light angle 
+    Calculate the adaptive parameters depending the light angle to surface
     x - bias
     y - FilterSize
     z - SSS Depth Threshold
@@ -52,7 +52,7 @@ float SSS(vec3 vw, vec3 L, float minDepthThreshold)
 */
 vec4 CalcAdaptiveShadowParams(vec3 N, vec3 L)
 {
-    float NdotL = dot(N, L);
+    float NdotL = clamp(dot(N, L), 0.0, 1.0);
     vec3 minV = vec3(SHADOW_MIN_ADAPTIVE_BIAS, SHADOW_MIN_ADAPTIVE_FILTER_SIZE, 0.0);
     vec3 maxV = vec3(SHADOW_MAX_ADAPTIVE_BIAS, SHADOW_MAX_ADAPTIVE_FILTER_SIZE, SSS_MAX_ADAPTIVE_DEPTH_THRESHOLD);
     vec3 rV = max(maxV * (1.0 - NdotL), minV);
