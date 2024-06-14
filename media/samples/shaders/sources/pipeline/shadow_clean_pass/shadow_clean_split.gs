@@ -1,9 +1,9 @@
 layout(triangles) in;
-layout(triangle_strip, max_vertices = MAX_SHADOW_SPLIT_VERTICES) out;
+layout(triangle_strip, max_vertices = SHADOW_MAX_SPLIT_VERTICES) out;
 
 layout(std140) uniform ShadowIndex
 {
-    ivec4 shadowIndex[MAX_SHADOW_LAYERS / 4 + 1];
+    ivec4 shadowIndex[SHADOW_MAX_LAYERS / 4 + 1];
 };
 
 void main()

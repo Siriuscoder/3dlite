@@ -1,8 +1,12 @@
 #include "samples:shaders/sources/common/version.def"
 
-#define MAX_SHADOW_LAYERS               5
-#define MAX_SHADOW_SPLIT_VERTICES       15
+#define SHADOW_MAX_LAYERS                       5
+#define SHADOW_MAX_SPLIT_VERTICES               15
 
-const float shadowBiasMax       = 0.0005;
-const float shadowBiasMin       = 0.0001;
-const float shadowFilterSize    = 1.0;
+#define SHADOW_MAX_ADAPTIVE_BIAS                0.0005
+#define SHADOW_MIN_ADAPTIVE_BIAS                0.0001
+#define SHADOW_MAX_ADAPTIVE_FILTER_SIZE         2.1
+#define SHADOW_MIN_ADAPTIVE_FILTER_SIZE         1.0
+#define SHADOW_MIN_ADAPTIVE_STEP                1.0
+
+#define SSS_MAX_ADAPTIVE_DEPTH_THRESHOLD        0.01

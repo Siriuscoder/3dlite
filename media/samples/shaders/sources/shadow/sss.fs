@@ -5,22 +5,20 @@ uniform sampler2DArray GBuffer;
 
 layout(std140) uniform ShadowMatrix
 {
-    mat4 shadowMat[MAX_SHADOW_LAYERS];
+    mat4 shadowMat[SHADOW_MAX_LAYERS];
 };
 
-float SSS(vec3 vw, vec3 L)
+float SSS(vec3 vw, vec3 L, float minDepthThreshold)
 {
     // Compute ray position and direction (in view-space)
     vec3 rayPos = worldToViewSpacePosition(vw);
     vec3 rayDir = worldToViewSpaceDirection(L);
-
+    
     // Compute ray step
-    vec3 rayStep = rayDir * sssStepLength;
-    float depthOriginal = rayPos.z;
-
+    vec3 rayStep = rayDir * SSS_STEP_LENGTH;
     // Ray march towards the light
     float occlusion = 0.0;
-    for (int i = 0; i < sssMaxSteps; i++)
+    for (int i = 0; i < SSS_MAX_STEPS; i++)
     {
         // Step the ray
         rayPos += rayStep;
@@ -34,7 +32,7 @@ float SSS(vec3 vw, vec3 L)
         float depth = worldToViewSpacePosition(texture(GBuffer, vec3(rayUV, 0)).xyz).z;
         float depthDelta = depth - rayPos.z;
 
-        if (depthDelta > 0.0 && depthDelta < sssDepthThickness && abs(depthOriginal - rayPos.z) < sssMaxDepthVariance)
+        if (depthDelta > minDepthThreshold && depthDelta < SSS_MAX_DEPTH_THRESHOLD)
         {
             // Mark as occluded
             occlusion = fadeScreenEdge(rayUV);
@@ -43,6 +41,22 @@ float SSS(vec3 vw, vec3 L)
     }
 
     return 1.0 - occlusion;
+}
+
+/* 
+    Calculate the adaptive parameters depending the light angle 
+    x - bias
+    y - FilterSize
+    z - SSS Depth Threshold
+    w - Step
+*/
+vec4 CalcAdaptiveShadowParams(vec3 N, vec3 L)
+{
+    float NdotL = dot(N, L);
+    vec3 minV = vec3(SHADOW_MIN_ADAPTIVE_BIAS, SHADOW_MIN_ADAPTIVE_FILTER_SIZE, 0.0);
+    vec3 maxV = vec3(SHADOW_MAX_ADAPTIVE_BIAS, SHADOW_MAX_ADAPTIVE_FILTER_SIZE, SSS_MAX_ADAPTIVE_DEPTH_THRESHOLD);
+    vec3 rV = max(maxV * (1.0 - NdotL), minV);
+    return vec4(rV, max(NdotL, SHADOW_MIN_ADAPTIVE_STEP));
 }
 
 float ShadowVisibility(float shadowIndex, vec3 vw, vec3 N, vec3 L)
@@ -61,25 +75,27 @@ float ShadowVisibility(float shadowIndex, vec3 vw, vec3 N, vec3 L)
 
     float visibility = 0.0;
     vec2 texelSize = 1.0 / textureSize(ShadowMaps, 0).xy;
-    // Adaptive bias
-    float bias = max(shadowBiasMax * (1.0 - dot(N, L)), shadowBiasMin);
+    // Adaptive bias, filter size, step
+    vec4 params = CalcAdaptiveShadowParams(N, L);
+    float samples = 0.0;
 
-    for (float x = -1.5; x <= 1.5; x += 1.0)
+    for (float x = -1.5; x <= 1.5; x += params.w)
     {
-        for (float y = -1.5; y <= 1.5; y += 1.0)
+        for (float y = -1.5; y <= 1.5; y += params.w)
         {
-            vec2 shift = sv.xy + (vec2(x, y) * texelSize * shadowFilterSize);
+            vec2 shift = sv.xy + (vec2(x, y) * texelSize * params.y);
             if (!isValidUV(shift))
                 continue;
 
-            visibility += texture(ShadowMaps, vec4(shift, shadowIndex, sv.z - bias));
+            visibility += texture(ShadowMaps, vec4(shift, shadowIndex, sv.z - params.x));
+            samples += 1.0;
         }
     }
 
-    visibility /= 16.0;
     if (!fiszero(visibility))
     {
-        visibility *= SSS(vw, L);
+        visibility /= samples;
+        visibility *= SSS(vw, L, params.z);
     }
 
     return visibility;

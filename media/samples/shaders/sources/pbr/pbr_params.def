@@ -1,4 +1,4 @@
 #include "samples:shaders/sources/common/version.def"
 
-const float fresnelPower = 5.0;
-const float diffuseStrength = 0.05;
+#define FRESNEL_POWER         5.0f
+#define DIFFUSE_STRENGTH      0.05f

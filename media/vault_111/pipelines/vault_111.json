@@ -16,7 +16,7 @@
     "SSAO": 
     {
         "AORadius": 25.0,
-        "FramebufferScale": 2
+        "FramebufferScale": 4
     },
     "BLOOM": 
     {
@@ -27,6 +27,6 @@
         "Gamma": 2.2,
         "Contrast": 1.005,
         "Saturation": 1.20,
-        "Exposure": 4.4
+        "Exposure": 3.4
     }
 }

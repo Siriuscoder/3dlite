@@ -1,6 +1,6 @@
 {
     // common settings
-    "LogLevel": 3,
+    "LogLevel": 2,
     "LogFlushAlways": true,
     "LogFile": "lite3d.log",
     "TextureSettings": {
@@ -15,8 +15,8 @@
         "GLProfile": "core",
         "GLVersionMajor": 3,
         "GLVersionMinor": 3,
-	    "Width": 2048,
-        "Height": 1050,
+        "Width": 1024,
+        "Height": 768,
         "Caption": "Sponza hall PBR complex scene",
         "ColorBits": 24,
         "Fullscreen": false,

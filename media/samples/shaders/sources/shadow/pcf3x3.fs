@@ -4,7 +4,7 @@ uniform sampler2DArrayShadow ShadowMaps;
 
 layout(std140) uniform ShadowMatrix
 {
-    mat4 shadowMat[MAX_SHADOW_LAYERS];
+    mat4 shadowMat[SHADOW_MAX_LAYERS];
 };
 
 float ShadowVisibility(float shadowIndex, vec3 vw, vec3 N, vec3 L)
@@ -24,13 +24,13 @@ float ShadowVisibility(float shadowIndex, vec3 vw, vec3 N, vec3 L)
     float visibility = 0.0;
     vec2 texelSize = 1.0 / textureSize(ShadowMaps, 0).xy;
     // Adaptive bias
-    float bias = max(shadowBiasMax * (1.0 - dot(N, L)), shadowBiasMin);
+    float bias = max(SHADOW_MAX_ADAPTIVE_BIAS * (1.0 - dot(N, L)), SHADOW_MIN_ADAPTIVE_BIAS);
 
     for (int x = -1; x <= 1; ++x)
     {
         for (int y = -1; y <= 1; ++y)
         {
-            vec2 shift = sv.xy + (vec2(x, y) * texelSize * shadowFilterSize);
+            vec2 shift = sv.xy + (vec2(x, y) * texelSize * SHADOW_MIN_ADAPTIVE_FILTER_SIZE);
             if (!isValidUV(shift))
                 continue;
 
