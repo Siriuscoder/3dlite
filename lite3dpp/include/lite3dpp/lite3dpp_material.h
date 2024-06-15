@@ -20,6 +20,7 @@
 #include <tuple>
 
 #include <lite3d/lite3d_material.h>
+#include <lite3d/lite3d_buffers_manip.h>
 
 #include <lite3dpp/lite3dpp_common.h>
 #include <lite3dpp/lite3dpp_config_reader.h>
@@ -42,6 +43,13 @@ namespace lite3dpp
     {
     public:
 
+        enum PolygonMode : uint8_t
+        {
+            PolygonPoint = LITE3D_POLYMODE_POINT,
+            PolygonLine = LITE3D_POLYMODE_LINE,
+            PolygonFill = LITE3D_POLYMODE_FILL
+        };
+
         using PassParameters = stl<String, lite3d_shader_parameter>::unordered_map;
         using GlobalPassParameters = stl<String>::set;
         using Passes = stl<uint16_t, std::tuple<PassParameters, GlobalPassParameters>>::map;
@@ -54,6 +62,8 @@ namespace lite3dpp
         void removePass(uint16_t pass); 
         void setPassProgram(uint16_t pass, ShaderProgram *program);
         void setPassBlendMode(uint16_t pass, bool blendEnable, uint8_t mode);
+        void setPolygonMode(uint16_t pass, PolygonMode mode);
+        void setDoubleSided(uint16_t pass, bool flag);
         ShaderProgram *getPassProgram(uint16_t pass) const;
         bool hasParameter(const String &name, uint16_t passNo, bool isGlobal = false) const;
         

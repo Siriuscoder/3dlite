@@ -6,7 +6,7 @@ const vec3 BaseF0 = vec3(0.04);
 vec3 FresnelSchlickRoughness(float cosTheta, vec3 albedo, vec3 specular)
 {
     // Calculate F0 coeff (metalness)
-    vec3 F0 = vec3(0.04);
+    vec3 F0 = BaseF0;
     F0 = mix(F0, albedo, specular.z);
 
     vec3 F = F0 + (max(vec3(1.0 - specular.y), F0) - F0) * pow(clamp(1.0 - cosTheta, 0.0, 1.0), FRESNEL_POWER);

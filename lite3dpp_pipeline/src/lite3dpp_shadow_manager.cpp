@@ -37,7 +37,8 @@ namespace lite3dpp_pipeline {
         }
         else
         {
-            mShadowCamera->setupPerspective(params.znear, params.zfar, 
+            float clipFar = params.zfar > 0.0 ? params.zfar : mLightNode->getLight()->getInfluenceDistance();
+            mShadowCamera->setupPerspective(params.znear, clipFar, 
                 kmRadiansToDegrees(mLightNode->getLight()->getAngleOuterCone()), params.aspect);
         }
     }

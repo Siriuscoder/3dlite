@@ -30,7 +30,7 @@ typedef struct vertexPod
 static const char *helpString = 
     "Press 'v' to set wireframe view\n"
     "Press 'r' to reload box texture pixels\n"
-    "Press 'a' to deform box (hold ctrl to reverse)\n";
+    "Press 'q' to deform box (hold ctrl to reverse)\n";
 
 class DynamicCude : public Sample
 {
@@ -46,6 +46,7 @@ public:
             "samples:scenes/scene_rtt_box.json");
 
         mBoxTexture = getMain().getResourceManager()->queryResource<TextureImage>("color512x512.texture");
+        mBoxMaterial = getMain().getResourceManager()->queryResource<Material>("render512x512.material");
         setMainCamera(getMain().getCamera("MyCamera"));
         mBox = scene->getObject("Box");
         mBoxMesh = getMain().getResourceManager()->queryResource<Mesh>("box.mesh");
@@ -66,14 +67,14 @@ public:
             if (e->key.keysym.sym == SDLK_v)
             {
                 mWireframeView = !mWireframeView;
-                getMainCamera().setPolygonMode(mWireframeView ? Camera::PolygonLine : Camera::PolygonFill);
-                getMainCamera().setCullFaceMode(mWireframeView ? Camera::CullFaceNever : Camera::CullFaceBack);
+                mBoxMaterial->setPolygonMode(1, mWireframeView ? Material::PolygonLine : Material::PolygonFill);
+                mBoxMaterial->setDoubleSided(1, mWireframeView);
             }
             else if (e->key.keysym.sym == SDLK_r)
             {
                 updateTextureData();
             }
-            else if (e->key.keysym.sym == SDLK_a)
+            else if (e->key.keysym.sym == SDLK_q)
             {
                 if (e->key.keysym.mod & KMOD_LCTRL)
                     mKof = -1;
@@ -131,6 +132,7 @@ private:
     
     SceneObject *mBox = nullptr;
     TextureImage *mBoxTexture = nullptr;
+    Material *mBoxMaterial = nullptr;
     Mesh *mBoxMesh = nullptr;
 
     bool mWireframeView = false;

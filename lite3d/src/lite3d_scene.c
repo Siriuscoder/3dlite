@@ -159,7 +159,7 @@ static void mqr_render_batch(lite3d_material_pass *pass, _mqr_node *mqrNode, uin
             lite3d_depth_output(LITE3D_FALSE);
             lite3d_backface_culling(LITE3D_CULLFACE_FRONT);
             mqr_render_mesh_chunk(scene, mqrNode->bbMeshChunk, mqrNode->instancesCount);
-            lite3d_backface_culling(scene->currentCamera->cullFaceMode);
+            lite3d_backface_culling(pass->doubleSided ? LITE3D_CULLFACE_NEVER : LITE3D_CULLFACE_BACK);
             lite3d_depth_output(flags & LITE3D_RENDER_DEPTH_OUTPUT ? LITE3D_TRUE : LITE3D_FALSE);
         }
 

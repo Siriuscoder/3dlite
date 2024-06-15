@@ -6,6 +6,7 @@
         "Name": "depth_alpha.program",
         "Path": "vault_111:shaders/json/depth_alpha.json"
       },
+      "DoubleSided": true,
       "Uniforms": [
         {
           "Name": "Albedo",
@@ -27,6 +28,7 @@
         "Name": "bsdf_prepare.program",
         "Path": "vault_111:shaders/json/bsdf_prepare.json"
       },
+      "DoubleSided": true,
       "Uniforms": [
         {
           "Name": "Albedo",
@@ -81,6 +83,7 @@
         "Name": "shadow_alpha.program",
         "Path": "vault_111:shaders/json/shadow_alpha.json"
       },
+      "DoubleSided": true,
       "Uniforms": [
         {
           "Name": "Albedo",

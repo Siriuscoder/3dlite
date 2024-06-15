@@ -33,10 +33,18 @@ vec3 ComputeIllumination(vec3 vw, vec3 nw, vec3 albedo, vec3 emission, vec3 spec
 {
     // Eye direction to current fragment 
     vec3 eyeDir = normalize(Eye - vw);
+    // HdotV
+    float NdotV = dot(nw, eyeDir);
+    // Invert normal for double sided materilas 
+    if (NdotV < 0.0)
+    {
+        nw *= -1.0;
+        NdotV = dot(nw, eyeDir);
+    }
+    // Clamp NdotV
+    NdotV = max(NdotV, FLT_EPSILON);
     // Reflect vector for ambient specular
     vec3 R = reflect(eyeDir, nw);
-    // HdotV for Fresnel
-    float NdotV = max(dot(nw, eyeDir), FLT_EPSILON);
     // Fresnel by Schlick aproxx
     vec3 F = FresnelSchlickRoughness(NdotV, albedo, specular);
 

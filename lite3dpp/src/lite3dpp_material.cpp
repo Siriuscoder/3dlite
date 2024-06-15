@@ -69,7 +69,7 @@ namespace lite3dpp
             setPassProgram(passNo, getMain().getResourceManager()->queryResource<ShaderProgram>(programJson.getString(L"Name"),
                 programJson.getString(L"Path")));
             
-            lite3dpp::String bMode = passJson.getUpperString(L"BlendingMode", "RGB_LINEAR_SOURCE_ALPHA");
+            String bMode = passJson.getUpperString(L"BlendingMode", "RGB_LINEAR_SOURCE_ALPHA");
             if (bMode == "RGB_LINEAR_SOURCE_ALPHA")
             {
                 setPassBlendMode(passNo, passJson.getBool(L"Blending", false), 
@@ -88,6 +88,25 @@ namespace lite3dpp
             else
             {
                 LITE3D_THROW(getName() << " unsupported BlendingMode");
+            }
+
+            setDoubleSided(passNo, passJson.getBool(L"DoubleSided", false));
+            String polygonMode = passJson.getUpperString(L"PolygonMode", "FILL");
+            if (polygonMode == "FILL")
+            {
+                setPolygonMode(passNo, PolygonMode::PolygonFill);
+            }
+            else if (polygonMode == "LINE")
+            {
+                setPolygonMode(passNo, PolygonMode::PolygonLine);
+            }
+            else if (polygonMode == "POINT")
+            {
+                setPolygonMode(passNo, PolygonMode::PolygonPoint);
+            }
+            else
+            {
+                LITE3D_THROW(getName() << " unsupported PolygonMode");
             }
 
             parseParameteres(passJson, passNo);
@@ -205,7 +224,25 @@ namespace lite3dpp
         
         passPtr->program = program->getPtr();
     }
-    
+
+    void Material::setPolygonMode(uint16_t pass, PolygonMode mode)
+    {
+        lite3d_material_pass *passPtr = lite3d_material_get_pass(&mMaterial, pass);
+        if(!passPtr)
+            LITE3D_THROW("Material \"" << getName() << "\" pass is not found..");
+
+        passPtr->polygonMode = static_cast<uint8_t>(mode);
+    }
+
+    void Material::setDoubleSided(uint16_t pass, bool flag)
+    {
+        lite3d_material_pass *passPtr = lite3d_material_get_pass(&mMaterial, pass);
+        if(!passPtr)
+            LITE3D_THROW("Material \"" << getName() << "\" pass is not found..");
+
+        passPtr->doubleSided = flag ? LITE3D_TRUE : LITE3D_FALSE;
+    }
+
     ShaderProgram *Material::getPassProgram(uint16_t pass) const
     {
         const lite3d_material_pass *passPtr = lite3d_material_get_pass(&mMaterial, pass);

@@ -307,7 +307,7 @@ void lite3d_render_loop(lite3d_render_listeners *callbacks)
 
     /* depth test enable by default */
     lite3d_depth_test_func(LITE3D_TEST_LESS);
-
+    lite3d_backface_culling(LITE3D_CULLFACE_BACK);
     lite3d_buffers_clear_values(&KM_VEC4_ZERO, 1.0f, 0);
     lite3d_buffers_clear(LITE3D_TRUE, LITE3D_TRUE, LITE3D_TRUE);
     lite3d_video_swap_buffers();

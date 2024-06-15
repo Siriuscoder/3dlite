@@ -18,7 +18,6 @@
 #pragma once
 
 #include <lite3d/lite3d_camera.h>
-#include <lite3d/lite3d_buffers_manip.h>
 
 #include <lite3dpp/lite3dpp_common.h>
 #include <lite3dpp/lite3dpp_scene_object.h>
@@ -28,21 +27,6 @@ namespace lite3dpp
     class LITE3DPP_EXPORT Camera : public SceneObjectBase
     {
     public:
-        
-        enum CullFaceMode : uint8_t
-        {
-            CullFaceNever = LITE3D_CULLFACE_NEVER,
-            CullFaceFront = LITE3D_CULLFACE_FRONT,
-            CullFaceBack = LITE3D_CULLFACE_BACK,
-            CullFaceFrontAndBack = LITE3D_CULLFACE_FRONT_AND_BACK
-        };
-
-        enum PolygonMode : uint8_t
-        {
-            PolygonPoint = LITE3D_POLYMODE_POINT,
-            PolygonLine = LITE3D_POLYMODE_LINE,
-            PolygonFill = LITE3D_POLYMODE_FILL
-        };
 
         Camera(const String &name, Main *main);
         virtual ~Camera() = default;
@@ -54,8 +38,6 @@ namespace lite3dpp
 
         inline bool isOrtho()
         { return mCamera.isOrtho == LITE3D_TRUE; }
-        inline void setPolygonMode(PolygonMode mode)
-        { mCamera.polygonMode = mode; }
 
         /* camera projection modes */
         void setupOrtho(float znear, float zfar, float left, float right, 
@@ -64,9 +46,6 @@ namespace lite3dpp
         void setAspect(float aspect);
         inline float getAspect()
         { return mCamera.projectionParams.aspect; }
-
-        inline void setCullFaceMode(CullFaceMode mode)
-        { mCamera.cullFaceMode = mode; }
         
         kmVec3 getDirection() const;
         kmVec3 getWorldDirection() const;

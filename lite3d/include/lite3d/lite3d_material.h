@@ -36,6 +36,8 @@ typedef struct lite3d_material_pass
     /* blending */
     uint8_t blending;
     uint8_t blendingMode;
+    uint8_t doubleSided;
+    uint8_t polygonMode;
 } lite3d_material_pass;
 
 typedef struct lite3d_material
