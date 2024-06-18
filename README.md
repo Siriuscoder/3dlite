@@ -89,67 +89,16 @@ Or just call build_win_2022.bat
 
 ## Samples
 
-After successfully compiling you can find some samples in bin directory. To provide samples work correctly you must download 
-resources pack [vault.pkg](https://drive.google.com/file/d/1JhsirjKwMq51IBg7GknUeZLGvrVKp1Sz/view?usp=sharing) and put it to media/packs/
-
-You can download resources for Vault_111 and Vault room sample from [here](https://drive.google.com/file/d/10sDEAlVEK4MVDGqzJgYaqVL5O0V8kRxo/view?usp=sharing), this 7z archive contains textures and models folders, you must copy this folders to media/vault_111 and anjoy this awesome samples!
-
-Also you able to download resources for sponza remastered scene from [here](https://drive.google.com/file/d/1rhB6k-BmfULFcVFAaw4KaPaILxeD34ne/view?usp=sharing), unpack and copy textures and models folders to media/sponza.
+See [here](samples/README.md)
 
 ## Screenshots
 
-Robots instancing sample
-![](/media/screenshots/robots.png "Robots")
-![](/media/screenshots/robots1.png "Robots")
-Reflection via cubemap sample
-![](/media/screenshots/reflection1.png "ReflectionSky")
-![](/media/screenshots/reflection2.png "ReflectionSky")
-Sponza sample with MSAA render target and PCF shadows
 ![](/media/screenshots/sponza.png "Sponza")
 ![](/media/screenshots/sponza1.png "Sponza")
-![](/media/screenshots/sponza2.png "Sponza")
-![](/media/screenshots/sponza3.png "Sponza")
-![](/media/screenshots/sponza4.png "Sponza")
-Vault scene (Fallout3 models) with dynamic lighting with multiple lights and big range of materials. Supports two render modes: Deffered shading and Direct shading, also supports several light buffer techniques such as UBO, TBO, SSBO.
-![](/media/screenshots/vault.png "Vault")
-![](/media/screenshots/vault1.png "Vault")
-![](/media/screenshots/vault2.png "Vault")
-![](/media/screenshots/vault3.png "Vault")
-![](/media/screenshots/vault4.png "Vault")
-Vault 111 scene (Fallout4 models) with complete PBR lighting and HDR rendering, Deffered shading pipeline, dynamic PCF shadows from multiple light sources, Physical Bloom effect and huge range of materials and models.
 ![](/media/screenshots/vault_111_0.png "Vault111")
-![](/media/screenshots/vault_111_1.png "Vault111")
-![](/media/screenshots/vault_111_2.png "Vault111")
 ![](/media/screenshots/vault_111_3.png "Vault111")
-![](/media/screenshots/vault_111_4.png "Vault111")
-![](/media/screenshots/vault_111_5.png "Vault111")
-![](/media/screenshots/vault_111_6.png "Vault111")
-![](/media/screenshots/vault_111_7.png "Vault111")
-![](/media/screenshots/vault_111_8.png "Vault111")
-![](/media/screenshots/vault_111_9.png "Vault111")
-![](/media/screenshots/vault_111_10.png "Vault111")
-![](/media/screenshots/vault_111_11.png "Vault111")
-![](/media/screenshots/vault_111_12.png "Vault111")
-![](/media/screenshots/vault_111_13.png "Vault111")
-![](/media/screenshots/vault_111_14.png "Vault111")
-![](/media/screenshots/vault_111_15.png "Vault111")
-![](/media/screenshots/vault_111_16.png "Vault111")
-![](/media/screenshots/vault_111_17.png "Vault111")
-![](/media/screenshots/vault_111_18.png "Vault111")
 ![](/media/screenshots/vault_111_19.png "Vault111")
-![](/media/screenshots/vault_111_20.png "Vault111")
-![](/media/screenshots/vault_111_21.png "Vault111")
-![](/media/screenshots/vault_111_22.png "Vault111")
-![](/media/screenshots/vault_111_23.png "Vault111")
-![](/media/screenshots/vault_111_24.png "Vault111")
-![](/media/screenshots/vault_111_25.png "Vault111")
-![](/media/screenshots/vault_111_26.png "Vault111")
-Vault 111 room scene (Fallout4 models) with complete PBR lighting and HDR rendering + Bullet Physics support.
 ![](/media/screenshots/vault_room_0.png "Vault room")
-![](/media/screenshots/vault_room_1.png "Vault room")
-![](/media/screenshots/vault_room_2.png "Vault room")
-![](/media/screenshots/vault_room_3.png "Vault room")
-![](/media/screenshots/vault_room_4.png "Vault room")
 
 ***
 Check branch master to fetch stable changes, and follow new releases =)
