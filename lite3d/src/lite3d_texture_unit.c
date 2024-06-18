@@ -392,6 +392,27 @@ static int lite3d_check_texture_target(uint32_t textureTarget)
     return LITE3D_TRUE;
 }
 
+#ifndef GLES
+static int lite3d_internal_format_float(const lite3d_texture_unit *textureUnit)
+{
+    switch (textureUnit->internalFormat)
+    {
+        case LITE3D_TEXTURE_INTERNAL_R16F:
+        case LITE3D_TEXTURE_INTERNAL_RG16F:
+        case LITE3D_TEXTURE_INTERNAL_RGB16F:
+        case LITE3D_TEXTURE_INTERNAL_RGBA16F:
+        case LITE3D_TEXTURE_INTERNAL_R32F:
+        case LITE3D_TEXTURE_INTERNAL_RG32F:
+        case LITE3D_TEXTURE_INTERNAL_RGB32F:
+        case LITE3D_TEXTURE_INTERNAL_RGBA32F:
+        case LITE3D_TEXTURE_INTERNAL_R11F_G11F_B10F:
+            return LITE3D_TRUE;
+    }
+
+    return LITE3D_FALSE;
+}
+#endif
+
 static int lite3d_set_internal_format(lite3d_texture_unit *textureUnit, uint16_t *format,
     uint16_t iformat, uint32_t *internalFormat)
 {
@@ -422,7 +443,7 @@ static int lite3d_set_internal_format(lite3d_texture_unit *textureUnit, uint16_t
             *internalFormat = GL_RGB8;
             if (textureCompression && lite3d_check_texture_compression_s3tc())
             {
-                if (iformat == LITE3D_TEXTURE_INTERNAL_SRGB)
+                if (iformat == LITE3D_TEXTURE_INTERNAL_SRGB8)
                 {
                     iformat = GL_COMPRESSED_SRGB_S3TC_DXT1_EXT;
                 }
@@ -454,7 +475,7 @@ static int lite3d_set_internal_format(lite3d_texture_unit *textureUnit, uint16_t
             *internalFormat = GL_RGBA8;
             if (textureCompression && lite3d_check_texture_compression_s3tc())
             {
-                if (iformat == LITE3D_TEXTURE_INTERNAL_SRGB_ALPHA)
+                if (iformat == LITE3D_TEXTURE_INTERNAL_SRGB8_ALPHA8)
                 {
                     iformat = GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT5_EXT;
                 }
@@ -541,7 +562,7 @@ static int lite3d_set_internal_format(lite3d_texture_unit *textureUnit, uint16_t
 
 static void lite3d_texture_unit_calc_total_size(lite3d_texture_unit *textureUnit)
 {
-    typedef int (*tsizefunc)(lite3d_texture_unit *, int8_t, uint8_t, size_t *);
+    typedef int (*tsizefunc)(const lite3d_texture_unit *, int8_t, uint8_t, size_t *);
     tsizefunc sf;
     size_t levelSize = 0;
     textureUnit->totalSize = 0;
@@ -805,9 +826,9 @@ int lite3d_texture_unit_from_resource(lite3d_texture_unit *textureUnit,
     /* matches openGL texture format */
     imageFormat = ilGetInteger(IL_IMAGE_FORMAT);
     if (srgb && imageFormat == LITE3D_TEXTURE_FORMAT_RGB)
-        internalFormat = LITE3D_TEXTURE_INTERNAL_SRGB;
+        internalFormat = LITE3D_TEXTURE_INTERNAL_SRGB8;
     else if (srgb && imageFormat == LITE3D_TEXTURE_FORMAT_RGBA)
-        internalFormat = LITE3D_TEXTURE_INTERNAL_SRGB_ALPHA;
+        internalFormat = LITE3D_TEXTURE_INTERNAL_SRGB8_ALPHA8;
 
     /* allocate texture surface if not allocated yet */
     if (textureUnit->imageWidth != imageWidth || textureUnit->imageHeight != imageHeight ||
@@ -1013,7 +1034,7 @@ int lite3d_texture_unit_set_compressed_pixels(lite3d_texture_unit *textureUnit,
     return LITE3D_CHECK_GL_ERROR ? LITE3D_FALSE : LITE3D_TRUE;  
 }
 
-int lite3d_texture_unit_get_level_size(lite3d_texture_unit *textureUnit, 
+int lite3d_texture_unit_get_level_size(const lite3d_texture_unit *textureUnit, 
     int8_t level, uint8_t cubeface, size_t *size)
 {
     int32_t imageWidth, imageHeight, imageDepth;
@@ -1054,7 +1075,7 @@ int lite3d_texture_unit_get_level_size(lite3d_texture_unit *textureUnit,
     return LITE3D_TRUE;
 }
 
-int lite3d_texture_unit_get_compressed_level_size(lite3d_texture_unit *textureUnit, 
+int lite3d_texture_unit_get_compressed_level_size(const lite3d_texture_unit *textureUnit, 
     int8_t level, uint8_t cubeface, size_t *size)
 {
 #ifndef GLES
@@ -1086,7 +1107,7 @@ int lite3d_texture_unit_get_compressed_level_size(lite3d_texture_unit *textureUn
 #endif
 }
 
-int lite3d_texture_unit_get_pixels(lite3d_texture_unit *textureUnit, 
+int lite3d_texture_unit_get_pixels(const lite3d_texture_unit *textureUnit, 
     int8_t level, uint8_t cubeface, void *pixels)
 {
 #ifndef GLES
@@ -1100,7 +1121,8 @@ int lite3d_texture_unit_get_pixels(lite3d_texture_unit *textureUnit,
 
     glGetTexImage(textureUnit->textureTarget == LITE3D_TEXTURE_CUBE ? 
         GL_TEXTURE_CUBE_MAP_POSITIVE_X + cubeface : textureTargetEnum[textureUnit->textureTarget],
-        level, textureUnit->dataFormat, GL_UNSIGNED_BYTE, pixels);
+        level, textureUnit->dataFormat, 
+        lite3d_internal_format_float(textureUnit) ? GL_FLOAT : GL_UNSIGNED_BYTE, pixels);
 
     return LITE3D_CHECK_GL_ERROR ? LITE3D_FALSE : LITE3D_TRUE;
 #else
@@ -1110,7 +1132,7 @@ int lite3d_texture_unit_get_pixels(lite3d_texture_unit *textureUnit,
 #endif
 }
 
-int lite3d_texture_unit_get_compressed_pixels(lite3d_texture_unit *textureUnit, 
+int lite3d_texture_unit_get_compressed_pixels(const lite3d_texture_unit *textureUnit, 
     int8_t level, uint8_t cubeface, void *pixels)
 {
 #ifndef GLES
@@ -1363,7 +1385,7 @@ void lite3d_texture_unit_compression(uint8_t on)
     textureCompression = on;
 }
 
-int32_t lite3d_texture_unit_get_level_width(lite3d_texture_unit *textureUnit,
+int32_t lite3d_texture_unit_get_level_width(const lite3d_texture_unit *textureUnit,
     int8_t level, uint8_t cubeface)
 {
 #ifndef GLES
@@ -1380,7 +1402,7 @@ int32_t lite3d_texture_unit_get_level_width(lite3d_texture_unit *textureUnit,
 #endif
 }
 
-int32_t lite3d_texture_unit_get_level_height(lite3d_texture_unit *textureUnit,
+int32_t lite3d_texture_unit_get_level_height(const lite3d_texture_unit *textureUnit,
     int8_t level, uint8_t cubeface)
 {
 #ifndef GLES
@@ -1397,7 +1419,7 @@ int32_t lite3d_texture_unit_get_level_height(lite3d_texture_unit *textureUnit,
 #endif
 }
 
-int32_t lite3d_texture_unit_get_level_depth(lite3d_texture_unit *textureUnit,
+int32_t lite3d_texture_unit_get_level_depth(const lite3d_texture_unit *textureUnit,
     int8_t level, uint8_t cubeface)
 {
 #ifndef GLES

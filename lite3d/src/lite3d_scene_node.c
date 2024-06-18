@@ -135,7 +135,9 @@ static void scene_node_update(lite3d_scene_node *node)
     kmMat4RotationQuaternion(&node->localView, &node->rotation);
     kmMat4Translation(&transMat, node->position.x, node->position.y, node->position.z);
     
-    if (node->scale.x != 1.0f || node->scale.y != 1.0f || node->scale.z != 1.0f)
+    if (!kmAlmostEqual(node->scale.x, 1.0f) || 
+        !kmAlmostEqual(node->scale.y, 1.0f) || 
+        !kmAlmostEqual(node->scale.z, 1.0f))
     {
         kmMat4Scaling(&scaleMat, node->scale.x, node->scale.y, node->scale.z);
         kmMat4Multiply(&transMat, &transMat, &scaleMat);

@@ -62,8 +62,8 @@ namespace lite3dpp
         inline int8_t getLevelsNum()
         { return mTexture.generatedMipmaps; }
 
-        void getPixels(int8_t level, PixelsData &pixels);
-        void getPixels(int8_t level, void *pixels);
+        void getPixels(int8_t level, PixelsData &pixels) const;
+        void getPixels(int8_t level, void *pixels) const;
 
         void setPixels(int8_t level, const PixelsData &pixels);
         void setPixels(int8_t level, const void *pixels);
@@ -94,7 +94,7 @@ namespace lite3dpp
         static uint32_t textureImageFormat(const String &s);
         static uint32_t textureFilterType(const String &s);
         static uint16_t textureFormat(const String &s);
-        static uint16_t textureInternalFormat(int iformat);
+        static uint16_t textureInternalFormat(const String& s);
 
     protected:
 

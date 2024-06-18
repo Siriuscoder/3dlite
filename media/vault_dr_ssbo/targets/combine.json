@@ -13,7 +13,7 @@
         [
             {
                 "TextureName": "combined.texture",
-                "TexturePath": "vault:textures/json/rgba.json"
+                "TexturePath": "samples:textures/json/rgba.json"
             }
         ]
     },

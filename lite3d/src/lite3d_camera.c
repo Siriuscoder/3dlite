@@ -27,9 +27,6 @@ void lite3d_camera_update_view(lite3d_camera *camera)
 {
     SDL_assert(camera);
 
-    lite3d_polygon_mode(camera->polygonMode);
-    lite3d_backface_culling(camera->cullFaceMode);
-
     /* camera link to node */
     lite3d_camera_link_to(camera, camera->linkNode, camera->linkType);
     /* camera track object */
@@ -132,9 +129,6 @@ void lite3d_camera_init(lite3d_camera *camera)
     kmMat4Identity(&camera->view);
     kmMat4Identity(&camera->projection);
     kmMat4Identity(&camera->screen);
-
-    camera->cullFaceMode = LITE3D_CULLFACE_BACK;
-    camera->polygonMode = LITE3D_POLYMODE_FILL;
 }
 
 void lite3d_camera_lookAt(lite3d_camera *camera, const kmVec3 *pointTo)

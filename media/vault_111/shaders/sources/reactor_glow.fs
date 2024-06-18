@@ -4,23 +4,32 @@ uniform vec4 Emission;
 uniform float EmissionStrength;
 uniform float Alpha;
 
-out vec4 fragColor;
-
-in vec2 iuv;
-in vec3 ivv;
-in mat3 itbn;
-
-vec3 ComputeIllumination(vec3 vw, vec3 nw, vec3 albedo, vec3 emission, vec3 specular, float aoFactor, 
-    float saFactor);
-
-void main()
+vec4 getAlbedo(vec2 uv)
 {
-    // get normal from TBN
-    vec3 nw = itbn[2];
-    // specular PBR parameters 
-    vec3 specular = vec3(0.5, 1.0, 0.0);
-    // Compute total illumination 
-    vec3 total = ComputeIllumination(ivv, nw, Emission.rgb, Emission.rgb * EmissionStrength, specular, 1.0, 0.1);
+    return vec4(Emission.rgb, Alpha);
+}
 
-    fragColor = vec4(total, Alpha);
+vec3 getEmission(vec2 uv)
+{
+    return Emission.rgb * EmissionStrength;
+}
+
+vec3 getNormal(vec2 uv, mat3 tbn)
+{
+    return tbn[2];
+}
+
+vec3 getSpecular(vec2 uv)
+{
+    return vec3(0.5, 1.0, 0.0);
+}
+
+float getAmbientOcclusion(vec2 uv)
+{
+    return 1.0;
+}
+
+float getSpecularAmbient(vec2 uv)
+{
+    return 0.1;
 }

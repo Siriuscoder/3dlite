@@ -3,8 +3,8 @@
     [
         "vaultshader:shaders/sources/prepass.vs",
         "vaultshader:shaders/sources/prepass.fs,vaultshader:shaders/sources/def/illum.def",
-        "samples:shaders/sources/lighting/phong_blinn_single.fs",
-        "samples:shaders/sources/lighting/lighting_ubo.fs,samples:shaders/sources/lighting/phong_blinn.def",
+        "samples:shaders/sources/phong/phong_blinn_single.fs",
+        "samples:shaders/sources/phong/lighting_ubo.fs,samples:shaders/sources/phong/phong_blinn.def",
         "samples:shaders/sources/common/utils.fs"
     ]
 }

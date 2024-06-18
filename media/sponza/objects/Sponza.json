@@ -1,0 +1,4249 @@
+{
+  "Root": {
+    "Name": "Sponza",
+    "Nodes": [
+      {
+        "Name": "1st_floor",
+        "Position": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "Nodes": [
+          {
+            "Name": "arch_stones_01",
+            "Mesh": {
+              "Mesh": "sponza:models/json/arch_stones_01.json",
+              "Name": "arch_stones_01.mesh"
+            },
+            "Position": [
+              0.14015014469623566,
+              -3.0872087478637695,
+              4.069164752960205
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "arch_stones_02",
+            "Mesh": {
+              "Mesh": "sponza:models/json/arch_stones_02.json",
+              "Name": "arch_stones_02.mesh"
+            },
+            "Position": [
+              0.14014892280101776,
+              3.114764928817749,
+              4.069164752960205
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "arch_stones_03",
+            "Mesh": {
+              "Mesh": "sponza:models/json/arch_stones_03.json",
+              "Name": "arch_stones_03.mesh"
+            },
+            "Position": [
+              0.11376464366912842,
+              0.016881408169865608,
+              4.3738908767700195
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              8.742277657347586e-08,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "arch_stones_04",
+            "Mesh": {
+              "Mesh": "sponza:models/json/arch_stones_04.json",
+              "Name": "arch_stones_04.mesh"
+            },
+            "Position": [
+              2.0093212127685547,
+              0.03623718023300171,
+              2.1693685054779053
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "arch_stones_05",
+            "Mesh": {
+              "Mesh": "sponza:models/json/arch_stones_05.json",
+              "Name": "arch_stones_05.mesh"
+            },
+            "Position": [
+              0.11376464366912842,
+              0.016881408169865608,
+              4.3738908767700195
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              8.742277657347586e-08,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "ceiling_1stfloor_01",
+            "Mesh": {
+              "Mesh": "sponza:models/json/ceiling_1stfloor_01.json",
+              "Name": "ceiling_1stfloor_01.mesh"
+            },
+            "Position": [
+              0.4021221697330475,
+              0.15080444514751434,
+              4.096160411834717
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "ceiling_1stfloor_02",
+            "Mesh": {
+              "Mesh": "sponza:models/json/ceiling_1stfloor_02.json",
+              "Name": "ceiling_1stfloor_02.mesh"
+            },
+            "Position": [
+              15.272645950317383,
+              2.0942840576171875,
+              3.9124488830566406
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "columns_1stfloor_01",
+            "Mesh": {
+              "Mesh": "sponza:models/json/columns_1stfloor_01.json",
+              "Name": "columns_1stfloor_01.mesh"
+            },
+            "Position": [
+              8.3294677734375,
+              0.03189780190587044,
+              -0.011514129117131233
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "columns_1stfloor_02",
+            "Mesh": {
+              "Mesh": "sponza:models/json/columns_1stfloor_02.json",
+              "Name": "columns_1stfloor_02.mesh"
+            },
+            "Position": [
+              4.2073211669921875,
+              0.04089896008372307,
+              -0.012799834832549095
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "columns_1stfloor_03",
+            "Mesh": {
+              "Mesh": "sponza:models/json/columns_1stfloor_03.json",
+              "Name": "columns_1stfloor_03.mesh"
+            },
+            "Position": [
+              0.144184872508049,
+              0.03620154410600662,
+              -0.011829833500087261
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "columns_1stfloor_04",
+            "Mesh": {
+              "Mesh": "sponza:models/json/columns_1stfloor_04.json",
+              "Name": "columns_1stfloor_04.mesh"
+            },
+            "Position": [
+              -3.896315336227417,
+              0.03693396598100662,
+              -0.01148147601634264
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "columns_1stfloor_05",
+            "Mesh": {
+              "Mesh": "sponza:models/json/columns_1stfloor_05.json",
+              "Name": "columns_1stfloor_05.mesh"
+            },
+            "Position": [
+              -8.081866264343262,
+              0.029485996812582016,
+              -0.011514129117131233
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "curtain_01",
+            "Mesh": {
+              "Mesh": "sponza:models/json/curtain_01.json",
+              "Name": "curtain_01.mesh"
+            },
+            "Position": [
+              8.34422492980957,
+              -1.5779229402542114,
+              3.104909658432007
+            ],
+            "Rotation": [
+              0.5,
+              -0.5000001788139343,
+              -0.49999988079071045,
+              0.49999988079071045
+            ],
+            "Scale": [
+              1.000000238418579,
+              1.000000238418579,
+              1.000000238418579
+            ]
+          },
+          {
+            "Name": "curtain_02",
+            "Mesh": {
+              "Mesh": "sponza:models/json/curtain_02.json",
+              "Name": "curtain_02.mesh"
+            },
+            "Position": [
+              -5.365208148956299,
+              3.131610870361328,
+              2.2247579097747803
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "curtain_05",
+            "Mesh": {
+              "Mesh": "sponza:models/json/curtain_05.json",
+              "Name": "curtain_05.mesh"
+            },
+            "Position": [
+              -5.758246421813965,
+              3.155316114425659,
+              2.2240562438964844
+            ],
+            "Rotation": [
+              0.70710688829422,
+              0.0,
+              0.0,
+              0.7071066498756409
+            ],
+            "Scale": [
+              1.0,
+              0.9999998807907104,
+              0.9999998807907104
+            ]
+          },
+          {
+            "Name": "curtain_06",
+            "Mesh": {
+              "Mesh": "sponza:models/json/curtain_06.json",
+              "Name": "curtain_06.mesh"
+            },
+            "Position": [
+              5.670446872711182,
+              -3.044111490249634,
+              2.2247579097747803
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              -1.0,
+              4.371138828673793e-08
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "curtain_09",
+            "Mesh": {
+              "Mesh": "sponza:models/json/curtain_09.json",
+              "Name": "curtain_09.mesh"
+            },
+            "Position": [
+              6.063292503356934,
+              -3.05473256111145,
+              2.2240562438964844
+            ],
+            "Rotation": [
+              3.0908616110991716e-08,
+              -0.7071067690849304,
+              -0.7071067690849304,
+              3.0908619663705394e-08
+            ],
+            "Scale": [
+              1.0000004768371582,
+              1.000000238418579,
+              1.000000238418579
+            ]
+          },
+          {
+            "Name": "curtain_hanging_01",
+            "Mesh": {
+              "Mesh": "sponza:models/json/curtain_hanging_01.json",
+              "Name": "curtain_hanging_01.mesh"
+            },
+            "Position": [
+              4.149219036102295,
+              3.021313428878784,
+              4.828596115112305
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "curtain_hanging_02",
+            "Mesh": {
+              "Mesh": "sponza:models/json/curtain_hanging_02.json",
+              "Name": "curtain_hanging_02.mesh"
+            },
+            "Position": [
+              2.3631227016448975,
+              2.9961302280426025,
+              0.0
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "curtain_hanging_03",
+            "Mesh": {
+              "Mesh": "sponza:models/json/curtain_hanging_03.json",
+              "Name": "curtain_hanging_03.mesh"
+            },
+            "Position": [
+              -1.6478279829025269,
+              2.996843099594116,
+              0.0
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "curtain_hanging_04",
+            "Mesh": {
+              "Mesh": "sponza:models/json/curtain_hanging_04.json",
+              "Name": "curtain_hanging_04.mesh"
+            },
+            "Position": [
+              -3.8755712509155273,
+              -2.992642402648926,
+              4.828596115112305
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              -1.0,
+              4.371138828673793e-08
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "curtain_hanging_05",
+            "Mesh": {
+              "Mesh": "sponza:models/json/curtain_hanging_05.json",
+              "Name": "curtain_hanging_05.mesh"
+            },
+            "Position": [
+              -2.089474678039551,
+              -2.967458963394165,
+              0.0
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              -1.0,
+              4.371138828673793e-08
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "curtain_hanging_06",
+            "Mesh": {
+              "Mesh": "sponza:models/json/curtain_hanging_06.json",
+              "Name": "curtain_hanging_06.mesh"
+            },
+            "Position": [
+              1.921476125717163,
+              -2.9681718349456787,
+              0.0
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              -1.0,
+              4.371138828673793e-08
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "curtain_holder_01",
+            "Mesh": {
+              "Mesh": "sponza:models/json/curtain_holder_01.json",
+              "Name": "curtain_holder_01.mesh"
+            },
+            "Position": [
+              0.16456709802150726,
+              3.2706472873687744,
+              4.031385898590088
+            ],
+            "Rotation": [
+              0.70710688829422,
+              0.0,
+              0.0,
+              0.7071066498756409
+            ],
+            "Scale": [
+              1.0,
+              0.9999998807907104,
+              0.9999998807907104
+            ]
+          },
+          {
+            "Name": "curtain_holder_02",
+            "Mesh": {
+              "Mesh": "sponza:models/json/curtain_holder_02.json",
+              "Name": "curtain_holder_02.mesh"
+            },
+            "Position": [
+              0.1351805031299591,
+              -3.176191568374634,
+              4.031385898590088
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "decals_1st_floor",
+            "Mesh": {
+              "Mesh": "sponza:models/json/decals_1st_floor.json",
+              "Name": "decals_1st_floor.mesh"
+            },
+            "Position": [
+              -11.116788864135742,
+              4.780294418334961,
+              1.170998454093933
+            ],
+            "Rotation": [
+              -0.49999991059303284,
+              -0.5000001788139343,
+              -0.5000001192092896,
+              -0.49999991059303284
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "exterior",
+            "Mesh": {
+              "Mesh": "sponza:models/json/exterior.json",
+              "Name": "exterior.mesh"
+            },
+            "Position": [
+              1.877864956855774,
+              -0.4965130388736725,
+              8.259137153625488
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "exteriorInner",
+            "Mesh": {
+              "Mesh": "sponza:models/json/exteriorInner.json",
+              "Name": "exteriorInner.mesh"
+            },
+            "Position": [
+              1.877864956855774,
+              -0.4965130388736725,
+              8.259137153625488
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "floor_1stfloor_01",
+            "Mesh": {
+              "Mesh": "sponza:models/json/floor_1stfloor_01.json",
+              "Name": "floor_1stfloor_01.mesh"
+            },
+            "Position": [
+              4.055417537689209,
+              0.04547119140625,
+              -0.4251940846443176
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "lamp_1stfloor_entrance",
+            "Mesh": {
+              "Mesh": "sponza:models/json/lamp_1stfloor_entrance.json",
+              "Name": "lamp_1stfloor_entrance.mesh"
+            },
+            "Position": [
+              15.610796928405762,
+              0.9186578989028931,
+              3.8830862045288086
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "lamps_1stfloor_00",
+            "Mesh": {
+              "Mesh": "sponza:models/json/lamps_1stfloor_00.json",
+              "Name": "lamps_1stfloor_00.mesh"
+            },
+            "Position": [
+              -13.598206520080566,
+              -0.06263710558414459,
+              4.563872337341309
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.537299633026123,
+              0.8433914184570312
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "lamps_1stfloor_01",
+            "Mesh": {
+              "Mesh": "sponza:models/json/lamps_1stfloor_01.json",
+              "Name": "lamps_1stfloor_01.mesh"
+            },
+            "Position": [
+              -9.825387001037598,
+              4.794541835784912,
+              4.823324203491211
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.2588190734386444,
+              0.9659258723258972
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "lamps_1stfloor_02",
+            "Mesh": {
+              "Mesh": "sponza:models/json/lamps_1stfloor_02.json",
+              "Name": "lamps_1stfloor_02.mesh"
+            },
+            "Position": [
+              -5.922083377838135,
+              4.794541835784912,
+              4.823324203491211
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.08715575933456421,
+              0.9961947202682495
+            ],
+            "Scale": [
+              0.9999999403953552,
+              0.9999999403953552,
+              1.0
+            ]
+          },
+          {
+            "Name": "lamps_1stfloor_03",
+            "Mesh": {
+              "Mesh": "sponza:models/json/lamps_1stfloor_03.json",
+              "Name": "lamps_1stfloor_03.mesh"
+            },
+            "Position": [
+              -1.852336049079895,
+              4.7958221435546875,
+              4.823324203491211
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "lamps_1stfloor_04",
+            "Mesh": {
+              "Mesh": "sponza:models/json/lamps_1stfloor_04.json",
+              "Name": "lamps_1stfloor_04.mesh"
+            },
+            "Position": [
+              2.183030128479004,
+              4.7958221435546875,
+              4.823324203491211
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              -0.2588190734386444,
+              0.9659258723258972
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "lamps_1stfloor_05",
+            "Mesh": {
+              "Mesh": "sponza:models/json/lamps_1stfloor_05.json",
+              "Name": "lamps_1stfloor_05.mesh"
+            },
+            "Position": [
+              6.146512985229492,
+              4.7958221435546875,
+              4.823324203491211
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "lamps_1stfloor_06",
+            "Mesh": {
+              "Mesh": "sponza:models/json/lamps_1stfloor_06.json",
+              "Name": "lamps_1stfloor_06.mesh"
+            },
+            "Position": [
+              10.02734375,
+              4.7958221435546875,
+              4.823324203491211
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.17364820837974548,
+              0.9848077893257141
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "lamps_1stfloor_07",
+            "Mesh": {
+              "Mesh": "sponza:models/json/lamps_1stfloor_07.json",
+              "Name": "lamps_1stfloor_07.mesh"
+            },
+            "Position": [
+              -9.825387001037598,
+              -4.740348815917969,
+              4.823324203491211
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.2588190734386444,
+              0.9659258723258972
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "lamps_1stfloor_08",
+            "Mesh": {
+              "Mesh": "sponza:models/json/lamps_1stfloor_08.json",
+              "Name": "lamps_1stfloor_08.mesh"
+            },
+            "Position": [
+              -5.922083377838135,
+              -4.740348815917969,
+              4.823324203491211
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.08715575933456421,
+              0.9961947202682495
+            ],
+            "Scale": [
+              0.9999999403953552,
+              0.9999999403953552,
+              1.0
+            ]
+          },
+          {
+            "Name": "lamps_1stfloor_09",
+            "Mesh": {
+              "Mesh": "sponza:models/json/lamps_1stfloor_09.json",
+              "Name": "lamps_1stfloor_09.mesh"
+            },
+            "Position": [
+              -1.852336049079895,
+              -4.739068984985352,
+              4.823324203491211
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "lamps_1stfloor_10",
+            "Mesh": {
+              "Mesh": "sponza:models/json/lamps_1stfloor_10.json",
+              "Name": "lamps_1stfloor_10.mesh"
+            },
+            "Position": [
+              2.183030128479004,
+              -4.739068984985352,
+              4.823324203491211
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              -0.2588190734386444,
+              0.9659258723258972
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "lamps_1stfloor_11",
+            "Mesh": {
+              "Mesh": "sponza:models/json/lamps_1stfloor_11.json",
+              "Name": "lamps_1stfloor_11.mesh"
+            },
+            "Position": [
+              6.146512985229492,
+              -4.739068984985352,
+              4.823324203491211
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "lamps_1stfloor_12",
+            "Mesh": {
+              "Mesh": "sponza:models/json/lamps_1stfloor_12.json",
+              "Name": "lamps_1stfloor_12.mesh"
+            },
+            "Position": [
+              10.158050537109375,
+              -4.743866920471191,
+              4.823324203491211
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              -0.13052619993686676,
+              0.9914448857307434
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "lionhead",
+            "Mesh": {
+              "Mesh": "sponza:models/json/lionhead.json",
+              "Name": "lionhead.mesh"
+            },
+            "Position": [
+              -15.945751190185547,
+              -0.09938076138496399,
+              0.22804443538188934
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.7071068286895752,
+              0.7071067094802856
+            ],
+            "Scale": [
+              0.4699629545211792,
+              0.4699629545211792,
+              0.4699629545211792
+            ]
+          },
+          {
+            "Name": "ornament_doors_01",
+            "Mesh": {
+              "Mesh": "sponza:models/json/ornament_doors_01.json",
+              "Name": "ornament_doors_01.mesh"
+            },
+            "Position": [
+              15.48161792755127,
+              -1.4644957780838013,
+              1.5200445652008057
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "ornament_doors_02",
+            "Mesh": {
+              "Mesh": "sponza:models/json/ornament_doors_02.json",
+              "Name": "ornament_doors_02.mesh"
+            },
+            "Position": [
+              18.31136131286621,
+              3.912816047668457,
+              0.8876335024833679
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "ornament_doors_03",
+            "Mesh": {
+              "Mesh": "sponza:models/json/ornament_doors_03.json",
+              "Name": "ornament_doors_03.mesh"
+            },
+            "Position": [
+              6.19555139541626,
+              -6.133327484130859,
+              1.7943835258483887
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "ornament_doors_04",
+            "Mesh": {
+              "Mesh": "sponza:models/json/ornament_doors_04.json",
+              "Name": "ornament_doors_04.mesh"
+            },
+            "Position": [
+              2.1816625595092773,
+              -6.133327484130859,
+              1.7943835258483887
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "ornament_doors_05",
+            "Mesh": {
+              "Mesh": "sponza:models/json/ornament_doors_05.json",
+              "Name": "ornament_doors_05.mesh"
+            },
+            "Position": [
+              -1.8183587789535522,
+              -6.133327484130859,
+              1.7943835258483887
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "ornament_doors_06",
+            "Mesh": {
+              "Mesh": "sponza:models/json/ornament_doors_06.json",
+              "Name": "ornament_doors_06.mesh"
+            },
+            "Position": [
+              -5.776973247528076,
+              -6.133327484130859,
+              1.7943835258483887
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "ornament_doors_07",
+            "Mesh": {
+              "Mesh": "sponza:models/json/ornament_doors_07.json",
+              "Name": "ornament_doors_07.mesh"
+            },
+            "Position": [
+              -11.2301607131958,
+              -4.657639026641846,
+              1.7943835258483887
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "ornament_doors_08",
+            "Mesh": {
+              "Mesh": "sponza:models/json/ornament_doors_08.json",
+              "Name": "ornament_doors_08.mesh"
+            },
+            "Position": [
+              -9.720212936401367,
+              -6.139299392700195,
+              1.7943835258483887
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "ornament_doors_09",
+            "Mesh": {
+              "Mesh": "sponza:models/json/ornament_doors_09.json",
+              "Name": "ornament_doors_09.mesh"
+            },
+            "Position": [
+              -2.048527240753174,
+              6.098107814788818,
+              1.8174022436141968
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "ornament_doors_10",
+            "Mesh": {
+              "Mesh": "sponza:models/json/ornament_doors_10.json",
+              "Name": "ornament_doors_10.mesh"
+            },
+            "Position": [
+              -9.99221420288086,
+              4.949672698974609,
+              1.8124775886535645
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "ornament_stones_01",
+            "Mesh": {
+              "Mesh": "sponza:models/json/ornament_stones_01.json",
+              "Name": "ornament_stones_01.mesh"
+            },
+            "Position": [
+              -1.2055010795593262,
+              0.13393187522888184,
+              2.8793656826019287
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "walls_1stfloor_01",
+            "Mesh": {
+              "Mesh": "sponza:models/json/walls_1stfloor_01.json",
+              "Name": "walls_1stfloor_01.mesh"
+            },
+            "Position": [
+              2.0093212127685547,
+              0.03623718023300171,
+              2.1693685054779053
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "walls_1stfloor_02",
+            "Mesh": {
+              "Mesh": "sponza:models/json/walls_1stfloor_02.json",
+              "Name": "walls_1stfloor_02.mesh"
+            },
+            "Position": [
+              2.0093212127685547,
+              0.03623718023300171,
+              2.1693685054779053
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "wooden_door_01",
+            "Mesh": {
+              "Mesh": "sponza:models/json/wooden_door_01.json",
+              "Name": "wooden_door_01.mesh"
+            },
+            "Position": [
+              14.160347938537598,
+              2.496399402618408,
+              1.8342666625976562
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "wooden_door_02",
+            "Mesh": {
+              "Mesh": "sponza:models/json/wooden_door_02.json",
+              "Name": "wooden_door_02.mesh"
+            },
+            "Position": [
+              14.160347938537598,
+              2.496399402618408,
+              1.8342666625976562
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "2nd_floor",
+        "Position": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "Nodes": [
+          {
+            "Name": "arch_wall_2ndfloor",
+            "Mesh": {
+              "Mesh": "sponza:models/json/arch_wall_2ndfloor.json",
+              "Name": "arch_wall_2ndfloor.mesh"
+            },
+            "Position": [
+              0.25837981700897217,
+              0.020968932658433914,
+              9.925777435302734
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "ceiling_2ndfloor",
+            "Mesh": {
+              "Mesh": "sponza:models/json/ceiling_2ndfloor.json",
+              "Name": "ceiling_2ndfloor.mesh"
+            },
+            "Position": [
+              0.14894957840442657,
+              0.050252072513103485,
+              9.553943634033203
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "column_2ndfloor_01",
+            "Mesh": {
+              "Mesh": "sponza:models/json/column_2ndfloor_01.json",
+              "Name": "column_2ndfloor_01.mesh"
+            },
+            "Position": [
+              -3.8596532344818115,
+              -3.106274366378784,
+              6.108536720275879
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "column_2ndfloor_02",
+            "Mesh": {
+              "Mesh": "sponza:models/json/column_2ndfloor_02.json",
+              "Name": "column_2ndfloor_02.mesh"
+            },
+            "Position": [
+              0.14297209680080414,
+              -3.103250026702881,
+              6.107756614685059
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "column_2ndfloor_03",
+            "Mesh": {
+              "Mesh": "sponza:models/json/column_2ndfloor_03.json",
+              "Name": "column_2ndfloor_03.mesh"
+            },
+            "Position": [
+              4.158140659332275,
+              -3.1034035682678223,
+              6.10853910446167
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "column_2ndfloor_04",
+            "Mesh": {
+              "Mesh": "sponza:models/json/column_2ndfloor_04.json",
+              "Name": "column_2ndfloor_04.mesh"
+            },
+            "Position": [
+              8.318652153015137,
+              -2.97918963432312,
+              6.108538627624512
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "column_2ndfloor_05",
+            "Mesh": {
+              "Mesh": "sponza:models/json/column_2ndfloor_05.json",
+              "Name": "column_2ndfloor_05.mesh"
+            },
+            "Position": [
+              -3.8596532344818115,
+              3.1314733028411865,
+              6.108536720275879
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "column_2ndfloor_06",
+            "Mesh": {
+              "Mesh": "sponza:models/json/column_2ndfloor_06.json",
+              "Name": "column_2ndfloor_06.mesh"
+            },
+            "Position": [
+              0.14740081131458282,
+              3.120760440826416,
+              6.107755661010742
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "column_2ndfloor_07",
+            "Mesh": {
+              "Mesh": "sponza:models/json/column_2ndfloor_07.json",
+              "Name": "column_2ndfloor_07.mesh"
+            },
+            "Position": [
+              4.14800500869751,
+              3.127596378326416,
+              6.1085357666015625
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "column_2ndfloor_08",
+            "Mesh": {
+              "Mesh": "sponza:models/json/column_2ndfloor_08.json",
+              "Name": "column_2ndfloor_08.mesh"
+            },
+            "Position": [
+              8.317798614501953,
+              2.9828436374664307,
+              6.10853910446167
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "column_2ndfloor_09",
+            "Mesh": {
+              "Mesh": "sponza:models/json/column_2ndfloor_09.json",
+              "Name": "column_2ndfloor_09.mesh"
+            },
+            "Position": [
+              -1.8593943119049072,
+              3.084819793701172,
+              6.100160598754883
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "column_2ndfloor_10",
+            "Mesh": {
+              "Mesh": "sponza:models/json/column_2ndfloor_10.json",
+              "Name": "column_2ndfloor_10.mesh"
+            },
+            "Position": [
+              2.1651017665863037,
+              3.0848207473754883,
+              6.100160598754883
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "column_2ndfloor_11",
+            "Mesh": {
+              "Mesh": "sponza:models/json/column_2ndfloor_11.json",
+              "Name": "column_2ndfloor_11.mesh"
+            },
+            "Position": [
+              6.153645992279053,
+              3.0848195552825928,
+              6.100160598754883
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "column_2ndfloor_12",
+            "Mesh": {
+              "Mesh": "sponza:models/json/column_2ndfloor_12.json",
+              "Name": "column_2ndfloor_12.mesh"
+            },
+            "Position": [
+              -1.8683825731277466,
+              -3.0724496841430664,
+              6.100160598754883
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "column_2ndfloor_13",
+            "Mesh": {
+              "Mesh": "sponza:models/json/column_2ndfloor_13.json",
+              "Name": "column_2ndfloor_13.mesh"
+            },
+            "Position": [
+              2.156113624572754,
+              -3.072448253631592,
+              6.100160598754883
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "column_2ndfloor_14",
+            "Mesh": {
+              "Mesh": "sponza:models/json/column_2ndfloor_14.json",
+              "Name": "column_2ndfloor_14.mesh"
+            },
+            "Position": [
+              6.170249938964844,
+              -3.0724480152130127,
+              6.100160598754883
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "column_2ndfloor_15",
+            "Mesh": {
+              "Mesh": "sponza:models/json/column_2ndfloor_15.json",
+              "Name": "column_2ndfloor_15.mesh"
+            },
+            "Position": [
+              8.420499801635742,
+              0.030615901574492455,
+              6.100160598754883
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "column_2ndfloor_16",
+            "Mesh": {
+              "Mesh": "sponza:models/json/column_2ndfloor_16.json",
+              "Name": "column_2ndfloor_16.mesh"
+            },
+            "Position": [
+              -8.063948631286621,
+              -2.9510302543640137,
+              6.066609859466553
+            ],
+            "Rotation": [
+              0.0,
+              -8.742277657347586e-08,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "column_2ndfloor_17",
+            "Mesh": {
+              "Mesh": "sponza:models/json/column_2ndfloor_17.json",
+              "Name": "column_2ndfloor_17.mesh"
+            },
+            "Position": [
+              -8.069543838500977,
+              2.9921135902404785,
+              6.108537673950195
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "column_2ndfloor_18",
+            "Mesh": {
+              "Mesh": "sponza:models/json/column_2ndfloor_18.json",
+              "Name": "column_2ndfloor_18.mesh"
+            },
+            "Position": [
+              -5.873531341552734,
+              3.084819793701172,
+              6.100160598754883
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "column_2ndfloor_19",
+            "Mesh": {
+              "Mesh": "sponza:models/json/column_2ndfloor_19.json",
+              "Name": "column_2ndfloor_19.mesh"
+            },
+            "Position": [
+              -8.14419174194336,
+              -0.021669253706932068,
+              6.100160598754883
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              8.742277657347586e-08,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "column_2ndfloor_20",
+            "Mesh": {
+              "Mesh": "sponza:models/json/column_2ndfloor_20.json",
+              "Name": "column_2ndfloor_20.mesh"
+            },
+            "Position": [
+              -5.856927394866943,
+              -3.072448968887329,
+              6.100160598754883
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "decals_2nd_floor",
+            "Mesh": {
+              "Mesh": "sponza:models/json/decals_2nd_floor.json",
+              "Name": "decals_2nd_floor.mesh"
+            },
+            "Position": [
+              0.1679241955280304,
+              0.3084954619407654,
+              8.079009056091309
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              -1.0,
+              1.1924880638503055e-08
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "lamps_2ndfloor_01",
+            "Mesh": {
+              "Mesh": "sponza:models/json/lamps_2ndfloor_01.json",
+              "Name": "lamps_2ndfloor_01.mesh"
+            },
+            "Position": [
+              -9.753705024719238,
+              4.726463317871094,
+              10.383440971374512
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              -0.7372773885726929,
+              0.6755901575088501
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "lamps_2ndfloor_02",
+            "Mesh": {
+              "Mesh": "sponza:models/json/lamps_2ndfloor_02.json",
+              "Name": "lamps_2ndfloor_02.mesh"
+            },
+            "Position": [
+              -5.852589130401611,
+              4.661561965942383,
+              10.383440971374512
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              -0.866025447845459,
+              0.4999999701976776
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "lamps_2ndfloor_03",
+            "Mesh": {
+              "Mesh": "sponza:models/json/lamps_2ndfloor_03.json",
+              "Name": "lamps_2ndfloor_03.mesh"
+            },
+            "Position": [
+              2.1634457111358643,
+              4.695348262786865,
+              10.383440971374512
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.13052619993686676,
+              0.9914448857307434
+            ],
+            "Scale": [
+              0.9999999403953552,
+              0.9999999403953552,
+              1.0
+            ]
+          },
+          {
+            "Name": "lamps_2ndfloor_04",
+            "Mesh": {
+              "Mesh": "sponza:models/json/lamps_2ndfloor_04.json",
+              "Name": "lamps_2ndfloor_04.mesh"
+            },
+            "Position": [
+              10.066171646118164,
+              4.72451639175415,
+              10.383440971374512
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              -0.2588190734386444,
+              0.9659258723258972
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "lamps_2ndfloor_05",
+            "Mesh": {
+              "Mesh": "sponza:models/json/lamps_2ndfloor_05.json",
+              "Name": "lamps_2ndfloor_05.mesh"
+            },
+            "Position": [
+              10.06491470336914,
+              -4.720071792602539,
+              10.383440971374512
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "lamps_2ndfloor_06",
+            "Mesh": {
+              "Mesh": "sponza:models/json/lamps_2ndfloor_06.json",
+              "Name": "lamps_2ndfloor_06.mesh"
+            },
+            "Position": [
+              2.163541555404663,
+              -4.664247512817383,
+              10.383440971374512
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              -0.043619394302368164,
+              0.9990482330322266
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "lamps_2ndfloor_07",
+            "Mesh": {
+              "Mesh": "sponza:models/json/lamps_2ndfloor_07.json",
+              "Name": "lamps_2ndfloor_07.mesh"
+            },
+            "Position": [
+              -5.8473639488220215,
+              -4.670383930206299,
+              10.383440971374512
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              -0.6427876353263855,
+              0.7660444378852844
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "lamps_2ndfloor_08",
+            "Mesh": {
+              "Mesh": "sponza:models/json/lamps_2ndfloor_08.json",
+              "Name": "lamps_2ndfloor_08.mesh"
+            },
+            "Position": [
+              -9.773459434509277,
+              -4.740229606628418,
+              10.383440971374512
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              -0.843391478061676,
+              0.5372995734214783
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "ornament_door_2ndfloor_01",
+            "Mesh": {
+              "Mesh": "sponza:models/json/ornament_door_2ndfloor_01.json",
+              "Name": "ornament_door_2ndfloor_01.mesh"
+            },
+            "Position": [
+              2.2743313312530518,
+              7.468501567840576,
+              5.450930595397949
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "ornament_door_2ndfloor_02",
+            "Mesh": {
+              "Mesh": "sponza:models/json/ornament_door_2ndfloor_02.json",
+              "Name": "ornament_door_2ndfloor_02.mesh"
+            },
+            "Position": [
+              -1.8412055969238281,
+              7.468501567840576,
+              5.450930595397949
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "ornament_door_2ndfloor_03",
+            "Mesh": {
+              "Mesh": "sponza:models/json/ornament_door_2ndfloor_03.json",
+              "Name": "ornament_door_2ndfloor_03.mesh"
+            },
+            "Position": [
+              -5.742908954620361,
+              7.468501567840576,
+              5.450930595397949
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "ornament_door_2ndfloor_04",
+            "Mesh": {
+              "Mesh": "sponza:models/json/ornament_door_2ndfloor_04.json",
+              "Name": "ornament_door_2ndfloor_04.mesh"
+            },
+            "Position": [
+              6.160540580749512,
+              7.452783584594727,
+              5.432581901550293
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "ornament_door_2ndfloor_05",
+            "Mesh": {
+              "Mesh": "sponza:models/json/ornament_door_2ndfloor_05.json",
+              "Name": "ornament_door_2ndfloor_05.mesh"
+            },
+            "Position": [
+              10.058539390563965,
+              7.468503952026367,
+              5.450930595397949
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "ornament_door_2ndfloor_06",
+            "Mesh": {
+              "Mesh": "sponza:models/json/ornament_door_2ndfloor_06.json",
+              "Name": "ornament_door_2ndfloor_06.mesh"
+            },
+            "Position": [
+              -9.634869575500488,
+              7.4684977531433105,
+              5.450930595397949
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "ornament_door_2ndfloor_07",
+            "Mesh": {
+              "Mesh": "sponza:models/json/ornament_door_2ndfloor_07.json",
+              "Name": "ornament_door_2ndfloor_07.mesh"
+            },
+            "Position": [
+              -12.40319538116455,
+              -0.12462028115987778,
+              5.4376397132873535
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "ornament_door_2ndfloor_08",
+            "Mesh": {
+              "Mesh": "sponza:models/json/ornament_door_2ndfloor_08.json",
+              "Name": "ornament_door_2ndfloor_08.mesh"
+            },
+            "Position": [
+              -12.421671867370605,
+              4.7081451416015625,
+              5.450929641723633
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "ornament_door_2ndfloor_09",
+            "Mesh": {
+              "Mesh": "sponza:models/json/ornament_door_2ndfloor_09.json",
+              "Name": "ornament_door_2ndfloor_09.mesh"
+            },
+            "Position": [
+              -12.424445152282715,
+              -4.697772979736328,
+              5.450929641723633
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "ornament_door_2ndfloor_10",
+            "Mesh": {
+              "Mesh": "sponza:models/json/ornament_door_2ndfloor_10.json",
+              "Name": "ornament_door_2ndfloor_10.mesh"
+            },
+            "Position": [
+              2.2569923400878906,
+              -7.430117130279541,
+              5.450929641723633
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "ornament_door_2ndfloor_11",
+            "Mesh": {
+              "Mesh": "sponza:models/json/ornament_door_2ndfloor_11.json",
+              "Name": "ornament_door_2ndfloor_11.mesh"
+            },
+            "Position": [
+              -1.9147945642471313,
+              -7.430118083953857,
+              5.450929641723633
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "ornament_door_2ndfloor_12",
+            "Mesh": {
+              "Mesh": "sponza:models/json/ornament_door_2ndfloor_12.json",
+              "Name": "ornament_door_2ndfloor_12.mesh"
+            },
+            "Position": [
+              -5.841040134429932,
+              -7.430119514465332,
+              5.450929641723633
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "ornament_door_2ndfloor_13",
+            "Mesh": {
+              "Mesh": "sponza:models/json/ornament_door_2ndfloor_13.json",
+              "Name": "ornament_door_2ndfloor_13.mesh"
+            },
+            "Position": [
+              -9.69232177734375,
+              -7.430120468139648,
+              5.450929641723633
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "ornament_door_2ndfloor_14",
+            "Mesh": {
+              "Mesh": "sponza:models/json/ornament_door_2ndfloor_14.json",
+              "Name": "ornament_door_2ndfloor_14.mesh"
+            },
+            "Position": [
+              10.040162086486816,
+              -7.407774448394775,
+              4.796761989593506
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "ornament_door_2ndfloor_15",
+            "Mesh": {
+              "Mesh": "sponza:models/json/ornament_door_2ndfloor_15.json",
+              "Name": "ornament_door_2ndfloor_15.mesh"
+            },
+            "Position": [
+              12.739145278930664,
+              -4.736014366149902,
+              5.422553062438965
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "ornament_stones_2ndfloor",
+            "Mesh": {
+              "Mesh": "sponza:models/json/ornament_stones_2ndfloor.json",
+              "Name": "ornament_stones_2ndfloor.mesh"
+            },
+            "Position": [
+              0.15320616960525513,
+              0.02905425988137722,
+              8.437972068786621
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "stonewalls_2ndfloor_01",
+            "Mesh": {
+              "Mesh": "sponza:models/json/stonewalls_2ndfloor_01.json",
+              "Name": "stonewalls_2ndfloor_01.mesh"
+            },
+            "Position": [
+              0.13906310498714447,
+              -0.11463012546300888,
+              7.855088710784912
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "stonewalls_2ndfloor_02",
+            "Mesh": {
+              "Mesh": "sponza:models/json/stonewalls_2ndfloor_02.json",
+              "Name": "stonewalls_2ndfloor_02.mesh"
+            },
+            "Position": [
+              0.13906310498714447,
+              -0.11463012546300888,
+              7.855088710784912
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "3rd_floor",
+        "Position": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "Nodes": [
+          {
+            "Name": "decals_3rd_floor",
+            "Mesh": {
+              "Mesh": "sponza:models/json/decals_3rd_floor.json",
+              "Name": "decals_3rd_floor.mesh"
+            },
+            "Position": [
+              0.09102355688810349,
+              -0.18152205646038055,
+              12.530000686645508
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "orn_windows_01",
+            "Mesh": {
+              "Mesh": "sponza:models/json/orn_windows_01.json",
+              "Name": "orn_windows_01.mesh"
+            },
+            "Position": [
+              1.0220263004302979,
+              -0.006693878211081028,
+              12.18465518951416
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "orn_windows_02",
+            "Mesh": {
+              "Mesh": "sponza:models/json/orn_windows_02.json",
+              "Name": "orn_windows_02.mesh"
+            },
+            "Position": [
+              1.0220263004302979,
+              -0.006693878211081028,
+              12.18465518951416
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "orn_windows_03",
+            "Mesh": {
+              "Mesh": "sponza:models/json/orn_windows_03.json",
+              "Name": "orn_windows_03.mesh"
+            },
+            "Position": [
+              1.0220263004302979,
+              -0.006693878211081028,
+              12.18465518951416
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "orn_windows_04",
+            "Mesh": {
+              "Mesh": "sponza:models/json/orn_windows_04.json",
+              "Name": "orn_windows_04.mesh"
+            },
+            "Position": [
+              1.0220263004302979,
+              -0.006693878211081028,
+              12.18465518951416
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "orn_windows_05",
+            "Mesh": {
+              "Mesh": "sponza:models/json/orn_windows_05.json",
+              "Name": "orn_windows_05.mesh"
+            },
+            "Position": [
+              1.0220263004302979,
+              -0.006693878211081028,
+              12.18465518951416
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "orn_windows_06",
+            "Mesh": {
+              "Mesh": "sponza:models/json/orn_windows_06.json",
+              "Name": "orn_windows_06.mesh"
+            },
+            "Position": [
+              0.20876312255859375,
+              -2.942045211791992,
+              14.929461479187012
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "orn_windows_07",
+            "Mesh": {
+              "Mesh": "sponza:models/json/orn_windows_07.json",
+              "Name": "orn_windows_07.mesh"
+            },
+            "Position": [
+              0.12733794748783112,
+              2.9162285327911377,
+              14.929462432861328
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "orn_windows_08",
+            "Mesh": {
+              "Mesh": "sponza:models/json/orn_windows_08.json",
+              "Name": "orn_windows_08.mesh"
+            },
+            "Position": [
+              8.248479843139648,
+              -0.03401733189821243,
+              14.930734634399414
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "ornament_roof",
+            "Mesh": {
+              "Mesh": "sponza:models/json/ornament_roof.json",
+              "Name": "ornament_roof.mesh"
+            },
+            "Position": [
+              0.8993908762931824,
+              0.0030139158479869366,
+              15.94246768951416
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "roof_floor_03_01",
+            "Mesh": {
+              "Mesh": "sponza:models/json/roof_floor_03_01.json",
+              "Name": "roof_floor_03_01.mesh"
+            },
+            "Position": [
+              -11.028592109680176,
+              -5.4987688064575195,
+              16.175004959106445
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "roof_floor_03_02",
+            "Mesh": {
+              "Mesh": "sponza:models/json/roof_floor_03_02.json",
+              "Name": "roof_floor_03_02.mesh"
+            },
+            "Position": [
+              -0.8206982016563416,
+              -5.498769283294678,
+              16.175004959106445
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "roof_floor_03_05",
+            "Mesh": {
+              "Mesh": "sponza:models/json/roof_floor_03_05.json",
+              "Name": "roof_floor_03_05.mesh"
+            },
+            "Position": [
+              10.204414367675781,
+              -0.14466887712478638,
+              16.703466415405273
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              8.742277657347586e-08,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "roof_floor_03_06",
+            "Mesh": {
+              "Mesh": "sponza:models/json/roof_floor_03_06.json",
+              "Name": "roof_floor_03_06.mesh"
+            },
+            "Position": [
+              -11.96572494506836,
+              -0.018022460862994194,
+              16.88477897644043
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              8.742277657347586e-08,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "roof_floor_03_07",
+            "Mesh": {
+              "Mesh": "sponza:models/json/roof_floor_03_07.json",
+              "Name": "roof_floor_03_07.mesh"
+            },
+            "Position": [
+              7.446067810058594,
+              -5.498768329620361,
+              16.175004959106445
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "roof_floor_03_08",
+            "Mesh": {
+              "Mesh": "sponza:models/json/roof_floor_03_08.json",
+              "Name": "roof_floor_03_08.mesh"
+            },
+            "Position": [
+              7.51724100112915,
+              5.476746559143066,
+              16.175004959106445
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              8.742277657347586e-08,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "roof_floor_03_09",
+            "Mesh": {
+              "Mesh": "sponza:models/json/roof_floor_03_09.json",
+              "Name": "roof_floor_03_09.mesh"
+            },
+            "Position": [
+              -11.032135963439941,
+              5.472142219543457,
+              16.172346115112305
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "roof_floor_03_10",
+            "Mesh": {
+              "Mesh": "sponza:models/json/roof_floor_03_10.json",
+              "Name": "roof_floor_03_10.mesh"
+            },
+            "Position": [
+              -0.8403283357620239,
+              5.476743221282959,
+              16.175004959106445
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "sponza_ornament",
+            "Mesh": {
+              "Mesh": "sponza:models/json/sponza_ornament.json",
+              "Name": "sponza_ornament.mesh"
+            },
+            "Position": [
+              -7.899507999420166,
+              0.011113815009593964,
+              13.326274871826172
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "Name": "walls_floor_03",
+            "Mesh": {
+              "Mesh": "sponza:models/json/walls_floor_03.json",
+              "Name": "walls_floor_03.mesh"
+            },
+            "Position": [
+              1.4462536573410034,
+              -0.0494467169046402,
+              13.452463150024414
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "ambient_light_day_01",
+        "Light": {
+          "Type": "Point",
+          "Name": "Point.024_ambient_light_day_01",
+          "Diffuse": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "Radiance": 200.0,
+          "LightSize": 0.0,
+          "Attenuation": {
+            "Constant": 1.0,
+            "Linear": 25.5,
+            "Quadratic": 23.5,
+            "InfluenceDistance": 0.0,
+            "InfluenceMinRadiance": 0.003000000026077032
+          },
+          "Direction": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "Position": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "Position": [
+          -4.40537166595459,
+          0.0,
+          13.502686500549316
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "Scale": [
+          0.9999998807907104,
+          0.9999998807907104,
+          0.9999999403953552
+        ]
+      },
+      {
+        "Name": "ambient_light_day_02",
+        "Light": {
+          "Type": "Point",
+          "Name": "Point.025_ambient_light_day_02",
+          "Diffuse": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "Radiance": 200.0,
+          "LightSize": 0.0,
+          "Attenuation": {
+            "Constant": 1.0,
+            "Linear": 25.5,
+            "Quadratic": 23.5,
+            "InfluenceDistance": 0.0,
+            "InfluenceMinRadiance": 0.003000000026077032
+          },
+          "Direction": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "Position": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "Position": [
+          4.17350959777832,
+          0.0,
+          13.502686500549316
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "Scale": [
+          0.9999998807907104,
+          0.9999998807907104,
+          0.9999999403953552
+        ]
+      },
+      {
+        "Name": "lamp_light_1st_floor_01",
+        "Light": {
+          "Type": "Point",
+          "Name": "Point.012_lamp_light_1st_floor_01",
+          "Diffuse": [
+            1.0,
+            0.45601436495780945,
+            0.11401355266571045
+          ],
+          "Radiance": 60.0,
+          "LightSize": 0.0,
+          "Attenuation": {
+            "Constant": 1.0,
+            "Linear": 25.5,
+            "Quadratic": 23.5,
+            "InfluenceDistance": 0.0,
+            "InfluenceMinRadiance": 0.02500000037252903
+          },
+          "Direction": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "Position": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "Position": [
+          -5.928595066070557,
+          -4.742170810699463,
+          4.171391487121582
+        ],
+        "Rotation": [
+          0.5376433730125427,
+          -0.45928138494491577,
+          -0.4592813551425934,
+          0.5376436114311218
+        ],
+        "Scale": [
+          0.9999998807907104,
+          0.9999998807907104,
+          0.9999999403953552
+        ]
+      },
+      {
+        "Name": "lamp_light_1st_floor_02",
+        "Light": {
+          "Type": "Point",
+          "Name": "Point.011_lamp_light_1st_floor_02",
+          "Diffuse": [
+            1.0,
+            0.45601436495780945,
+            0.11401355266571045
+          ],
+          "Radiance": 60.0,
+          "LightSize": 0.0,
+          "Attenuation": {
+            "Constant": 1.0,
+            "Linear": 25.5,
+            "Quadratic": 23.5,
+            "InfluenceDistance": 0.0,
+            "InfluenceMinRadiance": 0.02500000037252903
+          },
+          "Direction": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "Position": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "Position": [
+          -1.8494460582733154,
+          -4.742170810699463,
+          4.171391487121582
+        ],
+        "Rotation": [
+          0.5376433730125427,
+          -0.45928138494491577,
+          -0.4592813551425934,
+          0.5376436114311218
+        ],
+        "Scale": [
+          0.9999998807907104,
+          0.9999998807907104,
+          0.9999999403953552
+        ]
+      },
+      {
+        "Name": "lamp_light_1st_floor_03",
+        "Light": {
+          "Type": "Point",
+          "Name": "Point.010_lamp_light_1st_floor_03",
+          "Diffuse": [
+            1.0,
+            0.45601436495780945,
+            0.11401355266571045
+          ],
+          "Radiance": 60.0,
+          "LightSize": 0.0,
+          "Attenuation": {
+            "Constant": 1.0,
+            "Linear": 25.5,
+            "Quadratic": 23.5,
+            "InfluenceDistance": 0.0,
+            "InfluenceMinRadiance": 0.02500000037252903
+          },
+          "Direction": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "Position": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "Position": [
+          2.1935784816741943,
+          -4.742170810699463,
+          4.171391487121582
+        ],
+        "Rotation": [
+          0.5376433730125427,
+          -0.45928138494491577,
+          -0.4592813551425934,
+          0.5376436114311218
+        ],
+        "Scale": [
+          0.9999998807907104,
+          0.9999998807907104,
+          0.9999999403953552
+        ]
+      },
+      {
+        "Name": "lamp_light_1st_floor_04",
+        "Light": {
+          "Type": "Point",
+          "Name": "Point.009_lamp_light_1st_floor_04",
+          "Diffuse": [
+            1.0,
+            0.45601436495780945,
+            0.11401355266571045
+          ],
+          "Radiance": 60.0,
+          "LightSize": 0.0,
+          "Attenuation": {
+            "Constant": 1.0,
+            "Linear": 25.5,
+            "Quadratic": 23.5,
+            "InfluenceDistance": 0.0,
+            "InfluenceMinRadiance": 0.02500000037252903
+          },
+          "Direction": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "Position": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "Position": [
+          6.141829013824463,
+          -4.742170810699463,
+          4.171391487121582
+        ],
+        "Rotation": [
+          0.5376433730125427,
+          -0.45928138494491577,
+          -0.4592813551425934,
+          0.5376436114311218
+        ],
+        "Scale": [
+          0.9999998807907104,
+          0.9999998807907104,
+          0.9999999403953552
+        ]
+      },
+      {
+        "Name": "lamp_light_1st_floor_05",
+        "Light": {
+          "Type": "Point",
+          "Name": "Point.008_lamp_light_1st_floor_05",
+          "Diffuse": [
+            1.0,
+            0.45601436495780945,
+            0.11401355266571045
+          ],
+          "Radiance": 60.0,
+          "LightSize": 0.0,
+          "Attenuation": {
+            "Constant": 1.0,
+            "Linear": 25.5,
+            "Quadratic": 23.5,
+            "InfluenceDistance": 0.0,
+            "InfluenceMinRadiance": 0.02500000037252903
+          },
+          "Direction": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "Position": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "Position": [
+          10.024332046508789,
+          -4.757481098175049,
+          4.171391487121582
+        ],
+        "Rotation": [
+          0.5376433730125427,
+          -0.45928138494491577,
+          -0.4592813551425934,
+          0.5376436114311218
+        ],
+        "Scale": [
+          0.9999998807907104,
+          0.9999998807907104,
+          0.9999999403953552
+        ]
+      },
+      {
+        "Name": "lamp_light_1st_floor_06",
+        "Light": {
+          "Type": "Point",
+          "Name": "Point.007_lamp_light_1st_floor_06",
+          "Diffuse": [
+            1.0,
+            0.45601436495780945,
+            0.11401355266571045
+          ],
+          "Radiance": 60.0,
+          "LightSize": 0.0,
+          "Attenuation": {
+            "Constant": 1.0,
+            "Linear": 25.5,
+            "Quadratic": 23.5,
+            "InfluenceDistance": 0.0,
+            "InfluenceMinRadiance": 0.02500000037252903
+          },
+          "Direction": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "Position": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "Position": [
+          -9.82472038269043,
+          4.806305885314941,
+          4.171391487121582
+        ],
+        "Rotation": [
+          0.5376433730125427,
+          -0.45928138494491577,
+          -0.4592813551425934,
+          0.5376436114311218
+        ],
+        "Scale": [
+          0.9999998807907104,
+          0.9999998807907104,
+          0.9999999403953552
+        ]
+      },
+      {
+        "Name": "lamp_light_1st_floor_07",
+        "Light": {
+          "Type": "Point",
+          "Name": "Point.006_lamp_light_1st_floor_07",
+          "Diffuse": [
+            1.0,
+            0.45601436495780945,
+            0.11401355266571045
+          ],
+          "Radiance": 60.0,
+          "LightSize": 0.0,
+          "Attenuation": {
+            "Constant": 1.0,
+            "Linear": 25.5,
+            "Quadratic": 23.5,
+            "InfluenceDistance": 0.0,
+            "InfluenceMinRadiance": 0.02500000037252903
+          },
+          "Direction": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "Position": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "Position": [
+          -5.928595066070557,
+          4.806305885314941,
+          4.171391487121582
+        ],
+        "Rotation": [
+          0.5376433730125427,
+          -0.45928138494491577,
+          -0.4592813551425934,
+          0.5376436114311218
+        ],
+        "Scale": [
+          0.9999998807907104,
+          0.9999998807907104,
+          0.9999999403953552
+        ]
+      },
+      {
+        "Name": "lamp_light_1st_floor_08",
+        "Light": {
+          "Type": "Point",
+          "Name": "Point.005_lamp_light_1st_floor_08",
+          "Diffuse": [
+            1.0,
+            0.45601436495780945,
+            0.11401355266571045
+          ],
+          "Radiance": 60.0,
+          "LightSize": 0.0,
+          "Attenuation": {
+            "Constant": 1.0,
+            "Linear": 25.5,
+            "Quadratic": 23.5,
+            "InfluenceDistance": 0.0,
+            "InfluenceMinRadiance": 0.02500000037252903
+          },
+          "Direction": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "Position": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "Position": [
+          -1.8494460582733154,
+          4.806305885314941,
+          4.171391487121582
+        ],
+        "Rotation": [
+          0.5376433730125427,
+          -0.45928138494491577,
+          -0.4592813551425934,
+          0.5376436114311218
+        ],
+        "Scale": [
+          0.9999998807907104,
+          0.9999998807907104,
+          0.9999999403953552
+        ]
+      },
+      {
+        "Name": "lamp_light_1st_floor_09",
+        "Light": {
+          "Type": "Point",
+          "Name": "Point.004_lamp_light_1st_floor_09",
+          "Diffuse": [
+            1.0,
+            0.45601436495780945,
+            0.11401355266571045
+          ],
+          "Radiance": 60.0,
+          "LightSize": 0.0,
+          "Attenuation": {
+            "Constant": 1.0,
+            "Linear": 25.5,
+            "Quadratic": 23.5,
+            "InfluenceDistance": 0.0,
+            "InfluenceMinRadiance": 0.02500000037252903
+          },
+          "Direction": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "Position": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "Position": [
+          2.1935784816741943,
+          4.806305885314941,
+          4.171391487121582
+        ],
+        "Rotation": [
+          0.5376433730125427,
+          -0.45928138494491577,
+          -0.4592813551425934,
+          0.5376436114311218
+        ],
+        "Scale": [
+          0.9999998807907104,
+          0.9999998807907104,
+          0.9999999403953552
+        ]
+      },
+      {
+        "Name": "lamp_light_1st_floor_10",
+        "Light": {
+          "Type": "Point",
+          "Name": "Point.003_lamp_light_1st_floor_10",
+          "Diffuse": [
+            1.0,
+            0.45601436495780945,
+            0.11401355266571045
+          ],
+          "Radiance": 60.0,
+          "LightSize": 0.0,
+          "Attenuation": {
+            "Constant": 1.0,
+            "Linear": 25.5,
+            "Quadratic": 23.5,
+            "InfluenceDistance": 0.0,
+            "InfluenceMinRadiance": 0.02500000037252903
+          },
+          "Direction": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "Position": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "Position": [
+          6.141829013824463,
+          4.806305885314941,
+          4.171391487121582
+        ],
+        "Rotation": [
+          0.5376433730125427,
+          -0.45928138494491577,
+          -0.4592813551425934,
+          0.5376436114311218
+        ],
+        "Scale": [
+          0.9999998807907104,
+          0.9999998807907104,
+          0.9999999403953552
+        ]
+      },
+      {
+        "Name": "lamp_light_1st_floor_11",
+        "Light": {
+          "Type": "Point",
+          "Name": "Point.002_lamp_light_1st_floor_11",
+          "Diffuse": [
+            1.0,
+            0.45601436495780945,
+            0.11401355266571045
+          ],
+          "Radiance": 60.0,
+          "LightSize": 0.0,
+          "Attenuation": {
+            "Constant": 1.0,
+            "Linear": 25.5,
+            "Quadratic": 23.5,
+            "InfluenceDistance": 0.0,
+            "InfluenceMinRadiance": 0.02500000037252903
+          },
+          "Direction": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "Position": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "Position": [
+          10.024332046508789,
+          4.7909955978393555,
+          4.171391487121582
+        ],
+        "Rotation": [
+          0.5376433730125427,
+          -0.45928138494491577,
+          -0.4592813551425934,
+          0.5376436114311218
+        ],
+        "Scale": [
+          0.9999998807907104,
+          0.9999998807907104,
+          0.9999999403953552
+        ]
+      },
+      {
+        "Name": "lamp_light_1st_floor_12",
+        "Light": {
+          "Type": "Point",
+          "Name": "Point.001_lamp_light_1st_floor_12",
+          "Diffuse": [
+            1.0,
+            0.45601436495780945,
+            0.11401355266571045
+          ],
+          "Radiance": 60.0,
+          "LightSize": 0.0,
+          "Attenuation": {
+            "Constant": 1.0,
+            "Linear": 25.5,
+            "Quadratic": 23.5,
+            "InfluenceDistance": 0.0,
+            "InfluenceMinRadiance": 0.02500000037252903
+          },
+          "Direction": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "Position": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "Position": [
+          15.619152069091797,
+          0.9174348711967468,
+          3.2758443355560303
+        ],
+        "Rotation": [
+          0.5376433730125427,
+          -0.45928138494491577,
+          -0.4592813551425934,
+          0.5376436114311218
+        ],
+        "Scale": [
+          0.9999998807907104,
+          0.9999998807907104,
+          0.9999999403953552
+        ]
+      },
+      {
+        "Name": "lamp_light_1st_floor_13",
+        "Light": {
+          "Type": "Point",
+          "Name": "Point.013_lamp_light_1st_floor_13",
+          "Diffuse": [
+            1.0,
+            0.45601436495780945,
+            0.11401355266571045
+          ],
+          "Radiance": 60.0,
+          "LightSize": 0.0,
+          "Attenuation": {
+            "Constant": 1.0,
+            "Linear": 25.5,
+            "Quadratic": 23.5,
+            "InfluenceDistance": 0.0,
+            "InfluenceMinRadiance": 0.02500000037252903
+          },
+          "Direction": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "Position": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "Position": [
+          -9.82472038269043,
+          -4.742170810699463,
+          4.171391487121582
+        ],
+        "Rotation": [
+          0.5376433730125427,
+          -0.45928138494491577,
+          -0.4592813551425934,
+          0.5376436114311218
+        ],
+        "Scale": [
+          0.9999998807907104,
+          0.9999998807907104,
+          0.9999999403953552
+        ]
+      },
+      {
+        "Name": "lamp_light_1st_floor_14",
+        "Light": {
+          "Type": "Point",
+          "Name": "Point.022_lamp_light_1st_floor_14",
+          "Diffuse": [
+            1.0,
+            0.45601436495780945,
+            0.11401355266571045
+          ],
+          "Radiance": 60.0,
+          "LightSize": 0.0,
+          "Attenuation": {
+            "Constant": 1.0,
+            "Linear": 25.5,
+            "Quadratic": 23.5,
+            "InfluenceDistance": 0.0,
+            "InfluenceMinRadiance": 0.02500000037252903
+          },
+          "Direction": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "Position": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "Position": [
+          -13.589994430541992,
+          -0.06591804325580597,
+          3.8677940368652344
+        ],
+        "Rotation": [
+          0.5376433730125427,
+          -0.45928138494491577,
+          -0.4592813551425934,
+          0.5376436114311218
+        ],
+        "Scale": [
+          0.9999998807907104,
+          0.9999998807907104,
+          0.9999999403953552
+        ]
+      },
+      {
+        "Name": "lamp_light_1st_floor_15",
+        "Light": {
+          "Type": "Point",
+          "Name": "Point.023_lamp_light_1st_floor_15",
+          "Diffuse": [
+            1.0,
+            0.45601436495780945,
+            0.11401355266571045
+          ],
+          "Radiance": 60.0,
+          "LightSize": 0.0,
+          "Attenuation": {
+            "Constant": 1.0,
+            "Linear": 25.5,
+            "Quadratic": 23.5,
+            "InfluenceDistance": 0.0,
+            "InfluenceMinRadiance": 0.02500000037252903
+          },
+          "Direction": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "Position": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "Position": [
+          15.610796928405762,
+          0.9186578989028931,
+          3.20854115486145
+        ],
+        "Rotation": [
+          0.5376433730125427,
+          -0.45928138494491577,
+          -0.4592813551425934,
+          0.5376436114311218
+        ],
+        "Scale": [
+          0.9999998807907104,
+          0.9999998807907104,
+          0.9999999403953552
+        ]
+      },
+      {
+        "Name": "lamp_light_2nd_floor_01",
+        "Light": {
+          "Type": "Point",
+          "Name": "Point.015_lamp_light_2nd_floor_01",
+          "Diffuse": [
+            1.0,
+            0.45601436495780945,
+            0.11401355266571045
+          ],
+          "Radiance": 60.0,
+          "LightSize": 0.0,
+          "Attenuation": {
+            "Constant": 1.0,
+            "Linear": 25.5,
+            "Quadratic": 23.5,
+            "InfluenceDistance": 0.0,
+            "InfluenceMinRadiance": 0.02500000037252903
+          },
+          "Direction": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "Position": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "Position": [
+          -9.765947341918945,
+          -4.742170810699463,
+          9.285232543945312
+        ],
+        "Rotation": [
+          0.5376433730125427,
+          -0.45928138494491577,
+          -0.4592813551425934,
+          0.5376436114311218
+        ],
+        "Scale": [
+          0.9999998807907104,
+          0.9999998807907104,
+          0.9999999403953552
+        ]
+      },
+      {
+        "Name": "lamp_light_2nd_floor_02",
+        "Light": {
+          "Type": "Point",
+          "Name": "Point.016_lamp_light_2nd_floor_02",
+          "Diffuse": [
+            1.0,
+            0.45601436495780945,
+            0.11401355266571045
+          ],
+          "Radiance": 60.0,
+          "LightSize": 0.0,
+          "Attenuation": {
+            "Constant": 1.0,
+            "Linear": 25.5,
+            "Quadratic": 23.5,
+            "InfluenceDistance": 0.0,
+            "InfluenceMinRadiance": 0.02500000037252903
+          },
+          "Direction": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "Position": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "Position": [
+          2.1614978313446045,
+          -4.665034294128418,
+          9.285232543945312
+        ],
+        "Rotation": [
+          0.5376433730125427,
+          -0.45928138494491577,
+          -0.4592813551425934,
+          0.5376436114311218
+        ],
+        "Scale": [
+          0.9999998807907104,
+          0.9999998807907104,
+          0.9999999403953552
+        ]
+      },
+      {
+        "Name": "lamp_light_2nd_floor_03",
+        "Light": {
+          "Type": "Point",
+          "Name": "Point.017_lamp_light_2nd_floor_03",
+          "Diffuse": [
+            1.0,
+            0.45601436495780945,
+            0.11401355266571045
+          ],
+          "Radiance": 60.0,
+          "LightSize": 0.0,
+          "Attenuation": {
+            "Constant": 1.0,
+            "Linear": 25.5,
+            "Quadratic": 23.5,
+            "InfluenceDistance": 0.0,
+            "InfluenceMinRadiance": 0.02500000037252903
+          },
+          "Direction": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "Position": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "Position": [
+          10.07526683807373,
+          -4.725813865661621,
+          9.285232543945312
+        ],
+        "Rotation": [
+          0.5376433730125427,
+          -0.45928138494491577,
+          -0.4592813551425934,
+          0.5376436114311218
+        ],
+        "Scale": [
+          0.9999998807907104,
+          0.9999998807907104,
+          0.9999999403953552
+        ]
+      },
+      {
+        "Name": "lamp_light_2nd_floor_04",
+        "Light": {
+          "Type": "Point",
+          "Name": "Point.018_lamp_light_2nd_floor_04",
+          "Diffuse": [
+            1.0,
+            0.45601436495780945,
+            0.11401355266571045
+          ],
+          "Radiance": 60.0,
+          "LightSize": 0.0,
+          "Attenuation": {
+            "Constant": 1.0,
+            "Linear": 25.5,
+            "Quadratic": 23.5,
+            "InfluenceDistance": 0.0,
+            "InfluenceMinRadiance": 0.02500000037252903
+          },
+          "Direction": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "Position": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "Position": [
+          10.07526683807373,
+          4.727108478546143,
+          9.285232543945312
+        ],
+        "Rotation": [
+          0.5376433730125427,
+          -0.45928138494491577,
+          -0.4592813551425934,
+          0.5376436114311218
+        ],
+        "Scale": [
+          0.9999998807907104,
+          0.9999998807907104,
+          0.9999999403953552
+        ]
+      },
+      {
+        "Name": "lamp_light_2nd_floor_05",
+        "Light": {
+          "Type": "Point",
+          "Name": "Point.019_lamp_light_2nd_floor_05",
+          "Diffuse": [
+            1.0,
+            0.45601436495780945,
+            0.11401355266571045
+          ],
+          "Radiance": 60.0,
+          "LightSize": 0.0,
+          "Attenuation": {
+            "Constant": 1.0,
+            "Linear": 25.5,
+            "Quadratic": 23.5,
+            "InfluenceDistance": 0.0,
+            "InfluenceMinRadiance": 0.02500000037252903
+          },
+          "Direction": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "Position": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "Position": [
+          2.0937211513519287,
+          4.654066562652588,
+          9.285232543945312
+        ],
+        "Rotation": [
+          0.5376433730125427,
+          -0.45928138494491577,
+          -0.4592813551425934,
+          0.5376436114311218
+        ],
+        "Scale": [
+          0.9999998807907104,
+          0.9999998807907104,
+          0.9999999403953552
+        ]
+      },
+      {
+        "Name": "lamp_light_2nd_floor_06",
+        "Light": {
+          "Type": "Point",
+          "Name": "Point.020_lamp_light_2nd_floor_06",
+          "Diffuse": [
+            1.0,
+            0.5400034785270691,
+            0.1914873719215393
+          ],
+          "Radiance": 60.0,
+          "LightSize": 0.0,
+          "Attenuation": {
+            "Constant": 1.0,
+            "Linear": 25.5,
+            "Quadratic": 23.5,
+            "InfluenceDistance": 0.0,
+            "InfluenceMinRadiance": 0.02500000037252903
+          },
+          "Direction": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "Position": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "Position": [
+          -5.847650051116943,
+          4.663136959075928,
+          9.285232543945312
+        ],
+        "Rotation": [
+          0.5376433730125427,
+          -0.45928138494491577,
+          -0.4592813551425934,
+          0.5376436114311218
+        ],
+        "Scale": [
+          0.9999998807907104,
+          0.9999998807907104,
+          0.9999999403953552
+        ]
+      },
+      {
+        "Name": "lamp_light_2nd_floor_07",
+        "Light": {
+          "Type": "Point",
+          "Name": "Point.021_lamp_light_2nd_floor_07",
+          "Diffuse": [
+            1.0,
+            0.45601436495780945,
+            0.11401355266571045
+          ],
+          "Radiance": 60.0,
+          "LightSize": 0.0,
+          "Attenuation": {
+            "Constant": 1.0,
+            "Linear": 25.5,
+            "Quadratic": 23.5,
+            "InfluenceDistance": 0.0,
+            "InfluenceMinRadiance": 0.02500000037252903
+          },
+          "Direction": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "Position": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "Position": [
+          -9.751104354858398,
+          4.729568958282471,
+          9.285232543945312
+        ],
+        "Rotation": [
+          0.5376433730125427,
+          -0.45928138494491577,
+          -0.4592813551425934,
+          0.5376436114311218
+        ],
+        "Scale": [
+          0.9999998807907104,
+          0.9999998807907104,
+          0.9999999403953552
+        ]
+      },
+      {
+        "Name": "lamp_light_2nd_floor_08",
+        "Light": {
+          "Type": "Point",
+          "Name": "Point.014_lamp_light_2nd_floor_08",
+          "Diffuse": [
+            1.0,
+            0.45601436495780945,
+            0.11401355266571045
+          ],
+          "Radiance": 60.0,
+          "LightSize": 0.0,
+          "Attenuation": {
+            "Constant": 1.0,
+            "Linear": 25.5,
+            "Quadratic": 23.5,
+            "InfluenceDistance": 0.0,
+            "InfluenceMinRadiance": 0.02500000037252903
+          },
+          "Direction": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "Position": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "Position": [
+          -5.8483757972717285,
+          -4.665034294128418,
+          9.285232543945312
+        ],
+        "Rotation": [
+          0.5376433730125427,
+          -0.45928138494491577,
+          -0.4592813551425934,
+          0.5376436114311218
+        ],
+        "Scale": [
+          0.9999998807907104,
+          0.9999998807907104,
+          0.9999999403953552
+        ]
+      },
+      {
+        "Name": "SUN_actor",
+        "Position": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "Nodes": [
+          {
+            "Name": "SUN",
+            "Light": {
+              "Type": "Directional",
+              "Name": "Sun_SUN",
+              "Diffuse": [
+                0.9999998807907104,
+                0.9999998211860657,
+                1.0
+              ],
+              "Radiance": 12.0,
+              "Direction": [
+                0.0,
+                0.0,
+                -1.0
+              ],
+              "Position": [
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "Position": [
+              -21.704858779907227,
+              6.14988374710083,
+              43.41434097290039
+            ],
+            "Rotation": [
+              0.1868087351322174,
+              -0.22592565417289734,
+              -0.736810028553009,
+              0.6092381477355957
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              0.9999998807907104
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

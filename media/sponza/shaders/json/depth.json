@@ -1,0 +1,11 @@
+{
+    "Sources": 
+    [
+        // Standard shaders with params customization
+        "samples:shaders/sources/pipeline/depth_pass/depth.vs",
+        "samples:shaders/sources/pipeline/depth_pass/depth.fs",
+        "samples:shaders/sources/common/utils.fs",
+        // Sample specific shaders
+        "sponza:shaders/sources/regular_depth.fs"
+    ]
+}

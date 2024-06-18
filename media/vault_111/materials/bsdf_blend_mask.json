@@ -46,27 +46,27 @@
           "Type":"sampler"
         },
         {
-          "Name":"lightSources",
-          "UBOName": "Vault_111_lightingBufferObject",
+          "Name":"LightSources",
+          "UBOName": "Vault_111_MainScene_lightingBufferObject",
           "Type":"UBO"
         },
         {
-          "Name":"lightIndexes",
-          "UBOName": "Vault_111_lightingIndexBuffer",
+          "Name":"LightIndexes",
+          "UBOName": "Vault_111_MainScene_lightingIndexBuffer",
           "Type":"UBO"
         },
         {
           "Name":"ShadowMaps",
-          "TextureName":"shadow.texture",
+          "TextureName":"Vault_111_ShadowMap.texture",
           "Type":"sampler"
         },
         {
           "Name": "ShadowMatrix",
-          "UBOName": "ShadowMatrixBuffer",
+          "UBOName": "Vault_111_ShadowMatrixBuffer",
           "Type": "UBO"
         },
         {
-          "Name":"eye",
+          "Name":"Eye",
           "Type":"v3",
           "Scope":"global"
         }

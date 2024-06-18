@@ -1,78 +1,92 @@
 {
-    "Cameras":
-    [
+  "Cameras": [
+    {
+      "Name": "MyCamera",
+      "Position": [
+        0,
+        0,
+        3
+      ],
+      "LookAt": [
+        1,
+        0,
+        3
+      ],
+      "Perspective": {
+        "Znear": 0.1,
+        "Zfar": 100.0,
+        "Fov": 60.0
+      },
+      "RenderTargets": [
         {
-            "Name": "MyCamera",
-
-            "Position": [700,0,-400],
-            "LookAt": [-700,0,-400],
-            "Perspective": 
-            {
-                "Znear": 10,
-                "Zfar": 10000,
-                "Fov": 60
-            },
-            "RenderTargets":
-            [
-                // draw only non transparent objects to depth
-                {
-                    "Name": "RenderDepth",
-                    "Path": "sponzamat:targets/depth.json",
-                    "Priority": 0,
-                    "TexturePass": 1,
-                    "RenderBlend": false,
-                    "DepthTest": true,
-                    "ColorOutput": false,
-                    "DepthOutput": true
-                },
-                // draw all objects and calculate lighting
-                {
-                    "Name": "RenderDirect",
-                    "Path": "sponzamat:targets/render.json",
-                    "Priority": 0,
-                    "TexturePass": 2,
-                    "DepthTest": true,
-                    "ColorOutput": true,
-                    "DepthOutput": false
-                }
-            ]
+          "Name": "DepthPass",
+          "Path": "sponza:targets/depth.json",
+          "Priority": 0,
+          "TexturePass": 1,
+          "RenderBlend": false,
+          "OcclusionQuery": true,
+          "SortOpaqueFromNear": true,
+          "DepthTest": true,
+          "ColorOutput": false,
+          "DepthOutput": true
         },
         {
-            "Name": "ShadowCamera",
-            "Ortho": 
-            {
-                "Near": -2000,
-                "Far": 2000,
-                "Left": -1000,
-                "Right": 1000,
-                "Bottom": -600,
-                "Top": 1400
-            },
-            "RenderTargets":
-            [
-                // draw only non transparent objects to shadow map
-                {
-                    "Name": "RenderShadowMap",
-                    "Path": "sponzamat:targets/shadow.json",
-                    "Priority": 0,
-                    "TexturePass": 1,
-                    "RenderBlend": false,
-                    "DepthTest": true,
-                    "ColorOutput": false,
-                    "DepthOutput": true
-                }
-            ]
-        }
-    ],
-    
-    "LightingTechnique": "UBO", 
-    
-    "Objects":
-    [
+          "Name": "ShadowPass",
+          "Path": "sponza:targets/shadow.json",
+          "Priority": 1,
+          "TexturePass": 3,
+          "RenderBlend": false,
+          "DepthTest": true,
+          "ColorOutput": false,
+          "DepthOutput": true,
+          "CustomVisibilityCheck": true
+        },
         {
-            "Name": "SponzaHall",
-            "Object": "sponza:objects/sponzahall.json"
+          "Name": "RenderPass",
+          "Path": "sponza:targets/prepare.json",
+          "Priority": 0,
+          "TexturePass": 2,
+          "RenderBlend": false,
+          "OcclusionCulling": true,
+          "DepthTest": true,
+          "ColorOutput": true,
+          "DepthOutput": false
+        },
+        {
+          "Name": "CombineStep",
+          "Path": "sponza:targets/combine.json",
+          "Priority": 1,
+          "TexturePass": 2,
+          "RenderBlend": true,
+          "RenderOpaque": false,
+          "DepthTest": true,
+          "ColorOutput": true,
+          "DepthOutput": true
         }
-    ]
+      ]
+    }
+  ],
+  "LightingTechnique": "UBO",
+  "Objects": [
+    {
+      "Name": "Sponza",
+      "Object": "sponza:objects/Sponza.json",
+      "Position": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "Rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "Scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    }
+  ]
 }
-

@@ -13,7 +13,7 @@
         [
             {
                 "TextureName": "combined.texture",
-                "TexturePath": "warship:textures/json/rgba.json"
+                "TexturePath": "samples:textures/json/rgba.json"
             }
         ]
     },
@@ -21,7 +21,7 @@
     "DepthAttachments":
     {
         "TextureName": "prepassDepth.texture",
-        "TexturePath": "warship:textures/json/depth.json"
+        "TexturePath": "samples:textures/json/depth.json"
     }
 }
 

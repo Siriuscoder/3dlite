@@ -8,11 +8,11 @@
       },
       "Uniforms":[
         {
-          "Name":"screenMatrix"
+          "Name":"projViewMatrix"
         },
         {
           "Name":"ShadowIndex",
-          "UBOName":"ShadowIndexBuffer",
+          "UBOName":"Vault_111_ShadowIndexBuffer",
           "Type":"UBO"
         }
       ]

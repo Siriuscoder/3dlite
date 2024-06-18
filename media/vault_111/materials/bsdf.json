@@ -65,12 +65,12 @@
       "Uniforms":[
         {
           "Name":"ShadowMatrix",
-          "UBOName":"ShadowMatrixBuffer",
+          "UBOName":"Vault_111_ShadowMatrixBuffer",
           "Type":"UBO"
         },
         {
           "Name":"ShadowIndex",
-          "UBOName":"ShadowIndexBuffer",
+          "UBOName":"Vault_111_ShadowIndexBuffer",
           "Type":"UBO"
         }
       ]

@@ -1,10 +1,13 @@
 {
     "Sources": 
     [
-        "vault_111:shaders/sources/common.vs",
-        "vault_111:shaders/sources/mrt.fs,vault_111:shaders/sources/inc/palete_red.def",
-        "vault_111:shaders/sources/lighting/Normal.fs",
-        "vault_111:shaders/sources/lighting/Specular.fs",
-        "samples:shaders/sources/common/utils.fs"
+        // Standard shaders with params customization
+        "samples:shaders/sources/pipeline/v_tbn_inst.vs",
+        "samples:shaders/sources/pipeline/deffered_pass/deffered.fs",
+        "samples:shaders/sources/common/utils.fs",
+        // Sample specific shaders
+        "vault_111:shaders/sources/regular.fs,vault_111:shaders/sources/inc/palete_red.def",
+        "vault_111:shaders/sources/utils/Normal.fs",
+        "vault_111:shaders/sources/utils/Specular.fs"
     ]
 }

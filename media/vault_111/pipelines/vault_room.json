@@ -1,0 +1,32 @@
+{
+    "ShaderPackage": "vault_111",
+    "MainScenePath": "vault_111:scenes/vault_room.json",
+    "Instancing": true,
+    "OcclusionCulling": true,
+    "LightingTechnique": "UBO",
+    "LightComputeEnvironmentTexture": "samples:textures/json/skybox_metal_chrome.json",
+    "ShadowMaps":
+    {
+        "Width": 64,
+        "Height": 64,
+        "MaxCount": 1,
+        "NearClipPlane": 1.0,
+        "FarClipPlane": 1500.0
+    },
+    "SSAO": 
+    {
+        "AORadius": 25.0,
+        "FramebufferScale": 4
+    },
+    "BLOOM": 
+    {
+        "BloomRadius": 0.005
+    },
+    "PostProcess":
+    {
+        "Gamma": 2.2,
+        "Contrast": 1.005,
+        "Saturation": 1.20,
+        "Exposure": 3.4
+    }
+}

@@ -1,0 +1,68 @@
+{
+  "Passes":[
+    {
+      "Pass": 1,
+      "Program":{
+        "Name":"depth.program",
+        "Path":"sponza:shaders/json/depth.json"
+      },
+      "Uniforms":[
+        {
+          "Name": "projViewMatrix"
+        },
+        {
+          "Name": "modelMatrix"
+        }
+      ]
+    },
+    {
+      "Pass": 2,
+      "Program":{
+        "Name":"bsdf_prepare.program",
+        "Path":"sponza:shaders/json/bsdf_prepare.json"
+      },
+      "Uniforms":[
+        {
+          "Name":"<Albedo>"
+        },
+        {
+          "Name":"<Normal>"
+        },
+        {
+          "Name":"<Specular>"
+        },
+        {
+          "Name":"projViewMatrix"
+        },
+        {
+          "Name":"modelMatrix"
+        },
+        {
+          "Name":"normalMatrix"
+        }
+      ]
+    },
+    {
+      "Pass": 3,
+      "Program":{
+        "Name":"shadow.program",
+        "Path":"sponza:shaders/json/shadow.json"
+      },
+      "Uniforms":[
+        {
+          "Name":"ShadowMatrix",
+          "UBOName":"SponzaDeffered_ShadowMatrixBuffer",
+          "Type":"UBO"
+        },
+        {
+          "Name": "ShadowIndex",
+          "UBOName": "SponzaDeffered_ShadowIndexBuffer",
+          "Type": "UBO"
+        },
+        {
+          "Name":"modelMatrix"
+        }
+      ]
+    }
+  ]
+}

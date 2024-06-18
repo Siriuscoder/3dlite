@@ -61,23 +61,25 @@ namespace lite3dpp
     class LITE3DPP_EXPORT Material;
     class LITE3DPP_EXPORT Texture;
     class LITE3DPP_EXPORT RenderTarget;
+    class LITE3DPP_EXPORT ConfigurationWriter;
+    class LITE3DPP_EXPORT ConfigurationReader;
 
     /* epsilon */
     const constexpr auto epsilon = std::numeric_limits<float>::epsilon();
 
-    inline bool nonzero(float num)
-    {
-        return std::fabs(num) >= epsilon; 
-    }
-
     inline bool iszero(float num)
     {
-        return !nonzero(num);
+        return kmAlmostEqual(num, 0.0f);
+    }
+
+    inline bool nonzero(float num)
+    {
+        return !iszero(num);
     }
 
     inline bool near(float a, float b)
     {
-        return std::fabs(a - b) <= epsilon;
+        return kmAlmostEqual(a, b);
     }
 }
 

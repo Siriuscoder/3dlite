@@ -194,11 +194,11 @@ LITE3D_CEXPORT int lite3d_texture_technique_init(const lite3d_texture_technique_
 LITE3D_CEXPORT void lite3d_texture_technique_shut(void);
 
 /* texture mipmap level size */
-LITE3D_CEXPORT int32_t lite3d_texture_unit_get_level_width(lite3d_texture_unit *textureUnit,
+LITE3D_CEXPORT int32_t lite3d_texture_unit_get_level_width(const lite3d_texture_unit *textureUnit,
     int8_t level, uint8_t cubeface);
-LITE3D_CEXPORT int32_t lite3d_texture_unit_get_level_height(lite3d_texture_unit *textureUnit,
+LITE3D_CEXPORT int32_t lite3d_texture_unit_get_level_height(const lite3d_texture_unit *textureUnit,
     int8_t level, uint8_t cubeface);
-LITE3D_CEXPORT int32_t lite3d_texture_unit_get_level_depth(lite3d_texture_unit *textureUnit,
+LITE3D_CEXPORT int32_t lite3d_texture_unit_get_level_depth(const lite3d_texture_unit *textureUnit,
     int8_t level, uint8_t cubeface);
 
 /* load texture from resource file using Devil */
@@ -236,15 +236,15 @@ LITE3D_CEXPORT int lite3d_texture_unit_set_compressed_pixels(lite3d_texture_unit
     int8_t level, uint8_t cubeface, size_t pixelsSize, const void *pixels);
 
 /* get data from mipmap level */
-LITE3D_CEXPORT int lite3d_texture_unit_get_pixels(lite3d_texture_unit *textureUnit, 
+LITE3D_CEXPORT int lite3d_texture_unit_get_pixels(const lite3d_texture_unit *textureUnit, 
     int8_t level, uint8_t cubeface, void *pixels);
-LITE3D_CEXPORT int lite3d_texture_unit_get_compressed_pixels(lite3d_texture_unit *textureUnit, 
+LITE3D_CEXPORT int lite3d_texture_unit_get_compressed_pixels(const lite3d_texture_unit *textureUnit, 
     int8_t level, uint8_t cubeface, void *pixels);
 
 /* size of mipmap levels */
-LITE3D_CEXPORT int lite3d_texture_unit_get_level_size(lite3d_texture_unit *textureUnit, 
+LITE3D_CEXPORT int lite3d_texture_unit_get_level_size(const lite3d_texture_unit *textureUnit, 
     int8_t level, uint8_t cubeface, size_t *size);
-LITE3D_CEXPORT int lite3d_texture_unit_get_compressed_level_size(lite3d_texture_unit *textureUnit, 
+LITE3D_CEXPORT int lite3d_texture_unit_get_compressed_level_size(const lite3d_texture_unit *textureUnit, 
     int8_t level, uint8_t cubeface, size_t *size);
 /* regenerate mipmaps */
 LITE3D_CEXPORT int lite3d_texture_unit_generate_mipmaps(lite3d_texture_unit *textureUnit);

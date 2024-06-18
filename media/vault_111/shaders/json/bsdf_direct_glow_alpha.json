@@ -1,11 +1,14 @@
 {
     "Sources": 
     [
-        "vault_111:shaders/sources/common.vs",
-        "vault_111:shaders/sources/glow_alpha.fs",
-        "vault_111:shaders/sources/lighting/PBR.fs",
-        "vault_111:shaders/sources/lighting/BRDF.fs",
-        "vault_111:shaders/sources/lighting/PCF.fs",
-        "samples:shaders/sources/common/utils.fs"
+        // Standard shaders with params customization
+        "samples:shaders/sources/pipeline/v_tbn_inst.vs",
+        "samples:shaders/sources/pipeline/forward_pass/forward.fs",
+        "samples:shaders/sources/pbr/pbr.fs,vault_111:shaders/sources/inc/pbr_params.def",
+        "samples:shaders/sources/pbr/brdf.fs,vault_111:shaders/sources/inc/pbr_params.def",
+        "samples:shaders/sources/shadow/pcf4x4.fs,vault_111:shaders/sources/inc/shadow_params.def",
+        "samples:shaders/sources/common/utils.fs",
+        // Sample specific shaders
+        "vault_111:shaders/sources/alpha_glow.fs"
     ]
 }

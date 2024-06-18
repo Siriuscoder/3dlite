@@ -13,5 +13,12 @@ bool fiszero(vec3 a1);
 // - uniform normalized distribution
 // - fastest static noise generator function (also runs at low precision)
 // - use with indicated fractional seeding method
-float goldNoise(vec2 xy, float seed);
+float goldNoise(vec2 xy);
+float noiseInterleavedGradient(vec2 xy);
+
 float lerp(float a, float b, float f);
+vec3 worldToViewSpacePosition(vec3 vw);
+vec3 worldToViewSpaceDirection(vec3 dirw);
+vec2 viewPositionToUV(vec3 pos);
+float fadeScreenEdge(vec2 uv);
+bool isValidUV(vec2 uv);

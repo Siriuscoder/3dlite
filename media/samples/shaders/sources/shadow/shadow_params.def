@@ -1,0 +1,16 @@
+#include "samples:shaders/sources/common/version.def"
+
+#define SHADOW_MAX_LAYERS                           1
+#define SHADOW_MAX_SPLIT_VERTICES                   3
+
+#define SHADOW_MAX_ADAPTIVE_BIAS                    0.0028
+#define SHADOW_MIN_ADAPTIVE_BIAS                    0.0008
+#define SHADOW_MIN_ADAPTIVE_FILTER_SIZE             1.0
+#define SHADOW_MAX_ADAPTIVE_FILTER_SIZE             1.5
+#define SHADOW_MIN_ADAPTIVE_STEP                    0.5
+
+#define SSS_MAX_ADAPTIVE_DEPTH_THRESHOLD            0.01    // Min Depth clipping to avoid accuracy artifacts
+#define SSS_MAX_STEPS                               16      // Max ray steps, affects quality and performance.
+#define SSS_MAX_RAY_DISTANCE                        0.75    // Max shadow length, longer shadows are less accurate.
+#define SSS_MAX_DEPTH_THRESHOLD                     0.5     // Depth testing thickness.
+#define SSS_STEP_LENGTH                             (SSS_MAX_RAY_DISTANCE / float(SSS_MAX_STEPS))

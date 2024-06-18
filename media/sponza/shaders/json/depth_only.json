@@ -1,7 +1,0 @@
-{
-    "Sources": 
-    [
-        "sponzamat:shaders/sources/depth.vs",
-        "sponzamat:shaders/sources/depth.fs"
-    ]
-}

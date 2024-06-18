@@ -4,5 +4,5 @@
     "Wrapping": "ClampToEdge",
     "Compression": false,
     "TextureFormat": "RGBA",
-    "InternalFormat": 34842 // LITE3D_TEXTURE_INTERNAL_RGBA16F
+    "InternalFormat": "RGBA16F"
 }

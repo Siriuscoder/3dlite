@@ -37,16 +37,9 @@ namespace lite3dpp
             LITE3D_THROW("json parse failed..");
     }
 
-    ConfigurationReader::~ConfigurationReader()
-    {}
-
-    // private
+        // private
     ConfigurationReader::ConfigurationReader(const JSONObject &fromJsonObject) : 
         mObject(fromJsonObject)
-    {}
-
-    // private default
-    ConfigurationReader::ConfigurationReader()
     {}
 
     // copy 

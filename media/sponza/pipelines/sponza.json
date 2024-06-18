@@ -1,0 +1,50 @@
+{
+    "ShaderPackage": "sponza",
+    "MainScenePath": "sponza:scenes/sponza.json",
+    "Instancing": false,
+    "OcclusionCulling": true,
+    "LightingTechnique": "UBO",
+    "LightComputeEnvironmentTexture": "samples:textures/json/skybox_metal_chrome.json",
+    "SkyBox": 
+    {
+        "Texture": "samples:textures/json/skybox.json",
+        "EmissionStrength": 12.0
+    },
+    "ShadowMaps":
+    {
+        "Width": 4096,
+        "Height": 4096,
+        "MaxCount": 1,
+        "NearClipPlane": 1.0,
+        "FarClipPlane": 100.0,
+        "DirectionLightShadowParams": 
+        {
+            "LeftClipPlane": -20.0,
+            "RightClipPlane": 20.0,
+            "BottomClipPlane": -20.0,
+            "TopClipPlane": 20.0
+        }
+    },
+    "SSAO": 
+    {
+        "AORadius": 0.25,
+        "FramebufferScale": 2
+    },
+    "BLOOM": 
+    {
+        "BloomRadius": 0.005
+    },
+    "PostProcess":
+    {
+        "Gamma": 2.2,
+        "Contrast": 1.005,
+        "Saturation": 1.10,
+        "Exposure": 1.0,
+        "DynamicExposure":
+        {
+            "ExposureMax": 3.5,
+            "ExposureMin": 0.2,
+            "ExposureBase": 0.15
+        }
+    }
+}

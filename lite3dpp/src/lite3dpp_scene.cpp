@@ -235,7 +235,9 @@ namespace lite3dpp
                 anyValidated = true;
             }
 
-            if (!light->frustumTest() || camera.inFrustum(*light->getLight()))
+            if (light->getLight()->getType() == LITE3D_LIGHT_DIRECTIONAL || 
+                !light->frustumTest() || 
+                camera.inFrustum(*light->getLight()))
             {
                 light->setVisible(true);
                 mLightsIndexes.emplace_back(light->getLight()->index());
@@ -298,7 +300,10 @@ namespace lite3dpp
         {
             Camera *camera = nullptr;
             if ((camera = getMain().getCamera(cameraJson.getString(L"Name"))) == nullptr)
+            {
                 camera = getMain().addCamera(cameraJson.getString(L"Name"));
+                camera->loadFromTemplate(cameraJson);
+            }
 
             RenderTarget *renderTarget = nullptr;
 
@@ -368,8 +373,6 @@ namespace lite3dpp
                 renderTarget->addCamera(camera, this, renderTargetJson.getInt(L"TexturePass"), layers,
                     renderTargetJson.getInt(L"Priority"), renderFlags);
             }
-
-            camera->loadFromTemplate(cameraJson);
         }
     }
 

@@ -53,6 +53,7 @@ namespace lite3dpp
             uint32_t uboCount;
             uint32_t uboLoadedCount;
             uint32_t fileCachesCount;
+            uint32_t pipelinesCount;
             size_t totalCachedFilesMemSize;
         } ResourceManagerStats;
 
@@ -124,7 +125,7 @@ namespace lite3dpp
         void releaseResource(const String &name);
         void releaseFileCache();
         void releaseFileCache(const String &location);
-
+        bool resourceExists(const String &name);
         
         ResourceManagerStats getStats() const;
 
@@ -148,10 +149,10 @@ namespace lite3dpp
 
     private:
 
-        Main *mMain;
+        Main *mMain = nullptr;
         Resources mResources;
         Packs mPacks;
-        lite3d_pack *mLastUsed;
+        lite3d_pack *mLastUsed = nullptr;
     };
 }
 

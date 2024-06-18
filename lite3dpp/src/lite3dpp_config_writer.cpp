@@ -20,24 +20,31 @@
 #include <SDL_rwops.h>
 
 #include <lite3dpp/lite3dpp_config_writer.h>
+#include <lite3dpp/lite3dpp_config_reader.h>
 
 namespace lite3dpp
 {
-    ConfigurationWriter::~ConfigurationWriter() 
-    {}
-
     // private
     ConfigurationWriter::ConfigurationWriter(const JSONObject &fromJsonObject) : 
         mObject(fromJsonObject)
-    {}
-
-    ConfigurationWriter::ConfigurationWriter()
     {}
 
     // copy 
     ConfigurationWriter::ConfigurationWriter(const ConfigurationWriter &other) : 
         mObject(other.mObject)
     {}
+
+    ConfigurationWriter::ConfigurationWriter(const std::string_view &filePath)
+    {
+        ConfigurationReader reader(filePath);
+        mObject = reader.mObject;
+    }
+
+    ConfigurationWriter::ConfigurationWriter(const char *data, size_t size)
+    {
+        ConfigurationReader reader(data, size);
+        mObject = reader.mObject;
+    }
 
     ConfigurationWriter &ConfigurationWriter::set(const WString &name, int32_t value)
     {

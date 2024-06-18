@@ -5,5 +5,5 @@
     "Compression": false,
     "TextureFormat": "RED",
     "Scale": 4, // Reduce size at half of screen 
-    "InternalFormat": 33325 // LITE3D_TEXTURE_INTERNAL_R16F
+    "InternalFormat": "R16F"
 }

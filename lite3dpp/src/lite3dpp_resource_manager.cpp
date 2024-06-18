@@ -29,11 +29,8 @@
 namespace lite3dpp
 {
     ResourceManager::ResourceManager(Main *main) : 
-        mMain(main),
-        mLastUsed(NULL)
-    {
-
-    }
+        mMain(main)
+    {}
 
     ResourceManager::~ResourceManager()
     {
@@ -51,7 +48,12 @@ namespace lite3dpp
             return it->second.get();
         }
 
-        return NULL;
+        return nullptr;
+    }
+
+    bool ResourceManager::resourceExists(const String &name)
+    {
+        return mResources.count(name) > 0;
     }
 
     void ResourceManager::loadResource(const String &name,
@@ -72,19 +74,12 @@ namespace lite3dpp
         std::shared_ptr<AbstractResource> resource)
     {
         /* load resource from memory chunk */
-        try
-        {
-            resource->load(buffer, size);
-        }
-        catch(std::exception &)
-        {
-            /* to prevent reource leak */
-            resource->unload();
-            throw;
-        }
-
+        resource->load(buffer, size);
         /* just insert resource */
-        mResources.emplace(name, resource);
+        if (!mResources.emplace(name, resource).second)
+        {
+            LITE3D_THROW("Resource '" << name << "' already exists");
+        }
     }
 
     void ResourceManager::releaseAllResources()
@@ -193,6 +188,9 @@ namespace lite3dpp
                 stats.uboCount++;
                 if (resIt->second->getState() == AbstractResource::LOADED)
                     stats.uboLoadedCount++;
+                break;
+            case AbstractResource::PIPELINE:
+                stats.pipelinesCount++;
                 break;
             }
         }

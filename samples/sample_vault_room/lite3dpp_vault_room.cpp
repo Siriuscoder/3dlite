@@ -17,8 +17,8 @@
  *******************************************************************************/
 #include <ctime>
 
-#include "../sample_vault_111/lite3dpp_vault_shadows.h"
-#include "../sample_vault_111/lite3dpp_vault_bloom.h"
+#include <sample_common/lite3dpp_common.h>
+#include <lite3dpp_pipeline/lite3dpp_pipeline.h>
 #include <lite3dpp_physics/lite3dpp_physics_scene.h>
 
 namespace lite3dpp {
@@ -40,48 +40,24 @@ class SampleVaultRoom : public Sample
 {
 public:
 
+    using SampleVaultRoomPipeline = 
+        lite3dpp_pipeline::CustomScenePipeline<lite3dpp_pipeline::PipelineDeffered, lite3dpp_phisics::PhysicsScene>;
+
     SampleVaultRoom() : 
         Sample(helpString)
-    {
-        // use current time as seed for random generator
-        std::srand(std::time(nullptr));
-    }
+    {}
 
     void createScene() override
     {
-        mShadowManager = std::make_unique<SampleShadowManager>(getMain());
-        mBloomEffectRenderer = std::make_unique<SampleBloomEffect>(getMain());
-        mVaultScene = getMain().getResourceManager()->queryResource<lite3dpp_phisics::PhysicsScene>("Vault_111", "vault_111:scenes/vault_room.json");
-        getMain().getResourceManager()->queryResource<Scene>("ShadowClean", "vault_111:scenes/shadow_clean.json");
-        setMainCamera(getMain().getCamera("MyCamera"));
+        auto pipeline = getMain().getResourceManager()->queryResource<SampleVaultRoomPipeline>("Vault_111", 
+            "vault_111:pipelines/vault_room.json");
+        mVaultScene = &pipeline->getMainScene();
+        setMainCamera(&pipeline->getMainCamera());
 
-        setupShadowCasters();
+        mPipeline = pipeline;
+
         setupPlayer();
         addFlashlight();
-        // load SSAO effect pipeline before ligth compute step, because SSAO texture needed to ambient light compute  
-        getMain().getResourceManager()->queryResource<Scene>("VaultRoom_SSAO", "vault_111:scenes/ssao.json");
-        mSSAOShader = getMain().getResourceManager()->queryResource<Material>("ssao_compute.material");
-        // load intermediate light compute scene
-        mCombineScene = getMain().getResourceManager()->queryResource<Scene>("VaultRoom_LightCompute",
-            "vault_111:scenes/lightpass.json");
-
-        // Load bloom effect pipeline
-        mBloomEffectRenderer->init();
-
-        // postprocess step, fxaa, gamma correcion, draw directly info render window. 
-        getMain().getResourceManager()->queryResource<Scene>("VaultRoom_Postprocess",
-            "vault_111:scenes/postprocess.json");
-
-        // optimize: window clean not needed, because all pixels in last render target always be updated
-        getMain().window()->setBuffersCleanBit(false, false, false);
-        RenderTarget::depthTestFunc(RenderTarget::TestFuncLEqual);
-
-        kmVec3 resolution = { 
-            static_cast<float>(getMain().window()->width()), 
-            static_cast<float>(getMain().window()->height()), 0 
-        };
-        Material::setFloatv3GlobalParameter("screenResolution", resolution);
-        Material::setFloatGlobalParameter("RandomSeed", static_cast<float>(rand()) / static_cast<float>(RAND_MAX));
     }
 
     void setupPlayer()
@@ -90,13 +66,6 @@ public:
         mVaultScene->attachCamera(&getMainCamera(), mPlayer);
         /* позиция камеры отнгосительно капсулы плеера (приподнимаем камеру)*/
         getMainCamera().setPosition(kmVec3 {0.0, 0.0, 110.0f});
-    }
-
-    void setupShadowCasters()
-    {
-        RenderTarget* shadowUpdateRT = getMain().getResourceManager()->queryResource<TextureRenderTarget>("ShadowPass");
-        shadowUpdateRT->addObserver(mShadowManager.get());
-        mVaultScene->addObserver(mShadowManager.get());
     }
 
     void addFlashlight()
@@ -124,7 +93,6 @@ public:
 
     void frameBegin() override
     {
-        updateShaderParams();
         updateFlashLight();
     }
 
@@ -139,14 +107,6 @@ public:
         /* не модифицируем скорость по z (модет быть в прыжке) */
         velRelative.z = mPlayer->getLinearVelocity().z;
         mPlayer->setLinearVelocity(velRelative);
-    }
-
-    void updateShaderParams()
-    {
-        SDL_assert(mSSAOShader);
-        mSSAOShader->setFloatm4Parameter(1, "CameraView", getMainCamera().refreshViewMatrix());
-        mSSAOShader->setFloatm4Parameter(1, "CameraProjection", getMainCamera().getProjMatrix());
-        Material::setFloatv3GlobalParameter("eye", getMainCamera().getWorldPosition());
     }
 
     void updateFlashLight()
@@ -172,17 +132,23 @@ public:
             }
             else if (e->key.keysym.sym == SDLK_KP_PLUS)
             {
-                mGammaFactor += 0.02;
-                if (mGammaFactor > 3.0)
-                    mGammaFactor = 3.0;
-                Material::setFloatGlobalParameter("gamma", mGammaFactor);
+                mGamma += 0.02;
+                if (mGamma > 3.0)
+                    mGamma = 3.0;
+                mPipeline->setGamma(mGamma);
             }
             else if (e->key.keysym.sym == SDLK_KP_MINUS)
             {
-                mGammaFactor -= 0.02;
-                if (mGammaFactor < 1.5)
-                    mGammaFactor = 1.5;
-                Material::setFloatGlobalParameter("gamma", mGammaFactor);
+                mGamma -= 0.02;
+                if (mGamma < 1.5)
+                    mGamma = 1.5;
+                mPipeline->setGamma(mGamma);
+            }
+            else if (e->key.keysym.sym == SDLK_u)
+            {
+                static bool ssaoEnabled = true;
+                ssaoEnabled = !ssaoEnabled;
+                mPipeline->enableSSAO(ssaoEnabled);
             }
             else if (e->key.keysym.sym == SDLK_r)
             {
@@ -228,14 +194,6 @@ public:
                     mPlayer->setLinearVelocity(currVel);
                 }
             }
-            else if (e->key.keysym.sym == SDLK_u)
-            {
-                static bool ssaoEnabled = true;
-                ssaoEnabled = !ssaoEnabled;
-                Material::setIntGlobalParameter("AOEnabled", ssaoEnabled ? 1 : 0);
-                auto ssaoRenderTarget = getMain().getResourceManager()->queryResource<TextureRenderTarget>("SSAOStep");
-                ssaoEnabled ? ssaoRenderTarget->enable() : ssaoRenderTarget->disable();
-            }
         }
     }
 
@@ -261,15 +219,12 @@ public:
 
 private:
 
-    Scene* mCombineScene = nullptr;
     lite3dpp_phisics::PhysicsScene* mVaultScene = nullptr;
-    Material* mSSAOShader = nullptr;
-    std::unique_ptr<SampleShadowManager> mShadowManager;
-    std::unique_ptr<SampleBloomEffect> mBloomEffectRenderer;
+    lite3dpp_pipeline::PipelineDeffered* mPipeline = nullptr;
     LightSceneNode* mFlashLight;
     stl<lite3dpp_phisics::PhysicsSceneObject *>::list mObjects;
     lite3dpp_phisics::PhysicsSceneObject *mPlayer = nullptr;
-    float mGammaFactor = 2.2;
+    float mGamma = 2.2;
     int mObjectCounter = 0;
     bool mGravityEnabled = true;
 };

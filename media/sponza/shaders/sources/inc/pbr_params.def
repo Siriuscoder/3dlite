@@ -1,0 +1,4 @@
+#include "samples:shaders/sources/common/version.def"
+
+#define FRESNEL_POWER         5.0f
+#define DIFFUSE_STRENGTH      0.05f

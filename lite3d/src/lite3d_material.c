@@ -85,6 +85,7 @@ void lite3d_material_pass_init(lite3d_material_pass *pass, uint32_t no)
     memset(pass, 0, sizeof(lite3d_material_pass));
     lite3d_list_init(&pass->parameters);
     pass->passNo = no;
+    pass->polygonMode = LITE3D_POLYMODE_FILL;
 }
 
 lite3d_material_pass* lite3d_material_add_pass(
@@ -228,6 +229,9 @@ lite3d_material_pass *lite3d_material_apply(
     lite3d_material_pass_set_params(material, pass, LITE3D_TRUE);
     lite3d_blending(pass->blending);
     lite3d_blending_mode_set(pass->blendingMode);
+    lite3d_backface_culling(pass->doubleSided ? LITE3D_CULLFACE_NEVER : LITE3D_CULLFACE_BACK);
+    lite3d_polygon_mode(pass->polygonMode);
+
     return pass;
 }
 

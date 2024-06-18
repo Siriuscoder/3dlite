@@ -117,14 +117,84 @@ namespace lite3dpp
             (s == "DEPTH" ? LITE3D_TEXTURE_FORMAT_DEPTH : 0))))));
     }
 
-    uint16_t TextureImage::textureInternalFormat(int iformat)
+    uint16_t TextureImage::textureInternalFormat(const String &internalFormat)
     {
-        if (iformat < 0 || iformat > std::numeric_limits<uint16_t>::max())
+        static const stl<String, uint16_t>::unordered_map internalFormats = {
+            {"R8", LITE3D_TEXTURE_INTERNAL_R8},
+            {"R8_SNORM", LITE3D_TEXTURE_INTERNAL_R8_SNORM},
+            {"R16", LITE3D_TEXTURE_INTERNAL_R16},
+            {"R16_SNORM", LITE3D_TEXTURE_INTERNAL_R16_SNORM},
+            {"RG8", LITE3D_TEXTURE_INTERNAL_RG8},
+            {"RG8_SNORM", LITE3D_TEXTURE_INTERNAL_RG8_SNORM},
+            {"RG16", LITE3D_TEXTURE_INTERNAL_RG16},
+            {"RG16_SNORM", LITE3D_TEXTURE_INTERNAL_RG16_SNORM},
+            {"R3_G3_B2", LITE3D_TEXTURE_INTERNAL_R3_G3_B2},
+            {"RGB4", LITE3D_TEXTURE_INTERNAL_RGB4},
+            {"RGB5", LITE3D_TEXTURE_INTERNAL_RGB5},
+            {"RGB8", LITE3D_TEXTURE_INTERNAL_RGB8},
+            {"RGB8_SNORM", LITE3D_TEXTURE_INTERNAL_RGB8_SNORM},
+            {"RGB10", LITE3D_TEXTURE_INTERNAL_RGB10},
+            {"RGB12", LITE3D_TEXTURE_INTERNAL_RGB12},
+            {"RGB16_SNORM", LITE3D_TEXTURE_INTERNAL_RGB16_SNORM},
+            {"RGBA2", LITE3D_TEXTURE_INTERNAL_RGBA2},
+            {"RGBA4", LITE3D_TEXTURE_INTERNAL_RGBA4},
+            {"RGB5_A1", LITE3D_TEXTURE_INTERNAL_RGB5_A1},
+            {"RGBA8", LITE3D_TEXTURE_INTERNAL_RGBA8},
+            {"RGBA8_SNORM", LITE3D_TEXTURE_INTERNAL_RGBA8_SNORM},
+            {"RGB10_A2", LITE3D_TEXTURE_INTERNAL_RGB10_A2},
+            {"RGB10_A2UI", LITE3D_TEXTURE_INTERNAL_RGB10_A2UI},
+            {"RGBA12", LITE3D_TEXTURE_INTERNAL_RGBA12},
+            {"RGBA16", LITE3D_TEXTURE_INTERNAL_RGBA16},
+            {"SRGB8", LITE3D_TEXTURE_INTERNAL_SRGB8},
+            {"SRGB8_ALPHA8", LITE3D_TEXTURE_INTERNAL_SRGB8_ALPHA8},
+            {"SRGB", LITE3D_TEXTURE_INTERNAL_SRGB},
+            {"SRGB_ALPHA", LITE3D_TEXTURE_INTERNAL_SRGB_ALPHA},
+            {"R16F", LITE3D_TEXTURE_INTERNAL_R16F},
+            {"RG16F", LITE3D_TEXTURE_INTERNAL_RG16F},
+            {"RGB16F", LITE3D_TEXTURE_INTERNAL_RGB16F},
+            {"RGBA16F", LITE3D_TEXTURE_INTERNAL_RGBA16F},
+            {"R32F", LITE3D_TEXTURE_INTERNAL_R32F},
+            {"RG32F", LITE3D_TEXTURE_INTERNAL_RG32F},
+            {"RGB32F", LITE3D_TEXTURE_INTERNAL_RGB32F},
+            {"RGBA32F", LITE3D_TEXTURE_INTERNAL_RGBA32F},
+            {"R11F_G11F_B10F", LITE3D_TEXTURE_INTERNAL_R11F_G11F_B10F},
+            {"RGB9_E5", LITE3D_TEXTURE_INTERNAL_RGB9_E5},
+            {"R8I", LITE3D_TEXTURE_INTERNAL_R8I},
+            {"R8UI", LITE3D_TEXTURE_INTERNAL_R8UI},
+            {"R16I", LITE3D_TEXTURE_INTERNAL_R16I},
+            {"R16UI", LITE3D_TEXTURE_INTERNAL_R16UI},
+            {"R32I", LITE3D_TEXTURE_INTERNAL_R32I},
+            {"R32UI", LITE3D_TEXTURE_INTERNAL_R32UI},
+            {"RG8I", LITE3D_TEXTURE_INTERNAL_RG8I},
+            {"RG8UI", LITE3D_TEXTURE_INTERNAL_RG8UI},
+            {"RG16I", LITE3D_TEXTURE_INTERNAL_RG16I},
+            {"RG16UI", LITE3D_TEXTURE_INTERNAL_RG16UI},
+            {"RG32I", LITE3D_TEXTURE_INTERNAL_RG32I},
+            {"RG32UI", LITE3D_TEXTURE_INTERNAL_RG32UI},
+            {"RGB8I", LITE3D_TEXTURE_INTERNAL_RGB8I},
+            {"RGB8UI", LITE3D_TEXTURE_INTERNAL_RGB8UI},
+            {"RGB16I", LITE3D_TEXTURE_INTERNAL_RGB16I},
+            {"RGB16UI", LITE3D_TEXTURE_INTERNAL_RGB16UI},
+            {"RGB32I", LITE3D_TEXTURE_INTERNAL_RGB32I},
+            {"RGB32UI", LITE3D_TEXTURE_INTERNAL_RGB32UI},
+            {"RGBA8I", LITE3D_TEXTURE_INTERNAL_RGBA8I},
+            {"RGBA8UI", LITE3D_TEXTURE_INTERNAL_RGBA8UI},
+            {"RGBA16I", LITE3D_TEXTURE_INTERNAL_RGBA16I},
+            {"RGBA16UI", LITE3D_TEXTURE_INTERNAL_RGBA16UI},
+            {"RGBA32I", LITE3D_TEXTURE_INTERNAL_RGBA32I},
+            {"RGBA32UI", LITE3D_TEXTURE_INTERNAL_RGBA32UI}
+        };
+
+        if (internalFormat.empty())
+            return 0;
+
+        auto it = internalFormats.find(internalFormat);
+        if (it != internalFormats.end())
         {
-            LITE3D_THROW("Invalid Texture Internal Format: " << iformat);
+            return it->second;
         }
 
-        return iformat;
+        LITE3D_THROW("Invalid Texture Internal Format: " << internalFormat);
     }
 
     void TextureImage::loadFromConfigImpl(const ConfigurationReader &helper)
@@ -191,7 +261,7 @@ namespace lite3dpp
                 filtering, 
                 wrapping, 
                 textureFormat(helper.getUpperString(L"TextureFormat", "RGB")),
-                textureInternalFormat(helper.getInt(L"InternalFormat")),
+                textureInternalFormat(helper.getString(L"InternalFormat")),
                 width, 
                 height, 
                 depth, 
@@ -245,7 +315,7 @@ namespace lite3dpp
         Texture::unloadImpl();
     }
 
-    void TextureImage::getPixels(int8_t level, PixelsData &pixels)
+    void TextureImage::getPixels(int8_t level, PixelsData &pixels) const
     {
         size_t size;
         if(!lite3d_texture_unit_get_level_size(&mTexture, level, 0, &size))
@@ -256,7 +326,7 @@ namespace lite3dpp
             LITE3D_THROW("Could`n get level " << level << " for texture ");
     }
 
-    void TextureImage::getPixels(int8_t level, void *pixels)
+    void TextureImage::getPixels(int8_t level, void *pixels) const
     {
         if(!lite3d_texture_unit_get_pixels(&mTexture, level, 0, pixels))
             LITE3D_THROW("Could`n get level " << level << " for texture ");

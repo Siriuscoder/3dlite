@@ -36,12 +36,10 @@ typedef struct lite3d_camera
     kmMat4 projection;
     /* Матрица перехода в screen-space из world-space */
     kmMat4 screen;
-
-    uint8_t cullFaceMode;
-    uint8_t polygonMode;
+    /* Признак прямоугольной проекции */
     uint8_t isOrtho;
 
-    struct
+    struct projectionParamsStruct
     {
         float znear;
         float zfar;
