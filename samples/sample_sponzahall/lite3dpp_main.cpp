@@ -15,8 +15,6 @@
  *	You should have received a copy of the GNU General Public License
  *	along with Lite3D.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
-#include <ctime>
-
 #include <sample_common/lite3dpp_common.h>
 #include <lite3dpp_pipeline/lite3dpp_pipeline.h>
 
@@ -147,10 +145,10 @@ private:
     Scene* mSponzaScene = nullptr;
     lite3dpp_pipeline::PipelineDeffered* mPipeline = nullptr;
     lite3dpp_pipeline::ShadowManager::ShadowCaster *mSUNShadowCaster = nullptr;
-    LightSceneNode* mFlashLight;
-    LightSceneNode* mSUN;
-    LightSceneNode* mAmbient01;
-    LightSceneNode* mAmbient02;
+    LightSceneNode* mFlashLight = nullptr;
+    LightSceneNode* mSUN = nullptr;
+    LightSceneNode* mAmbient01 = nullptr;
+    LightSceneNode* mAmbient02 = nullptr;
     SceneNode* mSUNNode = nullptr;
     bool mDayNightMode = true;
     bool mSunRotation = false;

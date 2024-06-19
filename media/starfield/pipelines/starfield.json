@@ -1,0 +1,38 @@
+{
+    "ShaderPackage": "starfield",
+    "MainScenePath": "starfield:scenes/starfield.json",
+    "Instancing": false,
+    "OcclusionCulling": false,
+    "LightingTechnique": "UBO",
+    "SkyBox": 
+    {
+        "Texture": "samples:textures/json/skybox.json",
+        "EmissionStrength": 1.0
+    },
+    "ShadowMaps":
+    {
+        "Width": 1024,
+        "Height": 1024,
+        "MaxCount": 1,
+        "NearClipPlane": 1.0,
+        "FarClipPlane": 50.0,
+        "DirectionLightShadowParams": 
+        {
+            "LeftClipPlane": -20.0,
+            "RightClipPlane": 20.0,
+            "BottomClipPlane": -20.0,
+            "TopClipPlane": 20.0
+        }
+    },
+    "BLOOM": 
+    {
+        "BloomRadius": 0.005
+    },
+    "PostProcess":
+    {
+        "Gamma": 2.2,
+        "Contrast": 1.005,
+        "Saturation": 1.10,
+        "Exposure": 1.0
+    }
+}

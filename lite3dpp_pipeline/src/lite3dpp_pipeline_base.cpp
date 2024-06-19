@@ -463,4 +463,9 @@ namespace lite3dpp_pipeline {
     {
         updateExposure();
     }
+
+    void PipelineBase::frameBegin()
+    {
+        Material::setFloatv3GlobalParameter("Eye", getMainCamera().getWorldPosition());
+    }
 }}

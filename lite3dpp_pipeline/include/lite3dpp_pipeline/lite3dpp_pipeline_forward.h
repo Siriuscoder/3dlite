@@ -17,35 +17,26 @@
  *******************************************************************************/
 #pragma once
 
-#include <lite3dpp_pipeline/lite3dpp_pipeline_deffered.h>
-#include <lite3dpp_pipeline/lite3dpp_pipeline_forward.h>
+#include <lite3dpp_pipeline/lite3dpp_pipeline_base.h>
 
 namespace lite3dpp {
 namespace lite3dpp_pipeline {
 
-    template<class PipelineImpl, class SceneImpl>
-    class CustomScenePipeline : public PipelineImpl
+    class LITE3DPP_PIPELINE_EXPORT PipelineForward : public PipelineBase
     {
     public:
 
-        using SceneType = SceneImpl;
-        using PipelineType = PipelineImpl;
+        PipelineForward(const String &name, const String &path, Main *main);
 
-        CustomScenePipeline(const String &name, const String &path, Main *main) : 
-            PipelineType(name, path, main)
-        {}
+    protected:
+        
+        void constructCameraPipeline(const ConfigurationReader &pipelineConfig, const String &cameraName,
+            SceneGenerator &sceneGenerator) override;
 
-        SceneImpl &getMainScene()
-        {
-            return static_cast<SceneType&>(PipelineType::getMainScene());
-        }
+        virtual void constructCombinedPass(const ConfigurationReader &pipelineConfig, const String &cameraName,
+            SceneGenerator &sceneGenerator);
 
     protected:
 
-        void createMainScene(const String& name, const String& sceneConfig) override
-        {
-            PipelineType::mMainScene = PipelineType::getMain().getResourceManager()->
-                template queryResourceFromJson<SceneType>(name, sceneConfig);
-        }
     };
 }}

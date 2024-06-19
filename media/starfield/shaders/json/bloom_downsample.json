@@ -1,0 +1,7 @@
+{
+    "Sources": 
+    [
+        "samples:shaders/sources/bigtriangle.vs",
+        "samples:shaders/sources/bloom/bloom_downsample.fs"
+    ]
+}

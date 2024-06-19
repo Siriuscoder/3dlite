@@ -1,0 +1,66 @@
+{
+  "Passes":[
+    {
+      "Pass": 2,
+      "Program": {
+        "Name":"bsdf_alpha.program",
+        "Path":"sponza:shaders/json/bsdf_alpha.json"
+      },
+      "Uniforms":[
+        {
+          "Name":"<Albedo>"
+        },
+        {
+          "Name":"<Metallic>"
+        },
+        {
+          "Name":"<Roughness>"
+        },
+        {
+          "Name":"Environment",
+          "TextureName":"environment.texture",
+          "TexturePath":"samples:textures/json/skybox_metal_chrome.json",
+          "Type":"sampler"
+        },
+        {
+          "Name":"LightSources",
+          "UBOName": "Starfield_MainScene_lightingBufferObject",
+          "Type":"UBO"
+        },
+        {
+          "Name":"LightIndexes",
+          "UBOName": "Starfield_MainScene_lightingIndexBuffer",
+          "Type":"UBO"
+        },
+        {
+          "Name":"ShadowMaps",
+          "TextureName":"Starfield_ShadowMap.texture",
+          "Type":"sampler"
+        },
+        {
+          "Name": "ShadowMatrix",
+          "UBOName": "Starfield_ShadowMatrixBuffer",
+          "Type": "UBO"
+        },
+        {
+          "Name":"Eye",
+          "Type":"v3",
+          "Scope":"global"
+        }
+      ],
+      "Blending":true,
+      "BlendingMode": "RGB_LINEAR_SOURCE_ALPHA"
+    }
+  ],
+  "Uniforms":[
+    {
+      "Name":"projViewMatrix"
+    },
+    {
+      "Name":"modelMatrix"
+    },
+    {
+      "Name":"normalMatrix"
+    }
+  ]
+}
