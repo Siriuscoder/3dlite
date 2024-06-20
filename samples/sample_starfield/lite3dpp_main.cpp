@@ -23,13 +23,15 @@ namespace samples {
 
 static const char *helpString = 
     "Press '+' to increse gamma\n"
-    "Press '-' to decrese gamma\n";
+    "Press '-' to decrese gamma\n"
+    "Press 'e' to go to the next weapoon\n"
+    "Press 'r' to rotate weapoon\n";
 
-class SampleStarfieldWeapoons : public Sample
+class SampleStarfieldWeapons : public Sample
 {
 public:
 
-    SampleStarfieldWeapoons() : 
+    SampleStarfieldWeapons() : 
         Sample(helpString)
     {
         setCameraVelocityMax(0.015);
@@ -134,7 +136,7 @@ private:
 
 int main(int agrc, char *args[])
 {
-    lite3dpp::samples::SampleStarfieldWeapoons sample;
+    lite3dpp::samples::SampleStarfieldWeapons sample;
     return sample.start("starfield/config/config.json");
 }
 
