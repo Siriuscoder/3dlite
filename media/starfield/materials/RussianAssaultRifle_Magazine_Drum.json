@@ -26,31 +26,31 @@
           "Name": "Albedo",
           "Type": "sampler",
           "TextureName": "russianassaultrifle_magazine_drum_color.texture",
-          "TexturePath": "starfield:textures/json/russianassaultrifle_magazine_drum_color.json"
+          "TexturePath": "starfield_pak:textures/json/russianassaultrifle_magazine_drum_color.json"
         },
         {
           "Name": "AO",
           "Type": "sampler",
           "TextureName": "russianassaultrifle_magazine_drum_ao.texture",
-          "TexturePath": "starfield:textures/json/russianassaultrifle_magazine_drum_ao.json"
+          "TexturePath": "starfield_pak:textures/json/russianassaultrifle_magazine_drum_ao.json"
         },
         {
           "Name": "Metal",
           "Type": "sampler",
           "TextureName": "russianassaultrifle_magazine_drum_metal.texture",
-          "TexturePath": "starfield:textures/json/russianassaultrifle_magazine_drum_metal.json"
+          "TexturePath": "starfield_pak:textures/json/russianassaultrifle_magazine_drum_metal.json"
         },
         {
           "Name": "Rough",
           "Type": "sampler",
           "TextureName": "russianassaultrifle_magazine_drum_rough.texture",
-          "TexturePath": "starfield:textures/json/russianassaultrifle_magazine_drum_rough.json"
+          "TexturePath": "starfield_pak:textures/json/russianassaultrifle_magazine_drum_rough.json"
         },
         {
           "Name": "Normal",
           "Type": "sampler",
           "TextureName": "russianassaultrifle_magazine_drum_normal.texture",
-          "TexturePath": "starfield:textures/json/russianassaultrifle_magazine_drum_normal.json"
+          "TexturePath": "starfield_pak:textures/json/russianassaultrifle_magazine_drum_normal.json"
         },
         {
           "Name": "Environment",

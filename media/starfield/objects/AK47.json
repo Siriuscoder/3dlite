@@ -2,7 +2,7 @@
   "Root": {
     "Name": "AK47",
     "Mesh": {
-      "Mesh": "starfield:models/json/AK47.json",
+      "Mesh": "starfield_pak:models/json/AK47.json",
       "Name": "AK47.mesh"
     }
   }

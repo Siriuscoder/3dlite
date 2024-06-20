@@ -26,31 +26,31 @@
           "Name": "Albedo",
           "Type": "sampler",
           "TextureName": "receiver_color.dds.texture",
-          "TexturePath": "starfield:textures/json/receiver_color.dds.json"
+          "TexturePath": "starfield_pak:textures/json/receiver_color.dds.json"
         },
         {
           "Name": "AO",
           "Type": "sampler",
           "TextureName": "receiver_ao.dds.texture",
-          "TexturePath": "starfield:textures/json/receiver_ao.dds.json"
+          "TexturePath": "starfield_pak:textures/json/receiver_ao.dds.json"
         },
         {
           "Name": "Metal",
           "Type": "sampler",
           "TextureName": "receiver_metal.dds.texture",
-          "TexturePath": "starfield:textures/json/receiver_metal.dds.json"
+          "TexturePath": "starfield_pak:textures/json/receiver_metal.dds.json"
         },
         {
           "Name": "Rough",
           "Type": "sampler",
           "TextureName": "receiver_rough.dds.texture",
-          "TexturePath": "starfield:textures/json/receiver_rough.dds.json"
+          "TexturePath": "starfield_pak:textures/json/receiver_rough.dds.json"
         },
         {
           "Name": "Normal",
           "Type": "sampler",
           "TextureName": "receiver_normal.dds.texture",
-          "TexturePath": "starfield:textures/json/receiver_normal.dds.json"
+          "TexturePath": "starfield_pak:textures/json/receiver_normal.dds.json"
         },
         {
           "Name": "Environment",

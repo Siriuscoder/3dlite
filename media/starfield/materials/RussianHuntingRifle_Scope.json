@@ -26,31 +26,31 @@
           "Name": "Albedo",
           "Type": "sampler",
           "TextureName": "scope_color.dds.texture",
-          "TexturePath": "starfield:textures/json/scope_color.dds.json"
+          "TexturePath": "starfield_pak:textures/json/scope_color.dds.json"
         },
         {
           "Name": "AO",
           "Type": "sampler",
           "TextureName": "scope_ao.dds.texture",
-          "TexturePath": "starfield:textures/json/scope_ao.dds.json"
+          "TexturePath": "starfield_pak:textures/json/scope_ao.dds.json"
         },
         {
           "Name": "Metal",
           "Type": "sampler",
           "TextureName": "scope_metal.dds.texture",
-          "TexturePath": "starfield:textures/json/scope_metal.dds.json"
+          "TexturePath": "starfield_pak:textures/json/scope_metal.dds.json"
         },
         {
           "Name": "Rough",
           "Type": "sampler",
           "TextureName": "scope_rough.dds.texture",
-          "TexturePath": "starfield:textures/json/scope_rough.dds.json"
+          "TexturePath": "starfield_pak:textures/json/scope_rough.dds.json"
         },
         {
           "Name": "Normal",
           "Type": "sampler",
           "TextureName": "scope_normal.dds.texture",
-          "TexturePath": "starfield:textures/json/scope_normal.dds.json"
+          "TexturePath": "starfield_pak:textures/json/scope_normal.dds.json"
         },
         {
           "Name": "Environment",

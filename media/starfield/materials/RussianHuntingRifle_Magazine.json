@@ -26,31 +26,31 @@
           "Name": "Albedo",
           "Type": "sampler",
           "TextureName": "magazine_color.texture",
-          "TexturePath": "starfield:textures/json/magazine_color.json"
+          "TexturePath": "starfield_pak:textures/json/magazine_color.json"
         },
         {
           "Name": "AO",
           "Type": "sampler",
           "TextureName": "magazine_ao.texture",
-          "TexturePath": "starfield:textures/json/magazine_ao.json"
+          "TexturePath": "starfield_pak:textures/json/magazine_ao.json"
         },
         {
           "Name": "Metal",
           "Type": "sampler",
           "TextureName": "magazine_metal.texture",
-          "TexturePath": "starfield:textures/json/magazine_metal.json"
+          "TexturePath": "starfield_pak:textures/json/magazine_metal.json"
         },
         {
           "Name": "Rough",
           "Type": "sampler",
           "TextureName": "magazine_rough.texture",
-          "TexturePath": "starfield:textures/json/magazine_rough.json"
+          "TexturePath": "starfield_pak:textures/json/magazine_rough.json"
         },
         {
           "Name": "Normal",
           "Type": "sampler",
           "TextureName": "magazine_normal.texture",
-          "TexturePath": "starfield:textures/json/magazine_normal.json"
+          "TexturePath": "starfield_pak:textures/json/magazine_normal.json"
         },
         {
           "Name": "Environment",

@@ -2,7 +2,7 @@
   "Root": {
     "Name": "VSS",
     "Mesh": {
-      "Mesh": "starfield:models/json/VSS.json",
+      "Mesh": "starfield_pak:models/json/VSS.json",
       "Name": "VSS.mesh"
     }
   }
