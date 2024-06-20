@@ -30,6 +30,7 @@ namespace lite3dpp_pipeline {
         SceneGenerator &sceneGenerator)
     {
         constructCombinedPass(pipelineConfig, cameraName, sceneGenerator);
+        constructBloomPass(pipelineConfig, cameraName);
     }
 
     void PipelineForward::constructCombinedPass(const ConfigurationReader &pipelineConfig, const String &cameraName,

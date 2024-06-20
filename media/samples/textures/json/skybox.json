@@ -1,5 +1,5 @@
 {
-  "Filtering":"Linear",
+  "Filtering":"Trilinear",
   "Compression": false,
   "Image": [
     {
