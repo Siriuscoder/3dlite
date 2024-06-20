@@ -1,0 +1,25 @@
+{
+  "Root": {
+    "Name": "Sun",
+    "Light": {
+      "Type": "Directional",
+      "Name": "Sun_Sun",
+      "Diffuse": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "Radiance": 7.0,
+      "Direction": [
+        0.0,
+        0.0,
+        -1.0
+      ],
+      "Position": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    }
+  }
+}

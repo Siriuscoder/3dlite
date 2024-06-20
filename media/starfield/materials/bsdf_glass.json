@@ -18,24 +18,15 @@
     {
       "Pass": 2,
       "Program":{
-        "Name":"bsdf_regular.program",
-        "Path":"sponza:shaders/json/bsdf_regular.json"
+        "Name":"bsdf_glass.program",
+        "Path":"sponza:shaders/json/bsdf_glass.json"
       },
       "Uniforms":[
         {
           "Name":"<Albedo>"
         },
         {
-          "Name":"<AO>"
-        },
-        {
-          "Name":"<Metal>"
-        },
-        {
-          "Name":"<Rough>"
-        },
-        {
-          "Name":"<Normal>"
+          "Name":"<Roughness>"
         },
         {
           "Name":"Environment",

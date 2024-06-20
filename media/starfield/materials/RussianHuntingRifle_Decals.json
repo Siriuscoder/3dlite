@@ -1,0 +1,87 @@
+{
+  "Passes": [
+    {
+      "Pass": 2,
+      "Program": {
+        "Name": "bsdf_decal.program",
+        "Path": "sponza:shaders/json/bsdf_decal.json"
+      },
+      "Uniforms": [
+        {
+          "Name": "Albedo",
+          "Type": "sampler",
+          "TextureName": "decals_color.texture",
+          "TexturePath": "starfield:textures/json/decals_color.json"
+        },
+        {
+          "Name": "Metal",
+          "Type": "sampler",
+          "TextureName": "decals_metal.texture",
+          "TexturePath": "starfield:textures/json/decals_metal.json"
+        },
+        {
+          "Name": "Rough",
+          "Type": "sampler",
+          "TextureName": "decals_rough.texture",
+          "TexturePath": "starfield:textures/json/decals_rough.json"
+        },
+        {
+          "Name": "Normal",
+          "Type": "sampler",
+          "TextureName": "decals_normal.texture",
+          "TexturePath": "starfield:textures/json/decals_normal.json"
+        },
+        {
+          "Name": "Alpha",
+          "Type": "sampler",
+          "TextureName": "decals_opacity.texture",
+          "TexturePath": "starfield:textures/json/decals_opacity.json"
+        },
+        {
+          "Name": "Environment",
+          "TextureName": "environment.texture",
+          "TexturePath": "samples:textures/json/skybox_metal_chrome.json",
+          "Type": "sampler"
+        },
+        {
+          "Name": "LightSources",
+          "UBOName": "Starfield_MainScene_lightingBufferObject",
+          "Type": "UBO"
+        },
+        {
+          "Name": "LightIndexes",
+          "UBOName": "Starfield_MainScene_lightingIndexBuffer",
+          "Type": "UBO"
+        },
+        {
+          "Name": "ShadowMaps",
+          "TextureName": "Starfield_ShadowMap.texture",
+          "Type": "sampler"
+        },
+        {
+          "Name": "ShadowMatrix",
+          "UBOName": "Starfield_ShadowMatrixBuffer",
+          "Type": "UBO"
+        },
+        {
+          "Name": "Eye",
+          "Type": "v3",
+          "Scope": "global"
+        }
+      ],
+      "Blending": true,
+      "BlendingMode": "RGB_LINEAR_SOURCE_ALPHA"
+    }
+  ],
+  "Uniforms": [
+    {
+      "Name": "projViewMatrix"
+    },
+    {
+      "Name": "modelMatrix"
+    },
+    {
+      "Name": "normalMatrix"
+    }
+  ]
+}

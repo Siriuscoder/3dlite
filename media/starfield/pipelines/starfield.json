@@ -6,7 +6,7 @@
     "LightingTechnique": "UBO",
     "SkyBox": 
     {
-        "Texture": "samples:textures/json/skybox.json",
+        "Texture": "samples:textures/json/skybox_metal_chrome.json",
         "EmissionStrength": 1.0
     },
     "ShadowMaps":

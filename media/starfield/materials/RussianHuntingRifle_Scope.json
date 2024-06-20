@@ -1,0 +1,120 @@
+{
+  "Passes": [
+    {
+      "Pass": 1,
+      "Program": {
+        "Name": "depth.program",
+        "Path": "sponza:shaders/json/depth.json"
+      },
+      "Uniforms": [
+        {
+          "Name": "projViewMatrix"
+        },
+        {
+          "Name": "modelMatrix"
+        }
+      ]
+    },
+    {
+      "Pass": 2,
+      "Program": {
+        "Name": "bsdf_regular.program",
+        "Path": "sponza:shaders/json/bsdf_regular.json"
+      },
+      "Uniforms": [
+        {
+          "Name": "Albedo",
+          "Type": "sampler",
+          "TextureName": "scope_color.dds.texture",
+          "TexturePath": "starfield:textures/json/scope_color.dds.json"
+        },
+        {
+          "Name": "AO",
+          "Type": "sampler",
+          "TextureName": "scope_ao.dds.texture",
+          "TexturePath": "starfield:textures/json/scope_ao.dds.json"
+        },
+        {
+          "Name": "Metal",
+          "Type": "sampler",
+          "TextureName": "scope_metal.dds.texture",
+          "TexturePath": "starfield:textures/json/scope_metal.dds.json"
+        },
+        {
+          "Name": "Rough",
+          "Type": "sampler",
+          "TextureName": "scope_rough.dds.texture",
+          "TexturePath": "starfield:textures/json/scope_rough.dds.json"
+        },
+        {
+          "Name": "Normal",
+          "Type": "sampler",
+          "TextureName": "scope_normal.dds.texture",
+          "TexturePath": "starfield:textures/json/scope_normal.dds.json"
+        },
+        {
+          "Name": "Environment",
+          "TextureName": "environment.texture",
+          "TexturePath": "samples:textures/json/skybox_metal_chrome.json",
+          "Type": "sampler"
+        },
+        {
+          "Name": "LightSources",
+          "UBOName": "Starfield_MainScene_lightingBufferObject",
+          "Type": "UBO"
+        },
+        {
+          "Name": "LightIndexes",
+          "UBOName": "Starfield_MainScene_lightingIndexBuffer",
+          "Type": "UBO"
+        },
+        {
+          "Name": "ShadowMaps",
+          "TextureName": "Starfield_ShadowMap.texture",
+          "Type": "sampler"
+        },
+        {
+          "Name": "ShadowMatrix",
+          "UBOName": "Starfield_ShadowMatrixBuffer",
+          "Type": "UBO"
+        },
+        {
+          "Name": "Eye",
+          "Type": "v3",
+          "Scope": "global"
+        },
+        {
+          "Name": "projViewMatrix"
+        },
+        {
+          "Name": "modelMatrix"
+        },
+        {
+          "Name": "normalMatrix"
+        }
+      ]
+    },
+    {
+      "Pass": 3,
+      "Program": {
+        "Name": "shadow.program",
+        "Path": "sponza:shaders/json/shadow.json"
+      },
+      "Uniforms": [
+        {
+          "Name": "ShadowMatrix",
+          "UBOName": "Starfield_ShadowMatrixBuffer",
+          "Type": "UBO"
+        },
+        {
+          "Name": "ShadowIndex",
+          "UBOName": "Starfield_ShadowIndexBuffer",
+          "Type": "UBO"
+        },
+        {
+          "Name": "modelMatrix"
+        }
+      ]
+    }
+  ]
+}

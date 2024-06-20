@@ -3,18 +3,24 @@
     {
       "Pass": 2,
       "Program": {
-        "Name":"bsdf_alpha.program",
-        "Path":"sponza:shaders/json/bsdf_alpha.json"
+        "Name":"bsdf_decal.program",
+        "Path":"sponza:shaders/json/bsdf_decal.json"
       },
       "Uniforms":[
         {
           "Name":"<Albedo>"
         },
         {
-          "Name":"<Metallic>"
+          "Name":"<Metal>"
         },
         {
-          "Name":"<Roughness>"
+          "Name":"<Rough>"
+        },
+        {
+          "Name":"<Normal>"
+        },
+        {
+          "Name":"<Alpha>"
         },
         {
           "Name":"Environment",

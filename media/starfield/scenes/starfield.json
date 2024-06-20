@@ -22,8 +22,8 @@
   "LightingTechnique": "UBO",
   "Objects": [
     {
-      "Name": "Sponza",
-      "Object": "sponza:objects/Sponza.json",
+      "Name": "AR99",
+      "Object": "starfield:objects/AR99.json",
       "Position": [
         0.0,
         0.0,
@@ -34,6 +34,66 @@
         0.0,
         0.0,
         1.0
+      ],
+      "Scale": [
+        1.0,
+        1.0000001192092896,
+        1.0000001192092896
+      ]
+    },
+    {
+      "Name": "AK47",
+      "Object": "starfield:objects/AK47.json",
+      "Position": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "Rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "Scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "Name": "VSS",
+      "Object": "starfield:objects/VSS.json",
+      "Position": [
+        9.094947017729282e-13,
+        0.0,
+        3.725290298461914e-09
+      ],
+      "Rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "Scale": [
+        1.0,
+        1.0000001192092896,
+        1.0000001192092896
+      ]
+    },
+    {
+      "Name": "Sun",
+      "Object": "starfield:objects/Sun.json",
+      "Position": [
+        1.0913645029067993,
+        0.20541219413280487,
+        0.9073862433433533
+      ],
+      "Rotation": [
+        -0.06666921079158783,
+        0.4157288670539856,
+        0.047359611839056015,
+        0.9058045148849487
       ],
       "Scale": [
         1.0,

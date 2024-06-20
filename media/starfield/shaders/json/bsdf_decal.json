@@ -1,0 +1,14 @@
+{
+    "Sources": 
+    [
+        // Standard shaders with params customization
+        "samples:shaders/sources/pipeline/v_tbn.vs",
+        "samples:shaders/sources/pipeline/forward_pass/forward.fs",
+        "samples:shaders/sources/pbr/pbr.fs,starfield:shaders/sources/inc/pbr_params.def",
+        "samples:shaders/sources/pbr/brdf.fs,starfield:shaders/sources/inc/pbr_params.def",
+        "samples:shaders/sources/shadow/pcf3x3.fs,starfield:shaders/sources/inc/shadow_params.def",
+        "samples:shaders/sources/common/utils.fs",
+        // Sample specific shaders
+        "starfield:shaders/sources/decal.fs"
+    ]
+}
