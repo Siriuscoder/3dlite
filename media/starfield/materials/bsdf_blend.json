@@ -4,7 +4,7 @@
       "Pass": 2,
       "Program": {
         "Name":"bsdf_decal.program",
-        "Path":"sponza:shaders/json/bsdf_decal.json"
+        "Path":"starfield:shaders/json/bsdf_decal.json"
       },
       "Uniforms":[
         {
@@ -25,7 +25,7 @@
         {
           "Name":"Environment",
           "TextureName":"environment.texture",
-          "TexturePath":"samples:textures/json/skybox_metal_chrome.json",
+          "TexturePath":"samples:textures/json/skybox.json",
           "Type":"sampler"
         },
         {

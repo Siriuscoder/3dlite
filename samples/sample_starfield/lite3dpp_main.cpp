@@ -32,16 +32,21 @@ public:
     SampleStarfieldWeapoons() : 
         Sample(helpString)
     {
-        setCameraVelocityMax(0.15);
-        setCameraAcceleration(0.02);
-        setCameraResistance(0.01);
+        setCameraVelocityMax(0.015);
+        setCameraAcceleration(0.003);
+        setCameraResistance(0.001);
     }
 
     void createScene() override
     {
-        mPipeline = getMain().getResourceManager()->queryResource<lite3dpp_pipeline::PipelineForward>("SponzaDeffered", 
+        mPipeline = getMain().getResourceManager()->queryResource<lite3dpp_pipeline::PipelineForward>("Starfield", 
             "starfield:pipelines/starfield.json");
         mMainScene = &mPipeline->getMainScene();
+
+        mAK47 = mMainScene->getObject("AK47");
+        mVSS = mMainScene->getObject("VSS");
+
+        mVSS->disable();
         
         setMainCamera(&mPipeline->getMainCamera());
         setupShadowCasters();
@@ -49,13 +54,26 @@ public:
 
     void setupShadowCasters()
     {
-        //mSUN = mMainScene->getObject("Sponza")->getLightNode("SUN");
-        //mSUNShadowCaster = mPipeline->getShadowManager()->newShadowCaster(mSUN);
+        mSUN = mMainScene->getObject("Sun")->getLightNode("Sun");
+        mSUNShadowCaster = mPipeline->getShadowManager()->newShadowCaster(mSUN);
     }
 
     void fixedUpdateTimerTick(int32_t firedPerRound, uint64_t deltaMcs, float deltaRetard) override
     {
+        if (mRotationEnabled)
+        {
+            if (mAK47->isEnabled())
+            {
+                mAK47->rotateZ(0.005f * deltaRetard);
+            }
+            else if (mVSS->isEnabled())
+            {
+                mVSS->rotateZ(0.005f * deltaRetard);
+            }
 
+            // Помечаем что надо перерисовать тени в следубщий кадр
+            mSUNShadowCaster->invalidate();
+        }
     }
 
     void processEvent(SDL_Event *e) override
@@ -77,6 +95,25 @@ public:
                     mGamma = 1.5;
                 mPipeline->setGamma(mGamma);
             }
+            else if (e->key.keysym.sym == SDLK_e)
+            {
+                if (mAK47->isEnabled())
+                {
+                    mAK47->disable();
+                    mVSS->enable();
+                    mSUNShadowCaster->invalidate();
+                }
+                else if (mVSS->isEnabled())
+                {
+                    mAK47->enable();
+                    mVSS->disable();
+                    mSUNShadowCaster->invalidate();
+                }
+            }
+            else if (e->key.keysym.sym == SDLK_r)
+            {
+                mRotationEnabled = !mRotationEnabled;
+            }
         }
     }
 
@@ -84,10 +121,13 @@ public:
 private:
 
     Scene* mMainScene = nullptr;
+    SceneObject *mAK47 = nullptr;
+    SceneObject *mVSS = nullptr;
     lite3dpp_pipeline::PipelineForward* mPipeline = nullptr;
-    //lite3dpp_pipeline::ShadowManager::ShadowCaster *mSUNShadowCaster = nullptr;
-    //LightSceneNode* mSUN = nullptr;
+    lite3dpp_pipeline::ShadowManager::ShadowCaster *mSUNShadowCaster = nullptr;
+    LightSceneNode* mSUN = nullptr;
     float mGamma = 2.2;
+    bool mRotationEnabled = false;
 };
 
 }}

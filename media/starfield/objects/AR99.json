@@ -1,9 +1,0 @@
-{
-  "Root": {
-    "Name": "AR99",
-    "Mesh": {
-      "Mesh": "starfield:models/json/AR99.json",
-      "Name": "AR99.mesh"
-    }
-  }
-}

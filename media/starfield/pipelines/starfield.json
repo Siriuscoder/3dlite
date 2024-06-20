@@ -6,7 +6,7 @@
     "LightingTechnique": "UBO",
     "SkyBox": 
     {
-        "Texture": "samples:textures/json/skybox_metal_chrome.json",
+        "Texture": "samples:textures/json/skybox.json",
         "EmissionStrength": 1.0
     },
     "ShadowMaps":
@@ -14,14 +14,14 @@
         "Width": 1024,
         "Height": 1024,
         "MaxCount": 1,
-        "NearClipPlane": 1.0,
-        "FarClipPlane": 50.0,
+        "NearClipPlane": 0.01,
+        "FarClipPlane": 2.0,
         "DirectionLightShadowParams": 
         {
-            "LeftClipPlane": -20.0,
-            "RightClipPlane": 20.0,
-            "BottomClipPlane": -20.0,
-            "TopClipPlane": 20.0
+            "LeftClipPlane": -0.47,
+            "RightClipPlane": 0.47,
+            "BottomClipPlane": -0.4,
+            "TopClipPlane": 0.4
         }
     },
     "BLOOM": 
@@ -31,8 +31,8 @@
     "PostProcess":
     {
         "Gamma": 2.2,
-        "Contrast": 1.005,
-        "Saturation": 1.10,
+        "Contrast": 1.006,
+        "Saturation": 1.05,
         "Exposure": 1.0
     }
 }

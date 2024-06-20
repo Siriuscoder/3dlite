@@ -3,17 +3,17 @@
     {
       "Name": "MyCamera",
       "Position": [
+        0.5,
         0,
-        0,
-        3
+        0
       ],
       "LookAt": [
-        1,
         0,
-        3
+        0,
+        0
       ],
       "Perspective": {
-        "Znear": 0.1,
+        "Znear": 0.01,
         "Zfar": 50.0,
         "Fov": 60.0
       }
@@ -21,26 +21,6 @@
   ],
   "LightingTechnique": "UBO",
   "Objects": [
-    {
-      "Name": "AR99",
-      "Object": "starfield:objects/AR99.json",
-      "Position": [
-        0.0,
-        0.0,
-        0.0
-      ],
-      "Rotation": [
-        0.0,
-        0.0,
-        0.0,
-        1.0
-      ],
-      "Scale": [
-        1.0,
-        1.0000001192092896,
-        1.0000001192092896
-      ]
-    },
     {
       "Name": "AK47",
       "Object": "starfield:objects/AK47.json",

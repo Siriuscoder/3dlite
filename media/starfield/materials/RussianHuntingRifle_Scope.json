@@ -4,7 +4,7 @@
       "Pass": 1,
       "Program": {
         "Name": "depth.program",
-        "Path": "sponza:shaders/json/depth.json"
+        "Path": "starfield:shaders/json/depth.json"
       },
       "Uniforms": [
         {
@@ -19,7 +19,7 @@
       "Pass": 2,
       "Program": {
         "Name": "bsdf_regular.program",
-        "Path": "sponza:shaders/json/bsdf_regular.json"
+        "Path": "starfield:shaders/json/bsdf_regular.json"
       },
       "Uniforms": [
         {
@@ -55,7 +55,7 @@
         {
           "Name": "Environment",
           "TextureName": "environment.texture",
-          "TexturePath": "samples:textures/json/skybox_metal_chrome.json",
+          "TexturePath": "samples:textures/json/skybox.json",
           "Type": "sampler"
         },
         {
@@ -98,7 +98,7 @@
       "Pass": 3,
       "Program": {
         "Name": "shadow.program",
-        "Path": "sponza:shaders/json/shadow.json"
+        "Path": "starfield:shaders/json/shadow.json"
       },
       "Uniforms": [
         {

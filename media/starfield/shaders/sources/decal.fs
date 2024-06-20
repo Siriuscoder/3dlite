@@ -1,14 +1,16 @@
 #include "samples:shaders/sources/common/version.def"
 
 uniform sampler2D Albedo;
-uniform sampler2D AO;
+uniform sampler2D Alpha;
 uniform sampler2D Rough;
 uniform sampler2D Metal;
 uniform sampler2D Normal;
 
 vec4 getAlbedo(vec2 uv)
 {
-    return texture(Albedo, uv);
+    vec3 albedo = texture(Albedo, uv).rgb;
+    float alpha = texture(Alpha, uv).r;
+    return vec4(albedo, alpha);
 }
 
 vec3 getEmission(vec2 uv)
@@ -45,5 +47,5 @@ float getSpecularAmbient(vec2 uv)
 
 float getAmbientOcclusion(vec2 uv)
 {
-    return texture(AO, uv).r;
+    return 1.0;
 }

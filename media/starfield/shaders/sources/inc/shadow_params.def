@@ -3,8 +3,8 @@
 #define SHADOW_MAX_LAYERS                           1
 #define SHADOW_MAX_SPLIT_VERTICES                   3
 
-#define SHADOW_MAX_ADAPTIVE_BIAS                    0.0028
-#define SHADOW_MIN_ADAPTIVE_BIAS                    0.0008
+#define SHADOW_MAX_ADAPTIVE_BIAS                    0.0025
+#define SHADOW_MIN_ADAPTIVE_BIAS                    0.0005
 #define SHADOW_MIN_ADAPTIVE_FILTER_SIZE             1.0
-#define SHADOW_MAX_ADAPTIVE_FILTER_SIZE             3.0
-#define SHADOW_MIN_ADAPTIVE_STEP                    0.5
+#define SHADOW_MAX_ADAPTIVE_FILTER_SIZE             1.6
+#define SHADOW_MIN_ADAPTIVE_STEP                    0.8

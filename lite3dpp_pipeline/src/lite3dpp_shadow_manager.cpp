@@ -109,12 +109,12 @@ namespace lite3dpp_pipeline {
         int shadowsCastersMaxCount = shadowConf.getInt(L"MaxCount", 1);
         int width = shadowConf.getInt(L"Width", 1024);
         int height = shadowConf.getInt(L"Height", 1024);
-        mProjection.znear = shadowConf.getInt(L"NearClipPlane", 1.0);
-        mProjection.zfar = shadowConf.getInt(L"FarClipPlane", 100.0);
-        mProjection.left = shadowConf.getObject(L"DirectionLightShadowParams").getInt(L"LeftClipPlane");
-        mProjection.right = shadowConf.getObject(L"DirectionLightShadowParams").getInt(L"RightClipPlane");
-        mProjection.bottom = shadowConf.getObject(L"DirectionLightShadowParams").getInt(L"BottomClipPlane");
-        mProjection.top = shadowConf.getObject(L"DirectionLightShadowParams").getInt(L"TopClipPlane");
+        mProjection.znear = shadowConf.getDouble(L"NearClipPlane", 1.0);
+        mProjection.zfar = shadowConf.getDouble(L"FarClipPlane", 100.0);
+        mProjection.left = shadowConf.getObject(L"DirectionLightShadowParams").getDouble(L"LeftClipPlane");
+        mProjection.right = shadowConf.getObject(L"DirectionLightShadowParams").getDouble(L"RightClipPlane");
+        mProjection.bottom = shadowConf.getObject(L"DirectionLightShadowParams").getDouble(L"BottomClipPlane");
+        mProjection.top = shadowConf.getObject(L"DirectionLightShadowParams").getDouble(L"TopClipPlane");
         mProjection.aspect = static_cast<float>(width) / static_cast<float>(height);
 
         createShadowRenderPipeline(pipelineName, conf.getString(L"ShaderPackage"), width, height, shadowsCastersMaxCount);
