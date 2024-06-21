@@ -46,9 +46,13 @@ Vault 111 room scene (Fallout4 models) with complete PBR lighting and HDR render
 ![](/media/screenshots/vault_room_3.png "Vault room")
 ![](/media/screenshots/vault_room_4.png "Vault room")
 
+## sample_starfield
+Legacy weapons (Starfield models) with complete PBR materials. Please, download resources pack [starfield.pkg](https://drive.google.com/file/d/1gvl_boWlvqbEZ5I-4jKZu1msKqmHYxKZ/view?usp=sharing) and put it to media/packs/
+
+![](/media/screenshots/vss.png "Starfield")
+
 ## sample_vault
-Vault scene (Fallout3 models) with dynamic lighting with multiple lights and big range of basic materials. Supports two render modes: Deffered shading and Direct shading, also supports several light buffer techniques such as UBO, TBO, SSBO. To provide sample work correctly you must download 
-resources pack [vault.pkg](https://drive.google.com/file/d/1JhsirjKwMq51IBg7GknUeZLGvrVKp1Sz/view?usp=sharing) and put it to media/packs/  
+Vault scene (Fallout3 models) with dynamic lighting with multiple lights and big range of basic materials. Supports two render modes: Deffered shading and Direct shading, also supports several light buffer techniques such as UBO, TBO, SSBO. To provide sample work correctly you must download resources pack [vault.pkg](https://drive.google.com/file/d/1JhsirjKwMq51IBg7GknUeZLGvrVKp1Sz/view?usp=sharing) and put it to media/packs/  
 
 ![](/media/screenshots/vault.png "Vault")
 ![](/media/screenshots/vault1.png "Vault")

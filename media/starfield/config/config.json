@@ -15,9 +15,9 @@
         "GLProfile": "core",
         "GLVersionMajor": 3,
         "GLVersionMinor": 3,
-	    "Width": 1024,
+        "Width": 1024,
         "Height": 768,
-        "Caption": "Vault 111 PBR complex scene",
+        "Caption": "Starfield weapons PBR scene",
         "ColorBits": 24,
         "Fullscreen": false,
         "MSAA": 1,
@@ -27,13 +27,18 @@
     "ResourceLocations": [
         {
             "Name": "samples",
-            "FileCacheMaxSize": 1024000,
+            "FileCacheMaxSize": 5120000,
             "Path": "samples/"
         },
         {
-            "Name": "vault_111",
+            "Name": "starfield",
+            "FileCacheMaxSize": 5120000,
+            "Path": "starfield/"
+        },
+        {
+            "Name": "starfield_pak",
             "FileCacheMaxSize": 51200000,
-            "Path": "vault_111/"
+            "Path": "packs/starfield.pkg"
         }
     ],
 

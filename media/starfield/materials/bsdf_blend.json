@@ -1,0 +1,72 @@
+{
+  "Passes":[
+    {
+      "Pass": 2,
+      "Program": {
+        "Name":"bsdf_decal.program",
+        "Path":"starfield:shaders/json/bsdf_decal.json"
+      },
+      "Uniforms":[
+        {
+          "Name":"<Albedo>"
+        },
+        {
+          "Name":"<Metal>"
+        },
+        {
+          "Name":"<Rough>"
+        },
+        {
+          "Name":"<Normal>"
+        },
+        {
+          "Name":"<Alpha>"
+        },
+        {
+          "Name":"Environment",
+          "TextureName":"environment.texture",
+          "TexturePath":"samples:textures/json/skybox.json",
+          "Type":"sampler"
+        },
+        {
+          "Name":"LightSources",
+          "UBOName": "Starfield_MainScene_lightingBufferObject",
+          "Type":"UBO"
+        },
+        {
+          "Name":"LightIndexes",
+          "UBOName": "Starfield_MainScene_lightingIndexBuffer",
+          "Type":"UBO"
+        },
+        {
+          "Name":"ShadowMaps",
+          "TextureName":"Starfield_ShadowMap.texture",
+          "Type":"sampler"
+        },
+        {
+          "Name": "ShadowMatrix",
+          "UBOName": "Starfield_ShadowMatrixBuffer",
+          "Type": "UBO"
+        },
+        {
+          "Name":"Eye",
+          "Type":"v3",
+          "Scope":"global"
+        }
+      ],
+      "Blending":true,
+      "BlendingMode": "RGB_LINEAR_SOURCE_ALPHA"
+    }
+  ],
+  "Uniforms":[
+    {
+      "Name":"projViewMatrix"
+    },
+    {
+      "Name":"modelMatrix"
+    },
+    {
+      "Name":"normalMatrix"
+    }
+  ]
+}

@@ -15,7 +15,6 @@
  *	You should have received a copy of the GNU General Public License
  *	along with Lite3D.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
-#include <ctime>
 #include <algorithm>
 
 #include <lite3dpp_pipeline/lite3dpp_pipeline.h>
@@ -330,7 +329,7 @@ private:
     lite3dpp_pipeline::PipelineDeffered* mPipeline = nullptr;
     lite3dpp_pipeline::ShadowManager* mShadowManager;
     std::unique_ptr<SampleLightEffectManager> mLightAnimEffects;
-    LightSceneNode* mFlashLight;
+    LightSceneNode* mFlashLight = nullptr;
     SpotLightWithShadow mSpot;
     SpotLightWithShadow mSpot01;
     SpotLightWithShadow mSpot02;

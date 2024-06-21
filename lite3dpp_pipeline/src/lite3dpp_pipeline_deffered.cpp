@@ -30,7 +30,7 @@ namespace lite3dpp_pipeline {
         SceneGenerator &sceneGenerator)
     {
         constructGBufferPass(pipelineConfig, cameraName, sceneGenerator);
-        constructSSBOPass(pipelineConfig, cameraName);
+        constructSSAOPass(pipelineConfig, cameraName);
         constructCombinedPass(pipelineConfig, cameraName, sceneGenerator);
         constructBloomPass(pipelineConfig, cameraName);
     }
@@ -272,7 +272,7 @@ namespace lite3dpp_pipeline {
             .set(L"RenderInstancing", pipelineConfig.getBool(L"Instancing", true)));
     }
 
-    void PipelineDeffered::constructSSBOPass(const ConfigurationReader &pipelineConfig, const String &cameraName)
+    void PipelineDeffered::constructSSAOPass(const ConfigurationReader &pipelineConfig, const String &cameraName)
     {
         if (!pipelineConfig.has(L"SSAO"))
         {
@@ -384,6 +384,6 @@ namespace lite3dpp_pipeline {
                 "CameraProjection", projMatrix);
         }
 
-        Material::setFloatv3GlobalParameter("Eye", getMainCamera().getWorldPosition());
+        PipelineBase::frameBegin();
     }
 }}

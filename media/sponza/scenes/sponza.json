@@ -16,54 +16,7 @@
         "Znear": 0.1,
         "Zfar": 100.0,
         "Fov": 60.0
-      },
-      "RenderTargets": [
-        {
-          "Name": "DepthPass",
-          "Path": "sponza:targets/depth.json",
-          "Priority": 0,
-          "TexturePass": 1,
-          "RenderBlend": false,
-          "OcclusionQuery": true,
-          "SortOpaqueFromNear": true,
-          "DepthTest": true,
-          "ColorOutput": false,
-          "DepthOutput": true
-        },
-        {
-          "Name": "ShadowPass",
-          "Path": "sponza:targets/shadow.json",
-          "Priority": 1,
-          "TexturePass": 3,
-          "RenderBlend": false,
-          "DepthTest": true,
-          "ColorOutput": false,
-          "DepthOutput": true,
-          "CustomVisibilityCheck": true
-        },
-        {
-          "Name": "RenderPass",
-          "Path": "sponza:targets/prepare.json",
-          "Priority": 0,
-          "TexturePass": 2,
-          "RenderBlend": false,
-          "OcclusionCulling": true,
-          "DepthTest": true,
-          "ColorOutput": true,
-          "DepthOutput": false
-        },
-        {
-          "Name": "CombineStep",
-          "Path": "sponza:targets/combine.json",
-          "Priority": 1,
-          "TexturePass": 2,
-          "RenderBlend": true,
-          "RenderOpaque": false,
-          "DepthTest": true,
-          "ColorOutput": true,
-          "DepthOutput": true
-        }
-      ]
+      }
     }
   ],
   "LightingTechnique": "UBO",
