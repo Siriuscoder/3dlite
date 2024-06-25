@@ -25,7 +25,7 @@ namespace lite3dpp {
 namespace lite3dpp_pipeline {
 
     class LITE3DPP_PIPELINE_EXPORT PipelineBase : public ConfigurableResource, 
-        public LifecycleObserver, public Noncopiable
+        public LifecycleObserver, public SceneObserver, public Noncopiable
     {
     public:
 
@@ -47,7 +47,7 @@ namespace lite3dpp_pipeline {
         void loadFromConfigImpl(const ConfigurationReader &helper) override;
         void unloadImpl() override;
         void timerTick(lite3d_timer *timerid) override;
-        void frameBegin() override;
+        bool beginSceneRender(Scene *scene, Camera *camera) override;
 
         virtual void createMainScene(const String& name, const String &sceneConfig);
         virtual void constructShadowManager(const ConfigurationReader &pipelineConfig, const String &cameraName,

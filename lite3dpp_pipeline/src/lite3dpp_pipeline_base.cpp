@@ -170,6 +170,9 @@ namespace lite3dpp_pipeline {
             mMainScene->addObserver(mShadowManager.get());
         }
 
+        /* Для обновления параметров шейдеров */
+        mMainScene->addObserver(this);
+
         // optimize: window clean not needed, because all pixels in last render target always will be updated
         getMain().window()->setBuffersCleanBit(false, false, false);
         RenderTarget::depthTestFunc(RenderTarget::TestFuncLEqual);
@@ -464,8 +467,9 @@ namespace lite3dpp_pipeline {
         updateExposure();
     }
 
-    void PipelineBase::frameBegin()
+    bool PipelineBase::beginSceneRender(Scene *scene, Camera *camera)
     {
         Material::setFloatv3GlobalParameter("Eye", getMainCamera().getWorldPosition());
+        return true;
     }
 }}
