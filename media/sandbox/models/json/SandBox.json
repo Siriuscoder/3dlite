@@ -1,0 +1,69 @@
+{
+  "Codec": "m",
+  "Model": "sandbox:models/meshes/SandBox.m",
+  "MaterialMapping": [
+    {
+      "Material": {
+        "Name": "Wall01.material",
+        "Material": "sandbox:materials/Wall01.json"
+      },
+      "MaterialIndex": 0
+    },
+    {
+      "Material": {
+        "Name": "Wall02.material",
+        "Material": "sandbox:materials/Wall02.json"
+      },
+      "MaterialIndex": 1
+    },
+    {
+      "Material": {
+        "Name": "Wall03.material",
+        "Material": "sandbox:materials/Wall03.json"
+      },
+      "MaterialIndex": 2
+    },
+    {
+      "Material": {
+        "Name": "Wall04.material",
+        "Material": "sandbox:materials/Wall04.json"
+      },
+      "MaterialIndex": 3
+    },
+    {
+      "Material": {
+        "Name": "WallHalf.material",
+        "Material": "sandbox:materials/WallHalf.json"
+      },
+      "MaterialIndex": 4
+    },
+    {
+      "Material": {
+        "Name": "Floor.material",
+        "Material": "sandbox:materials/Floor.json"
+      },
+      "MaterialIndex": 5
+    },
+    {
+      "Material": {
+        "Name": "Ceil.material",
+        "Material": "sandbox:materials/Ceil.json"
+      },
+      "MaterialIndex": 6
+    },
+    {
+      "Material": {
+        "Name": "Monkey.material",
+        "Material": "sandbox:materials/Monkey.json"
+      },
+      "MaterialIndex": 7
+    },
+    {
+      "Material": {
+        "Name": "Sphere.material",
+        "Material": "sandbox:materials/Sphere.json"
+      },
+      "MaterialIndex": 8
+    }
+  ]
+}

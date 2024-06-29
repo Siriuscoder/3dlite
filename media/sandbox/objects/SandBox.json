@@ -1,0 +1,9 @@
+{
+  "Root": {
+    "Name": "SandBox",
+    "Mesh": {
+      "Mesh": "sandbox:models/json/SandBox.json",
+      "Name": "SandBox.mesh"
+    }
+  }
+}

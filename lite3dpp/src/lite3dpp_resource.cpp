@@ -63,8 +63,16 @@ namespace lite3dpp
     {
         if(mState == UNLOADED)
         {
-            loadImpl(buffer, size);
-            mState = LOADED;
+            try
+            {
+                loadImpl(buffer, size);
+                mState = LOADED;
+            }
+            catch(const std::exception&)
+            {
+                unloadImpl();
+                throw;
+            }
             
             logState();
         }
@@ -74,9 +82,17 @@ namespace lite3dpp
     {
         if(mState != LOADED)
         {
-            reloadImpl();
-            mState = LOADED;
-            
+            try
+            {
+                reloadImpl();
+                mState = LOADED;
+            }
+            catch(const std::exception&)
+            {
+                unloadImpl();
+                throw;
+            }
+
             logState();
         }
     }

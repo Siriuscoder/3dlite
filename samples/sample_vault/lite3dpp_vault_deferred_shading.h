@@ -118,7 +118,7 @@ public:
 
             mnode->frustumTest(false);
             mnode->setName(light->getName());
-            mnode->replaceMaterial(0, material);
+            mnode->replaceMaterial(0, material);mnode->replaceMaterial(0, material);
         }
     }
 
