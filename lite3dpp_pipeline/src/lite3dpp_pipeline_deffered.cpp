@@ -236,8 +236,8 @@ namespace lite3dpp_pipeline {
             .set(L"Filtering", "None")
             .set(L"Wrapping", "ClampToEdge")
             .set(L"Compression", false)
-            .set(L"TextureFormat", "RGBA")
-            .set(L"InternalFormat", "RGBA32F");
+            .set(L"TextureFormat", "RGB")
+            .set(L"InternalFormat", "RGB32F");
 
         mCombinedTexture = getMain().getResourceManager()->queryResourceFromJson<TextureImage>(
             getName() + "_" + cameraName + "_combined.texture", combinedTextureConfig.write());
