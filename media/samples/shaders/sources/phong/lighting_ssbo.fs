@@ -36,11 +36,11 @@ vec3 calc_lighting(vec3 fragPos,
         /* block0.y - enabled */
         /* block0.z - influence distance */
         /* block0.w - influence min radiance */
-        if (fnear(light.blocks[0].y, 0.0))
+        if (isNear(light.blocks[0].y, 0.0))
             continue;
 
         /* Read Position and check distance for spot and point light only */
-        if (fnear(light.blocks[0].x, LITE3D_LIGHT_POINT) || fnear(light.blocks[0].x, LITE3D_LIGHT_SPOT))
+        if (isNear(light.blocks[0].x, LITE3D_LIGHT_POINT) || isNear(light.blocks[0].x, LITE3D_LIGHT_SPOT))
         {
             /* block2.x - position.x */
             /* block2.y - position.y */

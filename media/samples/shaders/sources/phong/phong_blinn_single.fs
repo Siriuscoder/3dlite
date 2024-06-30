@@ -10,13 +10,13 @@ vec3 phong_blinn_single(float type, vec3 lightDir, vec3 eyeDir, vec3 diffuse,
     float attenuationFactor = 1.0;
 
     // no attenuation for direction light
-    if (!fnear(type, LITE3D_LIGHT_DIRECTIONAL))
+    if (!isNear(type, LITE3D_LIGHT_DIRECTIONAL))
     {
         ldir = normalize(lightDir);
         float ldist = length(lightDir);
         float spotAttenuationFactor = 1.0;
 
-        if (fnear(type, LITE3D_LIGHT_SPOT))
+        if (isNear(type, LITE3D_LIGHT_SPOT))
         {
             /* calculate spot attenuation */
             float spotAngle = acos(dot(-ldir, normalize(spotDirection)));
