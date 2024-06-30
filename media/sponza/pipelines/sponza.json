@@ -42,8 +42,8 @@
         "Exposure": 1.0,
         "DynamicExposure":
         {
-            "ExposureMax": 3.5,
-            "ExposureMin": 0.2,
+            "ExposureMax": 5.5,
+            "ExposureMin": 1.1,
             "ExposureBase": 0.15
         }
     }
