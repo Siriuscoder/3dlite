@@ -32,87 +32,15 @@ namespace lite3dpp
         Texture(name, path, main)
     {}
 
-    TextureBuffer::~TextureBuffer()
-    {}
-
     void TextureBuffer::loadFromConfigImpl(const ConfigurationReader &helper)
     {
         if (helper.getString(L"BufferFormat").size() > 0)
         {
-            uint16_t tbf = 0;
             String tbfString = helper.getUpperString(L"BufferFormat");
-
-            if (tbfString == "R8")
-                tbf = LITE3D_TB_R8;
-            else if (tbfString == "R16")
-                tbf = LITE3D_TB_R16;
-            else if (tbfString == "R16F")
-                tbf = LITE3D_TB_R16F;
-            else if (tbfString == "R32F")
-                tbf = LITE3D_TB_R32F;
-            else if (tbfString == "R8I")
-                tbf = LITE3D_TB_R8I;
-            else if (tbfString == "R16I")
-                tbf = LITE3D_TB_R16I;
-            else if (tbfString == "R32I")
-                tbf = LITE3D_TB_R32I;
-            else if (tbfString == "R8UI")
-                tbf = LITE3D_TB_R8UI;
-            else if (tbfString == "R16UI")
-                tbf = LITE3D_TB_R16UI;
-            else if (tbfString == "R32UI")
-                tbf = LITE3D_TB_R32UI;
-            else if (tbfString == "RG8")
-                tbf = LITE3D_TB_RG8;
-            else if (tbfString == "RG16")
-                tbf = LITE3D_TB_RG16;
-            else if (tbfString == "RG16F")
-                tbf = LITE3D_TB_RG16F;
-            else if (tbfString == "RG32F")
-                tbf = LITE3D_TB_RG32F;
-            else if (tbfString == "RG8I")
-                tbf = LITE3D_TB_RG8I;
-            else if (tbfString == "RG16I")
-                tbf = LITE3D_TB_RG16I;
-            else if (tbfString == "RG32I")
-                tbf = LITE3D_TB_RG32I;
-            else if (tbfString == "RG8UI")
-                tbf = LITE3D_TB_RG8UI;
-            else if (tbfString == "RG16UI")
-                tbf = LITE3D_TB_RG16UI;
-            else if (tbfString == "RG32UI")
-                tbf = LITE3D_TB_RG32UI;
-            else if (tbfString == "RGB32F")
-                tbf = LITE3D_TB_RGB32F;
-            else if (tbfString == "RGB32I")
-                tbf = LITE3D_TB_RGB32I;
-            else if (tbfString == "RGB32UI")
-                tbf = LITE3D_TB_RGB32UI;
-            else if (tbfString == "RGBA8")
-                tbf = LITE3D_TB_RGBA8;
-            else if (tbfString == "RGBA16")
-                tbf = LITE3D_TB_RGBA16;
-            else if (tbfString == "RGBA16F")
-                tbf = LITE3D_TB_RGBA16F;
-            else if (tbfString == "RGBA32F")
-                tbf = LITE3D_TB_RGBA32F;
-            else if (tbfString == "RGBA8I")
-                tbf = LITE3D_TB_RGBA8I;
-            else if (tbfString == "RGBA16I")
-                tbf = LITE3D_TB_RGBA16I;
-            else if (tbfString == "RGBA32I")
-                tbf = LITE3D_TB_RGBA32I;
-            else if (tbfString == "RGBA8UI")
-                tbf = LITE3D_TB_RGBA8UI;
-            else if (tbfString == "RGBA16UI")
-                tbf = LITE3D_TB_RGBA16UI;
-            else if (tbfString == "RGBA32UI")
-                tbf = LITE3D_TB_RGBA32UI;
-            else
-                LITE3D_THROW(getName() << " unsupported texture buffer format");
+            uint16_t format = Texture::textureInternalFormat(helper.getUpperString(L"BufferFormat"));
             
             if (!lite3d_texture_buffer_init(&mTexture, helper.getInt(L"TexelsCount", 0), NULL, 
-                tbf, helper.getBool(L"Dynamic", false) ? LITE3D_VBO_DYNAMIC_DRAW : LITE3D_VBO_STATIC_DRAW))
+                format, helper.getBool(L"Dynamic", false) ? LITE3D_VBO_DYNAMIC_DRAW : LITE3D_VBO_STATIC_DRAW))
             {
                 LITE3D_THROW(getName() << " texture buffer allocation failed, probably it is not supported");
             }
