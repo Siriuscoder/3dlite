@@ -2,11 +2,12 @@
 #define FLT_EPSILON 1.192092896e-07F
 #define PHI 1.61803398874989484820459
 
-bool fnear(float a1, float a2);
-bool fnear(vec3 a1, vec3 a2);
+bool isNear(float a1, float a2);
+bool isNear(vec3 a1, vec3 a2);
 
-bool fiszero(float a1);
-bool fiszero(vec3 a1);
+bool isZero(float a1);
+bool isZero(vec3 a1);
+bool isValidUV(vec2 uv);
 
 // Gold Noise ©2015 dcerisano@standard3d.com
 // - based on the Golden Ratio
@@ -17,8 +18,10 @@ float goldNoise(vec2 xy);
 float noiseInterleavedGradient(vec2 xy);
 
 float lerp(float a, float b, float f);
+
 vec3 worldToViewSpacePosition(vec3 vw);
 vec3 worldToViewSpaceDirection(vec3 dirw);
 vec2 viewPositionToUV(vec3 pos);
+
 float fadeScreenEdge(vec2 uv);
-bool isValidUV(vec2 uv);
+float doubleSidedNdotV(inout vec3 N, vec3 V);

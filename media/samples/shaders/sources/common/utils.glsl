@@ -2,24 +2,24 @@ uniform mat4 CameraView; // Main camera view matrix
 uniform mat4 CameraProjection; // Main camera projection matrix
 uniform float RandomSeed; /* 0.0 - 1.0 */
 
-bool fnear(float a1, float a2)
+bool isNear(float a1, float a2)
 {
     return abs(a1 - a2) < FLT_EPSILON;
 }
 
-bool fnear(vec3 a1, vec3 a2)
+bool isNear(vec3 a1, vec3 a2)
 {
-    return fnear(a1.x, a2.x) && fnear(a1.y, a2.y) && fnear(a1.y, a2.y); 
+    return isNear(a1.x, a2.x) && isNear(a1.y, a2.y) && isNear(a1.y, a2.y); 
 }
 
-bool fiszero(float a1)
+bool isZero(float a1)
 {
-    return fnear(a1, 0.0);
+    return isNear(a1, 0.0);
 }
 
-bool fiszero(vec3 a1)
+bool isZero(vec3 a1)
 {
-    return fnear(a1, vec3(0.0));
+    return isNear(a1, vec3(0.0));
 }
 
 // Gold Noise ©2015 dcerisano@standard3d.com
@@ -71,4 +71,19 @@ float fadeScreenEdge(vec2 uv)
 bool isValidUV(vec2 uv)
 {
     return !(uv.x < 0.0 || uv.x > 1.0 || uv.y < 0.0 || uv.y > 1.0);
+}
+
+float doubleSidedNdotV(inout vec3 N, vec3 V)
+{
+    const float tolerance = -0.1;
+    // HdotV
+    float NdotV = dot(N, V);
+    // Invert normal for double sided materilas 
+    if (NdotV < tolerance)
+    {
+        N *= -1.0;
+        NdotV = dot(N, V);
+    }
+    // Clamp NdotV
+    return max(NdotV, FLT_EPSILON);
 }

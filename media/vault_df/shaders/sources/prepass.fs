@@ -74,7 +74,7 @@ void main()
 #ifdef CALC_ILLUM
     // sampling glow texture and check colors
     vec3 fragGlow = texture(glow, tc).rgb;
-    if (!fiszero(fragGlow))
+    if (!isZero(fragGlow))
     {
         fragDiffuse = vec4(fragGlow, 1.0);
     }
@@ -88,7 +88,7 @@ void main()
     vec3 nw = normalize(itbn * normalize(2.0 * nval.xyz - 1.0));
 
     // fix bad normals
-    if (fiszero(nw))
+    if (isZero(nw))
         nw = wnorm;
 
     coord = vec4(ivv, gl_FragCoord.z / gl_FragCoord.w);

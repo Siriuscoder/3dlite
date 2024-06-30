@@ -22,29 +22,21 @@ layout(std140) uniform LightIndexes
 uniform vec3 Eye;
 
 /* Shadow compute module */
-float ShadowVisibility(float shadowIndex, vec3 vw, vec3 N, vec3 L);
+float ShadowVisibility(float shadowIndex, vec3 P, vec3 N, vec3 L);
 /* Illumination compute module */
 vec3 Lx(vec3 albedo, vec3 radiance, vec3 L, vec3 N, vec3 V, vec3 specular, float NdotV);
 /* Fresnel equation (Schlick) */
 vec3 FresnelSchlickRoughness(float NdotV, vec3 albedo, vec3 specular);
 
-vec3 ComputeIllumination(vec3 vw, vec3 nw, vec3 albedo, vec3 emission, vec3 specular, float aoFactor, 
+vec3 ComputeIllumination(vec3 P, vec3 N, vec3 albedo, vec3 emission, vec3 specular, float aoFactor, 
     float saFactor)
 {
     // Eye direction to current fragment 
-    vec3 eyeDir = normalize(Eye - vw);
+    vec3 V = normalize(Eye - P);
     // HdotV
-    float NdotV = dot(nw, eyeDir);
-    // Invert normal for double sided materilas 
-    if (NdotV < 0.0)
-    {
-        nw *= -1.0;
-        NdotV = dot(nw, eyeDir);
-    }
-    // Clamp NdotV
-    NdotV = max(NdotV, FLT_EPSILON);
+    float NdotV = doubleSidedNdotV(N, V);
     // Reflect vector for ambient specular
-    vec3 R = reflect(eyeDir, nw);
+    vec3 R = reflect(V, N);
     // Fresnel by Schlick aproxx
     vec3 F = FresnelSchlickRoughness(NdotV, albedo, specular);
 
@@ -60,7 +52,7 @@ vec3 ComputeIllumination(vec3 vw, vec3 nw, vec3 albedo, vec3 emission, vec3 spec
         /* block0.z - influence distance */
         /* block0.w - influence min radiance */
         vec4 block0 = lights[index];
-        if (fiszero(block0.y))
+        if (isZero(block0.y))
             continue;
 
         /* block3.x - direction.x */
@@ -72,14 +64,14 @@ vec3 ComputeIllumination(vec3 vw, vec3 nw, vec3 albedo, vec3 emission, vec3 spec
 
         vec3 lightDirection = block3.xyz;
         float attenuationFactor = 1.0;
-        if (!fnear(block0.x, LITE3D_LIGHT_DIRECTIONAL))
+        if (!isNear(block0.x, LITE3D_LIGHT_DIRECTIONAL))
         {
             /* block2.x - position.x */
             /* block2.y - position.y */
             /* block2.z - position.z */
             /* block2.w - user index */
             /* calculate direction from fragment to light */
-            lightDirection = lights[index+2].xyz - vw;
+            lightDirection = lights[index+2].xyz - P;
             float lightDistance = length(lightDirection);
             lightDirection = normalize(lightDirection);
             /* skip untouchable light source */
@@ -91,7 +83,7 @@ vec3 ComputeIllumination(vec3 vw, vec3 nw, vec3 albedo, vec3 emission, vec3 spec
             vec4 block4 = lights[index+4];
 
             float spotAttenuationFactor = 1.0;
-            if (fnear(block0.x, LITE3D_LIGHT_SPOT))
+            if (isNear(block0.x, LITE3D_LIGHT_SPOT))
             {
                 /* calculate spot attenuation */
                 float spotAngleRad = acos(dot(-lightDirection, normalize(block3.xyz)));
@@ -113,7 +105,7 @@ vec3 ComputeIllumination(vec3 vw, vec3 nw, vec3 albedo, vec3 emission, vec3 spec
             lightDirection *= -1.0;
         }
         /* User Index, at this implementation is shadow index */
-        float shadowVisibility = ShadowVisibility(lights[index+2].w, vw, nw, lightDirection);
+        float shadowVisibility = ShadowVisibility(lights[index+2].w, P, N, lightDirection);
         /* block1.x - diffuse.r */
         /* block1.y - diffuse.g  */
         /* block1.z - diffuse.b */
@@ -122,17 +114,17 @@ vec3 ComputeIllumination(vec3 vw, vec3 nw, vec3 albedo, vec3 emission, vec3 spec
         /* light source full radiance at fragment position */
         vec3 radiance = block1.rgb * block1.w * attenuationFactor * shadowVisibility * aoFactor;
         /* Radiance too small, do not take this light source in account */ 
-        if (fiszero(radiance))
+        if (isZero(radiance))
             continue;
         /* L for current lights source */ 
-        totalLx += Lx(albedo, radiance, lightDirection, nw, eyeDir, specular, NdotV);
+        totalLx += Lx(albedo, radiance, lightDirection, N, V, specular, NdotV);
     }
 
     vec3 kD = 1.0 - F;
     kD *= 1.0 - specular.z;
 
     float specularLevel = clamp(specular.y * IRRADIANCE_SPECULAR_MAX_LOD, IRRADIANCE_SPECULAR_MIN_LOD, IRRADIANCE_SPECULAR_MAX_LOD);
-    vec3 globalIrradiance = textureLod(Environment, nw, IRRADIANCE_DIFFUSE_LOD).rgb;
+    vec3 globalIrradiance = textureLod(Environment, N, IRRADIANCE_DIFFUSE_LOD).rgb;
     vec3 specularAmbient = textureLod(Environment, R, specularLevel).rgb * F * saFactor;
     vec3 diffuseAmbient = kD * globalIrradiance * albedo * DIFFUSE_STRENGTH;
     vec3 totalAmbient = (diffuseAmbient + specularAmbient) * aoFactor;

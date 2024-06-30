@@ -25,11 +25,11 @@ vec3 calc_lighting(vec3 fragPos, vec3 fragNormal, vec3 eye, float specularFactor
         /* block0.z - influence distance */
         /* block0.w - influence min radiance */
         blocks[0] = texelFetch(lightSources, texel + 0);
-        if (fiszero(blocks[0].y))
+        if (isZero(blocks[0].y))
             continue;
 
         /* Read Position and check distance for spot and point light only */
-        if (fnear(blocks[0].x, LITE3D_LIGHT_POINT) || fnear(blocks[0].x, LITE3D_LIGHT_SPOT))
+        if (isNear(blocks[0].x, LITE3D_LIGHT_POINT) || isNear(blocks[0].x, LITE3D_LIGHT_SPOT))
         {
             /* block2.x - position.x */
             /* block2.y - position.y */
