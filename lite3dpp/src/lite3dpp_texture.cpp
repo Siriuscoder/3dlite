@@ -30,9 +30,6 @@ namespace lite3dpp
         memset(&mTexture, 0, sizeof(mTexture));
     }
 
-    Texture::~Texture()
-    {}
-
     void Texture::unloadImpl()
     {
         lite3d_texture_unit_purge(&mTexture);
@@ -43,16 +40,7 @@ namespace lite3dpp
         return mTexture.totalSize;
     }
 
-    TextureImage::TextureImage(const String &name, 
-        const String &path, Main *main) : 
-        Texture(name, path, main),
-        mModifyed(false)
-    {}
-
-    TextureImage::~TextureImage()
-    {}
-
-    uint32_t TextureImage::textureType(const String &s)
+    uint32_t Texture::textureType(const String &s)
     {
         return s == "1D" ? LITE3D_TEXTURE_1D :
             (s == "2D" ? LITE3D_TEXTURE_2D :
@@ -63,20 +51,20 @@ namespace lite3dpp
             (s == "3D" ? LITE3D_TEXTURE_3D : 0xff))))));
     }
 
-    uint8_t TextureImage::textureFiltering(const String &s)
+    uint8_t Texture::textureFiltering(const String &s)
     {
         return s == "NONE" ? LITE3D_TEXTURE_FILTER_NEAREST :
             (s == "LINEAR" ? LITE3D_TEXTURE_FILTER_BILINEAR :
             (s == "TRILINEAR" ? LITE3D_TEXTURE_FILTER_TRILINEAR : 0));
     }
 
-    uint8_t TextureImage::textureWrap(const String &s)
+    uint8_t Texture::textureWrap(const String &s)
     {
         return s == "CLAMPTOEDGE" ? LITE3D_TEXTURE_CLAMP_TO_EDGE :
             (s == "REPEAT" ? LITE3D_TEXTURE_REPEAT : 0);
     }
 
-    uint32_t TextureImage::textureImageFormat(const String &s)
+    uint32_t Texture::textureImageFormat(const String &s)
     {
         return s == "BMP" ? LITE3D_IMAGE_BMP :
             (s == "JPG" ? LITE3D_IMAGE_JPG :
@@ -90,7 +78,7 @@ namespace lite3dpp
             (s == "ANY" ? LITE3D_IMAGE_ANY : 0)))))))));
     }
 
-    uint32_t TextureImage::textureFilterType(const String &s)
+    uint32_t Texture::textureFilterType(const String &s)
     {
         return s == "ALIENIFY" ? LITE3D_ALIENIFY_FILTER :
             (s == "BLURAVG" ? LITE3D_BLURAVG_FILTER :
@@ -106,7 +94,7 @@ namespace lite3dpp
             (s == "SHARPEN" ? LITE3D_SHARPEN_FILTER : 0)))))))))));
     }
 
-    uint16_t TextureImage::textureFormat(const String &s)
+    uint16_t Texture::textureFormat(const String &s)
     {
         return s == "RED" ? LITE3D_TEXTURE_FORMAT_RED :
             (s == "RGB" ? LITE3D_TEXTURE_FORMAT_RGB :
@@ -117,7 +105,7 @@ namespace lite3dpp
             (s == "DEPTH" ? LITE3D_TEXTURE_FORMAT_DEPTH : 0))))));
     }
 
-    uint16_t TextureImage::textureInternalFormat(const String &internalFormat)
+    uint16_t Texture::textureInternalFormat(const String &internalFormat)
     {
         static const stl<String, uint16_t>::unordered_map internalFormats = {
             {"R8", LITE3D_TEXTURE_INTERNAL_R8},
@@ -196,6 +184,12 @@ namespace lite3dpp
 
         LITE3D_THROW("Invalid Texture Internal Format: " << internalFormat);
     }
+
+    TextureImage::TextureImage(const String &name, 
+        const String &path, Main *main) : 
+        Texture(name, path, main),
+        mModifyed(false)
+    {}
 
     void TextureImage::loadFromConfigImpl(const ConfigurationReader &helper)
     {
