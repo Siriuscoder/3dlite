@@ -25,8 +25,8 @@
     "PostProcess":
     {
         "Gamma": 2.2,
-        "Contrast": 1.005,
-        "Saturation": 1.20,
-        "Exposure": 3.4
+        "Contrast": 1.001,
+        "Saturation": 1.2,
+        "Exposure": 5.8
     }
 }

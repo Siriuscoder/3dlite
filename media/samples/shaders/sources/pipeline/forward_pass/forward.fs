@@ -3,7 +3,7 @@
 out vec4 fragColor;
 
 in vec2 iuv;    // UVs
-in vec3 ivv;    // world-space position
+in vec4 ivv;    // world-space position
 in mat3 itbn;   // The matrix that transforms vector from tangent space to world space 
 
 // You must implement this methods in you shader to provide data for forward pass
@@ -19,6 +19,7 @@ vec3 ComputeIllumination(vec3 vw, vec3 nw, vec3 albedo, vec3 emission, vec3 spec
 
 void main()
 {
+    vec3 P = ivv.xyz / ivv.w;
     // Get albedo 
     vec4 albedo = getAlbedo(iuv);
     // Get emission  
@@ -28,7 +29,7 @@ void main()
     // Get Specular params
     vec3 specular = getSpecular(iuv);
     // Compute total illumination 
-    vec3 total = ComputeIllumination(ivv, normal, albedo.rgb, emission, specular, 
+    vec3 total = ComputeIllumination(P, normal, albedo.rgb, emission, specular, 
         getAmbientOcclusion(iuv), getSpecularAmbient(iuv));
     // Final
     fragColor = vec4(total, albedo.a);

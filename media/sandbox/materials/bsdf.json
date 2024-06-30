@@ -1,0 +1,110 @@
+{
+  "Passes":[
+    {
+      "Pass": 1,
+      "Program":{
+        "Name":"depth.program",
+        "Path":"sandbox:shaders/json/depth.json"
+      },
+      "Uniforms":[
+        {
+          "Name": "projViewMatrix"
+        },
+        {
+          "Name": "modelMatrix"
+        }
+      ]
+    },
+    {
+      "Pass": 2,
+      "Program":{
+        "Name":"bsdf_regular.program",
+        "Path":"sandbox:shaders/json/bsdf_regular.json"
+      },
+      "Uniforms":[
+        {
+          "Name":"<Albedo>"
+        },
+        {
+          "Name":"<Emission>"
+        },
+        {
+          "Name":"<Emission Strength>"
+        },
+        {
+          "Name":"<Metallic>"
+        },
+        {
+          "Name":"<Roughness>"
+        },
+        {
+          "Name": "SpecularAmbientFactor",
+          "Type": "float",
+          "Value": 0.0
+        },
+        {
+          "Name":"Environment",
+          "TextureName":"environment.texture",
+          "TexturePath":"samples:textures/json/skybox_metal_chrome.json",
+          "Type":"sampler"
+        },
+        {
+          "Name":"LightSources",
+          "UBOName": "SandboxPipeline_MainScene_lightingBufferObject",
+          "Type":"UBO"
+        },
+        {
+          "Name":"LightIndexes",
+          "UBOName": "SandboxPipeline_MainScene_lightingIndexBuffer",
+          "Type":"UBO"
+        },
+        {
+          "Name":"ShadowMaps",
+          "TextureName":"SandboxPipeline_ShadowMap.texture",
+          "Type":"sampler"
+        },
+        {
+          "Name": "ShadowMatrix",
+          "UBOName": "SandboxPipeline_ShadowMatrixBuffer",
+          "Type": "UBO"
+        },
+        {
+          "Name":"Eye",
+          "Type":"v3",
+          "Scope":"global"
+        },
+        {
+          "Name":"projViewMatrix"
+        },
+        {
+          "Name":"modelMatrix"
+        },
+        {
+          "Name":"normalMatrix"
+        }
+      ]
+    },
+    {
+      "Pass": 3,
+      "Program":{
+        "Name":"shadow.program",
+        "Path":"sandbox:shaders/json/shadow.json"
+      },
+      "Uniforms":[
+        {
+          "Name":"ShadowMatrix",
+          "UBOName":"SandboxPipeline_ShadowMatrixBuffer",
+          "Type":"UBO"
+        },
+        {
+          "Name": "ShadowIndex",
+          "UBOName": "SandboxPipeline_ShadowIndexBuffer",
+          "Type": "UBO"
+        },
+        {
+          "Name":"modelMatrix"
+        }
+      ]
+    }
+  ]
+}

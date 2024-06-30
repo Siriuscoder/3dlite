@@ -236,8 +236,8 @@ namespace lite3dpp_pipeline {
             .set(L"Filtering", "None")
             .set(L"Wrapping", "ClampToEdge")
             .set(L"Compression", false)
-            .set(L"TextureFormat", "RGBA")
-            .set(L"InternalFormat", "RGBA32F");
+            .set(L"TextureFormat", "RGB")
+            .set(L"InternalFormat", "RGB32F");
 
         mCombinedTexture = getMain().getResourceManager()->queryResourceFromJson<TextureImage>(
             getName() + "_" + cameraName + "_combined.texture", combinedTextureConfig.write());
@@ -363,10 +363,10 @@ namespace lite3dpp_pipeline {
         mSSAOStage->addObject("SSAOBigTri", BigTriObjectGenerator(mSSAOStageMaterial->getName()).generate());
     }
 
-    void PipelineDeffered::frameBegin()
+    bool PipelineDeffered::beginSceneRender(Scene *scene, Camera *camera)
     {
-        auto viewMatrix = getMainCamera().refreshViewMatrix();
-        auto projMatrix = getMainCamera().getProjMatrix();
+        auto &viewMatrix = getMainCamera().getViewMatrix();
+        auto &projMatrix = getMainCamera().getProjMatrix();
 
         if (mSSAOStageMaterial)
         {
@@ -384,6 +384,6 @@ namespace lite3dpp_pipeline {
                 "CameraProjection", projMatrix);
         }
 
-        PipelineBase::frameBegin();
+        return PipelineBase::beginSceneRender(scene, camera);
     }
 }}

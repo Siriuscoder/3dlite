@@ -10,7 +10,7 @@ layout(location = 5) in mat4 modelMatrix;
 uniform mat4 projViewMatrix;
 
 out vec2 iuv;
-out vec3 ivv;
+out vec4 ivv;
 out mat3 itbn;
 
 void main()
@@ -18,8 +18,7 @@ void main()
     // texture coordinate 
     iuv = uv;
     // vertex coordinate in world space 
-    vec4 wv = modelMatrix * vertex;
-    ivv = wv.xyz / wv.w;
+    ivv = modelMatrix * vertex;
     // calculate tangent, normal, binormal in world space
     mat3 normalMatrix = mat3(modelMatrix[0].xyz, modelMatrix[1].xyz, modelMatrix[2].xyz);
     vec3 wTang = normalize(normalMatrix * tang);
@@ -31,5 +30,5 @@ void main()
     // TBN matrix to transform normal from tangent space to world space
     itbn = mat3(wTang, wBTang, wNorm);
     
-    gl_Position = projViewMatrix * wv;
+    gl_Position = projViewMatrix * ivv;
 }

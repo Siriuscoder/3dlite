@@ -37,7 +37,7 @@ namespace lite3dpp
         TextureBuffer(const String &name, 
             const String &path, Main *main);
 
-        ~TextureBuffer();
+        virtual ~TextureBuffer() = default;
 
         size_t bufferSizeTexels() const;
         uint8_t texelSize() const;

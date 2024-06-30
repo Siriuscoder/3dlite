@@ -15,7 +15,7 @@ vec3 sampleViewSpaceNormal(vec2 uv)
 {
     vec3 nw = texture(GBuffer, vec3(uv, 1)).xyz;
     // Non shaded fragment
-    if (fiszero(nw))
+    if (isZero(nw))
         discard;
 
     return worldToViewSpaceDirection(nw);

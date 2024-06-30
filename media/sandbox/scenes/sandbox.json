@@ -1,0 +1,45 @@
+{
+  "Cameras": [
+    {
+      "Name": "MyCamera",
+      "Position": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "LookAt": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "Perspective": {
+        "Znear": 0.01,
+        "Zfar": 30.0,
+        "Fov": 60.0
+      }
+    }
+  ],
+  "LightingTechnique": "UBO",
+  "Objects": [
+    {
+      "Name": "SandBox",
+      "Object": "sandbox:objects/SandBox.json",
+      "Position": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "Rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "Scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    }
+  ]
+}
