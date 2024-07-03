@@ -24,8 +24,8 @@ namespace lite3dpp {
 namespace samples {
 
 static const char *helpString = 
-    "Press 'e' to change camera parent node\n"
-    "Press 'q' to set camera as box parent\n"; 
+    "Press 'l' to enable/disable flashlight\n"
+    "Press 'r' to add light spark\n";
 
 class SampleSandbox : public Sample
 {

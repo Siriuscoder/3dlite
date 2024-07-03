@@ -19,6 +19,7 @@
 
 #include <lite3dpp_pipeline/lite3dpp_bloom.h>
 #include <lite3dpp_pipeline/lite3dpp_shadow_manager.h>
+#include <lite3dpp_pipeline/lite3dpp_IBL.h>
 #include <lite3dpp_pipeline/lite3dpp_generator.h>
 
 namespace lite3dpp {
@@ -61,6 +62,8 @@ namespace lite3dpp_pipeline {
             SceneGenerator &sceneGenerator);
         virtual void constructSkyBoxPass(const ConfigurationReader &pipelineConfig, const String &cameraName,
             const ConfigurationWriter &mainCameraConfig);
+        virtual void constructSurroundingIrradiancePass(const ConfigurationReader &pipelineConfig, const String &cameraName,
+            SceneGenerator &sceneGenerator);
         
         void createBigTriangleMesh();
         void updateExposure();
@@ -73,6 +76,7 @@ namespace lite3dpp_pipeline {
         String mShaderPackage;
         std::unique_ptr<ShadowManager> mShadowManager;
         std::unique_ptr<BloomEffect> mBloomEffect;
+        std::unique_ptr<IBLDiffuseIrradiance> mSurrouningLighting;
         Camera *mMainCamera = nullptr;
         RenderTarget *mDepthPass = nullptr;
         RenderTarget *mCombinePass = nullptr;

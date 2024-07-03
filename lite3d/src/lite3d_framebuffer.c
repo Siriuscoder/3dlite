@@ -368,6 +368,7 @@ static int lite3d_framebuffer_setup_attachments(lite3d_framebuffer *fb, const li
                         0);
                     break;
                 case LITE3D_TEXTURE_2D_ARRAY:
+                case LITE3D_TEXTURE_CUBE:
                     if (flags & LITE3D_FRAMEBUFFER_USE_LAYERED_BINDING)
                     {
                         glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i,

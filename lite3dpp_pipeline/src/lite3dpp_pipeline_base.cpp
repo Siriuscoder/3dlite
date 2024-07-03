@@ -153,6 +153,7 @@ namespace lite3dpp_pipeline {
             mainSceneGenerator.addCamera(cameraName, cameraPipelineConfig);
             constructShadowManager(pipelineConfig, cameraName, mainSceneGenerator);
             constructCameraDepthPass(pipelineConfig, cameraName, mainSceneGenerator);
+            constructSurroundingIrradiancePass(pipelineConfig, cameraName, mainSceneGenerator);
             constructCameraPipeline(pipelineConfig, cameraName, mainSceneGenerator);
             constructPostProcessPass(pipelineConfig, cameraName, mainSceneGenerator);
             constructSkyBoxPass(pipelineConfig, cameraName, cameraPipelineConfig);
@@ -188,6 +189,7 @@ namespace lite3dpp_pipeline {
         mResourcesList.clear();
         mShadowManager.reset();
         mBloomEffect.reset();
+        mSurrouningLighting.reset();
     }
 
     void PipelineBase::createBigTriangleMesh()
@@ -262,6 +264,8 @@ namespace lite3dpp_pipeline {
         }
 
         mShadowManager = std::make_unique<ShadowManager>(getMain(), getName(), pipelineConfig);
+        mShadowManager->initialize(getName(), pipelineConfig.getString(L"ShaderPackage"));
+
         sceneGenerator.addRenderTarget(cameraName, mShadowManager->getShadowPass().getName(), ConfigurationWriter()
             .set(L"Priority", static_cast<int>(RenderPassStagePriority::ShadowBuildStage))
             .set(L"TexturePass", static_cast<int>(TexturePassTypes::Shadow))
@@ -279,6 +283,7 @@ namespace lite3dpp_pipeline {
         if (pipelineConfig.has(L"BLOOM"))
         {
             mBloomEffect = std::make_unique<BloomEffect>(getMain(), getName(), cameraName, pipelineConfig);
+            mBloomEffect->initialize();
         }
     }
 
@@ -431,6 +436,29 @@ namespace lite3dpp_pipeline {
 
         // Добавляем шейдер skybox
         mSkyBoxStage->addObject("SkyBox", SkyBoxObjectGenerator(mSkyBoxStageMaterial->getName()).generate());
+    }
+
+    void PipelineBase::constructSurroundingIrradiancePass(const ConfigurationReader &pipelineConfig, const String &cameraName,
+        SceneGenerator &sceneGenerator)
+    {
+        if (!pipelineConfig.has(L"IBL"))
+        {
+            return;
+        }
+
+        mSurrouningLighting = std::make_unique<IBLDiffuseIrradiance>(getMain());
+        mSurrouningLighting->initialize(getName(), pipelineConfig);
+
+        sceneGenerator.addRenderTarget(cameraName, mSurrouningLighting->getDiffusePass()->getName(), ConfigurationWriter()
+            .set(L"Priority", static_cast<int>(RenderPassStagePriority::ForwardStage))
+            .set(L"TexturePass", static_cast<int>(TexturePassTypes::SurroundDiffusePass))
+            .set(L"DepthTest", true)
+            .set(L"ColorOutput", true)
+            .set(L"DepthOutput", true)
+            .set(L"RenderBlend", false)
+            .set(L"RenderOpaque", true)
+            .set(L"FrustumCulling", false)
+            .set(L"RenderInstancing", pipelineConfig.getBool(L"Instancing", true)));
     }
 
     void PipelineBase::createMainScene(const String& name, const String &sceneConfig)

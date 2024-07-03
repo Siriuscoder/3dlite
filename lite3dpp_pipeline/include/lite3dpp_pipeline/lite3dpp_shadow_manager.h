@@ -100,6 +100,7 @@ public:
     ShadowManager(Main& main, const String& pipelineName, const ConfigurationReader& pipelineConf);
     ~ShadowManager();
 
+    void initialize(const String& pipelineName, const String& shaderPackage);
     ShadowCaster* newShadowCaster(LightSceneNode* node);
     DynamicShadowReceiver* registerShadowReceiver(SceneNode *node);
 
@@ -134,14 +135,14 @@ protected:
     bool customVisibilityCheck(Scene *scene, SceneNode *node, lite3d_mesh_chunk *meshChunk, Material *material, 
         lite3d_bounding_vol *boundingVol, Camera *camera) override;
 
-    void createShadowRenderPipeline(const String& pipelineName, const String& shaderPackage, int width, int height, 
-        int shadowsCastersMaxCount);
     void createShadowRenderTarget(const String& pipelineName, int width, int height, int shadowsCastersMaxCount);
     void createAuxiliaryBuffers(const String& pipelineName, int shadowsCastersMaxCount);
 
 private:
 
     Main& mMain;
+    int mShadowsCastersMaxCount;
+    int mWidth, mHeight;
     RenderTarget* mShadowPass = nullptr;
     Texture* mShadowMap = nullptr;
     VBOResource* mShadowMatrixBuffer = nullptr;

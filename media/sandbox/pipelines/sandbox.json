@@ -23,6 +23,11 @@
     {
         "BloomRadius": 0.005
     },
+    "IBL":
+    {
+        "Resolution": 256,
+        "IrradianceResolution": 64
+    },
     "PostProcess":
     {
         "Gamma": 2.2,

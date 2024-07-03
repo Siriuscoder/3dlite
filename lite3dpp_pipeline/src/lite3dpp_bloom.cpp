@@ -33,7 +33,6 @@ namespace lite3dpp_pipeline {
         mMinWidth = mMain.window()->width() / 40;
         mBloomRadius = pipelineConfig.getObject(L"BLOOM").getDouble(L"BloomRadius", mBloomRadius);
         mShaderPackage = pipelineConfig.getString(L"ShaderPackage");
-        init();
     }
 
     BloomEffect::~BloomEffect()
@@ -76,7 +75,7 @@ namespace lite3dpp_pipeline {
         return *mMiddleTexture;
     }
 
-    void BloomEffect::init()
+    void BloomEffect::initialize()
     {
         ConfigurationWriter bloomRenderTargetConfig;
         bloomRenderTargetConfig.set(L"Scale", 2.0f) // Первый слой блума в 2 раза меньше чем размер окна.

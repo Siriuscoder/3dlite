@@ -27,11 +27,13 @@ namespace lite3dpp_pipeline {
     {
         MainDepth = 1,
         ShadowMap = 2,
-        GBuffer = 3,
-        SSAO = 4,
-        Combine = 5,
-        BLOOM = 6,
-        PostProcess = 7
+        SurroundDiffuseMap = 3,
+        SurroundIrradianceMap = 4,
+        GBuffer = 5,
+        SSAO = 6,
+        Combine = 7,
+        BLOOM = 8,
+        PostProcess = 9
     };
 
     enum class RenderPassStagePriority
@@ -53,7 +55,8 @@ namespace lite3dpp_pipeline {
     {
         Depth = 1,
         RenderPass = 2,
-        Shadow = 3
+        Shadow = 3,
+        SurroundDiffusePass = 4
     };
 
     class LITE3DPP_PIPELINE_EXPORT SceneGenerator 
