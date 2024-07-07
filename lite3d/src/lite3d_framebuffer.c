@@ -457,6 +457,7 @@ static int lite3d_framebuffer_setup_attachments(lite3d_framebuffer *fb, const li
                     textureTargetEnum[fb->depthAttachment.attachment.attachment->textureTarget],
                     fb->depthAttachment.attachment.attachment->textureID, 0);
                 break;
+            case LITE3D_TEXTURE_CUBE:
             case LITE3D_TEXTURE_2D_ARRAY:
             case LITE3D_TEXTURE_2D_SHADOW_ARRAY:
                 if (flags & LITE3D_FRAMEBUFFER_USE_LAYERED_BINDING)

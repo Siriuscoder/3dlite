@@ -171,6 +171,11 @@ namespace lite3dpp_pipeline {
             mMainScene->addObserver(mShadowManager.get());
         }
 
+        if (mSurrouningLighting)
+        {
+            mSurrouningLighting->setMainCamera(mMainCamera);
+        }
+
         /* Для обновления параметров шейдеров */
         mMainScene->addObserver(this);
 

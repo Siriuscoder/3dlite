@@ -79,6 +79,9 @@ namespace lite3dpp
         bool inFrustum(const LightSource &light) const;
         bool inFrustum(const lite3d_bounding_vol &vol) const;
 
+        void computeCubeProjView(stl<kmMat4>::vector &matrices) const;
+        void computeCubeProjView(const kmVec3 &position, stl<kmMat4>::vector &matrices) const;
+
         virtual void loadFromTemplate(const ConfigurationReader& conf);
 
     private:

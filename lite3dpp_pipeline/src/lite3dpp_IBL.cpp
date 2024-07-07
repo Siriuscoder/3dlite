@@ -21,8 +21,30 @@ IBLDiffuseIrradiance::~IBLDiffuseIrradiance()
 
 void IBLDiffuseIrradiance::initialize(const String& pipelineName, const ConfigurationReader &pipelineConfig)
 {
-    ConfigurationReader iblConfig = pipelineConfig.getObject(L"IBL");
+    mPositionViewCubeMatrices = createMatrixBuffer(pipelineName, "_CubeTransform");
+    mCenteredViewCubeMatrices = createMatrixBuffer(pipelineName, "_StaticCubeTransform");
 
+    ConfigurationReader iblConfig = pipelineConfig.getObject(L"IBL");
+    createDiffuse(pipelineName, iblConfig);
+    //createDiffuseIrradiance(pipelineName, iblConfig);
+
+    // Таймер перерисовки диффузной кубической карты
+    mUpdateTimer = mMain.addTimer("EnvironmentUpdateTimer", 1000);
+}
+
+VBOResource* IBLDiffuseIrradiance::createMatrixBuffer(const String& pipelineName, const String& bufferName)
+{
+    auto matrixBuffer = mMain.getResourceManager()->queryResourceFromJson<UBO>(pipelineName + bufferName,
+        "{\"Dynamic\": true}");
+    
+    mResourcesList.emplace_back(matrixBuffer->getName());
+    // Выделяем место под 6 матриц, нужны будут для рендера 6ти сторон кубической текстуры
+    matrixBuffer->extendBufferBytes(sizeof(kmMat4) * 6);
+    return matrixBuffer;
+}
+
+void IBLDiffuseIrradiance::createDiffuse(const String& pipelineName, const ConfigurationReader &iblConfig)
+{
     auto resolution = iblConfig.getInt(L"Resolution", 256);
     // Создание кубической текстуры окружающего диффузного освещения  
     ConfigurationWriter surroundTextureConfig;
@@ -39,15 +61,14 @@ void IBLDiffuseIrradiance::initialize(const String& pipelineName, const Configur
         pipelineName + "_surroundDiffuse.texture", surroundTextureConfig.write());
     mResourcesList.emplace_back(mSurroundDiffuseTexture->getName());
 
-    auto iresolution = iblConfig.getInt(L"IrradianceResolution", 64);
-    // Создание кубической текстуры сожержащей свертку окружающего диффузного освещения
-    surroundTextureConfig.set(L"Width", iresolution)
-        .set(L"Height", iresolution)
-        .set(L"Filtering", "Linear");
+    // Создание кубической текстуры глубины для рендера сцены
+    surroundTextureConfig.set(L"Filtering", "None")
+        .set(L"TextureFormat", "Depth")
+        .set(L"InternalFormat", "");
 
-    mSurroundIrradianceTexture = mMain.getResourceManager()->queryResourceFromJson<TextureImage>(
-        pipelineName + "_surroundIrradiance.texture", surroundTextureConfig.write());
-    mResourcesList.emplace_back(mSurroundIrradianceTexture->getName());
+    mSurroundDepthTexture = mMain.getResourceManager()->queryResourceFromJson<TextureImage>(
+        pipelineName + "_surroundDepth.texture", surroundTextureConfig.write());
+    mResourcesList.emplace_back(mSurroundDepthTexture->getName());
 
     ConfigurationWriter surroundDiffusePassConfig;
     surroundDiffusePassConfig.set(L"BackgroundColor", kmVec4 { 0.0f, 0.0f, 0.0f, 1.0f })
@@ -63,31 +84,57 @@ void IBLDiffuseIrradiance::initialize(const String& pipelineName, const Configur
                 ConfigurationWriter().set(L"TextureName", mSurroundDiffuseTexture->getName())
             }))
         .set(L"DepthAttachments", ConfigurationWriter()
-            .set(L"Renderbuffer", true));
+            .set(L"TextureName", mSurroundDepthTexture->getName()));
 
     mSurroundDiffusePass = mMain.getResourceManager()->queryResourceFromJson<TextureRenderTarget>(
         pipelineName + "_surroundDiffuse_Pass", surroundDiffusePassConfig.write());
     mResourcesList.emplace_back(mSurroundDiffusePass->getName());
-
     mSurroundDiffusePass->addObserver(this);
+}
 
-  //  auto cubeViewMatrices = mMain.getResourceManager()->queryResourceFromJson<UBO>(pipelineName + "_CubeViewMatrices",
-  //      "{\"Dynamic\": false}");
+void IBLDiffuseIrradiance::createDiffuseIrradiance(const String& pipelineName, const ConfigurationReader &iblConfig)
+{
+    auto iresolution = iblConfig.getInt(L"IrradianceResolution", 64);
+    // Создание кубической текстуры сожержащей свертку окружающего диффузного освещения
+    ConfigurationWriter surroundTextureConfig;
+    surroundTextureConfig.set(L"TextureType", "CUBE")
+        .set(L"Filtering", "Linear")
+        .set(L"Width", iresolution)
+        .set(L"Height", iresolution)
+        .set(L"Wrapping", "ClampToEdge")
+        .set(L"Compression", false)
+        .set(L"TextureFormat", "RGB")
+        .set(L"InternalFormat", "RGB32F");
+
+    mSurroundIrradianceTexture = mMain.getResourceManager()->queryResourceFromJson<TextureImage>(
+        pipelineName + "_surroundIrradiance.texture", surroundTextureConfig.write());
+    mResourcesList.emplace_back(mSurroundIrradianceTexture->getName());
 }
 
 void IBLDiffuseIrradiance::timerTick(lite3d_timer *timerid)
 {
-    // Включаем перересовку по таймеру, каждый кадр обнолвять нет смысла
-    mSurroundDiffusePass->enable();
-    mSurroundIrradiancePass->enable();
+    if (timerid == mUpdateTimer)
+    {
+        // Включаем перересовку по таймеру, каждый кадр обнолвять нет смысла
+        mSurroundDiffusePass->enable();
+        //mSurroundIrradiancePass->enable();
+    }
 }
 
 bool IBLDiffuseIrradiance::beginUpdate(RenderTarget *rt)
 {
+    if (!mMainCamera)
+    {
+        return false;
+    }
+
     if (rt == mSurroundDiffusePass)
     {
         // TODO Обновить матрицы вида
-
+        stl<kmMat4>::vector matrices;
+        kmVec3 pos = {0.0f, 0.0f, 3.0f};
+        mMainCamera->computeCubeProjView(pos, matrices);
+        mPositionViewCubeMatrices->setData(&matrices[0], 0, matrices.size() * sizeof(kmMat4));
     }
 
     return true;

@@ -64,8 +64,7 @@
         },
         {
           "Name": "Environment",
-          "TextureName": "environment.texture",
-          "TexturePath": "samples:textures/json/skybox_metal_chrome.json",
+          "TextureName": "SandboxPipeline_surroundDiffuse.texture",
           "Type": "sampler"
         },
         {
@@ -119,6 +118,78 @@
         {
           "Name": "ShadowIndex",
           "UBOName": "SandboxPipeline_ShadowIndexBuffer",
+          "Type": "UBO"
+        },
+        {
+          "Name": "modelMatrix"
+        }
+      ]
+    },
+    {
+      "Pass": 4,
+      "Program": {
+        "Name": "env_probe.program",
+        "Path": "sandbox:shaders/json/env_probe.json"
+      },
+      "Uniforms": [
+        {
+          "Name": "Albedo",
+          "Type": "v4",
+          "Value": [
+            0.8036746978759766,
+            0.14870759844779968,
+            0.0031140081118792295,
+            1.0
+          ]
+        },
+        {
+          "Name": "Emission",
+          "Type": "v4",
+          "Value": [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        {
+          "Name": "EmissionStrength",
+          "Type": "float",
+          "Value": 0.0
+        },
+        {
+          "Name": "Metallic",
+          "Type": "float",
+          "Value": 0.0
+        },
+        {
+          "Name": "Roughness",
+          "Type": "float",
+          "Value": 0.05000000074505806
+        },
+        {
+          "Name": "LightSources",
+          "UBOName": "SandboxPipeline_MainScene_lightingBufferObject",
+          "Type": "UBO"
+        },
+        {
+          "Name": "LightIndexes",
+          "UBOName": "SandboxPipeline_MainScene_lightingIndexBuffer",
+          "Type": "UBO"
+        },
+        {
+          "Name": "ShadowMaps",
+          "TextureName": "SandboxPipeline_ShadowMap.texture",
+          "Type": "sampler"
+        },
+        {
+          "Name": "ShadowMatrix",
+          "UBOName": "SandboxPipeline_ShadowMatrixBuffer",
+          "Type": "UBO"
+        },
+        {
+          "Name": "CubeTransform",
+          "UBOName": "SandboxPipeline_CubeTransform",
           "Type": "UBO"
         },
         {

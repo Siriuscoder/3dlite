@@ -64,8 +64,7 @@
         },
         {
           "Name": "Environment",
-          "TextureName": "environment.texture",
-          "TexturePath": "samples:textures/json/skybox_metal_chrome.json",
+          "TextureName": "SandboxPipeline_surroundDiffuse.texture",
           "Type": "sampler"
         },
         {

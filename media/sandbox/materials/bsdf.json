@@ -44,8 +44,7 @@
         },
         {
           "Name":"Environment",
-          "TextureName":"environment.texture",
-          "TexturePath":"samples:textures/json/skybox_metal_chrome.json",
+          "TextureName":"SandboxPipeline_surroundDiffuse.texture",
           "Type":"sampler"
         },
         {
@@ -100,6 +99,58 @@
           "Name": "ShadowIndex",
           "UBOName": "SandboxPipeline_ShadowIndexBuffer",
           "Type": "UBO"
+        },
+        {
+          "Name":"modelMatrix"
+        }
+      ]
+    },
+    {
+      "Pass": 4,
+      "Program":{
+        "Name":"env_probe.program",
+        "Path":"sandbox:shaders/json/env_probe.json"
+      },
+      "Uniforms":[
+        {
+          "Name":"<Albedo>"
+        },
+        {
+          "Name":"<Emission>"
+        },
+        {
+          "Name":"<Emission Strength>"
+        },
+        {
+          "Name":"<Metallic>"
+        },
+        {
+          "Name":"<Roughness>"
+        },
+        {
+          "Name":"LightSources",
+          "UBOName": "SandboxPipeline_MainScene_lightingBufferObject",
+          "Type":"UBO"
+        },
+        {
+          "Name":"LightIndexes",
+          "UBOName": "SandboxPipeline_MainScene_lightingIndexBuffer",
+          "Type":"UBO"
+        },
+        {
+          "Name":"ShadowMaps",
+          "TextureName":"SandboxPipeline_ShadowMap.texture",
+          "Type":"sampler"
+        },
+        {
+          "Name": "ShadowMatrix",
+          "UBOName": "SandboxPipeline_ShadowMatrixBuffer",
+          "Type": "UBO"
+        },
+        {
+          "Name":"CubeTransform",
+          "UBOName":"SandboxPipeline_CubeTransform",
+          "Type":"UBO"
         },
         {
           "Name":"modelMatrix"

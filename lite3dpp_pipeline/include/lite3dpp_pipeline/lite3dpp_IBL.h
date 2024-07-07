@@ -31,6 +31,7 @@ public:
 
     void initialize(const String& pipelineName, const ConfigurationReader &pipelineConfig);
     inline RenderTarget* getDiffusePass() { return mSurroundDiffusePass; }
+    inline void setMainCamera(Camera *camera) { mMainCamera = camera; }
 
 protected:
 
@@ -38,13 +39,22 @@ protected:
     void postUpdate(RenderTarget *rt) override;
     bool beginUpdate(RenderTarget *rt) override;
 
+    void createDiffuse(const String& pipelineName, const ConfigurationReader &iblConfig);
+    void createDiffuseIrradiance(const String& pipelineName, const ConfigurationReader &iblConfig);
+    VBOResource* createMatrixBuffer(const String& pipelineName, const String& bufferName);
+
 protected:
 
     Main& mMain;
+    VBOResource *mPositionViewCubeMatrices = nullptr;
+    VBOResource *mCenteredViewCubeMatrices = nullptr;
     RenderTarget *mSurroundDiffusePass = nullptr;
     RenderTarget *mSurroundIrradiancePass = nullptr;
     Texture *mSurroundDiffuseTexture = nullptr;
+    Texture *mSurroundDepthTexture = nullptr;
     Texture *mSurroundIrradianceTexture = nullptr;
+    lite3d_timer *mUpdateTimer = nullptr;
+    Camera *mMainCamera = nullptr;
     stl<String>::list mResourcesList;
 };
 
