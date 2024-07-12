@@ -153,7 +153,7 @@ namespace lite3dpp_pipeline {
             mainSceneGenerator.addCamera(cameraName, cameraPipelineConfig);
             constructShadowManager(pipelineConfig, cameraName, mainSceneGenerator);
             constructCameraDepthPass(pipelineConfig, cameraName, mainSceneGenerator);
-            constructSurroundingIrradiancePass(pipelineConfig, cameraName, mainSceneGenerator);
+            constructIBL(pipelineConfig, cameraName, mainSceneGenerator);
             constructCameraPipeline(pipelineConfig, cameraName, mainSceneGenerator);
             constructPostProcessPass(pipelineConfig, cameraName, mainSceneGenerator);
             constructSkyBoxPass(pipelineConfig, cameraName, cameraPipelineConfig);
@@ -377,14 +377,8 @@ namespace lite3dpp_pipeline {
         }
     }
 
-    void PipelineBase::constructSkyBoxPass(const ConfigurationReader &pipelineConfig, const String &cameraName, 
-        const ConfigurationWriter &mainCameraConfig)
+    void PipelineBase::createSkyBoxMesh()
     {
-        if (!pipelineConfig.has(L"SkyBox"))
-        {
-            return;
-        }
-
         // Создаем built-in Skybox mesh, если еще не создан 
         if (!getMain().getResourceManager()->resourceExists("SkyBox.mesh"))
         {
@@ -394,6 +388,17 @@ namespace lite3dpp_pipeline {
                     .set(L"Size", kmVec3 { 2.0f, 2.0f, 2.0f})
                     .write());
         }
+    }
+
+    void PipelineBase::constructSkyBoxPass(const ConfigurationReader &pipelineConfig, const String &cameraName, 
+        const ConfigurationWriter &mainCameraConfig)
+    {
+        if (!pipelineConfig.has(L"SkyBox"))
+        {
+            return;
+        }
+
+        createSkyBoxMesh();
 
         SDL_assert(mCombinePass);
 
@@ -443,7 +448,7 @@ namespace lite3dpp_pipeline {
         mSkyBoxStage->addObject("SkyBox", SkyBoxObjectGenerator(mSkyBoxStageMaterial->getName()).generate());
     }
 
-    void PipelineBase::constructSurroundingIrradiancePass(const ConfigurationReader &pipelineConfig, const String &cameraName,
+    void PipelineBase::constructIBL(const ConfigurationReader &pipelineConfig, const String &cameraName,
         SceneGenerator &sceneGenerator)
     {
         if (!pipelineConfig.has(L"IBL"))
@@ -451,8 +456,10 @@ namespace lite3dpp_pipeline {
             return;
         }
 
-        mSurrouningLighting = std::make_unique<IBLDiffuseIrradiance>(getMain());
-        mSurrouningLighting->initialize(getName(), pipelineConfig);
+        createSkyBoxMesh();
+
+        mSurrouningLighting = std::make_unique<IBLDiffuseIrradiance>(getMain(), getName(), mShaderPackage);
+        mSurrouningLighting->initialize(pipelineConfig);
 
         sceneGenerator.addRenderTarget(cameraName, mSurrouningLighting->getDiffusePass()->getName(), ConfigurationWriter()
             .set(L"Priority", static_cast<int>(RenderPassStagePriority::ForwardStage))

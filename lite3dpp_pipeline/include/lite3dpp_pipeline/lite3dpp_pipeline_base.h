@@ -62,9 +62,10 @@ namespace lite3dpp_pipeline {
             SceneGenerator &sceneGenerator);
         virtual void constructSkyBoxPass(const ConfigurationReader &pipelineConfig, const String &cameraName,
             const ConfigurationWriter &mainCameraConfig);
-        virtual void constructSurroundingIrradiancePass(const ConfigurationReader &pipelineConfig, const String &cameraName,
+        virtual void constructIBL(const ConfigurationReader &pipelineConfig, const String &cameraName,
             SceneGenerator &sceneGenerator);
         
+        void createSkyBoxMesh();
         void createBigTriangleMesh();
         void updateExposure();
 

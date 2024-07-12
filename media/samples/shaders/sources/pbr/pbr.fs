@@ -123,11 +123,11 @@ vec3 ComputeIllumination(vec3 P, vec3 N, vec3 albedo, vec3 emission, vec3 specul
     vec3 kD = 1.0 - F;
     kD *= 1.0 - specular.z;
 
-    float specularLevel = clamp(specular.y * IRRADIANCE_SPECULAR_MAX_LOD, IRRADIANCE_SPECULAR_MIN_LOD, IRRADIANCE_SPECULAR_MAX_LOD);
-    vec3 globalIrradiance = textureLod(Environment, N, IRRADIANCE_DIFFUSE_LOD).rgb;
-    vec3 specularAmbient = textureLod(Environment, R, specularLevel).rgb * F * saFactor;
+    //float specularLevel = clamp(specular.y * IRRADIANCE_SPECULAR_MAX_LOD, IRRADIANCE_SPECULAR_MIN_LOD, IRRADIANCE_SPECULAR_MAX_LOD);
+    vec3 globalIrradiance = texture(Environment, N).rgb;
+    //vec3 specularAmbient = textureLod(Environment, -R, 0).rgb * saFactor;
     vec3 diffuseAmbient = kD * globalIrradiance * albedo * DIFFUSE_STRENGTH;
-    vec3 totalAmbient = (diffuseAmbient + specularAmbient) * aoFactor;
+    //vec3 totalAmbient = (diffuseAmbient + specularAmbient) * aoFactor;
 
-    return totalAmbient + totalLx + emission;
+    return diffuseAmbient + totalLx + emission;
 }

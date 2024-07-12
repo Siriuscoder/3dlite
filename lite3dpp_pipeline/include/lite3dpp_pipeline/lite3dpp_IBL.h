@@ -26,11 +26,11 @@ class LITE3DPP_PIPELINE_EXPORT IBLDiffuseIrradiance : public RenderTargetObserve
 {
 public:
 
-    IBLDiffuseIrradiance(Main& main);
+    IBLDiffuseIrradiance(Main& main, const String& pipelineName, const String& shaderPackage);
     virtual ~IBLDiffuseIrradiance();
 
-    void initialize(const String& pipelineName, const ConfigurationReader &pipelineConfig);
-    inline RenderTarget* getDiffusePass() { return mSurroundDiffusePass; }
+    void initialize(const ConfigurationReader &pipelineConfig);
+    inline RenderTarget* getDiffusePass() { return mSpecularMapPass; }
     inline void setMainCamera(Camera *camera) { mMainCamera = camera; }
 
 protected:
@@ -39,20 +39,22 @@ protected:
     void postUpdate(RenderTarget *rt) override;
     bool beginUpdate(RenderTarget *rt) override;
 
-    void createDiffuse(const String& pipelineName, const ConfigurationReader &iblConfig);
-    void createDiffuseIrradiance(const String& pipelineName, const ConfigurationReader &iblConfig);
-    VBOResource* createMatrixBuffer(const String& pipelineName, const String& bufferName);
+    void createDiffuse(const ConfigurationReader &iblConfig);
+    void createDiffuseIrradiance(const ConfigurationReader &iblConfig);
+    VBOResource* createMatrixBuffer(const String& bufferName);
 
 protected:
 
     Main& mMain;
+    String mPipelineName;
+    String mShaderPackage;
     VBOResource *mPositionViewCubeMatrices = nullptr;
     VBOResource *mCenteredViewCubeMatrices = nullptr;
-    RenderTarget *mSurroundDiffusePass = nullptr;
-    RenderTarget *mSurroundIrradiancePass = nullptr;
-    Texture *mSurroundDiffuseTexture = nullptr;
-    Texture *mSurroundDepthTexture = nullptr;
-    Texture *mSurroundIrradianceTexture = nullptr;
+    RenderTarget *mSpecularMapPass = nullptr;
+    RenderTarget *mIrradianceMapPass = nullptr;
+    Texture *mSpecularMap = nullptr;
+    Texture *mDepthCubeMap = nullptr;
+    Texture *mIrradianceMap = nullptr;
     lite3d_timer *mUpdateTimer = nullptr;
     Camera *mMainCamera = nullptr;
     stl<String>::list mResourcesList;
