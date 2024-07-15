@@ -26,9 +26,9 @@
           "Name": "Albedo",
           "Type": "v4",
           "Value": [
-            0.6399999856948853,
-            0.6200000047683716,
-            0.6600000262260437,
+            1.0,
+            0.71,
+            0.29,
             1.0
           ]
         },
@@ -50,12 +50,12 @@
         {
           "Name": "Metallic",
           "Type": "float",
-          "Value": 0.0
+          "Value": 1.0
         },
         {
           "Name": "Roughness",
           "Type": "float",
-          "Value": 0.05000000074505806
+          "Value": 0.415
         },
         {
           "Name": "SpecularAmbientFactor",
@@ -63,8 +63,13 @@
           "Value": 0.0
         },
         {
-          "Name": "Environment",
-          "TextureName": "SandboxPipeline_surroundDiffuse.texture",
+          "Name": "IrradianceMap",
+          "TextureName": "SandboxPipeline_IrradianceMap.texture",
+          "Type": "sampler"
+        },
+        {
+          "Name": "SpecularMap",
+          "TextureName": "SandboxPipeline_SpecularMap.texture",
           "Type": "sampler"
         },
         {

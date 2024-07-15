@@ -76,6 +76,8 @@ public:
         node->getLight()->setAttenuationQuadratic(35.23f);
         node->getLight()->setRadiance(60.0f);
         node->getLight()->enabled(true);
+
+        mPipeline->rebuildIBL();
     }
 
     void updateFlashLight()

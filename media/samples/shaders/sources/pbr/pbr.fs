@@ -7,7 +7,8 @@
 #define LITE3D_LIGHT_DIRECTIONAL        2.0
 #define LITE3D_LIGHT_SPOT               3.0
 
-uniform samplerCube Environment;
+uniform samplerCube IrradianceMap;
+uniform samplerCube SpecularMap;
 
 layout(std140) uniform LightSources
 {
@@ -123,11 +124,11 @@ vec3 ComputeIllumination(vec3 P, vec3 N, vec3 albedo, vec3 emission, vec3 specul
     vec3 kD = 1.0 - F;
     kD *= 1.0 - specular.z;
 
-    //float specularLevel = clamp(specular.y * IRRADIANCE_SPECULAR_MAX_LOD, IRRADIANCE_SPECULAR_MIN_LOD, IRRADIANCE_SPECULAR_MAX_LOD);
-    vec3 globalIrradiance = texture(Environment, N).rgb;
-    //vec3 specularAmbient = textureLod(Environment, -R, 0).rgb * saFactor;
-    vec3 diffuseAmbient = kD * globalIrradiance * albedo * DIFFUSE_STRENGTH;
-    //vec3 totalAmbient = (diffuseAmbient + specularAmbient) * aoFactor;
+    float specularLevel = clamp(sqrt(specular.y) * IRRADIANCE_SPECULAR_MAX_LOD, IRRADIANCE_SPECULAR_MIN_LOD, IRRADIANCE_SPECULAR_MAX_LOD);
+    vec3 globalIrradiance = texture(IrradianceMap, N).rgb;
+    vec3 specularAmbient = textureLod(SpecularMap, -R, specularLevel).rgb * F * specular.x;
+    vec3 diffuseAmbient = kD * globalIrradiance * DIFFUSE_STRENGTH;
+    vec3 totalAmbient = (diffuseAmbient + specularAmbient) * albedo * aoFactor;
 
-    return diffuseAmbient + totalLx + emission;
+    return totalAmbient + totalLx + emission;
 }

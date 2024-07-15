@@ -171,9 +171,9 @@ namespace lite3dpp_pipeline {
             mMainScene->addObserver(mShadowManager.get());
         }
 
-        if (mSurrouningLighting)
+        if (mIBL)
         {
-            mSurrouningLighting->setMainCamera(mMainCamera);
+            mIBL->setMainCamera(mMainCamera);
         }
 
         /* Для обновления параметров шейдеров */
@@ -194,7 +194,7 @@ namespace lite3dpp_pipeline {
         mResourcesList.clear();
         mShadowManager.reset();
         mBloomEffect.reset();
-        mSurrouningLighting.reset();
+        mIBL.reset();
     }
 
     void PipelineBase::createBigTriangleMesh()
@@ -458,10 +458,10 @@ namespace lite3dpp_pipeline {
 
         createSkyBoxMesh();
 
-        mSurrouningLighting = std::make_unique<IBLDiffuseIrradiance>(getMain(), getName(), mShaderPackage);
-        mSurrouningLighting->initialize(pipelineConfig);
+        mIBL = std::make_unique<IBLDiffuseIrradiance>(getMain(), getName(), mShaderPackage);
+        mIBL->initialize(pipelineConfig);
 
-        sceneGenerator.addRenderTarget(cameraName, mSurrouningLighting->getDiffusePass()->getName(), ConfigurationWriter()
+        sceneGenerator.addRenderTarget(cameraName, mIBL->getDiffusePass()->getName(), ConfigurationWriter()
             .set(L"Priority", static_cast<int>(RenderPassStagePriority::ForwardStage))
             .set(L"TexturePass", static_cast<int>(TexturePassTypes::SurroundDiffusePass))
             .set(L"DepthTest", true)
@@ -511,5 +511,13 @@ namespace lite3dpp_pipeline {
     {
         Material::setFloatv3GlobalParameter("Eye", getMainCamera().getWorldPosition());
         return true;
+    }
+
+    void PipelineBase::rebuildIBL()
+    {
+        if (mIBL)
+        {
+            mIBL->rebuildBuffers();
+        }
     }
 }}

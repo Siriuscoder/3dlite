@@ -63,8 +63,13 @@
           "Value": 0.0
         },
         {
-          "Name": "Environment",
-          "TextureName": "SandboxPipeline_surroundDiffuse.texture",
+          "Name": "IrradianceMap",
+          "TextureName": "SandboxPipeline_IrradianceMap.texture",
+          "Type": "sampler"
+        },
+        {
+          "Name": "SpecularMap",
+          "TextureName": "SandboxPipeline_SpecularMap.texture",
           "Type": "sampler"
         },
         {

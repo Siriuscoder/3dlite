@@ -183,13 +183,18 @@ void IBLDiffuseIrradiance::createDiffuseIrradiance(const ConfigurationReader &ib
     mIrradianceMapScene->addObject("SkyBox", SkyBoxObjectGenerator(IrradianceCumputeShader->getName()).generate());
 }
 
+void IBLDiffuseIrradiance::rebuildBuffers()
+{
+    // Включаем перересовку по таймеру, каждый кадр обнолвять нет смысла
+    mIrradianceMapPass->enable();
+}
+
 void IBLDiffuseIrradiance::timerTick(lite3d_timer *timerid)
 {
+    // Включаем перересовку по таймеру, каждый кадр обнолвять нет смысла
     if (timerid == mUpdateTimer)
     {
-        // Включаем перересовку по таймеру, каждый кадр обнолвять нет смысла
-        mSpecularMapPass->enable();
-        mIrradianceMapPass->enable();
+        //rebuildBuffers();
     }
 }
 
@@ -204,8 +209,8 @@ bool IBLDiffuseIrradiance::beginUpdate(RenderTarget *rt)
     {
         // TODO Обновить матрицы вида
         stl<kmMat4>::vector matrices;
-        kmVec3 pos = {0.0f, 0.0f, 3.0f};
-        mMainCamera->computeCubeProjView(pos, matrices);
+        //kmVec3 pos = {0.0f, 0.0f, 3.0f};
+        mMainCamera->computeCubeProjView(matrices);
         mPositionViewCubeMatrices->setData(&matrices[0], 0, matrices.size() * sizeof(kmMat4));
     }
     else if (rt == mIrradianceMapPass)
@@ -221,9 +226,9 @@ bool IBLDiffuseIrradiance::beginUpdate(RenderTarget *rt)
 
 void IBLDiffuseIrradiance::postUpdate(RenderTarget *rt)
 {
+    if (rt == mIrradianceMapPass)
     // После обработка соответствующего прохода, отключим его для дальнейшего включения по таймеру 
-    rt->disable();
+        rt->disable();
 }
-
 
 }}

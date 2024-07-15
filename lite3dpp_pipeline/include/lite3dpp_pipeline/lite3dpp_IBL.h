@@ -32,6 +32,7 @@ public:
     void initialize(const ConfigurationReader &pipelineConfig);
     inline RenderTarget* getDiffusePass() { return mSpecularMapPass; }
     inline void setMainCamera(Camera *camera) { mMainCamera = camera; }
+    void rebuildBuffers();
 
 protected:
 

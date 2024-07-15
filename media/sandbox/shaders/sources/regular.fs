@@ -19,7 +19,7 @@ vec3 getEmission(vec2 uv)
 
 vec3 getNormal(vec2 uv, mat3 tbn)
 {
-    return normalize(tbn[2]);
+    return tbn[2];
 }
 
 vec3 getSpecular(vec2 uv)

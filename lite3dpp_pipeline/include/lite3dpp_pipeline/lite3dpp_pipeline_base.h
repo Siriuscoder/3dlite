@@ -42,6 +42,7 @@ namespace lite3dpp_pipeline {
         void setContrast(float contrast);
         void setSaturation(float saturation);
         void setSkyBoxEmission(float emission);
+        void rebuildIBL();
 
     protected:
 
@@ -77,7 +78,7 @@ namespace lite3dpp_pipeline {
         String mShaderPackage;
         std::unique_ptr<ShadowManager> mShadowManager;
         std::unique_ptr<BloomEffect> mBloomEffect;
-        std::unique_ptr<IBLDiffuseIrradiance> mSurrouningLighting;
+        std::unique_ptr<IBLDiffuseIrradiance> mIBL;
         Camera *mMainCamera = nullptr;
         RenderTarget *mDepthPass = nullptr;
         RenderTarget *mCombinePass = nullptr;

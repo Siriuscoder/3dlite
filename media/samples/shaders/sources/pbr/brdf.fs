@@ -62,7 +62,7 @@ vec3 BRDF(vec3 albedo, float NdotL, float HdotV, float NdotV, float NdotH, vec3 
     kD *= 1.0 - specular.z;
         
     vec3 s = (ndf * g * F) / (4.0 * NdotV * NdotL);
-    return kD * albedo / M_PI;// + s;
+    return kD * albedo / M_PI + s;
 }
 
 vec3 Lx(vec3 albedo, vec3 radiance, vec3 L, vec3 N, vec3 V, vec3 specular, float NdotV)

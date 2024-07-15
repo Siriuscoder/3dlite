@@ -9,11 +9,15 @@ layout(std140) uniform CubeTransform
 };
 
 in vec2 iuv_g[];
-in mat3 itbn_g[];
+in vec3 iwn_g[];
+in vec3 iwt_g[];
+in vec3 iwb_g[];
 
 out vec2 iuv;    // UVs
-out vec4 ivv;    // world-space position
-out mat3 itbn;   // The matrix that transforms vector from tangent space to world space 
+out vec3 iwv;    // world-space position
+out vec3 iwn;
+out vec3 iwt;
+out vec3 iwb;
 
 void main()
 {
@@ -23,10 +27,17 @@ void main()
 
         for (int j = 0; j < 3; ++j)
         {
-            ivv = gl_in[j].gl_Position;
+            // world-space position
+            iwv = gl_in[j].gl_Position.xyz / gl_in[j].gl_Position.w;
+            // screen-space position
+            gl_Position = projViewCubeMatrices[i] * gl_in[j].gl_Position;
+            // UVs
             iuv = iuv_g[j];
-            itbn = itbn_g[j];
-            gl_Position = projViewCubeMatrices[i] * ivv;
+            // TBN
+            iwn = iwn_g[j];
+            iwt = iwt_g[j];
+            iwb = iwb_g[j];
+
             EmitVertex();
         }
         EndPrimitive();

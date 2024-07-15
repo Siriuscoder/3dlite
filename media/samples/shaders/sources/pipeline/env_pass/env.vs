@@ -9,7 +9,9 @@ layout(location = 4) in vec3 btang;
 uniform mat4 modelMatrix;
 
 out vec2 iuv_g;
-out mat3 itbn_g;
+out vec3 iwn_g;
+out vec3 iwt_g;
+out vec3 iwb_g;
 
 void main()
 {
@@ -19,7 +21,7 @@ void main()
     gl_Position = modelMatrix * vertex;
     // calculate tangent, normal, binormal in world space
     mat3 normalMatrix = mat3(modelMatrix[0].xyz, modelMatrix[1].xyz, modelMatrix[2].xyz);
-    itbn_g[0] = normalize(normalMatrix * tang);
-    itbn_g[1] = normalize(normalMatrix * btang);
-    itbn_g[2] = normalize(normalMatrix * normal);
+    iwt_g = normalize(normalMatrix * tang);
+    iwb_g = normalize(normalMatrix * btang);
+    iwn_g = normalize(normalMatrix * normal);
 }
