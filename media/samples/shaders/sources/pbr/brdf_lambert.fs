@@ -3,7 +3,7 @@
 // cook-torrance bidirectional reflective distribution function
 vec3 BRDF(vec3 albedo, float HdotV, vec3 specular)
 {
-    vec3 F = fresnelSchlickRoughness(HdotV, albedo, specular, FRESNEL_POWER);
+    vec3 F = fresnelSchlickRoughness(HdotV, albedo, specular);
     return diffuseFactor(F, specular.z) * albedo / M_PI;
 }
 

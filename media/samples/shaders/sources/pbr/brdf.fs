@@ -40,7 +40,7 @@ vec3 BRDF(vec3 albedo, float NdotL, float HdotV, float NdotV, float NdotH, vec3 
 {
     float ndf = NDF(NdotH, specular.y);
     float g = G(NdotV, NdotL, specular.y);
-    vec3 F = fresnelSchlickRoughness(HdotV, albedo, specular, FRESNEL_POWER);
+    vec3 F = fresnelSchlickRoughness(HdotV, albedo, specular);
 
     vec3 s = (ndf * g * F) / (4.0 * NdotV * NdotL);
     return diffuseFactor(F, specular.z) * albedo / M_PI + s;

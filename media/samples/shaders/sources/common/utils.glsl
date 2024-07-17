@@ -83,6 +83,16 @@ vec2 viewPositionToUV(vec3 pos)
     return uv.xy * 0.5 + 0.5;   // transform to range 0.0 - 1.0 
 }
 
+mat3 TBN(vec3 normal, vec3 tangent)
+{
+    normal = normalize(normal);
+    // re-orthogonalize T with respect to N
+    tangent = normalize(tangent - dot(tangent, normal) * normal);
+    vec3 bitangent = cross(normal, tangent);
+    // TBN transforms vector from tangent space to world space 
+    return mat3(tangent, bitangent, normal);
+}
+
 float fadeScreenEdge(vec2 uv)
 {
     vec2 fade = max(vec2(0.0), 12.0 * abs(uv - 0.5) - 5.0);
@@ -202,13 +212,13 @@ vec3 ditherBayer(vec3 color)
 }
 
 // Fresnel equation (Schlick)
-vec3 fresnelSchlickRoughness(float teta, vec3 albedo, vec3 specular, float power)
+vec3 fresnelSchlickRoughness(float teta, vec3 albedo, vec3 specular)
 {
     // Calculate F0 coeff (metalness)
     vec3 F0 = vec3(BASE_REFLECTION_AT_ZERO_INCIDENCE);
     F0 = mix(F0, albedo, specular.z);
 
-    vec3 F = F0 + (max(vec3(1.0 - specular.y), F0) - F0) * pow(clamp(1.0 - teta, 0.0, 1.0), power);
+    vec3 F = F0 + (max(vec3(1.0 - specular.y), F0) - F0) * pow(clamp(1.0 - teta, 0.0, 1.0), 5.0);
     return clamp(F * specular.x, 0.0, 1.0);
 }
 

@@ -7,7 +7,7 @@ vec3 ComputeEnvironmentLighting(vec3 V, vec3 N, float NdotV, vec3 albedo, vec3 s
     // Reflect vector from surface
     vec3 R = reflect(-V, N);
     // Fresnel by Schlick aproxx
-    vec3 F = fresnelSchlickRoughness(NdotV, albedo, specular, FRESNEL_POWER);
+    vec3 F = fresnelSchlickRoughness(NdotV, albedo, specular);
     // Duffuse irradiance 
     vec3 globalIrradiance = textureLod(Environment, N * CUBE_MAP_UV_SCALE, IRRADIANCE_DIFFUSE_LOD).rgb;
     vec3 diffuseEnv = diffuseFactor(F, specular.z) * globalIrradiance * DIFFUSE_IRRADIANCE_STRENGTH;

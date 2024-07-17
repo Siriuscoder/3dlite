@@ -1,6 +1,5 @@
 #include "samples:shaders/sources/common/version.def"
 
-#define FRESNEL_POWER                   5.0
 #define DIFFUSE_IRRADIANCE_STRENGTH     1.0
 #define IRRADIANCE_DIFFUSE_LOD          4
 #define SPECULAR_MAX_LOD                8

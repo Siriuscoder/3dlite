@@ -1,4 +1,5 @@
 #include "samples:shaders/sources/common/version.def"
+#include "samples:shaders/sources/common/utils_inc.glsl"
 
 layout(location = 0) out vec4 channel01;
 layout(location = 1) out vec4 channel02;
@@ -20,19 +21,12 @@ float getSpecularAmbient(vec2 uv);
 
 void main()
 {
-    // TBN transforms vector from tangent space to world space 
-    mat3 TBN = mat3(
-        normalize(iwt),
-        normalize(iwb),
-        normalize(iwn)
-    );
-
     // Get albedo 
     vec3 albedo = getAlbedo(iuv).rgb;
     // Get emission  
     vec3 emission = getEmission(iuv);
     // Get world-space normal
-    vec3 normal = getNormal(iuv, TBN);
+    vec3 normal = getNormal(iuv, TBN(iwn, iwt));
     // Get Specular params
     vec3 specular = getSpecular(iuv);
 

@@ -25,6 +25,7 @@ float noiseInterleavedGradient(vec2 xy);
 vec3 worldToViewSpacePosition(vec3 vw);
 vec3 worldToViewSpaceDirection(vec3 dirw);
 vec2 viewPositionToUV(vec3 pos);
+mat3 TBN(vec3 normal, vec3 tangent);
 
 //////////// Other utilities
 float fadeScreenEdge(vec2 uv);
@@ -33,6 +34,7 @@ float linearizeDepth(float z, float near, float far);
 
 //////////// Colour correction utilities 
 vec3 linearToSRGB(vec3 color);
+vec3 SRGBToLinear(vec3 color);
 vec3 reinhardTonemapping(vec3 x);
 vec3 exposureTonemapping(vec3 x);
 vec3 nautilusTonemapping(vec3 c);
@@ -41,5 +43,5 @@ mat4 saturationMatrix();
 vec3 ditherBayer(vec3 color);
 
 //////////// PBR utilities
-vec3 fresnelSchlickRoughness(float teta, vec3 albedo, vec3 specular, float power);
+vec3 fresnelSchlickRoughness(float teta, vec3 albedo, vec3 specular);
 vec3 diffuseFactor(vec3 F, float metallic);

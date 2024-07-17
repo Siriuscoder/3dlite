@@ -1,4 +1,5 @@
 #include "samples:shaders/sources/common/version.def"
+#include "samples:shaders/sources/common/utils_inc.glsl"
 
 out vec4 fragColor;
 
@@ -21,19 +22,12 @@ vec3 ComputeIllumination(vec3 vw, vec3 nw, vec3 albedo, vec3 emission, vec3 spec
 
 void main()
 {
-    // TBN transforms vector from tangent space to world space 
-    mat3 TBN = mat3(
-        normalize(iwt),
-        normalize(iwb),
-        normalize(iwn)
-    );
-
     // Get albedo 
     vec4 albedo = getAlbedo(iuv);
     // Get emission  
     vec3 emission = getEmission(iuv);
     // Get world-space normal
-    vec3 normal = getNormal(iuv, TBN);
+    vec3 normal = getNormal(iuv, TBN(iwn, iwt));
     // Get Specular params
     vec3 specular = getSpecular(iuv);
     // Compute total illumination 

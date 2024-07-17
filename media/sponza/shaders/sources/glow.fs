@@ -25,5 +25,5 @@ vec3 getSpecular(vec2 uv)
 
 float getSpecularAmbient(vec2 uv)
 {
-    return 0.10;
+    return 1.0;
 }
