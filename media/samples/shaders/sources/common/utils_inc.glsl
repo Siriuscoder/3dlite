@@ -1,8 +1,8 @@
 //////////// Math utilities
 
-#define M_PI 3.1415926535897932384626433832795
-#define FLT_EPSILON 1.192092896e-07F
-#define PHI 1.61803398874989484820459
+#define M_PI                                    3.1415926535897932384626433832795
+#define FLT_EPSILON                             1.192092896e-07F
+#define PHI                                     1.61803398874989484820459
 
 bool isNear(float a1, float a2);
 bool isNear(vec3 a1, vec3 a2);
@@ -39,3 +39,7 @@ vec3 nautilusTonemapping(vec3 c);
 mat4 contrastMatrix();
 mat4 saturationMatrix();
 vec3 ditherBayer(vec3 color);
+
+//////////// PBR utilities
+vec3 fresnelSchlickRoughness(float teta, vec3 albedo, vec3 specular, float power);
+vec3 diffuseFactor(vec3 F, float metallic);

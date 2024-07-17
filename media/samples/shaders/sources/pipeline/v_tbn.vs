@@ -7,7 +7,6 @@ layout(location = 3) in vec3 tang;
 layout(location = 4) in vec3 btang;
 
 uniform mat4 projViewMatrix;
-uniform mat4 viewMatrix;
 uniform mat4 modelMatrix;
 uniform mat3 normalMatrix;
 

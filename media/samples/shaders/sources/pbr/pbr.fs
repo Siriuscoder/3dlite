@@ -26,8 +26,8 @@ uniform vec3 Eye;
 float ShadowVisibility(float shadowIndex, vec3 P, vec3 N, vec3 L);
 /* Illumination compute module */
 vec3 Lx(vec3 albedo, vec3 radiance, vec3 L, vec3 N, vec3 V, vec3 specular, float NdotV);
-/* Fresnel equation (Schlick) */
-vec3 FresnelSchlickRoughness(float NdotV, vec3 albedo, vec3 specular);
+/* Environment lighting */
+vec3 ComputeEnvironmentLighting(vec3 V, vec3 N, float NdotV, vec3 albedo, vec3 specular, float aoFactor, float saFactor);
 
 vec3 ComputeIllumination(vec3 P, vec3 N, vec3 albedo, vec3 emission, vec3 specular, float aoFactor, 
     float saFactor)
@@ -36,12 +36,7 @@ vec3 ComputeIllumination(vec3 P, vec3 N, vec3 albedo, vec3 emission, vec3 specul
     vec3 V = normalize(Eye - P);
     // HdotV
     float NdotV = doubleSidedNdotV(N, V);
-    // Reflect vector for ambient specular
-    vec3 R = reflect(V, N);
-    // Fresnel by Schlick aproxx
-    vec3 F = FresnelSchlickRoughness(NdotV, albedo, specular);
-
-    vec3 totalLx = vec3(0.0);
+    vec3 directLx = vec3(0.0);
 
     int count = indexes[0].x;
     for (int i = 1; i <= count; i++)
@@ -118,17 +113,10 @@ vec3 ComputeIllumination(vec3 P, vec3 N, vec3 albedo, vec3 emission, vec3 specul
         if (isZero(radiance))
             continue;
         /* L for current lights source */ 
-        totalLx += Lx(albedo, radiance, L, N, V, specular, NdotV);
+        directLx += Lx(albedo, radiance, L, N, V, specular, NdotV);
     }
 
-    vec3 kD = 1.0 - F;
-    kD *= 1.0 - specular.z;
+    vec3 indirectLx = ComputeEnvironmentLighting(V, N, NdotV, albedo, specular, aoFactor, saFactor);
 
-    float specularLevel = clamp(sqrt(specular.y) * IRRADIANCE_SPECULAR_MAX_LOD, IRRADIANCE_SPECULAR_MIN_LOD, IRRADIANCE_SPECULAR_MAX_LOD);
-    vec3 globalIrradiance = texture(IrradianceMap, N).rgb;
-    vec3 specularAmbient = textureLod(SpecularMap, -R, specularLevel).rgb * F * specular.x;
-    vec3 diffuseAmbient = kD * globalIrradiance * DIFFUSE_STRENGTH;
-    vec3 totalAmbient = (diffuseAmbient + specularAmbient) * albedo * aoFactor;
-
-    return totalAmbient + totalLx + emission;
+    return indirectLx + directLx + emission;
 }

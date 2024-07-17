@@ -4,9 +4,9 @@ out vec4 fragColor;
 
 in vec2 iuv;    // UVs
 in vec3 iwv;    // world-space position
-in vec3 iwn;
-in vec3 iwt;
-in vec3 iwb;
+in vec3 iwn;    // world-space normal
+in vec3 iwt;    // world-space tangent
+in vec3 iwb;    // world-space bitangent
 
 // You must implement this methods in you shader to provide data for forward pass
 vec4 getAlbedo(vec2 uv);
