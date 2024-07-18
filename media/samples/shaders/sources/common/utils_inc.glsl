@@ -1,4 +1,5 @@
 //////////// Math utilities
+////////////////////////////////////////////////////////////////////////////
 
 #define M_PI                                    3.1415926535897932384626433832795
 #define FLT_EPSILON                             1.192092896e-07F
@@ -12,6 +13,7 @@ bool isValidUV(vec2 uv);
 float lerp(float a, float b, float f);
 
 //////////// Noise and random utilities
+////////////////////////////////////////////////////////////////////////////
 
 // Gold Noise ©2015 dcerisano@standard3d.com
 // - based on the Golden Ratio
@@ -22,17 +24,20 @@ float goldNoise(vec2 xy);
 float noiseInterleavedGradient(vec2 xy);
 
 //////////// Transformations
+////////////////////////////////////////////////////////////////////////////
 vec3 worldToViewSpacePosition(vec3 vw);
 vec3 worldToViewSpaceDirection(vec3 dirw);
 vec2 viewPositionToUV(vec3 pos);
 mat3 TBN(vec3 normal, vec3 tangent);
 
 //////////// Other utilities
+////////////////////////////////////////////////////////////////////////////
 float fadeScreenEdge(vec2 uv);
 float doubleSidedNdotV(inout vec3 N, vec3 V);
 float linearizeDepth(float z, float near, float far);
 
 //////////// Colour correction utilities 
+////////////////////////////////////////////////////////////////////////////
 vec3 linearToSRGB(vec3 color);
 vec3 SRGBToLinear(vec3 color);
 vec3 reinhardTonemapping(vec3 x);
@@ -43,5 +48,12 @@ mat4 saturationMatrix();
 vec3 ditherBayer(vec3 color);
 
 //////////// PBR utilities
+////////////////////////////////////////////////////////////////////////////
 vec3 fresnelSchlickRoughness(float teta, vec3 albedo, vec3 specular);
 vec3 diffuseFactor(vec3 F, float metallic);
+// Normal distribution function (Trowbridge-Reitz GGX)
+float NDF(float NdotH, float roughness);
+// Geometry function (Schlick-Beckmann, Schlick-GGX)
+float GGX(float NdotV, float roughness);
+// Geometry function (Smith's)
+float G(float NdotV, float NdotL, float roughness);

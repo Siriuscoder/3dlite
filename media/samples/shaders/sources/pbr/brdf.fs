@@ -1,40 +1,5 @@
 #include "samples:shaders/sources/common/utils_inc.glsl"
 
-// Normal distribution function (Trowbridge-Reitz GGX)
-float NDF(float NdotH, float roughness)
-{
-    float a = roughness * roughness;
-    float a2 = a * a;
-    float NdotH2 = NdotH * NdotH;
-	
-    float num = a2;
-    float denom = (NdotH2 * (a2 - 1.0) + 1.0);
-    denom = M_PI * denom * denom;
-	
-    return num / denom;
-}
-
-// Geometry function (Schlick-Beckmann, Schlick-GGX)
-float GGX(float NdotV, float roughness)
-{
-    float r = roughness + 1.0;
-    float k = (r * r) / 8.0;
-
-    float num   = NdotV;
-    float denom = NdotV * (1.0 - k) + k;
-	
-    return num / denom;
-}
-
-// Geometry function (Smith's)
-float G(float NdotV, float NdotL, float roughness)
-{
-    float ggx2  = GGX(NdotV, roughness);
-    float ggx1  = GGX(NdotL, roughness);
-	
-    return ggx1 * ggx2;
-}
-
 // cook-torrance bidirectional reflective distribution function
 vec3 BRDF(vec3 albedo, float NdotL, float HdotV, float NdotV, float NdotH, vec3 specular)
 {

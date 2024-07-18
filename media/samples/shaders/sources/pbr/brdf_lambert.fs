@@ -1,6 +1,6 @@
 #include "samples:shaders/sources/common/utils_inc.glsl"
 
-// cook-torrance bidirectional reflective distribution function
+// Lambertian
 vec3 BRDF(vec3 albedo, float HdotV, vec3 specular)
 {
     vec3 F = fresnelSchlickRoughness(HdotV, albedo, specular);
