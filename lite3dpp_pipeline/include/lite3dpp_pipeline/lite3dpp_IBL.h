@@ -31,6 +31,7 @@ public:
 
     void initialize(const ConfigurationReader &pipelineConfig);
     inline RenderTarget* getDiffusePass() { return mSpecularMapPass; }
+    inline const std::string &getViewCubeMatrixBufferName() const { return mPositionViewCubeMatrices->getName(); }
     inline void setMainCamera(Camera *camera) { mMainCamera = camera; }
     void rebuildBuffers();
 

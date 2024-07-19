@@ -418,8 +418,8 @@ namespace lite3dpp_pipeline {
         mResourcesList.emplace_back(mSkyBoxStage->getName());
 
         ConfigurationWriter skyBoxMaterialConfig;
-        auto skyBoxConfig = pipelineConfig.getObject(L"SkyBox");
-        skyBoxMaterialConfig.set(L"Passes", stl<ConfigurationWriter>::vector {
+        auto skyBoxConfig = pipelineConfig.getObject(L"SkyBox"); 
+        stl<ConfigurationWriter>::vector passes {
             ConfigurationWriter().set(L"Pass", static_cast<int>(TexturePassTypes::RenderPass))
                 .set(L"Program", ConfigurationWriter()
                     .set(L"Name", "SkyBox.program")
@@ -437,7 +437,45 @@ namespace lite3dpp_pipeline {
                         .set(L"TextureName", getName() + "_skybox.texture")
                         .set(L"TexturePath", skyBoxConfig.getString(L"Texture")),
                 })
-        });
+        };
+
+        /* Render SkyBox to environment */
+        if (mIBL)
+        {
+            stageGenerator.addRenderTarget(cameraName, mIBL->getDiffusePass()->getName(), ConfigurationWriter()
+                .set(L"Priority", static_cast<int>(RenderPassStagePriority::SkyBoxStage))
+                .set(L"TexturePass", static_cast<int>(TexturePassTypes::EnvironmentPass))
+                .set(L"DepthTest", true)
+                .set(L"ColorOutput", true)
+                .set(L"DepthOutput", false));
+
+            ConfigurationWriter envPass;
+            envPass.set(L"Pass", static_cast<int>(TexturePassTypes::EnvironmentPass))
+                .set(L"Program", ConfigurationWriter()
+                    .set(L"Name", "SkyBoxEnv.program")
+                    .set(L"Path", mShaderPackage + ":shaders/json/env_skybox.json"))
+                .set(L"Uniforms", stl<ConfigurationWriter>::vector {
+                    ConfigurationWriter()
+                        .set(L"Name", "modelMatrix"),
+                    ConfigurationWriter()
+                        .set(L"Name", "EmissionStrength")
+                        .set(L"Type", "float")
+                        .set(L"Value", skyBoxConfig.getDouble(L"EmissionStrength")),
+                    ConfigurationWriter()
+                        .set(L"Name", "Skybox")
+                        .set(L"Type", "sampler")
+                        .set(L"TextureName", getName() + "_skybox.texture")
+                        .set(L"TexturePath", skyBoxConfig.getString(L"Texture")),
+                    ConfigurationWriter()
+                        .set(L"CubeTransform", "EmissionStrength")
+                        .set(L"UBOName", mIBL->getViewCubeMatrixBufferName())
+                        .set(L"Type", "UBO")
+                });
+            
+            passes.emplace_back(envPass);
+        }
+
+        skyBoxMaterialConfig.set(L"Passes", passes);
 
         // Создаем шейдер skybox
         mSkyBoxStageMaterial = getMain().getResourceManager()->queryResourceFromJson<Material>(
@@ -463,7 +501,7 @@ namespace lite3dpp_pipeline {
 
         sceneGenerator.addRenderTarget(cameraName, mIBL->getDiffusePass()->getName(), ConfigurationWriter()
             .set(L"Priority", static_cast<int>(RenderPassStagePriority::ForwardStage))
-            .set(L"TexturePass", static_cast<int>(TexturePassTypes::SurroundDiffusePass))
+            .set(L"TexturePass", static_cast<int>(TexturePassTypes::EnvironmentPass))
             .set(L"DepthTest", true)
             .set(L"ColorOutput", true)
             .set(L"DepthOutput", true)

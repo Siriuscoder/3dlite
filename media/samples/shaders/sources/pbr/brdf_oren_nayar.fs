@@ -16,7 +16,7 @@ float diffuseOrenNayar(float NdotL, float NdotV, float LdotV, float roughness)
     float C1 = 1.0 - 0.5 * (s2 / (s2 + 0.33));
     float C2 = 0.45 * ss9;
     
-    if(gamma >= 0.0) 
+    if (gamma >= 0.0) 
     {
         C2 *= sin(alpha);
     } 
