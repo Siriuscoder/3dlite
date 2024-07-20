@@ -72,6 +72,61 @@
           "Name": "modelMatrix"
         }
       ]
+    },
+    {
+      "Pass": 4,
+      "Program": {
+        "Name": "env_probe.program",
+        "Path": "sponza:shaders/json/env_probe.json"
+      },
+      "Uniforms": [
+        {
+          "Name": "Albedo",
+          "Type": "sampler",
+          "TextureName": "col_head_2ndfloor_02_BaseColor.texture",
+          "TexturePath": "sponza:textures/json/col_head_2ndfloor_02_BaseColor.json"
+        },
+        {
+          "Name": "Normal",
+          "Type": "sampler",
+          "TextureName": "col_head_2ndfloor_02_Normal.texture",
+          "TexturePath": "sponza:textures/json/col_head_2ndfloor_02_Normal.json"
+        },
+        {
+          "Name": "Specular",
+          "Type": "sampler",
+          "TextureName": "col_head_2ndfloor_02_Roughnesscol_head_2ndfloor_02_Metalness.texture",
+          "TexturePath": "sponza:textures/json/col_head_2ndfloor_02_Roughnesscol_head_2ndfloor_02_Metalness.json"
+        },
+        {
+          "Name": "LightSources",
+          "UBOName": "SponzaDeffered_MainScene_lightingBufferObject",
+          "Type": "UBO"
+        },
+        {
+          "Name": "LightIndexes",
+          "UBOName": "SponzaDeffered_MainScene_lightingIndexBuffer",
+          "Type": "UBO"
+        },
+        {
+          "Name": "ShadowMaps",
+          "TextureName": "SponzaDeffered_ShadowMap.texture",
+          "Type": "sampler"
+        },
+        {
+          "Name": "ShadowMatrix",
+          "UBOName": "SponzaDeffered_ShadowMatrixBuffer",
+          "Type": "UBO"
+        },
+        {
+          "Name": "CubeTransform",
+          "UBOName": "SponzaDeffered_CubeTransform",
+          "Type": "UBO"
+        },
+        {
+          "Name": "modelMatrix"
+        }
+      ]
     }
   ]
 }

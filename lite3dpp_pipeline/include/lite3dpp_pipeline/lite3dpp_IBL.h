@@ -33,6 +33,8 @@ public:
     inline RenderTarget* getDiffusePass() { return mEnvironmentProbePass; }
     inline const std::string &getViewCubeMatrixBufferName() const { return mViewCubeMatricesGPUBuffer->getName(); }
     inline void setMainCamera(Camera *camera) { mMainCamera = camera; }
+    inline Texture *getEnvProbeTexture() { return mEnvironmentProbe; }
+    inline Texture *getIrradianceProbeTexture() { return mIrradianceProbe; }
     void rebuildEnvironmentProbe();
     void rebuildIrradianceProbe();
 

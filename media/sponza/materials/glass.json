@@ -11,10 +11,10 @@
           "Name": "Albedo",
           "Type": "v4",
           "Value": [
-            0.018703151494264603,
-            0.018703151494264603,
-            0.018703151494264603,
-            0.7599999904632568
+            0.85,
+            0.85,
+            0.85,
+            0.5
           ]
         },
         {
@@ -25,12 +25,16 @@
         {
           "Name": "Roughness",
           "Type": "float",
-          "Value": 0.019999999552965164
+          "Value": 0.05
         },
         {
-          "Name": "Environment",
-          "TextureName": "environment.texture",
-          "TexturePath": "samples:textures/json/skybox_metal_chrome.json",
+          "Name": "IrradianceProbe",
+          "TextureName": "SponzaDeffered_IrradianceProbe.texture",
+          "Type": "sampler"
+        },
+        {
+          "Name": "EnvironmentProbe",
+          "TextureName": "SponzaDeffered_EnvironmentProbe.texture",
           "Type": "sampler"
         },
         {

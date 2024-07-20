@@ -8,7 +8,7 @@
     "SkyBox": 
     {
         "Texture": "samples:textures/json/skybox.json",
-        "EmissionStrength": 12.0
+        "EmissionStrength": 8.0
     },
     "ShadowMaps":
     {
@@ -38,7 +38,7 @@
     {
         "environmentProbeResolution": 256,
         "IrradianceProbeResolution": 64,
-        "FixedProbePosition": [0.0, 0.0, 7.5]
+        "FixedProbePosition": [0.0, 0.0, 6.5]
     },
     "PostProcess":
     {
@@ -49,8 +49,8 @@
         "DynamicExposure":
         {
             "ExposureMax": 5.5,
-            "ExposureMin": 1.1,
-            "ExposureBase": 0.15
+            "ExposureMin": 0.5,
+            "ExposureBase": 0.2
         }
     }
 }

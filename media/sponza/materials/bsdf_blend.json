@@ -17,10 +17,14 @@
           "Name":"<Roughness>"
         },
         {
-          "Name":"Environment",
-          "TextureName":"environment.texture",
-          "TexturePath":"samples:textures/json/skybox_metal_chrome.json",
-          "Type":"sampler"
+          "Name": "IrradianceProbe",
+          "TextureName": "SponzaDeffered_IrradianceProbe.texture",
+          "Type": "sampler"
+        },
+        {
+          "Name": "EnvironmentProbe",
+          "TextureName": "SponzaDeffered_EnvironmentProbe.texture",
+          "Type": "sampler"
         },
         {
           "Name":"LightSources",

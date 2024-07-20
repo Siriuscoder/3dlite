@@ -1,10 +1,10 @@
 #include "samples:shaders/sources/common/version.def"
 
-layout(location = 0) in vec4 vertex;
+layout(location = 0) in vec3 vertex;
 
 uniform mat4 modelMatrix;
 
-out vec2 iuv_g;
+out vec3 iuv_g;
 
 void main()
 {

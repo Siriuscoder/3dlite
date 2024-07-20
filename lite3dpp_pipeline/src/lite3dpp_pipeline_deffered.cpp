@@ -78,14 +78,33 @@ namespace lite3dpp_pipeline {
             .set(L"TextureName", mGBufferTexture->getName())
             .set(L"Type", "sampler"));
         lightComputeMaterialUniforms.emplace_back(ConfigurationWriter()
-            .set(L"Name", "Environment")
-            .set(L"TextureName", "environment.texture")
-            .set(L"TexturePath", pipelineConfig.getString(L"LightComputeEnvironmentTexture"))
-            .set(L"Type", "sampler"));
-        lightComputeMaterialUniforms.emplace_back(ConfigurationWriter()
             .set(L"Name", "Eye")
             .set(L"Scope", "global")
             .set(L"Type", "v3"));
+
+        /* IBL present, using env probe */
+        if (mIBL)
+        {
+            lightComputeMaterialUniforms.emplace_back(ConfigurationWriter()
+                .set(L"Name", "EnvironmentProbe")
+                .set(L"TextureName", mIBL->getEnvProbeTexture()->getName())
+                .set(L"Type", "sampler"));
+            lightComputeMaterialUniforms.emplace_back(ConfigurationWriter()
+                .set(L"Name", "IrradianceProbe")
+                .set(L"TextureName", mIBL->getIrradianceProbeTexture()->getName())
+                .set(L"Type", "sampler"));
+        }
+        else
+        {
+            if (pipelineConfig.has(L"LightComputeEnvironmentTexture"))
+            {
+                lightComputeMaterialUniforms.emplace_back(ConfigurationWriter()
+                    .set(L"Name", "Environment")
+                    .set(L"TextureName", "environment.texture")
+                    .set(L"TexturePath", pipelineConfig.getString(L"LightComputeEnvironmentTexture"))
+                    .set(L"Type", "sampler"));
+            }
+        }
         
         auto lightingTechType = pipelineConfig.getString(L"LightingTechnique");
         if (lightingTechType == "UBO" && mMainScene->getLightParamsBuffer())

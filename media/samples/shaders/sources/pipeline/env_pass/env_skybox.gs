@@ -8,9 +8,9 @@ layout(std140) uniform CubeTransform
     mat4 projViewCubeMatrices[6];
 };
 
-in vec2 iuv_g[];
+in vec3 iuv_g[];
 
-out vec2 iuv;    // UVs
+out vec3 iuv;    // UVs
 
 void main()
 {

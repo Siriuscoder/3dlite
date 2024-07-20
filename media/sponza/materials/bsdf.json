@@ -63,6 +63,52 @@
           "Name":"modelMatrix"
         }
       ]
+    },
+    {
+      "Pass": 4,
+      "Program":{
+        "Name":"env_probe.program",
+        "Path":"sponza:shaders/json/env_probe.json"
+      },
+      "Uniforms":[
+        {
+          "Name":"<Albedo>"
+        },
+        {
+          "Name":"<Normal>"
+        },
+        {
+          "Name":"<Specular>"
+        },
+        {
+          "Name":"LightSources",
+          "UBOName": "SponzaDeffered_MainScene_lightingBufferObject",
+          "Type":"UBO"
+        },
+        {
+          "Name":"LightIndexes",
+          "UBOName": "SponzaDeffered_MainScene_lightingIndexBuffer",
+          "Type":"UBO"
+        },
+        {
+          "Name":"ShadowMaps",
+          "TextureName":"SponzaDeffered_ShadowMap.texture",
+          "Type":"sampler"
+        },
+        {
+          "Name": "ShadowMatrix",
+          "UBOName": "SponzaDeffered_ShadowMatrixBuffer",
+          "Type": "UBO"
+        },
+        {
+          "Name":"CubeTransform",
+          "UBOName":"SponzaDeffered_CubeTransform",
+          "Type":"UBO"
+        },
+        {
+          "Name":"modelMatrix"
+        }
+      ]
     }
   ]
 }

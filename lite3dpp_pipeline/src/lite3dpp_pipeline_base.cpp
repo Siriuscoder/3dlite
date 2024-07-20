@@ -98,6 +98,12 @@ namespace lite3dpp_pipeline {
         {
             mSkyBoxStageMaterial->setFloatParameter(static_cast<uint16_t>(TexturePassTypes::RenderPass), "EmissionStrength",
                 emission);
+
+            if (mIBL)
+            {
+                mSkyBoxStageMaterial->setFloatParameter(static_cast<uint16_t>(TexturePassTypes::EnvironmentPass), "EmissionStrength",
+                emission);
+            }
         }
     }
 
@@ -422,10 +428,6 @@ namespace lite3dpp_pipeline {
             .set(L"DepthTest", true)
             .set(L"ColorOutput", true)
             .set(L"DepthOutput", false));
-            
-        mSkyBoxStage = getMain().getResourceManager()->queryResourceFromJson<Scene>(
-            getName() + "_" + cameraName + "_SkyBoxStage", stageGenerator.generate().write());
-        mResourcesList.emplace_back(mSkyBoxStage->getName());
 
         ConfigurationWriter skyBoxMaterialConfig;
         auto skyBoxConfig = pipelineConfig.getObject(L"SkyBox"); 
@@ -477,13 +479,17 @@ namespace lite3dpp_pipeline {
                         .set(L"TextureName", getName() + "_skybox.texture")
                         .set(L"TexturePath", skyBoxConfig.getString(L"Texture")),
                     ConfigurationWriter()
-                        .set(L"CubeTransform", "EmissionStrength")
+                        .set(L"Name", "CubeTransform")
                         .set(L"UBOName", mIBL->getViewCubeMatrixBufferName())
                         .set(L"Type", "UBO")
                 });
             
             passes.emplace_back(envPass);
         }
+
+        mSkyBoxStage = getMain().getResourceManager()->queryResourceFromJson<Scene>(
+            getName() + "_" + cameraName + "_SkyBoxStage", stageGenerator.generate().write());
+        mResourcesList.emplace_back(mSkyBoxStage->getName());
 
         skyBoxMaterialConfig.set(L"Passes", passes);
 

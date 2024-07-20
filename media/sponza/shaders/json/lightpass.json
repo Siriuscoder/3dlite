@@ -6,7 +6,7 @@
         "samples:shaders/sources/pipeline/light_pass/light.fs",
         "samples:shaders/sources/pbr/pbr.fs,sponza:shaders/sources/inc/pbr_params.def",
         "samples:shaders/sources/pbr/brdf_oren_nayar.fs,sponza:shaders/sources/inc/pbr_params.def",
-        "samples:shaders/sources/pbr/brdf_simple_env.fs,sponza:shaders/sources/inc/pbr_params.def",
+        "samples:shaders/sources/pbr/brdf_irradiance_env.fs,sponza:shaders/sources/inc/pbr_params.def",
         "samples:shaders/sources/shadow/sss.fs,sponza:shaders/sources/inc/shadow_params.def",
         "samples:shaders/sources/ssao/ssao_sample.fs",
         "samples:shaders/sources/common/utils.fs"

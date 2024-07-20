@@ -28,9 +28,13 @@
           "Value": 0.10000000149011612
         },
         {
-          "Name": "Environment",
-          "TextureName": "environment.texture",
-          "TexturePath": "samples:textures/json/skybox_metal_chrome.json",
+          "Name": "IrradianceProbe",
+          "TextureName": "SponzaDeffered_IrradianceProbe.texture",
+          "Type": "sampler"
+        },
+        {
+          "Name": "EnvironmentProbe",
+          "TextureName": "SponzaDeffered_EnvironmentProbe.texture",
           "Type": "sampler"
         },
         {
