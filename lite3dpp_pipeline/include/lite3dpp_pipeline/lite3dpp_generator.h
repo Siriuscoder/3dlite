@@ -27,8 +27,8 @@ namespace lite3dpp_pipeline {
     {
         MainDepth = 1,
         ShadowMap = 2,
-        SpecularMap = 3,
-        IrradianceMap = 4,
+        EnvironmentProbe = 3,
+        IrradianceProbe = 4,
         GBuffer = 5,
         SSAO = 6,
         Combine = 7,

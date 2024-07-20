@@ -25,15 +25,17 @@ IBLDiffuseIrradiance::~IBLDiffuseIrradiance()
 
 void IBLDiffuseIrradiance::initialize(const ConfigurationReader &pipelineConfig)
 {
-    mPositionViewCubeMatrices = createMatrixBuffer("_CubeTransform");
-    mCenteredViewCubeMatrices = createMatrixBuffer("_StaticCubeTransform");
+    mViewCubeMatricesGPUBuffer = createMatrixBuffer("_CubeTransform");
 
     ConfigurationReader iblConfig = pipelineConfig.getObject(L"IBL");
     createDiffuse(iblConfig);
     createDiffuseIrradiance(iblConfig);
 
-    // Таймер перерисовки диффузной кубической карты
-    mUpdateTimer = mMain.addTimer("EnvironmentUpdateTimer", 1000);
+    mEnvConvolutionCamera = mMain.getCamera(mPipelineName + "_DiffuseIrradiance_Camera");
+    if (iblConfig.has(L"FixedProbePosition"))
+    {
+        mEnvProbeFixedPos = iblConfig.getVec3(L"FixedProbePosition");
+    }
 }
 
 VBOResource* IBLDiffuseIrradiance::createMatrixBuffer(const String& bufferName)
@@ -49,7 +51,7 @@ VBOResource* IBLDiffuseIrradiance::createMatrixBuffer(const String& bufferName)
 
 void IBLDiffuseIrradiance::createDiffuse(const ConfigurationReader &iblConfig)
 {
-    auto resolution = iblConfig.getInt(L"SpecularMapResolution", 256);
+    auto resolution = iblConfig.getInt(L"environmentProbeResolution", 256);
     // Создание кубической текстуры окружающего диффузного освещения  
     ConfigurationWriter mapConfig;
     mapConfig.set(L"TextureType", "CUBE")
@@ -61,9 +63,9 @@ void IBLDiffuseIrradiance::createDiffuse(const ConfigurationReader &iblConfig)
         .set(L"TextureFormat", "RGB")
         .set(L"InternalFormat", "RGB32F");
 
-    mSpecularMap = mMain.getResourceManager()->queryResourceFromJson<TextureImage>(
-        mPipelineName + "_SpecularMap.texture", mapConfig.write());
-    mResourcesList.emplace_back(mSpecularMap->getName());
+    mEnvironmentProbe = mMain.getResourceManager()->queryResourceFromJson<TextureImage>(
+        mPipelineName + "_EnvironmentProbe.texture", mapConfig.write());
+    mResourcesList.emplace_back(mEnvironmentProbe->getName());
 
     // Создание кубической текстуры глубины для рендера сцены
     mapConfig.set(L"Filtering", "None")
@@ -76,7 +78,7 @@ void IBLDiffuseIrradiance::createDiffuse(const ConfigurationReader &iblConfig)
 
     ConfigurationWriter passConfig;
     passConfig.set(L"BackgroundColor", kmVec4 { 0.0f, 0.0f, 0.0f, 1.0f })
-        .set(L"Priority", static_cast<int>(RenderPassPriority::SpecularMap))
+        .set(L"Priority", static_cast<int>(RenderPassPriority::EnvironmentProbe))
         .set(L"CleanColorBuf", true)
         .set(L"CleanDepthBuf", true)
         .set(L"CleanStencilBuf", false)
@@ -85,20 +87,20 @@ void IBLDiffuseIrradiance::createDiffuse(const ConfigurationReader &iblConfig)
         .set(L"LayeredFramebuffer", true)
         .set(L"ColorAttachments", ConfigurationWriter()
             .set(L"Attachments", stl<ConfigurationWriter>::vector {
-                ConfigurationWriter().set(L"TextureName", mSpecularMap->getName())
+                ConfigurationWriter().set(L"TextureName", mEnvironmentProbe->getName())
             }))
         .set(L"DepthAttachments", ConfigurationWriter()
             .set(L"TextureName", mDepthCubeMap->getName()));
 
-    mSpecularMapPass = mMain.getResourceManager()->queryResourceFromJson<TextureRenderTarget>(
-        mPipelineName + "_specularMapPass", passConfig.write());
-    mResourcesList.emplace_back(mSpecularMapPass->getName());
-    mSpecularMapPass->addObserver(this);
+    mEnvironmentProbePass = mMain.getResourceManager()->queryResourceFromJson<TextureRenderTarget>(
+        mPipelineName + "_EnvironmentProbePass", passConfig.write());
+    mResourcesList.emplace_back(mEnvironmentProbePass->getName());
+    mEnvironmentProbePass->addObserver(this);
 }
 
 void IBLDiffuseIrradiance::createDiffuseIrradiance(const ConfigurationReader &iblConfig)
 {
-    auto iresolution = iblConfig.getInt(L"IrradianceMapResolution", 64);
+    auto iresolution = iblConfig.getInt(L"IrradianceProbeResolution", 64);
     // Создание кубической текстуры сожержащей свертку окружающего диффузного освещения
     ConfigurationWriter mapConfig;
     mapConfig.set(L"TextureType", "CUBE")
@@ -110,13 +112,13 @@ void IBLDiffuseIrradiance::createDiffuseIrradiance(const ConfigurationReader &ib
         .set(L"TextureFormat", "RGB")
         .set(L"InternalFormat", "RGB32F");
 
-    mIrradianceMap = mMain.getResourceManager()->queryResourceFromJson<TextureImage>(
-        mPipelineName + "_IrradianceMap.texture", mapConfig.write());
-    mResourcesList.emplace_back(mIrradianceMap->getName());
+    mIrradianceProbe = mMain.getResourceManager()->queryResourceFromJson<TextureImage>(
+        mPipelineName + "_IrradianceProbe.texture", mapConfig.write());
+    mResourcesList.emplace_back(mIrradianceProbe->getName());
 
     ConfigurationWriter passConfig;
     passConfig.set(L"BackgroundColor", kmVec4 { 0.0f, 0.0f, 0.0f, 1.0f })
-        .set(L"Priority", static_cast<int>(RenderPassPriority::IrradianceMap))
+        .set(L"Priority", static_cast<int>(RenderPassPriority::IrradianceProbe))
         .set(L"CleanColorBuf", true)
         .set(L"CleanDepthBuf", false)
         .set(L"CleanStencilBuf", false)
@@ -125,15 +127,14 @@ void IBLDiffuseIrradiance::createDiffuseIrradiance(const ConfigurationReader &ib
         .set(L"LayeredFramebuffer", true)
         .set(L"ColorAttachments", ConfigurationWriter()
             .set(L"Attachments", stl<ConfigurationWriter>::vector {
-                ConfigurationWriter().set(L"TextureName", mIrradianceMap->getName())
+                ConfigurationWriter().set(L"TextureName", mIrradianceProbe->getName())
             }));
 
-    mIrradianceMapPass = mMain.getResourceManager()->queryResourceFromJson<TextureRenderTarget>(
+    mIrradianceProbePass = mMain.getResourceManager()->queryResourceFromJson<TextureRenderTarget>(
         mPipelineName + "_diffuseIrradiancePass", passConfig.write());
-    mResourcesList.emplace_back(mIrradianceMapPass->getName());
-    mIrradianceMapPass->addObserver(this);
+    mResourcesList.emplace_back(mIrradianceProbePass->getName());
+    mIrradianceProbePass->addObserver(this);
 
-    // Нужно чтобы название камеры вышло такое же как на главной сцене (так как камера должна быть общая)
     SceneGenerator stageGenerator(mPipelineName + "_DiffuseIrradiance");
     stageGenerator.addCamera("Camera", ConfigurationWriter()
         .set(L"Position", kmVec3 { 0.0f, 0.0f, 0.0f })
@@ -143,34 +144,34 @@ void IBLDiffuseIrradiance::createDiffuseIrradiance(const ConfigurationReader &ib
             .set(L"Zfar", 1.0f)
             .set(L"Fov", 90.0f)));
 
-    stageGenerator.addRenderTarget("Camera", mIrradianceMapPass->getName(), ConfigurationWriter()
+    stageGenerator.addRenderTarget("Camera", mIrradianceProbePass->getName(), ConfigurationWriter()
         .set(L"Priority", static_cast<int>(RenderPassStagePriority::SkyBoxStage))
         .set(L"TexturePass", static_cast<int>(TexturePassTypes::RenderPass))
         .set(L"DepthTest", false)
         .set(L"ColorOutput", true)
         .set(L"DepthOutput", false));
 
-    auto mIrradianceMapScene = mMain.getResourceManager()->queryResourceFromJson<Scene>(
-        mPipelineName + "_IrradianceMapStage", stageGenerator.generate().write());
-    mResourcesList.emplace_back(mIrradianceMapScene->getName());
+    auto mIrradianceProbeScene = mMain.getResourceManager()->queryResourceFromJson<Scene>(
+        mPipelineName + "_IrradianceProbeStage", stageGenerator.generate().write());
+    mResourcesList.emplace_back(mIrradianceProbeScene->getName());
 
-    SDL_assert(mSpecularMap);
+    SDL_assert(mEnvironmentProbe);
 
     ConfigurationWriter IrradianceComputeShaderConfig;
     IrradianceComputeShaderConfig.set(L"Passes", stl<ConfigurationWriter>::vector {
         ConfigurationWriter().set(L"Pass", static_cast<int>(TexturePassTypes::RenderPass))
             .set(L"Program", ConfigurationWriter()
-                .set(L"Name", "IrradianceMap.program")
+                .set(L"Name", "IrradianceProbe.program")
                 .set(L"Path", mShaderPackage + ":shaders/json/irradiance_probe.json"))
             .set(L"Uniforms", stl<ConfigurationWriter>::vector {
                 ConfigurationWriter()
                     .set(L"Name", "CubeTransform")
                     .set(L"Type", "UBO")
-                    .set(L"UBOName", mCenteredViewCubeMatrices->getName()),
+                    .set(L"UBOName", mViewCubeMatricesGPUBuffer->getName()),
                 ConfigurationWriter()
-                    .set(L"Name", "SpecularCubeMap")
+                    .set(L"Name", "EnvironmentProbe")
                     .set(L"Type", "sampler")
-                    .set(L"TextureName", mSpecularMap->getName())
+                    .set(L"TextureName", mEnvironmentProbe->getName())
             })
     });
 
@@ -180,22 +181,18 @@ void IBLDiffuseIrradiance::createDiffuseIrradiance(const ConfigurationReader &ib
     mResourcesList.emplace_back(IrradianceCumputeShader->getName());
 
         // Добавляем шейдер skybox
-    mIrradianceMapScene->addObject("SkyBox", SkyBoxObjectGenerator(IrradianceCumputeShader->getName()).generate());
+    mIrradianceProbeScene->addObject("SkyBox", SkyBoxObjectGenerator(IrradianceCumputeShader->getName()).generate());
 }
 
-void IBLDiffuseIrradiance::rebuildBuffers()
+void IBLDiffuseIrradiance::rebuildEnvironmentProbe()
 {
-    // Включаем перересовку по таймеру, каждый кадр обнолвять нет смысла
-    mIrradianceMapPass->enable();
+    mEnvironmentProbePass->enable();
 }
 
-void IBLDiffuseIrradiance::timerTick(lite3d_timer *timerid)
+void IBLDiffuseIrradiance::rebuildIrradianceProbe()
 {
     // Включаем перересовку по таймеру, каждый кадр обнолвять нет смысла
-    if (timerid == mUpdateTimer)
-    {
-        //rebuildBuffers();
-    }
+    mIrradianceProbePass->enable();
 }
 
 bool IBLDiffuseIrradiance::beginUpdate(RenderTarget *rt)
@@ -205,30 +202,32 @@ bool IBLDiffuseIrradiance::beginUpdate(RenderTarget *rt)
         return false;
     }
 
-    if (rt == mSpecularMapPass)
+    if (rt == mEnvironmentProbePass)
     {
-        // TODO Обновить матрицы вида
-        stl<kmMat4>::vector matrices;
-        //kmVec3 pos = {0.0f, 0.0f, 3.0f};
-        mMainCamera->computeCubeProjView(matrices);
-        mPositionViewCubeMatrices->setData(&matrices[0], 0, matrices.size() * sizeof(kmMat4));
+        if (mEnvProbeFixedPos)
+        {
+            mMainCamera->computeCubeProjView(*mEnvProbeFixedPos, mMatricesHostBuffer);
+        }
+        else 
+        {
+            mMainCamera->computeCubeProjView(mMatricesHostBuffer);
+        }
     }
-    else if (rt == mIrradianceMapPass)
+    else if (rt == mIrradianceProbePass)
     {
-        stl<kmMat4>::vector matrices;
-        auto camera = mMain.getCamera(mPipelineName + "_DiffuseIrradiance_Camera");
-        camera->computeCubeProjView(matrices);
-        mCenteredViewCubeMatrices->setData(&matrices[0], 0, matrices.size() * sizeof(kmMat4));
+        SDL_assert(mEnvConvolutionCamera);
+        mEnvConvolutionCamera->computeCubeProjView(mMatricesHostBuffer);
     }
+
+    mViewCubeMatricesGPUBuffer->setData(&mMatricesHostBuffer[0], 0, mMatricesHostBuffer.size() * sizeof(kmMat4));
 
     return true;
 }
 
 void IBLDiffuseIrradiance::postUpdate(RenderTarget *rt)
 {
-    if (rt == mIrradianceMapPass)
-    // После обработка соответствующего прохода, отключим его для дальнейшего включения по таймеру 
-        rt->disable();
+    // После обработка соответствующего прохода, отключим его для дальнейшего включения по внешнему событию 
+    rt->disable();
 }
 
 }}

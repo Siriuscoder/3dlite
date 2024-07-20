@@ -36,13 +36,13 @@ namespace lite3dpp_pipeline {
         Scene &getMainScene();
         Scene *getSkyBoxScene();
         ShadowManager *getShadowManager();
+        IBLDiffuseIrradiance *getIBL();
         Camera &getMainCamera();
 
         void setGamma(float gamma);
         void setContrast(float contrast);
         void setSaturation(float saturation);
         void setSkyBoxEmission(float emission);
-        void rebuildIBL();
 
     protected:
 

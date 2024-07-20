@@ -25,8 +25,9 @@
     },
     "IBL":
     {
-        "SpecularMapResolution": 256,
-        "IrradianceMapResolution": 64
+        "environmentProbeResolution": 256,
+        "IrradianceProbeResolution": 64,
+        "FixedProbePosition": [0.0, 0.0, 3.0]
     },
     "PostProcess":
     {

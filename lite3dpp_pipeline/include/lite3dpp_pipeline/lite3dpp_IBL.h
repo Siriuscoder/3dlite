@@ -30,14 +30,14 @@ public:
     virtual ~IBLDiffuseIrradiance();
 
     void initialize(const ConfigurationReader &pipelineConfig);
-    inline RenderTarget* getDiffusePass() { return mSpecularMapPass; }
-    inline const std::string &getViewCubeMatrixBufferName() const { return mPositionViewCubeMatrices->getName(); }
+    inline RenderTarget* getDiffusePass() { return mEnvironmentProbePass; }
+    inline const std::string &getViewCubeMatrixBufferName() const { return mViewCubeMatricesGPUBuffer->getName(); }
     inline void setMainCamera(Camera *camera) { mMainCamera = camera; }
-    void rebuildBuffers();
+    void rebuildEnvironmentProbe();
+    void rebuildIrradianceProbe();
 
 protected:
 
-    void timerTick(lite3d_timer *timerid) override;
     void postUpdate(RenderTarget *rt) override;
     bool beginUpdate(RenderTarget *rt) override;
 
@@ -50,15 +50,16 @@ protected:
     Main& mMain;
     String mPipelineName;
     String mShaderPackage;
-    VBOResource *mPositionViewCubeMatrices = nullptr;
-    VBOResource *mCenteredViewCubeMatrices = nullptr;
-    RenderTarget *mSpecularMapPass = nullptr;
-    RenderTarget *mIrradianceMapPass = nullptr;
-    Texture *mSpecularMap = nullptr;
+    VBOResource *mViewCubeMatricesGPUBuffer = nullptr;
+    RenderTarget *mEnvironmentProbePass = nullptr;
+    RenderTarget *mIrradianceProbePass = nullptr;
+    Texture *mEnvironmentProbe = nullptr;
     Texture *mDepthCubeMap = nullptr;
-    Texture *mIrradianceMap = nullptr;
-    lite3d_timer *mUpdateTimer = nullptr;
+    Texture *mIrradianceProbe = nullptr;
     Camera *mMainCamera = nullptr;
+    Camera *mEnvConvolutionCamera = nullptr;
+    std::optional<kmVec3> mEnvProbeFixedPos;
+    stl<kmMat4>::vector mMatricesHostBuffer;
     stl<String>::list mResourcesList;
 };
 

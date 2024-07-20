@@ -63,13 +63,13 @@
           "Value": 1.0
         },
         {
-          "Name": "IrradianceMap",
-          "TextureName": "SandboxPipeline_IrradianceMap.texture",
+          "Name": "IrradianceProbe",
+          "TextureName": "SandboxPipeline_IrradianceProbe.texture",
           "Type": "sampler"
         },
         {
-          "Name": "SpecularMap",
-          "TextureName": "SandboxPipeline_SpecularMap.texture",
+          "Name": "EnvironmentProbe",
+          "TextureName": "SandboxPipeline_EnvironmentProbe.texture",
           "Type": "sampler"
         },
         {

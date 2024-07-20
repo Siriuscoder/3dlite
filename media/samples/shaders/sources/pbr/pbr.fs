@@ -7,9 +7,6 @@
 #define LITE3D_LIGHT_DIRECTIONAL        2.0
 #define LITE3D_LIGHT_SPOT               3.0
 
-uniform samplerCube IrradianceMap;
-uniform samplerCube SpecularMap;
-
 layout(std140) uniform LightSources
 {
     vec4 lights[5 * MAX_LIGHTS];

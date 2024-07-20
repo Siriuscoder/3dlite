@@ -77,7 +77,8 @@ public:
         node->getLight()->setRadiance(60.0f);
         node->getLight()->enabled(true);
 
-        mPipeline->rebuildIBL();
+        mPipeline->getIBL()->rebuildEnvironmentProbe();
+        mPipeline->getIBL()->rebuildIrradianceProbe();
     }
 
     void updateFlashLight()

@@ -1,7 +1,7 @@
 #include "samples:shaders/sources/common/version.def"
 #include "samples:shaders/sources/common/utils_inc.glsl"
 
-uniform samplerCube SpecularCubeMap;
+uniform samplerCube EnvironmentProbe;
 
 in vec3 iuv;
 out vec4 fragColor;
@@ -26,7 +26,7 @@ void main()
             // tangent space to world
             vec3 sampleVec = tangentSample.x * right + tangentSample.y * up + tangentSample.z * normal; 
 
-            irradiance += texture(SpecularCubeMap, sampleVec).rgb * cos(theta) * sin(theta);
+            irradiance += texture(EnvironmentProbe, sampleVec).rgb * cos(theta) * sin(theta);
             count++;
         }
     }

@@ -45,6 +45,16 @@ namespace lite3dpp_pipeline {
         return *mMainScene;
     }
 
+    IBLDiffuseIrradiance *PipelineBase::getIBL()
+    {
+        if (mIBL)
+        {
+            return mIBL.get();
+        }
+
+        return nullptr;
+    }
+
     Scene *PipelineBase::getSkyBoxScene()
     {
         return mSkyBoxStage;
@@ -549,13 +559,5 @@ namespace lite3dpp_pipeline {
     {
         Material::setFloatv3GlobalParameter("Eye", getMainCamera().getWorldPosition());
         return true;
-    }
-
-    void PipelineBase::rebuildIBL()
-    {
-        if (mIBL)
-        {
-            mIBL->rebuildBuffers();
-        }
     }
 }}
