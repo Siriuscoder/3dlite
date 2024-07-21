@@ -21,12 +21,12 @@ vec3 getNormal(vec2 uv, mat3 tbn)
 
 vec3 getSpecular(vec2 uv)
 {
-    return vec3(1.0, Roughness, 0.85);
+    return vec3(1.0, Roughness, Metallic);
 }
 
 float getAmbientOcclusion(vec2 uv)
 {
-    return 1.0;
+    return 0.65;
 }
 
 float getSpecularAmbient(vec2 uv)
