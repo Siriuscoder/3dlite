@@ -55,7 +55,8 @@ const GLenum textureTargetEnum[] = {
     GL_TEXTURE_2D_MULTISAMPLE,
     GL_TEXTURE_2D_MULTISAMPLE_ARRAY,
     GL_TEXTURE_2D,
-    GL_TEXTURE_2D_ARRAY
+    GL_TEXTURE_2D_ARRAY,
+    GL_TEXTURE_CUBE_MAP_ARRAY
 };
 
 static lite3d_image_filter gFilters[LITE3D_MAX_FILTERS];
@@ -123,6 +124,8 @@ const char *lite3d_texture_unit_target_string(uint32_t textureTarget)
         return "TEXTURE_2D_MULTISAMPLE_ARRAY";
     case GL_TEXTURE_2D_ARRAY:
         return "TEXTURE_2D_ARRAY";
+    case GL_TEXTURE_CUBE_MAP_ARRAY:
+        return "TEXTURE_CUBE_MAP_ARRAY";
     default:
         return "INVALID";
     }
@@ -605,6 +608,13 @@ static int lite3d_texture_unit_create_storage(lite3d_texture_unit *textureUnit)
             case LITE3D_TEXTURE_2D_SHADOW_ARRAY:
                 glTexStorage3D(textureTargetEnum[textureUnit->textureTarget], textureUnit->generatedMipmaps + 1, 
                     textureUnit->internalFormat, textureUnit->imageWidth, textureUnit->imageHeight, textureUnit->imageDepth);
+                goto check_and_exit;
+            case LITE3D_TEXTURE_CUBE_ARRAY:
+            // Every OpenGL API call that operates on cubemap array textures takes layer-faces, not array layers. 
+            // For example, when you allocate storage for the texture, you would use glTexStorage3D or glTexImage3D or similar. 
+            // However, the depth​ parameter will be the number of layer-faces, not layers. So it must be divisible by 6.
+                glTexStorage3D(textureTargetEnum[textureUnit->textureTarget], textureUnit->generatedMipmaps + 1, 
+                    textureUnit->internalFormat, textureUnit->imageWidth, textureUnit->imageHeight, textureUnit->imageDepth * 6);
                 goto check_and_exit;
         }
     }
@@ -1202,14 +1212,22 @@ int lite3d_texture_unit_allocate(lite3d_texture_unit *textureUnit,
     if ((textureTarget == LITE3D_TEXTURE_2D_MULTISAMPLE || textureTarget == LITE3D_TEXTURE_3D_MULTISAMPLE) &&
         !lite3d_check_texture_multisample())
     {
-        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "%s: Multisample texture not supported",
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "%s: Multisample texture is not supported",
             LITE3D_CURRENT_FUNCTION);
         return LITE3D_FALSE;
     }
 
     if (textureTarget == LITE3D_TEXTURE_2D_SHADOW && !lite3d_check_shadow_samplers())
     {
-        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "%s: Shadow2D textures not supported",
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "%s: Shadow2D textures is not supported",
+            LITE3D_CURRENT_FUNCTION);
+        return LITE3D_FALSE;
+    }
+
+    if (textureTarget == LITE3D_TEXTURE_CUBE_ARRAY && (!lite3d_check_texture_storage() ||
+        !lite3d_check_texture_cube_map_array()))
+    {
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "%s: CubeMap arrays are not supported",
             LITE3D_CURRENT_FUNCTION);
         return LITE3D_FALSE;
     }

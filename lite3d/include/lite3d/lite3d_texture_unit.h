@@ -48,6 +48,7 @@
 #define LITE3D_TEXTURE_3D_MULTISAMPLE           0x07
 #define LITE3D_TEXTURE_2D_SHADOW                0x08
 #define LITE3D_TEXTURE_2D_SHADOW_ARRAY          0x09
+#define LITE3D_TEXTURE_CUBE_ARRAY               0x0A
 /* pre-loading texture manipulation */
 #define LITE3D_ALIENIFY_FILTER                  0x0001
 #define LITE3D_BLURAVG_FILTER                   0x0002

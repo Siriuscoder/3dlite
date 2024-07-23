@@ -369,6 +369,7 @@ static int lite3d_framebuffer_setup_attachments(lite3d_framebuffer *fb, const li
                     break;
                 case LITE3D_TEXTURE_2D_ARRAY:
                 case LITE3D_TEXTURE_CUBE:
+                case LITE3D_TEXTURE_CUBE_ARRAY:
                     if (flags & LITE3D_FRAMEBUFFER_USE_LAYERED_BINDING)
                     {
                         glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i,
@@ -460,6 +461,7 @@ static int lite3d_framebuffer_setup_attachments(lite3d_framebuffer *fb, const li
             case LITE3D_TEXTURE_CUBE:
             case LITE3D_TEXTURE_2D_ARRAY:
             case LITE3D_TEXTURE_2D_SHADOW_ARRAY:
+            case LITE3D_TEXTURE_CUBE_ARRAY:
                 if (flags & LITE3D_FRAMEBUFFER_USE_LAYERED_BINDING)
                 {
                     glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, 

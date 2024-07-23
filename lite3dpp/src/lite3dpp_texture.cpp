@@ -48,7 +48,8 @@ namespace lite3dpp
             (s == "2D_SHADOW" ? LITE3D_TEXTURE_2D_SHADOW :
             (s == "2D_SHADOW_ARRAY" ? LITE3D_TEXTURE_2D_SHADOW_ARRAY :
             (s == "CUBE" ? LITE3D_TEXTURE_CUBE :
-            (s == "3D" ? LITE3D_TEXTURE_3D : 0xff))))));
+            (s == "3D" ? LITE3D_TEXTURE_3D : 
+            (s == "CUBE_ARRAY" ? LITE3D_TEXTURE_CUBE_ARRAY : 0xff)))))));
     }
 
     uint8_t Texture::textureFiltering(const String &s)
