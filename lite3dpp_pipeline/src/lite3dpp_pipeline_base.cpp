@@ -55,6 +55,16 @@ namespace lite3dpp_pipeline {
         return nullptr;
     }
 
+    IBLMultiProbe *PipelineBase::getIBLM()
+    {
+        if (mIBLM)
+        {
+            return mIBLM.get();
+        }
+
+        return nullptr;
+    }
+
     Scene *PipelineBase::getSkyBoxScene()
     {
         return mSkyBoxStage;

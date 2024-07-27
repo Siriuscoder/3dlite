@@ -20,6 +20,7 @@
 #include <lite3dpp_pipeline/lite3dpp_bloom.h>
 #include <lite3dpp_pipeline/lite3dpp_shadow_manager.h>
 #include <lite3dpp_pipeline/lite3dpp_IBL.h>
+#include <lite3dpp_pipeline/lite3dpp_IBL_multiprobe.h>
 #include <lite3dpp_pipeline/lite3dpp_generator.h>
 
 namespace lite3dpp {
@@ -37,6 +38,7 @@ namespace lite3dpp_pipeline {
         Scene *getSkyBoxScene();
         ShadowManager *getShadowManager();
         IBLDiffuseIrradiance *getIBL();
+        IBLMultiProbe *getIBLM();
         Camera &getMainCamera();
 
         void setGamma(float gamma);
@@ -79,6 +81,7 @@ namespace lite3dpp_pipeline {
         std::unique_ptr<ShadowManager> mShadowManager;
         std::unique_ptr<BloomEffect> mBloomEffect;
         std::unique_ptr<IBLDiffuseIrradiance> mIBL;
+        std::unique_ptr<IBLMultiProbe> mIBLM;
         Camera *mMainCamera = nullptr;
         RenderTarget *mDepthPass = nullptr;
         RenderTarget *mCombinePass = nullptr;

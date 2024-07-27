@@ -28,12 +28,13 @@ namespace lite3dpp_pipeline {
         MainDepth = 1,
         ShadowMap = 2,
         EnvironmentProbe = 3,
-        IrradianceProbe = 4,
-        GBuffer = 5,
-        SSAO = 6,
-        Combine = 7,
-        BLOOM = 8,
-        PostProcess = 9
+        EnvironmentMultiProbe = 4,
+        IrradianceProbe = 5,
+        GBuffer = 6,
+        SSAO = 7,
+        Combine = 8,
+        BLOOM = 9,
+        PostProcess = 10
     };
 
     enum class RenderPassStagePriority

@@ -34,6 +34,7 @@ namespace lite3dpp
         ~ConfigurationWriter() = default;
 
         ConfigurationWriter &set(const WString &name, int32_t value);
+        ConfigurationWriter &set(const WString &name, uint32_t value);
         ConfigurationWriter &set(const WString &name, float value);
         ConfigurationWriter &set(const WString &name, bool value);
         ConfigurationWriter &set(const WString &name, const WString &value);
