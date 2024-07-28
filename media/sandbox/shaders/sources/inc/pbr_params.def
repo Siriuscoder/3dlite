@@ -1,4 +1,5 @@
 #include "samples:shaders/sources/common/version.def"
+#extension GL_ARB_texture_cube_map_array : enable
 
 #define DIFFUSE_IRRADIANCE_STRENGTH     1.0
 #define IRRADIANCE_DIFFUSE_LOD          4

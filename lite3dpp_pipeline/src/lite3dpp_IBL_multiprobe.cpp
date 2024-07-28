@@ -26,6 +26,8 @@ void IBLMultiProbe::initialize(const ConfigurationReader &pipelineConfig)
 {
     ConfigurationReader config = pipelineConfig.getObject(L"IBLMultiProbe");
     mProbeMaxCount = config.getInt(L"MaxCount", 1);
+    mzNear = config.getDouble(L"ProbeZNearClip", 0.0f);
+    mzFar = config.getDouble(L"ProbeZFarClip", 1.0f);
 
     mViewMatricesGPUBuffer = createMatrixBuffer("_CubeArrayTransform");
     createProbePass(config);
@@ -38,7 +40,7 @@ VBOResource* IBLMultiProbe::createMatrixBuffer(const String& bufferName)
     
     mResourcesList.emplace_back(matrixBuffer->getName());
     // Выделяем место под 6 * N матриц, нужны будут для рендера сторон массива кубических текстур
-    matrixBuffer->extendBufferBytes(sizeof(kmMat4) * 6 * mProbeMaxCount);
+    matrixBuffer->extendBufferBytes(sizeof(GPUEnvProbe) * mProbeMaxCount);
     return matrixBuffer;
 }
 
@@ -101,16 +103,14 @@ bool IBLMultiProbe::beginUpdate(RenderTarget *rt)
 {
     if (mRecalcProbes)
     {
-        SDL_assert((mProbes.size() * sizeof(kmMat4) * 6) <= mViewMatricesGPUBuffer->bufferSizeBytes());
+        SDL_assert((mProbes.size() * sizeof(GPUEnvProbe)) <= mViewMatricesGPUBuffer->bufferSizeBytes());
         auto lock = mViewMatricesGPUBuffer->map(BufferScopedMapper::BufferScopedMapperLockType::LockTypeReadWrite);
         
-        uint32_t index = 0;
+        auto probeBlock = lock.getPtr<GPUEnvProbe>(); 
         for (auto &probe : mProbes)
         {
             probe.rebuildMatrix();
-            memcpy(lock.getPtr<kmMat4>() + index, probe.getMatrixPtr(), sizeof(kmMat4) * 6);
-
-            index += 6;
+            probe.writeGPUProbe(probeBlock++);
         }
 
         mRecalcProbes = false;
@@ -127,6 +127,8 @@ void IBLMultiProbe::addProbe(const kmVec3 &position)
     }
 
     EnvProbe probe(&mMain, mzNear, mzFar);
+    probe.setPosition(position);
+
     mProbes.emplace_back(probe);
     mRecalcProbes = true;
 }
@@ -153,10 +155,17 @@ void IBLMultiProbe::EnvProbe::setPosition(const kmVec3 &pos)
     mProbeCamera->setPosition(pos);
 }
 
-const kmMat4 *IBLMultiProbe::EnvProbe::getMatrixPtr()
+const void IBLMultiProbe::EnvProbe::writeGPUProbe(IBLMultiProbe::GPUEnvProbe *probe)
 {
     SDL_assert(mViewProjMatrices.size() == 6);
-    return &mViewProjMatrices[0];
+    SDL_assert(probe);
+
+    probe->position.x = mProbeCamera->getPosition().x;
+    probe->position.y = mProbeCamera->getPosition().y;
+    probe->position.z = mProbeCamera->getPosition().z;
+    probe->position.w = 0.0f;
+    
+    std::copy(mViewProjMatrices.begin(), mViewProjMatrices.end(), probe->viewProjMatrices);
 }
 
 }}

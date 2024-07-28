@@ -19,6 +19,7 @@
 #include <SDL_log.h>
 
 #include <lite3d/lite3d_gl.h>
+#include <lite3d/lite3d_glext.h>
 #include <lite3d/lite3d_alloc.h>
 #include <lite3d/lite3d_misc.h>
 #include <lite3d/lite3d_shader_program.h>
@@ -26,6 +27,7 @@
 typedef int (*lite3d_uniform_set_func)(lite3d_shader_program *, lite3d_shader_parameter_container *);
 
 lite3d_shader_program *gActProg = NULL;
+int gMaxGSOutVertices = 0;
 
 static void lite3d_shader_program_get_log(lite3d_shader_program *program)
 {
@@ -46,6 +48,12 @@ static void lite3d_shader_program_get_log(lite3d_shader_program *program)
 
 int lite3d_shader_program_technique_init(void)
 {
+    if (lite3d_check_geometry_shader())
+    {
+        glGetIntegerv(GL_MAX_GEOMETRY_OUTPUT_VERTICES, &gMaxGSOutVertices);
+        SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "GL_MAX_GEOMETRY_OUTPUT_VERTICES: %d", gMaxGSOutVertices);
+    }
+
     return LITE3D_TRUE;
 }
 

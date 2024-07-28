@@ -67,6 +67,8 @@ namespace lite3dpp_pipeline {
             const ConfigurationWriter &mainCameraConfig);
         virtual void constructIBL(const ConfigurationReader &pipelineConfig, const String &cameraName,
             SceneGenerator &sceneGenerator);
+        virtual void constructIBLM(const ConfigurationReader &pipelineConfig, const String &cameraName,
+            SceneGenerator &sceneGenerator);
         
         void createSkyBoxMesh();
         void createBigTriangleMesh();

@@ -23,11 +23,18 @@
     {
         "BloomRadius": 0.005
     },
-    "IBL":
+//    "IBL":
+//    {
+//        "environmentProbeResolution": 256,
+//        "IrradianceProbeResolution": 64,
+//        "FixedProbePosition": [0.0, 0.0, 3.0]
+//    },
+    "IBLMultiProbe":
     {
-        "environmentProbeResolution": 256,
-        "IrradianceProbeResolution": 64,
-        "FixedProbePosition": [0.0, 0.0, 3.0]
+        "environmentProbeResolution": 128,
+        "MaxCount": 12,
+        "ProbeZNearClip": 0.01,
+        "ProbeZFarClip": 30.0
     },
     "PostProcess":
     {

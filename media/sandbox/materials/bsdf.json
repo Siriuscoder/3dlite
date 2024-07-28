@@ -43,13 +43,8 @@
           "Value": 1.0
         },
         {
-          "Name":"IrradianceProbe",
-          "TextureName":"SandboxPipeline_IrradianceProbe.texture",
-          "Type":"sampler"
-        },
-        {
           "Name":"EnvironmentProbe",
-          "TextureName":"SandboxPipeline_EnvironmentProbe.texture",
+          "TextureName":"SandboxPipeline_EnvironmentMultiProbe.texture",
           "Type":"sampler"
         },
         {
@@ -111,10 +106,10 @@
       ]
     },
     {
-      "Pass": 4,
+      "Pass": 5,
       "Program":{
-        "Name":"env_probe.program",
-        "Path":"sandbox:shaders/json/env_probe.json"
+        "Name":"env_multiprobe.program",
+        "Path":"sandbox:shaders/json/env_multiprobe.json"
       },
       "Uniforms":[
         {
@@ -154,7 +149,7 @@
         },
         {
           "Name":"CubeTransform",
-          "UBOName":"SandboxPipeline_CubeTransform",
+          "UBOName":"SandboxPipeline_CubeArrayTransform",
           "Type":"UBO"
         },
         {

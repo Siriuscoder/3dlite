@@ -27,8 +27,8 @@
           "Type": "v4",
           "Value": [
             1.0,
-            0.71,
-            0.29,
+            0.7099999785423279,
+            0.28999999165534973,
             1.0
           ]
         },
@@ -55,7 +55,7 @@
         {
           "Name": "Roughness",
           "Type": "float",
-          "Value": 0.415
+          "Value": 0.41499999165534973
         },
         {
           "Name": "SpecularAmbientFactor",
@@ -63,13 +63,8 @@
           "Value": 1.0
         },
         {
-          "Name": "IrradianceProbe",
-          "TextureName": "SandboxPipeline_IrradianceProbe.texture",
-          "Type": "sampler"
-        },
-        {
           "Name": "EnvironmentProbe",
-          "TextureName": "SandboxPipeline_EnvironmentProbe.texture",
+          "TextureName": "SandboxPipeline_EnvironmentMultiProbe.texture",
           "Type": "sampler"
         },
         {
@@ -123,6 +118,78 @@
         {
           "Name": "ShadowIndex",
           "UBOName": "SandboxPipeline_ShadowIndexBuffer",
+          "Type": "UBO"
+        },
+        {
+          "Name": "modelMatrix"
+        }
+      ]
+    },
+    {
+      "Pass": 5,
+      "Program": {
+        "Name": "env_multiprobe.program",
+        "Path": "sandbox:shaders/json/env_multiprobe.json"
+      },
+      "Uniforms": [
+        {
+          "Name": "Albedo",
+          "Type": "v4",
+          "Value": [
+            1.0,
+            0.7099999785423279,
+            0.28999999165534973,
+            1.0
+          ]
+        },
+        {
+          "Name": "Emission",
+          "Type": "v4",
+          "Value": [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        {
+          "Name": "EmissionStrength",
+          "Type": "float",
+          "Value": 0.0
+        },
+        {
+          "Name": "Metallic",
+          "Type": "float",
+          "Value": 1.0
+        },
+        {
+          "Name": "Roughness",
+          "Type": "float",
+          "Value": 0.41499999165534973
+        },
+        {
+          "Name": "LightSources",
+          "UBOName": "SandboxPipeline_MainScene_lightingBufferObject",
+          "Type": "UBO"
+        },
+        {
+          "Name": "LightIndexes",
+          "UBOName": "SandboxPipeline_MainScene_lightingIndexBuffer",
+          "Type": "UBO"
+        },
+        {
+          "Name": "ShadowMaps",
+          "TextureName": "SandboxPipeline_ShadowMap.texture",
+          "Type": "sampler"
+        },
+        {
+          "Name": "ShadowMatrix",
+          "UBOName": "SandboxPipeline_ShadowMatrixBuffer",
+          "Type": "UBO"
+        },
+        {
+          "Name": "CubeTransform",
+          "UBOName": "SandboxPipeline_CubeArrayTransform",
           "Type": "UBO"
         },
         {

@@ -180,6 +180,7 @@ namespace lite3dpp_pipeline {
             constructShadowManager(pipelineConfig, cameraName, mainSceneGenerator);
             constructCameraDepthPass(pipelineConfig, cameraName, mainSceneGenerator);
             constructIBL(pipelineConfig, cameraName, mainSceneGenerator);
+            constructIBLM(pipelineConfig, cameraName, mainSceneGenerator);
             constructCameraPipeline(pipelineConfig, cameraName, mainSceneGenerator);
             constructPostProcessPass(pipelineConfig, cameraName, mainSceneGenerator);
             constructSkyBoxPass(pipelineConfig, cameraName, cameraPipelineConfig);
@@ -221,6 +222,7 @@ namespace lite3dpp_pipeline {
         mShadowManager.reset();
         mBloomEffect.reset();
         mIBL.reset();
+        mIBLM.reset();
     }
 
     void PipelineBase::createBigTriangleMesh()
@@ -497,6 +499,42 @@ namespace lite3dpp_pipeline {
             passes.emplace_back(envPass);
         }
 
+        /* Render SkyBox to multiprobe  */
+        if (mIBLM)
+        {
+            stageGenerator.addRenderTarget(cameraName, mIBLM->getPass()->getName(), ConfigurationWriter()
+                .set(L"Priority", static_cast<int>(RenderPassStagePriority::SkyBoxStage))
+                .set(L"TexturePass", static_cast<int>(TexturePassTypes::EnvironmentMultiProbePass))
+                .set(L"DepthTest", true)
+                .set(L"ColorOutput", true)
+                .set(L"DepthOutput", false));
+
+            ConfigurationWriter envPass;
+            envPass.set(L"Pass", static_cast<int>(TexturePassTypes::EnvironmentMultiProbePass))
+                .set(L"Program", ConfigurationWriter()
+                    .set(L"Name", "SkyBoxMultiProbe.program")
+                    .set(L"Path", mShaderPackage + ":shaders/json/env_skybox_multi.json"))
+                .set(L"Uniforms", stl<ConfigurationWriter>::vector {
+                    ConfigurationWriter()
+                        .set(L"Name", "modelMatrix"),
+                    ConfigurationWriter()
+                        .set(L"Name", "EmissionStrength")
+                        .set(L"Type", "float")
+                        .set(L"Value", skyBoxConfig.getDouble(L"EmissionStrength")),
+                    ConfigurationWriter()
+                        .set(L"Name", "Skybox")
+                        .set(L"Type", "sampler")
+                        .set(L"TextureName", getName() + "_skybox.texture")
+                        .set(L"TexturePath", skyBoxConfig.getString(L"Texture")),
+                    ConfigurationWriter()
+                        .set(L"Name", "CubeTransform")
+                        .set(L"UBOName", mIBLM->getViewCubeMatrixBufferName())
+                        .set(L"Type", "UBO")
+                });
+            
+            passes.emplace_back(envPass);
+        }
+
         mSkyBoxStage = getMain().getResourceManager()->queryResourceFromJson<Scene>(
             getName() + "_" + cameraName + "_SkyBoxStage", stageGenerator.generate().write());
         mResourcesList.emplace_back(mSkyBoxStage->getName());
@@ -528,6 +566,29 @@ namespace lite3dpp_pipeline {
         sceneGenerator.addRenderTarget(cameraName, mIBL->getDiffusePass()->getName(), ConfigurationWriter()
             .set(L"Priority", static_cast<int>(RenderPassStagePriority::ForwardStage))
             .set(L"TexturePass", static_cast<int>(TexturePassTypes::EnvironmentPass))
+            .set(L"DepthTest", true)
+            .set(L"ColorOutput", true)
+            .set(L"DepthOutput", true)
+            .set(L"RenderBlend", false)
+            .set(L"RenderOpaque", true)
+            .set(L"FrustumCulling", false)
+            .set(L"RenderInstancing", pipelineConfig.getBool(L"Instancing", true)));
+    }
+
+    void PipelineBase::constructIBLM(const ConfigurationReader &pipelineConfig, const String &cameraName,
+        SceneGenerator &sceneGenerator)
+    {
+        if (!pipelineConfig.has(L"IBLMultiProbe"))
+        {
+            return;
+        }
+
+        mIBLM = std::make_unique<IBLMultiProbe>(getMain(), getName());
+        mIBLM->initialize(pipelineConfig);
+
+        sceneGenerator.addRenderTarget(cameraName, mIBLM->getPass()->getName(), ConfigurationWriter()
+            .set(L"Priority", static_cast<int>(RenderPassStagePriority::ForwardStage))
+            .set(L"TexturePass", static_cast<int>(TexturePassTypes::EnvironmentMultiProbePass))
             .set(L"DepthTest", true)
             .set(L"ColorOutput", true)
             .set(L"DepthOutput", true)
