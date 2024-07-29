@@ -26,13 +26,13 @@ class LITE3DPP_PIPELINE_EXPORT IBLMultiProbe : public RenderTargetObserver, publ
 {
 public:
 
-//#pragma pack(push, 16)
-    struct GPUEnvProbe
+#pragma pack(push, 16)
+    struct EnvProbeEntity
     {
         kmVec4 position;
         kmMat4 viewProjMatrices[6];
     };
-//#pragma pack(pop)
+#pragma pack(pop)
 
     class EnvProbe
     {
@@ -41,7 +41,7 @@ public:
         EnvProbe(Main *main, float zNear, float zFar);
         
         void setPosition(const kmVec3 &pos);
-        const void writeGPUProbe(GPUEnvProbe *probe);
+        const void writeProbe(EnvProbeEntity *probe);
 
         void rebuildMatrix();
 

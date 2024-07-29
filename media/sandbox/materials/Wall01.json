@@ -88,6 +88,11 @@
           "Type": "UBO"
         },
         {
+          "Name": "LightProbes",
+          "UBOName": "SandboxPipeline_LightProbes",
+          "Type": "UBO"
+        },
+        {
           "Name": "Eye",
           "Type": "v3",
           "Scope": "global"
@@ -188,8 +193,8 @@
           "Type": "UBO"
         },
         {
-          "Name": "CubeTransform",
-          "UBOName": "SandboxPipeline_CubeArrayTransform",
+          "Name": "LightProbes",
+          "UBOName": "SandboxPipeline_LightProbes",
           "Type": "UBO"
         },
         {

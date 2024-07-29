@@ -24,7 +24,7 @@ float ShadowVisibility(float shadowIndex, vec3 P, vec3 N, vec3 L);
 /* Illumination compute module */
 vec3 Lx(vec3 albedo, vec3 radiance, vec3 L, vec3 N, vec3 V, vec3 specular, float NdotV);
 /* Environment lighting */
-vec3 ComputeEnvironmentLighting(vec3 V, vec3 N, float NdotV, vec3 albedo, vec3 specular, float aoFactor, float saFactor);
+vec3 ComputeEnvironmentLighting(vec3 P, vec3 V, vec3 N, float NdotV, vec3 albedo, vec3 specular, float aoFactor, float saFactor);
 
 vec3 ComputeIllumination(vec3 P, vec3 N, vec3 albedo, vec3 emission, vec3 specular, float aoFactor, 
     float saFactor)
@@ -113,7 +113,7 @@ vec3 ComputeIllumination(vec3 P, vec3 N, vec3 albedo, vec3 emission, vec3 specul
         directLx += Lx(albedo, radiance, L, N, V, specular, NdotV);
     }
 
-    vec3 indirectLx = ComputeEnvironmentLighting(V, N, NdotV, albedo, specular, aoFactor, saFactor);
+    vec3 indirectLx = ComputeEnvironmentLighting(P, V, N, NdotV, albedo, specular, aoFactor, saFactor);
 
     return indirectLx + directLx + emission;
 }

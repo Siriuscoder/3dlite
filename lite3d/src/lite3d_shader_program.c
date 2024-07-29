@@ -28,6 +28,8 @@ typedef int (*lite3d_uniform_set_func)(lite3d_shader_program *, lite3d_shader_pa
 
 lite3d_shader_program *gActProg = NULL;
 int gMaxGSOutVertices = 0;
+int gMaxGSTotalOutputComponents = 0;
+int gMaxGSOutputComponents = 0;
 
 static void lite3d_shader_program_get_log(lite3d_shader_program *program)
 {
@@ -52,6 +54,12 @@ int lite3d_shader_program_technique_init(void)
     {
         glGetIntegerv(GL_MAX_GEOMETRY_OUTPUT_VERTICES, &gMaxGSOutVertices);
         SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "GL_MAX_GEOMETRY_OUTPUT_VERTICES: %d", gMaxGSOutVertices);
+
+        glGetIntegerv(GL_MAX_GEOMETRY_OUTPUT_COMPONENTS, &gMaxGSOutputComponents);
+        SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "GL_MAX_GEOMETRY_OUTPUT_COMPONENTS: %d", gMaxGSOutputComponents);
+
+        glGetIntegerv(GL_MAX_GEOMETRY_TOTAL_OUTPUT_COMPONENTS, &gMaxGSTotalOutputComponents);
+        SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "GL_MAX_GEOMETRY_TOTAL_OUTPUT_COMPONENTS: %d", gMaxGSTotalOutputComponents);
     }
 
     return LITE3D_TRUE;

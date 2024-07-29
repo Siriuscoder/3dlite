@@ -3,7 +3,7 @@
 uniform samplerCube IrradianceProbe;
 uniform samplerCube EnvironmentProbe;
 
-vec3 ComputeEnvironmentLighting(vec3 V, vec3 N, float NdotV, vec3 albedo, vec3 specular, float aoFactor, float saFactor)
+vec3 ComputeEnvironmentLighting(vec3 P, vec3 V, vec3 N, float NdotV, vec3 albedo, vec3 specular, float aoFactor, float saFactor)
 {
     // Reflect vector from surface
     vec3 R = reflect(-V, N);

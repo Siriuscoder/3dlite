@@ -7,7 +7,7 @@ struct EnvProbeStruct
     mat4 projView[6];
 };
 
-layout(std140) uniform CubeTransform
+layout(std140) uniform LightProbes
 {
     EnvProbeStruct probes[ENV_PROBES_MAX];
 };

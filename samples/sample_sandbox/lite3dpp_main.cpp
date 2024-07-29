@@ -49,7 +49,7 @@ public:
         setMainCamera(&mPipeline->getMainCamera());
         addFlashlight();
 
-        
+
         kmVec3 probePos = { -2.0, -4.0, 2.0 };
         for (int i = 0; i < 2; ++i)
         {
@@ -68,6 +68,14 @@ public:
             probePos.x = -2.0;
             probePos.z += 2.0;
         }
+/*
+        kmVec3 probePos = { 0.0, -4.0, 4.0 };
+        for (int i = 0; i < 3; ++i)
+        {
+            mPipeline->getIBLM()->addProbe(probePos); 
+            probePos.y += 4.0;
+        }
+*/
     }
 
     void frameBegin() override
@@ -97,6 +105,7 @@ public:
         node->getLight()->setRadiance(60.0f);
         node->getLight()->enabled(true);
 
+        mPipeline->getIBLM()->rebuild();
       //  mPipeline->getIBL()->rebuildEnvironmentProbe();
       //  mPipeline->getIBL()->rebuildIrradianceProbe();
     }

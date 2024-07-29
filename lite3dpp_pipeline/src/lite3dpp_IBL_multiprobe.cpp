@@ -29,7 +29,7 @@ void IBLMultiProbe::initialize(const ConfigurationReader &pipelineConfig)
     mzNear = config.getDouble(L"ProbeZNearClip", 0.0f);
     mzFar = config.getDouble(L"ProbeZFarClip", 1.0f);
 
-    mViewMatricesGPUBuffer = createMatrixBuffer("_CubeArrayTransform");
+    mViewMatricesGPUBuffer = createMatrixBuffer("_LightProbes");
     createProbePass(config);
 }
 
@@ -40,7 +40,7 @@ VBOResource* IBLMultiProbe::createMatrixBuffer(const String& bufferName)
     
     mResourcesList.emplace_back(matrixBuffer->getName());
     // Выделяем место под 6 * N матриц, нужны будут для рендера сторон массива кубических текстур
-    matrixBuffer->extendBufferBytes(sizeof(GPUEnvProbe) * mProbeMaxCount);
+    matrixBuffer->extendBufferBytes(sizeof(EnvProbeEntity) * mProbeMaxCount);
     return matrixBuffer;
 }
 
@@ -103,14 +103,14 @@ bool IBLMultiProbe::beginUpdate(RenderTarget *rt)
 {
     if (mRecalcProbes)
     {
-        SDL_assert((mProbes.size() * sizeof(GPUEnvProbe)) <= mViewMatricesGPUBuffer->bufferSizeBytes());
-        auto lock = mViewMatricesGPUBuffer->map(BufferScopedMapper::BufferScopedMapperLockType::LockTypeReadWrite);
+        SDL_assert((mProbes.size() * sizeof(EnvProbeEntity)) <= mViewMatricesGPUBuffer->bufferSizeBytes());
+        auto lock = mViewMatricesGPUBuffer->map(BufferScopedMapper::BufferScopedMapperLockType::LockTypeWrite);
         
-        auto probeBlock = lock.getPtr<GPUEnvProbe>(); 
+        auto probeBlock = lock.getPtr<EnvProbeEntity>(); 
         for (auto &probe : mProbes)
         {
             probe.rebuildMatrix();
-            probe.writeGPUProbe(probeBlock++);
+            probe.writeProbe(probeBlock++);
         }
 
         mRecalcProbes = false;
@@ -155,7 +155,7 @@ void IBLMultiProbe::EnvProbe::setPosition(const kmVec3 &pos)
     mProbeCamera->setPosition(pos);
 }
 
-const void IBLMultiProbe::EnvProbe::writeGPUProbe(IBLMultiProbe::GPUEnvProbe *probe)
+const void IBLMultiProbe::EnvProbe::writeProbe(IBLMultiProbe::EnvProbeEntity *probe)
 {
     SDL_assert(mViewProjMatrices.size() == 6);
     SDL_assert(probe);
