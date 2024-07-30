@@ -31,7 +31,7 @@
 //    },
     "IBLMultiProbe":
     {
-        "environmentProbeResolution": 256,
+        "environmentProbeResolution": 128,
         "MaxCount": 12,
         "ProbeZNearClip": 0.01,
         "ProbeZFarClip": 30.0

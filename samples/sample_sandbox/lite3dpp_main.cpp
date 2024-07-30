@@ -25,7 +25,8 @@ namespace samples {
 
 static const char *helpString = 
     "Press 'l' to enable/disable flashlight\n"
-    "Press 'r' to add light spark\n";
+    "Press 'r' to add light spark\n"
+    "Press 't' to add spot light\n";
 
 class SampleSandbox : public Sample
 {
@@ -78,8 +79,9 @@ public:
 */
     }
 
-    void frameBegin() override
+    void mainCameraChanged() override
     {
+        Sample::mainCameraChanged();
         updateFlashLight();
     }
 
@@ -94,6 +96,23 @@ public:
         mFlashLight->getLight()->enabled(false);
     }
 
+    void addSpotLight()
+    {
+        auto flashLightObject = mMainScene->addObject("SpotLight_" + std::to_string(++mObjectCounter), 
+            "samples:objects/flashlight.json", nullptr);
+        auto spotLight = flashLightObject->getLightNode("FlashLight.node");
+        spotLight->getLight()->setAttenuationConstant(1.0f);
+        spotLight->getLight()->setAttenuationLinear(15.23f);
+        spotLight->getLight()->setAttenuationQuadratic(35.23f);
+        spotLight->getLight()->setRadiance(100.0f);
+        spotLight->getLight()->enabled(true);
+        spotLight->setPosition(getMainCamera().getWorldPosition());
+        spotLight->setRotation(getMainCamera().getWorldRotation());
+
+        // Recalc global illumination
+        mPipeline->getIBLM()->rebuild();
+    }
+
     void addSpark()
     {
         auto sparkObject = mMainScene->addObject("Spark_" + std::to_string(++mObjectCounter), 
@@ -105,6 +124,7 @@ public:
         node->getLight()->setRadiance(60.0f);
         node->getLight()->enabled(true);
 
+        // Recalc global illumination
         mPipeline->getIBLM()->rebuild();
     }
 
@@ -114,6 +134,8 @@ public:
         {
             mFlashLight->setPosition(getMainCamera().getWorldPosition());
             mFlashLight->setRotation(getMainCamera().getWorldRotation());
+            // Recalc global illumination
+            mPipeline->getIBLM()->rebuild();
         }
     }
 
@@ -146,6 +168,10 @@ public:
             else if (e->key.keysym.sym == SDLK_r)
             {
                 addSpark();
+            }
+            else if (e->key.keysym.sym == SDLK_t)
+            {
+                addSpotLight();
             }
         }
     }

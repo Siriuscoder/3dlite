@@ -16,12 +16,13 @@ layout(std140) uniform LightProbes
 vec3 ComputeEnvironmentLighting(vec3 P, vec3 V, vec3 N, float NdotV, vec3 albedo, vec3 specular, float aoFactor, float saFactor)
 {
     vec3 diffuseIrradianceLx = vec3(0.0);
+    vec3 specularIrradianceLx = vec3(0.0);
     float samplesCount = 0.0;
     float nearProbeDistance = FLT_MAX;
-    int nearProbeIndex = 0;
-    vec3 environmentProbeDimensions = textureSize(EnvironmentProbe, 0);
-    float maxLod = log2(environmentProbeDimensions.x);
-    int probesCount = int(environmentProbeDimensions.z);
+    ivec3 environmentProbeDimensions = textureSize(EnvironmentProbe, 0);
+    float maxLod = log2(float(environmentProbeDimensions.x));
+    int probesCount = environmentProbeDimensions.z;
+    float specularLevel = sqrt(specular.y) * maxLod;
 
     // Reflect vector from surface
     vec3 R = reflect(-V, N);
@@ -31,11 +32,7 @@ vec3 ComputeEnvironmentLighting(vec3 P, vec3 V, vec3 N, float NdotV, vec3 albedo
     for (int p = 0; p < probesCount; ++p)
     {
         float probeDistance = length(P - probes[p].position.xyz);
-        if (probeDistance < nearProbeDistance)
-        {
-            nearProbeDistance = probeDistance;
-            nearProbeIndex = p;
-        }
+        nearProbeDistance = min(nearProbeDistance, probeDistance);
     }
 
     // Calc indirect diffuse light
@@ -47,16 +44,17 @@ vec3 ComputeEnvironmentLighting(vec3 P, vec3 V, vec3 N, float NdotV, vec3 albedo
         if (weight < DIFFUSE_IRRADIANCE_WEIGHT_THRESHOLD)
             continue;
 
-        diffuseIrradianceLx += textureLod(EnvironmentProbe, vec4(N, p), maxLod - 1.0).rgb * sqrt(weight);
+        float sw = sqrt(weight);
+        diffuseIrradianceLx += textureLod(EnvironmentProbe, vec4(N, p), maxLod - 1.0).rgb * sw;
+        specularIrradianceLx += textureLod(EnvironmentProbe, vec4(R, p), specularLevel).rgb * sw;
         samplesCount++;
     }
 
-    vec3 kD = diffuseFactor(F, specular.z) * albedo * DIFFUSE_IRRADIANCE_STRENGTH;
+    vec3 kD = diffuseFactor(F, specular.z) * albedo;
+    vec3 kS = F;
+
     diffuseIrradianceLx *= kD / samplesCount;
+    specularIrradianceLx *= kS / samplesCount;
 
-    // Calc indirect specular light
-    float specularLevel = sqrt(specular.y) * maxLod;
-    vec3 specularIrradianceLx = textureLod(EnvironmentProbe, vec4(R, 1), specularLevel).rgb * F * saFactor;
-
-    return (diffuseIrradianceLx + specularIrradianceLx) * aoFactor;
+    return (diffuseIrradianceLx + specularIrradianceLx) * aoFactor * saFactor;
 }
