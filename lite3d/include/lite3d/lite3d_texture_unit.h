@@ -43,12 +43,12 @@
 #define LITE3D_TEXTURE_3D                       0x02
 #define LITE3D_TEXTURE_CUBE                     0x03
 #define LITE3D_TEXTURE_2D_ARRAY                 0x04
-#define LITE3D_TEXTURE_BUFFER                   0x05
-#define LITE3D_TEXTURE_2D_MULTISAMPLE           0x06
-#define LITE3D_TEXTURE_3D_MULTISAMPLE           0x07
-#define LITE3D_TEXTURE_2D_SHADOW                0x08
-#define LITE3D_TEXTURE_2D_SHADOW_ARRAY          0x09
-#define LITE3D_TEXTURE_CUBE_ARRAY               0x0A
+#define LITE3D_TEXTURE_CUBE_ARRAY               0x05
+#define LITE3D_TEXTURE_BUFFER                   0x06
+#define LITE3D_TEXTURE_2D_MULTISAMPLE           0x07
+#define LITE3D_TEXTURE_3D_MULTISAMPLE           0x08
+#define LITE3D_TEXTURE_2D_SHADOW                0x09
+#define LITE3D_TEXTURE_2D_SHADOW_ARRAY          0x0A
 /* pre-loading texture manipulation */
 #define LITE3D_ALIENIFY_FILTER                  0x0001
 #define LITE3D_BLURAVG_FILTER                   0x0002

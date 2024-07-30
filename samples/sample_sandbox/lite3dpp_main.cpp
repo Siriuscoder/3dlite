@@ -106,8 +106,6 @@ public:
         node->getLight()->enabled(true);
 
         mPipeline->getIBLM()->rebuild();
-      //  mPipeline->getIBL()->rebuildEnvironmentProbe();
-      //  mPipeline->getIBL()->rebuildIrradianceProbe();
     }
 
     void updateFlashLight()

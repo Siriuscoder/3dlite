@@ -50,7 +50,7 @@ void IBLMultiProbe::createProbePass(const ConfigurationReader &config)
     // Создание массива кубических текстур для пробирования окружающего освещения
     ConfigurationWriter mapConfig;
     mapConfig.set(L"TextureType", "CUBE_ARRAY")
-        .set(L"Filtering", "Linear")
+        .set(L"Filtering", "Trilinear")
         .set(L"Width", resolution)
         .set(L"Height", resolution)
         .set(L"Depth", mProbeMaxCount)

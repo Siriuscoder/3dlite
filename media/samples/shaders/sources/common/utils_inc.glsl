@@ -1,8 +1,13 @@
 //////////// Math utilities
 ////////////////////////////////////////////////////////////////////////////
 
-#define M_PI                                    3.1415926535897932384626433832795
 #define FLT_EPSILON                             1.192092896e-07F
+#define FLT_MAX                                 3.402823466e+38
+#define FLT_MIN                                 1.175494351e-38
+#define DBL_MAX                                 1.7976931348623158e+308
+#define DBL_MIN                                 2.2250738585072014e-308
+
+#define M_PI                                    3.14159265358979323846264
 #define PHI                                     1.61803398874989484820459
 
 bool isNear(float a1, float a2);
