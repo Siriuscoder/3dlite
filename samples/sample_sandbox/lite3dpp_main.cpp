@@ -15,8 +15,6 @@
  *	You should have received a copy of the GNU General Public License
  *	along with Lite3D.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
-#include <ctime>
-
 #include <sample_common/lite3dpp_common.h>
 #include <lite3dpp_pipeline/lite3dpp_pipeline.h>
 
@@ -31,6 +29,10 @@ static const char *helpString =
 class SampleSandbox : public Sample
 {
 public:
+
+    static constexpr const float AttenuationConstant = 1.0;
+    static constexpr const float AttenuationLinear = 15.23f;
+    static constexpr const float AttenuationQuadratic = 35.23f;
 
     SampleSandbox() : 
         Sample(helpString)
@@ -69,14 +71,6 @@ public:
             probePos.x = -2.0;
             probePos.z += 2.0;
         }
-/*
-        kmVec3 probePos = { 0.0, -4.0, 4.0 };
-        for (int i = 0; i < 3; ++i)
-        {
-            mPipeline->getIBLM()->addProbe(probePos); 
-            probePos.y += 4.0;
-        }
-*/
     }
 
     void mainCameraChanged() override
@@ -89,9 +83,9 @@ public:
     {
         auto flashLightObject = mMainScene->addObject("FlashLight", "samples:objects/flashlight.json", nullptr);
         mFlashLight = flashLightObject->getLightNode("FlashLight.node");
-        mFlashLight->getLight()->setAttenuationConstant(1.0f);
-        mFlashLight->getLight()->setAttenuationLinear(15.23f);
-        mFlashLight->getLight()->setAttenuationQuadratic(35.23f);
+        mFlashLight->getLight()->setAttenuationConstant(AttenuationConstant);
+        mFlashLight->getLight()->setAttenuationLinear(AttenuationLinear);
+        mFlashLight->getLight()->setAttenuationQuadratic(AttenuationQuadratic);
         mFlashLight->getLight()->setRadiance(100.0f);
         mFlashLight->getLight()->enabled(false);
     }
@@ -101,10 +95,10 @@ public:
         auto flashLightObject = mMainScene->addObject("SpotLight_" + std::to_string(++mObjectCounter), 
             "samples:objects/flashlight.json", nullptr);
         auto spotLight = flashLightObject->getLightNode("FlashLight.node");
-        spotLight->getLight()->setAttenuationConstant(1.0f);
-        spotLight->getLight()->setAttenuationLinear(15.23f);
-        spotLight->getLight()->setAttenuationQuadratic(35.23f);
-        spotLight->getLight()->setRadiance(100.0f);
+        spotLight->getLight()->setAttenuationConstant(AttenuationConstant);
+        spotLight->getLight()->setAttenuationLinear(AttenuationLinear);
+        spotLight->getLight()->setAttenuationQuadratic(AttenuationQuadratic);
+        spotLight->getLight()->setRadiance(200.0f);
         spotLight->getLight()->enabled(true);
         spotLight->setPosition(getMainCamera().getWorldPosition());
         spotLight->setRotation(getMainCamera().getWorldRotation());
@@ -118,9 +112,9 @@ public:
         auto sparkObject = mMainScene->addObject("Spark_" + std::to_string(++mObjectCounter), 
             "samples:objects/light_spark.json", nullptr, getMainCamera().getWorldPosition());
         auto node = sparkObject->getLightNode("PointLightSpark.node");
-        node->getLight()->setAttenuationConstant(1.0f);
-        node->getLight()->setAttenuationLinear(15.23f);
-        node->getLight()->setAttenuationQuadratic(35.23f);
+        node->getLight()->setAttenuationConstant(AttenuationConstant);
+        node->getLight()->setAttenuationLinear(AttenuationLinear);
+        node->getLight()->setAttenuationQuadratic(AttenuationQuadratic);
         node->getLight()->setRadiance(60.0f);
         node->getLight()->enabled(true);
 

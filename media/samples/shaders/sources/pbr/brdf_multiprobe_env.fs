@@ -39,14 +39,13 @@ vec3 ComputeEnvironmentLighting(vec3 P, vec3 V, vec3 N, float NdotV, vec3 albedo
     for (int p = 0; p < probesCount; ++p)
     {
         float probeDistance = length(P - probes[p].position.xyz);
-        float weight = nearProbeDistance / probeDistance;
+        float weightD = nearProbeDistance / probeDistance;
 
-        if (weight < DIFFUSE_IRRADIANCE_WEIGHT_THRESHOLD)
+        if (weightD < DIFFUSE_IRRADIANCE_WEIGHT_THRESHOLD)
             continue;
 
-        float sw = sqrt(weight);
-        diffuseIrradianceLx += textureLod(EnvironmentProbe, vec4(N, p), maxLod - 1.0).rgb * sw;
-        specularIrradianceLx += textureLod(EnvironmentProbe, vec4(R, p), specularLevel).rgb * sw;
+        diffuseIrradianceLx += textureLod(EnvironmentProbe, vec4(N, p), maxLod - 1.0).rgb * sqrt(weightD);
+        specularIrradianceLx += textureLod(EnvironmentProbe, vec4(R, p), specularLevel).rgb * pow(weightD, 2.5);
         samplesCount++;
     }
 
