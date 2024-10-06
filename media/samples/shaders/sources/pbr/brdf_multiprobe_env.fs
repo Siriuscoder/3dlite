@@ -35,6 +35,8 @@ vec3 ComputeEnvironmentLighting(vec3 P, vec3 V, vec3 N, float NdotV, vec3 albedo
     }
 
     // Calc indirect diffuse light
+    float totalDWeight = 0.0;
+    float totalSWeight = 0.0;
     for (int p = 0; p < probesCount; ++p)
     {
         float probeDistance = length(P - probes[p].position.xyz);
@@ -43,12 +45,18 @@ vec3 ComputeEnvironmentLighting(vec3 P, vec3 V, vec3 N, float NdotV, vec3 albedo
         if (weight < DIFFUSE_IRRADIANCE_WEIGHT_THRESHOLD)
             continue;
 
-        diffuseIrradianceLx += textureLod(EnvironmentProbe, vec4(N, p), maxLod - 1.0).rgb * shlickPow(weight, 2.5);
-        specularIrradianceLx += textureLod(EnvironmentProbe, vec4(R, p), specularLevel).rgb * shlickPow(weight, 16.0);
+        float dW = sqrt(weight);
+        float sW = shlickPow(weight, 16.0);
+
+        diffuseIrradianceLx += textureLod(EnvironmentProbe, vec4(N, p), maxLod - 1.0).rgb * dW;
+        specularIrradianceLx += textureLod(EnvironmentProbe, vec4(R, p), specularLevel).rgb * sW;
+
+        totalDWeight += dW;
+        totalSWeight += sW;
     }
 
-    vec3 kD = diffuseFactor(F, specular.z) * albedo;
-    vec3 kS = F;
+    vec3 kD = diffuseFactor(F, specular.z) * albedo / totalDWeight;
+    vec3 kS = F / totalSWeight;
 
     diffuseIrradianceLx *= kD;
     specularIrradianceLx *= kS;

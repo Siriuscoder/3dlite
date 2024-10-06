@@ -24,25 +24,26 @@ in vec3 iwb_g[];
 
 out vec2 iuv;    // UVs
 out vec3 iwv;    // world-space position
-out vec3 iwn;
-out vec3 iwt;
-out vec3 iwb;
+out vec3 iwn;    // world-space normal
+out vec3 iwt;    // world-space tangent
+out vec3 iwb;    // world-space bitangent
 
 void main()
 {
-    int layerID = 0;
-    for (int p = 0; p < ENV_PROBES_MAX; ++p)
+    int indexCount = probesIndex[0];
+    for (int ic = 1; ic <= indexCount; ++ic)
     {
-        for (int i = 0; i < 6; ++i, ++layerID)
+        int index = probesIndex[ic];
+        for (int i = 0; i < 6; ++i)
         {
-            gl_Layer = layerID;
+            gl_Layer = (index * 6) + i;
 
             for (int j = 0; j < 3; ++j)
             {
                 // world-space position
                 iwv = gl_in[j].gl_Position.xyz / gl_in[j].gl_Position.w;
                 // screen-space position
-                gl_Position = probes[p].projView[i] * gl_in[j].gl_Position;
+                gl_Position = probes[index].projView[i] * gl_in[j].gl_Position;
                 // UVs
                 iuv = iuv_g[j];
                 // TBN

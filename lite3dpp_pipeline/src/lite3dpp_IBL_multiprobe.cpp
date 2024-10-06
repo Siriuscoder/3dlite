@@ -29,10 +29,10 @@ void IBLMultiProbe::initialize(const ConfigurationReader &pipelineConfig)
     mzNear = config.getDouble(L"ProbeZNearClip", 0.0f);
     mzFar = config.getDouble(L"ProbeZFarClip", 1.0f);
 
-    mProbesBuffer = createBuffer("EnvProbes", sizeof(ProbeEntity) * mProbeMaxCount);
+    mProbesBuffer = createBuffer("_EnvProbes", sizeof(ProbeEntity) * mProbeMaxCount);
     // Массивы в std140 всегда выравниваются по границе 16 байт, даже если тип данных (например, int) 
     // сам занимает меньше места (4 байта).
-    mProbesIndexBuffer = createBuffer("_EnvProbesIndex", sizeof(ProbeIndexEntity) * (mProbeMaxCount + 1));
+    mProbesIndexBuffer = createBuffer("_EnvProbesIndex", sizeof(ProbeIndexEntity) * (MaxProbeCountInBatch + 1));
     createProbePass(config);
 }
 
@@ -78,7 +78,7 @@ void IBLMultiProbe::createProbePass(const ConfigurationReader &config)
     ConfigurationWriter passConfig;
     passConfig.set(L"BackgroundColor", kmVec4 { 0.0f, 0.0f, 0.0f, 1.0f })
         .set(L"Priority", static_cast<uint32_t>(RenderPassPriority::EnvironmentMultiProbe))
-        .set(L"CleanColorBuf", true)
+        .set(L"CleanColorBuf", false)
         .set(L"CleanDepthBuf", true)
         .set(L"CleanStencilBuf", false)
         .set(L"Width", resolution)
@@ -162,12 +162,6 @@ void IBLMultiProbe::updateProbe(size_t index, const kmVec3 &position)
     }
 
     mProbes[index].setPosition(position);
-}
-
-void IBLMultiProbe::postUpdate(RenderTarget *rt)
-{
-    // После обработка соответствующего прохода, отключим его для дальнейшего включения по внешнему событию 
-    //rt->disable();
 }
 
 IBLMultiProbe::EnvProbe::EnvProbe(Main *main, float zNear, float zFar) : 

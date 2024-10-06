@@ -85,7 +85,6 @@ public:
 
 protected:
 
-    void postUpdate(RenderTarget *rt) override;
     bool beginUpdate(RenderTarget *rt) override;
 
     void createProbePass(const ConfigurationReader &config);

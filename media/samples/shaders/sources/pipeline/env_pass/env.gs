@@ -15,9 +15,9 @@ in vec3 iwb_g[];
 
 out vec2 iuv;    // UVs
 out vec3 iwv;    // world-space position
-out vec3 iwn;
-out vec3 iwt;
-out vec3 iwb;
+out vec3 iwn;    // world-space normal
+out vec3 iwt;    // world-space tangent
+out vec3 iwb;    // world-space bitangent
 
 void main()
 {
