@@ -68,8 +68,8 @@
           "Type": "UBO"
         },
         {
-          "Name":"LightProbes",
-          "UBOName":"SandboxPipeline_LightProbes",
+          "Name":"EnvProbes",
+          "UBOName":"SandboxPipeline_EnvProbes",
           "Type":"UBO"
         },
         {
@@ -153,8 +153,13 @@
           "Type": "UBO"
         },
         {
-          "Name":"LightProbes",
-          "UBOName":"SandboxPipeline_LightProbes",
+          "Name":"EnvProbes",
+          "UBOName":"SandboxPipeline_EnvProbes",
+          "Type":"UBO"
+        },
+        {
+          "Name":"EnvProbesIndex",
+          "UBOName":"SandboxPipeline_EnvProbesIndex",
           "Type":"UBO"
         },
         {

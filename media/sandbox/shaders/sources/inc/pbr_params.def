@@ -1,8 +1,8 @@
 #include "samples:shaders/sources/common/version.def"
 #extension GL_ARB_texture_cube_map_array : enable
 
-#define ENV_MULTI_MAX_VERTICES                  216
-#define ENV_PROBES_MAX                          12
+#define ENV_MULTI_MAX_VERTICES                  72
+#define ENV_PROBES_MAX                          4
 
 #define DIFFUSE_IRRADIANCE_WEIGHT_THRESHOLD     0.1
 #define DIFFUSE_IRRADIANCE_STRENGTH             10.0

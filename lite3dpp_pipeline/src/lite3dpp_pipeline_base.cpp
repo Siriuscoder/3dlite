@@ -527,8 +527,12 @@ namespace lite3dpp_pipeline {
                         .set(L"TextureName", getName() + "_skybox.texture")
                         .set(L"TexturePath", skyBoxConfig.getString(L"Texture")),
                     ConfigurationWriter()
-                        .set(L"Name", "CubeTransform")
-                        .set(L"UBOName", mIBLM->getViewCubeMatrixBufferName())
+                        .set(L"Name", "EnvProbes")
+                        .set(L"UBOName", mIBLM->getProbeBufferName())
+                        .set(L"Type", "UBO"),
+                    ConfigurationWriter()
+                        .set(L"Name", "EnvProbesIndex")
+                        .set(L"UBOName", mIBLM->getProbeIndexBufferName())
                         .set(L"Type", "UBO")
                 });
             

@@ -26,13 +26,30 @@ class LITE3DPP_PIPELINE_EXPORT IBLMultiProbe : public RenderTargetObserver, publ
 {
 public:
 
+    static constexpr const size_t MaxProbeCountInBatch = 4;
+
 #pragma pack(push, 16)
-    struct EnvProbeEntity
+    struct ProbeEntity
     {
         kmVec4 position;
         kmMat4 viewProjMatrices[6];
     };
+
+    struct ProbeIndexEntity
+    {
+        ProbeIndexEntity() = default;
+
+        template<class T>
+        ProbeIndexEntity(T i)
+        {
+            index[0] = static_cast<int32_t>(i);
+        }
+
+        int32_t index[4] = {0};
+    };
 #pragma pack(pop)
+
+
 
     class EnvProbe
     {
@@ -41,14 +58,17 @@ public:
         EnvProbe(Main *main, float zNear, float zFar);
         
         void setPosition(const kmVec3 &pos);
-        const void writeProbe(EnvProbeEntity *probe);
+        void writeProbe(ProbeEntity *probe) const;
 
         void rebuildMatrix();
+        inline bool invalidated() const { return mInvalidated; }
+        inline void invalidate() { mInvalidated = true; }
 
     private:
 
         std::shared_ptr<Camera> mProbeCamera;
         stl<kmMat4>::vector mViewProjMatrices;
+        bool mInvalidated = true;
     };
 
     IBLMultiProbe(Main& main, const String& pipelineName);
@@ -56,10 +76,12 @@ public:
 
     void initialize(const ConfigurationReader &pipelineConfig);
     inline RenderTarget* getPass() { return mEnvironmentProbePass; }
-    inline const std::string &getViewCubeMatrixBufferName() const { return mViewMatricesGPUBuffer->getName(); }
+    inline const std::string &getProbeBufferName() const { return mProbesBuffer->getName(); }
+    inline const std::string &getProbeIndexBufferName() const { return mProbesIndexBuffer->getName(); }
     inline Texture *getEnvProbeTexture() { return mEnvironmentProbe; }
     void rebuild();
-    void addProbe(const kmVec3 &position);
+    size_t addProbe(const kmVec3 &position);
+    void updateProbe(size_t index, const kmVec3 &position);
 
 protected:
 
@@ -67,21 +89,23 @@ protected:
     bool beginUpdate(RenderTarget *rt) override;
 
     void createProbePass(const ConfigurationReader &config);
-    VBOResource* createMatrixBuffer(const String& bufferName);
+    VBOResource* createBuffer(const String& bufferName, size_t size);
 
 protected:
 
     Main& mMain;
     uint32_t mProbeMaxCount = 1;
     String mPipelineName;
-    VBOResource *mViewMatricesGPUBuffer = nullptr;
+    VBOResource *mProbesBuffer = nullptr;
+    VBOResource *mProbesIndexBuffer = nullptr;
     RenderTarget *mEnvironmentProbePass = nullptr;
     Texture *mEnvironmentProbe = nullptr;
     Texture *mEnvironmentDepth = nullptr;
     stl<EnvProbe>::vector mProbes;
+    stl<ProbeIndexEntity>::vector mProbesIndex;
     stl<String>::list mResourcesList;
     float mzNear = 0.0, mzFar = 1.0;
-    bool mRecalcProbes = true;
+
 };
 
 }}

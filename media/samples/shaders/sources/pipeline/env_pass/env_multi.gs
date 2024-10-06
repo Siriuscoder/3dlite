@@ -7,9 +7,14 @@ struct EnvProbeStruct
     mat4 projView[6];
 };
 
-layout(std140) uniform LightProbes
+layout(std140) uniform EnvProbes
 {
     EnvProbeStruct probes[ENV_PROBES_MAX];
+};
+
+layout(std140) uniform EnvProbesIndex
+{
+    int probesIndex[ENV_PROBES_MAX + 1];
 };
 
 in vec2 iuv_g[];

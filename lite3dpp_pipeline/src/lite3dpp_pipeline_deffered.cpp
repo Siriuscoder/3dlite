@@ -96,12 +96,12 @@ namespace lite3dpp_pipeline {
         }
         else
         {
-            if (pipelineConfig.has(L"LightComputeEnvironmentTexture"))
+            if (pipelineConfig.has(L"EnvironmentTexture"))
             {
                 lightComputeMaterialUniforms.emplace_back(ConfigurationWriter()
                     .set(L"Name", "Environment")
                     .set(L"TextureName", "environment.texture")
-                    .set(L"TexturePath", pipelineConfig.getString(L"LightComputeEnvironmentTexture"))
+                    .set(L"TexturePath", pipelineConfig.getString(L"EnvironmentTexture"))
                     .set(L"Type", "sampler"));
             }
         }

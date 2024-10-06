@@ -43,6 +43,16 @@ bool isZero(vec3 a1)
     return isNear(a1, vec3(0.0));
 }
 
+float lerp(float a, float b, float f)
+{
+    return a + f * (b - a);
+}
+
+// Shlick power approx a^b = a / (b – a*b + a) for 0 <= a <= 1 
+float shlickPow(float a, float b)
+{
+    return a / (b - a * b + a);
+}
 // Gold Noise ©2015 dcerisano@standard3d.com
 // - based on the Golden Ratio
 // - uniform normalized distribution
@@ -51,11 +61,6 @@ bool isZero(vec3 a1)
 float goldNoise(vec2 xy)
 {
     return fract(tan(distance(xy * PHI, xy) * RandomSeed) * xy.x);
-}
-
-float lerp(float a, float b, float f)
-{
-    return a + f * (b - a);
 }
 
 float noiseInterleavedGradient(vec2 xy)

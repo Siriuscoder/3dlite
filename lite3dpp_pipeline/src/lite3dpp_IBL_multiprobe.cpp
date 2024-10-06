@@ -29,24 +29,27 @@ void IBLMultiProbe::initialize(const ConfigurationReader &pipelineConfig)
     mzNear = config.getDouble(L"ProbeZNearClip", 0.0f);
     mzFar = config.getDouble(L"ProbeZFarClip", 1.0f);
 
-    mViewMatricesGPUBuffer = createMatrixBuffer("_LightProbes");
+    mProbesBuffer = createBuffer("EnvProbes", sizeof(ProbeEntity) * mProbeMaxCount);
+    // Массивы в std140 всегда выравниваются по границе 16 байт, даже если тип данных (например, int) 
+    // сам занимает меньше места (4 байта).
+    mProbesIndexBuffer = createBuffer("_EnvProbesIndex", sizeof(ProbeIndexEntity) * (mProbeMaxCount + 1));
     createProbePass(config);
 }
 
-VBOResource* IBLMultiProbe::createMatrixBuffer(const String& bufferName)
+VBOResource* IBLMultiProbe::createBuffer(const String& bufferName, size_t size)
 {
-    auto matrixBuffer = mMain.getResourceManager()->queryResourceFromJson<UBO>(mPipelineName + bufferName,
+    auto buffer = mMain.getResourceManager()->queryResourceFromJson<UBO>(mPipelineName + bufferName,
         "{\"Dynamic\": true}");
     
-    mResourcesList.emplace_back(matrixBuffer->getName());
+    mResourcesList.emplace_back(buffer->getName());
     // Выделяем место под 6 * N матриц, нужны будут для рендера сторон массива кубических текстур
-    matrixBuffer->extendBufferBytes(sizeof(EnvProbeEntity) * mProbeMaxCount);
-    return matrixBuffer;
+    buffer->extendBufferBytes(size);
+    return buffer;
 }
 
 void IBLMultiProbe::createProbePass(const ConfigurationReader &config)
 {
-    auto resolution = config.getInt(L"environmentProbeResolution", 256);
+    auto resolution = config.getInt(L"ProbeResolution", 256);
     // Создание массива кубических текстур для пробирования окружающего освещения
     ConfigurationWriter mapConfig;
     mapConfig.set(L"TextureType", "CUBE_ARRAY")
@@ -96,47 +99,75 @@ void IBLMultiProbe::createProbePass(const ConfigurationReader &config)
 
 void IBLMultiProbe::rebuild()
 {
-    mEnvironmentProbePass->enable();
+    for (auto &probe : mProbes)
+    {
+        probe.invalidate();
+    }
 }
 
 bool IBLMultiProbe::beginUpdate(RenderTarget *rt)
 {
-    if (mRecalcProbes)
+    // Nothing to do
+    if (std::find_if(mProbes.begin(), mProbes.end(), [](const EnvProbe &e) { return e.invalidated(); }) == mProbes.end())
     {
-        SDL_assert((mProbes.size() * sizeof(EnvProbeEntity)) <= mViewMatricesGPUBuffer->bufferSizeBytes());
-        auto lock = mViewMatricesGPUBuffer->map(BufferScopedMapper::BufferScopedMapperLockType::LockTypeWrite);
-        
-        auto probeBlock = lock.getPtr<EnvProbeEntity>(); 
-        for (auto &probe : mProbes)
-        {
-            probe.rebuildMatrix();
-            probe.writeProbe(probeBlock++);
-        }
-
-        mRecalcProbes = false;
+        return false;
     }
+
+    SDL_assert((mProbes.size() * sizeof(ProbeEntity)) <= mProbesBuffer->bufferSizeBytes());
+    mProbesIndex.resize(1);
+    
+    {
+        auto lock = mProbesBuffer->map(BufferScopedMapper::BufferScopedMapperLockType::LockTypeWrite);
+        auto probeBlock = lock.getPtr<ProbeEntity>(); 
+
+        for (size_t i = 0; i < mProbes.size(); ++i)
+        {
+            if (mProbes[i].invalidated())
+            {
+                mProbes[i].rebuildMatrix();
+                mProbes[i].writeProbe(&probeBlock[i]);
+                mProbesIndex.emplace_back(i);
+            }
+
+            if (mProbesIndex.size() == (MaxProbeCountInBatch + 1))
+            {
+                break;
+            }
+        }
+    }
+    
+    mProbesIndex[0].index[0] = static_cast<int32_t>(mProbesIndex.size() - 1);
+    mProbesIndexBuffer->setData(&mProbesIndex[0], 0, sizeof(ProbeIndexEntity) * mProbesIndex.size());
 
     return true;
 }
 
-void IBLMultiProbe::addProbe(const kmVec3 &position)
+size_t IBLMultiProbe::addProbe(const kmVec3 &position)
 {
     if (mProbes.size() >= mProbeMaxCount)
     {
         LITE3D_THROW("Max probes count is reached: " << mProbeMaxCount << " probes");
     }
 
-    EnvProbe probe(&mMain, mzNear, mzFar);
-    probe.setPosition(position);
+    mProbes.emplace_back(&mMain, mzNear, mzFar);
+    mProbes.back().setPosition(position);
+    return mProbes.size() - 1;
+}
 
-    mProbes.emplace_back(probe);
-    mRecalcProbes = true;
+void IBLMultiProbe::updateProbe(size_t index, const kmVec3 &position)
+{
+    if (index >= mProbes.size())
+    {
+        LITE3D_THROW("Index out of range: " << index << " of " << mProbes.size());
+    }
+
+    mProbes[index].setPosition(position);
 }
 
 void IBLMultiProbe::postUpdate(RenderTarget *rt)
 {
     // После обработка соответствующего прохода, отключим его для дальнейшего включения по внешнему событию 
-    rt->disable();
+    //rt->disable();
 }
 
 IBLMultiProbe::EnvProbe::EnvProbe(Main *main, float zNear, float zFar) : 
@@ -148,14 +179,16 @@ IBLMultiProbe::EnvProbe::EnvProbe(Main *main, float zNear, float zFar) :
 void IBLMultiProbe::EnvProbe::rebuildMatrix()
 {
     mProbeCamera->computeCubeProjView(mViewProjMatrices);
+    mInvalidated = false;
 }
 
 void IBLMultiProbe::EnvProbe::setPosition(const kmVec3 &pos)
 {
     mProbeCamera->setPosition(pos);
+    invalidate();
 }
 
-const void IBLMultiProbe::EnvProbe::writeProbe(IBLMultiProbe::EnvProbeEntity *probe)
+void IBLMultiProbe::EnvProbe::writeProbe(IBLMultiProbe::ProbeEntity *probe) const
 {
     SDL_assert(mViewProjMatrices.size() == 6);
     SDL_assert(probe);

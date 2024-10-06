@@ -25,13 +25,13 @@
     },
 //    "IBL":
 //    {
-//        "environmentProbeResolution": 256,
+//        "ProbeResolution": 256,
 //        "IrradianceProbeResolution": 64,
 //        "FixedProbePosition": [0.0, 0.0, 3.0]
 //    },
     "IBLMultiProbe":
     {
-        "environmentProbeResolution": 128,
+        "ProbeResolution": 256,
         "MaxCount": 12,
         "ProbeZNearClip": 0.01,
         "ProbeZFarClip": 30.0

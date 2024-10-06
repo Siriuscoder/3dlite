@@ -4,7 +4,7 @@
     "Instancing": false,
     "OcclusionCulling": true,
     "LightingTechnique": "UBO",
-    "LightComputeEnvironmentTexture": "samples:textures/json/skybox_metal_chrome.json",
+    "EnvironmentTexture": "samples:textures/json/skybox_metal_chrome.json",
     "SkyBox": 
     {
         "Texture": "samples:textures/json/skybox.json",
@@ -36,7 +36,7 @@
     },
     "IBL":
     {
-        "environmentProbeResolution": 256,
+        "ProbeResolution": 256,
         "IrradianceProbeResolution": 64,
         "FixedProbePosition": [0.0, 0.0, 6.5]
     },

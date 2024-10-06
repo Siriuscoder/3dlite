@@ -51,7 +51,7 @@ VBOResource* IBLDiffuseIrradiance::createMatrixBuffer(const String& bufferName)
 
 void IBLDiffuseIrradiance::createDiffuse(const ConfigurationReader &iblConfig)
 {
-    auto resolution = iblConfig.getInt(L"environmentProbeResolution", 256);
+    auto resolution = iblConfig.getInt(L"ProbeResolution", 256);
     // Создание кубической текстуры окружающего диффузного освещения  
     ConfigurationWriter mapConfig;
     mapConfig.set(L"TextureType", "CUBE")

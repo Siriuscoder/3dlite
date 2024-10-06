@@ -16,7 +16,7 @@ bool isZero(float a1);
 bool isZero(vec3 a1);
 bool isValidUV(vec2 uv);
 float lerp(float a, float b, float f);
-
+float shlickPow(float a, float b);
 //////////// Noise and random utilities
 ////////////////////////////////////////////////////////////////////////////
 
