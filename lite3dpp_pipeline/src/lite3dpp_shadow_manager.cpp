@@ -294,7 +294,7 @@ namespace lite3dpp_pipeline {
         BigTriSceneGenerator stageGenerator;
         stageGenerator.addRenderTarget(mShadowPass->getName(), ConfigurationWriter()
             .set(L"Priority", static_cast<int>(RenderPassStagePriority::ShadowCleanStage))
-            .set(L"TexturePass", static_cast<int>(TexturePassTypes::Shadow))
+            .set(L"TexturePass", static_cast<int>(TexturePassTypes::ShadowPass))
             .set(L"DepthTest", true)
             .set(L"ColorOutput", false)
             .set(L"DepthOutput", true)
@@ -306,7 +306,7 @@ namespace lite3dpp_pipeline {
 
         ConfigurationWriter cleanStageMaterialConfig;
         cleanStageMaterialConfig.set(L"Passes", stl<ConfigurationWriter>::vector {
-            ConfigurationWriter().set(L"Pass", static_cast<int>(TexturePassTypes::Shadow))
+            ConfigurationWriter().set(L"Pass", static_cast<int>(TexturePassTypes::ShadowPass))
                 .set(L"Program", ConfigurationWriter()
                     .set(L"Name", "ShadowMapClean.program")
                     .set(L"Path", shaderPackage + ":shaders/json/shadow_map_clean.json"))

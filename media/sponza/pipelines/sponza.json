@@ -34,11 +34,12 @@
     {
         "BloomRadius": 0.005
     },
-    "IBL":
+    "GI":
     {
         "ProbeResolution": 256,
-        "IrradianceProbeResolution": 64,
-        "FixedProbePosition": [0.0, 0.0, 6.5]
+        "MaxCount": 13,
+        "ProbeZNearClip": 0.01,
+        "ProbeZFarClip": 100.0
     },
     "PostProcess":
     {

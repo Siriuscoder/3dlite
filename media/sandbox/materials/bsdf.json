@@ -68,8 +68,8 @@
           "Type": "UBO"
         },
         {
-          "Name":"EnvProbes",
-          "UBOName":"SandboxPipeline_EnvProbes",
+          "Name":"EnvProbesData",
+          "UBOName":"SandboxPipeline_EnvProbesData",
           "Type":"UBO"
         },
         {
@@ -153,8 +153,8 @@
           "Type": "UBO"
         },
         {
-          "Name":"EnvProbes",
-          "UBOName":"SandboxPipeline_EnvProbes",
+          "Name":"EnvProbesData",
+          "UBOName":"SandboxPipeline_EnvProbesData",
           "Type":"UBO"
         },
         {

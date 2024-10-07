@@ -1,4 +1,0 @@
-#include "samples:shaders/sources/common/version.def"
-
-#define ENV_MULTI_MAX_VERTICES  72
-#define ENV_PROBES_MAX          128

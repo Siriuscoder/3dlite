@@ -2,13 +2,7 @@
 
 uniform samplerCubeArray EnvironmentProbe;
 
-struct EnvironmentProbeStruct
-{
-    vec4 position;
-    mat4 projView[6];
-};
-
-layout(std140) uniform EnvProbes
+layout(std140) uniform EnvProbesData
 {
     EnvironmentProbeStruct probes[ENV_PROBES_MAX];
 };
@@ -40,14 +34,13 @@ vec3 ComputeEnvironmentLighting(vec3 P, vec3 V, vec3 N, float NdotV, vec3 albedo
     for (int p = 0; p < probesCount; ++p)
     {
         float probeDistance = length(P - probes[p].position.xyz);
-        float weight = nearProbeDistance / probeDistance;
+        float dW = 1.0 / max(probeDistance * probeDistance, FLT_EPSILON);
+        float relativeDistance = nearProbeDistance / max(probeDistance, FLT_EPSILON);
 
-        if (weight < DIFFUSE_IRRADIANCE_WEIGHT_THRESHOLD)
+        if (relativeDistance < DIFFUSE_IRRADIANCE_WEIGHT_THRESHOLD)
             continue;
 
-        float dW = sqrt(weight);
-        float sW = shlickPow(weight, 16.0);
-
+        float sW = shlickPow(relativeDistance, 16.0);
         diffuseIrradianceLx += textureLod(EnvironmentProbe, vec4(N, p), maxLod - 1.0).rgb * dW;
         specularIrradianceLx += textureLod(EnvironmentProbe, vec4(R, p), specularLevel).rgb * sW;
 
@@ -55,11 +48,11 @@ vec3 ComputeEnvironmentLighting(vec3 P, vec3 V, vec3 N, float NdotV, vec3 albedo
         totalSWeight += sW;
     }
 
-    vec3 kD = diffuseFactor(F, specular.z) * albedo / totalDWeight;
-    vec3 kS = F / totalSWeight;
+    vec3 kD = diffuseFactor(F, specular.z) * albedo;
+    vec3 kS = F;
 
-    diffuseIrradianceLx *= kD;
-    specularIrradianceLx *= kS;
+    diffuseIrradianceLx *= kD / totalDWeight;
+    specularIrradianceLx *= kS / totalSWeight;
 
     return (diffuseIrradianceLx + specularIrradianceLx) * aoFactor * saFactor;
 }

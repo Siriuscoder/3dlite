@@ -131,8 +131,7 @@ public:
                 mAmbient01->getLight()->enabled(mDayNightMode);
                 mAmbient02->getLight()->enabled(mDayNightMode);
                 mPipeline->setSkyBoxEmission(mDayNightMode ? 12.0f : 0.008f);
-                mPipeline->getIBL()->rebuildEnvironmentProbe();
-                mPipeline->getIBL()->rebuildIrradianceProbe();
+                mPipeline->getIBL()->rebuild();
             }
             else if (e->key.keysym.sym == SDLK_e)
             {

@@ -90,9 +90,9 @@ namespace lite3dpp_pipeline {
                 .set(L"TextureName", mIBL->getEnvProbeTexture()->getName())
                 .set(L"Type", "sampler"));
             lightComputeMaterialUniforms.emplace_back(ConfigurationWriter()
-                .set(L"Name", "IrradianceProbe")
-                .set(L"TextureName", mIBL->getIrradianceProbeTexture()->getName())
-                .set(L"Type", "sampler"));
+                .set(L"Name", "EnvProbesData")
+                .set(L"UBOName",  mIBL->getProbeBufferName())
+                .set(L"Type", "UBO"));
         }
         else
         {

@@ -19,7 +19,6 @@
 
 #include <lite3dpp_pipeline/lite3dpp_bloom.h>
 #include <lite3dpp_pipeline/lite3dpp_shadow_manager.h>
-#include <lite3dpp_pipeline/lite3dpp_IBL.h>
 #include <lite3dpp_pipeline/lite3dpp_IBL_multiprobe.h>
 #include <lite3dpp_pipeline/lite3dpp_generator.h>
 
@@ -37,8 +36,7 @@ namespace lite3dpp_pipeline {
         Scene &getMainScene();
         Scene *getSkyBoxScene();
         ShadowManager *getShadowManager();
-        IBLDiffuseIrradiance *getIBL();
-        IBLMultiProbe *getIBLM();
+        IBLMultiProbe *getIBL();
         Camera &getMainCamera();
 
         void setGamma(float gamma);
@@ -67,8 +65,6 @@ namespace lite3dpp_pipeline {
             const ConfigurationWriter &mainCameraConfig);
         virtual void constructIBL(const ConfigurationReader &pipelineConfig, const String &cameraName,
             SceneGenerator &sceneGenerator);
-        virtual void constructIBLM(const ConfigurationReader &pipelineConfig, const String &cameraName,
-            SceneGenerator &sceneGenerator);
         
         void createSkyBoxMesh();
         void createBigTriangleMesh();
@@ -82,8 +78,7 @@ namespace lite3dpp_pipeline {
         String mShaderPackage;
         std::unique_ptr<ShadowManager> mShadowManager;
         std::unique_ptr<BloomEffect> mBloomEffect;
-        std::unique_ptr<IBLDiffuseIrradiance> mIBL;
-        std::unique_ptr<IBLMultiProbe> mIBLM;
+        std::unique_ptr<IBLMultiProbe> mIBL;
         Camera *mMainCamera = nullptr;
         RenderTarget *mDepthPass = nullptr;
         RenderTarget *mCombinePass = nullptr;

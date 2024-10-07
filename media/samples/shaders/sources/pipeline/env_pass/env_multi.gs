@@ -1,15 +1,12 @@
+#include "samples:shaders/sources/common/version.def"
+#include "samples:shaders/sources/common/utils_inc.glsl"
+
 layout(triangles) in;
-layout(triangle_strip, max_vertices = ENV_MULTI_MAX_VERTICES) out;
+layout(triangle_strip, max_vertices = 72) out; // 4 probe max
 
-struct EnvProbeStruct
+layout(std140) uniform EnvProbesData
 {
-    vec4 position;
-    mat4 projView[6];
-};
-
-layout(std140) uniform EnvProbes
-{
-    EnvProbeStruct probes[ENV_PROBES_MAX];
+    EnvironmentProbeStruct probes[ENV_PROBES_MAX];
 };
 
 layout(std140) uniform EnvProbesIndex

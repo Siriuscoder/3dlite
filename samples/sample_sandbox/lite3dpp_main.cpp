@@ -53,7 +53,7 @@ public:
         addFlashlight();
 
         // Player position is the Zero probe
-       // mPipeline->getIBLM()->addProbe(getMainCamera().getPosition());
+        mPipeline->getIBL()->addProbe(getMainCamera().getPosition());
 
         kmVec3 probePos = { -2.0, -4.0, 2.0 };
         for (int i = 0; i < 2; ++i)
@@ -62,7 +62,7 @@ public:
             {
                 for (int i = 0; i < 3; ++i)
                 {
-                    mPipeline->getIBLM()->addProbe(probePos); 
+                    mPipeline->getIBL()->addProbe(probePos); 
                     probePos.y += 4.0;
                 }
 
@@ -81,7 +81,7 @@ public:
         updateFlashLight();
 
         // Update zero probe, set current position
-       // mPipeline->getIBLM()->updateProbe(0, getMainCamera().getWorldPosition());
+        mPipeline->getIBL()->updateProbe(0, getMainCamera().getWorldPosition());
     }
 
     void addFlashlight()
@@ -109,7 +109,7 @@ public:
         spotLight->setRotation(getMainCamera().getWorldRotation());
 
         // Recalc global illumination
-        mPipeline->getIBLM()->rebuild();
+        mPipeline->getIBL()->rebuild();
     }
 
     void addSpark()
@@ -124,7 +124,7 @@ public:
         node->getLight()->enabled(true);
 
         // Recalc global illumination
-        mPipeline->getIBLM()->rebuild();
+        mPipeline->getIBL()->rebuild();
     }
 
     void updateFlashLight()
@@ -135,7 +135,7 @@ public:
             mFlashLight->setRotation(getMainCamera().getWorldRotation());
 
             // Recalc global illumination
-            mPipeline->getIBLM()->rebuild();
+            mPipeline->getIBL()->rebuild();
         }
     }
 
@@ -152,7 +152,7 @@ public:
                 
                 updateFlashLight();
                 // Recalc global illumination
-                mPipeline->getIBLM()->rebuild();
+                mPipeline->getIBL()->rebuild();
             }
             else if (e->key.keysym.sym == SDLK_KP_PLUS)
             {

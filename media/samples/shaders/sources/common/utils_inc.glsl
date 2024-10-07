@@ -62,3 +62,6 @@ float NDF(float NdotH, float roughness);
 float GGX(float NdotV, float roughness);
 // Geometry function (Smith's)
 float G(float NdotV, float NdotL, float roughness);
+
+// Common structs
+#include "samples:shaders/sources/common/structs_inc.glsl"

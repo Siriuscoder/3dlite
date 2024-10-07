@@ -29,18 +29,18 @@ public:
     static constexpr const size_t MaxProbeCountInBatch = 4;
 
 #pragma pack(push, 16)
-    struct ProbeEntity
+    struct ProbeRawEntity
     {
         kmVec4 position;
         kmMat4 viewProjMatrices[6];
     };
 
-    struct ProbeIndexEntity
+    struct ProbeIndexRawEntity
     {
-        ProbeIndexEntity() = default;
+        ProbeIndexRawEntity() = default;
 
         template<class T>
-        ProbeIndexEntity(T i)
+        ProbeIndexRawEntity(T i)
         {
             index[0] = static_cast<int32_t>(i);
         }
@@ -49,8 +49,6 @@ public:
     };
 #pragma pack(pop)
 
-
-
     class EnvProbe
     {
     public:
@@ -58,7 +56,7 @@ public:
         EnvProbe(Main *main, float zNear, float zFar);
         
         void setPosition(const kmVec3 &pos);
-        void writeProbe(ProbeEntity *probe) const;
+        void writeProbe(ProbeRawEntity *probe) const;
 
         void rebuildMatrix();
         inline bool invalidated() const { return mInvalidated; }
@@ -101,10 +99,9 @@ protected:
     Texture *mEnvironmentProbe = nullptr;
     Texture *mEnvironmentDepth = nullptr;
     stl<EnvProbe>::vector mProbes;
-    stl<ProbeIndexEntity>::vector mProbesIndex;
+    stl<ProbeIndexRawEntity>::vector mProbesIndex;
     stl<String>::list mResourcesList;
     float mzNear = 0.0, mzFar = 1.0;
-
 };
 
 }}

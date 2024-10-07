@@ -24,15 +24,15 @@ IBLMultiProbe::~IBLMultiProbe()
 
 void IBLMultiProbe::initialize(const ConfigurationReader &pipelineConfig)
 {
-    ConfigurationReader config = pipelineConfig.getObject(L"IBLMultiProbe");
+    ConfigurationReader config = pipelineConfig.getObject(L"GI");
     mProbeMaxCount = config.getInt(L"MaxCount", 1);
     mzNear = config.getDouble(L"ProbeZNearClip", 0.0f);
     mzFar = config.getDouble(L"ProbeZFarClip", 1.0f);
 
-    mProbesBuffer = createBuffer("_EnvProbes", sizeof(ProbeEntity) * mProbeMaxCount);
+    mProbesBuffer = createBuffer("_EnvProbesData", sizeof(ProbeRawEntity) * mProbeMaxCount);
     // Массивы в std140 всегда выравниваются по границе 16 байт, даже если тип данных (например, int) 
     // сам занимает меньше места (4 байта).
-    mProbesIndexBuffer = createBuffer("_EnvProbesIndex", sizeof(ProbeIndexEntity) * (MaxProbeCountInBatch + 1));
+    mProbesIndexBuffer = createBuffer("_EnvProbesIndex", sizeof(ProbeIndexRawEntity) * (MaxProbeCountInBatch + 1));
     createProbePass(config);
 }
 
@@ -77,7 +77,7 @@ void IBLMultiProbe::createProbePass(const ConfigurationReader &config)
 
     ConfigurationWriter passConfig;
     passConfig.set(L"BackgroundColor", kmVec4 { 0.0f, 0.0f, 0.0f, 1.0f })
-        .set(L"Priority", static_cast<uint32_t>(RenderPassPriority::EnvironmentMultiProbe))
+        .set(L"Priority", static_cast<uint32_t>(RenderPassPriority::GIProbe))
         .set(L"CleanColorBuf", false)
         .set(L"CleanDepthBuf", true)
         .set(L"CleanStencilBuf", false)
@@ -113,12 +113,12 @@ bool IBLMultiProbe::beginUpdate(RenderTarget *rt)
         return false;
     }
 
-    SDL_assert((mProbes.size() * sizeof(ProbeEntity)) <= mProbesBuffer->bufferSizeBytes());
+    SDL_assert((mProbes.size() * sizeof(ProbeRawEntity)) <= mProbesBuffer->bufferSizeBytes());
     mProbesIndex.resize(1);
     
     {
         auto lock = mProbesBuffer->map(BufferScopedMapper::BufferScopedMapperLockType::LockTypeWrite);
-        auto probeBlock = lock.getPtr<ProbeEntity>(); 
+        auto probeBlock = lock.getPtr<ProbeRawEntity>(); 
 
         for (size_t i = 0; i < mProbes.size(); ++i)
         {
@@ -137,7 +137,7 @@ bool IBLMultiProbe::beginUpdate(RenderTarget *rt)
     }
     
     mProbesIndex[0].index[0] = static_cast<int32_t>(mProbesIndex.size() - 1);
-    mProbesIndexBuffer->setData(&mProbesIndex[0], 0, sizeof(ProbeIndexEntity) * mProbesIndex.size());
+    mProbesIndexBuffer->setData(&mProbesIndex[0], 0, sizeof(ProbeIndexRawEntity) * mProbesIndex.size());
 
     return true;
 }
@@ -182,7 +182,7 @@ void IBLMultiProbe::EnvProbe::setPosition(const kmVec3 &pos)
     invalidate();
 }
 
-void IBLMultiProbe::EnvProbe::writeProbe(IBLMultiProbe::ProbeEntity *probe) const
+void IBLMultiProbe::EnvProbe::writeProbe(IBLMultiProbe::ProbeRawEntity *probe) const
 {
     SDL_assert(mViewProjMatrices.size() == 6);
     SDL_assert(probe);
