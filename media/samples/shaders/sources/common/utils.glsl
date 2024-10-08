@@ -48,10 +48,14 @@ float lerp(float a, float b, float f)
     return a + f * (b - a);
 }
 
-// Shlick power approx a^b = a / (b – a*b + a) for 0 <= a <= 1 
 float shlickPow(float a, float b)
 {
     return a / (b - a * b + a);
+}
+
+bool hasFlag(int a, int flag)
+{
+    return (a & flag) == flag;
 }
 // Gold Noise ©2015 dcerisano@standard3d.com
 // - based on the Golden Ratio

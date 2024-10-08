@@ -142,14 +142,14 @@ bool IBLMultiProbe::beginUpdate(RenderTarget *rt)
     return true;
 }
 
-size_t IBLMultiProbe::addProbe(const kmVec3 &position)
+size_t IBLMultiProbe::addProbe(const kmVec3 &position, EnvProbeFlags flags)
 {
     if (mProbes.size() >= mProbeMaxCount)
     {
         LITE3D_THROW("Max probes count is reached: " << mProbeMaxCount << " probes");
     }
 
-    mProbes.emplace_back(&mMain, mzNear, mzFar);
+    mProbes.emplace_back(&mMain, mzNear, mzFar, flags);
     mProbes.back().setPosition(position);
     return mProbes.size() - 1;
 }
@@ -164,8 +164,9 @@ void IBLMultiProbe::updateProbe(size_t index, const kmVec3 &position)
     mProbes[index].setPosition(position);
 }
 
-IBLMultiProbe::EnvProbe::EnvProbe(Main *main, float zNear, float zFar) : 
-    mProbeCamera(std::make_shared<Camera>("", main))
+IBLMultiProbe::EnvProbe::EnvProbe(Main *main, float zNear, float zFar, EnvProbeFlags flags) : 
+    mProbeCamera(std::make_shared<Camera>("", main)),
+    mFlags(flags)
 {
     mProbeCamera->setupPerspective(zNear, zFar, 90.0f, 1.0f);
 }
@@ -187,12 +188,15 @@ void IBLMultiProbe::EnvProbe::writeProbe(IBLMultiProbe::ProbeRawEntity *probe) c
     SDL_assert(mViewProjMatrices.size() == 6);
     SDL_assert(probe);
 
+    memset(probe, 0, sizeof(IBLMultiProbe::ProbeRawEntity));
+
     probe->position.x = mProbeCamera->getPosition().x;
     probe->position.y = mProbeCamera->getPosition().y;
     probe->position.z = mProbeCamera->getPosition().z;
     probe->position.w = 0.0f;
     
     std::copy(mViewProjMatrices.begin(), mViewProjMatrices.end(), probe->viewProjMatrices);
+    probe->flags[0] = static_cast<int32_t>(mFlags);
 }
 
 }}

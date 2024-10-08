@@ -396,7 +396,7 @@ static int lite3d_framebuffer_setup_attachments(lite3d_framebuffer *fb, const li
                         attachments[i].attachment->textureTarget);
                     return LITE3D_FALSE;
                 }
-                binding.attachment.attachment->isFbAttachment = LITE3D_TRUE;
+
                 LITE3D_ARR_ADD_ELEM(&fb->colorAttachments, lite3d_framebuffer_attachment_binding, binding);
             }
         }
@@ -488,7 +488,6 @@ static int lite3d_framebuffer_setup_attachments(lite3d_framebuffer *fb, const li
                     return LITE3D_FALSE;
             }
 
-            fb->depthAttachment.attachment.attachment->isFbAttachment = LITE3D_TRUE;
         }
 #ifdef GL_DEPTH24_STENCIL8
         else if (flags & LITE3D_FRAMEBUFFER_USE_STENCIL_BUFFER)
@@ -768,5 +767,21 @@ void lite3d_framebuffer_switch_layer(lite3d_framebuffer *fb, const lite3d_frameb
                 0, layer[i].layer);
             fb->depthAttachment.bindedLayer = layer[i].layer;
         }
+    }
+}
+
+void lite3d_framebuffer_rebuild_mipmaps(lite3d_framebuffer *fb)
+{
+    SDL_assert(fb);
+
+    for (int ci = 0; ci < fb->colorAttachments.size; ++ci)
+    {
+        lite3d_framebuffer_attachment_binding *binding = lite3d_array_get(&fb->colorAttachments, ci);
+        lite3d_texture_unit_generate_mipmaps(binding->attachment.attachment);
+    }
+
+    if (fb->depthAttachment.attachment.attachment)
+    {
+        lite3d_texture_unit_generate_mipmaps(fb->depthAttachment.attachment.attachment);
     }
 }

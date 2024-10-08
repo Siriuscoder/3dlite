@@ -29,23 +29,29 @@ vec3 ComputeEnvironmentLighting(vec3 P, vec3 V, vec3 N, float NdotV, vec3 albedo
     }
 
     // Calc indirect diffuse light
-    float totalDWeight = 0.0;
-    float totalSWeight = 0.0;
+    float totalDWeight = FLT_EPSILON;
+    float totalSWeight = FLT_EPSILON;
     for (int p = 0; p < probesCount; ++p)
     {
         float probeDistance = length(P - probes[p].position.xyz);
-        float dW = 1.0 / max(probeDistance * probeDistance, FLT_EPSILON);
-        float relativeDistance = nearProbeDistance / max(probeDistance, FLT_EPSILON);
 
-        if (relativeDistance < DIFFUSE_IRRADIANCE_WEIGHT_THRESHOLD)
-            continue;
+        if (hasFlag(probes[p].flags, ENV_PROBE_FLAG_IRRADIANCE))
+        {
+            float dW = 1.0 / max(probeDistance * probeDistance, FLT_EPSILON);
+            diffuseIrradianceLx += textureLod(EnvironmentProbe, vec4(N, p), maxLod - 1.0).rgb * dW;
+            totalDWeight += dW;
+        }
 
-        float sW = shlickPow(relativeDistance, 16.0);
-        diffuseIrradianceLx += textureLod(EnvironmentProbe, vec4(N, p), maxLod - 1.0).rgb * dW;
-        specularIrradianceLx += textureLod(EnvironmentProbe, vec4(R, p), specularLevel).rgb * sW;
-
-        totalDWeight += dW;
-        totalSWeight += sW;
+        if (hasFlag(probes[p].flags, ENV_PROBE_FLAG_SPECULAR))
+        {
+            float relativeDistance = nearProbeDistance / max(probeDistance, FLT_EPSILON);
+            if (relativeDistance >= ENV_PROBE_SPECULAR_WEIGHT_THRESHOLD)
+            {
+                float sW = shlickPow(relativeDistance, 16.0);
+                specularIrradianceLx += textureLod(EnvironmentProbe, vec4(R, p), specularLevel).rgb * sW;
+                totalSWeight += sW;
+            }
+        }
     }
 
     vec3 kD = diffuseFactor(F, specular.z) * albedo;

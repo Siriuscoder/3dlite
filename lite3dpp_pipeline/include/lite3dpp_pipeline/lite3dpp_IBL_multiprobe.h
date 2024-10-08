@@ -22,6 +22,24 @@
 namespace lite3dpp {
 namespace lite3dpp_pipeline {
 
+enum class EnvProbeFlags : int32_t
+{
+    Irradiance = 1 << 0,
+    Specular = 1 << 1
+};
+
+// Перегрузка оператора | для использования побитовых операций
+inline EnvProbeFlags operator|(EnvProbeFlags a, EnvProbeFlags b)
+{
+    return static_cast<EnvProbeFlags>(static_cast<int32_t>(a) | static_cast<int32_t>(b));
+}
+
+// Перегрузка оператора & для побитовых операций (например, для проверок)
+inline EnvProbeFlags operator&(EnvProbeFlags a, EnvProbeFlags b)
+{
+    return static_cast<EnvProbeFlags>(static_cast<int32_t>(a) & static_cast<int32_t>(b));
+}
+
 class LITE3DPP_PIPELINE_EXPORT IBLMultiProbe : public RenderTargetObserver, public LifecycleObserver, public Noncopiable
 {
 public:
@@ -33,6 +51,7 @@ public:
     {
         kmVec4 position;
         kmMat4 viewProjMatrices[6];
+        int32_t flags[4];
     };
 
     struct ProbeIndexRawEntity
@@ -53,7 +72,7 @@ public:
     {
     public:
 
-        EnvProbe(Main *main, float zNear, float zFar);
+        EnvProbe(Main *main, float zNear, float zFar, EnvProbeFlags flags);
         
         void setPosition(const kmVec3 &pos);
         void writeProbe(ProbeRawEntity *probe) const;
@@ -67,6 +86,7 @@ public:
         std::shared_ptr<Camera> mProbeCamera;
         stl<kmMat4>::vector mViewProjMatrices;
         bool mInvalidated = true;
+        EnvProbeFlags mFlags;
     };
 
     IBLMultiProbe(Main& main, const String& pipelineName);
@@ -78,7 +98,7 @@ public:
     inline const std::string &getProbeIndexBufferName() const { return mProbesIndexBuffer->getName(); }
     inline Texture *getEnvProbeTexture() { return mEnvironmentProbe; }
     void rebuild();
-    size_t addProbe(const kmVec3 &position);
+    size_t addProbe(const kmVec3 &position, EnvProbeFlags flags = EnvProbeFlags::Irradiance | EnvProbeFlags::Specular);
     void updateProbe(size_t index, const kmVec3 &position);
 
 protected:

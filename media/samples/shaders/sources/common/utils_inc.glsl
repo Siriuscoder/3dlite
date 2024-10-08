@@ -16,7 +16,8 @@ bool isZero(float a1);
 bool isZero(vec3 a1);
 bool isValidUV(vec2 uv);
 float lerp(float a, float b, float f);
-float shlickPow(float a, float b);
+float shlickPow(float a, float b); // Shlick power fast approx a^b = a / (b – a*b + a) for 0 <= a <= 1 
+bool hasFlag(int a, int flag);
 //////////// Noise and random utilities
 ////////////////////////////////////////////////////////////////////////////
 

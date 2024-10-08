@@ -53,7 +53,7 @@ public:
         addFlashlight();
 
         // Player position is the Zero probe
-        mPipeline->getIBL()->addProbe(getMainCamera().getPosition());
+        mPipeline->getIBL()->addProbe(getMainCamera().getPosition(), lite3dpp_pipeline::EnvProbeFlags::Specular);
 
         kmVec3 probePos = { -2.0, -4.0, 2.0 };
         for (int i = 0; i < 2; ++i)

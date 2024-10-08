@@ -107,5 +107,7 @@ LITE3D_CEXPORT int lite3d_framebuffer_blit(lite3d_framebuffer *from, lite3d_fram
 LITE3D_CEXPORT void lite3d_framebuffer_switch_layer(lite3d_framebuffer *fb, const lite3d_framebuffer_layer *layer, 
     size_t layerCount);
 
+LITE3D_CEXPORT void lite3d_framebuffer_rebuild_mipmaps(lite3d_framebuffer *fb);
+
 #endif	/* LITE3D_FRAMEBUFFER_H */
 

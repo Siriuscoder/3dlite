@@ -946,7 +946,6 @@ int lite3d_texture_unit_from_resource(lite3d_texture_unit *textureUnit,
     /* release IL image */
     ilDeleteImage(imageDesc);
 
-    textureUnit->isFbAttachment = LITE3D_FALSE;
     return LITE3D_TRUE;
 }
 
@@ -1176,6 +1175,7 @@ int lite3d_texture_unit_get_compressed_pixels(const lite3d_texture_unit *texture
 
 int lite3d_texture_unit_generate_mipmaps(lite3d_texture_unit *textureUnit)
 {
+    SDL_assert(textureUnit);
     if(textureUnit->generatedMipmaps > 0)
     {
         glBindTexture(textureTargetEnum[textureUnit->textureTarget], textureUnit->textureID);
@@ -1358,7 +1358,6 @@ int lite3d_texture_unit_allocate(lite3d_texture_unit *textureUnit,
         lite3d_texture_unit_internal_format_string(textureUnit),
         lite3d_texture_unit_format_string(textureUnit));
 
-    textureUnit->isFbAttachment = LITE3D_FALSE;
     return LITE3D_TRUE;
 }
 
@@ -1377,10 +1376,6 @@ void lite3d_texture_unit_bind(lite3d_texture_unit *textureUnit, uint16_t layer)
 
     glActiveTexture(GL_TEXTURE0 + layer);
     glBindTexture(textureTargetEnum[textureUnit->textureTarget], textureUnit->textureID);
-
-    if (textureUnit->isFbAttachment &&
-        textureUnit->generatedMipmaps > 0)
-        glGenerateMipmap(textureTargetEnum[textureUnit->textureTarget]);
 }
 
 void lite3d_texture_unit_unbind(lite3d_texture_unit *textureUnit, uint16_t layer)
