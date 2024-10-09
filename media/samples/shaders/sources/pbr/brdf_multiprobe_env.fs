@@ -34,23 +34,18 @@ vec3 ComputeEnvironmentLighting(vec3 P, vec3 V, vec3 N, float NdotV, vec3 albedo
     for (int p = 0; p < probesCount; ++p)
     {
         float probeDistance = length(P - probes[p].position.xyz);
-
         if (hasFlag(probes[p].flags, ENV_PROBE_FLAG_IRRADIANCE))
         {
-            float dW = 1.0 / max(probeDistance * probeDistance, FLT_EPSILON);
+            float dW = 1.0 / max(pow(probeDistance, 3.0), FLT_EPSILON);
             diffuseIrradianceLx += textureLod(EnvironmentProbe, vec4(N, p), maxLod - 1.0).rgb * dW;
             totalDWeight += dW;
         }
 
         if (hasFlag(probes[p].flags, ENV_PROBE_FLAG_SPECULAR))
         {
-            float relativeDistance = nearProbeDistance / max(probeDistance, FLT_EPSILON);
-            if (relativeDistance >= ENV_PROBE_SPECULAR_WEIGHT_THRESHOLD)
-            {
-                float sW = shlickPow(relativeDistance, 16.0);
-                specularIrradianceLx += textureLod(EnvironmentProbe, vec4(R, p), specularLevel).rgb * sW;
-                totalSWeight += sW;
-            }
+            float sW = 1.0 / max(pow(probeDistance, 10.0), FLT_EPSILON);
+            specularIrradianceLx += textureLod(EnvironmentProbe, vec4(R, p), specularLevel).rgb * sW;
+            totalSWeight += sW;
         }
     }
 

@@ -20,7 +20,7 @@
         {
           "Name": "Metallic",
           "Type": "float",
-          "Value": 0.0
+          "Value": 0.9
         },
         {
           "Name": "Roughness",

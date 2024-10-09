@@ -37,7 +37,7 @@
     "GI":
     {
         "ProbeResolution": 256,
-        "MaxCount": 20,
+        "MaxCount": 33,
         "ProbeZNearClip": 0.01,
         "ProbeZFarClip": 100.0
     },
@@ -50,8 +50,8 @@
         "DynamicExposure":
         {
             "ExposureMax": 5.5,
-            "ExposureMin": 0.5,
-            "ExposureBase": 0.2
+            "ExposureMin": 0.7,
+            "ExposureBase": 0.3
         }
     }
 }

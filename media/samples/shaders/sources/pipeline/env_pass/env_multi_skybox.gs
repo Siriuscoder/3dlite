@@ -2,7 +2,7 @@
 #include "samples:shaders/sources/common/utils_inc.glsl"
 
 layout(triangles) in;
-layout(triangle_strip, max_vertices = 72) out; // 4 probe max
+layout(triangle_strip, max_vertices = ENV_PROBES_GS_VERTICES_MAX) out; // 4 probe max
 
 layout(std140) uniform EnvProbesData
 {
