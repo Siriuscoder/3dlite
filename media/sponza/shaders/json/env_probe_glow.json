@@ -3,12 +3,12 @@
     [
         // Standard shaders with params customization
         "samples:shaders/sources/pipeline/env_pass/env.vs",
-        "samples:shaders/sources/pipeline/env_pass/env.gs",
+        "samples:shaders/sources/pipeline/env_pass/env_multi.gs",
         "samples:shaders/sources/pipeline/forward_pass/forward.fs",
         "samples:shaders/sources/pbr/pbr.fs,sponza:shaders/sources/inc/pbr_params.def",
         "samples:shaders/sources/pbr/brdf_lambert.fs,sponza:shaders/sources/inc/pbr_params.def",
         "samples:shaders/sources/pbr/brdf_null_env.fs,sponza:shaders/sources/inc/pbr_params.def",
-        "samples:shaders/sources/shadow/pcf3x3.fs,sponza:shaders/sources/inc/shadow_params.def",
+        "samples:shaders/sources/shadow/pcf_simple.fs,sponza:shaders/sources/inc/shadow_params.def",
         "samples:shaders/sources/common/utils.fs",
         // Sample specific shaders
         "sponza:shaders/sources/glow.fs"

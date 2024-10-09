@@ -37,9 +37,9 @@
     "GI":
     {
         "ProbeResolution": 256,
-        "MaxCount": 13,
+        "MaxCount": 1,
         "ProbeZNearClip": 0.01,
-        "ProbeZFarClip": 100.0
+        "ProbeZFarClip": 60.0
     },
     "PostProcess":
     {

@@ -11,31 +11,31 @@
           "Name": "Albedo",
           "Type": "v4",
           "Value": [
-            0.85,
-            0.85,
-            0.85,
+            0.8500000238418579,
+            0.8500000238418579,
+            0.8500000238418579,
             0.5
           ]
         },
         {
           "Name": "Metallic",
           "Type": "float",
-          "Value": 0.85
+          "Value": 0.0
         },
         {
           "Name": "Roughness",
           "Type": "float",
-          "Value": 0.05
-        },
-        {
-          "Name": "IrradianceProbe",
-          "TextureName": "SponzaDeffered_IrradianceProbe.texture",
-          "Type": "sampler"
+          "Value": 0.05000000074505806
         },
         {
           "Name": "EnvironmentProbe",
-          "TextureName": "SponzaDeffered_EnvironmentProbe.texture",
+          "TextureName": "SponzaDeffered_EnvironmentMultiProbe.texture",
           "Type": "sampler"
+        },
+        {
+          "Name": "EnvProbesData",
+          "UBOName": "SponzaDeffered_EnvProbesData",
+          "Type": "UBO"
         },
         {
           "Name": "LightSources",

@@ -17,13 +17,8 @@
           "Name":"<Roughness>"
         },
         {
-          "Name": "IrradianceProbe",
-          "TextureName": "SponzaDeffered_IrradianceProbe.texture",
-          "Type": "sampler"
-        },
-        {
           "Name": "EnvironmentProbe",
-          "TextureName": "SponzaDeffered_EnvironmentProbe.texture",
+          "TextureName": "SponzaDeffered_EnvironmentMultiProbe.texture",
           "Type": "sampler"
         },
         {

@@ -2,5 +2,4 @@
 #extension GL_ARB_texture_cube_map_array : enable
 
 #define ENV_PROBE_SPECULAR_WEIGHT_THRESHOLD     0.01
-#define DIFFUSE_IRRADIANCE_STRENGTH             10.0
 #define CUBE_MAP_UV_SCALE                       1

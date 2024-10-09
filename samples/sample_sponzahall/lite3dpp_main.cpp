@@ -50,6 +50,8 @@ public:
         setMainCamera(&mPipeline->getMainCamera());
         setupShadowCasters();
         addFlashlight();
+
+        mPipeline->getIBL()->addProbe(kmVec3 { 0.0, 0.0, 4.0 });
     }
 
     void setupShadowCasters()
@@ -70,6 +72,7 @@ public:
             //mSUN->rotateX(0.00005f * deltaRetard);
             // Помечаем что надо перерисовать тени в следубщий кадр
             mSUNShadowCaster->invalidate();
+            mPipeline->getIBL()->rebuild();
         }
     }
 

@@ -1,7 +1,5 @@
 #include "samples:shaders/sources/common/version.def"
+#extension GL_ARB_texture_cube_map_array : enable
 
-#define DIFFUSE_IRRADIANCE_STRENGTH     0.1
-#define IRRADIANCE_DIFFUSE_LOD          4
-#define SPECULAR_MAX_LOD                8
-#define SPECULAR_MIN_LOD                0
-#define CUBE_MAP_UV_SCALE               1.0
+#define ENV_PROBE_SPECULAR_WEIGHT_THRESHOLD     0.01
+#define CUBE_MAP_UV_SCALE                       1.0

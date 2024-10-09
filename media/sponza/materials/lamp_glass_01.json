@@ -28,14 +28,14 @@
           "Value": 0.10000000149011612
         },
         {
-          "Name": "IrradianceProbe",
-          "TextureName": "SponzaDeffered_IrradianceProbe.texture",
+          "Name": "EnvironmentProbe",
+          "TextureName": "SponzaDeffered_EnvironmentMultiProbe.texture",
           "Type": "sampler"
         },
         {
-          "Name": "EnvironmentProbe",
-          "TextureName": "SponzaDeffered_EnvironmentProbe.texture",
-          "Type": "sampler"
+          "Name": "EnvProbesData",
+          "UBOName": "SponzaDeffered_EnvProbesData",
+          "Type": "UBO"
         },
         {
           "Name": "LightSources",

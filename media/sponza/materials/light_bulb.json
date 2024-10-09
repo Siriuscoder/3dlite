@@ -113,8 +113,13 @@
           "Type": "UBO"
         },
         {
-          "Name": "CubeTransform",
-          "UBOName": "SponzaDeffered_CubeTransform",
+          "Name": "EnvProbesData",
+          "UBOName": "SponzaDeffered_EnvProbesData",
+          "Type": "UBO"
+        },
+        {
+          "Name": "EnvProbesIndex",
+          "UBOName": "SponzaDeffered_EnvProbesIndex",
           "Type": "UBO"
         },
         {

@@ -5,8 +5,8 @@
         "samples:shaders/sources/pipeline/v_tbn.vs",
         "samples:shaders/sources/pipeline/forward_pass/forward.fs",
         "samples:shaders/sources/pbr/pbr.fs,sponza:shaders/sources/inc/pbr_params.def",
-        "samples:shaders/sources/pbr/brdf_oren_nayar.fs,sponza:shaders/sources/inc/pbr_params.def",
-        "samples:shaders/sources/pbr/brdf_irradiance_env.fs,sponza:shaders/sources/inc/pbr_params.def",
+        "samples:shaders/sources/pbr/brdf_oren_nayar_approx.fs,sponza:shaders/sources/inc/pbr_params.def",
+        "samples:shaders/sources/pbr/brdf_multiprobe_env.fs,sponza:shaders/sources/inc/pbr_params.def",
         "samples:shaders/sources/shadow/pcf4x4.fs,sponza:shaders/sources/inc/shadow_params.def",
         "samples:shaders/sources/common/utils.fs",
         // Sample specific shaders
