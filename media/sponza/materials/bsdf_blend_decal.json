@@ -21,6 +21,11 @@
           "Type": "sampler"
         },
         {
+          "Name":"EnvProbesData",
+          "UBOName": "SponzaDeffered_EnvProbesData",
+          "Type":"UBO"
+        },
+        {
           "Name":"LightSources",
           "UBOName": "SponzaDeffered_MainScene_lightingBufferObject",
           "Type":"UBO"

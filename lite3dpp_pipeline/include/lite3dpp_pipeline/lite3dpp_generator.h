@@ -55,7 +55,7 @@ namespace lite3dpp_pipeline {
         DepthPass = 1,
         RenderPass = 2,
         ShadowPass = 3,
-        GIProbePass = 5
+        GIProbePass = 4
     };
 
     class LITE3DPP_PIPELINE_EXPORT SceneGenerator 

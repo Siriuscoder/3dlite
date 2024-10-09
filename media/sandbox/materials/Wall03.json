@@ -60,7 +60,7 @@
         {
           "Name": "SpecularAmbientFactor",
           "Type": "float",
-          "Value": 1.0
+          "Value": 2.2
         },
         {
           "Name": "EnvironmentProbe",
@@ -131,7 +131,7 @@
       ]
     },
     {
-      "Pass": 5,
+      "Pass": 4,
       "Program": {
         "Name": "env_multiprobe.program",
         "Path": "sandbox:shaders/json/env_multiprobe.json"
