@@ -1,5 +1,7 @@
 #include "samples:shaders/sources/common/version.def"
 
-#define ENV_PROBE_SPECULAR_WEIGHT_THRESHOLD     0.1
-#define DIFFUSE_IRRADIANCE_STRENGTH             0.05
+#define ENV_PROBE_RELATIVE_DISTANCE_THRESHOLD   0.04
+#define ENV_PROBE_DIFFUSE_POWER                 2.0
+#define ENV_PROBE_SPECULAR_POWER                10.0
+#define ENV_DIFFUSE_STRENGTH                    0.05
 #define CUBE_MAP_UV_SCALE                       1

@@ -1046,16 +1046,16 @@ int lite3d_texture_unit_set_compressed_pixels(lite3d_texture_unit *textureUnit,
 int lite3d_texture_unit_get_level_size(const lite3d_texture_unit *textureUnit, 
     int8_t level, uint8_t cubeface, size_t *size)
 {
-    int32_t imageWidth, imageHeight, imageDepth;
+    size_t imageWidth, imageHeight, imageDepth;
 
     SDL_assert(textureUnit);
     SDL_assert(size);
     if (textureUnit->generatedMipmaps < level)
         return LITE3D_FALSE;
 
-    imageWidth = lite3d_texture_unit_get_level_width(textureUnit, level, cubeface);
-    imageHeight = lite3d_texture_unit_get_level_height(textureUnit, level, cubeface);
-    imageDepth = lite3d_texture_unit_get_level_depth(textureUnit, level, cubeface);
+    imageWidth = (size_t)lite3d_texture_unit_get_level_width(textureUnit, level, cubeface);
+    imageHeight = (size_t)lite3d_texture_unit_get_level_height(textureUnit, level, cubeface);
+    imageDepth = (size_t)lite3d_texture_unit_get_level_depth(textureUnit, level, cubeface);
 
 #ifndef GLES
     {

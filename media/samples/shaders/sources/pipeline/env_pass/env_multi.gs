@@ -16,14 +16,10 @@ layout(std140) uniform EnvProbesIndex
 
 in vec2 iuv_g[];
 in vec3 iwn_g[];
-in vec3 iwt_g[];
-in vec3 iwb_g[];
 
 out vec2 iuv;    // UVs
 out vec3 iwv;    // world-space position
 out vec3 iwn;    // world-space normal
-out vec3 iwt;    // world-space tangent
-out vec3 iwb;    // world-space bitangent
 
 void main()
 {
@@ -43,11 +39,8 @@ void main()
                 gl_Position = probes[index].projView[i] * gl_in[j].gl_Position;
                 // UVs
                 iuv = iuv_g[j];
-                // TBN
+                // N
                 iwn = iwn_g[j];
-                iwt = iwt_g[j];
-                iwb = iwb_g[j];
-
                 EmitVertex();
             }
             EndPrimitive();

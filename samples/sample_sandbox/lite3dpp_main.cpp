@@ -92,7 +92,7 @@ public:
         mFlashLight->getLight()->setAttenuationLinear(AttenuationLinear);
         mFlashLight->getLight()->setAttenuationQuadratic(AttenuationQuadratic);
         mFlashLight->getLight()->setRadiance(100.0f);
-        mFlashLight->getLight()->enabled(false);
+        mFlashLight->getLight()->enabled(true);
     }
 
     void addSpotLight()
@@ -146,7 +146,7 @@ public:
         {
             if (e->key.keysym.sym == SDLK_l && mFlashLight)
             {
-                static bool flashLightEnabled = false;
+                static bool flashLightEnabled = true;
                 flashLightEnabled = !flashLightEnabled;
                 mFlashLight->getLight()->enabled(flashLightEnabled);
                 

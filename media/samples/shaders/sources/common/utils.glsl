@@ -92,6 +92,15 @@ vec2 viewPositionToUV(vec3 pos)
     return uv.xy * 0.5 + 0.5;   // transform to range 0.0 - 1.0 
 }
 
+mat3 TBN(vec3 normal)
+{
+    return mat3(
+        vec3(0.0),
+        vec3(0.0),
+        normalize(normal)
+    );
+}
+
 mat3 TBN(vec3 normal, vec3 tangent)
 {
     normal = normalize(normal);
@@ -100,6 +109,15 @@ mat3 TBN(vec3 normal, vec3 tangent)
     vec3 bitangent = cross(normal, tangent);
     // TBN transforms vector from tangent space to world space 
     return mat3(tangent, bitangent, normal);
+}
+
+mat3 TBN(vec3 normal, vec3 tangent, vec3 btangent)
+{
+    return mat3(
+        normalize(tangent),
+        normalize(btangent),
+        normalize(normal)
+    );
 }
 
 float fadeScreenEdge(vec2 uv)

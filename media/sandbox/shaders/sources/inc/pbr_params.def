@@ -1,5 +1,0 @@
-#include "samples:shaders/sources/common/version.def"
-#extension GL_ARB_texture_cube_map_array : enable
-
-#define ENV_PROBE_SPECULAR_WEIGHT_THRESHOLD     0.01
-#define CUBE_MAP_UV_SCALE                       1

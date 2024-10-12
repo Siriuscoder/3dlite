@@ -23,11 +23,11 @@ uniform vec3 Eye;
 float ShadowVisibility(float shadowIndex, vec3 P, vec3 N, vec3 L);
 /* Illumination compute module */
 vec3 Lx(vec3 albedo, vec3 radiance, vec3 L, vec3 N, vec3 V, vec3 specular, float NdotV);
-/* Environment lighting */
-vec3 ComputeEnvironmentLighting(vec3 P, vec3 V, vec3 N, float NdotV, vec3 albedo, vec3 specular, float aoFactor, float saFactor);
+/* Indirect lighting */
+vec3 ComputeIndirect(vec3 P, vec3 V, vec3 N, float NdotV, vec3 albedo, vec3 specular, float edF, float esF);
 
-vec3 ComputeIllumination(vec3 P, vec3 N, vec3 albedo, vec3 emission, vec3 specular, float aoFactor, 
-    float saFactor)
+vec3 ComputeIllumination(vec3 P, vec3 N, vec3 albedo, vec3 emission, vec3 specular, float aoF, 
+    float esF)
 {
     // Eye direction to current fragment 
     vec3 V = normalize(Eye - P);
@@ -105,7 +105,7 @@ vec3 ComputeIllumination(vec3 P, vec3 N, vec3 albedo, vec3 emission, vec3 specul
         /* block1.w - radiance */
         vec4 block1 = lights[index+1];
         /* light source full radiance at fragment position */
-        vec3 radiance = block1.rgb * block1.w * attenuationFactor * shadowVisibility * aoFactor;
+        vec3 radiance = block1.rgb * block1.w * attenuationFactor * shadowVisibility * aoF;
         /* Radiance too small, do not take this light source in account */ 
         if (isZero(radiance))
             continue;
@@ -113,7 +113,8 @@ vec3 ComputeIllumination(vec3 P, vec3 N, vec3 albedo, vec3 emission, vec3 specul
         directLx += Lx(albedo, radiance, L, N, V, specular, NdotV);
     }
 
-    vec3 indirectLx = ComputeEnvironmentLighting(P, V, N, NdotV, albedo, specular, aoFactor, saFactor);
+    vec3 indirectLx = ComputeIndirect(P, V, N, NdotV, albedo, specular, 
+        ENV_DIFFUSE_STRENGTH, esF) * aoF;
 
     return indirectLx + directLx + emission;
 }

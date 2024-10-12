@@ -3,7 +3,7 @@
     [
         // Standard shaders with params customization
         "samples:shaders/sources/pipeline/shadow_pass/shadow.vs",
-        "samples:shaders/sources/pipeline/shadow_pass/shadow_split.gs,sandbox:shaders/sources/inc/shadow_params.def",
+        "samples:shaders/sources/pipeline/shadow_pass/shadow_split.gs,sandbox:shaders/sources/inc/params.def",
         "samples:shaders/sources/pipeline/depth_pass/depth.fs",
         "samples:shaders/sources/common/utils.fs",
         // Sample specific shaders
