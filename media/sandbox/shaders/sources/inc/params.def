@@ -2,7 +2,7 @@
 #extension GL_ARB_texture_cube_map_array : enable
 
 // Normal mapping params
-#define TBN_FROM_NORMAL
+#define NORMAL_MAPPING_OFF
 
 // Environment params
 #define ENV_PROBE_RELATIVE_DISTANCE_THRESHOLD   0.05

@@ -87,12 +87,6 @@
           "TexturePath": "sponza:textures/json/door_stoneframe_01_BaseColor.json"
         },
         {
-          "Name": "Normal",
-          "Type": "sampler",
-          "TextureName": "door_stoneframe_01_Normal.texture",
-          "TexturePath": "sponza:textures/json/door_stoneframe_01_Normal.json"
-        },
-        {
           "Name": "Specular",
           "Type": "sampler",
           "TextureName": "door_stoneframe_01_Roughnessdoor_stoneframe_01_Metalness.texture",

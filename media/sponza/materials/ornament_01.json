@@ -87,12 +87,6 @@
           "TexturePath": "sponza:textures/json/ornament_01_BaseColor.json"
         },
         {
-          "Name": "Normal",
-          "Type": "sampler",
-          "TextureName": "ornament_01_Normal.texture",
-          "TexturePath": "sponza:textures/json/ornament_01_Normal.json"
-        },
-        {
           "Name": "Specular",
           "Type": "sampler",
           "TextureName": "ornament_01_Roughnessornament_01_Metalness.texture",

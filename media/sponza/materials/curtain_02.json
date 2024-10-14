@@ -91,12 +91,6 @@
           "TexturePath": "sponza:textures/json/curtain_fabric_green_BaseColor.json"
         },
         {
-          "Name": "Normal",
-          "Type": "sampler",
-          "TextureName": "curtain_fabric_Normal.texture",
-          "TexturePath": "sponza:textures/json/curtain_fabric_Normal.json"
-        },
-        {
           "Name": "Specular",
           "Type": "sampler",
           "TextureName": "curtain_fabric_Roughnesscurtain_fabric_Metalness.texture",

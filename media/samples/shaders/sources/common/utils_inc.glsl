@@ -35,7 +35,6 @@ vec3 worldToViewSpacePosition(vec3 vw);
 vec3 worldToViewSpaceDirection(vec3 dirw);
 vec2 viewPositionToUV(vec3 pos);
 
-mat3 TBN(vec3 normal);
 mat3 TBN(vec3 normal, vec3 tangent);
 mat3 TBN(vec3 normal, vec3 tangent, vec3 btangent);
 //////////// Other utilities

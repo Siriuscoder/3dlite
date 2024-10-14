@@ -87,12 +87,6 @@
           "TexturePath": "sponza:textures/json/stone_trims_02_BaseColor.json"
         },
         {
-          "Name": "Normal",
-          "Type": "sampler",
-          "TextureName": "stone_trims_02_Normal.texture",
-          "TexturePath": "sponza:textures/json/stone_trims_02_Normal.json"
-        },
-        {
           "Name": "Specular",
           "Type": "sampler",
           "TextureName": "stone_trims_02_Roughnessstone_trims_02_Metalness.texture",

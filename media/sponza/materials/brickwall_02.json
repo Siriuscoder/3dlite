@@ -87,12 +87,6 @@
           "TexturePath": "sponza:textures/json/brickwall_02_BaseColor.json"
         },
         {
-          "Name": "Normal",
-          "Type": "sampler",
-          "TextureName": "brickwall_02_Normal.texture",
-          "TexturePath": "sponza:textures/json/brickwall_02_Normal.json"
-        },
-        {
           "Name": "Specular",
           "Type": "sampler",
           "TextureName": "brickwall_02_Roughnessbrickwall_02_Metalness.texture",

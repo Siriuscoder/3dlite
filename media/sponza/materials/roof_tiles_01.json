@@ -87,12 +87,6 @@
           "TexturePath": "sponza:textures/json/roof_tiles_01_BaseColor.json"
         },
         {
-          "Name": "Normal",
-          "Type": "sampler",
-          "TextureName": "roof_tiles_01_Normal.texture",
-          "TexturePath": "sponza:textures/json/roof_tiles_01_Normal.json"
-        },
-        {
           "Name": "Specular",
           "Type": "sampler",
           "TextureName": "roof_tiles_01_Roughnessroof_tiles_01_Metalness.texture",

@@ -87,12 +87,6 @@
           "TexturePath": "sponza:textures/json/lionhead_01_BaseColor.json"
         },
         {
-          "Name": "Normal",
-          "Type": "sampler",
-          "TextureName": "lionhead_01_Normal.texture",
-          "TexturePath": "sponza:textures/json/lionhead_01_Normal.json"
-        },
-        {
           "Name": "Specular",
           "Type": "sampler",
           "TextureName": "lionhead_01_Roughnesslionhead_01_Metalness.texture",

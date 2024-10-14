@@ -44,7 +44,7 @@ class LITE3DPP_PIPELINE_EXPORT IBLMultiProbe : public RenderTargetObserver, publ
 {
 public:
 
-    static constexpr const size_t MaxProbeCountInBatch = 3;
+    static constexpr const size_t MaxProbeCountInBatch = 4;
 
 #pragma pack(push, 16)
     struct ProbeRawEntity

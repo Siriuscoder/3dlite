@@ -92,15 +92,6 @@ vec2 viewPositionToUV(vec3 pos)
     return uv.xy * 0.5 + 0.5;   // transform to range 0.0 - 1.0 
 }
 
-mat3 TBN(vec3 normal)
-{
-    return mat3(
-        vec3(0.0),
-        vec3(0.0),
-        normalize(normal)
-    );
-}
-
 mat3 TBN(vec3 normal, vec3 tangent)
 {
     normal = normalize(normal);

@@ -87,12 +87,6 @@
           "TexturePath": "sponza:textures/json/col_1stfloor_BaseColor.json"
         },
         {
-          "Name": "Normal",
-          "Type": "sampler",
-          "TextureName": "col_1stfloor_Normal.texture",
-          "TexturePath": "sponza:textures/json/col_1stfloor_Normal.json"
-        },
-        {
           "Name": "Specular",
           "Type": "sampler",
           "TextureName": "col_1stfloor_Roughnesscol_1stfloor_Metalness.texture",

@@ -87,12 +87,6 @@
           "TexturePath": "sponza:textures/json/arch_stone_wall_01_BaseColor.json"
         },
         {
-          "Name": "Normal",
-          "Type": "sampler",
-          "TextureName": "arch_stone_wall_01_Normal.texture",
-          "TexturePath": "sponza:textures/json/arch_stone_wall_01_Normal.json"
-        },
-        {
           "Name": "Specular",
           "Type": "sampler",
           "TextureName": "arch_stone_wall_01_Roughnessarch_stone_wall_01_Metalness.texture",
