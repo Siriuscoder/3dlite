@@ -23,7 +23,7 @@ void main()
 {
     // Get world-space normal
 #if defined(NORMAL_MAPPING_OFF)
-    vec3 normal = iwn;
+    vec3 normal = normalize(iwn);
 #elif defined(NORMAL_MAPPING_TANGENT)
     vec3 normal = getNormal(iuv, TBN(iwn, iwt));
 #else

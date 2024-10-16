@@ -17,11 +17,6 @@ vec3 getEmission(vec2 uv)
     return Emission.rgb * EmissionStrength;
 }
 
-vec3 getNormal(vec2 uv, mat3 tbn)
-{
-    return tbn[2];
-}
-
 vec3 getSpecular(vec2 uv)
 {
     vec3 specular = vec3(1.0, Roughness, Metallic);
