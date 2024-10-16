@@ -1,7 +1,8 @@
 # Lite 3d rendering engine
 
-[![Build status](https://github.com/Siriuscoder/3dlite/actions/workflows/ci.yaml/badge.svg)](https://github.com/Siriuscoder/3dlite/actions/workflows/ci.yaml)
+[![Build status](https://github.com/Siriuscoder/3dlite/actions/workflows/ci.yaml/badge.svg?branch=master)](https://github.com/Siriuscoder/3dlite/actions/workflows/ci.yaml)
 [![Release](https://github.com/Siriuscoder/3dlite/actions/workflows/release.yaml/badge.svg?event=push)](https://github.com/Siriuscoder/3dlite/actions/workflows/release.yaml)
+[![Lite3D CodeQL](https://github.com/Siriuscoder/3dlite/actions/workflows/codeql.yml/badge.svg?branch=master)](https://github.com/Siriuscoder/3dlite/actions/workflows/codeql.yml)
 
 ## About
 
