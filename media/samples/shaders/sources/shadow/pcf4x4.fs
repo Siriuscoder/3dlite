@@ -55,7 +55,7 @@ float ShadowVisibility(float shadowIndex, vec3 vw, vec3 N, vec3 L)
         }
     }
 
-    if (!fiszero(visibility))
+    if (!isZero(visibility))
     {
         visibility /= samples;
     }

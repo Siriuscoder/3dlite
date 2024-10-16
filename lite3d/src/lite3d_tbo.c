@@ -130,48 +130,48 @@ int8_t lite3d_texture_buffer_texel_size(uint16_t bf)
 {
     switch (bf)
     {
-        case LITE3D_TB_R8:
-        case LITE3D_TB_R8I:
-        case LITE3D_TB_R8UI:
+        case LITE3D_TEXTURE_INTERNAL_R8:
+        case LITE3D_TEXTURE_INTERNAL_R8I:
+        case LITE3D_TEXTURE_INTERNAL_R8UI:
             return 1 * 1;
-        case LITE3D_TB_R16:
-        case LITE3D_TB_R16F:
-        case LITE3D_TB_R16I:
-        case LITE3D_TB_R16UI:
+        case LITE3D_TEXTURE_INTERNAL_R16:
+        case LITE3D_TEXTURE_INTERNAL_R16F:
+        case LITE3D_TEXTURE_INTERNAL_R16I:
+        case LITE3D_TEXTURE_INTERNAL_R16UI:
             return 1 * 2;
-        case LITE3D_TB_R32I:
-        case LITE3D_TB_R32F:
-        case LITE3D_TB_R32UI:
+        case LITE3D_TEXTURE_INTERNAL_R32I:
+        case LITE3D_TEXTURE_INTERNAL_R32F:
+        case LITE3D_TEXTURE_INTERNAL_R32UI:
             return 1 * 4;
-        case LITE3D_TB_RG8:
-        case LITE3D_TB_RG8I:
-        case LITE3D_TB_RG8UI:
+        case LITE3D_TEXTURE_INTERNAL_RG8:
+        case LITE3D_TEXTURE_INTERNAL_RG8I:
+        case LITE3D_TEXTURE_INTERNAL_RG8UI:
             return 2 * 1;
-        case LITE3D_TB_RG16:
-        case LITE3D_TB_RG16F:
-        case LITE3D_TB_RG16I:
-        case LITE3D_TB_RG16UI:
+        case LITE3D_TEXTURE_INTERNAL_RG16:
+        case LITE3D_TEXTURE_INTERNAL_RG16F:
+        case LITE3D_TEXTURE_INTERNAL_RG16I:
+        case LITE3D_TEXTURE_INTERNAL_RG16UI:
             return 2 * 2;
-        case LITE3D_TB_RG32F:
-        case LITE3D_TB_RG32I:
-        case LITE3D_TB_RG32UI:
+        case LITE3D_TEXTURE_INTERNAL_RG32F:
+        case LITE3D_TEXTURE_INTERNAL_RG32I:
+        case LITE3D_TEXTURE_INTERNAL_RG32UI:
             return 2 * 4;
-        case LITE3D_TB_RGB32F:
-        case LITE3D_TB_RGB32I:
-        case LITE3D_TB_RGB32UI:
+        case LITE3D_TEXTURE_INTERNAL_RGB32F:
+        case LITE3D_TEXTURE_INTERNAL_RGB32I:
+        case LITE3D_TEXTURE_INTERNAL_RGB32UI:
             return 3 * 4;
-        case LITE3D_TB_RGBA8:
-        case LITE3D_TB_RGBA8I:
-        case LITE3D_TB_RGBA8UI:
+        case LITE3D_TEXTURE_INTERNAL_RGBA8:
+        case LITE3D_TEXTURE_INTERNAL_RGBA8I:
+        case LITE3D_TEXTURE_INTERNAL_RGBA8UI:
             return 4 * 1;
-        case LITE3D_TB_RGBA16:
-        case LITE3D_TB_RGBA16F:
-        case LITE3D_TB_RGBA16I:
-        case LITE3D_TB_RGBA16UI:
+        case LITE3D_TEXTURE_INTERNAL_RGBA16:
+        case LITE3D_TEXTURE_INTERNAL_RGBA16F:
+        case LITE3D_TEXTURE_INTERNAL_RGBA16I:
+        case LITE3D_TEXTURE_INTERNAL_RGBA16UI:
             return 4 * 2;
-        case LITE3D_TB_RGBA32F:
-        case LITE3D_TB_RGBA32I:
-        case LITE3D_TB_RGBA32UI:
+        case LITE3D_TEXTURE_INTERNAL_RGBA32F:
+        case LITE3D_TEXTURE_INTERNAL_RGBA32I:
+        case LITE3D_TEXTURE_INTERNAL_RGBA32UI:
             return 4 * 4;
     }
     

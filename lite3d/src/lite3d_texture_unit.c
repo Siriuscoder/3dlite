@@ -51,6 +51,7 @@ const GLenum textureTargetEnum[] = {
     GL_TEXTURE_3D,
     GL_TEXTURE_CUBE_MAP,
     GL_TEXTURE_2D_ARRAY,
+    GL_TEXTURE_CUBE_MAP_ARRAY,
     GL_TEXTURE_BUFFER,
     GL_TEXTURE_2D_MULTISAMPLE,
     GL_TEXTURE_2D_MULTISAMPLE_ARRAY,
@@ -123,6 +124,8 @@ const char *lite3d_texture_unit_target_string(uint32_t textureTarget)
         return "TEXTURE_2D_MULTISAMPLE_ARRAY";
     case GL_TEXTURE_2D_ARRAY:
         return "TEXTURE_2D_ARRAY";
+    case GL_TEXTURE_CUBE_MAP_ARRAY:
+        return "TEXTURE_CUBE_MAP_ARRAY";
     default:
         return "INVALID";
     }
@@ -606,6 +609,13 @@ static int lite3d_texture_unit_create_storage(lite3d_texture_unit *textureUnit)
                 glTexStorage3D(textureTargetEnum[textureUnit->textureTarget], textureUnit->generatedMipmaps + 1, 
                     textureUnit->internalFormat, textureUnit->imageWidth, textureUnit->imageHeight, textureUnit->imageDepth);
                 goto check_and_exit;
+            case LITE3D_TEXTURE_CUBE_ARRAY:
+            // Every OpenGL API call that operates on cubemap array textures takes layer-faces, not array layers. 
+            // For example, when you allocate storage for the texture, you would use glTexStorage3D or glTexImage3D or similar. 
+            // However, the depth​ parameter will be the number of layer-faces, not layers. So it must be divisible by 6.
+                glTexStorage3D(textureTargetEnum[textureUnit->textureTarget], textureUnit->generatedMipmaps + 1, 
+                    textureUnit->internalFormat, textureUnit->imageWidth, textureUnit->imageHeight, textureUnit->imageDepth * 6);
+                goto check_and_exit;
         }
     }
 
@@ -936,7 +946,6 @@ int lite3d_texture_unit_from_resource(lite3d_texture_unit *textureUnit,
     /* release IL image */
     ilDeleteImage(imageDesc);
 
-    textureUnit->isFbAttachment = LITE3D_FALSE;
     return LITE3D_TRUE;
 }
 
@@ -1037,16 +1046,16 @@ int lite3d_texture_unit_set_compressed_pixels(lite3d_texture_unit *textureUnit,
 int lite3d_texture_unit_get_level_size(const lite3d_texture_unit *textureUnit, 
     int8_t level, uint8_t cubeface, size_t *size)
 {
-    int32_t imageWidth, imageHeight, imageDepth;
+    size_t imageWidth, imageHeight, imageDepth;
 
     SDL_assert(textureUnit);
     SDL_assert(size);
     if (textureUnit->generatedMipmaps < level)
         return LITE3D_FALSE;
 
-    imageWidth = lite3d_texture_unit_get_level_width(textureUnit, level, cubeface);
-    imageHeight = lite3d_texture_unit_get_level_height(textureUnit, level, cubeface);
-    imageDepth = lite3d_texture_unit_get_level_depth(textureUnit, level, cubeface);
+    imageWidth = (size_t)lite3d_texture_unit_get_level_width(textureUnit, level, cubeface);
+    imageHeight = (size_t)lite3d_texture_unit_get_level_height(textureUnit, level, cubeface);
+    imageDepth = (size_t)lite3d_texture_unit_get_level_depth(textureUnit, level, cubeface);
 
 #ifndef GLES
     {
@@ -1166,6 +1175,7 @@ int lite3d_texture_unit_get_compressed_pixels(const lite3d_texture_unit *texture
 
 int lite3d_texture_unit_generate_mipmaps(lite3d_texture_unit *textureUnit)
 {
+    SDL_assert(textureUnit);
     if(textureUnit->generatedMipmaps > 0)
     {
         glBindTexture(textureTargetEnum[textureUnit->textureTarget], textureUnit->textureID);
@@ -1202,14 +1212,22 @@ int lite3d_texture_unit_allocate(lite3d_texture_unit *textureUnit,
     if ((textureTarget == LITE3D_TEXTURE_2D_MULTISAMPLE || textureTarget == LITE3D_TEXTURE_3D_MULTISAMPLE) &&
         !lite3d_check_texture_multisample())
     {
-        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "%s: Multisample texture not supported",
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "%s: Multisample texture is not supported",
             LITE3D_CURRENT_FUNCTION);
         return LITE3D_FALSE;
     }
 
     if (textureTarget == LITE3D_TEXTURE_2D_SHADOW && !lite3d_check_shadow_samplers())
     {
-        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "%s: Shadow2D textures not supported",
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "%s: Shadow2D textures is not supported",
+            LITE3D_CURRENT_FUNCTION);
+        return LITE3D_FALSE;
+    }
+
+    if (textureTarget == LITE3D_TEXTURE_CUBE_ARRAY && (!lite3d_check_texture_storage() ||
+        !lite3d_check_texture_cube_map_array()))
+    {
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "%s: CubeMap arrays are not supported",
             LITE3D_CURRENT_FUNCTION);
         return LITE3D_FALSE;
     }
@@ -1340,7 +1358,6 @@ int lite3d_texture_unit_allocate(lite3d_texture_unit *textureUnit,
         lite3d_texture_unit_internal_format_string(textureUnit),
         lite3d_texture_unit_format_string(textureUnit));
 
-    textureUnit->isFbAttachment = LITE3D_FALSE;
     return LITE3D_TRUE;
 }
 
@@ -1359,10 +1376,6 @@ void lite3d_texture_unit_bind(lite3d_texture_unit *textureUnit, uint16_t layer)
 
     glActiveTexture(GL_TEXTURE0 + layer);
     glBindTexture(textureTargetEnum[textureUnit->textureTarget], textureUnit->textureID);
-
-    if (textureUnit->isFbAttachment &&
-        textureUnit->generatedMipmaps > 0)
-        glGenerateMipmap(textureTargetEnum[textureUnit->textureTarget]);
 }
 
 void lite3d_texture_unit_unbind(lite3d_texture_unit *textureUnit, uint16_t layer)

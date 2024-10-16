@@ -3,10 +3,11 @@
     [
         // Standard shaders with params customization
         "samples:shaders/sources/pipeline/v_tbn_inst.vs",
-        "samples:shaders/sources/pipeline/forward_pass/forward.fs",
+        "samples:shaders/sources/pipeline/forward_pass/forward.fs,samples:shaders/sources/common/version.def",
         "samples:shaders/sources/pbr/pbr.fs,vault_111:shaders/sources/inc/pbr_params.def",
-        "samples:shaders/sources/pbr/brdf.fs,vault_111:shaders/sources/inc/pbr_params.def",
-        "samples:shaders/sources/shadow/pcf4x4.fs,vault_111:shaders/sources/inc/shadow_params.def",
+        "samples:shaders/sources/pbr/brdf_oren_nayar_approx.fs,vault_111:shaders/sources/inc/pbr_params.def",
+        "samples:shaders/sources/pbr/brdf_simple_env.fs,vault_111:shaders/sources/inc/pbr_params.def",
+        "samples:shaders/sources/shadow/pcf3x3.fs,vault_111:shaders/sources/inc/shadow_params.def",
         "samples:shaders/sources/common/utils.fs",
         // Sample specific shaders
         "vault_111:shaders/sources/glow_falloff.fs"

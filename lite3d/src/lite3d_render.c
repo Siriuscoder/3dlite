@@ -188,6 +188,8 @@ static void update_render_target(lite3d_render_target *target)
             gRenderStats.textureUnitsByFrame += look->scene->stats.textureUnitsBinded;
         }
     }
+
+    lite3d_framebuffer_rebuild_mipmaps(&target->fb);
 }
 
 static int update_render_targets(void)

@@ -186,7 +186,8 @@ int lite3d_check_seamless_cube_map(void)
 int lite3d_check_geometry_shader(void)
 {
 #ifdef GLES
-    return SDL_GL_ExtensionSupported("GL_OES_geometry_shader") == SDL_TRUE;
+    return SDL_GL_ExtensionSupported("GL_OES_geometry_shader") == SDL_TRUE || 
+        SDL_GL_ExtensionSupported("GL_EXT_geometry_shader") == SDL_TRUE;
 #else 
     return GLEW_ARB_geometry_shader4 || GLEW_VERSION_3_2;
 #endif 
@@ -321,6 +322,16 @@ int lite3d_check_texture_storage_multisample(void)
 #else
     return GLEW_ARB_texture_storage_multisample || GLEW_VERSION_4_3;
 #endif 
+}
+
+int lite3d_check_texture_cube_map_array(void)
+{
+#ifdef GLES
+    return SDL_GL_ExtensionSupported("GL_OES_texture_cube_map_array") == SDL_TRUE || 
+        SDL_GL_ExtensionSupported("GL_EXT_texture_cube_map_array") == SDL_TRUE;
+#else
+    return GLEW_ARB_texture_cube_map_array || GLEW_VERSION_4_0;
+#endif
 }
 
 #ifdef __GNUC__

@@ -30,6 +30,7 @@ define_sample(sample_warship sample_common lite3dpp_font lite3dpp)
 define_sample(sample_viewer sample_common lite3dpp_font lite3dpp)
 define_sample(sample_vault_111 sample_common lite3dpp_font lite3dpp lite3dpp_pipeline)
 define_sample(sample_starfield sample_common lite3dpp_font lite3dpp lite3dpp_pipeline)
+define_sample(sample_sandbox sample_common lite3dpp_font lite3dpp lite3dpp_pipeline)
 define_sample(sample_reflection_sky sample_common lite3dpp_font lite3dpp)
 define_sample(sample_camera sample_common lite3dpp_font lite3dpp)
 

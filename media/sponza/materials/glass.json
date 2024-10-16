@@ -11,27 +11,31 @@
           "Name": "Albedo",
           "Type": "v4",
           "Value": [
-            0.018703151494264603,
-            0.018703151494264603,
-            0.018703151494264603,
-            0.7599999904632568
+            0.8500000238418579,
+            0.8500000238418579,
+            0.8500000238418579,
+            0.5
           ]
         },
         {
           "Name": "Metallic",
           "Type": "float",
-          "Value": 0.0
+          "Value": 0.9
         },
         {
           "Name": "Roughness",
           "Type": "float",
-          "Value": 0.019999999552965164
+          "Value": 0.05000000074505806
         },
         {
-          "Name": "Environment",
-          "TextureName": "environment.texture",
-          "TexturePath": "samples:textures/json/skybox_metal_chrome.json",
+          "Name": "EnvironmentProbe",
+          "TextureName": "SponzaDeffered_EnvironmentMultiProbe.texture",
           "Type": "sampler"
+        },
+        {
+          "Name": "EnvProbesData",
+          "UBOName": "SponzaDeffered_EnvProbesData",
+          "Type": "UBO"
         },
         {
           "Name": "LightSources",

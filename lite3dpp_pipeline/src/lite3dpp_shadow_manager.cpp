@@ -106,18 +106,16 @@ namespace lite3dpp_pipeline {
         mMain(main)
     {
         auto shadowConf = conf.getObject(L"ShadowMaps");
-        int shadowsCastersMaxCount = shadowConf.getInt(L"MaxCount", 1);
-        int width = shadowConf.getInt(L"Width", 1024);
-        int height = shadowConf.getInt(L"Height", 1024);
+        mShadowsCastersMaxCount = shadowConf.getInt(L"MaxCount", 1);
+        mWidth = shadowConf.getInt(L"Width", 1024);
+        mHeight = shadowConf.getInt(L"Height", 1024);
         mProjection.znear = shadowConf.getDouble(L"NearClipPlane", 1.0);
         mProjection.zfar = shadowConf.getDouble(L"FarClipPlane", 100.0);
         mProjection.left = shadowConf.getObject(L"DirectionLightShadowParams").getDouble(L"LeftClipPlane");
         mProjection.right = shadowConf.getObject(L"DirectionLightShadowParams").getDouble(L"RightClipPlane");
         mProjection.bottom = shadowConf.getObject(L"DirectionLightShadowParams").getDouble(L"BottomClipPlane");
         mProjection.top = shadowConf.getObject(L"DirectionLightShadowParams").getDouble(L"TopClipPlane");
-        mProjection.aspect = static_cast<float>(width) / static_cast<float>(height);
-
-        createShadowRenderPipeline(pipelineName, conf.getString(L"ShaderPackage"), width, height, shadowsCastersMaxCount);
+        mProjection.aspect = static_cast<float>(mWidth) / static_cast<float>(mHeight);
     }
 
     ShadowManager::~ShadowManager()
@@ -287,17 +285,16 @@ namespace lite3dpp_pipeline {
         mShadowPass->addObserver(this);
     }
 
-    void ShadowManager::createShadowRenderPipeline(const String& pipelineName, const String& shaderPackage, int width, int height, 
-        int shadowsCastersMaxCount)
+    void ShadowManager::initialize(const String& pipelineName, const String& shaderPackage)
     {
-        createAuxiliaryBuffers(pipelineName, shadowsCastersMaxCount);
-        createShadowRenderTarget(pipelineName, width, height, shadowsCastersMaxCount);
+        createAuxiliaryBuffers(pipelineName, mShadowsCastersMaxCount);
+        createShadowRenderTarget(pipelineName, mWidth, mHeight, mShadowsCastersMaxCount);
 
         // Создание специальной сцены для предварительной частичной очистки теневых карт которые надо перерисовать в текущем кадре.
         BigTriSceneGenerator stageGenerator;
         stageGenerator.addRenderTarget(mShadowPass->getName(), ConfigurationWriter()
             .set(L"Priority", static_cast<int>(RenderPassStagePriority::ShadowCleanStage))
-            .set(L"TexturePass", static_cast<int>(TexturePassTypes::Shadow))
+            .set(L"TexturePass", static_cast<int>(TexturePassTypes::ShadowPass))
             .set(L"DepthTest", true)
             .set(L"ColorOutput", false)
             .set(L"DepthOutput", true)
@@ -309,7 +306,7 @@ namespace lite3dpp_pipeline {
 
         ConfigurationWriter cleanStageMaterialConfig;
         cleanStageMaterialConfig.set(L"Passes", stl<ConfigurationWriter>::vector {
-            ConfigurationWriter().set(L"Pass", static_cast<int>(TexturePassTypes::Shadow))
+            ConfigurationWriter().set(L"Pass", static_cast<int>(TexturePassTypes::ShadowPass))
                 .set(L"Program", ConfigurationWriter()
                     .set(L"Name", "ShadowMapClean.program")
                     .set(L"Path", shaderPackage + ":shaders/json/shadow_map_clean.json"))

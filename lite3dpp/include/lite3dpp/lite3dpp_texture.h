@@ -31,7 +31,7 @@ namespace lite3dpp
 
         typedef stl<PixelsData>::vector LayersData;
 
-        ~Texture();
+        virtual ~Texture() = default;
 
         LITE3D_DECLARE_PTR_METHODS(lite3d_texture_unit, mTexture)
 
@@ -47,6 +47,16 @@ namespace lite3dpp
 
         virtual void unloadImpl() override;
 
+        static uint32_t textureType(const String &s);
+        static uint8_t textureFiltering(const String &s);
+        static uint8_t textureWrap(const String &s);
+        static uint32_t textureImageFormat(const String &s);
+        static uint32_t textureFilterType(const String &s);
+        static uint16_t textureFormat(const String &s);
+        static uint16_t textureInternalFormat(const String& s);
+
+    protected:
+
         lite3d_texture_unit mTexture = {0};
     };
 
@@ -57,7 +67,7 @@ namespace lite3dpp
         TextureImage(const String &name, 
             const String &path, Main *main);
 
-        ~TextureImage();
+        virtual ~TextureImage() = default;
 
         inline int8_t getLevelsNum()
         { return mTexture.generatedMipmaps; }
@@ -87,14 +97,6 @@ namespace lite3dpp
         { return mTexture.imageWidth; }
         inline int32_t getDepth()
         { return mTexture.imageDepth; }
-
-        static uint32_t textureType(const String &s);
-        static uint8_t textureFiltering(const String &s);
-        static uint8_t textureWrap(const String &s);
-        static uint32_t textureImageFormat(const String &s);
-        static uint32_t textureFilterType(const String &s);
-        static uint16_t textureFormat(const String &s);
-        static uint16_t textureInternalFormat(const String& s);
 
     protected:
 

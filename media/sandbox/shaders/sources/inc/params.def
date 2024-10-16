@@ -1,5 +1,17 @@
 #include "samples:shaders/sources/common/version.def"
+#extension GL_ARB_texture_cube_map_array : enable
 
+// Normal mapping params
+#define NORMAL_MAPPING_OFF
+
+// Environment params
+#define ENV_PROBE_RELATIVE_DISTANCE_THRESHOLD   0.05
+#define ENV_DIFFUSE_STRENGTH                    1.0
+#define ENV_PROBE_DIFFUSE_POWER                 2.0
+#define ENV_PROBE_SPECULAR_POWER                10.0
+#define CUBE_MAP_UV_SCALE                       1.0
+
+// Shadow params
 #define SHADOW_MAX_LAYERS                           1
 #define SHADOW_MAX_SPLIT_VERTICES                   3
 

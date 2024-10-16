@@ -72,6 +72,60 @@
           "Name": "modelMatrix"
         }
       ]
+    },
+    {
+      "Pass": 4,
+      "Program": {
+        "Name": "env_probe.program",
+        "Path": "sponza:shaders/json/env_probe.json"
+      },
+      "Uniforms": [
+        {
+          "Name": "Albedo",
+          "Type": "sampler",
+          "TextureName": "window_frame_01_BaseColor.texture",
+          "TexturePath": "sponza:textures/json/window_frame_01_BaseColor.json"
+        },
+        {
+          "Name": "Specular",
+          "Type": "sampler",
+          "TextureName": "window_frame_01_Roughnesswindow_frame_01_Metalness.texture",
+          "TexturePath": "sponza:textures/json/window_frame_01_Roughnesswindow_frame_01_Metalness.json"
+        },
+        {
+          "Name": "LightSources",
+          "UBOName": "SponzaDeffered_MainScene_lightingBufferObject",
+          "Type": "UBO"
+        },
+        {
+          "Name": "LightIndexes",
+          "UBOName": "SponzaDeffered_MainScene_lightingIndexBuffer",
+          "Type": "UBO"
+        },
+        {
+          "Name": "ShadowMaps",
+          "TextureName": "SponzaDeffered_ShadowMap.texture",
+          "Type": "sampler"
+        },
+        {
+          "Name": "ShadowMatrix",
+          "UBOName": "SponzaDeffered_ShadowMatrixBuffer",
+          "Type": "UBO"
+        },
+        {
+          "Name": "EnvProbesData",
+          "UBOName": "SponzaDeffered_EnvProbesData",
+          "Type": "UBO"
+        },
+        {
+          "Name": "EnvProbesIndex",
+          "UBOName": "SponzaDeffered_EnvProbesIndex",
+          "Type": "UBO"
+        },
+        {
+          "Name": "modelMatrix"
+        }
+      ]
     }
   ]
 }

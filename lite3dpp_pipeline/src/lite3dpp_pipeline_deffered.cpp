@@ -78,14 +78,33 @@ namespace lite3dpp_pipeline {
             .set(L"TextureName", mGBufferTexture->getName())
             .set(L"Type", "sampler"));
         lightComputeMaterialUniforms.emplace_back(ConfigurationWriter()
-            .set(L"Name", "Environment")
-            .set(L"TextureName", "environment.texture")
-            .set(L"TexturePath", pipelineConfig.getString(L"LightComputeEnvironmentTexture"))
-            .set(L"Type", "sampler"));
-        lightComputeMaterialUniforms.emplace_back(ConfigurationWriter()
             .set(L"Name", "Eye")
             .set(L"Scope", "global")
             .set(L"Type", "v3"));
+
+        /* IBL present, using env probe */
+        if (mIBL)
+        {
+            lightComputeMaterialUniforms.emplace_back(ConfigurationWriter()
+                .set(L"Name", "EnvironmentProbe")
+                .set(L"TextureName", mIBL->getEnvProbeTexture()->getName())
+                .set(L"Type", "sampler"));
+            lightComputeMaterialUniforms.emplace_back(ConfigurationWriter()
+                .set(L"Name", "EnvProbesData")
+                .set(L"UBOName",  mIBL->getProbeBufferName())
+                .set(L"Type", "UBO"));
+        }
+        else
+        {
+            if (pipelineConfig.has(L"EnvironmentTexture"))
+            {
+                lightComputeMaterialUniforms.emplace_back(ConfigurationWriter()
+                    .set(L"Name", "Environment")
+                    .set(L"TextureName", "environment.texture")
+                    .set(L"TexturePath", pipelineConfig.getString(L"EnvironmentTexture"))
+                    .set(L"Type", "sampler"));
+            }
+        }
         
         auto lightingTechType = pipelineConfig.getString(L"LightingTechnique");
         if (lightingTechType == "UBO" && mMainScene->getLightParamsBuffer())
@@ -236,8 +255,8 @@ namespace lite3dpp_pipeline {
             .set(L"Filtering", "None")
             .set(L"Wrapping", "ClampToEdge")
             .set(L"Compression", false)
-            .set(L"TextureFormat", "RGBA")
-            .set(L"InternalFormat", "RGBA32F");
+            .set(L"TextureFormat", "RGB")
+            .set(L"InternalFormat", "RGB32F");
 
         mCombinedTexture = getMain().getResourceManager()->queryResourceFromJson<TextureImage>(
             getName() + "_" + cameraName + "_combined.texture", combinedTextureConfig.write());
@@ -363,10 +382,10 @@ namespace lite3dpp_pipeline {
         mSSAOStage->addObject("SSAOBigTri", BigTriObjectGenerator(mSSAOStageMaterial->getName()).generate());
     }
 
-    void PipelineDeffered::frameBegin()
+    bool PipelineDeffered::beginSceneRender(Scene *scene, Camera *camera)
     {
-        auto viewMatrix = getMainCamera().refreshViewMatrix();
-        auto projMatrix = getMainCamera().getProjMatrix();
+        auto &viewMatrix = getMainCamera().getViewMatrix();
+        auto &projMatrix = getMainCamera().getProjMatrix();
 
         if (mSSAOStageMaterial)
         {
@@ -384,6 +403,6 @@ namespace lite3dpp_pipeline {
                 "CameraProjection", projMatrix);
         }
 
-        PipelineBase::frameBegin();
+        return PipelineBase::beginSceneRender(scene, camera);
     }
 }}

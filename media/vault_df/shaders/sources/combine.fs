@@ -14,7 +14,7 @@ void main()
     /* fragment coordinate */
     vec4 diff = texture(diffuseMap, iuv);
     /* check fragment not shaded or self-illum material */
-    if (fnear(diff.w, 1.0))
+    if (isNear(diff.w, 1.0))
     {
         fragColor = vec4(diff.xyz, 1.0);
         return;

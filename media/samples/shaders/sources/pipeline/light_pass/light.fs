@@ -15,7 +15,7 @@ void main()
     // sampling normal in world space from fullscreen normal map
     vec4 nw = texture(GBuffer, vec3(iuv, 1));
     // Non shaded fragment
-    if (fiszero(nw.xyz))
+    if (isZero(nw.xyz))
         discard;
 
     // sampling fragment position in world space from fullscreen normal map

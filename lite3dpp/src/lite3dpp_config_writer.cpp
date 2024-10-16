@@ -48,7 +48,13 @@ namespace lite3dpp
 
     ConfigurationWriter &ConfigurationWriter::set(const WString &name, int32_t value)
     {
-        mObject[name] = std::make_shared<JSONValue>((float)value);
+        mObject[name] = std::make_shared<JSONValue>(static_cast<float>(value));
+        return *this;
+    }
+
+    ConfigurationWriter &ConfigurationWriter::set(const WString &name, uint32_t value)
+    {
+        mObject[name] = std::make_shared<JSONValue>(static_cast<float>(value));
         return *this;
     }
 
@@ -122,7 +128,7 @@ namespace lite3dpp
         JSONArray jarray;
         for(const int32_t object : ints)
         {
-            jarray.emplace_back(std::make_shared<JSONValue>((float)object));
+            jarray.emplace_back(std::make_shared<JSONValue>(static_cast<float>(object)));
         }
 
         mObject[name] = std::make_shared<JSONValue>(jarray);

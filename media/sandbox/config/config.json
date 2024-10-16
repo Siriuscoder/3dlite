@@ -1,0 +1,41 @@
+{
+    // common settings
+    "LogLevel": 2,
+    "LogFlushAlways": true,
+    "LogFile": "lite3d.log",
+    "TextureSettings": {
+        "Anisotropy": 8,
+        "Compression": true,
+        "CompressedDataOnLoad": true,
+        "DepthFormat": "Depth32"
+    },
+    // Video settings
+    // Window size, caption, color settings, etc
+    "VideoSettings": {
+        "GLProfile": "core",
+        "GLVersionMajor": 3,
+        "GLVersionMinor": 3,
+        "Width": 1024,
+        "Height": 768,
+        "Caption": "Sandbox PBR scene",
+        "ColorBits": 24,
+        "Fullscreen": false,
+        "MSAA": 1,
+        "VSync": false
+    },
+    // resource locations
+    "ResourceLocations": [
+        {
+            "Name": "samples",
+            "FileCacheMaxSize": 5120000,
+            "Path": "samples/"
+        },
+        {
+            "Name": "sandbox",
+            "FileCacheMaxSize": 5120000,
+            "Path": "sandbox/"
+        }
+    ],
+
+    "FixedUpdatesInterval": 30
+}

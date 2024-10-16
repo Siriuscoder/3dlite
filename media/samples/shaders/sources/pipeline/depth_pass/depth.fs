@@ -10,6 +10,6 @@ void main()
 {
     // check albedo alpha and discard full transparent fragments
     vec4 albedo = getAlbedo(iuv);
-    if (fiszero(albedo.a))
+    if (isZero(albedo.a))
         discard;
 }
