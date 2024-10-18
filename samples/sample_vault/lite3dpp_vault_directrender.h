@@ -33,6 +33,7 @@ public:
 
     void createPipeline() override
     {
+        // SSBO supported by version GLSL 430 or higher
         ShaderProgram::setShaderVersion(mUseShader430 ? "430" : "330");
         // load main scene, direct render depth and then calculate lighting
         mVaultScene = getMain().getResourceManager()->queryResource<Scene>("Vault",

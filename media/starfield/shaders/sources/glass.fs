@@ -1,5 +1,3 @@
-#include "samples:shaders/sources/common/version.def"
-
 uniform vec4 Albedo;
 uniform float Roughness;
 

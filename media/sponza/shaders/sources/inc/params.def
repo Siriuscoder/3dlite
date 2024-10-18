@@ -1,4 +1,3 @@
-#include "samples:shaders/sources/common/version.def"
 #extension GL_ARB_texture_cube_map_array : enable
 
 #define NORMAL_MAPPING_TANGENT

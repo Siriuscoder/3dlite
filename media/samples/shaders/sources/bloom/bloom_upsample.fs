@@ -1,5 +1,3 @@
-#include "samples:shaders/sources/common/version.def"
-
 // This shader performs upsampling on a texture,
 // as taken from Call Of Duty method, presented at ACM Siggraph 2014.
 
