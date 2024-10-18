@@ -36,7 +36,7 @@ namespace lite3dpp_pipeline {
         void constructCameraPipeline(const ConfigurationReader &pipelineConfig, const String &cameraName,
             SceneGenerator &sceneGenerator) override;
 
-        void frameBegin() override;
+        bool beginSceneRender(Scene *scene, Camera *camera) override;
 
         virtual void constructGBufferPass(const ConfigurationReader &pipelineConfig, const String &cameraName,
             SceneGenerator &sceneGenerator);

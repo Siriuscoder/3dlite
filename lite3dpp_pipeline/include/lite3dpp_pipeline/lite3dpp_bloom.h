@@ -30,6 +30,7 @@ public:
     BloomEffect(Main& main, const String &pipelineName, const String &cameraName, const ConfigurationReader &pipelineConfig);
     ~BloomEffect();
 
+    void initialize();
     TextureRenderTarget &getRenderTarget();
     TextureImage &getLastTexture();
     TextureImage &getMiddleTexture();
@@ -40,7 +41,6 @@ private:
     bool beginDrawBatch(Scene *scene, SceneNode *node, lite3d_mesh_chunk *meshChunk, Material *material) override;
     bool beginSceneRender(Scene *scene, Camera *camera) override;
 
-    void init();
     void initTextureChain();
     void initBoomScene();
 

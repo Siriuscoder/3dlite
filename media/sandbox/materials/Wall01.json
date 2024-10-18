@@ -1,0 +1,211 @@
+{
+  "Passes": [
+    {
+      "Pass": 1,
+      "Program": {
+        "Name": "depth.program",
+        "Path": "sandbox:shaders/json/depth.json"
+      },
+      "Uniforms": [
+        {
+          "Name": "projViewMatrix"
+        },
+        {
+          "Name": "modelMatrix"
+        }
+      ]
+    },
+    {
+      "Pass": 2,
+      "Program": {
+        "Name": "bsdf_regular.program",
+        "Path": "sandbox:shaders/json/bsdf_regular.json"
+      },
+      "Uniforms": [
+        {
+          "Name": "Albedo",
+          "Type": "v4",
+          "Value": [
+            0.8002511262893677,
+            0.690215528011322,
+            0.10931983590126038,
+            1.0
+          ]
+        },
+        {
+          "Name": "Emission",
+          "Type": "v4",
+          "Value": [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        {
+          "Name": "EmissionStrength",
+          "Type": "float",
+          "Value": 0.0
+        },
+        {
+          "Name": "Metallic",
+          "Type": "float",
+          "Value": 0.0
+        },
+        {
+          "Name": "Roughness",
+          "Type": "float",
+          "Value": 0.05000000074505806
+        },
+        {
+          "Name": "SpecularAmbientFactor",
+          "Type": "float",
+          "Value": 2.2
+        },
+        {
+          "Name": "EnvironmentProbe",
+          "TextureName": "SandboxPipeline_EnvironmentMultiProbe.texture",
+          "Type": "sampler"
+        },
+        {
+          "Name": "LightSources",
+          "UBOName": "SandboxPipeline_MainScene_lightingBufferObject",
+          "Type": "UBO"
+        },
+        {
+          "Name": "LightIndexes",
+          "UBOName": "SandboxPipeline_MainScene_lightingIndexBuffer",
+          "Type": "UBO"
+        },
+        {
+          "Name": "ShadowMaps",
+          "TextureName": "SandboxPipeline_ShadowMap.texture",
+          "Type": "sampler"
+        },
+        {
+          "Name": "ShadowMatrix",
+          "UBOName": "SandboxPipeline_ShadowMatrixBuffer",
+          "Type": "UBO"
+        },
+        {
+          "Name": "EnvProbesData",
+          "UBOName": "SandboxPipeline_EnvProbesData",
+          "Type": "UBO"
+        },
+        {
+          "Name": "Eye",
+          "Type": "v3",
+          "Scope": "global"
+        },
+        {
+          "Name": "projViewMatrix"
+        },
+        {
+          "Name": "modelMatrix"
+        },
+        {
+          "Name": "normalMatrix"
+        }
+      ]
+    },
+    {
+      "Pass": 3,
+      "Program": {
+        "Name": "shadow.program",
+        "Path": "sandbox:shaders/json/shadow.json"
+      },
+      "Uniforms": [
+        {
+          "Name": "ShadowMatrix",
+          "UBOName": "SandboxPipeline_ShadowMatrixBuffer",
+          "Type": "UBO"
+        },
+        {
+          "Name": "ShadowIndex",
+          "UBOName": "SandboxPipeline_ShadowIndexBuffer",
+          "Type": "UBO"
+        },
+        {
+          "Name": "modelMatrix"
+        }
+      ]
+    },
+    {
+      "Pass": 4,
+      "Program": {
+        "Name": "env_multiprobe.program",
+        "Path": "sandbox:shaders/json/env_multiprobe.json"
+      },
+      "Uniforms": [
+        {
+          "Name": "Albedo",
+          "Type": "v4",
+          "Value": [
+            0.8002511262893677,
+            0.690215528011322,
+            0.10931983590126038,
+            1.0
+          ]
+        },
+        {
+          "Name": "Emission",
+          "Type": "v4",
+          "Value": [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        {
+          "Name": "EmissionStrength",
+          "Type": "float",
+          "Value": 0.0
+        },
+        {
+          "Name": "Metallic",
+          "Type": "float",
+          "Value": 0.0
+        },
+        {
+          "Name": "Roughness",
+          "Type": "float",
+          "Value": 0.05000000074505806
+        },
+        {
+          "Name": "LightSources",
+          "UBOName": "SandboxPipeline_MainScene_lightingBufferObject",
+          "Type": "UBO"
+        },
+        {
+          "Name": "LightIndexes",
+          "UBOName": "SandboxPipeline_MainScene_lightingIndexBuffer",
+          "Type": "UBO"
+        },
+        {
+          "Name": "ShadowMaps",
+          "TextureName": "SandboxPipeline_ShadowMap.texture",
+          "Type": "sampler"
+        },
+        {
+          "Name": "ShadowMatrix",
+          "UBOName": "SandboxPipeline_ShadowMatrixBuffer",
+          "Type": "UBO"
+        },
+        {
+          "Name": "EnvProbesData",
+          "UBOName": "SandboxPipeline_EnvProbesData",
+          "Type": "UBO"
+        },
+        {
+          "Name": "EnvProbesIndex",
+          "UBOName": "SandboxPipeline_EnvProbesIndex",
+          "Type": "UBO"
+        },
+        {
+          "Name": "modelMatrix"
+        }
+      ]
+    }
+  ]
+}

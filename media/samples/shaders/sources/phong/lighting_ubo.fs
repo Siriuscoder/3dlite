@@ -31,11 +31,11 @@ vec3 calc_lighting(vec3 fragPos, vec3 fragNormal, vec3 eye, float specularFactor
         /* block0.y - enabled */
         /* block0.z - influence distance */
         /* block0.w - influence min radiance */
-        if (fiszero(lights[index+0].y))
+        if (isZero(lights[index+0].y))
             continue;
 
         /* Read Position and check distance for spot and point light only */
-        if (fnear(lights[index+0].x, LITE3D_LIGHT_POINT) || fnear(lights[index+0].x, LITE3D_LIGHT_SPOT))
+        if (isNear(lights[index+0].x, LITE3D_LIGHT_POINT) || isNear(lights[index+0].x, LITE3D_LIGHT_SPOT))
         {
             /* block2.x - position.x */
             /* block2.y - position.y */

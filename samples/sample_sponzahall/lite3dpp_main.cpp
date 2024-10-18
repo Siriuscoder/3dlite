@@ -27,7 +27,8 @@ static const char *helpString =
     "Press 'l' to enable/disable flashlight\n"
     "Press 'u' to enable/disable SSAO\n"
     "Press 'r' to enable/disable night mode\n"
-    "Press 'e' to enable/disable sun rotation\n";
+    "Press 'e' to enable/disable sun rotation\n"
+    "Press 't' to enable/disable lamps\n";
 
 class SampleSponza : public Sample
 {
@@ -50,13 +51,26 @@ public:
         setMainCamera(&mPipeline->getMainCamera());
         setupShadowCasters();
         addFlashlight();
+        initGIProbes();
+    }
+
+    void initGIProbes()
+    {
+        auto scene = &mPipeline->getMainScene();
+        auto sponzaStatic = scene->getObject("Sponza");
+
+        for (const auto &node : sponzaStatic->getNodes())
+        {
+            if (node.first.starts_with("EnvProbe"))
+            {
+                mPipeline->getIBL()->addProbe(node.second->getPosition());
+            }
+        }
     }
 
     void setupShadowCasters()
     {
         mSUN = mSponzaScene->getObject("Sponza")->getLightNode("SUN");
-        mAmbient01 = mSponzaScene->getObject("Sponza")->getLightNode("ambient_light_day_01");
-        mAmbient02 = mSponzaScene->getObject("Sponza")->getLightNode("ambient_light_day_02");
         mSUNNode = mSponzaScene->getObject("Sponza")->getNode("SUN_actor");
         mSUNShadowCaster = mPipeline->getShadowManager()->newShadowCaster(mSUN);
     }
@@ -70,6 +84,7 @@ public:
             //mSUN->rotateX(0.00005f * deltaRetard);
             // Помечаем что надо перерисовать тени в следубщий кадр
             mSUNShadowCaster->invalidate();
+            //mPipeline->getIBL()->rebuild();
         }
     }
 
@@ -128,13 +143,29 @@ public:
             {
                 mDayNightMode = !mDayNightMode;
                 mSUN->getLight()->enabled(mDayNightMode);
-                mAmbient01->getLight()->enabled(mDayNightMode);
-                mAmbient02->getLight()->enabled(mDayNightMode);
                 mPipeline->setSkyBoxEmission(mDayNightMode ? 12.0f : 0.008f);
+                mPipeline->getIBL()->rebuild();
             }
             else if (e->key.keysym.sym == SDLK_e)
             {
                 mSunRotation = !mSunRotation;
+                if (!mSunRotation)
+                {
+                    mPipeline->getIBL()->rebuild();
+                }
+            }
+            else if (e->key.keysym.sym == SDLK_t)
+            {
+                mLampsOn = !mLampsOn;
+                for (const auto light : mPipeline->getMainScene().getLights())
+                {
+                    if (light != mSUN && light != mFlashLight)
+                    {
+                        light->getLight()->enabled(mLampsOn);
+                    }
+                }
+
+                mPipeline->getIBL()->rebuild();
             }
         }
     }
@@ -147,11 +178,10 @@ private:
     lite3dpp_pipeline::ShadowManager::ShadowCaster *mSUNShadowCaster = nullptr;
     LightSceneNode* mFlashLight = nullptr;
     LightSceneNode* mSUN = nullptr;
-    LightSceneNode* mAmbient01 = nullptr;
-    LightSceneNode* mAmbient02 = nullptr;
     SceneNode* mSUNNode = nullptr;
     bool mDayNightMode = true;
     bool mSunRotation = false;
+    bool mLampsOn = true;
     float mGamma = 2.2;
 };
 

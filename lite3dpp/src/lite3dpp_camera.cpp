@@ -214,5 +214,26 @@ namespace lite3dpp
         if (conf.has(L"LookAt"))
             lookAtLocal(conf.getVec3(L"LookAt"));
     }
+
+    void Camera::computeCubeProjView(stl<kmMat4>::vector &matrices) const
+    {
+        computeCubeProjView(mCamera.cameraNode.position, matrices);
+    }
+
+    void Camera::computeCubeProjView(const kmVec3 &position, stl<kmMat4>::vector &matrices) const
+    {
+        matrices.resize(6);
+
+        kmMat4 projection;
+        kmMat4PerspectiveProjection(&projection, 90.0, 1.0, mCamera.projectionParams.znear, 
+            mCamera.projectionParams.zfar);
+
+        kmMat4Multiply(&matrices[0], &projection, kmMat4LookDirection(&matrices[0], &position, &KM_VEC3_POS_X, &KM_VEC3_NEG_Y));
+        kmMat4Multiply(&matrices[1], &projection, kmMat4LookDirection(&matrices[1], &position, &KM_VEC3_NEG_X, &KM_VEC3_NEG_Y));
+        kmMat4Multiply(&matrices[2], &projection, kmMat4LookDirection(&matrices[2], &position, &KM_VEC3_POS_Y, &KM_VEC3_POS_Z));
+        kmMat4Multiply(&matrices[3], &projection, kmMat4LookDirection(&matrices[3], &position, &KM_VEC3_NEG_Y, &KM_VEC3_NEG_Z));
+        kmMat4Multiply(&matrices[4], &projection, kmMat4LookDirection(&matrices[4], &position, &KM_VEC3_POS_Z, &KM_VEC3_NEG_Y));
+        kmMat4Multiply(&matrices[5], &projection, kmMat4LookDirection(&matrices[5], &position, &KM_VEC3_NEG_Z, &KM_VEC3_NEG_Y));
+    }
 }
 

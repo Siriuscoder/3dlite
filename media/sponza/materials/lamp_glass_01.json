@@ -28,10 +28,14 @@
           "Value": 0.10000000149011612
         },
         {
-          "Name": "Environment",
-          "TextureName": "environment.texture",
-          "TexturePath": "samples:textures/json/skybox_metal_chrome.json",
+          "Name": "EnvironmentProbe",
+          "TextureName": "SponzaDeffered_EnvironmentMultiProbe.texture",
           "Type": "sampler"
+        },
+        {
+          "Name": "EnvProbesData",
+          "UBOName": "SponzaDeffered_EnvProbesData",
+          "Type": "UBO"
         },
         {
           "Name": "LightSources",

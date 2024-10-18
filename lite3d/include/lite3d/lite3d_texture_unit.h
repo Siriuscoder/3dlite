@@ -23,53 +23,54 @@
 #include <lite3d/lite3d_vbo.h>
 
 // Image types (IL enum compatible)
-#define LITE3D_IMAGE_ANY          0x00
-#define LITE3D_IMAGE_BMP          0x01  //Microsoft Windows Bitmap - .bmp extension
-#define LITE3D_IMAGE_JPG          0x02  //JPEG - .jpg, .jpe and .jpeg extensions
-#define LITE3D_IMAGE_PNG          0x03  //Portable Network Graphics - .png extension
-#define LITE3D_IMAGE_TGA          0x04  //TrueVision Targa File - .tga, .vda, .icb and .vst extensions
-#define LITE3D_IMAGE_TIF          0x05  //Tagged Image File Format - .tif and .tiff extensions
-#define LITE3D_IMAGE_GIF          0x06  //Graphics Interchange Format - .gif extension
-#define LITE3D_IMAGE_DDS          0x07  //DirectDraw Surface - .dds extension
-#define LITE3D_IMAGE_PSD          0x08  //Adobe PhotoShop - .psd extension
-#define LITE3D_IMAGE_HDR          0x09  //Radiance High Dynamic Range - .hdr extension
+#define LITE3D_IMAGE_ANY                        0x00
+#define LITE3D_IMAGE_BMP                        0x01  //Microsoft Windows Bitmap - .bmp extension
+#define LITE3D_IMAGE_JPG                        0x02  //JPEG - .jpg, .jpe and .jpeg extensions
+#define LITE3D_IMAGE_PNG                        0x03  //Portable Network Graphics - .png extension
+#define LITE3D_IMAGE_TGA                        0x04  //TrueVision Targa File - .tga, .vda, .icb and .vst extensions
+#define LITE3D_IMAGE_TIF                        0x05  //Tagged Image File Format - .tif and .tiff extensions
+#define LITE3D_IMAGE_GIF                        0x06  //Graphics Interchange Format - .gif extension
+#define LITE3D_IMAGE_DDS                        0x07  //DirectDraw Surface - .dds extension
+#define LITE3D_IMAGE_PSD                        0x08  //Adobe PhotoShop - .psd extension
+#define LITE3D_IMAGE_HDR                        0x09  //Radiance High Dynamic Range - .hdr extension
 
 #define LITE3D_TEXTURE_IFORMAT_DEPTH_DEFAULT    0x00
 #define LITE3D_TEXTURE_IFORMAT_DEPTH_32         0x01
 #define LITE3D_TEXTURE_IFORMAT_DEPTH_32F        0x02
 
-#define LITE3D_TEXTURE_1D               0x00
-#define LITE3D_TEXTURE_2D               0x01
-#define LITE3D_TEXTURE_3D               0x02
-#define LITE3D_TEXTURE_CUBE             0x03
-#define LITE3D_TEXTURE_2D_ARRAY         0x04
-#define LITE3D_TEXTURE_BUFFER           0x05
-#define LITE3D_TEXTURE_2D_MULTISAMPLE   0x06
-#define LITE3D_TEXTURE_3D_MULTISAMPLE   0x07
-#define LITE3D_TEXTURE_2D_SHADOW        0x08
-#define LITE3D_TEXTURE_2D_SHADOW_ARRAY  0x09
+#define LITE3D_TEXTURE_1D                       0x00
+#define LITE3D_TEXTURE_2D                       0x01
+#define LITE3D_TEXTURE_3D                       0x02
+#define LITE3D_TEXTURE_CUBE                     0x03
+#define LITE3D_TEXTURE_2D_ARRAY                 0x04
+#define LITE3D_TEXTURE_CUBE_ARRAY               0x05
+#define LITE3D_TEXTURE_BUFFER                   0x06
+#define LITE3D_TEXTURE_2D_MULTISAMPLE           0x07
+#define LITE3D_TEXTURE_3D_MULTISAMPLE           0x08
+#define LITE3D_TEXTURE_2D_SHADOW                0x09
+#define LITE3D_TEXTURE_2D_SHADOW_ARRAY          0x0A
 /* pre-loading texture manipulation */
-#define LITE3D_ALIENIFY_FILTER      0x0001
-#define LITE3D_BLURAVG_FILTER       0x0002
-#define LITE3D_BLURGAUSSIAN_FILTER  0x0003
-#define LITE3D_CONTRAST_FILTER      0x0004
-#define LITE3D_GAMMACORRECT_FILTER  0x0005
-#define LITE3D_MIRROR_FILTER        0x0006
-#define LITE3D_NEGATIVE_FILTER      0x0007
-#define LITE3D_NOISIFY_FILTER       0x0008
-#define LITE3D_PIXELIZE_FILTER      0x0009
-#define LITE3D_WAVE_FILTER          0x000A
-#define LITE3D_SHARPEN_FILTER       0x000B
-#define LITE3D_FLIP_FILTER          0x000C
+#define LITE3D_ALIENIFY_FILTER                  0x0001
+#define LITE3D_BLURAVG_FILTER                   0x0002
+#define LITE3D_BLURGAUSSIAN_FILTER              0x0003
+#define LITE3D_CONTRAST_FILTER                  0x0004
+#define LITE3D_GAMMACORRECT_FILTER              0x0005
+#define LITE3D_MIRROR_FILTER                    0x0006
+#define LITE3D_NEGATIVE_FILTER                  0x0007
+#define LITE3D_NOISIFY_FILTER                   0x0008
+#define LITE3D_PIXELIZE_FILTER                  0x0009
+#define LITE3D_WAVE_FILTER                      0x000A
+#define LITE3D_SHARPEN_FILTER                   0x000B
+#define LITE3D_FLIP_FILTER                      0x000C
 
-#define LITE3D_MAX_FILTERS          10
+#define LITE3D_MAX_FILTERS                      10
 
-#define LITE3D_TEXTURE_FILTER_NEAREST       0x0001
-#define LITE3D_TEXTURE_FILTER_BILINEAR    0x0002
-#define LITE3D_TEXTURE_FILTER_TRILINEAR    0x0003 // mipmapping + anisotropic filter
+#define LITE3D_TEXTURE_FILTER_NEAREST           0x0001
+#define LITE3D_TEXTURE_FILTER_BILINEAR          0x0002
+#define LITE3D_TEXTURE_FILTER_TRILINEAR         0x0003 // mipmapping + anisotropic filter
 
-#define LITE3D_TEXTURE_CLAMP_TO_EDGE    0x0001
-#define LITE3D_TEXTURE_REPEAT           0x0002
+#define LITE3D_TEXTURE_CLAMP_TO_EDGE            0x0001
+#define LITE3D_TEXTURE_REPEAT                   0x0002
 
 #define LITE3D_TEXTURE_FORMAT_RED               0x1903
 #define LITE3D_TEXTURE_FORMAT_LUMINANCE         0x1909 // legacy, replacted to LITE3D_TEXTURE_FORMAT_RED
@@ -181,7 +182,6 @@ typedef struct lite3d_texture_unit
     uint8_t wrapping;
     uint8_t compressed;
     int32_t samples;
-    uint8_t isFbAttachment;
     lite3d_vbo tbo;
     uint8_t isTextureBuffer;
     void *userdata;

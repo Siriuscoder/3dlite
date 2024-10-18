@@ -3,7 +3,8 @@
     [
         // Standard shaders with params customization
         "samples:shaders/sources/pipeline/v_tbn.vs",
-        "samples:shaders/sources/pipeline/deffered_pass/deffered.fs",
+        "samples:shaders/sources/pipeline/deffered_pass/deffered.fs,sponza:shaders/sources/inc/params.def",
+        "samples:shaders/sources/common/utils.fs",
         // Sample specific shaders
         "sponza:shaders/sources/glow.fs"
     ]

@@ -1,7 +1,7 @@
 #include "samples:shaders/sources/common/version.def"
 
-#define FRESNEL_POWER                   5.0
-#define DIFFUSE_STRENGTH                0.05
-#define IRRADIANCE_DIFFUSE_LOD          4
-#define IRRADIANCE_SPECULAR_MAX_LOD     7
-#define IRRADIANCE_SPECULAR_MIN_LOD     0
+#define ENV_PROBE_RELATIVE_DISTANCE_THRESHOLD   0.04
+#define ENV_PROBE_DIFFUSE_POWER                 2.0
+#define ENV_PROBE_SPECULAR_POWER                10.0
+#define ENV_DIFFUSE_STRENGTH                    0.05
+#define CUBE_MAP_UV_SCALE                       1

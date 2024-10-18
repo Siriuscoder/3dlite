@@ -30,7 +30,7 @@ void main()
 #ifdef CALC_ILLUM
     // sampling glow texture and check colors
     vec3 fragGlow = texture(glow, iuv).rgb;
-    if (!fiszero(fragGlow))
+    if (!isZero(fragGlow))
     {
         fragColor = vec4(fragGlow, fragTexture.a);
         return;
@@ -48,7 +48,7 @@ void main()
     // and trasform normal to world space 
     vec3 nw = normalize(itbn * normalize(2.0 * fragNormalAndSpecular.xyz - 1.0));
     // fix bad normals
-    if (fiszero(fragNormalAndSpecular.xyz))
+    if (isZero(fragNormalAndSpecular.xyz))
         nw = wnorm;
 
     vec3 linearSpec;

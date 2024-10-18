@@ -4,11 +4,11 @@
     "Instancing": false,
     "OcclusionCulling": true,
     "LightingTechnique": "UBO",
-    "LightComputeEnvironmentTexture": "samples:textures/json/skybox_metal_chrome.json",
+    "EnvironmentTexture": "samples:textures/json/skybox_metal_chrome.json",
     "SkyBox": 
     {
         "Texture": "samples:textures/json/skybox.json",
-        "EmissionStrength": 12.0
+        "EmissionStrength": 8.0
     },
     "ShadowMaps":
     {
@@ -34,6 +34,13 @@
     {
         "BloomRadius": 0.005
     },
+    "GI":
+    {
+        "ProbeResolution": 512,
+        "MaxCount": 33,
+        "ProbeZNearClip": 0.01,
+        "ProbeZFarClip": 100.0
+    },
     "PostProcess":
     {
         "Gamma": 2.2,
@@ -42,9 +49,9 @@
         "Exposure": 1.0,
         "DynamicExposure":
         {
-            "ExposureMax": 3.5,
-            "ExposureMin": 0.2,
-            "ExposureBase": 0.15
+            "ExposureMax": 5.5,
+            "ExposureMin": 0.7,
+            "ExposureBase": 0.3
         }
     }
 }

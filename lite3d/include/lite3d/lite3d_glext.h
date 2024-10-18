@@ -46,6 +46,7 @@ int lite3d_check_texture3D(void);
 int lite3d_check_texture_swizzle(void);
 int lite3d_check_texture_storage(void);
 int lite3d_check_texture_storage_multisample(void);
+int lite3d_check_texture_cube_map_array(void);
 
 /* stub functions */
 void glTexSubImage3D_stub(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLenum format, GLenum type, const void *pixels);
@@ -121,6 +122,18 @@ void glTexStorage1D_stub(GLenum target, GLsizei levels, GLenum internalformat, G
 #       define GL_MAX_GEOMETRY_UNIFORM_BLOCKS GL_MAX_GEOMETRY_UNIFORM_BLOCKS_EXT
 #   endif
 
+#   ifndef GL_MAX_GEOMETRY_OUTPUT_VERTICES
+#       define GL_MAX_GEOMETRY_OUTPUT_VERTICES GL_MAX_GEOMETRY_OUTPUT_VERTICES_EXT
+#   endif
+
+#   ifndef GL_MAX_GEOMETRY_OUTPUT_COMPONENTS
+#       define GL_MAX_GEOMETRY_OUTPUT_COMPONENTS GL_MAX_GEOMETRY_OUTPUT_COMPONENTS_EXT
+#   endif
+
+#   ifndef GL_MAX_GEOMETRY_TOTAL_OUTPUT_COMPONENTS
+#       define GL_MAX_GEOMETRY_TOTAL_OUTPUT_COMPONENTS GL_MAX_GEOMETRY_TOTAL_OUTPUT_COMPONENTS_EXT
+#   endif
+
 #   ifndef GL_MAX_COMBINED_GEOMETRY_UNIFORM_COMPONENTS
 #       define GL_MAX_COMBINED_GEOMETRY_UNIFORM_COMPONENTS GL_MAX_COMBINED_GEOMETRY_UNIFORM_COMPONENTS_EXT
 #   endif
@@ -131,6 +144,10 @@ void glTexStorage1D_stub(GLenum target, GLsizei levels, GLenum internalformat, G
 
 #   ifndef GL_SRGB_ALPHA
 #       define GL_SRGB_ALPHA GL_SRGB_ALPHA_EXT
+#   endif
+
+#   ifndef GL_TEXTURE_CUBE_MAP_ARRAY
+#       define GL_TEXTURE_CUBE_MAP_ARRAY GL_TEXTURE_CUBE_MAP_ARRAY_OES
 #   endif
 
 /* GL_OES_vertex_array_object */    

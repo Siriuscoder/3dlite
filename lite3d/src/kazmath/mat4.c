@@ -632,11 +632,18 @@ kmMat4* kmMat4OrthographicProjection(kmMat4* pOut, kmScalar left,
 kmMat4* kmMat4LookAt(kmMat4* pOut, const kmVec3* pEye,
                      const kmVec3* pCenter, const kmVec3* pUp)
 {
+    kmVec3 direction;
+    kmVec3Subtract(&direction, pCenter, pEye);
+    return kmMat4LookDirection(pOut, pEye, &direction, pUp);
+}
+
+kmMat4* kmMat4LookDirection(kmMat4* pOut, const struct kmVec3* pEye, 
+    const struct kmVec3* pDirection, const struct kmVec3* pUp)
+{
     kmVec3 f, up, s, u;
     kmMat4 translate;
 
-    kmVec3Subtract(&f, pCenter, pEye);
-    kmVec3Normalize(&f, &f);
+    kmVec3Normalize(&f, pDirection);
 
     kmVec3Assign(&up, pUp);
     kmVec3Normalize(&up, &up);

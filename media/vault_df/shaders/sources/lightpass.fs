@@ -35,7 +35,7 @@ void main()
         discard;
     /* sampling normal and specular factor (w)*/
     vec4 normal = texture(normalMap, iuv);
-    if (fiszero(normal.xyz))
+    if (isZero(normal.xyz))
         discard;
 
     /* fragment coordinate */

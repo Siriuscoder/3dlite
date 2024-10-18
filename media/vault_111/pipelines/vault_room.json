@@ -4,7 +4,7 @@
     "Instancing": true,
     "OcclusionCulling": true,
     "LightingTechnique": "UBO",
-    "LightComputeEnvironmentTexture": "samples:textures/json/skybox_metal_chrome.json",
+    "EnvironmentTexture": "samples:textures/json/skybox_metal_chrome.json",
     "ShadowMaps":
     {
         "Width": 64,
@@ -25,8 +25,8 @@
     "PostProcess":
     {
         "Gamma": 2.2,
-        "Contrast": 1.005,
-        "Saturation": 1.20,
-        "Exposure": 3.4
+        "Contrast": 1.001,
+        "Saturation": 1.2,
+        "Exposure": 5.8
     }
 }

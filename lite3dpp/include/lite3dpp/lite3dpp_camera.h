@@ -55,6 +55,8 @@ namespace lite3dpp
         void lookAtWorld(const SceneObjectBase &obj);
 
         const kmMat4& getProjMatrix() const;
+        inline const kmMat4& getViewMatrix() const { return mCamera.view; }
+        inline const kmMat4& getProjViewMatrix() const { return mCamera.screen; }
         const kmMat4& refreshViewMatrix();
         const kmMat4& refreshProjViewMatrix();
 
@@ -76,6 +78,9 @@ namespace lite3dpp
         void recalcFrustum();
         bool inFrustum(const LightSource &light) const;
         bool inFrustum(const lite3d_bounding_vol &vol) const;
+
+        void computeCubeProjView(stl<kmMat4>::vector &matrices) const;
+        void computeCubeProjView(const kmVec3 &position, stl<kmMat4>::vector &matrices) const;
 
         virtual void loadFromTemplate(const ConfigurationReader& conf);
 

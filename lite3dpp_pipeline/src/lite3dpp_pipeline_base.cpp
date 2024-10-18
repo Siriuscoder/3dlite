@@ -45,6 +45,16 @@ namespace lite3dpp_pipeline {
         return *mMainScene;
     }
 
+    IBLMultiProbe *PipelineBase::getIBL()
+    {
+        if (mIBL)
+        {
+            return mIBL.get();
+        }
+
+        return nullptr;
+    }
+
     Scene *PipelineBase::getSkyBoxScene()
     {
         return mSkyBoxStage;
@@ -88,6 +98,12 @@ namespace lite3dpp_pipeline {
         {
             mSkyBoxStageMaterial->setFloatParameter(static_cast<uint16_t>(TexturePassTypes::RenderPass), "EmissionStrength",
                 emission);
+
+            if (mIBL)
+            {
+                mSkyBoxStageMaterial->setFloatParameter(static_cast<uint16_t>(TexturePassTypes::GIProbePass), 
+                    "EmissionStrength", emission);
+            }
         }
     }
 
@@ -153,6 +169,7 @@ namespace lite3dpp_pipeline {
             mainSceneGenerator.addCamera(cameraName, cameraPipelineConfig);
             constructShadowManager(pipelineConfig, cameraName, mainSceneGenerator);
             constructCameraDepthPass(pipelineConfig, cameraName, mainSceneGenerator);
+            constructIBL(pipelineConfig, cameraName, mainSceneGenerator);
             constructCameraPipeline(pipelineConfig, cameraName, mainSceneGenerator);
             constructPostProcessPass(pipelineConfig, cameraName, mainSceneGenerator);
             constructSkyBoxPass(pipelineConfig, cameraName, cameraPipelineConfig);
@@ -170,6 +187,9 @@ namespace lite3dpp_pipeline {
             mMainScene->addObserver(mShadowManager.get());
         }
 
+        /* Для обновления параметров шейдеров */
+        mMainScene->addObserver(this);
+
         // optimize: window clean not needed, because all pixels in last render target always will be updated
         getMain().window()->setBuffersCleanBit(false, false, false);
         RenderTarget::depthTestFunc(RenderTarget::TestFuncLEqual);
@@ -185,6 +205,7 @@ namespace lite3dpp_pipeline {
         mResourcesList.clear();
         mShadowManager.reset();
         mBloomEffect.reset();
+        mIBL.reset();
     }
 
     void PipelineBase::createBigTriangleMesh()
@@ -231,7 +252,7 @@ namespace lite3dpp_pipeline {
         ConfigurationWriter depthPassGeneratedConfig;
         depthPassGeneratedConfig
             .set(L"Priority", static_cast<int>(RenderPassStagePriority::DepthBuildStage))
-            .set(L"TexturePass", static_cast<int>(TexturePassTypes::Depth))
+            .set(L"TexturePass", static_cast<int>(TexturePassTypes::DepthPass))
             .set(L"DepthTest", true)
             .set(L"ColorOutput", false)
             .set(L"DepthOutput", true)
@@ -259,9 +280,11 @@ namespace lite3dpp_pipeline {
         }
 
         mShadowManager = std::make_unique<ShadowManager>(getMain(), getName(), pipelineConfig);
+        mShadowManager->initialize(getName(), pipelineConfig.getString(L"ShaderPackage"));
+
         sceneGenerator.addRenderTarget(cameraName, mShadowManager->getShadowPass().getName(), ConfigurationWriter()
             .set(L"Priority", static_cast<int>(RenderPassStagePriority::ShadowBuildStage))
-            .set(L"TexturePass", static_cast<int>(TexturePassTypes::Shadow))
+            .set(L"TexturePass", static_cast<int>(TexturePassTypes::ShadowPass))
             .set(L"DepthTest", true)
             .set(L"ColorOutput", false)
             .set(L"DepthOutput", true)
@@ -276,6 +299,7 @@ namespace lite3dpp_pipeline {
         if (pipelineConfig.has(L"BLOOM"))
         {
             mBloomEffect = std::make_unique<BloomEffect>(getMain(), getName(), cameraName, pipelineConfig);
+            mBloomEffect->initialize();
         }
     }
 
@@ -364,14 +388,8 @@ namespace lite3dpp_pipeline {
         }
     }
 
-    void PipelineBase::constructSkyBoxPass(const ConfigurationReader &pipelineConfig, const String &cameraName, 
-        const ConfigurationWriter &mainCameraConfig)
+    void PipelineBase::createSkyBoxMesh()
     {
-        if (!pipelineConfig.has(L"SkyBox"))
-        {
-            return;
-        }
-
         // Создаем built-in Skybox mesh, если еще не создан 
         if (!getMain().getResourceManager()->resourceExists("SkyBox.mesh"))
         {
@@ -381,6 +399,17 @@ namespace lite3dpp_pipeline {
                     .set(L"Size", kmVec3 { 2.0f, 2.0f, 2.0f})
                     .write());
         }
+    }
+
+    void PipelineBase::constructSkyBoxPass(const ConfigurationReader &pipelineConfig, const String &cameraName, 
+        const ConfigurationWriter &mainCameraConfig)
+    {
+        if (!pipelineConfig.has(L"SkyBox"))
+        {
+            return;
+        }
+
+        createSkyBoxMesh();
 
         SDL_assert(mCombinePass);
 
@@ -394,14 +423,10 @@ namespace lite3dpp_pipeline {
             .set(L"DepthTest", true)
             .set(L"ColorOutput", true)
             .set(L"DepthOutput", false));
-            
-        mSkyBoxStage = getMain().getResourceManager()->queryResourceFromJson<Scene>(
-            getName() + "_" + cameraName + "_SkyBoxStage", stageGenerator.generate().write());
-        mResourcesList.emplace_back(mSkyBoxStage->getName());
 
         ConfigurationWriter skyBoxMaterialConfig;
-        auto skyBoxConfig = pipelineConfig.getObject(L"SkyBox");
-        skyBoxMaterialConfig.set(L"Passes", stl<ConfigurationWriter>::vector {
+        auto skyBoxConfig = pipelineConfig.getObject(L"SkyBox"); 
+        stl<ConfigurationWriter>::vector passes {
             ConfigurationWriter().set(L"Pass", static_cast<int>(TexturePassTypes::RenderPass))
                 .set(L"Program", ConfigurationWriter()
                     .set(L"Name", "SkyBox.program")
@@ -419,7 +444,53 @@ namespace lite3dpp_pipeline {
                         .set(L"TextureName", getName() + "_skybox.texture")
                         .set(L"TexturePath", skyBoxConfig.getString(L"Texture")),
                 })
-        });
+        };
+
+        /* Render SkyBox to environment */
+        if (mIBL)
+        {
+            stageGenerator.addRenderTarget(cameraName, mIBL->getPass()->getName(), ConfigurationWriter()
+                .set(L"Priority", static_cast<int>(RenderPassStagePriority::SkyBoxStage))
+                .set(L"TexturePass", static_cast<int>(TexturePassTypes::GIProbePass))
+                .set(L"DepthTest", true)
+                .set(L"ColorOutput", true)
+                .set(L"DepthOutput", false));
+
+            ConfigurationWriter envPass;
+            envPass.set(L"Pass", static_cast<int>(TexturePassTypes::GIProbePass))
+                .set(L"Program", ConfigurationWriter()
+                    .set(L"Name", "SkyBoxEnv.program")
+                    .set(L"Path", mShaderPackage + ":shaders/json/env_skybox.json"))
+                .set(L"Uniforms", stl<ConfigurationWriter>::vector {
+                    ConfigurationWriter()
+                        .set(L"Name", "modelMatrix"),
+                    ConfigurationWriter()
+                        .set(L"Name", "EmissionStrength")
+                        .set(L"Type", "float")
+                        .set(L"Value", skyBoxConfig.getDouble(L"EmissionStrength")),
+                    ConfigurationWriter()
+                        .set(L"Name", "Skybox")
+                        .set(L"Type", "sampler")
+                        .set(L"TextureName", getName() + "_skybox.texture")
+                        .set(L"TexturePath", skyBoxConfig.getString(L"Texture")),
+                    ConfigurationWriter()
+                        .set(L"Name", "EnvProbesData")
+                        .set(L"UBOName", mIBL->getProbeBufferName())
+                        .set(L"Type", "UBO"),
+                    ConfigurationWriter()
+                        .set(L"Name", "EnvProbesIndex")
+                        .set(L"UBOName", mIBL->getProbeIndexBufferName())
+                        .set(L"Type", "UBO")
+                });
+            
+            passes.emplace_back(envPass);
+        }
+
+        mSkyBoxStage = getMain().getResourceManager()->queryResourceFromJson<Scene>(
+            getName() + "_" + cameraName + "_SkyBoxStage", stageGenerator.generate().write());
+        mResourcesList.emplace_back(mSkyBoxStage->getName());
+
+        skyBoxMaterialConfig.set(L"Passes", passes);
 
         // Создаем шейдер skybox
         mSkyBoxStageMaterial = getMain().getResourceManager()->queryResourceFromJson<Material>(
@@ -428,6 +499,29 @@ namespace lite3dpp_pipeline {
 
         // Добавляем шейдер skybox
         mSkyBoxStage->addObject("SkyBox", SkyBoxObjectGenerator(mSkyBoxStageMaterial->getName()).generate());
+    }
+
+    void PipelineBase::constructIBL(const ConfigurationReader &pipelineConfig, const String &cameraName,
+        SceneGenerator &sceneGenerator)
+    {
+        if (!pipelineConfig.has(L"GI"))
+        {
+            return;
+        }
+
+        mIBL = std::make_unique<IBLMultiProbe>(getMain(), getName());
+        mIBL->initialize(pipelineConfig);
+
+        sceneGenerator.addRenderTarget(cameraName, mIBL->getPass()->getName(), ConfigurationWriter()
+            .set(L"Priority", static_cast<int>(RenderPassStagePriority::ForwardStage))
+            .set(L"TexturePass", static_cast<int>(TexturePassTypes::GIProbePass))
+            .set(L"DepthTest", true)
+            .set(L"ColorOutput", true)
+            .set(L"DepthOutput", true)
+            .set(L"RenderBlend", false)
+            .set(L"RenderOpaque", true)
+            .set(L"FrustumCulling", false)
+            .set(L"RenderInstancing", pipelineConfig.getBool(L"Instancing", true)));
     }
 
     void PipelineBase::createMainScene(const String& name, const String &sceneConfig)
@@ -464,8 +558,9 @@ namespace lite3dpp_pipeline {
         updateExposure();
     }
 
-    void PipelineBase::frameBegin()
+    bool PipelineBase::beginSceneRender(Scene *scene, Camera *camera)
     {
         Material::setFloatv3GlobalParameter("Eye", getMainCamera().getWorldPosition());
+        return true;
     }
 }}

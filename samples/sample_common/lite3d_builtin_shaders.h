@@ -45,9 +45,10 @@ static const char *fs_builtin =
 #endif
         "uniform sampler2D diffuse; "
         "in vec2 vTexCoord; "
+        "out vec4 fragColor; "
         "void main() "
         "{"
-        "   gl_FragColor = texture(diffuse, vTexCoord.st); "
+        "   fragColor = texture(diffuse, vTexCoord.st); "
         "}";
 
 #endif

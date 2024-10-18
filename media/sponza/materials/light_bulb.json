@@ -69,6 +69,63 @@
           "Name": "modelMatrix"
         }
       ]
+    },
+    {
+      "Pass": 4,
+      "Program": {
+        "Name": "env_probe_glow.program",
+        "Path": "sponza:shaders/json/env_probe_glow.json"
+      },
+      "Uniforms": [
+        {
+          "Name": "Emission",
+          "Type": "v4",
+          "Value": [
+            1.0000240802764893,
+            0.45640355348587036,
+            0.11443610489368439,
+            1.0
+          ]
+        },
+        {
+          "Name": "EmissionStrength",
+          "Type": "float",
+          "Value": 20.0
+        },
+        {
+          "Name": "LightSources",
+          "UBOName": "SponzaDeffered_MainScene_lightingBufferObject",
+          "Type": "UBO"
+        },
+        {
+          "Name": "LightIndexes",
+          "UBOName": "SponzaDeffered_MainScene_lightingIndexBuffer",
+          "Type": "UBO"
+        },
+        {
+          "Name": "ShadowMaps",
+          "TextureName": "SponzaDeffered_ShadowMap.texture",
+          "Type": "sampler"
+        },
+        {
+          "Name": "ShadowMatrix",
+          "UBOName": "SponzaDeffered_ShadowMatrixBuffer",
+          "Type": "UBO"
+        },
+        {
+          "Name": "EnvProbesData",
+          "UBOName": "SponzaDeffered_EnvProbesData",
+          "Type": "UBO"
+        },
+        {
+          "Name": "EnvProbesIndex",
+          "UBOName": "SponzaDeffered_EnvProbesIndex",
+          "Type": "UBO"
+        },
+        {
+          "Name": "modelMatrix"
+        }
+      ]
     }
   ]
 }

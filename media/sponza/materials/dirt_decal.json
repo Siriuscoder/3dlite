@@ -14,10 +14,14 @@
           "TexturePath": "sponza:textures/json/dirt_decal_01_dirt_decal_01_mask_gltf_alpha_dirt_decal_Opacity..json"
         },
         {
-          "Name": "Environment",
-          "TextureName": "environment.texture",
-          "TexturePath": "samples:textures/json/skybox_metal_chrome.json",
+          "Name": "EnvironmentProbe",
+          "TextureName": "SponzaDeffered_EnvironmentMultiProbe.texture",
           "Type": "sampler"
+        },
+        {
+          "Name": "EnvProbesData",
+          "UBOName": "SponzaDeffered_EnvProbesData",
+          "Type": "UBO"
         },
         {
           "Name": "LightSources",

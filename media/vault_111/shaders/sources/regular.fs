@@ -24,7 +24,7 @@ vec3 sampleNormal(vec2 uv, mat3 tbn);
 vec3 CheckAlbedo(vec4 albedo)
 {
     // check albedo alpha and discard full transparent fragments
-    if (fiszero(albedo.a))
+    if (isZero(albedo.a))
         discard;
     
     return albedo.rgb;

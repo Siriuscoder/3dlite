@@ -1,0 +1,15 @@
+{
+    "Sources": 
+    [
+        // Standard shaders with params customization
+        "samples:shaders/sources/pipeline/v_tbn.vs",
+        "samples:shaders/sources/pipeline/forward_pass/forward.fs,sandbox:shaders/sources/inc/params.def",
+        "samples:shaders/sources/pbr/pbr.fs,sandbox:shaders/sources/inc/params.def",
+        "samples:shaders/sources/pbr/brdf_oren_nayar_approx.fs,sandbox:shaders/sources/inc/params.def",
+        "samples:shaders/sources/pbr/brdf_multiprobe_env.fs,sandbox:shaders/sources/inc/params.def",
+        "samples:shaders/sources/shadow/pcf4x4.fs,sandbox:shaders/sources/inc/params.def",
+        "samples:shaders/sources/common/utils.fs",
+        // Sample specific shaders
+        "sandbox:shaders/sources/regular.fs"
+    ]
+}

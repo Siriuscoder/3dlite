@@ -26,7 +26,7 @@ vec3 getSpecular(vec2 uv)
 
 float getSpecularAmbient(vec2 uv)
 {
-    return 0.65;
+    return 1.0;
 }
 
 float getAmbientOcclusion(vec2 uv)

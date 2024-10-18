@@ -82,6 +82,7 @@ LITE3D_CEXPORT struct kmVec3* kmMat4GetForwardVec3LH(struct kmVec3* pOut, const 
 LITE3D_CEXPORT kmMat4* kmMat4PerspectiveProjection(kmMat4* pOut, kmScalar fovY, kmScalar aspect, kmScalar zNear, kmScalar zFar);
 LITE3D_CEXPORT kmMat4* kmMat4OrthographicProjection(kmMat4* pOut, kmScalar left, kmScalar right, kmScalar bottom, kmScalar top, kmScalar nearVal, kmScalar farVal);
 LITE3D_CEXPORT kmMat4* kmMat4LookAt(kmMat4* pOut, const struct kmVec3* pEye, const struct kmVec3* pCenter, const struct kmVec3* pUp);
+LITE3D_CEXPORT kmMat4* kmMat4LookDirection(kmMat4* pOut, const struct kmVec3* pEye, const struct kmVec3* pDirection, const struct kmVec3* pUp);
 
 LITE3D_CEXPORT kmMat4* kmMat4RotationAxisAngle(kmMat4* pOut, const struct kmVec3* axis, kmScalar radians);
 LITE3D_CEXPORT struct kmMat3* kmMat4ExtractRotation(struct kmMat3* pOut, const kmMat4* pIn);
