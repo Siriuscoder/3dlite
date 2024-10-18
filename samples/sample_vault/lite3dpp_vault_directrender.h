@@ -26,12 +26,14 @@ class VaultDR : public VaultBase
 {
 public:
 
-    VaultDR(const std::string_view &helpString) : 
-        VaultBase(helpString)
+    VaultDR(const std::string_view &helpString, bool use430 = false) : 
+        VaultBase(helpString),
+        mUseShader430(use430)
     {}
 
     void createPipeline() override
     {
+        ShaderProgram::setShaderVersion(mUseShader430 ? "430" : "330");
         // load main scene, direct render depth and then calculate lighting
         mVaultScene = getMain().getResourceManager()->queryResource<Scene>("Vault",
             "vaultmat:scenes/directrender.json");
@@ -44,6 +46,10 @@ public:
         getMain().window()->setBuffersCleanBit(false, false, false);
         RenderTarget::depthTestFunc(RenderTarget::TestFuncLEqual);
     }
+
+private:
+
+    bool mUseShader430;
 };
 
 }}

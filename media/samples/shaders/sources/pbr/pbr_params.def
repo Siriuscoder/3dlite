@@ -1,5 +1,3 @@
-#include "samples:shaders/sources/common/version.def"
-
 #define ENV_PROBE_RELATIVE_DISTANCE_THRESHOLD   0.04
 #define ENV_PROBE_DIFFUSE_POWER                 2.0
 #define ENV_PROBE_SPECULAR_POWER                10.0

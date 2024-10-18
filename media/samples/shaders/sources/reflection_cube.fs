@@ -1,5 +1,3 @@
-#include "samples:shaders/sources/common/version.def"
-
 uniform samplerCube cube;
 uniform vec3 eye;
 

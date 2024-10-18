@@ -4,7 +4,7 @@
         "vaultshader:shaders/sources/prepass.vs",
         "vaultshader:shaders/sources/prepass.fs,vaultshader:shaders/sources/def/illum.def",
         "samples:shaders/sources/phong/phong_blinn_single.fs",
-        "samples:shaders/sources/phong/lighting_ssbo.fs,samples:shaders/sources/phong/phong_blinn_43.def",
+        "samples:shaders/sources/phong/lighting_ssbo.fs",
         "samples:shaders/sources/common/utils.fs"
     ]
 }

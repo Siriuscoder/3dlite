@@ -1,5 +1,3 @@
-#include "samples:shaders/sources/common/version.def"
-
 uniform samplerCube Skybox;
 uniform float EmissionStrength;
 

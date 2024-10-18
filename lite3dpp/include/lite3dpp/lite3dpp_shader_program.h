@@ -35,6 +35,10 @@ namespace lite3dpp
         inline lite3d_shader_program *getPtr()
         { return &mProgram; }
 
+        static void setShaderVersion(const String &version);
+        static void setFloatPrecision(const String &prec);
+        static void addDefinition(const String &name, const String &value);
+
     protected:
 
         virtual void loadFromConfigImpl(const ConfigurationReader &helper) override;
@@ -48,10 +52,14 @@ namespace lite3dpp
         uint8_t determineShaderType(const String &filepath);
         void preprocessShaderCode(String &sourceCode);
         void optimizeShaderCode(String &sourceCode);
+        static String createSourceHeader();
 
     private:
 
         lite3d_shader_program mProgram;
+        static stl<String, String>::map mGlobalDefinitions;
+        static String mShaderVersion;
+        static String mFloatPrecision;
     };
 }
 
