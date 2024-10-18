@@ -1,5 +1,3 @@
-#include "samples:shaders/sources/common/version.def"
-
 uniform sampler2D Normal;
 uniform vec3 NormalScale;
 

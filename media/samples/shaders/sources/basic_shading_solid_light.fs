@@ -1,5 +1,3 @@
-#include "samples:shaders/sources/common/version.def"
-
 uniform vec4 Albedo;
 
 in vec2 uv;

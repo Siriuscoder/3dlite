@@ -38,11 +38,11 @@ namespace lite3dpp
     {
     public:
 
-        static void *allocPulled(size_t size);
-        static void freePulled(void * mem);
+        static void *allocInPool(size_t size);
+        static void freeInPool(void * mem);
         static void *alloc(size_t size);
         static void free(void * mem);
-        static void *callocPulled(size_t size);
+        static void *callocInPool(size_t size);
         static void *calloc(size_t size);
 
         /* memory management */
@@ -105,20 +105,22 @@ namespace lite3dpp
     {
     public:
 
-        typedef std::vector<T, ManageableStlAllocator<T> > vector;
-
-        typedef std::map<T, Y, std::less<T>, 
-            ManageableStlAllocator<std::pair<const T, Y> > > map;
-
-        typedef std::list<T, ManageableStlAllocator<T> > list;
-        
-        typedef std::set<T, std::less<T>, ManageableStlAllocator<T> > set;
-
-        typedef std::stack<T, ManageableStlAllocator<T> > stack;
-        
-        typedef std::unordered_map<T, Y, std::hash<T>, std::equal_to<T>,
-            ManageableStlAllocator<std::pair<const T, Y>>> unordered_map;
+        using vector = std::vector<T, ManageableStlAllocator<T> >;
+        using map = std::map<T, Y, std::less<T>, ManageableStlAllocator<std::pair<const T, Y> > >;
+        using list = std::list<T, ManageableStlAllocator<T> >;
+        using set = std::set<T, std::less<T>, ManageableStlAllocator<T> >;
+        using stack = std::stack<T, ManageableStlAllocator<T> >;
+        using unordered_map = std::unordered_map<T, Y, std::hash<T>, std::equal_to<T>, 
+            ManageableStlAllocator<std::pair<const T, Y>>>;
     };
+
+    using String = std::basic_string<char, char_traits<char>, ManageableStlAllocator<char>>;
+    using WString = std::basic_string<wchar_t, char_traits<wchar_t>, ManageableStlAllocator<wchar_t>>;
+    using String8 = std::basic_string<char8_t, char_traits<char8_t>, ManageableStlAllocator<char8_t>>;
+    using String16 = std::basic_string<char16_t, char_traits<char16_t>, ManageableStlAllocator<char16_t>>;
+    using String32 = std::basic_string<char32_t, char_traits<char32_t>, ManageableStlAllocator<char32_t>>;
+    using Stringstream = std::basic_stringstream<char, char_traits<char>, ManageableStlAllocator<char>>;
+    using WStringstream = std::basic_stringstream<wchar_t, char_traits<wchar_t>, ManageableStlAllocator<wchar_t>>;
  
 #else
     template<class T, class Y = void>
@@ -126,25 +128,22 @@ namespace lite3dpp
     {
     public:
 
-        typedef std::vector<T> vector;
-
-        typedef std::map<T, Y> map;
-
-        typedef std::list<T> list;
-        
-        typedef std::set<T> set;
-
-        typedef std::stack<T> stack;
-        
-        typedef std::unordered_map<T, Y> unordered_map;
-
-        typedef std::unordered_set<T> unordered_set;
+        using vector = std::vector<T>;
+        using map = std::map<T, Y>;
+        using list = std::list<T>;
+        using set = std::set<T>;
+        using stack = std::stack<T>;
+        using unordered_map = std::unordered_map<T, Y>;
+        using unordered_set = std::unordered_set<T>;
     };
     
-    typedef std::string String;
-    typedef std::wstring WString;
-    typedef std::stringstream Stringstream;
-    typedef std::wstringstream WStringstream;
+    using String = std::string;
+    using String8 = std::u8string;
+    using String16 = std::u16string;
+    using String32 = std::u32string;
+    using WString = std::wstring;
+    using Stringstream = std::stringstream;
+    using WStringstream = std::wstringstream;
     
 #endif
 }

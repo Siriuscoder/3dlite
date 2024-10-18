@@ -1,5 +1,3 @@
-#include "samples:shaders/sources/common/version.def"
-
 layout(location = 0) in vec4 v;
 layout(location = 1) in vec2 tc;
 

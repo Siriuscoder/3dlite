@@ -1,3 +1,1 @@
-#include "samples:shaders/sources/common/version.def"
-
 #define CALC_ILLUM

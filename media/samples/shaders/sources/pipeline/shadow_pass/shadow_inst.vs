@@ -1,5 +1,3 @@
-#include "samples:shaders/sources/common/version.def"
-
 layout(location = 0) in vec4 vertex;
 layout(location = 2) in vec2 uv;
 layout(location = 5) in mat4 modelMatrix;

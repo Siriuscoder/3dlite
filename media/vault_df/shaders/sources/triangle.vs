@@ -1,5 +1,3 @@
-#include "samples:shaders/sources/common/version.def"
-
 layout(location = 0) in vec2 ivertex;
 
 uniform mat4 projectionMatrix;

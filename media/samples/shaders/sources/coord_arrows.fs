@@ -1,5 +1,3 @@
-#include "samples:shaders/sources/common/version.def"
-
 in vec3 icolor;
 out vec4 fragcolor;
 

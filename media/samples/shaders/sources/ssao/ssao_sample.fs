@@ -1,5 +1,3 @@
-#include "samples:shaders/sources/common/version.def"
-
 uniform sampler2D AOMap;
 uniform int AOEnabled;
 

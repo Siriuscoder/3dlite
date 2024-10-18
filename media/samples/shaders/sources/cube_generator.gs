@@ -1,5 +1,3 @@
-#include "samples:shaders/sources/common/version.def"
-
 layout(triangles) in;
 layout(triangle_strip, max_vertices=36) out;
 

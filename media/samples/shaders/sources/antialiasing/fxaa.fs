@@ -1,5 +1,3 @@
-#include "samples:shaders/sources/common/version.def"
-
 /**
 Basic FXAA implementation based on the code on geeks3d.com with the
 modification that the texture2DLod stuff was removed since it's

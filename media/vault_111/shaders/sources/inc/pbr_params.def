@@ -1,4 +1,2 @@
-#include "samples:shaders/sources/common/version.def"
-
 #define ENV_DIFFUSE_STRENGTH            0.02
 #define CUBE_MAP_UV_SCALE               -1.0
