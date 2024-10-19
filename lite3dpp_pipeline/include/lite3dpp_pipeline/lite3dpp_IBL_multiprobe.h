@@ -44,7 +44,7 @@ class LITE3DPP_PIPELINE_EXPORT IBLMultiProbe : public RenderTargetObserver, publ
 {
 public:
 
-    static constexpr const size_t MaxProbeCountInBatch = 4;
+    static constexpr const uint32_t MaxProbeCount = 256;
 
 #pragma pack(push, 16)
     struct ProbeRawEntity
@@ -107,11 +107,14 @@ protected:
 
     void createProbePass(const ConfigurationReader &config);
     VBOResource* createBuffer(const String& bufferName, size_t size);
+    void calculateProbeBatchCount();
 
 protected:
 
     Main& mMain;
-    uint32_t mProbeMaxCount = 1;
+    uint32_t mProbeCount = 1;
+    uint32_t mMaxProbeCount = 0;
+    uint32_t mMaxProbeBatchCount = 0;
     String mPipelineName;
     VBOResource *mProbesBuffer = nullptr;
     VBOResource *mProbesIndexBuffer = nullptr;

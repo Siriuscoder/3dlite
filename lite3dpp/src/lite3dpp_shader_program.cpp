@@ -218,6 +218,28 @@ namespace lite3dpp
 #endif
         }
 
+        // Indicates what shader is being run by engine 
+        result.append("#define LITE3D_ENGINE\n");
+
+#ifdef GLES
+        result.append("#define LITE3D_GLES\n");
+#endif
+
+        std::string_view vendor = lite3d_video_get_vendor();
+        if (vendor.find("AMD") != std::string_view::npos)
+        {
+            result.append("#define LITE3D_RENDERER_AMD\n");
+        }
+        else if (vendor.find("NVIDIA") != std::string_view::npos)
+        {
+            result.append("#define LITE3D_RENDERER_NVIDIA\n");
+        }
+        else if (vendor.find("Intel") != std::string_view::npos || 
+                 vendor.find("INTEL") != std::string_view::npos)
+        {
+            result.append("#define LITE3D_RENDERER_INTEL\n");
+        }
+
         for (auto &d : mGlobalDefinitions)
         {
             result.append("#define ").append(d.first).append(" ").append(d.second).append("\n");
@@ -239,6 +261,7 @@ namespace lite3dpp
     void ShaderProgram::addDefinition(const String &name, const String &value)
     {
         mGlobalDefinitions[name] = value;
+        SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "GLSL: %s = %s", name.c_str(), value.c_str());
     }
 }
 

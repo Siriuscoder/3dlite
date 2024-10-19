@@ -1,7 +1,5 @@
 #include "samples:shaders/sources/common/utils_inc.glsl"
 
-#define MAX_LIGHTS  200 // 16kb storage needed
-
 #define LITE3D_LIGHT_UNDEFINED          0.0
 #define LITE3D_LIGHT_POINT              1.0
 #define LITE3D_LIGHT_DIRECTIONAL        2.0
@@ -9,12 +7,12 @@
 
 layout(std140) uniform LightSources
 {
-    vec4 lights[5 * MAX_LIGHTS];
+    vec4 lights[LITE3D_MAX_LIGHT_COUNT];
 };
 
 layout(std140) uniform LightIndexes
 {
-    ivec4 indexes[MAX_LIGHTS];
+    ivec4 indexes[LITE3D_MAX_LIGHT_COUNT];
 };
 
 uniform vec3 Eye;

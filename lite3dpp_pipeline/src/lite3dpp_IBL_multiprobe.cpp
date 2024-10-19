@@ -25,15 +25,41 @@ IBLMultiProbe::~IBLMultiProbe()
 void IBLMultiProbe::initialize(const ConfigurationReader &pipelineConfig)
 {
     ConfigurationReader config = pipelineConfig.getObject(L"GI");
-    mProbeMaxCount = config.getInt(L"MaxCount", 1);
+    mProbeCount = config.getInt(L"MaxCount", 1);
     mzNear = config.getDouble(L"ProbeZNearClip", 0.0f);
     mzFar = config.getDouble(L"ProbeZFarClip", 1.0f);
 
-    mProbesBuffer = createBuffer("_EnvProbesData", sizeof(ProbeRawEntity) * mProbeMaxCount);
+    calculateProbeBatchCount();
+
+    if (mProbeCount > mMaxProbeCount)
+    {
+        LITE3D_THROW("Too much probe count(" << mProbeCount << ") are requested, max hardware probe limit is " << mMaxProbeCount);
+    }
+
+    mProbesBuffer = createBuffer("_EnvProbesData", sizeof(ProbeRawEntity) * mProbeCount);
     // Массивы в std140 всегда выравниваются по границе 16 байт, даже если тип данных (например, int) 
     // сам занимает меньше места (4 байта).
-    mProbesIndexBuffer = createBuffer("_EnvProbesIndex", sizeof(ProbeIndexRawEntity) * (MaxProbeCountInBatch + 1));
+    mProbesIndexBuffer = createBuffer("_EnvProbesIndex", sizeof(ProbeIndexRawEntity) * (mMaxProbeBatchCount + 1));
     createProbePass(config);
+}
+
+void IBLMultiProbe::calculateProbeBatchCount()
+{
+    int maxGeometryOutputVertices, maxGeometryTotalOutputComponents, UBOMaxSize;
+    lite3d_shader_program_get_limitations(&maxGeometryOutputVertices, nullptr, &maxGeometryTotalOutputComponents);
+    lite3d_vbo_get_limitations(&UBOMaxSize, nullptr, nullptr);
+
+    // Число компонент на одну вершину в геометрическом шейдере для рендера пробников
+    // Константа связана с кодом шейдера!!!
+    const uint32_t probeComponentsByVertex = 12;
+    uint32_t a = maxGeometryTotalOutputComponents / (probeComponentsByVertex * 3 * 6);
+    uint32_t b = maxGeometryOutputVertices / (3 * 6);
+    mMaxProbeBatchCount = std::min(a, b);
+
+    uint32_t maxPossibleProbeCount = UBOMaxSize / sizeof(ProbeRawEntity);
+    mMaxProbeCount = std::min(maxPossibleProbeCount, MaxProbeCount);
+    ShaderProgram::addDefinition("LITE3D_ENV_PROBE_GS_MAX_VERTICES", std::to_string(mMaxProbeBatchCount * 3 * 6));
+    ShaderProgram::addDefinition("LITE3D_ENV_PROBE_MAX", std::to_string(mMaxProbeCount));
 }
 
 VBOResource* IBLMultiProbe::createBuffer(const String& bufferName, size_t size)
@@ -56,7 +82,7 @@ void IBLMultiProbe::createProbePass(const ConfigurationReader &config)
         .set(L"Filtering", "Trilinear")
         .set(L"Width", resolution)
         .set(L"Height", resolution)
-        .set(L"Depth", mProbeMaxCount)
+        .set(L"Depth", mProbeCount)
         .set(L"Wrapping", "ClampToEdge")
         .set(L"Compression", false)
         .set(L"TextureFormat", "RGB")
@@ -129,7 +155,7 @@ bool IBLMultiProbe::beginUpdate(RenderTarget *rt)
                 mProbesIndex.emplace_back(i);
             }
 
-            if (mProbesIndex.size() == (MaxProbeCountInBatch + 1))
+            if (mProbesIndex.size() == (mMaxProbeBatchCount + 1))
             {
                 break;
             }
@@ -144,9 +170,9 @@ bool IBLMultiProbe::beginUpdate(RenderTarget *rt)
 
 size_t IBLMultiProbe::addProbe(const kmVec3 &position, EnvProbeFlags flags)
 {
-    if (mProbes.size() >= mProbeMaxCount)
+    if (mProbes.size() >= mProbeCount)
     {
-        LITE3D_THROW("Max probes count is reached: " << mProbeMaxCount << " probes");
+        LITE3D_THROW("Max probes count is reached: " << mProbeCount << " probes");
     }
 
     mProbes.emplace_back(&mMain, mzNear, mzFar, flags);

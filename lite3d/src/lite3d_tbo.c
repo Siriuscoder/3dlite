@@ -25,7 +25,6 @@
 #include <lite3d/lite3d_tbo.h>
 
 extern GLenum textureTargetEnum[];
-extern GLint gTBOMaxSize;
 
 /*
 Overview
@@ -64,6 +63,7 @@ Overview
 int lite3d_texture_buffer_init(lite3d_texture_unit *textureUnit, 
     uint32_t texelsCount, const void *data, uint16_t bf, uint16_t access)
 {
+    int TBOMaxSize;
     if (!lite3d_check_tbo())
     {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
@@ -74,7 +74,6 @@ int lite3d_texture_buffer_init(lite3d_texture_unit *textureUnit,
     SDL_assert(textureUnit);
     memset(textureUnit, 0, sizeof(lite3d_texture_unit));
     lite3d_misc_gl_error_stack_clean();
-
 
     textureUnit->imageType = LITE3D_IMAGE_ANY;
 
@@ -88,11 +87,13 @@ int lite3d_texture_buffer_init(lite3d_texture_unit *textureUnit,
 
     textureUnit->totalSize = textureUnit->imageSize = texelsCount * textureUnit->imageBPP;
     textureUnit->textureTarget = LITE3D_TEXTURE_BUFFER;
-    if (gTBOMaxSize > 0 && textureUnit->totalSize > gTBOMaxSize)
+
+    lite3d_vbo_get_limitations(NULL, &TBOMaxSize, NULL);
+    if (TBOMaxSize > 0 && textureUnit->totalSize > TBOMaxSize)
     {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
             "%s: TBO is too large, limit is %d bytes, requested %zu bytes", LITE3D_CURRENT_FUNCTION,
-            gTBOMaxSize, textureUnit->totalSize);
+            TBOMaxSize, textureUnit->totalSize);
         return LITE3D_FALSE;
     }
 
@@ -207,12 +208,15 @@ int lite3d_texture_buffer_get(const lite3d_texture_unit *textureUnit,
 int lite3d_texture_buffer_extend(lite3d_texture_unit *textureUnit, 
     size_t addSize, uint16_t access)
 {
+    int TBOMaxSize;
     SDL_assert(textureUnit);
-    if (gTBOMaxSize > 0 && textureUnit->totalSize + addSize > gTBOMaxSize)
+    
+    lite3d_vbo_get_limitations(NULL, &TBOMaxSize, NULL);
+    if (TBOMaxSize > 0 && textureUnit->totalSize + addSize > TBOMaxSize)
     {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
             "%s: TBO is too large, limit is %d bytes, requested %zu bytes", LITE3D_CURRENT_FUNCTION,
-            gTBOMaxSize, textureUnit->totalSize + addSize);
+            TBOMaxSize, textureUnit->totalSize + addSize);
         return LITE3D_FALSE;
     }
 

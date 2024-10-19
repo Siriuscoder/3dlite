@@ -66,6 +66,9 @@ namespace lite3dpp
         String lightingTechnique = helper.getString(L"LightingTechnique", "none");
         if (lightingTechnique != "none")
         {
+            int UBOMaxSize, TBOMaxSize, SSBOMaxSize;
+            lite3d_vbo_get_limitations(&UBOMaxSize, &TBOMaxSize, &SSBOMaxSize);
+
             if (lightingTechnique == "TBO")
             {
                 /* default name of lighting buffer is scene name + "LightingBufferObject" */
@@ -76,6 +79,8 @@ namespace lite3dpp
                 mLightingIndexBuffer = getMain().getResourceManager()->
                     queryResourceFromJson<TextureBuffer>(getName() + "_lightingIndexBuffer",
                     "{\"BufferFormat\": \"R32I\", \"Dynamic\": true}");
+
+                mMaxLightsCount = std::min(MaxLightCount, static_cast<uint32_t>(TBOMaxSize / sizeof(lite3d_light_params)));
             }
             else if (lightingTechnique == "SSBO")
             {
@@ -87,6 +92,8 @@ namespace lite3dpp
                 mLightingIndexBuffer = getMain().getResourceManager()->
                     queryResourceFromJson<SSBO>(getName() + "_lightingIndexBuffer",
                     "{\"Dynamic\": true}");
+
+                mMaxLightsCount = std::min(MaxLightCount, static_cast<uint32_t>(SSBOMaxSize / sizeof(lite3d_light_params)));
             }
             else if (lightingTechnique == "UBO")
             {
@@ -98,6 +105,9 @@ namespace lite3dpp
                 mLightingIndexBuffer = getMain().getResourceManager()->
                     queryResourceFromJson<UBO>(getName() + "_lightingIndexBuffer",
                     "{\"Dynamic\": true}");
+
+                mMaxLightsCount = std::min(MaxLightCount, static_cast<uint32_t>(UBOMaxSize / sizeof(lite3d_light_params)));
+                ShaderProgram::addDefinition("LITE3D_MAX_LIGHT_COUNT", std::to_string(mMaxLightsCount));
             }
             else
             {
@@ -265,6 +275,11 @@ namespace lite3dpp
 
     void Scene::addLightSource(LightSceneNode *node)
     {
+        if (mLights.size() == mMaxLightsCount)
+        {
+            LITE3D_THROW("The maximum number of light sources has been reached(" << mMaxLightsCount << ")");
+        }
+
         mLights.emplace(node);
         rebuildLightingBuffer();
     }

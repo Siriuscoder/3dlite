@@ -37,8 +37,27 @@ static GLenum vboMapModeEnum[] = {
     GL_READ_ONLY, GL_WRITE_ONLY, GL_READ_WRITE
 };
 
-GLint gUBOMaxSize = -1;
-GLint gTBOMaxSize = -1;
+static GLint gUBOMaxSize = -1;
+static GLint gSSBOMaxSize = -1;
+static GLint gTBOMaxSize = -1;
+
+void lite3d_vbo_get_limitations(int *UBOMaxSize, int *TBOMaxSize, int *SSBOMaxSize)
+{
+    if (UBOMaxSize)
+    {
+        *UBOMaxSize = gUBOMaxSize;
+    }
+
+    if (TBOMaxSize)
+    {
+        *TBOMaxSize = gTBOMaxSize;
+    }
+
+    if (SSBOMaxSize)
+    {
+        *SSBOMaxSize = gSSBOMaxSize;
+    }
+}
 
 /*
 Name
@@ -329,16 +348,20 @@ int lite3d_vbo_technique_init(void)
             "GL_MAX_SHADER_STORAGE_BUFFER_BINDINGS: %d",
              var);
 
-        glGetIntegerv(GL_MAX_SHADER_STORAGE_BLOCK_SIZE, &var);
+        glGetIntegerv(GL_MAX_SHADER_STORAGE_BLOCK_SIZE, &gSSBOMaxSize);
         SDL_LogDebug(
             SDL_LOG_CATEGORY_APPLICATION,
             "GL_MAX_SHADER_STORAGE_BLOCK_SIZE: %d",
-             var);
+             gSSBOMaxSize);
     }
 
     if (lite3d_check_tbo())
     {
         glGetIntegerv(GL_MAX_TEXTURE_BUFFER_SIZE, &gTBOMaxSize);
+        SDL_LogDebug(
+            SDL_LOG_CATEGORY_APPLICATION,
+            "GL_MAX_TEXTURE_BUFFER_SIZE: %d",
+             gTBOMaxSize);
     }
 
 #endif

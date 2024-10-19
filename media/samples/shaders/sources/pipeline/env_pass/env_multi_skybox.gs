@@ -1,16 +1,16 @@
 #include "samples:shaders/sources/common/utils_inc.glsl"
 
 layout(triangles) in;
-layout(triangle_strip, max_vertices = ENV_PROBES_GS_VERTICES_MAX) out; // 4 probe max
+layout(triangle_strip, max_vertices = LITE3D_ENV_PROBE_GS_MAX_VERTICES) out;
 
 layout(std140) uniform EnvProbesData
 {
-    EnvironmentProbeStruct probes[ENV_PROBES_MAX];
+    EnvironmentProbeStruct probes[LITE3D_ENV_PROBE_MAX];
 };
 
 layout(std140) uniform EnvProbesIndex
 {
-    int probesIndex[ENV_PROBES_MAX + 1];
+    int probesIndex[LITE3D_ENV_PROBE_MAX + 1];
 };
 
 

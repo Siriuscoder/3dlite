@@ -45,6 +45,7 @@ typedef struct lite3d_vbo
 } lite3d_vbo;
 
 LITE3D_CEXPORT int lite3d_vbo_technique_init(void);
+LITE3D_CEXPORT void lite3d_vbo_get_limitations(int *UBOMaxSize, int *TBOMaxSize, int *SSBOMaxSize);
 
 /* use this to init vertex buffer object */
 LITE3D_CEXPORT int lite3d_vbo_init(struct lite3d_vbo *vbo);
