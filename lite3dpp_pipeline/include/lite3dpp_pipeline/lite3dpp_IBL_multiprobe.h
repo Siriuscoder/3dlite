@@ -113,7 +113,6 @@ protected:
 
     Main& mMain;
     uint32_t mProbeCount = 1;
-    uint32_t mMaxProbeCount = 0;
     uint32_t mMaxProbeBatchCount = 0;
     String mPipelineName;
     VBOResource *mProbesBuffer = nullptr;

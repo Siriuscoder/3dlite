@@ -110,7 +110,7 @@ namespace lite3dpp_pipeline {
         mWidth = shadowConf.getInt(L"Width", 1024);
         mHeight = shadowConf.getInt(L"Height", 1024);
         mProjection.znear = shadowConf.getDouble(L"NearClipPlane", 1.0);
-        mProjection.zfar = shadowConf.getDouble(L"FarClipPlane", 100.0);
+        mProjection.zfar = shadowConf.getDouble(L"FarClipPlane");
         mProjection.left = shadowConf.getObject(L"DirectionLightShadowParams").getDouble(L"LeftClipPlane");
         mProjection.right = shadowConf.getObject(L"DirectionLightShadowParams").getDouble(L"RightClipPlane");
         mProjection.bottom = shadowConf.getObject(L"DirectionLightShadowParams").getDouble(L"BottomClipPlane");
@@ -153,6 +153,11 @@ namespace lite3dpp_pipeline {
 
     ShadowManager::ShadowCaster* ShadowManager::newShadowCaster(LightSceneNode* node)
     {
+        if (mShadowsCastersMaxCount == mShadowCasters.size())
+        {
+            LITE3D_THROW("The maximum shadow casters limit is reached: " << mShadowsCastersMaxCount);
+        }
+
         auto index = static_cast<uint32_t>(mShadowCasters.size());
         mShadowCasters.emplace_back(std::make_unique<ShadowCaster>(mMain, node->getName() + std::to_string(index), 
             node, mProjection));
@@ -263,20 +268,47 @@ namespace lite3dpp_pipeline {
         }
     }
 
-    void ShadowManager::createAuxiliaryBuffers(const String& pipelineName, int shadowsCastersMaxCount)
+    void ShadowManager::createAuxiliaryBuffers(const String& pipelineName)
     {
+        calculateLimits();
+
         mShadowMatrixBuffer = mMain.getResourceManager()->queryResourceFromJson<UBO>(pipelineName + "_ShadowMatrixBuffer",
             "{\"Dynamic\": false}");
         mShadowIndexBuffer = mMain.getResourceManager()->queryResourceFromJson<UBO>(pipelineName + "_ShadowIndexBuffer",
             "{\"Dynamic\": true}");
 
-        mShadowMatrixBuffer->extendBufferBytes(sizeof(kmMat4) * shadowsCastersMaxCount);
-        mShadowIndexBuffer->extendBufferBytes(sizeof(IndexVector::value_type) * (shadowsCastersMaxCount + 1));
+        mShadowMatrixBuffer->extendBufferBytes(sizeof(kmMat4) * mShadowsCastersMaxCount);
+        mShadowIndexBuffer->extendBufferBytes(sizeof(IndexVector::value_type) * (mShadowsCastersMaxCount + 1));
         IndexVector::value_type initialZero = 0;
         mShadowIndexBuffer->setElement<IndexVector::value_type>(0, &initialZero);
     }
 
-    void ShadowManager::createShadowRenderTarget(const String& pipelineName, int width, int height, int shadowsCastersMaxCount)
+    void ShadowManager::calculateLimits()
+    {
+        int maxGeometryOutputVertices, maxGeometryTotalOutputComponents, UBOMaxSize;
+        lite3d_shader_program_get_limitations(&maxGeometryOutputVertices, nullptr, &maxGeometryTotalOutputComponents);
+        lite3d_vbo_get_limitations(&UBOMaxSize, nullptr, nullptr);
+
+        // Число компонент на одну вершину в геометрическом шейдере рендера теневого атласа
+        // Константа связана с кодом шейдера!!!
+        const uint32_t componentsByVertex = 6; // UV + Position
+        uint32_t a = maxGeometryTotalOutputComponents / (componentsByVertex * 3);
+        uint32_t b = maxGeometryOutputVertices / 3;
+        uint32_t c = UBOMaxSize / sizeof(kmMat4);
+
+        uint32_t shadowCastersLimit = std::min(std::min(a, b), c);
+
+        if (mShadowsCastersMaxCount > shadowCastersLimit)
+        {
+            LITE3D_THROW("Too much shadow casters count(" << mShadowsCastersMaxCount << ") are requested, "
+                "max hardware posible limit is " << shadowCastersLimit);
+        }
+
+        ShaderProgram::addDefinition("LITE3D_SPOT_SHADOW_GS_MAX_VERTICES", std::to_string(mShadowsCastersMaxCount * 3));
+        ShaderProgram::addDefinition("LITE3D_SPOT_SHADOW_MAX_COUNT", std::to_string(mShadowsCastersMaxCount));
+    }
+
+    void ShadowManager::createShadowRenderTarget(const String& pipelineName)
     {
         auto shadowMapName = pipelineName + "_ShadowMap.texture";
         ConfigurationWriter shadowTextureConfig;
@@ -285,15 +317,15 @@ namespace lite3dpp_pipeline {
             .set(L"Wrapping", "ClampToEdge")
             .set(L"Compression", false)
             .set(L"TextureFormat", "DEPTH")
-            .set(L"Height", height)
-            .set(L"Width", width)
-            .set(L"Depth", shadowsCastersMaxCount);
+            .set(L"Height", mHeight)
+            .set(L"Width", mWidth)
+            .set(L"Depth", mShadowsCastersMaxCount);
 
         mShadowMap = mMain.getResourceManager()->queryResourceFromJson<TextureImage>(shadowMapName, shadowTextureConfig.write());
 
         ConfigurationWriter shadowRenderTargetConfig;
-        shadowRenderTargetConfig.set(L"Width", width)
-            .set(L"Height", height)
+        shadowRenderTargetConfig.set(L"Width", mWidth)
+            .set(L"Height", mHeight)
             .set(L"BackgroundColor", kmVec4 { 0.0f, 0.0f, 0.0f, 1.0f })
             .set(L"Priority", static_cast<int>(RenderPassPriority::ShadowMap))
             .set(L"CleanColorBuf", false)
@@ -310,8 +342,8 @@ namespace lite3dpp_pipeline {
 
     void ShadowManager::initialize(const String& pipelineName, const String& shaderPackage)
     {
-        createAuxiliaryBuffers(pipelineName, mShadowsCastersMaxCount);
-        createShadowRenderTarget(pipelineName, mWidth, mHeight, mShadowsCastersMaxCount);
+        createAuxiliaryBuffers(pipelineName);
+        createShadowRenderTarget(pipelineName);
 
         // Создание специальной сцены для предварительной частичной очистки теневых карт которые надо перерисовать в текущем кадре.
         BigTriSceneGenerator stageGenerator;

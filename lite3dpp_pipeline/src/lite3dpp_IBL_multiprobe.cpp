@@ -31,11 +31,6 @@ void IBLMultiProbe::initialize(const ConfigurationReader &pipelineConfig)
 
     calculateProbeBatchCount();
 
-    if (mProbeCount > mMaxProbeCount)
-    {
-        LITE3D_THROW("Too much probe count(" << mProbeCount << ") are requested, max hardware probe limit is " << mMaxProbeCount);
-    }
-
     mProbesBuffer = createBuffer("_EnvProbesData", sizeof(ProbeRawEntity) * mProbeCount);
     // Массивы в std140 всегда выравниваются по границе 16 байт, даже если тип данных (например, int) 
     // сам занимает меньше места (4 байта).
@@ -57,9 +52,16 @@ void IBLMultiProbe::calculateProbeBatchCount()
     mMaxProbeBatchCount = std::min(a, b);
 
     uint32_t maxPossibleProbeCount = UBOMaxSize / sizeof(ProbeRawEntity);
-    mMaxProbeCount = std::min(maxPossibleProbeCount, MaxProbeCount);
+    uint32_t maxProbeCount = std::min(maxPossibleProbeCount, MaxProbeCount);
+
+    if (mProbeCount > maxProbeCount)
+    {
+        LITE3D_THROW("Too much probe count(" << mProbeCount << ") are requested, "
+            "max hardware posible limit is " << maxProbeCount);
+    }
+
     ShaderProgram::addDefinition("LITE3D_ENV_PROBE_GS_MAX_VERTICES", std::to_string(mMaxProbeBatchCount * 3 * 6));
-    ShaderProgram::addDefinition("LITE3D_ENV_PROBE_MAX", std::to_string(mMaxProbeCount));
+    ShaderProgram::addDefinition("LITE3D_ENV_PROBE_MAX", std::to_string(maxProbeCount));
 }
 
 VBOResource* IBLMultiProbe::createBuffer(const String& bufferName, size_t size)
@@ -170,9 +172,9 @@ bool IBLMultiProbe::beginUpdate(RenderTarget *rt)
 
 size_t IBLMultiProbe::addProbe(const kmVec3 &position, EnvProbeFlags flags)
 {
-    if (mProbes.size() >= mProbeCount)
+    if (mProbes.size() == mProbeCount)
     {
-        LITE3D_THROW("Max probes count is reached: " << mProbeCount << " probes");
+        LITE3D_THROW("The maximum probes count limit is reached: " << mProbeCount);
     }
 
     mProbes.emplace_back(&mMain, mzNear, mzFar, flags);

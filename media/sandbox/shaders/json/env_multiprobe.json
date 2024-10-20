@@ -8,7 +8,7 @@
         "samples:shaders/sources/pbr/pbr.fs,sandbox:shaders/sources/inc/params.def",
         "samples:shaders/sources/pbr/brdf_lambert.fs,sandbox:shaders/sources/inc/params.def",
         "samples:shaders/sources/pbr/brdf_null_env.fs,sandbox:shaders/sources/inc/params.def",
-        "samples:shaders/sources/shadow/pcf3x3.fs,sandbox:shaders/sources/inc/params.def",
+        "samples:shaders/sources/shadow/pcf_simple.fs,sandbox:shaders/sources/inc/params.def",
         "samples:shaders/sources/common/utils.fs",
         // Sample specific shaders
         "sandbox:shaders/sources/regular.fs"

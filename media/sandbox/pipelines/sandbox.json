@@ -6,18 +6,10 @@
     "LightingTechnique": "UBO",
     "ShadowMaps":
     {
-        "Width": 64,
-        "Height": 64,
-        "MaxCount": 1,
-        "NearClipPlane": 0.01,
-        "FarClipPlane": 2.0,
-        "DirectionLightShadowParams": 
-        {
-            "LeftClipPlane": -0.47,
-            "RightClipPlane": 0.47,
-            "BottomClipPlane": -0.4,
-            "TopClipPlane": 0.4
-        }
+        "Width": 512,
+        "Height": 512,
+        "MaxCount": 16,
+        "NearClipPlane": 0.01
     },
     "BLOOM": 
     {
