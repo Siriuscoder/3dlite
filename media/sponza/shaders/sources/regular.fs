@@ -1,5 +1,3 @@
-#include "samples:shaders/sources/common/version.def"
-
 uniform sampler2D Albedo;
 uniform sampler2D Specular;
 uniform sampler2D Normal;

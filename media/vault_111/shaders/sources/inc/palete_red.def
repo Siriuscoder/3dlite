@@ -1,3 +1,1 @@
-#include "samples:shaders/sources/common/version.def"
-
 #define PALETE_RED vec3(0.941, 0.095, 0.082)

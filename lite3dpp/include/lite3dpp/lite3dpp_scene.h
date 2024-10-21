@@ -35,7 +35,8 @@ namespace lite3dpp
         friend LightSceneNode;
     public:
 
-        static const constexpr size_t InitialLightCount = 10; 
+        static const constexpr uint32_t InitialLightCount = 10;
+        static const constexpr uint32_t MaxLightCount = 512;
 
         using SceneObjects = stl<String, SceneObject::Ptr>::unordered_map;
         using SceneLights = stl<LightSceneNode *>::unordered_set;
@@ -131,6 +132,7 @@ namespace lite3dpp
         BufferBase *mLightingParamsBuffer;
         BufferBase *mLightingIndexBuffer;
         LightsIndexesStore mLightsIndexes;
+        uint32_t mMaxLightsCount; 
     };
 }
 

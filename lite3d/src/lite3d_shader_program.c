@@ -26,10 +26,10 @@
 
 typedef int (*lite3d_uniform_set_func)(lite3d_shader_program *, lite3d_shader_parameter_container *);
 
-lite3d_shader_program *gActProg = NULL;
-int gMaxGSOutVertices = 0;
-int gMaxGSTotalOutputComponents = 0;
-int gMaxGSOutputComponents = 0;
+static lite3d_shader_program *gActProg = NULL;
+static int gMaxGeometryOutputVertices = 0;
+static int gMaxGeometryTotalOutputComponents = 0;
+static int gMaxGeometryOutputComponents = 0;
 
 static void lite3d_shader_program_get_log(lite3d_shader_program *program)
 {
@@ -52,17 +52,36 @@ int lite3d_shader_program_technique_init(void)
 {
     if (lite3d_check_geometry_shader())
     {
-        glGetIntegerv(GL_MAX_GEOMETRY_OUTPUT_VERTICES, &gMaxGSOutVertices);
-        SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "GL_MAX_GEOMETRY_OUTPUT_VERTICES: %d", gMaxGSOutVertices);
+        glGetIntegerv(GL_MAX_GEOMETRY_OUTPUT_VERTICES, &gMaxGeometryOutputVertices);
+        SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "GL_MAX_GEOMETRY_OUTPUT_VERTICES: %d", gMaxGeometryOutputVertices);
 
-        glGetIntegerv(GL_MAX_GEOMETRY_OUTPUT_COMPONENTS, &gMaxGSOutputComponents);
-        SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "GL_MAX_GEOMETRY_OUTPUT_COMPONENTS: %d", gMaxGSOutputComponents);
+        glGetIntegerv(GL_MAX_GEOMETRY_OUTPUT_COMPONENTS, &gMaxGeometryOutputComponents);
+        SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "GL_MAX_GEOMETRY_OUTPUT_COMPONENTS: %d", gMaxGeometryOutputComponents);
 
-        glGetIntegerv(GL_MAX_GEOMETRY_TOTAL_OUTPUT_COMPONENTS, &gMaxGSTotalOutputComponents);
-        SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "GL_MAX_GEOMETRY_TOTAL_OUTPUT_COMPONENTS: %d", gMaxGSTotalOutputComponents);
+        glGetIntegerv(GL_MAX_GEOMETRY_TOTAL_OUTPUT_COMPONENTS, &gMaxGeometryTotalOutputComponents);
+        SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "GL_MAX_GEOMETRY_TOTAL_OUTPUT_COMPONENTS: %d", gMaxGeometryTotalOutputComponents);
     }
 
     return LITE3D_TRUE;
+}
+
+void lite3d_shader_program_get_limitations(int *maxGeometryOutputVertices, 
+    int *maxGeometryOutputComponents, int *maxGeometryTotalOutputComponents)
+{
+    if (maxGeometryOutputVertices)
+    {
+        *maxGeometryOutputVertices = gMaxGeometryOutputVertices;
+    }
+
+    if (maxGeometryOutputComponents)
+    {
+        *maxGeometryOutputComponents = gMaxGeometryOutputComponents;
+    }
+
+    if (maxGeometryTotalOutputComponents)
+    {
+        *maxGeometryTotalOutputComponents = gMaxGeometryTotalOutputComponents;
+    }
 }
 
 int lite3d_shader_program_init(lite3d_shader_program *program)

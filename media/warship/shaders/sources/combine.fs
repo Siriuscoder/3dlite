@@ -1,4 +1,3 @@
-#include "samples:shaders/sources/common/version.def"
 #include "samples:shaders/sources/phong/lighting_inc.glsl"
 
 uniform sampler2D fragMap;

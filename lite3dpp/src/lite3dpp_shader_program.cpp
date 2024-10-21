@@ -24,6 +24,10 @@
 
 namespace lite3dpp
 {
+    stl<String, String>::map ShaderProgram::mGlobalDefinitions;
+    String ShaderProgram::mShaderVersion;
+    String ShaderProgram::mFloatPrecision;
+
     ShaderProgram::ShaderProgram(const String &name, 
         const String &path, Main *main) : 
         ConfigurableResource(name, path, main, AbstractResource::SHADER_PROGRAM)
@@ -88,6 +92,7 @@ namespace lite3dpp
 
     void ShaderProgram::loadShaders(stl<lite3d_shader>::vector &shaders)
     {
+        auto header = createSourceHeader();
         for (String &source : getJson().getStrings(L"Sources"))
         {
             String sourcePath;
@@ -128,8 +133,8 @@ namespace lite3dpp
             SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
                 "Compiling \"%s\" ...", sourcePath.c_str());
 
-            const char* finalShaderCode[] = { shaderCode.c_str() };
-            if (!lite3d_shader_compile(&shaders.back(), 1, finalShaderCode, NULL))
+            const char* finalShaderCode[] = { header.c_str(), shaderCode.c_str() };
+            if (!lite3d_shader_compile(&shaders.back(), 2, finalShaderCode, NULL))
                 LITE3D_THROW(sourcePath << " compile failed...");
         }
     }
@@ -175,9 +180,88 @@ namespace lite3dpp
         }
     }
 
-    void  ShaderProgram::optimizeShaderCode(String &sourceCode)
+    void ShaderProgram::optimizeShaderCode(String &sourceCode)
     {
         /* do nothing yet */
+    }
+
+    String ShaderProgram::createSourceHeader()
+    {
+        String result;
+        if (mShaderVersion.length() > 0)
+        {
+            result.append("#version ").append(mShaderVersion).append("\n\n");
+        }
+        else
+        {
+#ifdef WITH_GLES2
+            result.append("#version 100\n\n");
+#elif defined WITH_GLES3 
+            result.append("#version 300 es\n\n");
+#elif defined WITH_GLES31
+            result.append("#version 310 es\n\n");
+#elif defined WITH_GLES32 
+            result.append("#version 320 es\n\n");
+#else
+            result.append("#version 330\n\n");
+#endif
+        }
+
+        if (mFloatPrecision.length() > 0)
+        {
+            result.append("precision ").append(mFloatPrecision).append(" float;\n\n");
+        }
+        else
+        {
+#ifdef GLES
+            result.append("precision mediump float;\n\n");
+#endif
+        }
+
+        // Indicates what shader is being run by engine 
+        result.append("#define LITE3D_ENGINE\n");
+
+#ifdef GLES
+        result.append("#define LITE3D_GLES\n");
+#endif
+
+        std::string_view vendor = lite3d_video_get_vendor();
+        if (vendor.find("AMD") != std::string_view::npos)
+        {
+            result.append("#define LITE3D_RENDERER_AMD\n");
+        }
+        else if (vendor.find("NVIDIA") != std::string_view::npos)
+        {
+            result.append("#define LITE3D_RENDERER_NVIDIA\n");
+        }
+        else if (vendor.find("Intel") != std::string_view::npos || 
+                 vendor.find("INTEL") != std::string_view::npos)
+        {
+            result.append("#define LITE3D_RENDERER_INTEL\n");
+        }
+
+        for (auto &d : mGlobalDefinitions)
+        {
+            result.append("#define ").append(d.first).append(" ").append(d.second).append("\n");
+        }
+
+        return result;
+    }
+
+    void ShaderProgram::setShaderVersion(const String &version)
+    {
+        mShaderVersion = version;
+    }
+
+    void ShaderProgram::setFloatPrecision(const String &prec)
+    {
+        mFloatPrecision = prec;
+    }
+
+    void ShaderProgram::addDefinition(const String &name, const String &value)
+    {
+        mGlobalDefinitions[name] = value;
+        SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "GLSL: %s = %s", name.c_str(), value.c_str());
     }
 }
 

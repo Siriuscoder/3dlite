@@ -4,7 +4,7 @@ uniform samplerCubeArray EnvironmentProbe;
 
 layout(std140) uniform EnvProbesData
 {
-    EnvironmentProbeStruct probes[ENV_PROBES_MAX];
+    EnvironmentProbeStruct probes[LITE3D_ENV_PROBE_MAX];
 };
 
 vec3 ComputeIndirect(vec3 P, vec3 V, vec3 N, float NdotV, vec3 albedo, vec3 specular, float edF, float esF)

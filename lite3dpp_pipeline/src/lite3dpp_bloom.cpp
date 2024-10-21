@@ -37,7 +37,10 @@ namespace lite3dpp_pipeline {
 
     BloomEffect::~BloomEffect()
     {
-        mMain.getResourceManager()->releaseResource(mBloomRernderer->getName());
+        if (mBloomRernderer)
+        {
+            mMain.getResourceManager()->releaseResource(mBloomRernderer->getName());
+        }
 
         for (auto material : mMaterialChain)
         {
@@ -54,7 +57,10 @@ namespace lite3dpp_pipeline {
             }
         }
 
-        mMain.getResourceManager()->releaseResource(mBloomRT->getName());
+        if (mBloomRT)
+        {
+            mMain.getResourceManager()->releaseResource(mBloomRT->getName());
+        }
     }
 
     TextureRenderTarget &BloomEffect::getRenderTarget()

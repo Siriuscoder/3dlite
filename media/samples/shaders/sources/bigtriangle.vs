@@ -1,5 +1,3 @@
-#include "samples:shaders/sources/common/version.def"
-
 layout(location = 0) in vec2 vertex;
 
 uniform mat4 screenMatrix;

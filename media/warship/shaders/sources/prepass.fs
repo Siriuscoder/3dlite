@@ -1,5 +1,3 @@
-#include "samples:shaders/sources/common/version.def"
-
 uniform sampler2D diffuse;
 uniform sampler2D normals;
 

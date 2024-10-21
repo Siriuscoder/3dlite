@@ -28,6 +28,7 @@
 
 static SDL_Window *gRenderWindow = NULL;
 static SDL_GLContext gGLContext = NULL;
+static char gVideoVendor[256] = {0};
 
 #ifndef GLES
 static void print_extensions_string(const char *label, const char *extensionString)
@@ -158,6 +159,8 @@ static int init_gl_extensions(lite3d_video_settings *settings)
         "%s: GL Shading Lang %s",
         LITE3D_CURRENT_FUNCTION,
         (const char *) glGetString(GL_SHADING_LANGUAGE_VERSION));
+
+    strncpy(gVideoVendor, (const char *) glGetString(GL_VENDOR), sizeof(gVideoVendor)-1);
 
 #ifdef WITH_GLES2
     const char *extensionsStr = (const char *) glGetString(GL_EXTENSIONS);
@@ -462,4 +465,9 @@ void lite3d_video_view_system_cursor(int8_t flag)
 void lite3d_video_wait_async_complete(void)
 {
     glFinish();
+}
+
+const char *lite3d_video_get_vendor(void)
+{
+    return gVideoVendor;
 }
