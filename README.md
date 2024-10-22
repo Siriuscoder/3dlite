@@ -32,9 +32,9 @@ Library provides two API levels:
 
 ## Building project
 
-Use [cmake](http://www.cmake.org/) 3.21.0 or higher. Base dependencies already provided in [deps](https://github.com/Siriuscoder/3dlite/tree/master/deps) directory (except Bullet). Hovewer on windows recomended to use vcpkg build. 
+Use [cmake](http://www.cmake.org/) 3.21.0 or higher. Base dependencies already provided in [deps](https://github.com/Siriuscoder/3dlite/tree/master/deps) directory (except Bullet). Hovewer on windows is recomended to use vcpkg build. 
 
-All intructions assume that /path/to/3dlite/ is root of the project.
+All intructions assume that /path/to/3dlite/ is the root of the project.
 
 ### Build with existing dependencies (Linux)
 

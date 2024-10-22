@@ -1,5 +1,9 @@
 # Samples
 
+## assets download
+
+Most of the samples use external assets that do not exists in git repository due to their large size. For the samples to work correctly you should download this [asset archive](https://drive.google.com/file/d/1s717pC61ItUV3RLajZ0SvTCpx2vkr1z7/view?usp=sharing) (all on one). Extract this archive into the root of the project and feel free to run any sample. Note that any sample should be run from **media/** folder.
+
 ## sample_sponzahall
 Sponza remastered scene with full PBR materials. You can download resources for sponza remastered scene from [here](https://drive.google.com/file/d/1rhB6k-BmfULFcVFAaw4KaPaILxeD34ne/view?usp=sharing), unpack and copy textures and models folders to media/sponza.  
 
@@ -7,7 +11,7 @@ Sponza remastered scene with full PBR materials. You can download resources for 
 ![](/media/screenshots/sponza1.png "Sponza")
 
 ## sample_vault_111
-Vault 111 scene (Fallout4 models) with complete PBR lighting and HDR rendering, Deffered shading pipeline, dynamic PCF shadows from multiple light sources, Physical Bloom effect and huge range of materials and models. You can download resources for Vault_111 and Vault room sample from [here](https://drive.google.com/file/d/10sDEAlVEK4MVDGqzJgYaqVL5O0V8kRxo/view?usp=sharing), this 7z archive contains textures and models folders, you must copy this folders to media/vault_111 and anjoy this awesome samples!
+Vault 111 scene (Fallout4 models) with complete PBR lighting and HDR rendering, Deffered shading pipeline, dynamic PCF shadows from multiple light sources, Physical Bloom effect and huge range of materials and models. 
 
 ![](/media/screenshots/vault_111_0.png "Vault111")
 ![](/media/screenshots/vault_111_1.png "Vault111")
@@ -47,12 +51,12 @@ Vault 111 room scene (Fallout4 models) with complete PBR lighting and HDR render
 ![](/media/screenshots/vault_room_4.png "Vault room")
 
 ## sample_starfield
-Legacy weapons (Starfield models) with complete PBR materials. Please, download resources pack [starfield.pkg](https://drive.google.com/file/d/1gvl_boWlvqbEZ5I-4jKZu1msKqmHYxKZ/view?usp=sharing) and put it to media/packs/
+Legacy weapons (Starfield models) with complete PBR materials. 
 
 ![](/media/screenshots/vss.png "Starfield")
 
 ## sample_vault
-Vault scene (Fallout3 models) with dynamic lighting with multiple lights and big range of basic materials. Supports two render modes: Deffered shading and Direct shading, also supports several light buffer techniques such as UBO, TBO, SSBO. To provide sample work correctly you must download resources pack [vault.pkg](https://drive.google.com/file/d/1JhsirjKwMq51IBg7GknUeZLGvrVKp1Sz/view?usp=sharing) and put it to media/packs/  
+Vault scene (Fallout3 models) with dynamic lighting with multiple lights and big range of basic materials. Supports two render modes: Deffered shading and Direct shading, also supports several light buffer techniques such as UBO, TBO, SSBO. 
 
 ![](/media/screenshots/vault.png "Vault")
 ![](/media/screenshots/vault1.png "Vault")
@@ -86,3 +90,8 @@ Many different objects are interacting and colliding with each other
 Deffered render with legacy phong lighting  
 
 ![](/media/screenshots/warship.png "Warship")
+
+## sample_sandbox
+This sample is illustrating global illumination approach based on multiple light probes spread throughout in the scene. 
+
+![](/media/screenshots/sandbox.png "Sandbox")
