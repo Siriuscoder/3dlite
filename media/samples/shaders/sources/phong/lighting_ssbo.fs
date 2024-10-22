@@ -82,10 +82,8 @@ vec3 calc_lighting(vec3 fragPos,
         vec3 lattenuation = vec3(light.blocks[3].w, light.blocks[4].xy);
 
         vec3 curSpec = vec3(0.0);
-#ifdef PHONG_BLINN
         linear += phong_blinn_single(light.blocks[0].x, lightDir, eyeDir, ldiffuse, fragNormal, 
             lspotDirection, lspotFactor, lattenuation, specularFactor, wrapAroundFactor, specPower, curSpec);
-#endif
         linearSpec += curSpec;
     }
 

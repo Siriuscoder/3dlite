@@ -124,6 +124,12 @@ public:
         return mShadowIndexBuffer;
     }
 
+    inline uint32_t getShadowsCastersMaxCount() const 
+    { 
+        return mShadowsCastersMaxCount;
+    }
+
+
 protected:
 
     bool beginUpdate(RenderTarget *rt) override;
@@ -135,14 +141,15 @@ protected:
     bool customVisibilityCheck(Scene *scene, SceneNode *node, lite3d_mesh_chunk *meshChunk, Material *material, 
         lite3d_bounding_vol *boundingVol, Camera *camera) override;
 
-    void createShadowRenderTarget(const String& pipelineName, int width, int height, int shadowsCastersMaxCount);
-    void createAuxiliaryBuffers(const String& pipelineName, int shadowsCastersMaxCount);
+    void createShadowRenderTarget(const String& pipelineName);
+    void createAuxiliaryBuffers(const String& pipelineName);
+    void calculateLimits();
 
 private:
 
     Main& mMain;
-    int mShadowsCastersMaxCount;
-    int mWidth, mHeight;
+    uint32_t mShadowsCastersMaxCount;
+    uint32_t mWidth, mHeight;
     RenderTarget* mShadowPass = nullptr;
     Texture* mShadowMap = nullptr;
     VBOResource* mShadowMatrixBuffer = nullptr;

@@ -1,5 +1,3 @@
-#include "samples:shaders/sources/common/version.def"
-
 // needed for compute fxaa 
 void texcoords(vec2 fragCoord, vec2 resolution,
     out vec2 rgbNW, out vec2 rgbNE,

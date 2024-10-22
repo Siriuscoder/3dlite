@@ -49,6 +49,8 @@ typedef struct lite3d_shader_parameter_container
 } lite3d_shader_parameter_container;
 
 LITE3D_CEXPORT int lite3d_shader_program_technique_init(void);
+LITE3D_CEXPORT void lite3d_shader_program_get_limitations(int *maxGeometryOutputVertices, 
+    int *maxGeometryOutputComponents, int *maxGeometryTotalOutputComponents);
 LITE3D_CEXPORT int lite3d_shader_program_init(lite3d_shader_program *program);
 LITE3D_CEXPORT int lite3d_shader_program_link(
     lite3d_shader_program *program, lite3d_shader *shaders, size_t count);

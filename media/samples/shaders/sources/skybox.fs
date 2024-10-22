@@ -1,5 +1,3 @@
-#include "samples:shaders/sources/common/version.def"
-
 uniform samplerCube skybox;
 
 in vec3 iuv;

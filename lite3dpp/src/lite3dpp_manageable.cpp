@@ -22,7 +22,7 @@
 
 namespace lite3dpp
 {
-    void *Manageable::allocPulled(size_t size)
+    void *Manageable::allocInPool(size_t size)
     {
         void *mem = nullptr;
         if (!(mem = lite3d_malloc_pooled(LITE3D_POOL_NO2, size)))
@@ -33,7 +33,7 @@ namespace lite3dpp
         return mem;
     }
 
-    void Manageable::freePulled(void * mem)
+    void Manageable::freeInPool(void * mem)
     {
         if(mem)
             lite3d_free_pooled(LITE3D_POOL_NO2, mem);
@@ -57,7 +57,7 @@ namespace lite3dpp
             lite3d_free(mem);
     }
 
-    void *Manageable::callocPulled(size_t size)
+    void *Manageable::callocInPool(size_t size)
     {
         void *mem = nullptr;
         if (!(mem = lite3d_calloc_pooled(LITE3D_POOL_NO2, size)))
@@ -81,12 +81,12 @@ namespace lite3dpp
 
     void *Manageable::operator new(size_t size)
     {
-        return Manageable::callocPulled(size);
+        return Manageable::callocInPool(size);
     }
 
     void Manageable::operator delete(void *p)
     {
-        Manageable::freePulled(p);
+        Manageable::freeInPool(p);
     }
 
     void *Manageable::operator new[](size_t size)
@@ -101,12 +101,12 @@ namespace lite3dpp
 
     void *Manageable::operator new(size_t size, const std::nothrow_t &n)
     {
-        return Manageable::callocPulled(size);
+        return Manageable::callocInPool(size);
     }
 
     void Manageable::operator delete(void *p, const std::nothrow_t &n)
     {
-        Manageable::freePulled(p);
+        Manageable::freeInPool(p);
     }
 
     void *Manageable::operator new[](size_t size, const std::nothrow_t &n)

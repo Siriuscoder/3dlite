@@ -5,7 +5,7 @@ uniform sampler2DArray GBuffer;
 
 layout(std140) uniform ShadowMatrix
 {
-    mat4 shadowMat[SHADOW_MAX_LAYERS];
+    mat4 shadowMat[LITE3D_SPOT_SHADOW_MAX_COUNT];
 };
 
 float SSS(vec3 vw, vec3 L, float minDepthThreshold)

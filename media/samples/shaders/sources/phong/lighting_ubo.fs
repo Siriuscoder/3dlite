@@ -4,12 +4,12 @@
 // declaration for UBO
 layout(std140) uniform lightSources
 {
-    vec4 lights[5 * 100];
+    vec4 lights[LITE3D_MAX_LIGHT_COUNT];
 };
 
 layout(std140) uniform lightIndexes
 {
-    ivec4 indexes[100];
+    ivec4 indexes[LITE3D_MAX_LIGHT_COUNT];
 };
 
 vec3 calc_lighting(vec3 fragPos, vec3 fragNormal, vec3 eye, float specularFactor, 
@@ -77,10 +77,8 @@ vec3 calc_lighting(vec3 fragPos, vec3 fragNormal, vec3 eye, float specularFactor
         vec3 lattenuation = vec3(lights[index+3].w, lights[index+4].xy);
 
         vec3 curSpec = vec3(0.0);
-#ifdef PHONG_BLINN
         linear += phong_blinn_single(lights[index+0].x, lightDir, eyeDir, ldiffuse, fragNormal, lspotDirection, lspotFactor, 
             lattenuation, specularFactor, wrapAroundFactor, specPower, curSpec);
-#endif
         linearSpec += curSpec;
     }
 

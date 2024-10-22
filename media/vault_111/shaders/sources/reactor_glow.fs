@@ -1,5 +1,3 @@
-#include "samples:shaders/sources/common/version.def"
-
 uniform vec4 Emission;
 uniform float EmissionStrength;
 uniform float Alpha;

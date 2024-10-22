@@ -46,7 +46,7 @@ int main(int agrc, char *args[])
         }
         else if (std::string(args[1]) == "DRS")
         {
-            lite3dpp::samples::VaultDR sample(helpString);
+            lite3dpp::samples::VaultDR sample(helpString, true);
             return sample.start("vault_dr_ssbo/config/config_vault.json");
         }
     }
