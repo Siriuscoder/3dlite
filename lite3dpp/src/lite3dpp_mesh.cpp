@@ -130,36 +130,29 @@ namespace lite3dpp
     void Mesh::unloadImpl()
     {
         /* store buffers data */
-        vertexBuffer().getData(mVertexData, 0, mMesh.vertexBuffer.size);
-        indexBuffer().getData(mIndexData, 0, mMesh.indexBuffer.size);
+        vertexBuffer().getDataBuffer(mVertexData, 0, mMesh.vertexBuffer.size);
+        indexBuffer().getDataBuffer(mIndexData, 0, mMesh.indexBuffer.size);
 
         /* unload vbo from vmem */
-        if (mMesh.vertexBuffer.size > 0)
-            lite3d_vbo_buffer(&mMesh.vertexBuffer, NULL, 0, mMesh.vertexBuffer.access);
-        if (mMesh.indexBuffer.size > 0)
-            lite3d_vbo_buffer(&mMesh.indexBuffer, NULL, 0, mMesh.indexBuffer.access);
+        if (vertexBuffer().valid())
+            vertexBuffer().setBufferSizeBytes(0);
+        if (indexBuffer().valid())
+            indexBuffer().setBufferSizeBytes(0);
 
-        if (getBBPtr() && mBBMesh.vertexBuffer.size > 0)
+        auto wrapBB = VBO(mBBMesh.vertexBuffer);
+        if (getBBPtr() && wrapBB.bufferSizeBytes() > 0)
         {
-            VBO(mBBMesh.vertexBuffer).getData(mBBVertexData, 0, mBBMesh.vertexBuffer.size);
-            lite3d_vbo_buffer(&mBBMesh.vertexBuffer, NULL, 0, mBBMesh.vertexBuffer.access);
+            wrapBB.getDataBuffer(mBBVertexData, 0, mBBMesh.vertexBuffer.size);
+            wrapBB.setBufferSizeBytes(0);
         }
     }
 
     void Mesh::reloadFromConfigImpl(const ConfigurationReader &helper)
     {
         /* restore data */
-        if (mVertexData.size() > 0)
-            if (!lite3d_vbo_buffer(&mMesh.vertexBuffer, &mVertexData[0], mVertexData.size(), mMesh.vertexBuffer.access))
-                LITE3D_THROW(getName() << ": failed to reload vertex buffer");
-
-        if (mIndexData.size() > 0)
-            if (!lite3d_vbo_buffer(&mMesh.indexBuffer, &mIndexData[0], mIndexData.size(), mMesh.indexBuffer.access))
-                LITE3D_THROW(getName() << ": failed to reload index buffer");
-
-        if (mBBVertexData.size() > 0)
-            if (!lite3d_vbo_buffer(&mBBMesh.vertexBuffer, &mBBVertexData[0], mBBVertexData.size(), mBBMesh.indexBuffer.access))
-                LITE3D_THROW(getName() << ": failed to reload BB vertex buffer");
+        vertexBuffer().replaceDataBuffer(mVertexData);
+        indexBuffer().replaceDataBuffer(mIndexData);
+        VBO(mBBMesh.vertexBuffer).replaceDataBuffer(mBBVertexData);
         
         mVertexData.clear();
         mIndexData.clear();

@@ -175,8 +175,8 @@ namespace lite3dpp_phisics {
         mCollisionMeshInfo = std::make_unique<btTriangleIndexVertexArray>();
 
         /* copy vertex and index GPU buffers to host memory */
-        rawMesh->vertexBuffer().getData(mCollisionMeshVertexData, 0, rawMesh->vertexBuffer().bufferSizeBytes());
-        rawMesh->indexBuffer().getData(mCollisionMeshIndexData, 0, rawMesh->indexBuffer().bufferSizeBytes());
+        rawMesh->vertexBuffer().getDataBuffer(mCollisionMeshVertexData, 0, rawMesh->vertexBuffer().bufferSizeBytes());
+        rawMesh->indexBuffer().getDataBuffer(mCollisionMeshIndexData, 0, rawMesh->indexBuffer().bufferSizeBytes());
 
         lite3d_mesh_chunk *chunk = static_cast<lite3d_mesh_chunk *>(rawMesh->getPtr()->chunks.data);
         for (size_t i = 0; i < rawMesh->getPtr()->chunks.size; ++i)

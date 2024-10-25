@@ -104,7 +104,7 @@ public:
         kmQuaternionMultiplyVec3(&velRelative, &rotation, &velocity);
         kmVec3Mul(&velRelative, &velRelative, &scale);
 
-        /* не модифицируем скорость по z (модет быть в прыжке) */
+        /* не модифицируем скорость по z (может быть в прыжке) */
         velRelative.z = mPlayer->getLinearVelocity().z;
         mPlayer->setLinearVelocity(velRelative);
     }

@@ -28,59 +28,72 @@ namespace lite3dpp
     {
         return mVBO.size;
     }
+
+    bool VBO::valid() const 
+    {
+        return mVBO.vboID != 0;
+    }
     
     void VBO::extendBufferBytes(size_t addSize)
     {
-        if (!mVBO.vboID)
-            LITE3D_THROW("resource unavailable");
+        if (!valid())
+            LITE3D_THROW("Failed to extend GPU buffer, resource unavailable");
 
         if (!lite3d_vbo_extend(&mVBO, addSize, mVBO.access))
         {
-            LITE3D_THROW("GPU buffer extend failed, probably this function does not supported");
+            LITE3D_THROW("Failed to extend GPU buffer, probably this function does not supported");
         }
     }
 
     void VBO::setBufferSizeBytes(size_t size)
     {
-        if (!mVBO.vboID)
-            LITE3D_THROW("resource unavailable");
+        if (!valid())
+            LITE3D_THROW("Failed to resize GPU buffer, resource unavailable");
 
-        if (!lite3d_vbo_buffer(&mVBO, NULL, size, mVBO.access))
-            LITE3D_THROW("failed to resize GPU buffer up to " << size << " bytes");
+        replaceData(nullptr, 0);
     }
 
     void VBO::setData(const void *buffer, size_t offset, size_t size)
     {
-        if (!mVBO.vboID)
-            LITE3D_THROW("resource unavailable");
+        if (!valid())
+            LITE3D_THROW("Failed to upload data to GPU buffer, resource unavailable");
         
         if (size > 0)
         {
             if ((offset + size) > bufferSizeBytes())
                 LITE3D_THROW("operation may cause GPU buffer overflow");
             if (!lite3d_vbo_subbuffer(&mVBO, buffer, offset, size))
-                LITE3D_THROW("failed to upload data to GPU");
+                LITE3D_THROW("Failed to upload data to GPU");
         }
     }
 
     void VBO::getData(void *buffer, size_t offset, size_t size) const
     {
-        if (!mVBO.vboID)
-            LITE3D_THROW("resource unavailable");
+        if (!valid())
+            LITE3D_THROW("Failed to fetch data from GPU buffer, resource unavailable");
         
         if (size > 0)
         {
             if ((offset + size) > bufferSizeBytes())
                 LITE3D_THROW("GPU buffer read out of bounds: " << (offset + size) << " of " << bufferSizeBytes());
             if (!lite3d_vbo_get_buffer(&mVBO, buffer, offset, size))
-                LITE3D_THROW("failed to read data from GPU buffer");
+                LITE3D_THROW("Failed to read data from GPU buffer");
         }
+    }
+
+    void VBO::replaceData(const void *buffer, size_t size)
+    {
+        if (!valid())
+            LITE3D_THROW("Failed to upload data to GPU buffer, resource unavailable");
+
+        if (!lite3d_vbo_buffer(&mVBO, buffer, size, mVBO.access))
+            LITE3D_THROW("Failed to upload data to GPU buffer");
     }
     
     BufferScopedMapper VBO::map(BufferScopedMapper::BufferScopedMapperLockType lockType)
     {
-        if (!mVBO.vboID)
-            LITE3D_THROW("resource unavailable");
+        if (!valid())
+            LITE3D_THROW("Failed to map GPU buffer, resource unavailable");
         
         BufferScopedMapper mapper(mVBO, lockType);
         /* move constructor is a great power! */
@@ -112,8 +125,7 @@ namespace lite3dpp
         size_t size;
         if ((size = helper.getInt(L"Size", 0)) > 0)
         {
-            if (!lite3d_vbo_buffer(&mVBO, NULL, size, mVBO.access))
-                LITE3D_THROW(getName() << ": failed to allocate SSBO to " << size << " bytes");
+            setBufferSizeBytes(size);
         }
     }
     
@@ -122,8 +134,8 @@ namespace lite3dpp
         if (bufferSizeBytes() > 0)
         {
             /* load data into host memory */
-            getData(mVBOData, 0, bufferSizeBytes());
-            lite3d_vbo_buffer(&mVBO, NULL, 0, mVBO.access);
+            getDataBuffer(mVBOData, 0, bufferSizeBytes());
+            setBufferSizeBytes(0);
         }
     }
     
@@ -131,8 +143,7 @@ namespace lite3dpp
     {
         if (mVBOData.size() > 0)
         {
-            if (!lite3d_vbo_buffer(&mVBO, &mVBOData[0], mVBOData.size(), mVBO.access))
-                LITE3D_THROW(getName() << ": failed to reload vertex buffer");
+            replaceDataBuffer(mVBOData);
         }
     }
 }
