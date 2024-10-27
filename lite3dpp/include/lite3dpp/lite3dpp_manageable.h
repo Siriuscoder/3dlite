@@ -112,6 +112,8 @@ namespace lite3dpp
         using stack = std::stack<T, ManageableStlAllocator<T> >;
         using unordered_map = std::unordered_map<T, Y, std::hash<T>, std::equal_to<T>, 
             ManageableStlAllocator<std::pair<const T, Y>>>;
+        using unordered_set = std::unordered_set<T, std::hash<T>, std::equal_to<T>, 
+            ManageableStlAllocator<T>>;
     };
 
     using String = std::basic_string<char, char_traits<char>, ManageableStlAllocator<char>>;

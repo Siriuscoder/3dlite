@@ -80,7 +80,7 @@ namespace lite3dpp
     void TextureBuffer::unloadImpl()
     {
         getDataBuffer(mTexelsBackup, 0, bufferSizeBytes());
-        Texture::unloadImpl();
+        lite3d_texture_buffer_purge(&mTexture);
     }
     
     uint8_t TextureBuffer::texelSize() const

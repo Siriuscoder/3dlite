@@ -34,71 +34,63 @@ namespace lite3dpp
         typedef stl<lite3d_vao_layout>::vector BufferLayout; 
         typedef stl<int, Material *>::map MaterialMapping;
 
-        Mesh(const String &name, 
-            const String &path, Main *main);
-        ~Mesh();
+        Mesh(const String &name, const String &path, Main *main);
+        virtual ~Mesh() = default;
 
-        void mapMaterial(int unit, Material *material);
+        void applyMaterial(int unit, Material *material);
         inline const MaterialMapping &getMaterialMapping() const
         { return mMaterialMapping; }
-        inline lite3d_mesh *getPtr()
-        { return &mMesh; }
-        inline lite3d_mesh *getBBPtr()
-        {
-            if (mBBMesh.version > 0)
-            {
-                return &mBBMesh; 
-            }
+        inline uint32_t chunksCount() const
+        { return mChunksCount; }
 
-            return nullptr;
-        }
+        lite3d_mesh *getPtr();
+        lite3d_mesh *getBBPtr();
+        VBO vertexBuffer();
+        VBO indexBuffer();
 
-        inline VBO vertexBuffer()
-        { return VBO(mMesh.vertexBuffer); }
-        inline VBO indexBuffer()
-        { return VBO(mMesh.indexBuffer); }
+        lite3d_mesh_chunk *operator[](uint32_t index);
         
         template<class V, class Indx>
-        void addTriangleMeshChunk(const typename stl<V>::vector &vertices,
+        void addChunk(const typename stl<V>::vector &vertices,
             const typename stl<Indx>::vector &indices, const BufferLayout &layout, 
             int indexSize, VBO::VBOMode mode = VBO::ModeDynamicDraw)
         {
             if(!lite3d_mesh_indexed_extend_from_memory(&mMesh, &vertices[0], vertices.size(),
                 &layout[0], layout.size(), &indices[0], indices.size(), indexSize, mode))
-                LITE3D_THROW(getName() << " append mesh chunk failed..");
+                LITE3D_THROW(getName() << ": append mesh chunk failed..");
         }
 
         template<class V>
-        void addTriangleMeshChunk(const typename stl<V>::vector &vertices,
+        void addChunk(const typename stl<V>::vector &vertices,
             const BufferLayout &layout, VBO::VBOMode mode = VBO::ModeDynamicDraw)
         {
             if(!lite3d_mesh_extend_from_memory(&mMesh, &vertices[0], vertices.size(),
                 &layout[0], layout.size(), mode))
-                LITE3D_THROW(getName() << " append mesh chunk failed..");
+                LITE3D_THROW(getName() << ": append mesh chunk failed..");
         }
         
         size_t usedVideoMemBytes() const override;
-
-        void genPlain(const kmVec2 &size, bool dynamic);
-        void genBigTriangle(bool dynamic);
-        void genSkybox(const kmVec3 &center, const kmVec3 &size, bool dynamic);
-        void genArray(const stl<kmVec3>::vector &points, const kmVec3 &bbmin, const kmVec3 &bbmax, bool dynamic);
 
     protected:
 
         virtual void loadFromConfigImpl(const ConfigurationReader &helper) override;
         virtual void unloadImpl() override;
-        virtual void reloadFromConfigImpl(const ConfigurationReader &helper) override;
         void loadBBMesh();
-        
+        void initMesh(const ConfigurationReader &helper);
+        void genPlane(const kmVec2 &size, bool dynamic);
+        void genBigTriangle(bool dynamic);
+        void genSkybox(const kmVec3 &center, const kmVec3 &size, bool dynamic);
+        void genArray(const stl<kmVec3>::vector &points, const kmVec3 &bbmin, const kmVec3 &bbmax, bool dynamic);
+        void recalcChunksCount();
+
     private:
 
+        lite3d_mesh *mMesh = nullptr;
+        uint32_t mChunksCount = 0;
+        uint32_t mFirstChunkIndex = 0;
         MaterialMapping mMaterialMapping;
-        lite3d_mesh mMesh = {0};
-        lite3d_mesh mBBMesh = {0};
-        BufferData mVertexData;
-        BufferData mBBVertexData;
-        BufferData mIndexData;
+        lite3d_mesh mSelfMesh = {0};
+        lite3d_mesh mSelfBBMesh = {0};
     };
 }
 
