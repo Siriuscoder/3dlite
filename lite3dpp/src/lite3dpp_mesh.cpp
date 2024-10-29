@@ -32,24 +32,24 @@ namespace lite3dpp
         ConfigurableResource(name, path, main, AbstractResource::MESH)
     {}
 
-    lite3d_mesh_chunk *Mesh::getChunk(uint32_t index)
+    Mesh::ChunkEntity Mesh::getChunk(uint32_t index) const
     {
         if (index >= chunksCount())
         {
             LITE3D_THROW(getName() << ": Chunk index out of range: " << index << " of " << chunksCount());
         }
 
-        return mMeshChunks[index].chunk;
+        return mMeshChunks[index];
     }
 
-    lite3d_mesh_chunk *Mesh::getChunkBoudingBox(uint32_t index)
+    Mesh::ChunkEntity Mesh::getChunkBoudingBox(uint32_t index) const
     {
         if (index >= mBoundingBoxMeshChunks.size())
         {
             LITE3D_THROW(getName() << ": Chunk index out of range: " << index << " of " << mBoundingBoxMeshChunks.size());
         }
 
-        return mBoundingBoxMeshChunks[index].chunk;
+        return mBoundingBoxMeshChunks[index];
     }
 
     void Mesh::initPartition(const ConfigurationReader &config)
@@ -138,6 +138,11 @@ namespace lite3dpp
             if (chunk.chunk->materialIndex == materialIdx)
             {
                 chunk.material = material;
+                if (chunk.boudingBoxChunkindex)
+                {
+                    mBoundingBoxMeshChunks[chunk.boudingBoxChunkindex.value()].material = material;
+                }
+
                 return;
             }
         }
@@ -159,14 +164,13 @@ namespace lite3dpp
             size.x, 0.0f, 0.0f, 1.0f, 0.0f
         };
 
-        static const stl<lite3d_vao_layout>::vector layout = {
+        static const BufferLayout layout = {
             { LITE3D_BUFFER_BINDING_VERTEX, 3},
             { LITE3D_BUFFER_BINDING_TEXCOORD, 2}
         };
 
-        auto index = appendChunk(BufferWrap(vertices, 6), layout);
-        lite3d_bounding_vol_setup(&mMeshChunks[index].chunk->boundingVol, &vmin, &vmax);
-        initBouningBox();
+        auto chunk = append(VertexArrayWrap(vertices, 6), layout);
+        lite3d_bounding_vol_setup(&chunk.chunk->boundingVol, &vmin, &vmax);
     }
     
     void Mesh::genBigTriangle()
@@ -178,12 +182,12 @@ namespace lite3dpp
             0.0f, 2.0f
         };
 
-        static const stl<lite3d_vao_layout>::vector layout = {
+        static const BufferLayout layout = {
             { LITE3D_BUFFER_BINDING_VERTEX, 2}
         };
 
-        auto index = appendChunk(BufferWrap(vertices, 3), layout);
-        lite3d_bounding_vol_setup(&mMeshChunks[index].chunk->boundingVol, &vmin, &vmax);
+        auto chunk = append(VertexArrayWrap(vertices, 3), layout, false);
+        lite3d_bounding_vol_setup(&chunk.chunk->boundingVol, &vmin, &vmax);
     }
     
     void Mesh::genSkybox(const kmVec3 &center, const kmVec3 &size)
@@ -234,141 +238,32 @@ namespace lite3dpp
             center.x+(size.x/2),  center.y-(size.y/2), center.z+(size.z/2)
         };
         
-        static const stl<lite3d_vao_layout>::vector layout = {
+        static const BufferLayout layout = {
             { LITE3D_BUFFER_BINDING_VERTEX, 3 }
         };
         
         kmVec3 vmax = {center.x+(size.x/2), center.y+(size.y/2), center.z+(size.z/2)}, 
             vmin = {center.x-(size.x/2), center.y-(size.y/2), center.z-(size.z/2)};
         
-        auto index = appendChunk(BufferWrap(skyboxVertices, 36), layout);
-        lite3d_bounding_vol_setup(&mMeshChunks[index].chunk->boundingVol, &vmin, &vmax);
+        auto chunk = append(VertexArrayWrap(skyboxVertices, 36), layout, false);
+        lite3d_bounding_vol_setup(&chunk.chunk->boundingVol, &vmin, &vmax);
     }
 
     void Mesh::genArray(const stl<kmVec3>::vector &points, const kmVec3 &bbmin, const kmVec3 &bbmax)
     {
-        static const stl<lite3d_vao_layout>::vector layout = {
+        static const BufferLayout layout = {
             { LITE3D_BUFFER_BINDING_VERTEX, 3 }
         };
 
-        auto index = appendChunk(points, layout);
-        lite3d_bounding_vol_setup(&mMeshChunks[index].chunk->boundingVol, &bbmin, &bbmax);
-    }
-
-    void Mesh::initBouningBox()
-    {
-/*
-        lite3d_mesh_init(&mSelfBBMesh);
-        mSelfBBMesh.userdata = this;
-
-        BufferData vertexData;
-        const uint32_t boxVerticesCount = 36;
-
-        for (uint32_t i = 0; i < mChunksCount; ++i)
-        {
-            auto meshChunk = (*this)[i];
-            vertexData.resize(boxVerticesCount * meshChunk->vertexStride);
-            std::fill(vertexData.begin(), vertexData.end(), 0);
-            
-            kmVec3 vmin = meshChunk->boundingVol.box[0];
-            kmVec3 vmax = meshChunk->boundingVol.box[7];
-
-            const float bbVertices[] = {
-                vmin.x, vmin.y, vmax.z,
-                vmax.x, vmin.y, vmax.z,
-                vmax.x, vmax.y, vmax.z,
-
-                vmax.x, vmax.y, vmax.z,
-                vmin.x, vmax.y, vmax.z,
-                vmin.x, vmin.y, vmax.z,
-
-                vmin.x, vmin.y, vmin.z,
-                vmin.x, vmax.y, vmin.z,
-                vmax.x, vmax.y, vmin.z,
-
-                vmax.x, vmax.y, vmin.z,
-                vmax.x, vmin.y, vmin.z,
-                vmin.x, vmin.y, vmin.z,
-
-                vmin.x, vmax.y, vmin.z,
-                vmin.x, vmax.y, vmax.z,
-                vmax.x, vmax.y, vmax.z,
-
-                vmax.x, vmax.y, vmax.z,
-                vmax.x, vmax.y, vmin.z,
-                vmin.x, vmax.y, vmin.z,
-
-                vmin.x, vmin.y, vmin.z,
-                vmax.x, vmin.y, vmin.z,
-                vmax.x, vmin.y, vmax.z,
-
-                vmax.x, vmin.y, vmax.z,
-                vmin.x, vmin.y, vmax.z,
-                vmin.x, vmin.y, vmin.z,
-
-                vmax.x, vmin.y, vmin.z,
-                vmax.x, vmax.y, vmin.z,
-                vmax.x, vmax.y, vmax.z,
-
-                vmax.x, vmax.y, vmax.z,
-                vmax.x, vmin.y, vmax.z,
-                vmax.x, vmin.y, vmin.z,
-
-                vmin.x, vmin.y, vmin.z,
-                vmin.x, vmin.y, vmax.z,
-                vmin.x, vmax.y, vmax.z,
-
-                vmin.x, vmax.y, vmax.z,
-                vmin.x, vmax.y, vmin.z,
-                vmin.x, vmin.y, vmin.z
-            };
-
-            bool skipChunk = true;
-            size_t vOffset = 0;
-            for (uint32_t i = 0; i < meshChunk->layoutEntriesCount; ++i)
-            {
-                if (meshChunk->layout[i].binding == LITE3D_BUFFER_BINDING_VERTEX)
-                {
-                    if (meshChunk->layout[i].count >= 3)
-                    {
-                        skipChunk = false;
-                    }
-
-                    break;
-                }
-
-                vOffset += meshChunk->layout[i].count * sizeof(float);
-            }
-
-            if (skipChunk)
-            {
-                continue;
-            }
-
-            uint8_t *pBuffer = &vertexData[vOffset];
-            for (uint32_t i = 0; i < boxVerticesCount; ++i, pBuffer += meshChunk->vertexStride)
-            {
-                memcpy(pBuffer, &bbVertices[i * 3], sizeof(float) * 3);
-            }
-
-            if (!lite3d_mesh_extend_from_memory(&mSelfBBMesh, &vertexData[0], boxVerticesCount, 
-                meshChunk->layout, meshChunk->layoutEntriesCount, LITE3D_VBO_STATIC_DRAW))
-            {
-                LITE3D_THROW("Failed to extend BB mesh chunk");
-            }
-
-            lite3d_mesh_chunk *bbMeshChunk = LITE3D_ARR_GET_LAST(&mSelfBBMesh.chunks, lite3d_mesh_chunk);
-            bbMeshChunk->materialIndex = meshChunk->materialIdx;
-            bbMeshChunk->boundingVol = meshChunk->boundingVol;
-        }
-        */
+        auto chunk = append(points, layout, false);
+        lite3d_bounding_vol_setup(&chunk.chunk->boundingVol, &bbmin, &bbmax);
     }
 
     void Mesh::loadModel(const ConfigurationReader &config)
     {
         SDL_assert(mMeshPartition);
-        mMeshPartition->loadMesh(config.getString(L"Model"));
-        initBouningBox();
+        auto chunks = mMeshPartition->loadMesh(config.getString(L"Model"));
+        appendChunks(chunks, true);
     }
 
     void Mesh::loadAssimpModel(const ConfigurationReader &config)
@@ -380,34 +275,153 @@ namespace lite3dpp
         if (config.getBool(L"FlipUV"))
             flags |= LITE3D_FLIP_UV_FLAG;
 
-        mMeshPartition->loadMeshByAssimp(config.getString(L"Model"), 
+        auto chunks = mMeshPartition->loadMeshByAssimp(config.getString(L"Model"), 
             config.getString(L"ModelName"), flags);
-        initBouningBox();
+        appendChunks(chunks, true);
     }
 
-    uint32_t Mesh::appendChunk(const BufferWrap &vertices, const BufferWrap &indices, const BufferLayout &layout)
+    Mesh::ChunkEntity Mesh::append(const VertexArrayWrap &vertices, const IndexArrayWrap &indices, const BufferLayout &layout,
+        bool createBoundingBoxMesh)
     {
         SDL_assert(mMeshPartition);
-        auto chunk = mMeshPartition->appendMeshChunk(vertices, indices, layout);
-        mMeshChunks.push_back(ChunkEntity {
-            static_cast<uint32_t>(mMeshPartition->chunksCount() - 1),
-            chunk,
-            nullptr
-        });
-
-        return mMeshChunks.size() - 1;
+        auto chunk = mMeshPartition->append(vertices, indices, layout);
+        appendChunks(MeshChunkArray {chunk}, createBoundingBoxMesh);
+        return mMeshChunks[mMeshChunks.size() - 1];
     }
 
-    uint32_t Mesh::appendChunk(const BufferWrap &vertices, const BufferLayout &layout)
+    Mesh::ChunkEntity Mesh::append(const VertexArrayWrap &vertices, const BufferLayout &layout, 
+        bool createBoundingBoxMesh)
     {
         SDL_assert(mMeshPartition);
-        auto chunk = mMeshPartition->appendMeshChunk(vertices, layout);
-        mMeshChunks.push_back(ChunkEntity {
-            static_cast<uint32_t>(mMeshPartition->chunksCount() - 1),
-            chunk,
+        auto chunk = mMeshPartition->append(vertices, layout);
+        appendChunks(MeshChunkArray {chunk}, createBoundingBoxMesh);
+        return mMeshChunks[mMeshChunks.size() - 1];
+    }
+
+    void Mesh::appendChunks(const MeshChunkArray &chunks, bool createBoundingBoxMesh)
+    {
+        for (uint32_t i = 0; i < chunks.size(); ++i)
+        {
+            std::optional<uint32_t> boudingBoxChunkindex;
+            if (createBoundingBoxMesh)
+            {
+                createBoudingBox(chunks[i]);
+                boudingBoxChunkindex = static_cast<uint32_t>(mBoundingBoxMeshChunks.size() - 1);
+            }
+
+            mMeshChunks.push_back(ChunkEntity {
+                static_cast<uint32_t>(mMeshPartition->chunksCount() - chunks.size() + i),
+                boudingBoxChunkindex,
+                chunks[i],
+                nullptr
+            });
+        }
+    }
+
+    void Mesh::createBoudingBox(const lite3d_mesh_chunk *chunk)
+    {
+        if (!mBoundingBoxMeshPartition)
+        {
+            ConfigurationWriter partitionCfg;
+            partitionCfg.set(L"Dynamic", false);
+
+            auto partitionName = mMeshPartition->getName() + "_bouding_box";
+            mBoundingBoxMeshPartition = getMain().getResourceManager()->queryResourceFromJson<MeshPartition>(
+                partitionName, partitionCfg.write());
+        }
+
+        const uint32_t boxVerticesCount = 36;
+        BufferData vertexData(boxVerticesCount * chunk->vertexStride, 0);
+        kmVec3 vmin = chunk->boundingVol.box[0];
+        kmVec3 vmax = chunk->boundingVol.box[7];
+
+        const float bbVertices[] = {
+            vmin.x, vmin.y, vmax.z,
+            vmax.x, vmin.y, vmax.z,
+            vmax.x, vmax.y, vmax.z,
+
+            vmax.x, vmax.y, vmax.z,
+            vmin.x, vmax.y, vmax.z,
+            vmin.x, vmin.y, vmax.z,
+
+            vmin.x, vmin.y, vmin.z,
+            vmin.x, vmax.y, vmin.z,
+            vmax.x, vmax.y, vmin.z,
+
+            vmax.x, vmax.y, vmin.z,
+            vmax.x, vmin.y, vmin.z,
+            vmin.x, vmin.y, vmin.z,
+
+            vmin.x, vmax.y, vmin.z,
+            vmin.x, vmax.y, vmax.z,
+            vmax.x, vmax.y, vmax.z,
+
+            vmax.x, vmax.y, vmax.z,
+            vmax.x, vmax.y, vmin.z,
+            vmin.x, vmax.y, vmin.z,
+
+            vmin.x, vmin.y, vmin.z,
+            vmax.x, vmin.y, vmin.z,
+            vmax.x, vmin.y, vmax.z,
+
+            vmax.x, vmin.y, vmax.z,
+            vmin.x, vmin.y, vmax.z,
+            vmin.x, vmin.y, vmin.z,
+
+            vmax.x, vmin.y, vmin.z,
+            vmax.x, vmax.y, vmin.z,
+            vmax.x, vmax.y, vmax.z,
+
+            vmax.x, vmax.y, vmax.z,
+            vmax.x, vmin.y, vmax.z,
+            vmax.x, vmin.y, vmin.z,
+
+            vmin.x, vmin.y, vmin.z,
+            vmin.x, vmin.y, vmax.z,
+            vmin.x, vmax.y, vmax.z,
+
+            vmin.x, vmax.y, vmax.z,
+            vmin.x, vmax.y, vmin.z,
+            vmin.x, vmin.y, vmin.z
+        };
+
+        bool skipChunk = true;
+        size_t vOffset = 0;
+        for (uint32_t i = 0; i < chunk->layoutEntriesCount; ++i)
+        {
+            if (chunk->layout[i].binding == LITE3D_BUFFER_BINDING_VERTEX)
+            {
+                if (chunk->layout[i].count >= 3)
+                {
+                    skipChunk = false;
+                }
+                break;
+            }
+
+            vOffset += chunk->layout[i].count * sizeof(float);
+        }
+
+        if (skipChunk)
+        {
+            return;
+        }
+
+        uint8_t *pBuffer = &vertexData[vOffset];
+        for (uint32_t i = 0; i < boxVerticesCount; ++i, pBuffer += chunk->vertexStride)
+        {
+            memcpy(pBuffer, &bbVertices[i * 3], sizeof(float) * 3);
+        }
+
+        BufferLayout layout(chunk->layout, chunk->layout + chunk->layoutEntriesCount);
+        auto bbchunk = mBoundingBoxMeshPartition->append(VertexArrayWrap(vertexData, boxVerticesCount), layout);
+        bbchunk->materialIndex = chunk->materialIndex;
+        bbchunk->boundingVol = chunk->boundingVol;
+
+        mBoundingBoxMeshChunks.push_back(ChunkEntity {
+            static_cast<uint32_t>(mBoundingBoxMeshPartition->chunksCount() - 1),
+            std::nullopt,
+            bbchunk,
             nullptr
         });
-
-        return mMeshChunks.size() - 1;
     }
 }

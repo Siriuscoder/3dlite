@@ -70,7 +70,7 @@ namespace lite3dpp
         lite3d_mesh_purge(&mPartition);
     }
 
-    lite3d_mesh_chunk *MeshPartition::appendMeshChunk(const BufferWrap &vertices, const BufferWrap &indices,
+    lite3d_mesh_chunk *MeshPartition::append(const VertexArrayWrap &vertices, const IndexArrayWrap &indices,
         const BufferLayout &layout)
     {
         // Поддерживаются только 4 байтные индексы, не вижу смысла байт и 2 байта.
@@ -83,7 +83,7 @@ namespace lite3dpp
         return LITE3D_ARR_GET_LAST(&mPartition.chunks, lite3d_mesh_chunk);
     }
 
-    lite3d_mesh_chunk *MeshPartition::appendMeshChunk(const BufferWrap &vertices, const BufferLayout &layout)
+    lite3d_mesh_chunk *MeshPartition::append(const VertexArrayWrap &vertices, const BufferLayout &layout)
     {
         if (!lite3d_mesh_extend_from_memory(&mPartition, vertices.get<void>(), vertices.size(), 
             layout.data(), layout.size(), mMode))
@@ -94,7 +94,7 @@ namespace lite3dpp
         return LITE3D_ARR_GET_LAST(&mPartition.chunks, lite3d_mesh_chunk);
     }
 
-    stl<lite3d_mesh_chunk *>::vector MeshPartition::loadMeshByAssimp(const String &filePath, const String &modelName, 
+    MeshChunkArray MeshPartition::loadMeshByAssimp(const String &filePath, const String &modelName, 
         uint32_t flags)
     {
 #ifdef INCLUDE_ASSIMP
@@ -115,10 +115,10 @@ namespace lite3dpp
 #else
         LITE3D_THROW(getName() << ": assimp codec is not supported");
 #endif
-        return stl<lite3d_mesh_chunk *>::vector();
+        return MeshChunkArray();
     }
 
-    stl<lite3d_mesh_chunk *>::vector MeshPartition::loadMesh(const String &filePath)
+    MeshChunkArray MeshPartition::loadMesh(const String &filePath)
     {
 /*
         if (!lite3d_mesh_load_from_m_file(mMesh, 
@@ -126,6 +126,6 @@ namespace lite3dpp
             helper.getBool(L"Dynamic", false) ? LITE3D_VBO_DYNAMIC_DRAW : LITE3D_VBO_STATIC_DRAW))
             LITE3D_THROW(getName() << ": could not load mesh chunk");
 */
-        return stl<lite3d_mesh_chunk *>::vector();
+        return MeshChunkArray();
     }
 }

@@ -26,8 +26,6 @@ namespace lite3dpp
     class LITE3DPP_EXPORT MeshPartition : public ConfigurableResource, public Noncopiable
     {
     public:
-        
-        typedef stl<lite3d_vao_layout>::vector BufferLayout; 
 
         MeshPartition(const String &name, const String &path, Main *main);
         virtual ~MeshPartition() = default;
@@ -44,11 +42,11 @@ namespace lite3dpp
         size_t usedVideoMemBytes() const override;
 
 
-        lite3d_mesh_chunk *appendMeshChunk(const BufferWrap &vertices, const BufferWrap &indices, 
+        lite3d_mesh_chunk *append(const VertexArrayWrap &vertices, const IndexArrayWrap &indices, 
             const BufferLayout &layout);
-        lite3d_mesh_chunk *appendMeshChunk(const BufferWrap &vertices, const BufferLayout &layout);
-        stl<lite3d_mesh_chunk *>::vector loadMeshByAssimp(const String &filePath, const String &modelName, uint32_t flags);
-        stl<lite3d_mesh_chunk *>::vector loadMesh(const String &filePath);
+        lite3d_mesh_chunk *append(const VertexArrayWrap &vertices, const BufferLayout &layout);
+        MeshChunkArray loadMeshByAssimp(const String &filePath, const String &modelName, uint32_t flags);
+        MeshChunkArray loadMesh(const String &filePath);
 
     protected:
 

@@ -17,25 +17,36 @@
  *******************************************************************************/
 #pragma once
 
+#include <lite3d/lite3d_mesh.h>
 #include <lite3dpp/lite3dpp_common.h>
 #include <lite3dpp/lite3dpp_manageable.h>
 
 namespace lite3dpp
 {
-    class BufferWrap
+    using PixelsData = stl<uint8_t>::vector;
+    using BufferData = PixelsData;
+    using BufferLayout = stl<lite3d_vao_layout>::vector; 
+    using MeshChunkArray = stl<lite3d_mesh_chunk *>::vector;
+
+    class VertexArrayWrap
     {
     public:
 
+        VertexArrayWrap(const BufferData &ptr, size_t elementsCount) : 
+            mPtr(ptr.data()),
+            mElementsCount(elementsCount)
+        {}
+
         template <class T, typename std::enable_if_t<std::is_class_v<T>, bool> = true>
-        BufferWrap(const T &v) : 
+        VertexArrayWrap(const T &v) : 
             mPtr(v.data()),
-            mSize(v.size())
+            mElementsCount(v.size())
         {}
 
         template<class T>
-        BufferWrap(const T *ptr, size_t size) : 
+        VertexArrayWrap(const T *ptr, size_t elementsCount) : 
             mPtr(ptr),
-            mSize(size)
+            mElementsCount(elementsCount)
         {}
 
         template<class T>
@@ -46,12 +57,14 @@ namespace lite3dpp
 
         inline size_t size() const
         {
-            return mSize;
+            return mElementsCount;
         }
 
     private:
 
         const void *mPtr;
-        size_t mSize;
+        size_t mElementsCount;
     };
+
+    using IndexArrayWrap = VertexArrayWrap;
 }

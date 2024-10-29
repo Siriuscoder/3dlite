@@ -19,12 +19,12 @@
 
 #include <lite3dpp/lite3dpp_manageable.h>
 #include <lite3dpp/lite3dpp_config_reader.h>
+#include <lite3dpp/lite3dpp_buffer_wrapper.h>
 
 #define LITE3D_EMPTY_JSON                       "{}\0"
 
 namespace lite3dpp
 {
-    typedef stl<uint8_t>::vector PixelsData, BufferData;
     class LITE3DPP_EXPORT AbstractResource : public Manageable
     {
     public:

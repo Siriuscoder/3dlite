@@ -29,13 +29,11 @@ namespace lite3dpp
 
         struct ChunkEntity
         {
-            uint32_t chunkIndex = 0;
+            uint32_t chunkIndexInsidePartition = 0;
+            std::optional<uint32_t> boudingBoxChunkindex;
             lite3d_mesh_chunk *chunk = nullptr;
             Material *material = nullptr;
         };
-        
-        typedef stl<lite3d_vao_layout>::vector BufferLayout; 
-        typedef stl<ChunkEntity>::vector MeshChunks;
 
         Mesh(const String &name, const String &path, Main *main);
         virtual ~Mesh() = default;
@@ -48,19 +46,21 @@ namespace lite3dpp
         { return mMeshPartition; }
         MeshPartition *getBoudingBoxPartition()
         { return mBoundingBoxMeshPartition; }
-        lite3d_mesh_chunk *getChunk(uint32_t index);
-        lite3d_mesh_chunk *getChunkBoudingBox(uint32_t index);
+        ChunkEntity getChunk(uint32_t index) const;
+        ChunkEntity getChunkBoudingBox(uint32_t index) const;
         void autoAssignMaterialIndexes();
 
         /* return the index of the appended chunk */
-        uint32_t appendChunk(const BufferWrap &vertices, const BufferWrap &indices, const BufferLayout &layout);
-        uint32_t appendChunk(const BufferWrap &vertices, const BufferLayout &layout);
+        ChunkEntity append(const VertexArrayWrap &vertices, const IndexArrayWrap &indices, const BufferLayout &layout,
+            bool createBoundingBoxMesh = true);
+
+        ChunkEntity append(const VertexArrayWrap &vertices, const BufferLayout &layout,
+            bool createBoundingBoxMesh = true);
         
     protected:
 
         virtual void loadFromConfigImpl(const ConfigurationReader &config) override;
         virtual void unloadImpl() override;
-        void initBouningBox();
         void initPartition(const ConfigurationReader &config);
         void loadModel(const ConfigurationReader &config);
         void loadAssimpModel(const ConfigurationReader &config);
@@ -68,8 +68,12 @@ namespace lite3dpp
         void genBigTriangle();
         void genSkybox(const kmVec3 &center, const kmVec3 &size);
         void genArray(const stl<kmVec3>::vector &points, const kmVec3 &bbmin, const kmVec3 &bbmax);
+        void appendChunks(const MeshChunkArray &chunks, bool createBoundingBoxMesh);
+        void createBoudingBox(const lite3d_mesh_chunk *chunk);
 
     private:
+
+        using MeshChunks = stl<ChunkEntity>::vector;
 
         MeshPartition *mMeshPartition = nullptr;
         MeshPartition *mBoundingBoxMeshPartition = nullptr;
