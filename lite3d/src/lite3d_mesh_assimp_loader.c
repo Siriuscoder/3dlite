@@ -196,42 +196,16 @@ static int ai_node_load_to_vbo(lite3d_mesh *meshInst, const struct aiScene *scen
             }
         }
 
-        if (componentSize == sizeof(uint8_t))
+        register uint32_t *pindexes32 = (uint32_t *) indexes;
+        for (j = 0; j < mesh->mNumFaces; ++j)
         {
-            register uint8_t *pindexes8 = (uint8_t *) indexes;
-
-            for (j = 0; j < mesh->mNumFaces; ++j)
-            {
-                *pindexes8++ = (uint8_t) mesh->mFaces[j].mIndices[0];
-                *pindexes8++ = (uint8_t) mesh->mFaces[j].mIndices[1];
-                *pindexes8++ = (uint8_t) mesh->mFaces[j].mIndices[2];
-            }
-        }
-        else if (componentSize == sizeof(uint16_t))
-        {
-            register uint16_t *pindexes16 = (uint16_t *) indexes;
-
-            for (j = 0; j < mesh->mNumFaces; ++j)
-            {
-                *pindexes16++ = (uint16_t) mesh->mFaces[j].mIndices[0];
-                *pindexes16++ = (uint16_t) mesh->mFaces[j].mIndices[1];
-                *pindexes16++ = (uint16_t) mesh->mFaces[j].mIndices[2];
-            }
-        }
-        else if (componentSize == sizeof(uint32_t))
-        {
-            register uint32_t *pindexes32 = (uint32_t *) indexes;
-
-            for (j = 0; j < mesh->mNumFaces; ++j)
-            {
-                *pindexes32++ = mesh->mFaces[j].mIndices[0];
-                *pindexes32++ = mesh->mFaces[j].mIndices[1];
-                *pindexes32++ = mesh->mFaces[j].mIndices[2];
-            }
+            *pindexes32++ = mesh->mFaces[j].mIndices[0];
+            *pindexes32++ = mesh->mFaces[j].mIndices[1];
+            *pindexes32++ = mesh->mFaces[j].mIndices[2];
         }
 
         if (!lite3d_mesh_indexed_extend_from_memory(meshInst, vertices, mesh->mNumVertices,
-            layout, layoutCount, indexes, mesh->mNumFaces, componentSize, access))
+            layout, layoutCount, indexes, mesh->mNumFaces, access))
             return LITE3D_FALSE;
 
         /* set material index to currently added meshChunk */

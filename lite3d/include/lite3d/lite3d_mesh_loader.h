@@ -41,7 +41,6 @@ LITE3D_CEXPORT int lite3d_mesh_indexed_load_from_memory(lite3d_mesh *mesh,
     uint32_t layoutCount,
     const void *indexes, 
     uint32_t elementsCount,
-    uint8_t indexComponentSize, 
     uint16_t access);
 
 LITE3D_CEXPORT int lite3d_mesh_indexed_extend_from_memory(lite3d_mesh *mesh, 
@@ -51,7 +50,6 @@ LITE3D_CEXPORT int lite3d_mesh_indexed_extend_from_memory(lite3d_mesh *mesh,
     uint32_t layoutCount,
     const void *indexes, 
     uint32_t elementsCount,
-    uint8_t indexComponentSize, 
     uint16_t access);
 
 LITE3D_CEXPORT int lite3d_mesh_load_from_memory(lite3d_mesh *mesh, 

@@ -31,7 +31,6 @@ int lite3d_mesh_indexed_load_from_memory(lite3d_mesh *mesh,
     uint32_t layoutCount,
     const void *indexes,
     uint32_t elementsCount,
-    uint8_t indexComponentSize,
     uint16_t access)
 {
     size_t verticesSize = 0, indexesSize = 0;
@@ -47,14 +46,13 @@ int lite3d_mesh_indexed_load_from_memory(lite3d_mesh *mesh,
     if (!lite3d_vbo_buffer(&mesh->vertexBuffer, vertices, verticesSize, access))
         return LITE3D_FALSE;
 
-    indexesSize = 3 * indexComponentSize * elementsCount;
+    indexesSize = 3 * sizeof(uint32_t) * elementsCount;
     /* store index data to GPU memory */
     if (!lite3d_vbo_buffer(&mesh->indexBuffer, indexes, indexesSize, access))
         return LITE3D_FALSE;
 
     /* append new batch */
-    if (!lite3d_mesh_append_chunk(mesh, layout, layoutCount, stride,
-        lite3d_index_component_type_by_size(indexComponentSize), elementsCount * 3,
+    if (!lite3d_mesh_append_chunk(mesh, layout, layoutCount, stride, elementsCount * 3,
         indexesSize, 0, verticesCount, verticesSize, 0))
         return LITE3D_FALSE;
 
@@ -71,7 +69,6 @@ int lite3d_mesh_indexed_extend_from_memory(lite3d_mesh *mesh,
     uint32_t layoutCount,
     const void *indexes,
     uint32_t elementsCount,
-    uint8_t indexComponentSize,
     uint16_t access)
 {
     size_t verticesSize = 0, indexesSize = 0, offsetVertices = 0, offsetIndexes = 0;
@@ -82,14 +79,14 @@ int lite3d_mesh_indexed_extend_from_memory(lite3d_mesh *mesh,
     if (!mesh->chunks.size)
     {
         return lite3d_mesh_indexed_load_from_memory(mesh, vertices, verticesCount,
-            layout, layoutCount, indexes, elementsCount, indexComponentSize, access);
+            layout, layoutCount, indexes, elementsCount, access);
     }
 
     /* calculate buffer parameters */
     for (i = 0; i < layoutCount; ++i)
         stride += layout[i].count * sizeof (float);
     verticesSize = (size_t)stride * (size_t)verticesCount;
-    indexesSize = 3 * indexComponentSize * elementsCount;
+    indexesSize = 3 * sizeof(uint32_t) * elementsCount;
     /* expand VBO */
     offsetVertices = mesh->vertexBuffer.size;
     offsetIndexes = mesh->indexBuffer.size;
@@ -107,8 +104,7 @@ int lite3d_mesh_indexed_extend_from_memory(lite3d_mesh *mesh,
         return LITE3D_FALSE;
 
     /* append new batch */
-    if (!lite3d_mesh_append_chunk(mesh, layout, layoutCount, stride,
-        lite3d_index_component_type_by_size(indexComponentSize), elementsCount * 3,
+    if (!lite3d_mesh_append_chunk(mesh, layout, layoutCount, stride, elementsCount * 3,
         indexesSize, offsetIndexes, verticesCount, verticesSize, offsetVertices))
         return LITE3D_FALSE;
 
@@ -140,7 +136,7 @@ int lite3d_mesh_load_from_memory(lite3d_mesh *mesh,
 
     /* append new batch */
     if (!lite3d_mesh_append_chunk(mesh, layout, layoutCount, stride,
-        0, 0, 0, 0, verticesCount, verticesSize, 0))
+        0, 0, 0, verticesCount, verticesSize, 0))
         return LITE3D_FALSE;
 
     mesh->verticesCount = verticesCount;
@@ -182,7 +178,7 @@ int lite3d_mesh_extend_from_memory(lite3d_mesh *mesh,
 
     /* append new batch */
     if (!lite3d_mesh_append_chunk(mesh, layout, layoutCount, stride,
-        0, 0, 0, 0, verticesCount, verticesSize, offsetVertices))
+        0, 0, 0, verticesCount, verticesSize, offsetVertices))
         return LITE3D_FALSE;
 
     mesh->verticesCount += verticesCount;

@@ -17,38 +17,41 @@
  *******************************************************************************/
 #pragma once
 
-#include <lite3dpp/lite3dpp_scene_node.h>
-#include <lite3dpp/lite3dpp_mesh.h>
+#include <lite3dpp/lite3dpp_common.h>
+#include <lite3dpp/lite3dpp_manageable.h>
 
 namespace lite3dpp
 {
-    class LITE3DPP_EXPORT MeshSceneNode : public SceneNode
+    class BufferWrap
     {
     public:
 
-        using Ptr = std::shared_ptr<MeshSceneNode>;
-        
-        MeshSceneNode(const ConfigurationReader &json, SceneNodeBase *parent, Scene *scene);
-        
-        inline Mesh *getMesh()
-        { return mMesh; }
-        inline const Mesh *getMesh() const
-        { return mMesh; }
-        
-        inline void instances(uint32_t count)
-        { mInstances = count; }
-        
-        void replaceMaterial(int chunkNo, Material *material);
-            
-    protected:
+        template<class T>
+        BufferWrap(const typename std::vector<T> &v) : 
+            mPtr(v.data()),
+            mSize(v.size())
+        {}
 
-        void setMesh(Mesh *mesh);
-        void applyMaterial(int chunkNo, Material *material);
-        
+        template<class T>
+        BufferWrap(const T *ptr, size_t size) : 
+            mPtr(ptr),
+            mSize(size)
+        {}
+
+        template<class T>
+        inline const T *get() const
+        {
+            return static_cast<const T *>(mPtr);
+        }
+
+        inline size_t size() const
+        {
+            return mSize;
+        }
+
     private:
-        
-        //Mesh::MaterialMapping mMaterialMappingReplacement;
-        Mesh *mMesh = nullptr;
-        uint32_t mInstances = 1;
+
+        const void *mPtr;
+        size_t mSize;
     };
 }

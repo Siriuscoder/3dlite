@@ -192,6 +192,11 @@ namespace lite3dpp
             case AbstractResource::PIPELINE:
                 stats.pipelinesCount++;
                 break;
+            case AbstractResource::MESH_PARTITION:
+                stats.meshPartitionsCount++;
+                if (resIt->second->getState() == AbstractResource::LOADED)
+                    stats.meshPartitionsLoadedCount++;
+                break;
             }
         }
 

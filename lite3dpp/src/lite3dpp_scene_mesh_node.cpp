@@ -34,7 +34,7 @@ namespace lite3dpp
             setMesh(getMain()->getResourceManager()->queryResource<Mesh>(
                 meshHelper.getString(L"Name"),
                 meshHelper.getString(L"Mesh")));
-
+/*
             for (auto &matMap : meshHelper.getObjects(L"MaterialMapping"))
             {
                 mMaterialMappingReplacement[matMap.getInt(L"MaterialIndex")] = 
@@ -47,28 +47,30 @@ namespace lite3dpp
             {
                 applyMaterial(material.first, material.second);
             }
++*/
         }
     }
     
     void MeshSceneNode::setMesh(Mesh *mesh)
     {
         SDL_assert(mesh);
-        mMaterialMappingReplacement = mesh->getMaterialMapping();
+     //   mMaterialMappingReplacement = mesh->getMaterialMapping();
         mMesh = mesh;
     }
 
     void MeshSceneNode::replaceMaterial(int chunkNo, Material *material)
     {
-        mMaterialMappingReplacement[chunkNo] = material;
-        applyMaterial(chunkNo, material);
+       // mMaterialMappingReplacement[chunkNo] = material;
+       // applyMaterial(chunkNo, material);
     }
 
     void MeshSceneNode::applyMaterial(int chunkNo, Material *material)
     {
+
         if (mMesh) /* check node is attached to scene */
         {
+            /*
             getPtr()->renderable = LITE3D_TRUE;
-            /* touch material and mesh chunk to node */ 
             lite3d_mesh_chunk *meshChunk = lite3d_mesh_chunk_get_by_index(mMesh->getPtr(), chunkNo);
                 lite3d_mesh_chunk *bbMeshChunk = mMesh->getBBPtr() ? 
                 lite3d_mesh_chunk_get_by_index(mMesh->getBBPtr(), chunkNo) : nullptr;
@@ -78,6 +80,7 @@ namespace lite3dpp
                 {
                     LITE3D_THROW("Linking node failed..");
             }
+*/            
         }
     }
 }

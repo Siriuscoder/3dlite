@@ -50,6 +50,7 @@ namespace lite3dpp
             SHADER_STORAGE,
             UNIFORM_BUFFER,
             PIPELINE,
+            MESH_PARTITION
         };
 
         AbstractResource(const String &name, 

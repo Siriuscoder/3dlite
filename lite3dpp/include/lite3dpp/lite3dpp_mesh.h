@@ -18,79 +18,63 @@
 #pragma once
 
 #include <lite3d/lite3d_mesh.h>
-
-#include <lite3dpp/lite3dpp_common.h>
-#include <lite3dpp/lite3dpp_resource.h>
-#include <lite3dpp/lite3dpp_config_reader.h>
 #include <lite3dpp/lite3dpp_material.h>
-#include <lite3dpp/lite3dpp_vbo.h>
+#include <lite3dpp/lite3dpp_mesh_partition.h>
 
 namespace lite3dpp
 {
     class LITE3DPP_EXPORT Mesh : public ConfigurableResource, public Noncopiable
     {
     public:
+
+        struct ChunkEntity
+        {
+            uint32_t chunkIndex = 0;
+            lite3d_mesh_chunk *chunk = nullptr;
+            Material *material = nullptr;
+        };
         
         typedef stl<lite3d_vao_layout>::vector BufferLayout; 
-        typedef stl<int, Material *>::map MaterialMapping;
+        typedef stl<ChunkEntity>::vector MeshChunks;
 
         Mesh(const String &name, const String &path, Main *main);
         virtual ~Mesh() = default;
 
-        void applyMaterial(int unit, Material *material);
-        inline const MaterialMapping &getMaterialMapping() const
-        { return mMaterialMapping; }
-        inline uint32_t chunksCount() const
-        { return mChunksCount; }
+        void applyMaterial(uint32_t materialIdx, Material *material);
+        inline size_t chunksCount() const
+        { return mMeshChunks.size(); }
 
-        lite3d_mesh *getPtr();
-        lite3d_mesh *getBBPtr();
-        VBO vertexBuffer();
-        VBO indexBuffer();
+        MeshPartition *getPartition() 
+        { return mMeshPartition; }
+        MeshPartition *getBoudingBoxPartition()
+        { return mBoundingBoxMeshPartition; }
+        lite3d_mesh_chunk *getChunk(uint32_t index);
+        lite3d_mesh_chunk *getChunkBoudingBox(uint32_t index);
+        void autoAssignMaterialIndexes();
 
-        lite3d_mesh_chunk *operator[](uint32_t index);
+        /* return the index of the appended chunk */
+        uint32_t appendChunk(const BufferWrap &vertices, const BufferWrap &indices, const BufferLayout &layout);
+        uint32_t appendChunk(const BufferWrap &vertices, const BufferLayout &layout);
         
-        template<class V, class Indx>
-        void addChunk(const typename stl<V>::vector &vertices,
-            const typename stl<Indx>::vector &indices, const BufferLayout &layout, 
-            int indexSize, VBO::VBOMode mode = VBO::ModeDynamicDraw)
-        {
-            if(!lite3d_mesh_indexed_extend_from_memory(&mMesh, &vertices[0], vertices.size(),
-                &layout[0], layout.size(), &indices[0], indices.size(), indexSize, mode))
-                LITE3D_THROW(getName() << ": append mesh chunk failed..");
-        }
-
-        template<class V>
-        void addChunk(const typename stl<V>::vector &vertices,
-            const BufferLayout &layout, VBO::VBOMode mode = VBO::ModeDynamicDraw)
-        {
-            if(!lite3d_mesh_extend_from_memory(&mMesh, &vertices[0], vertices.size(),
-                &layout[0], layout.size(), mode))
-                LITE3D_THROW(getName() << ": append mesh chunk failed..");
-        }
-        
-        size_t usedVideoMemBytes() const override;
-
     protected:
 
-        virtual void loadFromConfigImpl(const ConfigurationReader &helper) override;
+        virtual void loadFromConfigImpl(const ConfigurationReader &config) override;
         virtual void unloadImpl() override;
-        void loadBBMesh();
-        void initMesh(const ConfigurationReader &helper);
-        void genPlane(const kmVec2 &size, bool dynamic);
-        void genBigTriangle(bool dynamic);
-        void genSkybox(const kmVec3 &center, const kmVec3 &size, bool dynamic);
-        void genArray(const stl<kmVec3>::vector &points, const kmVec3 &bbmin, const kmVec3 &bbmax, bool dynamic);
-        void recalcChunksCount();
+        void initBouningBox();
+        void initPartition(const ConfigurationReader &config);
+        void loadModel(const ConfigurationReader &config);
+        void loadAssimpModel(const ConfigurationReader &config);
+        void genPlane(const kmVec2 &size);
+        void genBigTriangle();
+        void genSkybox(const kmVec3 &center, const kmVec3 &size);
+        void genArray(const stl<kmVec3>::vector &points, const kmVec3 &bbmin, const kmVec3 &bbmax);
 
     private:
 
-        lite3d_mesh *mMesh = nullptr;
-        uint32_t mChunksCount = 0;
-        uint32_t mFirstChunkIndex = 0;
-        MaterialMapping mMaterialMapping;
-        lite3d_mesh mSelfMesh = {0};
-        lite3d_mesh mSelfBBMesh = {0};
+        MeshPartition *mMeshPartition = nullptr;
+        MeshPartition *mBoundingBoxMeshPartition = nullptr;
+        MeshChunks mMeshChunks;
+        MeshChunks mBoundingBoxMeshChunks;
     };
 }
 

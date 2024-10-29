@@ -81,8 +81,6 @@ int lite3d_mesh_extend(struct lite3d_mesh *mesh, size_t verticesSize,
 {
     SDL_assert(mesh);
 
-    lite3d_misc_gl_error_stack_clean();
-
     if (verticesSize > 0)
     {
         if (!lite3d_vbo_extend(&mesh->vertexBuffer, verticesSize, access))
@@ -169,7 +167,6 @@ lite3d_mesh_chunk *lite3d_mesh_append_chunk(lite3d_mesh *mesh,
     const lite3d_vao_layout *layout,
     uint32_t layoutCount,
     uint32_t stride,
-    uint16_t componentType,
     uint32_t indexesCount,
     size_t indexesSize,
     size_t indexesOffset,
@@ -194,7 +191,7 @@ lite3d_mesh_chunk *lite3d_mesh_append_chunk(lite3d_mesh *mesh,
     memcpy(meshChunk.layout, layout, layoutCount * sizeof(lite3d_vao_layout));
 
     if (!lite3d_vao_init_layout(&mesh->vertexBuffer, &mesh->indexBuffer, mesh->auxBuffer, 
-        &meshChunk.vao, meshChunk.layout, layoutCount, stride, componentType, indexesCount, 
+        &meshChunk.vao, meshChunk.layout, layoutCount, stride, indexesCount, 
         indexesSize, indexesOffset, verticesCount, verticesSize, verticesOffset))
     {
         lite3d_mesh_chunk_purge(&meshChunk);
@@ -214,14 +211,3 @@ lite3d_mesh_chunk *lite3d_mesh_append_chunk(lite3d_mesh *mesh,
     return LITE3D_ARR_GET_LAST(&mesh->chunks, lite3d_mesh_chunk);
 }
 
-uint16_t lite3d_index_component_type_by_size(uint8_t size)
-{
-    return size == sizeof(uint8_t) ? GL_UNSIGNED_BYTE :
-        (size == sizeof(uint16_t) ? GL_UNSIGNED_SHORT : GL_UNSIGNED_INT);
-}
-
-uint8_t lite3d_size_by_index_type(uint16_t type)
-{
-    return type == GL_UNSIGNED_BYTE ? sizeof(uint8_t) : 
-        (type == GL_UNSIGNED_SHORT ? sizeof(uint16_t) : sizeof(uint32_t));
-}
