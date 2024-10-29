@@ -94,7 +94,7 @@ void MeshInfoCommand::printInfo(const lite3d_file *meshFile)
         printf("\tElements count: %d\n", meshChunk->vao.indexesCount / 3);
         printf("\tVertices offset: 0x%zx\n", meshChunk->vao.verticesOffset);
         printf("\tIndices offset: 0x%zx\n", meshChunk->vao.indexesOffset);
-        printf("\tIndex size: %d bytes\n\n", lite3d_size_by_index_type(meshChunk->vao.indexType));
+        printf("\tIndex size: 4 bytes\n\n");
 
         printf("\tFORMAT\n");
         printf("\tLoc\tType\t\tData\tOffset\n");

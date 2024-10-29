@@ -20,7 +20,7 @@
 #include <SDL_log.h>
 #include <SDL_assert.h>
 
-#include <functional>
+#include <algorithm>
 
 #include <lite3d/lite3d_mesh_loader.h>
 #include <lite3d/lite3d_mesh_assimp_loader.h>

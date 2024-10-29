@@ -51,7 +51,7 @@ typedef struct lite3d_m_chunk
     int32_t verticesCount;
     int32_t verticesSize;
     int32_t verticesOffset;
-    uint8_t indexElemSize;
+    uint8_t indexElemSize; // it is not used anymore, always 4 bytes per index 
     uint32_t materialIndex;
     lite3d_bounding_vol boundingVol;
 } lite3d_m_chunk;

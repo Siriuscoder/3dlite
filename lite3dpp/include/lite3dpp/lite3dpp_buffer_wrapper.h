@@ -26,8 +26,8 @@ namespace lite3dpp
     {
     public:
 
-        template<class T>
-        BufferWrap(const typename std::vector<T> &v) : 
+        template <class T, typename std::enable_if_t<std::is_class_v<T>, bool> = true>
+        BufferWrap(const T &v) : 
             mPtr(v.data()),
             mSize(v.size())
         {}

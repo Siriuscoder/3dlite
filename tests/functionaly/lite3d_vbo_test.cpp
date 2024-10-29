@@ -30,8 +30,7 @@ public:
         lite3d_mesh mVBO;
         lite3d_pack *fileSysPack = lite3d_pack_open("tests/", 0, 1000000);
         EXPECT_TRUE(fileSysPack != NULL);
-        lite3d_file *meshFile = lite3d_pack_file_load(fileSysPack,
-                                                                        "pack/minigun/minigun.3ds");
+        lite3d_file *meshFile = lite3d_pack_file_load(fileSysPack, "pack/minigun/minigun.3ds");
         EXPECT_TRUE(lite3d_mesh_init(&mVBO) == LITE3D_TRUE);
         EXPECT_TRUE(lite3d_assimp_mesh_load(&mVBO, meshFile, NULL, LITE3D_VBO_STATIC_DRAW, 0) == LITE3D_TRUE);
     
@@ -91,6 +90,82 @@ public:
         /* quit immediatly */
         return LITE3D_FALSE;
     }
+
+/*
+    static int encodeDecode_ConvertIndexTest(void *userdata)
+    {
+        lite3d_mesh mVBO;
+        lite3d_mesh mVBO1;
+    
+        lite3d_pack *fileSysPack = lite3d_pack_open("samples/", 0, 1000000);
+        EXPECT_TRUE(fileSysPack != NULL);
+        lite3d_file *meshFile = lite3d_pack_file_load(fileSysPack, "models/meshes/minigun.m");
+        EXPECT_TRUE(lite3d_mesh_init(&mVBO) == LITE3D_TRUE);
+        EXPECT_TRUE(lite3d_mesh_init(&mVBO1) == LITE3D_TRUE);
+        EXPECT_TRUE(lite3d_mesh_m_decode(&mVBO, meshFile->fileBuff, meshFile->fileSize, LITE3D_VBO_STATIC_DRAW) == LITE3D_TRUE);
+
+        for(size_t j = 0; j < mVBO.chunks.size; ++j)
+        {
+            auto chunk = static_cast<lite3d_mesh_chunk *>(lite3d_array_get(&mVBO.chunks, j));
+            uint32_t *newIndex = new uint32_t[chunk->vao.indexesCount];
+
+            if (chunk->vao.indexElemSize == 1)
+            {
+                uint8_t *iptr = (uint8_t *)lite3d_vbo_map(&mVBO.indexBuffer, LITE3D_VBO_MAP_READ_ONLY) + chunk->vao.indexesOffset;
+                for (uint32_t i = 0; i < chunk->vao.indexesCount; ++i)
+                {
+                    newIndex[i] = iptr[i];
+                }
+
+                lite3d_vbo_unmap(&mVBO.indexBuffer);
+            }
+            else if (chunk->vao.indexElemSize == 2)
+            {
+                uint16_t *iptr = (uint16_t *)((uint8_t *)lite3d_vbo_map(&mVBO.indexBuffer, LITE3D_VBO_MAP_READ_ONLY) + chunk->vao.indexesOffset);
+                for (uint32_t i = 0; i < chunk->vao.indexesCount; ++i)
+                {
+                    newIndex[i] = iptr[i];
+                }
+
+                lite3d_vbo_unmap(&mVBO.indexBuffer);
+            }
+            else if (chunk->vao.indexElemSize == 4)
+            {
+                uint32_t *iptr = (uint32_t *)((uint8_t *)lite3d_vbo_map(&mVBO.indexBuffer, LITE3D_VBO_MAP_READ_ONLY) + chunk->vao.indexesOffset);
+                for (uint32_t i = 0; i < chunk->vao.indexesCount; ++i)
+                {
+                    newIndex[i] = iptr[i];
+                }
+
+                lite3d_vbo_unmap(&mVBO.indexBuffer);
+            }
+
+            uint8_t *vptr = (uint8_t *)lite3d_vbo_map(&mVBO.vertexBuffer, LITE3D_VBO_MAP_READ_ONLY) + chunk->vao.verticesOffset;
+            EXPECT_TRUE(lite3d_mesh_indexed_extend_from_memory(&mVBO1, vptr, chunk->vao.verticesCount, chunk->layout, chunk->layoutEntriesCount, 
+                newIndex, chunk->vao.elementsCount, LITE3D_VBO_STATIC_DRAW) == LITE3D_TRUE);
+            
+            static_cast<lite3d_mesh_chunk *>(lite3d_array_get(&mVBO1.chunks, j))->materialIndex = chunk->materialIndex;
+            static_cast<lite3d_mesh_chunk *>(lite3d_array_get(&mVBO1.chunks, j))->boundingVol = chunk->boundingVol;
+            
+            lite3d_vbo_unmap(&mVBO.vertexBuffer);
+            delete [] newIndex;
+        }
+
+        size_t mfileSize = lite3d_mesh_m_encode_size(&mVBO1);
+        void *encodeBuffer = lite3d_malloc(mfileSize);
+        EXPECT_TRUE(lite3d_mesh_m_encode(&mVBO1, encodeBuffer, mfileSize) == LITE3D_TRUE);
+    
+        auto f = fopen("minigun.m", "wb");
+        fwrite(encodeBuffer, mfileSize, 1, f);
+        fclose(f);
+    
+        lite3d_free(encodeBuffer);
+        lite3d_mesh_purge(&mVBO);
+        lite3d_mesh_purge(&mVBO1);
+        lite3d_pack_close(fileSysPack);
+        return LITE3D_FALSE;
+    }
+*/
 };
 
 LITE3D_GTEST_DECLARE(VBO_Test, meshLoading, meshLoadingTest)

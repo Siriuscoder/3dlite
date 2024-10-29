@@ -254,7 +254,7 @@ static int initCube(void)
         -1.0f, 1.0f, -1.0f, 0.0f, 1.0f
     };
 
-    const uint8_t cubeIndices[] = {
+    const uint32_t cubeIndices[] = {
         0, 1, 2,
         2, 3, 0,
         4, 5, 6,
@@ -276,7 +276,7 @@ static int initCube(void)
 
     if (!lite3d_mesh_init(&mCubeVbo))
         return LITE3D_FALSE;
-    if (!lite3d_mesh_indexed_load_from_memory(&mCubeVbo, cubeVertices, 24, layout, 2, cubeIndices, 12, sizeof(uint8_t), LITE3D_VBO_STATIC_DRAW))
+    if (!lite3d_mesh_indexed_load_from_memory(&mCubeVbo, cubeVertices, 24, layout, 2, cubeIndices, 12, LITE3D_VBO_STATIC_DRAW))
         return LITE3D_FALSE;
     
     saveCube();

@@ -28,37 +28,6 @@ class MeshCompare_Test : public Lite3dCommon
 {
 public:
 
-    template<class T>
-    struct Index
-    {
-        T a, b, c;
-    };
-    
-    template<class T, class Y>
-    static bool compareIndexBlock(const Index<T> *left, const Index<Y> *right, size_t size)
-    {
-        //printf("Chunk %d\n", size);
-        for(size_t i = 0; i < size; ++i)
-        {
-            //printf("%d, %d, %d - %d, %d, %d\n", left[i].a, left[i].b, left[i].c, right[i].a, left[i].b, left[i].c);
-            if(!(left[i].a == right[i].a && left[i].b == right[i].b && left[i].c == right[i].c))
-                return false;
-        }
-    
-        return true;
-    }
-    
-    static bool compareIndex(const void *left, const void *right, int mode, size_t size)
-    {
-        if(mode ==  0x1401)
-            return compareIndexBlock(reinterpret_cast<const Index<uint32_t> *>(left), reinterpret_cast<const Index<uint8_t> *>(right), size);
-        if(mode ==  0x1403)
-            return compareIndexBlock(reinterpret_cast<const Index<uint32_t> *>(left), reinterpret_cast<const Index<uint16_t> *>(right), size);
-        if(mode ==  0x1405)
-            return compareIndexBlock(reinterpret_cast<const Index<uint32_t> *>(left), reinterpret_cast<const Index<uint32_t> *>(right), size);
-    
-        return false;
-    }
 
     static void loadMeshes(lite3d_mesh *ubrMesh, lite3d_mesh *brMesh, lite3d_pack **fileSysPack)
     {
@@ -132,46 +101,9 @@ public:
         /* quit immediatly */
         return LITE3D_FALSE;
     }
-
-    static int compareIndices(void *userdata)
-    {
-        lite3d_mesh ubrMesh;
-        lite3d_mesh brMesh;
-        lite3d_pack *fileSysPack = nullptr;
-        lite3d_mesh_chunk *ubrChunk = nullptr, *brChunk = nullptr;
-        loadMeshes(&ubrMesh, &brMesh, &fileSysPack);
-
-        char *ubrIndexBuffer = (char *)lite3d_vbo_map(&ubrMesh.indexBuffer, LITE3D_VBO_MAP_READ_ONLY);
-        EXPECT_TRUE(ubrIndexBuffer != NULL);
-        char *brIndexBuffer = (char *)lite3d_vbo_map(&brMesh.indexBuffer, LITE3D_VBO_MAP_READ_ONLY);
-        EXPECT_TRUE(brIndexBuffer != NULL);
-
-        /* check chunks data */
-        EXPECT_TRUE(ubrMesh.chunks.size == brMesh.chunks.size);
-        for(size_t i = 0; i < ubrMesh.chunks.size; ++i)
-        {
-            ubrChunk = static_cast<lite3d_mesh_chunk *>(lite3d_array_get(&ubrMesh.chunks, i));
-            brChunk = static_cast<lite3d_mesh_chunk *>(lite3d_array_get(&brMesh.chunks, i));
-
-            /* check index data */
-            EXPECT_TRUE(compareIndex(ubrIndexBuffer + ubrChunk->vao.indexesOffset, 
-                brIndexBuffer + brChunk->vao.indexesOffset, 
-                brChunk->vao.indexType, ubrChunk->vao.elementsCount));
-        }
-
-        lite3d_vbo_unmap(&ubrMesh.indexBuffer);
-        lite3d_vbo_unmap(&brMesh.indexBuffer);
-
-        lite3d_mesh_purge(&ubrMesh);
-        lite3d_mesh_purge(&brMesh);
-        lite3d_pack_close(fileSysPack);
-        /* quit immediatly */
-        return LITE3D_FALSE;
-    }
 };
 
 LITE3D_GTEST_DECLARE(MeshCompare_Test, CompareVertices, compareVertices)
 LITE3D_GTEST_DECLARE(MeshCompare_Test, CompareChunksData, compareChunkData)
-LITE3D_GTEST_DECLARE(MeshCompare_Test, CompareIndices, compareIndices)
 
 #endif
