@@ -17,6 +17,8 @@
  *******************************************************************************/
 #pragma once
 
+#include <optional>
+
 #include <lite3d/lite3d_mesh.h>
 #include <lite3dpp/lite3dpp_material.h>
 #include <lite3dpp/lite3dpp_mesh_partition.h>
@@ -46,8 +48,8 @@ namespace lite3dpp
         { return mMeshPartition; }
         MeshPartition *getBoudingBoxPartition()
         { return mBoundingBoxMeshPartition; }
-        ChunkEntity getChunk(uint32_t index) const;
-        ChunkEntity getChunkBoudingBox(uint32_t index) const;
+        ChunkEntity getChunk(size_t index) const;
+        ChunkEntity getChunkBoudingBox(size_t index) const;
         void autoAssignMaterialIndexes();
 
         /* return the index of the appended chunk */

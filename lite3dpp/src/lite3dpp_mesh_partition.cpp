@@ -21,6 +21,7 @@
 #include <SDL_assert.h>
 
 #include <lite3d/lite3d_mesh_loader.h>
+#include <lite3d/lite3d_mesh_assimp_loader.h>
 #include <lite3dpp/lite3dpp_main.h>
 
 namespace lite3dpp
@@ -74,8 +75,11 @@ namespace lite3dpp
         const BufferLayout &layout)
     {
         // Поддерживаются только 4 байтные индексы, не вижу смысла байт и 2 байта.
-        if (!lite3d_mesh_indexed_extend_from_memory(&mPartition, vertices.get<void>(), vertices.size(), 
-            layout.data(), layout.size(), indices.get<void>(), indices.size(), mMode))
+        if (!lite3d_mesh_indexed_extend_from_memory(&mPartition, 
+            vertices.get<void>(), static_cast<uint32_t>(vertices.size()), 
+            layout.data(), static_cast<uint32_t>(layout.size()), 
+            indices.get<void>(), static_cast<uint32_t>(indices.size()), 
+            mMode))
         {
             LITE3D_THROW(getName() << ": Failed to append mesh chunk");
         }
@@ -85,8 +89,8 @@ namespace lite3dpp
 
     lite3d_mesh_chunk *MeshPartition::append(const VertexArrayWrap &vertices, const BufferLayout &layout)
     {
-        if (!lite3d_mesh_extend_from_memory(&mPartition, vertices.get<void>(), vertices.size(), 
-            layout.data(), layout.size(), mMode))
+        if (!lite3d_mesh_extend_from_memory(&mPartition, vertices.get<void>(), static_cast<uint32_t>(vertices.size()), 
+            layout.data(), static_cast<uint32_t>(layout.size()), mMode))
         {
             LITE3D_THROW(getName() << ": Failed to append mesh chunk");
         }
@@ -97,35 +101,44 @@ namespace lite3dpp
     MeshChunkArray MeshPartition::loadMeshByAssimp(const String &filePath, const String &modelName, 
         uint32_t flags)
     {
+        MeshChunkArray newChunks;
+
 #ifdef INCLUDE_ASSIMP
-/*
-        uint32_t flags = 0;
-        if (helper.getBool(L"Optimize"))
-            flags |= LITE3D_OPTIMIZE_MESH_FLAG;
-        if (helper.getBool(L"FlipUV"))
-            flags |= LITE3D_FLIP_UV_FLAG;
-        
-        if (!lite3d_assimp_mesh_load(mMesh, 
-            getMain().getResourceManager()->loadFileToMemory(helper.getString(L"Model")),
-            helper.getString(L"ModelName").c_str(), 
-            helper.getBool(L"Dynamic", false) ? LITE3D_VBO_DYNAMIC_DRAW : LITE3D_VBO_STATIC_DRAW,
-            flags))
-            LITE3D_THROW(getName() << ": could not load mesh chunk");
-*/
+        auto chunksCountBefore = mPartition.chunks.size;
+        if (!lite3d_assimp_mesh_load(&mPartition, 
+            getMain().getResourceManager()->loadFileToMemory(filePath), modelName.c_str(), 
+            mMode, flags))
+        {
+            LITE3D_THROW(getName() << ": Failed to load mesh via assimp");
+        }
+
+        for (size_t i = chunksCountBefore; i < mPartition.chunks.size; ++i)
+        {
+            newChunks.push_back(static_cast<lite3d_mesh_chunk*>(lite3d_array_get(&mPartition.chunks, i)));
+        }
 #else
         LITE3D_THROW(getName() << ": assimp codec is not supported");
 #endif
-        return MeshChunkArray();
+
+        return newChunks;
     }
 
     MeshChunkArray MeshPartition::loadMesh(const String &filePath)
     {
-/*
-        if (!lite3d_mesh_load_from_m_file(mMesh, 
-            getMain().getResourceManager()->loadFileToMemory(helper.getString(L"Model")),
-            helper.getBool(L"Dynamic", false) ? LITE3D_VBO_DYNAMIC_DRAW : LITE3D_VBO_STATIC_DRAW))
+        MeshChunkArray newChunks;
+        auto chunksCountBefore = mPartition.chunks.size;
+        
+        if (!lite3d_mesh_load_from_m_file(&mPartition, 
+            getMain().getResourceManager()->loadFileToMemory(filePath), mMode))
+        {
             LITE3D_THROW(getName() << ": could not load mesh chunk");
-*/
-        return MeshChunkArray();
+        }
+
+        for (size_t i = chunksCountBefore; i < mPartition.chunks.size; ++i)
+        {
+            newChunks.push_back(static_cast<lite3d_mesh_chunk*>(lite3d_array_get(&mPartition.chunks, i)));
+        }
+
+        return newChunks;
     }
 }

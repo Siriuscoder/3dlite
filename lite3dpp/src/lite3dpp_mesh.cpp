@@ -32,7 +32,7 @@ namespace lite3dpp
         ConfigurableResource(name, path, main, AbstractResource::MESH)
     {}
 
-    Mesh::ChunkEntity Mesh::getChunk(uint32_t index) const
+    Mesh::ChunkEntity Mesh::getChunk(size_t index) const
     {
         if (index >= chunksCount())
         {
@@ -42,7 +42,7 @@ namespace lite3dpp
         return mMeshChunks[index];
     }
 
-    Mesh::ChunkEntity Mesh::getChunkBoudingBox(uint32_t index) const
+    Mesh::ChunkEntity Mesh::getChunkBoudingBox(size_t index) const
     {
         if (index >= mBoundingBoxMeshChunks.size())
         {
