@@ -162,7 +162,7 @@ static int check_buffer_access(uint16_t access)
 static int vbo_buffer_extend(uint32_t vboID, size_t expandSize, uint16_t access)
 {
     int32_t originSize;
-    uint32_t tmpVbo;
+    uint32_t tempVboID;
 
     if (!lite3d_check_copy_buffer())
     {
@@ -181,39 +181,37 @@ static int vbo_buffer_extend(uint32_t vboID, size_t expandSize, uint16_t access)
     glBindBuffer(GL_COPY_READ_BUFFER, vboID);
     glGetBufferParameteriv(GL_COPY_READ_BUFFER, GL_BUFFER_SIZE, &originSize);
 
-    glGenBuffers(1, &tmpVbo);
-    glBindBuffer(GL_COPY_WRITE_BUFFER, tmpVbo);
+    glGenBuffers(1, &tempVboID);
+    glBindBuffer(GL_COPY_WRITE_BUFFER, tempVboID);
 
-    /* allocate tmp buffer */
+    /* allocate temporary buffer */
     glBufferData(GL_COPY_WRITE_BUFFER, originSize, NULL, GL_STATIC_COPY);
 
-    /* copy data to tmp buffer */
-    glCopyBufferSubData(
-        GL_COPY_READ_BUFFER, GL_COPY_WRITE_BUFFER, 0, 0, originSize);
+    /* copy data to temporary buffer */
+    glCopyBufferSubData(GL_COPY_READ_BUFFER, GL_COPY_WRITE_BUFFER, 0, 0, originSize);
 
     if (LITE3D_CHECK_GL_ERROR)
     {
-        glDeleteBuffers(1, &tmpVbo);
+        glDeleteBuffers(1, &tempVboID);
         return LITE3D_FALSE;
     }
 
-    glBindBuffer(GL_COPY_READ_BUFFER, tmpVbo);
+    glBindBuffer(GL_COPY_READ_BUFFER, tempVboID);
     glBindBuffer(GL_COPY_WRITE_BUFFER, vboID);
 
-    /* reallocate our buffer */
+    /* reallocate origin buffer */
     glGetBufferParameteriv(GL_COPY_READ_BUFFER, GL_BUFFER_SIZE, &originSize);
     glBufferData(GL_COPY_WRITE_BUFFER, originSize + expandSize, NULL, vboModeEnum[access]);
 
-    /* copy data back to our buffer */
-    glCopyBufferSubData(
-        GL_COPY_READ_BUFFER, GL_COPY_WRITE_BUFFER, 0, 0, originSize);
+    /* copy data back to origin buffer */
+    glCopyBufferSubData(GL_COPY_READ_BUFFER, GL_COPY_WRITE_BUFFER, 0, 0, originSize);
 
     glBindBuffer(GL_COPY_READ_BUFFER, 0);
     glBindBuffer(GL_COPY_WRITE_BUFFER, 0);
 
-    glDeleteBuffers(1, &tmpVbo);
+    glDeleteBuffers(1, &tempVboID);
 
-    return LITE3D_TRUE;
+    return LITE3D_CHECK_GL_ERROR ? LITE3D_FALSE : LITE3D_TRUE;
 }
 
 int lite3d_vbo_technique_init(void)

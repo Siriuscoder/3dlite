@@ -135,9 +135,12 @@ static int ai_node_load_to_vbo(lite3d_mesh *meshInst, const struct aiScene *scen
         indexesSize = componentSize * mesh->mNumFaces * 3;
 
         vertices = lite3d_malloc(verticesSize);
-        SDL_assert_release(vertices);
+        if (!vertices)
+            return LITE3D_FALSE;
+
         indexes = lite3d_malloc(indexesSize);
-        SDL_assert_release(indexes);
+        if (!indexes)
+            return LITE3D_FALSE;
 
         pvertices = (float *) vertices;
         
@@ -206,7 +209,11 @@ static int ai_node_load_to_vbo(lite3d_mesh *meshInst, const struct aiScene *scen
 
         if (!lite3d_mesh_indexed_extend_from_memory(meshInst, vertices, mesh->mNumVertices,
             layout, layoutCount, indexes, mesh->mNumFaces, access))
+        {
+            lite3d_free(vertices);
+            lite3d_free(indexes);
             return LITE3D_FALSE;
+        }
 
         /* set material index to currently added meshChunk */
         thisChunk = LITE3D_ARR_GET_LAST(&meshInst->chunks, lite3d_mesh_chunk);
