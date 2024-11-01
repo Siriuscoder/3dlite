@@ -38,16 +38,15 @@ namespace lite3dpp
         inline void instances(uint32_t count)
         { mInstances = count; }
         
-        void replaceMaterial(int chunkNo, Material *material);
+        void applyMaterial(uint32_t materialID, Material *material);
             
     protected:
 
         void setMesh(Mesh *mesh);
-        void applyMaterial(int chunkNo, Material *material);
-        
+        void applyMaterial(const Mesh::ChunkEntity &entity, Material *material);
+
     private:
         
-        //Mesh::MaterialMapping mMaterialMappingReplacement;
         Mesh *mMesh = nullptr;
         uint32_t mInstances = 1;
     };

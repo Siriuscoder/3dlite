@@ -70,6 +70,9 @@ namespace lite3dpp
         void setVisible(bool flag);
         bool isVisible() const;
 
+        void setRenderable(bool flag);
+        bool isRenderable() const;
+
     private:
 
         String mName;

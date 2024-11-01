@@ -340,10 +340,10 @@ static int init(void *userdata)
 
 
     lite3d_scene_add_node(&mScene, &mSceneNode[0], NULL);
-    lite3d_scene_node_touch_material(&mSceneNode[0], lite3d_mesh_chunk_get_by_index(&mCubeVbo, 0), NULL, &mBoxMaterial, 1);
+    lite3d_scene_node_touch_material(&mSceneNode[0], lite3d_mesh_chunk_get_by_material_index(&mCubeVbo, 0), NULL, &mBoxMaterial, 1);
 
     lite3d_scene_add_node(&mSceneMain, &mSceneNode[1], NULL);
-    lite3d_scene_node_touch_material(&mSceneNode[1], lite3d_mesh_chunk_get_by_index(&mCubeVbo, 0), NULL, &mRenderTextureMaterial, 1);
+    lite3d_scene_node_touch_material(&mSceneNode[1], lite3d_mesh_chunk_get_by_material_index(&mCubeVbo, 0), NULL, &mRenderTextureMaterial, 1);
 
 
     //lite3d_scene_add_node(&mScene, &mCamera01.cameraNode, NULL);

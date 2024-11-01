@@ -148,7 +148,7 @@ void lite3d_mesh_chunk_purge(struct lite3d_mesh_chunk *meshChunk)
         lite3d_free(meshChunk->layout);
 }
 
-lite3d_mesh_chunk *lite3d_mesh_chunk_get_by_index(struct lite3d_mesh *mesh,
+lite3d_mesh_chunk *lite3d_mesh_chunk_get_by_material_index(struct lite3d_mesh *mesh,
     uint32_t materialIndex)
 {
     lite3d_mesh_chunk *meshChunk;

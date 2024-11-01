@@ -32,7 +32,7 @@ namespace lite3dpp
         struct ChunkEntity
         {
             uint32_t chunkIndexInsidePartition = 0;
-            std::optional<uint32_t> boudingBoxChunkindex;
+            std::optional<uint32_t> boudingBoxChunkIndex;
             lite3d_mesh_chunk *chunk = nullptr;
             Material *material = nullptr;
         };

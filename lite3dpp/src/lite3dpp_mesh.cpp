@@ -138,9 +138,9 @@ namespace lite3dpp
             if (chunk.chunk->materialIndex == materialIdx)
             {
                 chunk.material = material;
-                if (chunk.boudingBoxChunkindex)
+                if (chunk.boudingBoxChunkIndex)
                 {
-                    mBoundingBoxMeshChunks[chunk.boudingBoxChunkindex.value()].material = material;
+                    mBoundingBoxMeshChunks[chunk.boudingBoxChunkIndex.value()].material = material;
                 }
 
                 return;
@@ -302,16 +302,16 @@ namespace lite3dpp
     {
         for (uint32_t i = 0; i < chunks.size(); ++i)
         {
-            std::optional<uint32_t> boudingBoxChunkindex;
+            std::optional<uint32_t> boudingBoxChunkIndex;
             if (createBoundingBoxMesh)
             {
                 createBoudingBox(chunks[i]);
-                boudingBoxChunkindex = static_cast<uint32_t>(mBoundingBoxMeshChunks.size() - 1);
+                boudingBoxChunkIndex = static_cast<uint32_t>(mBoundingBoxMeshChunks.size() - 1);
             }
 
             mMeshChunks.push_back(ChunkEntity {
                 static_cast<uint32_t>(mMeshPartition->chunksCount() - chunks.size() + i),
-                boudingBoxChunkindex,
+                boudingBoxChunkIndex,
                 chunks[i],
                 nullptr
             });

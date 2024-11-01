@@ -29,58 +29,67 @@ namespace lite3dpp
         SDL_assert(getMain());
 
         auto meshHelper = json.getObject(L"Mesh");
-        if(!meshHelper.isEmpty())
+        if (!meshHelper.isEmpty())
         {
             setMesh(getMain()->getResourceManager()->queryResource<Mesh>(
                 meshHelper.getString(L"Name"),
                 meshHelper.getString(L"Mesh")));
-/*
+
+            stl<uint32_t, Material *>::unordered_map materials;
             for (auto &matMap : meshHelper.getObjects(L"MaterialMapping"))
             {
-                mMaterialMappingReplacement[matMap.getInt(L"MaterialIndex")] = 
+                materials[matMap.getInt(L"MaterialIndex")] = 
                     getMain()->getResourceManager()->queryResource<Material>(
                     matMap.getObject(L"Material").getString(L"Name"),
                     matMap.getObject(L"Material").getString(L"Material"));
             }
 
-            for (auto &material : mMaterialMappingReplacement)
+            for (size_t i = 0; i < mMesh->chunksCount(); ++i)
             {
-                applyMaterial(material.first, material.second);
+                auto chunk = mMesh->getChunk(i);
+                auto materialReplacedIt = materials.find(chunk.chunk->materialIndex);
+                Material *material = materialReplacedIt != materials.end() ? materialReplacedIt->second : chunk.material;
+                if (material)
+                {
+                    applyMaterial(chunk, material);
+                }
             }
-+*/
         }
     }
     
     void MeshSceneNode::setMesh(Mesh *mesh)
     {
         SDL_assert(mesh);
-     //   mMaterialMappingReplacement = mesh->getMaterialMapping();
         mMesh = mesh;
     }
-
-    void MeshSceneNode::replaceMaterial(int chunkNo, Material *material)
+    
+    void MeshSceneNode::applyMaterial(uint32_t materialID, Material *material)
     {
-       // mMaterialMappingReplacement[chunkNo] = material;
-       // applyMaterial(chunkNo, material);
+        SDL_assert(material);
+        if (!mMesh)
+            return;
+
+        for (size_t i = 0; i < mMesh->chunksCount(); ++i)
+        {
+            auto chunk = mMesh->getChunk(i);
+            if (chunk.chunk->materialIndex == materialID)
+            {
+                applyMaterial(chunk, material);
+            }
+        }
     }
 
-    void MeshSceneNode::applyMaterial(int chunkNo, Material *material)
+    void MeshSceneNode::applyMaterial(const Mesh::ChunkEntity &entity, Material *material)
     {
+        SDL_assert(material);
+        // Берем сгенерированный boundig box если он есть (может и не быть)
+        lite3d_mesh_chunk *boundigBoxChunk = entity.boudingBoxChunkIndex ? 
+            mMesh->getChunkBoudingBox(entity.boudingBoxChunkIndex.value()).chunk : nullptr;
 
-        if (mMesh) /* check node is attached to scene */
+        if (!lite3d_scene_node_touch_material(getPtr(), entity.chunk, boundigBoxChunk, material->getPtr(), mInstances))
         {
-            /*
-            getPtr()->renderable = LITE3D_TRUE;
-            lite3d_mesh_chunk *meshChunk = lite3d_mesh_chunk_get_by_index(mMesh->getPtr(), chunkNo);
-                lite3d_mesh_chunk *bbMeshChunk = mMesh->getBBPtr() ? 
-                lite3d_mesh_chunk_get_by_index(mMesh->getBBPtr(), chunkNo) : nullptr;
-
-                if(!lite3d_scene_node_touch_material(getPtr(), 
-                meshChunk, bbMeshChunk, material->getPtr(), mInstances))
-                {
-                    LITE3D_THROW("Linking node failed..");
-            }
-*/            
+            LITE3D_THROW(getName() << ": Failed to attach node to scene '" << 
+                (getScene() ? getScene()->getName() : "none") << "'");
         }
     }
 }
