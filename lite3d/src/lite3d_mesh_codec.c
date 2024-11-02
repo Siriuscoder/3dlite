@@ -172,15 +172,17 @@ static int lite3d_append_buffer_from_stream(lite3d_vbo *buffer, size_t bufferOff
 size_t lite3d_mesh_m_encode_size(lite3d_mesh *mesh)
 {
     size_t result = 0;
+    lite3d_list_node *link;
     lite3d_mesh_chunk *meshChunk;
     SDL_assert(mesh);
 
     result += sizeof (lite3d_m_header);
 
-    LITE3D_ARR_FOREACH(&mesh->chunks, lite3d_mesh_chunk, meshChunk)
+    for (link = mesh->chunks.l.next; link != &mesh->chunks.l; link = lite3d_list_next(link))
     {
+        meshChunk = LITE3D_MEMBERCAST(lite3d_mesh_chunk, link, link);
         result += sizeof (lite3d_m_chunk);
-        result += sizeof (lite3d_m_chunk_layout) * meshChunk->layoutEntriesCount;
+        result += sizeof (lite3d_m_chunk_layout) * meshChunk->layout.size;
     }
 
     result += mesh->vertexBuffer.size;
@@ -206,9 +208,9 @@ int lite3d_mesh_m_decode(lite3d_mesh *mesh,
     SDL_assert(buffer);
 
     // Если mesh уже содержит данные то надо корректно вычислить offset от последнего чанка
-    if (mesh->chunks.size > 0)
+    if (!lite3d_list_is_empty(&mesh->chunks))
     {
-        lite3d_mesh_chunk *lastChunk = LITE3D_ARR_GET_LAST(&mesh->chunks, lite3d_mesh_chunk);
+        lite3d_mesh_chunk *lastChunk = LITE3D_MEMBERCAST(lite3d_mesh_chunk, lite3d_list_last_link(&mesh->chunks), link);
         initialIndicesOffset = indicesOffset = lastChunk->vao.indexesOffset + lastChunk->vao.indexesSize;
         initialVerticesOffset = verticesOffset = lastChunk->vao.verticesOffset + lastChunk->vao.verticesSize;
     }
@@ -321,6 +323,7 @@ int lite3d_mesh_m_decode(lite3d_mesh *mesh,
 int lite3d_mesh_m_encode(lite3d_mesh *mesh,
     void *buffer, size_t size)
 {
+    lite3d_list_node *link;
     lite3d_mesh_chunk *meshChunk;
     lite3d_m_header mheader;
     lite3d_m_chunk mchunk;
@@ -334,13 +337,14 @@ int lite3d_mesh_m_encode(lite3d_mesh *mesh,
     mheader.version = LITE3D_VERSION_NUM;
     mheader.vertexSectionSize = (uint32_t)mesh->vertexBuffer.size;
     mheader.indexSectionSize = (uint32_t)mesh->indexBuffer.size;
-    mheader.chunkCount = (uint32_t)mesh->chunks.size;
+    mheader.chunkCount = (uint32_t)lite3d_list_count(&mesh->chunks);
     mheader.chunkSectionSize = 0;
 
-    LITE3D_ARR_FOREACH(&mesh->chunks, lite3d_mesh_chunk, meshChunk)
+    for (link = mesh->chunks.l.next; link != &mesh->chunks.l; link = lite3d_list_next(link))
     {
+        meshChunk = LITE3D_MEMBERCAST(lite3d_mesh_chunk, link, link);
         mheader.chunkSectionSize += sizeof (lite3d_m_chunk);
-        mheader.chunkSectionSize += sizeof (lite3d_m_chunk_layout) * meshChunk->layoutEntriesCount;
+        mheader.chunkSectionSize += sizeof (lite3d_m_chunk_layout) * meshChunk->layout.size;
     }
 
     /* open memory stream */
@@ -353,14 +357,14 @@ int lite3d_mesh_m_encode(lite3d_mesh *mesh,
     }
 
     /* write chunks data */
-    LITE3D_ARR_FOREACH(&mesh->chunks, lite3d_mesh_chunk, meshChunk)
+    for (link = mesh->chunks.l.next; link != &mesh->chunks.l; link = lite3d_list_next(link))
     {
-        uint32_t i = 0;
+        meshChunk = LITE3D_MEMBERCAST(lite3d_mesh_chunk, link, link);
 
         memset(&mchunk, 0, sizeof(mchunk));
         mchunk.chunkSize = sizeof (lite3d_m_chunk) +
-            sizeof (lite3d_m_chunk_layout) * meshChunk->layoutEntriesCount;
-        mchunk.chunkLayoutCount = meshChunk->layoutEntriesCount;
+            sizeof (lite3d_m_chunk_layout) * meshChunk->layout.size;
+        mchunk.chunkLayoutCount = meshChunk->layout.size;
         mchunk.indexesCount = meshChunk->vao.indexesCount;
         mchunk.indexesSize = (uint32_t)meshChunk->vao.indexesSize;
         mchunk.indexesOffset = (uint32_t)meshChunk->vao.indexesOffset;
@@ -377,10 +381,11 @@ int lite3d_mesh_m_encode(lite3d_mesh *mesh,
             return LITE3D_FALSE;
         }
 
-        for (; i < mchunk.chunkLayoutCount; ++i)
+        for (uint32_t i = 0; i < mchunk.chunkLayoutCount; ++i)
         {
-            layout.binding = meshChunk->layout[i].binding;
-            layout.count = meshChunk->layout[i].count;
+            lite3d_vao_layout *playout = (lite3d_vao_layout *)lite3d_array_get(&meshChunk->layout, i);
+            layout.binding = playout->binding;
+            layout.count = playout->count;
 
             if (SDL_RWwrite(stream, &layout, sizeof (layout), 1) != 1)
             {

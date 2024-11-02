@@ -76,7 +76,7 @@ int lite3d_mesh_indexed_extend_from_memory(lite3d_mesh *mesh,
 
     SDL_assert(mesh && layout);
 
-    if (!mesh->chunks.size)
+    if (lite3d_list_is_empty(&mesh->chunks))
     {
         return lite3d_mesh_indexed_load_from_memory(mesh, vertices, verticesCount,
             layout, layoutCount, indexes, elementsCount, access);
@@ -156,7 +156,7 @@ int lite3d_mesh_extend_from_memory(lite3d_mesh *mesh,
 
     SDL_assert(mesh && layout);
 
-    if (!mesh->chunks.size)
+    if (lite3d_list_is_empty(&mesh->chunks))
     {
         return lite3d_mesh_load_from_memory(mesh, vertices, verticesCount,
             layout, layoutCount, access);
@@ -188,12 +188,14 @@ int lite3d_mesh_extend_from_memory(lite3d_mesh *mesh,
 
 void lite3d_mesh_order_mat_indexes(lite3d_mesh *mesh)
 {
+    lite3d_list_node *link;
     lite3d_mesh_chunk *meshChunk;
     uint32_t materialIndex = 0;
     SDL_assert(mesh);
 
-    LITE3D_ARR_FOREACH(&mesh->chunks, lite3d_mesh_chunk, meshChunk)
+    for (link = mesh->chunks.l.next; link != &mesh->chunks.l; link = lite3d_list_next(link))
     {
+        meshChunk = LITE3D_MEMBERCAST(lite3d_mesh_chunk, link, link);
         meshChunk->materialIndex = materialIndex++;
     }
 }

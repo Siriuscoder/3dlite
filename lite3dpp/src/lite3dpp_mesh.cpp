@@ -334,6 +334,7 @@ namespace lite3dpp
         BufferData vertexData(boxVerticesCount * chunk->vertexStride, 0);
         kmVec3 vmin = chunk->boundingVol.box[0];
         kmVec3 vmax = chunk->boundingVol.box[7];
+        lite3d_vao_layout *chunkLayout = static_cast<lite3d_vao_layout *>(chunk->layout.data);
 
         const float bbVertices[] = {
             vmin.x, vmin.y, vmax.z,
@@ -387,18 +388,18 @@ namespace lite3dpp
 
         bool skipChunk = true;
         size_t vOffset = 0;
-        for (uint32_t i = 0; i < chunk->layoutEntriesCount; ++i)
+        for (size_t i = 0; i < chunk->layout.size; ++i)
         {
-            if (chunk->layout[i].binding == LITE3D_BUFFER_BINDING_VERTEX)
+            if (chunkLayout[i].binding == LITE3D_BUFFER_BINDING_VERTEX)
             {
-                if (chunk->layout[i].count >= 3)
+                if (chunkLayout[i].count >= 3)
                 {
                     skipChunk = false;
                 }
                 break;
             }
 
-            vOffset += chunk->layout[i].count * sizeof(float);
+            vOffset += chunkLayout[i].count * sizeof(float);
         }
 
         if (skipChunk)
@@ -412,7 +413,7 @@ namespace lite3dpp
             memcpy(pBuffer, &bbVertices[i * 3], sizeof(float) * 3);
         }
 
-        BufferLayout layout(chunk->layout, chunk->layout + chunk->layoutEntriesCount);
+        BufferLayout layout(chunkLayout, chunkLayout + chunk->layout.size);
         auto bbchunk = mBoundingBoxMeshPartition->append(VertexArrayWrap(vertexData, boxVerticesCount), layout);
         bbchunk->materialIndex = chunk->materialIndex;
         bbchunk->boundingVol = chunk->boundingVol;

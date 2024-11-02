@@ -39,7 +39,7 @@ int main(int argc, char *args[])
 
     printf("Lite3d scene objests conversion utility.\n");
     printf("Conversion from formats supports by Assimp to internal lite3d format (m).\n");
-    printf("Engine version %s\n\n", LITE3D_VERSION_STRING);
+    printf("Engine version: %s\n\n", LITE3D_VERSION_STRING);
 
     if (argc < 3)
         print_help_and_exit();

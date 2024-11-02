@@ -216,7 +216,7 @@ static int ai_node_load_to_vbo(lite3d_mesh *meshInst, const struct aiScene *scen
         }
 
         /* set material index to currently added meshChunk */
-        thisChunk = LITE3D_ARR_GET_LAST(&meshInst->chunks, lite3d_mesh_chunk);
+        thisChunk = LITE3D_MEMBERCAST(lite3d_mesh_chunk, lite3d_list_last_link(&meshInst->chunks), link);
         thisChunk->materialIndex = mesh->mMaterialIndex;
         lite3d_bounding_vol_setup(&thisChunk->boundingVol, &vmin, &vmax);
 
@@ -468,7 +468,7 @@ int lite3d_assimp_mesh_load(lite3d_mesh *mesh, const lite3d_file *resource,
     }
 
     SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "MESH: %s (%s) loaded, cv/ce/cb/ %u/%u/%zu",
-        resource->name, targetNode->mName.data, mesh->verticesCount, mesh->elementsCount, mesh->chunks.size);
+        resource->name, targetNode->mName.data, mesh->verticesCount, mesh->elementsCount, lite3d_list_count(&mesh->chunks));
     aiReleaseImport(scene);
     aiReleasePropertyStore(importProrerties);
 

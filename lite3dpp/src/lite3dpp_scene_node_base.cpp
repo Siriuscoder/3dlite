@@ -128,12 +128,6 @@ namespace lite3dpp
         return mNodePtr->visible == LITE3D_TRUE;
     }
 
-    void SceneNodeBase::setRenderable(bool flag)
-    {
-        SDL_assert(mNodePtr);
-        mNodePtr->renderable = flag ? LITE3D_TRUE : LITE3D_FALSE;
-    }
-
     bool SceneNodeBase::isRenderable() const
     {
         SDL_assert(mNodePtr);

@@ -39,7 +39,7 @@
 
 #define LITE3D_POOL_MAX             0x06
 #define LITE3D_POOL_COMMON          0x00
-/* Littlest chunks */
+/* More little chunks */
 #define LITE3D_POOL_NO1             0x01
 /* C++ objects pool */
 #define LITE3D_POOL_NO2             0x02

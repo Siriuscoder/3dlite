@@ -30,9 +30,7 @@ namespace lite3dpp
         MeshPartition(const String &name, const String &path, Main *main);
         virtual ~MeshPartition() = default;
 
-        inline size_t chunksCount() const
-        { return mPartition.chunks.size; }
-
+        size_t chunksCount() const;
         LITE3D_DECLARE_PTR_METHODS(lite3d_mesh, mPartition);
 
         VBO vertexBuffer();

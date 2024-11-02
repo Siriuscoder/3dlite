@@ -20,6 +20,7 @@
 #include <SDL_log.h>
 #include <SDL_assert.h>
 
+#include <lite3d/lite3d_list.h>
 #include <lite3d/lite3d_mesh_loader.h>
 #include <lite3d/lite3d_mesh_assimp_loader.h>
 #include <lite3dpp/lite3dpp_main.h>
@@ -42,12 +43,13 @@ namespace lite3dpp
 
     lite3d_mesh_chunk *MeshPartition::operator[](size_t index)
     {
-        if (index >= chunksCount())
+        auto chunkLink = lite3d_list_index(&mPartition.chunks, index);
+        if (!chunkLink)
         {
             LITE3D_THROW(getName() << ": Chunk index out of range: " << index << " of " << chunksCount());
         }
 
-        return static_cast<lite3d_mesh_chunk *>(lite3d_array_get(&mPartition.chunks, index));
+        return LITE3D_MEMBERCAST(lite3d_mesh_chunk, chunkLink, link);
     }
 
     void MeshPartition::loadFromConfigImpl(const ConfigurationReader &helper)
@@ -64,6 +66,11 @@ namespace lite3dpp
     size_t MeshPartition::usedVideoMemBytes() const
     {
         return mPartition.vertexBuffer.size + mPartition.indexBuffer.size;
+    }
+
+    size_t MeshPartition::chunksCount() const
+    {
+        return lite3d_list_count(&mPartition.chunks);
     }
 
     void MeshPartition::unloadImpl()
@@ -84,7 +91,7 @@ namespace lite3dpp
             LITE3D_THROW(getName() << ": Failed to append mesh chunk");
         }
 
-        return LITE3D_ARR_GET_LAST(&mPartition.chunks, lite3d_mesh_chunk);
+        return LITE3D_MEMBERCAST(lite3d_mesh_chunk, lite3d_list_last_link(&mPartition.chunks), link);
     }
 
     lite3d_mesh_chunk *MeshPartition::append(const VertexArrayWrap &vertices, const BufferLayout &layout)
@@ -95,7 +102,7 @@ namespace lite3dpp
             LITE3D_THROW(getName() << ": Failed to append mesh chunk");
         }
 
-        return LITE3D_ARR_GET_LAST(&mPartition.chunks, lite3d_mesh_chunk);
+        return LITE3D_MEMBERCAST(lite3d_mesh_chunk, lite3d_list_last_link(&mPartition.chunks), link);
     }
 
     MeshChunkArray MeshPartition::loadMeshByAssimp(const String &filePath, const String &modelName, 
@@ -104,17 +111,18 @@ namespace lite3dpp
         MeshChunkArray newChunks;
 
 #ifdef INCLUDE_ASSIMP
-        auto chunksCountBefore = mPartition.chunks.size;
+        auto lastBefore = lite3d_list_last_link(&mPartition.chunks);
         if (!lite3d_assimp_mesh_load(&mPartition, 
             getMain().getResourceManager()->loadFileToMemory(filePath), modelName.c_str(), 
             mMode, flags))
         {
             LITE3D_THROW(getName() << ": Failed to load mesh via assimp");
         }
-
-        for (size_t i = chunksCountBefore; i < mPartition.chunks.size; ++i)
+        
+        for (lastBefore = lastBefore ? lastBefore : lite3d_list_first_link(&mPartition.chunks); 
+            lastBefore != &mPartition.chunks.l; lastBefore = lite3d_list_next(lastBefore))
         {
-            newChunks.push_back(static_cast<lite3d_mesh_chunk*>(lite3d_array_get(&mPartition.chunks, i)));
+            newChunks.push_back(LITE3D_MEMBERCAST(lite3d_mesh_chunk, lastBefore, link));
         }
 #else
         LITE3D_THROW(getName() << ": assimp codec is not supported");
@@ -126,7 +134,7 @@ namespace lite3dpp
     MeshChunkArray MeshPartition::loadMesh(const String &filePath)
     {
         MeshChunkArray newChunks;
-        auto chunksCountBefore = mPartition.chunks.size;
+        auto lastBefore = lite3d_list_last_link(&mPartition.chunks);
         
         if (!lite3d_mesh_load_from_m_file(&mPartition, 
             getMain().getResourceManager()->loadFileToMemory(filePath), mMode))
@@ -134,9 +142,10 @@ namespace lite3dpp
             LITE3D_THROW(getName() << ": could not load mesh chunk");
         }
 
-        for (size_t i = chunksCountBefore; i < mPartition.chunks.size; ++i)
+        for (lastBefore = lastBefore ? lastBefore : lite3d_list_first_link(&mPartition.chunks); 
+            lastBefore != &mPartition.chunks.l; lastBefore = lite3d_list_next(lastBefore))
         {
-            newChunks.push_back(static_cast<lite3d_mesh_chunk*>(lite3d_array_get(&mPartition.chunks, i)));
+            newChunks.push_back(LITE3D_MEMBERCAST(lite3d_mesh_chunk, lastBefore, link));
         }
 
         return newChunks;

@@ -740,7 +740,8 @@ int lite3d_scene_remove_node(lite3d_scene *scene, lite3d_scene_node *node)
     lite3d_list_unlink_link(&node->nodeLink);
     node->baseNode = NULL;
     node->scene = NULL;
-
+    node->renderable = LITE3D_FALSE;
+    
     for (mqrUnitNode = scene->materialRenderUnits.l.next;
         mqrUnitNode != &scene->materialRenderUnits.l; mqrUnitNode = lite3d_list_next(mqrUnitNode))
     {
@@ -845,6 +846,7 @@ int lite3d_scene_node_touch_material(struct lite3d_scene_node *node,
     mqrNode->instancesCount = instancesCount;
     mqrNode->matUnit = mqrUnit;
     mqrNode->node->recalc = LITE3D_TRUE;
+    node->renderable = LITE3D_TRUE;
     mqr_unit_add_node(mqrUnit, mqrNode);
 
     return LITE3D_TRUE;

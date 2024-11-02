@@ -79,14 +79,16 @@ public:
         lite3d_mesh brMesh;
         lite3d_pack *fileSysPack = nullptr;
         lite3d_mesh_chunk *ubrChunk = nullptr, *brChunk = nullptr;
+        lite3d_list_node *ubrLink, *brLink;
         loadMeshes(&ubrMesh, &brMesh, &fileSysPack);
 
         /* check chunks data */
-        EXPECT_TRUE(ubrMesh.chunks.size == brMesh.chunks.size);
-        for(size_t i = 0; i < ubrMesh.chunks.size; ++i)
+        EXPECT_TRUE(lite3d_list_count(&ubrMesh.chunks) == lite3d_list_count(&brMesh.chunks));
+        for (ubrLink = ubrMesh.chunks.l.next, brLink = brMesh.chunks.l.next; ubrLink != &ubrMesh.chunks.l; 
+            ubrLink = lite3d_list_next(ubrLink), brLink = lite3d_list_next(brLink))
         {
-            ubrChunk = static_cast<lite3d_mesh_chunk *>(lite3d_array_get(&ubrMesh.chunks, i));
-            brChunk = static_cast<lite3d_mesh_chunk *>(lite3d_array_get(&brMesh.chunks, i));
+            ubrChunk = LITE3D_MEMBERCAST(lite3d_mesh_chunk, ubrLink, link);
+            brChunk = LITE3D_MEMBERCAST(lite3d_mesh_chunk, brLink, link);
 
             EXPECT_TRUE(ubrChunk->vao.elementsCount == brChunk->vao.elementsCount);
             EXPECT_TRUE(ubrChunk->vao.indexesCount == brChunk->vao.indexesCount);

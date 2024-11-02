@@ -117,7 +117,7 @@ void ConverterCommand::runImpl()
     if(!lite3d_assimp_mesh_load_recursive(
         mMain.getResourceManager()->loadFileToMemory(mInputFilePath), ctx,
         LITE3D_VBO_STATIC_READ, loadFlags))
-        LITE3D_THROW("Unable to import input file.. possible bad format..");
+        LITE3D_THROW("Assimp failed to load file '" << mInputFilePath << "'");
 }
 #else
 void ConverterCommand::runImpl()

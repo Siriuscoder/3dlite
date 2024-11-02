@@ -258,10 +258,36 @@ lite3d_list_iterate(struct lite3d_list *in_list, lite3d_list_iterate_t func)
 {
     struct lite3d_list_node *it;
 
-
     for (it = in_list->l.next; it != &(in_list->l); it = lite3d_list_next(it))
     {
         if (func(it))
             return;
     }
+}
+
+size_t
+lite3d_list_count(const struct lite3d_list *in_list)
+{
+    struct lite3d_list_node *it;
+    size_t count = 0;
+    for (it = in_list->l.next; it != &(in_list->l); it = lite3d_list_next(it))
+    {
+        count++;
+    }
+
+    return count;
+}
+
+struct lite3d_list_node *
+lite3d_list_index(const struct lite3d_list *in_list, size_t index)
+{
+    struct lite3d_list_node *it;
+    size_t count = 0;
+    for (it = in_list->l.next; it != &(in_list->l); it = lite3d_list_next(it))
+    {
+        if (count++ == index)
+            return it;
+    }
+
+    return NULL;
 }

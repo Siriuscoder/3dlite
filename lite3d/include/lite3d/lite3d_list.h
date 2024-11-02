@@ -118,5 +118,10 @@ lite3d_list_find_arg(struct lite3d_list *in_list, lite3d_list_node_arg_predicate
 LITE3D_CEXPORT void
 lite3d_list_iterate(struct lite3d_list *in_list, lite3d_list_iterate_t func);
 
-#endif	/* LITE3D_LIST_H */
+LITE3D_CEXPORT size_t
+lite3d_list_count(const struct lite3d_list *in_list);
 
+LITE3D_CEXPORT struct lite3d_list_node *
+lite3d_list_index(const struct lite3d_list *in_list, size_t index);
+
+#endif	/* LITE3D_LIST_H */

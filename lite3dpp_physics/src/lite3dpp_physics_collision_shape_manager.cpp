@@ -145,11 +145,12 @@ namespace lite3dpp_phisics {
             LITE3D_THROW("Not indexed mesh '" << getName() << "', only indexed meshes supported");
         }
 
-        for (uint32_t i = 0; i < chunk->layoutEntriesCount; ++i)
+        const lite3d_vao_layout *layout = static_cast<const lite3d_vao_layout *>(chunk->layout.data);
+        for (uint32_t i = 0; i < chunk->layout.size; ++i)
         {
-            if (chunk->layout[i].binding != LITE3D_BUFFER_BINDING_VERTEX)
+            if (layout[i].binding != LITE3D_BUFFER_BINDING_VERTEX)
             {
-                offset += chunk->layout[i].count * sizeof(float);
+                offset += layout[i].count * sizeof(float);
             }
             else
             {
