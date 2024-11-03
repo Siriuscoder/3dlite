@@ -54,10 +54,15 @@ namespace lite3dpp
 
     void Mesh::initPartition(const ConfigurationReader &config)
     {
+        auto partitionName = config.getString(L"Partition", getName() + "_partition");
+        if (getMain().getResourceManager()->resourceExists(partitionName))
+        {
+            mMeshPartition = getMain().getResourceManager()->queryResource<MeshPartition>(partitionName);
+            return;
+        }
+
         ConfigurationWriter partitionCfg;
         partitionCfg.set(L"Dynamic", config.getBool(L"Dynamic", false));
-
-        auto partitionName = config.getString(L"Partition", getName() + "_partition");
         mMeshPartition = getMain().getResourceManager()->queryResourceFromJson<MeshPartition>(
             partitionName, partitionCfg.write());
     }
@@ -300,17 +305,20 @@ namespace lite3dpp
 
     void Mesh::appendChunks(const MeshChunkArray &chunks, bool createBoundingBoxMesh)
     {
+        size_t partChunksCount = mMeshPartition->chunksCount();
         for (uint32_t i = 0; i < chunks.size(); ++i)
         {
             std::optional<uint32_t> boudingBoxChunkIndex;
             if (createBoundingBoxMesh)
             {
-                createBoudingBox(chunks[i]);
-                boudingBoxChunkIndex = static_cast<uint32_t>(mBoundingBoxMeshChunks.size() - 1);
+                if (createBoudingBox(chunks[i]))
+                {
+                    boudingBoxChunkIndex = static_cast<uint32_t>(mBoundingBoxMeshChunks.size() - 1);
+                }
             }
 
             mMeshChunks.push_back(ChunkEntity {
-                static_cast<uint32_t>(mMeshPartition->chunksCount() - chunks.size() + i),
+                static_cast<uint32_t>(partChunksCount - chunks.size() + i),
                 boudingBoxChunkIndex,
                 chunks[i],
                 nullptr
@@ -318,23 +326,30 @@ namespace lite3dpp
         }
     }
 
-    void Mesh::createBoudingBox(const lite3d_mesh_chunk *chunk)
+    void Mesh::initBoudingBoxPartition()
     {
         if (!mBoundingBoxMeshPartition)
         {
+            auto partitionName = mMeshPartition->getName() + "_bouding_box";
+            if (getMain().getResourceManager()->resourceExists(partitionName))
+            {
+                mBoundingBoxMeshPartition = getMain().getResourceManager()->queryResource<MeshPartition>(partitionName);
+                return;
+            }
+
             ConfigurationWriter partitionCfg;
             partitionCfg.set(L"Dynamic", false);
-
-            auto partitionName = mMeshPartition->getName() + "_bouding_box";
             mBoundingBoxMeshPartition = getMain().getResourceManager()->queryResourceFromJson<MeshPartition>(
                 partitionName, partitionCfg.write());
         }
+    }
 
-        const uint32_t boxVerticesCount = 36;
-        BufferData vertexData(boxVerticesCount * chunk->vertexStride, 0);
+    bool Mesh::createBoudingBox(const lite3d_mesh_chunk *chunk)
+    {
+        initBoudingBoxPartition();
+
         kmVec3 vmin = chunk->boundingVol.box[0];
         kmVec3 vmax = chunk->boundingVol.box[7];
-        lite3d_vao_layout *chunkLayout = static_cast<lite3d_vao_layout *>(chunk->layout.data);
 
         const float bbVertices[] = {
             vmin.x, vmin.y, vmax.z,
@@ -386,6 +401,10 @@ namespace lite3dpp
             vmin.x, vmin.y, vmin.z
         };
 
+        const uint32_t boxVerticesCount = sizeof(bbVertices) / (sizeof(float) * 3);
+        BufferData vertexData(boxVerticesCount * chunk->vertexStride, 0);
+        lite3d_vao_layout *chunkLayout = static_cast<lite3d_vao_layout *>(chunk->layout.data);
+
         bool skipChunk = true;
         size_t vOffset = 0;
         for (size_t i = 0; i < chunk->layout.size; ++i)
@@ -404,7 +423,7 @@ namespace lite3dpp
 
         if (skipChunk)
         {
-            return;
+            return false;
         }
 
         uint8_t *pBuffer = &vertexData[vOffset];
@@ -424,5 +443,7 @@ namespace lite3dpp
             bbchunk,
             nullptr
         });
+
+        return true;
     }
 }

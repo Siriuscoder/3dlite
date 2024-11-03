@@ -34,6 +34,8 @@ class Lite3dExport(bpy.types.Operator, ExportHelper):
     defaultInfluenceDistance: FloatProperty(name = "Default Influence Distance", precision = 6, default = 0.0, description = "Default influence distance for light source")
     defaultInfluenceMinRadiance: FloatProperty(name = "Default Influence Minimum Radiance", precision = 6, default = 0.001, description = "Default minimum light radiance which considered in light computation")
     materialTemplate: StringProperty(name = "Material template name", default = "CommonMaterialTemplate", description = "Name of material template file used by default to generate material")
+    singlePartition: BoolProperty(name = "Single mesh partition", default = False, description = "Mark all exported meshes as in single mesh partition")
+    saveIndexes: BoolProperty(name = "Save mesh indexes", default = True, description = "Export index data as well as vertex data (consume less space), otherwise index data will not be used (may be more fast render)")
 
     def draw(self, context):
         layout = self.layout
@@ -49,7 +51,9 @@ class Lite3dExport(bpy.types.Operator, ExportHelper):
         box.prop(self, "removeDoubles")
         box.prop(self, "saveTangent")
         box.prop(self, "saveBiTangent")
+        box.prop(self, "saveIndexes")
         box.prop(self, "flipUV")
+        box.prop(self, "singlePartition")
         box.label(text = "Materials:")
         box.prop(self, "copyTexImages")
         box.prop(self, "textureCompression")
@@ -85,7 +89,9 @@ class Lite3dExport(bpy.types.Operator, ExportHelper):
                           defaultInfluenceMinRadiance = self.defaultInfluenceMinRadiance,
                           materialTemplate = self.materialTemplate,
                           exportLights = self.exportLights,
-                          physics = self.physics)
+                          physics = self.physics,
+                          singlePartition = self.singlePartition,
+                          saveIndexes = self.saveIndexes)
             
             scene.exportScene()
         except Exception as ex:

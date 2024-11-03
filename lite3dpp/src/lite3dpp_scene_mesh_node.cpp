@@ -17,6 +17,7 @@
  *******************************************************************************/
 #include <lite3dpp/lite3dpp_scene_mesh_node.h>
 
+#include <SDL_log.h>
 #include <SDL_assert.h>
 #include <lite3dpp/lite3dpp_main.h>
 
@@ -91,5 +92,9 @@ namespace lite3dpp
             LITE3D_THROW(getName() << ": Failed to attach node to scene '" << 
                 (getScene() ? getScene()->getName() : "none") << "'");
         }
+
+        SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "%s: material %d(%s), chunk 0x%p, bb chunk 0x%p",
+            getName().c_str(), entity.chunk->materialIndex, material->getName().c_str(), 
+                (void *)entity.chunk, (void *)boundigBoxChunk);
     }
 }

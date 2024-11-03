@@ -64,6 +64,7 @@ namespace lite3dpp
         virtual void loadFromConfigImpl(const ConfigurationReader &config) override;
         virtual void unloadImpl() override;
         void initPartition(const ConfigurationReader &config);
+        void initBoudingBoxPartition();
         void loadModel(const ConfigurationReader &config);
         void loadAssimpModel(const ConfigurationReader &config);
         void genPlane(const kmVec2 &size);
@@ -71,7 +72,7 @@ namespace lite3dpp
         void genSkybox(const kmVec3 &center, const kmVec3 &size);
         void genArray(const stl<kmVec3>::vector &points, const kmVec3 &bbmin, const kmVec3 &bbmax);
         void appendChunks(const MeshChunkArray &chunks, bool createBoundingBoxMesh);
-        void createBoudingBox(const lite3d_mesh_chunk *chunk);
+        bool createBoudingBox(const lite3d_mesh_chunk *chunk);
 
     private:
 

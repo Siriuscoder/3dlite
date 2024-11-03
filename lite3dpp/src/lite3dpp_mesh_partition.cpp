@@ -28,7 +28,7 @@
 namespace lite3dpp
 {
     MeshPartition::MeshPartition(const String &name, const String &path, Main *main) : 
-        ConfigurableResource(name, path, main, AbstractResource::MESH)
+        ConfigurableResource(name, path, main, AbstractResource::MESH_PARTITION)
     {}
 
     VBO MeshPartition::vertexBuffer()
