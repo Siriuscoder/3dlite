@@ -71,7 +71,7 @@ void lite3d_mesh_purge(struct lite3d_mesh *mesh)
     {
         meshChunk = LITE3D_MEMBERCAST(lite3d_mesh_chunk, link, link);
         lite3d_mesh_chunk_purge(meshChunk);
-        lite3d_free_pooled(LITE3D_POOL_NO1, meshChunk);
+        lite3d_free_pooled(LITE3D_POOL_NO3, meshChunk);
     }
 
     lite3d_vbo_purge(&mesh->vertexBuffer);
@@ -184,7 +184,7 @@ lite3d_mesh_chunk *lite3d_mesh_append_chunk(lite3d_mesh *mesh,
     SDL_assert(layoutCount > 0);
     SDL_assert(layout);
 
-    meshChunk = lite3d_malloc_pooled(LITE3D_POOL_NO1, sizeof(lite3d_mesh_chunk));
+    meshChunk = lite3d_malloc_pooled(LITE3D_POOL_NO3, sizeof(lite3d_mesh_chunk));
     if (!meshChunk)
     {
         return NULL;
@@ -206,7 +206,7 @@ lite3d_mesh_chunk *lite3d_mesh_append_chunk(lite3d_mesh *mesh,
         indexesSize, indexesOffset, verticesCount, verticesSize, verticesOffset))
     {
         lite3d_mesh_chunk_purge(meshChunk);
-        lite3d_free_pooled(LITE3D_POOL_NO1, meshChunk);
+        lite3d_free_pooled(LITE3D_POOL_NO3, meshChunk);
         return NULL;
     }
 

@@ -64,6 +64,21 @@ typedef struct lite3d_m_chunk_layout
 
 #pragma pack(pop)
 
+static int lite3d_realloc_buffer(lite3d_vbo *buffer, size_t bufferOffset, size_t size)
+{
+    SDL_assert(buffer);
+    // Не вмещаемся, требуется реалокация буфера
+    if (bufferOffset + size > buffer->size)
+    {
+        if (!lite3d_vbo_extend(buffer, bufferOffset + size - buffer->size, buffer->access))
+        {
+            return LITE3D_FALSE;
+        }
+    }
+
+    return LITE3D_TRUE;
+}
+
 static int lite3d_write_buffer_to_stream(lite3d_vbo *buffer, SDL_RWops *stream)
 {
     void *vboData;
@@ -116,14 +131,6 @@ static int lite3d_append_buffer_from_stream(lite3d_vbo *buffer, size_t bufferOff
 {
     SDL_assert(buffer);
     SDL_assert(stream);
-    // Не вмещаемся, требуется реалокация буфера
-    if (bufferOffset + size > buffer->size)
-    {
-        if (!lite3d_vbo_extend(buffer, bufferOffset + size - buffer->size, buffer->access))
-        {
-            return LITE3D_FALSE;
-        }
-    }
 
     if (lite3d_check_map_buffer())
     {
@@ -229,6 +236,18 @@ int lite3d_mesh_m_decode(lite3d_mesh *mesh,
         SDL_RWclose(stream);
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "%s: Signature mismatch: %d vs %d",
             LITE3D_CURRENT_FUNCTION, mheader.sig, LITE3D_M_SIGNATURE);
+        return LITE3D_FALSE;
+    }
+
+    if (!lite3d_realloc_buffer(&mesh->vertexBuffer, initialVerticesOffset, mheader.vertexSectionSize))
+    {
+        SDL_RWclose(stream);
+        return LITE3D_FALSE;
+    }
+
+    if (!lite3d_realloc_buffer(&mesh->indexBuffer, initialIndicesOffset, mheader.indexSectionSize))
+    {
+        SDL_RWclose(stream);
         return LITE3D_FALSE;
     }
     
@@ -343,8 +362,8 @@ int lite3d_mesh_m_encode(lite3d_mesh *mesh,
     for (link = mesh->chunks.l.next; link != &mesh->chunks.l; link = lite3d_list_next(link))
     {
         meshChunk = LITE3D_MEMBERCAST(lite3d_mesh_chunk, link, link);
-        mheader.chunkSectionSize += sizeof (lite3d_m_chunk);
-        mheader.chunkSectionSize += sizeof (lite3d_m_chunk_layout) * meshChunk->layout.size;
+        mheader.chunkSectionSize += (uint32_t)(sizeof (lite3d_m_chunk));
+        mheader.chunkSectionSize += (uint32_t)(sizeof (lite3d_m_chunk_layout) * meshChunk->layout.size);
     }
 
     /* open memory stream */
@@ -362,9 +381,9 @@ int lite3d_mesh_m_encode(lite3d_mesh *mesh,
         meshChunk = LITE3D_MEMBERCAST(lite3d_mesh_chunk, link, link);
 
         memset(&mchunk, 0, sizeof(mchunk));
-        mchunk.chunkSize = sizeof (lite3d_m_chunk) +
-            sizeof (lite3d_m_chunk_layout) * meshChunk->layout.size;
-        mchunk.chunkLayoutCount = meshChunk->layout.size;
+        mchunk.chunkSize = (uint32_t)(sizeof (lite3d_m_chunk) +
+            sizeof (lite3d_m_chunk_layout) * meshChunk->layout.size);
+        mchunk.chunkLayoutCount = (uint32_t)(meshChunk->layout.size);
         mchunk.indexesCount = meshChunk->vao.indexesCount;
         mchunk.indexesSize = (uint32_t)meshChunk->vao.indexesSize;
         mchunk.indexesOffset = (uint32_t)meshChunk->vao.indexesOffset;

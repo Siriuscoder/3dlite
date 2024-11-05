@@ -43,7 +43,7 @@ void lite3d_memory_init(lite3d_alloca_f *allocator)
     for (i = 0; i < LITE3D_POOL_MAX; ++i)
     {
         if (!globalMemPools[i])
-            globalMemPools[i] = nedcreatepool(0x100000, 1);
+            globalMemPools[i] = nedcreatepool(1024 * 1024, 1);
     }
 }
 

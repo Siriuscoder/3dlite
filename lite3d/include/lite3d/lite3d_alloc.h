@@ -43,7 +43,7 @@
 #define LITE3D_POOL_NO1             0x01
 /* C++ objects pool */
 #define LITE3D_POOL_NO2             0x02
-/* */
+/* Mesh chunks only */
 #define LITE3D_POOL_NO3             0x03
 #define LITE3D_POOL_NO4             0x04
 #define LITE3D_POOL_NO5             0x05
