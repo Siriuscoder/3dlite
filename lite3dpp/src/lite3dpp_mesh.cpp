@@ -20,8 +20,6 @@
 #include <SDL_log.h>
 #include <SDL_assert.h>
 
-#include <algorithm>
-
 #include <lite3d/lite3d_mesh_loader.h>
 #include <lite3d/lite3d_mesh_assimp_loader.h>
 #include <lite3dpp/lite3dpp_main.h>
@@ -122,15 +120,18 @@ namespace lite3dpp
 
     void Mesh::autoAssignMaterialIndexes()
     {
-        uint32_t materialIdx = 0; 
-        auto func = [&materialIdx](ChunkEntity &chunk)
+        uint32_t materialIdx = 0;
+        for (auto &chunkEntity : mMeshChunks)
         {
-            SDL_assert(chunk.chunk);
-            chunk.chunk->materialIndex = materialIdx++;
-        };
-
-        std::for_each(mMeshChunks.begin(), mMeshChunks.end(), func); materialIdx = 0;
-        std::for_each(mBoundingBoxMeshChunks.begin(), mBoundingBoxMeshChunks.end(), func);
+            SDL_assert(chunkEntity.chunk);
+            chunkEntity.chunk->materialIndex = materialIdx++;
+            if (chunkEntity.boudingBoxChunkIndex)
+            {
+                SDL_assert(mBoundingBoxMeshChunks[chunkEntity.boudingBoxChunkIndex.value()].chunk);
+                mBoundingBoxMeshChunks[chunkEntity.boudingBoxChunkIndex.value()].chunk->materialIndex = 
+                    chunkEntity.chunk->materialIndex;
+            }
+        }
     }
 
     void Mesh::unloadImpl()
@@ -174,13 +175,11 @@ namespace lite3dpp
             { LITE3D_BUFFER_BINDING_TEXCOORD, 2}
         };
 
-        auto chunk = append(VertexArrayWrap(vertices, 6), layout);
-        lite3d_bounding_vol_setup(&chunk.chunk->boundingVol, &vmin, &vmax);
+        append(VertexArrayWrap(vertices, 6), layout, vmin, vmax);
     }
     
     void Mesh::genBigTriangle()
     {
-        kmVec3 vmax = {2, 2, 0}, vmin = {0, 0, 0};
         const float vertices[] = {
             0.0f, 0.0f,
             2.0f, 0.0f,
@@ -191,13 +190,13 @@ namespace lite3dpp
             { LITE3D_BUFFER_BINDING_VERTEX, 2}
         };
 
-        auto chunk = append(VertexArrayWrap(vertices, 3), layout, false);
-        lite3d_bounding_vol_setup(&chunk.chunk->boundingVol, &vmin, &vmax);
+        append(VertexArrayWrap(vertices, 3), layout);
     }
     
     void Mesh::genSkybox(const kmVec3 &center, const kmVec3 &size)
     {
         SDL_assert(mMeshPartition);
+        
         const float skyboxVertices[] = {
             // positions          
             center.x-(size.x/2),  center.y+(size.y/2), center.z-(size.z/2),
@@ -247,11 +246,7 @@ namespace lite3dpp
             { LITE3D_BUFFER_BINDING_VERTEX, 3 }
         };
         
-        kmVec3 vmax = {center.x+(size.x/2), center.y+(size.y/2), center.z+(size.z/2)}, 
-            vmin = {center.x-(size.x/2), center.y-(size.y/2), center.z-(size.z/2)};
-        
-        auto chunk = append(VertexArrayWrap(skyboxVertices, 36), layout, false);
-        lite3d_bounding_vol_setup(&chunk.chunk->boundingVol, &vmin, &vmax);
+        append(VertexArrayWrap(skyboxVertices, 36), layout);
     }
 
     void Mesh::genArray(const stl<kmVec3>::vector &points, const kmVec3 &bbmin, const kmVec3 &bbmax)
@@ -260,13 +255,13 @@ namespace lite3dpp
             { LITE3D_BUFFER_BINDING_VERTEX, 3 }
         };
 
-        auto chunk = append(points, layout, false);
-        lite3d_bounding_vol_setup(&chunk.chunk->boundingVol, &bbmin, &bbmax);
+        append(points, layout, bbmin, bbmax);
     }
 
     void Mesh::loadModel(const ConfigurationReader &config)
     {
         SDL_assert(mMeshPartition);
+
         auto chunks = mMeshPartition->loadMesh(config.getString(L"Model"));
         appendChunks(chunks, true);
     }
@@ -274,6 +269,7 @@ namespace lite3dpp
     void Mesh::loadAssimpModel(const ConfigurationReader &config)
     {
         SDL_assert(mMeshPartition);
+
         uint32_t flags = 0;
         if (config.getBool(L"Optimize"))
             flags |= LITE3D_OPTIMIZE_MESH_FLAG;
@@ -285,21 +281,43 @@ namespace lite3dpp
         appendChunks(chunks, true);
     }
 
-    Mesh::ChunkEntity Mesh::append(const VertexArrayWrap &vertices, const IndexArrayWrap &indices, const BufferLayout &layout,
-        bool createBoundingBoxMesh)
+    Mesh::ChunkEntity Mesh::append(const VertexArrayWrap &vertices, const IndexArrayWrap &indices, const BufferLayout &layout)
     {
         SDL_assert(mMeshPartition);
+
         auto chunk = mMeshPartition->append(vertices, indices, layout);
-        appendChunks(MeshChunkArray {chunk}, createBoundingBoxMesh);
+        appendChunks(MeshChunkArray {chunk}, false);
         return mMeshChunks[mMeshChunks.size() - 1];
     }
 
-    Mesh::ChunkEntity Mesh::append(const VertexArrayWrap &vertices, const BufferLayout &layout, 
-        bool createBoundingBoxMesh)
+    Mesh::ChunkEntity Mesh::append(const VertexArrayWrap &vertices, const BufferLayout &layout)
     {
         SDL_assert(mMeshPartition);
+
         auto chunk = mMeshPartition->append(vertices, layout);
-        appendChunks(MeshChunkArray {chunk}, createBoundingBoxMesh);
+        appendChunks(MeshChunkArray {chunk}, false);
+        return mMeshChunks[mMeshChunks.size() - 1];
+    }
+
+    Mesh::ChunkEntity Mesh::append(const VertexArrayWrap &vertices, const IndexArrayWrap &indices, const BufferLayout &layout, 
+        const kmVec3 &bbmin, const kmVec3 &bbmax)
+    {
+        SDL_assert(mMeshPartition);
+
+        auto chunk = mMeshPartition->append(vertices, indices, layout);
+        lite3d_bounding_vol_setup(&chunk->boundingVol, &bbmin, &bbmax);
+        appendChunks(MeshChunkArray {chunk}, true);
+        return mMeshChunks[mMeshChunks.size() - 1];
+    }
+
+    Mesh::ChunkEntity Mesh::append(const VertexArrayWrap &vertices, const BufferLayout &layout,
+        const kmVec3 &bbmin, const kmVec3 &bbmax)
+    {
+        SDL_assert(mMeshPartition);
+
+        auto chunk = mMeshPartition->append(vertices, layout);
+        lite3d_bounding_vol_setup(&chunk->boundingVol, &bbmin, &bbmax);
+        appendChunks(MeshChunkArray {chunk}, true);
         return mMeshChunks[mMeshChunks.size() - 1];
     }
 

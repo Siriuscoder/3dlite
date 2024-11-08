@@ -52,12 +52,13 @@ namespace lite3dpp
         ChunkEntity getChunkBoudingBox(size_t index) const;
         void autoAssignMaterialIndexes();
 
-        /* return the index of the appended chunk */
-        ChunkEntity append(const VertexArrayWrap &vertices, const IndexArrayWrap &indices, const BufferLayout &layout,
-            bool createBoundingBoxMesh = true);
-
+        /* return the appended chunk */
+        ChunkEntity append(const VertexArrayWrap &vertices, const IndexArrayWrap &indices, const BufferLayout &layout);
+        ChunkEntity append(const VertexArrayWrap &vertices, const BufferLayout &layout);
+        ChunkEntity append(const VertexArrayWrap &vertices, const IndexArrayWrap &indices, const BufferLayout &layout, 
+            const kmVec3 &bbmin, const kmVec3 &bbmax);
         ChunkEntity append(const VertexArrayWrap &vertices, const BufferLayout &layout,
-            bool createBoundingBoxMesh = true);
+            const kmVec3 &bbmin, const kmVec3 &bbmax);
         
     protected:
 

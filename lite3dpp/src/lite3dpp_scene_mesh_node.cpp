@@ -93,7 +93,7 @@ namespace lite3dpp
                 (getScene() ? getScene()->getName() : "none") << "'");
         }
 
-        SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "%s: material %d(%s), chunk 0x%p, bb chunk 0x%p",
+        SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "%s: material %d(%s), chunk %p, bb chunk %p",
             getName().c_str(), entity.chunk->materialIndex, material->getName().c_str(), 
                 (void *)entity.chunk, (void *)boundigBoxChunk);
     }

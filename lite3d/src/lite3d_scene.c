@@ -814,6 +814,8 @@ int lite3d_scene_node_touch_material(struct lite3d_scene_node *node,
     if (mqrUnit == NULL)
     {
         mqrUnit = (_mqr_unit *) lite3d_calloc_pooled(LITE3D_POOL_NO1, sizeof (_mqr_unit));
+        if (!mqrUnit) return LITE3D_FALSE;
+
         lite3d_list_init(&mqrUnit->nodes);
         lite3d_list_link_init(&mqrUnit->queued);
         mqrUnit->material = material;
@@ -821,7 +823,7 @@ int lite3d_scene_node_touch_material(struct lite3d_scene_node *node,
         lite3d_list_add_last_link(&mqrUnit->queued, &scene->materialRenderUnits);
     }
 
-    SDL_assert_release(mqrUnit);
+    SDL_assert(mqrUnit);
 
     if (mqrNode == NULL)
     {
@@ -833,12 +835,14 @@ int lite3d_scene_node_touch_material(struct lite3d_scene_node *node,
         }
 
         mqrNode = (_mqr_node *) lite3d_calloc_pooled(LITE3D_POOL_NO1, sizeof (_mqr_node));
+        if (!mqrNode) return LITE3D_FALSE;
+
         lite3d_list_link_init(&mqrNode->unit);
         lite3d_array_init(&mqrNode->queries, sizeof(_query_unit), 1);
         mqrNode->node = node;
     }
 
-    SDL_assert_release(mqrNode);
+    SDL_assert(mqrNode);
     /* relink render node */
     mqrNode->meshChunk = meshChunk;
     mqrNode->bbMeshChunk = bbMeshChunk;
@@ -846,7 +850,7 @@ int lite3d_scene_node_touch_material(struct lite3d_scene_node *node,
     mqrNode->instancesCount = instancesCount;
     mqrNode->matUnit = mqrUnit;
     mqrNode->node->recalc = LITE3D_TRUE;
-    node->renderable = LITE3D_TRUE;
+    mqrNode->node->renderable = LITE3D_TRUE;
     mqr_unit_add_node(mqrUnit, mqrNode);
 
     return LITE3D_TRUE;

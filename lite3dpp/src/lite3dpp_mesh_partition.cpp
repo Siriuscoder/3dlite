@@ -119,7 +119,7 @@ namespace lite3dpp
             LITE3D_THROW(getName() << ": Failed to load mesh via assimp");
         }
         
-        for (lastBefore = lastBefore ? lastBefore : lite3d_list_first_link(&mPartition.chunks); 
+        for (lastBefore = lastBefore ? lite3d_list_next(lastBefore) : lite3d_list_first_link(&mPartition.chunks); 
             lastBefore != &mPartition.chunks.l; lastBefore = lite3d_list_next(lastBefore))
         {
             newChunks.push_back(LITE3D_MEMBERCAST(lite3d_mesh_chunk, lastBefore, link));
@@ -142,7 +142,7 @@ namespace lite3dpp
             LITE3D_THROW(getName() << ": could not load mesh chunk");
         }
 
-        for (lastBefore = lastBefore ? lastBefore : lite3d_list_first_link(&mPartition.chunks); 
+        for (lastBefore = lastBefore ? lite3d_list_next(lastBefore) : lite3d_list_first_link(&mPartition.chunks); 
             lastBefore != &mPartition.chunks.l; lastBefore = lite3d_list_next(lastBefore))
         {
             newChunks.push_back(LITE3D_MEMBERCAST(lite3d_mesh_chunk, lastBefore, link));
