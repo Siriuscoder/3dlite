@@ -27,6 +27,21 @@ namespace lite3dpp
     {
     public:
 
+        enum BufferUsage : uint16_t
+        {
+            ModeStreamDraw = LITE3D_VBO_STREAM_DRAW,
+            ModeStreamRead = LITE3D_VBO_STREAM_READ,
+            ModeStreamCopy = LITE3D_VBO_STREAM_COPY,
+
+            ModeStaticDraw = LITE3D_VBO_STATIC_DRAW,
+            ModeStaticRead = LITE3D_VBO_STATIC_READ,
+            ModeStaticCopy = LITE3D_VBO_STATIC_COPY,
+
+            ModeDynamicDraw = LITE3D_VBO_DYNAMIC_DRAW,
+            ModeDynamicRead = LITE3D_VBO_DYNAMIC_READ,
+            ModeDynamicCopy = LITE3D_VBO_DYNAMIC_COPY
+        };
+
         virtual ~BufferBase() = default;
 
         virtual size_t bufferSizeBytes() const = 0;

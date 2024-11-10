@@ -26,10 +26,10 @@ namespace lite3dpp
     
     void SSBO::loadFromConfigImpl(const ConfigurationReader &helper)
     {
-        if (!lite3d_ssbo_init(getPtr()))
+        if (!lite3d_ssbo_init(getPtr(), helper.getBool(L"Dynamic", false) ? 
+            BufferUsage::ModeDynamicDraw : BufferUsage::ModeStaticDraw))
             LITE3D_THROW(getName() << ": failed to create SSBO");
         
         VBOResource::loadFromConfigImpl(helper);
     }
 }
-

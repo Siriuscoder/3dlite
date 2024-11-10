@@ -125,8 +125,8 @@ namespace lite3dpp
 
         void releaseAllResources();
         void releaseResource(const String &name);
-        void releaseFileCache();
-        void releaseFileCache(const String &location);
+        void dropFileCache();
+        void dropFileCache(const String &location);
         bool resourceExists(const String &name);
         
         ResourceManagerStats getStats() const;

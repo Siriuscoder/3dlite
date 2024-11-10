@@ -39,7 +39,7 @@ namespace lite3dpp
         if (!valid())
             LITE3D_THROW("Failed to extend GPU buffer, resource unavailable");
 
-        if (!lite3d_vbo_extend(&mVBO, addSize, mVBO.access))
+        if (!lite3d_vbo_extend(&mVBO, addSize))
         {
             LITE3D_THROW("Failed to extend GPU buffer, probably this function does not supported");
         }
@@ -86,7 +86,7 @@ namespace lite3dpp
         if (!valid())
             LITE3D_THROW("Failed to upload data to GPU buffer, resource unavailable");
 
-        if (!lite3d_vbo_buffer(&mVBO, buffer, size, mVBO.access))
+        if (!lite3d_vbo_buffer(&mVBO, buffer, size))
             LITE3D_THROW("Failed to upload data to GPU buffer");
     }
     
@@ -120,8 +120,6 @@ namespace lite3dpp
     
     void VBOResource::loadFromConfigImpl(const ConfigurationReader &helper)
     {
-        mVBO.access = helper.getBool(L"Dynamic", false) ? LITE3D_VBO_DYNAMIC_DRAW : LITE3D_VBO_STATIC_DRAW;
-        
         size_t size;
         if ((size = helper.getInt(L"Size", 0)) > 0)
         {

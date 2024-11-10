@@ -60,11 +60,11 @@ void MeshInfoCommand::printInfo(const lite3d_file *meshFile)
     lite3d_mesh_chunk *meshChunk;
     int chunksCount = 0;
 
-    if (!lite3d_mesh_init(&mesh))
+    if (!lite3d_mesh_init(&mesh, LITE3D_VBO_STATIC_READ))
         return;
 
     if (!lite3d_mesh_m_decode(&mesh, meshFile->fileBuff,
-        meshFile->fileSize, LITE3D_VBO_STATIC_READ))
+        meshFile->fileSize))
     {
         lite3d_mesh_purge(&mesh);
         LITE3D_THROW("Failed to decode mesh");

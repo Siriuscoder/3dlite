@@ -28,7 +28,7 @@
 
 static lite3d_vbo gAuxGlobalBuffer = {0, 0, 0};
 
-int lite3d_mesh_init(struct lite3d_mesh *mesh)
+int lite3d_mesh_init(struct lite3d_mesh *mesh, uint16_t usage)
 {
     SDL_assert(mesh);
 
@@ -40,7 +40,7 @@ int lite3d_mesh_init(struct lite3d_mesh *mesh)
     {
         if (!gAuxGlobalBuffer.vboID)
         {
-            if (!lite3d_vbo_init(&gAuxGlobalBuffer))
+            if (!lite3d_vbo_init(&gAuxGlobalBuffer, LITE3D_VBO_DYNAMIC_DRAW))
                 return LITE3D_FALSE;
         }
 
@@ -48,11 +48,11 @@ int lite3d_mesh_init(struct lite3d_mesh *mesh)
     }
 
     /* gen buffer for store vertex data */
-    if (!lite3d_vbo_init(&mesh->vertexBuffer))
+    if (!lite3d_vbo_init(&mesh->vertexBuffer, usage))
         return LITE3D_FALSE;
 
     /* gen buffer for store index data */
-    if (!lite3d_ibo_init(&mesh->indexBuffer))
+    if (!lite3d_ibo_init(&mesh->indexBuffer, usage))
     {
         lite3d_vbo_purge(&mesh->vertexBuffer);
         return LITE3D_FALSE;
@@ -79,18 +79,18 @@ void lite3d_mesh_purge(struct lite3d_mesh *mesh)
 }
 
 int lite3d_mesh_extend(struct lite3d_mesh *mesh, size_t verticesSize,
-    size_t indexesSize, uint16_t access)
+    size_t indexesSize)
 {
     SDL_assert(mesh);
 
     if (verticesSize > 0)
     {
-        if (!lite3d_vbo_extend(&mesh->vertexBuffer, verticesSize, access))
+        if (!lite3d_vbo_extend(&mesh->vertexBuffer, verticesSize))
             return LITE3D_FALSE;
     }
     if (indexesSize > 0)
     {
-        if (!lite3d_vbo_extend(&mesh->indexBuffer, indexesSize, access))
+        if (!lite3d_vbo_extend(&mesh->indexBuffer, indexesSize))
             return LITE3D_FALSE;
     }
 

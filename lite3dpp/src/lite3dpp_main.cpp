@@ -190,7 +190,7 @@ namespace lite3dpp
         });
 
         mResourceManager.releaseAllResources();
-        mResourceManager.releaseFileCache();
+        mResourceManager.dropFileCache();
         removeAllCameras();
     }
 

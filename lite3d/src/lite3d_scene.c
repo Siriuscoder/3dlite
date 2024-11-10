@@ -176,7 +176,7 @@ static int mqr_render_series_params(lite3d_vbo *buffer, const void *param, size_
     /* setup global parameters (model normal) */
     if (psize > buffer->size)
     {
-        if(!lite3d_vbo_extend(buffer, psize - buffer->size, LITE3D_VBO_DYNAMIC_DRAW))
+        if(!lite3d_vbo_extend(buffer, psize - buffer->size))
         {
             SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "%s: Unable to extend buffer for store batch series",
                 LITE3D_CURRENT_FUNCTION);

@@ -40,7 +40,7 @@ namespace lite3dpp
             uint16_t format = Texture::textureInternalFormat(helper.getUpperString(L"BufferFormat"));
             
             if (!lite3d_texture_buffer_init(&mTexture, helper.getInt(L"TexelsCount", 0), NULL, 
-                format, helper.getBool(L"Dynamic", false) ? LITE3D_VBO_DYNAMIC_DRAW : LITE3D_VBO_STATIC_DRAW))
+                format, helper.getBool(L"Dynamic", false) ? BufferUsage::ModeDynamicDraw : BufferUsage::ModeStaticDraw))
             {
                 LITE3D_THROW(getName() << ": texture buffer allocation failed, probably it is not supported");
             }
@@ -106,8 +106,7 @@ namespace lite3dpp
         if (!valid())
             LITE3D_THROW(getName() << ": resource unavailable");
 
-        if (!lite3d_texture_buffer_extend(&mTexture, addSize,
-            getJson().getBool(L"Dynamic", false) ? LITE3D_VBO_DYNAMIC_DRAW : LITE3D_VBO_STATIC_DRAW))
+        if (!lite3d_texture_buffer_extend(&mTexture, addSize))
         {
             LITE3D_THROW(getName() << ": texture buffer extend failed, probably operation is not supported");
         }
@@ -146,7 +145,7 @@ namespace lite3dpp
         if (!valid())
             LITE3D_THROW(getName() << ": resource unavailable");
 
-        if (!lite3d_vbo_buffer(&mTexture.tbo, buffer, size, mTexture.tbo.access))
+        if (!lite3d_vbo_buffer(&mTexture.tbo, buffer, size))
             LITE3D_THROW(getName() << ": failed to replace texture buffer data, new size is " << size << " bytes");
     }
 

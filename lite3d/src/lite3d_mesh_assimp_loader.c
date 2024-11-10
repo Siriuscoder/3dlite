@@ -61,7 +61,7 @@ static const struct aiNode *ai_find_node_by_name(const struct aiNode *root, cons
 }
 
 static int ai_node_load_to_vbo(lite3d_mesh *meshInst, const struct aiScene *scene,
-    const struct aiNode *node, uint16_t access)
+    const struct aiNode *node)
 {
     uint8_t componentSize;
     lite3d_vao_layout layout[4 + AI_MAX_NUMBER_OF_COLOR_SETS + AI_MAX_NUMBER_OF_TEXTURECOORDS];
@@ -207,8 +207,8 @@ static int ai_node_load_to_vbo(lite3d_mesh *meshInst, const struct aiScene *scen
             *pindexes32++ = mesh->mFaces[j].mIndices[2];
         }
 
-        if (!lite3d_mesh_indexed_extend_from_memory(meshInst, vertices, mesh->mNumVertices,
-            layout, layoutCount, indexes, mesh->mNumFaces, access))
+        if (!lite3d_mesh_indexed_append_from_memory(meshInst, vertices, mesh->mNumVertices,
+            layout, layoutCount, indexes, mesh->mNumFaces))
         {
             lite3d_free(vertices);
             lite3d_free(indexes);
@@ -286,8 +286,7 @@ static int ai_load_light(const struct aiScene *scene, const struct aiNode *node,
 }
 
 static int ai_node_load_recursive(const struct aiScene *scene, 
-    const struct aiNode *node, lite3d_assimp_loader_ctx ctx,
-    uint16_t access)
+    const struct aiNode *node, lite3d_assimp_loader_ctx ctx)
 {
     uint32_t i;
     lite3d_mesh *mesh = NULL;
@@ -298,7 +297,7 @@ static int ai_node_load_recursive(const struct aiScene *scene,
         if(ctx.onAllocMesh && ((mesh = ctx.onAllocMesh(ctx.userdata)) == NULL))
             return LITE3D_FALSE;
 
-        if(!ai_node_load_to_vbo(mesh, scene, node, access))
+        if(!ai_node_load_to_vbo(mesh, scene, node))
         {
             SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "MESH: %s load failed..",
                 node->mName.data);
@@ -318,7 +317,7 @@ static int ai_node_load_recursive(const struct aiScene *scene,
 
     for (i = 0; i < node->mNumChildren; ++i)
     {
-        if (!ai_node_load_recursive(scene, node->mChildren[i], ctx, access))
+        if (!ai_node_load_recursive(scene, node->mChildren[i], ctx))
             return LITE3D_FALSE;
     }
 
@@ -413,7 +412,7 @@ static const struct aiScene *ai_load_scene(const lite3d_file *resource, uint32_t
 }
 
 int lite3d_assimp_mesh_load(lite3d_mesh *mesh, const lite3d_file *resource,
-    const char *name, uint16_t access, uint32_t flags)
+    const char *name, uint32_t flags)
 {
     const struct aiScene *scene = NULL;
     const struct aiNode *targetNode = NULL;
@@ -458,7 +457,7 @@ int lite3d_assimp_mesh_load(lite3d_mesh *mesh, const lite3d_file *resource,
         return LITE3D_FALSE;
     }
 
-    if (!ai_node_load_to_vbo(mesh, scene, targetNode, access))
+    if (!ai_node_load_to_vbo(mesh, scene, targetNode))
     {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "MESH: %s (%s) load failed..",
             resource->name, targetNode->mName.data);
@@ -476,8 +475,7 @@ int lite3d_assimp_mesh_load(lite3d_mesh *mesh, const lite3d_file *resource,
 }
 
 int lite3d_assimp_mesh_load_recursive(const lite3d_file *resource, 
-    lite3d_assimp_loader_ctx ctx,
-    uint16_t access, uint32_t flags)
+    lite3d_assimp_loader_ctx ctx, uint32_t flags)
 {
     const struct aiScene *scene = NULL;
     struct aiPropertyStore *importProrerties;
@@ -497,7 +495,7 @@ int lite3d_assimp_mesh_load_recursive(const lite3d_file *resource,
     if (!ai_load_materials(scene, ctx))
         return LITE3D_FALSE;
 
-    if (!ai_node_load_recursive(scene, scene->mRootNode, ctx, access))
+    if (!ai_node_load_recursive(scene, scene->mRootNode, ctx))
         return LITE3D_FALSE;
 
     if (ctx.onLevelPop)

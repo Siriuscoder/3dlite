@@ -39,6 +39,10 @@ namespace lite3dpp
         lite3d_mesh_chunk *operator[](size_t index);
         size_t usedVideoMemBytes() const override;
 
+        inline BufferBase::BufferUsage getUsageMode() const
+        { return mUsageMode; }
+
+        void extend(size_t extendVertexSize, size_t extendIndexSize);
 
         lite3d_mesh_chunk *append(const VertexArrayWrap &vertices, const IndexArrayWrap &indices, 
             const BufferLayout &layout);
@@ -54,7 +58,7 @@ namespace lite3dpp
     private:
 
         lite3d_mesh mPartition = {0};
-        VBO::VBOMode mMode = VBO::VBOMode::ModeStaticDraw;
+        BufferBase::BufferUsage mUsageMode = BufferBase::BufferUsage::ModeStaticDraw;
     };
 }
 

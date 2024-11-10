@@ -62,15 +62,14 @@ typedef struct lite3d_assimp_loader_ctx
         if *name* is NULL then first model node from *resource* will be load.
 */
 LITE3D_CEXPORT int lite3d_assimp_mesh_load(lite3d_mesh *mesh, const lite3d_file *resource, 
-    const char *name, uint16_t access, uint32_t flags);
+    const char *name, uint32_t flags);
 
 /*
     note:
         recursive load all meshes from *resource*
 */
 LITE3D_CEXPORT int lite3d_assimp_mesh_load_recursive(const lite3d_file *resource, 
-    lite3d_assimp_loader_ctx ctx,
-    uint16_t access, uint32_t flags);
+    lite3d_assimp_loader_ctx ctx, uint32_t flags);
 
 LITE3D_CEXPORT void lite3d_assimp_logging_init(void);
 LITE3D_CEXPORT void lite3d_assimp_logging_level(int8_t level);

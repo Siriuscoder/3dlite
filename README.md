@@ -2,11 +2,7 @@
 
 [![Build status](https://github.com/Siriuscoder/3dlite/actions/workflows/ci.yaml/badge.svg?branch=master)](https://github.com/Siriuscoder/3dlite/actions/workflows/ci.yaml)
 [![Release](https://github.com/Siriuscoder/3dlite/actions/workflows/release.yaml/badge.svg?event=push)](https://github.com/Siriuscoder/3dlite/actions/workflows/release.yaml)
-[![Lite3D CodeQL](https://github.com/Siriuscoder/3dlite/actions/workflows/codeql.yml/badge.svg?branch=master)](https://github.com/Siriuscoder/3dlite/actions/workflows/codeql.yml)
-![Code Size](https://img.shields.io/github/languages/code-size/Siriuscoder/3dlite)  
-
-![Downloads](https://img.shields.io/github/downloads/Siriuscoder/3dlite/latest/total)
-![Activity](https://img.shields.io/github/commit-activity/m/Siriuscoder/3dlite)
+[![Lite3D CodeQL](https://github.com/Siriuscoder/3dlite/actions/workflows/codeql.yml/badge.svg?branch=master)](https://github.com/Siriuscoder/3dlite/actions/workflows/codeql.yml)  
 
 ## About
 
@@ -17,7 +13,11 @@ vertex buffer, texture buffer and others.
 
 Lite3d library support only OpenGL graphics API as back end for GPU operations. No sound, no physics, graphics only!
 One of the reason of using OpenGL API was a potential support of many OS. Windows/Linux supports now, but 
-library may be simply ported on others platforms. 
+library may be simply ported on others platforms.  
+
+![Code Size](https://img.shields.io/github/languages/code-size/Siriuscoder/3dlite)
+![Downloads](https://img.shields.io/github/downloads/Siriuscoder/3dlite/latest/total)
+![Activity](https://img.shields.io/github/commit-activity/m/Siriuscoder/3dlite)
 
 ## API
 

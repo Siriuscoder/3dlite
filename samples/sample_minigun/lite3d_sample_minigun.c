@@ -125,9 +125,9 @@ static int initModel(void)
     if (!(file1 = lite3d_pack_file_load(mFileSysPack, "models/meshes/minigun.m")))
         return LITE3D_FALSE;
 
-    if (!lite3d_mesh_init(&mModel))
+    if (!lite3d_mesh_init(&mModel, LITE3D_VBO_STATIC_DRAW))
         return LITE3D_FALSE;
-    if (!lite3d_mesh_load_from_m_file(&mModel, file1, LITE3D_VBO_STATIC_DRAW))
+    if (!lite3d_mesh_load_from_m_file(&mModel, file1))
         return LITE3D_FALSE;
 
     return LITE3D_TRUE;

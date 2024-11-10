@@ -54,12 +54,14 @@ namespace lite3dpp
 
     void MeshPartition::loadFromConfigImpl(const ConfigurationReader &helper)
     {
-        mMode = helper.getBool(L"Dynamic", false) ? VBO::VBOMode::ModeDynamicDraw : VBO::VBOMode::ModeStaticDraw;
-        if (!lite3d_mesh_init(&mPartition))
+        mUsageMode = helper.getBool(L"Dynamic", false) ? BufferBase::BufferUsage::ModeDynamicDraw : 
+            BufferBase::BufferUsage::ModeStaticDraw;
+        if (!lite3d_mesh_init(&mPartition, mUsageMode))
         {
             LITE3D_THROW(getName() << ": Failed to init partition");
         }
 
+        extend(helper.getInt(L"PreallocVertexSize"), helper.getInt(L"PreallocIndexSize"));
         mPartition.userdata = this;
     }
 
@@ -82,11 +84,10 @@ namespace lite3dpp
         const BufferLayout &layout)
     {
         // Поддерживаются только 4 байтные индексы, не вижу смысла байт и 2 байта.
-        if (!lite3d_mesh_indexed_extend_from_memory(&mPartition, 
+        if (!lite3d_mesh_indexed_append_from_memory(&mPartition, 
             vertices.get<void>(), static_cast<uint32_t>(vertices.size()), 
             layout.data(), static_cast<uint32_t>(layout.size()), 
-            indices.get<void>(), static_cast<uint32_t>(indices.size()), 
-            mMode))
+            indices.get<void>(), static_cast<uint32_t>(indices.size())))
         {
             LITE3D_THROW(getName() << ": Failed to append mesh chunk");
         }
@@ -96,8 +97,8 @@ namespace lite3dpp
 
     lite3d_mesh_chunk *MeshPartition::append(const VertexArrayWrap &vertices, const BufferLayout &layout)
     {
-        if (!lite3d_mesh_extend_from_memory(&mPartition, vertices.get<void>(), static_cast<uint32_t>(vertices.size()), 
-            layout.data(), static_cast<uint32_t>(layout.size()), mMode))
+        if (!lite3d_mesh_append_from_memory(&mPartition, vertices.get<void>(), static_cast<uint32_t>(vertices.size()), 
+            layout.data(), static_cast<uint32_t>(layout.size())))
         {
             LITE3D_THROW(getName() << ": Failed to append mesh chunk");
         }
@@ -113,8 +114,7 @@ namespace lite3dpp
 #ifdef INCLUDE_ASSIMP
         auto lastBefore = lite3d_list_last_link(&mPartition.chunks);
         if (!lite3d_assimp_mesh_load(&mPartition, 
-            getMain().getResourceManager()->loadFileToMemory(filePath), modelName.c_str(), 
-            mMode, flags))
+            getMain().getResourceManager()->loadFileToMemory(filePath), modelName.c_str(), flags))
         {
             LITE3D_THROW(getName() << ": Failed to load mesh via assimp");
         }
@@ -137,7 +137,7 @@ namespace lite3dpp
         auto lastBefore = lite3d_list_last_link(&mPartition.chunks);
         
         if (!lite3d_mesh_load_from_m_file(&mPartition, 
-            getMain().getResourceManager()->loadFileToMemory(filePath), mMode))
+            getMain().getResourceManager()->loadFileToMemory(filePath)))
         {
             LITE3D_THROW(getName() << ": could not load mesh chunk");
         }
@@ -149,5 +149,13 @@ namespace lite3dpp
         }
 
         return newChunks;
+    }
+
+    void MeshPartition::extend(size_t extendVertexSize, size_t extendIndexSize)
+    {
+        if (!lite3d_mesh_extend(&mPartition, extendVertexSize, extendIndexSize))
+        {
+            LITE3D_THROW(getName() << ": failed to extend mesh partition");
+        }
     }
 }

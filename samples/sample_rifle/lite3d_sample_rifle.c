@@ -191,17 +191,17 @@ static int initModel(void)
     if (!(Battery = lite3d_pack_file_load(mFileSysPack, "models/meshes/battery.m")))
         return LITE3D_FALSE;
 
-    if (!lite3d_mesh_init(&mRifle))
+    if (!lite3d_mesh_init(&mRifle, LITE3D_VBO_STATIC_DRAW))
         return LITE3D_FALSE;
-    if (!lite3d_mesh_load_from_m_file(&mRifle, PlasmaRifl, LITE3D_VBO_STATIC_DRAW))
+    if (!lite3d_mesh_load_from_m_file(&mRifle, PlasmaRifl))
         return LITE3D_FALSE;
     /* fix material indexes to 0..maxVao */
     /* it is right way if you know how submeshes attached to real materials */
     lite3d_mesh_order_mat_indexes(&mRifle);
 
-    if (!lite3d_mesh_init(&mRifleBatt))
+    if (!lite3d_mesh_init(&mRifleBatt, LITE3D_VBO_STATIC_DRAW))
         return LITE3D_FALSE;
-    if (!lite3d_mesh_load_from_m_file(&mRifleBatt, Battery, LITE3D_VBO_STATIC_DRAW))
+    if (!lite3d_mesh_load_from_m_file(&mRifleBatt, Battery))
         return LITE3D_FALSE;
 
     return LITE3D_TRUE;

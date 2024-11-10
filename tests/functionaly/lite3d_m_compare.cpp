@@ -39,11 +39,11 @@ public:
         lite3d_file *brMeshFile = lite3d_pack_file_load(*fileSysPack, "meshes/VURmCorner_br.m");
         SDL_assert_release(brMeshFile != NULL);
 
-        SDL_assert_release(lite3d_mesh_init(ubrMesh) == LITE3D_TRUE);
-        SDL_assert_release(lite3d_mesh_init(brMesh) == LITE3D_TRUE);
+        SDL_assert_release(lite3d_mesh_init(ubrMesh, LITE3D_VBO_STATIC_DRAW) == LITE3D_TRUE);
+        SDL_assert_release(lite3d_mesh_init(brMesh, LITE3D_VBO_STATIC_DRAW) == LITE3D_TRUE);
 
-        SDL_assert_release(lite3d_mesh_m_decode(ubrMesh, ubrMeshFile->fileBuff, ubrMeshFile->fileSize, LITE3D_VBO_STATIC_DRAW) == LITE3D_TRUE);
-        SDL_assert_release(lite3d_mesh_m_decode(brMesh, brMeshFile->fileBuff, brMeshFile->fileSize, LITE3D_VBO_STATIC_DRAW) == LITE3D_TRUE);
+        SDL_assert_release(lite3d_mesh_m_decode(ubrMesh, ubrMeshFile->fileBuff, ubrMeshFile->fileSize) == LITE3D_TRUE);
+        SDL_assert_release(lite3d_mesh_m_decode(brMesh, brMeshFile->fileBuff, brMeshFile->fileSize) == LITE3D_TRUE);
     }
 
     static int compareVertices(void *userdata)

@@ -22,7 +22,7 @@
 
 // use LITE3D_TEXTURE_INTERNAL in bf
 LITE3D_CEXPORT int lite3d_texture_buffer_init(lite3d_texture_unit *textureUnit, 
-    uint32_t texelsCount, const void *data, uint16_t bf, uint16_t access);
+    uint32_t texelsCount, const void *data, uint16_t bf, uint16_t usage);
 
 LITE3D_CEXPORT int lite3d_texture_buffer_purge(lite3d_texture_unit *textureUnit);
 
@@ -40,7 +40,7 @@ LITE3D_CEXPORT int lite3d_texture_buffer_get(const lite3d_texture_unit *textureU
     void *buffer, size_t offset, size_t size);
 
 LITE3D_CEXPORT int lite3d_texture_buffer_extend(lite3d_texture_unit *textureUnit, 
-    size_t addSize, uint16_t access);
+    size_t addSize);
 
 
 #endif	/* LITE3D_TBO_H */

@@ -58,10 +58,10 @@ typedef struct lite3d_mesh_chunk
     lite3d_mesh *mesh;
 } lite3d_mesh_chunk;
 
-LITE3D_CEXPORT int lite3d_mesh_init(struct lite3d_mesh *mesh);
+LITE3D_CEXPORT int lite3d_mesh_init(struct lite3d_mesh *mesh, uint16_t usage);
 LITE3D_CEXPORT void lite3d_mesh_purge(struct lite3d_mesh *mesh);
 LITE3D_CEXPORT int lite3d_mesh_extend(struct lite3d_mesh *mesh, 
-    size_t verticesSize, size_t indexesSize, uint16_t access);
+    size_t verticesSize, size_t indexesSize);
 
 LITE3D_CEXPORT lite3d_mesh_chunk *lite3d_mesh_append_chunk(struct lite3d_mesh *mesh,
     const struct lite3d_vao_layout *layout,
