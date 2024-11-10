@@ -334,6 +334,15 @@ int lite3d_check_texture_cube_map_array(void)
 #endif
 }
 
+int lite3d_check_debug_context(void)
+{
+#ifdef GLES
+    return LITE3D_FALSE;
+#else
+    return GLEW_KHR_debug;
+#endif
+}
+
 #ifdef __GNUC__
 #   pragma GCC diagnostic push
 #   pragma GCC diagnostic ignored "-Wpedantic"
