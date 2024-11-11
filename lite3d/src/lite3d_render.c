@@ -149,8 +149,12 @@ static void update_render_target(lite3d_render_target *target)
     /* switch target framebuffer */
     lite3d_framebuffer_switch(&target->fb);
     /* clear target */
-    lite3d_buffers_clear_values(&target->cleanColor, target->cleanDepth, target->cleanStencil);
-    lite3d_buffers_clear(target->clearColorBuffer, target->clearDepthBuffer, target->clearStencilBuffer);
+
+    if (target->fb.status == LITE3D_FRAMEBUFFER_STATUS_OK)
+    {
+        lite3d_buffers_clear_values(&target->cleanColor, target->cleanDepth, target->cleanStencil);
+        lite3d_buffers_clear(target->clearColorBuffer, target->clearDepthBuffer, target->clearStencilBuffer);
+    }
 
     /* do paint by render queue */
     for (node = target->lookSequence.l.next; node != &target->lookSequence.l; node = lite3d_list_next(node))
@@ -159,11 +163,14 @@ static void update_render_target(lite3d_render_target *target)
 
         if (look->camera->cameraNode.enabled)
         {
-            lite3d_framebuffer_switch_layer(&target->fb, look->layer, look->layersCount);
+            if (target->fb.status == LITE3D_FRAMEBUFFER_STATUS_OK)
+            {
+                lite3d_framebuffer_switch_layer(&target->fb, look->layer, look->layersCount);
 
-            lite3d_buffers_clear((look->renderFlags & LITE3D_RENDER_CLEAN_COLOR_BUFF) ? LITE3D_TRUE : LITE3D_FALSE,
-                (look->renderFlags & LITE3D_RENDER_CLEAN_DEPTH_BUFF) ? LITE3D_TRUE : LITE3D_FALSE,
-                (look->renderFlags & LITE3D_RENDER_CLEAN_STENCIL_BUFF) ? LITE3D_TRUE : LITE3D_FALSE);
+                lite3d_buffers_clear((look->renderFlags & LITE3D_RENDER_CLEAN_COLOR_BUFF) ? LITE3D_TRUE : LITE3D_FALSE,
+                    (look->renderFlags & LITE3D_RENDER_CLEAN_DEPTH_BUFF) ? LITE3D_TRUE : LITE3D_FALSE,
+                    (look->renderFlags & LITE3D_RENDER_CLEAN_STENCIL_BUFF) ? LITE3D_TRUE : LITE3D_FALSE);
+            }
 
             lite3d_depth_test((look->renderFlags & LITE3D_RENDER_DEPTH_TEST) ? LITE3D_TRUE : LITE3D_FALSE);
             lite3d_color_output((look->renderFlags & LITE3D_RENDER_COLOR_OUTPUT) ? LITE3D_TRUE : LITE3D_FALSE);

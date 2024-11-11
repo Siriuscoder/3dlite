@@ -586,21 +586,31 @@ int lite3d_framebuffer_setup(lite3d_framebuffer *fb, const lite3d_framebuffer_at
     }
 #endif
     /* Does the GPU support current FBO configuration? */
-    if (flags & (LITE3D_FRAMEBUFFER_USE_COLOR_BUFFER | LITE3D_FRAMEBUFFER_USE_DEPTH_BUFFER) &&
-        glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+    if (flags & (LITE3D_FRAMEBUFFER_USE_COLOR_BUFFER | LITE3D_FRAMEBUFFER_USE_DEPTH_BUFFER))
     {
-        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Framebuffer configuration not supported..");
-        lite3d_framebuffer_purge(fb);
-        return LITE3D_FALSE;
+        if (glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE)
+        {
+            SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "FBO: 0x%x has been created and validated, %dx%d, color %s, "
+                "depth %s, stencil %s", fb->framebufferId, fb->width, fb->height,
+                fb->flags & LITE3D_FRAMEBUFFER_USE_COLOR_BUFFER ? (fb->colorAttachments.size > 0 ? "texture" : "renderbuffer") : "none",
+                fb->flags & LITE3D_FRAMEBUFFER_USE_DEPTH_BUFFER ? (fb->depthAttachment.attachment.attachment ? "texture" : "renderbuffer") : "none",
+                fb->flags & LITE3D_FRAMEBUFFER_USE_STENCIL_BUFFER ? "renderbuffer" : "none");
+
+            fb->status = LITE3D_FRAMEBUFFER_STATUS_OK;
+            return LITE3D_TRUE;
+        }
+        else
+        {
+            SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Framebuffer configuration not supported..");
+            lite3d_framebuffer_purge(fb);
+            return LITE3D_FALSE;
+        }
     }
 
-    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "FBO: 0x%x validated, %dx%d, color %s, "
-        "depth %s, stencil %s", fb->framebufferId, fb->width, fb->height,
-        fb->flags & LITE3D_FRAMEBUFFER_USE_COLOR_BUFFER ? (fb->colorAttachments.size > 0 ? "texture" : "renderbuffer") : "none",
-        fb->flags & LITE3D_FRAMEBUFFER_USE_DEPTH_BUFFER ? (fb->depthAttachment.attachment.attachment ? "texture" : "renderbuffer") : "none",
-        fb->flags & LITE3D_FRAMEBUFFER_USE_STENCIL_BUFFER ? "renderbuffer" : "none");
+    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "FBO: 0x%x has been created with no attachments, %dx%d", 
+        fb->framebufferId, fb->width, fb->height);
 
-    fb->status = LITE3D_FRAMEBUFFER_STATUS_OK;
+    fb->status = LITE3D_FRAMEBUFFER_STATUS_EMPTY;
     return LITE3D_TRUE;
 }
 
@@ -648,8 +658,6 @@ void lite3d_framebuffer_switch(lite3d_framebuffer *fb)
     {
         glBindFramebuffer(GL_FRAMEBUFFER, fb->framebufferId);
         gCurrentFb = fb;
-        /* set viewport */
-        glViewport(0, 0, fb->width, fb->height);
         /* set buffers drawable */
 #ifndef GLES
         if (fb->framebufferId == 0)
@@ -678,6 +686,9 @@ void lite3d_framebuffer_switch(lite3d_framebuffer *fb)
         }
 #endif
     }
+
+    /* set viewport */
+    glViewport(0, 0, fb->width, fb->height);
 }
 
 void lite3d_framebuffer_resize(lite3d_framebuffer *fb, 
@@ -686,8 +697,6 @@ void lite3d_framebuffer_resize(lite3d_framebuffer *fb,
     SDL_assert(fb);
     fb->width = width;
     fb->height = height;
-    // framebuffer will be readjusted
-    gCurrentFb = NULL;
 }
 
 int lite3d_framebuffer_read(lite3d_framebuffer *fb,
@@ -745,7 +754,6 @@ int lite3d_framebuffer_blit(lite3d_framebuffer *from, lite3d_framebuffer *to)
 
 void lite3d_framebuffer_switch_layer(lite3d_framebuffer *fb, const lite3d_framebuffer_layer *layer, size_t layerCount)
 {
-    lite3d_framebuffer_switch(fb);
     for (size_t i = 0; i < layerCount; ++i)
     {
         if (layer[i].attachmentType == LITE3D_FRAMEBUFFER_USE_COLOR_BUFFER)

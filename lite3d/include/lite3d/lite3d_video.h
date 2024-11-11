@@ -40,6 +40,7 @@ typedef struct lite3d_video_settings
     int8_t glProfile;
     int8_t glVersionMajor;
     int8_t glVersionMinor;
+    int8_t debug;
 } lite3d_video_settings;
 
 
