@@ -32,13 +32,43 @@ namespace lite3dpp
     void PBRMaterial::loadFromConfigImpl(const ConfigurationReader &helper)
     {
         MultiRenderMaterial::loadFromConfigImpl(helper);
+
+        mMaterialEntity.Albedo = helper.getVec4(L"Albedo", KM_VEC4_ONE);
+        mMaterialEntity.Emission = helper.getVec4(L"Emission", KM_VEC4_ZERO);
+        mMaterialEntity.F0 = helper.getVec4(L"F0", kmVec4 { 0.04, 0.04, 0.04, 1.0 });
+        mMaterialEntity.NormalScale = helper.getVec4(L"NormalScale", KM_VEC4_ONE);
+        mMaterialEntity.Alpha = helper.getDouble(L"Alpha", 1.0);
+        mMaterialEntity.Specular = helper.getDouble(L"Specular", 1.0);
+        mMaterialEntity.Roughness = helper.getDouble(L"Roughness", 1.0);
+        mMaterialEntity.Metallic = helper.getDouble(L"Metallic", 1.0);
+        mMaterialEntity.GIkd = helper.getDouble(L"GIkd", 1.0);
+        mMaterialEntity.GIks = helper.getDouble(L"GIks", 1.0);
+        mMaterialEntity.Ior = helper.getDouble(L"Ior", 1.0);
+
+        for (size_t i = 1; i < gTextureIds.size(); ++i)
+        {
+            WString wsName(gTextureIds[i]);
+            if (helper.has(wsName))
+            {
+                auto textureCfg = helper.getObject(wsName);
+                addTexture(getMain().getResourceManager()->queryResource<TextureImage>(
+                    textureCfg.getString(L"TextureName"),
+                    textureCfg.getString(L"TexturePath")), 
+                    static_cast<TextureFlags>(1u << i));
+            }
+        }
+
+        // Добавляем этот материал к остальным в буфер
+        mMaterialDataBuffer->extendBufferBytes(sizeof(PBRMaterialRaw));
+        mMaterialIndex = (mMaterialDataBuffer->bufferSizeBytes() / sizeof(PBRMaterialRaw)) - 1;
+        update();
     }
 
     void PBRMaterial::addTexture(Texture *texture, TextureFlags flags)
     {
         SDL_assert(texture);
 
-        const size_t maxTexturesCount = sizeof(RawPBRMaterial::textures) / sizeof(RawTextureHandle);
+        const size_t maxTexturesCount = sizeof(PBRMaterialRaw::textures) / sizeof(TextureHandleRaw);
         bool overflow = true;
         for (size_t i = 0; i < maxTexturesCount; ++i)
         {
@@ -48,6 +78,7 @@ namespace lite3dpp
             overflow = false;
             mMaterialEntity.textures[i].flags = flags | TextureFlags::LOADED;
             mMaterialEntity.textures[i].textureHandle = texture->handle();
+            break;
         }
 
         if (overflow)
@@ -58,7 +89,7 @@ namespace lite3dpp
 
     void PBRMaterial::update()
     {
-
+        SDL_assert(mMaterialDataBuffer);
+        mMaterialDataBuffer->setElement<PBRMaterialRaw>(mMaterialIndex, &mMaterialEntity);
     }
 }
-

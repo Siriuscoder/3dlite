@@ -17,6 +17,7 @@
  *******************************************************************************/
 #pragma once
 
+#include <array>
 #include <lite3dpp/lite3dpp_material_multi_render.h>
 
 #define LITE3D_DECLARE_PBR_MATERIAL_FIELD(t, n) \
@@ -33,7 +34,16 @@ namespace lite3dpp
     enum class TextureFlags : uint32_t
     {
         EMPTY = 0,
-        LOADED = 1 << 0
+        LOADED = 1u << 0,
+        ALBEDO = 1u << 1,
+        EMISSION = 1u << 2,
+        ALPHA_MASK = 1u << 3,
+        NORMAL = 1u << 4,
+        SPECULAR = 1u << 5,
+        ROUGHNESS = 1u << 6,
+        METALLIC = 1u << 7,
+        SPECULAR_ROUGNESS_METALLIC = 1u << 8,
+        ROUGNESS_METALLIC = 1u << 9
     };
 
     LITE3D_DECLARE_ENUM_OPERATORS(PBRMaterialFlags);
@@ -42,36 +52,53 @@ namespace lite3dpp
     class LITE3DPP_EXPORT PBRMaterial : public MultiRenderMaterial
     {
     public:
+        
+        using TextureIds = std::array<std::wstring_view, 9>;
+        static constexpr inline TextureIds gTextureIds = {
+            L"AlbedoTexture",
+            L"EmissionTexture",
+            L"AlphaMaskTexture",
+            L"NormalTexture",
+            L"SpecularTexture",
+            L"RoughnessTexture",
+            L"MetallicTexture",
+            L"SpecularRoughnessMetallicTexture",
+            L"RoughnessMetallicTexture"
+        };
 
 #pragma pack(push, 4)
 
-        struct RawTextureHandle
+        struct TextureHandleRaw
         {
-            uint64_t textureHandle;
-            TextureFlags flags;
+            uint64_t textureHandle = 0;
+            TextureFlags flags = TextureFlags::EMPTY;
         };
 
-        struct RawPBRMaterial
+        struct PBRMaterialRaw
         {
-            kmVec4 Albedo = KM_VEC4_ONE;
-            kmVec4 Emission = KM_VEC4_ONE;
-            kmVec4 F0 = KM_VEC4_ONE;
-            kmVec4 NormalScale = KM_VEC4_ONE;
-            float Alpha = 1.0f;
-            float Specular = 1.0f;
-            float Roughness = 1.0f;
-            float Metallic = 1.0f;
-            float GIdiffuse = 1.0f;
-            float GIspecular = 1.0f;
-            float Ior = 1.0f;
+            kmVec4 Albedo;
+            kmVec4 Emission;
+            kmVec4 F0;
+            kmVec4 NormalScale;
+            float Alpha;
+            float Specular;
+            float Roughness;
+            float Metallic;
+            float GIkd;
+            float GIks;
+            float Ior;
             PBRMaterialFlags Flags = PBRMaterialFlags::EMPTY;
-            RawTextureHandle textures[8] = {0};
+            TextureHandleRaw textures[8] = {};
         };
 
 #pragma pack(pop)
 
-
         PBRMaterial(const String &name, const String &path, Main *main);
+
+        // Индекс материала в глобальном массиве материалов
+        // У каждого материала будет уникальный индекс 
+        inline uint32_t getMaterialIndex() const 
+        { return mMaterialIndex; }
 
         LITE3D_DECLARE_PBR_MATERIAL_FIELD(kmVec4, Albedo);
         LITE3D_DECLARE_PBR_MATERIAL_FIELD(kmVec4, Emission);
@@ -81,8 +108,8 @@ namespace lite3dpp
         LITE3D_DECLARE_PBR_MATERIAL_FIELD(float, Specular);
         LITE3D_DECLARE_PBR_MATERIAL_FIELD(float, Roughness);
         LITE3D_DECLARE_PBR_MATERIAL_FIELD(float, Metallic);
-        LITE3D_DECLARE_PBR_MATERIAL_FIELD(float, GIdiffuse);
-        LITE3D_DECLARE_PBR_MATERIAL_FIELD(float, GIspecular);
+        LITE3D_DECLARE_PBR_MATERIAL_FIELD(float, GIkd);
+        LITE3D_DECLARE_PBR_MATERIAL_FIELD(float, GIks);
         LITE3D_DECLARE_PBR_MATERIAL_FIELD(float, Ior);
         LITE3D_DECLARE_PBR_MATERIAL_FIELD(PBRMaterialFlags, Flags);
 
@@ -95,7 +122,7 @@ namespace lite3dpp
 
     protected:
 
-        RawPBRMaterial mMaterialEntity;
-        size_t mMaterialIndex = 0;
+        PBRMaterialRaw mMaterialEntity;
+        uint32_t mMaterialIndex = 0;
     };
 }

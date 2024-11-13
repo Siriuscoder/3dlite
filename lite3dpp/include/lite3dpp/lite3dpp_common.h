@@ -107,4 +107,4 @@ class asIScriptContext;
     inline e operator&(e a, e b) \
     { \
         return static_cast<e>(static_cast<int32_t>(a) & static_cast<int32_t>(b)); \
-    } 
+    }
