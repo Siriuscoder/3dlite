@@ -61,7 +61,7 @@ Overview
 */
 
 int lite3d_texture_buffer_init(lite3d_texture_unit *textureUnit, 
-    uint32_t texelsCount, const void *data, uint16_t bf, uint16_t access)
+    uint32_t texelsCount, const void *data, uint16_t bf, uint16_t usage)
 {
     int TBOMaxSize;
     if (!lite3d_check_tbo())
@@ -97,9 +97,9 @@ int lite3d_texture_buffer_init(lite3d_texture_unit *textureUnit,
         return LITE3D_FALSE;
     }
 
-    if (!lite3d_vbo_init(&textureUnit->tbo))
+    if (!lite3d_vbo_init(&textureUnit->tbo, usage))
         return LITE3D_FALSE;
-    if (!lite3d_vbo_buffer(&textureUnit->tbo, data, textureUnit->imageSize, access))
+    if (!lite3d_vbo_buffer(&textureUnit->tbo, data, textureUnit->imageSize))
         return LITE3D_FALSE;
     
     glGenTextures(1, &textureUnit->textureID);
@@ -205,8 +205,7 @@ int lite3d_texture_buffer_get(const lite3d_texture_unit *textureUnit,
     return lite3d_vbo_get_buffer(&textureUnit->tbo, buffer, offset, size);
 }
 
-int lite3d_texture_buffer_extend(lite3d_texture_unit *textureUnit, 
-    size_t addSize, uint16_t access)
+int lite3d_texture_buffer_extend(lite3d_texture_unit *textureUnit, size_t addSize)
 {
     int TBOMaxSize;
     SDL_assert(textureUnit);
@@ -220,7 +219,7 @@ int lite3d_texture_buffer_extend(lite3d_texture_unit *textureUnit,
         return LITE3D_FALSE;
     }
 
-    if (lite3d_vbo_extend(&textureUnit->tbo, addSize, access))
+    if (lite3d_vbo_extend(&textureUnit->tbo, addSize))
     {
         textureUnit->totalSize += addSize;
         textureUnit->imageSize += addSize;

@@ -35,7 +35,7 @@ namespace lite3dpp
     ResourceManager::~ResourceManager()
     {
         releaseAllResources();
-        releaseFileCache();
+        dropFileCache();
     }
 
     AbstractResource *ResourceManager::fetchResource(const String &key)
@@ -103,7 +103,7 @@ namespace lite3dpp
         }
     }
     
-    void ResourceManager::releaseFileCache()
+    void ResourceManager::dropFileCache()
     {
         for(Packs::value_type &pack : mPacks)
         {
@@ -113,7 +113,7 @@ namespace lite3dpp
         mPacks.clear();
     }
         
-    void ResourceManager::releaseFileCache(const String &location)
+    void ResourceManager::dropFileCache(const String &location)
     {
         Packs::iterator it;
         if((it = mPacks.find(location)) != mPacks.end())
@@ -191,6 +191,11 @@ namespace lite3dpp
                 break;
             case AbstractResource::PIPELINE:
                 stats.pipelinesCount++;
+                break;
+            case AbstractResource::MESH_PARTITION:
+                stats.meshPartitionsCount++;
+                if (resIt->second->getState() == AbstractResource::LOADED)
+                    stats.meshPartitionsLoadedCount++;
                 break;
             }
         }

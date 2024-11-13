@@ -45,11 +45,11 @@ public:
         Scene *scene = getMain().getResourceManager()->queryResource<Scene>("BoxScene",
             "samples:scenes/scene_rtt_box.json");
 
-        mBoxTexture = getMain().getResourceManager()->queryResource<TextureImage>("color512x512.texture");
-        mBoxMaterial = getMain().getResourceManager()->queryResource<Material>("render512x512.material");
         setMainCamera(getMain().getCamera("MyCamera"));
         mBox = scene->getObject("Box");
         mBoxMesh = getMain().getResourceManager()->queryResource<Mesh>("box.mesh");
+        mBoxTexture = getMain().getResourceManager()->queryResource<TextureImage>("color512x512.texture");
+        mBoxMaterial = getMain().getResourceManager()->queryResource<Material>("render512x512.material");
 
         updateTextureData();
     }
@@ -114,7 +114,7 @@ public:
     void updateMesh()
     {
         vertexPod *vertices;
-        lite3dpp::BufferScopedMapper vmap = mBoxMesh->vertexBuffer().map(BufferScopedMapper::LockTypeReadWrite);
+        auto vmap = mBoxMesh->getPartition()->vertexBuffer().map(BufferScopedMapper::LockTypeReadWrite);
         
         vertices = vmap.getPtr<vertexPod>();
         for(uint32_t i = 0; i < vmap.getSize(); i += sizeof(vertexPod), ++vertices)

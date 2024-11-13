@@ -111,11 +111,9 @@ namespace lite3dpp
         }
 
         // GL Version
-        mSettings.videoSettings.glVersionMajor = \
-            videoSettings.getInt(L"GLVersionMajor", 0);
-
-        mSettings.videoSettings.glVersionMinor = \
-            videoSettings.getInt(L"GLVersionMinor", 0);
+        mSettings.videoSettings.glVersionMajor = videoSettings.getInt(L"GLVersionMajor", 0);
+        mSettings.videoSettings.glVersionMinor = videoSettings.getInt(L"GLVersionMinor", 0);
+        mSettings.videoSettings.debug = videoSettings.getBool(L"Debug", false) ? LITE3D_TRUE : LITE3D_FALSE;
 
         mSettings.renderLisneters.userdata = reinterpret_cast<void *> (this);
         mSettings.renderLisneters.preRender = Main::onInit;
@@ -123,7 +121,6 @@ namespace lite3dpp
         mSettings.renderLisneters.preFrame = Main::onFrameBegin;
         mSettings.renderLisneters.postFrame = Main::onFrameEnd;
         mSettings.renderLisneters.processEvent = Main::onProcessEvent;
-
     }
 
     const lite3d_global_settings &Main::getSettings() const
@@ -190,7 +187,7 @@ namespace lite3dpp
         });
 
         mResourceManager.releaseAllResources();
-        mResourceManager.releaseFileCache();
+        mResourceManager.dropFileCache();
         removeAllCameras();
     }
 

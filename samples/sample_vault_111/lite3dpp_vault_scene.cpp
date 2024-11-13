@@ -181,7 +181,7 @@ public:
                 {
                     // ВНИМАНИЕ! Для выбранных источников света чанк всегда первый, но для других источников это может быть не так. 
                     MeshSceneNode *meshNode = static_cast<MeshSceneNode*>(parent);
-                    meshNode->replaceMaterial(1, material);
+                    meshNode->applyMaterial(1, material);
                 }
             }
             else if (lightNode->getName() == "ReactorElectric")

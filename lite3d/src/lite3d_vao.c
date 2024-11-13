@@ -102,7 +102,7 @@ void lite3d_vao_draw_indexed(struct lite3d_vao *vao)
      * Attributes that aren't modified maintain their previous values.
      */
 
-    glDrawElements(GL_TRIANGLES, vao->indexesCount, vao->indexType, LITE3D_BUFFER_OFFSET(vao->indexesOffset));
+    glDrawElements(GL_TRIANGLES, vao->indexesCount, GL_UNSIGNED_INT, LITE3D_BUFFER_OFFSET(vao->indexesOffset));
 }
 
 void lite3d_vao_draw_indexed_instanced(struct lite3d_vao *vao, size_t count)
@@ -117,7 +117,7 @@ void lite3d_vao_draw_indexed_instanced(struct lite3d_vao *vao, size_t count)
     SDL_assert(vao);
 
     glDrawElementsInstanced(GL_TRIANGLES, vao->indexesCount,
-        vao->indexType, (void *) vao->indexesOffset, (GLsizei)count);
+        GL_UNSIGNED_INT, LITE3D_BUFFER_OFFSET(vao->indexesOffset), (GLsizei)count);
 }
 
 void lite3d_vao_draw(struct lite3d_vao *vao)
@@ -180,7 +180,6 @@ int lite3d_vao_init_layout(struct lite3d_vbo *vertexBuffer,
     const struct lite3d_vao_layout *layout, 
     uint32_t layoutCount, 
     uint32_t stride, 
-    uint16_t componentType,
     uint32_t indexesCount,
     size_t indexesSize,
     size_t indexesOffset,
@@ -226,13 +225,11 @@ int lite3d_vao_init_layout(struct lite3d_vbo *vertexBuffer,
     glBindVertexArray(0);
 
     vao->elementsCount = (indexesCount > 0 ? indexesCount : verticesCount) / 3;
-    vao->indexType = componentType;
     vao->indexesOffset = indexesOffset;
     vao->indexesCount = indexesCount;
     vao->indexesSize = indexesSize;
     vao->verticesCount = verticesCount;
     vao->verticesSize = verticesSize;
     vao->verticesOffset = verticesOffset;
-    vao->indexType = componentType;
     return LITE3D_TRUE;
 }

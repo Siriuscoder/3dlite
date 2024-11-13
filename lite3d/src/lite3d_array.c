@@ -57,13 +57,15 @@ void *lite3d_array_add(lite3d_array *a)
     if (a->size == a->capacity)
     {
         void *pnew;
-        a->capacity <<= 1;
-        pnew = lite3d_malloc(a->capacity * a->elemSize);
-        SDL_assert_release(pnew);
+        size_t s = a->capacity << 1;
+        
+        if (!(pnew = lite3d_malloc(s * a->elemSize)))
+            return NULL;
 
         memcpy(pnew, a->data, a->size * a->elemSize);
         lite3d_free(a->data);
         a->data = pnew;
+        a->capacity = s;
     }
 
     a->size++;

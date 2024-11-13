@@ -128,6 +128,12 @@ namespace lite3dpp
         return mNodePtr->visible == LITE3D_TRUE;
     }
 
+    bool SceneNodeBase::isRenderable() const
+    {
+        SDL_assert(mNodePtr);
+        return mNodePtr->renderable == LITE3D_TRUE;
+    }
+    
     kmVec3 SceneNodeBase::getWorldPosition() const
     {
         SDL_assert(mNodePtr);

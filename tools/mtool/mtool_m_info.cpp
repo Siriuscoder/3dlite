@@ -56,17 +56,18 @@ void MeshInfoCommand::parseCommandLineImpl(int argc, char *args[])
 void MeshInfoCommand::printInfo(const lite3d_file *meshFile)
 {
     lite3d_mesh mesh;
+    lite3d_list_node *link;
     lite3d_mesh_chunk *meshChunk;
     int chunksCount = 0;
 
-    if (!lite3d_mesh_init(&mesh))
+    if (!lite3d_mesh_init(&mesh, LITE3D_VBO_STATIC_READ))
         return;
 
     if (!lite3d_mesh_m_decode(&mesh, meshFile->fileBuff,
-        meshFile->fileSize, LITE3D_VBO_STATIC_READ))
+        meshFile->fileSize))
     {
         lite3d_mesh_purge(&mesh);
-        LITE3D_THROW("Bad format..");
+        LITE3D_THROW("Failed to decode mesh");
     }
     
     printf("Mesh file version: %d.%d.%d\n\n", LITE3D_GET_VERSION_MAJ(mesh.version),
@@ -78,15 +79,17 @@ void MeshInfoCommand::printInfo(const lite3d_file *meshFile)
     printf("\tElements count: %u\n", mesh.elementsCount);
     printf("\tRaw size: %zu bytes\n\n", mesh.indexBuffer.size);
 
-    printf("Chunks count: %zu\n\n", mesh.chunks.size);
+    printf("Chunks count: %zu\n\n", lite3d_list_count(&mesh.chunks));
 
-    LITE3D_ARR_FOREACH(&mesh.chunks, lite3d_mesh_chunk, meshChunk)
+    for (link = mesh.chunks.l.next; link != &mesh.chunks.l; link = lite3d_list_next(link))
     {
         uint32_t i;
         size_t offset = 0;
+        meshChunk = LITE3D_MEMBERCAST(lite3d_mesh_chunk, link, link);
+        lite3d_vao_layout *layout = static_cast<lite3d_vao_layout *>(meshChunk->layout.data);
 
         printf("CHUNK %d\n", chunksCount);
-        printf("\tMaterial index %d\n", meshChunk->materialIndex);
+        printf("\tMaterial index: %d\n", meshChunk->materialIndex);
         printf("\tVertices count: %d\n", meshChunk->vao.verticesCount);
         printf("\tVertices size: %zu bytes\n", meshChunk->vao.verticesSize);
         printf("\tIndices count: %d\n", meshChunk->vao.indexesCount);
@@ -94,26 +97,26 @@ void MeshInfoCommand::printInfo(const lite3d_file *meshFile)
         printf("\tElements count: %d\n", meshChunk->vao.indexesCount / 3);
         printf("\tVertices offset: 0x%zx\n", meshChunk->vao.verticesOffset);
         printf("\tIndices offset: 0x%zx\n", meshChunk->vao.indexesOffset);
-        printf("\tIndex size: %d bytes\n\n", lite3d_size_by_index_type(meshChunk->vao.indexType));
+        printf("\tIndex size: 4 bytes\n\n");
 
         printf("\tFORMAT\n");
         printf("\tLoc\tType\t\tData\tOffset\n");
-        for (i = 0; i < meshChunk->layoutEntriesCount; ++i)
+        for (i = 0; i < meshChunk->layout.size; ++i)
         {
             printf("\t%d\t%s\tFLOAT%d\t0x%zx\n", i,
-                (meshChunk->layout[i].binding == LITE3D_BUFFER_BINDING_VERTEX ? "VERTEX\t" :
-                (meshChunk->layout[i].binding == LITE3D_BUFFER_BINDING_COLOR ? "COLOR\t" :
-                (meshChunk->layout[i].binding == LITE3D_BUFFER_BINDING_NORMAL ? "NORMAL\t" :
-                (meshChunk->layout[i].binding == LITE3D_BUFFER_BINDING_TEXCOORD ? "TEXCOORD" : 
-                (meshChunk->layout[i].binding == LITE3D_BUFFER_BINDING_TANGENT ? "TANGENT\t" :
-                (meshChunk->layout[i].binding == LITE3D_BUFFER_BINDING_BINORMAL ? "BINORMAL" : "ATTRIBUTE")))))),
-                meshChunk->layout[i].count, offset);
+                (layout[i].binding == LITE3D_BUFFER_BINDING_VERTEX ? "VERTEX\t" :
+                (layout[i].binding == LITE3D_BUFFER_BINDING_COLOR ? "COLOR\t" :
+                (layout[i].binding == LITE3D_BUFFER_BINDING_NORMAL ? "NORMAL\t" :
+                (layout[i].binding == LITE3D_BUFFER_BINDING_TEXCOORD ? "TEXCOORD" : 
+                (layout[i].binding == LITE3D_BUFFER_BINDING_TANGENT ? "TANGENT\t" :
+                (layout[i].binding == LITE3D_BUFFER_BINDING_BINORMAL ? "BINORMAL" : "ATTRIBUTE")))))),
+                layout[i].count, offset);
 
-            offset += sizeof (float) * meshChunk->layout[i].count;
+            offset += sizeof (float) * layout[i].count;
         }
 
         printf("\n\tStride: %zu bytes \n", offset);
-        printf("\tBounding sphere : (%f,%f,%f) radius %f\n\n", meshChunk->boundingVol.sphereCenter.x,
+        printf("\tBounding sphere: (%f,%f,%f) radius %f\n\n", meshChunk->boundingVol.sphereCenter.x,
             meshChunk->boundingVol.sphereCenter.y, meshChunk->boundingVol.sphereCenter.z, meshChunk->boundingVol.radius);
 
         chunksCount++;

@@ -30,7 +30,6 @@ namespace lite3dpp
 
         lite3d_scene_node_init(&mNode);
         mNode.userdata = this;
-        mNode.renderable = LITE3D_FALSE;
 
         setName(json.getString(L"Name"));
         if (getName().size() == 0)

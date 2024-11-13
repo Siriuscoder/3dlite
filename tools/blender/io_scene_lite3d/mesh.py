@@ -11,6 +11,7 @@ class Mesh:
     
     def __init__(self, obj, scene):
         self.mesh = obj.data
+        self.meshPartition = self.mesh.get("Partition")
         self.name = obj.data.name + ".mesh"
         self.object = obj
         self.scene = scene
@@ -64,10 +65,17 @@ class Mesh:
         return PurePosixPath("models/json/") / f"{self.mesh.name}.json"
                 
     def save(self):
+        if self.scene.options["singlePartition"]:
+            if self.meshPartition is None:
+                self.meshPartition = self.scene.name + ".mesh_partition"
+        
         meshJson = {
             "Codec": "m",
             "Model": self.scene.getAbsMeshPath(self.getRelativePath())
         }
+
+        if self.meshPartition is not None:
+            meshJson["Partition"] = self.meshPartition
         
         if len(self.mesh.materials) > 0:
             materialMapping = []
@@ -95,11 +103,12 @@ class Mesh:
         indexSectionSize = sum([chunk.indexesSize for chunk in self.chunks.values()])
         file.write(struct.pack("=I5i", Mesh.sig, Mesh.version, chunkSectionSize, vertexSectionSize,
             indexSectionSize, chunkCount))
+        return vertexSectionSize, indexSectionSize
         
     def saveModel(self):
         path = self.scene.getAbsSysPath(self.getRelativePath())
         with open(path, "wb") as file:
-            self.saveHeader(file)
+            (vertexSectionSize, indexSectionSize) = self.saveHeader(file)
             
             indexesOffset = 0
             verticesOffset = 0
@@ -115,9 +124,10 @@ class Mesh:
                 chunk = self.chunks[chunkIndex]
                 chunk.saveVertexBlock(file)
 
-            # Save index data for each chunk one by one
-            for chunkIndex in chunksIndexes:
-                chunk = self.chunks[chunkIndex]
-                chunk.saveIndexBlock(file)
+            # Save index data for each chunk one by one (if exist)
+            if indexSectionSize > 0:
+                for chunkIndex in chunksIndexes:
+                    chunk = self.chunks[chunkIndex]
+                    chunk.saveIndexBlock(file)
                 
-            log.info(f"saved ok {path}")
+            log.info(f"saved ok {path}, vertexes {vertexSectionSize} bytes, indexes {indexSectionSize} bytes")

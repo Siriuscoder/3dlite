@@ -69,6 +69,7 @@ namespace lite3dpp
 
         void setVisible(bool flag);
         bool isVisible() const;
+        bool isRenderable() const;
 
     private:
 

@@ -34,7 +34,7 @@ lite3d_mesh *ConverterCommand::entry_alloc_mesh(void *userdata)
 {
     SDL_assert(userdata);
     lite3d_mesh *mesh = &static_cast<ConverterCommand *>(userdata)->mMesh;
-    if (!lite3d_mesh_init(mesh))
+    if (!lite3d_mesh_init(mesh, LITE3D_VBO_STATIC_READ))
         return NULL;
 
     return mesh;
@@ -115,9 +115,8 @@ void ConverterCommand::runImpl()
         mGenerator.reset(new NullGenerator());
 
     if(!lite3d_assimp_mesh_load_recursive(
-        mMain.getResourceManager()->loadFileToMemory(mInputFilePath), ctx,
-        LITE3D_VBO_STATIC_READ, loadFlags))
-        LITE3D_THROW("Unable to import input file.. possible bad format..");
+        mMain.getResourceManager()->loadFileToMemory(mInputFilePath), ctx, loadFlags))
+        LITE3D_THROW("Assimp failed to load file '" << mInputFilePath << "'");
 }
 #else
 void ConverterCommand::runImpl()

@@ -39,7 +39,7 @@ typedef struct lite3d_vbo
 {
     uint32_t vboID;
     size_t size;
-    uint16_t access;
+    uint16_t usage;
     uint16_t role;
     void *userdata;
 } lite3d_vbo;
@@ -48,22 +48,26 @@ LITE3D_CEXPORT int lite3d_vbo_technique_init(void);
 LITE3D_CEXPORT void lite3d_vbo_get_limitations(int *UBOMaxSize, int *TBOMaxSize, int *SSBOMaxSize);
 
 /* use this to init vertex buffer object */
-LITE3D_CEXPORT int lite3d_vbo_init(struct lite3d_vbo *vbo);
+LITE3D_CEXPORT int lite3d_vbo_init(struct lite3d_vbo *vbo, 
+    uint16_t usage);
 /* use this to init index buffer object */
-LITE3D_CEXPORT int lite3d_ibo_init(struct lite3d_vbo *vbo);
+LITE3D_CEXPORT int lite3d_ibo_init(struct lite3d_vbo *vbo, 
+    uint16_t usage);
 /* use this to init shader storage buffer object */
-LITE3D_CEXPORT int lite3d_ssbo_init(struct lite3d_vbo *vbo);
+LITE3D_CEXPORT int lite3d_ssbo_init(struct lite3d_vbo *vbo, 
+    uint16_t usage);
 /* use this to init uniform buffer object */
-LITE3D_CEXPORT int lite3d_ubo_init(struct lite3d_vbo *vbo);
+LITE3D_CEXPORT int lite3d_ubo_init(struct lite3d_vbo *vbo, 
+    uint16_t usage);
 
 LITE3D_CEXPORT void lite3d_vbo_purge(struct lite3d_vbo *vbo);
 LITE3D_CEXPORT void *lite3d_vbo_map(struct lite3d_vbo *vbo,
     uint16_t access);
 LITE3D_CEXPORT void lite3d_vbo_unmap(struct lite3d_vbo *vbo);
 LITE3D_CEXPORT int lite3d_vbo_extend(struct lite3d_vbo *vbo, 
-    size_t addSize, uint16_t access);
+    size_t addSize);
 LITE3D_CEXPORT int lite3d_vbo_buffer(struct lite3d_vbo *vbo, 
-    const void *buffer, size_t size, uint16_t access);
+    const void *buffer, size_t size);
 LITE3D_CEXPORT int lite3d_vbo_subbuffer(struct lite3d_vbo *vbo, 
     const void *buffer, size_t offset, size_t size);
 LITE3D_CEXPORT int lite3d_vbo_get_buffer(const struct lite3d_vbo *vbo, 

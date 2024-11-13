@@ -27,16 +27,35 @@ namespace lite3dpp
     {
     public:
 
-        virtual ~BufferBase();
+        enum BufferUsage : uint16_t
+        {
+            ModeStreamDraw = LITE3D_VBO_STREAM_DRAW,
+            ModeStreamRead = LITE3D_VBO_STREAM_READ,
+            ModeStreamCopy = LITE3D_VBO_STREAM_COPY,
+
+            ModeStaticDraw = LITE3D_VBO_STATIC_DRAW,
+            ModeStaticRead = LITE3D_VBO_STATIC_READ,
+            ModeStaticCopy = LITE3D_VBO_STATIC_COPY,
+
+            ModeDynamicDraw = LITE3D_VBO_DYNAMIC_DRAW,
+            ModeDynamicRead = LITE3D_VBO_DYNAMIC_READ,
+            ModeDynamicCopy = LITE3D_VBO_DYNAMIC_COPY
+        };
+
+        virtual ~BufferBase() = default;
 
         virtual size_t bufferSizeBytes() const = 0;
         virtual void extendBufferBytes(size_t addsize) = 0;
         virtual void setBufferSizeBytes(size_t size) = 0;
         virtual void setData(const void *buffer, size_t offset, size_t size) = 0;
+        virtual void replaceData(const void *buffer, size_t size) = 0;
         virtual void getData(void *buffer, size_t offset, size_t size) const = 0;
-        virtual void getData(BufferData &buffer, size_t offset, size_t size) const;
-        virtual void setData(const BufferData &buffer, size_t offset);
         virtual BufferScopedMapper map(BufferScopedMapper::BufferScopedMapperLockType lockType) = 0;
+        virtual bool valid() const = 0;
+
+        void getDataBuffer(BufferData &buffer, size_t offset, size_t size) const;
+        void setDataBuffer(const BufferData &buffer, size_t offset);
+        void replaceDataBuffer(const BufferData &buffer);
 
         /* type align must be related with texel size */
         template<class T>

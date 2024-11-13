@@ -44,10 +44,6 @@ namespace lite3dpp_phisics {
         btCollisionShape *getCollisionShape();
         inline const String &getName() const
         { return mName; }
-        inline BufferData &getCollisionMeshVertexData()
-        { return mCollisionMeshVertexData; }
-        inline BufferData &getCollisionMeshIndexData()
-        { return mCollisionMeshIndexData; } 
 
         void loadShape(const ConfigurationReader& conf);
         /* GimpactTriangleMesh поддерживает изменение геомерии на лету. 
@@ -72,8 +68,8 @@ namespace lite3dpp_phisics {
         TriangleCollisionShapeType mCollisionShapeType;
         std::unique_ptr<btCollisionShape> mCollisionShape;
         std::unique_ptr<btTriangleIndexVertexArray> mCollisionMeshInfo;
-        BufferData mCollisionMeshVertexData;
-        BufferData mCollisionMeshIndexData;
+        stl<BufferData>::vector mCollisionMeshVertexData;
+        stl<BufferData>::vector mCollisionMeshIndexData;
     };
 
     class PhysicsCollisionShapeManager : public Noncopiable

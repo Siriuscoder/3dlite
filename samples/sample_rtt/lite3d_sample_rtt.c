@@ -254,7 +254,7 @@ static int initCube(void)
         -1.0f, 1.0f, -1.0f, 0.0f, 1.0f
     };
 
-    const uint8_t cubeIndices[] = {
+    const uint32_t cubeIndices[] = {
         0, 1, 2,
         2, 3, 0,
         4, 5, 6,
@@ -274,10 +274,13 @@ static int initCube(void)
         { LITE3D_BUFFER_BINDING_TEXCOORD, 2}
     };
 
-    if (!lite3d_mesh_init(&mCubeVbo))
+    if (!lite3d_mesh_init(&mCubeVbo, LITE3D_VBO_STATIC_DRAW))
         return LITE3D_FALSE;
-    if (!lite3d_mesh_indexed_load_from_memory(&mCubeVbo, cubeVertices, 24, layout, 2, cubeIndices, 12, sizeof(uint8_t), LITE3D_VBO_STATIC_DRAW))
+    if (!lite3d_mesh_indexed_load_from_memory(&mCubeVbo, cubeVertices, 24, layout, 2, cubeIndices, 12))
         return LITE3D_FALSE;
+    
+    lite3d_bounding_vol_setup(&LITE3D_MEMBERCAST(lite3d_mesh_chunk, lite3d_list_last_link(&mCubeVbo.chunks), link)->boundingVol, 
+        &KM_VEC3_MINUS_ONE, &KM_VEC3_ONE);
     
     saveCube();
 
@@ -340,10 +343,10 @@ static int init(void *userdata)
 
 
     lite3d_scene_add_node(&mScene, &mSceneNode[0], NULL);
-    lite3d_scene_node_touch_material(&mSceneNode[0], lite3d_mesh_chunk_get_by_index(&mCubeVbo, 0), NULL, &mBoxMaterial, 1);
+    lite3d_scene_node_touch_material(&mSceneNode[0], lite3d_mesh_chunk_get_by_material_index(&mCubeVbo, 0), NULL, &mBoxMaterial, 1);
 
     lite3d_scene_add_node(&mSceneMain, &mSceneNode[1], NULL);
-    lite3d_scene_node_touch_material(&mSceneNode[1], lite3d_mesh_chunk_get_by_index(&mCubeVbo, 0), NULL, &mRenderTextureMaterial, 1);
+    lite3d_scene_node_touch_material(&mSceneNode[1], lite3d_mesh_chunk_get_by_material_index(&mCubeVbo, 0), NULL, &mRenderTextureMaterial, 1);
 
 
     //lite3d_scene_add_node(&mScene, &mCamera01.cameraNode, NULL);

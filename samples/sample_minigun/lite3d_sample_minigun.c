@@ -125,9 +125,9 @@ static int initModel(void)
     if (!(file1 = lite3d_pack_file_load(mFileSysPack, "models/meshes/minigun.m")))
         return LITE3D_FALSE;
 
-    if (!lite3d_mesh_init(&mModel))
+    if (!lite3d_mesh_init(&mModel, LITE3D_VBO_STATIC_DRAW))
         return LITE3D_FALSE;
-    if (!lite3d_mesh_load_from_m_file(&mModel, file1, LITE3D_VBO_STATIC_DRAW))
+    if (!lite3d_mesh_load_from_m_file(&mModel, file1))
         return LITE3D_FALSE;
 
     return LITE3D_TRUE;
@@ -158,7 +158,7 @@ static int init(void *userdata)
     lite3d_scene_init(&mScene);
     lite3d_scene_node_init(&mSceneNode);
     lite3d_scene_add_node(&mScene, &mSceneNode, NULL);
-    lite3d_scene_node_touch_material(&mSceneNode, lite3d_mesh_chunk_get_by_index(&mModel, 0), NULL, &mMinigunMaterial, 1);
+    lite3d_scene_node_touch_material(&mSceneNode, lite3d_mesh_chunk_get_by_material_index(&mModel, 0), NULL, &mMinigunMaterial, 1);
 
     //lite3d_scene_add_node(&mScene, &mCamera01.cameraNode, NULL);
     lite3d_render_target_screen_attach_camera(&mCamera01, &mScene, 1, 0, LITE3D_RENDER_DEFAULT);

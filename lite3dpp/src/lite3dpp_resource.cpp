@@ -35,7 +35,8 @@ namespace lite3dpp
         "RENDER_TARGET",
         "SHADER_STORAGE",
         "UNIFORM_BUFFER",
-        "PIPELINE"
+        "PIPELINE",
+        "MESH_PARTITION"
     };
     
     AbstractResource::AbstractResource(const String &name,
@@ -140,7 +141,7 @@ namespace lite3dpp
     void ConfigurableResource::reloadFromConfigImpl(const ConfigurationReader &helper)
     {
         /* by default, we try to load resource from json one more time */
-        loadFromConfigImpl(*mConfiguration);
+        loadFromConfigImpl(helper);
     }
 
     void ConfigurableResource::reloadImpl()

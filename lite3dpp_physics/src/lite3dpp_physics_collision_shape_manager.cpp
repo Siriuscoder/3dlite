@@ -145,15 +145,16 @@ namespace lite3dpp_phisics {
             LITE3D_THROW("Not indexed mesh '" << getName() << "', only indexed meshes supported");
         }
 
-        for (uint32_t i = 0; i < chunk->layoutEntriesCount; ++i)
+        const lite3d_vao_layout *layout = static_cast<const lite3d_vao_layout *>(chunk->layout.data);
+        for (uint32_t i = 0; i < chunk->layout.size; ++i)
         {
-            if (chunk->layout[i].binding != LITE3D_BUFFER_BINDING_VERTEX)
+            if (layout[i].binding != LITE3D_BUFFER_BINDING_VERTEX)
             {
-                offset += chunk->layout[i].count * sizeof(float);
+                offset += layout[i].count * sizeof(float);
             }
             else
             {
-                return chunk->vao.verticesOffset + offset;
+                return offset;
             }
         }
 
@@ -167,31 +168,39 @@ namespace lite3dpp_phisics {
         auto rawMesh = mMain.getResourceManager()->queryResource<Mesh>(getName(),
             conf.getObject(L"CollisionMesh").getString(L"Mesh"));
 
-        if (rawMesh->getPtr()->chunks.size == 0)
+        if (rawMesh->chunksCount() == 0)
         {
             LITE3D_THROW("Collision mesh '" << getName() << "' is empty...");
         }
 
         mCollisionMeshInfo = std::make_unique<btTriangleIndexVertexArray>();
+        mCollisionMeshVertexData.resize(rawMesh->chunksCount());
+        mCollisionMeshIndexData.resize(rawMesh->chunksCount());
 
-        /* copy vertex and index GPU buffers to host memory */
-        rawMesh->vertexBuffer().getData(mCollisionMeshVertexData, 0, rawMesh->vertexBuffer().bufferSizeBytes());
-        rawMesh->indexBuffer().getData(mCollisionMeshIndexData, 0, rawMesh->indexBuffer().bufferSizeBytes());
-
-        lite3d_mesh_chunk *chunk = static_cast<lite3d_mesh_chunk *>(rawMesh->getPtr()->chunks.data);
-        for (size_t i = 0; i < rawMesh->getPtr()->chunks.size; ++i)
+        for (size_t i = 0; i < rawMesh->chunksCount(); ++i)
         {
-            /* calc initial vertex data offset */
-            auto vertexOffset = validateChunkAndCalcVertexOffset(chunk + i);
+            auto chunkEntity = rawMesh->getChunk(i);
+
+            /* load chunk from GPU to host memory */
+            rawMesh->getPartition()->vertexBuffer().getDataBuffer(mCollisionMeshVertexData[i], 
+                chunkEntity.chunk->vao.verticesOffset,
+                chunkEntity.chunk->vao.verticesSize);
+                
+            rawMesh->getPartition()->indexBuffer().getDataBuffer(mCollisionMeshIndexData[i], 
+                chunkEntity.chunk->vao.indexesOffset,
+                chunkEntity.chunk->vao.indexesSize);
+
+            /* calc vertices offset inside chunk */
+            auto vertexOffset = validateChunkAndCalcVertexOffset(chunkEntity.chunk);
 
             btIndexedMesh triangleArrayChunk;
             triangleArrayChunk.m_indexType = PHY_ScalarType::PHY_INTEGER;
-            triangleArrayChunk.m_numTriangles = chunk[i].vao.elementsCount;
-            triangleArrayChunk.m_triangleIndexBase = &mCollisionMeshIndexData[chunk[i].vao.indexesOffset];
+            triangleArrayChunk.m_numTriangles = chunkEntity.chunk->vao.elementsCount;
+            triangleArrayChunk.m_triangleIndexBase = &mCollisionMeshIndexData[i][0];
             triangleArrayChunk.m_triangleIndexStride = sizeof(int32_t) * 3;
-            triangleArrayChunk.m_numVertices = chunk[i].vao.verticesCount;
-            triangleArrayChunk.m_vertexBase = &mCollisionMeshVertexData[vertexOffset];
-            triangleArrayChunk.m_vertexStride = chunk[i].vertexStride;
+            triangleArrayChunk.m_numVertices = chunkEntity.chunk->vao.verticesCount;
+            triangleArrayChunk.m_vertexBase = &mCollisionMeshVertexData[i][vertexOffset];
+            triangleArrayChunk.m_vertexStride = chunkEntity.chunk->vertexStride;
             mCollisionMeshInfo->addIndexedMesh(triangleArrayChunk);
         }
     }
@@ -231,10 +240,8 @@ namespace lite3dpp_phisics {
 
     void PhysicsTriangleCollisionShape::purgeMeshData()
     {
-        BufferData vertexEmpty;
-        BufferData indexEmpty;
-        mCollisionMeshVertexData.swap(vertexEmpty);
-        mCollisionMeshIndexData.swap(indexEmpty);
+        mCollisionMeshVertexData.clear();
+        mCollisionMeshIndexData.clear();
     }
 
     void PhysicsTriangleCollisionShape::updateBounds()

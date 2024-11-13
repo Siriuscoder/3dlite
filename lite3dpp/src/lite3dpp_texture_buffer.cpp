@@ -40,24 +40,23 @@ namespace lite3dpp
             uint16_t format = Texture::textureInternalFormat(helper.getUpperString(L"BufferFormat"));
             
             if (!lite3d_texture_buffer_init(&mTexture, helper.getInt(L"TexelsCount", 0), NULL, 
-                format, helper.getBool(L"Dynamic", false) ? LITE3D_VBO_DYNAMIC_DRAW : LITE3D_VBO_STATIC_DRAW))
+                format, helper.getBool(L"Dynamic", false) ? BufferUsage::ModeDynamicDraw : BufferUsage::ModeStaticDraw))
             {
-                LITE3D_THROW(getName() << " texture buffer allocation failed, probably it is not supported");
+                LITE3D_THROW(getName() << ": texture buffer allocation failed, probably it is not supported");
             }
         }
         else
-            LITE3D_THROW(getName() << " texture buffer bad parameters");
+            LITE3D_THROW(getName() << ": texture buffer bad parameters");
 
         mTexture.userdata = this;
     }
 
     void TextureBuffer::setBufferSizeBytes(size_t size)
     {
-        if (getState() != AbstractResource::LOADED)
-            LITE3D_THROW(getName() << " resource unavailable");
+        if (valid())
+            LITE3D_THROW(getName() << ": resource unavailable");
 
-        if (!lite3d_vbo_buffer(&mTexture.tbo, NULL, size, mTexture.tbo.access))
-            LITE3D_THROW(getName() << " failed to resize texture buffer up to " << size << " bytes");
+        replaceData(nullptr, size);
     }
 
     void TextureBuffer::reloadFromConfigImpl(const ConfigurationReader &helper)
@@ -73,15 +72,15 @@ namespace lite3dpp
                 extendBufferBytes(mTexelsBackup.size() - bufferSizeBytes());
             }
 
-            setData(mTexelsBackup, 0);
+            setDataBuffer(mTexelsBackup, 0);
             mTexelsBackup.clear();
         }
     }
 
     void TextureBuffer::unloadImpl()
     {
-        getData(mTexelsBackup, 0, bufferSizeBytes());
-        Texture::unloadImpl();
+        getDataBuffer(mTexelsBackup, 0, bufferSizeBytes());
+        lite3d_texture_buffer_purge(&mTexture);
     }
     
     uint8_t TextureBuffer::texelSize() const
@@ -97,54 +96,67 @@ namespace lite3dpp
     size_t TextureBuffer::bufferSizeTexels() const
     {
         if (texelSize() == 0)
-            LITE3D_THROW(getName() << " unsupported texture buffer format");
+            LITE3D_THROW(getName() << ": unsupported texture buffer format");
         
         return bufferSizeBytes() / texelSize();
     }
     
     void TextureBuffer::extendBufferBytes(size_t addSize)
     {
-        if (getState() != AbstractResource::LOADED)
-            LITE3D_THROW(getName() << " resource unavailable");
+        if (!valid())
+            LITE3D_THROW(getName() << ": resource unavailable");
 
-        if (!lite3d_texture_buffer_extend(&mTexture, addSize,
-            getJson().getBool(L"Dynamic", false) ? LITE3D_VBO_DYNAMIC_DRAW : LITE3D_VBO_STATIC_DRAW))
+        if (!lite3d_texture_buffer_extend(&mTexture, addSize))
         {
-            LITE3D_THROW(getName() << " texture buffer extend failed, probably it is not supported");
+            LITE3D_THROW(getName() << ": texture buffer extend failed, probably operation is not supported");
         }
     }
 
     void TextureBuffer::setData(const void *buffer, size_t offset, size_t size)
     {
-        if (getState() != AbstractResource::LOADED)
-            LITE3D_THROW(getName() << " resource unavailable");
+        if (!valid())
+            LITE3D_THROW(getName() << ": resource unavailable");
         
         if (size > 0)
         {
             if ((offset + size) > bufferSizeBytes())
-                LITE3D_THROW(getName() << " operation may cause buffer overflow");
+                LITE3D_THROW(getName() << ": operation may cause buffer overflow");
             if (!lite3d_texture_buffer(&mTexture, buffer, offset, size))
-                LITE3D_THROW(getName() << " operation failed");
+                LITE3D_THROW(getName() << ": operation failed");
         }
     }
 
     void TextureBuffer::getData(void *buffer, size_t offset, size_t size) const
     {
-        if (getState() != AbstractResource::LOADED)
-            LITE3D_THROW(getName() << " resource unavailable");
+        if (!valid())
+            LITE3D_THROW(getName() << ": resource unavailable");
         
         if (size > 0)
         {
             if ((offset + size) > bufferSizeBytes())
-                LITE3D_THROW(getName() << " requested size too big");
+                LITE3D_THROW(getName() << ": requested size too big");
             if (!lite3d_texture_buffer_get(&mTexture, buffer, offset, size))
-                LITE3D_THROW(getName() << " operation failed");
+                LITE3D_THROW(getName() << ": failed to upload data to texture buffer");
         }
     }
-    
+
+    void TextureBuffer::replaceData(const void *buffer, size_t size)
+    {
+        if (!valid())
+            LITE3D_THROW(getName() << ": resource unavailable");
+
+        if (!lite3d_vbo_buffer(&mTexture.tbo, buffer, size))
+            LITE3D_THROW(getName() << ": failed to replace texture buffer data, new size is " << size << " bytes");
+    }
+
+    bool TextureBuffer::valid() const
+    {
+        return mTexture.textureID > 0 && getState() == AbstractResource::LOADED;
+    }
+
     BufferScopedMapper TextureBuffer::map(BufferScopedMapper::BufferScopedMapperLockType lockType)
     {
-        if (getState() != AbstractResource::LOADED)
+        if (!valid())
             LITE3D_THROW(getName() << " resource unavailable");
         
         BufferScopedMapper mapper(mTexture.tbo, lockType);

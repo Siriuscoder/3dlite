@@ -105,9 +105,12 @@ void JsonGenerator::generateNode(const lite3d_mesh *mesh, const lite3dpp::String
         lite3dpp::stl<lite3dpp::ConfigurationWriter>::vector matMapping;
 
         {
+            lite3d_list_node *link;
             const lite3d_mesh_chunk *meshChunk;
-            LITE3D_ARR_FOREACH(&mesh->chunks, lite3d_mesh_chunk, meshChunk)
+            
+            for (link = mesh->chunks.l.next; link != &mesh->chunks.l; link = lite3d_list_next(link))
             {
+                meshChunk = LITE3D_MEMBERCAST(const lite3d_mesh_chunk, link, link);
                 lite3dpp::ConfigurationWriter material;
                 material.set(L"MaterialIndex", (int32_t)meshChunk->materialIndex);
 

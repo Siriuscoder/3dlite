@@ -32,6 +32,7 @@ class MeshChunk:
         self.saveTangent = opts["saveTangent"]
         self.saveBiTangent = opts["saveBiTangent"]
         self.flipUV = opts["flipUV"]
+        self.saveIndexes = opts["saveIndexes"]
         self.vertices = []
         self.indexes = []
         self.normalsSplit = {}
@@ -55,23 +56,30 @@ class MeshChunk:
         self.indexes.append(vi)
         self.indexesSize += MeshChunk.indexSize
         if vi >= len(self.vertices):
-            self.vertices.append(Vertex(v.co, n, uv, t, bt, self.saveTangent, self.saveBiTangent, self.flipUV))
-            self.verticesSize += self.vertices[-1].size()
+            self.insertVertex(v, n, uv, t, bt)
+
+    def insertVertex(self, v, n, uv, t, bt):
+        self.vertices.append(Vertex(v.co, n, uv, t, bt, self.saveTangent, self.saveBiTangent, self.flipUV))
+        self.verticesSize += self.vertices[-1].size()
         
-    def appendVertex(self, v, n, uv, t, bt): 
-        lv = len(self.vertices)
-        if not v.index in self.normalsSplit.keys():
-            self.normalsSplit[v.index] = [(n, lv)]
+    def appendVertex(self, v, n, uv, t, bt):
+        # Indexed geometry
+        if self.saveIndexes:
+            lv = len(self.vertices)
+            if not v.index in self.normalsSplit.keys():
+                self.normalsSplit[v.index] = [(n, lv)]
+            else:
+                normalSplit = self.normalsSplit[v.index]
+                for ins in normalSplit:
+                    if MeshChunk.compareNear(ins[0], n):
+                        self.insertByIndex(ins[1], v, n, uv, t, bt)
+                        return
+                normalSplit.append((n, lv))
+            self.insertByIndex(lv, v, n, uv, t, bt)
+        # Non indexed geometry
         else:
-            normalSplit = self.normalsSplit[v.index]
-            for ins in normalSplit:
-                if MeshChunk.compareNear(ins[0], n):
-                    self.insertByIndex(ins[1], v, n, uv, t, bt)
-                    return
-                
-            normalSplit.append((n, lv))
-                
-        self.insertByIndex(lv, v, n, uv, t, bt)
+            self.insertVertex(v, n, uv, t, bt)
+
         self.minmaxVec(v.co)
         
     def minmaxVec(self, co):

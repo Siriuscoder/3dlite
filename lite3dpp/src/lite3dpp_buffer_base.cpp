@@ -20,20 +20,28 @@
 
 namespace lite3dpp
 {
-    void BufferBase::setData(const BufferData &buffer, size_t offset)
+    void BufferBase::setDataBuffer(const BufferData &buffer, size_t offset)
     {
-        setData(&buffer[0], offset, buffer.size());
+        if (buffer.size() > 0)
+        {
+            setData(&buffer[0], offset, buffer.size());
+        }
     }
 
-    void BufferBase::getData(BufferData &buffer, size_t offset, size_t size) const
+    void BufferBase::getDataBuffer(BufferData &buffer, size_t offset, size_t size) const
     {
-        if (size > 0)
+        if (size > 0 && bufferSizeBytes() > 0)
         {
             buffer.resize(size);
             getData(&buffer[0], offset, size);
         }
     }
 
-    BufferBase::~BufferBase()
-    {}
+    void BufferBase::replaceDataBuffer(const BufferData &buffer)
+    {
+        if (buffer.size() > 0)
+        {
+            replaceData(&buffer[0], buffer.size());
+        }
+    }
 }

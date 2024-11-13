@@ -35,23 +35,23 @@ typedef struct lite3d_m_header
 {
     uint32_t sig;
     int32_t version;
-    int32_t chunkSectionSize;
-    int32_t vertexSectionSize;
-    int32_t indexSectionSize;
-    int32_t chunkCount;
+    uint32_t chunkSectionSize;
+    uint32_t vertexSectionSize;
+    uint32_t indexSectionSize;
+    uint32_t chunkCount;
 } lite3d_m_header;
 
 typedef struct lite3d_m_chunk
 {
-    int32_t chunkSize;
-    int32_t chunkLayoutCount;
-    int32_t indexesCount;
-    int32_t indexesSize;
-    int32_t indexesOffset;
-    int32_t verticesCount;
-    int32_t verticesSize;
-    int32_t verticesOffset;
-    uint8_t indexElemSize;
+    uint32_t chunkSize;
+    uint32_t chunkLayoutCount;
+    uint32_t indexesCount;
+    uint32_t indexesSize;
+    uint32_t indexesOffset;
+    uint32_t verticesCount;
+    uint32_t verticesSize;
+    uint32_t verticesOffset;
+    uint8_t indexElemSize; // it is not used anymore, always 4 bytes per index 
     uint32_t materialIndex;
     lite3d_bounding_vol boundingVol;
 } lite3d_m_chunk;
@@ -64,80 +64,126 @@ typedef struct lite3d_m_chunk_layout
 
 #pragma pack(pop)
 
-static int _load_mesh_from_stream(lite3d_mesh *mesh, SDL_RWops *stream)
+static int lite3d_write_buffer_to_stream(lite3d_vbo *buffer, SDL_RWops *stream)
 {
-    lite3d_misc_gl_error_stack_clean();
+    void *vboData;
+    
+    SDL_assert(buffer);
+    SDL_assert(stream);
+
     if (lite3d_check_map_buffer())
     {
-        void *mapped;
-        if ((mapped = lite3d_vbo_map(&mesh->vertexBuffer, LITE3D_VBO_MAP_WRITE_ONLY)) == NULL)
+        if ((vboData = lite3d_vbo_map(buffer, LITE3D_VBO_MAP_READ_ONLY)) == NULL)
         {
             return LITE3D_FALSE;
         }
 
-        /* read vertex section in mapped vertex buffer directly */
-        if (SDL_RWread(stream, mapped, mesh->vertexBuffer.size, 1) != 1)
+        if (SDL_RWwrite(stream, vboData, buffer->size, 1) != 1)
         {
-            lite3d_vbo_unmap(&mesh->vertexBuffer);
+            lite3d_vbo_unmap(buffer);
             return LITE3D_FALSE;
         }
-
-        lite3d_vbo_unmap(&mesh->vertexBuffer);
-
-        if ((mapped = lite3d_vbo_map(&mesh->indexBuffer, LITE3D_VBO_MAP_WRITE_ONLY)) == NULL)
-        {
-            return LITE3D_FALSE;
-        }
-
-        /* read index section in mapped index buffer directly */
-        if (SDL_RWread(stream, mapped, mesh->indexBuffer.size, 1) != 1)
-        {
-            lite3d_vbo_unmap(&mesh->indexBuffer);
-            return LITE3D_FALSE;
-        }
-
-        lite3d_vbo_unmap(&mesh->indexBuffer);
+        
+        lite3d_vbo_unmap(buffer);
     }
     else
     {
-        void *tbuffer = lite3d_malloc(mesh->vertexBuffer.size);
-        /* read vertex section in mapped vertex buffer directly */
-        if (SDL_RWread(stream, tbuffer, mesh->vertexBuffer.size, 1) != 1)
+        vboData = lite3d_malloc(buffer->size);
+        if (!vboData)
         {
-            lite3d_free(tbuffer);
             return LITE3D_FALSE;
         }
 
-        lite3d_vbo_subbuffer(&mesh->vertexBuffer, tbuffer, 0, mesh->vertexBuffer.size);
-        lite3d_free(tbuffer);
-
-        tbuffer = lite3d_malloc(mesh->indexBuffer.size);
-        /* read vertex section in mapped vertex buffer directly */
-        if (SDL_RWread(stream, tbuffer, mesh->indexBuffer.size, 1) != 1)
+        if (!lite3d_vbo_get_buffer(buffer, vboData, 0, buffer->size))
         {
-            lite3d_free(tbuffer);
+            lite3d_free(vboData);
             return LITE3D_FALSE;
         }
 
-        lite3d_vbo_subbuffer(&mesh->indexBuffer, tbuffer, 0, mesh->indexBuffer.size);
-        lite3d_free(tbuffer);
+        if (SDL_RWwrite(stream, vboData, buffer->size, 1) != 1)
+        {
+            lite3d_free(vboData);
+            return LITE3D_FALSE;
+        }
+
+        lite3d_free(vboData);
     }
 
-    return !LITE3D_CHECK_GL_ERROR;
+    return LITE3D_TRUE;
+}
+
+static int lite3d_append_buffer_from_stream(lite3d_vbo *buffer, size_t bufferOffset, size_t size, SDL_RWops *stream)
+{
+    SDL_assert(buffer);
+    SDL_assert(stream);
+
+    // Не вмещаемся, требуется реалокация буфера
+    if (bufferOffset + size > buffer->size)
+    {
+        if (!lite3d_vbo_extend(buffer, bufferOffset + size - buffer->size))
+        {
+            return LITE3D_FALSE;
+        }
+    }
+
+    if (lite3d_check_map_buffer())
+    {
+        uint8_t *mapped;
+        if ((mapped = lite3d_vbo_map(buffer, LITE3D_VBO_MAP_WRITE_ONLY)) == NULL)
+        {
+            return LITE3D_FALSE;
+        }
+
+        /* read vertex section in mapped vertex buffer directly */
+        if (SDL_RWread(stream, mapped + bufferOffset, size, 1) != 1)
+        {
+            lite3d_vbo_unmap(buffer);
+            return LITE3D_FALSE;
+        }
+
+        lite3d_vbo_unmap(buffer);
+    }
+    else
+    {
+        void *tmpBuf = lite3d_malloc(size);
+        if (!tmpBuf)
+        {
+            return LITE3D_FALSE;
+        }
+
+        /* read vertex section in mapped vertex buffer directly */
+        if (SDL_RWread(stream, tmpBuf, size, 1) != 1)
+        {
+            lite3d_free(tmpBuf);
+            return LITE3D_FALSE;
+        }
+
+        if (!lite3d_vbo_subbuffer(buffer, tmpBuf, bufferOffset, size))
+        {
+            lite3d_free(tmpBuf);
+            return LITE3D_FALSE;
+        }
+
+        lite3d_free(tmpBuf);
+    }
+
+    return LITE3D_TRUE;
 }
 
 size_t lite3d_mesh_m_encode_size(lite3d_mesh *mesh)
 {
     size_t result = 0;
+    lite3d_list_node *link;
     lite3d_mesh_chunk *meshChunk;
     SDL_assert(mesh);
 
     result += sizeof (lite3d_m_header);
 
-    LITE3D_ARR_FOREACH(&mesh->chunks, lite3d_mesh_chunk, meshChunk)
+    for (link = mesh->chunks.l.next; link != &mesh->chunks.l; link = lite3d_list_next(link))
     {
+        meshChunk = LITE3D_MEMBERCAST(lite3d_mesh_chunk, link, link);
         result += sizeof (lite3d_m_chunk);
-        result += sizeof (lite3d_m_chunk_layout) * meshChunk->layoutEntriesCount;
+        result += sizeof (lite3d_m_chunk_layout) * meshChunk->layout.size;
     }
 
     result += mesh->vertexBuffer.size;
@@ -146,20 +192,29 @@ size_t lite3d_mesh_m_encode_size(lite3d_mesh *mesh)
 }
 
 int lite3d_mesh_m_decode(lite3d_mesh *mesh,
-    const void *buffer, size_t size, uint16_t access)
+    const void *buffer, size_t size)
 {
     SDL_RWops *stream;
     lite3d_m_header mheader;
     lite3d_m_chunk mchunk;
     lite3d_m_chunk_layout layout;
     lite3d_vao_layout meshLayout[CHUNK_LAYOUT_MAX_COUNT];
-    register int32_t i = 0;
-    size_t indOffset = 0;
-    size_t vertOffset = 0;
+    register uint32_t i = 0;
+    size_t indicesOffset = 0, initialIndicesOffset = 0;
+    size_t verticesOffset = 0, initialVerticesOffset = 0;
     uint32_t chunkSectionOffset = 0;
-    lite3d_mesh_chunk *thisChunk;
+    lite3d_mesh_chunk *thisChunk = NULL;
     
     SDL_assert(mesh);
+    SDL_assert(buffer);
+
+    // Если mesh уже содержит данные то надо корректно вычислить offset от последнего чанка
+    if (!lite3d_list_is_empty(&mesh->chunks))
+    {
+        lite3d_mesh_chunk *lastChunk = LITE3D_MEMBERCAST(lite3d_mesh_chunk, lite3d_list_last_link(&mesh->chunks), link);
+        initialIndicesOffset = indicesOffset = lastChunk->vao.indexesOffset + lastChunk->vao.indexesSize;
+        initialVerticesOffset = verticesOffset = lastChunk->vao.verticesOffset + lastChunk->vao.verticesSize;
+    }
 
     /* open memory stream */
     stream = SDL_RWFromConstMem(buffer, (int)size);
@@ -179,25 +234,10 @@ int lite3d_mesh_m_decode(lite3d_mesh *mesh,
     }
     
     mesh->version = mheader.version;
-
-    if (!lite3d_vbo_buffer(&mesh->vertexBuffer, NULL, mheader.vertexSectionSize,
-        access))
-    {
-        SDL_RWclose(stream);
-        return LITE3D_FALSE;
-    }
-
-    if (!lite3d_vbo_buffer(&mesh->indexBuffer, NULL, mheader.indexSectionSize,
-        access))
-    {
-        SDL_RWclose(stream);
-        return LITE3D_FALSE;
-    }
-
     for (i = 0; i < mheader.chunkCount; ++i)
     {
-        register int32_t j = 0;
-        uint32_t stride = 0;   
+        register uint32_t j = 0;
+        uint32_t stride = 0;
         
         if (SDL_RWseek(stream, sizeof (mheader) + chunkSectionOffset, RW_SEEK_SET) < 0)
         {
@@ -229,8 +269,7 @@ int lite3d_mesh_m_decode(lite3d_mesh *mesh,
 
         /* append new batch */
         if (!(thisChunk = lite3d_mesh_append_chunk(mesh, meshLayout, mchunk.chunkLayoutCount, stride,
-            lite3d_index_component_type_by_size(mchunk.indexElemSize), mchunk.indexesCount,
-            mchunk.indexesSize, indOffset, mchunk.verticesCount, mchunk.verticesSize, vertOffset)))
+            mchunk.indexesCount, mchunk.indexesSize, indicesOffset, mchunk.verticesCount, mchunk.verticesSize, verticesOffset)))
         {
             return LITE3D_FALSE;
         }
@@ -239,8 +278,8 @@ int lite3d_mesh_m_decode(lite3d_mesh *mesh,
         thisChunk->materialIndex = mchunk.materialIndex;
         thisChunk->boundingVol = mchunk.boundingVol;
 
-        indOffset += mchunk.indexesSize;
-        vertOffset += mchunk.verticesSize;
+        indicesOffset += mchunk.indexesSize;
+        verticesOffset += mchunk.verticesSize;
         mesh->verticesCount += mchunk.verticesCount;
         mesh->elementsCount += mchunk.indexesCount / 3;
         
@@ -253,10 +292,29 @@ int lite3d_mesh_m_decode(lite3d_mesh *mesh,
         return LITE3D_FALSE;
     }
 
-    if(!_load_mesh_from_stream(mesh, stream))
+    if (mheader.vertexSectionSize > 0)
     {
-        SDL_RWclose(stream);
-        return LITE3D_FALSE;
+        if(!lite3d_append_buffer_from_stream(&mesh->vertexBuffer, initialVerticesOffset, 
+            mheader.vertexSectionSize, stream))
+        {
+            SDL_RWclose(stream);
+            return LITE3D_FALSE;
+        }
+    }
+    else
+    {
+        SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION, "%s: Vertices section has a zero size",
+            LITE3D_CURRENT_FUNCTION);
+    }
+
+    if (mheader.indexSectionSize > 0)
+    {
+        if(!lite3d_append_buffer_from_stream(&mesh->indexBuffer, initialIndicesOffset, 
+            mheader.indexSectionSize, stream))
+        {
+            SDL_RWclose(stream);
+            return LITE3D_FALSE;
+        }
     }
 
     SDL_RWclose(stream);
@@ -266,27 +324,28 @@ int lite3d_mesh_m_decode(lite3d_mesh *mesh,
 int lite3d_mesh_m_encode(lite3d_mesh *mesh,
     void *buffer, size_t size)
 {
+    lite3d_list_node *link;
     lite3d_mesh_chunk *meshChunk;
     lite3d_m_header mheader;
     lite3d_m_chunk mchunk;
     lite3d_m_chunk_layout layout;
     SDL_RWops *stream;
-    void *vboData;
-    SDL_assert(mesh);
 
+    SDL_assert(mesh);
+    SDL_assert(buffer);
 
     mheader.sig = LITE3D_M_SIGNATURE;
     mheader.version = LITE3D_VERSION_NUM;
-    mheader.vertexSectionSize = (int32_t)mesh->vertexBuffer.size;
-    mheader.indexSectionSize = (int32_t)mesh->indexBuffer.size;
-    mheader.chunkCount = (int32_t)mesh->chunks.size;
+    mheader.vertexSectionSize = (uint32_t)mesh->vertexBuffer.size;
+    mheader.indexSectionSize = (uint32_t)mesh->indexBuffer.size;
+    mheader.chunkCount = (uint32_t)lite3d_list_count(&mesh->chunks);
     mheader.chunkSectionSize = 0;
 
-
-    LITE3D_ARR_FOREACH(&mesh->chunks, lite3d_mesh_chunk, meshChunk)
+    for (link = mesh->chunks.l.next; link != &mesh->chunks.l; link = lite3d_list_next(link))
     {
-        mheader.chunkSectionSize += sizeof (lite3d_m_chunk);
-        mheader.chunkSectionSize += sizeof (lite3d_m_chunk_layout) * meshChunk->layoutEntriesCount;
+        meshChunk = LITE3D_MEMBERCAST(lite3d_mesh_chunk, link, link);
+        mheader.chunkSectionSize += (uint32_t)(sizeof (lite3d_m_chunk));
+        mheader.chunkSectionSize += (uint32_t)(sizeof (lite3d_m_chunk_layout) * meshChunk->layout.size);
     }
 
     /* open memory stream */
@@ -299,21 +358,21 @@ int lite3d_mesh_m_encode(lite3d_mesh *mesh,
     }
 
     /* write chunks data */
-    LITE3D_ARR_FOREACH(&mesh->chunks, lite3d_mesh_chunk, meshChunk)
+    for (link = mesh->chunks.l.next; link != &mesh->chunks.l; link = lite3d_list_next(link))
     {
-        int i = 0;
+        meshChunk = LITE3D_MEMBERCAST(lite3d_mesh_chunk, link, link);
 
         memset(&mchunk, 0, sizeof(mchunk));
-        mchunk.chunkSize = sizeof (lite3d_m_chunk) +
-            sizeof (lite3d_m_chunk_layout) * meshChunk->layoutEntriesCount;
-        mchunk.chunkLayoutCount = meshChunk->layoutEntriesCount;
+        mchunk.chunkSize = (uint32_t)(sizeof (lite3d_m_chunk) +
+            sizeof (lite3d_m_chunk_layout) * meshChunk->layout.size);
+        mchunk.chunkLayoutCount = (uint32_t)(meshChunk->layout.size);
         mchunk.indexesCount = meshChunk->vao.indexesCount;
-        mchunk.indexesSize = (int32_t)meshChunk->vao.indexesSize;
-        mchunk.indexesOffset = (int32_t)meshChunk->vao.indexesOffset;
+        mchunk.indexesSize = (uint32_t)meshChunk->vao.indexesSize;
+        mchunk.indexesOffset = (uint32_t)meshChunk->vao.indexesOffset;
         mchunk.verticesCount = meshChunk->vao.verticesCount;
-        mchunk.verticesSize = (int32_t)meshChunk->vao.verticesSize;
-        mchunk.verticesOffset = (int32_t)meshChunk->vao.verticesOffset;
-        mchunk.indexElemSize = lite3d_size_by_index_type(meshChunk->vao.indexType);
+        mchunk.verticesSize = (uint32_t)meshChunk->vao.verticesSize;
+        mchunk.verticesOffset = (uint32_t)meshChunk->vao.verticesOffset;
+        mchunk.indexElemSize = sizeof(uint32_t);
         mchunk.materialIndex = meshChunk->materialIndex;
         mchunk.boundingVol = meshChunk->boundingVol;
 
@@ -323,10 +382,11 @@ int lite3d_mesh_m_encode(lite3d_mesh *mesh,
             return LITE3D_FALSE;
         }
 
-        for (; i < mchunk.chunkLayoutCount; ++i)
+        for (uint32_t i = 0; i < mchunk.chunkLayoutCount; ++i)
         {
-            layout.binding = meshChunk->layout[i].binding;
-            layout.count = meshChunk->layout[i].count;
+            lite3d_vao_layout *playout = (lite3d_vao_layout *)lite3d_array_get(&meshChunk->layout, i);
+            layout.binding = playout->binding;
+            layout.count = playout->count;
 
             if (SDL_RWwrite(stream, &layout, sizeof (layout), 1) != 1)
             {
@@ -336,37 +396,20 @@ int lite3d_mesh_m_encode(lite3d_mesh *mesh,
         }
     }
 
-    /* map vertex buffer */
-    if ((vboData = lite3d_vbo_map(&mesh->vertexBuffer, LITE3D_VBO_MAP_READ_ONLY)) == NULL)
+    if (!lite3d_write_buffer_to_stream(&mesh->vertexBuffer, stream))
     {
         SDL_RWclose(stream);
         return LITE3D_FALSE;
     }
 
-    /* write vertex data */
-    if (SDL_RWwrite(stream, vboData, mesh->vertexBuffer.size, 1) != 1)
+    if (mesh->indexBuffer.size > 0)
     {
-        SDL_RWclose(stream);
-        lite3d_vbo_unmap(&mesh->vertexBuffer);
-        return LITE3D_FALSE;
+        if (!lite3d_write_buffer_to_stream(&mesh->indexBuffer, stream))
+        {
+            SDL_RWclose(stream);
+            return LITE3D_FALSE;
+        }
     }
-    lite3d_vbo_unmap(&mesh->vertexBuffer);
-
-    /* map index buffer */
-    if ((vboData = lite3d_vbo_map(&mesh->indexBuffer, LITE3D_VBO_MAP_READ_ONLY)) == NULL)
-    {
-        SDL_RWclose(stream);
-        return LITE3D_FALSE;
-    }
-
-    /* write index data */
-    if (SDL_RWwrite(stream, vboData, mesh->indexBuffer.size, 1) != 1)
-    {
-        SDL_RWclose(stream);
-        lite3d_vbo_unmap(&mesh->indexBuffer);
-        return LITE3D_FALSE;
-    }
-    lite3d_vbo_unmap(&mesh->indexBuffer);
 
     SDL_RWclose(stream);
     return LITE3D_TRUE;

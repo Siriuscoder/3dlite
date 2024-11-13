@@ -42,8 +42,26 @@ public:
         setCameraResistance(0.01);
     }
 
+    void preallocateMeshPartition()
+    {
+        ConfigurationWriter cfg;
+        cfg.set(L"Dynamic", true);
+        cfg.set(L"PreallocVertexSize", 160 * 1024 * 1024);
+        cfg.set(L"PreallocIndexSize", 60 * 1024 * 1024);
+
+        // Для ускорения загруки выделим место под геометрию заранее
+        getMain().getResourceManager()->queryResourceFromJson<lite3dpp::MeshPartition>("sponza.mesh_partition", cfg.write());
+
+        cfg.set(L"PreallocVertexSize", 1024 * 1024);
+        cfg.set(L"PreallocIndexSize", 0);
+        // Для ускорения загруки выделим место под геометрию заранее
+        getMain().getResourceManager()->queryResourceFromJson<lite3dpp::MeshPartition>("sponza.mesh_partition_bouding_box", cfg.write());
+    }
+
     void createScene() override
     {
+        preallocateMeshPartition();
+
         mPipeline = getMain().getResourceManager()->queryResource<lite3dpp_pipeline::PipelineDeffered>("SponzaDeffered", 
             "sponza:pipelines/sponza.json");
         mSponzaScene = &mPipeline->getMainScene();
@@ -52,6 +70,8 @@ public:
         setupShadowCasters();
         addFlashlight();
         initGIProbes();
+
+        getMain().getResourceManager()->dropFileCache();
     }
 
     void initGIProbes()

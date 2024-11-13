@@ -8,8 +8,8 @@
 			"LookAt": [0,0,0],
 			"Perspective": 
 			{
-				"Znear": 1,
-				"Zfar": 1000,
+				"Znear": 0.1,
+				"Zfar": 3000,
 				"Fov": 45
 			},
 			

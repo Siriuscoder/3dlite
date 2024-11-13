@@ -41,10 +41,12 @@ static const char *resourceStatsString =
     "============= Resource statistics =============\n"
     "Estimated video memory:         %d kB\n"
     "Total resources in cache:       %d\n"
+    "Pipelines:                      %d\n"
     "Textures:                       %d/%d\n"
     "Materials:                      %d/%d\n"
     "Scenes:                         %d/%d\n"
     "Meshes:                         %d/%d\n"
+    "Mesh partitions:                %d/%d\n"
     "Shaders:                        %d/%d\n"
     "Render targets:                 %d/%d\n"
     "SSBO:                           %d/%d\n"
@@ -292,11 +294,12 @@ void Sample::updateGui()
             ResourceManager::ResourceManagerStats memStats = mMain.getResourceManager()->getStats();
             sprintf(strbuf, resourceStatsString, 
                 static_cast<uint32_t>(memStats.usedVideoMem / 1024),
-                memStats.totalObjectsCount,
+                memStats.totalObjectsCount, memStats.pipelinesCount,
                 memStats.texturesLoadedCount, memStats.texturesCount,
                 memStats.materialsLoadedCount, memStats.materialsCount,
                 memStats.scenesLoadedCount, memStats.scenesCount,
                 memStats.meshesLoadedCount, memStats.meshesCount,
+                memStats.meshPartitionsCount, memStats.meshPartitionsLoadedCount,
                 memStats.shaderProgramsLoadedCount, memStats.shaderProgramsCount,
                 memStats.renderTargetsLoadedCount, memStats.renderTargetsCount,
                 memStats.ssboLoadedCount, memStats.ssboCount,

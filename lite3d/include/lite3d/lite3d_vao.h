@@ -42,7 +42,6 @@ typedef struct lite3d_vao
     uint32_t verticesCount;
     size_t verticesSize;
     size_t verticesOffset;
-    uint16_t indexType; /* Byte, short, int (GL value) */
 } lite3d_vao;
 
 typedef struct lite3d_vao_layout
@@ -70,7 +69,6 @@ LITE3D_CEXPORT int lite3d_vao_init_layout(struct lite3d_vbo *vertexBuffer,
     const struct lite3d_vao_layout *layout,
     uint32_t layoutCount,
     uint32_t stride,
-    uint16_t componentType,
     uint32_t indexesCount,
     size_t indexesSize,
     size_t indexesOffset,

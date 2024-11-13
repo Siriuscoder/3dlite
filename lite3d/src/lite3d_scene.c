@@ -176,7 +176,7 @@ static int mqr_render_series_params(lite3d_vbo *buffer, const void *param, size_
     /* setup global parameters (model normal) */
     if (psize > buffer->size)
     {
-        if(!lite3d_vbo_extend(buffer, psize - buffer->size, LITE3D_VBO_DYNAMIC_DRAW))
+        if(!lite3d_vbo_extend(buffer, psize - buffer->size))
         {
             SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "%s: Unable to extend buffer for store batch series",
                 LITE3D_CURRENT_FUNCTION);
@@ -740,7 +740,8 @@ int lite3d_scene_remove_node(lite3d_scene *scene, lite3d_scene_node *node)
     lite3d_list_unlink_link(&node->nodeLink);
     node->baseNode = NULL;
     node->scene = NULL;
-
+    node->renderable = LITE3D_FALSE;
+    
     for (mqrUnitNode = scene->materialRenderUnits.l.next;
         mqrUnitNode != &scene->materialRenderUnits.l; mqrUnitNode = lite3d_list_next(mqrUnitNode))
     {
@@ -813,6 +814,8 @@ int lite3d_scene_node_touch_material(struct lite3d_scene_node *node,
     if (mqrUnit == NULL)
     {
         mqrUnit = (_mqr_unit *) lite3d_calloc_pooled(LITE3D_POOL_NO1, sizeof (_mqr_unit));
+        if (!mqrUnit) return LITE3D_FALSE;
+
         lite3d_list_init(&mqrUnit->nodes);
         lite3d_list_link_init(&mqrUnit->queued);
         mqrUnit->material = material;
@@ -820,7 +823,7 @@ int lite3d_scene_node_touch_material(struct lite3d_scene_node *node,
         lite3d_list_add_last_link(&mqrUnit->queued, &scene->materialRenderUnits);
     }
 
-    SDL_assert_release(mqrUnit);
+    SDL_assert(mqrUnit);
 
     if (mqrNode == NULL)
     {
@@ -832,12 +835,14 @@ int lite3d_scene_node_touch_material(struct lite3d_scene_node *node,
         }
 
         mqrNode = (_mqr_node *) lite3d_calloc_pooled(LITE3D_POOL_NO1, sizeof (_mqr_node));
+        if (!mqrNode) return LITE3D_FALSE;
+
         lite3d_list_link_init(&mqrNode->unit);
         lite3d_array_init(&mqrNode->queries, sizeof(_query_unit), 1);
         mqrNode->node = node;
     }
 
-    SDL_assert_release(mqrNode);
+    SDL_assert(mqrNode);
     /* relink render node */
     mqrNode->meshChunk = meshChunk;
     mqrNode->bbMeshChunk = bbMeshChunk;
@@ -845,6 +850,7 @@ int lite3d_scene_node_touch_material(struct lite3d_scene_node *node,
     mqrNode->instancesCount = instancesCount;
     mqrNode->matUnit = mqrUnit;
     mqrNode->node->recalc = LITE3D_TRUE;
+    mqrNode->node->renderable = LITE3D_TRUE;
     mqr_unit_add_node(mqrUnit, mqrNode);
 
     return LITE3D_TRUE;

@@ -35,7 +35,7 @@ void lite3d_scene_node_init(lite3d_scene_node *node)
     node->invalidated = LITE3D_TRUE;
     node->rotationCentered = LITE3D_TRUE;
     node->isCamera = LITE3D_FALSE;
-    node->renderable = LITE3D_TRUE;
+    node->renderable = LITE3D_FALSE;
     node->enabled = LITE3D_TRUE;
     node->visible = LITE3D_TRUE;
     node->frustumTest = LITE3D_TRUE;

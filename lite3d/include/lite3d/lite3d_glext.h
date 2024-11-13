@@ -47,6 +47,7 @@ int lite3d_check_texture_swizzle(void);
 int lite3d_check_texture_storage(void);
 int lite3d_check_texture_storage_multisample(void);
 int lite3d_check_texture_cube_map_array(void);
+int lite3d_check_debug_context(void);
 
 /* stub functions */
 void glTexSubImage3D_stub(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLenum format, GLenum type, const void *pixels);

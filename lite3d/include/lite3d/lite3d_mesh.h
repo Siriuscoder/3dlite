@@ -20,6 +20,7 @@
 
 #include <lite3d/lite3d_common.h>
 #include <lite3d/lite3d_array.h>
+#include <lite3d/lite3d_list.h>
 #include <lite3d/lite3d_vbo.h>
 #include <lite3d/lite3d_vao.h>
 #include <lite3d/lite3d_frustum.h>
@@ -40,15 +41,15 @@ typedef struct lite3d_mesh
     lite3d_vbo *auxBuffer;
     uint32_t verticesCount;
     uint32_t elementsCount;
-    lite3d_array chunks;
+    lite3d_list chunks;
     void *userdata;
 } lite3d_mesh;
 
 typedef struct lite3d_mesh_chunk
 {
+    lite3d_list_node link;
     lite3d_vao vao;
-    uint32_t layoutEntriesCount;
-    lite3d_vao_layout *layout;
+    lite3d_array layout;
     uint32_t vertexStride;
     /* material index */
     uint32_t materialIndex;
@@ -57,16 +58,15 @@ typedef struct lite3d_mesh_chunk
     lite3d_mesh *mesh;
 } lite3d_mesh_chunk;
 
-LITE3D_CEXPORT int lite3d_mesh_init(struct lite3d_mesh *mesh);
+LITE3D_CEXPORT int lite3d_mesh_init(struct lite3d_mesh *mesh, uint16_t usage);
 LITE3D_CEXPORT void lite3d_mesh_purge(struct lite3d_mesh *mesh);
 LITE3D_CEXPORT int lite3d_mesh_extend(struct lite3d_mesh *mesh, 
-    size_t verticesSize, size_t indexesSize, uint16_t access);
+    size_t verticesSize, size_t indexesSize);
 
 LITE3D_CEXPORT lite3d_mesh_chunk *lite3d_mesh_append_chunk(struct lite3d_mesh *mesh,
     const struct lite3d_vao_layout *layout,
     uint32_t layoutCount,
     uint32_t stride,
-    uint16_t componentType,
     uint32_t indexesCount,
     size_t indexesSize,
     size_t indexesOffset,
@@ -74,17 +74,14 @@ LITE3D_CEXPORT lite3d_mesh_chunk *lite3d_mesh_append_chunk(struct lite3d_mesh *m
     size_t verticesSize,
     size_t verticesOffset);
 
-LITE3D_CEXPORT int lite3d_mesh_chunk_init(struct lite3d_mesh_chunk *meshChunk, uint8_t indexed);
+LITE3D_CEXPORT int lite3d_mesh_chunk_init(struct lite3d_mesh_chunk *meshChunk, size_t layoutCount);
 LITE3D_CEXPORT void lite3d_mesh_chunk_purge(struct lite3d_mesh_chunk *meshChunk);
 LITE3D_CEXPORT void lite3d_mesh_chunk_bind(struct lite3d_mesh_chunk *meshChunk);
 LITE3D_CEXPORT void lite3d_mesh_chunk_draw(struct lite3d_mesh_chunk *meshChunk);
 LITE3D_CEXPORT void lite3d_mesh_chunk_draw_instanced(struct lite3d_mesh_chunk *meshChunk, size_t instancesCount);
 LITE3D_CEXPORT void lite3d_mesh_chunk_unbind(struct lite3d_mesh_chunk *meshChunk);
-LITE3D_CEXPORT lite3d_mesh_chunk *lite3d_mesh_chunk_get_by_index(struct lite3d_mesh *mesh, 
+LITE3D_CEXPORT lite3d_mesh_chunk *lite3d_mesh_chunk_get_by_material_index(struct lite3d_mesh *mesh, 
     uint32_t materialIndex);
-
-LITE3D_CEXPORT uint16_t lite3d_index_component_type_by_size(uint8_t size); 
-LITE3D_CEXPORT uint8_t lite3d_size_by_index_type(uint16_t type);
 
 #endif	/* LITE3D_MESH_H */
 

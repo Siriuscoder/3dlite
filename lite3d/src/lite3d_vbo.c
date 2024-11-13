@@ -27,7 +27,7 @@
 #include <lite3d/lite3d_render.h>
 #include <lite3d/lite3d_vbo.h>
 
-static GLenum vboModeEnum[] = {
+static GLenum vboUsageEnum[] = {
     GL_STREAM_DRAW, GL_STREAM_READ, GL_STREAM_COPY, GL_STATIC_DRAW, 
     GL_STATIC_READ, GL_STATIC_COPY, GL_DYNAMIC_DRAW, GL_DYNAMIC_READ, 
     GL_DYNAMIC_COPY
@@ -128,18 +128,18 @@ Overview
     from and writing pixel data to a buffer object.
  */ 
 
-static int check_buffer_access(uint16_t access)
+static int check_buffer_usage(uint16_t usage)
 {
-    if (access >= (sizeof(vboModeEnum) / sizeof(vboModeEnum[0])))
+    if (usage >= (sizeof(vboUsageEnum) / sizeof(vboUsageEnum[0])))
     {
         SDL_LogError(
             SDL_LOG_CATEGORY_APPLICATION,
-            "%s: Invalid VBO access %d", LITE3D_CURRENT_FUNCTION, access);
+            "%s: Invalid VBO usage %d", LITE3D_CURRENT_FUNCTION, usage);
         return LITE3D_FALSE;
     }
 
 #ifdef WITH_GLES2
-    switch (vboModeEnum[access])
+    switch (vboUsageEnum[usage])
     {
         case GL_STREAM_READ:
         case GL_STREAM_COPY:
@@ -150,7 +150,7 @@ static int check_buffer_access(uint16_t access)
         {
             SDL_LogError(
                 SDL_LOG_CATEGORY_APPLICATION,
-                "%s: VBO access %d is not supported in GLES2", LITE3D_CURRENT_FUNCTION, access);
+                "%s: VBO usage %d is not supported in GLES2", LITE3D_CURRENT_FUNCTION, usage);
             return LITE3D_FALSE;
         }
     }
@@ -159,10 +159,10 @@ static int check_buffer_access(uint16_t access)
     return LITE3D_TRUE;
 }
 
-static int vbo_buffer_extend(uint32_t vboID, size_t expandSize, uint16_t access)
+static int vbo_buffer_extend(uint32_t vboID, size_t expandSize, uint16_t usage)
 {
     int32_t originSize;
-    uint32_t tmpVbo;
+    uint32_t tempVboID;
 
     if (!lite3d_check_copy_buffer())
     {
@@ -173,47 +173,40 @@ static int vbo_buffer_extend(uint32_t vboID, size_t expandSize, uint16_t access)
         return LITE3D_FALSE;
     }
 
-    if (!check_buffer_access(access))
-    {
-        return LITE3D_FALSE;
-    }
-
     glBindBuffer(GL_COPY_READ_BUFFER, vboID);
     glGetBufferParameteriv(GL_COPY_READ_BUFFER, GL_BUFFER_SIZE, &originSize);
 
-    glGenBuffers(1, &tmpVbo);
-    glBindBuffer(GL_COPY_WRITE_BUFFER, tmpVbo);
+    glGenBuffers(1, &tempVboID);
+    glBindBuffer(GL_COPY_WRITE_BUFFER, tempVboID);
 
-    /* allocate tmp buffer */
+    /* allocate temporary buffer */
     glBufferData(GL_COPY_WRITE_BUFFER, originSize, NULL, GL_STATIC_COPY);
 
-    /* copy data to tmp buffer */
-    glCopyBufferSubData(
-        GL_COPY_READ_BUFFER, GL_COPY_WRITE_BUFFER, 0, 0, originSize);
+    /* copy data to temporary buffer */
+    glCopyBufferSubData(GL_COPY_READ_BUFFER, GL_COPY_WRITE_BUFFER, 0, 0, originSize);
 
     if (LITE3D_CHECK_GL_ERROR)
     {
-        glDeleteBuffers(1, &tmpVbo);
+        glDeleteBuffers(1, &tempVboID);
         return LITE3D_FALSE;
     }
 
-    glBindBuffer(GL_COPY_READ_BUFFER, tmpVbo);
+    glBindBuffer(GL_COPY_READ_BUFFER, tempVboID);
     glBindBuffer(GL_COPY_WRITE_BUFFER, vboID);
 
-    /* reallocate our buffer */
+    /* reallocate origin buffer */
     glGetBufferParameteriv(GL_COPY_READ_BUFFER, GL_BUFFER_SIZE, &originSize);
-    glBufferData(GL_COPY_WRITE_BUFFER, originSize + expandSize, NULL, vboModeEnum[access]);
+    glBufferData(GL_COPY_WRITE_BUFFER, originSize + expandSize, NULL, vboUsageEnum[usage]);
 
-    /* copy data back to our buffer */
-    glCopyBufferSubData(
-        GL_COPY_READ_BUFFER, GL_COPY_WRITE_BUFFER, 0, 0, originSize);
+    /* copy data back to origin buffer */
+    glCopyBufferSubData(GL_COPY_READ_BUFFER, GL_COPY_WRITE_BUFFER, 0, 0, originSize);
 
     glBindBuffer(GL_COPY_READ_BUFFER, 0);
     glBindBuffer(GL_COPY_WRITE_BUFFER, 0);
 
-    glDeleteBuffers(1, &tmpVbo);
+    glDeleteBuffers(1, &tempVboID);
 
-    return LITE3D_TRUE;
+    return LITE3D_CHECK_GL_ERROR ? LITE3D_FALSE : LITE3D_TRUE;
 }
 
 int lite3d_vbo_technique_init(void)
@@ -369,19 +362,24 @@ int lite3d_vbo_technique_init(void)
     return LITE3D_TRUE;
 }
 
-int lite3d_vbo_init(struct lite3d_vbo *vbo)
+int lite3d_vbo_init(struct lite3d_vbo *vbo, uint16_t usage)
 {
     SDL_assert(vbo);
 
     memset(vbo, 0, sizeof (lite3d_vbo));
 
-    lite3d_misc_gl_error_stack_clean();
+    if (!check_buffer_usage(usage))
+    {
+        return LITE3D_FALSE;
+    }
 
+    lite3d_misc_gl_error_stack_clean();
     /* gen buffer for store data */
     glGenBuffers(1, &vbo->vboID);
 
     if (!LITE3D_CHECK_GL_ERROR)
     {
+        vbo->usage = usage;
         vbo->role = GL_ARRAY_BUFFER;
         lite3d_render_stats_get()->vboCount++;
         return LITE3D_TRUE;
@@ -390,9 +388,9 @@ int lite3d_vbo_init(struct lite3d_vbo *vbo)
     return LITE3D_FALSE;
 }
 
-int lite3d_ibo_init(struct lite3d_vbo *vbo)
+int lite3d_ibo_init(struct lite3d_vbo *vbo, uint16_t usage)
 {
-    if (!lite3d_vbo_init(vbo))
+    if (!lite3d_vbo_init(vbo, usage))
     {
         return LITE3D_FALSE;
     }
@@ -402,7 +400,7 @@ int lite3d_ibo_init(struct lite3d_vbo *vbo)
     return LITE3D_TRUE;
 }
 
-int lite3d_ssbo_init(struct lite3d_vbo *vbo)
+int lite3d_ssbo_init(struct lite3d_vbo *vbo, uint16_t usage)
 {
     if (!lite3d_check_ssbo())
     {
@@ -413,7 +411,7 @@ int lite3d_ssbo_init(struct lite3d_vbo *vbo)
         return LITE3D_FALSE;
     }
 
-    if (!lite3d_vbo_init(vbo))
+    if (!lite3d_vbo_init(vbo, usage))
     {
         return LITE3D_FALSE;
     }
@@ -423,7 +421,7 @@ int lite3d_ssbo_init(struct lite3d_vbo *vbo)
     return LITE3D_TRUE;
 }
 
-int lite3d_ubo_init(struct lite3d_vbo *vbo)
+int lite3d_ubo_init(struct lite3d_vbo *vbo, uint16_t usage)
 {
     if (!lite3d_check_uniform_buffer())
     {
@@ -434,7 +432,7 @@ int lite3d_ubo_init(struct lite3d_vbo *vbo)
         return LITE3D_FALSE;
     }
 
-    if (!lite3d_vbo_init(vbo))
+    if (!lite3d_vbo_init(vbo, usage))
     {
         return LITE3D_FALSE;
     }
@@ -465,7 +463,7 @@ void lite3d_vbo_purge(struct lite3d_vbo *vbo)
     memset(vbo, 0, sizeof(lite3d_vbo));
 }
 
-int lite3d_vbo_extend(struct lite3d_vbo *vbo, size_t addSize, uint16_t access)
+int lite3d_vbo_extend(struct lite3d_vbo *vbo, size_t addSize)
 {
     SDL_assert(vbo);
 
@@ -479,10 +477,9 @@ int lite3d_vbo_extend(struct lite3d_vbo *vbo, size_t addSize, uint16_t access)
         return LITE3D_FALSE;
     }
 
-    vbo->access = access;
     if (vbo->size > 0)
     {
-        if (!vbo_buffer_extend(vbo->vboID, addSize, access))
+        if (!vbo_buffer_extend(vbo->vboID, addSize, vbo->usage))
         {
             return LITE3D_FALSE;
         }
@@ -492,7 +489,7 @@ int lite3d_vbo_extend(struct lite3d_vbo *vbo, size_t addSize, uint16_t access)
     else
     {
         // relocate not needed, overwise may cause crash on some hardware
-        if (!lite3d_vbo_buffer(vbo, NULL, addSize, access))
+        if (!lite3d_vbo_buffer(vbo, NULL, addSize))
         {
             return LITE3D_FALSE;
         }
@@ -560,15 +557,10 @@ void lite3d_vbo_unmap(struct lite3d_vbo *vbo)
 }
 
 int lite3d_vbo_buffer(struct lite3d_vbo *vbo,
-    const void *buffer, size_t size, uint16_t access)
+    const void *buffer, size_t size)
 {
     SDL_assert(vbo);
     lite3d_misc_gl_error_stack_clean();
-
-    if (!check_buffer_access(access))
-    {
-        return LITE3D_FALSE;
-    }
 
     if (vbo->role == GL_UNIFORM_BUFFER && gUBOMaxSize > 0 && size > gUBOMaxSize)
     {
@@ -584,16 +576,13 @@ int lite3d_vbo_buffer(struct lite3d_vbo *vbo,
         return LITE3D_FALSE;
     }
 
-    /* store data to GPU memory */
-    vbo->access = access;
-
-    glBufferData(vbo->role, size, buffer, vboModeEnum[access]);
+    glBufferData(vbo->role, size, buffer, vboUsageEnum[vbo->usage]);
     if (LITE3D_CHECK_GL_ERROR)
     {
         return LITE3D_FALSE;
     }
 
-    vbo->size = size;
+    vbo->size = size;   
     glBindBuffer(vbo->role, 0);
 
     return LITE3D_TRUE;

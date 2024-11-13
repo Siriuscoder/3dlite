@@ -31,6 +31,48 @@ static SDL_GLContext gGLContext = NULL;
 static char gVideoVendor[256] = {0};
 
 #ifndef GLES
+
+static void print_gl_debug_message(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, 
+    const GLchar *message, const void *userParam) 
+{
+    SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "DebugContext: %s: %s(%d): %s: %s",
+        source == GL_DEBUG_SOURCE_API ? "API" : (
+        source == GL_DEBUG_SOURCE_WINDOW_SYSTEM ? "Window System" : (
+        source == GL_DEBUG_SOURCE_SHADER_COMPILER ? "Shader Compiler" : (
+        source == GL_DEBUG_SOURCE_THIRD_PARTY ? "Third Party" : (
+        source == GL_DEBUG_SOURCE_APPLICATION ? "Application" : (
+        source == GL_DEBUG_SOURCE_OTHER ? "Other" : "Unknown"))))),
+
+        type == GL_DEBUG_TYPE_ERROR ? "Error" : (
+        type == GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR ? "Deprecated Behavior" : (
+        type == GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR ? "Undefined Behavior" : (
+        type == GL_DEBUG_TYPE_PORTABILITY ? "Portability" : (
+        type == GL_DEBUG_TYPE_PERFORMANCE ? "Performance" : (
+        type == GL_DEBUG_TYPE_OTHER ? "Other" : "Unknown"))))),
+
+        id,
+
+        severity == GL_DEBUG_SEVERITY_HIGH ? "High" : (
+        severity == GL_DEBUG_SEVERITY_MEDIUM ? "Medium" : (
+        severity == GL_DEBUG_SEVERITY_LOW ? "Low" : (
+        severity == GL_DEBUG_SEVERITY_NOTIFICATION ? "Notification" : "Unknown"))),
+
+        message);
+}
+
+static void setup_gl_debug_context(void)
+{
+    if (lite3d_check_debug_context())
+    {
+        glEnable(GL_DEBUG_OUTPUT);
+        glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+        glDebugMessageCallback(print_gl_debug_message, NULL);
+        glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, NULL, GL_TRUE);
+
+        SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION, "DebugContext: OpenGL debug context has been enabled");
+    }
+}
+
 static void print_extensions_string(const char *label, const char *extensionString)
 {
     if (extensionString)
@@ -195,7 +237,14 @@ static int init_gl_extensions(lite3d_video_settings *settings)
 #ifndef GLES
     /* enable multisample buffers */
     if (settings->MSAA > 1 && GLEW_ARB_multisample)
+    {
         glEnable(GL_MULTISAMPLE_ARB);
+    }
+
+    if (settings->debug)
+    {
+        setup_gl_debug_context();
+    }
 
     return init_platform_gl_extensions(settings);
 
@@ -221,6 +270,7 @@ void set_opengl_version(lite3d_video_settings *settings)
 int lite3d_video_open(lite3d_video_settings *settings, int hideConsole)
 {
     uint32_t windowFlags;
+    int32_t contexFlags = SDL_GL_CONTEXT_FORWARD_COMPATIBLE_FLAG;
     SDL_DisplayMode displayMode;
 
     SDL_assert(settings);
@@ -232,6 +282,11 @@ int lite3d_video_open(lite3d_video_settings *settings, int hideConsole)
     }
 #endif
 
+    if (settings->debug)
+    {
+        contexFlags |= SDL_GL_CONTEXT_DEBUG_FLAG;
+    }
+
     SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
     SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
     SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
@@ -239,6 +294,7 @@ int lite3d_video_open(lite3d_video_settings *settings, int hideConsole)
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
     SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, contexFlags);
 
 #ifndef GLES
     /* Specify openGL context */

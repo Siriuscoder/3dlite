@@ -191,17 +191,17 @@ static int initModel(void)
     if (!(Battery = lite3d_pack_file_load(mFileSysPack, "models/meshes/battery.m")))
         return LITE3D_FALSE;
 
-    if (!lite3d_mesh_init(&mRifle))
+    if (!lite3d_mesh_init(&mRifle, LITE3D_VBO_STATIC_DRAW))
         return LITE3D_FALSE;
-    if (!lite3d_mesh_load_from_m_file(&mRifle, PlasmaRifl, LITE3D_VBO_STATIC_DRAW))
+    if (!lite3d_mesh_load_from_m_file(&mRifle, PlasmaRifl))
         return LITE3D_FALSE;
     /* fix material indexes to 0..maxVao */
     /* it is right way if you know how submeshes attached to real materials */
     lite3d_mesh_order_mat_indexes(&mRifle);
 
-    if (!lite3d_mesh_init(&mRifleBatt))
+    if (!lite3d_mesh_init(&mRifleBatt, LITE3D_VBO_STATIC_DRAW))
         return LITE3D_FALSE;
-    if (!lite3d_mesh_load_from_m_file(&mRifleBatt, Battery, LITE3D_VBO_STATIC_DRAW))
+    if (!lite3d_mesh_load_from_m_file(&mRifleBatt, Battery))
         return LITE3D_FALSE;
 
     return LITE3D_TRUE;
@@ -236,12 +236,12 @@ static int init(void *userdata)
     lite3d_scene_add_node(&mScene, &mRifleNode, NULL);
     lite3d_scene_add_node(&mScene, &mBattNode, &mRifleNode);
 
-    lite3d_scene_node_touch_material(&mRifleNode, lite3d_mesh_chunk_get_by_index(&mRifle, 0), NULL, &mRifleMaterialA, 1);
-    lite3d_scene_node_touch_material(&mRifleNode, lite3d_mesh_chunk_get_by_index(&mRifle, 1), NULL, &mRifleMaterialB, 1);
-    lite3d_scene_node_touch_material(&mRifleNode, lite3d_mesh_chunk_get_by_index(&mRifle, 2), NULL, &mRifleMaterialB, 1);
-    lite3d_scene_node_touch_material(&mRifleNode, lite3d_mesh_chunk_get_by_index(&mRifle, 3), NULL, &mRifleMaterialB, 1);
-    lite3d_scene_node_touch_material(&mRifleNode, lite3d_mesh_chunk_get_by_index(&mRifle, 4), NULL, &mRifleMaterialB, 1);
-    lite3d_scene_node_touch_material(&mBattNode, lite3d_mesh_chunk_get_by_index(&mRifleBatt, 0), NULL, &mBattMaterial, 1);
+    lite3d_scene_node_touch_material(&mRifleNode, lite3d_mesh_chunk_get_by_material_index(&mRifle, 0), NULL, &mRifleMaterialA, 1);
+    lite3d_scene_node_touch_material(&mRifleNode, lite3d_mesh_chunk_get_by_material_index(&mRifle, 1), NULL, &mRifleMaterialB, 1);
+    lite3d_scene_node_touch_material(&mRifleNode, lite3d_mesh_chunk_get_by_material_index(&mRifle, 2), NULL, &mRifleMaterialB, 1);
+    lite3d_scene_node_touch_material(&mRifleNode, lite3d_mesh_chunk_get_by_material_index(&mRifle, 3), NULL, &mRifleMaterialB, 1);
+    lite3d_scene_node_touch_material(&mRifleNode, lite3d_mesh_chunk_get_by_material_index(&mRifle, 4), NULL, &mRifleMaterialB, 1);
+    lite3d_scene_node_touch_material(&mBattNode, lite3d_mesh_chunk_get_by_material_index(&mRifleBatt, 0), NULL, &mBattMaterial, 1);
 
     //lite3d_scene_add_node(&mScene, &mCamera01.cameraNode, NULL);
     lite3d_render_target_screen_attach_camera(&mCamera01, &mScene, 1, 0, LITE3D_RENDER_DEFAULT);
