@@ -28,17 +28,7 @@ enum class EnvProbeFlags : int32_t
     Specular = 1 << 1
 };
 
-// Перегрузка оператора | для использования побитовых операций
-inline EnvProbeFlags operator|(EnvProbeFlags a, EnvProbeFlags b)
-{
-    return static_cast<EnvProbeFlags>(static_cast<int32_t>(a) | static_cast<int32_t>(b));
-}
-
-// Перегрузка оператора & для побитовых операций (например, для проверок)
-inline EnvProbeFlags operator&(EnvProbeFlags a, EnvProbeFlags b)
-{
-    return static_cast<EnvProbeFlags>(static_cast<int32_t>(a) & static_cast<int32_t>(b));
-}
+LITE3D_DECLARE_ENUM_OPERATORS(EnvProbeFlags);
 
 class LITE3DPP_PIPELINE_EXPORT IBLMultiProbe : public RenderTargetObserver, public LifecycleObserver, public Noncopiable
 {

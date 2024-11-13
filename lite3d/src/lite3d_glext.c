@@ -343,6 +343,24 @@ int lite3d_check_debug_context(void)
 #endif
 }
 
+int lite3d_check_bindless_texture(void)
+{
+#ifdef GLES
+    return LITE3D_FALSE;
+#else
+    return GLEW_ARB_bindless_texture;
+#endif
+}
+
+int lite3d_check_shader_draw_parameters(void)
+{
+#ifdef GLES
+    return LITE3D_FALSE;
+#else
+    return GLEW_ARB_shader_draw_parameters;
+#endif
+}
+
 #ifdef __GNUC__
 #   pragma GCC diagnostic push
 #   pragma GCC diagnostic ignored "-Wpedantic"

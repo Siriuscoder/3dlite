@@ -184,6 +184,8 @@ typedef struct lite3d_texture_unit
     int32_t samples;
     lite3d_vbo tbo;
     uint8_t isTextureBuffer;
+    int8_t useHandle;
+    uint64_t handle;
     void *userdata;
 } lite3d_texture_unit;
 
@@ -254,6 +256,8 @@ LITE3D_CEXPORT void lite3d_texture_unit_bind(lite3d_texture_unit *texture, uint1
 LITE3D_CEXPORT void lite3d_texture_unit_unbind(lite3d_texture_unit *texture, uint16_t layer);
 
 LITE3D_CEXPORT void lite3d_texture_unit_compression(uint8_t on);
+
+LITE3D_CEXPORT int lite3d_texture_unit_extract_handle(lite3d_texture_unit *texture);
 
 LITE3D_CEXPORT const char *lite3d_texture_unit_format_string(const lite3d_texture_unit *texture);
 LITE3D_CEXPORT const char *lite3d_texture_unit_target_string(uint32_t textureTarget);

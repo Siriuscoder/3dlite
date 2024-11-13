@@ -40,9 +40,10 @@ namespace lite3dpp
             for (auto &matMap : meshHelper.getObjects(L"MaterialMapping"))
             {
                 materials[matMap.getInt(L"MaterialIndex")] = 
-                    getMain()->getResourceManager()->queryResource<Material>(
-                    matMap.getObject(L"Material").getString(L"Name"),
-                    matMap.getObject(L"Material").getString(L"Material"));
+                    getMain()->getMaterialFactory().createMaterial(
+                        matMap.getObject(L"Material").getString(L"Type"),
+                        matMap.getObject(L"Material").getString(L"Name"),
+                        matMap.getObject(L"Material").getString(L"Material"));
             }
 
             for (size_t i = 0; i < mMesh->chunksCount(); ++i)
