@@ -21,7 +21,7 @@
 #include <lite3dpp/lite3dpp_material_multi_render.h>
 
 #define LITE3D_DECLARE_PBR_MATERIAL_FIELD(t, n) \
-    inline void set##n(const t &v) { mMaterialEntity.n = v; update(); } \
+    inline void set##n(const t &v, bool updateData = true) { mMaterialEntity.n = v; if (updateData) update(); } \
     inline t get##n() const { return mMaterialEntity.n; } 
 
 namespace lite3dpp
@@ -36,14 +36,16 @@ namespace lite3dpp
         EMPTY = 0,
         LOADED = 1u << 0,
         ALBEDO = 1u << 1,
-        EMISSION = 1u << 2,
-        ALPHA_MASK = 1u << 3,
-        NORMAL = 1u << 4,
-        SPECULAR = 1u << 5,
-        ROUGHNESS = 1u << 6,
-        METALLIC = 1u << 7,
-        SPECULAR_ROUGNESS_METALLIC = 1u << 8,
-        ROUGNESS_METALLIC = 1u << 9
+        ALBEDO_ALPHA = 1u << 2,
+        EMISSION = 1u << 3,
+        ALPHA_MASK = 1u << 4,
+        NORMAL = 1u << 5,
+        SPECULAR = 1u << 6,
+        ROUGHNESS = 1u << 7,
+        METALLIC = 1u << 8,
+        SPECULAR_ROUGNESS_METALLIC = 1u << 9,
+        ROUGNESS_METALLIC = 1u << 10,
+        ENVIRONMENT = 1u << 11
     };
 
     LITE3D_DECLARE_ENUM_OPERATORS(PBRMaterialFlags);
@@ -53,9 +55,10 @@ namespace lite3dpp
     {
     public:
         
-        using TextureIds = std::array<std::wstring_view, 9>;
+        using TextureIds = std::array<std::wstring_view, 10>;
         static constexpr inline TextureIds gTextureIds = {
             L"AlbedoTexture",
+            L"AlbedoAlphaTexture",
             L"EmissionTexture",
             L"AlphaMaskTexture",
             L"NormalTexture",
@@ -66,12 +69,13 @@ namespace lite3dpp
             L"RoughnessMetallicTexture"
         };
 
-#pragma pack(push, 4)
+#pragma pack(push, 16)
 
         struct TextureHandleRaw
         {
             uint64_t textureHandle = 0;
             TextureFlags flags = TextureFlags::EMPTY;
+            uint32_t reserved = 0;
         };
 
         struct PBRMaterialRaw
@@ -84,11 +88,12 @@ namespace lite3dpp
             float Specular;
             float Roughness;
             float Metallic;
-            float GIkd;
-            float GIks;
+            float EnvDiffuse;
+            float EnvSpecular;
             float Ior;
             PBRMaterialFlags Flags = PBRMaterialFlags::EMPTY;
-            TextureHandleRaw textures[8] = {};
+            TextureHandleRaw Textures[8] = {};
+            TextureHandleRaw Environment;
         };
 
 #pragma pack(pop)
@@ -108,12 +113,13 @@ namespace lite3dpp
         LITE3D_DECLARE_PBR_MATERIAL_FIELD(float, Specular);
         LITE3D_DECLARE_PBR_MATERIAL_FIELD(float, Roughness);
         LITE3D_DECLARE_PBR_MATERIAL_FIELD(float, Metallic);
-        LITE3D_DECLARE_PBR_MATERIAL_FIELD(float, GIkd);
-        LITE3D_DECLARE_PBR_MATERIAL_FIELD(float, GIks);
+        LITE3D_DECLARE_PBR_MATERIAL_FIELD(float, EnvDiffuse);
+        LITE3D_DECLARE_PBR_MATERIAL_FIELD(float, EnvSpecular);
         LITE3D_DECLARE_PBR_MATERIAL_FIELD(float, Ior);
         LITE3D_DECLARE_PBR_MATERIAL_FIELD(PBRMaterialFlags, Flags);
 
-        void addTexture(Texture *texture, TextureFlags flags);
+        void setTexture(Texture *texture, TextureFlags flags, size_t index, bool updateData = true);
+        void setEnvironmentTexture(Texture *texture, bool updateData);
         void update();
 
     protected:

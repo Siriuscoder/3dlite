@@ -47,6 +47,7 @@ typedef struct lite3d_material
     /* эти поля относятся к мультирендеру и используются только если сцена его поддерживает */
     lite3d_vbo *chunkInvocationBuffer; // Буфер с инфо по каждой draw команде (матрицы, индексы и тд) 
     lite3d_vbo *materialDataBuffer; // Буфер материалами для произвольного доступа из шейдера
+    uint32_t materialDataBufferIndex; // Индекс материала в materialDataBuffer
     void *userdata;
 } lite3d_material;
 

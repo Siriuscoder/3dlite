@@ -33,17 +33,17 @@ namespace lite3dpp
     {
         MultiRenderMaterial::loadFromConfigImpl(helper);
 
-        mMaterialEntity.Albedo = helper.getVec4(L"Albedo", KM_VEC4_ONE);
-        mMaterialEntity.Emission = helper.getVec4(L"Emission", KM_VEC4_ZERO);
-        mMaterialEntity.F0 = helper.getVec4(L"F0", kmVec4 { 0.04, 0.04, 0.04, 1.0 });
-        mMaterialEntity.NormalScale = helper.getVec4(L"NormalScale", KM_VEC4_ONE);
-        mMaterialEntity.Alpha = helper.getDouble(L"Alpha", 1.0);
-        mMaterialEntity.Specular = helper.getDouble(L"Specular", 1.0);
-        mMaterialEntity.Roughness = helper.getDouble(L"Roughness", 1.0);
-        mMaterialEntity.Metallic = helper.getDouble(L"Metallic", 1.0);
-        mMaterialEntity.GIkd = helper.getDouble(L"GIkd", 1.0);
-        mMaterialEntity.GIks = helper.getDouble(L"GIks", 1.0);
-        mMaterialEntity.Ior = helper.getDouble(L"Ior", 1.0);
+        setAlbedo(helper.getVec4(L"Albedo", KM_VEC4_ONE), false);
+        setEmission(helper.getVec4(L"Emission", KM_VEC4_ZERO), false);
+        setF0(helper.getVec4(L"F0", kmVec4 { 0.04, 0.04, 0.04, 1.0 }), false);
+        setNormalScale(helper.getVec4(L"NormalScale", KM_VEC4_ONE), false);
+        setAlpha(helper.getDouble(L"Alpha", 1.0), false);
+        setSpecular(helper.getDouble(L"Specular", 1.0), false);
+        setRoughness(helper.getDouble(L"Roughness", 1.0), false);
+        setMetallic(helper.getDouble(L"Metallic", 1.0), false);
+        setEnvDiffuse(helper.getDouble(L"EnvDiffuse", 1.0), false);
+        setEnvSpecular(helper.getDouble(L"EnvSpecular", 1.0), false);
+        setIor(helper.getDouble(L"Ior", 1.0), false);
 
         for (size_t i = 1; i < gTextureIds.size(); ++i)
         {
@@ -51,39 +51,56 @@ namespace lite3dpp
             if (helper.has(wsName))
             {
                 auto textureCfg = helper.getObject(wsName);
-                addTexture(getMain().getResourceManager()->queryResource<TextureImage>(
+                setTexture(getMain().getResourceManager()->queryResource<TextureImage>(
                     textureCfg.getString(L"TextureName"),
                     textureCfg.getString(L"TexturePath")), 
-                    static_cast<TextureFlags>(1u << i));
+                    static_cast<TextureFlags>(1u << i), i - 1, false);
             }
+        }
+
+        if (helper.has(L"EnvironmentTexture"))
+        {
+            auto textureCfg = helper.getObject(L"EnvironmentTexture");
+            setEnvironmentTexture(getMain().getResourceManager()->queryResource<TextureImage>(
+                textureCfg.getString(L"TextureName"),
+                textureCfg.getString(L"TexturePath")), false);
         }
 
         // Добавляем этот материал к остальным в буфер
         mMaterialDataBuffer->extendBufferBytes(sizeof(PBRMaterialRaw));
-        mMaterialIndex = (mMaterialDataBuffer->bufferSizeBytes() / sizeof(PBRMaterialRaw)) - 1;
+        mMaterialIndex = static_cast<uint32_t>(mMaterialDataBuffer->bufferSizeBytes() / sizeof(PBRMaterialRaw)) - 1;
         update();
     }
 
-    void PBRMaterial::addTexture(Texture *texture, TextureFlags flags)
+    void PBRMaterial::setTexture(Texture *texture, TextureFlags flags, size_t index, bool updateData)
     {
         SDL_assert(texture);
 
-        const size_t maxTexturesCount = sizeof(PBRMaterialRaw::textures) / sizeof(TextureHandleRaw);
-        bool overflow = true;
-        for (size_t i = 0; i < maxTexturesCount; ++i)
+        constexpr size_t maxTexturesCount = sizeof(PBRMaterialRaw::Textures) / sizeof(TextureHandleRaw);
+        if (index >= maxTexturesCount)
         {
-            if ((mMaterialEntity.textures[i].flags & TextureFlags::LOADED) == TextureFlags::LOADED)
-                continue;
-
-            overflow = false;
-            mMaterialEntity.textures[i].flags = flags | TextureFlags::LOADED;
-            mMaterialEntity.textures[i].textureHandle = texture->handle();
-            break;
+            LITE3D_THROW(getName() << ": Index out of range: " << index << ", max " << maxTexturesCount-1);
         }
 
-        if (overflow)
+        mMaterialEntity.Textures[index].flags = flags | TextureFlags::LOADED;
+        mMaterialEntity.Textures[index].textureHandle = texture->handle();
+
+        if (updateData)
         {
-            LITE3D_THROW(getName() << ": No more avaliable texture slots");
+            update();
+        }
+    }
+
+    void PBRMaterial::setEnvironmentTexture(Texture *texture, bool updateData)
+    {
+        SDL_assert(texture);
+
+        mMaterialEntity.Environment.flags = TextureFlags::ENVIRONMENT | TextureFlags::LOADED;
+        mMaterialEntity.Environment.textureHandle = texture->handle();
+        
+        if (updateData)
+        {
+            update();
         }
     }
 
@@ -91,5 +108,6 @@ namespace lite3dpp
     {
         SDL_assert(mMaterialDataBuffer);
         mMaterialDataBuffer->setElement<PBRMaterialRaw>(mMaterialIndex, &mMaterialEntity);
+        mMaterial.materialDataBufferIndex = mMaterialIndex;
     }
 }
