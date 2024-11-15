@@ -26,6 +26,9 @@
 void lite3d_array_init(lite3d_array *a, size_t elemSize, size_t capacity)
 {
     SDL_assert(a);
+    if (!capacity)
+        return;
+
     a->data = lite3d_malloc(elemSize * capacity);
     SDL_assert_release(a->data);
 

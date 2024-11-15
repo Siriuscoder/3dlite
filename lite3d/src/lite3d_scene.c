@@ -57,6 +57,16 @@ typedef struct _mqr_node
     _mqr_unit *matUnit;
 } _mqr_node;
 
+typedef struct _node_invocation_info
+{
+    kmMat4 model;
+    kmMat4 normal;
+    kmMat4 screen;
+    uint32_t materialIdx;
+    uint32_t flags;
+    uint32_t reserved[2];
+} _node_invocation_info; 
+
 // Сортирует от дальнего к ближнему
 static int mqr_node_distance_comparator_to_near(const void *a, const void *b)
 {
@@ -104,15 +114,12 @@ static void mqr_render_mesh_chunk(lite3d_scene *scene, lite3d_mesh_chunk *chunk,
     SDL_assert(chunk);
     SDL_assert(scene);
 
-    if (scene->bindedMeshChunk != chunk)
+    lite3d_mesh_chunk_bind(chunk);
+    scene->bindedMeshChunk = chunk;
+    /* validate current shader program */
+    if (!lite3d_shader_program_validate_current())
     {
-        lite3d_mesh_chunk_bind(chunk);
-        scene->bindedMeshChunk = chunk;
-        /* validate current shader program */
-        if (!lite3d_shader_program_validate_current())
-        {
-            return;
-        }
+        return;
     }
 
     if (count > 1)
@@ -232,6 +239,41 @@ static void mqr_render_node(lite3d_material_pass *pass, _mqr_node *mqrNode, uint
         LITE3D_METRIC_CALL(mqr_render_batch, (pass, mqrNode, flags))
 }
 
+static void mqr_multirender_batch(lite3d_scene *scene, lite3d_mesh *mesh, lite3d_vbo *chunkInvocationBuffer)
+{    
+    lite3d_mesh_chunk *firstchunk = NULL;
+    SDL_assert(scene);
+    SDL_assert(mesh);
+    SDL_assert(chunkInvocationBuffer);
+    SDL_assert(!lite3d_list_is_empty(&mesh->chunks));
+
+    if (mesh->drawQueue.size == 0)
+    {
+        return;
+    }
+
+    firstchunk = LITE3D_MEMBERCAST(lite3d_mesh_chunk, lite3d_list_first_link(&mesh->chunks), link);
+    // Все команды в очереди рисуются относительно первого чанка, все смещения задаются относительно начала VBO
+    lite3d_mesh_chunk_bind(firstchunk);
+    scene->bindedMeshChunk = firstchunk;
+    // Проверим впорядке ли шейдер
+    if (!lite3d_shader_program_validate_current())
+    {
+        return;
+    }
+
+    // Установка буфера позиционирования 
+    mqr_render_series_params(chunkInvocationBuffer, scene->invocationBuffer.data, 
+        scene->invocationBuffer.size * scene->invocationBuffer.elemSize);
+    
+    // рисуем все команды собранные в очереди и чистим очередь
+    lite3d_mesh_queue_draw(mesh, firstchunk->hasIndexes);
+    lite3d_mesh_queue_clean(mesh);
+    lite3d_array_clean(&scene->invocationBuffer);
+
+    scene->stats.batchCalled++;
+}
+
 static int mqr_node_occluded(lite3d_scene *scene, _mqr_node *mqrNode, uint32_t flags)
 {
     int queryFound = LITE3D_FALSE;
@@ -342,6 +384,15 @@ static int mqr_node_approve(lite3d_scene *scene, _mqr_node *mqrNode, uint32_t fl
     return nodeApproved;
 }
 
+static lite3d_material_pass *mqr_unit_apply_material(lite3d_scene *scene, _mqr_node *node, uint16_t pass)
+{
+    lite3d_material_pass *matPass = lite3d_material_apply(node->matUnit->material, pass);
+    scene->stats.textureUnitsBindings += matPass->bindContext.textureBindingsCount;
+    scene->stats.blockUnitsBindings += matPass->bindContext.blockBindingsCount;
+    scene->stats.materialSwitch++;
+    return matPass;
+}
+
 static void mqr_unit_queue_render(lite3d_scene *scene, lite3d_array *queue, uint16_t pass, uint32_t flags)
 {
     _mqr_node **mqrNode = NULL;
@@ -354,10 +405,7 @@ static void mqr_unit_queue_render(lite3d_scene *scene, lite3d_array *queue, uint
         uint8_t batchCrop = LITE3D_FALSE;
         if (curUnit != (*mqrNode)->matUnit)
         {
-            matPass = lite3d_material_apply((*mqrNode)->matUnit->material, pass);
-            scene->stats.textureUnitsBinded += matPass->bindContext.textureBindingsCount;
-            scene->stats.blockUnitsBinded += matPass->bindContext.blockBindingsCount;
-            scene->stats.materialPassed++;
+            matPass = mqr_unit_apply_material(scene, *mqrNode, pass);
             curUnit = (*mqrNode)->matUnit;
         }
 
@@ -375,6 +423,76 @@ static void mqr_unit_queue_render(lite3d_scene *scene, lite3d_array *queue, uint
         LITE3D_METRIC_CALL(mqr_render_node, (matPass, *mqrNode, continuedId, batchCrop, flags))
         continuedId = batchCrop ? 0 : continuedId+1;
     }
+}
+
+static void mqr_unit_queue_multirender(lite3d_scene *scene, lite3d_array *queue, uint16_t pass, uint32_t flags)
+{
+    _mqr_node **mqrNode = queue->data;
+    lite3d_shader_program *curProgram = NULL;
+    lite3d_material_pass *matPass = NULL;
+    lite3d_mesh *curMesh = NULL;
+    lite3d_vbo *curInvocationBuffer = NULL;
+
+    // Применяем самый первый шайдер и его параметры всегда
+    if (mqrNode)
+    {
+        matPass = mqr_unit_apply_material(scene, *mqrNode, pass);
+        curProgram = matPass->program;
+        curMesh = (*mqrNode)->meshChunk->mesh;
+        curInvocationBuffer = (*mqrNode)->matUnit->material->chunkInvocationBuffer;
+    }
+
+    LITE3D_ARR_FOREACH(queue, _mqr_node *, mqrNode)
+    {
+        matPass = lite3d_material_get_pass((*mqrNode)->matUnit->material, pass);
+        if (!matPass)
+            continue;
+
+        if ((*mqrNode)->meshChunk->mesh != curMesh)
+        {
+            // При смене меша надо наприсовать то что накопилось в буфере команд 
+            mqr_multirender_batch(scene, curMesh, curInvocationBuffer);
+            curMesh = (*mqrNode)->meshChunk->mesh;
+        }
+
+        if ((*mqrNode)->matUnit->material->chunkInvocationBuffer != curInvocationBuffer)
+        {
+            // При смене буфера позицицонирования чанков надо наприсовать то что накопилось в буфере команд 
+            mqr_multirender_batch(scene, curMesh, curInvocationBuffer);
+            curInvocationBuffer = (*mqrNode)->matUnit->material->chunkInvocationBuffer;
+        }
+
+        if (matPass->program != curProgram)
+        {
+            // При смене программы надо наприсовать то что накопилось в буфере команд
+            mqr_multirender_batch(scene, curMesh, curInvocationBuffer);
+            // Так же надо задействовать следующий шейдер и применить его параметры.
+            matPass = mqr_unit_apply_material(scene, *mqrNode, pass);
+            curProgram = matPass->program;
+        }
+
+        // Установка параметров позицицонирования чанка
+        _node_invocation_info *invocationInfo = lite3d_array_add(&scene->invocationBuffer);
+        memset(invocationInfo, 0, sizeof(_node_invocation_info));
+
+        // Model матрица (Model Space -> World Space) 
+        invocationInfo->model = (*mqrNode)->node->worldView;
+        // Матрица нормали (Model Space -> World Space) 
+        kmMat4AssignMat3(&invocationInfo->normal, &((*mqrNode)->node->normalModel));
+        // ModelViewProjection матрица (Model Space -> Clip Space)
+        kmMat4Multiply(&invocationInfo->screen, &scene->currentCamera->screen, &invocationInfo->model);
+        // Индекс материала в буфере материалов
+        invocationInfo->materialIdx = (*mqrNode)->matUnit->material->materialDataBufferIndex;
+
+        // Добавление команды на отрисовку чанка
+        lite3d_mesh_queue_chunk((*mqrNode)->meshChunk, (*mqrNode)->instancesCount);
+
+        scene->stats.trianglesRendered += (*mqrNode)->meshChunk->vao.elementsCount * (*mqrNode)->instancesCount;
+        scene->stats.verticesRendered += (*mqrNode)->meshChunk->vao.verticesCount * (*mqrNode)->instancesCount;
+        scene->stats.batchInstancedCalled += (*mqrNode)->instancesCount;
+    }
+
+    mqr_multirender_batch(scene, curMesh, curInvocationBuffer);
 }
 
 static void mqr_unit_make_queue(lite3d_scene *scene, _mqr_unit *mqrUnit, uint16_t pass, uint32_t flags)
@@ -454,7 +572,15 @@ static void mqr_render_stage_opaque(struct lite3d_scene *scene, uint16_t pass, u
         if (scene->beginOpaqueStageRender)
             LITE3D_METRIC_CALL(scene->beginOpaqueStageRender, (scene, scene->currentCamera))
 
-        LITE3D_METRIC_CALL(mqr_unit_queue_render, (scene, &scene->stageOpague, pass, flags))
+        if (flags & LITE3D_RENDER_MULTIRENDER)
+        {
+            LITE3D_METRIC_CALL(mqr_unit_queue_multirender, (scene, &scene->stageOpague, pass, flags))
+        }
+        else
+        {
+            LITE3D_METRIC_CALL(mqr_unit_queue_render, (scene, &scene->stageOpague, pass, flags))
+        }
+
         // cleanup last rendered queue
         lite3d_array_clean(&scene->stageOpague);
     }
@@ -476,7 +602,15 @@ static void mqr_render_stage_transparent(struct lite3d_scene *scene, uint16_t pa
         if (scene->beginBlendingStageRender)
             scene->beginBlendingStageRender(scene, scene->currentCamera);
 
-        mqr_unit_queue_render(scene, &scene->stageTransparent, pass, flags);
+        if (flags & LITE3D_RENDER_MULTIRENDER)
+        {
+            LITE3D_METRIC_CALL(mqr_unit_queue_multirender, (scene, &scene->stageTransparent, pass, flags))
+        }
+        else
+        {
+            LITE3D_METRIC_CALL(mqr_unit_queue_render, (scene, &scene->stageTransparent, pass, flags))
+        }
+
         lite3d_array_clean(&scene->stageTransparent);
     }
 }
@@ -644,6 +778,7 @@ void lite3d_scene_init(lite3d_scene *scene)
     lite3d_array_init(&scene->stageTransparent, sizeof(_mqr_node *), 2);
     lite3d_array_init(&scene->invalidatedUnits, sizeof(lite3d_scene_node *), 2);
     lite3d_array_init(&scene->seriesMatrixes, sizeof(kmMat4), 10);
+    lite3d_array_init(&scene->invocationBuffer, sizeof(_node_invocation_info), 10);
 }
 
 void lite3d_scene_purge(lite3d_scene *scene)
@@ -677,6 +812,7 @@ void lite3d_scene_purge(lite3d_scene *scene)
     lite3d_array_purge(&scene->stageOpague);
     lite3d_array_purge(&scene->stageTransparent);
     lite3d_array_purge(&scene->invalidatedUnits);
+    lite3d_array_purge(&scene->invocationBuffer);
 }
 
 int lite3d_scene_add_node(lite3d_scene *scene, lite3d_scene_node *node,
@@ -847,7 +983,7 @@ int lite3d_scene_node_touch_material(struct lite3d_scene_node *node,
     mqrNode->meshChunk = meshChunk;
     mqrNode->bbMeshChunk = bbMeshChunk;
     mqrNode->boundingVol = meshChunk->boundingVol;
-    mqrNode->instancesCount = instancesCount;
+    mqrNode->instancesCount = instancesCount == 0 ? 1 : instancesCount;
     mqrNode->matUnit = mqrUnit;
     mqrNode->node->recalc = LITE3D_TRUE;
     mqrNode->node->renderable = LITE3D_TRUE;

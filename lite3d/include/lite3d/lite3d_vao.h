@@ -50,6 +50,23 @@ typedef struct lite3d_vao_layout
     uint8_t count; /* count elements in component */
 } lite3d_vao_layout;
 
+typedef struct lite3d_multidraw_indexed_command
+{
+    uint32_t count;
+    uint32_t instanceCount;
+    uint32_t firstIndex;
+    int32_t  baseVertex;
+    uint32_t baseInstance;
+} lite3d_multidraw_indexed_command;
+
+typedef struct lite3d_multidraw_command
+{
+    uint32_t count;
+    uint32_t instanceCount;
+    uint32_t first;
+    uint32_t baseInstance;
+} lite3d_multidraw_command;
+
 LITE3D_CEXPORT int lite3d_vao_technique_init(void);
 LITE3D_CEXPORT int lite3d_vao_support_instancing(void);
 
@@ -57,8 +74,12 @@ LITE3D_CEXPORT int lite3d_vao_init(struct lite3d_vao *vao);
 LITE3D_CEXPORT void lite3d_vao_purge(struct lite3d_vao *vao);
 LITE3D_CEXPORT void lite3d_vao_bind(struct lite3d_vao *vao);
 LITE3D_CEXPORT void lite3d_vao_draw_indexed(struct lite3d_vao *vao);
+LITE3D_CEXPORT void lite3d_vao_multidraw_indexed(struct lite3d_vao *vao, 
+    struct lite3d_multidraw_indexed_command *commands, size_t count);
 LITE3D_CEXPORT void lite3d_vao_draw_indexed_instanced(struct lite3d_vao *vao, size_t count);
 LITE3D_CEXPORT void lite3d_vao_draw(struct lite3d_vao *vao);
+LITE3D_CEXPORT void lite3d_vao_multidraw(struct lite3d_vao *vao,
+    struct lite3d_multidraw_command *commands, size_t count);
 LITE3D_CEXPORT void lite3d_vao_draw_instanced(struct lite3d_vao *vao, size_t count);
 LITE3D_CEXPORT void lite3d_vao_unbind(struct lite3d_vao *vao);
 

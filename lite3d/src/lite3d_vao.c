@@ -28,7 +28,8 @@
 #include <lite3d/lite3d_render.h>
 #include <lite3d/lite3d_vao.h>
 
-static int instancingSupport;
+static int instancingSupport = LITE3D_FALSE;
+static lite3d_vao *bindedChunk = NULL;
 
 int lite3d_vao_support_instancing(void)
 {
@@ -120,6 +121,60 @@ void lite3d_vao_draw_indexed_instanced(struct lite3d_vao *vao, size_t count)
         GL_UNSIGNED_INT, LITE3D_BUFFER_OFFSET(vao->indexesOffset), (GLsizei)count);
 }
 
+void lite3d_vao_multidraw_indexed(struct lite3d_vao *vao, 
+    struct lite3d_multidraw_indexed_command *commands, size_t count)
+{
+    /* 
+        glMultiDrawElementsIndirect specifies multiple indexed geometric primitives with very few subroutine calls. 
+        glMultiDrawElementsIndirect behaves similarly to a multitude of calls to glDrawElementsInstancedBaseVertexBaseInstance,
+        execpt that the parameters to glDrawElementsInstancedBaseVertexBaseInstance are stored in an array in memory 
+        at the address given by indirect, separated by the stride, in basic machine units, specified by stride. 
+        If stride is zero, then the array is assumed to be tightly packed in memory.
+
+        The parameters addressed by indirect are packed into a structure that takes the form (in C):
+
+        typedef  struct {
+            uint  count;
+            uint  instanceCount;
+            uint  firstIndex;
+            int  baseVertex;
+            uint  baseInstance;
+        } DrawElementsIndirectCommand;
+
+        A single call to glMultiDrawElementsIndirect is equivalent, assuming no errors are generated to:
+
+        GLsizei n;
+        for (n = 0; n < drawcount; n++) {
+            const DrawElementsIndirectCommand *cmd;
+            if (stride != 0) {
+                cmd = (const DrawElementsIndirectCommand  *)((uintptr)indirect + n * stride);
+            } else {
+                cmd = (const DrawElementsIndirectCommand  *)indirect + n;
+            }
+
+            glDrawElementsInstancedBaseVertexBaseInstance(mode,
+                                                          cmd->count,
+                                                          type,
+                                                          cmd->firstIndex * size-of-type,
+                                                          cmd->instanceCount,
+                                                          cmd->baseVertex,
+                                                          cmd->baseInstance);
+        }
+
+        If a buffer is bound to the GL_DRAW_INDIRECT_BUFFER binding at the time of a call to glDrawElementsIndirect, 
+        indirect is interpreted as an offset, in basic machine units, into that buffer and the parameter data is read from 
+        the buffer rather than from client memory.Note that indices stored in client memory are not supported. 
+        If no buffer is bound to the GL_ELEMENT_ARRAY_BUFFER binding, an error will be generated. The results of the 
+        operation are undefined if the reservedMustBeZero member of the parameter structure is non-zero. 
+        However, no error is generated in this case.
+
+        Vertex attributes that are modified by glDrawElementsIndirect have an unspecified value after 
+        glDrawElementsIndirect returns. Attributes that aren't modified remain well defined.
+    */
+
+   glMultiDrawElementsIndirect(GL_TRIANGLES, GL_UNSIGNED_INT, commands, count, 0);
+}
+
 void lite3d_vao_draw(struct lite3d_vao *vao)
 {
     SDL_assert(vao);
@@ -134,17 +189,55 @@ void lite3d_vao_draw_instanced(struct lite3d_vao *vao, size_t count)
     glDrawArraysInstanced(GL_TRIANGLES, 0, vao->verticesCount, (GLsizei)count);
 }
 
+void lite3d_vao_multidraw(struct lite3d_vao *vao,
+    struct lite3d_multidraw_command *commands, size_t count)
+{
+    /*
+        glDrawArraysIndirect specifies multiple geometric primitives with very few subroutine calls. 
+        glDrawArraysIndirect behaves similarly to glDrawArraysInstancedBaseInstance, execept that the parameters 
+        to glDrawArraysInstancedBaseInstance are stored in memory at the address given by indirect.
+
+        The parameters addressed by indirect are packed into a structure that takes the form (in C):
+
+        typedef  struct {
+            uint  count;
+            uint  instanceCount;
+            uint  first;
+            uint  baseInstance;
+        } DrawArraysIndirectCommand;
+
+        const DrawArraysIndirectCommand *cmd = (const DrawArraysIndirectCommand *)indirect;
+        glDrawArraysInstancedBaseInstance(mode, cmd->first, cmd->count, cmd->instanceCount, cmd->baseInstance);
+
+        If a buffer is bound to the GL_DRAW_INDIRECT_BUFFER binding at the time of a call to glDrawArraysIndirect, 
+        indirect is interpreted as an offset, in basic machine units, into that buffer and the parameter data is read 
+        from the buffer rather than from client memory.
+        In contrast to glDrawArraysInstancedBaseInstance, the first member of the parameter structure is unsigned, 
+        and out-of-range indices do not generate an error.
+
+        Vertex attributes that are modified by glDrawArraysIndirect have an unspecified value after glDrawArraysIndirect
+         returns. Attributes that aren't modified remain well defined.
+    */
+
+    glMultiDrawArraysIndirect(GL_TRIANGLES, commands, count, 0);
+}
+
 void lite3d_vao_bind(struct lite3d_vao *vao)
 {
     SDL_assert(vao);
     /* bind current vao */
-    glBindVertexArray(vao->vaoID);
+    if (bindedChunk != vao)
+    {
+        glBindVertexArray(vao->vaoID);
+        bindedChunk = vao;
+    }
 }
 
 void lite3d_vao_unbind(struct lite3d_vao *vao)
 {
     /* zero bind */
     glBindVertexArray(0);
+    bindedChunk = NULL;
 }
 
 int lite3d_vao_init(struct lite3d_vao *vao)
@@ -168,6 +261,7 @@ int lite3d_vao_init(struct lite3d_vao *vao)
 void lite3d_vao_purge(struct lite3d_vao *vao)
 {
     SDL_assert(vao);
+
     glDeleteVertexArrays(1, &vao->vaoID);
     lite3d_render_stats_get()->vaoCount--;
     vao->vaoID = 0;
@@ -191,7 +285,7 @@ int lite3d_vao_init_layout(struct lite3d_vbo *vertexBuffer,
     size_t vOffset = verticesOffset;
 
     /* VAO set current */
-    glBindVertexArray(vao->vaoID);
+    lite3d_vao_bind(vao);
     /* use single VBO to store all data */
     glBindBuffer(vertexBuffer->role, vertexBuffer->vboID);
     /* bind all arrays and attribs into the current VAO */
@@ -222,7 +316,7 @@ int lite3d_vao_init_layout(struct lite3d_vbo *vertexBuffer,
     }
 
     /* end VAO binding */
-    glBindVertexArray(0);
+    lite3d_vao_unbind(vao);
 
     vao->elementsCount = (indexesCount > 0 ? indexesCount : verticesCount) / 3;
     vao->indexesOffset = indexesOffset;

@@ -59,9 +59,9 @@ typedef struct lite3d_scene_stats
     int32_t batchTotal;
     int32_t batchOccluded;
     int32_t materialBlocks;
-    int32_t textureUnitsBinded;
-    int32_t blockUnitsBinded;
-    int32_t materialPassed;
+    int32_t textureUnitsBindings;
+    int32_t blockUnitsBindings;
+    int32_t materialSwitch;
 } lite3d_scene_stats;
 
 typedef struct lite3d_scene
@@ -73,6 +73,7 @@ typedef struct lite3d_scene
     lite3d_array stageTransparent;
     lite3d_array invalidatedUnits;
     lite3d_array seriesMatrixes;
+    lite3d_array invocationBuffer;
     lite3d_mesh_chunk *bindedMeshChunk;
     lite3d_camera *currentCamera;
     void *userdata;

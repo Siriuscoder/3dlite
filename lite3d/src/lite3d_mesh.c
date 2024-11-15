@@ -76,6 +76,7 @@ void lite3d_mesh_purge(struct lite3d_mesh *mesh)
 
     lite3d_vbo_purge(&mesh->vertexBuffer);
     lite3d_vbo_purge(&mesh->indexBuffer);
+    lite3d_array_purge(&mesh->drawQueue);
 }
 
 int lite3d_mesh_extend(struct lite3d_mesh *mesh, size_t verticesSize,
@@ -226,3 +227,59 @@ lite3d_mesh_chunk *lite3d_mesh_append_chunk(lite3d_mesh *mesh,
 
     return meshChunk;
 }
+
+void lite3d_mesh_queue_draw(struct lite3d_mesh *mesh, uint8_t hasIndexes)
+{
+    lite3d_mesh_chunk *firstchunk = NULL;
+    SDL_assert(mesh);
+
+    if (hasIndexes)
+    {
+        lite3d_vao_multidraw_indexed(&firstchunk->vao, mesh->drawQueue.data, mesh->drawQueue.size);
+    }
+    else
+    {
+        lite3d_vao_multidraw(&firstchunk->vao, mesh->drawQueue.data, mesh->drawQueue.size);
+    }
+}
+
+void lite3d_mesh_queue_chunk(struct lite3d_mesh_chunk *meshChunk, size_t instancesCount)
+{
+    SDL_assert(meshChunk);
+    SDL_assert(meshChunk->mesh);
+
+    if (meshChunk->hasIndexes)
+    {
+        if (meshChunk->mesh->drawQueue.capacity == 0)
+        {
+            lite3d_array_init(&meshChunk->mesh->drawQueue, sizeof(lite3d_multidraw_indexed_command), 1);
+        }
+
+        lite3d_multidraw_indexed_command *command = lite3d_array_add(&meshChunk->mesh->drawQueue);
+        command->count = meshChunk->vao.indexesCount;
+        command->instanceCount = instancesCount;
+        command->firstIndex = meshChunk->vao.indexesOffset / sizeof(uint32_t);
+        command->baseVertex = meshChunk->vao.verticesOffset / meshChunk->vertexStride;
+        command->baseInstance = 0;
+    }
+    else
+    {
+        if (meshChunk->mesh->drawQueue.capacity == 0)
+        {
+            lite3d_array_init(&meshChunk->mesh->drawQueue, sizeof(lite3d_multidraw_command), 1);
+        }
+
+        lite3d_multidraw_command *command = lite3d_array_add(&meshChunk->mesh->drawQueue);
+        command->count = meshChunk->vao.verticesCount;
+        command->instanceCount = instancesCount;
+        command->first = meshChunk->vao.verticesOffset / meshChunk->vertexStride;
+        command->baseInstance = 0;
+    }
+}
+
+void lite3d_mesh_queue_clean(struct lite3d_mesh *mesh)
+{
+    SDL_assert(mesh);
+    lite3d_array_clean(&mesh->drawQueue);
+}
+
