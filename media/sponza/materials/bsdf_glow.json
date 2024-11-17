@@ -1,43 +1,34 @@
 {
+  "Emission": {
+    "Name":"<Emission>"
+  },
+  "EmissionStrength": {
+    "Name":"<Emission Strength>"
+  },
+  "Metallic": {
+    "Value": 0.0
+  },
+  "EnvDiffuse": {
+    "Value": 1.0
+  },
+  "EnvSpecular": {
+    "Value": 1.0
+  },
+
   "Passes":[
     {
       "Pass": 1,
       "Program":{
         "Name":"depth.program",
         "Path":"sponza:shaders/json/depth.json"
-      },
-      "Uniforms":[
-        {
-          "Name": "projViewMatrix"
-        },
-        {
-          "Name": "modelMatrix"
-        }
-      ]
+      }
     },
     {
       "Pass": 2,
       "Program":{
         "Name":"bsdf_glow_prepare.program",
         "Path":"sponza:shaders/json/bsdf_glow_prepare.json"
-      },
-      "Uniforms":[
-        {
-          "Name":"<Emission>"
-        },
-        {
-          "Name":"<Emission Strength>"
-        },
-        {
-          "Name":"projViewMatrix"
-        },
-        {
-          "Name":"modelMatrix"
-        },
-        {
-          "Name":"normalMatrix"
-        }
-      ]
+      }
     },
     {
       "Pass": 3,
@@ -55,9 +46,6 @@
           "Name": "ShadowIndex",
           "UBOName": "SponzaDeffered_ShadowIndexBuffer",
           "Type": "UBO"
-        },
-        {
-          "Name":"modelMatrix"
         }
       ]
     },
@@ -68,12 +56,6 @@
         "Path":"sponza:shaders/json/env_probe_glow.json"
       },
       "Uniforms":[
-        {
-          "Name":"<Emission>"
-        },
-        {
-          "Name":"<Emission Strength>"
-        },
         {
           "Name":"LightSources",
           "UBOName": "SponzaDeffered_MainScene_lightingBufferObject",
@@ -103,9 +85,6 @@
           "Name":"EnvProbesIndex",
           "UBOName":"SponzaDeffered_EnvProbesIndex",
           "Type":"UBO"
-        },
-        {
-          "Name":"modelMatrix"
         }
       ]
     }

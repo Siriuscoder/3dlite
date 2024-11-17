@@ -28,8 +28,6 @@
 #include <lite3d/lite3d_query.h>
 #include <lite3d/lite3d_scene.h>
 
-extern int gQueryObjectSupported;
-
 typedef struct _query_unit
 {
     lite3d_query query;
@@ -710,29 +708,12 @@ static void scene_updated_nodes_validate(lite3d_scene *scene)
     lite3d_array_clean(&scene->invalidatedUnits);
 }
 
-static uint32_t scene_correct_render_flags(uint32_t flags)
-{
-    if (!gQueryObjectSupported)
-    {
-        flags &= ~(LITE3D_RENDER_OCCLUSION_CULLING | LITE3D_RENDER_OCCLUSION_QUERY);
-    }
-
-    if (flags & LITE3D_RENDER_OCCLUSION_QUERY)
-    {
-        flags &= ~LITE3D_RENDER_INSTANCING;
-    }
-
-    return flags;
-}
-
 void lite3d_scene_render(lite3d_scene *scene, lite3d_camera *camera, 
     uint16_t pass, uint32_t flags)
 {
     SDL_assert(scene && camera);
     /* clean statistic */
     memset(&scene->stats, 0, sizeof (scene->stats));
-
-    flags = scene_correct_render_flags(flags);
 
     if (scene->beforeUpdateNodes)
         LITE3D_METRIC_CALL(scene->beforeUpdateNodes, (scene, camera))
@@ -990,4 +971,16 @@ int lite3d_scene_node_touch_material(struct lite3d_scene_node *node,
     mqr_unit_add_node(mqrUnit, mqrNode);
 
     return LITE3D_TRUE;
+}
+
+int lite3d_scene_multirender_support(void)
+{
+    return lite3d_check_bindless_texture() || 
+        lite3d_check_multi_draw_indirect() ||
+        lite3d_check_shader_draw_parameters();
+}
+
+int lite3d_scene_oocclusion_query_support(void)
+{
+    return lite3d_check_occlusion_query();
 }

@@ -1,4 +1,35 @@
 {
+  "Albedo": {
+    "Name": "Albedo",
+    "Type": "v4",
+    "Value": [
+      0.8500000238418579,
+      0.8500000238418579,
+      0.8500000238418579,
+      0.5
+    ]
+  },
+  "Metallic": {
+    "Name": "Metallic",
+    "Type": "float",
+    "Value": 0.8999999761581421
+  },
+  "Roughness": {
+    "Name": "Roughness",
+    "Type": "float",
+    "Value": 0.05000000074505806
+  },
+  "Alpha": {
+    "Name": "Alpha",
+    "Type": "float",
+    "Value": 0.5
+  },
+  "EnvDiffuse": {
+    "Value": 1.0
+  },
+  "EnvSpecular": {
+    "Value": 1.0
+  },
   "Passes": [
     {
       "Pass": 2,
@@ -7,26 +38,6 @@
         "Path": "sponza:shaders/json/bsdf_direct_alpha.json"
       },
       "Uniforms": [
-        {
-          "Name": "Albedo",
-          "Type": "v4",
-          "Value": [
-            0.8500000238418579,
-            0.8500000238418579,
-            0.8500000238418579,
-            0.5
-          ]
-        },
-        {
-          "Name": "Metallic",
-          "Type": "float",
-          "Value": 0.9
-        },
-        {
-          "Name": "Roughness",
-          "Type": "float",
-          "Value": 0.05000000074505806
-        },
         {
           "Name": "EnvironmentProbe",
           "TextureName": "SponzaDeffered_EnvironmentMultiProbe.texture",
@@ -65,17 +76,6 @@
       ],
       "Blending": true,
       "BlendingMode": "RGB_LINEAR_SOURCE_ALPHA"
-    }
-  ],
-  "Uniforms": [
-    {
-      "Name": "projViewMatrix"
-    },
-    {
-      "Name": "modelMatrix"
-    },
-    {
-      "Name": "normalMatrix"
     }
   ]
 }

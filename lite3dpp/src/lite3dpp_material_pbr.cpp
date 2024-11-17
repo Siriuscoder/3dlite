@@ -33,17 +33,18 @@ namespace lite3dpp
     {
         MultiRenderMaterial::loadFromConfigImpl(helper);
 
-        setAlbedo(helper.getVec4(L"Albedo", KM_VEC4_ONE), false);
-        setEmission(helper.getVec4(L"Emission", KM_VEC4_ZERO), false);
-        setF0(helper.getVec4(L"F0", kmVec4 { 0.04, 0.04, 0.04, 1.0 }), false);
-        setNormalScale(helper.getVec4(L"NormalScale", KM_VEC4_ONE), false);
-        setAlpha(helper.getDouble(L"Alpha", 1.0), false);
-        setSpecular(helper.getDouble(L"Specular", 1.0), false);
-        setRoughness(helper.getDouble(L"Roughness", 1.0), false);
-        setMetallic(helper.getDouble(L"Metallic", 1.0), false);
-        setEnvDiffuse(helper.getDouble(L"EnvDiffuse", 1.0), false);
-        setEnvSpecular(helper.getDouble(L"EnvSpecular", 1.0), false);
-        setIor(helper.getDouble(L"Ior", 1.0), false);
+        setAlbedo(helper.getObject(L"Albedo").getVec4(L"Value", KM_VEC4_ONE), false);
+        setEmission(helper.getObject(L"Emission").getVec4(L"Value", KM_VEC4_ZERO), false);
+        setF0(helper.getObject(L"F0").getVec4(L"Value", kmVec4 { 0.04, 0.04, 0.04, 1.0 }), false);
+        setNormalScale(helper.getObject(L"NormalScale").getVec4(L"Value", KM_VEC4_ONE), false);
+        setAlpha(helper.getObject(L"Alpha").getDouble(L"Value", 1.0), false);
+        setSpecular(helper.getObject(L"Specular").getDouble(L"Value", 1.0), false);
+        setRoughness(helper.getObject(L"Roughness").getDouble(L"Value", 1.0), false);
+        setMetallic(helper.getObject(L"Metallic").getDouble(L"Value", 1.0), false);
+        setEnvDiffuse(helper.getObject(L"EnvDiffuse").getDouble(L"Value", 1.0), false);
+        setEnvSpecular(helper.getObject(L"EnvSpecular").getDouble(L"Value", 1.0), false);
+        setIor(helper.getObject(L"Ior").getDouble(L"Value", 1.0), false);
+        setEmissionStrength(helper.getObject(L"EmissionStrength").getDouble(L"Value", 1.0), false);
 
         for (size_t i = 1; i < gTextureIds.size(); ++i)
         {

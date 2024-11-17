@@ -1,46 +1,34 @@
 {
+  "AlbedoTexture": {
+    "Name":"<Albedo>"
+  },
+  "RoughnessMetallicTexture": {
+    "Name":"<Specular>"
+  },
+  "NormalTexture": {
+    "Name":"<Normal>"
+  },
+  "EnvDiffuse": {
+    "Value": 1.0
+  },
+  "EnvSpecular": {
+    "Value": 1.0
+  },
+
   "Passes":[
     {
       "Pass": 1,
       "Program":{
         "Name":"depth.program",
         "Path":"sponza:shaders/json/depth.json"
-      },
-      "Uniforms":[
-        {
-          "Name": "projViewMatrix"
-        },
-        {
-          "Name": "modelMatrix"
-        }
-      ]
+      }
     },
     {
       "Pass": 2,
       "Program":{
         "Name":"bsdf_prepare.program",
         "Path":"sponza:shaders/json/bsdf_prepare.json"
-      },
-      "Uniforms":[
-        {
-          "Name":"<Albedo>"
-        },
-        {
-          "Name":"<Normal>"
-        },
-        {
-          "Name":"<Specular>"
-        },
-        {
-          "Name":"projViewMatrix"
-        },
-        {
-          "Name":"modelMatrix"
-        },
-        {
-          "Name":"normalMatrix"
-        }
-      ]
+      }
     },
     {
       "Pass": 3,
@@ -58,9 +46,6 @@
           "Name": "ShadowIndex",
           "UBOName": "SponzaDeffered_ShadowIndexBuffer",
           "Type": "UBO"
-        },
-        {
-          "Name":"modelMatrix"
         }
       ]
     },
@@ -71,12 +56,6 @@
         "Path":"sponza:shaders/json/env_probe.json"
       },
       "Uniforms":[
-        {
-          "Name":"<Albedo>"
-        },
-        {
-          "Name":"<Specular>"
-        },
         {
           "Name":"LightSources",
           "UBOName": "SponzaDeffered_MainScene_lightingBufferObject",
@@ -106,9 +85,6 @@
           "Name":"EnvProbesIndex",
           "UBOName":"SponzaDeffered_EnvProbesIndex",
           "Type":"UBO"
-        },
-        {
-          "Name":"modelMatrix"
         }
       ]
     }

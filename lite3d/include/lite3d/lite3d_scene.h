@@ -106,6 +106,8 @@ LITE3D_CEXPORT void lite3d_scene_purge(lite3d_scene *scene);
 LITE3D_CEXPORT int lite3d_scene_add_node(lite3d_scene *scene, lite3d_scene_node *node, lite3d_scene_node *baseNode);
 LITE3D_CEXPORT int lite3d_scene_rebase_node(lite3d_scene *scene, lite3d_scene_node *node, lite3d_scene_node *baseNode);
 LITE3D_CEXPORT int lite3d_scene_remove_node(lite3d_scene *scene, lite3d_scene_node *node);
+LITE3D_CEXPORT int lite3d_scene_multirender_support(void);
+LITE3D_CEXPORT int lite3d_scene_oocclusion_query_support(void);
 
 LITE3D_CEXPORT int lite3d_scene_node_touch_material(struct lite3d_scene_node *node, 
     struct lite3d_mesh_chunk *meshChunk, struct lite3d_mesh_chunk *bbMeshChunk, 

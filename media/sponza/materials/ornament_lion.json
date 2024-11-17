@@ -1,55 +1,42 @@
 {
+  "AlbedoTexture": {
+    "Name": "Albedo",
+    "Type": "sampler",
+    "TextureName": "lionhead_01_BaseColor.texture",
+    "TexturePath": "sponza:textures/json/lionhead_01_BaseColor.json"
+  },
+  "RoughnessMetallicTexture": {
+    "Name": "Specular",
+    "Type": "sampler",
+    "TextureName": "lionhead_01_Roughnesslionhead_01_Metalness.texture",
+    "TexturePath": "sponza:textures/json/lionhead_01_Roughnesslionhead_01_Metalness.json"
+  },
+  "NormalTexture": {
+    "Name": "Normal",
+    "Type": "sampler",
+    "TextureName": "lionhead_01_Normal.texture",
+    "TexturePath": "sponza:textures/json/lionhead_01_Normal.json"
+  },
+  "EnvDiffuse": {
+    "Value": 1.0
+  },
+  "EnvSpecular": {
+    "Value": 1.0
+  },
   "Passes": [
     {
       "Pass": 1,
       "Program": {
         "Name": "depth.program",
         "Path": "sponza:shaders/json/depth.json"
-      },
-      "Uniforms": [
-        {
-          "Name": "projViewMatrix"
-        },
-        {
-          "Name": "modelMatrix"
-        }
-      ]
+      }
     },
     {
       "Pass": 2,
       "Program": {
         "Name": "bsdf_prepare.program",
         "Path": "sponza:shaders/json/bsdf_prepare.json"
-      },
-      "Uniforms": [
-        {
-          "Name": "Albedo",
-          "Type": "sampler",
-          "TextureName": "lionhead_01_BaseColor.texture",
-          "TexturePath": "sponza:textures/json/lionhead_01_BaseColor.json"
-        },
-        {
-          "Name": "Normal",
-          "Type": "sampler",
-          "TextureName": "lionhead_01_Normal.texture",
-          "TexturePath": "sponza:textures/json/lionhead_01_Normal.json"
-        },
-        {
-          "Name": "Specular",
-          "Type": "sampler",
-          "TextureName": "lionhead_01_Roughnesslionhead_01_Metalness.texture",
-          "TexturePath": "sponza:textures/json/lionhead_01_Roughnesslionhead_01_Metalness.json"
-        },
-        {
-          "Name": "projViewMatrix"
-        },
-        {
-          "Name": "modelMatrix"
-        },
-        {
-          "Name": "normalMatrix"
-        }
-      ]
+      }
     },
     {
       "Pass": 3,
@@ -67,9 +54,6 @@
           "Name": "ShadowIndex",
           "UBOName": "SponzaDeffered_ShadowIndexBuffer",
           "Type": "UBO"
-        },
-        {
-          "Name": "modelMatrix"
         }
       ]
     },
@@ -80,18 +64,6 @@
         "Path": "sponza:shaders/json/env_probe.json"
       },
       "Uniforms": [
-        {
-          "Name": "Albedo",
-          "Type": "sampler",
-          "TextureName": "lionhead_01_BaseColor.texture",
-          "TexturePath": "sponza:textures/json/lionhead_01_BaseColor.json"
-        },
-        {
-          "Name": "Specular",
-          "Type": "sampler",
-          "TextureName": "lionhead_01_Roughnesslionhead_01_Metalness.texture",
-          "TexturePath": "sponza:textures/json/lionhead_01_Roughnesslionhead_01_Metalness.json"
-        },
         {
           "Name": "LightSources",
           "UBOName": "SponzaDeffered_MainScene_lightingBufferObject",
@@ -121,9 +93,6 @@
           "Name": "EnvProbesIndex",
           "UBOName": "SponzaDeffered_EnvProbesIndex",
           "Type": "UBO"
-        },
-        {
-          "Name": "modelMatrix"
         }
       ]
     }

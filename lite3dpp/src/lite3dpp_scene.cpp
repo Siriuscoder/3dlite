@@ -356,9 +356,30 @@ namespace lite3dpp
                 if (renderTargetJson.getBool(L"RenderInstancing", false))
                     renderFlags |= LITE3D_RENDER_INSTANCING;
                 if (renderTargetJson.getBool(L"OcclusionQuery", false))
-                    renderFlags |= LITE3D_RENDER_OCCLUSION_QUERY;
+                {
+                    if (!lite3d_scene_oocclusion_query_support())
+                    {
+                        SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION, "%s: OcclusionQuery feature is not supported", 
+                            getName().c_str());
+                    }
+                    else
+                    {
+                        renderFlags &= ~LITE3D_RENDER_INSTANCING;
+                        renderFlags |= LITE3D_RENDER_OCCLUSION_QUERY;
+                    }
+                }
                 if (renderTargetJson.getBool(L"OcclusionCulling", false))
-                    renderFlags |= LITE3D_RENDER_OCCLUSION_CULLING;
+                {
+                    if (!lite3d_scene_oocclusion_query_support())
+                    {
+                        SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION, "%s: OcclusionQuery feature is not supported", 
+                            getName().c_str());
+                    }
+                    else
+                    {
+                        renderFlags |= LITE3D_RENDER_OCCLUSION_CULLING;
+                    }
+                }
                 if (renderTargetJson.getBool(L"FrustumCulling", true))
                     renderFlags |= LITE3D_RENDER_FRUSTUM_CULLING;
                 if (renderTargetJson.getBool(L"CustomVisibilityCheck", false))
@@ -371,6 +392,15 @@ namespace lite3dpp
                     renderFlags |= LITE3D_RENDER_SORT_OPAQUE_FROM_NEAR;
                 if (renderTargetJson.getBool(L"SortTransparentFromNear", false))
                     renderFlags |= LITE3D_RENDER_SORT_TRANSPARENT_FROM_NEAR;
+                if (renderTargetJson.getBool(L"MultiRender", false))
+                {
+                    if (!lite3d_scene_multirender_support())
+                    {
+                        LITE3D_THROW(getName() << ": MultiRender feature is not supported");
+                    }
+
+                    renderFlags |= LITE3D_RENDER_MULTIRENDER;
+                }
 
                 RenderTarget::RenderLayers layers;
                 auto colorLayer = renderTargetJson.getInt(L"ColorLayer", -1);

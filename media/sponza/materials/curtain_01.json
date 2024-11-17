@@ -1,4 +1,28 @@
 {
+  "AlbedoTexture": {
+    "Name": "Albedo",
+    "Type": "sampler",
+    "TextureName": "curtain_fabric_red_BaseColor.texture",
+    "TexturePath": "sponza:textures/json/curtain_fabric_red_BaseColor.json"
+  },
+  "RoughnessMetallicTexture": {
+    "Name": "Specular",
+    "Type": "sampler",
+    "TextureName": "curtain_fabric_Roughnesscurtain_fabric_Metalness.texture",
+    "TexturePath": "sponza:textures/json/curtain_fabric_Roughnesscurtain_fabric_Metalness.json"
+  },
+  "NormalTexture": {
+    "Name": "Normal",
+    "Type": "sampler",
+    "TextureName": "curtain_fabric_Normal.texture",
+    "TexturePath": "sponza:textures/json/curtain_fabric_Normal.json"
+  },
+  "EnvDiffuse": {
+    "Value": 1.0
+  },
+  "EnvSpecular": {
+    "Value": 1.0
+  },
   "Passes": [
     {
       "Pass": 1,
@@ -6,15 +30,7 @@
         "Name": "depth.program",
         "Path": "sponza:shaders/json/depth.json"
       },
-      "DoubleSided": true,
-      "Uniforms": [
-        {
-          "Name": "projViewMatrix"
-        },
-        {
-          "Name": "modelMatrix"
-        }
-      ]
+      "DoubleSided": true
     },
     {
       "Pass": 2,
@@ -22,36 +38,7 @@
         "Name": "bsdf_prepare.program",
         "Path": "sponza:shaders/json/bsdf_prepare.json"
       },
-      "DoubleSided": true,
-      "Uniforms": [
-        {
-          "Name": "Albedo",
-          "Type": "sampler",
-          "TextureName": "curtain_fabric_red_BaseColor.texture",
-          "TexturePath": "sponza:textures/json/curtain_fabric_red_BaseColor.json"
-        },
-        {
-          "Name": "Normal",
-          "Type": "sampler",
-          "TextureName": "curtain_fabric_Normal.texture",
-          "TexturePath": "sponza:textures/json/curtain_fabric_Normal.json"
-        },
-        {
-          "Name": "Specular",
-          "Type": "sampler",
-          "TextureName": "curtain_fabric_Roughnesscurtain_fabric_Metalness.texture",
-          "TexturePath": "sponza:textures/json/curtain_fabric_Roughnesscurtain_fabric_Metalness.json"
-        },
-        {
-          "Name": "projViewMatrix"
-        },
-        {
-          "Name": "modelMatrix"
-        },
-        {
-          "Name": "normalMatrix"
-        }
-      ]
+      "DoubleSided": true
     },
     {
       "Pass": 3,
@@ -70,9 +57,6 @@
           "Name": "ShadowIndex",
           "UBOName": "SponzaDeffered_ShadowIndexBuffer",
           "Type": "UBO"
-        },
-        {
-          "Name": "modelMatrix"
         }
       ]
     },
@@ -84,18 +68,6 @@
       },
       "DoubleSided": true,
       "Uniforms": [
-        {
-          "Name": "Albedo",
-          "Type": "sampler",
-          "TextureName": "curtain_fabric_red_BaseColor.texture",
-          "TexturePath": "sponza:textures/json/curtain_fabric_red_BaseColor.json"
-        },
-        {
-          "Name": "Specular",
-          "Type": "sampler",
-          "TextureName": "curtain_fabric_Roughnesscurtain_fabric_Metalness.texture",
-          "TexturePath": "sponza:textures/json/curtain_fabric_Roughnesscurtain_fabric_Metalness.json"
-        },
         {
           "Name": "LightSources",
           "UBOName": "SponzaDeffered_MainScene_lightingBufferObject",
@@ -125,9 +97,6 @@
           "Name": "EnvProbesIndex",
           "UBOName": "SponzaDeffered_EnvProbesIndex",
           "Type": "UBO"
-        },
-        {
-          "Name": "modelMatrix"
         }
       ]
     }

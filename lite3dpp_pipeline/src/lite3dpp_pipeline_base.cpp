@@ -260,6 +260,7 @@ namespace lite3dpp_pipeline {
             .set(L"RenderOpaque", true);
 
         depthPassGeneratedConfig.set(L"RenderInstancing", pipelineConfig.getBool(L"Instancing", true));
+        depthPassGeneratedConfig.set(L"MultiRender", pipelineConfig.getBool(L"MultiRender", false));
         if (pipelineConfig.getBool(L"OcclusionCulling", true))
         {
             depthPassGeneratedConfig.set(L"OcclusionQuery", true)
