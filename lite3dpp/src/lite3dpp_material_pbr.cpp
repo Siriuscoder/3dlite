@@ -46,6 +46,7 @@ namespace lite3dpp
         setIor(helper.getObject(L"Ior").getDouble(L"Value", 1.0), false);
         setEmissionStrength(helper.getObject(L"EmissionStrength").getDouble(L"Value", 1.0), false);
 
+        size_t index = 0;
         for (size_t i = 1; i < gTextureIds.size(); ++i)
         {
             WString wsName(gTextureIds[i]);
@@ -55,7 +56,7 @@ namespace lite3dpp
                 setTexture(getMain().getResourceManager()->queryResource<TextureImage>(
                     textureCfg.getString(L"TextureName"),
                     textureCfg.getString(L"TexturePath")), 
-                    static_cast<TextureFlags>(1u << i), i - 1, false);
+                    static_cast<TextureFlags>(1u << i), index++, false);
             }
         }
 
