@@ -1,4 +1,4 @@
-#include "samples:shaders/sources/common/utils_pbr_inc.glsl"
+#include "samples:shaders/sources/common/material_inc.glsl"
 
 layout(location = 0) in vec4 vertex;
 layout(location = 1) in vec3 normal;
@@ -16,16 +16,16 @@ out vec3 iwb;
 
 void main()
 {
-    ChunkInvocationInfo chunkInfo = chunksInvocationInfo[gl_DrawID];
-    vec4 wv = chunkInfo.model * vertex;
+    ChunkInvocationInfo invInfo = getInvocationInfo();
+    vec4 wv = invInfo.model * vertex;
     // vertex coordinate in world space 
     iwv = wv.xyz / wv.w;
     // texture coordinate 
     iuv = uv;
     // calculate tangent, normal, binormal in world space
-    iwt = normalize(chunkInfo.normal * tang);
-    iwb = normalize(chunkInfo.normal * btang);
-    iwn = normalize(chunkInfo.normal * normal);
+    iwt = normalize(invInfo.normal * tang);
+    iwb = normalize(invInfo.normal * btang);
+    iwn = normalize(invInfo.normal * normal);
 
     gl_Position = projViewMatrix * wv;
 }

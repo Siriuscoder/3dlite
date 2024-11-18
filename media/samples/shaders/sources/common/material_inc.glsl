@@ -1,7 +1,3 @@
-#extension GL_ARB_shader_draw_parameters : require
-
-#include "samples:shaders/sources/common/utils_inc.glsl"
-
 #define TEXTURE_FLAG_EMPTY                           (0)
 #define TEXTURE_FLAG_LOADED                          (1 << 0)
 #define TEXTURE_FLAG_ALBEDO                          (1 << 1)
@@ -16,18 +12,21 @@
 #define TEXTURE_FLAG_ROUGNESS_METALLIC               (1 << 10)
 #define TEXTURE_FLAG_ENVIRONMENT                     (1 << 11)
 
+#define MATERIAL_NORMAL_MAPPING_TANGENT              (1 << 0)
+#define MATERIAL_NORMAL_MAPPING_TANGENT_BITANGENT    (1 << 1)
+
 struct TextureHandle
 {
     sampler2D textureId;
     uint flags;
-    uint32_t reserved;
+    uint reserved;
 };
 
 struct TextureCubeHandle
 {
     samplerCube textureId;
     uint flags;
-    uint32_t reserved;
+    uint reserved;
 };
 
 struct ChunkInvocationInfo
@@ -41,43 +40,40 @@ struct ChunkInvocationInfo
     uint reserved02;
 };
 
-struct PBRMaterial
+struct Material
 {
-    vec3 Albedo;
-    vec3 Emission;
-    vec3 F0;
-    vec3 NormalScale;
-    float Alpha;
-    float Specular;
-    float Roughness;
-    float Metallic;
-    float EnvDiffuse;
-    float EnvSpecular;
-    float Ior;
-    float EmissionStrength;
+    vec3 albedo;
+    vec3 emission;
+    vec3 f0;
+    vec3 normalScale;
+    float alpha;
+    float specular;
+    float roughness;
+    float metallic;
+    float envDiffuse;
+    float envSpecular;
+    float ior;
+    float emissionStrength;
     uint reserved01;
     uint reserved02;
     uint reserved03;
-    uint Flags;
-    TextureHandle Textures[8];
-    TextureCubeHandle Environment;
+    uint flags;
+    TextureHandle textures[8];
+    TextureCubeHandle environment;
 };
 
-struct PBRSurface
+struct Surface
 {
-    PBRMaterial material;
+    ChunkInvocationInfo transform;
+    Material material;
+    vec3 wv;
+    vec2 uv;
     vec3 normal;
+    float ao;
 };
 
-layout(std430) readonly buffer MultiRenderChunkInvocationBuffer 
-{
-    ChunkInvocationInfo chunksInvocationInfo[];
-};
-
-layout(std430) readonly buffer MultiRenderMaterialDataBuffer 
-{
-    PBRMaterial pbrMaterials[];
-};
-
-
+ChunkInvocationInfo getInvocationInfo();
+Surface makeSurface(vec2 uv, vec3 wv, vec3 wn, vec3 wt, vec3 wb);
+Surface restoreSurface(vec2 uv);
+void surfaceAlphaClip(Surface surface);
 

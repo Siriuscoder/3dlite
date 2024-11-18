@@ -2,14 +2,13 @@
     "Sources": 
     [
         // Standard shaders with params customization
-        "samples:shaders/sources/pipeline/v_tbn.vs",
+        "samples:shaders/sources/pipeline/v_inv.vs",
         "samples:shaders/sources/pipeline/forward_pass/forward.fs,sponza:shaders/sources/inc/params.def",
         "samples:shaders/sources/pbr/pbr.fs,sponza:shaders/sources/inc/params.def",
         "samples:shaders/sources/pbr/brdf_oren_nayar_approx.fs,sponza:shaders/sources/inc/params.def",
         "samples:shaders/sources/pbr/brdf_multiprobe_env.fs,sponza:shaders/sources/inc/params.def",
         "samples:shaders/sources/shadow/pcf3x3.fs,sponza:shaders/sources/inc/params.def",
-        "samples:shaders/sources/common/utils.fs",
-        // Sample specific shaders
-        "sponza:shaders/sources/glass.fs"
+        "samples:shaders/sources/common/material.fs",
+        "samples:shaders/sources/common/material.vs"
     ]
 }

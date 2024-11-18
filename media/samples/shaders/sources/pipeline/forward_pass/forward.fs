@@ -1,4 +1,4 @@
-#include "samples:shaders/sources/common/utils_inc.glsl"
+#include "samples:shaders/sources/common/material_inc.glsl"
 
 out vec4 fragColor;
 
@@ -8,37 +8,25 @@ in vec3 iwn;    // world-space normal
 in vec3 iwt;    // world-space tangent
 in vec3 iwb;    // world-space bitangent
 
-// You must implement this methods in you shader to provide data for forward pass
-vec4 getAlbedo(vec2 uv);
-vec3 getEmission(vec2 uv);
-vec3 getNormal(vec2 uv, mat3 tbn);
-vec3 getSpecular(vec2 uv);
-float getAmbientOcclusion(vec2 uv);
-float getSpecularAmbient(vec2 uv);
+float getAmbientOcclusion(vec2 uv)
+{
+    return 1.0;
+}
 
 vec3 ComputeIllumination(vec3 vw, vec3 nw, vec3 albedo, vec3 emission, vec3 specular, float aoFactor, 
     float saFactor);
 
 void main()
 {
-    // Get world-space normal
-#if defined(NORMAL_MAPPING_OFF)
-    vec3 normal = normalize(iwn);
-#elif defined(NORMAL_MAPPING_TANGENT)
-    vec3 normal = getNormal(iuv, TBN(iwn, iwt));
-#else
-    vec3 normal = getNormal(iuv, TBN(iwn, iwt, iwb));
-#endif
+    Surface surface = makeSurface(iuv, iwv, iwn, iwt, iwb);
 
-    // Get albedo 
-    vec4 albedo = getAlbedo(iuv);
-    // Get emission  
-    vec3 emission = getEmission(iuv);
-    // Get Specular params
-    vec3 specular = getSpecular(iuv);
-    // Compute total illumination 
-    vec3 total = ComputeIllumination(iwv, normal, albedo.rgb, emission, specular, 
-        getAmbientOcclusion(iuv), getSpecularAmbient(iuv));
+    vec3 total = ComputeIllumination(surface.wv, 
+        surface.normal, 
+        surface.material.albedo, 
+        surface.material.emission, 
+        vec3(surface.material.specular, surface.material.roughness, surface.material.metallic), 
+        surface.ao, 
+        surface.material.envSpecular);
     // Final
     fragColor = vec4(total, albedo.a);
 }

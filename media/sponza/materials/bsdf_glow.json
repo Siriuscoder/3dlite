@@ -26,8 +26,8 @@
     {
       "Pass": 2,
       "Program":{
-        "Name":"bsdf_glow_prepare.program",
-        "Path":"sponza:shaders/json/bsdf_glow_prepare.json"
+        "Name":"bsdf_prepare.program",
+        "Path":"sponza:shaders/json/bsdf_prepare.json"
       }
     },
     {
@@ -52,8 +52,8 @@
     {
       "Pass": 4,
       "Program":{
-        "Name":"env_probe_glow.program",
-        "Path":"sponza:shaders/json/env_probe_glow.json"
+        "Name":"env_probe.program",
+        "Path":"sponza:shaders/json/env_probe.json"
       },
       "Uniforms":[
         {
