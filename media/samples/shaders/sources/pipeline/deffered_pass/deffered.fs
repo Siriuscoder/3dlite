@@ -1,3 +1,4 @@
+#extension GL_ARB_bindless_texture : enable 
 #include "samples:shaders/sources/common/material_inc.glsl"
 
 layout(location = 0) out vec4 channel01;
@@ -14,9 +15,10 @@ in vec3 iwb;    // world-space bitangent
 void main()
 {
     Surface surface = makeSurface(iuv, iwv, iwn, iwt, iwb);
+    surfaceAlphaClip(surface); // Alpha clip case 
 
-    channel01 = vec4(iwv, float(chunkInfo.materialIdx));
-    channel02 = vec4(surface.normal, surface.material.Emission.r);
-    channel03 = vec4(surface.material.Albedo, surface.material.Emission.g);
-    channel04 = vec4(surface.material.Specular, surface.material.Roughness, surface.material.Metallic, surface.material.Emission.b);
+    channel01 = vec4(iwv, float(surface.index));
+    channel02 = vec4(surface.normal, surface.material.emission.r);
+    channel03 = vec4(surface.material.albedo, surface.material.emission.g);
+    channel04 = vec4(surface.material.specular, surface.material.roughness, surface.material.metallic, surface.material.emission.b);
 }

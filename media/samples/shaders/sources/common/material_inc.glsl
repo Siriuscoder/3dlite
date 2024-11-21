@@ -58,18 +58,8 @@ struct Material
     uint reserved02;
     uint reserved03;
     uint flags;
-};
-
-struct MaterialTextures
-{
     TextureHandle slot[8];
     TextureCubeHandle environment;
-};
-
-struct RawMaterial
-{
-    Material material;
-    MaterialTextures textures;
 };
 
 struct Surface

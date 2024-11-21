@@ -24,6 +24,11 @@ namespace lite3dpp
     class LITE3DPP_EXPORT MultiRenderMaterial : public Material
     {
     public:
+
+        static constexpr inline std::string_view MultiRenderChunkInvocationBufferName = 
+            "MultiRenderChunkInvocationBuffer";
+        static constexpr inline std::string_view MultiRenderMaterialDataBufferName = 
+            "MultiRenderMaterialDataBuffer"; 
     
         MultiRenderMaterial(const String &name, const String &path, Main *main);
 

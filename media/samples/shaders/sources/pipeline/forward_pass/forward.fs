@@ -1,3 +1,4 @@
+#extension GL_ARB_bindless_texture : enable
 #include "samples:shaders/sources/common/material_inc.glsl"
 
 out vec4 fragColor;
@@ -28,5 +29,5 @@ void main()
         surface.ao, 
         surface.material.envSpecular);
     // Final
-    fragColor = vec4(total, albedo.a);
+    fragColor = vec4(total, surface.material.alpha);
 }

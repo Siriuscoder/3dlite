@@ -33,11 +33,28 @@ namespace lite3dpp
     {
         Material::loadFromConfigImpl(helper);
 
-        mChunkInvocationBuffer = getMain().getResourceManager()->
-            queryResourceFromJson<SSBO>("MultiRenderChunkInvocationBuffer", "{\"Dynamic\": true}");
-        mMaterialDataBuffer = getMain().getResourceManager()->
-            queryResourceFromJson<SSBO>("MultiRenderMaterialDataBuffer", "{\"Dynamic\": true}");
+        if (!getMain().getResourceManager()->resourceExists(MultiRenderChunkInvocationBufferName.data()))
+        {
+            mChunkInvocationBuffer = getMain().getResourceManager()->
+                queryResourceFromJson<SSBO>(MultiRenderChunkInvocationBufferName.data(), "{\"Dynamic\": true}");
+        }
+        else
+        {
+            mChunkInvocationBuffer = getMain().getResourceManager()->
+                queryResource<SSBO>(MultiRenderChunkInvocationBufferName.data());
+        }
 
+        if (!getMain().getResourceManager()->resourceExists(MultiRenderMaterialDataBufferName.data()))
+        {
+            mMaterialDataBuffer = getMain().getResourceManager()->
+                queryResourceFromJson<SSBO>(MultiRenderMaterialDataBufferName.data(), "{\"Dynamic\": true}");
+        }
+        else
+        {
+            mMaterialDataBuffer = getMain().getResourceManager()->
+                queryResource<SSBO>(MultiRenderMaterialDataBufferName.data());
+        }
+        
         for (auto &passPair : mPasses)
         {
             /* 

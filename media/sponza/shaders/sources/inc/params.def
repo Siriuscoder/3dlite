@@ -1,4 +1,4 @@
-#extension GL_ARB_texture_cube_map_array : enable
+#extension GL_ARB_texture_cube_map_array : require
 
 #define NORMAL_MAPPING_TANGENT
 
