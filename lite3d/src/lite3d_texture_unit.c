@@ -960,8 +960,6 @@ int lite3d_texture_unit_set_pixels(lite3d_texture_unit *textureUnit,
     
     /* make texture active */
     glBindTexture(textureTargetEnum[textureUnit->textureTarget], textureUnit->textureID);
-    lite3d_misc_gl_error_stack_clean();
-    
     switch (textureUnit->textureTarget)
     {
         case LITE3D_TEXTURE_1D:
@@ -985,7 +983,7 @@ int lite3d_texture_unit_set_pixels(lite3d_texture_unit *textureUnit,
             break;
     }
     
-    return LITE3D_CHECK_GL_ERROR ? LITE3D_FALSE : LITE3D_TRUE;
+    return LITE3D_TRUE;
 }
 
 int lite3d_texture_unit_set_compressed_pixels(lite3d_texture_unit *textureUnit, 
@@ -999,7 +997,7 @@ int lite3d_texture_unit_set_compressed_pixels(lite3d_texture_unit *textureUnit,
     
     /* make texture active */
     glBindTexture(textureTargetEnum[textureUnit->textureTarget], textureUnit->textureID);
-    lite3d_misc_gl_error_stack_clean();
+
 #ifndef GLES
     {
         int32_t compressed;
@@ -1040,7 +1038,7 @@ int lite3d_texture_unit_set_compressed_pixels(lite3d_texture_unit *textureUnit,
             break;
     }
 
-    return LITE3D_CHECK_GL_ERROR ? LITE3D_FALSE : LITE3D_TRUE;  
+    return LITE3D_TRUE;
 }
 
 int lite3d_texture_unit_get_level_size(const lite3d_texture_unit *textureUnit, 
