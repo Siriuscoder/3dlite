@@ -242,7 +242,7 @@ void IBLMultiProbe::EnvProbe::writeProbe(IBLMultiProbe::ProbeRawEntity *probe) c
     probe->position.w = 0.0f;
     
     std::copy(mViewProjMatrices.begin(), mViewProjMatrices.end(), probe->viewProjMatrices);
-    probe->flags[0] = static_cast<int32_t>(mFlags);
+    probe->flags[0] = static_cast<uint32_t>(mFlags);
 }
 
 }}

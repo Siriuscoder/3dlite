@@ -1,19 +1,19 @@
-#define TEXTURE_FLAG_EMPTY                           (0)
-#define TEXTURE_FLAG_LOADED                          (1 << 0)
-#define TEXTURE_FLAG_ALBEDO                          (1 << 1)
-#define TEXTURE_FLAG_ALBEDO_ALPHA                    (1 << 2)
-#define TEXTURE_FLAG_EMISSION                        (1 << 3)
-#define TEXTURE_FLAG_ALPHA_MASK                      (1 << 4)
-#define TEXTURE_FLAG_NORMAL                          (1 << 5)
-#define TEXTURE_FLAG_SPECULAR                        (1 << 6)
-#define TEXTURE_FLAG_ROUGHNESS                       (1 << 7)
-#define TEXTURE_FLAG_METALLIC                        (1 << 8)
-#define TEXTURE_FLAG_SPECULAR_ROUGNESS_METALLIC      (1 << 9)
-#define TEXTURE_FLAG_ROUGNESS_METALLIC               (1 << 10)
-#define TEXTURE_FLAG_ENVIRONMENT                     (1 << 11)
+#define TEXTURE_FLAG_EMPTY                           uint(0)
+#define TEXTURE_FLAG_LOADED                          uint(1 << 0)
+#define TEXTURE_FLAG_ALBEDO                          uint(1 << 1)
+#define TEXTURE_FLAG_ALBEDO_ALPHA                    uint(1 << 2)
+#define TEXTURE_FLAG_EMISSION                        uint(1 << 3)
+#define TEXTURE_FLAG_ALPHA_MASK                      uint(1 << 4)
+#define TEXTURE_FLAG_NORMAL                          uint(1 << 5)
+#define TEXTURE_FLAG_SPECULAR                        uint(1 << 6)
+#define TEXTURE_FLAG_ROUGHNESS                       uint(1 << 7)
+#define TEXTURE_FLAG_METALLIC                        uint(1 << 8)
+#define TEXTURE_FLAG_SPECULAR_ROUGNESS_METALLIC      uint(1 << 9)
+#define TEXTURE_FLAG_ROUGNESS_METALLIC               uint(1 << 10)
+#define TEXTURE_FLAG_ENVIRONMENT                     uint(1 << 11)
 
-#define MATERIAL_NORMAL_MAPPING_TANGENT              (1 << 0)
-#define MATERIAL_NORMAL_MAPPING_TANGENT_BITANGENT    (1 << 1)
+#define MATERIAL_NORMAL_MAPPING_TANGENT              uint(1 << 0)
+#define MATERIAL_NORMAL_MAPPING_TANGENT_BITANGENT    uint(1 << 1)
 
 struct TextureHandle
 {
@@ -58,14 +58,25 @@ struct Material
     uint reserved02;
     uint reserved03;
     uint flags;
-    TextureHandle textures[8];
+};
+
+struct MaterialTextures
+{
+    TextureHandle slot[8];
     TextureCubeHandle environment;
+};
+
+struct RawMaterial
+{
+    Material material;
+    MaterialTextures textures;
 };
 
 struct Surface
 {
     ChunkInvocationInfo transform;
     Material material;
+    uint index;
     vec3 wv;
     vec2 uv;
     vec3 normal;

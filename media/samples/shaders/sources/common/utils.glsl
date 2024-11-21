@@ -53,7 +53,7 @@ float shlickPow(float a, float b)
     return a / (b - a * b + a);
 }
 
-bool hasFlag(int a, int flag)
+bool hasFlag(uint a, uint flag)
 {
     return (a & flag) == flag;
 }
@@ -228,6 +228,8 @@ mat4 saturationMatrix()
                 0, 0, 0, 1);
 }
 
+#ifdef LITE3D_FRAGMENT_SHADER
+
 vec3 ditherBayer(vec3 color)
 {
     // Получение позиции пикселя в матрице дизеринга
@@ -238,6 +240,8 @@ vec3 ditherBayer(vec3 color)
     // Применение дизеринга к цвету
     return color + (ditherValue / 255.0); // Масштабирование для 8-битного цвета
 }
+
+#endif
 
 // Fresnel equation (Schlick)
 vec3 fresnelSchlickRoughness(float teta, vec3 albedo, vec3 specular)

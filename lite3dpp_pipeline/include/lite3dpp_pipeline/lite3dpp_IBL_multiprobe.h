@@ -22,7 +22,7 @@
 namespace lite3dpp {
 namespace lite3dpp_pipeline {
 
-enum class EnvProbeFlags : int32_t
+enum class EnvProbeFlags : uint32_t
 {
     Irradiance = 1 << 0,
     Specular = 1 << 1
@@ -41,7 +41,7 @@ public:
     {
         kmVec4 position;
         kmMat4 viewProjMatrices[6];
-        int32_t flags[4];
+        uint32_t flags[4];
     };
 
     struct ProbeIndexRawEntity

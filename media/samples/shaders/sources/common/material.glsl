@@ -1,5 +1,3 @@
-#extension GL_ARB_shader_draw_parameters : require
-
 layout(std430) readonly buffer MultiRenderChunkInvocationBuffer 
 {
     ChunkInvocationInfo chunksInvocationInfo[];
@@ -7,89 +5,104 @@ layout(std430) readonly buffer MultiRenderChunkInvocationBuffer
 
 layout(std430) readonly buffer MultiRenderMaterialDataBuffer 
 {
-    Material materials[];
+    RawMaterial materials[];
 };
 
+#ifdef LITE3D_VERTEX_SHADER
+
+flat out int drawID;
+
+ChunkInvocationInfo getInvocationInfo()
+{
+    drawID = gl_DrawID;
+    return chunksInvocationInfo[gl_DrawID];
+}
+
+#elif defined(LITE3D_FRAGMENT_SHADER)
+
 uniform sampler2DArray GBuffer;
+flat in int drawID;
 
 float getAmbientOcclusion(vec2 uv);
 
 ChunkInvocationInfo getInvocationInfo()
 {
-    return chunksInvocationInfo[gl_DrawID];
+    return chunksInvocationInfo[drawID];
 }
 
 Surface makeSurface(vec2 uv, vec3 wv, vec3 wn, vec3 wt, vec3 wb)
 {
     Surface surface;
     surface.transform = getInvocationInfo();
-    surface.material = materials[surface.transform.materialIdx];
+    RawMaterial rawMaterial = materials[surface.transform.materialIdx];
+    surface.material = rawMaterial.material;
+    surface.index = surface.transform.materialIdx;
     surface.uv = uv;
     surface.wv = wv;
 
-    for (int = 0; i < 8; ++i)
+    for (int i = 0; i < 8; ++i)
     {
-        if (surface.material.textures[i].flags & TEXTURE_FLAG_LOADED)
+        if (hasFlag(rawMaterial.textures.slot[i].flags, TEXTURE_FLAG_LOADED))
         {
-            if (surface.material.textures[i].flags & TEXTURE_FLAG_ALBEDO)
+            if (hasFlag(rawMaterial.textures.slot[i].flags, TEXTURE_FLAG_ALBEDO))
             {
-                surface.material.albedo *= texture(surface.material.textures[i].textureId, uv).rgb;
+                surface.material.albedo *= texture(rawMaterial.textures.slot[i].textureId, uv).rgb;
             }
-            else if (surface.material.textures[i].flags & TEXTURE_FLAG_ALBEDO_ALPHA)
+            else if (hasFlag(rawMaterial.textures.slot[i].flags, TEXTURE_FLAG_ALBEDO_ALPHA))
             {
-                vec4 albedo = texture(surface.material.textures[i].textureId, uv).rgba;
+                vec4 albedo = texture(rawMaterial.textures.slot[i].textureId, uv).rgba;
                 surface.material.albedo *= albedo.rgb;
                 surface.material.alpha *= albedo.a;
             }
-            else if (surface.material.textures[i].flags & TEXTURE_FLAG_EMISSION)
+            else if (hasFlag(rawMaterial.textures.slot[i].flags, TEXTURE_FLAG_EMISSION))
             {
-                surface.material.emission = texture(surface.material.textures[i].textureId, uv).rgb;
+                surface.material.emission = texture(rawMaterial.textures.slot[i].textureId, uv).rgb;
             }
-            else if (surface.material.textures[i].flags & TEXTURE_FLAG_ALPHA_MASK)
+            else if (hasFlag(rawMaterial.textures.slot[i].flags, TEXTURE_FLAG_ALPHA_MASK))
             {
-                surface.material.alpha *= texture(surface.material.textures[i].textureId, uv).r;
+                surface.material.alpha *= texture(rawMaterial.textures.slot[i].textureId, uv).r;
             }
-            else if (surface.material.textures[i].flags & TEXTURE_FLAG_NORMAL)
+            else if (hasFlag(rawMaterial.textures.slot[i].flags, TEXTURE_FLAG_NORMAL))
             {
-                if (surface.material.flags & MATERIAL_NORMAL_MAPPING_TANGENT)
+                if (hasFlag(surface.material.flags, MATERIAL_NORMAL_MAPPING_TANGENT))
                 {
-                    vec2 nl = texture(surface.material.textures[i].textureId, uv).rg;
-                    surface.normal = calcNormal(nl, TBN(wn, wt), surface.material.NormalScale);
+                    vec2 nl = texture(rawMaterial.textures.slot[i].textureId, uv).rg;
+                    surface.normal = calcNormal(nl, TBN(wn, wt), surface.material.normalScale);
                 }
-                else if (surface.material.flags & MATERIAL_NORMAL_MAPPING_TANGENT_BITANGENT)
+                else if (hasFlag(surface.material.flags, MATERIAL_NORMAL_MAPPING_TANGENT_BITANGENT))
                 {
-                    vec2 nl = texture(surface.material.textures[i].textureId, uv).rg;
-                    surface.normal = calcNormal(nl, TBN(wn, wt, wb), surface.material.NormalScale);
+                    vec2 nl = texture(rawMaterial.textures.slot[i].textureId, uv).rg;
+                    surface.normal = calcNormal(nl, TBN(wn, wt, wb), surface.material.normalScale);
                 }
                 else
                 {
                     surface.normal = normalize(wn);
                 }
             }
-            else if (surface.material.textures[i].flags & TEXTURE_FLAG_SPECULAR)
+            else if (hasFlag(rawMaterial.textures.slot[i].flags, TEXTURE_FLAG_SPECULAR))
             {
-                surface.material.Specular *= texture(surface.material.textures[i].textureId, uv).r;
+                surface.material.specular *= texture(rawMaterial.textures.slot[i].textureId, uv).r;
             }
-            else if (surface.material.textures[i].flags & TEXTURE_FLAG_ROUGHNESS)
+            else if (hasFlag(rawMaterial.textures.slot[i].flags, TEXTURE_FLAG_ROUGHNESS))
             {
-                surface.material.Roughness *= texture(surface.material.textures[i].textureId, uv).r;
+                surface.material.roughness *= texture(rawMaterial.textures.slot[i].textureId, uv).r;
             }
-            else if (surface.material.textures[i].flags & TEXTURE_FLAG_METALLIC)
+            else if (hasFlag(rawMaterial.textures.slot[i].flags, TEXTURE_FLAG_METALLIC))
             {
-                surface.material.Metallic *= texture(surface.material.textures[i].textureId, uv).r;
+                surface.material.metallic *= texture(rawMaterial.textures.slot[i].textureId, uv).r;
             }
-            else if (surface.material.textures[i].flags & TEXTURE_FLAG_SPECULAR_ROUGNESS_METALLIC)
+            else if (hasFlag(rawMaterial.textures.slot[i].flags, TEXTURE_FLAG_SPECULAR_ROUGNESS_METALLIC))
             {
-                vec3 srm = texture(surface.material.textures[i].textureId, uv).rgb;
-                surface.material.Specular *= sr.r;
-                surface.material.Roughness *= sr.g;
-                surface.material.Metallic *= sr.b;
+                vec3 srm = texture(rawMaterial.textures.slot[i].textureId, uv).rgb;
+                surface.material.specular *= srm.r;
+                surface.material.roughness *= srm.g;
+                surface.material.metallic *= srm.b;
             }
-            else if (surface.material.textures[i].flags & TEXTURE_FLAG_ROUGNESS_METALLIC)
+            else if (hasFlag(rawMaterial.textures.slot[i].flags, TEXTURE_FLAG_ROUGNESS_METALLIC))
             {
-                vec2 rm = texture(surface.material.textures[i].textureId, uv).gb;
-                surface.material.Roughness *= rm.r;
-                surface.material.Metallic *= rm.g;
+                vec2 rm = texture(rawMaterial.textures.slot[i].textureId, uv).gb;
+                surface.material.roughness *= rm.r;
+                surface.material.metallic *= rm.g;
             }
         }
         else
@@ -97,6 +110,8 @@ Surface makeSurface(vec2 uv, vec3 wv, vec3 wn, vec3 wt, vec3 wb)
             break;
         }
     }
+
+    return surface;
 }
 
 Surface restoreSurface(vec2 uv)
@@ -117,8 +132,8 @@ Surface restoreSurface(vec2 uv)
     vec3 emission = vec3(nw.a, albedo.a, specular.a);
 
     Surface surface;
-    // Material index was stored in vw.w
-    surface.material = materials[int(round(vw.w))];
+    surface.index = int(round(wv.w)); // Material index was stored in wv.w
+    surface.material = materials[surface.index].material;
     surface.material.albedo = albedo.rgb;
     surface.material.emission = emission;
     surface.material.specular = specular.x;
@@ -128,6 +143,8 @@ Surface restoreSurface(vec2 uv)
     surface.uv = uv;
     surface.normal = nw.xyz;
     surface.ao = getAmbientOcclusion(uv);
+
+    return surface;
 }
 
 void surfaceAlphaClip(Surface surface)
@@ -135,3 +152,5 @@ void surfaceAlphaClip(Surface surface)
     if (isZero(surface.material.alpha))
         discard;
 }
+
+#endif

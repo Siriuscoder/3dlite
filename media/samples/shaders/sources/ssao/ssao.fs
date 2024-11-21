@@ -6,12 +6,12 @@ uniform float AORadius;
 in vec2 iuv;
 out vec4 outColor;
 
-vec3 sampleViewSpacePosition(vec2 uv)
+vec3 getViewSpacePosition(vec2 uv)
 {
     return worldToViewSpacePosition(texture(GBuffer, vec3(uv, 0)).xyz);
 }
 
-vec3 sampleViewSpaceNormal(vec2 uv)
+vec3 getViewSpaceNormal(vec2 uv)
 {
     vec3 nw = texture(GBuffer, vec3(uv, 1)).xyz;
     // Non shaded fragment
@@ -26,9 +26,9 @@ void main()
     float aoFactor = 0.0;
     float rc = 1.0; // For more randomization
     // sampling fragment normal in view space
-    vec3 nv = sampleViewSpaceNormal(iuv);
+    vec3 nv = getViewSpacePosition(iuv);
     // sampling fragment position in view space
-    vec3 vv = sampleViewSpacePosition(iuv);
+    vec3 vv = getViewSpaceNormal(iuv);
 
     // Take a xy-random base for more variative TBN basis
     vec3 baseRv = vec3(
@@ -46,7 +46,7 @@ void main()
     for (int i = 0; i < SSAO_MAX_DEPTH_SAMPLES; ++i)
     {
         // Random test sample in half hemisphere at tangent space 
-        vec3 sample = normalize(vec3(
+        vec3 s = normalize(vec3(
             goldNoise(iuv * rc++) * 2.0 - 1.0, // x = -1.0 to 1.0
             goldNoise(iuv * rc++) * 2.0 - 1.0, // y = -1.0 to 1.0
             goldNoise(iuv * rc++)              // z = 0.0 to 1.0
@@ -54,19 +54,19 @@ void main()
 
         // set sampler closer and closer to actual fragment 
         float sampleScale = float(i) / float(SSAO_MAX_DEPTH_SAMPLES);
-        sample *= lerp(0.1f, 1.0f, sampleScale * sampleScale);
+        s *= lerp(0.1f, 1.0f, sampleScale * sampleScale);
         // transform sample to view space using TBN and calc sample position in world space
-        sample = vv + (TBN * sample) * AORadius;
+        s = vv + (TBN * s) * AORadius;
 
         // Get Screen UV coordinate to sample surface depth in GBuffer
         // Convert sample view pos to clip-space
-        vec2 offsetUV = viewPositionToUV(sample);
+        vec2 offsetUV = viewPositionToUV(s);
         // Get surface world position at sample from GBuffer and translate to view space
-        float surfaceDepth = sampleViewSpacePosition(offsetUV).z;
+        float surfaceDepth = getViewSpacePosition(offsetUV).z;
         // Check sample depth respect to surface depth in view-space with range check
         //float rangeCheck = abs(vv.z - surfaceDepth) < AORadius ? 1.0 : 0.0;
         float rangeCheck = smoothstep(0.0, 1.0, AORadius / max(abs(vv.z - surfaceDepth), FLT_EPSILON));
-        aoFactor += (surfaceDepth >= (sample.z + SSAO_SAMPLE_BIAS) ? 1.0 : 0.0) * rangeCheck;
+        aoFactor += (surfaceDepth >= (s.z + SSAO_SAMPLE_BIAS) ? 1.0 : 0.0) * rangeCheck;
     }
 
     aoFactor = 1.0 - pow(aoFactor / float(SSAO_MAX_DEPTH_SAMPLES), SSAO_POWER);

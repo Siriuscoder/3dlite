@@ -292,6 +292,7 @@ namespace lite3dpp_pipeline {
             .set(L"RenderBlend", false)
             .set(L"RenderOpaque", true)
             .set(L"CustomVisibilityCheck", true)
+            .set(L"MultiRender", pipelineConfig.getBool(L"MultiRender", false))
             .set(L"RenderInstancing", pipelineConfig.getBool(L"Instancing", true)));
     }
     
@@ -522,6 +523,7 @@ namespace lite3dpp_pipeline {
             .set(L"RenderBlend", false)
             .set(L"RenderOpaque", true)
             .set(L"FrustumCulling", false)
+            .set(L"MultiRender", pipelineConfig.getBool(L"MultiRender", false))
             .set(L"RenderInstancing", pipelineConfig.getBool(L"Instancing", true)));
     }
 
