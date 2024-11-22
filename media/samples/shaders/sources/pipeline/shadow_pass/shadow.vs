@@ -1,4 +1,3 @@
-#extension GL_ARB_bindless_texture : enable 
 #include "samples:shaders/sources/common/material_inc.glsl"
 
 layout(location = 0) in vec4 vertex;

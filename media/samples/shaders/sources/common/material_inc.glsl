@@ -1,3 +1,6 @@
+#extension GL_ARB_shader_draw_parameters : require
+#extension GL_ARB_bindless_texture : require
+
 #define TEXTURE_FLAG_EMPTY                           uint(0)
 #define TEXTURE_FLAG_LOADED                          uint(1 << 0)
 #define TEXTURE_FLAG_ALBEDO                          uint(1 << 1)

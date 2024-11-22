@@ -108,7 +108,7 @@ void lite3d_mesh_chunk_draw(struct lite3d_mesh_chunk *meshChunk)
         lite3d_vao_draw(&meshChunk->vao);
 }
 
-void lite3d_mesh_chunk_draw_instanced(struct lite3d_mesh_chunk *meshChunk, size_t instancesCount)
+void lite3d_mesh_chunk_draw_instanced(struct lite3d_mesh_chunk *meshChunk, uint32_t instancesCount)
 {
     SDL_assert(meshChunk);
     
@@ -243,7 +243,7 @@ void lite3d_mesh_queue_draw(struct lite3d_mesh *mesh, uint8_t hasIndexes)
     }
 }
 
-void lite3d_mesh_queue_chunk(struct lite3d_mesh_chunk *meshChunk, size_t instancesCount)
+void lite3d_mesh_queue_chunk(struct lite3d_mesh_chunk *meshChunk, uint32_t instancesCount)
 {
     SDL_assert(meshChunk);
     SDL_assert(meshChunk->mesh);
@@ -258,8 +258,8 @@ void lite3d_mesh_queue_chunk(struct lite3d_mesh_chunk *meshChunk, size_t instanc
         lite3d_multidraw_indexed_command *command = lite3d_array_add(&meshChunk->mesh->drawQueue);
         command->count = meshChunk->vao.indexesCount;
         command->instanceCount = instancesCount;
-        command->firstIndex = meshChunk->vao.indexesOffset / sizeof(uint32_t);
-        command->baseVertex = meshChunk->vao.verticesOffset / meshChunk->vertexStride;
+        command->firstIndex = (uint32_t)(meshChunk->vao.indexesOffset / sizeof(uint32_t));
+        command->baseVertex = (uint32_t)(meshChunk->vao.verticesOffset / meshChunk->vertexStride);
         command->baseInstance = 0;
     }
     else
@@ -272,7 +272,7 @@ void lite3d_mesh_queue_chunk(struct lite3d_mesh_chunk *meshChunk, size_t instanc
         lite3d_multidraw_command *command = lite3d_array_add(&meshChunk->mesh->drawQueue);
         command->count = meshChunk->vao.verticesCount;
         command->instanceCount = instancesCount;
-        command->first = meshChunk->vao.verticesOffset / meshChunk->vertexStride;
+        command->first = (uint32_t)(meshChunk->vao.verticesOffset / meshChunk->vertexStride);
         command->baseInstance = 0;
     }
 }

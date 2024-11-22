@@ -106,7 +106,7 @@ void lite3d_vao_draw_indexed(struct lite3d_vao *vao)
     glDrawElements(GL_TRIANGLES, vao->indexesCount, GL_UNSIGNED_INT, LITE3D_BUFFER_OFFSET(vao->indexesOffset));
 }
 
-void lite3d_vao_draw_indexed_instanced(struct lite3d_vao *vao, size_t count)
+void lite3d_vao_draw_indexed_instanced(struct lite3d_vao *vao, uint32_t count)
 {
     /* glDrawElementsInstanced behaves identically to glDrawElements 
      * except that primcount instances of the set of elements are executed. 
@@ -118,7 +118,7 @@ void lite3d_vao_draw_indexed_instanced(struct lite3d_vao *vao, size_t count)
     SDL_assert(vao);
 
     glDrawElementsInstanced(GL_TRIANGLES, vao->indexesCount,
-        GL_UNSIGNED_INT, LITE3D_BUFFER_OFFSET(vao->indexesOffset), (GLsizei)count);
+        GL_UNSIGNED_INT, LITE3D_BUFFER_OFFSET(vao->indexesOffset), count);
 }
 
 void lite3d_vao_multidraw_indexed(struct lite3d_vao *vao, 
@@ -172,7 +172,7 @@ void lite3d_vao_multidraw_indexed(struct lite3d_vao *vao,
         glDrawElementsIndirect returns. Attributes that aren't modified remain well defined.
     */
 
-   glMultiDrawElementsIndirect(GL_TRIANGLES, GL_UNSIGNED_INT, commands, count, 0);
+   glMultiDrawElementsIndirect(GL_TRIANGLES, GL_UNSIGNED_INT, commands, (GLsizei)count, 0);
 }
 
 void lite3d_vao_draw(struct lite3d_vao *vao)
@@ -181,12 +181,12 @@ void lite3d_vao_draw(struct lite3d_vao *vao)
     glDrawArrays(GL_TRIANGLES, 0, vao->verticesCount);
 }
 
-void lite3d_vao_draw_instanced(struct lite3d_vao *vao, size_t count)
+void lite3d_vao_draw_instanced(struct lite3d_vao *vao, uint32_t count)
 {
     SDL_assert(instancingSupport);
     SDL_assert(vao);
 
-    glDrawArraysInstanced(GL_TRIANGLES, 0, vao->verticesCount, (GLsizei)count);
+    glDrawArraysInstanced(GL_TRIANGLES, 0, vao->verticesCount, count);
 }
 
 void lite3d_vao_multidraw(struct lite3d_vao *vao,
@@ -219,7 +219,7 @@ void lite3d_vao_multidraw(struct lite3d_vao *vao,
          returns. Attributes that aren't modified remain well defined.
     */
 
-    glMultiDrawArraysIndirect(GL_TRIANGLES, commands, count, 0);
+    glMultiDrawArraysIndirect(GL_TRIANGLES, commands, (GLsizei)count, 0);
 }
 
 void lite3d_vao_bind(struct lite3d_vao *vao)

@@ -79,7 +79,7 @@ LITE3D_CEXPORT int lite3d_mesh_chunk_init(struct lite3d_mesh_chunk *meshChunk, s
 LITE3D_CEXPORT void lite3d_mesh_chunk_purge(struct lite3d_mesh_chunk *meshChunk);
 LITE3D_CEXPORT void lite3d_mesh_chunk_bind(struct lite3d_mesh_chunk *meshChunk);
 LITE3D_CEXPORT void lite3d_mesh_chunk_draw(struct lite3d_mesh_chunk *meshChunk);
-LITE3D_CEXPORT void lite3d_mesh_chunk_draw_instanced(struct lite3d_mesh_chunk *meshChunk, size_t instancesCount);
+LITE3D_CEXPORT void lite3d_mesh_chunk_draw_instanced(struct lite3d_mesh_chunk *meshChunk, uint32_t instancesCount);
 LITE3D_CEXPORT void lite3d_mesh_chunk_unbind(struct lite3d_mesh_chunk *meshChunk);
 LITE3D_CEXPORT lite3d_mesh_chunk *lite3d_mesh_chunk_get_by_material_index(struct lite3d_mesh *mesh, 
     uint32_t materialIndex);
@@ -91,7 +91,7 @@ LITE3D_CEXPORT void lite3d_mesh_queue_draw(struct lite3d_mesh *mesh, uint8_t has
 //  ВНИМАНИЕ! layout всех чанков в одном mesh (VBO) должен быть одинаковый так как они будут рисоваться одним вызовом, 
 //  это касается и индексов, они должны быть у всех чанков или все чанки не должны содержать индексы.
 //
-LITE3D_CEXPORT void lite3d_mesh_queue_chunk(struct lite3d_mesh_chunk *meshChunk, size_t instancesCount);
+LITE3D_CEXPORT void lite3d_mesh_queue_chunk(struct lite3d_mesh_chunk *meshChunk, uint32_t instancesCount);
 // Очистка буфера команд для рисования 
 LITE3D_CEXPORT void lite3d_mesh_queue_clean(struct lite3d_mesh *mesh);
 
