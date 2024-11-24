@@ -273,7 +273,7 @@ namespace lite3dpp_pipeline {
         calculateLimits();
 
         mShadowMatrixBuffer = mMain.getResourceManager()->queryResourceFromJson<UBO>(pipelineName + "_ShadowMatrixBuffer",
-            "{\"Dynamic\": false}");
+            "{\"Dynamic\": true}");
         mShadowIndexBuffer = mMain.getResourceManager()->queryResourceFromJson<UBO>(pipelineName + "_ShadowIndexBuffer",
             "{\"Dynamic\": true}");
 
@@ -291,7 +291,7 @@ namespace lite3dpp_pipeline {
 
         // Число компонент на одну вершину в геометрическом шейдере рендера теневого атласа
         // Константа связана с кодом шейдера!!!
-        const uint32_t componentsByVertex = 6; // UV + Position
+        const uint32_t componentsByVertex = 7; // UV + Position + drawId
         uint32_t a = maxGeometryTotalOutputComponents / (componentsByVertex * 3);
         uint32_t b = maxGeometryOutputVertices / 3;
         uint32_t c = UBOMaxSize / sizeof(kmMat4);

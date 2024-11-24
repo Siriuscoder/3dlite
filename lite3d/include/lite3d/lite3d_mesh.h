@@ -38,6 +38,7 @@ typedef struct lite3d_mesh
     uint32_t version;
     lite3d_vbo vertexBuffer;
     lite3d_vbo indexBuffer;
+    lite3d_vbo indirectBuffer;
     lite3d_vbo *auxBuffer;
     uint32_t verticesCount;
     uint32_t elementsCount;

@@ -47,7 +47,7 @@ namespace lite3dpp
         setEmissionStrength(helper.getObject(L"EmissionStrength").getDouble(L"Value", 1.0), false);
 
         size_t index = 0;
-        for (size_t i = 1; i < gTextureIds.size(); ++i)
+        for (size_t i = 0; i < gTextureIds.size(); ++i)
         {
             WString wsName(gTextureIds[i]);
             if (helper.has(wsName))
@@ -56,7 +56,7 @@ namespace lite3dpp
                 setTexture(getMain().getResourceManager()->queryResource<TextureImage>(
                     textureCfg.getString(L"TextureName"),
                     textureCfg.getString(L"TexturePath")), 
-                    static_cast<TextureFlags>(1u << i), index++, false);
+                    static_cast<TextureFlags>(1u << (i+1)), index++, false);
             }
         }
 
@@ -71,6 +71,7 @@ namespace lite3dpp
         // Добавляем этот материал к остальным в буфер
         mMaterialDataBuffer->extendBufferBytes(sizeof(PBRMaterialRaw));
         mMaterialIndex = static_cast<uint32_t>(mMaterialDataBuffer->bufferSizeBytes() / sizeof(PBRMaterialRaw)) - 1;
+        mMaterialEntity.Flags = PBRMaterialFlags::NORMAL_MAPPING_TANGENT_BITANGENT;
         update();
     }
 

@@ -121,8 +121,7 @@ void lite3d_vao_draw_indexed_instanced(struct lite3d_vao *vao, uint32_t count)
         GL_UNSIGNED_INT, LITE3D_BUFFER_OFFSET(vao->indexesOffset), count);
 }
 
-void lite3d_vao_multidraw_indexed(struct lite3d_vao *vao, 
-    struct lite3d_multidraw_indexed_command *commands, size_t count)
+void lite3d_vao_multidraw_indexed(struct lite3d_vao *vao, size_t offset, size_t count)
 {
     /* 
         glMultiDrawElementsIndirect specifies multiple indexed geometric primitives with very few subroutine calls. 
@@ -171,8 +170,8 @@ void lite3d_vao_multidraw_indexed(struct lite3d_vao *vao,
         Vertex attributes that are modified by glDrawElementsIndirect have an unspecified value after 
         glDrawElementsIndirect returns. Attributes that aren't modified remain well defined.
     */
-
-   glMultiDrawElementsIndirect(GL_TRIANGLES, GL_UNSIGNED_INT, commands, (GLsizei)count, 0);
+    SDL_assert(vao);
+    glMultiDrawElementsIndirect(GL_TRIANGLES, GL_UNSIGNED_INT, LITE3D_BUFFER_OFFSET(offset), (GLsizei)count, 0);
 }
 
 void lite3d_vao_draw(struct lite3d_vao *vao)
@@ -189,8 +188,7 @@ void lite3d_vao_draw_instanced(struct lite3d_vao *vao, uint32_t count)
     glDrawArraysInstanced(GL_TRIANGLES, 0, vao->verticesCount, count);
 }
 
-void lite3d_vao_multidraw(struct lite3d_vao *vao,
-    struct lite3d_multidraw_command *commands, size_t count)
+void lite3d_vao_multidraw(struct lite3d_vao *vao, size_t offset, size_t count)
 {
     /*
         glDrawArraysIndirect specifies multiple geometric primitives with very few subroutine calls. 
@@ -218,8 +216,8 @@ void lite3d_vao_multidraw(struct lite3d_vao *vao,
         Vertex attributes that are modified by glDrawArraysIndirect have an unspecified value after glDrawArraysIndirect
          returns. Attributes that aren't modified remain well defined.
     */
-
-    glMultiDrawArraysIndirect(GL_TRIANGLES, commands, (GLsizei)count, 0);
+    SDL_assert(vao);
+    glMultiDrawArraysIndirect(GL_TRIANGLES, LITE3D_BUFFER_OFFSET(offset), (GLsizei)count, 0);
 }
 
 void lite3d_vao_bind(struct lite3d_vao *vao)
@@ -284,10 +282,12 @@ int lite3d_vao_init_layout(struct lite3d_vbo *vertexBuffer,
     uint32_t attribIndex = 0, i = 0;
     size_t vOffset = verticesOffset;
 
+    SDL_assert(vertexBuffer);
+
     /* VAO set current */
     lite3d_vao_bind(vao);
     /* use single VBO to store all data */
-    glBindBuffer(vertexBuffer->role, vertexBuffer->vboID);
+    lite3d_vbo_bind(vertexBuffer);
     /* bind all arrays and attribs into the current VAO */
     for (; i < layoutCount; ++i)
     {
@@ -301,7 +301,7 @@ int lite3d_vao_init_layout(struct lite3d_vbo *vertexBuffer,
     // setup buffers for instancing rendering 
     if (auxBuffer)
     {
-        glBindBuffer(auxBuffer->role, auxBuffer->vboID);
+        lite3d_vbo_bind(auxBuffer);
         for(i = 0; i < 4; ++i)
         {
             glEnableVertexAttribArray(attribIndex);
@@ -312,7 +312,7 @@ int lite3d_vao_init_layout(struct lite3d_vbo *vertexBuffer,
 
     if (indexesCount > 0 && indexesSize > 0 && indexBuffer)
     {
-        glBindBuffer(indexBuffer->role, indexBuffer->vboID);
+        lite3d_vbo_bind(indexBuffer);
     }
 
     /* end VAO binding */

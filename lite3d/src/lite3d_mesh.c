@@ -58,6 +58,16 @@ int lite3d_mesh_init(struct lite3d_mesh *mesh, uint16_t usage)
         return LITE3D_FALSE;
     }
 
+    if (lite3d_check_multi_draw_indirect())
+    {
+        if (!lite3d_vbo_indirect_init(&mesh->indirectBuffer, LITE3D_VBO_DYNAMIC_DRAW))
+        {
+            lite3d_vbo_purge(&mesh->vertexBuffer);
+            lite3d_vbo_purge(&mesh->indexBuffer);
+            return LITE3D_FALSE;
+        }
+    }
+
     return LITE3D_TRUE;
 }
 
@@ -76,6 +86,7 @@ void lite3d_mesh_purge(struct lite3d_mesh *mesh)
 
     lite3d_vbo_purge(&mesh->vertexBuffer);
     lite3d_vbo_purge(&mesh->indexBuffer);
+    lite3d_vbo_purge(&mesh->indirectBuffer);
     lite3d_array_purge(&mesh->drawQueue);
 }
 
@@ -233,13 +244,23 @@ void lite3d_mesh_queue_draw(struct lite3d_mesh *mesh, uint8_t hasIndexes)
     lite3d_mesh_chunk *firstchunk = NULL;
     SDL_assert(mesh);
 
+    if (!lite3d_vbo_subbuffer_extend(&mesh->indirectBuffer, mesh->drawQueue.data, 0, 
+        mesh->drawQueue.size * mesh->drawQueue.elemSize))
+    {
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "%s: Unable to write to the draw indirect buffer",
+            LITE3D_CURRENT_FUNCTION);
+        return;
+    }
+
+    lite3d_vbo_bind(&mesh->indirectBuffer);
+
     if (hasIndexes)
     {
-        lite3d_vao_multidraw_indexed(&firstchunk->vao, mesh->drawQueue.data, mesh->drawQueue.size);
+        lite3d_vao_multidraw_indexed(&firstchunk->vao, 0, mesh->drawQueue.size);
     }
     else
     {
-        lite3d_vao_multidraw(&firstchunk->vao, mesh->drawQueue.data, mesh->drawQueue.size);
+        lite3d_vao_multidraw(&firstchunk->vao, 0, mesh->drawQueue.size);
     }
 }
 

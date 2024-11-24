@@ -1,15 +1,23 @@
 #include "samples:shaders/sources/common/material_inc.glsl"
 
-in vec2 iuv;
 out vec4 fragColor;
+
+in vec2 iuv;    // UVs
+in vec3 iwv;    // world-space position
+in vec3 iwn;    // world-space normal
+
+float getAmbientOcclusion(vec2 uv)
+{
+    return 1.0;
+}
 
 vec3 ComputeIllumination(vec3 vw, vec3 nw, vec3 albedo, vec3 emission, vec3 specular, float aoFactor, 
     float saFactor);
 
 void main()
 {
-    Surface surface = restoreSurface(iuv);
-    // Compute total illumination 
+    Surface surface = makeSurface(iuv, iwv, iwn, vec3(0.0), vec3(0.0));
+
     vec3 total = ComputeIllumination(surface.wv, 
         surface.normal, 
         surface.material.albedo.rgb, 
@@ -17,6 +25,6 @@ void main()
         vec3(surface.material.specular, surface.material.roughness, surface.material.metallic), 
         surface.ao, 
         surface.material.envSpecular);
-
-    fragColor = vec4(total, 1.0);
+    // Final
+    fragColor = vec4(total, surface.material.alpha);
 }

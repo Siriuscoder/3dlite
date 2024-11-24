@@ -11,8 +11,11 @@ layout(std140) uniform ShadowIndex
     ivec4 shadowIndex[LITE3D_SPOT_SHADOW_MAX_COUNT / 4 + 1];
 };
 
-in vec2 vsUV[];
+in vec2 iuv_g[];
+flat in int drawID_g[];
+
 out vec2 iuv;
+flat out int drawID;
 
 void main()
 {
@@ -25,7 +28,8 @@ void main()
         for (int j = 0; j < 3; ++j)
         {
             gl_Position = shadowMat[index] * gl_in[j].gl_Position;
-            iuv = vsUV[j];
+            iuv = iuv_g[j];
+            drawID = drawID_g[j];
             EmitVertex();
         }
         EndPrimitive();

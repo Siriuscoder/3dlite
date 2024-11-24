@@ -57,15 +57,6 @@ namespace lite3dpp
         
         for (auto &passPair : mPasses)
         {
-            /* 
-               Насильно добавляем нескоторые built-in параметры чтобы не писать их каждый раз в json 
-               projectionMatrix viewMatrix projViewMatrix - могут пригодится, остальные матрицы точно не пригодятся в 
-               режиме мультирендера так как будут браться из буферов по DrawID
-            */
-            getParameter("projectionMatrix", 0, passPair.first, true, true);
-            getParameter("viewMatrix", 0, passPair.first, true, true);
-            getParameter("projViewMatrix", 0, passPair.first, true, true);
-
             setSSBOParameter(passPair.first, "MultiRenderChunkInvocationBuffer", *mChunkInvocationBuffer);
             setSSBOParameter(passPair.first, "MultiRenderMaterialDataBuffer", *mMaterialDataBuffer);
         }

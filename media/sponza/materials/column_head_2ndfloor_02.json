@@ -29,14 +29,24 @@
       "Program": {
         "Name": "depth.program",
         "Path": "sponza:shaders/json/depth.json"
-      }
+      },
+      "Uniforms": [
+        {
+          "Name": "projViewMatrix"
+        }
+      ]
     },
     {
       "Pass": 2,
       "Program": {
         "Name": "bsdf_prepare.program",
         "Path": "sponza:shaders/json/bsdf_prepare.json"
-      }
+      },
+      "Uniforms": [
+        {
+          "Name": "projViewMatrix"
+        }
+      ]
     },
     {
       "Pass": 3,

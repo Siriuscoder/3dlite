@@ -22,7 +22,12 @@
         "Name":"depth.program",
         "Path":"sponza:shaders/json/depth.json"
       },
-      "DoubleSided": true
+      "DoubleSided": true,
+      "Uniforms":[
+        {
+          "Name": "projViewMatrix"
+        }
+      ]
     },
     {
       "Pass": 2,
@@ -30,7 +35,12 @@
         "Name":"bsdf_prepare.program",
         "Path":"sponza:shaders/json/bsdf_prepare.json"
       },
-      "DoubleSided": true
+      "DoubleSided": true,
+      "Uniforms":[
+        {
+          "Name": "projViewMatrix"
+        }
+      ]
     },
     {
       "Pass": 3,

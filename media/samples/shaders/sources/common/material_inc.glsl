@@ -35,8 +35,8 @@ struct TextureCubeHandle
 struct ChunkInvocationInfo
 {
     mat4 model;
-    mat3 normal;
     mat4 screen;
+    mat4 normal;
     uint materialIdx;
     uint flags;
     uint reserved01;
@@ -45,10 +45,10 @@ struct ChunkInvocationInfo
 
 struct Material
 {
-    vec3 albedo;
-    vec3 emission;
-    vec3 f0;
-    vec3 normalScale;
+    vec4 albedo;
+    vec4 emission;
+    vec4 f0;
+    vec4 normalScale;
     float alpha;
     float specular;
     float roughness;

@@ -27,6 +27,9 @@
       },
       "Uniforms":[
         {
+          "Name": "projViewMatrix"
+        },
+        {
           "Name": "EnvironmentProbe",
           "TextureName": "SponzaDeffered_EnvironmentMultiProbe.texture",
           "Type": "sampler"

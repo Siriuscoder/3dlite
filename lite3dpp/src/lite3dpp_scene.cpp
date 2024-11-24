@@ -74,7 +74,7 @@ namespace lite3dpp
                 /* default name of lighting buffer is scene name + "LightingBufferObject" */
                 mLightingParamsBuffer = getMain().getResourceManager()->
                     queryResourceFromJson<TextureBuffer>(getName() + "_lightingBufferObject",
-                    "{\"BufferFormat\": \"RGBA32F\", \"Dynamic\": false}");
+                    "{\"BufferFormat\": \"RGBA32F\", \"Dynamic\": true}");
                 /* 2-bytes index, about 16k light sources support  */
                 mLightingIndexBuffer = getMain().getResourceManager()->
                     queryResourceFromJson<TextureBuffer>(getName() + "_lightingIndexBuffer",
@@ -87,7 +87,7 @@ namespace lite3dpp
                 /* default name of lighting buffer is scene name + "LightingBufferObject" */
                 mLightingParamsBuffer = getMain().getResourceManager()->
                     queryResourceFromJson<SSBO>(getName() + "_lightingBufferObject",
-                    "{\"Dynamic\": false}");
+                    "{\"Dynamic\": true}");
                 /* 2-bytes index, about 16k light sources support  */
                 mLightingIndexBuffer = getMain().getResourceManager()->
                     queryResourceFromJson<SSBO>(getName() + "_lightingIndexBuffer",
@@ -100,7 +100,7 @@ namespace lite3dpp
                 /* default name of lighting buffer is scene name + "LightingBufferObject" */
                 mLightingParamsBuffer = getMain().getResourceManager()->
                     queryResourceFromJson<UBO>(getName() + "_lightingBufferObject",
-                    "{\"Dynamic\": false}");
+                    "{\"Dynamic\": true}");
                 /* 2-bytes index, about 16k light sources support  */
                 mLightingIndexBuffer = getMain().getResourceManager()->
                     queryResourceFromJson<UBO>(getName() + "_lightingIndexBuffer",

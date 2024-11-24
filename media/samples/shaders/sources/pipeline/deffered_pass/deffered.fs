@@ -18,6 +18,6 @@ void main()
 
     channel01 = vec4(iwv, float(surface.index));
     channel02 = vec4(surface.normal, surface.material.emission.r);
-    channel03 = vec4(surface.material.albedo, surface.material.emission.g);
+    channel03 = vec4(surface.material.albedo.rgb, surface.material.emission.g);
     channel04 = vec4(surface.material.specular, surface.material.roughness, surface.material.metallic, surface.material.emission.b);
 }

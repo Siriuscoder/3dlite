@@ -179,7 +179,7 @@ static int lite3d_buffer_extend(struct lite3d_vbo *vbo, size_t expandSize)
             return LITE3D_FALSE;
         }
 
-        glBindBuffer(vbo->role, vbo->vboID);
+        lite3d_vbo_bind(vbo);
         /* copy data to temporary buffer */
         glCopyBufferSubData(vbo->role, GL_COPY_READ_BUFFER, 0, 0, vbo->size);
         /* reallocate origin buffer */
@@ -188,7 +188,7 @@ static int lite3d_buffer_extend(struct lite3d_vbo *vbo, size_t expandSize)
         if (LITE3D_CHECK_GL_ERROR)
         {
             glBindBuffer(GL_COPY_READ_BUFFER, 0);
-            glBindBuffer(vbo->role, 0);
+            lite3d_vbo_unbind(vbo);
             glDeleteBuffers(1, &tempVboID);
             return LITE3D_FALSE;
         }
@@ -197,7 +197,7 @@ static int lite3d_buffer_extend(struct lite3d_vbo *vbo, size_t expandSize)
         glCopyBufferSubData(GL_COPY_READ_BUFFER, vbo->role, 0, 0, vbo->size);
 
         glBindBuffer(GL_COPY_READ_BUFFER, 0);
-        glBindBuffer(vbo->role, 0);
+        lite3d_vbo_unbind(vbo);
 
         glDeleteBuffers(1, &tempVboID);
     }
@@ -381,6 +381,18 @@ int lite3d_vbo_technique_init(void)
     return LITE3D_TRUE;
 }
 
+void lite3d_vbo_bind(const struct lite3d_vbo *vbo)
+{
+    SDL_assert(vbo);
+    glBindBuffer(vbo->role, vbo->vboID);
+}
+
+void lite3d_vbo_unbind(const struct lite3d_vbo *vbo)
+{
+    SDL_assert(vbo);
+    glBindBuffer(vbo->role, 0);
+}
+
 int lite3d_vbo_init(struct lite3d_vbo *vbo, uint16_t usage)
 {
     SDL_assert(vbo);
@@ -445,7 +457,7 @@ int lite3d_ubo_init(struct lite3d_vbo *vbo, uint16_t usage)
     if (!lite3d_check_uniform_buffer())
     {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
-            "%s: Uniform buffers is not supported",
+            "%s: Uniform buffers are not supported",
             LITE3D_CURRENT_FUNCTION);
 
         return LITE3D_FALSE;
@@ -461,6 +473,28 @@ int lite3d_ubo_init(struct lite3d_vbo *vbo, uint16_t usage)
     return LITE3D_TRUE;
 }
 
+int lite3d_vbo_indirect_init(struct lite3d_vbo *vbo, 
+    uint16_t usage)
+{
+    if (!lite3d_check_multi_draw_indirect())
+    {
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+            "%s: Draw indirect buffers are not supported",
+            LITE3D_CURRENT_FUNCTION);
+        return LITE3D_FALSE;
+    }
+
+    if (!lite3d_vbo_init(vbo, usage))
+    {
+        return LITE3D_FALSE;
+    }
+
+    vbo->role = GL_DRAW_INDIRECT_BUFFER;
+    lite3d_render_stats_get()->indirectCount++;
+
+    return LITE3D_TRUE;
+}
+
 void lite3d_vbo_purge(struct lite3d_vbo *vbo)
 {
     SDL_assert(vbo);
@@ -471,12 +505,21 @@ void lite3d_vbo_purge(struct lite3d_vbo *vbo)
         glDeleteBuffers(1, &vbo->vboID);
         
         s->vboCount--;
-        if (vbo->role == GL_ELEMENT_ARRAY_BUFFER)
-            s->iboCount--;
-        if (vbo->role == GL_SHADER_STORAGE_BUFFER)
-            s->ssboCount--;
-        if (vbo->role == GL_UNIFORM_BUFFER)
-            s->uboCount--;
+        switch (vbo->role)
+        {
+            case GL_ELEMENT_ARRAY_BUFFER:
+                s->iboCount--;
+                break;
+            case GL_SHADER_STORAGE_BUFFER:
+                s->ssboCount--;
+                break;
+            case GL_UNIFORM_BUFFER:
+                s->uboCount--;
+                break;
+            case GL_DRAW_INDIRECT_BUFFER:
+                s->indirectCount--;
+                break;
+        };
     }
 
     memset(vbo, 0, sizeof(lite3d_vbo));
@@ -552,18 +595,18 @@ void *lite3d_vbo_map(struct lite3d_vbo *vbo, uint16_t access)
     }
 #endif
 
-    glBindBuffer(vbo->role, vbo->vboID);
+    lite3d_vbo_bind(vbo);
     mapped = glMapBuffer(vbo->role, vboMapModeEnum[access]);
-    glBindBuffer(vbo->role, 0);
+    lite3d_vbo_unbind(vbo);
     return mapped;
 }
 
 void lite3d_vbo_unmap(struct lite3d_vbo *vbo)
 {
     SDL_assert(vbo);
-    glBindBuffer(vbo->role, vbo->vboID);
+    lite3d_vbo_bind(vbo);
     glUnmapBuffer(vbo->role);
-    glBindBuffer(vbo->role, 0);
+    lite3d_vbo_unbind(vbo);
 }
 
 int lite3d_vbo_buffer(struct lite3d_vbo *vbo,
@@ -580,7 +623,7 @@ int lite3d_vbo_buffer(struct lite3d_vbo *vbo,
         return LITE3D_FALSE;
     }
 
-    glBindBuffer(vbo->role, vbo->vboID);
+    lite3d_vbo_bind(vbo);
     glBufferData(vbo->role, size, buffer, vboUsageEnum[vbo->usage]);
     if (LITE3D_CHECK_GL_ERROR)
     {
@@ -588,7 +631,7 @@ int lite3d_vbo_buffer(struct lite3d_vbo *vbo,
     }
 
     vbo->size = size;
-    glBindBuffer(vbo->role, 0);
+    lite3d_vbo_unbind(vbo);
 
     return LITE3D_TRUE;
 }
@@ -597,10 +640,19 @@ int lite3d_vbo_subbuffer(struct lite3d_vbo *vbo,
     const void *buffer, size_t offset, size_t size)
 {
     SDL_assert(vbo);
+
+    if (offset + size > vbo->size)
+    {
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+            "%s: The buffer size exceeds the VBO size.",
+            LITE3D_CURRENT_FUNCTION);
+        return LITE3D_FALSE;
+    }
+
     /* copy vertices to the end of the vertex buffer */
-    glBindBuffer(vbo->role, vbo->vboID);
+    lite3d_vbo_bind(vbo);
     glBufferSubData(vbo->role, offset, size, buffer);
-    glBindBuffer(vbo->role, 0);
+    lite3d_vbo_unbind(vbo);
     return LITE3D_TRUE;
 }
 
@@ -609,12 +661,20 @@ int lite3d_vbo_get_buffer(const struct lite3d_vbo *vbo,
 {
 #ifndef GLES
     SDL_assert(vbo);
-    lite3d_misc_gl_error_stack_clean();
 
+    if (offset + size > vbo->size)
+    {
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+            "%s: The requested size exceeds the VBO size.",
+            LITE3D_CURRENT_FUNCTION);
+        return LITE3D_FALSE;
+    }
+
+    lite3d_misc_gl_error_stack_clean();
     /* copy vertices to the end of the vertex buffer */
-    glBindBuffer(vbo->role, vbo->vboID);
+    lite3d_vbo_bind(vbo);
     glGetBufferSubData(vbo->role, offset, size, buffer);
-    glBindBuffer(vbo->role, 0);
+    lite3d_vbo_unbind(vbo);
     return LITE3D_CHECK_GL_ERROR ? LITE3D_FALSE : LITE3D_TRUE;
 #else
     SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
@@ -622,4 +682,24 @@ int lite3d_vbo_get_buffer(const struct lite3d_vbo *vbo,
         LITE3D_CURRENT_FUNCTION);
     return LITE3D_FALSE;
 #endif
+}
+
+int lite3d_vbo_subbuffer_extend(struct lite3d_vbo *vbo, 
+    const void *buffer, size_t offset, size_t size)
+{
+    /* setup global parameters (model normal) */
+    if (offset + size > vbo->size)
+    {
+        if(!lite3d_vbo_extend(vbo, (offset + size) - vbo->size))
+        {
+            return LITE3D_FALSE;
+        }
+    }
+    
+    if (!lite3d_vbo_subbuffer(vbo, buffer, offset, size))
+    {
+        return LITE3D_FALSE;
+    }
+
+    return LITE3D_TRUE;
 }

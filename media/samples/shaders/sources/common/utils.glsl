@@ -30,7 +30,7 @@ bool isNear(float a1, float a2)
 
 bool isNear(vec3 a1, vec3 a2)
 {
-    return isNear(a1.x, a2.x) && isNear(a1.y, a2.y) && isNear(a1.y, a2.y); 
+    return isNear(a1.x, a2.x) && isNear(a1.y, a2.y) && isNear(a1.z, a2.z); 
 }
 
 bool isZero(float a1)

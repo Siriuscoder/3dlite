@@ -22,8 +22,8 @@ void main()
 
     vec3 total = ComputeIllumination(surface.wv, 
         surface.normal, 
-        surface.material.albedo, 
-        surface.material.emission, 
+        surface.material.albedo.rgb, 
+        surface.material.emission.rgb, 
         vec3(surface.material.specular, surface.material.roughness, surface.material.metallic), 
         surface.ao, 
         surface.material.envSpecular);

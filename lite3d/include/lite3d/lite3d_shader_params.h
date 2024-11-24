@@ -23,7 +23,7 @@
 #include <lite3d/lite3d_rb_tree.h>
 #include <lite3d/lite3d_kazmath.h>
 
-#define LITE3D_SHADER_PARAMETER_MAX_NAME    30
+#define LITE3D_SHADER_PARAMETER_MAX_NAME    128
 #define LITE3D_SHADER_PARAMETER_FLOAT       0x1
 #define LITE3D_SHADER_PARAMETER_FLOATV3     0x2
 #define LITE3D_SHADER_PARAMETER_FLOATV4     0x3

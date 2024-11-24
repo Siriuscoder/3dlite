@@ -10,11 +10,8 @@ layout(std430) readonly buffer MultiRenderMaterialDataBuffer
 
 #ifdef LITE3D_VERTEX_SHADER
 
-flat out int drawID;
-
 ChunkInvocationInfo getInvocationInfo()
 {
-    drawID = gl_DrawIDARB;
     return chunksInvocationInfo[gl_DrawIDARB];
 }
 
@@ -38,6 +35,8 @@ Surface makeSurface(vec2 uv, vec3 wv, vec3 wn, vec3 wt, vec3 wb)
     surface.index = surface.transform.materialIdx;
     surface.uv = uv;
     surface.wv = wv;
+    surface.normal = normalize(wn);
+    surface.ao = 1.0;
 
     for (int i = 0; i < 8; ++i)
     {
@@ -45,17 +44,17 @@ Surface makeSurface(vec2 uv, vec3 wv, vec3 wn, vec3 wt, vec3 wb)
         {
             if (hasFlag(surface.material.slot[i].flags, TEXTURE_FLAG_ALBEDO))
             {
-                surface.material.albedo *= texture(surface.material.slot[i].textureId, uv).rgb;
+                surface.material.albedo *= vec4(texture(surface.material.slot[i].textureId, uv).rgb, 1.0);
             }
             else if (hasFlag(surface.material.slot[i].flags, TEXTURE_FLAG_ALBEDO_ALPHA))
             {
-                vec4 albedo = texture(surface.material.slot[i].textureId, uv).rgba;
-                surface.material.albedo *= albedo.rgb;
+                vec4 albedo = texture(surface.material.slot[i].textureId, uv);
+                surface.material.albedo *= vec4(albedo.rgb, 1.0);
                 surface.material.alpha *= albedo.a;
             }
             else if (hasFlag(surface.material.slot[i].flags, TEXTURE_FLAG_EMISSION))
             {
-                surface.material.emission = texture(surface.material.slot[i].textureId, uv).rgb;
+                surface.material.emission = vec4(texture(surface.material.slot[i].textureId, uv).rgb, 1.0);
             }
             else if (hasFlag(surface.material.slot[i].flags, TEXTURE_FLAG_ALPHA_MASK))
             {
@@ -65,17 +64,19 @@ Surface makeSurface(vec2 uv, vec3 wv, vec3 wn, vec3 wt, vec3 wb)
             {
                 if (hasFlag(surface.material.flags, MATERIAL_NORMAL_MAPPING_TANGENT))
                 {
-                    vec2 nl = texture(surface.material.slot[i].textureId, uv).rg;
-                    surface.normal = calcNormal(nl, TBN(wn, wt), surface.material.normalScale);
+                    if (!isZero(wt))
+                    {
+                        vec2 nl = texture(surface.material.slot[i].textureId, uv).rg;
+                        surface.normal = calcNormal(nl, TBN(wn, wt), surface.material.normalScale.xyz);
+                    }
                 }
                 else if (hasFlag(surface.material.flags, MATERIAL_NORMAL_MAPPING_TANGENT_BITANGENT))
                 {
-                    vec2 nl = texture(surface.material.slot[i].textureId, uv).rg;
-                    surface.normal = calcNormal(nl, TBN(wn, wt, wb), surface.material.normalScale);
-                }
-                else
-                {
-                    surface.normal = normalize(wn);
+                    if (!isZero(wt) && !isZero(wb))
+                    {
+                        vec2 nl = texture(surface.material.slot[i].textureId, uv).rg;
+                        surface.normal = calcNormal(nl, TBN(wn, wt, wb), surface.material.normalScale.xyz);
+                    }
                 }
             }
             else if (hasFlag(surface.material.slot[i].flags, TEXTURE_FLAG_SPECULAR))
@@ -133,8 +134,8 @@ Surface restoreSurface(vec2 uv)
     Surface surface;
     surface.index = int(round(wv.w)); // Material index was stored in wv.w
     surface.material = materials[surface.index];
-    surface.material.albedo = albedo.rgb;
-    surface.material.emission = emission;
+    surface.material.albedo = vec4(albedo.rgb, 1.0);
+    surface.material.emission = vec4(emission, 1.0);
     surface.material.specular = specular.x;
     surface.material.roughness = specular.y;
     surface.material.metallic = specular.z;

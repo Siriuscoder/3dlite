@@ -28,7 +28,9 @@ namespace lite3dpp
 {
     enum class PBRMaterialFlags : uint32_t
     {
-        EMPTY = 0
+        EMPTY = 0,
+        NORMAL_MAPPING_TANGENT = 1u << 0,
+        NORMAL_MAPPING_TANGENT_BITANGENT = 1u << 1,
     };
 
     enum class TextureFlags : uint32_t

@@ -264,8 +264,8 @@ namespace lite3dpp_pipeline {
         if (pipelineConfig.getBool(L"OcclusionCulling", true))
         {
             depthPassGeneratedConfig.set(L"OcclusionQuery", true)
-                .set(L"SortOpaqueFromNear", true)
-                .set(L"RenderInstancing", false);
+                .set(L"RenderInstancing", false) // Не подходит для корректной работы OcclusionQuery 
+                .set(L"SortOpaqueFromNear", true);
         }
 
         sceneGenerator.addRenderTarget(cameraName, mDepthPass->getName(), depthPassGeneratedConfig);

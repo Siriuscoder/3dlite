@@ -15,10 +15,12 @@ layout(std140) uniform EnvProbesIndex
 
 in vec2 iuv_g[];
 in vec3 iwn_g[];
+flat in int drawID_g[];
 
-out vec2 iuv;    // UVs
-out vec3 iwv;    // world-space position
-out vec3 iwn;    // world-space normal
+out vec2 iuv;           // UVs
+out vec3 iwv;           // world-space position
+out vec3 iwn;           // world-space normal
+flat out int drawID;    // currect chunk index
 
 void main()
 {
@@ -40,6 +42,7 @@ void main()
                 iuv = iuv_g[j];
                 // N
                 iwn = iwn_g[j];
+                drawID = drawID_g[j];
                 EmitVertex();
             }
             EndPrimitive();

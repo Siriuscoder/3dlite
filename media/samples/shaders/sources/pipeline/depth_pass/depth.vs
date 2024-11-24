@@ -6,12 +6,14 @@ layout(location = 2) in vec2 uv;
 uniform mat4 projViewMatrix;
 
 out vec2 iuv;
+flat out int drawID;
 
 void main()
 {
     ChunkInvocationInfo invInfo = getInvocationInfo();
-    vec4 wv = invInfo.model * vertex;
+    drawID = gl_DrawIDARB;
     iuv = uv;
 
+    vec4 wv = invInfo.model * vertex;
     gl_Position = projViewMatrix * wv;
 }

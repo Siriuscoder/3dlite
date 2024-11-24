@@ -156,6 +156,10 @@ void glMultiDrawElementsIndirect_stub(GLenum mode, GLenum type, const void *indi
 #       define GL_TEXTURE_CUBE_MAP_ARRAY GL_TEXTURE_CUBE_MAP_ARRAY_OES
 #   endif
 
+#   ifndef GL_DRAW_INDIRECT_BUFFER
+#       define GL_DRAW_INDIRECT_BUFFER 0x8F3F
+#   endif
+
 /* GL_OES_vertex_array_object */    
 extern PFNGLBINDVERTEXARRAYOESPROC glBindVertexArrayPtr;
 extern PFNGLDELETEVERTEXARRAYSOESPROC glDeleteVertexArraysPtr;

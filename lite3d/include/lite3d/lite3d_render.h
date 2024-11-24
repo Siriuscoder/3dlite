@@ -72,6 +72,7 @@ typedef struct lite3d_render_stats
     int32_t iboCount;
     int32_t ssboCount;
     int32_t uboCount;
+    int32_t indirectCount;
     int32_t queryCount;
 } lite3d_render_stats;
 
