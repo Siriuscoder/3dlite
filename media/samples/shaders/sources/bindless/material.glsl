@@ -132,7 +132,7 @@ Surface restoreSurface(vec2 uv)
     vec3 emission = vec3(nw.a, albedo.a, specular.a);
 
     Surface surface;
-    surface.index = int(round(wv.w)); // Material index was stored in wv.w
+    surface.index = uint(round(wv.w)); // Material index was stored in wv.w
     surface.material = materials[surface.index];
     surface.material.albedo = vec4(albedo.rgb, 1.0);
     surface.material.emission = vec4(emission, 1.0);

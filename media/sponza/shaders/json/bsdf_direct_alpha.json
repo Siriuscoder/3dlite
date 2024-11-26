@@ -2,8 +2,8 @@
     "Sources": 
     [
         // Standard shaders with params customization
-        "samples:shaders/sources/pipeline/v_inv.vs",
-        "samples:shaders/sources/pipeline/forward_pass/forward.fs,sponza:shaders/sources/inc/params.def",
+        "samples:shaders/sources/pipeline/v_tbn.vs",
+        "samples:shaders/sources/pipeline/forward_pass/forward.fs",
         "samples:shaders/sources/pbr/pbr.fs,sponza:shaders/sources/inc/params.def",
         "samples:shaders/sources/pbr/brdf_oren_nayar_approx.fs,sponza:shaders/sources/inc/params.def",
         "samples:shaders/sources/pbr/brdf_multiprobe_env.fs,sponza:shaders/sources/inc/params.def",

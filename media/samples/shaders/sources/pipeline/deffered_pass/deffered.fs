@@ -20,7 +20,7 @@ void main()
     Surface surface = makeSurface(iuv, iwv, iwn, iwt, iwb);
     surfaceAlphaClip(surface); // Alpha clip case 
 
-    channel01 = vec4(iwv, float(surface.index));
+    channel01 = vec4(iwv, surface.index);
     channel02 = vec4(surface.normal, surface.material.emission.r);
     channel03 = vec4(surface.material.albedo.rgb, surface.material.emission.g);
     channel04 = vec4(surface.material.specular, surface.material.roughness, surface.material.metallic, surface.material.emission.b);

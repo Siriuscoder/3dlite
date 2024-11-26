@@ -11,7 +11,7 @@ layout(location = 2) in vec2 uv;
 
 out vec2 iuv_g;
 out vec3 iwn_g;
-flat out int drawID_g;
+out flat int drawID_g;
 
 void main()
 {

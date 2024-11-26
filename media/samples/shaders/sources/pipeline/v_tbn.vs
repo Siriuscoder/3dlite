@@ -18,6 +18,7 @@ out vec3 iwv;
 out vec3 iwn;
 out vec3 iwt;
 out vec3 iwb;
+out flat int drawID; 
 
 void main()
 {
