@@ -1,115 +1,50 @@
-layout(std430) readonly buffer MultiRenderChunkInvocationBuffer 
-{
-    ChunkInvocationInfo chunksInvocationInfo[];
-};
-
-layout(std430) readonly buffer MultiRenderMaterialDataBuffer 
-{
-    Material materials[];
-};
-
-#ifdef LITE3D_VERTEX_SHADER
-
-ChunkInvocationInfo getInvocationInfo()
-{
-    return chunksInvocationInfo[gl_DrawIDARB];
-}
-
-#elif defined(LITE3D_FRAGMENT_SHADER)
+#ifdef LITE3D_FRAGMENT_SHADER
 
 uniform sampler2DArray GBuffer;
-flat in int drawID;
 
+vec4 getAlbedo(vec2 uv);
+vec3 getEmission(vec2 uv);
+vec3 getNormal(vec2 uv, mat3 tbn);
+vec3 getSpecular(vec2 uv);
 float getAmbientOcclusion(vec2 uv);
-
-ChunkInvocationInfo getInvocationInfo()
-{
-    return chunksInvocationInfo[drawID];
-}
+float getSpecularAmbient(vec2 uv);
 
 Surface makeSurface(vec2 uv, vec3 wv, vec3 wn, vec3 wt, vec3 wb)
 {
     Surface surface;
-    surface.transform = getInvocationInfo();
-    surface.material = materials[surface.transform.materialIdx];
-    surface.index = surface.transform.materialIdx;
+    surface.index = 0u;
     surface.uv = uv;
     surface.wv = wv;
-    surface.normal = normalize(wn);
     surface.ao = 1.0;
 
-    for (int i = 0; i < 8; ++i)
+    if (!isZero(wt) && !isZero(wb))
     {
-        if (hasFlag(surface.material.slot[i].flags, TEXTURE_FLAG_LOADED))
-        {
-            if (hasFlag(surface.material.slot[i].flags, TEXTURE_FLAG_ALBEDO))
-            {
-                surface.material.albedo *= vec4(texture(surface.material.slot[i].textureId, uv).rgb, 1.0);
-            }
-            else if (hasFlag(surface.material.slot[i].flags, TEXTURE_FLAG_ALBEDO_ALPHA))
-            {
-                vec4 albedo = texture(surface.material.slot[i].textureId, uv);
-                surface.material.albedo *= vec4(albedo.rgb, 1.0);
-                surface.material.alpha *= albedo.a;
-            }
-            else if (hasFlag(surface.material.slot[i].flags, TEXTURE_FLAG_EMISSION))
-            {
-                surface.material.emission = vec4(texture(surface.material.slot[i].textureId, uv).rgb, 1.0);
-            }
-            else if (hasFlag(surface.material.slot[i].flags, TEXTURE_FLAG_ALPHA_MASK))
-            {
-                surface.material.alpha *= texture(surface.material.slot[i].textureId, uv).r;
-            }
-            else if (hasFlag(surface.material.slot[i].flags, TEXTURE_FLAG_NORMAL))
-            {
-                if (hasFlag(surface.material.flags, MATERIAL_NORMAL_MAPPING_TANGENT))
-                {
-                    if (!isZero(wt))
-                    {
-                        vec2 nl = texture(surface.material.slot[i].textureId, uv).rg;
-                        surface.normal = calcNormal(nl, TBN(wn, wt), surface.material.normalScale.xyz);
-                    }
-                }
-                else if (hasFlag(surface.material.flags, MATERIAL_NORMAL_MAPPING_TANGENT_BITANGENT))
-                {
-                    if (!isZero(wt) && !isZero(wb))
-                    {
-                        vec2 nl = texture(surface.material.slot[i].textureId, uv).rg;
-                        surface.normal = calcNormal(nl, TBN(wn, wt, wb), surface.material.normalScale.xyz);
-                    }
-                }
-            }
-            else if (hasFlag(surface.material.slot[i].flags, TEXTURE_FLAG_SPECULAR))
-            {
-                surface.material.specular *= texture(surface.material.slot[i].textureId, uv).r;
-            }
-            else if (hasFlag(surface.material.slot[i].flags, TEXTURE_FLAG_ROUGHNESS))
-            {
-                surface.material.roughness *= texture(surface.material.slot[i].textureId, uv).r;
-            }
-            else if (hasFlag(surface.material.slot[i].flags, TEXTURE_FLAG_METALLIC))
-            {
-                surface.material.metallic *= texture(surface.material.slot[i].textureId, uv).r;
-            }
-            else if (hasFlag(surface.material.slot[i].flags, TEXTURE_FLAG_SPECULAR_ROUGNESS_METALLIC))
-            {
-                vec3 srm = texture(surface.material.slot[i].textureId, uv).rgb;
-                surface.material.specular *= srm.r;
-                surface.material.roughness *= srm.g;
-                surface.material.metallic *= srm.b;
-            }
-            else if (hasFlag(surface.material.slot[i].flags, TEXTURE_FLAG_ROUGNESS_METALLIC))
-            {
-                vec2 rm = texture(surface.material.slot[i].textureId, uv).gb;
-                surface.material.roughness *= rm.r;
-                surface.material.metallic *= rm.g;
-            }
-        }
-        else
-        {
-            break;
-        }
+        surface.normal = getNormal(uv, TBN(wn, wt, wb));
+        surface.material.flags |= MATERIAL_NORMAL_MAPPING_TANGENT_BITANGENT;
     }
+    else if (!isZero(wt))
+    {
+        surface.normal = getNormal(uv, TBN(wn, wt));
+        surface.material.flags |= MATERIAL_NORMAL_MAPPING_TANGENT;
+    }
+    else 
+    {
+        surface.normal = normalize(wn);
+    }
+
+    surface.material.albedo = getAlbedo(uv);
+    surface.material.alpha = surface.material.albedo.a;
+    surface.material.emission = vec4(getEmission(uv), 1.0);
+    surface.material.normalScale = vec4(1.0, 1.0, 1.0, 1.0);
+    surface.material.envSpecular = getSpecularAmbient(uv);
+    surface.material.envDiffuse = 1.0;
+    surface.material.emissionStrength = 1.0;
+
+    vec3 specular = getSpecular(uv);
+    surface.material.specular = specular.x;
+    surface.material.roughness = specular.y;
+    surface.material.metallic = specular.z;
+    surface.material.ior = 1.0;
 
     return surface;
 }
@@ -132,13 +67,19 @@ Surface restoreSurface(vec2 uv)
     vec3 emission = vec3(nw.a, albedo.a, specular.a);
 
     Surface surface;
-    surface.index = int(round(wv.w)); // Material index was stored in wv.w
-    surface.material = materials[surface.index];
+    surface.index = 0u;
     surface.material.albedo = vec4(albedo.rgb, 1.0);
     surface.material.emission = vec4(emission, 1.0);
+    surface.material.f0 = vec4(vec3(0.04), 1.0);
+    surface.material.normalScale = vec4(1.0, 1.0, 1.0, 1.0);
     surface.material.specular = specular.x;
     surface.material.roughness = specular.y;
     surface.material.metallic = specular.z;
+    surface.material.alpha = 1.0;
+    surface.material.envSpecular = wv.w;
+    surface.material.envDiffuse = 1.0;
+    surface.material.ior = 1.0;
+    surface.material.emissionStrength = 1.0;
     surface.wv = wv.xyz;
     surface.uv = uv;
     surface.normal = nw.xyz;

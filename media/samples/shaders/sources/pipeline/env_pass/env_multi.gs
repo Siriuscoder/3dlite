@@ -1,4 +1,4 @@
-#include "samples:shaders/sources/common/utils_inc.glsl"
+#include "samples:shaders/sources/common/env_probe_inc.glsl"
 
 layout(triangles) in;
 layout(triangle_strip, max_vertices = LITE3D_ENV_PROBE_GS_MAX_VERTICES) out;
@@ -42,7 +42,9 @@ void main()
                 iuv = iuv_g[j];
                 // N
                 iwn = iwn_g[j];
+#ifdef #ifdef BINDLESS_TEXTURE_PIPELINE
                 drawID = drawID_g[j];
+#endif
                 EmitVertex();
             }
             EndPrimitive();

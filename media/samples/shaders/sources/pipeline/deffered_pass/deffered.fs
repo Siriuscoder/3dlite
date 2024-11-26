@@ -1,4 +1,8 @@
+#ifdef BINDLESS_TEXTURE_PIPELINE
+#include "samples:shaders/sources/bindless/material_inc.glsl"
+#else
 #include "samples:shaders/sources/common/material_inc.glsl"
+#endif
 
 layout(location = 0) out vec4 channel01;
 layout(location = 1) out vec4 channel02;

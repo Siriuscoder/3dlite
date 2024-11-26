@@ -3,7 +3,7 @@
 #define NORMAL_MAPPING_TANGENT
 
 #define ENV_PROBE_RELATIVE_DISTANCE_THRESHOLD       0.05
-#define ENV_DIFFUSE_STRENGTH                        1.3
+#define ENV_DIFFUSE_STRENGTH                        1.0
 #define ENV_PROBE_DIFFUSE_POWER                     2.3
 #define ENV_PROBE_SPECULAR_POWER                    10.0
 #define CUBE_MAP_UV_SCALE                           1.0

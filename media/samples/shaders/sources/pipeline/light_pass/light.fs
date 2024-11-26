@@ -1,4 +1,8 @@
+#ifdef BINDLESS_TEXTURE_PIPELINE
+#include "samples:shaders/sources/bindless/material_inc.glsl"
+#else
 #include "samples:shaders/sources/common/material_inc.glsl"
+#endif
 
 in vec2 iuv;
 out vec4 fragColor;

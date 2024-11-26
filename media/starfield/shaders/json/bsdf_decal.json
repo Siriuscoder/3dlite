@@ -8,7 +8,7 @@
         "samples:shaders/sources/pbr/brdf_simple_env.fs,starfield:shaders/sources/inc/params.def",
         "samples:shaders/sources/pbr/brdf_oren_nayar.fs,starfield:shaders/sources/inc/params.def",
         "samples:shaders/sources/shadow/pcf4x4.fs,starfield:shaders/sources/inc/params.def",
-        "samples:shaders/sources/common/utils.fs",
+        "samples:shaders/sources/common/material.fs",
         // Sample specific shaders
         "starfield:shaders/sources/decal.fs"
     ]

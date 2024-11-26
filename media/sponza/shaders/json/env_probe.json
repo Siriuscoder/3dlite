@@ -9,7 +9,7 @@
         "samples:shaders/sources/pbr/brdf_lambert.fs,sponza:shaders/sources/inc/params.def",
         "samples:shaders/sources/pbr/brdf_null_env.fs,sponza:shaders/sources/inc/params.def",
         "samples:shaders/sources/shadow/pcf_simple.fs,sponza:shaders/sources/inc/params.def",
-        "samples:shaders/sources/common/material.fs",
-        "samples:shaders/sources/common/material.vs"
+        "samples:shaders/sources/bindless/material.fs",
+        "samples:shaders/sources/bindless/material.vs"
     ]
 }

@@ -62,6 +62,7 @@ public:
     {
         // SSBO supported by version GLSL 430 or higher
         ShaderProgram::setShaderVersion("430");
+        ShaderProgram::addDefinition("BINDLESS_TEXTURE_PIPELINE", "1");
 
         preallocateMeshPartition();
 

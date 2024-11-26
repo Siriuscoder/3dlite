@@ -9,7 +9,7 @@
         "samples:shaders/sources/pbr/brdf_multiprobe_env.fs,sponza:shaders/sources/inc/params.def",
         "samples:shaders/sources/shadow/sss.fs,sponza:shaders/sources/inc/params.def",
         "samples:shaders/sources/ssao/ssao_sample.fs",
-        "samples:shaders/sources/common/material.fs",
-        "samples:shaders/sources/common/material.vs"
+        "samples:shaders/sources/bindless/material.fs",
+        "samples:shaders/sources/bindless/material.vs"
     ]
 }
