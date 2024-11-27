@@ -15,7 +15,7 @@ Surface makeSurface(vec2 uv, vec3 wv, vec3 wn, vec3 wt, vec3 wb)
     surface.index = 0u;
     surface.uv = uv;
     surface.wv = wv;
-    surface.ao = 1.0;
+    surface.ao = getAmbientOcclusion(uv);
 
     if (!isZero(wt) && !isZero(wb))
     {
@@ -92,6 +92,15 @@ void surfaceAlphaClip(Surface surface)
 {
     if (isZero(surface.material.alpha))
         discard;
+}
+
+void surfaceAlphaClip(vec2 uv)
+{
+    Surface surface;
+    surface.uv = uv;
+    surface.material.albedo = getAlbedo(uv);
+    surface.material.alpha = surface.material.albedo.a;
+    surfaceAlphaClip(surface);
 }
 
 #endif

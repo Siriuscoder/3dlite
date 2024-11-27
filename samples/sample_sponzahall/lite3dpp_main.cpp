@@ -60,10 +60,6 @@ public:
 
     void createScene() override
     {
-        // SSBO supported by version GLSL 430 or higher
-        ShaderProgram::setShaderVersion("430");
-        ShaderProgram::addDefinition("BINDLESS_TEXTURE_PIPELINE", "1");
-
         preallocateMeshPartition();
 
         mPipeline = getMain().getResourceManager()->queryResource<lite3dpp_pipeline::PipelineDeffered>("SponzaDeffered", 

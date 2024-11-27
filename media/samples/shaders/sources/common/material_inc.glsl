@@ -31,4 +31,5 @@ struct Surface
 Surface makeSurface(vec2 uv, vec3 wv, vec3 wn, vec3 wt, vec3 wb);
 Surface restoreSurface(vec2 uv);
 void surfaceAlphaClip(Surface surface);
+void surfaceAlphaClip(vec2 uv);
 

@@ -44,10 +44,6 @@ Surface makeSurface(vec2 uv, vec3 wv, vec3 wn, vec3 wt, vec3 wb)
         {
             if (hasFlag(surface.material.slot[i].flags, TEXTURE_FLAG_ALBEDO))
             {
-                surface.material.albedo *= vec4(texture(surface.material.slot[i].textureId, uv).rgb, 1.0);
-            }
-            else if (hasFlag(surface.material.slot[i].flags, TEXTURE_FLAG_ALBEDO_ALPHA))
-            {
                 vec4 albedo = texture(surface.material.slot[i].textureId, uv);
                 surface.material.albedo *= vec4(albedo.rgb, 1.0);
                 surface.material.alpha *= albedo.a;
@@ -78,6 +74,10 @@ Surface makeSurface(vec2 uv, vec3 wv, vec3 wn, vec3 wt, vec3 wb)
                         surface.normal = calcNormal(nl, TBN(wn, wt, wb), surface.material.normalScale.xyz);
                     }
                 }
+            }
+            else if (hasFlag(surface.material.slot[i].flags, TEXTURE_FLAG_AO))
+            {
+                surface.ao = texture(surface.material.slot[i].textureId, uv).r;
             }
             else if (hasFlag(surface.material.slot[i].flags, TEXTURE_FLAG_SPECULAR))
             {
@@ -151,6 +151,38 @@ void surfaceAlphaClip(Surface surface)
 {
     if (isZero(surface.material.alpha))
         discard;
+}
+
+void surfaceAlphaClip(vec2 uv)
+{
+    Surface surface;
+    surface.transform = getInvocationInfo();
+    surface.material = materials[surface.transform.materialIdx];
+    surface.index = surface.transform.materialIdx;
+    surface.uv = uv;
+
+    for (int i = 0; i < 8; ++i)
+    {
+        if (hasFlag(surface.material.slot[i].flags, TEXTURE_FLAG_LOADED))
+        {
+            if (hasFlag(surface.material.slot[i].flags, TEXTURE_FLAG_ALBEDO))
+            {
+                vec4 albedo = texture(surface.material.slot[i].textureId, uv);
+                surface.material.albedo *= vec4(albedo.rgb, 1.0);
+                surface.material.alpha *= albedo.a;
+            }
+            else if (hasFlag(surface.material.slot[i].flags, TEXTURE_FLAG_ALPHA_MASK))
+            {
+                surface.material.alpha *= texture(surface.material.slot[i].textureId, uv).r;
+            }
+        }
+        else
+        {
+            break;
+        }
+    }
+
+    surfaceAlphaClip(surface);
 }
 
 #endif

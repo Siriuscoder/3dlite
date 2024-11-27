@@ -4,10 +4,10 @@
 #define TEXTURE_FLAG_EMPTY                           uint(0)
 #define TEXTURE_FLAG_LOADED                          uint(1 << 0)
 #define TEXTURE_FLAG_ALBEDO                          uint(1 << 1)
-#define TEXTURE_FLAG_ALBEDO_ALPHA                    uint(1 << 2)
-#define TEXTURE_FLAG_EMISSION                        uint(1 << 3)
-#define TEXTURE_FLAG_ALPHA_MASK                      uint(1 << 4)
-#define TEXTURE_FLAG_NORMAL                          uint(1 << 5)
+#define TEXTURE_FLAG_EMISSION                        uint(1 << 2)
+#define TEXTURE_FLAG_ALPHA_MASK                      uint(1 << 3)
+#define TEXTURE_FLAG_NORMAL                          uint(1 << 4)
+#define TEXTURE_FLAG_AO                              uint(1 << 5)
 #define TEXTURE_FLAG_SPECULAR                        uint(1 << 6)
 #define TEXTURE_FLAG_ROUGHNESS                       uint(1 << 7)
 #define TEXTURE_FLAG_METALLIC                        uint(1 << 8)
@@ -80,4 +80,4 @@ ChunkInvocationInfo getInvocationInfo();
 Surface makeSurface(vec2 uv, vec3 wv, vec3 wn, vec3 wt, vec3 wb);
 Surface restoreSurface(vec2 uv);
 void surfaceAlphaClip(Surface surface);
-
+void surfaceAlphaClip(vec2 uv);

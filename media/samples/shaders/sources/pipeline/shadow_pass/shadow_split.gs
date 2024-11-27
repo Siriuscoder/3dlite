@@ -29,7 +29,7 @@ void main()
         {
             gl_Position = shadowMat[index] * gl_in[j].gl_Position;
             iuv = iuv_g[j];
-#ifdef BINDLESS_TEXTURE_PIPELINE
+#ifdef LITE3D_BINDLESS_TEXTURE_PIPELINE
             drawID = drawID_g[j];
 #endif
             EmitVertex();

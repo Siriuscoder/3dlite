@@ -1,4 +1,4 @@
-#ifdef BINDLESS_TEXTURE_PIPELINE
+#ifdef LITE3D_BINDLESS_TEXTURE_PIPELINE
 #include "samples:shaders/sources/bindless/material_inc.glsl"
 #else
 uniform mat4 modelMatrix;
@@ -18,11 +18,11 @@ out vec3 iwv;
 out vec3 iwn;
 out vec3 iwt;
 out vec3 iwb;
-out flat int drawID; 
+flat out int drawID; 
 
 void main()
 {
-#ifdef BINDLESS_TEXTURE_PIPELINE
+#ifdef LITE3D_BINDLESS_TEXTURE_PIPELINE
     ChunkInvocationInfo invInfo = getInvocationInfo();
     drawID = gl_DrawIDARB;
     vec4 wv = invInfo.model * vertex;

@@ -1,4 +1,4 @@
-#ifdef BINDLESS_TEXTURE_PIPELINE
+#ifdef LITE3D_BINDLESS_TEXTURE_PIPELINE
 #include "samples:shaders/sources/bindless/material_inc.glsl"
 #else
 #include "samples:shaders/sources/common/material_inc.glsl"
@@ -13,7 +13,7 @@ flat out int drawID_g;
 
 void main()
 {
-#ifdef BINDLESS_TEXTURE_PIPELINE
+#ifdef LITE3D_BINDLESS_TEXTURE_PIPELINE
     ChunkInvocationInfo invInfo = getInvocationInfo();
     drawID_g = gl_DrawIDARB;
     // vertex coordinate in world space 

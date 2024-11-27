@@ -20,7 +20,7 @@ flat in int drawID_g[];
 out vec2 iuv;           // UVs
 out vec3 iwv;           // world-space position
 out vec3 iwn;           // world-space normal
-out flat int drawID;    // currect chunk index
+flat out int drawID;    // currect chunk index
 
 void main()
 {
@@ -42,7 +42,7 @@ void main()
                 iuv = iuv_g[j];
                 // N
                 iwn = iwn_g[j];
-#ifdef BINDLESS_TEXTURE_PIPELINE
+#ifdef LITE3D_BINDLESS_TEXTURE_PIPELINE
                 drawID = drawID_g[j];
 #endif
                 EmitVertex();

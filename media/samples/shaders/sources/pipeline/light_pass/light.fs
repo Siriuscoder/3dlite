@@ -1,4 +1,4 @@
-#ifdef BINDLESS_TEXTURE_PIPELINE
+#ifdef LITE3D_BINDLESS_TEXTURE_PIPELINE
 #include "samples:shaders/sources/bindless/material_inc.glsl"
 #else
 #include "samples:shaders/sources/common/material_inc.glsl"

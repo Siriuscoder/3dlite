@@ -16,6 +16,7 @@
  *	along with Lite3D.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
 #include <lite3dpp_pipeline/lite3dpp_pipeline_deffered.h>
+#include <lite3dpp/lite3dpp_material_multi_render.h>
 
 #include <SDL_assert.h>
 
@@ -170,6 +171,18 @@ namespace lite3dpp_pipeline {
                 .set(L"Name", "AOEnabled")
                 .set(L"Value", 1)
                 .set(L"Type", "int"));
+        }
+
+        if (pipelineConfig.getBool(L"MultiRender", false))
+        {
+            lightComputeMaterialUniforms.emplace_back(ConfigurationWriter()
+                .set(L"Name", "MultiRenderChunkInvocationBuffer")
+                .set(L"SSBOName", MultiRenderMaterial::MultiRenderChunkInvocationBufferName.data())
+                .set(L"Type", "SSBO"));
+            lightComputeMaterialUniforms.emplace_back(ConfigurationWriter()
+                .set(L"Name", "MultiRenderMaterialDataBuffer")
+                .set(L"SSBOName", MultiRenderMaterial::MultiRenderMaterialDataBufferName.data())
+                .set(L"Type", "SSBO"));
         }
 
         lightComputeMaterialConfig.set(L"Passes", stl<ConfigurationWriter>::vector {

@@ -1,4 +1,4 @@
-#ifdef BINDLESS_TEXTURE_PIPELINE
+#ifdef LITE3D_BINDLESS_TEXTURE_PIPELINE
 #include "samples:shaders/sources/bindless/material_inc.glsl"
 #else
 #include "samples:shaders/sources/common/material_inc.glsl"
@@ -11,11 +11,11 @@ layout(location = 2) in vec2 uv;
 
 out vec2 iuv_g;
 out vec3 iwn_g;
-out flat int drawID_g;
+flat out int drawID_g;
 
 void main()
 {
-#ifdef BINDLESS_TEXTURE_PIPELINE
+#ifdef LITE3D_BINDLESS_TEXTURE_PIPELINE
     ChunkInvocationInfo invInfo = getInvocationInfo();
     drawID_g = gl_DrawIDARB;
     mat3 normalMatrix = mat3(invInfo.normal[0].xyz, invInfo.normal[1].xyz, invInfo.normal[2].xyz);

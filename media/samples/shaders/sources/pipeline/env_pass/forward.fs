@@ -1,11 +1,5 @@
-#ifdef BINDLESS_TEXTURE_PIPELINE
+#ifdef LITE3D_BINDLESS_TEXTURE_PIPELINE
 #include "samples:shaders/sources/bindless/material_inc.glsl"
-
-float getAmbientOcclusion(vec2 uv)
-{
-    return 1.0;
-}
-
 #else
 #include "samples:shaders/sources/common/material_inc.glsl"
 #endif
