@@ -20,7 +20,12 @@ void main()
     Surface surface = makeSurface(iuv, iwv, iwn, iwt, iwb);
     surfaceAlphaClip(surface); // Alpha clip case 
 
+#ifdef LITE3D_BINDLESS_TEXTURE_PIPELINE
     channel01 = vec4(iwv, surface.index);
+#else 
+    channel01 = vec4(iwv, surface.material.envSpecular);
+#endif
+
     channel02 = vec4(surface.normal, surface.material.emission.r);
     channel03 = vec4(surface.material.albedo.rgb, surface.material.emission.g);
     channel04 = vec4(surface.material.specular, surface.material.roughness, surface.material.metallic, surface.material.emission.b);
