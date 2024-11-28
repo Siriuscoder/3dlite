@@ -1,7 +1,5 @@
 #extension GL_ARB_texture_cube_map_array : require
 
-#define NORMAL_MAPPING_TANGENT
-
 #define ENV_PROBE_RELATIVE_DISTANCE_THRESHOLD       0.05
 #define ENV_DIFFUSE_STRENGTH                        1.0
 #define ENV_PROBE_DIFFUSE_POWER                     2.3
