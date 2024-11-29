@@ -26,8 +26,10 @@ namespace lite3dpp
     
     void UBO::loadFromConfigImpl(const ConfigurationReader &helper)
     {
-        if (!lite3d_ubo_init(getPtr(), helper.getBool(L"Dynamic", false) ? 
-            BufferUsage::ModeDynamicDraw : BufferUsage::ModeStaticDraw))
+        auto usage = helper.getBool(L"Stream", false) ? BufferUsage::ModeStreamDraw : 
+            (helper.getBool(L"Dynamic", false) ? BufferUsage::ModeDynamicDraw : BufferUsage::ModeStaticDraw);
+
+        if (!lite3d_ubo_init(getPtr(), usage))
         {
             LITE3D_THROW(getName() << ": failed to create SSBO");
         }

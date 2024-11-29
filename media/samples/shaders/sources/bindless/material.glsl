@@ -50,7 +50,7 @@ Surface makeSurface(vec2 uv, vec3 wv, vec3 wn, vec3 wt, vec3 wb)
             }
             else if (hasFlag(surface.material.slot[i].flags, TEXTURE_FLAG_EMISSION))
             {
-                surface.material.emission = vec4(texture(surface.material.slot[i].textureId, uv).rgb, 1.0);
+                surface.material.emission *= vec4(texture(surface.material.slot[i].textureId, uv).rgb, 1.0);
             }
             else if (hasFlag(surface.material.slot[i].flags, TEXTURE_FLAG_ALPHA_MASK))
             {
@@ -111,6 +111,7 @@ Surface makeSurface(vec2 uv, vec3 wv, vec3 wn, vec3 wt, vec3 wb)
         }
     }
 
+    surface.material.emission *= surface.material.emissionStrength;
     return surface;
 }
 

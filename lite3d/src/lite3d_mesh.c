@@ -40,7 +40,7 @@ int lite3d_mesh_init(struct lite3d_mesh *mesh, uint16_t usage)
     {
         if (!gAuxGlobalBuffer.vboID)
         {
-            if (!lite3d_vbo_init(&gAuxGlobalBuffer, LITE3D_VBO_DYNAMIC_DRAW))
+            if (!lite3d_vbo_init(&gAuxGlobalBuffer, LITE3D_VBO_STREAM_DRAW))
                 return LITE3D_FALSE;
         }
 
@@ -60,7 +60,7 @@ int lite3d_mesh_init(struct lite3d_mesh *mesh, uint16_t usage)
 
     if (lite3d_check_multi_draw_indirect())
     {
-        if (!lite3d_vbo_indirect_init(&mesh->indirectBuffer, LITE3D_VBO_DYNAMIC_DRAW))
+        if (!lite3d_vbo_indirect_init(&mesh->indirectBuffer, LITE3D_VBO_STREAM_DRAW))
         {
             lite3d_vbo_purge(&mesh->vertexBuffer);
             lite3d_vbo_purge(&mesh->indexBuffer);

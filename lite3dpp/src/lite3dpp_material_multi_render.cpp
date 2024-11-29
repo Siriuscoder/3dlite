@@ -36,7 +36,7 @@ namespace lite3dpp
         if (!getMain().getResourceManager()->resourceExists(MultiRenderChunkInvocationBufferName.data()))
         {
             mChunkInvocationBuffer = getMain().getResourceManager()->
-                queryResourceFromJson<SSBO>(MultiRenderChunkInvocationBufferName.data(), "{\"Dynamic\": true}");
+                queryResourceFromJson<SSBO>(MultiRenderChunkInvocationBufferName.data(), "{\"Stream\": true}");
         }
         else
         {

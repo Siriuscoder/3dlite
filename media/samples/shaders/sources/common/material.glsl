@@ -2,6 +2,10 @@
 
 uniform sampler2DArray GBuffer;
 
+#ifndef LITE3D_CUBE_MAP_UV_SCALE
+#define LITE3D_CUBE_MAP_UV_SCALE 1.0
+#endif
+
 vec4 getAlbedo(vec2 uv);
 vec3 getEmission(vec2 uv);
 vec3 getNormal(vec2 uv, mat3 tbn);
@@ -39,6 +43,7 @@ Surface makeSurface(vec2 uv, vec3 wv, vec3 wn, vec3 wt, vec3 wb)
     surface.material.envSpecular = getSpecularAmbient(uv);
     surface.material.envDiffuse = 1.0;
     surface.material.emissionStrength = 1.0;
+    surface.material.environmentScale = LITE3D_CUBE_MAP_UV_SCALE;
 
     vec3 specular = getSpecular(uv);
     surface.material.specular = specular.x;
@@ -80,6 +85,7 @@ Surface restoreSurface(vec2 uv)
     surface.material.envDiffuse = 1.0;
     surface.material.ior = 1.0;
     surface.material.emissionStrength = 1.0;
+    surface.material.environmentScale = LITE3D_CUBE_MAP_UV_SCALE;
     surface.wv = wv.xyz;
     surface.uv = uv;
     surface.normal = nw.xyz;

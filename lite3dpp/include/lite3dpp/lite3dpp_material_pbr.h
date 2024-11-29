@@ -94,7 +94,8 @@ namespace lite3dpp
             float EnvSpecular;
             float Ior;
             float EmissionStrength;
-            uint32_t reserved[3] = {0};
+            float EnvironmentScale;
+            uint32_t reserved[2] = {0};
             PBRMaterialFlags Flags = PBRMaterialFlags::EMPTY;
             TextureHandleRaw Textures[8];
             TextureHandleRaw Environment;
@@ -121,6 +122,7 @@ namespace lite3dpp
         LITE3D_DECLARE_PBR_MATERIAL_FIELD(float, EnvSpecular);
         LITE3D_DECLARE_PBR_MATERIAL_FIELD(float, Ior);
         LITE3D_DECLARE_PBR_MATERIAL_FIELD(float, EmissionStrength);
+        LITE3D_DECLARE_PBR_MATERIAL_FIELD(float, EnvironmentScale);
         LITE3D_DECLARE_PBR_MATERIAL_FIELD(PBRMaterialFlags, Flags);
 
         void setTexture(Texture *texture, TextureFlags flags, size_t index, bool updateData = true);

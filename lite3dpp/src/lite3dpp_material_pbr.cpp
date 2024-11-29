@@ -44,7 +44,8 @@ namespace lite3dpp
         setEnvDiffuse(helper.getObject(L"EnvDiffuse").getDouble(L"Value", 1.0), false);
         setEnvSpecular(helper.getObject(L"EnvSpecular").getDouble(L"Value", 1.0), false);
         setIor(helper.getObject(L"Ior").getDouble(L"Value", 1.0), false);
-        setEmissionStrength(helper.getObject(L"EmissionStrength").getDouble(L"Value", 1.0), false);
+        setEmissionStrength(helper.getObject(L"EmissionStrength").getDouble(L"Value", 0.0), false);
+        setEnvironmentScale(helper.getObject(L"EnvironmentScale").getDouble(L"Value", 1.0), false);
 
         size_t index = 0;
         for (size_t i = 0; i < gTextureIds.size(); ++i)
