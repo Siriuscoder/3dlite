@@ -11,7 +11,7 @@
     "TextureName": "ceiling_plaster_02_Roughnessceiling_plaster_01_Metalness.texture",
     "TexturePath": "sponza:textures/json/ceiling_plaster_02_Roughnessceiling_plaster_01_Metalness.json"
   },
-  "NormalTexture": {
+  "NormalRGBTexture": {
     "Name": "Normal",
     "Type": "sampler",
     "TextureName": "ceiling_plaster_01_Normal.texture",
@@ -22,6 +22,14 @@
   },
   "EnvSpecular": {
     "Value": 1.0
+  },
+  "NormalScale": {
+    "Value": [
+      1.0,
+      -1.0,
+      1.0,
+      1.0
+    ]
   },
   "Passes": [
     {

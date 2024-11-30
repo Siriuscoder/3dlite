@@ -11,7 +11,7 @@
     "TextureName": "curtain_fabric_Roughnesscurtain_fabric_Metalness.texture",
     "TexturePath": "sponza:textures/json/curtain_fabric_Roughnesscurtain_fabric_Metalness.json"
   },
-  "NormalTexture": {
+  "NormalRGBTexture": {
     "Name": "Normal",
     "Type": "sampler",
     "TextureName": "curtain_fabric_Normal.texture",
@@ -22,6 +22,14 @@
   },
   "EnvSpecular": {
     "Value": 1.0
+  },
+  "NormalScale": {
+    "Value": [
+      1.0,
+      -1.0,
+      1.0,
+      1.0
+    ]
   },
   "Passes": [
     {

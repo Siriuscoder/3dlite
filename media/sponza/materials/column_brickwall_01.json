@@ -11,7 +11,7 @@
     "TextureName": "col_brickwall_01_Roughnesscol_brickwall_01_Metalness.texture",
     "TexturePath": "sponza:textures/json/col_brickwall_01_Roughnesscol_brickwall_01_Metalness.json"
   },
-  "NormalTexture": {
+  "NormalRGBTexture": {
     "Name": "Normal",
     "Type": "sampler",
     "TextureName": "col_brickwall_01_Normal.texture",
@@ -22,6 +22,14 @@
   },
   "EnvSpecular": {
     "Value": 1.0
+  },
+  "NormalScale": {
+    "Value": [
+      1.0,
+      -1.0,
+      1.0,
+      1.0
+    ]
   },
   "Passes": [
     {

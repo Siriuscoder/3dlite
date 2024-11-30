@@ -11,7 +11,7 @@
     "TextureName": "col_head_2ndfloor_02_Roughnesscol_head_2ndfloor_02_Metalness.texture",
     "TexturePath": "sponza:textures/json/col_head_2ndfloor_02_Roughnesscol_head_2ndfloor_02_Metalness.json"
   },
-  "NormalTexture": {
+  "NormalRGBTexture": {
     "Name": "Normal",
     "Type": "sampler",
     "TextureName": "col_head_2ndfloor_02_Normal.texture",
@@ -22,6 +22,14 @@
   },
   "EnvSpecular": {
     "Value": 1.0
+  },
+  "NormalScale": {
+    "Value": [
+      1.0,
+      -1.0,
+      1.0,
+      1.0
+    ]
   },
   "Passes": [
     {

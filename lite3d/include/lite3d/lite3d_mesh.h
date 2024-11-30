@@ -86,7 +86,7 @@ LITE3D_CEXPORT lite3d_mesh_chunk *lite3d_mesh_chunk_get_by_material_index(struct
     uint32_t materialIndex);
 
 // Отрисовать накопленный буфер команд одним вызовом! 
-LITE3D_CEXPORT void lite3d_mesh_queue_draw(struct lite3d_mesh *mesh, uint8_t hasIndexes);
+LITE3D_CEXPORT void lite3d_mesh_queue_draw(struct lite3d_mesh *mesh);
 //
 //  Добавление чанка в буфер команд для последующего рисования 
 //  ВНИМАНИЕ! layout всех чанков в одном mesh (VBO) должен быть одинаковый так как они будут рисоваться одним вызовом, 

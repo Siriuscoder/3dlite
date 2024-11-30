@@ -56,7 +56,7 @@ Surface makeSurface(vec2 uv, vec3 wv, vec3 wn, vec3 wt, vec3 wb)
             {
                 surface.material.alpha *= texture(surface.material.slot[i].textureId, uv).r;
             }
-            else if (hasFlag(surface.material.slot[i].flags, TEXTURE_FLAG_NORMAL))
+            else if (hasFlag(surface.material.slot[i].flags, TEXTURE_FLAG_NORMAL_RG))
             {
                 if (hasFlag(surface.material.flags, MATERIAL_NORMAL_MAPPING_TANGENT))
                 {
@@ -71,6 +71,25 @@ Surface makeSurface(vec2 uv, vec3 wv, vec3 wn, vec3 wt, vec3 wb)
                     if (!isZero(wt) && !isZero(wb))
                     {
                         vec2 nl = texture(surface.material.slot[i].textureId, uv).rg;
+                        surface.normal = calcNormal(nl, TBN(wn, wt, wb), surface.material.normalScale.xyz);
+                    }
+                }
+            }
+            else if (hasFlag(surface.material.slot[i].flags, TEXTURE_FLAG_NORMAL_RGB))
+            {
+                if (hasFlag(surface.material.flags, MATERIAL_NORMAL_MAPPING_TANGENT))
+                {
+                    if (!isZero(wt))
+                    {
+                        vec3 nl = texture(surface.material.slot[i].textureId, uv).rgb;
+                        surface.normal = calcNormal(nl, TBN(wn, wt), surface.material.normalScale.xyz);
+                    }
+                }
+                else if (hasFlag(surface.material.flags, MATERIAL_NORMAL_MAPPING_TANGENT_BITANGENT))
+                {
+                    if (!isZero(wt) && !isZero(wb))
+                    {
+                        vec3 nl = texture(surface.material.slot[i].textureId, uv).rgb;
                         surface.normal = calcNormal(nl, TBN(wn, wt, wb), surface.material.normalScale.xyz);
                     }
                 }

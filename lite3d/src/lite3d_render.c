@@ -122,8 +122,8 @@ static void refresh_render_stats(uint64_t beginFrame, uint64_t endFrame)
     gRenderStats.bestFrameMs = LITE3D_MIN(gRenderStats.lastFrameMs, gRenderStats.bestFrameMs);
     gRenderStats.worstFrameMs = LITE3D_MAX(gRenderStats.lastFrameMs, gRenderStats.worstFrameMs);
 
-    gRenderStats.triangleByBatch = gRenderStats.batchCalled ? gRenderStats.trianglesByFrame / gRenderStats.batchCalled : 0;
-    gRenderStats.triangleMs = gRenderStats.trianglesByFrame ? (float) gRenderStats.lastFrameMs / (float) gRenderStats.trianglesByFrame : 0;
+    gRenderStats.triangleByBatch = gRenderStats.drawCalls ? gRenderStats.trianglesRendered / gRenderStats.drawCalls : 0;
+    gRenderStats.triangleMs = gRenderStats.trianglesRendered ? (float) gRenderStats.lastFrameMs / (float) gRenderStats.trianglesRendered : 0;
 }
 
 static void timer_render_stats_tick(lite3d_timer *timer)
@@ -183,16 +183,18 @@ static void update_render_target(lite3d_render_target *target)
                 LITE3D_ARR_ADD_ELEM(&gInvalidatedCameras, lite3d_camera *, look->camera);
 
             /* accamulate statistics */
-            gRenderStats.trianglesByFrame += look->scene->stats.trianglesRendered;
-            gRenderStats.verticesByFrame += look->scene->stats.verticesRendered;
-            gRenderStats.nodesTotal += look->scene->stats.nodesTotal;
-            gRenderStats.batchTotal += look->scene->stats.batchTotal;
-            gRenderStats.batchCalled += look->scene->stats.batchCalled;
-            gRenderStats.batchInstancedCalled += look->scene->stats.batchInstancedCalled;
-            gRenderStats.batchOccluded += look->scene->stats.batchOccluded;
-            gRenderStats.materialsTotal += look->scene->stats.materialBlocks;
-            gRenderStats.materialsPassedByFrame += look->scene->stats.materialSwitch;
-            gRenderStats.textureUnitsByFrame += look->scene->stats.textureUnitsBindings;
+            gRenderStats.trianglesRendered += look->scene->stats.trianglesRendered;
+            gRenderStats.verticesRendered += look->scene->stats.verticesRendered;
+            gRenderStats.totalNodes += look->scene->stats.totalNodes;
+            gRenderStats.totalPieces += look->scene->stats.totalPieces;
+            gRenderStats.drawCalls += look->scene->stats.drawCalls;
+            gRenderStats.drawCallsInstanced += look->scene->stats.drawCallsInstanced;
+            gRenderStats.occludedPieces += look->scene->stats.occludedPieces;
+            gRenderStats.totalMaterials += look->scene->stats.totalMaterials;
+            gRenderStats.materialsSwitch += look->scene->stats.materialsSwitch;
+            gRenderStats.textureBinds += look->scene->stats.textureBinds;
+            gRenderStats.bufferBinds += look->scene->stats.bufferBinds;
+            gRenderStats.drawSubCommands += look->scene->stats.drawSubCommands;
         }
     }
 
@@ -255,16 +257,18 @@ int lite3d_render_loop_pump_event(void)
 
 int lite3d_render_frame(void)
 {
-    gRenderStats.trianglesByFrame =
-        gRenderStats.nodesTotal =
-        gRenderStats.batchTotal =
-        gRenderStats.batchCalled =
-        gRenderStats.batchInstancedCalled = 
-        gRenderStats.batchOccluded = 
-        gRenderStats.materialsTotal =
-        gRenderStats.materialsPassedByFrame =
-        gRenderStats.textureUnitsByFrame =
-        gRenderStats.verticesByFrame = 0;
+    gRenderStats.trianglesRendered =
+        gRenderStats.totalNodes =
+        gRenderStats.totalPieces =
+        gRenderStats.drawCalls =
+        gRenderStats.drawCallsInstanced = 
+        gRenderStats.occludedPieces = 
+        gRenderStats.totalMaterials =
+        gRenderStats.materialsSwitch =
+        gRenderStats.textureBinds =
+        gRenderStats.bufferBinds = 
+        gRenderStats.drawSubCommands = 
+        gRenderStats.verticesRendered = 0;
 
     if (gRenderActive)
     {

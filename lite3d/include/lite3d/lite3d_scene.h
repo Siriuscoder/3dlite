@@ -53,15 +53,16 @@ typedef struct lite3d_scene_stats
 {
     int32_t trianglesRendered;
     int32_t verticesRendered;
-    int32_t nodesTotal;
-    int32_t batchCalled;
-    int32_t batchInstancedCalled;
-    int32_t batchTotal;
-    int32_t batchOccluded;
-    int32_t materialBlocks;
-    int32_t textureUnitsBindings;
-    int32_t blockUnitsBindings;
-    int32_t materialSwitch;
+    int32_t totalNodes;
+    int32_t drawCalls;
+    int32_t drawCallsInstanced;
+    int32_t totalPieces;
+    int32_t occludedPieces;
+    int32_t totalMaterials;
+    int32_t textureBinds;
+    int32_t bufferBinds;
+    int32_t materialsSwitch;
+    int32_t drawSubCommands;
 } lite3d_scene_stats;
 
 typedef struct lite3d_scene

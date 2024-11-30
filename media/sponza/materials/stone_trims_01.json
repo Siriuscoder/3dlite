@@ -11,7 +11,7 @@
     "TextureName": "stone_trims_01_Roughnessstone_trims_01_Metalness.texture",
     "TexturePath": "sponza:textures/json/stone_trims_01_Roughnessstone_trims_01_Metalness.json"
   },
-  "NormalTexture": {
+  "NormalRGBTexture": {
     "Name": "Normal",
     "Type": "sampler",
     "TextureName": "stone_trims_01_Normal.texture",
@@ -22,6 +22,14 @@
   },
   "EnvSpecular": {
     "Value": 1.0
+  },
+  "NormalScale": {
+    "Value": [
+      1.0,
+      -1.0,
+      1.0,
+      1.0
+    ]
   },
   "Passes": [
     {

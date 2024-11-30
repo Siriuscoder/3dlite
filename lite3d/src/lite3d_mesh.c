@@ -239,11 +239,12 @@ lite3d_mesh_chunk *lite3d_mesh_append_chunk(lite3d_mesh *mesh,
     return meshChunk;
 }
 
-void lite3d_mesh_queue_draw(struct lite3d_mesh *mesh, uint8_t hasIndexes)
+void lite3d_mesh_queue_draw(struct lite3d_mesh *mesh)
 {
-    lite3d_mesh_chunk *firstchunk = NULL;
+    lite3d_mesh_chunk *firstchunk;
     SDL_assert(mesh);
 
+    firstchunk = LITE3D_MEMBERCAST(lite3d_mesh_chunk, lite3d_list_first_link(&mesh->chunks), link);
     if (!lite3d_vbo_subbuffer_extend(&mesh->indirectBuffer, mesh->drawQueue.data, 0, 
         mesh->drawQueue.size * mesh->drawQueue.elemSize))
     {
@@ -254,7 +255,7 @@ void lite3d_mesh_queue_draw(struct lite3d_mesh *mesh, uint8_t hasIndexes)
 
     lite3d_vbo_bind(&mesh->indirectBuffer);
 
-    if (hasIndexes)
+    if (firstchunk->hasIndexes)
     {
         lite3d_vao_multidraw_indexed(&firstchunk->vao, 0, mesh->drawQueue.size);
     }

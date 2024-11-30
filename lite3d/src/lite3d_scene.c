@@ -125,6 +125,7 @@ static void mqr_render_mesh_chunk(lite3d_scene *scene, lite3d_mesh_chunk *chunk,
     if (count > 1)
     {
         LITE3D_METRIC_CALL(lite3d_mesh_chunk_draw_instanced, (chunk, count))
+        scene->stats.drawCallsInstanced += count;
     }
     else
     {
@@ -133,11 +134,10 @@ static void mqr_render_mesh_chunk(lite3d_scene *scene, lite3d_mesh_chunk *chunk,
 
     scene->stats.trianglesRendered += chunk->vao.elementsCount * count;
     scene->stats.verticesRendered += chunk->vao.verticesCount * count;
-    scene->stats.batchCalled++;
-    scene->stats.batchInstancedCalled += count;
+    scene->stats.drawCalls++;
 }
 
-static void mqr_render_batch(lite3d_material_pass *pass, _mqr_node *mqrNode, uint32_t flags)
+static void mqr_render_batch_draw(lite3d_material_pass *pass, _mqr_node *mqrNode, uint32_t flags)
 {
     lite3d_scene *scene = (lite3d_scene *) mqrNode->node->scene;
     SDL_assert(mqrNode);
@@ -157,17 +157,19 @@ static void mqr_render_batch(lite3d_material_pass *pass, _mqr_node *mqrNode, uin
         lite3d_query_begin(&mqrNode->currentQuery->query); 
         if (mqrNode->currentQuery->query.anyPassed)
         {
-            // Render full complex batch under occlusion query if node visible
+            // Render full complex batch under occlusion query if the node is visible
             mqr_render_mesh_chunk(scene, mqrNode->meshChunk, mqrNode->instancesCount);
         }
         else
         {
-            // Render simplified batch under occlusion query if node occluded
+            // Render simplified batch under occlusion query if the node is occluded
+            uint8_t cullingMode = lite3d_backface_culling_get();
+            uint8_t depthOutput = lite3d_depth_output_get();
             lite3d_depth_output(LITE3D_FALSE);
             lite3d_backface_culling(LITE3D_CULLFACE_FRONT);
             mqr_render_mesh_chunk(scene, mqrNode->bbMeshChunk, mqrNode->instancesCount);
-            lite3d_backface_culling(pass->doubleSided ? LITE3D_CULLFACE_NEVER : LITE3D_CULLFACE_BACK);
-            lite3d_depth_output(flags & LITE3D_RENDER_DEPTH_OUTPUT ? LITE3D_TRUE : LITE3D_FALSE);
+            lite3d_backface_culling(cullingMode);
+            lite3d_depth_output(depthOutput);
         }
 
         lite3d_query_end(&mqrNode->currentQuery->query);
@@ -178,7 +180,7 @@ static void mqr_render_batch(lite3d_material_pass *pass, _mqr_node *mqrNode, uin
     }
 }
 
-static void mqr_render_batch_series(lite3d_material_pass *pass, _mqr_node *mqrNode, uint32_t continuedId, uint8_t batchCrop)
+static void mqr_render_batch_draw_instanced(lite3d_material_pass *pass, _mqr_node *mqrNode, uint32_t continuedId, uint8_t batchCrop)
 {
     lite3d_scene *scene = (lite3d_scene *) mqrNode->node->scene;
     SDL_assert(mqrNode);
@@ -211,12 +213,34 @@ static void mqr_render_batch_series(lite3d_material_pass *pass, _mqr_node *mqrNo
 static void mqr_render_node(lite3d_material_pass *pass, _mqr_node *mqrNode, uint32_t continuedId, uint8_t batchCrop, uint32_t flags)
 {
     if (flags & LITE3D_RENDER_INSTANCING)
-        LITE3D_METRIC_CALL(mqr_render_batch_series, (pass, mqrNode, continuedId, batchCrop))
+        LITE3D_METRIC_CALL(mqr_render_batch_draw_instanced, (pass, mqrNode, continuedId, batchCrop))
     else
-        LITE3D_METRIC_CALL(mqr_render_batch, (pass, mqrNode, flags))
+        LITE3D_METRIC_CALL(mqr_render_batch_draw, (pass, mqrNode, flags))
 }
 
-static void mqr_multirender_batch(lite3d_scene *scene, lite3d_mesh *mesh, lite3d_vbo *chunkInvocationBuffer)
+static void mqr_multirender_batch_draw(lite3d_mesh *mesh, uint8_t drawBB)
+{
+    SDL_assert(mesh);
+
+    if (drawBB) // Рисуем только bounding box 
+    {
+        uint8_t cullingMode = lite3d_backface_culling_get();
+        uint8_t depthOutput = lite3d_depth_output_get();
+        // Render simplified batch under occlusion query if the node is occluded
+        lite3d_depth_output(LITE3D_FALSE);
+        lite3d_backface_culling(LITE3D_CULLFACE_FRONT);
+        lite3d_mesh_queue_draw(mesh);
+        lite3d_backface_culling(cullingMode);
+        lite3d_depth_output(depthOutput);
+    }
+    else // Рисуем полноценный обьект
+    {
+        lite3d_mesh_queue_draw(mesh);
+    }
+}
+
+static void mqr_multirender_do_batch(lite3d_scene *scene, lite3d_mesh *mesh, 
+    lite3d_vbo *chunkInvocationBuffer, uint8_t drawBB)
 {    
     lite3d_mesh_chunk *firstchunk = NULL;
     SDL_assert(scene);
@@ -248,11 +272,10 @@ static void mqr_multirender_batch(lite3d_scene *scene, lite3d_mesh *mesh, lite3d
     }
 
     // рисуем все команды собранные в очереди и чистим очередь
-    lite3d_mesh_queue_draw(mesh, firstchunk->hasIndexes);
+    mqr_multirender_batch_draw(mesh, drawBB);
     lite3d_mesh_queue_clean(mesh);
     lite3d_array_clean(&scene->invocationBuffer);
-
-    scene->stats.batchCalled++;
+    scene->stats.drawCalls++;
 }
 
 static int mqr_node_occluded(lite3d_scene *scene, _mqr_node *mqrNode, uint32_t flags)
@@ -314,7 +337,7 @@ static int mqr_node_approve(lite3d_scene *scene, _mqr_node *mqrNode, uint32_t fl
     if (!mqrNode->node->enabled)
         return LITE3D_FALSE;
 
-    scene->stats.batchTotal++;
+    scene->stats.totalPieces++;
 
     // Check occlusion culling if needed
     if (mqr_node_occluded(scene, mqrNode, flags))
@@ -325,7 +348,7 @@ static int mqr_node_approve(lite3d_scene *scene, _mqr_node *mqrNode, uint32_t fl
         }
 
         nodeVisible = LITE3D_FALSE;
-        scene->stats.batchOccluded++;
+        scene->stats.occludedPieces++;
     }
 
     // Check frustum culling if needed
@@ -368,9 +391,9 @@ static int mqr_node_approve(lite3d_scene *scene, _mqr_node *mqrNode, uint32_t fl
 static lite3d_material_pass *mqr_unit_apply_material(lite3d_scene *scene, _mqr_node *node, uint16_t pass)
 {
     lite3d_material_pass *matPass = lite3d_material_apply(node->matUnit->material, pass);
-    scene->stats.textureUnitsBindings += matPass->bindContext.textureBindingsCount;
-    scene->stats.blockUnitsBindings += matPass->bindContext.blockBindingsCount;
-    scene->stats.materialSwitch++;
+    scene->stats.textureBinds += matPass->bindContext.textureBindingsCount;
+    scene->stats.bufferBinds += matPass->bindContext.blockBindingsCount;
+    scene->stats.materialsSwitch++;
     return matPass;
 }
 
@@ -404,6 +427,26 @@ static void mqr_unit_queue_render(lite3d_scene *scene, lite3d_array *queue, uint
         LITE3D_METRIC_CALL(mqr_render_node, (matPass, *mqrNode, continuedId, batchCrop, flags))
         continuedId = batchCrop ? 0 : continuedId+1;
     }
+}
+
+static void mqr_multirender_queue_command(lite3d_scene *scene, _mqr_node *node, lite3d_mesh_chunk *chunk)
+{
+    // Установка параметров позицицонирования чанка
+    _node_invocation_info *invocationInfo = lite3d_array_add(&scene->invocationBuffer);
+    memset(invocationInfo, 0, sizeof(_node_invocation_info));
+    // Model матрица (Model Space -> World Space) 
+    invocationInfo->model = node->node->worldView;
+    // Матрица нормали (Model Space -> World Space) 
+    kmMat4AssignMat3(&invocationInfo->normal, &(node->node->normalModel));
+    // ModelViewProjection матрица (Model Space -> Clip Space)
+    kmMat4Multiply(&invocationInfo->screen, &scene->currentCamera->screen, &invocationInfo->model);
+    // Индекс материала в буфере материалов
+    invocationInfo->materialIdx = node->matUnit->material->materialDataBufferIndex;
+    // Добавление команды на отрисовку чанка
+    lite3d_mesh_queue_chunk(chunk, node->instancesCount);
+    scene->stats.trianglesRendered += chunk->vao.elementsCount * node->instancesCount;
+    scene->stats.verticesRendered += chunk->vao.verticesCount * node->instancesCount;
+    scene->stats.drawSubCommands++;
 }
 
 static void mqr_unit_queue_multirender(lite3d_scene *scene, lite3d_array *queue, uint16_t pass, uint32_t flags)
@@ -443,33 +486,40 @@ static void mqr_unit_queue_multirender(lite3d_scene *scene, lite3d_array *queue,
             (*mqrNode)->matUnit->material->materialDataBuffer != curMaterialBuffer ||
             matPass->program != curProgram)
         {
-            mqr_multirender_batch(scene, curMesh, curInvocationBuffer);
+            mqr_multirender_do_batch(scene, curMesh, curInvocationBuffer, LITE3D_FALSE);
             curInvocationBuffer = (*mqrNode)->matUnit->material->chunkInvocationBuffer;
             curMesh = (*mqrNode)->meshChunk->mesh;
             curProgram = matPass->program;
             matPass = mqr_unit_apply_material(scene, *mqrNode, pass);
         }
 
-        // Установка параметров позицицонирования чанка
-        _node_invocation_info *invocationInfo = lite3d_array_add(&scene->invocationBuffer);
-        memset(invocationInfo, 0, sizeof(_node_invocation_info));
-        // Model матрица (Model Space -> World Space) 
-        invocationInfo->model = (*mqrNode)->node->worldView;
-        // Матрица нормали (Model Space -> World Space) 
-        kmMat4AssignMat3(&invocationInfo->normal, &((*mqrNode)->node->normalModel));
-        // ModelViewProjection матрица (Model Space -> Clip Space)
-        kmMat4Multiply(&invocationInfo->screen, &scene->currentCamera->screen, &invocationInfo->model);
-        // Индекс материала в буфере материалов
-        invocationInfo->materialIdx = (*mqrNode)->matUnit->material->materialDataBufferIndex;
-
-        // Добавление команды на отрисовку чанка
-        lite3d_mesh_queue_chunk((*mqrNode)->meshChunk, (*mqrNode)->instancesCount);
-        scene->stats.trianglesRendered += (*mqrNode)->meshChunk->vao.elementsCount * (*mqrNode)->instancesCount;
-        scene->stats.verticesRendered += (*mqrNode)->meshChunk->vao.verticesCount * (*mqrNode)->instancesCount;
-        scene->stats.batchInstancedCalled += (*mqrNode)->instancesCount;
+        // Если включен режим отсечения перекрытых обьектов то рисуем каждую команду отдельно для опеределения 
+        // видимости
+        if (flags & LITE3D_RENDER_OCCLUSION_QUERY && (*mqrNode)->bbMeshChunk)
+        {
+            SDL_assert((*mqrNode)->currentQuery);
+            lite3d_query_begin(&(*mqrNode)->currentQuery->query);
+            // Обьект виден, рисуем полноценный обьект
+            if ((*mqrNode)->currentQuery->query.anyPassed)
+            {
+                mqr_multirender_queue_command(scene, *mqrNode, (*mqrNode)->meshChunk);
+                mqr_multirender_do_batch(scene, (*mqrNode)->meshChunk->mesh, curInvocationBuffer, LITE3D_FALSE);
+            }
+            // Обьект не виден, рисуем лишь его bounding box для проверки видимости
+            else 
+            {
+                mqr_multirender_queue_command(scene, *mqrNode, (*mqrNode)->bbMeshChunk);
+                mqr_multirender_do_batch(scene, (*mqrNode)->bbMeshChunk->mesh, curInvocationBuffer, LITE3D_TRUE);
+            }
+            lite3d_query_end(&(*mqrNode)->currentQuery->query);
+        }
+        else
+        {
+            mqr_multirender_queue_command(scene, *mqrNode, (*mqrNode)->meshChunk);
+        }
     }
 
-    mqr_multirender_batch(scene, curMesh, curInvocationBuffer);
+    mqr_multirender_do_batch(scene, curMesh, curInvocationBuffer, LITE3D_FALSE);
 }
 
 static void mqr_unit_make_queue(lite3d_scene *scene, _mqr_unit *mqrUnit, uint16_t pass, uint32_t flags)
@@ -527,7 +577,7 @@ static void mqr_render_make_queue(struct lite3d_scene *scene, uint16_t pass, uin
 
         if (!lite3d_list_is_empty(&mqrUnit->nodes))
         {
-            scene->stats.materialBlocks++;
+            scene->stats.totalMaterials++;
             LITE3D_METRIC_CALL(mqr_unit_make_queue, (scene, mqrUnit, pass, flags))
         }
     }
@@ -673,7 +723,7 @@ static void scene_recursive_nodes_update(lite3d_scene *scene,
         scene_recursive_nodes_update(scene, child);
     }
 
-    scene->stats.nodesTotal++;
+    scene->stats.totalNodes++;
 }
 
 static void scene_updated_nodes_validate(lite3d_scene *scene)

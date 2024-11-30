@@ -40,14 +40,15 @@ namespace lite3dpp
         ALBEDO = 1u << 1,
         EMISSION = 1u << 2,
         ALPHA_MASK = 1u << 3,
-        NORMAL = 1u << 4,
-        AO = 1u << 5,
-        SPECULAR = 1u << 6,
-        ROUGHNESS = 1u << 7,
-        METALLIC = 1u << 8,
-        SPECULAR_ROUGNESS_METALLIC = 1u << 9,
-        ROUGNESS_METALLIC = 1u << 10,
-        ENVIRONMENT = 1u << 11
+        NORMAL_RG = 1u << 4,
+        NORMAL_RGB = 1u << 5,
+        AO = 1u << 6,
+        SPECULAR = 1u << 7,
+        ROUGHNESS = 1u << 8,
+        METALLIC = 1u << 9,
+        SPECULAR_ROUGNESS_METALLIC = 1u << 10,
+        ROUGNESS_METALLIC = 1u << 11,
+        ENVIRONMENT = 1u << 12
     };
 
     LITE3D_DECLARE_ENUM_OPERATORS(PBRMaterialFlags);
@@ -57,12 +58,13 @@ namespace lite3dpp
     {
     public:
         
-        using TextureIds = std::array<std::wstring_view, 10>;
+        using TextureIds = std::array<std::wstring_view, 11>;
         static constexpr inline TextureIds gTextureIds = {
             L"AlbedoTexture",
             L"EmissionTexture",
             L"AlphaMaskTexture",
-            L"NormalTexture",
+            L"NormalRGTexture",
+            L"NormalRGBTexture",
             L"AOTexture",
             L"SpecularTexture",
             L"RoughnessTexture",

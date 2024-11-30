@@ -5,7 +5,7 @@
   "RoughnessMetallicTexture": {
     "Name":"<Specular>"
   },
-  "NormalTexture": {
+  "NormalRGBTexture": {
     "Name":"<Normal>"
   },
   "EnvDiffuse": {
@@ -13,6 +13,9 @@
   },
   "EnvSpecular": {
     "Value": 1.0
+  },
+  "NormalScale": {
+    "Value": [1.0, -1.0, 1.0, 1.0]
   },
 
   "Passes":[

@@ -38,6 +38,7 @@ vec2 viewPositionToUV(vec3 pos);
 mat3 TBN(vec3 normal, vec3 tangent);
 mat3 TBN(vec3 normal, vec3 tangent, vec3 btangent);
 vec3 calcNormal(vec2 n, mat3 tbn, vec3 normalScale);
+vec3 calcNormal(vec3 n, mat3 tbn, vec3 normalScale);
 //////////// Other utilities
 ////////////////////////////////////////////////////////////////////////////
 float fadeScreenEdge(vec2 uv);

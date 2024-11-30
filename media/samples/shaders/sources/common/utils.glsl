@@ -121,6 +121,14 @@ vec3 calcNormal(vec2 n, mat3 tbn, vec3 normalScale)
     return normalize(tbn * normalize(vec3(n, z) * normalScale));
 }
 
+vec3 calcNormal(vec3 n, mat3 tbn, vec3 normalScale)
+{
+    // put normal in [-1,1] range in tangent space
+    n = 2.0 * clamp(n, 0.0, 1.0) - 1.0;
+    // trasform normal to world space using common TBN
+    return normalize(tbn * normalize(n * normalScale));
+}
+
 float fadeScreenEdge(vec2 uv)
 {
     vec2 fade = max(vec2(0.0), 12.0 * abs(uv - 0.5) - 5.0);

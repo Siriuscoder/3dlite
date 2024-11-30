@@ -79,7 +79,7 @@ void *lite3d_array_get(lite3d_array *a, size_t index)
 {
     SDL_assert(a);
     SDL_assert(index < a->size);
-    return ((char *) a->data) +(index * a->elemSize);
+    return ((char *) a->data) + (index * a->elemSize);
 }
 
 void lite3d_array_remove(lite3d_array *a, size_t index)
