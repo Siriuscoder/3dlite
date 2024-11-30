@@ -253,8 +253,6 @@ void lite3d_mesh_queue_draw(struct lite3d_mesh *mesh)
         return;
     }
 
-    lite3d_vbo_bind(&mesh->indirectBuffer);
-
     if (firstchunk->hasIndexes)
     {
         lite3d_vao_multidraw_indexed(&firstchunk->vao, 0, mesh->drawQueue.size);

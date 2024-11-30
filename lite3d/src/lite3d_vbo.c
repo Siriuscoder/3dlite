@@ -390,7 +390,10 @@ void lite3d_vbo_bind(const struct lite3d_vbo *vbo)
 void lite3d_vbo_unbind(const struct lite3d_vbo *vbo)
 {
     SDL_assert(vbo);
-    glBindBuffer(vbo->role, 0);
+    if (vbo->role != GL_DRAW_INDIRECT_BUFFER)
+    {
+        glBindBuffer(vbo->role, 0);
+    }
 }
 
 int lite3d_vbo_init(struct lite3d_vbo *vbo, uint16_t usage)

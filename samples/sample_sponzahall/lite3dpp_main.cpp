@@ -71,6 +71,7 @@ public:
         addFlashlight();
         initGIProbes();
 
+        getMain().getResourceManager()->warmUpMeshPartitions();
         getMain().getResourceManager()->dropFileCache();
     }
 
