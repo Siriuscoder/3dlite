@@ -1,0 +1,83 @@
+{
+  "AlbedoTexture": {
+    "Name": "Albedo",
+    "Type": "sampler",
+    "TextureName": "cloth_diffuse_D.texture",
+    "TexturePath": "sponza:textures/json/cloth_diffuse_D.json"
+  },
+  "Roughness": {
+    "Name": "Roughness",
+    "Type": "float",
+    "Value": 1.0
+  },
+  "Metallic": {
+    "Name": "Metallic",
+    "Type": "float",
+    "Value": 0.0
+  },
+  "NormalRGBTexture": {
+    "Name": "Normal",
+    "Type": "sampler",
+    "TextureName": "cloth_normal_D.texture",
+    "TexturePath": "sponza:textures/json/cloth_normal_D.json"
+  },
+  "EnvDiffuse": {
+    "Value": 1.0
+  },
+  "EnvSpecular": {
+    "Value": 0.5
+  },
+  "NormalScale": {
+    "Value": [
+      1.0,
+      -1.0,
+      1.0,
+      1.0
+    ]
+  },
+  "Passes": [
+    {
+      "Pass": 1,
+      "Program": {
+        "Name": "depth.program",
+        "Path": "sponza:shaders/json/depth.json"
+      },
+      "Uniforms": [
+        {
+          "Name": "projViewMatrix"
+        }
+      ]
+    },
+    {
+      "Pass": 2,
+      "Program": {
+        "Name": "bsdf_prepare.program",
+        "Path": "sponza:shaders/json/bsdf_prepare.json"
+      },
+      "Uniforms": [
+        {
+          "Name": "projViewMatrix"
+        }
+      ]
+    },
+    {
+      "Pass": 3,
+      "Program": {
+        "Name": "shadow.program",
+        "Path": "sponza:shaders/json/shadow.json"
+      },
+      "Uniforms": [
+        {
+          "Name": "ShadowMatrix",
+          "UBOName": "SponzaDeffered_ShadowMatrixBuffer",
+          "Type": "UBO"
+        },
+        {
+          "Name": "ShadowIndex",
+          "UBOName": "SponzaDeffered_ShadowIndexBuffer",
+          "Type": "UBO"
+        }
+      ]
+    }
+  ]
+}

@@ -46,8 +46,8 @@ public:
     {
         ConfigurationWriter cfg;
         cfg.set(L"Dynamic", true);
-        cfg.set(L"PreallocVertexSize", 160 * 1024 * 1024);
-        cfg.set(L"PreallocIndexSize", 60 * 1024 * 1024);
+        cfg.set(L"PreallocVertexSize", 170 * 1024 * 1024);
+        cfg.set(L"PreallocIndexSize", 70 * 1024 * 1024);
 
         // Для ускорения загруки выделим место под геометрию заранее
         getMain().getResourceManager()->queryResourceFromJson<lite3dpp::MeshPartition>("sponza.mesh_partition", cfg.write());

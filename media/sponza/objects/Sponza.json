@@ -3568,6 +3568,213 @@
         ]
       },
       {
+        "Name": "Knight",
+        "Mesh": {
+          "Mesh": "sponza:models/json/Knight.json",
+          "Name": "Knight.mesh"
+        },
+        "Position": [
+          2.5,
+          7.385064293430332e-08,
+          0.9467198848724365
+        ],
+        "Rotation": [
+          0.0,
+          -0.0,
+          -0.7071067690849304,
+          0.7071067690849304
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "Knight.001",
+        "Mesh": {
+          "Mesh": "sponza:models/json/Knight.json",
+          "Name": "Knight.mesh"
+        },
+        "Position": [
+          2.5,
+          1.8000000715255737,
+          0.9467198848724365
+        ],
+        "Rotation": [
+          0.0,
+          -0.0,
+          -0.7071067690849304,
+          0.7071067690849304
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "Knight.002",
+        "Mesh": {
+          "Mesh": "sponza:models/json/Knight.json",
+          "Name": "Knight.mesh"
+        },
+        "Position": [
+          2.5,
+          -1.6999999284744263,
+          0.9467198848724365
+        ],
+        "Rotation": [
+          0.0,
+          -0.0,
+          -0.7071067690849304,
+          0.7071067690849304
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "Knight.003",
+        "Mesh": {
+          "Mesh": "sponza:models/json/Knight.json",
+          "Name": "Knight.mesh"
+        },
+        "Position": [
+          4.800000190734863,
+          7.385064293430332e-08,
+          0.9467198848724365
+        ],
+        "Rotation": [
+          0.0,
+          -0.0,
+          -0.7071067690849304,
+          0.7071067690849304
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "Knight.004",
+        "Mesh": {
+          "Mesh": "sponza:models/json/Knight.json",
+          "Name": "Knight.mesh"
+        },
+        "Position": [
+          4.800000190734863,
+          1.8000000715255737,
+          0.9467198848724365
+        ],
+        "Rotation": [
+          0.0,
+          -0.0,
+          -0.7071067690849304,
+          0.7071067690849304
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "Knight.005",
+        "Mesh": {
+          "Mesh": "sponza:models/json/Knight.json",
+          "Name": "Knight.mesh"
+        },
+        "Position": [
+          4.800000190734863,
+          -1.6999999284744263,
+          0.9467198848724365
+        ],
+        "Rotation": [
+          0.0,
+          -0.0,
+          -0.7071067690849304,
+          0.7071067690849304
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "Knight.006",
+        "Mesh": {
+          "Mesh": "sponza:models/json/Knight.json",
+          "Name": "Knight.mesh"
+        },
+        "Position": [
+          6.900000095367432,
+          7.385064293430332e-08,
+          0.9467198848724365
+        ],
+        "Rotation": [
+          0.0,
+          -0.0,
+          -0.7071067690849304,
+          0.7071067690849304
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "Knight.007",
+        "Mesh": {
+          "Mesh": "sponza:models/json/Knight.json",
+          "Name": "Knight.mesh"
+        },
+        "Position": [
+          6.900000095367432,
+          1.8000000715255737,
+          0.9467198848724365
+        ],
+        "Rotation": [
+          0.0,
+          -0.0,
+          -0.7071067690849304,
+          0.7071067690849304
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "Knight.008",
+        "Mesh": {
+          "Mesh": "sponza:models/json/Knight.json",
+          "Name": "Knight.mesh"
+        },
+        "Position": [
+          6.900000095367432,
+          -1.6999999284744263,
+          0.9467198848724365
+        ],
+        "Rotation": [
+          0.0,
+          -0.0,
+          -0.7071067690849304,
+          0.7071067690849304
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
         "Name": "lamp_light_1st_floor_01",
         "Light": {
           "Type": "Point",
