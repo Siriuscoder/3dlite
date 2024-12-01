@@ -55,6 +55,8 @@ typedef struct _mqr_node
     _mqr_unit *matUnit;
 } _mqr_node;
 
+#define LITE3D_INVOCATION_INSTANCING    0x1
+
 #pragma pack(push, 1)
 typedef struct _node_invocation_info
 {
@@ -63,7 +65,8 @@ typedef struct _node_invocation_info
     kmMat4 normal;
     uint32_t materialIdx;
     uint32_t flags;
-    uint32_t reserved[2];
+    uint32_t instancingIndex;
+    uint32_t reserved;
 } _node_invocation_info; 
 #pragma pack(pop)
 

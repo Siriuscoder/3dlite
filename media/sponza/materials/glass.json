@@ -3,32 +3,32 @@
     "Name": "Albedo",
     "Type": "v4",
     "Value": [
-      0.8500000238418579,
-      0.8500000238418579,
-      0.8500000238418579,
-      0.5
+      0.009316107258200645,
+      0.009316107258200645,
+      0.009316107258200645,
+      0.75
     ]
   },
   "Metallic": {
     "Name": "Metallic",
     "Type": "float",
-    "Value": 0.8999999761581421
+    "Value": 0.20000000298023224
   },
   "Roughness": {
     "Name": "Roughness",
     "Type": "float",
-    "Value": 0.05000000074505806
+    "Value": 0.10000000149011612
   },
   "Alpha": {
     "Name": "Alpha",
     "Type": "float",
-    "Value": 0.5
+    "Value": 0.75
   },
   "EnvDiffuse": {
     "Value": 1.0
   },
   "EnvSpecular": {
-    "Value": 1.0
+    "Value": 0.5
   },
   "Passes": [
     {
