@@ -28,6 +28,24 @@
 
 static lite3d_vbo gAuxGlobalBuffer = {0, 0, 0};
 
+int lite3d_mesh_aux_buffer_init(void)
+{
+    if (lite3d_check_instanced_arrays())
+    {
+        if (!gAuxGlobalBuffer.vboID)
+        {
+            if (!lite3d_vbo_init(&gAuxGlobalBuffer, LITE3D_VBO_STREAM_DRAW))
+            {
+                return LITE3D_FALSE;
+            }
+        }
+
+        return LITE3D_TRUE;
+    }
+
+    return LITE3D_FALSE;
+}
+
 int lite3d_mesh_init(struct lite3d_mesh *mesh, uint16_t usage)
 {
     SDL_assert(mesh);
@@ -35,18 +53,12 @@ int lite3d_mesh_init(struct lite3d_mesh *mesh, uint16_t usage)
     memset(mesh, 0, sizeof (lite3d_mesh));
     mesh->version = LITE3D_VERSION_NUM;
     lite3d_list_init(&mesh->chunks);
-    
-    if (lite3d_check_instanced_arrays())
-    {
-        if (!gAuxGlobalBuffer.vboID)
-        {
-            if (!lite3d_vbo_init(&gAuxGlobalBuffer, LITE3D_VBO_STREAM_DRAW))
-                return LITE3D_FALSE;
-        }
 
+    if (gAuxGlobalBuffer.vboID != 0)
+    {
         mesh->auxBuffer = &gAuxGlobalBuffer;
     }
-
+    
     /* gen buffer for store vertex data */
     if (!lite3d_vbo_init(&mesh->vertexBuffer, usage))
         return LITE3D_FALSE;

@@ -354,7 +354,17 @@ namespace lite3dpp
                 if (renderTargetJson.getBool(L"StencilOutput", false))
                     renderFlags |= LITE3D_RENDER_STENCIL_OUTPUT;
                 if (renderTargetJson.getBool(L"RenderInstancing", false))
+                {
+                    // Инстансинг включен, но при этом мультирендер выключен
+                    // В этом случае мы испотьзуем инстанcинг через AttribDivisor
+                    // Нужно инициализировать aux буфер для хранения атрибутов
+                    if (!renderTargetJson.getBool(L"MultiRender", false))
+                    {
+                        lite3d_mesh_aux_buffer_init();
+                    }
+
                     renderFlags |= LITE3D_RENDER_INSTANCING;
+                }
                 if (renderTargetJson.getBool(L"OcclusionQuery", false))
                 {
                     if (!lite3d_scene_oocclusion_query_support())

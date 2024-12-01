@@ -60,6 +60,7 @@ typedef struct lite3d_mesh_chunk
     lite3d_mesh *mesh;
 } lite3d_mesh_chunk;
 
+LITE3D_CEXPORT int lite3d_mesh_aux_buffer_init(void);
 LITE3D_CEXPORT int lite3d_mesh_init(struct lite3d_mesh *mesh, uint16_t usage);
 LITE3D_CEXPORT void lite3d_mesh_purge(struct lite3d_mesh *mesh);
 LITE3D_CEXPORT int lite3d_mesh_extend(struct lite3d_mesh *mesh, 
