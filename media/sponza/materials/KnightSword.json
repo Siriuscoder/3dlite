@@ -16,19 +16,14 @@
     "Type": "float",
     "Value": 1.0
   },
+  "Roughness": {
+    "Value": 1.25
+  },
   "EnvDiffuse": {
     "Value": 1.0
   },
   "EnvSpecular": {
     "Value": 0.5
-  },
-  "NormalScale": {
-    "Value": [
-      1.0,
-      -1.0,
-      1.0,
-      1.0
-    ]
   },
   "Passes": [
     {

@@ -14,7 +14,7 @@
 
 #define SSS_MAX_ADAPTIVE_DEPTH_THRESHOLD            0.023   // Min Depth clipping to avoid accuracy artifacts
 #define SSS_MAX_STEPS                               32      // Max ray steps, affects quality and performance.
-#define SSS_MAX_RAY_DISTANCE                        0.85    // Max shadow length, longer shadows are less accurate.
+#define SSS_MAX_RAY_DISTANCE                        0.35    // Max shadow length, longer shadows are less accurate.
 #define SSS_MAX_DEPTH_THRESHOLD                     0.5     // Depth testing thickness.
 #define SSS_MAX_ADAPTIVE_DEPTH_THRESHOLD            0.023   // Min Depth clipping to avoid accuracy artifacts
 #define SSS_STEP_LENGTH                             (SSS_MAX_RAY_DISTANCE / float(SSS_MAX_STEPS))

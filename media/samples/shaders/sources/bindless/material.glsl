@@ -100,28 +100,31 @@ Surface makeSurface(vec2 uv, vec3 wv, vec3 wn, vec3 wt, vec3 wb)
             }
             else if (hasFlag(surface.material.slot[i].flags, TEXTURE_FLAG_SPECULAR))
             {
-                surface.material.specular *= texture(surface.material.slot[i].textureId, uv).r;
+                surface.material.specular = clamp(surface.material.specular * 
+                    texture(surface.material.slot[i].textureId, uv).r, 0.0, 1.0);
             }
             else if (hasFlag(surface.material.slot[i].flags, TEXTURE_FLAG_ROUGHNESS))
             {
-                surface.material.roughness *= texture(surface.material.slot[i].textureId, uv).r;
+                surface.material.roughness = clamp(surface.material.roughness * 
+                    texture(surface.material.slot[i].textureId, uv).r, 0.085, 1.0);
             }
             else if (hasFlag(surface.material.slot[i].flags, TEXTURE_FLAG_METALLIC))
             {
-                surface.material.metallic *= texture(surface.material.slot[i].textureId, uv).r;
+                surface.material.metallic = clamp(surface.material.metallic * 
+                    texture(surface.material.slot[i].textureId, uv).r, 0.0, 1.0);
             }
             else if (hasFlag(surface.material.slot[i].flags, TEXTURE_FLAG_SPECULAR_ROUGNESS_METALLIC))
             {
                 vec3 srm = texture(surface.material.slot[i].textureId, uv).rgb;
-                surface.material.specular *= srm.r;
-                surface.material.roughness *= srm.g;
-                surface.material.metallic *= srm.b;
+                surface.material.specular = clamp(surface.material.specular * srm.r, 0.0, 1.0);
+                surface.material.roughness = clamp(surface.material.roughness * srm.g, 0.085, 1.0);
+                surface.material.metallic = clamp(surface.material.metallic * srm.b, 0.0, 1.0);
             }
             else if (hasFlag(surface.material.slot[i].flags, TEXTURE_FLAG_ROUGNESS_METALLIC))
             {
                 vec2 rm = texture(surface.material.slot[i].textureId, uv).gb;
-                surface.material.roughness *= rm.r;
-                surface.material.metallic *= rm.g;
+                surface.material.roughness = clamp(surface.material.roughness * rm.r, 0.085, 1.0);
+                surface.material.metallic = clamp(surface.material.metallic * rm.g, 0.0, 1.0);
             }
         }
         else

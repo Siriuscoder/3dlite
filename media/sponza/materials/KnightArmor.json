@@ -15,6 +15,9 @@
     "TextureName": "brushed_metal_rough_D.texture",
     "TexturePath": "sponza:textures/json/brushed_metal_rough_D.json"
   },
+  "Roughness": {
+    "Value": 1.65
+  },
   "Metallic": {
     "Name": "Metallic",
     "Type": "float",
@@ -25,14 +28,6 @@
   },
   "EnvSpecular": {
     "Value": 0.5
-  },
-  "NormalScale": {
-    "Value": [
-      1.0,
-      -1.0,
-      1.0,
-      1.0
-    ]
   },
   "Passes": [
     {

@@ -16,6 +16,9 @@
     "Type": "float",
     "Value": 1.0
   },
+  "Roughness": {
+    "Value": 1.35
+  },
   "NormalRGBTexture": {
     "Name": "Normal",
     "Type": "sampler",

@@ -14,9 +14,6 @@
   "EnvSpecular": {
     "Value": 0.5
   },
-  "NormalScale": {
-    "Value": [1.0, -1.0, 1.0, 1.0]
-  },
 
   "Passes":[
     {
