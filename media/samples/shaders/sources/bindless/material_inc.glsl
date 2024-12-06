@@ -1,5 +1,6 @@
 #extension GL_ARB_shader_draw_parameters : require
 #extension GL_ARB_bindless_texture : require
+#extension GL_ARB_texture_cube_map_array : require
 
 #define TEXTURE_FLAG_EMPTY                           uint(0)
 #define TEXTURE_FLAG_LOADED                          uint(1 << 0)
@@ -15,9 +16,13 @@
 #define TEXTURE_FLAG_SPECULAR_ROUGNESS_METALLIC      uint(1 << 10)
 #define TEXTURE_FLAG_ROUGNESS_METALLIC               uint(1 << 11)
 #define TEXTURE_FLAG_ENVIRONMENT                     uint(1 << 12)
+#define TEXTURE_FLAG_ENVIRONMENT_PROBE               uint(1 << 13)
 
 #define MATERIAL_NORMAL_MAPPING_TANGENT              uint(1 << 0)
 #define MATERIAL_NORMAL_MAPPING_TANGENT_BITANGENT    uint(1 << 1)
+#define MATERIAL_ENVIRONMENT_TEXTURE                 uint(1 << 2)
+#define MATERIAL_ENVIRONMENT_MULTI_PROBE             uint(1 << 3)
+#define MATERIAL_ENVIRONMENT_SINGLE_PROBE            uint(1 << 4)
 
 struct TextureHandle
 {
@@ -29,6 +34,13 @@ struct TextureHandle
 struct TextureCubeHandle
 {
     samplerCube textureId;
+    uint flags;
+    uint reserved;
+};
+
+struct TextureCubeArrayHandle
+{
+    samplerCubeArray textureId;
     uint flags;
     uint reserved;
 };
@@ -58,12 +70,13 @@ struct Material
     float envSpecular;
     float ior;
     float emissionStrength;
-    uint reserved01;
-    uint reserved02;
-    uint reserved03;
+    float environmentUVScale;
+    uint environmentSingleProbeIndex;
+    uint reserved;
     uint flags;
     TextureHandle slot[8];
     TextureCubeHandle environment;
+    TextureCubeArrayHandle environmentProbe;
 };
 
 struct Surface

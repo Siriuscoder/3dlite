@@ -22,47 +22,38 @@
 #include <lite3d/lite3d_kazmath.h>
 #include <lite3d/lite3d_scene_node.h>
 
-#define LITE3D_LIGHT_UNDEFINED          0x0
-#define LITE3D_LIGHT_POINT              0x1
-#define LITE3D_LIGHT_DIRECTIONAL        0x2
-#define LITE3D_LIGHT_SPOT               0x3
+#define LITE3D_LIGHT_UNDEFINED                  0x0
+#define LITE3D_LIGHT_POINT                      (1u << 0)
+#define LITE3D_LIGHT_DIRECTIONAL                (1u << 1)
+#define LITE3D_LIGHT_SPOT                       (1u << 2)
+#define LITE3D_LIGHT_ENABLED                    (1u << 3)
+#define LITE3D_LIGHT_CASTSHADOW                 (1u << 4)
+#define LITE3D_LIGHT_CASTSHADOW_PCF3x3          (1u << 5)
+#define LITE3D_LIGHT_CASTSHADOW_PCF4x4          (1u << 6)
+#define LITE3D_LIGHT_CASTSHADOW_POISSON         (1u << 7)
+#define LITE3D_LIGHT_CASTSHADOW_SSS             (1u << 8)
 
-/* align structure to 16 bytes texel, this ability gives us a 
- * chance to use each kmVec4 field in this structure as a texel in 
- * texture buffer */
-#pragma pack(push,16)
+#pragma pack(push,1)
 typedef struct lite3d_light_params
 {
-    /* block1.x - type */
-    /* block1.y - enabled */
-    /* block1.z - influence distance */
-    /* block1.w - influence min radiance */
-    kmVec4 block1;
-
-    /* block2.x - diffuse.r */
-    /* block2.y - diffuse.g  */
-    /* block2.z - diffuse.b */
-    /* block2.w - radiance */
-    kmVec4 block2;
-
-    /* block3.x - position.x */
-    /* block3.y - position.y */
-    /* block3.z - position.z */
-    /* block3.w - user index */
-    kmVec4 block3;
-
-    /* block4.x - direction.x */
-    /* block4.y - direction.y */
-    /* block4.z - direction.z */
-    /* block4.w - attenuation constant */
-    kmVec4 block4;
-
-    /* block5.x - attenuation linear */
-    /* block5.y - attenuation quadratic */
-    /* block5.z - angle inner cone */
-    /* block5.w - angle outer cone */
-    kmVec4 block5;
-
+    kmVec3 position;
+    uint32_t pad1;
+    kmVec3 direction;
+    uint32_t pad2;
+    kmVec3 diffuse;
+    uint32_t pad3;
+    float radiance;
+    float influenceDistance;
+    float maxInfluence;
+    float minRadianceCutOff;
+    float innerCone; // Rad
+    float outerCone; // Rad
+    float attenuationConstant;
+    float attenuationLinear;
+    float attenuationQuadratic;
+    float lightSize;
+    uint32_t shadowIndex;
+    uint32_t flags;
 } lite3d_light_params;
 #pragma pack(pop)
 

@@ -33,10 +33,10 @@ namespace lite3dpp
     {
         MultiRenderMaterial::loadFromConfigImpl(helper);
 
-        setAlbedo(helper.getObject(L"Albedo").getVec4(L"Value", KM_VEC4_ONE), false);
-        setEmission(helper.getObject(L"Emission").getVec4(L"Value", KM_VEC4_ZERO), false);
-        setF0(helper.getObject(L"F0").getVec4(L"Value", kmVec4 { 0.04, 0.04, 0.04, 1.0 }), false);
-        setNormalScale(helper.getObject(L"NormalScale").getVec4(L"Value", KM_VEC4_ONE), false);
+        setAlbedo(helper.getObject(L"Albedo").getVec3(L"Value", KM_VEC3_ONE), false);
+        setEmission(helper.getObject(L"Emission").getVec3(L"Value", KM_VEC3_ZERO), false);
+        setF0(helper.getObject(L"F0").getVec3(L"Value", kmVec3 { 0.04, 0.04, 0.04 }), false);
+        setNormalScale(helper.getObject(L"NormalScale").getVec3(L"Value", KM_VEC3_ONE), false);
         setAlpha(helper.getObject(L"Alpha").getDouble(L"Value", 1.0), false);
         setSpecular(helper.getObject(L"Specular").getDouble(L"Value", 1.0), false);
         setRoughness(helper.getObject(L"Roughness").getDouble(L"Value", 1.0), false);
@@ -45,7 +45,8 @@ namespace lite3dpp
         setEnvSpecular(helper.getObject(L"EnvSpecular").getDouble(L"Value", 1.0), false);
         setIor(helper.getObject(L"Ior").getDouble(L"Value", 1.0), false);
         setEmissionStrength(helper.getObject(L"EmissionStrength").getDouble(L"Value", 0.0), false);
-        setEnvironmentScale(helper.getObject(L"EnvironmentScale").getDouble(L"Value", 1.0), false);
+        setEnvironmentUVScale(helper.getObject(L"EnvironmentUVScale").getDouble(L"Value", 1.0), false);
+        setEnvironmentSingleProbeIndex(helper.getObject(L"EnvironmentSingleProbeIndex").getInt(L"Value", 0), false);
 
         size_t index = 0;
         for (size_t i = 0; i < gTextureIds.size(); ++i)
@@ -65,6 +66,14 @@ namespace lite3dpp
         {
             auto textureCfg = helper.getObject(L"EnvironmentTexture");
             setEnvironmentTexture(getMain().getResourceManager()->queryResource<TextureImage>(
+                textureCfg.getString(L"TextureName"),
+                textureCfg.getString(L"TexturePath")), false);
+        }
+
+        if (helper.has(L"EnvironmentProbeTexture"))
+        {
+            auto textureCfg = helper.getObject(L"EnvironmentProbeTexture");
+            setEnvironmentProbeTexture(getMain().getResourceManager()->queryResource<TextureImage>(
                 textureCfg.getString(L"TextureName"),
                 textureCfg.getString(L"TexturePath")), false);
         }
@@ -101,6 +110,19 @@ namespace lite3dpp
 
         mMaterialEntity.Environment.flags = TextureFlags::ENVIRONMENT | TextureFlags::LOADED;
         mMaterialEntity.Environment.textureHandle = texture->handle();
+        
+        if (updateData)
+        {
+            update();
+        }
+    }
+
+    void PBRMaterial::setEnvironmentProbeTexture(Texture *texture, bool updateData)
+    {
+        SDL_assert(texture);
+
+        mMaterialEntity.EnvironmentProbe.flags = TextureFlags::ENVIRONMENT_PROBE | TextureFlags::LOADED;
+        mMaterialEntity.EnvironmentProbe.textureHandle = texture->handle();
         
         if (updateData)
         {

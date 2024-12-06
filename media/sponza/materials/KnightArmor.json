@@ -12,8 +12,8 @@
   "RoughnessTexture": {
     "Name": "Specular",
     "Type": "sampler",
-    "TextureName": "brushed_metal_rough_D.texture",
-    "TexturePath": "sponza:textures/json/brushed_metal_rough_D.json"
+    "TextureName": "brushed_metal_rough_F.texture",
+    "TexturePath": "sponza:textures/json/brushed_metal_rough_F.json"
   },
   "Roughness": {
     "Value": 1.65
@@ -27,7 +27,7 @@
     "Value": 1.0
   },
   "EnvSpecular": {
-    "Value": 0.5
+    "Value": 1.0
   },
   "Passes": [
     {

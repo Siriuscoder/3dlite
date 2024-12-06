@@ -10,6 +10,8 @@
 #define M_PI                                    3.14159265358979323846264
 #define PHI                                     1.61803398874989484820459
 
+#include "samples:shaders/sources/common/structs_inc.glsl"
+
 bool isNear(float a1, float a2);
 bool isNear(vec3 a1, vec3 a2);
 bool isZero(float a1);
@@ -67,5 +69,3 @@ float GGX(float NdotV, float roughness);
 // Geometry function (Smith's)
 float G(float NdotV, float NdotL, float roughness);
 
-
-#include "samples:shaders/sources/common/env_probe_inc.glsl"

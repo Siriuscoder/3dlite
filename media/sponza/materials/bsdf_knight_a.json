@@ -12,7 +12,7 @@
     "Value": 1.0
   },
   "EnvSpecular": {
-    "Value": 0.5
+    "Value": 1.0
   },
 
   "Passes":[

@@ -31,7 +31,7 @@ namespace lite3dpp_pipeline {
     {
         SDL_assert(node);
         // Ставим перспективу сразу при инициализации, считаем что конус источника света не меняется 
-        if (node->getLight()->getType() == LITE3D_LIGHT_DIRECTIONAL)
+        if (node->getLight()->getType() == LightSourceFlags::TypeDirectional)
         {
             mShadowCamera->setupOrtho(params.znear, params.zfar, params.left, params.right, params.bottom, params.top);
         }
@@ -162,7 +162,7 @@ namespace lite3dpp_pipeline {
         mShadowCasters.emplace_back(std::make_unique<ShadowCaster>(mMain, node->getName() + std::to_string(index), 
             node, mProjection));
         // Запишем в источник света индекс его теневой матрицы в UBO
-        node->getLight()->setUserIndex(index);
+        node->getLight()->setShadowIndex(index);
         return mShadowCasters.back().get();
     }
 

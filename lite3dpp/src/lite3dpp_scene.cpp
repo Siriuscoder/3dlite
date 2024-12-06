@@ -245,7 +245,7 @@ namespace lite3dpp
                 anyValidated = true;
             }
 
-            if (light->getLight()->getType() == LITE3D_LIGHT_DIRECTIONAL || 
+            if (light->getLight()->getType() == LightSourceFlags::TypeDirectional || 
                 !light->frustumTest() || 
                 camera.inFrustum(*light->getLight()))
             {

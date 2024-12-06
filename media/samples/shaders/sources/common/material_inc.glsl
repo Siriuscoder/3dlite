@@ -15,7 +15,8 @@ struct Material
     float envSpecular;
     float ior;
     float emissionStrength;
-    float environmentScale;
+    float environmentUVScale;
+    uint environmentSingleProbeIndex;
     uint flags;
 };
 

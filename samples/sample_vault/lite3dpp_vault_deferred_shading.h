@@ -105,7 +105,7 @@ public:
             light->translateToWorld();
             const auto &lightSource = *light->getLight();
             material->setIntParameter(1, "light.enabled", lightSource.enabled() ? 1 : 0, false);
-            material->setIntParameter(1, "light.type", lightSource.getType(), false);
+            material->setIntParameter(1, "light.type", static_cast<int32_t>(lightSource.getType()), false);
             material->setFloatv3Parameter(1, "light.position", lightSource.getWorldPosition(), false);
             material->setFloatv3Parameter(1, "light.diffuse", lightSource.getDiffuse(), false);
             material->setFloatv3Parameter(1, "light.direction", lightSource.getWorldDirection(), false);

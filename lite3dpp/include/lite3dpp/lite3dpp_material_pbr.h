@@ -48,7 +48,8 @@ namespace lite3dpp
         METALLIC = 1u << 9,
         SPECULAR_ROUGNESS_METALLIC = 1u << 10,
         ROUGNESS_METALLIC = 1u << 11,
-        ENVIRONMENT = 1u << 12
+        ENVIRONMENT = 1u << 12,
+        ENVIRONMENT_PROBE = 1u << 13
     };
 
     LITE3D_DECLARE_ENUM_OPERATORS(PBRMaterialFlags);
@@ -84,10 +85,14 @@ namespace lite3dpp
 
         struct PBRMaterialRaw
         {
-            kmVec4 Albedo;
-            kmVec4 Emission;
-            kmVec4 F0;
-            kmVec4 NormalScale;
+            kmVec3 Albedo;
+            uint32_t pad1 = 0;
+            kmVec3 Emission;
+            uint32_t pad2 = 0;
+            kmVec3 F0;
+            uint32_t pad3 = 0;
+            kmVec3 NormalScale;
+            uint32_t pad4 = 0;
             float Alpha;
             float Specular;
             float Roughness;
@@ -96,11 +101,13 @@ namespace lite3dpp
             float EnvSpecular;
             float Ior;
             float EmissionStrength;
-            float EnvironmentScale;
-            uint32_t reserved[2] = {0};
+            float EnvironmentUVScale;
+            uint32_t EnvironmentSingleProbeIndex;
+            uint32_t reserved = 0;
             PBRMaterialFlags Flags = PBRMaterialFlags::EMPTY;
             TextureHandleRaw Textures[8];
             TextureHandleRaw Environment;
+            TextureHandleRaw EnvironmentProbe;
         };
 
 #pragma pack(pop)
@@ -112,10 +119,10 @@ namespace lite3dpp
         inline uint32_t getMaterialIndex() const 
         { return mMaterialIndex; }
 
-        LITE3D_DECLARE_PBR_MATERIAL_FIELD(kmVec4, Albedo);
-        LITE3D_DECLARE_PBR_MATERIAL_FIELD(kmVec4, Emission);
-        LITE3D_DECLARE_PBR_MATERIAL_FIELD(kmVec4, F0);
-        LITE3D_DECLARE_PBR_MATERIAL_FIELD(kmVec4, NormalScale);
+        LITE3D_DECLARE_PBR_MATERIAL_FIELD(kmVec3, Albedo);
+        LITE3D_DECLARE_PBR_MATERIAL_FIELD(kmVec3, Emission);
+        LITE3D_DECLARE_PBR_MATERIAL_FIELD(kmVec3, F0);
+        LITE3D_DECLARE_PBR_MATERIAL_FIELD(kmVec3, NormalScale);
         LITE3D_DECLARE_PBR_MATERIAL_FIELD(float, Alpha);
         LITE3D_DECLARE_PBR_MATERIAL_FIELD(float, Specular);
         LITE3D_DECLARE_PBR_MATERIAL_FIELD(float, Roughness);
@@ -124,11 +131,13 @@ namespace lite3dpp
         LITE3D_DECLARE_PBR_MATERIAL_FIELD(float, EnvSpecular);
         LITE3D_DECLARE_PBR_MATERIAL_FIELD(float, Ior);
         LITE3D_DECLARE_PBR_MATERIAL_FIELD(float, EmissionStrength);
-        LITE3D_DECLARE_PBR_MATERIAL_FIELD(float, EnvironmentScale);
+        LITE3D_DECLARE_PBR_MATERIAL_FIELD(float, EnvironmentUVScale);
+        LITE3D_DECLARE_PBR_MATERIAL_FIELD(uint32_t, EnvironmentSingleProbeIndex);
         LITE3D_DECLARE_PBR_MATERIAL_FIELD(PBRMaterialFlags, Flags);
 
         void setTexture(Texture *texture, TextureFlags flags, size_t index, bool updateData = true);
         void setEnvironmentTexture(Texture *texture, bool updateData);
+        void setEnvironmentProbeTexture(Texture *texture, bool updateData);
         void update();
 
     protected:

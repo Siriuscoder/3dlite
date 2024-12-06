@@ -102,9 +102,9 @@ class asIScriptContext;
 #define LITE3D_DECLARE_ENUM_OPERATORS(e) \
     inline e operator|(e a, e b) \
     { \
-        return static_cast<e>(static_cast<int32_t>(a) | static_cast<int32_t>(b)); \
+        return static_cast<e>(static_cast<uint32_t>(a) | static_cast<uint32_t>(b)); \
     } \
     inline e operator&(e a, e b) \
     { \
-        return static_cast<e>(static_cast<int32_t>(a) & static_cast<int32_t>(b)); \
+        return static_cast<e>(static_cast<uint32_t>(a) & static_cast<uint32_t>(b)); \
     }

@@ -107,6 +107,15 @@ public:
             mSUNShadowCaster->invalidate();
             //mPipeline->getIBL()->rebuild();
         }
+
+        auto sponzaStatic = mPipeline->getMainScene().getObject("Sponza");
+        for (const auto &node : sponzaStatic->getNodes())
+        {
+            if (node.first.starts_with("Knight"))
+            {
+                node.second->rotateY(0.02 * deltaRetard);
+            }
+        }
     }
 
     void addFlashlight()
