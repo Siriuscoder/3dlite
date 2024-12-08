@@ -16,12 +16,12 @@ ivec2 getProbeTextureMaxLodAndCount(in Surface surface)
     );
 }
 
-vec3 getEnvTextureLod(vec3 uv, float lod)
+vec3 getEnvTextureLod(in Surface surface, vec3 uv, float lod)
 {
-    return textureLod(surface.material.environment.textureId, uv, lod).rgb;
+    return textureLod(surface.material.environment.textureId, uv * surface.material.environmentUVScale, lod).rgb;
 }
 
-vec3 getProbeTextureLod(vec3 uv, int index, float lod)
+vec3 getProbeTextureLod(in Surface surface, vec3 uv, uint index, float lod)
 {
     return textureLod(surface.material.environmentProbe.textureId, vec4(uv, index), lod).rgb;
 }
@@ -45,20 +45,16 @@ ivec2 getProbeTextureMaxLodAndCount(in Surface surface)
     );
 }
 
-vec3 getEnvTextureLod(vec3 uv, float lod)
+vec3 getEnvTextureLod(in Surface surface, vec3 uv, float lod)
 {
-    return textureLod(Environment, uv, lod).rgb;
+    return textureLod(Environment, uv * surface.material.environmentUVScale, lod).rgb;
 }
 
-vec3 getProbeTextureLod(vec3 uv, int index, float lod)
+vec3 getProbeTextureLod(in Surface surface, vec3 uv, uint index, float lod)
 {
     return textureLod(EnvironmentProbe, vec4(uv, index), lod).rgb;
 }
 
-#endif
-
-#ifndef LITE3D_BASE_AMBIENT_LIGHT
-#define LITE3D_BASE_AMBIENT_LIGHT vec3(0.0)
 #endif
 
 #ifndef LITE3D_ENV_PROBE_DIFFUSE_POWER
@@ -69,13 +65,15 @@ vec3 getProbeTextureLod(vec3 uv, int index, float lod)
 #define LITE3D_ENV_PROBE_SPECULAR_POWER 10.0
 #endif
 
+#ifndef LITE3D_ENV_PROBE_RELATIVE_DISTANCE_THRESHOLD
+#define LITE3D_ENV_PROBE_RELATIVE_DISTANCE_THRESHOLD 0.04
+#endif
 
 layout(std140) uniform EnvProbesData
 {
     EnvironmentProbeStruct probes[LITE3D_ENV_PROBE_MAX];
 };
 
-//vec3 P, vec3 V, vec3 N, float NdotV, vec3 albedo, vec3 specular, float edF, float esF)
 vec3 ComputeIndirect(in Surface surface, in AngularInfo angular)
 {
     vec3 diffuseIrradianceLx = vec3(0.0);
@@ -91,74 +89,88 @@ vec3 ComputeIndirect(in Surface surface, in AngularInfo angular)
 #endif
         int maxLod = getEnvTextureMaxLod(surface);
         // Reflect vector from surface
-        vec3 R = reflect(-angular.V, surface.normal);
+        vec3 R = reflect(-angular.viewDir, surface.normal);
         // Fresnel by Schlick aproxx
         vec3 F = fresnelSchlickRoughness(angular.NdotV, surface.material);
         // Duffuse irradiance 
         diffuseIrradianceLx = diffuseFactor(F, surface.material.metallic) * surface.material.albedo.rgb * 
-            getEnvTextureLod(surface.normal * surface.material.environmentUVScale, maxLod - 1.0);
+            getEnvTextureLod(surface, surface.normal, maxLod - 1.0);
         // Specular 
         float specularLevel = sqrt(surface.material.roughness) * maxLod;
-        specularIrradianceLx = getEnvTextureLod(R * surface.material.environmentUVScale, specularLevel) * F;
+        specularIrradianceLx = getEnvTextureLod(surface, R, specularLevel) * F;
     }
     else if (hasFlag(surface.material.flags, MATERIAL_ENVIRONMENT_SINGLE_PROBE))
     {
         ivec2 maxLodAndCount = getProbeTextureMaxLodAndCount(surface);
-        float specularLevel = sqrt(specular.y) * maxLodAndCount.x;
+        float specularLevel = sqrt(surface.material.roughness) * maxLodAndCount.x;
         // Reflect vector from surface
-        vec3 R = reflect(-angular.V, surface.normal);
+        vec3 R = reflect(-angular.viewDir, surface.normal);
         // Fresnel by Schlick aproxx
-        vec3 F = fresnelSchlickRoughness(NdotV, surface.material);
+        vec3 F = fresnelSchlickRoughness(angular.NdotV, surface.material);
+
+        EnvironmentProbeStruct probe = probes[surface.material.environmentSingleProbeIndex];
         // Calc indirect light from single probe by index
-        if (hasFlag(probes[p].flags, ENV_PROBE_FLAG_IRRADIANCE))
+        if (hasFlag(probe.flags, LITE3D_ENV_PROBE_FLAG_IRRADIANCE))
         {
-            diffuseIrradianceLx = getProbeTextureLod(surface.normal, surface.material.environmentSingleProbeIndex, maxLod - 1.0);
+            diffuseIrradianceLx = getProbeTextureLod(surface, surface.normal, surface.material.environmentSingleProbeIndex, maxLodAndCount.x - 1.0);
         }
 
-        if (hasFlag(probes[p].flags, ENV_PROBE_FLAG_SPECULAR))
+        if (hasFlag(probe.flags, LITE3D_ENV_PROBE_FLAG_SPECULAR))
         {
-            specularIrradianceLx = getProbeTextureLod(R, surface.material.environmentSingleProbeIndex, specularLevel);
+            specularIrradianceLx = getProbeTextureLod(surface, R, surface.material.environmentSingleProbeIndex, specularLevel);
         }
 
-        diffuseIrradianceLx *= diffuseFactor(F, surface.material.metallic) * albedo;
+        diffuseIrradianceLx *= diffuseFactor(F, surface.material.metallic) * surface.material.albedo.rgb;
         specularIrradianceLx *= F;
     }
     else if (hasFlag(surface.material.flags, MATERIAL_ENVIRONMENT_MULTI_PROBE))
     {
         float nearProbeDistance = FLT_MAX;
         ivec2 maxLodAndCount = getProbeTextureMaxLodAndCount(surface);
-        int probesCount = maxLodAndCount.y;
-        float specularLevel = sqrt(specular.y) * maxLodAndCount.x;
+        uint probesCount = maxLodAndCount.y;
+        float specularLevel = sqrt(surface.material.roughness) * maxLodAndCount.x;
         // Reflect vector from surface
-        vec3 R = reflect(-angular.V, surface.normal);
+        vec3 R = reflect(-angular.viewDir, surface.normal);
         // Fresnel by Schlick aproxx
-        vec3 F = fresnelSchlickRoughness(NdotV, surface.material);
+        vec3 F = fresnelSchlickRoughness(angular.NdotV, surface.material);
+
+        for (uint p = 0; p < probesCount; ++p)
+        {
+            float probeDistance = length(surface.wv - probes[p].position.xyz);
+            nearProbeDistance = min(nearProbeDistance, probeDistance);
+        }
+
         // Calc indirect light
         float totalDWeight = FLT_EPSILON;
         float totalSWeight = FLT_EPSILON;
-        for (int p = 0; p < probesCount; ++p)
+        for (uint p = 0; p < probesCount; ++p)
         {
-            float probeDistance = length(P - probes[p].position.xyz);
-            if (hasFlag(probes[p].flags, ENV_PROBE_FLAG_IRRADIANCE))
+            EnvironmentProbeStruct probe = probes[p];
+            float probeDistance = length(surface.wv - probe.position.xyz);
+            float relativeDistance = nearProbeDistance / max(probeDistance, FLT_EPSILON);
+
+            if (relativeDistance < LITE3D_ENV_PROBE_RELATIVE_DISTANCE_THRESHOLD)
+                continue;
+            
+            if (hasFlag(probe.flags, LITE3D_ENV_PROBE_FLAG_IRRADIANCE))
             {
                 float dW = 1.0 / max(pow(probeDistance, LITE3D_ENV_PROBE_DIFFUSE_POWER), FLT_EPSILON);
-                diffuseIrradianceLx += getProbeTextureLod(surface.normal, p, maxLod - 1.0) * dW;
+                diffuseIrradianceLx += getProbeTextureLod(surface, surface.normal, p, maxLodAndCount.x - 1.0) * dW;
                 totalDWeight += dW;
             }
 
-            if (hasFlag(probes[p].flags, ENV_PROBE_FLAG_SPECULAR))
+            if (hasFlag(probe.flags, LITE3D_ENV_PROBE_FLAG_SPECULAR))
             {
                 float sW = 1.0 / max(pow(probeDistance, LITE3D_ENV_PROBE_SPECULAR_POWER), FLT_EPSILON);
-                specularIrradianceLx += getProbeTextureLod(R, p, specularLevel) * sW;
+                specularIrradianceLx += getProbeTextureLod(surface, R, p, specularLevel) * sW;
                 totalSWeight += sW;
             }
         }
 
-        diffuseIrradianceLx *= diffuseFactor(F, surface.material.metallic) * albedo / totalDWeight;
+        diffuseIrradianceLx *= diffuseFactor(F, surface.material.metallic) * surface.material.albedo.rgb / totalDWeight;
         specularIrradianceLx *= F / totalSWeight;
     }
 
-    return LITE3D_BASE_AMBIENT_LIGHT + 
-        diffuseIrradianceLx * surface.material.envDiffuse + 
+    return diffuseIrradianceLx * surface.material.envDiffuse + 
         specularIrradianceLx * surface.material.envSpecular;
 }

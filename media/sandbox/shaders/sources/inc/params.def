@@ -5,7 +5,6 @@
 #define ENV_DIFFUSE_STRENGTH                        1.0
 #define ENV_PROBE_DIFFUSE_POWER                     2.0
 #define ENV_PROBE_SPECULAR_POWER                    10.0
-#define CUBE_MAP_UV_SCALE                           1.0
 
 // Shadow params
 #define SHADOW_MAX_ADAPTIVE_BIAS                    0.0025

@@ -7,7 +7,7 @@ layout(std140) uniform LightSources
 
 layout(std140) uniform LightIndexes
 {
-    ivec4 indexes[LITE3D_MAX_LIGHT_COUNT];
+    ivec4 lightsIndexes[LITE3D_MAX_LIGHT_COUNT];
 };
 
 /* Shadow compute module */
@@ -23,10 +23,10 @@ vec3 ComputeIllumination(in Surface surface)
     angularInfoInit(angular, surface);
     vec3 directLx = vec3(0.0);
 
-    int count = indexes[0].x;
+    int count = lightsIndexes[0].x;
     for (int i = 1; i <= count; ++i)
     {
-        int index = indexes[i/4][int(mod(i, 4))];
+        int index = lightsIndexes[i/4][int(mod(i, 4))];
 
         /* block0.x - type */
         /* block0.y - enabled */
@@ -40,7 +40,7 @@ vec3 ComputeIllumination(in Surface surface)
         if (angular.isOutside)
             continue;
 
-        float attenuationFactor = CalcAttenuation(light, angular);
+        float attenuationFactor = calcAttenuation(light, angular);
         float shadowFactor = Shadow(light, surface, angular);
         /* light source full radiance at fragment position */
         vec3 radiance = light.diffuse.rgb * light.radiance * attenuationFactor * shadowFactor * surface.ao;
@@ -55,5 +55,5 @@ vec3 ComputeIllumination(in Surface surface)
 
     vec3 indirectLx = ComputeIndirect(surface, angular);
 
-    return indirectLx + directLx + emission;
+    return indirectLx + directLx + surface.material.emission.rgb;
 }

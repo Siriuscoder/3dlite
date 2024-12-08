@@ -170,7 +170,7 @@ Surface restoreSurface(vec2 uv)
     return surface;
 }
 
-void surfaceAlphaClip(in Material surface)
+void surfaceAlphaClip(in Material material)
 {
     if (isZero(material.alpha))
         discard;

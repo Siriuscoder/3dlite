@@ -4,11 +4,11 @@
         // Standard shaders with params customization
         "samples:shaders/sources/pipeline/v_tbn.vs",
         "samples:shaders/sources/pipeline/forward_pass/forward.fs",
-        "samples:shaders/sources/pbr/pbr.fs,sponza:shaders/sources/inc/params.def",
-        "samples:shaders/sources/pbr/brdf_oren_nayar_approx.fs,sponza:shaders/sources/inc/params.def",
-        "samples:shaders/sources/pbr/brdf_multiprobe_env.fs,sponza:shaders/sources/inc/params.def",
-        "samples:shaders/sources/shadow/pcf3x3.fs,sponza:shaders/sources/inc/params.def",
-        "samples:shaders/sources/bindless/material.fs",
-        "samples:shaders/sources/bindless/material.vs"
+        "samples:shaders/sources/pbr/pbr.fs",
+        "samples:shaders/sources/pbr/brdf_oren_nayar_approx.fs",
+        "samples:shaders/sources/pbr/brdf_indirect.fs,sponza:shaders/sources/inc/params.def",
+        "samples:shaders/sources/shadow/pcf.fs,sponza:shaders/sources/inc/params.def",
+        "samples:shaders/sources/common/common.fs",
+        "samples:shaders/sources/common/common.vs"
     ]
 }

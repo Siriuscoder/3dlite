@@ -17,6 +17,11 @@
   "NormalScale": {
     "Value": [1.0, -1.0, 1.0, 1.0]
   },
+  "EnvironmentProbeTexture": {
+    "Name": "EnvironmentProbe",
+    "TextureName": "SponzaDeffered_EnvironmentMultiProbe.texture",
+    "Type": "sampler"
+  },
 
   "Passes":[
     {

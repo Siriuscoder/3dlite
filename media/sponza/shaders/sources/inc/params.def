@@ -1,20 +1,15 @@
-#extension GL_ARB_texture_cube_map_array : require
+#define LITE3D_BASE_AMBIENT_LIGHT                           vec3(0.0045)
+#define LITE3D_ENV_PROBE_RELATIVE_DISTANCE_THRESHOLD        0.05
+#define LITE3D_ENV_PROBE_DIFFUSE_POWER                      2.3
+#define LITE3D_ENV_PROBE_SPECULAR_POWER                     10.0
 
-#define ENV_PROBE_RELATIVE_DISTANCE_THRESHOLD       0.05
-#define ENV_DIFFUSE_STRENGTH                        1.0
-#define ENV_PROBE_DIFFUSE_POWER                     2.3
-#define ENV_PROBE_SPECULAR_POWER                    10.0
-#define CUBE_MAP_UV_SCALE                           1.0
+#define LITE3D_SHADOW_MIN_ADAPTIVE_BIAS                     0.0008
+#define LITE3D_SHADOW_MAX_ADAPTIVE_BIAS                     0.0028
+#define LITE3D_SHADOW_MIN_ADAPTIVE_FILTER_SIZE              1.0
+#define LITE3D_SHADOW_MAX_ADAPTIVE_FILTER_SIZE              3.0
+#define LITE3D_SHADOW_MIN_ADAPTIVE_STEP                     0.5
 
-#define SHADOW_MAX_ADAPTIVE_BIAS                    0.0028
-#define SHADOW_MIN_ADAPTIVE_BIAS                    0.0008
-#define SHADOW_MIN_ADAPTIVE_FILTER_SIZE             1.0
-#define SHADOW_MAX_ADAPTIVE_FILTER_SIZE             3.0
-#define SHADOW_MIN_ADAPTIVE_STEP                    0.5
-
-#define SSS_MAX_ADAPTIVE_DEPTH_THRESHOLD            0.023   // Min Depth clipping to avoid accuracy artifacts
-#define SSS_MAX_STEPS                               32      // Max ray steps, affects quality and performance.
-#define SSS_MAX_RAY_DISTANCE                        0.35    // Max shadow length, longer shadows are less accurate.
-#define SSS_MAX_DEPTH_THRESHOLD                     0.5     // Depth testing thickness.
-#define SSS_MAX_ADAPTIVE_DEPTH_THRESHOLD            0.023   // Min Depth clipping to avoid accuracy artifacts
-#define SSS_STEP_LENGTH                             (SSS_MAX_RAY_DISTANCE / float(SSS_MAX_STEPS))
+#define LITE3D_SSS_MAX_ADAPTIVE_DEPTH_THRESHOLD             0.023   // Min Depth clipping to avoid accuracy artifacts
+#define LITE3D_SSS_MAX_STEPS                                32      // Max ray steps, affects quality and performance.
+#define LITE3D_SSS_MAX_RAY_DISTANCE                         0.35    // Max shadow length, longer shadows are less accurate.
+#define LITE3D_SSS_MAX_DEPTH_THRESHOLD                      0.5     // Depth testing thickness.

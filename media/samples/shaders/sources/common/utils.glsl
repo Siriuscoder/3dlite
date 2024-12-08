@@ -9,14 +9,6 @@ uniform vec3 Eye;
 
 #define BAYER_MATRIX_SIZE                       4
 
-// The Fresnel-Schlick approximation expects a F0 parameter which is known as the surface 
-// reflection at zero incidence or how much the surface reflects if looking directly at the surface. 
-// The F0 varies per material and is tinted on metals as we find in large material databases. 
-// In the PBR metallic workflow we make the simplifying assumption that most dielectric surfaces 
-// look visually correct with a constant F0 of 0.04, while we do specify F0 for metallic surfaces as then 
-// given by the albedo value. 
-#define BASE_REFLECTION_AT_ZERO_INCIDENCE       0.04
-
 const float bayerMatrix[BAYER_MATRIX_SIZE * BAYER_MATRIX_SIZE] = float[BAYER_MATRIX_SIZE * BAYER_MATRIX_SIZE](
      0.0,  8.0,  2.0, 10.0,
     12.0,  4.0, 14.0,  6.0,
@@ -256,8 +248,8 @@ vec3 ditherBayer(vec3 color)
 vec3 fresnelSchlickRoughness(float teta, in Material material)
 {
     // Calculate F0 coeff (metalness)
-    F0 = mix(material.f0, material.albedo.rgb, material.metallic);
-
+    vec3 F0 = mix(material.f0.rgb, material.albedo.rgb, material.metallic);
+    // Calculate fresnel
     vec3 F = F0 + (max(vec3(1.0 - material.roughness), F0) - F0) * pow(clamp(1.0 - teta, 0.0, 1.0), 5.0);
     return clamp(F * material.specular, 0.0, 1.0);
 }
@@ -308,7 +300,7 @@ float G(float NdotV, float NdotL, float roughness)
 }
 
 // Attenuation
-float calcAttenuation(in LightSources source, in AngularInfo angular)
+float calcAttenuation(in LightSource source, in AngularInfo angular)
 {
     float factor = 1.0;
     // Calc Attenuation for spot and point light only
@@ -318,7 +310,7 @@ float calcAttenuation(in LightSources source, in AngularInfo angular)
         const float fallofStart = 0.9;
 
         float edgeFallof = (source.influenceDistance - clamp(angular.lightDistance, source.influenceDistance * fallofStart, 
-            source.influenceDistance)) / (block0.z * (1.0 - fallofStart));
+            source.influenceDistance)) / (source.influenceDistance * (1.0 - fallofStart));
 
         if (hasFlag(source.flags, LITE3D_LIGHT_SPOT))
         {

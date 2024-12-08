@@ -75,7 +75,7 @@ float GGX(float NdotV, float roughness);
 // Geometry function (Smith's)
 float G(float NdotV, float NdotL, float roughness);
 // Attenuation
-float calcAttenuation(in LightSources source, in AngularInfo angular);
+float calcAttenuation(in LightSource source, in AngularInfo angular);
 
 //////////// Building structures
 Surface makeSurface(vec2 uv, vec3 wv, vec3 wn, vec3 wt, vec3 wb);

@@ -31,6 +31,9 @@ namespace lite3dpp
         EMPTY = 0,
         NORMAL_MAPPING_TANGENT = 1u << 0,
         NORMAL_MAPPING_TANGENT_BITANGENT = 1u << 1,
+        ENVIRONMENT_TEXTURE = 1u << 2,
+        ENVIRONMENT_MULTI_PROBE  = 1u << 3,
+        ENVIRONMENT_SINGLE_PROBE = 1u << 4
     };
 
     enum class TextureFlags : uint32_t

@@ -110,6 +110,7 @@ namespace lite3dpp
 
         mMaterialEntity.Environment.flags = TextureFlags::ENVIRONMENT | TextureFlags::LOADED;
         mMaterialEntity.Environment.textureHandle = texture->handle();
+        mMaterialEntity.Flags = mMaterialEntity.Flags | PBRMaterialFlags::ENVIRONMENT_TEXTURE;
         
         if (updateData)
         {
@@ -123,7 +124,7 @@ namespace lite3dpp
 
         mMaterialEntity.EnvironmentProbe.flags = TextureFlags::ENVIRONMENT_PROBE | TextureFlags::LOADED;
         mMaterialEntity.EnvironmentProbe.textureHandle = texture->handle();
-        
+        mMaterialEntity.Flags = mMaterialEntity.Flags | PBRMaterialFlags::ENVIRONMENT_MULTI_PROBE;
         if (updateData)
         {
             update();

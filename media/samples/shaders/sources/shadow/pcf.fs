@@ -42,10 +42,10 @@ const vec2 PoissonDisc[LITE3D_POISSON_DISC_COUNT] = vec2[](
     vec2(-0.819775, 0.40949)
 );
 
-float SSS(vec3 vw, vec3 L, float minDepthThreshold)
+float SSS(vec3 P, vec3 L, float minDepthThreshold)
 {
     // Compute ray position and direction (in view-space)
-    vec3 rayPos = worldToViewSpacePosition(vw);
+    vec3 rayPos = worldToViewSpacePosition(P);
     vec3 rayDir = worldToViewSpaceDirection(L);
     
     // Compute ray step
@@ -99,7 +99,7 @@ float Shadow(in LightSource source, in Surface surface, in AngularInfo angular)
         return 1.0;
 
     // Shadow space NDC coorts of current fragment
-    vec4 sv = shadowTransform[source.shadowIndex] * vec4(surface.vw, 1.0);
+    vec4 sv = shadowTransform[source.shadowIndex] * vec4(surface.wv, 1.0);
     // transform the NDC coordinates to the range [0,1]
     sv = (sv / sv.w) * 0.5 + 0.5;
     // Z clip 
@@ -168,7 +168,7 @@ float Shadow(in LightSource source, in Surface surface, in AngularInfo angular)
         shadowFactor /= samples;
         if (hasFlag(source.flags, LITE3D_LIGHT_CASTSHADOW_SSS))
         {
-            shadowFactor *= SSS(surface.vw, angular.lightDir, adaptiveParams.z);
+            shadowFactor *= SSS(surface.wv, angular.lightDir, adaptiveParams.z);
         }
     }
 

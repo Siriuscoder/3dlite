@@ -1,10 +1,22 @@
-#include "samples:shaders/sources/common/utils_inc.glsl"
+#include "samples:shaders/sources/common/common_inc.glsl"
 
 uniform sampler2DArray GBuffer;
 uniform float AORadius;
 
 in vec2 iuv;
 out vec4 outColor;
+
+#ifndef LITE3D_SSAO_MAX_DEPTH_SAMPLES
+#define LITE3D_SSAO_MAX_DEPTH_SAMPLES 80
+#endif
+
+#ifndef LITE3D_SSAO_SAMPLE_BIAS
+#define LITE3D_SSAO_SAMPLE_BIAS 0.030
+#endif
+
+#ifndef LITE3D_SSAO_POWER
+#define LITE3D_SSAO_POWER 0.45
+#endif
 
 vec3 getViewSpacePosition(vec2 uv)
 {
@@ -43,7 +55,7 @@ void main()
     // Calculate TBN rotation matrix from tangent space to view space
     mat3 TBN = mat3(tv, bv, nv); 
 
-    for (int i = 0; i < SSAO_MAX_DEPTH_SAMPLES; ++i)
+    for (int i = 0; i < LITE3D_SSAO_MAX_DEPTH_SAMPLES; ++i)
     {
         // Random test sample in half hemisphere at tangent space 
         vec3 probeRay = normalize(vec3(
@@ -53,7 +65,7 @@ void main()
         ));
 
         // set sampler closer and closer to actual fragment 
-        float sampleScale = float(i) / float(SSAO_MAX_DEPTH_SAMPLES);
+        float sampleScale = float(i) / float(LITE3D_SSAO_MAX_DEPTH_SAMPLES);
         probeRay *= lerp(0.1f, 1.0f, sampleScale * sampleScale);
         // transform sample to view space using TBN and calc sample position in world space
         probeRay = vv + (TBN * probeRay) * AORadius;
@@ -66,9 +78,9 @@ void main()
         // Check sample depth respect to surface depth in view-space with range check
         //float rangeCheck = abs(vv.z - surfaceDepth) < AORadius ? 1.0 : 0.0;
         float rangeCheck = smoothstep(0.0, 1.0, AORadius / max(abs(vv.z - surfaceDepth), FLT_EPSILON));
-        aoFactor += (surfaceDepth >= (probeRay.z + SSAO_SAMPLE_BIAS) ? 1.0 : 0.0) * rangeCheck;
+        aoFactor += (surfaceDepth >= (probeRay.z + LITE3D_SSAO_SAMPLE_BIAS) ? 1.0 : 0.0) * rangeCheck;
     }
 
-    aoFactor = 1.0 - pow(aoFactor / float(SSAO_MAX_DEPTH_SAMPLES), SSAO_POWER);
+    aoFactor = 1.0 - pow(aoFactor / float(LITE3D_SSAO_MAX_DEPTH_SAMPLES), LITE3D_SSAO_POWER);
     outColor = vec4(vec3(aoFactor), 1.0);
 }

@@ -18,7 +18,7 @@ vec3 BRDF(in Surface surface, in AngularInfo angular)
     vec3 F = fresnelSchlickRoughness(angular.HdotV, surface.material);
 
     vec3 s = (ndf * g * F) / (4.0 * angular.NdotV * angular.NdotL);
-    float d = diffuseOrenNayarApprox(angular.NdotL, angular.HdotV, angular.NdotV, surface.material.roughness);
+    float d = diffuseOrenNayarApprox(angular, surface.material.roughness);
     vec3 kD = diffuseFactor(F, surface.material.metallic);
 
     return kD * d * surface.material.albedo.rgb + s;

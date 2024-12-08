@@ -92,6 +92,7 @@ public:
     void setupShadowCasters()
     {
         mSUN = mSponzaScene->getObject("Sponza")->getLightNode("SUN");
+        mSUN->getLight()->setFlag(LightSourceFlags::CastShadowPcfAdaptive | LightSourceFlags::CastShadowSSS);
         mSUNNode = mSponzaScene->getObject("Sponza")->getNode("SUN_actor");
         mSUNShadowCaster = mPipeline->getShadowManager()->newShadowCaster(mSUN);
     }

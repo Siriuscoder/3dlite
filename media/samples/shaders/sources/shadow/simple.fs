@@ -4,7 +4,7 @@ uniform sampler2DArrayShadow ShadowMaps;
 
 layout(std140) uniform ShadowMatrix
 {
-    mat4 shadowTransform[LITE3D_SPOT_LITE3D_SHADOW_MAX_COUNT];
+    mat4 shadowTransform[LITE3D_SPOT_SHADOW_MAX_COUNT];
 };
 
 float Shadow(in LightSource source, in Surface surface, in AngularInfo angular)
@@ -14,7 +14,7 @@ float Shadow(in LightSource source, in Surface surface, in AngularInfo angular)
         return 1.0;
 
     // Shadow space NDC coorts of current fragment
-    vec4 sv = shadowTransform[source.shadowIndex] * vec4(surface.vw, 1.0);
+    vec4 sv = shadowTransform[source.shadowIndex] * vec4(surface.wv, 1.0);
     // transform the NDC coordinates to the range [0,1]
     sv = (sv / sv.w) * 0.5 + 0.5;
     // Z clip 
