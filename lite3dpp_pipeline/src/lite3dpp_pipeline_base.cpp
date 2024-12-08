@@ -117,6 +117,13 @@ namespace lite3dpp_pipeline {
         ConfigurationWriter sceneGeneratedConfig(static_cast<const char *>(sceneJsonData->fileBuff), sceneJsonData->fileSize);
         ConfigurationReader sceneConfig(static_cast<const char *>(sceneJsonData->fileBuff), sceneJsonData->fileSize);
 
+        if (pipelineConfig.getBool(L"MultiRender", false))
+        {
+            // SSBO is needed for the MultiRender supported by version GLSL 430 or higher
+            ShaderProgram::setShaderVersion("430");
+            ShaderProgram::addDefinition("LITE3D_BINDLESS_TEXTURE_PIPELINE", "1");
+        }
+
         if (!lightingTechnique.empty())
         {
             sceneGeneratedConfig.set(L"LightingTechnique", lightingTechnique);
@@ -260,11 +267,12 @@ namespace lite3dpp_pipeline {
             .set(L"RenderOpaque", true);
 
         depthPassGeneratedConfig.set(L"RenderInstancing", pipelineConfig.getBool(L"Instancing", true));
+        depthPassGeneratedConfig.set(L"MultiRender", pipelineConfig.getBool(L"MultiRender", false));
         if (pipelineConfig.getBool(L"OcclusionCulling", true))
         {
             depthPassGeneratedConfig.set(L"OcclusionQuery", true)
-                .set(L"SortOpaqueFromNear", true)
-                .set(L"RenderInstancing", false);
+                .set(L"RenderInstancing", false) // Не подходит для корректной работы OcclusionQuery 
+                .set(L"SortOpaqueFromNear", true);
         }
 
         sceneGenerator.addRenderTarget(cameraName, mDepthPass->getName(), depthPassGeneratedConfig);
@@ -291,6 +299,7 @@ namespace lite3dpp_pipeline {
             .set(L"RenderBlend", false)
             .set(L"RenderOpaque", true)
             .set(L"CustomVisibilityCheck", true)
+            .set(L"MultiRender", pipelineConfig.getBool(L"MultiRender", false))
             .set(L"RenderInstancing", pipelineConfig.getBool(L"Instancing", true)));
     }
     
@@ -521,6 +530,7 @@ namespace lite3dpp_pipeline {
             .set(L"RenderBlend", false)
             .set(L"RenderOpaque", true)
             .set(L"FrustumCulling", false)
+            .set(L"MultiRender", pipelineConfig.getBool(L"MultiRender", false))
             .set(L"RenderInstancing", pipelineConfig.getBool(L"Instancing", true)));
     }
 

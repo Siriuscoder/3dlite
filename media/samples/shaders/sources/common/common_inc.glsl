@@ -1,3 +1,11 @@
+#ifdef LITE3D_BINDLESS_TEXTURE_PIPELINE
+#include "samples:shaders/sources/bindless/material_inc.glsl"
+#else
+#include "samples:shaders/sources/common/material_inc.glsl"
+#endif
+
+#include "samples:shaders/sources/common/structs_inc.glsl"
+
 //////////// Math utilities
 ////////////////////////////////////////////////////////////////////////////
 
@@ -17,7 +25,7 @@ bool isZero(vec3 a1);
 bool isValidUV(vec2 uv);
 float lerp(float a, float b, float f);
 float shlickPow(float a, float b); // Shlick power fast approx a^b = a / (b – a*b + a) for 0 <= a <= 1 
-bool hasFlag(int a, int flag);
+bool hasFlag(uint a, uint flag);
 //////////// Noise and random utilities
 ////////////////////////////////////////////////////////////////////////////
 
@@ -37,6 +45,8 @@ vec2 viewPositionToUV(vec3 pos);
 
 mat3 TBN(vec3 normal, vec3 tangent);
 mat3 TBN(vec3 normal, vec3 tangent, vec3 btangent);
+vec3 calcNormal(vec2 n, mat3 tbn, vec3 normalScale);
+vec3 calcNormal(vec3 n, mat3 tbn, vec3 normalScale);
 //////////// Other utilities
 ////////////////////////////////////////////////////////////////////////////
 float fadeScreenEdge(vec2 uv);
@@ -56,7 +66,7 @@ vec3 ditherBayer(vec3 color);
 
 //////////// PBR utilities
 ////////////////////////////////////////////////////////////////////////////
-vec3 fresnelSchlickRoughness(float teta, vec3 albedo, vec3 specular);
+vec3 fresnelSchlickRoughness(float teta, in Material material);
 vec3 diffuseFactor(vec3 F, float metallic);
 // Normal distribution function (Trowbridge-Reitz GGX)
 float NDF(float NdotH, float roughness);
@@ -64,6 +74,16 @@ float NDF(float NdotH, float roughness);
 float GGX(float NdotV, float roughness);
 // Geometry function (Smith's)
 float G(float NdotV, float NdotL, float roughness);
+// Attenuation
+float calcAttenuation(in LightSource source, in AngularInfo angular);
 
-// Common structs
-#include "samples:shaders/sources/common/structs_inc.glsl"
+//////////// Building structures
+Surface makeSurface(vec2 uv, vec3 wv, vec3 wn, vec3 wt, vec3 wb);
+Surface restoreSurface(vec2 uv);
+void angularInfoInit(inout AngularInfo angular, in Surface surface);
+void angularInfoSetLightSource(inout AngularInfo angular, in Surface surface, in LightSource source);
+void angularInfoCalcAngles(inout AngularInfo angular, in Surface surface);
+//////////// Clip Functions
+void surfaceAlphaClip(in Material material);
+void surfaceAlphaClip(vec2 uv);
+

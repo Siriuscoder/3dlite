@@ -1,6 +1,10 @@
-#include "samples:shaders/sources/common/utils_inc.glsl"
+#include "samples:shaders/sources/common/common_inc.glsl"
 
-vec3 ComputeIndirect(vec3 P, vec3 V, vec3 N, float NdotV, vec3 albedo, vec3 specular, float dF, float sF)
+#ifndef LITE3D_BASE_AMBIENT_LIGHT
+#define LITE3D_BASE_AMBIENT_LIGHT vec3(0.0)
+#endif
+
+vec3 ComputeIndirect(in Surface surface, in AngularInfo angular)
 {
-    return vec3(0.0);
+    return LITE3D_BASE_AMBIENT_LIGHT;
 }

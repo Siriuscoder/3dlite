@@ -77,6 +77,7 @@ namespace lite3dpp_pipeline {
             .set(L"RenderBlend", false)
             .set(L"RenderOpaque", true)
             .set(L"OcclusionCulling", pipelineConfig.getBool(L"OcclusionCulling", true))
+            .set(L"MultiRender", pipelineConfig.getBool(L"MultiRender", false))
             .set(L"RenderInstancing", pipelineConfig.getBool(L"Instancing", true)));
 
         sceneGenerator.addRenderTarget(cameraName, mCombinePass->getName(), ConfigurationWriter()
@@ -87,6 +88,7 @@ namespace lite3dpp_pipeline {
             .set(L"DepthOutput", true)
             .set(L"RenderBlend", true)
             .set(L"RenderOpaque", false)
+            .set(L"MultiRender", pipelineConfig.getBool(L"MultiRender", false))
             .set(L"RenderInstancing", pipelineConfig.getBool(L"Instancing", true)));
     }
 }}

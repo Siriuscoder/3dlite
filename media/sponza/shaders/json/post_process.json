@@ -6,6 +6,6 @@
         "samples:shaders/sources/pipeline/postprocess_pass/postprocess_bloom.fs",
         "samples:shaders/sources/antialiasing/fxaa.fs",
         "samples:shaders/sources/antialiasing/fxaa_texcoords.vs",
-        "samples:shaders/sources/common/utils.fs"
+        "samples:shaders/sources/common/common.fs"
     ]
 }

@@ -88,6 +88,11 @@ void lite3d_depth_output(uint8_t on)
     }
 }
 
+uint8_t lite3d_depth_output_get(void)
+{
+    return gDepthOutOn;
+}
+
 void lite3d_color_output(uint8_t on)
 {
     if (on != gColorOutOn)
@@ -237,4 +242,9 @@ void lite3d_backface_culling(uint8_t mode)
 
         gBackFaceCullingOn = mode;
     }
+}
+
+uint8_t lite3d_backface_culling_get(void)
+{
+    return gBackFaceCullingOn;
 }

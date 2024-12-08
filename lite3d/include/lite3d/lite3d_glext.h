@@ -48,6 +48,9 @@ int lite3d_check_texture_storage(void);
 int lite3d_check_texture_storage_multisample(void);
 int lite3d_check_texture_cube_map_array(void);
 int lite3d_check_debug_context(void);
+int lite3d_check_bindless_texture(void);
+int lite3d_check_shader_draw_parameters(void);
+int lite3d_check_multi_draw_indirect(void);
 
 /* stub functions */
 void glTexSubImage3D_stub(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLenum format, GLenum type, const void *pixels);
@@ -76,6 +79,8 @@ void glGetQueryObjectuiv_stub(GLuint id, GLenum pname, GLuint *params);
 void glFramebufferTextureLayer_stub(GLenum target, GLenum attachment, GLuint texture, GLint level, GLint layer);
 void glFramebufferTexture_stub(GLenum target, GLenum attachment, GLuint texture, GLint level);
 void glTexStorage1D_stub(GLenum target, GLsizei levels, GLenum internalformat, GLsizei width);
+void glMultiDrawArraysIndirect_stub(GLenum mode, const void *indirect, GLsizei drawcount, GLsizei stride);
+void glMultiDrawElementsIndirect_stub(GLenum mode, GLenum type, const void *indirect, GLsizei drawcount, GLsizei stride);
 
 #ifdef GLES
 
@@ -151,6 +156,10 @@ void glTexStorage1D_stub(GLenum target, GLsizei levels, GLenum internalformat, G
 #       define GL_TEXTURE_CUBE_MAP_ARRAY GL_TEXTURE_CUBE_MAP_ARRAY_OES
 #   endif
 
+#   ifndef GL_DRAW_INDIRECT_BUFFER
+#       define GL_DRAW_INDIRECT_BUFFER 0x8F3F
+#   endif
+
 /* GL_OES_vertex_array_object */    
 extern PFNGLBINDVERTEXARRAYOESPROC glBindVertexArrayPtr;
 extern PFNGLDELETEVERTEXARRAYSOESPROC glDeleteVertexArraysPtr;
@@ -180,6 +189,9 @@ extern PFNGLCOMPRESSEDTEXSUBIMAGE3DOESPROC glCompressedTexSubImage3DPtr;
 extern PFNGLFRAMEBUFFERTEXTURE3DOESPROC glFramebufferTexture3DPtr;
 /* GL_OES_geometry_shader */
 extern PFNGLFRAMEBUFFERTEXTUREOESPROC glFramebufferTexturePtr;
+/* GL_EXT_multi_draw_indirect */
+extern PFNGLMULTIDRAWARRAYSINDIRECTEXTPROC glMultiDrawArraysIndirectPtr;
+extern PFNGLMULTIDRAWELEMENTSINDIRECTEXTPROC glMultiDrawElementsIndirectPtr;
 
 #   ifdef WITH_GLES2
 #       define glDrawArraysInstanced glDrawArraysInstancedPtr
@@ -335,6 +347,9 @@ extern PFNGLFRAMEBUFFERTEXTUREOESPROC glFramebufferTexturePtr;
 #   define glGetBufferPointerv glGetBufferPointervPtr
 #   define glFramebufferTexture3D glFramebufferTexture3DPtr
 #   define glFramebufferTexture glFramebufferTexturePtr
+#   define glMultiDrawArraysIndirect glMultiDrawArraysIndirectPtr
+#   define glMultiDrawElementsIndirect glMultiDrawElementsIndirectPtr
+
 #   define glTexBuffer glTexBuffer_stub /* TODO GL_OES_texture_buffer */
 /* Not supported at all in GLES */
 #   define glTexSubImage1D glTexSubImage1D_stub

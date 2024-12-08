@@ -1,14 +1,8 @@
-#include "samples:shaders/sources/common/utils_inc.glsl"
+#include "samples:shaders/sources/common/common_inc.glsl"
 
 in vec2 iuv;
 
-// You must implement this methods in you shader to provide data for depth pass
-vec4 getAlbedo(vec2 uv);
-
 void main()
 {
-    // check albedo alpha and discard full transparent fragments
-    vec4 albedo = getAlbedo(iuv);
-    if (isZero(albedo.a))
-        discard;
+    surfaceAlphaClip(iuv);
 }

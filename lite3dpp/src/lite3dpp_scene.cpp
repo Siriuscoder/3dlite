@@ -74,7 +74,7 @@ namespace lite3dpp
                 /* default name of lighting buffer is scene name + "LightingBufferObject" */
                 mLightingParamsBuffer = getMain().getResourceManager()->
                     queryResourceFromJson<TextureBuffer>(getName() + "_lightingBufferObject",
-                    "{\"BufferFormat\": \"RGBA32F\", \"Dynamic\": false}");
+                    "{\"BufferFormat\": \"RGBA32F\", \"Dynamic\": true}");
                 /* 2-bytes index, about 16k light sources support  */
                 mLightingIndexBuffer = getMain().getResourceManager()->
                     queryResourceFromJson<TextureBuffer>(getName() + "_lightingIndexBuffer",
@@ -87,7 +87,7 @@ namespace lite3dpp
                 /* default name of lighting buffer is scene name + "LightingBufferObject" */
                 mLightingParamsBuffer = getMain().getResourceManager()->
                     queryResourceFromJson<SSBO>(getName() + "_lightingBufferObject",
-                    "{\"Dynamic\": false}");
+                    "{\"Dynamic\": true}");
                 /* 2-bytes index, about 16k light sources support  */
                 mLightingIndexBuffer = getMain().getResourceManager()->
                     queryResourceFromJson<SSBO>(getName() + "_lightingIndexBuffer",
@@ -100,7 +100,7 @@ namespace lite3dpp
                 /* default name of lighting buffer is scene name + "LightingBufferObject" */
                 mLightingParamsBuffer = getMain().getResourceManager()->
                     queryResourceFromJson<UBO>(getName() + "_lightingBufferObject",
-                    "{\"Dynamic\": false}");
+                    "{\"Dynamic\": true}");
                 /* 2-bytes index, about 16k light sources support  */
                 mLightingIndexBuffer = getMain().getResourceManager()->
                     queryResourceFromJson<UBO>(getName() + "_lightingIndexBuffer",
@@ -245,7 +245,7 @@ namespace lite3dpp
                 anyValidated = true;
             }
 
-            if (light->getLight()->getType() == LITE3D_LIGHT_DIRECTIONAL || 
+            if (light->getLight()->getType() == LightSourceFlags::TypeDirectional || 
                 !light->frustumTest() || 
                 camera.inFrustum(*light->getLight()))
             {
@@ -354,11 +354,42 @@ namespace lite3dpp
                 if (renderTargetJson.getBool(L"StencilOutput", false))
                     renderFlags |= LITE3D_RENDER_STENCIL_OUTPUT;
                 if (renderTargetJson.getBool(L"RenderInstancing", false))
+                {
+                    // Инстансинг включен, но при этом мультирендер выключен
+                    // В этом случае мы испотьзуем инстанcинг через AttribDivisor
+                    // Нужно инициализировать aux буфер для хранения атрибутов
+                    if (!renderTargetJson.getBool(L"MultiRender", false))
+                    {
+                        lite3d_mesh_aux_buffer_init();
+                    }
+
                     renderFlags |= LITE3D_RENDER_INSTANCING;
+                }
                 if (renderTargetJson.getBool(L"OcclusionQuery", false))
-                    renderFlags |= LITE3D_RENDER_OCCLUSION_QUERY;
+                {
+                    if (!lite3d_scene_oocclusion_query_support())
+                    {
+                        SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION, "%s: OcclusionQuery feature is not supported", 
+                            getName().c_str());
+                    }
+                    else
+                    {
+                        renderFlags &= ~LITE3D_RENDER_INSTANCING;
+                        renderFlags |= LITE3D_RENDER_OCCLUSION_QUERY;
+                    }
+                }
                 if (renderTargetJson.getBool(L"OcclusionCulling", false))
-                    renderFlags |= LITE3D_RENDER_OCCLUSION_CULLING;
+                {
+                    if (!lite3d_scene_oocclusion_query_support())
+                    {
+                        SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION, "%s: OcclusionQuery feature is not supported", 
+                            getName().c_str());
+                    }
+                    else
+                    {
+                        renderFlags |= LITE3D_RENDER_OCCLUSION_CULLING;
+                    }
+                }
                 if (renderTargetJson.getBool(L"FrustumCulling", true))
                     renderFlags |= LITE3D_RENDER_FRUSTUM_CULLING;
                 if (renderTargetJson.getBool(L"CustomVisibilityCheck", false))
@@ -371,6 +402,15 @@ namespace lite3dpp
                     renderFlags |= LITE3D_RENDER_SORT_OPAQUE_FROM_NEAR;
                 if (renderTargetJson.getBool(L"SortTransparentFromNear", false))
                     renderFlags |= LITE3D_RENDER_SORT_TRANSPARENT_FROM_NEAR;
+                if (renderTargetJson.getBool(L"MultiRender", false))
+                {
+                    if (!lite3d_scene_multirender_support())
+                    {
+                        LITE3D_THROW(getName() << ": MultiRender feature is not supported");
+                    }
+
+                    renderFlags |= LITE3D_RENDER_MULTIRENDER;
+                }
 
                 RenderTarget::RenderLayers layers;
                 auto colorLayer = renderTargetJson.getInt(L"ColorLayer", -1);
