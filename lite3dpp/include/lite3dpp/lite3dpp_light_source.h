@@ -38,7 +38,7 @@ namespace lite3dpp
         Enabled = LITE3D_LIGHT_ENABLED,
         CastShadow = LITE3D_LIGHT_CASTSHADOW,
         CastShadowPcf3x3 = LITE3D_LIGHT_CASTSHADOW_PCF3x3,
-        CastShadowPcf4x4 = LITE3D_LIGHT_CASTSHADOW_PCF4x4,
+        CastShadowPcfAdaptive = LITE3D_LIGHT_CASTSHADOW_PCF_ADAPTIVE,
         CastShadowPoisson = LITE3D_LIGHT_CASTSHADOW_POISSON,
         CastShadowSSS = LITE3D_LIGHT_CASTSHADOW_SSS
     };

@@ -1,8 +1,4 @@
-#ifdef LITE3D_BINDLESS_TEXTURE_PIPELINE
-#include "samples:shaders/sources/bindless/material_inc.glsl"
-#else
-#include "samples:shaders/sources/common/material_inc.glsl"
-#endif
+#include "samples:shaders/sources/common/common_inc.glsl"
 
 layout(location = 0) out vec4 channel01;
 layout(location = 1) out vec4 channel02;
@@ -18,7 +14,8 @@ in vec3 iwb;    // world-space bitangent
 void main()
 {
     Surface surface = makeSurface(iuv, iwv, iwn, iwt, iwb);
-    surfaceAlphaClip(surface); // Alpha clip case 
+    // Check for alpha clip 
+    surfaceAlphaClip(surface.material);
 
 #ifdef LITE3D_BINDLESS_TEXTURE_PIPELINE
     channel01 = vec4(iwv, surface.index);

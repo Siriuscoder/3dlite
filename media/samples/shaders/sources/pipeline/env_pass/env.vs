@@ -1,13 +1,10 @@
-#ifdef LITE3D_BINDLESS_TEXTURE_PIPELINE
-#include "samples:shaders/sources/bindless/material_inc.glsl"
-#else
-#include "samples:shaders/sources/common/material_inc.glsl"
-uniform mat4 modelMatrix;
-#endif
+#include "samples:shaders/sources/common/common_inc.glsl"
 
 layout(location = 0) in vec4 vertex;
 layout(location = 1) in vec3 normal;
 layout(location = 2) in vec2 uv;
+
+uniform mat4 modelMatrix;
 
 out vec2 iuv_g;
 out vec3 iwn_g;

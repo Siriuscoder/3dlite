@@ -163,6 +163,7 @@ namespace lite3dpp_pipeline {
             node, mProjection));
         // Запишем в источник света индекс его теневой матрицы в UBO
         node->getLight()->setShadowIndex(index);
+        node->getLight()->setFlag(LightSourceFlags::CastShadow);
         return mShadowCasters.back().get();
     }
 

@@ -3,7 +3,7 @@ layout(triangle_strip, max_vertices = LITE3D_SPOT_SHADOW_GS_MAX_VERTICES) out;
 
 layout(std140) uniform ShadowMatrix
 {
-    mat4 shadowMat[LITE3D_SPOT_SHADOW_MAX_COUNT];   
+    mat4 shadowTransform[LITE3D_SPOT_SHADOW_MAX_COUNT];   
 };
 
 layout(std140) uniform ShadowIndex
@@ -27,7 +27,7 @@ void main()
 
         for (int j = 0; j < 3; ++j)
         {
-            gl_Position = shadowMat[index] * gl_in[j].gl_Position;
+            gl_Position = shadowTransform[index] * gl_in[j].gl_Position;
             iuv = iuv_g[j];
 #ifdef LITE3D_BINDLESS_TEXTURE_PIPELINE
             drawID = drawID_g[j];

@@ -29,7 +29,7 @@
 #define LITE3D_LIGHT_ENABLED                    (1u << 3)
 #define LITE3D_LIGHT_CASTSHADOW                 (1u << 4)
 #define LITE3D_LIGHT_CASTSHADOW_PCF3x3          (1u << 5)
-#define LITE3D_LIGHT_CASTSHADOW_PCF4x4          (1u << 6)
+#define LITE3D_LIGHT_CASTSHADOW_PCF_ADAPTIVE    (1u << 6)
 #define LITE3D_LIGHT_CASTSHADOW_POISSON         (1u << 7)
 #define LITE3D_LIGHT_CASTSHADOW_SSS             (1u << 8)
 

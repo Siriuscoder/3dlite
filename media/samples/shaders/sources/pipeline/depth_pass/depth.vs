@@ -1,8 +1,4 @@
-#ifdef LITE3D_BINDLESS_TEXTURE_PIPELINE
-#include "samples:shaders/sources/bindless/material_inc.glsl"
-#else
-#include "samples:shaders/sources/common/material_inc.glsl"
-#endif
+#include "samples:shaders/sources/common/common_inc.glsl"
 
 layout(location = 0) in vec4 vertex;
 layout(location = 2) in vec2 uv;

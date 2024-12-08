@@ -1,4 +1,4 @@
-#include "samples:shaders/sources/common/env_probe_inc.glsl"
+#include "samples:shaders/sources/common/structs_inc.glsl"
 
 layout(triangles) in;
 layout(triangle_strip, max_vertices = LITE3D_ENV_PROBE_GS_MAX_VERTICES) out;

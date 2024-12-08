@@ -6,6 +6,10 @@ uniform sampler2DArray GBuffer;
 #define LITE3D_CUBE_MAP_UV_SCALE 1.0
 #endif
 
+#ifndef LITE3D_ENV_DIFFUSE_STRENGTH
+#define LITE3D_ENV_DIFFUSE_STRENGTH 1.0
+#endif
+
 vec4 getAlbedo(vec2 uv);
 vec3 getEmission(vec2 uv);
 vec3 getNormal(vec2 uv, mat3 tbn);
@@ -41,7 +45,7 @@ Surface makeSurface(vec2 uv, vec3 wv, vec3 wn, vec3 wt, vec3 wb)
     surface.material.emission = vec4(getEmission(uv), 1.0);
     surface.material.normalScale = vec4(1.0, 1.0, 1.0, 1.0);
     surface.material.envSpecular = getSpecularAmbient(uv);
-    surface.material.envDiffuse = 1.0;
+    surface.material.envDiffuse = LITE3D_ENV_DIFFUSE_STRENGTH;
     surface.material.emissionStrength = 1.0;
     surface.material.environmentScale = LITE3D_CUBE_MAP_UV_SCALE;
     surface.material.environmentSingleProbeIndex = 0;
@@ -83,7 +87,7 @@ Surface restoreSurface(vec2 uv)
     surface.material.metallic = specular.z;
     surface.material.alpha = 1.0;
     surface.material.envSpecular = wv.w;
-    surface.material.envDiffuse = 1.0;
+    surface.material.envDiffuse = LITE3D_ENV_DIFFUSE_STRENGTH;
     surface.material.ior = 1.0;
     surface.material.emissionStrength = 1.0;
     surface.material.environmentUVScale = LITE3D_CUBE_MAP_UV_SCALE;
@@ -96,19 +100,18 @@ Surface restoreSurface(vec2 uv)
     return surface;
 }
 
-void surfaceAlphaClip(Surface surface)
+void surfaceAlphaClip(in Material material)
 {
-    if (isZero(surface.material.alpha))
+    if (isZero(material.alpha))
         discard;
 }
 
 void surfaceAlphaClip(vec2 uv)
 {
-    Surface surface;
-    surface.uv = uv;
-    surface.material.albedo = getAlbedo(uv);
-    surface.material.alpha = surface.material.albedo.a;
-    surfaceAlphaClip(surface);
+    Material material;
+    material.albedo = getAlbedo(uv);
+    material.alpha = material.albedo.a;
+    surfaceAlphaClip(material);
 }
 
 #endif

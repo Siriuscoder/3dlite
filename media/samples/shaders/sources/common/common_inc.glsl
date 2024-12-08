@@ -1,3 +1,11 @@
+#ifdef LITE3D_BINDLESS_TEXTURE_PIPELINE
+#include "samples:shaders/sources/bindless/material_inc.glsl"
+#else
+#include "samples:shaders/sources/common/material_inc.glsl"
+#endif
+
+#include "samples:shaders/sources/common/structs_inc.glsl"
+
 //////////// Math utilities
 ////////////////////////////////////////////////////////////////////////////
 
@@ -9,8 +17,6 @@
 
 #define M_PI                                    3.14159265358979323846264
 #define PHI                                     1.61803398874989484820459
-
-#include "samples:shaders/sources/common/structs_inc.glsl"
 
 bool isNear(float a1, float a2);
 bool isNear(vec3 a1, vec3 a2);
@@ -60,7 +66,7 @@ vec3 ditherBayer(vec3 color);
 
 //////////// PBR utilities
 ////////////////////////////////////////////////////////////////////////////
-vec3 fresnelSchlickRoughness(float teta, vec3 albedo, vec3 specular);
+vec3 fresnelSchlickRoughness(float teta, in Material material);
 vec3 diffuseFactor(vec3 F, float metallic);
 // Normal distribution function (Trowbridge-Reitz GGX)
 float NDF(float NdotH, float roughness);
@@ -68,4 +74,16 @@ float NDF(float NdotH, float roughness);
 float GGX(float NdotV, float roughness);
 // Geometry function (Smith's)
 float G(float NdotV, float NdotL, float roughness);
+// Attenuation
+float calcAttenuation(in LightSources source, in AngularInfo angular);
+
+//////////// Building structures
+Surface makeSurface(vec2 uv, vec3 wv, vec3 wn, vec3 wt, vec3 wb);
+Surface restoreSurface(vec2 uv);
+void angularInfoInit(inout AngularInfo angular, in Surface surface);
+void angularInfoSetLightSource(inout AngularInfo angular, in Surface surface, in LightSource source);
+void angularInfoCalcAngles(inout AngularInfo angular, in Surface surface);
+//////////// Clip Functions
+void surfaceAlphaClip(in Material material);
+void surfaceAlphaClip(vec2 uv);
 

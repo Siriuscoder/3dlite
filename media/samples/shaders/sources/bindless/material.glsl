@@ -170,9 +170,9 @@ Surface restoreSurface(vec2 uv)
     return surface;
 }
 
-void surfaceAlphaClip(Surface surface)
+void surfaceAlphaClip(in Material surface)
 {
-    if (isZero(surface.material.alpha))
+    if (isZero(material.alpha))
         discard;
 }
 
@@ -181,8 +181,6 @@ void surfaceAlphaClip(vec2 uv)
     Surface surface;
     surface.transform = getInvocationInfo();
     surface.material = materials[surface.transform.materialIdx];
-    surface.index = surface.transform.materialIdx;
-    surface.uv = uv;
 
     for (int i = 0; i < 8; ++i)
     {
@@ -205,7 +203,7 @@ void surfaceAlphaClip(vec2 uv)
         }
     }
 
-    surfaceAlphaClip(surface);
+    surfaceAlphaClip(surface.material);
 }
 
 #endif

@@ -5,6 +5,7 @@ uniform float Gamma;
 uniform float Exposure;
 uniform float Contrast;
 uniform float Saturation;
+uniform vec3 Eye;
 
 #define BAYER_MATRIX_SIZE                       4
 
@@ -252,14 +253,13 @@ vec3 ditherBayer(vec3 color)
 #endif
 
 // Fresnel equation (Schlick)
-vec3 fresnelSchlickRoughness(float teta, vec3 albedo, vec3 specular)
+vec3 fresnelSchlickRoughness(float teta, in Material material)
 {
     // Calculate F0 coeff (metalness)
-    vec3 F0 = vec3(BASE_REFLECTION_AT_ZERO_INCIDENCE);
-    F0 = mix(F0, albedo, specular.z);
+    F0 = mix(material.f0, material.albedo.rgb, material.metallic);
 
-    vec3 F = F0 + (max(vec3(1.0 - specular.y), F0) - F0) * pow(clamp(1.0 - teta, 0.0, 1.0), 5.0);
-    return clamp(F * specular.x, 0.0, 1.0);
+    vec3 F = F0 + (max(vec3(1.0 - material.roughness), F0) - F0) * pow(clamp(1.0 - teta, 0.0, 1.0), 5.0);
+    return clamp(F * material.specular, 0.0, 1.0);
 }
 
 vec3 diffuseFactor(vec3 F, float metallic)
@@ -305,4 +305,66 @@ float G(float NdotV, float NdotL, float roughness)
     float ggx1  = GGX(NdotL, roughness);
 	
     return ggx1 * ggx2;
+}
+
+// Attenuation
+float calcAttenuation(in LightSources source, in AngularInfo angular)
+{
+    float factor = 1.0;
+    // Calc Attenuation for spot and point light only
+    if (!hasFlag(source.flags, LITE3D_LIGHT_DIRECTIONAL))
+    {
+        float spotFactor = 1.0;
+        const float fallofStart = 0.9;
+
+        float edgeFallof = (source.influenceDistance - clamp(angular.lightDistance, source.influenceDistance * fallofStart, 
+            source.influenceDistance)) / (block0.z * (1.0 - fallofStart));
+
+        if (hasFlag(source.flags, LITE3D_LIGHT_SPOT))
+        {
+            /* calculate spot cone attenuation */
+            float spotAngleRad = acos(dot(-angular.lightDir, normalize(source.direction.xyz)));
+            float spotConeAttenuation = (spotAngleRad * 2.0 - source.innerCone) / (source.outerCone - source.innerCone);
+            spotFactor = clamp(1.0 - spotConeAttenuation, 0.0, 1.0);
+        }
+
+        factor = spotFactor * edgeFallof / 
+            (source.attenuationConstant + 
+            source.attenuationLinear * angular.lightDistance + 
+            source.attenuationQuadratic * angular.lightDistance * angular.lightDistance);
+    }
+
+    return factor;
+}
+
+void angularInfoInit(inout AngularInfo angular, in Surface surface)
+{
+    // Eye direction to current fragment 
+    angular.viewDir = normalize(Eye - surface.wv);
+    angular.NdotV = doubleSidedNdotV(surface.normal, angular.viewDir);
+}
+
+void angularInfoSetLightSource(inout AngularInfo angular, in Surface surface, in LightSource source)
+{
+    if (hasFlag(source.flags, LITE3D_LIGHT_DIRECTIONAL))
+    {
+        angular.lightDir = -source.direction.xyz;
+        angular.lightDistance = FLT_EPSILON;
+        angular.isOutside = false;
+    }
+    else
+    {
+        vec3 vecLightDist = source.position.xyz - surface.wv;
+        angular.lightDir = normalize(vecLightDist);
+        angular.lightDistance = length(vecLightDist);
+        angular.isOutside = angular.lightDistance > source.influenceDistance;
+    }
+}
+
+void angularInfoCalcAngles(inout AngularInfo angular, in Surface surface)
+{
+    vec3 H = normalize(angular.lightDir + angular.viewDir);
+    angular.NdotL = max(dot(surface.normal, angular.lightDir), FLT_EPSILON);
+    angular.HdotV = max(dot(H, angular.viewDir), FLT_EPSILON);
+    angular.NdotH = max(dot(surface.normal, H), FLT_EPSILON);
 }

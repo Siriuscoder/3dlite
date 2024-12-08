@@ -1,13 +1,13 @@
+#include "samples:shaders/sources/common/common_inc.glsl"
+
 #ifdef LITE3D_BINDLESS_TEXTURE_PIPELINE
 
-#include "samples:shaders/sources/bindless/material_inc.glsl"
-
-int getEnvTextureMaxLod(Surface surface)
+int getEnvTextureMaxLod(in Surface surface)
 {
     return int(round(log2(float(textureSize(surface.material.environment.textureId, 0).x))));
 }
 
-ivec2 getProbeTextureMaxLodAndCount(Surface surface)
+ivec2 getProbeTextureMaxLodAndCount(in Surface surface)
 {
     ivec3 sizes = textureSize(surface.material.environmentProbe.textureId, 0);
     return ivec2(
@@ -28,16 +28,15 @@ vec3 getProbeTextureLod(vec3 uv, int index, float lod)
 
 #else
 
-#include "samples:shaders/sources/common/material_inc.glsl"
-
 uniform samplerCube Environment;
 uniform samplerCubeArray EnvironmentProbe;
-vec3 getEnvTextureMaxLod(Surface surface)
+
+vec3 getEnvTextureMaxLod(in Surface surface)
 {
     return log2(float(textureSize(Environment, 0).x));
 }
 
-ivec2 getProbeTextureMaxLodAndCount(Surface surface)
+ivec2 getProbeTextureMaxLodAndCount(in Surface surface)
 {
     ivec3 sizes = textureSize(EnvironmentProbe, 0);
     return ivec2(
@@ -58,8 +57,6 @@ vec3 getProbeTextureLod(vec3 uv, int index, float lod)
 
 #endif
 
-#include "samples:shaders/sources/common/utils_inc.glsl"
-
 #ifndef LITE3D_BASE_AMBIENT_LIGHT
 #define LITE3D_BASE_AMBIENT_LIGHT vec3(0.0)
 #endif
@@ -79,11 +76,10 @@ layout(std140) uniform EnvProbesData
 };
 
 //vec3 P, vec3 V, vec3 N, float NdotV, vec3 albedo, vec3 specular, float edF, float esF)
-vec3 ComputeIndirect(Surface surface, AngularInfo angular)
+vec3 ComputeIndirect(in Surface surface, in AngularInfo angular)
 {
     vec3 diffuseIrradianceLx = vec3(0.0);
     vec3 specularIrradianceLx = vec3(0.0);
-    vec3 specular = vec3(surface.material.specular, surface.material.roughness, surface.material.metallic);
 
     if (hasFlag(surface.material.flags, MATERIAL_ENVIRONMENT_TEXTURE))
     {
@@ -97,7 +93,7 @@ vec3 ComputeIndirect(Surface surface, AngularInfo angular)
         // Reflect vector from surface
         vec3 R = reflect(-angular.V, surface.normal);
         // Fresnel by Schlick aproxx
-        vec3 F = fresnelSchlickRoughness(angular.NdotV, surface.material.albedo.rgb, specular);
+        vec3 F = fresnelSchlickRoughness(angular.NdotV, surface.material);
         // Duffuse irradiance 
         diffuseIrradianceLx = diffuseFactor(F, surface.material.metallic) * surface.material.albedo.rgb * 
             getEnvTextureLod(surface.normal * surface.material.environmentUVScale, maxLod - 1.0);
@@ -112,7 +108,7 @@ vec3 ComputeIndirect(Surface surface, AngularInfo angular)
         // Reflect vector from surface
         vec3 R = reflect(-angular.V, surface.normal);
         // Fresnel by Schlick aproxx
-        vec3 F = fresnelSchlickRoughness(NdotV, albedo, specular);
+        vec3 F = fresnelSchlickRoughness(NdotV, surface.material);
         // Calc indirect light from single probe by index
         if (hasFlag(probes[p].flags, ENV_PROBE_FLAG_IRRADIANCE))
         {
@@ -136,7 +132,7 @@ vec3 ComputeIndirect(Surface surface, AngularInfo angular)
         // Reflect vector from surface
         vec3 R = reflect(-angular.V, surface.normal);
         // Fresnel by Schlick aproxx
-        vec3 F = fresnelSchlickRoughness(NdotV, albedo, specular);
+        vec3 F = fresnelSchlickRoughness(NdotV, surface.material);
         // Calc indirect light
         float totalDWeight = FLT_EPSILON;
         float totalSWeight = FLT_EPSILON;
