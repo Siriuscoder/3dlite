@@ -31,7 +31,7 @@ namespace lite3dpp_pipeline {
     {
         SDL_assert(node);
         // Ставим перспективу сразу при инициализации, считаем что конус источника света не меняется 
-        if (node->getLight()->getType() == LITE3D_LIGHT_DIRECTIONAL)
+        if (node->getLight()->getType() == LightSourceFlags::TypeDirectional)
         {
             mShadowCamera->setupOrtho(params.znear, params.zfar, params.left, params.right, params.bottom, params.top);
         }
@@ -162,7 +162,8 @@ namespace lite3dpp_pipeline {
         mShadowCasters.emplace_back(std::make_unique<ShadowCaster>(mMain, node->getName() + std::to_string(index), 
             node, mProjection));
         // Запишем в источник света индекс его теневой матрицы в UBO
-        node->getLight()->setUserIndex(index);
+        node->getLight()->setShadowIndex(index);
+        node->getLight()->setFlag(LightSourceFlags::CastShadow);
         return mShadowCasters.back().get();
     }
 
@@ -273,7 +274,7 @@ namespace lite3dpp_pipeline {
         calculateLimits();
 
         mShadowMatrixBuffer = mMain.getResourceManager()->queryResourceFromJson<UBO>(pipelineName + "_ShadowMatrixBuffer",
-            "{\"Dynamic\": false}");
+            "{\"Dynamic\": true}");
         mShadowIndexBuffer = mMain.getResourceManager()->queryResourceFromJson<UBO>(pipelineName + "_ShadowIndexBuffer",
             "{\"Dynamic\": true}");
 
@@ -291,7 +292,7 @@ namespace lite3dpp_pipeline {
 
         // Число компонент на одну вершину в геометрическом шейдере рендера теневого атласа
         // Константа связана с кодом шейдера!!!
-        const uint32_t componentsByVertex = 6; // UV + Position
+        const uint32_t componentsByVertex = 7; // UV + Position + drawId
         uint32_t a = maxGeometryTotalOutputComponents / (componentsByVertex * 3);
         uint32_t b = maxGeometryOutputVertices / 3;
         uint32_t c = UBOMaxSize / sizeof(kmMat4);

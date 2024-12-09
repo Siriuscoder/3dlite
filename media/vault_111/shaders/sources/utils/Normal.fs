@@ -20,5 +20,5 @@ vec3 sampleNormal(vec2 uv, mat3 tbn)
     // Refix Z (may be missing)
     nt.z = sqrt(1.0 - dot(nt.xy, nt.xy));
     // trasform normal to world space using common TBN
-    return normalize(tbn * (nt * NormalScale));
+    return normalize(tbn * normalize(nt * NormalScale));
 }

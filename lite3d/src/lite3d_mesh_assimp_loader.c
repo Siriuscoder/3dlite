@@ -251,33 +251,33 @@ static int ai_load_light(const struct aiScene *scene, const struct aiNode *node,
 
     /* type */
     if (light->mType == aiLightSource_DIRECTIONAL)
-        params.block1.x = LITE3D_LIGHT_DIRECTIONAL;
+        params.flags |= LITE3D_LIGHT_DIRECTIONAL;
     else if (light->mType == aiLightSource_POINT)
-        params.block1.x = LITE3D_LIGHT_POINT;
+        params.flags |= LITE3D_LIGHT_POINT;
     else if (light->mType == aiLightSource_SPOT)
-        params.block1.x = LITE3D_LIGHT_SPOT;
+        params.flags |= LITE3D_LIGHT_SPOT;
 
     /* enabled */
-    params.block1.y = LITE3D_TRUE;
+    params.flags |= LITE3D_LIGHT_ENABLED;
     
-    params.block2.x = light->mColorDiffuse.r;
-    params.block2.y = light->mColorDiffuse.g;
-    params.block2.z = light->mColorDiffuse.b;
-    params.block2.w = 1.0f;
+    params.diffuse.x = light->mColorDiffuse.r;
+    params.diffuse.y = light->mColorDiffuse.g;
+    params.diffuse.z = light->mColorDiffuse.b;
+    params.radiance = 1.0f;
 
-    params.block3.x = light->mPosition.x;
-    params.block3.y = light->mPosition.y;
-    params.block3.z = light->mPosition.z;
+    params.position.x = light->mPosition.x;
+    params.position.y = light->mPosition.y;
+    params.position.z = light->mPosition.z;
 
-    params.block4.x = light->mDirection.x;
-    params.block4.y = light->mDirection.y;
-    params.block4.z = light->mDirection.z;
-    params.block4.w = light->mAttenuationConstant;
-  
-    params.block5.x = light->mAttenuationLinear;
-    params.block5.y = light->mAttenuationQuadratic;
-    params.block5.z = light->mAngleInnerCone;
-    params.block5.w = light->mAngleOuterCone;
+    params.direction.x = light->mDirection.x;
+    params.direction.y = light->mDirection.y;
+    params.direction.z = light->mDirection.z;
+
+    params.attenuationConstant = light->mAttenuationConstant;
+    params.attenuationLinear = light->mAttenuationLinear;
+    params.attenuationQuadratic = light->mAttenuationQuadratic;
+    params.innerCone = light->mAngleInnerCone;
+    params.outerCone = light->mAngleOuterCone;
 
     if (ctx.onLight)
         ctx.onLight(node->mName.data, &params, &transform, ctx.userdata);

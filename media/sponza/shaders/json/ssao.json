@@ -3,7 +3,7 @@
     [
         // Standard shaders with params customization
         "samples:shaders/sources/bigtriangle.vs",
-        "samples:shaders/sources/ssao/ssao.fs,samples:shaders/sources/ssao/ssao_params.def",
-        "samples:shaders/sources/common/utils.fs"
+        "samples:shaders/sources/ssao/ssao.fs",
+        "samples:shaders/sources/common/common.fs"
     ]
 }

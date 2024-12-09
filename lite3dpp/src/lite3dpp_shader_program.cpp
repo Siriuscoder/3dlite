@@ -92,7 +92,6 @@ namespace lite3dpp
 
     void ShaderProgram::loadShaders(stl<lite3d_shader>::vector &shaders)
     {
-        auto header = createSourceHeader();
         for (String &source : getJson().getStrings(L"Sources"))
         {
             String sourcePath;
@@ -106,8 +105,8 @@ namespace lite3dpp
             if (source.find_first_of(',') != String::npos)
                 defPath = source.substr(source.find_first_of(',')+1);
 
-           
-            if (!lite3d_shader_init(&shaders.back(), determineShaderType(sourcePath)))
+            auto shaderType = determineShaderType(sourcePath);
+            if (!lite3d_shader_init(&shaders.back(), shaderType))
                 LITE3D_THROW("Shader init failed..");
 
             // load definition source
@@ -133,6 +132,7 @@ namespace lite3dpp
             SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
                 "Compiling \"%s\" ...", sourcePath.c_str());
 
+            auto header = createSourceHeader(shaderType);
             const char* finalShaderCode[] = { header.c_str(), shaderCode.c_str() };
             if (!lite3d_shader_compile(&shaders.back(), 2, finalShaderCode, NULL))
                 LITE3D_THROW(sourcePath << " compile failed...");
@@ -185,7 +185,7 @@ namespace lite3dpp
         /* do nothing yet */
     }
 
-    String ShaderProgram::createSourceHeader()
+    String ShaderProgram::createSourceHeader(uint8_t shaderType)
     {
         String result;
         if (mShaderVersion.length() > 0)
@@ -238,6 +238,19 @@ namespace lite3dpp
                  vendor.find("INTEL") != std::string_view::npos)
         {
             result.append("#define LITE3D_RENDERER_INTEL\n");
+        }
+
+        if (shaderType == LITE3D_SHADER_TYPE_VERTEX)
+        {
+            result.append("#define LITE3D_VERTEX_SHADER\n");
+        }
+        else if (shaderType == LITE3D_SHADER_TYPE_FRAGMENT)
+        {
+            result.append("#define LITE3D_FRAGMENT_SHADER\n");
+        }
+        else if (shaderType == LITE3D_SHADER_TYPE_GEOMETRY)
+        {
+            result.append("#define LITE3D_GEOMETRY_SHADER\n");
         }
 
         for (auto &d : mGlobalDefinitions)

@@ -48,6 +48,7 @@ typedef void (*lite3d_blend_mode_t)(void);
 LITE3D_CEXPORT void lite3d_depth_test(uint8_t on);
 LITE3D_CEXPORT void lite3d_depth_test_func(uint8_t func);
 LITE3D_CEXPORT void lite3d_depth_output(uint8_t on);
+LITE3D_CEXPORT uint8_t lite3d_depth_output_get(void);
 
 LITE3D_CEXPORT void lite3d_stencil_test(uint8_t on);
 LITE3D_CEXPORT void lite3d_stencil_test_func(uint8_t func, int32_t refValue);
@@ -77,7 +78,7 @@ LITE3D_CEXPORT void lite3d_blending(uint8_t on);
 
 LITE3D_CEXPORT void lite3d_polygon_mode(uint8_t mode);
 LITE3D_CEXPORT void lite3d_backface_culling(uint8_t mode);
-
+LITE3D_CEXPORT uint8_t lite3d_backface_culling_get(void);
 
 #endif	/* LITE3D_BUFFERS_MANIP_H */
 

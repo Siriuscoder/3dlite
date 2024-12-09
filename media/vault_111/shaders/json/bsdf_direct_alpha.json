@@ -8,7 +8,7 @@
         "samples:shaders/sources/pbr/brdf_oren_nayar_approx.fs,vault_111:shaders/sources/inc/pbr_params.def",
         "samples:shaders/sources/pbr/brdf_simple_env.fs,vault_111:shaders/sources/inc/pbr_params.def",
         "samples:shaders/sources/shadow/pcf4x4.fs,vault_111:shaders/sources/inc/shadow_params.def",
-        "samples:shaders/sources/common/utils.fs",
+        "samples:shaders/sources/common/material.fs",
         // Sample specific shaders
         "vault_111:shaders/sources/regular_alpha.fs",
         "vault_111:shaders/sources/utils/Normal.fs",

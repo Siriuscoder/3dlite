@@ -24,8 +24,6 @@
 #include <lite3d/lite3d_render.h>
 #include <lite3d/lite3d_query.h>
 
-int gQueryObjectSupported = LITE3D_FALSE;
-
 int lite3d_query_technique_init(void)
 {
     if (!lite3d_check_occlusion_query())
@@ -33,12 +31,10 @@ int lite3d_query_technique_init(void)
         SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION, "%s: Hardware occlusion query is not supported",
             LITE3D_CURRENT_FUNCTION);
     
-        gQueryObjectSupported = LITE3D_FALSE;
-        return gQueryObjectSupported;
+        return LITE3D_FALSE;
     }
 
-    gQueryObjectSupported = LITE3D_TRUE;
-    return gQueryObjectSupported;
+    return LITE3D_TRUE;
 }
 
 int lite3d_query_init(struct lite3d_query *query)

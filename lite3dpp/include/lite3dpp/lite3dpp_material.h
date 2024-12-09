@@ -83,8 +83,6 @@ namespace lite3dpp
         virtual void loadFromConfigImpl(const ConfigurationReader &helper) override;
         virtual void unloadImpl() override;
 
-    private:
-
         lite3d_shader_parameter *getParameter(const String &name, 
             uint8_t type, uint16_t passNo, bool isGlobal, bool createIfNotExist);
         void parseParameteres(const ConfigurationReader &passJson, uint16_t passNo);
@@ -92,7 +90,7 @@ namespace lite3dpp
         static lite3d_shader_parameter *getGlobalParameter(const String &name, 
             uint8_t type, bool createIfNotExist);
         
-    private:
+    protected:
 
         lite3d_material mMaterial;
         Passes mPasses;

@@ -44,6 +44,7 @@
 #define LITE3D_RENDER_SORT_TRANSPARENT_TO_NEAR      ((uint32_t)0x1 << 15)
 #define LITE3D_RENDER_SORT_OPAQUE_FROM_NEAR         ((uint32_t)0x1 << 16)
 #define LITE3D_RENDER_SORT_TRANSPARENT_FROM_NEAR    ((uint32_t)0x1 << 17)
+#define LITE3D_RENDER_MULTIRENDER                   ((uint32_t)0x1 << 18)
 
 #define LITE3D_RENDER_DEFAULT (LITE3D_RENDER_OPAQUE | LITE3D_RENDER_TRANSPARENT | LITE3D_RENDER_SORT_TRANSPARENT_TO_NEAR | \
     LITE3D_RENDER_DEPTH_TEST | LITE3D_RENDER_COLOR_OUTPUT | LITE3D_RENDER_DEPTH_OUTPUT | LITE3D_RENDER_FRUSTUM_CULLING)
@@ -52,15 +53,16 @@ typedef struct lite3d_scene_stats
 {
     int32_t trianglesRendered;
     int32_t verticesRendered;
-    int32_t nodesTotal;
-    int32_t batchCalled;
-    int32_t batchInstancedCalled;
-    int32_t batchTotal;
-    int32_t batchOccluded;
-    int32_t materialBlocks;
-    int32_t textureUnitsBinded;
-    int32_t blockUnitsBinded;
-    int32_t materialPassed;
+    int32_t totalNodes;
+    int32_t drawCalls;
+    int32_t drawCallsInstanced;
+    int32_t totalPieces;
+    int32_t occludedPieces;
+    int32_t totalMaterials;
+    int32_t textureBinds;
+    int32_t bufferBinds;
+    int32_t materialsSwitch;
+    int32_t drawSubCommands;
 } lite3d_scene_stats;
 
 typedef struct lite3d_scene
@@ -72,6 +74,7 @@ typedef struct lite3d_scene
     lite3d_array stageTransparent;
     lite3d_array invalidatedUnits;
     lite3d_array seriesMatrixes;
+    lite3d_array invocationBuffer;
     lite3d_mesh_chunk *bindedMeshChunk;
     lite3d_camera *currentCamera;
     void *userdata;
@@ -104,6 +107,8 @@ LITE3D_CEXPORT void lite3d_scene_purge(lite3d_scene *scene);
 LITE3D_CEXPORT int lite3d_scene_add_node(lite3d_scene *scene, lite3d_scene_node *node, lite3d_scene_node *baseNode);
 LITE3D_CEXPORT int lite3d_scene_rebase_node(lite3d_scene *scene, lite3d_scene_node *node, lite3d_scene_node *baseNode);
 LITE3D_CEXPORT int lite3d_scene_remove_node(lite3d_scene *scene, lite3d_scene_node *node);
+LITE3D_CEXPORT int lite3d_scene_multirender_support(void);
+LITE3D_CEXPORT int lite3d_scene_oocclusion_query_support(void);
 
 LITE3D_CEXPORT int lite3d_scene_node_touch_material(struct lite3d_scene_node *node, 
     struct lite3d_mesh_chunk *meshChunk, struct lite3d_mesh_chunk *bbMeshChunk, 

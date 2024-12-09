@@ -9,6 +9,6 @@
         "samples:shaders/sources/pbr/brdf_simple_env.fs,vault_111:shaders/sources/inc/pbr_params.def",
         "samples:shaders/sources/shadow/pcf4x4.fs,vault_111:shaders/sources/inc/shadow_params.def",
         "samples:shaders/sources/ssao/ssao_sample.fs",
-        "samples:shaders/sources/common/utils.fs"
+        "samples:shaders/sources/common/material.fs"
     ]
 }
