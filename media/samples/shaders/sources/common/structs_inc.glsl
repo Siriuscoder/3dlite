@@ -20,6 +20,7 @@ struct AngularInfo
     float NdotL;
     float HdotV;
     float NdotH;
+    float LdotV;
 };
 
 struct LightSource
@@ -88,3 +89,9 @@ struct LightSource
 #ifndef LITE3D_SHADOW_MIN_ADAPTIVE_STEP
 #define LITE3D_SHADOW_MIN_ADAPTIVE_STEP                     0.5
 #endif
+
+#define LITE3D_MATERIAL_NORMAL_MAPPING_TANGENT              uint(1 << 0)
+#define LITE3D_MATERIAL_NORMAL_MAPPING_TANGENT_BITANGENT    uint(1 << 1)
+#define LITE3D_MATERIAL_ENVIRONMENT_TEXTURE                 uint(1 << 2)
+#define LITE3D_MATERIAL_ENVIRONMENT_MULTI_PROBE             uint(1 << 3)
+#define LITE3D_MATERIAL_ENVIRONMENT_SINGLE_PROBE            uint(1 << 4)

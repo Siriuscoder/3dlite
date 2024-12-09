@@ -18,12 +18,6 @@
 #define TEXTURE_FLAG_ENVIRONMENT                     uint(1 << 12)
 #define TEXTURE_FLAG_ENVIRONMENT_PROBE               uint(1 << 13)
 
-#define MATERIAL_NORMAL_MAPPING_TANGENT              uint(1 << 0)
-#define MATERIAL_NORMAL_MAPPING_TANGENT_BITANGENT    uint(1 << 1)
-#define MATERIAL_ENVIRONMENT_TEXTURE                 uint(1 << 2)
-#define MATERIAL_ENVIRONMENT_MULTI_PROBE             uint(1 << 3)
-#define MATERIAL_ENVIRONMENT_SINGLE_PROBE            uint(1 << 4)
-
 struct TextureHandle
 {
     sampler2D textureId;

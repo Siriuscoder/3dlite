@@ -359,4 +359,5 @@ void angularInfoCalcAngles(inout AngularInfo angular, in Surface surface)
     angular.NdotL = max(dot(surface.normal, angular.lightDir), FLT_EPSILON);
     angular.HdotV = max(dot(H, angular.viewDir), FLT_EPSILON);
     angular.NdotH = max(dot(surface.normal, H), FLT_EPSILON);
+    angular.LdotV = max(dot(angular.lightDir, angular.viewDir), FLT_EPSILON);
 }

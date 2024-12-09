@@ -5,7 +5,7 @@
         "samples:shaders/sources/pipeline/shadow_pass/shadow.vs",
         "samples:shaders/sources/pipeline/shadow_pass/shadow_split.gs",
         "samples:shaders/sources/pipeline/depth_pass/depth.fs",
-        "samples:shaders/sources/common/material.fs",
+        "samples:shaders/sources/common/common.fs",
         // Sample specific shaders
         "sandbox:shaders/sources/regular_depth.fs"
     ]

@@ -1,5 +1,5 @@
-#define MATERIAL_NORMAL_MAPPING_TANGENT              uint(1 << 0)
-#define MATERIAL_NORMAL_MAPPING_TANGENT_BITANGENT    uint(1 << 1)
+#define LITE3D_MATERIAL_NORMAL_MAPPING_TANGENT              uint(1 << 0)
+#define LITE3D_MATERIAL_NORMAL_MAPPING_TANGENT_BITANGENT    uint(1 << 1)
 
 struct Material
 {

@@ -25,10 +25,9 @@ namespace lite3dpp
     LightSource::LightSource(const String &name) : 
         mName(name)
     {
-        memset(&mLightSource, 0, sizeof(mLightSource));
         mLightSource.userdata = this;
         /* enabled by default */
-        mLightSource.params.flags = LITE3D_LIGHT_ENABLED;
+        enabled(true);
         mLightSourceWorld = mLightSource;
     }
 
@@ -69,7 +68,7 @@ namespace lite3dpp
             setAngleOuterCone(spotFactor.getDouble(L"AngleOuterCone"));
         }
 
-        mLightSource.params.flags = LITE3D_LIGHT_ENABLED;
+        enabled(true);
         mLightSource.userdata = this;
         mLightSourceWorld = mLightSource;
     }

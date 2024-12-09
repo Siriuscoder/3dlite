@@ -9,6 +9,7 @@
 #define LITE3D_SHADOW_MAX_ADAPTIVE_FILTER_SIZE              3.0
 #define LITE3D_SHADOW_MIN_ADAPTIVE_STEP                     0.5
 
+#define LITE3D_SSS_ENABLE
 #define LITE3D_SSS_MAX_ADAPTIVE_DEPTH_THRESHOLD             0.023   // Min Depth clipping to avoid accuracy artifacts
 #define LITE3D_SSS_MAX_STEPS                                32      // Max ray steps, affects quality and performance.
 #define LITE3D_SSS_MAX_RAY_DISTANCE                         0.35    // Max shadow length, longer shadows are less accurate.

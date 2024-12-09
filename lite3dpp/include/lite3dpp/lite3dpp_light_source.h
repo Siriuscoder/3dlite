@@ -119,8 +119,8 @@ namespace lite3dpp
         void calcDistanceMinRadiance();
 
         String mName;
-        lite3d_light_source mLightSource;
-        lite3d_light_source mLightSourceWorld;
+        lite3d_light_source mLightSource = {};
+        lite3d_light_source mLightSourceWorld = {};
         uint32_t mBufferIndex = 0;
         bool mUpdated = false;
         std::optional<float> mInfluenceDistance;

@@ -124,6 +124,11 @@ namespace lite3dpp_pipeline {
             ShaderProgram::addDefinition("LITE3D_BINDLESS_TEXTURE_PIPELINE", "1");
         }
 
+        if (pipelineConfig.has(L"EnvironmentTexture"))
+        {
+            ShaderProgram::addDefinition("LITE3D_ENABLE_ENVIRONMENT_TEXTURE", "1");
+        }
+
         if (!lightingTechnique.empty())
         {
             sceneGeneratedConfig.set(L"LightingTechnique", lightingTechnique);
