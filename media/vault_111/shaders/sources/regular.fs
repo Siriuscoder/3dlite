@@ -1,5 +1,3 @@
-#include "samples:shaders/sources/common/utils_inc.glsl"
-
 #if defined(MRT_WITH_EMISSION)
 
 uniform sampler2D Albedo;

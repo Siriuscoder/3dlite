@@ -1,8 +1,8 @@
 #define LITE3D_ENV_DIFFUSE_STRENGTH                        0.23
 #define LITE3D_CUBE_MAP_UV_SCALE                           -1.0
 
-#define LITE3D_SHADOW_MAX_ADAPTIVE_BIAS                    0.0025
 #define LITE3D_SHADOW_MIN_ADAPTIVE_BIAS                    0.0005
+#define LITE3D_SHADOW_MAX_ADAPTIVE_BIAS                    0.0010
 #define LITE3D_SHADOW_MIN_ADAPTIVE_FILTER_SIZE             1.0
-#define LITE3D_SHADOW_MAX_ADAPTIVE_FILTER_SIZE             2.5
+#define LITE3D_SHADOW_MAX_ADAPTIVE_FILTER_SIZE             2.2
 #define LITE3D_SHADOW_MIN_ADAPTIVE_STEP                    0.5

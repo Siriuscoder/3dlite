@@ -27,32 +27,33 @@ vec3 ComputeIllumination(in Surface surface)
     for (int i = 1; i <= count; ++i)
     {
         int index = lightsIndexes[i/4][int(mod(i, 4))];
-
-        /* block0.x - type */
-        /* block0.y - enabled */
-        /* block0.z - influence distance */
-        /* block0.w - influence min radiance */
         LightSource light = lights[index];
+        // Check for the light source is enabled
         if (!hasFlag(light.flags, LITE3D_LIGHT_ENABLED))
             continue;
 
+        // Calc angular info respect to the light source
         angularInfoSetLightSource(angular, surface, light);
         if (angular.isOutside)
             continue;
 
+        // Calc angular dot products respect to the light source
+        angularInfoCalcAngles(angular, surface);
+        // Calc the light source attenuation
         float attenuationFactor = calcAttenuation(light, angular);
+        // Calc shadow, 0 - fully is in shadow, 1 - visible
         float shadowFactor = Shadow(light, surface, angular);
-        /* light source full radiance at fragment position */
+        // Calc the the light source radiance
         vec3 radiance = light.diffuse.rgb * light.radiance * attenuationFactor * shadowFactor * surface.ao;
-        /* Radiance too small, do not take this light source in account */ 
+        // Radiance is too small, consider to skip BRDF calculation
         if (isZero(radiance))
             continue;
 
-        angularInfoCalcAngles(angular, surface);
-        /* L for current lights source */ 
+        // Calculate BRDF
         directLx += BRDF(surface, angular) * radiance * angular.NdotL;
     }
 
+    // Calculate indirect lighting, ambient, IBL .. 
     vec3 indirectLx = ComputeIndirect(surface, angular);
 
     return indirectLx + directLx + surface.material.emission.rgb;

@@ -42,7 +42,6 @@ const vec2 PoissonDisc[LITE3D_POISSON_DISC_COUNT] = vec2[](
     vec2(-0.819775, 0.40949)
 );
 
-#ifdef LITE3D_SSS_ENABLE
 float SSS(vec3 P, vec3 L, float minDepthThreshold)
 {
     // Compute ray position and direction (in view-space)
@@ -77,7 +76,6 @@ float SSS(vec3 P, vec3 L, float minDepthThreshold)
 
     return 1.0 - occlusion;
 }
-#endif
 
 /* 
     Calculate the adaptive parameters depending the light angle to surface

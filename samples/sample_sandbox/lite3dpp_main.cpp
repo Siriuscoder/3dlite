@@ -112,7 +112,7 @@ public:
         spotLight->getLight()->setAttenuationQuadratic(AttenuationQuadratic);
         spotLight->getLight()->setRadiance(200.0f);
         spotLight->getLight()->enabled(true);
-        //spotLight->getLight()->setFlag(LightSourceFlags::CastShadow);
+        spotLight->getLight()->setFlag(LightSourceFlags::CastShadowPcf3x3);
         spotLight->setPosition(getMainCamera().getWorldPosition());
         spotLight->setRotation(getMainCamera().getWorldRotation());
 
