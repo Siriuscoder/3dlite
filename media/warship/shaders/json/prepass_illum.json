@@ -3,6 +3,7 @@
     [
         "warship:shaders/sources/prepass.vs",
         "warship:shaders/sources/prepass_illum.fs",
-        "samples:shaders/sources/common/common.fs"
+        "samples:shaders/sources/common/common.fs",
+        "samples:shaders/sources/common/empty_getters.fs"
     ]
 }

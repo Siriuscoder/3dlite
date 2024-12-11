@@ -53,7 +53,7 @@ void main()
     if (isZero(fragNormalAndSpecular.xyz))
         nw = wnorm;
 
-    vec3 linearSpec;
+    vec3 linearSpec = vec3(0.0);
     vec3 linear = calc_lighting(ivv, nw,
         eye, fragNormalAndSpecular.w, wrapAroundFactor, specPower, linearSpec);
 

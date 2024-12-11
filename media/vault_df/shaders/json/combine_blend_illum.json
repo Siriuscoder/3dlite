@@ -5,6 +5,7 @@
         "vaultmat:shaders/sources/combine_blend.fs,vaultmat:shaders/sources/def/illum.def",
         "samples:shaders/sources/phong/phong_blinn_single.fs",
         "samples:shaders/sources/phong/lighting_ubo.fs",
-        "samples:shaders/sources/common/common.fs"
+        "samples:shaders/sources/common/common.fs",
+        "samples:shaders/sources/common/empty_getters.fs"
     ]
 }

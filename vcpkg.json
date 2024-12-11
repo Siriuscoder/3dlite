@@ -1,6 +1,6 @@
 {
   "name": "3dlite",
-  "version": "2.1.1",
+  "version": "2.1.2",
   "dependencies": [
     "assimp",
     "bullet3",

@@ -1,11 +1,11 @@
 #include "samples:shaders/sources/common/common_inc.glsl"
 
-layout(std430) buffer readonly lightSources 
+layout(std430) readonly buffer lightSources 
 {
     LightSource lights[];
 };
 
-layout(std430) buffer readonly lightIndexes 
+layout(std430) readonly buffer lightIndexes 
 {
     ivec4 lightsIndexes[];
 };
@@ -18,7 +18,6 @@ vec3 calc_lighting(vec3 fragPos,
     float wrapAroundFactor, float specPower, inout vec3 linearSpec)
 {
     vec3 linear = vec3(0.0);
-    linearSpec = vec3(0.0);
     vec3 lightDir = vec3(0.0);
 
     /* calculate direction from fragment to eye */

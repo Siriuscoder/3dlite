@@ -122,7 +122,6 @@ public:
             material->setFloatParameter(1, "light.attenuationConstant", lightSource.getAttenuationConstant(), false);
             material->setFloatParameter(1, "light.attenuationLinear", lightSource.getAttenuationLinear(), false);
             material->setFloatParameter(1, "light.attenuationQuadratic", lightSource.getAttenuationQuadratic(), false);
-            material->setFloatParameter(1, "light.innerCone", lightSource.getAngleInnerCone(), false);
             material->setFloatParameter(1, "light.outerCone", lightSource.getAngleOuterCone(), false);
 
             mnode->frustumTest(false);

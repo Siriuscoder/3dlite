@@ -113,7 +113,7 @@ void main()
     if (isZero(nw))
         nw = wnorm;
 
-    vec3 linearSpec;
+    vec3 linearSpec = vec3(0.0);
     vec3 linear = calc_lighting(ivv, nw,
         eye, nval.w * 2, wrapAroundFactor, specPower, linearSpec);
 

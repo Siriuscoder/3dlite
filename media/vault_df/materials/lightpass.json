@@ -75,11 +75,6 @@
       "Value": 0.0
     },
     {
-      "Name":"light.innerCone",
-      "Type":"float",
-      "Value": 0.0
-    },
-    {
       "Name":"light.outerCone",
       "Type":"float",
       "Value": 0.0

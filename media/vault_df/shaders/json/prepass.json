@@ -3,6 +3,7 @@
     [
         "vaultmat:shaders/sources/prepass.vs",
         "vaultmat:shaders/sources/prepass.fs",
-        "samples:shaders/sources/common/common.fs"
+        "samples:shaders/sources/common/common.fs",
+        "samples:shaders/sources/common/empty_getters.fs"
     ]
 }
