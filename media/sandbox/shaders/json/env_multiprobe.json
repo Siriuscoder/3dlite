@@ -4,12 +4,12 @@
         // Standard shaders with params customization
         "samples:shaders/sources/pipeline/env_pass/env.vs",
         "samples:shaders/sources/pipeline/env_pass/env_multi.gs",
-        "samples:shaders/sources/pipeline/forward_pass/forward.fs,sandbox:shaders/sources/inc/params.def",
-        "samples:shaders/sources/pbr/pbr.fs,sandbox:shaders/sources/inc/params.def",
-        "samples:shaders/sources/pbr/brdf_lambert.fs,sandbox:shaders/sources/inc/params.def",
+        "samples:shaders/sources/pipeline/env_pass/forward.fs",
+        "samples:shaders/sources/pbr/pbr.fs",
+        "samples:shaders/sources/pbr/brdf_lambert.fs",
         "samples:shaders/sources/pbr/brdf_null_env.fs,sandbox:shaders/sources/inc/params.def",
-        "samples:shaders/sources/shadow/pcf_simple.fs,sandbox:shaders/sources/inc/params.def",
-        "samples:shaders/sources/common/utils.fs",
+        "samples:shaders/sources/shadow/simple.fs,sandbox:shaders/sources/inc/params.def",
+        "samples:shaders/sources/common/common.fs",
         // Sample specific shaders
         "sandbox:shaders/sources/regular.fs"
     ]

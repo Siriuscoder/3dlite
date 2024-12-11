@@ -1,4 +1,41 @@
 {
+  "AlbedoTexture": {
+    "Name": "Albedo",
+    "Type": "sampler",
+    "TextureName": "stones_2ndfloor_01_BaseColor.texture",
+    "TexturePath": "sponza:textures/json/stones_2ndfloor_01_BaseColor.json"
+  },
+  "RoughnessMetallicTexture": {
+    "Name": "Specular",
+    "Type": "sampler",
+    "TextureName": "stones_2ndfloor_01_Roughnessstones_2ndfloor_01_Metalness.texture",
+    "TexturePath": "sponza:textures/json/stones_2ndfloor_01_Roughnessstones_2ndfloor_01_Metalness.json"
+  },
+  "NormalRGBTexture": {
+    "Name": "Normal",
+    "Type": "sampler",
+    "TextureName": "stones_2ndfloor_01_Normal.texture",
+    "TexturePath": "sponza:textures/json/stones_2ndfloor_01_Normal.json"
+  },
+  "EnvDiffuse": {
+    "Value": 1.0
+  },
+  "EnvSpecular": {
+    "Value": 0.5
+  },
+  "NormalScale": {
+    "Value": [
+      1.0,
+      -1.0,
+      1.0,
+      1.0
+    ]
+  },
+  "EnvironmentProbeTexture": {
+    "Name": "EnvironmentProbe",
+    "TextureName": "SponzaDeffered_EnvironmentMultiProbe.texture",
+    "Type": "sampler"
+  },
   "Passes": [
     {
       "Pass": 1,
@@ -9,9 +46,6 @@
       "Uniforms": [
         {
           "Name": "projViewMatrix"
-        },
-        {
-          "Name": "modelMatrix"
         }
       ]
     },
@@ -23,31 +57,7 @@
       },
       "Uniforms": [
         {
-          "Name": "Albedo",
-          "Type": "sampler",
-          "TextureName": "stones_2ndfloor_01_BaseColor.texture",
-          "TexturePath": "sponza:textures/json/stones_2ndfloor_01_BaseColor.json"
-        },
-        {
-          "Name": "Normal",
-          "Type": "sampler",
-          "TextureName": "stones_2ndfloor_01_Normal.texture",
-          "TexturePath": "sponza:textures/json/stones_2ndfloor_01_Normal.json"
-        },
-        {
-          "Name": "Specular",
-          "Type": "sampler",
-          "TextureName": "stones_2ndfloor_01_Roughnessstones_2ndfloor_01_Metalness.texture",
-          "TexturePath": "sponza:textures/json/stones_2ndfloor_01_Roughnessstones_2ndfloor_01_Metalness.json"
-        },
-        {
           "Name": "projViewMatrix"
-        },
-        {
-          "Name": "modelMatrix"
-        },
-        {
-          "Name": "normalMatrix"
         }
       ]
     },
@@ -67,9 +77,6 @@
           "Name": "ShadowIndex",
           "UBOName": "SponzaDeffered_ShadowIndexBuffer",
           "Type": "UBO"
-        },
-        {
-          "Name": "modelMatrix"
         }
       ]
     },
@@ -80,18 +87,6 @@
         "Path": "sponza:shaders/json/env_probe.json"
       },
       "Uniforms": [
-        {
-          "Name": "Albedo",
-          "Type": "sampler",
-          "TextureName": "stones_2ndfloor_01_BaseColor.texture",
-          "TexturePath": "sponza:textures/json/stones_2ndfloor_01_BaseColor.json"
-        },
-        {
-          "Name": "Specular",
-          "Type": "sampler",
-          "TextureName": "stones_2ndfloor_01_Roughnessstones_2ndfloor_01_Metalness.texture",
-          "TexturePath": "sponza:textures/json/stones_2ndfloor_01_Roughnessstones_2ndfloor_01_Metalness.json"
-        },
         {
           "Name": "LightSources",
           "UBOName": "SponzaDeffered_MainScene_lightingBufferObject",
@@ -121,9 +116,6 @@
           "Name": "EnvProbesIndex",
           "UBOName": "SponzaDeffered_EnvProbesIndex",
           "Type": "UBO"
-        },
-        {
-          "Name": "modelMatrix"
         }
       ]
     }

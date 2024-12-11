@@ -1,4 +1,6 @@
-float ShadowVisibility(float shadowIndex, vec3 vw, vec3 N, vec3 L)
+#include "samples:shaders/sources/common/common_inc.glsl"
+
+float Shadow(in LightSource source, in Surface surface, in AngularInfo angular)
 {
     return 1.0;
 }

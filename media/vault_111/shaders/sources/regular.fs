@@ -1,5 +1,3 @@
-#include "samples:shaders/sources/common/utils_inc.glsl"
-
 #if defined(MRT_WITH_EMISSION)
 
 uniform sampler2D Albedo;
@@ -21,38 +19,29 @@ uniform float SpecularAmbientFactor;
 vec3 sampleSpecular(vec2 uv);
 vec3 sampleNormal(vec2 uv, mat3 tbn);
 
-vec3 CheckAlbedo(vec4 albedo)
-{
-    // check albedo alpha and discard full transparent fragments
-    if (isZero(albedo.a))
-        discard;
-    
-    return albedo.rgb;
-}
-
 //////////////////////// ALBEDO ///////////////////////////
 vec4 getAlbedo(vec2 uv)
 {
 #if defined(MRT_WITH_EMISSION_SOLID)
-    vec3 albedo = Emission.rgb;
+    vec4 albedo = Emission;
 #else
-    vec3 albedo = CheckAlbedo(texture(Albedo, uv));
+    vec4 albedo = texture(Albedo, uv);
 #endif
 
 // Additional modifiers
 #ifdef PALETE_YELLOW
-    albedo *= PALETE_YELLOW;
+    albedo.rgb *= PALETE_YELLOW;
 #endif
 
 #ifdef PALETE_RED
-    albedo *= PALETE_RED;
+    albedo.rgb *= PALETE_RED;
 #endif
 
 #ifdef PALETE_BLUE
-    albedo *= PALETE_BLUE;
+    albedo.rgb *= PALETE_BLUE;
 #endif
 
-    return vec4(albedo, 1.0);
+    return albedo;
 }
 ///////////////////////// EMISSION ////////////////////////
 vec3 getEmission(vec2 uv)
@@ -99,4 +88,9 @@ vec3 getSpecular(vec2 uv)
 #else
     return sampleSpecular(uv);
 #endif
+}
+
+float getAmbientOcclusion(vec2 uv)
+{
+    return 1.0;
 }

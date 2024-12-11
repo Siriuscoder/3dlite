@@ -47,13 +47,13 @@
     },
     {
       "Name":"lightSources",
-      "TextureName": "Vault_lightingBufferObject",
-      "Type":"samplerBuffer"
+      "UBOName": "Vault_lightingBufferObject",
+      "Type":"UBO"
     },
     {
       "Name":"lightIndexes",
-      "TextureName": "Vault_lightingIndexBuffer",
-      "Type":"samplerBuffer"
+      "UBOName": "Vault_lightingIndexBuffer",
+      "Type":"UBO"
     }
   ]
 }

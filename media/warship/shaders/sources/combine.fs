@@ -1,5 +1,3 @@
-#include "samples:shaders/sources/phong/lighting_inc.glsl"
-
 uniform sampler2D fragMap;
 uniform sampler2D normalMap;
 uniform sampler2D diffuseMap;
@@ -14,6 +12,9 @@ const float specPower = 40.0;
 const float density = 0.0005;
 const float LOG2 = 1.442695;
 const vec3 fogColor = vec3(0.5, 0.5, 0.2);
+
+vec3 calc_lighting(vec3 fragPos, vec3 fragNormal, vec3 eye, float specularFactor, 
+    float wrapAroundFactor, float specPower, inout vec3 linearSpec);
 
 void main()
 {

@@ -89,7 +89,7 @@ void *lite3d_calloc(size_t size)
 
 void lite3d_free(void *p)
 {
-    if (gAlloca_f.freef)
+    if (gAlloca_f.freef && p)
         gAlloca_f.freef(p);
 }
 

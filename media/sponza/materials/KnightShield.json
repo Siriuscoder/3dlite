@@ -1,0 +1,92 @@
+{
+  "AlbedoTexture": {
+    "Name": "Albedo",
+    "Type": "sampler",
+    "TextureName": "shield_final_diffuse_A.texture",
+    "TexturePath": "sponza:textures/json/shield_final_diffuse_A.json"
+  },
+  "RoughnessTexture": {
+    "Name": "Specular",
+    "Type": "sampler",
+    "TextureName": "brushed_metal_rough_F.texture",
+    "TexturePath": "sponza:textures/json/brushed_metal_rough_F.json"
+  },
+  "Metallic": {
+    "Name": "Metallic",
+    "Type": "float",
+    "Value": 1.0
+  },
+  "Roughness": {
+    "Value": 1.35
+  },
+  "NormalRGBTexture": {
+    "Name": "Normal",
+    "Type": "sampler",
+    "TextureName": "shield_final_normal_A.texture",
+    "TexturePath": "sponza:textures/json/shield_final_normal_A.json"
+  },
+  "EnvDiffuse": {
+    "Value": 1.0
+  },
+  "EnvSpecular": {
+    "Value": 1.0
+  },
+  "NormalScale": {
+    "Value": [
+      1.0,
+      -1.0,
+      1.0,
+      1.0
+    ]
+  },
+  "EnvironmentProbeTexture": {
+    "Name": "EnvironmentProbe",
+    "TextureName": "SponzaDeffered_EnvironmentMultiProbe.texture",
+    "Type": "sampler"
+  },
+  "Passes": [
+    {
+      "Pass": 1,
+      "Program": {
+        "Name": "depth.program",
+        "Path": "sponza:shaders/json/depth.json"
+      },
+      "Uniforms": [
+        {
+          "Name": "projViewMatrix"
+        }
+      ]
+    },
+    {
+      "Pass": 2,
+      "Program": {
+        "Name": "bsdf_prepare.program",
+        "Path": "sponza:shaders/json/bsdf_prepare.json"
+      },
+      "Uniforms": [
+        {
+          "Name": "projViewMatrix"
+        }
+      ]
+    },
+    {
+      "Pass": 3,
+      "Program": {
+        "Name": "shadow.program",
+        "Path": "sponza:shaders/json/shadow.json"
+      },
+      "Uniforms": [
+        {
+          "Name": "ShadowMatrix",
+          "UBOName": "SponzaDeffered_ShadowMatrixBuffer",
+          "Type": "UBO"
+        },
+        {
+          "Name": "ShadowIndex",
+          "UBOName": "SponzaDeffered_ShadowIndexBuffer",
+          "Type": "UBO"
+        }
+      ]
+    }
+  ]
+}

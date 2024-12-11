@@ -4,6 +4,7 @@
     "Instancing": false,
     "OcclusionCulling": false,
     "LightingTechnique": "UBO",
+    "EnvironmentTexture": "samples:textures/json/skybox.json",
     "SkyBox": 
     {
         "Texture": "samples:textures/json/skybox.json",

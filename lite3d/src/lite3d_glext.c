@@ -55,6 +55,9 @@ PFNGLCOMPRESSEDTEXSUBIMAGE3DOESPROC glCompressedTexSubImage3DPtr = NULL;
 PFNGLFRAMEBUFFERTEXTURE3DOESPROC glFramebufferTexture3DPtr = NULL;
 /* GL_OES_geometry_shader */
 PFNGLFRAMEBUFFERTEXTUREOESPROC glFramebufferTexturePtr = NULL;
+/* GL_EXT_multi_draw_indirect */
+PFNGLMULTIDRAWARRAYSINDIRECTEXTPROC glMultiDrawArraysIndirectPtr = NULL;
+PFNGLMULTIDRAWELEMENTSINDIRECTEXTPROC glMultiDrawElementsIndirectPtr = NULL;
 
 #endif
 
@@ -343,6 +346,33 @@ int lite3d_check_debug_context(void)
 #endif
 }
 
+int lite3d_check_bindless_texture(void)
+{
+#ifdef GLES
+    return LITE3D_FALSE;
+#else
+    return GLEW_ARB_bindless_texture;
+#endif
+}
+
+int lite3d_check_shader_draw_parameters(void)
+{
+#ifdef GLES
+    return LITE3D_FALSE;
+#else
+    return GLEW_ARB_shader_draw_parameters;
+#endif
+}
+
+int lite3d_check_multi_draw_indirect(void)
+{
+#ifdef GLES
+    return SDL_GL_ExtensionSupported("GL_EXT_multi_draw_indirect") == SDL_TRUE;
+#else
+    return GLEW_ARB_multi_draw_indirect;
+#endif
+}
+
 #ifdef __GNUC__
 #   pragma GCC diagnostic push
 #   pragma GCC diagnostic ignored "-Wpedantic"
@@ -397,6 +427,17 @@ int lite3d_init_gl_extensions_binding(void)
     else
     {
         glFramebufferTexturePtr = glFramebufferTexture_stub;
+    }
+
+    if (lite3d_check_multi_draw_indirect())
+    {
+        glMultiDrawArraysIndirectPtr = SDL_GL_GetProcAddress("glMultiDrawArraysIndirectEXT");
+        glMultiDrawElementsIndirectPtr = SDL_GL_GetProcAddress("glMultiDrawElementsIndirectEXT");
+    }
+    else
+    {
+        glMultiDrawArraysIndirectPtr = glMultiDrawArraysIndirect_stub;
+        glMultiDrawElementsIndirectPtr = glMultiDrawElementsIndirect_stub;
     }
     
 #ifdef WITH_GLES2
@@ -638,5 +679,19 @@ void glTexStorage1D_stub(GLenum target, GLsizei levels, GLenum internalformat, G
 {
     SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
         "%s: glFramebufferTexture is not supported..", LITE3D_CURRENT_FUNCTION);
+    lite3d_misc_gl_set_not_supported();
+}
+
+void glMultiDrawArraysIndirect_stub(GLenum mode, const void *indirect, GLsizei drawcount, GLsizei stride)
+{
+    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+        "%s: glMultiDrawArraysIndirect is not supported..", LITE3D_CURRENT_FUNCTION);
+    lite3d_misc_gl_set_not_supported();
+}
+
+void glMultiDrawElementsIndirect_stub(GLenum mode, GLenum type, const void *indirect, GLsizei drawcount, GLsizei stride)
+{
+    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+        "%s: glMultiDrawElementsIndirect is not supported..", LITE3D_CURRENT_FUNCTION);
     lite3d_misc_gl_set_not_supported();
 }

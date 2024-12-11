@@ -52,7 +52,7 @@ namespace lite3dpp
         uint8_t determineShaderType(const String &filepath);
         void preprocessShaderCode(String &sourceCode);
         void optimizeShaderCode(String &sourceCode);
-        static String createSourceHeader();
+        static String createSourceHeader(uint8_t shaderType);
 
     private:
 

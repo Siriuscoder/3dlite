@@ -27,6 +27,7 @@
 #include <lite3dpp/lite3dpp_texture_render_target.h>
 #include <lite3dpp/lite3dpp_config_writer.h>
 #include <lite3dpp/lite3dpp_observer.h>
+#include <lite3dpp/lite3dpp_material_factory.h>
 
 namespace lite3dpp
 {
@@ -72,7 +73,15 @@ namespace lite3dpp
 
         void run();
         void stop();
-        
+
+        template<class T>
+        inline void initMaterialFactory()
+        {
+            mMaterialFactory = std::make_unique<T>(*this);
+        }
+
+        const MaterialFactory &getMaterialFactory() const;
+
     private:
 
         void parseConfig();
@@ -96,5 +105,6 @@ namespace lite3dpp
         Timers mTimers;
         lite3d_timer *mFixedUpdatesTimer;
         Cameras mCameras;
+        std::unique_ptr<MaterialFactory> mMaterialFactory;
     };
 }

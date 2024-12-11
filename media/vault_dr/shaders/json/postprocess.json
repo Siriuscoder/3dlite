@@ -1,9 +1,0 @@
-{
-    "Sources": 
-    [
-        "vaultmat:shaders/sources/postprocess.vs",
-        "vaultmat:shaders/sources/postprocess.fs",
-        "samples:shaders/sources/antialiasing/fxaa.fs",
-        "samples:shaders/sources/antialiasing/fxaa_texcoords.vs"
-    ]
-}

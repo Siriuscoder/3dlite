@@ -23,16 +23,17 @@
 #include <lite3d/lite3d_rb_tree.h>
 #include <lite3d/lite3d_kazmath.h>
 
-#define LITE3D_SHADER_PARAMETER_MAX_NAME    30
+#define LITE3D_SHADER_PARAMETER_MAX_NAME    128
 #define LITE3D_SHADER_PARAMETER_FLOAT       0x1
 #define LITE3D_SHADER_PARAMETER_FLOATV3     0x2
 #define LITE3D_SHADER_PARAMETER_FLOATV4     0x3
 #define LITE3D_SHADER_PARAMETER_FLOATM3     0x4
 #define LITE3D_SHADER_PARAMETER_FLOATM4     0x5
 #define LITE3D_SHADER_PARAMETER_INT         0x6
-#define LITE3D_SHADER_PARAMETER_SAMPLER     0x7
-#define LITE3D_SHADER_PARAMETER_SSBO        0x8
-#define LITE3D_SHADER_PARAMETER_UBO         0x9
+#define LITE3D_SHADER_PARAMETER_UINT        0x7
+#define LITE3D_SHADER_PARAMETER_SAMPLER     0x8
+#define LITE3D_SHADER_PARAMETER_SSBO        0x9
+#define LITE3D_SHADER_PARAMETER_UBO         0xA
 
 typedef struct lite3d_shader_parameter
 {
@@ -43,6 +44,7 @@ typedef struct lite3d_shader_parameter
     union
     {
         int32_t valint; 
+        uint32_t valuint; 
         float valfloat;
         lite3d_texture_unit *texture;
         lite3d_vbo *vbo;

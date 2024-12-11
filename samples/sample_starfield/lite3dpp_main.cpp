@@ -57,6 +57,7 @@ public:
     void setupShadowCasters()
     {
         mSUN = mMainScene->getObject("Sun")->getLightNode("Sun");
+        mSUN->getLight()->setFlag(LightSourceFlags::CastShadowPcfAdaptive);
         mSUNShadowCaster = mPipeline->getShadowManager()->newShadowCaster(mSUN);
     }
 

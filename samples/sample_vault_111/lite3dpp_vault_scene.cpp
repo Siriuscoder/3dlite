@@ -44,6 +44,15 @@ public:
         lite3dpp_pipeline::ShadowManager::DynamicShadowReceiver* spot = nullptr;
         lite3dpp_pipeline::ShadowManager::ShadowCaster* shadowCaster = nullptr;
 
+        SpotLightWithShadow() = default;
+        SpotLightWithShadow(lite3dpp_pipeline::ShadowManager::DynamicShadowReceiver *spot, 
+            lite3dpp_pipeline::ShadowManager::ShadowCaster* shadowCaster) : 
+            spot(spot),
+            shadowCaster(shadowCaster)
+        {
+            shadowCaster->getNode()->getLight()->setFlag(LightSourceFlags::CastShadowPcfAdaptive);
+        }
+
         void rotateAngle(const kmVec3 &axis, float angle)
         {
             SDL_assert(spot);
@@ -124,27 +133,28 @@ public:
     {
         // Установим тень для трех прожекторов и потом будем их вращать
         // Источники света получаем по ObjectName + NodeName
-        mSpot = SpotLightWithShadow {
+        mSpot = SpotLightWithShadow(
             mShadowManager->registerShadowReceiver(mVaultScene->getObject("LightSpot")->getNode("LightSpotLamp")),
             mShadowManager->newShadowCaster(mVaultScene->getObject("LightSpot")->getLightNode("LightSpotNode"))
-        };
+        );
 
-        mSpot01 = SpotLightWithShadow {
+        mSpot01 = SpotLightWithShadow(
             mShadowManager->registerShadowReceiver(mVaultScene->getObject("LightSpot.001")->getNode("LightSpotLamp")),
             mShadowManager->newShadowCaster(mVaultScene->getObject("LightSpot.001")->getLightNode("LightSpotNode"))
-        };
+        );
 
-        mSpot02 = SpotLightWithShadow {
+        mSpot02 = SpotLightWithShadow(
             mShadowManager->registerShadowReceiver(mVaultScene->getObject("LightSpot.002")->getNode("LightSpotLamp")),
             mShadowManager->newShadowCaster(mVaultScene->getObject("LightSpot.002")->getLightNode("LightSpotNode"))
-        };
+        );
 
-        mSpot03 = SpotLightWithShadow {
+        mSpot03 = SpotLightWithShadow(
             mShadowManager->registerShadowReceiver(mVaultScene->getObject("LightSpot.003")->getNode("LightSpotLamp")),
             mShadowManager->newShadowCaster(mVaultScene->getObject("LightSpot.003")->getLightNode("LightSpotNode"))
-        };
+        );
         
-        mShadowManager->newShadowCaster(mVaultScene->getObject("VaultStatic")->getLightNode("RotorSpot"));
+        mShadowManager->newShadowCaster(mVaultScene->getObject("VaultStatic")->getLightNode("RotorSpot"))->getNode()->
+            getLight()->setFlag(LightSourceFlags::CastShadowPcfAdaptive);
     }
 
     void setupLightAnim()

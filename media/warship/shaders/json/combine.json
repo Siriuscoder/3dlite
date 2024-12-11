@@ -4,7 +4,7 @@
         "warship:shaders/sources/combine.vs",
         "warship:shaders/sources/combine.fs",
         "samples:shaders/sources/phong/phong_blinn_single.fs",
-        "samples:shaders/sources/phong/lighting_tbo.fs",
-        "samples:shaders/sources/common/utils.fs"
+        "samples:shaders/sources/phong/lighting_ubo.fs",
+        "samples:shaders/sources/common/common.fs"
     ]
 }

@@ -88,6 +88,8 @@ public:
     {
         auto flashLightObject = mMainScene->addObject("FlashLight", "samples:objects/flashlight.json", nullptr);
         mFlashLight = flashLightObject->getLightNode("FlashLight.node");
+        mFlashLight->setPosition(getMainCamera().getPosition());
+        mFlashLight->setRotation(getMainCamera().getRotation());
         mFlashLight->getLight()->setAttenuationConstant(AttenuationConstant);
         mFlashLight->getLight()->setAttenuationLinear(AttenuationLinear);
         mFlashLight->getLight()->setAttenuationQuadratic(AttenuationQuadratic);
@@ -110,6 +112,7 @@ public:
         spotLight->getLight()->setAttenuationQuadratic(AttenuationQuadratic);
         spotLight->getLight()->setRadiance(200.0f);
         spotLight->getLight()->enabled(true);
+        spotLight->getLight()->setFlag(LightSourceFlags::CastShadowPcf3x3);
         spotLight->setPosition(getMainCamera().getWorldPosition());
         spotLight->setRotation(getMainCamera().getWorldRotation());
 
