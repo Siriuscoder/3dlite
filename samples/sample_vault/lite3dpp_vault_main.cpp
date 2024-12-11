@@ -34,11 +34,6 @@ int main(int agrc, char *args[])
             lite3dpp::samples::VaultDF sample(helpString);
             return sample.start("vault_df/config/config_vault.json");
         }
-        else if (std::string(args[1]) == "DR")
-        {
-            lite3dpp::samples::VaultDR sample(helpString);
-            return sample.start("vault_dr/config/config_vault.json");
-        }
         else if (std::string(args[1]) == "DRU")
         {
             lite3dpp::samples::VaultDR sample(helpString);
@@ -55,7 +50,6 @@ int main(int agrc, char *args[])
     std::cout << "\tsample_vault [MODE] " << std::endl << std::endl;
     std::cout << "\tMODE: " << std::endl;
     std::cout << "\tDF : Deferred Shading Render with lightmap pass" << std::endl;
-    std::cout << "\tDR : Direct Render with TBO(Texture Buffer Object) lighting" << std::endl;
     std::cout << "\tDRU: Direct Render with UBO(Uniform Buffer Object) lighting" << std::endl;
     std::cout << "\tDRS: Direct Render with SSBO(Shader Storage Buffer Object) lighting" << std::endl;
 

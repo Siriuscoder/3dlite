@@ -22,6 +22,16 @@
 namespace lite3dpp {
 namespace samples {
 
+inline kmVec4 Vec3to4(const kmVec3 &v)
+{
+    return kmVec4 {
+        v.x,
+        v.y,
+        v.z,
+        1.0
+    };
+}
+
 class VaultDF : public VaultBase, public SceneObserver
 {
 public:
@@ -104,17 +114,16 @@ public:
 
             light->translateToWorld();
             const auto &lightSource = *light->getLight();
-            material->setIntParameter(1, "light.enabled", lightSource.enabled() ? 1 : 0, false);
-            material->setIntParameter(1, "light.type", static_cast<int32_t>(lightSource.getType()), false);
-            material->setFloatv3Parameter(1, "light.position", lightSource.getWorldPosition(), false);
-            material->setFloatv3Parameter(1, "light.diffuse", lightSource.getDiffuse(), false);
-            material->setFloatv3Parameter(1, "light.direction", lightSource.getWorldDirection(), false);
+            material->setUIntParameter(1, "light.flags", static_cast<uint32_t>(lightSource.getFlags()), false);
+            material->setFloatv4Parameter(1, "light.position", Vec3to4(lightSource.getWorldPosition()), false);
+            material->setFloatv4Parameter(1, "light.diffuse", Vec3to4(lightSource.getDiffuse()), false);
+            material->setFloatv4Parameter(1, "light.direction", Vec3to4(lightSource.getWorldDirection()), false);
             material->setFloatParameter(1, "light.influenceDistance", lightSource.getInfluenceDistance(), false);
-            material->setFloatParameter(1, "light.attenuationContant", lightSource.getAttenuationConstant(), false);
+            material->setFloatParameter(1, "light.attenuationConstant", lightSource.getAttenuationConstant(), false);
             material->setFloatParameter(1, "light.attenuationLinear", lightSource.getAttenuationLinear(), false);
             material->setFloatParameter(1, "light.attenuationQuadratic", lightSource.getAttenuationQuadratic(), false);
-            material->setFloatParameter(1, "light.innercone", lightSource.getAngleInnerCone(), false);
-            material->setFloatParameter(1, "light.outercone", lightSource.getAngleOuterCone(), false);
+            material->setFloatParameter(1, "light.innerCone", lightSource.getAngleInnerCone(), false);
+            material->setFloatParameter(1, "light.outerCone", lightSource.getAngleOuterCone(), false);
 
             mnode->frustumTest(false);
             mnode->setName(light->getName());

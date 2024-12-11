@@ -4,6 +4,6 @@
         "vaultmat:shaders/sources/triangle.vs",
         "vaultmat:shaders/sources/lightpass.fs",
         "samples:shaders/sources/phong/phong_blinn_single.fs",
-        "samples:shaders/sources/common/utils.fs"
+        "samples:shaders/sources/common/common.fs"
     ]
 }

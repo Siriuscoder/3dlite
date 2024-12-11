@@ -29,34 +29,29 @@
     },
 
     {
-      "Name":"light.enabled",
-      "Type":"int",
-      "Value": 1
-    },
-    {
-      "Name":"light.type",
-      "Type":"int",
+      "Name":"light.flags",
+      "Type":"uint",
       "Value": 0
     },
     {
       "Name":"light.position",
-      "Type":"v3",
+      "Type":"v4",
       "Value":[
-        0,0,0
+        0,0,0,0
       ]
     },
     {
       "Name":"light.diffuse",
-      "Type":"v3",
+      "Type":"v4",
       "Value":[
-        0,0,0
+        0,0,0,0
       ]
     },
     {
       "Name":"light.direction",
-      "Type":"v3",
+      "Type":"v4",
       "Value":[
-        0,0,0
+        0,0,0,0
       ]
     },
     {
@@ -65,7 +60,7 @@
       "Value": 0.0
     },
     {
-      "Name":"light.attenuationContant",
+      "Name":"light.attenuationConstant",
       "Type":"float",
       "Value": 0.0
     },
@@ -80,12 +75,12 @@
       "Value": 0.0
     },
     {
-      "Name":"light.innercone",
+      "Name":"light.innerCone",
       "Type":"float",
       "Value": 0.0
     },
     {
-      "Name":"light.outercone",
+      "Name":"light.outerCone",
       "Type":"float",
       "Value": 0.0
     },

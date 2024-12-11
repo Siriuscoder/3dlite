@@ -121,6 +121,11 @@ namespace lite3dpp
         setFlag(t);
     }
 
+    LightSourceFlags LightSource::getFlags() const
+    {
+        return static_cast<LightSourceFlags>(mLightSource.params.flags);
+    }
+
     void LightSource::setFlag(LightSourceFlags flag)
     {
         mLightSource.params.flags |= static_cast<uint32_t>(flag);

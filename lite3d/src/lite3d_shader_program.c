@@ -377,6 +377,15 @@ static int lite3d_shader_program_simple_uniform_set(
         case LITE3D_SHADER_PARAMETER_INT:
             glUniform1i(p->location, p->parameter->parameter.valint);
             break;
+        case LITE3D_SHADER_PARAMETER_UINT:
+#ifndef WITH_GLES2
+            glUniform1ui(p->location, p->parameter->parameter.valuint);
+#else
+            SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION, "%s: uniform '%s' type is not supported in program(%d) 0x%016llx",
+                LITE3D_CURRENT_FUNCTION, p->parameter->name, program->programID, (unsigned long long)program);
+            p->location = -2;
+#endif
+            break;
         case LITE3D_SHADER_PARAMETER_FLOAT:
             glUniform1f(p->location, p->parameter->parameter.valfloat);
             break;
@@ -406,6 +415,7 @@ static int lite3d_shader_program_simple_uniform_set(
 
 static lite3d_uniform_set_func uniformsMethodsTable[] = {
     NULL,
+    lite3d_shader_program_simple_uniform_set,
     lite3d_shader_program_simple_uniform_set,
     lite3d_shader_program_simple_uniform_set,
     lite3d_shader_program_simple_uniform_set,

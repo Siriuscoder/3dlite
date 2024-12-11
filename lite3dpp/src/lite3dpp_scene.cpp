@@ -69,20 +69,7 @@ namespace lite3dpp
             int UBOMaxSize, TBOMaxSize, SSBOMaxSize;
             lite3d_vbo_get_limitations(&UBOMaxSize, &TBOMaxSize, &SSBOMaxSize);
 
-            if (lightingTechnique == "TBO")
-            {
-                /* default name of lighting buffer is scene name + "LightingBufferObject" */
-                mLightingParamsBuffer = getMain().getResourceManager()->
-                    queryResourceFromJson<TextureBuffer>(getName() + "_lightingBufferObject",
-                    "{\"BufferFormat\": \"RGBA32F\", \"Dynamic\": true}");
-                /* 2-bytes index, about 16k light sources support  */
-                mLightingIndexBuffer = getMain().getResourceManager()->
-                    queryResourceFromJson<TextureBuffer>(getName() + "_lightingIndexBuffer",
-                    "{\"BufferFormat\": \"R32I\", \"Dynamic\": true}");
-
-                mMaxLightsCount = std::min(MaxLightCount, static_cast<uint32_t>(TBOMaxSize / sizeof(lite3d_light_params)));
-            }
-            else if (lightingTechnique == "SSBO")
+            if (lightingTechnique == "SSBO")
             {
                 /* default name of lighting buffer is scene name + "LightingBufferObject" */
                 mLightingParamsBuffer = getMain().getResourceManager()->

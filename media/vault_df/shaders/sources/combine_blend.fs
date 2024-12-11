@@ -1,5 +1,4 @@
-#include "samples:shaders/sources/common/utils_inc.glsl"
-#include "samples:shaders/sources/phong/lighting_inc.glsl"
+#include "samples:shaders/sources/common/common_inc.glsl"
 
 uniform sampler2D diffuse;
 uniform sampler2D normals;
@@ -23,6 +22,9 @@ const float specPower = 180.0;
 #else
 const float specPower = 40.0;
 #endif
+
+vec3 calc_lighting(vec3 fragPos, vec3 fragNormal, vec3 eye, float specularFactor, 
+    float wrapAroundFactor, float specPower, inout vec3 linearSpec);
 
 void main()
 {

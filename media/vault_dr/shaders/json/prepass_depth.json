@@ -1,7 +1,0 @@
-{
-    "Sources": 
-    [
-        "vaultmat:shaders/sources/depth.vs",
-        "vaultmat:shaders/sources/depth.fs"
-    ]
-}

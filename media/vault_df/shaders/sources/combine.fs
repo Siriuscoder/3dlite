@@ -1,4 +1,4 @@
-#include "samples:shaders/sources/common/utils_inc.glsl"
+#include "samples:shaders/sources/common/common_inc.glsl"
 
 uniform sampler2D lightMap;
 uniform sampler2D diffuseMap;

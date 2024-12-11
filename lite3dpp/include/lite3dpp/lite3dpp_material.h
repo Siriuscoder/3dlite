@@ -70,6 +70,7 @@ namespace lite3dpp
         /* if pass == 0 parameter will be used for all passes */
         LITE3D_MATERIAL_DECLARE_PARAMETER(Float, float, float)
         LITE3D_MATERIAL_DECLARE_PARAMETER(Int, int32_t, int32_t)
+        LITE3D_MATERIAL_DECLARE_PARAMETER(UInt, uint32_t, uint32_t)
         LITE3D_MATERIAL_DECLARE_PARAMETER(Floatv3, kmVec3, kmVec3)
         LITE3D_MATERIAL_DECLARE_PARAMETER(Floatv4, kmVec4, kmVec4)
         LITE3D_MATERIAL_DECLARE_PARAMETER(Floatm3, kmMat3, kmMat3)

@@ -1,3 +1,5 @@
+#include "samples:shaders/sources/common/common_inc.glsl"
+
 uniform sampler2D diffuse;
 uniform sampler2D glow;
 uniform sampler2D normals;
@@ -10,17 +12,11 @@ in vec2 iuv;
 in vec3 ivv;
 in mat3 itbn;
 
-bool vec3zero(vec3 vec)
-{
-    float prec = 0.000001;
-    return ((1.0-step(prec, vec.x)) * (1.0-step(prec, vec.y)) * (1.0-step(prec, vec.z))) == 1.0;
-}
-
 void main()
 {
     fragAlbedo = vec4(texture(diffuse, iuv).rgb, 0.0);
     vec3 fragGlow = texture(glow, iuv).xyz;
-    if (!vec3zero(fragGlow))
+    if (!isZero(fragGlow))
     {
         fragAlbedo = vec4(fragGlow, 1.0);
     }
