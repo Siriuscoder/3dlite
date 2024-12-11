@@ -1,5 +1,6 @@
-#define LITE3D_MATERIAL_NORMAL_MAPPING_TANGENT              uint(1 << 0)
-#define LITE3D_MATERIAL_NORMAL_MAPPING_TANGENT_BITANGENT    uint(1 << 1)
+#ifdef LITE3D_ENV_PROBE_MAX
+#extension GL_ARB_texture_cube_map_array : require
+#endif
 
 struct Material
 {

@@ -1,6 +1,6 @@
 vec4 getAlbedo(vec2 uv)
 {
-    return vec4(0.0);
+    return vec4(0.0, 0.0, 0.0, 1.0);
 }
 
 vec3 getNormal(vec2 uv, mat3 tbn)
@@ -19,11 +19,6 @@ vec3 getSpecular(vec2 uv)
 }
 
 float getSpecularAmbient(vec2 uv)
-{
-    return 1.0;
-}
-
-float getAmbientOcclusion(vec2 uv)
 {
     return 1.0;
 }

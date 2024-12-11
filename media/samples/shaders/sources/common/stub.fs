@@ -1,8 +1,6 @@
-uniform sampler2D Albedo;
-
 vec4 getAlbedo(vec2 uv)
 {
-    return texture(Albedo, uv);
+    return vec4(0.0, 0.0, 0.0, 1.0);
 }
 
 vec3 getNormal(vec2 uv, mat3 tbn)

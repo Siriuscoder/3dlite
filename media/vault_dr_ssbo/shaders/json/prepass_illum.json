@@ -6,6 +6,6 @@
         "samples:shaders/sources/phong/phong_blinn_single.fs",
         "samples:shaders/sources/phong/lighting_ssbo.fs",
         "samples:shaders/sources/common/common.fs",
-        "samples:shaders/sources/common/empty_getters.fs"
+        "samples:shaders/sources/common/stub.fs"
     ]
 }

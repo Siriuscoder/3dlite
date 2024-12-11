@@ -27,11 +27,24 @@ vec3 getProbeTextureLod(in Material material, vec3 uv, uint index, float lod)
 #else
 
 uniform samplerCube Environment;
-uniform samplerCubeArray EnvironmentProbe;
 
 float getEnvTextureMaxLod(in Material material)
 {
     return log2(float(textureSize(Environment, 0).x));
+}
+
+vec3 getEnvTextureLod(in Material material, vec3 uv, float lod)
+{
+    return textureLod(Environment, uv * material.environmentUVScale, lod).rgb;
+}
+
+#ifdef LITE3D_ENV_PROBE_MAX
+
+uniform samplerCubeArray EnvironmentProbe;
+
+vec3 getProbeTextureLod(in Material material, vec3 uv, uint index, float lod)
+{
+    return textureLod(EnvironmentProbe, vec4(uv, index), lod).rgb;
 }
 
 void getProbeTextureMaxLodAndCount(in Material material, inout uint count, inout float maxLod)
@@ -41,16 +54,7 @@ void getProbeTextureMaxLodAndCount(in Material material, inout uint count, inout
     maxLod = log2(float(sizes.x));
 }
 
-vec3 getEnvTextureLod(in Material material, vec3 uv, float lod)
-{
-    return textureLod(Environment, uv * material.environmentUVScale, lod).rgb;
-}
-
-vec3 getProbeTextureLod(in Material material, vec3 uv, uint index, float lod)
-{
-    return textureLod(EnvironmentProbe, vec4(uv, index), lod).rgb;
-}
-
+#endif
 #endif
 
 #ifndef LITE3D_ENV_PROBE_DIFFUSE_POWER
