@@ -8,6 +8,13 @@ in vec3 iwn;    // world-space normal
 in vec3 iwt;    // world-space tangent
 in vec3 iwb;    // world-space bitangent
 
+#ifdef LITE3D_BINDLESS_TEXTURE_PIPELINE
+float getAmbientOcclusion(vec2 uv)
+{
+    return 1.0;
+}
+#endif
+
 vec3 ComputeIllumination(in Surface surface);
 
 void main()

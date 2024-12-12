@@ -1,6 +1,6 @@
-#define LITE3D_BASE_AMBIENT_LIGHT                           vec3(0.0045)
-#define LITE3D_ENV_PROBE_RELATIVE_DISTANCE_THRESHOLD        0.05
-#define LITE3D_ENV_PROBE_DIFFUSE_POWER                      2.3
+#define LITE3D_BASE_AMBIENT_LIGHT                           vec3(0.002)
+#define LITE3D_ENV_PROBE_RELATIVE_DISTANCE_THRESHOLD        0.0
+#define LITE3D_ENV_PROBE_DIFFUSE_POWER                      1.5
 #define LITE3D_ENV_PROBE_SPECULAR_POWER                     10.0
 
 #define LITE3D_SHADOW_MIN_ADAPTIVE_BIAS                     0.0008
@@ -14,3 +14,6 @@
 #define LITE3D_SSS_MAX_STEPS                                32      // Max ray steps, affects quality and performance.
 #define LITE3D_SSS_MAX_RAY_DISTANCE                         0.35    // Max shadow length, longer shadows are less accurate.
 #define LITE3D_SSS_MAX_DEPTH_THRESHOLD                      0.5     // Depth testing thickness.
+
+#define LITE3D_SSAO_POWER                                   0.3
+#define LITE3D_SSAO_SAMPLE_BIAS                             0.030

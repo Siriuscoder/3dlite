@@ -88,14 +88,10 @@ namespace lite3dpp
 
         struct PBRMaterialRaw
         {
-            kmVec3 Albedo;
-            uint32_t pad1 = 0;
-            kmVec3 Emission;
-            uint32_t pad2 = 0;
-            kmVec3 F0;
-            uint32_t pad3 = 0;
-            kmVec3 NormalScale;
-            uint32_t pad4 = 0;
+            kmVec4 Albedo;
+            kmVec4 Emission;
+            kmVec4 F0;
+            kmVec4 NormalScale;
             float Alpha;
             float Specular;
             float Roughness;
@@ -122,10 +118,10 @@ namespace lite3dpp
         inline uint32_t getMaterialIndex() const 
         { return mMaterialIndex; }
 
-        LITE3D_DECLARE_PBR_MATERIAL_FIELD(kmVec3, Albedo);
-        LITE3D_DECLARE_PBR_MATERIAL_FIELD(kmVec3, Emission);
-        LITE3D_DECLARE_PBR_MATERIAL_FIELD(kmVec3, F0);
-        LITE3D_DECLARE_PBR_MATERIAL_FIELD(kmVec3, NormalScale);
+        LITE3D_DECLARE_PBR_MATERIAL_FIELD(kmVec4, Albedo);
+        LITE3D_DECLARE_PBR_MATERIAL_FIELD(kmVec4, Emission);
+        LITE3D_DECLARE_PBR_MATERIAL_FIELD(kmVec4, F0);
+        LITE3D_DECLARE_PBR_MATERIAL_FIELD(kmVec4, NormalScale);
         LITE3D_DECLARE_PBR_MATERIAL_FIELD(float, Alpha);
         LITE3D_DECLARE_PBR_MATERIAL_FIELD(float, Specular);
         LITE3D_DECLARE_PBR_MATERIAL_FIELD(float, Roughness);

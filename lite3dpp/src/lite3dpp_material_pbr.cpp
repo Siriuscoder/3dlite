@@ -33,10 +33,10 @@ namespace lite3dpp
     {
         MultiRenderMaterial::loadFromConfigImpl(helper);
 
-        setAlbedo(helper.getObject(L"Albedo").getVec3(L"Value", KM_VEC3_ONE), false);
-        setEmission(helper.getObject(L"Emission").getVec3(L"Value", KM_VEC3_ZERO), false);
-        setF0(helper.getObject(L"F0").getVec3(L"Value", kmVec3 { 0.04, 0.04, 0.04 }), false);
-        setNormalScale(helper.getObject(L"NormalScale").getVec3(L"Value", KM_VEC3_ONE), false);
+        setAlbedo(helper.getObject(L"Albedo").getVec4(L"Value", KM_VEC4_ONE), false);
+        setEmission(helper.getObject(L"Emission").getVec4(L"Value", KM_VEC4_ZERO), false);
+        setF0(helper.getObject(L"F0").getVec4(L"Value", kmVec4 { 0.04f, 0.04f, 0.04f, 1.0f }), false);
+        setNormalScale(helper.getObject(L"NormalScale").getVec4(L"Value", KM_VEC4_ONE), false);
         setAlpha(helper.getObject(L"Alpha").getDouble(L"Value", 1.0), false);
         setSpecular(helper.getObject(L"Specular").getDouble(L"Value", 1.0), false);
         setRoughness(helper.getObject(L"Roughness").getDouble(L"Value", 1.0), false);
@@ -81,7 +81,7 @@ namespace lite3dpp
         // Добавляем этот материал к остальным в буфер
         mMaterialDataBuffer->extendBufferBytes(sizeof(PBRMaterialRaw));
         mMaterialIndex = static_cast<uint32_t>(mMaterialDataBuffer->bufferSizeBytes() / sizeof(PBRMaterialRaw)) - 1;
-        mMaterialEntity.Flags = PBRMaterialFlags::NORMAL_MAPPING_TANGENT_BITANGENT;
+        mMaterialEntity.Flags = mMaterialEntity.Flags | PBRMaterialFlags::NORMAL_MAPPING_TANGENT_BITANGENT;
         update();
     }
 
@@ -125,6 +125,7 @@ namespace lite3dpp
         mMaterialEntity.EnvironmentProbe.flags = TextureFlags::ENVIRONMENT_PROBE | TextureFlags::LOADED;
         mMaterialEntity.EnvironmentProbe.textureHandle = texture->handle();
         mMaterialEntity.Flags = mMaterialEntity.Flags | PBRMaterialFlags::ENVIRONMENT_MULTI_PROBE;
+        mMaterialEntity.EnvironmentSingleProbeIndex = 5;
         if (updateData)
         {
             update();

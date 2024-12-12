@@ -9,6 +9,6 @@
         "samples:shaders/sources/pbr/brdf_indirect.fs,sponza:shaders/sources/inc/params.def",
         "samples:shaders/sources/shadow/pcf.fs,sponza:shaders/sources/inc/params.def",
         "samples:shaders/sources/ssao/ssao_sample.fs",
-        "samples:shaders/sources/common/common.fs"
+        "samples:shaders/sources/common/common.fs,sponza:shaders/sources/inc/disable_invocation.def"
     ]
 }

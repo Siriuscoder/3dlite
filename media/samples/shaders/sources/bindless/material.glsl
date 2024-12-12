@@ -17,10 +17,8 @@ ChunkInvocationInfo getInvocationInfo()
 
 #elif defined(LITE3D_FRAGMENT_SHADER)
 
-uniform sampler2DArray GBuffer;
+#ifndef LITE3D_DISABLE_INVOCATION_METHOD
 flat in int drawID;
-
-float getAmbientOcclusion(vec2 uv);
 
 ChunkInvocationInfo getInvocationInfo()
 {
@@ -137,6 +135,41 @@ Surface makeSurface(vec2 uv, vec3 wv, vec3 wn, vec3 wt, vec3 wb)
     return surface;
 }
 
+void surfaceAlphaClip(vec2 uv)
+{
+    Surface surface;
+    surface.transform = getInvocationInfo();
+    surface.material = materials[surface.transform.materialIdx];
+
+    for (int i = 0; i < 8; ++i)
+    {
+        if (hasFlag(surface.material.slot[i].flags, TEXTURE_FLAG_LOADED))
+        {
+            if (hasFlag(surface.material.slot[i].flags, TEXTURE_FLAG_ALBEDO))
+            {
+                vec4 albedo = texture(surface.material.slot[i].textureId, uv);
+                surface.material.albedo *= vec4(albedo.rgb, 1.0);
+                surface.material.alpha *= albedo.a;
+            }
+            else if (hasFlag(surface.material.slot[i].flags, TEXTURE_FLAG_ALPHA_MASK))
+            {
+                surface.material.alpha *= texture(surface.material.slot[i].textureId, uv).r;
+            }
+        }
+        else
+        {
+            break;
+        }
+    }
+
+    surfaceAlphaClip(surface.material);
+}
+
+#endif
+
+float getAmbientOcclusion(vec2 uv);
+uniform sampler2DArray GBuffer;
+
 Surface restoreSurface(vec2 uv)
 {
     // sampling normal in world space from fullscreen normal map
@@ -174,36 +207,6 @@ void surfaceAlphaClip(in Material material)
 {
     if (isZero(material.alpha))
         discard;
-}
-
-void surfaceAlphaClip(vec2 uv)
-{
-    Surface surface;
-    surface.transform = getInvocationInfo();
-    surface.material = materials[surface.transform.materialIdx];
-
-    for (int i = 0; i < 8; ++i)
-    {
-        if (hasFlag(surface.material.slot[i].flags, TEXTURE_FLAG_LOADED))
-        {
-            if (hasFlag(surface.material.slot[i].flags, TEXTURE_FLAG_ALBEDO))
-            {
-                vec4 albedo = texture(surface.material.slot[i].textureId, uv);
-                surface.material.albedo *= vec4(albedo.rgb, 1.0);
-                surface.material.alpha *= albedo.a;
-            }
-            else if (hasFlag(surface.material.slot[i].flags, TEXTURE_FLAG_ALPHA_MASK))
-            {
-                surface.material.alpha *= texture(surface.material.slot[i].textureId, uv).r;
-            }
-        }
-        else
-        {
-            break;
-        }
-    }
-
-    surfaceAlphaClip(surface.material);
 }
 
 #endif

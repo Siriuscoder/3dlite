@@ -7,16 +7,16 @@ float getEnvTextureMaxLod(in Material material)
     return log2(float(textureSize(material.environment.textureId, 0).x));
 }
 
+vec3 getEnvTextureLod(in Material material, vec3 uv, float lod)
+{
+    return textureLod(material.environment.textureId, uv * material.environmentUVScale, lod).rgb;
+}
+
 void getProbeTextureMaxLodAndCount(in Material material, inout uint count, inout float maxLod)
 {
     ivec3 sizes = textureSize(material.environmentProbe.textureId, 0);
     count = uint(sizes.z);
     maxLod = log2(float(sizes.x));
-}
-
-vec3 getEnvTextureLod(in Material material, vec3 uv, float lod)
-{
-    return textureLod(material.environment.textureId, uv * material.environmentUVScale, lod).rgb;
 }
 
 vec3 getProbeTextureLod(in Material material, vec3 uv, uint index, float lod)
@@ -80,8 +80,8 @@ vec3 ComputeIndirect(in Surface surface, in AngularInfo angular)
 {
     vec3 diffuseIrradianceLx = vec3(0.0f);
     vec3 specularIrradianceLx = vec3(0.0f);
-    float maxLod;
-    uint probesCount;
+    float maxLod = 0.0f;
+    uint probesCount = 0;
 
     // Reflect vector from surface
     vec3 R = reflect(-angular.viewDir, surface.normal);
@@ -175,5 +175,5 @@ vec3 ComputeIndirect(in Surface surface, in AngularInfo angular)
     diffuseIrradianceLx *= diffuseFactor(F, surface.material.metallic) * surface.material.albedo.rgb * surface.material.envDiffuse;
     specularIrradianceLx *= F * surface.material.envSpecular;
 
-    return diffuseIrradianceLx + specularIrradianceLx;
+    return (diffuseIrradianceLx + specularIrradianceLx) * surface.ao;
 }
