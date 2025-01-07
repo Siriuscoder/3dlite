@@ -823,7 +823,7 @@ int lite3d_texture_unit_from_resource(lite3d_texture_unit *textureUnit,
     /* Load IL image from memory */
     if (!ilLoadL(imageTypeEnum[imageType], resource->fileBuff, (ILuint)resource->fileSize))
     {
-        LITE3D_CHECK_IL_ERROR;
+        LITE3D_CHECK_IL_ERROR, 
         ilDeleteImage(imageDesc);
         return LITE3D_FALSE;
     }
@@ -1370,7 +1370,7 @@ void lite3d_texture_unit_purge(lite3d_texture_unit *textureUnit)
 void lite3d_texture_unit_bind(lite3d_texture_unit *textureUnit, uint16_t layer)
 {
     SDL_assert(textureUnit);
-    SDL_assert_release(layer < maxCombinedTextureImageUnits);
+    SDL_assert(layer < maxCombinedTextureImageUnits);
 
     glActiveTexture(GL_TEXTURE0 + layer);
     glBindTexture(textureTargetEnum[textureUnit->textureTarget], textureUnit->textureID);
@@ -1379,7 +1379,7 @@ void lite3d_texture_unit_bind(lite3d_texture_unit *textureUnit, uint16_t layer)
 void lite3d_texture_unit_unbind(lite3d_texture_unit *textureUnit, uint16_t layer)
 {
     SDL_assert(textureUnit);
-    SDL_assert_release(layer < maxCombinedTextureImageUnits);
+    SDL_assert(layer < maxCombinedTextureImageUnits);
 
     glActiveTexture(GL_TEXTURE0 + layer);
     glBindTexture(textureTargetEnum[textureUnit->textureTarget], 0);

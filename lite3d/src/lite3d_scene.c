@@ -117,14 +117,6 @@ static void mqr_render_mesh_chunk(lite3d_scene *scene, lite3d_mesh_chunk *chunk,
     SDL_assert(chunk);
     SDL_assert(scene);
 
-    lite3d_mesh_chunk_bind(chunk);
-    scene->bindedMeshChunk = chunk;
-    /* validate current shader program */
-    if (!lite3d_shader_program_validate_current())
-    {
-        return;
-    }
-
     if (count > 1)
     {
         LITE3D_METRIC_CALL(lite3d_mesh_chunk_draw_instanced, (chunk, count))
@@ -199,8 +191,8 @@ static void mqr_render_batch_draw_instanced(lite3d_material_pass *pass, _mqr_nod
     /* call rendering current chunk */
     if (batchCrop)
     {
-        if (!lite3d_vbo_subbuffer_extend(mqrNode->meshChunk->mesh->auxBuffer, 
-            scene->seriesMatrixes.data, 0, scene->seriesMatrixes.size * scene->seriesMatrixes.elemSize))
+        if (!lite3d_vbo_buffer_set(mqrNode->meshChunk->mesh->auxBuffer, 
+            scene->seriesMatrixes.data, scene->seriesMatrixes.size * scene->seriesMatrixes.elemSize))
         {
             lite3d_array_clean(&scene->seriesMatrixes);
             return;
@@ -245,7 +237,6 @@ static void mqr_multirender_batch_draw(lite3d_mesh *mesh, uint8_t drawBB)
 static void mqr_multirender_do_batch(lite3d_scene *scene, lite3d_mesh *mesh, 
     lite3d_vbo *chunkInvocationBuffer, uint8_t drawBB)
 {    
-    lite3d_mesh_chunk *firstchunk = NULL;
     SDL_assert(scene);
     SDL_assert(mesh);
     SDL_assert(chunkInvocationBuffer);
@@ -256,24 +247,15 @@ static void mqr_multirender_do_batch(lite3d_scene *scene, lite3d_mesh *mesh,
         return;
     }
 
-    firstchunk = LITE3D_MEMBERCAST(lite3d_mesh_chunk, lite3d_list_first_link(&mesh->chunks), link);
-    // Все команды в очереди рисуются относительно первого чанка, все смещения задаются относительно начала VBO
-    lite3d_mesh_chunk_bind(firstchunk);
-    scene->bindedMeshChunk = firstchunk;
     // Установка буфера позиционирования 
-    if (!lite3d_vbo_subbuffer_extend(chunkInvocationBuffer, scene->invocationBuffer.data, 0,
+    if (!lite3d_vbo_buffer_set(chunkInvocationBuffer, scene->invocationBuffer.data,
         scene->invocationBuffer.size * scene->invocationBuffer.elemSize))
     {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Unable to write to the invocation buffer");
         return;
     }
-    
-    // Проверим впорядке ли шейдер
-    if (!lite3d_shader_program_validate_current())
-    {
-        return;
-    }
 
+    // Все команды в очереди рисуются относительно первого чанка, все смещения задаются относительно начала VBO
     // рисуем все команды собранные в очереди и чистим очередь
     mqr_multirender_batch_draw(mesh, drawBB);
     lite3d_mesh_queue_clean(mesh);
@@ -402,7 +384,7 @@ static lite3d_material_pass *mqr_unit_apply_material(lite3d_scene *scene, _mqr_n
 
 static void mqr_unit_queue_render(lite3d_scene *scene, lite3d_array *queue, uint16_t pass, uint32_t flags)
 {
-    _mqr_node **mqrNode = NULL;
+    register _mqr_node **mqrNode = NULL;
     _mqr_unit *curUnit = NULL;
     uint32_t continuedId = 0;
     lite3d_material_pass *matPass = NULL;
@@ -454,12 +436,14 @@ static void mqr_multirender_queue_command(lite3d_scene *scene, _mqr_node *node, 
 
 static void mqr_unit_queue_multirender(lite3d_scene *scene, lite3d_array *queue, uint16_t pass, uint32_t flags)
 {
-    _mqr_node **mqrNode = queue->data;
-    lite3d_shader_program *curProgram = NULL;
+    register _mqr_node **mqrNode = NULL;
     lite3d_material_pass *matPass = NULL;
-    lite3d_mesh *curMesh = NULL;
-    lite3d_vbo *curInvocationBuffer = NULL;
-    lite3d_vbo *curMaterialBuffer = NULL;
+    lite3d_shader_program *program = NULL;
+    uint8_t doubleSided = 0xFF;
+    uint8_t polygonMode = 0xFF;
+    lite3d_mesh *mesh = NULL;
+    lite3d_vbo *invocationBuffer = NULL;
+    lite3d_vbo *materialDataBuffer = NULL;
 
     // Render queue is empty 
     if (queue->size == 0)
@@ -467,52 +451,51 @@ static void mqr_unit_queue_multirender(lite3d_scene *scene, lite3d_array *queue,
         return;
     }
 
-    // Применяем самый первый шайдер и его параметры всегда
-    matPass = mqr_unit_apply_material(scene, *mqrNode, pass);
-    curProgram = matPass->program;
-    curMesh = (*mqrNode)->meshChunk->mesh;
-    curInvocationBuffer = (*mqrNode)->matUnit->material->chunkInvocationBuffer;
-    curMaterialBuffer = (*mqrNode)->matUnit->material->materialDataBuffer;
-
     LITE3D_ARR_FOREACH(queue, _mqr_node *, mqrNode)
     {
         matPass = lite3d_material_get_pass((*mqrNode)->matUnit->material, pass);
-        if (!matPass)
-        {
-            continue;
-        }
+        SDL_assert(matPass);
 
         // При смене меша/шейлера/буфера материала/буфера позиционирования - надо наприсовать то что накопилось в буфере 
         // команд и переключить шейдер/материал!
-        if ((*mqrNode)->meshChunk->mesh != curMesh || 
-            (*mqrNode)->matUnit->material->chunkInvocationBuffer != curInvocationBuffer ||
-            (*mqrNode)->matUnit->material->materialDataBuffer != curMaterialBuffer ||
-            matPass->program != curProgram)
+        if (matPass->program != program || 
+            matPass->doubleSided != doubleSided ||
+            matPass->polygonMode != polygonMode ||
+            (*mqrNode)->meshChunk->mesh != mesh || 
+            (*mqrNode)->matUnit->material->chunkInvocationBuffer != invocationBuffer ||
+            (*mqrNode)->matUnit->material->materialDataBuffer != materialDataBuffer)
         {
-            mqr_multirender_do_batch(scene, curMesh, curInvocationBuffer, LITE3D_FALSE);
-            curInvocationBuffer = (*mqrNode)->matUnit->material->chunkInvocationBuffer;
-            curMesh = (*mqrNode)->meshChunk->mesh;
-            curProgram = matPass->program;
-            matPass = mqr_unit_apply_material(scene, *mqrNode, pass);
+            if (mesh)
+            {
+                mqr_multirender_do_batch(scene, mesh, invocationBuffer, LITE3D_FALSE);
+            }
+
+            mqr_unit_apply_material(scene, *mqrNode, pass);
+            program = matPass->program;
+            doubleSided = matPass->doubleSided;
+            polygonMode = matPass->polygonMode;
+            mesh = (*mqrNode)->meshChunk->mesh;
+            invocationBuffer = (*mqrNode)->matUnit->material->chunkInvocationBuffer;
+            materialDataBuffer = (*mqrNode)->matUnit->material->materialDataBuffer;
         }
 
         // Если включен режим отсечения перекрытых обьектов то рисуем каждую команду отдельно для опеределения 
         // видимости
-        if (flags & LITE3D_RENDER_OCCLUSION_QUERY && (*mqrNode)->bbMeshChunk)
+        if (flags & LITE3D_RENDER_OCCLUSION_QUERY)
         {
             SDL_assert((*mqrNode)->currentQuery);
             lite3d_query_begin(&(*mqrNode)->currentQuery->query);
             // Обьект виден, рисуем полноценный обьект
-            if ((*mqrNode)->currentQuery->query.anyPassed)
+            if ((*mqrNode)->currentQuery->query.anyPassed || !(*mqrNode)->bbMeshChunk)
             {
                 mqr_multirender_queue_command(scene, *mqrNode, (*mqrNode)->meshChunk);
-                mqr_multirender_do_batch(scene, (*mqrNode)->meshChunk->mesh, curInvocationBuffer, LITE3D_FALSE);
+                mqr_multirender_do_batch(scene, mesh, invocationBuffer, LITE3D_FALSE);
             }
             // Обьект не виден, рисуем лишь его bounding box для проверки видимости
             else 
             {
                 mqr_multirender_queue_command(scene, *mqrNode, (*mqrNode)->bbMeshChunk);
-                mqr_multirender_do_batch(scene, (*mqrNode)->bbMeshChunk->mesh, curInvocationBuffer, LITE3D_TRUE);
+                mqr_multirender_do_batch(scene, (*mqrNode)->bbMeshChunk->mesh, invocationBuffer, LITE3D_TRUE);
             }
             lite3d_query_end(&(*mqrNode)->currentQuery->query);
         }
@@ -522,7 +505,10 @@ static void mqr_unit_queue_multirender(lite3d_scene *scene, lite3d_array *queue,
         }
     }
 
-    mqr_multirender_do_batch(scene, curMesh, curInvocationBuffer, LITE3D_FALSE);
+    if (mesh)
+    {
+        mqr_multirender_do_batch(scene, mesh, invocationBuffer, LITE3D_FALSE);
+    }
 }
 
 static void mqr_unit_make_queue(lite3d_scene *scene, _mqr_unit *mqrUnit, uint16_t pass, uint32_t flags)
@@ -764,12 +750,8 @@ void lite3d_scene_render(lite3d_scene *scene, lite3d_camera *camera,
     /* render transparent objects */
     LITE3D_METRIC_CALL(mqr_render_stage_transparent, (scene, pass, flags))
     
-
-    if (scene->bindedMeshChunk)
-    {
-        lite3d_mesh_chunk_unbind(scene->bindedMeshChunk);
-        scene->bindedMeshChunk = NULL;
-    }
+    // Для чистоты зануляем биндинг VAO
+    lite3d_mesh_chunk_unbind();
 
     if (scene->endSceneRender)
         LITE3D_METRIC_CALL(scene->endSceneRender, (scene, camera))

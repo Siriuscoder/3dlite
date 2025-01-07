@@ -74,12 +74,12 @@ LITE3D_CEXPORT int lite3d_vao_init(struct lite3d_vao *vao);
 LITE3D_CEXPORT void lite3d_vao_purge(struct lite3d_vao *vao);
 LITE3D_CEXPORT void lite3d_vao_bind(struct lite3d_vao *vao);
 LITE3D_CEXPORT void lite3d_vao_draw_indexed(struct lite3d_vao *vao);
-LITE3D_CEXPORT void lite3d_vao_multidraw_indexed(struct lite3d_vao *vao, size_t offset, size_t count);
+LITE3D_CEXPORT void lite3d_vao_multidraw_indexed(size_t offset, size_t count);
 LITE3D_CEXPORT void lite3d_vao_draw_indexed_instanced(struct lite3d_vao *vao, uint32_t count);
 LITE3D_CEXPORT void lite3d_vao_draw(struct lite3d_vao *vao);
-LITE3D_CEXPORT void lite3d_vao_multidraw(struct lite3d_vao *vao, size_t offset, size_t count);
+LITE3D_CEXPORT void lite3d_vao_multidraw(size_t offset, size_t count);
 LITE3D_CEXPORT void lite3d_vao_draw_instanced(struct lite3d_vao *vao, uint32_t count);
-LITE3D_CEXPORT void lite3d_vao_unbind(struct lite3d_vao *vao);
+LITE3D_CEXPORT void lite3d_vao_unbind(void);
 
 LITE3D_CEXPORT int lite3d_vao_init_layout(struct lite3d_vbo *vertexBuffer,
     struct lite3d_vbo *indexBuffer,

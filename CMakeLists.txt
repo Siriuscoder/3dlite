@@ -67,8 +67,8 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID STREQUAL "Clang
         set(COMPILLER_COMMON_FLAGS "${COMPILLER_COMMON_FLAGS} -Wno-null-pointer-arithmetic") 
     endif()
     
-    set(DEBUG_GCC_COMPILER_FLAGS "-g3 -O0 -fstack-protector-all -fno-omit-frame-pointer -fno-optimize-sibling-calls")
-    set(RELEASE_GCC_COMPILER_FLAGS "-g0 -O3")
+    set(DEBUG_GCC_COMPILER_FLAGS "-DDEBUG -g3 -O0 -fstack-protector-all -fno-omit-frame-pointer -fno-optimize-sibling-calls")
+    set(RELEASE_GCC_COMPILER_FLAGS "-DNDEBUG -g0 -O3")
     set(CMAKE_C_FLAGS "${CXX_CLANG_SANITIZE} -std=c99")
     set(CMAKE_C_FLAGS_DEBUG ${DEBUG_GCC_COMPILER_FLAGS})
     set(CMAKE_C_FLAGS_RELEASE ${RELEASE_GCC_COMPILER_FLAGS})

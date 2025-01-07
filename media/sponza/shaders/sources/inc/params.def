@@ -1,5 +1,5 @@
 #define LITE3D_BASE_AMBIENT_LIGHT                           vec3(0.002)
-#define LITE3D_ENV_PROBE_RELATIVE_DISTANCE_THRESHOLD        0.0
+#define LITE3D_ENV_PROBE_RELATIVE_DISTANCE_THRESHOLD        0.05
 #define LITE3D_ENV_PROBE_DIFFUSE_POWER                      1.5
 #define LITE3D_ENV_PROBE_SPECULAR_POWER                     10.0
 

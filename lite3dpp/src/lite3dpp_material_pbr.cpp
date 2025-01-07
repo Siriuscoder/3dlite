@@ -125,7 +125,7 @@ namespace lite3dpp
         mMaterialEntity.EnvironmentProbe.flags = TextureFlags::ENVIRONMENT_PROBE | TextureFlags::LOADED;
         mMaterialEntity.EnvironmentProbe.textureHandle = texture->handle();
         mMaterialEntity.Flags = mMaterialEntity.Flags | PBRMaterialFlags::ENVIRONMENT_MULTI_PROBE;
-        mMaterialEntity.EnvironmentSingleProbeIndex = 5;
+        mMaterialEntity.EnvironmentSingleProbeIndex = 0;
         if (updateData)
         {
             update();

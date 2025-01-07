@@ -42,12 +42,12 @@ int lite3d_mesh_indexed_load_from_memory(lite3d_mesh *mesh,
     verticesSize = (size_t)stride * (size_t)verticesCount;
 
     /* store vertex data to GPU memory */
-    if (!lite3d_vbo_buffer(&mesh->vertexBuffer, vertices, verticesSize))
+    if (!lite3d_vbo_buffer_alloc(&mesh->vertexBuffer, vertices, verticesSize))
         return LITE3D_FALSE;
 
     indexesSize = 3 * sizeof(uint32_t) * elementsCount;
     /* store index data to GPU memory */
-    if (!lite3d_vbo_buffer(&mesh->indexBuffer, indexes, indexesSize))
+    if (!lite3d_vbo_buffer_alloc(&mesh->indexBuffer, indexes, indexesSize))
         return LITE3D_FALSE;
 
     /* append new batch */
@@ -136,7 +136,7 @@ int lite3d_mesh_load_from_memory(lite3d_mesh *mesh,
     verticesSize = (size_t)stride * (size_t)verticesCount;
 
     /* store vertex data to GPU memory */
-    if (!lite3d_vbo_buffer(&mesh->vertexBuffer, vertices, verticesSize))
+    if (!lite3d_vbo_buffer_alloc(&mesh->vertexBuffer, vertices, verticesSize))
         return LITE3D_FALSE;
 
     /* append new batch */

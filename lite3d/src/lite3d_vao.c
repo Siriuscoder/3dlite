@@ -121,7 +121,7 @@ void lite3d_vao_draw_indexed_instanced(struct lite3d_vao *vao, uint32_t count)
         GL_UNSIGNED_INT, LITE3D_BUFFER_OFFSET(vao->indexesOffset), count);
 }
 
-void lite3d_vao_multidraw_indexed(struct lite3d_vao *vao, size_t offset, size_t count)
+void lite3d_vao_multidraw_indexed(size_t offset, size_t count)
 {
     /* 
         glMultiDrawElementsIndirect specifies multiple indexed geometric primitives with very few subroutine calls. 
@@ -170,7 +170,6 @@ void lite3d_vao_multidraw_indexed(struct lite3d_vao *vao, size_t offset, size_t 
         Vertex attributes that are modified by glDrawElementsIndirect have an unspecified value after 
         glDrawElementsIndirect returns. Attributes that aren't modified remain well defined.
     */
-    SDL_assert(vao);
     glMultiDrawElementsIndirect(GL_TRIANGLES, GL_UNSIGNED_INT, LITE3D_BUFFER_OFFSET(offset), (GLsizei)count, 0);
 }
 
@@ -188,7 +187,7 @@ void lite3d_vao_draw_instanced(struct lite3d_vao *vao, uint32_t count)
     glDrawArraysInstanced(GL_TRIANGLES, 0, vao->verticesCount, count);
 }
 
-void lite3d_vao_multidraw(struct lite3d_vao *vao, size_t offset, size_t count)
+void lite3d_vao_multidraw(size_t offset, size_t count)
 {
     /*
         glDrawArraysIndirect specifies multiple geometric primitives with very few subroutine calls. 
@@ -216,7 +215,6 @@ void lite3d_vao_multidraw(struct lite3d_vao *vao, size_t offset, size_t count)
         Vertex attributes that are modified by glDrawArraysIndirect have an unspecified value after glDrawArraysIndirect
          returns. Attributes that aren't modified remain well defined.
     */
-    SDL_assert(vao);
     glMultiDrawArraysIndirect(GL_TRIANGLES, LITE3D_BUFFER_OFFSET(offset), (GLsizei)count, 0);
 }
 
@@ -231,7 +229,7 @@ void lite3d_vao_bind(struct lite3d_vao *vao)
     }
 }
 
-void lite3d_vao_unbind(struct lite3d_vao *vao)
+void lite3d_vao_unbind(void)
 {
     /* zero bind */
     glBindVertexArray(0);
@@ -316,7 +314,7 @@ int lite3d_vao_init_layout(struct lite3d_vbo *vertexBuffer,
     }
 
     /* end VAO binding */
-    lite3d_vao_unbind(vao);
+    lite3d_vao_unbind();
 
     vao->elementsCount = (indexesCount > 0 ? indexesCount : verticesCount) / 3;
     vao->indexesOffset = indexesOffset;

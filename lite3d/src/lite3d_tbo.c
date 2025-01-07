@@ -99,7 +99,7 @@ int lite3d_texture_buffer_init(lite3d_texture_unit *textureUnit,
 
     if (!lite3d_vbo_init(&textureUnit->tbo, usage))
         return LITE3D_FALSE;
-    if (!lite3d_vbo_buffer(&textureUnit->tbo, data, textureUnit->imageSize))
+    if (!lite3d_vbo_buffer_alloc(&textureUnit->tbo, data, textureUnit->imageSize))
         return LITE3D_FALSE;
     
     glGenTextures(1, &textureUnit->textureID);

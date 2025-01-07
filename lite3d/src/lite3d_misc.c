@@ -29,13 +29,17 @@ static uint8_t glNotSupported = LITE3D_FALSE;
 
 void lite3d_misc_gl_error_stack_clean(void)
 {
+#ifndef NDEBUG
     glNotSupported = LITE3D_FALSE;
     while (glGetError() != GL_NO_ERROR);
+#endif
 }
 
 void lite3d_misc_il_error_stack_clean(void)
 {
+#ifndef NDEBUG
     while (ilGetError() != IL_NO_ERROR);
+#endif
 }
 
 int lite3d_misc_check_gl_error(const char *func, int line)

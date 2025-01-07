@@ -568,9 +568,14 @@ namespace lite3dpp_pipeline {
         mPostProcessStageMaterial->setFloatParameter(static_cast<int>(TexturePassTypes::RenderPass), "Exposure", exposure);
     }
 
-    void PipelineBase::timerTick(lite3d_timer *timerid)
+    void PipelineBase::frameBegin()
     {
-        updateExposure();
+        // Обновление экспозиции каждые 10 кадров
+        auto renderStats = getMain().getRenderStats();
+        if ((renderStats->framesCount % 10) == 0)
+        {
+            updateExposure();
+        }
     }
 
     bool PipelineBase::beginSceneRender(Scene *scene, Camera *camera)

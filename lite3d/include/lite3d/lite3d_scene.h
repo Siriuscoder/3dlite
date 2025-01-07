@@ -75,7 +75,6 @@ typedef struct lite3d_scene
     lite3d_array invalidatedUnits;
     lite3d_array seriesMatrixes;
     lite3d_array invocationBuffer;
-    lite3d_mesh_chunk *bindedMeshChunk;
     lite3d_camera *currentCamera;
     void *userdata;
     int (*beginDrawBatch)(struct lite3d_scene *scene, 

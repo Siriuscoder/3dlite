@@ -71,7 +71,7 @@ LITE3D_CEXPORT void *lite3d_vbo_map(struct lite3d_vbo *vbo,
 LITE3D_CEXPORT void lite3d_vbo_unmap(struct lite3d_vbo *vbo);
 LITE3D_CEXPORT int lite3d_vbo_extend(struct lite3d_vbo *vbo, 
     size_t addSize);
-LITE3D_CEXPORT int lite3d_vbo_buffer(struct lite3d_vbo *vbo, 
+LITE3D_CEXPORT int lite3d_vbo_buffer_alloc(struct lite3d_vbo *vbo, 
     const void *buffer, size_t size);
 LITE3D_CEXPORT int lite3d_vbo_subbuffer(struct lite3d_vbo *vbo, 
     const void *buffer, size_t offset, size_t size);
@@ -79,6 +79,8 @@ LITE3D_CEXPORT int lite3d_vbo_get_buffer(const struct lite3d_vbo *vbo,
     void *buffer, size_t offset, size_t size);
 LITE3D_CEXPORT int lite3d_vbo_subbuffer_extend(struct lite3d_vbo *vbo, 
     const void *buffer, size_t offset, size_t size);
+LITE3D_CEXPORT int lite3d_vbo_buffer_set(struct lite3d_vbo *vbo, 
+    const void *buffer, size_t size);
 
 
 #endif	/* LITE3D_VBO_H */

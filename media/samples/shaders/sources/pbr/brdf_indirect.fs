@@ -81,7 +81,7 @@ vec3 ComputeIndirect(in Surface surface, in AngularInfo angular)
     vec3 diffuseIrradianceLx = vec3(0.0f);
     vec3 specularIrradianceLx = vec3(0.0f);
     float maxLod = 0.0f;
-    uint probesCount = 0;
+    uint probesCount = 0u;
 
     // Reflect vector from surface
     vec3 R = reflect(-angular.viewDir, surface.normal);

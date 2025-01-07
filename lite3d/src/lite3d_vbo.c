@@ -216,7 +216,7 @@ static int lite3d_buffer_extend(struct lite3d_vbo *vbo, size_t expandSize)
             return LITE3D_FALSE;
         }
 
-        if (!lite3d_vbo_buffer(vbo, hostBuffer, vbo->size + expandSize))
+        if (!lite3d_vbo_buffer_alloc(vbo, hostBuffer, vbo->size + expandSize))
         {
             lite3d_free(hostBuffer);
             return LITE3D_FALSE;
@@ -552,7 +552,7 @@ int lite3d_vbo_extend(struct lite3d_vbo *vbo, size_t addSize)
     else
     {
         // relocate not needed, overwise may cause crash on some hardware
-        if (!lite3d_vbo_buffer(vbo, NULL, addSize))
+        if (!lite3d_vbo_buffer_alloc(vbo, NULL, addSize))
         {
             return LITE3D_FALSE;
         }
@@ -612,7 +612,7 @@ void lite3d_vbo_unmap(struct lite3d_vbo *vbo)
     lite3d_vbo_unbind(vbo);
 }
 
-int lite3d_vbo_buffer(struct lite3d_vbo *vbo,
+int lite3d_vbo_buffer_alloc(struct lite3d_vbo *vbo,
     const void *buffer, size_t size)
 {
     SDL_assert(vbo);
@@ -700,6 +700,28 @@ int lite3d_vbo_subbuffer_extend(struct lite3d_vbo *vbo,
     }
     
     if (!lite3d_vbo_subbuffer(vbo, buffer, offset, size))
+    {
+        return LITE3D_FALSE;
+    }
+
+    return LITE3D_TRUE;
+}
+
+int lite3d_vbo_buffer_set(struct lite3d_vbo *vbo, 
+    const void *buffer, size_t size)
+{
+    /* setup global parameters (model normal) */
+    if (size > vbo->size)
+    {
+        if(!lite3d_vbo_buffer_alloc(vbo, buffer, size))
+        {
+            return LITE3D_FALSE;
+        }
+
+        return LITE3D_TRUE;
+    }
+    
+    if (!lite3d_vbo_subbuffer(vbo, buffer, 0, size))
     {
         return LITE3D_FALSE;
     }

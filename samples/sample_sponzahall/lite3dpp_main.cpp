@@ -45,7 +45,6 @@ public:
     void preallocateMeshPartition()
     {
         ConfigurationWriter cfg;
-        cfg.set(L"Dynamic", true);
         cfg.set(L"PreallocVertexSize", 170 * 1024 * 1024);
         cfg.set(L"PreallocIndexSize", 70 * 1024 * 1024);
 
