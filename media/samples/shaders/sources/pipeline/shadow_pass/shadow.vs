@@ -14,7 +14,7 @@ void main()
     ChunkInvocationInfo invInfo = getInvocationInfo();
     drawID_g = gl_DrawIDARB;
     // vertex coordinate in world space 
-    gl_Position = invInfo.model * vertex;
+    gl_Position = invInfo.modelMatrix * vertex;
 #else
     gl_Position = modelMatrix * vertex;
 #endif

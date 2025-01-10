@@ -25,9 +25,9 @@ void lite3d_scene_node_init(lite3d_scene_node *node)
     SDL_assert(node);
     memset(node, 0, sizeof (lite3d_scene_node));
     lite3d_list_link_init(&node->nodeLink);
-    kmMat4Identity(&node->localView);
-    kmMat4Identity(&node->worldView);
-    kmMat3Identity(&node->normalModel);
+    kmMat4Identity(&node->localMatrix);
+    kmMat4Identity(&node->worldMatrix);
+    kmMat3Identity(&node->normalMatrix);
     kmQuaternionIdentity(&node->rotation);
     kmVec3Fill(&node->position, 0, 0, 0);
     kmVec3Fill(&node->scale, 1.0f, 1.0f, 1.0f);
@@ -97,7 +97,7 @@ void lite3d_scene_node_scale(lite3d_scene_node *node, const kmVec3 *scale)
 void lite3d_scene_node_get_world_position(const lite3d_scene_node *node, kmVec3 *pos)
 {
     SDL_assert(node && pos);
-    kmMat4ExtractPosition(pos, &node->worldView);
+    kmMat4ExtractPosition(pos, &node->worldMatrix);
 }
 
 void lite3d_scene_node_get_world_rotation(const lite3d_scene_node *node, kmQuaternion *q)
@@ -105,7 +105,7 @@ void lite3d_scene_node_get_world_rotation(const lite3d_scene_node *node, kmQuate
     kmMat3 worldRotation;
 
     SDL_assert(node && q);
-    kmMat4ExtractRotation(&worldRotation, &node->worldView);
+    kmMat4ExtractRotation(&worldRotation, &node->worldMatrix);
     kmQuaternionRotationMatrix(q, &worldRotation);
 }
 
@@ -132,7 +132,7 @@ static void scene_node_update(lite3d_scene_node *node)
     kmMat4 transMat;
     kmMat4 scaleMat;
     kmQuaternionNormalize(&node->rotation, &node->rotation);
-    kmMat4RotationQuaternion(&node->localView, &node->rotation);
+    kmMat4RotationQuaternion(&node->localMatrix, &node->rotation);
     kmMat4Translation(&transMat, node->position.x, node->position.y, node->position.z);
     
     if (!kmAlmostEqual(node->scale.x, 1.0f) || 
@@ -145,23 +145,23 @@ static void scene_node_update(lite3d_scene_node *node)
 
     if (node->rotationCentered)
     {
-        kmMat4Multiply(&node->localView, &transMat, &node->localView);
+        kmMat4Multiply(&node->localMatrix, &transMat, &node->localMatrix);
     }
     else
     {
-        kmMat4Multiply(&node->localView, &node->localView, &transMat);
+        kmMat4Multiply(&node->localMatrix, &node->localMatrix, &transMat);
     }
 
     if (node->baseNode)
     {
-        kmMat4Multiply(&node->worldView, &node->baseNode->worldView, &node->localView);
+        kmMat4Multiply(&node->worldMatrix, &node->baseNode->worldMatrix, &node->localMatrix);
     }
     else
     {
-        node->worldView = node->localView;
+        node->worldMatrix = node->localMatrix;
     }
     
-    kmMat3NormalMatrix(&node->normalModel, &node->worldView);
+    kmMat3NormalMatrix(&node->normalMatrix, &node->worldMatrix);
 }
 
 uint8_t lite3d_scene_node_update(lite3d_scene_node *node)

@@ -55,8 +55,8 @@ namespace lite3dpp
         void lookAtWorld(const SceneObjectBase &obj);
 
         const kmMat4& getProjMatrix() const;
-        inline const kmMat4& getViewMatrix() const { return mCamera.view; }
-        inline const kmMat4& getProjViewMatrix() const { return mCamera.screen; }
+        inline const kmMat4& getViewMatrix() const { return mCamera.viewMatrix; }
+        inline const kmMat4& getProjViewMatrix() const { return mCamera.viewProjectionMatrix; }
         const kmMat4& refreshViewMatrix();
         const kmMat4& refreshProjViewMatrix();
 

@@ -314,17 +314,17 @@ namespace lite3dpp
         return mLightSource.params.outerCone;
     }
 
-    void LightSource::translateToWorld(const kmMat4 &worldView)
+    void LightSource::translateToWorld(const kmMat4 &worldMatrix)
     {
         mLightSourceWorld = mLightSource;
 
         kmVec3TransformCoord(&mLightSourceWorld.params.position,
-            &mLightSourceWorld.params.position, &worldView);
+            &mLightSourceWorld.params.position, &worldMatrix);
 
         if (getType() == LightSourceFlags::TypeDirectional || getType() == LightSourceFlags::TypeSpot)
         {
             kmVec3 direction = KM_VEC3_ZERO;
-            kmVec3TransformNormal(&direction, &mLightSourceWorld.params.direction, &worldView);
+            kmVec3TransformNormal(&direction, &mLightSourceWorld.params.direction, &worldMatrix);
             kmVec3Normalize(&mLightSourceWorld.params.direction, &direction);
         }
 

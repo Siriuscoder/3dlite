@@ -38,8 +38,6 @@ namespace lite3dpp
 
     protected:
 
-        // Буфер с инфо по каждой draw команде (матрицы, индексы и тд) 
-        SSBO *mChunkInvocationBuffer = nullptr; 
         // Буфер материалами для произвольного доступа из шейдера
         SSBO *mMaterialDataBuffer = nullptr;
     };

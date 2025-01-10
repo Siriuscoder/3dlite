@@ -38,7 +38,7 @@ namespace lite3dpp
     {
         if (mLight)
         {
-            mLight->translateToWorld(getPtr()->worldView);
+            mLight->translateToWorld(getPtr()->worldMatrix);
         }
     }
 

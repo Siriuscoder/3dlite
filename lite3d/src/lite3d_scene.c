@@ -60,13 +60,13 @@ typedef struct _mqr_node
 #pragma pack(push, 1)
 typedef struct _node_invocation_info
 {
-    kmMat4 model;
-    kmMat4 screen;
-    kmMat4 normal;
+    kmMat4 modelMatrix;
+    kmMat4 modelViewProjMatrix;
+    kmMat4 normalMatrix;
     uint32_t materialIdx;
     uint32_t flags;
-    uint32_t instancingIndex;
-    uint32_t reserved;
+    uint32_t reserved01;
+    uint32_t reserved02;
 } _node_invocation_info; 
 #pragma pack(pop)
 
@@ -101,11 +101,11 @@ static void mqr_node_set_shader_params(lite3d_scene *scene, lite3d_material_pass
     kmMat4 screen;
 
     /* setup global parameters (model) */
-    lite3d_shader_set_model_matrix(&mqrNode->node->worldView);
-    lite3d_shader_set_normal_matrix(&mqrNode->node->normalModel);
+    lite3d_shader_set_model_matrix(&mqrNode->node->worldMatrix);
+    lite3d_shader_set_normal_matrix(&mqrNode->node->normalMatrix);
 
     /* calc screen matrix */
-    kmMat4Multiply(&screen, &scene->currentCamera->screen, &mqrNode->node->worldView);
+    kmMat4Multiply(&screen, &scene->currentCamera->viewProjectionMatrix, &mqrNode->node->worldMatrix);
     lite3d_shader_set_screen_matrix(&screen);
 
     /* setup changed uniforms parameters */
@@ -187,7 +187,7 @@ static void mqr_render_batch_draw_instanced(lite3d_material_pass *pass, _mqr_nod
         mqrNode->meshChunk, mqrNode->matUnit->material))
             return;
 
-    LITE3D_ARR_ADD_ELEM(&scene->seriesMatrixes, kmMat4, mqrNode->node->worldView);
+    LITE3D_ARR_ADD_ELEM(&scene->seriesMatrixes, kmMat4, mqrNode->node->worldMatrix);
     /* call rendering current chunk */
     if (batchCrop)
     {
@@ -420,11 +420,11 @@ static void mqr_multirender_queue_command(lite3d_scene *scene, _mqr_node *node, 
     _node_invocation_info *invocationInfo = lite3d_array_add(&scene->invocationBuffer);
     memset(invocationInfo, 0, sizeof(_node_invocation_info));
     // Model матрица (Model Space -> World Space) 
-    invocationInfo->model = node->node->worldView;
+    invocationInfo->modelMatrix = node->node->worldMatrix;
     // Матрица нормали (Model Space -> World Space) 
-    kmMat4AssignMat3(&invocationInfo->normal, &(node->node->normalModel));
+    kmMat4AssignMat3(&invocationInfo->normalMatrix, &(node->node->normalMatrix));
     // ModelViewProjection матрица (Model Space -> Clip Space)
-    kmMat4Multiply(&invocationInfo->screen, &scene->currentCamera->screen, &invocationInfo->model);
+    kmMat4Multiply(&invocationInfo->modelViewProjMatrix, &scene->currentCamera->viewProjectionMatrix, &invocationInfo->modelMatrix);
     // Индекс материала в буфере материалов
     invocationInfo->materialIdx = node->matUnit->material->materialDataBufferIndex;
     // Добавление команды на отрисовку чанка
@@ -527,7 +527,7 @@ static void mqr_unit_make_queue(lite3d_scene *scene, _mqr_unit *mqrUnit, uint16_
             /* recalc bounding volume if node begin invalidated (position or rotation changed)*/
             lite3d_bounding_vol_translate(&mqrNode->boundingVol,
                 &mqrNode->meshChunk->boundingVol,
-                &mqrNode->node->worldView);
+                &mqrNode->node->worldMatrix);
         }
 
         if (mqrNode->node->invalidated || scene->currentCamera->cameraNode.invalidated)

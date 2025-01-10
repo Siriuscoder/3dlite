@@ -109,7 +109,7 @@ namespace lite3dpp
         float getAngleInnerCone() const;
         float getAngleOuterCone() const;
 
-        void translateToWorld(const kmMat4 &worldView);
+        void translateToWorld(const kmMat4 &worldMatrix);
         void writeToBuffer(BufferBase &buffer);
         lite3d_bounding_vol getBoundingVolumeWorld() const;
         lite3d_bounding_vol getBoundingVolume() const;

@@ -15,9 +15,9 @@ void main()
 #ifdef LITE3D_BINDLESS_TEXTURE_PIPELINE
     ChunkInvocationInfo invInfo = getInvocationInfo();
     drawID_g = gl_DrawIDARB;
-    mat3 normalMatrix = mat3(invInfo.normal[0].xyz, invInfo.normal[1].xyz, invInfo.normal[2].xyz);
+    mat3 normalMatrix = mat3(invInfo.normalMatrix[0].xyz, invInfo.normalMatrix[1].xyz, invInfo.normalMatrix[2].xyz);
     // vertex coordinate in world space 
-    gl_Position = invInfo.model * vertex;
+    gl_Position = invInfo.modelMatrix * vertex;
 #else 
     mat3 normalMatrix = mat3(modelMatrix[0].xyz, modelMatrix[1].xyz, modelMatrix[2].xyz);
     // vertex coordinate in world space 
