@@ -26,6 +26,9 @@
 #include <lite3d/lite3d_array.h>
 #include <lite3d/lite3d_lighting.h>
 
+#define LITE3D_MULTI_RENDER_CHUNK_INVOCATION_BUFFER "MultiRenderChunkInvocationBuffer"
+#define LITE3D_MULTI_RENDER_CHUNK_INVOCATION_INDEX_BUFFER "MultiRenderChunkInvocationIndexBuffer"
+
 #define LITE3D_RENDER_OPAQUE                        ((uint32_t)0x1)
 #define LITE3D_RENDER_TRANSPARENT                   ((uint32_t)0x1 << 1)
 #define LITE3D_RENDER_CLEAN_COLOR_BUFF              ((uint32_t)0x1 << 2)
@@ -74,7 +77,10 @@ typedef struct lite3d_scene
     lite3d_array stageTransparent;
     lite3d_array invalidatedUnits;
     lite3d_array seriesMatrixes;
-    lite3d_array invocationBuffer;
+    lite3d_array invocationBufferCPU;     // CPU Буфер с инфо по каждой draw команде (матрицы, индексы материалов и тд)
+    lite3d_vbo invocationBufferGPU;       // GPU Буфер с инфо по каждой draw команде (матрицы, индексы материалов и тд)
+    lite3d_array invocationIndexBufferCPU;     // CPU Буфер с индексами draw команд
+    lite3d_vbo invocationIndexBufferGPU;       // GPU Буфер с индексами draw команд
     lite3d_camera *currentCamera;
     void *userdata;
     int (*beginDrawBatch)(struct lite3d_scene *scene, 

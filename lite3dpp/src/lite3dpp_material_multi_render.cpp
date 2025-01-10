@@ -33,17 +33,6 @@ namespace lite3dpp
     {
         Material::loadFromConfigImpl(helper);
 
-        if (!getMain().getResourceManager()->resourceExists(MultiRenderChunkInvocationBufferName.data()))
-        {
-            mChunkInvocationBuffer = getMain().getResourceManager()->
-                queryResourceFromJson<SSBO>(MultiRenderChunkInvocationBufferName.data(), "{\"Stream\": true}");
-        }
-        else
-        {
-            mChunkInvocationBuffer = getMain().getResourceManager()->
-                queryResource<SSBO>(MultiRenderChunkInvocationBufferName.data());
-        }
-
         if (!getMain().getResourceManager()->resourceExists(MultiRenderMaterialDataBufferName.data()))
         {
             mMaterialDataBuffer = getMain().getResourceManager()->
@@ -57,12 +46,16 @@ namespace lite3dpp
         
         for (auto &passPair : mPasses)
         {
-            setSSBOParameter(passPair.first, "MultiRenderChunkInvocationBuffer", *mChunkInvocationBuffer);
+            /* Буфер с инфо по каждой draw команде (матрицы, индексы и тд) */
+            /* только создаем слот, сам буфер управляется и устанавливается сценой */
+            getParameter(LITE3D_MULTI_RENDER_CHUNK_INVOCATION_BUFFER, LITE3D_SHADER_PARAMETER_SSBO, passPair.first,
+                false, true);
+            /* Буфер индексов draw команд */
+            getParameter(LITE3D_MULTI_RENDER_CHUNK_INVOCATION_INDEX_BUFFER, LITE3D_SHADER_PARAMETER_UBO, passPair.first,
+                false, true);
+
             setSSBOParameter(passPair.first, "MultiRenderMaterialDataBuffer", *mMaterialDataBuffer);
         }
-
-        mMaterial.chunkInvocationBuffer = mChunkInvocationBuffer->getPtr();
-        mMaterial.materialDataBuffer = mMaterialDataBuffer->getPtr();
     }
 }
 

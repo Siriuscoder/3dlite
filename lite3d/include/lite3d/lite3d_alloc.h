@@ -31,6 +31,7 @@
 #define LITE3D_OFFSETOF(tstruct, field)             ((size_t) &((tstruct*)0x0)->field)
 #define LITE3D_MEMBERCAST(tstruct, pfield, field)   ((tstruct*)((size_t)pfield - \
     LITE3D_OFFSETOF(tstruct, field)))
+#define LITE3D_ALIGN_SIZE(size, align)              (size + (size % align))
 
 #define LITE3D_BUFFER_OFFSET(i)                     ((char *)NULL + (i)) 
 

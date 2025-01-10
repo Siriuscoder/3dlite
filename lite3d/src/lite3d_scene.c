@@ -53,6 +53,7 @@ typedef struct _mqr_node
     lite3d_array queries;
     _query_unit *currentQuery;
     _mqr_unit *matUnit;
+    int32_t invocationIndex;
 } _mqr_node;
 
 #define LITE3D_INVOCATION_INSTANCING    0x1
@@ -234,22 +235,20 @@ static void mqr_multirender_batch_draw(lite3d_mesh *mesh, uint8_t drawBB)
     }
 }
 
-static void mqr_multirender_do_batch(lite3d_scene *scene, lite3d_mesh *mesh, 
-    lite3d_vbo *chunkInvocationBuffer, uint8_t drawBB)
+static void mqr_multirender_do_batch(lite3d_scene *scene, lite3d_mesh *mesh, uint8_t drawBB)
 {    
     SDL_assert(scene);
     SDL_assert(mesh);
-    SDL_assert(chunkInvocationBuffer);
     SDL_assert(!lite3d_list_is_empty(&mesh->chunks));
 
-    if (mesh->drawQueue.size == 0)
+    if (mesh->drawQueue.size == 0 || scene->invocationIndexBufferCPU.size == 0)
     {
         return;
     }
 
-    // Установка буфера позиционирования 
-    if (!lite3d_vbo_buffer_set(chunkInvocationBuffer, scene->invocationBuffer.data,
-        scene->invocationBuffer.size * scene->invocationBuffer.elemSize))
+    // Установка индексов
+    if (!lite3d_vbo_buffer_set(&scene->invocationIndexBufferGPU, scene->invocationIndexBufferCPU.data,
+        LITE3D_ALIGN_SIZE(scene->invocationIndexBufferCPU.size, 4) * scene->invocationIndexBufferCPU.elemSize))
     {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Unable to write to the invocation buffer");
         return;
@@ -259,7 +258,7 @@ static void mqr_multirender_do_batch(lite3d_scene *scene, lite3d_mesh *mesh,
     // рисуем все команды собранные в очереди и чистим очередь
     mqr_multirender_batch_draw(mesh, drawBB);
     lite3d_mesh_queue_clean(mesh);
-    lite3d_array_clean(&scene->invocationBuffer);
+    lite3d_array_clean(&scene->invocationIndexBufferCPU);
     scene->stats.drawCalls++;
 }
 
@@ -416,6 +415,7 @@ static void mqr_unit_queue_render(lite3d_scene *scene, lite3d_array *queue, uint
 
 static void mqr_multirender_queue_command(lite3d_scene *scene, _mqr_node *node, lite3d_mesh_chunk *chunk)
 {
+    /*
     // Установка параметров позицицонирования чанка
     _node_invocation_info *invocationInfo = lite3d_array_add(&scene->invocationBuffer);
     memset(invocationInfo, 0, sizeof(_node_invocation_info));
@@ -427,11 +427,34 @@ static void mqr_multirender_queue_command(lite3d_scene *scene, _mqr_node *node, 
     kmMat4Multiply(&invocationInfo->modelViewProjMatrix, &scene->currentCamera->viewProjectionMatrix, &invocationInfo->modelMatrix);
     // Индекс материала в буфере материалов
     invocationInfo->materialIdx = node->matUnit->material->materialDataBufferIndex;
+    */
+    LITE3D_ARR_ADD_ELEM(&scene->invocationIndexBufferCPU, int32_t, node->invocationIndex);
     // Добавление команды на отрисовку чанка
     lite3d_mesh_queue_chunk(chunk, node->instancesCount);
     scene->stats.trianglesRendered += chunk->vao.elementsCount * node->instancesCount;
     scene->stats.verticesRendered += chunk->vao.verticesCount * node->instancesCount;
     scene->stats.drawSubCommands++;
+}
+
+static int mqr_multirender_set_shader_buffers(lite3d_scene *scene, lite3d_material_pass *matPass)
+{
+    lite3d_shader_parameter * pInvocationBuffer = 
+        lite3d_material_pass_get_parameter(matPass, LITE3D_MULTI_RENDER_CHUNK_INVOCATION_BUFFER);
+    lite3d_shader_parameter * pInvocationIndexBuffer = 
+        lite3d_material_pass_get_parameter(matPass, LITE3D_MULTI_RENDER_CHUNK_INVOCATION_INDEX_BUFFER);
+
+    if (!pInvocationBuffer || !pInvocationIndexBuffer)
+    {
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "%s: " LITE3D_MULTI_RENDER_CHUNK_INVOCATION_BUFFER " or "
+            LITE3D_MULTI_RENDER_CHUNK_INVOCATION_INDEX_BUFFER " material pass (%d) parameters are not found, this material "
+            "does not support the multirender approach", LITE3D_CURRENT_FUNCTION, matPass->passNo);
+
+        return LITE3D_FALSE;
+    }
+
+    pInvocationBuffer->parameter.vbo = &scene->invocationBufferGPU;
+    pInvocationIndexBuffer->parameter.vbo = &scene->invocationIndexBufferGPU;
+    return LITE3D_TRUE;
 }
 
 static void mqr_unit_queue_multirender(lite3d_scene *scene, lite3d_array *queue, uint16_t pass, uint32_t flags)
@@ -442,8 +465,6 @@ static void mqr_unit_queue_multirender(lite3d_scene *scene, lite3d_array *queue,
     uint8_t doubleSided = 0xFF;
     uint8_t polygonMode = 0xFF;
     lite3d_mesh *mesh = NULL;
-    lite3d_vbo *invocationBuffer = NULL;
-    lite3d_vbo *materialDataBuffer = NULL;
 
     // Render queue is empty 
     if (queue->size == 0)
@@ -461,22 +482,23 @@ static void mqr_unit_queue_multirender(lite3d_scene *scene, lite3d_array *queue,
         if (matPass->program != program || 
             matPass->doubleSided != doubleSided ||
             matPass->polygonMode != polygonMode ||
-            (*mqrNode)->meshChunk->mesh != mesh || 
-            (*mqrNode)->matUnit->material->chunkInvocationBuffer != invocationBuffer ||
-            (*mqrNode)->matUnit->material->materialDataBuffer != materialDataBuffer)
+            (*mqrNode)->meshChunk->mesh != mesh)
         {
             if (mesh)
             {
-                mqr_multirender_do_batch(scene, mesh, invocationBuffer, LITE3D_FALSE);
+                mqr_multirender_do_batch(scene, mesh, LITE3D_FALSE);
             }
 
+            // Установка параметров буферов позиционирования и буфера индексов
+            if (!mqr_multirender_set_shader_buffers(scene, matPass))
+                continue;
+
+            // И сразу переключаем материал
             mqr_unit_apply_material(scene, *mqrNode, pass);
             program = matPass->program;
             doubleSided = matPass->doubleSided;
             polygonMode = matPass->polygonMode;
             mesh = (*mqrNode)->meshChunk->mesh;
-            invocationBuffer = (*mqrNode)->matUnit->material->chunkInvocationBuffer;
-            materialDataBuffer = (*mqrNode)->matUnit->material->materialDataBuffer;
         }
 
         // Если включен режим отсечения перекрытых обьектов то рисуем каждую команду отдельно для опеределения 
@@ -489,13 +511,13 @@ static void mqr_unit_queue_multirender(lite3d_scene *scene, lite3d_array *queue,
             if ((*mqrNode)->currentQuery->query.anyPassed || !(*mqrNode)->bbMeshChunk)
             {
                 mqr_multirender_queue_command(scene, *mqrNode, (*mqrNode)->meshChunk);
-                mqr_multirender_do_batch(scene, mesh, invocationBuffer, LITE3D_FALSE);
+                mqr_multirender_do_batch(scene, mesh, LITE3D_FALSE);
             }
             // Обьект не виден, рисуем лишь его bounding box для проверки видимости
             else 
             {
                 mqr_multirender_queue_command(scene, *mqrNode, (*mqrNode)->bbMeshChunk);
-                mqr_multirender_do_batch(scene, (*mqrNode)->bbMeshChunk->mesh, invocationBuffer, LITE3D_TRUE);
+                mqr_multirender_do_batch(scene, (*mqrNode)->bbMeshChunk->mesh, LITE3D_TRUE);
             }
             lite3d_query_end(&(*mqrNode)->currentQuery->query);
         }
@@ -505,10 +527,7 @@ static void mqr_unit_queue_multirender(lite3d_scene *scene, lite3d_array *queue,
         }
     }
 
-    if (mesh)
-    {
-        mqr_multirender_do_batch(scene, mesh, invocationBuffer, LITE3D_FALSE);
-    }
+    mqr_multirender_do_batch(scene, mesh, LITE3D_FALSE);
 }
 
 static void mqr_unit_make_queue(lite3d_scene *scene, _mqr_unit *mqrUnit, uint16_t pass, uint32_t flags)
@@ -773,7 +792,14 @@ void lite3d_scene_init(lite3d_scene *scene)
     lite3d_array_init(&scene->stageTransparent, sizeof(_mqr_node *), 2);
     lite3d_array_init(&scene->invalidatedUnits, sizeof(lite3d_scene_node *), 2);
     lite3d_array_init(&scene->seriesMatrixes, sizeof(kmMat4), 10);
-    lite3d_array_init(&scene->invocationBuffer, sizeof(_node_invocation_info), 10);
+
+    if (lite3d_scene_multirender_support())
+    {
+        lite3d_array_init(&scene->invocationBufferCPU, sizeof(_node_invocation_info), 10);
+        lite3d_ssbo_init(&scene->invocationBufferGPU, LITE3D_VBO_DYNAMIC_DRAW);
+        lite3d_array_init(&scene->invocationIndexBufferCPU, sizeof(int32_t), LITE3D_ALIGN_SIZE(10, 4));
+        lite3d_ubo_init(&scene->invocationIndexBufferGPU, LITE3D_VBO_DYNAMIC_DRAW);
+    }
 }
 
 void lite3d_scene_purge(lite3d_scene *scene)
@@ -807,7 +833,10 @@ void lite3d_scene_purge(lite3d_scene *scene)
     lite3d_array_purge(&scene->stageOpague);
     lite3d_array_purge(&scene->stageTransparent);
     lite3d_array_purge(&scene->invalidatedUnits);
-    lite3d_array_purge(&scene->invocationBuffer);
+    lite3d_array_purge(&scene->invocationBufferCPU);
+    lite3d_vbo_purge(&scene->invocationBufferGPU);
+    lite3d_array_purge(&scene->invocationIndexBufferCPU);
+    lite3d_vbo_purge(&scene->invocationIndexBufferGPU);
 }
 
 int lite3d_scene_add_node(lite3d_scene *scene, lite3d_scene_node *node,
