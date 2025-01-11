@@ -823,7 +823,7 @@ int lite3d_texture_unit_from_resource(lite3d_texture_unit *textureUnit,
     /* Load IL image from memory */
     if (!ilLoadL(imageTypeEnum[imageType], resource->fileBuff, (ILuint)resource->fileSize))
     {
-        LITE3D_CHECK_IL_ERROR, 
+        if (LITE3D_CHECK_IL_ERROR) {} 
         ilDeleteImage(imageDesc);
         return LITE3D_FALSE;
     }

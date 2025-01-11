@@ -287,7 +287,7 @@ static int init(void *userdata)
     //lite3d_scene_node_rotate_angle(&mCamera01.cameraNode, &rotAxis, kmDegreesToRadians(90));
     //lite3d_scene_node_rotate_angle(&mCamera01.cameraNode, &rotAxisY, kmDegreesToRadians(90));
 
-    lite3d_scene_init(&mScene);
+    lite3d_scene_init(&mScene, 0);
     for (; i < sizeof (mSceneNode) / sizeof (lite3d_scene_node); ++i)
     {
         kmVec3 tmp = {

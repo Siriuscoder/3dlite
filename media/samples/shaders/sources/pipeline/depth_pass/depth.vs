@@ -13,7 +13,7 @@ void main()
 {
 #ifdef LITE3D_BINDLESS_TEXTURE_PIPELINE
     ChunkInvocationInfo invInfo = getInvocationInfo();
-    drawID = gl_DrawIDARB;
+    drawID = gl_DrawIDARB + gl_InstanceID;
     vec4 wv = invInfo.modelMatrix * vertex;
 #else
     vec4 wv = modelMatrix * vertex;

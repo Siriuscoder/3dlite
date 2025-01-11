@@ -1,7 +1,14 @@
+#if defined(LITE3D_VERTEX_SHADER) || !defined(LITE3D_DISABLE_INVOCATION_METHOD)
 layout(std430) readonly buffer MultiRenderChunkInvocationBuffer 
 {
     ChunkInvocationInfo chunksInvocationInfo[];
 };
+
+layout(std140) uniform MultiRenderChunkInvocationIndexBuffer
+{
+    ivec4 chunksIndexInvocationInfo[4000];
+};
+#endif
 
 layout(std430) readonly buffer MultiRenderMaterialDataBuffer 
 {
@@ -12,7 +19,9 @@ layout(std430) readonly buffer MultiRenderMaterialDataBuffer
 
 ChunkInvocationInfo getInvocationInfo()
 {
-    return chunksInvocationInfo[gl_DrawIDARB];
+    int compositeIndex = gl_DrawIDARB + gl_InstanceID;
+    int chunkIndex = chunksIndexInvocationInfo[compositeIndex/4][int(mod(compositeIndex, 4))];
+    return chunksInvocationInfo[chunkIndex];
 }
 
 #elif defined(LITE3D_FRAGMENT_SHADER)
@@ -22,7 +31,8 @@ flat in int drawID;
 
 ChunkInvocationInfo getInvocationInfo()
 {
-    return chunksInvocationInfo[drawID];
+    int chunkIndex = chunksIndexInvocationInfo[drawID/4][int(mod(drawID, 4))];
+    return chunksInvocationInfo[chunkIndex];
 }
 
 Surface makeSurface(vec2 uv, vec3 wv, vec3 wn, vec3 wt, vec3 wb)

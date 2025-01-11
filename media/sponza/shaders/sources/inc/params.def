@@ -17,3 +17,4 @@
 
 #define LITE3D_SSAO_POWER                                   0.3
 #define LITE3D_SSAO_SAMPLE_BIAS                             0.030
+#define LITE3D_SSAO_MAX_DEPTH_SAMPLES                       40

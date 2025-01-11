@@ -60,7 +60,15 @@ namespace lite3dpp
 
     void Scene::loadFromConfigImpl(const ConfigurationReader &helper)
     {
-        lite3d_scene_init(&mScene);
+        uint32_t features = 0;
+        if (helper.getBool(L"MultiRender", false))
+            features |= LITE3D_SCENE_FEATURE_MULTIRENDER;
+
+        if (!lite3d_scene_init(&mScene, features))
+        {
+            LITE3D_THROW("Failed to initialize scene '" << getName() << "'");
+        }
+
         setupCallbacks();
 
         String lightingTechnique = helper.getString(L"LightingTechnique", "none");
@@ -345,7 +353,7 @@ namespace lite3dpp
                     // Инстансинг включен, но при этом мультирендер выключен
                     // В этом случае мы испотьзуем инстанcинг через AttribDivisor
                     // Нужно инициализировать aux буфер для хранения атрибутов
-                    if (!renderTargetJson.getBool(L"MultiRender", false))
+                    if (!(mScene.features & LITE3D_SCENE_FEATURE_MULTIRENDER))
                     {
                         lite3d_mesh_aux_buffer_init();
                     }
@@ -389,15 +397,6 @@ namespace lite3dpp
                     renderFlags |= LITE3D_RENDER_SORT_OPAQUE_FROM_NEAR;
                 if (renderTargetJson.getBool(L"SortTransparentFromNear", false))
                     renderFlags |= LITE3D_RENDER_SORT_TRANSPARENT_FROM_NEAR;
-                if (renderTargetJson.getBool(L"MultiRender", false))
-                {
-                    if (!lite3d_scene_multirender_support())
-                    {
-                        LITE3D_THROW(getName() << ": MultiRender feature is not supported");
-                    }
-
-                    renderFlags |= LITE3D_RENDER_MULTIRENDER;
-                }
 
                 RenderTarget::RenderLayers layers;
                 auto colorLayer = renderTargetJson.getInt(L"ColorLayer", -1);

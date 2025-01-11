@@ -29,6 +29,7 @@
 #define LITE3D_MULTI_RENDER_CHUNK_INVOCATION_BUFFER "MultiRenderChunkInvocationBuffer"
 #define LITE3D_MULTI_RENDER_CHUNK_INVOCATION_INDEX_BUFFER "MultiRenderChunkInvocationIndexBuffer"
 
+// Scene render flags
 #define LITE3D_RENDER_OPAQUE                        ((uint32_t)0x1)
 #define LITE3D_RENDER_TRANSPARENT                   ((uint32_t)0x1 << 1)
 #define LITE3D_RENDER_CLEAN_COLOR_BUFF              ((uint32_t)0x1 << 2)
@@ -47,7 +48,8 @@
 #define LITE3D_RENDER_SORT_TRANSPARENT_TO_NEAR      ((uint32_t)0x1 << 15)
 #define LITE3D_RENDER_SORT_OPAQUE_FROM_NEAR         ((uint32_t)0x1 << 16)
 #define LITE3D_RENDER_SORT_TRANSPARENT_FROM_NEAR    ((uint32_t)0x1 << 17)
-#define LITE3D_RENDER_MULTIRENDER                   ((uint32_t)0x1 << 18)
+// Scene features
+#define LITE3D_SCENE_FEATURE_MULTIRENDER                   ((uint32_t)0x1)
 
 #define LITE3D_RENDER_DEFAULT (LITE3D_RENDER_OPAQUE | LITE3D_RENDER_TRANSPARENT | LITE3D_RENDER_SORT_TRANSPARENT_TO_NEAR | \
     LITE3D_RENDER_DEPTH_TEST | LITE3D_RENDER_COLOR_OUTPUT | LITE3D_RENDER_DEPTH_OUTPUT | LITE3D_RENDER_FRUSTUM_CULLING)
@@ -82,7 +84,9 @@ typedef struct lite3d_scene
     lite3d_array invocationIndexBufferCPU;     // CPU Буфер с индексами draw команд
     lite3d_vbo invocationIndexBufferGPU;       // GPU Буфер с индексами draw команд
     lite3d_camera *currentCamera;
+    uint32_t features;
     void *userdata;
+
     int (*beginDrawBatch)(struct lite3d_scene *scene, 
         struct lite3d_scene_node *node, struct lite3d_mesh_chunk *meshChunk, struct lite3d_material *material);
     void (*nodeInFrustum)(struct lite3d_scene *scene, 
@@ -106,7 +110,7 @@ typedef struct lite3d_scene
 
 LITE3D_CEXPORT void lite3d_scene_render(lite3d_scene *scene, lite3d_camera *camera, 
     uint16_t pass, uint32_t flags);
-LITE3D_CEXPORT void lite3d_scene_init(lite3d_scene *scene);
+LITE3D_CEXPORT int lite3d_scene_init(lite3d_scene *scene, uint32_t features);
 LITE3D_CEXPORT void lite3d_scene_purge(lite3d_scene *scene);
 
 LITE3D_CEXPORT int lite3d_scene_add_node(lite3d_scene *scene, lite3d_scene_node *node, lite3d_scene_node *baseNode);

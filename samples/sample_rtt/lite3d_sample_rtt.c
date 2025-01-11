@@ -331,8 +331,8 @@ static int init(void *userdata)
     lite3d_camera_set_position(&mCamera02, &cameraInitPos2);
     lite3d_camera_lookAt(&mCamera02, &nodePos[1]);
 
-    lite3d_scene_init(&mScene);
-    lite3d_scene_init(&mSceneMain);
+    lite3d_scene_init(&mScene, 0);
+    lite3d_scene_init(&mSceneMain, 0);
 
 
     lite3d_scene_node_init(&mSceneNode[0]);

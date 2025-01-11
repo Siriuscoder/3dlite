@@ -170,10 +170,6 @@ namespace lite3dpp_pipeline {
         if (pipelineConfig.getBool(L"MultiRender", false))
         {
             lightComputeMaterialUniforms.emplace_back(ConfigurationWriter()
-                .set(L"Name", "MultiRenderChunkInvocationBuffer")
-                .set(L"SSBOName", MultiRenderMaterial::MultiRenderChunkInvocationBufferName.data())
-                .set(L"Type", "SSBO"));
-            lightComputeMaterialUniforms.emplace_back(ConfigurationWriter()
                 .set(L"Name", "MultiRenderMaterialDataBuffer")
                 .set(L"SSBOName", MultiRenderMaterial::MultiRenderMaterialDataBufferName.data())
                 .set(L"Type", "SSBO"));
@@ -249,7 +245,6 @@ namespace lite3dpp_pipeline {
             .set(L"RenderBlend", false)
             .set(L"RenderOpaque", true)
             .set(L"OcclusionCulling", pipelineConfig.getBool(L"OcclusionCulling", true))
-            .set(L"MultiRender", pipelineConfig.getBool(L"MultiRender", false))
             .set(L"RenderInstancing", pipelineConfig.getBool(L"Instancing", true)));
     }
 
@@ -296,7 +291,6 @@ namespace lite3dpp_pipeline {
             .set(L"DepthOutput", true)
             .set(L"RenderBlend", true)
             .set(L"RenderOpaque", false)
-            .set(L"MultiRender", pipelineConfig.getBool(L"MultiRender", false))
             .set(L"RenderInstancing", pipelineConfig.getBool(L"Instancing", true)));
     }
 

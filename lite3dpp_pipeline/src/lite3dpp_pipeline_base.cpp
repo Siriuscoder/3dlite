@@ -122,6 +122,7 @@ namespace lite3dpp_pipeline {
             // SSBO is needed for the MultiRender supported by version GLSL 430 or higher
             ShaderProgram::setShaderVersion("430");
             ShaderProgram::addDefinition("LITE3D_BINDLESS_TEXTURE_PIPELINE", "1");
+            sceneGeneratedConfig.set(L"MultiRender", true);
         }
 
         if (pipelineConfig.has(L"EnvironmentTexture"))
@@ -175,7 +176,7 @@ namespace lite3dpp_pipeline {
             }
             else
             {
-                LITE3D_THROW("Pipeline " << getName() << ": Main camera has incorrect configuration");
+                LITE3D_THROW("Pipeline " << getName() << ": Main camera configuration incorrect");
             }
 
             mainSceneGenerator.addCamera(cameraName, cameraPipelineConfig);
@@ -272,7 +273,6 @@ namespace lite3dpp_pipeline {
             .set(L"RenderOpaque", true);
 
         depthPassGeneratedConfig.set(L"RenderInstancing", pipelineConfig.getBool(L"Instancing", true));
-        depthPassGeneratedConfig.set(L"MultiRender", pipelineConfig.getBool(L"MultiRender", false));
         if (pipelineConfig.getBool(L"OcclusionCulling", true))
         {
             depthPassGeneratedConfig.set(L"OcclusionQuery", true)
@@ -304,7 +304,6 @@ namespace lite3dpp_pipeline {
             .set(L"RenderBlend", false)
             .set(L"RenderOpaque", true)
             .set(L"CustomVisibilityCheck", true)
-            .set(L"MultiRender", pipelineConfig.getBool(L"MultiRender", false))
             .set(L"RenderInstancing", pipelineConfig.getBool(L"Instancing", true)));
     }
     
@@ -535,7 +534,6 @@ namespace lite3dpp_pipeline {
             .set(L"RenderBlend", false)
             .set(L"RenderOpaque", true)
             .set(L"FrustumCulling", false)
-            .set(L"MultiRender", pipelineConfig.getBool(L"MultiRender", false))
             .set(L"RenderInstancing", pipelineConfig.getBool(L"Instancing", true)));
     }
 
