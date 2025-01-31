@@ -18,7 +18,7 @@ jobs:
       shell: bash
       run: |
         sudo apt-get update
-        sudo apt-get install -y ninja-build clang libc++-dev libc++abi-dev libdevil-dev libassimp-dev libsdl2-dev libfreetype6-dev libbullet-dev
+        sudo apt-get install -y ninja-build clang libc++-dev libc++abi-dev libxi-dev libgl1-mesa-dev libglu1-mesa-dev mesa-common-dev libxrandr-dev libxxf86vm-dev libltdl-dev
 
     - name: Configure CMake
       run: >
