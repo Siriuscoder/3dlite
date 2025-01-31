@@ -45,14 +45,13 @@ public:
     void preallocateMeshPartition()
     {
         ConfigurationWriter cfg;
-        cfg.set(L"Dynamic", true);
-        cfg.set(L"PreallocVertexSize", 160 * 1024 * 1024);
-        cfg.set(L"PreallocIndexSize", 60 * 1024 * 1024);
+        cfg.set(L"PreallocVertexSize", 180 * 1024 * 1024);
+        cfg.set(L"PreallocIndexSize", 75 * 1024 * 1024);
 
         // Для ускорения загруки выделим место под геометрию заранее
         getMain().getResourceManager()->queryResourceFromJson<lite3dpp::MeshPartition>("sponza.mesh_partition", cfg.write());
 
-        cfg.set(L"PreallocVertexSize", 1024 * 1024);
+        cfg.set(L"PreallocVertexSize", 2 * 1024 * 1024);
         cfg.set(L"PreallocIndexSize", 0);
         // Для ускорения загруки выделим место под геометрию заранее
         getMain().getResourceManager()->queryResourceFromJson<lite3dpp::MeshPartition>("sponza.mesh_partition_bouding_box", cfg.write());
@@ -71,6 +70,7 @@ public:
         addFlashlight();
         initGIProbes();
 
+        getMain().getResourceManager()->warmUpMeshPartitions();
         getMain().getResourceManager()->dropFileCache();
     }
 
@@ -91,6 +91,7 @@ public:
     void setupShadowCasters()
     {
         mSUN = mSponzaScene->getObject("Sponza")->getLightNode("SUN");
+        mSUN->getLight()->setFlag(LightSourceFlags::CastShadowPcfAdaptive | LightSourceFlags::CastShadowSSS);
         mSUNNode = mSponzaScene->getObject("Sponza")->getNode("SUN_actor");
         mSUNShadowCaster = mPipeline->getShadowManager()->newShadowCaster(mSUN);
     }
@@ -105,6 +106,15 @@ public:
             // Помечаем что надо перерисовать тени в следубщий кадр
             mSUNShadowCaster->invalidate();
             //mPipeline->getIBL()->rebuild();
+        }
+
+        auto sponzaStatic = mPipeline->getMainScene().getObject("Sponza");
+        for (const auto &node : sponzaStatic->getNodes())
+        {
+            if (node.first.starts_with("Knight"))
+            {
+                node.second->rotateY(0.02 * deltaRetard);
+            }
         }
     }
 

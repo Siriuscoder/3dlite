@@ -4,11 +4,11 @@
     "Instancing": false,
     "OcclusionCulling": true,
     "LightingTechnique": "UBO",
-    "EnvironmentTexture": "samples:textures/json/skybox_metal_chrome.json",
+    "MultiRender": true,
     "SkyBox": 
     {
         "Texture": "samples:textures/json/skybox.json",
-        "EmissionStrength": 8.0
+        "EmissionStrength": 4.0
     },
     "ShadowMaps":
     {
@@ -36,7 +36,7 @@
     },
     "GI":
     {
-        "ProbeResolution": 512,
+        "ProbeResolution": 128,
         "MaxCount": 33,
         "ProbeZNearClip": 0.01,
         "ProbeZFarClip": 100.0

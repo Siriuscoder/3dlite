@@ -1,10 +1,11 @@
 {
     "Sources": 
     [
-        "vaultshader:shaders/sources/prepass.vs",
-        "vaultshader:shaders/sources/prepass.fs",
+        "vaultmat:shaders/sources/prepass.vs",
+        "vaultmat:shaders/sources/prepass.fs",
         "samples:shaders/sources/phong/phong_blinn_single.fs",
         "samples:shaders/sources/phong/lighting_ubo.fs",
-        "samples:shaders/sources/common/utils.fs"
+        "samples:shaders/sources/common/common.fs",
+        "samples:shaders/sources/common/stub.fs"
     ]
 }

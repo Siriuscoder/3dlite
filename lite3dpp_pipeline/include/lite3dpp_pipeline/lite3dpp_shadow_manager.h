@@ -52,24 +52,24 @@ public:
 
         inline bool invalidated() const
         {
-            return mInvalideted;
+            return mInvalidated;
         }
 
         inline void validate()
         {
-            mInvalideted = false;
+            mInvalidated = false;
         }
 
         inline void invalidate()
         {
-            mInvalideted = true;
+            mInvalidated = true;
         }
 
     private:
 
         LightSceneNode* mLightNode = nullptr;
         Camera* mShadowCamera = nullptr;
-        bool mInvalideted = true;
+        bool mInvalidated = true;
     };
 
     class LITE3DPP_PIPELINE_EXPORT DynamicShadowReceiver

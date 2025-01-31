@@ -1,4 +1,25 @@
 {
+  "Emission": {
+    "Name":"<Emission>"
+  },
+  "EmissionStrength": {
+    "Name":"<Emission Strength>"
+  },
+  "Metallic": {
+    "Value": 0.0
+  },
+  "EnvDiffuse": {
+    "Value": 1.0
+  },
+  "EnvSpecular": {
+    "Value": 1.0
+  },
+  "EnvironmentProbeTexture": {
+    "Name": "EnvironmentProbe",
+    "TextureName": "SponzaDeffered_EnvironmentMultiProbe.texture",
+    "Type": "sampler"
+  },
+
   "Passes":[
     {
       "Pass": 1,
@@ -9,33 +30,18 @@
       "Uniforms":[
         {
           "Name": "projViewMatrix"
-        },
-        {
-          "Name": "modelMatrix"
         }
       ]
     },
     {
       "Pass": 2,
       "Program":{
-        "Name":"bsdf_glow_prepare.program",
-        "Path":"sponza:shaders/json/bsdf_glow_prepare.json"
+        "Name":"bsdf_prepare.program",
+        "Path":"sponza:shaders/json/bsdf_prepare.json"
       },
       "Uniforms":[
         {
-          "Name":"<Emission>"
-        },
-        {
-          "Name":"<Emission Strength>"
-        },
-        {
-          "Name":"projViewMatrix"
-        },
-        {
-          "Name":"modelMatrix"
-        },
-        {
-          "Name":"normalMatrix"
+          "Name": "projViewMatrix"
         }
       ]
     },
@@ -55,25 +61,16 @@
           "Name": "ShadowIndex",
           "UBOName": "SponzaDeffered_ShadowIndexBuffer",
           "Type": "UBO"
-        },
-        {
-          "Name":"modelMatrix"
         }
       ]
     },
     {
       "Pass": 4,
       "Program":{
-        "Name":"env_probe_glow.program",
-        "Path":"sponza:shaders/json/env_probe_glow.json"
+        "Name":"env_probe.program",
+        "Path":"sponza:shaders/json/env_probe.json"
       },
       "Uniforms":[
-        {
-          "Name":"<Emission>"
-        },
-        {
-          "Name":"<Emission Strength>"
-        },
         {
           "Name":"LightSources",
           "UBOName": "SponzaDeffered_MainScene_lightingBufferObject",
@@ -103,9 +100,6 @@
           "Name":"EnvProbesIndex",
           "UBOName":"SponzaDeffered_EnvProbesIndex",
           "Type":"UBO"
-        },
-        {
-          "Name":"modelMatrix"
         }
       ]
     }

@@ -86,7 +86,7 @@ namespace lite3dpp
         if (!valid())
             LITE3D_THROW("Failed to upload data to GPU buffer, resource unavailable");
 
-        if (!lite3d_vbo_buffer(&mVBO, buffer, size))
+        if (!lite3d_vbo_buffer_alloc(&mVBO, buffer, size))
             LITE3D_THROW("Failed to upload data to GPU buffer");
     }
     

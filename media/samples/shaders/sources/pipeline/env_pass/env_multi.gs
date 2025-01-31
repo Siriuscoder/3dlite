@@ -1,4 +1,4 @@
-#include "samples:shaders/sources/common/utils_inc.glsl"
+#include "samples:shaders/sources/common/structs_inc.glsl"
 
 layout(triangles) in;
 layout(triangle_strip, max_vertices = LITE3D_ENV_PROBE_GS_MAX_VERTICES) out;
@@ -15,10 +15,12 @@ layout(std140) uniform EnvProbesIndex
 
 in vec2 iuv_g[];
 in vec3 iwn_g[];
+flat in int drawID_g[];
 
-out vec2 iuv;    // UVs
-out vec3 iwv;    // world-space position
-out vec3 iwn;    // world-space normal
+out vec2 iuv;           // UVs
+out vec3 iwv;           // world-space position
+out vec3 iwn;           // world-space normal
+flat out int drawID;    // currect chunk index
 
 void main()
 {
@@ -40,6 +42,9 @@ void main()
                 iuv = iuv_g[j];
                 // N
                 iwn = iwn_g[j];
+#ifdef LITE3D_BINDLESS_TEXTURE_PIPELINE
+                drawID = drawID_g[j];
+#endif
                 EmitVertex();
             }
             EndPrimitive();

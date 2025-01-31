@@ -31,11 +31,11 @@ typedef struct lite3d_camera
     /* Нода камеры */
     lite3d_scene_node cameraNode;
     /* Матрица перехода в view-space из world-space */
-    kmMat4 view;
-    /* Матрица перехода в screen-space из view-space */
-    kmMat4 projection;
-    /* Матрица перехода в screen-space из world-space */
-    kmMat4 screen;
+    kmMat4 viewMatrix;
+    /* Матрица перехода в clip-space из view-space */
+    kmMat4 projectionMatrix;
+    /* Матрица перехода в clip-space из world-space */
+    kmMat4 viewProjectionMatrix;
     /* Признак прямоугольной проекции */
     uint8_t isOrtho;
 

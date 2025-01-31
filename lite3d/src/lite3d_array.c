@@ -26,6 +26,9 @@
 void lite3d_array_init(lite3d_array *a, size_t elemSize, size_t capacity)
 {
     SDL_assert(a);
+    if (!capacity)
+        return;
+
     a->data = lite3d_malloc(elemSize * capacity);
     SDL_assert_release(a->data);
 
@@ -76,7 +79,7 @@ void *lite3d_array_get(lite3d_array *a, size_t index)
 {
     SDL_assert(a);
     SDL_assert(index < a->size);
-    return ((char *) a->data) +(index * a->elemSize);
+    return ((char *) a->data) + (index * a->elemSize);
 }
 
 void lite3d_array_remove(lite3d_array *a, size_t index)

@@ -25,11 +25,9 @@ namespace lite3dpp
     LightSource::LightSource(const String &name) : 
         mName(name)
     {
-        memset(&mLightSource, 0, sizeof(mLightSource));
         mLightSource.userdata = this;
         /* enabled by default */
-        mLightSource.params.block1.y = 1.0f;
-        mLightSource.params.block3.w = -1.0f;
+        enabled(true);
         mLightSourceWorld = mLightSource;
     }
 
@@ -44,8 +42,8 @@ namespace lite3dpp
     LightSource::LightSource(const ConfigurationReader &json)
     {
         String lightType = json.getString(L"Type", "Point");
-        setType(lightType == "Directional" ? LITE3D_LIGHT_DIRECTIONAL : 
-            (lightType == "Spot" ? LITE3D_LIGHT_SPOT : LITE3D_LIGHT_POINT));
+        setType(lightType == "Directional" ? LightSourceFlags::TypeDirectional : 
+            (lightType == "Spot" ? LightSourceFlags::TypeSpot : LightSourceFlags::TypePoint));
         
         mName = json.getString(L"Name");
         setPosition(json.getVec3(L"Position"));
@@ -70,131 +68,137 @@ namespace lite3dpp
             setAngleOuterCone(spotFactor.getDouble(L"AngleOuterCone"));
         }
 
-        mLightSource.params.block1.y = 1.0f;
-        mLightSource.params.block3.w = -1.0f;
+        enabled(true);
         mLightSource.userdata = this;
         mLightSourceWorld = mLightSource;
     }
     
     void LightSource::toJson(ConfigurationWriter &writer) const
     {
-        if (getType() == LITE3D_LIGHT_POINT)
+        if (getType() == LightSourceFlags::TypePoint)
             writer.set(L"Type", "Point");
-        else if (getType() == LITE3D_LIGHT_DIRECTIONAL)
+        else if (getType() == LightSourceFlags::TypeDirectional)
             writer.set(L"Type", "Directional");
-        else if (getType() == LITE3D_LIGHT_SPOT)
+        else if (getType() == LightSourceFlags::TypeSpot)
             writer.set(L"Type", "Spot");
         else
             writer.set(L"Type", "Undefined");
 
         writer.set(L"Name", mName);
-        writer.set(L"Diffuse", *reinterpret_cast<const kmVec3 *>(&mLightSource.params.block2.x));
-        writer.set(L"Radiance", mLightSource.params.block2.w);
+        writer.set(L"Diffuse", mLightSource.params.diffuse);
+        writer.set(L"Radiance", mLightSource.params.radiance);
 
-        if (getType() == LITE3D_LIGHT_POINT || 
-            getType() == LITE3D_LIGHT_SPOT)
+        if (getType() == LightSourceFlags::TypePoint || 
+            getType() == LightSourceFlags::TypeSpot)
         {
-            writer.set(L"Position", *reinterpret_cast<const kmVec3 *>(&mLightSource.params.block3.x));
-            writer.set(L"LightSize", mLightSource.params.block3.w);
+            writer.set(L"Position", mLightSource.params.position);
+            writer.set(L"LightSize", mLightSource.params.lightSize);
             writer.set(L"Attenuation", lite3dpp::ConfigurationWriter()
-                .set(L"Constant", mLightSource.params.block4.w)
-                .set(L"Linear", mLightSource.params.block5.x)
-                .set(L"Quadratic", mLightSource.params.block5.y)
-                .set(L"InfluenceDistance", mLightSource.params.block1.z)
-                .set(L"InfluenceMinRadiance", mLightSource.params.block1.w));
+                .set(L"Constant", mLightSource.params.attenuationConstant)
+                .set(L"Linear", mLightSource.params.attenuationLinear)
+                .set(L"Quadratic", mLightSource.params.attenuationQuadratic)
+                .set(L"InfluenceDistance", mLightSource.params.influenceDistance)
+                .set(L"InfluenceMinRadiance", mLightSource.params.minRadianceCutOff));
 
-            if (getType() == LITE3D_LIGHT_SPOT)
+            if (getType() == LightSourceFlags::TypeSpot)
             {
                 writer.set(L"SpotFactor", lite3dpp::ConfigurationWriter()
-                    .set(L"AngleInnerCone", mLightSource.params.block5.z)
-                    .set(L"AngleOuterCone", mLightSource.params.block5.w));
+                    .set(L"AngleInnerCone", mLightSource.params.innerCone)
+                    .set(L"AngleOuterCone", mLightSource.params.outerCone));
             }
         }
 
-        if (getType() == LITE3D_LIGHT_DIRECTIONAL || 
-            getType() == LITE3D_LIGHT_SPOT)
+        if (getType() == LightSourceFlags::TypeDirectional || 
+            getType() == LightSourceFlags::TypeSpot)
         {
-            writer.set(L"Direction", *reinterpret_cast<const kmVec3 *>(&mLightSource.params.block4.x));
+            writer.set(L"Direction", mLightSource.params.direction);
         }
     }
 
-    void LightSource::setType(uint8_t t)
+    void LightSource::setType(LightSourceFlags t)
     {
-        mLightSource.params.block1.x = t;
+        mLightSource.params.flags &= ~(LITE3D_LIGHT_POINT | LITE3D_LIGHT_DIRECTIONAL | LITE3D_LIGHT_SPOT);
+        setFlag(t);
+    }
+
+    LightSourceFlags LightSource::getFlags() const
+    {
+        return static_cast<LightSourceFlags>(mLightSource.params.flags);
+    }
+
+    void LightSource::setFlag(LightSourceFlags flag)
+    {
+        mLightSource.params.flags |= static_cast<uint32_t>(flag);
         mUpdated = true;
     }
     
     void LightSource::enabled(bool f)
     {
-        mLightSource.params.block1.y = f ? 1.0f : 0.0f;
-        mUpdated = true;  
+        if (f)
+        {
+            mLightSource.params.flags |= LITE3D_LIGHT_ENABLED;
+        }
+        else
+        {
+            mLightSource.params.flags &= ~LITE3D_LIGHT_ENABLED;
+        }
+
+        mUpdated = true;
     }
     
     void LightSource::setPosition(const kmVec3 &v)
     {
-        mLightSource.params.block3.x = v.x;
-        mLightSource.params.block3.y = v.y;
-        mLightSource.params.block3.z = v.z;
+        mLightSource.params.position = v;
         mUpdated = true;
     }
     
     void LightSource::setDirection(const kmVec3 &v)
     {
-        mLightSource.params.block4.x = v.x;
-        mLightSource.params.block4.y = v.y;
-        mLightSource.params.block4.z = v.z;
+        mLightSource.params.direction = v;
         mUpdated = true;
     }
     
     void LightSource::setDiffuse(const kmVec3 &v)
     {
-        mLightSource.params.block2.x = v.x;
-        mLightSource.params.block2.y = v.y;
-        mLightSource.params.block2.z = v.z;
-        mUpdated = true;   
+        mLightSource.params.diffuse = v;
+        mUpdated = true;
     }
     
-    uint8_t LightSource::getType() const
+    LightSourceFlags LightSource::getType() const
     {
-        if (near(mLightSource.params.block1.x, 1.0f))
-            return LITE3D_LIGHT_POINT;
-        else if (near(mLightSource.params.block1.x, 2.0f))
-            return LITE3D_LIGHT_DIRECTIONAL;
-        else if (near(mLightSource.params.block1.x, 3.0f))
-            return LITE3D_LIGHT_SPOT;
-
-        return LITE3D_LIGHT_UNDEFINED;
+        return static_cast<LightSourceFlags>(mLightSource.params.flags & 
+            (LITE3D_LIGHT_POINT | LITE3D_LIGHT_DIRECTIONAL | LITE3D_LIGHT_SPOT));
     }
 
     bool LightSource::enabled() const
     {
-        return near(mLightSource.params.block1.y, 1.0f);
+        return mLightSource.params.flags & LITE3D_LIGHT_ENABLED;
     }
 
     void LightSource::setAttenuationConstant(float value)
     {
-        mLightSource.params.block4.w = value;
+        mLightSource.params.attenuationConstant = value;
         calcDistanceMinRadiance();
         mUpdated = true;
     }
 
     void LightSource::setAttenuationLinear(float value)
     {
-        mLightSource.params.block5.x = value;
+        mLightSource.params.attenuationLinear = value;
         calcDistanceMinRadiance();
         mUpdated = true;
     }
 
     void LightSource::setAttenuationQuadratic(float value)
     {
-        mLightSource.params.block5.y = value;
+        mLightSource.params.attenuationQuadratic = value;
         calcDistanceMinRadiance();
         mUpdated = true;
     }
 
     void LightSource::setInfluenceDistance(float value)
     {
-        mLightSource.params.block1.z = value;
+        mLightSource.params.influenceDistance = value;
         if (nonzero(value))
         {
             mInfluenceDistance = value;
@@ -210,119 +214,118 @@ namespace lite3dpp
 
     void LightSource::setInfluenceMinRadiance(float value)
     {
-        mLightSource.params.block1.w = value;
+        mLightSource.params.minRadianceCutOff = value;
         calcDistanceMinRadiance();
         mUpdated = true;
     }
 
     void LightSource::setRadiance(float value)
     {
-        mLightSource.params.block2.w = value;
+        mLightSource.params.radiance = value;
         calcDistanceMinRadiance();
         mUpdated = true;
     }
 
-    void LightSource::setUserIndex(int32_t value)
+    void LightSource::setShadowIndex(uint32_t value)
     {
-        mLightSource.params.block3.w = static_cast<float>(value);
+        mLightSource.params.shadowIndex = value;
         mUpdated = true;
     }
 
     void LightSource::setAngleInnerCone(float value)
     {
-        mLightSource.params.block5.z = value;
+        mLightSource.params.innerCone = value;
         mUpdated = true;
     }
 
     void LightSource::setAngleOuterCone(float value)
     {
-        mLightSource.params.block5.w = value;
+        mLightSource.params.outerCone = value;
         mUpdated = true;
     }
 
     const kmVec3 &LightSource::getPosition() const
     {
-        return *reinterpret_cast<const kmVec3 *>(&mLightSource.params.block3.x);
+        return mLightSource.params.position;
     }
 
     const kmVec3 &LightSource::getDirection() const
     {
-        return *reinterpret_cast<const kmVec3 *>(&mLightSource.params.block4.x);
+        return mLightSource.params.direction;
     }
 
     const kmVec3 &LightSource::getWorldPosition() const
     {
-        return *reinterpret_cast<const kmVec3 *>(&mLightSourceWorld.params.block3.x);
+        return mLightSourceWorld.params.position;
     }
 
     const kmVec3 &LightSource::getWorldDirection() const
     {
-        return *reinterpret_cast<const kmVec3 *>(&mLightSourceWorld.params.block4.x);
+        return mLightSourceWorld.params.direction;
     }
 
     const kmVec3 &LightSource::getDiffuse() const
     {
-        return *reinterpret_cast<const kmVec3 *>(&mLightSource.params.block2.x);
+        return mLightSource.params.diffuse;
     }
 
     float LightSource::getAttenuationConstant() const
     {
-        return mLightSource.params.block4.w;
+        return mLightSource.params.attenuationConstant;
     }
 
     float LightSource::getAttenuationLinear() const
     {
-        return mLightSource.params.block5.x;
+        return mLightSource.params.attenuationLinear;
     }
 
     float LightSource::getAttenuationQuadratic() const
     {
-        return mLightSource.params.block5.y;
+        return mLightSource.params.attenuationQuadratic;
     }
 
     float LightSource::getInfluenceDistance() const
     {
-        return mLightSource.params.block1.z;
+        return mLightSource.params.influenceDistance;
     }
 
     float LightSource::getInfluenceMinRadiance() const
     {
-        return mLightSource.params.block1.w;
+        return mLightSource.params.minRadianceCutOff;
     }
 
     float LightSource::getRadiance() const
     {
-        return mLightSource.params.block2.w;
+        return mLightSource.params.radiance;
     }
 
-    int32_t LightSource::getUserIndex() const
+    uint32_t LightSource::getShadowIndex() const
     {
-        return static_cast<int32_t>(round(mLightSource.params.block3.w));
+        return mLightSource.params.shadowIndex;
     }
 
     float LightSource::getAngleInnerCone() const
     {
-        return mLightSource.params.block5.z;
+        return mLightSource.params.innerCone;
     }
 
     float LightSource::getAngleOuterCone() const
     {
-        return mLightSource.params.block5.w;
+        return mLightSource.params.outerCone;
     }
 
-    void LightSource::translateToWorld(const kmMat4 &worldView)
+    void LightSource::translateToWorld(const kmMat4 &worldMatrix)
     {
         mLightSourceWorld = mLightSource;
 
-        kmVec3TransformCoord(reinterpret_cast<kmVec3 *>(&mLightSourceWorld.params.block3.x), 
-            reinterpret_cast<kmVec3 *>(&mLightSourceWorld.params.block3.x), &worldView);
+        kmVec3TransformCoord(&mLightSourceWorld.params.position,
+            &mLightSourceWorld.params.position, &worldMatrix);
 
-        if (getType() == LITE3D_LIGHT_DIRECTIONAL || getType() == LITE3D_LIGHT_SPOT)
+        if (getType() == LightSourceFlags::TypeDirectional || getType() == LightSourceFlags::TypeSpot)
         {
             kmVec3 direction = KM_VEC3_ZERO;
-            kmVec3TransformNormal(&direction, 
-                reinterpret_cast<kmVec3 *>(&mLightSourceWorld.params.block4.x), &worldView);
-            kmVec3Normalize(reinterpret_cast<kmVec3 *>(&mLightSourceWorld.params.block4.x), &direction);
+            kmVec3TransformNormal(&direction, &mLightSourceWorld.params.direction, &worldMatrix);
+            kmVec3Normalize(&mLightSourceWorld.params.direction, &direction);
         }
 
         validate();
@@ -337,7 +340,7 @@ namespace lite3dpp
     {
         lite3d_bounding_vol volume = {};
         volume.radius = getInfluenceDistance();
-        volume.sphereCenter = *reinterpret_cast<const kmVec3 *>(&mLightSourceWorld.params.block3.x);
+        volume.sphereCenter = mLightSourceWorld.params.position;
         return volume;
     }
 
@@ -345,7 +348,7 @@ namespace lite3dpp
     {
         lite3d_bounding_vol volume = {};
         volume.radius = getInfluenceDistance();
-        volume.sphereCenter = *reinterpret_cast<const kmVec3 *>(&mLightSource.params.block3.x);
+        volume.sphereCenter = mLightSource.params.position;
         return volume;
     }
 
@@ -367,7 +370,7 @@ namespace lite3dpp
                 const auto nomRoot2 = -b - std::sqrt(D);
                 const auto root1 = nonzero(nomRoot1) ? (2.0f * c) / nomRoot1 : -std::numeric_limits<float>::max();
                 const auto root2 = nonzero(nomRoot2) ? (2.0f * c) / nomRoot2 : -std::numeric_limits<float>::max();
-                mLightSource.params.block1.z = std::max(std::max(root1, root2), 0.0f);
+                mLightSource.params.influenceDistance = std::max(std::max(root1, root2), 0.0f);
             }
         }
     }

@@ -4,8 +4,7 @@
         // Standard shaders with params customization
         "samples:shaders/sources/pipeline/depth_pass/depth.vs",
         "samples:shaders/sources/pipeline/depth_pass/depth.fs",
-        "samples:shaders/sources/common/utils.fs",
-        // Sample specific shaders
-        "starfield:shaders/sources/regular_depth.fs"
+        "samples:shaders/sources/common/common.fs,starfield:shaders/sources/inc/params.def",
+        "samples:shaders/sources/common/stub.fs"
     ]
 }

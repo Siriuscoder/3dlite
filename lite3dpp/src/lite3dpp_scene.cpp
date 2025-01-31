@@ -60,7 +60,15 @@ namespace lite3dpp
 
     void Scene::loadFromConfigImpl(const ConfigurationReader &helper)
     {
-        lite3d_scene_init(&mScene);
+        uint32_t features = 0;
+        if (helper.getBool(L"MultiRender", false))
+            features |= LITE3D_SCENE_FEATURE_MULTIRENDER;
+
+        if (!lite3d_scene_init(&mScene, features))
+        {
+            LITE3D_THROW("Failed to initialize scene '" << getName() << "'");
+        }
+
         setupCallbacks();
 
         String lightingTechnique = helper.getString(L"LightingTechnique", "none");
@@ -69,25 +77,12 @@ namespace lite3dpp
             int UBOMaxSize, TBOMaxSize, SSBOMaxSize;
             lite3d_vbo_get_limitations(&UBOMaxSize, &TBOMaxSize, &SSBOMaxSize);
 
-            if (lightingTechnique == "TBO")
-            {
-                /* default name of lighting buffer is scene name + "LightingBufferObject" */
-                mLightingParamsBuffer = getMain().getResourceManager()->
-                    queryResourceFromJson<TextureBuffer>(getName() + "_lightingBufferObject",
-                    "{\"BufferFormat\": \"RGBA32F\", \"Dynamic\": false}");
-                /* 2-bytes index, about 16k light sources support  */
-                mLightingIndexBuffer = getMain().getResourceManager()->
-                    queryResourceFromJson<TextureBuffer>(getName() + "_lightingIndexBuffer",
-                    "{\"BufferFormat\": \"R32I\", \"Dynamic\": true}");
-
-                mMaxLightsCount = std::min(MaxLightCount, static_cast<uint32_t>(TBOMaxSize / sizeof(lite3d_light_params)));
-            }
-            else if (lightingTechnique == "SSBO")
+            if (lightingTechnique == "SSBO")
             {
                 /* default name of lighting buffer is scene name + "LightingBufferObject" */
                 mLightingParamsBuffer = getMain().getResourceManager()->
                     queryResourceFromJson<SSBO>(getName() + "_lightingBufferObject",
-                    "{\"Dynamic\": false}");
+                    "{\"Dynamic\": true}");
                 /* 2-bytes index, about 16k light sources support  */
                 mLightingIndexBuffer = getMain().getResourceManager()->
                     queryResourceFromJson<SSBO>(getName() + "_lightingIndexBuffer",
@@ -100,7 +95,7 @@ namespace lite3dpp
                 /* default name of lighting buffer is scene name + "LightingBufferObject" */
                 mLightingParamsBuffer = getMain().getResourceManager()->
                     queryResourceFromJson<UBO>(getName() + "_lightingBufferObject",
-                    "{\"Dynamic\": false}");
+                    "{\"Dynamic\": true}");
                 /* 2-bytes index, about 16k light sources support  */
                 mLightingIndexBuffer = getMain().getResourceManager()->
                     queryResourceFromJson<UBO>(getName() + "_lightingIndexBuffer",
@@ -245,7 +240,7 @@ namespace lite3dpp
                 anyValidated = true;
             }
 
-            if (light->getLight()->getType() == LITE3D_LIGHT_DIRECTIONAL || 
+            if (light->getLight()->getType() == LightSourceFlags::TypeDirectional || 
                 !light->frustumTest() || 
                 camera.inFrustum(*light->getLight()))
             {
@@ -354,11 +349,42 @@ namespace lite3dpp
                 if (renderTargetJson.getBool(L"StencilOutput", false))
                     renderFlags |= LITE3D_RENDER_STENCIL_OUTPUT;
                 if (renderTargetJson.getBool(L"RenderInstancing", false))
+                {
+                    // Инстансинг включен, но при этом мультирендер выключен
+                    // В этом случае мы испотьзуем инстанcинг через AttribDivisor
+                    // Нужно инициализировать aux буфер для хранения атрибутов
+                    if (!(mScene.features & LITE3D_SCENE_FEATURE_MULTIRENDER))
+                    {
+                        lite3d_mesh_aux_buffer_init();
+                    }
+
                     renderFlags |= LITE3D_RENDER_INSTANCING;
+                }
                 if (renderTargetJson.getBool(L"OcclusionQuery", false))
-                    renderFlags |= LITE3D_RENDER_OCCLUSION_QUERY;
+                {
+                    if (!lite3d_scene_oocclusion_query_support())
+                    {
+                        SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION, "%s: OcclusionQuery feature is not supported", 
+                            getName().c_str());
+                    }
+                    else
+                    {
+                        renderFlags &= ~LITE3D_RENDER_INSTANCING;
+                        renderFlags |= LITE3D_RENDER_OCCLUSION_QUERY;
+                    }
+                }
                 if (renderTargetJson.getBool(L"OcclusionCulling", false))
-                    renderFlags |= LITE3D_RENDER_OCCLUSION_CULLING;
+                {
+                    if (!lite3d_scene_oocclusion_query_support())
+                    {
+                        SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION, "%s: OcclusionQuery feature is not supported", 
+                            getName().c_str());
+                    }
+                    else
+                    {
+                        renderFlags |= LITE3D_RENDER_OCCLUSION_CULLING;
+                    }
+                }
                 if (renderTargetJson.getBool(L"FrustumCulling", true))
                     renderFlags |= LITE3D_RENDER_FRUSTUM_CULLING;
                 if (renderTargetJson.getBool(L"CustomVisibilityCheck", false))

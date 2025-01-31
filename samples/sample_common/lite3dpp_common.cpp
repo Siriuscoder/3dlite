@@ -69,11 +69,15 @@ static const char *renderStatsString =
     "Best frame time:                %f ms\n"
     "Worst frame time:               %f ms\n"
     "Total Nodes:                    %d\n"
-    "Batches total:                  %d\n"
-    "Batches draw called:            %d\n"
-    "Batches draw instanced:         %d\n"
-    "Batches draw occluded:          %d\n"
-    "Draw faces:                     %d\n";
+    "Total Pieces:                   %d\n"
+    "Draw calls:                     %d\n"
+    "Draw calls instanced:           %d\n"
+    "Draw sub commands:              %d\n"
+    "Occluded pieces:                %d\n"
+    "Textures binds:                 %d\n"
+    "Buffers binds:                  %d\n"
+    "Materials switch:               %d\n"
+    "Faces:                          %d\n";
 
 Sample::Sample(const std::string_view &sampleHelpString) : 
    mSampleHelpString(sampleHelpString)
@@ -274,8 +278,8 @@ void Sample::updateGui()
         const kmVec4 textColor = {0.3f, 0.7f, 0.8f, 1.0f};
 
         sprintf(strbuf, "FPS: %d\nFrame time: %.2f ms\nBatching: %d/%d\nFaces: %d",
-            renderStats->lastFPS, renderStats->lastFrameMs, renderStats->batchCalled, 
-            renderStats->batchTotal, renderStats->trianglesByFrame);
+            renderStats->lastFPS, renderStats->lastFrameMs, renderStats->drawCalls, 
+            renderStats->totalPieces, renderStats->trianglesRendered);
 
         mStatTexture->clean();
         mStatTexture->drawText(strbuf, textPos, textColor);
@@ -310,11 +314,25 @@ void Sample::updateGui()
         else
         {
             sprintf(strbuf, renderStatsString, 
-                renderStats->framesCount, renderStats->lastFPS, renderStats->avrFPS, renderStats->bestFPS, renderStats->worstFPS,
-                renderStats->lastFrameMs, renderStats->avrFrameMs, renderStats->bestFrameMs, renderStats->worstFrameMs,
-                renderStats->nodesTotal, renderStats->batchTotal, renderStats->batchCalled, 
-                renderStats->batchInstancedCalled - renderStats->batchCalled, renderStats->batchOccluded, 
-                renderStats->trianglesByFrame);
+                renderStats->framesCount, 
+                renderStats->lastFPS, 
+                renderStats->avrFPS, 
+                renderStats->bestFPS, 
+                renderStats->worstFPS,
+                renderStats->lastFrameMs, 
+                renderStats->avrFrameMs, 
+                renderStats->bestFrameMs, 
+                renderStats->worstFrameMs,
+                renderStats->totalNodes, 
+                renderStats->totalPieces, 
+                renderStats->drawCalls, 
+                renderStats->drawCallsInstanced, 
+                renderStats->drawSubCommands, 
+                renderStats->occludedPieces, 
+                renderStats->textureBinds,
+                renderStats->bufferBinds,
+                renderStats->materialsSwitch,
+                renderStats->trianglesRendered);
         }
 
         mHelpTexture->clean();

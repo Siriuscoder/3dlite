@@ -3,3 +3,4 @@ build_clang/*
 .vscode/*
 .cache/*
 media/*.log
+nsight/*

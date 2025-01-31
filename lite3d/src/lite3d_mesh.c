@@ -15,8 +15,9 @@
  *	You should have received a copy of the GNU General Public License
  *	along with Lite3D.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
-#include <string.h>
+#include <lite3d/lite3d_mesh.h>
 
+#include <string.h>
 #include <SDL_log.h>
 #include <SDL_assert.h>
 
@@ -24,9 +25,27 @@
 #include <lite3d/lite3d_glext.h>
 #include <lite3d/lite3d_alloc.h>
 #include <lite3d/lite3d_misc.h>
-#include <lite3d/lite3d_mesh.h>
+#include <lite3d/lite3d_shader_program.h>
 
 static lite3d_vbo gAuxGlobalBuffer = {0, 0, 0};
+
+int lite3d_mesh_aux_buffer_init(void)
+{
+    if (lite3d_check_instanced_arrays())
+    {
+        if (!gAuxGlobalBuffer.vboID)
+        {
+            if (!lite3d_vbo_init(&gAuxGlobalBuffer, LITE3D_VBO_STREAM_DRAW))
+            {
+                return LITE3D_FALSE;
+            }
+        }
+
+        return LITE3D_TRUE;
+    }
+
+    return LITE3D_FALSE;
+}
 
 int lite3d_mesh_init(struct lite3d_mesh *mesh, uint16_t usage)
 {
@@ -35,18 +54,12 @@ int lite3d_mesh_init(struct lite3d_mesh *mesh, uint16_t usage)
     memset(mesh, 0, sizeof (lite3d_mesh));
     mesh->version = LITE3D_VERSION_NUM;
     lite3d_list_init(&mesh->chunks);
-    
-    if (lite3d_check_instanced_arrays())
-    {
-        if (!gAuxGlobalBuffer.vboID)
-        {
-            if (!lite3d_vbo_init(&gAuxGlobalBuffer, LITE3D_VBO_DYNAMIC_DRAW))
-                return LITE3D_FALSE;
-        }
 
+    if (gAuxGlobalBuffer.vboID != 0)
+    {
         mesh->auxBuffer = &gAuxGlobalBuffer;
     }
-
+    
     /* gen buffer for store vertex data */
     if (!lite3d_vbo_init(&mesh->vertexBuffer, usage))
         return LITE3D_FALSE;
@@ -56,6 +69,16 @@ int lite3d_mesh_init(struct lite3d_mesh *mesh, uint16_t usage)
     {
         lite3d_vbo_purge(&mesh->vertexBuffer);
         return LITE3D_FALSE;
+    }
+
+    if (lite3d_check_multi_draw_indirect())
+    {
+        if (!lite3d_vbo_indirect_init(&mesh->indirectBuffer, LITE3D_VBO_STREAM_DRAW))
+        {
+            lite3d_vbo_purge(&mesh->vertexBuffer);
+            lite3d_vbo_purge(&mesh->indexBuffer);
+            return LITE3D_FALSE;
+        }
     }
 
     return LITE3D_TRUE;
@@ -76,6 +99,8 @@ void lite3d_mesh_purge(struct lite3d_mesh *mesh)
 
     lite3d_vbo_purge(&mesh->vertexBuffer);
     lite3d_vbo_purge(&mesh->indexBuffer);
+    lite3d_vbo_purge(&mesh->indirectBuffer);
+    lite3d_array_purge(&mesh->drawQueue);
 }
 
 int lite3d_mesh_extend(struct lite3d_mesh *mesh, size_t verticesSize,
@@ -100,24 +125,32 @@ int lite3d_mesh_extend(struct lite3d_mesh *mesh, size_t verticesSize,
 void lite3d_mesh_chunk_draw(struct lite3d_mesh_chunk *meshChunk)
 {
     SDL_assert(meshChunk);
-    
-    if (meshChunk->hasIndexes)
-        lite3d_vao_draw_indexed(&meshChunk->vao);
-    else
-        lite3d_vao_draw(&meshChunk->vao);
+
+    lite3d_mesh_chunk_bind(meshChunk);
+    if (lite3d_shader_program_validate_current())
+    {
+        if (meshChunk->hasIndexes)
+            lite3d_vao_draw_indexed(&meshChunk->vao);
+        else
+            lite3d_vao_draw(&meshChunk->vao);
+    }
 }
 
-void lite3d_mesh_chunk_draw_instanced(struct lite3d_mesh_chunk *meshChunk, size_t instancesCount)
+void lite3d_mesh_chunk_draw_instanced(struct lite3d_mesh_chunk *meshChunk, uint32_t instancesCount)
 {
     SDL_assert(meshChunk);
     
     if (instancesCount == 0)
         return;
 
-    if (meshChunk->hasIndexes)
-        lite3d_vao_draw_indexed_instanced(&meshChunk->vao, instancesCount);
-    else
-        lite3d_vao_draw_instanced(&meshChunk->vao, instancesCount);
+    lite3d_mesh_chunk_bind(meshChunk);
+    if (lite3d_shader_program_validate_current())
+    {
+        if (meshChunk->hasIndexes)
+            lite3d_vao_draw_indexed_instanced(&meshChunk->vao, instancesCount);
+        else
+            lite3d_vao_draw_instanced(&meshChunk->vao, instancesCount);
+    }
 }
 
 void lite3d_mesh_chunk_bind(struct lite3d_mesh_chunk *meshChunk)
@@ -126,10 +159,9 @@ void lite3d_mesh_chunk_bind(struct lite3d_mesh_chunk *meshChunk)
     lite3d_vao_bind(&meshChunk->vao);
 }
 
-void lite3d_mesh_chunk_unbind(struct lite3d_mesh_chunk *meshChunk)
+void lite3d_mesh_chunk_unbind(void)
 {
-    SDL_assert(meshChunk);
-    lite3d_vao_unbind(&meshChunk->vao);
+    lite3d_vao_unbind();
 }
 
 int lite3d_mesh_chunk_init(struct lite3d_mesh_chunk *meshChunk, size_t layoutCount)
@@ -226,3 +258,87 @@ lite3d_mesh_chunk *lite3d_mesh_append_chunk(lite3d_mesh *mesh,
 
     return meshChunk;
 }
+
+void lite3d_mesh_queue_draw(struct lite3d_mesh *mesh)
+{
+    lite3d_mesh_chunk *firstchunk;
+    SDL_assert(mesh);
+
+    firstchunk = LITE3D_MEMBERCAST(lite3d_mesh_chunk, lite3d_list_first_link(&mesh->chunks), link);
+    if (!lite3d_vbo_buffer_set(&mesh->indirectBuffer, mesh->drawQueue.data, 
+        mesh->drawQueue.size * mesh->drawQueue.elemSize))
+    {
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "%s: Unable to write to the draw indirect buffer",
+            LITE3D_CURRENT_FUNCTION);
+        return;
+    }
+
+    lite3d_mesh_chunk_bind(firstchunk);
+    // Проверим впорядке ли шейдер
+    if (lite3d_shader_program_validate_current())
+    {
+        if (firstchunk->hasIndexes)
+        {
+            lite3d_vao_multidraw_indexed(0, mesh->drawQueue.size);
+        }
+        else
+        {
+            lite3d_vao_multidraw(0, mesh->drawQueue.size);
+        }
+    }
+}
+
+void lite3d_mesh_queue_chunk(struct lite3d_mesh_chunk *meshChunk)
+{
+    SDL_assert(meshChunk);
+    SDL_assert(meshChunk->mesh);
+
+    if (meshChunk->hasIndexes)
+    {
+        if (meshChunk->mesh->drawQueue.capacity == 0)
+        {
+            lite3d_array_init(&meshChunk->mesh->drawQueue, sizeof(lite3d_multidraw_indexed_command), 1);
+        }
+
+        lite3d_multidraw_indexed_command *command = lite3d_array_add(&meshChunk->mesh->drawQueue);
+        command->count = meshChunk->vao.indexesCount;
+        command->instanceCount = 1;
+        command->firstIndex = (uint32_t)(meshChunk->vao.indexesOffset / sizeof(uint32_t));
+        command->baseVertex = (uint32_t)(meshChunk->vao.verticesOffset / meshChunk->vertexStride);
+        command->baseInstance = 0;
+    }
+    else
+    {
+        if (meshChunk->mesh->drawQueue.capacity == 0)
+        {
+            lite3d_array_init(&meshChunk->mesh->drawQueue, sizeof(lite3d_multidraw_command), 1);
+        }
+
+        lite3d_multidraw_command *command = lite3d_array_add(&meshChunk->mesh->drawQueue);
+        command->count = meshChunk->vao.verticesCount;
+        command->instanceCount = 1;
+        command->first = (uint32_t)(meshChunk->vao.verticesOffset / meshChunk->vertexStride);
+        command->baseInstance = 0;
+    }
+}
+
+void lite3d_mesh_queue_chunk_add_instance(struct lite3d_mesh_chunk *meshChunk)
+{
+    SDL_assert(meshChunk);
+    SDL_assert(meshChunk->mesh);
+
+    if (meshChunk->mesh->drawQueue.size == 0)
+    {
+        return;
+    }
+
+    lite3d_multidraw_command *command = LITE3D_ARR_GET_LAST(&meshChunk->mesh->drawQueue, lite3d_multidraw_command);
+    command->instanceCount++;
+}
+
+void lite3d_mesh_queue_clean(struct lite3d_mesh *mesh)
+{
+    SDL_assert(mesh);
+    lite3d_array_clean(&mesh->drawQueue);
+}
+

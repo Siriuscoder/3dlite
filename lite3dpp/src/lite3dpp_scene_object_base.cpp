@@ -192,7 +192,7 @@ namespace lite3dpp
         SDL_assert(getRoot());
 
         kmVec3 result;
-        kmVec3TransformCoord(&result, &point, &getRoot()->getPtr()->worldView);
+        kmVec3TransformCoord(&result, &point, &getRoot()->getPtr()->worldMatrix);
         return result;
     }
 
@@ -201,7 +201,7 @@ namespace lite3dpp
         SDL_assert(getRoot());
 
         kmVec3 result;
-        kmVec3Transform(&result, &vec, &getRoot()->getPtr()->worldView);
+        kmVec3Transform(&result, &vec, &getRoot()->getPtr()->worldMatrix);
         return result;
     }
 
@@ -211,7 +211,7 @@ namespace lite3dpp
 
         kmVec3 result;
         kmMat4 inverted;
-        kmMat4Inverse(&inverted, &getRoot()->getPtr()->worldView);
+        kmMat4Inverse(&inverted, &getRoot()->getPtr()->worldMatrix);
         kmVec3TransformCoord(&result, &point, &inverted);
         return result;
     }
@@ -221,7 +221,7 @@ namespace lite3dpp
         SDL_assert(getRoot());
 
         kmVec3 result;
-        kmVec3InverseTransform(&result, &vec, &getRoot()->getPtr()->worldView);
+        kmVec3InverseTransform(&result, &vec, &getRoot()->getPtr()->worldMatrix);
         return result;
     }
 }

@@ -38,10 +38,12 @@ typedef struct lite3d_mesh
     uint32_t version;
     lite3d_vbo vertexBuffer;
     lite3d_vbo indexBuffer;
+    lite3d_vbo indirectBuffer;
     lite3d_vbo *auxBuffer;
     uint32_t verticesCount;
     uint32_t elementsCount;
     lite3d_list chunks;
+    lite3d_array drawQueue;
     void *userdata;
 } lite3d_mesh;
 
@@ -58,6 +60,7 @@ typedef struct lite3d_mesh_chunk
     lite3d_mesh *mesh;
 } lite3d_mesh_chunk;
 
+LITE3D_CEXPORT int lite3d_mesh_aux_buffer_init(void);
 LITE3D_CEXPORT int lite3d_mesh_init(struct lite3d_mesh *mesh, uint16_t usage);
 LITE3D_CEXPORT void lite3d_mesh_purge(struct lite3d_mesh *mesh);
 LITE3D_CEXPORT int lite3d_mesh_extend(struct lite3d_mesh *mesh, 
@@ -78,10 +81,22 @@ LITE3D_CEXPORT int lite3d_mesh_chunk_init(struct lite3d_mesh_chunk *meshChunk, s
 LITE3D_CEXPORT void lite3d_mesh_chunk_purge(struct lite3d_mesh_chunk *meshChunk);
 LITE3D_CEXPORT void lite3d_mesh_chunk_bind(struct lite3d_mesh_chunk *meshChunk);
 LITE3D_CEXPORT void lite3d_mesh_chunk_draw(struct lite3d_mesh_chunk *meshChunk);
-LITE3D_CEXPORT void lite3d_mesh_chunk_draw_instanced(struct lite3d_mesh_chunk *meshChunk, size_t instancesCount);
-LITE3D_CEXPORT void lite3d_mesh_chunk_unbind(struct lite3d_mesh_chunk *meshChunk);
+LITE3D_CEXPORT void lite3d_mesh_chunk_draw_instanced(struct lite3d_mesh_chunk *meshChunk, uint32_t instancesCount);
+LITE3D_CEXPORT void lite3d_mesh_chunk_unbind(void);
 LITE3D_CEXPORT lite3d_mesh_chunk *lite3d_mesh_chunk_get_by_material_index(struct lite3d_mesh *mesh, 
     uint32_t materialIndex);
+
+// Отрисовать накопленный буфер команд одним вызовом! 
+LITE3D_CEXPORT void lite3d_mesh_queue_draw(struct lite3d_mesh *mesh);
+//
+//  Добавление чанка в буфер команд для последующего рисования 
+//  ВНИМАНИЕ! layout всех чанков в одном mesh (VBO) должен быть одинаковый так как они будут рисоваться одним вызовом, 
+//  это касается и индексов, они должны быть у всех чанков или все чанки не должны содержать индексы.
+//
+LITE3D_CEXPORT void lite3d_mesh_queue_chunk(struct lite3d_mesh_chunk *meshChunk);
+LITE3D_CEXPORT void lite3d_mesh_queue_chunk_add_instance(struct lite3d_mesh_chunk *meshChunk);
+// Очистка буфера команд для рисования 
+LITE3D_CEXPORT void lite3d_mesh_queue_clean(struct lite3d_mesh *mesh);
 
 #endif	/* LITE3D_MESH_H */
 

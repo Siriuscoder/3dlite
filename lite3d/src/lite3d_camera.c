@@ -36,20 +36,20 @@ void lite3d_camera_update_view(lite3d_camera *camera)
     /* compute view matrix */
     lite3d_camera_compute_view(camera);
     /* update global shader projection matrix */
-    lite3d_shader_set_projection_matrix(&camera->projection);
+    lite3d_shader_set_projection_matrix(&camera->projectionMatrix);
     /* update global camera view matrix */
-    lite3d_shader_set_view_matrix(&camera->view);
+    lite3d_shader_set_view_matrix(&camera->viewMatrix);
     /* compute frustum planes */
     if (camera->cameraNode.invalidated)
     {
-        /* compute screen martix */
-        kmMat4Multiply(&camera->screen, &camera->projection, &camera->view);
+        /* compute viewProjection martix */
+        kmMat4Multiply(&camera->viewProjectionMatrix, &camera->projectionMatrix, &camera->viewMatrix);
         /* compute frustum */
-        lite3d_frustum_compute(&camera->frustum, &camera->screen);
+        lite3d_frustum_compute(&camera->frustum, &camera->viewProjectionMatrix);
     }
 
     /* update global projection view matrix */
-    lite3d_shader_set_projview_matrix(&camera->screen);
+    lite3d_shader_set_projview_matrix(&camera->viewProjectionMatrix);
 }
 
 void lite3d_camera_compute_view(lite3d_camera *camera)
@@ -57,8 +57,8 @@ void lite3d_camera_compute_view(lite3d_camera *camera)
     kmVec3 forward, up, right, worldPosition;
     kmMat3 worldRotation;
     kmMat4 translate;
-    kmMat4ExtractRotation(&worldRotation, &camera->cameraNode.worldView);
-    kmMat4ExtractPosition(&worldPosition, &camera->cameraNode.worldView);
+    kmMat4ExtractRotation(&worldRotation, &camera->cameraNode.worldMatrix);
+    kmMat4ExtractPosition(&worldPosition, &camera->cameraNode.worldMatrix);
     kmVec3MultiplyMat3(&forward, &KM_VEC3_NEG_Z, &worldRotation);
     kmVec3MultiplyMat3(&up, &KM_VEC3_POS_Y, &worldRotation);
     kmVec3MultiplyMat3(&right, &KM_VEC3_POS_X, &worldRotation);
@@ -66,21 +66,21 @@ void lite3d_camera_compute_view(lite3d_camera *camera)
     kmVec3Normalize(&up, &up);
     kmVec3Normalize(&right, &right);
 
-    kmMat4Identity(&camera->view);
-    camera->view.mat[0] = right.x;
-    camera->view.mat[4] = right.y;
-    camera->view.mat[8] = right.z;
+    kmMat4Identity(&camera->viewMatrix);
+    camera->viewMatrix.mat[0] = right.x;
+    camera->viewMatrix.mat[4] = right.y;
+    camera->viewMatrix.mat[8] = right.z;
 
-    camera->view.mat[1] = up.x;
-    camera->view.mat[5] = up.y;
-    camera->view.mat[9] = up.z;
+    camera->viewMatrix.mat[1] = up.x;
+    camera->viewMatrix.mat[5] = up.y;
+    camera->viewMatrix.mat[9] = up.z;
 
-    camera->view.mat[2] = -forward.x;
-    camera->view.mat[6] = -forward.y;
-    camera->view.mat[10] = -forward.z;
+    camera->viewMatrix.mat[2] = -forward.x;
+    camera->viewMatrix.mat[6] = -forward.y;
+    camera->viewMatrix.mat[10] = -forward.z;
 
     kmMat4Translation(&translate, -worldPosition.x, -worldPosition.y, -worldPosition.z);
-    kmMat4Multiply(&camera->view, &camera->view, &translate);
+    kmMat4Multiply(&camera->viewMatrix, &camera->viewMatrix, &translate);
 }
 
 void lite3d_camera_ortho(lite3d_camera *camera, float znear,
@@ -95,7 +95,7 @@ void lite3d_camera_ortho(lite3d_camera *camera, float znear,
     camera->projectionParams.right = right;
     camera->projectionParams.bottom = bottom;
     camera->projectionParams.top = top;
-    kmMat4OrthographicProjection(&camera->projection, left, right, bottom, top, znear, zfar);
+    kmMat4OrthographicProjection(&camera->projectionMatrix, left, right, bottom, top, znear, zfar);
     camera->cameraNode.invalidated = LITE3D_TRUE;
 }
 
@@ -108,11 +108,11 @@ void lite3d_camera_perspective(lite3d_camera *camera, float znear,
     camera->projectionParams.zfar = zfar;
     camera->projectionParams.fovy = fovy;
     camera->projectionParams.aspect = aspect;
-    kmMat4PerspectiveProjection(&camera->projection, fovy, aspect, znear, zfar);
-    camera->projectionParams.bottom = znear * (camera->projection.mat[9] - 1) / camera->projection.mat[5];
-    camera->projectionParams.top = znear * (camera->projection.mat[9] + 1) / camera->projection.mat[5];
-    camera->projectionParams.left = znear * (camera->projection.mat[8] - 1) / camera->projection.mat[0];
-    camera->projectionParams.right = znear * (camera->projection.mat[8] + 1) / camera->projection.mat[0];
+    kmMat4PerspectiveProjection(&camera->projectionMatrix, fovy, aspect, znear, zfar);
+    camera->projectionParams.bottom = znear * (camera->projectionMatrix.mat[9] - 1) / camera->projectionMatrix.mat[5];
+    camera->projectionParams.top = znear * (camera->projectionMatrix.mat[9] + 1) / camera->projectionMatrix.mat[5];
+    camera->projectionParams.left = znear * (camera->projectionMatrix.mat[8] - 1) / camera->projectionMatrix.mat[0];
+    camera->projectionParams.right = znear * (camera->projectionMatrix.mat[8] + 1) / camera->projectionMatrix.mat[0];
 
     camera->cameraNode.invalidated = LITE3D_TRUE;
 }
@@ -126,9 +126,9 @@ void lite3d_camera_init(lite3d_camera *camera)
     camera->cameraNode.rotationCentered = LITE3D_TRUE;
     camera->cameraNode.renderable = LITE3D_FALSE;
     camera->cameraNode.isCamera = LITE3D_TRUE;
-    kmMat4Identity(&camera->view);
-    kmMat4Identity(&camera->projection);
-    kmMat4Identity(&camera->screen);
+    kmMat4Identity(&camera->viewMatrix);
+    kmMat4Identity(&camera->projectionMatrix);
+    kmMat4Identity(&camera->viewProjectionMatrix);
 }
 
 void lite3d_camera_lookAt(lite3d_camera *camera, const kmVec3 *pointTo)
@@ -272,7 +272,7 @@ float lite3d_camera_distance(const lite3d_camera *camera,
 void lite3d_camera_world_direction(const lite3d_camera *camera, kmVec3 *vec)
 {
     kmMat3 worldRotation;
-    kmMat4ExtractRotation(&worldRotation, &camera->cameraNode.worldView);
+    kmMat4ExtractRotation(&worldRotation, &camera->cameraNode.worldMatrix);
     kmVec3MultiplyMat3(vec, &KM_VEC3_NEG_Z, &worldRotation);
     kmVec3Normalize(vec, vec);
 }

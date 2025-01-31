@@ -22,6 +22,7 @@
 #include <lite3d/lite3d_shader_program.h>
 #include <lite3d/lite3d_list.h>
 #include <lite3d/lite3d_array.h>
+#include <lite3d/lite3d_vbo.h>
 
 #define LITE3D_PASSNO_MAX  16
 
@@ -43,6 +44,8 @@ typedef struct lite3d_material_pass
 typedef struct lite3d_material
 {
     lite3d_array passes;
+    /* эти поля относятся к мультирендеру и используются только если сцена его поддерживает */
+    uint32_t materialDataBufferIndex; // Индекс материала в materialDataBuffer
     void *userdata;
 } lite3d_material;
 

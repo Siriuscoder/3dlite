@@ -34,7 +34,7 @@
         }
     ],
 
-    "LightingTechnique": "TBO",
+    "LightingTechnique": "UBO",
     
     "Objects":
     [

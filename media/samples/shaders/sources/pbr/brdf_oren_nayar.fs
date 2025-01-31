@@ -1,13 +1,13 @@
-#include "samples:shaders/sources/common/utils_inc.glsl"
+#include "samples:shaders/sources/common/common_inc.glsl"
 
-float diffuseOrenNayar(float NdotL, float NdotV, float LdotV, float roughness)
+float diffuseOrenNayar(in AngularInfo angular, float roughness)
 {
-    float angleVN = acos(NdotV);
-    float angleLN = acos(NdotL);
+    float angleVN = acos(angular.NdotV);
+    float angleLN = acos(angular.NdotL);
     
     float alpha = max(angleVN, angleLN);
     float beta = min(angleVN, angleLN);
-    float gamma = LdotV - NdotL * NdotV;
+    float gamma = angular.LdotV - angular.NdotL * angular.NdotV;
     
     float s2 = roughness * roughness;
     float ss9 = (s2 / (s2 + 0.09));
@@ -49,37 +49,25 @@ float diffuseOrenNayar(float NdotL, float NdotV, float LdotV, float roughness)
     float A = gamma * C2 * tan(beta);
     float B = (1.0 - abs(gamma)) * C3 * tan(ab2);
     
-    float L1 = NdotL * (C1 + A + B);
+    float L1 = angular.NdotL * (C1 + A + B);
     
     // Interreflection
     float twoBetaPi = 2.0 * beta / M_PI;
-    float L2 = 0.17 * NdotL * (s2 / (s2 + 0.13)) * (1.0 - gamma * twoBetaPi * twoBetaPi);
+    float L2 = 0.17 * angular.NdotL * (s2 / (s2 + 0.13)) * (1.0 - gamma * twoBetaPi * twoBetaPi);
     
     return L1 + L2;
 }
 
 // cook-torrance bidirectional reflective distribution function
-vec3 BRDF(vec3 albedo, float NdotL, float HdotV, float LdotV, float NdotV, float NdotH, vec3 specular)
+vec3 BRDF(in Surface surface, in AngularInfo angular)
 {
-    float ndf = NDF(NdotH, specular.y);
-    float g = G(NdotV, NdotL, specular.y);
-    vec3 F = fresnelSchlickRoughness(HdotV, albedo, specular);
+    float ndf = NDF(angular.NdotH, surface.material.roughness);
+    float g = G(angular.NdotV, angular.NdotL, surface.material.roughness);
+    vec3 F = fresnelSchlickRoughness(angular.HdotV, surface.material);
 
-    vec3 s = (ndf * g * F) / (4.0 * NdotV * NdotL);
-    float d = diffuseOrenNayar(NdotL, NdotV, LdotV, specular.y);
-    vec3 kD = diffuseFactor(F, specular.z);
+    vec3 s = (ndf * g * F) / (4.0 * angular.NdotV * angular.NdotL);
+    float d = diffuseOrenNayar(angular, surface.material.roughness);
+    vec3 kD = diffuseFactor(F, surface.material.metallic);
 
-    return kD * d * albedo + s;
-}
-
-vec3 Lx(vec3 albedo, vec3 radiance, vec3 L, vec3 N, vec3 V, vec3 specular, float NdotV)
-{
-    vec3 H = normalize(L + V);
-    float NdotL = max(dot(N, L), FLT_EPSILON);
-    float HdotV = max(dot(H, V), FLT_EPSILON);
-    float LdotV = max(dot(L, V), FLT_EPSILON);
-    float NdotH = max(dot(N, H), FLT_EPSILON);
-    
-    // Уравнение отражения для источника света
-    return BRDF(albedo, NdotL, HdotV, LdotV, NdotV, NdotH, specular) * radiance * NdotL;
+    return kD * d * surface.material.albedo.rgb + s;
 }

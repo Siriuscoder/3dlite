@@ -1,2 +1,2 @@
-#define ENV_DIFFUSE_STRENGTH            0.02
-#define CUBE_MAP_UV_SCALE               -1.0
+#define LITE3D_ENV_DIFFUSE_STRENGTH            0.08
+#define LITE3D_CUBE_MAP_UV_SCALE               -1.0

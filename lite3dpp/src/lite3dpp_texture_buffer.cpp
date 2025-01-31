@@ -145,7 +145,7 @@ namespace lite3dpp
         if (!valid())
             LITE3D_THROW(getName() << ": resource unavailable");
 
-        if (!lite3d_vbo_buffer(&mTexture.tbo, buffer, size))
+        if (!lite3d_vbo_buffer_alloc(&mTexture.tbo, buffer, size))
             LITE3D_THROW(getName() << ": failed to replace texture buffer data, new size is " << size << " bytes");
     }
 

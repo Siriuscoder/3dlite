@@ -70,6 +70,7 @@ namespace lite3dpp
         /* if pass == 0 parameter will be used for all passes */
         LITE3D_MATERIAL_DECLARE_PARAMETER(Float, float, float)
         LITE3D_MATERIAL_DECLARE_PARAMETER(Int, int32_t, int32_t)
+        LITE3D_MATERIAL_DECLARE_PARAMETER(UInt, uint32_t, uint32_t)
         LITE3D_MATERIAL_DECLARE_PARAMETER(Floatv3, kmVec3, kmVec3)
         LITE3D_MATERIAL_DECLARE_PARAMETER(Floatv4, kmVec4, kmVec4)
         LITE3D_MATERIAL_DECLARE_PARAMETER(Floatm3, kmMat3, kmMat3)
@@ -83,8 +84,6 @@ namespace lite3dpp
         virtual void loadFromConfigImpl(const ConfigurationReader &helper) override;
         virtual void unloadImpl() override;
 
-    private:
-
         lite3d_shader_parameter *getParameter(const String &name, 
             uint8_t type, uint16_t passNo, bool isGlobal, bool createIfNotExist);
         void parseParameteres(const ConfigurationReader &passJson, uint16_t passNo);
@@ -92,7 +91,7 @@ namespace lite3dpp
         static lite3d_shader_parameter *getGlobalParameter(const String &name, 
             uint8_t type, bool createIfNotExist);
         
-    private:
+    protected:
 
         lite3d_material mMaterial;
         Passes mPasses;

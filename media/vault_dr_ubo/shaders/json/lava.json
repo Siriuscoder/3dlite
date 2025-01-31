@@ -1,7 +1,7 @@
 {
     "Sources": 
     [
-        "vaultshader:shaders/sources/prepass.vs",
-        "vaultshader:shaders/sources/prepass_lava.fs"
+        "vaultmat:shaders/sources/prepass.vs",
+        "vaultmat:shaders/sources/prepass_lava.fs"
     ]
 }

@@ -40,6 +40,8 @@ namespace lite3dpp
 
         size_t usedVideoMemBytes() const override;
 
+        uint64_t handle();
+
     protected:
 
         Texture(const String &name, 

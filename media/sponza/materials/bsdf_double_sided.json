@@ -1,4 +1,28 @@
 {
+  "AlbedoTexture": {
+    "Name":"<Albedo>"
+  },
+  "RoughnessMetallicTexture": {
+    "Name":"<Specular>"
+  },
+  "NormalRGBTexture": {
+    "Name":"<Normal>"
+  },
+  "EnvDiffuse": {
+    "Value": 1.0
+  },
+  "EnvSpecular": {
+    "Value": 1.0
+  },
+  "NormalScale": {
+    "Value": [1.0, -1.0, 1.0, 1.0]
+  },
+  "EnvironmentProbeTexture": {
+    "Name": "EnvironmentProbe",
+    "TextureName": "SponzaDeffered_EnvironmentMultiProbe.texture",
+    "Type": "sampler"
+  },
+
   "Passes":[
     {
       "Pass": 1,
@@ -10,9 +34,6 @@
       "Uniforms":[
         {
           "Name": "projViewMatrix"
-        },
-        {
-          "Name": "modelMatrix"
         }
       ]
     },
@@ -25,22 +46,7 @@
       "DoubleSided": true,
       "Uniforms":[
         {
-          "Name":"<Albedo>"
-        },
-        {
-          "Name":"<Normal>"
-        },
-        {
-          "Name":"<Specular>"
-        },
-        {
-          "Name":"projViewMatrix"
-        },
-        {
-          "Name":"modelMatrix"
-        },
-        {
-          "Name":"normalMatrix"
+          "Name": "projViewMatrix"
         }
       ]
     },
@@ -61,9 +67,6 @@
           "Name": "ShadowIndex",
           "UBOName": "SponzaDeffered_ShadowIndexBuffer",
           "Type": "UBO"
-        },
-        {
-          "Name":"modelMatrix"
         }
       ]
     },
@@ -75,12 +78,6 @@
       },
       "DoubleSided": true,
       "Uniforms":[
-        {
-          "Name":"<Albedo>"
-        },
-        {
-          "Name":"<Specular>"
-        },
         {
           "Name":"LightSources",
           "UBOName": "SponzaDeffered_MainScene_lightingBufferObject",
@@ -110,9 +107,6 @@
           "Name":"EnvProbesIndex",
           "UBOName":"SponzaDeffered_EnvProbesIndex",
           "Type":"UBO"
-        },
-        {
-          "Name":"modelMatrix"
         }
       ]
     }

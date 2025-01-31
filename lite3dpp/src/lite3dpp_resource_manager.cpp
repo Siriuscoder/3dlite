@@ -261,5 +261,18 @@ namespace lite3dpp
 
         return resourceFile;
     }
+
+    void ResourceManager::warmUpMeshPartitions()
+    {
+        Resources::const_iterator it = mResources.begin();
+        for (; it != mResources.end(); ++it)
+        {
+            if (it->second->getType() == AbstractResource::MESH_PARTITION)
+            {
+                MeshPartition *meshPartition = static_cast<MeshPartition *>(it->second.get());
+                meshPartition->warmUpMemory();
+            }
+        }
+    }
 }
 

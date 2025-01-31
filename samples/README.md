@@ -2,7 +2,7 @@
 
 ## assets download
 
-Most of the samples use external assets that do not exists in git repository due to their large size. For the samples to work correctly you should download this [asset archive](https://drive.google.com/file/d/1s717pC61ItUV3RLajZ0SvTCpx2vkr1z7/view?usp=sharing) (all on one). Extract this archive into the root of the project and feel free to run any sample. Note that any sample should be run from **media/** folder.
+Most of the samples use external assets that do not exists in git repository due to their large size. For the samples to work correctly you should download this [asset archive](https://drive.google.com/file/d/1i-mWaHmjPdWYBEXFVHkr5vFJe0EU33ht/view?usp=sharing) (all on one). Extract this archive into the root of the project and feel free to run any sample. Note that any sample should be run from **media/** folder.
 
 ## sample_sponzahall
 Sponza remastered scene with full PBR materials. You can download resources for sponza remastered scene from [here](https://drive.google.com/file/d/1rhB6k-BmfULFcVFAaw4KaPaILxeD34ne/view?usp=sharing), unpack and copy textures and models folders to media/sponza.  

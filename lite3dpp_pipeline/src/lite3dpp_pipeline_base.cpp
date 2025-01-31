@@ -117,6 +117,19 @@ namespace lite3dpp_pipeline {
         ConfigurationWriter sceneGeneratedConfig(static_cast<const char *>(sceneJsonData->fileBuff), sceneJsonData->fileSize);
         ConfigurationReader sceneConfig(static_cast<const char *>(sceneJsonData->fileBuff), sceneJsonData->fileSize);
 
+        if (pipelineConfig.getBool(L"MultiRender", false))
+        {
+            // SSBO is needed for the MultiRender supported by version GLSL 430 or higher
+            ShaderProgram::setShaderVersion("430");
+            ShaderProgram::addDefinition("LITE3D_BINDLESS_TEXTURE_PIPELINE", "1");
+            sceneGeneratedConfig.set(L"MultiRender", true);
+        }
+
+        if (pipelineConfig.has(L"EnvironmentTexture"))
+        {
+            ShaderProgram::addDefinition("LITE3D_ENABLE_ENVIRONMENT_TEXTURE", "1");
+        }
+
         if (!lightingTechnique.empty())
         {
             sceneGeneratedConfig.set(L"LightingTechnique", lightingTechnique);
@@ -163,7 +176,7 @@ namespace lite3dpp_pipeline {
             }
             else
             {
-                LITE3D_THROW("Pipeline " << getName() << ": Main camera has incorrect configuration");
+                LITE3D_THROW("Pipeline " << getName() << ": Main camera configuration incorrect");
             }
 
             mainSceneGenerator.addCamera(cameraName, cameraPipelineConfig);
@@ -263,8 +276,8 @@ namespace lite3dpp_pipeline {
         if (pipelineConfig.getBool(L"OcclusionCulling", true))
         {
             depthPassGeneratedConfig.set(L"OcclusionQuery", true)
-                .set(L"SortOpaqueFromNear", true)
-                .set(L"RenderInstancing", false);
+                .set(L"RenderInstancing", false) // Не подходит для корректной работы OcclusionQuery 
+                .set(L"SortOpaqueFromNear", true);
         }
 
         sceneGenerator.addRenderTarget(cameraName, mDepthPass->getName(), depthPassGeneratedConfig);
@@ -553,9 +566,14 @@ namespace lite3dpp_pipeline {
         mPostProcessStageMaterial->setFloatParameter(static_cast<int>(TexturePassTypes::RenderPass), "Exposure", exposure);
     }
 
-    void PipelineBase::timerTick(lite3d_timer *timerid)
+    void PipelineBase::frameBegin()
     {
-        updateExposure();
+        // Обновление экспозиции каждые 10 кадров
+        auto renderStats = getMain().getRenderStats();
+        if ((renderStats->framesCount % 10) == 0)
+        {
+            updateExposure();
+        }
     }
 
     bool PipelineBase::beginSceneRender(Scene *scene, Camera *camera)

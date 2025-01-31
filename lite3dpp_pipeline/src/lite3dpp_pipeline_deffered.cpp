@@ -16,6 +16,7 @@
  *	along with Lite3D.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
 #include <lite3dpp_pipeline/lite3dpp_pipeline_deffered.h>
+#include <lite3dpp/lite3dpp_material_multi_render.h>
 
 #include <SDL_assert.h>
 
@@ -85,10 +86,15 @@ namespace lite3dpp_pipeline {
         /* IBL present, using env probe */
         if (mIBL)
         {
-            lightComputeMaterialUniforms.emplace_back(ConfigurationWriter()
-                .set(L"Name", "EnvironmentProbe")
-                .set(L"TextureName", mIBL->getEnvProbeTexture()->getName())
-                .set(L"Type", "sampler"));
+            // according to MultiRender case EnvironmentProbe texture being declared as bindless texture
+            if (!pipelineConfig.getBool(L"MultiRender", false))
+            {
+                lightComputeMaterialUniforms.emplace_back(ConfigurationWriter()
+                    .set(L"Name", "EnvironmentProbe")
+                    .set(L"TextureName", mIBL->getEnvProbeTexture()->getName())
+                    .set(L"Type", "sampler"));
+            }
+
             lightComputeMaterialUniforms.emplace_back(ConfigurationWriter()
                 .set(L"Name", "EnvProbesData")
                 .set(L"UBOName",  mIBL->getProbeBufferName())
@@ -117,17 +123,6 @@ namespace lite3dpp_pipeline {
                 .set(L"Name", "LightIndexes")
                 .set(L"UBOName", mMainScene->getName() + "_lightingIndexBuffer")
                 .set(L"Type", "UBO"));
-        }
-        else if (lightingTechType == "TBO" && mMainScene->getLightParamsBuffer())
-        {
-            lightComputeMaterialUniforms.emplace_back(ConfigurationWriter()
-                .set(L"Name", "LightSources")
-                .set(L"TBOName", mMainScene->getName() + "_lightingBufferObject")
-                .set(L"Type", "TBO"));
-            lightComputeMaterialUniforms.emplace_back(ConfigurationWriter()
-                .set(L"Name", "LightIndexes")
-                .set(L"TBOName", mMainScene->getName() + "_lightingIndexBuffer")
-                .set(L"Type", "TBO"));
         }
         else if (lightingTechType == "SSBO" && mMainScene->getLightParamsBuffer())
         {
@@ -170,6 +165,14 @@ namespace lite3dpp_pipeline {
                 .set(L"Name", "AOEnabled")
                 .set(L"Value", 1)
                 .set(L"Type", "int"));
+        }
+
+        if (pipelineConfig.getBool(L"MultiRender", false))
+        {
+            lightComputeMaterialUniforms.emplace_back(ConfigurationWriter()
+                .set(L"Name", "MultiRenderMaterialDataBuffer")
+                .set(L"SSBOName", MultiRenderMaterial::MultiRenderMaterialDataBufferName.data())
+                .set(L"Type", "SSBO"));
         }
 
         lightComputeMaterialConfig.set(L"Passes", stl<ConfigurationWriter>::vector {

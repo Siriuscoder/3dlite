@@ -158,4 +158,26 @@ namespace lite3dpp
             LITE3D_THROW(getName() << ": failed to extend mesh partition");
         }
     }
+
+    void MeshPartition::warmUpMemory()
+    {
+        auto vb = vertexBuffer();
+        auto ib = indexBuffer();
+
+        if (vb.valid() && vb.bufferSizeBytes() > 0)
+        {
+            SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "Partition's %s vertex buffer is being warming up %zu bytes",
+                getName().c_str(), vb.bufferSizeBytes());
+
+            vb.extendBufferBytes(0);
+        }
+
+        if (ib.valid() && ib.bufferSizeBytes() > 0)
+        {
+            SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "Partition's %s index buffer is being warming up %zu bytes",
+                getName().c_str(), ib.bufferSizeBytes());
+
+            ib.extendBufferBytes(0);
+        }
+    }
 }

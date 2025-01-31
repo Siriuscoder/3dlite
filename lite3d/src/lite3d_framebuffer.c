@@ -724,11 +724,10 @@ int lite3d_framebuffer_read(lite3d_framebuffer *fb,
         (format == LITE3D_FRAMEBUFFER_READ_DEPTH_FLOAT32 ? GL_FLOAT : GL_UNSIGNED_BYTE),        
         pixels);
         
-    
     if (gCurrentFb)
         glBindFramebuffer(GL_FRAMEBUFFER, gCurrentFb->framebufferId);
     
-    return !LITE3D_CHECK_GL_ERROR;
+    return LITE3D_CHECK_GL_ERROR ? LITE3D_FALSE : LITE3D_TRUE;
 }
 
 size_t lite3d_framebuffer_size(lite3d_framebuffer *fb,
@@ -743,13 +742,12 @@ size_t lite3d_framebuffer_size(lite3d_framebuffer *fb,
 
 int lite3d_framebuffer_blit(lite3d_framebuffer *from, lite3d_framebuffer *to)
 {
-    lite3d_misc_gl_error_stack_clean();
     glBindFramebuffer(GL_READ_FRAMEBUFFER, from->framebufferId);
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, to->framebufferId);
     glBlitFramebuffer(0, 0, from->width, from->height, 0, 0, 
         to->width, to->height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
 
-    return !LITE3D_CHECK_GL_ERROR;
+    return LITE3D_TRUE;
 }
 
 void lite3d_framebuffer_switch_layer(lite3d_framebuffer *fb, const lite3d_framebuffer_layer *layer, size_t layerCount)

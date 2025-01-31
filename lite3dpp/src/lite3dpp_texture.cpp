@@ -186,6 +186,16 @@ namespace lite3dpp
         LITE3D_THROW("Invalid Texture Internal Format: " << internalFormat);
     }
 
+    uint64_t Texture::handle()
+    {
+        if (!lite3d_texture_unit_extract_handle(&mTexture))
+        {
+            LITE3D_THROW(getName() << ": Failed to extract texture handle");
+        }
+
+        return mTexture.handle;
+    }
+
     TextureImage::TextureImage(const String &name, 
         const String &path, Main *main) : 
         Texture(name, path, main),

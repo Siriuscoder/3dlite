@@ -138,6 +138,8 @@ namespace lite3dpp
             const String &path,
             size_t fileCacheMaxSize);
 
+        void warmUpMeshPartitions();
+
     protected:
 
         String generateResourceName();

@@ -49,6 +49,7 @@ namespace lite3dpp
         lite3d_mesh_chunk *append(const VertexArrayWrap &vertices, const BufferLayout &layout);
         MeshChunkArray loadMeshByAssimp(const String &filePath, const String &modelName, uint32_t flags);
         MeshChunkArray loadMesh(const String &filePath);
+        void warmUpMemory();
 
     protected:
 

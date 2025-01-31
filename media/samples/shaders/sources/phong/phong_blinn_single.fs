@@ -1,34 +1,34 @@
-#include "samples:shaders/sources/common/utils_inc.glsl"
-#include "samples:shaders/sources/phong/lighting_inc.glsl"
+#include "samples:shaders/sources/common/common_inc.glsl"
 
-vec3 phong_blinn_single(float type, vec3 lightDir, vec3 eyeDir, vec3 diffuse, 
-    vec3 normal, vec3 spotDirection, vec2 spotFactor, vec3 attenuation, 
+vec3 phong_blinn_single(vec3 lightDir, vec3 eyeDir, vec3 normal, in LightSource source,
     float specularFactor, float wrapAroundFactor, float specPower, inout vec3 linearSpec)
 {
     vec3 ldir = vec3(0.0);
     float attenuationFactor = 1.0;
 
     // no attenuation for direction light
-    if (!isNear(type, LITE3D_LIGHT_DIRECTIONAL))
+    if (!hasFlag(source.flags, LITE3D_LIGHT_DIRECTIONAL))
     {
         ldir = normalize(lightDir);
         float ldist = length(lightDir);
         float spotAttenuationFactor = 1.0;
 
-        if (isNear(type, LITE3D_LIGHT_SPOT))
+        if (hasFlag(source.flags, LITE3D_LIGHT_SPOT))
         {
             /* calculate spot attenuation */
-            float spotAngle = acos(dot(-ldir, normalize(spotDirection)));
-            spotAttenuationFactor = max((spotFactor.y / 2.0) - spotAngle, 0.0) / (spotFactor.y / 2.0);
+            float spotAngle = acos(dot(-ldir, normalize(source.direction.xyz)));
+            spotAttenuationFactor = max((source.outerCone / 2.0) - spotAngle, 0.0) / (source.outerCone / 2.0);
         }
 
         /* calculate attenuation */
-        attenuationFactor = spotAttenuationFactor / (attenuation.x + attenuation.y * ldist + attenuation.z * ldist * ldist);
+        attenuationFactor = spotAttenuationFactor / (source.attenuationConstant + 
+            source.attenuationLinear * ldist + 
+            source.attenuationQuadratic * ldist * ldist);
     }
     else
     {
         // Directional light
-        ldir = -normalize(spotDirection);
+        ldir = -normalize(source.direction.xyz);
     }
     
     /* calculate lambertian ratio */
@@ -36,7 +36,7 @@ vec3 phong_blinn_single(float type, vec3 lightDir, vec3 eyeDir, vec3 diffuse,
     /* calculate specular ratio */
     float specRatio = pow(max(dot(normal, normalize(ldir + eyeDir)), 0.0), specPower) * specularFactor;
 
-    linearSpec = diffuse * specRatio * attenuationFactor;
+    linearSpec = source.diffuse.rgb * specRatio * attenuationFactor;
     /* calculate linear color factor */
-    return (diffuse * lambRatio * attenuationFactor) + linearSpec;
+    return (source.diffuse.rgb * lambRatio * attenuationFactor) + linearSpec;
 }

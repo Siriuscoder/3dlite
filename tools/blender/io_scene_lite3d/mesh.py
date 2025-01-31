@@ -84,6 +84,7 @@ class Mesh:
                 material = self.scene.saveMaterial(self.mesh.materials[chunk.materialID])
                 materialMapping.append({
                     "Material": {
+                        "Type": "PBR" if self.scene.options["materialTypePBR"] else "Default",
                         "Name": material.name,
                         "Material": self.scene.getAbsPath(material.getRelativePath())
                     },

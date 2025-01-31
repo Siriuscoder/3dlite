@@ -1,6 +1,6 @@
 {
     // common settings
-    "LogLevel": 2,
+    "LogLevel": 3,
     "LogFlushAlways": true,
     "LogFile": "lite3d.log",
     "TextureSettings": {
@@ -21,7 +21,8 @@
         "ColorBits": 24,
         "Fullscreen": false,
         "MSAA": 1,
-        "VSync": false
+        "VSync": false,
+        "Debug": true
     },
     // resource locations
     "ResourceLocations": [

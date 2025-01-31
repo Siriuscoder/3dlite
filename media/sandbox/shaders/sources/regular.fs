@@ -10,6 +10,11 @@ vec4 getAlbedo(vec2 uv)
     return Albedo;
 }
 
+vec3 getNormal(vec2 uv, mat3 tbn)
+{
+    return tbn[2];
+}
+
 vec3 getEmission(vec2 uv)
 {
     return Emission.rgb * EmissionStrength;

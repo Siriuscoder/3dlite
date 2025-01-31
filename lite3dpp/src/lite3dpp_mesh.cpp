@@ -112,7 +112,8 @@ namespace lite3dpp
         for (auto &matMap : config.getObjects(L"MaterialMapping"))
         {
             applyMaterial(matMap.getInt(L"MaterialIndex"), 
-                getMain().getResourceManager()->queryResource<Material>(
+                getMain().getMaterialFactory().createMaterial(
+                    matMap.getObject(L"Material").getString(L"Type"),
                     matMap.getObject(L"Material").getString(L"Name"),
                     matMap.getObject(L"Material").getString(L"Material")));
         }

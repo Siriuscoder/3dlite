@@ -142,18 +142,18 @@ namespace lite3dpp
     {
         lite3d_scene_node_update(&mCamera.cameraNode);
         lite3d_camera_compute_view(&mCamera);
-        return mCamera.view;
+        return mCamera.viewMatrix;
     }
 
     const kmMat4& Camera::getProjMatrix() const
     {
-        return mCamera.projection;
+        return mCamera.projectionMatrix;
     }
 
     const kmMat4& Camera::refreshProjViewMatrix()
     {
-        kmMat4Multiply(&mCamera.screen, &getProjMatrix(), &refreshViewMatrix());
-        return mCamera.screen;
+        kmMat4Multiply(&mCamera.viewProjectionMatrix, &getProjMatrix(), &refreshViewMatrix());
+        return mCamera.viewProjectionMatrix;
     }
 
     void Camera::recalcFrustum()

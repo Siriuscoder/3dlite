@@ -4,11 +4,12 @@
         // Standard shaders with params customization
         "samples:shaders/sources/bigtriangle.vs",
         "samples:shaders/sources/pipeline/light_pass/light.fs",
-        "samples:shaders/sources/pbr/pbr.fs,vault_111:shaders/sources/inc/pbr_params.def",
-        "samples:shaders/sources/pbr/brdf_oren_nayar_approx.fs,vault_111:shaders/sources/inc/pbr_params.def",
-        "samples:shaders/sources/pbr/brdf_simple_env.fs,vault_111:shaders/sources/inc/pbr_params.def",
-        "samples:shaders/sources/shadow/pcf4x4.fs,vault_111:shaders/sources/inc/shadow_params.def",
+        "samples:shaders/sources/pbr/pbr.fs",
+        "samples:shaders/sources/pbr/brdf_oren_nayar_approx.fs",
+        "samples:shaders/sources/pbr/brdf_indirect.fs,vault_111:shaders/sources/inc/pbr_params.def",
+        "samples:shaders/sources/shadow/pcf.fs,vault_111:shaders/sources/inc/shadow_params.def",
         "samples:shaders/sources/ssao/ssao_sample.fs",
-        "samples:shaders/sources/common/utils.fs"
+        "samples:shaders/sources/common/common.fs,vault_111:shaders/sources/inc/pbr_params.def",
+        "samples:shaders/sources/common/stub2.fs"
     ]
 }

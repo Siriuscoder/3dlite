@@ -18,6 +18,7 @@
 #include <algorithm>
 
 #include <SDL_rwops.h>
+#include <SDL_assert.h>
 #include <SDL_log.h>
 
 #include <lite3d/lite3d_alloc.h>
@@ -39,6 +40,12 @@ namespace lite3dpp
          * be crash on config parse step 
          */
         lite3d_memory_init(NULL);
+    }
+
+    const MaterialFactory &Main::getMaterialFactory() const
+    {
+        SDL_assert(mMaterialFactory);
+        return *mMaterialFactory.get();
     }
 
     void Main::initFromConfig(const std::string_view &config)
@@ -167,6 +174,9 @@ namespace lite3dpp
     {
         if(!mConfig)
             LITE3D_THROW("Bad configuration");
+
+        // Default material factory, may be replaced later
+        initMaterialFactory<MaterialFactory>();
         
         /* basic initialization */
         initResourceLocations();

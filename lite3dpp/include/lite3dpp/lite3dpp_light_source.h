@@ -30,6 +30,21 @@
 
 namespace lite3dpp
 {
+    enum class LightSourceFlags : uint32_t
+    {
+        TypePoint = LITE3D_LIGHT_POINT,
+        TypeDirectional = LITE3D_LIGHT_DIRECTIONAL,
+        TypeSpot = LITE3D_LIGHT_SPOT,
+        Enabled = LITE3D_LIGHT_ENABLED,
+        CastShadow = LITE3D_LIGHT_CASTSHADOW,
+        CastShadowPcf3x3 = LITE3D_LIGHT_CASTSHADOW_PCF3x3,
+        CastShadowPcfAdaptive = LITE3D_LIGHT_CASTSHADOW_PCF_ADAPTIVE,
+        CastShadowPoisson = LITE3D_LIGHT_CASTSHADOW_POISSON,
+        CastShadowSSS = LITE3D_LIGHT_CASTSHADOW_SSS
+    };
+
+    LITE3D_DECLARE_ENUM_OPERATORS(LightSourceFlags);
+
     class LITE3DPP_EXPORT LightSource : public Noncopiable, public Manageable
     {
     public:
@@ -60,7 +75,8 @@ namespace lite3dpp
 
         void toJson(ConfigurationWriter &writer) const;
         
-        void setType(uint8_t t);
+        void setType(LightSourceFlags t);
+        void setFlag(LightSourceFlags flag);
         void enabled(bool f);
         void setPosition(const kmVec3 &v);
         void setDirection(const kmVec3 &v);
@@ -71,11 +87,12 @@ namespace lite3dpp
         void setInfluenceDistance(float value);
         void setInfluenceMinRadiance(float value);
         void setRadiance(float value);
-        void setUserIndex(int32_t value);
+        void setShadowIndex(uint32_t value);
         void setAngleInnerCone(float value);
         void setAngleOuterCone(float value);
 
-        uint8_t getType() const;
+        LightSourceFlags getType() const;
+        LightSourceFlags getFlags() const;
         bool enabled() const;
         const kmVec3 &getPosition() const;
         const kmVec3 &getWorldPosition() const;
@@ -88,11 +105,11 @@ namespace lite3dpp
         float getInfluenceDistance() const;
         float getInfluenceMinRadiance() const;
         float getRadiance() const;
-        int32_t getUserIndex() const;
+        uint32_t getShadowIndex() const;
         float getAngleInnerCone() const;
         float getAngleOuterCone() const;
 
-        void translateToWorld(const kmMat4 &worldView);
+        void translateToWorld(const kmMat4 &worldMatrix);
         void writeToBuffer(BufferBase &buffer);
         lite3d_bounding_vol getBoundingVolumeWorld() const;
         lite3d_bounding_vol getBoundingVolume() const;
@@ -102,8 +119,8 @@ namespace lite3dpp
         void calcDistanceMinRadiance();
 
         String mName;
-        lite3d_light_source mLightSource;
-        lite3d_light_source mLightSourceWorld;
+        lite3d_light_source mLightSource = {};
+        lite3d_light_source mLightSourceWorld = {};
         uint32_t mBufferIndex = 0;
         bool mUpdated = false;
         std::optional<float> mInfluenceDistance;

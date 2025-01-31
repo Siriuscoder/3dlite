@@ -145,6 +145,8 @@ namespace lite3dpp
                     setFloatv4Parameter(passNo, paramName, uniformParamJson.getVec4(L"Value"), scope == "global");
                 else if(paramType == "int")
                     setIntParameter(passNo, paramName, uniformParamJson.getInt(L"Value"), scope == "global");
+                else if(paramType == "uint")
+                    setUIntParameter(passNo, paramName, static_cast<uint32_t>(uniformParamJson.getInt(L"Value")), scope == "global");
                 else if(paramType == "m3")
                 {
                     kmMat3 mat3;
@@ -357,6 +359,7 @@ namespace lite3dpp
     
     LITE3D_IMPLEMENT_MAT_PARAMETER(Float, float, float, LITE3D_SHADER_PARAMETER_FLOAT, valfloat, valfloat)
     LITE3D_IMPLEMENT_MAT_PARAMETER(Int, int32_t, int32_t, LITE3D_SHADER_PARAMETER_INT, valint, valint)
+    LITE3D_IMPLEMENT_MAT_PARAMETER(UInt, uint32_t, uint32_t, LITE3D_SHADER_PARAMETER_UINT, valuint, valuint)
     LITE3D_IMPLEMENT_MAT_PARAMETER(Floatv3, kmVec3, kmVec3, LITE3D_SHADER_PARAMETER_FLOATV3, valvec3, valvec3)
     LITE3D_IMPLEMENT_MAT_PARAMETER(Floatv4, kmVec4, kmVec4, LITE3D_SHADER_PARAMETER_FLOATV4, valvec4, valvec4)
     LITE3D_IMPLEMENT_MAT_PARAMETER(Floatm3, kmMat3, kmMat3, LITE3D_SHADER_PARAMETER_FLOATM3, valmat3, valmat3)

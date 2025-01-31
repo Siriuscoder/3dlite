@@ -42,7 +42,7 @@
         {
             "Name": "vaultshader",
             "FileCacheMaxSize": 10240,
-            "Path": "vault_dr/"
+            "Path": "vault_dr_ubo/"
         }
     ],
 

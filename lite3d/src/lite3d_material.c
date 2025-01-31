@@ -62,6 +62,7 @@ static lite3d_shader_parameter_container *lite3d_material_pass_find_parameter(
 void lite3d_material_init(lite3d_material *material)
 {
     SDL_assert(material);
+    memset(material, 0, sizeof(lite3d_material));
     lite3d_array_init(&material->passes, sizeof (lite3d_material_pass), LITE3D_PASSNO_MAX);
     material->userdata = NULL;
 }

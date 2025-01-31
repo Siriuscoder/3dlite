@@ -4,7 +4,8 @@
         "vaultmat:shaders/sources/prepass.vs",
         "vaultmat:shaders/sources/combine_blend.fs",
         "samples:shaders/sources/phong/phong_blinn_single.fs",
-        "samples:shaders/sources/phong/lighting_tbo.fs",
-        "samples:shaders/sources/common/utils.fs"
+        "samples:shaders/sources/phong/lighting_ubo.fs",
+        "samples:shaders/sources/common/common.fs",
+        "samples:shaders/sources/common/stub.fs"
     ]
 }

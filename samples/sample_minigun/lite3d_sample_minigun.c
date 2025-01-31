@@ -155,7 +155,7 @@ static int init(void *userdata)
     lite3d_camera_perspective(&mCamera01, 1.0f, 1000.0f, 45.0f, (float) DEFAULT_WIDTH / (float) DEFAULT_HEIGHT);
     lite3d_camera_set_position(&mCamera01, &cameraInitPos);
 
-    lite3d_scene_init(&mScene);
+    lite3d_scene_init(&mScene, 0);
     lite3d_scene_node_init(&mSceneNode);
     lite3d_scene_add_node(&mScene, &mSceneNode, NULL);
     lite3d_scene_node_touch_material(&mSceneNode, lite3d_mesh_chunk_get_by_material_index(&mModel, 0), NULL, &mMinigunMaterial, 1);

@@ -1,4 +1,40 @@
 {
+  "Albedo": {
+    "Name": "Albedo",
+    "Type": "v4",
+    "Value": [
+      0.20127132534980774,
+      0.20127132534980774,
+      0.20127132534980774,
+      0.44999998807907104
+    ]
+  },
+  "Metallic": {
+    "Name": "Metallic",
+    "Type": "float",
+    "Value": 0.0
+  },
+  "Roughness": {
+    "Name": "Roughness",
+    "Type": "float",
+    "Value": 0.10000000149011612
+  },
+  "Alpha": {
+    "Name": "Alpha",
+    "Type": "float",
+    "Value": 0.44999998807907104
+  },
+  "EnvDiffuse": {
+    "Value": 1.0
+  },
+  "EnvSpecular": {
+    "Value": 1.0
+  },
+  "EnvironmentProbeTexture": {
+    "Name": "EnvironmentProbe",
+    "TextureName": "SponzaDeffered_EnvironmentMultiProbe.texture",
+    "Type": "sampler"
+  },
   "Passes": [
     {
       "Pass": 2,
@@ -8,29 +44,7 @@
       },
       "Uniforms": [
         {
-          "Name": "Albedo",
-          "Type": "v4",
-          "Value": [
-            0.20127132534980774,
-            0.20127132534980774,
-            0.20127132534980774,
-            0.44999998807907104
-          ]
-        },
-        {
-          "Name": "Metallic",
-          "Type": "float",
-          "Value": 0.0
-        },
-        {
-          "Name": "Roughness",
-          "Type": "float",
-          "Value": 0.10000000149011612
-        },
-        {
-          "Name": "EnvironmentProbe",
-          "TextureName": "SponzaDeffered_EnvironmentMultiProbe.texture",
-          "Type": "sampler"
+          "Name": "projViewMatrix"
         },
         {
           "Name": "EnvProbesData",
@@ -65,17 +79,6 @@
       ],
       "Blending": true,
       "BlendingMode": "RGB_LINEAR_SOURCE_ALPHA"
-    }
-  ],
-  "Uniforms": [
-    {
-      "Name": "projViewMatrix"
-    },
-    {
-      "Name": "modelMatrix"
-    },
-    {
-      "Name": "normalMatrix"
     }
   ]
 }

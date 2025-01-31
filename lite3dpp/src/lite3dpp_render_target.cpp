@@ -42,49 +42,49 @@ namespace lite3dpp
 
     bool RenderTarget::isEnabled() const
     {
-        SDL_assert_release(mRenderTargetPtr);
+        SDL_assert(mRenderTargetPtr);
         return mRenderTargetPtr->enabled == LITE3D_TRUE;
     }
 
     void RenderTarget::enable()
     {
-        SDL_assert_release(mRenderTargetPtr);
+        SDL_assert(mRenderTargetPtr);
         mRenderTargetPtr->enabled = LITE3D_TRUE;
     }
 
     void RenderTarget::disable()
     {
-        SDL_assert_release(mRenderTargetPtr);
+        SDL_assert(mRenderTargetPtr);
         mRenderTargetPtr->enabled = LITE3D_FALSE;
     }
 
     int32_t RenderTarget::height() const
     {
-        SDL_assert_release(mRenderTargetPtr);
+        SDL_assert(mRenderTargetPtr);
         return mRenderTargetPtr->height;
     }
 
     int32_t RenderTarget::width() const
     {
-        SDL_assert_release(mRenderTargetPtr);
+        SDL_assert(mRenderTargetPtr);
         return mRenderTargetPtr->width;
     }
 
     void RenderTarget::setBackgroundColor(const kmVec4 &color)
     {
-        SDL_assert_release(mRenderTargetPtr);
+        SDL_assert(mRenderTargetPtr);
         mRenderTargetPtr->cleanColor = color;
     }
 
     void RenderTarget::setCleanDepth(float value)
     {
-        SDL_assert_release(mRenderTargetPtr);
+        SDL_assert(mRenderTargetPtr);
         mRenderTargetPtr->cleanDepth = value;
     }
 
     void RenderTarget::setBuffersCleanBit(bool color, bool depth, bool stencil)
     {
-        SDL_assert_release(mRenderTargetPtr);
+        SDL_assert(mRenderTargetPtr);
         mRenderTargetPtr->clearColorBuffer = color ? LITE3D_TRUE : LITE3D_FALSE;
         mRenderTargetPtr->clearDepthBuffer = depth ? LITE3D_TRUE : LITE3D_FALSE;
         mRenderTargetPtr->clearStencilBuffer = stencil ? LITE3D_TRUE : LITE3D_FALSE;
@@ -127,7 +127,7 @@ namespace lite3dpp
 
     void RenderTarget::clear(bool color, bool depth, bool stencil)
     {
-        SDL_assert_release(mRenderTargetPtr);
+        SDL_assert(mRenderTargetPtr);
         lite3d_buffers_clear_values(&mRenderTargetPtr->cleanColor,
             mRenderTargetPtr->cleanDepth, mRenderTargetPtr->cleanStencil);
         lite3d_buffers_clear(color ? LITE3D_TRUE : LITE3D_FALSE,
@@ -138,7 +138,7 @@ namespace lite3dpp
     void RenderTarget::addCamera(Camera *camera, Scene *scene, uint16_t pass, const RenderLayers &layers,
          int priority, uint32_t renderFlags)
     {
-        SDL_assert_release(mRenderTargetPtr);
+        SDL_assert(mRenderTargetPtr);
         if (!lite3d_render_target_attach_camera(mRenderTargetPtr, camera->getPtr(), scene->getPtr(), pass, 
             layers.size() > 0 ? &layers[0] : NULL, layers.size(), priority, renderFlags))
             LITE3D_THROW("Failed to add camera to render target '" << getName() << "', probably camera with priority " << 
@@ -147,7 +147,7 @@ namespace lite3dpp
 
     void RenderTarget::removeCamera(Camera *camera, int priority)
     {
-        SDL_assert_release(mRenderTargetPtr);
+        SDL_assert(mRenderTargetPtr);
         if (!lite3d_render_target_dettach_camera(mRenderTargetPtr, camera->getPtr(), priority))
             LITE3D_THROW("Failed to detach camera from render target '" << getName() << "', camera with priority " <<
                 priority << " not found");
@@ -155,7 +155,7 @@ namespace lite3dpp
     
     void RenderTarget::saveScreenshot(const String &filename)
     {
-        SDL_assert_release(mRenderTargetPtr);
+        SDL_assert(mRenderTargetPtr);
         lite3d_render_target_screenshot(mRenderTargetPtr, filename.c_str());
     }
 
