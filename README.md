@@ -107,4 +107,4 @@ See [here](samples/README.md)
 
 ***
 Check branch master to fetch stable changes, and follow new releases =)
-> Copyright © 2014-2024 Nikita Korolev (Sirius)
+> Copyright © 2014-2025 Nikita Korolev (Sirius)
