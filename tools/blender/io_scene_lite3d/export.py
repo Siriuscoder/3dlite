@@ -36,7 +36,10 @@ class Lite3dExport(bpy.types.Operator, ExportHelper):
     materialTemplate: StringProperty(name = "Material template name", default = "CommonMaterialTemplate", description = "Name of material template file used by default to generate material")
     materialTypePBR: BoolProperty(name = "PBR Materials Type", default = True, description = "Creating PBR Materials by default")
     singlePartition: BoolProperty(name = "Single mesh partition", default = False, description = "Mark all exported meshes as in single mesh partition")
-    saveIndexes: BoolProperty(name = "Save mesh indexes", default = True, description = "Export index data as well as vertex data (consume less space), otherwise index data will not be used (may be more fast render)")
+    indexedGeometry: BoolProperty(name = "Indexed geometry", default = True, description = "Export index data as well as vertex data (consume less space), otherwise index data will not be used (may be more fast render)")
+    vertexColors: BoolProperty(name = "Vertex colors", default = False, description = "Export vertex colors")
+    skeleton: BoolProperty(name = "Skeleton", default = False, description = "Export skeleton data as additional vertex attributes")
+    animation: BoolProperty(name = "Animation", default = False, description = "Export all available animation actions")
 
     def draw(self, context):
         layout = self.layout
@@ -47,14 +50,17 @@ class Lite3dExport(bpy.types.Operator, ExportHelper):
         box.prop(self, "imagePackageName")
         box.prop(self, "meshPackageName")
         box.prop(self, "physics")
+        box.prop(self, "animation")
+        box.prop(self, "skeleton")
         box.label(text = "Mesh:")
         box.prop(self, "triangulate")
         box.prop(self, "removeDoubles")
         box.prop(self, "saveTangent")
         box.prop(self, "saveBiTangent")
-        box.prop(self, "saveIndexes")
+        box.prop(self, "indexedGeometry")
         box.prop(self, "flipUV")
         box.prop(self, "singlePartition")
+        box.prop(self, "vertexColors")
         box.label(text = "Materials:")
         box.prop(self, "copyTexImages")
         box.prop(self, "textureCompression")
@@ -77,7 +83,7 @@ class Lite3dExport(bpy.types.Operator, ExportHelper):
                           self.packageName, 
                           imagePackageName = self.imagePackageName,
                           meshPackageName = self.meshPackageName, 
-                          saveTangent = self.saveTangent, 
+                          saveTangent = self.saveTangent,
                           saveBiTangent = self.saveBiTangent,
                           copyTexImages = self.copyTexImages,
                           textureCompression = self.textureCompression,
@@ -94,7 +100,10 @@ class Lite3dExport(bpy.types.Operator, ExportHelper):
                           physics = self.physics,
                           materialTypePBR = self.materialTypePBR,
                           singlePartition = self.singlePartition,
-                          saveIndexes = self.saveIndexes)
+                          indexedGeometry = self.indexedGeometry,
+                          vertexColors = self.vertexColors, 
+                          skeleton = self.skeleton,
+                          animation = self.animation)
             
             scene.exportScene()
         except Exception as ex:
