@@ -6,17 +6,35 @@ from io_scene_lite3d.io import IO
 from io_scene_lite3d.logger import log
 
 class Vertex:
-    def __init__(self, v, n, uv, t, bt, saveTangent, saveBiTangent, flipUV):
-        # vertex, normal, UV
-        self.block = [v.x, v.y, v.z, n.x, n.y, n.z, uv.x, 1.0 - uv.y if flipUV else uv.y]
-        if saveTangent:
-            # tangent optional
-            self.block.extend([t.x, t.y, t.z])
-        if saveBiTangent:
-            # bitangent optional
-            self.block.extend([bt.x, bt.y, bt.z])
-
+    def __init__(self, v, c, n, uv, t, bt, saveTangent, saveBiTangent, vertexColor, skeleton, flipUV):
+        # vertex, normal, UV is always required
+        self.block = [v.co.x, v.co.y, v.co.z, n.x, n.y, n.z, uv.x, 1.0 - uv.y if flipUV else uv.y]
         self.format = f"={len(self.block)}f"
+
+        if saveTangent:
+            # tangent is optional
+            self.block.extend([t.x, t.y, t.z])
+            self.format += "3f"
+
+        if saveBiTangent:
+            # bitangent is optional
+            self.block.extend([bt.x, bt.y, bt.z])
+            self.format += "3f"
+
+        if vertexColor:
+            # vertex color is optional
+            self.block.extend([x for x in c])
+            self.format += "4f"
+
+        if skeleton:
+            # Support only first 4 groups, ignore others
+            for i in range(4):
+                self.block.append(v.groups[i].group if i < len(v.groups) else -1)
+            self.format += "4i"
+
+            for i in range(4):
+                self.block.append(v.groups[i].weight if i < len(v.groups) else 0.0)
+            self.format += "4f"
 
     def size(self):
         return struct.calcsize(self.format)
@@ -32,7 +50,9 @@ class MeshChunk:
         self.saveTangent = opts["saveTangent"]
         self.saveBiTangent = opts["saveBiTangent"]
         self.flipUV = opts["flipUV"]
-        self.saveIndexes = opts["saveIndexes"]
+        self.indexedGeometry = opts["indexedGeometry"]
+        self.vertexColors = opts["vertexColors"]
+        self.skeleton = opts["skeleton"]
         self.vertices = []
         self.indexes = []
         self.normalsSplit = {}
@@ -43,6 +63,8 @@ class MeshChunk:
         self.layoutCount = 3
         self.layoutCount += 1 if self.saveTangent else 0
         self.layoutCount += 1 if self.saveBiTangent else 0
+        self.layoutCount += 1 if self.vertexColors else 0
+        self.layoutCount += 2 if self.skeleton else 0
         self.chunkHeaderFormat = "=8iBI"
 
     def chunkHeaderSize(self):
@@ -52,19 +74,20 @@ class MeshChunk:
     def compareNear(a, b):
         return math.isclose(a.x, b.x) and math.isclose(a.y, b.y) and math.isclose(a.z, b.z)
         
-    def insertByIndex(self, vi, v, n, uv, t, bt):
+    def insertByIndex(self, vi, v, c, n, uv, t, bt):
         self.indexes.append(vi)
         self.indexesSize += MeshChunk.indexSize
         if vi >= len(self.vertices):
-            self.insertVertex(v, n, uv, t, bt)
+            self.insertVertex(v, c, n, uv, t, bt)
 
-    def insertVertex(self, v, n, uv, t, bt):
-        self.vertices.append(Vertex(v.co, n, uv, t, bt, self.saveTangent, self.saveBiTangent, self.flipUV))
+    def insertVertex(self, v, c, n, uv, t, bt):
+        self.vertices.append(Vertex(v, c, n, uv, t, bt, self.saveTangent, self.saveBiTangent, 
+            self.vertexColors, self.skeleton, self.flipUV))
         self.verticesSize += self.vertices[-1].size()
         
-    def appendVertex(self, v, n, uv, t, bt):
+    def appendVertex(self, v, c, n, uv, t, bt):
         # Indexed geometry
-        if self.saveIndexes:
+        if self.indexedGeometry:
             lv = len(self.vertices)
             if not v.index in self.normalsSplit.keys():
                 self.normalsSplit[v.index] = [(n, lv)]
@@ -72,13 +95,13 @@ class MeshChunk:
                 normalSplit = self.normalsSplit[v.index]
                 for ins in normalSplit:
                     if MeshChunk.compareNear(ins[0], n):
-                        self.insertByIndex(ins[1], v, n, uv, t, bt)
+                        self.insertByIndex(ins[1], v, c, n, uv, t, bt)
                         return
                 normalSplit.append((n, lv))
-            self.insertByIndex(lv, v, n, uv, t, bt)
+            self.insertByIndex(lv, v, c, n, uv, t, bt)
         # Non indexed geometry
         else:
-            self.insertVertex(v, n, uv, t, bt)
+            self.insertVertex(v, c, n, uv, t, bt)
 
         self.minmaxVec(v.co)
         
@@ -129,7 +152,12 @@ class MeshChunk:
             file.write(struct.pack("=2B", 0x5, 3)) # LITE3D_BUFFER_BINDING_TANGENT
         if self.saveBiTangent:
             file.write(struct.pack("=2B", 0x6, 3)) # LITE3D_BUFFER_BINDING_BINORMAL
-        
+        if self.vertexColors:
+            file.write(struct.pack("=2B", 0x1, 4)) # LITE3D_BUFFER_BINDING_COLOR
+        if self.skeleton:
+            file.write(struct.pack("=2B", 0x7, 4)) # LITE3D_BUFFER_BINDING_BONES
+            file.write(struct.pack("=2B", 0x8, 4)) # LITE3D_BUFFER_BINDING_BONES_WEIGHT
+    
     def saveVertexBlock(self, file):
         for v in self.vertices:
             v.save(file)
