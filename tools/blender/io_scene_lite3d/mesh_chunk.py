@@ -6,7 +6,7 @@ from io_scene_lite3d.io import IO
 from io_scene_lite3d.logger import log
 
 class Vertex:
-    def __init__(self, v, c, n, uv, t, bt, saveTangent, saveBiTangent, vertexColor, skeleton, flipUV):
+    def __init__(self, v, c, n, uv, t, bt, saveTangent, saveBiTangent, skeleton, flipUV):
         # vertex, normal, UV is always required
         self.block = [v.co.x, v.co.y, v.co.z, n.x, n.y, n.z, uv.x, 1.0 - uv.y if flipUV else uv.y]
         self.format = f"={len(self.block)}f"
@@ -21,7 +21,7 @@ class Vertex:
             self.block.extend([bt.x, bt.y, bt.z])
             self.format += "3f"
 
-        if vertexColor:
+        if c is not None:
             # vertex color is optional
             self.block.extend([x for x in c])
             self.format += "4f"
@@ -30,11 +30,10 @@ class Vertex:
             # Support only first 4 groups, ignore others
             for i in range(4):
                 self.block.append(v.groups[i].group if i < len(v.groups) else -1)
-            self.format += "4i"
-
             for i in range(4):
                 self.block.append(v.groups[i].weight if i < len(v.groups) else 0.0)
-            self.format += "4f"
+
+            self.format += "4i4f"
 
     def size(self):
         return struct.calcsize(self.format)
@@ -82,7 +81,7 @@ class MeshChunk:
 
     def insertVertex(self, v, c, n, uv, t, bt):
         self.vertices.append(Vertex(v, c, n, uv, t, bt, self.saveTangent, self.saveBiTangent, 
-            self.vertexColors, self.skeleton, self.flipUV))
+            self.skeleton, self.flipUV))
         self.verticesSize += self.vertices[-1].size()
         
     def appendVertex(self, v, c, n, uv, t, bt):

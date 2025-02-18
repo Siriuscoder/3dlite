@@ -103,13 +103,17 @@ void MeshInfoCommand::printInfo(const lite3d_file *meshFile)
         printf("\tLoc\tType\t\tData\tOffset\n");
         for (i = 0; i < meshChunk->layout.size; ++i)
         {
-            printf("\t%d\t%s\tFLOAT%d\t0x%zx\n", i,
+            printf("\t%d\t%s\t%s%d\t0x%zx\n", i,
                 (layout[i].binding == LITE3D_BUFFER_BINDING_VERTEX ? "VERTEX\t" :
                 (layout[i].binding == LITE3D_BUFFER_BINDING_COLOR ? "COLOR\t" :
                 (layout[i].binding == LITE3D_BUFFER_BINDING_NORMAL ? "NORMAL\t" :
                 (layout[i].binding == LITE3D_BUFFER_BINDING_TEXCOORD ? "TEXCOORD" : 
+                (layout[i].binding == LITE3D_BUFFER_BINDING_ATTRIBUTE ? "ATTRIBUTE\t" :
                 (layout[i].binding == LITE3D_BUFFER_BINDING_TANGENT ? "TANGENT\t" :
-                (layout[i].binding == LITE3D_BUFFER_BINDING_BINORMAL ? "BINORMAL" : "ATTRIBUTE")))))),
+                (layout[i].binding == LITE3D_BUFFER_BINDING_BINORMAL ? "BINORMAL" : 
+                (layout[i].binding == LITE3D_BUFFER_BINDING_BONES ? "BONES\t" : 
+                (layout[i].binding == LITE3D_BUFFER_BINDING_BONES_WEIGHT ? "BONES_WEIGHT" : "UNKNOWN"))))))))),
+                layout[i].binding == LITE3D_BUFFER_BINDING_BONES ? "INT" : "FLOAT",
                 layout[i].count, offset);
 
             offset += sizeof (float) * layout[i].count;

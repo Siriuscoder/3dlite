@@ -34,6 +34,9 @@ Lite3dCommon::Lite3dCommon()
     mSettings.videoSettings.screenHeight = 600;
     mSettings.videoSettings.vsync = LITE3D_TRUE;
     mSettings.videoSettings.hidden = LITE3D_TRUE;
+    mSettings.videoSettings.glProfile = LITE3D_GL_PROFILE_CORE;
+    mSettings.videoSettings.glVersionMajor = 3;
+    mSettings.videoSettings.glVersionMinor = 3;
 }
 
 bool Lite3dCommon::main()

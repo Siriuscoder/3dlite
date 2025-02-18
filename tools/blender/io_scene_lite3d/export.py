@@ -38,8 +38,8 @@ class Lite3dExport(bpy.types.Operator, ExportHelper):
     singlePartition: BoolProperty(name = "Single mesh partition", default = False, description = "Mark all exported meshes as in single mesh partition")
     indexedGeometry: BoolProperty(name = "Indexed geometry", default = True, description = "Export index data as well as vertex data (consume less space), otherwise index data will not be used (may be more fast render)")
     vertexColors: BoolProperty(name = "Vertex colors", default = False, description = "Export vertex colors")
-    skeleton: BoolProperty(name = "Skeleton", default = True, description = "Export skeleton data as additional vertex attributes")
-    animation: BoolProperty(name = "Animation", default = True, description = "Export all available animation actions")
+    skeleton: BoolProperty(name = "Skeleton", default = False, description = "Export skeleton data as additional vertex attributes")
+    animation: BoolProperty(name = "Animation", default = False, description = "Export all available animation actions")
 
     def draw(self, context):
         layout = self.layout

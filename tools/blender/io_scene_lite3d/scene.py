@@ -17,7 +17,7 @@ class Scene:
         self.images = {}
         self.materials = {}
         self.options = opts
-        self.exportTypes = ["MESH", "EMPTY"]
+        self.exportTypes = ["MESH", "EMPTY", "ARMATURE"]
         self.sceneJson = {}
         self.physicsObjectTypes = ["Dynamic", "Static", "Kinematic"]
         self.physicsCollisionsTypes = [
@@ -181,7 +181,7 @@ class Scene:
             self.exportMesh(obj, node)
         elif obj.type == "LIGHT":
             self.exportLight(obj, node)
-        else:
+        elif obj.type == "EMPTY":
             self.exportPhysicsInfo(obj, node)
         
         if obj.parent is not None:
