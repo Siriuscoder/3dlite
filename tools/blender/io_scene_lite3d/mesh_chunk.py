@@ -70,8 +70,11 @@ class MeshChunk:
         boundingVolSize = struct.calcsize("=28f")
         return struct.calcsize(f"={self.layoutCount * 2}B") + struct.calcsize(self.chunkHeaderFormat) + boundingVolSize
         
-    def compareNear(a, b):
-        return math.isclose(a.x, b.x) and math.isclose(a.y, b.y) and math.isclose(a.z, b.z)
+    def compareNear2(a, b):
+        return math.isclose(a.x, b.x) and math.isclose(a.y, b.y)
+    
+    def compareNear3(a, b):
+        return MeshChunk.compareNear2(a, b) and math.isclose(a.z, b.z)
         
     def insertByIndex(self, vi, v, c, n, uv, t, bt):
         self.indexes.append(vi)
@@ -87,17 +90,19 @@ class MeshChunk:
     def appendVertex(self, v, c, n, uv, t, bt):
         # Indexed geometry
         if self.indexedGeometry:
-            lv = len(self.vertices)
+            last = len(self.vertices)
             if not v.index in self.normalsSplit.keys():
-                self.normalsSplit[v.index] = [(n, lv)]
+                self.normalsSplit[v.index] = [(last, n, uv, t)]
             else:
                 normalSplit = self.normalsSplit[v.index]
                 for ins in normalSplit:
-                    if MeshChunk.compareNear(ins[0], n):
-                        self.insertByIndex(ins[1], v, c, n, uv, t, bt)
+                    if  MeshChunk.compareNear3(ins[1], n) and \
+                        MeshChunk.compareNear2(ins[2], uv) and \
+                        MeshChunk.compareNear3(ins[3], t):
+                        self.insertByIndex(ins[0], v, c, n, uv, t, bt)
                         return
-                normalSplit.append((n, lv))
-            self.insertByIndex(lv, v, c, n, uv, t, bt)
+                normalSplit.append((last, n, uv, t))
+            self.insertByIndex(last, v, c, n, uv, t, bt)
         # Non indexed geometry
         else:
             self.insertVertex(v, c, n, uv, t, bt)
