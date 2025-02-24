@@ -6,7 +6,7 @@ from io_scene_lite3d.io import IO
 from io_scene_lite3d.logger import log
 
 class Vertex:
-    def __init__(self, v, c, n, uv, t, bt, saveTangent, saveBiTangent, skeleton, flipUV):
+    def __init__(self, v, vc, n, uv, t, bt, saveTangent, saveBiTangent, skeleton, flipUV):
         # vertex, normal, UV is always required
         self.block = [v.co.x, v.co.y, v.co.z, n.x, n.y, n.z, uv.x, 1.0 - uv.y if flipUV else uv.y]
         self.format = f"={len(self.block)}f"
@@ -21,9 +21,9 @@ class Vertex:
             self.block.extend([bt.x, bt.y, bt.z])
             self.format += "3f"
 
-        if c is not None:
+        if vc is not None:
             # vertex color is optional
-            self.block.extend([x for x in c])
+            self.block.extend([x for x in vc])
             self.format += "4f"
 
         if skeleton:
@@ -54,7 +54,7 @@ class MeshChunk:
         self.skeleton = opts["skeleton"]
         self.vertices = []
         self.indexes = []
-        self.normalsSplit = {}
+        self.vertexSplit = {}
         self.minVec = mathutils.Vector([sys.float_info.max] * 3)
         self.maxVec = mathutils.Vector([sys.float_info.min] * 3)
         self.verticesSize = 0
@@ -76,36 +76,37 @@ class MeshChunk:
     def compareNear3(a, b):
         return MeshChunk.compareNear2(a, b) and math.isclose(a.z, b.z)
         
-    def insertByIndex(self, vi, v, c, n, uv, t, bt):
+    def insertByIndex(self, vi, v, vc, n, uv, t, bt):
         self.indexes.append(vi)
         self.indexesSize += MeshChunk.indexSize
         if vi >= len(self.vertices):
-            self.insertVertex(v, c, n, uv, t, bt)
+            self.insertVertex(v, vc, n, uv, t, bt)
 
-    def insertVertex(self, v, c, n, uv, t, bt):
-        self.vertices.append(Vertex(v, c, n, uv, t, bt, self.saveTangent, self.saveBiTangent, 
+    def insertVertex(self, v, vc, n, uv, t, bt):
+        self.vertices.append(Vertex(v, vc, n, uv, t, bt, self.saveTangent, self.saveBiTangent, 
             self.skeleton, self.flipUV))
         self.verticesSize += self.vertices[-1].size()
         
-    def appendVertex(self, v, c, n, uv, t, bt):
+    def appendVertex(self, v, vc, uv, loop):
         # Indexed geometry
         if self.indexedGeometry:
             last = len(self.vertices)
-            if not v.index in self.normalsSplit.keys():
-                self.normalsSplit[v.index] = [(last, n, uv, t)]
+            if not v.index in self.vertexSplit.keys():
+                self.vertexSplit[v.index] = [(last, loop.normal, uv, loop.tangent, loop.bitangent_sign)]
             else:
-                normalSplit = self.normalsSplit[v.index]
-                for ins in normalSplit:
-                    if  MeshChunk.compareNear3(ins[1], n) and \
+                variations = self.vertexSplit[v.index]
+                for ins in variations:
+                    if  MeshChunk.compareNear3(ins[1], loop.normal) and \
                         MeshChunk.compareNear2(ins[2], uv) and \
-                        MeshChunk.compareNear3(ins[3], t):
-                        self.insertByIndex(ins[0], v, c, n, uv, t, bt)
+                        (not self.saveTangent or MeshChunk.compareNear3(ins[3], loop.tangent)) and \
+                        (not self.saveBiTangent or math.isclose(ins[4], loop.bitangent_sign)):
+                        self.insertByIndex(ins[0], v, vc, loop.normal, uv, loop.tangent, loop.bitangent)
                         return
-                normalSplit.append((last, n, uv, t))
-            self.insertByIndex(last, v, c, n, uv, t, bt)
+                variations.append((last, loop.normal, uv, loop.tangent, loop.bitangent_sign))
+            self.insertByIndex(last, v, vc, loop.normal, uv, loop.tangent, loop.bitangent)
         # Non indexed geometry
         else:
-            self.insertVertex(v, c, n, uv, t, bt)
+            self.insertVertex(v, vc, loop.normal, uv, loop.tangent, loop.bitangent)
 
         self.minmaxVec(v.co)
         

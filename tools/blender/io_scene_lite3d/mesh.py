@@ -39,7 +39,7 @@ class Mesh:
                 vertex = self.mesh.vertices[loop.vertex_index]
                 uv = uvLayer[loopIndex].uv
                 vertexColor = vertexColors.data[loop.vertex_index].color if vertexColors is not None else None
-                meshChunk.appendVertex(vertex, vertexColor, loop.normal, uv, loop.tangent, loop.bitangent)
+                meshChunk.appendVertex(vertex, vertexColor, uv, loop)
 
     def prepareMesh(self):
         if self.scene.options["removeDoubles"]:
