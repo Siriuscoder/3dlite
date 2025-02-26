@@ -3,6 +3,7 @@ import bpy
 import mathutils
 
 from pathlib import PurePosixPath, Path
+from io_scene_lite3d.action import AnimationAction
 from io_scene_lite3d.mesh import Mesh
 from io_scene_lite3d.material import Material
 from io_scene_lite3d.image import Image
@@ -14,6 +15,7 @@ class Scene:
         self.path = path
         self.package = package
         self.meshes = {}
+        self.actions = {}
         self.objectsList = []
         self.savedObjects = []
         self.images = {}
@@ -106,6 +108,39 @@ class Scene:
             obj.scale.y,
             obj.scale.z
         ]
+
+    def exportAction(self, actionsList, action):
+        aminAction = None
+        if not action.name in self.actions:
+            aminAction = AnimationAction(self, action)
+            aminAction.save()
+            self.actions[action.name] = aminAction
+        else:
+            aminAction = self.actions[action.name]
+        
+        actionsList.append({
+                "Action": self.getAbsMeshPath(aminAction.getRelativePath()), 
+                "Name": action.name
+            })
+
+    def exportActions(self, obj, node):
+        if obj.animation_data is None:
+            return
+        
+        actionsList = []
+        actionSet = set()
+        if obj.animation_data.action is not None:
+            self.exportAction(actionsList, obj.animation_data.action)
+            actionSet.add(obj.animation_data.action.name)
+
+        for track in obj.animation_data.nla_tracks:
+            for strip in track.strips:
+                if not strip.action.name in actionSet:
+                    self.exportAction(actionsList, strip.action)
+                    actionSet.add(strip.action.name)
+
+        if len(actionsList) > 0:
+            node["Actions"] = actionsList
         
     def exportMesh(self, obj, node):
         mesh = None
@@ -248,6 +283,9 @@ class Scene:
         
         if obj.parent is not None:
             Scene.orietation(obj, node)
+
+        if self.options["animation"]:
+            self.exportActions(obj, node)
             
         for child in obj.children:
             childNode = {}
