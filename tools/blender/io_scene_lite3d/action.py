@@ -34,14 +34,17 @@ class AnimationAction:
                     frames[frameKey] = {}
                 frames[frameKey][path.split(".")[-1] + axis] = keyframe.co.y
 
+        # Sort by the frames numbers
+        framesSorted = dict(sorted(frames.items(), key = lambda x: float(x[0])))
+
         actionJson = {}
         actionJson["Name"] = self.name
         actionJson["MinFrame"] = self.action.curve_frame_range.x
         actionJson["MaxFrame"] = self.action.curve_frame_range.y
 
         if len(self.skeletonFrames) > 0:
-            actionJson["BonesFrames"] = self.skeletonFrames
+            actionJson["BonesFrames"] = framesSorted
         if len(self.frames) > 0:
-            actionJson["Frames"] = self.frames
+            actionJson["Frames"] = framesSorted
 
-        IO.saveJson(self.scene.getAbsSysPath(self.getRelativePath()), actionJson, True)
+        IO.saveJson(self.scene.getAbsSysPath(self.getRelativePath()), actionJson)
