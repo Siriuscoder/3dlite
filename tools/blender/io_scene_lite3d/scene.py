@@ -1,6 +1,9 @@
 import json
 import bpy
+import mathutils
+
 from pathlib import PurePosixPath, Path
+from io_scene_lite3d.action import AnimationAction
 from io_scene_lite3d.mesh import Mesh
 from io_scene_lite3d.material import Material
 from io_scene_lite3d.image import Image
@@ -12,12 +15,13 @@ class Scene:
         self.path = path
         self.package = package
         self.meshes = {}
+        self.actions = {}
         self.objectsList = []
         self.savedObjects = []
         self.images = {}
         self.materials = {}
         self.options = opts
-        self.exportTypes = ["MESH", "EMPTY"]
+        self.exportTypes = ["MESH", "EMPTY", "ARMATURE"]
         self.sceneJson = {}
         self.physicsObjectTypes = ["Dynamic", "Static", "Kinematic"]
         self.physicsCollisionsTypes = [
@@ -104,6 +108,39 @@ class Scene:
             obj.scale.y,
             obj.scale.z
         ]
+
+    def exportAction(self, actionsList, action):
+        aminAction = None
+        if not action.name in self.actions:
+            aminAction = AnimationAction(self, action)
+            aminAction.save()
+            self.actions[action.name] = aminAction
+        else:
+            aminAction = self.actions[action.name]
+        
+        actionsList.append({
+                "Action": self.getAbsMeshPath(aminAction.getRelativePath()), 
+                "Name": action.name
+            })
+
+    def exportActions(self, obj, node):
+        if obj.animation_data is None:
+            return
+        
+        actionsList = []
+        actionSet = set()
+        if obj.animation_data.action is not None:
+            self.exportAction(actionsList, obj.animation_data.action)
+            actionSet.add(obj.animation_data.action.name)
+
+        for track in obj.animation_data.nla_tracks:
+            for strip in track.strips:
+                if not strip.action.name in actionSet:
+                    self.exportAction(actionsList, strip.action)
+                    actionSet.add(strip.action.name)
+
+        if len(actionsList) > 0:
+            node["Actions"] = actionsList
         
     def exportMesh(self, obj, node):
         mesh = None
@@ -119,6 +156,13 @@ class Scene:
                 "Mesh": self.getAbsMeshPath(mesh.getRelativePathJson()), 
                 "Name": mesh.name
             }
+            # export vertex groups per object basis. 
+            # vertex groups are used in the skeleton deform with appropriate bones
+            vertexGroups = []
+            for group in obj.vertex_groups:
+                vertexGroups.append({"name": group.name, "index": group.index})
+            if len(vertexGroups) > 0:
+                node["VertexGroups"] = vertexGroups
         
     def exportLight(self, obj, node):
         light = obj.data
@@ -172,6 +216,57 @@ class Scene:
         
         node["Light"] = lightJson
 
+    def exportSkeletonBone(self, boneJson, bone):
+        localPosition = bone.head
+        # extend position by parent bone lenght (Y-forward)
+        if bone.parent is not None:
+            localPosition = localPosition + mathutils.Vector((0.0, bone.parent.length, 0.0))
+
+        localRotation = bone.matrix.to_quaternion()
+
+        boneJson["Name"] = bone.name
+        boneJson["Position"] = [
+            localPosition.x, 
+            localPosition.y, 
+            localPosition.z
+        ]
+
+        boneJson["Head"] = [
+            bone.head.x, 
+            bone.head.y, 
+            bone.head.z
+        ]
+
+        boneJson["Rotation"] = [
+            localRotation.x,
+            localRotation.y,
+            localRotation.z,
+            localRotation.w
+        ]
+
+        boneJson["Length"] = bone.length
+
+        for childBone in bone.children:
+            childBoneJson = {}
+            self.exportSkeletonBone(childBoneJson, childBone)
+            # Добавляем только если что то добавилось из потомков
+            if "Bones" in boneJson.keys():
+                boneJson["Bones"].append(childBoneJson)
+            else:
+                boneJson["Bones"] = [childBoneJson]
+
+    def exportSkeleton(self, obj, node):
+        armature = obj.data
+        skeletonJson = []
+        # exporting the skeleton in bind-pose
+        for bone in armature.bones:
+            if bone.parent is None:
+                boneJson = {}
+                self.exportSkeletonBone(boneJson, bone)
+                skeletonJson.append(boneJson)
+
+        node["Skeleton"] = skeletonJson
+
     def exportNode(self, obj, node):
         if obj.type not in self.exportTypes:
             return
@@ -181,11 +276,16 @@ class Scene:
             self.exportMesh(obj, node)
         elif obj.type == "LIGHT":
             self.exportLight(obj, node)
-        else:
+        elif obj.type == "EMPTY":
             self.exportPhysicsInfo(obj, node)
+        elif obj.type == "ARMATURE" and self.options["skeleton"]:
+            self.exportSkeleton(obj, node)
         
         if obj.parent is not None:
             Scene.orietation(obj, node)
+
+        if self.options["animation"]:
+            self.exportActions(obj, node)
             
         for child in obj.children:
             childNode = {}

@@ -40,6 +40,10 @@ void Command::run(int argc, char *args[])
     video.set(L"ColorBits", 24);
     video.set(L"Fullscreen", false);
     video.set(L"Hidden", true);
+    video.set(L"GLProfile", "core");
+    video.set(L"GLVersionMajor", 3);
+    video.set(L"GLVersionMinor", 3);
+    video.set(L"Debug", false);
 
     lite3dpp::ConfigurationWriter texture;
     texture.set(L"Compression", false);

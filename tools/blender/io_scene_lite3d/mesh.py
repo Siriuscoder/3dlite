@@ -19,11 +19,15 @@ class Mesh:
 
         self.prepareMesh()
 
+        uvLayer = self.mesh.uv_layers.active.data
+
+        vertexColors = None
+        if len(self.mesh.color_attributes) > 0 and self.scene.options["vertexColors"]:
+            vertexColors = self.mesh.color_attributes.values()[0]
+
         for poly in self.mesh.polygons:
             if poly.loop_total != 3:
-                raise Exception("Wrong faces format, triangulate faces and try again")
-
-            uvLayer = self.mesh.uv_layers.active.data
+                raise Exception("N-Gon face, please triangulate faces and try again")
             
             meshChunk = self.chunks.get(poly.material_index, None)
             if meshChunk is None:
@@ -34,7 +38,8 @@ class Mesh:
                 loop = self.mesh.loops[loopIndex]
                 vertex = self.mesh.vertices[loop.vertex_index]
                 uv = uvLayer[loopIndex].uv
-                meshChunk.appendVertex(vertex, loop.normal, uv, loop.tangent, loop.bitangent)
+                vertexColor = vertexColors.data[loop.vertex_index].color if vertexColors is not None else None
+                meshChunk.appendVertex(vertex, vertexColor, uv, loop)
 
     def prepareMesh(self):
         if self.scene.options["removeDoubles"]:

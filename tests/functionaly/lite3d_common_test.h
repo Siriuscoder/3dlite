@@ -22,7 +22,7 @@
     TEST_F(testCase, test) \
     { \
         settings().renderLisneters.preRender = func; \
-        main(); \
+        EXPECT_TRUE(main()); \
     }
 
 class Lite3dCommon : public ::testing::Test

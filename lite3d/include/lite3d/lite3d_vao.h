@@ -31,6 +31,8 @@
 #define LITE3D_BUFFER_BINDING_ATTRIBUTE       0x4
 #define LITE3D_BUFFER_BINDING_TANGENT         0x5
 #define LITE3D_BUFFER_BINDING_BINORMAL        0x6
+#define LITE3D_BUFFER_BINDING_BONES           0x7
+#define LITE3D_BUFFER_BINDING_BONES_WEIGHT    0x8
 
 typedef struct lite3d_vao
 {
