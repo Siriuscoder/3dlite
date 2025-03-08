@@ -191,5 +191,52 @@ namespace lite3dpp
 
         return nullptr;
     }
+
+    void SceneNodeBase::actionPlay(const String &name)
+    {
+        auto action = mActions.find(name);
+        if (action != mActions.end())
+        {
+            mClip = action->second.playAction(this, false);
+        }
+    }
+
+    void SceneNodeBase::actionPlayCycle(const String &name)
+    {
+        auto action = mActions.find(name);
+        if (action != mActions.end())
+        {
+            mClip = action->second.playAction(this, true);
+        }
+    }
+
+    void SceneNodeBase::actionPause()
+    {
+        if (mClip)
+        {
+            mClip->pause();
+        }
+    }
+
+    void SceneNodeBase::actionResume()
+    {
+        if (mClip)
+        {
+            mClip->resume();
+        }
+    }
+
+    void SceneNodeBase::actionReset()
+    {
+        if (mClip)
+        {
+            mClip->reset();
+        }
+    }
+
+    bool SceneNodeBase::actionCompleted() const
+    {
+        return mClip ? mClip->completed() : true;
+    }
 }
 

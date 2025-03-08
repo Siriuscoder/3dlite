@@ -56,6 +56,7 @@ namespace lite3dpp
             uint32_t pipelinesCount;
             uint32_t meshPartitionsCount;
             uint32_t meshPartitionsLoadedCount;
+            uint32_t actionsCount;
             size_t totalCachedFilesMemSize;
         } ResourceManagerStats;
 

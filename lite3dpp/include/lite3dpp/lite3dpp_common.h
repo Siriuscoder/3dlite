@@ -54,9 +54,11 @@
 namespace lite3dpp
 {
     /* Main engine class */
+    class LITE3DPP_EXPORT Action;
     class LITE3DPP_EXPORT Main;
     class LITE3DPP_EXPORT Scene;
     class LITE3DPP_EXPORT Camera;
+    class LITE3DPP_EXPORT SceneNodeBase;
     class LITE3DPP_EXPORT SceneNode;
     class LITE3DPP_EXPORT Material;
     class LITE3DPP_EXPORT Texture;

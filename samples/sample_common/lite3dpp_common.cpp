@@ -54,7 +54,8 @@ static const char *resourceStatsString =
     "VBO:                            %d\n"
     "IBO:                            %d\n"
     "VAO:                            %d\n"
-    "QUERIES:                        %d\n\n"
+    "QUERIES:                        %d\n"
+    "ACTIONS:                        %d\n\n"
     "File cache: %d kB in %d files\n";
 
 static const char *renderStatsString = 
@@ -309,7 +310,8 @@ void Sample::updateGui()
                 memStats.ssboLoadedCount, memStats.ssboCount,
                 memStats.uboLoadedCount, memStats.uboCount,
                 renderStats->vboCount, renderStats->iboCount, renderStats->vaoCount, renderStats->queryCount,
-                static_cast<uint32_t>(memStats.totalCachedFilesMemSize / 1024), memStats.fileCachesCount);
+                memStats.actionsCount, static_cast<uint32_t>(memStats.totalCachedFilesMemSize / 1024), 
+                memStats.fileCachesCount);
         }
         else
         {

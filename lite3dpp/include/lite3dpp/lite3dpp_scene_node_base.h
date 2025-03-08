@@ -21,6 +21,8 @@
 
 #include <lite3dpp/lite3dpp_common.h>
 #include <lite3dpp/lite3dpp_config_reader.h>
+#include <lite3dpp/lite3dpp_action.h>
+#include <lite3dpp/lite3dpp_skeleton.h>
 
 namespace lite3dpp
 {
@@ -40,6 +42,8 @@ namespace lite3dpp
         { return mNodePtr; }
         inline const lite3d_scene_node *getPtr() const
         { return mNodePtr; }
+        inline Skeleton *getSkeleton()
+        { return mSkeleton; }
 
         SceneNodeBase *getParent();
         const SceneNodeBase *getParent() const;
@@ -71,9 +75,19 @@ namespace lite3dpp
         bool isVisible() const;
         bool isRenderable() const;
 
+        void actionPlay(const String &name);
+        void actionPlayCycle(const String &name);
+        void actionPause();
+        void actionResume();
+        void actionReset();
+        bool actionCompleted() const;
+
     private:
 
         String mName;
         lite3d_scene_node *mNodePtr = nullptr;
+        Skeleton *mSkeleton = nullptr;
+        stl<String, Action>::unordered_map mActions;
+        std::unique_ptr<ActionClip> mClip; 
     };
 }
