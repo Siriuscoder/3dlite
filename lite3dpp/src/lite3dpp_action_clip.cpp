@@ -31,11 +31,16 @@ namespace lite3dpp
     {
         SDL_assert(node);
         mMain.addObserver(this);
+
+        mInitialPosition = node->getPosition();
+        mInitialRotation = node->getRotation();
+        mInitialScale = node->getScale();
     }
 
     ActionClip::~ActionClip()
     {
         mMain.removeObserver(this);
+        reset();
     }
 
     void ActionClip::timerTick(lite3d_timer *timer)
@@ -63,7 +68,9 @@ namespace lite3dpp
 
     void ActionClip::reset()
     {
-
+        mNode->setPosition(mInitialPosition);
+        mNode->setRotation(mInitialRotation);
+        mNode->setScale(mInitialScale);
     }
 
     bool ActionClip::completed() const

@@ -15,7 +15,7 @@
  *	You should have received a copy of the GNU General Public License
  *	along with Lite3D.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
-#pragma once 
+#pragma once
 
 #include <lite3dpp/lite3dpp_common.h>
 #include <lite3dpp/lite3dpp_resource.h>
@@ -28,14 +28,53 @@ namespace lite3dpp
     {
     public:
 
+        struct KeyFrame
+        {
+            enum class Channel
+            {
+                LocationX,
+                LocationY,
+                LocationZ,
+                RotationQX,
+                RotationQY,
+                RotationQZ,
+                RotationQW,
+                ScaleX,
+                ScaleY,
+                ScaleZ
+            };
+
+            float frameNo;
+            stl<std::tuple<Channel, float>>::vector channels;
+        };
+
+        using LeftRightFrame = std::pair<const KeyFrame *, const KeyFrame *>;
+
         Action(const String &name, const String &path, Main *main);
         virtual ~Action() = default;
 
+        inline float getMinFrame() const
+        { return mMinFrame; }
+        inline float getMaxFrame() const
+        { return mMaxFrame; }
+
         virtual std::unique_ptr<ActionClip> playAction(SceneNodeBase *node, bool cycle);
+        LeftRightFrame getLeftRightFrameByTime(float time) const;
+        LeftRightFrame getLeftRightFrameBoneByTime(float time, const String &boneName) const;
 
     protected:
 
         virtual void loadFromConfigImpl(const ConfigurationReader &config) override;
         virtual void unloadImpl() override;
+
+        static void loadKeyFrames(const ConfigurationReader &config, stl<KeyFrame>::vector &keyFrames);
+        LeftRightFrame getLeftRightFrameByTime(float time, const stl<KeyFrame>::vector &frames) const;
+
+    protected:
+
+        stl<KeyFrame>::vector mKeyFrames;
+        stl<String, stl<KeyFrame>::vector>::unordered_map mSkeletonKeyFrames;
+        float mMinFrame = 0;
+        float mMaxFrame = 0;
     };
 }

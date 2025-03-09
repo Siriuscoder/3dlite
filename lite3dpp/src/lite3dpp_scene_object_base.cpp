@@ -166,7 +166,7 @@ namespace lite3dpp
     void SceneObjectBase::scale(const kmVec3 &scale)
     {
         SDL_assert(getRoot());
-        getRoot()->scale(scale);
+        getRoot()->setScale(scale);
     }
 
     void SceneObjectBase::rotateY(float angleDelta)

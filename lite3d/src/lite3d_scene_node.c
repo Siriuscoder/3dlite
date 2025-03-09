@@ -87,7 +87,7 @@ void lite3d_scene_node_rotate_angle(lite3d_scene_node *node, const kmVec3 *axis,
     lite3d_scene_node_rotate(node, &tmpQuat);
 }
 
-void lite3d_scene_node_scale(lite3d_scene_node *node, const kmVec3 *scale)
+void lite3d_scene_node_set_scale(lite3d_scene_node *node, const kmVec3 *scale)
 {
     SDL_assert(node && scale);
     node->scale = *scale;

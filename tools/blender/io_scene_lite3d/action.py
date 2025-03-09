@@ -43,7 +43,7 @@ class AnimationAction:
         actionJson["MaxFrame"] = self.action.curve_frame_range.y
 
         if len(self.skeletonFrames) > 0:
-            actionJson["BonesFrames"] = framesSorted
+            actionJson["SkeletonFrames"] = framesSorted
         if len(self.frames) > 0:
             actionJson["Frames"] = framesSorted
 

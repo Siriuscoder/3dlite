@@ -18,6 +18,9 @@
 #include <lite3dpp/lite3dpp_action.h>
 #include <lite3dpp/lite3dpp_scene_node_base.h>
 
+#include <algorithm>
+#include <functional>
+
 namespace lite3dpp
 {
     Action::Action(const String &name, const String &path, Main *main) : 
@@ -26,7 +29,6 @@ namespace lite3dpp
 
     std::unique_ptr<ActionClip> Action::playAction(SceneNodeBase *node, bool cycle)
     {
-        //auto skeleton = node->getSkeleton();
         auto clip = std::make_unique<ActionClip>(*this, getMain(), node);
         clip->setCycle(cycle);
         clip->play();
@@ -35,11 +37,129 @@ namespace lite3dpp
 
     void Action::loadFromConfigImpl(const ConfigurationReader &config)
     {
+        mMinFrame = config.getDouble(L"MinFrame");
+        mMaxFrame = config.getDouble(L"MaxFrame");
+        loadKeyFrames(config.getObject(L"Frames"), mKeyFrames);
 
+        config.getObject(L"SkeletonFrames").enumerateObjects([this](const WString &name, const ConfigurationReader &boneCfg)
+        {
+            stl<KeyFrame>::vector boneKeyFrames;
+            loadKeyFrames(boneCfg, boneKeyFrames);
+
+            if (boneKeyFrames.size() > 0)
+            {
+                String boneName(name.begin(), name.end());
+                mSkeletonKeyFrames[boneName] = boneKeyFrames;
+            }
+        });
     }
 
     void Action::unloadImpl()
-    {
+    {}
 
+    void Action::loadKeyFrames(const ConfigurationReader &config, stl<KeyFrame>::vector &keyFrames)
+    {
+        config.enumerateObjects([&keyFrames](const WString &name, const ConfigurationReader &keyFrameCfg)
+        {
+            KeyFrame keyFrame;
+            keyFrame.frameNo = std::stof(name);
+
+            keyFrameCfg.enumerateObjects([&keyFrame](const WString &name, const ConfigurationReader &channelCfg)
+            {
+                if (name == L"locationX")
+                {
+                    keyFrame.channels.emplace_back(std::make_tuple(KeyFrame::Channel::LocationX, channelCfg.getDouble(name)));
+                }
+                else if (name == L"locationY")
+                {
+                    keyFrame.channels.emplace_back(std::make_tuple(KeyFrame::Channel::LocationY, channelCfg.getDouble(name)));
+                }
+                else if (name == L"locationZ")
+                {
+                    keyFrame.channels.emplace_back(std::make_tuple(KeyFrame::Channel::LocationZ, channelCfg.getDouble(name)));
+                }
+                else if (name == L"rotation_quaternionX")
+                {
+                    keyFrame.channels.emplace_back(std::make_tuple(KeyFrame::Channel::RotationQX, channelCfg.getDouble(name)));
+                }
+                else if (name == L"rotation_quaternionY")
+                {
+                    keyFrame.channels.emplace_back(std::make_tuple(KeyFrame::Channel::RotationQY, channelCfg.getDouble(name)));
+                }
+                else if (name == L"rotation_quaternionZ")
+                {
+                    keyFrame.channels.emplace_back(std::make_tuple(KeyFrame::Channel::RotationQZ, channelCfg.getDouble(name)));
+                }
+                else if (name == L"rotation_quaternionW")
+                {
+                    keyFrame.channels.emplace_back(std::make_tuple(KeyFrame::Channel::RotationQW, channelCfg.getDouble(name)));
+                }
+                else if (name == L"scaleX")
+                {
+                    keyFrame.channels.emplace_back(std::make_tuple(KeyFrame::Channel::ScaleX, channelCfg.getDouble(name)));
+                }
+                else if (name == L"scaleY")
+                {
+                    keyFrame.channels.emplace_back(std::make_tuple(KeyFrame::Channel::ScaleY, channelCfg.getDouble(name)));
+                }
+                else if (name == L"scaleZ")
+                {
+                    keyFrame.channels.emplace_back(std::make_tuple(KeyFrame::Channel::ScaleZ, channelCfg.getDouble(name)));
+                }
+            });
+
+            keyFrames.emplace_back(keyFrame);
+        });
+
+        // В экспорте кадры отсортирвоаны, но сделаем еще раз на всякий случай
+        std::sort(keyFrames.begin(), keyFrames.end(), [](const KeyFrame &a, const KeyFrame &b)
+        {
+            return a.frameNo < b.frameNo;
+        });
+    }
+
+    Action::LeftRightFrame Action::getLeftRightFrameByTime(float time, const stl<KeyFrame>::vector &frames) const
+    {
+        // Кадров вообще нет, не должно быть такого
+        if (frames.size() == 0)
+        {
+            return std::make_pair(nullptr, nullptr); 
+        }
+
+        // ищем ближайший следующий кадр
+        KeyFrame marker = {time}; 
+        auto frameIt = std::upper_bound(frames.begin(), frames.end(), marker, [](const KeyFrame &a, const KeyFrame &b) 
+        {
+            return a.frameNo < b.frameNo;
+        });
+
+        // Время вышло за пределы анимации
+        if (frameIt == frames.end())
+        {
+            return std::make_pair(&frames.back(), nullptr); 
+        }
+        // Анимация еще не наступила
+        else if (frameIt == frames.begin())
+        {
+            return std::make_pair(nullptr, &frames.front()); 
+        }
+
+        return std::make_pair(&(*std::prev(frameIt)), &(*frameIt));
+    }
+
+    Action::LeftRightFrame Action::getLeftRightFrameByTime(float time) const
+    {
+        return getLeftRightFrameByTime(time, mKeyFrames);
+    }
+
+    Action::LeftRightFrame Action::getLeftRightFrameBoneByTime(float time, const String &boneName) const
+    {
+        const auto &boneKeyFrames = mSkeletonKeyFrames.find(boneName);
+        if (boneKeyFrames != mSkeletonKeyFrames.end())
+        {
+            return getLeftRightFrameByTime(time, boneKeyFrames->second);
+        }
+
+        return std::make_pair(nullptr, nullptr); 
     }
 }

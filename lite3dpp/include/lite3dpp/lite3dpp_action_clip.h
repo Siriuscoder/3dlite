@@ -49,5 +49,8 @@ namespace lite3dpp
         Main &mMain;
         SceneNodeBase *mNode;
         bool mCycle = false;
+        kmVec3 mInitialPosition;
+        kmQuaternion mInitialRotation;
+        kmVec3 mInitialScale;
     };
 }

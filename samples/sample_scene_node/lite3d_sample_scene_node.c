@@ -301,7 +301,7 @@ static int init(void *userdata)
         lite3d_scene_node_init(&mSceneNodeInherited[i]);
         mSceneNodeInherited[i].frustumTest = 0;
         lite3d_scene_node_set_position(&mSceneNodeInherited[i], &tmp);
-        lite3d_scene_node_scale(&mSceneNodeInherited[i], &nodeScale[i]);
+        lite3d_scene_node_set_scale(&mSceneNodeInherited[i], &nodeScale[i]);
 
         lite3d_scene_add_node(&mScene, &mSceneNode[i], NULL);
         lite3d_scene_node_touch_material(&mSceneNode[i], lite3d_mesh_chunk_get_by_material_index(&mCubeVbo, 0), NULL, &mVintageBoxMaterial, 1);

@@ -110,10 +110,16 @@ namespace lite3dpp
         lite3d_scene_node_rotate_angle(mNodePtr, &axis, angle);
     }
 
-    void SceneNodeBase::scale(const kmVec3 &scale)
+    void SceneNodeBase::setScale(const kmVec3 &scale)
     {
         SDL_assert(mNodePtr);
-        lite3d_scene_node_scale(mNodePtr, &scale);
+        lite3d_scene_node_set_scale(mNodePtr, &scale);
+    }
+
+    const kmVec3 &SceneNodeBase::getScale() const
+    {
+        SDL_assert(mNodePtr);
+        return mNodePtr->scale;
     }
     
     void SceneNodeBase::setVisible(bool flag)
@@ -197,7 +203,7 @@ namespace lite3dpp
         auto action = mActions.find(name);
         if (action != mActions.end())
         {
-            mClip = action->second.playAction(this, false);
+            mClip = action->second->playAction(this, false);
         }
     }
 
@@ -206,7 +212,7 @@ namespace lite3dpp
         auto action = mActions.find(name);
         if (action != mActions.end())
         {
-            mClip = action->second.playAction(this, true);
+            mClip = action->second->playAction(this, true);
         }
     }
 

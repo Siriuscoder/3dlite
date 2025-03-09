@@ -69,7 +69,8 @@ namespace lite3dpp
         void rotateX(float angleDelta);
         void rotateZ(float angleDelta);
         
-        void scale(const kmVec3 &scale);
+        void setScale(const kmVec3 &scale);
+        const kmVec3 &getScale() const;
 
         void setVisible(bool flag);
         bool isVisible() const;
@@ -86,8 +87,11 @@ namespace lite3dpp
 
         String mName;
         lite3d_scene_node *mNodePtr = nullptr;
+        std::unique_ptr<ActionClip> mClip;
+
+    protected:
+
         Skeleton *mSkeleton = nullptr;
-        stl<String, Action>::unordered_map mActions;
-        std::unique_ptr<ActionClip> mClip; 
+        stl<String, Action *>::unordered_map mActions;
     };
 }

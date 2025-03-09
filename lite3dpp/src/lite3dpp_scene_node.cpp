@@ -16,10 +16,11 @@
  *	along with Lite3D.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
 #include <lite3dpp/lite3dpp_scene_node.h>
+#include <lite3dpp/lite3dpp_scene.h>
+#include <lite3dpp/lite3dpp_main.h>
 
 #include <SDL_assert.h>
 #include <SDL_log.h>
-#include <lite3dpp/lite3dpp_scene.h>
 
 namespace lite3dpp
 {
@@ -41,7 +42,15 @@ namespace lite3dpp
         frustumTest(json.getBool(L"FrustumTest", true));
         setPosition(json.getVec3(L"Position"));
         setRotation(json.getQuaternion(L"Rotation"));
-        scale(json.getVec3(L"Scale", KM_VEC3_ONE));
+        setScale(json.getVec3(L"Scale", KM_VEC3_ONE));
+
+        for (auto &actionCfg : json.getObjects(L"Actions"))
+        {
+            auto action = scene->getMain().getResourceManager()->queryResource<Action>(actionCfg.getString(L"Name"), 
+                actionCfg.getString(L"Action"));
+
+            mActions[action->getName()] = action;
+        }
 
         /* attach node to scene */
         if (!lite3d_scene_add_node(scene->getPtr(), getPtr(), parent ? parent->getPtr() : nullptr))
