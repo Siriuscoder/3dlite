@@ -42,6 +42,16 @@ namespace lite3dpp
     protected:
 
         virtual void timerTick(lite3d_timer *timerid) override;
+        // Interpolate between two frames, node may be SceneNode, Bone or something else with 
+        // get/set Position Rotation Scale
+        template<class Node, class LeftRightFrame>
+        void interpolate(Node *node, const LeftRightFrame& leftRightFrame);
+        template<class Node, class KeyFrame>
+        kmVec3 consolidatePosition(Node *node, const KeyFrame *keyFrame, bool &updated);
+        template<class Node, class KeyFrame>
+        kmQuaternion consolidateRotation(Node *node, const KeyFrame *keyFrame, bool &updated);
+        template<class Node, class KeyFrame>
+        kmVec3 consolidateScale(Node *node, const KeyFrame *keyFrame, bool &updated);
 
     protected:
 
@@ -52,5 +62,7 @@ namespace lite3dpp
         kmVec3 mInitialPosition;
         kmQuaternion mInitialRotation;
         kmVec3 mInitialScale;
+        float mTime = 0.0f;
+        bool mPlaying = false;
     };
 }
