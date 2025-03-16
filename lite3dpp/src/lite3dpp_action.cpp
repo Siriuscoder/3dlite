@@ -66,21 +66,21 @@ namespace lite3dpp
 
             if (keyFrameCfg.has(L"location"))
             {
-                KeyFrame::ChannelValue value = {0};
+                KeyFrame::ChannelValue value = {};
                 value.position = keyFrameCfg.getVec3(L"location");
                 keyFrame.channels.emplace_back(std::make_tuple(KeyFrame::Channel::Location, value));
             }
             
             if (keyFrameCfg.has(L"rotation_quaternion"))
             {
-                KeyFrame::ChannelValue value = {0};
+                KeyFrame::ChannelValue value = {};
                 value.rotation = keyFrameCfg.getQuaternion(L"rotation_quaternion");
                 keyFrame.channels.emplace_back(std::make_tuple(KeyFrame::Channel::Rotation, value));
             }
             
             if (keyFrameCfg.has(L"scale"))
             {
-                KeyFrame::ChannelValue value = {0};
+                KeyFrame::ChannelValue value = {};
                 value.scale = keyFrameCfg.getVec3(L"scale");
                 keyFrame.channels.emplace_back(std::make_tuple(KeyFrame::Channel::Scale, value));
             }
