@@ -20,13 +20,14 @@
 #include <lite3d/lite3d_scene.h>
 
 #include <lite3dpp/lite3dpp_common.h>
+#include <lite3dpp/lite3dpp_observer.h>
 #include <lite3dpp/lite3dpp_config_reader.h>
 #include <lite3dpp/lite3dpp_action.h>
 #include <lite3dpp/lite3dpp_skeleton.h>
 
 namespace lite3dpp
 {
-    class LITE3DPP_EXPORT SceneNodeBase : public Manageable, public Noncopiable
+    class LITE3DPP_EXPORT SceneNodeBase : public Observable<SceneNodeObserver>, public Manageable, public Noncopiable
     {
     public:
 

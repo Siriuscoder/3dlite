@@ -30,7 +30,7 @@ namespace lite3dpp
     {
     public:
 
-        typedef typename stl<T *>::list Observers;
+        using Observers = stl<T *>::list;
 
         inline Observers &getObservers()
         { return mObservers; }
@@ -117,6 +117,17 @@ namespace lite3dpp
 
         virtual bool beginUpdate(RenderTarget *rt) { return true; }
         virtual void postUpdate(RenderTarget *rt) {}
+    };
+
+    class LITE3DPP_EXPORT SceneNodeObserver
+    {
+    public:
+
+        virtual ~SceneNodeObserver() {}
+
+        virtual void updatePosition(SceneNodeBase *node) {}
+        virtual void updateRotation(SceneNodeBase *node) {}
+        virtual void updateScale(SceneNodeBase *node) {}
     };
 
 #define LITE3D_EXT_OBSERVER_NOTIFY(obj, func)                                     { for(auto o : (obj)->getObservers()) o->func(); }

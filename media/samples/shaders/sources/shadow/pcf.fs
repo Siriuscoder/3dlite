@@ -106,10 +106,8 @@ float Shadow(in LightSource source, in Surface surface, in AngularInfo angular)
     // transform the NDC coordinates to the range [0,1]
     sv = (sv / sv.w) * 0.5 + 0.5;
     // clipping
-    if (!isValidUV(sv.xy))
+    if (sv.z > 1.0 || sv.z < 0.0 || !isValidUV(sv.xy))
         return hasFlag(source.flags, LITE3D_LIGHT_DIRECTIONAL) ? 1.0 : 0.0;
-    if (sv.z > 1.0 || sv.z < 0.0)
-        return 0.0;
 
     float shadowFactor = 0.0;
     vec2 texelSize = 1.0 / textureSize(ShadowMaps, 0).xy;
