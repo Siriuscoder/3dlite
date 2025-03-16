@@ -1,0 +1,50 @@
+{
+    "ShaderPackage": "piston",
+    "MainScenePath": "piston:scenes/piston.json",
+    "Instancing": false,
+    "OcclusionCulling": false,
+    "LightingTechnique": "UBO",
+    "MultiRender": true,
+    "SkyBox": 
+    {
+        "Texture": "samples:textures/json/skybox.json",
+        "EmissionStrength": 1.2
+    },
+    "ShadowMaps":
+    {
+        "Width": 2048,
+        "Height": 2048,
+        "MaxCount": 1,
+        "NearClipPlane": 1.0,
+        "FarClipPlane": 30.0,
+        "DirectionLightShadowParams": 
+        {
+            "LeftClipPlane": -10.0,
+            "RightClipPlane": 10.0,
+            "BottomClipPlane": -10.0,
+            "TopClipPlane": 10.0
+        }
+    },
+    "SSAO": 
+    {
+        "AORadius": 0.15,
+        "FramebufferScale": 2
+    },
+    "BLOOM": 
+    {
+        "BloomRadius": 0.005
+    },
+    "PostProcess":
+    {
+        "Gamma": 2.2,
+        "Contrast": 1.005,
+        "Saturation": 1.10,
+        "Exposure": 1.0,
+        "DynamicExposure":
+        {
+            "ExposureMax": 4.0,
+            "ExposureMin": 1.5,
+            "ExposureBase": 0.5
+        }
+    }
+}

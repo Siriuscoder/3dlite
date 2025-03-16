@@ -32,20 +32,20 @@ namespace lite3dpp
         {
             enum class Channel
             {
-                LocationX,
-                LocationY,
-                LocationZ,
-                RotationQX,
-                RotationQY,
-                RotationQZ,
-                RotationQW,
-                ScaleX,
-                ScaleY,
-                ScaleZ
+                Location,
+                Rotation,
+                Scale
+            };
+
+            union ChannelValue
+            {
+                kmVec3 position;
+                kmQuaternion rotation;
+                kmVec3 scale;
             };
 
             float frameNo;
-            stl<std::tuple<Channel, float>>::vector channels;
+            stl<std::tuple<Channel, ChannelValue>>::vector channels;
         };
 
         using LeftRightFrame = std::pair<const KeyFrame *, const KeyFrame *>;

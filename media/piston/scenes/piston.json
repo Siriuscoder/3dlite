@@ -1,0 +1,65 @@
+{
+  "Cameras": [
+    {
+      "Name": "MyCamera",
+      "Position": [
+        4.5,
+        2.0,
+        3.0
+      ],
+      "LookAt": [
+        0.0,
+        1.8,
+        1.2
+      ],
+      "Perspective": {
+        "Znear": 0.01,
+        "Zfar": 100.0,
+        "Fov": 60.0
+      }
+    }
+  ],
+  "LightingTechnique": "UBO",
+  "Objects": [
+    {
+      "Name": "Engine",
+      "Object": "piston:objects/Engine.json",
+      "Position": [
+        4.1698151517740974e-17,
+        0.0,
+        1.339081048965454
+      ],
+      "Rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "Scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "Name": "Ground",
+      "Object": "piston:objects/Ground.json",
+      "Position": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "Rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "Scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    }
+  ]
+}

@@ -33,7 +33,7 @@ class AnimationAction:
             rotationEuler = transformCopy["rotation_euler"]
             if all([x is not None for x in rotationEuler]):
                 rotationQ = mathutils.Euler(rotationEuler).to_quaternion()
-                transformCopy["rotation_quaternion"] = [x for x in rotationQ]
+                transformCopy["rotation_quaternion"] = [rotationQ.x, rotationQ.y, rotationQ.z, rotationQ.w]
             # Подчищаем пустные треки трансформации
             curvesToDel = [x[0] for x in transformCopy.items() if any([y is None for y in x[1]])]
             curvesToDel.append("rotation_euler")

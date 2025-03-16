@@ -120,7 +120,7 @@ class Scene:
         
         actionsList.append({
                 "Action": self.getAbsMeshPath(aminAction.getRelativePath()), 
-                "Name": action.name
+                "Name": aminAction.name
             })
 
     def exportActions(self, obj, node):

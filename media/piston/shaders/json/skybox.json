@@ -1,0 +1,8 @@
+{
+    "Sources": 
+    [
+        // Standard shaders with params customization
+        "samples:shaders/sources/pipeline/skybox_pass/skybox.vs",
+        "samples:shaders/sources/pipeline/skybox_pass/skybox.fs"
+    ]
+}

@@ -27,6 +27,15 @@ namespace lite3dpp
     {
     public:
 
+        enum class ActionClipState
+        {
+            UNKNOWN,
+            STOPPED,
+            PLAYING,
+            PAUSED,
+            COMPLETED,
+        };
+
         ActionClip(const Action &action, Main &main, SceneNodeBase *node);
         virtual ~ActionClip();
 
@@ -34,10 +43,10 @@ namespace lite3dpp
         void pause();
         void resume();
         void reset();
-        // Will never be completed if cycle = true
-        bool completed() const;
         void setCycle(bool cycle)
         { mCycle = cycle; }
+        inline ActionClipState getState() const 
+        { return mState; }
 
     protected:
 
@@ -63,6 +72,6 @@ namespace lite3dpp
         kmQuaternion mInitialRotation;
         kmVec3 mInitialScale;
         float mTime = 0.0f;
-        bool mPlaying = false;
+        ActionClipState mState = ActionClipState::STOPPED;
     };
 }

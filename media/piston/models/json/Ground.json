@@ -1,0 +1,15 @@
+{
+  "Codec": "m",
+  "Model": "piston:models/meshes/Ground.m",
+  "Partition": "piston.mesh_partition",
+  "MaterialMapping": [
+    {
+      "Material": {
+        "Type": "PBR",
+        "Name": "Ground.material",
+        "Material": "piston:materials/Ground.json"
+      },
+      "MaterialIndex": 0
+    }
+  ]
+}

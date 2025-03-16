@@ -1,0 +1,50 @@
+{
+  "Root": {
+    "Name": "Ground",
+    "Mesh": {
+      "Mesh": "piston:models/json/Ground.json",
+      "Name": "Ground.mesh"
+    },
+    "Nodes": [
+      {
+        "Name": "Sun",
+        "Light": {
+          "Type": "Directional",
+          "Name": "Sun_Sun",
+          "Diffuse": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "Radiance": 5.0,
+          "Direction": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "Position": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "Position": [
+          3.2826313972473145,
+          -7.016366958618164,
+          15.075141906738281
+        ],
+        "Rotation": [
+          0.16269774734973907,
+          0.289852112531662,
+          -0.13631999492645264,
+          0.9332374334335327
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      }
+    ]
+  }
+}

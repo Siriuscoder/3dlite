@@ -21,6 +21,7 @@
 #include <lite3dpp/lite3dpp_main.h>
 
 #include <SDL_assert.h>
+#include <SDL_log.h>
 
 namespace lite3dpp
 {
@@ -46,95 +47,58 @@ namespace lite3dpp
     template<class Node, class KeyFrame>
     kmVec3 ActionClip::consolidatePosition(Node *node, const KeyFrame *keyFrame, bool &updated)
     {
-        auto position = node->getPosition();
         updated = false;
-
         for (const auto &channel : keyFrame->channels)
         {
             switch (std::get<0>(channel))
             {
-                case Action::KeyFrame::Channel::LocationX:
-                    position.x = std::get<1>(channel);
+                case Action::KeyFrame::Channel::Location:
                     updated = true;
-                    break;
-                case Action::KeyFrame::Channel::LocationY:
-                    position.y = std::get<1>(channel);
-                    updated = true;
-                    break;
-                case Action::KeyFrame::Channel::LocationZ:
-                    position.z = std::get<1>(channel);
-                    updated = true;
-                    break;
+                    return std::get<1>(channel).position;
                 default:
                     break;
             }
         }
 
-        return position;
+        return node->getPosition();
     }
 
     template<class Node, class KeyFrame>
     kmQuaternion ActionClip::consolidateRotation(Node *node, const KeyFrame *keyFrame, bool &updated)
     {
-        auto rotation = node->getRotation();
         updated = false;
-
         for (const auto &channel : keyFrame->channels)
         {
             switch (std::get<0>(channel))
             {
-                case Action::KeyFrame::Channel::RotationQX:
-                    rotation.x = std::get<1>(channel);
+                case Action::KeyFrame::Channel::Rotation:
                     updated = true;
-                    break;
-                case Action::KeyFrame::Channel::RotationQY:
-                    rotation.y = std::get<1>(channel);
-                    updated = true;
-                    break;
-                case Action::KeyFrame::Channel::RotationQZ:
-                    rotation.z = std::get<1>(channel);
-                    updated = true;
-                    break;
-                case Action::KeyFrame::Channel::RotationQW:
-                    rotation.w = std::get<1>(channel);
-                    updated = true;
-                    break;
+                    return std::get<1>(channel).rotation;
                 default:
                     break;
             }
         }
 
-        return rotation;
+        return node->getRotation();;
     }
 
     template<class Node, class KeyFrame>
     kmVec3 ActionClip::consolidateScale(Node *node, const KeyFrame *keyFrame, bool &updated)
     {
-        auto scale = node->getScale();
         updated = false;
-
         for (const auto &channel : keyFrame->channels)
         {
             switch (std::get<0>(channel))
             {
-                case Action::KeyFrame::Channel::ScaleX:
-                    scale.x = std::get<1>(channel);
+                case Action::KeyFrame::Channel::Scale:
                     updated = true;
-                    break;
-                case Action::KeyFrame::Channel::ScaleY:
-                    scale.y = std::get<1>(channel);
-                    updated = true;
-                    break;
-                case Action::KeyFrame::Channel::ScaleZ:
-                    scale.z = std::get<1>(channel);
-                    updated = true;
-                    break;
+                    return std::get<1>(channel).scale;
                 default:
                     break;
             }
         }
 
-        return scale;
+        return node->getScale();
     }
 
     template<class Node, class LeftRightFrame>
@@ -194,7 +158,7 @@ namespace lite3dpp
 
     void ActionClip::timerTick(lite3d_timer *timer)
     {
-        if (!mPlaying)
+        if (mState != ActionClipState::PLAYING)
             return;
 
         if (mMain.getFixedUpdateTimer() == timer)
@@ -203,6 +167,7 @@ namespace lite3dpp
             {
                 if (!mCycle)
                 {
+                    mState = ActionClipState::COMPLETED;
                     return;
                 }
 
@@ -211,6 +176,7 @@ namespace lite3dpp
 
             // Сколько реальных кадров прошло с прошлого вызова таймера 
             mTime += static_cast<float>(static_cast<double>(timer->deltaMcs) / (timer->interval * 1000.0));
+            //SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "mTime %f delta", mTime);
             interpolate(mNode, mAction.getLeftRightFrameByTime(mTime));
         }
     }
@@ -218,30 +184,25 @@ namespace lite3dpp
     void ActionClip::play()
     {
         mTime = 0.0f;
-        mPlaying = true;
+        mState = ActionClipState::PLAYING;
     }
 
     void ActionClip::pause()
     {
-        mPlaying = false;
+        mState = ActionClipState::PAUSED;
     }
 
     void ActionClip::resume()
     {
-        mPlaying = true;
+        mState = ActionClipState::PLAYING;
     }
 
     void ActionClip::reset()
     {
         mTime = 0.0f;
-        mPlaying = false;
+        mState = ActionClipState::STOPPED;
         mNode->setPosition(mInitialPosition);
         mNode->setRotation(mInitialRotation);
         mNode->setScale(mInitialScale);
-    }
-
-    bool ActionClip::completed() const
-    {
-        return !mCycle && mTime >= mAction.getMaxFrame();
     }
 }

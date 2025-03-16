@@ -101,11 +101,13 @@ float Shadow(in LightSource source, in Surface surface, in AngularInfo angular)
     if (!hasFlag(source.flags, LITE3D_LIGHT_CASTSHADOW))
         return 1.0;
 
-    // Shadow space NDC coorts of current fragment
+    // Shadow space NDC coordinates of current fragment
     vec4 sv = shadowTransform[source.shadowIndex] * vec4(surface.wv, 1.0);
     // transform the NDC coordinates to the range [0,1]
     sv = (sv / sv.w) * 0.5 + 0.5;
-    // Z clip 
+    // clipping
+    if (!isValidUV(sv.xy))
+        return hasFlag(source.flags, LITE3D_LIGHT_DIRECTIONAL) ? 1.0 : 0.0;
     if (sv.z > 1.0 || sv.z < 0.0)
         return 0.0;
 

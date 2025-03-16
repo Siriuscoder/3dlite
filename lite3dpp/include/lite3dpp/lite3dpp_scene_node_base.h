@@ -82,6 +82,7 @@ namespace lite3dpp
         void actionResume();
         void actionReset();
         bool actionCompleted() const;
+        ActionClip::ActionClipState getActionState() const;
 
     private:
 

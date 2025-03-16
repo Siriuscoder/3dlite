@@ -212,6 +212,7 @@ namespace lite3dpp
         auto action = mActions.find(name);
         if (action != mActions.end())
         {
+            mClip.reset();
             mClip = action->second->playAction(this, true);
         }
     }
@@ -242,7 +243,12 @@ namespace lite3dpp
 
     bool SceneNodeBase::actionCompleted() const
     {
-        return mClip ? mClip->completed() : true;
+        return mClip ? mClip->getState() == ActionClip::ActionClipState::COMPLETED : false;
+    }
+
+    ActionClip::ActionClipState SceneNodeBase::getActionState() const
+    {
+        return mClip ? mClip->getState() : ActionClip::ActionClipState::UNKNOWN;
     }
 }
 

@@ -64,54 +64,31 @@ namespace lite3dpp
             KeyFrame keyFrame;
             keyFrame.frameNo = std::stof(name);
 
-            keyFrameCfg.enumerateObjects([&keyFrame](const WString &name, const ConfigurationReader &channelCfg)
+            if (keyFrameCfg.has(L"location"))
             {
-                if (name == L"locationX")
-                {
-                    keyFrame.channels.emplace_back(std::make_tuple(KeyFrame::Channel::LocationX, channelCfg.getDouble(name)));
-                }
-                else if (name == L"locationY")
-                {
-                    keyFrame.channels.emplace_back(std::make_tuple(KeyFrame::Channel::LocationY, channelCfg.getDouble(name)));
-                }
-                else if (name == L"locationZ")
-                {
-                    keyFrame.channels.emplace_back(std::make_tuple(KeyFrame::Channel::LocationZ, channelCfg.getDouble(name)));
-                }
-                else if (name == L"rotation_quaternionX")
-                {
-                    keyFrame.channels.emplace_back(std::make_tuple(KeyFrame::Channel::RotationQX, channelCfg.getDouble(name)));
-                }
-                else if (name == L"rotation_quaternionY")
-                {
-                    keyFrame.channels.emplace_back(std::make_tuple(KeyFrame::Channel::RotationQY, channelCfg.getDouble(name)));
-                }
-                else if (name == L"rotation_quaternionZ")
-                {
-                    keyFrame.channels.emplace_back(std::make_tuple(KeyFrame::Channel::RotationQZ, channelCfg.getDouble(name)));
-                }
-                else if (name == L"rotation_quaternionW")
-                {
-                    keyFrame.channels.emplace_back(std::make_tuple(KeyFrame::Channel::RotationQW, channelCfg.getDouble(name)));
-                }
-                else if (name == L"scaleX")
-                {
-                    keyFrame.channels.emplace_back(std::make_tuple(KeyFrame::Channel::ScaleX, channelCfg.getDouble(name)));
-                }
-                else if (name == L"scaleY")
-                {
-                    keyFrame.channels.emplace_back(std::make_tuple(KeyFrame::Channel::ScaleY, channelCfg.getDouble(name)));
-                }
-                else if (name == L"scaleZ")
-                {
-                    keyFrame.channels.emplace_back(std::make_tuple(KeyFrame::Channel::ScaleZ, channelCfg.getDouble(name)));
-                }
-            });
+                KeyFrame::ChannelValue value = {0};
+                value.position = keyFrameCfg.getVec3(L"location");
+                keyFrame.channels.emplace_back(std::make_tuple(KeyFrame::Channel::Location, value));
+            }
+            
+            if (keyFrameCfg.has(L"rotation_quaternion"))
+            {
+                KeyFrame::ChannelValue value = {0};
+                value.rotation = keyFrameCfg.getQuaternion(L"rotation_quaternion");
+                keyFrame.channels.emplace_back(std::make_tuple(KeyFrame::Channel::Rotation, value));
+            }
+            
+            if (keyFrameCfg.has(L"scale"))
+            {
+                KeyFrame::ChannelValue value = {0};
+                value.scale = keyFrameCfg.getVec3(L"scale");
+                keyFrame.channels.emplace_back(std::make_tuple(KeyFrame::Channel::Scale, value));
+            }
 
             keyFrames.emplace_back(keyFrame);
         });
 
-        // В экспорте кадры отсортирвоаны, но сделаем еще раз на всякий случай
+        // В экспорте кадры отсортированы, но сделаем еще раз на всякий случай
         std::sort(keyFrames.begin(), keyFrames.end(), [](const KeyFrame &a, const KeyFrame &b)
         {
             return a.frameNo < b.frameNo;

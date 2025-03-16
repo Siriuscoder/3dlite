@@ -1,0 +1,15 @@
+{
+  "Codec": "m",
+  "Model": "piston:models/meshes/Crankshaft.m",
+  "Partition": "piston.mesh_partition",
+  "MaterialMapping": [
+    {
+      "Material": {
+        "Type": "PBR",
+        "Name": "Crankshaft.material",
+        "Material": "piston:materials/Crankshaft.json"
+      },
+      "MaterialIndex": 0
+    }
+  ]
+}

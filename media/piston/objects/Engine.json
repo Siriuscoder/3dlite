@@ -1,0 +1,94 @@
+{
+  "Root": {
+    "Name": "Engine",
+    "Nodes": [
+      {
+        "Name": "Crankshaft",
+        "Mesh": {
+          "Mesh": "piston:models/json/Crankshaft.json",
+          "Name": "Crankshaft.mesh"
+        },
+        "Position": [
+          2.0514079191315086e-22,
+          3.552713678800501e-15,
+          5.11373272015208e-15
+        ],
+        "Rotation": [
+          0.0,
+          -8.881784197001252e-16,
+          4.235164736271502e-22,
+          1.0
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "Actions": [
+          {
+            "Action": "piston:actions/Crankshaft.json",
+            "Name": "Crankshaft.action"
+          }
+        ]
+      },
+      {
+        "Name": "Piston",
+        "Mesh": {
+          "Mesh": "piston:models/json/Piston.json",
+          "Name": "Piston.mesh"
+        },
+        "Position": [
+          -5.421010862427522e-20,
+          0.0,
+          1.0842021724855044e-19
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          -8.461896107704084e-22,
+          1.0
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "Actions": [
+          {
+            "Action": "piston:actions/Piston.json",
+            "Name": "Piston.action"
+          }
+        ]
+      },
+      {
+        "Name": "Rod",
+        "Mesh": {
+          "Mesh": "piston:models/json/Rod.json",
+          "Name": "Rod.mesh"
+        },
+        "Position": [
+          0.0,
+          0.0,
+          8.131516293641283e-20
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          -8.461944575318101e-22,
+          1.0
+        ],
+        "Scale": [
+          1.0,
+          0.9999999403953552,
+          0.9999999403953552
+        ],
+        "Actions": [
+          {
+            "Action": "piston:actions/Rod.json",
+            "Name": "Rod.action"
+          }
+        ]
+      }
+    ]
+  }
+}
