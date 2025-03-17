@@ -41,25 +41,24 @@ public:
 
     struct SpotLightWithShadow
     {
-        lite3dpp_pipeline::ShadowManager::DynamicShadowReceiver* spot = nullptr;
-        lite3dpp_pipeline::ShadowManager::ShadowCaster* shadowCaster = nullptr;
+        SceneNode* mSpotDriver = nullptr;
+        lite3dpp_pipeline::ShadowManager::ShadowCaster* mShadowCaster = nullptr;
 
         SpotLightWithShadow() = default;
-        SpotLightWithShadow(lite3dpp_pipeline::ShadowManager::DynamicShadowReceiver *spot, 
-            lite3dpp_pipeline::ShadowManager::ShadowCaster* shadowCaster) : 
-            spot(spot),
-            shadowCaster(shadowCaster)
+        SpotLightWithShadow(SceneNode *spotDriver, LightSceneNode *spot, lite3dpp_pipeline::ShadowManager* shadowManager) : 
+            mSpotDriver(spotDriver)
         {
-            shadowCaster->getNode()->getLight()->setFlag(LightSourceFlags::CastShadowPcfAdaptive);
+            mShadowCaster = shadowManager->newShadowCaster(spot);
+            mShadowCaster->getNode()->getLight()->setFlag(LightSourceFlags::CastShadowPcfAdaptive);
         }
 
         void rotateAngle(const kmVec3 &axis, float angle)
         {
-            SDL_assert(spot);
-            SDL_assert(shadowCaster);
+            SDL_assert(mSpotDriver);
+            SDL_assert(mShadowCaster);
 
-            spot->rotateAngle(axis, angle);
-            shadowCaster->invalidate();
+            mSpotDriver->rotateAngle(axis, angle);
+            mShadowCaster->invalidate();
         }
     };
 
@@ -72,8 +71,10 @@ public:
         MinigunObject(Scene* scene, lite3dpp_pipeline::ShadowManager* shadowManager, const String& name) : 
             mMinigunObj(scene->getObject(name))
         {
-            mMinigun = shadowManager->registerShadowReceiver(mMinigunObj->getNode("Minigun"));
-            mMinigunBarrel = shadowManager->registerShadowReceiver(mMinigunObj->getNode("MinigunBarrel"));
+            mMinigun = mMinigunObj->getNode("Minigun");
+            mMinigunBarrel = mMinigunObj->getNode("MinigunBarrel");
+            shadowManager->registerHintNode(mMinigun);
+            shadowManager->registerHintNode(mMinigunBarrel);
         }
 
         void rotateAngle(const kmVec3 &axis, float angle)
@@ -91,8 +92,8 @@ public:
     private:
 
         SceneObject* mMinigunObj = nullptr;
-        lite3dpp_pipeline::ShadowManager::DynamicShadowReceiver* mMinigun = nullptr;
-        lite3dpp_pipeline::ShadowManager::DynamicShadowReceiver* mMinigunBarrel = nullptr;
+        SceneNode* mMinigun = nullptr;
+        SceneNode* mMinigunBarrel = nullptr;
     };
 
 public:
@@ -119,39 +120,44 @@ public:
         mMinigun02 = MinigunObject(mVaultScene, mShadowManager, "MinigunTurret.001");
         mMinigun02.rotateAngle(KM_VEC3_POS_Z, kmDegreesToRadians(-30.0));
 
-        mGearKey = mShadowManager->registerShadowReceiver(mVaultScene->getObject("VaultStatic")->getNode("GearKey"));
-        mGearKeySpinner = mShadowManager->registerShadowReceiver(mVaultScene->getObject("VaultStatic")->getNode("GearKeySpinner"));
-        mGeneratorSpinner01 = mShadowManager->registerShadowReceiver(mVaultScene->getObject("VaultStatic")->getNode("PowerGeneratorSpinner01"));
-        mGeneratorSpinner02 = mShadowManager->registerShadowReceiver(mVaultScene->getObject("VaultStatic")->getNode("PowerGeneratorSpinner02"));
-        mFans.emplace_back(mShadowManager->registerShadowReceiver(mVaultScene->getObject("VaultStatic")->getNode("FanRotor")));
-        mFans.emplace_back(mShadowManager->registerShadowReceiver(mVaultScene->getObject("VaultStatic")->getNode("FanRotor.001")));
-        mFans.emplace_back(mShadowManager->registerShadowReceiver(mVaultScene->getObject("VaultStatic")->getNode("FanRotor.002")));
-        mFans.emplace_back(mShadowManager->registerShadowReceiver(mVaultScene->getObject("VaultStatic")->getNode("FanRotor.003")));
+        mGearKey = mVaultScene->getObject("VaultStatic")->getNode("GearKey");
+        mShadowManager->registerHintNode(mGearKey);
+
+        mGearKeySpinner = mVaultScene->getObject("VaultStatic")->getNode("GearKeySpinner");
+        mShadowManager->registerHintNode(mGearKeySpinner);
+
+        mGeneratorSpinner01 = mVaultScene->getObject("VaultStatic")->getNode("PowerGeneratorSpinner01");
+        mShadowManager->registerHintNode(mGeneratorSpinner01);
+
+        mGeneratorSpinner02 = mVaultScene->getObject("VaultStatic")->getNode("PowerGeneratorSpinner02");
+        mShadowManager->registerHintNode(mGeneratorSpinner02);
+
+        mFans.emplace_back(mVaultScene->getObject("VaultStatic")->getNode("FanRotor"));
+        mFans.emplace_back(mVaultScene->getObject("VaultStatic")->getNode("FanRotor.001"));
+        mFans.emplace_back(mVaultScene->getObject("VaultStatic")->getNode("FanRotor.002"));
+        mFans.emplace_back(mVaultScene->getObject("VaultStatic")->getNode("FanRotor.003"));
+        
+        for (auto fan : mFans)
+        {
+            mShadowManager->registerHintNode(fan);
+        }
     }
 
     void setupShadowCasters()
     {
         // Установим тень для трех прожекторов и потом будем их вращать
         // Источники света получаем по ObjectName + NodeName
-        mSpot = SpotLightWithShadow(
-            mShadowManager->registerShadowReceiver(mVaultScene->getObject("LightSpot")->getNode("LightSpotLamp")),
-            mShadowManager->newShadowCaster(mVaultScene->getObject("LightSpot")->getLightNode("LightSpotNode"))
-        );
+        mSpot = SpotLightWithShadow(mVaultScene->getObject("LightSpot")->getNode("LightSpotLamp"),
+            mVaultScene->getObject("LightSpot")->getLightNode("LightSpotNode"), mShadowManager);
 
-        mSpot01 = SpotLightWithShadow(
-            mShadowManager->registerShadowReceiver(mVaultScene->getObject("LightSpot.001")->getNode("LightSpotLamp")),
-            mShadowManager->newShadowCaster(mVaultScene->getObject("LightSpot.001")->getLightNode("LightSpotNode"))
-        );
+        mSpot01 = SpotLightWithShadow(mVaultScene->getObject("LightSpot.001")->getNode("LightSpotLamp"),
+            mVaultScene->getObject("LightSpot.001")->getLightNode("LightSpotNode"), mShadowManager);
 
-        mSpot02 = SpotLightWithShadow(
-            mShadowManager->registerShadowReceiver(mVaultScene->getObject("LightSpot.002")->getNode("LightSpotLamp")),
-            mShadowManager->newShadowCaster(mVaultScene->getObject("LightSpot.002")->getLightNode("LightSpotNode"))
-        );
+        mSpot02 = SpotLightWithShadow(mVaultScene->getObject("LightSpot.002")->getNode("LightSpotLamp"),
+            mVaultScene->getObject("LightSpot.002")->getLightNode("LightSpotNode"), mShadowManager);
 
-        mSpot03 = SpotLightWithShadow(
-            mShadowManager->registerShadowReceiver(mVaultScene->getObject("LightSpot.003")->getNode("LightSpotLamp")),
-            mShadowManager->newShadowCaster(mVaultScene->getObject("LightSpot.003")->getLightNode("LightSpotNode"))
-        );
+        mSpot03 = SpotLightWithShadow(mVaultScene->getObject("LightSpot.003")->getNode("LightSpotLamp"),
+            mVaultScene->getObject("LightSpot.003")->getLightNode("LightSpotNode"), mShadowManager);
         
         mShadowManager->newShadowCaster(mVaultScene->getObject("VaultStatic")->getLightNode("RotorSpot"))->getNode()->
             getLight()->setFlag(LightSourceFlags::CastShadowPcfAdaptive);
@@ -259,7 +265,7 @@ public:
         mMinigun02.animate(-cosA * 0.02, 0.13 * deltaRetard);
         mSpot03.rotateAngle(KM_VEC3_POS_Z, 0.1 * deltaRetard);
 
-        std::for_each(mFans.begin(), mFans.end(), [deltaRetard](lite3dpp_pipeline::ShadowManager::DynamicShadowReceiver* fanRotor)
+        std::for_each(mFans.begin(), mFans.end(), [deltaRetard](SceneNode* fanRotor)
         {
             fanRotor->rotateAngle(KM_VEC3_POS_Z, 0.07 * deltaRetard);
         });
@@ -344,11 +350,11 @@ private:
     SpotLightWithShadow mSpot01;
     SpotLightWithShadow mSpot02;
     SpotLightWithShadow mSpot03;
-    lite3dpp_pipeline::ShadowManager::DynamicShadowReceiver* mGearKey = nullptr;
-    lite3dpp_pipeline::ShadowManager::DynamicShadowReceiver* mGearKeySpinner = nullptr;
-    lite3dpp_pipeline::ShadowManager::DynamicShadowReceiver* mGeneratorSpinner01 = nullptr;
-    lite3dpp_pipeline::ShadowManager::DynamicShadowReceiver* mGeneratorSpinner02 = nullptr;
-    stl<lite3dpp_pipeline::ShadowManager::DynamicShadowReceiver*>::vector mFans;
+    SceneNode* mGearKey = nullptr;
+    SceneNode* mGearKeySpinner = nullptr;
+    SceneNode* mGeneratorSpinner01 = nullptr;
+    SceneNode* mGeneratorSpinner02 = nullptr;
+    stl<SceneNode*>::vector mFans;
     MinigunObject mMinigun01;
     MinigunObject mMinigun02;
     float mAnimPi = 0.0f;

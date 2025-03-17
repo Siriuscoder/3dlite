@@ -66,6 +66,7 @@ namespace lite3dpp
     {
         SDL_assert(mNodePtr);
         lite3d_scene_node_set_position(mNodePtr, &position);
+        LITE3D_OBSERVER_NOTIFY_1(updatePosition, this);
     }
 
     const kmVec3& SceneNodeBase::getPosition() const
@@ -78,18 +79,21 @@ namespace lite3dpp
     {
         SDL_assert(mNodePtr);
         lite3d_scene_node_move(mNodePtr, &position);
+        LITE3D_OBSERVER_NOTIFY_1(updatePosition, this);
     }
 
     void SceneNodeBase::moveRelative(const kmVec3 &p)
     {
         SDL_assert(mNodePtr);
         lite3d_scene_node_move_relative(mNodePtr, &p);
+        LITE3D_OBSERVER_NOTIFY_1(updatePosition, this);
     }
 
     void SceneNodeBase::setRotation(const kmQuaternion &quat)
     {
         SDL_assert(mNodePtr);
         lite3d_scene_node_set_rotation(mNodePtr, &quat);
+        LITE3D_OBSERVER_NOTIFY_1(updateRotation, this);
     }
 
     const kmQuaternion& SceneNodeBase::getRotation() const
@@ -102,18 +106,21 @@ namespace lite3dpp
     {
         SDL_assert(mNodePtr);
         lite3d_scene_node_rotate(mNodePtr, &quat);
+        LITE3D_OBSERVER_NOTIFY_1(updateRotation, this);
     }
 
     void SceneNodeBase::rotateAngle(const kmVec3 &axis, float angle)
     {
         SDL_assert(mNodePtr);
         lite3d_scene_node_rotate_angle(mNodePtr, &axis, angle);
+        LITE3D_OBSERVER_NOTIFY_1(updateRotation, this);
     }
 
     void SceneNodeBase::setScale(const kmVec3 &scale)
     {
         SDL_assert(mNodePtr);
         lite3d_scene_node_set_scale(mNodePtr, &scale);
+        LITE3D_OBSERVER_NOTIFY_1(updateScale, this);
     }
 
     const kmVec3 &SceneNodeBase::getScale() const
@@ -162,18 +169,21 @@ namespace lite3dpp
     {
         SDL_assert(mNodePtr);
         lite3d_scene_node_rotate_y(mNodePtr, angleDelta);
+        LITE3D_OBSERVER_NOTIFY_1(updateRotation, this);
     }
 
     void SceneNodeBase::rotateX(float angleDelta)
     {
         SDL_assert(mNodePtr);
         lite3d_scene_node_rotate_x(mNodePtr, angleDelta);
+        LITE3D_OBSERVER_NOTIFY_1(updateRotation, this);
     }
 
     void SceneNodeBase::rotateZ(float angleDelta)
     {
         SDL_assert(mNodePtr);
         lite3d_scene_node_rotate_z(mNodePtr, angleDelta);
+        LITE3D_OBSERVER_NOTIFY_1(updateRotation, this);
     }
 
     SceneNodeBase *SceneNodeBase::getParent()

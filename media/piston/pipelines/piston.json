@@ -39,12 +39,6 @@
         "Gamma": 2.2,
         "Contrast": 1.005,
         "Saturation": 1.10,
-        "Exposure": 1.0,
-        "DynamicExposure":
-        {
-            "ExposureMax": 4.0,
-            "ExposureMin": 1.5,
-            "ExposureBase": 0.5
-        }
+        "Exposure": 3.0
     }
 }

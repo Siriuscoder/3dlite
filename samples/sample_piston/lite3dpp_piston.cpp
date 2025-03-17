@@ -48,12 +48,12 @@ public:
         mPistonScene = &mPipeline->getMainScene();
         
         setMainCamera(&mPipeline->getMainCamera());
-        setupShadowCasters();
 
         mCrankshaft = mPistonScene->getObject("Engine")->getNode("Crankshaft");
         mPiston = mPistonScene->getObject("Engine")->getNode("Piston");
         mRod = mPistonScene->getObject("Engine")->getNode("Rod");
 
+        setupShadowCasters();
         getMain().getResourceManager()->warmUpMeshPartitions();
         getMain().getResourceManager()->dropFileCache();
     }
@@ -63,13 +63,9 @@ public:
         auto sun = mPistonScene->getObject("Ground")->getLightNode("Sun");
         sun->getLight()->setFlag(LightSourceFlags::CastShadowPcfAdaptive);
         mSUNShadowCaster = mPipeline->getShadowManager()->newShadowCaster(sun);
-    }
-
-    void fixedUpdateTimerTick(int32_t firedPerRound, uint64_t deltaMcs, float deltaRetard) override
-    {
-        // Если анимация запущена, то перерисуем тени
-        if (mCrankshaft->getActionState() == ActionClip::ActionClipState::PLAYING)
-            mSUNShadowCaster->invalidate();
+        mPipeline->getShadowManager()->registerHintNode(mCrankshaft);
+        mPipeline->getShadowManager()->registerHintNode(mPiston);
+        mPipeline->getShadowManager()->registerHintNode(mRod);
     }
 
     void processEvent(SDL_Event *e) override

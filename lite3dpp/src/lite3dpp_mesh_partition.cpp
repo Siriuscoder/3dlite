@@ -166,7 +166,7 @@ namespace lite3dpp
 
         if (vb.valid() && vb.bufferSizeBytes() > 0)
         {
-            SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "Partition's %s vertex buffer is being warming up %zu bytes",
+            SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "Partition's %s vertex buffer is being warm up %zu bytes",
                 getName().c_str(), vb.bufferSizeBytes());
 
             vb.extendBufferBytes(0);
@@ -174,7 +174,7 @@ namespace lite3dpp
 
         if (ib.valid() && ib.bufferSizeBytes() > 0)
         {
-            SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "Partition's %s index buffer is being warming up %zu bytes",
+            SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "Partition's %s index buffer is being warm up to %zu bytes",
                 getName().c_str(), ib.bufferSizeBytes());
 
             ib.extendBufferBytes(0);

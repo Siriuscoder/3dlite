@@ -54,39 +54,19 @@ namespace lite3dpp_pipeline {
         return mShadowCamera->refreshProjViewMatrix();
     }
 
-    void ShadowManager::DynamicShadowReceiver::move(const kmVec3 &value)
+    ShadowManager::VisibilityHintNode::VisibilityHintNode(SceneNode *node) : 
+        mNode(node)
     {
         SDL_assert(mNode);
-        mNode->move(value);
-        invalidate();
+        mNode->addObserver(this);
     }
 
-    void ShadowManager::DynamicShadowReceiver::rotateAngle(const kmVec3 &axis, float angle)
-    {
-        SDL_assert(mNode);
-        mNode->rotateAngle(axis, angle);
-        invalidate();
-    }
-
-    void ShadowManager::DynamicShadowReceiver::setPosition(const kmVec3 &pos)
-    {
-        SDL_assert(mNode);
-        mNode->setPosition(pos);
-        invalidate();
-    }
-
-    const kmVec3& ShadowManager::DynamicShadowReceiver::getPosition() const
-    {
-        SDL_assert(mNode);
-        return mNode->getPosition();
-    }
-
-    void ShadowManager::DynamicShadowReceiver::clearVisibility()
+    void ShadowManager::VisibilityHintNode::resetVision()
     {
         mVisibility.clear();
     }
 
-    void ShadowManager::DynamicShadowReceiver::addVisibility(ShadowCaster* sc)
+    void ShadowManager::VisibilityHintNode::setVisibleFrom(ShadowCaster* sc)
     {
         if (std::find(mVisibility.begin(), mVisibility.end(), sc) == mVisibility.end())
         {
@@ -94,12 +74,27 @@ namespace lite3dpp_pipeline {
         }
     }
 
-    void ShadowManager::DynamicShadowReceiver::invalidate()
+    void ShadowManager::VisibilityHintNode::invalidate()
     {
         for (auto shadowCaster: mVisibility)
         {
             shadowCaster->invalidate();
         }
+    }
+
+    void ShadowManager::VisibilityHintNode::updatePosition(SceneNodeBase *node)
+    {
+        invalidate();
+    }
+
+    void ShadowManager::VisibilityHintNode::updateRotation(SceneNodeBase *node)
+    {
+        invalidate();
+    }
+
+    void ShadowManager::VisibilityHintNode::updateScale(SceneNodeBase *node)
+    {
+        invalidate();
     }
 
     ShadowManager::ShadowManager(Main& main, const String& pipelineName, const ConfigurationReader& conf) : 
@@ -167,9 +162,9 @@ namespace lite3dpp_pipeline {
         return mShadowCasters.back().get();
     }
 
-    ShadowManager::DynamicShadowReceiver* ShadowManager::registerShadowReceiver(SceneNode *node)
+    ShadowManager::VisibilityHintNode* ShadowManager::registerHintNode(SceneNode *node)
     {
-        auto it = mDynamicNodes.emplace(node, DynamicShadowReceiver(node));
+        auto it = mVisibilityHintNodes.try_emplace(node, node);
         return &it.first->second;
     }
 
@@ -225,9 +220,9 @@ namespace lite3dpp_pipeline {
         {
             RenderTarget::depthTestFunc(RenderTarget::TestFuncLEqual);
             // Подчистим списки источников света для которых эта нода видима перед проверкой фрустума.
-            for (auto& node: mDynamicNodes)
+            for (auto& node: mVisibilityHintNodes)
             {
-                node.second.clearVisibility();
+                node.second.resetVision();
             }
         }
     }
@@ -236,8 +231,8 @@ namespace lite3dpp_pipeline {
     bool ShadowManager::customVisibilityCheck(Scene *scene, SceneNode *node, lite3d_mesh_chunk *meshChunk, Material *material, 
         lite3d_bounding_vol *boundingVol, Camera *camera)
     {
-        auto it = mDynamicNodes.find(node);
-        DynamicShadowReceiver* dnode = it != mDynamicNodes.end() ? &it->second : nullptr;
+        auto it = mVisibilityHintNodes.find(node);
+        VisibilityHintNode* dnode = it != mVisibilityHintNodes.end() ? &it->second : nullptr;
 
         bool isVisible = false;
         for (auto& shadowCaster: mShadowCasters)
@@ -247,7 +242,7 @@ namespace lite3dpp_pipeline {
                 if (dnode)
                 {
                     // Текущая нода видима для этого истоника света, запомним это
-                    dnode->addVisibility(shadowCaster.get());
+                    dnode->setVisibleFrom(shadowCaster.get());
                 }
 
                 if (shadowCaster->invalidated())

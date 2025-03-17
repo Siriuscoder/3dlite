@@ -72,25 +72,22 @@ public:
         bool mInvalidated = true;
     };
 
-    class LITE3DPP_PIPELINE_EXPORT DynamicShadowReceiver
+    class LITE3DPP_PIPELINE_EXPORT VisibilityHintNode : public SceneNodeObserver
     {
     public:
     
         using ShadowCasters = stl<ShadowCaster *>::vector;
 
-        DynamicShadowReceiver(SceneNode *node) : 
-            mNode(node)
-        {}
+        VisibilityHintNode(SceneNode *node);
 
-        void move(const kmVec3 &value);
-        void rotateAngle(const kmVec3 &axis, float angle);
-        void setPosition(const kmVec3 &pos);
-        const kmVec3& getPosition() const;
-        void clearVisibility();
-        void addVisibility(ShadowCaster* sc);
+        void resetVision();
+        void setVisibleFrom(ShadowCaster* sc);
 
     private:
 
+        void updatePosition(SceneNodeBase *node) override;
+        void updateRotation(SceneNodeBase *node) override;
+        void updateScale(SceneNodeBase *node) override;
         void invalidate();
 
         SceneNode *mNode = nullptr;
@@ -102,7 +99,7 @@ public:
 
     void initialize(const String& pipelineName, const String& shaderPackage);
     ShadowCaster* newShadowCaster(LightSceneNode* node);
-    DynamicShadowReceiver* registerShadowReceiver(SceneNode *node);
+    VisibilityHintNode* registerHintNode(SceneNode *node);
 
     inline RenderTarget& getShadowPass()
     {
@@ -156,7 +153,7 @@ private:
     VBOResource* mShadowIndexBuffer = nullptr;
     IndexVector mHostShadowIndexes;
     stl<std::unique_ptr<ShadowCaster>>::vector mShadowCasters;
-    stl<SceneNode *, DynamicShadowReceiver>::unordered_map mDynamicNodes;
+    stl<SceneNode *, VisibilityHintNode>::unordered_map mVisibilityHintNodes;
     lite3d_camera::projectionParamsStruct mProjection = {};
     Scene *mCleanStage = nullptr;
     Material *mCleanStageMaterial = nullptr;
