@@ -54,7 +54,22 @@ namespace lite3dpp_pipeline {
         return mShadowCamera->refreshProjViewMatrix();
     }
 
-    ShadowManager::VisibilityHintNode::VisibilityHintNode(SceneNode *node) : 
+    void ShadowManager::ShadowCaster::updatePosition(SceneNodeBase *node)
+    {
+        invalidate();
+    }
+
+    void ShadowManager::ShadowCaster::updateRotation(SceneNodeBase *node)
+    {
+        invalidate();
+    }
+
+    void ShadowManager::ShadowCaster::updateScale(SceneNodeBase *node)
+    {
+        invalidate();
+    }
+
+    ShadowManager::VisibilityHintNode::VisibilityHintNode(SceneNodeBase *node) : 
         mNode(node)
     {
         SDL_assert(mNode);
@@ -102,6 +117,8 @@ namespace lite3dpp_pipeline {
     {
         auto shadowConf = conf.getObject(L"ShadowMaps");
         mShadowsCastersMaxCount = shadowConf.getInt(L"MaxCount", 1);
+        // Важно выделить вектор заранее, чтобы реалокаций небыло
+        mShadowCasters.reserve(mShadowsCastersMaxCount);
         mWidth = shadowConf.getInt(L"Width", 1024);
         mHeight = shadowConf.getInt(L"Height", 1024);
         mProjection.znear = shadowConf.getDouble(L"NearClipPlane", 1.0);
@@ -146,7 +163,7 @@ namespace lite3dpp_pipeline {
         }
     }
 
-    ShadowManager::ShadowCaster* ShadowManager::newShadowCaster(LightSceneNode* node)
+    ShadowManager::ShadowCaster* ShadowManager::newShadowCaster(LightSceneNode* lightNode)
     {
         if (mShadowsCastersMaxCount == mShadowCasters.size())
         {
@@ -154,18 +171,75 @@ namespace lite3dpp_pipeline {
         }
 
         auto index = static_cast<uint32_t>(mShadowCasters.size());
-        mShadowCasters.emplace_back(std::make_unique<ShadowCaster>(mMain, node->getName() + std::to_string(index), 
-            node, mProjection));
+        mShadowCasters.emplace_back(std::make_unique<ShadowCaster>(mMain, lightNode->getName() + std::to_string(index), 
+            lightNode, mProjection));
         // Запишем в источник света индекс его теневой матрицы в UBO
-        node->getLight()->setShadowIndex(index);
-        node->getLight()->setFlag(LightSourceFlags::CastShadow);
+        lightNode->getLight()->setShadowIndex(index);
+        lightNode->getLight()->setFlag(LightSourceFlags::CastShadow);
+        
+        // Если какой либо из узлов сцены поменяет свое положение тень нужно перерисовать
+        SceneNodeBase *node = lightNode;
+        while (node)
+        {
+            node->addObserver(mShadowCasters.back().get());
+            node = node->getParent();
+        }
+
         return mShadowCasters.back().get();
     }
 
-    ShadowManager::VisibilityHintNode* ShadowManager::registerHintNode(SceneNode *node)
+    ShadowManager::VisibilityHintNode* ShadowManager::registerHintNode(SceneNodeBase *node)
     {
-        auto it = mVisibilityHintNodes.try_emplace(node, node);
-        return &it.first->second;
+        auto it = mVisibilityHintNodes.find(node);
+        if (it != mVisibilityHintNodes.end())
+        {
+            return it->second.get();
+        }
+
+        auto hintPtr = std::make_shared<VisibilityHintNode>(node);
+        mVisibilityHintNodes.emplace(node, hintPtr);
+        return hintPtr.get();
+    }
+
+    ShadowManager::VisibilityHintNode* ShadowManager::registerHintNodeRecursive(SceneNodeBase *node)
+    {
+        registerHintNode(node);
+        auto hint = mVisibilityHintNodes[node];
+        node->iterateAllChilds([&hint, this](SceneNodeBase *childNode)
+        {
+            SDL_assert(childNode);
+            childNode->addObserver(hint.get());
+            mVisibilityHintNodes.emplace(childNode, hint);
+        });
+
+        return hint.get();
+    }
+
+    void ShadowManager::unregisterHintNode(SceneNodeBase *node)
+    {
+        auto it = mVisibilityHintNodes.find(node);
+        if (it != mVisibilityHintNodes.end())
+        {
+            node->removeObserver(it->second.get());
+            mVisibilityHintNodes.erase(it);
+        }
+    }
+
+    void ShadowManager::unregisterHintNodeRecursive(SceneNodeBase *node)
+    {
+        auto it = mVisibilityHintNodes.find(node);
+        if (it == mVisibilityHintNodes.end())
+            return;
+
+        auto hint = it->second;
+        node->iterateAllChilds([&hint, this](SceneNodeBase *childNode)
+        {
+            SDL_assert(childNode);
+            childNode->removeObserver(hint.get());
+            mVisibilityHintNodes.erase(static_cast<SceneNodeBase *>(childNode));
+        });
+
+        mVisibilityHintNodes.erase(it);
     }
 
     bool ShadowManager::beginUpdate(RenderTarget *rt)
@@ -222,17 +296,17 @@ namespace lite3dpp_pipeline {
             // Подчистим списки источников света для которых эта нода видима перед проверкой фрустума.
             for (auto& node: mVisibilityHintNodes)
             {
-                node.second.resetVision();
+                node.second->resetVision();
             }
         }
     }
 
     // Проверим виден ли обьект сцены хотябы одной теневой камерой, если нет то рисовать его смысла нет.
-    bool ShadowManager::customVisibilityCheck(Scene *scene, SceneNode *node, lite3d_mesh_chunk *meshChunk, Material *material, 
+    bool ShadowManager::customVisibilityCheck(Scene *scene, SceneNodeBase *node, lite3d_mesh_chunk *meshChunk, Material *material, 
         lite3d_bounding_vol *boundingVol, Camera *camera)
     {
         auto it = mVisibilityHintNodes.find(node);
-        VisibilityHintNode* dnode = it != mVisibilityHintNodes.end() ? &it->second : nullptr;
+        VisibilityHintNode* dnode = it != mVisibilityHintNodes.end() ? it->second.get() : nullptr;
 
         bool isVisible = false;
         for (auto& shadowCaster: mShadowCasters)

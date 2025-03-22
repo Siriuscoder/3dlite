@@ -30,7 +30,7 @@ namespace lite3dpp
         SDL_assert(scene);
 
         lite3d_scene_node_init(&mNode);
-        mNode.userdata = this;
+        mNode.userdata = static_cast<SceneNodeBase *>(this);
 
         setName(json.getString(L"Name"));
         if (getName().size() == 0)

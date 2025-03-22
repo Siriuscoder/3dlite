@@ -63,9 +63,7 @@ public:
         auto sun = mPistonScene->getObject("Ground")->getLightNode("Sun");
         sun->getLight()->setFlag(LightSourceFlags::CastShadowPcfAdaptive);
         mSUNShadowCaster = mPipeline->getShadowManager()->newShadowCaster(sun);
-        mPipeline->getShadowManager()->registerHintNode(mCrankshaft);
-        mPipeline->getShadowManager()->registerHintNode(mPiston);
-        mPipeline->getShadowManager()->registerHintNode(mRod);
+        mPipeline->getShadowManager()->registerHintNodeRecursive(mPistonScene->getObject("Engine")->getRoot());
     }
 
     void processEvent(SDL_Event *e) override

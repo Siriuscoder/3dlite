@@ -39,29 +39,6 @@ class SampleVault111 : public Sample
 {
 public:
 
-    struct SpotLightWithShadow
-    {
-        SceneNode* mSpotDriver = nullptr;
-        lite3dpp_pipeline::ShadowManager::ShadowCaster* mShadowCaster = nullptr;
-
-        SpotLightWithShadow() = default;
-        SpotLightWithShadow(SceneNode *spotDriver, LightSceneNode *spot, lite3dpp_pipeline::ShadowManager* shadowManager) : 
-            mSpotDriver(spotDriver)
-        {
-            mShadowCaster = shadowManager->newShadowCaster(spot);
-            mShadowCaster->getNode()->getLight()->setFlag(LightSourceFlags::CastShadowPcfAdaptive);
-        }
-
-        void rotateAngle(const kmVec3 &axis, float angle)
-        {
-            SDL_assert(mSpotDriver);
-            SDL_assert(mShadowCaster);
-
-            mSpotDriver->rotateAngle(axis, angle);
-            mShadowCaster->invalidate();
-        }
-    };
-
     class MinigunObject
     {
     public:
@@ -73,8 +50,7 @@ public:
         {
             mMinigun = mMinigunObj->getNode("Minigun");
             mMinigunBarrel = mMinigunObj->getNode("MinigunBarrel");
-            shadowManager->registerHintNode(mMinigun);
-            shadowManager->registerHintNode(mMinigunBarrel);
+            shadowManager->registerHintNodeRecursive(mMinigunObj->getRoot());
         }
 
         void rotateAngle(const kmVec3 &axis, float angle)
@@ -145,19 +121,29 @@ public:
 
     void setupShadowCasters()
     {
-        // Установим тень для трех прожекторов и потом будем их вращать
+        // Установим тень для четырех прожекторов и потом будем их вращать
         // Источники света получаем по ObjectName + NodeName
-        mSpot = SpotLightWithShadow(mVaultScene->getObject("LightSpot")->getNode("LightSpotLamp"),
-            mVaultScene->getObject("LightSpot")->getLightNode("LightSpotNode"), mShadowManager);
+        mSpot = mVaultScene->getObject("LightSpot")->getNode("LightSpotLamp");
+        mSpot01 = mVaultScene->getObject("LightSpot.001")->getNode("LightSpotLamp");
+        mSpot02 = mVaultScene->getObject("LightSpot.002")->getNode("LightSpotLamp");
+        mSpot03 = mVaultScene->getObject("LightSpot.003")->getNode("LightSpotLamp");
 
-        mSpot01 = SpotLightWithShadow(mVaultScene->getObject("LightSpot.001")->getNode("LightSpotLamp"),
-            mVaultScene->getObject("LightSpot.001")->getLightNode("LightSpotNode"), mShadowManager);
+        mShadowManager->registerHintNode(mSpot);
+        mShadowManager->registerHintNode(mSpot01);
+        mShadowManager->registerHintNode(mSpot02);
+        mShadowManager->registerHintNode(mSpot03);
 
-        mSpot02 = SpotLightWithShadow(mVaultScene->getObject("LightSpot.002")->getNode("LightSpotLamp"),
-            mVaultScene->getObject("LightSpot.002")->getLightNode("LightSpotNode"), mShadowManager);
+        mShadowManager->newShadowCaster(mVaultScene->getObject("LightSpot")->getLightNode("LightSpotNode"))->getNode()->
+            getLight()->setFlag(LightSourceFlags::CastShadowPcfAdaptive);
 
-        mSpot03 = SpotLightWithShadow(mVaultScene->getObject("LightSpot.003")->getNode("LightSpotLamp"),
-            mVaultScene->getObject("LightSpot.003")->getLightNode("LightSpotNode"), mShadowManager);
+        mShadowManager->newShadowCaster(mVaultScene->getObject("LightSpot.001")->getLightNode("LightSpotNode"))->getNode()->
+            getLight()->setFlag(LightSourceFlags::CastShadowPcfAdaptive);
+
+        mShadowManager->newShadowCaster(mVaultScene->getObject("LightSpot.002")->getLightNode("LightSpotNode"))->getNode()->
+            getLight()->setFlag(LightSourceFlags::CastShadowPcfAdaptive);
+
+        mShadowManager->newShadowCaster(mVaultScene->getObject("LightSpot.003")->getLightNode("LightSpotNode"))->getNode()->
+            getLight()->setFlag(LightSourceFlags::CastShadowPcfAdaptive);
         
         mShadowManager->newShadowCaster(mVaultScene->getObject("VaultStatic")->getLightNode("RotorSpot"))->getNode()->
             getLight()->setFlag(LightSourceFlags::CastShadowPcfAdaptive);
@@ -263,7 +249,7 @@ public:
         float cosA = cos(mAnimPi);
         mMinigun01.animate(cosA * 0.02, 0.13 * deltaRetard);
         mMinigun02.animate(-cosA * 0.02, 0.13 * deltaRetard);
-        mSpot03.rotateAngle(KM_VEC3_POS_Z, 0.1 * deltaRetard);
+        mSpot03->rotateAngle(KM_VEC3_POS_Z, 0.1 * deltaRetard);
 
         std::for_each(mFans.begin(), mFans.end(), [deltaRetard](SceneNode* fanRotor)
         {
@@ -291,15 +277,15 @@ public:
             }
             else if (e->key.keysym.sym == SDLK_p)
             {
-                mSpot.rotateAngle(KM_VEC3_POS_Z, 0.10 * (e->key.keysym.mod & KMOD_LCTRL ? -1.0 : 1.0));
+                mSpot->rotateAngle(KM_VEC3_POS_Z, 0.10 * (e->key.keysym.mod & KMOD_LCTRL ? -1.0 : 1.0));
             }
             else if (e->key.keysym.sym == SDLK_i)
             {
-                mSpot01.rotateAngle(KM_VEC3_POS_Z, 0.10 * (e->key.keysym.mod & KMOD_LCTRL ? -1.0 : 1.0));
+                mSpot01->rotateAngle(KM_VEC3_POS_Z, 0.10 * (e->key.keysym.mod & KMOD_LCTRL ? -1.0 : 1.0));
             }
             else if (e->key.keysym.sym == SDLK_o)
             {
-                mSpot02.rotateAngle(KM_VEC3_POS_Z, 0.10 * (e->key.keysym.mod & KMOD_LCTRL ? -1.0 : 1.0));
+                mSpot02->rotateAngle(KM_VEC3_POS_Z, 0.10 * (e->key.keysym.mod & KMOD_LCTRL ? -1.0 : 1.0));
             }
             else if (e->key.keysym.sym == SDLK_k)
             {
@@ -346,10 +332,10 @@ private:
     lite3dpp_pipeline::ShadowManager* mShadowManager;
     std::unique_ptr<SampleLightEffectManager> mLightAnimEffects;
     LightSceneNode* mFlashLight = nullptr;
-    SpotLightWithShadow mSpot;
-    SpotLightWithShadow mSpot01;
-    SpotLightWithShadow mSpot02;
-    SpotLightWithShadow mSpot03;
+    SceneNode* mSpot;
+    SceneNode* mSpot01;
+    SceneNode* mSpot02;
+    SceneNode* mSpot03;
     SceneNode* mGearKey = nullptr;
     SceneNode* mGearKeySpinner = nullptr;
     SceneNode* mGeneratorSpinner01 = nullptr;

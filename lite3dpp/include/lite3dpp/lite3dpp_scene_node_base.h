@@ -85,7 +85,45 @@ namespace lite3dpp
         bool actionCompleted() const;
         ActionClip::ActionClipState getActionState() const;
 
+        template<class F> 
+        inline void iterateChilds(const F &f)
+        {
+            if (!mNodePtr)
+            {
+                return;
+            }
+
+            iterateChilds<F, false>(mNodePtr, f);
+        }
+
+        template<class F> 
+        inline void iterateAllChilds(const F &f)
+        {
+            if (!mNodePtr)
+            {
+                return;
+            }
+
+            iterateChilds<F, true>(mNodePtr, f);
+        }
+
     private:
+
+        template<class F, bool All> 
+        inline void iterateChilds(const lite3d_scene_node *node, const F &f)
+        {
+            lite3d_list_node *nodeLink = node->childNodes.l.next;
+            for (; nodeLink != &node->childNodes.l; nodeLink = lite3d_list_next(nodeLink))
+            {
+                auto child = LITE3D_MEMBERCAST(lite3d_scene_node, nodeLink, nodeLink);
+                f(static_cast<SceneNodeBase*>(child->userdata));
+
+                if (All)
+                {
+                    iterateChilds<F, All>(child, f);
+                }
+            }
+        }
 
         String mName;
         lite3d_scene_node *mNodePtr = nullptr;

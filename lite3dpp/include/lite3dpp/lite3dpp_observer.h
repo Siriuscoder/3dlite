@@ -98,7 +98,7 @@ namespace lite3dpp
             Camera *camera) {}
 
         virtual bool customVisibilityCheck(Scene *scene, 
-            SceneNode *node, lite3d_mesh_chunk *meshChunk, 
+            SceneNodeBase *node, lite3d_mesh_chunk *meshChunk, 
             Material *material, lite3d_bounding_vol *boundingVol,
             Camera *camera) { return true; }
 
