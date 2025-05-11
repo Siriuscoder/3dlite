@@ -15,10 +15,11 @@ class Material:
     def getRelativePath(self):
         return PurePosixPath("materials/") / f"{self.material.name}.json"
     
+    def isPBR(self):
+        return self.material.lite3d_properties.materialTypePBR == True
+    
     def getRelativeTemplatePath(self):
-        template = self.material.get("Template")
-        if template is None:
-            template = self.scene.options["materialTemplate"]
+        template = self.material.lite3d_properties.materialTemplate
         return PurePosixPath("materials/") / f"{template}.json"
     
     def considerShader(self, node):

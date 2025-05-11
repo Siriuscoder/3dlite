@@ -6,7 +6,7 @@ from io_scene_lite3d.io import IO
 from io_scene_lite3d.logger import log
 
 class Vertex:
-    def __init__(self, v, vc, n, uv, t, bt, saveTangent, saveBiTangent, skeleton, flipUV):
+    def __init__(self, v, vc, n, uv, t, bt, saveTangent, saveBiTangent, boneBindings, flipUV):
         # vertex, normal, UV is always required
         self.block = [v.co.x, v.co.y, v.co.z, n.x, n.y, n.z, uv.x, 1.0 - uv.y if flipUV else uv.y]
         self.format = f"={len(self.block)}f"
@@ -26,7 +26,7 @@ class Vertex:
             self.block.extend([x for x in vc])
             self.format += "4f"
 
-        if skeleton:
+        if boneBindings:
             # Support only first 4 groups, ignore others
             for i in range(4):
                 self.block.append(v.groups[i].group if i < len(v.groups) else -1)
@@ -44,14 +44,14 @@ class Vertex:
 class MeshChunk:
     indexSize = 4
 
-    def __init__(self, materialID, opts):
+    def __init__(self, materialID, opts, vertexColors, boneBindings):
         self.materialID = materialID
         self.saveTangent = opts["saveTangent"]
         self.saveBiTangent = opts["saveBiTangent"]
         self.flipUV = opts["flipUV"]
         self.indexedGeometry = opts["indexedGeometry"]
-        self.vertexColors = opts["vertexColors"]
-        self.skeleton = opts["skeleton"]
+        self.vertexColors = vertexColors
+        self.boneBindings = boneBindings
         self.vertices = []
         self.indexes = []
         self.vertexSplit = {}
@@ -63,7 +63,7 @@ class MeshChunk:
         self.layoutCount += 1 if self.saveTangent else 0
         self.layoutCount += 1 if self.saveBiTangent else 0
         self.layoutCount += 1 if self.vertexColors else 0
-        self.layoutCount += 2 if self.skeleton else 0
+        self.layoutCount += 2 if self.boneBindings else 0
         self.chunkHeaderFormat = "=8iBI"
 
     def chunkHeaderSize(self):
@@ -84,7 +84,7 @@ class MeshChunk:
 
     def insertVertex(self, v, vc, n, uv, t, bt):
         self.vertices.append(Vertex(v, vc, n, uv, t, bt, self.saveTangent, self.saveBiTangent, 
-            self.skeleton, self.flipUV))
+            self.boneBindings, self.flipUV))
         self.verticesSize += self.vertices[-1].size()
         
     def appendVertex(self, v, vc, uv, loop):
@@ -159,7 +159,7 @@ class MeshChunk:
             file.write(struct.pack("=2B", 0x6, 3)) # LITE3D_BUFFER_BINDING_BINORMAL
         if self.vertexColors:
             file.write(struct.pack("=2B", 0x1, 4)) # LITE3D_BUFFER_BINDING_COLOR
-        if self.skeleton:
+        if self.boneBindings:
             file.write(struct.pack("=2B", 0x7, 4)) # LITE3D_BUFFER_BINDING_BONES
             file.write(struct.pack("=2B", 0x8, 4)) # LITE3D_BUFFER_BINDING_BONES_WEIGHT
     
