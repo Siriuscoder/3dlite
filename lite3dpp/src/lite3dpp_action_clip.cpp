@@ -101,34 +101,34 @@ namespace lite3dpp
         return node->getScale();
     }
 
-    template<class Node, class LeftRightFrame>
-    void ActionClip::interpolate(Node *node, const LeftRightFrame &leftRightFrame)
+    template<class Node, class FramePair>
+    void ActionClip::interpolate(Node *node, const FramePair &framePair)
     {
         // Еще не дошли до первого ключевого кадра
-        if (!leftRightFrame.first && leftRightFrame.second)
+        if (!framePair.first && framePair.second)
         {
             bool updated = false;
-            node->setPosition(consolidatePosition(node, leftRightFrame.second, updated));
-            node->setRotation(consolidateRotation(node, leftRightFrame.second, updated));
-            node->setScale(consolidateScale(node, leftRightFrame.second, updated));
+            node->setPosition(consolidatePosition(node, framePair.second, updated));
+            node->setRotation(consolidateRotation(node, framePair.second, updated));
+            node->setScale(consolidateScale(node, framePair.second, updated));
         }
         // Последний ключевой кадр и дальше
-        else if (leftRightFrame.first && !leftRightFrame.second)
+        else if (framePair.first && !framePair.second)
         {
             bool updated = false;
-            node->setPosition(consolidatePosition(node, leftRightFrame.first, updated));
-            node->setRotation(consolidateRotation(node, leftRightFrame.first, updated));
-            node->setScale(consolidateScale(node, leftRightFrame.first, updated));
+            node->setPosition(consolidatePosition(node, framePair.first, updated));
+            node->setRotation(consolidateRotation(node, framePair.first, updated));
+            node->setScale(consolidateScale(node, framePair.first, updated));
         }
         // Между 2мя кадрами 
         else
         {
-            float k = (mTime - leftRightFrame.first->frameNo) / 
-                (leftRightFrame.second->frameNo - leftRightFrame.first->frameNo);
+            float k = (mTime - framePair.first->frameNo) / 
+                (framePair.second->frameNo - framePair.first->frameNo);
 
             bool updatedLeft = false, updatedRight = false;
-            auto positionLeft = consolidatePosition(node, leftRightFrame.first, updatedLeft);
-            auto positionRight = consolidatePosition(node, leftRightFrame.second, updatedRight);
+            auto positionLeft = consolidatePosition(node, framePair.first, updatedLeft);
+            auto positionRight = consolidatePosition(node, framePair.second, updatedRight);
             if (updatedLeft || updatedRight)
             {
                 kmVec3 interpolated;
@@ -136,8 +136,8 @@ namespace lite3dpp
                 node->setPosition(interpolated);
             }
 
-            auto rotationLeft = consolidateRotation(node, leftRightFrame.first, updatedLeft);
-            auto rotationRight = consolidateRotation(node, leftRightFrame.second, updatedRight);
+            auto rotationLeft = consolidateRotation(node, framePair.first, updatedLeft);
+            auto rotationRight = consolidateRotation(node, framePair.second, updatedRight);
             if (updatedLeft || updatedRight)
             {
                 kmQuaternion interpolated;
@@ -145,8 +145,8 @@ namespace lite3dpp
                 node->setRotation(interpolated);
             }
 
-            auto scaleLeft = consolidateScale(node, leftRightFrame.first, updatedLeft);
-            auto scaleRight = consolidateScale(node, leftRightFrame.second, updatedRight);
+            auto scaleLeft = consolidateScale(node, framePair.first, updatedLeft);
+            auto scaleRight = consolidateScale(node, framePair.second, updatedRight);
             if (updatedLeft || updatedRight)
             {
                 kmVec3 interpolated;
@@ -177,7 +177,7 @@ namespace lite3dpp
             // Сколько реальных кадров прошло с прошлого вызова таймера 
             mTime += static_cast<float>(static_cast<double>(timer->deltaMcs) / (timer->interval * 1000.0));
             //SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "mTime %f delta", mTime);
-            interpolate(mNode, mAction.getLeftRightFrameByTime(mTime));
+            interpolate(mNode, mAction.getFramePairByTime(mTime));
         }
     }
 

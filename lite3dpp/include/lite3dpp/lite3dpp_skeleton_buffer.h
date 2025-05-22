@@ -18,25 +18,29 @@
 #pragma once 
 
 #include <lite3dpp/lite3dpp_common.h>
-#include <lite3dpp/lite3dpp_manageable.h>
+#include <lite3dpp/lite3dpp_scene_node.h>
+#include <lite3dpp/lite3dpp_vbo.h>
 
 namespace lite3dpp
 {
-    class LITE3DPP_EXPORT Skeleton
+    class LITE3DPP_EXPORT SkeletonBuffer
     {
     public:
 
-        using BonesTransformData = stl<kmMat4>::vector;
+        SkeletonBuffer(Main &main);
+        
+        void registerSceneNode(SceneNodeBase *node);
+        void unregisterSceneNode(SceneNodeBase *node);
+        void unregisterAll();
 
-        Skeleton() = default;
-
-        size_t getBonesCount() const;
-        void setBufferIndex(size_t index)
-        { mBufferIndex = index; }
+        void updateData(size_t index, const Skeleton::BonesTransformData &data);
 
     private:
 
-        size_t mBufferIndex;
-        BonesTransformData mBonesTransformData;
+        Main &mMain;
+        VBOResource *mGlobalSkeletonBuffer = nullptr;
+        stl<SceneNodeBase *>::unordered_set mNodes;
+        size_t mPendingRemoveBytes = 0;
+        size_t mUsedBytes = 0;
     };
 }

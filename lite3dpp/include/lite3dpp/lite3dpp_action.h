@@ -48,7 +48,7 @@ namespace lite3dpp
             stl<std::tuple<Channel, ChannelValue>>::vector channels;
         };
 
-        using LeftRightFrame = std::pair<const KeyFrame *, const KeyFrame *>;
+        using FramePair = std::pair<const KeyFrame *, const KeyFrame *>;
 
         Action(const String &name, const String &path, Main *main);
         virtual ~Action() = default;
@@ -59,8 +59,8 @@ namespace lite3dpp
         { return mMaxFrame; }
 
         virtual std::unique_ptr<ActionClip> playAction(SceneNodeBase *node, bool cycle);
-        LeftRightFrame getLeftRightFrameByTime(float time) const;
-        LeftRightFrame getLeftRightFrameBoneByTime(float time, const String &boneName) const;
+        FramePair getFramePairByTime(float time) const;
+        FramePair getFramePairBoneByTime(float time, const String &boneName) const;
 
     protected:
 
@@ -68,7 +68,7 @@ namespace lite3dpp
         virtual void unloadImpl() override;
 
         static void loadKeyFrames(const ConfigurationReader &config, stl<KeyFrame>::vector &keyFrames);
-        LeftRightFrame getLeftRightFrameByTime(float time, const stl<KeyFrame>::vector &frames) const;
+        FramePair getFramePairByTime(float time, const stl<KeyFrame>::vector &frames) const;
 
     protected:
 

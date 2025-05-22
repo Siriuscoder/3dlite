@@ -15,28 +15,12 @@
  *	You should have received a copy of the GNU General Public License
  *	along with Lite3D.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
-#pragma once 
-
-#include <lite3dpp/lite3dpp_common.h>
-#include <lite3dpp/lite3dpp_manageable.h>
+#include <lite3dpp/lite3dpp_skeleton.h>
 
 namespace lite3dpp
 {
-    class LITE3DPP_EXPORT Skeleton
+    size_t Skeleton::getBonesCount() const
     {
-    public:
-
-        using BonesTransformData = stl<kmMat4>::vector;
-
-        Skeleton() = default;
-
-        size_t getBonesCount() const;
-        void setBufferIndex(size_t index)
-        { mBufferIndex = index; }
-
-    private:
-
-        size_t mBufferIndex;
-        BonesTransformData mBonesTransformData;
-    };
+        return 0;
+    }
 }

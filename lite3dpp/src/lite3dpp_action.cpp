@@ -95,7 +95,7 @@ namespace lite3dpp
         });
     }
 
-    Action::LeftRightFrame Action::getLeftRightFrameByTime(float time, const stl<KeyFrame>::vector &frames) const
+    Action::FramePair Action::getFramePairByTime(float time, const stl<KeyFrame>::vector &frames) const
     {
         // Кадров вообще нет, не должно быть такого
         if (frames.size() == 0)
@@ -124,17 +124,17 @@ namespace lite3dpp
         return std::make_pair(&(*std::prev(frameIt)), &(*frameIt));
     }
 
-    Action::LeftRightFrame Action::getLeftRightFrameByTime(float time) const
+    Action::FramePair Action::getFramePairByTime(float time) const
     {
-        return getLeftRightFrameByTime(time, mKeyFrames);
+        return getFramePairByTime(time, mKeyFrames);
     }
 
-    Action::LeftRightFrame Action::getLeftRightFrameBoneByTime(float time, const String &boneName) const
+    Action::FramePair Action::getFramePairBoneByTime(float time, const String &boneName) const
     {
         const auto &boneKeyFrames = mSkeletonKeyFrames.find(boneName);
         if (boneKeyFrames != mSkeletonKeyFrames.end())
         {
-            return getLeftRightFrameByTime(time, boneKeyFrames->second);
+            return getFramePairByTime(time, boneKeyFrames->second);
         }
 
         return std::make_pair(nullptr, nullptr); 

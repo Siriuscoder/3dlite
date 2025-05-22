@@ -44,7 +44,7 @@ namespace lite3dpp
         inline const lite3d_scene_node *getPtr() const
         { return mNodePtr; }
         inline Skeleton *getSkeleton()
-        { return mSkeleton; }
+        { return mSkeleton.get(); }
 
         SceneNodeBase *getParent();
         const SceneNodeBase *getParent() const;
@@ -131,7 +131,7 @@ namespace lite3dpp
 
     protected:
 
-        Skeleton *mSkeleton = nullptr;
+        std::unique_ptr<Skeleton> mSkeleton;
         stl<String, Action *>::unordered_map mActions;
     };
 }

@@ -53,8 +53,8 @@ namespace lite3dpp
         virtual void timerTick(lite3d_timer *timerid) override;
         // Interpolate between two frames, node may be SceneNode, Bone or something else with 
         // get/set Position Rotation Scale
-        template<class Node, class LeftRightFrame>
-        void interpolate(Node *node, const LeftRightFrame& leftRightFrame);
+        template<class Node, class FramePair>
+        void interpolate(Node *node, const FramePair& framePair);
         template<class Node, class KeyFrame>
         kmVec3 consolidatePosition(Node *node, const KeyFrame *keyFrame, bool &updated);
         template<class Node, class KeyFrame>
