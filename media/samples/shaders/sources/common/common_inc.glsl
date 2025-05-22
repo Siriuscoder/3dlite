@@ -13,6 +13,7 @@
 // look visually correct with a constant F0 of 0.04, while we do specify F0 for metallic surfaces as then 
 // given by the albedo value. 
 #define LITE3D_BASE_REFLECTION_AT_ZERO_INCIDENCE       0.04
+#define LITE3D_MIN_ROUGHNESS                           0.03
 
 //////////// Math utilities
 ////////////////////////////////////////////////////////////////////////////
@@ -66,10 +67,11 @@ float linearizeDepth(float z, float near, float far);
 vec3 linearToSRGB(vec3 color);
 vec3 SRGBToLinear(vec3 color);
 vec3 reinhardTonemapping(vec3 x);
-vec3 exposureTonemapping(vec3 x);
-vec3 nautilusTonemapping(vec3 c);
-mat4 contrastMatrix();
-mat4 saturationMatrix();
+vec3 exponentTonemapping(vec3 x);
+vec3 nautilusTonemapping(vec3 x);
+vec3 ACESTonemapping(vec3 x);
+vec3 contrastColor(vec3 color);
+vec3 saturationColor(vec3 color);
 vec3 ditherBayer(vec3 color);
 
 //////////// PBR utilities
