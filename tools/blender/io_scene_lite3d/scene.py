@@ -25,18 +25,6 @@ class Scene:
         self.options = opts
         self.exportTypes = ["MESH", "EMPTY", "ARMATURE"]
         self.sceneJson = {}
-        self.physicsObjectTypes = ["Dynamic", "Static", "Kinematic"]
-        self.physicsCollisionsTypes = [
-            "Box", 
-            "Sphere", 
-            "StaticPlane", 
-            "Cylinder", 
-            "Capsule", 
-            "Cone", 
-            "ConvexHull", 
-            "StaticTriangleMesh", 
-            "GimpactTriangleMesh"
-        ]
 
         if self.options["exportLights"]:
             self.exportTypes.append("LIGHT")
@@ -185,19 +173,13 @@ class Scene:
         
         lightJson["Radiance"] = light.energy
         if light.type in ["POINT", "SPOT"]:
-            ac = light.lite3d_properties.constantAttenuation
-            al = light.lite3d_properties.linearAttenuation
-            aq = light.lite3d_properties.quadraticAttenuation
-            d = light.lite3d_properties.influenceDistance
-            md = light.lite3d_properties.influenceMinRadiance
-            
-            lightJson["LightSize"] = 0.0
+            lightJson["LightSize"] = light.shadow_soft_size
             lightJson["Attenuation"] = {
-                "Constant": ac,
-                "Linear": al,
-                "Quadratic": aq,
-                "InfluenceDistance": d,
-                "InfluenceMinRadiance": md
+                "Constant": light.lite3d_properties.constantAttenuation,
+                "Linear": light.lite3d_properties.linearAttenuation,
+                "Quadratic": light.lite3d_properties.quadraticAttenuation,
+                "InfluenceDistance": light.lite3d_properties.influenceDistance,
+                "InfluenceMinRadiance": light.lite3d_properties.influenceMinRadiance
             }
             
             if light.type == "SPOT":
@@ -258,14 +240,25 @@ class Scene:
     def exportSkeleton(self, obj, node):
         armature = obj.data
         skeletonJson = []
-        # exporting the skeleton in bind-pose
-        for bone in armature.bones:
-            if bone.parent is None:
-                boneJson = {}
-                self.exportSkeletonBone(boneJson, bone)
-                skeletonJson.append(boneJson)
 
-        node["Skeleton"] = skeletonJson
+        # We take first mesh object in the hierarchy
+        for child in obj.children:
+            if child.type == "MESH":
+                self.exportMesh(child, node)
+                # export the skeleton in bind-pose
+                for bone in armature.bones:
+                    if bone.parent is None:
+                        boneJson = {}
+                        self.exportSkeletonBone(boneJson, bone)
+                        skeletonJson.append(boneJson)
+                node["Skeleton"] = skeletonJson
+
+                if obj.parent is not None:
+                    Scene.orietation(obj, node)
+                if self.options["animation"]:
+                    self.exportActions(obj, node)
+                
+                break
 
     def exportNode(self, obj, node):
         if obj.type not in self.exportTypes:
@@ -278,8 +271,12 @@ class Scene:
             self.exportLight(obj, node)
         elif obj.type == "EMPTY":
             self.exportPhysicsInfo(obj, node)
+        # В случае армутуры будет экспортирован только один первый попавшийся влодженный меш в иерархии 
+        # для простоты использования в движке. 
+        # Все остальные вложенные обьекты будут проигнорированы.
         elif obj.type == "ARMATURE" and self.options["skeleton"]:
             self.exportSkeleton(obj, node)
+            return
         
         if obj.parent is not None:
             Scene.orietation(obj, node)
