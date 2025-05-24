@@ -46,7 +46,7 @@ namespace lite3dpp
 
         for (auto &actionCfg : json.getObjects(L"Actions"))
         {
-            auto action = scene->getMain().getResourceManager()->queryResource<Action>(actionCfg.getString(L"Name"), 
+            auto action = scene->getMain().getResourceManager().queryResource<Action>(actionCfg.getString(L"Name"), 
                 actionCfg.getString(L"Action"));
 
             mActions[action->getName()] = action;

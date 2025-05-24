@@ -27,7 +27,7 @@ namespace lite3dpp
     {
     public:
 
-        MeshPartition(const String &name, const String &path, Main *main);
+        MeshPartition(const String &name, const String &path, Main &main);
         virtual ~MeshPartition() = default;
 
         size_t chunksCount() const;

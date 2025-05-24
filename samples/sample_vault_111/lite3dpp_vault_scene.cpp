@@ -81,7 +81,7 @@ public:
     void createScene() override
     {
         mLightAnimEffects = std::make_unique<SampleLightEffectManager>();
-        mPipeline = getMain().getResourceManager()->queryResource<lite3dpp_pipeline::PipelineDeffered>("Vault_111", 
+        mPipeline = getMain().getResourceManager().queryResource<lite3dpp_pipeline::PipelineDeffered>("Vault_111", 
             "vault_111:pipelines/vault_111.json");
         mVaultScene = &mPipeline->getMainScene();
         setMainCamera(&mPipeline->getMainCamera());
@@ -174,7 +174,7 @@ public:
                 lightNode->getName() == "LightCeilNode01.006")
             {
                 // Создаем новый материал для выбранных источников света чтобы сделать эффект мигания каджой отдельной лампочки 
-                auto material = getMain().getResourceManager()->queryResource<Material>(lightNode->getName() + "_BlinkGlow.material", 
+                auto material = getMain().getResourceManager().queryResource<Material>(lightNode->getName() + "_BlinkGlow.material", 
                     "vault_111:materials/VltLightGlow01.json");
                 mLightAnimEffects->registerLight(lightNode, SampleLightEffectManager::EffectTypeBlink, material, 1'200'000, 550'000, 80'000);
                 // Присваиваем новый натериал к родителю (MeshNode)
@@ -188,31 +188,31 @@ public:
             }
             else if (lightNode->getName() == "ReactorElectric")
             {
-                Material *reactorGlow = getMain().getResourceManager()->queryResource<Material>("V111ReactorGlow01.material");
+                Material *reactorGlow = getMain().getResourceManager().queryResource<Material>("V111ReactorGlow01.material");
                 mLightAnimEffects->registerLight(lightNode, SampleLightEffectManager::EffectTypeTrembling, reactorGlow);
                 mLightAnimEffects->registerLight(lightNode, SampleLightEffectManager::EffectTypeBlink, reactorGlow);
             }
             else if (lightNode->getName() == "ReactorElectric.001")
             {
-                Material *reactorGlow = getMain().getResourceManager()->queryResource<Material>("V111ReactorGlow02.material");
+                Material *reactorGlow = getMain().getResourceManager().queryResource<Material>("V111ReactorGlow02.material");
                 mLightAnimEffects->registerLight(lightNode, SampleLightEffectManager::EffectTypeTrembling, reactorGlow);
                 mLightAnimEffects->registerLight(lightNode, SampleLightEffectManager::EffectTypeBlink, reactorGlow);
             }
             else if (lightNode->getName() == "ReactorElectric.002")
             {
-                Material *reactorGlow = getMain().getResourceManager()->queryResource<Material>("V111ReactorGlow03.material");
+                Material *reactorGlow = getMain().getResourceManager().queryResource<Material>("V111ReactorGlow03.material");
                 mLightAnimEffects->registerLight(lightNode, SampleLightEffectManager::EffectTypeTrembling, reactorGlow);
                 mLightAnimEffects->registerLight(lightNode, SampleLightEffectManager::EffectTypeBlink, reactorGlow);
             }
             else if (lightNode->getName() == "ReactorElectric.003")
             {
-                Material *reactorGlow = getMain().getResourceManager()->queryResource<Material>("V111ReactorGlow04.material");
+                Material *reactorGlow = getMain().getResourceManager().queryResource<Material>("V111ReactorGlow04.material");
                 mLightAnimEffects->registerLight(lightNode, SampleLightEffectManager::EffectTypeTrembling, reactorGlow);
                 mLightAnimEffects->registerLight(lightNode, SampleLightEffectManager::EffectTypeBlink, reactorGlow);
             }
         }
 
-        Material *sineWave = getMain().getResourceManager()->queryResource<Material>("SineWave01.material");
+        Material *sineWave = getMain().getResourceManager().queryResource<Material>("SineWave01.material");
         mLightAnimEffects->registerLight(nullptr, SampleLightEffectManager::EffectTypeTrembling, sineWave);
     }
 

@@ -28,6 +28,7 @@
 #include <lite3dpp/lite3dpp_config_writer.h>
 #include <lite3dpp/lite3dpp_observer.h>
 #include <lite3dpp/lite3dpp_material_factory.h>
+#include <lite3dpp/lite3dpp_skeleton_buffer.h>
 
 namespace lite3dpp
 {
@@ -55,8 +56,10 @@ namespace lite3dpp
         lite3d_timer *addTimer(const String &name, int32_t millisec);
         lite3d_timer *getTimer(const String &name);
 
-        inline ResourceManager *getResourceManager()
-        { return &mResourceManager; }
+        inline ResourceManager &getResourceManager()
+        { return mResourceManager; }
+        inline SkeletonBuffer &getSkeletonBuffer()
+        { return mSkeletonBuffer; }
         inline lite3d_timer *getFixedUpdateTimer()
         { return mFixedUpdatesTimer; }
         WindowRenderTarget *window();
@@ -100,6 +103,7 @@ namespace lite3dpp
     private:
 
         ResourceManager mResourceManager;
+        SkeletonBuffer mSkeletonBuffer;
         std::unique_ptr<ConfigurationReader> mConfig;
         lite3d_global_settings mSettings;
         Timers mTimers;

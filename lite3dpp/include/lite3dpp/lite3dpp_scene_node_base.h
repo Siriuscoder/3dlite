@@ -23,7 +23,6 @@
 #include <lite3dpp/lite3dpp_observer.h>
 #include <lite3dpp/lite3dpp_config_reader.h>
 #include <lite3dpp/lite3dpp_action.h>
-#include <lite3dpp/lite3dpp_skeleton.h>
 
 namespace lite3dpp
 {
@@ -43,8 +42,6 @@ namespace lite3dpp
         { return mNodePtr; }
         inline const lite3d_scene_node *getPtr() const
         { return mNodePtr; }
-        inline Skeleton *getSkeleton()
-        { return mSkeleton.get(); }
 
         SceneNodeBase *getParent();
         const SceneNodeBase *getParent() const;
@@ -131,7 +128,6 @@ namespace lite3dpp
 
     protected:
 
-        std::unique_ptr<Skeleton> mSkeleton;
         stl<String, Action *>::unordered_map mActions;
     };
 }

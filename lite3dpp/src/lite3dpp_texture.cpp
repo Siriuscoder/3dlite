@@ -24,7 +24,7 @@
 namespace lite3dpp
 {
     Texture::Texture(const String &name, 
-        const String &path, Main *main) : 
+        const String &path, Main &main) : 
         ConfigurableResource(name, path, main, AbstractResource::TEXTURE)
     {
         memset(&mTexture, 0, sizeof(mTexture));
@@ -197,7 +197,7 @@ namespace lite3dpp
     }
 
     TextureImage::TextureImage(const String &name, 
-        const String &path, Main *main) : 
+        const String &path, Main &main) : 
         Texture(name, path, main),
         mModifyed(false)
     {}
@@ -224,7 +224,7 @@ namespace lite3dpp
             }
 
             if(!lite3d_texture_unit_from_resource(&mTexture, 
-                getMain().getResourceManager()->loadFileToMemory(helper.getString(L"Image")),
+                getMain().getResourceManager().loadFileToMemory(helper.getString(L"Image")),
                 textureImageFormat(helper.getUpperString(L"ImageFormat", "ANY")),
                 type, 
                 srgb,

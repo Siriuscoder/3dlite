@@ -28,7 +28,7 @@
 
 namespace lite3dpp
 {
-    ResourceManager::ResourceManager(Main *main) : 
+    ResourceManager::ResourceManager(Main &main) : 
         mMain(main)
     {}
 

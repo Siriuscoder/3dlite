@@ -42,11 +42,10 @@ struct TextureCubeArrayHandle
 struct ChunkInvocationInfo
 {
     mat4 modelMatrix;
-    mat4 modelViewProjMatrix;
     mat4 normalMatrix;
     uint materialIdx;
     uint flags;
-    uint reserved01;
+    uint skeletonBufferIndex;
     uint reserved02;
 };
 

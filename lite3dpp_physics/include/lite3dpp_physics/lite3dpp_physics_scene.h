@@ -33,7 +33,7 @@ namespace lite3dpp_phisics {
         static constexpr const int MaxSubStepCount = 10;
         static constexpr const float FixedTimeStep = 1.0 / 60.0;
 
-        PhysicsScene(const String &name, const String &path, Main *main);
+        PhysicsScene(const String &name, const String &path, Main &main);
         ~PhysicsScene();
 
         inline btDiscreteDynamicsWorld *getWorld() { return mWorld.get(); } 

@@ -111,7 +111,7 @@ namespace lite3dpp
 
 #pragma pack(pop)
 
-        PBRMaterial(const String &name, const String &path, Main *main);
+        PBRMaterial(const String &name, const String &path, Main &main);
 
         // Индекс материала в глобальном массиве материалов
         // У каждого материала будет уникальный индекс 

@@ -37,7 +37,7 @@ public:
     void createScene() override
     {
         // load empty scene
-        auto scene = getMain().getResourceManager()->queryResource<Scene>("SampleCameraScene",
+        auto scene = getMain().getResourceManager().queryResource<Scene>("SampleCameraScene",
             "samples:scenes/empty.json");
         auto camera = getMain().getCamera("MyCamera");
         setMainCamera(camera);

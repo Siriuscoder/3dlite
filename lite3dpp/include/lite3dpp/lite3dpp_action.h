@@ -50,13 +50,17 @@ namespace lite3dpp
 
         using FramePair = std::pair<const KeyFrame *, const KeyFrame *>;
 
-        Action(const String &name, const String &path, Main *main);
+        Action(const String &name, const String &path, Main &main);
         virtual ~Action() = default;
 
         inline float getMinFrame() const
         { return mMinFrame; }
         inline float getMaxFrame() const
         { return mMaxFrame; }
+        inline Skeleton *getSkeleton()
+        { return mSkeleton; }
+        inline void setSkeleton(Skeleton *skeleton)
+        { mSkeleton = skeleton; }
 
         virtual std::unique_ptr<ActionClip> playAction(SceneNodeBase *node, bool cycle);
         FramePair getFramePairByTime(float time) const;
@@ -76,5 +80,6 @@ namespace lite3dpp
         stl<String, stl<KeyFrame>::vector>::unordered_map mSkeletonKeyFrames;
         float mMinFrame = 0;
         float mMaxFrame = 0;
+        Skeleton *mSkeleton = nullptr;
     };
 }

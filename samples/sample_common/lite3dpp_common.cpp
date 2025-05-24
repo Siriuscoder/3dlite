@@ -89,14 +89,14 @@ Sample::Sample(const std::string_view &sampleHelpString) :
 void Sample::initGui()
 {
     /* preload font textures */
-    mStatTexture = mMain.getResourceManager()->
+    mStatTexture = mMain.getResourceManager().
         queryResource<lite3dpp_font::FontTexture>("arial256x128.texture",
         "samples:textures/json/arial256x128.json");
-    mHelpTexture = mMain.getResourceManager()->
+    mHelpTexture = mMain.getResourceManager().
         queryResource<lite3dpp_font::FontTexture>("arial512x512.texture",
         "samples:textures/json/arial512x512.json");
     
-    mGuiScene = mMain.getResourceManager()->queryResource<Scene>("GUI",
+    mGuiScene = mMain.getResourceManager().queryResource<Scene>("GUI",
         "samples:scenes/gui.json");
     
     mGuiCamera = getMain().getCamera("GuiCamera");
@@ -296,7 +296,7 @@ void Sample::updateGui()
         }
         else if (mHelpState == SHOW_RESOURCES)
         {
-            ResourceManager::ResourceManagerStats memStats = mMain.getResourceManager()->getStats();
+            ResourceManager::ResourceManagerStats memStats = mMain.getResourceManager().getStats();
             sprintf(strbuf, resourceStatsString, 
                 static_cast<uint32_t>(memStats.usedVideoMem / 1024),
                 memStats.totalObjectsCount, memStats.pipelinesCount,

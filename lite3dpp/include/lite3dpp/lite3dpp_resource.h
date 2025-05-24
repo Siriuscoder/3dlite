@@ -55,7 +55,7 @@ namespace lite3dpp
         };
 
         AbstractResource(const String &name, 
-            const String &path, Main *main, ResourceType type);
+            const String &path, Main &main, ResourceType type);
         virtual ~AbstractResource();
 
         void load(const void *buffer, size_t size);
@@ -76,9 +76,9 @@ namespace lite3dpp
         inline const String &getPath() const
         { return mPath; }
         inline Main &getMain()
-        { return *mMain; }
+        { return mMain; }
         inline const Main &getMain() const
-        { return *mMain; }
+        { return mMain; }
 
     protected:
 
@@ -94,7 +94,7 @@ namespace lite3dpp
         ResourceType mType;
         String mName;
         String mPath;
-        Main *mMain;
+        Main &mMain;
     };
 
     class LITE3DPP_EXPORT ConfigurableResource : public AbstractResource
@@ -104,7 +104,7 @@ namespace lite3dpp
         static const String emptyJson;
 
         ConfigurableResource(const String &name, 
-            const String &path, Main *main, ResourceType type);
+            const String &path, Main &main, ResourceType type);
         virtual ~ConfigurableResource();
 
         const ConfigurationReader &getJson() const;

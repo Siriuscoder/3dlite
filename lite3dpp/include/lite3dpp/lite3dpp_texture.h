@@ -45,7 +45,7 @@ namespace lite3dpp
     protected:
 
         Texture(const String &name, 
-            const String &path, Main *main);
+            const String &path, Main &main);
 
         virtual void unloadImpl() override;
 
@@ -67,7 +67,7 @@ namespace lite3dpp
     public:
 
         TextureImage(const String &name, 
-            const String &path, Main *main);
+            const String &path, Main &main);
 
         virtual ~TextureImage() = default;
 

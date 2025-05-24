@@ -28,7 +28,7 @@ MeshInfoCommand::MeshInfoCommand()
 
 void MeshInfoCommand::runImpl()
 {
-    printInfo(mMain.getResourceManager()->loadFileToMemory(mInputFilePath));
+    printInfo(mMain.getResourceManager().loadFileToMemory(mInputFilePath));
 }
 
 void MeshInfoCommand::parseCommandLineImpl(int argc, char *args[]) 

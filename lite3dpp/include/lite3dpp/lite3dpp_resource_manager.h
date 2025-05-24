@@ -121,7 +121,7 @@ namespace lite3dpp
             return queryResource<T>(name, json.data(), json.size());
         }
 
-        ResourceManager(Main *main);
+        ResourceManager(Main &main);
         virtual ~ResourceManager();
 
         void releaseAllResources();
@@ -154,7 +154,7 @@ namespace lite3dpp
 
     private:
 
-        Main *mMain = nullptr;
+        Main &mMain;
         Resources mResources;
         Packs mPacks;
         lite3d_pack *mLastUsed = nullptr;

@@ -41,7 +41,7 @@ namespace lite3dpp
     };
     
     AbstractResource::AbstractResource(const String &name,
-        const String &path, Main *main, ResourceType type) : 
+        const String &path, Main &main, ResourceType type) : 
         mState(UNLOADED),
         mType(type),
         mName(name),
@@ -121,7 +121,7 @@ namespace lite3dpp
     }
 
     ConfigurableResource::ConfigurableResource(const String &name, 
-        const String &path, Main *main, ResourceType type) : 
+        const String &path, Main &main, ResourceType type) : 
         AbstractResource(name, path, main, type)
     {}
 

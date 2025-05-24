@@ -35,7 +35,7 @@ namespace lite3dpp
         using BufferBase::setData;
 
         TextureBuffer(const String &name, 
-            const String &path, Main *main);
+            const String &path, Main &main);
 
         virtual ~TextureBuffer() = default;
 

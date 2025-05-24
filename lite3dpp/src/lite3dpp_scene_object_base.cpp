@@ -80,7 +80,7 @@ namespace lite3dpp
     void SceneObjectBase::loadFromTemplateFromFile(const String &templatePath)
     {
         size_t fileSize = 0;
-        const void *fileData = getMain().getResourceManager()->loadFileToMemory(templatePath, &fileSize);
+        const void *fileData = getMain().getResourceManager().loadFileToMemory(templatePath, &fileSize);
         ConfigurationReader conf(static_cast<const char *>(fileData), fileSize);
         loadFromTemplate(conf);
     }

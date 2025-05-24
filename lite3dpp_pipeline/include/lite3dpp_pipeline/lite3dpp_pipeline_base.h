@@ -30,7 +30,7 @@ namespace lite3dpp_pipeline {
     {
     public:
 
-        PipelineBase(const String &name, const String &path, Main *main);
+        PipelineBase(const String &name, const String &path, Main &main);
         virtual ~PipelineBase();
 
         Scene &getMainScene();

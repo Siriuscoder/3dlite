@@ -51,7 +51,7 @@ namespace lite3dpp
         using BufferBase::getData;
         using BufferBase::setData;
         
-        VBOResource(const String &name, const String &path, Main *main,
+        VBOResource(const String &name, const String &path, Main &main,
             AbstractResource::ResourceType type);
         ~VBOResource();
         

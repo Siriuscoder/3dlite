@@ -31,7 +31,7 @@ public:
 
     void createScene() override
     {
-        Scene *scene = getMain().getResourceManager()->queryResource<Scene>("SimpleScene",
+        Scene *scene = getMain().getResourceManager().queryResource<Scene>("SimpleScene",
             "samples:scenes/scene.json");
         setMainCamera(getMain().getCamera("MyCamera"));
         mMinigun = scene->getObject("Minigun");

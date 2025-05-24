@@ -43,7 +43,7 @@ public:
 
     void createScene() override
     {
-        mPipeline = getMain().getResourceManager()->queryResource<lite3dpp_pipeline::PipelineDeffered>("PistonScene", 
+        mPipeline = getMain().getResourceManager().queryResource<lite3dpp_pipeline::PipelineDeffered>("PistonScene", 
             "piston:pipelines/piston.json");
         mPistonScene = &mPipeline->getMainScene();
         
@@ -54,8 +54,8 @@ public:
         mRod = mPistonScene->getObject("Engine")->getNode("Rod");
 
         setupShadowCasters();
-        getMain().getResourceManager()->warmUpMeshPartitions();
-        getMain().getResourceManager()->dropFileCache();
+        getMain().getResourceManager().warmUpMeshPartitions();
+        getMain().getResourceManager().dropFileCache();
     }
 
     void setupShadowCasters()

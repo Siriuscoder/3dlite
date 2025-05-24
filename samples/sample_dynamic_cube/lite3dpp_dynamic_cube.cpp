@@ -42,14 +42,14 @@ public:
 
     void createScene() override
     {
-        Scene *scene = getMain().getResourceManager()->queryResource<Scene>("BoxScene",
+        Scene *scene = getMain().getResourceManager().queryResource<Scene>("BoxScene",
             "samples:scenes/scene_rtt_box.json");
 
         setMainCamera(getMain().getCamera("MyCamera"));
         mBox = scene->getObject("Box");
-        mBoxMesh = getMain().getResourceManager()->queryResource<Mesh>("box.mesh");
-        mBoxTexture = getMain().getResourceManager()->queryResource<TextureImage>("color512x512.texture");
-        mBoxMaterial = getMain().getResourceManager()->queryResource<Material>("render512x512.material");
+        mBoxMesh = getMain().getResourceManager().queryResource<Mesh>("box.mesh");
+        mBoxTexture = getMain().getResourceManager().queryResource<TextureImage>("color512x512.texture");
+        mBoxMaterial = getMain().getResourceManager().queryResource<Material>("render512x512.material");
 
         updateTextureData();
     }

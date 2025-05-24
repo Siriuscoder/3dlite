@@ -26,7 +26,7 @@ namespace lite3dpp
         mMain(main)
     {}
 
-    void SkeletonBuffer::registerSceneNode(SceneNodeBase *node)
+    void SkeletonBuffer::registerSceneNode(MeshSceneNode *node)
     {
         SDL_assert(node);
 
@@ -40,11 +40,11 @@ namespace lite3dpp
         {
             if (!mGlobalSkeletonBuffer)
             {
-                mGlobalSkeletonBuffer = mMain.getResourceManager()->
+                mGlobalSkeletonBuffer = mMain.getResourceManager().
                     queryResourceFromJson<SSBO>("GlobalSkeletonBuffer", "{\"Dynamic\": true}");
             }
 
-            size_t bufferIndex = mGlobalSkeletonBuffer->bufferSizeBytes() / sizeof(kmMat4);
+            int32_t bufferIndex = mGlobalSkeletonBuffer->bufferSizeBytes() / sizeof(kmMat4);
             size_t sizeBytes = node->getSkeleton()->getBonesCount() * sizeof(kmMat4);
 
             if ((mUsedBytes + sizeBytes) > mGlobalSkeletonBuffer->bufferSizeBytes())
@@ -53,11 +53,11 @@ namespace lite3dpp
                 mUsedBytes += sizeBytes;
             }
 
-            node->getSkeleton()->setBufferIndex(bufferIndex);
+            node->setSkeletonBufferIndex(bufferIndex);
         }
     }
 
-    void SkeletonBuffer::unregisterSceneNode(SceneNodeBase *node)
+    void SkeletonBuffer::unregisterSceneNode(MeshSceneNode *node)
     {
         SDL_assert(node);
 
@@ -77,7 +77,7 @@ namespace lite3dpp
     {
         if (mGlobalSkeletonBuffer)
         {
-            mMain.getResourceManager()->releaseResource(mGlobalSkeletonBuffer->getName());
+            mMain.getResourceManager().releaseResource(mGlobalSkeletonBuffer->getName());
             mGlobalSkeletonBuffer = nullptr;
         }
 

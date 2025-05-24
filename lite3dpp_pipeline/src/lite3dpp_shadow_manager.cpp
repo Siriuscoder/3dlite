@@ -134,32 +134,32 @@ namespace lite3dpp_pipeline {
     {
         if (mCleanStage)
         {
-            mMain.getResourceManager()->releaseResource(mCleanStage->getName());
+            mMain.getResourceManager().releaseResource(mCleanStage->getName());
         }
 
         if (mCleanStageMaterial)
         {
-            mMain.getResourceManager()->releaseResource(mCleanStageMaterial->getName());
+            mMain.getResourceManager().releaseResource(mCleanStageMaterial->getName());
         }
 
         if (mShadowPass)
         {
-            mMain.getResourceManager()->releaseResource(mShadowPass->getName());
+            mMain.getResourceManager().releaseResource(mShadowPass->getName());
         }
 
         if (mShadowMap)
         {
-            mMain.getResourceManager()->releaseResource(mShadowMap->getName());
+            mMain.getResourceManager().releaseResource(mShadowMap->getName());
         }
 
         if (mShadowMatrixBuffer)
         {
-            mMain.getResourceManager()->releaseResource(mShadowMatrixBuffer->getName());
+            mMain.getResourceManager().releaseResource(mShadowMatrixBuffer->getName());
         }
 
         if (mShadowIndexBuffer)
         {
-            mMain.getResourceManager()->releaseResource(mShadowIndexBuffer->getName());
+            mMain.getResourceManager().releaseResource(mShadowIndexBuffer->getName());
         }
     }
 
@@ -342,9 +342,9 @@ namespace lite3dpp_pipeline {
     {
         calculateLimits();
 
-        mShadowMatrixBuffer = mMain.getResourceManager()->queryResourceFromJson<UBO>(pipelineName + "_ShadowMatrixBuffer",
+        mShadowMatrixBuffer = mMain.getResourceManager().queryResourceFromJson<UBO>(pipelineName + "_ShadowMatrixBuffer",
             "{\"Dynamic\": true}");
-        mShadowIndexBuffer = mMain.getResourceManager()->queryResourceFromJson<UBO>(pipelineName + "_ShadowIndexBuffer",
+        mShadowIndexBuffer = mMain.getResourceManager().queryResourceFromJson<UBO>(pipelineName + "_ShadowIndexBuffer",
             "{\"Dynamic\": true}");
 
         mShadowMatrixBuffer->extendBufferBytes(sizeof(kmMat4) * mShadowsCastersMaxCount);
@@ -391,7 +391,7 @@ namespace lite3dpp_pipeline {
             .set(L"Width", mWidth)
             .set(L"Depth", mShadowsCastersMaxCount);
 
-        mShadowMap = mMain.getResourceManager()->queryResourceFromJson<TextureImage>(shadowMapName, shadowTextureConfig.write());
+        mShadowMap = mMain.getResourceManager().queryResourceFromJson<TextureImage>(shadowMapName, shadowTextureConfig.write());
 
         ConfigurationWriter shadowRenderTargetConfig;
         shadowRenderTargetConfig.set(L"Width", mWidth)
@@ -405,7 +405,7 @@ namespace lite3dpp_pipeline {
             .set(L"DepthAttachments", ConfigurationWriter()
                 .set(L"TextureName", shadowMapName));
 
-        mShadowPass = mMain.getResourceManager()->queryResourceFromJson<TextureRenderTarget>(pipelineName + "_ShadowPass",
+        mShadowPass = mMain.getResourceManager().queryResourceFromJson<TextureRenderTarget>(pipelineName + "_ShadowPass",
             shadowRenderTargetConfig.write());
         mShadowPass->addObserver(this);
     }
@@ -426,7 +426,7 @@ namespace lite3dpp_pipeline {
             .set(L"RenderBlend", false)
             .set(L"RenderOpaque", true));
             
-        mCleanStage = mMain.getResourceManager()->queryResourceFromJson<Scene>(pipelineName + "_ShadowCleanStage",
+        mCleanStage = mMain.getResourceManager().queryResourceFromJson<Scene>(pipelineName + "_ShadowCleanStage",
             stageGenerator.generate().write());
 
         ConfigurationWriter cleanStageMaterialConfig;
@@ -446,7 +446,7 @@ namespace lite3dpp_pipeline {
         });
         
         // Создаем служебный шейдер отвечающий за очистку теневых карт
-        mCleanStageMaterial = mMain.getResourceManager()->queryResourceFromJson<Material>(
+        mCleanStageMaterial = mMain.getResourceManager().queryResourceFromJson<Material>(
             pipelineName + "_ShadowCleanStage.material", cleanStageMaterialConfig.write());
 
         // Добавляем шейдер очистки на сцену 

@@ -16,9 +16,28 @@
  *	along with Lite3D.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
 #include <lite3dpp/lite3dpp_skeleton.h>
+#include <lite3dpp/lite3dpp_main.h>
+
+#include <SDL_assert.h>
 
 namespace lite3dpp
 {
+    Skeleton::Skeleton(MeshSceneNode &node) : 
+        mNode(node)
+    {}
+
+    Skeleton::~Skeleton()
+    {
+        mNode.getMain()->getSkeletonBuffer().unregisterSceneNode(&mNode);
+    }
+
+    void Skeleton::loadFromJson(const ConfigurationReader& conf)
+    {
+        SDL_assert(mNode.getMain());
+
+        mNode.getMain()->getSkeletonBuffer().registerSceneNode(&mNode);
+    }
+
     size_t Skeleton::getBonesCount() const
     {
         return 0;

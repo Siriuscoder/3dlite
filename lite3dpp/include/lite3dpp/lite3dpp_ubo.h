@@ -25,7 +25,7 @@ namespace lite3dpp
     {
     public:
         
-        UBO(const String &name, const String &path, Main *main);
+        UBO(const String &name, const String &path, Main &main);
         
     protected:
         

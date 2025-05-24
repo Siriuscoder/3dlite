@@ -41,7 +41,7 @@ public:
     void createScene() override
     {
         // load empty scene with floor plane only
-        mScene = getMain().getResourceManager()->queryResource<lite3dpp_phisics::PhysicsScene>("SamplePhysicsScene",
+        mScene = getMain().getResourceManager().queryResource<lite3dpp_phisics::PhysicsScene>("SamplePhysicsScene",
             "samples:scenes/physic_simple.json");
         setMainCamera(getMain().getCamera("MyCamera"));
     }

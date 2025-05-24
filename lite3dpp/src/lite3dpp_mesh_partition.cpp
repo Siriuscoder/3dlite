@@ -27,7 +27,7 @@
 
 namespace lite3dpp
 {
-    MeshPartition::MeshPartition(const String &name, const String &path, Main *main) : 
+    MeshPartition::MeshPartition(const String &name, const String &path, Main &main) : 
         ConfigurableResource(name, path, main, AbstractResource::MESH_PARTITION)
     {}
 
@@ -114,7 +114,7 @@ namespace lite3dpp
 #ifdef INCLUDE_ASSIMP
         auto lastBefore = lite3d_list_last_link(&mPartition.chunks);
         if (!lite3d_assimp_mesh_load(&mPartition, 
-            getMain().getResourceManager()->loadFileToMemory(filePath), modelName.c_str(), flags))
+            getMain().getResourceManager().loadFileToMemory(filePath), modelName.c_str(), flags))
         {
             LITE3D_THROW(getName() << ": Failed to load mesh via assimp");
         }
@@ -137,7 +137,7 @@ namespace lite3dpp
         auto lastBefore = lite3d_list_last_link(&mPartition.chunks);
         
         if (!lite3d_mesh_load_from_m_file(&mPartition, 
-            getMain().getResourceManager()->loadFileToMemory(filePath)))
+            getMain().getResourceManager().loadFileToMemory(filePath)))
         {
             LITE3D_THROW(getName() << ": could not load mesh chunk");
         }

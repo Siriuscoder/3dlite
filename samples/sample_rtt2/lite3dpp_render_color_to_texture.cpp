@@ -31,12 +31,12 @@ public:
 
     void createScene() override
     {
-        Scene *scene = getMain().getResourceManager()->queryResource<Scene>("SceneInTexture",
+        Scene *scene = getMain().getResourceManager().queryResource<Scene>("SceneInTexture",
             "samples:scenes/scene_rtt.json");
         mMinigun = scene->getObject("Minigun");
         mPlasmagun = scene->getObject("Plasmagun");
 
-        scene = getMain().getResourceManager()->queryResource<Scene>("BoxScene",
+        scene = getMain().getResourceManager().queryResource<Scene>("BoxScene",
             "samples:scenes/scene_rtt_box.json");
         setMainCamera(getMain().getCamera("MyCamera"));
 

@@ -26,7 +26,7 @@ namespace lite3dpp_pipeline {
     {
     public:
 
-        PipelineForward(const String &name, const String &path, Main *main);
+        PipelineForward(const String &name, const String &path, Main &main);
 
     protected:
         

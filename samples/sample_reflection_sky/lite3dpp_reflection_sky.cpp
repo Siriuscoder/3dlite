@@ -35,14 +35,14 @@ public:
 
     void createScene() override
     {
-        getMain().getResourceManager()->queryResource<Scene>("ReflectionSky", "samples:scenes/reflections.json");
+        getMain().getResourceManager().queryResource<Scene>("ReflectionSky", "samples:scenes/reflections.json");
         // Основной cubemap уже загружен сценой, просто надо получить
-        mSkyCube = getMain().getResourceManager()->queryResource<TextureImage>("skybox.texture");
+        mSkyCube = getMain().getResourceManager().queryResource<TextureImage>("skybox.texture");
         // Загружаем альтернативный cubemap
-        mCryoCube = getMain().getResourceManager()->queryResource<TextureImage>("cryo_cube.texture", "samples:textures/json/skybox_cryo.json");
+        mCryoCube = getMain().getResourceManager().queryResource<TextureImage>("cryo_cube.texture", "samples:textures/json/skybox_cryo.json");
         // Прихраниваем материалы для дальнейшей смены cubemap
-        mSkyMaterial = getMain().getResourceManager()->queryResource<Material>("skycube.material");
-        mReflectionMaterial = getMain().getResourceManager()->queryResource<Material>("reflection.material");
+        mSkyMaterial = getMain().getResourceManager().queryResource<Material>("skycube.material");
+        mReflectionMaterial = getMain().getResourceManager().queryResource<Material>("reflection.material");
         // Установка главной камеры (для перемещения)
         setMainCamera(getMain().getCamera("MyCamera"));
         // Важно для отрисовки sky cube

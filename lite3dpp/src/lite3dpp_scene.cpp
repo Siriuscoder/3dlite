@@ -26,7 +26,7 @@
 namespace lite3dpp
 {
     Scene::Scene(const String &name, 
-        const String &path, Main *main) : 
+        const String &path, Main &main) : 
         ConfigurableResource(name, path, main, AbstractResource::SCENE),
         mLightingParamsBuffer(nullptr),
         mLightingIndexBuffer(nullptr)
@@ -80,11 +80,11 @@ namespace lite3dpp
             if (lightingTechnique == "SSBO")
             {
                 /* default name of lighting buffer is scene name + "LightingBufferObject" */
-                mLightingParamsBuffer = getMain().getResourceManager()->
+                mLightingParamsBuffer = getMain().getResourceManager().
                     queryResourceFromJson<SSBO>(getName() + "_lightingBufferObject",
                     "{\"Dynamic\": true}");
                 /* 2-bytes index, about 16k light sources support  */
-                mLightingIndexBuffer = getMain().getResourceManager()->
+                mLightingIndexBuffer = getMain().getResourceManager().
                     queryResourceFromJson<SSBO>(getName() + "_lightingIndexBuffer",
                     "{\"Dynamic\": true}");
 
@@ -93,11 +93,11 @@ namespace lite3dpp
             else if (lightingTechnique == "UBO")
             {
                 /* default name of lighting buffer is scene name + "LightingBufferObject" */
-                mLightingParamsBuffer = getMain().getResourceManager()->
+                mLightingParamsBuffer = getMain().getResourceManager().
                     queryResourceFromJson<UBO>(getName() + "_lightingBufferObject",
                     "{\"Dynamic\": true}");
                 /* 2-bytes index, about 16k light sources support  */
-                mLightingIndexBuffer = getMain().getResourceManager()->
+                mLightingIndexBuffer = getMain().getResourceManager().
                     queryResourceFromJson<UBO>(getName() + "_lightingIndexBuffer",
                     "{\"Dynamic\": true}");
 
@@ -127,13 +127,13 @@ namespace lite3dpp
         /* release lighting technique buffers */
         if (mLightingParamsBuffer)
         {
-            getMain().getResourceManager()->releaseResource(getName() + "_lightingBufferObject");
+            getMain().getResourceManager().releaseResource(getName() + "_lightingBufferObject");
             mLightingParamsBuffer = nullptr;
         }
 
         if (mLightingIndexBuffer)
         {
-            getMain().getResourceManager()->releaseResource(getName() + "_lightingIndexBuffer");
+            getMain().getResourceManager().releaseResource(getName() + "_lightingIndexBuffer");
             mLightingIndexBuffer = nullptr;
         }
 
@@ -324,7 +324,7 @@ namespace lite3dpp
                     renderTarget = getMain().window();
                 else
                 {
-                    renderTarget = getMain().getResourceManager()->queryResource<TextureRenderTarget>(
+                    renderTarget = getMain().getResourceManager().queryResource<TextureRenderTarget>(
                         renderTargetJson.getString(L"Name"),
                         renderTargetJson.getString(L"Path"));
                 }

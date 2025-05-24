@@ -30,7 +30,7 @@ namespace lite3dpp
         static constexpr inline std::string_view MultiRenderMaterialDataBufferName = 
             "MultiRenderMaterialDataBuffer"; 
     
-        MultiRenderMaterial(const String &name, const String &path, Main *main);
+        MultiRenderMaterial(const String &name, const String &path, Main &main);
 
     protected:
 

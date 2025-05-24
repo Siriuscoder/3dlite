@@ -60,6 +60,7 @@ namespace lite3dpp
     class LITE3DPP_EXPORT Camera;
     class LITE3DPP_EXPORT SceneNodeBase;
     class LITE3DPP_EXPORT SceneNode;
+    class LITE3DPP_EXPORT MeshSceneNode;
     class LITE3DPP_EXPORT Material;
     class LITE3DPP_EXPORT Texture;
     class LITE3DPP_EXPORT RenderTarget;

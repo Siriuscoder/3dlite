@@ -39,17 +39,17 @@ namespace lite3dpp_pipeline {
     {
         if (mBloomRernderer)
         {
-            mMain.getResourceManager()->releaseResource(mBloomRernderer->getName());
+            mMain.getResourceManager().releaseResource(mBloomRernderer->getName());
         }
 
         for (auto material : mMaterialChain)
         {
-            mMain.getResourceManager()->releaseResource(material->getName());
+            mMain.getResourceManager().releaseResource(material->getName());
         }
 
         for (auto texture : mTextureChain)
         {
-            mMain.getResourceManager()->releaseResource(texture->getName());
+            mMain.getResourceManager().releaseResource(texture->getName());
             /* Так как в mTextureChain текстуры дублируются, удаляем только до середины */
             if (texture == mMiddleTexture)
             {
@@ -59,7 +59,7 @@ namespace lite3dpp_pipeline {
 
         if (mBloomRT)
         {
-            mMain.getResourceManager()->releaseResource(mBloomRT->getName());
+            mMain.getResourceManager().releaseResource(mBloomRT->getName());
         }
     }
 
@@ -91,7 +91,7 @@ namespace lite3dpp_pipeline {
             .set(L"CleanDepthBuf", false)
             .set(L"CleanStencilBuf", false);
 
-        mBloomRT = mMain.getResourceManager()->queryResourceFromJson<TextureRenderTarget>(
+        mBloomRT = mMain.getResourceManager().queryResourceFromJson<TextureRenderTarget>(
             mPipelineName + "_" + mCameraName + "_BloomPass",
             bloomRenderTargetConfig.write());
 
@@ -152,7 +152,7 @@ namespace lite3dpp_pipeline {
                 .set(L"InternalFormat", "RGB32F");
 
             textureChainTmp.emplace_back(
-                mMain.getResourceManager()->queryResourceFromJson<TextureImage>(textureName + std::to_string(i) + ".texture", 
+                mMain.getResourceManager().queryResourceFromJson<TextureImage>(textureName + std::to_string(i) + ".texture", 
                 textureConfig.write()));
         }
 
@@ -167,7 +167,7 @@ namespace lite3dpp_pipeline {
     {
         String matName = mPipelineName + "_" + mCameraName + "_bloom_slice_";
         // Получим финишную HDR текстру сцены после прогона освещения, будем ее блумить
-        Texture *combinedTexture = mMain.getResourceManager()->queryResource<TextureImage>(
+        Texture *combinedTexture = mMain.getResourceManager().queryResource<TextureImage>(
             mPipelineName + "_" + mCameraName + "_combined.texture");
 
         BigTriSceneGenerator bloomSceneConfig;
@@ -182,7 +182,7 @@ namespace lite3dpp_pipeline {
             .set(L"SortTransparentToNear", true)
             .set(L"SortOpaqueToNear", true));
 
-        mBloomRernderer = mMain.getResourceManager()->queryResourceFromJson<Scene>(
+        mBloomRernderer = mMain.getResourceManager().queryResourceFromJson<Scene>(
             mPipelineName + "_" + mCameraName + "_BloomStage",
             bloomSceneConfig.generate().write());
         mBloomRernderer->addObserver(this);
@@ -225,7 +225,7 @@ namespace lite3dpp_pipeline {
             }
 
             /* создание шейдера */
-            Material *material = mMain.getResourceManager()->queryResourceFromJson<Material>(
+            Material *material = mMain.getResourceManager().queryResourceFromJson<Material>(
                 matName + std::to_string(i) + ".material", bloomSampleMaterialConfig.write());
             /* Установим исходную текстуру для каждого bloom шейдера, каждый проход берет результат предидущего */
             material->setSamplerParameter(static_cast<int>(TexturePassTypes::RenderPass), "Source", 

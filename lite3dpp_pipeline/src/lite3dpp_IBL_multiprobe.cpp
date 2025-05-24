@@ -34,7 +34,7 @@ IBLMultiProbe::~IBLMultiProbe()
 {
     for (auto it = mResourcesList.rbegin(); it != mResourcesList.rend(); ++it)
     {
-        mMain.getResourceManager()->releaseResource(*it);
+        mMain.getResourceManager().releaseResource(*it);
     }
 
     mMain.removeObserver(this);
@@ -84,7 +84,7 @@ void IBLMultiProbe::calculateProbeBatchCount()
 
 VBOResource* IBLMultiProbe::createBuffer(const String& bufferName, size_t size)
 {
-    auto buffer = mMain.getResourceManager()->queryResourceFromJson<UBO>(mPipelineName + bufferName,
+    auto buffer = mMain.getResourceManager().queryResourceFromJson<UBO>(mPipelineName + bufferName,
         "{\"Dynamic\": true}");
     
     mResourcesList.emplace_back(buffer->getName());
@@ -108,7 +108,7 @@ void IBLMultiProbe::createProbePass(const ConfigurationReader &config)
         .set(L"TextureFormat", "RGB")
         .set(L"InternalFormat", "RGB16F");
 
-    mEnvironmentProbe = mMain.getResourceManager()->queryResourceFromJson<TextureImage>(
+    mEnvironmentProbe = mMain.getResourceManager().queryResourceFromJson<TextureImage>(
         mPipelineName + "_EnvironmentMultiProbe.texture", mapConfig.write());
     mResourcesList.emplace_back(mEnvironmentProbe->getName());
 
@@ -117,7 +117,7 @@ void IBLMultiProbe::createProbePass(const ConfigurationReader &config)
         .set(L"TextureFormat", "Depth")
         .set(L"InternalFormat", "");
 
-    mEnvironmentDepth = mMain.getResourceManager()->queryResourceFromJson<TextureImage>(
+    mEnvironmentDepth = mMain.getResourceManager().queryResourceFromJson<TextureImage>(
         mPipelineName + "_EnvironmentMultiProbeDepth.texture", mapConfig.write());
     mResourcesList.emplace_back(mEnvironmentDepth->getName());
 
@@ -137,7 +137,7 @@ void IBLMultiProbe::createProbePass(const ConfigurationReader &config)
         .set(L"DepthAttachments", ConfigurationWriter()
             .set(L"TextureName", mEnvironmentDepth->getName()));
 
-    mEnvironmentProbePass = mMain.getResourceManager()->queryResourceFromJson<TextureRenderTarget>(
+    mEnvironmentProbePass = mMain.getResourceManager().queryResourceFromJson<TextureRenderTarget>(
         mPipelineName + "_EnvironmentMultiProbePass", passConfig.write());
     mResourcesList.emplace_back(mEnvironmentProbePass->getName());
     mEnvironmentProbePass->addObserver(this);

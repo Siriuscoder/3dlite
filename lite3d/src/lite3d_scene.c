@@ -62,11 +62,10 @@ typedef struct _mqr_node
 typedef struct _node_invocation_info
 {
     kmMat4 modelMatrix;
-    kmMat4 modelViewProjMatrix;
     kmMat4 normalMatrix;
     uint32_t materialIdx;
     uint32_t flags;
-    uint32_t reserved01;
+    uint32_t skeletonBufferIndex;
     uint32_t reserved02;
 } _node_invocation_info; 
 #pragma pack(pop)
@@ -577,10 +576,9 @@ static void mqr_unit_make_queue(lite3d_scene *scene, _mqr_unit *mqrUnit, uint16_
                 _node_invocation_info *nodeInfo = lite3d_array_get(&scene->invocationBufferCPU, mqrNode->invocationIndex);
                 // Model матрица (Model Space -> World Space) 
                 nodeInfo->modelMatrix = mqrNode->node->worldMatrix;
+                nodeInfo->skeletonBufferIndex = mqrNode->node->skeletonBufferIndex;
                 // Матрица нормали (Model Space -> World Space) 
                 kmMat4AssignMat3(&nodeInfo->normalMatrix, &(mqrNode->node->normalMatrix));
-                // ModelViewProjection матрица (Model Space -> Clip Space)
-                kmMat4Multiply(&nodeInfo->modelViewProjMatrix, &scene->currentCamera->viewProjectionMatrix, &nodeInfo->modelMatrix);
 
                 if (!lite3d_vbo_subbuffer(&scene->invocationBufferGPU, nodeInfo, 
                     mqrNode->invocationIndex * scene->invocationBufferCPU.elemSize,

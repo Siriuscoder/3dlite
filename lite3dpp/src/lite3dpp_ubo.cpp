@@ -20,7 +20,7 @@
 
 namespace lite3dpp
 {
-    UBO::UBO(const String &name, const String &path, Main *main) : 
+    UBO::UBO(const String &name, const String &path, Main &main) : 
         VBOResource(name, path, main, AbstractResource::UNIFORM_BUFFER)
     {}
     

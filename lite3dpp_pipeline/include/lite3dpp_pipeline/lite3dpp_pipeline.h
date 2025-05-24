@@ -31,7 +31,7 @@ namespace lite3dpp_pipeline {
         using SceneType = SceneImpl;
         using PipelineType = PipelineImpl;
 
-        CustomScenePipeline(const String &name, const String &path, Main *main) : 
+        CustomScenePipeline(const String &name, const String &path, Main &main) : 
             PipelineType(name, path, main)
         {}
 
@@ -44,7 +44,7 @@ namespace lite3dpp_pipeline {
 
         void createMainScene(const String& name, const String& sceneConfig) override
         {
-            PipelineType::mMainScene = PipelineType::getMain().getResourceManager()->
+            PipelineType::mMainScene = PipelineType::getMain().getResourceManager().
                 template queryResourceFromJson<SceneType>(name, sceneConfig);
         }
     };

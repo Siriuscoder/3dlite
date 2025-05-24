@@ -61,7 +61,7 @@ namespace lite3dpp
     public:
 
         RenderTarget(const String &name, 
-            const String &path, Main *main);
+            const String &path, Main &main);
         virtual ~RenderTarget();
 
         bool isEnabled() const;
@@ -103,7 +103,7 @@ namespace lite3dpp
     public:
 
         WindowRenderTarget(const String &name, 
-            const String &path, Main *main);
+            const String &path, Main &main);
         ~WindowRenderTarget();
 
         void fullscreen(bool flag);

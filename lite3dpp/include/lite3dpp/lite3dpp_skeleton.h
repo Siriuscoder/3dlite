@@ -28,15 +28,20 @@ namespace lite3dpp
 
         using BonesTransformData = stl<kmMat4>::vector;
 
-        Skeleton() = default;
+        Skeleton(MeshSceneNode &node);
+        ~Skeleton();
+
+        void loadFromJson(const ConfigurationReader& conf);
 
         size_t getBonesCount() const;
-        void setBufferIndex(size_t index)
+        inline void setBufferIndex(int32_t index)
         { mBufferIndex = index; }
 
     private:
 
-        size_t mBufferIndex;
+        MeshSceneNode &mNode;
+        int32_t mBufferIndex = 0;
         BonesTransformData mBonesTransformData;
+
     };
 }

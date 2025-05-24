@@ -32,7 +32,7 @@ namespace lite3dpp
         auto meshHelper = json.getObject(L"Mesh");
         if (!meshHelper.isEmpty())
         {
-            setMesh(getMain()->getResourceManager()->queryResource<Mesh>(
+            setMesh(getMain()->getResourceManager().queryResource<Mesh>(
                 meshHelper.getString(L"Name"),
                 meshHelper.getString(L"Mesh")));
 
@@ -56,6 +56,27 @@ namespace lite3dpp
                     applyMaterial(chunk, material);
                 }
             }
+
+            if (json.has(L"Skeleton") && json.has(L"VertexGroups"))
+            {
+                mSkeleton = std::make_unique<Skeleton>(*this);
+                mSkeleton->loadFromJson(json);
+                for (auto &action : mActions)
+                {
+                    SDL_assert(action.second);
+                    action.second->setSkeleton(mSkeleton.get());
+                };
+            }
+        }
+    }
+
+    void MeshSceneNode::setSkeletonBufferIndex(int32_t index)
+    {
+        if (mSkeleton)
+        {
+            mSkeleton->setBufferIndex(index);
+            getPtr()->skeletonBufferIndex = index;
+            getPtr()->invalidated = LITE3D_TRUE;
         }
     }
     

@@ -26,7 +26,7 @@
 
 namespace lite3dpp
 {
-    Mesh::Mesh(const String &name, const String &path, Main *main) : 
+    Mesh::Mesh(const String &name, const String &path, Main &main) : 
         ConfigurableResource(name, path, main, AbstractResource::MESH)
     {}
 
@@ -53,15 +53,15 @@ namespace lite3dpp
     void Mesh::initPartition(const ConfigurationReader &config)
     {
         auto partitionName = config.getString(L"Partition", getName() + "_partition");
-        if (getMain().getResourceManager()->resourceExists(partitionName))
+        if (getMain().getResourceManager().resourceExists(partitionName))
         {
-            mMeshPartition = getMain().getResourceManager()->queryResource<MeshPartition>(partitionName);
+            mMeshPartition = getMain().getResourceManager().queryResource<MeshPartition>(partitionName);
             return;
         }
 
         ConfigurationWriter partitionCfg;
         partitionCfg.set(L"Dynamic", config.getBool(L"Dynamic", false));
-        mMeshPartition = getMain().getResourceManager()->queryResourceFromJson<MeshPartition>(
+        mMeshPartition = getMain().getResourceManager().queryResourceFromJson<MeshPartition>(
             partitionName, partitionCfg.write());
     }
 
@@ -350,15 +350,15 @@ namespace lite3dpp
         if (!mBoundingBoxMeshPartition)
         {
             auto partitionName = mMeshPartition->getName() + "_bouding_box";
-            if (getMain().getResourceManager()->resourceExists(partitionName))
+            if (getMain().getResourceManager().resourceExists(partitionName))
             {
-                mBoundingBoxMeshPartition = getMain().getResourceManager()->queryResource<MeshPartition>(partitionName);
+                mBoundingBoxMeshPartition = getMain().getResourceManager().queryResource<MeshPartition>(partitionName);
                 return;
             }
 
             ConfigurationWriter partitionCfg;
             partitionCfg.set(L"Dynamic", false);
-            mBoundingBoxMeshPartition = getMain().getResourceManager()->queryResourceFromJson<MeshPartition>(
+            mBoundingBoxMeshPartition = getMain().getResourceManager().queryResourceFromJson<MeshPartition>(
                 partitionName, partitionCfg.write());
         }
     }

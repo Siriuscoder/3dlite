@@ -23,7 +23,7 @@
 namespace lite3dpp {
 namespace lite3dpp_pipeline {
 
-    PipelineDeffered::PipelineDeffered(const String &name, const String &path, Main *main) : 
+    PipelineDeffered::PipelineDeffered(const String &name, const String &path, Main &main) : 
         PipelineBase(name, path, main)
     {}
 
@@ -65,7 +65,7 @@ namespace lite3dpp_pipeline {
             .set(L"ColorOutput", true)
             .set(L"DepthOutput", false));
             
-        mLightComputeStage = getMain().getResourceManager()->queryResourceFromJson<Scene>(getName() + "_LightComputeStage",
+        mLightComputeStage = getMain().getResourceManager().queryResourceFromJson<Scene>(getName() + "_LightComputeStage",
             stageGenerator.generate().write());
         mResourcesList.emplace_back(mLightComputeStage->getName());
 
@@ -184,7 +184,7 @@ namespace lite3dpp_pipeline {
         });
         
         // Создаем служебный шейдер отвечающий за расчет освещения в экранном пространстве
-        mLightComputeStageMaterial = getMain().getResourceManager()->queryResourceFromJson<Material>(
+        mLightComputeStageMaterial = getMain().getResourceManager().queryResourceFromJson<Material>(
             getName() + "_LightComputeStage.material", lightComputeMaterialConfig.write());
         mResourcesList.emplace_back(mLightComputeStageMaterial->getName());
 
@@ -207,7 +207,7 @@ namespace lite3dpp_pipeline {
             .set(L"InternalFormat", "RGBA32F")
             .set(L"Depth", 4);
 
-        mGBufferTexture = getMain().getResourceManager()->queryResourceFromJson<TextureImage>(
+        mGBufferTexture = getMain().getResourceManager().queryResourceFromJson<TextureImage>(
             getName() + "_" + cameraName + "_geometry_data.texture", gBufferTextureConfig.write());
         mResourcesList.emplace_back(mGBufferTexture->getName());
 
@@ -232,7 +232,7 @@ namespace lite3dpp_pipeline {
             .set(L"DepthAttachments", ConfigurationWriter()
             .set(L"TextureName", mDepthTexture->getName()));
 
-        mGBufferPass = getMain().getResourceManager()->queryResourceFromJson<TextureRenderTarget>(
+        mGBufferPass = getMain().getResourceManager().queryResourceFromJson<TextureRenderTarget>(
             getName() + "_" + cameraName + "_GBufferPass", gBufferTargetConfig.write());
         mResourcesList.emplace_back(mGBufferPass->getName());
 
@@ -261,7 +261,7 @@ namespace lite3dpp_pipeline {
             .set(L"TextureFormat", "RGB")
             .set(L"InternalFormat", "RGB32F");
 
-        mCombinedTexture = getMain().getResourceManager()->queryResourceFromJson<TextureImage>(
+        mCombinedTexture = getMain().getResourceManager().queryResourceFromJson<TextureImage>(
             getName() + "_" + cameraName + "_combined.texture", combinedTextureConfig.write());
         mResourcesList.emplace_back(mCombinedTexture->getName());
 
@@ -279,7 +279,7 @@ namespace lite3dpp_pipeline {
             .set(L"DepthAttachments", ConfigurationWriter()
                 .set(L"TextureName", mDepthTexture->getName()));
 
-        mCombinePass = getMain().getResourceManager()->queryResourceFromJson<TextureRenderTarget>(
+        mCombinePass = getMain().getResourceManager().queryResourceFromJson<TextureRenderTarget>(
             getName() + "_" + cameraName + "_CombinePass", combinedTargetConfig.write());
         mResourcesList.emplace_back(mCombinePass->getName());
 
@@ -311,7 +311,7 @@ namespace lite3dpp_pipeline {
             .set(L"InternalFormat", "R16F")
             .set(L"Scale", pipelineConfig.getObject(L"SSAO").getInt(L"FramebufferScale", 4));
 
-        mSSAOTexture = getMain().getResourceManager()->queryResourceFromJson<TextureImage>(
+        mSSAOTexture = getMain().getResourceManager().queryResourceFromJson<TextureImage>(
             getName() + "_" + cameraName + "_SSAO.texture", ssaoTextureConfig.write());
         mResourcesList.emplace_back(mSSAOTexture->getName());
 
@@ -328,7 +328,7 @@ namespace lite3dpp_pipeline {
                     ConfigurationWriter().set(L"TextureName", mSSAOTexture->getName())
                 }));
 
-        mSSAOPass = getMain().getResourceManager()->queryResourceFromJson<TextureRenderTarget>(
+        mSSAOPass = getMain().getResourceManager().queryResourceFromJson<TextureRenderTarget>(
             getName() + "_" + cameraName + "_SSAOPass", ssaoTargetConfig.write());
         mResourcesList.emplace_back(mSSAOPass->getName());
 
@@ -340,7 +340,7 @@ namespace lite3dpp_pipeline {
             .set(L"ColorOutput", true)
             .set(L"DepthOutput", false));
             
-        mSSAOStage = getMain().getResourceManager()->queryResourceFromJson<Scene>(cameraName + "_SSAOStage",
+        mSSAOStage = getMain().getResourceManager().queryResourceFromJson<Scene>(cameraName + "_SSAOStage",
             stageGenerator.generate().write());
         mResourcesList.emplace_back(mSSAOStage->getName());
 
@@ -377,7 +377,7 @@ namespace lite3dpp_pipeline {
         });
 
         // Создаем служебный шейдер отвечающий за расчет SSAO
-        mSSAOStageMaterial = getMain().getResourceManager()->queryResourceFromJson<Material>(
+        mSSAOStageMaterial = getMain().getResourceManager().queryResourceFromJson<Material>(
             getName() + "_" + cameraName + "_SSAOStage.material", ssaoMaterialConfig.write());
         mResourcesList.emplace_back(mSSAOStageMaterial->getName());
 

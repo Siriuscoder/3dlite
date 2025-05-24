@@ -25,7 +25,7 @@
 namespace lite3dpp
 {
     PBRMaterial::PBRMaterial(const String &name, 
-        const String &path, Main *main) : 
+        const String &path, Main &main) : 
         MultiRenderMaterial(name, path, main)
     {}
 
@@ -55,7 +55,7 @@ namespace lite3dpp
             if (helper.has(wsName))
             {
                 auto textureCfg = helper.getObject(wsName);
-                setTexture(getMain().getResourceManager()->queryResource<TextureImage>(
+                setTexture(getMain().getResourceManager().queryResource<TextureImage>(
                     textureCfg.getString(L"TextureName"),
                     textureCfg.getString(L"TexturePath")), 
                     static_cast<TextureFlags>(1u << (i+1)), index++, false);
@@ -65,7 +65,7 @@ namespace lite3dpp
         if (helper.has(L"EnvironmentTexture"))
         {
             auto textureCfg = helper.getObject(L"EnvironmentTexture");
-            setEnvironmentTexture(getMain().getResourceManager()->queryResource<TextureImage>(
+            setEnvironmentTexture(getMain().getResourceManager().queryResource<TextureImage>(
                 textureCfg.getString(L"TextureName"),
                 textureCfg.getString(L"TexturePath")), false);
         }
@@ -73,7 +73,7 @@ namespace lite3dpp
         if (helper.has(L"EnvironmentProbeTexture"))
         {
             auto textureCfg = helper.getObject(L"EnvironmentProbeTexture");
-            setEnvironmentProbeTexture(getMain().getResourceManager()->queryResource<TextureImage>(
+            setEnvironmentProbeTexture(getMain().getResourceManager().queryResource<TextureImage>(
                 textureCfg.getString(L"TextureName"),
                 textureCfg.getString(L"TexturePath")), false);
         }

@@ -23,7 +23,7 @@
 
 namespace lite3dpp
 {
-    Action::Action(const String &name, const String &path, Main *main) : 
+    Action::Action(const String &name, const String &path, Main &main) : 
         ConfigurableResource(name, path, main, AbstractResource::ACTION)
     {}
 
