@@ -80,9 +80,9 @@ typedef struct lite3d_scene
     lite3d_array invalidatedUnits;
     lite3d_array seriesMatrixes;
     lite3d_array invocationBufferCPU;     // CPU Буфер с инфо по каждой draw команде (матрицы, индексы материалов и тд)
-    lite3d_vbo invocationBufferGPU;       // GPU Буфер с инфо по каждой draw команде (матрицы, индексы материалов и тд)
+    lite3d_vbo *invocationBufferGPU;       // GPU Буфер с инфо по каждой draw команде (матрицы, индексы материалов и тд)
     lite3d_array invocationIndexBufferCPU;     // CPU Буфер с индексами draw команд
-    lite3d_vbo invocationIndexBufferGPU;       // GPU Буфер с индексами draw команд
+    lite3d_vbo *invocationIndexBufferGPU;       // GPU Буфер с индексами draw команд
     lite3d_camera *currentCamera;
     uint32_t features;
     void *userdata;

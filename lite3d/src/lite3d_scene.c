@@ -247,7 +247,7 @@ static void mqr_multirender_do_batch(lite3d_scene *scene, lite3d_mesh *mesh, uin
 
     // Установка индексов, заполняем vbo с учетом выравнивания, хотя мы немного выходим за пределы size при этом
     // это не страшно, так как массив всегда имеет зарезервированную память.
-    if (!lite3d_vbo_buffer_set(&scene->invocationIndexBufferGPU, scene->invocationIndexBufferCPU.data,
+    if (!lite3d_vbo_buffer_set(scene->invocationIndexBufferGPU, scene->invocationIndexBufferCPU.data,
         LITE3D_ALIGN_SIZE(scene->invocationIndexBufferCPU.size, 4) * scene->invocationIndexBufferCPU.elemSize))
     {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Unable to write to the invocation index buffer");
@@ -453,8 +453,11 @@ static int mqr_multirender_set_shader_buffers(lite3d_scene *scene, lite3d_materi
         return LITE3D_FALSE;
     }
 
-    pInvocationBuffer->parameter.vbo = &scene->invocationBufferGPU;
-    pInvocationIndexBuffer->parameter.vbo = &scene->invocationIndexBufferGPU;
+    SDL_assert(scene->invocationBufferGPU);
+    SDL_assert(scene->invocationIndexBufferGPU);
+
+    pInvocationBuffer->parameter.vbo = scene->invocationBufferGPU;
+    pInvocationIndexBuffer->parameter.vbo = scene->invocationIndexBufferGPU;
     return LITE3D_TRUE;
 }
 
@@ -580,7 +583,7 @@ static void mqr_unit_make_queue(lite3d_scene *scene, _mqr_unit *mqrUnit, uint16_
                 // Матрица нормали (Model Space -> World Space) 
                 kmMat4AssignMat3(&nodeInfo->normalMatrix, &(mqrNode->node->normalMatrix));
 
-                if (!lite3d_vbo_subbuffer(&scene->invocationBufferGPU, nodeInfo, 
+                if (!lite3d_vbo_subbuffer(scene->invocationBufferGPU, nodeInfo, 
                     mqrNode->invocationIndex * scene->invocationBufferCPU.elemSize,
                     scene->invocationBufferCPU.elemSize))
                 {
@@ -752,7 +755,7 @@ static _node_invocation_info *mqr_reuse_invocation_node(lite3d_scene *scene, _mq
 
         // Сразу сделаем реалокацию буффера если это нужно
         // Чтобы уменьшить количество релокаций будем расширять буфер с запасом
-        if (!lite3d_vbo_subbuffer_extend(&scene->invocationBufferGPU, foundNode, 
+        if (!lite3d_vbo_subbuffer_extend(scene->invocationBufferGPU, foundNode, 
             node->invocationIndex * scene->invocationBufferCPU.elemSize,
             scene->invocationBufferCPU.elemSize))
         {
@@ -789,6 +792,7 @@ static void mqr_unit_add_node(lite3d_scene *scene, _mqr_unit *unit, _mqr_node *n
         }
 
         nodeInfo->materialIdx = unit->material->materialDataBufferIndex;
+        nodeInfo->skeletonBufferIndex = node->node->skeletonBufferIndex;
     }
 
     node->matUnit = unit;
@@ -895,11 +899,9 @@ int lite3d_scene_init(lite3d_scene *scene, uint32_t features)
         if (lite3d_scene_multirender_support())
         {
             lite3d_array_init(&scene->invocationBufferCPU, sizeof(_node_invocation_info), 12);
-            lite3d_ssbo_init(&scene->invocationBufferGPU, LITE3D_VBO_DYNAMIC_DRAW);
             // The Index array is passing to shader as ivec4 array, therefore we need to align it to 4 ints (4x4 bytes)
             // Preserve 12 elements at initialization
             lite3d_array_init(&scene->invocationIndexBufferCPU, sizeof(uint32_t), LITE3D_ALIGN_SIZE(12, 4));
-            lite3d_ubo_init(&scene->invocationIndexBufferGPU, LITE3D_VBO_DYNAMIC_DRAW);
         }
         else
         {
@@ -958,9 +960,7 @@ void lite3d_scene_purge(lite3d_scene *scene)
     if (scene->features & LITE3D_SCENE_FEATURE_MULTIRENDER)
     {
         lite3d_array_purge(&scene->invocationBufferCPU);
-        lite3d_vbo_purge(&scene->invocationBufferGPU);
         lite3d_array_purge(&scene->invocationIndexBufferCPU);
-        lite3d_vbo_purge(&scene->invocationIndexBufferGPU);
     }
 }
 

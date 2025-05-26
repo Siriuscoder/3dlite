@@ -129,8 +129,10 @@ namespace lite3dpp
         SceneObjects mObjects;
         SceneLights mLights;
         SceneCameras mCameras;
-        BufferBase *mLightingParamsBuffer;
-        BufferBase *mLightingIndexBuffer;
+        VBOResource *mLightingParamsBuffer = nullptr;
+        VBOResource *mLightingIndexBuffer = nullptr;
+        VBOResource *mInvocationBuffer = nullptr;
+        VBOResource *mInvocationIndexBuffer = nullptr;
         LightsIndexesStore mLightsIndexes;
         uint32_t mMaxLightsCount; 
     };
