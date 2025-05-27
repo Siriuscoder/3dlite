@@ -256,13 +256,11 @@ vec3 ditherBayer(vec3 color)
 // Fresnel equation (Schlick)
 vec3 fresnelSchlickRoughness(float teta, in Material material)
 {
-    // Calculate F0 coeff (metalness)
+    // Calculate F0 coeff
     vec3 F0 = mix(material.f0.rgb, material.albedo.rgb, material.metallic);
     // Calculate fresnel
     vec3 F = F0 + (max(vec3(1.0 - material.roughness), F0) - F0) * pow(clamp(1.0 - teta, 0.0, 1.0), 5.0);
-    // Energy compensation
-    float energyComp = mix(0.7, 1.0, material.roughness);
-    return clamp(F * energyComp * material.specular, 0.0, 1.0);
+    return clamp(F * material.specular, 0.0, 1.0);
 }
 
 vec3 diffuseFactor(vec3 F, float metallic)
@@ -308,6 +306,34 @@ float G(float NdotV, float NdotL, float roughness)
     float ggx1  = GGX(NdotL, roughness);
 	
     return ggx1 * ggx2;
+}
+
+// Specular Term GGX
+vec3 SpecularGGX(vec3 F, in Material material, in AngularInfo angular)
+{
+    float ndf = NDF(angular.NdotH, material.roughness);
+    float g = G(angular.NdotV, angular.NdotL, material.roughness);
+
+    return (ndf * g * F) / (4.0 * angular.NdotV * angular.NdotL);
+}
+
+// Diffuse Term Lambertian (Simple diffuse model)
+vec3 DiffuseLambertian(vec3 F, in Material material)
+{
+    vec3 kD = diffuseFactor(F, material.metallic);
+    return kD * material.albedo.rgb / M_PI;
+}
+
+vec3 Sheen(vec3 F, in Material material, in AngularInfo angular)
+{
+    if (material.sheen > FLT_EPSILON)
+    {
+        vec3 Fs = mix(vec3(1.0), material.albedo.rgb, F);
+        float sheenFalloff = pow(clamp(1.0 - angular.NdotV, 0.0, 1.0), 5.0); // падение к краям
+        return Fs * sheenFalloff * material.sheen;
+    }
+
+    return vec3(0.0);
 }
 
 // Attenuation

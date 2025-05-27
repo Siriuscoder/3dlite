@@ -18,6 +18,7 @@ struct Material
     float emissionStrength;
     float environmentUVScale;
     uint environmentSingleProbeIndex;
+    float sheen;
     uint flags;
 };
 

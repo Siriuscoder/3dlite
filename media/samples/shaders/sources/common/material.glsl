@@ -50,6 +50,7 @@ Surface makeSurface(vec2 uv, vec3 wv, vec3 wn, vec3 wt, vec3 wb)
     surface.material.emissionStrength = 1.0;
     surface.material.environmentUVScale = LITE3D_CUBE_MAP_UV_SCALE;
     surface.material.environmentSingleProbeIndex = 0u;
+    surface.material.sheen = 0.0;
 
     vec3 specular = getSpecular(uv);
     surface.material.specular = clamp(specular.x, 0.0, 1.0);
@@ -101,6 +102,7 @@ Surface restoreSurface(vec2 uv)
     surface.material.emissionStrength = 1.0;
     surface.material.environmentUVScale = LITE3D_CUBE_MAP_UV_SCALE;
     surface.material.environmentSingleProbeIndex = 0u;
+    surface.material.sheen = 0.0;
     surface.wv = wv.xyz;
     surface.uv = uv;
     surface.normal = nw.xyz;

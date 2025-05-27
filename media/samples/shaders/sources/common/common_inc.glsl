@@ -78,12 +78,12 @@ vec3 ditherBayer(vec3 color);
 ////////////////////////////////////////////////////////////////////////////
 vec3 fresnelSchlickRoughness(float teta, in Material material);
 vec3 diffuseFactor(vec3 F, float metallic);
-// Normal distribution function (Trowbridge-Reitz GGX)
-float NDF(float NdotH, float roughness);
-// Geometry function (Schlick-Beckmann, Schlick-GGX)
-float GGX(float NdotV, float roughness);
-// Geometry function (Smith's)
-float G(float NdotV, float NdotL, float roughness);
+// Specular Term GGX
+vec3 SpecularGGX(vec3 F, in Material material, in AngularInfo angular);
+// Diffuse Term Lambertian (Simple diffuse model)
+vec3 DiffuseLambertian(vec3 F, in Material material);
+// Sheen 
+vec3 Sheen(vec3 F, in Material material, in AngularInfo angular);
 // Attenuation
 float calcAttenuation(in LightSource source, in AngularInfo angular);
 

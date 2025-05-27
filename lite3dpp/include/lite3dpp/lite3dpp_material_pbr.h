@@ -102,7 +102,7 @@ namespace lite3dpp
             float EmissionStrength;
             float EnvironmentUVScale;
             uint32_t EnvironmentSingleProbeIndex;
-            uint32_t reserved = 0;
+            float Sheen;
             PBRMaterialFlags Flags = PBRMaterialFlags::EMPTY;
             TextureHandleRaw Textures[8];
             TextureHandleRaw Environment;
@@ -132,6 +132,7 @@ namespace lite3dpp
         LITE3D_DECLARE_PBR_MATERIAL_FIELD(float, EmissionStrength);
         LITE3D_DECLARE_PBR_MATERIAL_FIELD(float, EnvironmentUVScale);
         LITE3D_DECLARE_PBR_MATERIAL_FIELD(uint32_t, EnvironmentSingleProbeIndex);
+        LITE3D_DECLARE_PBR_MATERIAL_FIELD(float, Sheen);
         LITE3D_DECLARE_PBR_MATERIAL_FIELD(PBRMaterialFlags, Flags);
 
         void setTexture(Texture *texture, TextureFlags flags, size_t index, bool updateData = true);

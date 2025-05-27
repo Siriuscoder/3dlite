@@ -65,7 +65,7 @@ struct Material
     float emissionStrength;
     float environmentUVScale;
     uint environmentSingleProbeIndex;
-    uint reserved;
+    float sheen;
     uint flags;
     TextureHandle slot[8];
     TextureCubeHandle environment;
