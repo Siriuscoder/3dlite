@@ -44,7 +44,7 @@ namespace lite3dpp
                     queryResourceFromJson<SSBO>("GlobalSkeletonBuffer", "{\"Dynamic\": true}");
             }
 
-            int32_t bufferIndex = mGlobalSkeletonBuffer->bufferSizeBytes() / sizeof(kmMat4);
+            size_t bufferIndex = mGlobalSkeletonBuffer->bufferSizeBytes() / sizeof(kmMat4);
             size_t sizeBytes = node->getSkeleton()->getBonesCount() * sizeof(kmMat4);
 
             if ((mUsedBytes + sizeBytes) > mGlobalSkeletonBuffer->bufferSizeBytes())
@@ -53,7 +53,7 @@ namespace lite3dpp
                 mUsedBytes += sizeBytes;
             }
 
-            node->setSkeletonBufferIndex(bufferIndex);
+            node->setSkeletonBufferIndex(static_cast<int32_t>(bufferIndex));
         }
     }
 
