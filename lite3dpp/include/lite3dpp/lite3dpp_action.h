@@ -44,6 +44,11 @@ namespace lite3dpp
                 kmVec3 scale;
             };
 
+            friend bool operator<(const KeyFrame& l, const KeyFrame& r)
+            {
+                return l.frameNo < r.frameNo;
+            }
+
             float frameNo;
             stl<std::tuple<Channel, ChannelValue>>::vector channels;
         };

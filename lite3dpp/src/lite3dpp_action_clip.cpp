@@ -121,7 +121,7 @@ namespace lite3dpp
             node->setScale(consolidateScale(node, framePair.first, updated));
         }
         // Между 2мя кадрами 
-        else
+        else if (framePair.first && framePair.second)
         {
             float k = (mTime - framePair.first->frameNo) / 
                 (framePair.second->frameNo - framePair.first->frameNo);

@@ -89,10 +89,7 @@ namespace lite3dpp
         });
 
         // В экспорте кадры отсортированы, но сделаем еще раз на всякий случай
-        std::sort(keyFrames.begin(), keyFrames.end(), [](const KeyFrame &a, const KeyFrame &b)
-        {
-            return a.frameNo < b.frameNo;
-        });
+        std::sort(keyFrames.begin(), keyFrames.end());
     }
 
     Action::FramePair Action::getFramePairByTime(float time, const stl<KeyFrame>::vector &frames) const
@@ -105,10 +102,7 @@ namespace lite3dpp
 
         // ищем ближайший следующий кадр
         KeyFrame marker = {time}; 
-        auto frameIt = std::upper_bound(frames.begin(), frames.end(), marker, [](const KeyFrame &a, const KeyFrame &b) 
-        {
-            return a.frameNo < b.frameNo;
-        });
+        auto frameIt = std::upper_bound(frames.begin(), frames.end(), marker);
 
         // Время вышло за пределы анимации
         if (frameIt == frames.end())

@@ -19,6 +19,7 @@
 
 #include <lite3dpp/lite3dpp_common.h>
 #include <lite3dpp/lite3dpp_manageable.h>
+#include <lite3dpp/lite3dpp_skeleton_bone.h>
 
 namespace lite3dpp
 {
@@ -26,22 +27,35 @@ namespace lite3dpp
     {
     public:
 
-        using BonesTransformData = stl<kmMat4>::vector;
+        using BonesTransformData = stl<kmMat4>::vector; // bones gtransform matrices buffer CPU side 
+        using VertexGroups = stl<String, int32_t>::map;
+        using Bones = stl<String, SkeletonBone>::map;
 
         Skeleton(MeshSceneNode &node);
         ~Skeleton();
 
         void loadFromJson(const ConfigurationReader& conf);
+        void resetToRestPose();
+        void recalculate();
 
-        size_t getBonesCount() const;
+        inline size_t getBonesCount() const
+        { return mBones.size(); }
+        inline const BonesTransformData &getTransformData() const
+        { return mBonesTransformData; }
         inline void setBufferIndex(int32_t index)
         { mBufferIndex = index; }
+
+    private:
+
+        void loadVertexGroups(const ConfigurationReader& conf);
+        void loadBone(SkeletonBone *parent, const ConfigurationReader& conf);
 
     private:
 
         MeshSceneNode &mNode;
         int32_t mBufferIndex = 0;
         BonesTransformData mBonesTransformData;
-
+        VertexGroups mVertexGroups;
+        Bones mBones;
     };
 }

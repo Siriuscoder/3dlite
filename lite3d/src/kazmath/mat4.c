@@ -534,6 +534,26 @@ kmMat4* kmMat4Translation(kmMat4* pOut, const kmScalar x,
 }
 
 /**
+ * Builds a translation and scale matrix. All other elements in the matrix
+ * will be set to zero except for the diagonal which is set to scale
+ */
+kmMat4* kmMat4TranslationScale(kmMat4* pOut, const kmVec3 *translation, const kmVec3 *scale)
+{
+    memset(pOut->mat, 0, sizeof(pOut->mat));
+
+    pOut->mat[0] = scale->x;
+    pOut->mat[5] = scale->y;
+    pOut->mat[10] = scale->z;
+
+    pOut->mat[12] = translation->x;
+    pOut->mat[13] = translation->y;
+    pOut->mat[14] = translation->z;
+    pOut->mat[15] = 1.0f;
+
+    return pOut;
+}
+
+/**
  * Get the up vector from a matrix. pIn is the matrix you
  * wish to extract the vector from. pOut is a pointer to the
  * kmVec3 structure that should hold the resulting vector

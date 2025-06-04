@@ -73,6 +73,7 @@ LITE3D_CEXPORT kmMat4* kmMat4RotationQuaternion(kmMat4* pOut, const struct kmQua
 LITE3D_CEXPORT kmMat4* kmMat4RotationTranslation(kmMat4* pOut, const struct kmMat3* rotation, const struct kmVec3* translation);
 LITE3D_CEXPORT kmMat4* kmMat4Scaling(kmMat4* pOut, const kmScalar x, const kmScalar y, const kmScalar z);
 LITE3D_CEXPORT kmMat4* kmMat4Translation(kmMat4* pOut, const kmScalar x, const kmScalar y, const kmScalar z);
+LITE3D_CEXPORT kmMat4* kmMat4TranslationScale(kmMat4* pOut, const struct kmVec3 *translation, const struct kmVec3 *scale);
 
 LITE3D_CEXPORT struct kmVec3* kmMat4GetUpVec3(struct kmVec3* pOut, const kmMat4* pIn);
 LITE3D_CEXPORT struct kmVec3* kmMat4GetRightVec3(struct kmVec3* pOut, const kmMat4* pIn);

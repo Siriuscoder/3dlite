@@ -19,6 +19,7 @@
 #include <lite3dpp/lite3dpp_main.h>
 
 #include <SDL_assert.h>
+#include <SDL_log.h>
 
 namespace lite3dpp
 {
@@ -31,15 +32,84 @@ namespace lite3dpp
         mNode.getMain()->getSkeletonBuffer().unregisterSceneNode(&mNode);
     }
 
+    void Skeleton::loadVertexGroups(const ConfigurationReader& conf)
+    {
+        for (const auto &groupCfg : conf.getObjects(L"VertexGroups"))
+        {
+            mVertexGroups[groupCfg.getString(L"Name")] = groupCfg.getInt(L"Index");
+        }
+
+        mBonesTransformData.resize(mVertexGroups.size());
+    }
+
+    void Skeleton::loadBone(SkeletonBone *parent, const ConfigurationReader& conf)
+    {
+        String boneName = conf.getString(L"Name");
+        auto indexIt = mVertexGroups.find(boneName);
+        if (indexIt == mVertexGroups.end())
+        {
+            SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION, "Vertex group for bone '%s' is not found. Mesh '%s'",
+                boneName.c_str(), mNode.getName().c_str());
+        }
+
+        auto inserted = mBones.try_emplace(boneName, 
+            boneName,
+            parent,
+            indexIt == mVertexGroups.end() ? nullptr : &mBonesTransformData[indexIt->second],
+            conf.getVec3(L"Head"),
+            conf.getDouble(L"Length"),
+            conf.getVec3(L"Position"),
+            conf.getQuaternion(L"Rotation"));
+
+        if (!inserted.second)
+        {
+            LITE3D_THROW("Duplicate bone name '" << boneName << "'. Mesh '" << mNode.getName() << "'");
+        }
+
+        if (parent)
+        {
+            parent->addChildBone(&inserted.first->second);
+        }
+
+        for (const auto &boneCfg : conf.getObjects(L"Bones"))
+        {
+            loadBone(&inserted.first->second, boneCfg);
+        }
+    }
+
     void Skeleton::loadFromJson(const ConfigurationReader& conf)
     {
         SDL_assert(mNode.getMain());
+        
+        loadVertexGroups(conf);
+        for (const auto &boneCfg : conf.getObjects(L"Skeleton"))
+        {
+            loadBone(nullptr, boneCfg);
+        }
 
         mNode.getMain()->getSkeletonBuffer().registerSceneNode(&mNode);
     }
 
-    size_t Skeleton::getBonesCount() const
+    void Skeleton::resetToRestPose()
     {
-        return 0;
+        for (auto &bone : mBones)
+        {
+            bone.second.resetToRestPose();
+        }
+
+        mNode.getMain()->getSkeletonBuffer().updateData(mBufferIndex, getTransformData());
+    }
+
+    void Skeleton::recalculate()
+    {
+        for (auto &bone : mBones)
+        {
+            if (bone.second.isEmptyParent())
+            {
+                bone.second.recalculateRecursive();
+            }
+        }
+
+        mNode.getMain()->getSkeletonBuffer().updateData(mBufferIndex, getTransformData());
     }
 }

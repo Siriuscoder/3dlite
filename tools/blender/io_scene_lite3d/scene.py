@@ -148,7 +148,7 @@ class Scene:
             # vertex groups are used in the skeleton deform with appropriate bones
             vertexGroups = []
             for group in obj.vertex_groups:
-                vertexGroups.append({"name": group.name, "index": group.index})
+                vertexGroups.append({"Name": group.name, "Index": group.index})
             if len(vertexGroups) > 0:
                 node["VertexGroups"] = vertexGroups
         
