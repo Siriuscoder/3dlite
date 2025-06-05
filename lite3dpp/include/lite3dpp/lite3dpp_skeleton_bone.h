@@ -31,8 +31,6 @@ namespace lite3dpp
         SkeletonBone(const String &name, 
             SkeletonBone *parent,
             kmMat4 *matrixBuffer, 
-            const kmVec3 &head, 
-            float length,
             const kmVec3 &restPosePosition,
             const kmQuaternion &restPoseRotation);
 
@@ -56,8 +54,6 @@ namespace lite3dpp
         String mName;
         SkeletonBone *mParent;
         kmMat4 *mTransformFromRest;
-        kmVec3 mHead;
-        float mLength;
         kmMat4 mTransform;
         kmMat4 mRestPoseTransform;
         kmMat4 mRestPoseTransformInverse;

@@ -43,7 +43,7 @@ namespace lite3dpp
             mMaterialDataBuffer = getMain().getResourceManager().
                 queryResource<SSBO>(MultiRenderMaterialDataBufferName.data());
         }
-        
+
         for (auto &passPair : mPasses)
         {
             /* Буфер с инфо по каждой draw команде (матрицы, индексы и тд) */
@@ -55,6 +55,11 @@ namespace lite3dpp
                 false, true);
 
             setSSBOParameter(passPair.first, "MultiRenderMaterialDataBuffer", *mMaterialDataBuffer);
+
+            if (helper.getBool(L"BindSkeleton", false))
+            {
+                setSSBOParameter(passPair.first, "SkeletonTransformBuffer", getMain().getSkeletonBuffer().getBuffer());
+            }
         }
     }
 }

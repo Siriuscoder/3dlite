@@ -22,15 +22,11 @@ namespace lite3dpp
     SkeletonBone::SkeletonBone(const String &name, 
         SkeletonBone *parent, 
         kmMat4 *matrixBuffer, 
-        const kmVec3 &head, 
-        float length,
         const kmVec3 &restPosePosition,
         const kmQuaternion &restPoseRotation) : 
         mName(name),
         mParent(parent),
         mTransformFromRest(matrixBuffer),
-        mHead(head),
-        mLength(length),
         mRestPosePosition(restPosePosition),
         mRestPoseRotation(restPoseRotation)
     {

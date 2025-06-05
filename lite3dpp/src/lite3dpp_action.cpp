@@ -27,9 +27,9 @@ namespace lite3dpp
         ConfigurableResource(name, path, main, AbstractResource::ACTION)
     {}
 
-    std::unique_ptr<ActionClip> Action::playAction(SceneNodeBase *node, bool cycle)
+    std::unique_ptr<ActionClip> Action::playAction(SceneNodeBase &node, bool cycle)
     {
-        auto clip = std::make_unique<ActionClip>(*this, getMain(), node);
+        auto clip = std::make_unique<ActionClip>(*this, getMain(), node, mSkeleton);
         clip->setCycle(cycle);
         clip->play();
         return clip;

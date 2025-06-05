@@ -25,17 +25,17 @@
 
 namespace lite3dpp
 {
-    ActionClip::ActionClip(const Action &action, Main &main, SceneNodeBase *node) : 
+    ActionClip::ActionClip(const Action &action, Main &main, SceneNodeBase &node, Skeleton *skeleton) : 
         mAction(action),
         mMain(main),
-        mNode(node)
+        mNode(node),
+        mSkeleton(skeleton)
     {
-        SDL_assert(node);
         mMain.addObserver(this);
 
-        mInitialPosition = node->getPosition();
-        mInitialRotation = node->getRotation();
-        mInitialScale = node->getScale();
+        mInitialPosition = node.getPosition();
+        mInitialRotation = node.getRotation();
+        mInitialScale = node.getScale();
     }
 
     ActionClip::~ActionClip()
@@ -79,7 +79,7 @@ namespace lite3dpp
             }
         }
 
-        return node->getRotation();;
+        return node->getRotation();
     }
 
     template<class Node, class KeyFrame>
@@ -176,8 +176,17 @@ namespace lite3dpp
 
             // Сколько реальных кадров прошло с прошлого вызова таймера 
             mTime += static_cast<float>(static_cast<double>(timer->deltaMcs) / (timer->interval * 1000.0));
-            //SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "mTime %f delta", mTime);
-            interpolate(mNode, mAction.getFramePairByTime(mTime));
+            
+            interpolate(&mNode, mAction.getFramePairByTime(mTime));
+            if (mSkeleton)
+            {
+                for (auto &bone : mSkeleton->getBones())
+                {
+                    interpolate(&bone.second, mAction.getFramePairBoneByTime(mTime, bone.first));
+                }
+
+                mSkeleton->recalculate();
+            }
         }
     }
 
@@ -201,8 +210,13 @@ namespace lite3dpp
     {
         mTime = 0.0f;
         mState = ActionClipState::STOPPED;
-        mNode->setPosition(mInitialPosition);
-        mNode->setRotation(mInitialRotation);
-        mNode->setScale(mInitialScale);
+        mNode.setPosition(mInitialPosition);
+        mNode.setRotation(mInitialRotation);
+        mNode.setScale(mInitialScale);
+
+        if (mSkeleton)
+        {
+            mSkeleton->resetToRestPose();
+        }
     }
 }

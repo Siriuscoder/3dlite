@@ -213,7 +213,7 @@ namespace lite3dpp
         auto action = mActions.find(name);
         if (action != mActions.end())
         {
-            mClip = action->second->playAction(this, false);
+            mClip = action->second->playAction(*this, false);
         }
     }
 
@@ -223,7 +223,7 @@ namespace lite3dpp
         if (action != mActions.end())
         {
             mClip.reset();
-            mClip = action->second->playAction(this, true);
+            mClip = action->second->playAction(*this, true);
         }
     }
 

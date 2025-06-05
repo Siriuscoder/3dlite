@@ -40,10 +40,13 @@ namespace lite3dpp
 
         inline size_t getBonesCount() const
         { return mBones.size(); }
+        inline Bones &getBones() 
+        { return mBones; }
         inline const BonesTransformData &getTransformData() const
         { return mBonesTransformData; }
         inline void setBufferIndex(int32_t index)
         { mBufferIndex = index; }
+    
 
     private:
 

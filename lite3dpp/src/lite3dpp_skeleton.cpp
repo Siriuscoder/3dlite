@@ -56,8 +56,6 @@ namespace lite3dpp
             boneName,
             parent,
             indexIt == mVertexGroups.end() ? nullptr : &mBonesTransformData[indexIt->second],
-            conf.getVec3(L"Head"),
-            conf.getDouble(L"Length"),
             conf.getVec3(L"Position"),
             conf.getQuaternion(L"Rotation"));
 

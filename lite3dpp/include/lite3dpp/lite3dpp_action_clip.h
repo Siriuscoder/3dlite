@@ -36,7 +36,7 @@ namespace lite3dpp
             COMPLETED,
         };
 
-        ActionClip(const Action &action, Main &main, SceneNodeBase *node);
+        ActionClip(const Action &action, Main &main, SceneNodeBase &node, Skeleton *skeleton);
         virtual ~ActionClip();
 
         void play();
@@ -66,12 +66,14 @@ namespace lite3dpp
 
         const Action &mAction;
         Main &mMain;
-        SceneNodeBase *mNode;
+        SceneNodeBase &mNode;
+        Skeleton *mSkeleton;
         bool mCycle = false;
         kmVec3 mInitialPosition;
         kmQuaternion mInitialRotation;
         kmVec3 mInitialScale;
         float mTime = 0.0f;
         ActionClipState mState = ActionClipState::STOPPED;
+        
     };
 }

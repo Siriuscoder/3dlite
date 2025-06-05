@@ -26,6 +26,18 @@ namespace lite3dpp
         mMain(main)
     {}
 
+    SSBO &SkeletonBuffer::getBuffer()
+    {
+        if (!mGlobalSkeletonBuffer)
+        {
+            mGlobalSkeletonBuffer = mMain.getResourceManager().
+                queryResourceFromJson<SSBO>("GlobalSkeletonBuffer", "{\"Dynamic\": true}");
+        }
+
+        SDL_assert(mGlobalSkeletonBuffer);
+        return *mGlobalSkeletonBuffer;
+    }
+
     void SkeletonBuffer::registerSceneNode(MeshSceneNode *node)
     {
         SDL_assert(node);
@@ -38,11 +50,7 @@ namespace lite3dpp
         auto it = mNodes.emplace(node);
         if (it.second)
         {
-            if (!mGlobalSkeletonBuffer)
-            {
-                mGlobalSkeletonBuffer = mMain.getResourceManager().
-                    queryResourceFromJson<SSBO>("GlobalSkeletonBuffer", "{\"Dynamic\": true}");
-            }
+            getBuffer();
 
             size_t bufferIndex = mUsedBytes / sizeof(kmMat4);
             size_t sizeBytes = node->getSkeleton()->getTransformData().size();

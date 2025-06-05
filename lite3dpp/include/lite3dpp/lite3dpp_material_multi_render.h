@@ -28,6 +28,8 @@ namespace lite3dpp
         static constexpr inline std::string_view MultiRenderChunkInvocationBufferName = 
             "MultiRenderChunkInvocationBuffer";
         static constexpr inline std::string_view MultiRenderMaterialDataBufferName = 
+            "MultiRenderMaterialDataBuffer";
+        static constexpr inline std::string_view GlobalSkeletonBufferName = 
             "MultiRenderMaterialDataBuffer"; 
     
         MultiRenderMaterial(const String &name, const String &path, Main &main);

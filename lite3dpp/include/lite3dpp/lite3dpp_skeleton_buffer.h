@@ -19,7 +19,7 @@
 
 #include <lite3dpp/lite3dpp_common.h>
 #include <lite3dpp/lite3dpp_scene_mesh_node.h>
-#include <lite3dpp/lite3dpp_vbo.h>
+#include <lite3dpp/lite3dpp_ssbo.h>
 
 namespace lite3dpp
 {
@@ -34,11 +34,12 @@ namespace lite3dpp
         void unregisterAll();
 
         void updateData(size_t index, const Skeleton::BonesTransformData &data);
+        SSBO &getBuffer();
 
     private:
 
         Main &mMain;
-        VBOResource *mGlobalSkeletonBuffer = nullptr;
+        SSBO *mGlobalSkeletonBuffer = nullptr;
         stl<MeshSceneNode *>::unordered_set mNodes;
         size_t mPendingRemoveBytes = 0;
         size_t mUsedBytes = 0;
