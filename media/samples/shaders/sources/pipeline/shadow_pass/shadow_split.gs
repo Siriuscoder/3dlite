@@ -12,10 +12,12 @@ layout(std140) uniform ShadowIndex
 };
 
 in vec2 iuv_g[];
-flat in int drawID_g[];
-
 out vec2 iuv;
-flat out int drawID;
+
+#ifdef LITE3D_BINDLESS_TEXTURE_PIPELINE
+layout(location = 1) flat in int drawID_g[];
+layout(location = 1) flat out int drawID;    // currect chunk index
+#endif
 
 void main()
 {

@@ -17,17 +17,20 @@ layout(std430) readonly buffer MultiRenderMaterialDataBuffer
 
 #ifdef LITE3D_VERTEX_SHADER
 
+layout(location = 1) flat out int drawID;
+
 ChunkInvocationInfo getInvocationInfo()
 {
-    int compositeIndex = gl_DrawIDARB + gl_InstanceID;
-    int chunkIndex = chunksIndexInvocationInfo[compositeIndex/4][int(mod(compositeIndex, 4))];
+    drawID = gl_DrawIDARB + gl_InstanceID;
+    int chunkIndex = chunksIndexInvocationInfo[drawID/4][int(mod(drawID, 4))];
     return chunksInvocationInfo[chunkIndex];
 }
 
 #elif defined(LITE3D_FRAGMENT_SHADER)
 
 #ifndef LITE3D_DISABLE_INVOCATION_METHOD
-flat in int drawID;
+
+layout(location = 1) flat in int drawID;
 
 ChunkInvocationInfo getInvocationInfo()
 {

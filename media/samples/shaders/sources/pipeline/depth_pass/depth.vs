@@ -7,13 +7,11 @@ uniform mat4 projViewMatrix;
 uniform mat4 modelMatrix;
 
 out vec2 iuv;
-flat out int drawID;
 
 void main()
 {
 #ifdef LITE3D_BINDLESS_TEXTURE_PIPELINE
     ChunkInvocationInfo invInfo = getInvocationInfo();
-    drawID = gl_DrawIDARB + gl_InstanceID;
     vec4 wv = invInfo.modelMatrix * vertex;
 #else
     vec4 wv = modelMatrix * vertex;

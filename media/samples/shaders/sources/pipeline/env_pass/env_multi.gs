@@ -15,12 +15,15 @@ layout(std140) uniform EnvProbesIndex
 
 in vec2 iuv_g[];
 in vec3 iwn_g[];
-flat in int drawID_g[];
 
 out vec2 iuv;           // UVs
 out vec3 iwv;           // world-space position
 out vec3 iwn;           // world-space normal
-flat out int drawID;    // currect chunk index
+
+#ifdef LITE3D_BINDLESS_TEXTURE_PIPELINE
+layout(location = 1) flat in int drawID_g[];
+layout(location = 1) flat out int drawID;    // currect chunk index
+#endif
 
 void main()
 {

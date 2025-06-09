@@ -8,13 +8,11 @@ uniform mat4 modelMatrix;
 
 out vec2 iuv_g;
 out vec3 iwn_g;
-flat out int drawID_g;
 
 void main()
 {
 #ifdef LITE3D_BINDLESS_TEXTURE_PIPELINE
     ChunkInvocationInfo invInfo = getInvocationInfo();
-    drawID_g = gl_DrawIDARB;
     mat3 normalMatrix = mat3(invInfo.normalMatrix[0].xyz, invInfo.normalMatrix[1].xyz, invInfo.normalMatrix[2].xyz);
     // vertex coordinate in world space 
     gl_Position = invInfo.modelMatrix * vertex;
