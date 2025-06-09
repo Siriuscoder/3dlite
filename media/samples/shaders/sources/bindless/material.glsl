@@ -41,9 +41,9 @@ ChunkInvocationInfo getInvocationInfo()
 Surface makeSurface(vec2 uv, vec3 wv, vec3 wn, vec3 wt, vec3 wb)
 {
     Surface surface;
-    surface.transform = getInvocationInfo();
-    surface.material = materials[surface.transform.materialIdx];
-    surface.index = surface.transform.materialIdx;
+    uint materialIdx = getInvocationInfo().materialIdx;
+    surface.material = materials[materialIdx];
+    surface.index = materialIdx;
     surface.uv = uv;
     surface.wv = wv;
     surface.normal = normalize(wn);
@@ -151,8 +151,8 @@ Surface makeSurface(vec2 uv, vec3 wv, vec3 wn, vec3 wt, vec3 wb)
 void surfaceAlphaClip(vec2 uv)
 {
     Surface surface;
-    surface.transform = getInvocationInfo();
-    surface.material = materials[surface.transform.materialIdx];
+    uint materialIdx = getInvocationInfo().materialIdx;
+    surface.material = materials[materialIdx];
 
     for (int i = 0; i < 8; ++i)
     {

@@ -64,11 +64,6 @@ namespace lite3dpp
             LITE3D_THROW("Duplicate bone name '" << boneName << "'. Mesh '" << mNode.getName() << "'");
         }
 
-        if (parent)
-        {
-            parent->addChildBone(&inserted.first->second);
-        }
-
         for (const auto &boneCfg : conf.getObjects(L"Bones"))
         {
             loadBone(&inserted.first->second, boneCfg);

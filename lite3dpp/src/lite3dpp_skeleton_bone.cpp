@@ -39,6 +39,7 @@ namespace lite3dpp
         if (parent)
         {
             kmMat4Multiply(&mRestPoseTransform, &parent->mRestPoseTransform, &mRestPoseTransform);
+            parent->addChildBone(this);
         }
         // Caclulate bone rest pose skeleton space inverse transform
         if (!kmMat4Inverse(&mRestPoseTransformInverse, &mRestPoseTransform))
