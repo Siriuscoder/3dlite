@@ -3,9 +3,9 @@
     "Name": "Albedo",
     "Type": "v4",
     "Value": [
-      0.06513054668903351,
-      0.0376785509288311,
-      0.027944132685661316,
+      0.09583882987499237,
+      0.1096816211938858,
+      0.12296995520591736,
       1.0
     ]
   },
@@ -28,7 +28,7 @@
     "Value": 1.0
   },
   "EnvSpecular": {
-    "Value": 0.1
+    "Value": 0.5
   },
   "EnvironmentTexture": {
     "TextureName": "PistonScene_skybox.texture",

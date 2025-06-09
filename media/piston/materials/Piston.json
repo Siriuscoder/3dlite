@@ -22,7 +22,7 @@
   "Metallic": {
     "Name": "Metallic",
     "Type": "float",
-    "Value": 0.949999988079071
+    "Value": 1.0
   },
   "EnvDiffuse": {
     "Value": 1.0

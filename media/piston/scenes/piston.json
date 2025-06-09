@@ -25,7 +25,7 @@
       "Name": "Engine",
       "Object": "piston:objects/Engine.json",
       "Position": [
-        4.1698151517740974e-17,
+        8.0,
         0.0,
         1.339081048965454
       ],
@@ -54,6 +54,26 @@
         0.0,
         0.0,
         1.0
+      ],
+      "Scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "Name": "SkeletonBody",
+      "Object": "piston:objects/SkeletonBody.json",
+      "Position": [
+        3.489130735397339,
+        -4.056552886962891,
+        -4.910610140740346e-09
+      ],
+      "Rotation": [
+        0.0,
+        0.0,
+        0.7071067690849304,
+        0.7071067690849304
       ],
       "Scale": [
         1.0,

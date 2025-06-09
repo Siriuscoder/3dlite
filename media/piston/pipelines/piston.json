@@ -12,17 +12,17 @@
     },
     "ShadowMaps":
     {
-        "Width": 2048,
-        "Height": 2048,
+        "Width": 1024,
+        "Height": 1024,
         "MaxCount": 1,
         "NearClipPlane": 1.0,
         "FarClipPlane": 30.0,
         "DirectionLightShadowParams": 
         {
-            "LeftClipPlane": -10.0,
-            "RightClipPlane": 10.0,
-            "BottomClipPlane": -10.0,
-            "TopClipPlane": 10.0
+            "LeftClipPlane": -20.0,
+            "RightClipPlane": 20.0,
+            "BottomClipPlane": -20.0,
+            "TopClipPlane": 20.0
         }
     },
     "SSAO": 

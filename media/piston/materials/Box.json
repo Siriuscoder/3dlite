@@ -1,13 +1,9 @@
 {
-  "Albedo": {
+  "AlbedoTexture": {
     "Name": "Albedo",
-    "Type": "v4",
-    "Value": [
-      0.6159999966621399,
-      0.5820000171661377,
-      0.5440000295639038,
-      1.0
-    ]
+    "Type": "sampler",
+    "TextureName": "box1.texture",
+    "TexturePath": "piston:textures/json/box1.json"
   },
   "Specular": {
     "Name": "Specular",
@@ -17,12 +13,12 @@
   "Roughness": {
     "Name": "Roughness",
     "Type": "float",
-    "Value": 0.20000000298023224
+    "Value": 0.8999999761581421
   },
   "Metallic": {
     "Name": "Metallic",
     "Type": "float",
-    "Value": 1.0
+    "Value": 0.0
   },
   "EnvDiffuse": {
     "Value": 1.0
@@ -37,6 +33,7 @@
   "EnvironmentUVScale": {
     "Value": -1.0
   },
+  "BindSkeleton": true,
   "Passes": [
     {
       "Pass": 1,

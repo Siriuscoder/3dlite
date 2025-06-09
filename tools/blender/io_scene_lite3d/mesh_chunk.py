@@ -27,11 +27,13 @@ class Vertex:
             self.format += "4f"
 
         if boneBindings:
-            # Support only first 4 groups, ignore others
+            # Sorting by weights, descending order.
+            sgroups = sorted([(int(g.group), float(g.weight)) for g in v.groups], key = lambda g: g[1], reverse = True)
+            # Support only first 4 groups, we are considering only 4 larger weights, but it's possible that there are more.
             for i in range(4):
-                self.block.append(v.groups[i].group if i < len(v.groups) else -1)
+                self.block.append(sgroups[i][0] if i < len(sgroups) else -1)
             for i in range(4):
-                self.block.append(v.groups[i].weight if i < len(v.groups) else 0.0)
+                self.block.append(sgroups[i][1] if i < len(sgroups) else 0.0)
 
             self.format += "4i4f"
 

@@ -52,8 +52,9 @@ namespace lite3dpp
         {
             getBuffer();
 
-            size_t bufferIndex = mUsedBytes / sizeof(kmMat4);
-            size_t sizeBytes = node->getSkeleton()->getTransformData().size();
+            size_t bufferIndex = mUsedBytes / sizeof(Skeleton::BonesTransformData::value_type);
+            size_t sizeBytes = node->getSkeleton()->getTransformData().size() * 
+                sizeof(Skeleton::BonesTransformData::value_type);
 
             if ((mUsedBytes + sizeBytes) > mGlobalSkeletonBuffer->bufferSizeBytes())
             {
@@ -77,7 +78,8 @@ namespace lite3dpp
 
         if (mNodes.erase(node) > 0)
         {
-            size_t sizeBytes = node->getSkeleton()->getBonesCount() * sizeof(kmMat4);
+            size_t sizeBytes = node->getSkeleton()->getBonesCount() * 
+                sizeof(Skeleton::BonesTransformData::value_type);
             mPendingRemoveBytes += sizeBytes;
         }
     }
@@ -95,8 +97,8 @@ namespace lite3dpp
 
     void SkeletonBuffer::updateData(size_t index, const Skeleton::BonesTransformData &data)
     {
-        size_t offset = index * sizeof(kmMat4);
-        size_t dataSize = data.size() * sizeof(kmMat4);
+        size_t offset = index * sizeof(Skeleton::BonesTransformData::value_type);
+        size_t dataSize = data.size() * sizeof(Skeleton::BonesTransformData::value_type);
 
         SDL_assert(mGlobalSkeletonBuffer);
         SDL_assert((offset + dataSize) <= mGlobalSkeletonBuffer->bufferSizeBytes());

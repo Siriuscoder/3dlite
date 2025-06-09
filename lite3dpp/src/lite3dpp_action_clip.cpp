@@ -41,7 +41,6 @@ namespace lite3dpp
     ActionClip::~ActionClip()
     {
         mMain.removeObserver(this);
-        reset();
     }
 
     template<class Node, class KeyFrame>
