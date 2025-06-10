@@ -11,6 +11,11 @@ layout(location = 2) in vec2 uv;
 layout(location = 3) in vec3 tang;
 layout(location = 4) in vec3 btang;
 
+#ifdef LITE3D_VERTEX_SKELETON_DEFORM
+layout(location = 5) in ivec4 boneIndexes;
+layout(location = 6) in vec4 boneWeights;
+#endif
+
 uniform mat4 projViewMatrix;
 
 out vec2 iuv;
@@ -23,6 +28,11 @@ void main()
 {
 #ifdef LITE3D_BINDLESS_TEXTURE_PIPELINE
     ChunkInvocationInfo invInfo = getInvocationInfo();
+
+#ifdef LITE3D_VERTEX_SKELETON_DEFORM
+    skeletonDeform(invInfo, boneIndexes, boneWeights);
+#endif
+
     vec4 wv = invInfo.modelMatrix * vertex;
     mat3 normalMatrix = mat3(invInfo.normalMatrix[0].xyz, invInfo.normalMatrix[1].xyz, invInfo.normalMatrix[2].xyz);
 #else

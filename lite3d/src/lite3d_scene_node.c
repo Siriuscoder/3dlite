@@ -39,7 +39,7 @@ void lite3d_scene_node_init(lite3d_scene_node *node)
     node->enabled = LITE3D_TRUE;
     node->visible = LITE3D_TRUE;
     node->frustumTest = LITE3D_TRUE;
-    node->skeletonBufferIndex = -1;
+    node->skeletonTransformIndex = -1;
     lite3d_list_init(&node->childNodes);
 }
 

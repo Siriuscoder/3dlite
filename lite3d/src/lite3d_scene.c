@@ -65,7 +65,7 @@ typedef struct _node_invocation_info
     kmMat4 normalMatrix;
     uint32_t materialIdx;
     uint32_t flags;
-    uint32_t skeletonBufferIndex;
+    int32_t skeletonTransformIndex;
     uint32_t reserved02;
 } _node_invocation_info; 
 #pragma pack(pop)
@@ -579,7 +579,7 @@ static void mqr_unit_make_queue(lite3d_scene *scene, _mqr_unit *mqrUnit, uint16_
                 _node_invocation_info *nodeInfo = lite3d_array_get(&scene->invocationBufferCPU, mqrNode->invocationIndex);
                 // Model матрица (Model Space -> World Space) 
                 nodeInfo->modelMatrix = mqrNode->node->worldMatrix;
-                nodeInfo->skeletonBufferIndex = mqrNode->node->skeletonBufferIndex;
+                nodeInfo->skeletonTransformIndex = mqrNode->node->skeletonTransformIndex;
                 // Матрица нормали (Model Space -> World Space) 
                 kmMat4AssignMat3(&nodeInfo->normalMatrix, &(mqrNode->node->normalMatrix));
 
@@ -792,7 +792,7 @@ static void mqr_unit_add_node(lite3d_scene *scene, _mqr_unit *unit, _mqr_node *n
         }
 
         nodeInfo->materialIdx = unit->material->materialDataBufferIndex;
-        nodeInfo->skeletonBufferIndex = node->node->skeletonBufferIndex;
+        nodeInfo->skeletonTransformIndex = node->node->skeletonTransformIndex;
     }
 
     node->matUnit = unit;

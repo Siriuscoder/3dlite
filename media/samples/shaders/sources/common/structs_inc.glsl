@@ -149,9 +149,13 @@ struct ChunkInvocationInfo
     mat4 normalMatrix;
     uint materialIdx;
     uint flags;
-    uint skeletonBufferIndex;
+    int skeletonTransformIndex;
     uint reserved02;
 };
+
+#ifdef LITE3D_VERTEX_SKELETON_DEFORM
+void skeletonDeform(inout ChunkInvocationInfo chunkInfo, ivec4 boneIndexes, vec4 boneWeights);
+#endif
 
 ChunkInvocationInfo getInvocationInfo();
 

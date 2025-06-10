@@ -31,8 +31,8 @@
     {
       "Pass": 1,
       "Program":{
-        "Name":"depth.program",
-        "Path":"piston:shaders/json/depth.json"
+        "Name":"depth_ske.program",
+        "Path":"piston:shaders/json/depth_ske.json"
       },
       "Uniforms":[
         {
@@ -43,8 +43,8 @@
     {
       "Pass": 2,
       "Program":{
-        "Name":"bsdf_prepare.program",
-        "Path":"piston:shaders/json/bsdf_prepare.json"
+        "Name":"bsdf_prepare_ske.program",
+        "Path":"piston:shaders/json/bsdf_prepare_ske.json"
       },
       "Uniforms":[
         {
@@ -55,8 +55,8 @@
     {
       "Pass": 3,
       "Program":{
-        "Name":"shadow.program",
-        "Path":"piston:shaders/json/shadow.json"
+        "Name":"shadow_ske.program",
+        "Path":"piston:shaders/json/shadow_ske.json"
       },
       "Uniforms":[
         {

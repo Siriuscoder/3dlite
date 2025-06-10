@@ -75,7 +75,7 @@ namespace lite3dpp
         if (mSkeleton)
         {
             mSkeleton->setBufferIndex(index);
-            getPtr()->skeletonBufferIndex = index;
+            getPtr()->skeletonTransformIndex = index;
             getPtr()->recalc = LITE3D_TRUE;
         }
     }

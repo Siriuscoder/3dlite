@@ -19,6 +19,36 @@ layout(std430) readonly buffer MultiRenderMaterialDataBuffer
 
 layout(location = 1) flat out int drawID;
 
+#ifdef LITE3D_VERTEX_SKELETON_DEFORM
+
+layout(std430) readonly buffer SkeletonTransformBuffer 
+{
+    mat4 skeletonTransform[];
+};
+
+void skeletonDeform(inout ChunkInvocationInfo chunkInfo, ivec4 boneIndexes, vec4 boneWeights)
+{
+    if (chunkInfo.skeletonTransformIndex < 0)
+    {
+        return;
+    }
+
+    mat4 deform = mat4(0.0);
+    for (int i = 0; i < 4; i++)
+    {
+        if (boneIndexes[i] >= 0)
+        {
+            deform += boneWeights[i] * skeletonTransform[chunkInfo.skeletonTransformIndex + boneIndexes[i]];
+        }
+    }
+
+    chunkInfo.modelMatrix *= deform;
+    // TBD: consider to take correct normalMatrix
+    chunkInfo.normalMatrix = chunkInfo.modelMatrix;
+}
+
+#endif
+
 ChunkInvocationInfo getInvocationInfo()
 {
     drawID = gl_DrawIDARB + gl_InstanceID;

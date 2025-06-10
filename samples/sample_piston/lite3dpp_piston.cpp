@@ -52,6 +52,7 @@ public:
         mCrankshaft = mPistonScene->getObject("Engine")->getNode("Crankshaft");
         mPiston = mPistonScene->getObject("Engine")->getNode("Piston");
         mRod = mPistonScene->getObject("Engine")->getNode("Rod");
+        mSkeletonBody = mPistonScene->getObject("SkeletonBody")->getRoot();
 
         setupShadowCasters();
         getMain().getResourceManager().warmUpMeshPartitions();
@@ -96,6 +97,8 @@ public:
                 mCrankshaft->actionPlayCycle("Crankshaft.action");
                 mRod->actionPlayCycle("Rod.action");
                 mPiston->actionPlayCycle("Piston.action");
+                mPiston->actionPlayCycle("Piston.action");
+                mSkeletonBody->actionPlayCycle("SkeletonBodyAction.action");
             }
             else if (e->key.keysym.sym == SDLK_e)
             {
@@ -104,12 +107,14 @@ public:
                     mCrankshaft->actionPause();
                     mRod->actionPause();
                     mPiston->actionPause();
+                    mSkeletonBody->actionPause();
                 }
                 else
                 {
                     mCrankshaft->actionResume();
                     mRod->actionResume();
                     mPiston->actionResume();
+                    mSkeletonBody->actionResume();
                 }
             }
             else if (e->key.keysym.sym == SDLK_r)
@@ -117,6 +122,7 @@ public:
                 mCrankshaft->actionReset();
                 mRod->actionReset();
                 mPiston->actionReset();
+                mSkeletonBody->actionReset();
             }
         }
     }
@@ -127,9 +133,10 @@ private:
     Scene* mPistonScene = nullptr;
     lite3dpp_pipeline::PipelineDeffered* mPipeline = nullptr;
     lite3dpp_pipeline::ShadowManager::ShadowCaster *mSUNShadowCaster = nullptr;
-    SceneNode *mCrankshaft = nullptr;
-    SceneNode *mRod = nullptr;
-    SceneNode *mPiston = nullptr;
+    SceneNodeBase *mCrankshaft = nullptr;
+    SceneNodeBase *mRod = nullptr;
+    SceneNodeBase *mPiston = nullptr;
+    SceneNodeBase *mSkeletonBody = nullptr;
     float mGamma = 2.2;
 };
 
