@@ -22,18 +22,21 @@ namespace lite3dpp
     SkeletonBone::SkeletonBone(const String &name, 
         SkeletonBone *parent, 
         kmMat4 *matrixBuffer, 
-        const kmVec3 &restPosePosition,
+        const kmVec3 &head,
+        kmScalar lenght,
         const kmQuaternion &restPoseRotation) : 
         mName(name),
         mParent(parent),
         mTransformFromRest(matrixBuffer),
-        mRestPosePosition(restPosePosition),
+        mLength(lenght),
         mRestPoseRotation(restPoseRotation)
     {
+        mRestPosePosition = head;
+        mRestPosePosition.y += parent ? parent->mLength : 0.0f;
         // Caclulate bone rest pose local transform
         kmMat4 translate;
-        kmMat4Translation(&translate, restPosePosition.x, restPosePosition.y, restPosePosition.z);
-        kmMat4RotationQuaternion(&mRestPoseTransform, &restPoseRotation);
+        kmMat4Translation(&translate, mRestPosePosition.x, mRestPosePosition.y, mRestPosePosition.z);
+        kmMat4RotationQuaternion(&mRestPoseTransform, &mRestPoseRotation);
         kmMat4Multiply(&mRestPoseTransform, &translate, &mRestPoseTransform);
         // Caclulate bone rest pose skeleton space transform
         if (parent)
@@ -52,18 +55,18 @@ namespace lite3dpp
 
     void SkeletonBone::setPosition(const kmVec3 &position)
     {
-        mPosition = position;
+        mPosition = mRestPosePosition;
         mNeedRecalc = true;
     }
 
     const kmVec3& SkeletonBone::getPosition() const
     {
-        return mPosition;
+        return mRestPosePosition;
     }
 
     void SkeletonBone::setRotation(const kmQuaternion &rotation)
     {
-        mRotation = rotation;
+        kmQuaternionMultiply(&mRotation, &mRestPoseRotation, &rotation);
         mNeedRecalc = true;
     }
 
@@ -74,13 +77,13 @@ namespace lite3dpp
 
     void SkeletonBone::setScale(const kmVec3 &scale)
     {
-        mScale = scale;
+        mScale = KM_VEC3_ONE;
         mNeedRecalc = true;
     }
 
     const kmVec3 &SkeletonBone::getScale() const
     {
-        return mScale;
+        return KM_VEC3_ONE;
     }
 
     void SkeletonBone::addChildBone(SkeletonBone *bone)

@@ -199,20 +199,9 @@ class Scene:
         node["Light"] = lightJson
 
     def exportSkeletonBone(self, boneJson, bone):
-        localPosition = bone.head
-        # extend position by parent bone lenght (Y-forward)
-        if bone.parent is not None:
-            localPosition = localPosition + mathutils.Vector((0.0, bone.parent.length, 0.0))
-
-        localRotation = bone.matrix.to_quaternion()
+        boneRotation = bone.matrix.to_quaternion()
 
         boneJson["Name"] = bone.name
-        boneJson["Position"] = [
-            localPosition.x, 
-            localPosition.y, 
-            localPosition.z
-        ]
-
         boneJson["Head"] = [
             bone.head.x, 
             bone.head.y, 
@@ -220,10 +209,10 @@ class Scene:
         ]
 
         boneJson["Rotation"] = [
-            localRotation.x,
-            localRotation.y,
-            localRotation.z,
-            localRotation.w
+            boneRotation.x,
+            boneRotation.y,
+            boneRotation.z,
+            boneRotation.w
         ]
 
         boneJson["Length"] = bone.length

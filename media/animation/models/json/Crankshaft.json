@@ -1,0 +1,15 @@
+{
+  "Codec": "m",
+  "Model": "animation:models/meshes/Crankshaft.m",
+  "Partition": "animation.mesh_partition",
+  "MaterialMapping": [
+    {
+      "Material": {
+        "Type": "PBR",
+        "Name": "Crankshaft.material",
+        "Material": "animation:materials/Crankshaft.json"
+      },
+      "MaterialIndex": 0
+    }
+  ]
+}

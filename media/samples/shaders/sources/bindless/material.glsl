@@ -44,7 +44,7 @@ void skeletonDeform(inout ChunkInvocationInfo chunkInfo, ivec4 boneIndexes, vec4
 
     chunkInfo.modelMatrix *= deform;
     // TBD: consider to take correct normalMatrix
-    chunkInfo.normalMatrix = chunkInfo.modelMatrix;
+    //chunkInfo.normalMatrix = transpose(inverse(mat3(chunkInfo.modelMatrix)));
 }
 
 #endif

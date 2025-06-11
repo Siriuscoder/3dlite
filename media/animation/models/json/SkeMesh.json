@@ -1,0 +1,15 @@
+{
+  "Codec": "m",
+  "Model": "animation:models/meshes/SkeMesh.m",
+  "Partition": "skeleton.mesh_partition",
+  "MaterialMapping": [
+    {
+      "Material": {
+        "Type": "PBR",
+        "Name": "Box.material",
+        "Material": "animation:materials/Box.json"
+      },
+      "MaterialIndex": 0
+    }
+  ]
+}

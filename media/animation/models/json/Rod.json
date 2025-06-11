@@ -1,0 +1,15 @@
+{
+  "Codec": "m",
+  "Model": "animation:models/meshes/Rod.m",
+  "Partition": "animation.mesh_partition",
+  "MaterialMapping": [
+    {
+      "Material": {
+        "Type": "PBR",
+        "Name": "Rod.material",
+        "Material": "animation:materials/Rod.json"
+      },
+      "MaterialIndex": 0
+    }
+  ]
+}

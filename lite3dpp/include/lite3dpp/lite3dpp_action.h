@@ -62,10 +62,9 @@ namespace lite3dpp
         { return mMinFrame; }
         inline float getMaxFrame() const
         { return mMaxFrame; }
-        inline void setSkeleton(Skeleton *skeleton)
-        { mSkeleton = skeleton; }
 
-        virtual std::unique_ptr<ActionClip> playAction(SceneNodeBase &node, bool cycle);
+        std::unique_ptr<ActionClip> playAction(SceneNodeBase &node, bool cycle);
+        std::unique_ptr<ActionClip> playAction(MeshSceneNode &node, bool cycle);
         FramePair getFramePairByTime(float time) const;
         FramePair getFramePairBoneByTime(float time, const String &boneName) const;
 
@@ -83,6 +82,5 @@ namespace lite3dpp
         stl<String, stl<KeyFrame>::vector>::unordered_map mSkeletonKeyFrames;
         float mMinFrame = 0;
         float mMaxFrame = 0;
-        Skeleton *mSkeleton = nullptr;
     };
 }

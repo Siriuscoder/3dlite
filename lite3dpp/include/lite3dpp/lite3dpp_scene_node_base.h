@@ -74,8 +74,7 @@ namespace lite3dpp
         bool isVisible() const;
         bool isRenderable() const;
 
-        void actionPlay(const String &name);
-        void actionPlayCycle(const String &name);
+        virtual void actionPlay(const String &name, bool cycle = false);
         void actionPause();
         void actionResume();
         void actionReset();
@@ -124,10 +123,10 @@ namespace lite3dpp
 
         String mName;
         lite3d_scene_node *mNodePtr = nullptr;
-        std::unique_ptr<ActionClip> mClip;
 
     protected:
 
+        std::unique_ptr<ActionClip> mClip;
         stl<String, Action *>::unordered_map mActions;
     };
 }

@@ -61,11 +61,6 @@ namespace lite3dpp
             {
                 mSkeleton = std::make_unique<Skeleton>(*this);
                 mSkeleton->loadFromJson(json);
-                for (auto &action : mActions)
-                {
-                    SDL_assert(action.second);
-                    action.second->setSkeleton(mSkeleton.get());
-                };
             }
         }
     }
@@ -118,5 +113,14 @@ namespace lite3dpp
         SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "%s: material %d(%s), chunk %p, bb chunk %p",
             getName().c_str(), entity.chunk->materialIndex, material->getName().c_str(), 
                 (void *)entity.chunk, (void *)boundigBoxChunk);
+    }
+
+    void MeshSceneNode::actionPlay(const String &name, bool cycle)
+    {
+        auto action = mActions.find(name);
+        if (action != mActions.end())
+        {
+            mClip = action->second->playAction(*this, cycle);
+        }
     }
 }

@@ -42,6 +42,8 @@ namespace lite3dpp
         
         void setSkeletonBufferIndex(int32_t index);
         void applyMaterial(uint32_t materialID, Material *material);
+
+        virtual void actionPlay(const String &name, bool cycle = false) override;
             
     protected:
 

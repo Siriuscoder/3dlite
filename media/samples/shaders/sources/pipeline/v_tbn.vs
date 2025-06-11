@@ -31,10 +31,12 @@ void main()
 
 #ifdef LITE3D_VERTEX_SKELETON_DEFORM
     skeletonDeform(invInfo, boneIndexes, boneWeights);
+    mat3 normalMatrix = transpose(inverse(mat3(invInfo.modelMatrix)));
+#else
+    mat3 normalMatrix = mat3(invInfo.normalMatrix);
 #endif
 
     vec4 wv = invInfo.modelMatrix * vertex;
-    mat3 normalMatrix = mat3(invInfo.normalMatrix[0].xyz, invInfo.normalMatrix[1].xyz, invInfo.normalMatrix[2].xyz);
 #else
     vec4 wv = modelMatrix * vertex;
 #endif

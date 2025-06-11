@@ -46,10 +46,13 @@ class AnimationAction:
     def save(self):
         for fcurve in self.action.fcurves:
             path = fcurve.data_path
-            if not any(path.endswith(x) for x in ["location", "rotation_quaternion", "rotation_euler", "scale"]):
+            if any(path.endswith(x) for x in ["location", "rotation_euler", "scale"]):
+                axis = ['X', 'Y', 'Z'][fcurve.array_index]
+            elif path.endswith("rotation_quaternion"):
+                axis = ['W', 'X', 'Y', 'Z'][fcurve.array_index]
+            else:
                 continue
 
-            axis = ['X', 'Y', 'Z', 'W'][fcurve.array_index]
             boneProbe = path.split('pose.bones["')
             frames = self.frames
             # this is bone animation curve

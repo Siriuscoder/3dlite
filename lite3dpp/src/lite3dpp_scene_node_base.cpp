@@ -208,22 +208,12 @@ namespace lite3dpp
         return nullptr;
     }
 
-    void SceneNodeBase::actionPlay(const String &name)
+    void SceneNodeBase::actionPlay(const String &name, bool cycle)
     {
         auto action = mActions.find(name);
         if (action != mActions.end())
         {
-            mClip = action->second->playAction(*this, false);
-        }
-    }
-
-    void SceneNodeBase::actionPlayCycle(const String &name)
-    {
-        auto action = mActions.find(name);
-        if (action != mActions.end())
-        {
-            mClip.reset();
-            mClip = action->second->playAction(*this, true);
+            mClip = action->second->playAction(*this, cycle);
         }
     }
 

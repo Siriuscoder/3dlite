@@ -22,7 +22,7 @@
 
 namespace lite3dpp
 {
-    class LITE3DPP_EXPORT SkeletonBone
+    class LITE3DPP_EXPORT SkeletonBone : public Noncopiable
     {
     public:
 
@@ -31,7 +31,8 @@ namespace lite3dpp
         SkeletonBone(const String &name, 
             SkeletonBone *parent,
             kmMat4 *matrixBuffer, 
-            const kmVec3 &restPosePosition,
+            const kmVec3 &head,
+            kmScalar lenght,
             const kmQuaternion &restPoseRotation);
 
         inline const String &getName() const 
@@ -54,6 +55,7 @@ namespace lite3dpp
         String mName;
         SkeletonBone *mParent;
         kmMat4 *mTransformFromRest;
+        float mLength;
         kmMat4 mTransform;
         kmMat4 mRestPoseTransform;
         kmMat4 mRestPoseTransformInverse;

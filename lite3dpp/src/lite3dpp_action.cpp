@@ -16,7 +16,7 @@
  *	along with Lite3D.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
 #include <lite3dpp/lite3dpp_action.h>
-#include <lite3dpp/lite3dpp_scene_node_base.h>
+#include <lite3dpp/lite3dpp_scene_mesh_node.h>
 
 #include <algorithm>
 #include <functional>
@@ -29,7 +29,15 @@ namespace lite3dpp
 
     std::unique_ptr<ActionClip> Action::playAction(SceneNodeBase &node, bool cycle)
     {
-        auto clip = std::make_unique<ActionClip>(*this, getMain(), node, mSkeleton);
+        auto clip = std::make_unique<ActionClip>(*this, getMain(), node, nullptr);
+        clip->setCycle(cycle);
+        clip->play();
+        return clip;
+    }
+
+    std::unique_ptr<ActionClip> Action::playAction(MeshSceneNode &node, bool cycle)
+    {
+        auto clip = std::make_unique<ActionClip>(*this, getMain(), node, node.getSkeleton());
         clip->setCycle(cycle);
         clip->play();
         return clip;

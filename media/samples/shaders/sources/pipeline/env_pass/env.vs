@@ -21,9 +21,11 @@ void main()
 
 #ifdef LITE3D_VERTEX_SKELETON_DEFORM
     skeletonDeform(invInfo, boneIndexes, boneWeights);
+    mat3 normalMatrix = transpose(inverse(mat3(invInfo.modelMatrix)));
+#else
+    mat3 normalMatrix = mat3(invInfo.normalMatrix);
 #endif
 
-    mat3 normalMatrix = mat3(invInfo.normalMatrix[0].xyz, invInfo.normalMatrix[1].xyz, invInfo.normalMatrix[2].xyz);
     // vertex coordinate in world space 
     gl_Position = invInfo.modelMatrix * vertex;
 #else 
