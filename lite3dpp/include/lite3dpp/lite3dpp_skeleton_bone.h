@@ -22,7 +22,7 @@
 
 namespace lite3dpp
 {
-    class LITE3DPP_EXPORT SkeletonBone : public Noncopiable
+    class LITE3DPP_EXPORT SkeletonBone
     {
     public:
 

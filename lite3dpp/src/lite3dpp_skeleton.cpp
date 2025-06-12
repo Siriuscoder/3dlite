@@ -52,14 +52,13 @@ namespace lite3dpp
                 boneName.c_str(), mNode.getName().c_str());
         }
 
-        auto inserted = mBones.emplace(std::piecewise_construct,
-            std::forward_as_tuple(boneName), 
-            std::forward_as_tuple(boneName,
+        auto inserted = mBones.try_emplace(boneName, 
+            boneName,
             parent,
             indexIt == mVertexGroups.end() ? nullptr : &mBonesTransformData[indexIt->second],
             conf.getVec3(L"Head"),
             conf.getDouble(L"Length"),
-            conf.getQuaternion(L"Rotation")));
+            conf.getQuaternion(L"Rotation"));
 
         if (!inserted.second)
         {

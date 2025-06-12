@@ -1,0 +1,59 @@
+{
+  "Root": {
+    "Name": "CuriousSphere",
+    "Mesh": {
+      "Mesh": "animation:models/json/CuriousSphere.json",
+      "Name": "CuriousSphere.mesh"
+    },
+    "VertexGroups": [
+      {
+        "Name": "Bone",
+        "Index": 0
+      },
+      {
+        "Name": "Bone.001",
+        "Index": 1
+      }
+    ],
+    "Skeleton": [
+      {
+        "Name": "Bone",
+        "Head": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "Rotation": [
+          0.7071067690849304,
+          0.0,
+          0.0,
+          0.7071067690849304
+        ],
+        "Length": 0.9752607941627502,
+        "Bones": [
+          {
+            "Name": "Bone.001",
+            "Head": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "Rotation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Length": 0.9000000357627869
+          }
+        ]
+      }
+    ],
+    "Actions": [
+      {
+        "Action": "animation:actions/CuriousSphereAction.json",
+        "Name": "CuriousSphereAction.action"
+      }
+    ]
+  }
+}

@@ -55,6 +55,7 @@ public:
         mRod = mAnimationScene->getObject("Engine")->getNode("Rod");
         mSkeletonBody = mAnimationScene->getObject("SkeletonBody")->getRoot();
         mSkeletonBody2 = mAnimationScene->getObject("SkeletonBody2")->getRoot();
+        mCuriousSphere = mAnimationScene->getObject("CuriousSphere")->getRoot();
 
         setupShadowCasters();
         getMain().getResourceManager().warmUpMeshPartitions();
@@ -70,6 +71,7 @@ public:
         mPipeline->getShadowManager()->registerHintNodeRecursive(mAnimationScene->getObject("Engine")->getRoot());
         mPipeline->getShadowManager()->registerHintNode(mSkeletonBody);
         mPipeline->getShadowManager()->registerHintNode(mSkeletonBody2);
+        mPipeline->getShadowManager()->registerHintNode(mCuriousSphere);
     }
 
     void processEvent(SDL_Event *e) override
@@ -109,6 +111,10 @@ public:
             {
                 mSkeletonBody2->actionPlay("SkeletonBodyAction.action", true);
             }
+            else if (e->key.keysym.sym == SDLK_x)
+            {
+                mCuriousSphere->actionPlay("CuriousSphereAction.action", true);
+            }
             else if (e->key.keysym.sym == SDLK_e)
             {
                 if (mCrankshaft->getActionState() == ActionClip::ActionClipState::PLAYING)
@@ -116,16 +122,39 @@ public:
                     mCrankshaft->actionPause();
                     mRod->actionPause();
                     mPiston->actionPause();
-                    mSkeletonBody->actionPause();
-                    mSkeletonBody2->actionPause();
                 }
                 else
                 {
                     mCrankshaft->actionResume();
                     mRod->actionResume();
                     mPiston->actionResume();
+                }
+
+                if (mSkeletonBody->getActionState() == ActionClip::ActionClipState::PLAYING)
+                {
+                    mSkeletonBody->actionPause();
+                }
+                else
+                {
                     mSkeletonBody->actionResume();
+                }
+
+                if (mSkeletonBody2->getActionState() == ActionClip::ActionClipState::PLAYING)
+                {
+                    mSkeletonBody2->actionPause();
+                }
+                else
+                {
                     mSkeletonBody2->actionResume();
+                }
+
+                if (mCuriousSphere->getActionState() == ActionClip::ActionClipState::PLAYING)
+                {
+                    mCuriousSphere->actionPause();
+                }
+                else
+                {
+                    mCuriousSphere->actionResume();
                 }
             }
             else if (e->key.keysym.sym == SDLK_r)
@@ -135,6 +164,7 @@ public:
                 mPiston->actionReset();
                 mSkeletonBody->actionReset();
                 mSkeletonBody2->actionReset();
+                mCuriousSphere->actionReset();
             }
         }
     }
@@ -150,6 +180,7 @@ private:
     SceneNodeBase *mPiston = nullptr;
     SceneNodeBase *mSkeletonBody = nullptr;
     SceneNodeBase *mSkeletonBody2 = nullptr;
+    SceneNodeBase *mCuriousSphere = nullptr;
     float mGamma = 2.2;
 };
 

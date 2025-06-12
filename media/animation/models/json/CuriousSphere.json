@@ -1,0 +1,15 @@
+{
+  "Codec": "m",
+  "Model": "animation:models/meshes/CuriousSphere.m",
+  "Partition": "skeleton.mesh_partition",
+  "MaterialMapping": [
+    {
+      "Material": {
+        "Type": "PBR",
+        "Name": "CuriousSphere.material",
+        "Material": "animation:materials/CuriousSphere.json"
+      },
+      "MaterialIndex": 0
+    }
+  ]
+}

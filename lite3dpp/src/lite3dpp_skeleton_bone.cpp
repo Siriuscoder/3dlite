@@ -55,13 +55,13 @@ namespace lite3dpp
 
     void SkeletonBone::setPosition(const kmVec3 &position)
     {
-        mPosition = mRestPosePosition;
+        kmVec3Add(&mPosition, &mRestPosePosition, &position);
         mNeedRecalc = true;
     }
 
     const kmVec3& SkeletonBone::getPosition() const
     {
-        return mRestPosePosition;
+        return mPosition;
     }
 
     void SkeletonBone::setRotation(const kmQuaternion &rotation)
@@ -77,13 +77,13 @@ namespace lite3dpp
 
     void SkeletonBone::setScale(const kmVec3 &scale)
     {
-        mScale = KM_VEC3_ONE;
+        mScale = scale;
         mNeedRecalc = true;
     }
 
     const kmVec3 &SkeletonBone::getScale() const
     {
-        return KM_VEC3_ONE;
+        return mScale;
     }
 
     void SkeletonBone::addChildBone(SkeletonBone *bone)
@@ -125,9 +125,10 @@ namespace lite3dpp
 
     void SkeletonBone::resetToRestPose()
     {
-        setPosition(mRestPosePosition);
-        setRotation(mRestPoseRotation);
-        setScale(KM_VEC3_ONE);
+        mPosition = mRestPosePosition;
+        mRotation = mRestPoseRotation;
+        mScale = KM_VEC3_ONE;
+        mNeedRecalc = true;
 
         mTransform = mRestPoseTransform;
         if (mTransformFromRest)

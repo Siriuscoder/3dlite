@@ -100,6 +100,26 @@
         1.0,
         1.0
       ]
+    },
+    {
+      "Name": "CuriousSphere",
+      "Object": "animation:objects/CuriousSphere.json",
+      "Position": [
+        4.066037654876709,
+        2.9275472164154053,
+        0.0
+      ],
+      "Rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "Scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
     }
   ]
 }
