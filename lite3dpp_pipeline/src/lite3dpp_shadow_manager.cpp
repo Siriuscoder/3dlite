@@ -69,6 +69,11 @@ namespace lite3dpp_pipeline {
         invalidate();
     }
 
+    void ShadowManager::ShadowCaster::updateSkeletonPose(SceneNodeBase *node)
+    {
+        invalidate();
+    }
+
     ShadowManager::VisibilityHintNode::VisibilityHintNode(SceneNodeBase *node) : 
         mNode(node)
     {
@@ -108,6 +113,11 @@ namespace lite3dpp_pipeline {
     }
 
     void ShadowManager::VisibilityHintNode::updateScale(SceneNodeBase *node)
+    {
+        invalidate();
+    }
+
+    void ShadowManager::VisibilityHintNode::updateSkeletonPose(SceneNodeBase *node)
     {
         invalidate();
     }

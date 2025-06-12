@@ -128,6 +128,7 @@ namespace lite3dpp
         virtual void updatePosition(SceneNodeBase *node) {}
         virtual void updateRotation(SceneNodeBase *node) {}
         virtual void updateScale(SceneNodeBase *node) {}
+        virtual void updateSkeletonPose(SceneNodeBase *node) {}
     };
 
 #define LITE3D_EXT_OBSERVER_NOTIFY(obj, func)                                     { for(auto o : (obj)->getObservers()) o->func(); }

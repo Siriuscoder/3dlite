@@ -70,6 +70,7 @@ public:
         void updatePosition(SceneNodeBase *node) override;
         void updateRotation(SceneNodeBase *node) override;
         void updateScale(SceneNodeBase *node) override;
+        void updateSkeletonPose(SceneNodeBase *node) override;
 
     private:
 
@@ -94,6 +95,7 @@ public:
         void updatePosition(SceneNodeBase *node) override;
         void updateRotation(SceneNodeBase *node) override;
         void updateScale(SceneNodeBase *node) override;
+        void updateSkeletonPose(SceneNodeBase *node) override;
         void invalidate();
 
         SceneNodeBase *mNode = nullptr;

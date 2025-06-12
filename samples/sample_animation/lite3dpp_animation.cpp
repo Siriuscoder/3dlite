@@ -66,7 +66,10 @@ public:
         auto sun = mAnimationScene->getObject("Ground")->getLightNode("Sun");
         sun->getLight()->setFlag(LightSourceFlags::CastShadowPcfAdaptive);
         mSUNShadowCaster = mPipeline->getShadowManager()->newShadowCaster(sun);
+        // Register hint nodes for automate shadow recalculation 
         mPipeline->getShadowManager()->registerHintNodeRecursive(mAnimationScene->getObject("Engine")->getRoot());
+        mPipeline->getShadowManager()->registerHintNode(mSkeletonBody);
+        mPipeline->getShadowManager()->registerHintNode(mSkeletonBody2);
     }
 
     void processEvent(SDL_Event *e) override

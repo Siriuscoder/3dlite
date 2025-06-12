@@ -52,13 +52,14 @@ namespace lite3dpp
                 boneName.c_str(), mNode.getName().c_str());
         }
 
-        auto inserted = mBones.try_emplace(boneName, 
-            boneName,
+        auto inserted = mBones.emplace(std::piecewise_construct,
+            std::forward_as_tuple(boneName), 
+            std::forward_as_tuple(boneName,
             parent,
             indexIt == mVertexGroups.end() ? nullptr : &mBonesTransformData[indexIt->second],
             conf.getVec3(L"Head"),
             conf.getDouble(L"Length"),
-            conf.getQuaternion(L"Rotation"));
+            conf.getQuaternion(L"Rotation")));
 
         if (!inserted.second)
         {
@@ -82,6 +83,7 @@ namespace lite3dpp
         }
 
         mNode.getMain()->getSkeletonBuffer().registerSceneNode(&mNode);
+        LITE3D_EXT_OBSERVER_NOTIFY_1(&mNode, updateSkeletonPose, &mNode);
     }
 
     void Skeleton::resetToRestPose()
@@ -92,6 +94,7 @@ namespace lite3dpp
         }
 
         mNode.getMain()->getSkeletonBuffer().updateData(mBufferIndex, getTransformData());
+        LITE3D_EXT_OBSERVER_NOTIFY_1(&mNode, updateSkeletonPose, &mNode);
     }
 
     void Skeleton::recalculate()
@@ -105,5 +108,6 @@ namespace lite3dpp
         }
 
         mNode.getMain()->getSkeletonBuffer().updateData(mBufferIndex, getTransformData());
+        LITE3D_EXT_OBSERVER_NOTIFY_1(&mNode, updateSkeletonPose, &mNode);
     }
 }
