@@ -38,10 +38,12 @@ namespace lite3dpp
 
     private:
 
+        bool tryReuseRemoved(size_t sizeBytes);
+
         Main &mMain;
         SSBO *mGlobalSkeletonBuffer = nullptr;
         stl<MeshSceneNode *>::unordered_set mNodes;
-        size_t mPendingRemoveBytes = 0;
-        size_t mUsedBytes = 0;
+        size_t mUnusedBytes = 0;
+        size_t mAllocatedBytes = 0;
     };
 }

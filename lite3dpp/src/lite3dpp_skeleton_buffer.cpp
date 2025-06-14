@@ -38,6 +38,29 @@ namespace lite3dpp
         return *mGlobalSkeletonBuffer;
     }
 
+    bool SkeletonBuffer::tryReuseRemoved(size_t sizeBytes)
+    {
+        if (static_cast<float>(mUnusedBytes) / static_cast<float>(mAllocatedBytes) > 1.0f/3.0f &&
+            sizeBytes <= mUnusedBytes)
+        {
+            size_t bufferIndex = 0;
+            mAllocatedBytes = 0;
+            for (auto node : mNodes)
+            {
+                node->setSkeletonBufferIndex(static_cast<int32_t>(bufferIndex));
+                updateData(bufferIndex, node->getSkeleton()->getTransformData());
+                mAllocatedBytes += node->getSkeleton()->getTransformData().size() * 
+                    sizeof(Skeleton::BonesTransformData::value_type);
+                bufferIndex += node->getSkeleton()->getTransformData().size();
+            }
+
+            mUnusedBytes = 0;
+            return true;
+        }
+
+        return false;
+    }
+
     void SkeletonBuffer::registerSceneNode(MeshSceneNode *node)
     {
         SDL_assert(node);
@@ -52,14 +75,17 @@ namespace lite3dpp
         {
             getBuffer();
 
-            size_t bufferIndex = mUsedBytes / sizeof(Skeleton::BonesTransformData::value_type);
+            size_t bufferIndex = mAllocatedBytes / sizeof(Skeleton::BonesTransformData::value_type);
             size_t sizeBytes = node->getSkeleton()->getTransformData().size() * 
                 sizeof(Skeleton::BonesTransformData::value_type);
 
-            if ((mUsedBytes + sizeBytes) > mGlobalSkeletonBuffer->bufferSizeBytes())
+            if ((mAllocatedBytes + sizeBytes) > mGlobalSkeletonBuffer->bufferSizeBytes())
             {
+                if (tryReuseRemoved(sizeBytes))
+                    return;
+
                 mGlobalSkeletonBuffer->extendBufferBytes(sizeBytes);
-                mUsedBytes += sizeBytes;
+                mAllocatedBytes += sizeBytes;
             }
 
             node->setSkeletonBufferIndex(static_cast<int32_t>(bufferIndex));
@@ -78,9 +104,9 @@ namespace lite3dpp
 
         if (mNodes.erase(node) > 0)
         {
-            size_t sizeBytes = node->getSkeleton()->getBonesCount() * 
+            size_t sizeBytes = node->getSkeleton()->getTransformData().size() * 
                 sizeof(Skeleton::BonesTransformData::value_type);
-            mPendingRemoveBytes += sizeBytes;
+            mUnusedBytes += sizeBytes;
         }
     }
 
