@@ -25,7 +25,7 @@ namespace lite3dpp
     {
     public:
         
-        SSBO(const String &name, const String &path, Main *main);
+        SSBO(const String &name, const String &path, Main &main);
         
     protected:
         

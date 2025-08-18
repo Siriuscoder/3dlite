@@ -36,15 +36,15 @@ public:
 
     void createScene() override
     {
-        Scene *scene = getMain().getResourceManager()->queryResource<Scene>("Warship",
+        Scene *scene = getMain().getResourceManager().queryResource<Scene>("Warship",
             "warship:scenes/warship_prepass.json");
 
         setMainCamera(getMain().getCamera("MainCamera"));
         addFlashlight(scene);
         
-        scene = getMain().getResourceManager()->queryResource<Scene>("WarshipCombine",
+        scene = getMain().getResourceManager().queryResource<Scene>("WarshipCombine",
             "warship:scenes/warship_combine.json");
-        scene = getMain().getResourceManager()->queryResource<Scene>("WarshipPostProcess",
+        scene = getMain().getResourceManager().queryResource<Scene>("WarshipPostProcess",
             "warship:scenes/warship_postprocess.json");
         
         lite3dpp::Material::setIntGlobalParameter("FXAA", 0);

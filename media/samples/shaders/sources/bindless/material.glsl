@@ -17,17 +17,50 @@ layout(std430) readonly buffer MultiRenderMaterialDataBuffer
 
 #ifdef LITE3D_VERTEX_SHADER
 
+layout(location = 1) flat out int drawID;
+
+#ifdef LITE3D_VERTEX_SKELETON_DEFORM
+
+layout(std430) readonly buffer SkeletonTransformBuffer 
+{
+    mat4 skeletonTransform[];
+};
+
+void skeletonDeform(inout ChunkInvocationInfo chunkInfo, ivec4 boneIndexes, vec4 boneWeights)
+{
+    if (chunkInfo.skeletonTransformIndex < 0)
+    {
+        return;
+    }
+
+    mat4 deform = mat4(0.0);
+    for (int i = 0; i < 4; i++)
+    {
+        if (boneIndexes[i] >= 0)
+        {
+            deform += boneWeights[i] * skeletonTransform[chunkInfo.skeletonTransformIndex + boneIndexes[i]];
+        }
+    }
+
+    chunkInfo.modelMatrix *= deform;
+    // TBD: consider to take correct normalMatrix
+    //chunkInfo.normalMatrix = transpose(inverse(mat3(chunkInfo.modelMatrix)));
+}
+
+#endif
+
 ChunkInvocationInfo getInvocationInfo()
 {
-    int compositeIndex = gl_DrawIDARB + gl_InstanceID;
-    int chunkIndex = chunksIndexInvocationInfo[compositeIndex/4][int(mod(compositeIndex, 4))];
+    drawID = gl_DrawIDARB + gl_InstanceID;
+    int chunkIndex = chunksIndexInvocationInfo[drawID/4][int(mod(drawID, 4))];
     return chunksInvocationInfo[chunkIndex];
 }
 
 #elif defined(LITE3D_FRAGMENT_SHADER)
 
 #ifndef LITE3D_DISABLE_INVOCATION_METHOD
-flat in int drawID;
+
+layout(location = 1) flat in int drawID;
 
 ChunkInvocationInfo getInvocationInfo()
 {
@@ -38,9 +71,9 @@ ChunkInvocationInfo getInvocationInfo()
 Surface makeSurface(vec2 uv, vec3 wv, vec3 wn, vec3 wt, vec3 wb)
 {
     Surface surface;
-    surface.transform = getInvocationInfo();
-    surface.material = materials[surface.transform.materialIdx];
-    surface.index = surface.transform.materialIdx;
+    uint materialIdx = getInvocationInfo().materialIdx;
+    surface.material = materials[materialIdx];
+    surface.index = materialIdx;
     surface.uv = uv;
     surface.wv = wv;
     surface.normal = normalize(wn);
@@ -108,31 +141,28 @@ Surface makeSurface(vec2 uv, vec3 wv, vec3 wn, vec3 wt, vec3 wb)
             }
             else if (hasFlag(surface.material.slot[i].flags, TEXTURE_FLAG_SPECULAR))
             {
-                surface.material.specular = clamp(surface.material.specular * 
-                    texture(surface.material.slot[i].textureId, uv).r, 0.0, 1.0);
+                surface.material.specular *= texture(surface.material.slot[i].textureId, uv).r;
             }
             else if (hasFlag(surface.material.slot[i].flags, TEXTURE_FLAG_ROUGHNESS))
             {
-                surface.material.roughness = clamp(surface.material.roughness * 
-                    texture(surface.material.slot[i].textureId, uv).r, 0.085, 1.0);
+                surface.material.roughness *= texture(surface.material.slot[i].textureId, uv).r;
             }
             else if (hasFlag(surface.material.slot[i].flags, TEXTURE_FLAG_METALLIC))
             {
-                surface.material.metallic = clamp(surface.material.metallic * 
-                    texture(surface.material.slot[i].textureId, uv).r, 0.0, 1.0);
+                surface.material.metallic *= texture(surface.material.slot[i].textureId, uv).r;
             }
             else if (hasFlag(surface.material.slot[i].flags, TEXTURE_FLAG_SPECULAR_ROUGNESS_METALLIC))
             {
                 vec3 srm = texture(surface.material.slot[i].textureId, uv).rgb;
-                surface.material.specular = clamp(surface.material.specular * srm.r, 0.0, 1.0);
-                surface.material.roughness = clamp(surface.material.roughness * srm.g, 0.085, 1.0);
-                surface.material.metallic = clamp(surface.material.metallic * srm.b, 0.0, 1.0);
+                surface.material.specular *= srm.r;
+                surface.material.roughness *= srm.g;
+                surface.material.metallic *= srm.b;
             }
             else if (hasFlag(surface.material.slot[i].flags, TEXTURE_FLAG_ROUGNESS_METALLIC))
             {
                 vec2 rm = texture(surface.material.slot[i].textureId, uv).gb;
-                surface.material.roughness = clamp(surface.material.roughness * rm.r, 0.085, 1.0);
-                surface.material.metallic = clamp(surface.material.metallic * rm.g, 0.0, 1.0);
+                surface.material.roughness *= rm.r;
+                surface.material.metallic *= rm.g;
             }
         }
         else
@@ -140,7 +170,10 @@ Surface makeSurface(vec2 uv, vec3 wv, vec3 wn, vec3 wt, vec3 wb)
             break;
         }
     }
-
+    
+    surface.material.specular = clamp(surface.material.specular, 0.0, 1.0);
+    surface.material.roughness = clamp(surface.material.roughness, LITE3D_MIN_ROUGHNESS, 1.0);
+    surface.material.metallic = clamp(surface.material.metallic, 0.0, 1.0);
     surface.material.emission *= surface.material.emissionStrength;
     return surface;
 }
@@ -148,8 +181,8 @@ Surface makeSurface(vec2 uv, vec3 wv, vec3 wn, vec3 wt, vec3 wb)
 void surfaceAlphaClip(vec2 uv)
 {
     Surface surface;
-    surface.transform = getInvocationInfo();
-    surface.material = materials[surface.transform.materialIdx];
+    uint materialIdx = getInvocationInfo().materialIdx;
+    surface.material = materials[materialIdx];
 
     for (int i = 0; i < 8; ++i)
     {

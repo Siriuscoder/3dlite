@@ -26,7 +26,7 @@ namespace lite3dpp_pipeline {
     {
     public:
 
-        PipelineDeffered(const String &name, const String &path, Main *main);
+        PipelineDeffered(const String &name, const String &path, Main &main);
 
         void enableSSAO(bool flag);
 

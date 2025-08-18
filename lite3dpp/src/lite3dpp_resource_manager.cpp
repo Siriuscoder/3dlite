@@ -28,7 +28,7 @@
 
 namespace lite3dpp
 {
-    ResourceManager::ResourceManager(Main *main) : 
+    ResourceManager::ResourceManager(Main &main) : 
         mMain(main)
     {}
 
@@ -132,8 +132,7 @@ namespace lite3dpp
 
     ResourceManager::ResourceManagerStats ResourceManager::getStats() const
     {
-        ResourceManagerStats stats;
-        memset(&stats, 0, sizeof(stats));
+        ResourceManagerStats stats = {};
 
         Packs::const_iterator packIt = mPacks.begin();
         for (; packIt != mPacks.end(); ++packIt)
@@ -196,6 +195,9 @@ namespace lite3dpp
                 stats.meshPartitionsCount++;
                 if (resIt->second->getState() == AbstractResource::LOADED)
                     stats.meshPartitionsLoadedCount++;
+                break;
+            case AbstractResource::ACTION:
+                stats.actionsCount++;
                 break;
             }
         }

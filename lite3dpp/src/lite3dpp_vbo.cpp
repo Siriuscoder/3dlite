@@ -100,7 +100,7 @@ namespace lite3dpp
         return mapper;
     }
     
-    VBOResource::VBOResource(const String &name, const String &path, Main *main,
+    VBOResource::VBOResource(const String &name, const String &path, Main &main,
         AbstractResource::ResourceType type) : 
         ConfigurableResource(name, path, main, type),
         VBO(mVBO)

@@ -92,7 +92,7 @@ vec4 CalcAdaptiveShadowParams(in AngularInfo angular)
     vec3 minV = vec3(LITE3D_SHADOW_MIN_ADAPTIVE_BIAS, LITE3D_SHADOW_MIN_ADAPTIVE_FILTER_SIZE, 0.0);
     vec3 maxV = vec3(LITE3D_SHADOW_MAX_ADAPTIVE_BIAS, LITE3D_SHADOW_MAX_ADAPTIVE_FILTER_SIZE, LITE3D_SSS_MAX_ADAPTIVE_DEPTH_THRESHOLD);
     vec3 rV = max(maxV * (1.0 - angular.NdotL), minV);
-    return vec4(rV, max(angular.NdotL, LITE3D_SHADOW_MIN_ADAPTIVE_STEP));
+    return vec4(rV, LITE3D_SHADOW_MIN_ADAPTIVE_STEP);
 }
 
 float Shadow(in LightSource source, in Surface surface, in AngularInfo angular)
@@ -101,13 +101,13 @@ float Shadow(in LightSource source, in Surface surface, in AngularInfo angular)
     if (!hasFlag(source.flags, LITE3D_LIGHT_CASTSHADOW))
         return 1.0;
 
-    // Shadow space NDC coorts of current fragment
+    // Shadow space NDC coordinates of current fragment
     vec4 sv = shadowTransform[source.shadowIndex] * vec4(surface.wv, 1.0);
     // transform the NDC coordinates to the range [0,1]
     sv = (sv / sv.w) * 0.5 + 0.5;
-    // Z clip 
-    if (sv.z > 1.0 || sv.z < 0.0)
-        return 0.0;
+    // clipping
+    if (sv.z > 1.0 || sv.z < 0.0 || !isValidUV(sv.xy))
+        return hasFlag(source.flags, LITE3D_LIGHT_DIRECTIONAL) ? 1.0 : 0.0;
 
     float shadowFactor = 0.0;
     vec2 texelSize = 1.0 / textureSize(ShadowMaps, 0).xy;

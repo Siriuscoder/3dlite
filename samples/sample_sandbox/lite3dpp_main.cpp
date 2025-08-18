@@ -45,7 +45,7 @@ public:
     void createScene() override
     {
         // load empty scene
-        mPipeline = getMain().getResourceManager()->queryResource<lite3dpp_pipeline::PipelineForward>("SandboxPipeline", 
+        mPipeline = getMain().getResourceManager().queryResource<lite3dpp_pipeline::PipelineForward>("SandboxPipeline", 
             "sandbox:pipelines/sandbox.json");
         mMainScene = &mPipeline->getMainScene();
 

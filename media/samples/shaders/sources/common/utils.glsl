@@ -176,21 +176,22 @@ vec3 linearToSRGB(vec3 color)
 // Reinhard tone mapping
 vec3 reinhardTonemapping(vec3 x)
 {
-    return x / (x + 1.0);
+    vec3 c = x * Exposure;
+    return c / (c + 1.0);
 }
 
 // Exposure tone mapping
-vec3 exposureTonemapping(vec3 x)
+vec3 exponentTonemapping(vec3 x)
 {
     return 1.0 - exp(-x * Exposure);
 }
 
 // Nautilus tone mapping
-vec3 nautilusTonemapping(vec3 c)
+vec3 nautilusTonemapping(vec3 x)
 {
-
     // Nautilus fit of ACES
     // By Nolram
+    vec3 c = x * Exposure;
     
     float a = 2.51;
     float b = 0.03;
@@ -200,33 +201,41 @@ vec3 nautilusTonemapping(vec3 c)
     return clamp((c * (a * c + b)) / (c * (y * c + d) + e), 0.0, 1.0);
 }
 
-mat4 contrastMatrix()
+vec3 ACESTonemapping(vec3 x)
 {
-	float t = (1.0 - Contrast) / 2.0;
-    return mat4(Contrast, 0, 0, 0,
-                0, Contrast, 0, 0,
-                0, 0, Contrast, 0,
-                t, t, t, 1);
+    vec3 color = x * Exposure;
+
+    const mat3 ACESInputMat = mat3(
+        vec3(0.59719, 0.07600, 0.02840),
+        vec3(0.35458, 0.90834, 0.13383),
+        vec3(0.04823, 0.01566, 0.83777)
+    );
+
+    const mat3 ACESOutputMat = mat3(
+        vec3(1.60475, -0.10208, -0.00327),
+        vec3(-0.53108, 1.10813, -0.07276),
+        vec3(-0.07367, -0.00605, 1.07602)
+    );
+
+    color = ACESInputMat * color;
+    // RRT (Reference Rendering Transform) & ODT (Output Device Transform) fit
+    vec3 a = color * (color + 0.0245786) - 0.000090537;
+    vec3 b = color * (0.983729 * color + 0.4329510) + 0.238081;
+    color = a / b;
+
+    color = ACESOutputMat * color;
+    return clamp(color, 0.0, 1.0);
 }
 
-mat4 saturationMatrix()
+vec3 contrastColor(vec3 color)
 {
-    vec3 luminance = vec3(0.2126, 0.7152, 0.0722);
-    float oneMinusSat = 1.0 - Saturation;
+    return mix(vec3(0.5), color, Contrast);
+}
 
-    vec3 red = vec3(luminance.x * oneMinusSat);
-    red += vec3(Saturation, 0, 0);
-    
-    vec3 green = vec3(luminance.y * oneMinusSat);
-    green += vec3(0, Saturation, 0);
-    
-    vec3 blue = vec3(luminance.z * oneMinusSat);
-    blue += vec3(0, 0, Saturation);
-    
-    return mat4(red,     0,
-                green,   0,
-                blue,    0,
-                0, 0, 0, 1);
+vec3 saturationColor(vec3 color)
+{
+    float gray = dot(color, vec3(0.2126, 0.7152, 0.0722)); // luma
+    return mix(vec3(gray), color, Saturation);
 }
 
 #ifdef LITE3D_FRAGMENT_SHADER
@@ -247,7 +256,7 @@ vec3 ditherBayer(vec3 color)
 // Fresnel equation (Schlick)
 vec3 fresnelSchlickRoughness(float teta, in Material material)
 {
-    // Calculate F0 coeff (metalness)
+    // Calculate F0 coeff
     vec3 F0 = mix(material.f0.rgb, material.albedo.rgb, material.metallic);
     // Calculate fresnel
     vec3 F = F0 + (max(vec3(1.0 - material.roughness), F0) - F0) * pow(clamp(1.0 - teta, 0.0, 1.0), 5.0);
@@ -297,6 +306,34 @@ float G(float NdotV, float NdotL, float roughness)
     float ggx1  = GGX(NdotL, roughness);
 	
     return ggx1 * ggx2;
+}
+
+// Specular Term GGX
+vec3 SpecularGGX(vec3 F, in Material material, in AngularInfo angular)
+{
+    float ndf = NDF(angular.NdotH, material.roughness);
+    float g = G(angular.NdotV, angular.NdotL, material.roughness);
+
+    return (ndf * g * F) / (4.0 * angular.NdotV * angular.NdotL);
+}
+
+// Diffuse Term Lambertian (Simple diffuse model)
+vec3 DiffuseLambertian(vec3 F, in Material material)
+{
+    vec3 kD = diffuseFactor(F, material.metallic);
+    return kD * material.albedo.rgb / M_PI;
+}
+
+vec3 Sheen(vec3 F, in Material material, in AngularInfo angular)
+{
+    if (material.sheen > FLT_EPSILON)
+    {
+        vec3 Fs = mix(vec3(1.0), material.albedo.rgb, F);
+        float sheenFalloff = pow(clamp(1.0 - angular.NdotV, 0.0, 1.0), 5.0); // падение к краям
+        return Fs * sheenFalloff * material.sheen;
+    }
+
+    return vec3(0.0);
 }
 
 // Attenuation

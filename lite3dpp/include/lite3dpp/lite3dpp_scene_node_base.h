@@ -20,11 +20,13 @@
 #include <lite3d/lite3d_scene.h>
 
 #include <lite3dpp/lite3dpp_common.h>
+#include <lite3dpp/lite3dpp_observer.h>
 #include <lite3dpp/lite3dpp_config_reader.h>
+#include <lite3dpp/lite3dpp_action.h>
 
 namespace lite3dpp
 {
-    class LITE3DPP_EXPORT SceneNodeBase : public Manageable, public Noncopiable
+    class LITE3DPP_EXPORT SceneNodeBase : public Observable<SceneNodeObserver>, public Manageable, public Noncopiable
     {
     public:
 
@@ -65,15 +67,66 @@ namespace lite3dpp
         void rotateX(float angleDelta);
         void rotateZ(float angleDelta);
         
-        void scale(const kmVec3 &scale);
+        void setScale(const kmVec3 &scale);
+        const kmVec3 &getScale() const;
 
         void setVisible(bool flag);
         bool isVisible() const;
         bool isRenderable() const;
 
+        virtual void actionPlay(const String &name, bool cycle = false);
+        void actionPause();
+        void actionResume();
+        void actionReset();
+        bool actionCompleted() const;
+        ActionClip::ActionClipState getActionState() const;
+
+        template<class F> 
+        inline void iterateChilds(const F &f)
+        {
+            if (!mNodePtr)
+            {
+                return;
+            }
+
+            iterateChilds<F, false>(mNodePtr, f);
+        }
+
+        template<class F> 
+        inline void iterateAllChilds(const F &f)
+        {
+            if (!mNodePtr)
+            {
+                return;
+            }
+
+            iterateChilds<F, true>(mNodePtr, f);
+        }
+
     private:
+
+        template<class F, bool All> 
+        inline void iterateChilds(const lite3d_scene_node *node, const F &f)
+        {
+            lite3d_list_node *nodeLink = node->childNodes.l.next;
+            for (; nodeLink != &node->childNodes.l; nodeLink = lite3d_list_next(nodeLink))
+            {
+                auto child = LITE3D_MEMBERCAST(lite3d_scene_node, nodeLink, nodeLink);
+                f(static_cast<SceneNodeBase*>(child->userdata));
+
+                if (All)
+                {
+                    iterateChilds<F, All>(child, f);
+                }
+            }
+        }
 
         String mName;
         lite3d_scene_node *mNodePtr = nullptr;
+
+    protected:
+
+        std::unique_ptr<ActionClip> mClip;
+        stl<String, Action *>::unordered_map mActions;
     };
 }

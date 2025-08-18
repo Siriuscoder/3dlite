@@ -28,7 +28,7 @@
 namespace lite3dpp
 {
     TextureBuffer::TextureBuffer(const String &name, 
-        const String &path, Main *main) : 
+        const String &path, Main &main) : 
         Texture(name, path, main)
     {}
 

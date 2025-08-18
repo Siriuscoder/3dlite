@@ -27,7 +27,7 @@
 
 namespace lite3dpp
 {
-    MeshPartition::MeshPartition(const String &name, const String &path, Main *main) : 
+    MeshPartition::MeshPartition(const String &name, const String &path, Main &main) : 
         ConfigurableResource(name, path, main, AbstractResource::MESH_PARTITION)
     {}
 
@@ -114,7 +114,7 @@ namespace lite3dpp
 #ifdef INCLUDE_ASSIMP
         auto lastBefore = lite3d_list_last_link(&mPartition.chunks);
         if (!lite3d_assimp_mesh_load(&mPartition, 
-            getMain().getResourceManager()->loadFileToMemory(filePath), modelName.c_str(), flags))
+            getMain().getResourceManager().loadFileToMemory(filePath), modelName.c_str(), flags))
         {
             LITE3D_THROW(getName() << ": Failed to load mesh via assimp");
         }
@@ -137,7 +137,7 @@ namespace lite3dpp
         auto lastBefore = lite3d_list_last_link(&mPartition.chunks);
         
         if (!lite3d_mesh_load_from_m_file(&mPartition, 
-            getMain().getResourceManager()->loadFileToMemory(filePath)))
+            getMain().getResourceManager().loadFileToMemory(filePath)))
         {
             LITE3D_THROW(getName() << ": could not load mesh chunk");
         }
@@ -166,7 +166,7 @@ namespace lite3dpp
 
         if (vb.valid() && vb.bufferSizeBytes() > 0)
         {
-            SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "Partition's %s vertex buffer is being warming up %zu bytes",
+            SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "Partition's %s vertex buffer is being warmed up %zu bytes",
                 getName().c_str(), vb.bufferSizeBytes());
 
             vb.extendBufferBytes(0);
@@ -174,7 +174,7 @@ namespace lite3dpp
 
         if (ib.valid() && ib.bufferSizeBytes() > 0)
         {
-            SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "Partition's %s index buffer is being warming up %zu bytes",
+            SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "Partition's %s index buffer is being warmed up to %zu bytes",
                 getName().c_str(), ib.bufferSizeBytes());
 
             ib.extendBufferBytes(0);

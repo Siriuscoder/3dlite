@@ -115,7 +115,7 @@ void ConverterCommand::runImpl()
         mGenerator.reset(new NullGenerator());
 
     if(!lite3d_assimp_mesh_load_recursive(
-        mMain.getResourceManager()->loadFileToMemory(mInputFilePath), ctx, loadFlags))
+        mMain.getResourceManager().loadFileToMemory(mInputFilePath), ctx, loadFlags))
         LITE3D_THROW("Assimp failed to load file '" << mInputFilePath << "'");
 }
 #else

@@ -50,11 +50,12 @@ Surface makeSurface(vec2 uv, vec3 wv, vec3 wn, vec3 wt, vec3 wb)
     surface.material.emissionStrength = 1.0;
     surface.material.environmentUVScale = LITE3D_CUBE_MAP_UV_SCALE;
     surface.material.environmentSingleProbeIndex = 0u;
+    surface.material.sheen = 0.0;
 
     vec3 specular = getSpecular(uv);
-    surface.material.specular = specular.x;
-    surface.material.roughness = specular.y;
-    surface.material.metallic = specular.z;
+    surface.material.specular = clamp(specular.x, 0.0, 1.0);
+    surface.material.roughness = clamp(specular.y, LITE3D_MIN_ROUGHNESS, 1.0);
+    surface.material.metallic = clamp(specular.z, 0.0, 1.0);
     surface.material.ior = 1.0;
 
 #ifdef LITE3D_ENABLE_ENVIRONMENT_TEXTURE // Setup by the engine 
@@ -101,6 +102,7 @@ Surface restoreSurface(vec2 uv)
     surface.material.emissionStrength = 1.0;
     surface.material.environmentUVScale = LITE3D_CUBE_MAP_UV_SCALE;
     surface.material.environmentSingleProbeIndex = 0u;
+    surface.material.sheen = 0.0;
     surface.wv = wv.xyz;
     surface.uv = uv;
     surface.normal = nw.xyz;

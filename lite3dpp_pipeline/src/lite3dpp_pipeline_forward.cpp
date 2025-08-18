@@ -22,7 +22,7 @@
 namespace lite3dpp {
 namespace lite3dpp_pipeline {
 
-    PipelineForward::PipelineForward(const String &name, const String &path, Main *main) : 
+    PipelineForward::PipelineForward(const String &name, const String &path, Main &main) : 
         PipelineBase(name, path, main)
     {}
 
@@ -46,7 +46,7 @@ namespace lite3dpp_pipeline {
             .set(L"TextureFormat", "RGB")
             .set(L"InternalFormat", "RGB32F");
 
-        mCombinedTexture = getMain().getResourceManager()->queryResourceFromJson<TextureImage>(
+        mCombinedTexture = getMain().getResourceManager().queryResourceFromJson<TextureImage>(
             getName() + "_" + cameraName + "_combined.texture", combinedTextureConfig.write());
         mResourcesList.emplace_back(mCombinedTexture->getName());
 
@@ -64,7 +64,7 @@ namespace lite3dpp_pipeline {
             .set(L"DepthAttachments", ConfigurationWriter()
                 .set(L"TextureName", mDepthTexture->getName()));
 
-        mCombinePass = getMain().getResourceManager()->queryResourceFromJson<TextureRenderTarget>(
+        mCombinePass = getMain().getResourceManager().queryResourceFromJson<TextureRenderTarget>(
             getName() + "_" + cameraName + "_CombinePass", combinedTargetConfig.write());
         mResourcesList.emplace_back(mCombinePass->getName());
 

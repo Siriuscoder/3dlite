@@ -27,13 +27,14 @@ void main()
     // BLOOM
     hdr = mix(hdr, texture(Bloom, iuv).rgb, BloomStrength);
     // Exposure tone mapping
-    vec4 ldr = vec4(exposureTonemapping(hdr), 1.0);
+    vec3 ldr = exponentTonemapping(hdr);
     // Color correction
-    ldr = contrastMatrix() * saturationMatrix() * ldr;
+    ldr = contrastColor(ldr);
+    ldr = saturationColor(ldr);
     // Gamma correction 
-    ldr.rgb = linearToSRGB(ldr.rgb);
+    ldr = linearToSRGB(ldr);
     // Dithering
-    ldr.rgb = ditherBayer(ldr.rgb);
+    ldr = ditherBayer(ldr);
     // Final Color
-    fragColor = vec4(ldr.rgb, 1.0);
+    fragColor = vec4(ldr, 1.0);
 }

@@ -37,7 +37,7 @@ namespace lite3dpp
             Material *material = nullptr;
         };
 
-        Mesh(const String &name, const String &path, Main *main);
+        Mesh(const String &name, const String &path, Main &main);
         virtual ~Mesh() = default;
 
         void applyMaterial(uint32_t materialIdx, Material *material);

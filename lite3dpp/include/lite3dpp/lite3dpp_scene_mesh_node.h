@@ -19,6 +19,7 @@
 
 #include <lite3dpp/lite3dpp_scene_node.h>
 #include <lite3dpp/lite3dpp_mesh.h>
+#include <lite3dpp/lite3dpp_skeleton.h>
 
 namespace lite3dpp
 {
@@ -34,11 +35,15 @@ namespace lite3dpp
         { return mMesh; }
         inline const Mesh *getMesh() const
         { return mMesh; }
-        
+        inline Skeleton *getSkeleton()
+        { return mSkeleton.get(); }
         inline void instances(uint32_t count)
         { mInstances = count; }
         
+        void setSkeletonBufferIndex(int32_t index);
         void applyMaterial(uint32_t materialID, Material *material);
+
+        virtual void actionPlay(const String &name, bool cycle = false) override;
             
     protected:
 
@@ -49,5 +54,6 @@ namespace lite3dpp
         
         Mesh *mMesh = nullptr;
         uint32_t mInstances = 1;
+        std::unique_ptr<Skeleton> mSkeleton;
     };
 }

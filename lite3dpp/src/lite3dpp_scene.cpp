@@ -26,7 +26,7 @@
 namespace lite3dpp
 {
     Scene::Scene(const String &name, 
-        const String &path, Main *main) : 
+        const String &path, Main &main) : 
         ConfigurableResource(name, path, main, AbstractResource::SCENE),
         mLightingParamsBuffer(nullptr),
         mLightingIndexBuffer(nullptr)
@@ -69,6 +69,19 @@ namespace lite3dpp
             LITE3D_THROW("Failed to initialize scene '" << getName() << "'");
         }
 
+        // Для поддержки мультирендера для каждой сцены нужно создать 2 служебных буфера
+        // mInvocationBuffer и mInvocationIndexBuffer. !!!
+        if (features & LITE3D_SCENE_FEATURE_MULTIRENDER)
+        {
+            mInvocationBuffer = getMain().getResourceManager().queryResourceFromJson<SSBO>(getName() + 
+                "_invocationBuffer", "{\"Dynamic\": true}");
+            mInvocationIndexBuffer = getMain().getResourceManager().queryResourceFromJson<UBO>(getName() + 
+                "_invocationIndexBuffer", "{\"Dynamic\": true}");
+            
+            mScene.invocationBufferGPU = mInvocationBuffer->getPtr();
+            mScene.invocationIndexBufferGPU = mInvocationIndexBuffer->getPtr();
+        }
+
         setupCallbacks();
 
         String lightingTechnique = helper.getString(L"LightingTechnique", "none");
@@ -80,11 +93,11 @@ namespace lite3dpp
             if (lightingTechnique == "SSBO")
             {
                 /* default name of lighting buffer is scene name + "LightingBufferObject" */
-                mLightingParamsBuffer = getMain().getResourceManager()->
+                mLightingParamsBuffer = getMain().getResourceManager().
                     queryResourceFromJson<SSBO>(getName() + "_lightingBufferObject",
                     "{\"Dynamic\": true}");
                 /* 2-bytes index, about 16k light sources support  */
-                mLightingIndexBuffer = getMain().getResourceManager()->
+                mLightingIndexBuffer = getMain().getResourceManager().
                     queryResourceFromJson<SSBO>(getName() + "_lightingIndexBuffer",
                     "{\"Dynamic\": true}");
 
@@ -93,11 +106,11 @@ namespace lite3dpp
             else if (lightingTechnique == "UBO")
             {
                 /* default name of lighting buffer is scene name + "LightingBufferObject" */
-                mLightingParamsBuffer = getMain().getResourceManager()->
+                mLightingParamsBuffer = getMain().getResourceManager().
                     queryResourceFromJson<UBO>(getName() + "_lightingBufferObject",
                     "{\"Dynamic\": true}");
                 /* 2-bytes index, about 16k light sources support  */
-                mLightingIndexBuffer = getMain().getResourceManager()->
+                mLightingIndexBuffer = getMain().getResourceManager().
                     queryResourceFromJson<UBO>(getName() + "_lightingIndexBuffer",
                     "{\"Dynamic\": true}");
 
@@ -127,14 +140,26 @@ namespace lite3dpp
         /* release lighting technique buffers */
         if (mLightingParamsBuffer)
         {
-            getMain().getResourceManager()->releaseResource(getName() + "_lightingBufferObject");
+            getMain().getResourceManager().releaseResource(mLightingParamsBuffer->getName());
             mLightingParamsBuffer = nullptr;
         }
 
         if (mLightingIndexBuffer)
         {
-            getMain().getResourceManager()->releaseResource(getName() + "_lightingIndexBuffer");
+            getMain().getResourceManager().releaseResource(mLightingIndexBuffer->getName());
             mLightingIndexBuffer = nullptr;
+        }
+
+        if (mInvocationBuffer)
+        {
+            getMain().getResourceManager().releaseResource(mInvocationBuffer->getName());
+            mInvocationBuffer = nullptr;
+        }
+
+        if (mInvocationIndexBuffer)
+        {
+            getMain().getResourceManager().releaseResource(mInvocationIndexBuffer->getName());
+            mInvocationIndexBuffer = nullptr;
         }
 
         detachAllCameras();
@@ -324,7 +349,7 @@ namespace lite3dpp
                     renderTarget = getMain().window();
                 else
                 {
-                    renderTarget = getMain().getResourceManager()->queryResource<TextureRenderTarget>(
+                    renderTarget = getMain().getResourceManager().queryResource<TextureRenderTarget>(
                         renderTargetJson.getString(L"Name"),
                         renderTargetJson.getString(L"Path"));
                 }

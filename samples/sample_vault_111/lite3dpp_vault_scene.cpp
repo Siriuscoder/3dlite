@@ -39,30 +39,6 @@ class SampleVault111 : public Sample
 {
 public:
 
-    struct SpotLightWithShadow
-    {
-        lite3dpp_pipeline::ShadowManager::DynamicShadowReceiver* spot = nullptr;
-        lite3dpp_pipeline::ShadowManager::ShadowCaster* shadowCaster = nullptr;
-
-        SpotLightWithShadow() = default;
-        SpotLightWithShadow(lite3dpp_pipeline::ShadowManager::DynamicShadowReceiver *spot, 
-            lite3dpp_pipeline::ShadowManager::ShadowCaster* shadowCaster) : 
-            spot(spot),
-            shadowCaster(shadowCaster)
-        {
-            shadowCaster->getNode()->getLight()->setFlag(LightSourceFlags::CastShadowPcfAdaptive);
-        }
-
-        void rotateAngle(const kmVec3 &axis, float angle)
-        {
-            SDL_assert(spot);
-            SDL_assert(shadowCaster);
-
-            spot->rotateAngle(axis, angle);
-            shadowCaster->invalidate();
-        }
-    };
-
     class MinigunObject
     {
     public:
@@ -72,8 +48,9 @@ public:
         MinigunObject(Scene* scene, lite3dpp_pipeline::ShadowManager* shadowManager, const String& name) : 
             mMinigunObj(scene->getObject(name))
         {
-            mMinigun = shadowManager->registerShadowReceiver(mMinigunObj->getNode("Minigun"));
-            mMinigunBarrel = shadowManager->registerShadowReceiver(mMinigunObj->getNode("MinigunBarrel"));
+            mMinigun = mMinigunObj->getNode("Minigun");
+            mMinigunBarrel = mMinigunObj->getNode("MinigunBarrel");
+            shadowManager->registerHintNodeRecursive(mMinigunObj->getRoot());
         }
 
         void rotateAngle(const kmVec3 &axis, float angle)
@@ -91,8 +68,8 @@ public:
     private:
 
         SceneObject* mMinigunObj = nullptr;
-        lite3dpp_pipeline::ShadowManager::DynamicShadowReceiver* mMinigun = nullptr;
-        lite3dpp_pipeline::ShadowManager::DynamicShadowReceiver* mMinigunBarrel = nullptr;
+        SceneNode* mMinigun = nullptr;
+        SceneNode* mMinigunBarrel = nullptr;
     };
 
 public:
@@ -104,7 +81,7 @@ public:
     void createScene() override
     {
         mLightAnimEffects = std::make_unique<SampleLightEffectManager>();
-        mPipeline = getMain().getResourceManager()->queryResource<lite3dpp_pipeline::PipelineDeffered>("Vault_111", 
+        mPipeline = getMain().getResourceManager().queryResource<lite3dpp_pipeline::PipelineDeffered>("Vault_111", 
             "vault_111:pipelines/vault_111.json");
         mVaultScene = &mPipeline->getMainScene();
         setMainCamera(&mPipeline->getMainCamera());
@@ -119,39 +96,54 @@ public:
         mMinigun02 = MinigunObject(mVaultScene, mShadowManager, "MinigunTurret.001");
         mMinigun02.rotateAngle(KM_VEC3_POS_Z, kmDegreesToRadians(-30.0));
 
-        mGearKey = mShadowManager->registerShadowReceiver(mVaultScene->getObject("VaultStatic")->getNode("GearKey"));
-        mGearKeySpinner = mShadowManager->registerShadowReceiver(mVaultScene->getObject("VaultStatic")->getNode("GearKeySpinner"));
-        mGeneratorSpinner01 = mShadowManager->registerShadowReceiver(mVaultScene->getObject("VaultStatic")->getNode("PowerGeneratorSpinner01"));
-        mGeneratorSpinner02 = mShadowManager->registerShadowReceiver(mVaultScene->getObject("VaultStatic")->getNode("PowerGeneratorSpinner02"));
-        mFans.emplace_back(mShadowManager->registerShadowReceiver(mVaultScene->getObject("VaultStatic")->getNode("FanRotor")));
-        mFans.emplace_back(mShadowManager->registerShadowReceiver(mVaultScene->getObject("VaultStatic")->getNode("FanRotor.001")));
-        mFans.emplace_back(mShadowManager->registerShadowReceiver(mVaultScene->getObject("VaultStatic")->getNode("FanRotor.002")));
-        mFans.emplace_back(mShadowManager->registerShadowReceiver(mVaultScene->getObject("VaultStatic")->getNode("FanRotor.003")));
+        mGearKey = mVaultScene->getObject("VaultStatic")->getNode("GearKey");
+        mShadowManager->registerHintNode(mGearKey);
+
+        mGearKeySpinner = mVaultScene->getObject("VaultStatic")->getNode("GearKeySpinner");
+        mShadowManager->registerHintNode(mGearKeySpinner);
+
+        mGeneratorSpinner01 = mVaultScene->getObject("VaultStatic")->getNode("PowerGeneratorSpinner01");
+        mShadowManager->registerHintNode(mGeneratorSpinner01);
+
+        mGeneratorSpinner02 = mVaultScene->getObject("VaultStatic")->getNode("PowerGeneratorSpinner02");
+        mShadowManager->registerHintNode(mGeneratorSpinner02);
+
+        mFans.emplace_back(mVaultScene->getObject("VaultStatic")->getNode("FanRotor"));
+        mFans.emplace_back(mVaultScene->getObject("VaultStatic")->getNode("FanRotor.001"));
+        mFans.emplace_back(mVaultScene->getObject("VaultStatic")->getNode("FanRotor.002"));
+        mFans.emplace_back(mVaultScene->getObject("VaultStatic")->getNode("FanRotor.003"));
+        
+        for (auto fan : mFans)
+        {
+            mShadowManager->registerHintNode(fan);
+        }
     }
 
     void setupShadowCasters()
     {
-        // Установим тень для трех прожекторов и потом будем их вращать
+        // Установим тень для четырех прожекторов и потом будем их вращать
         // Источники света получаем по ObjectName + NodeName
-        mSpot = SpotLightWithShadow(
-            mShadowManager->registerShadowReceiver(mVaultScene->getObject("LightSpot")->getNode("LightSpotLamp")),
-            mShadowManager->newShadowCaster(mVaultScene->getObject("LightSpot")->getLightNode("LightSpotNode"))
-        );
+        mSpot = mVaultScene->getObject("LightSpot")->getNode("LightSpotLamp");
+        mSpot01 = mVaultScene->getObject("LightSpot.001")->getNode("LightSpotLamp");
+        mSpot02 = mVaultScene->getObject("LightSpot.002")->getNode("LightSpotLamp");
+        mSpot03 = mVaultScene->getObject("LightSpot.003")->getNode("LightSpotLamp");
 
-        mSpot01 = SpotLightWithShadow(
-            mShadowManager->registerShadowReceiver(mVaultScene->getObject("LightSpot.001")->getNode("LightSpotLamp")),
-            mShadowManager->newShadowCaster(mVaultScene->getObject("LightSpot.001")->getLightNode("LightSpotNode"))
-        );
+        mShadowManager->registerHintNode(mSpot);
+        mShadowManager->registerHintNode(mSpot01);
+        mShadowManager->registerHintNode(mSpot02);
+        mShadowManager->registerHintNode(mSpot03);
 
-        mSpot02 = SpotLightWithShadow(
-            mShadowManager->registerShadowReceiver(mVaultScene->getObject("LightSpot.002")->getNode("LightSpotLamp")),
-            mShadowManager->newShadowCaster(mVaultScene->getObject("LightSpot.002")->getLightNode("LightSpotNode"))
-        );
+        mShadowManager->newShadowCaster(mVaultScene->getObject("LightSpot")->getLightNode("LightSpotNode"))->getNode()->
+            getLight()->setFlag(LightSourceFlags::CastShadowPcfAdaptive);
 
-        mSpot03 = SpotLightWithShadow(
-            mShadowManager->registerShadowReceiver(mVaultScene->getObject("LightSpot.003")->getNode("LightSpotLamp")),
-            mShadowManager->newShadowCaster(mVaultScene->getObject("LightSpot.003")->getLightNode("LightSpotNode"))
-        );
+        mShadowManager->newShadowCaster(mVaultScene->getObject("LightSpot.001")->getLightNode("LightSpotNode"))->getNode()->
+            getLight()->setFlag(LightSourceFlags::CastShadowPcfAdaptive);
+
+        mShadowManager->newShadowCaster(mVaultScene->getObject("LightSpot.002")->getLightNode("LightSpotNode"))->getNode()->
+            getLight()->setFlag(LightSourceFlags::CastShadowPcfAdaptive);
+
+        mShadowManager->newShadowCaster(mVaultScene->getObject("LightSpot.003")->getLightNode("LightSpotNode"))->getNode()->
+            getLight()->setFlag(LightSourceFlags::CastShadowPcfAdaptive);
         
         mShadowManager->newShadowCaster(mVaultScene->getObject("VaultStatic")->getLightNode("RotorSpot"))->getNode()->
             getLight()->setFlag(LightSourceFlags::CastShadowPcfAdaptive);
@@ -182,7 +174,7 @@ public:
                 lightNode->getName() == "LightCeilNode01.006")
             {
                 // Создаем новый материал для выбранных источников света чтобы сделать эффект мигания каджой отдельной лампочки 
-                auto material = getMain().getResourceManager()->queryResource<Material>(lightNode->getName() + "_BlinkGlow.material", 
+                auto material = getMain().getResourceManager().queryResource<Material>(lightNode->getName() + "_BlinkGlow.material", 
                     "vault_111:materials/VltLightGlow01.json");
                 mLightAnimEffects->registerLight(lightNode, SampleLightEffectManager::EffectTypeBlink, material, 1'200'000, 550'000, 80'000);
                 // Присваиваем новый натериал к родителю (MeshNode)
@@ -196,31 +188,31 @@ public:
             }
             else if (lightNode->getName() == "ReactorElectric")
             {
-                Material *reactorGlow = getMain().getResourceManager()->queryResource<Material>("V111ReactorGlow01.material");
+                Material *reactorGlow = getMain().getResourceManager().queryResource<Material>("V111ReactorGlow01.material");
                 mLightAnimEffects->registerLight(lightNode, SampleLightEffectManager::EffectTypeTrembling, reactorGlow);
                 mLightAnimEffects->registerLight(lightNode, SampleLightEffectManager::EffectTypeBlink, reactorGlow);
             }
             else if (lightNode->getName() == "ReactorElectric.001")
             {
-                Material *reactorGlow = getMain().getResourceManager()->queryResource<Material>("V111ReactorGlow02.material");
+                Material *reactorGlow = getMain().getResourceManager().queryResource<Material>("V111ReactorGlow02.material");
                 mLightAnimEffects->registerLight(lightNode, SampleLightEffectManager::EffectTypeTrembling, reactorGlow);
                 mLightAnimEffects->registerLight(lightNode, SampleLightEffectManager::EffectTypeBlink, reactorGlow);
             }
             else if (lightNode->getName() == "ReactorElectric.002")
             {
-                Material *reactorGlow = getMain().getResourceManager()->queryResource<Material>("V111ReactorGlow03.material");
+                Material *reactorGlow = getMain().getResourceManager().queryResource<Material>("V111ReactorGlow03.material");
                 mLightAnimEffects->registerLight(lightNode, SampleLightEffectManager::EffectTypeTrembling, reactorGlow);
                 mLightAnimEffects->registerLight(lightNode, SampleLightEffectManager::EffectTypeBlink, reactorGlow);
             }
             else if (lightNode->getName() == "ReactorElectric.003")
             {
-                Material *reactorGlow = getMain().getResourceManager()->queryResource<Material>("V111ReactorGlow04.material");
+                Material *reactorGlow = getMain().getResourceManager().queryResource<Material>("V111ReactorGlow04.material");
                 mLightAnimEffects->registerLight(lightNode, SampleLightEffectManager::EffectTypeTrembling, reactorGlow);
                 mLightAnimEffects->registerLight(lightNode, SampleLightEffectManager::EffectTypeBlink, reactorGlow);
             }
         }
 
-        Material *sineWave = getMain().getResourceManager()->queryResource<Material>("SineWave01.material");
+        Material *sineWave = getMain().getResourceManager().queryResource<Material>("SineWave01.material");
         mLightAnimEffects->registerLight(nullptr, SampleLightEffectManager::EffectTypeTrembling, sineWave);
     }
 
@@ -257,9 +249,9 @@ public:
         float cosA = cos(mAnimPi);
         mMinigun01.animate(cosA * 0.02, 0.13 * deltaRetard);
         mMinigun02.animate(-cosA * 0.02, 0.13 * deltaRetard);
-        mSpot03.rotateAngle(KM_VEC3_POS_Z, 0.1 * deltaRetard);
+        mSpot03->rotateAngle(KM_VEC3_POS_Z, 0.1 * deltaRetard);
 
-        std::for_each(mFans.begin(), mFans.end(), [deltaRetard](lite3dpp_pipeline::ShadowManager::DynamicShadowReceiver* fanRotor)
+        std::for_each(mFans.begin(), mFans.end(), [deltaRetard](SceneNode* fanRotor)
         {
             fanRotor->rotateAngle(KM_VEC3_POS_Z, 0.07 * deltaRetard);
         });
@@ -285,15 +277,15 @@ public:
             }
             else if (e->key.keysym.sym == SDLK_p)
             {
-                mSpot.rotateAngle(KM_VEC3_POS_Z, 0.10 * (e->key.keysym.mod & KMOD_LCTRL ? -1.0 : 1.0));
+                mSpot->rotateAngle(KM_VEC3_POS_Z, 0.10 * (e->key.keysym.mod & KMOD_LCTRL ? -1.0 : 1.0));
             }
             else if (e->key.keysym.sym == SDLK_i)
             {
-                mSpot01.rotateAngle(KM_VEC3_POS_Z, 0.10 * (e->key.keysym.mod & KMOD_LCTRL ? -1.0 : 1.0));
+                mSpot01->rotateAngle(KM_VEC3_POS_Z, 0.10 * (e->key.keysym.mod & KMOD_LCTRL ? -1.0 : 1.0));
             }
             else if (e->key.keysym.sym == SDLK_o)
             {
-                mSpot02.rotateAngle(KM_VEC3_POS_Z, 0.10 * (e->key.keysym.mod & KMOD_LCTRL ? -1.0 : 1.0));
+                mSpot02->rotateAngle(KM_VEC3_POS_Z, 0.10 * (e->key.keysym.mod & KMOD_LCTRL ? -1.0 : 1.0));
             }
             else if (e->key.keysym.sym == SDLK_k)
             {
@@ -340,15 +332,15 @@ private:
     lite3dpp_pipeline::ShadowManager* mShadowManager;
     std::unique_ptr<SampleLightEffectManager> mLightAnimEffects;
     LightSceneNode* mFlashLight = nullptr;
-    SpotLightWithShadow mSpot;
-    SpotLightWithShadow mSpot01;
-    SpotLightWithShadow mSpot02;
-    SpotLightWithShadow mSpot03;
-    lite3dpp_pipeline::ShadowManager::DynamicShadowReceiver* mGearKey = nullptr;
-    lite3dpp_pipeline::ShadowManager::DynamicShadowReceiver* mGearKeySpinner = nullptr;
-    lite3dpp_pipeline::ShadowManager::DynamicShadowReceiver* mGeneratorSpinner01 = nullptr;
-    lite3dpp_pipeline::ShadowManager::DynamicShadowReceiver* mGeneratorSpinner02 = nullptr;
-    stl<lite3dpp_pipeline::ShadowManager::DynamicShadowReceiver*>::vector mFans;
+    SceneNode* mSpot;
+    SceneNode* mSpot01;
+    SceneNode* mSpot02;
+    SceneNode* mSpot03;
+    SceneNode* mGearKey = nullptr;
+    SceneNode* mGearKeySpinner = nullptr;
+    SceneNode* mGeneratorSpinner01 = nullptr;
+    SceneNode* mGeneratorSpinner02 = nullptr;
+    stl<SceneNode*>::vector mFans;
     MinigunObject mMinigun01;
     MinigunObject mMinigun02;
     float mAnimPi = 0.0f;

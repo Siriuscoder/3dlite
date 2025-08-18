@@ -25,10 +25,10 @@ namespace lite3dpp
     {
         if (type == "PBR")
         {
-            return mMain.getResourceManager()->queryResource<PBRMaterial>(name, path);
+            return mMain.getResourceManager().queryResource<PBRMaterial>(name, path);
         }
 
-        return mMain.getResourceManager()->queryResource<Material>(name, path);
+        return mMain.getResourceManager().queryResource<Material>(name, path);
     }
 }
 

@@ -53,7 +53,7 @@ lite3dpp::Material::PassParameters lite3dpp::Material::mGlobalParameters;
 namespace lite3dpp
 {
     Material::Material(const String &name, 
-        const String &path, Main *main) : 
+        const String &path, Main &main) : 
         ConfigurableResource(name, path, main, AbstractResource::MATERIAL)
     {}
 
@@ -66,7 +66,7 @@ namespace lite3dpp
             addPass(passNo);
 
             ConfigurationReader programJson = passJson.getObject(L"Program");
-            setPassProgram(passNo, getMain().getResourceManager()->queryResource<ShaderProgram>(programJson.getString(L"Name"),
+            setPassProgram(passNo, getMain().getResourceManager().queryResource<ShaderProgram>(programJson.getString(L"Name"),
                 programJson.getString(L"Path")));
             
             String bMode = passJson.getUpperString(L"BlendingMode", "RGB_LINEAR_SOURCE_ALPHA");
@@ -161,19 +161,19 @@ namespace lite3dpp
                 }
                 else if(paramType == "sampler")
                     setSamplerParameter(passNo, paramName, 
-                        *getMain().getResourceManager()->queryResource<TextureImage>(uniformParamJson.getString(L"TextureName"),
+                        *getMain().getResourceManager().queryResource<TextureImage>(uniformParamJson.getString(L"TextureName"),
                         uniformParamJson.getString(L"TexturePath")), scope == "global");
                 else if(paramType == "samplerBuffer")
                     setSamplerParameter(passNo, paramName, 
-                        *getMain().getResourceManager()->queryResource<TextureBuffer>(uniformParamJson.getString(L"TextureName"),
+                        *getMain().getResourceManager().queryResource<TextureBuffer>(uniformParamJson.getString(L"TextureName"),
                         uniformParamJson.getString(L"TexturePath")), scope == "global");
                 else if(paramType == "SSBO")
                     setSSBOParameter(passNo, paramName, 
-                        *getMain().getResourceManager()->queryResource<SSBO>(uniformParamJson.getString(L"SSBOName"),
+                        *getMain().getResourceManager().queryResource<SSBO>(uniformParamJson.getString(L"SSBOName"),
                         uniformParamJson.getString(L"SSBOPath")), scope == "global");
                 else if(paramType == "UBO")
                     setUBOParameter(passNo, paramName, 
-                        *getMain().getResourceManager()->queryResource<UBO>(uniformParamJson.getString(L"UBOName"),
+                        *getMain().getResourceManager().queryResource<UBO>(uniformParamJson.getString(L"UBOName"),
                         uniformParamJson.getString(L"UBOPath")), scope == "global");
             }
         }

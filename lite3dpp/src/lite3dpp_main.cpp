@@ -32,7 +32,8 @@ namespace lite3dpp
     const char Main::fixedUpdateTimerName[] = "fixedTimer";
 
     Main::Main() :
-        mResourceManager(this)
+        mResourceManager(*this),
+        mSkeletonBuffer(*this)
     {
         /* init memory model first
          * json parser used lite3d allocator model,

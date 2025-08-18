@@ -1,0 +1,14 @@
+#define LITE3D_BASE_AMBIENT_LIGHT                           vec3(0.002)
+#define LITE3D_ENV_PROBE_RELATIVE_DISTANCE_THRESHOLD        0.05
+#define LITE3D_ENV_PROBE_DIFFUSE_POWER                      1.5
+#define LITE3D_ENV_PROBE_SPECULAR_POWER                     10.0
+
+#define LITE3D_SHADOW_MIN_ADAPTIVE_BIAS                     0.0005
+#define LITE3D_SHADOW_MAX_ADAPTIVE_BIAS                     0.05
+#define LITE3D_SHADOW_MIN_ADAPTIVE_FILTER_SIZE              2.0
+#define LITE3D_SHADOW_MAX_ADAPTIVE_FILTER_SIZE              5.0
+#define LITE3D_SHADOW_MIN_ADAPTIVE_STEP                     0.5
+
+#define LITE3D_SSAO_POWER                                   1.0
+#define LITE3D_SSAO_SAMPLE_BIAS                             0.030
+#define LITE3D_SSAO_MAX_DEPTH_SAMPLES                       56

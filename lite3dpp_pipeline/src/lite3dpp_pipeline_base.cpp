@@ -23,13 +23,13 @@
 namespace lite3dpp {
 namespace lite3dpp_pipeline {
 
-    PipelineBase::PipelineBase(const String &name, const String &path, Main *main) : 
+    PipelineBase::PipelineBase(const String &name, const String &path, Main &main) : 
         ConfigurableResource(name, path, main, AbstractResource::PIPELINE)
     {
         std::srand(std::time(nullptr));
         mRandomSeed = static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
 
-        main->addObserver(this);
+        main.addObserver(this);
     }
 
     PipelineBase::~PipelineBase()
@@ -113,7 +113,7 @@ namespace lite3dpp_pipeline {
         mShaderPackage = pipelineConfig.getString(L"ShaderPackage");
         auto lightingTechnique = pipelineConfig.getString(L"LightingTechnique");
         auto mainScenePath = pipelineConfig.getString(L"MainScenePath");
-        auto sceneJsonData = getMain().getResourceManager()->loadFileToMemory(mainScenePath);
+        auto sceneJsonData = getMain().getResourceManager().loadFileToMemory(mainScenePath);
         ConfigurationWriter sceneGeneratedConfig(static_cast<const char *>(sceneJsonData->fileBuff), sceneJsonData->fileSize);
         ConfigurationReader sceneConfig(static_cast<const char *>(sceneJsonData->fileBuff), sceneJsonData->fileSize);
 
@@ -212,7 +212,7 @@ namespace lite3dpp_pipeline {
     {
         for (auto it = mResourcesList.rbegin(); it != mResourcesList.rend(); ++it)
         {
-            getMain().getResourceManager()->releaseResource(*it);
+            getMain().getResourceManager().releaseResource(*it);
         }
 
         mResourcesList.clear();
@@ -223,9 +223,9 @@ namespace lite3dpp_pipeline {
 
     void PipelineBase::createBigTriangleMesh()
     {
-        if (!getMain().getResourceManager()->resourceExists("BigTriangle.mesh"))
+        if (!getMain().getResourceManager().resourceExists("BigTriangle.mesh"))
         {
-            getMain().getResourceManager()->queryResourceFromJson<Mesh>("BigTriangle.mesh",
+            getMain().getResourceManager().queryResourceFromJson<Mesh>("BigTriangle.mesh",
                 ConfigurationWriter().set(L"Model", "BigTriangle").set(L"Dynamic", false).write());
         }
     }
@@ -245,7 +245,7 @@ namespace lite3dpp_pipeline {
             .set(L"Compression", false)
             .set(L"TextureFormat", "DEPTH");
 
-        mDepthTexture = getMain().getResourceManager()->queryResourceFromJson<TextureImage>(depthTextureName, 
+        mDepthTexture = getMain().getResourceManager().queryResourceFromJson<TextureImage>(depthTextureName, 
             depthTextureConfig.write());
         mResourcesList.emplace_back(mDepthTexture->getName());
 
@@ -258,7 +258,7 @@ namespace lite3dpp_pipeline {
             .set(L"DepthAttachments", ConfigurationWriter()
                 .set(L"TextureName", depthTextureName));
 
-        mDepthPass = getMain().getResourceManager()->queryResourceFromJson<TextureRenderTarget>(
+        mDepthPass = getMain().getResourceManager().queryResourceFromJson<TextureRenderTarget>(
             getName() + "_" + cameraName + "_DepthPass", depthPassConfig.write());
         mResourcesList.emplace_back(mDepthPass->getName());
 
@@ -327,7 +327,7 @@ namespace lite3dpp_pipeline {
             .set(L"ColorOutput", true)
             .set(L"DepthOutput", false));
             
-        mPostProcessStage = getMain().getResourceManager()->queryResourceFromJson<Scene>(
+        mPostProcessStage = getMain().getResourceManager().queryResourceFromJson<Scene>(
             getName() + "_" + cameraName + "_PostProcessStage", stageGenerator.generate().write());
         mResourcesList.emplace_back(mPostProcessStage->getName());
 
@@ -383,7 +383,7 @@ namespace lite3dpp_pipeline {
         });
 
         // Создаем шейдер постпроцессинга финального изображения
-        mPostProcessStageMaterial = getMain().getResourceManager()->queryResourceFromJson<Material>(
+        mPostProcessStageMaterial = getMain().getResourceManager().queryResourceFromJson<Material>(
             getName() + "_" + cameraName + "_PostProcessStage.material", postProcessMaterialConfig.write());
         mResourcesList.emplace_back(mPostProcessStageMaterial->getName());
 
@@ -404,9 +404,9 @@ namespace lite3dpp_pipeline {
     void PipelineBase::createSkyBoxMesh()
     {
         // Создаем built-in Skybox mesh, если еще не создан 
-        if (!getMain().getResourceManager()->resourceExists("SkyBox.mesh"))
+        if (!getMain().getResourceManager().resourceExists("SkyBox.mesh"))
         {
-            getMain().getResourceManager()->queryResourceFromJson<Mesh>("SkyBox.mesh",
+            getMain().getResourceManager().queryResourceFromJson<Mesh>("SkyBox.mesh",
                 ConfigurationWriter().set(L"Model", "Skybox")
                     .set(L"Dynamic", false)
                     .set(L"Size", kmVec3 { 2.0f, 2.0f, 2.0f})
@@ -499,14 +499,14 @@ namespace lite3dpp_pipeline {
             passes.emplace_back(envPass);
         }
 
-        mSkyBoxStage = getMain().getResourceManager()->queryResourceFromJson<Scene>(
+        mSkyBoxStage = getMain().getResourceManager().queryResourceFromJson<Scene>(
             getName() + "_" + cameraName + "_SkyBoxStage", stageGenerator.generate().write());
         mResourcesList.emplace_back(mSkyBoxStage->getName());
 
         skyBoxMaterialConfig.set(L"Passes", passes);
 
         // Создаем шейдер skybox
-        mSkyBoxStageMaterial = getMain().getResourceManager()->queryResourceFromJson<Material>(
+        mSkyBoxStageMaterial = getMain().getResourceManager().queryResourceFromJson<Material>(
             getName() + "_" + cameraName + "_SkyBoxStage.material", skyBoxMaterialConfig.write());
         mResourcesList.emplace_back(mSkyBoxStageMaterial->getName());
 
@@ -539,7 +539,7 @@ namespace lite3dpp_pipeline {
 
     void PipelineBase::createMainScene(const String& name, const String &sceneConfig)
     {
-        mMainScene = getMain().getResourceManager()->queryResourceFromJson<Scene>(name, sceneConfig);
+        mMainScene = getMain().getResourceManager().queryResourceFromJson<Scene>(name, sceneConfig);
     }
 
     void PipelineBase::updateExposure()

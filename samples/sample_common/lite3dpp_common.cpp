@@ -54,7 +54,8 @@ static const char *resourceStatsString =
     "VBO:                            %d\n"
     "IBO:                            %d\n"
     "VAO:                            %d\n"
-    "QUERIES:                        %d\n\n"
+    "QUERIES:                        %d\n"
+    "ACTIONS:                        %d\n\n"
     "File cache: %d kB in %d files\n";
 
 static const char *renderStatsString = 
@@ -88,14 +89,14 @@ Sample::Sample(const std::string_view &sampleHelpString) :
 void Sample::initGui()
 {
     /* preload font textures */
-    mStatTexture = mMain.getResourceManager()->
+    mStatTexture = mMain.getResourceManager().
         queryResource<lite3dpp_font::FontTexture>("arial256x128.texture",
         "samples:textures/json/arial256x128.json");
-    mHelpTexture = mMain.getResourceManager()->
+    mHelpTexture = mMain.getResourceManager().
         queryResource<lite3dpp_font::FontTexture>("arial512x512.texture",
         "samples:textures/json/arial512x512.json");
     
-    mGuiScene = mMain.getResourceManager()->queryResource<Scene>("GUI",
+    mGuiScene = mMain.getResourceManager().queryResource<Scene>("GUI",
         "samples:scenes/gui.json");
     
     mGuiCamera = getMain().getCamera("GuiCamera");
@@ -295,7 +296,7 @@ void Sample::updateGui()
         }
         else if (mHelpState == SHOW_RESOURCES)
         {
-            ResourceManager::ResourceManagerStats memStats = mMain.getResourceManager()->getStats();
+            ResourceManager::ResourceManagerStats memStats = mMain.getResourceManager().getStats();
             sprintf(strbuf, resourceStatsString, 
                 static_cast<uint32_t>(memStats.usedVideoMem / 1024),
                 memStats.totalObjectsCount, memStats.pipelinesCount,
@@ -309,7 +310,8 @@ void Sample::updateGui()
                 memStats.ssboLoadedCount, memStats.ssboCount,
                 memStats.uboLoadedCount, memStats.uboCount,
                 renderStats->vboCount, renderStats->iboCount, renderStats->vaoCount, renderStats->queryCount,
-                static_cast<uint32_t>(memStats.totalCachedFilesMemSize / 1024), memStats.fileCachesCount);
+                memStats.actionsCount, static_cast<uint32_t>(memStats.totalCachedFilesMemSize / 1024), 
+                memStats.fileCachesCount);
         }
         else
         {

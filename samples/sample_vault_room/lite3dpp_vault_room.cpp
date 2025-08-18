@@ -49,7 +49,7 @@ public:
 
     void createScene() override
     {
-        auto pipeline = getMain().getResourceManager()->queryResource<SampleVaultRoomPipeline>("Vault_111", 
+        auto pipeline = getMain().getResourceManager().queryResource<SampleVaultRoomPipeline>("Vault_111", 
             "vault_111:pipelines/vault_room.json");
         mVaultScene = &pipeline->getMainScene();
         setMainCamera(&pipeline->getMainCamera());

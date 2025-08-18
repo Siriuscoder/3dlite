@@ -29,7 +29,7 @@ namespace lite3dpp
         public:
 
             FontTexture(const String &name,
-                const String &path, Main *main);
+                const String &path, Main &main);
 
             ~FontTexture();
             

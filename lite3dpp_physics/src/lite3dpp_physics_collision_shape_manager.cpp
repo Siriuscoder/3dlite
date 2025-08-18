@@ -165,7 +165,7 @@ namespace lite3dpp_phisics {
     void PhysicsTriangleCollisionShape::setupTriangleMeshArray(const ConfigurationReader& conf)
     {
         /* load collision mesh into GPU memory */
-        auto rawMesh = mMain.getResourceManager()->queryResource<Mesh>(getName(),
+        auto rawMesh = mMain.getResourceManager().queryResource<Mesh>(getName(),
             conf.getObject(L"CollisionMesh").getString(L"Mesh"));
 
         if (rawMesh->chunksCount() == 0)

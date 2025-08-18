@@ -1,0 +1,44 @@
+{
+    "ShaderPackage": "animation",
+    "MainScenePath": "animation:scenes/animation.json",
+    "Instancing": false,
+    "OcclusionCulling": false,
+    "LightingTechnique": "UBO",
+    "MultiRender": true,
+    "SkyBox": 
+    {
+        "Texture": "samples:textures/json/skybox.json",
+        "EmissionStrength": 1.2
+    },
+    "ShadowMaps":
+    {
+        "Width": 1024,
+        "Height": 1024,
+        "MaxCount": 1,
+        "NearClipPlane": 1.0,
+        "FarClipPlane": 35.0,
+        "DirectionLightShadowParams": 
+        {
+            "LeftClipPlane": -25.0,
+            "RightClipPlane": 25.0,
+            "BottomClipPlane": -25.0,
+            "TopClipPlane": 25.0
+        }
+    },
+    "SSAO": 
+    {
+        "AORadius": 0.15,
+        "FramebufferScale": 2
+    },
+    "BLOOM": 
+    {
+        "BloomRadius": 0.005
+    },
+    "PostProcess":
+    {
+        "Gamma": 2.2,
+        "Contrast": 1.005,
+        "Saturation": 1.10,
+        "Exposure": 3.0
+    }
+}

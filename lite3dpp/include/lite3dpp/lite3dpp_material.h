@@ -54,7 +54,7 @@ namespace lite3dpp
         using GlobalPassParameters = stl<String>::set;
         using Passes = stl<uint16_t, std::tuple<PassParameters, GlobalPassParameters>>::map;
         
-        Material(const String &name, const String &path, Main *main);
+        Material(const String &name, const String &path, Main &main);
 
         LITE3D_DECLARE_PTR_METHODS(lite3d_material, mMaterial)
 

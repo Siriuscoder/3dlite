@@ -56,6 +56,7 @@ namespace lite3dpp
             uint32_t pipelinesCount;
             uint32_t meshPartitionsCount;
             uint32_t meshPartitionsLoadedCount;
+            uint32_t actionsCount;
             size_t totalCachedFilesMemSize;
         } ResourceManagerStats;
 
@@ -120,7 +121,7 @@ namespace lite3dpp
             return queryResource<T>(name, json.data(), json.size());
         }
 
-        ResourceManager(Main *main);
+        ResourceManager(Main &main);
         virtual ~ResourceManager();
 
         void releaseAllResources();
@@ -153,7 +154,7 @@ namespace lite3dpp
 
     private:
 
-        Main *mMain = nullptr;
+        Main &mMain;
         Resources mResources;
         Packs mPacks;
         lite3d_pack *mLastUsed = nullptr;

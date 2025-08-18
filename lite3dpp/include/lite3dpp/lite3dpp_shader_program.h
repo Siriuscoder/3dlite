@@ -30,7 +30,7 @@ namespace lite3dpp
     public:
 
         ShaderProgram(const String &name, 
-            const String &path, Main *main);
+            const String &path, Main &main);
 
         inline lite3d_shader_program *getPtr()
         { return &mProgram; }

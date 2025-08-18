@@ -11,7 +11,7 @@ class Mesh:
     
     def __init__(self, obj, scene):
         self.mesh = obj.data
-        self.meshPartition = self.mesh.get("Partition")
+        self.meshPartition = self.mesh.lite3d_properties.partition
         self.name = obj.data.name + ".mesh"
         self.object = obj
         self.scene = scene
@@ -19,22 +19,29 @@ class Mesh:
 
         self.prepareMesh()
 
+        uvLayer = self.mesh.uv_layers.active.data
+
+        vertexColors = None
+        if len(self.mesh.color_attributes) > 0 and self.mesh.lite3d_properties.vertexColors:
+            vertexColors = self.mesh.color_attributes.values()[0]
+
         for poly in self.mesh.polygons:
             if poly.loop_total != 3:
-                raise Exception("Wrong faces format, triangulate faces and try again")
-
-            uvLayer = self.mesh.uv_layers.active.data
+                raise Exception("N-Gon face is found, please triangulate faces and try again")
             
             meshChunk = self.chunks.get(poly.material_index, None)
             if meshChunk is None:
-                meshChunk = MeshChunk(poly.material_index, self.scene.options)
+                meshChunk = MeshChunk(poly.material_index, self.scene.options, 
+                    vertexColors is not None,
+                    self.mesh.lite3d_properties.boneBindings)
                 self.chunks[poly.material_index] = meshChunk
             
             for loopIndex in range(poly.loop_start, poly.loop_start + poly.loop_total):
                 loop = self.mesh.loops[loopIndex]
                 vertex = self.mesh.vertices[loop.vertex_index]
                 uv = uvLayer[loopIndex].uv
-                meshChunk.appendVertex(vertex, loop.normal, uv, loop.tangent, loop.bitangent)
+                vertexColor = vertexColors.data[loop.vertex_index].color if vertexColors is not None else None
+                meshChunk.appendVertex(vertex, vertexColor, uv, loop)
 
     def prepareMesh(self):
         if self.scene.options["removeDoubles"]:
@@ -66,7 +73,7 @@ class Mesh:
                 
     def save(self):
         if self.scene.options["singlePartition"]:
-            if self.meshPartition is None:
+            if not self.meshPartition:
                 self.meshPartition = self.scene.name + ".mesh_partition"
         
         meshJson = {
@@ -74,7 +81,7 @@ class Mesh:
             "Model": self.scene.getAbsMeshPath(self.getRelativePath())
         }
 
-        if self.meshPartition is not None:
+        if self.meshPartition:
             meshJson["Partition"] = self.meshPartition
         
         if len(self.mesh.materials) > 0:
@@ -84,7 +91,7 @@ class Mesh:
                 material = self.scene.saveMaterial(self.mesh.materials[chunk.materialID])
                 materialMapping.append({
                     "Material": {
-                        "Type": "PBR" if self.scene.options["materialTypePBR"] else "Default",
+                        "Type": "PBR" if material.isPBR() else "Default",
                         "Name": material.name,
                         "Material": self.scene.getAbsPath(material.getRelativePath())
                     },

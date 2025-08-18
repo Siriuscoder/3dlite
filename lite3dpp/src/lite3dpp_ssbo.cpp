@@ -20,7 +20,7 @@
 
 namespace lite3dpp
 {
-    SSBO::SSBO(const String &name, const String &path, Main *main) : 
+    SSBO::SSBO(const String &name, const String &path, Main &main) : 
         VBOResource(name, path, main, AbstractResource::SHADER_STORAGE)
     {}
     

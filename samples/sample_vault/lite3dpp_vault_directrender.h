@@ -36,11 +36,11 @@ public:
         // SSBO supported by version GLSL 430 or higher
         ShaderProgram::setShaderVersion(mUseShader430 ? "430" : "330");
         // load main scene, direct render depth and then calculate lighting
-        mVaultScene = getMain().getResourceManager()->queryResource<Scene>("Vault",
+        mVaultScene = getMain().getResourceManager().queryResource<Scene>("Vault",
             "vaultmat:scenes/directrender.json");
 
         // postprocess step, fxaa, gamma correcion, draw directly info window. 
-        getMain().getResourceManager()->queryResource<Scene>("VaultPostprocessStep",
+        getMain().getResourceManager().queryResource<Scene>("VaultPostprocessStep",
             "vaultmat:scenes/postprocess.json");
         
         // optimize: window clean not needed, because all pixels in last render target always be updated

@@ -25,7 +25,7 @@
 namespace lite3dpp
 {
     MultiRenderMaterial::MultiRenderMaterial(const String &name, 
-        const String &path, Main *main) : 
+        const String &path, Main &main) : 
         Material(name, path, main)
     {}
 
@@ -33,17 +33,17 @@ namespace lite3dpp
     {
         Material::loadFromConfigImpl(helper);
 
-        if (!getMain().getResourceManager()->resourceExists(MultiRenderMaterialDataBufferName.data()))
+        if (!getMain().getResourceManager().resourceExists(MultiRenderMaterialDataBufferName.data()))
         {
-            mMaterialDataBuffer = getMain().getResourceManager()->
+            mMaterialDataBuffer = getMain().getResourceManager().
                 queryResourceFromJson<SSBO>(MultiRenderMaterialDataBufferName.data(), "{\"Dynamic\": true}");
         }
         else
         {
-            mMaterialDataBuffer = getMain().getResourceManager()->
+            mMaterialDataBuffer = getMain().getResourceManager().
                 queryResource<SSBO>(MultiRenderMaterialDataBufferName.data());
         }
-        
+
         for (auto &passPair : mPasses)
         {
             /* Буфер с инфо по каждой draw команде (матрицы, индексы и тд) */
@@ -55,6 +55,11 @@ namespace lite3dpp
                 false, true);
 
             setSSBOParameter(passPair.first, "MultiRenderMaterialDataBuffer", *mMaterialDataBuffer);
+
+            if (helper.getBool(L"BindSkeleton", false))
+            {
+                setSSBOParameter(passPair.first, "SkeletonTransformBuffer", getMain().getSkeletonBuffer().getBuffer());
+            }
         }
     }
 }

@@ -25,7 +25,7 @@
 namespace lite3dpp
 {
     TextureRenderTarget::TextureRenderTarget(const String &name, 
-        const String &path, Main *main) : 
+        const String &path, Main &main) : 
         RenderTarget(name, path, main),
         mRenderTargetBlitTo(nullptr)
     {
@@ -59,7 +59,7 @@ namespace lite3dpp
             for(const ConfigurationReader &targetJson : attachmentJson.getObjects(L"Attachments"))
             {
                 lite3d_framebuffer_attachment attachment;
-                attachment.attachment = getMain().getResourceManager()->queryResource<TextureImage>(
+                attachment.attachment = getMain().getResourceManager().queryResource<TextureImage>(
                     targetJson.getString(L"TextureName"), targetJson.getString(L"TexturePath"))->getPtr();
                 attachment.layer.layer = targetJson.getInt(L"Layer", 0);
                 attachment.layer.attachmentType = LITE3D_FRAMEBUFFER_USE_COLOR_BUFFER;
@@ -82,7 +82,7 @@ namespace lite3dpp
             if(attachmentJson.has(L"TextureName"))
             {
                 lite3d_framebuffer_attachment attachment;
-                attachment.attachment = getMain().getResourceManager()->queryResource<TextureImage>(
+                attachment.attachment = getMain().getResourceManager().queryResource<TextureImage>(
                     attachmentJson.getString(L"TextureName"), attachmentJson.getString(L"TexturePath"))->getPtr();
                 attachment.layer.layer = attachmentJson.getInt(L"Layer", 0);
                 attachment.layer.attachmentType = LITE3D_FRAMEBUFFER_USE_DEPTH_BUFFER;
@@ -140,7 +140,7 @@ namespace lite3dpp
                 mRenderTargetBlitTo = getMain().window();
             else
             {
-                mRenderTargetBlitTo = getMain().getResourceManager()->queryResource<TextureRenderTarget>(
+                mRenderTargetBlitTo = getMain().getResourceManager().queryResource<TextureRenderTarget>(
                     rtConf.getString(L"Name"),
                     rtConf.getString(L"Path"));
             }

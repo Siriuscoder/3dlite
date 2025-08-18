@@ -63,7 +63,7 @@ namespace lite3dpp
         } gFontLibLogger;
 
         FontTexture::FontTexture(const String &name,
-            const String &path, Main *main) : 
+            const String &path, Main &main) : 
             TextureImage(name, path, main),
             mTexBuf(new nw::Texture())
         {
@@ -91,7 +91,7 @@ namespace lite3dpp
                 
             if(!mFont)
             {
-                const lite3d_file *fontFile = getMain().getResourceManager()->loadFileToMemory(helper.getString(L"Font"));
+                const lite3d_file *fontFile = getMain().getResourceManager().loadFileToMemory(helper.getString(L"Font"));
                 mFontBuffer.insert(mFontBuffer.begin(), (uint8_t *)fontFile->fileBuff, 
                     (uint8_t *)fontFile->fileBuff + fontFile->fileSize);
                 

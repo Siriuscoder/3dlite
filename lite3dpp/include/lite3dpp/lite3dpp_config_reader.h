@@ -56,6 +56,19 @@ namespace lite3dpp
         bool has(const WString &name) const;
         bool isEmpty() const;
 
+        template<class Func>
+        void enumerateObjects(const Func &f) const
+        {
+            for (auto &obj : mObject)
+            {
+                if (obj.second->IsObject())
+                {
+                    ConfigurationReader reader(obj.second->AsObject());
+                    f(obj.first, reader);
+                }
+            }
+        }
+
         ConfigurationReader& operator=(const ConfigurationReader& other);
 
     private:

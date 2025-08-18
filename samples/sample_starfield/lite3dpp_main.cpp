@@ -41,7 +41,7 @@ public:
 
     void createScene() override
     {
-        mPipeline = getMain().getResourceManager()->queryResource<lite3dpp_pipeline::PipelineForward>("Starfield", 
+        mPipeline = getMain().getResourceManager().queryResource<lite3dpp_pipeline::PipelineForward>("Starfield", 
             "starfield:pipelines/starfield.json");
         mMainScene = &mPipeline->getMainScene();
 

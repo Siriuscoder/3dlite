@@ -1,7 +1,7 @@
 bl_info = {
     "name": "Lite3d Scene Exporter",
     "author": "Nikita Korolev, Sirius",
-    "version": (2, 1, 2),  # can't read from VERSION, blender wants it hardcoded,
+    "version": (2, 1, 3),  # can't read from VERSION, blender wants it hardcoded,
     "blender": ( 2, 80, 0 ),
     "api": 36079,
     "location": "File > Export > Lite3d Scene Export",
@@ -12,19 +12,19 @@ bl_info = {
     "category": "Import-Export"
 }
 
-import bpy
 from io_scene_lite3d.logger import log
-from io_scene_lite3d.export import Lite3dExport
+from io_scene_lite3d.export import register_export, unregister_export
+from io_scene_lite3d.properties import register_properties, unregister_properties
+from io_scene_lite3d.menus import register_menus, unregister_menus
 
 log.init()
 
-def menu_func(self, context):
-    self.layout.operator(Lite3dExport.bl_idname, text = "Lite3d Scene Export")
-
 def register():
-    bpy.utils.register_class(Lite3dExport)
-    bpy.types.TOPBAR_MT_file_export.append(menu_func)
-
+    register_export()
+    register_properties()
+    register_menus()
+    
 def unregister():
-    bpy.utils.unregister_class(Lite3dExport)
-    bpy.types.TOPBAR_MT_file_export.remove(menu_func)
+    unregister_menus()
+    unregister_properties()
+    unregister_export()

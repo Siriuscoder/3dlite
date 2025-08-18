@@ -1,0 +1,10 @@
+{
+    "Sources": 
+    [
+        // Standard shaders with params customization
+        "samples:shaders/sources/pipeline/depth_pass/depth.vs,animation:shaders/sources/inc/skeleton.def",
+        "samples:shaders/sources/pipeline/depth_pass/depth.fs",
+        "samples:shaders/sources/common/common.fs",
+        "samples:shaders/sources/common/common.vs,animation:shaders/sources/inc/skeleton.def"
+    ]
+}

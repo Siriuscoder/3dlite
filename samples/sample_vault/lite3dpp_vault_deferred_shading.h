@@ -43,17 +43,17 @@ public:
     void createPipeline() override
     {
         // load main scene as precompute step
-        mVaultScene = getMain().getResourceManager()->queryResource<Scene>("Vault",
+        mVaultScene = getMain().getResourceManager().queryResource<Scene>("Vault",
             "vaultmat:scenes/prepass.json");
         // load intermediate light compute scene
-        getMain().getResourceManager()->queryResource<Scene>("VaultLightComputeStep",
+        getMain().getResourceManager().queryResource<Scene>("VaultLightComputeStep",
             "vaultmat:scenes/lightpass.json")->addObserver(this);
-        mLightComputeStep = getMain().getResourceManager()->queryResource<TextureRenderTarget>("LightComputeStep");
+        mLightComputeStep = getMain().getResourceManager().queryResource<TextureRenderTarget>("LightComputeStep");
         // Scene that combines lightmap from previous step and textures and draw all transparent objects at end of step.
-        getMain().getResourceManager()->queryResource<Scene>("VaultCombineStep",
+        getMain().getResourceManager().queryResource<Scene>("VaultCombineStep",
             "vaultmat:scenes/combine.json");
         // postprocess step, fxaa, gamma correcion, draw directly info window. 
-        getMain().getResourceManager()->queryResource<Scene>("VaultPostprocessStep",
+        getMain().getResourceManager().queryResource<Scene>("VaultPostprocessStep",
             "vaultmat:scenes/postprocess.json");
         
         // optimize: window clean not needed, because all pixels in last render target always be updated
@@ -105,7 +105,7 @@ public:
             /* load per light big triangle */
             SceneObject *lo = scene->addObject(light->getName(), "vault:objects/lightpass_tri.json");
             /* load per light big triangle material and setup light properties as uniform parameters */
-            Material *material = getMain().getResourceManager()->queryResource<Material>(light->getName() + ".material",
+            Material *material = getMain().getResourceManager().queryResource<Material>(light->getName() + ".material",
                 "vaultmat:materials/lightpass.json");
 
             MeshSceneNode *mnode = (MeshSceneNode *)lo->getRoot();

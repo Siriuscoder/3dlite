@@ -26,7 +26,7 @@ public:
 
     void createScene() override
     {
-        getMain().getResourceManager()->queryResource<lite3dpp::Scene>("InstancedRobots",
+        getMain().getResourceManager().queryResource<lite3dpp::Scene>("InstancedRobots",
             "samples:scenes/robots.json");
         setMainCamera(getMain().getCamera("MyCamera"));
 

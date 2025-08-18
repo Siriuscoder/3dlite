@@ -1,0 +1,125 @@
+{
+  "Cameras": [
+    {
+      "Name": "MyCamera",
+      "Position": [
+        4.5,
+        2.0,
+        3.0
+      ],
+      "LookAt": [
+        0.0,
+        1.8,
+        1.2
+      ],
+      "Perspective": {
+        "Znear": 0.01,
+        "Zfar": 100.0,
+        "Fov": 60.0
+      }
+    }
+  ],
+  "LightingTechnique": "UBO",
+  "Objects": [
+    {
+      "Name": "Engine",
+      "Object": "animation:objects/Engine.json",
+      "Position": [
+        8.0,
+        0.0,
+        1.339081048965454
+      ],
+      "Rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "Scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "Name": "Ground",
+      "Object": "animation:objects/Ground.json",
+      "Position": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "Rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "Scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "Name": "SkeletonBody",
+      "Object": "animation:objects/SkeletonBody.json",
+      "Position": [
+        3.489130735397339,
+        -4.056552886962891,
+        -4.910610140740346e-09
+      ],
+      "Rotation": [
+        0.0,
+        0.0,
+        0.7071067690849304,
+        0.7071067690849304
+      ],
+      "Scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "Name": "SkeletonBody2",
+      "Object": "animation:objects/SkeletonBody.json",
+      "Position": [
+        -0.851642370223999,
+        4.0153350830078125,
+        -0.5837835669517517
+      ],
+      "Rotation": [
+        0.0,
+        0.0,
+        0.5458178520202637,
+        0.8379038572311401
+      ],
+      "Scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "Name": "CuriousSphere",
+      "Object": "animation:objects/CuriousSphere.json",
+      "Position": [
+        4.066037654876709,
+        2.9275472164154053,
+        0.0
+      ],
+      "Rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "Scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    }
+  ]
+}

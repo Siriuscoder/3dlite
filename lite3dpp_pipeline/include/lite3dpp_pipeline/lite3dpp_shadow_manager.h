@@ -31,7 +31,7 @@ public:
 
 public:
 
-    class LITE3DPP_PIPELINE_EXPORT ShadowCaster 
+    class LITE3DPP_PIPELINE_EXPORT ShadowCaster : public SceneNodeObserver
     {
     public:
         
@@ -67,33 +67,38 @@ public:
 
     private:
 
+        void updatePosition(SceneNodeBase *node) override;
+        void updateRotation(SceneNodeBase *node) override;
+        void updateScale(SceneNodeBase *node) override;
+        void updateSkeletonPose(SceneNodeBase *node) override;
+
+    private:
+
         LightSceneNode* mLightNode = nullptr;
         Camera* mShadowCamera = nullptr;
         bool mInvalidated = true;
     };
 
-    class LITE3DPP_PIPELINE_EXPORT DynamicShadowReceiver
+    class LITE3DPP_PIPELINE_EXPORT VisibilityHintNode : public SceneNodeObserver
     {
     public:
     
         using ShadowCasters = stl<ShadowCaster *>::vector;
 
-        DynamicShadowReceiver(SceneNode *node) : 
-            mNode(node)
-        {}
+        VisibilityHintNode(SceneNodeBase *node);
 
-        void move(const kmVec3 &value);
-        void rotateAngle(const kmVec3 &axis, float angle);
-        void setPosition(const kmVec3 &pos);
-        const kmVec3& getPosition() const;
-        void clearVisibility();
-        void addVisibility(ShadowCaster* sc);
+        void resetVision();
+        void setVisibleFrom(ShadowCaster* sc);
 
     private:
 
+        void updatePosition(SceneNodeBase *node) override;
+        void updateRotation(SceneNodeBase *node) override;
+        void updateScale(SceneNodeBase *node) override;
+        void updateSkeletonPose(SceneNodeBase *node) override;
         void invalidate();
 
-        SceneNode *mNode = nullptr;
+        SceneNodeBase *mNode = nullptr;
         ShadowCasters mVisibility;
     };
 
@@ -102,7 +107,10 @@ public:
 
     void initialize(const String& pipelineName, const String& shaderPackage);
     ShadowCaster* newShadowCaster(LightSceneNode* node);
-    DynamicShadowReceiver* registerShadowReceiver(SceneNode *node);
+    VisibilityHintNode* registerHintNode(SceneNodeBase *node);
+    VisibilityHintNode* registerHintNodeRecursive(SceneNodeBase *node);
+    void unregisterHintNode(SceneNodeBase *node);
+    void unregisterHintNodeRecursive(SceneNodeBase *node);
 
     inline RenderTarget& getShadowPass()
     {
@@ -138,7 +146,7 @@ protected:
     void endSceneRender(Scene *scene, Camera *camera) override;
 
     // Проверим виден ли обьект сцены хотябы одной теневой камерой, если нет то рисовать его смысла нет.
-    bool customVisibilityCheck(Scene *scene, SceneNode *node, lite3d_mesh_chunk *meshChunk, Material *material, 
+    bool customVisibilityCheck(Scene *scene, SceneNodeBase *node, lite3d_mesh_chunk *meshChunk, Material *material, 
         lite3d_bounding_vol *boundingVol, Camera *camera) override;
 
     void createShadowRenderTarget(const String& pipelineName);
@@ -156,7 +164,7 @@ private:
     VBOResource* mShadowIndexBuffer = nullptr;
     IndexVector mHostShadowIndexes;
     stl<std::unique_ptr<ShadowCaster>>::vector mShadowCasters;
-    stl<SceneNode *, DynamicShadowReceiver>::unordered_map mDynamicNodes;
+    stl<SceneNodeBase *, std::shared_ptr<VisibilityHintNode>>::unordered_map mVisibilityHintNodes;
     lite3d_camera::projectionParamsStruct mProjection = {};
     Scene *mCleanStage = nullptr;
     Material *mCleanStageMaterial = nullptr;

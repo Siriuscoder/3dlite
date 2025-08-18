@@ -1,0 +1,15 @@
+{
+  "Codec": "m",
+  "Model": "animation:models/meshes/Piston.m",
+  "Partition": "animation.mesh_partition",
+  "MaterialMapping": [
+    {
+      "Material": {
+        "Type": "PBR",
+        "Name": "Piston.material",
+        "Material": "animation:materials/Piston.json"
+      },
+      "MaterialIndex": 0
+    }
+  ]
+}

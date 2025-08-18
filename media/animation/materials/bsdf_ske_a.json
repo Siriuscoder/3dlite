@@ -1,0 +1,75 @@
+{
+  "Albedo": {
+    "Name":"<Albedo>"
+  },
+  "Specular": {
+    "Name":"<Specular>"
+  },
+  "Roughness": {
+    "Name":"<Roughness>"
+  },
+  "Metallic": {
+    "Name":"<Metallic>"
+  },
+  "EnvDiffuse": {
+    "Value": 1.0
+  },
+  "EnvSpecular": {
+    "Value": 0.5
+  },
+  "EnvironmentTexture": {
+    "TextureName": "AnimationScene_skybox.texture",
+    "TexturePath": "samples:textures/json/skybox.json"
+  },
+  "EnvironmentUVScale": {
+    "Value": -1.0
+  },
+
+  "BindSkeleton": true,
+
+  "Passes":[
+    {
+      "Pass": 1,
+      "Program":{
+        "Name":"depth_ske.program",
+        "Path":"animation:shaders/json/depth_ske.json"
+      },
+      "Uniforms":[
+        {
+          "Name": "projViewMatrix"
+        }
+      ]
+    },
+    {
+      "Pass": 2,
+      "Program":{
+        "Name":"bsdf_prepare_ske.program",
+        "Path":"animation:shaders/json/bsdf_prepare_ske.json"
+      },
+      "Uniforms":[
+        {
+          "Name": "projViewMatrix"
+        }
+      ]
+    },
+    {
+      "Pass": 3,
+      "Program":{
+        "Name":"shadow_ske.program",
+        "Path":"animation:shaders/json/shadow_ske.json"
+      },
+      "Uniforms":[
+        {
+          "Name":"ShadowMatrix",
+          "UBOName":"AnimationScene_ShadowMatrixBuffer",
+          "Type":"UBO"
+        },
+        {
+          "Name": "ShadowIndex",
+          "UBOName": "AnimationScene_ShadowIndexBuffer",
+          "Type": "UBO"
+        }
+      ]
+    }
+  ]
+}

@@ -15,6 +15,6 @@
 #define LITE3D_SSS_MAX_RAY_DISTANCE                         0.35    // Max shadow length, longer shadows are less accurate.
 #define LITE3D_SSS_MAX_DEPTH_THRESHOLD                      0.5     // Depth testing thickness.
 
-#define LITE3D_SSAO_POWER                                   0.3
+#define LITE3D_SSAO_POWER                                   0.65
 #define LITE3D_SSAO_SAMPLE_BIAS                             0.030
 #define LITE3D_SSAO_MAX_DEPTH_SAMPLES                       40

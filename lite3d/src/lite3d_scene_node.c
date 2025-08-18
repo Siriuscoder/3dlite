@@ -39,6 +39,7 @@ void lite3d_scene_node_init(lite3d_scene_node *node)
     node->enabled = LITE3D_TRUE;
     node->visible = LITE3D_TRUE;
     node->frustumTest = LITE3D_TRUE;
+    node->skeletonTransformIndex = -1;
     lite3d_list_init(&node->childNodes);
 }
 
@@ -87,7 +88,7 @@ void lite3d_scene_node_rotate_angle(lite3d_scene_node *node, const kmVec3 *axis,
     lite3d_scene_node_rotate(node, &tmpQuat);
 }
 
-void lite3d_scene_node_scale(lite3d_scene_node *node, const kmVec3 *scale)
+void lite3d_scene_node_set_scale(lite3d_scene_node *node, const kmVec3 *scale)
 {
     SDL_assert(node && scale);
     node->scale = *scale;
@@ -166,7 +167,6 @@ static void scene_node_update(lite3d_scene_node *node)
 
 uint8_t lite3d_scene_node_update(lite3d_scene_node *node)
 {
-    uint8_t updated = LITE3D_FALSE;
     SDL_assert(node);
     
     if (node->recalc)
@@ -174,8 +174,8 @@ uint8_t lite3d_scene_node_update(lite3d_scene_node *node)
         scene_node_update(node);
         node->recalc = LITE3D_FALSE;
         node->invalidated = LITE3D_TRUE;
-        updated = LITE3D_TRUE;
+        return LITE3D_TRUE;
     }
 
-    return updated;
+    return LITE3D_FALSE;
 }

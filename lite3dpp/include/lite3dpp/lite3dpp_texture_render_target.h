@@ -30,7 +30,7 @@ namespace lite3dpp
     public:
 
         TextureRenderTarget(const String &name, 
-            const String &path, Main *main);
+            const String &path, Main &main);
         ~TextureRenderTarget() = default;
 
         void replaceAttachments(const stl<lite3d_framebuffer_attachment>::vector& attachments,

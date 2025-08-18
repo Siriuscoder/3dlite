@@ -1,0 +1,15 @@
+{
+  "Codec": "m",
+  "Model": "animation:models/meshes/Ground.m",
+  "Partition": "animation.mesh_partition",
+  "MaterialMapping": [
+    {
+      "Material": {
+        "Type": "PBR",
+        "Name": "Ground.material",
+        "Material": "animation:materials/Ground.json"
+      },
+      "MaterialIndex": 0
+    }
+  ]
+}

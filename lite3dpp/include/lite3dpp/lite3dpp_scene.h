@@ -44,7 +44,7 @@ namespace lite3dpp
         using LightsIndexesStore = stl<int32_t>::vector;
 
         Scene(const String &name, 
-            const String &path, Main *main);
+            const String &path, Main &main);
         virtual ~Scene();
 
         inline lite3d_scene *getPtr()
@@ -129,8 +129,10 @@ namespace lite3dpp
         SceneObjects mObjects;
         SceneLights mLights;
         SceneCameras mCameras;
-        BufferBase *mLightingParamsBuffer;
-        BufferBase *mLightingIndexBuffer;
+        VBOResource *mLightingParamsBuffer = nullptr;
+        VBOResource *mLightingIndexBuffer = nullptr;
+        VBOResource *mInvocationBuffer = nullptr;
+        VBOResource *mInvocationIndexBuffer = nullptr;
         LightsIndexesStore mLightsIndexes;
         uint32_t mMaxLightsCount; 
     };

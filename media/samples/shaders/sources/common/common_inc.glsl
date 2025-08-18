@@ -1,9 +1,3 @@
-#ifdef LITE3D_BINDLESS_TEXTURE_PIPELINE
-#include "samples:shaders/sources/bindless/material_inc.glsl"
-#else
-#include "samples:shaders/sources/common/material_inc.glsl"
-#endif
-
 #include "samples:shaders/sources/common/structs_inc.glsl"
 
 // The Fresnel-Schlick approximation expects a F0 parameter which is known as the surface 
@@ -13,6 +7,7 @@
 // look visually correct with a constant F0 of 0.04, while we do specify F0 for metallic surfaces as then 
 // given by the albedo value. 
 #define LITE3D_BASE_REFLECTION_AT_ZERO_INCIDENCE       0.04
+#define LITE3D_MIN_ROUGHNESS                           0.03
 
 //////////// Math utilities
 ////////////////////////////////////////////////////////////////////////////
@@ -66,22 +61,23 @@ float linearizeDepth(float z, float near, float far);
 vec3 linearToSRGB(vec3 color);
 vec3 SRGBToLinear(vec3 color);
 vec3 reinhardTonemapping(vec3 x);
-vec3 exposureTonemapping(vec3 x);
-vec3 nautilusTonemapping(vec3 c);
-mat4 contrastMatrix();
-mat4 saturationMatrix();
+vec3 exponentTonemapping(vec3 x);
+vec3 nautilusTonemapping(vec3 x);
+vec3 ACESTonemapping(vec3 x);
+vec3 contrastColor(vec3 color);
+vec3 saturationColor(vec3 color);
 vec3 ditherBayer(vec3 color);
 
 //////////// PBR utilities
 ////////////////////////////////////////////////////////////////////////////
 vec3 fresnelSchlickRoughness(float teta, in Material material);
 vec3 diffuseFactor(vec3 F, float metallic);
-// Normal distribution function (Trowbridge-Reitz GGX)
-float NDF(float NdotH, float roughness);
-// Geometry function (Schlick-Beckmann, Schlick-GGX)
-float GGX(float NdotV, float roughness);
-// Geometry function (Smith's)
-float G(float NdotV, float NdotL, float roughness);
+// Specular Term GGX
+vec3 SpecularGGX(vec3 F, in Material material, in AngularInfo angular);
+// Diffuse Term Lambertian (Simple diffuse model)
+vec3 DiffuseLambertian(vec3 F, in Material material);
+// Sheen 
+vec3 Sheen(vec3 F, in Material material, in AngularInfo angular);
 // Attenuation
 float calcAttenuation(in LightSource source, in AngularInfo angular);
 

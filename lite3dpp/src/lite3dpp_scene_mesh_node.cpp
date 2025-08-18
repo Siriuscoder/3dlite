@@ -32,7 +32,7 @@ namespace lite3dpp
         auto meshHelper = json.getObject(L"Mesh");
         if (!meshHelper.isEmpty())
         {
-            setMesh(getMain()->getResourceManager()->queryResource<Mesh>(
+            setMesh(getMain()->getResourceManager().queryResource<Mesh>(
                 meshHelper.getString(L"Name"),
                 meshHelper.getString(L"Mesh")));
 
@@ -56,6 +56,22 @@ namespace lite3dpp
                     applyMaterial(chunk, material);
                 }
             }
+
+            if (json.has(L"Skeleton") && json.has(L"VertexGroups"))
+            {
+                mSkeleton = std::make_unique<Skeleton>(*this);
+                mSkeleton->loadFromJson(json);
+            }
+        }
+    }
+
+    void MeshSceneNode::setSkeletonBufferIndex(int32_t index)
+    {
+        if (mSkeleton)
+        {
+            mSkeleton->setBufferIndex(index);
+            getPtr()->skeletonTransformIndex = index;
+            getPtr()->recalc = LITE3D_TRUE;
         }
     }
     
@@ -97,5 +113,14 @@ namespace lite3dpp
         SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "%s: material %d(%s), chunk %p, bb chunk %p",
             getName().c_str(), entity.chunk->materialIndex, material->getName().c_str(), 
                 (void *)entity.chunk, (void *)boundigBoxChunk);
+    }
+
+    void MeshSceneNode::actionPlay(const String &name, bool cycle)
+    {
+        auto action = mActions.find(name);
+        if (action != mActions.end())
+        {
+            mClip = action->second->playAction(*this, cycle);
+        }
     }
 }

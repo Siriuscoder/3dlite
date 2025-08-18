@@ -1,3 +1,11 @@
+#ifdef LITE3D_BINDLESS_TEXTURE_PIPELINE
+#extension GL_ARB_shader_draw_parameters : require
+#extension GL_ARB_bindless_texture : require
+#endif
+
+#ifdef LITE3D_ENV_PROBE_MAX
+#extension GL_ARB_texture_cube_map_array : require
+#endif
 
 // Environment probe layout
 struct EnvironmentProbeStruct
@@ -95,3 +103,95 @@ struct LightSource
 #define LITE3D_MATERIAL_ENVIRONMENT_TEXTURE                 uint(1 << 2)
 #define LITE3D_MATERIAL_ENVIRONMENT_MULTI_PROBE             uint(1 << 3)
 #define LITE3D_MATERIAL_ENVIRONMENT_SINGLE_PROBE            uint(1 << 4)
+
+#define TEXTURE_FLAG_EMPTY                                  uint(0)
+#define TEXTURE_FLAG_LOADED                                 uint(1 << 0)
+#define TEXTURE_FLAG_ALBEDO                                 uint(1 << 1)
+#define TEXTURE_FLAG_EMISSION                               uint(1 << 2)
+#define TEXTURE_FLAG_ALPHA_MASK                             uint(1 << 3)
+#define TEXTURE_FLAG_NORMAL_RG                              uint(1 << 4)
+#define TEXTURE_FLAG_NORMAL_RGB                             uint(1 << 5)
+#define TEXTURE_FLAG_AO                                     uint(1 << 6)
+#define TEXTURE_FLAG_SPECULAR                               uint(1 << 7)
+#define TEXTURE_FLAG_ROUGHNESS                              uint(1 << 8)
+#define TEXTURE_FLAG_METALLIC                               uint(1 << 9)
+#define TEXTURE_FLAG_SPECULAR_ROUGNESS_METALLIC             uint(1 << 10)
+#define TEXTURE_FLAG_ROUGNESS_METALLIC                      uint(1 << 11)
+#define TEXTURE_FLAG_ENVIRONMENT                            uint(1 << 12)
+#define TEXTURE_FLAG_ENVIRONMENT_PROBE                      uint(1 << 13)
+
+#ifdef LITE3D_BINDLESS_TEXTURE_PIPELINE
+
+struct TextureHandle
+{
+    sampler2D textureId;
+    uint flags;
+    uint reserved;
+};
+
+struct TextureCubeHandle
+{
+    samplerCube textureId;
+    uint flags;
+    uint reserved;
+};
+
+struct TextureCubeArrayHandle
+{
+    samplerCubeArray textureId;
+    uint flags;
+    uint reserved;
+};
+
+struct ChunkInvocationInfo
+{
+    mat4 modelMatrix;
+    mat4 normalMatrix;
+    uint materialIdx;
+    uint flags;
+    int skeletonTransformIndex;
+    uint reserved02;
+};
+
+#ifdef LITE3D_VERTEX_SKELETON_DEFORM
+void skeletonDeform(inout ChunkInvocationInfo chunkInfo, ivec4 boneIndexes, vec4 boneWeights);
+#endif
+
+ChunkInvocationInfo getInvocationInfo();
+
+#endif
+
+struct Material
+{
+    vec4 albedo;
+    vec4 emission;
+    vec4 f0;
+    vec4 normalScale;
+    float alpha;
+    float specular;
+    float roughness;
+    float metallic;
+    float envDiffuse;
+    float envSpecular;
+    float ior;
+    float emissionStrength;
+    float environmentUVScale;
+    uint environmentSingleProbeIndex;
+    float sheen;
+    uint flags;
+#ifdef LITE3D_BINDLESS_TEXTURE_PIPELINE
+    TextureHandle slot[8];
+    TextureCubeHandle environment;
+    TextureCubeArrayHandle environmentProbe;
+#endif
+};
+
+struct Surface
+{
+    Material material;
+    uint index;
+    vec3 wv;
+    vec2 uv;
+    vec3 normal;
+    float ao;
+};
