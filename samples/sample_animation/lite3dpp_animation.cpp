@@ -27,6 +27,7 @@ static const char *helpString =
     "Press 'u' to enable/disable SSAO\n"
     "Press 'q' to start animation\n"
     "Press 'z' to start second skeleton body animation\n"
+    "Press 'x' to start curious sphere animation\n"
     "Press 'e' to pause/resume all animation\n"
     "Press 'r' to reset all animation\n";
 
