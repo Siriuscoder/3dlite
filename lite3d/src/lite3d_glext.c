@@ -373,6 +373,17 @@ int lite3d_check_multi_draw_indirect(void)
 #endif
 }
 
+int lite3d_check_compute_shader(void)
+{
+#if defined(WITH_GLES2) || defined(WITH_GLES3)
+    return LITE3D_FALSE;
+#elif defined(WITH_GLES31) || defined(WITH_GLES32)
+    return LITE3D_TRUE;
+#else
+    return GLEW_ARB_compute_shader;
+#endif
+}
+
 #ifdef __GNUC__
 #   pragma GCC diagnostic push
 #   pragma GCC diagnostic ignored "-Wpedantic"
@@ -693,5 +704,19 @@ void glMultiDrawElementsIndirect_stub(GLenum mode, GLenum type, const void *indi
 {
     SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
         "%s: glMultiDrawElementsIndirect is not supported..", LITE3D_CURRENT_FUNCTION);
+    lite3d_misc_gl_set_not_supported();
+}
+
+void glMemoryBarrier_stub(GLbitfield barriers)
+{
+    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+        "%s: glMemoryBarrier is not supported..", LITE3D_CURRENT_FUNCTION);
+    lite3d_misc_gl_set_not_supported();
+}
+
+void glDispatchCompute_stub(GLuint num_groups_x, GLuint num_groups_y, GLuint num_groups_z)
+{
+    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+        "%s: glDispatchCompute is not supported..", LITE3D_CURRENT_FUNCTION);
     lite3d_misc_gl_set_not_supported();
 }
