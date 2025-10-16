@@ -23,17 +23,21 @@
 #include <lite3d/lite3d_rb_tree.h>
 #include <lite3d/lite3d_kazmath.h>
 
-#define LITE3D_SHADER_PARAMETER_MAX_NAME    128
-#define LITE3D_SHADER_PARAMETER_FLOAT       0x1
-#define LITE3D_SHADER_PARAMETER_FLOATV3     0x2
-#define LITE3D_SHADER_PARAMETER_FLOATV4     0x3
-#define LITE3D_SHADER_PARAMETER_FLOATM3     0x4
-#define LITE3D_SHADER_PARAMETER_FLOATM4     0x5
-#define LITE3D_SHADER_PARAMETER_INT         0x6
-#define LITE3D_SHADER_PARAMETER_UINT        0x7
-#define LITE3D_SHADER_PARAMETER_SAMPLER     0x8
-#define LITE3D_SHADER_PARAMETER_SSBO        0x9
-#define LITE3D_SHADER_PARAMETER_UBO         0xA
+#define LITE3D_SHADER_PARAMETER_MAX_NAME            128
+#define LITE3D_SHADER_PARAMETER_FLOAT               0x1
+#define LITE3D_SHADER_PARAMETER_FLOATV3             0x2
+#define LITE3D_SHADER_PARAMETER_FLOATV4             0x3
+#define LITE3D_SHADER_PARAMETER_FLOATM3             0x4
+#define LITE3D_SHADER_PARAMETER_FLOATM4             0x5
+#define LITE3D_SHADER_PARAMETER_INT                 0x6
+#define LITE3D_SHADER_PARAMETER_UINT                0x7
+#define LITE3D_SHADER_PARAMETER_SAMPLER             0x8
+#define LITE3D_SHADER_PARAMETER_SSBO                0x9
+#define LITE3D_SHADER_PARAMETER_UBO                 0xA
+#define LITE3D_SHADER_PARAMETER_IMAGE_STORE         0xB
+
+#define LITE3D_SHADER_PARAMETER_DIRECTION_INPUT     0x1
+#define LITE3D_SHADER_PARAMETER_DIRECTION_OUTPUT    0x2
 
 typedef struct lite3d_shader_parameter
 {
@@ -53,6 +57,7 @@ typedef struct lite3d_shader_parameter
         kmMat3 valmat3;
         kmMat4 valmat4;
     } parameter;
+    uint8_t direction;
     /* userdata */
     void *userdata;
 } lite3d_shader_parameter;

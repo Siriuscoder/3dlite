@@ -24,7 +24,7 @@
 #include <lite3d/lite3d_alloc.h>
 #include <lite3d/lite3d_shader.h>
 
-int lite3d_shader_init(lite3d_shader *shader, uint8_t type)
+int lite3d_shader_init(struct lite3d_shader *shader, uint8_t type)
 {
     SDL_assert(shader);
     
@@ -47,6 +47,14 @@ int lite3d_shader_init(lite3d_shader *shader, uint8_t type)
         }
         shader->shaderID = glCreateShader(GL_GEOMETRY_SHADER);
         break;
+    case LITE3D_SHADER_TYPE_COMPUTE:
+        if (!lite3d_check_compute_shader())
+        {
+            SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "%s: Compute shaders are not supported", LITE3D_CURRENT_FUNCTION);
+            return LITE3D_FALSE;
+        }
+        shader->shaderID = glCreateShader(GL_COMPUTE_SHADER);
+        break;
     default:
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "%s: Unknown shader type '%d'", LITE3D_CURRENT_FUNCTION, type);
         return LITE3D_FALSE;
@@ -62,8 +70,7 @@ int lite3d_shader_init(lite3d_shader *shader, uint8_t type)
     return LITE3D_TRUE;
 }
 
-int lite3d_shader_compile(
-    lite3d_shader *shader, uint32_t sources, const char **source, int32_t *length)
+int lite3d_shader_compile(struct lite3d_shader *shader, uint32_t sources, const char **source, int32_t *length)
 {
     GLint isCompiled = 0;
     GLint maxLogLength = 0;
@@ -125,8 +132,7 @@ int lite3d_shader_compile(
     return shader->success;
 }
 
-void lite3d_shader_purge(
-    lite3d_shader *shader)
+void lite3d_shader_purge(struct lite3d_shader *shader)
 {
     SDL_assert(shader);
 

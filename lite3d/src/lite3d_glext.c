@@ -380,7 +380,7 @@ int lite3d_check_compute_shader(void)
 #elif defined(WITH_GLES31) || defined(WITH_GLES32)
     return LITE3D_TRUE;
 #else
-    return GLEW_ARB_compute_shader;
+    return GLEW_ARB_compute_shader && GLEW_ARB_shader_image_load_store;
 #endif
 }
 
@@ -718,5 +718,35 @@ void glDispatchCompute_stub(GLuint num_groups_x, GLuint num_groups_y, GLuint num
 {
     SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
         "%s: glDispatchCompute is not supported..", LITE3D_CURRENT_FUNCTION);
+    lite3d_misc_gl_set_not_supported();
+}
+
+void glBindImageTexture_stub(GLuint unit, GLuint texture, GLint level, GLboolean layered, GLint layer, GLenum access, GLenum format)
+{
+    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+        "%s: glBindImageTexture is not supported..", LITE3D_CURRENT_FUNCTION);
+    lite3d_misc_gl_set_not_supported();
+}
+
+GLsync glFenceSync_stub(GLenum condition, GLbitfield flags)
+{
+    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+        "%s: glFenceSync is not supported..", LITE3D_CURRENT_FUNCTION);
+    lite3d_misc_gl_set_not_supported();
+    return NULL;
+}
+
+GLenum glClientWaitSync_stub(GLsync sync, GLbitfield flags, GLuint64 timeout)
+{
+    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+        "%s: glClientWaitSync is not supported..", LITE3D_CURRENT_FUNCTION);
+    lite3d_misc_gl_set_not_supported();
+    return GL_FALSE;
+}
+
+void glDeleteSync_stub(GLsync sync)
+{
+    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+        "%s: glDeleteSync is not supported..", LITE3D_CURRENT_FUNCTION);
     lite3d_misc_gl_set_not_supported();
 }

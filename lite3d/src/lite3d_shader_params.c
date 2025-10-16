@@ -29,6 +29,7 @@ void lite3d_shader_parameter_init(
 
     memset(param, 0, sizeof(lite3d_shader_parameter));
     param->changed = LITE3D_TRUE;
+    param->direction = LITE3D_SHADER_PARAMETER_DIRECTION_INPUT;
 }
 
 void lite3d_shader_parameter_purge(

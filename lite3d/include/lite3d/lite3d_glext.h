@@ -84,6 +84,10 @@ void glMultiDrawArraysIndirect_stub(GLenum mode, const void *indirect, GLsizei d
 void glMultiDrawElementsIndirect_stub(GLenum mode, GLenum type, const void *indirect, GLsizei drawcount, GLsizei stride);
 void glMemoryBarrier_stub(GLbitfield barriers);
 void glDispatchCompute_stub(GLuint num_groups_x, GLuint num_groups_y, GLuint num_groups_z);
+void glBindImageTexture_stub(GLuint unit, GLuint texture, GLint level, GLboolean layered, GLint layer, GLenum access, GLenum format);
+GLsync glFenceSync_stub(GLenum condition, GLbitfield flags);
+GLenum glClientWaitSync_stub(GLsync sync, GLbitfield flags, GLuint64 timeout);
+void glDeleteSync_stub(GLsync sync);
 
 #ifdef GLES
 
@@ -261,6 +265,58 @@ void glDispatchCompute_stub(GLuint num_groups_x, GLuint num_groups_y, GLuint num
 
 #   ifndef GL_COMPUTE_SHADER
 #       define GL_COMPUTE_SHADER 0x91B9
+#   endif
+
+#   ifndef GL_SYNC_CONDITION
+#       define GL_SYNC_CONDITION 0x9113
+#   endif
+
+#   ifndef GL_SYNC_STATUS
+#       define GL_SYNC_STATUS 0x9114
+#   endif
+
+#   ifndef GL_SYNC_FLAGS
+#       define GL_SYNC_FLAGS 0x9115
+#   endif
+
+#   ifndef GL_SYNC_FENCE
+#       define GL_SYNC_FENCE 0x9116
+#   endif
+
+#   ifndef GL_SYNC_GPU_COMMANDS_COMPLETE
+#       define GL_SYNC_GPU_COMMANDS_COMPLETE 0x9117
+#   endif
+
+#   ifndef GL_UNSIGNALED
+#       define GL_UNSIGNALED 0x9118
+#   endif
+
+#   ifndef GL_SIGNALED
+#       define GL_SIGNALED 0x9119
+#   endif
+
+#   ifndef GL_ALREADY_SIGNALED
+#       define GL_ALREADY_SIGNALED 0x911A
+#   endif
+
+#   ifndef GL_TIMEOUT_EXPIRED
+#       define GL_TIMEOUT_EXPIRED 0x911B
+#   endif
+
+#   ifndef GL_CONDITION_SATISFIED
+#       define GL_CONDITION_SATISFIED 0x911C
+#   endif
+
+#   ifndef GL_WAIT_FAILED
+#       define GL_WAIT_FAILED 0x911D
+#   endif
+
+#   ifndef GL_SYNC_FLUSH_COMMANDS_BIT
+#       define GL_SYNC_FLUSH_COMMANDS_BIT 0x00000001
+#   endif
+
+#   ifndef GL_TIMEOUT_IGNORED
+#       define GL_TIMEOUT_IGNORED 0xFFFFFFFFFFFFFFFFull
 #   endif
 
 /* GL_OES_vertex_array_object */    
@@ -461,11 +517,15 @@ extern PFNGLMULTIDRAWELEMENTSINDIRECTEXTPROC glMultiDrawElementsIndirectPtr;
 #   define glTexImage2DMultisample glTexImage2DMultisample_stub
 #   define glTexImage3DMultisample glTexImage3DMultisample_stub
 #   define glTexStorage1D glTexStorage1D_stub
+#   define glFenceSync glFenceSync_stub
+#   define glClientWaitSync glClientWaitSync_stub
+#   define glDeleteSync glDeleteSync_stub
 #endif
 
 #if defined(WITH_GLES2) || defined(WITH_GLES3)
-#   define MemoryBarrier
-#   define glDispatchCompute
+#   define MemoryBarrier glMemoryBarrier_stub
+#   define glDispatchCompute glDispatchCompute_stub
+#   define glBindImageTexture glBindImageTexture_stub
 #endif
 
 #endif

@@ -22,12 +22,17 @@
 #include <lite3d/lite3d_shader.h>
 #include <lite3d/lite3d_shader_params.h>
 
+#define LITE3D_SHADER_PROGRAM_TYPE_COMMON_PIPELINE  0x1
+#define LITE3D_SHADER_PROGRAM_TYPE_COMPUTE          0x2
+
 typedef struct lite3d_shader_program
 {
     uint32_t programID;
     char *statusString;
     uint8_t success;
     uint8_t validated;
+    uint8_t type;
+    uint32_t syncFlags;
     /* userdata */
     void *userdata;
 } lite3d_shader_program;
@@ -46,31 +51,38 @@ typedef struct lite3d_shader_parameter_container
     /* uniform location in shader program attached to this pass */
     int32_t location;
     int16_t binding;
+    int8_t direction;
 } lite3d_shader_parameter_container;
 
 LITE3D_CEXPORT int lite3d_shader_program_technique_init(void);
 LITE3D_CEXPORT void lite3d_shader_program_get_limitations(int *maxGeometryOutputVertices, 
     int *maxGeometryOutputComponents, int *maxGeometryTotalOutputComponents);
-LITE3D_CEXPORT int lite3d_shader_program_init(lite3d_shader_program *program);
+LITE3D_CEXPORT int lite3d_shader_program_init(struct lite3d_shader_program *program);
 LITE3D_CEXPORT int lite3d_shader_program_link(
-    lite3d_shader_program *program, lite3d_shader *shaders, size_t count);
+    struct lite3d_shader_program *program, lite3d_shader *shaders, size_t count);
 LITE3D_CEXPORT void lite3d_shader_program_purge(
-    lite3d_shader_program *program);
+    struct lite3d_shader_program *program);
 LITE3D_CEXPORT void lite3d_shader_program_bind(
-    lite3d_shader_program *program);
+    struct lite3d_shader_program *program);
 LITE3D_CEXPORT void lite3d_shader_program_unbind(
-    lite3d_shader_program *program);
+    struct lite3d_shader_program *program);
 LITE3D_CEXPORT int lite3d_shader_program_validate(
-    lite3d_shader_program *program);
+    struct lite3d_shader_program *program);
 
 /* set uniform or sampler params to shader, shader must be bind */
 LITE3D_CEXPORT int lite3d_shader_program_uniform_set(
-    lite3d_shader_program *program, lite3d_shader_parameter_container *p);
+    struct lite3d_shader_program *program, struct lite3d_shader_parameter_container *p);
 
 LITE3D_CEXPORT void lite3d_shader_program_attribute_index(
-    lite3d_shader_program *program, const char *name, int32_t location);
+    struct lite3d_shader_program *program, const char *name, int32_t location);
 
 LITE3D_CEXPORT int lite3d_shader_program_validate_current(void);
+
+LITE3D_CEXPORT void lite3d_shader_program_compute_dispatch(struct lite3d_shader_program *program, uint32_t numGroupsX,
+    uint32_t numGroupsY, uint32_t numGroupsZ);
+
+LITE3D_CEXPORT void lite3d_shader_program_compute_dispatch_sync(struct lite3d_shader_program *program, uint32_t numGroupsX,
+    uint32_t numGroupsY, uint32_t numGroupsZ);
 
 #endif	/* LITE3D_SHADER_PROGRAM_H */
 
