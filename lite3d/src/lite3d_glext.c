@@ -729,7 +729,7 @@ void glBindImageTexture_stub(GLuint unit, GLuint texture, GLint level, GLboolean
 }
 
 GLsync glFenceSync_stub(GLenum condition, GLbitfield flags)
-{
+{ 
     SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
         "%s: glFenceSync is not supported..", LITE3D_CURRENT_FUNCTION);
     lite3d_misc_gl_set_not_supported();
@@ -748,5 +748,12 @@ void glDeleteSync_stub(GLsync sync)
 {
     SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
         "%s: glDeleteSync is not supported..", LITE3D_CURRENT_FUNCTION);
+    lite3d_misc_gl_set_not_supported();
+}
+
+void glGetIntegeri_v_stub(GLenum target, GLuint index, GLint *data)
+{
+    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+        "%s: glGetIntegeri_v is not supported..", LITE3D_CURRENT_FUNCTION);
     lite3d_misc_gl_set_not_supported();
 }

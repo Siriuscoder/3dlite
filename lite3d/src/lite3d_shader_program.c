@@ -30,6 +30,13 @@ static lite3d_shader_program *gActProg = NULL;
 static int gMaxGeometryOutputVertices = 0;
 static int gMaxGeometryTotalOutputComponents = 0;
 static int gMaxGeometryOutputComponents = 0;
+static int gMaxComputeWorkGroupCount = 0;
+static int gMaxComputeWorkGroupSize[3] = {0};
+static int gMaxComputeStorageBlocks = 0;
+static int gMaxComputeImageUniforms = 0;
+static int gMaxComputeTextureImageUnits = 0;
+static int gMaxComputeUniformBlocks = 0;
+static int gMaxComputeCombinedUniformComponents = 0;
 
 static void lite3d_shader_program_get_log(struct lite3d_shader_program *program)
 {
@@ -60,6 +67,37 @@ int lite3d_shader_program_technique_init(void)
 
         glGetIntegerv(GL_MAX_GEOMETRY_TOTAL_OUTPUT_COMPONENTS, &gMaxGeometryTotalOutputComponents);
         SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "GL_MAX_GEOMETRY_TOTAL_OUTPUT_COMPONENTS: %d", gMaxGeometryTotalOutputComponents);
+    }
+
+    if (lite3d_check_compute_shader())
+    {
+        int i;
+
+        glGetIntegerv(GL_MAX_COMPUTE_WORK_GROUP_COUNT, &gMaxComputeWorkGroupCount);
+        SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "GL_MAX_COMPUTE_WORK_GROUP_COUNT: %d", gMaxComputeWorkGroupCount);
+
+        for (i = 0; i < 3; i++)
+        {
+            glGetIntegeri_v(GL_MAX_COMPUTE_WORK_GROUP_SIZE, i, &gMaxComputeWorkGroupSize[i]);
+        }
+
+        SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "GL_MAX_COMPUTE_WORK_GROUP_SIZE: %d %d %d", gMaxComputeWorkGroupSize[0], 
+            gMaxComputeWorkGroupSize[1], gMaxComputeWorkGroupSize[2]);
+
+        glGetIntegerv(GL_MAX_COMPUTE_SHADER_STORAGE_BLOCKS, &gMaxComputeStorageBlocks);
+        SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "GL_MAX_COMPUTE_SHADER_STORAGE_BLOCKS: %d", gMaxComputeStorageBlocks);
+
+        glGetIntegerv(GL_MAX_COMPUTE_IMAGE_UNIFORMS, &gMaxComputeImageUniforms);
+        SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "GL_MAX_COMPUTE_IMAGE_UNIFORMS: %d", gMaxComputeImageUniforms);
+
+        glGetIntegerv(GL_MAX_COMPUTE_TEXTURE_IMAGE_UNITS, &gMaxComputeTextureImageUnits);
+        SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "GL_MAX_COMPUTE_TEXTURE_IMAGE_UNITS: %d", gMaxComputeTextureImageUnits);
+
+        glGetIntegerv(GL_MAX_COMPUTE_UNIFORM_BLOCKS, &gMaxComputeUniformBlocks);
+        SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "GL_MAX_COMPUTE_UNIFORM_BLOCKS: %d", gMaxComputeUniformBlocks);
+
+        glGetIntegerv(GL_MAX_COMBINED_COMPUTE_UNIFORM_COMPONENTS, &gMaxComputeCombinedUniformComponents);
+        SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "GL_MAX_COMBINED_COMPUTE_UNIFORM_COMPONENTS: %d", gMaxComputeCombinedUniformComponents);
     }
 
     return LITE3D_TRUE;
@@ -306,8 +344,11 @@ static int lite3d_shader_program_ssbo_set(
     
     glBindBufferBase(GL_SHADER_STORAGE_BUFFER, p->binding, p->parameter->parameter.vbo->vboID);
 
-    if (p->direction == LITE3D_SHADER_PARAMETER_DIRECTION_OUTPUT)
+    if (p->direction == LITE3D_SHADER_PARAMETER_DIRECTION_OUTPUT || 
+        p->direction == LITE3D_SHADER_PARAMETER_DIRECTION_INOUT)
+    {
         program->syncFlags |= GL_SHADER_STORAGE_BARRIER_BIT;
+    }
 
     return LITE3D_TRUE;
 #else
@@ -362,10 +403,44 @@ static int lite3d_shader_program_image_store_set(
     struct lite3d_shader_program *program, struct lite3d_shader_parameter_container *p)
 {
 #if !defined(WITH_GLES2) || !defined(WITH_GLES3)
+    SDL_assert(program);
+    SDL_assert(program->success == LITE3D_TRUE);
+    SDL_assert(p->parameter->parameter.texture);
 
+    /* -1  mean what location unknown yet */
+    if (p->location == -1)
+    {
+        p->location = glGetUniformLocation(program->programID, p->parameter->name);
+        if (p->location < 0)
+        {
+            p->location = -2;
+            SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
+                "%s: texture image '%s' not found in program(%d) 0x%016llx",
+                LITE3D_CURRENT_FUNCTION, p->parameter->name, program->programID, (unsigned long long)program);
+            return LITE3D_FALSE;
+        }
+    }
+    else if (p->location == -2)
+        return LITE3D_FALSE;
+    
+    if (p->binding < 0)
+        p->binding = p->bindContext->textureImageBindingsCount++;
+    
+    glUniform1i(p->location, p->binding);
 
-    if (p->direction == LITE3D_SHADER_PARAMETER_DIRECTION_OUTPUT)
+    if (p->direction == LITE3D_SHADER_PARAMETER_DIRECTION_OUTPUT || 
+        p->direction == LITE3D_SHADER_PARAMETER_DIRECTION_INOUT)
+    {
         program->syncFlags |= GL_SHADER_IMAGE_ACCESS_BARRIER_BIT | GL_TEXTURE_FETCH_BARRIER_BIT;
+    }
+
+    glBindImageTexture(p->binding, p->parameter->parameter.texture->textureID, 
+        p->parameter->imageMipLevel, 
+        p->parameter->imageLayer < 0 ? GL_TRUE : GL_FALSE, 
+        p->parameter->imageLayer >= 0 ? p->parameter->imageLayer : 0,
+        p->direction == LITE3D_SHADER_PARAMETER_DIRECTION_INOUT ? GL_READ_WRITE : 
+        (p->direction == LITE3D_SHADER_PARAMETER_DIRECTION_INPUT ? GL_READ_ONLY : GL_WRITE_ONLY),
+        p->parameter->parameter.texture->internalFormat);
 
     return LITE3D_TRUE;
 #else

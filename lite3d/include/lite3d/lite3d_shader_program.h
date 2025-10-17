@@ -41,6 +41,7 @@ typedef struct lite3d_shader_binding_context
 {
     int16_t textureBindingsCount;
     int16_t blockBindingsCount;  
+    int16_t textureImageBindingsCount;  
 } lite3d_shader_binding_context;
 
 typedef struct lite3d_shader_parameter_container

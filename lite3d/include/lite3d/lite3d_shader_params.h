@@ -36,6 +36,7 @@
 #define LITE3D_SHADER_PARAMETER_UBO                 0xA
 #define LITE3D_SHADER_PARAMETER_IMAGE_STORE         0xB
 
+#define LITE3D_SHADER_PARAMETER_DIRECTION_INOUT     0x0
 #define LITE3D_SHADER_PARAMETER_DIRECTION_INPUT     0x1
 #define LITE3D_SHADER_PARAMETER_DIRECTION_OUTPUT    0x2
 
@@ -58,6 +59,8 @@ typedef struct lite3d_shader_parameter
         kmMat4 valmat4;
     } parameter;
     uint8_t direction;
+    int32_t imageMipLevel;
+    int32_t imageLayer;
     /* userdata */
     void *userdata;
 } lite3d_shader_parameter;

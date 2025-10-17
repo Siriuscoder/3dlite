@@ -88,6 +88,7 @@ void glBindImageTexture_stub(GLuint unit, GLuint texture, GLint level, GLboolean
 GLsync glFenceSync_stub(GLenum condition, GLbitfield flags);
 GLenum glClientWaitSync_stub(GLsync sync, GLbitfield flags, GLuint64 timeout);
 void glDeleteSync_stub(GLsync sync);
+void glGetIntegeri_v_stub(GLenum target, GLuint index, GLint *data);
 
 #ifdef GLES
 
@@ -229,6 +230,10 @@ void glDeleteSync_stub(GLsync sync);
 
 #   ifndef GL_MAX_COMPUTE_IMAGE_UNIFORMS
 #       define GL_MAX_COMPUTE_IMAGE_UNIFORMS 0x91BD
+#   endif
+
+#   ifndef GL_MAX_COMPUTE_SHADER_STORAGE_BLOCKS
+#       define GL_MAX_COMPUTE_SHADER_STORAGE_BLOCKS 0x90DB
 #   endif
 
 #   ifndef GL_MAX_COMPUTE_SHARED_MEMORY_SIZE
@@ -523,9 +528,10 @@ extern PFNGLMULTIDRAWELEMENTSINDIRECTEXTPROC glMultiDrawElementsIndirectPtr;
 #endif
 
 #if defined(WITH_GLES2) || defined(WITH_GLES3)
-#   define MemoryBarrier glMemoryBarrier_stub
+#   define glMemoryBarrier glMemoryBarrier_stub
 #   define glDispatchCompute glDispatchCompute_stub
 #   define glBindImageTexture glBindImageTexture_stub
+#   define glGetIntegeri_v glGetIntegeri_v_stub
 #endif
 
 #endif
