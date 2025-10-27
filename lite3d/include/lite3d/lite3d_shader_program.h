@@ -37,24 +37,6 @@ typedef struct lite3d_shader_program
     void *userdata;
 } lite3d_shader_program;
 
-typedef struct lite3d_shader_binding_context
-{
-    int16_t textureBindingsCount;
-    int16_t blockBindingsCount;  
-    int16_t textureImageBindingsCount;  
-} lite3d_shader_binding_context;
-
-typedef struct lite3d_shader_parameter_container
-{
-    lite3d_list_node parameterLink;
-    lite3d_shader_parameter *parameter;
-    lite3d_shader_binding_context *bindContext;
-    /* uniform location in shader program attached to this pass */
-    int32_t location;
-    int16_t binding;
-    int8_t direction;
-} lite3d_shader_parameter_container;
-
 LITE3D_CEXPORT int lite3d_shader_program_technique_init(void);
 LITE3D_CEXPORT void lite3d_shader_program_get_limitations(int *maxGeometryOutputVertices, 
     int *maxGeometryOutputComponents, int *maxGeometryTotalOutputComponents);
@@ -84,6 +66,9 @@ LITE3D_CEXPORT void lite3d_shader_program_compute_dispatch(struct lite3d_shader_
 
 LITE3D_CEXPORT void lite3d_shader_program_compute_dispatch_sync(struct lite3d_shader_program *program, uint32_t numGroupsX,
     uint32_t numGroupsY, uint32_t numGroupsZ);
+
+LITE3D_CEXPORT void lite3d_shader_program_apply_parameters(struct lite3d_shader_program *program, 
+    struct lite3d_shader_parameters *params, uint8_t changed);
 
 #endif	/* LITE3D_SHADER_PROGRAM_H */
 

@@ -18,6 +18,7 @@
 #include <string.h>
 #include <SDL_assert.h>
 
+#include <lite3d/lite3d_alloc.h>
 #include <lite3d/lite3d_shader_params.h>
 
 static lite3d_global_parameters globalParams;
@@ -109,4 +110,89 @@ void lite3d_shader_global_parameters_init(void)
     kmMat3Identity(&globalParams.normalMatrix.parameter.valmat3);
     kmMat4Identity(&globalParams.screenMatrix.parameter.valmat4);
     kmMat4Identity(&globalParams.projViewMatrix.parameter.valmat4);
+}
+
+static lite3d_shader_parameter_container *lite3d_shader_parameters_find(
+    lite3d_shader_parameters *params, const char *name)
+{
+    lite3d_list_node *parameterNode;
+    lite3d_shader_parameter_container *parameter;
+    SDL_assert(params);
+
+    for (parameterNode = params->parameters.l.next;
+        parameterNode != &params->parameters.l;
+        parameterNode = lite3d_list_next(parameterNode))
+    {
+        parameter = LITE3D_MEMBERCAST(
+            lite3d_shader_parameter_container,
+            parameterNode,
+            parameterLink);
+
+        if (strcmp(parameter->parameter->name, name) == 0)
+        {
+            return parameter;
+        }
+    }
+
+    return NULL;
+}
+
+void lite3d_shader_parameters_init(lite3d_shader_parameters *params)
+{
+    SDL_assert(params);
+    memset(params, 0, sizeof(lite3d_shader_parameters));
+    lite3d_list_init(&params->parameters);
+}
+
+void lite3d_shader_parameters_add(lite3d_shader_parameters *params, lite3d_shader_parameter *param)
+{
+    lite3d_shader_parameter_container *parameter;
+    SDL_assert(params);
+
+    parameter = (lite3d_shader_parameter_container *) lite3d_malloc_pooled(
+        LITE3D_POOL_NO1,
+        sizeof (lite3d_shader_parameter_container));
+    SDL_assert_release(parameter);
+
+    parameter->parameter = param;
+    parameter->location = -1; // unknown ??
+    parameter->binding = -1; // unknown ??
+    parameter->bindContext = &params->bindContext;
+    lite3d_list_link_init(&parameter->parameterLink);
+    lite3d_list_add_last_link(&parameter->parameterLink, &params->parameters);
+}
+
+int lite3d_shader_parameters_remove(lite3d_shader_parameters *params, const char *name)
+{
+    lite3d_shader_parameter_container *parameter;
+    SDL_assert(params);
+
+    if ((parameter = lite3d_shader_parameters_find(params, name)) != NULL)
+    {
+        lite3d_list_unlink_link(&parameter->parameterLink);
+        lite3d_free_pooled(LITE3D_POOL_NO1, parameter);
+
+        return LITE3D_TRUE;
+    }
+
+    return LITE3D_FALSE;
+}
+
+void lite3d_shader_parameters_remove_all(lite3d_shader_parameters *params)
+{
+    lite3d_list_node *parameterNode;
+    while ((parameterNode = lite3d_list_remove_first_link(&params->parameters)) != NULL)
+    {
+        lite3d_free_pooled(LITE3D_POOL_NO1,
+            LITE3D_MEMBERCAST(lite3d_shader_parameter_container,
+            parameterNode, parameterLink));
+    }
+}
+
+lite3d_shader_parameter *lite3d_shader_parameters_get(lite3d_shader_parameters *params, const char *name)
+{
+    lite3d_shader_parameter_container *parameter;
+    parameter = lite3d_shader_parameters_find(params, name);
+
+    return parameter ? parameter->parameter : NULL;
 }

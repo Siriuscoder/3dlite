@@ -30,7 +30,6 @@ static lite3d_shader_program *gActProg = NULL;
 static int gMaxGeometryOutputVertices = 0;
 static int gMaxGeometryTotalOutputComponents = 0;
 static int gMaxGeometryOutputComponents = 0;
-static int gMaxComputeWorkGroupCount = 0;
 static int gMaxComputeWorkGroupSize[3] = {0};
 static int gMaxComputeStorageBlocks = 0;
 static int gMaxComputeImageUniforms = 0;
@@ -72,9 +71,6 @@ int lite3d_shader_program_technique_init(void)
     if (lite3d_check_compute_shader())
     {
         int i;
-
-        glGetIntegerv(GL_MAX_COMPUTE_WORK_GROUP_COUNT, &gMaxComputeWorkGroupCount);
-        SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "GL_MAX_COMPUTE_WORK_GROUP_COUNT: %d", gMaxComputeWorkGroupCount);
 
         for (i = 0; i < 3; i++)
         {
@@ -604,4 +600,29 @@ void lite3d_shader_program_compute_dispatch_sync(struct lite3d_shader_program *p
     sync = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
     glClientWaitSync(sync, GL_SYNC_FLUSH_COMMANDS_BIT, UINT64_MAX);
     glDeleteSync(sync);
+}
+
+void lite3d_shader_program_apply_parameters(struct lite3d_shader_program *program, 
+    struct lite3d_shader_parameters *params, uint8_t changed)
+{
+    lite3d_list_node *parameterNode;
+    lite3d_shader_parameter_container *parameter;
+
+    SDL_assert(program);
+    SDL_assert(params);
+
+    /* check parameters and set it if changed */
+    for (parameterNode = params->parameters.l.next;
+        parameterNode != &params->parameters.l;
+        parameterNode = lite3d_list_next(parameterNode))
+    {
+        parameter = LITE3D_MEMBERCAST(lite3d_shader_parameter_container,
+            parameterNode, parameterLink);
+
+        if (changed || parameter->parameter->changed)
+        {
+            lite3d_shader_program_uniform_set(program, parameter);
+            parameter->parameter->changed = LITE3D_FALSE;
+        }
+    }
 }

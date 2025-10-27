@@ -109,7 +109,7 @@ static void mqr_node_set_shader_params(lite3d_scene *scene, lite3d_material_pass
     lite3d_shader_set_screen_matrix(&screen);
 
     /* setup changed uniforms parameters */
-    lite3d_material_pass_set_params(mqrNode->matUnit->material, pass, LITE3D_FALSE);
+    lite3d_shader_program_apply_parameters(pass->program, &pass->parameters, LITE3D_FALSE);
 }
 
 static void mqr_render_mesh_chunk(lite3d_scene *scene, lite3d_mesh_chunk *chunk, uint32_t count)
@@ -375,8 +375,8 @@ static int mqr_node_approve(lite3d_scene *scene, _mqr_node *mqrNode, uint32_t fl
 static lite3d_material_pass *mqr_unit_apply_material(lite3d_scene *scene, _mqr_node *node, uint16_t pass)
 {
     lite3d_material_pass *matPass = lite3d_material_apply(node->matUnit->material, pass);
-    scene->stats.textureBinds += matPass->bindContext.textureBindingsCount;
-    scene->stats.bufferBinds += matPass->bindContext.blockBindingsCount;
+    scene->stats.textureBinds += matPass->parameters.bindContext.textureBindingsCount;
+    scene->stats.bufferBinds += matPass->parameters.bindContext.blockBindingsCount;
     scene->stats.materialsSwitch++;
     return matPass;
 }

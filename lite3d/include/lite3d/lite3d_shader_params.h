@@ -21,6 +21,7 @@
 #include <lite3d/lite3d_common.h>
 #include <lite3d/lite3d_texture_unit.h>
 #include <lite3d/lite3d_rb_tree.h>
+#include <lite3d/lite3d_list.h>
 #include <lite3d/lite3d_kazmath.h>
 
 #define LITE3D_SHADER_PARAMETER_MAX_NAME            128
@@ -65,6 +66,32 @@ typedef struct lite3d_shader_parameter
     void *userdata;
 } lite3d_shader_parameter;
 
+
+typedef struct lite3d_shader_binding_context
+{
+    int16_t textureBindingsCount;
+    int16_t blockBindingsCount;  
+    int16_t textureImageBindingsCount;  
+} lite3d_shader_binding_context;
+
+typedef struct lite3d_shader_parameter_container
+{
+    lite3d_list_node parameterLink;
+    lite3d_shader_parameter *parameter;
+    lite3d_shader_binding_context *bindContext;
+    /* uniform location in shader program attached to this pass */
+    int32_t location;
+    int16_t binding;
+    int8_t direction;
+} lite3d_shader_parameter_container;
+
+typedef struct lite3d_shader_parameters
+{
+    lite3d_shader_binding_context bindContext;
+    /* list lite3d_shader_parameter_container */
+    lite3d_list parameters;
+} lite3d_shader_parameters;
+
 typedef struct lite3d_global_parameters
 {
     // Матрица проекции, из координат камеры в экранные координаты
@@ -85,6 +112,17 @@ LITE3D_CEXPORT void lite3d_shader_parameter_init(
     lite3d_shader_parameter *param);
 LITE3D_CEXPORT void lite3d_shader_parameter_purge(
     lite3d_shader_parameter *param);
+
+
+LITE3D_CEXPORT void lite3d_shader_parameters_init(lite3d_shader_parameters *params);
+
+LITE3D_CEXPORT void lite3d_shader_parameters_add(lite3d_shader_parameters *params,
+    lite3d_shader_parameter *param);
+LITE3D_CEXPORT int lite3d_shader_parameters_remove(lite3d_shader_parameters *params,
+    const char *name);
+LITE3D_CEXPORT void lite3d_shader_parameters_remove_all(lite3d_shader_parameters *params);
+LITE3D_CEXPORT lite3d_shader_parameter *lite3d_shader_parameters_get(
+    lite3d_shader_parameters *params, const char *name);
 
 LITE3D_CEXPORT void lite3d_shader_global_parameters_init(void);
 LITE3D_CEXPORT lite3d_global_parameters *lite3d_shader_global_parameters(void);

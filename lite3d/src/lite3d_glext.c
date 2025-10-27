@@ -380,7 +380,7 @@ int lite3d_check_compute_shader(void)
 #elif defined(WITH_GLES31) || defined(WITH_GLES32)
     return LITE3D_TRUE;
 #else
-    return GLEW_ARB_compute_shader && GLEW_ARB_shader_image_load_store;
+    return GLEW_ARB_compute_shader && GLEW_ARB_shader_image_load_store && GLEW_ARB_sync;
 #endif
 }
 
