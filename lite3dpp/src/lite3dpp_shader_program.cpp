@@ -51,7 +51,7 @@ namespace lite3dpp
         try
         {
             if(!lite3d_shader_program_init(&mProgram))
-                LITE3D_THROW("Shader program init failed..");
+                LITE3D_THROW("Shader \"" << getName() << "\" program init failed..");
 
             mProgram.userdata = this;
             bindAttributeLocations();
@@ -60,7 +60,7 @@ namespace lite3dpp
                 "Linking \"%s\" ...", getPath().c_str());
 
             if(!lite3d_shader_program_link(&mProgram, &shaders[0], shaders.size()))
-                LITE3D_THROW(getPath() << " link failed...");
+                LITE3D_THROW("Shader \"" << getName() << "\":\"" << getPath() << "\" link failed...");
         }
         catch(std::exception &)
         {
@@ -85,6 +85,8 @@ namespace lite3dpp
             return LITE3D_SHADER_TYPE_FRAGMENT;
         else if (filepath.find(".gs") != String::npos)
             return LITE3D_SHADER_TYPE_GEOMETRY;
+        else if (filepath.find(".comp") != String::npos)
+            return LITE3D_SHADER_TYPE_COMPUTE;
 
         // will cause error in lite3d_shader_init
         return 0;
@@ -107,7 +109,7 @@ namespace lite3dpp
 
             auto shaderType = determineShaderType(sourcePath);
             if (!lite3d_shader_init(&shaders.back(), shaderType))
-                LITE3D_THROW("Shader init failed..");
+                LITE3D_THROW("Shader \"" << getName() << "\" init failed..");
 
             // load definition source
             if (defPath.size() > 0)
@@ -135,7 +137,7 @@ namespace lite3dpp
             auto header = createSourceHeader(shaderType);
             const char* finalShaderCode[] = { header.c_str(), shaderCode.c_str() };
             if (!lite3d_shader_compile(&shaders.back(), 2, finalShaderCode, NULL))
-                LITE3D_THROW(sourcePath << " compile failed...");
+                LITE3D_THROW("Shader \"" << getName() << "\":\"" << sourcePath << "\" compile failed...");
         }
     }
 

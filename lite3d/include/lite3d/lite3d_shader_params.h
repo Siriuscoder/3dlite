@@ -59,9 +59,9 @@ typedef struct lite3d_shader_parameter
         kmMat3 valmat3;
         kmMat4 valmat4;
     } parameter;
-    uint8_t direction;
-    int32_t imageMipLevel;
-    int32_t imageLayer;
+    uint8_t direction;     // 0 - inout, 1 - input, 2 - output, for compute shaders only
+    int32_t imageMipLevel; // mip level, zero by default
+    int32_t imageLayer;    // image array layer, layered binding disabled by default
     /* userdata */
     void *userdata;
 } lite3d_shader_parameter;

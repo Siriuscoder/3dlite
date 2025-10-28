@@ -54,6 +54,8 @@ namespace lite3dpp
         static lite3d_shader_parameter *getGlobalParameter(const String &name, 
             uint8_t type, bool createIfNotExist);
 
+        void clear();
+
         LITE3D_SHADER_PARAMETER_DECLARE(Float, float, float)
         LITE3D_SHADER_PARAMETER_DECLARE(Int, int32_t, int32_t)
         LITE3D_SHADER_PARAMETER_DECLARE(UInt, uint32_t, uint32_t)
@@ -64,6 +66,7 @@ namespace lite3dpp
         LITE3D_SHADER_PARAMETER_DECLARE(Sampler, Texture, Texture *)
         LITE3D_SHADER_PARAMETER_DECLARE(SSBO, SSBO, SSBO *)
         LITE3D_SHADER_PARAMETER_DECLARE(UBO, UBO, UBO *)
+        LITE3D_SHADER_PARAMETER_DECLARE(ImageStore, Texture, Texture *)
         
     protected:
 

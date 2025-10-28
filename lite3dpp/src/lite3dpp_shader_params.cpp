@@ -139,6 +139,12 @@ namespace lite3dpp
         return &it->second;
     }
 
+    void ShaderParameters::clear()
+    {
+        SDL_assert(mData);
+        lite3d_shader_parameters_remove_all(mData);
+    }
+
     LITE3D_IMPLEMENT_SHADER_PARAMETER(Float, float, float, LITE3D_SHADER_PARAMETER_FLOAT, valfloat, valfloat)
     LITE3D_IMPLEMENT_SHADER_PARAMETER(Int, int32_t, int32_t, LITE3D_SHADER_PARAMETER_INT, valint, valint)
     LITE3D_IMPLEMENT_SHADER_PARAMETER(UInt, uint32_t, uint32_t, LITE3D_SHADER_PARAMETER_UINT, valuint, valuint)
@@ -149,5 +155,6 @@ namespace lite3dpp
     LITE3D_IMPLEMENT_SHADER_PARAMETER(Sampler, Texture, Texture *, LITE3D_SHADER_PARAMETER_SAMPLER, texture, texture->userdata)
     LITE3D_IMPLEMENT_SHADER_PARAMETER(SSBO, SSBO, SSBO *, LITE3D_SHADER_PARAMETER_SSBO, vbo, vbo->userdata)
     LITE3D_IMPLEMENT_SHADER_PARAMETER(UBO, UBO, UBO *, LITE3D_SHADER_PARAMETER_UBO, vbo, vbo->userdata)
+    LITE3D_IMPLEMENT_SHADER_PARAMETER(ImageStore, Texture, Texture *, LITE3D_SHADER_PARAMETER_IMAGE_STORE, texture, texture->userdata)
 }
 
