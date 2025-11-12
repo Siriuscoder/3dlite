@@ -173,6 +173,8 @@ namespace lite3dpp
                     setUBOParameter(passNo, paramName, 
                         *getMain().getResourceManager().queryResource<UBO>(uniformParamJson.getString(L"UBOName"),
                         uniformParamJson.getString(L"UBOPath")), scope == "global");
+                else
+                    LITE3D_THROW("Material \"" << getName() << "\": unknown parameter type \"" << paramType << "\"");
             }
         }
     }

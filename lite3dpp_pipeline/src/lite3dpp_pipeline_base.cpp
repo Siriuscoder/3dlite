@@ -522,7 +522,7 @@ namespace lite3dpp_pipeline {
             return;
         }
 
-        mIBL = std::make_unique<IBLMultiProbe>(getMain(), getName());
+        mIBL = std::make_unique<IBLMultiProbe>(getMain(), getName(), mShaderPackage);
         mIBL->initialize(pipelineConfig);
 
         sceneGenerator.addRenderTarget(cameraName, mIBL->getPass()->getName(), ConfigurationWriter()

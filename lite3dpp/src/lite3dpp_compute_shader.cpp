@@ -91,6 +91,8 @@ namespace lite3dpp
                     mShaderParameters.setImageStoreParameter(paramName, 
                         *getMain().getResourceManager().queryResource<TextureImage>(uniformParamJson.getString(L"TextureName"),
                         uniformParamJson.getString(L"TexturePath")), scope == "global");
+                else
+                    LITE3D_THROW("ComputeShader \"" << getName() << "\": unknown parameter type \"" << paramType << "\"");
             }
         }
     }

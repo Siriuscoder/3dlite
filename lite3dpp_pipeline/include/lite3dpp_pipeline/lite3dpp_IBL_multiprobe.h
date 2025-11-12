@@ -17,6 +17,7 @@
  *******************************************************************************/
 #pragma once
 
+#include <lite3dpp/lite3dpp_compute_shader.h>
 #include <lite3dpp_pipeline/lite3dpp_generator.h>
 
 namespace lite3dpp {
@@ -79,7 +80,7 @@ public:
         EnvProbeFlags mFlags;
     };
 
-    IBLMultiProbe(Main& main, const String& pipelineName);
+    IBLMultiProbe(Main& main, const String& pipelineName, const String& shaderPackage);
     virtual ~IBLMultiProbe();
 
     void initialize(const ConfigurationReader &pipelineConfig);
@@ -98,6 +99,7 @@ protected:
     void createProbePass(const ConfigurationReader &config);
     VBOResource* createBuffer(const String& bufferName, size_t size);
     void calculateProbeBatchCount();
+    void integrateGGX();
 
 protected:
 
@@ -105,6 +107,7 @@ protected:
     uint32_t mProbeCount = 1;
     uint32_t mMaxProbeBatchCount = 0;
     String mPipelineName;
+    String mShaderPackage;
     VBOResource *mProbesBuffer = nullptr;
     VBOResource *mProbesIndexBuffer = nullptr;
     RenderTarget *mEnvironmentProbePass = nullptr;

@@ -23,9 +23,10 @@
 namespace lite3dpp {
 namespace lite3dpp_pipeline {
 
-IBLMultiProbe::IBLMultiProbe(Main& mMain, const String& pipelineName) : 
+IBLMultiProbe::IBLMultiProbe(Main& mMain, const String& pipelineName, const String& shaderPackage) : 
     mMain(mMain),
-    mPipelineName(pipelineName)
+    mPipelineName(pipelineName),
+    mShaderPackage(shaderPackage)
 {
     mMain.addObserver(this);
 }
@@ -48,12 +49,50 @@ void IBLMultiProbe::initialize(const ConfigurationReader &pipelineConfig)
     mzFar = config.getDouble(L"ProbeZFarClip", 1.0f);
 
     calculateProbeBatchCount();
+    integrateGGX();
 
     mProbesBuffer = createBuffer("_EnvProbesData", sizeof(ProbeRawEntity) * mProbeCount);
     // Массивы в std140 всегда выравниваются по границе 16 байт, даже если тип данных (например, int) 
     // сам занимает меньше места (4 байта).
     mProbesIndexBuffer = createBuffer("_EnvProbesIndex", sizeof(ProbeIndexRawEntity) * (mMaxProbeBatchCount + 1));
     createProbePass(config);
+}
+
+void IBLMultiProbe::integrateGGX()
+{
+    const int32_t LUTSize = 512;
+    ConfigurationWriter IntergratedGGXLUTConfig;
+    IntergratedGGXLUTConfig.set(L"TextureType", "2D")
+        .set(L"Filtering", "Linear")
+        .set(L"Width", LUTSize)
+        .set(L"Height", LUTSize)
+        .set(L"Depth", 1)
+        .set(L"Wrapping", "ClampToEdge")
+        .set(L"Compression", false)
+        .set(L"TextureFormat", "RGB")
+        .set(L"InternalFormat", "RGB16F");
+
+    mMain.getResourceManager().queryResourceFromJson<TextureImage>("IntergratedGGXLUT.texture", 
+        IntergratedGGXLUTConfig.write());
+
+    ConfigurationWriter shaderParams;
+    shaderParams.set(L"Program", ConfigurationWriter()
+        .set(L"Name", "IntergrateGGX.program")
+        .set(L"Path", mShaderPackage + ":shaders/json/intergrate_ggx.json"))
+        .set(L"Uniforms", stl<ConfigurationWriter>::vector {
+        ConfigurationWriter().set(L"Type", "imageStore")
+            .set(L"TextureName", "IntergratedGGXLUT.texture")
+    });
+
+    auto intergrateGGXShader = mMain.getResourceManager().queryResourceFromJson<ComputeShader>("IntergrateGGX.comp",
+        shaderParams.write());
+
+    // 16 нитей в группе
+    uint32_t groupsCount = (LUTSize + 16 - 1) / 16;
+    intergrateGGXShader->dispatch(groupsCount, groupsCount, 1);
+
+    // Освобождаем ресурсы, расчет GGX делается только однажды, более шейдер не требуется
+    mMain.getResourceManager().releaseResource(intergrateGGXShader->getName());
 }
 
 void IBLMultiProbe::calculateProbeBatchCount()

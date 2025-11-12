@@ -39,6 +39,7 @@ static int sdl_init(void)
 
     if (SDL_WasInit(subSystems) != subSystems)
     {
+        SDL_SetHint(SDL_HINT_APP_NAME, "lite3d " LITE3D_FULL_VERSION);
         if (SDL_Init(subSystems) != 0)
         {
             SDL_LogCritical(
@@ -102,8 +103,7 @@ int lite3d_main(const lite3d_global_settings *settings)
 
     SDL_LogInfo(
         SDL_LOG_CATEGORY_APPLICATION,
-        "====== lite3d %s ======",
-        LITE3D_FULL_VERSION);
+        "============================ LITE3D ============================");
 
     /* setup SDL */
     if (!sdl_init())
