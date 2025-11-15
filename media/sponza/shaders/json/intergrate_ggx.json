@@ -1,0 +1,6 @@
+{
+    "Sources": 
+    [
+        "samples:shaders/sources/pbr/intergrate_ggx.comp"
+    ]
+}

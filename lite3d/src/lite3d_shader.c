@@ -24,6 +24,23 @@
 #include <lite3d/lite3d_alloc.h>
 #include <lite3d/lite3d_shader.h>
 
+static const char *lite3d_get_shader_type_name(uint8_t type)
+{
+    switch (type)
+    {
+    case LITE3D_SHADER_TYPE_VERTEX:
+        return "vertex";
+    case LITE3D_SHADER_TYPE_FRAGMENT:
+        return "fragment";
+    case LITE3D_SHADER_TYPE_GEOMETRY:
+        return "geometry";
+    case LITE3D_SHADER_TYPE_COMPUTE:
+        return "compute";
+    default:
+        return "unknown";
+    }
+}
+
 int lite3d_shader_init(struct lite3d_shader *shader, uint8_t type)
 {
     SDL_assert(shader);
@@ -112,21 +129,21 @@ int lite3d_shader_compile(struct lite3d_shader *shader, uint32_t sources, const 
         if (maxLogLength > 0)
         {
             SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
-                "%s: compile shader(%d) 0x%016llx OK: %s", LITE3D_CURRENT_FUNCTION, shader->shaderID, 
-                (unsigned long long)shader, shader->statusString);
+                "%s: compile %s shader(%d) 0x%016llx OK: %s", LITE3D_CURRENT_FUNCTION, lite3d_get_shader_type_name(shader->type), 
+                shader->shaderID, (unsigned long long)shader, shader->statusString);
         }
         else
         {
             SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION,
-                "%s: compile shader(%d) 0x%016llx OK", LITE3D_CURRENT_FUNCTION, shader->shaderID, 
-                (unsigned long long)shader);
+                "%s: compile %s shader(%d) 0x%016llx OK", LITE3D_CURRENT_FUNCTION, lite3d_get_shader_type_name(shader->type), 
+                shader->shaderID, (unsigned long long)shader);
         }
     }
     else
     {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
-            "%s: compile shader(%d) 0x%016llx FAILED: %s", LITE3D_CURRENT_FUNCTION, shader->shaderID, 
-            (unsigned long long)shader, maxLogLength > 0 ? shader->statusString : "No info");
+            "%s: compile %s shader(%d) 0x%016llx FAILED: %s", LITE3D_CURRENT_FUNCTION, lite3d_get_shader_type_name(shader->type),
+            shader->shaderID, (unsigned long long)shader, maxLogLength > 0 ? shader->statusString : "No info");
     }
 
     return shader->success;

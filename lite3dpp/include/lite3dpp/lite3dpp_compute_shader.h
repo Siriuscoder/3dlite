@@ -35,6 +35,8 @@ namespace lite3dpp
         void dispatch(uint32_t numGroupsX, uint32_t numGroupsY, uint32_t numGroupsZ);
         void dispatchSync(uint32_t numGroupsX, uint32_t numGroupsY, uint32_t numGroupsZ);
 
+        inline ShaderProgram *getProgram() const { return mProgram; }
+
     protected:
 
         virtual void loadFromConfigImpl(const ConfigurationReader &helper) override;

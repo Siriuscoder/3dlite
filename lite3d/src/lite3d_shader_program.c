@@ -225,7 +225,7 @@ int lite3d_shader_program_validate(struct lite3d_shader_program *program)
 
     if (program->validated)
     {
-        if (program->statusString)
+        if (program->statusString && strlen(program->statusString) > 0)
         {
             SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION, "shader program(%d) 0x%016llx validate OK: %s", 
                 program->programID, (unsigned long long)program, program->statusString);

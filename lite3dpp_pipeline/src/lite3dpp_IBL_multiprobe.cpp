@@ -70,7 +70,7 @@ void IBLMultiProbe::integrateGGX()
         .set(L"Wrapping", "ClampToEdge")
         .set(L"Compression", false)
         .set(L"TextureFormat", "RGB")
-        .set(L"InternalFormat", "RGB16F");
+        .set(L"InternalFormat", "RG16F");
 
     mMain.getResourceManager().queryResourceFromJson<TextureImage>("IntergratedGGXLUT.texture", 
         IntergratedGGXLUTConfig.write());
@@ -81,6 +81,7 @@ void IBLMultiProbe::integrateGGX()
         .set(L"Path", mShaderPackage + ":shaders/json/intergrate_ggx.json"))
         .set(L"Uniforms", stl<ConfigurationWriter>::vector {
         ConfigurationWriter().set(L"Type", "imageStore")
+            .set(L"Name", "dstMip")
             .set(L"TextureName", "IntergratedGGXLUT.texture")
     });
 
@@ -88,10 +89,11 @@ void IBLMultiProbe::integrateGGX()
         shaderParams.write());
 
     // 16 нитей в группе
-    uint32_t groupsCount = (LUTSize + 16 - 1) / 16;
+    const uint32_t groupsCount = (LUTSize + 16 - 1) / 16;
     intergrateGGXShader->dispatch(groupsCount, groupsCount, 1);
 
     // Освобождаем ресурсы, расчет GGX делается только однажды, более шейдер не требуется
+    mMain.getResourceManager().releaseResource(intergrateGGXShader->getProgram()->getName());
     mMain.getResourceManager().releaseResource(intergrateGGXShader->getName());
 }
 

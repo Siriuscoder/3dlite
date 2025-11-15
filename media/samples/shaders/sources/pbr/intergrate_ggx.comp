@@ -1,0 +1,16 @@
+layout(local_size_x = 16, local_size_y = 16) in;
+layout(binding = 0, rg16f) uniform writeonly image2D dstMip;
+
+void main() {
+    ivec2 dstCoord = ivec2(gl_GlobalInvocationID.xy);
+    ivec2 bounds = imageSize(dstMip);
+
+    if (dstCoord.x >= bounds.x || dstCoord.y >= bounds.y)
+        return;
+
+    vec2 coord = 8.0 * vec2(dstCoord) / vec2(bounds);
+    float checker = mod(floor(coord.x) + floor(coord.y), 2.0);
+
+    vec4 color = (checker < 1.0) ? vec4(1.0, 0.0, 0.0, 0.0) : vec4(0.0, 1.0, 0.0, 0.0);
+    imageStore(dstMip, dstCoord, color);
+}
