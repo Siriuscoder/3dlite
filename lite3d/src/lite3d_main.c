@@ -39,7 +39,11 @@ static int sdl_init(void)
 
     if (SDL_WasInit(subSystems) != subSystems)
     {
+
+#ifdef SDL_HINT_APP_NAME
         SDL_SetHint(SDL_HINT_APP_NAME, "lite3d " LITE3D_FULL_VERSION);
+#endif
+
         if (SDL_Init(subSystems) != 0)
         {
             SDL_LogCritical(

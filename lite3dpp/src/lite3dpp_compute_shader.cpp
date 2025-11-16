@@ -88,9 +88,27 @@ namespace lite3dpp
                         *getMain().getResourceManager().queryResource<UBO>(uniformParamJson.getString(L"UBOName"),
                         uniformParamJson.getString(L"UBOPath")), scope == "global");
                 else if (paramType == "imageStore")
+                {
                     mShaderParameters.setImageStoreParameter(paramName, 
                         *getMain().getResourceManager().queryResource<TextureImage>(uniformParamJson.getString(L"TextureName"),
                         uniformParamJson.getString(L"TexturePath")), scope == "global");
+                    auto parameter = mShaderParameters.getParameter(paramName, LITE3D_SHADER_PARAMETER_IMAGE_STORE, 
+                        scope == "global", false);
+
+                    // Set direction of parameter based on json value
+                    // "inout" sets direction to inout, "in" sets direction to input, "out" sets direction to output
+                    auto direction = uniformParamJson.getString(L"Direction", "inout");
+                    parameter->direction = direction == "inout" ? LITE3D_SHADER_PARAMETER_DIRECTION_INOUT :
+                        (direction == "in" ? LITE3D_SHADER_PARAMETER_DIRECTION_INPUT : LITE3D_SHADER_PARAMETER_DIRECTION_OUTPUT);
+
+                    // Set layer of parameter based on json value
+                    // -1 means no layer specified
+                    parameter->imageLayer = uniformParamJson.getInt(L"Layer", -1);
+
+                    // Set mip level of parameter based on json value
+                    // 0 means highest mip level
+                    parameter->imageMipLevel = uniformParamJson.getInt(L"MipLevel", 0);
+                }
                 else
                     LITE3D_THROW("ComputeShader \"" << getName() << "\": unknown parameter type \"" << paramType << "\"");
             }

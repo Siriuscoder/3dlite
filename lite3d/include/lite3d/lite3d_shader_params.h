@@ -82,7 +82,6 @@ typedef struct lite3d_shader_parameter_container
     /* uniform location in shader program attached to this pass */
     int32_t location;
     int16_t binding;
-    int8_t direction;
 } lite3d_shader_parameter_container;
 
 typedef struct lite3d_shader_parameters

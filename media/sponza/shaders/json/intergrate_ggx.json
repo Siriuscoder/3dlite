@@ -1,6 +1,7 @@
 {
     "Sources": 
     [
-        "samples:shaders/sources/pbr/intergrate_ggx.comp"
+        "samples:shaders/sources/pbr/intergrate_ggx.comp",
+        "samples:shaders/sources/common/utils.comp"
     ]
 }

@@ -81,7 +81,8 @@ void IBLMultiProbe::integrateGGX()
         .set(L"Path", mShaderPackage + ":shaders/json/intergrate_ggx.json"))
         .set(L"Uniforms", stl<ConfigurationWriter>::vector {
         ConfigurationWriter().set(L"Type", "imageStore")
-            .set(L"Name", "dstMip")
+            .set(L"Name", "brfdLUT")
+            .set(L"Direction", "output")
             .set(L"TextureName", "IntergratedGGXLUT.texture")
     });
 

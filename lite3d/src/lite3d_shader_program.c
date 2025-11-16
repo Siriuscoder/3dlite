@@ -182,12 +182,12 @@ int lite3d_shader_program_link(struct lite3d_shader_program *program, lite3d_sha
     {
         if (program->statusString)
         {
-            SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION, "shader program(%d) 0x%016llx link OK: %s", 
+            SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION, "shader program(%d) 0x%016llx linked successfully: %s", 
                 program->programID, (unsigned long long)program, program->statusString);
         }
         else
         {
-            SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "shader program(%d) 0x%016llx link OK",
+            SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "shader program(%d) 0x%016llx linked successfully",
                 program->programID, (unsigned long long)program);
         }
     }
@@ -227,12 +227,12 @@ int lite3d_shader_program_validate(struct lite3d_shader_program *program)
     {
         if (program->statusString && strlen(program->statusString) > 0)
         {
-            SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION, "shader program(%d) 0x%016llx validate OK: %s", 
+            SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION, "shader program(%d) 0x%016llx validated successfully: %s", 
                 program->programID, (unsigned long long)program, program->statusString);
         }
         else
         {
-            SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "shader program(%d) 0x%016llx validate OK",
+            SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "shader program(%d) 0x%016llx validated successfully",
                 program->programID, (unsigned long long)program);
         }
     }
@@ -340,8 +340,8 @@ static int lite3d_shader_program_ssbo_set(
     
     glBindBufferBase(GL_SHADER_STORAGE_BUFFER, p->binding, p->parameter->parameter.vbo->vboID);
 
-    if (p->direction == LITE3D_SHADER_PARAMETER_DIRECTION_OUTPUT || 
-        p->direction == LITE3D_SHADER_PARAMETER_DIRECTION_INOUT)
+    if (p->parameter->direction == LITE3D_SHADER_PARAMETER_DIRECTION_OUTPUT || 
+        p->parameter->direction == LITE3D_SHADER_PARAMETER_DIRECTION_INOUT)
     {
         program->syncFlags |= GL_SHADER_STORAGE_BARRIER_BIT;
     }
@@ -424,8 +424,8 @@ static int lite3d_shader_program_image_store_set(
     
     glUniform1i(p->location, p->binding);
 
-    if (p->direction == LITE3D_SHADER_PARAMETER_DIRECTION_OUTPUT || 
-        p->direction == LITE3D_SHADER_PARAMETER_DIRECTION_INOUT)
+    if (p->parameter->direction == LITE3D_SHADER_PARAMETER_DIRECTION_OUTPUT || 
+        p->parameter->direction == LITE3D_SHADER_PARAMETER_DIRECTION_INOUT)
     {
         program->syncFlags |= GL_SHADER_IMAGE_ACCESS_BARRIER_BIT | GL_TEXTURE_FETCH_BARRIER_BIT;
     }
@@ -434,8 +434,8 @@ static int lite3d_shader_program_image_store_set(
         p->parameter->imageMipLevel, 
         p->parameter->imageLayer < 0 ? GL_TRUE : GL_FALSE, 
         p->parameter->imageLayer >= 0 ? p->parameter->imageLayer : 0,
-        p->direction == LITE3D_SHADER_PARAMETER_DIRECTION_INOUT ? GL_READ_WRITE : 
-        (p->direction == LITE3D_SHADER_PARAMETER_DIRECTION_INPUT ? GL_READ_ONLY : GL_WRITE_ONLY),
+        p->parameter->direction == LITE3D_SHADER_PARAMETER_DIRECTION_INOUT ? GL_READ_WRITE : 
+        (p->parameter->direction == LITE3D_SHADER_PARAMETER_DIRECTION_INPUT ? GL_READ_ONLY : GL_WRITE_ONLY),
         p->parameter->parameter.texture->internalFormat);
 
     return LITE3D_TRUE;

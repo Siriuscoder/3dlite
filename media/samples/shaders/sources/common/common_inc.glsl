@@ -74,12 +74,39 @@ vec3 fresnelSchlickRoughness(float teta, in Material material);
 vec3 diffuseFactor(vec3 F, float metallic);
 // Specular Term GGX
 vec3 SpecularGGX(vec3 F, in Material material, in AngularInfo angular);
+// Geometry function (Smith's) for IBL intergation
+float G_IBL(float NdotV, float NdotL, float roughness);
 // Diffuse Term Lambertian (Simple diffuse model)
 vec3 DiffuseLambertian(vec3 F, in Material material);
 // Sheen 
 vec3 Sheen(vec3 F, in Material material, in AngularInfo angular);
 // Attenuation
 float calcAttenuation(in LightSource source, in AngularInfo angular);
+
+// Importance sample GGX NDF using Hammersley sequence
+// This function generates a sample vector towards the alignment of the specular lobe
+// using importance sampling. The importance sampling is done using the Hammersley sequence
+// which is a low-discrepancy sequence that can be used to generate points that are
+// uniformly distributed in the unit square.
+//
+// The input parameters are:
+// Xi: the Hammersley sequence number
+// N: the normal vector
+// roughness: the material roughness
+//
+// The output is the sample vector towards the alignment of the specular lobe
+vec3 importanceSampleGGX(vec2 Xi, vec3 N, float roughness);
+
+// Hammersley sequence
+// This is a low-discrepancy sequence which can be used to generate points that are uniformly distributed
+// in the unit square. This is useful for generating points for importance sampling in IBL.
+//
+// The sequence is generated using the following formulae:
+// x_n = (sqrt(2) * n - 1) / (2 * N)
+// y_n = (sqrt(3) * (n % N)) / (2 * N)
+//
+// The sequence is then shuffled by swapping the x and y coordinates of every second point.
+vec2 hammersleySequence(uint i, uint N);
 
 //////////// Building structures
 Surface makeSurface(vec2 uv, vec3 wv, vec3 wn, vec3 wt, vec3 wb);
