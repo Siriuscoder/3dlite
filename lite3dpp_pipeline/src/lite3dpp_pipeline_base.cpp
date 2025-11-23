@@ -121,13 +121,13 @@ namespace lite3dpp_pipeline {
         {
             // SSBO is needed for the MultiRender supported by version GLSL 430 or higher
             ShaderProgram::setShaderVersion("430");
-            ShaderProgram::addDefinition("LITE3D_BINDLESS_TEXTURE_PIPELINE", "1");
+            ShaderProgram::addGlobalDefinition("LITE3D_BINDLESS_TEXTURE_PIPELINE", "1");
             sceneGeneratedConfig.set(L"MultiRender", true);
         }
 
         if (pipelineConfig.has(L"EnvironmentTexture"))
         {
-            ShaderProgram::addDefinition("LITE3D_ENABLE_ENVIRONMENT_TEXTURE", "1");
+            ShaderProgram::addGlobalDefinition("LITE3D_ENABLE_ENVIRONMENT_TEXTURE", "1");
         }
 
         if (!lightingTechnique.empty())

@@ -182,7 +182,7 @@ static void update_render_target(lite3d_render_target *target)
             if (look->camera->cameraNode.invalidated)
                 LITE3D_ARR_ADD_ELEM(&gInvalidatedCameras, lite3d_camera *, look->camera);
 
-            /* accamulate statistics */
+            /* accumulate statistics */
             gRenderStats.trianglesRendered += look->scene->stats.trianglesRendered;
             gRenderStats.verticesRendered += look->scene->stats.verticesRendered;
             gRenderStats.totalNodes += look->scene->stats.totalNodes;

@@ -36,6 +36,7 @@ class LITE3DPP_PIPELINE_EXPORT IBLMultiProbe : public RenderTargetObserver, publ
 public:
 
     static constexpr const uint32_t MaxProbeCount = 256;
+    static constexpr const int32_t DefaultProbeResolution = 256;
 
 #pragma pack(push, 16)
     struct ProbeRawEntity
@@ -87,7 +88,7 @@ public:
     inline RenderTarget* getPass() { return mEnvironmentProbePass; }
     inline const std::string &getProbeBufferName() const { return mProbesBuffer->getName(); }
     inline const std::string &getProbeIndexBufferName() const { return mProbesIndexBuffer->getName(); }
-    inline Texture *getEnvProbeTexture() { return mEnvironmentProbe; }
+    inline Texture *getEnvProbeTexture() { return mPrefilteredEnvironment; }
     void rebuild();
     size_t addProbe(const kmVec3 &position, EnvProbeFlags flags = EnvProbeFlags::Irradiance | EnvProbeFlags::Specular);
     void updateProbe(size_t index, const kmVec3 &position);
@@ -95,8 +96,10 @@ public:
 protected:
 
     bool beginUpdate(RenderTarget *rt) override;
+    void postUpdate(RenderTarget *rt) override;
 
     void createProbePass(const ConfigurationReader &config);
+    void createPrefilterShader(const ConfigurationReader &config);
     VBOResource* createBuffer(const String& bufferName, size_t size);
     void calculateProbeBatchCount();
     void integrateGGX();
@@ -113,6 +116,8 @@ protected:
     RenderTarget *mEnvironmentProbePass = nullptr;
     Texture *mEnvironmentProbe = nullptr;
     Texture *mEnvironmentDepth = nullptr;
+    ComputeShader *mPrefilterEnvironmentShader = nullptr;
+    TextureImage *mPrefilteredEnvironment = nullptr;
     stl<EnvProbe>::vector mProbes;
     stl<ProbeIndexRawEntity>::vector mProbesIndex;
     stl<String>::list mResourcesList;

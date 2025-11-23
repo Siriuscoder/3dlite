@@ -453,3 +453,21 @@ vec3 importanceSampleGGX(vec2 Xi, vec3 N, float roughness)
     vec3 sampleVec = tangent * H.x + bitangent * H.y + N * H.z;
     return normalize(sampleVec);
 }
+
+vec3 cubeCoordToWorld(ivec3 cubeCoord, vec2 cubemapSize)
+{
+    vec2 texCoord = vec2(cubeCoord.xy) / cubemapSize;
+    texCoord = texCoord  * 2.0 - 1.0; // -1..1
+    switch (cubeCoord.z)
+    {
+        case 0: return vec3(1.0, -texCoord.yx); // posx
+        case 1: return vec3(-1.0, -texCoord.y, texCoord.x); //negx
+        case 2: return vec3(texCoord.x, 1.0, texCoord.y); // posy
+        case 3: return vec3(texCoord.x, -1.0, -texCoord.y); //negy
+        case 4: return vec3(texCoord.x, -texCoord.y, 1.0); // posz
+        case 5: return vec3(-texCoord.xy, -1.0); // negz
+    }
+
+    return vec3(0.0);
+}
+

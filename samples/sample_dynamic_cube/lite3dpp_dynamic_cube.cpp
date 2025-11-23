@@ -89,7 +89,7 @@ public:
     void updateTextureData()
     {
         lite3dpp::PixelsData pixels;
-        for(int8_t i = 0; i <= mBoxTexture->getLevelsNum(); ++i)
+        for(int8_t i = 0; i < mBoxTexture->getTotalLevels(); ++i)
         {
             mBoxTexture->getPixels(i, pixels);
 

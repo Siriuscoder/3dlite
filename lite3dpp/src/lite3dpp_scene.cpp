@@ -115,7 +115,7 @@ namespace lite3dpp
                     "{\"Dynamic\": true}");
 
                 mMaxLightsCount = std::min(MaxLightCount, static_cast<uint32_t>(UBOMaxSize / sizeof(lite3d_light_params)));
-                ShaderProgram::addDefinition("LITE3D_MAX_LIGHT_COUNT", std::to_string(mMaxLightsCount));
+                ShaderProgram::addGlobalDefinition("LITE3D_MAX_LIGHT_COUNT", std::to_string(mMaxLightsCount));
             }
             else
             {

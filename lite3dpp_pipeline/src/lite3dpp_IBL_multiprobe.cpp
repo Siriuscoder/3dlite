@@ -56,6 +56,7 @@ void IBLMultiProbe::initialize(const ConfigurationReader &pipelineConfig)
     // сам занимает меньше места (4 байта).
     mProbesIndexBuffer = createBuffer("_EnvProbesIndex", sizeof(ProbeIndexRawEntity) * (mMaxProbeBatchCount + 1));
     createProbePass(config);
+    createPrefilterShader(config);
 }
 
 void IBLMultiProbe::integrateGGX()
@@ -72,18 +73,18 @@ void IBLMultiProbe::integrateGGX()
         .set(L"TextureFormat", "RGB")
         .set(L"InternalFormat", "RG16F");
 
-    mMain.getResourceManager().queryResourceFromJson<TextureImage>("IntergratedGGXLUT.texture", 
+    auto ggxLUT = mMain.getResourceManager().queryResourceFromJson<TextureImage>("IntergratedGGXLUT.texture", 
         IntergratedGGXLUTConfig.write());
 
     ConfigurationWriter shaderParams;
     shaderParams.set(L"Program", ConfigurationWriter()
         .set(L"Name", "IntergrateGGX.program")
-        .set(L"Path", mShaderPackage + ":shaders/json/intergrate_ggx.json"))
+        .set(L"Path", mShaderPackage + ":shaders/json/integrate_ggx.json"))
         .set(L"Uniforms", stl<ConfigurationWriter>::vector {
         ConfigurationWriter().set(L"Type", "imageStore")
-            .set(L"Name", "brfdLUT")
+            .set(L"Name", "BrdfLUT")
             .set(L"Direction", "output")
-            .set(L"TextureName", "IntergratedGGXLUT.texture")
+            .set(L"TextureName", ggxLUT->getName())
     });
 
     auto intergrateGGXShader = mMain.getResourceManager().queryResourceFromJson<ComputeShader>("IntergrateGGX.comp",
@@ -120,8 +121,8 @@ void IBLMultiProbe::calculateProbeBatchCount()
             "max hardware posible limit is " << maxProbeCount);
     }
 
-    ShaderProgram::addDefinition("LITE3D_ENV_PROBE_GS_MAX_VERTICES", std::to_string(mMaxProbeBatchCount * 3 * 6));
-    ShaderProgram::addDefinition("LITE3D_ENV_PROBE_MAX", std::to_string(maxProbeCount));
+    ShaderProgram::addGlobalDefinition("LITE3D_ENV_PROBE_GS_MAX_VERTICES", std::to_string(mMaxProbeBatchCount * 3 * 6));
+    ShaderProgram::addGlobalDefinition("LITE3D_ENV_PROBE_MAX", std::to_string(maxProbeCount));
 }
 
 VBOResource* IBLMultiProbe::createBuffer(const String& bufferName, size_t size)
@@ -137,7 +138,7 @@ VBOResource* IBLMultiProbe::createBuffer(const String& bufferName, size_t size)
 
 void IBLMultiProbe::createProbePass(const ConfigurationReader &config)
 {
-    auto resolution = config.getInt(L"ProbeResolution", 256);
+    auto resolution = config.getInt(L"ProbeResolution", DefaultProbeResolution);
     // Создание массива кубических текстур для пробирования окружающего освещения
     ConfigurationWriter mapConfig;
     mapConfig.set(L"TextureType", "CUBE_ARRAY")
@@ -185,6 +186,50 @@ void IBLMultiProbe::createProbePass(const ConfigurationReader &config)
     mEnvironmentProbePass->addObserver(this);
 }
 
+void IBLMultiProbe::createPrefilterShader(const ConfigurationReader &config)
+{
+    auto resolution = config.getInt(L"ProbeResolution", DefaultProbeResolution);
+    // Создание массива кубических текстур для пробирования окружающего освещения
+    ConfigurationWriter mapConfig;
+    mapConfig.set(L"TextureType", "CUBE_ARRAY")
+        .set(L"Filtering", "Trilinear")
+        .set(L"Width", resolution)
+        .set(L"Height", resolution)
+        .set(L"Depth", mProbeCount)
+        .set(L"Wrapping", "ClampToEdge")
+        .set(L"Compression", false)
+        .set(L"TextureFormat", "RGB")
+        .set(L"InternalFormat", "RGBA16F");
+
+    mPrefilteredEnvironment = mMain.getResourceManager().queryResourceFromJson<TextureImage>(
+        mPipelineName + "_PrefilteredEnvironmentMultiProbe", mapConfig.write());
+    mResourcesList.emplace_back(mPrefilteredEnvironment->getName());
+
+    ConfigurationWriter shaderParams;
+    shaderParams.set(L"Program", ConfigurationWriter()
+        .set(L"Name", "PrefilterEnvironment.program")
+        .set(L"Path", mShaderPackage + ":shaders/json/prefilter_environment.json"))
+        .set(L"Uniforms", stl<ConfigurationWriter>::vector {
+        ConfigurationWriter().set(L"Type", "imageStore")
+            .set(L"Name", "PrefilteredEnvironment")
+            .set(L"Direction", "output")
+            .set(L"TextureName", mPrefilteredEnvironment->getName()),
+        ConfigurationWriter().set(L"Type", "sampler")
+            .set(L"Name", "EnvironmentProbe")
+            .set(L"TextureName", mEnvironmentProbe->getName()),
+        ConfigurationWriter().set(L"Type", "float")
+            .set(L"Name", "Roughness")
+            .set(L"Value", 1.0f),
+        ConfigurationWriter().set(L"Type", "UBO")
+            .set(L"Name", "EnvProbesIndex")
+            .set(L"UBOName", getProbeIndexBufferName())
+    });
+
+    mPrefilterEnvironmentShader = mMain.getResourceManager().queryResourceFromJson<ComputeShader>(
+        mPipelineName + "_PrefilterEnvironment.comp", shaderParams.write());
+    mResourcesList.emplace_back(mPrefilterEnvironmentShader->getName());
+}
+
 void IBLMultiProbe::rebuild()
 {
     for (auto &probe : mProbes)
@@ -228,6 +273,34 @@ bool IBLMultiProbe::beginUpdate(RenderTarget *rt)
     mProbesIndexBuffer->setData(&mProbesIndex[0], 0, sizeof(ProbeIndexRawEntity) * mProbesIndex.size());
 
     return true;
+}
+
+void IBLMultiProbe::postUpdate(RenderTarget *rt)
+{
+    // nothing to do
+    if (mProbesIndex.size() == 0 || mProbesIndex[0].index[0] == 0)
+    {
+        return;
+    }
+
+    auto totalLevels = mPrefilteredEnvironment->getTotalLevels();
+    auto levelSize = mPrefilteredEnvironment->getWidth();
+    for (int8_t mip = 0; mip < totalLevels; ++mip)
+    {
+        // Calculate a roughness value in the range [0, 1] based on the
+        // current mip level and the total number of mip levels.
+        const auto roughness = static_cast<float>(mip) / static_cast<float>(totalLevels);
+        mPrefilterEnvironmentShader->getShaderParameters().setFloatParameter("Roughness", roughness);
+        // Bind the current mip level of the environment probe texture
+        mPrefilterEnvironmentShader->getShaderParameters().getParameter("PrefilteredEnvironment", 
+            LITE3D_SHADER_PARAMETER_IMAGE_STORE)->imageMipLevel = mip;
+
+        const uint32_t groupsCount = (levelSize + 16 - 1) / 16;
+        mPrefilterEnvironmentShader->dispatch(groupsCount, groupsCount, mProbesIndex[0].index[0] * 6);
+
+        // Shift to the next mip level
+        levelSize >>= 1;
+    }
 }
 
 size_t IBLMultiProbe::addProbe(const kmVec3 &position, EnvProbeFlags flags)

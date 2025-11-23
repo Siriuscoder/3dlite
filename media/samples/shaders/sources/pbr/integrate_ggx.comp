@@ -1,7 +1,7 @@
 #include "samples:shaders/sources/common/common_inc.glsl"
 
 layout(local_size_x = 16, local_size_y = 16) in;
-layout(binding = 0, rg16f) uniform writeonly image2D brfdLUT;
+layout(binding = 0, rg16f) uniform writeonly image2D BrdfLUT;
 
 const uint totalSamples = 1024u;
 const float invTotalSamples = 1.0 / float(totalSamples);
@@ -9,7 +9,7 @@ const float invTotalSamples = 1.0 / float(totalSamples);
 void main() 
 {
     const ivec2 texCoord = ivec2(gl_GlobalInvocationID.xy);
-    const ivec2 bounds = imageSize(brfdLUT);
+    const ivec2 bounds = ivec2(imageSize(BrdfLUT));
 
     if (texCoord.x >= bounds.x || texCoord.y >= bounds.y)
         return;
@@ -53,5 +53,5 @@ void main()
     A *= invTotalSamples;
     B *= invTotalSamples;
 
-    imageStore(brfdLUT, texCoord, vec4(A, B, 0.0, 0.0));
+    imageStore(BrdfLUT, texCoord, vec4(A, B, 0.0, 0.0));
 }

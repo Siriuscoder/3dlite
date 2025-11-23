@@ -36,6 +36,9 @@ namespace lite3dpp
         void dispatchSync(uint32_t numGroupsX, uint32_t numGroupsY, uint32_t numGroupsZ);
 
         inline ShaderProgram *getProgram() const { return mProgram; }
+        inline ShaderParameters &getShaderParameters() { return mShaderParameters; }
+
+        void addLocalDefinition(const String &name, const String &value);
 
     protected:
 

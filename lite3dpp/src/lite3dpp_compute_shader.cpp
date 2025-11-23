@@ -147,4 +147,12 @@ namespace lite3dpp
         lite3d_shader_program_apply_parameters(mProgram->getPtr(), &mShaderParametersData, LITE3D_TRUE);
         lite3d_shader_program_compute_dispatch_sync(mProgram->getPtr(), numGroupsX, numGroupsY, numGroupsZ);
     }
+
+    void ComputeShader::addLocalDefinition(const String &name, const String &value)
+    {
+        if (mProgram)
+        {
+            mProgram->addLocalDefinition(name, value);
+        }
+    }
 }

@@ -260,6 +260,11 @@ namespace lite3dpp
             result.append("#define ").append(d.first).append(" ").append(d.second).append("\n");
         }
 
+        for (auto &d : mLocalDefinitions)
+        {
+            result.append("#define ").append(d.first).append(" ").append(d.second).append("\n");
+        }
+
         return result;
     }
 
@@ -273,9 +278,15 @@ namespace lite3dpp
         mFloatPrecision = prec;
     }
 
-    void ShaderProgram::addDefinition(const String &name, const String &value)
+    void ShaderProgram::addGlobalDefinition(const String &name, const String &value)
     {
         mGlobalDefinitions[name] = value;
+        SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "GLSL: %s = %s", name.c_str(), value.c_str());
+    }
+
+    void ShaderProgram::addLocalDefinition(const String &name, const String &value)
+    {
+        mLocalDefinitions[name] = value;
         SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "GLSL: %s = %s", name.c_str(), value.c_str());
     }
 }

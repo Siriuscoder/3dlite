@@ -72,6 +72,8 @@ vec3 ditherBayer(vec3 color);
 ////////////////////////////////////////////////////////////////////////////
 vec3 fresnelSchlickRoughness(float teta, in Material material);
 vec3 diffuseFactor(vec3 F, float metallic);
+// Normal distribution function (Trowbridge-Reitz GGX)
+float NDF(float NdotH, float roughness);
 // Specular Term GGX
 vec3 SpecularGGX(vec3 F, in Material material, in AngularInfo angular);
 // Geometry function (Smith's) for IBL intergation
@@ -107,6 +109,8 @@ vec3 importanceSampleGGX(vec2 Xi, vec3 N, float roughness);
 //
 // The sequence is then shuffled by swapping the x and y coordinates of every second point.
 vec2 hammersleySequence(uint i, uint N);
+
+vec3 cubeCoordToWorld(ivec3 cubeCoord, vec2 cubemapSize);
 
 //////////// Building structures
 Surface makeSurface(vec2 uv, vec3 wv, vec3 wn, vec3 wt, vec3 wb);

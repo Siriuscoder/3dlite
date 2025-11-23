@@ -49,10 +49,10 @@ namespace lite3dpp
 
         bool hasParameter(const String &name, bool isGlobal = false) const;
         lite3d_shader_parameter *getParameter(const String &name, 
-            uint8_t type, bool isGlobal, bool createIfNotExist);
+            uint8_t type, bool isGlobal = false, bool createIfNotExist = false);
         
         static lite3d_shader_parameter *getGlobalParameter(const String &name, 
-            uint8_t type, bool createIfNotExist);
+            uint8_t type, bool createIfNotExist = false);
 
         void clear();
 
