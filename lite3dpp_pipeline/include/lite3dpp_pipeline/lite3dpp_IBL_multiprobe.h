@@ -88,6 +88,7 @@ public:
     inline RenderTarget* getPass() { return mEnvironmentProbePass; }
     inline const std::string &getProbeBufferName() const { return mProbesBuffer->getName(); }
     inline const std::string &getProbeIndexBufferName() const { return mProbesIndexBuffer->getName(); }
+    inline const std::string &getBrdfLUTName() const { return mBrdfLUT->getName(); }
     inline Texture *getEnvProbeTexture() { return mPrefilteredEnvironment; }
     void rebuild();
     size_t addProbe(const kmVec3 &position, EnvProbeFlags flags = EnvProbeFlags::Irradiance | EnvProbeFlags::Specular);
@@ -116,6 +117,7 @@ protected:
     RenderTarget *mEnvironmentProbePass = nullptr;
     Texture *mEnvironmentProbe = nullptr;
     Texture *mEnvironmentDepth = nullptr;
+    Texture *mBrdfLUT = nullptr;
     ComputeShader *mPrefilterEnvironmentShader = nullptr;
     TextureImage *mPrefilteredEnvironment = nullptr;
     stl<EnvProbe>::vector mProbes;

@@ -4,7 +4,6 @@ layout(local_size_x = 16, local_size_y = 16) in;
 layout(binding = 0, rg16f) uniform writeonly image2D BrdfLUT;
 
 const uint totalSamples = 1024u;
-const float invTotalSamples = 1.0 / float(totalSamples);
 
 void main() 
 {
@@ -14,9 +13,8 @@ void main()
     if (texCoord.x >= bounds.x || texCoord.y >= bounds.y)
         return;
 
-    const float invTexSize = 1.0 / float(min(bounds.x, bounds.y));
-    const float NdotV = float(texCoord.x) * invTexSize;
-    const float roughness = float(texCoord.y) * invTexSize;
+    const float NdotV = max(float(texCoord.x) / float(bounds.x), FLT_EPSILON);
+    const float roughness = max(float(texCoord.y) / float(bounds.y), LITE3D_MIN_ROUGHNESS);
 
     vec3 V;
     V.x = sqrt(1.0 - NdotV * NdotV);
@@ -38,8 +36,9 @@ void main()
         float NdotL = max(L.z, 0.0);
         if(NdotL > 0.0)
         {
-            HdotV = max(HdotV, 0.0);
-            float NdotH = max(H.z, 0.0);
+            NdotL = max(NdotL, FLT_EPSILON);
+            HdotV = max(HdotV, FLT_EPSILON);
+            float NdotH = max(H.z, FLT_EPSILON);
             // Geometric Shadowing term
             float G = G_IBL(NdotL, NdotV, roughness);
             float G_Vis = (G * HdotV) / (NdotH * NdotV);
@@ -50,8 +49,8 @@ void main()
             B += Fc * G_Vis;
         }
     }
-    A *= invTotalSamples;
-    B *= invTotalSamples;
+    A /= float(totalSamples);
+    B /= float(totalSamples);
 
     imageStore(BrdfLUT, texCoord, vec4(A, B, 0.0, 0.0));
 }

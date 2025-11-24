@@ -456,8 +456,8 @@ vec3 importanceSampleGGX(vec2 Xi, vec3 N, float roughness)
 
 vec3 cubeCoordToWorld(ivec3 cubeCoord, vec2 cubemapSize)
 {
-    vec2 texCoord = vec2(cubeCoord.xy) / cubemapSize;
-    texCoord = texCoord  * 2.0 - 1.0; // -1..1
+    vec2 texCoord = (vec2(cubeCoord.xy) + 0.5) / cubemapSize;
+    texCoord = texCoord * 2.0 - 1.0; // -1..1
     switch (cubeCoord.z)
     {
         case 0: return vec3(1.0, -texCoord.yx); // posx

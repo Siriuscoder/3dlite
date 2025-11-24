@@ -1332,6 +1332,13 @@ int lite3d_texture_unit_allocate(lite3d_texture_unit *textureUnit,
         glTexParameteri(textureTargetEnum[textureTarget], GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
     }
 
+    if (lite3d_check_seamless_cube_map_per_texture() && 
+        (textureTarget == LITE3D_TEXTURE_CUBE_ARRAY || 
+        textureTarget == LITE3D_TEXTURE_CUBE))
+    {
+        glTexParameteri(textureTargetEnum[textureTarget], GL_TEXTURE_CUBE_MAP_SEAMLESS, GL_TRUE);
+    }
+
     if (LITE3D_CHECK_GL_ERROR)
     {
         lite3d_texture_unit_purge(textureUnit);

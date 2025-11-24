@@ -99,6 +99,10 @@ namespace lite3dpp_pipeline {
                 .set(L"Name", "EnvProbesData")
                 .set(L"UBOName",  mIBL->getProbeBufferName())
                 .set(L"Type", "UBO"));
+            lightComputeMaterialUniforms.emplace_back(ConfigurationWriter()
+                .set(L"Name", "BrdfLUT")
+                .set(L"TextureName", mIBL->getBrdfLUTName())
+                .set(L"Type", "sampler"));
         }
         else
         {

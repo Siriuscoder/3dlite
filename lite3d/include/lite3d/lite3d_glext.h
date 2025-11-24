@@ -34,6 +34,7 @@ int lite3d_check_tbo(void);
 int lite3d_check_uniform_buffer(void);
 int lite3d_check_ssbo(void);
 int lite3d_check_seamless_cube_map(void);
+int lite3d_check_seamless_cube_map_per_texture(void);
 int lite3d_check_geometry_shader(void);
 int lite3d_check_renderbuffer_storage_multisample(void);
 int lite3d_check_texture_multisample(void);

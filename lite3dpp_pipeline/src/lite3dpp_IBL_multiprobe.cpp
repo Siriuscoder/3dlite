@@ -70,10 +70,10 @@ void IBLMultiProbe::integrateGGX()
         .set(L"Depth", 1)
         .set(L"Wrapping", "ClampToEdge")
         .set(L"Compression", false)
-        .set(L"TextureFormat", "RGB")
+        .set(L"TextureFormat", "RG")
         .set(L"InternalFormat", "RG16F");
 
-    auto ggxLUT = mMain.getResourceManager().queryResourceFromJson<TextureImage>("IntergratedGGXLUT.texture", 
+    mBrdfLUT = mMain.getResourceManager().queryResourceFromJson<TextureImage>("IntergratedGGXLUT.texture", 
         IntergratedGGXLUTConfig.write());
 
     ConfigurationWriter shaderParams;
@@ -84,7 +84,7 @@ void IBLMultiProbe::integrateGGX()
         ConfigurationWriter().set(L"Type", "imageStore")
             .set(L"Name", "BrdfLUT")
             .set(L"Direction", "output")
-            .set(L"TextureName", ggxLUT->getName())
+            .set(L"TextureName", mBrdfLUT->getName())
     });
 
     auto intergrateGGXShader = mMain.getResourceManager().queryResourceFromJson<ComputeShader>("IntergrateGGX.comp",
@@ -202,7 +202,7 @@ void IBLMultiProbe::createPrefilterShader(const ConfigurationReader &config)
         .set(L"InternalFormat", "RGBA16F");
 
     mPrefilteredEnvironment = mMain.getResourceManager().queryResourceFromJson<TextureImage>(
-        mPipelineName + "_PrefilteredEnvironmentMultiProbe", mapConfig.write());
+        mPipelineName + "_PrefilteredEnvironmentMultiProbe.texture", mapConfig.write());
     mResourcesList.emplace_back(mPrefilteredEnvironment->getName());
 
     ConfigurationWriter shaderParams;

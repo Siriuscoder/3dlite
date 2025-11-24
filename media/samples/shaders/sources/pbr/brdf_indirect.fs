@@ -70,10 +70,29 @@ void getProbeTextureMaxLodAndCount(in Material material, inout uint count, inout
 #endif
 
 #ifdef LITE3D_ENV_PROBE_MAX
+
+uniform sampler2D BrdfLUT;
 layout(std140) uniform EnvProbesData
 {
     EnvironmentProbeStruct probes[LITE3D_ENV_PROBE_MAX];
 };
+
+// Apply freshnel BRDF LUT correction for environment probes only
+vec3 RebuildF(vec3 F, float NdotV, float roughness)
+{
+    vec2 coef = texture(BrdfLUT, vec2(NdotV, roughness)).rg;
+    return (F * coef.x) + coef.y;
+}
+
+#else
+
+// Freshnel BRDF LUT correction
+// No LUT, nothing to do
+vec3 RebuildF(vec3 F, float NdotV, float roughness)
+{
+    return F;
+}
+
 #endif
 
 vec3 ComputeIndirect(in Surface surface, in AngularInfo angular)
@@ -102,7 +121,7 @@ vec3 ComputeIndirect(in Surface surface, in AngularInfo angular)
             // Duffuse irradiance 
             diffuseIrradianceLx += getEnvTextureLod(surface.material, surface.normal, maxLod - 1.0);
             // Specular 
-            float specularLevel = sqrt(surface.material.roughness) * maxLod;
+            float specularLevel = surface.material.roughness * maxLod;
             specularIrradianceLx += getEnvTextureLod(surface.material, R, specularLevel);
         }
     }
@@ -113,7 +132,7 @@ vec3 ComputeIndirect(in Surface surface, in AngularInfo angular)
     {
         float nearProbeDistance = FLT_MAX;
         getProbeTextureMaxLodAndCount(surface.material, probesCount, maxLod);
-        float specularLevel = sqrt(surface.material.roughness) * maxLod;
+        float specularLevel = surface.material.roughness * maxLod;
 
         for (uint p = 0u; p < probesCount; ++p)
         {
@@ -156,7 +175,7 @@ vec3 ComputeIndirect(in Surface surface, in AngularInfo angular)
     else if (hasFlag(surface.material.flags, LITE3D_MATERIAL_ENVIRONMENT_SINGLE_PROBE))
     {
         getProbeTextureMaxLodAndCount(surface.material, probesCount, maxLod);
-        float specularLevel = sqrt(surface.material.roughness) * maxLod;
+        float specularLevel = surface.material.roughness * maxLod;
 
         EnvironmentProbeStruct probe = probes[surface.material.environmentSingleProbeIndex];
         // Calc indirect light from single probe by index
@@ -173,7 +192,7 @@ vec3 ComputeIndirect(in Surface surface, in AngularInfo angular)
 #endif
 
     diffuseIrradianceLx *= diffuseFactor(F, surface.material.metallic) * surface.material.albedo.rgb * surface.material.envDiffuse;
-    specularIrradianceLx *= F * surface.material.envSpecular;
+    specularIrradianceLx *= RebuildF(F, angular.NdotV, surface.material.roughness) * surface.material.envSpecular;
 
     return (diffuseIrradianceLx + specularIrradianceLx) * surface.ao;
 }

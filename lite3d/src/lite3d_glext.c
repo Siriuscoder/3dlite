@@ -182,7 +182,16 @@ int lite3d_check_seamless_cube_map(void)
 #ifdef GLES
     return LITE3D_FALSE;
 #else 
-    return GLEW_ARB_seamless_cube_map || GLEW_ARB_seamless_cubemap_per_texture;
+    return GLEW_ARB_seamless_cube_map;
+#endif      
+}
+
+int lite3d_check_seamless_cube_map_per_texture(void)
+{
+#ifdef GLES
+    return LITE3D_FALSE;
+#else 
+    return GLEW_ARB_seamless_cubemap_per_texture;
 #endif      
 }
 

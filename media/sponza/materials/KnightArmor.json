@@ -15,9 +15,6 @@
     "TextureName": "brushed_metal_rough_F.texture",
     "TexturePath": "sponza:textures/json/brushed_metal_rough_F.json"
   },
-  "Roughness": {
-    "Value": 1.65
-  },
   "Metallic": {
     "Name": "Metallic",
     "Type": "float",
@@ -31,7 +28,7 @@
   },
   "EnvironmentProbeTexture": {
     "Name": "EnvironmentProbe",
-    "TextureName": "SponzaDeffered_EnvironmentMultiProbe.texture",
+    "TextureName": "SponzaDeffered_PrefilteredEnvironmentMultiProbe.texture",
     "Type": "sampler"
   },
   "Passes": [
