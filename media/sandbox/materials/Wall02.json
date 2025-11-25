@@ -64,8 +64,13 @@
         },
         {
           "Name": "EnvironmentProbe",
-          "TextureName": "SandboxPipeline_EnvironmentMultiProbe.texture",
+          "TextureName": "SandboxPipeline_PrefilteredEnvironmentMultiProbe.texture",
           "Type": "sampler"
+        },
+        {
+          "Name":"BrdfLUT",
+          "TextureName":"IntergratedGGXLUT.texture",
+          "Type":"sampler"
         },
         {
           "Name": "LightSources",
