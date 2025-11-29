@@ -6,7 +6,7 @@ if(PORT MATCHES "devil")
     set(VCPKG_LIBRARY_LINKAGE dynamic)
 endif()
 
-if(PORT MATCHES "sdl2")
+if(PORT MATCHES "sdl3")
     set(VCPKG_LIBRARY_LINKAGE dynamic)
 endif()
 

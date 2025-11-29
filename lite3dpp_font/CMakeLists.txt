@@ -43,7 +43,7 @@ target_include_directories(lite3dpp_font PRIVATE
 "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include/>"
 "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include/lite3dpp_font/>"
 "$<BUILD_INTERFACE:${FREETYPE_INCLUDE_DIRS}>"
-"$<BUILD_INTERFACE:${SDL2_INCLUDE_DIR}>"
+"$<BUILD_INTERFACE:${SDL3_INCLUDE_DIR}>"
 "$<BUILD_INTERFACE:${CMAKE_LITE3D_TOP_DIR}/winres/>")
 
 target_link_libraries(lite3dpp_font

@@ -27,4 +27,4 @@ headers_files(".")
 add_library(${PROJECT_NAME} STATIC ${SOURCES_LIST} ${HEADERS_LIST})
 
 target_include_directories(${PROJECT_NAME} PRIVATE 
-    "$<BUILD_INTERFACE:${SDL2_INCLUDE_DIR}>")
+    "$<BUILD_INTERFACE:${SDL3_INCLUDE_DIR}>")

@@ -34,7 +34,7 @@ if(MSVC)
 endif()
 
 target_include_directories(lite3dpp_physics PRIVATE 
-    "$<BUILD_INTERFACE:${SDL2_INCLUDE_DIR}>"
+    "$<BUILD_INTERFACE:${SDL3_INCLUDE_DIR}>"
     "$<BUILD_INTERFACE:${BULLET_INCLUDE_DIRS}>"
     "$<BUILD_INTERFACE:${CMAKE_LITE3D_TOP_DIR}/winres/>")
     

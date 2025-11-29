@@ -1,16 +1,16 @@
 # Locate SDL2 library
 # This module defines
-# SDL2_LIBRARY, the name of the library to link against
+# SDL3_LIBRARY, the name of the library to link against
 # SDL2_FOUND, if false, do not try to link to SDL2
-# SDL2_INCLUDE_DIR, where to find SDL.h
+# SDL3_INCLUDE_DIR, where to find SDL.h
 #
 # This module responds to the the flag:
-# SDL2_BUILDING_LIBRARY
+# SDL3_BUILDING_LIBRARY
 # If this is defined, then no SDL2main will be linked in because
 # only applications need main().
 # Otherwise, it is assumed you are building an application and this
 # module will attempt to locate and set the the proper link flags
-# as part of the returned SDL2_LIBRARY variable.
+# as part of the returned SDL3_LIBRARY variable.
 #
 # Don't forget to include SDLmain.h and SDLmain.m your project for the
 # OS X framework based version. (Other versions link to -lSDL2main which
@@ -18,17 +18,17 @@
 # module will automatically add the -framework Cocoa on your behalf.
 #
 #
-# Additional Note: If you see an empty SDL2_LIBRARY_TEMP in your configuration
-# and no SDL2_LIBRARY, it means CMake did not find your SDL2 library
+# Additional Note: If you see an empty SDL3_LIBRARY_TEMP in your configuration
+# and no SDL3_LIBRARY, it means CMake did not find your SDL2 library
 # (SDL2.dll, libsdl2.so, SDL2.framework, etc).
-# Set SDL2_LIBRARY_TEMP to point to your SDL2 library, and configure again.
-# Similarly, if you see an empty SDL2MAIN_LIBRARY, you should set this value
-# as appropriate. These values are used to generate the final SDL2_LIBRARY
-# variable, but when these values are unset, SDL2_LIBRARY does not get created.
+# Set SDL3_LIBRARY_TEMP to point to your SDL2 library, and configure again.
+# Similarly, if you see an empty SDL3MAIN_LIBRARY, you should set this value
+# as appropriate. These values are used to generate the final SDL3_LIBRARY
+# variable, but when these values are unset, SDL3_LIBRARY does not get created.
 #
 #
-# $SDL2DIR is an environment variable that would
-# correspond to the ./configure --prefix=$SDL2DIR
+# $SDL3DIR is an environment variable that would
+# correspond to the ./configure --prefix=$SDL3DIR
 # used in building SDL2.
 # l.e.galup  9-20-02
 #
@@ -44,7 +44,7 @@
 #
 # On OSX, this will prefer the Framework version (if found) over others.
 # People will have to manually change the cache values of
-# SDL2_LIBRARY to override this selection or set the CMake environment
+# SDL3_LIBRARY to override this selection or set the CMake environment
 # CMAKE_INCLUDE_PATH to modify the search paths.
 #
 # Note that the header path has changed from SDL2/SDL.h to just SDL.h
@@ -66,10 +66,10 @@
 #  License text for the above reference.)
 
 IF(MSVC)
-SET(SDL2_SEARCH_PATHS
-  "${CMAKE_LITE3D_TOP_DIR}/deps/SDL2")
+SET(SDL3_SEARCH_PATHS
+  "${CMAKE_LITE3D_TOP_DIR}/deps/SDL3")
 ELSE()
-SET(SDL2_SEARCH_PATHS
+SET(SDL3_SEARCH_PATHS
   /usr/local
   /usr
   /sw # Fink
@@ -79,36 +79,36 @@ SET(SDL2_SEARCH_PATHS
 )
 ENDIF()
 
-FIND_PATH(SDL2_INCLUDE_DIR SDL.h
+FIND_PATH(SDL3_INCLUDE_DIR SDL.h
   HINTS
-  $ENV{SDL2DIR}
-  PATH_SUFFIXES include/SDL2 include
-  PATHS ${SDL2_SEARCH_PATHS}
+  $ENV{SDL3DIR}
+  PATH_SUFFIXES include/SDL3 include
+  PATHS ${SDL3_SEARCH_PATHS}
 )
 
-FIND_LIBRARY(SDL2_LIBRARY_TEMP
-  NAMES SDL2
+FIND_LIBRARY(SDL3_LIBRARY_TEMP
+  NAMES SDL3
   HINTS
-  $ENV{SDL2DIR}
+  $ENV{SDL3DIR}
   PATH_SUFFIXES lib64 lib lib/x64
-  PATHS ${SDL2_SEARCH_PATHS}
+  PATHS ${SDL3_SEARCH_PATHS}
 )
 
-IF(NOT SDL2_BUILDING_LIBRARY)
-  IF(NOT ${SDL2_INCLUDE_DIR} MATCHES ".framework")
+IF(NOT SDL3_BUILDING_LIBRARY)
+  IF(NOT ${SDL3_INCLUDE_DIR} MATCHES ".framework")
     # Non-OS X framework versions expect you to also dynamically link to
     # SDL2main. This is mainly for Windows and OS X. Other (Unix) platforms
     # seem to provide SDL2main for compatibility even though they don't
     # necessarily need it.
-    FIND_LIBRARY(SDL2MAIN_LIBRARY
-      NAMES SDL2main
+    FIND_LIBRARY(SDL3MAIN_LIBRARY
+      NAMES SDL3main
       HINTS
-      $ENV{SDL2DIR}
+      $ENV{SDL3DIR}
       PATH_SUFFIXES lib64 lib lib/x64
-      PATHS ${SDL2_SEARCH_PATHS}
+      PATHS ${SDL3_SEARCH_PATHS}
     )
-  ENDIF(NOT ${SDL2_INCLUDE_DIR} MATCHES ".framework")
-ENDIF(NOT SDL2_BUILDING_LIBRARY)
+  ENDIF(NOT ${SDL3_INCLUDE_DIR} MATCHES ".framework")
+ENDIF(NOT SDL3_BUILDING_LIBRARY)
 
 # SDL2 may require threads on your system.
 # The Apple build may not need an explicit flag because one of the
@@ -125,13 +125,13 @@ IF(MINGW)
   SET(MINGW32_LIBRARY mingw32 CACHE STRING "mwindows for MinGW")
 ENDIF(MINGW)
 
-IF(SDL2_LIBRARY_TEMP)
+IF(SDL3_LIBRARY_TEMP)
   # For SDL2main
-  IF(NOT SDL2_BUILDING_LIBRARY)
-    IF(SDL2MAIN_LIBRARY)
-      SET(SDL2_LIBRARY_TEMP ${SDL2MAIN_LIBRARY} ${SDL2_LIBRARY_TEMP})
-    ENDIF(SDL2MAIN_LIBRARY)
-  ENDIF(NOT SDL2_BUILDING_LIBRARY)
+  IF(NOT SDL3_BUILDING_LIBRARY)
+    IF(SDL3MAIN_LIBRARY)
+      SET(SDL3_LIBRARY_TEMP ${SDL3MAIN_LIBRARY} ${SDL3_LIBRARY_TEMP})
+    ENDIF(SDL3MAIN_LIBRARY)
+  ENDIF(NOT SDL3_BUILDING_LIBRARY)
 
   # For OS X, SDL2 uses Cocoa as a backend so it must link to Cocoa.
   # CMake doesn't display the -framework Cocoa string in the UI even
@@ -140,27 +140,27 @@ IF(SDL2_LIBRARY_TEMP)
   # So I use a temporary variable until the end so I can set the
   # "real" variable in one-shot.
   IF(APPLE)
-    SET(SDL2_LIBRARY_TEMP ${SDL2_LIBRARY_TEMP} "-framework Cocoa")
+    SET(SDL3_LIBRARY_TEMP ${SDL3_LIBRARY_TEMP} "-framework Cocoa")
   ENDIF(APPLE)
 
   # For threads, as mentioned Apple doesn't need this.
   # In fact, there seems to be a problem if I used the Threads package
   # and try using this line, so I'm just skipping it entirely for OS X.
   IF(NOT APPLE)
-    SET(SDL2_LIBRARY_TEMP ${SDL2_LIBRARY_TEMP} ${CMAKE_THREAD_LIBS_INIT})
+    SET(SDL3_LIBRARY_TEMP ${SDL3_LIBRARY_TEMP} ${CMAKE_THREAD_LIBS_INIT})
   ENDIF(NOT APPLE)
 
   # For MinGW library
   IF(MINGW)
-    SET(SDL2_LIBRARY_TEMP ${MINGW32_LIBRARY} ${SDL2_LIBRARY_TEMP})
+    SET(SDL3_LIBRARY_TEMP ${MINGW32_LIBRARY} ${SDL3_LIBRARY_TEMP})
   ENDIF(MINGW)
 
   # Set the final string here so the GUI reflects the final state.
-  SET(SDL2_LIBRARY ${SDL2_LIBRARY_TEMP} CACHE STRING "Where the SDL2 Library can be found")
+  SET(SDL3_LIBRARY ${SDL3_LIBRARY_TEMP} CACHE STRING "Where the SDL3 Library can be found")
   # Set the temp variable to INTERNAL so it is not seen in the CMake GUI
-  SET(SDL2_LIBRARY_TEMP "${SDL2_LIBRARY_TEMP}" CACHE INTERNAL "")
-ENDIF(SDL2_LIBRARY_TEMP)
+  SET(SDL3_LIBRARY_TEMP "${SDL3_LIBRARY_TEMP}" CACHE INTERNAL "")
+ENDIF(SDL3_LIBRARY_TEMP)
 
 INCLUDE(FindPackageHandleStandardArgs)
 
-FIND_PACKAGE_HANDLE_STANDARD_ARGS(SDL2 REQUIRED_VARS SDL2_LIBRARY SDL2_INCLUDE_DIR)
+FIND_PACKAGE_HANDLE_STANDARD_ARGS(SDL3 REQUIRED_VARS SDL3_LIBRARY SDL3_INCLUDE_DIR)

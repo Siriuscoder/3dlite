@@ -74,7 +74,7 @@ macro(define_sample SAMPLE_NAME)
 
     target_include_directories(${SAMPLE_NAME} PRIVATE 
         "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}>"
-        "$<BUILD_INTERFACE:${SDL2_INCLUDE_DIR}>"
+        "$<BUILD_INTERFACE:${SDL3_INCLUDE_DIR}>"
         "$<BUILD_INTERFACE:${SAMPLE_ADDON_INCLUDES}>")
             
     if(MSVC)

@@ -93,7 +93,7 @@ if(ENABLE_METRICS)
     endif()
 endif()
 
-find_package(SDL2 REQUIRED)
+find_package(SDL3 REQUIRED)
 
 find_package(Assimp)
 if(NOT ASSIMP_FOUND)
