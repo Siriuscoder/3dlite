@@ -59,9 +59,9 @@ public:
     void processEvent(SDL_Event *e) override
     {
         Sample::processEvent(e);
-        if (e->type == SDL_KEYDOWN)
+        if (e->type == SDL_EVENT_KEY_DOWN)
         {
-            if (e->key.keysym.sym == SDLK_e)
+            if (e->key.key == SDLK_E)
             {
                 static bool cubeSwitch = true;
                 cubeSwitch = !cubeSwitch;

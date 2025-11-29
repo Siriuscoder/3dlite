@@ -82,23 +82,23 @@ public:
     void processEvent(SDL_Event *e) override
     {
         Sample::processEvent(e);
-        if (e->type == SDL_KEYDOWN)
+        if (e->type == SDL_EVENT_KEY_DOWN)
         {
-            if (e->key.keysym.sym == SDLK_KP_PLUS)
+            if (e->key.key == SDLK_KP_PLUS)
             {
                 mGamma += 0.02;
                 if (mGamma > 3.0)
                     mGamma = 3.0;
                 mPipeline->setGamma(mGamma);
             }
-            else if (e->key.keysym.sym == SDLK_KP_MINUS)
+            else if (e->key.key == SDLK_KP_MINUS)
             {
                 mGamma -= 0.02;
                 if (mGamma < 1.5)
                     mGamma = 1.5;
                 mPipeline->setGamma(mGamma);
             }
-            else if (e->key.keysym.sym == SDLK_e)
+            else if (e->key.key == SDLK_E)
             {
                 if (mAK47->isEnabled())
                 {
@@ -113,7 +113,7 @@ public:
                     mSUNShadowCaster->invalidate();
                 }
             }
-            else if (e->key.keysym.sym == SDLK_r)
+            else if (e->key.key == SDLK_R)
             {
                 mRotationEnabled = !mRotationEnabled;
             }

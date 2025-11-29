@@ -31,6 +31,10 @@
 #include <lite3d/lite3d_timer.h>
 #include <lite3d/lite3d_query.h>
 
+#define LITE3D_APP_ID_MAX_LEN 64
+#define LITE3D_APP_NAME_MAX_LEN 128
+#define LITE3D_APP_VERSION_MAX_LEN 32
+#define LITE3D_APP_CREATOR_MAX_LEN 64
 
 typedef int (*lite3d_user_init_completed_t)(void *userdata);
 typedef int (*lite3d_user_shut_t)(void *userdata);
@@ -38,6 +42,10 @@ typedef int (*lite3d_user_shut_t)(void *userdata);
 
 typedef struct lite3d_global_settings
 {
+    char appID[LITE3D_APP_ID_MAX_LEN];
+    char appName[LITE3D_APP_NAME_MAX_LEN];
+    char appVersion[LITE3D_APP_VERSION_MAX_LEN];
+    char appCreator[LITE3D_APP_CREATOR_MAX_LEN];
     lite3d_video_settings videoSettings;
     lite3d_texture_technique_settings textureSettings;
     lite3d_alloca_f userAllocator;

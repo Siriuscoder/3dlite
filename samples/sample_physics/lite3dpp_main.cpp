@@ -49,12 +49,12 @@ public:
     void processEvent(SDL_Event *e) override
     {
         Sample::processEvent(e);
-        if (e->type == SDL_KEYDOWN)
+        if (e->type == SDL_EVENT_KEY_DOWN)
         {
-            if (e->key.keysym.sym == SDLK_c || 
-                e->key.keysym.sym == SDLK_e || 
-                e->key.keysym.sym == SDLK_x || 
-                e->key.keysym.sym == SDLK_q)
+            if (e->key.key == SDLK_C || 
+                e->key.key == SDLK_E || 
+                e->key.key == SDLK_X || 
+                e->key.key == SDLK_Q)
             {
                 if (mCubes.size() > 500)
                 {
@@ -75,9 +75,9 @@ public:
 
                 kmQuaternion rot = { 1.0f, 1.0f, 1.0f, (rand() % 1000)/1000.0f };
                 auto newObject = mScene->addObject(cubeName, 
-                    e->key.keysym.sym == SDLK_c ? "samples:objects/cube.json" : 
-                    (e->key.keysym.sym == SDLK_e ? "samples:objects/compound_cross.json" : 
-                    (e->key.keysym.sym == SDLK_x ? "samples:objects/compound_Z.json" : 
+                    e->key.key == SDLK_C ? "samples:objects/cube.json" : 
+                    (e->key.key == SDLK_E ? "samples:objects/compound_cross.json" : 
+                    (e->key.key == SDLK_X ? "samples:objects/compound_Z.json" : 
                     "samples:objects/compound_T.json")),
                     nullptr, pos, rot);
 
@@ -87,7 +87,7 @@ public:
                 
                 mCubes.push_back(newObject);
             }
-            else if (e->key.keysym.sym == SDLK_r)
+            else if (e->key.key == SDLK_R)
             {
                 mArrowsEnabled = !mArrowsEnabled;
                 for (auto &o : mScene->getObjects())

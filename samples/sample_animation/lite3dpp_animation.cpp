@@ -78,29 +78,29 @@ public:
     void processEvent(SDL_Event *e) override
     {
         Sample::processEvent(e);
-        if (e->type == SDL_KEYDOWN)
+        if (e->type == SDL_EVENT_KEY_DOWN)
         {
-            if (e->key.keysym.sym == SDLK_KP_PLUS)
+            if (e->key.key == SDLK_KP_PLUS)
             {
                 mGamma += 0.02;
                 if (mGamma > 3.0)
                     mGamma = 3.0;
                 mPipeline->setGamma(mGamma);
             }
-            else if (e->key.keysym.sym == SDLK_KP_MINUS)
+            else if (e->key.key == SDLK_KP_MINUS)
             {
                 mGamma -= 0.02;
                 if (mGamma < 1.5)
                     mGamma = 1.5;
                 mPipeline->setGamma(mGamma);
             }
-            else if (e->key.keysym.sym == SDLK_u)
+            else if (e->key.key == SDLK_U)
             {
                 static bool ssaoEnabled = true;
                 ssaoEnabled = !ssaoEnabled;
                 mPipeline->enableSSAO(ssaoEnabled);
             }
-            else if (e->key.keysym.sym == SDLK_q)
+            else if (e->key.key == SDLK_Q)
             {
                 mCrankshaft->actionPlay("Crankshaft.action", true);
                 mRod->actionPlay("Rod.action", true);
@@ -108,15 +108,15 @@ public:
                 mPiston->actionPlay("Piston.action", true);
                 mSkeletonBody->actionPlay("SkeletonBodyAction.action", true);
             }
-            else if (e->key.keysym.sym == SDLK_z)
+            else if (e->key.key == SDLK_Z)
             {
                 mSkeletonBody2->actionPlay("SkeletonBodyAction.action", true);
             }
-            else if (e->key.keysym.sym == SDLK_x)
+            else if (e->key.key == SDLK_X)
             {
                 mCuriousSphere->actionPlay("CuriousSphereAction.action", true);
             }
-            else if (e->key.keysym.sym == SDLK_e)
+            else if (e->key.key == SDLK_E)
             {
                 if (mCrankshaft->getActionState() == ActionClip::ActionClipState::PLAYING)
                 {
@@ -158,7 +158,7 @@ public:
                     mCuriousSphere->actionResume();
                 }
             }
-            else if (e->key.keysym.sym == SDLK_r)
+            else if (e->key.key == SDLK_R)
             {
                 mCrankshaft->actionReset();
                 mRod->actionReset();

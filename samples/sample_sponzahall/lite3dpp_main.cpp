@@ -141,42 +141,42 @@ public:
     void processEvent(SDL_Event *e) override
     {
         Sample::processEvent(e);
-        if (e->type == SDL_KEYDOWN)
+        if (e->type == SDL_EVENT_KEY_DOWN)
         {
-            if (e->key.keysym.sym == SDLK_l && mFlashLight)
+            if (e->key.key == SDLK_L && mFlashLight)
             {
                 static bool flashLightEnabled = false;
                 flashLightEnabled = !flashLightEnabled;
                 mFlashLight->getLight()->enabled(flashLightEnabled);
             }
-            else if (e->key.keysym.sym == SDLK_KP_PLUS)
+            else if (e->key.key == SDLK_KP_PLUS)
             {
                 mGamma += 0.02;
                 if (mGamma > 3.0)
                     mGamma = 3.0;
                 mPipeline->setGamma(mGamma);
             }
-            else if (e->key.keysym.sym == SDLK_KP_MINUS)
+            else if (e->key.key == SDLK_KP_MINUS)
             {
                 mGamma -= 0.02;
                 if (mGamma < 1.5)
                     mGamma = 1.5;
                 mPipeline->setGamma(mGamma);
             }
-            else if (e->key.keysym.sym == SDLK_u)
+            else if (e->key.key == SDLK_U)
             {
                 static bool ssaoEnabled = true;
                 ssaoEnabled = !ssaoEnabled;
                 mPipeline->enableSSAO(ssaoEnabled);
             }
-            else if (e->key.keysym.sym == SDLK_r)
+            else if (e->key.key == SDLK_R)
             {
                 mDayNightMode = !mDayNightMode;
                 mSUN->getLight()->enabled(mDayNightMode);
                 mPipeline->setSkyBoxEmission(mDayNightMode ? 12.0f : 0.008f);
                 mPipeline->getIBL()->rebuild();
             }
-            else if (e->key.keysym.sym == SDLK_e)
+            else if (e->key.key == SDLK_E)
             {
                 mSunRotation = !mSunRotation;
                 if (!mSunRotation)
@@ -184,7 +184,7 @@ public:
                     mPipeline->getIBL()->rebuild();
                 }
             }
-            else if (e->key.keysym.sym == SDLK_t)
+            else if (e->key.key == SDLK_T)
             {
                 mLampsOn = !mLampsOn;
                 for (const auto light : mPipeline->getMainScene().getLights())

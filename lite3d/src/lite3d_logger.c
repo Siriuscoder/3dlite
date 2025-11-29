@@ -15,6 +15,8 @@
  *	You should have received a copy of the GNU General Public License
  *	along with Lite3D.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
+#include <lite3d/lite3d_logger.h>
+
 #include <stdio.h>
 #include <string.h>
 #include <errno.h>
@@ -22,7 +24,6 @@
 #include <SDL_log.h>
 #include <SDL_timer.h>
 
-#include <lite3d/lite3d_logger.h>
 #include <lite3d/lite3d_mesh_assimp_loader.h>
 
 static int gFlushAlways = LITE3D_FALSE;
@@ -35,7 +36,7 @@ static void log_to_file(FILE *desc, int category,
     if (!desc)
         return;
 
-    fprintf(desc, "[%10d]:%s:%s : %s\n",
+    fprintf(desc, "[%10lu]:%s:%s : %s\n",
         SDL_GetTicks(),
         (priority == SDL_LOG_PRIORITY_VERBOSE ? "note" :
         (priority == SDL_LOG_PRIORITY_DEBUG ? "debug" :
@@ -71,7 +72,7 @@ static void file_output_function(void* userdata, int category,
 
 void lite3d_logger_set_logParams(int level, int flushAlways, int muteStd)
 {
-    SDL_LogSetAllPriority(level == LITE3D_LOGLEVEL_ERROR ? SDL_LOG_PRIORITY_WARN :
+    SDL_SetLogPriorities(level == LITE3D_LOGLEVEL_ERROR ? SDL_LOG_PRIORITY_WARN :
         (level == LITE3D_LOGLEVEL_INFO ? SDL_LOG_PRIORITY_INFO : SDL_LOG_PRIORITY_VERBOSE));
 
     gFlushAlways = flushAlways;
@@ -83,7 +84,7 @@ void lite3d_logger_set_logParams(int level, int flushAlways, int muteStd)
 
 static void lite3d_logger_setup_stdout(void)
 {
-    SDL_LogSetOutputFunction(std_output_function, NULL);
+    SDL_SetLogOutputFunction(std_output_function, NULL);
 
 #ifdef INCLUDE_ASSIMP
     lite3d_assimp_logging_init();
@@ -93,7 +94,7 @@ static void lite3d_logger_setup_stdout(void)
 
 static void lite3d_logger_setup_file(const char *logfile)
 {
-    SDL_LogSetOutputFunction(file_output_function, NULL);
+    SDL_SetLogOutputFunction(file_output_function, NULL);
     if ((gOutFile = fopen(logfile, "a")) == NULL)
         SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION, "%s: Could not open log file: %s",
         LITE3D_CURRENT_FUNCTION, strerror(errno));

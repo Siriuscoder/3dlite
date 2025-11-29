@@ -37,13 +37,13 @@ static lite3d_scene mScene;
 
 static int process_events(SDL_Event *levent, void *userdata)
 {
-    if (levent->type == SDL_KEYDOWN)
+    if (levent->type == SDL_EVENT_KEY_DOWN)
     {
         /* exit */
-        if (levent->key.keysym.sym == SDLK_ESCAPE)
+        if (levent->key.key == SDLK_ESCAPE)
             return LITE3D_FALSE;
             /* print render stats */
-        else if (levent->key.keysym.sym == SDLK_F1)
+        else if (levent->key.key == SDLK_F1)
         {
             lite3d_render_stats *stats = lite3d_render_stats_get();
             SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,

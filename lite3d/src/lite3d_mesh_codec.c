@@ -18,7 +18,7 @@
 #include <string.h>
 
 #include <SDL_assert.h>
-#include <SDL_rwops.h>
+#include <SDL_iostream.h>
 #include <SDL_log.h>
 
 #include <lite3d/lite3d_glext.h>
@@ -64,7 +64,7 @@ typedef struct lite3d_m_chunk_layout
 
 #pragma pack(pop)
 
-static int lite3d_write_buffer_to_stream(lite3d_vbo *buffer, SDL_RWops *stream)
+static int lite3d_write_buffer_to_stream(lite3d_vbo *buffer, SDL_IOStream *stream)
 {
     void *vboData;
     
@@ -78,7 +78,7 @@ static int lite3d_write_buffer_to_stream(lite3d_vbo *buffer, SDL_RWops *stream)
             return LITE3D_FALSE;
         }
 
-        if (SDL_RWwrite(stream, vboData, buffer->size, 1) != 1)
+        if (SDL_WriteIO(stream, vboData, buffer->size) != buffer->size)
         {
             lite3d_vbo_unmap(buffer);
             return LITE3D_FALSE;
@@ -100,7 +100,7 @@ static int lite3d_write_buffer_to_stream(lite3d_vbo *buffer, SDL_RWops *stream)
             return LITE3D_FALSE;
         }
 
-        if (SDL_RWwrite(stream, vboData, buffer->size, 1) != 1)
+        if (SDL_WriteIO(stream, vboData, buffer->size) != buffer->size)
         {
             lite3d_free(vboData);
             return LITE3D_FALSE;
@@ -112,7 +112,7 @@ static int lite3d_write_buffer_to_stream(lite3d_vbo *buffer, SDL_RWops *stream)
     return LITE3D_TRUE;
 }
 
-static int lite3d_append_buffer_from_stream(lite3d_vbo *buffer, size_t bufferOffset, size_t size, SDL_RWops *stream)
+static int lite3d_append_buffer_from_stream(lite3d_vbo *buffer, size_t bufferOffset, size_t size, SDL_IOStream *stream)
 {
     SDL_assert(buffer);
     SDL_assert(stream);
@@ -135,7 +135,7 @@ static int lite3d_append_buffer_from_stream(lite3d_vbo *buffer, size_t bufferOff
         }
 
         /* read vertex section in mapped vertex buffer directly */
-        if (SDL_RWread(stream, mapped + bufferOffset, size, 1) != 1)
+        if (SDL_ReadIO(stream, mapped + bufferOffset, size) != size)
         {
             lite3d_vbo_unmap(buffer);
             return LITE3D_FALSE;
@@ -152,7 +152,7 @@ static int lite3d_append_buffer_from_stream(lite3d_vbo *buffer, size_t bufferOff
         }
 
         /* read vertex section in mapped vertex buffer directly */
-        if (SDL_RWread(stream, tmpBuf, size, 1) != 1)
+        if (SDL_ReadIO(stream, tmpBuf, size) != size)
         {
             lite3d_free(tmpBuf);
             return LITE3D_FALSE;
@@ -194,7 +194,7 @@ size_t lite3d_mesh_m_encode_size(lite3d_mesh *mesh)
 int lite3d_mesh_m_decode(lite3d_mesh *mesh,
     const void *buffer, size_t size)
 {
-    SDL_RWops *stream;
+    SDL_IOStream *stream;
     lite3d_m_header mheader;
     lite3d_m_chunk mchunk;
     lite3d_m_chunk_layout layout;
@@ -217,17 +217,17 @@ int lite3d_mesh_m_decode(lite3d_mesh *mesh,
     }
 
     /* open memory stream */
-    stream = SDL_RWFromConstMem(buffer, (int)size);
+    stream = SDL_IOFromConstMem(buffer, (int)size);
 
-    if (SDL_RWread(stream, &mheader, sizeof (mheader), 1) != 1)
+    if (SDL_ReadIO(stream, &mheader, sizeof (mheader)) != sizeof (mheader))
     {
-        SDL_RWclose(stream);
+        SDL_CloseIO(stream);
         return LITE3D_FALSE;
     }
 
     if (mheader.sig != LITE3D_M_SIGNATURE)
     {
-        SDL_RWclose(stream);
+        SDL_CloseIO(stream);
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "%s: Signature mismatch: %d vs %d",
             LITE3D_CURRENT_FUNCTION, mheader.sig, LITE3D_M_SIGNATURE);
         return LITE3D_FALSE;
@@ -239,15 +239,15 @@ int lite3d_mesh_m_decode(lite3d_mesh *mesh,
         register uint32_t j = 0;
         uint32_t stride = 0;
         
-        if (SDL_RWseek(stream, sizeof (mheader) + chunkSectionOffset, RW_SEEK_SET) < 0)
+        if (SDL_SeekIO(stream, sizeof (mheader) + chunkSectionOffset, SDL_IO_SEEK_SET) < 0)
         {
-            SDL_RWclose(stream);
+            SDL_CloseIO(stream);
             return LITE3D_FALSE;
         }
         
-        if (SDL_RWread(stream, &mchunk, sizeof (mchunk), 1) != 1)
+        if (SDL_ReadIO(stream, &mchunk, sizeof (mchunk)) != sizeof (mchunk))
         {
-            SDL_RWclose(stream);
+            SDL_CloseIO(stream);
             return LITE3D_FALSE;
         }
 
@@ -256,9 +256,9 @@ int lite3d_mesh_m_decode(lite3d_mesh *mesh,
 
         for (; j < mchunk.chunkLayoutCount; ++j)
         {
-            if (SDL_RWread(stream, &layout, sizeof (lite3d_m_chunk_layout), 1) != 1)
+            if (SDL_ReadIO(stream, &layout, sizeof (lite3d_m_chunk_layout)) != sizeof (lite3d_m_chunk_layout))
             {
-                SDL_RWclose(stream);
+                SDL_CloseIO(stream);
                 return LITE3D_FALSE;
             }
 
@@ -286,9 +286,9 @@ int lite3d_mesh_m_decode(lite3d_mesh *mesh,
         chunkSectionOffset += mchunk.chunkSize;
     }
 
-    if (SDL_RWseek(stream, sizeof (mheader) + mheader.chunkSectionSize, RW_SEEK_SET) < 0)
+    if (SDL_SeekIO(stream, sizeof (mheader) + mheader.chunkSectionSize, SDL_IO_SEEK_SET) < 0)
     {
-        SDL_RWclose(stream);
+        SDL_CloseIO(stream);
         return LITE3D_FALSE;
     }
 
@@ -297,7 +297,7 @@ int lite3d_mesh_m_decode(lite3d_mesh *mesh,
         if(!lite3d_append_buffer_from_stream(&mesh->vertexBuffer, initialVerticesOffset, 
             mheader.vertexSectionSize, stream))
         {
-            SDL_RWclose(stream);
+            SDL_CloseIO(stream);
             return LITE3D_FALSE;
         }
     }
@@ -312,12 +312,12 @@ int lite3d_mesh_m_decode(lite3d_mesh *mesh,
         if(!lite3d_append_buffer_from_stream(&mesh->indexBuffer, initialIndicesOffset, 
             mheader.indexSectionSize, stream))
         {
-            SDL_RWclose(stream);
+            SDL_CloseIO(stream);
             return LITE3D_FALSE;
         }
     }
 
-    SDL_RWclose(stream);
+    SDL_CloseIO(stream);
     return LITE3D_TRUE;
 }
 
@@ -329,7 +329,7 @@ int lite3d_mesh_m_encode(lite3d_mesh *mesh,
     lite3d_m_header mheader;
     lite3d_m_chunk mchunk;
     lite3d_m_chunk_layout layout;
-    SDL_RWops *stream;
+    SDL_IOStream *stream;
 
     SDL_assert(mesh);
     SDL_assert(buffer);
@@ -349,11 +349,11 @@ int lite3d_mesh_m_encode(lite3d_mesh *mesh,
     }
 
     /* open memory stream */
-    stream = SDL_RWFromMem(buffer, (int)size);
+    stream = SDL_IOFromMem(buffer, (int)size);
     /* write header */
-    if (SDL_RWwrite(stream, &mheader, sizeof (mheader), 1) != 1)
+    if (SDL_WriteIO(stream, &mheader, sizeof (mheader)) != sizeof (mheader))
     {
-        SDL_RWclose(stream);
+        SDL_CloseIO(stream);
         return LITE3D_FALSE;
     }
 
@@ -376,9 +376,9 @@ int lite3d_mesh_m_encode(lite3d_mesh *mesh,
         mchunk.materialIndex = meshChunk->materialIndex;
         mchunk.boundingVol = meshChunk->boundingVol;
 
-        if (SDL_RWwrite(stream, &mchunk, sizeof (mchunk), 1) != 1)
+        if (SDL_WriteIO(stream, &mchunk, sizeof (mchunk)) != sizeof (mchunk))
         {
-            SDL_RWclose(stream);
+            SDL_CloseIO(stream);
             return LITE3D_FALSE;
         }
 
@@ -388,9 +388,9 @@ int lite3d_mesh_m_encode(lite3d_mesh *mesh,
             layout.binding = playout->binding;
             layout.count = playout->count;
 
-            if (SDL_RWwrite(stream, &layout, sizeof (layout), 1) != 1)
+            if (SDL_WriteIO(stream, &layout, sizeof (layout)) != sizeof (layout))
             {
-                SDL_RWclose(stream);
+                SDL_CloseIO(stream);
                 return LITE3D_FALSE;
             }
         }
@@ -398,7 +398,7 @@ int lite3d_mesh_m_encode(lite3d_mesh *mesh,
 
     if (!lite3d_write_buffer_to_stream(&mesh->vertexBuffer, stream))
     {
-        SDL_RWclose(stream);
+        SDL_CloseIO(stream);
         return LITE3D_FALSE;
     }
 
@@ -406,11 +406,11 @@ int lite3d_mesh_m_encode(lite3d_mesh *mesh,
     {
         if (!lite3d_write_buffer_to_stream(&mesh->indexBuffer, stream))
         {
-            SDL_RWclose(stream);
+            SDL_CloseIO(stream);
             return LITE3D_FALSE;
         }
     }
 
-    SDL_RWclose(stream);
+    SDL_CloseIO(stream);
     return LITE3D_TRUE;
 }

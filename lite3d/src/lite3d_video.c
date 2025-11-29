@@ -15,15 +15,16 @@
  *	You should have received a copy of the GNU General Public License
  *	along with Lite3D.  If not, see <http://www.gnu.org/licenses/>.
  *****************************************************************************/
+#include <lite3d/lite3d_video.h>
+
 #include <SDL_log.h>
-#include <SDL_syswm.h>
+#include <SDL_video.h>
 #include <SDL_assert.h>
 
 #include <lite3d/lite3d_alloc.h>
 #include <lite3d/lite3d_gl.h>
 #include <lite3d/lite3d_glext.h>
 #include <lite3d/lite3d_render.h>
-#include <lite3d/lite3d_video.h>
 
 
 static SDL_Window *gRenderWindow = NULL;
@@ -32,7 +33,7 @@ static char gVideoVendor[256] = {0};
 
 #ifndef GLES
 
-static void print_gl_debug_message(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, 
+static void lite3d_print_gl_debug_message(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, 
     const GLchar *message, const void *userParam) 
 {
     SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "DebugContext: %s: %s(%d): %s: %s",
@@ -60,20 +61,20 @@ static void print_gl_debug_message(GLenum source, GLenum type, GLuint id, GLenum
         message);
 }
 
-static void setup_gl_debug_context(void)
+static void lite3d_setup_gl_debug_context(void)
 {
     if (lite3d_check_debug_context())
     {
         glEnable(GL_DEBUG_OUTPUT);
         glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
-        glDebugMessageCallback(print_gl_debug_message, NULL);
+        glDebugMessageCallback(lite3d_print_gl_debug_message, NULL);
         glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, NULL, GL_TRUE);
 
         SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION, "DebugContext: OpenGL debug context has been enabled");
     }
 }
 
-static void print_extensions_string(const char *label, const char *extensionString)
+static void lite3d_print_extensions_string(const char *label, const char *extensionString)
 {
     if (extensionString)
     {
@@ -96,19 +97,18 @@ static void print_extensions_string(const char *label, const char *extensionStri
     }
 }
 
-static int init_platform_gl_extensions(lite3d_video_settings *settings)
+static int lite3d_init_platform_gl_extensions(lite3d_video_settings *settings)
 {
-    SDL_SysWMinfo wminfo;
-
-    SDL_VERSION(&wminfo.version);
-    if (!SDL_GetWindowWMInfo(gRenderWindow, &wminfo))
+    SDL_PropertiesID props = SDL_GetWindowProperties(gRenderWindow);
+    if (!props) 
     {
-        SDL_LogWarn(
+        SDL_LogCritical(
             SDL_LOG_CATEGORY_APPLICATION,
-            "SDL_GetWindowWMInfo failed: %s",
+            "%s: falied to get window properties: %s",
+            LITE3D_CURRENT_FUNCTION,
             SDL_GetError());
 
-        return LITE3D_TRUE;
+        return LITE3D_FALSE;
     }
 
 #ifdef PLATFORM_Windows
@@ -117,12 +117,26 @@ static int init_platform_gl_extensions(lite3d_video_settings *settings)
     {
         SDL_LogWarn(
             SDL_LOG_CATEGORY_APPLICATION,
-            "WGLEW_ARB_extensions_string is not supported");
+            "%s: WGLEW_ARB_extensions_string is not supported",
+            LITE3D_CURRENT_FUNCTION);
 
         return LITE3D_TRUE;
     }
-
-    print_extensions_string("WGL", wglGetExtensionsStringARB(GetDC(wminfo.info.win.window)));
+    else
+    {
+        HDC hdc = (HDC)SDL_GetPointerProperty(props, SDL_PROP_WINDOW_WIN32_HDC_POINTER, NULL);
+        if (hdc)
+        {
+            lite3d_print_extensions_string("WGL", wglGetExtensionsStringARB(hdc));
+        }
+        else
+        {
+            SDL_LogWarn(
+                SDL_LOG_CATEGORY_APPLICATION,
+                "%s: failed to get window HDC",
+                LITE3D_CURRENT_FUNCTION);
+        }
+    }
 
 #elif defined(PLATFORM_Linux)
 
@@ -130,33 +144,37 @@ static int init_platform_gl_extensions(lite3d_video_settings *settings)
     {
         SDL_LogCritical(
             SDL_LOG_CATEGORY_APPLICATION,
-            "%s: GLX v1.3 not supported..",
+            "%s: GLX v1.3 is not supported..",
             LITE3D_CURRENT_FUNCTION);
 
         return LITE3D_FALSE;
     }
+    else
+    {
+        Display *display = (Display *)SDL_GetPointerProperty(props, SDL_PROP_WINDOW_X11_DISPLAY_POINTER, NULL);
+        int screen = (int)SDL_GetNumberProperty(props, SDL_PROP_WINDOW_X11_SCREEN_NUMBER, 0);
 
-    SDL_LogDebug(
-        SDL_LOG_CATEGORY_APPLICATION,
-        "%s: GLX Client %s",
-        LITE3D_CURRENT_FUNCTION,
-        glXGetClientString(wminfo.info.x11.display, 1));
+        SDL_LogDebug(
+            SDL_LOG_CATEGORY_APPLICATION,
+            "%s: GLX Client %s",
+            LITE3D_CURRENT_FUNCTION,
+            glXGetClientString(display, 1));
 
-    SDL_LogDebug(
-        SDL_LOG_CATEGORY_APPLICATION,
-        "%s: GLX Server %s",
-        LITE3D_CURRENT_FUNCTION,
-        glXQueryServerString(wminfo.info.x11.display, 0, 1));
+        SDL_LogDebug(
+            SDL_LOG_CATEGORY_APPLICATION,
+            "%s: GLX Server %s",
+            LITE3D_CURRENT_FUNCTION,
+            glXQueryServerString(display, screen, 1));
 
-    print_extensions_string("GLX", glXQueryExtensionsString(wminfo.info.x11.display, 0));
-
+        lite3d_print_extensions_string("GLX", glXQueryExtensionsString(display, 0));
+    }
 #endif
 
     return LITE3D_TRUE;
 }
 #endif
 
-static int init_gl_extensions(lite3d_video_settings *settings)
+static int lite3d_init_gl_extensions(lite3d_video_settings *settings)
 {
     if (!lite3d_init_gl_extensions_binding())
     {
@@ -243,17 +261,17 @@ static int init_gl_extensions(lite3d_video_settings *settings)
 
     if (settings->debug)
     {
-        setup_gl_debug_context();
+        lite3d_setup_gl_debug_context();
     }
 
-    return init_platform_gl_extensions(settings);
+    return lite3d_init_platform_gl_extensions(settings);
 
 #else
     return LITE3D_TRUE;
 #endif
 }
 
-void set_opengl_version(lite3d_video_settings *settings)
+static void lite3d_set_opengl_version(lite3d_video_settings *settings)
 {
     SDL_LogInfo(
         SDL_LOG_CATEGORY_APPLICATION,
@@ -269,11 +287,21 @@ void set_opengl_version(lite3d_video_settings *settings)
 
 int lite3d_video_open(lite3d_video_settings *settings, int hideConsole)
 {
-    uint32_t windowFlags;
     int32_t contexFlags = SDL_GL_CONTEXT_FORWARD_COMPATIBLE_FLAG;
-    SDL_DisplayMode displayMode;
+    SDL_PropertiesID windowProps = SDL_CreateProperties();
+    const SDL_DisplayMode *displayMode = NULL;
 
     SDL_assert(settings);
+
+    if (windowProps == 0) 
+    {
+        SDL_LogCritical(
+            SDL_LOG_CATEGORY_APPLICATION,
+            "%s: failed to crate SDL window properties: %s",
+            LITE3D_CURRENT_FUNCTION, SDL_GetError());
+
+        return LITE3D_FALSE;
+    }
 
 #ifdef PLATFORM_Windows
     if (hideConsole)
@@ -314,7 +342,7 @@ int lite3d_video_open(lite3d_video_settings *settings, int hideConsole)
             SDL_GL_CONTEXT_PROFILE_MASK,
             SDL_GL_CONTEXT_PROFILE_CORE);
 
-        set_opengl_version(settings);
+        lite3d_set_opengl_version(settings);
     }
     else if (settings->glProfile == LITE3D_GL_PROFILE_COMPATIBILITY)
     {
@@ -326,7 +354,7 @@ int lite3d_video_open(lite3d_video_settings *settings, int hideConsole)
             SDL_GL_CONTEXT_PROFILE_MASK,
             SDL_GL_CONTEXT_PROFILE_COMPATIBILITY);
 
-        set_opengl_version(settings);
+        lite3d_set_opengl_version(settings);
     }
     else
     {
@@ -357,11 +385,18 @@ int lite3d_video_open(lite3d_video_settings *settings, int hideConsole)
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
 #endif
 
-    windowFlags = SDL_WINDOW_OPENGL | SDL_WINDOW_HIDDEN;
+    /* setup render window */
+    SDL_SetStringProperty(windowProps, SDL_PROP_WINDOW_CREATE_TITLE_STRING, settings->caption);
+    SDL_SetBooleanProperty(windowProps, SDL_PROP_WINDOW_CREATE_RESIZABLE_BOOLEAN, false);
+    SDL_SetBooleanProperty(windowProps, SDL_PROP_WINDOW_CREATE_OPENGL_BOOLEAN, true);
+    SDL_SetBooleanProperty(windowProps, SDL_PROP_WINDOW_CREATE_HIDDEN_BOOLEAN, true);
+    SDL_SetNumberProperty(windowProps, SDL_PROP_WINDOW_CREATE_X_NUMBER, SDL_WINDOWPOS_CENTERED);
+    SDL_SetNumberProperty(windowProps, SDL_PROP_WINDOW_CREATE_Y_NUMBER, SDL_WINDOWPOS_CENTERED);
+
     if (settings->fullscreen)
     {
-        windowFlags |= SDL_WINDOW_FULLSCREEN;
-        windowFlags |= SDL_WINDOW_BORDERLESS;
+        SDL_SetBooleanProperty(windowProps, SDL_PROP_WINDOW_CREATE_FULLSCREEN_BOOLEAN, true);
+        SDL_SetBooleanProperty(windowProps, SDL_PROP_WINDOW_CREATE_BORDERLESS_BOOLEAN, true);
     }
 
     if (settings->screenWidth == 0 || settings->screenHeight == 0)
@@ -370,28 +405,19 @@ int lite3d_video_open(lite3d_video_settings *settings, int hideConsole)
             &settings->screenWidth,
             &settings->screenHeight))
         {
-            SDL_LogWarn(
-                SDL_LOG_CATEGORY_APPLICATION,
-                "lite3d_video_get_display_size failed");
-
             return LITE3D_FALSE;
         }
     }
 
-    /* setup render window */
-    gRenderWindow = SDL_CreateWindow(
-        settings->caption,
-        SDL_WINDOWPOS_CENTERED,
-        SDL_WINDOWPOS_CENTERED,
-        settings->screenWidth,
-        settings->screenHeight,
-        windowFlags);
+    SDL_SetNumberProperty(windowProps, SDL_PROP_WINDOW_CREATE_WIDTH_NUMBER, settings->screenWidth);
+    SDL_SetNumberProperty(windowProps, SDL_PROP_WINDOW_CREATE_HEIGHT_NUMBER, settings->screenHeight);
 
-    if (!gRenderWindow)
+    /* create render window */
+    if (!(gRenderWindow = SDL_CreateWindowWithProperties(windowProps)))
     {
         SDL_LogCritical(
             SDL_LOG_CATEGORY_APPLICATION,
-            "%s: SDL_CreateWindow failed: %s",
+            "%s: falied to create render window: %s",
             LITE3D_CURRENT_FUNCTION,
             SDL_GetError());
 
@@ -400,7 +426,7 @@ int lite3d_video_open(lite3d_video_settings *settings, int hideConsole)
 
     SDL_LogInfo(
         SDL_LOG_CATEGORY_APPLICATION,
-        "%s: render window created %dx%d (%s)",
+        "%s: render window has been created %dx%d (%s)",
         LITE3D_CURRENT_FUNCTION,
         settings->screenWidth,
         settings->screenHeight,
@@ -422,17 +448,22 @@ int lite3d_video_open(lite3d_video_settings *settings, int hideConsole)
     /* set gl context */
     SDL_GL_MakeCurrent(gRenderWindow, gGLContext);
 
-    SDL_GetWindowDisplayMode(gRenderWindow, &displayMode);
-    SDL_LogInfo(
-        SDL_LOG_CATEGORY_APPLICATION,
-        "%s: selected pixel format: %d bpp, %s",
-        LITE3D_CURRENT_FUNCTION,
-        SDL_BITSPERPIXEL(displayMode.format),
-        SDL_GetPixelFormatName(displayMode.format));
+    displayMode = SDL_GetDesktopDisplayMode(SDL_GetDisplayForWindow(gRenderWindow));
+    if (displayMode)
+    {
+        SDL_LogInfo(
+            SDL_LOG_CATEGORY_APPLICATION,
+            "%s: display mode: %d bpp, %s, density %.2f, refresh rate %.2f Hz",
+            LITE3D_CURRENT_FUNCTION,
+            SDL_BITSPERPIXEL(displayMode->format),
+            SDL_GetPixelFormatName(displayMode->format),
+            displayMode->pixel_density,
+            displayMode->refresh_rate);
+    }
 
     SDL_GL_SetSwapInterval(settings->vsync ? 1 : 0);
 
-    if (!init_gl_extensions(settings))
+    if (!lite3d_init_gl_extensions(settings))
     {
         SDL_LogWarn(
             SDL_LOG_CATEGORY_APPLICATION,
@@ -453,13 +484,23 @@ int lite3d_video_open(lite3d_video_settings *settings, int hideConsole)
 
 int lite3d_video_close(void)
 {
-    SDL_GL_DeleteContext(gGLContext);
+    SDL_assert(gRenderWindow);
+    SDL_assert(gGLContext);
+
+    // Finish opengl queue
+    lite3d_video_wait_async_complete();
+    // Destroy opengl context
+    SDL_GL_MakeCurrent(gRenderWindow, NULL);
+    SDL_GL_DestroyContext(gGLContext);
+    // Pump events before destroying window due to SDL3 buggy stuck behaviour of SDL_DestroyWindow
+    SDL_PumpEvents();
     SDL_DestroyWindow(gRenderWindow);
     return LITE3D_TRUE;
 }
 
 void lite3d_video_swap_buffers(void)
 {
+    SDL_assert(gRenderWindow);
     SDL_GL_SwapWindow(gRenderWindow);
 }
 
@@ -496,26 +537,36 @@ void lite3d_video_set_fullscreen(int8_t flag)
 
 int lite3d_video_get_display_size(int32_t *width, int32_t *height)
 {
-    SDL_DisplayMode displayMode;
+    const SDL_DisplayMode *displayMode = NULL;
+    SDL_DisplayID displayId;
+    // Render window is not created yet, first call 
+    if (!gRenderWindow)
+    {
+        displayId = SDL_GetPrimaryDisplay();
+    }
+    else
+    {
+        displayId = SDL_GetDisplayForWindow(gRenderWindow);
+    }
 
-    if (SDL_GetDesktopDisplayMode(0, &displayMode) != 0)
+    if (!(displayMode = SDL_GetDesktopDisplayMode(displayId)))
     {
         SDL_LogError(
             SDL_LOG_CATEGORY_APPLICATION,
-            "%s: SDL_GetDesktopDisplayMode failed..",
-            LITE3D_CURRENT_FUNCTION);
+            "%s: failed to get display info: %s",
+            LITE3D_CURRENT_FUNCTION, SDL_GetError());
 
         return LITE3D_FALSE;
     }
 
-    *width = displayMode.w;
-    *height = displayMode.h;
+    *width = displayMode->w;
+    *height = displayMode->h;
     return LITE3D_TRUE;
 }
 
 void lite3d_video_view_system_cursor(int8_t flag)
 {
-    SDL_ShowCursor(flag == LITE3D_TRUE ? 1 : 0);
+    flag ? SDL_ShowCursor() : SDL_HideCursor();
 }
 
 void lite3d_video_wait_async_complete(void)

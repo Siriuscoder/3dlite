@@ -77,29 +77,29 @@ public:
     void processEvent(SDL_Event *e) override
     {
         Sample::processEvent(e);
-        if (e->type == SDL_KEYDOWN)
+        if (e->type == SDL_EVENT_KEY_DOWN)
         {
-            if (e->key.keysym.sym == SDLK_KP_PLUS)
+            if (e->key.key == SDLK_KP_PLUS)
             {
                 mGammaFactor += 0.02;
                 if (mGammaFactor > 2.2)
                     mGammaFactor = 2.2;
                 lite3dpp::Material::setFloatGlobalParameter("GammaFactor", mGammaFactor);
             }
-            else if (e->key.keysym.sym == SDLK_KP_MINUS)
+            else if (e->key.key == SDLK_KP_MINUS)
             {
                 mGammaFactor -= 0.02;
                 if (mGammaFactor < 1.0)
                     mGammaFactor = 1.0;
                 lite3dpp::Material::setFloatGlobalParameter("GammaFactor", mGammaFactor);
             }
-            else if (e->key.keysym.sym == SDLK_o)
+            else if (e->key.key == SDLK_O)
             {
                 static bool fxaaEnabled = false;
                 fxaaEnabled = !fxaaEnabled;
                 lite3dpp::Material::setIntGlobalParameter("FXAA", fxaaEnabled ? 1 : 0);
             }
-            else if (e->key.keysym.sym == SDLK_l)
+            else if (e->key.key == SDLK_L)
             {
                 static bool flashLightEnabled = false;
                 flashLightEnabled = !flashLightEnabled;

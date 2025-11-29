@@ -15,64 +15,89 @@
  *	You should have received a copy of the GNU General Public License
  *	along with Lite3D.  If not, see <http://www.gnu.org/licenses/>.
  *****************************************************************************/
-
+#include <lite3d/lite3d_main.h>
 
 #include <stdlib.h>
+#include <stdio.h>
 #include <SDL.h>
 
-#include <lite3d/lite3d_main.h>
 #include <lite3d/lite3d_metrics.h>
-
 
 static lite3d_global_settings gGlobalSettings;
 
-
-static int sdl_init(void)
+static int lite3d_sdl_init(void)
 {
-    uint32_t subSystems = SDL_INIT_VIDEO |
-                          SDL_INIT_TIMER |
-                          SDL_INIT_EVENTS |
-                          SDL_INIT_JOYSTICK |
-                          SDL_INIT_GAMECONTROLLER;
+    SDL_InitFlags subSystems = SDL_INIT_VIDEO | SDL_INIT_EVENTS;
+    int32_t compiledVers = SDL_VERSION;  /* hardcoded number from SDL headers */
+    int32_t linkedVers = SDL_GetVersion();  /* reported by linked SDL library */
 
-    SDL_version compiledVers, linkedVers;
+    if (SDL_VERSIONNUM_MAJOR(compiledVers) != 
+        SDL_VERSIONNUM_MAJOR(linkedVers))
+    {
+        printf("%s: SDL major version mismatch, compiled: %d, present: %d",
+            LITE3D_CURRENT_FUNCTION,
+            SDL_VERSIONNUM_MAJOR(compiledVers),
+            SDL_VERSIONNUM_MAJOR(linkedVers));
+
+        return LITE3D_FALSE;
+    }
+
+    if (gGlobalSettings.appID[0])
+    {
+        if (!SDL_SetAppMetadataProperty(SDL_PROP_APP_METADATA_IDENTIFIER_STRING, gGlobalSettings.appID))
+        {
+            printf("%s: set identifier string failed: %s",
+                LITE3D_CURRENT_FUNCTION,
+                SDL_GetError());
+        }
+    }
+
+    if (gGlobalSettings.appName[0])
+    {
+        if (!SDL_SetAppMetadataProperty(SDL_PROP_APP_METADATA_NAME_STRING, gGlobalSettings.appName))
+        {
+            printf("%s: set app name failed: %s",
+                LITE3D_CURRENT_FUNCTION,
+                SDL_GetError());
+        }
+    }
+
+    if (gGlobalSettings.appVersion[0])
+    {
+        if (!SDL_SetAppMetadataProperty(SDL_PROP_APP_METADATA_VERSION_STRING, gGlobalSettings.appVersion))
+        {
+            printf("%s: set version failed: %s",
+                LITE3D_CURRENT_FUNCTION,
+                SDL_GetError());
+        }
+    }
+
+    if (gGlobalSettings.appCreator[0])
+    {
+        if (!SDL_SetAppMetadataProperty(SDL_PROP_APP_METADATA_CREATOR_STRING, gGlobalSettings.appCreator))
+        {
+            printf("%s: set creator failed: %s",
+                LITE3D_CURRENT_FUNCTION,
+                SDL_GetError());
+        }
+    }
 
     if (SDL_WasInit(subSystems) != subSystems)
     {
-
-#ifdef SDL_HINT_APP_NAME
-        SDL_SetHint(SDL_HINT_APP_NAME, "lite3d app");
-#endif
-
-        if (SDL_Init(subSystems) != 0)
+        if (!SDL_Init(subSystems))
         {
-            SDL_LogCritical(
-                SDL_LOG_CATEGORY_APPLICATION,
-                "%s: SDL startup error..",
-                LITE3D_CURRENT_FUNCTION);
+            printf("%s: SDL startup failed: %s",
+                LITE3D_CURRENT_FUNCTION, SDL_GetError());
             return LITE3D_FALSE;
         }
     }
 
-    SDL_VERSION(&compiledVers);
-    SDL_GetVersion(&linkedVers);
-
-    if (compiledVers.major != linkedVers.major)
-    {
-        SDL_LogCritical(
-            SDL_LOG_CATEGORY_APPLICATION,
-            "SDL version mismatch..");
-
-        SDL_Quit();
-        return LITE3D_FALSE;
-    }
-
     SDL_LogInfo(
         SDL_LOG_CATEGORY_APPLICATION,
-        "SDL Version %d.%d.%d",
-        (int) linkedVers.major,
-        (int) linkedVers.minor,
-        (int) linkedVers.patch);
+        "SDL subsystems is initialized, version %d.%d.%d",
+        SDL_VERSIONNUM_MAJOR(linkedVers),
+        SDL_VERSIONNUM_MINOR(linkedVers),
+        SDL_VERSIONNUM_MICRO(linkedVers));
 
     return LITE3D_TRUE;
 }
@@ -110,12 +135,12 @@ int lite3d_main(const lite3d_global_settings *settings)
         "=================== LITE3D " LITE3D_FULL_VERSION " ===================");
 
     /* setup SDL */
-    if (!sdl_init())
+    if (!lite3d_sdl_init())
     {
         goto ret_metrics;
     }
 
-    if (SDL_SetThreadPriority(SDL_THREAD_PRIORITY_HIGH))
+    if (!SDL_SetCurrentThreadPriority(SDL_THREAD_PRIORITY_HIGH))
     {
         SDL_LogError(
             SDL_LOG_CATEGORY_APPLICATION,

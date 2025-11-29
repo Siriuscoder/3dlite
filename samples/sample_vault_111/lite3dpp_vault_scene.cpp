@@ -266,30 +266,30 @@ public:
     void processEvent(SDL_Event *e) override
     {
         Sample::processEvent(e);
-        if (e->type == SDL_KEYDOWN)
+        if (e->type == SDL_EVENT_KEY_DOWN)
         {
-            if (e->key.keysym.sym == SDLK_l && mFlashLight)
+            if (e->key.key == SDLK_L && mFlashLight)
             {
                 static bool flashLightEnabled = false;
                 flashLightEnabled = !flashLightEnabled;
                 mFlashLight->getLight()->enabled(flashLightEnabled);
                 updateFlashLight();
             }
-            else if (e->key.keysym.sym == SDLK_p)
+            else if (e->key.key == SDLK_P)
             {
-                mSpot->rotateAngle(KM_VEC3_POS_Z, 0.10 * (e->key.keysym.mod & KMOD_LCTRL ? -1.0 : 1.0));
+                mSpot->rotateAngle(KM_VEC3_POS_Z, 0.10 * (e->key.mod & SDL_KMOD_LCTRL ? -1.0 : 1.0));
             }
-            else if (e->key.keysym.sym == SDLK_i)
+            else if (e->key.key == SDLK_I)
             {
-                mSpot01->rotateAngle(KM_VEC3_POS_Z, 0.10 * (e->key.keysym.mod & KMOD_LCTRL ? -1.0 : 1.0));
+                mSpot01->rotateAngle(KM_VEC3_POS_Z, 0.10 * (e->key.mod & SDL_KMOD_LCTRL ? -1.0 : 1.0));
             }
-            else if (e->key.keysym.sym == SDLK_o)
+            else if (e->key.key == SDLK_O)
             {
-                mSpot02->rotateAngle(KM_VEC3_POS_Z, 0.10 * (e->key.keysym.mod & KMOD_LCTRL ? -1.0 : 1.0));
+                mSpot02->rotateAngle(KM_VEC3_POS_Z, 0.10 * (e->key.mod & SDL_KMOD_LCTRL ? -1.0 : 1.0));
             }
-            else if (e->key.keysym.sym == SDLK_k)
+            else if (e->key.key == SDLK_K)
             {
-                mGearKey->move(kmVec3{10.0f * (e->key.keysym.mod & KMOD_LCTRL ? -1.0f : 1.0f), 0.0f, 0.0f});
+                mGearKey->move(kmVec3{10.0f * (e->key.mod & SDL_KMOD_LCTRL ? -1.0f : 1.0f), 0.0f, 0.0f});
                 auto pos = mGearKey->getPosition();
                 if (pos.x > 332.0f)
                 {
@@ -302,21 +302,21 @@ public:
                     mGearKey->setPosition(pos);
                 }
             }
-            else if (e->key.keysym.sym == SDLK_KP_PLUS)
+            else if (e->key.key == SDLK_KP_PLUS)
             {
                 mGamma += 0.02;
                 if (mGamma > 3.0)
                     mGamma = 3.0;
                 mPipeline->setGamma(mGamma);
             }
-            else if (e->key.keysym.sym == SDLK_KP_MINUS)
+            else if (e->key.key == SDLK_KP_MINUS)
             {
                 mGamma -= 0.02;
                 if (mGamma < 1.5)
                     mGamma = 1.5;
                 mPipeline->setGamma(mGamma);
             }
-            else if (e->key.keysym.sym == SDLK_u)
+            else if (e->key.key == SDLK_U)
             {
                 static bool ssaoEnabled = true;
                 ssaoEnabled = !ssaoEnabled;

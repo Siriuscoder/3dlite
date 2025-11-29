@@ -66,13 +66,13 @@ static lite3d_scene mSceneMain;
 
 static int process_events(SDL_Event *levent, void *userdata)
 {
-    if (levent->type == SDL_KEYDOWN)
+    if (levent->type == SDL_EVENT_KEY_DOWN)
     {
         /* exit */
-        if (levent->key.keysym.sym == SDLK_ESCAPE)
+        if (levent->key.key == SDLK_ESCAPE)
             return LITE3D_FALSE;
             /* print render stats */
-        else if (levent->key.keysym.sym == SDLK_F1)
+        else if (levent->key.key == SDLK_F1)
         {
             lite3d_render_stats *stats = lite3d_render_stats_get();
             SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
@@ -84,39 +84,39 @@ static int process_events(SDL_Event *levent, void *userdata)
                 stats->lastFPS, stats->avrFPS, stats->bestFPS, stats->worstFPS,
                 stats->lastFrameMs, stats->avrFrameMs, stats->bestFrameMs, stats->worstFrameMs);
         }
-        else if (levent->key.keysym.sym == SDLK_UP)
+        else if (levent->key.key == SDLK_UP)
         {
             lite3d_camera_pitch(&mCamera02, kmDegreesToRadians(-1));
         }
-        else if (levent->key.keysym.sym == SDLK_DOWN)
+        else if (levent->key.key == SDLK_DOWN)
         {
             lite3d_camera_pitch(&mCamera02, kmDegreesToRadians(1));
         }
-        else if (levent->key.keysym.sym == SDLK_LEFT)
+        else if (levent->key.key == SDLK_LEFT)
         {
             lite3d_camera_yaw(&mCamera02, kmDegreesToRadians(-1));
         }
-        else if (levent->key.keysym.sym == SDLK_RIGHT)
+        else if (levent->key.key == SDLK_RIGHT)
         {
             lite3d_camera_yaw(&mCamera02, kmDegreesToRadians(1));
         }
-        else if (levent->key.keysym.sym == SDLK_w)
+        else if (levent->key.key == SDLK_W)
         {
             lite3d_camera_move_relative(&mCamera02, &KM_VEC3_POS_Z);
         }
-        else if (levent->key.keysym.sym == SDLK_s)
+        else if (levent->key.key == SDLK_S)
         {
             lite3d_camera_move_relative(&mCamera02, &KM_VEC3_NEG_Z);
         }
-        else if (levent->key.keysym.sym == SDLK_a)
+        else if (levent->key.key == SDLK_A)
         {
             lite3d_camera_move_relative(&mCamera02, &KM_VEC3_POS_X);
         }
-        else if (levent->key.keysym.sym == SDLK_d)
+        else if (levent->key.key == SDLK_D)
         {
             lite3d_camera_move_relative(&mCamera02, &KM_VEC3_NEG_X);
         }
-        else if (levent->key.keysym.sym == SDLK_q)
+        else if (levent->key.key == SDLK_Q)
         {
             lite3d_camera_roll(&mCamera02, kmDegreesToRadians(5));
         }
@@ -189,7 +189,7 @@ static int initMaterials(void)
 
 static void saveCube(void)
 {
-    SDL_RWops *descr;
+    SDL_IOStream *descr;
     size_t encodeBufferSize;
     void *encodeBuffer;
     
@@ -202,21 +202,21 @@ static void saveCube(void)
         return;
     }
     
-    descr = SDL_RWFromFile("cube.m", "wb");
+    descr = SDL_IOFromFile("cube.m", "wb");
     if (!descr)
     {
         lite3d_free(encodeBuffer);
         return;
     }
     
-    if (SDL_RWwrite(descr, encodeBuffer, encodeBufferSize, 1) != 1)
+    if (SDL_WriteIO(descr, encodeBuffer, encodeBufferSize) != encodeBufferSize)
     {
         lite3d_free(encodeBuffer);
-        SDL_RWclose(descr);
+        SDL_CloseIO(descr);
         return;
     }
 
-    SDL_RWclose(descr);
+    SDL_CloseIO(descr);
     lite3d_free(encodeBuffer);
 }
 

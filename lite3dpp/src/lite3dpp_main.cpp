@@ -17,7 +17,7 @@
  *******************************************************************************/
 #include <algorithm>
 
-#include <SDL_rwops.h>
+#include <SDL_iostream.h>
 #include <SDL_assert.h>
 #include <SDL_log.h>
 
@@ -98,6 +98,12 @@ namespace lite3dpp
             videoSettings.getBool(L"Fullscreen", false) ? LITE3D_TRUE : LITE3D_FALSE;
         videoSettings.getString(L"Caption", "TEST window").copy(mSettings.videoSettings.caption,
             sizeof(mSettings.videoSettings.caption)-1);
+        
+        videoSettings.getString(L"AppID", "LITE3D").copy(mSettings.appID, LITE3D_APP_ID_MAX_LEN-1);
+        videoSettings.getString(L"AppName", "LITE3D").copy(mSettings.appName, LITE3D_APP_NAME_MAX_LEN-1);
+        videoSettings.getString(L"AppVersion", LITE3D_VERSION_STRING).copy(mSettings.appVersion, LITE3D_APP_VERSION_MAX_LEN-1);
+        videoSettings.getString(L"AppCreator", "Nikita.Korolev").copy(mSettings.appCreator, LITE3D_APP_CREATOR_MAX_LEN-1);
+
         mSettings.videoSettings.hidden = videoSettings.getBool(L"Hidden", false) ? LITE3D_TRUE : LITE3D_FALSE;
 
         // GL Profile

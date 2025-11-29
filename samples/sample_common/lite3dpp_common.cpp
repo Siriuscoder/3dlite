@@ -128,7 +128,7 @@ void Sample::timerTick(lite3d_timer *timerid)
         // Считаем запаздывание таймера как отношение фактического времени к интервалу
         float deltaRetard = static_cast<float>(static_cast<double>(timerid->deltaMcs) / (timerid->interval * 1000.0));
         // Обработка плавного движения камеры
-        const Uint8 *kstate = SDL_GetKeyboardState(NULL);
+        const bool *kstate = SDL_GetKeyboardState(NULL);
         kmVec2 accel = KM_VEC2_ZERO;
 
         if (kstate[SDL_SCANCODE_W])
@@ -152,32 +152,32 @@ void Sample::timerTick(lite3d_timer *timerid)
 
 void Sample::processEvent(SDL_Event *e)
 {
-    if (e->type == SDL_KEYDOWN)
+    if (e->type == SDL_EVENT_KEY_DOWN)
     {
         /* exit */
-        if (e->key.keysym.sym == SDLK_ESCAPE)
+        if (e->key.key == SDLK_ESCAPE)
             mMain.stop();
-        else if (e->key.keysym.sym == SDLK_1)
+        else if (e->key.key == SDLK_1)
         {
             SDL_assert(mHelpOverlay);
             mHelpOverlay->isEnabled() ? mHelpOverlay->disable() : mHelpOverlay->enable();
         }
-        else if (e->key.keysym.sym == SDLK_2)
+        else if (e->key.key == SDLK_2)
         {
             mHelpState = mHelpState == SHOW_HELP ? SHOW_RENDER : 
                 (mHelpState == SHOW_RENDER ? SHOW_RESOURCES : SHOW_HELP);
             updateGui();
         }
-        else if (e->key.keysym.sym == SDLK_3)
+        else if (e->key.key == SDLK_3)
         {
             SDL_assert(mGuiCamera);
             mGuiCamera->isEnabled() ? mGuiCamera->disable() : mGuiCamera->enable();
         }
-        else if (e->key.keysym.sym == SDLK_4)
+        else if (e->key.key == SDLK_4)
         {
             saveScreenshot();
         }
-        else if (mMainWindow && mMainCamera && e->key.keysym.sym == SDLK_f)
+        else if (mMainWindow && mMainCamera && e->key.key == SDLK_F)
         {
             static bool scRes = false;
             if(scRes)
@@ -196,7 +196,7 @@ void Sample::processEvent(SDL_Event *e)
             mainCameraChanged();
         }
     }
-    else if(mMainCamera && e->type == SDL_MOUSEMOTION)
+    else if(mMainCamera && e->type == SDL_EVENT_MOUSE_MOTION)
     {
         if (e->motion.x != mWCenter.x || e->motion.y != mWCenter.y)
         {

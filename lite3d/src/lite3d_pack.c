@@ -19,7 +19,7 @@
 
 #include <SDL_assert.h>
 #include <SDL_log.h>
-#include <SDL_rwops.h>
+#include <SDL_iostream.h>
 
 
 #include <lite3d/lite3d_main.h>
@@ -219,7 +219,7 @@ lite3d_file *lite3d_pack_file_load(lite3d_pack *pack, const char *file)
     if(!pack->isCompressed)
     {
         char fullPath[LITE3D_MAX_FILE_PATH];
-        SDL_RWops *desc;
+        SDL_IOStream *desc;
 
         if((strlen(file) + strlen(pack->pathto)) >= LITE3D_MAX_FILE_PATH)
         {
@@ -232,7 +232,7 @@ lite3d_file *lite3d_pack_file_load(lite3d_pack *pack, const char *file)
         strcat(fullPath, file);
 
         /* check open file */
-        desc = SDL_RWFromFile(fullPath, "rb");
+        desc = SDL_IOFromFile(fullPath, "rb");
         if(!desc)
         {
             SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, 
@@ -242,25 +242,25 @@ lite3d_file *lite3d_pack_file_load(lite3d_pack *pack, const char *file)
         }
 
         /* get file size */
-        fileSize = SDL_RWsize(desc);
+        fileSize = SDL_GetIOSize(desc);
         if(!check_pack_memory_limit(pack, fileSize))
         {
             SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
                 "%s: file %s too big: %d bytes (limit %d)",
                 LITE3D_CURRENT_FUNCTION, fullPath, (int) fileSize, (int) pack->memoryLimit);
-            SDL_RWclose(desc);
+            SDL_CloseIO(desc);
             return NULL;
         }
         
         fileBuffer = lite3d_malloc(fileSize);
         SDL_assert_release(fileBuffer);
         /* begin to read file into the memory */
-        if(SDL_RWread(desc, fileBuffer, fileSize, 1) == 0)
+        if(SDL_ReadIO(desc, fileBuffer, fileSize) != fileSize)
         {
             SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
                 "%s: %s : %s",
                 LITE3D_CURRENT_FUNCTION, fullPath, SDL_GetError());
-            SDL_RWclose(desc);
+            SDL_CloseIO(desc);
             lite3d_free(fileBuffer);
             return NULL;
         }
@@ -268,7 +268,7 @@ lite3d_file *lite3d_pack_file_load(lite3d_pack *pack, const char *file)
         SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, 
             "PACK: '%s' loaded (size: %d bytes)",
             file, (int)fileSize);
-        SDL_RWclose(desc);
+        SDL_CloseIO(desc);
     }
     else
     {

@@ -121,58 +121,58 @@ public:
     void processEvent(SDL_Event *e) override
     {
         Sample::processEvent(e);
-        if (e->type == SDL_KEYDOWN)
+        if (e->type == SDL_EVENT_KEY_DOWN)
         {
-            if (e->key.keysym.sym == SDLK_l && mFlashLight)
+            if (e->key.key == SDLK_L && mFlashLight)
             {
                 static bool flashLightEnabled = false;
                 flashLightEnabled = !flashLightEnabled;
                 mFlashLight->getLight()->enabled(flashLightEnabled);
                 updateFlashLight();
             }
-            else if (e->key.keysym.sym == SDLK_KP_PLUS)
+            else if (e->key.key == SDLK_KP_PLUS)
             {
                 mGamma += 0.02;
                 if (mGamma > 3.0)
                     mGamma = 3.0;
                 mPipeline->setGamma(mGamma);
             }
-            else if (e->key.keysym.sym == SDLK_KP_MINUS)
+            else if (e->key.key == SDLK_KP_MINUS)
             {
                 mGamma -= 0.02;
                 if (mGamma < 1.5)
                     mGamma = 1.5;
                 mPipeline->setGamma(mGamma);
             }
-            else if (e->key.keysym.sym == SDLK_u)
+            else if (e->key.key == SDLK_U)
             {
                 static bool ssaoEnabled = true;
                 ssaoEnabled = !ssaoEnabled;
                 mPipeline->enableSSAO(ssaoEnabled);
             }
-            else if (e->key.keysym.sym == SDLK_r)
+            else if (e->key.key == SDLK_R)
             {
                 addSpark();
             }
-            else if (e->key.keysym.sym == SDLK_q)
+            else if (e->key.key == SDLK_Q)
             {
                 dropObject(mVaultScene->addPhysicsObject("LightCapsule_" + std::to_string(++mObjectCounter), 
                     "vault_111:objects/LightCapsule.json", nullptr,
                     getCameraPositionForObject()), 850.0f);
             }
-            else if (e->key.keysym.sym == SDLK_e)
+            else if (e->key.key == SDLK_E)
             {
                 dropObject(mVaultScene->addPhysicsObject("Ball_" + std::to_string(++mObjectCounter), 
                     "vault_111:objects/Ball.json", nullptr,
                     getCameraPositionForObject()), 850.0f);
             }
-            else if (e->key.keysym.sym == SDLK_z)
+            else if (e->key.key == SDLK_Z)
             {
                 dropObject(mVaultScene->addPhysicsObject("CannonBall_" + std::to_string(++mObjectCounter), 
                     "vault_111:objects/CannonBall.json", nullptr,
                     getCameraPositionForObject()), 7000.0f);
             }
-            else if (e->key.keysym.sym == SDLK_g)
+            else if (e->key.key == SDLK_G)
             {
                 mGravityEnabled = !mGravityEnabled;
                 if (mGravityEnabled)
@@ -184,7 +184,7 @@ public:
                     mVaultScene->setGravity(kmVec3 {0.0, 0.0, 0.0f});
                 }
             }
-            else if (e->key.keysym.sym == SDLK_SPACE)
+            else if (e->key.key == SDLK_SPACE)
             {
                 kmVec3 currVel = mPlayer->getLinearVelocity();
                  /* не модифицируем скорость по x,y (может быть в движении) */

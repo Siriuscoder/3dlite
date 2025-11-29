@@ -62,21 +62,21 @@ public:
     void processEvent(SDL_Event *e) override
     {
         Sample::processEvent(e);
-        if (e->type == SDL_KEYDOWN)
+        if (e->type == SDL_EVENT_KEY_DOWN)
         {
-            if (e->key.keysym.sym == SDLK_v)
+            if (e->key.key == SDLK_V)
             {
                 mWireframeView = !mWireframeView;
                 mBoxMaterial->setPolygonMode(1, mWireframeView ? Material::PolygonLine : Material::PolygonFill);
                 mBoxMaterial->setDoubleSided(1, mWireframeView);
             }
-            else if (e->key.keysym.sym == SDLK_r)
+            else if (e->key.key == SDLK_R)
             {
                 updateTextureData();
             }
-            else if (e->key.keysym.sym == SDLK_q)
+            else if (e->key.key == SDLK_Q)
             {
-                if (e->key.keysym.mod & KMOD_LCTRL)
+                if (e->key.mod & SDL_KMOD_LCTRL)
                     mKof = -1;
                 else
                     mKof = 1;

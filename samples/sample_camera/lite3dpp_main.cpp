@@ -69,16 +69,16 @@ public:
     void processEvent(SDL_Event *e) override
     {
         Sample::processEvent(e);
-        if (e->type == SDL_KEYDOWN)
+        if (e->type == SDL_EVENT_KEY_DOWN)
         {
-            if (e->key.keysym.sym == SDLK_e)
+            if (e->key.key == SDLK_E)
             {
                 auto next = mCameraCurrentBound == mGround ? mBox2 : mGround;
                 /* перепривязка камеры к кубику */
                 getMainCamera().rebase(next);
                 mCameraCurrentBound = next;
             }
-            else if (e->key.keysym.sym == SDLK_q)
+            else if (e->key.key == SDLK_Q)
             {
                 /* перепривязка кубика к камере а потом к обратно к полу */
                 if (mBox3->getParent() != &getMainCamera())

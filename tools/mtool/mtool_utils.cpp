@@ -31,7 +31,7 @@
         printf("Make directory %s\n", MAKE_PATH(folder, name));
 #endif
 
-#include <SDL_rwops.h>
+#include <SDL_iostream.h>
 #include <SDL_log.h>
 #include <mtool/mtool_utils.h>
 
@@ -39,21 +39,21 @@ int Utils::mNonameCounter = 0;
 
 void Utils::saveFile(const void *buffer, size_t size, const lite3dpp::String &path)
 {
-    SDL_RWops *descr;
+    SDL_IOStream *descr;
     printf("Writing %s ... ", path.c_str());
     fflush(stdout);
 
-    descr = SDL_RWFromFile(path.c_str(), "wb");
+    descr = SDL_IOFromFile(path.c_str(), "wb");
     if (!descr)
         LITE3D_THROW("Unable to open file " << path);
 
-    if (SDL_RWwrite(descr, buffer, size, 1) != 1)
+    if (SDL_WriteIO(descr, buffer, size) != size)
     {
-        SDL_RWclose(descr);
+        SDL_CloseIO(descr);
         LITE3D_THROW("IO error.. " << path);
     }
 
-    SDL_RWclose(descr);
+    SDL_CloseIO(descr);
 
     printf("done\n");
     fflush(stdout);

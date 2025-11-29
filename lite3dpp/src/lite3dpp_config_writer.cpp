@@ -17,7 +17,7 @@
  *******************************************************************************/
 #include <SDL_assert.h>
 #include <SDL_log.h>
-#include <SDL_rwops.h>
+#include <SDL_iostream.h>
 
 #include <lite3dpp/lite3dpp_config_writer.h>
 #include <lite3dpp/lite3dpp_config_reader.h>

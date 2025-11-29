@@ -20,7 +20,7 @@
 
 #include <SDL_assert.h>
 #include <SDL_log.h>
-#include <SDL_rwops.h>
+#include <SDL_iostream.h>
 
 #include <lite3dpp/lite3dpp_config_reader.h>
 
@@ -49,25 +49,25 @@ namespace lite3dpp
 
     void ConfigurationReader::parseFromFile(const std::string_view &filePath)
     {
-        SDL_RWops *desc = NULL;
+        SDL_IOStream *desc = NULL;
         size_t fileSize;
         char *json;
         /* check open file */
-        desc = SDL_RWFromFile(filePath.data(), "r");
+        desc = SDL_IOFromFile(filePath.data(), "r");
         if (!desc)
             LITE3D_THROW(filePath << " file open failed..");
 
-        fileSize = static_cast<size_t>(SDL_RWsize(desc));
+        fileSize = static_cast<size_t>(SDL_GetIOSize(desc));
         json = static_cast<char *>(Manageable::alloc(fileSize + 1));
         /* read whole file */
-        if (SDL_RWread(desc, json, fileSize, 1) == 0)
+        if (SDL_ReadIO(desc, json, fileSize) != fileSize)
         {
             Manageable::free(json);
-            SDL_RWclose(desc);
+            SDL_CloseIO(desc);
             LITE3D_THROW(filePath << " file read failed..");
         }
 
-        SDL_RWclose(desc);
+        SDL_CloseIO(desc);
         
         if (!parseFromString({json, fileSize}))
         {
