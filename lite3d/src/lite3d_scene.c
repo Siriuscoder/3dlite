@@ -191,7 +191,7 @@ static void mqr_render_batch_draw_instanced(lite3d_material_pass *pass, _mqr_nod
     /* call rendering current chunk */
     if (batchCrop)
     {
-        if (!lite3d_vbo_buffer_set(mqrNode->meshChunk->mesh->auxBuffer, 
+        if (!lite3d_vbo_buffer_alloc(mqrNode->meshChunk->mesh->auxBuffer, 
             scene->seriesMatrixes.data, scene->seriesMatrixes.size * scene->seriesMatrixes.elemSize))
         {
             lite3d_array_clean(&scene->seriesMatrixes);
@@ -247,7 +247,7 @@ static void mqr_multirender_do_batch(lite3d_scene *scene, lite3d_mesh *mesh, uin
 
     // Установка индексов, заполняем vbo с учетом выравнивания, хотя мы немного выходим за пределы size при этом
     // это не страшно, так как массив всегда имеет зарезервированную память.
-    if (!lite3d_vbo_buffer_set(scene->invocationIndexBufferGPU, scene->invocationIndexBufferCPU.data,
+    if (!lite3d_vbo_buffer_alloc(scene->invocationIndexBufferGPU, scene->invocationIndexBufferCPU.data,
         LITE3D_ALIGN_SIZE(scene->invocationIndexBufferCPU.size, 4) * scene->invocationIndexBufferCPU.elemSize))
     {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Unable to write to the invocation index buffer");

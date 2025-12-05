@@ -31,11 +31,20 @@ static int sdl_init(void)
 {
     uint32_t subSystems = SDL_INIT_VIDEO |
                           SDL_INIT_TIMER |
-                          SDL_INIT_EVENTS |
-                          SDL_INIT_JOYSTICK |
-                          SDL_INIT_GAMECONTROLLER;
+                          SDL_INIT_EVENTS;
 
     SDL_version compiledVers, linkedVers;
+
+    SDL_VERSION(&compiledVers);
+    SDL_GetVersion(&linkedVers);
+
+    if (compiledVers.major != linkedVers.major)
+    {
+        printf("%s: SDL major version mismatch, compiled: %d, linked: %d\n",
+            LITE3D_CURRENT_FUNCTION, (int)compiledVers.major, (int)linkedVers.major);
+
+        return LITE3D_FALSE;
+    }
 
     if (SDL_WasInit(subSystems) != subSystems)
     {
@@ -46,25 +55,10 @@ static int sdl_init(void)
 
         if (SDL_Init(subSystems) != 0)
         {
-            SDL_LogCritical(
-                SDL_LOG_CATEGORY_APPLICATION,
-                "%s: SDL startup error..",
-                LITE3D_CURRENT_FUNCTION);
+            printf("%s: SDL startup failed: %s\n",
+                LITE3D_CURRENT_FUNCTION, SDL_GetError());
             return LITE3D_FALSE;
         }
-    }
-
-    SDL_VERSION(&compiledVers);
-    SDL_GetVersion(&linkedVers);
-
-    if (compiledVers.major != linkedVers.major)
-    {
-        SDL_LogCritical(
-            SDL_LOG_CATEGORY_APPLICATION,
-            "SDL version mismatch..");
-
-        SDL_Quit();
-        return LITE3D_FALSE;
     }
 
     SDL_LogInfo(
