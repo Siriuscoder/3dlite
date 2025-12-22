@@ -357,10 +357,10 @@ int lite3d_video_open(lite3d_video_settings *settings, int hideConsole)
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
 #endif
 
-    windowFlags = SDL_WINDOW_OPENGL | SDL_WINDOW_HIDDEN;
+    windowFlags = SDL_WINDOW_OPENGL | SDL_WINDOW_ALLOW_HIGHDPI | SDL_WINDOW_HIDDEN;
     if (settings->fullscreen)
     {
-        windowFlags |= SDL_WINDOW_FULLSCREEN;
+        windowFlags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
         windowFlags |= SDL_WINDOW_BORDERLESS;
     }
 
@@ -491,13 +491,21 @@ void lite3d_video_resize(int32_t width, int32_t height)
     }
 }
 
+void lite3d_video_get_drawable_size(int32_t *width, int32_t *height)
+{
+    if (gRenderWindow)
+    {
+        SDL_GL_GetDrawableSize(gRenderWindow, width, height);
+    }
+}
+
 void lite3d_video_set_fullscreen(int8_t flag)
 {
     if (gRenderWindow)
     {
         SDL_SetWindowFullscreen(
             gRenderWindow,
-            flag ? SDL_WINDOW_FULLSCREEN : 0);
+            flag ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0);
     }
 }
 

@@ -179,20 +179,10 @@ void Sample::processEvent(SDL_Event *e)
         }
         else if (mMainWindow && mMainCamera && e->key.keysym.sym == SDLK_f)
         {
-            static bool scRes = false;
-            if(scRes)
-            {
-                resizeMainWindow(lite3d_get_global_settings()->videoSettings.screenWidth, 
-                    lite3d_get_global_settings()->videoSettings.screenHeight);
-                mMainWindow->fullscreen(false);
-            }
-            else
-            {
-                resizeMainWindow(0, 0);
-                mMainWindow->fullscreen(true);
-            }
-
+            static bool scRes = lite3d_get_global_settings()->videoSettings.fullscreen;
             scRes = !scRes;
+
+            setFullscreen(scRes);
             mainCameraChanged();
         }
     }
@@ -256,11 +246,26 @@ void Sample::adjustMainCamera(int32_t width, int32_t height)
     mMainCamera->setAspect(mMainWindow->computeCameraAspect());
 }
 
-void Sample::resizeMainWindow(int32_t width, int32_t height)
+void Sample::resizeWindow(int32_t width, int32_t height)
 {
     SDL_assert(mMainWindow);
 
     mMainWindow->resize(width, height);
+    setGuiSize(mMainWindow->width(), mMainWindow->height());
+    adjustMainCamera(mMainWindow->width(), mMainWindow->height());
+}
+
+void Sample::setFullscreen(bool fullscreen)
+{
+    mMainWindow->fullscreen(fullscreen);
+
+    // Restore original window size
+    if (!fullscreen)
+    {
+        mMainWindow->resize(lite3d_get_global_settings()->videoSettings.screenWidth, 
+            lite3d_get_global_settings()->videoSettings.screenHeight);
+    }
+
     setGuiSize(mMainWindow->width(), mMainWindow->height());
     adjustMainCamera(mMainWindow->width(), mMainWindow->height());
 }

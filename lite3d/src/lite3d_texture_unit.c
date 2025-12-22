@@ -358,7 +358,7 @@ static int8_t lite3d_max_mipmaps_count(int32_t width, int32_t height)
         width = LITE3D_MAX(1, width >> 1);
         height = LITE3D_MAX(1, height >> 1);
 
-        if (++count >= 255)
+        if (++count == INT8_MAX)
             return 0;
     }
     while (!(width == 1 && height == 1));
