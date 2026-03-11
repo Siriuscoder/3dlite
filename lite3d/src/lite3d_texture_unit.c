@@ -350,20 +350,18 @@ static void lite3d_apply_image_filters(void)
     }
 }
 
-static int8_t lite3d_max_mipmaps_count(int32_t width, int32_t height, int32_t depth,
-    int32_t maxMipmapsSupported)
+static int8_t lite3d_max_mipmaps_count(int32_t width, int32_t height)
 {
     int8_t count = 0;
     do
     {
-        width = LITE3D_MAX(1, width / 2);
-        height = LITE3D_MAX(1, height / 2);
-        depth = LITE3D_MAX(1, depth / 2);
+        width = LITE3D_MAX(1, width >> 1);
+        height = LITE3D_MAX(1, height >> 1);
 
-        if (++count > maxMipmapsSupported)
+        if (++count == INT8_MAX)
             return 0;
     }
-    while (!(width == 1 && height == 1 && depth == 1));
+    while (!(width == 1 && height == 1));
 
     return count;
 }
@@ -878,8 +876,6 @@ int lite3d_texture_unit_from_resource(lite3d_texture_unit *textureUnit,
             ilGetInteger(IL_IMAGE_SIZE_OF_DATA));
     }
 
-    textureUnit->loadedMipmaps = 0;
-
     /* make texture active */
     glBindTexture(textureTargetEnum[textureTarget], textureUnit->textureID);
 
@@ -918,6 +914,16 @@ int lite3d_texture_unit_from_resource(lite3d_texture_unit *textureUnit,
                 return LITE3D_FALSE;
             }
         }
+    }
+
+    if (totalLevels != textureUnit->generatedMipmaps)
+    {
+        SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "%s: %s, "
+            "Not all mipmaps present in image (%d of %d)",
+            lite3d_texture_unit_target_string(textureUnit->textureTarget),
+            resource->name,
+            totalLevels,
+            textureUnit->generatedMipmaps);
     }
 
     /* ganerate mipmaps if not loaded */
@@ -1189,7 +1195,6 @@ int lite3d_texture_unit_allocate(lite3d_texture_unit *textureUnit,
     uint16_t iformat, int32_t width, int32_t height, int32_t depth, int32_t samples)
 {
     uint32_t internalFormat;
-    int32_t textureMaxLevels;
     SDL_assert(textureUnit);
 
     memset(textureUnit, 0, sizeof (lite3d_texture_unit));
@@ -1275,17 +1280,11 @@ int lite3d_texture_unit_allocate(lite3d_texture_unit *textureUnit,
     if (filtering == LITE3D_TEXTURE_FILTER_TRILINEAR && textureTarget < LITE3D_TEXTURE_BUFFER)
     {
         /* check  mipmaps consistency */
-#ifdef GL_TEXTURE_MAX_LEVEL
-        glGetTexParameteriv(textureTargetEnum[textureTarget], GL_TEXTURE_MAX_LEVEL, &textureMaxLevels);
-#else
-        textureMaxLevels = 1000;
-#endif
-        textureUnit->generatedMipmaps = lite3d_max_mipmaps_count(width,
-            height, depth, textureMaxLevels);
+        textureUnit->generatedMipmaps = lite3d_max_mipmaps_count(width, height);
         if (textureUnit->generatedMipmaps == 0)
         {
             SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
-                "%s: mipmaps not supported for this dimensions %dx%dx%d",
+                "%s: mipmaps are not supported for this dimensions %dx%dx%d",
                 lite3d_texture_unit_target_string(textureUnit->textureTarget),
                 width, height, depth);
             filtering = LITE3D_TEXTURE_FILTER_BILINEAR;
@@ -1331,6 +1330,13 @@ int lite3d_texture_unit_allocate(lite3d_texture_unit *textureUnit,
     {
         glTexParameteri(textureTargetEnum[textureTarget], GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
         glTexParameteri(textureTargetEnum[textureTarget], GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
+    }
+
+    if (lite3d_check_seamless_cube_map_per_texture() && 
+        (textureTarget == LITE3D_TEXTURE_CUBE_ARRAY || 
+        textureTarget == LITE3D_TEXTURE_CUBE))
+    {
+        glTexParameteri(textureTargetEnum[textureTarget], GL_TEXTURE_CUBE_MAP_SEAMLESS, GL_TRUE);
     }
 
     if (LITE3D_CHECK_GL_ERROR)

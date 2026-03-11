@@ -1,0 +1,56 @@
+#include "samples:shaders/sources/common/common_inc.glsl"
+
+layout(local_size_x = 16, local_size_y = 16) in;
+layout(binding = 0, rg16f) uniform writeonly image2D BrdfLUT;
+
+const uint totalSamples = 1024u;
+
+void main() 
+{
+    const ivec2 texCoord = ivec2(gl_GlobalInvocationID.xy);
+    const ivec2 bounds = ivec2(imageSize(BrdfLUT));
+
+    if (texCoord.x >= bounds.x || texCoord.y >= bounds.y)
+        return;
+
+    const float NdotV = max(float(texCoord.x) / float(bounds.x), FLT_EPSILON);
+    const float roughness = max(float(texCoord.y) / float(bounds.y), LITE3D_MIN_ROUGHNESS);
+
+    vec3 V;
+    V.x = sqrt(1.0 - NdotV * NdotV);
+    V.y = 0.0;
+    V.z = NdotV;
+
+    float A = 0.0;
+    float B = 0.0;
+    vec3 N = vec3(0.0, 0.0, 1.0);
+
+    for (uint i = 0u; i < totalSamples; ++i)
+    {
+        // generate sample vector towards the alignment of the specular lobe
+        vec2 Xi = hammersleySequence(i, totalSamples);
+        vec3 H  = importanceSampleGGX(Xi, N, roughness);
+        float HdotV = dot(H, V);
+        vec3 L  = normalize(2.0 * HdotV * H - V);
+
+        float NdotL = max(L.z, 0.0);
+        if(NdotL > 0.0)
+        {
+            NdotL = max(NdotL, FLT_EPSILON);
+            HdotV = max(HdotV, FLT_EPSILON);
+            float NdotH = max(H.z, FLT_EPSILON);
+            // Geometric Shadowing term
+            float G = G_IBL(NdotL, NdotV, roughness);
+            float G_Vis = (G * HdotV) / (NdotH * NdotV);
+            // Fresnel component
+            float Fc = pow(1.0 - HdotV, 5.0);
+
+            A += (1.0 - Fc) * G_Vis;
+            B += Fc * G_Vis;
+        }
+    }
+    A /= float(totalSamples);
+    B /= float(totalSamples);
+
+    imageStore(BrdfLUT, texCoord, vec4(A, B, 0.0, 0.0));
+}

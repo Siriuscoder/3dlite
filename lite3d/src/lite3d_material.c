@@ -33,32 +33,6 @@ static void lite3d_material_pass_purge(lite3d_material_pass *pass)
     pass->passNo = 0;
 }
 
-static lite3d_shader_parameter_container *lite3d_material_pass_find_parameter(
-    lite3d_material_pass *pass, const char *name)
-{
-    lite3d_list_node *parameterNode;
-    lite3d_shader_parameter_container *parameter;
-    SDL_assert(pass);
-
-    for (parameterNode = pass->parameters.l.next;
-        parameterNode != &pass->parameters.l;
-        parameterNode = lite3d_list_next(parameterNode))
-    {
-        parameter = LITE3D_MEMBERCAST(
-            lite3d_shader_parameter_container,
-            parameterNode,
-            parameterLink);
-
-        if (strcmp(parameter->parameter->name, name) == 0)
-        {
-            return parameter;
-        }
-    }
-
-    return NULL;
-}
-
-
 void lite3d_material_init(lite3d_material *material)
 {
     SDL_assert(material);
@@ -83,9 +57,12 @@ void lite3d_material_purge(lite3d_material *material)
 void lite3d_material_pass_init(lite3d_material_pass *pass, uint32_t no)
 {
     SDL_assert(pass);
-    memset(pass, 0, sizeof(lite3d_material_pass));
-    lite3d_list_init(&pass->parameters);
+    lite3d_shader_parameters_init(&pass->parameters);
     pass->passNo = no;
+    pass->program = NULL;
+    pass->blending = LITE3D_FALSE;
+    pass->blendingMode = LITE3D_BLENDING_MODE_RGB_LINEAR_SOURCE_ALPHA;
+    pass->doubleSided = LITE3D_FALSE;
     pass->polygonMode = LITE3D_POLYMODE_FILL;
 }
 
@@ -130,57 +107,30 @@ int lite3d_material_remove_pass(
 void lite3d_material_pass_add_parameter(lite3d_material_pass *pass,
     lite3d_shader_parameter *param)
 {
-    lite3d_shader_parameter_container *parameter;
     SDL_assert(pass);
-
-    parameter = (lite3d_shader_parameter_container *) lite3d_malloc_pooled(
-        LITE3D_POOL_NO1,
-        sizeof (lite3d_shader_parameter_container));
-    SDL_assert_release(parameter);
-
-    parameter->parameter = param;
-    parameter->location = -1; // unknown ??
-    parameter->binding = -1; // unknown ??
-    parameter->bindContext = &pass->bindContext;
-    lite3d_list_link_init(&parameter->parameterLink);
-    lite3d_list_add_last_link(&parameter->parameterLink, &pass->parameters);
+    SDL_assert(param);
+    lite3d_shader_parameters_add(&pass->parameters, param);
 }
 
 int lite3d_material_pass_remove_parameter(lite3d_material_pass *pass,
     const char *name)
 {
-    lite3d_shader_parameter_container *parameter;
     SDL_assert(pass);
-
-    if ((parameter = lite3d_material_pass_find_parameter(pass, name)) != NULL)
-    {
-        lite3d_list_unlink_link(&parameter->parameterLink);
-        lite3d_free_pooled(LITE3D_POOL_NO1, parameter);
-
-        return LITE3D_TRUE;
-    }
-
-    return LITE3D_FALSE;
+    SDL_assert(name);
+    return lite3d_shader_parameters_remove(&pass->parameters, name);
 }
 
 void lite3d_material_pass_remove_all_parameters(lite3d_material_pass *pass)
 {
-    lite3d_list_node *parameterNode;
-    while ((parameterNode = lite3d_list_remove_first_link(&pass->parameters)) != NULL)
-    {
-        lite3d_free_pooled(LITE3D_POOL_NO1,
-            LITE3D_MEMBERCAST(lite3d_shader_parameter_container,
-            parameterNode, parameterLink));
-    }
+    SDL_assert(pass);
+    lite3d_shader_parameters_remove_all(&pass->parameters);
 }
 
 lite3d_shader_parameter *lite3d_material_pass_get_parameter(
     lite3d_material_pass *pass, const char *name)
 {
-    lite3d_shader_parameter_container *parameter;
-    parameter = lite3d_material_pass_find_parameter(pass, name);
-
-    return parameter ? parameter->parameter : NULL;
+    SDL_assert(pass);
+    return lite3d_shader_parameters_get(&pass->parameters, name);
 }
 
 lite3d_material_pass *lite3d_material_get_pass(
@@ -216,6 +166,7 @@ lite3d_material_pass *lite3d_material_apply(
     lite3d_material *material, uint16_t no)
 {
     lite3d_material_pass *pass;
+    SDL_assert(material);
 
     pass = lite3d_material_get_pass(material, no);
 
@@ -227,33 +178,11 @@ lite3d_material_pass *lite3d_material_apply(
     /* bind current shander first */
     lite3d_shader_program_bind(pass->program);
     /* set up uniforms if shader changed */
-    lite3d_material_pass_set_params(material, pass, LITE3D_TRUE);
+    lite3d_shader_program_apply_parameters(pass->program, &pass->parameters, LITE3D_TRUE);
     lite3d_blending(pass->blending);
     lite3d_blending_mode_set(pass->blendingMode);
     lite3d_backface_culling(pass->doubleSided ? LITE3D_CULLFACE_NEVER : LITE3D_CULLFACE_BACK);
     lite3d_polygon_mode(pass->polygonMode);
 
     return pass;
-}
-
-void lite3d_material_pass_set_params(lite3d_material *material,
-    lite3d_material_pass *pass, uint8_t changed)
-{
-    lite3d_list_node *parameterNode;
-    lite3d_shader_parameter_container *parameter;
-
-    /* check parameters and set it if changed */
-    for (parameterNode = pass->parameters.l.next;
-        parameterNode != &pass->parameters.l;
-        parameterNode = lite3d_list_next(parameterNode))
-    {
-        parameter = LITE3D_MEMBERCAST(lite3d_shader_parameter_container,
-            parameterNode, parameterLink);
-
-        if (changed || parameter->parameter->changed)
-        {
-            lite3d_shader_program_uniform_set(pass->program, parameter);
-            parameter->parameter->changed = LITE3D_FALSE;
-        }
-    }
 }

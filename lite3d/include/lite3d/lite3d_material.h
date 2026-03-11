@@ -29,11 +29,8 @@
 typedef struct lite3d_material_pass
 {
     uint32_t passNo;
-    /* shader must be linked before set parameters */
     lite3d_shader_program *program;
-    lite3d_shader_binding_context bindContext;
-    /* list lite3d_shader_parameter_container */
-    lite3d_list parameters;
+    lite3d_shader_parameters parameters;
     /* blending */
     uint8_t blending;
     uint8_t blendingMode;
@@ -74,8 +71,6 @@ LITE3D_CEXPORT int lite3d_material_pass_is_empty(
     const lite3d_material *material, uint32_t no);
 
 LITE3D_CEXPORT lite3d_material_pass *lite3d_material_apply(lite3d_material *material, uint16_t no);
-LITE3D_CEXPORT void lite3d_material_pass_set_params(lite3d_material *material,
-    lite3d_material_pass *pass, uint8_t changed);
 
 #endif	/* LITE3D_MATERIAL_H */
 

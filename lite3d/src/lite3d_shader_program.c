@@ -30,8 +30,14 @@ static lite3d_shader_program *gActProg = NULL;
 static int gMaxGeometryOutputVertices = 0;
 static int gMaxGeometryTotalOutputComponents = 0;
 static int gMaxGeometryOutputComponents = 0;
+static int gMaxComputeWorkGroupSize[3] = {0};
+static int gMaxComputeStorageBlocks = 0;
+static int gMaxComputeImageUniforms = 0;
+static int gMaxComputeTextureImageUnits = 0;
+static int gMaxComputeUniformBlocks = 0;
+static int gMaxComputeCombinedUniformComponents = 0;
 
-static void lite3d_shader_program_get_log(lite3d_shader_program *program)
+static void lite3d_shader_program_get_log(struct lite3d_shader_program *program)
 {
     GLint maxLogLength = 0;
     if (program->statusString)
@@ -62,6 +68,34 @@ int lite3d_shader_program_technique_init(void)
         SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "GL_MAX_GEOMETRY_TOTAL_OUTPUT_COMPONENTS: %d", gMaxGeometryTotalOutputComponents);
     }
 
+    if (lite3d_check_compute_shader())
+    {
+        int i;
+
+        for (i = 0; i < 3; i++)
+        {
+            glGetIntegeri_v(GL_MAX_COMPUTE_WORK_GROUP_SIZE, i, &gMaxComputeWorkGroupSize[i]);
+        }
+
+        SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "GL_MAX_COMPUTE_WORK_GROUP_SIZE: %d %d %d", gMaxComputeWorkGroupSize[0], 
+            gMaxComputeWorkGroupSize[1], gMaxComputeWorkGroupSize[2]);
+
+        glGetIntegerv(GL_MAX_COMPUTE_SHADER_STORAGE_BLOCKS, &gMaxComputeStorageBlocks);
+        SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "GL_MAX_COMPUTE_SHADER_STORAGE_BLOCKS: %d", gMaxComputeStorageBlocks);
+
+        glGetIntegerv(GL_MAX_COMPUTE_IMAGE_UNIFORMS, &gMaxComputeImageUniforms);
+        SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "GL_MAX_COMPUTE_IMAGE_UNIFORMS: %d", gMaxComputeImageUniforms);
+
+        glGetIntegerv(GL_MAX_COMPUTE_TEXTURE_IMAGE_UNITS, &gMaxComputeTextureImageUnits);
+        SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "GL_MAX_COMPUTE_TEXTURE_IMAGE_UNITS: %d", gMaxComputeTextureImageUnits);
+
+        glGetIntegerv(GL_MAX_COMPUTE_UNIFORM_BLOCKS, &gMaxComputeUniformBlocks);
+        SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "GL_MAX_COMPUTE_UNIFORM_BLOCKS: %d", gMaxComputeUniformBlocks);
+
+        glGetIntegerv(GL_MAX_COMBINED_COMPUTE_UNIFORM_COMPONENTS, &gMaxComputeCombinedUniformComponents);
+        SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "GL_MAX_COMBINED_COMPUTE_UNIFORM_COMPONENTS: %d", gMaxComputeCombinedUniformComponents);
+    }
+
     return LITE3D_TRUE;
 }
 
@@ -84,13 +118,14 @@ void lite3d_shader_program_get_limitations(int *maxGeometryOutputVertices,
     }
 }
 
-int lite3d_shader_program_init(lite3d_shader_program *program)
+int lite3d_shader_program_init(struct lite3d_shader_program *program)
 {
     SDL_assert(program);
 
     lite3d_misc_gl_error_stack_clean();
     memset(program, 0, sizeof(lite3d_shader_program));
     program->programID = glCreateProgram();
+    program->type = LITE3D_SHADER_PROGRAM_TYPE_COMMON_PIPELINE;
     if (LITE3D_CHECK_GL_ERROR)
     {
         lite3d_shader_program_purge(program);
@@ -103,8 +138,7 @@ int lite3d_shader_program_init(lite3d_shader_program *program)
     return LITE3D_TRUE;
 }
 
-int lite3d_shader_program_link(
-    lite3d_shader_program *program, lite3d_shader *shaders, size_t count)
+int lite3d_shader_program_link(struct lite3d_shader_program *program, lite3d_shader *shaders, size_t count)
 {
     uint32_t i;
     GLint isLinked = 0;
@@ -118,7 +152,15 @@ int lite3d_shader_program_link(
     lite3d_misc_gl_error_stack_clean();
 
     for (i = 0; i < count; ++i)
+    {
+        if (shaders[i].type == LITE3D_SHADER_TYPE_COMPUTE)
+        {
+            program->type = LITE3D_SHADER_PROGRAM_TYPE_COMPUTE;
+        }
+
         glAttachShader(program->programID, shaders[i].shaderID);
+    }
+
     /* linking process */
     glLinkProgram(program->programID);
 
@@ -140,12 +182,12 @@ int lite3d_shader_program_link(
     {
         if (program->statusString)
         {
-            SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION, "shader program(%d) 0x%016llx link OK: %s", 
+            SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION, "shader program(%d) 0x%016llx linked successfully: %s", 
                 program->programID, (unsigned long long)program, program->statusString);
         }
         else
         {
-            SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "shader program(%d) 0x%016llx link OK",
+            SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "shader program(%d) 0x%016llx linked successfully",
                 program->programID, (unsigned long long)program);
         }
     }
@@ -158,8 +200,7 @@ int lite3d_shader_program_link(
     return program->success;
 }
 
-int lite3d_shader_program_validate(
-    lite3d_shader_program *program)
+int lite3d_shader_program_validate(struct lite3d_shader_program *program)
 {
     GLint isValidated = 0;
     SDL_assert(program);
@@ -184,14 +225,14 @@ int lite3d_shader_program_validate(
 
     if (program->validated)
     {
-        if (program->statusString)
+        if (program->statusString && strlen(program->statusString) > 0)
         {
-            SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION, "shader program(%d) 0x%016llx validate OK: %s", 
+            SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION, "shader program(%d) 0x%016llx validated successfully: %s", 
                 program->programID, (unsigned long long)program, program->statusString);
         }
         else
         {
-            SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "shader program(%d) 0x%016llx validate OK",
+            SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "shader program(%d) 0x%016llx validated successfully",
                 program->programID, (unsigned long long)program);
         }
     }
@@ -204,8 +245,7 @@ int lite3d_shader_program_validate(
     return program->validated;
 }
 
-void lite3d_shader_program_purge(
-    lite3d_shader_program *program)
+void lite3d_shader_program_purge(struct lite3d_shader_program *program)
 {
     SDL_assert(program);
 
@@ -221,8 +261,7 @@ void lite3d_shader_program_purge(
     }
 }
 
-void lite3d_shader_program_bind(
-    lite3d_shader_program *program)
+void lite3d_shader_program_bind(struct lite3d_shader_program *program)
 {
     SDL_assert(program);
     SDL_assert(program->success == LITE3D_TRUE);
@@ -233,15 +272,13 @@ void lite3d_shader_program_bind(
     }
 }
 
-void lite3d_shader_program_unbind(
-    lite3d_shader_program *program)
+void lite3d_shader_program_unbind(struct lite3d_shader_program *program)
 {
     glUseProgram(0);
     gActProg = NULL;
 }
 
-static int lite3d_shader_program_sampler_set(
-    lite3d_shader_program *program, lite3d_shader_parameter_container *p)
+static int lite3d_shader_program_sampler_set(struct lite3d_shader_program *program, struct lite3d_shader_parameter_container *p)
 {
     SDL_assert(program);
     SDL_assert(program->success == LITE3D_TRUE);
@@ -271,7 +308,7 @@ static int lite3d_shader_program_sampler_set(
 }
 
 static int lite3d_shader_program_ssbo_set(
-    lite3d_shader_program *program, lite3d_shader_parameter_container *p)
+    struct lite3d_shader_program *program, struct lite3d_shader_parameter_container *p)
 {
 #ifndef GLES
     SDL_assert(program);
@@ -302,6 +339,13 @@ static int lite3d_shader_program_ssbo_set(
     }
     
     glBindBufferBase(GL_SHADER_STORAGE_BUFFER, p->binding, p->parameter->parameter.vbo->vboID);
+
+    if (p->parameter->direction == LITE3D_SHADER_PARAMETER_DIRECTION_OUTPUT || 
+        p->parameter->direction == LITE3D_SHADER_PARAMETER_DIRECTION_INOUT)
+    {
+        program->syncFlags |= GL_SHADER_STORAGE_BARRIER_BIT;
+    }
+
     return LITE3D_TRUE;
 #else
     SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
@@ -312,7 +356,7 @@ static int lite3d_shader_program_ssbo_set(
 }
 
 static int lite3d_shader_program_ubo_set(
-    lite3d_shader_program *program, lite3d_shader_parameter_container *p)
+    struct lite3d_shader_program *program, struct lite3d_shader_parameter_container *p)
 {
 #ifndef WITH_GLES2
     SDL_assert(program);
@@ -351,8 +395,60 @@ static int lite3d_shader_program_ubo_set(
 #endif
 }
 
+static int lite3d_shader_program_image_store_set(
+    struct lite3d_shader_program *program, struct lite3d_shader_parameter_container *p)
+{
+#if !defined(WITH_GLES2) || !defined(WITH_GLES3)
+    SDL_assert(program);
+    SDL_assert(program->success == LITE3D_TRUE);
+    SDL_assert(p->parameter->parameter.texture);
+
+    /* -1  mean what location unknown yet */
+    if (p->location == -1)
+    {
+        p->location = glGetUniformLocation(program->programID, p->parameter->name);
+        if (p->location < 0)
+        {
+            p->location = -2;
+            SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
+                "%s: texture image '%s' not found in program(%d) 0x%016llx",
+                LITE3D_CURRENT_FUNCTION, p->parameter->name, program->programID, (unsigned long long)program);
+            return LITE3D_FALSE;
+        }
+    }
+    else if (p->location == -2)
+        return LITE3D_FALSE;
+    
+    if (p->binding < 0)
+        p->binding = p->bindContext->textureImageBindingsCount++;
+    
+    glUniform1i(p->location, p->binding);
+
+    if (p->parameter->direction == LITE3D_SHADER_PARAMETER_DIRECTION_OUTPUT || 
+        p->parameter->direction == LITE3D_SHADER_PARAMETER_DIRECTION_INOUT)
+    {
+        program->syncFlags |= GL_SHADER_IMAGE_ACCESS_BARRIER_BIT | GL_TEXTURE_FETCH_BARRIER_BIT;
+    }
+
+    glBindImageTexture(p->binding, p->parameter->parameter.texture->textureID, 
+        p->parameter->imageMipLevel, 
+        p->parameter->imageLayer < 0 ? GL_TRUE : GL_FALSE, 
+        p->parameter->imageLayer >= 0 ? p->parameter->imageLayer : 0,
+        p->parameter->direction == LITE3D_SHADER_PARAMETER_DIRECTION_INOUT ? GL_READ_WRITE : 
+        (p->parameter->direction == LITE3D_SHADER_PARAMETER_DIRECTION_INPUT ? GL_READ_ONLY : GL_WRITE_ONLY),
+        p->parameter->parameter.texture->internalFormat);
+
+    return LITE3D_TRUE;
+#else
+    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+        "%s: Can`t set parameter '%s', ImageStore is supported in GLES31 or later, program 0x%016llx",
+        LITE3D_CURRENT_FUNCTION, p->parameter->name, (unsigned long long)program);
+    return LITE3D_FALSE;
+#endif
+}
+
 static int lite3d_shader_program_simple_uniform_set(
-    lite3d_shader_program *program, lite3d_shader_parameter_container *p)
+    struct lite3d_shader_program *program, struct lite3d_shader_parameter_container *p)
 {
     SDL_assert(program);
     SDL_assert(program->success == LITE3D_TRUE);
@@ -424,11 +520,12 @@ static lite3d_uniform_set_func uniformsMethodsTable[] = {
     lite3d_shader_program_simple_uniform_set,
     lite3d_shader_program_sampler_set,
     lite3d_shader_program_ssbo_set,
-    lite3d_shader_program_ubo_set
+    lite3d_shader_program_ubo_set,
+    lite3d_shader_program_image_store_set
 };
 
 int lite3d_shader_program_uniform_set(
-    lite3d_shader_program *program, lite3d_shader_parameter_container *p)
+    struct lite3d_shader_program *program, struct lite3d_shader_parameter_container *p)
 {
     SDL_assert(p);
     SDL_assert(p->parameter);
@@ -436,7 +533,7 @@ int lite3d_shader_program_uniform_set(
 }
 
 void lite3d_shader_program_attribute_index(
-    lite3d_shader_program *program, const char *name, int32_t location)
+    struct lite3d_shader_program *program, const char *name, int32_t location)
 {
     SDL_assert(program);
     SDL_assert(glIsProgram(program->programID));
@@ -456,4 +553,76 @@ int lite3d_shader_program_validate_current(void)
     }
 
     return lite3d_shader_program_validate(gActProg);
+}
+
+void lite3d_shader_program_compute_dispatch(struct lite3d_shader_program *program, uint32_t numGroupsX,
+    uint32_t numGroupsY, uint32_t numGroupsZ)
+{
+    if (program->type != LITE3D_SHADER_PROGRAM_TYPE_COMPUTE)
+    {
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "%s: program(%d) 0x%016llx is not compute shader program", 
+            LITE3D_CURRENT_FUNCTION, program->programID, (unsigned long long)program);
+        return;
+    }
+
+    lite3d_shader_program_bind(program);
+    /* validate program only first time  */
+    if (!lite3d_shader_program_validate_current())
+    {
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "%s: program(%d) 0x%016llx validate failed", 
+            LITE3D_CURRENT_FUNCTION, program->programID, (unsigned long long)program);
+        return;
+    }
+
+    /* Call glDispatchCompute to execute the compute shader program.
+     * numGroupsX, numGroupsY, numGroupsZ are the number of work groups
+     * in the X, Y and Z dimensions.
+     */
+    glDispatchCompute(numGroupsX, numGroupsY, numGroupsZ);
+
+    /* Call glMemoryBarrier if the program has requested a barrier. */
+    if (program->syncFlags)
+    {
+        glMemoryBarrier(program->syncFlags);
+    }
+}
+
+void lite3d_shader_program_compute_dispatch_sync(struct lite3d_shader_program *program, uint32_t numGroupsX,
+    uint32_t numGroupsY, uint32_t numGroupsZ)
+{
+    GLsync sync;
+
+    lite3d_shader_program_compute_dispatch(program, numGroupsX, numGroupsY, numGroupsZ);
+
+    /* Get fence sync object for waiting for GPU commands to complete. */
+    /* Wait for GPU commands to complete. */
+    /* Flush all commands in the command buffer to the GPU. */
+    sync = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
+    glClientWaitSync(sync, GL_SYNC_FLUSH_COMMANDS_BIT, UINT64_MAX);
+    glDeleteSync(sync);
+}
+
+void lite3d_shader_program_apply_parameters(struct lite3d_shader_program *program, 
+    struct lite3d_shader_parameters *params, uint8_t changed)
+{
+    lite3d_list_node *parameterNode;
+    lite3d_shader_parameter_container *parameter;
+
+    SDL_assert(program);
+    SDL_assert(params);
+
+    /* check parameters and set it if changed */
+    for (parameterNode = params->parameters.l.next;
+        parameterNode != &params->parameters.l;
+        parameterNode = lite3d_list_next(parameterNode))
+    {
+        parameter = LITE3D_MEMBERCAST(lite3d_shader_parameter_container,
+            parameterNode, parameterLink);
+
+        if (changed || parameter->parameter->changed)
+        {
+            lite3d_shader_program_uniform_set(program, parameter);
+            parameter->parameter->changed = LITE3D_FALSE;
+        }
+    }
 }

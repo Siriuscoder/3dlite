@@ -357,10 +357,10 @@ int lite3d_video_open(lite3d_video_settings *settings, int hideConsole)
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
 #endif
 
-    windowFlags = SDL_WINDOW_OPENGL | SDL_WINDOW_HIDDEN;
+    windowFlags = SDL_WINDOW_OPENGL | SDL_WINDOW_ALLOW_HIGHDPI | SDL_WINDOW_HIDDEN;
     if (settings->fullscreen)
     {
-        windowFlags |= SDL_WINDOW_FULLSCREEN;
+        windowFlags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
         windowFlags |= SDL_WINDOW_BORDERLESS;
     }
 
@@ -370,10 +370,6 @@ int lite3d_video_open(lite3d_video_settings *settings, int hideConsole)
             &settings->screenWidth,
             &settings->screenHeight))
         {
-            SDL_LogWarn(
-                SDL_LOG_CATEGORY_APPLICATION,
-                "lite3d_video_get_display_size failed");
-
             return LITE3D_FALSE;
         }
     }
@@ -391,7 +387,7 @@ int lite3d_video_open(lite3d_video_settings *settings, int hideConsole)
     {
         SDL_LogCritical(
             SDL_LOG_CATEGORY_APPLICATION,
-            "%s: SDL_CreateWindow failed: %s",
+            "%s: Failed to create render window: %s",
             LITE3D_CURRENT_FUNCTION,
             SDL_GetError());
 
@@ -400,7 +396,7 @@ int lite3d_video_open(lite3d_video_settings *settings, int hideConsole)
 
     SDL_LogInfo(
         SDL_LOG_CATEGORY_APPLICATION,
-        "%s: render window created %dx%d (%s)",
+        "%s: render window has been created %dx%d (%s)",
         LITE3D_CURRENT_FUNCTION,
         settings->screenWidth,
         settings->screenHeight,
@@ -412,7 +408,7 @@ int lite3d_video_open(lite3d_video_settings *settings, int hideConsole)
     {
         SDL_LogCritical(
             SDL_LOG_CATEGORY_APPLICATION,
-            "%s: GL Context create failed: %s",
+            "%s: Failed to create GL Context: %s",
             LITE3D_CURRENT_FUNCTION,
             SDL_GetError());
 
@@ -420,15 +416,26 @@ int lite3d_video_open(lite3d_video_settings *settings, int hideConsole)
     }
 
     /* set gl context */
-    SDL_GL_MakeCurrent(gRenderWindow, gGLContext);
+    if (SDL_GL_MakeCurrent(gRenderWindow, gGLContext) != 0)
+    {
+        SDL_LogCritical(
+            SDL_LOG_CATEGORY_APPLICATION,
+            "%s: Failed to set GL Context: %s",
+            LITE3D_CURRENT_FUNCTION,
+            SDL_GetError());
+
+        lite3d_video_close();
+        return LITE3D_FALSE;
+    }
 
     SDL_GetWindowDisplayMode(gRenderWindow, &displayMode);
     SDL_LogInfo(
         SDL_LOG_CATEGORY_APPLICATION,
-        "%s: selected pixel format: %d bpp, %s",
+        "%s: display format: %d bpp, %s, refresh rate %d Hz",
         LITE3D_CURRENT_FUNCTION,
         SDL_BITSPERPIXEL(displayMode.format),
-        SDL_GetPixelFormatName(displayMode.format));
+        SDL_GetPixelFormatName(displayMode.format),
+        displayMode.refresh_rate);
 
     SDL_GL_SetSwapInterval(settings->vsync ? 1 : 0);
 
@@ -484,26 +491,47 @@ void lite3d_video_resize(int32_t width, int32_t height)
     }
 }
 
+void lite3d_video_get_drawable_size(int32_t *width, int32_t *height)
+{
+    if (gRenderWindow)
+    {
+        SDL_GL_GetDrawableSize(gRenderWindow, width, height);
+    }
+}
+
 void lite3d_video_set_fullscreen(int8_t flag)
 {
     if (gRenderWindow)
     {
         SDL_SetWindowFullscreen(
             gRenderWindow,
-            flag ? SDL_WINDOW_FULLSCREEN : 0);
+            flag ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0);
     }
 }
 
 int lite3d_video_get_display_size(int32_t *width, int32_t *height)
 {
     SDL_DisplayMode displayMode;
+    int displayIndex = 0;
 
-    if (SDL_GetDesktopDisplayMode(0, &displayMode) != 0)
+    if (gRenderWindow)
+    {
+        if ((displayIndex = SDL_GetWindowDisplayIndex(gRenderWindow)) < 0)
+        {
+            SDL_LogError(
+                SDL_LOG_CATEGORY_APPLICATION,
+                "%s: Failed to get render window display index: %s",
+                LITE3D_CURRENT_FUNCTION, SDL_GetError());
+        }
+        return LITE3D_TRUE;
+    }
+
+    if (SDL_GetDesktopDisplayMode(displayIndex, &displayMode) != 0)
     {
         SDL_LogError(
             SDL_LOG_CATEGORY_APPLICATION,
-            "%s: SDL_GetDesktopDisplayMode failed..",
-            LITE3D_CURRENT_FUNCTION);
+            "%s: Failed to get render window display mode: %s",
+            LITE3D_CURRENT_FUNCTION, SDL_GetError());
 
         return LITE3D_FALSE;
     }

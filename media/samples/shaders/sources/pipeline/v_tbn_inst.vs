@@ -22,7 +22,7 @@ void main()
     // texture coordinate 
     iuv = uv;
     // calculate tangent, normal, binormal in world space
-    mat3 normalMatrix = mat3(modelMatrix[0].xyz, modelMatrix[1].xyz, modelMatrix[2].xyz);
+    mat3 normalMatrix = mat3(modelMatrix);
     iwt = normalize(normalMatrix * tang);
     iwb = normalize(normalMatrix * btang);
     iwn = normalize(normalMatrix * normal);

@@ -24,7 +24,24 @@
 #include <lite3d/lite3d_alloc.h>
 #include <lite3d/lite3d_shader.h>
 
-int lite3d_shader_init(lite3d_shader *shader, uint8_t type)
+static const char *lite3d_get_shader_type_name(uint8_t type)
+{
+    switch (type)
+    {
+    case LITE3D_SHADER_TYPE_VERTEX:
+        return "vertex";
+    case LITE3D_SHADER_TYPE_FRAGMENT:
+        return "fragment";
+    case LITE3D_SHADER_TYPE_GEOMETRY:
+        return "geometry";
+    case LITE3D_SHADER_TYPE_COMPUTE:
+        return "compute";
+    default:
+        return "unknown";
+    }
+}
+
+int lite3d_shader_init(struct lite3d_shader *shader, uint8_t type)
 {
     SDL_assert(shader);
     
@@ -47,6 +64,14 @@ int lite3d_shader_init(lite3d_shader *shader, uint8_t type)
         }
         shader->shaderID = glCreateShader(GL_GEOMETRY_SHADER);
         break;
+    case LITE3D_SHADER_TYPE_COMPUTE:
+        if (!lite3d_check_compute_shader())
+        {
+            SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "%s: Compute shaders are not supported", LITE3D_CURRENT_FUNCTION);
+            return LITE3D_FALSE;
+        }
+        shader->shaderID = glCreateShader(GL_COMPUTE_SHADER);
+        break;
     default:
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "%s: Unknown shader type '%d'", LITE3D_CURRENT_FUNCTION, type);
         return LITE3D_FALSE;
@@ -62,8 +87,7 @@ int lite3d_shader_init(lite3d_shader *shader, uint8_t type)
     return LITE3D_TRUE;
 }
 
-int lite3d_shader_compile(
-    lite3d_shader *shader, uint32_t sources, const char **source, int32_t *length)
+int lite3d_shader_compile(struct lite3d_shader *shader, uint32_t sources, const char **source, int32_t *length)
 {
     GLint isCompiled = 0;
     GLint maxLogLength = 0;
@@ -105,28 +129,27 @@ int lite3d_shader_compile(
         if (maxLogLength > 0)
         {
             SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
-                "%s: compile shader(%d) 0x%016llx OK: %s", LITE3D_CURRENT_FUNCTION, shader->shaderID, 
-                (unsigned long long)shader, shader->statusString);
+                "%s: %s shader(%d) 0x%016llx compiled successfully: %s", LITE3D_CURRENT_FUNCTION, lite3d_get_shader_type_name(shader->type), 
+                shader->shaderID, (unsigned long long)shader, shader->statusString);
         }
         else
         {
             SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION,
-                "%s: compile shader(%d) 0x%016llx OK", LITE3D_CURRENT_FUNCTION, shader->shaderID, 
-                (unsigned long long)shader);
+                "%s: %s shader(%d) 0x%016llx compiled successfully", LITE3D_CURRENT_FUNCTION, lite3d_get_shader_type_name(shader->type), 
+                shader->shaderID, (unsigned long long)shader);
         }
     }
     else
     {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
-            "%s: compile shader(%d) 0x%016llx FAILED: %s", LITE3D_CURRENT_FUNCTION, shader->shaderID, 
-            (unsigned long long)shader, maxLogLength > 0 ? shader->statusString : "No info");
+            "%s: %s shader(%d) 0x%016llx compile FAILED: %s", LITE3D_CURRENT_FUNCTION, lite3d_get_shader_type_name(shader->type),
+            shader->shaderID, (unsigned long long)shader, maxLogLength > 0 ? shader->statusString : "No info");
     }
 
     return shader->success;
 }
 
-void lite3d_shader_purge(
-    lite3d_shader *shader)
+void lite3d_shader_purge(struct lite3d_shader *shader)
 {
     SDL_assert(shader);
 

@@ -31,35 +31,48 @@ static int sdl_init(void)
 {
     uint32_t subSystems = SDL_INIT_VIDEO |
                           SDL_INIT_TIMER |
-                          SDL_INIT_EVENTS |
-                          SDL_INIT_JOYSTICK |
-                          SDL_INIT_GAMECONTROLLER;
+                          SDL_INIT_EVENTS;
 
     SDL_version compiledVers, linkedVers;
-
-    if (SDL_WasInit(subSystems) != subSystems)
-    {
-        if (SDL_Init(subSystems) != 0)
-        {
-            SDL_LogCritical(
-                SDL_LOG_CATEGORY_APPLICATION,
-                "%s: SDL startup error..",
-                LITE3D_CURRENT_FUNCTION);
-            return LITE3D_FALSE;
-        }
-    }
 
     SDL_VERSION(&compiledVers);
     SDL_GetVersion(&linkedVers);
 
     if (compiledVers.major != linkedVers.major)
     {
-        SDL_LogCritical(
-            SDL_LOG_CATEGORY_APPLICATION,
-            "SDL version mismatch..");
+        SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION,
+            "%s: SDL major version mismatch, compiled: %d, linked: %d",
+            LITE3D_CURRENT_FUNCTION, (int)compiledVers.major, (int)linkedVers.major);
 
-        SDL_Quit();
         return LITE3D_FALSE;
+    }
+
+    if (SDL_WasInit(subSystems) != subSystems)
+    {
+
+#ifdef SDL_HINT_APP_NAME
+        SDL_SetHint(SDL_HINT_APP_NAME, "lite3d app");
+#endif
+
+#ifdef SDL_HINT_WINDOWS_DPI_AWARENESS
+        // "permonitorv2": Request per-monitor V2 DPI awareness. (Windows 10, version 1607 and later). 
+        // The most visible difference from "permonitor" is that window title bar will be scaled to the visually
+        // correct size when dragging between monitors with different scale factors. This is the preferred DPI awareness level.
+        SDL_SetHint(SDL_HINT_WINDOWS_DPI_AWARENESS, "permonitorv2");
+#endif
+
+#ifdef SDL_HINT_VIDEO_HIGHDPI_DISABLED
+        // Allow HiDPI
+        SDL_SetHint(SDL_HINT_VIDEO_HIGHDPI_DISABLED, "0");
+#endif
+
+        if (SDL_Init(subSystems) != 0)
+        {
+            SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION,
+                "%s: SDL startup failed: %s\n",
+                LITE3D_CURRENT_FUNCTION, SDL_GetError());
+            return LITE3D_FALSE;
+        }
     }
 
     SDL_LogInfo(
@@ -88,7 +101,7 @@ int lite3d_main(const lite3d_global_settings *settings)
     atexit(lite3d_memory_cleanup);
 
     /* setup logger */
-    lite3d_logger_setup(settings->logFile);
+    lite3d_logger_setup(gGlobalSettings.logFile);
 
     lite3d_logger_set_logParams(
         gGlobalSettings.logLevel,
@@ -102,8 +115,7 @@ int lite3d_main(const lite3d_global_settings *settings)
 
     SDL_LogInfo(
         SDL_LOG_CATEGORY_APPLICATION,
-        "====== lite3d %s ======",
-        LITE3D_FULL_VERSION);
+        "=================== LITE3D " LITE3D_FULL_VERSION " ===================");
 
     /* setup SDL */
     if (!sdl_init())
@@ -113,9 +125,9 @@ int lite3d_main(const lite3d_global_settings *settings)
 
     if (SDL_SetThreadPriority(SDL_THREAD_PRIORITY_HIGH))
     {
-        SDL_LogError(
+        SDL_LogWarn(
             SDL_LOG_CATEGORY_APPLICATION,
-            "Could not insrease thread priority %s",
+            "Could not increase thread priority %s",
             SDL_GetError());
     }
 
@@ -124,59 +136,35 @@ int lite3d_main(const lite3d_global_settings *settings)
           &gGlobalSettings.videoSettings,
           settings->logMuteStd))
     {
-        SDL_LogError(
-            SDL_LOG_CATEGORY_APPLICATION,
-            "Could not setup video");
-
         goto ret_sdl_quit;
     }
 
     /* setup textures technique */
     if (!lite3d_texture_technique_init(&gGlobalSettings.textureSettings))
     {
-        SDL_LogError(
-            SDL_LOG_CATEGORY_APPLICATION,
-            "Could not setup textures technique "
-            "(lite3d_texture_technique_init)");
-
         goto ret_video_close;
     }
 
     /* setup textures technique */
     if (!lite3d_vbo_technique_init())
     {
-        SDL_LogError(
-            SDL_LOG_CATEGORY_APPLICATION,
-            "Could not setup VBO technique");
         goto ret_texture_shut;
     }
 
     /* setup vao technique */
     if (!lite3d_vao_technique_init())
     {
-        SDL_LogError(
-            SDL_LOG_CATEGORY_APPLICATION,
-            "Could not setup VAO technique");
-
         goto ret_texture_shut;
     }
 
     /* setup shaders technique */
     if (!lite3d_shader_program_technique_init())
     {
-        SDL_LogError(
-            SDL_LOG_CATEGORY_APPLICATION,
-            "Could not setup shaders technique");
-
         goto ret_texture_shut;
     }
 
     if (!lite3d_timer_technique_init())
     {
-        SDL_LogError(
-            SDL_LOG_CATEGORY_APPLICATION,
-            "Could not setup timer technique");
-
         goto ret_texture_shut;
     }
 
@@ -185,10 +173,6 @@ int lite3d_main(const lite3d_global_settings *settings)
 
     if (!lite3d_framebuffer_technique_init())
     {
-        SDL_LogError(
-            SDL_LOG_CATEGORY_APPLICATION,
-            "Could not setup framebuffer techique");
-
         goto ret_texture_shut;
     }
 

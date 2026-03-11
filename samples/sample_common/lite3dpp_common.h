@@ -65,7 +65,8 @@ public:
     inline void setCameraResistance(float v)
     { mCameraAccelResistance = v; }
 
-    void resizeMainWindow(int32_t width, int32_t height);
+    void resizeWindow(int32_t width, int32_t height);
+    void setFullscreen(bool fullscreen);
     void saveScreenshot();
 
     virtual void createScene() = 0;

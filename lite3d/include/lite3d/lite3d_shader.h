@@ -24,6 +24,7 @@
 #define LITE3D_SHADER_TYPE_VERTEX       0x1
 #define LITE3D_SHADER_TYPE_FRAGMENT     0x2
 #define LITE3D_SHADER_TYPE_GEOMETRY     0x3
+#define LITE3D_SHADER_TYPE_COMPUTE      0x4
 
 typedef struct lite3d_shader
 {
@@ -33,11 +34,11 @@ typedef struct lite3d_shader
     uint8_t type;
 } lite3d_shader;
 
-LITE3D_CEXPORT int lite3d_shader_init(lite3d_shader *shader, uint8_t type);
+LITE3D_CEXPORT int lite3d_shader_init(struct lite3d_shader *shader, uint8_t type);
 LITE3D_CEXPORT int lite3d_shader_compile(
-    lite3d_shader *shader, uint32_t sources, const char **source, int32_t *length);
+    struct lite3d_shader *shader, uint32_t sources, const char **source, int32_t *length);
 LITE3D_CEXPORT void lite3d_shader_purge(
-    lite3d_shader *shader);
+    struct lite3d_shader *shader);
 
 #endif	/* LITE3D_SHADER_H */
 

@@ -71,8 +71,12 @@ namespace lite3dpp
 
         virtual ~TextureImage() = default;
 
-        inline int8_t getLevelsNum()
-        { return mTexture.generatedMipmaps; }
+        /**
+         * @return The total number of mipmap levels in the texture.
+         * One means no mipmaps have been generated/loaded, but a single level exists.
+         */
+        inline int8_t getTotalLevels() const
+        { return mTexture.generatedMipmaps + 1; }
 
         void getPixels(int8_t level, PixelsData &pixels) const;
         void getPixels(int8_t level, void *pixels) const;
@@ -80,24 +84,24 @@ namespace lite3dpp
         void setPixels(int8_t level, const PixelsData &pixels);
         void setPixels(int8_t level, const void *pixels);
 
-        void getCompressedPixels(int8_t level, PixelsData &pixels);
-        void getCompressedPixels(int8_t level, void *pixels);
+        void getCompressedPixels(int8_t level, PixelsData &pixels) const;
+        void getCompressedPixels(int8_t level, void *pixels) const;
         void setCompressedPixels(int8_t level, const PixelsData &pixels);
         void setCompressedPixels(int8_t level, const void *pixels, size_t size);
 
-        size_t getLayerSize(int8_t level);
-        size_t getCompressedLayerSize(int8_t level);
+        size_t getLayerSize(int8_t level) const;
+        size_t getCompressedLayerSize(int8_t level) const;
         
         /* commonly color.x = r, color.y = b ... */
         void setBlankColor(const kmVec4 &color);
 
         void generateMipmaps();
         
-        inline int32_t getHeight()
+        inline int32_t getHeight() const
         { return mTexture.imageHeight; }
-        inline int32_t getWidth()
+        inline int32_t getWidth() const
         { return mTexture.imageWidth; }
-        inline int32_t getDepth()
+        inline int32_t getDepth() const
         { return mTexture.imageDepth; }
 
     protected:
@@ -108,7 +112,7 @@ namespace lite3dpp
 
     private:
 
-        bool mModifyed;
+        bool mModified;
         LayersData mLayersBackup;
     };
 }

@@ -21,19 +21,25 @@
 #include <lite3d/lite3d_common.h>
 #include <lite3d/lite3d_texture_unit.h>
 #include <lite3d/lite3d_rb_tree.h>
+#include <lite3d/lite3d_list.h>
 #include <lite3d/lite3d_kazmath.h>
 
-#define LITE3D_SHADER_PARAMETER_MAX_NAME    128
-#define LITE3D_SHADER_PARAMETER_FLOAT       0x1
-#define LITE3D_SHADER_PARAMETER_FLOATV3     0x2
-#define LITE3D_SHADER_PARAMETER_FLOATV4     0x3
-#define LITE3D_SHADER_PARAMETER_FLOATM3     0x4
-#define LITE3D_SHADER_PARAMETER_FLOATM4     0x5
-#define LITE3D_SHADER_PARAMETER_INT         0x6
-#define LITE3D_SHADER_PARAMETER_UINT        0x7
-#define LITE3D_SHADER_PARAMETER_SAMPLER     0x8
-#define LITE3D_SHADER_PARAMETER_SSBO        0x9
-#define LITE3D_SHADER_PARAMETER_UBO         0xA
+#define LITE3D_SHADER_PARAMETER_MAX_NAME            128
+#define LITE3D_SHADER_PARAMETER_FLOAT               0x1
+#define LITE3D_SHADER_PARAMETER_FLOATV3             0x2
+#define LITE3D_SHADER_PARAMETER_FLOATV4             0x3
+#define LITE3D_SHADER_PARAMETER_FLOATM3             0x4
+#define LITE3D_SHADER_PARAMETER_FLOATM4             0x5
+#define LITE3D_SHADER_PARAMETER_INT                 0x6
+#define LITE3D_SHADER_PARAMETER_UINT                0x7
+#define LITE3D_SHADER_PARAMETER_SAMPLER             0x8
+#define LITE3D_SHADER_PARAMETER_SSBO                0x9
+#define LITE3D_SHADER_PARAMETER_UBO                 0xA
+#define LITE3D_SHADER_PARAMETER_IMAGE_STORE         0xB
+
+#define LITE3D_SHADER_PARAMETER_DIRECTION_INOUT     0x0
+#define LITE3D_SHADER_PARAMETER_DIRECTION_INPUT     0x1
+#define LITE3D_SHADER_PARAMETER_DIRECTION_OUTPUT    0x2
 
 typedef struct lite3d_shader_parameter
 {
@@ -53,9 +59,37 @@ typedef struct lite3d_shader_parameter
         kmMat3 valmat3;
         kmMat4 valmat4;
     } parameter;
+    uint8_t direction;     // 0 - inout, 1 - input, 2 - output, for compute shaders only
+    int32_t imageMipLevel; // mip level, zero by default
+    int32_t imageLayer;    // image array layer, layered binding disabled by default
     /* userdata */
     void *userdata;
 } lite3d_shader_parameter;
+
+
+typedef struct lite3d_shader_binding_context
+{
+    int16_t textureBindingsCount;
+    int16_t blockBindingsCount;  
+    int16_t textureImageBindingsCount;  
+} lite3d_shader_binding_context;
+
+typedef struct lite3d_shader_parameter_container
+{
+    lite3d_list_node parameterLink;
+    lite3d_shader_parameter *parameter;
+    lite3d_shader_binding_context *bindContext;
+    /* uniform location in shader program attached to this pass */
+    int32_t location;
+    int16_t binding;
+} lite3d_shader_parameter_container;
+
+typedef struct lite3d_shader_parameters
+{
+    lite3d_shader_binding_context bindContext;
+    /* list lite3d_shader_parameter_container */
+    lite3d_list parameters;
+} lite3d_shader_parameters;
 
 typedef struct lite3d_global_parameters
 {
@@ -77,6 +111,17 @@ LITE3D_CEXPORT void lite3d_shader_parameter_init(
     lite3d_shader_parameter *param);
 LITE3D_CEXPORT void lite3d_shader_parameter_purge(
     lite3d_shader_parameter *param);
+
+
+LITE3D_CEXPORT void lite3d_shader_parameters_init(lite3d_shader_parameters *params);
+
+LITE3D_CEXPORT void lite3d_shader_parameters_add(lite3d_shader_parameters *params,
+    lite3d_shader_parameter *param);
+LITE3D_CEXPORT int lite3d_shader_parameters_remove(lite3d_shader_parameters *params,
+    const char *name);
+LITE3D_CEXPORT void lite3d_shader_parameters_remove_all(lite3d_shader_parameters *params);
+LITE3D_CEXPORT lite3d_shader_parameter *lite3d_shader_parameters_get(
+    lite3d_shader_parameters *params, const char *name);
 
 LITE3D_CEXPORT void lite3d_shader_global_parameters_init(void);
 LITE3D_CEXPORT lite3d_global_parameters *lite3d_shader_global_parameters(void);

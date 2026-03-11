@@ -1,17 +1,41 @@
 # Samples
 
-## assets download
+## Assets Download
 
-Most of the samples use external assets that do not exists in git repository due to their large size. For the samples to work correctly you should download this [asset archive](https://drive.google.com/file/d/1i-mWaHmjPdWYBEXFVHkr5vFJe0EU33ht/view?usp=sharing) (all on one). Extract this archive into the root of the project and feel free to run any sample. Note that any sample should be run from **media/** folder.
+Most of the samples use external assets that are not included in the Git repository due to their large size.
+
+To run the samples correctly, download this [asset archive](https://drive.google.com/file/d/1i-mWaHmjPdWYBEXFVHkr5vFJe0EU33ht/view?usp=sharing).  
+This archive contains **all assets required for every sample**, including the Sponza scene.
+
+Extract the archive into the root directory of the project.
+
+After extraction, you can run any sample.  
+**Note:** all samples should be executed from the **media/** folder.
+
+---
 
 ## sample_sponzahall
-Sponza remastered scene with full PBR materials. You can download resources for sponza remastered scene from [here](https://drive.google.com/file/d/1rhB6k-BmfULFcVFAaw4KaPaILxeD34ne/view?usp=sharing), unpack and copy textures and models folders to media/sponza.  
+
+Sponza Remastered scene with full PBR materials.
+
+**Note:** the required assets are already included in the main asset archive described above.  
+The separate Sponza download link previously used is no longer required.
 
 ![](/media/screenshots/sponza.png "Sponza")
 ![](/media/screenshots/sponza1.png "Sponza")
 
+---
+
 ## sample_vault_111
-Vault 111 scene (Fallout4 models) with complete PBR lighting and HDR rendering, Deffered shading pipeline, dynamic PCF shadows from multiple light sources, Physical Bloom effect and huge range of materials and models. 
+
+Vault 111 scene (Fallout 4 models) featuring:
+
+- full PBR lighting
+- HDR rendering
+- deferred shading pipeline
+- dynamic PCF shadows from multiple light sources
+- physically-based bloom effect
+- a large variety of materials and models
 
 ![](/media/screenshots/vault_111_0.png "Vault111")
 ![](/media/screenshots/vault_111_1.png "Vault111")
@@ -41,8 +65,15 @@ Vault 111 scene (Fallout4 models) with complete PBR lighting and HDR rendering, 
 ![](/media/screenshots/vault_111_25.png "Vault111")
 ![](/media/screenshots/vault_111_26.png "Vault111")
 
+---
+
 ## sample_vault_room
-Vault 111 room scene (Fallout4 models) with complete PBR lighting and HDR rendering + Bullet Physics support. 
+
+Vault 111 room scene (Fallout 4 models) with:
+
+- full PBR lighting
+- HDR rendering
+- Bullet Physics integration
 
 ![](/media/screenshots/vault_room_0.png "Vault room")
 ![](/media/screenshots/vault_room_1.png "Vault room")
@@ -50,13 +81,25 @@ Vault 111 room scene (Fallout4 models) with complete PBR lighting and HDR render
 ![](/media/screenshots/vault_room_3.png "Vault room")
 ![](/media/screenshots/vault_room_4.png "Vault room")
 
+---
+
 ## sample_starfield
-Legacy weapons (Starfield models) with complete PBR materials. 
+
+Legacy weapons (Starfield models) with full PBR materials.
 
 ![](/media/screenshots/vss.png "Starfield")
 
+---
+
 ## sample_vault
-Vault scene (Fallout3 models) with dynamic lighting with multiple lights and big range of basic materials. Supports two render modes: Deffered shading and Direct shading, also supports several light buffer techniques such as UBO, TBO, SSBO. 
+
+Vault scene (Fallout 3 models) with dynamic lighting and multiple light sources.
+
+Features:
+
+- deferred shading and forward shading render modes
+- multiple light buffer techniques: **UBO, TBO, SSBO**
+- a wide range of basic materials
 
 ![](/media/screenshots/vault.png "Vault")
 ![](/media/screenshots/vault1.png "Vault")
@@ -64,34 +107,52 @@ Vault scene (Fallout3 models) with dynamic lighting with multiple lights and big
 ![](/media/screenshots/vault3.png "Vault")
 ![](/media/screenshots/vault4.png "Vault")
 
+---
+
 ## sample_cellwallerkiller
-The Robots instancing sample
+
+Robot instancing demonstration.
 
 ![](/media/screenshots/robots.png "Robots")
 ![](/media/screenshots/robots1.png "Robots")
 
+---
+
 ## sample_reflection_sky
-Reflection via cubemap sample
+
+Cubemap-based reflection sample.
 
 ![](/media/screenshots/reflection1.png "ReflectionSky")
 ![](/media/screenshots/reflection2.png "ReflectionSky")
 
+---
+
 ## sample_camera
-The camera binding demontration
+
+Camera binding demonstration.
 
 ![](/media/screenshots/camera.png "Camera")
 
+---
+
 ## sample_physics
-Many different objects are interacting and colliding with each other
+
+Multiple objects interacting and colliding with each other using physics simulation.
 
 ![](/media/screenshots/physics.png "Physics")
 
+---
+
 ## sample_warship
-Deffered render with legacy phong lighting  
+
+Deferred rendering with legacy Phong lighting.
 
 ![](/media/screenshots/warship.png "Warship")
 
+---
+
 ## sample_sandbox
-This sample is illustrating global illumination approach based on multiple light probes spread throughout in the scene. 
+
+Demonstrates a global illumination approach based on multiple light probes distributed throughout the scene.
 
 ![](/media/screenshots/sandbox.png "Sandbox")

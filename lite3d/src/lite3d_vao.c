@@ -67,14 +67,14 @@ int lite3d_vao_technique_init(void)
     if (!lite3d_check_vertex_array_object())
     {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
-            "%s: GL_ARB_vertex_array_object not supported..", LITE3D_CURRENT_FUNCTION);
+            "%s: GL_ARB_vertex_array_object is not supported..", LITE3D_CURRENT_FUNCTION);
         return LITE3D_FALSE;
     }
 
     if (!lite3d_check_instanced_arrays())
     {
         SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
-            "%s: GL_ARB_instanced_arrays not supported..", LITE3D_CURRENT_FUNCTION);
+            "%s: GL_ARB_instanced_arrays is not supported..", LITE3D_CURRENT_FUNCTION);
         instancingSupport = LITE3D_FALSE;
     }
 

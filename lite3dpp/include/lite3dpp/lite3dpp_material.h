@@ -30,6 +30,7 @@
 #include <lite3dpp/lite3dpp_ssbo.h>
 #include <lite3dpp/lite3dpp_ubo.h>
 #include <lite3dpp/lite3dpp_shader_program.h>
+#include <lite3dpp/lite3dpp_shader_params.h>
 
 namespace lite3dpp
 {
@@ -50,9 +51,7 @@ namespace lite3dpp
             PolygonFill = LITE3D_POLYMODE_FILL
         };
 
-        using PassParameters = stl<String, lite3d_shader_parameter>::unordered_map;
-        using GlobalPassParameters = stl<String>::set;
-        using Passes = stl<uint16_t, std::tuple<PassParameters, GlobalPassParameters>>::map;
+        using Passes = stl<uint16_t, ShaderParameters>::map;
         
         Material(const String &name, const String &path, Main &main);
 
@@ -95,6 +94,5 @@ namespace lite3dpp
 
         lite3d_material mMaterial;
         Passes mPasses;
-        static PassParameters mGlobalParameters;
     };
 }

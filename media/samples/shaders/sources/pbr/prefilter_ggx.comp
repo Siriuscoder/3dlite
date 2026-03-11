@@ -1,0 +1,69 @@
+#include "samples:shaders/sources/common/common_inc.glsl"
+
+layout(local_size_x = 16, local_size_y = 16, local_size_z = 1) in;
+layout(binding = 0, rgba16f) uniform writeonly imageCubeArray PrefilteredEnvironment;
+uniform samplerCubeArray EnvironmentProbe;
+layout(std140) uniform EnvProbesIndex
+{
+    int probesIndex[LITE3D_ENV_PROBE_MAX + 1];
+};
+
+uniform float Roughness;
+
+const uint totalSamples = 1024u;
+const float invTotalSamples = 1.0 / float(totalSamples);
+
+void main() 
+{
+    const ivec3 texCoord = ivec3(gl_GlobalInvocationID.xyz);
+    const ivec2 bounds = ivec2(imageSize(PrefilteredEnvironment).xy);
+
+    // Skip unnecessary shader calls
+    if (texCoord.x >= bounds.x || texCoord.y >= bounds.y)
+        return;
+
+    const vec2 originalSize = vec2(textureSize(EnvironmentProbe, 0).xy);
+    const float originalSamples = originalSize.x * originalSize.y;
+    const int currentProbeNumber = texCoord.z / 6;
+    const int currentProbeFace = texCoord.z % 6;
+    const int currentProbeIndex = probesIndex[currentProbeNumber + 1];
+    const int dstIndex = (currentProbeIndex * 6) + currentProbeFace;
+    const float roughness = max(Roughness, LITE3D_MIN_ROUGHNESS);
+    const vec3 baseVector = cubeCoordToWorld(ivec3(texCoord.xy, currentProbeFace), vec2(bounds.x, bounds.y)); 
+    // tagent space from origin point
+    const vec3 N = normalize(baseVector);
+    // assume view direction always equal to outgoing direction
+    const vec3 R = N;
+    const vec3 V = N;
+
+    float totalWeight = 0.0;
+    vec3 prefilteredColor = vec3(0.0);
+    for (uint i = 0u; i < totalSamples; ++i)
+    {
+        // generate sample vector towards the alignment of the specular lobe
+        vec2 Xi = hammersleySequence(i, totalSamples);
+        vec3 H = importanceSampleGGX(Xi, N, roughness);
+        float HdotV = dot(H, V);
+        vec3 L = normalize(2.0 * HdotV * H - V);
+
+        float NdotL = max(dot(N, L), 0.0);
+        if (NdotL > 0.0)
+        {
+            float NdotH = max(dot(N, H), 0.0);
+            HdotV = max(HdotV, 0.0);
+            // sample from the environment's mip level based on roughness/pdf
+            float D = NDF(NdotH, roughness);
+            float pdf = D * NdotH / (4.0 * HdotV) + 0.0001; 
+
+            float saTexel  = 4.0 * M_PI / (6.0 * originalSamples);
+            float saSample = 1.0 / (totalSamples * pdf + 0.0001);
+            float mipLevel = roughness == 0.0 ? 0.0 : 0.5 * log2(saSample / saTexel); 
+
+            prefilteredColor += textureLod(EnvironmentProbe, vec4(L, currentProbeIndex), mipLevel).rgb * NdotL;
+            totalWeight += NdotL;
+        }
+    }
+
+    prefilteredColor /= totalWeight;
+    imageStore(PrefilteredEnvironment, ivec3(texCoord.xy, dstIndex), vec4(prefilteredColor, 1.0));
+}

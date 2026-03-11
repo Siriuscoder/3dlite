@@ -199,7 +199,7 @@ namespace lite3dpp
     TextureImage::TextureImage(const String &name, 
         const String &path, Main &main) : 
         Texture(name, path, main),
-        mModifyed(false)
+        mModified(false)
     {}
 
     void TextureImage::loadFromConfigImpl(const ConfigurationReader &helper)
@@ -286,9 +286,9 @@ namespace lite3dpp
         loadFromConfigImpl(helper);
 
         /* restore modifyed content */
-        if(mModifyed)
+        if(mModified)
         {
-            for(int8_t level = 0; level <= getLevelsNum() && level < (int8_t)mLayersBackup.size(); ++level)
+            for(int8_t level = 0; level < getTotalLevels() && level < (int8_t)mLayersBackup.size(); ++level)
             {
                 if(mTexture.compressed)
                     setCompressedPixels(level, mLayersBackup[level]);
@@ -302,9 +302,9 @@ namespace lite3dpp
 
     void TextureImage::unloadImpl()
     {
-        if(mModifyed)
+        if(mModified)
         {
-            for(int8_t level = 0; level <= getLevelsNum(); ++level)
+            for(int8_t level = 0; level < getTotalLevels(); ++level)
             {
                 PixelsData pixels;
 
@@ -351,10 +351,10 @@ namespace lite3dpp
             level, 0, pixels))
             LITE3D_THROW("Could`n set level " << level << " for texture ");
 
-        mModifyed = true;
+        mModified = true;
     }
 
-    void TextureImage::getCompressedPixels(int8_t level, PixelsData &pixels)
+    void TextureImage::getCompressedPixels(int8_t level, PixelsData &pixels) const
     {
         size_t size;
         if(!lite3d_texture_unit_get_compressed_level_size(&mTexture, level, 0, &size))
@@ -365,7 +365,7 @@ namespace lite3dpp
             LITE3D_THROW("Could`n get level " << level << " for texture ");
     }
 
-    void TextureImage::getCompressedPixels(int8_t level, void *pixels)
+    void TextureImage::getCompressedPixels(int8_t level, void *pixels) const
     {
         if(!lite3d_texture_unit_get_compressed_pixels(&mTexture, level, 0, pixels))
             LITE3D_THROW("Could`n get level " << level << " for texture ");
@@ -385,7 +385,7 @@ namespace lite3dpp
             level, 0, size, pixels))
             LITE3D_THROW("Could`n set level " << level << " for texture ");
 
-        mModifyed = true;
+        mModified = true;
     }
 
     void TextureImage::generateMipmaps()
@@ -393,7 +393,7 @@ namespace lite3dpp
         lite3d_texture_unit_generate_mipmaps(&mTexture);
     }
 
-    size_t TextureImage::getLayerSize(int8_t level)
+    size_t TextureImage::getLayerSize(int8_t level) const
     {
         size_t res;
         if(!lite3d_texture_unit_get_level_size(&mTexture, level, 0, &res))
@@ -402,7 +402,7 @@ namespace lite3dpp
         return res;
     }
 
-    size_t TextureImage::getCompressedLayerSize(int8_t level)
+    size_t TextureImage::getCompressedLayerSize(int8_t level) const
     {
         size_t res;
         if(!lite3d_texture_unit_get_compressed_level_size(&mTexture, level, 0, &res))

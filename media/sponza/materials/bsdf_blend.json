@@ -19,7 +19,7 @@
   },
   "EnvironmentProbeTexture": {
     "Name": "EnvironmentProbe",
-    "TextureName": "SponzaDeffered_EnvironmentMultiProbe.texture",
+    "TextureName": "SponzaDeffered_PrefilteredEnvironmentMultiProbe.texture",
     "Type": "sampler"
   },
 
@@ -38,6 +38,11 @@
           "Name":"EnvProbesData",
           "UBOName": "SponzaDeffered_EnvProbesData",
           "Type":"UBO"
+        },
+        {
+          "Name":"BrdfLUT",
+          "TextureName":"IntergratedGGXLUT.texture",
+          "Type":"sampler"
         },
         {
           "Name":"LightSources",

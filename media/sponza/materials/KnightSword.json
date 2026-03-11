@@ -16,9 +16,6 @@
     "Type": "float",
     "Value": 1.0
   },
-  "Roughness": {
-    "Value": 1.25
-  },
   "EnvDiffuse": {
     "Value": 1.0
   },
@@ -27,7 +24,7 @@
   },
   "EnvironmentProbeTexture": {
     "Name": "EnvironmentProbe",
-    "TextureName": "SponzaDeffered_EnvironmentMultiProbe.texture",
+    "TextureName": "SponzaDeffered_PrefilteredEnvironmentMultiProbe.texture",
     "Type": "sampler"
   },
   "Passes": [

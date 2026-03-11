@@ -35,7 +35,7 @@ int lite3d_mesh_aux_buffer_init(void)
     {
         if (!gAuxGlobalBuffer.vboID)
         {
-            if (!lite3d_vbo_init(&gAuxGlobalBuffer, LITE3D_VBO_STREAM_DRAW))
+            if (!lite3d_vbo_init(&gAuxGlobalBuffer, LITE3D_VBO_DYNAMIC_DRAW))
             {
                 return LITE3D_FALSE;
             }

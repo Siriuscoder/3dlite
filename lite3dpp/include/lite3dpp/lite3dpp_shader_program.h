@@ -37,7 +37,8 @@ namespace lite3dpp
 
         static void setShaderVersion(const String &version);
         static void setFloatPrecision(const String &prec);
-        static void addDefinition(const String &name, const String &value);
+        static void addGlobalDefinition(const String &name, const String &value);
+        void addLocalDefinition(const String &name, const String &value);
 
     protected:
 
@@ -52,11 +53,12 @@ namespace lite3dpp
         uint8_t determineShaderType(const String &filepath);
         void preprocessShaderCode(String &sourceCode);
         void optimizeShaderCode(String &sourceCode);
-        static String createSourceHeader(uint8_t shaderType);
+        String createSourceHeader(uint8_t shaderType);
 
     private:
 
         lite3d_shader_program mProgram;
+        stl<String, String>::map mLocalDefinitions;
         static stl<String, String>::map mGlobalDefinitions;
         static String mShaderVersion;
         static String mFloatPrecision;

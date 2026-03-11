@@ -279,32 +279,43 @@ float NDF(float NdotH, float roughness)
     float a = roughness * roughness;
     float a2 = a * a;
     float NdotH2 = NdotH * NdotH;
-	
+
     float nom = a2;
     float denom = (NdotH2 * (a2 - 1.0) + 1.0);
     denom = M_PI * denom * denom;
-	
+
     return nom / denom;
 }
 
 // Geometry function (Schlick-Beckmann, Schlick-GGX)
-float GGX(float NdotV, float roughness)
+float GGX(float NdotV, float k)
 {
-    float r = roughness + 1.0;
-    float k = (r * r) / 8.0;
-
     float nom   = NdotV;
     float denom = NdotV * (1.0 - k) + k;
-	
+
     return nom / denom;
 }
 
 // Geometry function (Smith's)
 float G(float NdotV, float NdotL, float roughness)
 {
-    float ggx2  = GGX(NdotV, roughness);
-    float ggx1  = GGX(NdotL, roughness);
-	
+    roughness += 1.0;
+    float k = (roughness * roughness) / 8.0;
+
+    float ggx2  = GGX(NdotV, k);
+    float ggx1  = GGX(NdotL, k);
+
+    return ggx1 * ggx2;
+}
+
+// Geometry function (Smith's) for IBL intergation
+float G_IBL(float NdotV, float NdotL, float roughness)
+{
+    float k = (roughness * roughness) / 2.0;
+
+    float ggx2  = GGX(NdotV, k);
+    float ggx1  = GGX(NdotL, k);
+
     return ggx1 * ggx2;
 }
 
@@ -398,3 +409,65 @@ void angularInfoCalcAngles(inout AngularInfo angular, in Surface surface)
     angular.NdotH = max(dot(surface.normal, H), FLT_EPSILON);
     angular.LdotV = max(dot(angular.lightDir, angular.viewDir), FLT_EPSILON);
 }
+
+// Van Der Corpus sequence
+// @see http://holger.dammertz.org/stuff/notes_HammersleyOnHemisphere.html
+float vdcSequence(uint bits) 
+{
+    bits = (bits << 16u) | (bits >> 16u);
+    bits = ((bits & 0x55555555u) << 1u) | ((bits & 0xAAAAAAAAu) >> 1u);
+    bits = ((bits & 0x33333333u) << 2u) | ((bits & 0xCCCCCCCCu) >> 2u);
+    bits = ((bits & 0x0F0F0F0Fu) << 4u) | ((bits & 0xF0F0F0F0u) >> 4u);
+    bits = ((bits & 0x00FF00FFu) << 8u) | ((bits & 0xFF00FF00u) >> 8u);
+    return float(bits) * 2.3283064365386963e-10; // / 0x100000000
+}
+
+// Hammersley sequence
+// @see http://holger.dammertz.org/stuff/notes_HammersleyOnHemisphere.html
+vec2 hammersleySequence(uint i, uint N)
+{
+    return vec2(float(i) / float(N), vdcSequence(i));
+}
+
+// GGX NDF via importance sampling
+vec3 importanceSampleGGX(vec2 Xi, vec3 N, float roughness)
+{
+    float alpha = roughness * roughness;
+    float alpha2 = alpha * alpha;
+    
+    float phi = 2.0 * M_PI * Xi.x;
+    float cosTheta = sqrt((1.0 - Xi.y) / (1.0 + (alpha2 - 1.0) * Xi.y));
+    float sinTheta = sqrt(1.0 - cosTheta * cosTheta);
+    
+    // from spherical coordinates to cartesian coordinates
+    vec3 H;
+    H.x = cos(phi) * sinTheta;
+    H.y = sin(phi) * sinTheta;
+    H.z = cosTheta;
+    
+    // from tangent-space vector to world-space sample vector
+    vec3 up        = abs(N.z) < 0.999 ? vec3(0.0, 0.0, 1.0) : vec3(1.0, 0.0, 0.0);
+    vec3 tangent   = normalize(cross(up, N));
+    vec3 bitangent = cross(N, tangent);
+    
+    vec3 sampleVec = tangent * H.x + bitangent * H.y + N * H.z;
+    return normalize(sampleVec);
+}
+
+vec3 cubeCoordToWorld(ivec3 cubeCoord, vec2 cubemapSize)
+{
+    vec2 texCoord = (vec2(cubeCoord.xy) + 0.5) / cubemapSize;
+    texCoord = texCoord * 2.0 - 1.0; // -1..1
+    switch (cubeCoord.z)
+    {
+        case 0: return vec3(1.0, -texCoord.yx); // posx
+        case 1: return vec3(-1.0, -texCoord.y, texCoord.x); //negx
+        case 2: return vec3(texCoord.x, 1.0, texCoord.y); // posy
+        case 3: return vec3(texCoord.x, -1.0, -texCoord.y); //negy
+        case 4: return vec3(texCoord.x, -texCoord.y, 1.0); // posz
+        case 5: return vec3(-texCoord.xy, -1.0); // negz
+    }
+
+    return vec3(0.0);
+}
+

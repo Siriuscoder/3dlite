@@ -182,7 +182,7 @@ static void update_render_target(lite3d_render_target *target)
             if (look->camera->cameraNode.invalidated)
                 LITE3D_ARR_ADD_ELEM(&gInvalidatedCameras, lite3d_camera *, look->camera);
 
-            /* accamulate statistics */
+            /* accumulate statistics */
             gRenderStats.trianglesRendered += look->scene->stats.trianglesRendered;
             gRenderStats.verticesRendered += look->scene->stats.verticesRendered;
             gRenderStats.totalNodes += look->scene->stats.totalNodes;
@@ -315,6 +315,7 @@ void lite3d_render_loop(lite3d_render_listeners *callbacks)
 {
     lite3d_timer *frameStatsTimer = NULL;
     gRenderListeners = *callbacks;
+    int32_t width, height;
 
     gPerfFreq = SDL_GetPerformanceFrequency();
 
@@ -328,11 +329,11 @@ void lite3d_render_loop(lite3d_render_listeners *callbacks)
     /* clean statistic */
     memset(&gRenderStats, 0, sizeof (gRenderStats));
     /* init screen render target */
-    lite3d_render_target_init(&gScreenRt,
-        lite3d_get_global_settings()->videoSettings.screenWidth,
-        lite3d_get_global_settings()->videoSettings.screenHeight);
-    
+    lite3d_video_get_drawable_size(&width, &height);
+    lite3d_render_target_init(&gScreenRt, width, height);
+    /* set fullscreen state */
     lite3d_render_target_fullscreen(&gScreenRt, lite3d_get_global_settings()->videoSettings.fullscreen);
+
 
     lite3d_list_init(&gRenderTargets);
     lite3d_render_target_add(&gScreenRt, 0xFFFFFFF);
@@ -569,13 +570,17 @@ void lite3d_render_target_resize(lite3d_render_target *rt, int32_t width, int32_
             return;
     }
 
-    rt->width = width;
-    rt->height = height;
+    if (rt->width == width && rt->height == height)
+        return;
+
     if (rt == &gScreenRt)
     {
         lite3d_video_resize(width, height);
+        lite3d_video_get_drawable_size(&width, &height);
     }
 
+    rt->width = width;
+    rt->height = height;
     lite3d_framebuffer_resize(&rt->fb, width, height);
 }
 
@@ -584,8 +589,12 @@ void lite3d_render_target_fullscreen(lite3d_render_target *rt, int8_t flag)
     SDL_assert(rt);
     if (rt == &gScreenRt && rt->fullscreen != flag)
     {
+        int32_t width, height;
         lite3d_video_set_fullscreen(flag);
         rt->fullscreen = flag;
+
+        lite3d_video_get_drawable_size(&width, &height);
+        lite3d_render_target_resize(rt, width, height);
     }
 }
 

@@ -384,8 +384,8 @@ namespace lite3dpp_pipeline {
                 "max hardware posible limit is " << shadowCastersLimit);
         }
 
-        ShaderProgram::addDefinition("LITE3D_SPOT_SHADOW_GS_MAX_VERTICES", std::to_string(mShadowsCastersMaxCount * 3));
-        ShaderProgram::addDefinition("LITE3D_SPOT_SHADOW_MAX_COUNT", std::to_string(mShadowsCastersMaxCount));
+        ShaderProgram::addGlobalDefinition("LITE3D_SPOT_SHADOW_GS_MAX_VERTICES", std::to_string(mShadowsCastersMaxCount * 3));
+        ShaderProgram::addGlobalDefinition("LITE3D_SPOT_SHADOW_MAX_COUNT", std::to_string(mShadowsCastersMaxCount));
     }
 
     void ShadowManager::createShadowRenderTarget(const String& pipelineName)
