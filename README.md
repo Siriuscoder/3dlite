@@ -1,30 +1,52 @@
-# Lite 3d rendering engine
+# Lite 3D Rendering Engine
 
 [![Build status](https://github.com/Siriuscoder/3dlite/actions/workflows/ci.yaml/badge.svg?branch=master)](https://github.com/Siriuscoder/3dlite/actions/workflows/ci.yaml)
 [![Release](https://github.com/Siriuscoder/3dlite/actions/workflows/release.yaml/badge.svg?event=push)](https://github.com/Siriuscoder/3dlite/actions/workflows/release.yaml)
-[![Lite3D CodeQL](https://github.com/Siriuscoder/3dlite/actions/workflows/codeql.yml/badge.svg?branch=master)](https://github.com/Siriuscoder/3dlite/actions/workflows/codeql.yml)  
+[![Lite3D CodeQL](https://github.com/Siriuscoder/3dlite/actions/workflows/codeql.yml/badge.svg?branch=master)](https://github.com/Siriuscoder/3dlite/actions/workflows/codeql.yml)
+
+Lite3D is a lightweight OpenGL-based rendering helper library that provides a higher-level API
+for building real-time 3D applications and rendering experiments.
+
+![](/media/screenshots/sponza1.png "Sponza")
 
 ## About
 
-Light weight 3d/2d graphics rendering helper. "Engine" is not correct word for this library. 
-It is designed as adapter from low level OpenGL API to more simple high level API. This API contains some high level 
-concepts like scene, material, mesh, shader.. etc. whereas OpenGL API provides low level concepts like Framebuffer, 
-vertex buffer, texture buffer and others.
+Lite3D is a lightweight 3D/2D graphics rendering helper library. The term *"engine"* is not entirely accurate for this project.  
+It acts as an adapter that translates the low-level OpenGL API into a simpler, higher-level API.
 
-Lite3d library support only OpenGL graphics API as back end for GPU operations. No sound, no physics, graphics only!
-One of the reason of using OpenGL API was a potential support of many OS. Windows/Linux supports now, but 
-library may be simply ported on others platforms.  
+This API introduces higher-level concepts such as **scene**, **material**, **mesh**, and **shader**, while OpenGL itself exposes low-level constructs like **framebuffers**, **vertex buffers**, and **texture buffers**.
+
+Lite3D currently supports **OpenGL** as the only graphics backend.  
+The library focuses strictly on rendering — it does not include built-in sound or game logic systems.
 
 ![Code Size](https://img.shields.io/github/languages/code-size/Siriuscoder/3dlite)
 ![Downloads](https://img.shields.io/github/downloads/Siriuscoder/3dlite/latest/total)
 ![Activity](https://img.shields.io/github/commit-activity/m/Siriuscoder/3dlite)
 
+## Features
+
+Rendering features demonstrated in the engine and sample applications:
+
+- Physically Based Rendering (PBR)
+- Deferred and forward rendering pipelines
+- HDR rendering
+- Dynamic shadow mapping with PCF filtering
+- Instanced rendering
+- Cubemap reflections
+- Image-based lighting
+- Global illumination approximation using light probes
+- Multiple light buffer techniques (UBO, TBO, SSBO)
+- Scene graph with meshes, materials, shaders, and cameras
+- Optional Bullet Physics integration
+
 ## API
 
-Library provides two API levels:
-  1. Low level C API (3dlite), common graphic operations.
-  2. High level C++ API (3dlitepp), user friendly C++ components and scripting API.
-(See samples for more details)
+The library provides two API layers:
+
+1. **Low-level C API (`3dlite`)** — provides common graphics operations.
+2. **High-level C++ API (`3dlitepp`)** — provides user-friendly C++ components and scripting support.
+
+See the **samples** for usage examples.
 
 ## Dependencies
 
@@ -34,11 +56,14 @@ Library provides two API levels:
 * [FreeType](https://github.com/freetype/freetype)
 * [Bullet](https://github.com/bulletphysics/bullet3)
 
-## Building project
+## Building the Project
 
-Use [cmake](http://www.cmake.org/) 3.21.0 or higher. Base dependencies already provided in [deps](https://github.com/Siriuscoder/3dlite/tree/master/deps) directory (except Bullet). Hovewer on windows is recomended to use vcpkg build. 
+Use [CMake](http://www.cmake.org/) **3.21.0 or higher**.
 
-All intructions assume that /path/to/3dlite/ is the root of the project.
+Base dependencies are already provided in the [deps](https://github.com/Siriuscoder/3dlite/tree/master/deps) directory (except **Bullet**).  
+However, on **Windows it is recommended to use vcpkg** for dependency management and building.
+
+All instructions assume that `/path/to/3dlite/` is the root directory of the project.
 
 ### Build with existing dependencies (Linux)
 
@@ -51,7 +76,9 @@ $ cmake --build build/ --config Release
 
 ### Build with existing dependencies (Windows)
 
-Recommended to use cmake GUI to generate Visual Studio projects on windows OR
+It is recommended to use **CMake GUI** to generate Visual Studio projects on Windows.
+
+Alternatively:
 
 ```
 $ cd /path/to/3dlite
@@ -77,9 +104,10 @@ $ mkdir build/
 $ cmake --preset=Windows64_vcpkg
 $ cmake --build build/ --config Release
 ``` 
-Or just call build_win_2022.bat
 
-### All presets
+Or simply run build_win_2022.bat
+
+### Available CMake presets
 
 * Linux64_vcpkg_debug 
 * Linux64_vcpkg
@@ -94,17 +122,8 @@ Or just call build_win_2022.bat
 
 ## Samples
 
-See [here](samples/README.md)
-
-## Screenshots
-
-![](/media/screenshots/sponza.png "Sponza")
-![](/media/screenshots/sponza1.png "Sponza")
-![](/media/screenshots/vault_111_0.png "Vault111")
-![](/media/screenshots/vault_111_3.png "Vault111")
-![](/media/screenshots/vault_111_19.png "Vault111")
-![](/media/screenshots/vault_room_0.png "Vault room")
+See the [samples documentation](samples/README.md)
 
 ***
-Check branch master to fetch stable changes, and follow new releases =)
-> Copyright © 2014-2025 Nikita Korolev (Sirius)
+Check the **master** branch to get stable changes and follow new releases.
+> Copyright © 2014-2026 Nikita Korolev (Sirius)
