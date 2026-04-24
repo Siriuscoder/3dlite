@@ -87,7 +87,6 @@ namespace lite3dpp_pipeline {
         Material *mPostProcessStageMaterial = nullptr;
         Material *mSkyBoxStageMaterial = nullptr;
         stl<String>::list mResourcesList;
-        PixelsData mBloomPixels;
 
         float mRandomSeed;
         float mExposureMax = 1.0;

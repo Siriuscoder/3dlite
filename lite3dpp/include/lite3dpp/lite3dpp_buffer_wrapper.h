@@ -24,6 +24,7 @@
 namespace lite3dpp
 {
     using PixelsData = stl<uint8_t>::vector;
+    using PixelsFloatData = stl<float>::vector;
     using BufferData = PixelsData;
     using BufferLayout = stl<lite3d_vao_layout>::vector; 
     using MeshChunkArray = stl<lite3d_mesh_chunk *>::vector;

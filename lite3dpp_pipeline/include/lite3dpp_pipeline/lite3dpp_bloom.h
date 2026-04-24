@@ -58,7 +58,7 @@ private:
     TextureImage *mMiddleTexture = nullptr;
     int mChainState = 0;
     float mBloomRadius = 0.005;
-    mutable PixelsData mBloomPixels;
+    mutable PixelsFloatData mBloomPixels;
 };
 
 }}

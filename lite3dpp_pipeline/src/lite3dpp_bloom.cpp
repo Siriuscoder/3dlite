@@ -247,13 +247,13 @@ namespace lite3dpp_pipeline {
 
         auto it = mBloomPixels.cbegin();
         kmVec3 lumaAverage = KM_VEC3_ZERO;
-        for (; it != mBloomPixels.cend(); it += sizeof(kmVec3))
+        for (; it != mBloomPixels.cend(); it += 3)
         {
             const kmVec3 *texel = reinterpret_cast<const kmVec3 *>(&(*it));
             kmVec3Add(&lumaAverage, &lumaAverage, texel);
         }
 
-        kmVec3Scale(&lumaAverage, &lumaAverage, 1.0f / (mBloomPixels.size() / (3 * sizeof(float))));
+        kmVec3Scale(&lumaAverage, &lumaAverage, 1.0f / (mBloomPixels.size() / 3));
         return lumaAverage;
     }
 }}

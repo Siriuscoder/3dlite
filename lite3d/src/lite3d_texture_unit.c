@@ -393,27 +393,6 @@ static int lite3d_check_texture_target(uint32_t textureTarget)
     return LITE3D_TRUE;
 }
 
-#ifndef GLES
-static int lite3d_internal_format_float(const lite3d_texture_unit *textureUnit)
-{
-    switch (textureUnit->internalFormat)
-    {
-        case LITE3D_TEXTURE_INTERNAL_R16F:
-        case LITE3D_TEXTURE_INTERNAL_RG16F:
-        case LITE3D_TEXTURE_INTERNAL_RGB16F:
-        case LITE3D_TEXTURE_INTERNAL_RGBA16F:
-        case LITE3D_TEXTURE_INTERNAL_R32F:
-        case LITE3D_TEXTURE_INTERNAL_RG32F:
-        case LITE3D_TEXTURE_INTERNAL_RGB32F:
-        case LITE3D_TEXTURE_INTERNAL_RGBA32F:
-        case LITE3D_TEXTURE_INTERNAL_R11F_G11F_B10F:
-            return LITE3D_TRUE;
-    }
-
-    return LITE3D_FALSE;
-}
-#endif
-
 static int lite3d_set_internal_format(lite3d_texture_unit *textureUnit, uint16_t *format,
     uint16_t iformat, uint32_t *internalFormat)
 {
@@ -907,7 +886,7 @@ int lite3d_texture_unit_from_resource(lite3d_texture_unit *textureUnit,
             lDepth = ilGetInteger(IL_IMAGE_DEPTH);
 
             if (!lite3d_texture_unit_set_pixels(textureUnit, 0, 0, 0, 
-                lWidth, lHeight, lDepth, mipLevel, totalFaces == 0 ? cubeface : imageFace, ilGetData()))
+                lWidth, lHeight, lDepth, mipLevel, totalFaces == 0 ? cubeface : imageFace, ilGetInteger(IL_IMAGE_TYPE), ilGetData()))
             {
                 ilDeleteImage(imageDesc);
                 lite3d_texture_unit_purge(textureUnit);
@@ -958,7 +937,7 @@ int lite3d_texture_unit_from_resource(lite3d_texture_unit *textureUnit,
 int lite3d_texture_unit_set_pixels(lite3d_texture_unit *textureUnit, 
     int32_t widthOff, int32_t heightOff, int32_t depthOff, 
     int32_t width, int32_t height, int32_t depth,
-    int8_t level, uint8_t cubeface, const void *pixels)
+    int8_t level, uint8_t cubeface, uint32_t pixelType, const void *pixels)
 {
     SDL_assert(textureUnit);
     if (textureUnit->generatedMipmaps < level)
@@ -970,7 +949,7 @@ int lite3d_texture_unit_set_pixels(lite3d_texture_unit *textureUnit,
     {
         case LITE3D_TEXTURE_1D:
             glTexSubImage1D(textureTargetEnum[textureUnit->textureTarget], level, widthOff,
-                width, textureUnit->dataFormat, GL_UNSIGNED_BYTE, pixels);
+                width, textureUnit->dataFormat, pixelType, pixels);
             break;
         case LITE3D_TEXTURE_2D:
         case LITE3D_TEXTURE_CUBE:
@@ -978,14 +957,14 @@ int lite3d_texture_unit_set_pixels(lite3d_texture_unit *textureUnit,
             glTexSubImage2D(textureUnit->textureTarget == LITE3D_TEXTURE_CUBE ?
                 GL_TEXTURE_CUBE_MAP_POSITIVE_X + cubeface : textureTargetEnum[textureUnit->textureTarget],
                 level, widthOff, heightOff, width, height, textureUnit->dataFormat,
-                GL_UNSIGNED_BYTE, pixels);
+                pixelType, pixels);
             break;
         case LITE3D_TEXTURE_3D:
         case LITE3D_TEXTURE_2D_ARRAY:
         case LITE3D_TEXTURE_2D_SHADOW_ARRAY:
             glTexSubImage3D(textureTargetEnum[textureUnit->textureTarget], level, widthOff,
                 heightOff, depthOff, width, height, depth,
-                textureUnit->dataFormat, GL_UNSIGNED_BYTE, pixels);
+                textureUnit->dataFormat, pixelType, pixels);
             break;
     }
     
@@ -1121,7 +1100,7 @@ int lite3d_texture_unit_get_compressed_level_size(const lite3d_texture_unit *tex
 }
 
 int lite3d_texture_unit_get_pixels(const lite3d_texture_unit *textureUnit, 
-    int8_t level, uint8_t cubeface, void *pixels)
+    int8_t level, uint8_t cubeface, uint32_t pixelType, void *pixels)
 {
 #ifndef GLES
     SDL_assert(textureUnit);
@@ -1134,8 +1113,7 @@ int lite3d_texture_unit_get_pixels(const lite3d_texture_unit *textureUnit,
 
     glGetTexImage(textureUnit->textureTarget == LITE3D_TEXTURE_CUBE ? 
         GL_TEXTURE_CUBE_MAP_POSITIVE_X + cubeface : textureTargetEnum[textureUnit->textureTarget],
-        level, textureUnit->dataFormat, 
-        lite3d_internal_format_float(textureUnit) ? GL_FLOAT : GL_UNSIGNED_BYTE, pixels);
+        level, textureUnit->dataFormat, pixelType, pixels);
 
     return LITE3D_CHECK_GL_ERROR ? LITE3D_FALSE : LITE3D_TRUE;
 #else

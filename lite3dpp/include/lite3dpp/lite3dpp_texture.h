@@ -79,10 +79,14 @@ namespace lite3dpp
         { return mTexture.generatedMipmaps + 1; }
 
         void getPixels(int8_t level, PixelsData &pixels) const;
+        void getPixels(int8_t level, PixelsFloatData &pixels) const;
         void getPixels(int8_t level, void *pixels) const;
+        void getPixels(int8_t level, float *pixels) const;
 
         void setPixels(int8_t level, const PixelsData &pixels);
-        void setPixels(int8_t level, const void *pixels);
+        void setPixels(int8_t level, const PixelsFloatData &pixels);
+        void setPixels(int8_t level, const uint8_t *pixels);
+        void setPixels(int8_t level, const float *pixels);
 
         void getCompressedPixels(int8_t level, PixelsData &pixels) const;
         void getCompressedPixels(int8_t level, void *pixels) const;
@@ -113,7 +117,6 @@ namespace lite3dpp
     private:
 
         bool mModified;
-        LayersData mLayersBackup;
     };
 }
 

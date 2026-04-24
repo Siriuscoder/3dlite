@@ -22,7 +22,7 @@
         "Fullscreen": false,
         "MSAA": 1,
         "VSync": false,
-        "Debug": true
+        "Debug": false
     },
     // resource locations
     "ResourceLocations": [

@@ -130,7 +130,7 @@ namespace lite3dpp
         
         void FontTexture::uploadChanges()
         {
-            setPixels(0, &mTexBuf->data()[0]);
+            setPixels(0, &mTexBuf->data()[0].r);
             generateMipmaps();
         }
         
