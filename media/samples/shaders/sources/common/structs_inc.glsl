@@ -36,6 +36,7 @@ struct LightSource
     vec4 position;
     vec4 direction;
     vec4 diffuse;
+    vec4 directionX;
     float radiance;
     float influenceDistance;
     float maxInfluence;
@@ -45,9 +46,13 @@ struct LightSource
     float attenuationConstant;
     float attenuationLinear;
     float attenuationQuadratic;
-    float lightSize;
+    float areaWidth;
+    float areaHeight;
     uint shadowIndex;
     uint flags;
+    uint reserved01;
+    uint reserved02;
+    uint reserved03;
 };
 
 #define LITE3D_LIGHT_POINT                      uint(1 << 0)
@@ -59,6 +64,8 @@ struct LightSource
 #define LITE3D_LIGHT_CASTSHADOW_PCF_ADAPTIVE    uint(1 << 6)
 #define LITE3D_LIGHT_CASTSHADOW_POISSON         uint(1 << 7)
 #define LITE3D_LIGHT_CASTSHADOW_SSS             uint(1 << 8)
+#define LITE3D_LIGHT_DISK_AREA                  uint(1 << 9)
+#define LITE3D_LIGHT_QUAD_AREA                  uint(1 << 10)
 
 #ifndef LITE3D_SSS_MAX_ADAPTIVE_DEPTH_THRESHOLD
 #define LITE3D_SSS_MAX_ADAPTIVE_DEPTH_THRESHOLD             0.01    // Min Depth clipping to avoid accuracy artifacts

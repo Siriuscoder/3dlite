@@ -40,7 +40,9 @@ namespace lite3dpp
         CastShadowPcf3x3 = LITE3D_LIGHT_CASTSHADOW_PCF3x3,
         CastShadowPcfAdaptive = LITE3D_LIGHT_CASTSHADOW_PCF_ADAPTIVE,
         CastShadowPoisson = LITE3D_LIGHT_CASTSHADOW_POISSON,
-        CastShadowSSS = LITE3D_LIGHT_CASTSHADOW_SSS
+        CastShadowSSS = LITE3D_LIGHT_CASTSHADOW_SSS,
+        TypeDiskArea = LITE3D_LIGHT_DISK_AREA,
+        TypeQuadArea = LITE3D_LIGHT_QUAD_AREA
     };
 
     LITE3D_DECLARE_ENUM_OPERATORS(LightSourceFlags);
@@ -80,6 +82,7 @@ namespace lite3dpp
         void enabled(bool f);
         void setPosition(const kmVec3 &v);
         void setDirection(const kmVec3 &v);
+        void setDirectionX(const kmVec3 &v);
         void setDiffuse(const kmVec3 &v);
         void setAttenuationConstant(float value);
         void setAttenuationLinear(float value);
@@ -90,6 +93,8 @@ namespace lite3dpp
         void setShadowIndex(uint32_t value);
         void setAngleInnerCone(float value);
         void setAngleOuterCone(float value);
+        void setAreaWidth(float value);
+        void setAreaHeight(float value);
 
         LightSourceFlags getType() const;
         LightSourceFlags getFlags() const;
@@ -98,6 +103,8 @@ namespace lite3dpp
         const kmVec3 &getWorldPosition() const;
         const kmVec3 &getDirection() const;
         const kmVec3 &getWorldDirection() const;
+        const kmVec3 &getDirectionX() const;
+        const kmVec3 &getWorldDirectionX() const;
         const kmVec3 &getDiffuse() const;
         float getAttenuationConstant() const;
         float getAttenuationLinear() const;
@@ -108,6 +115,8 @@ namespace lite3dpp
         uint32_t getShadowIndex() const;
         float getAngleInnerCone() const;
         float getAngleOuterCone() const;
+        float getAreaWidth() const;
+        float getAreaHeight() const;
 
         void translateToWorld(const kmMat4 &worldMatrix);
         void writeToBuffer(BufferBase &buffer);
