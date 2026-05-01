@@ -33,7 +33,7 @@
 #define LITE3D_LIGHT_CASTSHADOW_POISSON         (1u << 7)
 #define LITE3D_LIGHT_CASTSHADOW_SSS             (1u << 8)
 #define LITE3D_LIGHT_DISK_AREA                  (1u << 9)
-#define LITE3D_LIGHT_QUAD_AREA                  (1u << 10)
+#define LITE3D_LIGHT_RECT_AREA                  (1u << 10)
 
 #pragma pack(push,1)
 typedef struct lite3d_light_params
@@ -44,7 +44,7 @@ typedef struct lite3d_light_params
     uint32_t pad2;
     kmVec3 diffuse;
     uint32_t pad3;
-    kmVec3 directionX;
+    kmVec3 directionUP;
     uint32_t pad4;
     float radiance;
     float influenceDistance;

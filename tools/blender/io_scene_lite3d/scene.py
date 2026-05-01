@@ -77,6 +77,7 @@ class Scene:
     
     @staticmethod
     def orietation(obj, node):
+        rmode_old = obj.rotation_mode
         obj.rotation_mode = "QUATERNION"
         node["Position"] = [
             obj.location.x,
@@ -96,6 +97,8 @@ class Scene:
             obj.scale.y,
             obj.scale.z
         ]
+        # Restore rotation mode
+        obj.rotation_mode = rmode_old
 
     def exportAction(self, actionsList, action):
         aminAction = None
@@ -161,6 +164,8 @@ class Scene:
             lightJson["Type"] = "Directional"
         elif light.type == "SPOT":
             lightJson["Type"] = "Spot"
+        elif light.type == "AREA":
+            pass
         else: 
             return
         
@@ -173,7 +178,6 @@ class Scene:
         
         lightJson["Radiance"] = light.energy
         if light.type in ["POINT", "SPOT"]:
-            lightJson["LightSize"] = light.shadow_soft_size
             lightJson["Attenuation"] = {
                 "Constant": light.lite3d_properties.constantAttenuation,
                 "Linear": light.lite3d_properties.linearAttenuation,
@@ -187,14 +191,17 @@ class Scene:
                     "AngleInnerCone": light.spot_size * (1.0 - light.spot_blend),
                     "AngleOuterCone": light.spot_size,
                 }
-                
-        lightJson["Direction"] = [
-            0.0, 0.0, -1.0
-        ]
         
-        lightJson["Position"] = [
-            0.0, 0.0, 0.0
-        ]
+        if light.type == "AREA":
+            if light.shape in ["RECTANGLE", "SQUARE"]:
+                lightJson["Type"] = "RectArea"
+            elif light.shape in ["DISK", "ELLIPSE"]:
+                lightJson["Type"] = "DiskArea"
+
+            lightJson["AreaWidth"] = light.size
+            lightJson["AreaHeight"] = light.size
+            if light.shape in ["RECTANGLE", "ELLIPSE"]:
+                lightJson["AreaWidth"] = light.size_y
         
         node["Light"] = lightJson
 

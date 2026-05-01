@@ -32,6 +32,7 @@ namespace lite3dpp
 {
     enum class LightSourceFlags : uint32_t
     {
+        TypeUndefined = 0,
         TypePoint = LITE3D_LIGHT_POINT,
         TypeDirectional = LITE3D_LIGHT_DIRECTIONAL,
         TypeSpot = LITE3D_LIGHT_SPOT,
@@ -42,7 +43,7 @@ namespace lite3dpp
         CastShadowPoisson = LITE3D_LIGHT_CASTSHADOW_POISSON,
         CastShadowSSS = LITE3D_LIGHT_CASTSHADOW_SSS,
         TypeDiskArea = LITE3D_LIGHT_DISK_AREA,
-        TypeQuadArea = LITE3D_LIGHT_QUAD_AREA
+        TypeRectArea = LITE3D_LIGHT_RECT_AREA
     };
 
     LITE3D_DECLARE_ENUM_OPERATORS(LightSourceFlags);
@@ -82,7 +83,7 @@ namespace lite3dpp
         void enabled(bool f);
         void setPosition(const kmVec3 &v);
         void setDirection(const kmVec3 &v);
-        void setDirectionX(const kmVec3 &v);
+        void setDirectionUP(const kmVec3 &v);
         void setDiffuse(const kmVec3 &v);
         void setAttenuationConstant(float value);
         void setAttenuationLinear(float value);
@@ -103,8 +104,8 @@ namespace lite3dpp
         const kmVec3 &getWorldPosition() const;
         const kmVec3 &getDirection() const;
         const kmVec3 &getWorldDirection() const;
-        const kmVec3 &getDirectionX() const;
-        const kmVec3 &getWorldDirectionX() const;
+        const kmVec3 &getDirectionUP() const;
+        const kmVec3 &getWorldDirectionUP() const;
         const kmVec3 &getDiffuse() const;
         float getAttenuationConstant() const;
         float getAttenuationLinear() const;
