@@ -31,6 +31,8 @@ vec3 ComputeIllumination(in Surface surface)
         // Check for the light source is enabled
         if (!hasFlag(light.flags, LITE3D_LIGHT_ENABLED))
             continue;
+        if (hasFlag(light.flags, LITE3D_LIGHT_RECT_AREA))
+            continue;
 
         // Calc angular info respect to the light source
         angularInfoSetLightSource(angular, surface, light);

@@ -1,0 +1,14 @@
+{
+  "Codec": "m",
+  "Model": "area_lights:models/meshes/Cube.m",
+  "MaterialMapping": [
+    {
+      "Material": {
+        "Type": "PBR",
+        "Name": "MaterialCube.material",
+        "Material": "area_lights:materials/MaterialCube.json"
+      },
+      "MaterialIndex": 0
+    }
+  ]
+}

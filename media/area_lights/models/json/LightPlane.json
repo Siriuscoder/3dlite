@@ -1,0 +1,14 @@
+{
+  "Codec": "m",
+  "Model": "area_lights:models/meshes/LightPlane.m",
+  "MaterialMapping": [
+    {
+      "Material": {
+        "Type": "PBR",
+        "Name": "Emitter.material",
+        "Material": "area_lights:materials/Emitter.json"
+      },
+      "MaterialIndex": 0
+    }
+  ]
+}

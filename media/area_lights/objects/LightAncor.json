@@ -1,0 +1,61 @@
+{
+  "Root": {
+    "Name": "LightAncor",
+    "Nodes": [
+      {
+        "Name": "Light",
+        "Light": {
+          "Name": "Light_Light",
+          "Diffuse": [
+            0.830769956111908,
+            1.0,
+            0.44520124793052673
+          ],
+          "Radiance": 500.0,
+          "Type": "RectArea",
+          "AreaWidth": 2.0,
+          "AreaHeight": 5.0
+        },
+        "Position": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "LightPlane",
+        "Mesh": {
+          "Mesh": "area_lights:models/json/LightPlane.json",
+          "Name": "LightPlane.mesh"
+        },
+        "Position": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      }
+    ]
+  }
+}

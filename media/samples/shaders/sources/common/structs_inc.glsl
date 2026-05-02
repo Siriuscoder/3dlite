@@ -50,9 +50,9 @@ struct LightSource
     float areaHeight;
     uint shadowIndex;
     uint flags;
-    uint reserved01;
-    uint reserved02;
-    uint reserved03;
+    uint reserved1;
+    uint reserved2;
+    uint reserved3;
 };
 
 #define LITE3D_LIGHT_POINT                      uint(1 << 0)
@@ -65,7 +65,7 @@ struct LightSource
 #define LITE3D_LIGHT_CASTSHADOW_POISSON         uint(1 << 7)
 #define LITE3D_LIGHT_CASTSHADOW_SSS             uint(1 << 8)
 #define LITE3D_LIGHT_DISK_AREA                  uint(1 << 9)
-#define LITE3D_LIGHT_QUAD_AREA                  uint(1 << 10)
+#define LITE3D_LIGHT_RECT_AREA                  uint(1 << 10)
 
 #ifndef LITE3D_SSS_MAX_ADAPTIVE_DEPTH_THRESHOLD
 #define LITE3D_SSS_MAX_ADAPTIVE_DEPTH_THRESHOLD             0.01    // Min Depth clipping to avoid accuracy artifacts
