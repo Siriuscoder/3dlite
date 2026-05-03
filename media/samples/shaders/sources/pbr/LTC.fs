@@ -108,5 +108,5 @@ vec3 LTC(in LightSource source, in Surface surface, in AngularInfo angular)
 
     vec3 radiance = source.diffuse.rgb * source.radiance * surface.ao;
     vec3 kD = diffuseFactor(angular.F, surface.material.metallic);
-    return radiance * (diff * surface.material.albedo.rgb * kD + spec * angular.F);
+    return radiance * (diff * surface.material.albedo.rgb * kD + spec * angular.F * surface.material.specular);
 }

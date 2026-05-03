@@ -16,6 +16,7 @@
  *	along with Lite3D.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
 #include <sample_common/lite3dpp_common.h>
+#include <lite3dpp/lite3dpp_material_pbr.h>
 #include <lite3dpp_pipeline/lite3dpp_pipeline.h>
 
 namespace lite3dpp {
@@ -24,7 +25,9 @@ namespace samples {
 static const char *helpString = 
     "Press '+' to increse gamma\n"
     "Press '-' to decrese gamma\n"
-    "Press 'u' to enable/disable SSAO\n";
+    "Press 'u' to enable/disable SSAO\n"
+    "Press 'l' to enable/disable flashlight\n"
+    "Press 'e' to enable/disable rect area light\n";
 
 class SampleAreaLights : public Sample
 {
@@ -51,7 +54,8 @@ public:
         setMainCamera(&mPipeline->getMainCamera());
         addFlashlight();
 
-        mAreaLight = mScene->getObject("LightAncor")->getLightNode("Light");
+        mAreaQuadLight = mScene->getObject("LightAnchor")->getLightNode("Light");
+        mAreaQuadLightMaterial = getMain().getResourceManager().queryResource<PBRMaterial>("Emitter.material");
     }
 
     void mainCameraChanged() override
@@ -79,7 +83,7 @@ public:
         mFlashLight->getLight()->setAttenuationLinear(AttenuationLinear);
         mFlashLight->getLight()->setAttenuationQuadratic(AttenuationQuadratic);
         mFlashLight->getLight()->setRadiance(700.0f);
-        mFlashLight->getLight()->enabled(true);
+        mFlashLight->getLight()->enabled(false);
     }
 
     void processEvent(SDL_Event *e) override
@@ -109,7 +113,7 @@ public:
             }
             else if (e->key.keysym.sym == SDLK_l && mFlashLight)
             {
-                static bool flashLightEnabled = true;
+                static bool flashLightEnabled = false;
                 flashLightEnabled = !flashLightEnabled;
                 mFlashLight->getLight()->enabled(flashLightEnabled);
                 
@@ -119,7 +123,8 @@ public:
             {
                 static bool areaLightEnabled = true;
                 areaLightEnabled = !areaLightEnabled;
-                mAreaLight->getLight()->enabled(areaLightEnabled);
+                mAreaQuadLight->getLight()->enabled(areaLightEnabled);
+                mAreaQuadLightMaterial->setEmissionStrength(areaLightEnabled ? 1.0f : 0.0f);
             }
         }
     }
@@ -129,7 +134,8 @@ private:
     Scene* mScene = nullptr;
     lite3dpp_pipeline::PipelineDeffered* mPipeline = nullptr;
     LightSceneNode* mFlashLight = nullptr;
-    LightSceneNode* mAreaLight = nullptr;
+    LightSceneNode* mAreaQuadLight = nullptr;
+    PBRMaterial* mAreaQuadLightMaterial = nullptr;
     float mGamma = 2.2;
 };
 

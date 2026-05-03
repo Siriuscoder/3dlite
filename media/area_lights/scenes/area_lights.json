@@ -22,26 +22,6 @@
   "LightingTechnique": "UBO",
   "Objects": [
     {
-      "Name": "Cube",
-      "Object": "area_lights:objects/Cube.json",
-      "Position": [
-        0.29926586151123047,
-        0.0515909306704998,
-        0.03656882047653198
-      ],
-      "Rotation": [
-        0.0,
-        0.0,
-        -0.29423803091049194,
-        0.9557321667671204
-      ],
-      "Scale": [
-        0.6064234972000122,
-        0.6064234972000122,
-        0.6064234972000122
-      ]
-    },
-    {
       "Name": "Plane",
       "Object": "area_lights:objects/Plane.json",
       "Position": [
@@ -122,48 +102,8 @@
       ]
     },
     {
-      "Name": "Cube.004",
-      "Object": "area_lights:objects/Cube.json",
-      "Position": [
-        -1.0950301885604858,
-        1.4679591655731201,
-        0.4408422112464905
-      ],
-      "Rotation": [
-        0.0,
-        0.0,
-        -0.02017436921596527,
-        0.999796450138092
-      ],
-      "Scale": [
-        0.6064234972000122,
-        0.6064234972000122,
-        0.6064234972000122
-      ]
-    },
-    {
-      "Name": "Cube.005",
-      "Object": "area_lights:objects/Cube.json",
-      "Position": [
-        0.035194799304008484,
-        -1.843908667564392,
-        0.1835079789161682
-      ],
-      "Rotation": [
-        0.0,
-        0.0,
-        0.8148475885391235,
-        0.5796752572059631
-      ],
-      "Scale": [
-        0.6064234972000122,
-        0.6064234972000122,
-        0.6064234972000122
-      ]
-    },
-    {
-      "Name": "LightAncor",
-      "Object": "area_lights:objects/LightAncor.json",
+      "Name": "LightAnchor",
+      "Object": "area_lights:objects/LightAnchor.json",
       "Position": [
         7.360339164733887,
         -5.295835876495403e-07,
@@ -174,6 +114,106 @@
         0.2960874140262604,
         0.6421311497688293,
         0.6421309113502502
+      ],
+      "Scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "Name": "Sphere",
+      "Object": "area_lights:objects/Sphere.json",
+      "Position": [
+        0.0,
+        0.0,
+        -0.11079379916191101
+      ],
+      "Rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "Scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "Name": "Sphere.001",
+      "Object": "area_lights:objects/Sphere.json",
+      "Position": [
+        -1.804700493812561,
+        1.876072883605957,
+        0.24420903623104095
+      ],
+      "Rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "Scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "Name": "Sphere.002",
+      "Object": "area_lights:objects/Sphere.json",
+      "Position": [
+        0.7647033929824829,
+        2.5796003341674805,
+        0.23368427157402039
+      ],
+      "Rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "Scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "Name": "Suzanne",
+      "Object": "area_lights:objects/Suzanne.json",
+      "Position": [
+        -0.17618775367736816,
+        -2.625197649002075,
+        1.1149054765701294
+      ],
+      "Rotation": [
+        0.0,
+        0.0,
+        0.7492203712463379,
+        0.6623207926750183
+      ],
+      "Scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "Name": "Suzanne.001",
+      "Object": "area_lights:objects/Suzanne.json",
+      "Position": [
+        -0.8527489900588989,
+        4.6266937255859375,
+        1.1149054765701294
+      ],
+      "Rotation": [
+        0.0,
+        0.0,
+        0.6038327813148499,
+        0.7971110343933105
       ],
       "Scale": [
         1.0,

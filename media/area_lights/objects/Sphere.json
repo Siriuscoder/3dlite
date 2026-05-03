@@ -1,0 +1,9 @@
+{
+  "Root": {
+    "Name": "Sphere",
+    "Mesh": {
+      "Mesh": "area_lights:models/json/Sphere.json",
+      "Name": "Sphere.mesh"
+    }
+  }
+}

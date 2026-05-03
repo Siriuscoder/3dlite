@@ -1,0 +1,14 @@
+{
+  "Codec": "m",
+  "Model": "area_lights:models/meshes/Sphere.m",
+  "MaterialMapping": [
+    {
+      "Material": {
+        "Type": "PBR",
+        "Name": "MaterialSphere.material",
+        "Material": "area_lights:materials/MaterialSphere.json"
+      },
+      "MaterialIndex": 0
+    }
+  ]
+}
