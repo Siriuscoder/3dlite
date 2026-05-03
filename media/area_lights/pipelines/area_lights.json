@@ -5,9 +5,10 @@
     "OcclusionCulling": false,
     "LightingTechnique": "UBO",
     "MultiRender": true,
+    "ComputeAreaLighting": true,
     "SSAO": 
     {
-        "AORadius": 0.15,
+        "AORadius": 0.06,
         "FramebufferScale": 2
     },
     "BLOOM": 

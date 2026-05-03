@@ -382,6 +382,7 @@ void angularInfoInit(inout AngularInfo angular, in Surface surface)
     // Eye direction to current fragment 
     angular.viewDir = normalize(Eye - surface.wv);
     angular.NdotV = doubleSidedNdotV(surface.normal, angular.viewDir);
+    angular.F = fresnelSchlickRoughness(angular.NdotV, surface.material);
 }
 
 void angularInfoSetLightSource(inout AngularInfo angular, in Surface surface, in LightSource source)

@@ -4,9 +4,10 @@
         // Standard shaders with params customization
         "samples:shaders/sources/bigtriangle.vs",
         "samples:shaders/sources/pipeline/light_pass/light.fs",
-        "samples:shaders/sources/pbr/pbr.fs",
+        "samples:shaders/sources/pbr/pbr.fs,area_lights:shaders/sources/inc/enable_area_lighting.def",
+        "samples:shaders/sources/pbr/LTC.fs",
         "samples:shaders/sources/pbr/brdf_oren_nayar_approx.fs",
-        "samples:shaders/sources/pbr/brdf_null_env.fs",
+        "samples:shaders/sources/pbr/brdf_null_env.fs,area_lights:shaders/sources/inc/params.def",
         "samples:shaders/sources/shadow/none.fs",
         "samples:shaders/sources/ssao/ssao_sample.fs",
         "samples:shaders/sources/common/common.fs,area_lights:shaders/sources/inc/disable_invocation.def"

@@ -50,6 +50,8 @@ public:
         
         setMainCamera(&mPipeline->getMainCamera());
         addFlashlight();
+
+        mAreaLight = mScene->getObject("LightAncor")->getLightNode("Light");
     }
 
     void mainCameraChanged() override
@@ -113,6 +115,12 @@ public:
                 
                 updateFlashLight();
             }
+            else if (e->key.keysym.sym == SDLK_e)
+            {
+                static bool areaLightEnabled = true;
+                areaLightEnabled = !areaLightEnabled;
+                mAreaLight->getLight()->enabled(areaLightEnabled);
+            }
         }
     }
 
@@ -121,6 +129,7 @@ private:
     Scene* mScene = nullptr;
     lite3dpp_pipeline::PipelineDeffered* mPipeline = nullptr;
     LightSceneNode* mFlashLight = nullptr;
+    LightSceneNode* mAreaLight = nullptr;
     float mGamma = 2.2;
 };
 

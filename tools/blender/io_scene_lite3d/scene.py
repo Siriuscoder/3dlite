@@ -201,7 +201,11 @@ class Scene:
             lightJson["AreaWidth"] = light.size
             lightJson["AreaHeight"] = light.size
             if light.shape in ["RECTANGLE", "ELLIPSE"]:
-                lightJson["AreaWidth"] = light.size_y
+                lightJson["AreaHeight"] = light.size_y
+            
+            lightJson["Attenuation"] = {
+                "InfluenceDistance": light.lite3d_properties.influenceDistance
+            }
         
         node["Light"] = lightJson
 

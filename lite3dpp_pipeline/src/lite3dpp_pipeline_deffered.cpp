@@ -171,6 +171,21 @@ namespace lite3dpp_pipeline {
                 .set(L"Type", "int"));
         }
 
+        if (pipelineConfig.getBool(L"ComputeAreaLighting", false))
+        {
+            SDL_assert(mLTCLut01);
+            SDL_assert(mLTCLut02);
+
+            lightComputeMaterialUniforms.emplace_back(ConfigurationWriter()
+                .set(L"Name", "ltcLut1")
+                .set(L"TextureName", mLTCLut01->getName())
+                .set(L"Type", "sampler"));
+            lightComputeMaterialUniforms.emplace_back(ConfigurationWriter()
+                .set(L"Name", "ltcLut2")
+                .set(L"TextureName", mLTCLut02->getName())
+                .set(L"Type", "sampler"));
+        }
+
         if (pipelineConfig.getBool(L"MultiRender", false))
         {
             lightComputeMaterialUniforms.emplace_back(ConfigurationWriter()

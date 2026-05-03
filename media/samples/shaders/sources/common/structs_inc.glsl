@@ -22,6 +22,7 @@ struct AngularInfo
 {
     vec3 viewDir;   // view direction
     vec3 lightDir;  // light direction
+    vec3 F;
     float lightDistance;
     bool isOutside;
     float NdotV;

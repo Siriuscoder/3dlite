@@ -16,6 +16,7 @@
  *	along with Lite3D.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
 #include <lite3dpp_pipeline/lite3dpp_pipeline_base.h>
+#include <lite3dpp_pipeline/lite3dpp_ltc_precompute.h>
 
 #include <ctime>
 #include <SDL_assert.h>
@@ -143,6 +144,11 @@ namespace lite3dpp_pipeline {
         // Создание "Полноэкранного треугольника" для использования в служебных сценах Postprocess, SSAO, и тд.
         createBigTriangleMesh();
 
+        if (pipelineConfig.getBool(L"ComputeAreaLighting", false))
+        {
+            createLTCLutTextures();
+        }
+
         SceneGenerator mainSceneGenerator(getName() + "_MainScene");
         for (const auto &cameraConfig : sceneConfig.getObjects(L"Cameras"))
         {
@@ -227,6 +233,43 @@ namespace lite3dpp_pipeline {
         {
             getMain().getResourceManager().queryResourceFromJson<Mesh>("BigTriangle.mesh",
                 ConfigurationWriter().set(L"Model", "BigTriangle").set(L"Dynamic", false).write());
+        }
+    }
+
+    void PipelineBase::createLTCLutTextures()
+    {
+        ConfigurationWriter textureConfig;
+        textureConfig.set(L"TextureType", "2D")
+            .set(L"Filtering", "Linear")
+            .set(L"Wrapping", "ClampToEdge")
+            .set(L"Compression", false)
+            .set(L"Height", LITE3D_LTC_LUT_SIZE)
+            .set(L"Width", LITE3D_LTC_LUT_SIZE)
+            .set(L"TextureFormat", "RGBA")
+            .set(L"InternalFormat", "RGBA32F");
+
+        String lutName1("LTCLutTexture1.texture");
+        String lutName2("LTCLutTexture2.texture");
+        if (!getMain().getResourceManager().resourceExists(lutName1))
+        {
+            mLTCLut01 = getMain().getResourceManager().queryResourceFromJson<TextureImage>(lutName1,
+                textureConfig.write());
+            mLTCLut01->setPixels(0, ltc_lut_1);
+        }
+        else
+        {
+            mLTCLut01 = getMain().getResourceManager().queryResource<TextureImage>(lutName1);
+        }
+
+        if (!getMain().getResourceManager().resourceExists(lutName2))
+        {
+            mLTCLut02 = getMain().getResourceManager().queryResourceFromJson<TextureImage>(lutName2,
+                textureConfig.write());
+            mLTCLut02->setPixels(0, ltc_lut_2);
+        }
+        else
+        {
+            mLTCLut02 = getMain().getResourceManager().queryResource<TextureImage>(lutName2);
         }
     }
 

@@ -104,8 +104,6 @@ vec3 ComputeIndirect(in Surface surface, in AngularInfo angular)
 
     // Reflect vector from surface
     vec3 R = reflect(-angular.viewDir, surface.normal);
-    // Fresnel by Schlick aprox
-    vec3 F = fresnelSchlickRoughness(angular.NdotV, surface.material);
 
 // В случае если запущен bindless пайплайн всегда декларируем эту секцию так как ее использование зависит от 
 // флагов материала. Иначе движок выставляет LITE3D_ENABLE_ENVIRONMENT_TEXTURE если в пайплайне включено
@@ -191,8 +189,8 @@ vec3 ComputeIndirect(in Surface surface, in AngularInfo angular)
     }
 #endif
 
-    diffuseIrradianceLx *= diffuseFactor(F, surface.material.metallic) * surface.material.albedo.rgb * surface.material.envDiffuse;
-    specularIrradianceLx *= RebuildF(F, angular.NdotV, surface.material.roughness) * surface.material.envSpecular;
+    diffuseIrradianceLx *= diffuseFactor(angular.F, surface.material.metallic) * surface.material.albedo.rgb * surface.material.envDiffuse;
+    specularIrradianceLx *= RebuildF(angular.F, angular.NdotV, surface.material.roughness) * surface.material.envSpecular;
 
     return (diffuseIrradianceLx + specularIrradianceLx) * surface.ao;
 }

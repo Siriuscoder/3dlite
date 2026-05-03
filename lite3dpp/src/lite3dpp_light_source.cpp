@@ -136,7 +136,7 @@ namespace lite3dpp
 
     void LightSource::setType(LightSourceFlags t)
     {
-        mLightSource.params.flags &= ~(LITE3D_LIGHT_POINT | LITE3D_LIGHT_DIRECTIONAL | LITE3D_LIGHT_SPOT);
+        mLightSource.params.flags &= ~(LITE3D_LIGHT_POINT | LITE3D_LIGHT_DIRECTIONAL | LITE3D_LIGHT_SPOT | LITE3D_LIGHT_DISK_AREA | LITE3D_LIGHT_RECT_AREA);
         setFlag(t);
     }
 
@@ -192,7 +192,7 @@ namespace lite3dpp
     LightSourceFlags LightSource::getType() const
     {
         return static_cast<LightSourceFlags>(mLightSource.params.flags & 
-            (LITE3D_LIGHT_POINT | LITE3D_LIGHT_DIRECTIONAL | LITE3D_LIGHT_SPOT));
+            (LITE3D_LIGHT_POINT | LITE3D_LIGHT_DIRECTIONAL | LITE3D_LIGHT_SPOT | LITE3D_LIGHT_DISK_AREA | LITE3D_LIGHT_RECT_AREA));
     }
 
     bool LightSource::enabled() const

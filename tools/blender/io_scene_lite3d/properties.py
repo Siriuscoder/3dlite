@@ -23,7 +23,7 @@ class LITE3D_SceneSettings(bpy.types.PropertyGroup):
     meshPackageName: StringProperty(name = "Mesh Package", default = "samples")
 
 class LITE3D_ObjectSettings(bpy.types.PropertyGroup):
-    originObject: PointerProperty(name="Origin", type = bpy.types.Object, description="Gives ability to reuse the origin object as this object. Name of this object remains unchanged.")
+    originObject: PointerProperty(name="Instance of", type = bpy.types.Object, description="Gives ability to reuse the origin object as this object. Name of this object remains unchanged.")
     enabled: BoolProperty(name = "Enabled", default = True, description = "Enables or disables export of this object")
     physicsCalcCenterOfMass: BoolProperty(name = "Calculate center of mass", default = False, description = "Adjust center of mass for complex compound objects")
     physicsObjectType: EnumProperty(name = "Type", description="Type of the physics object in terms of Bullet. Must be EMPTY and root of the physics object", 
