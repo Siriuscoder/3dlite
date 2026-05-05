@@ -1,0 +1,64 @@
+{
+  "Root": {
+    "Name": "LightAnchorDisk",
+    "Nodes": [
+      {
+        "Name": "LightAreaDisk",
+        "Light": {
+          "Name": "LightDisk_LightAreaDisk",
+          "Diffuse": [
+            0.830769956111908,
+            1.0,
+            0.44520124793052673
+          ],
+          "Radiance": 10.0,
+          "Type": "DiskArea",
+          "AreaWidth": 5.0,
+          "AreaHeight": 2.0,
+          "Attenuation": {
+            "InfluenceDistance": 30.0
+          }
+        },
+        "Position": [
+          0.0,
+          0.0,
+          -0.05000000074505806
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "Name": "LightDisk",
+        "Mesh": {
+          "Mesh": "area_lights:models/json/LightDisk.json",
+          "Name": "LightDisk.mesh"
+        },
+        "Position": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "Rotation": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "Scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      }
+    ]
+  }
+}

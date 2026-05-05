@@ -27,7 +27,8 @@ static const char *helpString =
     "Press '-' to decrese gamma\n"
     "Press 'u' to enable/disable SSAO\n"
     "Press 'l' to enable/disable flashlight\n"
-    "Press 'e' to enable/disable rect area light\n";
+    "Press 'e' to enable/disable rect area light\n"
+    "Press 'q' to enable/disable disk area light\n";
 
 class SampleAreaLights : public Sample
 {
@@ -56,6 +57,8 @@ public:
 
         mAreaQuadLight = mScene->getObject("LightAnchor")->getLightNode("Light");
         mAreaQuadLightMaterial = getMain().getResourceManager().queryResource<PBRMaterial>("Emitter.material");
+        mAreaEllipceLight = mScene->getObject("LightAnchorDisk")->getLightNode("LightAreaDisk");
+        mAreaEllipceLightMaterial = getMain().getResourceManager().queryResource<PBRMaterial>("EmitterEllipce.material");
     }
 
     void mainCameraChanged() override
@@ -121,10 +124,17 @@ public:
             }
             else if (e->key.keysym.sym == SDLK_e)
             {
-                static bool areaLightEnabled = true;
-                areaLightEnabled = !areaLightEnabled;
-                mAreaQuadLight->getLight()->enabled(areaLightEnabled);
-                mAreaQuadLightMaterial->setEmissionStrength(areaLightEnabled ? 1.0f : 0.0f);
+                static bool areaQuadLightEnabled = true;
+                areaQuadLightEnabled = !areaQuadLightEnabled;
+                mAreaQuadLight->getLight()->enabled(areaQuadLightEnabled);
+                mAreaQuadLightMaterial->setEmissionStrength(areaQuadLightEnabled ? 2.0f : 0.0f);
+            }
+            else if (e->key.keysym.sym == SDLK_q)
+            {
+                static bool areaDiskLightEnabled = true;
+                areaDiskLightEnabled = !areaDiskLightEnabled;
+                mAreaEllipceLight->getLight()->enabled(areaDiskLightEnabled);
+                mAreaEllipceLightMaterial->setEmissionStrength(areaDiskLightEnabled ? 2.0f : 0.0f);
             }
         }
     }
@@ -136,6 +146,8 @@ private:
     LightSceneNode* mFlashLight = nullptr;
     LightSceneNode* mAreaQuadLight = nullptr;
     PBRMaterial* mAreaQuadLightMaterial = nullptr;
+    LightSceneNode* mAreaEllipceLight = nullptr;
+    PBRMaterial* mAreaEllipceLightMaterial = nullptr;
     float mGamma = 2.2;
 };
 

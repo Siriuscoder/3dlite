@@ -1,11 +1,26 @@
 {
+  "Emission": {
+    "Name": "Emission",
+    "Type": "v4",
+    "Value": [
+      0.8334428071975708,
+      1.0,
+      0.4467257559299469,
+      1.0
+    ]
+  },
+  "EmissionStrength": {
+    "Name": "EmissionStrength",
+    "Type": "float",
+    "Value": 2.0
+  },
   "Albedo": {
     "Name": "Albedo",
     "Type": "v4",
     "Value": [
+      0.830769956111908,
       1.0,
-      0.7099999785423279,
-      0.28999999165534973,
+      0.44520124793052673,
       1.0
     ]
   },
@@ -17,12 +32,12 @@
   "Roughness": {
     "Name": "Roughness",
     "Type": "float",
-    "Value": 0.35
+    "Value": 1.0
   },
   "Metallic": {
     "Name": "Metallic",
     "Type": "float",
-    "Value": 1.0
+    "Value": 0.0
   },
   "EnvDiffuse": {
     "Value": 1.0
