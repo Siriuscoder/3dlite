@@ -64,9 +64,6 @@ void main()
             goldNoise(iuv * rc++)              // z = 0.0 to 1.0
         ));
 
-        // set sampler closer and closer to actual fragment 
-        float sampleScale = float(i) / float(LITE3D_SSAO_MAX_DEPTH_SAMPLES);
-        probeRay *= lerp(0.1f, 1.0f, sampleScale * sampleScale);
         // transform sample to view space using TBN and calc sample position in world space
         probeRay = vv + (TBN * probeRay) * AORadius;
 

@@ -368,6 +368,11 @@ float calcAttenuation(in LightSource source, in AngularInfo angular)
             spotFactor = clamp(1.0 - spotConeAttenuation, 0.0, 1.0);
         }
 
+        if (hasFlag(source.flags, LITE3D_LIGHT_RECT_AREA) || hasFlag(source.flags, LITE3D_LIGHT_DISK_AREA))
+        {
+            return edgeFallof;
+        }
+        
         factor = spotFactor * edgeFallof / 
             (source.attenuationConstant + 
             source.attenuationLinear * angular.lightDistance + 
@@ -382,7 +387,6 @@ void angularInfoInit(inout AngularInfo angular, in Surface surface)
     // Eye direction to current fragment 
     angular.viewDir = normalize(Eye - surface.wv);
     angular.NdotV = doubleSidedNdotV(surface.normal, angular.viewDir);
-    angular.F = fresnelSchlickRoughness(angular.NdotV, surface.material);
 }
 
 void angularInfoSetLightSource(inout AngularInfo angular, in Surface surface, in LightSource source)

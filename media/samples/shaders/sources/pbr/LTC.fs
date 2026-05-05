@@ -8,6 +8,101 @@ const float LTC_LUT_SIZE  = 64.0;
 const float LTC_LUT_SCALE = (LTC_LUT_SIZE - 1.0)/LTC_LUT_SIZE;
 const float LTC_LUT_BIAS  = 0.5/LTC_LUT_SIZE;
 
+vec3 restoreFresnel(float magnitude, float power, Material material)
+{
+    // Calculate F0 coeff
+    vec3 F0 = mix(material.f0.rgb, material.albedo.rgb, material.metallic);
+    // Restore fresnel
+    vec3 F = F0 * magnitude + (max(vec3(1.0 - material.roughness), F0) - F0) * power;
+    return clamp(F * material.specular, 0.0, 1.0);
+}
+
+// An extended version of the implementation from
+// "How to solve a cubic equation, revisited"
+// http://momentsingraphics.de/?p=105
+vec3 SolveCubic(vec4 Coefficient)
+{
+    // Normalize the polynomial
+    Coefficient.xyz /= Coefficient.w;
+    // Divide middle coefficients by three
+    Coefficient.yz /= 3.0;
+
+    float A = Coefficient.w;
+    float B = Coefficient.z;
+    float C = Coefficient.y;
+    float D = Coefficient.x;
+
+    // Compute the Hessian and the discriminant
+    vec3 Delta = vec3(
+        -Coefficient.z*Coefficient.z + Coefficient.y,
+        -Coefficient.y*Coefficient.z + Coefficient.x,
+        dot(vec2(Coefficient.z, -Coefficient.y), Coefficient.xy)
+    );
+
+    float Discriminant = dot(vec2(4.0*Delta.x, -Delta.y), Delta.zy);
+
+    vec3 RootsA, RootsD;
+
+    vec2 xlc, xsc;
+
+    // Algorithm A
+    {
+        float A_a = 1.0;
+        float C_a = Delta.x;
+        float D_a = -2.0*B*Delta.x + Delta.y;
+
+        // Take the cubic root of a normalized complex number
+        float Theta = atan(sqrt(Discriminant), -D_a)/3.0;
+
+        float x_1a = 2.0*sqrt(-C_a)*cos(Theta);
+        float x_3a = 2.0*sqrt(-C_a)*cos(Theta + (2.0/3.0)*M_PI);
+
+        float xl;
+        if ((x_1a + x_3a) > 2.0*B)
+            xl = x_1a;
+        else
+            xl = x_3a;
+
+        xlc = vec2(xl - B, A);
+    }
+
+    // Algorithm D
+    {
+        float A_d = D;
+        float C_d = Delta.z;
+        float D_d = -D*Delta.y + 2.0*C*Delta.z;
+
+        // Take the cubic root of a normalized complex number
+        float Theta = atan(D*sqrt(Discriminant), -D_d)/3.0;
+
+        float x_1d = 2.0*sqrt(-C_d)*cos(Theta);
+        float x_3d = 2.0*sqrt(-C_d)*cos(Theta + (2.0/3.0)*M_PI);
+
+        float xs;
+        if (x_1d + x_3d < 2.0*C)
+            xs = x_1d;
+        else
+            xs = x_3d;
+
+        xsc = vec2(-D, xs + C);
+    }
+
+    float E =  xlc.y*xsc.y;
+    float F = -xlc.x*xsc.y - xlc.y*xsc.x;
+    float G =  xlc.x*xsc.x;
+
+    vec2 xmc = vec2(C*F - B*G, -B*F + C*E);
+
+    vec3 Root = vec3(xsc.x/xsc.y, xmc.x/xmc.y, xlc.x/xlc.y);
+
+    if (Root.x < Root.y && Root.x < Root.z)
+        Root.xyz = Root.yxz;
+    else if (Root.z < Root.x && Root.z < Root.y)
+        Root.xyz = Root.xzy;
+
+    return Root;
+}
+
 vec3 IntegrateEdgeVec(vec3 v1, vec3 v2)
 {
     float x = dot(v1, v2);
@@ -22,6 +117,122 @@ vec3 IntegrateEdgeVec(vec3 v1, vec3 v2)
     return cross(v1, v2)*theta_sintheta;
 }
 
+float IntegrateEdge(vec3 v1, vec3 v2)
+{
+    return IntegrateEdgeVec(v1, v2).z;
+}
+
+void ClipQuadToHorizon(inout vec3 L[5], out int n)
+{
+    // detect clipping config
+    int config = 0;
+    if (L[0].z > 0.0) config += 1;
+    if (L[1].z > 0.0) config += 2;
+    if (L[2].z > 0.0) config += 4;
+    if (L[3].z > 0.0) config += 8;
+
+    // clip
+    n = 0;
+
+    if (config == 0)
+    {
+        // clip all
+    }
+    else if (config == 1) // V1 clip V2 V3 V4
+    {
+        n = 3;
+        L[1] = -L[1].z * L[0] + L[0].z * L[1];
+        L[2] = -L[3].z * L[0] + L[0].z * L[3];
+    }
+    else if (config == 2) // V2 clip V1 V3 V4
+    {
+        n = 3;
+        L[0] = -L[0].z * L[1] + L[1].z * L[0];
+        L[2] = -L[2].z * L[1] + L[1].z * L[2];
+    }
+    else if (config == 3) // V1 V2 clip V3 V4
+    {
+        n = 4;
+        L[2] = -L[2].z * L[1] + L[1].z * L[2];
+        L[3] = -L[3].z * L[0] + L[0].z * L[3];
+    }
+    else if (config == 4) // V3 clip V1 V2 V4
+    {
+        n = 3;
+        L[0] = -L[3].z * L[2] + L[2].z * L[3];
+        L[1] = -L[1].z * L[2] + L[2].z * L[1];
+    }
+    else if (config == 5) // V1 V3 clip V2 V4) impossible
+    {
+        n = 0;
+    }
+    else if (config == 6) // V2 V3 clip V1 V4
+    {
+        n = 4;
+        L[0] = -L[0].z * L[1] + L[1].z * L[0];
+        L[3] = -L[3].z * L[2] + L[2].z * L[3];
+    }
+    else if (config == 7) // V1 V2 V3 clip V4
+    {
+        n = 5;
+        L[4] = -L[3].z * L[0] + L[0].z * L[3];
+        L[3] = -L[3].z * L[2] + L[2].z * L[3];
+    }
+    else if (config == 8) // V4 clip V1 V2 V3
+    {
+        n = 3;
+        L[0] = -L[0].z * L[3] + L[3].z * L[0];
+        L[1] = -L[2].z * L[3] + L[3].z * L[2];
+        L[2] =  L[3];
+    }
+    else if (config == 9) // V1 V4 clip V2 V3
+    {
+        n = 4;
+        L[1] = -L[1].z * L[0] + L[0].z * L[1];
+        L[2] = -L[2].z * L[3] + L[3].z * L[2];
+    }
+    else if (config == 10) // V2 V4 clip V1 V3) impossible
+    {
+        n = 0;
+    }
+    else if (config == 11) // V1 V2 V4 clip V3
+    {
+        n = 5;
+        L[4] = L[3];
+        L[3] = -L[2].z * L[3] + L[3].z * L[2];
+        L[2] = -L[2].z * L[1] + L[1].z * L[2];
+    }
+    else if (config == 12) // V3 V4 clip V1 V2
+    {
+        n = 4;
+        L[1] = -L[1].z * L[2] + L[2].z * L[1];
+        L[0] = -L[0].z * L[3] + L[3].z * L[0];
+    }
+    else if (config == 13) // V1 V3 V4 clip V2
+    {
+        n = 5;
+        L[4] = L[3];
+        L[3] = L[2];
+        L[2] = -L[1].z * L[2] + L[2].z * L[1];
+        L[1] = -L[1].z * L[0] + L[0].z * L[1];
+    }
+    else if (config == 14) // V2 V3 V4 clip V1
+    {
+        n = 5;
+        L[4] = -L[0].z * L[3] + L[3].z * L[0];
+        L[0] = -L[0].z * L[1] + L[1].z * L[0];
+    }
+    else if (config == 15) // V1 V2 V3 V4
+    {
+        n = 4;
+    }
+
+    if (n == 3)
+        L[3] = L[0];
+    if (n == 4)
+        L[4] = L[0];
+}
+
 vec3 LTC_EvaluateQuad(vec3 N, vec3 V, vec3 P, mat3 Minv, vec3 points[4])
 {
     // construct orthonormal basis around N
@@ -33,7 +244,7 @@ vec3 LTC_EvaluateQuad(vec3 N, vec3 V, vec3 P, mat3 Minv, vec3 points[4])
     Minv = Minv * transpose(mat3(T1, T2, N));
 
     // polygon 
-    vec3 L[4];
+    vec3 L[5];
     L[0] = Minv * (points[0] - P);
     L[1] = Minv * (points[1] - P);
     L[2] = Minv * (points[2] - P);
@@ -41,34 +252,146 @@ vec3 LTC_EvaluateQuad(vec3 N, vec3 V, vec3 P, mat3 Minv, vec3 points[4])
 
     // integrate
     float sum = 0.0;
-    vec3 dir = points[0].xyz - P;
-    vec3 lightNormal = cross(points[1] - points[0], points[3] - points[0]);
-    bool behind = (dot(dir, lightNormal) < 0.0);
-    if (behind)
-        return vec3(0.0);
+    int n;
+    ClipQuadToHorizon(L, n);
 
+    if (n == 0)
+        return vec3(0.0);
+    // project onto sphere
     L[0] = normalize(L[0]);
     L[1] = normalize(L[1]);
     L[2] = normalize(L[2]);
     L[3] = normalize(L[3]);
+    L[4] = normalize(L[4]);
 
-    vec3 vsum = vec3(0.0);
+    // integrate
+    sum += IntegrateEdge(L[0], L[1]);
+    sum += IntegrateEdge(L[1], L[2]);
+    sum += IntegrateEdge(L[2], L[3]);
+    if (n >= 4)
+        sum += IntegrateEdge(L[3], L[4]);
+    if (n == 5)
+        sum += IntegrateEdge(L[4], L[0]);
 
-    vsum += IntegrateEdgeVec(L[0], L[1]);
-    vsum += IntegrateEdgeVec(L[1], L[2]);
-    vsum += IntegrateEdgeVec(L[2], L[3]);
-    vsum += IntegrateEdgeVec(L[3], L[0]);
+    return vec3(max(0.0, sum));
+}
 
-    float len = length(vsum);
-    float z = vsum.z/len;
+vec3 LTC_EvaluateEllipce(vec3 N, vec3 V, vec3 P, mat3 Minv, vec3 points[4])
+{
+    // construct orthonormal basis around N
+    vec3 T1, T2;
+    T1 = normalize(V - N*dot(V, N));
+    T2 = cross(N, T1);
 
-    vec2 uv = vec2(z*0.5 + 0.5, len);
+    // rotate area light in (T1, T2, N) basis
+    mat3 R = transpose(mat3(T1, T2, N));
+
+    // polygon
+    vec3 L_[3];
+    L_[0] = R * (points[0] - P);
+    L_[1] = R * (points[1] - P);
+    L_[2] = R * (points[2] - P);
+
+    vec3 Lo_i = vec3(0);
+
+    // init ellipse
+    vec3 C  = 0.5 * (L_[0] + L_[2]);
+    vec3 V1 = 0.5 * (L_[1] - L_[2]);
+    vec3 V2 = 0.5 * (L_[1] - L_[0]);
+
+    C  = Minv * C;
+    V1 = Minv * V1;
+    V2 = Minv * V2;
+
+    if(dot(cross(V1, V2), C) < 0.0)
+        return vec3(0.0);
+
+    // compute eigenvectors of ellipse
+    float a, b;
+    float d11 = dot(V1, V1);
+    float d22 = dot(V2, V2);
+    float d12 = dot(V1, V2);
+    if (abs(d12)/sqrt(d11*d22) > 0.0001)
+    {
+        float tr = d11 + d22;
+        float det = -d12*d12 + d11*d22;
+
+        // use sqrt matrix to solve for eigenvalues
+        det = sqrt(det);
+        float u = 0.5*sqrt(tr - 2.0*det);
+        float v = 0.5*sqrt(tr + 2.0*det);
+        float e_max = (u + v) * (u + v);
+        float e_min = (u - v) * (u - v);
+
+        vec3 V1_, V2_;
+
+        if (d11 > d22)
+        {
+            V1_ = d12*V1 + (e_max - d11)*V2;
+            V2_ = d12*V1 + (e_min - d11)*V2;
+        }
+        else
+        {
+            V1_ = d12*V2 + (e_max - d22)*V1;
+            V2_ = d12*V2 + (e_min - d22)*V1;
+        }
+
+        a = 1.0 / e_max;
+        b = 1.0 / e_min;
+        V1 = normalize(V1_);
+        V2 = normalize(V2_);
+    }
+    else
+    {
+        a = 1.0 / dot(V1, V1);
+        b = 1.0 / dot(V2, V2);
+        V1 *= sqrt(a);
+        V2 *= sqrt(b);
+    }
+
+    vec3 V3 = cross(V1, V2);
+    if (dot(C, V3) < 0.0)
+        V3 *= -1.0;
+
+    float L  = dot(V3, C);
+    float x0 = dot(V1, C) / L;
+    float y0 = dot(V2, C) / L;
+
+    float E1 = inversesqrt(a);
+    float E2 = inversesqrt(b);
+
+    a *= L*L;
+    b *= L*L;
+
+    float c0 = a*b;
+    float c1 = a*b*(1.0 + x0*x0 + y0*y0) - a - b;
+    float c2 = 1.0 - a*(1.0 + x0*x0) - b*(1.0 + y0*y0);
+    float c3 = 1.0;
+
+    vec3 roots = SolveCubic(vec4(c0, c1, c2, c3));
+    float e1 = roots.x;
+    float e2 = roots.y;
+    float e3 = roots.z;
+
+    vec3 avgDir = vec3(a*x0/(a - e2), b*y0/(b - e2), 1.0);
+
+    mat3 rotate = mat3(V1, V2, V3);
+
+    avgDir = rotate*avgDir;
+    avgDir = normalize(avgDir);
+
+    float L1 = sqrt(-e2/e3);
+    float L2 = sqrt(-e2/e1);
+
+    float formFactor = L1*L2*inversesqrt((1.0 + L1*L1)*(1.0 + L2*L2));
+
+    // use tabulated horizon-clipped sphere
+    vec2 uv = vec2(avgDir.z*0.5 + 0.5, formFactor);
     uv = uv * LTC_LUT_SCALE + LTC_LUT_BIAS;
-
     float scale = texture(ltcLut2, uv).w;
-    sum = len * scale;
+    float spec = formFactor * scale;
 
-    return vec3(sum);
+    return vec3(spec);
 }
 
 vec3 LTC(in LightSource source, in Surface surface, in AngularInfo angular)
@@ -105,8 +428,21 @@ vec3 LTC(in LightSource source, in Surface surface, in AngularInfo angular)
         // Diffuse quad term
         diff = LTC_EvaluateQuad(surface.normal, angular.viewDir, surface.wv, mat3(1), points);
     }
-
+    else if (hasFlag(source.flags, LITE3D_LIGHT_DISK_AREA))
+    {
+        // Specular ellipce term
+        spec = LTC_EvaluateEllipce(surface.normal, angular.viewDir, surface.wv, Minv, points);
+        // Diffuse ellipce term
+        diff = LTC_EvaluateEllipce(surface.normal, angular.viewDir, surface.wv, mat3(1), points);
+    }
+    else
+    {
+        return vec3(0.0);
+    }
+    
+    vec3 F = restoreFresnel(t2.x, t2.y, surface.material);
     vec3 radiance = source.diffuse.rgb * source.radiance * surface.ao;
-    vec3 kD = diffuseFactor(angular.F, surface.material.metallic);
-    return radiance * (diff * surface.material.albedo.rgb * kD + spec * angular.F * surface.material.specular);
+    vec3 kD = diffuseFactor(F, surface.material.metallic);
+
+    return radiance * (diff * surface.material.albedo.rgb * kD + spec * F);
 }
