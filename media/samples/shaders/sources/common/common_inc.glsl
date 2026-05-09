@@ -39,6 +39,7 @@ bool hasFlag(uint a, uint flag);
 // - use with indicated fractional seeding method
 float goldNoise(vec2 xy);
 float noiseInterleavedGradient(vec2 xy);
+vec2 Halton2D(int index);
 
 //////////// Transformations
 ////////////////////////////////////////////////////////////////////////////

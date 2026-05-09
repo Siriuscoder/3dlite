@@ -24,6 +24,11 @@
     "Type": "float",
     "Value": 0.0
   },
+  "Sheen": {
+    "Name": "Sheen",
+    "Type": "float",
+    "Value": 0.0
+  },
   "EnvDiffuse": {
     "Value": 1.0
   },

@@ -1,6 +1,5 @@
 uniform mat4 CameraView; // Main camera view matrix
 uniform mat4 CameraProjection; // Main camera projection matrix
-uniform float RandomSeed; /* 0.0 - 1.0 */
 uniform float Gamma;
 uniform float Exposure;
 uniform float Contrast;
@@ -50,6 +49,32 @@ bool hasFlag(uint a, uint flag)
 {
     return (a & flag) == flag;
 }
+
+float radicalInverse(int index, float base)
+{
+    float result = 0.0;
+    float f = 1.0/base;
+    float i = float(index);
+    for (int x = 0; x < 8; x++)
+    {
+        if (i <= 0.0) break;
+
+        result += f*mod(i, base);
+        i = floor(i/base);
+        f = f/base;
+    }
+
+    return result;
+}
+
+vec2 Halton2D(int index)
+{
+    return vec2(
+        radicalInverse(index, 2.0),
+        radicalInverse(index, 3.0)
+    );
+}
+
 // Gold Noise ©2015 dcerisano@standard3d.com
 // - based on the Golden Ratio
 // - uniform normalized distribution
@@ -57,13 +82,13 @@ bool hasFlag(uint a, uint flag)
 // - use with indicated fractional seeding method
 float goldNoise(vec2 xy)
 {
-    return fract(tan(distance(xy * PHI, xy) * RandomSeed) * xy.x);
+    return fract(tan(distance(xy * PHI, xy)) * xy.x);
 }
 
 float noiseInterleavedGradient(vec2 xy)
 {
     vec3 magic = vec3(0.06711056, 0.00583715, 52.9829189);
-    return fract(magic.z * fract(dot(xy * RandomSeed, magic.xy)));
+    return fract(magic.z * fract(dot(xy, magic.xy)));
 }
 
 vec3 worldToViewSpacePosition(vec3 posw)
@@ -341,7 +366,7 @@ vec3 Sheen(vec3 F, in Material material, in AngularInfo angular)
     {
         vec3 Fs = mix(vec3(1.0), material.albedo.rgb, F);
         float sheenFalloff = pow(clamp(1.0 - angular.NdotV, 0.0, 1.0), 5.0); // падение к краям
-        return Fs * sheenFalloff * material.sheen;
+        return Fs * sheenFalloff * material.sheen * material.roughness;
     }
 
     return vec3(0.0);
@@ -357,8 +382,10 @@ float calcAttenuation(in LightSource source, in AngularInfo angular)
         float spotFactor = 1.0;
         const float fallofStart = 0.9;
 
-        float edgeFallof = (source.influenceDistance - clamp(angular.lightDistance, source.influenceDistance * fallofStart, 
-            source.influenceDistance)) / (source.influenceDistance * (1.0 - fallofStart));
+        float edgeFallof = 1.0 - smoothstep(source.influenceDistance * fallofStart, source.influenceDistance, angular.lightDistance);
+        
+        //(source.influenceDistance - clamp(angular.lightDistance, source.influenceDistance * fallofStart, 
+        //    source.influenceDistance)) / (source.influenceDistance * (1.0 - fallofStart));
 
         if (hasFlag(source.flags, LITE3D_LIGHT_SPOT))
         {

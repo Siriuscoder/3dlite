@@ -383,9 +383,9 @@ namespace lite3dpp_pipeline {
                         .set(L"Value", pipelineConfig.getObject(L"SSAO").getDouble(L"AORadius"))
                         .set(L"Type", "float"),
                     ConfigurationWriter()
-                        .set(L"Name", "RandomSeed")
-                        .set(L"Value", mRandomSeed)
-                        .set(L"Type", "float"),
+                        .set(L"Name", "FrameNumber")
+                        .set(L"Value", 0)
+                        .set(L"Type", "int"),
                     ConfigurationWriter()
                         .set(L"Name", "CameraView")
                         .set(L"Type", "m4"),
@@ -415,6 +415,8 @@ namespace lite3dpp_pipeline {
                 "CameraView", viewMatrix);
             mSSAOStageMaterial->setFloatm4Parameter(static_cast<uint16_t>(TexturePassTypes::RenderPass), 
                 "CameraProjection", projMatrix);
+            mSSAOStageMaterial->setIntParameter(static_cast<uint16_t>(TexturePassTypes::RenderPass), 
+                "FrameNumber", static_cast<int32_t>(getMain().getRenderStats()->framesCount));
         }
 
         if (mLightComputeStageMaterial)

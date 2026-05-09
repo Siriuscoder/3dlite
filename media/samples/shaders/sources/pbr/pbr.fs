@@ -58,7 +58,7 @@ vec3 ComputeIllumination(in Surface surface)
 #endif
         {
             // Calc the the light source radiance
-            vec3 radiance = light.diffuse.rgb * light.radiance * attenuationFactor * shadowFactor * surface.ao;
+            vec3 radiance = light.diffuse.rgb * light.radiance * attenuationFactor * shadowFactor;
             // Radiance is too small, consider to skip BRDF calculation
             if (isZero(radiance))
                 continue;
@@ -69,7 +69,7 @@ vec3 ComputeIllumination(in Surface surface)
     }
 
     // Calculate indirect lighting, ambient, IBL .. 
-    vec3 indirectLx = ComputeIndirect(surface, angular);
+    vec3 indirectLx = ComputeIndirect(surface, angular) * surface.ao;
 
     return indirectLx + directLx + surface.material.emission.rgb;
 }

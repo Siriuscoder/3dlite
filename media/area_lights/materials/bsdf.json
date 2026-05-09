@@ -11,6 +11,9 @@
   "Metallic": {
     "Name":"<Metallic>"
   },
+  "Sheen": {
+    "Name": "<Sheen>"
+  },
   "EnvDiffuse": {
     "Value": 1.0
   },

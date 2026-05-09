@@ -9,6 +9,6 @@
 #define LITE3D_SHADOW_MAX_ADAPTIVE_FILTER_SIZE              5.0
 #define LITE3D_SHADOW_MIN_ADAPTIVE_STEP                     0.5
 
-#define LITE3D_SSAO_POWER                                   1.0
-#define LITE3D_SSAO_SAMPLE_BIAS                             0.030
-#define LITE3D_SSAO_MAX_DEPTH_SAMPLES                       56
+#define LITE3D_SSAO_POWER                                   2.0
+#define LITE3D_SSAO_ADAPTIVE_BIAS_MAX                       0.05
+#define LITE3D_SSAO_ADAPTIVE_BIAS_MIN                       0.01

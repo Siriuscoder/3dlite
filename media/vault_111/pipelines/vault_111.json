@@ -15,8 +15,8 @@
     },
     "SSAO": 
     {
-        "AORadius": 25.0,
-        "FramebufferScale": 4
+        "AORadius": 10.0,
+        "FramebufferScale": 2
     },
     "BLOOM": 
     {

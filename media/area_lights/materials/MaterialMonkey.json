@@ -4,8 +4,8 @@
     "Type": "v4",
     "Value": [
       1.0,
-      0.7099999785423279,
-      0.28999999165534973,
+      0.699999988079071,
+      0.2800000011920929,
       1.0
     ]
   },
@@ -17,12 +17,17 @@
   "Roughness": {
     "Name": "Roughness",
     "Type": "float",
-    "Value": 0.35
+    "Value": 0.3499999940395355
   },
   "Metallic": {
     "Name": "Metallic",
     "Type": "float",
     "Value": 1.0
+  },
+  "Sheen": {
+    "Name": "Sheen",
+    "Type": "float",
+    "Value": 0.0
   },
   "EnvDiffuse": {
     "Value": 1.0
