@@ -156,3 +156,9 @@ Deferred rendering with legacy Phong lighting.
 Demonstrates a global illumination approach based on multiple light probes distributed throughout the scene.
 
 ![](/media/screenshots/sandbox.png "Sandbox")
+
+## sample_area_lights
+
+Demonstrates a ellipse and rectangle area lights. Lighting based on LTC method.
+
+![](/media/screenshots/area_lights.png "Area lighting")

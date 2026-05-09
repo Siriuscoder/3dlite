@@ -36,8 +36,10 @@ Rendering features demonstrated in the engine and sample applications:
 - Image-based lighting
 - Global illumination approximation using light probes
 - Multiple light buffer techniques (UBO, TBO, SSBO)
+- Ellipse or rectangle area lighting using [LTC method](https://github.com/selfshadow/ltc_code)
 - Scene graph with meshes, materials, shaders, and cameras
 - Optional Bullet Physics integration
+- Blender export plugin
 
 ## API
 
