@@ -313,48 +313,45 @@ float NDF(float NdotH, float roughness)
 }
 
 // Geometry function (Schlick-Beckmann, Schlick-GGX)
-float GGX(float NdotV, float k)
+float SchlickGGX(float teta, float k)
 {
-    float nom   = NdotV;
-    float denom = NdotV * (1.0 - k) + k;
+    float nom   = teta;
+    float denom = teta * (1.0 - k) + k;
 
     return nom / denom;
 }
 
 // Geometry function (Smith's)
-float G(float NdotV, float NdotL, float roughness)
-{
-    roughness += 1.0;
-    float k = (roughness * roughness) / 8.0;
-
-    float ggx2  = GGX(NdotV, k);
-    float ggx1  = GGX(NdotL, k);
-
-    return ggx1 * ggx2;
-}
-
-// Geometry function (Smith's) for IBL intergation
-float G_IBL(float NdotV, float NdotL, float roughness)
+float SmithGGX(float NdotV, float NdotL, float roughness)
 {
     float k = (roughness * roughness) / 2.0;
 
-    float ggx2  = GGX(NdotV, k);
-    float ggx1  = GGX(NdotL, k);
+    float ggx2  = SchlickGGX(NdotV, k);
+    float ggx1  = SchlickGGX(NdotL, k);
 
     return ggx1 * ggx2;
 }
 
+float SmithGGXCorrelated(float NdotV, float NdotL, float roughness)
+{
+    roughness += 1.0;
+    float k = (roughness * roughness) / 8.0;
+    
+    float denom = mix(NdotV, 1.0, k) * mix(NdotL, 1.0, k);
+    return 1.0 / denom;
+}
+
 // Specular Term GGX
-vec3 SpecularGGX(vec3 F, in Material material, in AngularInfo angular)
+vec3 SpecularLobeGGX(vec3 F, in Material material, in AngularInfo angular)
 {
     float ndf = NDF(angular.NdotH, material.roughness);
-    float g = G(angular.NdotV, angular.NdotL, material.roughness);
+    float gVis = SmithGGXCorrelated(angular.NdotV, angular.NdotL, material.roughness);
 
-    return (ndf * g * F) / (4.0 * angular.NdotV * angular.NdotL);
+    return (ndf * gVis * F) / 4.0;
 }
 
 // Diffuse Term Lambertian (Simple diffuse model)
-vec3 DiffuseLambertian(vec3 F, in Material material)
+vec3 DiffuseLobeLambertian(vec3 F, in Material material)
 {
     vec3 kD = diffuseFactor(F, material.metallic);
     return kD * material.albedo.rgb / M_PI;
@@ -430,6 +427,19 @@ void angularInfoSetLightSource(inout AngularInfo angular, in Surface surface, in
         angular.lightDir = normalize(vecLightDist);
         angular.lightDistance = length(vecLightDist);
         angular.isOutside = angular.lightDistance > source.influenceDistance;
+
+        if (source.radius > FLT_EPSILON &&
+            (hasFlag(source.flags, LITE3D_LIGHT_POINT) ||
+            hasFlag(source.flags, LITE3D_LIGHT_SPOT)))
+        {
+            vec3 R = reflect(-angular.viewDir, surface.normal);
+            // Projection vecLightDist to R
+            vec3 centerToRay = dot(vecLightDist, R) * R - vecLightDist;
+            float t = clamp(source.radius / max(length(centerToRay), FLT_EPSILON), 0.0, 1.0);
+            vec3 closestPoint = vecLightDist + centerToRay * t;
+            angular.lightDir = normalize(closestPoint);
+            angular.lightDistance = length(closestPoint);
+        }
     }
 }
 

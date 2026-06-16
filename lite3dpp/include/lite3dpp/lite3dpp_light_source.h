@@ -96,6 +96,7 @@ namespace lite3dpp
         void setAngleOuterCone(float value);
         void setAreaWidth(float value);
         void setAreaHeight(float value);
+        void setRadius(float value);
 
         LightSourceFlags getType() const;
         LightSourceFlags getFlags() const;
@@ -118,6 +119,7 @@ namespace lite3dpp
         float getAngleOuterCone() const;
         float getAreaWidth() const;
         float getAreaHeight() const;
+        float getRadius() const;
 
         void translateToWorld(const kmMat4 &worldMatrix);
         void writeToBuffer(BufferBase &buffer);

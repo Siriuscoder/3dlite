@@ -66,6 +66,6 @@ vec3 BRDF(in Surface surface, in AngularInfo angular)
     vec3 kD = diffuseFactor(F, surface.material.metallic);
 
     return kD * d * surface.material.albedo.rgb + 
-        SpecularGGX(F, surface.material, angular) + 
+        SpecularLobeGGX(F, surface.material, angular) + 
         Sheen(F, surface.material, angular);
 }

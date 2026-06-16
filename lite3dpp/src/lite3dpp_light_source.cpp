@@ -56,6 +56,7 @@ namespace lite3dpp
         setRadiance(json.getDouble(L"Radiance"));
         setAreaHeight(json.getDouble(L"AreaHeight"));
         setAreaWidth(json.getDouble(L"AreaWidth"));
+        setRadius(json.getDouble(L"Radius"));
         
         auto attenuation = json.getObject(L"Attenuation");
         if (!attenuation.isEmpty())
@@ -115,6 +116,8 @@ namespace lite3dpp
                     .set(L"AngleInnerCone", mLightSource.params.innerCone)
                     .set(L"AngleOuterCone", mLightSource.params.outerCone));
             }
+
+            writer.set(L"Radius", mLightSource.params.radius);
         }
 
         if (getType() == LightSourceFlags::TypeDirectional || 
@@ -281,6 +284,12 @@ namespace lite3dpp
         mUpdated = true;
     }
 
+    void LightSource::setRadius(float value)
+    {
+        mLightSource.params.radius = value;
+        mUpdated = true;
+    }
+
     const kmVec3 &LightSource::getPosition() const
     {
         return mLightSource.params.position;
@@ -369,6 +378,11 @@ namespace lite3dpp
     float LightSource::getAreaWidth() const
     {
         return mLightSource.params.areaWidth;
+    }
+
+    float LightSource::getRadius() const
+    {
+        return mLightSource.params.radius;
     }
 
     void LightSource::translateToWorld(const kmMat4 &worldMatrix)

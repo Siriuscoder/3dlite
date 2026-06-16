@@ -441,8 +441,9 @@ vec3 LTC(in LightSource source, in Surface surface, in AngularInfo angular)
     }
     
     vec3 F = restoreFresnel(t2.x, t2.y, surface.material);
-    vec3 radiance = source.diffuse.rgb * source.radiance * surface.ao;
     vec3 kD = diffuseFactor(F, surface.material.metallic);
 
-    return radiance * (diff * surface.material.albedo.rgb * kD + spec * F + Sheen(F, surface.material, angular));
+    return diff * surface.material.albedo.rgb * kD +    // diffuse lobe
+        spec * F +                                      // specular lobe
+        Sheen(F, surface.material, angular);            // sheen
 }

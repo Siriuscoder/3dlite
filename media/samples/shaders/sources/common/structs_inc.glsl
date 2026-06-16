@@ -50,7 +50,7 @@ struct LightSource
     float areaHeight;
     uint shadowIndex;
     uint flags;
-    uint reserved1;
+    float radius;
     uint reserved2;
     uint reserved3;
 };

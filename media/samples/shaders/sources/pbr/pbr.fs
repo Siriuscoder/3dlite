@@ -47,29 +47,28 @@ vec3 ComputeIllumination(in Surface surface)
         float attenuationFactor = calcAttenuation(light, angular);
         // Calc shadow, 0 - fully is in shadow, 1 - visible
         float shadowFactor = Shadow(light, surface, angular);
+        // Calc the the light source radiance
+        vec3 radiance = light.diffuse.rgb * light.radiance * attenuationFactor * shadowFactor;
+        // Radiance is too small, consider to skip BRDF calculation
+        if (isZero(radiance))
+            continue;
 
 #ifdef LITE3D_USE_AREA_LIGHTS
         if (hasFlag(light.flags, LITE3D_LIGHT_RECT_AREA) ||
             hasFlag(light.flags, LITE3D_LIGHT_DISK_AREA))
         {
-            directLx += shadowFactor * attenuationFactor * LTC(light, surface, angular);
+            directLx += LTC(light, surface, angular) * radiance;
         }
         else
 #endif
         {
-            // Calc the the light source radiance
-            vec3 radiance = light.diffuse.rgb * light.radiance * attenuationFactor * shadowFactor;
-            // Radiance is too small, consider to skip BRDF calculation
-            if (isZero(radiance))
-                continue;
-
             // Calculate BRDF
             directLx += BRDF(surface, angular) * radiance * angular.NdotL;
         }
     }
 
     // Calculate indirect lighting, ambient, IBL .. 
-    vec3 indirectLx = ComputeIndirect(surface, angular) * surface.ao;
-
-    return indirectLx + directLx + surface.material.emission.rgb;
+    vec3 indirectLx = ComputeIndirect(surface, angular);
+    // Total illumination
+    return (indirectLx + directLx) * surface.ao + surface.material.emission.rgb;
 }

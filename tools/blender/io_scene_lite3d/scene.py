@@ -178,6 +178,7 @@ class Scene:
         
         lightJson["Radiance"] = light.energy
         if light.type in ["POINT", "SPOT"]:
+            lightJson["Radius"] = light.shadow_soft_size
             lightJson["Attenuation"] = {
                 "Constant": light.lite3d_properties.constantAttenuation,
                 "Linear": light.lite3d_properties.linearAttenuation,

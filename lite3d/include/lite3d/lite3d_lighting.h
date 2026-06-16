@@ -59,7 +59,8 @@ typedef struct lite3d_light_params
     float areaHeight;
     uint32_t shadowIndex;
     uint32_t flags;
-    uint32_t reserved[3];
+    float radius; // Used for point and spot light. Emulates reflection of sized point light 
+    uint32_t reserved[2];
 } lite3d_light_params;
 #pragma pack(pop)
 

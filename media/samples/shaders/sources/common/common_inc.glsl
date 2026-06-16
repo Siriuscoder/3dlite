@@ -75,12 +75,12 @@ vec3 fresnelSchlickRoughness(float teta, in Material material);
 vec3 diffuseFactor(vec3 F, float metallic);
 // Normal distribution function (Trowbridge-Reitz GGX)
 float NDF(float NdotH, float roughness);
-// Specular Term GGX
-vec3 SpecularGGX(vec3 F, in Material material, in AngularInfo angular);
-// Geometry function (Smith's) for IBL intergation
-float G_IBL(float NdotV, float NdotL, float roughness);
-// Diffuse Term Lambertian (Simple diffuse model)
-vec3 DiffuseLambertian(vec3 F, in Material material);
+// Specular GGX lobe
+vec3 SpecularLobeGGX(vec3 F, in Material material, in AngularInfo angular);
+// Geometry function (Smith's)
+float SmithGGX(float NdotV, float NdotL, float roughness);
+// Diffuse Lambertian lobe (Simple diffuse model)
+vec3 DiffuseLobeLambertian(vec3 F, in Material material);
 // Sheen 
 vec3 Sheen(vec3 F, in Material material, in AngularInfo angular);
 // Attenuation
