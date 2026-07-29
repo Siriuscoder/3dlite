@@ -93,13 +93,19 @@ namespace lite3dpp
         void setCompressedPixels(int8_t level, const PixelsData &pixels);
         void setCompressedPixels(int8_t level, const void *pixels, size_t size);
 
-        size_t getLayerSize(int8_t level) const;
-        size_t getCompressedLayerSize(int8_t level) const;
+        size_t getLevelSize(int8_t level) const;
+        size_t getCompressedLevelSize(int8_t level) const;
         
         /* commonly color.x = r, color.y = b ... */
         void setBlankColor(const kmVec4 &color);
 
         void generateMipmaps();
+
+        void copyFrom(const TextureImage &srcTex, int8_t level = 0);
+        void copyRegionFrom(const TextureImage &dstTex,  
+            int32_t srcWidthOff, int32_t srcHeightOff, int32_t srcDepthOff,
+            int32_t dstWidthOff, int32_t dstHeightOff, int32_t dstDepthOff,
+            int32_t width, int32_t height, int32_t depth, int8_t level = 0);
         
         inline int32_t getHeight() const
         { return mTexture.imageHeight; }
@@ -107,6 +113,13 @@ namespace lite3dpp
         { return mTexture.imageWidth; }
         inline int32_t getDepth() const
         { return mTexture.imageDepth; }
+        inline int32_t getFaceLayerDepth() const
+        {
+            if (mTexture.textureTarget == LITE3D_TEXTURE_CUBE_ARRAY)
+                return mTexture.imageDepth * 6;
+             
+            return mTexture.imageDepth; 
+        }
 
     protected:
 

@@ -58,6 +58,8 @@ PFNGLFRAMEBUFFERTEXTUREOESPROC glFramebufferTexturePtr = NULL;
 /* GL_EXT_multi_draw_indirect */
 PFNGLMULTIDRAWARRAYSINDIRECTEXTPROC glMultiDrawArraysIndirectPtr = NULL;
 PFNGLMULTIDRAWELEMENTSINDIRECTEXTPROC glMultiDrawElementsIndirectPtr = NULL;
+/* GL_EXT_copy_image */
+PFNGLCOPYIMAGESUBDATAEXTPROC glCopyImageSubDataPtr = NULL;
 
 #endif
 
@@ -97,6 +99,20 @@ int lite3d_check_copy_buffer(void)
 #   endif
 #else
     return GLEW_ARB_copy_buffer;
+#endif
+}
+
+int lite3d_check_copy_image(void)
+{
+#ifdef GLES
+#   ifdef WITH_GLES32
+    return LITE3D_TRUE;
+#   else
+    return SDL_GL_ExtensionSupported("GL_EXT_copy_image") == SDL_TRUE ||
+        SDL_GL_ExtensionSupported("GL_OES_copy_image") == SDL_TRUE;
+#   endif
+#else
+    return GLEW_VERSION_4_3 || GLEW_ARB_copy_image;
 #endif
 }
 
@@ -459,6 +475,27 @@ int lite3d_init_gl_extensions_binding(void)
         glMultiDrawArraysIndirectPtr = glMultiDrawArraysIndirect_stub;
         glMultiDrawElementsIndirectPtr = glMultiDrawElementsIndirect_stub;
     }
+
+    if (lite3d_check_copy_image())
+    {
+        glCopyImageSubDataPtr = SDL_GL_GetProcAddress("glCopyImageSubData");
+        if (!glCopyImageSubDataPtr)
+        {
+            glCopyImageSubDataPtr = SDL_GL_GetProcAddress("glCopyImageSubDataEXT");
+        }
+        if (!glCopyImageSubDataPtr)
+        {
+            glCopyImageSubDataPtr = SDL_GL_GetProcAddress("glCopyImageSubDataOES");
+        }
+        if (!glCopyImageSubDataPtr)
+        {
+            glCopyImageSubDataPtr = glCopyImageSubData_stub;
+        }
+    }
+    else
+    {
+        glCopyImageSubDataPtr = glCopyImageSubData_stub;
+    }
     
 #ifdef WITH_GLES2
     if (lite3d_check_instanced_arrays())
@@ -628,6 +665,13 @@ void glCopyBufferSubData_stub(GLenum readTarget, GLenum writeTarget, GLintptr re
 {
     SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
         "%s: glCopyBufferSubData is not supported..", LITE3D_CURRENT_FUNCTION);
+    lite3d_misc_gl_set_not_supported();
+}
+
+void glCopyImageSubData_stub(GLuint srcName, GLenum srcTarget, GLint srcLevel, GLint srcX, GLint srcY, GLint srcZ, GLuint dstName, GLenum dstTarget, GLint dstLevel, GLint dstX, GLint dstY, GLint dstZ, GLsizei srcWidth, GLsizei srcHeight, GLsizei srcDepth)
+{
+    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+        "%s: glCopyImageSubData is not supported..", LITE3D_CURRENT_FUNCTION);
     lite3d_misc_gl_set_not_supported();
 }
 

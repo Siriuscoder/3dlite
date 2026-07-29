@@ -353,7 +353,7 @@ static void lite3d_apply_image_filters(void)
 static int8_t lite3d_max_mipmaps_count(int32_t width, int32_t height)
 {
     int8_t count = 0;
-    do
+    while (width != 1 || height != 1)
     {
         width = LITE3D_MAX(1, width >> 1);
         height = LITE3D_MAX(1, height >> 1);
@@ -361,7 +361,6 @@ static int8_t lite3d_max_mipmaps_count(int32_t width, int32_t height)
         if (++count == INT8_MAX)
             return 0;
     }
-    while (!(width == 1 && height == 1));
 
     return count;
 }
@@ -389,6 +388,108 @@ static int lite3d_check_texture_target(uint32_t textureTarget)
         }
     }
 #endif
+
+    return LITE3D_TRUE;
+}
+
+static int32_t lite3d_texture_unit_mip_size(int32_t size, int8_t level)
+{
+    return LITE3D_MAX(1, size >> level);
+}
+
+static int32_t lite3d_texture_unit_copy_level_width(const lite3d_texture_unit *textureUnit, int8_t level)
+{
+    switch (textureUnit->textureTarget)
+    {
+        case LITE3D_TEXTURE_BUFFER:
+            return 0;
+        default:
+            return lite3d_texture_unit_mip_size(textureUnit->imageWidth, level);
+    }
+}
+
+static int32_t lite3d_texture_unit_copy_level_height(const lite3d_texture_unit *textureUnit, int8_t level)
+{
+    switch (textureUnit->textureTarget)
+    {
+        case LITE3D_TEXTURE_1D:
+            return 1;
+        case LITE3D_TEXTURE_BUFFER:
+            return 0;
+        default:
+            return lite3d_texture_unit_mip_size(textureUnit->imageHeight, level);
+    }
+}
+
+static int32_t lite3d_texture_unit_copy_level_depth(const lite3d_texture_unit *textureUnit, int8_t level)
+{
+    switch (textureUnit->textureTarget)
+    {
+        case LITE3D_TEXTURE_1D:
+        case LITE3D_TEXTURE_2D:
+        case LITE3D_TEXTURE_2D_MULTISAMPLE:
+        case LITE3D_TEXTURE_2D_SHADOW:
+            return 1;
+        case LITE3D_TEXTURE_CUBE:
+            return 6;
+        case LITE3D_TEXTURE_3D:
+            return lite3d_texture_unit_mip_size(textureUnit->imageDepth, level);
+        case LITE3D_TEXTURE_2D_ARRAY:
+        case LITE3D_TEXTURE_2D_SHADOW_ARRAY:
+        case LITE3D_TEXTURE_3D_MULTISAMPLE:
+            return textureUnit->imageDepth;
+        case LITE3D_TEXTURE_CUBE_ARRAY:
+            return textureUnit->imageDepth * 6;
+        default:
+            return 0;
+    }
+}
+
+static int lite3d_texture_unit_copy_check_region(const lite3d_texture_unit *textureUnit,
+    const char *name, int8_t level, int32_t widthOff, int32_t heightOff, int32_t depthOff,
+    int32_t width, int32_t height, int32_t depth)
+{
+    int32_t levelWidth, levelHeight, levelDepth;
+
+    if (textureUnit->generatedMipmaps < level)
+    {
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+            "%s: %s texture mipmap level %d is not allocated",
+            LITE3D_CURRENT_FUNCTION, name, level);
+        return LITE3D_FALSE;
+    }
+
+    if ((textureUnit->textureTarget == LITE3D_TEXTURE_2D_MULTISAMPLE ||
+        textureUnit->textureTarget == LITE3D_TEXTURE_3D_MULTISAMPLE) && level != 0)
+    {
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+            "%s: %s multisample texture supports only zero mipmap level",
+            LITE3D_CURRENT_FUNCTION, name);
+        return LITE3D_FALSE;
+    }
+
+    levelWidth = lite3d_texture_unit_copy_level_width(textureUnit, level);
+    levelHeight = lite3d_texture_unit_copy_level_height(textureUnit, level);
+    levelDepth = lite3d_texture_unit_copy_level_depth(textureUnit, level);
+
+    if (widthOff < 0 || heightOff < 0 || depthOff < 0 ||
+        width <= 0 || height <= 0 || depth <= 0)
+    {
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+            "%s: %s texture copy region has invalid offsets or size",
+            LITE3D_CURRENT_FUNCTION, name);
+        return LITE3D_FALSE;
+    }
+
+    if (widthOff > levelWidth - width || heightOff > levelHeight - height ||
+        depthOff > levelDepth - depth)
+    {
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+            "%s: %s texture copy region %dx%dx%d at %dx%dx%d is out of %dx%dx%d level %d",
+            LITE3D_CURRENT_FUNCTION, name, width, height, depth,
+            widthOff, heightOff, depthOff, levelWidth, levelHeight, levelDepth, level);
+        return LITE3D_FALSE;
+    }
 
     return LITE3D_TRUE;
 }
@@ -1026,6 +1127,84 @@ int lite3d_texture_unit_set_compressed_pixels(lite3d_texture_unit *textureUnit,
     return LITE3D_TRUE;
 }
 
+int lite3d_texture_unit_copy(const lite3d_texture_unit *srcTextureUnit,
+    const lite3d_texture_unit *dstTextureUnit, int8_t level,
+    int32_t srcWidthOff, int32_t srcHeightOff, int32_t srcDepthOff,
+    int32_t dstWidthOff, int32_t dstHeightOff, int32_t dstDepthOff,
+    int32_t width, int32_t height, int32_t depth)
+{
+    SDL_assert(srcTextureUnit);
+    SDL_assert(dstTextureUnit);
+
+    if (!lite3d_check_copy_image())
+    {
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+            "%s: GL copy image is not supported",
+            LITE3D_CURRENT_FUNCTION);
+        return LITE3D_FALSE;
+    }
+
+    if (level < 0)
+    {
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+            "%s: Invalid mipmap level %d",
+            LITE3D_CURRENT_FUNCTION, level);
+        return LITE3D_FALSE;
+    }
+
+    if (!lite3d_check_texture_target(srcTextureUnit->textureTarget) ||
+        !lite3d_check_texture_target(dstTextureUnit->textureTarget))
+    {
+        return LITE3D_FALSE;
+    }
+
+    if (srcTextureUnit->textureTarget == LITE3D_TEXTURE_BUFFER ||
+        dstTextureUnit->textureTarget == LITE3D_TEXTURE_BUFFER)
+    {
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+            "%s: Texture buffer copy is not supported by glCopyImageSubData",
+            LITE3D_CURRENT_FUNCTION);
+        return LITE3D_FALSE;
+    }
+
+    if (srcTextureUnit->textureID == 0 || dstTextureUnit->textureID == 0)
+    {
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+            "%s: Source or destination texture is not allocated",
+            LITE3D_CURRENT_FUNCTION);
+        return LITE3D_FALSE;
+    }
+
+    if ((srcTextureUnit->textureTarget == LITE3D_TEXTURE_2D_MULTISAMPLE ||
+        srcTextureUnit->textureTarget == LITE3D_TEXTURE_3D_MULTISAMPLE ||
+        dstTextureUnit->textureTarget == LITE3D_TEXTURE_2D_MULTISAMPLE ||
+        dstTextureUnit->textureTarget == LITE3D_TEXTURE_3D_MULTISAMPLE) &&
+        srcTextureUnit->samples != dstTextureUnit->samples)
+    {
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+            "%s: Source and destination multisample count must match",
+            LITE3D_CURRENT_FUNCTION);
+        return LITE3D_FALSE;
+    }
+
+    if (!lite3d_texture_unit_copy_check_region(srcTextureUnit, "Source", level,
+        srcWidthOff, srcHeightOff, srcDepthOff, width, height, depth) ||
+        !lite3d_texture_unit_copy_check_region(dstTextureUnit, "Destination", level,
+        dstWidthOff, dstHeightOff, dstDepthOff, width, height, depth))
+    {
+        return LITE3D_FALSE;
+    }
+
+    lite3d_misc_gl_error_stack_clean();
+
+    glCopyImageSubData(srcTextureUnit->textureID, textureTargetEnum[srcTextureUnit->textureTarget],
+        level, srcWidthOff, srcHeightOff, srcDepthOff,
+        dstTextureUnit->textureID, textureTargetEnum[dstTextureUnit->textureTarget],
+        level, dstWidthOff, dstHeightOff, dstDepthOff, width, height, depth);
+
+    return LITE3D_CHECK_GL_ERROR ? LITE3D_FALSE : LITE3D_TRUE;
+}
+
 int lite3d_texture_unit_get_level_size(const lite3d_texture_unit *textureUnit, 
     int8_t level, uint8_t cubeface, size_t *size)
 {
@@ -1454,4 +1633,12 @@ int lite3d_texture_unit_extract_handle(lite3d_texture_unit *texture)
     }
 
     return LITE3D_TRUE;
+}
+
+void lite3d_texture_unit_set_label(const lite3d_texture_unit *textureUnit, const char *label)
+{
+    if (lite3d_check_debug_context())
+    {
+        glObjectLabel(GL_TEXTURE, textureUnit->textureID, -1, label);
+    }
 }

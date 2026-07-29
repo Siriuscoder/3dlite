@@ -277,6 +277,7 @@ namespace lite3dpp
                 setBlankColor(helper.getVec4(L"BlankColor"));
         }
 
+        lite3d_texture_unit_set_label(&mTexture, getName().c_str());
         mTexture.userdata = this;
     }
 
@@ -392,7 +393,7 @@ namespace lite3dpp
         lite3d_texture_unit_generate_mipmaps(&mTexture);
     }
 
-    size_t TextureImage::getLayerSize(int8_t level) const
+    size_t TextureImage::getLevelSize(int8_t level) const
     {
         size_t res;
         if(!lite3d_texture_unit_get_level_size(&mTexture, level, 0, &res))
@@ -401,7 +402,7 @@ namespace lite3dpp
         return res;
     }
 
-    size_t TextureImage::getCompressedLayerSize(int8_t level) const
+    size_t TextureImage::getCompressedLevelSize(int8_t level) const
     {
         size_t res;
         if(!lite3d_texture_unit_get_compressed_level_size(&mTexture, level, 0, &res))
@@ -430,5 +431,36 @@ namespace lite3dpp
         setPixels(0, pixels);
         generateMipmaps();
     }
-}
 
+    void TextureImage::copyFrom(const TextureImage &srcTex, int8_t level)
+    {
+        if (getState() != ResourceState::LOADED)
+            LITE3D_THROW("Could not to copy texture: destination texture '" << getName() << "' is not loaded");
+        if (srcTex.getState() != ResourceState::LOADED)
+            LITE3D_THROW("Could not to copy texture: source texture '" << srcTex.getName() << "' is not loaded");
+
+        auto widthMin = std::min(getWidth(), srcTex.getWidth());
+        auto heightMin = std::min(getHeight(), srcTex.getHeight());
+        auto depthMin = std::min(getFaceLayerDepth(), srcTex.getFaceLayerDepth());
+
+        if (!lite3d_texture_unit_copy(&srcTex.mTexture, &mTexture, level, 0, 0, 0, 0, 0, 0, widthMin, heightMin, depthMin))
+            LITE3D_THROW("Could not to copy texture: source texture '" << srcTex.getName() << "', destination texture '" << 
+                getName() << "'");
+    }
+
+    void TextureImage::copyRegionFrom(const TextureImage &srcTex, 
+        int32_t srcWidthOff, int32_t srcHeightOff, int32_t srcDepthOff,
+        int32_t dstWidthOff, int32_t dstHeightOff, int32_t dstDepthOff,
+        int32_t width, int32_t height, int32_t depth, int8_t level)
+    {
+        if (getState() != ResourceState::LOADED)
+            LITE3D_THROW("Could not to copy texture: destination texture '" << getName() << "' is not loaded");
+        if (srcTex.getState() != ResourceState::LOADED)
+            LITE3D_THROW("Could not to copy texture: source texture '" << srcTex.getName() << "' is not loaded");
+
+        if (!lite3d_texture_unit_copy(&srcTex.mTexture, &mTexture, level, srcWidthOff, srcHeightOff, srcDepthOff, dstWidthOff,
+            dstHeightOff, dstDepthOff, width, height, depth))
+            LITE3D_THROW("Could not to copy texture: source texture '" << srcTex.getName() << "', destination texture '" << 
+                getName() << "'");
+    }
+}

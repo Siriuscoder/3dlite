@@ -245,6 +245,14 @@ LITE3D_CEXPORT int lite3d_texture_unit_set_compressed_pixels(lite3d_texture_unit
     int32_t width, int32_t height, int32_t depth,
     int8_t level, uint8_t cubeface, size_t pixelsSize, const void *pixels);
 
+/* copy texture pixels from one texture object to another */
+/* for cubemap array textures use layer-faces depth */
+LITE3D_CEXPORT int lite3d_texture_unit_copy(const lite3d_texture_unit *srcTextureUnit,
+    const lite3d_texture_unit *dstTextureUnit, int8_t level,
+    int32_t srcWidthOff, int32_t srcHeightOff, int32_t srcDepthOff,
+    int32_t dstWidthOff, int32_t dstHeightOff, int32_t dstDepthOff,
+    int32_t width, int32_t height, int32_t depth);
+
 /* get data from mipmap level */
 LITE3D_CEXPORT int lite3d_texture_unit_get_pixels(const lite3d_texture_unit *textureUnit, 
     int8_t level, uint8_t cubeface, uint32_t pixelType, void *pixels);
@@ -270,5 +278,8 @@ LITE3D_CEXPORT int lite3d_texture_unit_extract_handle(lite3d_texture_unit *textu
 LITE3D_CEXPORT const char *lite3d_texture_unit_format_string(const lite3d_texture_unit *texture);
 LITE3D_CEXPORT const char *lite3d_texture_unit_target_string(uint32_t textureTarget);
 LITE3D_CEXPORT const char *lite3d_texture_unit_internal_format_string(const lite3d_texture_unit *texture);
+
+/* set debug label to texture, has no significant overhead */
+LITE3D_CEXPORT void lite3d_texture_unit_set_label(const lite3d_texture_unit *textureUnit, const char *label);
 
 #endif

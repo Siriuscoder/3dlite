@@ -24,6 +24,7 @@ int lite3d_check_vertex_array_object(void);
 int lite3d_check_instanced_arrays(void);
 int lite3d_check_vertex_buffer_object(void);
 int lite3d_check_copy_buffer(void);
+int lite3d_check_copy_image(void);
 int lite3d_check_texture_compression_rgtc(void);
 int lite3d_check_texture_compression_s3tc(void);
 int lite3d_check_texture_filter_anisotropic(void);
@@ -71,6 +72,7 @@ void glTexImage2DMultisample_stub(GLenum target, GLsizei samples, GLenum interna
 void glTexImage3DMultisample_stub(GLenum target, GLsizei samples, GLenum internalformat, GLsizei width, GLsizei height, GLsizei depth, GLboolean fixedsamplelocations);
 void glBlitFramebuffer_stub(GLint srcX0, GLint srcY0, GLint srcX1, GLint srcY1, GLint dstX0, GLint dstY0, GLint dstX1, GLint dstY1, GLbitfield mask, GLenum filter);
 void glCopyBufferSubData_stub(GLenum readTarget, GLenum writeTarget, GLintptr readOffset, GLintptr writeOffset, GLsizeiptr size);
+void glCopyImageSubData_stub(GLuint srcName, GLenum srcTarget, GLint srcLevel, GLint srcX, GLint srcY, GLint srcZ, GLuint dstName, GLenum dstTarget, GLint dstLevel, GLint dstX, GLint dstY, GLint dstZ, GLsizei srcWidth, GLsizei srcHeight, GLsizei srcDepth);
 void glGenQueries_stub(GLsizei n, GLuint *ids);
 void glDeleteQueries_stub(GLsizei n, const GLuint *ids);
 GLboolean glIsQuery_stub(GLuint id);
@@ -357,6 +359,8 @@ extern PFNGLFRAMEBUFFERTEXTUREOESPROC glFramebufferTexturePtr;
 /* GL_EXT_multi_draw_indirect */
 extern PFNGLMULTIDRAWARRAYSINDIRECTEXTPROC glMultiDrawArraysIndirectPtr;
 extern PFNGLMULTIDRAWELEMENTSINDIRECTEXTPROC glMultiDrawElementsIndirectPtr;
+/* GL_EXT_copy_image */
+extern PFNGLCOPYIMAGESUBDATAEXTPROC glCopyImageSubDataPtr;
 
 #   ifdef WITH_GLES2
 #       define glDrawArraysInstanced glDrawArraysInstancedPtr
@@ -533,6 +537,7 @@ extern PFNGLMULTIDRAWELEMENTSINDIRECTEXTPROC glMultiDrawElementsIndirectPtr;
 #   define glDispatchCompute glDispatchCompute_stub
 #   define glBindImageTexture glBindImageTexture_stub
 #   define glGetIntegeri_v glGetIntegeri_v_stub
+#   define glCopyImageSubData glCopyImageSubDataPtr
 #endif
 
 #endif
