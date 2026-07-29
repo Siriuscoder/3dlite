@@ -122,7 +122,7 @@ namespace lite3dpp_pipeline {
         return true;
     }
 
-    bool BloomEffect::beginSceneRender(Scene *scene, Camera *camera)
+    bool BloomEffect::beginSceneRender(Scene *scene, Camera *camera, int32_t priority)
     {
         // Скинем индекс цепочки в 0 в началале рисования сцены
         mChainState = 0;

@@ -1637,8 +1637,10 @@ int lite3d_texture_unit_extract_handle(lite3d_texture_unit *texture)
 
 void lite3d_texture_unit_set_label(const lite3d_texture_unit *textureUnit, const char *label)
 {
+#ifndef GLES
     if (lite3d_check_debug_context())
     {
         glObjectLabel(GL_TEXTURE, textureUnit->textureID, -1, label);
     }
+#endif
 }

@@ -281,7 +281,7 @@ namespace lite3dpp_pipeline {
         return true;
     }
 
-    bool ShadowManager::beginSceneRender(Scene *scene, Camera *camera)
+    bool ShadowManager::beginSceneRender(Scene *scene, Camera *camera, int32_t priority)
     {
         if (scene == mCleanStage)
         {
@@ -297,7 +297,7 @@ namespace lite3dpp_pipeline {
         return true; 
     }
 
-    void ShadowManager::endSceneRender(Scene *scene, Camera *camera)
+    void ShadowManager::endSceneRender(Scene *scene, Camera *camera, int32_t priority)
     {
         // После очистки теневых карт готовимся к перерисовке теней.
         if (scene == mCleanStage)

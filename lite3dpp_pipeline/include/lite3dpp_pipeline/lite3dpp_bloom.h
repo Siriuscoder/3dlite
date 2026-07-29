@@ -39,7 +39,7 @@ public:
 private:
 
     bool beginDrawBatch(Scene *scene, SceneNode *node, lite3d_mesh_chunk *meshChunk, Material *material) override;
-    bool beginSceneRender(Scene *scene, Camera *camera) override;
+    bool beginSceneRender(Scene *scene, Camera *camera, int32_t priority) override;
 
     void initTextureChain();
     void initBoomScene();

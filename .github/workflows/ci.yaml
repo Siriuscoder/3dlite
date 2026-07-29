@@ -25,15 +25,15 @@ jobs:
       #
       # To add more build types (Release, Debug, RelWithDebInfo, etc.) customize the build_type list.
       matrix:
-        os: [ubuntu-latest, windows-latest]
+        os: [ubuntu-latest, windows-2022]
         preset: [Windows64_ci_debug, Linux64_ci_gcc_debug, Linux64_ci_clang_debug]
         backend: [GLEW, GLES2, GLES3]
         include:
-          - os: windows-latest
+          - os: windows-2022
             backend: GLEW
             preset: Windows64_ci_debug
         exclude:
-          - os: windows-latest
+          - os: windows-2022
           - os: ubuntu-latest
             preset: Windows64_ci_debug
 

@@ -17,8 +17,6 @@
 
 project(gtest)
 
-enable_testing()
-
 set(GTEST_SOURCES gtest/src/gtest-all.cc
 gtest/src/gtest_main.cc)
 
@@ -38,4 +36,3 @@ target_include_directories(gtest PRIVATE
 "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/gtest/>")
 
 add_subdirectory("${PROJECT_SOURCE_DIR}/functionaly/")
-

@@ -142,8 +142,8 @@ protected:
 
     bool beginUpdate(RenderTarget *rt) override;
     void postUpdate(RenderTarget *rt) override;
-    bool beginSceneRender(Scene *scene, Camera *camera) override;
-    void endSceneRender(Scene *scene, Camera *camera) override;
+    bool beginSceneRender(Scene *scene, Camera *camera, int32_t priority) override;
+    void endSceneRender(Scene *scene, Camera *camera, int32_t priority) override;
 
     // Проверим виден ли обьект сцены хотябы одной теневой камерой, если нет то рисовать его смысла нет.
     bool customVisibilityCheck(Scene *scene, SceneNodeBase *node, lite3d_mesh_chunk *meshChunk, Material *material, 

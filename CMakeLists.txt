@@ -25,6 +25,10 @@ option(SHOW_STATS "Show cmake variables" OFF)
 option(ENABLE_METRICS "Enable code performance counters" OFF)
 option(ENABLE_SANITIZE "Enable clang address sanitizer" OFF)
 
+if(BUILD_TESTS)
+    enable_testing()
+endif()
+
 set(CMAKE_LITE3D_TOP_DIR ${PROJECT_SOURCE_DIR})
 include(${CMAKE_LITE3D_TOP_DIR}/CMake/lite3dCommon.cmake)
 set(CMAKE_MODULE_PATH ${CMAKE_LITE3D_TOP_DIR} "${PROJECT_SOURCE_DIR}/CMake/")
@@ -167,4 +171,3 @@ endif()
 if(SHOW_STATS)
     print_build_info()
 endif()
-

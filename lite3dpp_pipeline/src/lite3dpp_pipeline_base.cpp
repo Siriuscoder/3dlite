@@ -608,7 +608,7 @@ namespace lite3dpp_pipeline {
         }
     }
 
-    bool PipelineBase::beginSceneRender(Scene *scene, Camera *camera)
+    bool PipelineBase::beginSceneRender(Scene *scene, Camera *camera, int32_t priority)
     {
         Material::setFloatv3GlobalParameter("Eye", getMainCamera().getWorldPosition());
         return true;

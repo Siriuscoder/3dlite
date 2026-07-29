@@ -547,16 +547,17 @@ namespace lite3dpp
         return LITE3D_FALSE;
     }
 
-    void Scene::beforeUpdateNodesEntry(struct lite3d_scene *scene, struct lite3d_camera *camera)
+    void Scene::beforeUpdateNodesEntry(struct lite3d_scene *scene, struct lite3d_camera *camera, int32_t priority)
     {
         SDL_assert(scene->userdata);
         SDL_assert(camera->userdata);
 
         try
         {
-            LITE3D_EXT_OBSERVER_NOTIFY_2(reinterpret_cast<Scene *>(scene->userdata), beforeUpdateNodes, 
+            LITE3D_EXT_OBSERVER_NOTIFY_3(reinterpret_cast<Scene *>(scene->userdata), beforeUpdateNodes, 
                 reinterpret_cast<Scene *>(scene->userdata),
-                reinterpret_cast<Camera *>(camera->userdata));
+                reinterpret_cast<Camera *>(camera->userdata),
+                priority);
         }
         catch(std::exception &ex)
         {
@@ -564,7 +565,7 @@ namespace lite3dpp
         }
     }
 
-    int Scene::beginSceneRenderEntry(struct lite3d_scene *scene, struct lite3d_camera *camera)
+    int Scene::beginSceneRenderEntry(struct lite3d_scene *scene, struct lite3d_camera *camera, int32_t priority)
     {
         SDL_assert(scene->userdata);
         SDL_assert(camera->userdata);
@@ -574,9 +575,10 @@ namespace lite3dpp
             Camera *cameraObj = reinterpret_cast<Camera *>(camera->userdata);
             reinterpret_cast<Scene *>(scene->userdata)->validateLightingBuffer(*cameraObj);
             
-            LITE3D_EXT_OBSERVER_NOTIFY_CHECK_2(reinterpret_cast<Scene *>(scene->userdata), beginSceneRender, 
+            LITE3D_EXT_OBSERVER_NOTIFY_CHECK_3(reinterpret_cast<Scene *>(scene->userdata), beginSceneRender, 
                 reinterpret_cast<Scene *>(scene->userdata),
-                cameraObj);
+                cameraObj,
+                priority);
             LITE3D_EXT_OBSERVER_RETURN;
         }
         catch(std::exception &ex)
@@ -587,16 +589,17 @@ namespace lite3dpp
         return LITE3D_FALSE;
     }
 
-    void Scene::endSceneRenderEntry(struct lite3d_scene *scene, struct lite3d_camera *camera)
+    void Scene::endSceneRenderEntry(struct lite3d_scene *scene, struct lite3d_camera *camera, int32_t priority)
     {
         SDL_assert(scene->userdata);
         SDL_assert(camera->userdata);
 
         try
         {
-            LITE3D_EXT_OBSERVER_NOTIFY_2(reinterpret_cast<Scene *>(scene->userdata), endSceneRender, 
+            LITE3D_EXT_OBSERVER_NOTIFY_3(reinterpret_cast<Scene *>(scene->userdata), endSceneRender, 
                 reinterpret_cast<Scene *>(scene->userdata),
-                reinterpret_cast<Camera *>(camera->userdata));
+                reinterpret_cast<Camera *>(camera->userdata),
+                priority);
         }
         catch(std::exception &ex)
         {
@@ -604,16 +607,17 @@ namespace lite3dpp
         }
     }
 
-    void Scene::beginOpaqueStageRenderEntry(struct lite3d_scene *scene, struct lite3d_camera *camera)
+    void Scene::beginOpaqueStageRenderEntry(struct lite3d_scene *scene, struct lite3d_camera *camera, int32_t priority)
     {
         SDL_assert(scene->userdata);
         SDL_assert(camera->userdata);
 
         try
         {
-            LITE3D_EXT_OBSERVER_NOTIFY_2(reinterpret_cast<Scene *>(scene->userdata), beginOpaqueStageRender, 
+            LITE3D_EXT_OBSERVER_NOTIFY_3(reinterpret_cast<Scene *>(scene->userdata), beginOpaqueStageRender, 
                 reinterpret_cast<Scene *>(scene->userdata),
-                reinterpret_cast<Camera *>(camera->userdata));
+                reinterpret_cast<Camera *>(camera->userdata),
+                priority);
         }
         catch(std::exception &ex)
         {
@@ -621,16 +625,17 @@ namespace lite3dpp
         }
     }
 
-    void Scene::beginBlendingStageRenderEntry(struct lite3d_scene *scene, struct lite3d_camera *camera)
+    void Scene::beginBlendingStageRenderEntry(struct lite3d_scene *scene, struct lite3d_camera *camera, int32_t priority)
     {
         SDL_assert(scene->userdata);
         SDL_assert(camera->userdata);
 
         try
         {
-            LITE3D_EXT_OBSERVER_NOTIFY_2(reinterpret_cast<Scene *>(scene->userdata), beginBlendingStageRender, 
+            LITE3D_EXT_OBSERVER_NOTIFY_3(reinterpret_cast<Scene *>(scene->userdata), beginBlendingStageRender, 
                 reinterpret_cast<Scene *>(scene->userdata),
-                reinterpret_cast<Camera *>(camera->userdata));
+                reinterpret_cast<Camera *>(camera->userdata),
+                priority);
         }
         catch(std::exception &ex)
         {
@@ -682,4 +687,3 @@ namespace lite3dpp
         mCameras.clear();
     }
 }
-

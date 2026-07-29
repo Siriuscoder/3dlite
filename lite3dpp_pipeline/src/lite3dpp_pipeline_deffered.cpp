@@ -404,7 +404,7 @@ namespace lite3dpp_pipeline {
         mSSAOStage->addObject("SSAOBigTri", BigTriObjectGenerator(mSSAOStageMaterial->getName()).generate());
     }
 
-    bool PipelineDeffered::beginSceneRender(Scene *scene, Camera *camera)
+    bool PipelineDeffered::beginSceneRender(Scene *scene, Camera *camera, int32_t priority)
     {
         auto &viewMatrix = getMainCamera().getViewMatrix();
         auto &projMatrix = getMainCamera().getProjMatrix();
@@ -427,6 +427,6 @@ namespace lite3dpp_pipeline {
                 "CameraProjection", projMatrix);
         }
 
-        return PipelineBase::beginSceneRender(scene, camera);
+        return PipelineBase::beginSceneRender(scene, camera, priority);
     }
 }}
