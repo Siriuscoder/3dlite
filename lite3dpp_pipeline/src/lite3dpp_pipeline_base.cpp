@@ -185,6 +185,11 @@ namespace lite3dpp_pipeline {
                 LITE3D_THROW("Pipeline " << getName() << ": Main camera configuration incorrect");
             }
 
+            if (pipelineConfig.getBool(L"CopyCombinedTexture", false))
+            {
+                createCombined2Texture(cameraName);
+            }
+
             mainSceneGenerator.addCamera(cameraName, cameraPipelineConfig);
             constructShadowManager(pipelineConfig, cameraName, mainSceneGenerator);
             constructCameraDepthPass(pipelineConfig, cameraName, mainSceneGenerator);
@@ -457,6 +462,22 @@ namespace lite3dpp_pipeline {
         }
     }
 
+    void PipelineBase::createCombined2Texture(const String &cameraName)
+    {
+        // This texture holds a copy of combined texture and used for refraction effects. 
+        ConfigurationWriter combinedTextureConfig;
+        combinedTextureConfig.set(L"TextureType", "2D")
+            .set(L"Filtering", "None")
+            .set(L"Wrapping", "ClampToEdge")
+            .set(L"Compression", false)
+            .set(L"TextureFormat", "RGB")
+            .set(L"InternalFormat", "RGB32F");
+
+        mCombined2Texture = getMain().getResourceManager().queryResourceFromJson<TextureImage>(
+            getName() + "_" + cameraName + "_combined_copy.texture", combinedTextureConfig.write());
+        mResourcesList.emplace_back(mCombined2Texture->getName());
+    }
+
     void PipelineBase::constructSkyBoxPass(const ConfigurationReader &pipelineConfig, const String &cameraName, 
         const ConfigurationWriter &mainCameraConfig)
     {
@@ -611,6 +632,13 @@ namespace lite3dpp_pipeline {
     bool PipelineBase::beginSceneRender(Scene *scene, Camera *camera, int32_t priority)
     {
         Material::setFloatv3GlobalParameter("Eye", getMainCamera().getWorldPosition());
+
+        // Make a copy of the combined texture before blend stage 
+        if (mCombined2Texture && priority == static_cast<int32_t>(RenderPassStagePriority::BlendDecalStage))
+        {
+            mCombined2Texture->copyFrom(*mCombinedTexture);
+        }
+
         return true;
     }
 }}

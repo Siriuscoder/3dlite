@@ -67,6 +67,7 @@ namespace lite3dpp_pipeline {
             SceneGenerator &sceneGenerator);
         
         void createSkyBoxMesh();
+        void createCombined2Texture(const String &cameraName);
         void createLTCLutTextures();
         void createBigTriangleMesh();
         void updateExposure();
@@ -84,7 +85,8 @@ namespace lite3dpp_pipeline {
         RenderTarget *mDepthPass = nullptr;
         RenderTarget *mCombinePass = nullptr;
         Texture *mDepthTexture = nullptr;
-        Texture *mCombinedTexture = nullptr;
+        TextureImage *mCombinedTexture = nullptr;
+        TextureImage *mCombined2Texture = nullptr;
         TextureImage *mLTCLut01 = nullptr;
         TextureImage *mLTCLut02 = nullptr;
         Material *mPostProcessStageMaterial = nullptr;
