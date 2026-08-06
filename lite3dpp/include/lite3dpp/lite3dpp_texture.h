@@ -107,19 +107,9 @@ namespace lite3dpp
             int32_t dstWidthOff, int32_t dstHeightOff, int32_t dstDepthOff,
             int32_t width, int32_t height, int32_t depth, int8_t level = 0);
         
-        inline int32_t getHeight() const
-        { return mTexture.imageHeight; }
-        inline int32_t getWidth() const
-        { return mTexture.imageWidth; }
-        inline int32_t getDepth() const
-        { return mTexture.imageDepth; }
-        inline int32_t getFaceLayerDepth() const
-        {
-            if (mTexture.textureTarget == LITE3D_TEXTURE_CUBE_ARRAY)
-                return mTexture.imageDepth * 6;
-             
-            return mTexture.imageDepth; 
-        }
+        int32_t getHeight(int8_t level = 0) const;
+        int32_t getWidth(int8_t level = 0) const;
+        int32_t getDepth(int8_t level = 0) const;
 
     protected:
 

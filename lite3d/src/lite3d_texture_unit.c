@@ -1215,9 +1215,9 @@ int lite3d_texture_unit_get_level_size(const lite3d_texture_unit *textureUnit,
     if (textureUnit->generatedMipmaps < level)
         return LITE3D_FALSE;
 
-    imageWidth = (size_t)lite3d_texture_unit_get_level_width(textureUnit, level, cubeface);
-    imageHeight = (size_t)lite3d_texture_unit_get_level_height(textureUnit, level, cubeface);
-    imageDepth = (size_t)lite3d_texture_unit_get_level_depth(textureUnit, level, cubeface);
+    imageWidth = (size_t)lite3d_texture_unit_level_width(textureUnit, level, cubeface);
+    imageHeight = (size_t)lite3d_texture_unit_level_height(textureUnit, level, cubeface);
+    imageDepth = (size_t)lite3d_texture_unit_level_depth(textureUnit, level, cubeface);
 
 #ifndef GLES
     {
@@ -1559,7 +1559,7 @@ void lite3d_texture_unit_compression(uint8_t on)
     textureCompression = on;
 }
 
-int32_t lite3d_texture_unit_get_level_width(const lite3d_texture_unit *textureUnit,
+int32_t lite3d_texture_unit_level_width(const lite3d_texture_unit *textureUnit,
     int8_t level, uint8_t cubeface)
 {
 #ifndef GLES
@@ -1572,11 +1572,11 @@ int32_t lite3d_texture_unit_get_level_width(const lite3d_texture_unit *textureUn
     return result;
 #else
     SDL_assert(textureUnit);
-    return textureUnit->imageWidth >> level;
+    return lite3d_texture_unit_copy_level_width(textureUnit, level);
 #endif
 }
 
-int32_t lite3d_texture_unit_get_level_height(const lite3d_texture_unit *textureUnit,
+int32_t lite3d_texture_unit_level_height(const lite3d_texture_unit *textureUnit,
     int8_t level, uint8_t cubeface)
 {
 #ifndef GLES
@@ -1589,11 +1589,11 @@ int32_t lite3d_texture_unit_get_level_height(const lite3d_texture_unit *textureU
     return result;
 #else
     SDL_assert(textureUnit);
-    return textureUnit->imageHeight >> level;
+    return lite3d_texture_unit_copy_level_height(textureUnit, level); 
 #endif
 }
 
-int32_t lite3d_texture_unit_get_level_depth(const lite3d_texture_unit *textureUnit,
+int32_t lite3d_texture_unit_level_depth(const lite3d_texture_unit *textureUnit,
     int8_t level, uint8_t cubeface)
 {
 #ifndef GLES
@@ -1606,7 +1606,7 @@ int32_t lite3d_texture_unit_get_level_depth(const lite3d_texture_unit *textureUn
     return result;
 #else
     SDL_assert(textureUnit);
-    return textureUnit->imageDepth >> level;
+    return lite3d_texture_unit_copy_level_depth(textureUnit, level);
 #endif
 }
 

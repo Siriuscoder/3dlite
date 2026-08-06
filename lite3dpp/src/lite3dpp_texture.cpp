@@ -333,9 +333,9 @@ namespace lite3dpp
     void TextureImage::setPixels(int8_t level, const uint8_t *pixels)
     {
         if(!lite3d_texture_unit_set_pixels(&mTexture, 0, 0, 0,
-            lite3d_texture_unit_get_level_width(&mTexture, level, 0), 
-            lite3d_texture_unit_get_level_height(&mTexture, level, 0), 
-            lite3d_texture_unit_get_level_depth(&mTexture, level, 0), 
+            lite3d_texture_unit_level_width(&mTexture, level, 0), 
+            lite3d_texture_unit_level_height(&mTexture, level, 0), 
+            lite3d_texture_unit_level_depth(&mTexture, level, 0), 
             level, 0, LITE3D_TEXTURE_PIXEL_UNSIGNED_BYTE, pixels))
             LITE3D_THROW("Could`n set level " << level << " for texture ");
 
@@ -345,9 +345,9 @@ namespace lite3dpp
     void TextureImage::setPixels(int8_t level, const float *pixels)
     {
         if(!lite3d_texture_unit_set_pixels(&mTexture, 0, 0, 0,
-            lite3d_texture_unit_get_level_width(&mTexture, level, 0), 
-            lite3d_texture_unit_get_level_height(&mTexture, level, 0), 
-            lite3d_texture_unit_get_level_depth(&mTexture, level, 0), 
+            lite3d_texture_unit_level_width(&mTexture, level, 0), 
+            lite3d_texture_unit_level_height(&mTexture, level, 0), 
+            lite3d_texture_unit_level_depth(&mTexture, level, 0), 
             level, 0, LITE3D_TEXTURE_PIXEL_FLOAT, pixels))
             LITE3D_THROW("Could`n set level " << level << " for texture ");
 
@@ -379,9 +379,9 @@ namespace lite3dpp
     void TextureImage::setCompressedPixels(int8_t level, const void *pixels, size_t size)
     {
         if(!lite3d_texture_unit_set_compressed_pixels(&mTexture, 0, 0, 0,
-            lite3d_texture_unit_get_level_width(&mTexture, level, 0), 
-            lite3d_texture_unit_get_level_height(&mTexture, level, 0), 
-            lite3d_texture_unit_get_level_depth(&mTexture, level, 0), 
+            lite3d_texture_unit_level_width(&mTexture, level, 0), 
+            lite3d_texture_unit_level_height(&mTexture, level, 0), 
+            lite3d_texture_unit_level_depth(&mTexture, level, 0), 
             level, 0, size, pixels))
             LITE3D_THROW("Could`n set level " << level << " for texture ");
 
@@ -410,7 +410,37 @@ namespace lite3dpp
 
         return res;
     }
-    
+
+    int32_t TextureImage::getHeight(int8_t level) const
+    {
+        if (level == 0)
+            return mTexture.imageHeight;
+
+        return lite3d_texture_unit_level_height(&mTexture, level, 0);
+    }
+
+    int32_t TextureImage::getWidth(int8_t level) const
+    {
+        if (level == 0)
+            return mTexture.imageWidth;
+
+        return lite3d_texture_unit_level_width(&mTexture, level, 0);
+    }
+
+    int32_t TextureImage::getDepth(int8_t level) const
+    {
+        if (level == 0)
+        {
+            if (mTexture.textureTarget == LITE3D_TEXTURE_CUBE_ARRAY || 
+                mTexture.textureTarget == LITE3D_TEXTURE_CUBE)
+                return mTexture.imageDepth * 6;
+            
+            return mTexture.imageDepth;
+        }
+
+        return lite3d_texture_unit_level_depth(&mTexture, level, 0);
+    }
+
     void TextureImage::setBlankColor(const kmVec4 &color)
     {
         /* fullup pixels */
@@ -434,18 +464,11 @@ namespace lite3dpp
 
     void TextureImage::copyFrom(const TextureImage &srcTex, int8_t level)
     {
-        if (getState() != ResourceState::LOADED)
-            LITE3D_THROW("Could not to copy texture: destination texture '" << getName() << "' is not loaded");
-        if (srcTex.getState() != ResourceState::LOADED)
-            LITE3D_THROW("Could not to copy texture: source texture '" << srcTex.getName() << "' is not loaded");
+        auto widthMin = std::min(getWidth(level), srcTex.getWidth(level));
+        auto heightMin = std::min(getHeight(level), srcTex.getHeight(level));
+        auto depthMin = std::min(getDepth(level), srcTex.getDepth(level));
 
-        auto widthMin = std::min(getWidth(), srcTex.getWidth());
-        auto heightMin = std::min(getHeight(), srcTex.getHeight());
-        auto depthMin = std::min(getFaceLayerDepth(), srcTex.getFaceLayerDepth());
-
-        if (!lite3d_texture_unit_copy(&srcTex.mTexture, &mTexture, level, 0, 0, 0, 0, 0, 0, widthMin, heightMin, depthMin))
-            LITE3D_THROW("Could not to copy texture: source texture '" << srcTex.getName() << "', destination texture '" << 
-                getName() << "'");
+        copyRegionFrom(srcTex, 0, 0, 0, 0, 0, 0, widthMin, heightMin, depthMin, level);
     }
 
     void TextureImage::copyRegionFrom(const TextureImage &srcTex, 

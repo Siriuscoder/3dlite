@@ -204,11 +204,11 @@ LITE3D_CEXPORT int lite3d_texture_technique_init(const lite3d_texture_technique_
 LITE3D_CEXPORT void lite3d_texture_technique_shut(void);
 
 /* texture mipmap level size */
-LITE3D_CEXPORT int32_t lite3d_texture_unit_get_level_width(const lite3d_texture_unit *textureUnit,
+LITE3D_CEXPORT int32_t lite3d_texture_unit_level_width(const lite3d_texture_unit *textureUnit,
     int8_t level, uint8_t cubeface);
-LITE3D_CEXPORT int32_t lite3d_texture_unit_get_level_height(const lite3d_texture_unit *textureUnit,
+LITE3D_CEXPORT int32_t lite3d_texture_unit_level_height(const lite3d_texture_unit *textureUnit,
     int8_t level, uint8_t cubeface);
-LITE3D_CEXPORT int32_t lite3d_texture_unit_get_level_depth(const lite3d_texture_unit *textureUnit,
+LITE3D_CEXPORT int32_t lite3d_texture_unit_level_depth(const lite3d_texture_unit *textureUnit,
     int8_t level, uint8_t cubeface);
 
 /* load texture from resource file using Devil */
