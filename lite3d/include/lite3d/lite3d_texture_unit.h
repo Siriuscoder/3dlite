@@ -243,8 +243,6 @@ LITE3D_CEXPORT int lite3d_texture_unit_set_pixels(lite3d_texture_unit *textureUn
 
 /* update compressed pixels in specified mipmap level and layer */
 LITE3D_CEXPORT int lite3d_texture_unit_set_compressed_pixels(lite3d_texture_unit *textureUnit, 
-    int32_t widthOff, int32_t heightOff,
-    int32_t width, int32_t height,
     int8_t level, uint8_t layer, size_t pixelsSize, const void *pixels);
 
 /* copy texture pixels from one texture object to another */
@@ -261,8 +259,6 @@ LITE3D_CEXPORT int lite3d_texture_unit_get_pixels(const lite3d_texture_unit *tex
     int32_t width, int32_t height,
     int8_t level, int32_t layer, uint32_t pixelType, void *pixels, size_t size);
 LITE3D_CEXPORT int lite3d_texture_unit_get_compressed_pixels(const lite3d_texture_unit *textureUnit, 
-    int32_t widthOff, int32_t heightOff,
-    int32_t width, int32_t height,
     int8_t level, int32_t layer, void *pixels, size_t size);
 
 /* internal VRAM size of one 2D image at specified mipmap level */

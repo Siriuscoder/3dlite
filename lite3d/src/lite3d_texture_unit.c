@@ -1045,13 +1045,16 @@ int lite3d_texture_unit_set_pixels(lite3d_texture_unit *textureUnit,
 }
 
 int lite3d_texture_unit_set_compressed_pixels(lite3d_texture_unit *textureUnit, 
-    int32_t widthOff, int32_t heightOff, 
-    int32_t width, int32_t height,
     int8_t level, uint8_t layer, size_t pixelsSize, const void *pixels)
 {
+    int32_t width, height;
+
     SDL_assert(textureUnit);
     if (textureUnit->generatedMipmaps < level)
         return LITE3D_FALSE;
+
+    width = lite3d_texture_unit_level_width(textureUnit, level);
+    height = lite3d_texture_unit_level_height(textureUnit, level);
     
     /* make texture active */
     glBindTexture(textureTargetEnum[textureUnit->textureTarget], textureUnit->textureID);
@@ -1076,7 +1079,7 @@ int lite3d_texture_unit_set_compressed_pixels(lite3d_texture_unit *textureUnit,
     switch (textureUnit->textureTarget)
     {
         case LITE3D_TEXTURE_1D:
-            glCompressedTexSubImage1D(textureTargetEnum[textureUnit->textureTarget], level, widthOff,
+            glCompressedTexSubImage1D(textureTargetEnum[textureUnit->textureTarget], level, 0,
                 width, textureUnit->internalFormat, (GLsizei)pixelsSize, pixels);
             break;
         case LITE3D_TEXTURE_2D:
@@ -1084,15 +1087,15 @@ int lite3d_texture_unit_set_compressed_pixels(lite3d_texture_unit *textureUnit,
         case LITE3D_TEXTURE_2D_SHADOW:
             glCompressedTexSubImage2D(textureUnit->textureTarget == LITE3D_TEXTURE_CUBE ? 
                 GL_TEXTURE_CUBE_MAP_POSITIVE_X + layer : textureTargetEnum[textureUnit->textureTarget],
-                level, widthOff, heightOff, width, height, textureUnit->internalFormat,
+                level, 0, 0, width, height, textureUnit->internalFormat,
                 (GLsizei)pixelsSize, pixels);
             break;
         case LITE3D_TEXTURE_3D:
         case LITE3D_TEXTURE_2D_ARRAY:
         case LITE3D_TEXTURE_2D_SHADOW_ARRAY:
         case LITE3D_TEXTURE_CUBE_ARRAY:
-            glCompressedTexSubImage3D(textureTargetEnum[textureUnit->textureTarget], level, widthOff,
-                heightOff, layer, width, height, 1,
+            glCompressedTexSubImage3D(textureTargetEnum[textureUnit->textureTarget], level, 0,
+                0, layer, width, height, 1,
                 textureUnit->internalFormat, (GLsizei)pixelsSize, pixels);
             break;
     }
@@ -1304,8 +1307,6 @@ int lite3d_texture_unit_get_pixels(const lite3d_texture_unit *textureUnit,
 }
 
 int lite3d_texture_unit_get_compressed_pixels(const lite3d_texture_unit *textureUnit, 
-    int32_t widthOff, int32_t heightOff,
-    int32_t width, int32_t height,
     int8_t level, int32_t layer, void *pixels, size_t size)
 {
 #ifndef GLES
@@ -1323,8 +1324,9 @@ int lite3d_texture_unit_get_compressed_pixels(const lite3d_texture_unit *texture
 
     lite3d_misc_gl_error_stack_clean();
 
-    glGetCompressedTextureSubImage(textureUnit->textureID, level, widthOff, heightOff, layer,
-        width, height, 1,
+    glGetCompressedTextureSubImage(textureUnit->textureID, level, 0, 0, layer,
+        lite3d_texture_unit_level_width(textureUnit, level),
+        lite3d_texture_unit_level_height(textureUnit, level), 1,
         (GLsizei)size, pixels);
 
     return LITE3D_CHECK_GL_ERROR ? LITE3D_FALSE : LITE3D_TRUE;
