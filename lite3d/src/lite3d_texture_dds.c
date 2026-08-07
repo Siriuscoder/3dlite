@@ -335,7 +335,7 @@ static size_t lite3d_dds_load_face(struct lite3d_texture_unit *textureUnit, cons
         /* use only 0 level and skip others if texture do not support mipmaps */
         if (mip == 0 || textureUnit->generatedMipmaps > 0)
         {
-            if (!lite3d_texture_unit_set_compressed_pixels(textureUnit, 0, 0, 0, Width, Height, Depth, mip, face, 
+            if (!lite3d_texture_unit_set_compressed_pixels(textureUnit, 0, 0, Width, Height, mip, face, 
                 linearSize, buffer))
             {
                 return 0;

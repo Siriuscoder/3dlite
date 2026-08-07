@@ -18,6 +18,7 @@
 #pragma once
 
 #include <lite3d/lite3d_mesh.h>
+#include <lite3d/lite3d_texture_unit.h>
 #include <lite3dpp/lite3dpp_common.h>
 #include <lite3dpp/lite3dpp_manageable.h>
 
@@ -28,6 +29,17 @@ namespace lite3dpp
     using BufferData = PixelsData;
     using BufferLayout = stl<lite3d_vao_layout>::vector; 
     using MeshChunkArray = stl<lite3d_mesh_chunk *>::vector;
+
+    enum TexturePixelType : uint32_t
+    {
+        Byte = LITE3D_TEXTURE_PIXEL_BYTE,
+        UnsignedByte = LITE3D_TEXTURE_PIXEL_UNSIGNED_BYTE,
+        Short = LITE3D_TEXTURE_PIXEL_SHORT,
+        UnsignedShort = LITE3D_TEXTURE_PIXEL_UNSIGNED_SHORT,
+        Int = LITE3D_TEXTURE_PIXEL_INT,
+        UnsignedInt = LITE3D_TEXTURE_PIXEL_UNSIGNED_INT,
+        Float = LITE3D_TEXTURE_PIXEL_FLOAT
+    };
 
     class VertexArrayWrap
     {

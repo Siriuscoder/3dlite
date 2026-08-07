@@ -91,7 +91,7 @@ public:
         lite3dpp::PixelsData pixels;
         for(int8_t i = 0; i < mBoxTexture->getTotalLevels(); ++i)
         {
-            mBoxTexture->getPixels(i, pixels);
+            mBoxTexture->getPixels(pixels, i);
 
             /* random color */
             unsigned char r = (unsigned char)(rand() % 255);
@@ -107,7 +107,7 @@ public:
                 pixels[j++] = 255;
             }
 
-            mBoxTexture->setPixels(i, pixels);
+            mBoxTexture->setPixels(pixels, i);
         }
     }
 

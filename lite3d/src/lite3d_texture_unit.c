@@ -350,6 +350,11 @@ static void lite3d_apply_image_filters(void)
     }
 }
 
+static int32_t lite3d_texture_unit_mip_size(int32_t size, int8_t level)
+{
+    return LITE3D_MAX(1, size >> level);
+}
+
 static int8_t lite3d_max_mipmaps_count(int32_t width, int32_t height)
 {
     int8_t count = 0;
@@ -392,106 +397,74 @@ static int lite3d_check_texture_target(uint32_t textureTarget)
     return LITE3D_TRUE;
 }
 
-static int32_t lite3d_texture_unit_mip_size(int32_t size, int8_t level)
+#ifndef GLES
+static int lite3d_texture_unit_check_get_pixels(const lite3d_texture_unit *textureUnit, const void *pixels)
 {
-    return LITE3D_MAX(1, size >> level);
-}
-
-static int32_t lite3d_texture_unit_copy_level_width(const lite3d_texture_unit *textureUnit, int8_t level)
-{
-    switch (textureUnit->textureTarget)
-    {
-        case LITE3D_TEXTURE_BUFFER:
-            return 0;
-        default:
-            return lite3d_texture_unit_mip_size(textureUnit->imageWidth, level);
-    }
-}
-
-static int32_t lite3d_texture_unit_copy_level_height(const lite3d_texture_unit *textureUnit, int8_t level)
-{
-    switch (textureUnit->textureTarget)
-    {
-        case LITE3D_TEXTURE_1D:
-            return 1;
-        case LITE3D_TEXTURE_BUFFER:
-            return 0;
-        default:
-            return lite3d_texture_unit_mip_size(textureUnit->imageHeight, level);
-    }
-}
-
-static int32_t lite3d_texture_unit_copy_level_depth(const lite3d_texture_unit *textureUnit, int8_t level)
-{
-    switch (textureUnit->textureTarget)
-    {
-        case LITE3D_TEXTURE_1D:
-        case LITE3D_TEXTURE_2D:
-        case LITE3D_TEXTURE_2D_MULTISAMPLE:
-        case LITE3D_TEXTURE_2D_SHADOW:
-            return 1;
-        case LITE3D_TEXTURE_CUBE:
-            return 6;
-        case LITE3D_TEXTURE_3D:
-            return lite3d_texture_unit_mip_size(textureUnit->imageDepth, level);
-        case LITE3D_TEXTURE_2D_ARRAY:
-        case LITE3D_TEXTURE_2D_SHADOW_ARRAY:
-        case LITE3D_TEXTURE_3D_MULTISAMPLE:
-            return textureUnit->imageDepth;
-        case LITE3D_TEXTURE_CUBE_ARRAY:
-            return textureUnit->imageDepth * 6;
-        default:
-            return 0;
-    }
-}
-
-static int lite3d_texture_unit_copy_check_region(const lite3d_texture_unit *textureUnit,
-    const char *name, int8_t level, int32_t widthOff, int32_t heightOff, int32_t depthOff,
-    int32_t width, int32_t height, int32_t depth)
-{
-    int32_t levelWidth, levelHeight, levelDepth;
-
-    if (textureUnit->generatedMipmaps < level)
+    if (!lite3d_check_get_texture_sub_image())
     {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
-            "%s: %s texture mipmap level %d is not allocated",
-            LITE3D_CURRENT_FUNCTION, name, level);
+            "%s: GL get texture sub image is not supported",
+            LITE3D_CURRENT_FUNCTION);
         return LITE3D_FALSE;
     }
 
-    if ((textureUnit->textureTarget == LITE3D_TEXTURE_2D_MULTISAMPLE ||
-        textureUnit->textureTarget == LITE3D_TEXTURE_3D_MULTISAMPLE) && level != 0)
+    if (textureUnit->textureID == 0)
     {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
-            "%s: %s multisample texture supports only zero mipmap level",
-            LITE3D_CURRENT_FUNCTION, name);
+            "%s: Texture is not allocated",
+            LITE3D_CURRENT_FUNCTION);
         return LITE3D_FALSE;
     }
 
-    levelWidth = lite3d_texture_unit_copy_level_width(textureUnit, level);
-    levelHeight = lite3d_texture_unit_copy_level_height(textureUnit, level);
-    levelDepth = lite3d_texture_unit_copy_level_depth(textureUnit, level);
-
-    if (widthOff < 0 || heightOff < 0 || depthOff < 0 ||
-        width <= 0 || height <= 0 || depth <= 0)
+    if (!pixels)
     {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
-            "%s: %s texture copy region has invalid offsets or size",
-            LITE3D_CURRENT_FUNCTION, name);
+            "%s: Output buffer is NULL",
+            LITE3D_CURRENT_FUNCTION);
         return LITE3D_FALSE;
     }
 
-    if (widthOff > levelWidth - width || heightOff > levelHeight - height ||
-        depthOff > levelDepth - depth)
+    if (textureUnit->isTextureBuffer ||
+        textureUnit->textureTarget == LITE3D_TEXTURE_BUFFER)
     {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
-            "%s: %s texture copy region %dx%dx%d at %dx%dx%d is out of %dx%dx%d level %d",
-            LITE3D_CURRENT_FUNCTION, name, width, height, depth,
-            widthOff, heightOff, depthOff, levelWidth, levelHeight, levelDepth, level);
+            "%s: Texture buffer dumping is not supported",
+            LITE3D_CURRENT_FUNCTION);
+        return LITE3D_FALSE;
+    }
+
+    if (textureUnit->textureTarget == LITE3D_TEXTURE_2D_MULTISAMPLE ||
+        textureUnit->textureTarget == LITE3D_TEXTURE_3D_MULTISAMPLE)
+    {
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+            "%s: Multisample texture dumping is not supported",
+            LITE3D_CURRENT_FUNCTION);
         return LITE3D_FALSE;
     }
 
     return LITE3D_TRUE;
+}
+#endif
+
+static size_t lite3d_texture_unit_get_pixels_size(const lite3d_texture_unit *textureUnit,
+    int32_t width, int32_t height, uint32_t pixelType)
+{
+    size_t pixelSize = (size_t)textureUnit->imageBPP;
+
+    switch (pixelType)
+    {
+        case LITE3D_TEXTURE_PIXEL_SHORT:
+        case LITE3D_TEXTURE_PIXEL_UNSIGNED_SHORT:
+            pixelSize *= 2;
+            break;
+        case LITE3D_TEXTURE_PIXEL_INT:
+        case LITE3D_TEXTURE_PIXEL_UNSIGNED_INT:
+        case LITE3D_TEXTURE_PIXEL_FLOAT:
+            pixelSize *= 4;
+            break;
+    };
+
+    return (size_t)width * (size_t)height * pixelSize;
 }
 
 static int lite3d_set_internal_format(lite3d_texture_unit *textureUnit, uint16_t *format,
@@ -643,21 +616,21 @@ static int lite3d_set_internal_format(lite3d_texture_unit *textureUnit, uint16_t
 
 static void lite3d_texture_unit_calc_total_size(lite3d_texture_unit *textureUnit)
 {
-    typedef int (*tsizefunc)(const lite3d_texture_unit *, int8_t, uint8_t, size_t *);
+    typedef int (*tsizefunc)(const lite3d_texture_unit *, int8_t, size_t *);
     tsizefunc sf;
     size_t levelSize = 0;
     textureUnit->totalSize = 0;
 
-    sf = textureUnit->compressed ? lite3d_texture_unit_get_compressed_level_size : 
-        lite3d_texture_unit_get_level_size;
-    
-    for (int icube = 0; icube < 6; icube++)
+    sf = textureUnit->compressed ? lite3d_texture_unit_compressed_level_size : 
+        lite3d_texture_unit_level_size;
+
+    for (int8_t level = 0; level < textureUnit->generatedMipmaps; level++)
     {
-        uint8_t li = 0;
-        while(sf(textureUnit, li++, icube, &levelSize))
-            textureUnit->totalSize += levelSize;
-        if (textureUnit->textureTarget != LITE3D_TEXTURE_CUBE)
-            break;
+        if (sf(textureUnit, level, &levelSize))
+        {
+            int32_t depth = lite3d_texture_unit_level_depth(textureUnit, level);
+            textureUnit->totalSize += levelSize * depth;
+        }
     }
 }
 
@@ -974,7 +947,7 @@ int lite3d_texture_unit_from_resource(lite3d_texture_unit *textureUnit,
     {
         for (mipLevel = 0; mipLevel <= totalLevels; ++mipLevel)
         {
-            int32_t lWidth, lHeight, lDepth;
+            int32_t lWidth, lHeight;
             /* workaround to prevent ilActiveMipmap bug */
             ilBindImage(imageDesc);
             ilActiveFace(imageFace);
@@ -984,10 +957,9 @@ int lite3d_texture_unit_from_resource(lite3d_texture_unit *textureUnit,
 
             lWidth = ilGetInteger(IL_IMAGE_WIDTH);
             lHeight = ilGetInteger(IL_IMAGE_HEIGHT);
-            lDepth = ilGetInteger(IL_IMAGE_DEPTH);
 
-            if (!lite3d_texture_unit_set_pixels(textureUnit, 0, 0, 0, 
-                lWidth, lHeight, lDepth, mipLevel, totalFaces == 0 ? cubeface : imageFace, ilGetInteger(IL_IMAGE_TYPE), ilGetData()))
+            if (!lite3d_texture_unit_set_pixels(textureUnit, 0, 0, 
+                lWidth, lHeight, mipLevel, totalFaces == 0 ? cubeface : imageFace, ilGetInteger(IL_IMAGE_TYPE), ilGetData()))
             {
                 ilDeleteImage(imageDesc);
                 lite3d_texture_unit_purge(textureUnit);
@@ -1036,9 +1008,9 @@ int lite3d_texture_unit_from_resource(lite3d_texture_unit *textureUnit,
 }
 
 int lite3d_texture_unit_set_pixels(lite3d_texture_unit *textureUnit, 
-    int32_t widthOff, int32_t heightOff, int32_t depthOff, 
-    int32_t width, int32_t height, int32_t depth,
-    int8_t level, uint8_t cubeface, uint32_t pixelType, const void *pixels)
+    int32_t widthOff, int32_t heightOff, 
+    int32_t width, int32_t height,
+    int8_t level, uint8_t layer, uint32_t pixelType, const void *pixels)
 {
     SDL_assert(textureUnit);
     if (textureUnit->generatedMipmaps < level)
@@ -1056,7 +1028,7 @@ int lite3d_texture_unit_set_pixels(lite3d_texture_unit *textureUnit,
         case LITE3D_TEXTURE_CUBE:
         case LITE3D_TEXTURE_2D_SHADOW:
             glTexSubImage2D(textureUnit->textureTarget == LITE3D_TEXTURE_CUBE ?
-                GL_TEXTURE_CUBE_MAP_POSITIVE_X + cubeface : textureTargetEnum[textureUnit->textureTarget],
+                GL_TEXTURE_CUBE_MAP_POSITIVE_X + layer : textureTargetEnum[textureUnit->textureTarget],
                 level, widthOff, heightOff, width, height, textureUnit->dataFormat,
                 pixelType, pixels);
             break;
@@ -1064,7 +1036,7 @@ int lite3d_texture_unit_set_pixels(lite3d_texture_unit *textureUnit,
         case LITE3D_TEXTURE_2D_ARRAY:
         case LITE3D_TEXTURE_2D_SHADOW_ARRAY:
             glTexSubImage3D(textureTargetEnum[textureUnit->textureTarget], level, widthOff,
-                heightOff, depthOff, width, height, depth,
+                heightOff, layer, width, height, 1,
                 textureUnit->dataFormat, pixelType, pixels);
             break;
     }
@@ -1073,9 +1045,9 @@ int lite3d_texture_unit_set_pixels(lite3d_texture_unit *textureUnit,
 }
 
 int lite3d_texture_unit_set_compressed_pixels(lite3d_texture_unit *textureUnit, 
-    int32_t widthOff, int32_t heightOff, int32_t depthOff, 
-    int32_t width, int32_t height, int32_t depth,
-    int8_t level, uint8_t cubeface, size_t pixelsSize, const void *pixels)
+    int32_t widthOff, int32_t heightOff, 
+    int32_t width, int32_t height,
+    int8_t level, uint8_t layer, size_t pixelsSize, const void *pixels)
 {
     SDL_assert(textureUnit);
     if (textureUnit->generatedMipmaps < level)
@@ -1088,7 +1060,7 @@ int lite3d_texture_unit_set_compressed_pixels(lite3d_texture_unit *textureUnit,
     {
         int32_t compressed;
         glGetTexLevelParameteriv(textureUnit->textureTarget == LITE3D_TEXTURE_CUBE ? 
-            GL_TEXTURE_CUBE_MAP_POSITIVE_X + cubeface : textureTargetEnum[textureUnit->textureTarget],
+            GL_TEXTURE_CUBE_MAP_POSITIVE_X : textureTargetEnum[textureUnit->textureTarget],
             level, GL_TEXTURE_COMPRESSED, &compressed);
     
         if(compressed == GL_FALSE)
@@ -1111,15 +1083,16 @@ int lite3d_texture_unit_set_compressed_pixels(lite3d_texture_unit *textureUnit,
         case LITE3D_TEXTURE_CUBE:
         case LITE3D_TEXTURE_2D_SHADOW:
             glCompressedTexSubImage2D(textureUnit->textureTarget == LITE3D_TEXTURE_CUBE ? 
-                GL_TEXTURE_CUBE_MAP_POSITIVE_X + cubeface : textureTargetEnum[textureUnit->textureTarget],
+                GL_TEXTURE_CUBE_MAP_POSITIVE_X + layer : textureTargetEnum[textureUnit->textureTarget],
                 level, widthOff, heightOff, width, height, textureUnit->internalFormat,
                 (GLsizei)pixelsSize, pixels);
             break;
         case LITE3D_TEXTURE_3D:
         case LITE3D_TEXTURE_2D_ARRAY:
         case LITE3D_TEXTURE_2D_SHADOW_ARRAY:
+        case LITE3D_TEXTURE_CUBE_ARRAY:
             glCompressedTexSubImage3D(textureTargetEnum[textureUnit->textureTarget], level, widthOff,
-                heightOff, depthOff, width, height, depth,
+                heightOff, layer, width, height, 1,
                 textureUnit->internalFormat, (GLsizei)pixelsSize, pixels);
             break;
     }
@@ -1187,14 +1160,6 @@ int lite3d_texture_unit_copy(const lite3d_texture_unit *srcTextureUnit,
         return LITE3D_FALSE;
     }
 
-    if (!lite3d_texture_unit_copy_check_region(srcTextureUnit, "Source", level,
-        srcWidthOff, srcHeightOff, srcDepthOff, width, height, depth) ||
-        !lite3d_texture_unit_copy_check_region(dstTextureUnit, "Destination", level,
-        dstWidthOff, dstHeightOff, dstDepthOff, width, height, depth))
-    {
-        return LITE3D_FALSE;
-    }
-
     lite3d_misc_gl_error_stack_clean();
 
     glCopyImageSubData(srcTextureUnit->textureID, textureTargetEnum[srcTextureUnit->textureTarget],
@@ -1205,30 +1170,31 @@ int lite3d_texture_unit_copy(const lite3d_texture_unit *srcTextureUnit,
     return LITE3D_CHECK_GL_ERROR ? LITE3D_FALSE : LITE3D_TRUE;
 }
 
-int lite3d_texture_unit_get_level_size(const lite3d_texture_unit *textureUnit, 
-    int8_t level, uint8_t cubeface, size_t *size)
+int lite3d_texture_unit_level_size(const lite3d_texture_unit *textureUnit, 
+    int8_t level, size_t *size)
 {
-    size_t imageWidth, imageHeight, imageDepth;
-
-    SDL_assert(textureUnit);
-    SDL_assert(size);
-    if (textureUnit->generatedMipmaps < level)
-        return LITE3D_FALSE;
-
-    imageWidth = (size_t)lite3d_texture_unit_level_width(textureUnit, level, cubeface);
-    imageHeight = (size_t)lite3d_texture_unit_level_height(textureUnit, level, cubeface);
-    imageDepth = (size_t)lite3d_texture_unit_level_depth(textureUnit, level, cubeface);
-
 #ifndef GLES
     {
-        GLenum levelType = textureUnit->textureTarget == LITE3D_TEXTURE_CUBE ? 
-            GL_TEXTURE_CUBE_MAP_POSITIVE_X + cubeface : textureTargetEnum[textureUnit->textureTarget];
+        size_t imageWidth, imageHeight;
+
+        SDL_assert(textureUnit);
+        SDL_assert(size);
+        if (textureUnit->generatedMipmaps < level)
+            return LITE3D_FALSE;
+
+        imageWidth = (size_t)lite3d_texture_unit_level_width(textureUnit, level);
+        imageHeight = (size_t)lite3d_texture_unit_level_height(textureUnit, level);
+
+        GLenum levelType = textureUnit->textureTarget == LITE3D_TEXTURE_CUBE ?
+            GL_TEXTURE_CUBE_MAP_POSITIVE_X : textureTargetEnum[textureUnit->textureTarget];
+
+        glBindTexture(textureTargetEnum[textureUnit->textureTarget], textureUnit->textureID);
             
         if (textureUnit->dataFormat == LITE3D_TEXTURE_FORMAT_DEPTH)
         {
             int32_t sizeDepth;
             glGetTexLevelParameteriv(levelType, level, GL_TEXTURE_DEPTH_SIZE, &sizeDepth);
-            *size = imageWidth * imageHeight * imageDepth * sizeDepth / 8;
+            *size = imageWidth * imageHeight * sizeDepth / 8;
         }
         else
         {
@@ -1237,38 +1203,64 @@ int lite3d_texture_unit_get_level_size(const lite3d_texture_unit *textureUnit,
             glGetTexLevelParameteriv(levelType, level, GL_TEXTURE_GREEN_SIZE, &sizeG);
             glGetTexLevelParameteriv(levelType, level, GL_TEXTURE_BLUE_SIZE, &sizeB);
             glGetTexLevelParameteriv(levelType, level, GL_TEXTURE_ALPHA_SIZE, &sizeA);
-            *size = imageWidth * imageHeight * imageDepth * (sizeR + sizeG + sizeB + sizeA) / 8;
+            *size = imageWidth * imageHeight * (sizeR + sizeG + sizeB + sizeA) / 8;
         }
     }
 #else
-    *size = imageWidth * imageHeight * imageDepth * textureUnit->imageBPP;
+    return lite3d_texture_unit_estimated_level_size(textureUnit, level,
+        LITE3D_TEXTURE_PIXEL_UNSIGNED_BYTE, size);
 #endif
     return LITE3D_TRUE;
 }
 
-int lite3d_texture_unit_get_compressed_level_size(const lite3d_texture_unit *textureUnit, 
-    int8_t level, uint8_t cubeface, size_t *size)
+int lite3d_texture_unit_estimated_level_size(const lite3d_texture_unit *textureUnit, 
+    int8_t level, uint32_t pixelType, size_t *size)
 {
-#ifndef GLES
-    int32_t compressed;
+    size_t imageWidth, imageHeight;
 
     SDL_assert(textureUnit);
     SDL_assert(size);
     if (textureUnit->generatedMipmaps < level)
         return LITE3D_FALSE;
 
+    imageWidth = (size_t)lite3d_texture_unit_level_width(textureUnit, level);
+    imageHeight = (size_t)lite3d_texture_unit_level_height(textureUnit, level);
+    *size = lite3d_texture_unit_get_pixels_size(textureUnit, imageWidth, imageHeight, pixelType);
+    
+    return LITE3D_TRUE;
+}
+
+int lite3d_texture_unit_compressed_level_size(const lite3d_texture_unit *textureUnit, 
+    int8_t level, size_t *size)
+{
+#ifndef GLES
+    int32_t compressed, compressedSize;
+    GLenum levelType;
+
+    SDL_assert(textureUnit);
+    SDL_assert(size);
+    if (textureUnit->generatedMipmaps < level)
+        return LITE3D_FALSE;
+    
+    levelType = textureUnit->textureTarget == LITE3D_TEXTURE_CUBE ?
+        GL_TEXTURE_CUBE_MAP_POSITIVE_X : textureTargetEnum[textureUnit->textureTarget];
+
     /* make texture active */
     glBindTexture(textureTargetEnum[textureUnit->textureTarget], textureUnit->textureID);
-    glGetTexLevelParameteriv(textureUnit->textureTarget == LITE3D_TEXTURE_CUBE ? 
-        GL_TEXTURE_CUBE_MAP_POSITIVE_X + cubeface : textureTargetEnum[textureUnit->textureTarget],
-        level, GL_TEXTURE_COMPRESSED, &compressed);
+    glGetTexLevelParameteriv(levelType, level, GL_TEXTURE_COMPRESSED, &compressed);
     
     if(compressed == GL_FALSE)
         return LITE3D_FALSE;
 
-    glGetTexLevelParameteriv(textureUnit->textureTarget == LITE3D_TEXTURE_CUBE ? 
-        GL_TEXTURE_CUBE_MAP_POSITIVE_X + cubeface : textureTargetEnum[textureUnit->textureTarget],
-        level, GL_TEXTURE_COMPRESSED_IMAGE_SIZE, (GLint *)size);
+    glGetTexLevelParameteriv(levelType, level, GL_TEXTURE_COMPRESSED_IMAGE_SIZE, &compressedSize);
+    if (textureUnit->textureTarget == LITE3D_TEXTURE_2D_ARRAY ||
+        textureUnit->textureTarget == LITE3D_TEXTURE_2D_SHADOW_ARRAY ||
+        textureUnit->textureTarget == LITE3D_TEXTURE_CUBE_ARRAY)
+    {
+        compressedSize /= lite3d_texture_unit_level_depth(textureUnit, level);
+    }
+
+    *size = (size_t)compressedSize;
 
     return LITE3D_TRUE;
 #else
@@ -1279,20 +1271,29 @@ int lite3d_texture_unit_get_compressed_level_size(const lite3d_texture_unit *tex
 }
 
 int lite3d_texture_unit_get_pixels(const lite3d_texture_unit *textureUnit, 
-    int8_t level, uint8_t cubeface, uint32_t pixelType, void *pixels)
+    int32_t widthOff, int32_t heightOff,
+    int32_t width, int32_t height,
+    int8_t level, int32_t layer, uint32_t pixelType, void *pixels, size_t size)
 {
 #ifndef GLES
     SDL_assert(textureUnit);
-    if (textureUnit->generatedMipmaps < level)
+    SDL_assert(pixels);
+
+    if (!lite3d_texture_unit_check_get_pixels(textureUnit, pixels))
         return LITE3D_FALSE;
 
-    /* make texture active */
-    glBindTexture(textureTargetEnum[textureUnit->textureTarget], textureUnit->textureID);
+    if (!size)
+    {
+        size = lite3d_texture_unit_get_pixels_size(textureUnit, width, height, pixelType);
+    }
+
     lite3d_misc_gl_error_stack_clean();
 
-    glGetTexImage(textureUnit->textureTarget == LITE3D_TEXTURE_CUBE ? 
-        GL_TEXTURE_CUBE_MAP_POSITIVE_X + cubeface : textureTargetEnum[textureUnit->textureTarget],
-        level, textureUnit->dataFormat, pixelType, pixels);
+    glGetTextureSubImage(textureUnit->textureID, level, widthOff, heightOff, layer,
+        width,
+        height,
+        1, // always gets only one layer per call
+        textureUnit->dataFormat, pixelType, (GLsizei)size, pixels);
 
     return LITE3D_CHECK_GL_ERROR ? LITE3D_FALSE : LITE3D_TRUE;
 #else
@@ -1303,29 +1304,29 @@ int lite3d_texture_unit_get_pixels(const lite3d_texture_unit *textureUnit,
 }
 
 int lite3d_texture_unit_get_compressed_pixels(const lite3d_texture_unit *textureUnit, 
-    int8_t level, uint8_t cubeface, void *pixels)
+    int32_t widthOff, int32_t heightOff,
+    int32_t width, int32_t height,
+    int8_t level, int32_t layer, void *pixels, size_t size)
 {
 #ifndef GLES
-    int32_t compressed;
-
     SDL_assert(textureUnit);
-    if (textureUnit->generatedMipmaps < level)
+    SDL_assert(pixels);
+
+    if (!lite3d_texture_unit_check_get_pixels(textureUnit, pixels))
         return LITE3D_FALSE;
 
-    /* make texture active */
-    glBindTexture(textureTargetEnum[textureUnit->textureTarget], textureUnit->textureID);
+    if (!size)
+    {
+        if (!lite3d_texture_unit_compressed_level_size(textureUnit, level, &size))
+            return LITE3D_FALSE;
+    }
+
     lite3d_misc_gl_error_stack_clean();
 
-    glGetTexLevelParameteriv(textureUnit->textureTarget == LITE3D_TEXTURE_CUBE ? 
-        GL_TEXTURE_CUBE_MAP_POSITIVE_X + cubeface : textureTargetEnum[textureUnit->textureTarget],
-        level, GL_TEXTURE_COMPRESSED, &compressed);
+    glGetCompressedTextureSubImage(textureUnit->textureID, level, widthOff, heightOff, layer,
+        width, height, 1,
+        (GLsizei)size, pixels);
 
-    if(compressed == GL_FALSE)
-        return LITE3D_FALSE;
-
-    glGetCompressedTexImage(textureUnit->textureTarget == LITE3D_TEXTURE_CUBE ? 
-        GL_TEXTURE_CUBE_MAP_POSITIVE_X + cubeface : textureTargetEnum[textureUnit->textureTarget],
-        level, pixels);
     return LITE3D_CHECK_GL_ERROR ? LITE3D_FALSE : LITE3D_TRUE;
 #else
     SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "%s texture dumping does not supported..",
@@ -1559,55 +1560,43 @@ void lite3d_texture_unit_compression(uint8_t on)
     textureCompression = on;
 }
 
-int32_t lite3d_texture_unit_level_width(const lite3d_texture_unit *textureUnit,
-    int8_t level, uint8_t cubeface)
+int32_t lite3d_texture_unit_level_width(const lite3d_texture_unit *textureUnit, int8_t level)
 {
-#ifndef GLES
-    int32_t result = 0;
-    SDL_assert(textureUnit);
-    glBindTexture(textureTargetEnum[textureUnit->textureTarget], textureUnit->textureID);
-    glGetTexLevelParameteriv(textureUnit->textureTarget == LITE3D_TEXTURE_CUBE ? 
-        GL_TEXTURE_CUBE_MAP_POSITIVE_X + cubeface : textureTargetEnum[textureUnit->textureTarget],
-        level, GL_TEXTURE_WIDTH, &result);
-    return result;
-#else
-    SDL_assert(textureUnit);
-    return lite3d_texture_unit_copy_level_width(textureUnit, level);
-#endif
+    switch (textureUnit->textureTarget)
+    {
+        case LITE3D_TEXTURE_BUFFER:
+            return 0;
+        default:
+            return lite3d_texture_unit_mip_size(textureUnit->imageWidth, level);
+    }
 }
 
-int32_t lite3d_texture_unit_level_height(const lite3d_texture_unit *textureUnit,
-    int8_t level, uint8_t cubeface)
+int32_t lite3d_texture_unit_level_height(const lite3d_texture_unit *textureUnit, int8_t level)
 {
-#ifndef GLES
-    int32_t result = 0;
-    SDL_assert(textureUnit);
-    glBindTexture(textureTargetEnum[textureUnit->textureTarget], textureUnit->textureID);
-    glGetTexLevelParameteriv(textureUnit->textureTarget == LITE3D_TEXTURE_CUBE ? 
-        GL_TEXTURE_CUBE_MAP_POSITIVE_X + cubeface : textureTargetEnum[textureUnit->textureTarget],
-        level, GL_TEXTURE_HEIGHT, &result);
-    return result;
-#else
-    SDL_assert(textureUnit);
-    return lite3d_texture_unit_copy_level_height(textureUnit, level); 
-#endif
+    switch (textureUnit->textureTarget)
+    {
+        case LITE3D_TEXTURE_1D:
+            return 1;
+        case LITE3D_TEXTURE_BUFFER:
+            return 0;
+        default:
+            return lite3d_texture_unit_mip_size(textureUnit->imageHeight, level);
+    }
 }
 
-int32_t lite3d_texture_unit_level_depth(const lite3d_texture_unit *textureUnit,
-    int8_t level, uint8_t cubeface)
+int32_t lite3d_texture_unit_level_depth(const lite3d_texture_unit *textureUnit, int8_t level)
 {
-#ifndef GLES
-    int32_t result = 0;
-    SDL_assert(textureUnit);
-    glBindTexture(textureTargetEnum[textureUnit->textureTarget], textureUnit->textureID);
-    glGetTexLevelParameteriv(textureUnit->textureTarget == LITE3D_TEXTURE_CUBE ? 
-        GL_TEXTURE_CUBE_MAP_POSITIVE_X + cubeface : textureTargetEnum[textureUnit->textureTarget],
-        level, GL_TEXTURE_DEPTH, &result);
-    return result;
-#else
-    SDL_assert(textureUnit);
-    return lite3d_texture_unit_copy_level_depth(textureUnit, level);
-#endif
+    switch (textureUnit->textureTarget)
+    {
+        case LITE3D_TEXTURE_CUBE:
+            return 6;
+        case LITE3D_TEXTURE_3D:
+            return lite3d_texture_unit_mip_size(textureUnit->imageDepth, level);
+        case LITE3D_TEXTURE_CUBE_ARRAY:
+            return textureUnit->imageDepth * 6;
+    }
+
+    return textureUnit->imageDepth;
 }
 
 int lite3d_texture_unit_extract_handle(lite3d_texture_unit *texture)

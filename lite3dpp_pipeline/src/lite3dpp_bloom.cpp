@@ -243,7 +243,7 @@ namespace lite3dpp_pipeline {
     kmVec3 BloomEffect::getLumaAverage() const
     {
         SDL_assert(mMiddleTexture);
-        mMiddleTexture->getPixels(0, mBloomPixels);
+        mMiddleTexture->getPixels(mBloomPixels);
 
         auto it = mBloomPixels.cbegin();
         kmVec3 lumaAverage = KM_VEC3_ZERO;

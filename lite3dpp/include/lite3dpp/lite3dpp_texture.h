@@ -78,22 +78,23 @@ namespace lite3dpp
         inline int8_t getTotalLevels() const
         { return mTexture.generatedMipmaps + 1; }
 
-        void getPixels(int8_t level, PixelsData &pixels) const;
-        void getPixels(int8_t level, PixelsFloatData &pixels) const;
-        void getPixels(int8_t level, void *pixels) const;
-        void getPixels(int8_t level, float *pixels) const;
+        void getPixels(PixelsData &pixels, int8_t level = 0, uint8_t layer = 0) const;
+        void getPixels(PixelsFloatData &pixels, int8_t level = 0, uint8_t layer = 0) const;
+        void getPixels(uint8_t *pixels, int8_t level = 0, uint8_t layer = 0) const;
+        void getPixels(float *pixels, int8_t level = 0, uint8_t layer = 0) const;
 
-        void setPixels(int8_t level, const PixelsData &pixels);
-        void setPixels(int8_t level, const PixelsFloatData &pixels);
-        void setPixels(int8_t level, const uint8_t *pixels);
-        void setPixels(int8_t level, const float *pixels);
+        void setPixels(const PixelsData &pixels, int8_t level = 0, uint8_t layer = 0);
+        void setPixels(const PixelsFloatData &pixels, int8_t level = 0, uint8_t layer = 0);
+        void setPixels(const uint8_t *pixels, int8_t level = 0, uint8_t layer = 0);
+        void setPixels(const float *pixels, int8_t level = 0, uint8_t layer = 0);
 
-        void getCompressedPixels(int8_t level, PixelsData &pixels) const;
-        void getCompressedPixels(int8_t level, void *pixels) const;
-        void setCompressedPixels(int8_t level, const PixelsData &pixels);
-        void setCompressedPixels(int8_t level, const void *pixels, size_t size);
+        void getCompressedPixels(PixelsData &pixels, int8_t level = 0, uint8_t layer = 0) const;
+        void getCompressedPixels(void *pixels, int8_t level = 0, uint8_t layer = 0) const;
+        void setCompressedPixels(const PixelsData &pixels, int8_t level = 0, uint8_t layer = 0);
+        void setCompressedPixels(const void *pixels, size_t size, int8_t level = 0, uint8_t layer = 0);
 
         size_t getLevelSize(int8_t level) const;
+        size_t getLevelEstimatedSize(int8_t level, TexturePixelType pixelType) const;
         size_t getCompressedLevelSize(int8_t level) const;
         
         /* commonly color.x = r, color.y = b ... */
@@ -122,4 +123,3 @@ namespace lite3dpp
         bool mModified;
     };
 }
-

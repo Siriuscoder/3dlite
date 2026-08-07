@@ -48,6 +48,7 @@ int lite3d_check_texture3D(void);
 int lite3d_check_texture_swizzle(void);
 int lite3d_check_texture_storage(void);
 int lite3d_check_texture_storage_multisample(void);
+int lite3d_check_get_texture_sub_image(void);
 int lite3d_check_texture_cube_map_array(void);
 int lite3d_check_debug_context(void);
 int lite3d_check_bindless_texture(void);

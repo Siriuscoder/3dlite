@@ -259,7 +259,7 @@ namespace lite3dpp_pipeline {
         {
             mLTCLut01 = getMain().getResourceManager().queryResourceFromJson<TextureImage>(lutName1,
                 textureConfig.write());
-            mLTCLut01->setPixels(0, ltc_lut_1);
+            mLTCLut01->setPixels(ltc_lut_1);
         }
         else
         {
@@ -270,7 +270,7 @@ namespace lite3dpp_pipeline {
         {
             mLTCLut02 = getMain().getResourceManager().queryResourceFromJson<TextureImage>(lutName2,
                 textureConfig.write());
-            mLTCLut02->setPixels(0, ltc_lut_2);
+            mLTCLut02->setPixels(ltc_lut_2);
         }
         else
         {

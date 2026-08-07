@@ -352,6 +352,15 @@ int lite3d_check_texture_storage_multisample(void)
 #endif 
 }
 
+int lite3d_check_get_texture_sub_image(void)
+{
+#ifdef GLES
+    return LITE3D_FALSE;
+#else
+    return GLEW_ARB_get_texture_sub_image || GLEW_VERSION_4_5;
+#endif 
+}
+
 int lite3d_check_texture_cube_map_array(void)
 {
 #ifdef GLES
