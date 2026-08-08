@@ -38,7 +38,7 @@
         {
           "Name": "SpecularAmbientFactor",
           "Type": "float",
-          "Value": 0.44999998807907104
+          "Value": 1.0
         },
         {
           "Name": "NormalScale",
@@ -74,6 +74,11 @@
           "Name": "ShadowMatrix",
           "UBOName": "Vault_111_ShadowMatrixBuffer",
           "Type": "UBO"
+        },
+        {
+          "Name": "OpaqueCombined",
+          "TextureName": "Vault_111_MyCamera_combined_copy.texture",
+          "Type": "sampler"
         },
         {
           "Name": "Eye",

@@ -21,10 +21,8 @@ vec3 BRDF(in Surface surface, in AngularInfo angular);
 /* Indirect lighting */
 vec3 ComputeIndirect(in Surface surface, in AngularInfo angular);
 
-vec3 ComputeIllumination(in Surface surface)
+vec3 ComputeIllumination(in Surface surface, in AngularInfo angular)
 {
-    AngularInfo angular;
-    angularInfoInit(angular, surface);
     vec3 directLx = vec3(0.0);
 
     int count = lightsIndexes[0].x;

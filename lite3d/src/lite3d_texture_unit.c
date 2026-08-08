@@ -624,7 +624,7 @@ static void lite3d_texture_unit_calc_total_size(lite3d_texture_unit *textureUnit
     sf = textureUnit->compressed ? lite3d_texture_unit_compressed_level_size : 
         lite3d_texture_unit_level_size;
 
-    for (int8_t level = 0; level < textureUnit->generatedMipmaps; level++)
+    for (int8_t level = 0; level <= textureUnit->generatedMipmaps; level++)
     {
         if (sf(textureUnit, level, &levelSize))
         {
@@ -947,7 +947,7 @@ int lite3d_texture_unit_from_resource(lite3d_texture_unit *textureUnit,
     {
         for (mipLevel = 0; mipLevel <= totalLevels; ++mipLevel)
         {
-            int32_t lWidth, lHeight;
+            int32_t lWidth, lHeight, lDepth;
             /* workaround to prevent ilActiveMipmap bug */
             ilBindImage(imageDesc);
             ilActiveFace(imageFace);
@@ -957,9 +957,11 @@ int lite3d_texture_unit_from_resource(lite3d_texture_unit *textureUnit,
 
             lWidth = ilGetInteger(IL_IMAGE_WIDTH);
             lHeight = ilGetInteger(IL_IMAGE_HEIGHT);
+            lDepth = ilGetInteger(IL_IMAGE_DEPTH);
 
-            if (!lite3d_texture_unit_set_pixels(textureUnit, 0, 0, 
-                lWidth, lHeight, mipLevel, totalFaces == 0 ? cubeface : imageFace, ilGetInteger(IL_IMAGE_TYPE), ilGetData()))
+            if (!lite3d_texture_unit_set_pixels(textureUnit, 0, 0, 0,
+                lWidth, lHeight, lDepth, mipLevel, totalFaces == 0 ? cubeface : imageFace, 
+                ilGetInteger(IL_IMAGE_TYPE), ilGetData()))
             {
                 ilDeleteImage(imageDesc);
                 lite3d_texture_unit_purge(textureUnit);
@@ -1008,8 +1010,8 @@ int lite3d_texture_unit_from_resource(lite3d_texture_unit *textureUnit,
 }
 
 int lite3d_texture_unit_set_pixels(lite3d_texture_unit *textureUnit, 
-    int32_t widthOff, int32_t heightOff, 
-    int32_t width, int32_t height,
+    int32_t widthOff, int32_t heightOff, int32_t depthOff,
+    int32_t width, int32_t height, int32_t depth,
     int8_t level, uint8_t layer, uint32_t pixelType, const void *pixels)
 {
     SDL_assert(textureUnit);
@@ -1033,8 +1035,13 @@ int lite3d_texture_unit_set_pixels(lite3d_texture_unit *textureUnit,
                 pixelType, pixels);
             break;
         case LITE3D_TEXTURE_3D:
+            glTexSubImage3D(textureTargetEnum[textureUnit->textureTarget], level, widthOff,
+                heightOff, depthOff, width, height, depth,
+                textureUnit->dataFormat, pixelType, pixels);
+            break;
         case LITE3D_TEXTURE_2D_ARRAY:
         case LITE3D_TEXTURE_2D_SHADOW_ARRAY:
+        case LITE3D_TEXTURE_CUBE_ARRAY:
             glTexSubImage3D(textureTargetEnum[textureUnit->textureTarget], level, widthOff,
                 heightOff, layer, width, height, 1,
                 textureUnit->dataFormat, pixelType, pixels);
@@ -1047,7 +1054,7 @@ int lite3d_texture_unit_set_pixels(lite3d_texture_unit *textureUnit,
 int lite3d_texture_unit_set_compressed_pixels(lite3d_texture_unit *textureUnit, 
     int8_t level, uint8_t layer, size_t pixelsSize, const void *pixels)
 {
-    int32_t width, height;
+    int32_t width, height, depth;
 
     SDL_assert(textureUnit);
     if (textureUnit->generatedMipmaps < level)
@@ -1055,6 +1062,7 @@ int lite3d_texture_unit_set_compressed_pixels(lite3d_texture_unit *textureUnit,
 
     width = lite3d_texture_unit_level_width(textureUnit, level);
     height = lite3d_texture_unit_level_height(textureUnit, level);
+    depth = lite3d_texture_unit_level_depth(textureUnit, level);
     
     /* make texture active */
     glBindTexture(textureTargetEnum[textureUnit->textureTarget], textureUnit->textureID);
@@ -1091,6 +1099,10 @@ int lite3d_texture_unit_set_compressed_pixels(lite3d_texture_unit *textureUnit,
                 (GLsizei)pixelsSize, pixels);
             break;
         case LITE3D_TEXTURE_3D:
+            glCompressedTexSubImage3D(textureTargetEnum[textureUnit->textureTarget], level, 0,
+                0, 0, width, height, depth,
+                textureUnit->internalFormat, (GLsizei)pixelsSize, pixels);
+            break;
         case LITE3D_TEXTURE_2D_ARRAY:
         case LITE3D_TEXTURE_2D_SHADOW_ARRAY:
         case LITE3D_TEXTURE_CUBE_ARRAY:

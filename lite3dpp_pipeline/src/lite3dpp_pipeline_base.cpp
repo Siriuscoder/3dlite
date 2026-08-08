@@ -185,7 +185,7 @@ namespace lite3dpp_pipeline {
                 LITE3D_THROW("Pipeline " << getName() << ": Main camera configuration incorrect");
             }
 
-            if (pipelineConfig.getBool(L"CopyCombinedTexture", false))
+            if (pipelineConfig.getBool(L"OpaqueCombinedTexture", false))
             {
                 createCombined2Texture(cameraName);
             }
@@ -467,7 +467,7 @@ namespace lite3dpp_pipeline {
         // This texture holds a copy of combined texture and used for refraction effects. 
         ConfigurationWriter combinedTextureConfig;
         combinedTextureConfig.set(L"TextureType", "2D")
-            .set(L"Filtering", "None")
+            .set(L"Filtering", "Linear")
             .set(L"Wrapping", "ClampToEdge")
             .set(L"Compression", false)
             .set(L"TextureFormat", "RGB")

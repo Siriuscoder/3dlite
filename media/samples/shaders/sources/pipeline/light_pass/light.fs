@@ -3,11 +3,13 @@
 in vec2 iuv;
 out vec4 fragColor;
 
-vec3 ComputeIllumination(in Surface surface);
+vec3 ComputeIllumination(in Surface surface, in AngularInfo angular);
 
 void main()
 {
     Surface surface = restoreSurface(iuv);
+    AngularInfo angular;
+    angularInfoInit(angular, surface);
     // Compute total illumination 
-    fragColor = vec4(ComputeIllumination(surface), 1.0);
+    fragColor = vec4(ComputeIllumination(surface, angular), 1.0);
 }

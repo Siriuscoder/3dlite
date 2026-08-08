@@ -230,15 +230,18 @@ LITE3D_CEXPORT int lite3d_texture_unit_allocate(lite3d_texture_unit *textureUnit
     uint32_t textureTarget, int8_t filtering, uint8_t wrapping, uint16_t format,
     uint16_t iformat, int32_t width, int32_t height, int32_t depth, int32_t samples);
 
-/* Texture pixel operations treat every texture as a set of 2D images.
+/* Texture pixel operations treat every texture as a set of 2D images except of volume textures (3D).
    One call updates or reads exactly one 2D image selected by mipmap level and layer.
    For cubemaps layer selects cubemap face [0..5].
-   For 2D array, shadow array, 3D, and cubemap array textures layer selects the target 2D slice/layer-face. */
+   For 2D array, shadow array and cubemap array textures layer selects the target 2D slice/layer-face. 
+   
+   depthOff and depth are usable only for volume textures (3D).
+   */
 
 /* update pixels in specified mipmap level and layer */
 LITE3D_CEXPORT int lite3d_texture_unit_set_pixels(lite3d_texture_unit *textureUnit, 
-    int32_t widthOff, int32_t heightOff,
-    int32_t width, int32_t height,
+    int32_t widthOff, int32_t heightOff, int32_t depthOff,
+    int32_t width, int32_t height, int32_t depth,
     int8_t level, uint8_t layer, uint32_t pixelType, const void *pixels);
 
 /* update compressed pixels in specified mipmap level and layer */

@@ -411,6 +411,13 @@ void angularInfoInit(inout AngularInfo angular, in Surface surface)
     // Eye direction to current fragment 
     angular.viewDir = normalize(Eye - surface.wv);
     angular.NdotV = doubleSidedNdotV(surface.normal, angular.viewDir);
+    angular.lightDir = vec3(0.0);
+    angular.lightDistance = 0.0;
+    angular.isOutside = false;
+    angular.NdotL = 0.0;
+    angular.HdotV = 0.0;
+    angular.NdotH = 0.0;
+    angular.LdotV = 0.0;
 }
 
 void angularInfoSetLightSource(inout AngularInfo angular, in Surface surface, in LightSource source)

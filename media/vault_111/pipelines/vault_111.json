@@ -5,6 +5,7 @@
     "OcclusionCulling": true,
     "LightingTechnique": "UBO",
     "EnvironmentTexture": "samples:textures/json/skybox_metal_chrome.json",
+    "OpaqueCombinedTexture": true,
     "ShadowMaps":
     {
         "Width": 2048,

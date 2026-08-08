@@ -346,9 +346,10 @@ namespace lite3dpp
 
     void TextureImage::setPixels(const uint8_t *pixels, int8_t level, uint8_t layer)
     {
-        if(!lite3d_texture_unit_set_pixels(&mTexture, 0, 0,
+        if(!lite3d_texture_unit_set_pixels(&mTexture, 0, 0, 0,
             lite3d_texture_unit_level_width(&mTexture, level), 
-            lite3d_texture_unit_level_height(&mTexture, level), 
+            lite3d_texture_unit_level_height(&mTexture, level),
+            lite3d_texture_unit_level_depth(&mTexture, level), 
             level, layer, TexturePixelType::UnsignedByte, pixels))
             LITE3D_THROW("Could`n set level " << level << " for texture ");
 
@@ -357,9 +358,10 @@ namespace lite3dpp
 
     void TextureImage::setPixels(const float *pixels, int8_t level, uint8_t layer)
     {
-        if(!lite3d_texture_unit_set_pixels(&mTexture, 0, 0,
+        if(!lite3d_texture_unit_set_pixels(&mTexture, 0, 0, 0,
             lite3d_texture_unit_level_width(&mTexture, level), 
-            lite3d_texture_unit_level_height(&mTexture, level), 
+            lite3d_texture_unit_level_height(&mTexture, level),
+            lite3d_texture_unit_level_depth(&mTexture, level), 
             level, layer, TexturePixelType::Float, pixels))
             LITE3D_THROW("Could`n set level " << level << " for texture ");
 
