@@ -20,7 +20,7 @@ vec3 ComputeIllumination(in Surface surface, in AngularInfo angular);
 void main()
 {
     Surface surface = makeSurface(iuv, iwv, iwn, iwt, iwb);
-    AngularInfo angular;
+    AngularInfo angular = AngularInfo(vec3(0), vec3(0), 0.0, false, 0.0, 0.0, 0.0, 0.0, 0.0);
     angularInfoInit(angular, surface);
     // Compute total illumination 
     fragColor = vec4(ComputeIllumination(surface, angular), surface.material.alpha);

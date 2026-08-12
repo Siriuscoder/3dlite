@@ -45,3 +45,13 @@ float getAmbientOcclusion(vec2 uv)
 {
     return texture(AO, uv).r;
 }
+
+float getIOR(vec2 uv)
+{
+    return 1.0;
+}
+
+float getSheen(vec2 uv)
+{
+    return 0.0;
+}

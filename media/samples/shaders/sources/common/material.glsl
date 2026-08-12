@@ -16,6 +16,8 @@ vec3 getNormal(vec2 uv, mat3 tbn);
 vec3 getSpecular(vec2 uv);
 float getAmbientOcclusion(vec2 uv);
 float getSpecularAmbient(vec2 uv);
+float getIOR(vec2 uv); 
+float getSheen(vec2 uv); 
 
 Surface makeSurface(vec2 uv, vec3 wv, vec3 wn, vec3 wt, vec3 wb)
 {
@@ -50,13 +52,13 @@ Surface makeSurface(vec2 uv, vec3 wv, vec3 wn, vec3 wt, vec3 wb)
     surface.material.emissionStrength = 1.0;
     surface.material.environmentUVScale = LITE3D_CUBE_MAP_UV_SCALE;
     surface.material.environmentSingleProbeIndex = 0u;
-    surface.material.sheen = 0.0;
+    surface.material.sheen = getSheen(uv);
 
     vec3 specular = getSpecular(uv);
     surface.material.specular = clamp(specular.x, 0.0, 1.0);
     surface.material.roughness = clamp(specular.y, LITE3D_MIN_ROUGHNESS, 1.0);
     surface.material.metallic = clamp(specular.z, 0.0, 1.0);
-    surface.material.ior = 1.0;
+    surface.material.ior = getIOR(uv);
 
 #ifdef LITE3D_ENABLE_ENVIRONMENT_TEXTURE // Setup by the engine 
     surface.material.flags |= LITE3D_MATERIAL_ENVIRONMENT_TEXTURE;

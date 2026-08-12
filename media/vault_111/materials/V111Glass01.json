@@ -31,11 +31,6 @@
           "Value": 1.0
         },
         {
-          "Name": "MetallicFactor",
-          "Type": "float",
-          "Value": 1.0
-        },
-        {
           "Name": "SpecularAmbientFactor",
           "Type": "float",
           "Value": 1.0

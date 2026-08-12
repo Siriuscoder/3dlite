@@ -105,6 +105,14 @@ struct LightSource
 #define LITE3D_SHADOW_MIN_ADAPTIVE_STEP                     0.5
 #endif
 
+#ifndef LITE3D_REFRACTION_BLUR_SCALE                        
+#define LITE3D_REFRACTION_BLUR_SCALE                        0.015
+#endif
+
+#ifndef LITE3D_REFRACTION_THICKNESS                        
+#define LITE3D_REFRACTION_THICKNESS                         10.0
+#endif
+
 #define LITE3D_MATERIAL_NORMAL_MAPPING_TANGENT              uint(1 << 0)
 #define LITE3D_MATERIAL_NORMAL_MAPPING_TANGENT_BITANGENT    uint(1 << 1)
 #define LITE3D_MATERIAL_ENVIRONMENT_TEXTURE                 uint(1 << 2)

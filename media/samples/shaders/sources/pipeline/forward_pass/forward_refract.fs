@@ -36,17 +36,14 @@ void main()
 {
     Surface surface = makeSurface(iuv, iwv, iwn, iwt, iwb);
     // Compute refraction offset 
-    AngularInfo angular;
+    AngularInfo angular = AngularInfo(vec3(0), vec3(0), 0.0, false, 0.0, 0.0, 0.0, 0.0, 0.0);
     angularInfoInit(angular, surface);
 
-    // Пока что стекло
-    float thickness = 10.0;
-    float ior = 1.5;
-    float eta = 1.0 / ior;
+    float eta = 1.0 / surface.material.ior;
     // Вектор преломления в мировых координатах
     vec3 T = refract(-angular.viewDir, surface.normal, eta);
     // Мировая координата выхода преломленного луча из поверхности, толщина поверхности задается thickness
-    vec3 Pexit = surface.wv + T * thickness;
+    vec3 Pexit = surface.wv + T * LITE3D_REFRACTION_THICKNESS;
     // Вычисляем смещение в экранных координатах
     vec4 clip0 = projViewMatrix * vec4(surface.wv, 1.0);
     vec4 clip1 = projViewMatrix * vec4(Pexit, 1.0);
@@ -62,8 +59,7 @@ void main()
     float edgeFade = fadeScreenEdge(refractUV);
     refractUV = mix(uv, refractUV, edgeFade);
     // Получаем цвет того что за стеклом c учетом шероховатости стекла
-    float refractionBlurScale = 0.03;
-    float radius = surface.material.roughness * refractionBlurScale;
+    float radius = surface.material.roughness * LITE3D_REFRACTION_BLUR_SCALE;
 
     vec3 refracted = vec3(0.0);
     for(int i = 0; i < 8; i++)

@@ -58,9 +58,7 @@
           "Type": "v3",
           "Scope": "global"
         }
-      ],
-      "Blending": true,
-      "BlendingMode": "RGB_LINEAR_SOURCE_ALPHA"
+      ]
     }
   ],
   "Uniforms": [

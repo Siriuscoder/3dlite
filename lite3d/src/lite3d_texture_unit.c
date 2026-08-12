@@ -1190,15 +1190,15 @@ int lite3d_texture_unit_level_size(const lite3d_texture_unit *textureUnit,
 {
 #ifndef GLES
     {
-        size_t imageWidth, imageHeight;
+        int32_t imageWidth, imageHeight;
 
         SDL_assert(textureUnit);
         SDL_assert(size);
         if (textureUnit->generatedMipmaps < level)
             return LITE3D_FALSE;
 
-        imageWidth = (size_t)lite3d_texture_unit_level_width(textureUnit, level);
-        imageHeight = (size_t)lite3d_texture_unit_level_height(textureUnit, level);
+        imageWidth = lite3d_texture_unit_level_width(textureUnit, level);
+        imageHeight = lite3d_texture_unit_level_height(textureUnit, level);
 
         GLenum levelType = textureUnit->textureTarget == LITE3D_TEXTURE_CUBE ?
             GL_TEXTURE_CUBE_MAP_POSITIVE_X : textureTargetEnum[textureUnit->textureTarget];
@@ -1231,15 +1231,15 @@ int lite3d_texture_unit_level_size(const lite3d_texture_unit *textureUnit,
 int lite3d_texture_unit_estimated_level_size(const lite3d_texture_unit *textureUnit, 
     int8_t level, uint32_t pixelType, size_t *size)
 {
-    size_t imageWidth, imageHeight;
+    int32_t imageWidth, imageHeight;
 
     SDL_assert(textureUnit);
     SDL_assert(size);
     if (textureUnit->generatedMipmaps < level)
         return LITE3D_FALSE;
 
-    imageWidth = (size_t)lite3d_texture_unit_level_width(textureUnit, level);
-    imageHeight = (size_t)lite3d_texture_unit_level_height(textureUnit, level);
+    imageWidth = lite3d_texture_unit_level_width(textureUnit, level);
+    imageHeight = lite3d_texture_unit_level_height(textureUnit, level);
     *size = lite3d_texture_unit_get_pixels_size(textureUnit, imageWidth, imageHeight, pixelType);
     
     return LITE3D_TRUE;
