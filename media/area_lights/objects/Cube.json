@@ -1,0 +1,9 @@
+{
+  "Root": {
+    "Name": "Cube",
+    "Mesh": {
+      "Mesh": "area_lights:models/json/Cube.json",
+      "Name": "Cube.mesh"
+    }
+  }
+}

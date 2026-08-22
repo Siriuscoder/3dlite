@@ -1,6 +1,6 @@
 /******************************************************************************
  *	This file is part of lite3d (Light-weight 3d engine).
- *	Copyright (C) 2025 Sirius (Korolev Nikita)
+ *	Copyright (C) 2026 Sirius (Korolev Nikita)
  *
  *	Lite3D is free software: you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -142,8 +142,8 @@ protected:
 
     bool beginUpdate(RenderTarget *rt) override;
     void postUpdate(RenderTarget *rt) override;
-    bool beginSceneRender(Scene *scene, Camera *camera) override;
-    void endSceneRender(Scene *scene, Camera *camera) override;
+    bool beginSceneRender(Scene *scene, Camera *camera, int32_t priority) override;
+    void endSceneRender(Scene *scene, Camera *camera, int32_t priority) override;
 
     // Проверим виден ли обьект сцены хотябы одной теневой камерой, если нет то рисовать его смысла нет.
     bool customVisibilityCheck(Scene *scene, SceneNodeBase *node, lite3d_mesh_chunk *meshChunk, Material *material, 

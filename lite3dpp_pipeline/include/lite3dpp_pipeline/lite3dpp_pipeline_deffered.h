@@ -1,6 +1,6 @@
 /******************************************************************************
  *	This file is part of lite3d (Light-weight 3d engine).
- *	Copyright (C) 2025 Sirius (Korolev Nikita)
+ *	Copyright (C) 2026 Sirius (Korolev Nikita)
  *
  *	Lite3D is free software: you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -36,7 +36,7 @@ namespace lite3dpp_pipeline {
         void constructCameraPipeline(const ConfigurationReader &pipelineConfig, const String &cameraName,
             SceneGenerator &sceneGenerator) override;
 
-        bool beginSceneRender(Scene *scene, Camera *camera) override;
+        bool beginSceneRender(Scene *scene, Camera *camera, int32_t priority) override;
 
         virtual void constructGBufferPass(const ConfigurationReader &pipelineConfig, const String &cameraName,
             SceneGenerator &sceneGenerator);

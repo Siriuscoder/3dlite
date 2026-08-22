@@ -1,6 +1,6 @@
 /******************************************************************************
 *	This file is part of lite3d (Light-weight 3d engine).
-*	Copyright (C) 2025  Sirius (Korolev Nikita)
+*	Copyright (C) 2026  Sirius (Korolev Nikita)
 *
 *	Lite3D is free software: you can redistribute it and/or modify
 *	it under the terms of the GNU General Public License as published by
@@ -91,7 +91,7 @@
 
 #define LITE3D_VERSION_MAJ         2
 #define LITE3D_VERSION_MIN         1
-#define LITE3D_VERSION_PCH         3
+#define LITE3D_VERSION_PCH         5
 
 #define LITE3D_VERSION_STRING      STR(LITE3D_VERSION_MAJ) "." STR(LITE3D_VERSION_MIN) \
     "." STR(LITE3D_VERSION_PCH)

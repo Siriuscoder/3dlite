@@ -1,6 +1,6 @@
 /******************************************************************************
  *	This file is part of lite3d (Light-weight 3d engine).
- *	Copyright (C) 2025 Sirius (Korolev Nikita)
+ *	Copyright (C) 2026 Sirius (Korolev Nikita)
  *
  *	Lite3D is free software: you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -16,6 +16,7 @@
  *	along with Lite3D.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
 #include <lite3dpp_pipeline/lite3dpp_pipeline_base.h>
+#include <lite3dpp_pipeline/lite3dpp_ltc_precompute.h>
 
 #include <ctime>
 #include <SDL_assert.h>
@@ -143,6 +144,11 @@ namespace lite3dpp_pipeline {
         // Создание "Полноэкранного треугольника" для использования в служебных сценах Postprocess, SSAO, и тд.
         createBigTriangleMesh();
 
+        if (pipelineConfig.getBool(L"ComputeAreaLighting", false))
+        {
+            createLTCLutTextures();
+        }
+
         SceneGenerator mainSceneGenerator(getName() + "_MainScene");
         for (const auto &cameraConfig : sceneConfig.getObjects(L"Cameras"))
         {
@@ -177,6 +183,11 @@ namespace lite3dpp_pipeline {
             else
             {
                 LITE3D_THROW("Pipeline " << getName() << ": Main camera configuration incorrect");
+            }
+
+            if (pipelineConfig.getBool(L"OpaqueCombinedTexture", false))
+            {
+                createCombined2Texture(cameraName);
             }
 
             mainSceneGenerator.addCamera(cameraName, cameraPipelineConfig);
@@ -227,6 +238,43 @@ namespace lite3dpp_pipeline {
         {
             getMain().getResourceManager().queryResourceFromJson<Mesh>("BigTriangle.mesh",
                 ConfigurationWriter().set(L"Model", "BigTriangle").set(L"Dynamic", false).write());
+        }
+    }
+
+    void PipelineBase::createLTCLutTextures()
+    {
+        ConfigurationWriter textureConfig;
+        textureConfig.set(L"TextureType", "2D")
+            .set(L"Filtering", "Linear")
+            .set(L"Wrapping", "ClampToEdge")
+            .set(L"Compression", false)
+            .set(L"Height", LITE3D_LTC_LUT_SIZE)
+            .set(L"Width", LITE3D_LTC_LUT_SIZE)
+            .set(L"TextureFormat", "RGBA")
+            .set(L"InternalFormat", "RGBA32F");
+
+        String lutName1("LTCLutTexture1.texture");
+        String lutName2("LTCLutTexture2.texture");
+        if (!getMain().getResourceManager().resourceExists(lutName1))
+        {
+            mLTCLut01 = getMain().getResourceManager().queryResourceFromJson<TextureImage>(lutName1,
+                textureConfig.write());
+            mLTCLut01->setPixels(ltc_lut_1);
+        }
+        else
+        {
+            mLTCLut01 = getMain().getResourceManager().queryResource<TextureImage>(lutName1);
+        }
+
+        if (!getMain().getResourceManager().resourceExists(lutName2))
+        {
+            mLTCLut02 = getMain().getResourceManager().queryResourceFromJson<TextureImage>(lutName2,
+                textureConfig.write());
+            mLTCLut02->setPixels(ltc_lut_2);
+        }
+        else
+        {
+            mLTCLut02 = getMain().getResourceManager().queryResource<TextureImage>(lutName2);
         }
     }
 
@@ -414,6 +462,22 @@ namespace lite3dpp_pipeline {
         }
     }
 
+    void PipelineBase::createCombined2Texture(const String &cameraName)
+    {
+        // This texture holds a copy of combined texture and used for refraction effects. 
+        ConfigurationWriter combinedTextureConfig;
+        combinedTextureConfig.set(L"TextureType", "2D")
+            .set(L"Filtering", "Linear")
+            .set(L"Wrapping", "ClampToEdge")
+            .set(L"Compression", false)
+            .set(L"TextureFormat", "RGB")
+            .set(L"InternalFormat", "RGB32F");
+
+        mCombined2Texture = getMain().getResourceManager().queryResourceFromJson<TextureImage>(
+            getName() + "_" + cameraName + "_combined_copy.texture", combinedTextureConfig.write());
+        mResourcesList.emplace_back(mCombined2Texture->getName());
+    }
+
     void PipelineBase::constructSkyBoxPass(const ConfigurationReader &pipelineConfig, const String &cameraName, 
         const ConfigurationWriter &mainCameraConfig)
     {
@@ -549,18 +613,7 @@ namespace lite3dpp_pipeline {
             return;
         }
 
-        mBloomEffect->getMiddleTexture().getPixels(0, mBloomPixels);
-
-        auto it = mBloomPixels.begin();
-        kmVec3 rgbAverage = KM_VEC3_ZERO;
-        for (; it != mBloomPixels.end(); )
-        {
-            rgbAverage.x += *reinterpret_cast<float *>(&(*it)); it += sizeof(float);
-            rgbAverage.y += *reinterpret_cast<float *>(&(*it)); it += sizeof(float);
-            rgbAverage.z += *reinterpret_cast<float *>(&(*it)); it += sizeof(float);
-        }
-
-        kmVec3Scale(&rgbAverage, &rgbAverage, 1.0f / (mBloomPixels.size() / (3 * sizeof(float))));
+        kmVec3 rgbAverage = mBloomEffect->getLumaAverage();
         auto exposure = mExposureBase / kmVec3Length(&rgbAverage);
         exposure = std::max(mExposureMin, std::min(mExposureMax, exposure));
         mPostProcessStageMaterial->setFloatParameter(static_cast<int>(TexturePassTypes::RenderPass), "Exposure", exposure);
@@ -576,9 +629,16 @@ namespace lite3dpp_pipeline {
         }
     }
 
-    bool PipelineBase::beginSceneRender(Scene *scene, Camera *camera)
+    bool PipelineBase::beginSceneRender(Scene *scene, Camera *camera, int32_t priority)
     {
         Material::setFloatv3GlobalParameter("Eye", getMainCamera().getWorldPosition());
+
+        // Make a copy of the combined texture before blend stage 
+        if (mCombined2Texture && priority == static_cast<int32_t>(RenderPassStagePriority::BlendDecalStage))
+        {
+            mCombined2Texture->copyFrom(*mCombinedTexture);
+        }
+
         return true;
     }
 }}

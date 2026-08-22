@@ -1,0 +1,64 @@
+{
+  "Albedo": {
+    "Name": "Albedo",
+    "Type": "v4",
+    "Value": [
+      0.8000156879425049,
+      0.13313020765781403,
+      0.1573842465877533,
+      1.0
+    ]
+  },
+  "Specular": {
+    "Name": "Specular",
+    "Type": "float",
+    "Value": 1.0
+  },
+  "Roughness": {
+    "Name": "Roughness",
+    "Type": "float",
+    "Value": 0.11999999731779099
+  },
+  "Metallic": {
+    "Name": "Metallic",
+    "Type": "float",
+    "Value": 0.0
+  },
+  "Sheen": {
+    "Name": "Sheen",
+    "Type": "float",
+    "Value": 0.10000000149011612
+  },
+  "EnvDiffuse": {
+    "Value": 1.0
+  },
+  "EnvSpecular": {
+    "Value": 1.0
+  },
+  "Passes": [
+    {
+      "Pass": 1,
+      "Program": {
+        "Name": "depth.program",
+        "Path": "area_lights:shaders/json/depth.json"
+      },
+      "Uniforms": [
+        {
+          "Name": "projViewMatrix"
+        }
+      ]
+    },
+    {
+      "Pass": 2,
+      "Program": {
+        "Name": "bsdf_prepare.program",
+        "Path": "area_lights:shaders/json/bsdf_prepare.json"
+      },
+      "Uniforms": [
+        {
+          "Name": "projViewMatrix"
+        }
+      ]
+    }
+  ]
+}

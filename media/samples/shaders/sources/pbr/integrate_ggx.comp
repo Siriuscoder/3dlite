@@ -40,7 +40,7 @@ void main()
             HdotV = max(HdotV, FLT_EPSILON);
             float NdotH = max(H.z, FLT_EPSILON);
             // Geometric Shadowing term
-            float G = G_IBL(NdotL, NdotV, roughness);
+            float G = SmithGGX(NdotL, NdotV, roughness);
             float G_Vis = (G * HdotV) / (NdotH * NdotV);
             // Fresnel component
             float Fc = pow(1.0 - HdotV, 5.0);

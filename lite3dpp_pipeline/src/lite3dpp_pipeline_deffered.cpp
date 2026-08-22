@@ -1,6 +1,6 @@
 /******************************************************************************
  *	This file is part of lite3d (Light-weight 3d engine).
- *	Copyright (C) 2025 Sirius (Korolev Nikita)
+ *	Copyright (C) 2026 Sirius (Korolev Nikita)
  *
  *	Lite3D is free software: you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -169,6 +169,21 @@ namespace lite3dpp_pipeline {
                 .set(L"Name", "AOEnabled")
                 .set(L"Value", 1)
                 .set(L"Type", "int"));
+        }
+
+        if (pipelineConfig.getBool(L"ComputeAreaLighting", false))
+        {
+            SDL_assert(mLTCLut01);
+            SDL_assert(mLTCLut02);
+
+            lightComputeMaterialUniforms.emplace_back(ConfigurationWriter()
+                .set(L"Name", "ltcLut1")
+                .set(L"TextureName", mLTCLut01->getName())
+                .set(L"Type", "sampler"));
+            lightComputeMaterialUniforms.emplace_back(ConfigurationWriter()
+                .set(L"Name", "ltcLut2")
+                .set(L"TextureName", mLTCLut02->getName())
+                .set(L"Type", "sampler"));
         }
 
         if (pipelineConfig.getBool(L"MultiRender", false))
@@ -368,9 +383,9 @@ namespace lite3dpp_pipeline {
                         .set(L"Value", pipelineConfig.getObject(L"SSAO").getDouble(L"AORadius"))
                         .set(L"Type", "float"),
                     ConfigurationWriter()
-                        .set(L"Name", "RandomSeed")
-                        .set(L"Value", mRandomSeed)
-                        .set(L"Type", "float"),
+                        .set(L"Name", "FrameNumber")
+                        .set(L"Value", 0)
+                        .set(L"Type", "int"),
                     ConfigurationWriter()
                         .set(L"Name", "CameraView")
                         .set(L"Type", "m4"),
@@ -389,7 +404,7 @@ namespace lite3dpp_pipeline {
         mSSAOStage->addObject("SSAOBigTri", BigTriObjectGenerator(mSSAOStageMaterial->getName()).generate());
     }
 
-    bool PipelineDeffered::beginSceneRender(Scene *scene, Camera *camera)
+    bool PipelineDeffered::beginSceneRender(Scene *scene, Camera *camera, int32_t priority)
     {
         auto &viewMatrix = getMainCamera().getViewMatrix();
         auto &projMatrix = getMainCamera().getProjMatrix();
@@ -400,6 +415,8 @@ namespace lite3dpp_pipeline {
                 "CameraView", viewMatrix);
             mSSAOStageMaterial->setFloatm4Parameter(static_cast<uint16_t>(TexturePassTypes::RenderPass), 
                 "CameraProjection", projMatrix);
+            mSSAOStageMaterial->setIntParameter(static_cast<uint16_t>(TexturePassTypes::RenderPass), 
+                "FrameNumber", static_cast<int32_t>(getMain().getRenderStats()->framesCount));
         }
 
         if (mLightComputeStageMaterial)
@@ -410,6 +427,6 @@ namespace lite3dpp_pipeline {
                 "CameraProjection", projMatrix);
         }
 
-        return PipelineBase::beginSceneRender(scene, camera);
+        return PipelineBase::beginSceneRender(scene, camera, priority);
     }
 }}

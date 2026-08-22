@@ -1,0 +1,14 @@
+{
+  "Codec": "m",
+  "Model": "area_lights:models/meshes/Suzanne.m",
+  "MaterialMapping": [
+    {
+      "Material": {
+        "Type": "PBR",
+        "Name": "MaterialMonkey.material",
+        "Material": "area_lights:materials/MaterialMonkey.json"
+      },
+      "MaterialIndex": 0
+    }
+  ]
+}

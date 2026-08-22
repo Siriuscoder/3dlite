@@ -1,6 +1,6 @@
 /******************************************************************************
  *	This file is part of lite3d (Light-weight 3d engine).
- *	Copyright (C) 2025 Sirius (Korolev Nikita)
+ *	Copyright (C) 2026 Sirius (Korolev Nikita)
  *
  *	Lite3D is free software: you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -277,6 +277,7 @@ namespace lite3dpp
                 setBlankColor(helper.getVec4(L"BlankColor"));
         }
 
+        lite3d_texture_unit_set_label(&mTexture, getName().c_str());
         mTexture.userdata = this;
     }
 
@@ -284,105 +285,112 @@ namespace lite3dpp
     {
         /* reload json content */
         loadFromConfigImpl(helper);
-
-        /* restore modifyed content */
-        if(mModified)
-        {
-            for(int8_t level = 0; level < getTotalLevels() && level < (int8_t)mLayersBackup.size(); ++level)
-            {
-                if(mTexture.compressed)
-                    setCompressedPixels(level, mLayersBackup[level]);
-                else
-                    setPixels(level, mLayersBackup[level]);
-            }
-
-            mLayersBackup.clear();
-        }
     }
 
     void TextureImage::unloadImpl()
     {
-        if(mModified)
-        {
-            for(int8_t level = 0; level < getTotalLevels(); ++level)
-            {
-                PixelsData pixels;
-
-                if(mTexture.compressed)
-                    getCompressedPixels(level, pixels);
-                else
-                    getPixels(level, pixels);
-
-                mLayersBackup.emplace_back(pixels);
-            }
-        }
-
         Texture::unloadImpl();
     }
 
-    void TextureImage::getPixels(int8_t level, PixelsData &pixels) const
+    void TextureImage::getPixels(PixelsData &pixels, int8_t level, uint8_t layer) const
     {
-        size_t size;
-        if(!lite3d_texture_unit_get_level_size(&mTexture, level, 0, &size))
-            LITE3D_THROW("Could`n get size of level " << level << " for texture " << getName());
-
+        size_t size = getLevelEstimatedSize(level, TexturePixelType::UnsignedByte);
         pixels.resize(size);
-        if(!lite3d_texture_unit_get_pixels(&mTexture, level, 0, &pixels[0]))
+
+        if(!lite3d_texture_unit_get_pixels(&mTexture, 0, 0,
+            lite3d_texture_unit_level_width(&mTexture, level),
+            lite3d_texture_unit_level_height(&mTexture, level),
+            level, layer, TexturePixelType::UnsignedByte, &pixels[0], size))
             LITE3D_THROW("Could`n get level " << level << " for texture ");
     }
 
-    void TextureImage::getPixels(int8_t level, void *pixels) const
+    void TextureImage::getPixels(PixelsFloatData &pixels, int8_t level, uint8_t layer) const
     {
-        if(!lite3d_texture_unit_get_pixels(&mTexture, level, 0, pixels))
+        size_t size = getLevelEstimatedSize(level, TexturePixelType::Float);
+        pixels.resize(size / sizeof(float));
+
+        if(!lite3d_texture_unit_get_pixels(&mTexture, 0, 0,
+            lite3d_texture_unit_level_width(&mTexture, level),
+            lite3d_texture_unit_level_height(&mTexture, level),
+            level, layer, TexturePixelType::Float, &pixels[0], size))
             LITE3D_THROW("Could`n get level " << level << " for texture ");
     }
 
-    void TextureImage::setPixels(int8_t level, const PixelsData &pixels)
+    void TextureImage::getPixels(uint8_t *pixels, int8_t level, uint8_t layer) const
     {
-        setPixels(level, &pixels[0]);
+        if(!lite3d_texture_unit_get_pixels(&mTexture, 0, 0,
+            lite3d_texture_unit_level_width(&mTexture, level),
+            lite3d_texture_unit_level_height(&mTexture, level),
+            level, layer, TexturePixelType::UnsignedByte, pixels, 0))
+            LITE3D_THROW("Could`n get level " << level << " for texture ");
     }
 
-    void TextureImage::setPixels(int8_t level, const void *pixels)
+    void TextureImage::getPixels(float *pixels, int8_t level, uint8_t layer) const
+    {
+        if(!lite3d_texture_unit_get_pixels(&mTexture, 0, 0,
+            lite3d_texture_unit_level_width(&mTexture, level),
+            lite3d_texture_unit_level_height(&mTexture, level),
+            level, layer, TexturePixelType::Float, pixels, 0))
+            LITE3D_THROW("Could`n get level " << level << " for texture ");
+    }
+
+    void TextureImage::setPixels(const PixelsData &pixels, int8_t level, uint8_t layer)
+    {
+        setPixels(&pixels[0], level, layer);
+    }
+
+    void TextureImage::setPixels(const PixelsFloatData &pixels, int8_t level, uint8_t layer)
+    {
+        setPixels(&pixels[0], level, layer);
+    }
+
+    void TextureImage::setPixels(const uint8_t *pixels, int8_t level, uint8_t layer)
     {
         if(!lite3d_texture_unit_set_pixels(&mTexture, 0, 0, 0,
-            lite3d_texture_unit_get_level_width(&mTexture, level, 0), 
-            lite3d_texture_unit_get_level_height(&mTexture, level, 0), 
-            lite3d_texture_unit_get_level_depth(&mTexture, level, 0), 
-            level, 0, pixels))
+            lite3d_texture_unit_level_width(&mTexture, level), 
+            lite3d_texture_unit_level_height(&mTexture, level),
+            lite3d_texture_unit_level_depth(&mTexture, level), 
+            level, layer, TexturePixelType::UnsignedByte, pixels))
             LITE3D_THROW("Could`n set level " << level << " for texture ");
 
         mModified = true;
     }
 
-    void TextureImage::getCompressedPixels(int8_t level, PixelsData &pixels) const
+    void TextureImage::setPixels(const float *pixels, int8_t level, uint8_t layer)
     {
-        size_t size;
-        if(!lite3d_texture_unit_get_compressed_level_size(&mTexture, level, 0, &size))
-            LITE3D_THROW("Could`n get size of level " << level << " for texture " << getName());
+        if(!lite3d_texture_unit_set_pixels(&mTexture, 0, 0, 0,
+            lite3d_texture_unit_level_width(&mTexture, level), 
+            lite3d_texture_unit_level_height(&mTexture, level),
+            lite3d_texture_unit_level_depth(&mTexture, level), 
+            level, layer, TexturePixelType::Float, pixels))
+            LITE3D_THROW("Could`n set level " << level << " for texture ");
 
+        mModified = true;
+    }
+
+    void TextureImage::getCompressedPixels(PixelsData &pixels, int8_t level, uint8_t layer) const
+    {
+        size_t size = getCompressedLevelSize(level);
         pixels.resize(size);
-        if(!lite3d_texture_unit_get_compressed_pixels(&mTexture, level, 0, &pixels[0]))
+
+        if(!lite3d_texture_unit_get_compressed_pixels(&mTexture, level, layer, &pixels[0], size))
             LITE3D_THROW("Could`n get level " << level << " for texture ");
     }
 
-    void TextureImage::getCompressedPixels(int8_t level, void *pixels) const
+    void TextureImage::getCompressedPixels(void *pixels, int8_t level, uint8_t layer) const
     {
-        if(!lite3d_texture_unit_get_compressed_pixels(&mTexture, level, 0, pixels))
+        if(!lite3d_texture_unit_get_compressed_pixels(&mTexture, level, layer, pixels, 0))
             LITE3D_THROW("Could`n get level " << level << " for texture ");
     }
 
-    void TextureImage::setCompressedPixels(int8_t level, const PixelsData &pixels)
+    void TextureImage::setCompressedPixels(const PixelsData &pixels, int8_t level, uint8_t layer)
     {
-        setCompressedPixels(level, &pixels[0], pixels.size());
+        setCompressedPixels(&pixels[0], pixels.size(), level, layer);
     }
 
-    void TextureImage::setCompressedPixels(int8_t level, const void *pixels, size_t size)
+    void TextureImage::setCompressedPixels(const void *pixels, size_t size, int8_t level, uint8_t layer)
     {
-        if(!lite3d_texture_unit_set_compressed_pixels(&mTexture, 0, 0, 0,
-            lite3d_texture_unit_get_level_width(&mTexture, level, 0), 
-            lite3d_texture_unit_get_level_height(&mTexture, level, 0), 
-            lite3d_texture_unit_get_level_depth(&mTexture, level, 0), 
-            level, 0, size, pixels))
+        if(!lite3d_texture_unit_set_compressed_pixels(&mTexture, level, layer, size, pixels))
             LITE3D_THROW("Could`n set level " << level << " for texture ");
 
         mModified = true;
@@ -393,24 +401,48 @@ namespace lite3dpp
         lite3d_texture_unit_generate_mipmaps(&mTexture);
     }
 
-    size_t TextureImage::getLayerSize(int8_t level) const
+    size_t TextureImage::getLevelSize(int8_t level) const
     {
         size_t res;
-        if(!lite3d_texture_unit_get_level_size(&mTexture, level, 0, &res))
+        if(!lite3d_texture_unit_level_size(&mTexture, level, &res))
             LITE3D_THROW("Could`n dump level " << level << " size for texture " << getName());
 
         return res;
     }
 
-    size_t TextureImage::getCompressedLayerSize(int8_t level) const
+    size_t TextureImage::getLevelEstimatedSize(int8_t level, TexturePixelType pixelType) const
     {
         size_t res;
-        if(!lite3d_texture_unit_get_compressed_level_size(&mTexture, level, 0, &res))
+        if(!lite3d_texture_unit_estimated_level_size(&mTexture, level, static_cast<uint32_t>(pixelType), &res))
+            LITE3D_THROW("Could`n dump level " << level << " estimated size for texture " << getName());
+
+        return res;
+    }
+
+    size_t TextureImage::getCompressedLevelSize(int8_t level) const
+    {
+        size_t res;
+        if(!lite3d_texture_unit_compressed_level_size(&mTexture, level, &res))
             LITE3D_THROW("Could`n dump level " << level << " size for texture " << getName());
 
         return res;
     }
-    
+
+    int32_t TextureImage::getHeight(int8_t level) const
+    {
+        return lite3d_texture_unit_level_height(&mTexture, level);
+    }
+
+    int32_t TextureImage::getWidth(int8_t level) const
+    {
+        return lite3d_texture_unit_level_width(&mTexture, level);
+    }
+
+    int32_t TextureImage::getDepth(int8_t level) const
+    {
+        return lite3d_texture_unit_level_depth(&mTexture, level);
+    }
+
     void TextureImage::setBlankColor(const kmVec4 &color)
     {
         /* fullup pixels */
@@ -428,8 +460,32 @@ namespace lite3dpp
         }
         
         /* upload pixels */
-        setPixels(0, pixels);
+        setPixels(pixels);
         generateMipmaps();
     }
-}
 
+    void TextureImage::copyFrom(const TextureImage &srcTex, int8_t level)
+    {
+        auto widthMin = std::min(getWidth(level), srcTex.getWidth(level));
+        auto heightMin = std::min(getHeight(level), srcTex.getHeight(level));
+        auto depthMin = std::min(getDepth(level), srcTex.getDepth(level));
+
+        copyRegionFrom(srcTex, 0, 0, 0, 0, 0, 0, widthMin, heightMin, depthMin, level);
+    }
+
+    void TextureImage::copyRegionFrom(const TextureImage &srcTex, 
+        int32_t srcWidthOff, int32_t srcHeightOff, int32_t srcDepthOff,
+        int32_t dstWidthOff, int32_t dstHeightOff, int32_t dstDepthOff,
+        int32_t width, int32_t height, int32_t depth, int8_t level)
+    {
+        if (getState() != ResourceState::LOADED)
+            LITE3D_THROW("Could not to copy texture: destination texture '" << getName() << "' is not loaded");
+        if (srcTex.getState() != ResourceState::LOADED)
+            LITE3D_THROW("Could not to copy texture: source texture '" << srcTex.getName() << "' is not loaded");
+
+        if (!lite3d_texture_unit_copy(&srcTex.mTexture, &mTexture, level, srcWidthOff, srcHeightOff, srcDepthOff, dstWidthOff,
+            dstHeightOff, dstDepthOff, width, height, depth))
+            LITE3D_THROW("Could not to copy texture: source texture '" << srcTex.getName() << "', destination texture '" << 
+                getName() << "'");
+    }
+}

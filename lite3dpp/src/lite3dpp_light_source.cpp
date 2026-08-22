@@ -1,6 +1,6 @@
 /******************************************************************************
  *	This file is part of lite3d (Light-weight 3d engine).
- *	Copyright (C) 2025 Sirius (Korolev Nikita)
+ *	Copyright (C) 2026 Sirius (Korolev Nikita)
  *
  *	Lite3D is free software: you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -43,13 +43,20 @@ namespace lite3dpp
     {
         String lightType = json.getString(L"Type", "Point");
         setType(lightType == "Directional" ? LightSourceFlags::TypeDirectional : 
-            (lightType == "Spot" ? LightSourceFlags::TypeSpot : LightSourceFlags::TypePoint));
+            (lightType == "Spot" ? LightSourceFlags::TypeSpot : 
+            (lightType == "Point" ? LightSourceFlags::TypePoint :
+            (lightType == "DiskArea" ? LightSourceFlags::TypeDiskArea : 
+            (lightType == "RectArea" ? LightSourceFlags::TypeRectArea : LightSourceFlags::TypeUndefined)))));
         
         mName = json.getString(L"Name");
         setPosition(json.getVec3(L"Position"));
-        setDirection(json.getVec3(L"Direction"));
+        setDirection(json.getVec3(L"Direction", KM_VEC3_NEG_Z));
+        setDirectionUP(json.getVec3(L"DirectionUP", KM_VEC3_POS_Y));
         setDiffuse(json.getVec3(L"Diffuse"));
         setRadiance(json.getDouble(L"Radiance"));
+        setAreaHeight(json.getDouble(L"AreaHeight"));
+        setAreaWidth(json.getDouble(L"AreaWidth"));
+        setRadius(json.getDouble(L"Radius"));
         
         auto attenuation = json.getObject(L"Attenuation");
         if (!attenuation.isEmpty())
@@ -81,6 +88,10 @@ namespace lite3dpp
             writer.set(L"Type", "Directional");
         else if (getType() == LightSourceFlags::TypeSpot)
             writer.set(L"Type", "Spot");
+        else if (getType() == LightSourceFlags::TypeDiskArea)
+            writer.set(L"Type", "DiskArea");
+        else if (getType() == LightSourceFlags::TypeRectArea)
+            writer.set(L"Type", "RectArea");
         else
             writer.set(L"Type", "Undefined");
 
@@ -92,7 +103,6 @@ namespace lite3dpp
             getType() == LightSourceFlags::TypeSpot)
         {
             writer.set(L"Position", mLightSource.params.position);
-            writer.set(L"LightSize", mLightSource.params.lightSize);
             writer.set(L"Attenuation", lite3dpp::ConfigurationWriter()
                 .set(L"Constant", mLightSource.params.attenuationConstant)
                 .set(L"Linear", mLightSource.params.attenuationLinear)
@@ -106,6 +116,8 @@ namespace lite3dpp
                     .set(L"AngleInnerCone", mLightSource.params.innerCone)
                     .set(L"AngleOuterCone", mLightSource.params.outerCone));
             }
+
+            writer.set(L"Radius", mLightSource.params.radius);
         }
 
         if (getType() == LightSourceFlags::TypeDirectional || 
@@ -113,11 +125,21 @@ namespace lite3dpp
         {
             writer.set(L"Direction", mLightSource.params.direction);
         }
+
+        if (getType() == LightSourceFlags::TypeDiskArea || 
+            getType() == LightSourceFlags::TypeRectArea)
+        {
+            writer.set(L"Position", mLightSource.params.position);
+            writer.set(L"Direction", mLightSource.params.direction);
+            writer.set(L"DirectionUP", mLightSource.params.directionUP);
+            writer.set(L"AreaWidth", mLightSource.params.areaWidth);
+            writer.set(L"AreaHeight", mLightSource.params.areaHeight);
+        }
     }
 
     void LightSource::setType(LightSourceFlags t)
     {
-        mLightSource.params.flags &= ~(LITE3D_LIGHT_POINT | LITE3D_LIGHT_DIRECTIONAL | LITE3D_LIGHT_SPOT);
+        mLightSource.params.flags &= ~(LITE3D_LIGHT_POINT | LITE3D_LIGHT_DIRECTIONAL | LITE3D_LIGHT_SPOT | LITE3D_LIGHT_DISK_AREA | LITE3D_LIGHT_RECT_AREA);
         setFlag(t);
     }
 
@@ -157,6 +179,12 @@ namespace lite3dpp
         mLightSource.params.direction = v;
         mUpdated = true;
     }
+
+    void LightSource::setDirectionUP(const kmVec3 &v)
+    {
+        mLightSource.params.directionUP = v;
+        mUpdated = true;
+    }
     
     void LightSource::setDiffuse(const kmVec3 &v)
     {
@@ -167,7 +195,7 @@ namespace lite3dpp
     LightSourceFlags LightSource::getType() const
     {
         return static_cast<LightSourceFlags>(mLightSource.params.flags & 
-            (LITE3D_LIGHT_POINT | LITE3D_LIGHT_DIRECTIONAL | LITE3D_LIGHT_SPOT));
+            (LITE3D_LIGHT_POINT | LITE3D_LIGHT_DIRECTIONAL | LITE3D_LIGHT_SPOT | LITE3D_LIGHT_DISK_AREA | LITE3D_LIGHT_RECT_AREA));
     }
 
     bool LightSource::enabled() const
@@ -244,6 +272,24 @@ namespace lite3dpp
         mUpdated = true;
     }
 
+    void LightSource::setAreaHeight(float value)
+    {
+        mLightSource.params.areaHeight = value;
+        mUpdated = true;
+    }
+
+    void LightSource::setAreaWidth(float value)
+    {
+        mLightSource.params.areaWidth = value;
+        mUpdated = true;
+    }
+
+    void LightSource::setRadius(float value)
+    {
+        mLightSource.params.radius = value;
+        mUpdated = true;
+    }
+
     const kmVec3 &LightSource::getPosition() const
     {
         return mLightSource.params.position;
@@ -262,6 +308,16 @@ namespace lite3dpp
     const kmVec3 &LightSource::getWorldDirection() const
     {
         return mLightSourceWorld.params.direction;
+    }
+
+    const kmVec3 &LightSource::getDirectionUP() const
+    {
+        return mLightSource.params.directionUP;
+    }
+
+    const kmVec3 &LightSource::getWorldDirectionUP() const
+    {
+        return mLightSourceWorld.params.directionUP;
     }
 
     const kmVec3 &LightSource::getDiffuse() const
@@ -314,6 +370,21 @@ namespace lite3dpp
         return mLightSource.params.outerCone;
     }
 
+    float LightSource::getAreaHeight() const
+    {
+        return mLightSource.params.areaHeight;
+    }
+
+    float LightSource::getAreaWidth() const
+    {
+        return mLightSource.params.areaWidth;
+    }
+
+    float LightSource::getRadius() const
+    {
+        return mLightSource.params.radius;
+    }
+
     void LightSource::translateToWorld(const kmMat4 &worldMatrix)
     {
         mLightSourceWorld = mLightSource;
@@ -321,11 +392,15 @@ namespace lite3dpp
         kmVec3TransformCoord(&mLightSourceWorld.params.position,
             &mLightSourceWorld.params.position, &worldMatrix);
 
-        if (getType() == LightSourceFlags::TypeDirectional || getType() == LightSourceFlags::TypeSpot)
+        if (getType() == LightSourceFlags::TypeDirectional || getType() == LightSourceFlags::TypeSpot || 
+            getType() == LightSourceFlags::TypeDiskArea || getType() == LightSourceFlags::TypeRectArea)
         {
             kmVec3 direction = KM_VEC3_ZERO;
+            kmVec3 directionUP = KM_VEC3_ZERO;
             kmVec3TransformNormal(&direction, &mLightSourceWorld.params.direction, &worldMatrix);
+            kmVec3TransformNormal(&directionUP, &mLightSourceWorld.params.directionUP, &worldMatrix);
             kmVec3Normalize(&mLightSourceWorld.params.direction, &direction);
+            kmVec3Normalize(&mLightSourceWorld.params.directionUP, &directionUP);
         }
 
         validate();

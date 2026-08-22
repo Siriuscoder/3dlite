@@ -5,6 +5,7 @@
     "OcclusionCulling": true,
     "LightingTechnique": "UBO",
     "EnvironmentTexture": "samples:textures/json/skybox_metal_chrome.json",
+    "OpaqueCombinedTexture": true,
     "ShadowMaps":
     {
         "Width": 2048,
@@ -15,8 +16,8 @@
     },
     "SSAO": 
     {
-        "AORadius": 25.0,
-        "FramebufferScale": 4
+        "AORadius": 10.0,
+        "FramebufferScale": 2
     },
     "BLOOM": 
     {

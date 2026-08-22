@@ -1,6 +1,6 @@
 /******************************************************************************
  *	This file is part of lite3d (Light-weight 3d engine).
- *	Copyright (C) 2025 Sirius (Korolev Nikita)
+ *	Copyright (C) 2026 Sirius (Korolev Nikita)
  *
  *	Lite3D is free software: you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -61,7 +61,7 @@ public:
     }
 
     // setup lighting at once before light compute scene begin rendering first time
-    bool beginSceneRender(Scene *scene, Camera *camera) override
+    bool beginSceneRender(Scene *scene, Camera *camera, int32_t priority) override
     {
         SDL_assert(mVaultScene);
         /* check scene already fullup */
@@ -73,7 +73,7 @@ public:
         return true;
     }
 
-    void endSceneRender(Scene *scene, Camera *camera) override 
+    void endSceneRender(Scene *scene, Camera *camera, int32_t priority) override 
     {
         /* disable lightpass after lightmap recalc complete */
         SDL_assert(mLightComputeStep);
@@ -144,4 +144,3 @@ private:
 };
 
 }}
-

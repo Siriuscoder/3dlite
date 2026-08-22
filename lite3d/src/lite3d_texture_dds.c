@@ -1,6 +1,6 @@
 /******************************************************************************
  *    This file is part of lite3d (Light-weight 3d engine).
- *    Copyright (C) 2025 Sirius (Korolev Nikita)
+ *    Copyright (C) 2026 Sirius (Korolev Nikita)
  *
  *    Lite3D is free software: you can redistribute it and/or modify
  *    it under the terms of the GNU General Public License as published by
@@ -335,8 +335,7 @@ static size_t lite3d_dds_load_face(struct lite3d_texture_unit *textureUnit, cons
         /* use only 0 level and skip others if texture do not support mipmaps */
         if (mip == 0 || textureUnit->generatedMipmaps > 0)
         {
-            if (!lite3d_texture_unit_set_compressed_pixels(textureUnit, 0, 0, 0, Width, Height, Depth, mip, face, 
-                linearSize, buffer))
+            if (!lite3d_texture_unit_set_compressed_pixels(textureUnit, mip, face, linearSize, buffer))
             {
                 return 0;
             }
@@ -345,9 +344,9 @@ static size_t lite3d_dds_load_face(struct lite3d_texture_unit *textureUnit, cons
         size -= linearSize;
         buffer += linearSize;
 
-        Width = LITE3D_MAX(1, Width / 2);
-        Height = LITE3D_MAX(1, Height / 2);
-        Depth = LITE3D_MAX(1, Depth / 2);
+        Width = LITE3D_MAX(1, Width >> 1);
+        Height = LITE3D_MAX(1, Height >> 1);
+        Depth = LITE3D_MAX(1, Depth >> 1);
     }
 
     return originSize - size;

@@ -1,6 +1,6 @@
 /******************************************************************************
  *	This file is part of lite3d (Light-weight 3d engine).
- *	Copyright (C) 2025 Sirius (Korolev Nikita)
+ *	Copyright (C) 2026 Sirius (Korolev Nikita)
  *
  *	Lite3D is free software: you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -281,7 +281,7 @@ namespace lite3dpp_pipeline {
         return true;
     }
 
-    bool ShadowManager::beginSceneRender(Scene *scene, Camera *camera)
+    bool ShadowManager::beginSceneRender(Scene *scene, Camera *camera, int32_t priority)
     {
         if (scene == mCleanStage)
         {
@@ -297,7 +297,7 @@ namespace lite3dpp_pipeline {
         return true; 
     }
 
-    void ShadowManager::endSceneRender(Scene *scene, Camera *camera)
+    void ShadowManager::endSceneRender(Scene *scene, Camera *camera, int32_t priority)
     {
         // После очистки теневых карт готовимся к перерисовке теней.
         if (scene == mCleanStage)

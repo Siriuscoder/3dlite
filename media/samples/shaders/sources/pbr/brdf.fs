@@ -4,7 +4,7 @@
 vec3 BRDF(in Surface surface, in AngularInfo angular);
 {
     vec3 F = fresnelSchlickRoughness(angular.HdotV, surface.material);
-    return DiffuseLambertian(F, surface.material) + 
-        SpecularGGX(F, surface.material, angular) + 
+    return DiffuseLobeLambertian(F, surface.material) + 
+        SpecularLobeGGX(F, surface.material, angular) + 
         Sheen(F, surface.material, angular);
 }

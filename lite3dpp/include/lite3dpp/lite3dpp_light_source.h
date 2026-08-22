@@ -1,6 +1,6 @@
 /******************************************************************************
  *	This file is part of lite3d (Light-weight 3d engine).
- *	Copyright (C) 2025 Sirius (Korolev Nikita)
+ *	Copyright (C) 2026 Sirius (Korolev Nikita)
  *
  *	Lite3D is free software: you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -32,6 +32,7 @@ namespace lite3dpp
 {
     enum class LightSourceFlags : uint32_t
     {
+        TypeUndefined = 0,
         TypePoint = LITE3D_LIGHT_POINT,
         TypeDirectional = LITE3D_LIGHT_DIRECTIONAL,
         TypeSpot = LITE3D_LIGHT_SPOT,
@@ -40,7 +41,9 @@ namespace lite3dpp
         CastShadowPcf3x3 = LITE3D_LIGHT_CASTSHADOW_PCF3x3,
         CastShadowPcfAdaptive = LITE3D_LIGHT_CASTSHADOW_PCF_ADAPTIVE,
         CastShadowPoisson = LITE3D_LIGHT_CASTSHADOW_POISSON,
-        CastShadowSSS = LITE3D_LIGHT_CASTSHADOW_SSS
+        CastShadowSSS = LITE3D_LIGHT_CASTSHADOW_SSS,
+        TypeDiskArea = LITE3D_LIGHT_DISK_AREA,
+        TypeRectArea = LITE3D_LIGHT_RECT_AREA
     };
 
     LITE3D_DECLARE_ENUM_OPERATORS(LightSourceFlags);
@@ -80,6 +83,7 @@ namespace lite3dpp
         void enabled(bool f);
         void setPosition(const kmVec3 &v);
         void setDirection(const kmVec3 &v);
+        void setDirectionUP(const kmVec3 &v);
         void setDiffuse(const kmVec3 &v);
         void setAttenuationConstant(float value);
         void setAttenuationLinear(float value);
@@ -90,6 +94,9 @@ namespace lite3dpp
         void setShadowIndex(uint32_t value);
         void setAngleInnerCone(float value);
         void setAngleOuterCone(float value);
+        void setAreaWidth(float value);
+        void setAreaHeight(float value);
+        void setRadius(float value);
 
         LightSourceFlags getType() const;
         LightSourceFlags getFlags() const;
@@ -98,6 +105,8 @@ namespace lite3dpp
         const kmVec3 &getWorldPosition() const;
         const kmVec3 &getDirection() const;
         const kmVec3 &getWorldDirection() const;
+        const kmVec3 &getDirectionUP() const;
+        const kmVec3 &getWorldDirectionUP() const;
         const kmVec3 &getDiffuse() const;
         float getAttenuationConstant() const;
         float getAttenuationLinear() const;
@@ -108,6 +117,9 @@ namespace lite3dpp
         uint32_t getShadowIndex() const;
         float getAngleInnerCone() const;
         float getAngleOuterCone() const;
+        float getAreaWidth() const;
+        float getAreaHeight() const;
+        float getRadius() const;
 
         void translateToWorld(const kmMat4 &worldMatrix);
         void writeToBuffer(BufferBase &buffer);

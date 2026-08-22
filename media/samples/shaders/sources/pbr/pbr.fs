@@ -10,6 +10,10 @@ layout(std140) uniform LightIndexes
     ivec4 lightsIndexes[LITE3D_MAX_LIGHT_COUNT];
 };
 
+#ifdef LITE3D_USE_AREA_LIGHTS
+vec3 LTC(in LightSource source, in Surface surface, in AngularInfo angular);
+#endif
+
 /* Shadow compute module */
 float Shadow(in LightSource source, in Surface surface, in AngularInfo angular);
 /* Illumination compute module */
@@ -17,10 +21,8 @@ vec3 BRDF(in Surface surface, in AngularInfo angular);
 /* Indirect lighting */
 vec3 ComputeIndirect(in Surface surface, in AngularInfo angular);
 
-vec3 ComputeIllumination(in Surface surface)
+vec3 ComputeIllumination(in Surface surface, in AngularInfo angular)
 {
-    AngularInfo angular;
-    angularInfoInit(angular, surface);
     vec3 directLx = vec3(0.0);
 
     int count = lightsIndexes[0].x;
@@ -44,17 +46,27 @@ vec3 ComputeIllumination(in Surface surface)
         // Calc shadow, 0 - fully is in shadow, 1 - visible
         float shadowFactor = Shadow(light, surface, angular);
         // Calc the the light source radiance
-        vec3 radiance = light.diffuse.rgb * light.radiance * attenuationFactor * shadowFactor * surface.ao;
+        vec3 radiance = light.diffuse.rgb * light.radiance * attenuationFactor * shadowFactor;
         // Radiance is too small, consider to skip BRDF calculation
         if (isZero(radiance))
             continue;
 
-        // Calculate BRDF
-        directLx += BRDF(surface, angular) * radiance * angular.NdotL;
+#ifdef LITE3D_USE_AREA_LIGHTS
+        if (hasFlag(light.flags, LITE3D_LIGHT_RECT_AREA) ||
+            hasFlag(light.flags, LITE3D_LIGHT_DISK_AREA))
+        {
+            directLx += LTC(light, surface, angular) * radiance;
+        }
+        else
+#endif
+        {
+            // Calculate BRDF
+            directLx += BRDF(surface, angular) * radiance * angular.NdotL;
+        }
     }
 
     // Calculate indirect lighting, ambient, IBL .. 
     vec3 indirectLx = ComputeIndirect(surface, angular);
-
-    return indirectLx + directLx + surface.material.emission.rgb;
+    // Total illumination
+    return (indirectLx + directLx) * surface.ao + surface.material.emission.rgb;
 }

@@ -1,6 +1,6 @@
 /******************************************************************************
  *	This file is part of lite3d (Light-weight 3d engine).
- *	Copyright (C) 2025 Sirius (Korolev Nikita)
+ *	Copyright (C) 2026 Sirius (Korolev Nikita)
  *
  *	Lite3D is free software: you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -122,7 +122,7 @@ namespace lite3dpp_pipeline {
         return true;
     }
 
-    bool BloomEffect::beginSceneRender(Scene *scene, Camera *camera)
+    bool BloomEffect::beginSceneRender(Scene *scene, Camera *camera, int32_t priority)
     {
         // Скинем индекс цепочки в 0 в началале рисования сцены
         mChainState = 0;
@@ -243,17 +243,17 @@ namespace lite3dpp_pipeline {
     kmVec3 BloomEffect::getLumaAverage() const
     {
         SDL_assert(mMiddleTexture);
-        mMiddleTexture->getPixels(0, mBloomPixels);
+        mMiddleTexture->getPixels(mBloomPixels);
 
         auto it = mBloomPixels.cbegin();
         kmVec3 lumaAverage = KM_VEC3_ZERO;
-        for (; it != mBloomPixels.cend(); it += sizeof(kmVec3))
+        for (; it != mBloomPixels.cend(); it += 3)
         {
             const kmVec3 *texel = reinterpret_cast<const kmVec3 *>(&(*it));
             kmVec3Add(&lumaAverage, &lumaAverage, texel);
         }
 
-        kmVec3Scale(&lumaAverage, &lumaAverage, 1.0f / (mBloomPixels.size() / (3 * sizeof(float))));
+        kmVec3Scale(&lumaAverage, &lumaAverage, 1.0f / (mBloomPixels.size() / 3));
         return lumaAverage;
     }
 }}

@@ -1,6 +1,6 @@
 /******************************************************************************
  *	This file is part of lite3d (Light-weight 3d engine).
- *	Copyright (C) 2025 Sirius (Korolev Nikita)
+ *	Copyright (C) 2026 Sirius (Korolev Nikita)
  *
  *	Lite3D is free software: you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -119,11 +119,11 @@ namespace lite3dpp
             struct lite3d_material *material, struct lite3d_bounding_vol *boundingVol,
             struct lite3d_camera *camera);
 
-        static void beforeUpdateNodesEntry(struct lite3d_scene *scene, struct lite3d_camera *camera);
-        static int beginSceneRenderEntry(struct lite3d_scene *scene, struct lite3d_camera *camera);
-        static void endSceneRenderEntry(struct lite3d_scene *scene, struct lite3d_camera *camera);
-        static void beginOpaqueStageRenderEntry(struct lite3d_scene *scene, struct lite3d_camera *camera);
-        static void beginBlendingStageRenderEntry(struct lite3d_scene *scene, struct lite3d_camera *camera);
+        static void beforeUpdateNodesEntry(struct lite3d_scene *scene, struct lite3d_camera *camera, int32_t priority);
+        static int beginSceneRenderEntry(struct lite3d_scene *scene, struct lite3d_camera *camera, int32_t priority);
+        static void endSceneRenderEntry(struct lite3d_scene *scene, struct lite3d_camera *camera, int32_t priority);
+        static void beginOpaqueStageRenderEntry(struct lite3d_scene *scene, struct lite3d_camera *camera, int32_t priority);
+        static void beginBlendingStageRenderEntry(struct lite3d_scene *scene, struct lite3d_camera *camera, int32_t priority);
 
         lite3d_scene mScene;
         SceneObjects mObjects;
@@ -137,4 +137,3 @@ namespace lite3dpp
         uint32_t mMaxLightsCount; 
     };
 }
-

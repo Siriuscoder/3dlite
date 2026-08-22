@@ -36,6 +36,7 @@ struct LightSource
     vec4 position;
     vec4 direction;
     vec4 diffuse;
+    vec4 directionUP;
     float radiance;
     float influenceDistance;
     float maxInfluence;
@@ -45,9 +46,13 @@ struct LightSource
     float attenuationConstant;
     float attenuationLinear;
     float attenuationQuadratic;
-    float lightSize;
+    float areaWidth;
+    float areaHeight;
     uint shadowIndex;
     uint flags;
+    float radius;
+    uint reserved2;
+    uint reserved3;
 };
 
 #define LITE3D_LIGHT_POINT                      uint(1 << 0)
@@ -59,6 +64,8 @@ struct LightSource
 #define LITE3D_LIGHT_CASTSHADOW_PCF_ADAPTIVE    uint(1 << 6)
 #define LITE3D_LIGHT_CASTSHADOW_POISSON         uint(1 << 7)
 #define LITE3D_LIGHT_CASTSHADOW_SSS             uint(1 << 8)
+#define LITE3D_LIGHT_DISK_AREA                  uint(1 << 9)
+#define LITE3D_LIGHT_RECT_AREA                  uint(1 << 10)
 
 #ifndef LITE3D_SSS_MAX_ADAPTIVE_DEPTH_THRESHOLD
 #define LITE3D_SSS_MAX_ADAPTIVE_DEPTH_THRESHOLD             0.01    // Min Depth clipping to avoid accuracy artifacts
@@ -96,6 +103,14 @@ struct LightSource
 
 #ifndef LITE3D_SHADOW_MIN_ADAPTIVE_STEP
 #define LITE3D_SHADOW_MIN_ADAPTIVE_STEP                     0.5
+#endif
+
+#ifndef LITE3D_REFRACTION_BLUR_SCALE                        
+#define LITE3D_REFRACTION_BLUR_SCALE                        0.015
+#endif
+
+#ifndef LITE3D_REFRACTION_THICKNESS                        
+#define LITE3D_REFRACTION_THICKNESS                         10.0
 #endif
 
 #define LITE3D_MATERIAL_NORMAL_MAPPING_TANGENT              uint(1 << 0)

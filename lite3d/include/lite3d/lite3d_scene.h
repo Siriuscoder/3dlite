@@ -1,6 +1,6 @@
 /******************************************************************************
 *	This file is part of lite3d (Light-weight 3d engine).
-*	Copyright (C) 2025  Sirius (Korolev Nikita)
+*	Copyright (C) 2026  Sirius (Korolev Nikita)
 *
 *	Lite3D is free software: you can redistribute it and/or modify
 *	it under the terms of the GNU General Public License as published by
@@ -101,15 +101,15 @@ typedef struct lite3d_scene
         struct lite3d_scene_node *node, struct lite3d_mesh_chunk *meshChunk, 
         struct lite3d_material *material, struct lite3d_bounding_vol *boundingVol,
         struct lite3d_camera *camera);
-    void (*beforeUpdateNodes)(struct lite3d_scene *scene, struct lite3d_camera *camera);
-    int (*beginSceneRender)(struct lite3d_scene *scene, struct lite3d_camera *camera);
-    void (*endSceneRender)(struct lite3d_scene *scene, struct lite3d_camera *camera);
-    void (*beginOpaqueStageRender)(struct lite3d_scene *scene, struct lite3d_camera *camera);
-    void (*beginBlendingStageRender)(struct lite3d_scene *scene, struct lite3d_camera *camera);
+    void (*beforeUpdateNodes)(struct lite3d_scene *scene, struct lite3d_camera *camera, int32_t priority);
+    int (*beginSceneRender)(struct lite3d_scene *scene, struct lite3d_camera *camera, int32_t priority);
+    void (*endSceneRender)(struct lite3d_scene *scene, struct lite3d_camera *camera, int32_t priority);
+    void (*beginOpaqueStageRender)(struct lite3d_scene *scene, struct lite3d_camera *camera, int32_t priority);
+    void (*beginBlendingStageRender)(struct lite3d_scene *scene, struct lite3d_camera *camera, int32_t priority);
 } lite3d_scene;
 
 LITE3D_CEXPORT void lite3d_scene_render(lite3d_scene *scene, lite3d_camera *camera, 
-    uint16_t pass, uint32_t flags);
+    uint16_t pass, int32_t priority, uint32_t flags);
 LITE3D_CEXPORT int lite3d_scene_init(lite3d_scene *scene, uint32_t features);
 LITE3D_CEXPORT void lite3d_scene_purge(lite3d_scene *scene);
 
@@ -124,4 +124,3 @@ LITE3D_CEXPORT int lite3d_scene_node_touch_material(struct lite3d_scene_node *no
     struct lite3d_material *material, uint32_t instancesCount);
 
 #endif	/* LITE3D_SCENE_H */
-

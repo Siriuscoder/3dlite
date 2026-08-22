@@ -1,6 +1,6 @@
 /******************************************************************************
 *	This file is part of lite3d (Light-weight 3d engine).
-*	Copyright (C) 2025  Sirius (Korolev Nikita)
+*	Copyright (C) 2026  Sirius (Korolev Nikita)
 *
 *	Lite3D is free software: you can redistribute it and/or modify
 *	it under the terms of the GNU General Public License as published by
@@ -117,10 +117,10 @@ LITE3D_CEXPORT void lite3d_render_suspend(void);
 LITE3D_CEXPORT void lite3d_render_stop(void);
 
 LITE3D_CEXPORT int lite3d_render_target_attach_camera(lite3d_render_target *rt, lite3d_camera *camera, lite3d_scene *scene, 
-    uint16_t pass, const lite3d_framebuffer_layer *layer, size_t layersCount, int priority, uint32_t renderFlags);
-LITE3D_CEXPORT int lite3d_render_target_dettach_camera(lite3d_render_target *rt, lite3d_camera *camera, int priority);
-LITE3D_CEXPORT int lite3d_render_target_screen_attach_camera(lite3d_camera *camera, lite3d_scene *scene, uint16_t pass, int priority, uint32_t renderFlags);
-LITE3D_CEXPORT int lite3d_render_target_screen_dettach_camera(lite3d_camera *camera, int priority);
+    uint16_t pass, const lite3d_framebuffer_layer *layer, size_t layersCount, int32_t priority, uint32_t renderFlags);
+LITE3D_CEXPORT int lite3d_render_target_dettach_camera(lite3d_render_target *rt, lite3d_camera *camera, int32_t priority);
+LITE3D_CEXPORT int lite3d_render_target_screen_attach_camera(lite3d_camera *camera, lite3d_scene *scene, uint16_t pass, int32_t priority, uint32_t renderFlags);
+LITE3D_CEXPORT int lite3d_render_target_screen_dettach_camera(lite3d_camera *camera, int32_t priority);
 LITE3D_CEXPORT lite3d_render_target *lite3d_render_target_screen_get(void);
 LITE3D_CEXPORT void lite3d_render_target_resize(lite3d_render_target *rt, int32_t width, int32_t height);
 LITE3D_CEXPORT void lite3d_render_target_fullscreen(lite3d_render_target *rt, int8_t flag);

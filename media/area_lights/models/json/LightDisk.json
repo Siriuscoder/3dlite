@@ -1,0 +1,14 @@
+{
+  "Codec": "m",
+  "Model": "area_lights:models/meshes/LightDisk.m",
+  "MaterialMapping": [
+    {
+      "Material": {
+        "Type": "PBR",
+        "Name": "EmitterEllipce.material",
+        "Material": "area_lights:materials/EmitterEllipce.json"
+      },
+      "MaterialIndex": 0
+    }
+  ]
+}

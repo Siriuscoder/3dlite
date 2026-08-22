@@ -1,6 +1,6 @@
 /******************************************************************************
  *	This file is part of lite3d (Light-weight 3d engine).
- *	Copyright (C) 2025 Sirius (Korolev Nikita)
+ *	Copyright (C) 2026 Sirius (Korolev Nikita)
  *
  *	Lite3D is free software: you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -32,6 +32,8 @@
 #define LITE3D_LIGHT_CASTSHADOW_PCF_ADAPTIVE    (1u << 6)
 #define LITE3D_LIGHT_CASTSHADOW_POISSON         (1u << 7)
 #define LITE3D_LIGHT_CASTSHADOW_SSS             (1u << 8)
+#define LITE3D_LIGHT_DISK_AREA                  (1u << 9)
+#define LITE3D_LIGHT_RECT_AREA                  (1u << 10)
 
 #pragma pack(push,1)
 typedef struct lite3d_light_params
@@ -42,6 +44,8 @@ typedef struct lite3d_light_params
     uint32_t pad2;
     kmVec3 diffuse;
     uint32_t pad3;
+    kmVec3 directionUP;
+    uint32_t pad4;
     float radiance;
     float influenceDistance;
     float maxInfluence;
@@ -51,9 +55,12 @@ typedef struct lite3d_light_params
     float attenuationConstant;
     float attenuationLinear;
     float attenuationQuadratic;
-    float lightSize;
+    float areaWidth;
+    float areaHeight;
     uint32_t shadowIndex;
     uint32_t flags;
+    float radius; // Used for point and spot light. Emulates reflection of sized point light 
+    uint32_t reserved[2];
 } lite3d_light_params;
 #pragma pack(pop)
 

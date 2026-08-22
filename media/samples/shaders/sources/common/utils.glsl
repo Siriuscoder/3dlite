@@ -1,6 +1,5 @@
 uniform mat4 CameraView; // Main camera view matrix
 uniform mat4 CameraProjection; // Main camera projection matrix
-uniform float RandomSeed; /* 0.0 - 1.0 */
 uniform float Gamma;
 uniform float Exposure;
 uniform float Contrast;
@@ -50,6 +49,32 @@ bool hasFlag(uint a, uint flag)
 {
     return (a & flag) == flag;
 }
+
+float radicalInverse(int index, float base)
+{
+    float result = 0.0;
+    float f = 1.0/base;
+    float i = float(index);
+    for (int x = 0; x < 8; x++)
+    {
+        if (i <= 0.0) break;
+
+        result += f*mod(i, base);
+        i = floor(i/base);
+        f = f/base;
+    }
+
+    return result;
+}
+
+vec2 Halton2D(int index)
+{
+    return vec2(
+        radicalInverse(index, 2.0),
+        radicalInverse(index, 3.0)
+    );
+}
+
 // Gold Noise ©2015 dcerisano@standard3d.com
 // - based on the Golden Ratio
 // - uniform normalized distribution
@@ -57,13 +82,13 @@ bool hasFlag(uint a, uint flag)
 // - use with indicated fractional seeding method
 float goldNoise(vec2 xy)
 {
-    return fract(tan(distance(xy * PHI, xy) * RandomSeed) * xy.x);
+    return fract(tan(distance(xy * PHI, xy)) * xy.x);
 }
 
 float noiseInterleavedGradient(vec2 xy)
 {
     vec3 magic = vec3(0.06711056, 0.00583715, 52.9829189);
-    return fract(magic.z * fract(dot(xy * RandomSeed, magic.xy)));
+    return fract(magic.z * fract(dot(xy, magic.xy)));
 }
 
 vec3 worldToViewSpacePosition(vec3 posw)
@@ -288,48 +313,45 @@ float NDF(float NdotH, float roughness)
 }
 
 // Geometry function (Schlick-Beckmann, Schlick-GGX)
-float GGX(float NdotV, float k)
+float SchlickGGX(float teta, float k)
 {
-    float nom   = NdotV;
-    float denom = NdotV * (1.0 - k) + k;
+    float nom   = teta;
+    float denom = teta * (1.0 - k) + k;
 
     return nom / denom;
 }
 
 // Geometry function (Smith's)
-float G(float NdotV, float NdotL, float roughness)
-{
-    roughness += 1.0;
-    float k = (roughness * roughness) / 8.0;
-
-    float ggx2  = GGX(NdotV, k);
-    float ggx1  = GGX(NdotL, k);
-
-    return ggx1 * ggx2;
-}
-
-// Geometry function (Smith's) for IBL intergation
-float G_IBL(float NdotV, float NdotL, float roughness)
+float SmithGGX(float NdotV, float NdotL, float roughness)
 {
     float k = (roughness * roughness) / 2.0;
 
-    float ggx2  = GGX(NdotV, k);
-    float ggx1  = GGX(NdotL, k);
+    float ggx2  = SchlickGGX(NdotV, k);
+    float ggx1  = SchlickGGX(NdotL, k);
 
     return ggx1 * ggx2;
 }
 
+float SmithGGXCorrelated(float NdotV, float NdotL, float roughness)
+{
+    roughness += 1.0;
+    float k = (roughness * roughness) / 8.0;
+    
+    float denom = mix(NdotV, 1.0, k) * mix(NdotL, 1.0, k);
+    return 1.0 / denom;
+}
+
 // Specular Term GGX
-vec3 SpecularGGX(vec3 F, in Material material, in AngularInfo angular)
+vec3 SpecularLobeGGX(vec3 F, in Material material, in AngularInfo angular)
 {
     float ndf = NDF(angular.NdotH, material.roughness);
-    float g = G(angular.NdotV, angular.NdotL, material.roughness);
+    float gVis = SmithGGXCorrelated(angular.NdotV, angular.NdotL, material.roughness);
 
-    return (ndf * g * F) / (4.0 * angular.NdotV * angular.NdotL);
+    return (ndf * gVis * F) / 4.0;
 }
 
 // Diffuse Term Lambertian (Simple diffuse model)
-vec3 DiffuseLambertian(vec3 F, in Material material)
+vec3 DiffuseLobeLambertian(vec3 F, in Material material)
 {
     vec3 kD = diffuseFactor(F, material.metallic);
     return kD * material.albedo.rgb / M_PI;
@@ -341,7 +363,7 @@ vec3 Sheen(vec3 F, in Material material, in AngularInfo angular)
     {
         vec3 Fs = mix(vec3(1.0), material.albedo.rgb, F);
         float sheenFalloff = pow(clamp(1.0 - angular.NdotV, 0.0, 1.0), 5.0); // падение к краям
-        return Fs * sheenFalloff * material.sheen;
+        return Fs * sheenFalloff * material.sheen * material.roughness;
     }
 
     return vec3(0.0);
@@ -357,8 +379,10 @@ float calcAttenuation(in LightSource source, in AngularInfo angular)
         float spotFactor = 1.0;
         const float fallofStart = 0.9;
 
-        float edgeFallof = (source.influenceDistance - clamp(angular.lightDistance, source.influenceDistance * fallofStart, 
-            source.influenceDistance)) / (source.influenceDistance * (1.0 - fallofStart));
+        float edgeFallof = 1.0 - smoothstep(source.influenceDistance * fallofStart, source.influenceDistance, angular.lightDistance);
+        
+        //(source.influenceDistance - clamp(angular.lightDistance, source.influenceDistance * fallofStart, 
+        //    source.influenceDistance)) / (source.influenceDistance * (1.0 - fallofStart));
 
         if (hasFlag(source.flags, LITE3D_LIGHT_SPOT))
         {
@@ -368,6 +392,11 @@ float calcAttenuation(in LightSource source, in AngularInfo angular)
             spotFactor = clamp(1.0 - spotConeAttenuation, 0.0, 1.0);
         }
 
+        if (hasFlag(source.flags, LITE3D_LIGHT_RECT_AREA) || hasFlag(source.flags, LITE3D_LIGHT_DISK_AREA))
+        {
+            return edgeFallof;
+        }
+        
         factor = spotFactor * edgeFallof / 
             (source.attenuationConstant + 
             source.attenuationLinear * angular.lightDistance + 
@@ -398,6 +427,19 @@ void angularInfoSetLightSource(inout AngularInfo angular, in Surface surface, in
         angular.lightDir = normalize(vecLightDist);
         angular.lightDistance = length(vecLightDist);
         angular.isOutside = angular.lightDistance > source.influenceDistance;
+
+        if (source.radius > FLT_EPSILON &&
+            (hasFlag(source.flags, LITE3D_LIGHT_POINT) ||
+            hasFlag(source.flags, LITE3D_LIGHT_SPOT)))
+        {
+            vec3 R = reflect(-angular.viewDir, surface.normal);
+            // Projection vecLightDist to R
+            vec3 centerToRay = dot(vecLightDist, R) * R - vecLightDist;
+            float t = clamp(source.radius / max(length(centerToRay), FLT_EPSILON), 0.0, 1.0);
+            vec3 closestPoint = vecLightDist + centerToRay * t;
+            angular.lightDir = normalize(closestPoint);
+            angular.lightDistance = length(closestPoint);
+        }
     }
 }
 

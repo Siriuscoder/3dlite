@@ -1,18 +1,13 @@
 uniform sampler2D Albedo;
+uniform sampler2D Specular;
+uniform float SpecularFactor;
 uniform float SpecularAmbientFactor;
 
-vec3 specularTmp = vec3(0.0);
-
-vec3 sampleSpecular(vec2 iuv);
 vec3 sampleNormal(vec2 iuv, mat3 tbn);
 
 vec4 getAlbedo(vec2 uv)
 {
-    vec4 albedo = texture(Albedo, uv);
-    specularTmp = sampleSpecular(uv);
-
-    float alpha = mix(albedo.a, 1.0, specularTmp.y);
-    return vec4(albedo.rgb, alpha);
+    return texture(Albedo, uv);
 }
 
 vec3 getEmission(vec2 uv)
@@ -27,7 +22,9 @@ vec3 getNormal(vec2 uv, mat3 tbn)
 
 vec3 getSpecular(vec2 uv)
 {
-    return vec3(specularTmp.x, specularTmp.y / 10.0, specularTmp.z);
+    vec2 specular = texture(Specular, uv).rg;
+    float roughness = 1.0 - specular.g;
+    return vec3(specular.r * SpecularFactor, roughness * roughness, 0.0);
 }
 
 float getAmbientOcclusion(vec2 uv)
@@ -38,4 +35,14 @@ float getAmbientOcclusion(vec2 uv)
 float getSpecularAmbient(vec2 uv)
 {
     return SpecularAmbientFactor;
+}
+
+float getIOR(vec2 uv)
+{
+    return 1.5;
+}
+
+float getSheen(vec2 uv)
+{
+    return 0.0;
 }

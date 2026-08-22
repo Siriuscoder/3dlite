@@ -1,6 +1,6 @@
 
 #	This file is part of lite3d (Light-weight 3d engine).
-#	Copyright (C) 2025  Sirius (Korolev Nikita)
+#	Copyright (C) 2026  Sirius (Korolev Nikita)
 #
 #	Lite3D is free software: you can redistribute it and/or modify
 #	it under the terms of the GNU General Public License as published by
@@ -24,6 +24,10 @@ option(BUILD_TOOLS "Enable tools build" ON)
 option(SHOW_STATS "Show cmake variables" OFF)
 option(ENABLE_METRICS "Enable code performance counters" OFF)
 option(ENABLE_SANITIZE "Enable clang address sanitizer" OFF)
+
+if(BUILD_TESTS)
+    enable_testing()
+endif()
 
 set(CMAKE_LITE3D_TOP_DIR ${PROJECT_SOURCE_DIR})
 include(${CMAKE_LITE3D_TOP_DIR}/CMake/lite3dCommon.cmake)
@@ -167,4 +171,3 @@ endif()
 if(SHOW_STATS)
     print_build_info()
 endif()
-

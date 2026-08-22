@@ -1,5 +1,4 @@
-build/*
-build_clang/*
+build*
 .vscode/*
 .cache/*
 media/*.log

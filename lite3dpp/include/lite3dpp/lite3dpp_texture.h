@@ -1,6 +1,6 @@
 /******************************************************************************
  *	This file is part of lite3d (Light-weight 3d engine).
- *	Copyright (C) 2025 Sirius (Korolev Nikita)
+ *	Copyright (C) 2026 Sirius (Korolev Nikita)
  *
  *	Lite3D is free software: you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -78,31 +78,39 @@ namespace lite3dpp
         inline int8_t getTotalLevels() const
         { return mTexture.generatedMipmaps + 1; }
 
-        void getPixels(int8_t level, PixelsData &pixels) const;
-        void getPixels(int8_t level, void *pixels) const;
+        void getPixels(PixelsData &pixels, int8_t level = 0, uint8_t layer = 0) const;
+        void getPixels(PixelsFloatData &pixels, int8_t level = 0, uint8_t layer = 0) const;
+        void getPixels(uint8_t *pixels, int8_t level = 0, uint8_t layer = 0) const;
+        void getPixels(float *pixels, int8_t level = 0, uint8_t layer = 0) const;
 
-        void setPixels(int8_t level, const PixelsData &pixels);
-        void setPixels(int8_t level, const void *pixels);
+        void setPixels(const PixelsData &pixels, int8_t level = 0, uint8_t layer = 0);
+        void setPixels(const PixelsFloatData &pixels, int8_t level = 0, uint8_t layer = 0);
+        void setPixels(const uint8_t *pixels, int8_t level = 0, uint8_t layer = 0);
+        void setPixels(const float *pixels, int8_t level = 0, uint8_t layer = 0);
 
-        void getCompressedPixels(int8_t level, PixelsData &pixels) const;
-        void getCompressedPixels(int8_t level, void *pixels) const;
-        void setCompressedPixels(int8_t level, const PixelsData &pixels);
-        void setCompressedPixels(int8_t level, const void *pixels, size_t size);
+        void getCompressedPixels(PixelsData &pixels, int8_t level = 0, uint8_t layer = 0) const;
+        void getCompressedPixels(void *pixels, int8_t level = 0, uint8_t layer = 0) const;
+        void setCompressedPixels(const PixelsData &pixels, int8_t level = 0, uint8_t layer = 0);
+        void setCompressedPixels(const void *pixels, size_t size, int8_t level = 0, uint8_t layer = 0);
 
-        size_t getLayerSize(int8_t level) const;
-        size_t getCompressedLayerSize(int8_t level) const;
+        size_t getLevelSize(int8_t level) const;
+        size_t getLevelEstimatedSize(int8_t level, TexturePixelType pixelType) const;
+        size_t getCompressedLevelSize(int8_t level) const;
         
         /* commonly color.x = r, color.y = b ... */
         void setBlankColor(const kmVec4 &color);
 
         void generateMipmaps();
+
+        void copyFrom(const TextureImage &srcTex, int8_t level = 0);
+        void copyRegionFrom(const TextureImage &dstTex,  
+            int32_t srcWidthOff, int32_t srcHeightOff, int32_t srcDepthOff,
+            int32_t dstWidthOff, int32_t dstHeightOff, int32_t dstDepthOff,
+            int32_t width, int32_t height, int32_t depth, int8_t level = 0);
         
-        inline int32_t getHeight() const
-        { return mTexture.imageHeight; }
-        inline int32_t getWidth() const
-        { return mTexture.imageWidth; }
-        inline int32_t getDepth() const
-        { return mTexture.imageDepth; }
+        int32_t getHeight(int8_t level = 0) const;
+        int32_t getWidth(int8_t level = 0) const;
+        int32_t getDepth(int8_t level = 0) const;
 
     protected:
 
@@ -113,7 +121,5 @@ namespace lite3dpp
     private:
 
         bool mModified;
-        LayersData mLayersBackup;
     };
 }
-

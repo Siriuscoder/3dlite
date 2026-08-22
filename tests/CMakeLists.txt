@@ -1,6 +1,6 @@
 
 #	This file is part of lite3d (Light-weight 3d engine).
-#	Copyright (C) 2025  Sirius (Korolev Nikita)
+#	Copyright (C) 2026  Sirius (Korolev Nikita)
 #
 #	Lite3D is free software: you can redistribute it and/or modify
 #	it under the terms of the GNU General Public License as published by
@@ -16,8 +16,6 @@
 #	along with Lite3D.  If not, see <http://www.gnu.org/licenses/>.
 
 project(gtest)
-
-enable_testing()
 
 set(GTEST_SOURCES gtest/src/gtest-all.cc
 gtest/src/gtest_main.cc)
@@ -38,4 +36,3 @@ target_include_directories(gtest PRIVATE
 "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/gtest/>")
 
 add_subdirectory("${PROJECT_SOURCE_DIR}/functionaly/")
-

@@ -1,6 +1,6 @@
 /******************************************************************************
  *	This file is part of lite3d (Light-weight 3d engine).
- *	Copyright (C) 2025 Sirius (Korolev Nikita)
+ *	Copyright (C) 2026 Sirius (Korolev Nikita)
  *
  *	Lite3D is free software: you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -48,7 +48,7 @@ namespace lite3dpp_pipeline {
 
         void loadFromConfigImpl(const ConfigurationReader &helper) override;
         void unloadImpl() override;
-        bool beginSceneRender(Scene *scene, Camera *camera) override;
+        bool beginSceneRender(Scene *scene, Camera *camera, int32_t priority) override;
         void frameBegin() override;
 
         virtual void createMainScene(const String& name, const String &sceneConfig);
@@ -67,6 +67,8 @@ namespace lite3dpp_pipeline {
             SceneGenerator &sceneGenerator);
         
         void createSkyBoxMesh();
+        void createCombined2Texture(const String &cameraName);
+        void createLTCLutTextures();
         void createBigTriangleMesh();
         void updateExposure();
 
@@ -83,11 +85,13 @@ namespace lite3dpp_pipeline {
         RenderTarget *mDepthPass = nullptr;
         RenderTarget *mCombinePass = nullptr;
         Texture *mDepthTexture = nullptr;
-        Texture *mCombinedTexture = nullptr;
+        TextureImage *mCombinedTexture = nullptr;
+        TextureImage *mCombined2Texture = nullptr;
+        TextureImage *mLTCLut01 = nullptr;
+        TextureImage *mLTCLut02 = nullptr;
         Material *mPostProcessStageMaterial = nullptr;
         Material *mSkyBoxStageMaterial = nullptr;
         stl<String>::list mResourcesList;
-        PixelsData mBloomPixels;
 
         float mRandomSeed;
         float mExposureMax = 1.0;

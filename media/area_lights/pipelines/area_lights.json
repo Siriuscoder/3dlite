@@ -1,0 +1,25 @@
+{
+    "ShaderPackage": "area_lights",
+    "MainScenePath": "area_lights:scenes/area_lights.json",
+    "Instancing": false,
+    "OcclusionCulling": false,
+    "LightingTechnique": "UBO",
+    "MultiRender": true,
+    "ComputeAreaLighting": true,
+    "SSAO": 
+    {
+        "AORadius": 0.15,
+        "FramebufferScale": 2
+    },
+    "BLOOM": 
+    {
+        "BloomRadius": 0.005
+    },
+    "PostProcess":
+    {
+        "Gamma": 2.2,
+        "Contrast": 1.005,
+        "Saturation": 1.10,
+        "Exposure": 3.0
+    }
+}

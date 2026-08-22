@@ -1,6 +1,6 @@
 /******************************************************************************
  *	This file is part of lite3d (Light-weight 3d engine).
- *	Copyright (C) 2025  Sirius (Korolev Nikita)
+ *	Copyright (C) 2026  Sirius (Korolev Nikita)
  *
  *	Lite3D is free software: you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -635,7 +635,7 @@ static void mqr_render_make_queue(struct lite3d_scene *scene, uint16_t pass, uin
     }
 }
 
-static void mqr_render_stage_opaque(struct lite3d_scene *scene, uint16_t pass, uint32_t flags)
+static void mqr_render_stage_opaque(struct lite3d_scene *scene, uint16_t pass, int32_t priority, uint32_t flags)
 {
     if (flags & LITE3D_RENDER_OPAQUE)
     {
@@ -649,7 +649,7 @@ static void mqr_render_stage_opaque(struct lite3d_scene *scene, uint16_t pass, u
         }
 
         if (scene->beginOpaqueStageRender)
-            LITE3D_METRIC_CALL(scene->beginOpaqueStageRender, (scene, scene->currentCamera))
+            LITE3D_METRIC_CALL(scene->beginOpaqueStageRender, (scene, scene->currentCamera, priority))
 
         if (scene->features & LITE3D_SCENE_FEATURE_MULTIRENDER)
         {
@@ -665,7 +665,7 @@ static void mqr_render_stage_opaque(struct lite3d_scene *scene, uint16_t pass, u
     }
 }
 
-static void mqr_render_stage_transparent(struct lite3d_scene *scene, uint16_t pass, uint32_t flags)
+static void mqr_render_stage_transparent(struct lite3d_scene *scene, uint16_t pass, int32_t priority, uint32_t flags)
 {
     if (flags & LITE3D_RENDER_TRANSPARENT)
     {
@@ -679,7 +679,7 @@ static void mqr_render_stage_transparent(struct lite3d_scene *scene, uint16_t pa
         }
 
         if (scene->beginBlendingStageRender)
-            scene->beginBlendingStageRender(scene, scene->currentCamera);
+            scene->beginBlendingStageRender(scene, scene->currentCamera, priority);
 
         if (scene->features & LITE3D_SCENE_FEATURE_MULTIRENDER)
         {
@@ -857,34 +857,34 @@ static void scene_updated_nodes_validate(lite3d_scene *scene)
 }
 
 void lite3d_scene_render(lite3d_scene *scene, lite3d_camera *camera, 
-    uint16_t pass, uint32_t flags)
+    uint16_t pass, int32_t priority, uint32_t flags)
 {
     SDL_assert(scene && camera);
     /* clean statistic */
     memset(&scene->stats, 0, sizeof (scene->stats));
 
     if (scene->beforeUpdateNodes)
-        LITE3D_METRIC_CALL(scene->beforeUpdateNodes, (scene, camera))
+        LITE3D_METRIC_CALL(scene->beforeUpdateNodes, (scene, camera, priority))
     /* update scene tree */
     LITE3D_METRIC_CALL(scene_recursive_nodes_update, (scene, &scene->rootNode))
     /* update camera projection & transformation */
     LITE3D_METRIC_CALL(lite3d_camera_update_view, (camera))
 
-    if (scene->beginSceneRender && !scene->beginSceneRender(scene, camera))
+    if (scene->beginSceneRender && !scene->beginSceneRender(scene, camera, priority))
         return;
 
     scene->currentCamera = camera;
     LITE3D_METRIC_CALL(mqr_render_make_queue, (scene, pass, flags));
     /* render common objects */
-    LITE3D_METRIC_CALL(mqr_render_stage_opaque, (scene, pass, flags))
+    LITE3D_METRIC_CALL(mqr_render_stage_opaque, (scene, pass, priority, flags))
     /* render transparent objects */
-    LITE3D_METRIC_CALL(mqr_render_stage_transparent, (scene, pass, flags))
+    LITE3D_METRIC_CALL(mqr_render_stage_transparent, (scene, pass, priority, flags))
     
     // Для чистоты зануляем биндинг VAO
     lite3d_mesh_chunk_unbind();
 
     if (scene->endSceneRender)
-        LITE3D_METRIC_CALL(scene->endSceneRender, (scene, camera))
+        LITE3D_METRIC_CALL(scene->endSceneRender, (scene, camera, priority))
 
     LITE3D_METRIC_CALL(scene_updated_nodes_validate, (scene))
 }

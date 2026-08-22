@@ -1,6 +1,6 @@
 /******************************************************************************
  *	This file is part of lite3d (Light-weight 3d engine).
- *	Copyright (C) 2025  Sirius (Korolev Nikita)
+ *	Copyright (C) 2026  Sirius (Korolev Nikita)
  *
  *	Lite3D is free software: you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -41,7 +41,7 @@ typedef struct lookUnit
     lite3d_camera *camera;
     lite3d_scene *scene;
     uint16_t pass;
-    int priority;
+    int32_t priority;
     uint32_t renderFlags;
     lite3d_framebuffer_layer layer[2];
     size_t layersCount;
@@ -177,7 +177,7 @@ static void update_render_target(lite3d_render_target *target)
             lite3d_depth_output((look->renderFlags & LITE3D_RENDER_DEPTH_OUTPUT) ? LITE3D_TRUE : LITE3D_FALSE);
             lite3d_stencil_output((look->renderFlags & LITE3D_RENDER_STENCIL_OUTPUT) ? LITE3D_TRUE : LITE3D_FALSE);
             
-            LITE3D_METRIC_CALL(lite3d_scene_render, (look->scene, look->camera, look->pass, look->renderFlags))
+            LITE3D_METRIC_CALL(lite3d_scene_render, (look->scene, look->camera, look->pass, look->priority, look->renderFlags))
 
             if (look->camera->cameraNode.invalidated)
                 LITE3D_ARR_ADD_ELEM(&gInvalidatedCameras, lite3d_camera *, look->camera);
@@ -425,7 +425,7 @@ void lite3d_render_target_purge(lite3d_render_target *rt)
     lite3d_render_target_erase(rt);
 }
 
-void lite3d_render_target_add(lite3d_render_target *newRt, int priority)
+void lite3d_render_target_add(lite3d_render_target *newRt, int32_t priority)
 {
     lite3d_render_target *rtPtr = NULL;
     lite3d_list_node *node = NULL;
@@ -474,7 +474,7 @@ void lite3d_render_stop(void)
 }
 
 int lite3d_render_target_attach_camera(lite3d_render_target *target, lite3d_camera *camera, lite3d_scene *scene,
-    uint16_t pass, const lite3d_framebuffer_layer *layer, size_t layersCount, int priority, uint32_t renderFlags)
+    uint16_t pass, const lite3d_framebuffer_layer *layer, size_t layersCount, int32_t priority, uint32_t renderFlags)
 {
     lookUnit *look = NULL;
     lookUnit *lookIns = NULL;
@@ -520,7 +520,7 @@ int lite3d_render_target_attach_camera(lite3d_render_target *target, lite3d_came
     return LITE3D_TRUE;
 }
 
-int lite3d_render_target_dettach_camera(lite3d_render_target *rt, lite3d_camera *camera, int priority)
+int lite3d_render_target_dettach_camera(lite3d_render_target *rt, lite3d_camera *camera, int32_t priority)
 {
     lookUnit *look = NULL;
     lite3d_list_node *node = NULL;
@@ -544,13 +544,13 @@ int lite3d_render_target_dettach_camera(lite3d_render_target *rt, lite3d_camera 
 }
 
 int lite3d_render_target_screen_attach_camera(lite3d_camera *camera, lite3d_scene *scene,
-    uint16_t pass, int priority, uint32_t renderFlags)
+    uint16_t pass, int32_t priority, uint32_t renderFlags)
 {
     return lite3d_render_target_attach_camera(&gScreenRt, camera, scene,
         pass, NULL, 0, priority, renderFlags);
 }
 
-int lite3d_render_target_screen_dettach_camera(lite3d_camera *camera, int priority)
+int lite3d_render_target_screen_dettach_camera(lite3d_camera *camera, int32_t priority)
 {
     return lite3d_render_target_dettach_camera(&gScreenRt, camera, priority);
 }
@@ -647,4 +647,3 @@ void lite3d_render_target_screenshot(lite3d_render_target *rt, const char *filen
     
     ilDeleteImage(imageId);
 }
-

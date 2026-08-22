@@ -1,6 +1,6 @@
 
 #	This file is part of lite3d (Light-weight 3d engine).
-#	Copyright (C) 2025  Sirius (Korolev Nikita)
+#	Copyright (C) 2026  Sirius (Korolev Nikita)
 #
 #	Lite3D is free software: you can redistribute it and/or modify
 #	it under the terms of the GNU General Public License as published by
@@ -34,6 +34,7 @@ define_sample(sample_sandbox sample_common lite3dpp_font lite3dpp lite3dpp_pipel
 define_sample(sample_animation sample_common lite3dpp_font lite3dpp lite3dpp_pipeline)
 define_sample(sample_reflection_sky sample_common lite3dpp_font lite3dpp)
 define_sample(sample_camera sample_common lite3dpp_font lite3dpp)
+define_sample(sample_area_lights sample_common lite3dpp_font lite3dpp lite3dpp_pipeline)
 
 if(BULLET_FOUND)
     define_sample(sample_physics sample_common lite3dpp_font lite3dpp lite3dpp_physics)

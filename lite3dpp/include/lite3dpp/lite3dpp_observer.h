@@ -1,6 +1,6 @@
 /******************************************************************************
  *	This file is part of lite3d (Light-weight 3d engine).
- *	Copyright (C) 2025 Sirius (Korolev Nikita)
+ *	Copyright (C) 2026 Sirius (Korolev Nikita)
  *
  *	Lite3D is free software: you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -102,11 +102,11 @@ namespace lite3dpp
             Material *material, lite3d_bounding_vol *boundingVol,
             Camera *camera) { return true; }
 
-        virtual void beforeUpdateNodes(Scene *scene, Camera *camera) {}
-        virtual bool beginSceneRender(Scene *scene, Camera *camera) { return true; }
-        virtual void endSceneRender(Scene *scene, Camera *camera) {}
-        virtual void beginOpaqueStageRender(Scene *scene, Camera *camera) {}
-        virtual void beginBlendingStageRender(Scene *scene, Camera *camera) {}
+        virtual void beforeUpdateNodes(Scene *scene, Camera *camera, int32_t priority) {}
+        virtual bool beginSceneRender(Scene *scene, Camera *camera, int32_t priority) { return true; }
+        virtual void endSceneRender(Scene *scene, Camera *camera, int32_t priority) {}
+        virtual void beginOpaqueStageRender(Scene *scene, Camera *camera, int32_t priority) {}
+        virtual void beginBlendingStageRender(Scene *scene, Camera *camera, int32_t priority) {}
     };
 
     class LITE3DPP_EXPORT RenderTargetObserver
@@ -166,4 +166,3 @@ namespace lite3dpp
 #define LITE3D_OBSERVER_NOTIFY_CHECK_6(func, p1, p2, p3, p4, p5, p6)              LITE3D_EXT_OBSERVER_NOTIFY_CHECK_6(this, func, p1, p2, p3, p4, p5, p6)
 
 }
-

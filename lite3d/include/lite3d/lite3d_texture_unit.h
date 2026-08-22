@@ -1,6 +1,6 @@
 /******************************************************************************
 *	This file is part of lite3d (Light-weight 3d engine).
-*	Copyright (C) 2025  Sirius (Korolev Nikita)
+*	Copyright (C) 2026  Sirius (Korolev Nikita)
 *
 *	Lite3D is free software: you can redistribute it and/or modify
 *	it under the terms of the GNU General Public License as published by
@@ -72,6 +72,7 @@
 #define LITE3D_TEXTURE_CLAMP_TO_EDGE            0x0001
 #define LITE3D_TEXTURE_REPEAT                   0x0002
 
+// Texture channels formats
 #define LITE3D_TEXTURE_FORMAT_RED               0x1903
 #define LITE3D_TEXTURE_FORMAT_LUMINANCE         0x1909 // legacy, replacted to LITE3D_TEXTURE_FORMAT_RED
 #define LITE3D_TEXTURE_FORMAT_RG                0x8227
@@ -81,7 +82,7 @@
 #define LITE3D_TEXTURE_FORMAT_BRG               0x80E0
 #define LITE3D_TEXTURE_FORMAT_BRGA              0x80E1
 #define LITE3D_TEXTURE_FORMAT_DEPTH             0x1902
-
+// Internal texture storage formats
 #define LITE3D_TEXTURE_INTERNAL_R8              0x8229
 #define LITE3D_TEXTURE_INTERNAL_R8_SNORM        0x8F94
 #define LITE3D_TEXTURE_INTERNAL_R16             0x822A
@@ -145,7 +146,14 @@
 #define LITE3D_TEXTURE_INTERNAL_RGBA16UI        0x8D76
 #define LITE3D_TEXTURE_INTERNAL_RGBA32I         0x8D82
 #define LITE3D_TEXTURE_INTERNAL_RGBA32UI        0x8D70
-
+// Pixel representation data types
+#define LITE3D_TEXTURE_PIXEL_BYTE               0x1400
+#define LITE3D_TEXTURE_PIXEL_UNSIGNED_BYTE      0x1401
+#define LITE3D_TEXTURE_PIXEL_SHORT              0x1402
+#define LITE3D_TEXTURE_PIXEL_UNSIGNED_SHORT     0x1403
+#define LITE3D_TEXTURE_PIXEL_INT                0x1404
+#define LITE3D_TEXTURE_PIXEL_UNSIGNED_INT       0x1405
+#define LITE3D_TEXTURE_PIXEL_FLOAT              0x1406
             
 typedef struct lite3d_image_filter
 {
@@ -196,12 +204,9 @@ LITE3D_CEXPORT int lite3d_texture_technique_init(const lite3d_texture_technique_
 LITE3D_CEXPORT void lite3d_texture_technique_shut(void);
 
 /* texture mipmap level size */
-LITE3D_CEXPORT int32_t lite3d_texture_unit_get_level_width(const lite3d_texture_unit *textureUnit,
-    int8_t level, uint8_t cubeface);
-LITE3D_CEXPORT int32_t lite3d_texture_unit_get_level_height(const lite3d_texture_unit *textureUnit,
-    int8_t level, uint8_t cubeface);
-LITE3D_CEXPORT int32_t lite3d_texture_unit_get_level_depth(const lite3d_texture_unit *textureUnit,
-    int8_t level, uint8_t cubeface);
+LITE3D_CEXPORT int32_t lite3d_texture_unit_level_width(const lite3d_texture_unit *textureUnit, int8_t level);
+LITE3D_CEXPORT int32_t lite3d_texture_unit_level_height(const lite3d_texture_unit *textureUnit, int8_t level);
+LITE3D_CEXPORT int32_t lite3d_texture_unit_level_depth(const lite3d_texture_unit *textureUnit, int8_t level);
 
 /* load texture from resource file using Devil */
 /* CUBEFACE description (takes in account for LITE3D_TEXTURE_CUBE textures only )
@@ -225,29 +230,48 @@ LITE3D_CEXPORT int lite3d_texture_unit_allocate(lite3d_texture_unit *textureUnit
     uint32_t textureTarget, int8_t filtering, uint8_t wrapping, uint16_t format,
     uint16_t iformat, int32_t width, int32_t height, int32_t depth, int32_t samples);
 
-/* update specified mipmap level */
+/* Texture pixel operations treat every texture as a set of 2D images except of volume textures (3D).
+   One call updates or reads exactly one 2D image selected by mipmap level and layer.
+   For cubemaps layer selects cubemap face [0..5].
+   For 2D array, shadow array and cubemap array textures layer selects the target 2D slice/layer-face. 
+   
+   depthOff and depth are usable only for volume textures (3D).
+   */
+
+/* update pixels in specified mipmap level and layer */
 LITE3D_CEXPORT int lite3d_texture_unit_set_pixels(lite3d_texture_unit *textureUnit, 
-    int32_t widthOff, int32_t heightOff, int32_t depthOff, 
+    int32_t widthOff, int32_t heightOff, int32_t depthOff,
     int32_t width, int32_t height, int32_t depth,
-    int8_t level, uint8_t cubeface, const void *pixels);
+    int8_t level, uint8_t layer, uint32_t pixelType, const void *pixels);
 
-/* update specified mipmap compressed level */
+/* update compressed pixels in specified mipmap level and layer */
 LITE3D_CEXPORT int lite3d_texture_unit_set_compressed_pixels(lite3d_texture_unit *textureUnit, 
-    int32_t widthOff, int32_t heightOff, int32_t depthOff, 
-    int32_t width, int32_t height, int32_t depth,
-    int8_t level, uint8_t cubeface, size_t pixelsSize, const void *pixels);
+    int8_t level, uint8_t layer, size_t pixelsSize, const void *pixels);
 
-/* get data from mipmap level */
+/* copy texture pixels from one texture object to another */
+/* for cubemap array textures use layer-faces depth */
+LITE3D_CEXPORT int lite3d_texture_unit_copy(const lite3d_texture_unit *srcTextureUnit,
+    const lite3d_texture_unit *dstTextureUnit, int8_t level,
+    int32_t srcWidthOff, int32_t srcHeightOff, int32_t srcDepthOff,
+    int32_t dstWidthOff, int32_t dstHeightOff, int32_t dstDepthOff,
+    int32_t width, int32_t height, int32_t depth);
+
+/* get pixels from specified mipmap level and layer */
 LITE3D_CEXPORT int lite3d_texture_unit_get_pixels(const lite3d_texture_unit *textureUnit, 
-    int8_t level, uint8_t cubeface, void *pixels);
+    int32_t widthOff, int32_t heightOff,
+    int32_t width, int32_t height,
+    int8_t level, int32_t layer, uint32_t pixelType, void *pixels, size_t size);
 LITE3D_CEXPORT int lite3d_texture_unit_get_compressed_pixels(const lite3d_texture_unit *textureUnit, 
-    int8_t level, uint8_t cubeface, void *pixels);
+    int8_t level, int32_t layer, void *pixels, size_t size);
 
-/* size of mipmap levels */
-LITE3D_CEXPORT int lite3d_texture_unit_get_level_size(const lite3d_texture_unit *textureUnit, 
-    int8_t level, uint8_t cubeface, size_t *size);
-LITE3D_CEXPORT int lite3d_texture_unit_get_compressed_level_size(const lite3d_texture_unit *textureUnit, 
-    int8_t level, uint8_t cubeface, size_t *size);
+/* internal VRAM size of one 2D image at specified mipmap level */
+LITE3D_CEXPORT int lite3d_texture_unit_level_size(const lite3d_texture_unit *textureUnit, 
+    int8_t level, size_t *size);
+/* estimated CPU pixel buffer size of one 2D image at specified mipmap level, depends on pixelType */
+LITE3D_CEXPORT int lite3d_texture_unit_estimated_level_size(const lite3d_texture_unit *textureUnit, 
+    int8_t level, uint32_t pixelType, size_t *size);
+LITE3D_CEXPORT int lite3d_texture_unit_compressed_level_size(const lite3d_texture_unit *textureUnit, 
+    int8_t level, size_t *size);
 /* regenerate mipmaps */
 LITE3D_CEXPORT int lite3d_texture_unit_generate_mipmaps(lite3d_texture_unit *textureUnit);
 
@@ -262,5 +286,8 @@ LITE3D_CEXPORT int lite3d_texture_unit_extract_handle(lite3d_texture_unit *textu
 LITE3D_CEXPORT const char *lite3d_texture_unit_format_string(const lite3d_texture_unit *texture);
 LITE3D_CEXPORT const char *lite3d_texture_unit_target_string(uint32_t textureTarget);
 LITE3D_CEXPORT const char *lite3d_texture_unit_internal_format_string(const lite3d_texture_unit *texture);
+
+/* set debug label to texture, has no significant overhead */
+LITE3D_CEXPORT void lite3d_texture_unit_set_label(const lite3d_texture_unit *textureUnit, const char *label);
 
 #endif
