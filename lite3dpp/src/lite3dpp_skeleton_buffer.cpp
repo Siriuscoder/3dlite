@@ -32,6 +32,7 @@ namespace lite3dpp
         {
             mGlobalSkeletonBuffer = mMain.getResourceManager().
                 queryResourceFromJson<SSBO>("GlobalSkeletonBuffer", "{\"Dynamic\": true}");
+            mGlobalSkeletonBuffer->pin(true);
         }
 
         SDL_assert(mGlobalSkeletonBuffer);

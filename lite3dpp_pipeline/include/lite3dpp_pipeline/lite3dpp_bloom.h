@@ -27,7 +27,7 @@ class LITE3DPP_PIPELINE_EXPORT BloomEffect : public SceneObserver, public Noncop
 {
 public:
 
-    BloomEffect(Main& main, const String &pipelineName, const String &cameraName, const ConfigurationReader &pipelineConfig);
+    BloomEffect(Main& main, PipelineBase &pipeline, const String &cameraName);
     ~BloomEffect();
 
     void initialize();
@@ -47,6 +47,7 @@ private:
 private:
 
     Main& mMain;
+    PipelineBase& mPipeline;
     String mPipelineName;
     String mCameraName;
     String mShaderPackage;

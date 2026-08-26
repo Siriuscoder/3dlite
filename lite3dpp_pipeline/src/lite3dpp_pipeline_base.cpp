@@ -237,7 +237,7 @@ namespace lite3dpp_pipeline {
         if (!getMain().getResourceManager().resourceExists("BigTriangle.mesh"))
         {
             getMain().getResourceManager().queryResourceFromJson<Mesh>("BigTriangle.mesh",
-                ConfigurationWriter().set(L"Model", "BigTriangle").set(L"Dynamic", false).write());
+                ConfigurationWriter().set(L"Model", "BigTriangle").set(L"Dynamic", false).write(), this);
         }
     }
 
@@ -260,6 +260,7 @@ namespace lite3dpp_pipeline {
             mLTCLut01 = getMain().getResourceManager().queryResourceFromJson<TextureImage>(lutName1,
                 textureConfig.write());
             mLTCLut01->setPixels(ltc_lut_1);
+            mLTCLut01->pin(true);
         }
         else
         {
@@ -271,6 +272,7 @@ namespace lite3dpp_pipeline {
             mLTCLut02 = getMain().getResourceManager().queryResourceFromJson<TextureImage>(lutName2,
                 textureConfig.write());
             mLTCLut02->setPixels(ltc_lut_2);
+            mLTCLut02->pin(true);
         }
         else
         {
@@ -294,7 +296,7 @@ namespace lite3dpp_pipeline {
             .set(L"TextureFormat", "DEPTH");
 
         mDepthTexture = getMain().getResourceManager().queryResourceFromJson<TextureImage>(depthTextureName, 
-            depthTextureConfig.write());
+            depthTextureConfig.write(), this);
         mResourcesList.emplace_back(mDepthTexture->getName());
 
         ConfigurationWriter depthPassConfig;
@@ -307,7 +309,7 @@ namespace lite3dpp_pipeline {
                 .set(L"TextureName", depthTextureName));
 
         mDepthPass = getMain().getResourceManager().queryResourceFromJson<TextureRenderTarget>(
-            getName() + "_" + cameraName + "_DepthPass", depthPassConfig.write());
+            getName() + "_" + cameraName + "_DepthPass", depthPassConfig.write(), this);
         mResourcesList.emplace_back(mDepthPass->getName());
 
         ConfigurationWriter depthPassGeneratedConfig;
@@ -340,7 +342,7 @@ namespace lite3dpp_pipeline {
             return;
         }
 
-        mShadowManager = std::make_unique<ShadowManager>(getMain(), getName(), pipelineConfig);
+        mShadowManager = std::make_unique<ShadowManager>(getMain(), *this);
         mShadowManager->initialize(getName(), pipelineConfig.getString(L"ShaderPackage"));
 
         sceneGenerator.addRenderTarget(cameraName, mShadowManager->getShadowPass().getName(), ConfigurationWriter()
@@ -359,7 +361,7 @@ namespace lite3dpp_pipeline {
     {
         if (pipelineConfig.has(L"BLOOM"))
         {
-            mBloomEffect = std::make_unique<BloomEffect>(getMain(), getName(), cameraName, pipelineConfig);
+            mBloomEffect = std::make_unique<BloomEffect>(getMain(), *this, cameraName);
             mBloomEffect->initialize();
         }
     }
@@ -376,7 +378,7 @@ namespace lite3dpp_pipeline {
             .set(L"DepthOutput", false));
             
         mPostProcessStage = getMain().getResourceManager().queryResourceFromJson<Scene>(
-            getName() + "_" + cameraName + "_PostProcessStage", stageGenerator.generate().write());
+            getName() + "_" + cameraName + "_PostProcessStage", stageGenerator.generate().write(), this);
         mResourcesList.emplace_back(mPostProcessStage->getName());
 
         SDL_assert(mCombinedTexture);
@@ -432,7 +434,7 @@ namespace lite3dpp_pipeline {
 
         // Создаем шейдер постпроцессинга финального изображения
         mPostProcessStageMaterial = getMain().getResourceManager().queryResourceFromJson<Material>(
-            getName() + "_" + cameraName + "_PostProcessStage.material", postProcessMaterialConfig.write());
+            getName() + "_" + cameraName + "_PostProcessStage.material", postProcessMaterialConfig.write(), this);
         mResourcesList.emplace_back(mPostProcessStageMaterial->getName());
 
         // Добавляем шейдер постпроцессинга финального изображения 
@@ -454,11 +456,13 @@ namespace lite3dpp_pipeline {
         // Создаем built-in Skybox mesh, если еще не создан 
         if (!getMain().getResourceManager().resourceExists("SkyBox.mesh"))
         {
-            getMain().getResourceManager().queryResourceFromJson<Mesh>("SkyBox.mesh",
+            auto mesh = getMain().getResourceManager().queryResourceFromJson<Mesh>("SkyBox.mesh",
                 ConfigurationWriter().set(L"Model", "Skybox")
                     .set(L"Dynamic", false)
                     .set(L"Size", kmVec3 { 2.0f, 2.0f, 2.0f})
                     .write());
+
+            mesh->pin(true);
         }
     }
 
@@ -474,7 +478,7 @@ namespace lite3dpp_pipeline {
             .set(L"InternalFormat", "RGB32F");
 
         mCombined2Texture = getMain().getResourceManager().queryResourceFromJson<TextureImage>(
-            getName() + "_" + cameraName + "_combined_copy.texture", combinedTextureConfig.write());
+            getName() + "_" + cameraName + "_combined_copy.texture", combinedTextureConfig.write(), this);
         mResourcesList.emplace_back(mCombined2Texture->getName());
     }
 
@@ -564,14 +568,14 @@ namespace lite3dpp_pipeline {
         }
 
         mSkyBoxStage = getMain().getResourceManager().queryResourceFromJson<Scene>(
-            getName() + "_" + cameraName + "_SkyBoxStage", stageGenerator.generate().write());
+            getName() + "_" + cameraName + "_SkyBoxStage", stageGenerator.generate().write(), this);
         mResourcesList.emplace_back(mSkyBoxStage->getName());
 
         skyBoxMaterialConfig.set(L"Passes", passes);
 
         // Создаем шейдер skybox
         mSkyBoxStageMaterial = getMain().getResourceManager().queryResourceFromJson<Material>(
-            getName() + "_" + cameraName + "_SkyBoxStage.material", skyBoxMaterialConfig.write());
+            getName() + "_" + cameraName + "_SkyBoxStage.material", skyBoxMaterialConfig.write(), this);
         mResourcesList.emplace_back(mSkyBoxStageMaterial->getName());
 
         // Добавляем шейдер skybox
@@ -586,8 +590,8 @@ namespace lite3dpp_pipeline {
             return;
         }
 
-        mIBL = std::make_unique<IBLMultiProbe>(getMain(), getName(), mShaderPackage);
-        mIBL->initialize(pipelineConfig);
+        mIBL = std::make_unique<IBLMultiProbe>(getMain(), *this);
+        mIBL->initialize();
 
         sceneGenerator.addRenderTarget(cameraName, mIBL->getPass()->getName(), ConfigurationWriter()
             .set(L"Priority", static_cast<int>(RenderPassStagePriority::ForwardStage))
@@ -603,7 +607,7 @@ namespace lite3dpp_pipeline {
 
     void PipelineBase::createMainScene(const String& name, const String &sceneConfig)
     {
-        mMainScene = getMain().getResourceManager().queryResourceFromJson<Scene>(name, sceneConfig);
+        mMainScene = getMain().getResourceManager().queryResourceFromJson<Scene>(name, sceneConfig, this);
     }
 
     void PipelineBase::updateExposure()

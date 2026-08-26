@@ -37,6 +37,7 @@ public:
 
     static constexpr const uint32_t MaxProbeCount = 256;
     static constexpr const int32_t DefaultProbeResolution = 256;
+    static constexpr const char GGXLUTName[] = "IntergratedGGXLUT.texture";
 
 #pragma pack(push, 16)
     struct ProbeRawEntity
@@ -81,10 +82,10 @@ public:
         EnvProbeFlags mFlags;
     };
 
-    IBLMultiProbe(Main& main, const String& pipelineName, const String& shaderPackage);
+    IBLMultiProbe(Main &main, PipelineBase &pipeline);
     virtual ~IBLMultiProbe();
 
-    void initialize(const ConfigurationReader &pipelineConfig);
+    void initialize();
     inline RenderTarget* getPass() { return mEnvironmentProbePass; }
     inline const std::string &getProbeBufferName() const { return mProbesBuffer->getName(); }
     inline const std::string &getProbeIndexBufferName() const { return mProbesIndexBuffer->getName(); }
@@ -108,6 +109,7 @@ protected:
 protected:
 
     Main& mMain;
+    PipelineBase &mPipeline;
     uint32_t mProbeCount = 1;
     uint32_t mMaxProbeBatchCount = 0;
     String mPipelineName;

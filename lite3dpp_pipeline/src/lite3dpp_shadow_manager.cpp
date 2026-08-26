@@ -20,6 +20,7 @@
 #include <algorithm>
 #include <SDL_assert.h>
 #include <lite3dpp_pipeline/lite3dpp_generator.h>
+#include <lite3dpp_pipeline/lite3dpp_pipeline_base.h>
 
 namespace lite3dpp {
 namespace lite3dpp_pipeline {
@@ -122,10 +123,11 @@ namespace lite3dpp_pipeline {
         invalidate();
     }
 
-    ShadowManager::ShadowManager(Main& main, const String& pipelineName, const ConfigurationReader& conf) : 
-        mMain(main)
+    ShadowManager::ShadowManager(Main& main, PipelineBase &pipeline) : 
+        mMain(main),
+        mPipeline(pipeline)
     {
-        auto shadowConf = conf.getObject(L"ShadowMaps");
+        auto shadowConf = mPipeline.getConfig().getObject(L"ShadowMaps");
         mShadowsCastersMaxCount = shadowConf.getInt(L"MaxCount", 1);
         // Важно выделить вектор заранее, чтобы реалокаций небыло
         mShadowCasters.reserve(mShadowsCastersMaxCount);
@@ -353,9 +355,9 @@ namespace lite3dpp_pipeline {
         calculateLimits();
 
         mShadowMatrixBuffer = mMain.getResourceManager().queryResourceFromJson<UBO>(pipelineName + "_ShadowMatrixBuffer",
-            "{\"Dynamic\": true}");
+            "{\"Dynamic\": true}", &mPipeline);
         mShadowIndexBuffer = mMain.getResourceManager().queryResourceFromJson<UBO>(pipelineName + "_ShadowIndexBuffer",
-            "{\"Dynamic\": true}");
+            "{\"Dynamic\": true}", &mPipeline);
 
         mShadowMatrixBuffer->extendBufferBytes(sizeof(kmMat4) * mShadowsCastersMaxCount);
         mShadowIndexBuffer->extendBufferBytes(sizeof(IndexVector::value_type) * (mShadowsCastersMaxCount + 1));
@@ -401,7 +403,8 @@ namespace lite3dpp_pipeline {
             .set(L"Width", mWidth)
             .set(L"Depth", mShadowsCastersMaxCount);
 
-        mShadowMap = mMain.getResourceManager().queryResourceFromJson<TextureImage>(shadowMapName, shadowTextureConfig.write());
+        mShadowMap = mMain.getResourceManager().queryResourceFromJson<TextureImage>(shadowMapName, 
+            shadowTextureConfig.write(), &mPipeline);
 
         ConfigurationWriter shadowRenderTargetConfig;
         shadowRenderTargetConfig.set(L"Width", mWidth)
@@ -416,7 +419,7 @@ namespace lite3dpp_pipeline {
                 .set(L"TextureName", shadowMapName));
 
         mShadowPass = mMain.getResourceManager().queryResourceFromJson<TextureRenderTarget>(pipelineName + "_ShadowPass",
-            shadowRenderTargetConfig.write());
+            shadowRenderTargetConfig.write(), &mPipeline);
         mShadowPass->addObserver(this);
     }
 
@@ -437,7 +440,7 @@ namespace lite3dpp_pipeline {
             .set(L"RenderOpaque", true));
             
         mCleanStage = mMain.getResourceManager().queryResourceFromJson<Scene>(pipelineName + "_ShadowCleanStage",
-            stageGenerator.generate().write());
+            stageGenerator.generate().write(), &mPipeline);
 
         ConfigurationWriter cleanStageMaterialConfig;
         cleanStageMaterialConfig.set(L"Passes", stl<ConfigurationWriter>::vector {
@@ -457,7 +460,7 @@ namespace lite3dpp_pipeline {
         
         // Создаем служебный шейдер отвечающий за очистку теневых карт
         mCleanStageMaterial = mMain.getResourceManager().queryResourceFromJson<Material>(
-            pipelineName + "_ShadowCleanStage.material", cleanStageMaterialConfig.write());
+            pipelineName + "_ShadowCleanStage.material", cleanStageMaterialConfig.write(), &mPipeline);
 
         // Добавляем шейдер очистки на сцену 
         mCleanStage->addObject("ShadowCleanBigTri", BigTriObjectGenerator(mCleanStageMaterial->getName()).generate());

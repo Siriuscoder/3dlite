@@ -20,13 +20,16 @@
 #include <algorithm>
 #include <SDL_assert.h>
 
+#include <lite3dpp_pipeline/lite3dpp_pipeline_base.h>
+
 namespace lite3dpp {
 namespace lite3dpp_pipeline {
 
-IBLMultiProbe::IBLMultiProbe(Main& mMain, const String& pipelineName, const String& shaderPackage) : 
+IBLMultiProbe::IBLMultiProbe(Main& mMain, PipelineBase &pipeline) : 
     mMain(mMain),
-    mPipelineName(pipelineName),
-    mShaderPackage(shaderPackage)
+    mPipeline(pipeline),
+    mPipelineName(pipeline.getName()),
+    mShaderPackage(pipeline.getConfig().getString(L"ShaderPackage"))
 {
     mMain.addObserver(this);
 }
@@ -41,15 +44,23 @@ IBLMultiProbe::~IBLMultiProbe()
     mMain.removeObserver(this);
 }
 
-void IBLMultiProbe::initialize(const ConfigurationReader &pipelineConfig)
+void IBLMultiProbe::initialize()
 {
-    ConfigurationReader config = pipelineConfig.getObject(L"GI");
+    ConfigurationReader config = mPipeline.getConfig().getObject(L"GI");
     mProbeCount = config.getInt(L"MaxCount", 1);
     mzNear = config.getDouble(L"ProbeZNearClip", 0.0f);
     mzFar = config.getDouble(L"ProbeZFarClip", 1.0f);
 
     calculateProbeBatchCount();
-    integrateGGX();
+
+    if (!mMain.getResourceManager().resourceExists(GGXLUTName))
+    {
+        integrateGGX();
+    }
+    else
+    {
+        mBrdfLUT = mMain.getResourceManager().queryResource<TextureImage>(GGXLUTName);
+    }
 
     mProbesBuffer = createBuffer("_EnvProbesData", sizeof(ProbeRawEntity) * mProbeCount);
     // Массивы в std140 всегда выравниваются по границе 16 байт, даже если тип данных (например, int) 
@@ -76,8 +87,9 @@ void IBLMultiProbe::integrateGGX()
         .set(L"TextureFormat", "RG")
         .set(L"InternalFormat", "RG16F");
 
-    mBrdfLUT = mMain.getResourceManager().queryResourceFromJson<TextureImage>("IntergratedGGXLUT.texture", 
+    mBrdfLUT = mMain.getResourceManager().queryResourceFromJson<TextureImage>(GGXLUTName, 
         IntergratedGGXLUTConfig.write());
+    mBrdfLUT->pin(true);
 
     ConfigurationWriter shaderParams;
     shaderParams.set(L"Program", ConfigurationWriter()
@@ -91,7 +103,7 @@ void IBLMultiProbe::integrateGGX()
     });
 
     auto intergrateGGXShader = mMain.getResourceManager().queryResourceFromJson<ComputeShader>("IntergrateGGX.comp",
-        shaderParams.write());
+        shaderParams.write(), &mPipeline);
 
     // 16 нитей в группе
     const uint32_t groupsCount = (LUTSize + 16 - 1) / 16;
@@ -131,7 +143,7 @@ void IBLMultiProbe::calculateProbeBatchCount()
 VBOResource* IBLMultiProbe::createBuffer(const String& bufferName, size_t size)
 {
     auto buffer = mMain.getResourceManager().queryResourceFromJson<UBO>(mPipelineName + bufferName,
-        "{\"Dynamic\": true}");
+        "{\"Dynamic\": true}", &mPipeline);
     
     mResourcesList.emplace_back(buffer->getName());
     // Выделяем место под 6 * N матриц, нужны будут для рендера сторон массива кубических текстур
@@ -155,7 +167,7 @@ void IBLMultiProbe::createProbePass(const ConfigurationReader &config)
         .set(L"InternalFormat", "RGB16F");
 
     mEnvironmentProbe = mMain.getResourceManager().queryResourceFromJson<TextureImage>(
-        mPipelineName + "_EnvironmentMultiProbe.texture", mapConfig.write());
+        mPipelineName + "_EnvironmentMultiProbe.texture", mapConfig.write(), &mPipeline);
     mResourcesList.emplace_back(mEnvironmentProbe->getName());
 
     // Создание массива кубических текстур глубины для рендера сцены
@@ -164,7 +176,7 @@ void IBLMultiProbe::createProbePass(const ConfigurationReader &config)
         .set(L"InternalFormat", "");
 
     mEnvironmentDepth = mMain.getResourceManager().queryResourceFromJson<TextureImage>(
-        mPipelineName + "_EnvironmentMultiProbeDepth.texture", mapConfig.write());
+        mPipelineName + "_EnvironmentMultiProbeDepth.texture", mapConfig.write(), &mPipeline);
     mResourcesList.emplace_back(mEnvironmentDepth->getName());
 
     ConfigurationWriter passConfig;
@@ -184,7 +196,7 @@ void IBLMultiProbe::createProbePass(const ConfigurationReader &config)
             .set(L"TextureName", mEnvironmentDepth->getName()));
 
     mEnvironmentProbePass = mMain.getResourceManager().queryResourceFromJson<TextureRenderTarget>(
-        mPipelineName + "_EnvironmentMultiProbePass", passConfig.write());
+        mPipelineName + "_EnvironmentMultiProbePass", passConfig.write(), &mPipeline);
     mResourcesList.emplace_back(mEnvironmentProbePass->getName());
     mEnvironmentProbePass->addObserver(this);
 }
@@ -205,7 +217,7 @@ void IBLMultiProbe::createPrefilterShader(const ConfigurationReader &config)
         .set(L"InternalFormat", "RGBA16F");
 
     mPrefilteredEnvironment = mMain.getResourceManager().queryResourceFromJson<TextureImage>(
-        mPipelineName + "_PrefilteredEnvironmentMultiProbe.texture", mapConfig.write());
+        mPipelineName + "_PrefilteredEnvironmentMultiProbe.texture", mapConfig.write(), &mPipeline);
     mResourcesList.emplace_back(mPrefilteredEnvironment->getName());
 
     ConfigurationWriter shaderParams;
@@ -229,7 +241,7 @@ void IBLMultiProbe::createPrefilterShader(const ConfigurationReader &config)
     });
 
     mPrefilterEnvironmentShader = mMain.getResourceManager().queryResourceFromJson<ComputeShader>(
-        mPipelineName + "_PrefilterEnvironment.comp", shaderParams.write());
+        mPipelineName + "_PrefilterEnvironment.comp", shaderParams.write(), &mPipeline);
     mResourcesList.emplace_back(mPrefilterEnvironmentShader->getName());
 }
 

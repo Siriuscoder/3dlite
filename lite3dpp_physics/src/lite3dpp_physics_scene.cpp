@@ -26,7 +26,7 @@ namespace lite3dpp_phisics {
 
     PhysicsScene::PhysicsScene(const String &name, const String &path, Main &main) : 
         Scene(name, path, main),
-        mCollisionShapeManager(main)
+        mCollisionShapeManager(main, *this)
     {
         getMain().addObserver(this);
     }

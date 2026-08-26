@@ -34,13 +34,13 @@ namespace lite3dpp
         {
             setMesh(getMain()->getResourceManager().queryResource<Mesh>(
                 meshHelper.getString(L"Name"),
-                meshHelper.getString(L"Mesh")));
+                meshHelper.getString(L"Mesh"), scene));
 
             stl<uint32_t, Material *>::unordered_map materials;
             for (auto &matMap : meshHelper.getObjects(L"MaterialMapping"))
             {
                 materials[matMap.getInt(L"MaterialIndex")] = 
-                    getMain()->getMaterialFactory().createMaterial(
+                    getMain()->getMaterialFactory().createMaterial(scene,
                         matMap.getObject(L"Material").getString(L"Type"),
                         matMap.getObject(L"Material").getString(L"Name"),
                         matMap.getObject(L"Material").getString(L"Material"));

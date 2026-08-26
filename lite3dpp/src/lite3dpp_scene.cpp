@@ -74,9 +74,9 @@ namespace lite3dpp
         if (features & LITE3D_SCENE_FEATURE_MULTIRENDER)
         {
             mInvocationBuffer = getMain().getResourceManager().queryResourceFromJson<SSBO>(getName() + 
-                "_invocationBuffer", "{\"Dynamic\": true}");
+                "_invocationBuffer", "{\"Dynamic\": true}", this);
             mInvocationIndexBuffer = getMain().getResourceManager().queryResourceFromJson<UBO>(getName() + 
-                "_invocationIndexBuffer", "{\"Dynamic\": true}");
+                "_invocationIndexBuffer", "{\"Dynamic\": true}", this);
             
             mScene.invocationBufferGPU = mInvocationBuffer->getPtr();
             mScene.invocationIndexBufferGPU = mInvocationIndexBuffer->getPtr();
@@ -95,11 +95,11 @@ namespace lite3dpp
                 /* default name of lighting buffer is scene name + "LightingBufferObject" */
                 mLightingParamsBuffer = getMain().getResourceManager().
                     queryResourceFromJson<SSBO>(getName() + "_lightingBufferObject",
-                    "{\"Dynamic\": true}");
+                    "{\"Dynamic\": true}", this);
                 /* 2-bytes index, about 16k light sources support  */
                 mLightingIndexBuffer = getMain().getResourceManager().
                     queryResourceFromJson<SSBO>(getName() + "_lightingIndexBuffer",
-                    "{\"Dynamic\": true}");
+                    "{\"Dynamic\": true}", this);
 
                 mMaxLightsCount = std::min(MaxLightCount, static_cast<uint32_t>(SSBOMaxSize / sizeof(lite3d_light_params)));
             }
@@ -108,11 +108,11 @@ namespace lite3dpp
                 /* default name of lighting buffer is scene name + "LightingBufferObject" */
                 mLightingParamsBuffer = getMain().getResourceManager().
                     queryResourceFromJson<UBO>(getName() + "_lightingBufferObject",
-                    "{\"Dynamic\": true}");
+                    "{\"Dynamic\": true}", this);
                 /* 2-bytes index, about 16k light sources support  */
                 mLightingIndexBuffer = getMain().getResourceManager().
                     queryResourceFromJson<UBO>(getName() + "_lightingIndexBuffer",
-                    "{\"Dynamic\": true}");
+                    "{\"Dynamic\": true}", this);
 
                 mMaxLightsCount = std::min(MaxLightCount, static_cast<uint32_t>(UBOMaxSize / sizeof(lite3d_light_params)));
                 ShaderProgram::addGlobalDefinition("LITE3D_MAX_LIGHT_COUNT", std::to_string(mMaxLightsCount));
@@ -137,31 +137,6 @@ namespace lite3dpp
 
     void Scene::unloadImpl()
     {
-        /* release lighting technique buffers */
-        if (mLightingParamsBuffer)
-        {
-            getMain().getResourceManager().releaseResource(mLightingParamsBuffer->getName());
-            mLightingParamsBuffer = nullptr;
-        }
-
-        if (mLightingIndexBuffer)
-        {
-            getMain().getResourceManager().releaseResource(mLightingIndexBuffer->getName());
-            mLightingIndexBuffer = nullptr;
-        }
-
-        if (mInvocationBuffer)
-        {
-            getMain().getResourceManager().releaseResource(mInvocationBuffer->getName());
-            mInvocationBuffer = nullptr;
-        }
-
-        if (mInvocationIndexBuffer)
-        {
-            getMain().getResourceManager().releaseResource(mInvocationIndexBuffer->getName());
-            mInvocationIndexBuffer = nullptr;
-        }
-
         detachAllCameras();
         removeAllObjects();
         lite3d_scene_purge(&mScene);
@@ -351,7 +326,7 @@ namespace lite3dpp
                 {
                     renderTarget = getMain().getResourceManager().queryResource<TextureRenderTarget>(
                         renderTargetJson.getString(L"Name"),
-                        renderTargetJson.getString(L"Path"));
+                        renderTargetJson.getString(L"Path"), this);
                 }
                 
                 uint32_t renderFlags = 0;

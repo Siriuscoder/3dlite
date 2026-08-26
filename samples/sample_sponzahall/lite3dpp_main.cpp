@@ -49,12 +49,14 @@ public:
         cfg.set(L"PreallocIndexSize", 75 * 1024 * 1024);
 
         // Для ускорения загруки выделим место под геометрию заранее
-        getMain().getResourceManager().queryResourceFromJson<lite3dpp::MeshPartition>("sponza.mesh_partition", cfg.write());
+        getMain().getResourceManager().queryResourceFromJson<lite3dpp::MeshPartition>("sponza.mesh_partition", 
+            cfg.write());
 
         cfg.set(L"PreallocVertexSize", 2 * 1024 * 1024);
         cfg.set(L"PreallocIndexSize", 0);
         // Для ускорения загруки выделим место под геометрию заранее
-        getMain().getResourceManager().queryResourceFromJson<lite3dpp::MeshPartition>("sponza.mesh_partition_bouding_box", cfg.write());
+        getMain().getResourceManager().queryResourceFromJson<lite3dpp::MeshPartition>("sponza.mesh_partition_bouding_box", 
+            cfg.write());
     }
 
     void createScene() override

@@ -38,7 +38,7 @@ namespace lite3dpp_phisics {
             CollisionShapeTypeMaxCount
         };
 
-        PhysicsTriangleCollisionShape(Main &main, const std::string_view& name, TriangleCollisionShapeType type);
+        PhysicsTriangleCollisionShape(Main &main, Scene &scene, const std::string_view& name, TriangleCollisionShapeType type);
         ~PhysicsTriangleCollisionShape();
 
         btCollisionShape *getCollisionShape();
@@ -64,6 +64,7 @@ namespace lite3dpp_phisics {
     private:
 
         Main &mMain;
+        Scene &mScene;
         String mName;
         TriangleCollisionShapeType mCollisionShapeType;
         std::unique_ptr<btCollisionShape> mCollisionShape;
@@ -79,7 +80,7 @@ namespace lite3dpp_phisics {
         using CollisionsShapeCache = stl<String, PhysicsTriangleCollisionShape::Ptr>::unordered_map;
         using CollisionsShapeCacheByType = stl<CollisionsShapeCache>::vector;
 
-        PhysicsCollisionShapeManager(Main &main);
+        PhysicsCollisionShapeManager(Main &main, Scene &scene);
         ~PhysicsCollisionShapeManager() = default;
 
         btCollisionShape *getCollisionShape(PhysicsTriangleCollisionShape::TriangleCollisionShapeType type,
@@ -95,6 +96,7 @@ namespace lite3dpp_phisics {
     private:
 
         Main &mMain;
+        Scene &mScene;
         CollisionsShapeCacheByType mCache;
     };
 }}

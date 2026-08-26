@@ -102,7 +102,7 @@ public:
         ShadowCasters mVisibility;
     };
 
-    ShadowManager(Main& main, const String& pipelineName, const ConfigurationReader& pipelineConf);
+    ShadowManager(Main& main, PipelineBase &pipeline);
     ~ShadowManager();
 
     void initialize(const String& pipelineName, const String& shaderPackage);
@@ -156,6 +156,7 @@ protected:
 private:
 
     Main& mMain;
+    PipelineBase &mPipeline;
     uint32_t mShadowsCastersMaxCount;
     uint32_t mWidth, mHeight;
     RenderTarget* mShadowPass = nullptr;

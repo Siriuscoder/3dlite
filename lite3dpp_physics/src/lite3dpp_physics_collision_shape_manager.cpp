@@ -24,8 +24,9 @@
 namespace lite3dpp {
 namespace lite3dpp_phisics {
 
-    PhysicsCollisionShapeManager::PhysicsCollisionShapeManager(Main &main) : 
-        mMain(main)
+    PhysicsCollisionShapeManager::PhysicsCollisionShapeManager(Main &main, Scene &scene) : 
+        mMain(main),
+        mScene(scene)
     {
         mCache.resize(PhysicsTriangleCollisionShape::CollisionShapeTypeMaxCount);
     }
@@ -48,7 +49,7 @@ namespace lite3dpp_phisics {
             }
         }
 
-        auto shapeItem = std::make_shared<PhysicsTriangleCollisionShape>(mMain, name, type);
+        auto shapeItem = std::make_shared<PhysicsTriangleCollisionShape>(mMain, mScene, name, type);
         shapeItem->loadShape(collisionShapeConf);
 
         mCache[type].emplace(name, shapeItem);
@@ -96,9 +97,10 @@ namespace lite3dpp_phisics {
         }
     }
 
-    PhysicsTriangleCollisionShape::PhysicsTriangleCollisionShape(Main &main, const std::string_view& name, 
+    PhysicsTriangleCollisionShape::PhysicsTriangleCollisionShape(Main &main, Scene &scene, const std::string_view& name, 
         TriangleCollisionShapeType type) : 
         mMain(main),
+        mScene(scene),
         mName(name),
         mCollisionShapeType(type)
     {}
@@ -166,7 +168,7 @@ namespace lite3dpp_phisics {
     {
         /* load collision mesh into GPU memory */
         auto rawMesh = mMain.getResourceManager().queryResource<Mesh>(getName(),
-            conf.getObject(L"CollisionMesh").getString(L"Mesh"));
+            conf.getObject(L"CollisionMesh").getString(L"Mesh"), &mScene);
 
         if (rawMesh->chunksCount() == 0)
         {

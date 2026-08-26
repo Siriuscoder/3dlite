@@ -65,7 +65,7 @@ namespace lite3dpp
 
             ConfigurationReader programJson = passJson.getObject(L"Program");
             setPassProgram(passNo, getMain().getResourceManager().queryResource<ShaderProgram>(programJson.getString(L"Name"),
-                programJson.getString(L"Path")));
+                programJson.getString(L"Path"), this));
             
             String bMode = passJson.getUpperString(L"BlendingMode", "RGB_LINEAR_SOURCE_ALPHA");
             if (bMode == "RGB_LINEAR_SOURCE_ALPHA")
@@ -160,19 +160,19 @@ namespace lite3dpp
                 else if(paramType == "sampler")
                     setSamplerParameter(passNo, paramName, 
                         *getMain().getResourceManager().queryResource<TextureImage>(uniformParamJson.getString(L"TextureName"),
-                        uniformParamJson.getString(L"TexturePath")), scope == "global");
+                        uniformParamJson.getString(L"TexturePath"), this), scope == "global");
                 else if(paramType == "samplerBuffer")
                     setSamplerParameter(passNo, paramName, 
                         *getMain().getResourceManager().queryResource<TextureBuffer>(uniformParamJson.getString(L"TextureName"),
-                        uniformParamJson.getString(L"TexturePath")), scope == "global");
+                        uniformParamJson.getString(L"TexturePath"), this), scope == "global");
                 else if(paramType == "SSBO")
                     setSSBOParameter(passNo, paramName, 
                         *getMain().getResourceManager().queryResource<SSBO>(uniformParamJson.getString(L"SSBOName"),
-                        uniformParamJson.getString(L"SSBOPath")), scope == "global");
+                        uniformParamJson.getString(L"SSBOPath"), this), scope == "global");
                 else if(paramType == "UBO")
                     setUBOParameter(passNo, paramName, 
                         *getMain().getResourceManager().queryResource<UBO>(uniformParamJson.getString(L"UBOName"),
-                        uniformParamJson.getString(L"UBOPath")), scope == "global");
+                        uniformParamJson.getString(L"UBOPath"), this), scope == "global");
                 else
                     LITE3D_THROW("Material \"" << getName() << "\": unknown parameter type \"" << paramType << "\"");
             }
