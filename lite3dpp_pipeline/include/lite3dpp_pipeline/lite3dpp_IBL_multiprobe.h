@@ -124,7 +124,6 @@ protected:
     TextureImage *mPrefilteredEnvironment = nullptr;
     stl<EnvProbe>::vector mProbes;
     stl<ProbeIndexRawEntity>::vector mProbesIndex;
-    stl<String>::list mResourcesList;
     float mzNear = 0.0, mzFar = 1.0;
 };
 

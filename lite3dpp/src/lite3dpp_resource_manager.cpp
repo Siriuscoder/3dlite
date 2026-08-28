@@ -68,15 +68,18 @@ namespace lite3dpp
         }
     }
 
-    void ResourceManager::releaseAllResources()
+    size_t ResourceManager::releaseAllResources()
     {
+        size_t count = mResources.size();
         Resources::iterator it = mResources.begin();
+
         for(; it != mResources.end(); ++it)
         {
             it->second->unload();
         }
 
         mResources.clear();
+        return count;
     }
 
     void ResourceManager::releaseResource(const String &name)
@@ -89,23 +92,28 @@ namespace lite3dpp
         }
     }
 
-    void ResourceManager::releaseUnloadedResources()
+    size_t ResourceManager::releaseUnloadedResources()
     {
+        size_t count = 0;
         Resources::iterator it = mResources.begin();
-        for(; it != mResources.end(); )
+        for(; it != mResources.end();)
         {
             if (it->second->getState() == AbstractResource::ResourceState::UNLOADED)
             {
                 it = mResources.erase(it);
+                count++;
                 continue;
             }
 
             it++;
         }
+
+        return count;
     }
 
-    void ResourceManager::releaseOrphanedResources()
+    size_t ResourceManager::releaseOrphanedResources()
     {
+        size_t count = 0;
         Resources::iterator it = mResources.begin();
         for(; it != mResources.end(); )
         {
@@ -113,11 +121,14 @@ namespace lite3dpp
             {
                 it->second->unload();
                 it = mResources.erase(it);
+                count++;
                 continue;
             }
 
             it++;
         }
+
+        return count;
     }
     
     void ResourceManager::dropFileCache()

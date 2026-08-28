@@ -224,9 +224,9 @@ namespace lite3dpp
         ResourceManager(Main &main);
         virtual ~ResourceManager();
 
-        void releaseAllResources();
-        void releaseUnloadedResources();
-        void releaseOrphanedResources();
+        size_t releaseAllResources();
+        size_t releaseUnloadedResources();
+        size_t releaseOrphanedResources();
         void releaseResource(const String &name);
         void dropFileCache();
         void dropFileCache(const String &location);

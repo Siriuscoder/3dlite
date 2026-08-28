@@ -67,7 +67,6 @@ namespace lite3dpp_pipeline {
             
         mLightComputeStage = getMain().getResourceManager().queryResourceFromJson<Scene>(getName() + "_LightComputeStage",
             stageGenerator.generate().write(), this);
-        mResourcesList.emplace_back(mLightComputeStage->getName());
 
         ConfigurationWriter lightComputeMaterialConfig;
         stl<ConfigurationWriter>::vector lightComputeMaterialUniforms;
@@ -205,7 +204,6 @@ namespace lite3dpp_pipeline {
         // Создаем служебный шейдер отвечающий за расчет освещения в экранном пространстве
         mLightComputeStageMaterial = getMain().getResourceManager().queryResourceFromJson<Material>(
             getName() + "_LightComputeStage.material", lightComputeMaterialConfig.write(), this);
-        mResourcesList.emplace_back(mLightComputeStageMaterial->getName());
 
         // Добавляем шейдер расчета освещения в экранном пространстве
         mLightComputeStage->addObject("LightComputeBigTri", 
@@ -228,7 +226,6 @@ namespace lite3dpp_pipeline {
 
         mGBufferTexture = getMain().getResourceManager().queryResourceFromJson<TextureImage>(
             getName() + "_" + cameraName + "_geometry_data.texture", gBufferTextureConfig.write(), this);
-        mResourcesList.emplace_back(mGBufferTexture->getName());
 
         ConfigurationWriter gBufferTargetConfig;
         stl<ConfigurationWriter>::vector gBufferColorAttachmentsConfig;
@@ -253,7 +250,6 @@ namespace lite3dpp_pipeline {
 
         mGBufferPass = getMain().getResourceManager().queryResourceFromJson<TextureRenderTarget>(
             getName() + "_" + cameraName + "_GBufferPass", gBufferTargetConfig.write(), this);
-        mResourcesList.emplace_back(mGBufferPass->getName());
 
         sceneGenerator.addRenderTarget(cameraName, mGBufferPass->getName(), ConfigurationWriter()
             .set(L"Priority", static_cast<int>(RenderPassStagePriority::GBufferBuildStage))
@@ -282,7 +278,6 @@ namespace lite3dpp_pipeline {
 
         mCombinedTexture = getMain().getResourceManager().queryResourceFromJson<TextureImage>(
             getName() + "_" + cameraName + "_combined.texture", combinedTextureConfig.write(), this);
-        mResourcesList.emplace_back(mCombinedTexture->getName());
 
         SDL_assert(mDepthTexture);
         ConfigurationWriter combinedTargetConfig;
@@ -300,7 +295,6 @@ namespace lite3dpp_pipeline {
 
         mCombinePass = getMain().getResourceManager().queryResourceFromJson<TextureRenderTarget>(
             getName() + "_" + cameraName + "_CombinePass", combinedTargetConfig.write(), this);
-        mResourcesList.emplace_back(mCombinePass->getName());
 
         sceneGenerator.addRenderTarget(cameraName, mCombinePass->getName(), ConfigurationWriter()
             .set(L"Priority", static_cast<int>(RenderPassStagePriority::BlendDecalStage))
@@ -332,7 +326,6 @@ namespace lite3dpp_pipeline {
 
         mSSAOTexture = getMain().getResourceManager().queryResourceFromJson<TextureImage>(
             getName() + "_" + cameraName + "_SSAO.texture", ssaoTextureConfig.write(), this);
-        mResourcesList.emplace_back(mSSAOTexture->getName());
 
         ConfigurationWriter ssaoTargetConfig;
         ssaoTargetConfig
@@ -349,7 +342,6 @@ namespace lite3dpp_pipeline {
 
         mSSAOPass = getMain().getResourceManager().queryResourceFromJson<TextureRenderTarget>(
             getName() + "_" + cameraName + "_SSAOPass", ssaoTargetConfig.write(), this);
-        mResourcesList.emplace_back(mSSAOPass->getName());
 
         BigTriSceneGenerator stageGenerator;
         stageGenerator.addRenderTarget(mSSAOPass->getName(), ConfigurationWriter()
@@ -361,7 +353,6 @@ namespace lite3dpp_pipeline {
             
         mSSAOStage = getMain().getResourceManager().queryResourceFromJson<Scene>(cameraName + "_SSAOStage",
             stageGenerator.generate().write(), this);
-        mResourcesList.emplace_back(mSSAOStage->getName());
 
         SDL_assert(mGBufferTexture);
 
@@ -398,7 +389,6 @@ namespace lite3dpp_pipeline {
         // Создаем служебный шейдер отвечающий за расчет SSAO
         mSSAOStageMaterial = getMain().getResourceManager().queryResourceFromJson<Material>(
             getName() + "_" + cameraName + "_SSAOStage.material", ssaoMaterialConfig.write(), this);
-        mResourcesList.emplace_back(mSSAOStageMaterial->getName());
 
         // Добавляем шейдер расчета SSAO
         mSSAOStage->addObject("SSAOBigTri", BigTriObjectGenerator(mSSAOStageMaterial->getName()).generate());

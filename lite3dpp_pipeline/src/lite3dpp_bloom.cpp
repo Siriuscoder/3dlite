@@ -36,34 +36,6 @@ namespace lite3dpp_pipeline {
         mShaderPackage = pipeline.getConfig().getString(L"ShaderPackage");
     }
 
-    BloomEffect::~BloomEffect()
-    {
-        if (mBloomRernderer)
-        {
-            mMain.getResourceManager().releaseResource(mBloomRernderer->getName());
-        }
-
-        for (auto material : mMaterialChain)
-        {
-            mMain.getResourceManager().releaseResource(material->getName());
-        }
-
-        for (auto texture : mTextureChain)
-        {
-            mMain.getResourceManager().releaseResource(texture->getName());
-            /* Так как в mTextureChain текстуры дублируются, удаляем только до середины */
-            if (texture == mMiddleTexture)
-            {
-                break;
-            }
-        }
-
-        if (mBloomRT)
-        {
-            mMain.getResourceManager().releaseResource(mBloomRT->getName());
-        }
-    }
-
     TextureRenderTarget &BloomEffect::getRenderTarget()
     {
         SDL_assert(mBloomRT);

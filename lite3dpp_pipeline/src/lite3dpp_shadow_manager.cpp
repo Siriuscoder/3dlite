@@ -143,37 +143,7 @@ namespace lite3dpp_pipeline {
     }
 
     ShadowManager::~ShadowManager()
-    {
-        if (mCleanStage)
-        {
-            mMain.getResourceManager().releaseResource(mCleanStage->getName());
-        }
-
-        if (mCleanStageMaterial)
-        {
-            mMain.getResourceManager().releaseResource(mCleanStageMaterial->getName());
-        }
-
-        if (mShadowPass)
-        {
-            mMain.getResourceManager().releaseResource(mShadowPass->getName());
-        }
-
-        if (mShadowMap)
-        {
-            mMain.getResourceManager().releaseResource(mShadowMap->getName());
-        }
-
-        if (mShadowMatrixBuffer)
-        {
-            mMain.getResourceManager().releaseResource(mShadowMatrixBuffer->getName());
-        }
-
-        if (mShadowIndexBuffer)
-        {
-            mMain.getResourceManager().releaseResource(mShadowIndexBuffer->getName());
-        }
-    }
+    {}
 
     ShadowManager::ShadowCaster* ShadowManager::newShadowCaster(LightSceneNode* lightNode)
     {

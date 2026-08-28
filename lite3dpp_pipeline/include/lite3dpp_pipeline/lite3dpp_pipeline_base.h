@@ -91,7 +91,6 @@ namespace lite3dpp_pipeline {
         TextureImage *mLTCLut02 = nullptr;
         Material *mPostProcessStageMaterial = nullptr;
         Material *mSkyBoxStageMaterial = nullptr;
-        stl<String>::list mResourcesList;
 
         float mRandomSeed;
         float mExposureMax = 1.0;

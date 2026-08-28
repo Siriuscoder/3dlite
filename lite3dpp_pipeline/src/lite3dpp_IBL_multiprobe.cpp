@@ -36,11 +36,6 @@ IBLMultiProbe::IBLMultiProbe(Main& mMain, PipelineBase &pipeline) :
 
 IBLMultiProbe::~IBLMultiProbe()
 {
-    for (auto it = mResourcesList.rbegin(); it != mResourcesList.rend(); ++it)
-    {
-        mMain.getResourceManager().releaseResource(*it);
-    }
-
     mMain.removeObserver(this);
 }
 
@@ -145,7 +140,6 @@ VBOResource* IBLMultiProbe::createBuffer(const String& bufferName, size_t size)
     auto buffer = mMain.getResourceManager().queryResourceFromJson<UBO>(mPipelineName + bufferName,
         "{\"Dynamic\": true}", &mPipeline);
     
-    mResourcesList.emplace_back(buffer->getName());
     // Выделяем место под 6 * N матриц, нужны будут для рендера сторон массива кубических текстур
     buffer->extendBufferBytes(size);
     return buffer;
@@ -168,7 +162,6 @@ void IBLMultiProbe::createProbePass(const ConfigurationReader &config)
 
     mEnvironmentProbe = mMain.getResourceManager().queryResourceFromJson<TextureImage>(
         mPipelineName + "_EnvironmentMultiProbe.texture", mapConfig.write(), &mPipeline);
-    mResourcesList.emplace_back(mEnvironmentProbe->getName());
 
     // Создание массива кубических текстур глубины для рендера сцены
     mapConfig.set(L"Filtering", "None")
@@ -177,7 +170,6 @@ void IBLMultiProbe::createProbePass(const ConfigurationReader &config)
 
     mEnvironmentDepth = mMain.getResourceManager().queryResourceFromJson<TextureImage>(
         mPipelineName + "_EnvironmentMultiProbeDepth.texture", mapConfig.write(), &mPipeline);
-    mResourcesList.emplace_back(mEnvironmentDepth->getName());
 
     ConfigurationWriter passConfig;
     passConfig.set(L"BackgroundColor", kmVec4 { 0.0f, 0.0f, 0.0f, 1.0f })
@@ -197,7 +189,6 @@ void IBLMultiProbe::createProbePass(const ConfigurationReader &config)
 
     mEnvironmentProbePass = mMain.getResourceManager().queryResourceFromJson<TextureRenderTarget>(
         mPipelineName + "_EnvironmentMultiProbePass", passConfig.write(), &mPipeline);
-    mResourcesList.emplace_back(mEnvironmentProbePass->getName());
     mEnvironmentProbePass->addObserver(this);
 }
 
@@ -218,7 +209,6 @@ void IBLMultiProbe::createPrefilterShader(const ConfigurationReader &config)
 
     mPrefilteredEnvironment = mMain.getResourceManager().queryResourceFromJson<TextureImage>(
         mPipelineName + "_PrefilteredEnvironmentMultiProbe.texture", mapConfig.write(), &mPipeline);
-    mResourcesList.emplace_back(mPrefilteredEnvironment->getName());
 
     ConfigurationWriter shaderParams;
     shaderParams.set(L"Program", ConfigurationWriter()
@@ -242,7 +232,6 @@ void IBLMultiProbe::createPrefilterShader(const ConfigurationReader &config)
 
     mPrefilterEnvironmentShader = mMain.getResourceManager().queryResourceFromJson<ComputeShader>(
         mPipelineName + "_PrefilterEnvironment.comp", shaderParams.write(), &mPipeline);
-    mResourcesList.emplace_back(mPrefilterEnvironmentShader->getName());
 }
 
 void IBLMultiProbe::rebuild()

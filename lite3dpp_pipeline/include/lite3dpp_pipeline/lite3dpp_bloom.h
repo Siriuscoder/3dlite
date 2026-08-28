@@ -28,7 +28,6 @@ class LITE3DPP_PIPELINE_EXPORT BloomEffect : public SceneObserver, public Noncop
 public:
 
     BloomEffect(Main& main, PipelineBase &pipeline, const String &cameraName);
-    ~BloomEffect();
 
     void initialize();
     TextureRenderTarget &getRenderTarget();

@@ -35,8 +35,6 @@ namespace lite3dpp_pipeline {
 
     PipelineBase::~PipelineBase()
     {
-        // В случае если загрузка пайплайна не прошла, удаляем что успело загрузиться в деструкторе
-        unloadImpl();
         getMain().removeObserver(this);
     }
 
@@ -202,7 +200,6 @@ namespace lite3dpp_pipeline {
 
         /* Создание главной сцены в самом конце, все остальные обьекты должны быть созданы до этого момента */
         createMainScene(mainSceneGenerator.getName(), mainSceneGenerator.generateFromExisting(sceneGeneratedConfig).write());
-        mResourcesList.emplace_back(mMainScene->getName());
         mMainCamera = getMain().getCamera(mainCameraName);
 
         if (mShadowManager)
@@ -221,15 +218,13 @@ namespace lite3dpp_pipeline {
 
     void PipelineBase::unloadImpl()
     {
-        for (auto it = mResourcesList.rbegin(); it != mResourcesList.rend(); ++it)
-        {
-            getMain().getResourceManager().releaseResource(*it);
-        }
-
-        mResourcesList.clear();
         mShadowManager.reset();
         mBloomEffect.reset();
         mIBL.reset();
+
+        // We are going to unload all resources loaded by this pipeline 
+        unloadBranch();
+        getMain().getResourceManager().releaseUnloadedResources();
     }
 
     void PipelineBase::createBigTriangleMesh()
@@ -297,7 +292,6 @@ namespace lite3dpp_pipeline {
 
         mDepthTexture = getMain().getResourceManager().queryResourceFromJson<TextureImage>(depthTextureName, 
             depthTextureConfig.write(), this);
-        mResourcesList.emplace_back(mDepthTexture->getName());
 
         ConfigurationWriter depthPassConfig;
         depthPassConfig.set(L"BackgroundColor", kmVec4 { 0.0f, 0.0f, 0.0f, 1.0f })
@@ -310,7 +304,6 @@ namespace lite3dpp_pipeline {
 
         mDepthPass = getMain().getResourceManager().queryResourceFromJson<TextureRenderTarget>(
             getName() + "_" + cameraName + "_DepthPass", depthPassConfig.write(), this);
-        mResourcesList.emplace_back(mDepthPass->getName());
 
         ConfigurationWriter depthPassGeneratedConfig;
         depthPassGeneratedConfig
@@ -379,7 +372,6 @@ namespace lite3dpp_pipeline {
             
         mPostProcessStage = getMain().getResourceManager().queryResourceFromJson<Scene>(
             getName() + "_" + cameraName + "_PostProcessStage", stageGenerator.generate().write(), this);
-        mResourcesList.emplace_back(mPostProcessStage->getName());
 
         SDL_assert(mCombinedTexture);
 
@@ -435,7 +427,6 @@ namespace lite3dpp_pipeline {
         // Создаем шейдер постпроцессинга финального изображения
         mPostProcessStageMaterial = getMain().getResourceManager().queryResourceFromJson<Material>(
             getName() + "_" + cameraName + "_PostProcessStage.material", postProcessMaterialConfig.write(), this);
-        mResourcesList.emplace_back(mPostProcessStageMaterial->getName());
 
         // Добавляем шейдер постпроцессинга финального изображения 
         mPostProcessStage->addObject("PostProcessBigTri", 
@@ -479,7 +470,6 @@ namespace lite3dpp_pipeline {
 
         mCombined2Texture = getMain().getResourceManager().queryResourceFromJson<TextureImage>(
             getName() + "_" + cameraName + "_combined_copy.texture", combinedTextureConfig.write(), this);
-        mResourcesList.emplace_back(mCombined2Texture->getName());
     }
 
     void PipelineBase::constructSkyBoxPass(const ConfigurationReader &pipelineConfig, const String &cameraName, 
@@ -569,14 +559,12 @@ namespace lite3dpp_pipeline {
 
         mSkyBoxStage = getMain().getResourceManager().queryResourceFromJson<Scene>(
             getName() + "_" + cameraName + "_SkyBoxStage", stageGenerator.generate().write(), this);
-        mResourcesList.emplace_back(mSkyBoxStage->getName());
 
         skyBoxMaterialConfig.set(L"Passes", passes);
 
         // Создаем шейдер skybox
         mSkyBoxStageMaterial = getMain().getResourceManager().queryResourceFromJson<Material>(
             getName() + "_" + cameraName + "_SkyBoxStage.material", skyBoxMaterialConfig.write(), this);
-        mResourcesList.emplace_back(mSkyBoxStageMaterial->getName());
 
         // Добавляем шейдер skybox
         mSkyBoxStage->addObject("SkyBox", SkyBoxObjectGenerator(mSkyBoxStageMaterial->getName()).generate());
