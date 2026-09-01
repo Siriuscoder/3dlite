@@ -66,6 +66,7 @@ namespace lite3dpp_phisics {
         Main &mMain;
         Scene &mScene;
         String mName;
+        Mesh *mRawCollisionMesh = nullptr;
         TriangleCollisionShapeType mCollisionShapeType;
         std::unique_ptr<btCollisionShape> mCollisionShape;
         std::unique_ptr<btTriangleIndexVertexArray> mCollisionMeshInfo;

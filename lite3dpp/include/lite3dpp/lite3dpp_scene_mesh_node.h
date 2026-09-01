@@ -30,6 +30,7 @@ namespace lite3dpp
         using Ptr = std::shared_ptr<MeshSceneNode>;
         
         MeshSceneNode(const ConfigurationReader &json, SceneNodeBase *parent, Scene *scene);
+        virtual ~MeshSceneNode();
         
         inline Mesh *getMesh()
         { return mMesh; }

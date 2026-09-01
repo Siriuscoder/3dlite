@@ -42,6 +42,7 @@ namespace lite3dpp
         using SceneLights = stl<LightSceneNode *>::unordered_set;
         using SceneCameras = stl<String, Camera*>::unordered_map;
         using LightsIndexesStore = stl<int32_t>::vector;
+        using MeshCounter = stl<Mesh *, int32_t>::unordered_map;
 
         Scene(const String &name, 
             const String &path, Main &main);
@@ -66,6 +67,7 @@ namespace lite3dpp
         void removeAllObjects();
         void removeObject(const String &name);
         void detachAllCameras();
+        void loadObjects(const String &path);
 
         inline const SceneLights &getLights() const 
         { return mLights; }
@@ -82,6 +84,10 @@ namespace lite3dpp
             return mLightingIndexBuffer;
         }
 
+        // this fundtions are used for tracking mesh resource parent  
+        void registerMesh(Mesh *mesh);
+        void unregisterMesh(Mesh *mesh);
+
     protected:
 
         virtual void loadFromConfigImpl(const ConfigurationReader &helper) override;
@@ -92,7 +98,7 @@ namespace lite3dpp
         void validateLightingBuffer(const Camera &camera);
         void addLightSource(LightSceneNode *node);
         void removeLightSource(LightSceneNode *node);
-        
+
         virtual SceneObject::Ptr createObject(const String &name, SceneObjectBase *parent, const kmVec3 &initialPosition, 
             const kmQuaternion &initialRotation, const kmVec3 &initialScale);
 
@@ -135,5 +141,6 @@ namespace lite3dpp
         VBOResource *mInvocationIndexBuffer = nullptr;
         LightsIndexesStore mLightsIndexes;
         uint32_t mMaxLightsCount; 
+        MeshCounter mMeshCounter;
     };
 }

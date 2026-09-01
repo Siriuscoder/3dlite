@@ -107,6 +107,11 @@ namespace lite3dpp_phisics {
 
     PhysicsTriangleCollisionShape::~PhysicsTriangleCollisionShape()
     {
+        if (mRawCollisionMesh)
+        {
+            mScene.unregisterMesh(mRawCollisionMesh);
+        }
+        
         mCollisionShape.reset();
         purgeMeshData();
     }
@@ -167,28 +172,29 @@ namespace lite3dpp_phisics {
     void PhysicsTriangleCollisionShape::setupTriangleMeshArray(const ConfigurationReader& conf)
     {
         /* load collision mesh into GPU memory */
-        auto rawMesh = mMain.getResourceManager().queryResource<Mesh>(getName(),
+        mRawCollisionMesh = mMain.getResourceManager().queryResource<Mesh>(getName(),
             conf.getObject(L"CollisionMesh").getString(L"Mesh"), &mScene);
+        mScene.registerMesh(mRawCollisionMesh);
 
-        if (rawMesh->chunksCount() == 0)
+        if (mRawCollisionMesh->chunksCount() == 0)
         {
             LITE3D_THROW("Collision mesh '" << getName() << "' is empty...");
         }
 
         mCollisionMeshInfo = std::make_unique<btTriangleIndexVertexArray>();
-        mCollisionMeshVertexData.resize(rawMesh->chunksCount());
-        mCollisionMeshIndexData.resize(rawMesh->chunksCount());
+        mCollisionMeshVertexData.resize(mRawCollisionMesh->chunksCount());
+        mCollisionMeshIndexData.resize(mRawCollisionMesh->chunksCount());
 
-        for (size_t i = 0; i < rawMesh->chunksCount(); ++i)
+        for (size_t i = 0; i < mRawCollisionMesh->chunksCount(); ++i)
         {
-            auto chunkEntity = rawMesh->getChunk(i);
+            auto chunkEntity = mRawCollisionMesh->getChunk(i);
 
             /* load chunk from GPU to host memory */
-            rawMesh->getPartition()->vertexBuffer().getDataBuffer(mCollisionMeshVertexData[i], 
+            mRawCollisionMesh->getPartition()->vertexBuffer().getDataBuffer(mCollisionMeshVertexData[i], 
                 chunkEntity.chunk->vao.verticesOffset,
                 chunkEntity.chunk->vao.verticesSize);
                 
-            rawMesh->getPartition()->indexBuffer().getDataBuffer(mCollisionMeshIndexData[i], 
+            mRawCollisionMesh->getPartition()->indexBuffer().getDataBuffer(mCollisionMeshIndexData[i], 
                 chunkEntity.chunk->vao.indexesOffset,
                 chunkEntity.chunk->vao.indexesSize);
 

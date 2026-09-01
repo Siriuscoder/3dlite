@@ -25,7 +25,8 @@
 namespace lite3dpp
 {
     SceneNode::SceneNode(const ConfigurationReader &json, SceneNodeBase *parent, Scene *scene) : 
-        SceneNodeBase(&mNode)
+        SceneNodeBase(&mNode),
+        mScene(scene)
     {
         SDL_assert(scene);
 

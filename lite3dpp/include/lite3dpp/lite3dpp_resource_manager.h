@@ -168,6 +168,7 @@ namespace lite3dpp
                 {
                     size_t fileSize;
                     auto buffer = loadFileToMemory(path, &fileSize);
+                    result->unload();
                     result->load(buffer, fileSize);
                     result->addParentResource(parent);
                     return result;

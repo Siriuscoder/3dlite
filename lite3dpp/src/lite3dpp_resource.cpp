@@ -53,14 +53,14 @@ namespace lite3dpp
 
     AbstractResource::~AbstractResource()
     {
-        for (auto resource : mParentResources)
+        while (!mParentResources.empty())
         {
-            resource->removeChildResource(this);
+            removeParentResource(mParentResources.front());
         }
 
-        for (auto resource : mChildResources)
+        while (!mChildResources.empty())
         {
-            resource->removeParentResource(this);
+            mChildResources.front()->removeParentResource(this);
         }
     }
 
@@ -83,6 +83,7 @@ namespace lite3dpp
         auto it = std::find(mParentResources.begin(), mParentResources.end(), parent);
         if (it != mParentResources.end())
         {
+            parent->removeChildResource(this);
             mParentResources.erase(it);
         }
     }
@@ -126,21 +127,20 @@ namespace lite3dpp
 
     void AbstractResource::reload()
     {
-        if (mState == UNLOADED)
+        unload();
+
+        try
         {
-            try
-            {
-                loadImpl(nullptr, 0);
-                mState = LOADED;
-            }
-            catch (const std::exception&)
-            {
-                unloadImpl();
-                throw;
-            }
-            
-            logState();
+            loadImpl(nullptr, 0);
+            mState = LOADED;
         }
+        catch (const std::exception&)
+        {
+            unloadImpl();
+            throw;
+        }
+        
+        logState();
     }
 
     void AbstractResource::unload()
