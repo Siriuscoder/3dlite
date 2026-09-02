@@ -107,6 +107,8 @@ namespace lite3dpp
         virtual void endSceneRender(Scene *scene, Camera *camera, int32_t priority) {}
         virtual void beginOpaqueStageRender(Scene *scene, Camera *camera, int32_t priority) {}
         virtual void beginBlendingStageRender(Scene *scene, Camera *camera, int32_t priority) {}
+        virtual void registerLightNode(Scene *scene, LightSceneNode *node) {}
+        virtual void unregisterLightNode(Scene *scene, LightSceneNode *node) {}
     };
 
     class LITE3DPP_EXPORT RenderTargetObserver

@@ -76,6 +76,35 @@ namespace lite3dpp
         }
 
         enabled(true);
+
+        if (json.has(L"ShadowParams"))
+        {
+            auto shadowParams = json.getObject(L"ShadowParams");
+            setFlag(LightSourceFlags::CastShadow);
+
+            auto shadowType = shadowParams.getString(L"Type", "PCF");
+            auto shadowTypeFlag = shadowType == "PCF" ? LightSourceFlags::CastShadowPcf3x3 : 
+                (shadowType == "PCFAdaptive" ? LightSourceFlags::CastShadowPcfAdaptive : 
+                (shadowType == "PCFPoisson" ? LightSourceFlags::CastShadowPoisson :
+                (shadowType == "VSM" ? LightSourceFlags::CastShadowVSM : LightSourceFlags::TypeUndefined)));
+            if (shadowParams.getBool(L"SSS", false))
+            {
+                shadowTypeFlag = shadowTypeFlag | LightSourceFlags::CastShadowSSS;
+            }
+
+            setFlag(shadowTypeFlag);
+            if (getType() == LightSourceFlags::TypeDirectional)
+            {
+                mShadowClipParams.leftClipPlane = shadowParams.getDouble(L"LeftClipPlane");
+                mShadowClipParams.rightClipPlane = shadowParams.getDouble(L"RightClipPlane");
+                mShadowClipParams.bottomClipPlane = shadowParams.getDouble(L"BottomClipPlane");
+                mShadowClipParams.topClipPlane = shadowParams.getDouble(L"TopClipPlane");
+            }
+
+            mShadowClipParams.nearClipPlane = shadowParams.getDouble(L"NearClipPlane");
+            mShadowClipParams.farClipPlane = shadowParams.getDouble(L"FarClipPlane");
+        }
+
         mLightSource.userdata = this;
         mLightSourceWorld = mLightSource;
     }
@@ -134,6 +163,32 @@ namespace lite3dpp
             writer.set(L"DirectionUP", mLightSource.params.directionUP);
             writer.set(L"AreaWidth", mLightSource.params.areaWidth);
             writer.set(L"AreaHeight", mLightSource.params.areaHeight);
+        }
+
+        if (mLightSource.params.flags & LITE3D_LIGHT_CASTSHADOW)
+        {
+            lite3dpp::ConfigurationWriter shadowParams;
+            if (mLightSource.params.flags & LITE3D_LIGHT_CASTSHADOW_PCF3x3)
+                shadowParams.set(L"Type", "PCF");
+            else if (mLightSource.params.flags & LITE3D_LIGHT_CASTSHADOW_PCF_ADAPTIVE)
+                shadowParams.set(L"Type", "PCFAdaptive");
+            else if (mLightSource.params.flags & LITE3D_LIGHT_CASTSHADOW_POISSON)
+                shadowParams.set(L"Type", "PCFPoisson");
+            else if (mLightSource.params.flags & LITE3D_LIGHT_CASTSHADOW_VSM)
+                shadowParams.set(L"Type", "VSM");
+            if (mLightSource.params.flags & LITE3D_LIGHT_CASTSHADOW_SSS)
+                shadowParams.set(L"SSS", true);
+
+            if (getType() == LightSourceFlags::TypeDirectional)
+            {
+                shadowParams.set(L"LeftClipPlane", mShadowClipParams.leftClipPlane);
+                shadowParams.set(L"RightClipPlane", mShadowClipParams.rightClipPlane);
+                shadowParams.set(L"BottomClipPlane", mShadowClipParams.bottomClipPlane);
+                shadowParams.set(L"TopClipPlane", mShadowClipParams.topClipPlane);
+            }
+
+            shadowParams.set(L"NearClipPlane", mShadowClipParams.nearClipPlane);
+            shadowParams.set(L"FarClipPlane", mShadowClipParams.farClipPlane);
         }
     }
 

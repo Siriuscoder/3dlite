@@ -29,14 +29,7 @@ namespace lite3dpp
                  const String &path, Main &main) : ConfigurableResource(name, path, main, AbstractResource::SCENE),
         mLightingParamsBuffer(nullptr),
         mLightingIndexBuffer(nullptr)
-    {
-        addObserver(this);
-    }
-
-    Scene::~Scene()
-    {
-        removeObserver(this);
-    }
+    {}
 
     size_t Scene::usedVideoMemBytes() const
     {
@@ -269,7 +262,7 @@ namespace lite3dpp
         return std::make_shared<SceneObject>(name, this, &getMain(), parent, initialPosition, initialRotation, initialScale);
     }
 
-    void Scene::addLightSource(LightSceneNode *node)
+    void Scene::registerLightNode(LightSceneNode *node)
     {
         if (mLights.size() == mMaxLightsCount)
         {
@@ -278,12 +271,14 @@ namespace lite3dpp
 
         mLights.emplace(node);
         rebuildLightingBuffer();
+        LITE3D_OBSERVER_NOTIFY_2(registerLightNode, this, node);
     }
 
-    void Scene::removeLightSource(LightSceneNode *node)
+    void Scene::unregisterLightNode(LightSceneNode *node)
     {
         mLights.erase(node);
         rebuildLightingBuffer();
+        LITE3D_OBSERVER_NOTIFY_2(unregisterLightNode, this, node);
     }
 
     void Scene::loadObjects(const String &path)

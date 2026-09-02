@@ -35,7 +35,6 @@ namespace lite3dpp
             setMesh(getMain()->getResourceManager().queryResource<Mesh>(
                 meshHelper.getString(L"Name"),
                 meshHelper.getString(L"Mesh"), scene));
-            scene->registerMesh(mMesh);
 
             stl<uint32_t, Material *>::unordered_map materials;
             for (auto &matMap : meshHelper.getObjects(L"MaterialMapping"))
@@ -63,6 +62,8 @@ namespace lite3dpp
                 mSkeleton = std::make_unique<Skeleton>(*this);
                 mSkeleton->loadFromJson(json);
             }
+
+            scene->registerMesh(mMesh);
         }
     }
 

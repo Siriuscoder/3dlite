@@ -29,8 +29,7 @@
 
 namespace lite3dpp
 {
-    class LITE3DPP_EXPORT Scene : public Observable<SceneObserver>, 
-        public SceneObserver, public ConfigurableResource, public Noncopiable
+    class LITE3DPP_EXPORT Scene : public Observable<SceneObserver>, public ConfigurableResource, public Noncopiable
     {
         friend LightSceneNode;
     public:
@@ -44,9 +43,8 @@ namespace lite3dpp
         using LightsIndexesStore = stl<int32_t>::vector;
         using MeshCounter = stl<Mesh *, int32_t>::unordered_map;
 
-        Scene(const String &name, 
-            const String &path, Main &main);
-        virtual ~Scene();
+        Scene(const String &name, const String &path, Main &main);
+        virtual ~Scene() = default;
 
         inline lite3d_scene *getPtr()
         { return &mScene; }
@@ -84,7 +82,7 @@ namespace lite3dpp
             return mLightingIndexBuffer;
         }
 
-        // this fundtions are used for tracking mesh resource parent  
+        // this functions are used for tracking mesh
         void registerMesh(Mesh *mesh);
         void unregisterMesh(Mesh *mesh);
 
@@ -96,8 +94,10 @@ namespace lite3dpp
         void setupCallbacks();
         void rebuildLightingBuffer();
         void validateLightingBuffer(const Camera &camera);
-        void addLightSource(LightSceneNode *node);
-        void removeLightSource(LightSceneNode *node);
+
+        // this functions are used for tracking lightNode
+        void registerLightNode(LightSceneNode *node);
+        void unregisterLightNode(LightSceneNode *node);
 
         virtual SceneObject::Ptr createObject(const String &name, SceneObjectBase *parent, const kmVec3 &initialPosition, 
             const kmQuaternion &initialRotation, const kmVec3 &initialScale);
