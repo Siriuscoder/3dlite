@@ -10,7 +10,7 @@ layout(std140) uniform ShadowMatrix
 float Shadow(in LightSource source, in Surface surface, in AngularInfo angular)
 {
     // Do not cast shadows
-    if (!hasFlag(source.flags, LITE3D_LIGHT_CASTSHADOW))
+    if (!hasFlag(source.flags, LITE3D_LIGHT_SHADOW_STATIC | LITE3D_LIGHT_SHADOW_DYNAMIC))
         return 1.0;
 
     // Shadow space NDC coorts of current fragment

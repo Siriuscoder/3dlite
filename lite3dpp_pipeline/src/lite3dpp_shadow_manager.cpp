@@ -157,7 +157,7 @@ namespace lite3dpp_pipeline {
             lightNode, mProjection));
         // Запишем в источник света индекс его теневой матрицы в UBO
         lightNode->getLight()->setShadowIndex(index);
-        lightNode->getLight()->setFlag(LightSourceFlags::CastShadow);
+        lightNode->getLight()->setFlag(LightSourceFlags::ShadowDynamic);
         
         // Если какой либо из узлов сцены поменяет свое положение тень нужно перерисовать
         SceneNodeBase *node = lightNode;

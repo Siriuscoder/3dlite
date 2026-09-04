@@ -240,7 +240,7 @@ int lite3d_render_loop_pump_event(void)
         if (gRenderListeners.processEvent)
         {
             int res;
-            LITE3D_METRIC_CALLRET(gRenderListeners.processEvent, res, (&wevent, gRenderListeners.userdata))
+            LITE3D_METRIC_CALL_WITH_RET(gRenderListeners.processEvent, res, (&wevent, gRenderListeners.userdata))
 
             if (!res)
             {

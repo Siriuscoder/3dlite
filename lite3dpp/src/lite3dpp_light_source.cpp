@@ -80,16 +80,17 @@ namespace lite3dpp
         if (json.has(L"ShadowParams"))
         {
             auto shadowParams = json.getObject(L"ShadowParams");
-            setFlag(LightSourceFlags::CastShadow);
+            setFlag(shadowParams.getBool(L"Dynamic", false) ? LightSourceFlags::ShadowDynamic : 
+                LightSourceFlags::ShadowStatic);
 
             auto shadowType = shadowParams.getString(L"Type", "PCF");
-            auto shadowTypeFlag = shadowType == "PCF" ? LightSourceFlags::CastShadowPcf3x3 : 
-                (shadowType == "PCFAdaptive" ? LightSourceFlags::CastShadowPcfAdaptive : 
-                (shadowType == "PCFPoisson" ? LightSourceFlags::CastShadowPoisson :
-                (shadowType == "VSM" ? LightSourceFlags::CastShadowVSM : LightSourceFlags::TypeUndefined)));
+            auto shadowTypeFlag = shadowType == "PCF" ? LightSourceFlags::ShadowPcf3x3 : 
+                (shadowType == "PCFAdaptive" ? LightSourceFlags::ShadowPcfAdaptive : 
+                (shadowType == "PCFPoisson" ? LightSourceFlags::ShadowPoisson :
+                (shadowType == "VSM" ? LightSourceFlags::ShadowVSM : LightSourceFlags::TypeUndefined)));
             if (shadowParams.getBool(L"SSS", false))
             {
-                shadowTypeFlag = shadowTypeFlag | LightSourceFlags::CastShadowSSS;
+                shadowTypeFlag = shadowTypeFlag | LightSourceFlags::ShadowSSS;
             }
 
             setFlag(shadowTypeFlag);
@@ -165,18 +166,20 @@ namespace lite3dpp
             writer.set(L"AreaHeight", mLightSource.params.areaHeight);
         }
 
-        if (mLightSource.params.flags & LITE3D_LIGHT_CASTSHADOW)
+        if (mLightSource.params.flags & (LITE3D_LIGHT_SHADOW_DYNAMIC | LITE3D_LIGHT_SHADOW_STATIC))
         {
             lite3dpp::ConfigurationWriter shadowParams;
-            if (mLightSource.params.flags & LITE3D_LIGHT_CASTSHADOW_PCF3x3)
+            shadowParams.set(L"Dynamic", static_cast<bool>(mLightSource.params.flags & LITE3D_LIGHT_SHADOW_DYNAMIC));
+
+            if (mLightSource.params.flags & LITE3D_LIGHT_SHADOW_PCF3x3)
                 shadowParams.set(L"Type", "PCF");
-            else if (mLightSource.params.flags & LITE3D_LIGHT_CASTSHADOW_PCF_ADAPTIVE)
+            else if (mLightSource.params.flags & LITE3D_LIGHT_SHADOW_PCF_ADAPTIVE)
                 shadowParams.set(L"Type", "PCFAdaptive");
-            else if (mLightSource.params.flags & LITE3D_LIGHT_CASTSHADOW_POISSON)
+            else if (mLightSource.params.flags & LITE3D_LIGHT_SHADOW_POISSON)
                 shadowParams.set(L"Type", "PCFPoisson");
-            else if (mLightSource.params.flags & LITE3D_LIGHT_CASTSHADOW_VSM)
+            else if (mLightSource.params.flags & LITE3D_LIGHT_SHADOW_VSM)
                 shadowParams.set(L"Type", "VSM");
-            if (mLightSource.params.flags & LITE3D_LIGHT_CASTSHADOW_SSS)
+            if (mLightSource.params.flags & LITE3D_LIGHT_SHADOW_SSS)
                 shadowParams.set(L"SSS", true);
 
             if (getType() == LightSourceFlags::TypeDirectional)
@@ -189,6 +192,7 @@ namespace lite3dpp
 
             shadowParams.set(L"NearClipPlane", mShadowClipParams.nearClipPlane);
             shadowParams.set(L"FarClipPlane", mShadowClipParams.farClipPlane);
+            writer.set(L"ShadowParams", shadowParams);
         }
     }
 

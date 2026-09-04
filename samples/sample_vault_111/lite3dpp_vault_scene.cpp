@@ -134,19 +134,19 @@ public:
         mShadowManager->registerHintNode(mSpot03);
 
         mShadowManager->newShadowCaster(mVaultScene->getObject("LightSpot")->getLightNode("LightSpotNode"))->getNode()->
-            getLight()->setFlag(LightSourceFlags::CastShadowPcfAdaptive);
+            getLight()->setFlag(LightSourceFlags::ShadowPcfAdaptive);
 
         mShadowManager->newShadowCaster(mVaultScene->getObject("LightSpot.001")->getLightNode("LightSpotNode"))->getNode()->
-            getLight()->setFlag(LightSourceFlags::CastShadowPcfAdaptive);
+            getLight()->setFlag(LightSourceFlags::ShadowPcfAdaptive);
 
         mShadowManager->newShadowCaster(mVaultScene->getObject("LightSpot.002")->getLightNode("LightSpotNode"))->getNode()->
-            getLight()->setFlag(LightSourceFlags::CastShadowPcfAdaptive);
+            getLight()->setFlag(LightSourceFlags::ShadowPcfAdaptive);
 
         mShadowManager->newShadowCaster(mVaultScene->getObject("LightSpot.003")->getLightNode("LightSpotNode"))->getNode()->
-            getLight()->setFlag(LightSourceFlags::CastShadowPcfAdaptive);
+            getLight()->setFlag(LightSourceFlags::ShadowPcfAdaptive);
         
         mShadowManager->newShadowCaster(mVaultScene->getObject("VaultStatic")->getLightNode("RotorSpot"))->getNode()->
-            getLight()->setFlag(LightSourceFlags::CastShadowPcfAdaptive);
+            getLight()->setFlag(LightSourceFlags::ShadowPcfAdaptive);
     }
 
     void setupLightAnim()

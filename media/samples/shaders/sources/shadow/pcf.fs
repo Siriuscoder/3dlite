@@ -98,7 +98,7 @@ vec4 CalcAdaptiveShadowParams(in AngularInfo angular)
 float Shadow(in LightSource source, in Surface surface, in AngularInfo angular)
 {
     // Do not cast shadows
-    if (!hasFlag(source.flags, LITE3D_LIGHT_CASTSHADOW))
+    if (!hasFlag(source.flags, LITE3D_LIGHT_SHADOW_STATIC | LITE3D_LIGHT_SHADOW_DYNAMIC))
         return 1.0;
 
     // Shadow space NDC coordinates of current fragment
@@ -115,7 +115,7 @@ float Shadow(in LightSource source, in Surface surface, in AngularInfo angular)
     vec4 adaptiveParams = CalcAdaptiveShadowParams(angular);
     float samples = 0.0;
 
-    if (hasFlag(source.flags, LITE3D_LIGHT_CASTSHADOW_PCF3x3))
+    if (hasFlag(source.flags, LITE3D_LIGHT_SHADOW_PCF3x3))
     {
         for (int x = -1; x <= 1; ++x)
         {
@@ -130,7 +130,7 @@ float Shadow(in LightSource source, in Surface surface, in AngularInfo angular)
             }
         }
     }
-    else if (hasFlag(source.flags, LITE3D_LIGHT_CASTSHADOW_PCF_ADAPTIVE))
+    else if (hasFlag(source.flags, LITE3D_LIGHT_SHADOW_PCF_ADAPTIVE))
     {
         for (float x = -1.5; x <= 1.5; x += adaptiveParams.w)
         {
@@ -145,7 +145,7 @@ float Shadow(in LightSource source, in Surface surface, in AngularInfo angular)
             }
         }
     }
-    else if (hasFlag(source.flags, LITE3D_LIGHT_CASTSHADOW_POISSON))
+    else if (hasFlag(source.flags, LITE3D_LIGHT_SHADOW_POISSON))
     {
         for (int i = 0; i < LITE3D_POISSON_DISC_COUNT; ++i)
         {
@@ -171,7 +171,7 @@ float Shadow(in LightSource source, in Surface surface, in AngularInfo angular)
         shadowFactor /= samples;
 
 #ifdef LITE3D_SSS_ENABLE
-        if (hasFlag(source.flags, LITE3D_LIGHT_CASTSHADOW_SSS))
+        if (hasFlag(source.flags, LITE3D_LIGHT_SHADOW_SSS))
         {
             shadowFactor *= SSS(surface.wv, angular.lightDir, adaptiveParams.z);
         }

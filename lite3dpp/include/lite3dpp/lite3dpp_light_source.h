@@ -32,19 +32,20 @@ namespace lite3dpp
 {
     enum class LightSourceFlags : uint32_t
     {
-        TypeUndefined = 0,
+        TypeUndefined = LITE3D_LIGHT_UNDEFINED,
         TypePoint = LITE3D_LIGHT_POINT,
         TypeDirectional = LITE3D_LIGHT_DIRECTIONAL,
         TypeSpot = LITE3D_LIGHT_SPOT,
         Enabled = LITE3D_LIGHT_ENABLED,
-        CastShadow = LITE3D_LIGHT_CASTSHADOW,
-        CastShadowPcf3x3 = LITE3D_LIGHT_CASTSHADOW_PCF3x3,
-        CastShadowPcfAdaptive = LITE3D_LIGHT_CASTSHADOW_PCF_ADAPTIVE,
-        CastShadowPoisson = LITE3D_LIGHT_CASTSHADOW_POISSON,
-        CastShadowSSS = LITE3D_LIGHT_CASTSHADOW_SSS,
+        ShadowStatic = LITE3D_LIGHT_SHADOW_STATIC,
+        ShadowDynamic = LITE3D_LIGHT_SHADOW_DYNAMIC,
+        ShadowPcf3x3 = LITE3D_LIGHT_SHADOW_PCF3x3,
+        ShadowPcfAdaptive = LITE3D_LIGHT_SHADOW_PCF_ADAPTIVE,
+        ShadowPoisson = LITE3D_LIGHT_SHADOW_POISSON,
+        ShadowVSM = LITE3D_LIGHT_SHADOW_VSM,
+        ShadowSSS = LITE3D_LIGHT_SHADOW_SSS,
         TypeDiskArea = LITE3D_LIGHT_DISK_AREA,
-        TypeRectArea = LITE3D_LIGHT_RECT_AREA,
-        CastShadowVSM = LITE3D_LIGHT_CASTSHADOW_VSM
+        TypeRectArea = LITE3D_LIGHT_RECT_AREA
     };
 
     LITE3D_DECLARE_ENUM_OPERATORS(LightSourceFlags);

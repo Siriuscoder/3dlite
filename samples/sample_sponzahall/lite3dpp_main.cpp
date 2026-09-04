@@ -73,7 +73,7 @@ public:
         initGIProbes();
 
         getMain().getResourceManager().warmUpMeshPartitions();
-        getMain().getResourceManager().dropFileCache();
+        //getMain().getResourceManager().dropFileCache();
     }
 
     void initGIProbes()
@@ -93,7 +93,7 @@ public:
     void setupShadowCasters()
     {
         mSUN = mSponzaScene->getObject("Sponza")->getLightNode("SUN");
-        mSUN->getLight()->setFlag(LightSourceFlags::CastShadowPcfAdaptive | LightSourceFlags::CastShadowSSS);
+        mSUN->getLight()->setFlag(LightSourceFlags::ShadowPcfAdaptive | LightSourceFlags::ShadowSSS);
         mSUNNode = mSponzaScene->getObject("Sponza")->getNode("SUN_actor");
         mSUNShadowCaster = mPipeline->getShadowManager()->newShadowCaster(mSUN);
     }
@@ -199,6 +199,11 @@ public:
 
                 mPipeline->getIBL()->rebuild();
             }
+            //else if (e->key.keysym.sym == SDLK_n)
+            //{
+            //    mSponzaScene->removeAllObjects();
+            //    mSponzaScene->loadObjects("sponza:scenes/sponza.json");
+            //}
         }
     }
 

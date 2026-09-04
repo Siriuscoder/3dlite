@@ -47,7 +47,7 @@ float shlickPow(float a, float b)
 
 bool hasFlag(uint a, uint flag)
 {
-    return (a & flag) == flag;
+    return (a & flag) != 0u;
 }
 
 float radicalInverse(int index, float base)
