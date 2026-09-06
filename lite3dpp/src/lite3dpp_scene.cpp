@@ -236,7 +236,7 @@ namespace lite3dpp
 
             if (light->getLight()->getType() == LightSourceFlags::TypeDirectional || 
                 !light->frustumTest() || 
-                camera.inFrustum(*light->getLight()))
+                camera.intersectFrustum(*light->getLight()))
             {
                 light->setVisible(true);
                 mLightsIndexes.emplace_back(light->getLight()->index());

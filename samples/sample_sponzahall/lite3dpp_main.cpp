@@ -95,7 +95,7 @@ public:
         mSUN = mSponzaScene->getObject("Sponza")->getLightNode("SUN");
         mSUN->getLight()->setFlag(LightSourceFlags::ShadowPcfAdaptive | LightSourceFlags::ShadowSSS);
         mSUNNode = mSponzaScene->getObject("Sponza")->getNode("SUN_actor");
-        mSUNShadowCaster = mPipeline->getShadowManager()->newShadowCaster(mSUN);
+        mSUNShadowCaster = mPipeline->getShadowManager()->registerEmitter(mSUN);
     }
 
     void fixedUpdateTimerTick(int32_t firedPerRound, uint64_t deltaMcs, float deltaRetard) override
@@ -212,7 +212,7 @@ private:
 
     Scene* mSponzaScene = nullptr;
     lite3dpp_pipeline::PipelineDeffered* mPipeline = nullptr;
-    lite3dpp_pipeline::ShadowManager::ShadowCaster *mSUNShadowCaster = nullptr;
+    lite3dpp_pipeline::ShadowCaster *mSUNShadowCaster = nullptr;
     LightSceneNode* mFlashLight = nullptr;
     LightSceneNode* mSUN = nullptr;
     SceneNode* mSUNNode = nullptr;

@@ -161,13 +161,13 @@ namespace lite3dpp
         lite3d_frustum_compute(&mCamera.frustum, &refreshProjViewMatrix());
     }
 
-    bool Camera::inFrustum(const LightSource &light) const
+    bool Camera::intersectFrustum(const LightSource &light) const
     {
         auto volToCheck = light.getBoundingVolumeWorld();
         return lite3d_frustum_test_sphere(&mCamera.frustum, &volToCheck) == LITE3D_TRUE;
     }
 
-    bool Camera::inFrustum(const lite3d_bounding_vol &vol) const
+    bool Camera::intersectFrustum(const lite3d_bounding_vol &vol) const
     {
         return lite3d_frustum_test(&mCamera.frustum, &vol) == LITE3D_TRUE;
     }
@@ -234,6 +234,11 @@ namespace lite3dpp
         kmMat4Multiply(&matrices[3], &projection, kmMat4LookDirection(&matrices[3], &position, &KM_VEC3_NEG_Y, &KM_VEC3_NEG_Z));
         kmMat4Multiply(&matrices[4], &projection, kmMat4LookDirection(&matrices[4], &position, &KM_VEC3_POS_Z, &KM_VEC3_NEG_Y));
         kmMat4Multiply(&matrices[5], &projection, kmMat4LookDirection(&matrices[5], &position, &KM_VEC3_NEG_Z, &KM_VEC3_NEG_Y));
+    }
+
+    float Camera::getDistance(const kmVec3 &point)
+    {
+        return lite3d_camera_distance(&mCamera, &point);
     }
 }
 

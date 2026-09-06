@@ -76,8 +76,9 @@ namespace lite3dpp
         void holdOnSceneObject(const SceneObjectBase &sceneObj);
         void linkWithSceneObject(const SceneObjectBase &sceneObj);
         void recalcFrustum();
-        bool inFrustum(const LightSource &light) const;
-        bool inFrustum(const lite3d_bounding_vol &vol) const;
+        bool intersectFrustum(const LightSource &light) const;
+        bool intersectFrustum(const lite3d_bounding_vol &vol) const;
+        float getDistance(const kmVec3 &point);
 
         void computeCubeProjView(stl<kmMat4>::vector &matrices) const;
         void computeCubeProjView(const kmVec3 &position, stl<kmMat4>::vector &matrices) const;

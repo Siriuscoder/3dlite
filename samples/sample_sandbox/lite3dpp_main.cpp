@@ -99,11 +99,6 @@ public:
 
     void addSpotLight()
     {
-        if (++mSpotLightCount >= mPipeline->getShadowManager()->getShadowsCastersMaxCount())
-        {
-            return;
-        }
-
         auto flashLightObject = mMainScene->addObject("SpotLight_" + std::to_string(++mObjectCounter), 
             "samples:objects/flashlight.json", nullptr);
         auto spotLight = flashLightObject->getLightNode("FlashLight.node");
@@ -118,7 +113,7 @@ public:
 
         // Recalc global illumination
         mPipeline->getIBL()->rebuild();
-        mPipeline->getShadowManager()->newShadowCaster(spotLight);
+        mPipeline->getShadowManager()->registerEmitter(spotLight);
     }
 
     void addSpark()

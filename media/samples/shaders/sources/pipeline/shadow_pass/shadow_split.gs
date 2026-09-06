@@ -3,12 +3,12 @@ layout(triangle_strip, max_vertices = LITE3D_SPOT_SHADOW_GS_MAX_VERTICES) out;
 
 layout(std140) uniform ShadowMatrix
 {
-    mat4 shadowTransform[LITE3D_SPOT_SHADOW_MAX_COUNT];   
+    mat4 shadowTransform[LITE3D_SHADOW_CACHE_MAX_COUNT];   
 };
 
 layout(std140) uniform ShadowIndex
 {
-    ivec4 shadowIndex[LITE3D_SPOT_SHADOW_MAX_COUNT / 4 + 1];
+    ivec4 shadowIndex[LITE3D_SHADOW_CACHE_MAX_COUNT / 4 + 1];
 };
 
 in vec2 iuv_g[];

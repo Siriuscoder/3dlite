@@ -58,7 +58,7 @@ public:
     {
         mSUN = mMainScene->getObject("Sun")->getLightNode("Sun");
         mSUN->getLight()->setFlag(LightSourceFlags::ShadowPcfAdaptive);
-        mSUNShadowCaster = mPipeline->getShadowManager()->newShadowCaster(mSUN);
+        mSUNShadowCaster = mPipeline->getShadowManager()->registerEmitter(mSUN);
     }
 
     void fixedUpdateTimerTick(int32_t firedPerRound, uint64_t deltaMcs, float deltaRetard) override
@@ -127,7 +127,7 @@ private:
     SceneObject *mAK47 = nullptr;
     SceneObject *mVSS = nullptr;
     lite3dpp_pipeline::PipelineForward* mPipeline = nullptr;
-    lite3dpp_pipeline::ShadowManager::ShadowCaster *mSUNShadowCaster = nullptr;
+    lite3dpp_pipeline::ShadowCaster *mSUNShadowCaster = nullptr;
     LightSceneNode* mSUN = nullptr;
     float mGamma = 2.2;
     bool mRotationEnabled = false;

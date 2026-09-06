@@ -4,7 +4,7 @@ uniform sampler2DArrayShadow ShadowMaps;
 
 layout(std140) uniform ShadowMatrix
 {
-    mat4 shadowTransform[LITE3D_SPOT_SHADOW_MAX_COUNT];
+    mat4 shadowTransform[LITE3D_SHADOW_CACHE_MAX_COUNT];
 };
 
 float Shadow(in LightSource source, in Surface surface, in AngularInfo angular)

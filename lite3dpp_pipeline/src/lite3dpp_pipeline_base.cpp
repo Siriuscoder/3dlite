@@ -336,7 +336,7 @@ namespace lite3dpp_pipeline {
         }
 
         mShadowManager = std::make_unique<ShadowManager>(getMain(), *this);
-        mShadowManager->initialize(getName(), pipelineConfig.getString(L"ShaderPackage"));
+        mShadowManager->initialize();
 
         sceneGenerator.addRenderTarget(cameraName, mShadowManager->getShadowPass().getName(), ConfigurationWriter()
             .set(L"Priority", static_cast<int>(RenderPassStagePriority::ShadowBuildStage))
