@@ -136,14 +136,8 @@ namespace lite3dpp
         if (helper.has(L"BlitResultTo"))
         {
             ConfigurationReader rtConf = helper.getObject(L"BlitResultTo");
-            if (rtConf.getString(L"Name") == "Window")
-                mRenderTargetBlitTo = getMain().window();
-            else
-            {
-                mRenderTargetBlitTo = getMain().getResourceManager().queryResource<TextureRenderTarget>(
-                    rtConf.getString(L"Name"),
-                    rtConf.getString(L"Path"), this);
-            }
+            mRenderTargetBlitTo = getMain().getResourceManager().queryResource<RenderTarget>(
+                rtConf.getString(L"Name"), this);
         }
 
         // -1 is detached render target

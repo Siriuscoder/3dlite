@@ -313,7 +313,7 @@ namespace lite3dpp
         mUpdated = true;
     }
 
-    void LightSource::setShadowIndex(uint32_t value)
+    void LightSource::setShadowIndex(int32_t value)
     {
         mLightSource.params.shadowIndex = value;
         mUpdated = true;
@@ -414,7 +414,7 @@ namespace lite3dpp
         return mLightSource.params.radiance;
     }
 
-    uint32_t LightSource::getShadowIndex() const
+    int32_t LightSource::getShadowIndex() const
     {
         return mLightSource.params.shadowIndex;
     }

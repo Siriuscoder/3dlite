@@ -59,7 +59,7 @@ public:
         mInvalidated = true;
     }
 
-    inline bool dynamic() const
+    inline bool dynamicShadow() const
     {
         return (mLightNode->getLight()->getFlags() & LightSourceFlags::ShadowDynamic) == LightSourceFlags::ShadowDynamic;
     }
@@ -67,6 +67,16 @@ public:
     inline EmitterType getEmitterType() const 
     {
         return mEmitterType;
+    }
+
+    inline int32_t getCacheIndex() const
+    {
+        return mLightNode->getLight()->getShadowIndex();
+    }
+
+    inline int32_t cached() const
+    {
+        return mLightNode->getLight()->getShadowIndex() >= 0;
     }
 
 protected:

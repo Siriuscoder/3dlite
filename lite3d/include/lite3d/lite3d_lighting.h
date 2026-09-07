@@ -60,7 +60,7 @@ typedef struct lite3d_light_params
     float attenuationQuadratic;
     float areaWidth;
     float areaHeight;
-    uint32_t shadowIndex;
+    int32_t shadowIndex;
     uint32_t flags;
     float radius; // Used for point and spot light. Emulates reflection of sized point light 
     uint32_t reserved[2];

@@ -12,6 +12,8 @@ float Shadow(in LightSource source, in Surface surface, in AngularInfo angular)
     // Do not cast shadows
     if (!hasFlag(source.flags, LITE3D_LIGHT_SHADOW_STATIC | LITE3D_LIGHT_SHADOW_DYNAMIC))
         return 1.0;
+    if (source.shadowIndex < 0)
+        return 1.0;
 
     // Shadow space NDC coorts of current fragment
     vec4 sv = shadowTransform[source.shadowIndex] * vec4(surface.wv, 1.0);

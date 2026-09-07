@@ -36,12 +36,13 @@ public:
     {
     public:
     
-        using ShadowCasters = stl<ShadowCaster*>::vector;
+        using ShadowCasters = stl<ShadowCaster*>::unordered_set;
 
         VisibilityHintNode(SceneNodeBase *node);
 
         void resetVision();
         void setVisibleFrom(ShadowCaster* sc);
+        void setInvisibleFrom(ShadowCaster* sc);
 
     private:
 
@@ -52,7 +53,7 @@ public:
         void invalidate();
 
         SceneNodeBase *mNode = nullptr;
-        ShadowCasters mVisibility;
+        ShadowCasters mAffectingShadowCasters;
     };
 
     ShadowManager(Main& main, PipelineBase &pipeline);
@@ -60,7 +61,7 @@ public:
 
     void initialize();
     ShadowCaster* registerEmitter(LightSceneNode* emitter);
-    ShadowCaster* unregisterEmitter(LightSceneNode* emitter);
+    void unregisterEmitter(LightSceneNode* emitter);
     VisibilityHintNode* registerHintNode(SceneNodeBase *node);
     VisibilityHintNode* registerHintNodeRecursive(SceneNodeBase *node);
     void unregisterHintNode(SceneNodeBase *node);
@@ -121,9 +122,11 @@ private:
     VBOResource* mShadowMatrixBuffer = nullptr;
     VBOResource* mShadowIndexBuffer = nullptr;
     IndexVector mHostShadowIndexes;
-    stl<std::unique_ptr<ShadowCaster>>::vector mShadowCasters;
+    stl<LightSceneNode *, std::unique_ptr<ShadowCaster>>::unordered_map mShadowCasters;
+    stl<ShadowCaster*>::vector mShadowCastersCachePlaceHolders;
     stl<SceneNodeBase *, std::shared_ptr<VisibilityHintNode>>::unordered_map mVisibilityHintNodes;
     Scene *mCleanStage = nullptr;
+    bool mCascadeShadowIsReserved = false;
 };
 
 }}

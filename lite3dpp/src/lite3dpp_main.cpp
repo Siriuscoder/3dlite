@@ -184,7 +184,7 @@ namespace lite3dpp
 
         /* create main window render target */
         /* it is fake and used only as label indicating render to screen */
-        mResourceManager.queryResourceFromJson<WindowRenderTarget>("MainWindow", 
+        mResourceManager.queryResourceFromJson<WindowRenderTarget>(WindowRenderTarget::Name, 
             ConfigurableResource::emptyJson)->pin(true);
 
         /* perform fixed update timer */
@@ -206,7 +206,7 @@ namespace lite3dpp
     WindowRenderTarget *Main::window()
     {
         /* query main windows from resources */
-        return mResourceManager.queryResource<WindowRenderTarget>("MainWindow", nullptr);
+        return mResourceManager.queryResource<WindowRenderTarget>(WindowRenderTarget::Name, nullptr);
     }
 
     void Main::renderFrame()

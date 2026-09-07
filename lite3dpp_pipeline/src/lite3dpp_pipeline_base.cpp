@@ -363,7 +363,7 @@ namespace lite3dpp_pipeline {
         SceneGenerator &sceneGenerator)
     {
         BigTriSceneGenerator stageGenerator;
-        stageGenerator.addRenderTarget("Window", ConfigurationWriter()
+        stageGenerator.addRenderTarget(WindowRenderTarget::Name, ConfigurationWriter()
             .set(L"Priority", static_cast<int>(RenderPassStagePriority::PostProcessStage))
             .set(L"TexturePass", static_cast<int>(TexturePassTypes::RenderPass))
             .set(L"DepthTest", false)

@@ -48,7 +48,7 @@ struct LightSource
     float attenuationQuadratic;
     float areaWidth;
     float areaHeight;
-    uint shadowIndex;
+    int shadowIndex;
     uint flags;
     float radius;
     uint reserved2;

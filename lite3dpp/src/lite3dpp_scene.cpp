@@ -325,7 +325,7 @@ namespace lite3dpp
             for (const ConfigurationReader &renderTargetJson : cameraJson.getObjects(L"RenderTargets"))
             {
                 String renderTargetName = renderTargetJson.getString(L"Name");
-                if (renderTargetName == "Window") 
+                if (renderTargetName == WindowRenderTarget::Name) 
                     renderTarget = getMain().window();
                 else
                 {

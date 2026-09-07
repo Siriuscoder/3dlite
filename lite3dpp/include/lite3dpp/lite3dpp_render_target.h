@@ -102,6 +102,8 @@ namespace lite3dpp
     {
     public:
 
+        static inline constexpr String Name = "Window";
+
         WindowRenderTarget(const String &name, 
             const String &path, Main &main);
         ~WindowRenderTarget();
