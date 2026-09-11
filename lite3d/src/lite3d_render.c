@@ -40,9 +40,7 @@ typedef struct lookUnit
     lite3d_list_node rtLink;
     lite3d_camera *camera;
     lite3d_scene *scene;
-    uint16_t pass;
-    int32_t priority;
-    uint32_t renderFlags;
+    lite3d_scene_render_params renderParams;
     lite3d_framebuffer_layer layer[2];
     size_t layersCount;
 } lookUnit;
@@ -167,17 +165,17 @@ static void update_render_target(lite3d_render_target *target)
             {
                 lite3d_framebuffer_switch_layer(&target->fb, look->layer, look->layersCount);
 
-                lite3d_buffers_clear((look->renderFlags & LITE3D_RENDER_CLEAN_COLOR_BUFF) ? LITE3D_TRUE : LITE3D_FALSE,
-                    (look->renderFlags & LITE3D_RENDER_CLEAN_DEPTH_BUFF) ? LITE3D_TRUE : LITE3D_FALSE,
-                    (look->renderFlags & LITE3D_RENDER_CLEAN_STENCIL_BUFF) ? LITE3D_TRUE : LITE3D_FALSE);
+                lite3d_buffers_clear((look->renderParams.flags & LITE3D_RENDER_CLEAN_COLOR_BUFF) ? LITE3D_TRUE : LITE3D_FALSE,
+                    (look->renderParams.flags & LITE3D_RENDER_CLEAN_DEPTH_BUFF) ? LITE3D_TRUE : LITE3D_FALSE,
+                    (look->renderParams.flags & LITE3D_RENDER_CLEAN_STENCIL_BUFF) ? LITE3D_TRUE : LITE3D_FALSE);
             }
 
-            lite3d_depth_test((look->renderFlags & LITE3D_RENDER_DEPTH_TEST) ? LITE3D_TRUE : LITE3D_FALSE);
-            lite3d_color_output((look->renderFlags & LITE3D_RENDER_COLOR_OUTPUT) ? LITE3D_TRUE : LITE3D_FALSE);
-            lite3d_depth_output((look->renderFlags & LITE3D_RENDER_DEPTH_OUTPUT) ? LITE3D_TRUE : LITE3D_FALSE);
-            lite3d_stencil_output((look->renderFlags & LITE3D_RENDER_STENCIL_OUTPUT) ? LITE3D_TRUE : LITE3D_FALSE);
+            lite3d_depth_test((look->renderParams.flags & LITE3D_RENDER_DEPTH_TEST) ? LITE3D_TRUE : LITE3D_FALSE);
+            lite3d_color_output((look->renderParams.flags & LITE3D_RENDER_COLOR_OUTPUT) ? LITE3D_TRUE : LITE3D_FALSE);
+            lite3d_depth_output((look->renderParams.flags & LITE3D_RENDER_DEPTH_OUTPUT) ? LITE3D_TRUE : LITE3D_FALSE);
+            lite3d_stencil_output((look->renderParams.flags & LITE3D_RENDER_STENCIL_OUTPUT) ? LITE3D_TRUE : LITE3D_FALSE);
             
-            LITE3D_METRIC_CALL(lite3d_scene_render, (look->scene, look->camera, look->pass, look->priority, look->renderFlags))
+            LITE3D_METRIC_CALL(lite3d_scene_render, (look->scene, look->camera, &look->renderParams))
 
             if (look->camera->cameraNode.invalidated)
                 LITE3D_ARR_ADD_ELEM(&gInvalidatedCameras, lite3d_camera *, look->camera);
@@ -490,10 +488,10 @@ int lite3d_render_target_attach_camera(lite3d_render_target *target, lite3d_came
     SDL_assert_release(lookIns);
 
     lookIns->camera = camera;
-    lookIns->pass = pass;
-    lookIns->priority = priority;
     lookIns->scene = scene;
-    lookIns->renderFlags = renderFlags;
+    lookIns->renderParams.pass = pass;
+    lookIns->renderParams.priority = priority;
+    lookIns->renderParams.flags = renderFlags;
     lookIns->layersCount = layersCount;
     memcpy(lookIns->layer, layer, LITE3D_MIN(layersCount * sizeof(lite3d_framebuffer_layer), sizeof(lookIns->layer)));
     lite3d_list_link_init(&lookIns->rtLink);
@@ -503,13 +501,13 @@ int lite3d_render_target_attach_camera(lite3d_render_target *target, lite3d_came
     while ((node = lite3d_list_next(node)) != &target->lookSequence.l)
     {
         look = LITE3D_MEMBERCAST(lookUnit, node, rtLink);
-        if (look->priority == priority)
+        if (look->renderParams.priority == priority)
         {
             lite3d_free_pooled(LITE3D_POOL_NO1, lookIns);
             return LITE3D_FALSE;
         }
 
-        if (priority <= look->priority)
+        if (priority <= look->renderParams.priority)
         {
             lite3d_list_insert_before_link(&lookIns->rtLink, &look->rtLink);
             return LITE3D_TRUE;
@@ -532,7 +530,7 @@ int lite3d_render_target_dettach_camera(lite3d_render_target *rt, lite3d_camera 
     while ((node = lite3d_list_next(node)) != &rt->lookSequence.l)
     {
         look = LITE3D_MEMBERCAST(lookUnit, node, rtLink);
-        if (look->camera == camera && look->priority == priority)
+        if (look->camera == camera && look->renderParams.priority == priority)
         {
             lite3d_list_unlink_link(node);
             lite3d_free_pooled(LITE3D_POOL_NO1, look);

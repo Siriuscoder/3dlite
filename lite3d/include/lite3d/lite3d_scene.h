@@ -70,6 +70,13 @@ typedef struct lite3d_scene_stats
     int32_t drawSubCommands;
 } lite3d_scene_stats;
 
+typedef struct lite3d_scene_render_params
+{
+    uint16_t pass;
+    int32_t priority;
+    uint32_t flags;
+} lite3d_scene_render_params;
+
 typedef struct lite3d_scene
 {
     lite3d_scene_node rootNode;
@@ -88,28 +95,29 @@ typedef struct lite3d_scene
     void *userdata;
 
     int (*beginDrawBatch)(struct lite3d_scene *scene, 
-        struct lite3d_scene_node *node, struct lite3d_mesh_chunk *meshChunk, struct lite3d_material *material);
+        struct lite3d_scene_node *node, struct lite3d_mesh_chunk *meshChunk, struct lite3d_material *material,
+        const lite3d_scene_render_params *params);
     void (*nodeInFrustum)(struct lite3d_scene *scene, 
         struct lite3d_scene_node *node, struct lite3d_mesh_chunk *meshChunk, 
         struct lite3d_material *material, struct lite3d_bounding_vol *boundingVol, 
-        struct lite3d_camera *camera);
+        struct lite3d_camera *camera, const lite3d_scene_render_params *params);
     void (*nodeOutOfFrustum)(struct lite3d_scene *scene, 
         struct lite3d_scene_node *node, struct lite3d_mesh_chunk *meshChunk, 
         struct lite3d_material *material, struct lite3d_bounding_vol *boundingVol,
-        struct lite3d_camera *camera);
-    int (*customVisibilityCheck)(struct lite3d_scene *scene, 
+        struct lite3d_camera *camera, const lite3d_scene_render_params *params);
+    int (*customFrustumCheck)(struct lite3d_scene *scene, 
         struct lite3d_scene_node *node, struct lite3d_mesh_chunk *meshChunk, 
         struct lite3d_material *material, struct lite3d_bounding_vol *boundingVol,
-        struct lite3d_camera *camera);
-    void (*beforeUpdateNodes)(struct lite3d_scene *scene, struct lite3d_camera *camera, int32_t priority);
-    int (*beginSceneRender)(struct lite3d_scene *scene, struct lite3d_camera *camera, int32_t priority);
-    void (*endSceneRender)(struct lite3d_scene *scene, struct lite3d_camera *camera, int32_t priority);
-    void (*beginOpaqueStageRender)(struct lite3d_scene *scene, struct lite3d_camera *camera, int32_t priority);
-    void (*beginBlendingStageRender)(struct lite3d_scene *scene, struct lite3d_camera *camera, int32_t priority);
+        struct lite3d_camera *camera, const lite3d_scene_render_params *params);
+    void (*beforeUpdateNodes)(struct lite3d_scene *scene, struct lite3d_camera *camera, const lite3d_scene_render_params *params);
+    int (*beginSceneRender)(struct lite3d_scene *scene, struct lite3d_camera *camera, const lite3d_scene_render_params *params);
+    void (*endSceneRender)(struct lite3d_scene *scene, struct lite3d_camera *camera, const lite3d_scene_render_params *params);
+    void (*beginOpaqueStageRender)(struct lite3d_scene *scene, struct lite3d_camera *camera, const lite3d_scene_render_params *params);
+    void (*beginBlendingStageRender)(struct lite3d_scene *scene, struct lite3d_camera *camera, const lite3d_scene_render_params *params);
 } lite3d_scene;
 
 LITE3D_CEXPORT void lite3d_scene_render(lite3d_scene *scene, lite3d_camera *camera, 
-    uint16_t pass, int32_t priority, uint32_t flags);
+    const lite3d_scene_render_params *params);
 LITE3D_CEXPORT int lite3d_scene_init(lite3d_scene *scene, uint32_t features);
 LITE3D_CEXPORT void lite3d_scene_purge(lite3d_scene *scene);
 

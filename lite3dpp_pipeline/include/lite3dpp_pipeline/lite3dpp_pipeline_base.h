@@ -48,7 +48,7 @@ namespace lite3dpp_pipeline {
 
         void loadFromConfigImpl(const ConfigurationReader &helper) override;
         void unloadImpl() override;
-        bool beginSceneRender(Scene *scene, Camera *camera, int32_t priority) override;
+        bool beginSceneRender(Scene *scene, Camera *camera, const lite3d_scene_render_params *params) override;
         void frameBegin() override;
 
         virtual void createMainScene(const String& name, const String &sceneConfig);

@@ -46,7 +46,7 @@ namespace lite3dpp
         mScene.endSceneRender = endSceneRenderEntry;
         mScene.nodeInFrustum = nodeInFrustumEntry;
         mScene.nodeOutOfFrustum = nodeOutOfFrustumEntry;
-        mScene.customVisibilityCheck = customVisibilityCheckEntry;
+        mScene.customFrustumCheck = customFrustumCheckEntry;
         mScene.beforeUpdateNodes = beforeUpdateNodesEntry;
     }
 
@@ -392,7 +392,7 @@ namespace lite3dpp
                 }
                 if (renderTargetJson.getBool(L"FrustumCulling", true))
                     renderFlags |= LITE3D_RENDER_FRUSTUM_CULLING;
-                if (renderTargetJson.getBool(L"CustomVisibilityCheck", false))
+                if (renderTargetJson.getBool(L"CustomFrustumCheck", false))
                     renderFlags |= LITE3D_RENDER_CUSTOM_VISIBILITY_CHECK;
                 if (renderTargetJson.getBool(L"SortOpaqueToNear", false))
                     renderFlags |= LITE3D_RENDER_SORT_OPAQUE_TO_NEAR;
@@ -423,7 +423,8 @@ namespace lite3dpp
     }
 
     int Scene::beginDrawBatchEntry(struct lite3d_scene *scene, 
-            struct lite3d_scene_node *node, struct lite3d_mesh_chunk *meshChunk, struct lite3d_material *material)
+            struct lite3d_scene_node *node, struct lite3d_mesh_chunk *meshChunk, struct lite3d_material *material,
+            const lite3d_scene_render_params *params)
     {
         SDL_assert(scene->userdata);
         SDL_assert(material->userdata);
@@ -431,11 +432,12 @@ namespace lite3dpp
 
         try
         {
-            LITE3D_EXT_OBSERVER_NOTIFY_CHECK_4(reinterpret_cast<Scene *>(scene->userdata), beginDrawBatch, 
+            LITE3D_EXT_OBSERVER_NOTIFY_CHECK_5(reinterpret_cast<Scene *>(scene->userdata), beginDrawBatch, 
                 reinterpret_cast<Scene *>(scene->userdata),
                 reinterpret_cast<SceneNode *>(node->userdata),
                 meshChunk,
-                reinterpret_cast<Material *>(material->userdata));
+                reinterpret_cast<Material *>(material->userdata),
+                params);
             LITE3D_EXT_OBSERVER_RETURN;
         }
         catch (std::exception &ex)
@@ -449,7 +451,7 @@ namespace lite3dpp
     void Scene::nodeInFrustumEntry(struct lite3d_scene *scene, 
             struct lite3d_scene_node *node, struct lite3d_mesh_chunk *meshChunk, 
             struct lite3d_material *material, struct lite3d_bounding_vol *boundingVol, 
-            struct lite3d_camera *camera)
+            struct lite3d_camera *camera, const lite3d_scene_render_params *params)
     {
         SDL_assert(scene->userdata);
         SDL_assert(material->userdata);
@@ -458,13 +460,14 @@ namespace lite3dpp
 
         try
         {
-            LITE3D_EXT_OBSERVER_NOTIFY_6(reinterpret_cast<Scene *>(scene->userdata), nodeInFrustum, 
+            LITE3D_EXT_OBSERVER_NOTIFY_7(reinterpret_cast<Scene *>(scene->userdata), nodeInFrustum, 
                 reinterpret_cast<Scene *>(scene->userdata),
                 reinterpret_cast<SceneNode *>(node->userdata),
                 meshChunk,
                 reinterpret_cast<Material *>(material->userdata),
                 boundingVol,
-                reinterpret_cast<Camera *>(camera->userdata));
+                reinterpret_cast<Camera *>(camera->userdata),
+                params);
         }
         catch (std::exception &ex)
         {
@@ -475,7 +478,7 @@ namespace lite3dpp
     void Scene::nodeOutOfFrustumEntry(struct lite3d_scene *scene, 
             struct lite3d_scene_node *node, struct lite3d_mesh_chunk *meshChunk, 
             struct lite3d_material *material, struct lite3d_bounding_vol *boundingVol,
-            struct lite3d_camera *camera)
+            struct lite3d_camera *camera, const lite3d_scene_render_params *params)
     {
         SDL_assert(scene->userdata);
         SDL_assert(material->userdata);
@@ -484,13 +487,14 @@ namespace lite3dpp
 
         try
         {
-            LITE3D_EXT_OBSERVER_NOTIFY_6(reinterpret_cast<Scene *>(scene->userdata), nodeOutOfFrustum, 
+            LITE3D_EXT_OBSERVER_NOTIFY_7(reinterpret_cast<Scene *>(scene->userdata), nodeOutOfFrustum, 
                 reinterpret_cast<Scene *>(scene->userdata),
                 reinterpret_cast<SceneNode *>(node->userdata),
                 meshChunk,
                 reinterpret_cast<Material *>(material->userdata),
                 boundingVol,
-                reinterpret_cast<Camera *>(camera->userdata));
+                reinterpret_cast<Camera *>(camera->userdata),
+                params);
         }
         catch (std::exception &ex)
         {
@@ -498,10 +502,10 @@ namespace lite3dpp
         }
     }
 
-    int Scene::customVisibilityCheckEntry(struct lite3d_scene *scene, 
+    int Scene::customFrustumCheckEntry(struct lite3d_scene *scene, 
             struct lite3d_scene_node *node, struct lite3d_mesh_chunk *meshChunk, 
             struct lite3d_material *material, struct lite3d_bounding_vol *boundingVol,
-            struct lite3d_camera *camera)
+            struct lite3d_camera *camera, const lite3d_scene_render_params *params)
     {
         SDL_assert(scene->userdata);
         SDL_assert(material->userdata);
@@ -510,13 +514,14 @@ namespace lite3dpp
 
         try
         {
-            LITE3D_EXT_OBSERVER_NOTIFY_CHECK_6(reinterpret_cast<Scene *>(scene->userdata), customVisibilityCheck, 
+            LITE3D_EXT_OBSERVER_NOTIFY_CHECK_7(reinterpret_cast<Scene *>(scene->userdata), customFrustumCheck, 
                 reinterpret_cast<Scene *>(scene->userdata),
                 reinterpret_cast<SceneNode *>(node->userdata),
                 meshChunk,
                 reinterpret_cast<Material *>(material->userdata),
                 boundingVol,
-                reinterpret_cast<Camera *>(camera->userdata));
+                reinterpret_cast<Camera *>(camera->userdata), 
+                params);
             LITE3D_EXT_OBSERVER_RETURN;
         }
         catch (std::exception &ex)
@@ -527,7 +532,8 @@ namespace lite3dpp
         return LITE3D_FALSE;
     }
 
-    void Scene::beforeUpdateNodesEntry(struct lite3d_scene *scene, struct lite3d_camera *camera, int32_t priority)
+    void Scene::beforeUpdateNodesEntry(struct lite3d_scene *scene, struct lite3d_camera *camera,
+        const lite3d_scene_render_params *params)
     {
         SDL_assert(scene->userdata);
         SDL_assert(camera->userdata);
@@ -537,7 +543,7 @@ namespace lite3dpp
             LITE3D_EXT_OBSERVER_NOTIFY_3(reinterpret_cast<Scene *>(scene->userdata), beforeUpdateNodes, 
                 reinterpret_cast<Scene *>(scene->userdata),
                 reinterpret_cast<Camera *>(camera->userdata),
-                priority);
+                params);
         }
         catch (std::exception &ex)
         {
@@ -545,7 +551,8 @@ namespace lite3dpp
         }
     }
 
-    int Scene::beginSceneRenderEntry(struct lite3d_scene *scene, struct lite3d_camera *camera, int32_t priority)
+    int Scene::beginSceneRenderEntry(struct lite3d_scene *scene, struct lite3d_camera *camera,
+        const lite3d_scene_render_params *params)
     {
         SDL_assert(scene->userdata);
         SDL_assert(camera->userdata);
@@ -557,7 +564,7 @@ namespace lite3dpp
             LITE3D_EXT_OBSERVER_NOTIFY_CHECK_3(reinterpret_cast<Scene *>(scene->userdata), beginSceneRender, 
                 reinterpret_cast<Scene *>(scene->userdata),
                 cameraObj,
-                priority);
+                params);
 
             if (__ret)
             {
@@ -575,7 +582,8 @@ namespace lite3dpp
         return LITE3D_FALSE;
     }
 
-    void Scene::endSceneRenderEntry(struct lite3d_scene *scene, struct lite3d_camera *camera, int32_t priority)
+    void Scene::endSceneRenderEntry(struct lite3d_scene *scene, struct lite3d_camera *camera,
+        const lite3d_scene_render_params *params)
     {
         SDL_assert(scene->userdata);
         SDL_assert(camera->userdata);
@@ -585,7 +593,7 @@ namespace lite3dpp
             LITE3D_EXT_OBSERVER_NOTIFY_3(reinterpret_cast<Scene *>(scene->userdata), endSceneRender, 
                 reinterpret_cast<Scene *>(scene->userdata),
                 reinterpret_cast<Camera *>(camera->userdata),
-                priority);
+                params);
         }
         catch (std::exception &ex)
         {
@@ -593,7 +601,8 @@ namespace lite3dpp
         }
     }
 
-    void Scene::beginOpaqueStageRenderEntry(struct lite3d_scene *scene, struct lite3d_camera *camera, int32_t priority)
+    void Scene::beginOpaqueStageRenderEntry(struct lite3d_scene *scene, struct lite3d_camera *camera,
+        const lite3d_scene_render_params *params)
     {
         SDL_assert(scene->userdata);
         SDL_assert(camera->userdata);
@@ -603,7 +612,7 @@ namespace lite3dpp
             LITE3D_EXT_OBSERVER_NOTIFY_3(reinterpret_cast<Scene *>(scene->userdata), beginOpaqueStageRender, 
                 reinterpret_cast<Scene *>(scene->userdata),
                 reinterpret_cast<Camera *>(camera->userdata),
-                priority);
+                params);
         }
         catch (std::exception &ex)
         {
@@ -611,7 +620,8 @@ namespace lite3dpp
         }
     }
 
-    void Scene::beginBlendingStageRenderEntry(struct lite3d_scene *scene, struct lite3d_camera *camera, int32_t priority)
+    void Scene::beginBlendingStageRenderEntry(struct lite3d_scene *scene, struct lite3d_camera *camera,
+        const lite3d_scene_render_params *params)
     {
         SDL_assert(scene->userdata);
         SDL_assert(camera->userdata);
@@ -621,7 +631,7 @@ namespace lite3dpp
             LITE3D_EXT_OBSERVER_NOTIFY_3(reinterpret_cast<Scene *>(scene->userdata), beginBlendingStageRender, 
                 reinterpret_cast<Scene *>(scene->userdata),
                 reinterpret_cast<Camera *>(camera->userdata),
-                priority);
+                params);
         }
         catch (std::exception &ex)
         {

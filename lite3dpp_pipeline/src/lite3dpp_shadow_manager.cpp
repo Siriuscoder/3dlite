@@ -339,7 +339,7 @@ namespace lite3dpp_pipeline {
         return true;
     }
 
-    bool ShadowManager::beginSceneRender(Scene *scene, Camera *camera, int32_t priority)
+    bool ShadowManager::beginSceneRender(Scene *scene, Camera *camera, const lite3d_scene_render_params *params)
     {
         if (scene == mCleanStage)
         {
@@ -355,7 +355,7 @@ namespace lite3dpp_pipeline {
         return true; 
     }
 
-    void ShadowManager::endSceneRender(Scene *scene, Camera *camera, int32_t priority)
+    void ShadowManager::endSceneRender(Scene *scene, Camera *camera, const lite3d_scene_render_params *params)
     {
         // После очистки теневых карт готовимся к перерисовке теней.
         if (scene == mCleanStage)
@@ -365,8 +365,8 @@ namespace lite3dpp_pipeline {
     }
 
     // Проверим виден ли обьект сцены хотябы одной теневой камерой, если нет то рисовать его смысла нет.
-    bool ShadowManager::customVisibilityCheck(Scene *scene, SceneNodeBase *node, lite3d_mesh_chunk *meshChunk, Material *material, 
-        lite3d_bounding_vol *boundingVol, Camera *camera)
+    bool ShadowManager::customFrustumCheck(Scene *scene, SceneNodeBase *node, lite3d_mesh_chunk *meshChunk, Material *material, 
+        lite3d_bounding_vol *boundingVol, Camera *camera, const lite3d_scene_render_params *params)
     {
         auto it = mVisibilityHintNodes.find(node);
         VisibilityHintNode* dnode = it != mVisibilityHintNodes.end() ? it->second.get() : nullptr;

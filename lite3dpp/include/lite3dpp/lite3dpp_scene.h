@@ -108,28 +108,34 @@ namespace lite3dpp
         void setupCameras(const stl<ConfigurationReader>::vector &cameras);
 
         static int beginDrawBatchEntry(struct lite3d_scene *scene, 
-            struct lite3d_scene_node *node, struct lite3d_mesh_chunk *meshChunk, struct lite3d_material *material);
+            struct lite3d_scene_node *node, struct lite3d_mesh_chunk *meshChunk, struct lite3d_material *material,
+            const lite3d_scene_render_params *params);
 
         static void nodeInFrustumEntry(struct lite3d_scene *scene, 
             struct lite3d_scene_node *node, struct lite3d_mesh_chunk *meshChunk, 
             struct lite3d_material *material, struct lite3d_bounding_vol *boundingVol, 
-            struct lite3d_camera *camera);
+            struct lite3d_camera *camera, const lite3d_scene_render_params *params);
 
         static void nodeOutOfFrustumEntry(struct lite3d_scene *scene, 
             struct lite3d_scene_node *node, struct lite3d_mesh_chunk *meshChunk, 
             struct lite3d_material *material, struct lite3d_bounding_vol *boundingVol,
-            struct lite3d_camera *camera);
+            struct lite3d_camera *camera, const lite3d_scene_render_params *params);
 
-        static int customVisibilityCheckEntry(struct lite3d_scene *scene, 
+        static int customFrustumCheckEntry(struct lite3d_scene *scene, 
             struct lite3d_scene_node *node, struct lite3d_mesh_chunk *meshChunk, 
             struct lite3d_material *material, struct lite3d_bounding_vol *boundingVol,
-            struct lite3d_camera *camera);
+            struct lite3d_camera *camera, const lite3d_scene_render_params *params);
 
-        static void beforeUpdateNodesEntry(struct lite3d_scene *scene, struct lite3d_camera *camera, int32_t priority);
-        static int beginSceneRenderEntry(struct lite3d_scene *scene, struct lite3d_camera *camera, int32_t priority);
-        static void endSceneRenderEntry(struct lite3d_scene *scene, struct lite3d_camera *camera, int32_t priority);
-        static void beginOpaqueStageRenderEntry(struct lite3d_scene *scene, struct lite3d_camera *camera, int32_t priority);
-        static void beginBlendingStageRenderEntry(struct lite3d_scene *scene, struct lite3d_camera *camera, int32_t priority);
+        static void beforeUpdateNodesEntry(struct lite3d_scene *scene, struct lite3d_camera *camera,
+            const lite3d_scene_render_params *params);
+        static int beginSceneRenderEntry(struct lite3d_scene *scene, struct lite3d_camera *camera,
+            const lite3d_scene_render_params *params);
+        static void endSceneRenderEntry(struct lite3d_scene *scene, struct lite3d_camera *camera,
+            const lite3d_scene_render_params *params);
+        static void beginOpaqueStageRenderEntry(struct lite3d_scene *scene, struct lite3d_camera *camera,
+            const lite3d_scene_render_params *params);
+        static void beginBlendingStageRenderEntry(struct lite3d_scene *scene, struct lite3d_camera *camera,
+            const lite3d_scene_render_params *params);
 
         lite3d_scene mScene;
         SceneObjects mObjects;

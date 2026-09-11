@@ -97,12 +97,12 @@ protected:
 
     bool beginUpdate(RenderTarget *rt) override;
     void postUpdate(RenderTarget *rt) override;
-    bool beginSceneRender(Scene *scene, Camera *camera, int32_t priority) override;
-    void endSceneRender(Scene *scene, Camera *camera, int32_t priority) override;
+    bool beginSceneRender(Scene *scene, Camera *camera, const lite3d_scene_render_params *params) override;
+    void endSceneRender(Scene *scene, Camera *camera, const lite3d_scene_render_params *params) override;
 
     // Проверим виден ли обьект сцены хотябы одной теневой камерой, если нет то рисовать его смысла нет.
-    bool customVisibilityCheck(Scene *scene, SceneNodeBase *node, lite3d_mesh_chunk *meshChunk, Material *material, 
-        lite3d_bounding_vol *boundingVol, Camera *camera) override;
+    bool customFrustumCheck(Scene *scene, SceneNodeBase *node, lite3d_mesh_chunk *meshChunk, Material *material, 
+        lite3d_bounding_vol *boundingVol, Camera *camera, const lite3d_scene_render_params *params) override;
 
     void createShadowRenderTarget();
     void createAuxiliaryBuffers();

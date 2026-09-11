@@ -346,7 +346,7 @@ namespace lite3dpp_pipeline {
             .set(L"DepthOutput", true)
             .set(L"RenderBlend", false)
             .set(L"RenderOpaque", true)
-            .set(L"CustomVisibilityCheck", true)
+            .set(L"CustomFrustumCheck", true)
             .set(L"RenderInstancing", pipelineConfig.getBool(L"Instancing", true)));
     }
     
@@ -621,12 +621,12 @@ namespace lite3dpp_pipeline {
         }
     }
 
-    bool PipelineBase::beginSceneRender(Scene *scene, Camera *camera, int32_t priority)
+    bool PipelineBase::beginSceneRender(Scene *scene, Camera *camera, const lite3d_scene_render_params *params)
     {
         Material::setFloatv3GlobalParameter("Eye", getMainCamera().getWorldPosition());
 
         // Make a copy of the combined texture before blend stage 
-        if (mCombined2Texture && priority == static_cast<int32_t>(RenderPassStagePriority::BlendDecalStage))
+        if (mCombined2Texture && params->priority == static_cast<int32_t>(RenderPassStagePriority::BlendDecalStage))
         {
             mCombined2Texture->copyFrom(*mCombinedTexture);
         }

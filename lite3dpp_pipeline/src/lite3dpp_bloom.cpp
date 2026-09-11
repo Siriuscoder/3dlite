@@ -72,7 +72,8 @@ namespace lite3dpp_pipeline {
         initBoomScene();
     }
 
-    bool BloomEffect::beginDrawBatch(Scene *scene, SceneNode *node, lite3d_mesh_chunk *meshChunk, Material *material)
+    bool BloomEffect::beginDrawBatch(Scene *scene, SceneNode *node, lite3d_mesh_chunk *meshChunk, Material *material,
+        const lite3d_scene_render_params *params)
     {
         Texture *current = mTextureChain[mChainState++];
         stl<lite3d_framebuffer_attachment>::vector attachments = {
@@ -95,7 +96,7 @@ namespace lite3dpp_pipeline {
         return true;
     }
 
-    bool BloomEffect::beginSceneRender(Scene *scene, Camera *camera, int32_t priority)
+    bool BloomEffect::beginSceneRender(Scene *scene, Camera *camera, const lite3d_scene_render_params *params)
     {
         // Скинем индекс цепочки в 0 в началале рисования сцены
         mChainState = 0;

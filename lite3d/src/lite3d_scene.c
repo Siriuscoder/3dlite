@@ -132,21 +132,23 @@ static void mqr_render_mesh_chunk(lite3d_scene *scene, lite3d_mesh_chunk *chunk,
     scene->stats.drawCalls++;
 }
 
-static void mqr_render_batch_draw(lite3d_material_pass *pass, _mqr_node *mqrNode, uint32_t flags)
+static void mqr_render_batch_draw(lite3d_material_pass *pass, _mqr_node *mqrNode, 
+    const lite3d_scene_render_params *params)
 {
     lite3d_scene *scene = (lite3d_scene *) mqrNode->node->scene;
     SDL_assert(mqrNode);
     SDL_assert(scene);
+    SDL_assert(params);
 
     /* notify render batch */
     if (scene->beginDrawBatch && !scene->beginDrawBatch(scene, mqrNode->node,
-        mqrNode->meshChunk, mqrNode->matUnit->material))
+        mqrNode->meshChunk, mqrNode->matUnit->material, params))
             return;
 
     mqr_node_set_shader_params(scene, pass, mqrNode);
     
     /* call rendering current chunk */
-    if (flags & LITE3D_RENDER_OCCLUSION_QUERY && mqrNode->bbMeshChunk)
+    if (params->flags & LITE3D_RENDER_OCCLUSION_QUERY && mqrNode->bbMeshChunk)
     {
         SDL_assert(mqrNode->currentQuery);
         lite3d_query_begin(&mqrNode->currentQuery->query); 
@@ -175,16 +177,18 @@ static void mqr_render_batch_draw(lite3d_material_pass *pass, _mqr_node *mqrNode
     }
 }
 
-static void mqr_render_batch_draw_instanced(lite3d_material_pass *pass, _mqr_node *mqrNode, uint32_t continuedId, uint8_t batchCrop)
+static void mqr_render_batch_draw_instanced(lite3d_material_pass *pass, _mqr_node *mqrNode,
+    uint32_t continuedId, uint8_t batchCrop, const lite3d_scene_render_params *params)
 {
     lite3d_scene *scene = (lite3d_scene *) mqrNode->node->scene;
     SDL_assert(mqrNode);
     SDL_assert(scene);
     SDL_assert(mqrNode->meshChunk->mesh->auxBuffer);
+    SDL_assert(params);
 
     /* notify render batch */
     if (scene->beginDrawBatch && !scene->beginDrawBatch(scene, mqrNode->node,
-        mqrNode->meshChunk, mqrNode->matUnit->material))
+        mqrNode->meshChunk, mqrNode->matUnit->material, params))
             return;
 
     LITE3D_ARR_ADD_ELEM(&scene->seriesMatrixes, kmMat4, mqrNode->node->worldMatrix);
@@ -205,12 +209,13 @@ static void mqr_render_batch_draw_instanced(lite3d_material_pass *pass, _mqr_nod
     }
 }
 
-static void mqr_render_node(lite3d_material_pass *pass, _mqr_node *mqrNode, uint32_t continuedId, uint8_t batchCrop, uint32_t flags)
+static void mqr_render_node(lite3d_material_pass *pass, _mqr_node *mqrNode,
+    uint32_t continuedId, uint8_t batchCrop, const lite3d_scene_render_params *params)
 {
-    if (flags & LITE3D_RENDER_INSTANCING)
-        LITE3D_METRIC_CALL(mqr_render_batch_draw_instanced, (pass, mqrNode, continuedId, batchCrop))
+    if (params->flags & LITE3D_RENDER_INSTANCING)
+        LITE3D_METRIC_CALL(mqr_render_batch_draw_instanced, (pass, mqrNode, continuedId, batchCrop, params))
     else
-        LITE3D_METRIC_CALL(mqr_render_batch_draw, (pass, mqrNode, flags))
+        LITE3D_METRIC_CALL(mqr_render_batch_draw, (pass, mqrNode, params))
 }
 
 static void mqr_multirender_batch_draw(lite3d_mesh *mesh, uint8_t drawBB)
@@ -305,7 +310,8 @@ static int mqr_node_occluded(lite3d_scene *scene, _mqr_node *mqrNode, uint32_t f
     return mqrNode->currentQuery->query.anyPassed == LITE3D_FALSE ? LITE3D_TRUE : LITE3D_FALSE;
 }
 
-static int mqr_node_approve(lite3d_scene *scene, _mqr_node *mqrNode, uint32_t flags)
+static int mqr_node_approve(lite3d_scene *scene, _mqr_node *mqrNode,
+    const lite3d_scene_render_params *params)
 {
     int nodeVisible = LITE3D_TRUE;
     int nodeApproved = LITE3D_TRUE;
@@ -314,6 +320,7 @@ static int mqr_node_approve(lite3d_scene *scene, _mqr_node *mqrNode, uint32_t fl
     SDL_assert(mqrNode->node);
     SDL_assert(mqrNode->matUnit);
     SDL_assert(scene->currentCamera);
+    SDL_assert(params);
     
     if (!mqrNode->node->renderable)
         return LITE3D_FALSE;
@@ -324,9 +331,9 @@ static int mqr_node_approve(lite3d_scene *scene, _mqr_node *mqrNode, uint32_t fl
     scene->stats.totalPieces++;
 
     // Check occlusion culling if needed
-    if (mqr_node_occluded(scene, mqrNode, flags))
+    if (mqr_node_occluded(scene, mqrNode, params->flags))
     {
-        if (flags & LITE3D_RENDER_OCCLUSION_CULLING)
+        if (params->flags & LITE3D_RENDER_OCCLUSION_CULLING)
         {
             nodeApproved = LITE3D_FALSE;
         }
@@ -336,13 +343,13 @@ static int mqr_node_approve(lite3d_scene *scene, _mqr_node *mqrNode, uint32_t fl
     }
 
     // Check frustum culling if needed
-    if (flags & LITE3D_RENDER_FRUSTUM_CULLING)
+    if (params->flags & LITE3D_RENDER_FRUSTUM_CULLING)
     {
         // Custom frustum check
-        if (scene->customVisibilityCheck && flags & LITE3D_RENDER_CUSTOM_VISIBILITY_CHECK)
+        if (scene->customFrustumCheck && params->flags & LITE3D_RENDER_CUSTOM_VISIBILITY_CHECK)
         {
-            if (!scene->customVisibilityCheck(scene, mqrNode->node,
-                mqrNode->meshChunk, mqrNode->matUnit->material, &mqrNode->boundingVol, scene->currentCamera))
+            if (!scene->customFrustumCheck(scene, mqrNode->node,
+                mqrNode->meshChunk, mqrNode->matUnit->material, &mqrNode->boundingVol, scene->currentCamera, params))
             {
                 nodeApproved = nodeVisible = LITE3D_FALSE;
             }
@@ -354,13 +361,13 @@ static int mqr_node_approve(lite3d_scene *scene, _mqr_node *mqrNode, uint32_t fl
             if (scene->nodeOutOfFrustum)
             {
                 scene->nodeOutOfFrustum(scene, mqrNode->node, mqrNode->meshChunk, mqrNode->matUnit->material, 
-                    &mqrNode->boundingVol, scene->currentCamera);
+                    &mqrNode->boundingVol, scene->currentCamera, params);
             }
         }
         else if (mqrNode->node->frustumTest && scene->nodeInFrustum)
         {
             scene->nodeInFrustum(scene, mqrNode->node, mqrNode->meshChunk, mqrNode->matUnit->material, 
-                &mqrNode->boundingVol, scene->currentCamera);
+                &mqrNode->boundingVol, scene->currentCamera, params);
         }
     }
 
@@ -381,19 +388,21 @@ static lite3d_material_pass *mqr_unit_apply_material(lite3d_scene *scene, _mqr_n
     return matPass;
 }
 
-static void mqr_unit_queue_render(lite3d_scene *scene, lite3d_array *queue, uint16_t pass, uint32_t flags)
+static void mqr_unit_queue_render(lite3d_scene *scene, lite3d_array *queue,
+    const lite3d_scene_render_params *params)
 {
     register _mqr_node **mqrNode = NULL;
     _mqr_unit *curUnit = NULL;
     uint32_t continuedId = 0;
     lite3d_material_pass *matPass = NULL;
+    SDL_assert(params);
 
     LITE3D_ARR_FOREACH(queue, _mqr_node *, mqrNode)
     {
         uint8_t batchCrop = LITE3D_FALSE;
         if (curUnit != (*mqrNode)->matUnit)
         {
-            matPass = mqr_unit_apply_material(scene, *mqrNode, pass);
+            matPass = mqr_unit_apply_material(scene, *mqrNode, params->pass);
             curUnit = (*mqrNode)->matUnit;
         }
 
@@ -408,7 +417,7 @@ static void mqr_unit_queue_render(lite3d_scene *scene, lite3d_array *queue, uint
                 batchCrop = LITE3D_TRUE;
         }
 
-        LITE3D_METRIC_CALL(mqr_render_node, (matPass, *mqrNode, continuedId, batchCrop, flags))
+        LITE3D_METRIC_CALL(mqr_render_node, (matPass, *mqrNode, continuedId, batchCrop, params))
         continuedId = batchCrop ? 0 : continuedId+1;
     }
 }
@@ -461,7 +470,8 @@ static int mqr_multirender_set_shader_buffers(lite3d_scene *scene, lite3d_materi
     return LITE3D_TRUE;
 }
 
-static void mqr_unit_queue_multirender(lite3d_scene *scene, lite3d_array *queue, uint16_t pass, uint32_t flags)
+static void mqr_unit_queue_multirender(lite3d_scene *scene, lite3d_array *queue,
+    const lite3d_scene_render_params *params)
 {
     register _mqr_node **mqrNode = NULL;
     lite3d_material_pass *matPass = NULL;
@@ -471,6 +481,7 @@ static void mqr_unit_queue_multirender(lite3d_scene *scene, lite3d_array *queue,
     lite3d_mesh *mesh = NULL;
     uint32_t instancesCount = 0;
     lite3d_mesh_chunk *lastChunk = NULL;
+    SDL_assert(params);
 
     // Render queue is empty 
     if (queue->size == 0)
@@ -480,7 +491,7 @@ static void mqr_unit_queue_multirender(lite3d_scene *scene, lite3d_array *queue,
 
     LITE3D_ARR_FOREACH(queue, _mqr_node *, mqrNode)
     {
-        matPass = lite3d_material_get_pass((*mqrNode)->matUnit->material, pass);
+        matPass = lite3d_material_get_pass((*mqrNode)->matUnit->material, params->pass);
         SDL_assert(matPass);
 
         if (lastChunk != (*mqrNode)->meshChunk && instancesCount > 0)
@@ -509,7 +520,7 @@ static void mqr_unit_queue_multirender(lite3d_scene *scene, lite3d_array *queue,
                 continue;
 
             // И сразу переключаем материал
-            mqr_unit_apply_material(scene, *mqrNode, pass);
+            mqr_unit_apply_material(scene, *mqrNode, params->pass);
             program = matPass->program;
             doubleSided = matPass->doubleSided;
             polygonMode = matPass->polygonMode;
@@ -518,7 +529,7 @@ static void mqr_unit_queue_multirender(lite3d_scene *scene, lite3d_array *queue,
 
         // Если включен режим отсечения перекрытых обьектов то рисуем каждую команду отдельно для опеределения 
         // видимости
-        if (flags & LITE3D_RENDER_OCCLUSION_QUERY)
+        if (params->flags & LITE3D_RENDER_OCCLUSION_QUERY)
         {
             SDL_assert((*mqrNode)->currentQuery);
             lite3d_query_begin(&(*mqrNode)->currentQuery->query);
@@ -555,11 +566,13 @@ static void mqr_unit_queue_multirender(lite3d_scene *scene, lite3d_array *queue,
     mqr_multirender_do_batch(scene, mesh, LITE3D_FALSE);
 }
 
-static void mqr_unit_make_queue(lite3d_scene *scene, _mqr_unit *mqrUnit, uint16_t pass, uint32_t flags)
+static void mqr_unit_make_queue(lite3d_scene *scene, _mqr_unit *mqrUnit,
+    const lite3d_scene_render_params *params)
 {
     _mqr_node *mqrNode;
     lite3d_list_node *mqrListNode;
     SDL_assert(mqrUnit);
+    SDL_assert(params);
 
     for (mqrListNode = mqrUnit->nodes.l.next;
         mqrListNode != &mqrUnit->nodes.l; mqrListNode = lite3d_list_next(mqrListNode))
@@ -599,28 +612,30 @@ static void mqr_unit_make_queue(lite3d_scene *scene, _mqr_unit *mqrUnit, uint16_
         }
         
         /* ignore this entry if material pass not exist or empty */
-        if (!lite3d_material_get_pass(mqrUnit->material, pass) || lite3d_material_pass_is_empty(mqrUnit->material, pass))
+        if (!lite3d_material_get_pass(mqrUnit->material, params->pass) ||
+            lite3d_material_pass_is_empty(mqrUnit->material, params->pass))
             continue;
 
-        if (lite3d_material_pass_is_blend(mqrUnit->material, pass))
+        if (lite3d_material_pass_is_blend(mqrUnit->material, params->pass))
         {
-            if ((flags & LITE3D_RENDER_TRANSPARENT) && mqr_node_approve(scene, mqrNode, flags))
+            if ((params->flags & LITE3D_RENDER_TRANSPARENT) && mqr_node_approve(scene, mqrNode, params))
                 /* add to transparent stage */
                 LITE3D_ARR_ADD_ELEM(&scene->stageTransparent, _mqr_node *, mqrNode);
         }
         else
         {
-            if ((flags & LITE3D_RENDER_OPAQUE) && mqr_node_approve(scene, mqrNode, flags))
+            if ((params->flags & LITE3D_RENDER_OPAQUE) && mqr_node_approve(scene, mqrNode, params))
                 /* add to opague stage */
                 LITE3D_ARR_ADD_ELEM(&scene->stageOpague, _mqr_node *, mqrNode);
         }
     }
 }
 
-static void mqr_render_make_queue(struct lite3d_scene *scene, uint16_t pass, uint32_t flags)
+static void mqr_render_make_queue(struct lite3d_scene *scene, const lite3d_scene_render_params *params)
 {
     _mqr_unit *mqrUnit = NULL;
     lite3d_list_node *mqrUnitNode = NULL;
+    SDL_assert(params);
 
     for (mqrUnitNode = scene->materialRenderUnits.l.next;
         mqrUnitNode != &scene->materialRenderUnits.l; mqrUnitNode = lite3d_list_next(mqrUnitNode))
@@ -630,34 +645,36 @@ static void mqr_render_make_queue(struct lite3d_scene *scene, uint16_t pass, uin
         if (!lite3d_list_is_empty(&mqrUnit->nodes))
         {
             scene->stats.totalMaterials++;
-            LITE3D_METRIC_CALL(mqr_unit_make_queue, (scene, mqrUnit, pass, flags))
+            LITE3D_METRIC_CALL(mqr_unit_make_queue, (scene, mqrUnit, params))
         }
     }
 }
 
-static void mqr_render_stage_opaque(struct lite3d_scene *scene, uint16_t pass, int32_t priority, uint32_t flags)
+static void mqr_render_stage_opaque(struct lite3d_scene *scene, const lite3d_scene_render_params *params)
 {
-    if (flags & LITE3D_RENDER_OPAQUE)
+    SDL_assert(params);
+
+    if (params->flags & LITE3D_RENDER_OPAQUE)
     {
-        if (flags & LITE3D_RENDER_SORT_OPAQUE_TO_NEAR)
+        if (params->flags & LITE3D_RENDER_SORT_OPAQUE_TO_NEAR)
         {
             lite3d_array_qsort(&scene->stageOpague, mqr_node_distance_comparator_to_near);
         }
-        else if (flags & LITE3D_RENDER_SORT_OPAQUE_FROM_NEAR)
+        else if (params->flags & LITE3D_RENDER_SORT_OPAQUE_FROM_NEAR)
         {
             lite3d_array_qsort(&scene->stageOpague, mqr_node_distance_comparator_from_near);
         }
 
         if (scene->beginOpaqueStageRender)
-            LITE3D_METRIC_CALL(scene->beginOpaqueStageRender, (scene, scene->currentCamera, priority))
+            LITE3D_METRIC_CALL(scene->beginOpaqueStageRender, (scene, scene->currentCamera, params))
 
         if (scene->features & LITE3D_SCENE_FEATURE_MULTIRENDER)
         {
-            LITE3D_METRIC_CALL(mqr_unit_queue_multirender, (scene, &scene->stageOpague, pass, flags))
+            LITE3D_METRIC_CALL(mqr_unit_queue_multirender, (scene, &scene->stageOpague, params))
         }
         else
         {
-            LITE3D_METRIC_CALL(mqr_unit_queue_render, (scene, &scene->stageOpague, pass, flags))
+            LITE3D_METRIC_CALL(mqr_unit_queue_render, (scene, &scene->stageOpague, params))
         }
 
         // cleanup last rendered queue
@@ -665,29 +682,31 @@ static void mqr_render_stage_opaque(struct lite3d_scene *scene, uint16_t pass, i
     }
 }
 
-static void mqr_render_stage_transparent(struct lite3d_scene *scene, uint16_t pass, int32_t priority, uint32_t flags)
+static void mqr_render_stage_transparent(struct lite3d_scene *scene, const lite3d_scene_render_params *params)
 {
-    if (flags & LITE3D_RENDER_TRANSPARENT)
+    SDL_assert(params);
+
+    if (params->flags & LITE3D_RENDER_TRANSPARENT)
     {
-        if (flags & LITE3D_RENDER_SORT_TRANSPARENT_TO_NEAR)
+        if (params->flags & LITE3D_RENDER_SORT_TRANSPARENT_TO_NEAR)
         {
             lite3d_array_qsort(&scene->stageTransparent, mqr_node_distance_comparator_to_near);
         }
-        else if (flags & LITE3D_RENDER_SORT_OPAQUE_FROM_NEAR)
+        else if (params->flags & LITE3D_RENDER_SORT_OPAQUE_FROM_NEAR)
         {
             lite3d_array_qsort(&scene->stageTransparent, mqr_node_distance_comparator_from_near);
         }
 
         if (scene->beginBlendingStageRender)
-            scene->beginBlendingStageRender(scene, scene->currentCamera, priority);
+            scene->beginBlendingStageRender(scene, scene->currentCamera, params);
 
         if (scene->features & LITE3D_SCENE_FEATURE_MULTIRENDER)
         {
-            LITE3D_METRIC_CALL(mqr_unit_queue_multirender, (scene, &scene->stageTransparent, pass, flags))
+            LITE3D_METRIC_CALL(mqr_unit_queue_multirender, (scene, &scene->stageTransparent, params))
         }
         else
         {
-            LITE3D_METRIC_CALL(mqr_unit_queue_render, (scene, &scene->stageTransparent, pass, flags))
+            LITE3D_METRIC_CALL(mqr_unit_queue_render, (scene, &scene->stageTransparent, params))
         }
 
         lite3d_array_clean(&scene->stageTransparent);
@@ -857,34 +876,35 @@ static void scene_updated_nodes_validate(lite3d_scene *scene)
 }
 
 void lite3d_scene_render(lite3d_scene *scene, lite3d_camera *camera, 
-    uint16_t pass, int32_t priority, uint32_t flags)
+    const lite3d_scene_render_params *params)
 {
     SDL_assert(scene && camera);
+    SDL_assert(params);
     /* clean statistic */
     memset(&scene->stats, 0, sizeof (scene->stats));
 
     if (scene->beforeUpdateNodes)
-        LITE3D_METRIC_CALL(scene->beforeUpdateNodes, (scene, camera, priority))
+        LITE3D_METRIC_CALL(scene->beforeUpdateNodes, (scene, camera, params))
     /* update scene tree */
     LITE3D_METRIC_CALL(scene_recursive_nodes_update, (scene, &scene->rootNode))
     /* update camera projection & transformation */
     LITE3D_METRIC_CALL(lite3d_camera_update_view, (camera))
 
-    if (scene->beginSceneRender && !scene->beginSceneRender(scene, camera, priority))
+    if (scene->beginSceneRender && !scene->beginSceneRender(scene, camera, params))
         return;
 
     scene->currentCamera = camera;
-    LITE3D_METRIC_CALL(mqr_render_make_queue, (scene, pass, flags));
+    LITE3D_METRIC_CALL(mqr_render_make_queue, (scene, params));
     /* render common objects */
-    LITE3D_METRIC_CALL(mqr_render_stage_opaque, (scene, pass, priority, flags))
+    LITE3D_METRIC_CALL(mqr_render_stage_opaque, (scene, params))
     /* render transparent objects */
-    LITE3D_METRIC_CALL(mqr_render_stage_transparent, (scene, pass, priority, flags))
+    LITE3D_METRIC_CALL(mqr_render_stage_transparent, (scene, params))
     
     // Для чистоты зануляем биндинг VAO
     lite3d_mesh_chunk_unbind();
 
     if (scene->endSceneRender)
-        LITE3D_METRIC_CALL(scene->endSceneRender, (scene, camera, priority))
+        LITE3D_METRIC_CALL(scene->endSceneRender, (scene, camera, params))
 
     LITE3D_METRIC_CALL(scene_updated_nodes_validate, (scene))
 }
