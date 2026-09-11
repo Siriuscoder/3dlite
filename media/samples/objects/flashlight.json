@@ -5,7 +5,7 @@
         "Nodes": [
             {
                 "Name": "FlashLight.node",
-                "FrustumTest":false,
+                "FrustumTest":true,
                 "Light": {
                     "Type": "Spot",
                     "Name": "FlashLight",
@@ -16,7 +16,7 @@
                     ],
                     "Attenuation": {
                         "Constant": 1.0,
-                        "InfluenceMinRadiance": 0.001
+                        "InfluenceMinRadiance": 0.1
                     },
                     "SpotFactor": {
                         "AngleInnerCone": 0.8,
@@ -26,7 +26,12 @@
                         0.0,
                         0.0,
                         -1.0
-                    ]
+                    ],
+                    "ShadowParams": {
+                        "Dynamic": true,
+                        "Type": "PCF",
+                        "NearClipPlane": 0.01
+                    }
                 }
             }
         ]

@@ -50,6 +50,8 @@ LITE3D_CEXPORT kmVec3* kmVec3Add(kmVec3* pOut, const kmVec3* pV1, const kmVec3* 
 LITE3D_CEXPORT kmVec3* kmVec3Subtract(kmVec3* pOut, const kmVec3* pV1, const kmVec3* pV2); /** Subtracts 2 vectors and returns the result */
 LITE3D_CEXPORT kmVec3* kmVec3Mul( kmVec3* pOut,const kmVec3* pV1, const kmVec3* pV2 ); 
 LITE3D_CEXPORT kmVec3* kmVec3Div( kmVec3* pOut,const kmVec3* pV1, const kmVec3* pV2 );
+LITE3D_CEXPORT kmVec3* kmVec3MulScalar( kmVec3* pOut,const kmVec3* pV1, float s ); 
+LITE3D_CEXPORT kmVec3* kmVec3DivScalar( kmVec3* pOut,const kmVec3* pV1, float s );
 
 LITE3D_CEXPORT kmVec3* kmVec3MultiplyMat3(kmVec3 *pOut, const kmVec3 *pV, const struct kmMat3* pM);
 LITE3D_CEXPORT kmVec3* kmVec3MultiplyMat4(kmVec3* pOut, const kmVec3* pV, const struct kmMat4* pM);

@@ -553,13 +553,19 @@ namespace lite3dpp
         try
         {
             Camera *cameraObj = reinterpret_cast<Camera *>(camera->userdata);
-            reinterpret_cast<Scene *>(scene->userdata)->validateLightingBuffer(*cameraObj);
             
             LITE3D_EXT_OBSERVER_NOTIFY_CHECK_3(reinterpret_cast<Scene *>(scene->userdata), beginSceneRender, 
                 reinterpret_cast<Scene *>(scene->userdata),
                 cameraObj,
                 priority);
-            LITE3D_EXT_OBSERVER_RETURN;
+
+            if (__ret)
+            {
+                reinterpret_cast<Scene *>(scene->userdata)->validateLightingBuffer(*cameraObj);
+                return LITE3D_TRUE;
+            }
+
+            return LITE3D_FALSE;
         }
         catch (std::exception &ex)
         {

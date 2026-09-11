@@ -26,6 +26,7 @@ namespace lite3dpp
         mName(name)
     {
         mLightSource.userdata = this;
+        mLightSource.params.shadowIndex = -1;
         /* enabled by default */
         enabled(true);
         mLightSourceWorld = mLightSource;
@@ -107,6 +108,7 @@ namespace lite3dpp
         }
 
         mLightSource.userdata = this;
+        mLightSource.params.shadowIndex = -1;
         mLightSourceWorld = mLightSource;
     }
     
@@ -472,18 +474,33 @@ namespace lite3dpp
 
     lite3d_bounding_vol LightSource::getBoundingVolumeWorld() const
     {
-        lite3d_bounding_vol volume = {};
-        volume.radius = getInfluenceDistance();
-        volume.sphereCenter = mLightSourceWorld.params.position;
-        return volume;
+        lite3d_bounding_vol aabb = {};
+
+        if (getType() == LightSourceFlags::TypeSpot)
+        {
+            if (getAngleOuterCone() < kmDegreesToRadians(100.0f))
+            {
+                kmVec3 dir;
+
+                float baseRadius = getInfluenceDistance() * tan(getAngleOuterCone() / 2.0);
+                kmVec3MulScalar(&dir, &mLightSourceWorld.params.direction, getInfluenceDistance() / 2.0f);
+                kmVec3Add(&aabb.sphereCenter, &mLightSourceWorld.params.position, &dir);
+                aabb.radius = sqrt(getInfluenceDistance() * getInfluenceDistance() * 0.25f + baseRadius * baseRadius);
+                return aabb;
+            }
+        }
+
+        aabb.radius = getInfluenceDistance();
+        aabb.sphereCenter = mLightSourceWorld.params.position;
+        return aabb;
     }
 
     lite3d_bounding_vol LightSource::getBoundingVolume() const
     {
-        lite3d_bounding_vol volume = {};
-        volume.radius = getInfluenceDistance();
-        volume.sphereCenter = mLightSource.params.position;
-        return volume;
+        lite3d_bounding_vol aabb = {};
+        aabb.radius = getInfluenceDistance();
+        aabb.sphereCenter = mLightSource.params.position;
+        return aabb;
     }
 
     void LightSource::calcDistanceMinRadiance()

@@ -31,8 +31,8 @@ class SampleSandbox : public Sample
 public:
 
     static constexpr const float AttenuationConstant = 1.0;
-    static constexpr const float AttenuationLinear = 15.23f;
-    static constexpr const float AttenuationQuadratic = 35.23f;
+    static constexpr const float AttenuationLinear = 0.0f;
+    static constexpr const float AttenuationQuadratic = 1.0f;
 
     SampleSandbox() : 
         Sample(helpString)
@@ -93,23 +93,21 @@ public:
         mFlashLight->getLight()->setAttenuationConstant(AttenuationConstant);
         mFlashLight->getLight()->setAttenuationLinear(AttenuationLinear);
         mFlashLight->getLight()->setAttenuationQuadratic(AttenuationQuadratic);
-        mFlashLight->getLight()->setRadiance(100.0f);
+        mFlashLight->getLight()->setRadiance(10.0f);
         mFlashLight->getLight()->enabled(true);
     }
 
     void addSpotLight()
     {
         auto flashLightObject = mMainScene->addObject("SpotLight_" + std::to_string(++mObjectCounter), 
-            "samples:objects/flashlight.json", nullptr);
+            "samples:objects/flashlight.json", nullptr, getMainCamera().getWorldPosition(),
+            getMainCamera().getWorldRotation());
         auto spotLight = flashLightObject->getLightNode("FlashLight.node");
         spotLight->getLight()->setAttenuationConstant(AttenuationConstant);
         spotLight->getLight()->setAttenuationLinear(AttenuationLinear);
         spotLight->getLight()->setAttenuationQuadratic(AttenuationQuadratic);
-        spotLight->getLight()->setRadiance(200.0f);
+        spotLight->getLight()->setRadiance(10.0f);
         spotLight->getLight()->enabled(true);
-        spotLight->getLight()->setFlag(LightSourceFlags::ShadowPcf3x3);
-        spotLight->setPosition(getMainCamera().getWorldPosition());
-        spotLight->setRotation(getMainCamera().getWorldRotation());
 
         // Recalc global illumination
         mPipeline->getIBL()->rebuild();
@@ -120,15 +118,16 @@ public:
     {
         auto sparkObject = mMainScene->addObject("Spark_" + std::to_string(++mObjectCounter), 
             "samples:objects/light_spark.json", nullptr, getMainCamera().getWorldPosition());
-        auto node = sparkObject->getLightNode("PointLightSpark.node");
-        node->getLight()->setAttenuationConstant(AttenuationConstant);
-        node->getLight()->setAttenuationLinear(AttenuationLinear);
-        node->getLight()->setAttenuationQuadratic(AttenuationQuadratic);
-        node->getLight()->setRadiance(60.0f);
-        node->getLight()->enabled(true);
+        auto sparkNode = sparkObject->getLightNode("PointLightSpark.node");
+        sparkNode->getLight()->setAttenuationConstant(AttenuationConstant);
+        sparkNode->getLight()->setAttenuationLinear(AttenuationLinear);
+        sparkNode->getLight()->setAttenuationQuadratic(AttenuationQuadratic);
+        sparkNode->getLight()->setRadiance(12.0f);
+        sparkNode->getLight()->enabled(true);
 
         // Recalc global illumination
         mPipeline->getIBL()->rebuild();
+        mPipeline->getShadowManager()->registerEmitter(sparkNode);
     }
 
     void updateFlashLight()

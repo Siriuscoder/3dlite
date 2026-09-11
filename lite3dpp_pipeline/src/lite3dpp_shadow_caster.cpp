@@ -25,6 +25,8 @@
 namespace lite3dpp {
 namespace lite3dpp_pipeline {
 
+    uint32_t ShadowCaster::gCameraCounter = 0;
+
     ShadowCaster::ShadowCaster(EmitterType emitterType, Main& main, LightSceneNode* node) : 
         mLightNode(node),
         mEmitterType(emitterType),
@@ -51,6 +53,11 @@ namespace lite3dpp_pipeline {
             camera->recalcFrustum();
             matrices.push_back(camera->refreshProjViewMatrix());
         }
+    }
+
+    size_t ShadowCaster::getPlaceHolderSize() const
+    {
+        return 1;
     }
 
     bool ShadowCaster::intersectFrustum(const lite3d_bounding_vol &aabb)
@@ -95,7 +102,7 @@ namespace lite3dpp_pipeline {
         auto clipFar = clip.farClipPlane > FLT_EPSILON ? clip.farClipPlane : 
             mLightNode->getLight()->getInfluenceDistance();
                     
-        auto camera = main.addCamera(mLightNode->getName() + "_spot_shadow");
+        auto camera = main.addCamera(mLightNode->getName() + "_spot_shadow_" + std::to_string(++gCameraCounter));
         camera->setupPerspective(clip.nearClipPlane, clipFar, 
             kmRadiansToDegrees(mLightNode->getLight()->getAngleOuterCone()), 1.0);
         mCameras.push_back(camera);
@@ -110,7 +117,7 @@ namespace lite3dpp_pipeline {
         auto clipFar = clip.farClipPlane > FLT_EPSILON ? clip.farClipPlane : 
             mLightNode->getLight()->getInfluenceDistance();
 
-        auto camera = main.addCamera(mLightNode->getName() + "_omni_shadow");
+        auto camera = main.addCamera(mLightNode->getName() + "_omni_shadow_" + std::to_string(++gCameraCounter));
         camera->setupPerspective(clip.nearClipPlane, clipFar, 90.0, 1.0);
         mCameras.push_back(camera);
     }
@@ -128,6 +135,11 @@ namespace lite3dpp_pipeline {
         return distance <= (aabb.radius + mLightNode->getLight()->getInfluenceDistance());
     }
 
+    size_t ShadowCasterOmniDirectional::getPlaceHolderSize() const
+    {
+        return 6;
+    }
+
     ShadowCasterCascade::ShadowCasterCascade(Main &main, LightSceneNode *emitter, uint32_t cascadeMaxCount) : 
         ShadowCaster(ShadowCaster::EmitterType::CascadeShadow, main, emitter)
     {
@@ -138,7 +150,8 @@ namespace lite3dpp_pipeline {
 
         for (auto it = mCameras.rbegin(); it != mCameras.rend(); ++it)
         {
-            auto cameraName = mLightNode->getName() + "_cascade_shadow_" + std::to_string(cascadeMaxCount);
+            auto cameraName = mLightNode->getName() + "_cascade_shadow_" + std::to_string(++gCameraCounter) + "_" + 
+                std::to_string(cascadeMaxCount);
             *it = main.addCamera(cameraName);
 
             (*it)->setupOrtho(clip.nearClipPlane, clip.farClipPlane, 
@@ -149,6 +162,11 @@ namespace lite3dpp_pipeline {
 
             cascadeMaxCount--;
         }
+    }
+
+    size_t ShadowCasterCascade::getPlaceHolderSize() const
+    {
+        return mCameras.size();
     }
 
 }}

@@ -5,7 +5,7 @@
         "Nodes": [
             {
                 "Name": "PointLightSpark.node",
-                "FrustumTest":false,
+                "FrustumTest":true,
                 "Light": {
                     "Type": "Point",
                     "Name": "PointLightSpark",
@@ -17,6 +17,11 @@
                     "Attenuation": {
                         "Constant": 1.0,
                         "InfluenceMinRadiance": 0.005
+                    },
+                    "ShadowParams": {
+                        "Dynamic": true,
+                        "Type": "PCF",
+                        "NearClipPlane": 0.01
                     }
                 }
             }

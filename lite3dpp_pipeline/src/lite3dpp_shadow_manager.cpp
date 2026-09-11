@@ -233,17 +233,98 @@ namespace lite3dpp_pipeline {
     { 
         SDL_assert(mShadowMatrixBuffer);
         SDL_assert(mShadowIndexBuffer);
-/*
+
+        stl<kmMat4>::vector shadowMatrices;
         mHostShadowIndexes.resize(1, 0); // Reserve 0 index for size
-        // Обновим матрицы по всем источникам отбрасывающим тень которые влияют на текущий кадр
-        for (uint32_t index = 0; index < mShadowCasters.size(); ++index)
+        
+        for (auto &[_, shadowCaster] : mShadowCasters) 
         {
-            auto &shadowCaster = mShadowCasters[index];
-            auto mat = shadowCaster->getMatrix();
-            if (shadowCaster->invalidated() && shadowCaster->getNode()->isVisible())
+            // Боьльше источников чем в mMaxShadowsRebuildCount за один кадр перестроить нельзя, остальные 
+            // доделаем потом, в следующих кадрах
+            if ((mHostShadowIndexes.size() + shadowCaster->getPlaceHolderSize() - 1) >= mMaxShadowsRebuildCount)
+                break;
+
+            // Смотрим только на видимые в кадре источники света, остальные пока не интересуют
+            if (shadowCaster->getNode()->getLight()->enabled() && shadowCaster->getNode()->isVisible())
             {
-                mShadowMatrixBuffer->setElement<kmMat4>(index, &mat);
-                mHostShadowIndexes.emplace_back(index);
+                // Если источник уже кеширован, теневая карта уже отсована, проверим, может нужно ее перерисовать?
+                if (shadowCaster->cached())
+                {
+                    if (shadowCaster->invalidated())
+                    {
+                        shadowCaster->recalcMatrices(shadowMatrices);
+                        uint32_t index = static_cast<uint32_t>(shadowCaster->getCacheIndex());
+                        mShadowMatrixBuffer->setElements<kmMat4>(index, &shadowMatrices[0], shadowMatrices.size());
+                        for (auto j = index; j < (index + shadowMatrices.size()); ++j)
+                            mHostShadowIndexes.push_back(j);
+                    }
+
+                    continue;
+                }
+
+                // Если сточник не кеширован, значит надо попробовать его закешировать и построить теневую карту
+                uint32_t step = 1;
+                uint32_t firstIndexToSearch = 0;
+                uint32_t searchCount = 0;
+                switch (shadowCaster->getEmitterType())
+                {
+                    case ShadowCaster::EmitterType::CascadeShadow:
+                        firstIndexToSearch = 0;
+                        searchCount = mCascadeShadowCacheMaxCount;
+                        step = 1;
+                        break;
+                    case ShadowCaster::EmitterType::OmniDirectionalShadow:
+                        firstIndexToSearch = mCascadeShadowCacheMaxCount;
+                        searchCount = mOmniShadowCacheMaxCount * 6;
+                        step = 6;
+                        break;
+                    case ShadowCaster::EmitterType::SpotShadow:
+                        firstIndexToSearch = mCascadeShadowCacheMaxCount + (mOmniShadowCacheMaxCount * 6);
+                        searchCount = mSpotShadowCacheMaxCount;
+                        step = 1;
+                        break;
+                };
+                    
+                for (auto i = firstIndexToSearch; i < (firstIndexToSearch + searchCount); i += step)
+                {
+                    // нашли свободное место в кеше
+                    if (!mShadowCastersCachePlaceHolders[i])
+                    {
+                        mShadowCastersCachePlaceHolders[i] = shadowCaster.get();
+                        shadowCaster->setCacheIndex(i);
+
+                        shadowCaster->recalcMatrices(shadowMatrices);
+                        mShadowMatrixBuffer->setElements<kmMat4>(i, &shadowMatrices[0], shadowMatrices.size());
+                        for (auto j = i; j < (i + shadowMatrices.size()); ++j)
+                            mHostShadowIndexes.push_back(j);
+                        break;
+                    }
+                }
+
+                if (shadowCaster->cached())
+                {
+                    continue;
+                }
+                    
+                // Если свободного места не нашлось, про буем вытянуть из кеша старый источник, который не виден
+                for (auto i = firstIndexToSearch; i < (firstIndexToSearch + searchCount); i += step)
+                {
+                    if (mShadowCastersCachePlaceHolders[i] && (!mShadowCastersCachePlaceHolders[i]->getNode()->isVisible() || 
+                        !mShadowCastersCachePlaceHolders[i]->getNode()->getLight()->enabled()))
+                    {
+                        // Выкинуть из кеша старый
+                        mShadowCastersCachePlaceHolders[i]->setCacheIndex(-1);
+                        // Выткнуть на его место новый
+                        mShadowCastersCachePlaceHolders[i] = shadowCaster.get();
+                        shadowCaster->setCacheIndex(i);
+
+                        shadowCaster->recalcMatrices(shadowMatrices);
+                        mShadowMatrixBuffer->setElements<kmMat4>(i, &shadowMatrices[0], shadowMatrices.size());
+                        for (auto j = i; j < (i + shadowMatrices.size()); ++j)
+                            mHostShadowIndexes.push_back(j);
+                        break;
+                    }
+                }
             }
         }
 
@@ -255,7 +336,6 @@ namespace lite3dpp_pipeline {
         }
 
         mShadowIndexBuffer->setData(&mHostShadowIndexes[0], 0, mHostShadowIndexes.size() * sizeof(IndexVector::value_type)); 
-        */
         return true;
     }
 
@@ -299,20 +379,22 @@ namespace lite3dpp_pipeline {
 
             if (shadowCaster->intersectFrustum(*boundingVol))
             {
-                if (dnode)
+                if (dnode && shadowCaster->dynamicShadow())
                 {
                     // Текущая нода видима для этого истоника света, запомним это
                     dnode->setVisibleFrom(shadowCaster);
                 }
 
-                if (shadowCaster->invalidated())
+                // Рисуем только те обьекты которые попадают в область видимости источников света которые сейчас обновляются
+                if (std::find(mHostShadowIndexes.begin()+1, mHostShadowIndexes.end(), shadowCaster->getCacheIndex()) !=
+                    mHostShadowIndexes.end())
                 {
                     isVisible = true;
                 }
             }
             else
             {
-                if (dnode)
+                if (dnode && shadowCaster->dynamicShadow())
                 {
                     // Текущая нода НЕ видима для этого истоника света
                     dnode->setInvisibleFrom(shadowCaster);
@@ -415,8 +497,8 @@ namespace lite3dpp_pipeline {
     {
         auto shadowParams = mPipeline.getConfig().getObject(L"ShadowMaps");
         mSpotShadowCacheMaxCount = shadowParams.getInt(L"SpotShadowCacheMaxCount", 10);
-        mOmniShadowCacheMaxCount = shadowParams.getInt(L"OmniShadowCacheMaxCount", 2);
-        mCascadeShadowCacheMaxCount = shadowParams.getInt(L"CascadeShadowCacheMaxCount", 2);
+        mOmniShadowCacheMaxCount = shadowParams.getInt(L"OmniShadowCacheMaxCount", 0);
+        mCascadeShadowCacheMaxCount = shadowParams.getInt(L"CascadeShadowCacheMaxCount", 0);
         mExtent = shadowParams.getInt(L"Extent", 512);
 
         setupLimits();

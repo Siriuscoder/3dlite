@@ -513,3 +513,17 @@ vec3 cubeCoordToWorld(ivec3 cubeCoord, vec2 cubemapSize)
     return vec3(0.0);
 }
 
+int cubeFaceFromDir(vec3 dir)
+{
+    vec3 a = abs(dir);
+    int face;
+
+    if (a.x >= a.y && a.x >= a.z)
+        face = dir.x >= 0.0 ? 0 : 1;
+    else if (a.y >= a.x && a.y >= a.z)
+        face = dir.y >= 0.0 ? 2 : 3;
+    else
+        face = dir.z >= 0.0 ? 4 : 5;
+
+    return face;
+}

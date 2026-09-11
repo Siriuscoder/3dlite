@@ -38,6 +38,7 @@ public:
 
     virtual void recalcMatrices(stl<kmMat4>::vector &matrices);
     virtual bool intersectFrustum(const lite3d_bounding_vol &aabb);
+    virtual size_t getPlaceHolderSize() const; 
 
     inline LightSceneNode *getNode()
     {
@@ -74,6 +75,11 @@ public:
         return mLightNode->getLight()->getShadowIndex();
     }
 
+    inline void setCacheIndex(int32_t index) 
+    {
+        return mLightNode->getLight()->setShadowIndex(index);
+    }
+
     inline int32_t cached() const
     {
         return mLightNode->getLight()->getShadowIndex() >= 0;
@@ -93,6 +99,7 @@ protected:
     bool mInvalidated = true;
     EmitterType mEmitterType;
     Main &mMain;
+    static uint32_t gCameraCounter;
 };
 
 class LITE3DPP_PIPELINE_EXPORT ShadowCasterSpot : public ShadowCaster
@@ -109,6 +116,7 @@ public:
     ShadowCasterOmniDirectional(Main &main, LightSceneNode *emitter);
     void recalcMatrices(stl<kmMat4>::vector &matrices) override;
     bool intersectFrustum(const lite3d_bounding_vol &aabb) override;
+    size_t getPlaceHolderSize() const override;
 };
 
 class LITE3DPP_PIPELINE_EXPORT ShadowCasterCascade : public ShadowCaster
@@ -116,6 +124,7 @@ class LITE3DPP_PIPELINE_EXPORT ShadowCasterCascade : public ShadowCaster
 public:
 
     ShadowCasterCascade(Main &main, LightSceneNode *emitter, uint32_t cascadeMaxCount);
+    size_t getPlaceHolderSize() const override;
 };
 
 }}

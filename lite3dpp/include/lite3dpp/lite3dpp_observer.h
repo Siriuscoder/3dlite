@@ -101,6 +101,10 @@ namespace lite3dpp
             SceneNodeBase *node, lite3d_mesh_chunk *meshChunk, 
             Material *material, lite3d_bounding_vol *boundingVol,
             Camera *camera) { return true; }
+        virtual bool customVisibilityCheck(Scene *scene, 
+            SceneNodeBase *node, lite3d_mesh_chunk *meshChunk, 
+            Material *material, lite3d_bounding_vol *boundingVol,
+            Camera *camera) { return true; }
 
         virtual void beforeUpdateNodes(Scene *scene, Camera *camera, int32_t priority) {}
         virtual bool beginSceneRender(Scene *scene, Camera *camera, int32_t priority) { return true; }
