@@ -218,13 +218,19 @@ namespace lite3dpp_pipeline {
 
     void PipelineBase::unloadImpl()
     {
-        // We are going to unload all resources loaded by this pipeline 
-        unloadBranch();
-        getMain().getResourceManager().releaseUnloadedResources();
+        if (mShadowManager)
+        {
+            SDL_assert(mMainScene);
+            mMainScene->removeObserver(mShadowManager.get());
+        }
 
         mShadowManager.reset();
         mBloomEffect.reset();
         mIBL.reset();
+
+        // We are going to unload all resources loaded by this pipeline 
+        unloadBranch();
+        getMain().getResourceManager().releaseUnloadedResources();
     }
 
     void PipelineBase::createBigTriangleMesh()

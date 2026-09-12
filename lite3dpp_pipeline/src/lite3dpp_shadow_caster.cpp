@@ -27,48 +27,45 @@ namespace lite3dpp_pipeline {
 
     uint32_t ShadowCaster::gCameraCounter = 0;
 
-    ShadowCaster::ShadowCaster(EmitterType emitterType, Main& main, LightSceneNode* node) : 
-        mLightNode(node),
+    ShadowCaster::ShadowCaster(EmitterType emitterType, Main& main, LightSceneNode* emitter) : 
+        mLightNode(emitter),
         mEmitterType(emitterType),
         mMain(main)
     {
-        SDL_assert(node);
+        SDL_assert(emitter);
+
+        // Если какой либо из узлов сцены поменяет свое положение тень нужно перерисовать
+        SceneNodeBase *node = emitter;
+        while (node)
+        {
+            node->addObserver(this);
+            node = node->getParent();
+        }
     }
 
     ShadowCaster::~ShadowCaster()
     {
-        for (auto camera : mCameras)
+        mMain.removeCamera(mCamera->getName());
+        
+        SceneNodeBase *node = mLightNode;
+        while (node)
         {
-            mMain.removeCamera(camera->getName());
+            node->removeObserver(this);
+            node = node->getParent();
         }
     }
 
-    void ShadowCaster::recalcMatrices(stl<kmMat4>::vector &matrices)
+    kmMat4 ShadowCaster::recalcMatrix()
     {
-        matrices.clear();
-        for (auto camera : mCameras)
-        {
-            camera->setDirection(mLightNode->getLight()->getWorldDirection());
-            camera->setPosition(mLightNode->getLight()->getWorldPosition());
-            camera->recalcFrustum();
-            matrices.push_back(camera->refreshProjViewMatrix());
-        }
-    }
-
-    size_t ShadowCaster::getPlaceHolderSize() const
-    {
-        return 1;
+        mCamera->setDirection(mLightNode->getLight()->getWorldDirection());
+        mCamera->setPosition(mLightNode->getLight()->getWorldPosition());
+        mCamera->recalcFrustum();
+        return mCamera->refreshProjViewMatrix();
     }
 
     bool ShadowCaster::intersectFrustum(const lite3d_bounding_vol &aabb)
     {
-        for (auto camera : mCameras)
-        {
-            if (camera->intersectFrustum(aabb))
-                return true;
-        }
-
-        return false;
+        return mCamera->intersectFrustum(aabb);
     }
 
     void ShadowCaster::updatePosition(SceneNodeBase *node)
@@ -91,6 +88,16 @@ namespace lite3dpp_pipeline {
         invalidate();
     }
 
+    int32_t ShadowCaster::getCacheIndex() const
+    {
+        return mLightNode->getLight()->getShadowIndex();
+    }
+
+    void ShadowCaster::setCacheIndex(int32_t index)
+    {
+        mLightNode->getLight()->setShadowIndex(index);
+    }
+
     ShadowCasterSpot::ShadowCasterSpot(Main &main, LightSceneNode *emitter) : 
         ShadowCaster(ShadowCaster::EmitterType::SpotShadow, main, emitter)
     {
@@ -98,75 +105,86 @@ namespace lite3dpp_pipeline {
             mLightNode->getLight()->getType() == LightSourceFlags::TypeRectArea || 
             mLightNode->getLight()->getType() == LightSourceFlags::TypeSpot);
 
-        const auto &clip = mLightNode->getLight()->getShadowClip();
-        auto clipFar = clip.farClipPlane > FLT_EPSILON ? clip.farClipPlane : 
+        auto clipFar = mLightNode->getLight()->getClipFar() > FLT_EPSILON ? mLightNode->getLight()->getClipFar() : 
             mLightNode->getLight()->getInfluenceDistance();
                     
-        auto camera = main.addCamera(mLightNode->getName() + "_spot_shadow_" + std::to_string(++gCameraCounter));
-        camera->setupPerspective(clip.nearClipPlane, clipFar, 
+        mCamera = main.addCamera(mLightNode->getName() + "_spot_shadow_" + std::to_string(++gCameraCounter));
+        mCamera->setupPerspective(mLightNode->getLight()->getClipNear(), clipFar, 
             kmRadiansToDegrees(mLightNode->getLight()->getAngleOuterCone()), 1.0);
-        mCameras.push_back(camera);
     }
 
-    ShadowCasterOmniDirectional::ShadowCasterOmniDirectional(Main &main, LightSceneNode *emitter) : 
-        ShadowCaster(ShadowCaster::EmitterType::OmniDirectionalShadow, main, emitter)
+    ShadowCasterOmniDirectional::ShadowCasterOmniDirectional(Main &main, LightSceneNode *emitter, uint32_t faceNum) : 
+        ShadowCaster(ShadowCaster::EmitterType::OmniDirectionalShadow, main, emitter),
+        mFaceNum(faceNum)
     {
-        SDL_assert(mLightNode->getLight()->getType() == LightSourceFlags::TypePoint);
+        const kmVec3 faceDirections[] = {
+            KM_VEC3_POS_X,
+            KM_VEC3_NEG_X,
+            KM_VEC3_POS_Y,
+            KM_VEC3_NEG_Y,
+            KM_VEC3_POS_Z,
+            KM_VEC3_NEG_Z
+        };
 
-        const auto &clip = mLightNode->getLight()->getShadowClip();
-        auto clipFar = clip.farClipPlane > FLT_EPSILON ? clip.farClipPlane : 
+        SDL_assert(mLightNode->getLight()->getType() == LightSourceFlags::TypePoint);
+        SDL_assert(faceNum >= 0 && faceNum <= 6);
+
+        auto clipFar = mLightNode->getLight()->getClipFar() > FLT_EPSILON ? mLightNode->getLight()->getClipFar() : 
             mLightNode->getLight()->getInfluenceDistance();
 
-        auto camera = main.addCamera(mLightNode->getName() + "_omni_shadow_" + std::to_string(++gCameraCounter));
-        camera->setupPerspective(clip.nearClipPlane, clipFar, 90.0, 1.0);
-        mCameras.push_back(camera);
+        mCamera = main.addCamera(mLightNode->getName() + "_omni_shadow_face_" + std::to_string(faceNum) + "_" + 
+            std::to_string(++gCameraCounter));
+        mCamera->setupPerspective(mLightNode->getLight()->getClipNear(), clipFar, 90.0, 1.0);
+        mCamera->setDirection(faceDirections[faceNum]);
     }
 
-    void ShadowCasterOmniDirectional::recalcMatrices(stl<kmMat4>::vector &matrices)
+    int32_t ShadowCasterOmniDirectional::getCacheIndex() const
     {
-        mCameras[0]->setDirection(mLightNode->getLight()->getWorldDirection());
-        mCameras[0]->setPosition(mLightNode->getLight()->getWorldPosition());
-        mCameras[0]->computeCubeProjView(matrices);
-    }
-
-    bool ShadowCasterOmniDirectional::intersectFrustum(const lite3d_bounding_vol &aabb)
-    {
-        auto distance = mCameras[0]->getDistance(aabb.sphereCenter);
-        return distance <= (aabb.radius + mLightNode->getLight()->getInfluenceDistance());
-    }
-
-    size_t ShadowCasterOmniDirectional::getPlaceHolderSize() const
-    {
-        return 6;
-    }
-
-    ShadowCasterCascade::ShadowCasterCascade(Main &main, LightSceneNode *emitter, uint32_t cascadeMaxCount) : 
-        ShadowCaster(ShadowCaster::EmitterType::CascadeShadow, main, emitter)
-    {
-        SDL_assert(mLightNode->getLight()->getType() == LightSourceFlags::TypePoint);
-
-        const auto &clip = mLightNode->getLight()->getShadowClip();
-        mCameras.resize(cascadeMaxCount);
-
-        for (auto it = mCameras.rbegin(); it != mCameras.rend(); ++it)
+        if (mLightNode->getLight()->getShadowIndex() >= 0)
         {
-            auto cameraName = mLightNode->getName() + "_cascade_shadow_" + std::to_string(++gCameraCounter) + "_" + 
-                std::to_string(cascadeMaxCount);
-            *it = main.addCamera(cameraName);
+            return mLightNode->getLight()->getShadowIndex() + mFaceNum;
+        }
 
-            (*it)->setupOrtho(clip.nearClipPlane, clip.farClipPlane, 
-                clip.leftClipPlane / cascadeMaxCount, 
-                clip.rightClipPlane / cascadeMaxCount, 
-                clip.bottomClipPlane / cascadeMaxCount,
-                clip.topClipPlane / cascadeMaxCount);
+        return -1;
+    }
 
-            cascadeMaxCount--;
+    void ShadowCasterOmniDirectional::setCacheIndex(int32_t index)
+    {
+        if (mFaceNum == 0)
+        {
+            mLightNode->getLight()->setShadowIndex(index);
         }
     }
 
-    size_t ShadowCasterCascade::getPlaceHolderSize() const
+    kmMat4 ShadowCasterOmniDirectional::recalcMatrix()
     {
-        return mCameras.size();
+        mCamera->setPosition(mLightNode->getLight()->getWorldPosition());
+        mCamera->recalcFrustum();
+        return mCamera->refreshProjViewMatrix();
     }
 
+    ShadowCasterCascade::ShadowCasterCascade(Main &main, LightSceneNode *emitter, uint32_t cascadeNum) : 
+        ShadowCaster(ShadowCaster::EmitterType::CascadeShadow, main, emitter),
+        mCascadeNum(cascadeNum)
+    {
+        SDL_assert(mLightNode->getLight()->getType() == LightSourceFlags::TypePoint);
+    }
+
+    int32_t ShadowCasterCascade::getCacheIndex() const
+    {
+        if (mLightNode->getLight()->getShadowIndex() >= 0)
+        {
+            return mLightNode->getLight()->getShadowIndex() + mCascadeNum;
+        }
+
+        return -1;
+    }
+
+    void ShadowCasterCascade::setCacheIndex(int32_t index)
+    {
+        if (mCascadeNum == 0)
+        {
+            mLightNode->getLight()->setShadowIndex(index);
+        }
+    }
 }}

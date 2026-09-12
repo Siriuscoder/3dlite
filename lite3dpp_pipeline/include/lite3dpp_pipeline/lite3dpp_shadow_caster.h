@@ -36,9 +36,10 @@ public:
     ShadowCaster(EmitterType emitterType, Main &main, LightSceneNode *emitter);
     virtual ~ShadowCaster();
 
-    virtual void recalcMatrices(stl<kmMat4>::vector &matrices);
+    virtual kmMat4 recalcMatrix();
     virtual bool intersectFrustum(const lite3d_bounding_vol &aabb);
-    virtual size_t getPlaceHolderSize() const; 
+    virtual int32_t getCacheIndex() const;
+    virtual void setCacheIndex(int32_t index); 
 
     inline LightSceneNode *getNode()
     {
@@ -70,16 +71,6 @@ public:
         return mEmitterType;
     }
 
-    inline int32_t getCacheIndex() const
-    {
-        return mLightNode->getLight()->getShadowIndex();
-    }
-
-    inline void setCacheIndex(int32_t index) 
-    {
-        return mLightNode->getLight()->setShadowIndex(index);
-    }
-
     inline int32_t cached() const
     {
         return mLightNode->getLight()->getShadowIndex() >= 0;
@@ -95,7 +86,7 @@ protected:
 protected:
 
     LightSceneNode *mLightNode;
-    stl<Camera *>::vector mCameras;
+    Camera *mCamera;
     bool mInvalidated = true;
     EmitterType mEmitterType;
     Main &mMain;
@@ -113,18 +104,27 @@ class LITE3DPP_PIPELINE_EXPORT ShadowCasterOmniDirectional : public ShadowCaster
 {
 public:
 
-    ShadowCasterOmniDirectional(Main &main, LightSceneNode *emitter);
-    void recalcMatrices(stl<kmMat4>::vector &matrices) override;
-    bool intersectFrustum(const lite3d_bounding_vol &aabb) override;
-    size_t getPlaceHolderSize() const override;
+    ShadowCasterOmniDirectional(Main &main, LightSceneNode *emitter, uint32_t faceNum);
+    kmMat4 recalcMatrix() override;
+    int32_t getCacheIndex() const override;
+    void setCacheIndex(int32_t index) override;
+
+private:
+
+    uint32_t mFaceNum;
 };
 
 class LITE3DPP_PIPELINE_EXPORT ShadowCasterCascade : public ShadowCaster
 {
 public:
 
-    ShadowCasterCascade(Main &main, LightSceneNode *emitter, uint32_t cascadeMaxCount);
-    size_t getPlaceHolderSize() const override;
+    ShadowCasterCascade(Main &main, LightSceneNode *emitter, uint32_t cascadeNum);
+    int32_t getCacheIndex() const override;
+    void setCacheIndex(int32_t index) override;
+    
+private:
+
+    uint32_t mCascadeNum;
 };
 
 }}

@@ -206,7 +206,7 @@ namespace lite3dpp
         }
     }
     
-    void Scene::validateLightingBuffer(const Camera &camera)
+    void Scene::validateLightingBuffer(const Camera &camera, const lite3d_scene_render_params &params)
     {
         if (!mLightingParamsBuffer || !mLightingIndexBuffer || mLights.size() == 0)
             return;
@@ -234,7 +234,7 @@ namespace lite3dpp
                 anyValidated = true;
             }
 
-            if (light->getLight()->getType() == LightSourceFlags::TypeDirectional || 
+            if (!(params.flags & LITE3D_RENDER_FRUSTUM_CULLING) || 
                 !light->frustumTest() || 
                 camera.intersectFrustum(*light->getLight()))
             {
@@ -568,7 +568,7 @@ namespace lite3dpp
 
             if (__ret)
             {
-                reinterpret_cast<Scene *>(scene->userdata)->validateLightingBuffer(*cameraObj);
+                reinterpret_cast<Scene *>(scene->userdata)->validateLightingBuffer(*cameraObj, *params);
                 return LITE3D_TRUE;
             }
 

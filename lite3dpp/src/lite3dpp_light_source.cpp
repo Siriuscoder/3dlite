@@ -95,16 +95,8 @@ namespace lite3dpp
             }
 
             setFlag(shadowTypeFlag);
-            if (getType() == LightSourceFlags::TypeDirectional)
-            {
-                mShadowClipParams.leftClipPlane = shadowParams.getDouble(L"LeftClipPlane");
-                mShadowClipParams.rightClipPlane = shadowParams.getDouble(L"RightClipPlane");
-                mShadowClipParams.bottomClipPlane = shadowParams.getDouble(L"BottomClipPlane");
-                mShadowClipParams.topClipPlane = shadowParams.getDouble(L"TopClipPlane");
-            }
-
-            mShadowClipParams.nearClipPlane = shadowParams.getDouble(L"NearClipPlane");
-            mShadowClipParams.farClipPlane = shadowParams.getDouble(L"FarClipPlane");
+            mClipNear = shadowParams.getDouble(L"NearClipPlane");
+            mClipFar = shadowParams.getDouble(L"FarClipPlane");
         }
 
         mLightSource.userdata = this;
@@ -184,16 +176,8 @@ namespace lite3dpp
             if (mLightSource.params.flags & LITE3D_LIGHT_SHADOW_SSS)
                 shadowParams.set(L"SSS", true);
 
-            if (getType() == LightSourceFlags::TypeDirectional)
-            {
-                shadowParams.set(L"LeftClipPlane", mShadowClipParams.leftClipPlane);
-                shadowParams.set(L"RightClipPlane", mShadowClipParams.rightClipPlane);
-                shadowParams.set(L"BottomClipPlane", mShadowClipParams.bottomClipPlane);
-                shadowParams.set(L"TopClipPlane", mShadowClipParams.topClipPlane);
-            }
-
-            shadowParams.set(L"NearClipPlane", mShadowClipParams.nearClipPlane);
-            shadowParams.set(L"FarClipPlane", mShadowClipParams.farClipPlane);
+            shadowParams.set(L"NearClipPlane", mClipNear);
+            shadowParams.set(L"FarClipPlane", mClipFar);
             writer.set(L"ShadowParams", shadowParams);
         }
     }
@@ -444,6 +428,15 @@ namespace lite3dpp
     float LightSource::getRadius() const
     {
         return mLightSource.params.radius;
+    }
+
+    float LightSource::getClipNear() const
+    {
+        return mClipNear;
+    }
+    float LightSource::getClipFar() const
+    { 
+        return mClipFar; 
     }
 
     void LightSource::translateToWorld(const kmMat4 &worldMatrix)

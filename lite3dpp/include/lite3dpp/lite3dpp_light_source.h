@@ -55,10 +55,6 @@ namespace lite3dpp
     public:
         float nearClipPlane = 0.0f;
         float farClipPlane = 0.0f;
-        float leftClipPlane = 0.0f;
-        float rightClipPlane = 0.0f;
-        float bottomClipPlane = 0.0f;
-        float topClipPlane = 0.0f;
     };
 
     class LITE3DPP_EXPORT LightSource : public Noncopiable, public Manageable
@@ -133,8 +129,8 @@ namespace lite3dpp
         float getAreaWidth() const;
         float getAreaHeight() const;
         float getRadius() const;
-        inline const ShadowClipParams &getShadowClip() const
-        { return mShadowClipParams; }
+        float getClipNear() const;
+        float getClipFar() const;
 
         void translateToWorld(const kmMat4 &worldMatrix);
         void writeToBuffer(BufferBase &buffer);
@@ -151,7 +147,8 @@ namespace lite3dpp
         uint32_t mBufferIndex = 0;
         bool mUpdated = false;
         std::optional<float> mInfluenceDistance;
-        ShadowClipParams mShadowClipParams;
+        float mClipNear;
+        float mClipFar;
     };
 }
 

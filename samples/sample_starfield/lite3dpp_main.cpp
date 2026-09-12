@@ -58,7 +58,7 @@ public:
     {
         mSUN = mMainScene->getObject("Sun")->getLightNode("Sun");
         mSUN->getLight()->setFlag(LightSourceFlags::ShadowPcfAdaptive);
-        mSUNShadowCaster = mPipeline->getShadowManager()->registerEmitter(mSUN);
+        mSUNShadowCaster = mPipeline->getShadowManager()->registerEmitter(mSUN)[0];
     }
 
     void fixedUpdateTimerTick(int32_t firedPerRound, uint64_t deltaMcs, float deltaRetard) override

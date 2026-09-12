@@ -32,17 +32,19 @@ public:
 
 public:
 
-    class LITE3DPP_PIPELINE_EXPORT VisibilityHintNode : public SceneNodeObserver
+    class LITE3DPP_PIPELINE_EXPORT VisibilityHintNode : public SceneNodeObserver, public Noncopiable
     {
     public:
     
         using ShadowCasters = stl<ShadowCaster*>::unordered_set;
 
-        VisibilityHintNode(SceneNodeBase *node);
+        VisibilityHintNode(SceneNodeBase *node, bool recursive);
+        ~VisibilityHintNode();
 
         void resetVision();
         void setVisibleFrom(ShadowCaster* sc);
         void setInvisibleFrom(ShadowCaster* sc);
+        bool isRecursive();
 
     private:
 
@@ -54,18 +56,18 @@ public:
 
         SceneNodeBase *mNode = nullptr;
         ShadowCasters mAffectingShadowCasters;
+        bool mRecursive;
     };
 
     ShadowManager(Main& main, PipelineBase &pipeline);
     ~ShadowManager();
 
     void initialize();
-    ShadowCaster* registerEmitter(LightSceneNode* emitter);
+    stl<ShadowCaster*>::vector registerEmitter(LightSceneNode* emitter);
     void unregisterEmitter(LightSceneNode* emitter);
-    VisibilityHintNode* registerHintNode(SceneNodeBase *node);
-    VisibilityHintNode* registerHintNodeRecursive(SceneNodeBase *node);
+    VisibilityHintNode* registerHintNode(SceneNodeBase *node, bool recursive = false);
     void unregisterHintNode(SceneNodeBase *node);
-    void unregisterHintNodeRecursive(SceneNodeBase *node);
+    void clear();
 
     inline RenderTarget& getShadowPass()
     {
@@ -122,9 +124,9 @@ private:
     VBOResource* mShadowMatrixBuffer = nullptr;
     VBOResource* mShadowIndexBuffer = nullptr;
     IndexVector mHostShadowIndexes;
-    stl<LightSceneNode *, std::unique_ptr<ShadowCaster>>::unordered_map mShadowCasters;
+    stl<LightSceneNode *, std::unique_ptr<ShadowCaster>>::multimap mShadowCasters;
     stl<ShadowCaster*>::vector mShadowCastersCachePlaceHolders;
-    stl<SceneNodeBase *, std::shared_ptr<VisibilityHintNode>>::unordered_map mVisibilityHintNodes;
+    stl<SceneNodeBase *, std::unique_ptr<VisibilityHintNode>>::unordered_map mVisibilityHintNodes;
     Scene *mCleanStage = nullptr;
     bool mCascadeShadowIsReserved = false;
 };

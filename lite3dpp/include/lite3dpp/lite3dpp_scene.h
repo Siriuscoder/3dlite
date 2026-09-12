@@ -93,7 +93,7 @@ namespace lite3dpp
         
         void setupCallbacks();
         void rebuildLightingBuffer();
-        void validateLightingBuffer(const Camera &camera);
+        void validateLightingBuffer(const Camera &camera, const lite3d_scene_render_params &params);
 
         // this functions are used for tracking lightNode
         void registerLightNode(LightSceneNode *node);

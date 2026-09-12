@@ -99,10 +99,10 @@ public:
 
     void addSpotLight()
     {
-        auto flashLightObject = mMainScene->addObject("SpotLight_" + std::to_string(++mObjectCounter), 
-            "samples:objects/flashlight.json", nullptr, getMainCamera().getWorldPosition(),
+        auto spotLightObject = mMainScene->addObject("SpotLight_" + std::to_string(++mObjectCounter), 
+            "samples:objects/spotlight.json", nullptr, getMainCamera().getWorldPosition(),
             getMainCamera().getWorldRotation());
-        auto spotLight = flashLightObject->getLightNode("FlashLight.node");
+        auto spotLight = spotLightObject->getLightNode("SpotLight.node");
         spotLight->getLight()->setAttenuationConstant(AttenuationConstant);
         spotLight->getLight()->setAttenuationLinear(AttenuationLinear);
         spotLight->getLight()->setAttenuationQuadratic(AttenuationQuadratic);
@@ -122,7 +122,7 @@ public:
         sparkNode->getLight()->setAttenuationConstant(AttenuationConstant);
         sparkNode->getLight()->setAttenuationLinear(AttenuationLinear);
         sparkNode->getLight()->setAttenuationQuadratic(AttenuationQuadratic);
-        sparkNode->getLight()->setRadiance(12.0f);
+        sparkNode->getLight()->setRadiance(10.0f);
         sparkNode->getLight()->enabled(true);
 
         // Recalc global illumination

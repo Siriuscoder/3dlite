@@ -22,6 +22,31 @@
 namespace lite3dpp {
 namespace lite3dpp_pipeline {
 
+//- Deffered pipeline scenario ------------------------------------------------------
+// 
+// Render Target        | Stage                 | Matrerial Pass    | Scene         |
+// ---------------------|-----------------------|-------------------|---------------|
+// MainDepth            | DepthBuildStage       | DepthPass         | MainScene     |
+// ---------------------|-----------------------|-------------------|---------------|
+// ShadowMap            | ShadowCleanStage      | ShadowPass        | BigTri        |
+// ShadowMap            | ShadowBuildStage      | ShadowPass        | MainScene     |
+// ---------------------|-----------------------|-------------------|---------------|
+// GIProbe              | GIStage               | GIProbePass       | MainScene     |
+// GIProbe              | SkyBoxStage           | GIProbePass       | SkyBox        |
+// ---------------------|-----------------------|-------------------|---------------|
+// GBuffer              | GBufferBuildStage     | RenderPass        | MainScene     |
+// ---------------------|-----------------------|-------------------|---------------|
+// SSAO                 | SSAOBuildStage        | RenderPass        | BigTri        |
+// ---------------------|-----------------------|-------------------|---------------|
+// Combine              | LightComputeStage     | RenderPass        | BigTri        |
+// Combine              | SkyBoxStage           | RenderPass        | SkyBox        |
+// Combine              | BlendDecalStage       | RenderPass        | MainScene     |
+// ---------------------|-----------------------|-------------------|---------------|
+// BLOOM                | BloomBuildStage       | RenderPass        | BigTri        |
+// ---------------------|-----------------------|-------------------|---------------|
+// PostProcess          | PostProcessStage      | RenderPass        | BigTri        |
+// ---------------------|-----------------------|-------------------|---------------|
+
     class LITE3DPP_PIPELINE_EXPORT PipelineDeffered : public PipelineBase
     {
     public:

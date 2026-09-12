@@ -7,11 +7,8 @@
     "EnvironmentTexture": "samples:textures/json/skybox_metal_chrome.json",
     "ShadowMaps":
     {
-        "Width": 64,
-        "Height": 64,
-        "MaxCount": 1,
-        "NearClipPlane": 1.0,
-        "FarClipPlane": 1500.0
+        "Extent": 512,
+        "OmniShadowCacheMaxCount": 10
     },
     "SSAO": 
     {

@@ -18095,7 +18095,7 @@
                 "Linear": 50.0,
                 "Quadratic": 130.0,
                 "InfluenceDistance": 400.0,
-                "InfluenceMinRadiance": 0.004000000189989805
+                "InfluenceMinRadiance": 0.01
               },
               "SpotFactor": {
                 "AngleInnerCone": 0.5235987901687622,
@@ -18110,7 +18110,12 @@
                 0.0,
                 0.0,
                 0.0
-              ]
+              ],
+              "ShadowParams": {
+                "Dynamic": true,
+                "Type": "PCFAdaptive",
+                "NearClipPlane": 2
+              }
             },
             "Position": [
               4.8890783546085e-06,

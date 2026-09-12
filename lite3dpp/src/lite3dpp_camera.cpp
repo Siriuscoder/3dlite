@@ -163,6 +163,9 @@ namespace lite3dpp
 
     bool Camera::intersectFrustum(const LightSource &light) const
     {
+        if (light.getType() == LightSourceFlags::TypeDirectional)
+            return true;
+            
         auto aabb = light.getBoundingVolumeWorld();
         return lite3d_frustum_test_sphere(&mCamera.frustum, &aabb) == LITE3D_TRUE;
     }

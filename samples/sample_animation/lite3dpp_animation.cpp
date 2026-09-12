@@ -69,7 +69,7 @@ public:
         sun->getLight()->setFlag(LightSourceFlags::ShadowPcfAdaptive);
         mPipeline->getShadowManager()->registerEmitter(sun);
         // Register hint nodes for automate shadow recalculation 
-        mPipeline->getShadowManager()->registerHintNodeRecursive(mAnimationScene->getObject("Engine")->getRoot());
+        mPipeline->getShadowManager()->registerHintNode(mAnimationScene->getObject("Engine")->getRoot(), true);
         mPipeline->getShadowManager()->registerHintNode(mSkeletonBody);
         mPipeline->getShadowManager()->registerHintNode(mSkeletonBody2);
         mPipeline->getShadowManager()->registerHintNode(mCuriousSphere);

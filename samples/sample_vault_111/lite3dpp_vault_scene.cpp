@@ -50,7 +50,7 @@ public:
         {
             mMinigun = mMinigunObj->getNode("Minigun");
             mMinigunBarrel = mMinigunObj->getNode("MinigunBarrel");
-            shadowManager->registerHintNodeRecursive(mMinigunObj->getRoot());
+            shadowManager->registerHintNode(mMinigunObj->getRoot(), true);
         }
 
         void rotateAngle(const kmVec3 &axis, float angle)
@@ -80,6 +80,8 @@ public:
 
     void createScene() override
     {
+        ShaderProgram::addGlobalDefinition("SAMPLE_VAULT_111", "1");
+
         mLightAnimEffects = std::make_unique<SampleLightEffectManager>();
         mPipeline = getMain().getResourceManager().queryResource<lite3dpp_pipeline::PipelineDeffered>("Vault_111", 
             "vault_111:pipelines/vault_111.json");
@@ -133,20 +135,11 @@ public:
         mShadowManager->registerHintNode(mSpot02);
         mShadowManager->registerHintNode(mSpot03);
 
-        mShadowManager->registerEmitter(mVaultScene->getObject("LightSpot")->getLightNode("LightSpotNode"))->getNode()->
-            getLight()->setFlag(LightSourceFlags::ShadowPcfAdaptive);
-
-        mShadowManager->registerEmitter(mVaultScene->getObject("LightSpot.001")->getLightNode("LightSpotNode"))->getNode()->
-            getLight()->setFlag(LightSourceFlags::ShadowPcfAdaptive);
-
-        mShadowManager->registerEmitter(mVaultScene->getObject("LightSpot.002")->getLightNode("LightSpotNode"))->getNode()->
-            getLight()->setFlag(LightSourceFlags::ShadowPcfAdaptive);
-
-        mShadowManager->registerEmitter(mVaultScene->getObject("LightSpot.003")->getLightNode("LightSpotNode"))->getNode()->
-            getLight()->setFlag(LightSourceFlags::ShadowPcfAdaptive);
-        
-        mShadowManager->registerEmitter(mVaultScene->getObject("VaultStatic")->getLightNode("RotorSpot"))->getNode()->
-            getLight()->setFlag(LightSourceFlags::ShadowPcfAdaptive);
+        mShadowManager->registerEmitter(mVaultScene->getObject("LightSpot")->getLightNode("LightSpotNode"));
+        mShadowManager->registerEmitter(mVaultScene->getObject("LightSpot.001")->getLightNode("LightSpotNode"));
+        mShadowManager->registerEmitter(mVaultScene->getObject("LightSpot.002")->getLightNode("LightSpotNode"));
+        mShadowManager->registerEmitter(mVaultScene->getObject("LightSpot.003")->getLightNode("LightSpotNode"));
+        mShadowManager->registerEmitter(mVaultScene->getObject("VaultStatic")->getLightNode("RotorSpot"));
     }
 
     void setupLightAnim()
