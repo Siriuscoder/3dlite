@@ -230,12 +230,21 @@ public:
         if (mObjects.size() >= 200)
         {
             mPipeline->getShadowManager()->unregisterHintNode(mObjects.front()->getRoot());
+            for (auto &[_, lightNode] : mObjects.front()->getLightNodes())
+            {
+                mPipeline->getShadowManager()->unregisterEmitter(lightNode.get());
+            }
+
             mVaultScene->removeObject(mObjects.front()->getName());
             mObjects.pop_front();
         }
 
         mObjects.push_back(o);
         mPipeline->getShadowManager()->registerHintNode(o->getRoot());
+        for (auto &[_, lightNode] : o->getLightNodes())
+        {
+            mPipeline->getShadowManager()->registerEmitter(lightNode.get());
+        }
     }
 
 private:

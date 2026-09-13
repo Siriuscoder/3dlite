@@ -189,7 +189,6 @@ private:
     LightSceneNode* mFlashLight = nullptr;
     float mGamma = 2.2f;
     uint32_t mObjectCounter = 0;
-    uint32_t mSpotLightCount = 0;
 };
 
 }}

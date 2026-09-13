@@ -28,15 +28,11 @@ class LITE3DPP_PIPELINE_EXPORT ShadowManager : public RenderTargetObserver, publ
 {
 public:
 
-    using IndexVector = stl<int32_t>::vector;
-
-public:
-
     class LITE3DPP_PIPELINE_EXPORT VisibilityHintNode : public SceneNodeObserver, public Noncopiable
     {
     public:
     
-        using ShadowCasters = stl<ShadowCaster*>::unordered_set;
+        using AffectingShadowCasters = stl<ShadowCaster*>::unordered_set;
 
         VisibilityHintNode(SceneNodeBase *node, bool recursive);
         ~VisibilityHintNode();
@@ -55,9 +51,15 @@ public:
         void invalidate();
 
         SceneNodeBase *mNode = nullptr;
-        ShadowCasters mAffectingShadowCasters;
+        AffectingShadowCasters mAffectingShadowCasters;
         bool mRecursive;
     };
+
+public:
+
+    using IndexVector = stl<int32_t>::vector;
+    using ShadowCasters = stl<LightSceneNode *, std::unique_ptr<ShadowCaster>>::multimap;
+    using VisibilityHints = stl<SceneNodeBase *, std::unique_ptr<VisibilityHintNode>>::unordered_map;
 
     ShadowManager(Main& main, PipelineBase &pipeline);
     ~ShadowManager();
@@ -124,9 +126,9 @@ private:
     VBOResource* mShadowMatrixBuffer = nullptr;
     VBOResource* mShadowIndexBuffer = nullptr;
     IndexVector mHostShadowIndexes;
-    stl<LightSceneNode *, std::unique_ptr<ShadowCaster>>::multimap mShadowCasters;
+    ShadowCasters mShadowCasters;
     stl<ShadowCaster*>::vector mShadowCastersCachePlaceHolders;
-    stl<SceneNodeBase *, std::unique_ptr<VisibilityHintNode>>::unordered_map mVisibilityHintNodes;
+    VisibilityHints mVisibilityHintNodes;
     Scene *mCleanStage = nullptr;
     bool mCascadeShadowIsReserved = false;
 };

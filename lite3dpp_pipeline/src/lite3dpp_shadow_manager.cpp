@@ -177,24 +177,26 @@ namespace lite3dpp_pipeline {
             LITE3D_THROW("Unable to delete shadow caster, emitter '" << emitter->getName() << "' is not found");
         }
 
-        while (range.first != range.second)
+        std::for_each(range.first, range.second, [&](ShadowCasters::value_type &shadowCaster)
         {
-            SDL_assert(range.first->second->getNode() == emitter);
+            SDL_assert(shadowCaster.second->getNode() == emitter);
 
-            if (range.first->second->cached())
+            if (shadowCaster.second->cached())
             {
-                // Remove from cache
-                auto index = range.first->second->getCacheIndex();
-                emitter->getLight()->setShadowIndex(-1);
+                auto index = shadowCaster.second->getCacheIndex();
                 mShadowCastersCachePlaceHolders[index] = nullptr;
             }
  
             // Remove caster from tracked objects 
             for (auto& node: mVisibilityHintNodes)
             {
-                node.second->setInvisibleFrom(range.first->second.get());
+                node.second->setInvisibleFrom(shadowCaster.second.get());
             }
+        });
 
+        while (range.first != range.second)
+        {
+            emitter->getLight()->setShadowIndex(-1);
             range.first = mShadowCasters.erase(range.first);
         }
     }
@@ -240,6 +242,15 @@ namespace lite3dpp_pipeline {
     void ShadowManager::unregisterHintNode(SceneNodeBase *node)
     {
         mVisibilityHintNodes.erase(node);
+        // Force update one of the cached shadows, to cause update hint nodes visibility in customFrustumCheck 
+        for (auto shadowCaster : mShadowCastersCachePlaceHolders)
+        {
+            if (shadowCaster)
+            {
+                shadowCaster->invalidate();
+                break;
+            }
+        }
     }
 
     bool ShadowManager::beginUpdate(RenderTarget *rt)
