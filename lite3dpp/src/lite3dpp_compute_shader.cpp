@@ -33,7 +33,7 @@ namespace lite3dpp
     {
         ConfigurationReader programJson = helper.getObject(L"Program");
         mProgram = getMain().getResourceManager().queryResource<ShaderProgram>(programJson.getString(L"Name"),
-                programJson.getString(L"Path"));
+                programJson.getString(L"Path"), this);
 
         for(const ConfigurationReader &uniformParamJson : helper.getObjects(L"Uniforms"))
         {
@@ -78,20 +78,20 @@ namespace lite3dpp
                 else if (paramType == "sampler")
                     mShaderParameters.setSamplerParameter(paramName, 
                         *getMain().getResourceManager().queryResource<TextureImage>(uniformParamJson.getString(L"TextureName"),
-                        uniformParamJson.getString(L"TexturePath")), scope == "global");
+                        uniformParamJson.getString(L"TexturePath"), this), scope == "global");
                 else if (paramType == "SSBO")
                     mShaderParameters.setSSBOParameter(paramName, 
                         *getMain().getResourceManager().queryResource<SSBO>(uniformParamJson.getString(L"SSBOName"),
-                        uniformParamJson.getString(L"SSBOPath")), scope == "global");
+                        uniformParamJson.getString(L"SSBOPath"), this), scope == "global");
                 else if (paramType == "UBO")
                     mShaderParameters.setUBOParameter(paramName, 
                         *getMain().getResourceManager().queryResource<UBO>(uniformParamJson.getString(L"UBOName"),
-                        uniformParamJson.getString(L"UBOPath")), scope == "global");
+                        uniformParamJson.getString(L"UBOPath"), this), scope == "global");
                 else if (paramType == "imageStore")
                 {
                     mShaderParameters.setImageStoreParameter(paramName, 
                         *getMain().getResourceManager().queryResource<TextureImage>(uniformParamJson.getString(L"TextureName"),
-                        uniformParamJson.getString(L"TexturePath")), scope == "global");
+                        uniformParamJson.getString(L"TexturePath"), this), scope == "global");
                     auto parameter = mShaderParameters.getParameter(paramName, LITE3D_SHADER_PARAMETER_IMAGE_STORE, 
                         scope == "global", false);
 

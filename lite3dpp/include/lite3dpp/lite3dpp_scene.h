@@ -29,8 +29,7 @@
 
 namespace lite3dpp
 {
-    class LITE3DPP_EXPORT Scene : public Observable<SceneObserver>, 
-        public SceneObserver, public ConfigurableResource, public Noncopiable
+    class LITE3DPP_EXPORT Scene : public Observable<SceneObserver>, public ConfigurableResource, public Noncopiable
     {
         friend LightSceneNode;
     public:
@@ -42,10 +41,10 @@ namespace lite3dpp
         using SceneLights = stl<LightSceneNode *>::unordered_set;
         using SceneCameras = stl<String, Camera*>::unordered_map;
         using LightsIndexesStore = stl<int32_t>::vector;
+        using MeshCounter = stl<Mesh *, int32_t>::unordered_map;
 
-        Scene(const String &name, 
-            const String &path, Main &main);
-        virtual ~Scene();
+        Scene(const String &name, const String &path, Main &main);
+        virtual ~Scene() = default;
 
         inline lite3d_scene *getPtr()
         { return &mScene; }
@@ -66,6 +65,7 @@ namespace lite3dpp
         void removeAllObjects();
         void removeObject(const String &name);
         void detachAllCameras();
+        void loadObjects(const String &path);
 
         inline const SceneLights &getLights() const 
         { return mLights; }
@@ -82,6 +82,10 @@ namespace lite3dpp
             return mLightingIndexBuffer;
         }
 
+        // this functions are used for tracking mesh
+        void registerMesh(Mesh *mesh);
+        void unregisterMesh(Mesh *mesh);
+
     protected:
 
         virtual void loadFromConfigImpl(const ConfigurationReader &helper) override;
@@ -89,10 +93,12 @@ namespace lite3dpp
         
         void setupCallbacks();
         void rebuildLightingBuffer();
-        void validateLightingBuffer(const Camera &camera);
-        void addLightSource(LightSceneNode *node);
-        void removeLightSource(LightSceneNode *node);
-        
+        void validateLightingBuffer(const Camera &camera, const lite3d_scene_render_params &params);
+
+        // this functions are used for tracking lightNode
+        void registerLightNode(LightSceneNode *node);
+        void unregisterLightNode(LightSceneNode *node);
+
         virtual SceneObject::Ptr createObject(const String &name, SceneObjectBase *parent, const kmVec3 &initialPosition, 
             const kmQuaternion &initialRotation, const kmVec3 &initialScale);
 
@@ -102,28 +108,34 @@ namespace lite3dpp
         void setupCameras(const stl<ConfigurationReader>::vector &cameras);
 
         static int beginDrawBatchEntry(struct lite3d_scene *scene, 
-            struct lite3d_scene_node *node, struct lite3d_mesh_chunk *meshChunk, struct lite3d_material *material);
+            struct lite3d_scene_node *node, struct lite3d_mesh_chunk *meshChunk, struct lite3d_material *material,
+            const lite3d_scene_render_params *params);
 
         static void nodeInFrustumEntry(struct lite3d_scene *scene, 
             struct lite3d_scene_node *node, struct lite3d_mesh_chunk *meshChunk, 
             struct lite3d_material *material, struct lite3d_bounding_vol *boundingVol, 
-            struct lite3d_camera *camera);
+            struct lite3d_camera *camera, const lite3d_scene_render_params *params);
 
         static void nodeOutOfFrustumEntry(struct lite3d_scene *scene, 
             struct lite3d_scene_node *node, struct lite3d_mesh_chunk *meshChunk, 
             struct lite3d_material *material, struct lite3d_bounding_vol *boundingVol,
-            struct lite3d_camera *camera);
+            struct lite3d_camera *camera, const lite3d_scene_render_params *params);
 
-        static int customVisibilityCheckEntry(struct lite3d_scene *scene, 
+        static int customFrustumCheckEntry(struct lite3d_scene *scene, 
             struct lite3d_scene_node *node, struct lite3d_mesh_chunk *meshChunk, 
             struct lite3d_material *material, struct lite3d_bounding_vol *boundingVol,
-            struct lite3d_camera *camera);
+            struct lite3d_camera *camera, const lite3d_scene_render_params *params);
 
-        static void beforeUpdateNodesEntry(struct lite3d_scene *scene, struct lite3d_camera *camera, int32_t priority);
-        static int beginSceneRenderEntry(struct lite3d_scene *scene, struct lite3d_camera *camera, int32_t priority);
-        static void endSceneRenderEntry(struct lite3d_scene *scene, struct lite3d_camera *camera, int32_t priority);
-        static void beginOpaqueStageRenderEntry(struct lite3d_scene *scene, struct lite3d_camera *camera, int32_t priority);
-        static void beginBlendingStageRenderEntry(struct lite3d_scene *scene, struct lite3d_camera *camera, int32_t priority);
+        static void beforeUpdateNodesEntry(struct lite3d_scene *scene, struct lite3d_camera *camera,
+            const lite3d_scene_render_params *params);
+        static int beginSceneRenderEntry(struct lite3d_scene *scene, struct lite3d_camera *camera,
+            const lite3d_scene_render_params *params);
+        static void endSceneRenderEntry(struct lite3d_scene *scene, struct lite3d_camera *camera,
+            const lite3d_scene_render_params *params);
+        static void beginOpaqueStageRenderEntry(struct lite3d_scene *scene, struct lite3d_camera *camera,
+            const lite3d_scene_render_params *params);
+        static void beginBlendingStageRenderEntry(struct lite3d_scene *scene, struct lite3d_camera *camera,
+            const lite3d_scene_render_params *params);
 
         lite3d_scene mScene;
         SceneObjects mObjects;
@@ -135,5 +147,6 @@ namespace lite3dpp
         VBOResource *mInvocationIndexBuffer = nullptr;
         LightsIndexesStore mLightsIndexes;
         uint32_t mMaxLightsCount; 
+        MeshCounter mMeshCounter;
     };
 }

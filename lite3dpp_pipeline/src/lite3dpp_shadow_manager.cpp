@@ -20,83 +20,61 @@
 #include <algorithm>
 #include <SDL_assert.h>
 #include <lite3dpp_pipeline/lite3dpp_generator.h>
+#include <lite3dpp_pipeline/lite3dpp_pipeline_base.h>
 
 namespace lite3dpp {
 namespace lite3dpp_pipeline {
 
-    ShadowManager::ShadowCaster::ShadowCaster(Main& main, const String& name, LightSceneNode* node, 
-        const lite3d_camera::projectionParamsStruct &params) : 
-        mLightNode(node),
-        mShadowCamera(main.addCamera(name))
-    {
-        SDL_assert(node);
-        // Ставим перспективу сразу при инициализации, считаем что конус источника света не меняется 
-        if (node->getLight()->getType() == LightSourceFlags::TypeDirectional)
-        {
-            mShadowCamera->setupOrtho(params.znear, params.zfar, params.left, params.right, params.bottom, params.top);
-        }
-        else
-        {
-            float clipFar = params.zfar > 0.0 ? params.zfar : mLightNode->getLight()->getInfluenceDistance();
-            mShadowCamera->setupPerspective(params.znear, clipFar, 
-                kmRadiansToDegrees(mLightNode->getLight()->getAngleOuterCone()), params.aspect);
-        }
-    }
-
-    kmMat4 ShadowManager::ShadowCaster::getMatrix()
-    {
-        SDL_assert(mShadowCamera);
-        // Обновим параметры теневой камеры
-        mShadowCamera->setDirection(mLightNode->getLight()->getWorldDirection());
-        mShadowCamera->setPosition(mLightNode->getLight()->getWorldPosition());
-        mShadowCamera->recalcFrustum();
-        // Пересчитаем теневую матрицу
-        return mShadowCamera->refreshProjViewMatrix();
-    }
-
-    void ShadowManager::ShadowCaster::updatePosition(SceneNodeBase *node)
-    {
-        invalidate();
-    }
-
-    void ShadowManager::ShadowCaster::updateRotation(SceneNodeBase *node)
-    {
-        invalidate();
-    }
-
-    void ShadowManager::ShadowCaster::updateScale(SceneNodeBase *node)
-    {
-        invalidate();
-    }
-
-    void ShadowManager::ShadowCaster::updateSkeletonPose(SceneNodeBase *node)
-    {
-        invalidate();
-    }
-
-    ShadowManager::VisibilityHintNode::VisibilityHintNode(SceneNodeBase *node) : 
-        mNode(node)
+    ShadowManager::VisibilityHintNode::VisibilityHintNode(SceneNodeBase *node, bool recursive) : 
+        mNode(node),
+        mRecursive(recursive)
     {
         SDL_assert(mNode);
         mNode->addObserver(this);
+
+        if (mRecursive)
+        {
+            node->iterateAllChilds([this](SceneNodeBase *childNode)
+            {
+                SDL_assert(childNode);
+                childNode->addObserver(this);
+            });
+        }
+    }
+
+    ShadowManager::VisibilityHintNode::~VisibilityHintNode()
+    {
+        mNode->removeObserver(this);
+        if (mRecursive)
+        {
+            mNode->iterateAllChilds([this](SceneNodeBase *childNode)
+            {
+                SDL_assert(childNode);
+                childNode->removeObserver(this);
+            });
+        }
     }
 
     void ShadowManager::VisibilityHintNode::resetVision()
     {
-        mVisibility.clear();
+        mAffectingShadowCasters.clear();
     }
 
     void ShadowManager::VisibilityHintNode::setVisibleFrom(ShadowCaster* sc)
     {
-        if (std::find(mVisibility.begin(), mVisibility.end(), sc) == mVisibility.end())
-        {
-            mVisibility.emplace_back(sc);
-        }
+        SDL_assert(sc);
+        mAffectingShadowCasters.emplace(sc);
+    }
+
+    void ShadowManager::VisibilityHintNode::setInvisibleFrom(ShadowCaster* sc)
+    {
+        SDL_assert(sc);
+        mAffectingShadowCasters.erase(sc);
     }
 
     void ShadowManager::VisibilityHintNode::invalidate()
     {
-        for (auto shadowCaster: mVisibility)
+        for (auto shadowCaster: mAffectingShadowCasters)
         {
             shadowCaster->invalidate();
         }
@@ -122,83 +100,124 @@ namespace lite3dpp_pipeline {
         invalidate();
     }
 
-    ShadowManager::ShadowManager(Main& main, const String& pipelineName, const ConfigurationReader& conf) : 
-        mMain(main)
-    {
-        auto shadowConf = conf.getObject(L"ShadowMaps");
-        mShadowsCastersMaxCount = shadowConf.getInt(L"MaxCount", 1);
-        // Важно выделить вектор заранее, чтобы реалокаций небыло
-        mShadowCasters.reserve(mShadowsCastersMaxCount);
-        mWidth = shadowConf.getInt(L"Width", 1024);
-        mHeight = shadowConf.getInt(L"Height", 1024);
-        mProjection.znear = shadowConf.getDouble(L"NearClipPlane", 1.0);
-        mProjection.zfar = shadowConf.getDouble(L"FarClipPlane");
-        mProjection.left = shadowConf.getObject(L"DirectionLightShadowParams").getDouble(L"LeftClipPlane");
-        mProjection.right = shadowConf.getObject(L"DirectionLightShadowParams").getDouble(L"RightClipPlane");
-        mProjection.bottom = shadowConf.getObject(L"DirectionLightShadowParams").getDouble(L"BottomClipPlane");
-        mProjection.top = shadowConf.getObject(L"DirectionLightShadowParams").getDouble(L"TopClipPlane");
-        mProjection.aspect = static_cast<float>(mWidth) / static_cast<float>(mHeight);
-    }
+    ShadowManager::ShadowManager(Main& main, PipelineBase &pipeline) : 
+        mMain(main),
+        mPipeline(pipeline)
+    {}
 
     ShadowManager::~ShadowManager()
     {
-        if (mCleanStage)
-        {
-            mMain.getResourceManager().releaseResource(mCleanStage->getName());
-        }
-
-        if (mCleanStageMaterial)
-        {
-            mMain.getResourceManager().releaseResource(mCleanStageMaterial->getName());
-        }
-
-        if (mShadowPass)
-        {
-            mMain.getResourceManager().releaseResource(mShadowPass->getName());
-        }
-
-        if (mShadowMap)
-        {
-            mMain.getResourceManager().releaseResource(mShadowMap->getName());
-        }
-
-        if (mShadowMatrixBuffer)
-        {
-            mMain.getResourceManager().releaseResource(mShadowMatrixBuffer->getName());
-        }
-
-        if (mShadowIndexBuffer)
-        {
-            mMain.getResourceManager().releaseResource(mShadowIndexBuffer->getName());
-        }
+        clear();
     }
 
-    ShadowManager::ShadowCaster* ShadowManager::newShadowCaster(LightSceneNode* lightNode)
+    stl<ShadowCaster*>::vector ShadowManager::registerEmitter(LightSceneNode* emitter)
     {
-        if (mShadowsCastersMaxCount == mShadowCasters.size())
+        SDL_assert(emitter);
+
+        if (!static_cast<bool>(emitter->getLight()->getFlags() & 
+            (LightSourceFlags::ShadowDynamic | LightSourceFlags::ShadowStatic)))
         {
-            LITE3D_THROW("The maximum shadow casters limit is reached: " << mShadowsCastersMaxCount);
+            LITE3D_THROW("Emitter '" << emitter->getName() << "' does not contain shadow parameters");
         }
 
-        auto index = static_cast<uint32_t>(mShadowCasters.size());
-        mShadowCasters.emplace_back(std::make_unique<ShadowCaster>(mMain, lightNode->getName() + std::to_string(index), 
-            lightNode, mProjection));
-        // Запишем в источник света индекс его теневой матрицы в UBO
-        lightNode->getLight()->setShadowIndex(index);
-        lightNode->getLight()->setFlag(LightSourceFlags::CastShadow);
-        
-        // Если какой либо из узлов сцены поменяет свое положение тень нужно перерисовать
-        SceneNodeBase *node = lightNode;
-        while (node)
+        stl<ShadowCaster*>::vector shadowCasters;
+
+        switch (emitter->getLight()->getType())
         {
-            node->addObserver(mShadowCasters.back().get());
-            node = node->getParent();
+            case LightSourceFlags::TypeDirectional:
+                {
+                    if (mCascadeShadowIsReserved)
+                    {
+                        LITE3D_THROW("Cascade shadows implementation currently supports only one directional light");
+                    }
+
+                    for (uint32_t i = 0; i < mOmniShadowCacheMaxCount; ++i)
+                    {
+                        auto it = mShadowCasters.emplace(emitter, std::make_unique<ShadowCasterCascade>(mMain, emitter, i));
+                        shadowCasters.push_back(it->second.get());
+                    }
+                    mCascadeShadowIsReserved = true;
+                }
+                break;
+            case LightSourceFlags::TypeDiskArea:
+            case LightSourceFlags::TypeRectArea:
+            case LightSourceFlags::TypeSpot:
+                {
+                    auto it = mShadowCasters.emplace(emitter, std::make_unique<ShadowCasterSpot>(mMain, emitter));
+                    shadowCasters.push_back(it->second.get());
+                }
+                break;
+            case LightSourceFlags::TypePoint:
+                {
+                    for (uint32_t i = 0; i < 6; ++i)
+                    {
+                        auto it = mShadowCasters.emplace(emitter, std::make_unique<ShadowCasterOmniDirectional>(mMain, emitter, i));
+                        shadowCasters.push_back(it->second.get());
+                    }
+                }
+                break;
+            default:
+                {
+                    LITE3D_THROW("Unsupported emitter, name '" << emitter->getName() << "', type " << 
+                        static_cast<int>(emitter->getLight()->getType()));
+                }
+                break;
         }
 
-        return mShadowCasters.back().get();
+        return shadowCasters;
     }
 
-    ShadowManager::VisibilityHintNode* ShadowManager::registerHintNode(SceneNodeBase *node)
+    void ShadowManager::unregisterEmitter(LightSceneNode* emitter)
+    {
+        SDL_assert(emitter);
+
+        auto range = mShadowCasters.equal_range(emitter);
+        if (range.first == mShadowCasters.end())
+        {
+            LITE3D_THROW("Unable to delete shadow caster, emitter '" << emitter->getName() << "' is not found");
+        }
+
+        std::for_each(range.first, range.second, [&](ShadowCasters::value_type &shadowCaster)
+        {
+            SDL_assert(shadowCaster.second->getNode() == emitter);
+
+            if (shadowCaster.second->cached())
+            {
+                auto index = shadowCaster.second->getCacheIndex();
+                mShadowCastersCachePlaceHolders[index] = nullptr;
+            }
+ 
+            // Remove caster from tracked objects 
+            for (auto& node: mVisibilityHintNodes)
+            {
+                node.second->setInvisibleFrom(shadowCaster.second.get());
+            }
+        });
+
+        while (range.first != range.second)
+        {
+            emitter->getLight()->setShadowIndex(-1);
+            range.first = mShadowCasters.erase(range.first);
+        }
+    }
+
+    void ShadowManager::clear()
+    {
+        for (auto &shadowCaster : mShadowCastersCachePlaceHolders)
+        {
+            if (shadowCaster)
+            {
+                shadowCaster->setCacheIndex(-1);
+            }
+
+            shadowCaster = nullptr;
+        }
+
+        mVisibilityHintNodes.clear();
+        mShadowCasters.clear();
+    }
+
+    ShadowManager::VisibilityHintNode* ShadowManager::registerHintNode(SceneNodeBase *node, bool recursive)
     {
         auto it = mVisibilityHintNodes.find(node);
         if (it != mVisibilityHintNodes.end())
@@ -206,50 +225,32 @@ namespace lite3dpp_pipeline {
             return it->second.get();
         }
 
-        auto hintPtr = std::make_shared<VisibilityHintNode>(node);
-        mVisibilityHintNodes.emplace(node, hintPtr);
-        return hintPtr.get();
-    }
-
-    ShadowManager::VisibilityHintNode* ShadowManager::registerHintNodeRecursive(SceneNodeBase *node)
-    {
-        registerHintNode(node);
-        auto hint = mVisibilityHintNodes[node];
-        node->iterateAllChilds([&hint, this](SceneNodeBase *childNode)
+        auto ins = mVisibilityHintNodes.try_emplace(node, std::make_unique<VisibilityHintNode>(node, recursive));
+        // Force update one of the cached shadows, to cause update hint nodes visibility in customFrustumCheck 
+        for (auto shadowCaster : mShadowCastersCachePlaceHolders)
         {
-            SDL_assert(childNode);
-            childNode->addObserver(hint.get());
-            mVisibilityHintNodes.emplace(childNode, hint);
-        });
+            if (shadowCaster)
+            {
+                shadowCaster->invalidate();
+                break;
+            }
+        }
 
-        return hint.get();
+        return ins.first->second.get();
     }
 
     void ShadowManager::unregisterHintNode(SceneNodeBase *node)
     {
-        auto it = mVisibilityHintNodes.find(node);
-        if (it != mVisibilityHintNodes.end())
+        mVisibilityHintNodes.erase(node);
+        // Force update one of the cached shadows, to cause update hint nodes visibility in customFrustumCheck 
+        for (auto shadowCaster : mShadowCastersCachePlaceHolders)
         {
-            node->removeObserver(it->second.get());
-            mVisibilityHintNodes.erase(it);
+            if (shadowCaster)
+            {
+                shadowCaster->invalidate();
+                break;
+            }
         }
-    }
-
-    void ShadowManager::unregisterHintNodeRecursive(SceneNodeBase *node)
-    {
-        auto it = mVisibilityHintNodes.find(node);
-        if (it == mVisibilityHintNodes.end())
-            return;
-
-        auto hint = it->second;
-        node->iterateAllChilds([&hint, this](SceneNodeBase *childNode)
-        {
-            SDL_assert(childNode);
-            childNode->removeObserver(hint.get());
-            mVisibilityHintNodes.erase(static_cast<SceneNodeBase *>(childNode));
-        });
-
-        mVisibilityHintNodes.erase(it);
     }
 
     bool ShadowManager::beginUpdate(RenderTarget *rt)
@@ -258,15 +259,121 @@ namespace lite3dpp_pipeline {
         SDL_assert(mShadowIndexBuffer);
 
         mHostShadowIndexes.resize(1, 0); // Reserve 0 index for size
-        // Обновим матрицы по всем источникам отбрасывающим тень которые влияют на текущий кадр
-        for (uint32_t index = 0; index < mShadowCasters.size(); ++index)
+        
+        for (auto it = mShadowCasters.begin(); it != mShadowCasters.end();) 
         {
-            auto &shadowCaster = mShadowCasters[index];
-            auto mat = shadowCaster->getMatrix();
-            if (shadowCaster->invalidated() && shadowCaster->getNode()->isVisible())
+            // Больше источников чем в mMaxShadowsRebuildCount за один кадр перестроить нельзя, остальные 
+            // доделаем потом, в следующих кадрах
+            if (mHostShadowIndexes.size() >= mMaxShadowsRebuildCount)
+                break;
+
+            // Смотрим только на видимые в кадре источники света, остальные пока не интересуют
+            if (it->first->getLight()->enabled() && it->first->isVisible())
             {
-                mShadowMatrixBuffer->setElement<kmMat4>(index, &mat);
-                mHostShadowIndexes.emplace_back(index);
+                // Если источник уже кеширован, теневая карта уже отрисована, проверим, может нужно ее перерисовать?
+                if (it->second->cached())
+                {
+                    if (it->second->invalidated())
+                    {
+                        auto matrix = it->second->recalcMatrix();
+                        uint32_t index = static_cast<uint32_t>(it->second->getCacheIndex());
+                        mShadowMatrixBuffer->setElement<kmMat4>(index, &matrix);
+                        mHostShadowIndexes.push_back(index);
+                    }
+
+                    ++it;
+                    continue;
+                }
+
+                // Если сточник не кеширован, значит надо попробовать его закешировать и построить теневую карту
+                uint32_t step = 1;
+                uint32_t firstIndexToSearch = 0;
+                uint32_t searchCount = 0;
+                switch (it->second->getEmitterType())
+                {
+                    case ShadowCaster::EmitterType::CascadeShadow:
+                        firstIndexToSearch = 0;
+                        searchCount = mCascadeShadowCacheMaxCount;
+                        step = mCascadeShadowCacheMaxCount;
+                        break;
+                    case ShadowCaster::EmitterType::OmniDirectionalShadow:
+                        firstIndexToSearch = mCascadeShadowCacheMaxCount;
+                        searchCount = mOmniShadowCacheMaxCount * 6;
+                        step = 6;
+                        break;
+                    case ShadowCaster::EmitterType::SpotShadow:
+                        firstIndexToSearch = mCascadeShadowCacheMaxCount + (mOmniShadowCacheMaxCount * 6);
+                        searchCount = mSpotShadowCacheMaxCount;
+                        step = 1;
+                        break;
+                };
+
+                if ((mHostShadowIndexes.size() + step - 1) >= mMaxShadowsRebuildCount)
+                {
+                    std::advance(it, step);
+                    continue;
+                }
+                
+                bool placeFound = false;
+                for (auto i = firstIndexToSearch; i < (firstIndexToSearch + searchCount); i += step)
+                {
+                    // нашли свободное место в кеше
+                    if (!mShadowCastersCachePlaceHolders[i])
+                    {
+                        for (auto j = i; j < (i + step); ++it, ++j)
+                        {
+                            mShadowCastersCachePlaceHolders[j] = it->second.get();
+                            it->second->setCacheIndex(j);
+
+                            auto matrix = it->second->recalcMatrix();
+                            mShadowMatrixBuffer->setElement<kmMat4>(j, &matrix);
+                            mHostShadowIndexes.push_back(j);
+                        }
+
+                        placeFound = true;
+                        break;
+                    }
+                }
+
+                if (placeFound)
+                {
+                    continue;
+                }
+                    
+                // Если свободного места не нашлось, про буем вытянуть из кеша старый источник, который не виден
+                for (auto i = firstIndexToSearch; i < (firstIndexToSearch + searchCount); i += step)
+                {
+                    if (mShadowCastersCachePlaceHolders[i] && (!mShadowCastersCachePlaceHolders[i]->getNode()->isVisible() || 
+                        !mShadowCastersCachePlaceHolders[i]->getNode()->getLight()->enabled()))
+                    {
+                        for (auto j = i; j < (i + step); ++it, ++j)
+                        {
+                            // Выкинуть из кеша старый
+                            mShadowCastersCachePlaceHolders[j]->setCacheIndex(-1);
+                            // Воткнуть на его место новый
+                            mShadowCastersCachePlaceHolders[j] = it->second.get();
+                            it->second->setCacheIndex(j);
+
+                            auto matrix = it->second->recalcMatrix();
+                            mShadowMatrixBuffer->setElement<kmMat4>(j, &matrix);
+                            mHostShadowIndexes.push_back(j);
+                        }
+
+                        placeFound = true;
+                        break;
+                    }
+                }
+
+                if (placeFound)
+                {
+                    continue;
+                }
+
+                std::advance(it, step);
+            }
+            else
+            {
+                ++it;
             }
         }
 
@@ -277,11 +384,11 @@ namespace lite3dpp_pipeline {
             return false;
         }
 
-        mShadowIndexBuffer->setData(&mHostShadowIndexes[0], 0, mHostShadowIndexes.size() * sizeof(IndexVector::value_type));
+        mShadowIndexBuffer->setData(&mHostShadowIndexes[0], 0, mHostShadowIndexes.size() * sizeof(IndexVector::value_type)); 
         return true;
     }
 
-    bool ShadowManager::beginSceneRender(Scene *scene, Camera *camera, int32_t priority)
+    bool ShadowManager::beginSceneRender(Scene *scene, Camera *camera, const lite3d_scene_render_params *params)
     {
         if (scene == mCleanStage)
         {
@@ -297,41 +404,54 @@ namespace lite3dpp_pipeline {
         return true; 
     }
 
-    void ShadowManager::endSceneRender(Scene *scene, Camera *camera, int32_t priority)
+    void ShadowManager::endSceneRender(Scene *scene, Camera *camera, const lite3d_scene_render_params *params)
     {
         // После очистки теневых карт готовимся к перерисовке теней.
         if (scene == mCleanStage)
         {
             RenderTarget::depthTestFunc(RenderTarget::TestFuncLEqual);
-            // Подчистим списки источников света для которых эта нода видима перед проверкой фрустума.
-            for (auto& node: mVisibilityHintNodes)
-            {
-                node.second->resetVision();
-            }
         }
     }
 
     // Проверим виден ли обьект сцены хотябы одной теневой камерой, если нет то рисовать его смысла нет.
-    bool ShadowManager::customVisibilityCheck(Scene *scene, SceneNodeBase *node, lite3d_mesh_chunk *meshChunk, Material *material, 
-        lite3d_bounding_vol *boundingVol, Camera *camera)
+    bool ShadowManager::customFrustumCheck(Scene *scene, SceneNodeBase *node, lite3d_mesh_chunk *meshChunk, Material *material, 
+        lite3d_bounding_vol *boundingVol, Camera *camera, const lite3d_scene_render_params *params)
     {
+        if (static_cast<RenderPassStagePriority>(params->priority) != RenderPassStagePriority::ShadowBuildStage)
+        {
+            return true;
+        }
+
         auto it = mVisibilityHintNodes.find(node);
         VisibilityHintNode* dnode = it != mVisibilityHintNodes.end() ? it->second.get() : nullptr;
 
         bool isVisible = false;
-        for (auto& shadowCaster: mShadowCasters)
+        for (auto shadowCaster: mShadowCastersCachePlaceHolders)
         {
-            if (shadowCaster->getCamera()->inFrustum(*boundingVol))
+            if (!shadowCaster)
+                continue;
+
+            if (shadowCaster->intersectFrustum(*boundingVol))
             {
-                if (dnode)
+                if (dnode && shadowCaster->dynamicShadow())
                 {
                     // Текущая нода видима для этого истоника света, запомним это
-                    dnode->setVisibleFrom(shadowCaster.get());
+                    dnode->setVisibleFrom(shadowCaster);
                 }
 
-                if (shadowCaster->invalidated())
+                // Рисуем только те обьекты которые попадают в область видимости источников света которые сейчас обновляются
+                if (std::find(mHostShadowIndexes.begin()+1, mHostShadowIndexes.end(), shadowCaster->getCacheIndex()) !=
+                    mHostShadowIndexes.end())
                 {
                     isVisible = true;
+                }
+            }
+            else
+            {
+                if (dnode && shadowCaster->dynamicShadow())
+                {
+                    // Текущая нода НЕ видима для этого истоника света
+                    dnode->setInvisibleFrom(shadowCaster);
                 }
             }
         }
@@ -344,26 +464,33 @@ namespace lite3dpp_pipeline {
         // Валидейтим только перересованные тени, остальные будут перерисованы потом когда попадут в область видимости
         for (size_t i = 1; i < mHostShadowIndexes.size(); ++i)
         {
-            mShadowCasters[mHostShadowIndexes[i]]->validate();
+            auto shadowCasterPlaceHolder = mShadowCastersCachePlaceHolders[mHostShadowIndexes[i]];
+            if (shadowCasterPlaceHolder)
+            {
+                shadowCasterPlaceHolder->validate();
+            }
         }
+
+        mHostShadowIndexes.clear();
     }
 
-    void ShadowManager::createAuxiliaryBuffers(const String& pipelineName)
+    void ShadowManager::createAuxiliaryBuffers()
     {
-        calculateLimits();
+        mShadowMatrixBuffer = mMain.getResourceManager().queryResourceFromJson<UBO>(mPipeline.getName() + "_ShadowMatrixBuffer",
+            "{\"Dynamic\": true}", &mPipeline);
+        mShadowIndexBuffer = mMain.getResourceManager().queryResourceFromJson<UBO>(mPipeline.getName() + "_ShadowIndexBuffer",
+            "{\"Dynamic\": true}", &mPipeline);
 
-        mShadowMatrixBuffer = mMain.getResourceManager().queryResourceFromJson<UBO>(pipelineName + "_ShadowMatrixBuffer",
-            "{\"Dynamic\": true}");
-        mShadowIndexBuffer = mMain.getResourceManager().queryResourceFromJson<UBO>(pipelineName + "_ShadowIndexBuffer",
-            "{\"Dynamic\": true}");
-
-        mShadowMatrixBuffer->extendBufferBytes(sizeof(kmMat4) * mShadowsCastersMaxCount);
-        mShadowIndexBuffer->extendBufferBytes(sizeof(IndexVector::value_type) * (mShadowsCastersMaxCount + 1));
+        mShadowMatrixBuffer->extendBufferBytes(sizeof(kmMat4) * getShadowsCacheMaxCount());
+        mShadowIndexBuffer->extendBufferBytes(sizeof(IndexVector::value_type) * (getShadowsCacheMaxCount() + 1));
         IndexVector::value_type initialZero = 0;
         mShadowIndexBuffer->setElement<IndexVector::value_type>(0, &initialZero);
+
+        mHostShadowIndexes.reserve(getShadowsCacheMaxCount() + 1);
+        mShadowCastersCachePlaceHolders.resize(getShadowsCacheMaxCount(), nullptr);
     }
 
-    void ShadowManager::calculateLimits()
+    void ShadowManager::setupLimits()
     {
         int maxGeometryOutputVertices, maxGeometryTotalOutputComponents, UBOMaxSize;
         lite3d_shader_program_get_limitations(&maxGeometryOutputVertices, nullptr, &maxGeometryTotalOutputComponents);
@@ -376,36 +503,36 @@ namespace lite3dpp_pipeline {
         uint32_t b = maxGeometryOutputVertices / 3;
         uint32_t c = UBOMaxSize / sizeof(kmMat4);
 
-        uint32_t shadowCastersLimit = std::min(std::min(a, b), c);
+        mMaxShadowsRebuildCount = std::min(std::min(a, b), c);
 
-        if (mShadowsCastersMaxCount > shadowCastersLimit)
+        if (getShadowsCacheMaxCount() > c)
         {
-            LITE3D_THROW("Too much shadow casters count(" << mShadowsCastersMaxCount << ") are requested, "
-                "max hardware posible limit is " << shadowCastersLimit);
+            LITE3D_THROW("Shadow matrix buffer limit exceeded (" << getShadowsCacheMaxCount() << " of " << c << ")");
         }
 
-        ShaderProgram::addGlobalDefinition("LITE3D_SPOT_SHADOW_GS_MAX_VERTICES", std::to_string(mShadowsCastersMaxCount * 3));
-        ShaderProgram::addGlobalDefinition("LITE3D_SPOT_SHADOW_MAX_COUNT", std::to_string(mShadowsCastersMaxCount));
+        ShaderProgram::addGlobalDefinition("LITE3D_SPOT_SHADOW_GS_MAX_VERTICES", std::to_string(mMaxShadowsRebuildCount * 3));
+        ShaderProgram::addGlobalDefinition("LITE3D_SHADOW_CACHE_MAX_COUNT", std::to_string(getShadowsCacheMaxCount()));
     }
 
-    void ShadowManager::createShadowRenderTarget(const String& pipelineName)
+    void ShadowManager::createShadowRenderTarget()
     {
-        auto shadowMapName = pipelineName + "_ShadowMap.texture";
+        auto shadowMapName = mPipeline.getName() + "_ShadowMap.texture";
         ConfigurationWriter shadowTextureConfig;
         shadowTextureConfig.set(L"TextureType", "2D_SHADOW_ARRAY")
             .set(L"Filtering", "Linear")
             .set(L"Wrapping", "ClampToEdge")
             .set(L"Compression", false)
             .set(L"TextureFormat", "DEPTH")
-            .set(L"Height", mHeight)
-            .set(L"Width", mWidth)
-            .set(L"Depth", mShadowsCastersMaxCount);
+            .set(L"Height", mExtent)
+            .set(L"Width", mExtent)
+            .set(L"Depth", getShadowsCacheMaxCount());
 
-        mShadowMap = mMain.getResourceManager().queryResourceFromJson<TextureImage>(shadowMapName, shadowTextureConfig.write());
+        mShadowMap = mMain.getResourceManager().queryResourceFromJson<TextureImage>(shadowMapName, 
+            shadowTextureConfig.write(), &mPipeline);
 
         ConfigurationWriter shadowRenderTargetConfig;
-        shadowRenderTargetConfig.set(L"Width", mWidth)
-            .set(L"Height", mHeight)
+        shadowRenderTargetConfig.set(L"Width", mExtent)
+            .set(L"Height", mExtent)
             .set(L"BackgroundColor", kmVec4 { 0.0f, 0.0f, 0.0f, 1.0f })
             .set(L"Priority", static_cast<int>(RenderPassPriority::ShadowMap))
             .set(L"CleanColorBuf", false)
@@ -415,15 +542,22 @@ namespace lite3dpp_pipeline {
             .set(L"DepthAttachments", ConfigurationWriter()
                 .set(L"TextureName", shadowMapName));
 
-        mShadowPass = mMain.getResourceManager().queryResourceFromJson<TextureRenderTarget>(pipelineName + "_ShadowPass",
-            shadowRenderTargetConfig.write());
+        mShadowPass = mMain.getResourceManager().queryResourceFromJson<TextureRenderTarget>(mPipeline.getName() + "_ShadowPass",
+            shadowRenderTargetConfig.write(), &mPipeline);
         mShadowPass->addObserver(this);
     }
 
-    void ShadowManager::initialize(const String& pipelineName, const String& shaderPackage)
+    void ShadowManager::initialize()
     {
-        createAuxiliaryBuffers(pipelineName);
-        createShadowRenderTarget(pipelineName);
+        auto shadowParams = mPipeline.getConfig().getObject(L"ShadowMaps");
+        mSpotShadowCacheMaxCount = shadowParams.getInt(L"SpotShadowCacheMaxCount", 0);
+        mOmniShadowCacheMaxCount = shadowParams.getInt(L"OmniShadowCacheMaxCount", 0);
+        mCascadeShadowCacheMaxCount = shadowParams.getInt(L"CascadeShadowCacheMaxCount", 0);
+        mExtent = shadowParams.getInt(L"Extent", 512);
+
+        setupLimits();
+        createAuxiliaryBuffers();
+        createShadowRenderTarget();
 
         // Создание специальной сцены для предварительной частичной очистки теневых карт которые надо перерисовать в текущем кадре.
         BigTriSceneGenerator stageGenerator;
@@ -436,15 +570,15 @@ namespace lite3dpp_pipeline {
             .set(L"RenderBlend", false)
             .set(L"RenderOpaque", true));
             
-        mCleanStage = mMain.getResourceManager().queryResourceFromJson<Scene>(pipelineName + "_ShadowCleanStage",
-            stageGenerator.generate().write());
+        mCleanStage = mMain.getResourceManager().queryResourceFromJson<Scene>(mPipeline.getName() + "_ShadowCleanStage",
+            stageGenerator.generate().write(), &mPipeline);
 
         ConfigurationWriter cleanStageMaterialConfig;
         cleanStageMaterialConfig.set(L"Passes", stl<ConfigurationWriter>::vector {
             ConfigurationWriter().set(L"Pass", static_cast<int>(TexturePassTypes::ShadowPass))
                 .set(L"Program", ConfigurationWriter()
                     .set(L"Name", "ShadowMapClean.program")
-                    .set(L"Path", shaderPackage + ":shaders/json/shadow_map_clean.json"))
+                    .set(L"Path", mPipeline.getConfig().getString(L"ShaderPackage") + ":shaders/json/shadow_map_clean.json"))
                 .set(L"Uniforms", stl<ConfigurationWriter>::vector {
                     ConfigurationWriter()
                         .set(L"Name", "screenMatrix"),
@@ -456,11 +590,11 @@ namespace lite3dpp_pipeline {
         });
         
         // Создаем служебный шейдер отвечающий за очистку теневых карт
-        mCleanStageMaterial = mMain.getResourceManager().queryResourceFromJson<Material>(
-            pipelineName + "_ShadowCleanStage.material", cleanStageMaterialConfig.write());
+        auto cleanStageMaterial = mMain.getResourceManager().queryResourceFromJson<Material>(
+            mPipeline.getName() + "_ShadowCleanStage.material", cleanStageMaterialConfig.write(), &mPipeline);
 
         // Добавляем шейдер очистки на сцену 
-        mCleanStage->addObject("ShadowCleanBigTri", BigTriObjectGenerator(mCleanStageMaterial->getName()).generate());
+        mCleanStage->addObject("ShadowCleanBigTri", BigTriObjectGenerator(cleanStageMaterial->getName()).generate());
         mCleanStage->addObserver(this);
     }
 }}

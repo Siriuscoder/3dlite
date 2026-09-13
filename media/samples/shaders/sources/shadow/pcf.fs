@@ -4,7 +4,7 @@ uniform sampler2DArrayShadow ShadowMaps;
 
 layout(std140) uniform ShadowMatrix
 {
-    mat4 shadowTransform[LITE3D_SPOT_SHADOW_MAX_COUNT];
+    mat4 shadowTransform[LITE3D_SHADOW_CACHE_MAX_COUNT];
 };
 
 #define LITE3D_POISSON_DISC_COUNT 30
@@ -98,11 +98,19 @@ vec4 CalcAdaptiveShadowParams(in AngularInfo angular)
 float Shadow(in LightSource source, in Surface surface, in AngularInfo angular)
 {
     // Do not cast shadows
-    if (!hasFlag(source.flags, LITE3D_LIGHT_CASTSHADOW))
+    if (!hasFlag(source.flags, LITE3D_LIGHT_SHADOW_STATIC | LITE3D_LIGHT_SHADOW_DYNAMIC))
+        return 1.0;
+    if (source.shadowIndex < 0)
         return 1.0;
 
+    int shadowIndex = source.shadowIndex;
+    if (hasFlag(source.flags, LITE3D_LIGHT_POINT))
+    {
+        shadowIndex = source.shadowIndex + cubeFaceFromDir(-angular.lightDir);
+    }
+
     // Shadow space NDC coordinates of current fragment
-    vec4 sv = shadowTransform[source.shadowIndex] * vec4(surface.wv, 1.0);
+    vec4 sv = shadowTransform[shadowIndex] * vec4(surface.wv, 1.0);
     // transform the NDC coordinates to the range [0,1]
     sv = (sv / sv.w) * 0.5 + 0.5;
     // clipping
@@ -115,7 +123,7 @@ float Shadow(in LightSource source, in Surface surface, in AngularInfo angular)
     vec4 adaptiveParams = CalcAdaptiveShadowParams(angular);
     float samples = 0.0;
 
-    if (hasFlag(source.flags, LITE3D_LIGHT_CASTSHADOW_PCF3x3))
+    if (hasFlag(source.flags, LITE3D_LIGHT_SHADOW_PCF3x3))
     {
         for (int x = -1; x <= 1; ++x)
         {
@@ -125,12 +133,12 @@ float Shadow(in LightSource source, in Surface surface, in AngularInfo angular)
                 if (!isValidUV(shift))
                     continue;
 
-                shadowFactor += texture(ShadowMaps, vec4(shift, source.shadowIndex, sv.z - adaptiveParams.x));
+                shadowFactor += texture(ShadowMaps, vec4(shift, shadowIndex, sv.z - adaptiveParams.x));
                 samples += 1.0;
             }
         }
     }
-    else if (hasFlag(source.flags, LITE3D_LIGHT_CASTSHADOW_PCF_ADAPTIVE))
+    else if (hasFlag(source.flags, LITE3D_LIGHT_SHADOW_PCF_ADAPTIVE))
     {
         for (float x = -1.5; x <= 1.5; x += adaptiveParams.w)
         {
@@ -140,12 +148,12 @@ float Shadow(in LightSource source, in Surface surface, in AngularInfo angular)
                 if (!isValidUV(shift))
                     continue;
 
-                shadowFactor += texture(ShadowMaps, vec4(shift, source.shadowIndex, sv.z - adaptiveParams.x));
+                shadowFactor += texture(ShadowMaps, vec4(shift, shadowIndex, sv.z - adaptiveParams.x));
                 samples += 1.0;
             }
         }
     }
-    else if (hasFlag(source.flags, LITE3D_LIGHT_CASTSHADOW_POISSON))
+    else if (hasFlag(source.flags, LITE3D_LIGHT_SHADOW_POISSON))
     {
         for (int i = 0; i < LITE3D_POISSON_DISC_COUNT; ++i)
         {
@@ -153,7 +161,7 @@ float Shadow(in LightSource source, in Surface surface, in AngularInfo angular)
             if (!isValidUV(shift))
                 continue;
 
-            shadowFactor += texture(ShadowMaps, vec4(shift, source.shadowIndex, sv.z - adaptiveParams.x));
+            shadowFactor += texture(ShadowMaps, vec4(shift, shadowIndex, sv.z - adaptiveParams.x));
             samples += 1.0;
         }
     }
@@ -162,7 +170,7 @@ float Shadow(in LightSource source, in Surface surface, in AngularInfo angular)
         if (!isValidUV(sv.xy))
             return 0.0;
 
-        shadowFactor += texture(ShadowMaps, vec4(sv.xy, source.shadowIndex, sv.z - adaptiveParams.x));
+        shadowFactor += texture(ShadowMaps, vec4(sv.xy, shadowIndex, sv.z - adaptiveParams.x));
         samples += 1.0;
     }
 
@@ -171,7 +179,7 @@ float Shadow(in LightSource source, in Surface surface, in AngularInfo angular)
         shadowFactor /= samples;
 
 #ifdef LITE3D_SSS_ENABLE
-        if (hasFlag(source.flags, LITE3D_LIGHT_CASTSHADOW_SSS))
+        if (hasFlag(source.flags, LITE3D_LIGHT_SHADOW_SSS))
         {
             shadowFactor *= SSS(surface.wv, angular.lightDir, adaptiveParams.z);
         }

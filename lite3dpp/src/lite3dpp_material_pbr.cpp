@@ -58,7 +58,7 @@ namespace lite3dpp
                 auto textureCfg = helper.getObject(wsName);
                 setTexture(getMain().getResourceManager().queryResource<TextureImage>(
                     textureCfg.getString(L"TextureName"),
-                    textureCfg.getString(L"TexturePath")), 
+                    textureCfg.getString(L"TexturePath"), this), 
                     static_cast<TextureFlags>(1u << (i+1)), index++, false);
             }
         }
@@ -68,7 +68,7 @@ namespace lite3dpp
             auto textureCfg = helper.getObject(L"EnvironmentTexture");
             setEnvironmentTexture(getMain().getResourceManager().queryResource<TextureImage>(
                 textureCfg.getString(L"TextureName"),
-                textureCfg.getString(L"TexturePath")), false);
+                textureCfg.getString(L"TexturePath"), this), false);
         }
 
         if (helper.has(L"EnvironmentProbeTexture"))
@@ -76,7 +76,7 @@ namespace lite3dpp
             auto textureCfg = helper.getObject(L"EnvironmentProbeTexture");
             setEnvironmentProbeTexture(getMain().getResourceManager().queryResource<TextureImage>(
                 textureCfg.getString(L"TextureName"),
-                textureCfg.getString(L"TexturePath")), false);
+                textureCfg.getString(L"TexturePath"), this), false);
         }
 
         // Добавляем этот материал к остальным в буфер

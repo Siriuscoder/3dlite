@@ -4,13 +4,15 @@ uniform sampler2DArrayShadow ShadowMaps;
 
 layout(std140) uniform ShadowMatrix
 {
-    mat4 shadowTransform[LITE3D_SPOT_SHADOW_MAX_COUNT];
+    mat4 shadowTransform[LITE3D_SHADOW_CACHE_MAX_COUNT];
 };
 
 float Shadow(in LightSource source, in Surface surface, in AngularInfo angular)
 {
     // Do not cast shadows
-    if (!hasFlag(source.flags, LITE3D_LIGHT_CASTSHADOW))
+    if (!hasFlag(source.flags, LITE3D_LIGHT_SHADOW_STATIC | LITE3D_LIGHT_SHADOW_DYNAMIC))
+        return 1.0;
+    if (source.shadowIndex < 0)
         return 1.0;
 
     // Shadow space NDC coorts of current fragment

@@ -48,7 +48,7 @@ struct LightSource
     float attenuationQuadratic;
     float areaWidth;
     float areaHeight;
-    uint shadowIndex;
+    int shadowIndex;
     uint flags;
     float radius;
     uint reserved2;
@@ -58,14 +58,16 @@ struct LightSource
 #define LITE3D_LIGHT_POINT                      uint(1 << 0)
 #define LITE3D_LIGHT_DIRECTIONAL                uint(1 << 1)
 #define LITE3D_LIGHT_SPOT                       uint(1 << 2)
-#define LITE3D_LIGHT_ENABLED                    uint(1 << 3)
-#define LITE3D_LIGHT_CASTSHADOW                 uint(1 << 4)
-#define LITE3D_LIGHT_CASTSHADOW_PCF3x3          uint(1 << 5)
-#define LITE3D_LIGHT_CASTSHADOW_PCF_ADAPTIVE    uint(1 << 6)
-#define LITE3D_LIGHT_CASTSHADOW_POISSON         uint(1 << 7)
-#define LITE3D_LIGHT_CASTSHADOW_SSS             uint(1 << 8)
-#define LITE3D_LIGHT_DISK_AREA                  uint(1 << 9)
-#define LITE3D_LIGHT_RECT_AREA                  uint(1 << 10)
+#define LITE3D_LIGHT_DISK_AREA                  uint(1 << 3)
+#define LITE3D_LIGHT_RECT_AREA                  uint(1 << 4)
+#define LITE3D_LIGHT_ENABLED                    uint(1 << 5)
+#define LITE3D_LIGHT_SHADOW_STATIC              uint(1 << 6)
+#define LITE3D_LIGHT_SHADOW_DYNAMIC             uint(1 << 7)
+#define LITE3D_LIGHT_SHADOW_PCF3x3              uint(1 << 8)
+#define LITE3D_LIGHT_SHADOW_PCF_ADAPTIVE        uint(1 << 9)
+#define LITE3D_LIGHT_SHADOW_POISSON             uint(1 << 10)
+#define LITE3D_LIGHT_SHADOW_SSS                 uint(1 << 11)
+#define LITE3D_LIGHT_SHADOW_VSM                 uint(1 << 12)
 
 #ifndef LITE3D_SSS_MAX_ADAPTIVE_DEPTH_THRESHOLD
 #define LITE3D_SSS_MAX_ADAPTIVE_DEPTH_THRESHOLD             0.01    // Min Depth clipping to avoid accuracy artifacts

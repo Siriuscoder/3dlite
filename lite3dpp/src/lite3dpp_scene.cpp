@@ -26,18 +26,10 @@
 namespace lite3dpp
 {
     Scene::Scene(const String &name, 
-        const String &path, Main &main) : 
-        ConfigurableResource(name, path, main, AbstractResource::SCENE),
+                 const String &path, Main &main) : ConfigurableResource(name, path, main, AbstractResource::SCENE),
         mLightingParamsBuffer(nullptr),
         mLightingIndexBuffer(nullptr)
-    {
-        addObserver(this);
-    }
-
-    Scene::~Scene()
-    {
-        removeObserver(this);
-    }
+    {}
 
     size_t Scene::usedVideoMemBytes() const
     {
@@ -54,7 +46,7 @@ namespace lite3dpp
         mScene.endSceneRender = endSceneRenderEntry;
         mScene.nodeInFrustum = nodeInFrustumEntry;
         mScene.nodeOutOfFrustum = nodeOutOfFrustumEntry;
-        mScene.customVisibilityCheck = customVisibilityCheckEntry;
+        mScene.customFrustumCheck = customFrustumCheckEntry;
         mScene.beforeUpdateNodes = beforeUpdateNodesEntry;
     }
 
@@ -74,9 +66,11 @@ namespace lite3dpp
         if (features & LITE3D_SCENE_FEATURE_MULTIRENDER)
         {
             mInvocationBuffer = getMain().getResourceManager().queryResourceFromJson<SSBO>(getName() + 
-                "_invocationBuffer", "{\"Dynamic\": true}");
+                                                                                               "_invocationBuffer",
+                                                                                           "{\"Dynamic\": true}", this);
             mInvocationIndexBuffer = getMain().getResourceManager().queryResourceFromJson<UBO>(getName() + 
-                "_invocationIndexBuffer", "{\"Dynamic\": true}");
+                                                                                                   "_invocationIndexBuffer",
+                                                                                               "{\"Dynamic\": true}", this);
             
             mScene.invocationBufferGPU = mInvocationBuffer->getPtr();
             mScene.invocationIndexBufferGPU = mInvocationIndexBuffer->getPtr();
@@ -95,11 +89,11 @@ namespace lite3dpp
                 /* default name of lighting buffer is scene name + "LightingBufferObject" */
                 mLightingParamsBuffer = getMain().getResourceManager().
                     queryResourceFromJson<SSBO>(getName() + "_lightingBufferObject",
-                    "{\"Dynamic\": true}");
+                    "{\"Dynamic\": true}", this);
                 /* 2-bytes index, about 16k light sources support  */
                 mLightingIndexBuffer = getMain().getResourceManager().
                     queryResourceFromJson<SSBO>(getName() + "_lightingIndexBuffer",
-                    "{\"Dynamic\": true}");
+                    "{\"Dynamic\": true}", this);
 
                 mMaxLightsCount = std::min(MaxLightCount, static_cast<uint32_t>(SSBOMaxSize / sizeof(lite3d_light_params)));
             }
@@ -108,11 +102,11 @@ namespace lite3dpp
                 /* default name of lighting buffer is scene name + "LightingBufferObject" */
                 mLightingParamsBuffer = getMain().getResourceManager().
                     queryResourceFromJson<UBO>(getName() + "_lightingBufferObject",
-                    "{\"Dynamic\": true}");
+                    "{\"Dynamic\": true}", this);
                 /* 2-bytes index, about 16k light sources support  */
                 mLightingIndexBuffer = getMain().getResourceManager().
                     queryResourceFromJson<UBO>(getName() + "_lightingIndexBuffer",
-                    "{\"Dynamic\": true}");
+                    "{\"Dynamic\": true}", this);
 
                 mMaxLightsCount = std::min(MaxLightCount, static_cast<uint32_t>(UBOMaxSize / sizeof(lite3d_light_params)));
                 ShaderProgram::addGlobalDefinition("LITE3D_MAX_LIGHT_COUNT", std::to_string(mMaxLightsCount));
@@ -137,31 +131,6 @@ namespace lite3dpp
 
     void Scene::unloadImpl()
     {
-        /* release lighting technique buffers */
-        if (mLightingParamsBuffer)
-        {
-            getMain().getResourceManager().releaseResource(mLightingParamsBuffer->getName());
-            mLightingParamsBuffer = nullptr;
-        }
-
-        if (mLightingIndexBuffer)
-        {
-            getMain().getResourceManager().releaseResource(mLightingIndexBuffer->getName());
-            mLightingIndexBuffer = nullptr;
-        }
-
-        if (mInvocationBuffer)
-        {
-            getMain().getResourceManager().releaseResource(mInvocationBuffer->getName());
-            mInvocationBuffer = nullptr;
-        }
-
-        if (mInvocationIndexBuffer)
-        {
-            getMain().getResourceManager().releaseResource(mInvocationIndexBuffer->getName());
-            mInvocationIndexBuffer = nullptr;
-        }
-
         detachAllCameras();
         removeAllObjects();
         lite3d_scene_purge(&mScene);
@@ -171,7 +140,7 @@ namespace lite3dpp
         SceneObjectBase *parent, const kmVec3 &initialPosition, const kmQuaternion &initialRotation, 
         const kmVec3 &initialScale)
     {
-        if(mObjects.find(name) != mObjects.end())
+        if (mObjects.find(name) != mObjects.end())
             LITE3D_THROW(name << " make object failed.. already exist");
 
         SceneObject::Ptr sceneObject = createObject(name, parent, initialPosition, initialRotation, initialScale);
@@ -184,7 +153,7 @@ namespace lite3dpp
         SceneObjectBase *parent, const kmVec3 &initialPosition, const kmQuaternion &initialRotation, 
         const kmVec3 &initialScale)
     {
-        if(mObjects.find(name) != mObjects.end())
+        if (mObjects.find(name) != mObjects.end())
             LITE3D_THROW(name << " make object failed.. already exist");
 
         SceneObject::Ptr sceneObject = createObject(name, parent, initialPosition, initialRotation, initialScale);
@@ -196,7 +165,7 @@ namespace lite3dpp
     SceneObject *Scene::getObject(const String &name) const
     {
         SceneObjects::const_iterator it;
-        if((it = mObjects.find(name)) != mObjects.end())
+        if ((it = mObjects.find(name)) != mObjects.end())
             return it->second.get();
 
         LITE3D_THROW(name << " object not found");
@@ -210,7 +179,7 @@ namespace lite3dpp
     void Scene::removeObject(const String &name)
     {
         SceneObjects::const_iterator it;
-        if((it = mObjects.find(name)) == mObjects.end())
+        if ((it = mObjects.find(name)) == mObjects.end())
             LITE3D_THROW(name << " remove object failed.. not found");
 
         mObjects.erase(it);
@@ -237,15 +206,15 @@ namespace lite3dpp
         }
     }
     
-    void Scene::validateLightingBuffer(const Camera &camera)
+    void Scene::validateLightingBuffer(const Camera &camera, const lite3d_scene_render_params &params)
     {
         if (!mLightingParamsBuffer || !mLightingIndexBuffer || mLights.size() == 0)
             return;
 
         // check index buffer size, extend it if needed
-        if (mLightingIndexBuffer->bufferSizeBytes() < (mLights.size()+1)*sizeof(LightsIndexesStore::value_type))
+        if (mLightingIndexBuffer->bufferSizeBytes() < (mLights.size() + 1) * sizeof(LightsIndexesStore::value_type))
         {
-            mLightingIndexBuffer->extendBufferBytes(((mLights.size()+1) * sizeof(LightsIndexesStore::value_type)) -
+            mLightingIndexBuffer->extendBufferBytes(((mLights.size() + 1) * sizeof(LightsIndexesStore::value_type)) -
                 mLightingIndexBuffer->bufferSizeBytes());
         }
 
@@ -265,9 +234,9 @@ namespace lite3dpp
                 anyValidated = true;
             }
 
-            if (light->getLight()->getType() == LightSourceFlags::TypeDirectional || 
+            if (!(params.flags & LITE3D_RENDER_FRUSTUM_CULLING) || 
                 !light->frustumTest() || 
-                camera.inFrustum(*light->getLight()))
+                camera.intersectFrustum(*light->getLight()))
             {
                 light->setVisible(true);
                 mLightsIndexes.emplace_back(light->getLight()->index());
@@ -279,7 +248,7 @@ namespace lite3dpp
         }
         
         // the first index contain indexes count, max 16k
-        mLightsIndexes[0] = static_cast<int32_t>(mLightsIndexes.size()-1);
+        mLightsIndexes[0] = static_cast<int32_t>(mLightsIndexes.size() - 1);
         // upload indexes
         mLightingIndexBuffer->setData(&mLightsIndexes[0], 0, mLightsIndexes.size() * sizeof(LightsIndexesStore::value_type));
 
@@ -293,7 +262,7 @@ namespace lite3dpp
         return std::make_shared<SceneObject>(name, this, &getMain(), parent, initialPosition, initialRotation, initialScale);
     }
 
-    void Scene::addLightSource(LightSceneNode *node)
+    void Scene::registerLightNode(LightSceneNode *node)
     {
         if (mLights.size() == mMaxLightsCount)
         {
@@ -302,12 +271,23 @@ namespace lite3dpp
 
         mLights.emplace(node);
         rebuildLightingBuffer();
+        LITE3D_OBSERVER_NOTIFY_2(registerLightNode, this, node);
     }
 
-    void Scene::removeLightSource(LightSceneNode *node)
+    void Scene::unregisterLightNode(LightSceneNode *node)
     {
         mLights.erase(node);
         rebuildLightingBuffer();
+        LITE3D_OBSERVER_NOTIFY_2(unregisterLightNode, this, node);
+    }
+
+    void Scene::loadObjects(const String &path)
+    {
+        size_t fileSize;
+        auto buffer = getMain().getResourceManager().loadFileToMemory(path, &fileSize);
+        ConfigurationReader objectsConf(static_cast<const char *>(buffer), fileSize);
+
+        setupObjects(objectsConf.getObjects(L"Objects"), nullptr);
     }
 
     void Scene::setupObjects(const stl<ConfigurationReader>::vector &objects, SceneObjectBase *base)
@@ -331,7 +311,7 @@ namespace lite3dpp
 
     void Scene::setupCameras(const stl<ConfigurationReader>::vector &cameras)
     {
-        for(const ConfigurationReader &cameraJson : cameras)
+        for (const ConfigurationReader &cameraJson : cameras)
         {
             Camera *camera = nullptr;
             if ((camera = getMain().getCamera(cameraJson.getString(L"Name"))) == nullptr)
@@ -345,13 +325,13 @@ namespace lite3dpp
             for (const ConfigurationReader &renderTargetJson : cameraJson.getObjects(L"RenderTargets"))
             {
                 String renderTargetName = renderTargetJson.getString(L"Name");
-                if (renderTargetName == "Window") 
+                if (renderTargetName == WindowRenderTarget::Name) 
                     renderTarget = getMain().window();
                 else
                 {
                     renderTarget = getMain().getResourceManager().queryResource<TextureRenderTarget>(
                         renderTargetJson.getString(L"Name"),
-                        renderTargetJson.getString(L"Path"));
+                        renderTargetJson.getString(L"Path"), this);
                 }
                 
                 uint32_t renderFlags = 0;
@@ -412,7 +392,7 @@ namespace lite3dpp
                 }
                 if (renderTargetJson.getBool(L"FrustumCulling", true))
                     renderFlags |= LITE3D_RENDER_FRUSTUM_CULLING;
-                if (renderTargetJson.getBool(L"CustomVisibilityCheck", false))
+                if (renderTargetJson.getBool(L"CustomFrustumCheck", false))
                     renderFlags |= LITE3D_RENDER_CUSTOM_VISIBILITY_CHECK;
                 if (renderTargetJson.getBool(L"SortOpaqueToNear", false))
                     renderFlags |= LITE3D_RENDER_SORT_OPAQUE_TO_NEAR;
@@ -428,12 +408,12 @@ namespace lite3dpp
                 auto depthLayer = renderTargetJson.getInt(L"DepthLayer", -1);
                 if (colorLayer >= 0)
                 {
-                    layers.emplace_back(lite3d_framebuffer_layer { LITE3D_FRAMEBUFFER_USE_COLOR_BUFFER, colorLayer });
+                    layers.emplace_back(lite3d_framebuffer_layer{LITE3D_FRAMEBUFFER_USE_COLOR_BUFFER, colorLayer});
                 }
 
                 if (depthLayer >= 0)
                 {
-                    layers.emplace_back(lite3d_framebuffer_layer { LITE3D_FRAMEBUFFER_USE_DEPTH_BUFFER, depthLayer });
+                    layers.emplace_back(lite3d_framebuffer_layer{LITE3D_FRAMEBUFFER_USE_DEPTH_BUFFER, depthLayer});
                 }
         
                 renderTarget->addCamera(camera, this, renderTargetJson.getInt(L"TexturePass"), layers,
@@ -443,7 +423,8 @@ namespace lite3dpp
     }
 
     int Scene::beginDrawBatchEntry(struct lite3d_scene *scene, 
-            struct lite3d_scene_node *node, struct lite3d_mesh_chunk *meshChunk, struct lite3d_material *material)
+            struct lite3d_scene_node *node, struct lite3d_mesh_chunk *meshChunk, struct lite3d_material *material,
+            const lite3d_scene_render_params *params)
     {
         SDL_assert(scene->userdata);
         SDL_assert(material->userdata);
@@ -451,14 +432,15 @@ namespace lite3dpp
 
         try
         {
-            LITE3D_EXT_OBSERVER_NOTIFY_CHECK_4(reinterpret_cast<Scene *>(scene->userdata), beginDrawBatch, 
+            LITE3D_EXT_OBSERVER_NOTIFY_CHECK_5(reinterpret_cast<Scene *>(scene->userdata), beginDrawBatch, 
                 reinterpret_cast<Scene *>(scene->userdata),
                 reinterpret_cast<SceneNode *>(node->userdata),
                 meshChunk,
-                reinterpret_cast<Material *>(material->userdata));
+                reinterpret_cast<Material *>(material->userdata),
+                params);
             LITE3D_EXT_OBSERVER_RETURN;
         }
-        catch(std::exception &ex)
+        catch (std::exception &ex)
         {
             SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION, ex.what());
         }
@@ -469,7 +451,7 @@ namespace lite3dpp
     void Scene::nodeInFrustumEntry(struct lite3d_scene *scene, 
             struct lite3d_scene_node *node, struct lite3d_mesh_chunk *meshChunk, 
             struct lite3d_material *material, struct lite3d_bounding_vol *boundingVol, 
-            struct lite3d_camera *camera)
+            struct lite3d_camera *camera, const lite3d_scene_render_params *params)
     {
         SDL_assert(scene->userdata);
         SDL_assert(material->userdata);
@@ -478,15 +460,16 @@ namespace lite3dpp
 
         try
         {
-            LITE3D_EXT_OBSERVER_NOTIFY_6(reinterpret_cast<Scene *>(scene->userdata), nodeInFrustum, 
+            LITE3D_EXT_OBSERVER_NOTIFY_7(reinterpret_cast<Scene *>(scene->userdata), nodeInFrustum, 
                 reinterpret_cast<Scene *>(scene->userdata),
                 reinterpret_cast<SceneNode *>(node->userdata),
                 meshChunk,
                 reinterpret_cast<Material *>(material->userdata),
                 boundingVol,
-                reinterpret_cast<Camera *>(camera->userdata));
+                reinterpret_cast<Camera *>(camera->userdata),
+                params);
         }
-        catch(std::exception &ex)
+        catch (std::exception &ex)
         {
             SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION, ex.what());
         }
@@ -495,7 +478,7 @@ namespace lite3dpp
     void Scene::nodeOutOfFrustumEntry(struct lite3d_scene *scene, 
             struct lite3d_scene_node *node, struct lite3d_mesh_chunk *meshChunk, 
             struct lite3d_material *material, struct lite3d_bounding_vol *boundingVol,
-            struct lite3d_camera *camera)
+            struct lite3d_camera *camera, const lite3d_scene_render_params *params)
     {
         SDL_assert(scene->userdata);
         SDL_assert(material->userdata);
@@ -504,24 +487,25 @@ namespace lite3dpp
 
         try
         {
-            LITE3D_EXT_OBSERVER_NOTIFY_6(reinterpret_cast<Scene *>(scene->userdata), nodeOutOfFrustum, 
+            LITE3D_EXT_OBSERVER_NOTIFY_7(reinterpret_cast<Scene *>(scene->userdata), nodeOutOfFrustum, 
                 reinterpret_cast<Scene *>(scene->userdata),
                 reinterpret_cast<SceneNode *>(node->userdata),
                 meshChunk,
                 reinterpret_cast<Material *>(material->userdata),
                 boundingVol,
-                reinterpret_cast<Camera *>(camera->userdata));
+                reinterpret_cast<Camera *>(camera->userdata),
+                params);
         }
-        catch(std::exception &ex)
+        catch (std::exception &ex)
         {
             SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION, ex.what());
         }
     }
 
-    int Scene::customVisibilityCheckEntry(struct lite3d_scene *scene, 
+    int Scene::customFrustumCheckEntry(struct lite3d_scene *scene, 
             struct lite3d_scene_node *node, struct lite3d_mesh_chunk *meshChunk, 
             struct lite3d_material *material, struct lite3d_bounding_vol *boundingVol,
-            struct lite3d_camera *camera)
+            struct lite3d_camera *camera, const lite3d_scene_render_params *params)
     {
         SDL_assert(scene->userdata);
         SDL_assert(material->userdata);
@@ -530,16 +514,17 @@ namespace lite3dpp
 
         try
         {
-            LITE3D_EXT_OBSERVER_NOTIFY_CHECK_6(reinterpret_cast<Scene *>(scene->userdata), customVisibilityCheck, 
+            LITE3D_EXT_OBSERVER_NOTIFY_CHECK_7(reinterpret_cast<Scene *>(scene->userdata), customFrustumCheck, 
                 reinterpret_cast<Scene *>(scene->userdata),
                 reinterpret_cast<SceneNode *>(node->userdata),
                 meshChunk,
                 reinterpret_cast<Material *>(material->userdata),
                 boundingVol,
-                reinterpret_cast<Camera *>(camera->userdata));
+                reinterpret_cast<Camera *>(camera->userdata), 
+                params);
             LITE3D_EXT_OBSERVER_RETURN;
         }
-        catch(std::exception &ex)
+        catch (std::exception &ex)
         {
             SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION, ex.what());
         }
@@ -547,7 +532,8 @@ namespace lite3dpp
         return LITE3D_FALSE;
     }
 
-    void Scene::beforeUpdateNodesEntry(struct lite3d_scene *scene, struct lite3d_camera *camera, int32_t priority)
+    void Scene::beforeUpdateNodesEntry(struct lite3d_scene *scene, struct lite3d_camera *camera,
+        const lite3d_scene_render_params *params)
     {
         SDL_assert(scene->userdata);
         SDL_assert(camera->userdata);
@@ -557,15 +543,16 @@ namespace lite3dpp
             LITE3D_EXT_OBSERVER_NOTIFY_3(reinterpret_cast<Scene *>(scene->userdata), beforeUpdateNodes, 
                 reinterpret_cast<Scene *>(scene->userdata),
                 reinterpret_cast<Camera *>(camera->userdata),
-                priority);
+                params);
         }
-        catch(std::exception &ex)
+        catch (std::exception &ex)
         {
             SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION, ex.what());
         }
     }
 
-    int Scene::beginSceneRenderEntry(struct lite3d_scene *scene, struct lite3d_camera *camera, int32_t priority)
+    int Scene::beginSceneRenderEntry(struct lite3d_scene *scene, struct lite3d_camera *camera,
+        const lite3d_scene_render_params *params)
     {
         SDL_assert(scene->userdata);
         SDL_assert(camera->userdata);
@@ -573,15 +560,21 @@ namespace lite3dpp
         try
         {
             Camera *cameraObj = reinterpret_cast<Camera *>(camera->userdata);
-            reinterpret_cast<Scene *>(scene->userdata)->validateLightingBuffer(*cameraObj);
             
             LITE3D_EXT_OBSERVER_NOTIFY_CHECK_3(reinterpret_cast<Scene *>(scene->userdata), beginSceneRender, 
                 reinterpret_cast<Scene *>(scene->userdata),
                 cameraObj,
-                priority);
-            LITE3D_EXT_OBSERVER_RETURN;
+                params);
+
+            if (__ret)
+            {
+                reinterpret_cast<Scene *>(scene->userdata)->validateLightingBuffer(*cameraObj, *params);
+                return LITE3D_TRUE;
+            }
+
+            return LITE3D_FALSE;
         }
-        catch(std::exception &ex)
+        catch (std::exception &ex)
         {
             SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION, ex.what());
         }
@@ -589,7 +582,8 @@ namespace lite3dpp
         return LITE3D_FALSE;
     }
 
-    void Scene::endSceneRenderEntry(struct lite3d_scene *scene, struct lite3d_camera *camera, int32_t priority)
+    void Scene::endSceneRenderEntry(struct lite3d_scene *scene, struct lite3d_camera *camera,
+        const lite3d_scene_render_params *params)
     {
         SDL_assert(scene->userdata);
         SDL_assert(camera->userdata);
@@ -599,15 +593,16 @@ namespace lite3dpp
             LITE3D_EXT_OBSERVER_NOTIFY_3(reinterpret_cast<Scene *>(scene->userdata), endSceneRender, 
                 reinterpret_cast<Scene *>(scene->userdata),
                 reinterpret_cast<Camera *>(camera->userdata),
-                priority);
+                params);
         }
-        catch(std::exception &ex)
+        catch (std::exception &ex)
         {
             SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION, ex.what());
         }
     }
 
-    void Scene::beginOpaqueStageRenderEntry(struct lite3d_scene *scene, struct lite3d_camera *camera, int32_t priority)
+    void Scene::beginOpaqueStageRenderEntry(struct lite3d_scene *scene, struct lite3d_camera *camera,
+        const lite3d_scene_render_params *params)
     {
         SDL_assert(scene->userdata);
         SDL_assert(camera->userdata);
@@ -617,15 +612,16 @@ namespace lite3dpp
             LITE3D_EXT_OBSERVER_NOTIFY_3(reinterpret_cast<Scene *>(scene->userdata), beginOpaqueStageRender, 
                 reinterpret_cast<Scene *>(scene->userdata),
                 reinterpret_cast<Camera *>(camera->userdata),
-                priority);
+                params);
         }
-        catch(std::exception &ex)
+        catch (std::exception &ex)
         {
             SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION, ex.what());
         }
     }
 
-    void Scene::beginBlendingStageRenderEntry(struct lite3d_scene *scene, struct lite3d_camera *camera, int32_t priority)
+    void Scene::beginBlendingStageRenderEntry(struct lite3d_scene *scene, struct lite3d_camera *camera,
+        const lite3d_scene_render_params *params)
     {
         SDL_assert(scene->userdata);
         SDL_assert(camera->userdata);
@@ -635,15 +631,15 @@ namespace lite3dpp
             LITE3D_EXT_OBSERVER_NOTIFY_3(reinterpret_cast<Scene *>(scene->userdata), beginBlendingStageRender, 
                 reinterpret_cast<Scene *>(scene->userdata),
                 reinterpret_cast<Camera *>(camera->userdata),
-                priority);
+                params);
         }
-        catch(std::exception &ex)
+        catch (std::exception &ex)
         {
             SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION, ex.what());
         }
     }
 
-    void Scene::attachCamera(Camera* camera, SceneObjectBase *parent)
+    void Scene::attachCamera(Camera *camera, SceneObjectBase *parent)
     {
         auto scene = camera->getScene();
         if (scene)
@@ -662,7 +658,7 @@ namespace lite3dpp
         mCameras.emplace(camera->getName(), camera);
     }
 
-    void Scene::detachCamera(Camera* camera)
+    void Scene::detachCamera(Camera *camera)
     {
         auto scene = camera->getScene();
         if (scene != this)
@@ -679,11 +675,33 @@ namespace lite3dpp
 
     void Scene::detachAllCameras()
     {
-        for (auto &camera: mCameras)
+        for (auto &camera : mCameras)
         {
             lite3d_scene_remove_node(getPtr(), &camera.second->getPtr()->cameraNode);
         }
 
         mCameras.clear();
+    }
+
+    void Scene::registerMesh(Mesh *mesh)
+    {
+        SDL_assert(mesh);
+        
+        auto found = mMeshCounter.try_emplace(mesh, 0);
+        found.first->second++;
+    }
+
+    void Scene::unregisterMesh(Mesh *mesh)
+    {
+        SDL_assert(mesh);
+
+        auto found = mMeshCounter.find(mesh);
+        if (found != mMeshCounter.end())
+        {
+            if (!--found->second)
+            {
+                mesh->removeParentResource(this);
+            }
+        }
     }
 }

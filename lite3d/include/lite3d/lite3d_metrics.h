@@ -23,25 +23,36 @@
 #include <lite3d/lite3d_rb_tree.h>
 #include <lite3d/lite3d_array.h>
 
-#define LITE3D_MEASUREMENTS_MAX 3000
+#define LITE3D_MEASUREMENTS_WARMUP 1000
 #define LITE3D_MEASUREMENTS_GROUPS 7
 
+/*
+ * Metrics collect raw measurements only during warmup. When the warmup buffer
+ * reaches LITE3D_MEASUREMENTS_WARMUP samples, the current min/max range is used
+ * to build LITE3D_MEASUREMENTS_GROUPS logarithmic buckets. The first bucket
+ * always starts at 0 and ends at minMcs; the remaining buckets cover minMcs..
+ * maxMcs with narrower ranges near minMcs and wider ranges near maxMcs.
+ *
+ * Warmup samples are replayed into the buckets once, then the raw buffer is
+ * cleared. Further inserts update only the matching bucket hit counter, so
+ * distribution tracking does not keep growing with the number of calls.
+ */
 typedef struct lite3d_metric_node
 {
     /* rb tree node entity */
     lite3d_rb_node cached;
     char name[LITE3D_MAX_METRIC_NAME];
-    uint64_t maxMcs;
-    uint64_t minMcs;
-    uint64_t avgMcs;
+    double maxMcs;
+    double minMcs;
+    double avgMcs;
     uint64_t count;
+    uint8_t distributionReady;
 
     struct lite3d_metric_distribution 
     {
-        uint64_t lo;
-        uint64_t hi;
+        double lo;
+        double hi;
         uint64_t hit;
-        float percentage;
     } distribution[LITE3D_MEASUREMENTS_GROUPS];
 
     lite3d_array measurements;
@@ -55,36 +66,35 @@ typedef struct lite3d_metrics
 LITE3D_CEXPORT int lite3d_metrics_global_init(void);
 LITE3D_CEXPORT int lite3d_metrics_global_purge(void);
 LITE3D_CEXPORT lite3d_metrics *lite3d_metrics_global_get(void);
-LITE3D_CEXPORT int lite3d_metrics_global_insert(const char *name, uint64_t mcs);
+LITE3D_CEXPORT int lite3d_metrics_global_insert(const char *name, double mcs);
 LITE3D_CEXPORT int lite3d_metrics_global_write_to_log(void);
 
 LITE3D_CEXPORT int lite3d_metrics_init(lite3d_metrics *metrics);
 LITE3D_CEXPORT int lite3d_metrics_purge(lite3d_metrics *metrics);
-LITE3D_CEXPORT int lite3d_metrics_insert(lite3d_metrics *metrics, const char *name, uint64_t mcs);
+LITE3D_CEXPORT int lite3d_metrics_insert(lite3d_metrics *metrics, const char *name, double mcs);
 LITE3D_CEXPORT int lite3d_metrics_write_to_log(lite3d_metrics *metrics);
 
 #ifdef LITE3D_WITH_METRICS
 #define LITE3D_METRIC_CALL(method, args) \
     { \
-        uint64_t call_delta_; \
+        double call_delta_; \
         uint64_t call_bt_ = SDL_GetPerformanceCounter(); \
         method args; \
-        call_delta_ = (SDL_GetPerformanceCounter() - call_bt_) / (SDL_GetPerformanceFrequency() / 1000000); \
+        call_delta_ = (SDL_GetPerformanceCounter() - call_bt_) / (SDL_GetPerformanceFrequency() / 1000000.0f); \
         lite3d_metrics_global_insert(STR(method), call_delta_); \
     }
 
-#define LITE3D_METRIC_CALLRET(method, ret, args) \
+#define LITE3D_METRIC_CALL_WITH_RET(method, ret, args) \
     { \
-        uint64_t call_delta_; \
+        double call_delta_; \
         uint64_t call_bt_ = SDL_GetPerformanceCounter(); \
         ret = method args; \
-        call_delta_ = (SDL_GetPerformanceCounter() - call_bt_) / (SDL_GetPerformanceFrequency() / 1000000); \
+        call_delta_ = (SDL_GetPerformanceCounter() - call_bt_) / (SDL_GetPerformanceFrequency() / 1000000.0f); \
         lite3d_metrics_global_insert(STR(method), call_delta_); \
     }
 #else
 #define LITE3D_METRIC_CALL(method, args) method args;
-#define LITE3D_METRIC_CALLRET(method, ret, args) ret = method args;
+#define LITE3D_METRIC_CALL_WITH_RET(method, ret, args) ret = method args;
 #endif
 
 #endif	/* LITE3D_METRICS_H */
-

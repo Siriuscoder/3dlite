@@ -26,6 +26,7 @@ namespace lite3dpp
         mName(name)
     {
         mLightSource.userdata = this;
+        mLightSource.params.shadowIndex = -1;
         /* enabled by default */
         enabled(true);
         mLightSourceWorld = mLightSource;
@@ -76,7 +77,30 @@ namespace lite3dpp
         }
 
         enabled(true);
+
+        if (json.has(L"ShadowParams"))
+        {
+            auto shadowParams = json.getObject(L"ShadowParams");
+            setFlag(shadowParams.getBool(L"Dynamic", false) ? LightSourceFlags::ShadowDynamic : 
+                LightSourceFlags::ShadowStatic);
+
+            auto shadowType = shadowParams.getString(L"Type", "PCF");
+            auto shadowTypeFlag = shadowType == "PCF" ? LightSourceFlags::ShadowPcf3x3 : 
+                (shadowType == "PCFAdaptive" ? LightSourceFlags::ShadowPcfAdaptive : 
+                (shadowType == "PCFPoisson" ? LightSourceFlags::ShadowPoisson :
+                (shadowType == "VSM" ? LightSourceFlags::ShadowVSM : LightSourceFlags::TypeUndefined)));
+            if (shadowParams.getBool(L"SSS", false))
+            {
+                shadowTypeFlag = shadowTypeFlag | LightSourceFlags::ShadowSSS;
+            }
+
+            setFlag(shadowTypeFlag);
+            mClipNear = shadowParams.getDouble(L"NearClipPlane");
+            mClipFar = shadowParams.getDouble(L"FarClipPlane");
+        }
+
         mLightSource.userdata = this;
+        mLightSource.params.shadowIndex = -1;
         mLightSourceWorld = mLightSource;
     }
     
@@ -134,6 +158,27 @@ namespace lite3dpp
             writer.set(L"DirectionUP", mLightSource.params.directionUP);
             writer.set(L"AreaWidth", mLightSource.params.areaWidth);
             writer.set(L"AreaHeight", mLightSource.params.areaHeight);
+        }
+
+        if (mLightSource.params.flags & (LITE3D_LIGHT_SHADOW_DYNAMIC | LITE3D_LIGHT_SHADOW_STATIC))
+        {
+            lite3dpp::ConfigurationWriter shadowParams;
+            shadowParams.set(L"Dynamic", static_cast<bool>(mLightSource.params.flags & LITE3D_LIGHT_SHADOW_DYNAMIC));
+
+            if (mLightSource.params.flags & LITE3D_LIGHT_SHADOW_PCF3x3)
+                shadowParams.set(L"Type", "PCF");
+            else if (mLightSource.params.flags & LITE3D_LIGHT_SHADOW_PCF_ADAPTIVE)
+                shadowParams.set(L"Type", "PCFAdaptive");
+            else if (mLightSource.params.flags & LITE3D_LIGHT_SHADOW_POISSON)
+                shadowParams.set(L"Type", "PCFPoisson");
+            else if (mLightSource.params.flags & LITE3D_LIGHT_SHADOW_VSM)
+                shadowParams.set(L"Type", "VSM");
+            if (mLightSource.params.flags & LITE3D_LIGHT_SHADOW_SSS)
+                shadowParams.set(L"SSS", true);
+
+            shadowParams.set(L"NearClipPlane", mClipNear);
+            shadowParams.set(L"FarClipPlane", mClipFar);
+            writer.set(L"ShadowParams", shadowParams);
         }
     }
 
@@ -254,7 +299,7 @@ namespace lite3dpp
         mUpdated = true;
     }
 
-    void LightSource::setShadowIndex(uint32_t value)
+    void LightSource::setShadowIndex(int32_t value)
     {
         mLightSource.params.shadowIndex = value;
         mUpdated = true;
@@ -355,7 +400,7 @@ namespace lite3dpp
         return mLightSource.params.radiance;
     }
 
-    uint32_t LightSource::getShadowIndex() const
+    int32_t LightSource::getShadowIndex() const
     {
         return mLightSource.params.shadowIndex;
     }
@@ -383,6 +428,15 @@ namespace lite3dpp
     float LightSource::getRadius() const
     {
         return mLightSource.params.radius;
+    }
+
+    float LightSource::getClipNear() const
+    {
+        return mClipNear;
+    }
+    float LightSource::getClipFar() const
+    { 
+        return mClipFar; 
     }
 
     void LightSource::translateToWorld(const kmMat4 &worldMatrix)
@@ -413,18 +467,33 @@ namespace lite3dpp
 
     lite3d_bounding_vol LightSource::getBoundingVolumeWorld() const
     {
-        lite3d_bounding_vol volume = {};
-        volume.radius = getInfluenceDistance();
-        volume.sphereCenter = mLightSourceWorld.params.position;
-        return volume;
+        lite3d_bounding_vol aabb = {};
+
+        if (getType() == LightSourceFlags::TypeSpot)
+        {
+            if (getAngleOuterCone() < kmDegreesToRadians(100.0f))
+            {
+                kmVec3 dir;
+
+                float baseRadius = getInfluenceDistance() * tan(getAngleOuterCone() / 2.0);
+                kmVec3MulScalar(&dir, &mLightSourceWorld.params.direction, getInfluenceDistance() / 2.0f);
+                kmVec3Add(&aabb.sphereCenter, &mLightSourceWorld.params.position, &dir);
+                aabb.radius = sqrt(getInfluenceDistance() * getInfluenceDistance() * 0.25f + baseRadius * baseRadius);
+                return aabb;
+            }
+        }
+
+        aabb.radius = getInfluenceDistance();
+        aabb.sphereCenter = mLightSourceWorld.params.position;
+        return aabb;
     }
 
     lite3d_bounding_vol LightSource::getBoundingVolume() const
     {
-        lite3d_bounding_vol volume = {};
-        volume.radius = getInfluenceDistance();
-        volume.sphereCenter = mLightSource.params.position;
-        return volume;
+        lite3d_bounding_vol aabb = {};
+        aabb.radius = getInfluenceDistance();
+        aabb.sphereCenter = mLightSource.params.position;
+        return aabb;
     }
 
     void LightSource::calcDistanceMinRadiance()

@@ -21,14 +21,15 @@
 
 namespace lite3dpp
 {
-    Material *MaterialFactory::createMaterial(const String& type, const String& name, const String& path) const
+    Material *MaterialFactory::createMaterial(AbstractResource *parent, 
+        const String& type, const String& name, const String& path) const
     {
         if (type == "PBR")
         {
-            return mMain.getResourceManager().queryResource<PBRMaterial>(name, path);
+            return mMain.getResourceManager().queryResource<PBRMaterial>(name, path, parent);
         }
 
-        return mMain.getResourceManager().queryResource<Material>(name, path);
+        return mMain.getResourceManager().queryResource<Material>(name, path, parent);
     }
 }
 

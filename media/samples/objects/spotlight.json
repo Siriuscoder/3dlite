@@ -1,14 +1,14 @@
 {
     "Root":
     {
-        "Name": "PointLightSpark.root",
+        "Name": "SpotLight.root",
         "Nodes": [
             {
-                "Name": "PointLightSpark.node",
+                "Name": "SpotLight.node",
                 "FrustumTest":true,
                 "Light": {
-                    "Type": "Point",
-                    "Name": "PointLightSpark",
+                    "Type": "Spot",
+                    "Name": "SpotLight",
                     "Diffuse": [
                         1.0,
                         0.913,
@@ -18,6 +18,15 @@
                         "Constant": 1.0,
                         "InfluenceMinRadiance": 0.1
                     },
+                    "SpotFactor": {
+                        "AngleInnerCone": 0.8,
+                        "AngleOuterCone": 1.0
+                    },
+                    "Direction": [
+                        0.0,
+                        0.0,
+                        -1.0
+                    ],
                     "ShadowParams": {
                         "Dynamic": true,
                         "Type": "PCF",

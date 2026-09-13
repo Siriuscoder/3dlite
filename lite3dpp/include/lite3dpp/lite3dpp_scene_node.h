@@ -32,6 +32,7 @@ namespace lite3dpp
 
     protected:
 
+        Scene *mScene;
         lite3d_scene_node mNode;
     };
 }

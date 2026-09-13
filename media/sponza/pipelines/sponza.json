@@ -1,8 +1,8 @@
 {
     "ShaderPackage": "sponza",
     "MainScenePath": "sponza:scenes/sponza.json",
-    "Instancing": false,
-    "OcclusionCulling": true,
+    "Instancing": true,
+    "OcclusionCulling": false,
     "LightingTechnique": "UBO",
     "MultiRender": true,
     "SkyBox": 

@@ -15,6 +15,7 @@
 *	You should have received a copy of the GNU General Public License
 *	along with Lite3D.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
+#include <algorithm>
 #include <SDL_assert.h>
 #include <SDL_log.h>
 
@@ -40,17 +41,61 @@ namespace lite3dpp
         "ACTION"
     };
     
-    AbstractResource::AbstractResource(const String &name,
-        const String &path, Main &main, ResourceType type) : 
-        mState(UNLOADED),
+    AbstractResource::AbstractResource(const String &name, const String &path, Main &main, 
+        ResourceType type) : 
+        mState(ResourceState::UNLOADED),
         mType(type),
         mName(name),
         mPath(path),
-        mMain(main)
+        mMain(main),
+        mPinned(false)
     {}
 
     AbstractResource::~AbstractResource()
-    {}
+    {
+        while (!mParentResources.empty())
+        {
+            removeParentResource(mParentResources.front());
+        }
+
+        while (!mChildResources.empty())
+        {
+            mChildResources.front()->removeParentResource(this);
+        }
+    }
+
+    void AbstractResource::addParentResource(AbstractResource *parent)
+    {
+        if (!parent)
+            return;
+
+        if (std::find(mParentResources.begin(), mParentResources.end(), parent) == mParentResources.end())
+        {
+            mParentResources.push_back(parent);
+            parent->addChildResource(this);
+        }
+    }
+
+    void AbstractResource::removeParentResource(AbstractResource *parent)
+    {
+        SDL_assert(parent);
+
+        auto it = std::find(mParentResources.begin(), mParentResources.end(), parent);
+        if (it != mParentResources.end())
+        {
+            parent->removeChildResource(this);
+            mParentResources.erase(it);
+        }
+    }
+
+    void AbstractResource::unloadBranch()
+    {
+        for (auto it = mChildResources.rbegin(); it != mChildResources.rend(); ++it)
+        {
+            (*it)->unloadBranch();
+            (*it)->unload();
+        }
+    }
     
     void AbstractResource::logState()
     {
@@ -63,14 +108,14 @@ namespace lite3dpp
 
     void AbstractResource::load(const void *buffer, size_t size)
     {
-        if(mState == UNLOADED)
+        if (mState == UNLOADED)
         {
             try
             {
                 loadImpl(buffer, size);
                 mState = LOADED;
             }
-            catch(const std::exception&)
+            catch (const std::exception&)
             {
                 unloadImpl();
                 throw;
@@ -82,21 +127,20 @@ namespace lite3dpp
 
     void AbstractResource::reload()
     {
-        if(mState != LOADED)
-        {
-            try
-            {
-                reloadImpl();
-                mState = LOADED;
-            }
-            catch(const std::exception&)
-            {
-                unloadImpl();
-                throw;
-            }
+        unload();
 
-            logState();
+        try
+        {
+            loadImpl(nullptr, 0);
+            mState = LOADED;
         }
+        catch (const std::exception&)
+        {
+            unloadImpl();
+            throw;
+        }
+        
+        logState();
     }
 
     void AbstractResource::unload()
@@ -120,8 +164,26 @@ namespace lite3dpp
         return 0;
     }
 
-    ConfigurableResource::ConfigurableResource(const String &name, 
-        const String &path, Main &main, ResourceType type) : 
+    void AbstractResource::addChildResource(AbstractResource *resource)
+    {
+        SDL_assert(resource);
+        SDL_assert(std::find(mChildResources.begin(), mChildResources.end(), resource) == mChildResources.end());
+        mChildResources.push_back(resource);
+    }
+
+    void AbstractResource::removeChildResource(AbstractResource *resource)
+    {
+        SDL_assert(resource);
+
+        auto it = std::find(mChildResources.begin(), mChildResources.end(), resource);
+        if (it != mChildResources.end())
+        {
+            mChildResources.erase(it);
+        }
+    }
+
+    ConfigurableResource::ConfigurableResource(const String &name, const String &path, 
+        Main &main, ResourceType type) : 
         AbstractResource(name, path, main, type)
     {}
 
@@ -131,11 +193,14 @@ namespace lite3dpp
     void ConfigurableResource::loadImpl(const void *buffer, size_t size)
     {
         SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
-            "Parsing json (%s) \"%s\" ...", getName().c_str(), 
+            "%s resource (%s) \"%s\" ...", buffer ? "Loading" : "Reloading", getName().c_str(), 
             getPath().size() == 0 ? "" : getPath().c_str()); 
 
-        mConfiguration.reset(new ConfigurationReader(static_cast<const char *>(buffer), size));
-        SDL_assert_release(mConfiguration);
+        if (buffer)
+        {
+            mConfiguration.reset(new ConfigurationReader(static_cast<const char *>(buffer), size));
+        }
+
         loadFromConfigImpl(*mConfiguration);
     }
 
@@ -145,14 +210,9 @@ namespace lite3dpp
         loadFromConfigImpl(helper);
     }
 
-    void ConfigurableResource::reloadImpl()
+    const ConfigurationReader &ConfigurableResource::getConfig() const
     {
-        reloadFromConfigImpl(*mConfiguration);
-    }
-
-    const ConfigurationReader &ConfigurableResource::getJson() const
-    {
-        SDL_assert_release(mConfiguration);
+        SDL_assert(mConfiguration);
         return *mConfiguration;
     }
 }

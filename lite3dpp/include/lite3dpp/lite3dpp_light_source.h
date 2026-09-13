@@ -32,21 +32,30 @@ namespace lite3dpp
 {
     enum class LightSourceFlags : uint32_t
     {
-        TypeUndefined = 0,
+        TypeUndefined = LITE3D_LIGHT_UNDEFINED,
         TypePoint = LITE3D_LIGHT_POINT,
         TypeDirectional = LITE3D_LIGHT_DIRECTIONAL,
         TypeSpot = LITE3D_LIGHT_SPOT,
         Enabled = LITE3D_LIGHT_ENABLED,
-        CastShadow = LITE3D_LIGHT_CASTSHADOW,
-        CastShadowPcf3x3 = LITE3D_LIGHT_CASTSHADOW_PCF3x3,
-        CastShadowPcfAdaptive = LITE3D_LIGHT_CASTSHADOW_PCF_ADAPTIVE,
-        CastShadowPoisson = LITE3D_LIGHT_CASTSHADOW_POISSON,
-        CastShadowSSS = LITE3D_LIGHT_CASTSHADOW_SSS,
+        ShadowStatic = LITE3D_LIGHT_SHADOW_STATIC,
+        ShadowDynamic = LITE3D_LIGHT_SHADOW_DYNAMIC,
+        ShadowPcf3x3 = LITE3D_LIGHT_SHADOW_PCF3x3,
+        ShadowPcfAdaptive = LITE3D_LIGHT_SHADOW_PCF_ADAPTIVE,
+        ShadowPoisson = LITE3D_LIGHT_SHADOW_POISSON,
+        ShadowVSM = LITE3D_LIGHT_SHADOW_VSM,
+        ShadowSSS = LITE3D_LIGHT_SHADOW_SSS,
         TypeDiskArea = LITE3D_LIGHT_DISK_AREA,
         TypeRectArea = LITE3D_LIGHT_RECT_AREA
     };
 
     LITE3D_DECLARE_ENUM_OPERATORS(LightSourceFlags);
+
+    class ShadowClipParams
+    {
+    public:
+        float nearClipPlane = 0.0f;
+        float farClipPlane = 0.0f;
+    };
 
     class LITE3DPP_EXPORT LightSource : public Noncopiable, public Manageable
     {
@@ -91,7 +100,7 @@ namespace lite3dpp
         void setInfluenceDistance(float value);
         void setInfluenceMinRadiance(float value);
         void setRadiance(float value);
-        void setShadowIndex(uint32_t value);
+        void setShadowIndex(int32_t value);
         void setAngleInnerCone(float value);
         void setAngleOuterCone(float value);
         void setAreaWidth(float value);
@@ -114,12 +123,14 @@ namespace lite3dpp
         float getInfluenceDistance() const;
         float getInfluenceMinRadiance() const;
         float getRadiance() const;
-        uint32_t getShadowIndex() const;
+        int32_t getShadowIndex() const;
         float getAngleInnerCone() const;
         float getAngleOuterCone() const;
         float getAreaWidth() const;
         float getAreaHeight() const;
         float getRadius() const;
+        float getClipNear() const;
+        float getClipFar() const;
 
         void translateToWorld(const kmMat4 &worldMatrix);
         void writeToBuffer(BufferBase &buffer);
@@ -136,6 +147,8 @@ namespace lite3dpp
         uint32_t mBufferIndex = 0;
         bool mUpdated = false;
         std::optional<float> mInfluenceDistance;
+        float mClipNear;
+        float mClipFar;
     };
 }
 

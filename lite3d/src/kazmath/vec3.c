@@ -184,6 +184,22 @@ kmVec3* kmVec3Div( kmVec3* pOut,const kmVec3* pV1, const kmVec3* pV2 ) {
     return pOut;
 }
 
+kmVec3* kmVec3MulScalar( kmVec3* pOut,const kmVec3* pV1, float s ) {
+    pOut->x = pV1->x * s;
+    pOut->y = pV1->y * s;
+    pOut->z = pV1->z * s;
+    return pOut;
+}
+
+kmVec3* kmVec3DivScalar( kmVec3* pOut,const kmVec3* pV1, float s ) {
+    if ( s ){
+        pOut->x = pV1->x / s;
+        pOut->y = pV1->y / s;
+        pOut->z = pV1->z / s;
+    }
+    return pOut;
+}
+
 kmVec3* kmVec3MultiplyMat3(kmVec3* pOut, const kmVec3* pV, const kmMat3* pM) {
     kmVec3 v;
 

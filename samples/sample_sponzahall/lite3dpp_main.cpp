@@ -49,12 +49,14 @@ public:
         cfg.set(L"PreallocIndexSize", 75 * 1024 * 1024);
 
         // Для ускорения загруки выделим место под геометрию заранее
-        getMain().getResourceManager().queryResourceFromJson<lite3dpp::MeshPartition>("sponza.mesh_partition", cfg.write());
+        getMain().getResourceManager().queryResourceFromJson<lite3dpp::MeshPartition>("sponza.mesh_partition", 
+            cfg.write());
 
         cfg.set(L"PreallocVertexSize", 2 * 1024 * 1024);
         cfg.set(L"PreallocIndexSize", 0);
         // Для ускорения загруки выделим место под геометрию заранее
-        getMain().getResourceManager().queryResourceFromJson<lite3dpp::MeshPartition>("sponza.mesh_partition_bouding_box", cfg.write());
+        getMain().getResourceManager().queryResourceFromJson<lite3dpp::MeshPartition>("sponza.mesh_partition_bouding_box", 
+            cfg.write());
     }
 
     void createScene() override
@@ -71,7 +73,7 @@ public:
         initGIProbes();
 
         getMain().getResourceManager().warmUpMeshPartitions();
-        getMain().getResourceManager().dropFileCache();
+        //getMain().getResourceManager().dropFileCache();
     }
 
     void initGIProbes()
@@ -91,9 +93,9 @@ public:
     void setupShadowCasters()
     {
         mSUN = mSponzaScene->getObject("Sponza")->getLightNode("SUN");
-        mSUN->getLight()->setFlag(LightSourceFlags::CastShadowPcfAdaptive | LightSourceFlags::CastShadowSSS);
+        mSUN->getLight()->setFlag(LightSourceFlags::ShadowPcfAdaptive | LightSourceFlags::ShadowSSS);
         mSUNNode = mSponzaScene->getObject("Sponza")->getNode("SUN_actor");
-        mSUNShadowCaster = mPipeline->getShadowManager()->newShadowCaster(mSUN);
+        mSUNShadowCaster = mPipeline->getShadowManager()->registerEmitter(mSUN)[0];
     }
 
     void fixedUpdateTimerTick(int32_t firedPerRound, uint64_t deltaMcs, float deltaRetard) override
@@ -197,6 +199,11 @@ public:
 
                 mPipeline->getIBL()->rebuild();
             }
+            //else if (e->key.keysym.sym == SDLK_n)
+            //{
+            //    mSponzaScene->removeAllObjects();
+            //    mSponzaScene->loadObjects("sponza:scenes/sponza.json");
+            //}
         }
     }
 
@@ -205,7 +212,7 @@ private:
 
     Scene* mSponzaScene = nullptr;
     lite3dpp_pipeline::PipelineDeffered* mPipeline = nullptr;
-    lite3dpp_pipeline::ShadowManager::ShadowCaster *mSUNShadowCaster = nullptr;
+    lite3dpp_pipeline::ShadowCaster *mSUNShadowCaster = nullptr;
     LightSceneNode* mFlashLight = nullptr;
     LightSceneNode* mSUN = nullptr;
     SceneNode* mSUNNode = nullptr;

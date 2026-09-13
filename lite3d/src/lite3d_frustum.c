@@ -51,7 +51,7 @@ int lite3d_frustum_test_sphere(const struct lite3d_frustum *frustum,
     for (i = 0; i < 6; ++i)
     {
         // frustum test not pass if sphere behind a plane */
-        if (kmPlaneDistance(&frustum->clipPlains[i], &vol->sphereCenter) <= -vol->radius)
+        if (kmPlaneDistance(&frustum->clipPlains[i], &vol->sphereCenter) < -vol->radius)
             return LITE3D_FALSE;
     }
 

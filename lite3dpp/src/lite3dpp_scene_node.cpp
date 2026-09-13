@@ -25,7 +25,8 @@
 namespace lite3dpp
 {
     SceneNode::SceneNode(const ConfigurationReader &json, SceneNodeBase *parent, Scene *scene) : 
-        SceneNodeBase(&mNode)
+        SceneNodeBase(&mNode),
+        mScene(scene)
     {
         SDL_assert(scene);
 
@@ -47,7 +48,7 @@ namespace lite3dpp
         for (auto &actionCfg : json.getObjects(L"Actions"))
         {
             auto action = scene->getMain().getResourceManager().queryResource<Action>(actionCfg.getString(L"Name"), 
-                actionCfg.getString(L"Action"));
+                actionCfg.getString(L"Action"), scene);
 
             mActions[action->getName()] = action;
         }

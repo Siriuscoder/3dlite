@@ -27,8 +27,7 @@ class LITE3DPP_PIPELINE_EXPORT BloomEffect : public SceneObserver, public Noncop
 {
 public:
 
-    BloomEffect(Main& main, const String &pipelineName, const String &cameraName, const ConfigurationReader &pipelineConfig);
-    ~BloomEffect();
+    BloomEffect(Main& main, PipelineBase &pipeline, const String &cameraName);
 
     void initialize();
     TextureRenderTarget &getRenderTarget();
@@ -38,8 +37,9 @@ public:
 
 private:
 
-    bool beginDrawBatch(Scene *scene, SceneNode *node, lite3d_mesh_chunk *meshChunk, Material *material) override;
-    bool beginSceneRender(Scene *scene, Camera *camera, int32_t priority) override;
+    bool beginDrawBatch(Scene *scene, SceneNode *node, lite3d_mesh_chunk *meshChunk, Material *material,
+        const lite3d_scene_render_params *params) override;
+    bool beginSceneRender(Scene *scene, Camera *camera, const lite3d_scene_render_params *params) override;
 
     void initTextureChain();
     void initBoomScene();
@@ -47,6 +47,7 @@ private:
 private:
 
     Main& mMain;
+    PipelineBase& mPipeline;
     String mPipelineName;
     String mCameraName;
     String mShaderPackage;

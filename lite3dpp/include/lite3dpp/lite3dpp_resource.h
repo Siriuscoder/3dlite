@@ -54,14 +54,16 @@ namespace lite3dpp
             ACTION
         };
 
-        AbstractResource(const String &name, 
-            const String &path, Main &main, ResourceType type);
+        AbstractResource(const String &name, const String &path, Main &main, ResourceType type);
         virtual ~AbstractResource();
 
+        void addParentResource(AbstractResource *parent);
+        void removeParentResource(AbstractResource *parent);
+
         void load(const void *buffer, size_t size);
-        /* call this to reload object */ 
         void reload();
         void unload();
+        void unloadBranch();
 
         /* allocated size in video memory (when resource LOADED_MAPPED) */
         virtual size_t usedVideoMemBytes() const;
@@ -79,12 +81,23 @@ namespace lite3dpp
         { return mMain; }
         inline const Main &getMain() const
         { return mMain; }
+        inline void pin(bool pinned)
+        { mPinned = pinned; }
+        inline bool isOrphaned() const
+        { return mParentResources.empty() && !mPinned; }
 
     protected:
 
         virtual void loadImpl(const void *buffer, size_t size) = 0;
-        virtual void reloadImpl() = 0;
         virtual void unloadImpl() = 0;
+
+        void addChildResource(AbstractResource *resource);
+        void removeChildResource(AbstractResource *resource);
+
+    protected:
+
+        stl<AbstractResource *>::list mChildResources;
+        stl<AbstractResource *>::list mParentResources;
 
     private:
         
@@ -95,6 +108,7 @@ namespace lite3dpp
         String mName;
         String mPath;
         Main &mMain;
+        bool mPinned;
     };
 
     class LITE3DPP_EXPORT ConfigurableResource : public AbstractResource
@@ -103,16 +117,14 @@ namespace lite3dpp
 
         static const String emptyJson;
 
-        ConfigurableResource(const String &name, 
-            const String &path, Main &main, ResourceType type);
+        ConfigurableResource(const String &name, const String &path, Main &main, ResourceType type);
         virtual ~ConfigurableResource();
 
-        const ConfigurationReader &getJson() const;
+        const ConfigurationReader &getConfig() const;
 
     protected:
 
         virtual void loadImpl(const void *buffer, size_t size) override final;
-        virtual void reloadImpl() override final;
         virtual void loadFromConfigImpl(const ConfigurationReader &helper) = 0;
         virtual void reloadFromConfigImpl(const ConfigurationReader &helper);
     private:

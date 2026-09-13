@@ -57,6 +57,7 @@ public:
         mPipeline = pipeline;
 
         setupPlayer();
+        setupShadowCasters();
         addFlashlight();
     }
 
@@ -66,6 +67,24 @@ public:
         mVaultScene->attachCamera(&getMainCamera(), mPlayer);
         /* позиция камеры отнгосительно капсулы плеера (приподнимаем камеру)*/
         getMainCamera().setPosition(kmVec3 {0.0, 0.0, 110.0f});
+    }
+
+    void setupShadowCasters()
+    {
+        for (auto lightNode : mVaultScene->getLights())
+        {
+            mPipeline->getShadowManager()->registerEmitter(lightNode);
+        }
+
+        for (auto &[name, object] : mVaultScene->getObjects())
+        {
+            if (name.starts_with("FirstAid") ||
+                name.starts_with("Table") ||
+                name.starts_with("Crate01b"))
+            {
+                mPipeline->getShadowManager()->registerHintNode(object->getRoot());
+            } 
+        }  
     }
 
     void addFlashlight()
@@ -210,11 +229,22 @@ public:
 
         if (mObjects.size() >= 200)
         {
+            mPipeline->getShadowManager()->unregisterHintNode(mObjects.front()->getRoot());
+            for (auto &[_, lightNode] : mObjects.front()->getLightNodes())
+            {
+                mPipeline->getShadowManager()->unregisterEmitter(lightNode.get());
+            }
+
             mVaultScene->removeObject(mObjects.front()->getName());
             mObjects.pop_front();
         }
 
         mObjects.push_back(o);
+        mPipeline->getShadowManager()->registerHintNode(o->getRoot());
+        for (auto &[_, lightNode] : o->getLightNodes())
+        {
+            mPipeline->getShadowManager()->registerEmitter(lightNode.get());
+        }
     }
 
 private:

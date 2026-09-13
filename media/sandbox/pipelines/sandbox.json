@@ -6,10 +6,9 @@
     "LightingTechnique": "UBO",
     "ShadowMaps":
     {
-        "Width": 512,
-        "Height": 512,
-        "MaxCount": 16,
-        "NearClipPlane": 0.01
+        "Extent": 512,
+        "SpotShadowCacheMaxCount": 3,
+        "OmniShadowCacheMaxCount": 2
     },
     "BLOOM": 
     {

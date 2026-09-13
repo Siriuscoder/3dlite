@@ -66,8 +66,7 @@ namespace lite3dpp_pipeline {
             .set(L"DepthOutput", false));
             
         mLightComputeStage = getMain().getResourceManager().queryResourceFromJson<Scene>(getName() + "_LightComputeStage",
-            stageGenerator.generate().write());
-        mResourcesList.emplace_back(mLightComputeStage->getName());
+            stageGenerator.generate().write(), this);
 
         ConfigurationWriter lightComputeMaterialConfig;
         stl<ConfigurationWriter>::vector lightComputeMaterialUniforms;
@@ -204,8 +203,7 @@ namespace lite3dpp_pipeline {
         
         // Создаем служебный шейдер отвечающий за расчет освещения в экранном пространстве
         mLightComputeStageMaterial = getMain().getResourceManager().queryResourceFromJson<Material>(
-            getName() + "_LightComputeStage.material", lightComputeMaterialConfig.write());
-        mResourcesList.emplace_back(mLightComputeStageMaterial->getName());
+            getName() + "_LightComputeStage.material", lightComputeMaterialConfig.write(), this);
 
         // Добавляем шейдер расчета освещения в экранном пространстве
         mLightComputeStage->addObject("LightComputeBigTri", 
@@ -227,8 +225,7 @@ namespace lite3dpp_pipeline {
             .set(L"Depth", 4);
 
         mGBufferTexture = getMain().getResourceManager().queryResourceFromJson<TextureImage>(
-            getName() + "_" + cameraName + "_geometry_data.texture", gBufferTextureConfig.write());
-        mResourcesList.emplace_back(mGBufferTexture->getName());
+            getName() + "_" + cameraName + "_geometry_data.texture", gBufferTextureConfig.write(), this);
 
         ConfigurationWriter gBufferTargetConfig;
         stl<ConfigurationWriter>::vector gBufferColorAttachmentsConfig;
@@ -252,8 +249,7 @@ namespace lite3dpp_pipeline {
             .set(L"TextureName", mDepthTexture->getName()));
 
         mGBufferPass = getMain().getResourceManager().queryResourceFromJson<TextureRenderTarget>(
-            getName() + "_" + cameraName + "_GBufferPass", gBufferTargetConfig.write());
-        mResourcesList.emplace_back(mGBufferPass->getName());
+            getName() + "_" + cameraName + "_GBufferPass", gBufferTargetConfig.write(), this);
 
         sceneGenerator.addRenderTarget(cameraName, mGBufferPass->getName(), ConfigurationWriter()
             .set(L"Priority", static_cast<int>(RenderPassStagePriority::GBufferBuildStage))
@@ -281,8 +277,7 @@ namespace lite3dpp_pipeline {
             .set(L"InternalFormat", "RGB32F");
 
         mCombinedTexture = getMain().getResourceManager().queryResourceFromJson<TextureImage>(
-            getName() + "_" + cameraName + "_combined.texture", combinedTextureConfig.write());
-        mResourcesList.emplace_back(mCombinedTexture->getName());
+            getName() + "_" + cameraName + "_combined.texture", combinedTextureConfig.write(), this);
 
         SDL_assert(mDepthTexture);
         ConfigurationWriter combinedTargetConfig;
@@ -299,8 +294,7 @@ namespace lite3dpp_pipeline {
                 .set(L"TextureName", mDepthTexture->getName()));
 
         mCombinePass = getMain().getResourceManager().queryResourceFromJson<TextureRenderTarget>(
-            getName() + "_" + cameraName + "_CombinePass", combinedTargetConfig.write());
-        mResourcesList.emplace_back(mCombinePass->getName());
+            getName() + "_" + cameraName + "_CombinePass", combinedTargetConfig.write(), this);
 
         sceneGenerator.addRenderTarget(cameraName, mCombinePass->getName(), ConfigurationWriter()
             .set(L"Priority", static_cast<int>(RenderPassStagePriority::BlendDecalStage))
@@ -331,8 +325,7 @@ namespace lite3dpp_pipeline {
             .set(L"Scale", pipelineConfig.getObject(L"SSAO").getInt(L"FramebufferScale", 4));
 
         mSSAOTexture = getMain().getResourceManager().queryResourceFromJson<TextureImage>(
-            getName() + "_" + cameraName + "_SSAO.texture", ssaoTextureConfig.write());
-        mResourcesList.emplace_back(mSSAOTexture->getName());
+            getName() + "_" + cameraName + "_SSAO.texture", ssaoTextureConfig.write(), this);
 
         ConfigurationWriter ssaoTargetConfig;
         ssaoTargetConfig
@@ -348,8 +341,7 @@ namespace lite3dpp_pipeline {
                 }));
 
         mSSAOPass = getMain().getResourceManager().queryResourceFromJson<TextureRenderTarget>(
-            getName() + "_" + cameraName + "_SSAOPass", ssaoTargetConfig.write());
-        mResourcesList.emplace_back(mSSAOPass->getName());
+            getName() + "_" + cameraName + "_SSAOPass", ssaoTargetConfig.write(), this);
 
         BigTriSceneGenerator stageGenerator;
         stageGenerator.addRenderTarget(mSSAOPass->getName(), ConfigurationWriter()
@@ -360,8 +352,7 @@ namespace lite3dpp_pipeline {
             .set(L"DepthOutput", false));
             
         mSSAOStage = getMain().getResourceManager().queryResourceFromJson<Scene>(cameraName + "_SSAOStage",
-            stageGenerator.generate().write());
-        mResourcesList.emplace_back(mSSAOStage->getName());
+            stageGenerator.generate().write(), this);
 
         SDL_assert(mGBufferTexture);
 
@@ -397,14 +388,13 @@ namespace lite3dpp_pipeline {
 
         // Создаем служебный шейдер отвечающий за расчет SSAO
         mSSAOStageMaterial = getMain().getResourceManager().queryResourceFromJson<Material>(
-            getName() + "_" + cameraName + "_SSAOStage.material", ssaoMaterialConfig.write());
-        mResourcesList.emplace_back(mSSAOStageMaterial->getName());
+            getName() + "_" + cameraName + "_SSAOStage.material", ssaoMaterialConfig.write(), this);
 
         // Добавляем шейдер расчета SSAO
         mSSAOStage->addObject("SSAOBigTri", BigTriObjectGenerator(mSSAOStageMaterial->getName()).generate());
     }
 
-    bool PipelineDeffered::beginSceneRender(Scene *scene, Camera *camera, int32_t priority)
+    bool PipelineDeffered::beginSceneRender(Scene *scene, Camera *camera, const lite3d_scene_render_params *params)
     {
         auto &viewMatrix = getMainCamera().getViewMatrix();
         auto &projMatrix = getMainCamera().getProjMatrix();
@@ -427,6 +417,6 @@ namespace lite3dpp_pipeline {
                 "CameraProjection", projMatrix);
         }
 
-        return PipelineBase::beginSceneRender(scene, camera, priority);
+        return PipelineBase::beginSceneRender(scene, camera, params);
     }
 }}

@@ -112,7 +112,7 @@ vec3 importanceSampleGGX(vec2 Xi, vec3 N, float roughness);
 vec2 hammersleySequence(uint i, uint N);
 
 vec3 cubeCoordToWorld(ivec3 cubeCoord, vec2 cubemapSize);
-
+int cubeFaceFromDir(vec3 dir);
 //////////// Building structures
 Surface makeSurface(vec2 uv, vec3 wv, vec3 wn, vec3 wt, vec3 wb);
 Surface restoreSurface(vec2 uv);

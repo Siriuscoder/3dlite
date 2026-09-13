@@ -66,10 +66,10 @@ public:
     void setupShadowCasters()
     {
         auto sun = mAnimationScene->getObject("Ground")->getLightNode("Sun");
-        sun->getLight()->setFlag(LightSourceFlags::CastShadowPcfAdaptive);
-        mSUNShadowCaster = mPipeline->getShadowManager()->newShadowCaster(sun);
+        sun->getLight()->setFlag(LightSourceFlags::ShadowPcfAdaptive);
+        mPipeline->getShadowManager()->registerEmitter(sun);
         // Register hint nodes for automate shadow recalculation 
-        mPipeline->getShadowManager()->registerHintNodeRecursive(mAnimationScene->getObject("Engine")->getRoot());
+        mPipeline->getShadowManager()->registerHintNode(mAnimationScene->getObject("Engine")->getRoot(), true);
         mPipeline->getShadowManager()->registerHintNode(mSkeletonBody);
         mPipeline->getShadowManager()->registerHintNode(mSkeletonBody2);
         mPipeline->getShadowManager()->registerHintNode(mCuriousSphere);
@@ -175,7 +175,6 @@ private:
 
     Scene* mAnimationScene = nullptr;
     lite3dpp_pipeline::PipelineDeffered* mPipeline = nullptr;
-    lite3dpp_pipeline::ShadowManager::ShadowCaster *mSUNShadowCaster = nullptr;
     SceneNodeBase *mCrankshaft = nullptr;
     SceneNodeBase *mRod = nullptr;
     SceneNodeBase *mPiston = nullptr;

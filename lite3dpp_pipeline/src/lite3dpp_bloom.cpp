@@ -20,47 +20,20 @@
 #include <algorithm>
 #include <SDL_assert.h>
 #include <lite3dpp_pipeline/lite3dpp_generator.h>
+#include <lite3dpp_pipeline/lite3dpp_pipeline_base.h>
 
 namespace lite3dpp {
 namespace lite3dpp_pipeline {
 
-    BloomEffect::BloomEffect(Main& main, const String &pipelineName, const String &cameraName, 
-        const ConfigurationReader &pipelineConfig) : 
+    BloomEffect::BloomEffect(Main& main, PipelineBase &pipeline, const String &cameraName) : 
         mMain(main),
-        mPipelineName(pipelineName),
+        mPipeline(pipeline),
+        mPipelineName(pipeline.getName()),
         mCameraName(cameraName)
     {
         mMinWidth = mMain.window()->width() / 40;
-        mBloomRadius = pipelineConfig.getObject(L"BLOOM").getDouble(L"BloomRadius", mBloomRadius);
-        mShaderPackage = pipelineConfig.getString(L"ShaderPackage");
-    }
-
-    BloomEffect::~BloomEffect()
-    {
-        if (mBloomRernderer)
-        {
-            mMain.getResourceManager().releaseResource(mBloomRernderer->getName());
-        }
-
-        for (auto material : mMaterialChain)
-        {
-            mMain.getResourceManager().releaseResource(material->getName());
-        }
-
-        for (auto texture : mTextureChain)
-        {
-            mMain.getResourceManager().releaseResource(texture->getName());
-            /* Так как в mTextureChain текстуры дублируются, удаляем только до середины */
-            if (texture == mMiddleTexture)
-            {
-                break;
-            }
-        }
-
-        if (mBloomRT)
-        {
-            mMain.getResourceManager().releaseResource(mBloomRT->getName());
-        }
+        mBloomRadius = pipeline.getConfig().getObject(L"BLOOM").getDouble(L"BloomRadius", mBloomRadius);
+        mShaderPackage = pipeline.getConfig().getString(L"ShaderPackage");
     }
 
     TextureRenderTarget &BloomEffect::getRenderTarget()
@@ -93,13 +66,14 @@ namespace lite3dpp_pipeline {
 
         mBloomRT = mMain.getResourceManager().queryResourceFromJson<TextureRenderTarget>(
             mPipelineName + "_" + mCameraName + "_BloomPass",
-            bloomRenderTargetConfig.write());
+            bloomRenderTargetConfig.write(), &mPipeline);
 
         initTextureChain();
         initBoomScene();
     }
 
-    bool BloomEffect::beginDrawBatch(Scene *scene, SceneNode *node, lite3d_mesh_chunk *meshChunk, Material *material)
+    bool BloomEffect::beginDrawBatch(Scene *scene, SceneNode *node, lite3d_mesh_chunk *meshChunk, Material *material,
+        const lite3d_scene_render_params *params)
     {
         Texture *current = mTextureChain[mChainState++];
         stl<lite3d_framebuffer_attachment>::vector attachments = {
@@ -122,7 +96,7 @@ namespace lite3dpp_pipeline {
         return true;
     }
 
-    bool BloomEffect::beginSceneRender(Scene *scene, Camera *camera, int32_t priority)
+    bool BloomEffect::beginSceneRender(Scene *scene, Camera *camera, const lite3d_scene_render_params *params)
     {
         // Скинем индекс цепочки в 0 в началале рисования сцены
         mChainState = 0;
@@ -153,7 +127,7 @@ namespace lite3dpp_pipeline {
 
             textureChainTmp.emplace_back(
                 mMain.getResourceManager().queryResourceFromJson<TextureImage>(textureName + std::to_string(i) + ".texture", 
-                textureConfig.write()));
+                textureConfig.write(), &mPipeline));
         }
 
         mMiddleTexture = textureChainTmp.back();
@@ -168,7 +142,7 @@ namespace lite3dpp_pipeline {
         String matName = mPipelineName + "_" + mCameraName + "_bloom_slice_";
         // Получим финишную HDR текстру сцены после прогона освещения, будем ее блумить
         Texture *combinedTexture = mMain.getResourceManager().queryResource<TextureImage>(
-            mPipelineName + "_" + mCameraName + "_combined.texture");
+            mPipelineName + "_" + mCameraName + "_combined.texture", &mPipeline);
 
         BigTriSceneGenerator bloomSceneConfig;
         bloomSceneConfig.addRenderTarget(mBloomRT->getName(), ConfigurationWriter()
@@ -184,7 +158,7 @@ namespace lite3dpp_pipeline {
 
         mBloomRernderer = mMain.getResourceManager().queryResourceFromJson<Scene>(
             mPipelineName + "_" + mCameraName + "_BloomStage",
-            bloomSceneConfig.generate().write());
+            bloomSceneConfig.generate().write(), &mPipeline);
         mBloomRernderer->addObserver(this);
 
         for (size_t i = 0; i < mTextureChain.size(); ++i)
@@ -226,7 +200,7 @@ namespace lite3dpp_pipeline {
 
             /* создание шейдера */
             Material *material = mMain.getResourceManager().queryResourceFromJson<Material>(
-                matName + std::to_string(i) + ".material", bloomSampleMaterialConfig.write());
+                matName + std::to_string(i) + ".material", bloomSampleMaterialConfig.write(), &mPipeline);
             /* Установим исходную текстуру для каждого bloom шейдера, каждый проход берет результат предидущего */
             material->setSamplerParameter(static_cast<int>(TexturePassTypes::RenderPass), "Source", 
                 i == 0 ? *combinedTexture : *mTextureChain[i-1]);
