@@ -36,16 +36,19 @@ void PhysicsObjectMotionState::getWorldTransform(btTransform& worldTrans) const
 void PhysicsObjectMotionState::setWorldTransform(const btTransform& worldTrans)
 {
     SDL_assert(mSceneObject);
-    auto prevOrigin = BulletUtils::convert(mSceneObject->getPosition());
-    auto prevRotation = BulletUtils::convert(mSceneObject->getRotation());
-    auto newOrigin = worldTrans.getOrigin();
-    auto newRotation = worldTrans.getRotation();
-
-    if (prevOrigin != newOrigin ||
-        prevRotation != newRotation)
+    if (mSceneObject->getRoot()->isDynamic())
     {
-        mSceneObject->setPosition(BulletUtils::convert(newOrigin));
-        mSceneObject->setRotation(BulletUtils::convert(newRotation));
+        auto prevOrigin = BulletUtils::convert(mSceneObject->getPosition());
+        auto prevRotation = BulletUtils::convert(mSceneObject->getRotation());
+        auto newOrigin = worldTrans.getOrigin();
+        auto newRotation = worldTrans.getRotation();
+
+        if (prevOrigin != newOrigin ||
+            prevRotation != newRotation)
+        {
+            mSceneObject->setPosition(BulletUtils::convert(newOrigin));
+            mSceneObject->setRotation(BulletUtils::convert(newRotation));
+        }
     }
 }
 

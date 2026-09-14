@@ -44,6 +44,8 @@ namespace lite3dpp
         setPosition(json.getVec3(L"Position"));
         setRotation(json.getQuaternion(L"Rotation"));
         setScale(json.getVec3(L"Scale", KM_VEC3_ONE));
+        setStatic(json.getBool(L"Static", false));
+        setCastShadow(json.getBool(L"CastShadow", true));
 
         for (auto &actionCfg : json.getObjects(L"Actions"))
         {

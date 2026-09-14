@@ -322,10 +322,10 @@ static int mqr_node_approve(lite3d_scene *scene, _mqr_node *mqrNode,
     SDL_assert(scene->currentCamera);
     SDL_assert(params);
     
-    if (!mqrNode->node->renderable)
+    if (!(mqrNode->node->flags & LITE3D_SCENE_NODE_RENDERABLE))
         return LITE3D_FALSE;
 
-    if (!mqrNode->node->enabled)
+    if (!(mqrNode->node->flags & LITE3D_SCENE_NODE_ENABLED))
         return LITE3D_FALSE;
 
     scene->stats.totalPieces++;
@@ -355,7 +355,8 @@ static int mqr_node_approve(lite3d_scene *scene, _mqr_node *mqrNode,
             }
         }
         /* frustum test */
-        else if (mqrNode->node->frustumTest && !lite3d_frustum_test(&scene->currentCamera->frustum, &mqrNode->boundingVol))
+        else if ((mqrNode->node->flags & LITE3D_SCENE_NODE_FRUSTUM_TEST) &&
+            !lite3d_frustum_test(&scene->currentCamera->frustum, &mqrNode->boundingVol))
         {
             nodeApproved = nodeVisible = LITE3D_FALSE;
             if (scene->nodeOutOfFrustum)
@@ -364,7 +365,7 @@ static int mqr_node_approve(lite3d_scene *scene, _mqr_node *mqrNode,
                     &mqrNode->boundingVol, scene->currentCamera, params);
             }
         }
-        else if (mqrNode->node->frustumTest && scene->nodeInFrustum)
+        else if ((mqrNode->node->flags & LITE3D_SCENE_NODE_FRUSTUM_TEST) && scene->nodeInFrustum)
         {
             scene->nodeInFrustum(scene, mqrNode->node, mqrNode->meshChunk, mqrNode->matUnit->material, 
                 &mqrNode->boundingVol, scene->currentCamera, params);
@@ -817,7 +818,7 @@ static void mqr_unit_add_node(lite3d_scene *scene, _mqr_unit *unit, _mqr_node *n
     node->matUnit = unit;
     // При следующем проходе сцены будет пересчет этой ноды
     node->node->recalc = LITE3D_TRUE;
-    node->node->renderable = LITE3D_TRUE;
+    node->node->flags |= LITE3D_SCENE_NODE_RENDERABLE;
 
     /* insert node info list group by meshChunk */
     /* it guarantee what node will be sorted by meshChunk */
@@ -846,7 +847,7 @@ static void scene_recursive_nodes_update(lite3d_scene *scene,
     node->visible = LITE3D_FALSE; // Определим видимость далее
     if ((recalcNode = lite3d_scene_node_update(node)) == LITE3D_TRUE)
     {
-        if (!node->isCamera)
+        if (!(node->flags & LITE3D_SCENE_NODE_CAMERA))
         {
             LITE3D_ARR_ADD_ELEM(&scene->invalidatedUnits, lite3d_scene_node *, node);
         }
@@ -933,7 +934,7 @@ int lite3d_scene_init(lite3d_scene *scene, uint32_t features)
     /* root scene node */
     lite3d_scene_node_init(&scene->rootNode);
     /* never render this node */
-    scene->rootNode.renderable = LITE3D_FALSE;
+    scene->rootNode.flags &= ~LITE3D_SCENE_NODE_RENDERABLE;
     lite3d_list_init(&scene->materialRenderUnits);
 
     lite3d_array_init(&scene->stageOpague, sizeof(_mqr_node *), 2);
@@ -998,7 +999,7 @@ int lite3d_scene_add_node(lite3d_scene *scene, lite3d_scene_node *node,
         baseNode = &scene->rootNode;
 
     node->recalc = LITE3D_TRUE;
-    node->renderable = LITE3D_FALSE;
+    node->flags &= ~LITE3D_SCENE_NODE_RENDERABLE;
     node->baseNode = baseNode;
     node->scene = scene;
     lite3d_list_add_last_link(&node->nodeLink, &baseNode->childNodes);
@@ -1046,7 +1047,7 @@ int lite3d_scene_remove_node(lite3d_scene *scene, lite3d_scene_node *node)
     lite3d_list_unlink_link(&node->nodeLink);
     node->baseNode = NULL;
     node->scene = NULL;
-    node->renderable = LITE3D_FALSE;
+    node->flags &= ~LITE3D_SCENE_NODE_RENDERABLE;
     
     for (mqrUnitNode = scene->materialRenderUnits.l.next;
         mqrUnitNode != &scene->materialRenderUnits.l; mqrUnitNode = lite3d_list_next(mqrUnitNode))

@@ -73,10 +73,10 @@ namespace lite3dpp
         SDL_assert(getRoot());
         for(Nodes::value_type &node : mNodes)
         {
-            node.second->getPtr()->enabled = LITE3D_FALSE;
+            node.second->disable();
         }
 
-        getRoot()->getPtr()->enabled = LITE3D_FALSE;
+        getRoot()->disable();
     }
 
     void SceneObject::enable()
@@ -84,10 +84,10 @@ namespace lite3dpp
         SDL_assert(getRoot());
         for(Nodes::value_type &node : mNodes)
         {
-            node.second->getPtr()->enabled = LITE3D_TRUE;
+            node.second->enable();
         }
 
-        getRoot()->getPtr()->enabled = LITE3D_TRUE;
+        getRoot()->enable();
     }
     
     SceneNode* SceneObject::createNode(const ConfigurationReader &conf, SceneNodeBase *parent)

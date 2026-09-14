@@ -295,11 +295,11 @@ static int init(void *userdata)
         };
 
         lite3d_scene_node_init(&mSceneNode[i]);
-        mSceneNode[i].frustumTest = 0;
+        mSceneNode[i].flags &= ~LITE3D_SCENE_NODE_FRUSTUM_TEST;
         lite3d_scene_node_set_position(&mSceneNode[i], &nodePos[i]);
 
         lite3d_scene_node_init(&mSceneNodeInherited[i]);
-        mSceneNodeInherited[i].frustumTest = 0;
+        mSceneNodeInherited[i].flags &= ~LITE3D_SCENE_NODE_FRUSTUM_TEST;
         lite3d_scene_node_set_position(&mSceneNodeInherited[i], &tmp);
         lite3d_scene_node_set_scale(&mSceneNodeInherited[i], &nodeScale[i]);
 

@@ -159,7 +159,7 @@ static void update_render_target(lite3d_render_target *target)
     {
         look = LITE3D_MEMBERCAST(lookUnit, node, rtLink);
 
-        if (look->camera->cameraNode.enabled)
+        if (look->camera->cameraNode.flags & LITE3D_SCENE_NODE_ENABLED)
         {
             if (target->fb.status == LITE3D_FRAMEBUFFER_STATUS_OK)
             {

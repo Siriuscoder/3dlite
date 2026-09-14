@@ -88,19 +88,19 @@ namespace lite3dpp
     bool SceneObjectBase::isEnabled() const
     {
         SDL_assert(getRoot());
-        return getRoot()->getPtr()->enabled == LITE3D_TRUE;
+        return getRoot()->isEnabled();
     }
 
     void SceneObjectBase::enable()
     {
         SDL_assert(getRoot());
-        getRoot()->getPtr()->enabled = LITE3D_TRUE;
+        getRoot()->enable();
     }
 
     void SceneObjectBase::disable()
     {
         SDL_assert(getRoot());
-        getRoot()->getPtr()->enabled = LITE3D_FALSE;
+        getRoot()->disable();
     }
     
     const kmVec3& SceneObjectBase::getPosition() const
@@ -225,4 +225,3 @@ namespace lite3dpp
         return result;
     }
 }
-

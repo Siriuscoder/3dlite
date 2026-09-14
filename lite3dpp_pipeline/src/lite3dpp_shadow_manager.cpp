@@ -219,6 +219,11 @@ namespace lite3dpp_pipeline {
 
     ShadowManager::VisibilityHintNode* ShadowManager::registerHintNode(SceneNodeBase *node, bool recursive)
     {
+        if (!node->isRenderable())
+        {
+            LITE3D_THROW("Only renderable nodes can be a hint '" << node->getName() << "'");
+        }
+
         auto it = mVisibilityHintNodes.find(node);
         if (it != mVisibilityHintNodes.end())
         {
@@ -422,6 +427,11 @@ namespace lite3dpp_pipeline {
             return true;
         }
 
+        if (!node->isCastShadow())
+        {
+            return false;
+        }
+        
         auto it = mVisibilityHintNodes.find(node);
         VisibilityHintNode* dnode = it != mVisibilityHintNodes.end() ? it->second.get() : nullptr;
 

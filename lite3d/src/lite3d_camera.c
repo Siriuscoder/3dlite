@@ -123,9 +123,8 @@ void lite3d_camera_init(lite3d_camera *camera)
 
     memset(camera, 0, sizeof (lite3d_camera));
     lite3d_scene_node_init(&camera->cameraNode);
-    camera->cameraNode.rotationCentered = LITE3D_TRUE;
-    camera->cameraNode.renderable = LITE3D_FALSE;
-    camera->cameraNode.isCamera = LITE3D_TRUE;
+    camera->cameraNode.flags |= LITE3D_SCENE_NODE_ROTATION_CENTERED | LITE3D_SCENE_NODE_CAMERA;
+    camera->cameraNode.flags &= ~LITE3D_SCENE_NODE_RENDERABLE;
     kmMat4Identity(&camera->viewMatrix);
     kmMat4Identity(&camera->projectionMatrix);
     kmMat4Identity(&camera->viewProjectionMatrix);
