@@ -92,8 +92,8 @@ namespace lite3dpp
     {
         for (auto it = mChildResources.rbegin(); it != mChildResources.rend(); ++it)
         {
-            (*it)->unloadBranch();
             (*it)->unload();
+            (*it)->unloadBranch();
         }
     }
     

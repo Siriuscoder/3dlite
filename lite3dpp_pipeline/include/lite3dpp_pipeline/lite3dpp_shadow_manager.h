@@ -120,6 +120,7 @@ private:
     uint32_t mOmniShadowCacheMaxCount = 0;
     uint32_t mCascadeShadowCacheMaxCount = 0;
     uint32_t mMaxShadowsRebuildCount = 0;
+    float mCascadeSplitLambda = 0.5;
     uint32_t mExtent = 0;
     RenderTarget* mShadowPass = nullptr;
     Texture* mShadowMap = nullptr;
@@ -130,7 +131,7 @@ private:
     stl<ShadowCaster*>::vector mShadowCastersCachePlaceHolders;
     VisibilityHints mVisibilityHintNodes;
     Scene *mCleanStage = nullptr;
-    bool mCascadeShadowIsReserved = false;
+    bool mCascadeShadowCasterAlreadyRegistered = false;
 };
 
 }}

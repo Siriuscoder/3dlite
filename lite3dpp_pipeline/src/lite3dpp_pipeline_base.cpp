@@ -71,8 +71,9 @@ namespace lite3dpp_pipeline {
 
     Camera &PipelineBase::getMainCamera()
     {
-        SDL_assert(mMainCamera);
-        return *mMainCamera;
+        auto mainCamera = getMain().getCamera(mMainCameraName);
+        SDL_assert(mainCamera);
+        return *mainCamera;
     }
 
     void PipelineBase::setGamma(float gamma)
@@ -152,10 +153,7 @@ namespace lite3dpp_pipeline {
         {
             ConfigurationWriter cameraPipelineConfig;
             auto cameraName = cameraConfig.getString(L"Name");
-            if (mainCameraName.empty())
-            {
-                mainCameraName = mainSceneGenerator.getName() + "_" + cameraName;
-            }
+            mMainCameraName = mainSceneGenerator.getName() + "_" + cameraName;
 
             cameraPipelineConfig
                 .set(L"Position", cameraConfig.getVec3(L"Position"))
@@ -200,7 +198,6 @@ namespace lite3dpp_pipeline {
 
         /* Создание главной сцены в самом конце, все остальные обьекты должны быть созданы до этого момента */
         createMainScene(mainSceneGenerator.getName(), mainSceneGenerator.generateFromExisting(sceneGeneratedConfig).write());
-        mMainCamera = getMain().getCamera(mainCameraName);
 
         if (mShadowManager)
         {
@@ -218,12 +215,11 @@ namespace lite3dpp_pipeline {
 
     void PipelineBase::unloadImpl()
     {
-        if (mShadowManager)
+        if (mMainScene && mShadowManager)
         {
-            SDL_assert(mMainScene);
             mMainScene->removeObserver(mShadowManager.get());
         }
-
+        
         mShadowManager.reset();
         mBloomEffect.reset();
         mIBL.reset();

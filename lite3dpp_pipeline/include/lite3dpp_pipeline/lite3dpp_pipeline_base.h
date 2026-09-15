@@ -81,7 +81,7 @@ namespace lite3dpp_pipeline {
         std::unique_ptr<ShadowManager> mShadowManager;
         std::unique_ptr<BloomEffect> mBloomEffect;
         std::unique_ptr<IBLMultiProbe> mIBL;
-        Camera *mMainCamera = nullptr;
+        String mMainCameraName;
         RenderTarget *mDepthPass = nullptr;
         RenderTarget *mCombinePass = nullptr;
         Texture *mDepthTexture = nullptr;

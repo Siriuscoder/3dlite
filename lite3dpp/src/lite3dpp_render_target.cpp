@@ -135,7 +135,7 @@ namespace lite3dpp
             stencil ? LITE3D_TRUE : LITE3D_FALSE);
     }
 
-    void RenderTarget::addCamera(Camera *camera, Scene *scene, uint16_t pass, const RenderLayers &layers,
+    void RenderTarget::addPass(Camera *camera, Scene *scene, uint16_t pass, const RenderLayers &layers,
          int priority, uint32_t renderFlags)
     {
         SDL_assert(mRenderTargetPtr);
@@ -145,12 +145,10 @@ namespace lite3dpp
                 priority << " already exist");
     }
 
-    void RenderTarget::removeCamera(Camera *camera, int priority)
+    void RenderTarget::removePass(Camera *camera, int priority)
     {
         SDL_assert(mRenderTargetPtr);
-        if (!lite3d_render_target_dettach_camera(mRenderTargetPtr, camera->getPtr(), priority))
-            LITE3D_THROW("Failed to detach camera from render target '" << getName() << "', camera with priority " <<
-                priority << " not found");
+        lite3d_render_target_dettach_camera(mRenderTargetPtr, camera->getPtr(), priority);
     }
     
     void RenderTarget::saveScreenshot(const String &filename)

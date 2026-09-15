@@ -129,10 +129,41 @@ namespace lite3dpp
         setupObjects(helper.getObjects(L"Objects"), nullptr);
     }
 
+    void Scene::removeAllPasses()
+    {
+        auto camerasConf = getConfig().getObjects(L"Cameras");
+        for (const ConfigurationReader &cameraJson : camerasConf)
+        {
+            if (auto camera = getMain().getCamera(cameraJson.getString(L"Name")))
+            {
+                RenderTarget *renderTarget = nullptr;
+                for (const ConfigurationReader &renderTargetJson : cameraJson.getObjects(L"RenderTargets"))
+                {
+                    auto renderTargetName = renderTargetJson.getString(L"Name");
+                    if (getMain().getResourceManager().resourceExists(renderTargetName))
+                    {
+                        if (renderTargetName == WindowRenderTarget::Name) 
+                            renderTarget = getMain().window();
+                        else
+                        {
+                            renderTarget = getMain().getResourceManager().queryResource<TextureRenderTarget>(
+                                renderTargetName);
+                        }
+
+                        renderTarget->removePass(camera, renderTargetJson.getInt(L"Priority"));
+                    }
+                }
+
+                getMain().removeCamera(camera->getName());
+            }
+        }
+    }
+
     void Scene::unloadImpl()
     {
         detachAllCameras();
         removeAllObjects();
+        removeAllPasses();
         lite3d_scene_purge(&mScene);
     }
 
@@ -317,9 +348,9 @@ namespace lite3dpp
             if ((camera = getMain().getCamera(cameraJson.getString(L"Name"))) == nullptr)
             {
                 camera = getMain().addCamera(cameraJson.getString(L"Name"));
-                camera->loadFromTemplate(cameraJson);
             }
 
+            camera->loadFromTemplate(cameraJson);
             RenderTarget *renderTarget = nullptr;
 
             for (const ConfigurationReader &renderTargetJson : cameraJson.getObjects(L"RenderTargets"))
@@ -330,7 +361,7 @@ namespace lite3dpp
                 else
                 {
                     renderTarget = getMain().getResourceManager().queryResource<TextureRenderTarget>(
-                        renderTargetJson.getString(L"Name"),
+                        renderTargetName,
                         renderTargetJson.getString(L"Path"), this);
                 }
                 
@@ -416,7 +447,7 @@ namespace lite3dpp
                     layers.emplace_back(lite3d_framebuffer_layer{LITE3D_FRAMEBUFFER_USE_DEPTH_BUFFER, depthLayer});
                 }
         
-                renderTarget->addCamera(camera, this, renderTargetJson.getInt(L"TexturePass"), layers,
+                renderTarget->addPass(camera, this, renderTargetJson.getInt(L"TexturePass"), layers,
                     renderTargetJson.getInt(L"Priority"), renderFlags);
             }
         }

@@ -118,13 +118,21 @@ class LITE3DPP_PIPELINE_EXPORT ShadowCasterCascade : public ShadowCaster
 {
 public:
 
-    ShadowCasterCascade(Main &main, LightSceneNode *emitter, uint32_t cascadeNum);
+    ShadowCasterCascade(Main &main, LightSceneNode *emitter, uint32_t cascadeNum, 
+        uint32_t cascadeCount, float cascadeSplitLambda, Camera &mainCamera);
     int32_t getCacheIndex() const override;
     void setCacheIndex(int32_t index) override;
     
 private:
 
+    float splitDepth(uint32_t num, float lambda, float zNear, float zFar);
+    void makeCascadeRange(float lambda, float zNear, float zFar);
+
     uint32_t mCascadeNum;
+    uint32_t mCascadeCount;
+    float mCascadeNear;
+    float mCascadeFar;
+    Camera &mMainCamera;
 };
 
 }}

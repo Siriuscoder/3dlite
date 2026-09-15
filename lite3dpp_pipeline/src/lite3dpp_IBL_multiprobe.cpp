@@ -117,7 +117,7 @@ void IBLMultiProbe::calculateProbeBatchCount()
 
     // Число компонент на одну вершину в геометрическом шейдере для рендера пробников
     // Константа связана с кодом шейдера!!!
-    const uint32_t probeComponentsByVertex = 13; // pos + iuv + iwv + iwn + drawID
+    const uint32_t probeComponentsByVertex = 14; // pos + iuv + iwv + iwn + drawID + LayerID
     uint32_t a = maxGeometryTotalOutputComponents / (probeComponentsByVertex * 3 * 6);
     uint32_t b = maxGeometryOutputVertices / (3 * 6);
     mMaxProbeBatchCount = std::min(a, b);

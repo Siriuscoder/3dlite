@@ -43,6 +43,12 @@ namespace lite3dpp
         lite3d_memory_init(NULL);
     }
 
+    Main::~Main()
+    {
+        mResourceManager.releaseAllResources();
+        removeAllCameras();
+    }
+
     const MaterialFactory &Main::getMaterialFactory() const
     {
         SDL_assert(mMaterialFactory);

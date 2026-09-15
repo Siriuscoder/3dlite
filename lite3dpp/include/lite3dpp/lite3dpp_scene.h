@@ -106,6 +106,7 @@ namespace lite3dpp
 
         void setupObjects(const stl<ConfigurationReader>::vector &objects, SceneObjectBase *base);
         void setupCameras(const stl<ConfigurationReader>::vector &cameras);
+        void removeAllPasses();
 
         static int beginDrawBatchEntry(struct lite3d_scene *scene, 
             struct lite3d_scene_node *node, struct lite3d_mesh_chunk *meshChunk, struct lite3d_material *material,

@@ -44,8 +44,12 @@ namespace lite3dpp
             float bottom, float top);
         void setupPerspective(float znear, float zfar, float fovy, float aspect);
         void setAspect(float aspect);
-        inline float getAspect()
+        inline float getAspect() const
         { return mCamera.projectionParams.aspect; }
+        inline float getClipNear() const
+        { return mCamera.projectionParams.znear; }
+        inline float getClipFar() const
+        { return mCamera.projectionParams.zfar; }
         
         kmVec3 getDirection() const;
         kmVec3 getWorldDirection() const;

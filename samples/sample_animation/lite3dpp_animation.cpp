@@ -66,10 +66,11 @@ public:
     void setupShadowCasters()
     {
         auto sun = mAnimationScene->getObject("Ground")->getLightNode("Sun");
-        sun->getLight()->setFlag(LightSourceFlags::ShadowPcfAdaptive);
         mPipeline->getShadowManager()->registerEmitter(sun);
         // Register hint nodes for automate shadow recalculation 
-        mPipeline->getShadowManager()->registerHintNode(mAnimationScene->getObject("Engine")->getRoot(), true);
+        mPipeline->getShadowManager()->registerHintNode(mCrankshaft);
+        mPipeline->getShadowManager()->registerHintNode(mPiston);
+        mPipeline->getShadowManager()->registerHintNode(mRod);
         mPipeline->getShadowManager()->registerHintNode(mSkeletonBody);
         mPipeline->getShadowManager()->registerHintNode(mSkeletonBody2);
         mPipeline->getShadowManager()->registerHintNode(mCuriousSphere);

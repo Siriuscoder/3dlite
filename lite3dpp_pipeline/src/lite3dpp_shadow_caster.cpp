@@ -163,11 +163,16 @@ namespace lite3dpp_pipeline {
         return mCamera->refreshProjViewMatrix();
     }
 
-    ShadowCasterCascade::ShadowCasterCascade(Main &main, LightSceneNode *emitter, uint32_t cascadeNum) : 
+    ShadowCasterCascade::ShadowCasterCascade(Main &main, LightSceneNode *emitter, uint32_t cascadeNum, 
+        uint32_t cascadeCount, float cascadeSplitLambda, Camera &mainCamera) : 
         ShadowCaster(ShadowCaster::EmitterType::CascadeShadow, main, emitter),
-        mCascadeNum(cascadeNum)
+        mCascadeNum(cascadeNum),
+        mCascadeCount(cascadeCount),
+        mMainCamera(mainCamera)
     {
-        SDL_assert(mLightNode->getLight()->getType() == LightSourceFlags::TypePoint);
+        SDL_assert(mLightNode->getLight()->getType() == LightSourceFlags::TypeDirectional);
+
+        makeCascadeRange(cascadeSplitLambda, mMainCamera.getClipNear(), mMainCamera.getClipFar());
     }
 
     int32_t ShadowCasterCascade::getCacheIndex() const
@@ -186,5 +191,27 @@ namespace lite3dpp_pipeline {
         {
             mLightNode->getLight()->setShadowIndex(index);
         }
+    }
+
+    float ShadowCasterCascade::splitDepth(uint32_t num, float lambda, float zNear, float zFar)
+    {
+        const float p = float(num + 1) / float(mCascadeCount);
+        float logSplit = zNear * std::pow(zFar / zNear, p);
+        float uniformSplit = zNear + (zFar - zNear) * p;
+
+        return std::lerp(uniformSplit, logSplit, lambda);
+    }
+
+    void ShadowCasterCascade::makeCascadeRange(float lambda, float zNear, float zFar)
+    {
+        if (mCascadeNum == 0)
+        {
+            mCascadeNear = zNear;
+            mCascadeFar = splitDepth(mCascadeNum, lambda, zNear, zFar);
+            return;
+        }
+
+        mCascadeNear = splitDepth(mCascadeNum-1, lambda, zNear, zFar);
+        mCascadeFar = splitDepth(mCascadeNum, lambda, zNear, zFar);
     }
 }}

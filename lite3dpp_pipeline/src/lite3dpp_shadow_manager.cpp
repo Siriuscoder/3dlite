@@ -126,17 +126,18 @@ namespace lite3dpp_pipeline {
         {
             case LightSourceFlags::TypeDirectional:
                 {
-                    if (mCascadeShadowIsReserved)
+                    if (mCascadeShadowCasterAlreadyRegistered)
                     {
                         LITE3D_THROW("Cascade shadows implementation currently supports only one directional light");
                     }
 
-                    for (uint32_t i = 0; i < mOmniShadowCacheMaxCount; ++i)
+                    for (uint32_t i = 0; i < mCascadeShadowCacheMaxCount; ++i)
                     {
-                        auto it = mShadowCasters.emplace(emitter, std::make_unique<ShadowCasterCascade>(mMain, emitter, i));
+                        auto it = mShadowCasters.emplace(emitter, std::make_unique<ShadowCasterCascade>(mMain, 
+                            emitter, i, mCascadeShadowCacheMaxCount, mCascadeSplitLambda, mPipeline.getMainCamera()));
                         shadowCasters.push_back(it->second.get());
                     }
-                    mCascadeShadowIsReserved = true;
+                    mCascadeShadowCasterAlreadyRegistered = true;
                 }
                 break;
             case LightSourceFlags::TypeDiskArea:
@@ -221,7 +222,7 @@ namespace lite3dpp_pipeline {
     {
         if (!node->isRenderable())
         {
-            LITE3D_THROW("Only renderable nodes can be a hint '" << node->getName() << "'");
+            LITE3D_THROW("Only renderable nodes can be registered as hint, node '" << node->getName() << "'");
         }
 
         auto it = mVisibilityHintNodes.find(node);
@@ -431,7 +432,7 @@ namespace lite3dpp_pipeline {
         {
             return false;
         }
-        
+
         auto it = mVisibilityHintNodes.find(node);
         VisibilityHintNode* dnode = it != mVisibilityHintNodes.end() ? it->second.get() : nullptr;
 
@@ -508,7 +509,7 @@ namespace lite3dpp_pipeline {
 
         // Число компонент на одну вершину в геометрическом шейдере рендера теневого атласа
         // Константа связана с кодом шейдера!!!
-        const uint32_t componentsByVertex = 7; // UV + Position + drawId
+        const uint32_t componentsByVertex = 8; // UV(2) + Position(4) + drawID(1) + LayerID(1)
         uint32_t a = maxGeometryTotalOutputComponents / (componentsByVertex * 3);
         uint32_t b = maxGeometryOutputVertices / 3;
         uint32_t c = UBOMaxSize / sizeof(kmMat4);
@@ -563,6 +564,7 @@ namespace lite3dpp_pipeline {
         mSpotShadowCacheMaxCount = shadowParams.getInt(L"SpotShadowCacheMaxCount", 0);
         mOmniShadowCacheMaxCount = shadowParams.getInt(L"OmniShadowCacheMaxCount", 0);
         mCascadeShadowCacheMaxCount = shadowParams.getInt(L"CascadeShadowCacheMaxCount", 0);
+        mCascadeSplitLambda = shadowParams.getDouble(L"CascadeSplitLambda", 0.5f);
         mExtent = shadowParams.getInt(L"Extent", 512);
 
         setupLimits();
