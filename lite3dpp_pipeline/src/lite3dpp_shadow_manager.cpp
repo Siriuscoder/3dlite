@@ -63,20 +63,27 @@ namespace lite3dpp_pipeline {
     void ShadowManager::VisibilityHintNode::setVisibleFrom(ShadowCaster* sc)
     {
         SDL_assert(sc);
-        mAffectingShadowCasters.emplace(sc);
+        mAffectingShadowCasters.push_back(sc);
     }
 
     void ShadowManager::VisibilityHintNode::setInvisibleFrom(ShadowCaster* sc)
     {
         SDL_assert(sc);
-        mAffectingShadowCasters.erase(sc);
+        auto it = std::find(mAffectingShadowCasters.begin(), mAffectingShadowCasters.end(), sc);
+        if (it != mAffectingShadowCasters.end())
+        {
+            (*it) = nullptr;
+        }
     }
 
     void ShadowManager::VisibilityHintNode::invalidate()
     {
         for (auto shadowCaster: mAffectingShadowCasters)
         {
-            shadowCaster->invalidate();
+            if (shadowCaster)
+            {
+                shadowCaster->invalidate();
+            }
         }
     }
 
@@ -231,8 +238,21 @@ namespace lite3dpp_pipeline {
             return it->second.get();
         }
 
-        auto ins = mVisibilityHintNodes.try_emplace(node, std::make_unique<VisibilityHintNode>(node, recursive));
-        // Force update one of the cached shadows, to cause update hint nodes visibility in customFrustumCheck 
+        auto ins = mVisibilityHintNodes.try_emplace(node, std::make_shared<VisibilityHintNode>(node, recursive));
+
+        // Recursively register all child renderable nodes
+        if (recursive)
+        {
+            node->iterateAllChilds([&ins, this](SceneNodeBase *childNode)
+            {
+                if (childNode->isRenderable())
+                {
+                    mVisibilityHintNodes.emplace(childNode, ins.first->second);
+                }
+            });
+        }
+
+        // Force update one of the cached shadow maps to update hint nodes visibility in customFrustumCheck 
         for (auto shadowCaster : mShadowCastersCachePlaceHolders)
         {
             if (shadowCaster)
@@ -247,6 +267,24 @@ namespace lite3dpp_pipeline {
 
     void ShadowManager::unregisterHintNode(SceneNodeBase *node)
     {
+        auto it = mVisibilityHintNodes.find(node);
+        if (it == mVisibilityHintNodes.end())
+        {
+            return;
+        }
+
+        // Recursively register all child renderable nodes
+        if (it->second->isRecursive())
+        {
+            node->iterateAllChilds([this](SceneNodeBase *childNode)
+            {
+                if (childNode->isRenderable())
+                {
+                    mVisibilityHintNodes.erase(childNode);
+                }
+            });
+        }
+
         mVisibilityHintNodes.erase(node);
         // Force update one of the cached shadows, to cause update hint nodes visibility in customFrustumCheck 
         for (auto shadowCaster : mShadowCastersCachePlaceHolders)
@@ -416,6 +454,10 @@ namespace lite3dpp_pipeline {
         if (scene == mCleanStage)
         {
             RenderTarget::depthTestFunc(RenderTarget::TestFuncLEqual);
+            for (auto &hintNode : mVisibilityHintNodes)
+            {
+                hintNode.second->resetVision();
+            }
         }
     }
 
@@ -442,7 +484,7 @@ namespace lite3dpp_pipeline {
             if (!shadowCaster)
                 continue;
 
-            if (shadowCaster->intersectFrustum(*boundingVol))
+            if (!node->frustumTest() || shadowCaster->intersectFrustum(*boundingVol))
             {
                 if (dnode && shadowCaster->dynamicShadow())
                 {
@@ -455,14 +497,6 @@ namespace lite3dpp_pipeline {
                     mHostShadowIndexes.end())
                 {
                     isVisible = true;
-                }
-            }
-            else
-            {
-                if (dnode && shadowCaster->dynamicShadow())
-                {
-                    // Текущая нода НЕ видима для этого истоника света
-                    dnode->setInvisibleFrom(shadowCaster);
                 }
             }
         }

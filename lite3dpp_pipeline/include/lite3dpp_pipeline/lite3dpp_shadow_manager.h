@@ -32,7 +32,7 @@ public:
     {
     public:
     
-        using AffectingShadowCasters = stl<ShadowCaster*>::unordered_set;
+        using AffectingShadowCasters = stl<ShadowCaster*>::vector;
 
         VisibilityHintNode(SceneNodeBase *node, bool recursive);
         ~VisibilityHintNode();
@@ -40,7 +40,8 @@ public:
         void resetVision();
         void setVisibleFrom(ShadowCaster* sc);
         void setInvisibleFrom(ShadowCaster* sc);
-        bool isRecursive();
+        inline bool isRecursive() const
+        { return mRecursive; }
 
     private:
 
@@ -59,7 +60,7 @@ public:
 
     using IndexVector = stl<int32_t>::vector;
     using ShadowCasters = stl<LightSceneNode *, std::unique_ptr<ShadowCaster>>::multimap;
-    using VisibilityHints = stl<SceneNodeBase *, std::unique_ptr<VisibilityHintNode>>::unordered_map;
+    using VisibilityHints = stl<SceneNodeBase *, std::shared_ptr<VisibilityHintNode>>::unordered_map;
 
     ShadowManager(Main& main, PipelineBase &pipeline);
     ~ShadowManager();

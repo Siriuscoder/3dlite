@@ -12,18 +12,9 @@
     },
     "ShadowMaps":
     {
-        "Width": 2048,
-        "Height": 2048,
-        "MaxCount": 1,
-        "NearClipPlane": 0.01,
-        "FarClipPlane": 2.0,
-        "DirectionLightShadowParams": 
-        {
-            "LeftClipPlane": -0.47,
-            "RightClipPlane": 0.47,
-            "BottomClipPlane": -0.4,
-            "TopClipPlane": 0.4
-        }
+        "Extent": 1024,
+        "CascadeShadowCacheMaxCount": 2,
+        "CascadeSplitLambda": 0.4
     },
     "BLOOM": 
     {

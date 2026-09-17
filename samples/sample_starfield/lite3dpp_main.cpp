@@ -57,8 +57,15 @@ public:
     void setupShadowCasters()
     {
         mSUN = mMainScene->getObject("Sun")->getLightNode("Sun");
-        mSUN->getLight()->setFlag(LightSourceFlags::ShadowPcfAdaptive);
-        mSUNShadowCaster = mPipeline->getShadowManager()->registerEmitter(mSUN)[0];
+        mSUNShadowCaster = mPipeline->getShadowManager()->registerEmitter(mSUN);
+        mPipeline->getShadowManager()->registerHintNode(mAK47->getRoot(), true);
+        mPipeline->getShadowManager()->registerHintNode(mVSS->getRoot(), true);
+    }
+
+    void invalidateShadowCasters()
+    {
+        for (auto shadowCaster : mSUNShadowCaster)
+            shadowCaster->invalidate();
     }
 
     void fixedUpdateTimerTick(int32_t firedPerRound, uint64_t deltaMcs, float deltaRetard) override
@@ -73,9 +80,6 @@ public:
             {
                 mVSS->rotateZ(0.005f * deltaRetard);
             }
-
-            // Помечаем что надо перерисовать тени в следубщий кадр
-            mSUNShadowCaster->invalidate();
         }
     }
 
@@ -104,13 +108,13 @@ public:
                 {
                     mAK47->disable();
                     mVSS->enable();
-                    mSUNShadowCaster->invalidate();
+                    invalidateShadowCasters();
                 }
                 else if (mVSS->isEnabled())
                 {
                     mAK47->enable();
                     mVSS->disable();
-                    mSUNShadowCaster->invalidate();
+                    invalidateShadowCasters();
                 }
             }
             else if (e->key.keysym.sym == SDLK_r)
@@ -127,7 +131,7 @@ private:
     SceneObject *mAK47 = nullptr;
     SceneObject *mVSS = nullptr;
     lite3dpp_pipeline::PipelineForward* mPipeline = nullptr;
-    lite3dpp_pipeline::ShadowCaster *mSUNShadowCaster = nullptr;
+    stl<lite3dpp_pipeline::ShadowCaster*>::vector mSUNShadowCaster;
     LightSceneNode* mSUN = nullptr;
     float mGamma = 2.2;
     bool mRotationEnabled = false;
