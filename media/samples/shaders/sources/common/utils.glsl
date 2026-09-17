@@ -110,6 +110,22 @@ vec2 viewPositionToUV(vec3 pos)
     return uv.xy * 0.5 + 0.5;   // transform to range 0.0 - 1.0 
 }
 
+float getZNear()
+{
+    float A = CameraProjection[2][2];
+    float B = CameraProjection[3][2];
+
+    return B / (A - 1.0);
+}
+
+float getZFar()
+{
+    float A = CameraProjection[2][2];
+    float B = CameraProjection[3][2];
+
+    return B / (A + 1.0);
+}
+
 mat3 TBN(vec3 normal, vec3 tangent)
 {
     normal = normalize(normal);

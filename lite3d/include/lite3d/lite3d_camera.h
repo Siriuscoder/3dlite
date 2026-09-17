@@ -36,6 +36,10 @@ typedef struct lite3d_camera
     kmMat4 projectionMatrix;
     /* Матрица перехода в clip-space из world-space */
     kmMat4 viewProjectionMatrix;
+    /* Наравления осей камеры в моровой системе координат */
+    kmVec3 forward;
+    kmVec3 right;
+    kmVec3 up;
     /* Признак прямоугольной проекции */
     uint8_t isOrtho;
 
@@ -60,7 +64,7 @@ typedef struct lite3d_camera
 } lite3d_camera;
 
 LITE3D_CEXPORT void lite3d_camera_init(lite3d_camera *camera);
-LITE3D_CEXPORT void lite3d_camera_link_to(lite3d_camera *camera, const lite3d_scene_node *target, uint8_t linkType);
+LITE3D_CEXPORT void lite3d_camera_follow_to(lite3d_camera *camera, const lite3d_scene_node *target, uint8_t linkType);
 LITE3D_CEXPORT void lite3d_camera_tracking(lite3d_camera *camera, const lite3d_scene_node *target);
 LITE3D_CEXPORT void lite3d_camera_update_view(lite3d_camera *camera);
 LITE3D_CEXPORT void lite3d_camera_compute_view(lite3d_camera *camera);
@@ -74,8 +78,8 @@ LITE3D_CEXPORT void lite3d_camera_lookAt_world(lite3d_camera *camera, const kmVe
 /* direction задан в локальной системе координат камеры */
 LITE3D_CEXPORT void lite3d_camera_set_direction(lite3d_camera *camera, const kmVec3 *direction);
 LITE3D_CEXPORT void lite3d_camera_direction(const lite3d_camera *camera, kmVec3 *vec);
-/* Получение вектора направления в мировой системе координат */
-LITE3D_CEXPORT void lite3d_camera_world_direction(const lite3d_camera *camera, kmVec3 *vec);
+LITE3D_CEXPORT void lite3d_camera_right(const lite3d_camera *camera, kmVec3 *vec);
+LITE3D_CEXPORT void lite3d_camera_up(const lite3d_camera *camera, kmVec3 *vec);
 /* установка позиции в локальной системе координат */
 LITE3D_CEXPORT void lite3d_camera_set_position(lite3d_camera *camera, const kmVec3 *position);
 /* установка вращения в локальной системе координат */

@@ -625,7 +625,11 @@ namespace lite3dpp_pipeline {
 
     bool PipelineBase::beginSceneRender(Scene *scene, Camera *camera, const lite3d_scene_render_params *params)
     {
-        Material::setFloatv3GlobalParameter("Eye", getMainCamera().getWorldPosition());
+        auto &mainCamera = getMainCamera();
+        Material::setFloatv3GlobalParameter("Eye", mainCamera.getWorldPosition());
+        Material::setFloatm4GlobalParameter("CameraView", mainCamera.getViewMatrix());
+        Material::setFloatm4GlobalParameter("CameraProjection", mainCamera.getProjMatrix());
+        Material::setIntGlobalParameter("FrameNumber", static_cast<int32_t>(getMain().getRenderStats()->framesCount));
 
         // Make a copy of the combined texture before blend stage 
         if (mCombined2Texture && params->priority == static_cast<int32_t>(RenderPassStagePriority::BlendDecalStage))

@@ -95,6 +95,15 @@ vec4 CalcAdaptiveShadowParams(in AngularInfo angular)
     return vec4(rV, LITE3D_SHADOW_MIN_ADAPTIVE_STEP);
 }
 
+float getCascadeSplit(int i, int cascadeCount, float zNear, float zFar, float lambda)
+{
+    float p = float(i + 1) / float(cascadeCount);
+    float logSplit = zNear * pow(zFar / zNear, p);
+    float uniformSplit = zNear + (zFar - zNear) * p;
+
+    return mix(uniformSplit, logSplit, lambda);
+}
+
 float Shadow(in LightSource source, in Surface surface, in AngularInfo angular)
 {
     // Do not cast shadows
@@ -108,6 +117,27 @@ float Shadow(in LightSource source, in Surface surface, in AngularInfo angular)
     {
         shadowIndex = source.shadowIndex + cubeFaceFromDir(-angular.lightDir);
     }
+#ifdef LITE3D_SHADOW_CSM_ENABLE
+    else if (hasFlag(source.flags, LITE3D_LIGHT_DIRECTIONAL))
+    {
+        int cascade = LITE3D_SHADOW_CSM_CASCADE_COUNT - 1;
+        vec3 viewPos = worldToViewSpacePosition(surface.wv);
+        float zNear = getZNear();
+        float zFar = getZFar();
+        float depth = -viewPos.z;
+
+        for (int i = 0; i < LITE3D_SHADOW_CSM_CASCADE_COUNT - 1; ++i)
+        {
+            if (depth < getCascadeSplit(i, LITE3D_SHADOW_CSM_CASCADE_COUNT, zNear, zFar, LITE3D_SHADOW_CSM_SPLIT_LAMBDA))
+            {
+                cascade = i;
+                break;
+            }
+        }
+
+        shadowIndex = source.shadowIndex + cascade;
+    }
+#endif
 
     // Shadow space NDC coordinates of current fragment
     vec4 sv = shadowTransform[shadowIndex] * vec4(surface.wv, 1.0);
@@ -115,7 +145,7 @@ float Shadow(in LightSource source, in Surface surface, in AngularInfo angular)
     sv = (sv / sv.w) * 0.5 + 0.5;
     // clipping
     if (sv.z > 1.0 || sv.z < 0.0 || !isValidUV(sv.xy))
-        return hasFlag(source.flags, LITE3D_LIGHT_DIRECTIONAL) ? 1.0 : 0.0;
+        return 0.0;
 
     float shadowFactor = 0.0;
     vec2 texelSize = 1.0 / textureSize(ShadowMaps, 0).xy;

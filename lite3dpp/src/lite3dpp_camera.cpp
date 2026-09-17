@@ -55,46 +55,52 @@ namespace lite3dpp
     {
         mCamera.cameraNode.rotation = KM_QUATERNION_IDENTITY;
         mCamera.cameraNode.recalc = LITE3D_TRUE;
+        LITE3D_EXT_OBSERVER_NOTIFY_1(getRoot(), updateRotation, getRoot());
     }
 
     void Camera::lookAtLocal(const kmVec3 &pointTo)
     {
         lite3d_camera_lookAt(&mCamera, &pointTo);
+        LITE3D_EXT_OBSERVER_NOTIFY_1(getRoot(), updateRotation, getRoot());
     }
 
     void Camera::lookAtWorld(const SceneObjectBase &obj)
     {
         lookAtWorld(obj.getWorldPosition());
+        LITE3D_EXT_OBSERVER_NOTIFY_1(getRoot(), updateRotation, getRoot());
     }
 
     void Camera::lookAtWorld(const kmVec3 &pointTo)
     {
         lite3d_camera_lookAt_world(&mCamera, &pointTo);
+        LITE3D_EXT_OBSERVER_NOTIFY_1(getRoot(), updateRotation, getRoot());
     }
 
     void Camera::setDirection(const kmVec3 &direction)
     {
         lite3d_camera_set_direction(&mCamera, &direction);
+        LITE3D_EXT_OBSERVER_NOTIFY_1(getRoot(), updateRotation, getRoot());
     }
 
     void Camera::yaw(float angleDelta)
     {
-        lite3d_camera_yaw(&mCamera, angleDelta);
+        rotateY(angleDelta);
     }
 
     void Camera::pitch(float angleDelta)
     {
-        lite3d_camera_pitch(&mCamera, angleDelta);
+        rotateX(angleDelta);
     }
 
     void Camera::roll(float angleDelta)
     {
-        lite3d_camera_roll(&mCamera, angleDelta);
+        rotateZ(angleDelta);
     }
 
     void Camera::setYawPitchRoll(float yaw, float pitch, float roll)
     {
         lite3d_camera_set_yaw_pitch_roll(&mCamera, yaw, pitch, roll);
+        LITE3D_EXT_OBSERVER_NOTIFY_1(getRoot(), updateRotation, getRoot());
     }
 
     void Camera::setOrientationAngles(float ZW, float XW)
@@ -114,14 +120,17 @@ namespace lite3dpp
         return getPitch();
     }
 
-    void Camera::holdOnSceneObject(const SceneObjectBase &sceneObj)
+    void Camera::trackToSceneObject(const SceneObjectBase &sceneObj)
     {
         lite3d_camera_tracking(&mCamera, sceneObj.getRoot()->getPtr());
+        LITE3D_EXT_OBSERVER_NOTIFY_1(getRoot(), updateRotation, getRoot());
     }
 
-    void Camera::linkWithSceneObject(const SceneObjectBase &sceneObj)
+    void Camera::followToSceneObject(const SceneObjectBase &sceneObj)
     {
-        lite3d_camera_link_to(&mCamera, sceneObj.getRoot()->getPtr(), LITE3D_CAMERA_LINK_POSITION);
+        lite3d_camera_follow_to(&mCamera, sceneObj.getRoot()->getPtr(), LITE3D_CAMERA_LINK_POSITION);
+        LITE3D_EXT_OBSERVER_NOTIFY_1(getRoot(), updateRotation, getRoot());
+        LITE3D_EXT_OBSERVER_NOTIFY_1(getRoot(), updatePosition, getRoot());
     }
     
     kmVec3 Camera::getDirection() const
@@ -131,11 +140,33 @@ namespace lite3dpp
         return direction;
     }
 
+    kmVec3 Camera::getRight() const
+    {
+        kmVec3 right;
+        lite3d_camera_right(&mCamera, &right);
+        return right;
+    }
+
+    kmVec3 Camera::getUp() const
+    {
+        kmVec3 up;
+        lite3d_camera_up(&mCamera, &up);
+        return up;
+    }
+
     kmVec3 Camera::getWorldDirection() const
     {
-        kmVec3 direction;
-        lite3d_camera_world_direction(&mCamera, &direction);
-        return direction;
+        return mCamera.forward;
+    }
+
+    kmVec3 Camera::getWorldRight() const
+    {
+        return mCamera.right;
+    }
+
+    kmVec3 Camera::getWorldUp() const
+    {
+        return mCamera.up;
     }
 
     const kmMat4& Camera::refreshViewMatrix()
@@ -152,13 +183,17 @@ namespace lite3dpp
 
     const kmMat4& Camera::refreshProjViewMatrix()
     {
-        kmMat4Multiply(&mCamera.viewProjectionMatrix, &getProjMatrix(), &refreshViewMatrix());
+        auto view = refreshViewMatrix();
+        kmMat4Multiply(&mCamera.viewProjectionMatrix, &getProjMatrix(), &view);
+        lite3d_frustum_compute(&mCamera.frustum, &mCamera.viewProjectionMatrix);
         return mCamera.viewProjectionMatrix;
     }
 
-    void Camera::recalcFrustum()
+    const kmMat4& Camera::refreshProjViewMatrix(const kmMat4 &view)
     {
-        lite3d_frustum_compute(&mCamera.frustum, &refreshProjViewMatrix());
+        kmMat4Multiply(&mCamera.viewProjectionMatrix, &getProjMatrix(), &view);
+        lite3d_frustum_compute(&mCamera.frustum, &mCamera.viewProjectionMatrix);
+        return mCamera.viewProjectionMatrix;
     }
 
     bool Camera::intersectFrustum(const LightSource &light) const

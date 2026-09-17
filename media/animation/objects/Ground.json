@@ -30,8 +30,8 @@
           "ShadowParams": {
             "Dynamic": true,
             "Type": "PCFAdaptive",
-            "NearClipPlane": 1.0,
-            "FarClipPlane": 35.0
+            "NearClipPlane": 0.01,
+            "FarClipPlane": 80.0
           }
         },
         "Position": [

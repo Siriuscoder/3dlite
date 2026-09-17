@@ -152,10 +152,12 @@ namespace lite3dpp_pipeline {
                 
             lightComputeMaterialUniforms.emplace_back(ConfigurationWriter()
                 .set(L"Name", "CameraView")
-                .set(L"Type", "m4"));
+                .set(L"Type", "m4")
+                .set(L"Scope", "global"));
             lightComputeMaterialUniforms.emplace_back(ConfigurationWriter()
                 .set(L"Name", "CameraProjection")
-                .set(L"Type", "m4"));
+                .set(L"Type", "m4")
+                .set(L"Scope", "global"));
         }
 
         if (mSSAOTexture)
@@ -375,14 +377,16 @@ namespace lite3dpp_pipeline {
                         .set(L"Type", "float"),
                     ConfigurationWriter()
                         .set(L"Name", "FrameNumber")
-                        .set(L"Value", 0)
-                        .set(L"Type", "int"),
+                        .set(L"Type", "int")
+                        .set(L"Scope", "global"),
                     ConfigurationWriter()
                         .set(L"Name", "CameraView")
-                        .set(L"Type", "m4"),
+                        .set(L"Type", "m4")
+                        .set(L"Scope", "global"),
                     ConfigurationWriter()
                         .set(L"Name", "CameraProjection")
                         .set(L"Type", "m4")
+                        .set(L"Scope", "global")
                 })
         });
 
@@ -392,31 +396,5 @@ namespace lite3dpp_pipeline {
 
         // Добавляем шейдер расчета SSAO
         mSSAOStage->addObject("SSAOBigTri", BigTriObjectGenerator(mSSAOStageMaterial->getName()).generate());
-    }
-
-    bool PipelineDeffered::beginSceneRender(Scene *scene, Camera *camera, const lite3d_scene_render_params *params)
-    {
-        auto &viewMatrix = getMainCamera().getViewMatrix();
-        auto &projMatrix = getMainCamera().getProjMatrix();
-
-        if (mSSAOStageMaterial)
-        {
-            mSSAOStageMaterial->setFloatm4Parameter(static_cast<uint16_t>(TexturePassTypes::RenderPass), 
-                "CameraView", viewMatrix);
-            mSSAOStageMaterial->setFloatm4Parameter(static_cast<uint16_t>(TexturePassTypes::RenderPass), 
-                "CameraProjection", projMatrix);
-            mSSAOStageMaterial->setIntParameter(static_cast<uint16_t>(TexturePassTypes::RenderPass), 
-                "FrameNumber", static_cast<int32_t>(getMain().getRenderStats()->framesCount));
-        }
-
-        if (mLightComputeStageMaterial)
-        {
-            mLightComputeStageMaterial->setFloatm4Parameter(static_cast<uint16_t>(TexturePassTypes::RenderPass), 
-                "CameraView", viewMatrix);
-            mLightComputeStageMaterial->setFloatm4Parameter(static_cast<uint16_t>(TexturePassTypes::RenderPass), 
-                "CameraProjection", projMatrix);
-        }
-
-        return PipelineBase::beginSceneRender(scene, camera, params);
     }
 }}

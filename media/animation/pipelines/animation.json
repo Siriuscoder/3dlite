@@ -12,7 +12,7 @@
     },
     "ShadowMaps":
     {
-        "Extent": 1024,
+        "Extent": 512,
         "CascadeShadowCacheMaxCount": 4
     },
     "SSAO": 

@@ -46,13 +46,22 @@ namespace lite3dpp
         void setAspect(float aspect);
         inline float getAspect() const
         { return mCamera.projectionParams.aspect; }
+        inline float getFOV() const
+        { return mCamera.projectionParams.fovy; }
+        inline float getFOVRad() const
+        { return kmDegreesToRadians(mCamera.projectionParams.fovy); }
         inline float getClipNear() const
         { return mCamera.projectionParams.znear; }
         inline float getClipFar() const
         { return mCamera.projectionParams.zfar; }
         
         kmVec3 getDirection() const;
+        kmVec3 getRight() const;
+        kmVec3 getUp() const;
         kmVec3 getWorldDirection() const;
+        kmVec3 getWorldRight() const;
+        kmVec3 getWorldUp() const;
+
         void setDirection(const kmVec3 &direction);
         void lookAtLocal(const kmVec3 &pointTo);
         void lookAtWorld(const kmVec3 &pointTo);
@@ -63,6 +72,7 @@ namespace lite3dpp
         inline const kmMat4& getProjViewMatrix() const { return mCamera.viewProjectionMatrix; }
         const kmMat4& refreshViewMatrix();
         const kmMat4& refreshProjViewMatrix();
+        const kmMat4& refreshProjViewMatrix(const kmMat4 &view);
 
         void resetView();
         void yaw(float angleDelta);
@@ -77,9 +87,8 @@ namespace lite3dpp
         float getRoll() const;
         float getZW() const;
         float getXW() const;
-        void holdOnSceneObject(const SceneObjectBase &sceneObj);
-        void linkWithSceneObject(const SceneObjectBase &sceneObj);
-        void recalcFrustum();
+        void trackToSceneObject(const SceneObjectBase &sceneObj);
+        void followToSceneObject(const SceneObjectBase &sceneObj);
         bool intersectFrustum(const LightSource &light) const;
         bool intersectFrustum(const lite3d_bounding_vol &vol) const;
         float getDistance(const kmVec3 &point);

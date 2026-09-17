@@ -523,6 +523,8 @@ namespace lite3dpp_pipeline {
 
         ShaderProgram::addGlobalDefinition("LITE3D_SPOT_SHADOW_GS_MAX_VERTICES", std::to_string(mMaxShadowsRebuildCount * 3));
         ShaderProgram::addGlobalDefinition("LITE3D_SHADOW_CACHE_MAX_COUNT", std::to_string(getShadowsCacheMaxCount()));
+        ShaderProgram::addGlobalDefinition("LITE3D_SHADOW_CSM_SPLIT_LAMBDA", std::to_string(mCascadeSplitLambda));
+        ShaderProgram::addGlobalDefinition("LITE3D_SHADOW_CSM_CASCADE_COUNT", std::to_string(mCascadeShadowCacheMaxCount));
     }
 
     void ShadowManager::createShadowRenderTarget()

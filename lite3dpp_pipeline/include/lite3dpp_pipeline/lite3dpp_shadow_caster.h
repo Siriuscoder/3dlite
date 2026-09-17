@@ -120,6 +120,9 @@ public:
 
     ShadowCasterCascade(Main &main, LightSceneNode *emitter, uint32_t cascadeNum, 
         uint32_t cascadeCount, float cascadeSplitLambda, Camera &mainCamera);
+    ~ShadowCasterCascade();
+
+    kmMat4 recalcMatrix() override;
     int32_t getCacheIndex() const override;
     void setCacheIndex(int32_t index) override;
     

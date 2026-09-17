@@ -476,7 +476,7 @@ namespace lite3dpp
                 kmVec3 dir;
 
                 float baseRadius = getInfluenceDistance() * tan(getAngleOuterCone() / 2.0);
-                kmVec3MulScalar(&dir, &mLightSourceWorld.params.direction, getInfluenceDistance() / 2.0f);
+                kmVec3Scale(&dir, &mLightSourceWorld.params.direction, getInfluenceDistance() / 2.0f);
                 kmVec3Add(&aabb.sphereCenter, &mLightSourceWorld.params.position, &dir);
                 aabb.radius = sqrt(getInfluenceDistance() * getInfluenceDistance() * 0.25f + baseRadius * baseRadius);
                 return aabb;

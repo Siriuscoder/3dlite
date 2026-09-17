@@ -46,6 +46,8 @@ vec2 Halton2D(int index);
 vec3 worldToViewSpacePosition(vec3 vw);
 vec3 worldToViewSpaceDirection(vec3 dirw);
 vec2 viewPositionToUV(vec3 pos);
+float getZNear();
+float getZFar();
 
 mat3 TBN(vec3 normal, vec3 tangent);
 mat3 TBN(vec3 normal, vec3 tangent, vec3 btangent);

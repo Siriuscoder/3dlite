@@ -45,8 +45,11 @@ namespace lite3dpp_pipeline {
 
     ShadowCaster::~ShadowCaster()
     {
-        mMain.removeCamera(mCamera->getName());
-        
+        if (mCamera)
+        {
+            mMain.removeCamera(mCamera->getName());
+        }
+
         SceneNodeBase *node = mLightNode;
         while (node)
         {
@@ -59,7 +62,6 @@ namespace lite3dpp_pipeline {
     {
         mCamera->setDirection(mLightNode->getLight()->getWorldDirection());
         mCamera->setPosition(mLightNode->getLight()->getWorldPosition());
-        mCamera->recalcFrustum();
         return mCamera->refreshProjViewMatrix();
     }
 
@@ -159,7 +161,6 @@ namespace lite3dpp_pipeline {
     kmMat4 ShadowCasterOmniDirectional::recalcMatrix()
     {
         mCamera->setPosition(mLightNode->getLight()->getWorldPosition());
-        mCamera->recalcFrustum();
         return mCamera->refreshProjViewMatrix();
     }
 
@@ -173,6 +174,15 @@ namespace lite3dpp_pipeline {
         SDL_assert(mLightNode->getLight()->getType() == LightSourceFlags::TypeDirectional);
 
         makeCascadeRange(cascadeSplitLambda, mMainCamera.getClipNear(), mMainCamera.getClipFar());
+        mCamera = main.addCamera(mLightNode->getName() + "_shadow_cascade_" + std::to_string(cascadeNum) + "_" + 
+            std::to_string(++gCameraCounter));
+
+        mMainCamera.getRoot()->addObserver(this);
+    }
+
+    ShadowCasterCascade::~ShadowCasterCascade()
+    {
+        mMainCamera.getRoot()->removeObserver(this);
     }
 
     int32_t ShadowCasterCascade::getCacheIndex() const
@@ -213,5 +223,107 @@ namespace lite3dpp_pipeline {
 
         mCascadeNear = splitDepth(mCascadeNum-1, lambda, zNear, zFar);
         mCascadeFar = splitDepth(mCascadeNum, lambda, zNear, zFar);
+    }
+
+    kmMat4 ShadowCasterCascade::recalcMatrix()
+    {
+        /* получение главных осей камеры игрока в мировой системе координат */
+        const auto forward = mMainCamera.getWorldDirection();
+        const auto right = mMainCamera.getWorldRight();
+        const auto up = mMainCamera.getWorldUp();
+        const auto position = mMainCamera.getWorldPosition();
+        const float midDepth = (mLightNode->getLight()->getClipFar() - mLightNode->getLight()->getClipNear()) / 2.0f;
+
+        /* Ближняя и дальняя плоскость отсечения каскада в мировой системе координат */
+        kmVec3 nc, fc;
+        kmVec3Add(&nc, &position, kmVec3Scale(&nc, &forward, mCascadeNear));
+        kmVec3Add(&fc, &position, kmVec3Scale(&fc, &forward, mCascadeFar));
+
+        /* Размеры near/far плоскостей каскада */
+        const float tanHalfFov = std::tan(mMainCamera.getFOVRad() * 0.5f);
+        const float nearH = mCascadeNear * tanHalfFov;
+        const float nearW = nearH * mMainCamera.getAspect();
+        const float farH = mCascadeFar * tanHalfFov;
+        const float farW = farH * mMainCamera.getAspect();
+
+        /* Получение координат 8 углов каскада (frustum) в мировой системе координат */
+        kmVec3 rightNear, upNear, rightFar, upFar, corners[8];
+
+        kmVec3Scale(&rightNear, &right, nearW);
+        kmVec3Scale(&upNear,    &up,    nearH);
+
+        kmVec3Scale(&rightFar,  &right, farW);
+        kmVec3Scale(&upFar,     &up,    farH);
+
+        // near bottom-left
+        kmVec3Subtract(&corners[0], &nc, &rightNear);
+        kmVec3Subtract(&corners[0], &corners[0], &upNear);
+
+        // near bottom-right
+        kmVec3Add(&corners[1], &nc, &rightNear);
+        kmVec3Subtract(&corners[1], &corners[1], &upNear);
+
+        // near top-right
+        kmVec3Add(&corners[2], &nc, &rightNear);
+        kmVec3Add(&corners[2], &corners[2], &upNear);
+
+        // near top-left
+        kmVec3Subtract(&corners[3], &nc, &rightNear);
+        kmVec3Add(&corners[3], &corners[3], &upNear);
+
+
+        // far bottom-left
+        kmVec3Subtract(&corners[4], &fc, &rightFar);
+        kmVec3Subtract(&corners[4], &corners[4], &upFar);
+
+        // far bottom-right
+        kmVec3Add(&corners[5], &fc, &rightFar);
+        kmVec3Subtract(&corners[5], &corners[5], &upFar);
+
+        // far top-right
+        kmVec3Add(&corners[6], &fc, &rightFar);
+        kmVec3Add(&corners[6], &corners[6], &upFar);
+
+        // far top-left
+        kmVec3Subtract(&corners[7], &fc, &rightFar);
+        kmVec3Add(&corners[7], &corners[7], &upFar);
+
+        /* Найдем центральную точку каскада  */
+        kmVec3 center, tmp;
+        kmVec3Add(&center, &nc, &fc);
+        kmVec3Scale(&center, &center, 0.5f);
+
+        /* Найдем мнимую координату теневой камеры для каскада */
+        kmVec3 cascadeCamPosition;
+        kmVec3Subtract(&cascadeCamPosition, &center, kmVec3Scale(&tmp, &mLightNode->getLight()->getWorldDirection(), midDepth));
+
+        /* Зададим View матрицу для теневой камеры */
+        mCamera->setPosition(cascadeCamPosition);
+        mCamera->setDirection(mLightNode->getLight()->getWorldDirection());
+        kmMat4 view = mCamera->refreshViewMatrix();
+
+        /* Получим координаты углов каскада в системе координат теневой камеры (shadow-view-space) */
+        float minX, minY, maxX, maxY;
+        minX = minY = FLT_MAX;
+        maxX = maxY = FLT_MIN;
+        for (int i = 0; i < 8; ++i)
+        {
+            kmVec3TransformCoord(&tmp, &corners[i], &view);
+        
+            minX = std::min(minX, tmp.x);
+            maxX = std::max(maxX, tmp.x);
+        
+            minY = std::min(minY, tmp.y);
+            maxY = std::max(maxY, tmp.y);
+        }
+
+        /* Построим ортогональную проекцию по полученным размерам каскада */
+        mCamera->setupOrtho(
+            mLightNode->getLight()->getClipNear(), 
+            mLightNode->getLight()->getClipFar(),
+            minX, maxX,
+            minY, maxY);
+
+        return mCamera->refreshProjViewMatrix(view);
     }
 }}
