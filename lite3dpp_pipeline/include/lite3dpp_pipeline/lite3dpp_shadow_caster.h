@@ -36,7 +36,7 @@ public:
     ShadowCaster(EmitterType emitterType, Main &main, LightSceneNode *emitter);
     virtual ~ShadowCaster();
 
-    virtual kmMat4 recalcMatrix();
+    virtual bool recalcMatrix(kmMat4 &matrix);
     virtual bool intersectFrustum(const lite3d_bounding_vol &aabb);
     virtual int32_t getCacheIndex() const;
     virtual void setCacheIndex(int32_t index); 
@@ -105,7 +105,7 @@ class LITE3DPP_PIPELINE_EXPORT ShadowCasterOmniDirectional : public ShadowCaster
 public:
 
     ShadowCasterOmniDirectional(Main &main, LightSceneNode *emitter, uint32_t faceNum);
-    kmMat4 recalcMatrix() override;
+    bool recalcMatrix(kmMat4 &matrix) override;
     int32_t getCacheIndex() const override;
     void setCacheIndex(int32_t index) override;
 
@@ -119,10 +119,10 @@ class LITE3DPP_PIPELINE_EXPORT ShadowCasterCascade : public ShadowCaster
 public:
 
     ShadowCasterCascade(Main &main, LightSceneNode *emitter, uint32_t cascadeNum, 
-        uint32_t cascadeCount, float cascadeSplitLambda, Camera &mainCamera);
+        uint32_t cascadeCount, float cascadeSplitLambda, uint32_t shadowMapSize, Camera &mainCamera);
     ~ShadowCasterCascade();
 
-    kmMat4 recalcMatrix() override;
+    bool recalcMatrix(kmMat4 &matrix) override;
     int32_t getCacheIndex() const override;
     void setCacheIndex(int32_t index) override;
     
@@ -135,7 +135,10 @@ private:
     uint32_t mCascadeCount;
     float mCascadeNear;
     float mCascadeFar;
+    uint32_t mShadowMapSize;
     Camera &mMainCamera;
+    std::optional<float> mRadius;
+    float mTexelSize;
 };
 
 }}

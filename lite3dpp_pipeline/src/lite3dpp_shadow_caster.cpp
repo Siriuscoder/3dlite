@@ -58,11 +58,12 @@ namespace lite3dpp_pipeline {
         }
     }
 
-    kmMat4 ShadowCaster::recalcMatrix()
+    bool ShadowCaster::recalcMatrix(kmMat4 &matrix)
     {
         mCamera->setDirection(mLightNode->getLight()->getWorldDirection());
         mCamera->setPosition(mLightNode->getLight()->getWorldPosition());
-        return mCamera->refreshProjViewMatrix();
+        matrix = mCamera->refreshProjViewMatrix();
+        return true;
     }
 
     bool ShadowCaster::intersectFrustum(const lite3d_bounding_vol &aabb)
@@ -158,17 +159,19 @@ namespace lite3dpp_pipeline {
         }
     }
 
-    kmMat4 ShadowCasterOmniDirectional::recalcMatrix()
+    bool ShadowCasterOmniDirectional::recalcMatrix(kmMat4 &matrix)
     {
         mCamera->setPosition(mLightNode->getLight()->getWorldPosition());
-        return mCamera->refreshProjViewMatrix();
+        matrix = mCamera->refreshProjViewMatrix();
+        return true;
     }
 
     ShadowCasterCascade::ShadowCasterCascade(Main &main, LightSceneNode *emitter, uint32_t cascadeNum, 
-        uint32_t cascadeCount, float cascadeSplitLambda, Camera &mainCamera) : 
+        uint32_t cascadeCount, float cascadeSplitLambda, uint32_t shadowMapSize, Camera &mainCamera) : 
         ShadowCaster(ShadowCaster::EmitterType::CascadeShadow, main, emitter),
         mCascadeNum(cascadeNum),
         mCascadeCount(cascadeCount),
+        mShadowMapSize(shadowMapSize),
         mMainCamera(mainCamera)
     {
         SDL_assert(mLightNode->getLight()->getType() == LightSourceFlags::TypeDirectional);
@@ -225,14 +228,14 @@ namespace lite3dpp_pipeline {
         mCascadeFar = splitDepth(mCascadeNum, lambda, zNear, zFar);
     }
 
-    kmMat4 ShadowCasterCascade::recalcMatrix()
+    bool ShadowCasterCascade::recalcMatrix(kmMat4 &matrix)
     {
         /* получение главных осей камеры игрока в мировой системе координат */
         const auto forward = mMainCamera.getWorldDirection();
         const auto right = mMainCamera.getWorldRight();
         const auto up = mMainCamera.getWorldUp();
         const auto position = mMainCamera.getWorldPosition();
-        const float midDepth = (mLightNode->getLight()->getClipFar() - mLightNode->getLight()->getClipNear()) / 2.0f;
+        const float midDepth = std::abs(mLightNode->getLight()->getClipFar() - mLightNode->getLight()->getClipNear()) / 2.0f;
 
         /* Ближняя и дальняя плоскость отсечения каскада в мировой системе координат */
         kmVec3 nc, fc;
@@ -293,15 +296,23 @@ namespace lite3dpp_pipeline {
         kmVec3Add(&center, &nc, &fc);
         kmVec3Scale(&center, &center, 0.5f);
 
+        if (!mRadius)
+        {
+            /* найдем максимальный радиус каскада по одному из дальних углов */
+            mRadius = kmVec3Length(kmVec3Subtract(&tmp, &corners[4], &center));
+            mTexelSize = (mRadius.value() * 2.0f) / mShadowMapSize;
+        }
+
         /* Найдем мнимую координату теневой камеры для каскада */
-        kmVec3 cascadeCamPosition;
-        kmVec3Subtract(&cascadeCamPosition, &center, kmVec3Scale(&tmp, &mLightNode->getLight()->getWorldDirection(), midDepth));
+        kmVec3 shadowCamPosition, centerLS;
+        kmVec3Subtract(&shadowCamPosition, &center, kmVec3Scale(&tmp, &mLightNode->getLight()->getWorldDirection(), midDepth));
 
         /* Зададим View матрицу для теневой камеры */
-        mCamera->setPosition(cascadeCamPosition);
+        mCamera->setPosition(shadowCamPosition);
         mCamera->setDirection(mLightNode->getLight()->getWorldDirection());
         kmMat4 view = mCamera->refreshViewMatrix();
 
+        kmVec3TransformCoord(&centerLS, &center, &view);
         /* Получим координаты углов каскада в системе координат теневой камеры (shadow-view-space) */
         float minX, minY, maxX, maxY;
         minX = minY = FLT_MAX;
@@ -317,13 +328,33 @@ namespace lite3dpp_pipeline {
             maxY = std::max(maxY, tmp.y);
         }
 
+        /* Будем брать всегда квадратную область проекции, для стабильности, найдем половину стороны квадрата */
+        //float extent = 0.5f * std::max(maxX - minX, maxY - minY);
+        //float centerXL = (minX + maxX) * 0.5f;
+        //float centerYL = (minY + maxY) * 0.5f;
+
+        /* стабилизация вида, для уменешения дрожания теней (shimmering) */
+        //centerLS.x = std::floor(centerLS.x / mTexelSize) * mTexelSize;
+        //centerLS.y = std::floor(centerLS.y / mTexelSize) * mTexelSize;
+        //centerLS.z = std::floor(centerLS.z / mTexelSize) * mTexelSize;
+//
+        //kmMat4 viewInverse;
+        //kmMat4Inverse(&viewInverse, &view);
+        //kmVec3TransformCoord(&center, &centerLS, &viewInverse);
+        //kmVec3Subtract(&shadowCamPosition, &center, kmVec3Scale(&tmp, &mLightNode->getLight()->getWorldDirection(), midDepth));
+        //mCamera->setPosition(shadowCamPosition);
+        //view = mCamera->refreshViewMatrix();
+
         /* Построим ортогональную проекцию по полученным размерам каскада */
         mCamera->setupOrtho(
             mLightNode->getLight()->getClipNear(), 
             mLightNode->getLight()->getClipFar(),
+            //centerLS.x - mRadius.value(), centerLS.x + mRadius.value(),
+            //centerLS.y - mRadius.value(), centerLS.y + mRadius.value());
             minX, maxX,
             minY, maxY);
 
-        return mCamera->refreshProjViewMatrix(view);
+        matrix = mCamera->refreshProjViewMatrix(view);
+        return true;
     }
 }}

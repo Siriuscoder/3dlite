@@ -141,7 +141,7 @@ namespace lite3dpp_pipeline {
                     for (uint32_t i = 0; i < mCascadeShadowCacheMaxCount; ++i)
                     {
                         auto it = mShadowCasters.emplace(emitter, std::make_unique<ShadowCasterCascade>(mMain, 
-                            emitter, i, mCascadeShadowCacheMaxCount, mCascadeSplitLambda, mPipeline.getMainCamera()));
+                            emitter, i, mCascadeShadowCacheMaxCount, mCascadeSplitLambda, mExtent, mPipeline.getMainCamera()));
                         shadowCasters.push_back(it->second.get());
                     }
                     mCascadeShadowCasterAlreadyRegistered = true;
@@ -302,6 +302,7 @@ namespace lite3dpp_pipeline {
         SDL_assert(mShadowMatrixBuffer);
         SDL_assert(mShadowIndexBuffer);
 
+        kmMat4 matrix;
         mHostShadowIndexes.resize(1, 0); // Reserve 0 index for size
         
         for (auto it = mShadowCasters.begin(); it != mShadowCasters.end();) 
@@ -319,10 +320,12 @@ namespace lite3dpp_pipeline {
                 {
                     if (it->second->invalidated())
                     {
-                        auto matrix = it->second->recalcMatrix();
-                        uint32_t index = static_cast<uint32_t>(it->second->getCacheIndex());
-                        mShadowMatrixBuffer->setElement<kmMat4>(index, &matrix);
-                        mHostShadowIndexes.push_back(index);
+                        if (it->second->recalcMatrix(matrix))
+                        {
+                            uint32_t index = static_cast<uint32_t>(it->second->getCacheIndex());
+                            mShadowMatrixBuffer->setElement<kmMat4>(index, &matrix);
+                            mHostShadowIndexes.push_back(index);
+                        }
                     }
 
                     ++it;
@@ -369,7 +372,7 @@ namespace lite3dpp_pipeline {
                             mShadowCastersCachePlaceHolders[j] = it->second.get();
                             it->second->setCacheIndex(j);
 
-                            auto matrix = it->second->recalcMatrix();
+                            it->second->recalcMatrix(matrix);
                             mShadowMatrixBuffer->setElement<kmMat4>(j, &matrix);
                             mHostShadowIndexes.push_back(j);
                         }
@@ -398,7 +401,7 @@ namespace lite3dpp_pipeline {
                             mShadowCastersCachePlaceHolders[j] = it->second.get();
                             it->second->setCacheIndex(j);
 
-                            auto matrix = it->second->recalcMatrix();
+                            it->second->recalcMatrix(matrix);
                             mShadowMatrixBuffer->setElement<kmMat4>(j, &matrix);
                             mHostShadowIndexes.push_back(j);
                         }
