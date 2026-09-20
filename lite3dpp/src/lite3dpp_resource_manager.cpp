@@ -71,14 +71,38 @@ namespace lite3dpp
     size_t ResourceManager::releaseAllResources()
     {
         size_t count = mResources.size();
-        Resources::iterator it = mResources.begin();
 
-        for(; it != mResources.end(); ++it)
+        // Pipelines first
+        Resources::iterator it = mResources.begin();
+        for(; it != mResources.end(); )
         {
-            it->second->unload();
+            if (it->second->getType() == AbstractResource::ResourceType::PIPELINE)
+            {
+                it->second->unload();
+                it = mResources.erase(it);
+                continue;
+            }
+
+            it++;
         }
 
-        mResources.clear();
+        while (releaseOrphanedResources() > 0);
+
+        // Pinned at end
+        it = mResources.begin();
+        for(; it != mResources.end(); )
+        {
+            if (it->second->isPinned())
+            {
+                it->second->unload();
+                it = mResources.erase(it);
+                continue;
+            }
+
+            it++;
+        }
+
+        while (releaseOrphanedResources() > 0);
         return count;
     }
 

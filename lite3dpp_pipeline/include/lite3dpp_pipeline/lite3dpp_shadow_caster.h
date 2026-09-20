@@ -130,6 +130,7 @@ private:
 
     float splitDepth(uint32_t num, float lambda, float zNear, float zFar);
     void makeCascadeRange(float lambda, float zNear, float zFar);
+    kmVec2 calcStabilizationOffset(const kmVec3 &center, float minX, float maxX, float minY, float maxY);
 
     uint32_t mCascadeNum;
     uint32_t mCascadeCount;
@@ -137,8 +138,6 @@ private:
     float mCascadeFar;
     uint32_t mShadowMapSize;
     Camera &mMainCamera;
-    std::optional<float> mRadius;
-    float mTexelSize;
 };
 
 }}

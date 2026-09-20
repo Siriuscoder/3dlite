@@ -85,6 +85,8 @@ namespace lite3dpp
         { mPinned = pinned; }
         inline bool isOrphaned() const
         { return mParentResources.empty() && !mPinned; }
+        inline bool isPinned() const
+        { return mPinned; }
 
     protected:
 

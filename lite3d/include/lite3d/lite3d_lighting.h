@@ -34,8 +34,8 @@
 #define LITE3D_LIGHT_SHADOW_PCF3x3              (1u << 8)
 #define LITE3D_LIGHT_SHADOW_PCF_ADAPTIVE        (1u << 9)
 #define LITE3D_LIGHT_SHADOW_POISSON             (1u << 10)
-#define LITE3D_LIGHT_SHADOW_VSM                 (1u << 11)
-#define LITE3D_LIGHT_SHADOW_SSS                 (1u << 12)
+#define LITE3D_LIGHT_SHADOW_SSS                 (1u << 11)
+#define LITE3D_LIGHT_SHADOW_VSM                 (1u << 12)
 
 
 #pragma pack(push,1)

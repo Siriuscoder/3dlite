@@ -93,9 +93,20 @@ public:
     void setupShadowCasters()
     {
         mSUN = mSponzaScene->getObject("Sponza")->getLightNode("SUN");
-        mSUN->getLight()->setFlag(LightSourceFlags::ShadowPcfAdaptive | LightSourceFlags::ShadowSSS);
         mSUNNode = mSponzaScene->getObject("Sponza")->getNode("SUN_actor");
-        mSUNShadowCaster = mPipeline->getShadowManager()->registerEmitter(mSUN)[0];
+        
+        for (const auto &node : mSponzaScene->getObject("Sponza")->getNodes())
+        {
+            if (node.first.starts_with("Knight"))
+            {
+                mPipeline->getShadowManager()->registerHintNode(node.second.get());
+            }
+        }
+
+        for (auto lightNode : mSponzaScene->getLights())
+        {
+            mPipeline->getShadowManager()->registerEmitter(lightNode);
+        }
     }
 
     void fixedUpdateTimerTick(int32_t firedPerRound, uint64_t deltaMcs, float deltaRetard) override
@@ -104,9 +115,6 @@ public:
         {
             // Крутим источник света
             mSUNNode->rotateZ(0.0005f * deltaRetard);
-            //mSUN->rotateX(0.00005f * deltaRetard);
-            // Помечаем что надо перерисовать тени в следубщий кадр
-            mSUNShadowCaster->invalidate();
             //mPipeline->getIBL()->rebuild();
         }
 
@@ -212,7 +220,6 @@ private:
 
     Scene* mSponzaScene = nullptr;
     lite3dpp_pipeline::PipelineDeffered* mPipeline = nullptr;
-    lite3dpp_pipeline::ShadowCaster *mSUNShadowCaster = nullptr;
     LightSceneNode* mFlashLight = nullptr;
     LightSceneNode* mSUN = nullptr;
     SceneNode* mSUNNode = nullptr;

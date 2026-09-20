@@ -80,6 +80,10 @@ float SSS(vec3 P, vec3 L, float minDepthThreshold)
 }
 #endif
 
+#ifndef LITE3D_SHADOW_CSM_CASCADE_COUNT
+#define LITE3D_SHADOW_CSM_CASCADE_COUNT 1
+#endif
+
 /* 
     Calculate the adaptive parameters depending the light angle to surface
     x - bias
@@ -87,9 +91,12 @@ float SSS(vec3 P, vec3 L, float minDepthThreshold)
     z - SSS Depth Threshold
     w - Step
 */
-vec4 CalcAdaptiveShadowParams(in AngularInfo angular)
+vec4 CalcAdaptiveShadowParams(in AngularInfo angular, int cascade)
 {
-    vec3 minV = vec3(LITE3D_SHADOW_MIN_ADAPTIVE_BIAS, LITE3D_SHADOW_MIN_ADAPTIVE_FILTER_SIZE, 0.0);
+    float minBias = mix(LITE3D_SHADOW_MIN_ADAPTIVE_BIAS, LITE3D_SHADOW_MAX_ADAPTIVE_BIAS, 
+        float(cascade) / LITE3D_SHADOW_CSM_CASCADE_COUNT);  
+
+    vec3 minV = vec3(minBias, LITE3D_SHADOW_MIN_ADAPTIVE_FILTER_SIZE, 0.0);
     vec3 maxV = vec3(LITE3D_SHADOW_MAX_ADAPTIVE_BIAS, LITE3D_SHADOW_MAX_ADAPTIVE_FILTER_SIZE, LITE3D_SSS_MAX_ADAPTIVE_DEPTH_THRESHOLD);
     vec3 rV = max(maxV * (1.0 - angular.NdotL), minV);
     return vec4(rV, LITE3D_SHADOW_MIN_ADAPTIVE_STEP);
@@ -113,6 +120,7 @@ float Shadow(in LightSource source, in Surface surface, in AngularInfo angular)
         return 1.0;
 
     int shadowIndex = source.shadowIndex;
+    int cascade = 0;
     if (hasFlag(source.flags, LITE3D_LIGHT_POINT))
     {
         shadowIndex = source.shadowIndex + cubeFaceFromDir(-angular.lightDir);
@@ -120,7 +128,7 @@ float Shadow(in LightSource source, in Surface surface, in AngularInfo angular)
 #ifdef LITE3D_SHADOW_CSM_ENABLE
     else if (hasFlag(source.flags, LITE3D_LIGHT_DIRECTIONAL))
     {
-        int cascade = LITE3D_SHADOW_CSM_CASCADE_COUNT - 1;
+        cascade = LITE3D_SHADOW_CSM_CASCADE_COUNT - 1;
         vec3 viewPos = worldToViewSpacePosition(surface.wv);
         float zNear = getZNear();
         float zFar = getZFar();
@@ -150,7 +158,7 @@ float Shadow(in LightSource source, in Surface surface, in AngularInfo angular)
     float shadowFactor = 0.0;
     vec2 texelSize = 1.0 / textureSize(ShadowMaps, 0).xy;
     // Adaptive bias, filter size, step
-    vec4 adaptiveParams = CalcAdaptiveShadowParams(angular);
+    vec4 adaptiveParams = CalcAdaptiveShadowParams(angular, cascade);
     float samples = 0.0;
 
     if (hasFlag(source.flags, LITE3D_LIGHT_SHADOW_PCF3x3))
