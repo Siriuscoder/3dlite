@@ -25,8 +25,8 @@ namespace lite3dpp {
 namespace samples {
 
 static const char *helpString = 
-    "Press '+' to increse gamma\n"
-    "Press '-' to decrese gamma\n"
+    "Press '+' to increse brightness\n"
+    "Press '-' to decrese brightness\n"
     "Press 'l' to enable/disable flashlight\n"
     "Press 'u' to enable/disable SSAO\n"
     "Press 'r' to add light spark\n"
@@ -149,20 +149,6 @@ public:
                 mFlashLight->getLight()->enabled(flashLightEnabled);
                 updateFlashLight();
             }
-            else if (e->key.keysym.sym == SDLK_KP_PLUS)
-            {
-                mGamma += 0.02;
-                if (mGamma > 3.0)
-                    mGamma = 3.0;
-                mPipeline->setGamma(mGamma);
-            }
-            else if (e->key.keysym.sym == SDLK_KP_MINUS)
-            {
-                mGamma -= 0.02;
-                if (mGamma < 1.5)
-                    mGamma = 1.5;
-                mPipeline->setGamma(mGamma);
-            }
             else if (e->key.keysym.sym == SDLK_u)
             {
                 static bool ssaoEnabled = true;
@@ -254,7 +240,6 @@ private:
     LightSceneNode* mFlashLight;
     stl<lite3dpp_phisics::PhysicsSceneObject *>::list mObjects;
     lite3dpp_phisics::PhysicsSceneObject *mPlayer = nullptr;
-    float mGamma = 2.2;
     int mObjectCounter = 0;
     bool mGravityEnabled = true;
 };

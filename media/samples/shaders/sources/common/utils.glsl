@@ -1,6 +1,5 @@
 uniform mat4 CameraView; // Main camera view matrix
 uniform mat4 CameraProjection; // Main camera projection matrix
-uniform float Gamma;
 uniform float Exposure;
 uniform float Contrast;
 uniform float Saturation;
@@ -200,7 +199,7 @@ float linearizeDepth(float z, float near, float far)
 vec3 SRGBToLinear(vec3 color)
 {
     vec3 linearLow  = color / 12.92;
-    vec3 linearHigh = pow((color + 0.055) / 1.055, vec3(Gamma));
+    vec3 linearHigh = pow((color + 0.055) / 1.055, vec3(2.2));
     vec3 isHigh     = step(0.0404482362771082, color);
     return mix(linearLow, linearHigh, isHigh);
 }
@@ -209,7 +208,7 @@ vec3 SRGBToLinear(vec3 color)
 vec3 linearToSRGB(vec3 color)
 {
     vec3 srgbLow  = color * 12.92;
-    vec3 srgbHigh = 1.055 * pow(color, vec3(1.0 / Gamma)) - 0.055;
+    vec3 srgbHigh = 1.055 * pow(color, vec3(1.0 / 2.2)) - 0.055;
     vec3 isHigh   = step(0.00313066844250063, color);
     return mix(srgbLow, srgbHigh, isHigh);
 }
@@ -228,7 +227,7 @@ vec3 exponentTonemapping(vec3 x)
 }
 
 // Nautilus tone mapping
-vec3 nautilusTonemapping(vec3 x)
+vec3 nautilusACESTonemapping(vec3 x)
 {
     // Nautilus fit of ACES
     // By Nolram
@@ -279,20 +278,16 @@ vec3 saturationColor(vec3 color)
     return mix(vec3(gray), color, Saturation);
 }
 
-#ifdef LITE3D_FRAGMENT_SHADER
-
-vec3 ditherBayer(vec3 color)
+vec3 ditherBayer(vec2 coord, vec3 color)
 {
     // Получение позиции пикселя в матрице дизеринга
-    int x = int(mod(gl_FragCoord.x, float(BAYER_MATRIX_SIZE)));
-    int y = int(mod(gl_FragCoord.y, float(BAYER_MATRIX_SIZE)));
+    int x = int(mod(coord.x, float(BAYER_MATRIX_SIZE)));
+    int y = int(mod(coord.y, float(BAYER_MATRIX_SIZE)));
     float ditherValue = bayerMatrix[y * BAYER_MATRIX_SIZE + x] / 16.0;
     
     // Применение дизеринга к цвету
     return color + (ditherValue / 255.0); // Масштабирование для 8-битного цвета
 }
-
-#endif
 
 // Fresnel equation (Schlick)
 vec3 fresnelSchlickRoughness(float teta, in Material material)

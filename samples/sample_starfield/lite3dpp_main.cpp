@@ -22,8 +22,8 @@ namespace lite3dpp {
 namespace samples {
 
 static const char *helpString = 
-    "Press '+' to increse gamma\n"
-    "Press '-' to decrese gamma\n"
+    "Press '+' to increse brightness\n"
+    "Press '-' to decrese brightness\n"
     "Press 'e' to go to the next weapoon\n"
     "Press 'r' to rotate weapoon\n";
 
@@ -88,21 +88,7 @@ public:
         Sample::processEvent(e);
         if (e->type == SDL_KEYDOWN)
         {
-            if (e->key.keysym.sym == SDLK_KP_PLUS)
-            {
-                mGamma += 0.02;
-                if (mGamma > 3.0)
-                    mGamma = 3.0;
-                mPipeline->setGamma(mGamma);
-            }
-            else if (e->key.keysym.sym == SDLK_KP_MINUS)
-            {
-                mGamma -= 0.02;
-                if (mGamma < 1.5)
-                    mGamma = 1.5;
-                mPipeline->setGamma(mGamma);
-            }
-            else if (e->key.keysym.sym == SDLK_e)
+            if (e->key.keysym.sym == SDLK_e)
             {
                 if (mAK47->isEnabled())
                 {
@@ -133,7 +119,6 @@ private:
     lite3dpp_pipeline::PipelineForward* mPipeline = nullptr;
     stl<lite3dpp_pipeline::ShadowCaster*>::vector mSUNShadowCaster;
     LightSceneNode* mSUN = nullptr;
-    float mGamma = 2.2;
     bool mRotationEnabled = false;
 };
 

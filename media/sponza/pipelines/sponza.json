@@ -8,7 +8,7 @@
     "SkyBox": 
     {
         "Texture": "samples:textures/json/skybox.json",
-        "EmissionStrength": 4.0
+        "EmissionStrength": 2.0
     },
     "ShadowMaps":
     {
@@ -34,15 +34,16 @@
     },
     "PostProcess":
     {
-        "Gamma": 2.2,
         "Contrast": 1.005,
         "Saturation": 1.10,
-        "Exposure": 1.0,
+        "Exposure": 2.0,
+        "LensFlare": true,
+        "ChromaticAberration": true,
         "DynamicExposure":
         {
-            "ExposureMax": 5.5,
-            "ExposureMin": 0.7,
-            "ExposureBase": 0.3
+            "ExposureMax": 12.0,
+            "ExposureMin": 1.0,
+            "ExposureBase": 0.18
         }
     }
 }

@@ -31,7 +31,7 @@ enum class EnvProbeFlags : uint32_t
 
 LITE3D_DECLARE_ENUM_OPERATORS(EnvProbeFlags);
 
-class LITE3DPP_PIPELINE_EXPORT IBLMultiProbe : public RenderTargetObserver, public LifecycleObserver, public Noncopiable
+class LITE3DPP_PIPELINE_EXPORT IBLMultiProbePass : public RenderTargetObserver, public LifecycleObserver, public Noncopiable
 {
 public:
 
@@ -82,8 +82,8 @@ public:
         EnvProbeFlags mFlags;
     };
 
-    IBLMultiProbe(Main &main, PipelineBase &pipeline);
-    virtual ~IBLMultiProbe();
+    IBLMultiProbePass(Main &main, PipelineBase &pipeline);
+    virtual ~IBLMultiProbePass();
 
     void initialize();
     inline RenderTarget* getPass() { return mEnvironmentProbePass; }

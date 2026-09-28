@@ -23,17 +23,17 @@
 namespace lite3dpp {
 namespace lite3dpp_pipeline {
 
-class LITE3DPP_PIPELINE_EXPORT BloomEffect : public SceneObserver, public Noncopiable
+class LITE3DPP_PIPELINE_EXPORT BloomPass : public SceneObserver, public Noncopiable
 {
 public:
 
-    BloomEffect(Main& main, PipelineBase &pipeline, const String &cameraName);
+    BloomPass(Main& main, PipelineBase &pipeline, const String &cameraName);
 
     void initialize();
     TextureRenderTarget &getRenderTarget();
     TextureImage &getLastTexture();
     TextureImage &getMiddleTexture();
-    kmVec3 getLumaAverage() const;
+    float getLumaAverage() const;
 
 private:
 

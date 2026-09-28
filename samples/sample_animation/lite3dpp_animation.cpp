@@ -22,8 +22,8 @@ namespace lite3dpp {
 namespace samples {
 
 static const char *helpString = 
-    "Press '+' to increse gamma\n"
-    "Press '-' to decrese gamma\n"
+    "Press '+' to increse brightness\n"
+    "Press '-' to decrese brightness\n"
     "Press 'u' to enable/disable SSAO\n"
     "Press 'q' to start animation\n"
     "Press 'z' to start second skeleton body animation\n"
@@ -81,21 +81,7 @@ public:
         Sample::processEvent(e);
         if (e->type == SDL_KEYDOWN)
         {
-            if (e->key.keysym.sym == SDLK_KP_PLUS)
-            {
-                mGamma += 0.02;
-                if (mGamma > 3.0)
-                    mGamma = 3.0;
-                mPipeline->setGamma(mGamma);
-            }
-            else if (e->key.keysym.sym == SDLK_KP_MINUS)
-            {
-                mGamma -= 0.02;
-                if (mGamma < 1.5)
-                    mGamma = 1.5;
-                mPipeline->setGamma(mGamma);
-            }
-            else if (e->key.keysym.sym == SDLK_u)
+            if (e->key.keysym.sym == SDLK_u)
             {
                 static bool ssaoEnabled = true;
                 ssaoEnabled = !ssaoEnabled;
@@ -182,7 +168,6 @@ private:
     SceneNodeBase *mSkeletonBody = nullptr;
     SceneNodeBase *mSkeletonBody2 = nullptr;
     SceneNodeBase *mCuriousSphere = nullptr;
-    float mGamma = 2.2;
 };
 
 }}

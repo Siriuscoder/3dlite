@@ -157,20 +157,6 @@ public:
                 // Recalc global illumination
                 mPipeline->getIBL()->rebuild();
             }
-            else if (e->key.keysym.sym == SDLK_KP_PLUS)
-            {
-                mGamma += 0.02;
-                if (mGamma > 3.0)
-                    mGamma = 3.0;
-                mPipeline->setGamma(mGamma);
-            }
-            else if (e->key.keysym.sym == SDLK_KP_MINUS)
-            {
-                mGamma -= 0.02;
-                if (mGamma < 1.5)
-                    mGamma = 1.5;
-                mPipeline->setGamma(mGamma);
-            }
             else if (e->key.keysym.sym == SDLK_r)
             {
                 addSpark();
@@ -187,7 +173,6 @@ private:
     Scene* mMainScene = nullptr;
     lite3dpp_pipeline::PipelineForward* mPipeline = nullptr;
     LightSceneNode* mFlashLight = nullptr;
-    float mGamma = 2.2f;
     uint32_t mObjectCounter = 0;
 };
 

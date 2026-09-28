@@ -19,3 +19,9 @@
 #define LITE3D_SSAO_POWER                                   2.5
 #define LITE3D_SSAO_ADAPTIVE_BIAS_MIN                       0.01
 #define LITE3D_SSAO_ADAPTIVE_BIAS_MAX                       0.050
+
+#define LITE3D_CHROMATIC_ABERRATION_DISTORTION              0.04
+#define LITE3D_CHROMATIC_ABERRATION_AMOUNT                  0.004
+#define LITE3D_LENSFLARE_GHOSTS_COUNT                       3
+#define LITE3D_LENSFLARE_GHOSTS_ALPHA                       0.005
+#define LITE3D_LENSFLARE_THRESHOLD_SCALE                    2

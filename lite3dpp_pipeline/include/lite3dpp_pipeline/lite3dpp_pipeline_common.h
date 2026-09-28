@@ -38,5 +38,6 @@ namespace lite3dpp {
 namespace lite3dpp_pipeline {
 
 class PipelineBase;
+class BloomPass;
 
 }}

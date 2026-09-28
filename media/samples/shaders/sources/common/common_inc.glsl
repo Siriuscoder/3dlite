@@ -65,11 +65,11 @@ vec3 linearToSRGB(vec3 color);
 vec3 SRGBToLinear(vec3 color);
 vec3 reinhardTonemapping(vec3 x);
 vec3 exponentTonemapping(vec3 x);
-vec3 nautilusTonemapping(vec3 x);
+vec3 nautilusACESTonemapping(vec3 x);
 vec3 ACESTonemapping(vec3 x);
 vec3 contrastColor(vec3 color);
 vec3 saturationColor(vec3 color);
-vec3 ditherBayer(vec3 color);
+vec3 ditherBayer(vec2 uv, vec3 color);
 
 //////////// PBR utilities
 ////////////////////////////////////////////////////////////////////////////

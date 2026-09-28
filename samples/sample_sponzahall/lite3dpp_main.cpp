@@ -22,8 +22,8 @@ namespace lite3dpp {
 namespace samples {
 
 static const char *helpString = 
-    "Press '+' to increse gamma\n"
-    "Press '-' to decrese gamma\n"
+    "Press '+' to increse brightness\n"
+    "Press '-' to decrese brightness\n"
     "Press 'l' to enable/disable flashlight\n"
     "Press 'u' to enable/disable SSAO\n"
     "Press 'r' to enable/disable night mode\n"
@@ -103,10 +103,7 @@ public:
             }
         }
 
-        for (auto lightNode : mSponzaScene->getLights())
-        {
-            mPipeline->getShadowManager()->registerEmitter(lightNode);
-        }
+        mPipeline->getShadowManager()->registerEmitter(mSUN);
     }
 
     void fixedUpdateTimerTick(int32_t firedPerRound, uint64_t deltaMcs, float deltaRetard) override
@@ -158,20 +155,6 @@ public:
                 static bool flashLightEnabled = false;
                 flashLightEnabled = !flashLightEnabled;
                 mFlashLight->getLight()->enabled(flashLightEnabled);
-            }
-            else if (e->key.keysym.sym == SDLK_KP_PLUS)
-            {
-                mGamma += 0.02;
-                if (mGamma > 3.0)
-                    mGamma = 3.0;
-                mPipeline->setGamma(mGamma);
-            }
-            else if (e->key.keysym.sym == SDLK_KP_MINUS)
-            {
-                mGamma -= 0.02;
-                if (mGamma < 1.5)
-                    mGamma = 1.5;
-                mPipeline->setGamma(mGamma);
             }
             else if (e->key.keysym.sym == SDLK_u)
             {
@@ -226,7 +209,6 @@ private:
     bool mDayNightMode = true;
     bool mSunRotation = false;
     bool mLampsOn = true;
-    float mGamma = 2.2;
 };
 
 }}

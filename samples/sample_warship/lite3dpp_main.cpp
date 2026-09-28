@@ -21,8 +21,8 @@ namespace lite3dpp {
 namespace samples {
 
 static const char *helpString = 
-    "Press '+' to increse gamma\n"
-    "Press '-' to decrese gamma\n"
+    "Press '+' to increse brightness\n"
+    "Press '-' to decrese brightness\n"
     "Press 'l' to enable/disable flashlight\n"
     "Press 'o' to enable/disable FXAA\n";
 

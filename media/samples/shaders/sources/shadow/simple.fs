@@ -15,8 +15,14 @@ float Shadow(in LightSource source, in Surface surface, in AngularInfo angular)
     if (source.shadowIndex < 0)
         return 1.0;
 
+    int shadowIndex = source.shadowIndex;
+    int cascade = 0;
+    if (hasFlag(source.flags, LITE3D_LIGHT_POINT))
+    {
+        shadowIndex = source.shadowIndex + cubeFaceFromDir(-angular.lightDir);
+    }
     // Shadow space NDC coorts of current fragment
-    vec4 sv = shadowTransform[source.shadowIndex] * vec4(surface.wv, 1.0);
+    vec4 sv = shadowTransform[shadowIndex] * vec4(surface.wv, 1.0);
     // transform the NDC coordinates to the range [0,1]
     sv = (sv / sv.w) * 0.5 + 0.5;
     // Z clip 
@@ -28,5 +34,5 @@ float Shadow(in LightSource source, in Surface surface, in AngularInfo angular)
     if (!isValidUV(sv.xy))
         return 0.0;
 
-    return texture(ShadowMaps, vec4(sv.xy, source.shadowIndex, sv.z - bias));
+    return texture(ShadowMaps, vec4(sv.xy, shadowIndex, sv.z - bias));
 }
