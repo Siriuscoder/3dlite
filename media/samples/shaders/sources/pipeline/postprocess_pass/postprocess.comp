@@ -1,12 +1,14 @@
 #include "samples:shaders/sources/common/common_inc.glsl"
 
 layout(local_size_x = 16, local_size_y = 16) in;
-layout(binding = 0, rgba8) uniform writeonly image2D PostProcessOutput;
+layout(binding = 0, rgba16f) uniform writeonly image2D PostProcessOutput;
 
 uniform sampler2D Combined;
 uniform sampler2D Bloom;
 
-const float BloomStrength = 0.04;
+#ifndef LITE3D_BLOOM_STRENGTH
+#define LITE3D_BLOOM_STRENGTH                           0.04
+#endif
 
 // 0.0f, 2.0f
 #ifndef LITE3D_LENSFLARE_GHOSTS_DISPERSAL
@@ -96,7 +98,6 @@ vec3 lensFlare(vec2 uv, float aspectRatio, ivec2 bounds)
     vec2 direction = normalize(ghostVec);
     vec2 circVec = vec2(ghostVec.x * aspectRatio, ghostVec.y);
     float offset = 0.5 * (1.0 - aspectRatio);
-    float offsetY = 0.5 * (1.0 - 1.0 / aspectRatio);
 
     // ghosts
     vec3 color = vec3(0.0);
@@ -137,16 +138,15 @@ void main()
     hdr += lensFlare(uv, aspectRatio, bounds);
 #endif
     // Apply bloom
-    hdr = mix(hdr, texture(Bloom, uv).rgb, BloomStrength);
+    hdr = mix(hdr, texture(Bloom, uv).rgb, LITE3D_BLOOM_STRENGTH);
     // Tone mapping
     vec3 ldr = ACESTonemapping(hdr);
     // Color correction
+    ldr = brightnessColor(ldr);
     ldr = contrastColor(ldr);
     ldr = saturationColor(ldr);
-    // Dithering
-    ldr = ditherBayer(uv, ldr);
     // sRGB
-    ldr = linearToSRGB(ldr);
+    ldr = linearToSRGB(clamp(ldr, 0.0, 1.0));
     // compute luma
     float luma = dot(ldr, vec3(0.299, 0.587, 0.114));
     // Write to output

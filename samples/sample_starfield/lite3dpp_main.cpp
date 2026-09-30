@@ -22,8 +22,6 @@ namespace lite3dpp {
 namespace samples {
 
 static const char *helpString = 
-    "Press '+' to increse brightness\n"
-    "Press '-' to decrese brightness\n"
     "Press 'e' to go to the next weapoon\n"
     "Press 'r' to rotate weapoon\n";
 

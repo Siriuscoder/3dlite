@@ -103,7 +103,10 @@ public:
             }
         }
 
-        mPipeline->getShadowManager()->registerEmitter(mSUN);
+        for (auto lightNode : mSponzaScene->getLights())
+        {
+            mPipeline->getShadowManager()->registerEmitter(lightNode);
+        }
     }
 
     void fixedUpdateTimerTick(int32_t firedPerRound, uint64_t deltaMcs, float deltaRetard) override
@@ -190,11 +193,26 @@ public:
 
                 mPipeline->getIBL()->rebuild();
             }
+            else if (e->key.keysym.sym == SDLK_KP_PLUS)
+            {
+                mBrightness += 0.001;
+                if (mBrightness > 0.08)
+                    mBrightness = 0.08;
+                mPipeline->setBrightness(mBrightness);
+            }
+            else if (e->key.keysym.sym == SDLK_KP_MINUS)
+            {
+                mBrightness -= 0.001;
+                if (mBrightness < -0.08)
+                    mBrightness = -0.08;
+                mPipeline->setBrightness(mBrightness);
+            }
             //else if (e->key.keysym.sym == SDLK_n)
             //{
             //    mSponzaScene->removeAllObjects();
             //    mSponzaScene->loadObjects("sponza:scenes/sponza.json");
             //}
+
         }
     }
 
@@ -209,6 +227,7 @@ private:
     bool mDayNightMode = true;
     bool mSunRotation = false;
     bool mLampsOn = true;
+    float mBrightness = 0.0f;
 };
 
 }}

@@ -94,6 +94,12 @@ namespace lite3dpp_pipeline {
         mPostProcessPass->updateSaturation(saturation);
     }
 
+    void PipelineBase::setBrightness(float brightness)
+    {
+        SDL_assert(mPostProcessPass);
+        mPostProcessPass->updateBrightness(brightness);
+    }
+
     void PipelineBase::setSkyBoxEmission(float emission)
     {
         if (mSkyBoxStageMaterial)

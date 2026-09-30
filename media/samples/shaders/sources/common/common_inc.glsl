@@ -67,6 +67,7 @@ vec3 reinhardTonemapping(vec3 x);
 vec3 exponentTonemapping(vec3 x);
 vec3 nautilusACESTonemapping(vec3 x);
 vec3 ACESTonemapping(vec3 x);
+vec3 brightnessColor(vec3 color);
 vec3 contrastColor(vec3 color);
 vec3 saturationColor(vec3 color);
 vec3 ditherBayer(vec2 uv, vec3 color);

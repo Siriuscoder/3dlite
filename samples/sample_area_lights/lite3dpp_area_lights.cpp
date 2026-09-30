@@ -122,6 +122,20 @@ public:
                 mAreaEllipceLight->getLight()->enabled(areaDiskLightEnabled);
                 mAreaEllipceLightMaterial->setEmissionStrength(areaDiskLightEnabled ? 2.0f : 0.0f);
             }
+            else if (e->key.keysym.sym == SDLK_KP_PLUS)
+            {
+                mBrightness += 0.001;
+                if (mBrightness > 0.08)
+                    mBrightness = 0.08;
+                mPipeline->setBrightness(mBrightness);
+            }
+            else if (e->key.keysym.sym == SDLK_KP_MINUS)
+            {
+                mBrightness -= 0.001;
+                if (mBrightness < -0.08)
+                    mBrightness = -0.08;
+                mPipeline->setBrightness(mBrightness);
+            }
         }
     }
 
@@ -134,6 +148,7 @@ private:
     PBRMaterial* mAreaQuadLightMaterial = nullptr;
     LightSceneNode* mAreaEllipceLight = nullptr;
     PBRMaterial* mAreaEllipceLightMaterial = nullptr;
+    float mBrightness = 0.0f;
 };
 
 }}

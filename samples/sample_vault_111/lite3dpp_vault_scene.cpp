@@ -301,6 +301,20 @@ public:
                 ssaoEnabled = !ssaoEnabled;
                 mPipeline->enableSSAO(ssaoEnabled);
             }
+            else if (e->key.keysym.sym == SDLK_KP_PLUS)
+            {
+                mBrightness += 0.001;
+                if (mBrightness > 0.08)
+                    mBrightness = 0.08;
+                mPipeline->setBrightness(mBrightness);
+            }
+            else if (e->key.keysym.sym == SDLK_KP_MINUS)
+            {
+                mBrightness -= 0.001;
+                if (mBrightness < -0.08)
+                    mBrightness = -0.08;
+                mPipeline->setBrightness(mBrightness);
+            }
         }
     }
 
@@ -323,6 +337,7 @@ private:
     MinigunObject mMinigun01;
     MinigunObject mMinigun02;
     float mAnimPi = 0.0f;
+    float mBrightness = 0.004f; 
 };
 
 }}

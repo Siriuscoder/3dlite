@@ -56,6 +56,7 @@ namespace lite3dpp_pipeline {
         updateSaturation(postProcessConfig.getDouble(L"Saturation", 1.0f));
         updateContrast(postProcessConfig.getDouble(L"Contrast", 1.0f));
         updateExposure(postProcessConfig.getDouble(L"Exposure", 1.0f));
+        updateBrightness(postProcessConfig.getDouble(L"Brightness", 0.0f));
 
         // Be sure to use GLSL 4.30
         ShaderProgram::setShaderVersion("430");
@@ -77,7 +78,8 @@ namespace lite3dpp_pipeline {
             .set(L"Height", combinedImage.getHeight())
             .set(L"Wrapping", "ClampToEdge")
             .set(L"Compression", false)
-            .set(L"TextureFormat", "RGBA");
+            .set(L"TextureFormat", "RGBA")
+            .set(L"InternalFormat", "RGBA16F");
 
         mPostProcessOutput = mMain.getResourceManager().queryResourceFromJson<TextureImage>(
             mPipeline.getName() + "_PostProcessOutput.texture", postProcessOutputParams.write());
@@ -99,6 +101,10 @@ namespace lite3dpp_pipeline {
         postProcessVariables.push_back(ConfigurationWriter()
             .set(L"Name", "Saturation")
             .set(L"Value", postProcessConfig.getDouble(L"Saturation", mSaturation))
+            .set(L"Type", "float"));
+        postProcessVariables.push_back(ConfigurationWriter()
+            .set(L"Name", "Brightness")
+            .set(L"Value", postProcessConfig.getDouble(L"Brightness", mBrightness))
             .set(L"Type", "float"));
         postProcessVariables.push_back(ConfigurationWriter()
             .set(L"Type", "imageStore")
@@ -153,13 +159,7 @@ namespace lite3dpp_pipeline {
                     ConfigurationWriter()
                         .set(L"Name", "InputImage")
                         .set(L"TextureName", mPostProcessOutput->getName())
-                        .set(L"Type", "sampler"),
-                    ConfigurationWriter()
-                        .set(L"Name", "OutputResolution")
-                        .set(L"Value", kmVec3 { static_cast<float>(mMain.window()->width()), 
-                            static_cast<float>(mMain.window()->height()), 0.0f })
-                        .set(L"Type", "v3")
-                        .set(L"Scope", "global")
+                        .set(L"Type", "sampler")
                 })
         });
 
@@ -187,6 +187,11 @@ namespace lite3dpp_pipeline {
     void PostProcessPass::updateSaturation(float saturation)
     {
         mSaturation = saturation;
+    }
+
+    void PostProcessPass::updateBrightness(float brightness)
+    {
+        mBrightness = brightness;
     }
 
     void PostProcessPass::frameBegin()
@@ -217,6 +222,7 @@ namespace lite3dpp_pipeline {
         mPostProcessShader->getShaderParameters().setFloatParameter("Exposure", mExposure);
         mPostProcessShader->getShaderParameters().setFloatParameter("Contrast", mContrast);
         mPostProcessShader->getShaderParameters().setFloatParameter("Saturation", mSaturation);
+        mPostProcessShader->getShaderParameters().setFloatParameter("Brightness", mBrightness);
 
         const uint32_t groupsCountX = (mPostProcessOutput->getWidth() + 16 - 1) / 16;
         const uint32_t groupsCountY = (mPostProcessOutput->getHeight() + 16 - 1) / 16;

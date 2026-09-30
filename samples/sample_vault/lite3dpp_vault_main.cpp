@@ -19,8 +19,8 @@
 #include "lite3dpp_vault_directrender.h"
 
 static const char *helpString = 
-    "Press '+' to increse brightness\n"
-    "Press '-' to decrese brightness\n"
+    "Press '+' to increse gamma\n"
+    "Press '-' to decrese gamma\n"
     "Press 'o' to enable/disable FXAA\n"
     "Press 'l' to enable/disable flashlight\n"
     "Press 't' to on/off lamps\n";

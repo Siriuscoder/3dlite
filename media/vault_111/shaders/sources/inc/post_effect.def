@@ -1,0 +1,6 @@
+#define LITE3D_CHROMATIC_ABERRATION_DISTORTION              0.03
+#define LITE3D_CHROMATIC_ABERRATION_AMOUNT                  0.004
+#define LITE3D_LENSFLARE_GHOSTS_COUNT                       2
+#define LITE3D_LENSFLARE_GHOSTS_ALPHA                       0.001
+#define LITE3D_LENSFLARE_THRESHOLD_SCALE                    4
+#define LITE3D_BLOOM_STRENGTH                               0.009

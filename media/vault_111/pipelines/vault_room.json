@@ -21,9 +21,11 @@
     },
     "PostProcess":
     {
-        "Gamma": 2.2,
         "Contrast": 1.001,
-        "Saturation": 1.2,
-        "Exposure": 5.8
+        "Saturation": 1.08,
+        "Exposure": 14.0,
+        "Brightness": 0.004,
+        "LensFlare": true,
+        "ChromaticAberration": true
     }
 }

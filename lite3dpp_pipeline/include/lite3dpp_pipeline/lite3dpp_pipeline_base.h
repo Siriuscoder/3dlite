@@ -43,6 +43,7 @@ namespace lite3dpp_pipeline {
         void setExposure(float exp);
         void setContrast(float contrast);
         void setSaturation(float saturation);
+        void setBrightness(float brightness);
         void setSkyBoxEmission(float emission);
 
     protected:

@@ -199,6 +199,20 @@ public:
                     mPlayer->setLinearVelocity(currVel);
                 }
             }
+            else if (e->key.keysym.sym == SDLK_KP_PLUS)
+            {
+                mBrightness += 0.001;
+                if (mBrightness > 0.08)
+                    mBrightness = 0.08;
+                mPipeline->setBrightness(mBrightness);
+            }
+            else if (e->key.keysym.sym == SDLK_KP_MINUS)
+            {
+                mBrightness -= 0.001;
+                if (mBrightness < -0.08)
+                    mBrightness = -0.08;
+                mPipeline->setBrightness(mBrightness);
+            }
         }
     }
 
@@ -242,6 +256,7 @@ private:
     lite3dpp_phisics::PhysicsSceneObject *mPlayer = nullptr;
     int mObjectCounter = 0;
     bool mGravityEnabled = true;
+    float mBrightness = 0.004f;
 };
 
 }}

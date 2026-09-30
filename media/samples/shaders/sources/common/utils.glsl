@@ -1,5 +1,6 @@
 uniform mat4 CameraView; // Main camera view matrix
 uniform mat4 CameraProjection; // Main camera projection matrix
+uniform float Brightness;
 uniform float Exposure;
 uniform float Contrast;
 uniform float Saturation;
@@ -265,6 +266,11 @@ vec3 ACESTonemapping(vec3 x)
 
     color = ACESOutputMat * color;
     return clamp(color, 0.0, 1.0);
+}
+
+vec3 brightnessColor(vec3 color)
+{
+    return color + Brightness;
 }
 
 vec3 contrastColor(vec3 color)

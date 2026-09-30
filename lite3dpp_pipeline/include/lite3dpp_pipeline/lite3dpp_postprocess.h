@@ -34,6 +34,7 @@ public:
     void updateExposure(float exp);
     void updateContrast(float contrast);
     void updateSaturation(float saturation);
+    void updateBrightness(float brightness);
 
 protected:
 
@@ -52,6 +53,7 @@ protected:
     float mExposure = 1.0;
     float mContrast = 1.0;
     float mSaturation = 1.0;
+    float mBrightness = 0.0;
     bool mDynamicExposureEnabled = false;
     ComputeShader *mPostProcessShader = nullptr;
     TextureImage *mPostProcessOutput;

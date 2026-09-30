@@ -219,7 +219,7 @@ float Shadow(in LightSource source, in Surface surface, in AngularInfo angular)
 #ifdef LITE3D_SSS_ENABLE
         if (hasFlag(source.flags, LITE3D_LIGHT_SHADOW_SSS))
         {
-            shadowFactor *= SSS(surface.wv, angular.lightDir, adaptiveParams.z);
+            shadowFactor = min(shadowFactor, SSS(surface.wv, angular.lightDir, adaptiveParams.z));
         }
 #endif
     }

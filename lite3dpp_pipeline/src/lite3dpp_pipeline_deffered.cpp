@@ -376,10 +376,6 @@ namespace lite3dpp_pipeline {
                         .set(L"Value", pipelineConfig.getObject(L"SSAO").getDouble(L"AORadius"))
                         .set(L"Type", "float"),
                     ConfigurationWriter()
-                        .set(L"Name", "FrameNumber")
-                        .set(L"Type", "int")
-                        .set(L"Scope", "global"),
-                    ConfigurationWriter()
                         .set(L"Name", "CameraView")
                         .set(L"Type", "m4")
                         .set(L"Scope", "global"),

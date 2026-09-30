@@ -686,7 +686,8 @@
               1.0,
               1.0,
               1.0
-            ]
+            ],
+            "CastShadow": false
           },
           {
             "Name": "lamps_1stfloor_00",
@@ -709,7 +710,8 @@
               1.0,
               1.0,
               1.0
-            ]
+            ],
+            "CastShadow": false
           },
           {
             "Name": "lamps_1stfloor_01",
@@ -732,7 +734,8 @@
               1.0,
               1.0,
               1.0
-            ]
+            ],
+            "CastShadow": false
           },
           {
             "Name": "lamps_1stfloor_02",
@@ -755,7 +758,8 @@
               0.9999999403953552,
               0.9999999403953552,
               1.0
-            ]
+            ],
+            "CastShadow": false
           },
           {
             "Name": "lamps_1stfloor_03",
@@ -778,7 +782,8 @@
               1.0,
               1.0,
               1.0
-            ]
+            ],
+            "CastShadow": false
           },
           {
             "Name": "lamps_1stfloor_04",
@@ -801,7 +806,8 @@
               1.0,
               1.0,
               1.0
-            ]
+            ],
+            "CastShadow": false
           },
           {
             "Name": "lamps_1stfloor_05",
@@ -824,7 +830,8 @@
               1.0,
               1.0,
               1.0
-            ]
+            ],
+            "CastShadow": false
           },
           {
             "Name": "lamps_1stfloor_06",
@@ -847,7 +854,8 @@
               1.0,
               1.0,
               1.0
-            ]
+            ],
+            "CastShadow": false
           },
           {
             "Name": "lamps_1stfloor_07",
@@ -870,7 +878,8 @@
               1.0,
               1.0,
               1.0
-            ]
+            ],
+            "CastShadow": false
           },
           {
             "Name": "lamps_1stfloor_08",
@@ -893,7 +902,8 @@
               0.9999999403953552,
               0.9999999403953552,
               1.0
-            ]
+            ],
+            "CastShadow": false
           },
           {
             "Name": "lamps_1stfloor_09",
@@ -916,7 +926,8 @@
               1.0,
               1.0,
               1.0
-            ]
+            ],
+            "CastShadow": false
           },
           {
             "Name": "lamps_1stfloor_10",
@@ -939,7 +950,8 @@
               1.0,
               1.0,
               1.0
-            ]
+            ],
+            "CastShadow": false
           },
           {
             "Name": "lamps_1stfloor_11",
@@ -962,7 +974,8 @@
               1.0,
               1.0,
               1.0
-            ]
+            ],
+            "CastShadow": false
           },
           {
             "Name": "lamps_1stfloor_12",
@@ -985,7 +998,8 @@
               1.0,
               1.0,
               1.0
-            ]
+            ],
+            "CastShadow": false
           },
           {
             "Name": "lionhead",
@@ -1903,7 +1917,8 @@
               1.0,
               1.0,
               1.0
-            ]
+            ],
+            "CastShadow": false
           },
           {
             "Name": "lamps_2ndfloor_02",
@@ -1926,7 +1941,8 @@
               1.0,
               1.0,
               1.0
-            ]
+            ],
+            "CastShadow": false
           },
           {
             "Name": "lamps_2ndfloor_03",
@@ -1949,7 +1965,8 @@
               0.9999999403953552,
               0.9999999403953552,
               1.0
-            ]
+            ],
+            "CastShadow": false
           },
           {
             "Name": "lamps_2ndfloor_04",
@@ -1972,7 +1989,8 @@
               1.0,
               1.0,
               1.0
-            ]
+            ],
+            "CastShadow": false
           },
           {
             "Name": "lamps_2ndfloor_05",
@@ -1995,7 +2013,8 @@
               1.0,
               1.0,
               1.0
-            ]
+            ],
+            "CastShadow": false
           },
           {
             "Name": "lamps_2ndfloor_06",
@@ -2018,7 +2037,8 @@
               1.0,
               1.0,
               1.0
-            ]
+            ],
+            "CastShadow": false
           },
           {
             "Name": "lamps_2ndfloor_07",
@@ -2041,7 +2061,8 @@
               1.0,
               1.0,
               1.0
-            ]
+            ],
+            "CastShadow": false
           },
           {
             "Name": "lamps_2ndfloor_08",
@@ -2064,7 +2085,8 @@
               1.0,
               1.0,
               1.0
-            ]
+            ],
+            "CastShadow": false
           },
           {
             "Name": "ornament_door_2ndfloor_01",
@@ -3802,7 +3824,12 @@
             0.0,
             0.0,
             0.0
-          ]
+          ],
+          "ShadowParams": {
+            "Dynamic": false,
+            "Type": "PCF",
+            "NearClipPlane": 0.01
+          }
         },
         "Position": [
           -5.928595066070557,
@@ -3849,7 +3876,12 @@
             0.0,
             0.0,
             0.0
-          ]
+          ],
+          "ShadowParams": {
+            "Dynamic": false,
+            "Type": "PCF",
+            "NearClipPlane": 0.01
+          }
         },
         "Position": [
           -1.8494460582733154,
@@ -3896,7 +3928,12 @@
             0.0,
             0.0,
             0.0
-          ]
+          ],
+          "ShadowParams": {
+            "Dynamic": false,
+            "Type": "PCF",
+            "NearClipPlane": 0.01
+          }
         },
         "Position": [
           2.1935784816741943,
@@ -3943,7 +3980,12 @@
             0.0,
             0.0,
             0.0
-          ]
+          ],
+          "ShadowParams": {
+            "Dynamic": false,
+            "Type": "PCF",
+            "NearClipPlane": 0.01
+          }
         },
         "Position": [
           6.141829013824463,
@@ -3990,7 +4032,12 @@
             0.0,
             0.0,
             0.0
-          ]
+          ],
+          "ShadowParams": {
+            "Dynamic": false,
+            "Type": "PCF",
+            "NearClipPlane": 0.01
+          }
         },
         "Position": [
           10.024332046508789,
@@ -4037,7 +4084,12 @@
             0.0,
             0.0,
             0.0
-          ]
+          ],
+          "ShadowParams": {
+            "Dynamic": false,
+            "Type": "PCF",
+            "NearClipPlane": 0.01
+          }
         },
         "Position": [
           -9.82472038269043,
@@ -4084,7 +4136,12 @@
             0.0,
             0.0,
             0.0
-          ]
+          ],
+          "ShadowParams": {
+            "Dynamic": false,
+            "Type": "PCF",
+            "NearClipPlane": 0.01
+          }
         },
         "Position": [
           -5.928595066070557,
@@ -4131,7 +4188,12 @@
             0.0,
             0.0,
             0.0
-          ]
+          ],
+          "ShadowParams": {
+            "Dynamic": false,
+            "Type": "PCF",
+            "NearClipPlane": 0.01
+          }
         },
         "Position": [
           -1.8494460582733154,
@@ -4178,7 +4240,12 @@
             0.0,
             0.0,
             0.0
-          ]
+          ],
+          "ShadowParams": {
+            "Dynamic": false,
+            "Type": "PCF",
+            "NearClipPlane": 0.01
+          }
         },
         "Position": [
           2.1935784816741943,
@@ -4225,7 +4292,12 @@
             0.0,
             0.0,
             0.0
-          ]
+          ],
+          "ShadowParams": {
+            "Dynamic": false,
+            "Type": "PCF",
+            "NearClipPlane": 0.01
+          }
         },
         "Position": [
           6.141829013824463,
@@ -4272,7 +4344,12 @@
             0.0,
             0.0,
             0.0
-          ]
+          ],
+          "ShadowParams": {
+            "Dynamic": false,
+            "Type": "PCF",
+            "NearClipPlane": 0.01
+          }
         },
         "Position": [
           10.024332046508789,
@@ -4319,7 +4396,12 @@
             0.0,
             0.0,
             0.0
-          ]
+          ],
+          "ShadowParams": {
+            "Dynamic": false,
+            "Type": "PCF",
+            "NearClipPlane": 0.01
+          }
         },
         "Position": [
           15.619152069091797,
@@ -4366,7 +4448,12 @@
             0.0,
             0.0,
             0.0
-          ]
+          ],
+          "ShadowParams": {
+            "Dynamic": false,
+            "Type": "PCF",
+            "NearClipPlane": 0.01
+          }
         },
         "Position": [
           -9.82472038269043,
@@ -4413,7 +4500,12 @@
             0.0,
             0.0,
             0.0
-          ]
+          ],
+          "ShadowParams": {
+            "Dynamic": false,
+            "Type": "PCF",
+            "NearClipPlane": 0.01
+          }
         },
         "Position": [
           -13.589994430541992,
@@ -4460,7 +4552,12 @@
             0.0,
             0.0,
             0.0
-          ]
+          ],
+          "ShadowParams": {
+            "Dynamic": false,
+            "Type": "PCF",
+            "NearClipPlane": 0.01
+          }
         },
         "Position": [
           15.610796928405762,
@@ -4507,7 +4604,12 @@
             0.0,
             0.0,
             0.0
-          ]
+          ],
+          "ShadowParams": {
+            "Dynamic": false,
+            "Type": "PCF",
+            "NearClipPlane": 0.01
+          }
         },
         "Position": [
           -9.765947341918945,
@@ -4554,7 +4656,12 @@
             0.0,
             0.0,
             0.0
-          ]
+          ],
+          "ShadowParams": {
+            "Dynamic": false,
+            "Type": "PCF",
+            "NearClipPlane": 0.01
+          }
         },
         "Position": [
           2.1614978313446045,
@@ -4601,7 +4708,12 @@
             0.0,
             0.0,
             0.0
-          ]
+          ],
+          "ShadowParams": {
+            "Dynamic": false,
+            "Type": "PCF",
+            "NearClipPlane": 0.01
+          }
         },
         "Position": [
           10.07526683807373,
@@ -4648,7 +4760,12 @@
             0.0,
             0.0,
             0.0
-          ]
+          ],
+          "ShadowParams": {
+            "Dynamic": false,
+            "Type": "PCF",
+            "NearClipPlane": 0.01
+          }
         },
         "Position": [
           10.07526683807373,
@@ -4695,7 +4812,12 @@
             0.0,
             0.0,
             0.0
-          ]
+          ],
+          "ShadowParams": {
+            "Dynamic": false,
+            "Type": "PCF",
+            "NearClipPlane": 0.01
+          }
         },
         "Position": [
           2.0937211513519287,
@@ -4742,7 +4864,12 @@
             0.0,
             0.0,
             0.0
-          ]
+          ],
+          "ShadowParams": {
+            "Dynamic": false,
+            "Type": "PCF",
+            "NearClipPlane": 0.01
+          }
         },
         "Position": [
           -5.847650051116943,
@@ -4789,7 +4916,12 @@
             0.0,
             0.0,
             0.0
-          ]
+          ],
+          "ShadowParams": {
+            "Dynamic": false,
+            "Type": "PCF",
+            "NearClipPlane": 0.01
+          }
         },
         "Position": [
           -9.751104354858398,
@@ -4836,7 +4968,12 @@
             0.0,
             0.0,
             0.0
-          ]
+          ],
+          "ShadowParams": {
+            "Dynamic": false,
+            "Type": "PCF",
+            "NearClipPlane": 0.01
+          }
         },
         "Position": [
           -5.8483757972717285,
@@ -4884,7 +5021,7 @@
                 0.9999998211860657,
                 1.0
               ],
-              "Radiance": 5.0,
+              "Radiance": 4.5,
               "Direction": [
                 0.0,
                 0.0,

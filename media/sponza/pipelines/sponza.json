@@ -8,7 +8,7 @@
     "SkyBox": 
     {
         "Texture": "samples:textures/json/skybox.json",
-        "EmissionStrength": 2.0
+        "EmissionStrength": 3.8
     },
     "ShadowMaps":
     {
@@ -43,7 +43,7 @@
         {
             "ExposureMax": 12.0,
             "ExposureMin": 1.0,
-            "ExposureBase": 0.18
+            "ExposureBase": 0.34
         }
     }
 }

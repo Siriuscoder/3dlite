@@ -16,7 +16,7 @@
                     ],
                     "Attenuation": {
                         "Constant": 1.0,
-                        "InfluenceMinRadiance": 0.1
+                        "InfluenceMinRadiance": 0.01
                     },
                     "ShadowParams": {
                         "Dynamic": true,
