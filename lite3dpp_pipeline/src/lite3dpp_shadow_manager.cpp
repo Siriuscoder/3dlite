@@ -566,7 +566,6 @@ namespace lite3dpp_pipeline {
 
     void ShadowManager::createShadowRenderTarget()
     {
-        auto shadowMapName = mPipeline.getName() + "_ShadowMap.texture";
         ConfigurationWriter shadowTextureConfig;
         shadowTextureConfig.set(L"TextureType", "2D_SHADOW_ARRAY")
             .set(L"Filtering", "Linear")
@@ -577,8 +576,21 @@ namespace lite3dpp_pipeline {
             .set(L"Width", mExtent)
             .set(L"Depth", getShadowsCacheMaxCount());
 
-        mShadowMap = mMain.getResourceManager().queryResourceFromJson<TextureImage>(shadowMapName, 
+        ConfigurationWriter momentsTextureConfig;
+        momentsTextureConfig.set(L"TextureType", "2D_ARRAY")
+            .set(L"Filtering", "Linear")
+            .set(L"Wrapping", "ClampToEdge")
+            .set(L"Compression", false)
+            .set(L"TextureFormat", "RG")
+            .set(L"InternalFormat", "RG32F")
+            .set(L"Height", mExtent)
+            .set(L"Width", mExtent)
+            .set(L"Depth", getShadowsCacheMaxCount());
+
+        mShadowMap = mMain.getResourceManager().queryResourceFromJson<TextureImage>(mPipeline.getName() + "_ShadowMap.texture", 
             shadowTextureConfig.write(), &mPipeline);
+        mMomentsMap = mMain.getResourceManager().queryResourceFromJson<TextureImage>(mPipeline.getName() + "_MomentsMap.texture", 
+            momentsTextureConfig.write(), &mPipeline);
 
         ConfigurationWriter shadowRenderTargetConfig;
         shadowRenderTargetConfig.set(L"Width", mExtent)
@@ -589,8 +601,11 @@ namespace lite3dpp_pipeline {
             .set(L"CleanDepthBuf", false)
             .set(L"CleanStencilBuf", false)
             .set(L"LayeredFramebuffer", true)
+            .set(L"ColorAttachments", ConfigurationWriter()
+                .set(L"Attachments", stl<ConfigurationWriter>::vector {
+                    ConfigurationWriter().set(L"TextureName", mMomentsMap->getName())}))
             .set(L"DepthAttachments", ConfigurationWriter()
-                .set(L"TextureName", shadowMapName));
+                .set(L"TextureName", mShadowMap->getName()));
 
         mShadowPass = mMain.getResourceManager().queryResourceFromJson<TextureRenderTarget>(mPipeline.getName() + "_ShadowPass",
             shadowRenderTargetConfig.write(), &mPipeline);

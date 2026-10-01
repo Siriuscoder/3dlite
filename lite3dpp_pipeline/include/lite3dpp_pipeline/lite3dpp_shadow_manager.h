@@ -125,6 +125,7 @@ private:
     uint32_t mExtent = 0;
     RenderTarget* mShadowPass = nullptr;
     Texture* mShadowMap = nullptr;
+    Texture* mMomentsMap = nullptr;
     VBOResource* mShadowMatrixBuffer = nullptr;
     VBOResource* mShadowIndexBuffer = nullptr;
     IndexVector mHostShadowIndexes;
