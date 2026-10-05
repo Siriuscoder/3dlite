@@ -126,7 +126,7 @@ void main()
         return;
 
     float aspectRatio = float(bounds.x) / float(bounds.y);
-    vec2 uv = vec2(coord) / vec2(bounds);
+    vec2 uv = (vec2(coord) + 0.5) / vec2(bounds);
     
 #ifdef LITE3D_CHROMATIC_ABERRATION_ENABLE
     vec3 hdr = chromaticAberration(uv);

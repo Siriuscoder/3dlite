@@ -13,7 +13,7 @@ in vec2 iuv;
 
 const float subPix           = 0.9;    // the amount of sub-pixel aliasing removal. This can effect sharpness.
 const float edgeThreshold    = 0.125;  // the minimum amount of local contrast required to apply algorithm.
-const float edgeThresholdMin = 0.0312; // trims the algorithm from processing darks
+const float edgeThresholdMin = 0.0625; // trims the algorithm from processing darks
 
 void main()
 {
