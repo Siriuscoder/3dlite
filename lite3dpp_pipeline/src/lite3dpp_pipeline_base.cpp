@@ -353,7 +353,7 @@ namespace lite3dpp_pipeline {
             .set(L"Priority", static_cast<int>(RenderPassStagePriority::ShadowBuildStage))
             .set(L"TexturePass", static_cast<int>(TexturePassTypes::ShadowPass))
             .set(L"DepthTest", true)
-            .set(L"ColorOutput", false)
+            .set(L"ColorOutput", true)
             .set(L"DepthOutput", true)
             .set(L"RenderBlend", false)
             .set(L"RenderOpaque", true)

@@ -102,8 +102,6 @@ protected:
 
     bool beginUpdate(RenderTarget *rt) override;
     void postUpdate(RenderTarget *rt) override;
-    bool beginSceneRender(Scene *scene, Camera *camera, const lite3d_scene_render_params *params) override;
-    void endSceneRender(Scene *scene, Camera *camera, const lite3d_scene_render_params *params) override;
 
     // Проверим виден ли обьект сцены хотябы одной теневой камерой, если нет то рисовать его смысла нет.
     bool customFrustumCheck(Scene *scene, SceneNodeBase *node, lite3d_mesh_chunk *meshChunk, Material *material, 
@@ -112,6 +110,7 @@ protected:
     void createShadowRenderTarget();
     void createAuxiliaryBuffers();
     void setupLimits();
+    void prepareAffectedShadowMaps();
 
 private:
 
@@ -124,15 +123,14 @@ private:
     float mCascadeSplitLambda = 0.5;
     uint32_t mExtent = 0;
     RenderTarget* mShadowPass = nullptr;
-    Texture* mShadowMap = nullptr;
-    Texture* mMomentsMap = nullptr;
+    TextureImage* mShadowMap = nullptr;
+    TextureImage* mMomentsMap = nullptr;
     VBOResource* mShadowMatrixBuffer = nullptr;
     VBOResource* mShadowIndexBuffer = nullptr;
     IndexVector mHostShadowIndexes;
     ShadowCasters mShadowCasters;
     stl<ShadowCaster*>::vector mShadowCastersCachePlaceHolders;
     VisibilityHints mVisibilityHintNodes;
-    Scene *mCleanStage = nullptr;
     bool mCascadeShadowCasterAlreadyRegistered = false;
 };
 

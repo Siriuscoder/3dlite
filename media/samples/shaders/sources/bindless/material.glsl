@@ -250,7 +250,7 @@ Surface restoreSurface(vec2 uv)
 
 void surfaceAlphaClip(in Material material)
 {
-    if (isZero(material.alpha))
+    if (material.alpha < 0.1)
         discard;
 }
 

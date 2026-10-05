@@ -31,7 +31,7 @@
             "Dynamic": true,
             "Type": "PCFAdaptive",
             "NearClipPlane": 0.01,
-            "FarClipPlane": 80.0
+            "FarClipPlane": 100.0
           }
         },
         "Position": [

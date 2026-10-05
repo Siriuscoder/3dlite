@@ -431,36 +431,29 @@ namespace lite3dpp_pipeline {
             return false;
         }
 
-        mShadowIndexBuffer->setData(&mHostShadowIndexes[0], 0, mHostShadowIndexes.size() * sizeof(IndexVector::value_type)); 
+        mShadowIndexBuffer->setData(&mHostShadowIndexes[0], 0, mHostShadowIndexes.size() * sizeof(IndexVector::value_type));
+        prepareAffectedShadowMaps();
         return true;
     }
 
-    bool ShadowManager::beginSceneRender(Scene *scene, Camera *camera, const lite3d_scene_render_params *params)
+    void ShadowManager::prepareAffectedShadowMaps()
     {
-        if (scene == mCleanStage)
+        SDL_assert(mShadowMap);
+        SDL_assert(mMomentsMap);
+
+        // Forget all visibility hints, prepare to rebuild them in shadow build pass, see customFrustumCheck
+        for (auto &hintNode : mVisibilityHintNodes)
         {
-            // Так как мы используем texture_array для хранения теневых карт мы в режиме layered render мы не можем подчистить
-            // отдельную карту теней, а перерисовываем мы не все. Для очистки только нужных теневых карт используем предварительный 
-            // проход с BigTriangle (сцена shadow_clean) устанавливающий во все фрагменты теневого буфера значение 1.0, но дело в том что его надо 
-            // выполянть без проверки глубины, а при выключении ZTEST запись в буфер глубины невозможна, поэтому включаем 
-            // ZTEST и устанавливаем TestFuncAlways для гарантированной перезаписи буфера грубины. Но перед рендером основной сцены надо будет 
-            // переключить обратно 
-            RenderTarget::depthTestFunc(RenderTarget::TestFuncAlways);
+            hintNode.second->resetVision();
         }
 
-        return true; 
-    }
-
-    void ShadowManager::endSceneRender(Scene *scene, Camera *camera, const lite3d_scene_render_params *params)
-    {
-        // После очистки теневых карт готовимся к перерисовке теней.
-        if (scene == mCleanStage)
+        static const float cleanDepth = 1.0;
+        static const float cleanMoments[] = { 1.0, 1.0 };
+        // Clear affected shadow maps
+        for (size_t i = 1; i < mHostShadowIndexes.size(); ++i)
         {
-            RenderTarget::depthTestFunc(RenderTarget::TestFuncLEqual);
-            for (auto &hintNode : mVisibilityHintNodes)
-            {
-                hintNode.second->resetVision();
-            }
+            mShadowMap->clearPixels(&cleanDepth, 0, mHostShadowIndexes[i]);
+            mMomentsMap->clearPixels(cleanMoments, 0, mHostShadowIndexes[i]);
         }
     }
 
@@ -624,43 +617,5 @@ namespace lite3dpp_pipeline {
         setupLimits();
         createAuxiliaryBuffers();
         createShadowRenderTarget();
-
-        // Создание специальной сцены для предварительной частичной очистки теневых карт которые надо перерисовать в текущем кадре.
-        BigTriSceneGenerator stageGenerator;
-        stageGenerator.addRenderTarget(mShadowPass->getName(), ConfigurationWriter()
-            .set(L"Priority", static_cast<int>(RenderPassStagePriority::ShadowCleanStage))
-            .set(L"TexturePass", static_cast<int>(TexturePassTypes::ShadowPass))
-            .set(L"DepthTest", true)
-            .set(L"ColorOutput", false)
-            .set(L"DepthOutput", true)
-            .set(L"RenderBlend", false)
-            .set(L"RenderOpaque", true));
-            
-        mCleanStage = mMain.getResourceManager().queryResourceFromJson<Scene>(mPipeline.getName() + "_ShadowCleanStage",
-            stageGenerator.generate().write(), &mPipeline);
-
-        ConfigurationWriter cleanStageMaterialConfig;
-        cleanStageMaterialConfig.set(L"Passes", stl<ConfigurationWriter>::vector {
-            ConfigurationWriter().set(L"Pass", static_cast<int>(TexturePassTypes::ShadowPass))
-                .set(L"Program", ConfigurationWriter()
-                    .set(L"Name", "ShadowMapClean.program")
-                    .set(L"Path", mPipeline.getConfig().getString(L"ShaderPackage") + ":shaders/json/shadow_map_clean.json"))
-                .set(L"Uniforms", stl<ConfigurationWriter>::vector {
-                    ConfigurationWriter()
-                        .set(L"Name", "screenMatrix"),
-                    ConfigurationWriter()
-                        .set(L"Name", "ShadowIndex")
-                        .set(L"UBOName", mShadowIndexBuffer->getName())
-                        .set(L"Type", "UBO")
-                })
-        });
-        
-        // Создаем служебный шейдер отвечающий за очистку теневых карт
-        auto cleanStageMaterial = mMain.getResourceManager().queryResourceFromJson<Material>(
-            mPipeline.getName() + "_ShadowCleanStage.material", cleanStageMaterialConfig.write(), &mPipeline);
-
-        // Добавляем шейдер очистки на сцену 
-        mCleanStage->addObject("ShadowCleanBigTri", BigTriObjectGenerator(cleanStageMaterial->getName()).generate());
-        mCleanStage->addObserver(this);
     }
 }}
