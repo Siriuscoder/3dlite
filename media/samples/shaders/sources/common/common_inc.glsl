@@ -126,3 +126,8 @@ void angularInfoCalcAngles(inout AngularInfo angular, in Surface surface);
 void surfaceAlphaClip(in Material material);
 void surfaceAlphaClip(vec2 uv);
 
+//////////// Packing functions
+float packF8AndInt16(float a, uint b);
+void unpackF8AndInt16(float pval, out float a, out uint b);
+float pack2xF8(float a1, float b1);
+void unpack2xF8(float pval, out float a, out float b);

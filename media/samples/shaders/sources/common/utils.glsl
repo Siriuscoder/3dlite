@@ -544,3 +544,35 @@ int cubeFaceFromDir(vec3 dir)
 
     return face;
 }
+
+float packF8AndInt16(float a, uint b)
+{
+    uint a8 = uint(round(clamp(a, 0.0, 1.0) * 255.0));
+    uint pval = (b << 8) | a8;
+    return float(pval);
+}
+
+void unpackF8AndInt16(float pval, out float a, out uint b)
+{
+    uint shifted = uint(pval + 0.5);
+    b = shifted >> 8;
+    a = float(shifted & 0xFFu) / 255.0;
+}
+
+float pack2xF8(float a, float b)
+{
+    uint a8 = uint(round(clamp(a, 0.0, 1.0) * 255.0));
+    uint b8 = uint(round(clamp(b, 0.0, 1.0) * 255.0));
+    uint pval = a8 | (b8 << 8);
+    return float(pval);
+}
+
+void unpack2xF8(float pval, out float a, out float b)
+{
+    uint shifted = uint(pval + 0.5);
+    uint a8 = shifted & 0xFFu;
+    uint b8 = (shifted >> 8) & 0xFFu;
+
+    a = float(a8) / 255.0;
+    b = float(b8) / 255.0;
+}

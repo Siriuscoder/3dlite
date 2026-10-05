@@ -164,7 +164,7 @@ struct ChunkInvocationInfo
 {
     mat4 modelMatrix;
     mat4 normalMatrix;
-    uint materialIdx;
+    uint materialIndex;
     uint flags;
     int skeletonTransformIndex;
     uint reserved02;
@@ -206,7 +206,7 @@ struct Material
 struct Surface
 {
     Material material;
-    uint index;
+    uint materialIndex;
     vec3 wv;
     vec2 uv;
     vec3 normal;

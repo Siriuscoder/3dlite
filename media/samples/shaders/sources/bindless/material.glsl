@@ -71,9 +71,9 @@ ChunkInvocationInfo getInvocationInfo()
 Surface makeSurface(vec2 uv, vec3 wv, vec3 wn, vec3 wt, vec3 wb)
 {
     Surface surface;
-    uint materialIdx = getInvocationInfo().materialIdx;
-    surface.material = materials[materialIdx];
-    surface.index = materialIdx;
+    uint materialIndex = getInvocationInfo().materialIndex;
+    surface.material = materials[materialIndex];
+    surface.materialIndex = materialIndex;
     surface.uv = uv;
     surface.wv = wv;
     surface.normal = normalize(wn);
@@ -181,8 +181,8 @@ Surface makeSurface(vec2 uv, vec3 wv, vec3 wn, vec3 wt, vec3 wb)
 void surfaceAlphaClip(vec2 uv)
 {
     Surface surface;
-    uint materialIdx = getInvocationInfo().materialIdx;
-    surface.material = materials[materialIdx];
+    uint materialIndex = getInvocationInfo().materialIndex;
+    surface.material = materials[materialIndex];
 
     for (int i = 0; i < 8; ++i)
     {
@@ -231,8 +231,10 @@ Surface restoreSurface(vec2 uv)
     vec3 emission = vec3(nw.a, albedo.a, specular.a);
 
     Surface surface;
-    surface.index = uint(round(wv.w)); // Material index was stored in wv.w
-    surface.material = materials[surface.index];
+    // unpack material index and AO from wv.w
+    unpackF8AndInt16(wv.w, surface.ao, surface.materialIndex);
+
+    surface.material = materials[surface.materialIndex];
     surface.material.albedo = vec4(albedo.rgb, 1.0);
     surface.material.emission = vec4(emission, 1.0);
     surface.material.specular = specular.x;
@@ -241,7 +243,7 @@ Surface restoreSurface(vec2 uv)
     surface.wv = wv.xyz;
     surface.uv = uv;
     surface.normal = nw.xyz;
-    surface.ao = getAmbientOcclusion(uv);
+    surface.ao = min(surface.ao, getAmbientOcclusion(uv));
 
     return surface;
 }
