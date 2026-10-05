@@ -49,6 +49,7 @@ int lite3d_check_texture_swizzle(void);
 int lite3d_check_texture_storage(void);
 int lite3d_check_texture_storage_multisample(void);
 int lite3d_check_get_texture_sub_image(void);
+int lite3d_check_clear_texture(void);
 int lite3d_check_texture_cube_map_array(void);
 int lite3d_check_debug_context(void);
 int lite3d_check_bindless_texture(void);
@@ -74,6 +75,7 @@ void glTexImage3DMultisample_stub(GLenum target, GLsizei samples, GLenum interna
 void glBlitFramebuffer_stub(GLint srcX0, GLint srcY0, GLint srcX1, GLint srcY1, GLint dstX0, GLint dstY0, GLint dstX1, GLint dstY1, GLbitfield mask, GLenum filter);
 void glCopyBufferSubData_stub(GLenum readTarget, GLenum writeTarget, GLintptr readOffset, GLintptr writeOffset, GLsizeiptr size);
 void glCopyImageSubData_stub(GLuint srcName, GLenum srcTarget, GLint srcLevel, GLint srcX, GLint srcY, GLint srcZ, GLuint dstName, GLenum dstTarget, GLint dstLevel, GLint dstX, GLint dstY, GLint dstZ, GLsizei srcWidth, GLsizei srcHeight, GLsizei srcDepth);
+void glClearTexSubImage_stub(GLuint texture, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLenum format, GLenum type, const void *data);
 void glGenQueries_stub(GLsizei n, GLuint *ids);
 void glDeleteQueries_stub(GLsizei n, const GLuint *ids);
 GLboolean glIsQuery_stub(GLuint id);
@@ -362,6 +364,8 @@ extern PFNGLMULTIDRAWARRAYSINDIRECTEXTPROC glMultiDrawArraysIndirectPtr;
 extern PFNGLMULTIDRAWELEMENTSINDIRECTEXTPROC glMultiDrawElementsIndirectPtr;
 /* GL_EXT_copy_image */
 extern PFNGLCOPYIMAGESUBDATAEXTPROC glCopyImageSubDataPtr;
+/* GL_EXT_clear_texture */
+extern PFNGLCLEARTEXSUBIMAGEEXTPROC glClearTexSubImagePtr;
 
 #   ifdef WITH_GLES2
 #       define glDrawArraysInstanced glDrawArraysInstancedPtr
@@ -519,6 +523,7 @@ extern PFNGLCOPYIMAGESUBDATAEXTPROC glCopyImageSubDataPtr;
 #   define glFramebufferTexture glFramebufferTexturePtr
 #   define glMultiDrawArraysIndirect glMultiDrawArraysIndirectPtr
 #   define glMultiDrawElementsIndirect glMultiDrawElementsIndirectPtr
+#   define glClearTexSubImage glClearTexSubImagePtr
 
 #   define glTexBuffer glTexBuffer_stub /* TODO GL_OES_texture_buffer */
 /* Not supported at all in GLES */

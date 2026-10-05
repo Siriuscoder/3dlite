@@ -60,6 +60,8 @@ PFNGLMULTIDRAWARRAYSINDIRECTEXTPROC glMultiDrawArraysIndirectPtr = NULL;
 PFNGLMULTIDRAWELEMENTSINDIRECTEXTPROC glMultiDrawElementsIndirectPtr = NULL;
 /* GL_EXT_copy_image */
 PFNGLCOPYIMAGESUBDATAEXTPROC glCopyImageSubDataPtr = NULL;
+/* GL_EXT_clear_texture */
+PFNGLCLEARTEXSUBIMAGEEXTPROC glClearTexSubImagePtr = NULL;
 
 #endif
 
@@ -113,6 +115,15 @@ int lite3d_check_copy_image(void)
 #   endif
 #else
     return GLEW_VERSION_4_3 || GLEW_ARB_copy_image;
+#endif
+}
+
+int lite3d_check_clear_texture(void)
+{
+#ifdef GLES
+    return SDL_GL_ExtensionSupported("GL_EXT_clear_texture") == SDL_TRUE;
+#else
+    return GLEW_VERSION_4_4 || GLEW_ARB_clear_texture || GLEW_EXT_clear_texture;
 #endif
 }
 
@@ -505,6 +516,23 @@ int lite3d_init_gl_extensions_binding(void)
     {
         glCopyImageSubDataPtr = glCopyImageSubData_stub;
     }
+
+    if (lite3d_check_clear_texture())
+    {
+        glClearTexSubImagePtr = SDL_GL_GetProcAddress("glClearTexSubImage");
+        if (!glClearTexSubImagePtr)
+        {
+            glClearTexSubImagePtr = SDL_GL_GetProcAddress("glClearTexSubImageEXT");
+        }
+        if (!glClearTexSubImagePtr)
+        {
+            glClearTexSubImagePtr = glClearTexSubImage_stub;
+        }
+    }
+    else
+    {
+        glClearTexSubImagePtr = glClearTexSubImage_stub;
+    }
     
 #ifdef WITH_GLES2
     if (lite3d_check_instanced_arrays())
@@ -681,6 +709,13 @@ void glCopyImageSubData_stub(GLuint srcName, GLenum srcTarget, GLint srcLevel, G
 {
     SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
         "%s: glCopyImageSubData is not supported..", LITE3D_CURRENT_FUNCTION);
+    lite3d_misc_gl_set_not_supported();
+}
+
+void glClearTexSubImage_stub(GLuint texture, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLenum format, GLenum type, const void *data)
+{
+    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+        "%s: glClearTexSubImage is not supported..", LITE3D_CURRENT_FUNCTION);
     lite3d_misc_gl_set_not_supported();
 }
 

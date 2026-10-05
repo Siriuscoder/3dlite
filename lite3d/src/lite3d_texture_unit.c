@@ -1012,7 +1012,7 @@ int lite3d_texture_unit_from_resource(lite3d_texture_unit *textureUnit,
 int lite3d_texture_unit_set_pixels(lite3d_texture_unit *textureUnit, 
     int32_t widthOff, int32_t heightOff, int32_t depthOff,
     int32_t width, int32_t height, int32_t depth,
-    int8_t level, uint8_t layer, uint32_t pixelType, const void *pixels)
+    int8_t level, int32_t layer, uint32_t pixelType, const void *pixels)
 {
     SDL_assert(textureUnit);
     if (textureUnit->generatedMipmaps < level)
@@ -1051,8 +1051,96 @@ int lite3d_texture_unit_set_pixels(lite3d_texture_unit *textureUnit,
     return LITE3D_TRUE;
 }
 
+int lite3d_texture_unit_clear_pixels(lite3d_texture_unit *textureUnit,
+    int8_t level, int32_t layer, uint32_t pixelType, const void *pixels)
+{
+    int32_t width;
+    int32_t height;
+    int32_t clearDepth;
+    int32_t xoffset = 0;
+    int32_t yoffset = 0;
+    int32_t zoffset = 0;
+
+    SDL_assert(textureUnit);
+
+    if (!lite3d_check_clear_texture())
+    {
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+            "%s: GL clear texture is not supported",
+            LITE3D_CURRENT_FUNCTION);
+        return LITE3D_FALSE;
+    }
+
+    if (level < 0 || textureUnit->generatedMipmaps < level)
+    {
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+            "%s: Invalid mipmap level %d",
+            LITE3D_CURRENT_FUNCTION, level);
+        return LITE3D_FALSE;
+    }
+
+    if (!lite3d_check_texture_target(textureUnit->textureTarget))
+    {
+        return LITE3D_FALSE;
+    }
+
+    if (textureUnit->textureTarget == LITE3D_TEXTURE_BUFFER)
+    {
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+            "%s: Texture buffer clear is not supported by glClearTexSubImage",
+            LITE3D_CURRENT_FUNCTION);
+        return LITE3D_FALSE;
+    }
+
+    if (textureUnit->textureID == 0)
+    {
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+            "%s: Texture is not allocated",
+            LITE3D_CURRENT_FUNCTION);
+        return LITE3D_FALSE;
+    }
+
+    width = lite3d_texture_unit_level_width(textureUnit, level);
+    height = lite3d_texture_unit_level_height(textureUnit, level);
+    clearDepth = lite3d_texture_unit_level_depth(textureUnit, level);
+
+    switch (textureUnit->textureTarget)
+    {
+        case LITE3D_TEXTURE_1D:
+            height = 1;
+            clearDepth = 1;
+            break;
+        case LITE3D_TEXTURE_2D:
+        case LITE3D_TEXTURE_2D_SHADOW:
+            clearDepth = 1;
+            break;
+        case LITE3D_TEXTURE_CUBE:
+        case LITE3D_TEXTURE_2D_ARRAY:
+        case LITE3D_TEXTURE_2D_SHADOW_ARRAY:
+        case LITE3D_TEXTURE_CUBE_ARRAY:
+            zoffset = layer;
+            clearDepth = 1;
+            break;
+        case LITE3D_TEXTURE_3D:
+            break;
+        case LITE3D_TEXTURE_2D_MULTISAMPLE:
+        case LITE3D_TEXTURE_3D_MULTISAMPLE:
+            SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+                "%s: Multisample texture clear is not supported",
+                LITE3D_CURRENT_FUNCTION);
+            return LITE3D_FALSE;
+    }
+
+    lite3d_misc_gl_error_stack_clean();
+
+    glClearTexSubImage(textureUnit->textureID, level, xoffset, yoffset, zoffset,
+        width, height, clearDepth, textureUnit->dataFormat, pixelType, pixels);
+
+    return LITE3D_CHECK_GL_ERROR ? LITE3D_FALSE : LITE3D_TRUE;
+}
+
 int lite3d_texture_unit_set_compressed_pixels(lite3d_texture_unit *textureUnit, 
-    int8_t level, uint8_t layer, size_t pixelsSize, const void *pixels)
+    int8_t level, int32_t layer, size_t pixelsSize, const void *pixels)
 {
     int32_t width, height, depth;
 
