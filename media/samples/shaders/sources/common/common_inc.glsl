@@ -27,6 +27,7 @@ bool isZero(float a1);
 bool isZero(vec3 a1);
 bool isValidUV(vec2 uv);
 float lerp(float a, float b, float f);
+float linstep(float a, float b, float v);
 float shlickPow(float a, float b); // Shlick power fast approx a^b = a / (b – a*b + a) for 0 <= a <= 1 
 bool hasFlag(uint a, uint flag);
 //////////// Noise and random utilities
@@ -40,6 +41,9 @@ bool hasFlag(uint a, uint flag);
 float goldNoise(vec2 xy);
 float noiseInterleavedGradient(vec2 xy);
 vec2 Halton2D(int index);
+vec2 PoissonDisk(int i);
+// Gaussian sequence
+float Gaussian(float x, float sigma);
 
 //////////// Transformations
 ////////////////////////////////////////////////////////////////////////////

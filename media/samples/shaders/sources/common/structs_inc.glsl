@@ -87,24 +87,40 @@ struct LightSource
 
 #define LITE3D_SSS_STEP_LENGTH                              (LITE3D_SSS_MAX_RAY_DISTANCE / float(LITE3D_SSS_MAX_STEPS))
 
-#ifndef LITE3D_SHADOW_MAX_ADAPTIVE_BIAS
-#define LITE3D_SHADOW_MAX_ADAPTIVE_BIAS                     0.0028
+#ifndef LITE3D_SHADOW_MAX_BIAS
+#define LITE3D_SHADOW_MAX_BIAS                              0.0028
 #endif
 
-#ifndef LITE3D_SHADOW_MIN_ADAPTIVE_BIAS
-#define LITE3D_SHADOW_MIN_ADAPTIVE_BIAS                     0.0008
+#ifndef LITE3D_SHADOW_MIN_BIAS
+#define LITE3D_SHADOW_MIN_BIAS                              0.0008
 #endif
 
-#ifndef LITE3D_SHADOW_MIN_ADAPTIVE_FILTER_SIZE 
-#define LITE3D_SHADOW_MIN_ADAPTIVE_FILTER_SIZE              1.0
+#ifndef LITE3D_SHADOW_PCF_MIN_FILTER_SIZE 
+#define LITE3D_SHADOW_PCF_MIN_FILTER_SIZE                   1.0
 #endif
 
-#ifndef LITE3D_SHADOW_MAX_ADAPTIVE_FILTER_SIZE
-#define LITE3D_SHADOW_MAX_ADAPTIVE_FILTER_SIZE              1.5
+#ifndef LITE3D_SHADOW_PCF_MAX_FILTER_SIZE
+#define LITE3D_SHADOW_PCF_MAX_FILTER_SIZE                   1.5
 #endif
 
-#ifndef LITE3D_SHADOW_MIN_ADAPTIVE_STEP
-#define LITE3D_SHADOW_MIN_ADAPTIVE_STEP                     0.5
+#ifndef LITE3D_SHADOW_PCF_MIN_STEP
+#define LITE3D_SHADOW_PCF_MIN_STEP                          0.5
+#endif
+
+#ifndef LITE3D_SHADOW_VSM_MIN_VARIANCE
+#define LITE3D_SHADOW_VSM_MIN_VARIANCE                      0.000001
+#endif
+
+#ifndef LITE3D_SHADOW_VSM_LIGHT_BLEEDING_REDUCTION
+#define LITE3D_SHADOW_VSM_LIGHT_BLEEDING_REDUCTION          0.2
+#endif
+
+#ifndef LITE3D_VSM_BLUR_MAX_RADIUS
+#define LITE3D_VSM_BLUR_MAX_RADIUS                          24
+#endif
+
+#ifndef LITE3D_SHADOW_CSM_CASCADE_COUNT
+#define LITE3D_SHADOW_CSM_CASCADE_COUNT                     1
 #endif
 
 #ifndef LITE3D_REFRACTION_BLUR_SCALE                        

@@ -18,6 +18,7 @@
 #pragma once 
 
 #include <lite3dpp/lite3dpp_main.h>
+#include <lite3dpp/lite3dpp_compute_shader.h>
 #include <lite3dpp_pipeline/lite3dpp_pipeline_common.h>
 #include <lite3dpp_pipeline/lite3dpp_shadow_caster.h>
 
@@ -82,6 +83,11 @@ public:
         return mShadowMap;
     }
 
+    inline Texture* getMomentsMapTexture()
+    {
+        return mMomentsMap;
+    }
+
     inline VBOResource* getShadowMatrixBuffer()
     {
         return mShadowMatrixBuffer;
@@ -109,8 +115,10 @@ protected:
 
     void createShadowRenderTarget();
     void createAuxiliaryBuffers();
+    void createShadowBlurPass();
     void setupLimits();
     void prepareAffectedShadowMaps();
+    void blurMoments();
 
 private:
 
@@ -125,8 +133,10 @@ private:
     RenderTarget* mShadowPass = nullptr;
     TextureImage* mShadowMap = nullptr;
     TextureImage* mMomentsMap = nullptr;
+    TextureImage* mMomentsBackMap = nullptr;
     VBOResource* mShadowMatrixBuffer = nullptr;
     VBOResource* mShadowIndexBuffer = nullptr;
+    ComputeShader *mShadowBlurPass = nullptr;
     IndexVector mHostShadowIndexes;
     ShadowCasters mShadowCasters;
     stl<ShadowCaster*>::vector mShadowCastersCachePlaceHolders;

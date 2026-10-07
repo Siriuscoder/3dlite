@@ -58,9 +58,6 @@ namespace lite3dpp_pipeline {
         updateExposure(postProcessConfig.getDouble(L"Exposure", 1.0f));
         updateBrightness(postProcessConfig.getDouble(L"Brightness", 0.0f));
 
-        // Be sure to use GLSL 4.30
-        ShaderProgram::setShaderVersion("430");
-
         if (postProcessConfig.getBool(L"LensFlare", false))
         {
             ShaderProgram::addGlobalDefinition("LITE3D_LENSFLARE_ENABLE", "1");

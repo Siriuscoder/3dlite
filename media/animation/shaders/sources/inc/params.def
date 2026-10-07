@@ -4,11 +4,13 @@
 #define LITE3D_ENV_PROBE_SPECULAR_POWER                     10.0
 
 #define LITE3D_SHADOW_CSM_ENABLE
-#define LITE3D_SHADOW_MIN_ADAPTIVE_BIAS                     0.0005
-#define LITE3D_SHADOW_MAX_ADAPTIVE_BIAS                     0.05
-#define LITE3D_SHADOW_MIN_ADAPTIVE_FILTER_SIZE              2.0
-#define LITE3D_SHADOW_MAX_ADAPTIVE_FILTER_SIZE              5.0
-#define LITE3D_SHADOW_MIN_ADAPTIVE_STEP                     0.5
+#define LITE3D_SHADOW_VSM_ENABLE
+
+#define LITE3D_SHADOW_MIN_BIAS                              0.0005
+#define LITE3D_SHADOW_MAX_BIAS                              0.05
+#define LITE3D_SHADOW_PCF_MIN_FILTER_SIZE                   2.0
+#define LITE3D_SHADOW_PCF_MAX_FILTER_SIZE                   5.0
+#define LITE3D_SHADOW_PCF_MIN_STEP                          0.5
 
 #define LITE3D_SSAO_POWER                                   2.0
 #define LITE3D_SSAO_ADAPTIVE_BIAS_MAX                       0.05

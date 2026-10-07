@@ -125,10 +125,11 @@ namespace lite3dpp_pipeline {
         ConfigurationWriter sceneGeneratedConfig(static_cast<const char *>(sceneJsonData->fileBuff), sceneJsonData->fileSize);
         ConfigurationReader sceneConfig(static_cast<const char *>(sceneJsonData->fileBuff), sceneJsonData->fileSize);
 
+        // SSBO supported by version GLSL 430 or higher
+        ShaderProgram::setShaderVersion("430");
+
         if (pipelineConfig.getBool(L"MultiRender", false))
         {
-            // SSBO is needed for the MultiRender supported by version GLSL 430 or higher
-            ShaderProgram::setShaderVersion("430");
             ShaderProgram::addGlobalDefinition("LITE3D_BINDLESS_TEXTURE_PIPELINE", "1");
             sceneGeneratedConfig.set(L"MultiRender", true);
         }

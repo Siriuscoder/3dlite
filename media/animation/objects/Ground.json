@@ -29,7 +29,7 @@
           ],
           "ShadowParams": {
             "Dynamic": true,
-            "Type": "PCFAdaptive",
+            "Type": "VSM",
             "NearClipPlane": 0.01,
             "FarClipPlane": 100.0
           }

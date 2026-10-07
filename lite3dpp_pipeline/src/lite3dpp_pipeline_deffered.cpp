@@ -146,6 +146,10 @@ namespace lite3dpp_pipeline {
                 .set(L"TextureName", mShadowManager->getShadowMapTexture()->getName())
                 .set(L"Type", "sampler"));
             lightComputeMaterialUniforms.emplace_back(ConfigurationWriter()
+                .set(L"Name", "MomentsMaps")
+                .set(L"TextureName", mShadowManager->getMomentsMapTexture()->getName())
+                .set(L"Type", "sampler"));
+            lightComputeMaterialUniforms.emplace_back(ConfigurationWriter()
                 .set(L"Name", "ShadowMatrix")
                 .set(L"UBOName", mShadowManager->getShadowMatrixBuffer()->getName())
                 .set(L"Type", "UBO"));

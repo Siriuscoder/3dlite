@@ -67,9 +67,6 @@ void IBLMultiProbePass::initialize()
 
 void IBLMultiProbePass::integrateGGX()
 {
-    // Be sure to use GLSL 4.30
-    ShaderProgram::setShaderVersion("430");
-
     const int32_t LUTSize = 512;
     ConfigurationWriter IntergratedGGXLUTConfig;
     IntergratedGGXLUTConfig.set(L"TextureType", "2D")

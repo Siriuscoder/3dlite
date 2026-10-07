@@ -15,6 +15,39 @@ const float bayerMatrix[BAYER_MATRIX_SIZE * BAYER_MATRIX_SIZE] = float[BAYER_MAT
     15.0,  7.0, 13.0,  5.0
 );
 
+const vec2 poissonDisk30[30] = vec2[](
+    vec2(-0.002892,  0.008787),
+    vec2(-0.032134, -0.998555),
+    vec2( 0.990465, -0.130147),
+    vec2(-0.887676, -0.455494),
+    vec2(-0.823399,  0.566836),
+    vec2( 0.523825,  0.845140),
+    vec2(-0.232278,  0.957536),
+    vec2( 0.632134, -0.766695),
+    vec2( 0.524210,  0.254282),
+    vec2(-0.587958,  0.035581),
+    vec2(-0.307026, -0.499810),
+    vec2( 0.432535, -0.280113),
+    vec2(-0.295008,  0.452983),
+    vec2( 0.137705,  0.604865),
+    vec2( 0.120631, -0.582725),
+    vec2( 0.948766,  0.312962),
+    vec2(-0.446443, -0.894033),
+    vec2(-0.980643,  0.168562),
+    vec2( 0.137622,  0.976252),
+    vec2( 0.872719, -0.484706),
+    vec2(-0.564071,  0.817303),
+    vec2(-0.296517, -0.152222),
+    vec2( 0.189478,  0.279175),
+    vec2( 0.307833, -0.891822),
+    vec2( 0.703419,  0.548422),
+    vec2(-0.594834, -0.291985),
+    vec2( 0.674540, -0.042851),
+    vec2(-0.022419, -0.309571),
+    vec2(-0.606168, -0.606690),
+    vec2( 0.331932,  0.012893) 
+);
+
 bool isNear(float a1, float a2)
 {
     return abs(a1 - a2) < FLT_EPSILON;
@@ -38,6 +71,11 @@ bool isZero(vec3 a1)
 float lerp(float a, float b, float f)
 {
     return a + f * (b - a);
+}
+
+float linstep(float a, float b, float v)
+{
+    return clamp((v - a) / (b - a), 0.0, 1.0);
 }
 
 float shlickPow(float a, float b)
@@ -73,6 +111,16 @@ vec2 Halton2D(int index)
         radicalInverse(index, 2.0),
         radicalInverse(index, 3.0)
     );
+}
+
+vec2 PoissonDisk(int i)
+{
+    return poissonDisk30[i % 30];
+}
+
+float Gaussian(float x, float sigma)
+{
+    return exp(-(x * x) / (2.0 * sigma * sigma));
 }
 
 // Gold Noise ©2015 dcerisano@standard3d.com

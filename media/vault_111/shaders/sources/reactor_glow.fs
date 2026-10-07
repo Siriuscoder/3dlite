@@ -1,10 +1,9 @@
 uniform vec4 Emission;
 uniform float EmissionStrength;
-uniform float Alpha;
 
 vec4 getAlbedo(vec2 uv)
 {
-    return vec4(Emission.rgb, Alpha);
+    return vec4(Emission.rgb, 1.0);
 }
 
 vec3 getEmission(vec2 uv)
