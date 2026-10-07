@@ -36,11 +36,13 @@ void main()
 
     for (int i = -radius; i <= radius; ++i)
     {
-        float fi = float(i);
-        float w = Gaussian(fi, sigma);
-        vec2 offset = (Mode == 0 ? vec2(1.0, 0.0) : vec2(0.0, 1.0)) * texelSize * fi;
+        float w = Gaussian(float(i), sigma);
 
-        result += textureLod(InputMoments, vec3(uv + offset, layer), 0.0).rg * w;
+        ivec2 offset = (Mode == 0 ? ivec2(1, 0) : ivec2(0, 1)) * i;
+        ivec2 samplePixel = clamp(pixel + offset, ivec2(0), bounds.xy - ivec2(1));
+
+        // use texelFetch to optimize performance, linear filtering sampling is too heavy
+        result += texelFetch(InputMoments, ivec3(samplePixel, layer), 0).rg * w;
         weightSum += w;
     }
 

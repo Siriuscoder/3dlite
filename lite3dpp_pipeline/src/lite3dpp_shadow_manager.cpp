@@ -637,7 +637,7 @@ namespace lite3dpp_pipeline {
             .set(L"Type", "int"));
         blurPassVariables.push_back(ConfigurationWriter()
             .set(L"Name", "Sigma")
-            .set(L"Value", 1.5f)
+            .set(L"Value", 3.5f)
             .set(L"Type", "float"));
         blurPassVariables.push_back(ConfigurationWriter()
             .set(L"Type", "imageStore")
