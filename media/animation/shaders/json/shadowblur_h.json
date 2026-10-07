@@ -1,7 +1,7 @@
 {
     "Sources": 
     [
-        "samples:shaders/sources/pipeline/shadow_pass/vsm_blur.comp",
+        "samples:shaders/sources/pipeline/shadow_pass/vsm_blur_h.comp",
         "samples:shaders/sources/common/utils.comp"
     ]
 }

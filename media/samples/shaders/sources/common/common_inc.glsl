@@ -1,4 +1,5 @@
 #include "samples:shaders/sources/common/structs_inc.glsl"
+#include "samples:shaders/sources/common/common_def.glsl"
 
 // The Fresnel-Schlick approximation expects a F0 parameter which is known as the surface 
 // reflection at zero incidence or how much the surface reflects if looking directly at the surface. 

@@ -581,12 +581,22 @@ namespace lite3dpp_pipeline {
             .set(L"Width", mExtent)
             .set(L"Depth", getShadowsCacheMaxCount());
 
+        ConfigurationWriter momentsBlurTextureConfig;
+        momentsBlurTextureConfig.set(L"TextureType", "2D")
+            .set(L"Filtering", "None")
+            .set(L"Wrapping", "ClampToEdge")
+            .set(L"Compression", false)
+            .set(L"TextureFormat", "RG")
+            .set(L"InternalFormat", "RG32F")
+            .set(L"Height", mExtent)
+            .set(L"Width", mExtent);
+
         mShadowMap = mMain.getResourceManager().queryResourceFromJson<TextureImage>(mPipeline.getName() + "_ShadowMap.texture", 
             shadowTextureConfig.write(), &mPipeline);
         mMomentsMap = mMain.getResourceManager().queryResourceFromJson<TextureImage>(mPipeline.getName() + "_MomentsMap.texture", 
             momentsTextureConfig.write(), &mPipeline);
-        mMomentsBackMap = mMain.getResourceManager().queryResourceFromJson<TextureImage>(mPipeline.getName() + "_MomentsBackMap.texture", 
-            momentsTextureConfig.write(), &mPipeline);
+        mMomentsBlurMap = mMain.getResourceManager().queryResourceFromJson<TextureImage>(mPipeline.getName() + "_MomentsBlurMap.texture", 
+            momentsBlurTextureConfig.write(), &mPipeline);
 
         ConfigurationWriter shadowRenderTargetConfig;
         shadowRenderTargetConfig.set(L"Width", mExtent)
@@ -632,48 +642,64 @@ namespace lite3dpp_pipeline {
             .set(L"TextureName", mMomentsMap->getName())
             .set(L"Type", "sampler"));
         blurPassVariables.push_back(ConfigurationWriter()
-            .set(L"Name", "Mode")
-            .set(L"Value", 0) // 0 horizontal , 1 vertical
+            .set(L"Name", "ShadowIndex")
+            .set(L"Value", 0)
             .set(L"Type", "int"));
         blurPassVariables.push_back(ConfigurationWriter()
             .set(L"Name", "Sigma")
-            .set(L"Value", 3.5f)
+            .set(L"Value", 0.5f)
             .set(L"Type", "float"));
         blurPassVariables.push_back(ConfigurationWriter()
             .set(L"Type", "imageStore")
             .set(L"Name", "OutputMoments")
             .set(L"Direction", "output")
-            .set(L"TextureName", mMomentsBackMap->getName()));
-        blurPassVariables.push_back(ConfigurationWriter()
-            .set(L"Type", "UBO")
-            .set(L"Name", "ShadowIndex")
-            .set(L"UBOName", mShadowIndexBuffer->getName()));
+            .set(L"TextureName", mMomentsBlurMap->getName()));
 
-        ConfigurationWriter shaderParams;
-        shaderParams.set(L"Program", ConfigurationWriter()
-                .set(L"Name", "shadowblur.program")
-                .set(L"Path", shaderPackage + ":shaders/json/shadowblur.json"))
+        ConfigurationWriter shaderVParams;
+        shaderVParams.set(L"Program", ConfigurationWriter()
+                .set(L"Name", "shadowblurv.program")
+                .set(L"Path", shaderPackage + ":shaders/json/shadowblur_v.json"))
             .set(L"Uniforms", blurPassVariables);
 
-        mShadowBlurPass = mMain.getResourceManager().queryResourceFromJson<ComputeShader>(
-            mPipeline.getName() + "_ShadowBlurPass.comp", shaderParams.write(), &mPipeline);
+        ConfigurationWriter shaderHParams;
+        shaderHParams.set(L"Program", ConfigurationWriter()
+                .set(L"Name", "shadowblurh.program")
+                .set(L"Path", shaderPackage + ":shaders/json/shadowblur_h.json"))
+            .set(L"Uniforms", blurPassVariables);
+
+        mShadowBlurVPass = mMain.getResourceManager().queryResourceFromJson<ComputeShader>(
+            mPipeline.getName() + "_ShadowBlurVPass.comp", shaderVParams.write(), &mPipeline);
+
+        mShadowBlurHPass = mMain.getResourceManager().queryResourceFromJson<ComputeShader>(
+            mPipeline.getName() + "_ShadowBlurHPass.comp", shaderHParams.write(), &mPipeline);
     }
 
     void ShadowManager::blurMoments()
     {
-        SDL_assert(mHostShadowIndexes.size() > 1);
-        
         const uint32_t groupsCount = (mExtent + 16 - 1) / 16;
-        // horizontal pass
-        mShadowBlurPass->getShaderParameters().setIntParameter("Mode", 0);
-        mShadowBlurPass->getShaderParameters().setSamplerParameter("InputMoments", *mMomentsMap);
-        mShadowBlurPass->getShaderParameters().setImageStoreParameter("OutputMoments", *mMomentsBackMap);
-        mShadowBlurPass->dispatch(groupsCount, groupsCount, mHostShadowIndexes.size()-1);
 
-        // vertical pass
-        mShadowBlurPass->getShaderParameters().setIntParameter("Mode", 1);
-        mShadowBlurPass->getShaderParameters().setSamplerParameter("InputMoments", *mMomentsBackMap);
-        mShadowBlurPass->getShaderParameters().setImageStoreParameter("OutputMoments", *mMomentsMap);
-        mShadowBlurPass->dispatch(groupsCount, groupsCount, mHostShadowIndexes.size()-1);
+        for (size_t i = 1; i < mHostShadowIndexes.size(); ++i)
+        {
+            const auto index = mHostShadowIndexes[i];
+            auto shadowCaster = mShadowCastersCachePlaceHolders[index];
+            if (shadowCaster && shadowCaster->getNode()->getLight()->hasFlag(LightSourceFlags::ShadowVSM))
+            {
+                // horizontal pass
+                mShadowBlurHPass->getShaderParameters().setIntParameter("ShadowIndex", index);
+                mShadowBlurHPass->getShaderParameters().setFloatParameter("Sigma", 
+                    shadowCaster->getNode()->getLight()->getShadowVSMBlurSigma());
+                mShadowBlurHPass->getShaderParameters().setSamplerParameter("InputMoments", *mMomentsMap);
+                mShadowBlurHPass->getShaderParameters().setImageStoreParameter("OutputMoments", *mMomentsBlurMap);
+                mShadowBlurHPass->dispatch(groupsCount, groupsCount, 1);
+
+                // vertical pass
+                mShadowBlurVPass->getShaderParameters().setIntParameter("ShadowIndex", index);
+                mShadowBlurVPass->getShaderParameters().setFloatParameter("Sigma", 
+                    shadowCaster->getNode()->getLight()->getShadowVSMBlurSigma());
+                mShadowBlurVPass->getShaderParameters().setSamplerParameter("InputMoments", *mMomentsBlurMap);
+                mShadowBlurVPass->getShaderParameters().setImageStoreParameter("OutputMoments", *mMomentsMap);
+                mShadowBlurVPass->dispatch(groupsCount, groupsCount, 1);
+            }
+        }
     }
 }}

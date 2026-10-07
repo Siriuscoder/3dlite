@@ -133,10 +133,11 @@ private:
     RenderTarget* mShadowPass = nullptr;
     TextureImage* mShadowMap = nullptr;
     TextureImage* mMomentsMap = nullptr;
-    TextureImage* mMomentsBackMap = nullptr;
+    TextureImage* mMomentsBlurMap = nullptr;
     VBOResource* mShadowMatrixBuffer = nullptr;
     VBOResource* mShadowIndexBuffer = nullptr;
-    ComputeShader *mShadowBlurPass = nullptr;
+    ComputeShader *mShadowBlurVPass = nullptr;
+    ComputeShader *mShadowBlurHPass = nullptr;
     IndexVector mHostShadowIndexes;
     ShadowCasters mShadowCasters;
     stl<ShadowCaster*>::vector mShadowCastersCachePlaceHolders;

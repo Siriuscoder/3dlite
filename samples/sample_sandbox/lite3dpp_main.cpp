@@ -100,7 +100,7 @@ public:
     void addSpotLight()
     {
         auto spotLightObject = mMainScene->addObject("SpotLight_" + std::to_string(++mObjectCounter), 
-            "samples:objects/spotlight.json", nullptr, getMainCamera().getWorldPosition(),
+            "samples:objects/spotlight_vsm.json", nullptr, getMainCamera().getWorldPosition(),
             getMainCamera().getWorldRotation());
         auto spotLight = spotLightObject->getLightNode("SpotLight.node");
         spotLight->getLight()->setAttenuationConstant(AttenuationConstant);
@@ -117,7 +117,7 @@ public:
     void addSpark()
     {
         auto sparkObject = mMainScene->addObject("Spark_" + std::to_string(++mObjectCounter), 
-            "samples:objects/light_spark.json", nullptr, getMainCamera().getWorldPosition());
+            "samples:objects/light_spark_vsm.json", nullptr, getMainCamera().getWorldPosition());
         auto sparkNode = sparkObject->getLightNode("PointLightSpark.node");
         sparkNode->getLight()->setAttenuationConstant(AttenuationConstant);
         sparkNode->getLight()->setAttenuationLinear(AttenuationLinear);

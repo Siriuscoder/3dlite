@@ -95,8 +95,9 @@ namespace lite3dpp
             }
 
             setFlag(shadowTypeFlag);
-            mClipNear = shadowParams.getDouble(L"NearClipPlane");
-            mClipFar = shadowParams.getDouble(L"FarClipPlane");
+            mShadowClipNear = shadowParams.getDouble(L"NearClipPlane");
+            mShadowClipFar = shadowParams.getDouble(L"FarClipPlane");
+            mShadowVSMBlurSigma = shadowParams.getDouble(L"VSMBlurSigma", 0.8f);
         }
 
         mLightSource.userdata = this;
@@ -176,8 +177,9 @@ namespace lite3dpp
             if (mLightSource.params.flags & LITE3D_LIGHT_SHADOW_SSS)
                 shadowParams.set(L"SSS", true);
 
-            shadowParams.set(L"NearClipPlane", mClipNear);
-            shadowParams.set(L"FarClipPlane", mClipFar);
+            shadowParams.set(L"NearClipPlane", mShadowClipNear);
+            shadowParams.set(L"FarClipPlane", mShadowClipFar);
+            shadowParams.set(L"VSMBlurSigma", mShadowVSMBlurSigma);
             writer.set(L"ShadowParams", shadowParams);
         }
     }
@@ -191,6 +193,11 @@ namespace lite3dpp
     LightSourceFlags LightSource::getFlags() const
     {
         return static_cast<LightSourceFlags>(mLightSource.params.flags);
+    }
+
+    bool LightSource::hasFlag(LightSourceFlags flag) const
+    {
+        return mLightSource.params.flags & static_cast<uint32_t>(flag);
     }
 
     void LightSource::setFlag(LightSourceFlags flag)
@@ -335,6 +342,11 @@ namespace lite3dpp
         mUpdated = true;
     }
 
+    void LightSource::setShadowVSMBlurSigma(float value)
+    {
+        mShadowVSMBlurSigma = value;
+    }
+
     const kmVec3 &LightSource::getPosition() const
     {
         return mLightSource.params.position;
@@ -430,13 +442,18 @@ namespace lite3dpp
         return mLightSource.params.radius;
     }
 
-    float LightSource::getClipNear() const
+    float LightSource::getShadowClipNear() const
     {
-        return mClipNear;
+        return mShadowClipNear;
     }
-    float LightSource::getClipFar() const
+    float LightSource::getShadowClipFar() const
     { 
-        return mClipFar; 
+        return mShadowClipFar; 
+    }
+
+    float LightSource::getShadowVSMBlurSigma() const
+    {
+        return mShadowVSMBlurSigma;
     }
 
     void LightSource::translateToWorld(const kmMat4 &worldMatrix)

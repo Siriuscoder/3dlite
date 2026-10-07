@@ -29,7 +29,8 @@
                     ],
                     "ShadowParams": {
                         "Dynamic": true,
-                        "Type": "PCF",
+                        "Type": "VSM",
+                        "VSMBlurSigma": 1.85,
                         "NearClipPlane": 0.01
                     }
                 }

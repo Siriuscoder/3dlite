@@ -108,11 +108,11 @@ namespace lite3dpp_pipeline {
             mLightNode->getLight()->getType() == LightSourceFlags::TypeRectArea || 
             mLightNode->getLight()->getType() == LightSourceFlags::TypeSpot);
 
-        auto clipFar = mLightNode->getLight()->getClipFar() > FLT_EPSILON ? mLightNode->getLight()->getClipFar() : 
+        auto clipFar = mLightNode->getLight()->getShadowClipFar() > FLT_EPSILON ? mLightNode->getLight()->getShadowClipFar() : 
             mLightNode->getLight()->getInfluenceDistance();
                     
         mCamera = main.addCamera(mLightNode->getName() + "_spot_shadow_" + std::to_string(++gCameraCounter));
-        mCamera->setupPerspective(mLightNode->getLight()->getClipNear(), clipFar, 
+        mCamera->setupPerspective(mLightNode->getLight()->getShadowClipNear(), clipFar, 
             kmRadiansToDegrees(mLightNode->getLight()->getAngleOuterCone()), 1.0);
     }
 
@@ -132,12 +132,12 @@ namespace lite3dpp_pipeline {
         SDL_assert(mLightNode->getLight()->getType() == LightSourceFlags::TypePoint);
         SDL_assert(faceNum >= 0 && faceNum <= 6);
 
-        auto clipFar = mLightNode->getLight()->getClipFar() > FLT_EPSILON ? mLightNode->getLight()->getClipFar() : 
+        auto clipFar = mLightNode->getLight()->getShadowClipFar() > FLT_EPSILON ? mLightNode->getLight()->getShadowClipFar() : 
             mLightNode->getLight()->getInfluenceDistance();
 
         mCamera = main.addCamera(mLightNode->getName() + "_omni_shadow_face_" + std::to_string(faceNum) + "_" + 
             std::to_string(++gCameraCounter));
-        mCamera->setupPerspective(mLightNode->getLight()->getClipNear(), clipFar, 90.0, 1.0);
+        mCamera->setupPerspective(mLightNode->getLight()->getShadowClipNear(), clipFar, 90.0, 1.0);
         mCamera->setDirection(faceDirections[faceNum]);
     }
 
@@ -176,7 +176,7 @@ namespace lite3dpp_pipeline {
     {
         SDL_assert(mLightNode->getLight()->getType() == LightSourceFlags::TypeDirectional);
 
-        makeCascadeRange(cascadeSplitLambda, mMainCamera.getClipNear(), mMainCamera.getClipFar());
+        makeCascadeRange(cascadeSplitLambda, mMainCamera.getShadowClipNear(), mMainCamera.getShadowClipFar());
         mCamera = main.addCamera(mLightNode->getName() + "_shadow_cascade_" + std::to_string(cascadeNum) + "_" + 
             std::to_string(++gCameraCounter));
 
@@ -235,7 +235,7 @@ namespace lite3dpp_pipeline {
         const auto right = mMainCamera.getWorldRight();
         const auto up = mMainCamera.getWorldUp();
         const auto position = mMainCamera.getWorldPosition();
-        const float midDepth = std::abs(mLightNode->getLight()->getClipFar() - mLightNode->getLight()->getClipNear()) / 2.0f;
+        const float midDepth = std::abs(mLightNode->getLight()->getShadowClipFar() - mLightNode->getLight()->getShadowClipNear()) / 2.0f;
 
         /* Ближняя и дальняя плоскость отсечения каскада в мировой системе координат */
         kmVec3 nc, fc;
@@ -324,8 +324,8 @@ namespace lite3dpp_pipeline {
         auto offset = calcStabilizationOffset(center, minX, maxX, minY, maxY);
         /* Построим ортогональную проекцию по полученным размерам каскада */
         mCamera->setupOrtho(
-            mLightNode->getLight()->getClipNear(), 
-            mLightNode->getLight()->getClipFar(),
+            mLightNode->getLight()->getShadowClipNear(), 
+            mLightNode->getLight()->getShadowClipFar(),
             minX + offset.x, maxX + offset.x,
             minY + offset.y, maxY + offset.y);
 

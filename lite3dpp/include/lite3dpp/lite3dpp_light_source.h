@@ -89,6 +89,7 @@ namespace lite3dpp
         
         void setType(LightSourceFlags t);
         void setFlag(LightSourceFlags flag);
+        bool hasFlag(LightSourceFlags flag) const;
         void enabled(bool f);
         void setPosition(const kmVec3 &v);
         void setDirection(const kmVec3 &v);
@@ -106,6 +107,7 @@ namespace lite3dpp
         void setAreaWidth(float value);
         void setAreaHeight(float value);
         void setRadius(float value);
+        void setShadowVSMBlurSigma(float value);
 
         LightSourceFlags getType() const;
         LightSourceFlags getFlags() const;
@@ -129,8 +131,9 @@ namespace lite3dpp
         float getAreaWidth() const;
         float getAreaHeight() const;
         float getRadius() const;
-        float getClipNear() const;
-        float getClipFar() const;
+        float getShadowClipNear() const;
+        float getShadowClipFar() const;
+        float getShadowVSMBlurSigma() const;
 
         void translateToWorld(const kmMat4 &worldMatrix);
         void writeToBuffer(BufferBase &buffer);
@@ -147,8 +150,9 @@ namespace lite3dpp
         uint32_t mBufferIndex = 0;
         bool mUpdated = false;
         std::optional<float> mInfluenceDistance;
-        float mClipNear;
-        float mClipFar;
+        float mShadowClipNear = 0.0f;
+        float mShadowClipFar = 0.0f;
+        float mShadowVSMBlurSigma = 0.8f;
     };
 }
 

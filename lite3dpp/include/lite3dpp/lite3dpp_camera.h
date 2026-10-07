@@ -50,9 +50,9 @@ namespace lite3dpp
         { return mCamera.projectionParams.fovy; }
         inline float getFOVRad() const
         { return kmDegreesToRadians(mCamera.projectionParams.fovy); }
-        inline float getClipNear() const
+        inline float getShadowClipNear() const
         { return mCamera.projectionParams.znear; }
-        inline float getClipFar() const
+        inline float getShadowClipFar() const
         { return mCamera.projectionParams.zfar; }
         
         kmVec3 getDirection() const;

@@ -4,9 +4,13 @@
 #define LITE3D_ENV_PROBE_DIFFUSE_POWER                      2.0
 #define LITE3D_ENV_PROBE_SPECULAR_POWER                     10.0
 
+#define LITE3D_SHADOW_VSM_ENABLE
 // Shadow params
 #define LITE3D_SHADOW_MIN_BIAS                              0.0005
 #define LITE3D_SHADOW_MAX_BIAS                              0.0010
 #define LITE3D_SHADOW_PCF_MIN_FILTER_SIZE                   1.0
 #define LITE3D_SHADOW_PCF_MAX_FILTER_SIZE                   1.7
 #define LITE3D_SHADOW_PCF_MIN_STEP                          0.5
+
+#define LITE3D_SHADOW_VSM_MIN_VARIANCE                      0.000001
+#define LITE3D_SHADOW_VSM_LIGHT_BLEEDING_REDUCTION          0.45
