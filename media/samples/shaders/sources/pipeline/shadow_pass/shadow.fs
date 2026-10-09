@@ -10,10 +10,12 @@ float getAmbientOcclusion(vec2 uv)
 }
 #endif
 
+#include "samples:shaders/sources/shadow/vsm.glsl"
+
 void main()
 {
     surfaceAlphaClip(iuv);
 
-    float depth = gl_FragCoord.z;
-    fragColor = vec4(depth, depth * depth, 0.0, 0.0);
+    float warpedDepth = WarpDepth(gl_FragCoord.z, GetEVSMExponent());
+    fragColor = vec4(warpedDepth, warpedDepth * warpedDepth, 0.0, 0.0);
 }

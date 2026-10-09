@@ -36,8 +36,8 @@
 #define LITE3D_SHADOW_PCF_MIN_STEP                          0.5
 #endif
 
-#ifndef LITE3D_SHADOW_VSM_MIN_VARIANCE
-#define LITE3D_SHADOW_VSM_MIN_VARIANCE                      0.000001
+#ifndef LITE3D_SHADOW_VSM_BIAS
+#define LITE3D_SHADOW_VSM_BIAS                              0.0001
 #endif
 
 #ifndef LITE3D_SHADOW_VSM_LIGHT_BLEEDING_REDUCTION
@@ -46,6 +46,10 @@
 
 #ifndef LITE3D_VSM_BLUR_MAX_RADIUS
 #define LITE3D_VSM_BLUR_MAX_RADIUS                          24
+#endif
+
+#ifndef LITE3D_VSM_EXPONENT
+#define LITE3D_VSM_EXPONENT                                 20.0
 #endif
 
 #ifndef LITE3D_SHADOW_CSM_CASCADE_COUNT

@@ -81,7 +81,7 @@ float Shadow(in LightSource source, in Surface surface, in AngularInfo angular)
 #ifdef LITE3D_SHADOW_VSM_ENABLE
     else if (hasFlag(source.flags, LITE3D_LIGHT_SHADOW_VSM))
     {
-        shadowFactor = EvaluateShadowVSM(shadowPos, adapt, shadowIndex);
+        shadowFactor = EvaluateShadowEVSM2(shadowPos, shadowIndex);
     }
 #endif
     else // Simple shadow without PCF 

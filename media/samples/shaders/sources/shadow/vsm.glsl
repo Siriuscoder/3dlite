@@ -1,5 +1,20 @@
 uniform sampler2DArray MomentsMaps;
 
+
+float GetEVSMExponent()
+{
+    const float maxExponent = 42.0;
+    // Clamp to maximum range of fp32 to prevent overflow/underflow
+    return clamp(LITE3D_VSM_EXPONENT, 1.0, maxExponent);
+}
+
+float WarpDepth(float depth, float exponent)
+{
+    // Rescale depth into [-1, 1]
+    depth = 2.0 * depth - 1.0;
+    return exp(exponent * depth);
+}
+
 // Reduces VSM light bleeding
 float ReduceLightBleeding(float pMax, float amount)
 {
@@ -7,13 +22,11 @@ float ReduceLightBleeding(float pMax, float amount)
     return linstep(amount, 1.0, pMax);
 }
 
-float ChebyshevUpperBound(
-    vec2 moments,
-    float mean)
+float ChebyshevUpperBound(vec2 moments, float mean, float minVariance)
 {
     // Compute variance
     float variance = moments.y - moments.x * moments.x;
-    variance = max(variance, LITE3D_SHADOW_VSM_MIN_VARIANCE);
+    variance = max(variance, minVariance);
 
     // Compute probabilistic upper bound
     float d = mean - moments.x;
@@ -25,10 +38,24 @@ float ChebyshevUpperBound(
     return mean <= moments.x ? 1.0 : pMax;
 }
 
-float EvaluateShadowVSM(vec3 shadowPos, vec3 adaptive, int shadowIndex)
+float EvaluateShadowVSM(vec3 shadowPos, int shadowIndex)
 {
-    float sampleDepth = shadowPos.z - (adaptive.x * 0.01);
     vec2 occluder = texture(MomentsMaps, vec3(shadowPos.xy, shadowIndex)).xy;
 
-    return ChebyshevUpperBound(occluder, sampleDepth);
+    return ChebyshevUpperBound(occluder, shadowPos.z, LITE3D_SHADOW_VSM_BIAS);
+}
+
+float EvaluateShadowEVSM2(vec3 shadowPos, int shadowIndex)
+{
+    float exponent = GetEVSMExponent();
+    float warpedDepth = WarpDepth(shadowPos.z, exponent);
+
+    vec2 occluder = texture(MomentsMaps, vec3(shadowPos.xy, shadowIndex)).xy;
+
+    // Derivative of warping at depth
+    float depthScale = LITE3D_SHADOW_VSM_BIAS * exponent * warpedDepth;
+    float minVariance = depthScale * depthScale;
+
+    // Positive only
+    return ChebyshevUpperBound(occluder, warpedDepth, minVariance);
 }

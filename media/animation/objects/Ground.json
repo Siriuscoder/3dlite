@@ -30,6 +30,7 @@
           "ShadowParams": {
             "Dynamic": true,
             "Type": "VSM",
+            "VSMBlurSigma": 1.5,
             "NearClipPlane": 0.01,
             "FarClipPlane": 100.0
           }

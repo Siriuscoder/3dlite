@@ -106,8 +106,8 @@ void main()
     // sampling fragment position in view space
     vec3 vv = getViewSpacePosition(iuv);
     // Adaptive sample bias
-    float NdotV = abs(dot(nv, normalize(-vv)));
-    float bias = mix(LITE3D_SSAO_ADAPTIVE_BIAS_MIN, LITE3D_SSAO_ADAPTIVE_BIAS_MAX, 1.0 - NdotV);
+    float angleFactor = 1.0 - abs(dot(nv, normalize(-vv)));
+    float bias = mix(LITE3D_SSAO_ADAPTIVE_BIAS_MIN, LITE3D_SSAO_ADAPTIVE_BIAS_MAX, angleFactor * angleFactor);
 
     vec2 hran = Halton2D(int(iuv.x * 3560) + int(iuv.y * 3560));
     // Take a xy-random base for more variative TBN basis
