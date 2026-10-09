@@ -23,8 +23,8 @@ namespace lite3dpp {
 namespace samples {
 
 static const char *helpString = 
-    "Press '+' to increse gamma\n"
-    "Press '-' to decrese gamma\n"
+    "Press '+' to increse brightness\n"
+    "Press '-' to decrese brightness\n"
     "Press 'u' to enable/disable SSAO\n"
     "Press 'l' to enable/disable flashlight\n"
     "Press 'e' to enable/disable rect area light\n"
@@ -94,21 +94,7 @@ public:
         Sample::processEvent(e);
         if (e->type == SDL_KEYDOWN)
         {
-            if (e->key.keysym.sym == SDLK_KP_PLUS)
-            {
-                mGamma += 0.02;
-                if (mGamma > 3.0)
-                    mGamma = 3.0;
-                mPipeline->setGamma(mGamma);
-            }
-            else if (e->key.keysym.sym == SDLK_KP_MINUS)
-            {
-                mGamma -= 0.02;
-                if (mGamma < 1.5)
-                    mGamma = 1.5;
-                mPipeline->setGamma(mGamma);
-            }
-            else if (e->key.keysym.sym == SDLK_u)
+            if (e->key.keysym.sym == SDLK_u)
             {
                 static bool ssaoEnabled = true;
                 ssaoEnabled = !ssaoEnabled;
@@ -136,6 +122,20 @@ public:
                 mAreaEllipceLight->getLight()->enabled(areaDiskLightEnabled);
                 mAreaEllipceLightMaterial->setEmissionStrength(areaDiskLightEnabled ? 2.0f : 0.0f);
             }
+            else if (e->key.keysym.sym == SDLK_KP_PLUS)
+            {
+                mBrightness += 0.001;
+                if (mBrightness > 0.08)
+                    mBrightness = 0.08;
+                mPipeline->setBrightness(mBrightness);
+            }
+            else if (e->key.keysym.sym == SDLK_KP_MINUS)
+            {
+                mBrightness -= 0.001;
+                if (mBrightness < -0.08)
+                    mBrightness = -0.08;
+                mPipeline->setBrightness(mBrightness);
+            }
         }
     }
 
@@ -148,7 +148,7 @@ private:
     PBRMaterial* mAreaQuadLightMaterial = nullptr;
     LightSceneNode* mAreaEllipceLight = nullptr;
     PBRMaterial* mAreaEllipceLightMaterial = nullptr;
-    float mGamma = 2.2;
+    float mBrightness = 0.0f;
 };
 
 }}

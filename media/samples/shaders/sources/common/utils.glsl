@@ -1,6 +1,6 @@
 uniform mat4 CameraView; // Main camera view matrix
 uniform mat4 CameraProjection; // Main camera projection matrix
-uniform float Gamma;
+uniform float Brightness;
 uniform float Exposure;
 uniform float Contrast;
 uniform float Saturation;
@@ -13,6 +13,39 @@ const float bayerMatrix[BAYER_MATRIX_SIZE * BAYER_MATRIX_SIZE] = float[BAYER_MAT
     12.0,  4.0, 14.0,  6.0,
      3.0, 11.0,  1.0,  9.0,
     15.0,  7.0, 13.0,  5.0
+);
+
+const vec2 poissonDisk30[30] = vec2[](
+    vec2(-0.002892,  0.008787),
+    vec2(-0.032134, -0.998555),
+    vec2( 0.990465, -0.130147),
+    vec2(-0.887676, -0.455494),
+    vec2(-0.823399,  0.566836),
+    vec2( 0.523825,  0.845140),
+    vec2(-0.232278,  0.957536),
+    vec2( 0.632134, -0.766695),
+    vec2( 0.524210,  0.254282),
+    vec2(-0.587958,  0.035581),
+    vec2(-0.307026, -0.499810),
+    vec2( 0.432535, -0.280113),
+    vec2(-0.295008,  0.452983),
+    vec2( 0.137705,  0.604865),
+    vec2( 0.120631, -0.582725),
+    vec2( 0.948766,  0.312962),
+    vec2(-0.446443, -0.894033),
+    vec2(-0.980643,  0.168562),
+    vec2( 0.137622,  0.976252),
+    vec2( 0.872719, -0.484706),
+    vec2(-0.564071,  0.817303),
+    vec2(-0.296517, -0.152222),
+    vec2( 0.189478,  0.279175),
+    vec2( 0.307833, -0.891822),
+    vec2( 0.703419,  0.548422),
+    vec2(-0.594834, -0.291985),
+    vec2( 0.674540, -0.042851),
+    vec2(-0.022419, -0.309571),
+    vec2(-0.606168, -0.606690),
+    vec2( 0.331932,  0.012893) 
 );
 
 bool isNear(float a1, float a2)
@@ -40,6 +73,11 @@ float lerp(float a, float b, float f)
     return a + f * (b - a);
 }
 
+float linstep(float a, float b, float v)
+{
+    return clamp((v - a) / (b - a), 0.0, 1.0);
+}
+
 float shlickPow(float a, float b)
 {
     return a / (b - a * b + a);
@@ -47,7 +85,7 @@ float shlickPow(float a, float b)
 
 bool hasFlag(uint a, uint flag)
 {
-    return (a & flag) == flag;
+    return (a & flag) != 0u;
 }
 
 float radicalInverse(int index, float base)
@@ -73,6 +111,16 @@ vec2 Halton2D(int index)
         radicalInverse(index, 2.0),
         radicalInverse(index, 3.0)
     );
+}
+
+vec2 PoissonDisk(int i)
+{
+    return poissonDisk30[i % 30];
+}
+
+float Gaussian(float x, float sigma)
+{
+    return exp(-(x * x) / (2.0 * sigma * sigma));
 }
 
 // Gold Noise ©2015 dcerisano@standard3d.com
@@ -108,6 +156,22 @@ vec2 viewPositionToUV(vec3 pos)
     vec4 uv = CameraProjection * vec4(pos, 1.0);
     uv /= uv.w;                 // perspective divide
     return uv.xy * 0.5 + 0.5;   // transform to range 0.0 - 1.0 
+}
+
+float getZNear()
+{
+    float A = CameraProjection[2][2];
+    float B = CameraProjection[3][2];
+
+    return B / (A - 1.0);
+}
+
+float getZFar()
+{
+    float A = CameraProjection[2][2];
+    float B = CameraProjection[3][2];
+
+    return B / (A + 1.0);
 }
 
 mat3 TBN(vec3 normal, vec3 tangent)
@@ -184,7 +248,7 @@ float linearizeDepth(float z, float near, float far)
 vec3 SRGBToLinear(vec3 color)
 {
     vec3 linearLow  = color / 12.92;
-    vec3 linearHigh = pow((color + 0.055) / 1.055, vec3(Gamma));
+    vec3 linearHigh = pow((color + 0.055) / 1.055, vec3(2.2));
     vec3 isHigh     = step(0.0404482362771082, color);
     return mix(linearLow, linearHigh, isHigh);
 }
@@ -193,7 +257,7 @@ vec3 SRGBToLinear(vec3 color)
 vec3 linearToSRGB(vec3 color)
 {
     vec3 srgbLow  = color * 12.92;
-    vec3 srgbHigh = 1.055 * pow(color, vec3(1.0 / Gamma)) - 0.055;
+    vec3 srgbHigh = 1.055 * pow(color, vec3(1.0 / 2.2)) - 0.055;
     vec3 isHigh   = step(0.00313066844250063, color);
     return mix(srgbLow, srgbHigh, isHigh);
 }
@@ -212,7 +276,7 @@ vec3 exponentTonemapping(vec3 x)
 }
 
 // Nautilus tone mapping
-vec3 nautilusTonemapping(vec3 x)
+vec3 nautilusACESTonemapping(vec3 x)
 {
     // Nautilus fit of ACES
     // By Nolram
@@ -252,6 +316,11 @@ vec3 ACESTonemapping(vec3 x)
     return clamp(color, 0.0, 1.0);
 }
 
+vec3 brightnessColor(vec3 color)
+{
+    return color + Brightness;
+}
+
 vec3 contrastColor(vec3 color)
 {
     return mix(vec3(0.5), color, Contrast);
@@ -263,20 +332,16 @@ vec3 saturationColor(vec3 color)
     return mix(vec3(gray), color, Saturation);
 }
 
-#ifdef LITE3D_FRAGMENT_SHADER
-
-vec3 ditherBayer(vec3 color)
+vec3 ditherBayer(vec2 coord, vec3 color)
 {
     // Получение позиции пикселя в матрице дизеринга
-    int x = int(mod(gl_FragCoord.x, float(BAYER_MATRIX_SIZE)));
-    int y = int(mod(gl_FragCoord.y, float(BAYER_MATRIX_SIZE)));
+    int x = int(mod(coord.x, float(BAYER_MATRIX_SIZE)));
+    int y = int(mod(coord.y, float(BAYER_MATRIX_SIZE)));
     float ditherValue = bayerMatrix[y * BAYER_MATRIX_SIZE + x] / 16.0;
     
     // Применение дизеринга к цвету
     return color + (ditherValue / 255.0); // Масштабирование для 8-битного цвета
 }
-
-#endif
 
 // Fresnel equation (Schlick)
 vec3 fresnelSchlickRoughness(float teta, in Material material)
@@ -513,3 +578,49 @@ vec3 cubeCoordToWorld(ivec3 cubeCoord, vec2 cubemapSize)
     return vec3(0.0);
 }
 
+int cubeFaceFromDir(vec3 dir)
+{
+    vec3 a = abs(dir);
+    int face;
+
+    if (a.x >= a.y && a.x >= a.z)
+        face = dir.x >= 0.0 ? 0 : 1;
+    else if (a.y >= a.x && a.y >= a.z)
+        face = dir.y >= 0.0 ? 2 : 3;
+    else
+        face = dir.z >= 0.0 ? 4 : 5;
+
+    return face;
+}
+
+float packF8AndInt16(float a, uint b)
+{
+    uint a8 = uint(round(clamp(a, 0.0, 1.0) * 255.0));
+    uint pval = (b << 8) | a8;
+    return float(pval);
+}
+
+void unpackF8AndInt16(float pval, out float a, out uint b)
+{
+    uint shifted = uint(pval + 0.5);
+    b = shifted >> 8;
+    a = float(shifted & 0xFFu) / 255.0;
+}
+
+float pack2xF8(float a, float b)
+{
+    uint a8 = uint(round(clamp(a, 0.0, 1.0) * 255.0));
+    uint b8 = uint(round(clamp(b, 0.0, 1.0) * 255.0));
+    uint pval = a8 | (b8 << 8);
+    return float(pval);
+}
+
+void unpack2xF8(float pval, out float a, out float b)
+{
+    uint shifted = uint(pval + 0.5);
+    uint a8 = shifted & 0xFFu;
+    uint b8 = (shifted >> 8) & 0xFFu;
+
+    a = float(a8) / 255.0;
+    b = float(b8) / 255.0;
+}

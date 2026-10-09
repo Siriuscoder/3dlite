@@ -27,7 +27,7 @@ namespace lite3dpp
 {
     class LITE3DPP_EXPORT Mesh : public ConfigurableResource, public Noncopiable
     {
-    public:
+    public:\
 
         struct ChunkEntity
         {

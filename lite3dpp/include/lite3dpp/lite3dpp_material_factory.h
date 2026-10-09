@@ -31,7 +31,8 @@ namespace lite3dpp
 
         virtual ~MaterialFactory() = default;
 
-        virtual Material *createMaterial(const String& type, const String& name, const String& path) const;
+        virtual Material *createMaterial(AbstractResource *parent, 
+            const String& type, const String& name, const String& path) const;
 
     private:
 

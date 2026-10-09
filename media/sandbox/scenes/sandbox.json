@@ -13,8 +13,8 @@
         0.0
       ],
       "Perspective": {
-        "Znear": 0.01,
-        "Zfar": 30.0,
+        "Znear": 0.001,
+        "Zfar": 15.0,
         "Fov": 60.0
       }
     }

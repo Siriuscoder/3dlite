@@ -25,8 +25,8 @@ namespace lite3dpp {
 namespace samples {
 
 static const char *helpString = 
-    "Press '+' to increse gamma\n"
-    "Press '-' to decrese gamma\n"
+    "Press '+' to increse brightness\n"
+    "Press '-' to decrese brightness\n"
     "Press 'l' to enable/disable flashlight\n"
     "Press 'u' to enable/disable SSAO\n"
     "Press 'r' to add light spark\n"
@@ -57,6 +57,7 @@ public:
         mPipeline = pipeline;
 
         setupPlayer();
+        setupShadowCasters();
         addFlashlight();
     }
 
@@ -66,6 +67,24 @@ public:
         mVaultScene->attachCamera(&getMainCamera(), mPlayer);
         /* позиция камеры отнгосительно капсулы плеера (приподнимаем камеру)*/
         getMainCamera().setPosition(kmVec3 {0.0, 0.0, 110.0f});
+    }
+
+    void setupShadowCasters()
+    {
+        for (auto lightNode : mVaultScene->getLights())
+        {
+            mPipeline->getShadowManager()->registerEmitter(lightNode);
+        }
+
+        for (auto &[name, object] : mVaultScene->getObjects())
+        {
+            if (name.starts_with("FirstAid") ||
+                name.starts_with("Table") ||
+                name.starts_with("Crate01b"))
+            {
+                mPipeline->getShadowManager()->registerHintNode(object->getRoot());
+            } 
+        }  
     }
 
     void addFlashlight()
@@ -130,20 +149,6 @@ public:
                 mFlashLight->getLight()->enabled(flashLightEnabled);
                 updateFlashLight();
             }
-            else if (e->key.keysym.sym == SDLK_KP_PLUS)
-            {
-                mGamma += 0.02;
-                if (mGamma > 3.0)
-                    mGamma = 3.0;
-                mPipeline->setGamma(mGamma);
-            }
-            else if (e->key.keysym.sym == SDLK_KP_MINUS)
-            {
-                mGamma -= 0.02;
-                if (mGamma < 1.5)
-                    mGamma = 1.5;
-                mPipeline->setGamma(mGamma);
-            }
             else if (e->key.keysym.sym == SDLK_u)
             {
                 static bool ssaoEnabled = true;
@@ -194,6 +199,20 @@ public:
                     mPlayer->setLinearVelocity(currVel);
                 }
             }
+            else if (e->key.keysym.sym == SDLK_KP_PLUS)
+            {
+                mBrightness += 0.001;
+                if (mBrightness > 0.08)
+                    mBrightness = 0.08;
+                mPipeline->setBrightness(mBrightness);
+            }
+            else if (e->key.keysym.sym == SDLK_KP_MINUS)
+            {
+                mBrightness -= 0.001;
+                if (mBrightness < -0.08)
+                    mBrightness = -0.08;
+                mPipeline->setBrightness(mBrightness);
+            }
         }
     }
 
@@ -210,11 +229,22 @@ public:
 
         if (mObjects.size() >= 200)
         {
+            mPipeline->getShadowManager()->unregisterHintNode(mObjects.front()->getRoot());
+            for (auto &[_, lightNode] : mObjects.front()->getLightNodes())
+            {
+                mPipeline->getShadowManager()->unregisterEmitter(lightNode.get());
+            }
+
             mVaultScene->removeObject(mObjects.front()->getName());
             mObjects.pop_front();
         }
 
         mObjects.push_back(o);
+        mPipeline->getShadowManager()->registerHintNode(o->getRoot());
+        for (auto &[_, lightNode] : o->getLightNodes())
+        {
+            mPipeline->getShadowManager()->registerEmitter(lightNode.get());
+        }
     }
 
 private:
@@ -224,9 +254,9 @@ private:
     LightSceneNode* mFlashLight;
     stl<lite3dpp_phisics::PhysicsSceneObject *>::list mObjects;
     lite3dpp_phisics::PhysicsSceneObject *mPlayer = nullptr;
-    float mGamma = 2.2;
     int mObjectCounter = 0;
     bool mGravityEnabled = true;
+    float mBrightness = 0.004f;
 };
 
 }}

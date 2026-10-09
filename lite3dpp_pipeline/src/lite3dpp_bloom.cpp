@@ -20,68 +20,41 @@
 #include <algorithm>
 #include <SDL_assert.h>
 #include <lite3dpp_pipeline/lite3dpp_generator.h>
+#include <lite3dpp_pipeline/lite3dpp_pipeline_base.h>
 
 namespace lite3dpp {
 namespace lite3dpp_pipeline {
 
-    BloomEffect::BloomEffect(Main& main, const String &pipelineName, const String &cameraName, 
-        const ConfigurationReader &pipelineConfig) : 
+    BloomPass::BloomPass(Main& main, PipelineBase &pipeline, const String &cameraName) : 
         mMain(main),
-        mPipelineName(pipelineName),
+        mPipeline(pipeline),
+        mPipelineName(pipeline.getName()),
         mCameraName(cameraName)
     {
         mMinWidth = mMain.window()->width() / 40;
-        mBloomRadius = pipelineConfig.getObject(L"BLOOM").getDouble(L"BloomRadius", mBloomRadius);
-        mShaderPackage = pipelineConfig.getString(L"ShaderPackage");
+        mBloomRadius = pipeline.getConfig().getObject(L"BLOOM").getDouble(L"BloomRadius", mBloomRadius);
+        mShaderPackage = pipeline.getConfig().getString(L"ShaderPackage");
     }
 
-    BloomEffect::~BloomEffect()
-    {
-        if (mBloomRernderer)
-        {
-            mMain.getResourceManager().releaseResource(mBloomRernderer->getName());
-        }
-
-        for (auto material : mMaterialChain)
-        {
-            mMain.getResourceManager().releaseResource(material->getName());
-        }
-
-        for (auto texture : mTextureChain)
-        {
-            mMain.getResourceManager().releaseResource(texture->getName());
-            /* Так как в mTextureChain текстуры дублируются, удаляем только до середины */
-            if (texture == mMiddleTexture)
-            {
-                break;
-            }
-        }
-
-        if (mBloomRT)
-        {
-            mMain.getResourceManager().releaseResource(mBloomRT->getName());
-        }
-    }
-
-    TextureRenderTarget &BloomEffect::getRenderTarget()
+    TextureRenderTarget &BloomPass::getRenderTarget()
     {
         SDL_assert(mBloomRT);
         return *mBloomRT;
     }
 
-    TextureImage &BloomEffect::getLastTexture()
+    TextureImage &BloomPass::getLastTexture()
     {
         SDL_assert(mTextureChain.size() > 0);
         return *mTextureChain.back();
     }
 
-    TextureImage &BloomEffect::getMiddleTexture()
+    TextureImage &BloomPass::getMiddleTexture()
     {
         SDL_assert(mMiddleTexture);
         return *mMiddleTexture;
     }
 
-    void BloomEffect::initialize()
+    void BloomPass::initialize()
     {
         ConfigurationWriter bloomRenderTargetConfig;
         bloomRenderTargetConfig.set(L"Scale", 2.0f) // Первый слой блума в 2 раза меньше чем размер окна.
@@ -93,13 +66,14 @@ namespace lite3dpp_pipeline {
 
         mBloomRT = mMain.getResourceManager().queryResourceFromJson<TextureRenderTarget>(
             mPipelineName + "_" + mCameraName + "_BloomPass",
-            bloomRenderTargetConfig.write());
+            bloomRenderTargetConfig.write(), &mPipeline);
 
         initTextureChain();
         initBoomScene();
     }
 
-    bool BloomEffect::beginDrawBatch(Scene *scene, SceneNode *node, lite3d_mesh_chunk *meshChunk, Material *material)
+    bool BloomPass::beginDrawBatch(Scene *scene, SceneNode *node, lite3d_mesh_chunk *meshChunk, Material *material,
+        const lite3d_scene_render_params *params)
     {
         Texture *current = mTextureChain[mChainState++];
         stl<lite3d_framebuffer_attachment>::vector attachments = {
@@ -122,14 +96,14 @@ namespace lite3dpp_pipeline {
         return true;
     }
 
-    bool BloomEffect::beginSceneRender(Scene *scene, Camera *camera, int32_t priority)
+    bool BloomPass::beginSceneRender(Scene *scene, Camera *camera, const lite3d_scene_render_params *params)
     {
         // Скинем индекс цепочки в 0 в началале рисования сцены
         mChainState = 0;
         return true;
     }
 
-    void BloomEffect::initTextureChain()
+    void BloomPass::initTextureChain()
     {
         auto width = mMain.window()->width() / 2;
         auto height = mMain.window()->height() / 2;
@@ -153,7 +127,7 @@ namespace lite3dpp_pipeline {
 
             textureChainTmp.emplace_back(
                 mMain.getResourceManager().queryResourceFromJson<TextureImage>(textureName + std::to_string(i) + ".texture", 
-                textureConfig.write()));
+                textureConfig.write(), &mPipeline));
         }
 
         mMiddleTexture = textureChainTmp.back();
@@ -163,12 +137,12 @@ namespace lite3dpp_pipeline {
         mTextureChain.insert(mTextureChain.end(), textureChainTmp.rbegin()+1, textureChainTmp.rend());
     }
 
-    void BloomEffect::initBoomScene()
+    void BloomPass::initBoomScene()
     {
         String matName = mPipelineName + "_" + mCameraName + "_bloom_slice_";
         // Получим финишную HDR текстру сцены после прогона освещения, будем ее блумить
         Texture *combinedTexture = mMain.getResourceManager().queryResource<TextureImage>(
-            mPipelineName + "_" + mCameraName + "_combined.texture");
+            mPipelineName + "_" + mCameraName + "_combined.texture", &mPipeline);
 
         BigTriSceneGenerator bloomSceneConfig;
         bloomSceneConfig.addRenderTarget(mBloomRT->getName(), ConfigurationWriter()
@@ -184,7 +158,7 @@ namespace lite3dpp_pipeline {
 
         mBloomRernderer = mMain.getResourceManager().queryResourceFromJson<Scene>(
             mPipelineName + "_" + mCameraName + "_BloomStage",
-            bloomSceneConfig.generate().write());
+            bloomSceneConfig.generate().write(), &mPipeline);
         mBloomRernderer->addObserver(this);
 
         for (size_t i = 0; i < mTextureChain.size(); ++i)
@@ -226,7 +200,7 @@ namespace lite3dpp_pipeline {
 
             /* создание шейдера */
             Material *material = mMain.getResourceManager().queryResourceFromJson<Material>(
-                matName + std::to_string(i) + ".material", bloomSampleMaterialConfig.write());
+                matName + std::to_string(i) + ".material", bloomSampleMaterialConfig.write(), &mPipeline);
             /* Установим исходную текстуру для каждого bloom шейдера, каждый проход берет результат предидущего */
             material->setSamplerParameter(static_cast<int>(TexturePassTypes::RenderPass), "Source", 
                 i == 0 ? *combinedTexture : *mTextureChain[i-1]);
@@ -240,20 +214,21 @@ namespace lite3dpp_pipeline {
         }
     }
 
-    kmVec3 BloomEffect::getLumaAverage() const
+    float BloomPass::getLumaAverage() const
     {
         SDL_assert(mMiddleTexture);
         mMiddleTexture->getPixels(mBloomPixels);
 
         auto it = mBloomPixels.cbegin();
-        kmVec3 lumaAverage = KM_VEC3_ZERO;
+        float avgLuma = 0.0f;
         for (; it != mBloomPixels.cend(); it += 3)
         {
             const kmVec3 *texel = reinterpret_cast<const kmVec3 *>(&(*it));
-            kmVec3Add(&lumaAverage, &lumaAverage, texel);
+            float luma = kmVec3Length(texel);
+            avgLuma += std::log(std::max(luma, 0.00001f));
         }
 
-        kmVec3Scale(&lumaAverage, &lumaAverage, 1.0f / (mBloomPixels.size() / 3));
-        return lumaAverage;
+        avgLuma /= (mBloomPixels.size() / 3);
+        return std::exp(avgLuma);
     }
 }}

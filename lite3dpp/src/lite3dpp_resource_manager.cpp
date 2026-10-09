@@ -44,7 +44,6 @@ namespace lite3dpp
         Resources::iterator it;
         if((it = mResources.find(key)) != mResources.end())
         {
-            it->second->reload();
             return it->second.get();
         }
 
@@ -54,19 +53,6 @@ namespace lite3dpp
     bool ResourceManager::resourceExists(const String &name)
     {
         return mResources.count(name) > 0;
-    }
-
-    void ResourceManager::loadResource(const String &name,
-        const String &path,
-        std::shared_ptr<AbstractResource> resource)
-    {
-        size_t fileSize;
-
-        /* open file buffer */
-        const char *buffer = static_cast<const char *>(loadFileToMemory(path, &fileSize));
-
-        /* load resource from memory file */
-        loadResource(name, buffer, fileSize, resource);
     }
     
     void ResourceManager::loadResource(const String &name, 
@@ -82,15 +68,42 @@ namespace lite3dpp
         }
     }
 
-    void ResourceManager::releaseAllResources()
+    size_t ResourceManager::releaseAllResources()
     {
+        size_t count = mResources.size();
+
+        // Pipelines first
         Resources::iterator it = mResources.begin();
-        for(; it != mResources.end(); ++it)
+        for(; it != mResources.end(); )
         {
-            it->second->unload();
+            if (it->second->getType() == AbstractResource::ResourceType::PIPELINE)
+            {
+                it->second->unload();
+                it = mResources.erase(it);
+                continue;
+            }
+
+            it++;
         }
 
-        mResources.clear();
+        while (releaseOrphanedResources() > 0);
+
+        // Pinned at end
+        it = mResources.begin();
+        for(; it != mResources.end(); )
+        {
+            if (it->second->isPinned())
+            {
+                it->second->unload();
+                it = mResources.erase(it);
+                continue;
+            }
+
+            it++;
+        }
+
+        while (releaseOrphanedResources() > 0);
+        return count;
     }
 
     void ResourceManager::releaseResource(const String &name)
@@ -101,6 +114,45 @@ namespace lite3dpp
             it->second->unload();
             mResources.erase(it);
         }
+    }
+
+    size_t ResourceManager::releaseUnloadedResources()
+    {
+        size_t count = 0;
+        Resources::iterator it = mResources.begin();
+        for(; it != mResources.end();)
+        {
+            if (it->second->getState() == AbstractResource::ResourceState::UNLOADED)
+            {
+                it = mResources.erase(it);
+                count++;
+                continue;
+            }
+
+            it++;
+        }
+
+        return count;
+    }
+
+    size_t ResourceManager::releaseOrphanedResources()
+    {
+        size_t count = 0;
+        Resources::iterator it = mResources.begin();
+        for(; it != mResources.end(); )
+        {
+            if (it->second->isOrphaned())
+            {
+                it->second->unload();
+                it = mResources.erase(it);
+                count++;
+                continue;
+            }
+
+            it++;
+        }
+
+        return count;
     }
     
     void ResourceManager::dropFileCache()

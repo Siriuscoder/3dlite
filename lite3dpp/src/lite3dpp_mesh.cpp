@@ -55,14 +55,14 @@ namespace lite3dpp
         auto partitionName = config.getString(L"Partition", getName() + "_partition");
         if (getMain().getResourceManager().resourceExists(partitionName))
         {
-            mMeshPartition = getMain().getResourceManager().queryResource<MeshPartition>(partitionName);
+            mMeshPartition = getMain().getResourceManager().queryResource<MeshPartition>(partitionName, this);
             return;
         }
 
         ConfigurationWriter partitionCfg;
         partitionCfg.set(L"Dynamic", config.getBool(L"Dynamic", false));
         mMeshPartition = getMain().getResourceManager().queryResourceFromJson<MeshPartition>(
-            partitionName, partitionCfg.write());
+            partitionName, partitionCfg.write(), this);
     }
 
     void Mesh::loadFromConfigImpl(const ConfigurationReader &config)
@@ -84,7 +84,7 @@ namespace lite3dpp
         else if (config.getString(L"Model") == "Array")
         {
             stl<kmVec3>::vector points;
-            for (auto &point : config.getObjects(L"Data"))
+            for (const auto &point : config.getObjects(L"Data"))
             {
                 points.emplace_back(point.getVec3(L"Point"));
             }
@@ -109,10 +109,10 @@ namespace lite3dpp
             autoAssignMaterialIndexes();
         }
 
-        for (auto &matMap : config.getObjects(L"MaterialMapping"))
+        for (const auto &matMap : config.getObjects(L"MaterialMapping"))
         {
             applyMaterial(matMap.getInt(L"MaterialIndex"), 
-                getMain().getMaterialFactory().createMaterial(
+                getMain().getMaterialFactory().createMaterial(this,
                     matMap.getObject(L"Material").getString(L"Type"),
                     matMap.getObject(L"Material").getString(L"Name"),
                     matMap.getObject(L"Material").getString(L"Material")));
@@ -352,14 +352,14 @@ namespace lite3dpp
             auto partitionName = mMeshPartition->getName() + "_bouding_box";
             if (getMain().getResourceManager().resourceExists(partitionName))
             {
-                mBoundingBoxMeshPartition = getMain().getResourceManager().queryResource<MeshPartition>(partitionName);
+                mBoundingBoxMeshPartition = getMain().getResourceManager().queryResource<MeshPartition>(partitionName, this);
                 return;
             }
 
             ConfigurationWriter partitionCfg;
             partitionCfg.set(L"Dynamic", false);
             mBoundingBoxMeshPartition = getMain().getResourceManager().queryResourceFromJson<MeshPartition>(
-                partitionName, partitionCfg.write());
+                partitionName, partitionCfg.write(), this);
         }
     }
 

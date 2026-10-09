@@ -28,7 +28,7 @@ void lite3d_camera_update_view(lite3d_camera *camera)
     SDL_assert(camera);
 
     /* camera link to node */
-    lite3d_camera_link_to(camera, camera->linkNode, camera->linkType);
+    lite3d_camera_follow_to(camera, camera->linkNode, camera->linkType);
     /* camera track object */
     lite3d_camera_tracking(camera, camera->trackNode);
     /* compute world matrix */
@@ -54,30 +54,30 @@ void lite3d_camera_update_view(lite3d_camera *camera)
 
 void lite3d_camera_compute_view(lite3d_camera *camera)
 {
-    kmVec3 forward, up, right, worldPosition;
+    kmVec3 worldPosition;
     kmMat3 worldRotation;
     kmMat4 translate;
     kmMat4ExtractRotation(&worldRotation, &camera->cameraNode.worldMatrix);
     kmMat4ExtractPosition(&worldPosition, &camera->cameraNode.worldMatrix);
-    kmVec3MultiplyMat3(&forward, &KM_VEC3_NEG_Z, &worldRotation);
-    kmVec3MultiplyMat3(&up, &KM_VEC3_POS_Y, &worldRotation);
-    kmVec3MultiplyMat3(&right, &KM_VEC3_POS_X, &worldRotation);
-    kmVec3Normalize(&forward, &forward);
-    kmVec3Normalize(&up, &up);
-    kmVec3Normalize(&right, &right);
+    kmVec3MultiplyMat3(&camera->forward, &KM_VEC3_NEG_Z, &worldRotation);
+    kmVec3MultiplyMat3(&camera->up, &KM_VEC3_POS_Y, &worldRotation);
+    kmVec3MultiplyMat3(&camera->right, &KM_VEC3_POS_X, &worldRotation);
+    kmVec3Normalize(&camera->forward, &camera->forward);
+    kmVec3Normalize(&camera->up, &camera->up);
+    kmVec3Normalize(&camera->right, &camera->right);
 
     kmMat4Identity(&camera->viewMatrix);
-    camera->viewMatrix.mat[0] = right.x;
-    camera->viewMatrix.mat[4] = right.y;
-    camera->viewMatrix.mat[8] = right.z;
+    camera->viewMatrix.mat[0] = camera->right.x;
+    camera->viewMatrix.mat[4] = camera->right.y;
+    camera->viewMatrix.mat[8] = camera->right.z;
 
-    camera->viewMatrix.mat[1] = up.x;
-    camera->viewMatrix.mat[5] = up.y;
-    camera->viewMatrix.mat[9] = up.z;
+    camera->viewMatrix.mat[1] = camera->up.x;
+    camera->viewMatrix.mat[5] = camera->up.y;
+    camera->viewMatrix.mat[9] = camera->up.z;
 
-    camera->viewMatrix.mat[2] = -forward.x;
-    camera->viewMatrix.mat[6] = -forward.y;
-    camera->viewMatrix.mat[10] = -forward.z;
+    camera->viewMatrix.mat[2]  = -camera->forward.x;
+    camera->viewMatrix.mat[6]  = -camera->forward.y;
+    camera->viewMatrix.mat[10] = -camera->forward.z;
 
     kmMat4Translation(&translate, -worldPosition.x, -worldPosition.y, -worldPosition.z);
     kmMat4Multiply(&camera->viewMatrix, &camera->viewMatrix, &translate);
@@ -123,9 +123,8 @@ void lite3d_camera_init(lite3d_camera *camera)
 
     memset(camera, 0, sizeof (lite3d_camera));
     lite3d_scene_node_init(&camera->cameraNode);
-    camera->cameraNode.rotationCentered = LITE3D_TRUE;
-    camera->cameraNode.renderable = LITE3D_FALSE;
-    camera->cameraNode.isCamera = LITE3D_TRUE;
+    camera->cameraNode.flags |= LITE3D_SCENE_NODE_ROTATION_CENTERED | LITE3D_SCENE_NODE_CAMERA;
+    camera->cameraNode.flags &= ~LITE3D_SCENE_NODE_RENDERABLE;
     kmMat4Identity(&camera->viewMatrix);
     kmMat4Identity(&camera->projectionMatrix);
     kmMat4Identity(&camera->viewProjectionMatrix);
@@ -159,7 +158,7 @@ void lite3d_camera_set_direction(lite3d_camera *camera, const kmVec3 *direction)
     lite3d_camera_set_rotation(camera, &q);
 }
 
-void lite3d_camera_link_to(lite3d_camera *camera,
+void lite3d_camera_follow_to(lite3d_camera *camera,
     const lite3d_scene_node *target, uint8_t linkType)
 {
     SDL_assert(camera);
@@ -256,6 +255,20 @@ void lite3d_camera_direction(const lite3d_camera *camera,
     kmVec3Normalize(vec, vec);
 }
 
+void lite3d_camera_right(const lite3d_camera *camera, kmVec3 *vec)
+{
+    SDL_assert(camera && vec);
+    kmQuaternionMultiplyVec3(vec, &camera->cameraNode.rotation, &KM_VEC3_POS_X);
+    kmVec3Normalize(vec, vec);
+}
+
+void lite3d_camera_up(const lite3d_camera *camera, kmVec3 *vec)
+{
+    SDL_assert(camera && vec);
+    kmQuaternionMultiplyVec3(vec, &camera->cameraNode.rotation, &KM_VEC3_POS_Y);
+    kmVec3Normalize(vec, vec);
+}
+
 float lite3d_camera_distance(const lite3d_camera *camera, 
     const kmVec3 *point)
 {
@@ -267,14 +280,6 @@ float lite3d_camera_distance(const lite3d_camera *camera,
     lite3d_camera_world_position(camera, &worldCameraPos);
     kmVec3Subtract(&pointDir, point, &worldCameraPos);
     return kmVec3Length(&pointDir);
-}
-
-void lite3d_camera_world_direction(const lite3d_camera *camera, kmVec3 *vec)
-{
-    kmMat3 worldRotation;
-    kmMat4ExtractRotation(&worldRotation, &camera->cameraNode.worldMatrix);
-    kmVec3MultiplyMat3(vec, &KM_VEC3_NEG_Z, &worldRotation);
-    kmVec3Normalize(vec, vec);
 }
 
 void lite3d_camera_world_position(const lite3d_camera *camera, kmVec3 *pos)

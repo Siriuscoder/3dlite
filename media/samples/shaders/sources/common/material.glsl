@@ -22,7 +22,7 @@ float getSheen(vec2 uv);
 Surface makeSurface(vec2 uv, vec3 wv, vec3 wn, vec3 wt, vec3 wb)
 {
     Surface surface;
-    surface.index = 0u;
+    surface.materialIndex = 0u;
     surface.uv = uv;
     surface.wv = wv;
     surface.ao = getAmbientOcclusion(uv);
@@ -89,7 +89,7 @@ Surface restoreSurface(vec2 uv)
     vec3 emission = vec3(nw.a, albedo.a, specular.a);
 
     Surface surface;
-    surface.index = 0u;
+    surface.materialIndex = 0u;
     surface.material.albedo = vec4(albedo.rgb, 1.0);
     surface.material.emission = vec4(emission, 1.0);
     surface.material.f0 = vec4(vec3(LITE3D_BASE_REFLECTION_AT_ZERO_INCIDENCE), 1.0);
@@ -98,7 +98,6 @@ Surface restoreSurface(vec2 uv)
     surface.material.roughness = specular.y;
     surface.material.metallic = specular.z;
     surface.material.alpha = 1.0;
-    surface.material.envSpecular = wv.w;
     surface.material.envDiffuse = LITE3D_ENV_DIFFUSE_STRENGTH;
     surface.material.ior = 1.0;
     surface.material.emissionStrength = 1.0;
@@ -108,7 +107,9 @@ Surface restoreSurface(vec2 uv)
     surface.wv = wv.xyz;
     surface.uv = uv;
     surface.normal = nw.xyz;
-    surface.ao = getAmbientOcclusion(uv);
+
+    unpack2xF8(wv.w, surface.ao, surface.material.envSpecular);
+    surface.ao = min(surface.ao, getAmbientOcclusion(uv));
 
 #ifdef LITE3D_ENABLE_ENVIRONMENT_TEXTURE // Setup by the engine 
     surface.material.flags |= LITE3D_MATERIAL_ENVIRONMENT_TEXTURE;
@@ -123,7 +124,7 @@ Surface restoreSurface(vec2 uv)
 
 void surfaceAlphaClip(in Material material)
 {
-    if (isZero(material.alpha))
+    if (material.alpha < 0.1)
         discard;
 }
 

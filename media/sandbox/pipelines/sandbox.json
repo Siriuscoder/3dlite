@@ -6,10 +6,9 @@
     "LightingTechnique": "UBO",
     "ShadowMaps":
     {
-        "Width": 512,
-        "Height": 512,
-        "MaxCount": 16,
-        "NearClipPlane": 0.01
+        "Extent": 512,
+        "SpotShadowCacheMaxCount": 3,
+        "OmniShadowCacheMaxCount": 2
     },
     "BLOOM": 
     {
@@ -24,14 +23,13 @@
     },
     "PostProcess":
     {
-        "Gamma": 2.2,
         "Contrast": 1.02,
         "Saturation": 1.05,
         "DynamicExposure":
         {
-            "ExposureMax": 3.0,
+            "ExposureMax": 5.0,
             "ExposureMin": 0.1,
-            "ExposureBase": 0.5
+            "ExposureBase": 0.3
         }
     }
 }

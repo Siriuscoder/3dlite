@@ -1,29 +1,20 @@
 {
     "ShaderPackage": "sponza",
     "MainScenePath": "sponza:scenes/sponza.json",
-    "Instancing": false,
-    "OcclusionCulling": true,
+    "Instancing": true,
+    "OcclusionCulling": false,
     "LightingTechnique": "UBO",
     "MultiRender": true,
     "SkyBox": 
     {
         "Texture": "samples:textures/json/skybox.json",
-        "EmissionStrength": 4.0
+        "EmissionStrength": 3.8
     },
     "ShadowMaps":
     {
-        "Width": 4096,
-        "Height": 4096,
-        "MaxCount": 1,
-        "NearClipPlane": 1.0,
-        "FarClipPlane": 100.0,
-        "DirectionLightShadowParams": 
-        {
-            "LeftClipPlane": -20.0,
-            "RightClipPlane": 20.0,
-            "BottomClipPlane": -20.0,
-            "TopClipPlane": 20.0
-        }
+        "Extent": 1024,
+        "CascadeShadowCacheMaxCount": 4,
+        "OmniShadowCacheMaxCount": 6
     },
     "SSAO": 
     {
@@ -43,15 +34,16 @@
     },
     "PostProcess":
     {
-        "Gamma": 2.2,
         "Contrast": 1.005,
         "Saturation": 1.10,
-        "Exposure": 1.0,
+        "Exposure": 2.0,
+        "LensFlare": true,
+        "ChromaticAberration": true,
         "DynamicExposure":
         {
-            "ExposureMax": 5.5,
-            "ExposureMin": 0.7,
-            "ExposureBase": 0.3
+            "ExposureMax": 12.0,
+            "ExposureMin": 1.0,
+            "ExposureBase": 0.34
         }
     }
 }

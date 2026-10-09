@@ -68,6 +68,11 @@
           "Type":"sampler"
         },
         {
+          "Name":"MomentsMaps",
+          "TextureName":"SandboxPipeline_MomentsMap.texture",
+          "Type":"sampler"
+        },
+        {
           "Name": "ShadowMatrix",
           "UBOName": "SandboxPipeline_ShadowMatrixBuffer",
           "Type": "UBO"

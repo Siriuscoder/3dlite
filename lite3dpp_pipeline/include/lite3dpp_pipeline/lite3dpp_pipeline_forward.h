@@ -22,6 +22,28 @@
 namespace lite3dpp {
 namespace lite3dpp_pipeline {
 
+//- Forward pipeline scenario ------------------------------------------------------
+// 
+// Render Target        | Stage                 | Matrerial Pass    | Scene         |
+// ---------------------|-----------------------|-------------------|---------------|
+// MainDepth            | DepthBuildStage       | DepthPass         | MainScene     |
+// ---------------------|-----------------------|-------------------|---------------|
+// ShadowMap            | ShadowCleanStage      | ShadowPass        | BigTri        |
+// ShadowMap            | ShadowBuildStage      | ShadowPass        | MainScene     |
+// ---------------------|-----------------------|-------------------|---------------|
+// GIProbe              | GIStage               | GIProbePass       | MainScene     |
+// GIProbe              | SkyBoxStage           | GIProbePass       | SkyBox        |
+// ---------------------|-----------------------|-------------------|---------------|
+// Combine              | ForwardStage          | RenderPass        | MainScene     |
+// Combine              | SkyBoxStage           | RenderPass        | SkyBox        |
+// Combine              | BlendDecalStage       | RenderPass        | MainScene     |
+// ---------------------|-----------------------|-------------------|---------------|
+// BLOOM                | BloomBuildStage       | RenderPass        | BigTri        |
+// ---------------------|-----------------------|-------------------|---------------|
+// PostProcess          | PostProcessStage      | RenderPass        | BigTri        |
+// ---------------------|-----------------------|-------------------|---------------|
+
+
     class LITE3DPP_PIPELINE_EXPORT PipelineForward : public PipelineBase
     {
     public:

@@ -1,0 +1,7 @@
+{
+    "Sources": 
+    [
+        "samples:shaders/sources/pipeline/postprocess_pass/postprocess.comp,sponza:shaders/sources/inc/params.def",
+        "samples:shaders/sources/common/utils.comp"
+    ]
+}

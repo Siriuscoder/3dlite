@@ -34,3 +34,10 @@
 #   define LITE3DPP_PIPELINE_EXPORT
 #endif
 
+namespace lite3dpp {
+namespace lite3dpp_pipeline {
+
+class PipelineBase;
+class BloomPass;
+
+}}

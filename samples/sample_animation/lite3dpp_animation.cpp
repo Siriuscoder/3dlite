@@ -22,8 +22,8 @@ namespace lite3dpp {
 namespace samples {
 
 static const char *helpString = 
-    "Press '+' to increse gamma\n"
-    "Press '-' to decrese gamma\n"
+    "Press '+' to increse brightness\n"
+    "Press '-' to decrese brightness\n"
     "Press 'u' to enable/disable SSAO\n"
     "Press 'q' to start animation\n"
     "Press 'z' to start second skeleton body animation\n"
@@ -66,10 +66,11 @@ public:
     void setupShadowCasters()
     {
         auto sun = mAnimationScene->getObject("Ground")->getLightNode("Sun");
-        sun->getLight()->setFlag(LightSourceFlags::CastShadowPcfAdaptive);
-        mSUNShadowCaster = mPipeline->getShadowManager()->newShadowCaster(sun);
+        mPipeline->getShadowManager()->registerEmitter(sun);
         // Register hint nodes for automate shadow recalculation 
-        mPipeline->getShadowManager()->registerHintNodeRecursive(mAnimationScene->getObject("Engine")->getRoot());
+        mPipeline->getShadowManager()->registerHintNode(mCrankshaft);
+        mPipeline->getShadowManager()->registerHintNode(mPiston);
+        mPipeline->getShadowManager()->registerHintNode(mRod);
         mPipeline->getShadowManager()->registerHintNode(mSkeletonBody);
         mPipeline->getShadowManager()->registerHintNode(mSkeletonBody2);
         mPipeline->getShadowManager()->registerHintNode(mCuriousSphere);
@@ -80,21 +81,7 @@ public:
         Sample::processEvent(e);
         if (e->type == SDL_KEYDOWN)
         {
-            if (e->key.keysym.sym == SDLK_KP_PLUS)
-            {
-                mGamma += 0.02;
-                if (mGamma > 3.0)
-                    mGamma = 3.0;
-                mPipeline->setGamma(mGamma);
-            }
-            else if (e->key.keysym.sym == SDLK_KP_MINUS)
-            {
-                mGamma -= 0.02;
-                if (mGamma < 1.5)
-                    mGamma = 1.5;
-                mPipeline->setGamma(mGamma);
-            }
-            else if (e->key.keysym.sym == SDLK_u)
+            if (e->key.keysym.sym == SDLK_u)
             {
                 static bool ssaoEnabled = true;
                 ssaoEnabled = !ssaoEnabled;
@@ -167,6 +154,20 @@ public:
                 mSkeletonBody2->actionReset();
                 mCuriousSphere->actionReset();
             }
+            else if (e->key.keysym.sym == SDLK_KP_PLUS)
+            {
+                mBrightness += 0.001;
+                if (mBrightness > 0.08)
+                    mBrightness = 0.08;
+                mPipeline->setBrightness(mBrightness);
+            }
+            else if (e->key.keysym.sym == SDLK_KP_MINUS)
+            {
+                mBrightness -= 0.001;
+                if (mBrightness < -0.08)
+                    mBrightness = -0.08;
+                mPipeline->setBrightness(mBrightness);
+            }
         }
     }
 
@@ -175,14 +176,13 @@ private:
 
     Scene* mAnimationScene = nullptr;
     lite3dpp_pipeline::PipelineDeffered* mPipeline = nullptr;
-    lite3dpp_pipeline::ShadowManager::ShadowCaster *mSUNShadowCaster = nullptr;
     SceneNodeBase *mCrankshaft = nullptr;
     SceneNodeBase *mRod = nullptr;
     SceneNodeBase *mPiston = nullptr;
     SceneNodeBase *mSkeletonBody = nullptr;
     SceneNodeBase *mSkeletonBody2 = nullptr;
     SceneNodeBase *mCuriousSphere = nullptr;
-    float mGamma = 2.2;
+    float mBrightness = 0.0f; 
 };
 
 }}

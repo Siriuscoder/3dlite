@@ -22,6 +22,14 @@
 #include <lite3d/lite3d_kazmath.h>
 #include <lite3d/lite3d_list.h>
 
+#define LITE3D_SCENE_NODE_ROTATION_CENTERED   ((uint32_t)0x1)
+#define LITE3D_SCENE_NODE_CAMERA              ((uint32_t)0x1 << 1)
+#define LITE3D_SCENE_NODE_RENDERABLE          ((uint32_t)0x1 << 2)
+#define LITE3D_SCENE_NODE_ENABLED             ((uint32_t)0x1 << 3)
+#define LITE3D_SCENE_NODE_FRUSTUM_TEST        ((uint32_t)0x1 << 4)
+#define LITE3D_SCENE_NODE_STATIC              ((uint32_t)0x1 << 5)
+#define LITE3D_SCENE_NODE_CAST_SHADOW         ((uint32_t)0x1 << 6)
+
 typedef struct  lite3d_scene_node
 {
     lite3d_list_node nodeLink;
@@ -43,12 +51,8 @@ typedef struct  lite3d_scene_node
     kmVec3 scale;
     uint8_t recalc;
     uint8_t invalidated;
-    uint8_t rotationCentered;
-    uint8_t isCamera;
-    uint8_t renderable;
-    uint8_t enabled;
     uint8_t visible;
-    uint8_t frustumTest;
+    uint32_t flags;
     int32_t skeletonTransformIndex;
     struct lite3d_scene_node *baseNode;
     struct lite3d_list childNodes;

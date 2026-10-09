@@ -33,12 +33,10 @@ void lite3d_scene_node_init(lite3d_scene_node *node)
     kmVec3Fill(&node->scale, 1.0f, 1.0f, 1.0f);
     node->recalc = LITE3D_TRUE;
     node->invalidated = LITE3D_TRUE;
-    node->rotationCentered = LITE3D_TRUE;
-    node->isCamera = LITE3D_FALSE;
-    node->renderable = LITE3D_FALSE;
-    node->enabled = LITE3D_TRUE;
     node->visible = LITE3D_TRUE;
-    node->frustumTest = LITE3D_TRUE;
+    node->flags = LITE3D_SCENE_NODE_ROTATION_CENTERED |
+        LITE3D_SCENE_NODE_ENABLED |
+        LITE3D_SCENE_NODE_FRUSTUM_TEST;
     node->skeletonTransformIndex = -1;
     lite3d_list_init(&node->childNodes);
 }
@@ -144,7 +142,7 @@ static void scene_node_update(lite3d_scene_node *node)
         kmMat4Multiply(&transMat, &transMat, &scaleMat);
     }
 
-    if (node->rotationCentered)
+    if (node->flags & LITE3D_SCENE_NODE_ROTATION_CENTERED)
     {
         kmMat4Multiply(&node->localMatrix, &transMat, &node->localMatrix);
     }

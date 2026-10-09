@@ -61,70 +61,173 @@ namespace lite3dpp
         } ResourceManagerStats;
 
         template<class T>
-        T *queryResource(const String &name,
-            const String &path = "")
+        T *queryResource(const String &name, AbstractResource *parent = nullptr)
         {
-            AbstractResource *resource;
-
-            if((resource = fetchResource(name)) != NULL)
+            if (AbstractResource *resource = fetchResource(name))
             {
-                T *result;
-                if((result = dynamic_cast<T*>(resource)) == NULL)
-                    LITE3D_THROW("Resource type mismatch: " << name);
-                return result;
+                if (T *result = dynamic_cast<T*>(resource))
+                {
+                    result->addParentResource(parent);
+                    return result;
+                }
+
+                LITE3D_THROW("Resource type mismatch: " << name);
             }
 
-            if(path.size() == 0)
-                LITE3D_THROW("Resource not found: " << name);
+            LITE3D_THROW("Resource is not found: " << name);
+        }
 
+        template<class T>
+        T *queryResource(const String &name,
+            const String &path, AbstractResource *parent = nullptr)
+        {
             String resName = name;
-            if(resName.size() == 0)
+            
+            if (resName.empty())
                 resName = generateResourceName();
+            else
+            {
+                if (AbstractResource *resource = fetchResource(name))
+                {
+                    if (T *result = dynamic_cast<T*>(resource))
+                    {
+                        result->addParentResource(parent);
+                        return result;
+                    }
 
-            /* resource not found.. create one */
+                    LITE3D_THROW("Resource type mismatch: " << name);
+                }
+            }
+
+            /* resource is not found.. create and load */
+            size_t fileSize;
+            auto buffer = loadFileToMemory(path, &fileSize);
             auto result = std::make_shared<T>(resName, path, mMain);
-            loadResource(resName, path, result);
+            loadResource(resName, buffer, fileSize, result);
 
+            result->addParentResource(parent);
             return result.get();
         }
         
         template<class T>
         T *queryResource(const String &name, 
-            const void *data, size_t size)
+            const void *data, size_t size, AbstractResource *parent = nullptr)
         {
             String resName = name;
-            if(resName.size() == 0)
-                resName = generateResourceName();
 
-            /* resource not found.. create one */
+            if (resName.empty())
+                resName = generateResourceName();
+            else
+            {
+                if (AbstractResource *resource = fetchResource(name))
+                {
+                    if (T *result = dynamic_cast<T*>(resource))
+                    {
+                        result->addParentResource(parent);
+                        return result;
+                    }
+
+                    LITE3D_THROW("Resource type mismatch: " << name);
+                }
+            }
+
+            /* resource not found.. create new one */
             auto result = std::make_shared<T>(resName, "", mMain);
             loadResource(resName, data, size, result);
 
+            result->addParentResource(parent);
             return result.get();
         }
-        
+
         template<class T>
-        T *queryResource(const void *data, size_t size)
+        T *reloadResource(const String &name, 
+            const void *data, size_t size, AbstractResource *parent = nullptr)
         {
-            return queryResource<T>("", data, size);
+            if (AbstractResource *resource = fetchResource(name))
+            {
+                if (T *result = dynamic_cast<T*>(resource))
+                {
+                    result->load(data, size);
+                    result->addParentResource(parent);
+                    return result;
+                }
+
+                LITE3D_THROW("Resource type mismatch: " << name);
+            }
+
+            LITE3D_THROW("Resource is not found: " << name);
+        }
+
+        template<class T>
+        T *reloadResource(const String &name, 
+            const String &path, AbstractResource *parent = nullptr)
+        {
+            if (AbstractResource *resource = fetchResource(name))
+            {
+                if (T *result = dynamic_cast<T*>(resource))
+                {
+                    size_t fileSize;
+                    auto buffer = loadFileToMemory(path, &fileSize);
+                    result->unload();
+                    result->load(buffer, fileSize);
+                    result->addParentResource(parent);
+                    return result;
+                }
+
+                LITE3D_THROW("Resource type mismatch: " << name);
+            }
+
+            LITE3D_THROW("Resource is not found: " << name);
+        }
+
+        template<class T>
+        T *reloadResource(const String &name, AbstractResource *parent = nullptr)
+        {
+            if (AbstractResource *resource = fetchResource(name))
+            {
+                if (T *result = dynamic_cast<T*>(resource))
+                {
+                    result->reload();
+                    result->addParentResource(parent);
+                    return result;
+                }
+
+                LITE3D_THROW("Resource type mismatch: " << name);
+            }
+
+            LITE3D_THROW("Resource is not found: " << name);
         }
         
         template<class T>
-        T *queryResourceFromJson(const String &json)
+        T *queryResource(const void *data, size_t size, AbstractResource *parent = nullptr)
         {
-            return queryResource<T>("", json.data(), json.size());
+            return queryResource<T>("", data, size, parent);
         }
         
         template<class T>
-        T *queryResourceFromJson(const String &name, const String &json)
+        T *queryResourceFromJson(const String &json, AbstractResource *parent = nullptr)
         {
-            return queryResource<T>(name, json.data(), json.size());
+            return queryResource<T>("", json.data(), json.size(), parent);
+        }
+        
+        template<class T>
+        T *queryResourceFromJson(const String &name, const String &json, AbstractResource *parent = nullptr)
+        {
+            return queryResource<T>(name, json.data(), json.size(), parent);
+        }
+
+        template<class T>
+        T *reloadResourceFromJson(const String &name, const String &json, AbstractResource *parent = nullptr)
+        {
+            return reloadResource<T>(name, json.data(), json.size(), parent);
         }
 
         ResourceManager(Main &main);
         virtual ~ResourceManager();
 
-        void releaseAllResources();
+        size_t releaseAllResources();
+        size_t releaseUnloadedResources();
+        size_t releaseOrphanedResources();
         void releaseResource(const String &name);
         void dropFileCache();
         void dropFileCache(const String &location);
@@ -145,9 +248,6 @@ namespace lite3dpp
 
         String generateResourceName();
         AbstractResource *fetchResource(const String &key);
-        virtual void loadResource(const String &name, 
-            const String &path,
-            std::shared_ptr<AbstractResource> resource);
         virtual void loadResource(const String &name, 
             const void *buffer, size_t size,
             std::shared_ptr<AbstractResource> resource);

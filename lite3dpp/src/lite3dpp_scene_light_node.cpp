@@ -30,7 +30,7 @@ namespace lite3dpp
         if (!lightHelper.isEmpty())
         {
             mLight = std::make_unique<LightSource>(lightHelper);
-            getScene()->addLightSource(this);
+            getScene()->registerLightNode(this);
         }
     }
 
@@ -56,7 +56,7 @@ namespace lite3dpp
     {
         if (mLight)
         {
-            getScene()->removeLightSource(this);
+            getScene()->unregisterLightNode(this);
         }
     }
 }

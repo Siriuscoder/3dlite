@@ -125,7 +125,7 @@ namespace lite3dpp
             
         void FontTexture::clean()
         {
-            clean(getJson().getVec4(L"BlankColor"));
+            clean(getConfig().getVec4(L"BlankColor"));
         }
         
         void FontTexture::uploadChanges()

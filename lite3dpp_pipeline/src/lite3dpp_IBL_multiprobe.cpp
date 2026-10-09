@@ -20,36 +20,42 @@
 #include <algorithm>
 #include <SDL_assert.h>
 
+#include <lite3dpp_pipeline/lite3dpp_pipeline_base.h>
+
 namespace lite3dpp {
 namespace lite3dpp_pipeline {
 
-IBLMultiProbe::IBLMultiProbe(Main& mMain, const String& pipelineName, const String& shaderPackage) : 
+IBLMultiProbePass::IBLMultiProbePass(Main& mMain, PipelineBase &pipeline) : 
     mMain(mMain),
-    mPipelineName(pipelineName),
-    mShaderPackage(shaderPackage)
+    mPipeline(pipeline),
+    mPipelineName(pipeline.getName()),
+    mShaderPackage(pipeline.getConfig().getString(L"ShaderPackage"))
 {
     mMain.addObserver(this);
 }
 
-IBLMultiProbe::~IBLMultiProbe()
+IBLMultiProbePass::~IBLMultiProbePass()
 {
-    for (auto it = mResourcesList.rbegin(); it != mResourcesList.rend(); ++it)
-    {
-        mMain.getResourceManager().releaseResource(*it);
-    }
-
     mMain.removeObserver(this);
 }
 
-void IBLMultiProbe::initialize(const ConfigurationReader &pipelineConfig)
+void IBLMultiProbePass::initialize()
 {
-    ConfigurationReader config = pipelineConfig.getObject(L"GI");
+    ConfigurationReader config = mPipeline.getConfig().getObject(L"GI");
     mProbeCount = config.getInt(L"MaxCount", 1);
     mzNear = config.getDouble(L"ProbeZNearClip", 0.0f);
     mzFar = config.getDouble(L"ProbeZFarClip", 1.0f);
 
     calculateProbeBatchCount();
-    integrateGGX();
+
+    if (!mMain.getResourceManager().resourceExists(GGXLUTName))
+    {
+        integrateGGX();
+    }
+    else
+    {
+        mBrdfLUT = mMain.getResourceManager().queryResource<TextureImage>(GGXLUTName);
+    }
 
     mProbesBuffer = createBuffer("_EnvProbesData", sizeof(ProbeRawEntity) * mProbeCount);
     // Массивы в std140 всегда выравниваются по границе 16 байт, даже если тип данных (например, int) 
@@ -59,11 +65,8 @@ void IBLMultiProbe::initialize(const ConfigurationReader &pipelineConfig)
     createPrefilterShader(config);
 }
 
-void IBLMultiProbe::integrateGGX()
+void IBLMultiProbePass::integrateGGX()
 {
-    // Be sure to use GLSL 4.30
-    ShaderProgram::setShaderVersion("430");
-
     const int32_t LUTSize = 512;
     ConfigurationWriter IntergratedGGXLUTConfig;
     IntergratedGGXLUTConfig.set(L"TextureType", "2D")
@@ -76,8 +79,9 @@ void IBLMultiProbe::integrateGGX()
         .set(L"TextureFormat", "RG")
         .set(L"InternalFormat", "RG16F");
 
-    mBrdfLUT = mMain.getResourceManager().queryResourceFromJson<TextureImage>("IntergratedGGXLUT.texture", 
+    mBrdfLUT = mMain.getResourceManager().queryResourceFromJson<TextureImage>(GGXLUTName, 
         IntergratedGGXLUTConfig.write());
+    mBrdfLUT->pin(true);
 
     ConfigurationWriter shaderParams;
     shaderParams.set(L"Program", ConfigurationWriter()
@@ -91,7 +95,7 @@ void IBLMultiProbe::integrateGGX()
     });
 
     auto intergrateGGXShader = mMain.getResourceManager().queryResourceFromJson<ComputeShader>("IntergrateGGX.comp",
-        shaderParams.write());
+        shaderParams.write(), &mPipeline);
 
     // 16 нитей в группе
     const uint32_t groupsCount = (LUTSize + 16 - 1) / 16;
@@ -102,7 +106,7 @@ void IBLMultiProbe::integrateGGX()
     mMain.getResourceManager().releaseResource(intergrateGGXShader->getName());
 }
 
-void IBLMultiProbe::calculateProbeBatchCount()
+void IBLMultiProbePass::calculateProbeBatchCount()
 {
     int maxGeometryOutputVertices, maxGeometryTotalOutputComponents, UBOMaxSize;
     lite3d_shader_program_get_limitations(&maxGeometryOutputVertices, nullptr, &maxGeometryTotalOutputComponents);
@@ -110,7 +114,7 @@ void IBLMultiProbe::calculateProbeBatchCount()
 
     // Число компонент на одну вершину в геометрическом шейдере для рендера пробников
     // Константа связана с кодом шейдера!!!
-    const uint32_t probeComponentsByVertex = 13; // pos + iuv + iwv + iwn + drawID
+    const uint32_t probeComponentsByVertex = 14; // pos + iuv + iwv + iwn + drawID + LayerID
     uint32_t a = maxGeometryTotalOutputComponents / (probeComponentsByVertex * 3 * 6);
     uint32_t b = maxGeometryOutputVertices / (3 * 6);
     mMaxProbeBatchCount = std::min(a, b);
@@ -128,18 +132,17 @@ void IBLMultiProbe::calculateProbeBatchCount()
     ShaderProgram::addGlobalDefinition("LITE3D_ENV_PROBE_MAX", std::to_string(maxProbeCount));
 }
 
-VBOResource* IBLMultiProbe::createBuffer(const String& bufferName, size_t size)
+VBOResource* IBLMultiProbePass::createBuffer(const String& bufferName, size_t size)
 {
     auto buffer = mMain.getResourceManager().queryResourceFromJson<UBO>(mPipelineName + bufferName,
-        "{\"Dynamic\": true}");
+        "{\"Dynamic\": true}", &mPipeline);
     
-    mResourcesList.emplace_back(buffer->getName());
     // Выделяем место под 6 * N матриц, нужны будут для рендера сторон массива кубических текстур
     buffer->extendBufferBytes(size);
     return buffer;
 }
 
-void IBLMultiProbe::createProbePass(const ConfigurationReader &config)
+void IBLMultiProbePass::createProbePass(const ConfigurationReader &config)
 {
     auto resolution = config.getInt(L"ProbeResolution", DefaultProbeResolution);
     // Создание массива кубических текстур для пробирования окружающего освещения
@@ -155,8 +158,7 @@ void IBLMultiProbe::createProbePass(const ConfigurationReader &config)
         .set(L"InternalFormat", "RGB16F");
 
     mEnvironmentProbe = mMain.getResourceManager().queryResourceFromJson<TextureImage>(
-        mPipelineName + "_EnvironmentMultiProbe.texture", mapConfig.write());
-    mResourcesList.emplace_back(mEnvironmentProbe->getName());
+        mPipelineName + "_EnvironmentMultiProbe.texture", mapConfig.write(), &mPipeline);
 
     // Создание массива кубических текстур глубины для рендера сцены
     mapConfig.set(L"Filtering", "None")
@@ -164,8 +166,7 @@ void IBLMultiProbe::createProbePass(const ConfigurationReader &config)
         .set(L"InternalFormat", "");
 
     mEnvironmentDepth = mMain.getResourceManager().queryResourceFromJson<TextureImage>(
-        mPipelineName + "_EnvironmentMultiProbeDepth.texture", mapConfig.write());
-    mResourcesList.emplace_back(mEnvironmentDepth->getName());
+        mPipelineName + "_EnvironmentMultiProbeDepth.texture", mapConfig.write(), &mPipeline);
 
     ConfigurationWriter passConfig;
     passConfig.set(L"BackgroundColor", kmVec4 { 0.0f, 0.0f, 0.0f, 1.0f })
@@ -184,12 +185,11 @@ void IBLMultiProbe::createProbePass(const ConfigurationReader &config)
             .set(L"TextureName", mEnvironmentDepth->getName()));
 
     mEnvironmentProbePass = mMain.getResourceManager().queryResourceFromJson<TextureRenderTarget>(
-        mPipelineName + "_EnvironmentMultiProbePass", passConfig.write());
-    mResourcesList.emplace_back(mEnvironmentProbePass->getName());
+        mPipelineName + "_EnvironmentMultiProbePass", passConfig.write(), &mPipeline);
     mEnvironmentProbePass->addObserver(this);
 }
 
-void IBLMultiProbe::createPrefilterShader(const ConfigurationReader &config)
+void IBLMultiProbePass::createPrefilterShader(const ConfigurationReader &config)
 {
     auto resolution = config.getInt(L"ProbeResolution", DefaultProbeResolution);
     // Создание массива кубических текстур для пробирования окружающего освещения
@@ -205,8 +205,7 @@ void IBLMultiProbe::createPrefilterShader(const ConfigurationReader &config)
         .set(L"InternalFormat", "RGBA16F");
 
     mPrefilteredEnvironment = mMain.getResourceManager().queryResourceFromJson<TextureImage>(
-        mPipelineName + "_PrefilteredEnvironmentMultiProbe.texture", mapConfig.write());
-    mResourcesList.emplace_back(mPrefilteredEnvironment->getName());
+        mPipelineName + "_PrefilteredEnvironmentMultiProbe.texture", mapConfig.write(), &mPipeline);
 
     ConfigurationWriter shaderParams;
     shaderParams.set(L"Program", ConfigurationWriter()
@@ -229,11 +228,10 @@ void IBLMultiProbe::createPrefilterShader(const ConfigurationReader &config)
     });
 
     mPrefilterEnvironmentShader = mMain.getResourceManager().queryResourceFromJson<ComputeShader>(
-        mPipelineName + "_PrefilterEnvironment.comp", shaderParams.write());
-    mResourcesList.emplace_back(mPrefilterEnvironmentShader->getName());
+        mPipelineName + "_PrefilterEnvironment.comp", shaderParams.write(), &mPipeline);
 }
 
-void IBLMultiProbe::rebuild()
+void IBLMultiProbePass::rebuild()
 {
     for (auto &probe : mProbes)
     {
@@ -241,7 +239,7 @@ void IBLMultiProbe::rebuild()
     }
 }
 
-bool IBLMultiProbe::beginUpdate(RenderTarget *rt)
+bool IBLMultiProbePass::beginUpdate(RenderTarget *rt)
 {
     // Nothing to do
     if (std::find_if(mProbes.begin(), mProbes.end(), [](const EnvProbe &e) { return e.invalidated(); }) == mProbes.end())
@@ -278,7 +276,7 @@ bool IBLMultiProbe::beginUpdate(RenderTarget *rt)
     return true;
 }
 
-void IBLMultiProbe::postUpdate(RenderTarget *rt)
+void IBLMultiProbePass::postUpdate(RenderTarget *rt)
 {
     // nothing to do
     if (mProbesIndex.size() == 0 || mProbesIndex[0].index[0] == 0)
@@ -306,7 +304,7 @@ void IBLMultiProbe::postUpdate(RenderTarget *rt)
     }
 }
 
-size_t IBLMultiProbe::addProbe(const kmVec3 &position, EnvProbeFlags flags)
+size_t IBLMultiProbePass::addProbe(const kmVec3 &position, EnvProbeFlags flags)
 {
     if (mProbes.size() == mProbeCount)
     {
@@ -318,7 +316,7 @@ size_t IBLMultiProbe::addProbe(const kmVec3 &position, EnvProbeFlags flags)
     return mProbes.size() - 1;
 }
 
-void IBLMultiProbe::updateProbe(size_t index, const kmVec3 &position)
+void IBLMultiProbePass::updateProbe(size_t index, const kmVec3 &position)
 {
     if (index >= mProbes.size())
     {
@@ -328,31 +326,31 @@ void IBLMultiProbe::updateProbe(size_t index, const kmVec3 &position)
     mProbes[index].setPosition(position);
 }
 
-IBLMultiProbe::EnvProbe::EnvProbe(Main *main, float zNear, float zFar, EnvProbeFlags flags) : 
+IBLMultiProbePass::EnvProbe::EnvProbe(Main *main, float zNear, float zFar, EnvProbeFlags flags) : 
     mProbeCamera(std::make_shared<Camera>("", main)),
     mFlags(flags)
 {
     mProbeCamera->setupPerspective(zNear, zFar, 90.0f, 1.0f);
 }
 
-void IBLMultiProbe::EnvProbe::rebuildMatrix()
+void IBLMultiProbePass::EnvProbe::rebuildMatrix()
 {
     mProbeCamera->computeCubeProjView(mViewProjMatrices);
     mInvalidated = false;
 }
 
-void IBLMultiProbe::EnvProbe::setPosition(const kmVec3 &pos)
+void IBLMultiProbePass::EnvProbe::setPosition(const kmVec3 &pos)
 {
     mProbeCamera->setPosition(pos);
     invalidate();
 }
 
-void IBLMultiProbe::EnvProbe::writeProbe(IBLMultiProbe::ProbeRawEntity *probe) const
+void IBLMultiProbePass::EnvProbe::writeProbe(IBLMultiProbePass::ProbeRawEntity *probe) const
 {
     SDL_assert(mViewProjMatrices.size() == 6);
     SDL_assert(probe);
 
-    memset(probe, 0, sizeof(IBLMultiProbe::ProbeRawEntity));
+    memset(probe, 0, sizeof(IBLMultiProbePass::ProbeRawEntity));
 
     probe->position.x = mProbeCamera->getPosition().x;
     probe->position.y = mProbeCamera->getPosition().y;

@@ -1,0 +1,154 @@
+#include "samples:shaders/sources/common/common_inc.glsl"
+
+layout(local_size_x = 16, local_size_y = 16) in;
+layout(binding = 0, rgba16f) uniform writeonly image2D PostProcessOutput;
+
+uniform sampler2D Combined;
+uniform sampler2D Bloom;
+
+#ifndef LITE3D_BLOOM_STRENGTH
+#define LITE3D_BLOOM_STRENGTH                           0.04
+#endif
+
+// 0.0f, 2.0f
+#ifndef LITE3D_LENSFLARE_GHOSTS_DISPERSAL
+#define LITE3D_LENSFLARE_GHOSTS_DISPERSAL               0.71
+#endif
+
+// -100.0f, 100.0f
+#ifndef LITE3D_LENSFLARE_CHROMATIC_DISTORTION
+#define LITE3D_LENSFLARE_CHROMATIC_DISTORTION           -6.5
+#endif
+
+#ifndef LITE3D_LENSFLARE_GHOSTS_COUNT
+#define LITE3D_LENSFLARE_GHOSTS_COUNT                   4
+#endif
+
+// -1.0f, 1.0f
+#ifndef LITE3D_LENSFLARE_THRESHOLD_BIAS
+#define LITE3D_LENSFLARE_THRESHOLD_BIAS                 -0.9
+#endif
+
+// 0.0f, 20.0f
+#ifndef LITE3D_LENSFLARE_THRESHOLD_SCALE
+#define LITE3D_LENSFLARE_THRESHOLD_SCALE                7.0
+#endif
+
+// 0.0f, 50.0f
+#ifndef LITE3D_LENSFLARE_GHOSTS_WEIGHT
+#define LITE3D_LENSFLARE_GHOSTS_WEIGHT                  27.5
+#endif
+
+#ifndef LITE3D_LENSFLARE_GHOSTS_ALPHA
+#define LITE3D_LENSFLARE_GHOSTS_ALPHA                   0.1
+#endif
+
+#ifndef LITE3D_CHROMATIC_ABERRATION_AMOUNT
+#define LITE3D_CHROMATIC_ABERRATION_AMOUNT              0.01
+#endif
+
+#ifndef LITE3D_CHROMATIC_ABERRATION_DISTORTION
+#define LITE3D_CHROMATIC_ABERRATION_DISTORTION          0.2
+#endif
+
+vec3 sampleBloomScaledBiased(vec2 uv, vec2 direction, vec3 distortion)
+{
+    vec3 distoredSample = vec3(
+        texture(Bloom, uv + direction * distortion.r).r,
+        texture(Bloom, uv + direction * distortion.g).g,
+        texture(Bloom, uv + direction * distortion.b).b
+    );
+
+    return max(vec3(0.0), distoredSample + LITE3D_LENSFLARE_THRESHOLD_BIAS) * 
+        LITE3D_LENSFLARE_THRESHOLD_SCALE;
+}
+
+vec3 chromaticAberration(vec2 uv)
+{
+    // apply lens distortion with zoom to avoid edge artifacts
+    const vec2 center = vec2(0.5, 0.5); // center of the texture
+    vec2 delta = uv - center;
+    float r = length(delta);
+
+    float maxR = 0.707; // max distance from center (corner of unit square)
+    float maxDistortion = 1.0 + LITE3D_CHROMATIC_ABERRATION_DISTORTION * (maxR * maxR); // max distortion at edge
+    float zoom = 1.0 / maxDistortion; // scale uvs to counteract max distortion
+
+    // apply distortion with zoom
+    float distortionFactor = 1.0 + LITE3D_CHROMATIC_ABERRATION_DISTORTION * (r * r); // quadratic distortion
+    vec2 distortedUV = center + delta * zoom * distortionFactor;
+
+    // chromatic aberration: sample each color channel with a slight offset
+    vec2 offset = delta * LITE3D_CHROMATIC_ABERRATION_AMOUNT; // offset proportional to distance from center
+    
+    float rS = texture(Combined, distortedUV + offset).r;
+    float gS = texture(Combined, distortedUV).g; // green uses no offset
+    float bS = texture(Combined, distortedUV - offset).b;
+
+    return vec3(rS, gS, bS);
+}
+
+vec3 lensFlare(vec2 uv, float aspectRatio, ivec2 bounds)
+{
+    vec2 texelSize = 1.0 / vec2(bounds);
+    
+    vec2 texcoord = -uv + vec2(1.0); // flip image
+    vec2 ghostVec = (vec2(0.5) - texcoord) * LITE3D_LENSFLARE_GHOSTS_DISPERSAL;
+    vec3 distortion = vec3(-texelSize.x * LITE3D_LENSFLARE_CHROMATIC_DISTORTION, 0.0, texelSize.x * LITE3D_LENSFLARE_CHROMATIC_DISTORTION);
+    vec2 direction = normalize(ghostVec);
+    vec2 circVec = vec2(ghostVec.x * aspectRatio, ghostVec.y);
+    float offset = 0.5 * (1.0 - aspectRatio);
+
+    // ghosts
+    vec3 color = vec3(0.0);
+    for (int i = 0; i < LITE3D_LENSFLARE_GHOSTS_COUNT; ++i)
+    {
+        vec2 offset = fract(texcoord + ghostVec * float(i));
+
+        // falloff from center
+        float weight = length(vec2(0.5) - offset) / length(vec2(0.5));
+        weight = pow(1.0 - weight, LITE3D_LENSFLARE_GHOSTS_WEIGHT);
+
+        color += sampleBloomScaledBiased(offset, direction, distortion) * 
+            weight * LITE3D_LENSFLARE_GHOSTS_ALPHA;
+    }
+
+    return color;
+}
+
+void main()
+{
+    const ivec2 coord = ivec2(gl_GlobalInvocationID.xy);
+    const ivec2 bounds = ivec2(imageSize(PostProcessOutput).xy);
+
+    // Skip unnecessary shader calls
+    if (coord.x >= bounds.x || coord.y >= bounds.y)
+        return;
+
+    float aspectRatio = float(bounds.x) / float(bounds.y);
+    vec2 uv = (vec2(coord) + 0.5) / vec2(bounds);
+    
+#ifdef LITE3D_CHROMATIC_ABERRATION_ENABLE
+    vec3 hdr = chromaticAberration(uv);
+#else
+    vec3 hdr = texture(Combined, uv).rgb;
+#endif
+
+#ifdef LITE3D_LENSFLARE_ENABLE
+    hdr += lensFlare(uv, aspectRatio, bounds);
+#endif
+    // Apply bloom
+    hdr = mix(hdr, texture(Bloom, uv).rgb, LITE3D_BLOOM_STRENGTH);
+    // Tone mapping
+    vec3 ldr = ACESTonemapping(hdr);
+    // Color correction
+    ldr = brightnessColor(ldr);
+    ldr = contrastColor(ldr);
+    ldr = saturationColor(ldr);
+    // sRGB
+    ldr = linearToSRGB(clamp(ldr, 0.0, 1.0));
+    // compute luma
+    float luma = dot(ldr, vec3(0.299, 0.587, 0.114));
+    // Write to output
+    imageStore(PostProcessOutput, coord, vec4(ldr, luma));
+}

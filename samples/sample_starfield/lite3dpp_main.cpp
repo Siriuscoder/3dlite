@@ -22,8 +22,6 @@ namespace lite3dpp {
 namespace samples {
 
 static const char *helpString = 
-    "Press '+' to increse gamma\n"
-    "Press '-' to decrese gamma\n"
     "Press 'e' to go to the next weapoon\n"
     "Press 'r' to rotate weapoon\n";
 
@@ -57,8 +55,15 @@ public:
     void setupShadowCasters()
     {
         mSUN = mMainScene->getObject("Sun")->getLightNode("Sun");
-        mSUN->getLight()->setFlag(LightSourceFlags::CastShadowPcfAdaptive);
-        mSUNShadowCaster = mPipeline->getShadowManager()->newShadowCaster(mSUN);
+        mSUNShadowCaster = mPipeline->getShadowManager()->registerEmitter(mSUN);
+        mPipeline->getShadowManager()->registerHintNode(mAK47->getRoot(), true);
+        mPipeline->getShadowManager()->registerHintNode(mVSS->getRoot(), true);
+    }
+
+    void invalidateShadowCasters()
+    {
+        for (auto shadowCaster : mSUNShadowCaster)
+            shadowCaster->invalidate();
     }
 
     void fixedUpdateTimerTick(int32_t firedPerRound, uint64_t deltaMcs, float deltaRetard) override
@@ -73,9 +78,6 @@ public:
             {
                 mVSS->rotateZ(0.005f * deltaRetard);
             }
-
-            // Помечаем что надо перерисовать тени в следубщий кадр
-            mSUNShadowCaster->invalidate();
         }
     }
 
@@ -84,33 +86,19 @@ public:
         Sample::processEvent(e);
         if (e->type == SDL_KEYDOWN)
         {
-            if (e->key.keysym.sym == SDLK_KP_PLUS)
-            {
-                mGamma += 0.02;
-                if (mGamma > 3.0)
-                    mGamma = 3.0;
-                mPipeline->setGamma(mGamma);
-            }
-            else if (e->key.keysym.sym == SDLK_KP_MINUS)
-            {
-                mGamma -= 0.02;
-                if (mGamma < 1.5)
-                    mGamma = 1.5;
-                mPipeline->setGamma(mGamma);
-            }
-            else if (e->key.keysym.sym == SDLK_e)
+            if (e->key.keysym.sym == SDLK_e)
             {
                 if (mAK47->isEnabled())
                 {
                     mAK47->disable();
                     mVSS->enable();
-                    mSUNShadowCaster->invalidate();
+                    invalidateShadowCasters();
                 }
                 else if (mVSS->isEnabled())
                 {
                     mAK47->enable();
                     mVSS->disable();
-                    mSUNShadowCaster->invalidate();
+                    invalidateShadowCasters();
                 }
             }
             else if (e->key.keysym.sym == SDLK_r)
@@ -127,9 +115,8 @@ private:
     SceneObject *mAK47 = nullptr;
     SceneObject *mVSS = nullptr;
     lite3dpp_pipeline::PipelineForward* mPipeline = nullptr;
-    lite3dpp_pipeline::ShadowManager::ShadowCaster *mSUNShadowCaster = nullptr;
+    stl<lite3dpp_pipeline::ShadowCaster*>::vector mSUNShadowCaster;
     LightSceneNode* mSUN = nullptr;
-    float mGamma = 2.2;
     bool mRotationEnabled = false;
 };
 

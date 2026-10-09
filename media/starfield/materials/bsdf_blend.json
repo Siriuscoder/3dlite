@@ -52,6 +52,16 @@
           "Name":"Eye",
           "Type":"v3",
           "Scope":"global"
+        },
+        {
+          "Name":"CameraView",
+          "Type":"m4",
+          "Scope":"global"
+        },
+        {
+          "Name":"CameraProjection",
+          "Type":"m4",
+          "Scope":"global"
         }
       ],
       "Blending":true,

@@ -66,6 +66,7 @@ namespace lite3dpp
     class LITE3DPP_EXPORT RenderTarget;
     class LITE3DPP_EXPORT ConfigurationWriter;
     class LITE3DPP_EXPORT ConfigurationReader;
+    class LITE3DPP_EXPORT LightSceneNode;
 
     /* epsilon */
     const constexpr auto epsilon = std::numeric_limits<float>::epsilon();

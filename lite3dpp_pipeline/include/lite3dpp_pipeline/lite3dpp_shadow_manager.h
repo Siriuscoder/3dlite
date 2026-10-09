@@ -18,7 +18,9 @@
 #pragma once 
 
 #include <lite3dpp/lite3dpp_main.h>
+#include <lite3dpp/lite3dpp_compute_shader.h>
 #include <lite3dpp_pipeline/lite3dpp_pipeline_common.h>
+#include <lite3dpp_pipeline/lite3dpp_shadow_caster.h>
 
 namespace lite3dpp {
 namespace lite3dpp_pipeline {
@@ -27,68 +29,20 @@ class LITE3DPP_PIPELINE_EXPORT ShadowManager : public RenderTargetObserver, publ
 {
 public:
 
-    using IndexVector = stl<int32_t>::vector;
-
-public:
-
-    class LITE3DPP_PIPELINE_EXPORT ShadowCaster : public SceneNodeObserver
-    {
-    public:
-        
-        ShadowCaster(Main& main, const String& name, LightSceneNode* node, 
-            const lite3d_camera::projectionParamsStruct &params);
-
-        kmMat4 getMatrix();
-
-        inline LightSceneNode* getNode()
-        {
-            return mLightNode;
-        }
-
-        inline Camera* getCamera()
-        {
-            return mShadowCamera;
-        }
-
-        inline bool invalidated() const
-        {
-            return mInvalidated;
-        }
-
-        inline void validate()
-        {
-            mInvalidated = false;
-        }
-
-        inline void invalidate()
-        {
-            mInvalidated = true;
-        }
-
-    private:
-
-        void updatePosition(SceneNodeBase *node) override;
-        void updateRotation(SceneNodeBase *node) override;
-        void updateScale(SceneNodeBase *node) override;
-        void updateSkeletonPose(SceneNodeBase *node) override;
-
-    private:
-
-        LightSceneNode* mLightNode = nullptr;
-        Camera* mShadowCamera = nullptr;
-        bool mInvalidated = true;
-    };
-
-    class LITE3DPP_PIPELINE_EXPORT VisibilityHintNode : public SceneNodeObserver
+    class LITE3DPP_PIPELINE_EXPORT VisibilityHintNode : public SceneNodeObserver, public Noncopiable
     {
     public:
     
-        using ShadowCasters = stl<ShadowCaster *>::vector;
+        using AffectingShadowCasters = stl<ShadowCaster*>::vector;
 
-        VisibilityHintNode(SceneNodeBase *node);
+        VisibilityHintNode(SceneNodeBase *node, bool recursive);
+        ~VisibilityHintNode();
 
         void resetVision();
         void setVisibleFrom(ShadowCaster* sc);
+        void setInvisibleFrom(ShadowCaster* sc);
+        inline bool isRecursive() const
+        { return mRecursive; }
 
     private:
 
@@ -99,18 +53,25 @@ public:
         void invalidate();
 
         SceneNodeBase *mNode = nullptr;
-        ShadowCasters mVisibility;
+        AffectingShadowCasters mAffectingShadowCasters;
+        bool mRecursive;
     };
 
-    ShadowManager(Main& main, const String& pipelineName, const ConfigurationReader& pipelineConf);
+public:
+
+    using IndexVector = stl<int32_t>::vector;
+    using ShadowCasters = stl<LightSceneNode *, std::unique_ptr<ShadowCaster>>::multimap;
+    using VisibilityHints = stl<SceneNodeBase *, std::shared_ptr<VisibilityHintNode>>::unordered_map;
+
+    ShadowManager(Main& main, PipelineBase &pipeline);
     ~ShadowManager();
 
-    void initialize(const String& pipelineName, const String& shaderPackage);
-    ShadowCaster* newShadowCaster(LightSceneNode* node);
-    VisibilityHintNode* registerHintNode(SceneNodeBase *node);
-    VisibilityHintNode* registerHintNodeRecursive(SceneNodeBase *node);
+    void initialize();
+    stl<ShadowCaster*>::vector registerEmitter(LightSceneNode* emitter);
+    void unregisterEmitter(LightSceneNode* emitter);
+    VisibilityHintNode* registerHintNode(SceneNodeBase *node, bool recursive = false);
     void unregisterHintNode(SceneNodeBase *node);
-    void unregisterHintNodeRecursive(SceneNodeBase *node);
+    void clear();
 
     inline RenderTarget& getShadowPass()
     {
@@ -120,6 +81,11 @@ public:
     inline Texture* getShadowMapTexture()
     {
         return mShadowMap;
+    }
+
+    inline Texture* getMomentsMapTexture()
+    {
+        return mMomentsMap;
     }
 
     inline VBOResource* getShadowMatrixBuffer()
@@ -132,9 +98,9 @@ public:
         return mShadowIndexBuffer;
     }
 
-    inline uint32_t getShadowsCastersMaxCount() const 
+    inline uint32_t getShadowsCacheMaxCount() const 
     { 
-        return mShadowsCastersMaxCount;
+        return mSpotShadowCacheMaxCount + (mOmniShadowCacheMaxCount * 6) + mCascadeShadowCacheMaxCount;
     }
 
 
@@ -142,32 +108,41 @@ protected:
 
     bool beginUpdate(RenderTarget *rt) override;
     void postUpdate(RenderTarget *rt) override;
-    bool beginSceneRender(Scene *scene, Camera *camera, int32_t priority) override;
-    void endSceneRender(Scene *scene, Camera *camera, int32_t priority) override;
 
     // Проверим виден ли обьект сцены хотябы одной теневой камерой, если нет то рисовать его смысла нет.
-    bool customVisibilityCheck(Scene *scene, SceneNodeBase *node, lite3d_mesh_chunk *meshChunk, Material *material, 
-        lite3d_bounding_vol *boundingVol, Camera *camera) override;
+    bool customFrustumCheck(Scene *scene, SceneNodeBase *node, lite3d_mesh_chunk *meshChunk, Material *material, 
+        lite3d_bounding_vol *boundingVol, Camera *camera, const lite3d_scene_render_params *params) override;
 
-    void createShadowRenderTarget(const String& pipelineName);
-    void createAuxiliaryBuffers(const String& pipelineName);
-    void calculateLimits();
+    void createShadowRenderTarget();
+    void createAuxiliaryBuffers();
+    void createShadowBlurPass();
+    void setupLimits();
+    void prepareAffectedShadowMaps();
+    void blurMoments();
 
 private:
 
     Main& mMain;
-    uint32_t mShadowsCastersMaxCount;
-    uint32_t mWidth, mHeight;
+    PipelineBase &mPipeline;
+    uint32_t mSpotShadowCacheMaxCount = 0;
+    uint32_t mOmniShadowCacheMaxCount = 0;
+    uint32_t mCascadeShadowCacheMaxCount = 0;
+    uint32_t mMaxShadowsRebuildCount = 0;
+    float mCascadeSplitLambda = 0.5;
+    uint32_t mExtent = 0;
     RenderTarget* mShadowPass = nullptr;
-    Texture* mShadowMap = nullptr;
+    TextureImage* mShadowMap = nullptr;
+    TextureImage* mMomentsMap = nullptr;
+    TextureImage* mMomentsBlurMap = nullptr;
     VBOResource* mShadowMatrixBuffer = nullptr;
     VBOResource* mShadowIndexBuffer = nullptr;
+    ComputeShader *mShadowBlurVPass = nullptr;
+    ComputeShader *mShadowBlurHPass = nullptr;
     IndexVector mHostShadowIndexes;
-    stl<std::unique_ptr<ShadowCaster>>::vector mShadowCasters;
-    stl<SceneNodeBase *, std::shared_ptr<VisibilityHintNode>>::unordered_map mVisibilityHintNodes;
-    lite3d_camera::projectionParamsStruct mProjection = {};
-    Scene *mCleanStage = nullptr;
-    Material *mCleanStageMaterial = nullptr;
+    ShadowCasters mShadowCasters;
+    stl<ShadowCaster*>::vector mShadowCastersCachePlaceHolders;
+    VisibilityHints mVisibilityHintNodes;
+    bool mCascadeShadowCasterAlreadyRegistered = false;
 };
 
 }}

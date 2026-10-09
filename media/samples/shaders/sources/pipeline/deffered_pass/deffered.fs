@@ -25,9 +25,11 @@ void main()
     surfaceAlphaClip(surface.material);
 
 #ifdef LITE3D_BINDLESS_TEXTURE_PIPELINE
-    channel01 = vec4(iwv, surface.index);
+    // pack AO and material index to the channel01.w. Material index is being clamped to int16 (65536 materials is limit)
+    channel01 = vec4(iwv, packF8AndInt16(surface.ao, surface.materialIndex));
 #else 
-    channel01 = vec4(iwv, surface.material.envSpecular);
+    // pack AO and environment specular factor to the channel01.w. 
+    channel01 = vec4(iwv, pack2xF8(surface.ao, surface.material.envSpecular));
 #endif
 
     channel02 = vec4(surface.normal, surface.material.emission.r);
