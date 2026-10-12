@@ -112,8 +112,18 @@ namespace lite3dpp_pipeline {
             mLightNode->getLight()->getInfluenceDistance();
                     
         mCamera = main.addCamera(mLightNode->getName() + "_spot_shadow_" + std::to_string(++gCameraCounter));
-        mCamera->setupPerspective(mLightNode->getLight()->getShadowClipNear(), clipFar, 
-            kmRadiansToDegrees(mLightNode->getLight()->getAngleOuterCone()), 1.0);
+
+        if (mLightNode->getLight()->getType() == LightSourceFlags::TypeDiskArea || 
+            mLightNode->getLight()->getType() == LightSourceFlags::TypeRectArea)
+        {
+            // Wide projection angle for area lights, rough approx
+            mCamera->setupPerspective(mLightNode->getLight()->getShadowClipNear(), clipFar, 160.0f, 1.0);
+        }
+        else
+        {
+            mCamera->setupPerspective(mLightNode->getLight()->getShadowClipNear(), clipFar, 
+                kmRadiansToDegrees(mLightNode->getLight()->getAngleOuterCone()), 1.0);
+        }
     }
 
     ShadowCasterOmniDirectional::ShadowCasterOmniDirectional(Main &main, LightSceneNode *emitter, uint32_t faceNum) : 

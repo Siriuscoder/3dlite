@@ -6,6 +6,11 @@
     "LightingTechnique": "UBO",
     "MultiRender": true,
     "ComputeAreaLighting": true,
+    "ShadowMaps":
+    {
+        "Extent": 2048,
+        "SpotShadowCacheMaxCount": 2
+    },
     "SSAO": 
     {
         "AORadius": 0.15,

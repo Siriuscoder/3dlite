@@ -26,7 +26,7 @@ float EvaluateShadow(uint flags, int shadowIndex, in vec3 adapt, vec3 pos, in An
     vec3 shadowPos = (sv.xyz / sv.w) * 0.5 + 0.5;
     // clipping
     if (shadowPos.z > 1.0 || shadowPos.z < 0.0 || !isValidUV(shadowPos.xy))
-        return 0.0;
+        return 1.0;
 
     if (hasFlag(flags, LITE3D_LIGHT_SHADOW_PCF3x3))
     {
@@ -51,7 +51,7 @@ float EvaluateShadow(uint flags, int shadowIndex, in vec3 adapt, vec3 pos, in An
         return EvaluateShadowSample(shadowPos, adapt, shadowIndex);
     }
 
-    return 0.0;
+    return 1.0;
 }
 
 float Shadow(in LightSource source, in Surface surface, in AngularInfo angular)

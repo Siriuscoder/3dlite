@@ -9,3 +9,6 @@
 #define LITE3D_SSAO_POWER                                   2.0
 #define LITE3D_SSAO_ADAPTIVE_BIAS_MAX                       0.06
 #define LITE3D_SSAO_ADAPTIVE_BIAS_MIN                       0.01
+
+#define LITE3D_SHADOW_VSM_ENABLE
+#define LITE3D_SHADOW_VSM_BIAS                              0.0001

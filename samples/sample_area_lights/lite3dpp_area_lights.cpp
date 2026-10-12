@@ -59,6 +59,9 @@ public:
         mAreaQuadLightMaterial = getMain().getResourceManager().queryResource<PBRMaterial>("Emitter.material");
         mAreaEllipceLight = mScene->getObject("LightAnchorDisk")->getLightNode("LightAreaDisk");
         mAreaEllipceLightMaterial = getMain().getResourceManager().queryResource<PBRMaterial>("EmitterEllipce.material");
+
+        mPipeline->getShadowManager()->registerEmitter(mAreaQuadLight);
+        mPipeline->getShadowManager()->registerEmitter(mAreaEllipceLight);
     }
 
     void mainCameraChanged() override
