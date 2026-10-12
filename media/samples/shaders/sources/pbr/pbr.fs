@@ -43,10 +43,10 @@ vec3 ComputeIllumination(in Surface surface, in AngularInfo angular)
         angularInfoCalcAngles(angular, surface);
         // Calc the light source attenuation
         float attenuationFactor = calcAttenuation(light, angular);
-        // Calc shadow, 0 - fully is in shadow, 1 - visible
-        float shadowFactor = Shadow(light, surface, angular);
+        // Calc shadow, 0 - covered by shadow, 1 - visible
+        float shadowVisibility = Shadow(light, surface, angular);
         // Calc the the light source radiance
-        vec3 radiance = light.diffuse.rgb * light.radiance * attenuationFactor * shadowFactor;
+        vec3 radiance = light.diffuse.rgb * light.radiance * attenuationFactor * shadowVisibility;
         // Radiance is too small, consider to skip BRDF calculation
         if (isZero(radiance))
             continue;

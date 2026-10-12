@@ -18,6 +18,42 @@ layout(std140) uniform ShadowMatrix
 #include "samples:shaders/sources/shadow/vsm.glsl"
 #endif
 
+float EvaluateShadow(uint flags, int shadowIndex, in vec3 adapt, vec3 pos, in AngularInfo angular)
+{
+    // Shadow space NDC coordinates of current fragment
+    vec4 sv = shadowTransform[shadowIndex] * vec4(pos, 1.0);
+    // transform the NDC coordinates to the range [0,1]
+    vec3 shadowPos = (sv.xyz / sv.w) * 0.5 + 0.5;
+    // clipping
+    if (shadowPos.z > 1.0 || shadowPos.z < 0.0 || !isValidUV(shadowPos.xy))
+        return 0.0;
+
+    if (hasFlag(flags, LITE3D_LIGHT_SHADOW_PCF3x3))
+    {
+        return EvaluateShadowPCF3x3(shadowPos, adapt, shadowIndex);
+    }
+    else if (hasFlag(flags, LITE3D_LIGHT_SHADOW_PCF_ADAPTIVE))
+    {
+        return EvaluateShadowPCFAdaptive(shadowPos, adapt, shadowIndex);
+    }
+    else if (hasFlag(flags, LITE3D_LIGHT_SHADOW_POISSON))
+    {
+        return EvaluateShadowPCFPoisson(shadowPos, adapt, shadowIndex);
+    }
+#ifdef LITE3D_SHADOW_VSM_ENABLE
+    else if (hasFlag(flags, LITE3D_LIGHT_SHADOW_VSM))
+    {
+        return EvaluateShadowEVSM2(shadowPos, shadowIndex);
+    }
+#endif
+    else // Simple shadow without PCF 
+    {
+        return EvaluateShadowSample(shadowPos, adapt, shadowIndex);
+    }
+
+    return 0.0;
+}
+
 float Shadow(in LightSource source, in Surface surface, in AngularInfo angular)
 {
     // Do not cast shadows
@@ -27,23 +63,27 @@ float Shadow(in LightSource source, in Surface surface, in AngularInfo angular)
         return 1.0;
 
     int shadowIndex = source.shadowIndex;
-    int cascade = 0;
+    float shadowVisibility = 0.0;
+    vec3 adapt = vec3(0.0);
+
     if (hasFlag(source.flags, LITE3D_LIGHT_POINT))
     {
         shadowIndex = source.shadowIndex + cubeFaceFromDir(-angular.lightDir);
     }
 #ifdef LITE3D_SHADOW_CSM_ENABLE
-    else if (hasFlag(source.flags, LITE3D_LIGHT_DIRECTIONAL))
+    if (hasFlag(source.flags, LITE3D_LIGHT_DIRECTIONAL))
     {
-        cascade = LITE3D_SHADOW_CSM_CASCADE_COUNT - 1;
+        int cascade = LITE3D_SHADOW_CSM_CASCADE_COUNT - 1;
         vec3 viewPos = worldToViewSpacePosition(surface.wv);
         float zNear = getZNear();
         float zFar = getZFar();
         float depth = -viewPos.z;
+        float splitEnd = 0.0;
 
         for (int i = 0; i < LITE3D_SHADOW_CSM_CASCADE_COUNT - 1; ++i)
         {
-            if (depth < BuildCascadeSplit(i, zNear, zFar))
+            splitEnd = BuildCascadeSplit(i, zNear, zFar);
+            if (depth < splitEnd)
             {
                 cascade = i;
                 break;
@@ -51,53 +91,45 @@ float Shadow(in LightSource source, in Surface surface, in AngularInfo angular)
         }
 
         shadowIndex = source.shadowIndex + cascade;
+        adapt = CalcAdaptiveShadowParams(angular, cascade);
+        shadowVisibility = EvaluateShadow(source.flags, shadowIndex, adapt, surface.wv, angular);
+
+        // Blend with neighbor cascade, if current is not last
+        if (cascade < LITE3D_SHADOW_CSM_CASCADE_COUNT - 1)
+        {
+            const float blendThreshold = 0.1;
+
+            float splitStart = cascade == 0 ? zNear : BuildCascadeSplit(cascade - 1, zNear, zFar);
+            float splitSize = splitEnd - splitStart;
+            float fadeFactor = (splitEnd - depth) / splitSize;
+
+            if (fadeFactor < blendThreshold)
+            {
+                vec3 adaptNext = CalcAdaptiveShadowParams(angular, cascade + 1);
+                float nextCascadeVisibility = EvaluateShadow(source.flags, shadowIndex + 1, adaptNext, surface.wv, angular);
+                float weight = smoothstep(0.0, blendThreshold, fadeFactor);
+
+                shadowVisibility = mix(nextCascadeVisibility, shadowVisibility, weight);
+            }
+        }
     }
+    else
 #endif
-
-    // Shadow space NDC coordinates of current fragment
-    vec4 sv = shadowTransform[shadowIndex] * vec4(surface.wv, 1.0);
-    // transform the NDC coordinates to the range [0,1]
-    vec3 shadowPos = (sv.xyz / sv.w) * 0.5 + 0.5;
-    // clipping
-    if (shadowPos.z > 1.0 || shadowPos.z < 0.0 || !isValidUV(shadowPos.xy))
-        return 0.0;
-
-    float shadowFactor = 0.0;
-    // Adaptive bias, filter size
-    vec3 adapt = CalcAdaptiveShadowParams(angular, cascade);
-
-    if (hasFlag(source.flags, LITE3D_LIGHT_SHADOW_PCF3x3))
     {
-        shadowFactor = EvaluateShadowPCF3x3(shadowPos, adapt, shadowIndex);
-    }
-    else if (hasFlag(source.flags, LITE3D_LIGHT_SHADOW_PCF_ADAPTIVE))
-    {
-        shadowFactor = EvaluateShadowPCFAdaptive(shadowPos, adapt, shadowIndex);
-    }
-    else if (hasFlag(source.flags, LITE3D_LIGHT_SHADOW_POISSON))
-    {
-        shadowFactor = EvaluateShadowPCFPoisson(shadowPos, adapt, shadowIndex);
-    }
-#ifdef LITE3D_SHADOW_VSM_ENABLE
-    else if (hasFlag(source.flags, LITE3D_LIGHT_SHADOW_VSM))
-    {
-        shadowFactor = EvaluateShadowEVSM2(shadowPos, shadowIndex);
-    }
-#endif
-    else // Simple shadow without PCF 
-    {
-        shadowFactor = EvaluateShadowSample(shadowPos, adapt, shadowIndex);
+        // Adaptive bias, filter size
+        adapt = CalcAdaptiveShadowParams(angular, 0);
+        shadowVisibility = EvaluateShadow(source.flags, shadowIndex, adapt, surface.wv, angular);
     }
 
-    if (!isZero(shadowFactor))
+    if (!isZero(shadowVisibility))
     {
 #ifdef LITE3D_SSS_ENABLE
         if (hasFlag(source.flags, LITE3D_LIGHT_SHADOW_SSS))
         {
-            shadowFactor = min(shadowFactor, SSS(surface.wv, angular.lightDir, adapt.z));
+            shadowVisibility = min(shadowVisibility, SSS(surface.wv, angular.lightDir, adapt.z));
         }
 #endif
     }
 
-    return shadowFactor;
+    return shadowVisibility;
 }

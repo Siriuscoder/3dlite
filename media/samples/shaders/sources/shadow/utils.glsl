@@ -14,7 +14,7 @@ vec3 CalcAdaptiveShadowParams(in AngularInfo angular, int cascade)
         LITE3D_SHADOW_PCF_MAX_FILTER_SIZE, 
         LITE3D_SSS_MAX_ADAPTIVE_DEPTH_THRESHOLD);
 
-    float factor = pow(1.0 - angular.NdotL, 2.3);
+    float factor = shlickPow(1.0 - angular.NdotL, 2.3);
     return mix(minV, maxV, factor);
 }
 

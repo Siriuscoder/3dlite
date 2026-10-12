@@ -30,7 +30,7 @@
         "ProbeResolution": 128,
         "MaxCount": 33,
         "ProbeZNearClip": 0.01,
-        "ProbeZFarClip": 100.0
+        "ProbeZFarClip": 40.0
     },
     "PostProcess":
     {
