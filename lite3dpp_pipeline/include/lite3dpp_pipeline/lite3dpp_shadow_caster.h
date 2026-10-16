@@ -125,12 +125,14 @@ public:
     bool recalcMatrix(kmMat4 &matrix) override;
     int32_t getCacheIndex() const override;
     void setCacheIndex(int32_t index) override;
+
+    static kmVec2 calcStabilizationOffset(const kmVec3 &center, float minX, float maxX, float minY, float maxY,
+        const kmVec3 &lightDirection, uint32_t shadowMapSize);
     
 private:
 
     float splitDepth(uint32_t num, float lambda, float zNear, float zFar);
     void makeCascadeRange(float lambda, float zNear, float zFar);
-    kmVec2 calcStabilizationOffset(const kmVec3 &center, float minX, float maxX, float minY, float maxY);
 
     uint32_t mCascadeNum;
     uint32_t mCascadeCount;
@@ -138,6 +140,18 @@ private:
     float mCascadeFar;
     uint32_t mShadowMapSize;
     Camera &mMainCamera;
+};
+
+class LITE3DPP_PIPELINE_EXPORT ShadowCasterEntireScene : public ShadowCaster
+{
+public:
+
+    ShadowCasterEntireScene(Main &main, LightSceneNode *emitter, uint32_t shadowMapSize);
+    bool recalcMatrix(kmMat4 &matrix) override;
+    
+private:
+
+    uint32_t mShadowMapSize;
 };
 
 }}

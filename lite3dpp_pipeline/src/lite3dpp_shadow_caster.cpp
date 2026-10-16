@@ -202,19 +202,14 @@ namespace lite3dpp_pipeline {
     {
         if (mLightNode->getLight()->getShadowIndex() >= 0)
         {
-            return mLightNode->getLight()->getShadowIndex() + mCascadeNum;
+            return mLightNode->getLight()->getShadowIndex() + mCascadeNum + 1;
         }
 
         return -1;
     }
 
     void ShadowCasterCascade::setCacheIndex(int32_t index)
-    {
-        if (mCascadeNum == 0)
-        {
-            mLightNode->getLight()->setShadowIndex(index);
-        }
-    }
+    {}
 
     float ShadowCasterCascade::splitDepth(uint32_t num, float lambda, float zNear, float zFar)
     {
@@ -316,47 +311,99 @@ namespace lite3dpp_pipeline {
         kmMat4 view = mCamera->refreshViewMatrix();
 
         /* Получим координаты углов каскада в системе координат теневой камеры (shadow-view-space) */
-        float minX, minY, maxX, maxY;
-        minX = minY = FLT_MAX;
-        maxX = maxY = FLT_MIN;
+        kmVec3 min = {FLT_MAX, FLT_MAX, FLT_MAX};
+        kmVec3 max = {-FLT_MAX, -FLT_MAX, -FLT_MAX};
         for (int i = 0; i < 8; ++i)
         {
             kmVec3TransformCoord(&tmp, &corners[i], &view);
         
-            minX = std::min(minX, tmp.x);
-            maxX = std::max(maxX, tmp.x);
-        
-            minY = std::min(minY, tmp.y);
-            maxY = std::max(maxY, tmp.y);
+            kmVec3Min(&min, &min, &tmp);
+            kmVec3Max(&max, &max, &tmp);
         }
 
         /* расчет смещения для стабилизации вида, для уменешения дрожания теней (shimmering) */
-        auto offset = calcStabilizationOffset(center, minX, maxX, minY, maxY);
+        auto offset = calcStabilizationOffset(center, min.x, max.x, min.y, max.y,
+            mLightNode->getLight()->getWorldDirection(), mShadowMapSize);
         /* Построим ортогональную проекцию по полученным размерам каскада */
         mCamera->setupOrtho(
             mLightNode->getLight()->getShadowClipNear(), 
             mLightNode->getLight()->getShadowClipFar(),
-            minX + offset.x, maxX + offset.x,
-            minY + offset.y, maxY + offset.y);
+            min.x + offset.x, max.x + offset.x,
+            min.y + offset.y, max.y + offset.y);
 
         matrix = mCamera->refreshProjViewMatrix(view);
         return true;
     }
 
-    kmVec2 ShadowCasterCascade::calcStabilizationOffset(const kmVec3 &center, float minX, float maxX, float minY, float maxY)
+    kmVec2 ShadowCasterCascade::calcStabilizationOffset(const kmVec3 &center, float minX, float maxX, float minY, float maxY,
+        const kmVec3 &lightDirection, uint32_t shadowMapSize)
     {
         kmMat3 lightCamBasis;
         kmVec3 centerAtZero;
-        kmMat3LookAt(&lightCamBasis, &KM_VEC3_ZERO, &mLightNode->getLight()->getWorldDirection(), &KM_VEC3_POS_Z);
+        kmMat3LookAt(&lightCamBasis, &KM_VEC3_ZERO, &lightDirection, &KM_VEC3_POS_Z);
         kmVec3MultiplyMat3(&centerAtZero, &center, &lightCamBasis);
 
         kmVec2 extent, texelSize, offset;
         extent.x = 0.5f * (maxX - minX);
         extent.y = 0.5f * (maxY - minY);
-        texelSize.x = (extent.x * 2.0f) / mShadowMapSize;
-        texelSize.y = (extent.y * 2.0f) / mShadowMapSize;
+        texelSize.x = (extent.x * 2.0f) / shadowMapSize;
+        texelSize.y = (extent.y * 2.0f) / shadowMapSize;
         offset.x = -centerAtZero.x + std::floor(centerAtZero.x / texelSize.x) * texelSize.x;
         offset.y = -centerAtZero.y + std::floor(centerAtZero.y / texelSize.y) * texelSize.y;
         return offset;
+    }
+
+    ShadowCasterEntireScene::ShadowCasterEntireScene(Main &main, LightSceneNode *emitter, uint32_t shadowMapSize) : 
+        ShadowCaster(ShadowCaster::EmitterType::CascadeShadow, main, emitter),
+        mShadowMapSize(shadowMapSize)
+    {
+        SDL_assert(mLightNode->getLight()->getType() == LightSourceFlags::TypeDirectional);
+
+        mCamera = main.addCamera(mLightNode->getName() + "_shadow_cascade_entire_scene_" +  
+            std::to_string(++gCameraCounter));
+    }
+
+    bool ShadowCasterEntireScene::recalcMatrix(kmMat4 &matrix)
+    {
+        Scene *mainScene = mLightNode->getScene();
+        SDL_assert(mainScene);
+
+        const auto &aabb = mainScene->getBoundingVolume();
+        const auto &center = aabb.sphereCenter;
+        const float padding = std::max(aabb.radius * 0.0001f, 0.001f);
+        const auto &direction = mLightNode->getLight()->getWorldDirection();
+        kmVec3 shadowCamPosition, tmp;
+        kmVec3Scale(&tmp, &direction, aabb.radius + 2.0f * padding);
+        kmVec3Subtract(&shadowCamPosition, &center, &tmp);
+
+        mCamera->setPosition(shadowCamPosition);
+        mCamera->setDirection(direction);
+        const kmMat4 view = mCamera->refreshViewMatrix();
+
+        kmVec3 min = {FLT_MAX, FLT_MAX, FLT_MAX};
+        kmVec3 max = {-FLT_MAX, -FLT_MAX, -FLT_MAX};
+        for (const auto &corner : aabb.box)
+        {
+            kmVec3TransformCoord(&tmp, &corner, &view);
+            kmVec3Min(&min, &min, &tmp);
+            kmVec3Max(&max, &max, &tmp);
+        }
+
+        const kmVec3 minPadding = {-padding, -padding, -padding};
+        const kmVec3 maxPadding = {padding, padding, padding};
+        kmVec3Add(&min, &min, &minPadding);
+        kmVec3Add(&max, &max, &maxPadding);
+        const auto offset = ShadowCasterCascade::calcStabilizationOffset(center,
+            min.x, max.x, min.y, max.y, direction, mShadowMapSize);
+
+        // Keep all corners inside the projection after texel snapping.
+        const float marginX = (max.x - min.x) / mShadowMapSize;
+        const float marginY = (max.y - min.y) / mShadowMapSize;
+        mCamera->setupOrtho(-max.z, -min.z,
+            min.x + offset.x - marginX, max.x + offset.x + marginX,
+            min.y + offset.y - marginY, max.y + offset.y + marginY);
+
+        matrix = mCamera->refreshProjViewMatrix(view);
+        return true;
     }
 }}

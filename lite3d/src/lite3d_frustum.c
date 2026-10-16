@@ -144,6 +144,27 @@ void lite3d_bounding_vol_setup(struct lite3d_bounding_vol *vol,
     vol->radius = kmVec3Length(&center);
 }
 
+void lite3d_bounding_vol_min_max(struct lite3d_bounding_vol *vol,
+    kmVec3 *vmin, kmVec3 *vmax)
+{
+    int i;
+    kmVec3 min, max;
+
+    SDL_assert(vol);
+    SDL_assert(vmin);
+    SDL_assert(vmax);
+
+    min = max = vol->box[0];
+    for (i = 1; i < 8; ++i)
+    {
+        kmVec3Min(&min, &min, &vol->box[i]);
+        kmVec3Max(&max, &max, &vol->box[i]);
+    }
+
+    *vmin = min;
+    *vmax = max;
+}
+
 void lite3d_bounding_vol_translate(struct lite3d_bounding_vol *volOut,
     const struct lite3d_bounding_vol *volIn, const struct kmMat4 *tr)
 {

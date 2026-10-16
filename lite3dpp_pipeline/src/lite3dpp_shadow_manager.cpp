@@ -138,9 +138,13 @@ namespace lite3dpp_pipeline {
                         LITE3D_THROW("Cascade shadows implementation currently supports only one directional light");
                     }
 
+                    // Add full scene shadow map for low quality render
+                    auto it = mShadowCasters.emplace(emitter, std::make_unique<ShadowCasterEntireScene>(mMain, emitter, mExtent));
+                    shadowCasters.push_back(it->second.get());
+
                     for (uint32_t i = 0; i < mCascadeShadowCacheMaxCount; ++i)
                     {
-                        auto it = mShadowCasters.emplace(emitter, std::make_unique<ShadowCasterCascade>(mMain, 
+                        it = mShadowCasters.emplace(emitter, std::make_unique<ShadowCasterCascade>(mMain, 
                             emitter, i, mCascadeShadowCacheMaxCount, mCascadeSplitLambda, mExtent, mPipeline.getMainCamera()));
                         shadowCasters.push_back(it->second.get());
                     }
@@ -336,20 +340,25 @@ namespace lite3dpp_pipeline {
                 uint32_t step = 1;
                 uint32_t firstIndexToSearch = 0;
                 uint32_t searchCount = 0;
+                
+                // Shadow cache layout
+                // ---------------------------------------------------------------------------------------------------------------------
+                // Entire scene cascade | mCascadeShadowCacheMaxCount | mOmniShadowsCacheMaxCount * 6 (Cubes) | SpotShadowCacheMaxCount
+                // ---------------------------------------------------------------------------------------------------------------------
                 switch (it->second->getEmitterType())
                 {
                     case ShadowCaster::EmitterType::CascadeShadow:
                         firstIndexToSearch = 0;
-                        searchCount = mCascadeShadowCacheMaxCount;
-                        step = mCascadeShadowCacheMaxCount;
+                        searchCount = getCascadeShadowsCacheMaxCount();
+                        step = getCascadeShadowsCacheMaxCount();
                         break;
                     case ShadowCaster::EmitterType::OmniDirectionalShadow:
-                        firstIndexToSearch = mCascadeShadowCacheMaxCount;
-                        searchCount = mOmniShadowCacheMaxCount * 6;
+                        firstIndexToSearch = getCascadeShadowsCacheMaxCount();
+                        searchCount= getOmniShadowsCacheMaxCount();
                         step = 6;
                         break;
                     case ShadowCaster::EmitterType::SpotShadow:
-                        firstIndexToSearch = mCascadeShadowCacheMaxCount + (mOmniShadowCacheMaxCount * 6);
+                        firstIndexToSearch = getCascadeShadowsCacheMaxCount() + getOmniShadowsCacheMaxCount();
                         searchCount = mSpotShadowCacheMaxCount;
                         step = 1;
                         break;

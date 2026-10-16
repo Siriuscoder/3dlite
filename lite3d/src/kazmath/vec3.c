@@ -149,6 +149,22 @@ kmVec3* kmVec3Add(kmVec3* pOut, const kmVec3* pV1, const kmVec3* pV2)
     return pOut;
 }
 
+kmVec3* kmVec3Min(kmVec3* pOut, const kmVec3* pV1, const kmVec3* pV2)
+{
+    pOut->x = kmMin(pV1->x, pV2->x);
+    pOut->y = kmMin(pV1->y, pV2->y);
+    pOut->z = kmMin(pV1->z, pV2->z);
+    return pOut;
+}
+
+kmVec3* kmVec3Max(kmVec3* pOut, const kmVec3* pV1, const kmVec3* pV2)
+{
+    pOut->x = kmMax(pV1->x, pV2->x);
+    pOut->y = kmMax(pV1->y, pV2->y);
+    pOut->z = kmMax(pV1->z, pV2->z);
+    return pOut;
+}
+
  /**
   * Subtracts 2 vectors and returns the result. The result is stored in
   * pOut.

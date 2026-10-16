@@ -40,6 +40,8 @@ typedef struct kmVec4
 
 LITE3D_CEXPORT kmVec4* kmVec4Fill(kmVec4* pOut, kmScalar x, kmScalar y, kmScalar z, kmScalar w);
 LITE3D_CEXPORT kmVec4* kmVec4Add(kmVec4* pOut, const kmVec4* pV1, const kmVec4* pV2);
+LITE3D_CEXPORT kmVec4* kmVec4Min(kmVec4* pOut, const kmVec4* pV1, const kmVec4* pV2); /** Returns component-wise minima */
+LITE3D_CEXPORT kmVec4* kmVec4Max(kmVec4* pOut, const kmVec4* pV1, const kmVec4* pV2); /** Returns component-wise maxima */
 LITE3D_CEXPORT kmScalar kmVec4Dot(const kmVec4* pV1, const kmVec4* pV2);
 LITE3D_CEXPORT kmScalar kmVec4Length(const kmVec4* pIn);
 LITE3D_CEXPORT kmScalar kmVec4LengthSq(const kmVec4* pIn);

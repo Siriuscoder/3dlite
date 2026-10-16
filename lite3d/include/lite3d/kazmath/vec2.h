@@ -41,6 +41,8 @@ LITE3D_CEXPORT kmScalar kmVec2LengthSq(const kmVec2* pIn); /**< Returns the squa
 LITE3D_CEXPORT kmVec2* kmVec2Normalize(kmVec2* pOut, const kmVec2* pIn); /**< Returns the vector passed in set to unit length*/
 LITE3D_CEXPORT kmVec2* kmVec2Lerp(kmVec2* pOut, const kmVec2* pV1, const kmVec2* pV2, kmScalar t);
 LITE3D_CEXPORT kmVec2* kmVec2Add(kmVec2* pOut, const kmVec2* pV1, const kmVec2* pV2); /**< Adds 2 vectors and returns the result*/
+LITE3D_CEXPORT kmVec2* kmVec2Min(kmVec2* pOut, const kmVec2* pV1, const kmVec2* pV2); /** Returns component-wise minima */
+LITE3D_CEXPORT kmVec2* kmVec2Max(kmVec2* pOut, const kmVec2* pV1, const kmVec2* pV2); /** Returns component-wise maxima */
 LITE3D_CEXPORT kmScalar kmVec2Dot(const kmVec2* pV1, const kmVec2* pV2); /** Returns the Dot product which is the cosine of the angle between the two vectors multiplied by their lengths */
 LITE3D_CEXPORT kmScalar kmVec2Cross(const kmVec2* pV1, const kmVec2* pV2);
 LITE3D_CEXPORT kmVec2* kmVec2Subtract(kmVec2* pOut, const kmVec2* pV1, const kmVec2* pV2); /**< Subtracts 2 vectors and returns the result*/

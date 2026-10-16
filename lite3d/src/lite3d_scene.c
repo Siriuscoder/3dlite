@@ -568,16 +568,22 @@ static void mqr_unit_queue_multirender(lite3d_scene *scene, lite3d_array *queue,
 }
 
 static void mqr_unit_make_queue(lite3d_scene *scene, _mqr_unit *mqrUnit,
-    const lite3d_scene_render_params *params)
+    const lite3d_scene_render_params *params, kmVec3 *min, kmVec3 *max)
 {
     _mqr_node *mqrNode;
     lite3d_list_node *mqrListNode;
     SDL_assert(mqrUnit);
     SDL_assert(params);
+    SDL_assert(min);
+    SDL_assert(max);
+
+    kmVec3Fill(min, FLT_MAX, FLT_MAX, FLT_MAX);
+    kmVec3Fill(max, -FLT_MAX, -FLT_MAX, -FLT_MAX);
 
     for (mqrListNode = mqrUnit->nodes.l.next;
         mqrListNode != &mqrUnit->nodes.l; mqrListNode = lite3d_list_next(mqrListNode))
     {
+        kmVec3 minBB, maxBB;
         mqrNode = LITE3D_MEMBERCAST(_mqr_node, mqrListNode, unit);
         
         if (mqrNode->node->invalidated)
@@ -606,6 +612,10 @@ static void mqr_unit_make_queue(lite3d_scene *scene, _mqr_unit *mqrUnit,
                 }
             }
         }
+
+        lite3d_bounding_vol_min_max(&mqrNode->boundingVol, &minBB, &maxBB);
+        kmVec3Min(min, min, &minBB);
+        kmVec3Max(max, max, &maxBB);
 
         if (mqrNode->node->invalidated || scene->currentCamera->cameraNode.invalidated)
         {
@@ -636,6 +646,9 @@ static void mqr_render_make_queue(struct lite3d_scene *scene, const lite3d_scene
 {
     _mqr_unit *mqrUnit = NULL;
     lite3d_list_node *mqrUnitNode = NULL;
+    kmVec3 minScenePoint = {FLT_MAX, FLT_MAX, FLT_MAX};
+    kmVec3 maxScenePoint = {-FLT_MAX, -FLT_MAX, -FLT_MAX};
+    int hasBounds = LITE3D_FALSE;
     SDL_assert(params);
 
     for (mqrUnitNode = scene->materialRenderUnits.l.next;
@@ -645,10 +658,19 @@ static void mqr_render_make_queue(struct lite3d_scene *scene, const lite3d_scene
 
         if (!lite3d_list_is_empty(&mqrUnit->nodes))
         {
+            kmVec3 min, max;
             scene->stats.totalMaterials++;
-            LITE3D_METRIC_CALL(mqr_unit_make_queue, (scene, mqrUnit, params))
+            LITE3D_METRIC_CALL(mqr_unit_make_queue, (scene, mqrUnit, params, &min, &max))
+            kmVec3Min(&minScenePoint, &minScenePoint, &min);
+            kmVec3Max(&maxScenePoint, &maxScenePoint, &max);
+            hasBounds = LITE3D_TRUE;
         }
     }
+
+    if (!hasBounds)
+        minScenePoint = maxScenePoint = KM_VEC3_ZERO;
+
+    lite3d_bounding_vol_setup(&scene->aabb, &minScenePoint, &maxScenePoint);
 }
 
 static void mqr_render_stage_opaque(struct lite3d_scene *scene, const lite3d_scene_render_params *params)

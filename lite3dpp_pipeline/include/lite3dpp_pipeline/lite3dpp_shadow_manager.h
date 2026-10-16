@@ -98,9 +98,19 @@ public:
         return mShadowIndexBuffer;
     }
 
+    inline uint32_t getCascadeShadowsCacheMaxCount() const 
+    {
+        return mCascadeShadowCacheMaxCount + 1;
+    }
+
+    inline uint32_t getOmniShadowsCacheMaxCount() const 
+    {
+        return mOmniShadowCacheMaxCount * 6;
+    }
+
     inline uint32_t getShadowsCacheMaxCount() const 
     { 
-        return mSpotShadowCacheMaxCount + (mOmniShadowCacheMaxCount * 6) + mCascadeShadowCacheMaxCount;
+        return mSpotShadowCacheMaxCount + getOmniShadowsCacheMaxCount() + getCascadeShadowsCacheMaxCount();
     }
 
 

@@ -49,6 +49,9 @@ namespace lite3dpp
         inline lite3d_scene *getPtr()
         { return &mScene; }
 
+        inline const lite3d_bounding_vol &getBoundingVolume() const
+        { return mScene.aabb; }
+
         SceneObject *addObject(const String &name, const String &templatePath, 
             SceneObjectBase *parent = nullptr, const kmVec3 &initialPosition = KM_VEC3_ZERO, 
             const kmQuaternion &initialRotation = KM_QUATERNION_IDENTITY, const kmVec3 &initialScale = KM_VEC3_ONE);

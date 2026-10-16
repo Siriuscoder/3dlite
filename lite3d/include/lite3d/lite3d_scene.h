@@ -91,6 +91,7 @@ typedef struct lite3d_scene
     lite3d_array invocationIndexBufferCPU;     // CPU Буфер с индексами draw команд
     lite3d_vbo *invocationIndexBufferGPU;       // GPU Буфер с индексами draw команд
     lite3d_camera *currentCamera;
+    lite3d_bounding_vol aabb;
     uint32_t features;
     void *userdata;
 
