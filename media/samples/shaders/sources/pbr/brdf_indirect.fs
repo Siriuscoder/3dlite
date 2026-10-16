@@ -134,7 +134,7 @@ vec3 ComputeIndirect(in Surface surface, in AngularInfo angular)
 
         for (uint p = 0u; p < probesCount; ++p)
         {
-            float probeDistance = length(surface.wv - probes[p].position.xyz);
+            float probeDistance = distance(surface.wv, probes[p].position.xyz);
             nearProbeDistance = min(nearProbeDistance, probeDistance);
         }
 
@@ -146,7 +146,7 @@ vec3 ComputeIndirect(in Surface surface, in AngularInfo angular)
         for (uint p = 0u; p < probesCount; ++p)
         {
             EnvironmentProbeStruct probe = probes[p];
-            float probeDistance = length(surface.wv - probe.position.xyz);
+            float probeDistance = distance(surface.wv, probe.position.xyz);
             float relativeDistance = nearProbeDistance / max(probeDistance, FLT_EPSILON);
 
             if (relativeDistance < LITE3D_ENV_PROBE_RELATIVE_DISTANCE_THRESHOLD)

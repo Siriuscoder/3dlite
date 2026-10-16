@@ -18,18 +18,6 @@ float getAmbientOcclusion(vec2 uv)
 }
 #endif
 
-const vec2 poissonDisk8[8] = vec2[]
-(
-    vec2(-0.326212, -0.405810),
-    vec2(-0.840144, -0.073580),
-    vec2(-0.695914,  0.457137),
-    vec2(-0.203345,  0.620716),
-    vec2( 0.962340, -0.194983),
-    vec2( 0.473434, -0.480026),
-    vec2( 0.519456,  0.767022),
-    vec2( 0.185461, -0.893124)
-);
-
 vec3 ComputeIllumination(in Surface surface, in AngularInfo angular);
 
 void main()
@@ -53,7 +41,7 @@ void main()
     // Наконец то смещение получено
     vec2 offset = uv1 - uv0;
     // Получаем цвет из текстуры экрана по смещенным координатам
-    vec2 uv = gl_FragCoord.xy / vec2(textureSize(OpaqueCombined, 0));
+    vec2 uv = (gl_FragCoord.xy + 0.5) / vec2(textureSize(OpaqueCombined, 0));
     vec2 refractUV = uv + offset;
     // Замазываем артефакты возникающие при сильном преломлении по краям, когда преломленный луч выходит за пределами экрана
     float edgeFade = fadeScreenEdge(refractUV);
@@ -64,7 +52,7 @@ void main()
     vec3 refracted = vec3(0.0);
     for(int i = 0; i < 8; i++)
     {
-        vec2 sampleUV = refractUV + poissonDisk8[i] * radius;
+        vec2 sampleUV = refractUV + PoissonDisk(i) * radius;
         refracted += texture(OpaqueCombined, sampleUV).rgb;
     }
 

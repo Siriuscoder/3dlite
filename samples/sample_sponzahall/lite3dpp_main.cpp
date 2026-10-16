@@ -22,8 +22,8 @@ namespace lite3dpp {
 namespace samples {
 
 static const char *helpString = 
-    "Press '+' to increse gamma\n"
-    "Press '-' to decrese gamma\n"
+    "Press '+' to increse brightness\n"
+    "Press '-' to decrese brightness\n"
     "Press 'l' to enable/disable flashlight\n"
     "Press 'u' to enable/disable SSAO\n"
     "Press 'r' to enable/disable night mode\n"
@@ -49,12 +49,14 @@ public:
         cfg.set(L"PreallocIndexSize", 75 * 1024 * 1024);
 
         // Для ускорения загруки выделим место под геометрию заранее
-        getMain().getResourceManager().queryResourceFromJson<lite3dpp::MeshPartition>("sponza.mesh_partition", cfg.write());
+        getMain().getResourceManager().queryResourceFromJson<lite3dpp::MeshPartition>("sponza.mesh_partition", 
+            cfg.write());
 
         cfg.set(L"PreallocVertexSize", 2 * 1024 * 1024);
         cfg.set(L"PreallocIndexSize", 0);
         // Для ускорения загруки выделим место под геометрию заранее
-        getMain().getResourceManager().queryResourceFromJson<lite3dpp::MeshPartition>("sponza.mesh_partition_bouding_box", cfg.write());
+        getMain().getResourceManager().queryResourceFromJson<lite3dpp::MeshPartition>("sponza.mesh_partition_bouding_box", 
+            cfg.write());
     }
 
     void createScene() override
@@ -71,7 +73,7 @@ public:
         initGIProbes();
 
         getMain().getResourceManager().warmUpMeshPartitions();
-        getMain().getResourceManager().dropFileCache();
+        //getMain().getResourceManager().dropFileCache();
     }
 
     void initGIProbes()
@@ -91,9 +93,20 @@ public:
     void setupShadowCasters()
     {
         mSUN = mSponzaScene->getObject("Sponza")->getLightNode("SUN");
-        mSUN->getLight()->setFlag(LightSourceFlags::CastShadowPcfAdaptive | LightSourceFlags::CastShadowSSS);
         mSUNNode = mSponzaScene->getObject("Sponza")->getNode("SUN_actor");
-        mSUNShadowCaster = mPipeline->getShadowManager()->newShadowCaster(mSUN);
+        
+        for (const auto &node : mSponzaScene->getObject("Sponza")->getNodes())
+        {
+            if (node.first.starts_with("Knight"))
+            {
+                mPipeline->getShadowManager()->registerHintNode(node.second.get());
+            }
+        }
+
+        for (auto lightNode : mSponzaScene->getLights())
+        {
+            mPipeline->getShadowManager()->registerEmitter(lightNode);
+        }
     }
 
     void fixedUpdateTimerTick(int32_t firedPerRound, uint64_t deltaMcs, float deltaRetard) override
@@ -102,9 +115,6 @@ public:
         {
             // Крутим источник света
             mSUNNode->rotateZ(0.0005f * deltaRetard);
-            //mSUN->rotateX(0.00005f * deltaRetard);
-            // Помечаем что надо перерисовать тени в следубщий кадр
-            mSUNShadowCaster->invalidate();
             //mPipeline->getIBL()->rebuild();
         }
 
@@ -149,20 +159,6 @@ public:
                 flashLightEnabled = !flashLightEnabled;
                 mFlashLight->getLight()->enabled(flashLightEnabled);
             }
-            else if (e->key.keysym.sym == SDLK_KP_PLUS)
-            {
-                mGamma += 0.02;
-                if (mGamma > 3.0)
-                    mGamma = 3.0;
-                mPipeline->setGamma(mGamma);
-            }
-            else if (e->key.keysym.sym == SDLK_KP_MINUS)
-            {
-                mGamma -= 0.02;
-                if (mGamma < 1.5)
-                    mGamma = 1.5;
-                mPipeline->setGamma(mGamma);
-            }
             else if (e->key.keysym.sym == SDLK_u)
             {
                 static bool ssaoEnabled = true;
@@ -197,6 +193,26 @@ public:
 
                 mPipeline->getIBL()->rebuild();
             }
+            else if (e->key.keysym.sym == SDLK_KP_PLUS)
+            {
+                mBrightness += 0.001;
+                if (mBrightness > 0.08)
+                    mBrightness = 0.08;
+                mPipeline->setBrightness(mBrightness);
+            }
+            else if (e->key.keysym.sym == SDLK_KP_MINUS)
+            {
+                mBrightness -= 0.001;
+                if (mBrightness < -0.08)
+                    mBrightness = -0.08;
+                mPipeline->setBrightness(mBrightness);
+            }
+            //else if (e->key.keysym.sym == SDLK_n)
+            //{
+            //    mSponzaScene->removeAllObjects();
+            //    mSponzaScene->loadObjects("sponza:scenes/sponza.json");
+            //}
+
         }
     }
 
@@ -205,14 +221,13 @@ private:
 
     Scene* mSponzaScene = nullptr;
     lite3dpp_pipeline::PipelineDeffered* mPipeline = nullptr;
-    lite3dpp_pipeline::ShadowManager::ShadowCaster *mSUNShadowCaster = nullptr;
     LightSceneNode* mFlashLight = nullptr;
     LightSceneNode* mSUN = nullptr;
     SceneNode* mSUNNode = nullptr;
     bool mDayNightMode = true;
     bool mSunRotation = false;
     bool mLampsOn = true;
-    float mGamma = 2.2;
+    float mBrightness = 0.0f;
 };
 
 }}

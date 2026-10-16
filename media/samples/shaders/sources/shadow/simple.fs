@@ -4,27 +4,36 @@ uniform sampler2DArrayShadow ShadowMaps;
 
 layout(std140) uniform ShadowMatrix
 {
-    mat4 shadowTransform[LITE3D_SPOT_SHADOW_MAX_COUNT];
+    mat4 shadowTransform[LITE3D_SHADOW_CACHE_MAX_COUNT];
 };
 
+#include "samples:shaders/sources/shadow/utils.glsl"
+#include "samples:shaders/sources/shadow/pcf.glsl"
+
+// Warning! This method evaluates only the near CSM cascade
 float Shadow(in LightSource source, in Surface surface, in AngularInfo angular)
 {
     // Do not cast shadows
-    if (!hasFlag(source.flags, LITE3D_LIGHT_CASTSHADOW))
+    if (!hasFlag(source.flags, LITE3D_LIGHT_SHADOW_STATIC | LITE3D_LIGHT_SHADOW_DYNAMIC))
+        return 1.0;
+    if (source.shadowIndex < 0)
         return 1.0;
 
-    // Shadow space NDC coorts of current fragment
-    vec4 sv = shadowTransform[source.shadowIndex] * vec4(surface.wv, 1.0);
+    int shadowIndex = source.shadowIndex;
+    if (hasFlag(source.flags, LITE3D_LIGHT_POINT))
+    {
+        shadowIndex = source.shadowIndex + cubeFaceFromDir(-angular.lightDir);
+    }
+
+    // Shadow space NDC coordinates of current fragment
+    vec4 sv = shadowTransform[shadowIndex] * vec4(surface.wv, 1.0);
     // transform the NDC coordinates to the range [0,1]
-    sv = (sv / sv.w) * 0.5 + 0.5;
-    // Z clip 
-    if (sv.z > 1.0 || sv.z < 0.0)
+    vec3 shadowPos = (sv.xyz / sv.w) * 0.5 + 0.5;
+    // clipping
+    if (shadowPos.z > 1.0 || shadowPos.z < 0.0 || !isValidUV(shadowPos.xy))
         return 0.0;
 
-    // Adaptive bias
-    float bias = max(LITE3D_SHADOW_MAX_ADAPTIVE_BIAS * (1.0 - angular.NdotL), LITE3D_SHADOW_MIN_ADAPTIVE_BIAS);
-    if (!isValidUV(sv.xy))
-        return 0.0;
-
-    return texture(ShadowMaps, vec4(sv.xy, source.shadowIndex, sv.z - bias));
+    // Adaptive bias, filter size
+    vec3 adapt = CalcAdaptiveShadowParams(angular, 0);
+    return EvaluateShadowSample(shadowPos, adapt, shadowIndex);
 }

@@ -47,6 +47,8 @@ LITE3D_CEXPORT kmVec3* kmVec3Normalize(kmVec3* pOut, const kmVec3* pIn); /** Ret
 LITE3D_CEXPORT kmVec3* kmVec3Cross(kmVec3* pOut, const kmVec3* pV1, const kmVec3* pV2); /** Returns a vector perpendicular to 2 other vectors */
 LITE3D_CEXPORT kmScalar kmVec3Dot(const kmVec3* pV1, const kmVec3* pV2); /** Returns the cosine of the angle between 2 vectors */
 LITE3D_CEXPORT kmVec3* kmVec3Add(kmVec3* pOut, const kmVec3* pV1, const kmVec3* pV2); /** Adds 2 vectors and returns the result */
+LITE3D_CEXPORT kmVec3* kmVec3Min(kmVec3* pOut, const kmVec3* pV1, const kmVec3* pV2); /** Returns component-wise minima */
+LITE3D_CEXPORT kmVec3* kmVec3Max(kmVec3* pOut, const kmVec3* pV1, const kmVec3* pV2); /** Returns component-wise maxima */
 LITE3D_CEXPORT kmVec3* kmVec3Subtract(kmVec3* pOut, const kmVec3* pV1, const kmVec3* pV2); /** Subtracts 2 vectors and returns the result */
 LITE3D_CEXPORT kmVec3* kmVec3Mul( kmVec3* pOut,const kmVec3* pV1, const kmVec3* pV2 ); 
 LITE3D_CEXPORT kmVec3* kmVec3Div( kmVec3* pOut,const kmVec3* pV1, const kmVec3* pV2 );

@@ -48,6 +48,9 @@ LITE3D_CEXPORT int lite3d_frustum_test(const struct lite3d_frustum *frustum,
 LITE3D_CEXPORT void lite3d_bounding_vol_setup(struct lite3d_bounding_vol *vol,
     const kmVec3 *vmin, const kmVec3 *vmax);
 
+LITE3D_CEXPORT void lite3d_bounding_vol_min_max(struct lite3d_bounding_vol *vol,
+    kmVec3 *vmin, kmVec3 *vmax);
+
 LITE3D_CEXPORT void lite3d_bounding_vol_translate(struct lite3d_bounding_vol *volOut,
     const struct lite3d_bounding_vol *volIn, const struct kmMat4 *tr);
 

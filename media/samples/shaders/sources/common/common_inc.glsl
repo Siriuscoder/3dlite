@@ -1,4 +1,5 @@
 #include "samples:shaders/sources/common/structs_inc.glsl"
+#include "samples:shaders/sources/common/common_def.glsl"
 
 // The Fresnel-Schlick approximation expects a F0 parameter which is known as the surface 
 // reflection at zero incidence or how much the surface reflects if looking directly at the surface. 
@@ -27,6 +28,7 @@ bool isZero(float a1);
 bool isZero(vec3 a1);
 bool isValidUV(vec2 uv);
 float lerp(float a, float b, float f);
+float linstep(float a, float b, float v);
 float shlickPow(float a, float b); // Shlick power fast approx a^b = a / (b – a*b + a) for 0 <= a <= 1 
 bool hasFlag(uint a, uint flag);
 //////////// Noise and random utilities
@@ -40,12 +42,17 @@ bool hasFlag(uint a, uint flag);
 float goldNoise(vec2 xy);
 float noiseInterleavedGradient(vec2 xy);
 vec2 Halton2D(int index);
+vec2 PoissonDisk(int i);
+// Gaussian sequence
+float Gaussian(float x, float sigma);
 
 //////////// Transformations
 ////////////////////////////////////////////////////////////////////////////
 vec3 worldToViewSpacePosition(vec3 vw);
 vec3 worldToViewSpaceDirection(vec3 dirw);
 vec2 viewPositionToUV(vec3 pos);
+float getZNear();
+float getZFar();
 
 mat3 TBN(vec3 normal, vec3 tangent);
 mat3 TBN(vec3 normal, vec3 tangent, vec3 btangent);
@@ -63,11 +70,12 @@ vec3 linearToSRGB(vec3 color);
 vec3 SRGBToLinear(vec3 color);
 vec3 reinhardTonemapping(vec3 x);
 vec3 exponentTonemapping(vec3 x);
-vec3 nautilusTonemapping(vec3 x);
+vec3 nautilusACESTonemapping(vec3 x);
 vec3 ACESTonemapping(vec3 x);
+vec3 brightnessColor(vec3 color);
 vec3 contrastColor(vec3 color);
 vec3 saturationColor(vec3 color);
-vec3 ditherBayer(vec3 color);
+vec3 ditherBayer(vec2 uv, vec3 color);
 
 //////////// PBR utilities
 ////////////////////////////////////////////////////////////////////////////
@@ -112,7 +120,7 @@ vec3 importanceSampleGGX(vec2 Xi, vec3 N, float roughness);
 vec2 hammersleySequence(uint i, uint N);
 
 vec3 cubeCoordToWorld(ivec3 cubeCoord, vec2 cubemapSize);
-
+int cubeFaceFromDir(vec3 dir);
 //////////// Building structures
 Surface makeSurface(vec2 uv, vec3 wv, vec3 wn, vec3 wt, vec3 wb);
 Surface restoreSurface(vec2 uv);
@@ -123,3 +131,8 @@ void angularInfoCalcAngles(inout AngularInfo angular, in Surface surface);
 void surfaceAlphaClip(in Material material);
 void surfaceAlphaClip(vec2 uv);
 
+//////////// Packing functions
+float packF8AndInt16(float a, uint b);
+void unpackF8AndInt16(float pval, out float a, out uint b);
+float pack2xF8(float a1, float b1);
+void unpack2xF8(float pval, out float a, out float b);

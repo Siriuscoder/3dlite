@@ -3,10 +3,22 @@ from bpy.props import StringProperty, BoolProperty, FloatProperty, PointerProper
 
 class LITE3D_LightSettings(bpy.types.PropertyGroup):
     constantAttenuation: FloatProperty(name = "Attenuation Constant", precision = 6, default = 1.0, description = "Light constant attenuation")
-    linearAttenuation: FloatProperty(name = "Attenuation Linear", precision = 6, default = 0.01, description = "Light linear attenuation")
-    quadraticAttenuation: FloatProperty(name = "Attenuation Quadratic", precision = 6, default = 0.0001, description = "Light quadratic attenuation")
+    linearAttenuation: FloatProperty(name = "Attenuation Linear", precision = 6, default = 0.00, description = "Light linear attenuation")
+    quadraticAttenuation: FloatProperty(name = "Attenuation Quadratic", precision = 6, default = 1.0, description = "Light quadratic attenuation")
     influenceDistance: FloatProperty(name = "Influence Distance", precision = 6, default = 0.0, description = "Influence distance for light source")
-    influenceMinRadiance: FloatProperty(name = "Influence Minimum Radiance", precision = 6, default = 0.001, description = "Minimum light radiance which is considered in light computation")
+    influenceMinRadiance: FloatProperty(name = "Influence Minimum Radiance", precision = 6, default = 0.01, description = "Minimum light radiance which is considered in light computation")
+    shadowDynamic: BoolProperty(name = "Dynamic", default = False, description = "Update cached shadows dynamically")
+    shadowType: EnumProperty(name = "Type", default = "PCF", description = "Shadow filtering algorithm",
+        items = [
+            ("PCF", "PCF", "3x3 percentage-closer filtering"),
+            ("PCFAdaptive", "Adaptive PCF", "Adaptive percentage-closer filtering"),
+            ("PCFPoisson", "Poisson PCF", "Poisson disk percentage-closer filtering"),
+            ("VSM", "VSM", "Variance shadow maps")
+        ])
+    shadowSSS: BoolProperty(name = "Screen Space Shadows", default = False, description = "Enable screen space shadows")
+    shadowNearClipPlane: FloatProperty(name = "Near Clip Plane", precision = 6, default = 0.01, min = 0.000001, subtype = 'DISTANCE', description = "Shadow camera near clipping distance")
+    shadowFarClipPlane: FloatProperty(name = "Far Clip Plane", precision = 6, default = 0.0, min = 0.0, subtype = 'DISTANCE', description = "Shadow camera far clipping distance; zero uses the influence distance for local lights")
+    shadowVSMBlurSigma: FloatProperty(name = "VSM Blur Sigma", precision = 6, default = 0.8, min = 0.000001, description = "Gaussian blur sigma for variance shadow maps")
 
 class LITE3D_MaterialSettings(bpy.types.PropertyGroup):
     materialTemplate: StringProperty(name = "Template", default = "bsdf", description = "Material template file name (without extension). Template is used as foundation to generate material")
@@ -25,6 +37,9 @@ class LITE3D_SceneSettings(bpy.types.PropertyGroup):
 class LITE3D_ObjectSettings(bpy.types.PropertyGroup):
     originObject: PointerProperty(name="Instance of", type = bpy.types.Object, description="Gives ability to reuse the origin object as this object. Name of this object remains unchanged.")
     enabled: BoolProperty(name = "Enabled", default = True, description = "Enables or disables export of this object")
+    static: BoolProperty(name = "Static", default = False, description = "Export as a static scene node; always enabled for Dynamic and Kinematic physics objects")
+    castShadow: BoolProperty(name = "Cast Shadow", default = True, description = "Allow this scene node to cast shadows")
+    frustumTest: BoolProperty(name = "Frustum Test", default = True, description = "Enable frustum culling for this scene node")
     physicsCalcCenterOfMass: BoolProperty(name = "Calculate center of mass", default = False, description = "Adjust center of mass for complex compound objects")
     physicsObjectType: EnumProperty(name = "Type", description="Type of the physics object in terms of Bullet. Must be EMPTY and root of the physics object", 
         default = "None",

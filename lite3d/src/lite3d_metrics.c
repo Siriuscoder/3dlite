@@ -16,6 +16,7 @@
  *	along with Lite3D.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
 #include <inttypes.h>
+#include <math.h>
 #include <stdio.h>
 #include <string.h>
 
@@ -51,40 +52,61 @@ int lite3d_metrics_purge(lite3d_metrics *metrics)
     return LITE3D_TRUE;
 }
 
-static void lite3d_metrics_recalc_distrib(lite3d_metric_node *node)
+static void lite3d_metrics_distrib_insert(lite3d_metric_node *node, double mcs)
 {
     int i = 0, count = sizeof(node->distribution) / sizeof(node->distribution[0]);
-    uint64_t interval = (node->maxMcs - node->minMcs) / count;
-    uint64_t *mi;
 
-    if (interval == 0)
+    if (!node->distributionReady)
         return;
 
     for (; i < count; i++)
     {
-        node->distribution[i].lo = node->minMcs + (i * interval);
-        node->distribution[i].hi = node->distribution[i].lo + interval - 1;
-        node->distribution[i].hit = 0;
-        node->distribution[i].percentage = 0.0;
-    }
-
-    node->maxMcs = node->minMcs = node->avgMcs;
-
-    LITE3D_ARR_FOREACH(&node->measurements, uint64_t, mi)
-    {
-        for (i = 0; i < count; i++)
+        if ((i == 0 && mcs <= node->distribution[i].hi) ||
+            (i == count - 1 && mcs >= node->distribution[i].lo) ||
+            (mcs >= node->distribution[i].lo && mcs < node->distribution[i].hi))
         {
-            if (*mi >= node->distribution[i].lo && *mi <= node->distribution[i].hi)
-            {
-                node->distribution[i].hit++;
-                node->distribution[i].percentage = (float)node->distribution[i].hit / LITE3D_MEASUREMENTS_MAX * 100.0f;
-                break;
-            }
+            node->distribution[i].hit++;
+            break;
         }
     }
 }
 
-int lite3d_metrics_insert(lite3d_metrics *metrics, const char *name, uint64_t mcs)
+static void lite3d_metrics_init_distrib(lite3d_metric_node *node)
+{
+    int i = 0, count = sizeof(node->distribution) / sizeof(node->distribution[0]);
+    double logRange = node->minMcs > 0.0 && node->maxMcs > node->minMcs ?
+        log(node->maxMcs / node->minMcs) : 0.0;
+    double *mi;
+
+    for (; i < count; i++)
+    {
+        if (i == 0)
+        {
+            node->distribution[i].lo = 0.0;
+            node->distribution[i].hi = node->minMcs;
+        }
+        else
+        {
+            double hiFactor = (double)i / (count - 1);
+            node->distribution[i].lo = node->distribution[i - 1].hi;
+            node->distribution[i].hi = logRange > 0.0 ?
+                node->minMcs * exp(logRange * hiFactor) : node->maxMcs;
+        }
+
+        node->distribution[i].hit = 0;
+    }
+
+    node->distributionReady = LITE3D_TRUE;
+
+    LITE3D_ARR_FOREACH(&node->measurements, double, mi)
+    {
+        lite3d_metrics_distrib_insert(node, *mi);
+    }
+
+    lite3d_array_clean(&node->measurements);
+}
+
+int lite3d_metrics_insert(lite3d_metrics *metrics, const char *name, double mcs)
 {
     lite3d_rb_node *indexNode;
     lite3d_metric_node *node;
@@ -101,11 +123,17 @@ int lite3d_metrics_insert(lite3d_metrics *metrics, const char *name, uint64_t mc
         node->avgMcs = (node->avgMcs + mcs) / 2;
         node->count++;
         
-        LITE3D_ARR_ADD_ELEM(&node->measurements, uint64_t, mcs);
-        if (node->measurements.size == LITE3D_MEASUREMENTS_MAX)
+        if (node->distributionReady)
         {
-            lite3d_metrics_recalc_distrib(node);
-            lite3d_array_clean(&node->measurements);
+            lite3d_metrics_distrib_insert(node, mcs);
+        }
+        else
+        {
+            LITE3D_ARR_ADD_ELEM(&node->measurements, double, mcs);
+            if (node->measurements.size == LITE3D_MEASUREMENTS_WARMUP)
+            {
+                lite3d_metrics_init_distrib(node);
+            }
         }
 
         return LITE3D_TRUE;
@@ -120,8 +148,8 @@ int lite3d_metrics_insert(lite3d_metrics *metrics, const char *name, uint64_t mc
     node->maxMcs = mcs;
     node->avgMcs = mcs;
     node->count++;
-    lite3d_array_init(&node->measurements, sizeof(uint64_t), LITE3D_MEASUREMENTS_MAX);
-    LITE3D_ARR_ADD_ELEM(&node->measurements, uint64_t, mcs);
+    lite3d_array_init(&node->measurements, sizeof(double), LITE3D_MEASUREMENTS_WARMUP);
+    LITE3D_ARR_ADD_ELEM(&node->measurements, double, mcs);
     return lite3d_rb_tree_insert(metrics->metricsCache, &node->cached) ? LITE3D_TRUE : LITE3D_FALSE;
 }
 
@@ -140,7 +168,7 @@ lite3d_metrics *lite3d_metrics_global_get(void)
     return &globalMetrics;
 }
 
-int lite3d_metrics_global_insert(const char *name, uint64_t mcs)
+int lite3d_metrics_global_insert(const char *name, double mcs)
 {
     return lite3d_metrics_insert(&globalMetrics, name, mcs);
 }
@@ -149,15 +177,68 @@ static void node_write_to_log(lite3d_rb_tree* tree, lite3d_rb_node *x)
 {
     lite3d_metric_node *node = LITE3D_MEMBERCAST(lite3d_metric_node, x, cached);
     int i = 0, count = sizeof(node->distribution) / sizeof(node->distribution[0]), wr;
-    char output[2048];
+    char output[4096];
 
-    wr = snprintf(output, sizeof(output), "\n%30s | min %7"PRIu64" mcs | max %7"PRIu64" mcs | avg %7"PRIu64" mcs | %10"PRIu64" called |\n",
+    wr = snprintf(output, sizeof(output),
+        "\n"
+        "+----------------------------------------------------------------------------+\n"
+        "| Metric: %-66.66s |\n"
+        "+----------------+----------------+----------------+------------------------+\n"
+        "| Min, mcs       | Max, mcs       | Avg, mcs       | Calls                  |\n"
+        "+----------------+----------------+----------------+------------------------+\n"
+        "| %14.3f | %14.3f | %14.3f | %22"PRIu64" |\n"
+        "+----------------+----------------+----------------+------------------------+\n"
+        "| Distribution                                                               |\n",
         node->name, node->minMcs, node->maxMcs, node->avgMcs, node->count);
+
+    if (!node->distributionReady)
+    {
+        char warmup[128];
+        snprintf(warmup, sizeof(warmup), "Warmup: %zu / %d samples",
+            node->measurements.size, LITE3D_MEASUREMENTS_WARMUP);
+        if (wr < sizeof(output))
+        {
+            snprintf(output + wr, sizeof(output) - wr,
+                "| %-74.74s |\n"
+                "+----------------------------------------------------------------------------+\n",
+                warmup);
+        }
+
+        SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, output);
+        return;
+    }
+
+    wr += snprintf(output + wr, sizeof(output) - wr,
+        "+-----+------------------+------------------+----------------+--------------+\n"
+        "|  #  | From, mcs        | To, mcs          | Hits           | Percent      |\n"
+        "+-----+------------------+------------------+----------------+--------------+\n");
 
     for (i = 0; i < count && wr < sizeof(output); i++)
     {
-        wr += snprintf(output + wr, sizeof(output) - wr, "%17"PRIu64" - %6"PRIu64" mcs |%16"PRIu64" |%16.2f |\n",
-            node->distribution[i].lo, node->distribution[i].hi, node->distribution[i].hit, node->distribution[i].percentage);
+        char lo[32], hi[32];
+        double percentage = node->count > 0 ?
+            (double)node->distribution[i].hit / node->count * 100.0 : 0.0;
+
+        snprintf(lo, sizeof(lo), "%.3f", node->distribution[i].lo);
+
+        if (i == count - 1)
+            snprintf(hi, sizeof(hi), "+inf");
+        else
+            snprintf(hi, sizeof(hi), "%.3f", node->distribution[i].hi);
+
+        wr += snprintf(output + wr, sizeof(output) - wr,
+            "| %3d | %16s | %16s | %14"PRIu64" | %11.2f%% |\n",
+            i,
+            lo,
+            hi,
+            node->distribution[i].hit,
+            percentage);
+    }
+
+    if (wr < sizeof(output))
+    {
+        snprintf(output + wr, sizeof(output) - wr,
+            "+-----+------------------+------------------+----------------+--------------+\n");
     }
 
     SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, output);

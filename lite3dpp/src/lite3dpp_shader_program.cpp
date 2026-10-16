@@ -94,7 +94,7 @@ namespace lite3dpp
 
     void ShaderProgram::loadShaders(stl<lite3d_shader>::vector &shaders)
     {
-        for (String &source : getJson().getStrings(L"Sources"))
+        for (String &source : getConfig().getStrings(L"Sources"))
         {
             String sourcePath;
             String defPath;
@@ -152,7 +152,7 @@ namespace lite3dpp
     void ShaderProgram::bindAttributeLocations()
     {
         int location = 0;
-        for(String &name : getJson().getStrings(L"AttributesOrder"))
+        for(String &name : getConfig().getStrings(L"AttributesOrder"))
         {
             lite3d_shader_program_attribute_index(&mProgram, name.c_str(), location);
             location++;

@@ -90,6 +90,20 @@ kmScalar kmVec2Cross(const kmVec2* pV1, const kmVec2* pV2)
     return pV1->x * pV2->y - pV1->y * pV2->x;
 }
 
+kmVec2* kmVec2Min(kmVec2* pOut, const kmVec2* pV1, const kmVec2* pV2)
+{
+    pOut->x = kmMin(pV1->x, pV2->x);
+    pOut->y = kmMin(pV1->y, pV2->y);
+    return pOut;
+}
+
+kmVec2* kmVec2Max(kmVec2* pOut, const kmVec2* pV1, const kmVec2* pV2)
+{
+    pOut->x = kmMax(pV1->x, pV2->x);
+    pOut->y = kmMax(pV1->y, pV2->y);
+    return pOut;
+}
+
 kmVec2* kmVec2Subtract(kmVec2* pOut, const kmVec2* pV1, const kmVec2* pV2)
 {
 	pOut->x = pV1->x - pV2->x;

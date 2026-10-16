@@ -20,6 +20,7 @@
 #include <lite3dpp_pipeline/lite3dpp_bloom.h>
 #include <lite3dpp_pipeline/lite3dpp_shadow_manager.h>
 #include <lite3dpp_pipeline/lite3dpp_IBL_multiprobe.h>
+#include <lite3dpp_pipeline/lite3dpp_postprocess.h>
 #include <lite3dpp_pipeline/lite3dpp_generator.h>
 
 namespace lite3dpp {
@@ -36,20 +37,20 @@ namespace lite3dpp_pipeline {
         Scene &getMainScene();
         Scene *getSkyBoxScene();
         ShadowManager *getShadowManager();
-        IBLMultiProbe *getIBL();
+        IBLMultiProbePass *getIBL();
         Camera &getMainCamera();
 
-        void setGamma(float gamma);
+        void setExposure(float exp);
         void setContrast(float contrast);
         void setSaturation(float saturation);
+        void setBrightness(float brightness);
         void setSkyBoxEmission(float emission);
 
     protected:
 
         void loadFromConfigImpl(const ConfigurationReader &helper) override;
         void unloadImpl() override;
-        bool beginSceneRender(Scene *scene, Camera *camera, int32_t priority) override;
-        void frameBegin() override;
+        bool beginSceneRender(Scene *scene, Camera *camera, const lite3d_scene_render_params *params) override;
 
         virtual void createMainScene(const String& name, const String &sceneConfig);
         virtual void constructShadowManager(const ConfigurationReader &pipelineConfig, const String &cameraName,
@@ -59,8 +60,7 @@ namespace lite3dpp_pipeline {
         virtual void constructCameraPipeline(const ConfigurationReader &pipelineConfig, const String &cameraName,
             SceneGenerator &sceneGenerator);
         virtual void constructBloomPass(const ConfigurationReader &pipelineConfig, const String &cameraName);
-        virtual void constructPostProcessPass(const ConfigurationReader &pipelineConfig, const String &cameraName,
-            SceneGenerator &sceneGenerator);
+        virtual void constructPostProcessPass(const ConfigurationReader &pipelineConfig);
         virtual void constructSkyBoxPass(const ConfigurationReader &pipelineConfig, const String &cameraName,
             const ConfigurationWriter &mainCameraConfig);
         virtual void constructIBL(const ConfigurationReader &pipelineConfig, const String &cameraName,
@@ -70,18 +70,17 @@ namespace lite3dpp_pipeline {
         void createCombined2Texture(const String &cameraName);
         void createLTCLutTextures();
         void createBigTriangleMesh();
-        void updateExposure();
 
     protected:
 
         Scene *mMainScene = nullptr;
         Scene *mSkyBoxStage = nullptr;
-        Scene *mPostProcessStage = nullptr;
         String mShaderPackage;
         std::unique_ptr<ShadowManager> mShadowManager;
-        std::unique_ptr<BloomEffect> mBloomEffect;
-        std::unique_ptr<IBLMultiProbe> mIBL;
-        Camera *mMainCamera = nullptr;
+        std::unique_ptr<BloomPass> mBloomPass;
+        std::unique_ptr<IBLMultiProbePass> mIBL;
+        std::unique_ptr<PostProcessPass> mPostProcessPass;
+        String mMainCameraName;
         RenderTarget *mDepthPass = nullptr;
         RenderTarget *mCombinePass = nullptr;
         Texture *mDepthTexture = nullptr;
@@ -89,9 +88,7 @@ namespace lite3dpp_pipeline {
         TextureImage *mCombined2Texture = nullptr;
         TextureImage *mLTCLut01 = nullptr;
         TextureImage *mLTCLut02 = nullptr;
-        Material *mPostProcessStageMaterial = nullptr;
         Material *mSkyBoxStageMaterial = nullptr;
-        stl<String>::list mResourcesList;
 
         float mRandomSeed;
         float mExposureMax = 1.0;

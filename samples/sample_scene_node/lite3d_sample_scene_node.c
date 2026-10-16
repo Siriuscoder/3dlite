@@ -295,11 +295,11 @@ static int init(void *userdata)
         };
 
         lite3d_scene_node_init(&mSceneNode[i]);
-        mSceneNode[i].frustumTest = 0;
+        mSceneNode[i].flags &= ~LITE3D_SCENE_NODE_FRUSTUM_TEST;
         lite3d_scene_node_set_position(&mSceneNode[i], &nodePos[i]);
 
         lite3d_scene_node_init(&mSceneNodeInherited[i]);
-        mSceneNodeInherited[i].frustumTest = 0;
+        mSceneNodeInherited[i].flags &= ~LITE3D_SCENE_NODE_FRUSTUM_TEST;
         lite3d_scene_node_set_position(&mSceneNodeInherited[i], &tmp);
         lite3d_scene_node_set_scale(&mSceneNodeInherited[i], &nodeScale[i]);
 
@@ -312,7 +312,7 @@ static int init(void *userdata)
 
     //lite3d_scene_add_node(&mScene, &mCamera01.cameraNode, NULL);
     lite3d_render_target_screen_attach_camera(&mCamera01, &mScene, 1, 0, LITE3D_RENDER_DEFAULT);
-    //lite3d_camera_link_to(&mCamera01, &mSceneNode[2], LITE3D_CAMERA_LINK_ORIENTATION);
+    //lite3d_camera_follow_to(&mCamera01, &mSceneNode[2], LITE3D_CAMERA_LINK_ORIENTATION);
     //lite3d_camera_tracking(&mCamera01, &mSceneNode[2]);
 
     return LITE3D_TRUE;

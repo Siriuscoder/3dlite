@@ -61,7 +61,7 @@ public:
     }
 
     // setup lighting at once before light compute scene begin rendering first time
-    bool beginSceneRender(Scene *scene, Camera *camera, int32_t priority) override
+    bool beginSceneRender(Scene *scene, Camera *camera, const lite3d_scene_render_params *params) override
     {
         SDL_assert(mVaultScene);
         /* check scene already fullup */
@@ -73,7 +73,7 @@ public:
         return true;
     }
 
-    void endSceneRender(Scene *scene, Camera *camera, int32_t priority) override 
+    void endSceneRender(Scene *scene, Camera *camera, const lite3d_scene_render_params *params) override 
     {
         /* disable lightpass after lightmap recalc complete */
         SDL_assert(mLightComputeStep);

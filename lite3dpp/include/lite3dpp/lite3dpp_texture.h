@@ -78,20 +78,22 @@ namespace lite3dpp
         inline int8_t getTotalLevels() const
         { return mTexture.generatedMipmaps + 1; }
 
-        void getPixels(PixelsData &pixels, int8_t level = 0, uint8_t layer = 0) const;
-        void getPixels(PixelsFloatData &pixels, int8_t level = 0, uint8_t layer = 0) const;
-        void getPixels(uint8_t *pixels, int8_t level = 0, uint8_t layer = 0) const;
-        void getPixels(float *pixels, int8_t level = 0, uint8_t layer = 0) const;
+        void getPixels(PixelsData &pixels, int8_t level = 0, int32_t layer = 0) const;
+        void getPixels(PixelsFloatData &pixels, int8_t level = 0, int32_t layer = 0) const;
+        void getPixels(uint8_t *pixels, int8_t level = 0, int32_t layer = 0) const;
+        void getPixels(float *pixels, int8_t level = 0, int32_t layer = 0) const;
 
-        void setPixels(const PixelsData &pixels, int8_t level = 0, uint8_t layer = 0);
-        void setPixels(const PixelsFloatData &pixels, int8_t level = 0, uint8_t layer = 0);
-        void setPixels(const uint8_t *pixels, int8_t level = 0, uint8_t layer = 0);
-        void setPixels(const float *pixels, int8_t level = 0, uint8_t layer = 0);
+        void setPixels(const PixelsData &pixels, int8_t level = 0, int32_t layer = 0);
+        void setPixels(const PixelsFloatData &pixels, int8_t level = 0, int32_t layer = 0);
+        void setPixels(const uint8_t *pixels, int8_t level = 0, int32_t layer = 0);
+        void setPixels(const float *pixels, int8_t level = 0, int32_t layer = 0);
+        void clearPixels(const uint8_t *pixels, int8_t level = 0, int32_t layer = 0);
+        void clearPixels(const float *pixels, int8_t level = 0, int32_t layer = 0);
 
-        void getCompressedPixels(PixelsData &pixels, int8_t level = 0, uint8_t layer = 0) const;
-        void getCompressedPixels(void *pixels, int8_t level = 0, uint8_t layer = 0) const;
-        void setCompressedPixels(const PixelsData &pixels, int8_t level = 0, uint8_t layer = 0);
-        void setCompressedPixels(const void *pixels, size_t size, int8_t level = 0, uint8_t layer = 0);
+        void getCompressedPixels(PixelsData &pixels, int8_t level = 0, int32_t layer = 0) const;
+        void getCompressedPixels(void *pixels, int8_t level = 0, int32_t layer = 0) const;
+        void setCompressedPixels(const PixelsData &pixels, int8_t level = 0, int32_t layer = 0);
+        void setCompressedPixels(const void *pixels, size_t size, int8_t level = 0, int32_t layer = 0);
 
         size_t getLevelSize(int8_t level) const;
         size_t getLevelEstimatedSize(int8_t level, TexturePixelType pixelType) const;

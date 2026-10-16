@@ -35,8 +35,6 @@ namespace lite3dpp_pipeline {
 
     PipelineBase::~PipelineBase()
     {
-        // В случае если загрузка пайплайна не прошла, удаляем что успело загрузиться в деструкторе
-        unloadImpl();
         getMain().removeObserver(this);
     }
 
@@ -46,7 +44,7 @@ namespace lite3dpp_pipeline {
         return *mMainScene;
     }
 
-    IBLMultiProbe *PipelineBase::getIBL()
+    IBLMultiProbePass *PipelineBase::getIBL()
     {
         if (mIBL)
         {
@@ -73,24 +71,33 @@ namespace lite3dpp_pipeline {
 
     Camera &PipelineBase::getMainCamera()
     {
-        SDL_assert(mMainCamera);
-        return *mMainCamera;
+        auto mainCamera = getMain().getCamera(mMainCameraName);
+        SDL_assert(mainCamera);
+        return *mainCamera;
     }
 
-    void PipelineBase::setGamma(float gamma)
+    void PipelineBase::setExposure(float exp)
     {
-        mPostProcessStageMaterial->setFloatParameter(static_cast<uint16_t>(TexturePassTypes::RenderPass), "Gamma", gamma);
+        SDL_assert(mPostProcessPass);
+        mPostProcessPass->updateExposure(exp);
     }
 
     void PipelineBase::setContrast(float contrast)
     {
-        mPostProcessStageMaterial->setFloatParameter(static_cast<uint16_t>(TexturePassTypes::RenderPass), "Contrast", contrast);
+        SDL_assert(mPostProcessPass);
+        mPostProcessPass->updateContrast(contrast);
     }
 
     void PipelineBase::setSaturation(float saturation)
     {
-        mPostProcessStageMaterial->setFloatParameter(static_cast<uint16_t>(TexturePassTypes::RenderPass), "Saturation", 
-            saturation);
+        SDL_assert(mPostProcessPass);
+        mPostProcessPass->updateSaturation(saturation);
+    }
+
+    void PipelineBase::setBrightness(float brightness)
+    {
+        SDL_assert(mPostProcessPass);
+        mPostProcessPass->updateBrightness(brightness);
     }
 
     void PipelineBase::setSkyBoxEmission(float emission)
@@ -118,10 +125,11 @@ namespace lite3dpp_pipeline {
         ConfigurationWriter sceneGeneratedConfig(static_cast<const char *>(sceneJsonData->fileBuff), sceneJsonData->fileSize);
         ConfigurationReader sceneConfig(static_cast<const char *>(sceneJsonData->fileBuff), sceneJsonData->fileSize);
 
+        // SSBO supported by version GLSL 430 or higher
+        ShaderProgram::setShaderVersion("430");
+
         if (pipelineConfig.getBool(L"MultiRender", false))
         {
-            // SSBO is needed for the MultiRender supported by version GLSL 430 or higher
-            ShaderProgram::setShaderVersion("430");
             ShaderProgram::addGlobalDefinition("LITE3D_BINDLESS_TEXTURE_PIPELINE", "1");
             sceneGeneratedConfig.set(L"MultiRender", true);
         }
@@ -154,10 +162,7 @@ namespace lite3dpp_pipeline {
         {
             ConfigurationWriter cameraPipelineConfig;
             auto cameraName = cameraConfig.getString(L"Name");
-            if (mainCameraName.empty())
-            {
-                mainCameraName = mainSceneGenerator.getName() + "_" + cameraName;
-            }
+            mMainCameraName = mainSceneGenerator.getName() + "_" + cameraName;
 
             cameraPipelineConfig
                 .set(L"Position", cameraConfig.getVec3(L"Position"))
@@ -195,15 +200,13 @@ namespace lite3dpp_pipeline {
             constructCameraDepthPass(pipelineConfig, cameraName, mainSceneGenerator);
             constructIBL(pipelineConfig, cameraName, mainSceneGenerator);
             constructCameraPipeline(pipelineConfig, cameraName, mainSceneGenerator);
-            constructPostProcessPass(pipelineConfig, cameraName, mainSceneGenerator);
+            constructPostProcessPass(pipelineConfig);
             constructSkyBoxPass(pipelineConfig, cameraName, cameraPipelineConfig);
             break;
         }
 
         /* Создание главной сцены в самом конце, все остальные обьекты должны быть созданы до этого момента */
         createMainScene(mainSceneGenerator.getName(), mainSceneGenerator.generateFromExisting(sceneGeneratedConfig).write());
-        mResourcesList.emplace_back(mMainScene->getName());
-        mMainCamera = getMain().getCamera(mainCameraName);
 
         if (mShadowManager)
         {
@@ -221,15 +224,19 @@ namespace lite3dpp_pipeline {
 
     void PipelineBase::unloadImpl()
     {
-        for (auto it = mResourcesList.rbegin(); it != mResourcesList.rend(); ++it)
+        if (mMainScene && mShadowManager)
         {
-            getMain().getResourceManager().releaseResource(*it);
+            mMainScene->removeObserver(mShadowManager.get());
         }
-
-        mResourcesList.clear();
+        
         mShadowManager.reset();
-        mBloomEffect.reset();
+        mPostProcessPass.reset();
+        mBloomPass.reset();
         mIBL.reset();
+
+        // We are going to unload all resources loaded by this pipeline 
+        unloadBranch();
+        getMain().getResourceManager().releaseUnloadedResources();
     }
 
     void PipelineBase::createBigTriangleMesh()
@@ -237,7 +244,7 @@ namespace lite3dpp_pipeline {
         if (!getMain().getResourceManager().resourceExists("BigTriangle.mesh"))
         {
             getMain().getResourceManager().queryResourceFromJson<Mesh>("BigTriangle.mesh",
-                ConfigurationWriter().set(L"Model", "BigTriangle").set(L"Dynamic", false).write());
+                ConfigurationWriter().set(L"Model", "BigTriangle").set(L"Dynamic", false).write(), this);
         }
     }
 
@@ -260,6 +267,7 @@ namespace lite3dpp_pipeline {
             mLTCLut01 = getMain().getResourceManager().queryResourceFromJson<TextureImage>(lutName1,
                 textureConfig.write());
             mLTCLut01->setPixels(ltc_lut_1);
+            mLTCLut01->pin(true);
         }
         else
         {
@@ -271,6 +279,7 @@ namespace lite3dpp_pipeline {
             mLTCLut02 = getMain().getResourceManager().queryResourceFromJson<TextureImage>(lutName2,
                 textureConfig.write());
             mLTCLut02->setPixels(ltc_lut_2);
+            mLTCLut02->pin(true);
         }
         else
         {
@@ -294,8 +303,7 @@ namespace lite3dpp_pipeline {
             .set(L"TextureFormat", "DEPTH");
 
         mDepthTexture = getMain().getResourceManager().queryResourceFromJson<TextureImage>(depthTextureName, 
-            depthTextureConfig.write());
-        mResourcesList.emplace_back(mDepthTexture->getName());
+            depthTextureConfig.write(), this);
 
         ConfigurationWriter depthPassConfig;
         depthPassConfig.set(L"BackgroundColor", kmVec4 { 0.0f, 0.0f, 0.0f, 1.0f })
@@ -307,8 +315,7 @@ namespace lite3dpp_pipeline {
                 .set(L"TextureName", depthTextureName));
 
         mDepthPass = getMain().getResourceManager().queryResourceFromJson<TextureRenderTarget>(
-            getName() + "_" + cameraName + "_DepthPass", depthPassConfig.write());
-        mResourcesList.emplace_back(mDepthPass->getName());
+            getName() + "_" + cameraName + "_DepthPass", depthPassConfig.write(), this);
 
         ConfigurationWriter depthPassGeneratedConfig;
         depthPassGeneratedConfig
@@ -340,18 +347,18 @@ namespace lite3dpp_pipeline {
             return;
         }
 
-        mShadowManager = std::make_unique<ShadowManager>(getMain(), getName(), pipelineConfig);
-        mShadowManager->initialize(getName(), pipelineConfig.getString(L"ShaderPackage"));
+        mShadowManager = std::make_unique<ShadowManager>(getMain(), *this);
+        mShadowManager->initialize();
 
         sceneGenerator.addRenderTarget(cameraName, mShadowManager->getShadowPass().getName(), ConfigurationWriter()
             .set(L"Priority", static_cast<int>(RenderPassStagePriority::ShadowBuildStage))
             .set(L"TexturePass", static_cast<int>(TexturePassTypes::ShadowPass))
             .set(L"DepthTest", true)
-            .set(L"ColorOutput", false)
+            .set(L"ColorOutput", true)
             .set(L"DepthOutput", true)
             .set(L"RenderBlend", false)
             .set(L"RenderOpaque", true)
-            .set(L"CustomVisibilityCheck", true)
+            .set(L"CustomFrustumCheck", true)
             .set(L"RenderInstancing", pipelineConfig.getBool(L"Instancing", true)));
     }
     
@@ -359,94 +366,17 @@ namespace lite3dpp_pipeline {
     {
         if (pipelineConfig.has(L"BLOOM"))
         {
-            mBloomEffect = std::make_unique<BloomEffect>(getMain(), getName(), cameraName, pipelineConfig);
-            mBloomEffect->initialize();
+            mBloomPass = std::make_unique<BloomPass>(getMain(), *this, cameraName);
+            mBloomPass->initialize();
         }
     }
 
-    void PipelineBase::constructPostProcessPass(const ConfigurationReader &pipelineConfig, const String &cameraName,
-        SceneGenerator &sceneGenerator)
+    void PipelineBase::constructPostProcessPass(const ConfigurationReader &pipelineConfig)
     {
-        BigTriSceneGenerator stageGenerator;
-        stageGenerator.addRenderTarget("Window", ConfigurationWriter()
-            .set(L"Priority", static_cast<int>(RenderPassStagePriority::PostProcessStage))
-            .set(L"TexturePass", static_cast<int>(TexturePassTypes::RenderPass))
-            .set(L"DepthTest", false)
-            .set(L"ColorOutput", true)
-            .set(L"DepthOutput", false));
-            
-        mPostProcessStage = getMain().getResourceManager().queryResourceFromJson<Scene>(
-            getName() + "_" + cameraName + "_PostProcessStage", stageGenerator.generate().write());
-        mResourcesList.emplace_back(mPostProcessStage->getName());
-
         SDL_assert(mCombinedTexture);
 
-        ConfigurationWriter postProcessMaterialConfig;
-        auto postProcessConfig = pipelineConfig.getObject(L"PostProcess");
-        stl<ConfigurationWriter>::vector postProcessMaterialUniforms;
-
-        postProcessMaterialUniforms.emplace_back(ConfigurationWriter()
-            .set(L"Name", "screenMatrix"));
-        postProcessMaterialUniforms.emplace_back(ConfigurationWriter()
-            .set(L"Name", "Combined")
-            .set(L"TextureName", mCombinedTexture->getName())
-            .set(L"Type", "sampler"));
-        postProcessMaterialUniforms.emplace_back(ConfigurationWriter()
-            .set(L"Name", "Gamma")
-            .set(L"Value", postProcessConfig.getDouble(L"Gamma", 2.2f))
-            .set(L"Type", "float")
-            .set(L"Scope", "global"));
-        postProcessMaterialUniforms.emplace_back(ConfigurationWriter()
-            .set(L"Name", "Exposure")
-            .set(L"Value", postProcessConfig.getDouble(L"Exposure", 1.0f))
-            .set(L"Type", "float"));
-        postProcessMaterialUniforms.emplace_back(ConfigurationWriter()
-            .set(L"Name", "Contrast")
-            .set(L"Value", postProcessConfig.getDouble(L"Contrast", 1.0f))
-            .set(L"Type", "float"));
-        postProcessMaterialUniforms.emplace_back(ConfigurationWriter()
-            .set(L"Name", "Saturation")
-            .set(L"Value", postProcessConfig.getDouble(L"Saturation", 1.0f))
-            .set(L"Type", "float"));
-        postProcessMaterialUniforms.emplace_back(ConfigurationWriter()
-            .set(L"Name", "ScreenResolution")
-            .set(L"Value", kmVec3 { static_cast<float>(getMain().window()->width()), 
-                static_cast<float>(getMain().window()->height()), 0.0f })
-            .set(L"Type", "v3"));
-
-        if (mBloomEffect)
-        {
-            postProcessMaterialUniforms.emplace_back(ConfigurationWriter()
-                .set(L"Name", "Bloom")
-                .set(L"Type", "sampler")
-                .set(L"TextureName", mBloomEffect->getLastTexture().getName()));
-        }
-        
-        postProcessMaterialConfig.set(L"Passes", stl<ConfigurationWriter>::vector {
-            ConfigurationWriter().set(L"Pass", static_cast<int>(TexturePassTypes::RenderPass))
-                .set(L"Program", ConfigurationWriter()
-                    .set(L"Name", "PostProcess.program")
-                    .set(L"Path", mShaderPackage + ":shaders/json/post_process.json"))
-                .set(L"Uniforms", postProcessMaterialUniforms)
-        });
-
-        // Создаем шейдер постпроцессинга финального изображения
-        mPostProcessStageMaterial = getMain().getResourceManager().queryResourceFromJson<Material>(
-            getName() + "_" + cameraName + "_PostProcessStage.material", postProcessMaterialConfig.write());
-        mResourcesList.emplace_back(mPostProcessStageMaterial->getName());
-
-        // Добавляем шейдер постпроцессинга финального изображения 
-        mPostProcessStage->addObject("PostProcessBigTri", 
-            BigTriObjectGenerator(mPostProcessStageMaterial->getName()).generate());
-
-        if (postProcessConfig.has(L"DynamicExposure"))
-        {
-            mDynamicExposureEnabled = true;
-            auto dynamicExposureConfig = postProcessConfig.getObject(L"DynamicExposure");
-            mExposureMax = dynamicExposureConfig.getDouble(L"ExposureMax", 1.0);
-            mExposureMin = dynamicExposureConfig.getDouble(L"ExposureMin", 1.0);
-            mExposureBase = dynamicExposureConfig.getDouble(L"ExposureBase", 1.0);
-        }
+        mPostProcessPass = std::make_unique<PostProcessPass>(getMain(), *this, mBloomPass.get());
+        mPostProcessPass->initialize(*mCombinedTexture);
     }
 
     void PipelineBase::createSkyBoxMesh()
@@ -454,11 +384,13 @@ namespace lite3dpp_pipeline {
         // Создаем built-in Skybox mesh, если еще не создан 
         if (!getMain().getResourceManager().resourceExists("SkyBox.mesh"))
         {
-            getMain().getResourceManager().queryResourceFromJson<Mesh>("SkyBox.mesh",
+            auto mesh = getMain().getResourceManager().queryResourceFromJson<Mesh>("SkyBox.mesh",
                 ConfigurationWriter().set(L"Model", "Skybox")
                     .set(L"Dynamic", false)
                     .set(L"Size", kmVec3 { 2.0f, 2.0f, 2.0f})
                     .write());
+
+            mesh->pin(true);
         }
     }
 
@@ -474,8 +406,7 @@ namespace lite3dpp_pipeline {
             .set(L"InternalFormat", "RGB32F");
 
         mCombined2Texture = getMain().getResourceManager().queryResourceFromJson<TextureImage>(
-            getName() + "_" + cameraName + "_combined_copy.texture", combinedTextureConfig.write());
-        mResourcesList.emplace_back(mCombined2Texture->getName());
+            getName() + "_" + cameraName + "_combined_copy.texture", combinedTextureConfig.write(), this);
     }
 
     void PipelineBase::constructSkyBoxPass(const ConfigurationReader &pipelineConfig, const String &cameraName, 
@@ -564,15 +495,13 @@ namespace lite3dpp_pipeline {
         }
 
         mSkyBoxStage = getMain().getResourceManager().queryResourceFromJson<Scene>(
-            getName() + "_" + cameraName + "_SkyBoxStage", stageGenerator.generate().write());
-        mResourcesList.emplace_back(mSkyBoxStage->getName());
+            getName() + "_" + cameraName + "_SkyBoxStage", stageGenerator.generate().write(), this);
 
         skyBoxMaterialConfig.set(L"Passes", passes);
 
         // Создаем шейдер skybox
         mSkyBoxStageMaterial = getMain().getResourceManager().queryResourceFromJson<Material>(
-            getName() + "_" + cameraName + "_SkyBoxStage.material", skyBoxMaterialConfig.write());
-        mResourcesList.emplace_back(mSkyBoxStageMaterial->getName());
+            getName() + "_" + cameraName + "_SkyBoxStage.material", skyBoxMaterialConfig.write(), this);
 
         // Добавляем шейдер skybox
         mSkyBoxStage->addObject("SkyBox", SkyBoxObjectGenerator(mSkyBoxStageMaterial->getName()).generate());
@@ -586,8 +515,8 @@ namespace lite3dpp_pipeline {
             return;
         }
 
-        mIBL = std::make_unique<IBLMultiProbe>(getMain(), getName(), mShaderPackage);
-        mIBL->initialize(pipelineConfig);
+        mIBL = std::make_unique<IBLMultiProbePass>(getMain(), *this);
+        mIBL->initialize();
 
         sceneGenerator.addRenderTarget(cameraName, mIBL->getPass()->getName(), ConfigurationWriter()
             .set(L"Priority", static_cast<int>(RenderPassStagePriority::ForwardStage))
@@ -603,38 +532,19 @@ namespace lite3dpp_pipeline {
 
     void PipelineBase::createMainScene(const String& name, const String &sceneConfig)
     {
-        mMainScene = getMain().getResourceManager().queryResourceFromJson<Scene>(name, sceneConfig);
+        mMainScene = getMain().getResourceManager().queryResourceFromJson<Scene>(name, sceneConfig, this);
     }
 
-    void PipelineBase::updateExposure()
+    bool PipelineBase::beginSceneRender(Scene *scene, Camera *camera, const lite3d_scene_render_params *params)
     {
-        if (!mBloomEffect || !mPostProcessStageMaterial || !mDynamicExposureEnabled)
-        {
-            return;
-        }
-
-        kmVec3 rgbAverage = mBloomEffect->getLumaAverage();
-        auto exposure = mExposureBase / kmVec3Length(&rgbAverage);
-        exposure = std::max(mExposureMin, std::min(mExposureMax, exposure));
-        mPostProcessStageMaterial->setFloatParameter(static_cast<int>(TexturePassTypes::RenderPass), "Exposure", exposure);
-    }
-
-    void PipelineBase::frameBegin()
-    {
-        // Обновление экспозиции каждые 10 кадров
-        auto renderStats = getMain().getRenderStats();
-        if ((renderStats->framesCount % 10) == 0)
-        {
-            updateExposure();
-        }
-    }
-
-    bool PipelineBase::beginSceneRender(Scene *scene, Camera *camera, int32_t priority)
-    {
-        Material::setFloatv3GlobalParameter("Eye", getMainCamera().getWorldPosition());
+        auto &mainCamera = getMainCamera();
+        Material::setFloatv3GlobalParameter("Eye", mainCamera.getWorldPosition());
+        Material::setFloatm4GlobalParameter("CameraView", mainCamera.getViewMatrix());
+        Material::setFloatm4GlobalParameter("CameraProjection", mainCamera.getProjMatrix());
+        Material::setIntGlobalParameter("FrameNumber", static_cast<int32_t>(getMain().getRenderStats()->framesCount));
 
         // Make a copy of the combined texture before blend stage 
-        if (mCombined2Texture && priority == static_cast<int32_t>(RenderPassStagePriority::BlendDecalStage))
+        if (mCombined2Texture && params->priority == static_cast<int32_t>(RenderPassStagePriority::BlendDecalStage))
         {
             mCombined2Texture->copyFrom(*mCombinedTexture);
         }

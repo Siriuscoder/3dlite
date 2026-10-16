@@ -43,7 +43,7 @@ namespace lite3dpp
     public:
 
         Main();
-        ~Main() = default;
+        ~Main();
 
         void initFromConfig(const std::string_view &config);
         void initFromConfigString(const std::string_view &config);

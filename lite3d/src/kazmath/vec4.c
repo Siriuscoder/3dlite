@@ -107,6 +107,24 @@ kmVec4* kmVec4Scale(kmVec4* pOut, const kmVec4* pIn, const kmScalar s) {
 	return pOut;
 }
 
+kmVec4* kmVec4Min(kmVec4* pOut, const kmVec4* pV1, const kmVec4* pV2)
+{
+    pOut->x = kmMin(pV1->x, pV2->x);
+    pOut->y = kmMin(pV1->y, pV2->y);
+    pOut->z = kmMin(pV1->z, pV2->z);
+    pOut->w = kmMin(pV1->w, pV2->w);
+    return pOut;
+}
+
+kmVec4* kmVec4Max(kmVec4* pOut, const kmVec4* pV1, const kmVec4* pV2)
+{
+    pOut->x = kmMax(pV1->x, pV2->x);
+    pOut->y = kmMax(pV1->y, pV2->y);
+    pOut->z = kmMax(pV1->z, pV2->z);
+    pOut->w = kmMax(pV1->w, pV2->w);
+    return pOut;
+}
+
 /** Subtracts one 4D pV2 from pV1. The result is stored in pOut. pOut is returned*/
 kmVec4* kmVec4Subtract(kmVec4* pOut, const kmVec4* pV1, const kmVec4* pV2) {
 	pOut->x = pV1->x - pV2->x;
@@ -179,4 +197,3 @@ kmVec4* kmVec4Assign(kmVec4* pOut, const kmVec4* pIn) {
 
 	return pOut;
 }
-

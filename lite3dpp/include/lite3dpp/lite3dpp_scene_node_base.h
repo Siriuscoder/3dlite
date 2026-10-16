@@ -51,6 +51,14 @@ namespace lite3dpp
 
         void frustumTest(bool flag);
         const bool frustumTest() const;
+        void enable();
+        void disable();
+        bool isEnabled() const;
+        void setStatic(bool flag);
+        bool isStatic() const;
+        bool isDynamic() const;
+        void setCastShadow(bool flag);
+        bool isCastShadow() const;
 
         void setPosition(const kmVec3 &position);
         const kmVec3& getPosition() const;

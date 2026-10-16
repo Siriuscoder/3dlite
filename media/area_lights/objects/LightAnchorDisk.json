@@ -17,6 +17,12 @@
           "AreaHeight": 2.0,
           "Attenuation": {
             "InfluenceDistance": 30.0
+          },
+          "ShadowParams": {
+            "Dynamic": false,
+            "Type": "VSM",
+            "VSMBlurSigma": 2.5,
+            "NearClipPlane": 0.01
           }
         },
         "Position": [
