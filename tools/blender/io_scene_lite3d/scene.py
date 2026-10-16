@@ -208,6 +208,17 @@ class Scene:
                 "InfluenceDistance": light.lite3d_properties.influenceDistance
             }
         
+        if light.use_shadow:
+            settings = light.lite3d_properties
+            lightJson["ShadowParams"] = {
+                "Dynamic": settings.shadowDynamic,
+                "Type": settings.shadowType,
+                "SSS": settings.shadowSSS,
+                "NearClipPlane": settings.shadowNearClipPlane,
+                "FarClipPlane": settings.shadowFarClipPlane,
+                "VSMBlurSigma": settings.shadowVSMBlurSigma
+            }
+
         node["Light"] = lightJson
 
     def exportSkeletonBone(self, boneJson, bone):
@@ -266,6 +277,10 @@ class Scene:
             return
         
         node["Name"] = obj.name
+        settings = obj.lite3d_properties
+        node["Static"] = settings.static or settings.physicsObjectType in ["Dynamic", "Kinematic"]
+        node["CastShadow"] = settings.castShadow
+        node["FrustumTest"] = settings.frustumTest
         if obj.type == "MESH":
             self.exportMesh(obj, node)
         elif obj.type == "LIGHT":
@@ -377,4 +392,3 @@ class Scene:
                 self.exportObject(obj)
             
         self.saveScene()
-    

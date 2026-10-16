@@ -90,7 +90,7 @@ float Shadow(in LightSource source, in Surface surface, in AngularInfo angular)
             }
         }
 
-        shadowIndex = source.shadowIndex + cascade;
+        shadowIndex = source.shadowIndex + cascade + 1;
         adapt = CalcAdaptiveShadowParams(angular, cascade);
         shadowVisibility = EvaluateShadow(source.flags, shadowIndex, adapt, surface.wv, angular);
 
