@@ -48,10 +48,6 @@
 #define LITE3D_VSM_BLUR_MAX_RADIUS                          24
 #endif
 
-#ifndef LITE3D_VSM_EXPONENT
-#define LITE3D_VSM_EXPONENT                                 20.0
-#endif
-
 #ifndef LITE3D_SHADOW_CSM_CASCADE_COUNT
 #define LITE3D_SHADOW_CSM_CASCADE_COUNT                     1
 #endif

@@ -17,6 +17,7 @@
  *******************************************************************************/
 #include <stdlib.h>
 #include <string.h>
+#include <float.h>
 #include <SDL_assert.h>
 #include <SDL_log.h>
 #include <SDL_timer.h>

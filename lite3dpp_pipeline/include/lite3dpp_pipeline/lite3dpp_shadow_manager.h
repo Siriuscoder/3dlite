@@ -29,6 +29,9 @@ class LITE3DPP_PIPELINE_EXPORT ShadowManager : public RenderTargetObserver, publ
 {
 public:
 
+    static constexpr const float MaxVSMExpo = 42.0f;
+    static constexpr const float VSMExpo = std::min(21.0f, MaxVSMExpo);
+
     class LITE3DPP_PIPELINE_EXPORT VisibilityHintNode : public SceneNodeObserver, public Noncopiable
     {
     public:
@@ -43,6 +46,7 @@ public:
         void setInvisibleFrom(ShadowCaster* sc);
         inline bool isRecursive() const
         { return mRecursive; }
+        void invalidate();
 
     private:
 
@@ -50,7 +54,6 @@ public:
         void updateRotation(SceneNodeBase *node) override;
         void updateScale(SceneNodeBase *node) override;
         void updateSkeletonPose(SceneNodeBase *node) override;
-        void invalidate();
 
         SceneNodeBase *mNode = nullptr;
         AffectingShadowCasters mAffectingShadowCasters;

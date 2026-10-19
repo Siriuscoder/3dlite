@@ -69,11 +69,8 @@ namespace lite3dpp_pipeline {
     void ShadowManager::VisibilityHintNode::setInvisibleFrom(ShadowCaster* sc)
     {
         SDL_assert(sc);
-        auto it = std::find(mAffectingShadowCasters.begin(), mAffectingShadowCasters.end(), sc);
-        if (it != mAffectingShadowCasters.end())
-        {
-            (*it) = nullptr;
-        }
+        std::replace(mAffectingShadowCasters.begin(), mAffectingShadowCasters.end(), sc,
+            static_cast<ShadowCaster*>(nullptr));
     }
 
     void ShadowManager::VisibilityHintNode::invalidate()
@@ -211,6 +208,11 @@ namespace lite3dpp_pipeline {
             emitter->getLight()->setShadowIndex(-1);
             range.first = mShadowCasters.erase(range.first);
         }
+
+        if (emitter->getLight()->getType() == LightSourceFlags::TypeDirectional)
+        {
+            mCascadeShadowCasterAlreadyRegistered = false;
+        }
     }
 
     void ShadowManager::clear()
@@ -243,15 +245,16 @@ namespace lite3dpp_pipeline {
         }
 
         auto ins = mVisibilityHintNodes.try_emplace(node, std::make_shared<VisibilityHintNode>(node, recursive));
+        auto hintNode = ins.first->second;
 
         // Recursively register all child renderable nodes
         if (recursive)
         {
-            node->iterateAllChilds([&ins, this](SceneNodeBase *childNode)
+            node->iterateAllChilds([hintNode, this](SceneNodeBase *childNode)
             {
                 if (childNode->isRenderable())
                 {
-                    mVisibilityHintNodes.emplace(childNode, ins.first->second);
+                    mVisibilityHintNodes.emplace(childNode, hintNode);
                 }
             });
         }
@@ -266,7 +269,7 @@ namespace lite3dpp_pipeline {
             }
         }
 
-        return ins.first->second.get();
+        return hintNode.get();
     }
 
     void ShadowManager::unregisterHintNode(SceneNodeBase *node)
@@ -276,6 +279,8 @@ namespace lite3dpp_pipeline {
         {
             return;
         }
+
+        it->second->invalidate();
 
         // Recursively register all child renderable nodes
         if (it->second->isRecursive())
@@ -290,15 +295,6 @@ namespace lite3dpp_pipeline {
         }
 
         mVisibilityHintNodes.erase(node);
-        // Force update one of the cached shadows, to cause update hint nodes visibility in customFrustumCheck 
-        for (auto shadowCaster : mShadowCastersCachePlaceHolders)
-        {
-            if (shadowCaster)
-            {
-                shadowCaster->invalidate();
-                break;
-            }
-        }
     }
 
     bool ShadowManager::beginUpdate(RenderTarget *rt)
@@ -396,7 +392,7 @@ namespace lite3dpp_pipeline {
                     continue;
                 }
                     
-                // Если свободного места не нашлось, про буем вытянуть из кеша старый источник, который не виден
+                // Если свободного места не нашлось, пробуем вытянуть из кеша старый источник, который не виден
                 for (auto i = firstIndexToSearch; i < (firstIndexToSearch + searchCount); i += step)
                 {
                     if (mShadowCastersCachePlaceHolders[i] && (!mShadowCastersCachePlaceHolders[i]->getNode()->isVisible() || 
@@ -456,8 +452,9 @@ namespace lite3dpp_pipeline {
             hintNode.second->resetVision();
         }
 
-        static const float cleanDepth = 1.0;
-        static const float cleanMoments[] = { 1.0, 1.0 };
+        const float cleanDepth = 1.0;
+        const float warpedCleanDepth = std::exp(VSMExpo);
+        const float cleanMoments[] = { warpedCleanDepth, warpedCleanDepth * warpedCleanDepth };
         // Clear affected shadow maps
         for (size_t i = 1; i < mHostShadowIndexes.size(); ++i)
         {
@@ -560,11 +557,12 @@ namespace lite3dpp_pipeline {
         {
             LITE3D_THROW("Shadow matrix buffer limit exceeded (" << getShadowsCacheMaxCount() << " of " << c << ")");
         }
-
+        
         ShaderProgram::addGlobalDefinition("LITE3D_SPOT_SHADOW_GS_MAX_VERTICES", std::to_string(mMaxShadowsRebuildCount * 3));
         ShaderProgram::addGlobalDefinition("LITE3D_SHADOW_CACHE_MAX_COUNT", std::to_string(getShadowsCacheMaxCount()));
         ShaderProgram::addGlobalDefinition("LITE3D_SHADOW_CSM_SPLIT_LAMBDA", std::to_string(mCascadeSplitLambda));
         ShaderProgram::addGlobalDefinition("LITE3D_SHADOW_CSM_CASCADE_COUNT", std::to_string(mCascadeShadowCacheMaxCount));
+        ShaderProgram::addGlobalDefinition("LITE3D_VSM_EXPONENT", std::to_string(VSMExpo));
     }
 
     void ShadowManager::createShadowRenderTarget()
