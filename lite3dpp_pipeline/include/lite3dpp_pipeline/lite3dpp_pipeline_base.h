@@ -45,6 +45,8 @@ namespace lite3dpp_pipeline {
         void setSaturation(float saturation);
         void setBrightness(float brightness);
         void setSkyBoxEmission(float emission);
+        void clearScene();
+        void loadScene(const String &path);
 
     protected:
 

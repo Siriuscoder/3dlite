@@ -28,7 +28,8 @@ static const char *helpString =
     "Press 'u' to enable/disable SSAO\n"
     "Press 'r' to enable/disable night mode\n"
     "Press 'e' to enable/disable sun rotation\n"
-    "Press 't' to enable/disable lamps\n";
+    "Press 't' to enable/disable lamps\n"
+    "Press 'n' to reload all scene\n";
 
 class SampleSponza : public Sample
 {
@@ -207,12 +208,13 @@ public:
                     mBrightness = -0.08;
                 mPipeline->setBrightness(mBrightness);
             }
-            //else if (e->key.keysym.sym == SDLK_n)
-            //{
-            //    mSponzaScene->removeAllObjects();
-            //    mSponzaScene->loadObjects("sponza:scenes/sponza.json");
-            //}
-
+            else if (e->key.keysym.sym == SDLK_n)
+            {
+                mPipeline->clearScene();
+                mPipeline->loadScene("sponza:scenes/sponza.json");
+                setupShadowCasters();
+                addFlashlight();
+            }
         }
     }
 

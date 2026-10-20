@@ -115,6 +115,24 @@ namespace lite3dpp_pipeline {
         }
     }
 
+    void PipelineBase::clearScene()
+    {
+        SDL_assert(mMainScene);
+
+        if (mShadowManager)
+        {
+            mShadowManager->clear();
+        }
+
+        mMainScene->removeAllObjects();
+    }
+
+    void PipelineBase::loadScene(const String &path)
+    {
+        SDL_assert(mMainScene);
+        mMainScene->loadObjects(path);
+    }
+
     void PipelineBase::loadFromConfigImpl(const ConfigurationReader &pipelineConfig)
     {
         String mainCameraName;

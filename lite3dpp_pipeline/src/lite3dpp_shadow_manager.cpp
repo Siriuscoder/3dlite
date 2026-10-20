@@ -229,6 +229,7 @@ namespace lite3dpp_pipeline {
 
         mVisibilityHintNodes.clear();
         mShadowCasters.clear();
+        mCascadeShadowCasterAlreadyRegistered = false;
     }
 
     ShadowManager::VisibilityHintNode* ShadowManager::registerHintNode(SceneNodeBase *node, bool recursive)

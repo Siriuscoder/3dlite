@@ -343,11 +343,9 @@ namespace lite3dpp_pipeline {
         kmMat3LookAt(&lightCamBasis, &KM_VEC3_ZERO, &lightDirection, &KM_VEC3_POS_Z);
         kmVec3MultiplyMat3(&centerAtZero, &center, &lightCamBasis);
 
-        kmVec2 extent, texelSize, offset;
-        extent.x = 0.5f * (maxX - minX);
-        extent.y = 0.5f * (maxY - minY);
-        texelSize.x = (extent.x * 2.0f) / shadowMapSize;
-        texelSize.y = (extent.y * 2.0f) / shadowMapSize;
+        kmVec2 texelSize, offset;
+        texelSize.x = (maxX - minX) / shadowMapSize;
+        texelSize.y = (maxY - minY) / shadowMapSize;
         offset.x = -centerAtZero.x + std::floor(centerAtZero.x / texelSize.x) * texelSize.x;
         offset.y = -centerAtZero.y + std::floor(centerAtZero.y / texelSize.y) * texelSize.y;
         return offset;
@@ -396,12 +394,9 @@ namespace lite3dpp_pipeline {
         const auto offset = ShadowCasterCascade::calcStabilizationOffset(center,
             min.x, max.x, min.y, max.y, direction, mShadowMapSize);
 
-        // Keep all corners inside the projection after texel snapping.
-        const float marginX = (max.x - min.x) / mShadowMapSize;
-        const float marginY = (max.y - min.y) / mShadowMapSize;
         mCamera->setupOrtho(-max.z, -min.z,
-            min.x + offset.x - marginX, max.x + offset.x + marginX,
-            min.y + offset.y - marginY, max.y + offset.y + marginY);
+            min.x + offset.x, max.x + offset.x,
+            min.y + offset.y, max.y + offset.y);
 
         matrix = mCamera->refreshProjViewMatrix(view);
         return true;
