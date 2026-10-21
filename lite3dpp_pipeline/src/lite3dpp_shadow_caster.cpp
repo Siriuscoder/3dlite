@@ -108,22 +108,33 @@ namespace lite3dpp_pipeline {
             mLightNode->getLight()->getType() == LightSourceFlags::TypeRectArea || 
             mLightNode->getLight()->getType() == LightSourceFlags::TypeSpot);
 
+        mCamera = main.addCamera(mLightNode->getName() + "_spot_shadow_" + std::to_string(++gCameraCounter));
+        checkAndRecalcProjection(true);
+    }
+
+    void ShadowCasterSpot::checkAndRecalcProjection(bool force)
+    {
         auto clipFar = mLightNode->getLight()->getShadowClipFar() > FLT_EPSILON ? mLightNode->getLight()->getShadowClipFar() : 
             mLightNode->getLight()->getInfluenceDistance();
-                    
-        mCamera = main.addCamera(mLightNode->getName() + "_spot_shadow_" + std::to_string(++gCameraCounter));
+        auto clipNear = mLightNode->getLight()->getShadowClipNear();
 
-        if (mLightNode->getLight()->getType() == LightSourceFlags::TypeDiskArea || 
-            mLightNode->getLight()->getType() == LightSourceFlags::TypeRectArea)
+        auto angleOuterCone = (mLightNode->getLight()->getType() == LightSourceFlags::TypeDiskArea || 
+            mLightNode->getLight()->getType() == LightSourceFlags::TypeRectArea) ? 160.0f : 
+            mLightNode->getLight()->getAngleOuterCone();
+
+        if (force || !(near(clipFar, mClipFar) && near(clipNear, mClipNear) && near(angleOuterCone, mAngleOuterCone)))
         {
-            // Wide projection angle for area lights, rough approx
-            mCamera->setupPerspective(mLightNode->getLight()->getShadowClipNear(), clipFar, 160.0f, 1.0);
+            mCamera->setupPerspective(clipNear, clipFar, kmRadiansToDegrees(angleOuterCone), 1.0);
+            mClipNear = clipNear;
+            mClipFar = clipFar;
+            mAngleOuterCone = angleOuterCone;
         }
-        else
-        {
-            mCamera->setupPerspective(mLightNode->getLight()->getShadowClipNear(), clipFar, 
-                kmRadiansToDegrees(mLightNode->getLight()->getAngleOuterCone()), 1.0);
-        }
+    }
+
+    bool ShadowCasterSpot::recalcMatrix(kmMat4 &matrix)
+    {
+        checkAndRecalcProjection(false);
+        return ShadowCaster::recalcMatrix(matrix);
     }
 
     ShadowCasterOmniDirectional::ShadowCasterOmniDirectional(Main &main, LightSceneNode *emitter, uint32_t faceNum) : 
@@ -140,15 +151,27 @@ namespace lite3dpp_pipeline {
         };
 
         SDL_assert(mLightNode->getLight()->getType() == LightSourceFlags::TypePoint);
-        SDL_assert(faceNum >= 0 && faceNum <= 6);
-
-        auto clipFar = mLightNode->getLight()->getShadowClipFar() > FLT_EPSILON ? mLightNode->getLight()->getShadowClipFar() : 
-            mLightNode->getLight()->getInfluenceDistance();
+        SDL_assert(faceNum >= 0 && faceNum < 6);
 
         mCamera = main.addCamera(mLightNode->getName() + "_omni_shadow_face_" + std::to_string(faceNum) + "_" + 
             std::to_string(++gCameraCounter));
-        mCamera->setupPerspective(mLightNode->getLight()->getShadowClipNear(), clipFar, 90.0, 1.0);
+
         mCamera->setDirection(faceDirections[faceNum]);
+        checkAndRecalcProjection(true);
+    }
+
+    void ShadowCasterOmniDirectional::checkAndRecalcProjection(bool force)
+    {
+        auto clipFar = mLightNode->getLight()->getShadowClipFar() > FLT_EPSILON ? mLightNode->getLight()->getShadowClipFar() : 
+            mLightNode->getLight()->getInfluenceDistance();
+        auto clipNear = mLightNode->getLight()->getShadowClipNear();
+
+        if (force || !(near(clipFar, mClipFar) && near(clipNear, mClipNear)))
+        {
+            mCamera->setupPerspective(clipNear, clipFar, 90.0f, 1.0f);
+            mClipNear = clipNear;
+            mClipFar = clipFar;
+        }
     }
 
     int32_t ShadowCasterOmniDirectional::getCacheIndex() const
@@ -171,6 +194,7 @@ namespace lite3dpp_pipeline {
 
     bool ShadowCasterOmniDirectional::recalcMatrix(kmMat4 &matrix)
     {
+        checkAndRecalcProjection(false);
         mCamera->setPosition(mLightNode->getLight()->getWorldPosition());
         matrix = mCamera->refreshProjViewMatrix();
         return true;

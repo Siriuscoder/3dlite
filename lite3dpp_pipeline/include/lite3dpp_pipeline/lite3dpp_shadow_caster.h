@@ -98,6 +98,17 @@ class LITE3DPP_PIPELINE_EXPORT ShadowCasterSpot : public ShadowCaster
 public:
 
     ShadowCasterSpot(Main &main, LightSceneNode *emitter);
+    bool recalcMatrix(kmMat4 &matrix) override;
+
+private:
+
+    void checkAndRecalcProjection(bool force);
+
+private:
+
+    float mClipNear = 0.0f;
+    float mClipFar = 0.0f;
+    float mAngleOuterCone = 0.0f;
 };
 
 class LITE3DPP_PIPELINE_EXPORT ShadowCasterOmniDirectional : public ShadowCaster
@@ -111,7 +122,13 @@ public:
 
 private:
 
+    void checkAndRecalcProjection(bool force);
+
+private:
+    
     uint32_t mFaceNum;
+    float mClipNear = 0.0f;
+    float mClipFar = 0.0f;
 };
 
 class LITE3DPP_PIPELINE_EXPORT ShadowCasterCascade : public ShadowCaster
