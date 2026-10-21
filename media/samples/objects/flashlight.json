@@ -16,7 +16,7 @@
                     ],
                     "Attenuation": {
                         "Constant": 1.0,
-                        "InfluenceMinRadiance": 0.001
+                        "InfluenceMinRadiance": 0.01
                     },
                     "SpotFactor": {
                         "AngleInnerCone": 0.8,

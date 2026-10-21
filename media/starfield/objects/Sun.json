@@ -19,7 +19,13 @@
         0.0,
         0.0,
         0.0
-      ]
+      ],
+      "ShadowParams": {
+        "Dynamic": true,
+        "Type": "PCFAdaptive",
+        "NearClipPlane": 0.01,
+        "FarClipPlane": 10.0
+      }
     }
   }
 }

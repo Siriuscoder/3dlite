@@ -47,8 +47,7 @@ namespace lite3dpp_pipeline {
             .set(L"InternalFormat", "RGB32F");
 
         mCombinedTexture = getMain().getResourceManager().queryResourceFromJson<TextureImage>(
-            getName() + "_" + cameraName + "_combined.texture", combinedTextureConfig.write());
-        mResourcesList.emplace_back(mCombinedTexture->getName());
+            getName() + "_" + cameraName + "_combined.texture", combinedTextureConfig.write(), this);
 
         SDL_assert(mDepthTexture);
         ConfigurationWriter combinedTargetConfig;
@@ -65,8 +64,7 @@ namespace lite3dpp_pipeline {
                 .set(L"TextureName", mDepthTexture->getName()));
 
         mCombinePass = getMain().getResourceManager().queryResourceFromJson<TextureRenderTarget>(
-            getName() + "_" + cameraName + "_CombinePass", combinedTargetConfig.write());
-        mResourcesList.emplace_back(mCombinePass->getName());
+            getName() + "_" + cameraName + "_CombinePass", combinedTargetConfig.write(), this);
 
         sceneGenerator.addRenderTarget(cameraName, mCombinePass->getName(), ConfigurationWriter()
             .set(L"Priority", static_cast<int>(RenderPassStagePriority::ForwardStage))

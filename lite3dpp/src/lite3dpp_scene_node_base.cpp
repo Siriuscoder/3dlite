@@ -53,13 +53,69 @@ namespace lite3dpp
     void SceneNodeBase::frustumTest(bool flag)
     {
         SDL_assert(mNodePtr);
-        mNodePtr->frustumTest = flag ? LITE3D_TRUE : LITE3D_FALSE; 
+        if (flag)
+            mNodePtr->flags |= LITE3D_SCENE_NODE_FRUSTUM_TEST;
+        else
+            mNodePtr->flags &= ~LITE3D_SCENE_NODE_FRUSTUM_TEST;
     }
     
     const bool SceneNodeBase::frustumTest() const
     {
         SDL_assert(mNodePtr);
-        return mNodePtr->frustumTest == LITE3D_TRUE; 
+        return (mNodePtr->flags & LITE3D_SCENE_NODE_FRUSTUM_TEST) != 0;
+    }
+
+    void SceneNodeBase::enable()
+    {
+        SDL_assert(mNodePtr);
+        mNodePtr->flags |= LITE3D_SCENE_NODE_ENABLED;
+    }
+
+    void SceneNodeBase::disable()
+    {
+        SDL_assert(mNodePtr);
+        mNodePtr->flags &= ~LITE3D_SCENE_NODE_ENABLED;
+    }
+
+    bool SceneNodeBase::isEnabled() const
+    {
+        SDL_assert(mNodePtr);
+        return (mNodePtr->flags & LITE3D_SCENE_NODE_ENABLED) != 0;
+    }
+
+    void SceneNodeBase::setStatic(bool flag)
+    {
+        SDL_assert(mNodePtr);
+        if (flag)
+            mNodePtr->flags |= LITE3D_SCENE_NODE_STATIC;
+        else
+            mNodePtr->flags &= ~LITE3D_SCENE_NODE_STATIC;
+    }
+
+    bool SceneNodeBase::isStatic() const
+    {
+        SDL_assert(mNodePtr);
+        return (mNodePtr->flags & LITE3D_SCENE_NODE_STATIC) != 0;
+    }
+
+    bool SceneNodeBase::isDynamic() const
+    {
+        return !isStatic();
+    }
+
+    void SceneNodeBase::setCastShadow(bool flag)
+    {
+        SDL_assert(mNodePtr);
+        if (flag)
+            mNodePtr->flags |= LITE3D_SCENE_NODE_CAST_SHADOW;
+        else
+            mNodePtr->flags &= ~LITE3D_SCENE_NODE_CAST_SHADOW;
+    }
+
+    bool SceneNodeBase::isCastShadow() const
+    {
+        SDL_assert(mNodePtr);
+        return (mNodePtr->flags & LITE3D_SCENE_NODE_CAST_SHADOW) != 0;
     }
 
     void SceneNodeBase::setPosition(const kmVec3 &position)
@@ -144,7 +200,7 @@ namespace lite3dpp
     bool SceneNodeBase::isRenderable() const
     {
         SDL_assert(mNodePtr);
-        return mNodePtr->renderable == LITE3D_TRUE;
+        return (mNodePtr->flags & LITE3D_SCENE_NODE_RENDERABLE) != 0;
     }
     
     kmVec3 SceneNodeBase::getWorldPosition() const
@@ -251,4 +307,3 @@ namespace lite3dpp
         return mClip ? mClip->getState() : ActionClip::ActionClipState::UNKNOWN;
     }
 }
-

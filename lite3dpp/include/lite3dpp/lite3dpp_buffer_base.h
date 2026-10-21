@@ -73,5 +73,13 @@ namespace lite3dpp
             size_t offset = index * sizeof(T);
             setData(elem, offset, sizeof(T));
         }
+
+        /* type align must be related with texel size */
+        template<class T>
+        void setElements(uint32_t index, const T *elem, size_t elementsCount)
+        {
+            size_t offset = index * sizeof(T);
+            setData(elem, offset, sizeof(T) * elementsCount);
+        }
     };
 }

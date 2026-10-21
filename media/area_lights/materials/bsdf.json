@@ -45,6 +45,25 @@
           "Name": "projViewMatrix"
         }
       ]
+    },
+    {
+      "Pass": 3,
+      "Program":{
+        "Name":"shadow.program",
+        "Path":"area_lights:shaders/json/shadow.json"
+      },
+      "Uniforms":[
+        {
+          "Name":"ShadowMatrix",
+          "UBOName":"AreaLightsSample_ShadowMatrixBuffer",
+          "Type":"UBO"
+        },
+        {
+          "Name": "ShadowIndex",
+          "UBOName": "AreaLightsSample_ShadowIndexBuffer",
+          "Type": "UBO"
+        }
+      ]
     }
   ]
 }

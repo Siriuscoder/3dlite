@@ -37,17 +37,18 @@ namespace lite3dpp_pipeline {
 
     enum class RenderPassStagePriority
     {
-        ShadowCleanStage = 0,
-        ShadowBuildStage = 1,
         DepthBuildStage = 0,
-        BloomBuildStage = 0,
-        LightComputeStage = 0,
-        GBufferBuildStage = 0,
-        ForwardStage = 0,
-        BlendDecalStage = 2,
-        SSAOBuildStage = 0,
-        PostProcessStage = 0,
-        SkyBoxStage = 1
+        ShadowCleanStage = 1,
+        ShadowBuildStage = 2,
+        GIStage = 3,
+        GBufferBuildStage = 4,
+        LightComputeStage = 5,
+        ForwardStage = 6,
+        SkyBoxStage = 7,
+        BlendDecalStage = 8,
+        SSAOBuildStage = 9,
+        BloomBuildStage = 10,
+        PostProcessStage = 11
     };
 
     enum class TexturePassTypes

@@ -8,7 +8,7 @@
         "samples:shaders/sources/pbr/LTC.fs",
         "samples:shaders/sources/pbr/brdf_oren_nayar_approx.fs",
         "samples:shaders/sources/pbr/brdf_null_env.fs,area_lights:shaders/sources/inc/params.def",
-        "samples:shaders/sources/shadow/none.fs",
+        "samples:shaders/sources/shadow/full.fs,area_lights:shaders/sources/inc/params.def",
         "samples:shaders/sources/ssao/ssao_sample.fs",
         "samples:shaders/sources/common/common.fs,area_lights:shaders/sources/inc/disable_invocation.def"
     ]

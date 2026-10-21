@@ -43,6 +43,12 @@ namespace lite3dpp
         lite3d_memory_init(NULL);
     }
 
+    Main::~Main()
+    {
+        mResourceManager.releaseAllResources();
+        removeAllCameras();
+    }
+
     const MaterialFactory &Main::getMaterialFactory() const
     {
         SDL_assert(mMaterialFactory);
@@ -184,7 +190,8 @@ namespace lite3dpp
 
         /* create main window render target */
         /* it is fake and used only as label indicating render to screen */
-        mResourceManager.queryResourceFromJson<WindowRenderTarget>("MainWindow", ConfigurableResource::emptyJson);
+        mResourceManager.queryResourceFromJson<WindowRenderTarget>(WindowRenderTarget::Name, 
+            ConfigurableResource::emptyJson)->pin(true);
 
         /* perform fixed update timer */
         mFixedUpdatesTimer = addTimer(fixedUpdateTimerName, mConfig->getInt(L"FixedUpdatesInterval", 200));
@@ -205,7 +212,7 @@ namespace lite3dpp
     WindowRenderTarget *Main::window()
     {
         /* query main windows from resources */
-        return mResourceManager.queryResource<WindowRenderTarget>("MainWindow");
+        return mResourceManager.queryResource<WindowRenderTarget>(WindowRenderTarget::Name, nullptr);
     }
 
     void Main::renderFrame()

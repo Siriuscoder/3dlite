@@ -83,9 +83,9 @@ namespace lite3dpp
         inline lite3d_render_target *getPtr()
         { return mRenderTargetPtr; }
 
-        void addCamera(Camera *camera, Scene *scene, uint16_t pass, const RenderLayers &layers,
+        void addPass(Camera *camera, Scene *scene, uint16_t pass, const RenderLayers &layers,
             int priority, uint32_t renderFlags);
-        void removeCamera(Camera *camera, int priority);
+        void removePass(Camera *camera, int priority);
         void setActive();
 
     protected:
@@ -101,6 +101,8 @@ namespace lite3dpp
     class LITE3DPP_EXPORT WindowRenderTarget : public RenderTarget
     {
     public:
+
+        inline static const String Name = "Window";
 
         WindowRenderTarget(const String &name, 
             const String &path, Main &main);

@@ -7,7 +7,7 @@
             [
                 {
                     "Name": "Window",
-                    "Priority": 20,
+                    "Priority": 1000,
                     "TexturePass": 1,
                     "DepthTest": false,
                     "DepthOutput": false

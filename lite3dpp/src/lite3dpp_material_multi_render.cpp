@@ -36,12 +36,12 @@ namespace lite3dpp
         if (!getMain().getResourceManager().resourceExists(MultiRenderMaterialDataBufferName.data()))
         {
             mMaterialDataBuffer = getMain().getResourceManager().
-                queryResourceFromJson<SSBO>(MultiRenderMaterialDataBufferName.data(), "{\"Dynamic\": true}");
+                queryResourceFromJson<SSBO>(MultiRenderMaterialDataBufferName.data(), "{\"Dynamic\": true}", this);
         }
         else
         {
             mMaterialDataBuffer = getMain().getResourceManager().
-                queryResource<SSBO>(MultiRenderMaterialDataBufferName.data());
+                queryResource<SSBO>(MultiRenderMaterialDataBufferName.data(), this);
         }
 
         for (auto &passPair : mPasses)

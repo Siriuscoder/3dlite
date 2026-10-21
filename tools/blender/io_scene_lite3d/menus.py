@@ -21,6 +21,18 @@ class LIGHT3D_LIGHT_PT_panel(bpy.types.Panel):
         self.layout.prop(context.light.lite3d_properties, "influenceDistance")
         self.layout.prop(context.light.lite3d_properties, "influenceMinRadiance")
 
+        shadowSettings = self.layout.box()
+        shadowSettings.prop(context.light, "use_shadow", text = "Shadows")
+        shadowParams = shadowSettings.column()
+        shadowParams.enabled = context.light.use_shadow
+        shadowParams.prop(context.light.lite3d_properties, "shadowDynamic")
+        shadowParams.prop(context.light.lite3d_properties, "shadowType")
+        shadowParams.prop(context.light.lite3d_properties, "shadowSSS")
+        shadowParams.prop(context.light.lite3d_properties, "shadowNearClipPlane")
+        shadowParams.prop(context.light.lite3d_properties, "shadowFarClipPlane")
+        if context.light.lite3d_properties.shadowType == "VSM":
+            shadowParams.prop(context.light.lite3d_properties, "shadowVSMBlurSigma")
+
 class LIGHT3D_MATERIAL_PT_panel(bpy.types.Panel):
     bl_label = PanelName
     bl_idname = "LIGHT3D_MATERIAL_PT_panel"
@@ -75,6 +87,9 @@ class LIGHT3D_OBJECT_PT_panel(bpy.types.Panel):
     def draw(self, context):
         self.layout.prop(context.object.lite3d_properties, "originObject")
         self.layout.prop(context.object.lite3d_properties, "enabled")
+        self.layout.prop(context.object.lite3d_properties, "static")
+        self.layout.prop(context.object.lite3d_properties, "castShadow")
+        self.layout.prop(context.object.lite3d_properties, "frustumTest")
 
         physicsSettings = self.layout.box()
         physicsSettings.label(text = "Physics:")

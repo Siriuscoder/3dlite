@@ -93,6 +93,11 @@
           "Type": "UBO"
         },
         {
+          "Name":"MomentsMaps",
+          "TextureName":"SandboxPipeline_MomentsMap.texture",
+          "Type":"sampler"
+        },
+        {
           "Name": "EnvProbesData",
           "UBOName": "SandboxPipeline_EnvProbesData",
           "Type": "UBO"

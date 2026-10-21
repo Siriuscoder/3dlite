@@ -12,18 +12,8 @@
     },
     "ShadowMaps":
     {
-        "Width": 1024,
-        "Height": 1024,
-        "MaxCount": 1,
-        "NearClipPlane": 1.0,
-        "FarClipPlane": 35.0,
-        "DirectionLightShadowParams": 
-        {
-            "LeftClipPlane": -25.0,
-            "RightClipPlane": 25.0,
-            "BottomClipPlane": -25.0,
-            "TopClipPlane": 25.0
-        }
+        "Extent": 512,
+        "CascadeShadowCacheMaxCount": 4
     },
     "SSAO": 
     {
@@ -36,9 +26,10 @@
     },
     "PostProcess":
     {
-        "Gamma": 2.2,
-        "Contrast": 1.005,
-        "Saturation": 1.10,
-        "Exposure": 3.0
+        "Contrast": 1.001,
+        "Saturation": 1.005,
+        "Exposure": 3.0,
+        "LensFlare": false,
+        "ChromaticAberration": false
     }
 }

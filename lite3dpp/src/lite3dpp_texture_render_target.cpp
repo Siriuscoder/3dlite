@@ -56,11 +56,11 @@ namespace lite3dpp
 
         {
             ConfigurationReader attachmentJson = helper.getObject(L"ColorAttachments");
-            for(const ConfigurationReader &targetJson : attachmentJson.getObjects(L"Attachments"))
+            for (const ConfigurationReader &targetJson : attachmentJson.getObjects(L"Attachments"))
             {
                 lite3d_framebuffer_attachment attachment;
                 attachment.attachment = getMain().getResourceManager().queryResource<TextureImage>(
-                    targetJson.getString(L"TextureName"), targetJson.getString(L"TexturePath"))->getPtr();
+                    targetJson.getString(L"TextureName"), targetJson.getString(L"TexturePath"), this)->getPtr();
                 attachment.layer.layer = targetJson.getInt(L"Layer", 0);
                 attachment.layer.attachmentType = LITE3D_FRAMEBUFFER_USE_COLOR_BUFFER;
                 textureAttachments.emplace_back(attachment);
@@ -83,7 +83,7 @@ namespace lite3dpp
             {
                 lite3d_framebuffer_attachment attachment;
                 attachment.attachment = getMain().getResourceManager().queryResource<TextureImage>(
-                    attachmentJson.getString(L"TextureName"), attachmentJson.getString(L"TexturePath"))->getPtr();
+                    attachmentJson.getString(L"TextureName"), attachmentJson.getString(L"TexturePath"), this)->getPtr();
                 attachment.layer.layer = attachmentJson.getInt(L"Layer", 0);
                 attachment.layer.attachmentType = LITE3D_FRAMEBUFFER_USE_DEPTH_BUFFER;
                 textureAttachments.emplace_back(attachment);
@@ -136,14 +136,8 @@ namespace lite3dpp
         if (helper.has(L"BlitResultTo"))
         {
             ConfigurationReader rtConf = helper.getObject(L"BlitResultTo");
-            if (rtConf.getString(L"Name") == "Window")
-                mRenderTargetBlitTo = getMain().window();
-            else
-            {
-                mRenderTargetBlitTo = getMain().getResourceManager().queryResource<TextureRenderTarget>(
-                    rtConf.getString(L"Name"),
-                    rtConf.getString(L"Path"));
-            }
+            mRenderTargetBlitTo = getMain().getResourceManager().queryResource<RenderTarget>(
+                rtConf.getString(L"Name"), this);
         }
 
         // -1 is detached render target

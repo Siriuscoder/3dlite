@@ -24,8 +24,8 @@ namespace lite3dpp {
 namespace samples {
 
 static const char *helpString = 
-    "Press '+' to increse gamma\n"
-    "Press '-' to decrese gamma\n"
+    "Press '+' to increse brightness\n"
+    "Press '-' to decrese brightness\n"
     "Press 'o,p' to rotate lamp in gear room\n"
     "            (hold ctrl to reverse)\n"
     "Press 'i' to rotate lamp in reactor room\n"
@@ -50,7 +50,7 @@ public:
         {
             mMinigun = mMinigunObj->getNode("Minigun");
             mMinigunBarrel = mMinigunObj->getNode("MinigunBarrel");
-            shadowManager->registerHintNodeRecursive(mMinigunObj->getRoot());
+            shadowManager->registerHintNode(mMinigunObj->getRoot(), true);
         }
 
         void rotateAngle(const kmVec3 &axis, float angle)
@@ -80,6 +80,8 @@ public:
 
     void createScene() override
     {
+        ShaderProgram::addGlobalDefinition("SAMPLE_VAULT_111", "1");
+
         mLightAnimEffects = std::make_unique<SampleLightEffectManager>();
         mPipeline = getMain().getResourceManager().queryResource<lite3dpp_pipeline::PipelineDeffered>("Vault_111", 
             "vault_111:pipelines/vault_111.json");
@@ -133,20 +135,11 @@ public:
         mShadowManager->registerHintNode(mSpot02);
         mShadowManager->registerHintNode(mSpot03);
 
-        mShadowManager->newShadowCaster(mVaultScene->getObject("LightSpot")->getLightNode("LightSpotNode"))->getNode()->
-            getLight()->setFlag(LightSourceFlags::CastShadowPcfAdaptive);
-
-        mShadowManager->newShadowCaster(mVaultScene->getObject("LightSpot.001")->getLightNode("LightSpotNode"))->getNode()->
-            getLight()->setFlag(LightSourceFlags::CastShadowPcfAdaptive);
-
-        mShadowManager->newShadowCaster(mVaultScene->getObject("LightSpot.002")->getLightNode("LightSpotNode"))->getNode()->
-            getLight()->setFlag(LightSourceFlags::CastShadowPcfAdaptive);
-
-        mShadowManager->newShadowCaster(mVaultScene->getObject("LightSpot.003")->getLightNode("LightSpotNode"))->getNode()->
-            getLight()->setFlag(LightSourceFlags::CastShadowPcfAdaptive);
-        
-        mShadowManager->newShadowCaster(mVaultScene->getObject("VaultStatic")->getLightNode("RotorSpot"))->getNode()->
-            getLight()->setFlag(LightSourceFlags::CastShadowPcfAdaptive);
+        mShadowManager->registerEmitter(mVaultScene->getObject("LightSpot")->getLightNode("LightSpotNode"));
+        mShadowManager->registerEmitter(mVaultScene->getObject("LightSpot.001")->getLightNode("LightSpotNode"));
+        mShadowManager->registerEmitter(mVaultScene->getObject("LightSpot.002")->getLightNode("LightSpotNode"));
+        mShadowManager->registerEmitter(mVaultScene->getObject("LightSpot.003")->getLightNode("LightSpotNode"));
+        mShadowManager->registerEmitter(mVaultScene->getObject("VaultStatic")->getLightNode("RotorSpot"));
     }
 
     void setupLightAnim()
@@ -302,25 +295,25 @@ public:
                     mGearKey->setPosition(pos);
                 }
             }
-            else if (e->key.keysym.sym == SDLK_KP_PLUS)
-            {
-                mGamma += 0.02;
-                if (mGamma > 3.0)
-                    mGamma = 3.0;
-                mPipeline->setGamma(mGamma);
-            }
-            else if (e->key.keysym.sym == SDLK_KP_MINUS)
-            {
-                mGamma -= 0.02;
-                if (mGamma < 1.5)
-                    mGamma = 1.5;
-                mPipeline->setGamma(mGamma);
-            }
             else if (e->key.keysym.sym == SDLK_u)
             {
                 static bool ssaoEnabled = true;
                 ssaoEnabled = !ssaoEnabled;
                 mPipeline->enableSSAO(ssaoEnabled);
+            }
+            else if (e->key.keysym.sym == SDLK_KP_PLUS)
+            {
+                mBrightness += 0.001;
+                if (mBrightness > 0.08)
+                    mBrightness = 0.08;
+                mPipeline->setBrightness(mBrightness);
+            }
+            else if (e->key.keysym.sym == SDLK_KP_MINUS)
+            {
+                mBrightness -= 0.001;
+                if (mBrightness < -0.08)
+                    mBrightness = -0.08;
+                mPipeline->setBrightness(mBrightness);
             }
         }
     }
@@ -344,7 +337,7 @@ private:
     MinigunObject mMinigun01;
     MinigunObject mMinigun02;
     float mAnimPi = 0.0f;
-    float mGamma = 2.2f;
+    float mBrightness = 0.004f; 
 };
 
 }}

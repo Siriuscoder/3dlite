@@ -8,11 +8,8 @@
     "OpaqueCombinedTexture": true,
     "ShadowMaps":
     {
-        "Width": 2048,
-        "Height": 2048,
-        "MaxCount": 5,
-        "NearClipPlane": 1.0,
-        "FarClipPlane": 1500.0
+        "Extent": 2048,
+        "SpotShadowCacheMaxCount": 4
     },
     "SSAO": 
     {
@@ -25,9 +22,11 @@
     },
     "PostProcess":
     {
-        "Gamma": 2.2,
         "Contrast": 1.001,
-        "Saturation": 1.2,
-        "Exposure": 5.8
+        "Saturation": 1.08,
+        "Exposure": 12.0,
+        "Brightness": 0.004,
+        "LensFlare": true,
+        "ChromaticAberration": true
     }
 }

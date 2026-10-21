@@ -46,14 +46,15 @@ namespace lite3dpp_phisics {
     void PhysicsRigidBodySceneObject::loadFromTemplate(const ConfigurationReader& conf)
     {
         SDL_assert(mWorld);
-        SceneObject::loadFromTemplate(conf);
 
         ConfigurationReader physicsConfig = conf.getObject(L"Root").getObject(L"Physics");
-        if (physicsConfig.isEmpty())
-            return;
-        
         auto typeString = physicsConfig.getUpperString(L"Type", "STATIC");
         mBodyType = (typeString == "STATIC" ? BodyStatic : (typeString == "DYNAMIC" ? BodyDynamic : BodyKinematic));
+
+        SceneObject::loadFromTemplate(conf);
+
+        if (physicsConfig.isEmpty())
+            return;
         
         if (mCollisionNodes.size() == 0)
         {
@@ -186,12 +187,18 @@ namespace lite3dpp_phisics {
 
     SceneNode* PhysicsRigidBodySceneObject::createNode(const ConfigurationReader &conf, SceneNodeBase *parent)
     {
+        SceneNode *newSceneNode = nullptr;
         if (conf.has(L"CollisionShape"))
         {
-            return addCollisiuonShapeNode(conf, parent);
+            newSceneNode = addCollisiuonShapeNode(conf, parent);
+        }
+        else
+        {
+            newSceneNode = SceneObject::createNode(conf, parent);
         }
 
-        return SceneObject::createNode(conf, parent);
+        newSceneNode->setStatic(mBodyType == BodyStatic);
+        return newSceneNode;
     }
 
     void PhysicsRigidBodySceneObject::fillRigidBodyInfo(btRigidBody::btRigidBodyConstructionInfo &info, 
