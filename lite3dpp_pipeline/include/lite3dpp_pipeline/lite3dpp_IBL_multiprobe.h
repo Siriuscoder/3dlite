@@ -44,20 +44,8 @@ public:
     {
         kmVec4 position;
         kmMat4 viewProjMatrices[6];
+        kmVec4 sh[9];
         uint32_t flags[4];
-    };
-
-    struct ProbeIndexRawEntity
-    {
-        ProbeIndexRawEntity() = default;
-
-        template<class T>
-        ProbeIndexRawEntity(T i)
-        {
-            index[0] = static_cast<int32_t>(i);
-        }
-
-        int32_t index[4] = {0};
     };
 #pragma pack(pop)
 
@@ -86,7 +74,7 @@ public:
     virtual ~IBLMultiProbePass();
 
     void initialize();
-    inline RenderTarget* getPass() { return mEnvironmentProbePass; }
+    inline RenderTarget* getPass() { return mEnvironmentProbeColorPass; }
     inline const std::string &getProbeBufferName() const { return mProbesBuffer->getName(); }
     inline const std::string &getProbeIndexBufferName() const { return mProbesIndexBuffer->getName(); }
     inline const std::string &getBrdfLUTName() const { return mBrdfLUT->getName(); }
@@ -94,6 +82,7 @@ public:
     void rebuild();
     size_t addProbe(const kmVec3 &position, EnvProbeFlags flags = EnvProbeFlags::Irradiance | EnvProbeFlags::Specular);
     void updateProbe(size_t index, const kmVec3 &position);
+    void prepareAffectedProbes();
 
 protected:
 
@@ -102,7 +91,6 @@ protected:
 
     void createProbePass(const ConfigurationReader &config);
     void createPrefilterShader(const ConfigurationReader &config);
-    VBOResource* createBuffer(const String& bufferName, size_t size);
     void calculateProbeBatchCount();
     void integrateGGX();
 
@@ -116,14 +104,14 @@ protected:
     String mShaderPackage;
     VBOResource *mProbesBuffer = nullptr;
     VBOResource *mProbesIndexBuffer = nullptr;
-    RenderTarget *mEnvironmentProbePass = nullptr;
-    Texture *mEnvironmentProbe = nullptr;
-    Texture *mEnvironmentDepth = nullptr;
+    RenderTarget *mEnvironmentProbeColorPass = nullptr;
+    TextureImage *mEnvironmentProbeColor = nullptr;
+    TextureImage *mEnvironmentProbeDepth = nullptr;
     Texture *mBrdfLUT = nullptr;
     ComputeShader *mPrefilterEnvironmentShader = nullptr;
     TextureImage *mPrefilteredEnvironment = nullptr;
     stl<EnvProbe>::vector mProbes;
-    stl<ProbeIndexRawEntity>::vector mProbesIndex;
+    stl<int32_t>::vector mProbesIndex;
     float mzNear = 0.0, mzFar = 1.0;
 };
 

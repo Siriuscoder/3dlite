@@ -72,7 +72,7 @@ void getProbeTextureMaxLodAndCount(in Material material, inout uint count, inout
 #ifdef LITE3D_ENV_PROBE_MAX
 
 uniform sampler2D BrdfLUT;
-layout(std140) uniform EnvProbesData
+layout(std430) readonly buffer EnvProbesData
 {
     EnvironmentProbeStruct probes[LITE3D_ENV_PROBE_MAX];
 };

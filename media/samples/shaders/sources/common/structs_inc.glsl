@@ -12,6 +12,7 @@ struct EnvironmentProbeStruct
 {
     vec4 position;      // Probe position
     mat4 projView[6];   // View-Projection matrix for every cube face
+    vec4 sh[9];
     uint flags;
 };
 

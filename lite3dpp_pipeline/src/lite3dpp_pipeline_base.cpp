@@ -501,8 +501,8 @@ namespace lite3dpp_pipeline {
                         .set(L"TexturePath", skyBoxConfig.getString(L"Texture")),
                     ConfigurationWriter()
                         .set(L"Name", "EnvProbesData")
-                        .set(L"UBOName", mIBL->getProbeBufferName())
-                        .set(L"Type", "UBO"),
+                        .set(L"SSBOName", mIBL->getProbeBufferName())
+                        .set(L"Type", "SSBO"),
                     ConfigurationWriter()
                         .set(L"Name", "EnvProbesIndex")
                         .set(L"UBOName", mIBL->getProbeIndexBufferName())

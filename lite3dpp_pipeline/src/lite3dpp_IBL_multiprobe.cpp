@@ -5,7 +5,7 @@
  *	Lite3D is free software: you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
  *	the Free Software Foundation, either version 3 of the License, or
- *	(at your option) any later version.
+ *	(at your option) any layer version.
  *
  *	Lite3D is distributed in the hope that it will be useful,
  *	but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -57,10 +57,16 @@ void IBLMultiProbePass::initialize()
         mBrdfLUT = mMain.getResourceManager().queryResource<TextureImage>(GGXLUTName);
     }
 
-    mProbesBuffer = createBuffer("_EnvProbesData", sizeof(ProbeRawEntity) * mProbeCount);
-    // Массивы в std140 всегда выравниваются по границе 16 байт, даже если тип данных (например, int) 
-    // сам занимает меньше места (4 байта).
-    mProbesIndexBuffer = createBuffer("_EnvProbesIndex", sizeof(ProbeIndexRawEntity) * (mMaxProbeBatchCount + 1));
+    // Буфер под информацию о пробниках 
+    mProbesBuffer = mMain.getResourceManager().queryResourceFromJson<SSBO>(mPipelineName + "_EnvProbesData",
+        "{\"Dynamic\": true}", &mPipeline);
+    mProbesBuffer->extendBufferBytes(sizeof(ProbeRawEntity) * mProbeCount);
+
+    // Буфер индексов для обновления пробников
+    mProbesIndexBuffer = mMain.getResourceManager().queryResourceFromJson<UBO>(mPipelineName + "_EnvProbesIndex",
+        "{\"Dynamic\": true}", &mPipeline);
+    mProbesIndexBuffer->extendBufferBytes(sizeof(decltype(mProbesIndex)::value_type) * LITE3D_ALIGN(mMaxProbeBatchCount + 1, 4));
+
     createProbePass(config);
     createPrefilterShader(config);
 }
@@ -108,9 +114,9 @@ void IBLMultiProbePass::integrateGGX()
 
 void IBLMultiProbePass::calculateProbeBatchCount()
 {
-    int maxGeometryOutputVertices, maxGeometryTotalOutputComponents, UBOMaxSize;
+    int maxGeometryOutputVertices, maxGeometryTotalOutputComponents, SSBOMaxSize;
     lite3d_shader_program_get_limitations(&maxGeometryOutputVertices, nullptr, &maxGeometryTotalOutputComponents);
-    lite3d_vbo_get_limitations(&UBOMaxSize, nullptr, nullptr);
+    lite3d_vbo_get_limitations(nullptr, nullptr, &SSBOMaxSize);
 
     // Число компонент на одну вершину в геометрическом шейдере для рендера пробников
     // Константа связана с кодом шейдера!!!
@@ -119,27 +125,17 @@ void IBLMultiProbePass::calculateProbeBatchCount()
     uint32_t b = maxGeometryOutputVertices / (3 * 6);
     mMaxProbeBatchCount = std::min(a, b);
 
-    uint32_t maxPossibleProbeCount = UBOMaxSize / sizeof(ProbeRawEntity);
+    uint32_t maxPossibleProbeCount = SSBOMaxSize / sizeof(ProbeRawEntity);
     uint32_t maxProbeCount = std::min(maxPossibleProbeCount, MaxProbeCount);
 
     if (mProbeCount > maxProbeCount)
     {
-        LITE3D_THROW("Too much probe count(" << mProbeCount << ") are requested, "
-            "max hardware posible limit is " << maxProbeCount);
+        LITE3D_THROW("Too many probe count(" << mProbeCount << ") are requested, "
+            "max supported limit is " << maxProbeCount);
     }
 
     ShaderProgram::addGlobalDefinition("LITE3D_ENV_PROBE_GS_MAX_VERTICES", std::to_string(mMaxProbeBatchCount * 3 * 6));
     ShaderProgram::addGlobalDefinition("LITE3D_ENV_PROBE_MAX", std::to_string(maxProbeCount));
-}
-
-VBOResource* IBLMultiProbePass::createBuffer(const String& bufferName, size_t size)
-{
-    auto buffer = mMain.getResourceManager().queryResourceFromJson<UBO>(mPipelineName + bufferName,
-        "{\"Dynamic\": true}", &mPipeline);
-    
-    // Выделяем место под 6 * N матриц, нужны будут для рендера сторон массива кубических текстур
-    buffer->extendBufferBytes(size);
-    return buffer;
 }
 
 void IBLMultiProbePass::createProbePass(const ConfigurationReader &config)
@@ -157,7 +153,7 @@ void IBLMultiProbePass::createProbePass(const ConfigurationReader &config)
         .set(L"TextureFormat", "RGB")
         .set(L"InternalFormat", "RGB16F");
 
-    mEnvironmentProbe = mMain.getResourceManager().queryResourceFromJson<TextureImage>(
+    mEnvironmentProbeColor = mMain.getResourceManager().queryResourceFromJson<TextureImage>(
         mPipelineName + "_EnvironmentMultiProbe.texture", mapConfig.write(), &mPipeline);
 
     // Создание массива кубических текстур глубины для рендера сцены
@@ -165,28 +161,27 @@ void IBLMultiProbePass::createProbePass(const ConfigurationReader &config)
         .set(L"TextureFormat", "Depth")
         .set(L"InternalFormat", "");
 
-    mEnvironmentDepth = mMain.getResourceManager().queryResourceFromJson<TextureImage>(
+    mEnvironmentProbeDepth = mMain.getResourceManager().queryResourceFromJson<TextureImage>(
         mPipelineName + "_EnvironmentMultiProbeDepth.texture", mapConfig.write(), &mPipeline);
 
     ConfigurationWriter passConfig;
-    passConfig.set(L"BackgroundColor", kmVec4 { 0.0f, 0.0f, 0.0f, 1.0f })
-        .set(L"Priority", static_cast<uint32_t>(RenderPassPriority::GIProbe))
+    passConfig.set(L"Priority", static_cast<uint32_t>(RenderPassPriority::GIProbe))
         .set(L"CleanColorBuf", false)
-        .set(L"CleanDepthBuf", true)
+        .set(L"CleanDepthBuf", false)
         .set(L"CleanStencilBuf", false)
         .set(L"Width", resolution)
         .set(L"Height", resolution)
         .set(L"LayeredFramebuffer", true)
         .set(L"ColorAttachments", ConfigurationWriter()
             .set(L"Attachments", stl<ConfigurationWriter>::vector {
-                ConfigurationWriter().set(L"TextureName", mEnvironmentProbe->getName())
+                ConfigurationWriter().set(L"TextureName", mEnvironmentProbeColor->getName())
             }))
         .set(L"DepthAttachments", ConfigurationWriter()
-            .set(L"TextureName", mEnvironmentDepth->getName()));
+            .set(L"TextureName", mEnvironmentProbeDepth->getName()));
 
-    mEnvironmentProbePass = mMain.getResourceManager().queryResourceFromJson<TextureRenderTarget>(
+    mEnvironmentProbeColorPass = mMain.getResourceManager().queryResourceFromJson<TextureRenderTarget>(
         mPipelineName + "_EnvironmentMultiProbePass", passConfig.write(), &mPipeline);
-    mEnvironmentProbePass->addObserver(this);
+    mEnvironmentProbeColorPass->addObserver(this);
 }
 
 void IBLMultiProbePass::createPrefilterShader(const ConfigurationReader &config)
@@ -218,7 +213,7 @@ void IBLMultiProbePass::createPrefilterShader(const ConfigurationReader &config)
             .set(L"TextureName", mPrefilteredEnvironment->getName()),
         ConfigurationWriter().set(L"Type", "sampler")
             .set(L"Name", "EnvironmentProbe")
-            .set(L"TextureName", mEnvironmentProbe->getName()),
+            .set(L"TextureName", mEnvironmentProbeColor->getName()),
         ConfigurationWriter().set(L"Type", "float")
             .set(L"Name", "Roughness")
             .set(L"Value", 1.0f),
@@ -270,34 +265,55 @@ bool IBLMultiProbePass::beginUpdate(RenderTarget *rt)
         }
     }
     
-    mProbesIndex[0].index[0] = static_cast<int32_t>(mProbesIndex.size() - 1);
-    mProbesIndexBuffer->setData(&mProbesIndex[0], 0, sizeof(ProbeIndexRawEntity) * mProbesIndex.size());
+    mProbesIndex[0] = static_cast<int32_t>(mProbesIndex.size() - 1);
+    mProbesIndexBuffer->setData(&mProbesIndex[0], 0, sizeof(decltype(mProbesIndex)::value_type) * mProbesIndex.size());
+    prepareAffectedProbes();
 
     return true;
+}
+
+void IBLMultiProbePass::prepareAffectedProbes()
+{
+    const float cleanDepth = 1.0;
+    const float cleanProbeColor[4] = { 0.0, 0.0, 0.0, 1.0 };
+    // Clear affected probes
+    for (size_t i = 1; i < mProbesIndex.size(); ++i)
+    {
+        auto probeIndex = mProbesIndex[i];
+        for (int32_t layer = probeIndex * 6; layer < (probeIndex * 6) + 6; ++layer)
+        {
+            for (int8_t level = 0; level < mEnvironmentProbeColor->getTotalLevels(); ++level)
+            {
+                mEnvironmentProbeColor->clearPixels(cleanProbeColor, level, layer);
+            }
+
+            mEnvironmentProbeDepth->clearPixels(&cleanDepth, 0, layer);
+        }
+    }
 }
 
 void IBLMultiProbePass::postUpdate(RenderTarget *rt)
 {
     // nothing to do
-    if (mProbesIndex.size() == 0 || mProbesIndex[0].index[0] == 0)
+    if (mProbesIndex.size() == 0 || mProbesIndex[0] == 0)
     {
         return;
     }
 
     auto totalLevels = mPrefilteredEnvironment->getTotalLevels();
     auto levelSize = mPrefilteredEnvironment->getWidth();
-    for (int8_t mip = 0; mip < totalLevels; ++mip)
+    for (int8_t level = 0; level < totalLevels; ++level)
     {
         // Calculate a roughness value in the range [0, 1] based on the
         // current mip level and the total number of mip levels.
-        const auto roughness = static_cast<float>(mip) / static_cast<float>(totalLevels);
+        const auto roughness = static_cast<float>(level) / static_cast<float>(totalLevels);
         mPrefilterEnvironmentShader->getShaderParameters().setFloatParameter("Roughness", roughness);
         // Bind the current mip level of the environment probe texture
         mPrefilterEnvironmentShader->getShaderParameters().getParameter("PrefilteredEnvironment", 
-            LITE3D_SHADER_PARAMETER_IMAGE_STORE)->imageMipLevel = mip;
+            LITE3D_SHADER_PARAMETER_IMAGE_STORE)->imageMipLevel = level;
 
         const uint32_t groupsCount = (levelSize + 16 - 1) / 16;
-        mPrefilterEnvironmentShader->dispatch(groupsCount, groupsCount, mProbesIndex[0].index[0] * 6);
+        mPrefilterEnvironmentShader->dispatch(groupsCount, groupsCount, mProbesIndex[0] * 6);
 
         // Shift to the next mip level
         levelSize >>= 1;

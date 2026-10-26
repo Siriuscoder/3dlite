@@ -112,5 +112,7 @@
 #define LITE3D_TRUE         1
 #define LITE3D_FALSE        0
 
+#define LITE3D_ALIGN(val, align) (((val) + (align)) & ~(align))
+
 #endif	/* COMMON_H */
 

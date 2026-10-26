@@ -1,6 +1,9 @@
 {
   "Root": {
     "Name": "SandBox",
+    "Static": true,
+    "CastShadow": true,
+    "FrustumTest": true,
     "Mesh": {
       "Mesh": "sandbox:models/json/SandBox.json",
       "Name": "SandBox.mesh"

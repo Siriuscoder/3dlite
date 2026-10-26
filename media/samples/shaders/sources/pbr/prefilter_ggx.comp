@@ -5,7 +5,7 @@ layout(binding = 0, rgba16f) uniform writeonly imageCubeArray PrefilteredEnviron
 uniform samplerCubeArray EnvironmentProbe;
 layout(std140) uniform EnvProbesIndex
 {
-    int probesIndex[LITE3D_ENV_PROBE_MAX + 1];
+    ivec4 probesIndex[LITE3D_ENV_PROBE_MAX / 4 + 1];
 };
 
 uniform float Roughness;
@@ -24,9 +24,9 @@ void main()
 
     const vec2 originalSize = vec2(textureSize(EnvironmentProbe, 0).xy);
     const float originalSamples = originalSize.x * originalSize.y;
-    const int currentProbeNumber = texCoord.z / 6;
+    const int currentProbeNumberIndex = (texCoord.z / 6) + 1;
     const int currentProbeFace = texCoord.z % 6;
-    const int currentProbeIndex = probesIndex[currentProbeNumber + 1];
+    const int currentProbeIndex = probesIndex[currentProbeNumberIndex/4][int(mod(currentProbeNumberIndex, 4))];
     const int dstIndex = (currentProbeIndex * 6) + currentProbeFace;
     const float roughness = max(Roughness, LITE3D_MIN_ROUGHNESS);
     const vec3 baseVector = cubeCoordToWorld(ivec3(texCoord.xy, currentProbeFace), vec2(bounds.x, bounds.y)); 

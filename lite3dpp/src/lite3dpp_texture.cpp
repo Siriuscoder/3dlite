@@ -461,23 +461,14 @@ namespace lite3dpp
 
     void TextureImage::setBlankColor(const kmVec4 &color)
     {
-        /* fullup pixels */
-        PixelsData pixels(mTexture.imageSize);
-        for(unsigned j = 0; j < pixels.size();)
+        const int32_t layers = mTexture.textureTarget == LITE3D_TEXTURE_3D ? 1 : getDepth();
+        for (int8_t level = 0; level < getTotalLevels(); ++level)
         {
-            if(mTexture.imageBPP >= 1)
-                pixels[j++] = color.x * 255;
-            if(mTexture.imageBPP >= 2)
-                pixels[j++] = color.y * 255;
-            if(mTexture.imageBPP >= 3)
-                pixels[j++] = color.z * 255;
-            if(mTexture.imageBPP == 4)
-                pixels[j++] = color.w * 255;
+            for (int32_t layer = 0; layer < layers; ++layer)
+            {
+                clearPixels(&color.x, level, layer);
+            }
         }
-        
-        /* upload pixels */
-        setPixels(pixels);
-        generateMipmaps();
     }
 
     void TextureImage::copyFrom(const TextureImage &srcTex, int8_t level)
