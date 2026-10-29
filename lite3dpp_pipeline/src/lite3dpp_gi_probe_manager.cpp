@@ -302,6 +302,17 @@ bool GIProbeManager::beginUpdate(RenderTarget *rt)
     return true;
 }
 
+bool GIProbeManager::customFrustumCheck(Scene *scene, SceneNodeBase *node, lite3d_mesh_chunk *meshChunk, Material *material,
+    lite3d_bounding_vol *boundingVol, Camera *camera, const lite3d_scene_render_params *params)
+{
+    if (params->pass != static_cast<uint16_t>(TexturePassTypes::GIProbePass))
+    {
+        return true;
+    }
+    
+    return node->isGIVisible();
+}
+
 void GIProbeManager::prepareAffectedProbes()
 {
     const float cleanDepth = 1.0;
@@ -355,6 +366,21 @@ void GIProbeManager::postUpdate(RenderTarget *rt)
 
 size_t GIProbeManager::addProbe(const kmVec3 &position, EnvProbeFlags flags)
 {
+    if ((flags & EnvProbeFlags::Reusable) == EnvProbeFlags::Reusable)
+    {
+        LITE3D_THROW("Reusable is a technical flag and cannot be used to add a probe");
+    }
+
+    for (size_t i = 0; i < mProbes.size(); ++i)
+    {
+        if (mProbes[i].isReusable())
+        {
+            mProbes[i].setFlags(flags);
+            mProbes[i].setPosition(position);
+            return i;
+        }
+    }
+
     if (mProbes.size() == mProbeCount)
     {
         LITE3D_THROW("The maximum probes count limit is reached: " << mProbeCount);
@@ -372,7 +398,25 @@ void GIProbeManager::updateProbe(size_t index, const kmVec3 &position)
         LITE3D_THROW("Index out of range: " << index << " of " << mProbes.size());
     }
 
+    if (mProbes[index].isReusable())
+    {
+        LITE3D_THROW("Cannot update a removed probe: " << index);
+    }
+
     mProbes[index].setPosition(position);
+}
+
+void GIProbeManager::removeProbe(size_t index)
+{
+    if (index >= mProbes.size())
+    {
+        LITE3D_THROW("Index out of range: " << index << " of " << mProbes.size());
+    }
+
+    const auto flags = mProbes[index].getFlags() | EnvProbeFlags::Reusable;
+    const auto rawFlags = static_cast<uint32_t>(flags);
+    mProbesBuffer->setData(&rawFlags, index * sizeof(ProbeRawEntity) + offsetof(ProbeRawEntity, flags), sizeof(rawFlags));
+    mProbes[index].setFlags(flags);
 }
 
 GIProbeManager::EnvProbe::EnvProbe(Main *main, float zNear, float zFar, EnvProbeFlags flags) : 

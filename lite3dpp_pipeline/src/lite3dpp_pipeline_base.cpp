@@ -226,10 +226,16 @@ namespace lite3dpp_pipeline {
         /* Создание главной сцены в самом конце, все остальные обьекты должны быть созданы до этого момента */
         createMainScene(mainSceneGenerator.getName(), mainSceneGenerator.generateFromExisting(sceneGeneratedConfig).write());
 
+        SDL_assert(mMainScene);
+        
         if (mShadowManager)
         {
-            SDL_assert(mMainScene);
             mMainScene->addObserver(mShadowManager.get());
+        }
+
+        if (mGIProbeManager)
+        {
+            mMainScene->addObserver(mGIProbeManager.get());
         }
 
         /* Для обновления параметров шейдеров */
@@ -242,6 +248,11 @@ namespace lite3dpp_pipeline {
 
     void PipelineBase::unloadImpl()
     {
+        if (mMainScene && mGIProbeManager)
+        {
+            mMainScene->removeObserver(mGIProbeManager.get());
+        }
+
         if (mMainScene && mShadowManager)
         {
             mMainScene->removeObserver(mShadowManager.get());
@@ -544,7 +555,8 @@ namespace lite3dpp_pipeline {
             .set(L"DepthOutput", true)
             .set(L"RenderBlend", false)
             .set(L"RenderOpaque", true)
-            .set(L"FrustumCulling", false)
+            .set(L"FrustumCulling", true)
+            .set(L"CustomFrustumCheck", true)
             .set(L"RenderInstancing", pipelineConfig.getBool(L"Instancing", true)));
     }
 

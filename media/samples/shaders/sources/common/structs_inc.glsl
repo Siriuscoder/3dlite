@@ -17,8 +17,9 @@ struct EnvironmentProbeStruct
     uint flags;
 };
 
-#define LITE3D_ENV_PROBE_FLAG_IRRADIANCE   uint(1)
-#define LITE3D_ENV_PROBE_FLAG_SPECULAR     uint(2)
+#define LITE3D_ENV_PROBE_FLAG_IRRADIANCE                uint(1 << 0)
+#define LITE3D_ENV_PROBE_FLAG_SPECULAR                  uint(1 << 1)
+#define LITE3D_ENV_PROBE_FLAG_REUSABLE                  uint(1 << 2)
 
 struct AngularInfo
 {

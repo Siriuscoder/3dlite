@@ -26,12 +26,14 @@ namespace lite3dpp_pipeline {
 enum class EnvProbeFlags : uint32_t
 {
     Irradiance = 1 << 0,
-    Specular = 1 << 1
+    Specular = 1 << 1,
+    Reusable = 1 << 2 // Inactive slot available for reuse.
 };
 
 LITE3D_DECLARE_ENUM_OPERATORS(EnvProbeFlags);
 
-class LITE3DPP_PIPELINE_EXPORT GIProbeManager : public RenderTargetObserver, public LifecycleObserver, public Noncopiable
+class LITE3DPP_PIPELINE_EXPORT GIProbeManager : public RenderTargetObserver, public LifecycleObserver, 
+    public SceneObserver, public Noncopiable
 {
 public:
 
@@ -59,8 +61,11 @@ public:
         void writeProbe(ProbeRawEntity *probe) const;
 
         void rebuildMatrix();
-        inline bool invalidated() const { return mInvalidated; }
+        inline bool invalidated() const { return mInvalidated && !isReusable(); }
         inline void invalidate() { mInvalidated = true; }
+        inline EnvProbeFlags getFlags() const { return mFlags; }
+        inline void setFlags(EnvProbeFlags flags) { mFlags = flags; }
+        inline bool isReusable() const { return (mFlags & EnvProbeFlags::Reusable) == EnvProbeFlags::Reusable; }
 
     private:
 
@@ -82,12 +87,16 @@ public:
     void rebuild();
     size_t addProbe(const kmVec3 &position, EnvProbeFlags flags = EnvProbeFlags::Irradiance | EnvProbeFlags::Specular);
     void updateProbe(size_t index, const kmVec3 &position);
+    // Keep the slot/index and upload its Reusable flag without clearing captured data.
+    void removeProbe(size_t index);
     void prepareAffectedProbes();
 
 protected:
 
     bool beginUpdate(RenderTarget *rt) override;
     void postUpdate(RenderTarget *rt) override;
+    bool customFrustumCheck(Scene *scene, SceneNodeBase *node, lite3d_mesh_chunk *meshChunk, Material *material,
+        lite3d_bounding_vol *boundingVol, Camera *camera, const lite3d_scene_render_params *params) override;
 
     void createProbePass(const ConfigurationReader &config);
     void createPrefilterShader(const ConfigurationReader &config);
