@@ -155,7 +155,7 @@ vec3 ComputeIndirect(in Surface surface, in AngularInfo angular)
             if (hasFlag(probe.flags, LITE3D_ENV_PROBE_FLAG_IRRADIANCE))
             {
                 float dW = 1.0 / max(pow(probeDistance, LITE3D_ENV_PROBE_DIFFUSE_POWER), FLT_EPSILON);
-                totalDiffuse += getProbeTextureLod(surface.material, surface.normal, p, maxLod - 1.0) * dW;
+                totalDiffuse += irradianceSHL2(surface.normal, probe.sh, 1.0) * dW;
                 totalDWeight += dW;
             }
 
@@ -191,7 +191,7 @@ vec3 ComputeIndirect(in Surface surface, in AngularInfo angular)
 
     vec3 F = fresnelSchlickRoughness(angular.NdotV, surface.material);
     diffuseIrradianceLx *= diffuseFactor(F, surface.material.metallic) * surface.material.albedo.rgb * surface.material.envDiffuse;
-    specularIrradianceLx *= RebuildF(F, angular.NdotV, surface.material.roughness) * surface.material.envSpecular;
+    //specularIrradianceLx *= RebuildF(F, angular.NdotV, surface.material.roughness) * surface.material.envSpecular;
 
-    return (diffuseIrradianceLx + specularIrradianceLx);
+    return diffuseIrradianceLx;
 }

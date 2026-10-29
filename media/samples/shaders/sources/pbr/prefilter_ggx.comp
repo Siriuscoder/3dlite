@@ -29,7 +29,7 @@ void main()
     const int currentProbeIndex = probesIndex[currentProbeNumberIndex/4][int(mod(currentProbeNumberIndex, 4))];
     const int dstIndex = (currentProbeIndex * 6) + currentProbeFace;
     const float roughness = max(Roughness, LITE3D_MIN_ROUGHNESS);
-    const vec3 baseVector = cubeCoordToWorld(ivec3(texCoord.xy, currentProbeFace), vec2(bounds.x, bounds.y)); 
+    const vec3 baseVector = cubeTexelToDir(ivec3(texCoord.xy, currentProbeFace), vec2(bounds.x, bounds.y)); 
     // tagent space from origin point
     const vec3 N = normalize(baseVector);
     // assume view direction always equal to outgoing direction

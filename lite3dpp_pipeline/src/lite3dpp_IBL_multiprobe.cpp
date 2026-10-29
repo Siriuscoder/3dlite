@@ -32,6 +32,10 @@ IBLMultiProbePass::IBLMultiProbePass(Main& mMain, PipelineBase &pipeline) :
     mShaderPackage(pipeline.getConfig().getString(L"ShaderPackage"))
 {
     mMain.addObserver(this);
+
+    int32_t maxSupportedThreadsGroupX;
+    lite3d_shader_program_get_workgroup_limits(&maxSupportedThreadsGroupX, nullptr, nullptr);
+    mSHMaxThreads = std::min(256, maxSupportedThreadsGroupX);
 }
 
 IBLMultiProbePass::~IBLMultiProbePass()
@@ -69,6 +73,7 @@ void IBLMultiProbePass::initialize()
 
     createProbePass(config);
     createPrefilterShader(config);
+    createDiffuseRadianceShader();
 }
 
 void IBLMultiProbePass::integrateGGX()
@@ -196,7 +201,7 @@ void IBLMultiProbePass::createPrefilterShader(const ConfigurationReader &config)
         .set(L"Depth", mProbeCount)
         .set(L"Wrapping", "ClampToEdge")
         .set(L"Compression", false)
-        .set(L"TextureFormat", "RGB")
+        .set(L"TextureFormat", "RGBA")
         .set(L"InternalFormat", "RGBA16F");
 
     mPrefilteredEnvironment = mMain.getResourceManager().queryResourceFromJson<TextureImage>(
@@ -224,6 +229,29 @@ void IBLMultiProbePass::createPrefilterShader(const ConfigurationReader &config)
 
     mPrefilterEnvironmentShader = mMain.getResourceManager().queryResourceFromJson<ComputeShader>(
         mPipelineName + "_PrefilterEnvironment.comp", shaderParams.write(), &mPipeline);
+}
+
+void IBLMultiProbePass::createDiffuseRadianceShader()
+{
+    ConfigurationWriter shaderParams;
+    shaderParams.set(L"Program", ConfigurationWriter()
+        .set(L"Name", "DiffuseRadianceSHEnvironment.program")
+        .set(L"Path", mShaderPackage + ":shaders/json/diffuse_radiance_sh.json"))
+        .set(L"Uniforms", stl<ConfigurationWriter>::vector {
+        ConfigurationWriter().set(L"Type", "sampler")
+            .set(L"Name", "EnvironmentProbes")
+            .set(L"TextureName", mEnvironmentProbeColor->getName()),
+        ConfigurationWriter().set(L"Type", "SSBO")
+            .set(L"Name", "ProbesData")
+            .set(L"SSBOName", getProbeBufferName()),
+        ConfigurationWriter().set(L"Type", "UBO")
+            .set(L"Name", "ProbesIndex")
+            .set(L"UBOName", getProbeIndexBufferName())
+    });
+
+    ShaderProgram::addGlobalDefinition("LITE3D_SH_THREADS", std::to_string(mSHMaxThreads));
+    mDiffuseRadianceSHShader = mMain.getResourceManager().queryResourceFromJson<ComputeShader>(
+        mPipelineName + "_DiffuseRadianceSHEnvironment.comp", shaderParams.write(), &mPipeline);
 }
 
 void IBLMultiProbePass::rebuild()
@@ -267,6 +295,8 @@ bool IBLMultiProbePass::beginUpdate(RenderTarget *rt)
     
     mProbesIndex[0] = static_cast<int32_t>(mProbesIndex.size() - 1);
     mProbesIndexBuffer->setData(&mProbesIndex[0], 0, sizeof(decltype(mProbesIndex)::value_type) * mProbesIndex.size());
+    
+    // Clear affected probes
     prepareAffectedProbes();
 
     return true;
@@ -299,7 +329,7 @@ void IBLMultiProbePass::postUpdate(RenderTarget *rt)
     {
         return;
     }
-
+/*
     auto totalLevels = mPrefilteredEnvironment->getTotalLevels();
     auto levelSize = mPrefilteredEnvironment->getWidth();
     for (int8_t level = 0; level < totalLevels; ++level)
@@ -318,6 +348,9 @@ void IBLMultiProbePass::postUpdate(RenderTarget *rt)
         // Shift to the next mip level
         levelSize >>= 1;
     }
+*/
+    // Recalc diffuse radiance SH coeffs foreach every affected probe in one dispatch call
+    mDiffuseRadianceSHShader->dispatch(mProbesIndex.size() - 1, 1, 1);
 }
 
 size_t IBLMultiProbePass::addProbe(const kmVec3 &position, EnvProbeFlags flags)

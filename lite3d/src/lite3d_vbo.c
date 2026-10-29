@@ -728,3 +728,16 @@ int lite3d_vbo_buffer_set(struct lite3d_vbo *vbo,
 
     return LITE3D_TRUE;
 }
+
+void lite3d_vbo_set_label(const struct lite3d_vbo *vbo, const char *label)
+{
+    SDL_assert(vbo);
+
+#ifndef GLES
+    if (lite3d_check_debug_context())
+    {
+        glObjectLabel(GL_BUFFER, vbo->vboID, -1, label);
+    }
+#endif
+}
+

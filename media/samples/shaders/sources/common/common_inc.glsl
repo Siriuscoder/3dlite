@@ -119,7 +119,10 @@ vec3 importanceSampleGGX(vec2 Xi, vec3 N, float roughness);
 // The sequence is then shuffled by swapping the x and y coordinates of every second point.
 vec2 hammersleySequence(uint i, uint N);
 
-vec3 cubeCoordToWorld(ivec3 cubeCoord, vec2 cubemapSize);
+// Maps a 2D uniform sample in [0, 1]^2 to a uniformly distributed direction on the unit sphere.
+vec3 sampleUniformSphere(vec2 Xi);
+
+vec3 cubeTexelToDir(ivec3 cubeCoord, vec2 cubemapSize);
 int cubeFaceFromDir(vec3 dir);
 //////////// Building structures
 Surface makeSurface(vec2 uv, vec3 wv, vec3 wn, vec3 wt, vec3 wb);
@@ -136,3 +139,8 @@ float packF8AndInt16(float a, uint b);
 void unpackF8AndInt16(float pval, out float a, out uint b);
 float pack2xF8(float a1, float b1);
 void unpack2xF8(float pval, out float a, out float b);
+
+//////////// Spherical Harmonics
+void evaluateSHBasisL2(vec3 dir, out float b[LITE3D_SH_COEFFS]);
+// visibility means AO
+vec3 irradianceSHL2(vec3 dir, vec4 L[LITE3D_SH_COEFFS], float visibility);

@@ -452,9 +452,11 @@ float calcAttenuation(in LightSource source, in AngularInfo angular)
         if (hasFlag(source.flags, LITE3D_LIGHT_SPOT))
         {
             /* calculate spot cone attenuation */
-            float spotAngleRad = acos(dot(-angular.lightDir, normalize(source.direction.xyz)));
-            float spotConeAttenuation = (spotAngleRad * 2.0 - source.innerCone) / (source.outerCone - source.innerCone);
-            spotFactor = clamp(1.0 - spotConeAttenuation, 0.0, 1.0);
+            const float cosSpotAngle = dot(-angular.lightDir, normalize(source.direction.xyz));
+            float cosInner = cos(source.innerCone * 0.5);
+            float cosOuter = cos(source.outerCone * 0.5);
+
+            spotFactor = smoothstep(cosOuter, cosInner, cosSpotAngle);
         }
 
         if (hasFlag(source.flags, LITE3D_LIGHT_RECT_AREA) || hasFlag(source.flags, LITE3D_LIGHT_DISK_AREA))
@@ -536,6 +538,15 @@ vec2 hammersleySequence(uint i, uint N)
     return vec2(float(i) / float(N), vdcSequence(i));
 }
 
+vec3 sampleUniformSphere(vec2 Xi)
+{
+    float z = 1.0 - 2.0 * Xi.x;
+    float phi = 2.0 * M_PI * Xi.y;
+    float r = sqrt(max(0.0, 1.0 - z * z));
+
+    return vec3(r * cos(phi), r * sin(phi), z);
+}
+
 // GGX NDF via importance sampling
 vec3 importanceSampleGGX(vec2 Xi, vec3 N, float roughness)
 {
@@ -561,7 +572,7 @@ vec3 importanceSampleGGX(vec2 Xi, vec3 N, float roughness)
     return normalize(sampleVec);
 }
 
-vec3 cubeCoordToWorld(ivec3 cubeCoord, vec2 cubemapSize)
+vec3 cubeTexelToDir(ivec3 cubeCoord, vec2 cubemapSize)
 {
     vec2 texCoord = (vec2(cubeCoord.xy) + 0.5) / cubemapSize;
     texCoord = texCoord * 2.0 - 1.0; // -1..1
@@ -623,4 +634,55 @@ void unpack2xF8(float pval, out float a, out float b)
 
     a = float(a8) / 255.0;
     b = float(b8) / 255.0;
+}
+
+void evaluateSHBasisL2(vec3 dir, out float b[LITE3D_SH_COEFFS])
+{
+    const float x = dir.x;
+    const float y = dir.y;
+    const float z = dir.z;
+
+    b[0] =  0.28209479177387814;
+    b[1] = -0.4886025119029199 * y;
+    b[2] =  0.4886025119029199 * z;
+    b[3] = -0.4886025119029199 * x;
+
+    b[4] =  1.0925484305920792 * x * y;
+    b[5] = -1.0925484305920792 * y * z;
+    b[6] =  0.31539156525252005 * (3.0 * z * z - 1.0);
+    b[7] = -1.0925484305920792 * x * z;
+    b[8] =  0.5462742152960396 * (x * x - y * y);
+}
+
+vec3 irradianceSHL2(vec3 dir, vec4 L[LITE3D_SH_COEFFS], float visibility)
+{
+    float b[LITE3D_SH_COEFFS];
+    evaluateSHBasisL2(dir, b);
+
+    const float sin2 = clamp(visibility, 0.0, 1.0);
+    const float cos2 = 1.0 - sin2;
+    const float cos3 = cos2 * sqrt(cos2);
+
+    // cosine lobe band factors for irradiance from radiance sh, ramamoorthi 2001
+    const float sh_a0 = 3.14159265;
+    const float sh_a1 = 2.09439510;
+    const float sh_a2 = 0.78539816;
+
+    const float k0 = sh_a0 * sin2;
+    const float k1 = sh_a1 * (1.0 - cos3);
+    const float k2 = sh_a2 * sin2 * (1.0 + 3.0 * cos2);
+
+    vec3 E = vec3(0.0);
+
+    E += L[0].rgb * (b[0] * k0);
+    E += L[1].rgb * (b[1] * k1);
+    E += L[2].rgb * (b[2] * k1);
+    E += L[3].rgb * (b[3] * k1);
+    E += L[4].rgb * (b[4] * k2);
+    E += L[5].rgb * (b[5] * k2);
+    E += L[6].rgb * (b[6] * k2);
+    E += L[7].rgb * (b[7] * k2);
+    E += L[8].rgb * (b[8] * k2);
+
+    return max(E, vec3(0.0));
 }

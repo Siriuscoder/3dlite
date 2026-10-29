@@ -27,15 +27,15 @@
 typedef int (*lite3d_uniform_set_func)(lite3d_shader_program *, lite3d_shader_parameter_container *);
 
 static lite3d_shader_program *gActProg = NULL;
-static int gMaxGeometryOutputVertices = 0;
-static int gMaxGeometryTotalOutputComponents = 0;
-static int gMaxGeometryOutputComponents = 0;
-static int gMaxComputeWorkGroupSize[3] = {0};
-static int gMaxComputeStorageBlocks = 0;
-static int gMaxComputeImageUniforms = 0;
-static int gMaxComputeTextureImageUnits = 0;
-static int gMaxComputeUniformBlocks = 0;
-static int gMaxComputeCombinedUniformComponents = 0;
+static int32_t gMaxGeometryOutputVertices = 0;
+static int32_t gMaxGeometryTotalOutputComponents = 0;
+static int32_t gMaxGeometryOutputComponents = 0;
+static int32_t gMaxComputeWorkGroupSize[3] = {0};
+static int32_t gMaxComputeStorageBlocks = 0;
+static int32_t gMaxComputeImageUniforms = 0;
+static int32_t gMaxComputeTextureImageUnits = 0;
+static int32_t gMaxComputeUniformBlocks = 0;
+static int32_t gMaxComputeCombinedUniformComponents = 0;
 
 static void lite3d_shader_program_get_log(struct lite3d_shader_program *program)
 {
@@ -99,8 +99,8 @@ int lite3d_shader_program_technique_init(void)
     return LITE3D_TRUE;
 }
 
-void lite3d_shader_program_get_limitations(int *maxGeometryOutputVertices, 
-    int *maxGeometryOutputComponents, int *maxGeometryTotalOutputComponents)
+void lite3d_shader_program_get_limitations(int32_t *maxGeometryOutputVertices, 
+    int32_t *maxGeometryOutputComponents, int32_t *maxGeometryTotalOutputComponents)
 {
     if (maxGeometryOutputVertices)
     {
@@ -115,6 +115,25 @@ void lite3d_shader_program_get_limitations(int *maxGeometryOutputVertices,
     if (maxGeometryTotalOutputComponents)
     {
         *maxGeometryTotalOutputComponents = gMaxGeometryTotalOutputComponents;
+    }
+}
+
+void lite3d_shader_program_get_workgroup_limits(int32_t *maxThreadsWorkGroupX, 
+    int32_t *maxThreadsWorkGroupY, int32_t *maxThreadsWorkGroupZ)
+{
+    if (maxThreadsWorkGroupX)
+    {
+        *maxThreadsWorkGroupX = gMaxComputeWorkGroupSize[0];
+    }
+
+    if (maxThreadsWorkGroupY)
+    {
+        *maxThreadsWorkGroupY = gMaxComputeWorkGroupSize[1];
+    }
+
+    if (maxThreadsWorkGroupZ)
+    {
+        *maxThreadsWorkGroupZ = gMaxComputeWorkGroupSize[2];
     }
 }
 

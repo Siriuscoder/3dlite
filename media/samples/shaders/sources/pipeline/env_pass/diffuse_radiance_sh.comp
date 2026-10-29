@@ -1,0 +1,78 @@
+#include "samples:shaders/sources/common/common_inc.glsl"
+
+#define SAMPLE_COUNT                2048
+layout(local_size_x = LITE3D_SH_THREADS) in;
+
+layout(binding = 0) uniform samplerCubeArray EnvironmentProbes;
+
+layout(std140, binding = 1) uniform ProbesIndex
+{
+    ivec4 probesIndex[LITE3D_ENV_PROBE_MAX / 4 + 1];
+};
+
+layout(std430, binding = 2) buffer ProbesData
+{
+    EnvironmentProbeStruct probes[];
+};
+
+shared vec3 partial[LITE3D_SH_THREADS][LITE3D_SH_COEFFS];
+
+void main()
+{
+    uint tid = gl_LocalInvocationID.x;
+    uint workIndex = gl_WorkGroupID.x;
+
+    // Первый элемент массива — количество проб.
+    const uint probeCount = uint(probesIndex[0].x);
+    // Пропускаем вызовы в лишних воркгруппах
+    if (workIndex >= probeCount)
+        return;
+
+    // Реальный индекс пробы.
+    const uint probeWorkIndex = workIndex + 1u;
+    const int probeIndex = probesIndex[probeWorkIndex/4][int(mod(probeWorkIndex, 4))];
+
+    for (uint k = 0u; k < LITE3D_SH_COEFFS; ++k)
+        partial[tid][k] = vec3(0.0);
+
+    // Интегрирование radiance по сфере методом МонтеКарло
+    for (uint i = tid; i < SAMPLE_COUNT; i += LITE3D_SH_THREADS)
+    {
+        vec2 Xi  = hammersleySequence(i, SAMPLE_COUNT);
+        vec3 dir = sampleUniformSphere(Xi);
+
+        vec3 radiance = textureLod(EnvironmentProbes, vec4(dir, float(probeIndex)), 0.0).rgb;
+
+        float basis[LITE3D_SH_COEFFS];
+        evaluateSHBasisL2(dir, basis);
+
+        for (uint k = 0u; k < LITE3D_SH_COEFFS; ++k)
+            partial[tid][k] += radiance * basis[k];
+    }
+
+    // Ждем пока все треды воркгруппы не дойдут сюда 
+    barrier();
+
+    // Параллельная редукция внутри одной workgroup.
+    for (uint offset = LITE3D_SH_THREADS / 2u; offset > 0u; offset >>= 1u)
+    {
+        if (tid < offset)
+        {
+            for (uint k = 0u; k < LITE3D_SH_COEFFS; ++k)
+                partial[tid][k] += partial[tid + offset][k];
+        }
+
+        // Ждем пока все треды воркгруппы не дойдут сюда 
+        barrier();
+    }
+
+    if (tid == 0u)
+    {
+        const float weight = 4.0 * M_PI / float(SAMPLE_COUNT);
+        for (uint k = 0u; k < LITE3D_SH_COEFFS; ++k)
+        {
+            vec3 coeff = partial[0][k] * weight;
+            probes[probeIndex].sh[k] = vec4(coeff, 0.0);
+        }
+    }
+}

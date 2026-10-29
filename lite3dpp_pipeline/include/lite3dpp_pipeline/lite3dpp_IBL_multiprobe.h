@@ -91,6 +91,7 @@ protected:
 
     void createProbePass(const ConfigurationReader &config);
     void createPrefilterShader(const ConfigurationReader &config);
+    void createDiffuseRadianceShader();
     void calculateProbeBatchCount();
     void integrateGGX();
 
@@ -109,10 +110,12 @@ protected:
     TextureImage *mEnvironmentProbeDepth = nullptr;
     Texture *mBrdfLUT = nullptr;
     ComputeShader *mPrefilterEnvironmentShader = nullptr;
+    ComputeShader *mDiffuseRadianceSHShader = nullptr;
     TextureImage *mPrefilteredEnvironment = nullptr;
     stl<EnvProbe>::vector mProbes;
     stl<int32_t>::vector mProbesIndex;
     float mzNear = 0.0, mzFar = 1.0;
+    int32_t mSHMaxThreads = 256;
 };
 
 }}

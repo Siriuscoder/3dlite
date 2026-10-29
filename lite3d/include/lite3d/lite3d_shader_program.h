@@ -38,8 +38,10 @@ typedef struct lite3d_shader_program
 } lite3d_shader_program;
 
 LITE3D_CEXPORT int lite3d_shader_program_technique_init(void);
-LITE3D_CEXPORT void lite3d_shader_program_get_limitations(int *maxGeometryOutputVertices, 
-    int *maxGeometryOutputComponents, int *maxGeometryTotalOutputComponents);
+LITE3D_CEXPORT void lite3d_shader_program_get_limitations(int32_t *maxGeometryOutputVertices, 
+    int32_t *maxGeometryOutputComponents, int32_t *maxGeometryTotalOutputComponents);
+LITE3D_CEXPORT void lite3d_shader_program_get_workgroup_limits(int32_t *maxThreadsWorkGroupX, 
+    int32_t *maxThreadsWorkGroupY, int32_t *maxThreadsWorkGroupZ);
 LITE3D_CEXPORT int lite3d_shader_program_init(struct lite3d_shader_program *program);
 LITE3D_CEXPORT int lite3d_shader_program_link(
     struct lite3d_shader_program *program, lite3d_shader *shaders, size_t count);

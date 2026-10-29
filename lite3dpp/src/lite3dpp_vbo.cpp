@@ -125,6 +125,11 @@ namespace lite3dpp
         {
             setBufferSizeBytes(size);
         }
+
+        if (mVBO.vboID > 0)
+        {
+            lite3d_vbo_set_label(&mVBO, getName().c_str());
+        }
     }
     
     void VBOResource::unloadImpl()
