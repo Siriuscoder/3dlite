@@ -83,24 +83,24 @@ namespace lite3dpp_pipeline {
             .set(L"Type", "v3"));
 
         /* IBL present, using env probe */
-        if (mIBL)
+        if (mGIProbeManager)
         {
             // according to MultiRender case EnvironmentProbe texture being declared as bindless texture
             if (!pipelineConfig.getBool(L"MultiRender", false))
             {
                 lightComputeMaterialUniforms.emplace_back(ConfigurationWriter()
                     .set(L"Name", "EnvironmentProbe")
-                    .set(L"TextureName", mIBL->getEnvProbeTexture()->getName())
+                    .set(L"TextureName", mGIProbeManager->getEnvProbeTexture()->getName())
                     .set(L"Type", "sampler"));
             }
 
             lightComputeMaterialUniforms.emplace_back(ConfigurationWriter()
                 .set(L"Name", "EnvProbesData")
-                .set(L"SSBOName",  mIBL->getProbeBufferName())
+                .set(L"SSBOName",  mGIProbeManager->getProbeBufferName())
                 .set(L"Type", "SSBO"));
             lightComputeMaterialUniforms.emplace_back(ConfigurationWriter()
                 .set(L"Name", "BrdfLUT")
-                .set(L"TextureName", mIBL->getBrdfLUTName())
+                .set(L"TextureName", mGIProbeManager->getBrdfLUTName())
                 .set(L"Type", "sampler"));
         }
         else

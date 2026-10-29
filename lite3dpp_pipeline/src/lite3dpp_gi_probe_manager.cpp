@@ -15,7 +15,7 @@
  *	You should have received a copy of the GNU General Public License
  *	along with Lite3D.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
-#include <lite3dpp_pipeline/lite3dpp_IBL_multiprobe.h>
+#include <lite3dpp_pipeline/lite3dpp_gi_probe_manager.h>
 
 #include <algorithm>
 #include <SDL_assert.h>
@@ -25,7 +25,7 @@
 namespace lite3dpp {
 namespace lite3dpp_pipeline {
 
-IBLMultiProbePass::IBLMultiProbePass(Main& mMain, PipelineBase &pipeline) : 
+GIProbeManager::GIProbeManager(Main& mMain, PipelineBase &pipeline) : 
     mMain(mMain),
     mPipeline(pipeline),
     mPipelineName(pipeline.getName()),
@@ -38,12 +38,12 @@ IBLMultiProbePass::IBLMultiProbePass(Main& mMain, PipelineBase &pipeline) :
     mSHMaxThreads = std::min(256, maxSupportedThreadsGroupX);
 }
 
-IBLMultiProbePass::~IBLMultiProbePass()
+GIProbeManager::~GIProbeManager()
 {
     mMain.removeObserver(this);
 }
 
-void IBLMultiProbePass::initialize()
+void GIProbeManager::initialize()
 {
     ConfigurationReader config = mPipeline.getConfig().getObject(L"GI");
     mProbeCount = config.getInt(L"MaxCount", 1);
@@ -76,7 +76,7 @@ void IBLMultiProbePass::initialize()
     createDiffuseRadianceShader();
 }
 
-void IBLMultiProbePass::integrateGGX()
+void GIProbeManager::integrateGGX()
 {
     const int32_t LUTSize = 512;
     ConfigurationWriter IntergratedGGXLUTConfig;
@@ -117,7 +117,7 @@ void IBLMultiProbePass::integrateGGX()
     mMain.getResourceManager().releaseResource(intergrateGGXShader->getName());
 }
 
-void IBLMultiProbePass::calculateProbeBatchCount()
+void GIProbeManager::calculateProbeBatchCount()
 {
     int maxGeometryOutputVertices, maxGeometryTotalOutputComponents, SSBOMaxSize;
     lite3d_shader_program_get_limitations(&maxGeometryOutputVertices, nullptr, &maxGeometryTotalOutputComponents);
@@ -143,7 +143,7 @@ void IBLMultiProbePass::calculateProbeBatchCount()
     ShaderProgram::addGlobalDefinition("LITE3D_ENV_PROBE_MAX", std::to_string(maxProbeCount));
 }
 
-void IBLMultiProbePass::createProbePass(const ConfigurationReader &config)
+void GIProbeManager::createProbePass(const ConfigurationReader &config)
 {
     auto resolution = config.getInt(L"ProbeResolution", DefaultProbeResolution);
     // Создание массива кубических текстур для пробирования окружающего освещения
@@ -189,7 +189,7 @@ void IBLMultiProbePass::createProbePass(const ConfigurationReader &config)
     mEnvironmentProbeColorPass->addObserver(this);
 }
 
-void IBLMultiProbePass::createPrefilterShader(const ConfigurationReader &config)
+void GIProbeManager::createPrefilterShader(const ConfigurationReader &config)
 {
     auto resolution = config.getInt(L"ProbeResolution", DefaultProbeResolution);
     // Создание массива кубических текстур для пробирования окружающего освещения
@@ -231,7 +231,7 @@ void IBLMultiProbePass::createPrefilterShader(const ConfigurationReader &config)
         mPipelineName + "_PrefilterEnvironment.comp", shaderParams.write(), &mPipeline);
 }
 
-void IBLMultiProbePass::createDiffuseRadianceShader()
+void GIProbeManager::createDiffuseRadianceShader()
 {
     ConfigurationWriter shaderParams;
     shaderParams.set(L"Program", ConfigurationWriter()
@@ -254,7 +254,7 @@ void IBLMultiProbePass::createDiffuseRadianceShader()
         mPipelineName + "_DiffuseRadianceSHEnvironment.comp", shaderParams.write(), &mPipeline);
 }
 
-void IBLMultiProbePass::rebuild()
+void GIProbeManager::rebuild()
 {
     for (auto &probe : mProbes)
     {
@@ -262,7 +262,7 @@ void IBLMultiProbePass::rebuild()
     }
 }
 
-bool IBLMultiProbePass::beginUpdate(RenderTarget *rt)
+bool GIProbeManager::beginUpdate(RenderTarget *rt)
 {
     // Nothing to do
     if (std::find_if(mProbes.begin(), mProbes.end(), [](const EnvProbe &e) { return e.invalidated(); }) == mProbes.end())
@@ -302,7 +302,7 @@ bool IBLMultiProbePass::beginUpdate(RenderTarget *rt)
     return true;
 }
 
-void IBLMultiProbePass::prepareAffectedProbes()
+void GIProbeManager::prepareAffectedProbes()
 {
     const float cleanDepth = 1.0;
     const float cleanProbeColor[4] = { 0.0, 0.0, 0.0, 1.0 };
@@ -322,7 +322,7 @@ void IBLMultiProbePass::prepareAffectedProbes()
     }
 }
 
-void IBLMultiProbePass::postUpdate(RenderTarget *rt)
+void GIProbeManager::postUpdate(RenderTarget *rt)
 {
     // nothing to do
     if (mProbesIndex.size() == 0 || mProbesIndex[0] == 0)
@@ -353,7 +353,7 @@ void IBLMultiProbePass::postUpdate(RenderTarget *rt)
     mDiffuseRadianceSHShader->dispatch(mProbesIndex.size() - 1, 1, 1);
 }
 
-size_t IBLMultiProbePass::addProbe(const kmVec3 &position, EnvProbeFlags flags)
+size_t GIProbeManager::addProbe(const kmVec3 &position, EnvProbeFlags flags)
 {
     if (mProbes.size() == mProbeCount)
     {
@@ -365,7 +365,7 @@ size_t IBLMultiProbePass::addProbe(const kmVec3 &position, EnvProbeFlags flags)
     return mProbes.size() - 1;
 }
 
-void IBLMultiProbePass::updateProbe(size_t index, const kmVec3 &position)
+void GIProbeManager::updateProbe(size_t index, const kmVec3 &position)
 {
     if (index >= mProbes.size())
     {
@@ -375,31 +375,31 @@ void IBLMultiProbePass::updateProbe(size_t index, const kmVec3 &position)
     mProbes[index].setPosition(position);
 }
 
-IBLMultiProbePass::EnvProbe::EnvProbe(Main *main, float zNear, float zFar, EnvProbeFlags flags) : 
+GIProbeManager::EnvProbe::EnvProbe(Main *main, float zNear, float zFar, EnvProbeFlags flags) : 
     mProbeCamera(std::make_shared<Camera>("", main)),
     mFlags(flags)
 {
     mProbeCamera->setupPerspective(zNear, zFar, 90.0f, 1.0f);
 }
 
-void IBLMultiProbePass::EnvProbe::rebuildMatrix()
+void GIProbeManager::EnvProbe::rebuildMatrix()
 {
     mProbeCamera->computeCubeProjView(mViewProjMatrices);
     mInvalidated = false;
 }
 
-void IBLMultiProbePass::EnvProbe::setPosition(const kmVec3 &pos)
+void GIProbeManager::EnvProbe::setPosition(const kmVec3 &pos)
 {
     mProbeCamera->setPosition(pos);
     invalidate();
 }
 
-void IBLMultiProbePass::EnvProbe::writeProbe(IBLMultiProbePass::ProbeRawEntity *probe) const
+void GIProbeManager::EnvProbe::writeProbe(GIProbeManager::ProbeRawEntity *probe) const
 {
     SDL_assert(mViewProjMatrices.size() == 6);
     SDL_assert(probe);
 
-    memset(probe, 0, sizeof(IBLMultiProbePass::ProbeRawEntity));
+    memset(probe, 0, sizeof(GIProbeManager::ProbeRawEntity));
 
     probe->position.x = mProbeCamera->getPosition().x;
     probe->position.y = mProbeCamera->getPosition().y;

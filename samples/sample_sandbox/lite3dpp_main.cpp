@@ -53,7 +53,7 @@ public:
         addFlashlight();
 
         // Player position is the Zero probe
-        mPipeline->getIBL()->addProbe(getMainCamera().getPosition(), lite3dpp_pipeline::EnvProbeFlags::Specular);
+        mPipeline->getGIProbeManager()->addProbe(getMainCamera().getPosition(), lite3dpp_pipeline::EnvProbeFlags::Specular);
 
         kmVec3 probePos = { -2.0, -4.0, 2.0 };
         for (int i = 0; i < 2; ++i)
@@ -62,7 +62,7 @@ public:
             {
                 for (int i = 0; i < 3; ++i)
                 {
-                    mPipeline->getIBL()->addProbe(probePos); 
+                    mPipeline->getGIProbeManager()->addProbe(probePos); 
                     probePos.y += 4.0;
                 }
 
@@ -81,7 +81,7 @@ public:
         updateFlashLight();
 
         // Update zero probe, set current position
-        mPipeline->getIBL()->updateProbe(0, getMainCamera().getWorldPosition());
+        mPipeline->getGIProbeManager()->updateProbe(0, getMainCamera().getWorldPosition());
     }
 
     void addFlashlight()
@@ -110,7 +110,7 @@ public:
         spotLight->getLight()->enabled(true);
 
         // Recalc global illumination
-        mPipeline->getIBL()->rebuild();
+        mPipeline->getGIProbeManager()->rebuild();
         mPipeline->getShadowManager()->registerEmitter(spotLight);
     }
 
@@ -126,7 +126,7 @@ public:
         sparkNode->getLight()->enabled(true);
 
         // Recalc global illumination
-        mPipeline->getIBL()->rebuild();
+        mPipeline->getGIProbeManager()->rebuild();
         mPipeline->getShadowManager()->registerEmitter(sparkNode);
     }
 
@@ -138,7 +138,7 @@ public:
             mFlashLight->setRotation(getMainCamera().getWorldRotation());
 
             // Recalc global illumination
-            mPipeline->getIBL()->rebuild();
+            mPipeline->getGIProbeManager()->rebuild();
         }
     }
 
@@ -155,7 +155,7 @@ public:
                 
                 updateFlashLight();
                 // Recalc global illumination
-                mPipeline->getIBL()->rebuild();
+                mPipeline->getGIProbeManager()->rebuild();
             }
             else if (e->key.keysym.sym == SDLK_r)
             {
