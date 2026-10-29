@@ -736,7 +736,9 @@ void lite3d_vbo_set_label(const struct lite3d_vbo *vbo, const char *label)
 #ifndef GLES
     if (lite3d_check_debug_context())
     {
+        lite3d_vbo_bind(vbo);
         glObjectLabel(GL_BUFFER, vbo->vboID, -1, label);
+        lite3d_vbo_unbind(vbo);
     }
 #endif
 }

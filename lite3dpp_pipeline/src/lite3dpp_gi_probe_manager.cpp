@@ -155,8 +155,8 @@ void GIProbeManager::createProbePass(const ConfigurationReader &config)
         .set(L"Depth", mProbeCount)
         .set(L"Wrapping", "ClampToEdge")
         .set(L"Compression", false)
-        .set(L"TextureFormat", "RGB")
-        .set(L"InternalFormat", "RGB16F");
+        .set(L"TextureFormat", "RGBA")
+        .set(L"InternalFormat", "RGBA16F");
 
     mEnvironmentProbeColor = mMain.getResourceManager().queryResourceFromJson<TextureImage>(
         mPipelineName + "_EnvironmentMultiProbe.texture", mapConfig.write(), &mPipeline);
@@ -340,10 +340,20 @@ void GIProbeManager::postUpdate(RenderTarget *rt)
     {
         return;
     }
-/*
+
     auto totalLevels = mPrefilteredEnvironment->getTotalLevels();
     auto levelSize = mPrefilteredEnvironment->getWidth();
-    for (int8_t level = 0; level < totalLevels; ++level)
+    // Mip 0 uses the original capture; copy all six faces of each updated probe to avoid a compute dispatch.
+    for (size_t i = 1; i < mProbesIndex.size(); ++i)
+    {
+        const int32_t layer = mProbesIndex[i] * 6;
+        mPrefilteredEnvironment->copyRegionFrom(*mEnvironmentProbeColor,
+            0, 0, layer, 0, 0, layer, levelSize, mPrefilteredEnvironment->getHeight(), 6, 0);
+    }
+
+    // Start GGX filtering at mip 1, with the dispatch size reduced to that mip's resolution.
+    levelSize >>= 1;
+    for (int8_t level = 1; level < totalLevels; ++level)
     {
         // Calculate a roughness value in the range [0, 1] based on the
         // current mip level and the total number of mip levels.
@@ -359,7 +369,7 @@ void GIProbeManager::postUpdate(RenderTarget *rt)
         // Shift to the next mip level
         levelSize >>= 1;
     }
-*/
+
     // Recalc diffuse radiance SH coeffs foreach every affected probe in one dispatch call
     mDiffuseRadianceSHShader->dispatch(mProbesIndex.size() - 1, 1, 1);
 }

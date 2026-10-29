@@ -335,10 +335,10 @@ vec3 saturationColor(vec3 color)
 vec3 ditherBayer(vec2 coord, vec3 color)
 {
     // Получение позиции пикселя в матрице дизеринга
-    int x = int(mod(coord.x, float(BAYER_MATRIX_SIZE)));
-    int y = int(mod(coord.y, float(BAYER_MATRIX_SIZE)));
+    int x = int(coord.x) % BAYER_MATRIX_SIZE;
+    int y = int(coord.y) % BAYER_MATRIX_SIZE;
     float ditherValue = bayerMatrix[y * BAYER_MATRIX_SIZE + x] / 16.0;
-    
+
     // Применение дизеринга к цвету
     return color + (ditherValue / 255.0); // Масштабирование для 8-битного цвета
 }
@@ -419,7 +419,7 @@ vec3 SpecularLobeGGX(vec3 F, in Material material, in AngularInfo angular)
 vec3 DiffuseLobeLambertian(vec3 F, in Material material)
 {
     vec3 kD = diffuseFactor(F, material.metallic);
-    return kD * material.albedo.rgb / M_PI;
+    return kD * material.albedo.rgb * M_INV_PI;
 }
 
 vec3 Sheen(vec3 F, in Material material, in AngularInfo angular)
@@ -572,7 +572,7 @@ vec3 importanceSampleGGX(vec2 Xi, vec3 N, float roughness)
     return normalize(sampleVec);
 }
 
-vec3 cubeTexelToDir(ivec3 cubeCoord, vec2 cubemapSize)
+vec3 cubeTexelToDir(ivec3 cubeCoord, ivec2 cubemapSize)
 {
     vec2 texCoord = (vec2(cubeCoord.xy) + 0.5) / cubemapSize;
     texCoord = texCoord * 2.0 - 1.0; // -1..1

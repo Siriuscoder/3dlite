@@ -20,6 +20,7 @@
 #define DBL_MIN                                 2.2250738585072014e-308
 
 #define M_PI                                    3.14159265358979323846264
+#define M_INV_PI                                (1 / M_PI)
 #define PHI                                     1.61803398874989484820459
 
 bool isNear(float a1, float a2);
@@ -122,7 +123,7 @@ vec2 hammersleySequence(uint i, uint N);
 // Maps a 2D uniform sample in [0, 1]^2 to a uniformly distributed direction on the unit sphere.
 vec3 sampleUniformSphere(vec2 Xi);
 
-vec3 cubeTexelToDir(ivec3 cubeCoord, vec2 cubemapSize);
+vec3 cubeTexelToDir(ivec3 cubeCoord, ivec2 cubemapSize);
 int cubeFaceFromDir(vec3 dir);
 //////////// Building structures
 Surface makeSurface(vec2 uv, vec3 wv, vec3 wn, vec3 wt, vec3 wb);

@@ -62,6 +62,22 @@ namespace lite3dpp
         }
 
         extend(helper.getInt(L"PreallocVertexSize"), helper.getInt(L"PreallocIndexSize"));
+
+        if (mPartition.indirectBuffer.vboID)
+        {
+            lite3d_vbo_set_label(&mPartition.indirectBuffer, (getName() + ".indirect").c_str());
+        }
+
+        if (mPartition.vertexBuffer.vboID)
+        {
+            lite3d_vbo_set_label(&mPartition.vertexBuffer, (getName() + ".vertex").c_str());
+        }
+
+        if (mPartition.indexBuffer.vboID)
+        {
+            lite3d_vbo_set_label(&mPartition.indexBuffer, (getName() + ".index").c_str());
+        }
+
         mPartition.userdata = this;
     }
 

@@ -10,7 +10,7 @@ layout(std140) uniform EnvProbesIndex
 
 uniform float Roughness;
 
-const uint totalSamples = 1024u;
+const uint totalSamples = 32u;
 const float invTotalSamples = 1.0 / float(totalSamples);
 
 void main() 
@@ -29,7 +29,7 @@ void main()
     const int currentProbeIndex = probesIndex[currentProbeNumberIndex/4][int(mod(currentProbeNumberIndex, 4))];
     const int dstIndex = (currentProbeIndex * 6) + currentProbeFace;
     const float roughness = max(Roughness, LITE3D_MIN_ROUGHNESS);
-    const vec3 baseVector = cubeTexelToDir(ivec3(texCoord.xy, currentProbeFace), vec2(bounds.x, bounds.y)); 
+    const vec3 baseVector = cubeTexelToDir(ivec3(texCoord.xy, currentProbeFace), bounds); 
     // tagent space from origin point
     const vec3 N = normalize(baseVector);
     // assume view direction always equal to outgoing direction
@@ -50,16 +50,16 @@ void main()
         if (NdotL > 0.0)
         {
             float NdotH = max(dot(N, H), 0.0);
-            HdotV = max(HdotV, 0.0);
+            HdotV = max(HdotV, FLT_EPSILON);
             // sample from the environment's mip level based on roughness/pdf
             float D = NDF(NdotH, roughness);
-            float pdf = D * NdotH / (4.0 * HdotV) + 0.0001; 
+            float pdf = max(D * NdotH / (4.0 * HdotV), 0.0001);
 
             float saTexel  = 4.0 * M_PI / (6.0 * originalSamples);
-            float saSample = 1.0 / (totalSamples * pdf + 0.0001);
-            float mipLevel = roughness == 0.0 ? 0.0 : 0.5 * log2(saSample / saTexel); 
+            float saSample = 1.0 / (totalSamples * pdf);
+            float level = max(0.5 * log2(saSample / saTexel) + 1.0, 0.0);
 
-            prefilteredColor += textureLod(EnvironmentProbe, vec4(L, currentProbeIndex), mipLevel).rgb * NdotL;
+            prefilteredColor += textureLod(EnvironmentProbe, vec4(L, currentProbeIndex), level).rgb * NdotL;
             totalWeight += NdotL;
         }
     }
