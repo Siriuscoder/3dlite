@@ -44,11 +44,11 @@ namespace lite3dpp_pipeline {
         return *mMainScene;
     }
 
-    IBLMultiProbePass *PipelineBase::getIBL()
+    GIProbeManager *PipelineBase::getGIProbeManager()
     {
-        if (mIBL)
+        if (mGIProbeManager)
         {
-            return mIBL.get();
+            return mGIProbeManager.get();
         }
 
         return nullptr;
@@ -107,7 +107,7 @@ namespace lite3dpp_pipeline {
             mSkyBoxStageMaterial->setFloatParameter(static_cast<uint16_t>(TexturePassTypes::RenderPass), "EmissionStrength",
                 emission);
 
-            if (mIBL)
+            if (mGIProbeManager)
             {
                 mSkyBoxStageMaterial->setFloatParameter(static_cast<uint16_t>(TexturePassTypes::GIProbePass), 
                     "EmissionStrength", emission);
@@ -226,10 +226,16 @@ namespace lite3dpp_pipeline {
         /* Создание главной сцены в самом конце, все остальные обьекты должны быть созданы до этого момента */
         createMainScene(mainSceneGenerator.getName(), mainSceneGenerator.generateFromExisting(sceneGeneratedConfig).write());
 
+        SDL_assert(mMainScene);
+        
         if (mShadowManager)
         {
-            SDL_assert(mMainScene);
             mMainScene->addObserver(mShadowManager.get());
+        }
+
+        if (mGIProbeManager)
+        {
+            mMainScene->addObserver(mGIProbeManager.get());
         }
 
         /* Для обновления параметров шейдеров */
@@ -242,6 +248,11 @@ namespace lite3dpp_pipeline {
 
     void PipelineBase::unloadImpl()
     {
+        if (mMainScene && mGIProbeManager)
+        {
+            mMainScene->removeObserver(mGIProbeManager.get());
+        }
+
         if (mMainScene && mShadowManager)
         {
             mMainScene->removeObserver(mShadowManager.get());
@@ -250,7 +261,7 @@ namespace lite3dpp_pipeline {
         mShadowManager.reset();
         mPostProcessPass.reset();
         mBloomPass.reset();
-        mIBL.reset();
+        mGIProbeManager.reset();
 
         // We are going to unload all resources loaded by this pipeline 
         unloadBranch();
@@ -473,9 +484,9 @@ namespace lite3dpp_pipeline {
         };
 
         /* Render SkyBox to environment */
-        if (mIBL)
+        if (mGIProbeManager)
         {
-            stageGenerator.addRenderTarget(cameraName, mIBL->getPass()->getName(), ConfigurationWriter()
+            stageGenerator.addRenderTarget(cameraName, mGIProbeManager->getPass()->getName(), ConfigurationWriter()
                 .set(L"Priority", static_cast<int>(RenderPassStagePriority::SkyBoxStage))
                 .set(L"TexturePass", static_cast<int>(TexturePassTypes::GIProbePass))
                 .set(L"DepthTest", true)
@@ -501,11 +512,11 @@ namespace lite3dpp_pipeline {
                         .set(L"TexturePath", skyBoxConfig.getString(L"Texture")),
                     ConfigurationWriter()
                         .set(L"Name", "EnvProbesData")
-                        .set(L"UBOName", mIBL->getProbeBufferName())
-                        .set(L"Type", "UBO"),
+                        .set(L"SSBOName", mGIProbeManager->getProbeBufferName())
+                        .set(L"Type", "SSBO"),
                     ConfigurationWriter()
                         .set(L"Name", "EnvProbesIndex")
-                        .set(L"UBOName", mIBL->getProbeIndexBufferName())
+                        .set(L"UBOName", mGIProbeManager->getProbeIndexBufferName())
                         .set(L"Type", "UBO")
                 });
             
@@ -533,10 +544,10 @@ namespace lite3dpp_pipeline {
             return;
         }
 
-        mIBL = std::make_unique<IBLMultiProbePass>(getMain(), *this);
-        mIBL->initialize();
+        mGIProbeManager = std::make_unique<GIProbeManager>(getMain(), *this);
+        mGIProbeManager->initialize();
 
-        sceneGenerator.addRenderTarget(cameraName, mIBL->getPass()->getName(), ConfigurationWriter()
+        sceneGenerator.addRenderTarget(cameraName, mGIProbeManager->getPass()->getName(), ConfigurationWriter()
             .set(L"Priority", static_cast<int>(RenderPassStagePriority::ForwardStage))
             .set(L"TexturePass", static_cast<int>(TexturePassTypes::GIProbePass))
             .set(L"DepthTest", true)
@@ -544,7 +555,8 @@ namespace lite3dpp_pipeline {
             .set(L"DepthOutput", true)
             .set(L"RenderBlend", false)
             .set(L"RenderOpaque", true)
-            .set(L"FrustumCulling", false)
+            .set(L"FrustumCulling", true)
+            .set(L"CustomFrustumCheck", true)
             .set(L"RenderInstancing", pipelineConfig.getBool(L"Instancing", true)));
     }
 

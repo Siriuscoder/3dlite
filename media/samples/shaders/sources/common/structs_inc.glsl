@@ -7,16 +7,19 @@
 #extension GL_ARB_texture_cube_map_array : require
 #endif
 
+#define LITE3D_SH_COEFFS                               9
 // Environment probe layout
 struct EnvironmentProbeStruct
 {
     vec4 position;      // Probe position
     mat4 projView[6];   // View-Projection matrix for every cube face
+    vec4 sh[LITE3D_SH_COEFFS];
     uint flags;
 };
 
-#define LITE3D_ENV_PROBE_FLAG_IRRADIANCE   uint(1)
-#define LITE3D_ENV_PROBE_FLAG_SPECULAR     uint(2)
+#define LITE3D_ENV_PROBE_FLAG_IRRADIANCE                uint(1 << 0)
+#define LITE3D_ENV_PROBE_FLAG_SPECULAR                  uint(1 << 1)
+#define LITE3D_ENV_PROBE_FLAG_REUSABLE                  uint(1 << 2)
 
 struct AngularInfo
 {

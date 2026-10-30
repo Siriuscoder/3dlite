@@ -89,6 +89,7 @@ class LIGHT3D_OBJECT_PT_panel(bpy.types.Panel):
         self.layout.prop(context.object.lite3d_properties, "enabled")
         self.layout.prop(context.object.lite3d_properties, "static")
         self.layout.prop(context.object.lite3d_properties, "castShadow")
+        self.layout.prop(context.object.lite3d_properties, "giVisible")
         self.layout.prop(context.object.lite3d_properties, "frustumTest")
 
         physicsSettings = self.layout.box()

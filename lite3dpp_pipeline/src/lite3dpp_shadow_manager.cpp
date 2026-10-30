@@ -531,7 +531,7 @@ namespace lite3dpp_pipeline {
             "{\"Dynamic\": true}", &mPipeline);
 
         mShadowMatrixBuffer->extendBufferBytes(sizeof(kmMat4) * getShadowsCacheMaxCount());
-        mShadowIndexBuffer->extendBufferBytes(sizeof(IndexVector::value_type) * (getShadowsCacheMaxCount() + 1));
+        mShadowIndexBuffer->extendBufferBytes(sizeof(IndexVector::value_type) * LITE3D_ALIGN(getShadowsCacheMaxCount() + 1, 4));
         IndexVector::value_type initialZero = 0;
         mShadowIndexBuffer->setElement<IndexVector::value_type>(0, &initialZero);
 

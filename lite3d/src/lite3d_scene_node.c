@@ -36,7 +36,8 @@ void lite3d_scene_node_init(lite3d_scene_node *node)
     node->visible = LITE3D_TRUE;
     node->flags = LITE3D_SCENE_NODE_ROTATION_CENTERED |
         LITE3D_SCENE_NODE_ENABLED |
-        LITE3D_SCENE_NODE_FRUSTUM_TEST;
+        LITE3D_SCENE_NODE_FRUSTUM_TEST |
+        LITE3D_SCENE_NODE_GI_VISIBLE;
     node->skeletonTransformIndex = -1;
     lite3d_list_init(&node->childNodes);
 }

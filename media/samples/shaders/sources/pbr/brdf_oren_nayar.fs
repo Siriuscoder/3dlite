@@ -22,7 +22,7 @@ float diffuseOrenNayar(in AngularInfo angular, float roughness)
     } 
     else 
     {
-        C2 *= (sin(alpha) - pow((2.0 * beta) / M_PI, 3.0));
+        C2 *= (sin(alpha) - pow((2.0 * beta) * M_INV_PI, 3.0));
     }
     
     float powValue = (4.0 * alpha * beta) / (M_PI * M_PI);
@@ -52,7 +52,7 @@ float diffuseOrenNayar(in AngularInfo angular, float roughness)
     float L1 = angular.NdotL * (C1 + A + B);
     
     // Interreflection
-    float twoBetaPi = 2.0 * beta / M_PI;
+    float twoBetaPi = 2.0 * beta * M_INV_PI;
     float L2 = 0.17 * angular.NdotL * (s2 / (s2 + 0.13)) * (1.0 - gamma * twoBetaPi * twoBetaPi);
     
     return L1 + L2;

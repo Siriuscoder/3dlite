@@ -118,6 +118,21 @@ namespace lite3dpp
         return (mNodePtr->flags & LITE3D_SCENE_NODE_CAST_SHADOW) != 0;
     }
 
+    void SceneNodeBase::setGIVisible(bool flag)
+    {
+        SDL_assert(mNodePtr);
+        if (flag)
+            mNodePtr->flags |= LITE3D_SCENE_NODE_GI_VISIBLE;
+        else
+            mNodePtr->flags &= ~LITE3D_SCENE_NODE_GI_VISIBLE;
+    }
+
+    bool SceneNodeBase::isGIVisible() const
+    {
+        SDL_assert(mNodePtr);
+        return (mNodePtr->flags & LITE3D_SCENE_NODE_GI_VISIBLE) != 0;
+    }
+
     void SceneNodeBase::setPosition(const kmVec3 &position)
     {
         SDL_assert(mNodePtr);

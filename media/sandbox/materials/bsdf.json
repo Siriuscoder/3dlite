@@ -79,8 +79,8 @@
         },
         {
           "Name":"EnvProbesData",
-          "UBOName":"SandboxPipeline_EnvProbesData",
-          "Type":"UBO"
+          "SSBOName":"SandboxPipeline_EnvProbesData",
+          "Type":"SSBO"
         },
         {
           "Name":"Eye",
@@ -164,8 +164,8 @@
         },
         {
           "Name":"EnvProbesData",
-          "UBOName":"SandboxPipeline_EnvProbesData",
-          "Type":"UBO"
+          "SSBOName":"SandboxPipeline_EnvProbesData",
+          "Type":"SSBO"
         },
         {
           "Name":"EnvProbesIndex",

@@ -8,7 +8,7 @@ float diffuseOrenNayarApprox(in AngularInfo angular, float roughness)
 
     float C1    = 1 - 0.5 * sigma2 / (sigma2 + 0.33);
     float C2    = 0.45 * sigma2 / (sigma2 + 0.09);
-    return (C1 + C2 * stinv) / M_PI;
+    return (C1 + C2 * stinv) * M_INV_PI;
 }
 
 // cook-torrance bidirectional reflective distribution function

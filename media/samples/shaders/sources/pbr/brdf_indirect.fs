@@ -72,7 +72,7 @@ void getProbeTextureMaxLodAndCount(in Material material, inout uint count, inout
 #ifdef LITE3D_ENV_PROBE_MAX
 
 uniform sampler2D BrdfLUT;
-layout(std140) uniform EnvProbesData
+layout(std430) readonly buffer EnvProbesData
 {
     EnvironmentProbeStruct probes[LITE3D_ENV_PROBE_MAX];
 };
@@ -134,6 +134,9 @@ vec3 ComputeIndirect(in Surface surface, in AngularInfo angular)
 
         for (uint p = 0u; p < probesCount; ++p)
         {
+            if (hasFlag(probes[p].flags, LITE3D_ENV_PROBE_FLAG_REUSABLE)) // Empty probe, may be reused
+                continue;
+
             float probeDistance = distance(surface.wv, probes[p].position.xyz);
             nearProbeDistance = min(nearProbeDistance, probeDistance);
         }
@@ -141,10 +144,16 @@ vec3 ComputeIndirect(in Surface surface, in AngularInfo angular)
         // Calc indirect light
         float totalDWeight = FLT_EPSILON;
         float totalSWeight = FLT_EPSILON;
-        vec3 totalDiffuse = vec3(0.0f);
         vec3 totalSpecular = vec3(0.0f);
+        vec4 radianceSH[LITE3D_SH_COEFFS] = {
+            vec4(0.0), vec4(0.0), vec4(0.0), vec4(0.0), vec4(0.0), vec4(0.0), vec4(0.0), vec4(0.0), vec4(0.0)
+        };
+
         for (uint p = 0u; p < probesCount; ++p)
         {
+            if (hasFlag(probes[p].flags, LITE3D_ENV_PROBE_FLAG_REUSABLE)) // Empty probe, may be reused
+                continue;
+
             EnvironmentProbeStruct probe = probes[p];
             float probeDistance = distance(surface.wv, probe.position.xyz);
             float relativeDistance = nearProbeDistance / max(probeDistance, FLT_EPSILON);
@@ -155,7 +164,12 @@ vec3 ComputeIndirect(in Surface surface, in AngularInfo angular)
             if (hasFlag(probe.flags, LITE3D_ENV_PROBE_FLAG_IRRADIANCE))
             {
                 float dW = 1.0 / max(pow(probeDistance, LITE3D_ENV_PROBE_DIFFUSE_POWER), FLT_EPSILON);
-                totalDiffuse += getProbeTextureLod(surface.material, surface.normal, p, maxLod - 1.0) * dW;
+                // Interpolate SH coeffs between probes 
+                for (uint ir = 0; ir < LITE3D_SH_COEFFS; ++ir)
+                {
+                    radianceSH[ir] += probe.sh[ir] * dW;
+                }
+
                 totalDWeight += dW;
             }
 
@@ -167,7 +181,12 @@ vec3 ComputeIndirect(in Surface surface, in AngularInfo angular)
             }
         }
 
-        diffuseIrradianceLx += totalDiffuse / totalDWeight;
+        for (uint ir = 0; ir < LITE3D_SH_COEFFS; ++ir)
+        {
+            radianceSH[ir] /= totalDWeight;
+        }
+
+        diffuseIrradianceLx += irradianceSHL2(surface.normal, radianceSH, 1.0);
         specularIrradianceLx += totalSpecular / totalSWeight;
     }
     else if (hasFlag(surface.material.flags, LITE3D_MATERIAL_ENVIRONMENT_SINGLE_PROBE))
@@ -191,7 +210,7 @@ vec3 ComputeIndirect(in Surface surface, in AngularInfo angular)
 
     vec3 F = fresnelSchlickRoughness(angular.NdotV, surface.material);
     diffuseIrradianceLx *= diffuseFactor(F, surface.material.metallic) * surface.material.albedo.rgb * surface.material.envDiffuse;
-    specularIrradianceLx *= RebuildF(F, angular.NdotV, surface.material.roughness) * surface.material.envSpecular;
+    //specularIrradianceLx *= RebuildF(F, angular.NdotV, surface.material.roughness) * surface.material.envSpecular;
 
-    return (diffuseIrradianceLx + specularIrradianceLx);
+    return diffuseIrradianceLx;
 }
