@@ -31,6 +31,8 @@ GIProbeManager::GIProbeManager(Main& mMain, PipelineBase &pipeline) :
     mPipelineName(pipeline.getName()),
     mShaderPackage(pipeline.getConfig().getString(L"ShaderPackage"))
 {
+    // Returned probe pointers must not move when more probes are added.
+    mProbes.reserve(MaxProbeCount);
     mMain.addObserver(this);
 
     int32_t maxSupportedThreadsGroupX;
@@ -283,7 +285,7 @@ bool GIProbeManager::beginUpdate(RenderTarget *rt)
             {
                 mProbes[i].rebuildMatrix();
                 mProbes[i].writeProbe(&probeBlock[i]);
-                mProbesIndex.emplace_back(i);
+                mProbesIndex.emplace_back(static_cast<int32_t>(i));
             }
 
             if (mProbesIndex.size() == (mMaxProbeBatchCount + 1))
@@ -371,10 +373,10 @@ void GIProbeManager::postUpdate(RenderTarget *rt)
     }
 
     // Recalc diffuse radiance SH coeffs foreach every affected probe in one dispatch call
-    mDiffuseRadianceSHShader->dispatch(mProbesIndex.size() - 1, 1, 1);
+    mDiffuseRadianceSHShader->dispatch(static_cast<uint32_t>(mProbesIndex.size() - 1), 1, 1);
 }
 
-size_t GIProbeManager::addProbe(const kmVec3 &position, EnvProbeFlags flags)
+GIProbeManager::EnvProbe *GIProbeManager::addProbe(const kmVec3 &position, EnvProbeFlags flags)
 {
     if ((flags & EnvProbeFlags::Reusable) == EnvProbeFlags::Reusable)
     {
@@ -387,7 +389,7 @@ size_t GIProbeManager::addProbe(const kmVec3 &position, EnvProbeFlags flags)
         {
             mProbes[i].setFlags(flags);
             mProbes[i].setPosition(position);
-            return i;
+            return &mProbes[i];
         }
     }
 
@@ -398,35 +400,68 @@ size_t GIProbeManager::addProbe(const kmVec3 &position, EnvProbeFlags flags)
 
     mProbes.emplace_back(&mMain, mzNear, mzFar, flags);
     mProbes.back().setPosition(position);
-    return mProbes.size() - 1;
+    return &mProbes.back();
 }
 
-void GIProbeManager::updateProbe(size_t index, const kmVec3 &position)
+void GIProbeManager::removeProbe(EnvProbe *probe)
 {
-    if (index >= mProbes.size())
+    const auto it = std::find_if(mProbes.begin(), mProbes.end(),
+        [probe](const EnvProbe &entry) { return &entry == probe; });
+    if (it == mProbes.end())
     {
-        LITE3D_THROW("Index out of range: " << index << " of " << mProbes.size());
+        LITE3D_THROW("Probe does not belong to this GI probe manager");
     }
 
-    if (mProbes[index].isReusable())
-    {
-        LITE3D_THROW("Cannot update a removed probe: " << index);
-    }
-
-    mProbes[index].setPosition(position);
-}
-
-void GIProbeManager::removeProbe(size_t index)
-{
-    if (index >= mProbes.size())
-    {
-        LITE3D_THROW("Index out of range: " << index << " of " << mProbes.size());
-    }
-
-    const auto flags = mProbes[index].getFlags() | EnvProbeFlags::Reusable;
+    const auto index = static_cast<size_t>(std::distance(mProbes.begin(), it));
+    const auto flags = probe->getFlags() | EnvProbeFlags::Reusable;
     const auto rawFlags = static_cast<uint32_t>(flags);
     mProbesBuffer->setData(&rawFlags, index * sizeof(ProbeRawEntity) + offsetof(ProbeRawEntity, flags), sizeof(rawFlags));
-    mProbes[index].setFlags(flags);
+    probe->setFlags(flags);
+    probe->unregisterAllHintNodes();
+}
+
+GIProbeManager::HintNode::HintNode(EnvProbe &probe, SceneNodeBase *node, bool recursive) :
+    mProbe(probe)
+{
+    SDL_assert(node);
+    mNodes.push_back(node);
+    if (recursive)
+    {
+        node->iterateAllChilds([this](SceneNodeBase *childNode) { mNodes.push_back(childNode); });
+    }
+
+    for (auto observedNode : mNodes)
+    {
+        observedNode->addObserver(this);
+    }
+}
+
+GIProbeManager::HintNode::~HintNode()
+{
+    for (auto node : mNodes)
+    {
+        node->removeObserver(this);
+    }
+}
+
+void GIProbeManager::HintNode::updatePosition(SceneNodeBase *node)
+{
+    mProbe.invalidate();
+}
+
+void GIProbeManager::HintNode::updateRotation(SceneNodeBase *node)
+{
+    mProbe.invalidate();
+}
+
+void GIProbeManager::HintNode::updateScale(SceneNodeBase *node)
+{
+    mProbe.invalidate();
+}
+
+void GIProbeManager::HintNode::updateSkeletonPose(SceneNodeBase *node)
+{
+    mProbe.invalidate();
 }
 
 GIProbeManager::EnvProbe::EnvProbe(Main *main, float zNear, float zFar, EnvProbeFlags flags) : 
@@ -444,8 +479,55 @@ void GIProbeManager::EnvProbe::rebuildMatrix()
 
 void GIProbeManager::EnvProbe::setPosition(const kmVec3 &pos)
 {
+    if (isReusable())
+    {
+        LITE3D_THROW("Cannot update a removed probe");
+    }
+
     mProbeCamera->setPosition(pos);
     invalidate();
+}
+
+GIProbeManager::HintNode *GIProbeManager::EnvProbe::registerHintNode(SceneNodeBase *node, bool recursive)
+{
+    SDL_assert(node);
+    if (isReusable())
+    {
+        LITE3D_THROW("Cannot register a hint for a removed probe");
+    }
+
+    auto it = mHintNodes.find(node);
+    if (it != mHintNodes.end())
+    {
+        return it->second.get();
+    }
+
+    auto hint = std::make_shared<HintNode>(*this, node, recursive);
+    auto inserted = mHintNodes.try_emplace(node, std::move(hint));
+
+    if (inserted.second)
+    {
+        invalidate();
+    }
+
+    return inserted.first->second.get();
+}
+
+void GIProbeManager::EnvProbe::unregisterHintNode(SceneNodeBase *node)
+{
+    if (mHintNodes.erase(node) > 0)
+    {
+        invalidate();
+    }
+}
+
+void GIProbeManager::EnvProbe::unregisterAllHintNodes()
+{
+    if (!mHintNodes.empty())
+    {
+        mHintNodes.clear();
+        invalidate();
+    }
 }
 
 void GIProbeManager::EnvProbe::writeProbe(GIProbeManager::ProbeRawEntity *probe) const

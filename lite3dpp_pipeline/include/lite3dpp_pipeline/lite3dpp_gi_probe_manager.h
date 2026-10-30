@@ -51,9 +51,31 @@ public:
     };
 #pragma pack(pop)
 
-    class EnvProbe
+    class EnvProbe;
+
+    class LITE3DPP_PIPELINE_EXPORT HintNode : public SceneNodeObserver, public Noncopiable
     {
     public:
+
+        HintNode(EnvProbe &probe, SceneNodeBase *node, bool recursive);
+        ~HintNode();
+
+    private:
+
+        void updatePosition(SceneNodeBase *node) override;
+        void updateRotation(SceneNodeBase *node) override;
+        void updateScale(SceneNodeBase *node) override;
+        void updateSkeletonPose(SceneNodeBase *node) override;
+
+        EnvProbe &mProbe;
+        stl<SceneNodeBase*>::vector mNodes;
+    };
+
+    class LITE3DPP_PIPELINE_EXPORT EnvProbe
+    {
+    public:
+
+        using HintCache = stl<SceneNodeBase*, std::shared_ptr<HintNode>>::unordered_map;
 
         EnvProbe(Main *main, float zNear, float zFar, EnvProbeFlags flags);
         
@@ -66,6 +88,10 @@ public:
         inline EnvProbeFlags getFlags() const { return mFlags; }
         inline void setFlags(EnvProbeFlags flags) { mFlags = flags; }
         inline bool isReusable() const { return (mFlags & EnvProbeFlags::Reusable) == EnvProbeFlags::Reusable; }
+        // Unregister hints before destroying their scene nodes.
+        HintNode *registerHintNode(SceneNodeBase *node, bool recursive = false);
+        void unregisterHintNode(SceneNodeBase *node);
+        void unregisterAllHintNodes();
 
     private:
 
@@ -73,6 +99,7 @@ public:
         stl<kmMat4>::vector mViewProjMatrices;
         bool mInvalidated = true;
         EnvProbeFlags mFlags;
+        HintCache mHintNodes;
     };
 
     GIProbeManager(Main &main, PipelineBase &pipeline);
@@ -85,10 +112,10 @@ public:
     inline const std::string &getBrdfLUTName() const { return mBrdfLUT->getName(); }
     inline Texture *getEnvProbeTexture() { return mPrefilteredEnvironment; }
     void rebuild();
-    size_t addProbe(const kmVec3 &position, EnvProbeFlags flags = EnvProbeFlags::Irradiance | EnvProbeFlags::Specular);
-    void updateProbe(size_t index, const kmVec3 &position);
-    // Keep the slot/index and upload its Reusable flag without clearing captured data.
-    void removeProbe(size_t index);
+    // Pointers remain stable until manager destruction; removed slots may be reused by addProbe.
+    EnvProbe *addProbe(const kmVec3 &position, EnvProbeFlags flags = EnvProbeFlags::Irradiance | EnvProbeFlags::Specular);
+    // Keep the slot and upload its Reusable flag without clearing captured data.
+    void removeProbe(EnvProbe *probe);
     void prepareAffectedProbes();
 
 protected:

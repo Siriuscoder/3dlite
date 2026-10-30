@@ -53,7 +53,7 @@ public:
         addFlashlight();
 
         // Player position is the Zero probe
-        mPipeline->getGIProbeManager()->addProbe(getMainCamera().getPosition(), lite3dpp_pipeline::EnvProbeFlags::Specular);
+        mPlayerProbe = mPipeline->getGIProbeManager()->addProbe(getMainCamera().getPosition(), lite3dpp_pipeline::EnvProbeFlags::Specular);
 
         kmVec3 probePos = { -2.0, -4.0, 2.0 };
         for (int i = 0; i < 2; ++i)
@@ -81,7 +81,10 @@ public:
         updateFlashLight();
 
         // Update zero probe, set current position
-        mPipeline->getGIProbeManager()->updateProbe(0, getMainCamera().getWorldPosition());
+        if (mPlayerProbe)
+        {
+            mPlayerProbe->setPosition(getMainCamera().getWorldPosition());
+        }
     }
 
     void addFlashlight()
@@ -173,6 +176,7 @@ private:
     Scene* mMainScene = nullptr;
     lite3dpp_pipeline::PipelineForward* mPipeline = nullptr;
     LightSceneNode* mFlashLight = nullptr;
+    lite3dpp_pipeline::GIProbeManager::EnvProbe* mPlayerProbe = nullptr;
     uint32_t mObjectCounter = 0;
 };
 
