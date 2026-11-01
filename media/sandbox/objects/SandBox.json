@@ -3,6 +3,7 @@
     "Name": "SandBox",
     "Static": true,
     "CastShadow": true,
+    "GIVisible": true,
     "FrustumTest": true,
     "Mesh": {
       "Mesh": "sandbox:models/json/SandBox.json",

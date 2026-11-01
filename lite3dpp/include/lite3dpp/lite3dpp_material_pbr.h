@@ -32,8 +32,7 @@ namespace lite3dpp
         NORMAL_MAPPING_TANGENT = 1u << 0,
         NORMAL_MAPPING_TANGENT_BITANGENT = 1u << 1,
         ENVIRONMENT_TEXTURE = 1u << 2,
-        ENVIRONMENT_MULTI_PROBE  = 1u << 3,
-        ENVIRONMENT_SINGLE_PROBE = 1u << 4
+        ENVIRONMENT_MULTI_PROBE  = 1u << 3    
     };
 
     enum class TextureFlags : uint32_t
@@ -101,12 +100,13 @@ namespace lite3dpp
             float Ior;
             float EmissionStrength;
             float EnvironmentUVScale;
-            uint32_t EnvironmentSingleProbeIndex;
+            int32_t EnvironmentSingleProbeIndex;
             float Sheen;
             PBRMaterialFlags Flags = PBRMaterialFlags::EMPTY;
             TextureHandleRaw Textures[8];
             TextureHandleRaw Environment;
             TextureHandleRaw EnvironmentProbe;
+            TextureHandleRaw EnvironmentProbeDepth;
         };
 
 #pragma pack(pop)
@@ -131,13 +131,13 @@ namespace lite3dpp
         LITE3D_DECLARE_PBR_MATERIAL_FIELD(float, Ior);
         LITE3D_DECLARE_PBR_MATERIAL_FIELD(float, EmissionStrength);
         LITE3D_DECLARE_PBR_MATERIAL_FIELD(float, EnvironmentUVScale);
-        LITE3D_DECLARE_PBR_MATERIAL_FIELD(uint32_t, EnvironmentSingleProbeIndex);
+        LITE3D_DECLARE_PBR_MATERIAL_FIELD(int32_t, EnvironmentSingleProbeIndex);
         LITE3D_DECLARE_PBR_MATERIAL_FIELD(float, Sheen);
         LITE3D_DECLARE_PBR_MATERIAL_FIELD(PBRMaterialFlags, Flags);
 
         void setTexture(Texture *texture, TextureFlags flags, size_t index, bool updateData = true);
         void setEnvironmentTexture(Texture *texture, bool updateData);
-        void setEnvironmentProbeTexture(Texture *texture, bool updateData);
+        void setEnvironmentProbeTexture(Texture *texture, Texture *textureDepth, bool updateData);
         void update();
 
     protected:

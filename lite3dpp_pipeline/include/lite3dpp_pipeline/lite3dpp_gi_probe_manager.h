@@ -41,7 +41,7 @@ public:
     static constexpr const int32_t DefaultProbeResolution = 256;
     static constexpr const char GGXLUTName[] = "IntergratedGGXLUT.texture";
 
-#pragma pack(push, 16)
+#pragma pack(push, 1)
     struct ProbeRawEntity
     {
         kmVec4 position;

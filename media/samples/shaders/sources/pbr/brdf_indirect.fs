@@ -2,38 +2,43 @@
 
 #ifdef LITE3D_BINDLESS_TEXTURE_PIPELINE
 
-float getEnvTextureMaxLod(in Material material)
+float getEnvMaxLod(in Material material)
 {
     return log2(float(textureSize(material.environment.textureId, 0).x));
 }
 
-vec3 getEnvTextureLod(in Material material, vec3 uv, float lod)
+vec3 sampleEnvLod(in Material material, vec3 uv, float lod)
 {
     return textureLod(material.environment.textureId, uv * material.environmentUVScale, lod).rgb;
 }
 
-void getProbeTextureMaxLodAndCount(in Material material, inout uint count, inout float maxLod)
+void getProbeMaxLodAndCount(in Material material, inout int count, inout float maxLod)
 {
     ivec3 sizes = textureSize(material.environmentProbe.textureId, 0);
-    count = uint(sizes.z);
+    count = sizes.z;
     maxLod = log2(float(sizes.x));
 }
 
-vec3 getProbeTextureLod(in Material material, vec3 uv, uint index, float lod)
+vec3 sampleProbeLod(in Material material, vec3 uv, int index, float lod)
 {
     return textureLod(material.environmentProbe.textureId, vec4(uv, index), lod).rgb;
+}
+
+float sampleProbeDepth(in Material material, vec3 uv, int index)
+{
+    return texture(material.environmentProbeDepth.textureId, vec4(uv, index)).r;
 }
 
 #else
 
 uniform samplerCube Environment;
 
-float getEnvTextureMaxLod(in Material material)
+float getEnvMaxLod(in Material material)
 {
     return log2(float(textureSize(Environment, 0).x));
 }
 
-vec3 getEnvTextureLod(in Material material, vec3 uv, float lod)
+vec3 sampleEnvLod(in Material material, vec3 uv, float lod)
 {
     return textureLod(Environment, uv * material.environmentUVScale, lod).rgb;
 }
@@ -41,16 +46,22 @@ vec3 getEnvTextureLod(in Material material, vec3 uv, float lod)
 #ifdef LITE3D_ENV_PROBE_MAX
 
 uniform samplerCubeArray EnvironmentProbe;
+uniform samplerCubeArray EnvironmentProbeDepth;
 
-vec3 getProbeTextureLod(in Material material, vec3 uv, uint index, float lod)
+vec3 sampleProbeLod(in Material material, vec3 uv, int index, float lod)
 {
     return textureLod(EnvironmentProbe, vec4(uv, index), lod).rgb;
 }
 
-void getProbeTextureMaxLodAndCount(in Material material, inout uint count, inout float maxLod)
+float sampleProbeDepth(in Material material, vec3 uv, int index)
+{
+    return texture(EnvironmentProbeDepth, vec4(uv, index)).r;
+}
+
+void getProbeMaxLodAndCount(in Material material, inout int count, inout float maxLod)
 {
     ivec3 sizes = textureSize(EnvironmentProbe, 0);
-    count = uint(sizes.z);
+    count = sizes.z;
     maxLod = log2(float(sizes.x));
 }
 
@@ -100,7 +111,7 @@ vec3 ComputeIndirect(in Surface surface, in AngularInfo angular)
     vec3 diffuseIrradianceLx = vec3(0.0f);
     vec3 specularIrradianceLx = vec3(0.0f);
     float maxLod = 0.0f;
-    uint probesCount = 0u;
+    int probesCount = 0;
 
     // Reflect vector from surface
     vec3 R = reflect(-angular.viewDir, surface.normal);
@@ -115,12 +126,12 @@ vec3 ComputeIndirect(in Surface surface, in AngularInfo angular)
         if (hasFlag(surface.material.environment.flags, TEXTURE_FLAG_LOADED))
 #endif
         {
-            maxLod = getEnvTextureMaxLod(surface.material);
+            maxLod = getEnvMaxLod(surface.material);
             // Duffuse irradiance 
-            diffuseIrradianceLx += getEnvTextureLod(surface.material, surface.normal, maxLod - 1.0);
+            diffuseIrradianceLx += sampleEnvLod(surface.material, surface.normal, maxLod - 1.0);
             // Specular 
             float specularLevel = surface.material.roughness * maxLod;
-            specularIrradianceLx += getEnvTextureLod(surface.material, R, specularLevel);
+            specularIrradianceLx += sampleEnvLod(surface.material, R, specularLevel);
         }
     }
 #endif
@@ -129,10 +140,10 @@ vec3 ComputeIndirect(in Surface surface, in AngularInfo angular)
     if (hasFlag(surface.material.flags, LITE3D_MATERIAL_ENVIRONMENT_MULTI_PROBE))
     {
         float nearProbeDistance = FLT_MAX;
-        getProbeTextureMaxLodAndCount(surface.material, probesCount, maxLod);
+        getProbeMaxLodAndCount(surface.material, probesCount, maxLod);
         float specularLevel = surface.material.roughness * maxLod;
 
-        for (uint p = 0u; p < probesCount; ++p)
+        for (int p = 0; p < probesCount; ++p)
         {
             if (hasFlag(probes[p].flags, LITE3D_ENV_PROBE_FLAG_REUSABLE)) // Empty probe, may be reused
                 continue;
@@ -149,7 +160,7 @@ vec3 ComputeIndirect(in Surface surface, in AngularInfo angular)
             vec4(0.0), vec4(0.0), vec4(0.0), vec4(0.0), vec4(0.0), vec4(0.0), vec4(0.0), vec4(0.0), vec4(0.0)
         };
 
-        for (uint p = 0u; p < probesCount; ++p)
+        for (int p = 0; p < probesCount; ++p)
         {
             if (hasFlag(probes[p].flags, LITE3D_ENV_PROBE_FLAG_REUSABLE)) // Empty probe, may be reused
                 continue;
@@ -176,7 +187,7 @@ vec3 ComputeIndirect(in Surface surface, in AngularInfo angular)
             if (hasFlag(probe.flags, LITE3D_ENV_PROBE_FLAG_SPECULAR))
             {
                 float sW = 1.0 / max(pow(probeDistance, LITE3D_ENV_PROBE_SPECULAR_POWER), FLT_EPSILON);
-                totalSpecular += getProbeTextureLod(surface.material, R, p, specularLevel) * sW;
+                totalSpecular += sampleProbeLod(surface.material, R, p, specularLevel) * sW;
                 totalSWeight += sW;
             }
         }
@@ -189,21 +200,21 @@ vec3 ComputeIndirect(in Surface surface, in AngularInfo angular)
         diffuseIrradianceLx += irradianceSHL2(surface.normal, radianceSH, 1.0);
         specularIrradianceLx += totalSpecular / totalSWeight;
     }
-    else if (hasFlag(surface.material.flags, LITE3D_MATERIAL_ENVIRONMENT_SINGLE_PROBE))
+    else if (surface.material.environmentSingleProbeIndex >= 0)
     {
-        getProbeTextureMaxLodAndCount(surface.material, probesCount, maxLod);
+        getProbeMaxLodAndCount(surface.material, probesCount, maxLod);
         float specularLevel = surface.material.roughness * maxLod;
 
         EnvironmentProbeStruct probe = probes[surface.material.environmentSingleProbeIndex];
         // Calc indirect light from single probe by index
         if (hasFlag(probe.flags, LITE3D_ENV_PROBE_FLAG_IRRADIANCE))
         {
-            diffuseIrradianceLx += getProbeTextureLod(surface.material, surface.normal, surface.material.environmentSingleProbeIndex, maxLod - 1.0);
+            diffuseIrradianceLx += sampleProbeLod(surface.material, surface.normal, surface.material.environmentSingleProbeIndex, maxLod - 1.0);
         }
 
         if (hasFlag(probe.flags, LITE3D_ENV_PROBE_FLAG_SPECULAR))
         {
-            specularIrradianceLx += getProbeTextureLod(surface.material, R, surface.material.environmentSingleProbeIndex, specularLevel);
+            specularIrradianceLx += sampleProbeLod(surface.material, R, surface.material.environmentSingleProbeIndex, specularLevel);
         }
     }
 #endif

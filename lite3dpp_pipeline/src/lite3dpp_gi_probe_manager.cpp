@@ -169,7 +169,7 @@ void GIProbeManager::createProbePass(const ConfigurationReader &config)
         .set(L"InternalFormat", "");
 
     mEnvironmentProbeDepth = mMain.getResourceManager().queryResourceFromJson<TextureImage>(
-        mPipelineName + "_EnvironmentMultiProbeDepth.texture", mapConfig.write(), &mPipeline);
+        mPipelineName + "_EnvironmentProbesDepth.texture", mapConfig.write(), &mPipeline);
 
     ConfigurationWriter passConfig;
     passConfig.set(L"Priority", static_cast<uint32_t>(RenderPassPriority::GIProbe))
@@ -207,7 +207,7 @@ void GIProbeManager::createPrefilterShader(const ConfigurationReader &config)
         .set(L"InternalFormat", "RGBA16F");
 
     mPrefilteredEnvironment = mMain.getResourceManager().queryResourceFromJson<TextureImage>(
-        mPipelineName + "_PrefilteredEnvironmentMultiProbe.texture", mapConfig.write(), &mPipeline);
+        mPipelineName + "_PrefilteredEnvironmentProbes.texture", mapConfig.write(), &mPipeline);
 
     ConfigurationWriter shaderParams;
     shaderParams.set(L"Program", ConfigurationWriter()

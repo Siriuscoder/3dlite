@@ -76,7 +76,6 @@ struct LightSource
 #define LITE3D_MATERIAL_NORMAL_MAPPING_TANGENT_BITANGENT    uint(1 << 1)
 #define LITE3D_MATERIAL_ENVIRONMENT_TEXTURE                 uint(1 << 2)
 #define LITE3D_MATERIAL_ENVIRONMENT_MULTI_PROBE             uint(1 << 3)
-#define LITE3D_MATERIAL_ENVIRONMENT_SINGLE_PROBE            uint(1 << 4)
 
 #define TEXTURE_FLAG_EMPTY                                  uint(0)
 #define TEXTURE_FLAG_LOADED                                 uint(1 << 0)
@@ -150,13 +149,14 @@ struct Material
     float ior;
     float emissionStrength;
     float environmentUVScale;
-    uint environmentSingleProbeIndex;
+    int environmentSingleProbeIndex;
     float sheen;
     uint flags;
 #ifdef LITE3D_BINDLESS_TEXTURE_PIPELINE
     TextureHandle slot[8];
     TextureCubeHandle environment;
     TextureCubeArrayHandle environmentProbe;
+    TextureCubeArrayHandle environmentProbeDepth;
 #endif
 };
 
