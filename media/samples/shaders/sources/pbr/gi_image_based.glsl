@@ -1,0 +1,227 @@
+#include "samples:shaders/sources/common/common_inc.glsl"
+
+#ifdef LITE3D_BINDLESS_TEXTURE_PIPELINE
+
+float getEnvMaxLod(in Material material)
+{
+    return log2(float(textureSize(material.environment.textureId, 0).x));
+}
+
+vec3 sampleEnvLod(in Material material, vec3 uv, float lod)
+{
+    return textureLod(material.environment.textureId, uv * material.environmentUVScale, lod).rgb;
+}
+
+void getProbeMaxLodAndCount(in Material material, inout int count, inout float maxLod)
+{
+    ivec3 sizes = textureSize(material.environmentProbe.textureId, 0);
+    count = sizes.z;
+    maxLod = log2(float(sizes.x));
+}
+
+vec3 sampleProbeLod(in Material material, vec3 uv, int index, float lod)
+{
+    return textureLod(material.environmentProbe.textureId, vec4(uv, index), lod).rgb;
+}
+
+float sampleProbeDepth(in Material material, vec3 uv, int index)
+{
+    return texture(material.environmentProbeDepth.textureId, vec4(uv, index)).r;
+}
+
+#else
+
+uniform samplerCube Environment;
+
+float getEnvMaxLod(in Material material)
+{
+    return log2(float(textureSize(Environment, 0).x));
+}
+
+vec3 sampleEnvLod(in Material material, vec3 uv, float lod)
+{
+    return textureLod(Environment, uv * material.environmentUVScale, lod).rgb;
+}
+
+#ifdef LITE3D_ENV_PROBE_MAX
+
+uniform samplerCubeArray EnvironmentProbe;
+uniform samplerCubeArray EnvironmentProbeDepth;
+
+vec3 sampleProbeLod(in Material material, vec3 uv, int index, float lod)
+{
+    return textureLod(EnvironmentProbe, vec4(uv, index), lod).rgb;
+}
+
+float sampleProbeDepth(in Material material, vec3 uv, int index)
+{
+    return texture(EnvironmentProbeDepth, vec4(uv, index)).r;
+}
+
+void getProbeMaxLodAndCount(in Material material, inout int count, inout float maxLod)
+{
+    ivec3 sizes = textureSize(EnvironmentProbe, 0);
+    count = sizes.z;
+    maxLod = log2(float(sizes.x));
+}
+
+#endif
+#endif
+
+#ifndef LITE3D_ENV_PROBE_DIFFUSE_POWER
+#define LITE3D_ENV_PROBE_DIFFUSE_POWER 2.0
+#endif
+
+#ifndef LITE3D_ENV_PROBE_SPECULAR_POWER
+#define LITE3D_ENV_PROBE_SPECULAR_POWER 10.0
+#endif
+
+#ifndef LITE3D_ENV_PROBE_RELATIVE_DISTANCE_THRESHOLD
+#define LITE3D_ENV_PROBE_RELATIVE_DISTANCE_THRESHOLD 0.04
+#endif
+
+#ifdef LITE3D_ENV_PROBE_MAX
+
+uniform sampler2D BrdfLUT;
+layout(std430) readonly buffer EnvProbesData
+{
+    EnvironmentProbeStruct probes[LITE3D_ENV_PROBE_MAX];
+};
+
+// Apply freshnel BRDF LUT correction for environment probes only
+vec3 RebuildF(vec3 F, float NdotV, float roughness)
+{
+    vec2 coef = texture(BrdfLUT, vec2(NdotV, roughness)).rg;
+    return (F * coef.x) + coef.y;
+}
+
+#else
+
+// Freshnel BRDF LUT correction
+// No LUT, nothing to do
+vec3 RebuildF(vec3 F, float NdotV, float roughness)
+{
+    return F;
+}
+
+#endif
+
+vec3 ComputeIndirect(in Surface surface, in AngularInfo angular)
+{
+    vec3 diffuseIrradianceLx = vec3(0.0f);
+    vec3 specularIrradianceLx = vec3(0.0f);
+    float maxLod = 0.0f;
+    int probesCount = 0;
+
+    // Reflect vector from surface
+    vec3 R = reflect(-angular.viewDir, surface.normal);
+
+// В случае если запущен bindless пайплайн всегда декларируем эту секцию так как ее использование зависит от 
+// флагов материала. Иначе движок выставляет LITE3D_ENABLE_ENVIRONMENT_TEXTURE если в пайплайне включено
+// использование текстуры окружения
+#if defined(LITE3D_BINDLESS_TEXTURE_PIPELINE) || defined(LITE3D_ENABLE_ENVIRONMENT_TEXTURE)
+    if (hasFlag(surface.material.flags, LITE3D_MATERIAL_ENVIRONMENT_TEXTURE))
+    {
+#ifdef LITE3D_BINDLESS_TEXTURE_PIPELINE
+        if (hasFlag(surface.material.environment.flags, TEXTURE_FLAG_LOADED))
+#endif
+        {
+            maxLod = getEnvMaxLod(surface.material);
+            // Duffuse irradiance 
+            diffuseIrradianceLx = sampleEnvLod(surface.material, surface.normal, maxLod - 1.0);
+            // Specular 
+            float specularLevel = surface.material.roughness * maxLod;
+            specularIrradianceLx = sampleEnvLod(surface.material, R, specularLevel);
+        }
+    }
+#endif
+
+#ifdef LITE3D_ENV_PROBE_MAX // The IBL is enabled in the engine 
+    if (hasFlag(surface.material.flags, LITE3D_MATERIAL_ENVIRONMENT_MULTI_PROBE))
+    {
+        float nearProbeDistance = FLT_MAX;
+        getProbeMaxLodAndCount(surface.material, probesCount, maxLod);
+        float specularLevel = surface.material.roughness * maxLod;
+
+        for (int p = 0; p < probesCount; ++p)
+        {
+            if (hasFlag(probes[p].flags, LITE3D_ENV_PROBE_FLAG_REUSABLE)) // Empty probe, may be reused
+                continue;
+
+            float probeDistance = distance(surface.wv, probes[p].position.xyz);
+            nearProbeDistance = min(nearProbeDistance, probeDistance);
+        }
+
+        // Calc indirect light
+        float totalDWeight = FLT_EPSILON;
+        float totalSWeight = FLT_EPSILON;
+        vec3 totalSpecular = vec3(0.0f);
+        vec4 radianceSH[LITE3D_SH_COEFFS] = {
+            vec4(0.0), vec4(0.0), vec4(0.0), vec4(0.0), vec4(0.0), vec4(0.0), vec4(0.0), vec4(0.0), vec4(0.0)
+        };
+
+        for (int p = 0; p < probesCount; ++p)
+        {
+            if (hasFlag(probes[p].flags, LITE3D_ENV_PROBE_FLAG_REUSABLE)) // Empty probe, may be reused
+                continue;
+
+            EnvironmentProbeStruct probe = probes[p];
+            float probeDistance = distance(surface.wv, probe.position.xyz);
+            float relativeDistance = nearProbeDistance / max(probeDistance, FLT_EPSILON);
+
+            if (relativeDistance < LITE3D_ENV_PROBE_RELATIVE_DISTANCE_THRESHOLD)
+                continue;
+            
+            if (hasFlag(probe.flags, LITE3D_ENV_PROBE_FLAG_IRRADIANCE))
+            {
+                float dW = 1.0 / max(pow(probeDistance, LITE3D_ENV_PROBE_DIFFUSE_POWER), FLT_EPSILON);
+                // Interpolate SH coeffs between probes 
+                for (uint ir = 0; ir < LITE3D_SH_COEFFS; ++ir)
+                {
+                    radianceSH[ir] += probe.sh[ir] * dW;
+                }
+
+                totalDWeight += dW;
+            }
+
+            if (hasFlag(probe.flags, LITE3D_ENV_PROBE_FLAG_SPECULAR))
+            {
+                float sW = 1.0 / max(pow(probeDistance, LITE3D_ENV_PROBE_SPECULAR_POWER), FLT_EPSILON);
+                totalSpecular += sampleProbeLod(surface.material, R, p, specularLevel) * sW;
+                totalSWeight += sW;
+            }
+        }
+
+        for (uint ir = 0; ir < LITE3D_SH_COEFFS; ++ir)
+        {
+            radianceSH[ir] /= totalDWeight;
+        }
+
+        diffuseIrradianceLx += irradianceSHL2(surface.normal, radianceSH, 1.0);
+        specularIrradianceLx += totalSpecular / totalSWeight;
+    }
+    else if (surface.material.environmentSingleProbeIndex >= 0)
+    {
+        getProbeMaxLodAndCount(surface.material, probesCount, maxLod);
+        float specularLevel = surface.material.roughness * maxLod;
+
+        EnvironmentProbeStruct probe = probes[surface.material.environmentSingleProbeIndex];
+        // Calc indirect light from single probe by index
+        if (hasFlag(probe.flags, LITE3D_ENV_PROBE_FLAG_IRRADIANCE))
+        {
+            diffuseIrradianceLx += sampleProbeLod(surface.material, surface.normal, surface.material.environmentSingleProbeIndex, maxLod - 1.0);
+        }
+
+        if (hasFlag(probe.flags, LITE3D_ENV_PROBE_FLAG_SPECULAR))
+        {
+            specularIrradianceLx += sampleProbeLod(surface.material, R, surface.material.environmentSingleProbeIndex, specularLevel);
+        }
+    }
+#endif
+
+    vec3 F = fresnelSchlickRoughness(angular.NdotV, surface);
+    diffuseIrradianceLx *= diffuseFactor(F, surface.material.metallic) * surface.material.albedo.rgb * surface.material.envDiffuse;
+    //specularIrradianceLx *= RebuildF(F, angular.NdotV, surface.material.roughness) * surface.material.envSpecular;
+
+    return diffuseIrradianceLx;
+}

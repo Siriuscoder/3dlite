@@ -26,6 +26,7 @@ Surface makeSurface(vec2 uv, vec3 wv, vec3 wn, vec3 wt, vec3 wb)
     surface.uv = uv;
     surface.wv = wv;
     surface.ao = getAmbientOcclusion(uv);
+    surface.bentNormal = vec3(0.0);
 
     if (!isZero(wt) && !isZero(wb))
     {
@@ -46,7 +47,7 @@ Surface makeSurface(vec2 uv, vec3 wv, vec3 wn, vec3 wt, vec3 wb)
     surface.material.alpha = surface.material.albedo.a;
     surface.material.emission = vec4(getEmission(uv), 1.0);
     surface.material.normalScale = vec4(1.0, 1.0, 1.0, 1.0);
-    surface.material.f0 = vec4(vec3(LITE3D_BASE_REFLECTION_AT_ZERO_INCIDENCE), 1.0);
+    surface.material.F0 = vec4(vec3(LITE3D_BASE_REFLECTION_AT_ZERO_INCIDENCE), 1.0);
     surface.material.envDiffuse = LITE3D_ENV_DIFFUSE_STRENGTH;
     surface.material.envSpecular = getSpecularAmbient(uv);
     surface.material.emissionStrength = 1.0;
@@ -92,7 +93,7 @@ Surface restoreSurface(vec2 uv)
     surface.materialIndex = 0u;
     surface.material.albedo = vec4(albedo.rgb, 1.0);
     surface.material.emission = vec4(emission, 1.0);
-    surface.material.f0 = vec4(vec3(LITE3D_BASE_REFLECTION_AT_ZERO_INCIDENCE), 1.0);
+    surface.material.F0 = vec4(vec3(LITE3D_BASE_REFLECTION_AT_ZERO_INCIDENCE), 1.0);
     surface.material.normalScale = vec4(1.0, 1.0, 1.0, 1.0);
     surface.material.specular = specular.x;
     surface.material.roughness = specular.y;
@@ -107,6 +108,8 @@ Surface restoreSurface(vec2 uv)
     surface.wv = wv.xyz;
     surface.uv = uv;
     surface.normal = nw.xyz;
+    surface.bentNormal = vec3(0.0);
+    surface.F0 = modulateF0(surface.material);
 
     unpack2xF8(wv.w, surface.ao, surface.material.envSpecular);
     surface.ao = min(surface.ao, getAmbientOcclusion(uv));

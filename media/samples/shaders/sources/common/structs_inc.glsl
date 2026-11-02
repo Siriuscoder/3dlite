@@ -23,8 +23,9 @@ struct EnvironmentProbeStruct
 
 struct AngularInfo
 {
-    vec3 viewDir;   // view direction
-    vec3 lightDir;  // light direction
+    vec3 viewDir;           // view direction
+    vec3 viewReflectDir;    // view reflection direction
+    vec3 lightDir;          // light direction
     float lightDistance;
     bool isOutside;
     float NdotV;
@@ -138,7 +139,7 @@ struct Material
 {
     vec4 albedo;
     vec4 emission;
-    vec4 f0;
+    vec4 F0;
     vec4 normalScale;
     float alpha;
     float specular;
@@ -167,5 +168,13 @@ struct Surface
     vec3 wv;
     vec2 uv;
     vec3 normal;
+    vec3 bentNormal;
     float ao;
+    vec3 F0;
+};
+
+struct SufraceLighting
+{
+    vec3 diffuse;
+    vec3 specular;
 };

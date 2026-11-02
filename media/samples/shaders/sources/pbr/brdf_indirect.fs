@@ -128,10 +128,10 @@ vec3 ComputeIndirect(in Surface surface, in AngularInfo angular)
         {
             maxLod = getEnvMaxLod(surface.material);
             // Duffuse irradiance 
-            diffuseIrradianceLx += sampleEnvLod(surface.material, surface.normal, maxLod - 1.0);
+            diffuseIrradianceLx = sampleEnvLod(surface.material, surface.normal, maxLod - 1.0);
             // Specular 
             float specularLevel = surface.material.roughness * maxLod;
-            specularIrradianceLx += sampleEnvLod(surface.material, R, specularLevel);
+            specularIrradianceLx = sampleEnvLod(surface.material, R, specularLevel);
         }
     }
 #endif
@@ -219,7 +219,7 @@ vec3 ComputeIndirect(in Surface surface, in AngularInfo angular)
     }
 #endif
 
-    vec3 F = fresnelSchlickRoughness(angular.NdotV, surface.material);
+    vec3 F = fresnelSchlickRoughness(angular.NdotV, surface);
     diffuseIrradianceLx *= diffuseFactor(F, surface.material.metallic) * surface.material.albedo.rgb * surface.material.envDiffuse;
     //specularIrradianceLx *= RebuildF(F, angular.NdotV, surface.material.roughness) * surface.material.envSpecular;
 

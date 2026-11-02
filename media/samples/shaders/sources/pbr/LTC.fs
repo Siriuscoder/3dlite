@@ -8,13 +8,12 @@ const float LTC_LUT_SIZE  = 64.0;
 const float LTC_LUT_SCALE = (LTC_LUT_SIZE - 1.0)/LTC_LUT_SIZE;
 const float LTC_LUT_BIAS  = 0.5/LTC_LUT_SIZE;
 
-vec3 restoreFresnel(float magnitude, float power, Material material)
+vec3 restoreFresnel(float magnitude, float power, Surface surface)
 {
-    // Calculate F0 coeff
-    vec3 F0 = mix(material.f0.rgb, material.albedo.rgb, material.metallic);
+    vec3 F0 = surface.F0;
     // Restore fresnel
-    vec3 F = F0 * magnitude + (max(vec3(1.0 - material.roughness), F0) - F0) * power;
-    return clamp(F * material.specular, 0.0, 1.0);
+    vec3 F = F0 * magnitude + (max(vec3(1.0 - surface.material.roughness), F0) - F0) * power;
+    return clamp(F * surface.material.specular, 0.0, 1.0);
 }
 
 // An extended version of the implementation from
@@ -440,7 +439,7 @@ vec3 LTC(in LightSource source, in Surface surface, in AngularInfo angular)
         return vec3(0.0);
     }
     
-    vec3 F = restoreFresnel(t2.x, t2.y, surface.material);
+    vec3 F = restoreFresnel(t2.x, t2.y, surface);
     vec3 kD = diffuseFactor(F, surface.material.metallic);
 
     return diff * surface.material.albedo.rgb * kD +    // diffuse lobe

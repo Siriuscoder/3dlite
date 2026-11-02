@@ -61,7 +61,7 @@ float diffuseOrenNayar(in AngularInfo angular, float roughness)
 // cook-torrance bidirectional reflective distribution function
 vec3 BRDF(in Surface surface, in AngularInfo angular)
 {
-    vec3 F = fresnelSchlickRoughness(angular.HdotV, surface.material);
+    vec3 F = fresnelSchlickRoughness(angular.HdotV, surface);
     float d = diffuseOrenNayar(angular, surface.material.roughness);
     vec3 kD = diffuseFactor(F, surface.material.metallic);
 

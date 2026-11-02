@@ -78,6 +78,7 @@ Surface makeSurface(vec2 uv, vec3 wv, vec3 wn, vec3 wt, vec3 wb)
     surface.wv = wv;
     surface.normal = normalize(wn);
     surface.ao = 1.0;
+    surface.bentNormal = vec3(0.0);
 
     for (int i = 0; i < 8; ++i)
     {
@@ -244,7 +245,9 @@ Surface restoreSurface(vec2 uv)
     surface.uv = uv;
     surface.normal = nw.xyz;
     surface.ao = min(surface.ao, getAmbientOcclusion(uv));
-
+    surface.bentNormal = vec3(0.0);
+    surface.F0 = modulateF0(surface.material);
+    
     return surface;
 }
 

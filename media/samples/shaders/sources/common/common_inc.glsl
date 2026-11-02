@@ -80,7 +80,8 @@ vec3 ditherBayer(vec2 uv, vec3 color);
 
 //////////// PBR utilities
 ////////////////////////////////////////////////////////////////////////////
-vec3 fresnelSchlickRoughness(float teta, in Material material);
+vec3 modulateF0()
+vec3 fresnelSchlickRoughness(float teta, in Surface material);
 vec3 diffuseFactor(vec3 F, float metallic);
 // Normal distribution function (Trowbridge-Reitz GGX)
 float NDF(float NdotH, float roughness);

@@ -343,14 +343,18 @@ vec3 ditherBayer(vec2 coord, vec3 color)
     return color + (ditherValue / 255.0); // Масштабирование для 8-битного цвета
 }
 
-// Fresnel equation (Schlick)
-vec3 fresnelSchlickRoughness(float teta, in Material material)
+vec3 modulateF0(in Material material)
 {
-    // Calculate F0 coeff
-    vec3 F0 = mix(material.f0.rgb, material.albedo.rgb, material.metallic);
+    return mix(material.F0.rgb, material.albedo.rgb, material.metallic);
+}
+
+// Fresnel equation (Schlick)
+vec3 fresnelSchlickRoughness(float teta, in Surface surface)
+{
+    vec3 F0 = surface.F0;
     // Calculate fresnel
-    vec3 F = F0 + (max(vec3(1.0 - material.roughness), F0) - F0) * pow(clamp(1.0 - teta, 0.0, 1.0), 5.0);
-    return clamp(F * material.specular, 0.0, 1.0);
+    vec3 F = F0 + (max(vec3(1.0 - surface.material.roughness), F0) - F0) * pow(clamp(1.0 - teta, 0.0, 1.0), 5.0);
+    return clamp(F * surface.material.specular, 0.0, 1.0);
 }
 
 vec3 diffuseFactor(vec3 F, float metallic)
@@ -477,6 +481,7 @@ void angularInfoInit(inout AngularInfo angular, in Surface surface)
 {
     // Eye direction to current fragment 
     angular.viewDir = normalize(Eye - surface.wv);
+    angular.viewReflectDir = reflect(-angular.viewDir, surface.normal);
     angular.NdotV = doubleSidedNdotV(surface.normal, angular.viewDir);
 }
 
