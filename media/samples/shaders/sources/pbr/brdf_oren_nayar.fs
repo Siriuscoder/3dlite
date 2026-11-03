@@ -22,7 +22,7 @@ float diffuseOrenNayar(in AngularInfo angular, float roughness)
     } 
     else 
     {
-        C2 *= (sin(alpha) - pow((2.0 * beta) / M_PI, 3.0));
+        C2 *= (sin(alpha) - pow((2.0 * beta) * M_INV_PI, 3.0));
     }
     
     float powValue = (4.0 * alpha * beta) / (M_PI * M_PI);
@@ -52,20 +52,23 @@ float diffuseOrenNayar(in AngularInfo angular, float roughness)
     float L1 = angular.NdotL * (C1 + A + B);
     
     // Interreflection
-    float twoBetaPi = 2.0 * beta / M_PI;
+    float twoBetaPi = 2.0 * beta * M_INV_PI;
     float L2 = 0.17 * angular.NdotL * (s2 / (s2 + 0.13)) * (1.0 - gamma * twoBetaPi * twoBetaPi);
     
     return L1 + L2;
 }
 
 // cook-torrance bidirectional reflective distribution function
-vec3 BRDF(in Surface surface, in AngularInfo angular)
+SufraceLighting BRDF(in Surface surface, in AngularInfo angular)
 {
-    vec3 F = fresnelSchlickRoughness(angular.HdotV, surface.material);
+    vec3 F = fresnelSchlick(angular.HdotV, surface);
     float d = diffuseOrenNayar(angular, surface.material.roughness);
     vec3 kD = diffuseFactor(F, surface.material.metallic);
 
-    return kD * d * surface.material.albedo.rgb + 
-        SpecularLobeGGX(F, surface.material, angular) + 
-        Sheen(F, surface.material, angular);
+    SufraceLighting sl;
+    sl.diffuseEnergy = kD;
+    sl.diffuse = d * surface.material.albedo.rgb;
+    sl.specular = SpecularLobeGGX(F, surface.material, angular);
+
+    return sl;
 }

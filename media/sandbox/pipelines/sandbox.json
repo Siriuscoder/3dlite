@@ -27,9 +27,9 @@
         "Saturation": 1.05,
         "DynamicExposure":
         {
-            "ExposureMax": 5.0,
+            "ExposureMax": 6.0,
             "ExposureMin": 0.1,
-            "ExposureBase": 0.3
+            "ExposureBase": 1.0
         }
     }
 }

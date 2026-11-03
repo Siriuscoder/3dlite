@@ -78,9 +78,15 @@ float linstep(float a, float b, float v)
     return clamp((v - a) / (b - a), 0.0, 1.0);
 }
 
-float shlickPow(float a, float b)
+float fastPow(float a, float b)
 {
     return a / (b - a * b + a);
+}
+
+float fastPow5(float x) 
+{ 
+    float x2 = x * x;
+    return x2 * x2 * x; 
 }
 
 bool hasFlag(uint a, uint flag)
@@ -335,22 +341,36 @@ vec3 saturationColor(vec3 color)
 vec3 ditherBayer(vec2 coord, vec3 color)
 {
     // Получение позиции пикселя в матрице дизеринга
-    int x = int(mod(coord.x, float(BAYER_MATRIX_SIZE)));
-    int y = int(mod(coord.y, float(BAYER_MATRIX_SIZE)));
+    int x = int(coord.x) % BAYER_MATRIX_SIZE;
+    int y = int(coord.y) % BAYER_MATRIX_SIZE;
     float ditherValue = bayerMatrix[y * BAYER_MATRIX_SIZE + x] / 16.0;
-    
+
     // Применение дизеринга к цвету
     return color + (ditherValue / 255.0); // Масштабирование для 8-битного цвета
 }
 
-// Fresnel equation (Schlick)
-vec3 fresnelSchlickRoughness(float teta, in Material material)
+vec3 modulateF0(in Material material)
 {
-    // Calculate F0 coeff
-    vec3 F0 = mix(material.f0.rgb, material.albedo.rgb, material.metallic);
-    // Calculate fresnel
-    vec3 F = F0 + (max(vec3(1.0 - material.roughness), F0) - F0) * pow(clamp(1.0 - teta, 0.0, 1.0), 5.0);
-    return clamp(F * material.specular, 0.0, 1.0);
+    return mix(material.F0.rgb, material.albedo.rgb, material.metallic);
+}
+
+// Fresnel equation (Schlick, considering roughness)
+vec3 fresnelSchlickRoughness(float teta, in Surface surface)
+{
+    vec3 F0 = surface.F0;
+    // Calculate fresnel with roughness 
+    vec3 F = F0 + (max(vec3(1.0 - surface.material.roughness), F0) - F0) * fastPow5(1.0 - teta);
+    return clamp(F * surface.material.specular, 0.0, 1.0);
+}
+
+// Fresnel equation (Schlick)
+vec3 fresnelSchlick(float teta, in Surface surface)
+{
+    vec3 F0 = surface.F0;
+    float F90 = clamp(50.0 * dot(F0, vec3(0.33333)), 0.0, 1.0);
+
+    vec3 F = F0 + (F90 - F0) * fastPow5(1.0 - teta);
+    return clamp(F * surface.material.specular, 0.0, 1.0);
 }
 
 vec3 diffuseFactor(vec3 F, float metallic)
@@ -377,61 +397,59 @@ float NDF(float NdotH, float roughness)
     return nom / denom;
 }
 
-// Geometry function (Schlick-Beckmann, Schlick-GGX)
-float SchlickGGX(float teta, float k)
+// Geometry function visibility (Schlick-Beckmann, Schlick-GGX) height-correlated 
+float SmithGGXCorrelatedVis(float NdotV, float NdotL, float roughness)
 {
-    float nom   = teta;
-    float denom = teta * (1.0 - k) + k;
+    const float alpha = roughness * roughness;
+    const float alpha2 = alpha * alpha;
 
-    return nom / denom;
-}
+    const float gv = NdotL * sqrt(alpha2 + (1.0 - alpha2) * NdotV * NdotV);
+    const float gl = NdotV * sqrt(alpha2 + (1.0 - alpha2) * NdotL * NdotL);
 
-// Geometry function (Smith's)
-float SmithGGX(float NdotV, float NdotL, float roughness)
-{
-    float k = (roughness * roughness) / 2.0;
-
-    float ggx2  = SchlickGGX(NdotV, k);
-    float ggx1  = SchlickGGX(NdotL, k);
-
-    return ggx1 * ggx2;
-}
-
-float SmithGGXCorrelated(float NdotV, float NdotL, float roughness)
-{
-    roughness += 1.0;
-    float k = (roughness * roughness) / 8.0;
-    
-    float denom = mix(NdotV, 1.0, k) * mix(NdotL, 1.0, k);
-    return 1.0 / denom;
+    return 0.5 / max(gv + gl, 1e-6);
 }
 
 // Specular Term GGX
 vec3 SpecularLobeGGX(vec3 F, in Material material, in AngularInfo angular)
 {
     float ndf = NDF(angular.NdotH, material.roughness);
-    float gVis = SmithGGXCorrelated(angular.NdotV, angular.NdotL, material.roughness);
+    float GVis = SmithGGXCorrelatedVis(angular.NdotV, angular.NdotL, material.roughness);
 
-    return (ndf * gVis * F) / 4.0;
+    return ndf * GVis * F;
 }
 
 // Diffuse Term Lambertian (Simple diffuse model)
-vec3 DiffuseLobeLambertian(vec3 F, in Material material)
+vec3 DiffuseLobeLambertian(in Material material)
 {
-    vec3 kD = diffuseFactor(F, material.metallic);
-    return kD * material.albedo.rgb / M_PI;
+    return material.albedo.rgb * M_INV_PI;
 }
 
-vec3 Sheen(vec3 F, in Material material, in AngularInfo angular)
+// estevez and kulla 2017 - attempt to provide cloth/sheen ndf
+float CharlieNDF(float roughness, float NdotH)
 {
-    if (material.sheen > FLT_EPSILON)
-    {
-        vec3 Fs = mix(vec3(1.0), material.albedo.rgb, F);
-        float sheenFalloff = pow(clamp(1.0 - angular.NdotV, 0.0, 1.0), 5.0); // падение к краям
-        return Fs * sheenFalloff * material.sheen * material.roughness;
-    }
+    float invR = 1.0 / max(roughness, 0.001);
+    float sin2h = max(1.0 - NdotH * NdotH, 0.0078125);
+    return (2.0 + invR) * pow(sin2h, invR * 0.5) / (M_PI * 2.0);
+}
 
-    return vec3(0.0);
+// neubelt and pettineo 2013 - attempt to provide cloth visibility
+float NeubeltVis(float NdotV, float NdotL)
+{
+    return max(1.0 / (4.0 * (NdotL + NdotV - NdotL * NdotV)), 0.0);
+}
+
+vec3 Sheen(in Material material, in AngularInfo angular)
+{
+    // roughness - sheen needs minimum roughness for cloth appearance
+    float sheenRoughness = max(material.roughness, 0.3);
+    
+    // specular
+    float ndf = CharlieNDF(sheenRoughness, angular.NdotH);
+    float GVis = NeubeltVis(angular.NdotV, angular.NdotL);
+    vec3 sheenColor = material.albedo.rgb * material.sheen;
+    float edge = fastPow5(1.0 - angular.NdotV);
+    vec3 F = mix(sheenColor * 0.2, sheenColor, edge);
+    return ndf * GVis * F;
 }
 
 // Attenuation
@@ -452,9 +470,11 @@ float calcAttenuation(in LightSource source, in AngularInfo angular)
         if (hasFlag(source.flags, LITE3D_LIGHT_SPOT))
         {
             /* calculate spot cone attenuation */
-            float spotAngleRad = acos(dot(-angular.lightDir, normalize(source.direction.xyz)));
-            float spotConeAttenuation = (spotAngleRad * 2.0 - source.innerCone) / (source.outerCone - source.innerCone);
-            spotFactor = clamp(1.0 - spotConeAttenuation, 0.0, 1.0);
+            const float cosSpotAngle = dot(-angular.lightDir, normalize(source.direction.xyz));
+            float cosInner = cos(source.innerCone * 0.5);
+            float cosOuter = cos(source.outerCone * 0.5);
+
+            spotFactor = smoothstep(cosOuter, cosInner, cosSpotAngle);
         }
 
         if (hasFlag(source.flags, LITE3D_LIGHT_RECT_AREA) || hasFlag(source.flags, LITE3D_LIGHT_DISK_AREA))
@@ -475,6 +495,7 @@ void angularInfoInit(inout AngularInfo angular, in Surface surface)
 {
     // Eye direction to current fragment 
     angular.viewDir = normalize(Eye - surface.wv);
+    angular.viewReflectDir = reflect(-angular.viewDir, surface.normal);
     angular.NdotV = doubleSidedNdotV(surface.normal, angular.viewDir);
 }
 
@@ -536,6 +557,15 @@ vec2 hammersleySequence(uint i, uint N)
     return vec2(float(i) / float(N), vdcSequence(i));
 }
 
+vec3 sampleUniformSphere(vec2 Xi)
+{
+    float z = 1.0 - 2.0 * Xi.x;
+    float phi = 2.0 * M_PI * Xi.y;
+    float r = sqrt(max(0.0, 1.0 - z * z));
+
+    return vec3(r * cos(phi), r * sin(phi), z);
+}
+
 // GGX NDF via importance sampling
 vec3 importanceSampleGGX(vec2 Xi, vec3 N, float roughness)
 {
@@ -561,7 +591,7 @@ vec3 importanceSampleGGX(vec2 Xi, vec3 N, float roughness)
     return normalize(sampleVec);
 }
 
-vec3 cubeCoordToWorld(ivec3 cubeCoord, vec2 cubemapSize)
+vec3 cubeTexelToDir(ivec3 cubeCoord, ivec2 cubemapSize)
 {
     vec2 texCoord = (vec2(cubeCoord.xy) + 0.5) / cubemapSize;
     texCoord = texCoord * 2.0 - 1.0; // -1..1
@@ -623,4 +653,55 @@ void unpack2xF8(float pval, out float a, out float b)
 
     a = float(a8) / 255.0;
     b = float(b8) / 255.0;
+}
+
+void evaluateSHBasisL2(vec3 dir, out float b[LITE3D_SH_COEFFS])
+{
+    const float x = dir.x;
+    const float y = dir.y;
+    const float z = dir.z;
+
+    b[0] =  0.28209479177387814;
+    b[1] = -0.4886025119029199 * y;
+    b[2] =  0.4886025119029199 * z;
+    b[3] = -0.4886025119029199 * x;
+
+    b[4] =  1.0925484305920792 * x * y;
+    b[5] = -1.0925484305920792 * y * z;
+    b[6] =  0.31539156525252005 * (3.0 * z * z - 1.0);
+    b[7] = -1.0925484305920792 * x * z;
+    b[8] =  0.5462742152960396 * (x * x - y * y);
+}
+
+vec3 irradianceSHL2(vec3 dir, vec4 L[LITE3D_SH_COEFFS], float visibility)
+{
+    float b[LITE3D_SH_COEFFS];
+    evaluateSHBasisL2(dir, b);
+
+    const float sin2 = clamp(visibility, 0.0, 1.0);
+    const float cos2 = 1.0 - sin2;
+    const float cos3 = cos2 * sqrt(cos2);
+
+    // cosine lobe band factors for irradiance from radiance sh, ramamoorthi 2001
+    const float sh_a0 = 3.14159265;
+    const float sh_a1 = 2.09439510;
+    const float sh_a2 = 0.78539816;
+
+    const float k0 = sh_a0 * sin2;
+    const float k1 = sh_a1 * (1.0 - cos3);
+    const float k2 = sh_a2 * sin2 * (1.0 + 3.0 * cos2);
+
+    vec3 E = vec3(0.0);
+
+    E += L[0].rgb * (b[0] * k0);
+    E += L[1].rgb * (b[1] * k1);
+    E += L[2].rgb * (b[2] * k1);
+    E += L[3].rgb * (b[3] * k1);
+    E += L[4].rgb * (b[4] * k2);
+    E += L[5].rgb * (b[5] * k2);
+    E += L[6].rgb * (b[6] * k2);
+    E += L[7].rgb * (b[7] * k2);
+    E += L[8].rgb * (b[8] * k2);
+
+    return max(E, vec3(0.0));
 }

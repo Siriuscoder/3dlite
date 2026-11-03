@@ -60,17 +60,22 @@
         {
           "Name": "SpecularAmbientFactor",
           "Type": "float",
-          "Value": 2.2
+          "Value": 1.0
         },
         {
           "Name": "EnvironmentProbe",
-          "TextureName": "SandboxPipeline_PrefilteredEnvironmentMultiProbe.texture",
+          "TextureName": "SandboxPipeline_PrefilteredEnvironmentProbes.texture",
           "Type": "sampler"
         },
         {
-          "Name":"BrdfLUT",
-          "TextureName":"IntergratedGGXLUT.texture",
-          "Type":"sampler"
+          "Name": "EnvironmentProbeDepth",
+          "TextureName": "SandboxPipeline_EnvironmentProbesDepth.texture",
+          "Type": "sampler"
+        },
+        {
+          "Name": "BrdfLUT",
+          "TextureName": "IntergratedGGXLUT.texture",
+          "Type": "sampler"
         },
         {
           "Name": "LightSources",
@@ -88,19 +93,19 @@
           "Type": "sampler"
         },
         {
+          "Name": "MomentsMaps",
+          "TextureName": "SandboxPipeline_MomentsMap.texture",
+          "Type": "sampler"
+        },
+        {
           "Name": "ShadowMatrix",
           "UBOName": "SandboxPipeline_ShadowMatrixBuffer",
           "Type": "UBO"
         },
         {
-          "Name":"MomentsMaps",
-          "TextureName":"SandboxPipeline_MomentsMap.texture",
-          "Type":"sampler"
-        },
-        {
           "Name": "EnvProbesData",
-          "UBOName": "SandboxPipeline_EnvProbesData",
-          "Type": "UBO"
+          "SSBOName": "SandboxPipeline_EnvProbesData",
+          "Type": "SSBO"
         },
         {
           "Name": "Eye",
@@ -204,8 +209,8 @@
         },
         {
           "Name": "EnvProbesData",
-          "UBOName": "SandboxPipeline_EnvProbesData",
-          "Type": "UBO"
+          "SSBOName": "SandboxPipeline_EnvProbesData",
+          "Type": "SSBO"
         },
         {
           "Name": "EnvProbesIndex",

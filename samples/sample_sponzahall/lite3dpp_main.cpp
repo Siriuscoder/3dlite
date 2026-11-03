@@ -86,7 +86,7 @@ public:
         {
             if (node.first.starts_with("EnvProbe"))
             {
-                mPipeline->getIBL()->addProbe(node.second->getPosition());
+                mPipeline->getGIProbeManager()->addProbe(node.second->getPosition());
             }
         }
     }
@@ -116,7 +116,7 @@ public:
         {
             // Крутим источник света
             mSUNNode->rotateZ(0.0005f * deltaRetard);
-            //mPipeline->getIBL()->rebuild();
+            //mPipeline->getGIProbeManager()->rebuild();
         }
 
         auto sponzaStatic = mPipeline->getMainScene().getObject("Sponza");
@@ -171,14 +171,14 @@ public:
                 mDayNightMode = !mDayNightMode;
                 mSUN->getLight()->enabled(mDayNightMode);
                 mPipeline->setSkyBoxEmission(mDayNightMode ? 12.0f : 0.008f);
-                mPipeline->getIBL()->rebuild();
+                mPipeline->getGIProbeManager()->rebuild();
             }
             else if (e->key.keysym.sym == SDLK_e)
             {
                 mSunRotation = !mSunRotation;
                 if (!mSunRotation)
                 {
-                    mPipeline->getIBL()->rebuild();
+                    mPipeline->getGIProbeManager()->rebuild();
                 }
             }
             else if (e->key.keysym.sym == SDLK_t)
@@ -192,7 +192,7 @@ public:
                     }
                 }
 
-                mPipeline->getIBL()->rebuild();
+                mPipeline->getGIProbeManager()->rebuild();
             }
             else if (e->key.keysym.sym == SDLK_KP_PLUS)
             {

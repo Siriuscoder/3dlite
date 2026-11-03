@@ -7,21 +7,25 @@
 #extension GL_ARB_texture_cube_map_array : require
 #endif
 
+#define LITE3D_SH_COEFFS                               9
 // Environment probe layout
 struct EnvironmentProbeStruct
 {
     vec4 position;      // Probe position
     mat4 projView[6];   // View-Projection matrix for every cube face
+    vec4 sh[LITE3D_SH_COEFFS];
     uint flags;
 };
 
-#define LITE3D_ENV_PROBE_FLAG_IRRADIANCE   uint(1)
-#define LITE3D_ENV_PROBE_FLAG_SPECULAR     uint(2)
+#define LITE3D_ENV_PROBE_FLAG_IRRADIANCE                uint(1 << 0)
+#define LITE3D_ENV_PROBE_FLAG_SPECULAR                  uint(1 << 1)
+#define LITE3D_ENV_PROBE_FLAG_REUSABLE                  uint(1 << 2)
 
 struct AngularInfo
 {
-    vec3 viewDir;   // view direction
-    vec3 lightDir;  // light direction
+    vec3 viewDir;           // view direction
+    vec3 viewReflectDir;    // view reflection direction
+    vec3 lightDir;          // light direction
     float lightDistance;
     bool isOutside;
     float NdotV;
@@ -73,7 +77,6 @@ struct LightSource
 #define LITE3D_MATERIAL_NORMAL_MAPPING_TANGENT_BITANGENT    uint(1 << 1)
 #define LITE3D_MATERIAL_ENVIRONMENT_TEXTURE                 uint(1 << 2)
 #define LITE3D_MATERIAL_ENVIRONMENT_MULTI_PROBE             uint(1 << 3)
-#define LITE3D_MATERIAL_ENVIRONMENT_SINGLE_PROBE            uint(1 << 4)
 
 #define TEXTURE_FLAG_EMPTY                                  uint(0)
 #define TEXTURE_FLAG_LOADED                                 uint(1 << 0)
@@ -95,21 +98,21 @@ struct LightSource
 
 struct TextureHandle
 {
-    sampler2D textureId;
+    uvec2 textureId;
     uint flags;
     uint reserved;
 };
 
 struct TextureCubeHandle
 {
-    samplerCube textureId;
+    uvec2 textureId;
     uint flags;
     uint reserved;
 };
 
 struct TextureCubeArrayHandle
 {
-    samplerCubeArray textureId;
+    uvec2 textureId;
     uint flags;
     uint reserved;
 };
@@ -136,7 +139,7 @@ struct Material
 {
     vec4 albedo;
     vec4 emission;
-    vec4 f0;
+    vec4 F0;
     vec4 normalScale;
     float alpha;
     float specular;
@@ -147,13 +150,16 @@ struct Material
     float ior;
     float emissionStrength;
     float environmentUVScale;
-    uint environmentSingleProbeIndex;
+    int environmentSingleProbeIndex;
     float sheen;
+    float subSurfaceScattering;
     uint flags;
+    uint reserved[3];
 #ifdef LITE3D_BINDLESS_TEXTURE_PIPELINE
     TextureHandle slot[8];
     TextureCubeHandle environment;
     TextureCubeArrayHandle environmentProbe;
+    TextureCubeArrayHandle environmentProbeDepth;
 #endif
 };
 
@@ -164,5 +170,14 @@ struct Surface
     vec3 wv;
     vec2 uv;
     vec3 normal;
+    vec3 bentNormal;
     float ao;
+    vec3 F0;
+};
+
+struct SufraceLighting
+{
+    vec3 diffuseEnergy;
+    vec3 diffuse;
+    vec3 specular;
 };

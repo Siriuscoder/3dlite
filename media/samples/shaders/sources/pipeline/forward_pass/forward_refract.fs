@@ -18,13 +18,13 @@ float getAmbientOcclusion(vec2 uv)
 }
 #endif
 
-vec3 ComputeIllumination(in Surface surface, in AngularInfo angular);
+#include "samples:shaders/sources/pipeline/forward_pass/lighting.fs"
 
 void main()
 {
     Surface surface = makeSurface(iuv, iwv, iwn, iwt, iwb);
     // Compute refraction offset 
-    AngularInfo angular = AngularInfo(vec3(0), vec3(0), 0.0, false, 0.0, 0.0, 0.0, 0.0, 0.0);
+    AngularInfo angular = AngularInfo(vec3(0), vec3(0), vec3(0), 0.0, false, 0.0, 0.0, 0.0, 0.0, 0.0);
     angularInfoInit(angular, surface);
 
     float eta = 1.0 / surface.material.ior;
@@ -58,7 +58,7 @@ void main()
 
     refracted /= 8.0;
     // Compute total illumination 
-    vec3 reflected = ComputeIllumination(surface, angular); 
+    vec3 reflected = ComputeLighting(surface, angular); 
     // mix colors via alpha
     fragColor = vec4(mix(refracted, reflected, surface.material.alpha), 1.0);
 }

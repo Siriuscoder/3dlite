@@ -90,8 +90,8 @@
 #define LITE3D_CPPEXPORT LITE3D_EXTERN LITE3D_CLASS_EXPORT
 
 #define LITE3D_VERSION_MAJ         2
-#define LITE3D_VERSION_MIN         1
-#define LITE3D_VERSION_PCH         5
+#define LITE3D_VERSION_MIN         2
+#define LITE3D_VERSION_PCH         1
 
 #define LITE3D_VERSION_STRING      STR(LITE3D_VERSION_MAJ) "." STR(LITE3D_VERSION_MIN) \
     "." STR(LITE3D_VERSION_PCH)
@@ -111,6 +111,8 @@
 
 #define LITE3D_TRUE         1
 #define LITE3D_FALSE        0
+
+#define LITE3D_ALIGN(val, align) (((val) + (align)) & ~(align))
 
 #endif	/* COMMON_H */
 

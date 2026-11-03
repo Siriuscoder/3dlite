@@ -81,7 +81,8 @@ LITE3D_CEXPORT int lite3d_vbo_subbuffer_extend(struct lite3d_vbo *vbo,
     const void *buffer, size_t offset, size_t size);
 LITE3D_CEXPORT int lite3d_vbo_buffer_set(struct lite3d_vbo *vbo, 
     const void *buffer, size_t size);
-
+LITE3D_CEXPORT void lite3d_vbo_set_label(const struct lite3d_vbo *vbo, \
+    const char *label);
 
 #endif	/* LITE3D_VBO_H */
 

@@ -47,7 +47,8 @@ namespace lite3dpp
         setEmissionStrength(helper.getObject(L"EmissionStrength").getDouble(L"Value", 0.0), false);
         setEnvironmentUVScale(helper.getObject(L"EnvironmentUVScale").getDouble(L"Value", 1.0), false);
         setSheen(helper.getObject(L"Sheen").getDouble(L"Value", 0.0), false);
-        setEnvironmentSingleProbeIndex(helper.getObject(L"EnvironmentSingleProbeIndex").getInt(L"Value", 0), false);
+        setSubSurfaceScattering(helper.getObject(L"SubSurfaceScattering").getDouble(L"Value", 0.0), false);
+        setEnvironmentSingleProbeIndex(helper.getObject(L"EnvironmentSingleProbeIndex").getInt(L"Value", -1), false);
 
         size_t index = 0;
         for (size_t i = 0; i < gTextureIds.size(); ++i)
@@ -74,9 +75,12 @@ namespace lite3dpp
         if (helper.has(L"EnvironmentProbeTexture"))
         {
             auto textureCfg = helper.getObject(L"EnvironmentProbeTexture");
-            setEnvironmentProbeTexture(getMain().getResourceManager().queryResource<TextureImage>(
-                textureCfg.getString(L"TextureName"),
-                textureCfg.getString(L"TexturePath"), this), false);
+            setEnvironmentProbeTexture(
+                getMain().getResourceManager().queryResource<TextureImage>(
+                    textureCfg.getString(L"Probe"), this), 
+                getMain().getResourceManager().queryResource<TextureImage>(
+                    textureCfg.getString(L"ProbeDepth"), this), 
+                false);
         }
 
         // Добавляем этот материал к остальным в буфер
@@ -119,14 +123,16 @@ namespace lite3dpp
         }
     }
 
-    void PBRMaterial::setEnvironmentProbeTexture(Texture *texture, bool updateData)
+    void PBRMaterial::setEnvironmentProbeTexture(Texture *texture, Texture *depthTexture, bool updateData)
     {
         SDL_assert(texture);
 
         mMaterialEntity.EnvironmentProbe.flags = TextureFlags::ENVIRONMENT_PROBE | TextureFlags::LOADED;
         mMaterialEntity.EnvironmentProbe.textureHandle = texture->handle();
+        mMaterialEntity.EnvironmentProbeDepth.flags = TextureFlags::ENVIRONMENT_PROBE | TextureFlags::LOADED;
+        mMaterialEntity.EnvironmentProbeDepth.textureHandle = depthTexture->handle();
         mMaterialEntity.Flags = mMaterialEntity.Flags | PBRMaterialFlags::ENVIRONMENT_MULTI_PROBE;
-        mMaterialEntity.EnvironmentSingleProbeIndex = 0;
+
         if (updateData)
         {
             update();

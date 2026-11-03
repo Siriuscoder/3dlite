@@ -53,7 +53,7 @@ public:
         addFlashlight();
 
         // Player position is the Zero probe
-        mPipeline->getIBL()->addProbe(getMainCamera().getPosition(), lite3dpp_pipeline::EnvProbeFlags::Specular);
+        mPlayerProbe = mPipeline->getGIProbeManager()->addProbe(getMainCamera().getPosition(), lite3dpp_pipeline::EnvProbeFlags::Specular);
 
         kmVec3 probePos = { -2.0, -4.0, 2.0 };
         for (int i = 0; i < 2; ++i)
@@ -62,7 +62,7 @@ public:
             {
                 for (int i = 0; i < 3; ++i)
                 {
-                    mPipeline->getIBL()->addProbe(probePos); 
+                    mPipeline->getGIProbeManager()->addProbe(probePos); 
                     probePos.y += 4.0;
                 }
 
@@ -81,7 +81,10 @@ public:
         updateFlashLight();
 
         // Update zero probe, set current position
-        mPipeline->getIBL()->updateProbe(0, getMainCamera().getWorldPosition());
+        if (mPlayerProbe)
+        {
+            mPlayerProbe->setPosition(getMainCamera().getWorldPosition());
+        }
     }
 
     void addFlashlight()
@@ -93,7 +96,7 @@ public:
         mFlashLight->getLight()->setAttenuationConstant(AttenuationConstant);
         mFlashLight->getLight()->setAttenuationLinear(AttenuationLinear);
         mFlashLight->getLight()->setAttenuationQuadratic(AttenuationQuadratic);
-        mFlashLight->getLight()->setRadiance(10.0f);
+        mFlashLight->getLight()->setRadiance(20.0f);
         mFlashLight->getLight()->enabled(true);
     }
 
@@ -106,11 +109,11 @@ public:
         spotLight->getLight()->setAttenuationConstant(AttenuationConstant);
         spotLight->getLight()->setAttenuationLinear(AttenuationLinear);
         spotLight->getLight()->setAttenuationQuadratic(AttenuationQuadratic);
-        spotLight->getLight()->setRadiance(10.0f);
+        spotLight->getLight()->setRadiance(20.0f);
         spotLight->getLight()->enabled(true);
 
         // Recalc global illumination
-        mPipeline->getIBL()->rebuild();
+        mPipeline->getGIProbeManager()->rebuild();
         mPipeline->getShadowManager()->registerEmitter(spotLight);
     }
 
@@ -122,11 +125,11 @@ public:
         sparkNode->getLight()->setAttenuationConstant(AttenuationConstant);
         sparkNode->getLight()->setAttenuationLinear(AttenuationLinear);
         sparkNode->getLight()->setAttenuationQuadratic(AttenuationQuadratic);
-        sparkNode->getLight()->setRadiance(10.0f);
+        sparkNode->getLight()->setRadiance(6.0f);
         sparkNode->getLight()->enabled(true);
 
         // Recalc global illumination
-        mPipeline->getIBL()->rebuild();
+        mPipeline->getGIProbeManager()->rebuild();
         mPipeline->getShadowManager()->registerEmitter(sparkNode);
     }
 
@@ -138,7 +141,7 @@ public:
             mFlashLight->setRotation(getMainCamera().getWorldRotation());
 
             // Recalc global illumination
-            mPipeline->getIBL()->rebuild();
+            mPipeline->getGIProbeManager()->rebuild();
         }
     }
 
@@ -155,7 +158,7 @@ public:
                 
                 updateFlashLight();
                 // Recalc global illumination
-                mPipeline->getIBL()->rebuild();
+                mPipeline->getGIProbeManager()->rebuild();
             }
             else if (e->key.keysym.sym == SDLK_r)
             {
@@ -173,6 +176,7 @@ private:
     Scene* mMainScene = nullptr;
     lite3dpp_pipeline::PipelineForward* mPipeline = nullptr;
     LightSceneNode* mFlashLight = nullptr;
+    lite3dpp_pipeline::GIProbeManager::EnvProbe* mPlayerProbe = nullptr;
     uint32_t mObjectCounter = 0;
 };
 

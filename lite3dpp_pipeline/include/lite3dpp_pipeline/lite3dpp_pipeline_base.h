@@ -19,7 +19,7 @@
 
 #include <lite3dpp_pipeline/lite3dpp_bloom.h>
 #include <lite3dpp_pipeline/lite3dpp_shadow_manager.h>
-#include <lite3dpp_pipeline/lite3dpp_IBL_multiprobe.h>
+#include <lite3dpp_pipeline/lite3dpp_gi_probe_manager.h>
 #include <lite3dpp_pipeline/lite3dpp_postprocess.h>
 #include <lite3dpp_pipeline/lite3dpp_generator.h>
 
@@ -37,7 +37,7 @@ namespace lite3dpp_pipeline {
         Scene &getMainScene();
         Scene *getSkyBoxScene();
         ShadowManager *getShadowManager();
-        IBLMultiProbePass *getIBL();
+        GIProbeManager *getGIProbeManager();
         Camera &getMainCamera();
 
         void setExposure(float exp);
@@ -80,7 +80,7 @@ namespace lite3dpp_pipeline {
         String mShaderPackage;
         std::unique_ptr<ShadowManager> mShadowManager;
         std::unique_ptr<BloomPass> mBloomPass;
-        std::unique_ptr<IBLMultiProbePass> mIBL;
+        std::unique_ptr<GIProbeManager> mGIProbeManager;
         std::unique_ptr<PostProcessPass> mPostProcessPass;
         String mMainCameraName;
         RenderTarget *mDepthPass = nullptr;

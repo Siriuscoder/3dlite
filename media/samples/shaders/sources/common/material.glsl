@@ -2,14 +2,6 @@
 
 uniform sampler2DArray GBuffer;
 
-#ifndef LITE3D_CUBE_MAP_UV_SCALE
-#define LITE3D_CUBE_MAP_UV_SCALE 1.0
-#endif
-
-#ifndef LITE3D_ENV_DIFFUSE_STRENGTH
-#define LITE3D_ENV_DIFFUSE_STRENGTH 1.0
-#endif
-
 vec4 getAlbedo(vec2 uv);
 vec3 getEmission(vec2 uv);
 vec3 getNormal(vec2 uv, mat3 tbn);
@@ -46,19 +38,22 @@ Surface makeSurface(vec2 uv, vec3 wv, vec3 wn, vec3 wt, vec3 wb)
     surface.material.alpha = surface.material.albedo.a;
     surface.material.emission = vec4(getEmission(uv), 1.0);
     surface.material.normalScale = vec4(1.0, 1.0, 1.0, 1.0);
-    surface.material.f0 = vec4(vec3(LITE3D_BASE_REFLECTION_AT_ZERO_INCIDENCE), 1.0);
+    surface.material.F0 = vec4(vec3(LITE3D_BASE_REFLECTION_AT_ZERO_INCIDENCE), 1.0);
     surface.material.envDiffuse = LITE3D_ENV_DIFFUSE_STRENGTH;
     surface.material.envSpecular = getSpecularAmbient(uv);
     surface.material.emissionStrength = 1.0;
     surface.material.environmentUVScale = LITE3D_CUBE_MAP_UV_SCALE;
-    surface.material.environmentSingleProbeIndex = 0u;
+    surface.material.environmentSingleProbeIndex = -1;
     surface.material.sheen = getSheen(uv);
+    surface.material.subSurfaceScattering = LITE3D_SUBSURFACE_SCATTERING;
 
     vec3 specular = getSpecular(uv);
     surface.material.specular = clamp(specular.x, 0.0, 1.0);
     surface.material.roughness = clamp(specular.y, LITE3D_MIN_ROUGHNESS, 1.0);
     surface.material.metallic = clamp(specular.z, 0.0, 1.0);
     surface.material.ior = getIOR(uv);
+    surface.F0 = modulateF0(surface.material);
+    surface.bentNormal = surface.normal;
 
 #ifdef LITE3D_ENABLE_ENVIRONMENT_TEXTURE // Setup by the engine 
     surface.material.flags |= LITE3D_MATERIAL_ENVIRONMENT_TEXTURE;
@@ -92,7 +87,7 @@ Surface restoreSurface(vec2 uv)
     surface.materialIndex = 0u;
     surface.material.albedo = vec4(albedo.rgb, 1.0);
     surface.material.emission = vec4(emission, 1.0);
-    surface.material.f0 = vec4(vec3(LITE3D_BASE_REFLECTION_AT_ZERO_INCIDENCE), 1.0);
+    surface.material.F0 = vec4(vec3(LITE3D_BASE_REFLECTION_AT_ZERO_INCIDENCE), 1.0);
     surface.material.normalScale = vec4(1.0, 1.0, 1.0, 1.0);
     surface.material.specular = specular.x;
     surface.material.roughness = specular.y;
@@ -102,11 +97,14 @@ Surface restoreSurface(vec2 uv)
     surface.material.ior = 1.0;
     surface.material.emissionStrength = 1.0;
     surface.material.environmentUVScale = LITE3D_CUBE_MAP_UV_SCALE;
-    surface.material.environmentSingleProbeIndex = 0u;
+    surface.material.environmentSingleProbeIndex = -1;
     surface.material.sheen = 0.0;
+    surface.material.subSurfaceScattering = LITE3D_SUBSURFACE_SCATTERING;
     surface.wv = wv.xyz;
     surface.uv = uv;
     surface.normal = nw.xyz;
+    surface.F0 = modulateF0(surface.material);
+    surface.bentNormal = surface.normal;
 
     unpack2xF8(wv.w, surface.ao, surface.material.envSpecular);
     surface.ao = min(surface.ao, getAmbientOcclusion(uv));

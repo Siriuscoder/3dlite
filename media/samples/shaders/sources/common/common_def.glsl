@@ -59,3 +59,31 @@
 #ifndef LITE3D_REFRACTION_THICKNESS                        
 #define LITE3D_REFRACTION_THICKNESS                         10.0
 #endif
+
+#ifndef LITE3D_ENV_PROBE_DIFFUSE_POWER
+#define LITE3D_ENV_PROBE_DIFFUSE_POWER                      2.0
+#endif
+
+#ifndef LITE3D_ENV_PROBE_SPECULAR_POWER
+#define LITE3D_ENV_PROBE_SPECULAR_POWER                     10.0
+#endif
+
+#ifndef LITE3D_ENV_PROBE_RELATIVE_DISTANCE_THRESHOLD
+#define LITE3D_ENV_PROBE_RELATIVE_DISTANCE_THRESHOLD        0.04
+#endif
+
+#ifndef LITE3D_BASE_AMBIENT_LIGHT
+#define LITE3D_BASE_AMBIENT_LIGHT                           vec3(0.0)
+#endif
+
+#ifndef LITE3D_CUBE_MAP_UV_SCALE
+#define LITE3D_CUBE_MAP_UV_SCALE                            1.0
+#endif
+
+#ifndef LITE3D_ENV_DIFFUSE_STRENGTH
+#define LITE3D_ENV_DIFFUSE_STRENGTH                         1.0
+#endif
+
+#ifndef LITE3D_SUBSURFACE_SCATTERING
+#define LITE3D_SUBSURFACE_SCATTERING                        0.0
+#endif
