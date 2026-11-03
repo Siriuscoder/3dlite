@@ -18,7 +18,6 @@ Surface makeSurface(vec2 uv, vec3 wv, vec3 wn, vec3 wt, vec3 wb)
     surface.uv = uv;
     surface.wv = wv;
     surface.ao = getAmbientOcclusion(uv);
-    surface.bentNormal = vec3(0.0);
 
     if (!isZero(wt) && !isZero(wb))
     {
@@ -54,6 +53,7 @@ Surface makeSurface(vec2 uv, vec3 wv, vec3 wn, vec3 wt, vec3 wb)
     surface.material.metallic = clamp(specular.z, 0.0, 1.0);
     surface.material.ior = getIOR(uv);
     surface.F0 = modulateF0(surface.material);
+    surface.bentNormal = surface.normal;
 
 #ifdef LITE3D_ENABLE_ENVIRONMENT_TEXTURE // Setup by the engine 
     surface.material.flags |= LITE3D_MATERIAL_ENVIRONMENT_TEXTURE;
@@ -103,8 +103,8 @@ Surface restoreSurface(vec2 uv)
     surface.wv = wv.xyz;
     surface.uv = uv;
     surface.normal = nw.xyz;
-    surface.bentNormal = vec3(0.0);
     surface.F0 = modulateF0(surface.material);
+    surface.bentNormal = surface.normal;
 
     unpack2xF8(wv.w, surface.ao, surface.material.envSpecular);
     surface.ao = min(surface.ao, getAmbientOcclusion(uv));

@@ -58,11 +58,8 @@ SufraceLighting EvaluateDirect(in LightSource light, inout Surface surface, inou
     if (isZero(shadowVisibility))
         return sl;
 
-    // Calc microshadow/AO 
-    float microShadow = MicrowShadowingCOD(angular.NdotL, surface.ao);
-
     // Calc the the light source radiance
-    vec3 radiance = light.diffuse.rgb * light.radiance * attenuationFactor * shadowVisibility * microShadow;
+    vec3 radiance = light.diffuse.rgb * light.radiance * attenuationFactor * shadowVisibility;
 
     // Radiance is too small, consider to skip BRDF calculation
     if (isZero(radiance))
@@ -73,6 +70,7 @@ SufraceLighting EvaluateDirect(in LightSource light, inout Surface surface, inou
         hasFlag(light.flags, LITE3D_LIGHT_DISK_AREA))
     {
         sl = LTC(light, surface, angular);
+        radiance *= surface.ao;
     }
     else
 #endif
@@ -81,11 +79,15 @@ SufraceLighting EvaluateDirect(in LightSource light, inout Surface surface, inou
         sl = BRDF(surface, angular);
         sl.diffuse *= angular.NdotL;
         sl.specular *= angular.NdotL;
+
+        // Calc microshadow/AO 
+        radiance *= MicrowShadowingCOD(angular.NdotL, surface.ao);
     }
 
-    if (surface.material.subSurfaceScattering > FLT_EPSILON)
+    float sss = clamp(surface.material.subSurfaceScattering, 0.0, 1.0);
+    if (sss > FLT_EPSILON)
     {
-        sl.diffuse += SubsurfaceScattering(surface.normal, angular.lightDir) * surface.material.subSurfaceScattering;
+        sl.diffuse = mix(sl.diffuse, vec3(SubsurfaceScattering(surface.normal, angular.lightDir)), sss);
     }
 
     if (surface.material.sheen > FLT_EPSILON)

@@ -2,8 +2,8 @@
     "Sources": 
     [
         // Standard shaders with params customization
-        "samples:shaders/sources/pipeline/env_pass/env_skybox.vs",
-        "samples:shaders/sources/pipeline/env_pass/env_multi_skybox.gs",
+        "samples:shaders/sources/pipeline/gi_pass/env_skybox.vs",
+        "samples:shaders/sources/pipeline/gi_pass/env_multi_skybox.gs",
         "samples:shaders/sources/pipeline/skybox_pass/skybox.fs"
     ]
 }
