@@ -40,7 +40,7 @@ vec3 IBLSpecularEnergy(vec3 F, float NdotV, in Surface surface)
 float getEnvMaxLod(in Material material)
 {
 #ifdef LITE3D_BINDLESS_TEXTURE_PIPELINE
-    return log2(float(textureSize(material.environment.textureId, 0).x));
+    return log2(float(textureSize(samplerCube(material.environment.textureId), 0).x));
 #else
     return log2(float(textureSize(Environment, 0).x));
 #endif
@@ -49,7 +49,7 @@ float getEnvMaxLod(in Material material)
 vec3 sampleEnvLod(in Material material, vec3 uv, float lod)
 {
 #ifdef LITE3D_BINDLESS_TEXTURE_PIPELINE
-    return textureLod(material.environment.textureId, uv * material.environmentUVScale, lod).rgb;
+    return textureLod(samplerCube(material.environment.textureId), uv * material.environmentUVScale, lod).rgb;
 #else
     return textureLod(Environment, uv * material.environmentUVScale, lod).rgb;
 #endif
@@ -58,7 +58,7 @@ vec3 sampleEnvLod(in Material material, vec3 uv, float lod)
 void getProbeMaxLodAndCount(in Material material, inout int count, inout float maxLod)
 {
 #ifdef LITE3D_BINDLESS_TEXTURE_PIPELINE
-    ivec3 sizes = textureSize(material.environmentProbe.textureId, 0);
+    ivec3 sizes = textureSize(samplerCubeArray(material.environmentProbe.textureId), 0);
 #else
     ivec3 sizes = textureSize(EnvironmentProbe, 0);
 #endif
@@ -70,7 +70,7 @@ void getProbeMaxLodAndCount(in Material material, inout int count, inout float m
 vec3 sampleProbeLod(in Material material, vec3 uv, int index, float lod)
 {
 #ifdef LITE3D_BINDLESS_TEXTURE_PIPELINE
-    return textureLod(material.environmentProbe.textureId, vec4(uv, index), lod).rgb;
+    return textureLod(samplerCubeArray(material.environmentProbe.textureId), vec4(uv, index), lod).rgb;
 #else
     return textureLod(EnvironmentProbe, vec4(uv, index), lod).rgb;
 #endif
@@ -79,7 +79,7 @@ vec3 sampleProbeLod(in Material material, vec3 uv, int index, float lod)
 float sampleProbeDepth(in Material material, vec3 uv, int index)
 {
 #ifdef LITE3D_BINDLESS_TEXTURE_PIPELINE
-    return texture(material.environmentProbeDepth.textureId, vec4(uv, index)).r;
+    return texture(samplerCubeArray(material.environmentProbeDepth.textureId), vec4(uv, index)).r;
 #else
     return texture(EnvironmentProbeDepth, vec4(uv, index)).r;
 #endif
