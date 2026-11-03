@@ -1,8 +1,14 @@
 #include "samples:shaders/sources/common/common_inc.glsl"
 
 // Lambertian
-vec3 BRDF(in Surface surface, in AngularInfo angular)
+SufraceLighting BRDF(in Surface surface, in AngularInfo angular)
 {
-    vec3 F = fresnelSchlickRoughness(angular.HdotV, surface);
-    return DiffuseLobeLambertian(F, surface.material);
+    vec3 F = fresnelSchlick(angular.HdotV, surface);
+    vec3 kD = diffuseFactor(F, surface.material.metallic);
+
+    SufraceLighting sl;
+    sl.diffuse = kD * DiffuseLobeLambertian(surface.material);
+    sl.specular = vec3(0.0);
+
+    return sl;
 }

@@ -176,6 +176,8 @@ Surface makeSurface(vec2 uv, vec3 wv, vec3 wn, vec3 wt, vec3 wb)
     surface.material.roughness = clamp(surface.material.roughness, LITE3D_MIN_ROUGHNESS, 1.0);
     surface.material.metallic = clamp(surface.material.metallic, 0.0, 1.0);
     surface.material.emission *= surface.material.emissionStrength;
+    surface.F0 = modulateF0(surface.material);
+    
     return surface;
 }
 

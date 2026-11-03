@@ -60,6 +60,7 @@ Surface makeSurface(vec2 uv, vec3 wv, vec3 wn, vec3 wt, vec3 wb)
     surface.material.roughness = clamp(specular.y, LITE3D_MIN_ROUGHNESS, 1.0);
     surface.material.metallic = clamp(specular.z, 0.0, 1.0);
     surface.material.ior = getIOR(uv);
+    surface.F0 = modulateF0(surface.material);
 
 #ifdef LITE3D_ENABLE_ENVIRONMENT_TEXTURE // Setup by the engine 
     surface.material.flags |= LITE3D_MATERIAL_ENVIRONMENT_TEXTURE;

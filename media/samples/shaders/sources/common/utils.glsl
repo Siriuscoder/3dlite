@@ -78,9 +78,15 @@ float linstep(float a, float b, float v)
     return clamp((v - a) / (b - a), 0.0, 1.0);
 }
 
-float shlickPow(float a, float b)
+float fastPow(float a, float b)
 {
     return a / (b - a * b + a);
+}
+
+float fastPow5(float x) 
+{ 
+    float x2 = x * x;
+    return x2 * x2 * x; 
 }
 
 bool hasFlag(uint a, uint flag)
@@ -348,12 +354,22 @@ vec3 modulateF0(in Material material)
     return mix(material.F0.rgb, material.albedo.rgb, material.metallic);
 }
 
-// Fresnel equation (Schlick)
+// Fresnel equation (Schlick, considering roughness)
 vec3 fresnelSchlickRoughness(float teta, in Surface surface)
 {
     vec3 F0 = surface.F0;
-    // Calculate fresnel
-    vec3 F = F0 + (max(vec3(1.0 - surface.material.roughness), F0) - F0) * pow(clamp(1.0 - teta, 0.0, 1.0), 5.0);
+    // Calculate fresnel with roughness 
+    vec3 F = F0 + (max(vec3(1.0 - surface.material.roughness), F0) - F0) * fastPow5(1.0 - teta);
+    return clamp(F * surface.material.specular, 0.0, 1.0);
+}
+
+// Fresnel equation (Schlick)
+vec3 fresnelSchlick(float teta, in Surface surface)
+{
+    vec3 F0 = surface.F0;
+    float F90 = clamp(50.0 * dot(F0, vec3(0.33333)), 0.0, 1.0);
+
+    vec3 F = F0 + (F90 - F0) * fastPow5(1.0 - teta);
     return clamp(F * surface.material.specular, 0.0, 1.0);
 }
 
@@ -381,61 +397,59 @@ float NDF(float NdotH, float roughness)
     return nom / denom;
 }
 
-// Geometry function (Schlick-Beckmann, Schlick-GGX)
-float SchlickGGX(float teta, float k)
+// Geometry function visibility (Schlick-Beckmann, Schlick-GGX) height-correlated 
+float SmithGGXCorrelatedVis(float NdotV, float NdotL, float roughness)
 {
-    float nom   = teta;
-    float denom = teta * (1.0 - k) + k;
+    const float alpha = roughness * roughness;
+    const float alpha2 = alpha * alpha;
 
-    return nom / denom;
-}
+    const float gv = NdotL * sqrt(alpha2 + (1.0 - alpha2) * NdotV * NdotV);
+    const float gl = NdotV * sqrt(alpha2 + (1.0 - alpha2) * NdotL * NdotL);
 
-// Geometry function (Smith's)
-float SmithGGX(float NdotV, float NdotL, float roughness)
-{
-    float k = (roughness * roughness) / 2.0;
-
-    float ggx2  = SchlickGGX(NdotV, k);
-    float ggx1  = SchlickGGX(NdotL, k);
-
-    return ggx1 * ggx2;
-}
-
-float SmithGGXCorrelated(float NdotV, float NdotL, float roughness)
-{
-    roughness += 1.0;
-    float k = (roughness * roughness) / 8.0;
-    
-    float denom = mix(NdotV, 1.0, k) * mix(NdotL, 1.0, k);
-    return 1.0 / denom;
+    return 0.5 / max(gv + gl, 1e-6);
 }
 
 // Specular Term GGX
 vec3 SpecularLobeGGX(vec3 F, in Material material, in AngularInfo angular)
 {
     float ndf = NDF(angular.NdotH, material.roughness);
-    float gVis = SmithGGXCorrelated(angular.NdotV, angular.NdotL, material.roughness);
+    float GVis = SmithGGXCorrelatedVis(angular.NdotV, angular.NdotL, material.roughness);
 
-    return (ndf * gVis * F) / 4.0;
+    return ndf * GVis * F;
 }
 
 // Diffuse Term Lambertian (Simple diffuse model)
-vec3 DiffuseLobeLambertian(vec3 F, in Material material)
+vec3 DiffuseLobeLambertian(in Material material)
 {
-    vec3 kD = diffuseFactor(F, material.metallic);
-    return kD * material.albedo.rgb * M_INV_PI;
+    return material.albedo.rgb * M_INV_PI;
 }
 
-vec3 Sheen(vec3 F, in Material material, in AngularInfo angular)
+// estevez and kulla 2017 - attempt to provide cloth/sheen ndf
+float CharlieNDF(float roughness, float NdotH)
 {
-    if (material.sheen > FLT_EPSILON)
-    {
-        vec3 Fs = mix(vec3(1.0), material.albedo.rgb, F);
-        float sheenFalloff = pow(clamp(1.0 - angular.NdotV, 0.0, 1.0), 5.0); // падение к краям
-        return Fs * sheenFalloff * material.sheen * material.roughness;
-    }
+    float invR = 1.0 / max(roughness, 0.001);
+    float sin2h = max(1.0 - NdotH * NdotH, 0.0078125);
+    return (2.0 + invR) * pow(sin2h, invR * 0.5) / (M_PI * 2.0);
+}
 
-    return vec3(0.0);
+// neubelt and pettineo 2013 - attempt to provide cloth visibility
+float NeubeltVis(float NdotV, float NdotL)
+{
+    return max(1.0 / (4.0 * (NdotL + NdotV - NdotL * NdotV)), 0.0);
+}
+
+vec3 Sheen(in Material material, in AngularInfo angular)
+{
+    // roughness - sheen needs minimum roughness for cloth appearance
+    float sheenRoughness = max(material.roughness, 0.3);
+    
+    // specular
+    float ndf = CharlieNDF(sheenRoughness, angular.NdotH);
+    float GVis = NeubeltVis(angular.NdotV, angular.NdotL);
+    vec3 sheenColor = material.albedo.rgb * material.sheen;
+    float edge = fastPow5(1.0 - angular.NdotV);
+    vec3 F = mix(sheenColor * 0.2, sheenColor, edge);
+    return ndf * GVis * F;
 }
 
 // Attenuation

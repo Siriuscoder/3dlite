@@ -30,7 +30,8 @@ bool isZero(vec3 a1);
 bool isValidUV(vec2 uv);
 float lerp(float a, float b, float f);
 float linstep(float a, float b, float v);
-float shlickPow(float a, float b); // Shlick power fast approx a^b = a / (b – a*b + a) for 0 <= a <= 1 
+float fastPow(float a, float b); // Shlick power fast approx a^b = a / (b – a*b + a) for 0 <= a <= 1 
+float fastPow5(float x);
 bool hasFlag(uint a, uint flag);
 //////////// Noise and random utilities
 ////////////////////////////////////////////////////////////////////////////
@@ -80,19 +81,20 @@ vec3 ditherBayer(vec2 uv, vec3 color);
 
 //////////// PBR utilities
 ////////////////////////////////////////////////////////////////////////////
-vec3 modulateF0()
-vec3 fresnelSchlickRoughness(float teta, in Surface material);
+vec3 modulateF0(in Material material);
+vec3 fresnelSchlickRoughness(float teta, in Surface surface);
+vec3 fresnelSchlick(float teta, in Surface material);
 vec3 diffuseFactor(vec3 F, float metallic);
 // Normal distribution function (Trowbridge-Reitz GGX)
 float NDF(float NdotH, float roughness);
 // Specular GGX lobe
 vec3 SpecularLobeGGX(vec3 F, in Material material, in AngularInfo angular);
 // Geometry function (Smith's)
-float SmithGGX(float NdotV, float NdotL, float roughness);
+float SmithGGXCorrelatedVis(float NdotV, float NdotL, float roughness);
 // Diffuse Lambertian lobe (Simple diffuse model)
-vec3 DiffuseLobeLambertian(vec3 F, in Material material);
+vec3 DiffuseLobeLambertian(in Material material);
 // Sheen 
-vec3 Sheen(vec3 F, in Material material, in AngularInfo angular);
+vec3 Sheen(in Material material, in AngularInfo angular);
 // Attenuation
 float calcAttenuation(in LightSource source, in AngularInfo angular);
 
