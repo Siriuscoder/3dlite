@@ -15,7 +15,7 @@ SufraceLighting EvaluateIBL(in Surface surface, in AngularInfo angular);
 
 vec3 ComputeLighting(in Surface surface, in AngularInfo angular)
 {
-    SufraceLighting direct = SufraceLighting(vec3(0.0), vec3(0.0));
+    SufraceLighting direct = SufraceLighting(vec3(0.0), vec3(0.0), vec3(0.0));
 
     int count = lightsIndexes[0].x;
     for (int i = 1; i <= count; ++i)

@@ -60,7 +60,7 @@
         {
           "Name": "SpecularAmbientFactor",
           "Type": "float",
-          "Value": 2.2
+          "Value": 1.0
         },
         {
           "Name": "EnvironmentProbe",

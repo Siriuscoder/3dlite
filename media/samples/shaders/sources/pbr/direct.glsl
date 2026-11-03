@@ -20,9 +20,21 @@ float MicrowShadowingCOD(float NdotL, float visibility)
     return microShadow * microShadow;
 }
 
+// A local diffuse approximation, not a volumetric thickness simulation. The wrap
+// integrates to one over incident directions: the (1 + wrap)^2 denominator keeps
+// broadening the lobe from manufacturing light. The caller blends this with the
+// ordinary diffuse lobe using the material's scattering fraction.
+float SubsurfaceScattering(vec3 normal, vec3 lightDir)
+{
+    const float wrap = 0.35;
+    const float NdotL = dot(normal, lightDir);
+
+    return max(NdotL + wrap, 0.0) / ((1.0 + wrap) * (1.0 + wrap) * M_PI);
+}
+
 SufraceLighting EvaluateDirect(in LightSource light, inout Surface surface, inout AngularInfo angular)
 {
-    SufraceLighting sl = SufraceLighting(vec3(0.0), vec3(0.0));
+    SufraceLighting sl = SufraceLighting(vec3(0.0), vec3(0.0), vec3(0.0));
 
     // Check for the light source is enabled
     if (!hasFlag(light.flags, LITE3D_LIGHT_ENABLED))
@@ -71,15 +83,20 @@ SufraceLighting EvaluateDirect(in LightSource light, inout Surface surface, inou
         sl.specular *= angular.NdotL;
     }
 
+    if (surface.material.subSurfaceScattering > FLT_EPSILON)
+    {
+        sl.diffuse += SubsurfaceScattering(surface.normal, angular.lightDir) * surface.material.subSurfaceScattering;
+    }
+
     if (surface.material.sheen > FLT_EPSILON)
     {
         sl.specular += Sheen(surface.material, angular) * angular.NdotL;
         // energy - sheen absorbs some diffuse
-        sl.diffuse *= 1.0 - surface.material.sheen * 0.5;
+        sl.diffuseEnergy *= 1.0 - surface.material.sheen * 0.5;
     }
 
     // reduce deffuse for transparent surfaces
-    sl.diffuse *= radiance * surface.material.alpha;
+    sl.diffuse *= radiance * sl.diffuseEnergy * surface.material.alpha;
     sl.specular *= radiance;
 
     return sl;

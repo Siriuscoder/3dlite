@@ -66,7 +66,8 @@ SufraceLighting BRDF(in Surface surface, in AngularInfo angular)
     vec3 kD = diffuseFactor(F, surface.material.metallic);
 
     SufraceLighting sl;
-    sl.diffuse = kD * d * surface.material.albedo.rgb;
+    sl.diffuseEnergy = kD;
+    sl.diffuse = d * surface.material.albedo.rgb;
     sl.specular = SpecularLobeGGX(F, surface.material, angular);
 
     return sl;

@@ -2,14 +2,6 @@
 
 uniform sampler2DArray GBuffer;
 
-#ifndef LITE3D_CUBE_MAP_UV_SCALE
-#define LITE3D_CUBE_MAP_UV_SCALE 1.0
-#endif
-
-#ifndef LITE3D_ENV_DIFFUSE_STRENGTH
-#define LITE3D_ENV_DIFFUSE_STRENGTH 1.0
-#endif
-
 vec4 getAlbedo(vec2 uv);
 vec3 getEmission(vec2 uv);
 vec3 getNormal(vec2 uv, mat3 tbn);
@@ -54,6 +46,7 @@ Surface makeSurface(vec2 uv, vec3 wv, vec3 wn, vec3 wt, vec3 wb)
     surface.material.environmentUVScale = LITE3D_CUBE_MAP_UV_SCALE;
     surface.material.environmentSingleProbeIndex = -1;
     surface.material.sheen = getSheen(uv);
+    surface.material.subSurfaceScattering = LITE3D_SUBSURFACE_SCATTERING;
 
     vec3 specular = getSpecular(uv);
     surface.material.specular = clamp(specular.x, 0.0, 1.0);
@@ -106,6 +99,7 @@ Surface restoreSurface(vec2 uv)
     surface.material.environmentUVScale = LITE3D_CUBE_MAP_UV_SCALE;
     surface.material.environmentSingleProbeIndex = -1;
     surface.material.sheen = 0.0;
+    surface.material.subSurfaceScattering = LITE3D_SUBSURFACE_SCATTERING;
     surface.wv = wv.xyz;
     surface.uv = uv;
     surface.normal = nw.xyz;

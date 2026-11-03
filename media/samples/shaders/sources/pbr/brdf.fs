@@ -7,7 +7,8 @@ SufraceLighting BRDF(in Surface surface, in AngularInfo angular);
     vec3 kD = diffuseFactor(F, surface.material.metallic);
 
     SufraceLighting sl;
-    sl.diffuse = kD * DiffuseLobeLambertian(surface.material);
+    sl.diffuseEnergy = kD;
+    sl.diffuse = DiffuseLobeLambertian(surface.material);
     sl.specular = SpecularLobeGGX(F, surface.material, angular);
 
     return sl;

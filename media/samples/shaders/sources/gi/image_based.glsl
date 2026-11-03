@@ -87,7 +87,7 @@ float sampleProbeDepth(in Material material, vec3 uv, int index)
 
 SufraceLighting EvaluateIBL(in Surface surface, in AngularInfo angular)
 {
-    SufraceLighting result = SufraceLighting(vec3(0.0), vec3(0.0));
+    SufraceLighting result = SufraceLighting(vec3(0.0), vec3(0.0), vec3(0.0));
     float maxLod = 0.0;
     int probesCount = 0;
 
@@ -194,7 +194,7 @@ SufraceLighting EvaluateIBL(in Surface surface, in AngularInfo angular)
                 if (hasFlag(probe.flags, LITE3D_ENV_PROBE_FLAG_SPECULAR))
                 {
                     float sW = 1.0 / max(pow(probeDistance, LITE3D_ENV_PROBE_SPECULAR_POWER), FLT_EPSILON);
-                    totalSpecular += sampleProbeLod(surface.material, R, p, specularLevel) * sW;
+                    totalSpecular += sampleProbeLod(surface.material, angular.viewReflectDir, p, specularLevel) * sW;
                     totalSWeight += sW;
                 }
 #endif
@@ -206,7 +206,7 @@ SufraceLighting EvaluateIBL(in Surface surface, in AngularInfo angular)
                 radianceSH[ir] /= totalDWeight;
             }
 
-            result.diffuse += irradianceSHL2(surface.normal, radianceSH, 1.0);
+            result.diffuse += irradianceSHL2(surface.normal, radianceSH, visClamped);
 #endif
 
 #ifdef LITE3D_EVALUATE_IBL_SPECULAR
@@ -219,7 +219,8 @@ SufraceLighting EvaluateIBL(in Surface surface, in AngularInfo angular)
     vec3 F = fresnelSchlickRoughness(angular.NdotV, surface);
     vec3 specEnergy = IBLSpecularEnergy(F, angular.NdotV, surface);
 
-    result.diffuse *= diffuseFactor(F, surface.material.metallic) * surface.material.albedo.rgb * surface.material.envDiffuse;
+    result.diffuseEnergy = diffuseFactor(F, surface.material.metallic);
+    result.diffuse *= result.diffuseEnergy * surface.material.albedo.rgb * surface.material.envDiffuse;
     result.specular *= specEnergy * surface.material.envSpecular;
 
     return result;

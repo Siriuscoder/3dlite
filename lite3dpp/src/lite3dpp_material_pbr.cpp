@@ -47,6 +47,7 @@ namespace lite3dpp
         setEmissionStrength(helper.getObject(L"EmissionStrength").getDouble(L"Value", 0.0), false);
         setEnvironmentUVScale(helper.getObject(L"EnvironmentUVScale").getDouble(L"Value", 1.0), false);
         setSheen(helper.getObject(L"Sheen").getDouble(L"Value", 0.0), false);
+        setSubSurfaceScattering(helper.getObject(L"SubSurfaceScattering").getDouble(L"Value", 0.0), false);
         setEnvironmentSingleProbeIndex(helper.getObject(L"EnvironmentSingleProbeIndex").getInt(L"Value", -1), false);
 
         size_t index = 0;

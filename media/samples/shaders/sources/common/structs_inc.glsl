@@ -152,7 +152,9 @@ struct Material
     float environmentUVScale;
     int environmentSingleProbeIndex;
     float sheen;
+    float subSurfaceScattering;
     uint flags;
+    uint reserved[3];
 #ifdef LITE3D_BINDLESS_TEXTURE_PIPELINE
     TextureHandle slot[8];
     TextureCubeHandle environment;
@@ -175,6 +177,7 @@ struct Surface
 
 struct SufraceLighting
 {
+    vec3 diffuseEnergy;
     vec3 diffuse;
     vec3 specular;
 };

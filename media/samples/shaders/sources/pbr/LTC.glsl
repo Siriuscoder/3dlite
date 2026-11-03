@@ -393,7 +393,7 @@ vec3 LTC_EvaluateEllipce(vec3 N, vec3 V, vec3 P, mat3 Minv, vec3 points[4])
 
 SufraceLighting LTC(in LightSource source, in Surface surface, in AngularInfo angular)
 {
-    SufraceLighting sl = SufraceLighting(vec3(0.0), vec3(0.0));
+    SufraceLighting sl = SufraceLighting(vec3(0.0), vec3(0.0), vec3(0.0));
     // Calc the rect area of the light source
     vec3 directionX = cross(source.direction.xyz, source.directionUP.xyz);
     vec3 ex = source.areaWidth / 2.0 * directionX.xyz;
@@ -441,7 +441,8 @@ SufraceLighting LTC(in LightSource source, in Surface surface, in AngularInfo an
     vec3 F = fresnelLUT(t2.x, t2.y, surface);
     vec3 kD = diffuseFactor(F, surface.material.metallic);
 
-    sl.diffuse = diff * surface.material.albedo.rgb * kD; // diffuse lobe
+    sl.diffuseEnergy = kD;
+    sl.diffuse = diff * surface.material.albedo.rgb; // diffuse lobe
     sl.specular = spec * F;                               // specular lobe
     return sl;
 }
