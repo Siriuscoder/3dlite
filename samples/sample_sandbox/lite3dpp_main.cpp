@@ -96,7 +96,7 @@ public:
         mFlashLight->getLight()->setAttenuationConstant(AttenuationConstant);
         mFlashLight->getLight()->setAttenuationLinear(AttenuationLinear);
         mFlashLight->getLight()->setAttenuationQuadratic(AttenuationQuadratic);
-        mFlashLight->getLight()->setRadiance(10.0f);
+        mFlashLight->getLight()->setRadiance(20.0f);
         mFlashLight->getLight()->enabled(true);
     }
 
@@ -109,7 +109,7 @@ public:
         spotLight->getLight()->setAttenuationConstant(AttenuationConstant);
         spotLight->getLight()->setAttenuationLinear(AttenuationLinear);
         spotLight->getLight()->setAttenuationQuadratic(AttenuationQuadratic);
-        spotLight->getLight()->setRadiance(10.0f);
+        spotLight->getLight()->setRadiance(20.0f);
         spotLight->getLight()->enabled(true);
 
         // Recalc global illumination
@@ -125,7 +125,7 @@ public:
         sparkNode->getLight()->setAttenuationConstant(AttenuationConstant);
         sparkNode->getLight()->setAttenuationLinear(AttenuationLinear);
         sparkNode->getLight()->setAttenuationQuadratic(AttenuationQuadratic);
-        sparkNode->getLight()->setRadiance(10.0f);
+        sparkNode->getLight()->setRadiance(6.0f);
         sparkNode->getLight()->enabled(true);
 
         // Recalc global illumination

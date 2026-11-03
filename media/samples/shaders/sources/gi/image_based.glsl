@@ -85,12 +85,44 @@ float sampleProbeDepth(in Material material, vec3 uv, int index)
 #endif
 }
 
+vec3 computeDominantSpecularDirection(in Surface surface, in AngularInfo angular)
+{
+    // frostbite/epic dominant direction - biases toward normal as roughness increases
+    // this better represents where most specular energy comes from for rough surfaces
+    float smoothness  = 1.0 - surface.material.roughness;
+    float factor      = smoothness * (sqrt(smoothness) + surface.material.roughness);
+    return normalize(mix(surface.normal, angular.viewReflectDir, factor));
+}
+
+float computeSpecularOcclusion(in Surface surface, in AngularInfo angular, vec3 dominantSpecularDirection)
+{
+    float exponent = exp2(-16.0 * surface.material.roughness - 1.0);
+
+    float occlusion = clamp(pow(max(angular.NdotV + surface.ao, 1e-6), exponent) - 1.0 + surface.ao, 0.0, 1.0);
+    float horizon = clamp(1.0 + dot(dominantSpecularDirection, surface.normal), 0.0, 1.0);
+
+    return occlusion * horizon * horizon;
+}
+
+// approx of multi-bounce (inter-reflection) for ao
+vec3 gtaoMultiBounce(float visibility, vec3 albedo)
+{
+    // Jimenez et al. 2016 approximation
+    vec3 a = 2.0404 * albedo - 0.3324;
+    vec3 b = -4.7951 * albedo + 0.6417;
+    vec3 c = 2.7552 * albedo + 0.6903;
+    
+    return max(vec3(visibility), ((visibility * a + b) * visibility + c) * visibility);
+}
+
 SufraceLighting EvaluateIBL(in Surface surface, in AngularInfo angular)
 {
     SufraceLighting result = SufraceLighting(vec3(0.0), vec3(0.0), vec3(0.0));
     float maxLod = 0.0;
     int probesCount = 0;
+    float visibility = max(surface.ao, 0.1); 
 
+    vec3 dominant = computeDominantSpecularDirection(surface, angular);
 // В случае если запущен bindless пайплайн всегда декларируем эту секцию так как ее использование зависит от 
 // флагов материала. Иначе движок выставляет LITE3D_ENABLE_ENVIRONMENT_TEXTURE если в пайплайне включено
 // использование текстуры окружения
@@ -109,8 +141,8 @@ SufraceLighting EvaluateIBL(in Surface surface, in AngularInfo angular)
 
 #ifdef LITE3D_EVALUATE_IBL_SPECULAR
             // Specular 
-            float specularLevel = surface.material.roughness * max(maxLod - 1.0. 0.0);
-            result.specular = sampleEnvLod(surface.material, angular.viewReflectDir, specularLevel);
+            float specularLevel = surface.material.roughness * max(maxLod - 1.0, 0.0);
+            result.specular = sampleEnvLod(surface.material, dominant, specularLevel);
 #endif
         }
     }
@@ -121,7 +153,6 @@ SufraceLighting EvaluateIBL(in Surface surface, in AngularInfo angular)
     {
         getProbeMaxLodAndCount(surface.material, probesCount, maxLod);
         float specularLevel = surface.material.roughness * max(maxLod - 1.0, 0.0);
-        float visClamped = max(surface.ao, 0.05); 
 
         if (surface.material.environmentSingleProbeIndex >= 0)
         {
@@ -130,14 +161,14 @@ SufraceLighting EvaluateIBL(in Surface surface, in AngularInfo angular)
 #ifdef LITE3D_EVALUATE_IBL_DIFFUSE
             if (hasFlag(probe.flags, LITE3D_ENV_PROBE_FLAG_IRRADIANCE))
             {
-                result.diffuse += irradianceSHL2(surface.normal, probe.sh, visClamped);
+                result.diffuse += irradianceSHL2(surface.normal, probe.sh, visibility);
             }
 #endif
 
 #ifdef LITE3D_EVALUATE_IBL_SPECULAR
             if (hasFlag(probe.flags, LITE3D_ENV_PROBE_FLAG_SPECULAR))
             {
-                result.specular += sampleProbeLod(surface.material, angular.viewReflectDir, 
+                result.specular += sampleProbeLod(surface.material, dominant, 
                     surface.material.environmentSingleProbeIndex, specularLevel);
             }
 #endif
@@ -194,7 +225,7 @@ SufraceLighting EvaluateIBL(in Surface surface, in AngularInfo angular)
                 if (hasFlag(probe.flags, LITE3D_ENV_PROBE_FLAG_SPECULAR))
                 {
                     float sW = 1.0 / max(pow(probeDistance, LITE3D_ENV_PROBE_SPECULAR_POWER), FLT_EPSILON);
-                    totalSpecular += sampleProbeLod(surface.material, angular.viewReflectDir, p, specularLevel) * sW;
+                    totalSpecular += sampleProbeLod(surface.material, dominant, p, specularLevel) * sW;
                     totalSWeight += sW;
                 }
 #endif
@@ -206,22 +237,28 @@ SufraceLighting EvaluateIBL(in Surface surface, in AngularInfo angular)
                 radianceSH[ir] /= totalDWeight;
             }
 
-            result.diffuse += irradianceSHL2(surface.normal, radianceSH, visClamped);
+            result.diffuse += irradianceSHL2(surface.normal, radianceSH, visibility);
 #endif
 
 #ifdef LITE3D_EVALUATE_IBL_SPECULAR
             result.specular += totalSpecular / totalSWeight;
 #endif
         }
+
+#ifdef LITE3D_EVALUATE_IBL_DIFFUSE
+        result.diffuse *= M_INV_PI;
+#endif
     }
 #endif
 
+    vec3 bounceBoost = gtaoMultiBounce(visibility, surface.material.albedo.rgb) / visibility;
+    float occlusion = computeSpecularOcclusion(surface, angular, dominant);
     vec3 F = fresnelSchlickRoughness(angular.NdotV, surface);
     vec3 specEnergy = IBLSpecularEnergy(F, angular.NdotV, surface);
 
     result.diffuseEnergy = diffuseFactor(F, surface.material.metallic);
-    result.diffuse *= result.diffuseEnergy * surface.material.albedo.rgb * surface.material.envDiffuse;
-    result.specular *= specEnergy * surface.material.envSpecular;
+    result.diffuse *= surface.material.albedo.rgb * result.diffuseEnergy * bounceBoost * surface.material.envDiffuse;
+    result.specular *= specEnergy * occlusion * surface.material.envSpecular;
 
     return result;
 }

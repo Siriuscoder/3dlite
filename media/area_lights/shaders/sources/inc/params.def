@@ -6,7 +6,7 @@
 #define LITE3D_SHADOW_PCF_MAX_FILTER_SIZE                   5.0
 #define LITE3D_SHADOW_PCF_MIN_STEP                          0.5
 
-#define LITE3D_SSAO_POWER                                   2.0
+#define LITE3D_SSAO_POWER                                   1.2
 #define LITE3D_SSAO_ADAPTIVE_BIAS_MAX                       0.06
 #define LITE3D_SSAO_ADAPTIVE_BIAS_MIN                       0.01
 

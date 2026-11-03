@@ -8,7 +8,7 @@ const float LTC_LUT_BIAS  = 0.5/LTC_LUT_SIZE;
 vec3 fresnelLUT(float magnitude, float power, Surface surface)
 {
     vec3 F0 = surface.F0;
-    vec3 F90 = clamp(50.0 * dot(F0, 0.33333), 0.0, 1.0);
+    float F90 = clamp(50.0 * dot(F0, vec3(0.33333)), 0.0, 1.0);
     // Restore fresnel
     vec3 F = F0 * magnitude + (F90 - F0) * power;
     return clamp(F * surface.material.specular, 0.0, 1.0);
