@@ -98,21 +98,21 @@ struct LightSource
 
 struct TextureHandle
 {
-    sampler2D textureId;
+    uvec2 textureId;
     uint flags;
     uint reserved;
 };
 
 struct TextureCubeHandle
 {
-    samplerCube textureId;
+    uvec2 textureId;
     uint flags;
     uint reserved;
 };
 
 struct TextureCubeArrayHandle
 {
-    samplerCubeArray textureId;
+    uvec2 textureId;
     uint flags;
     uint reserved;
 };

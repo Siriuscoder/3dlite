@@ -86,17 +86,17 @@ Surface makeSurface(vec2 uv, vec3 wv, vec3 wn, vec3 wt, vec3 wb)
         {
             if (hasFlag(surface.material.slot[i].flags, TEXTURE_FLAG_ALBEDO))
             {
-                vec4 albedo = texture(surface.material.slot[i].textureId, uv);
+                vec4 albedo = texture(sampler2D(surface.material.slot[i].textureId), uv);
                 surface.material.albedo *= vec4(albedo.rgb, 1.0);
                 surface.material.alpha *= albedo.a;
             }
             else if (hasFlag(surface.material.slot[i].flags, TEXTURE_FLAG_EMISSION))
             {
-                surface.material.emission *= vec4(texture(surface.material.slot[i].textureId, uv).rgb, 1.0);
+                surface.material.emission *= vec4(texture(sampler2D(surface.material.slot[i].textureId), uv).rgb, 1.0);
             }
             else if (hasFlag(surface.material.slot[i].flags, TEXTURE_FLAG_ALPHA_MASK))
             {
-                surface.material.alpha *= texture(surface.material.slot[i].textureId, uv).r;
+                surface.material.alpha *= texture(sampler2D(surface.material.slot[i].textureId), uv).r;
             }
             else if (hasFlag(surface.material.slot[i].flags, TEXTURE_FLAG_NORMAL_RG))
             {
@@ -104,7 +104,7 @@ Surface makeSurface(vec2 uv, vec3 wv, vec3 wn, vec3 wt, vec3 wb)
                 {
                     if (!isZero(wt))
                     {
-                        vec2 nl = texture(surface.material.slot[i].textureId, uv).rg;
+                        vec2 nl = texture(sampler2D(surface.material.slot[i].textureId), uv).rg;
                         surface.normal = calcNormal(nl, TBN(wn, wt), surface.material.normalScale.xyz);
                     }
                 }
@@ -112,7 +112,7 @@ Surface makeSurface(vec2 uv, vec3 wv, vec3 wn, vec3 wt, vec3 wb)
                 {
                     if (!isZero(wt) && !isZero(wb))
                     {
-                        vec2 nl = texture(surface.material.slot[i].textureId, uv).rg;
+                        vec2 nl = texture(sampler2D(surface.material.slot[i].textureId), uv).rg;
                         surface.normal = calcNormal(nl, TBN(wn, wt, wb), surface.material.normalScale.xyz);
                     }
                 }
@@ -123,7 +123,7 @@ Surface makeSurface(vec2 uv, vec3 wv, vec3 wn, vec3 wt, vec3 wb)
                 {
                     if (!isZero(wt))
                     {
-                        vec3 nl = texture(surface.material.slot[i].textureId, uv).rgb;
+                        vec3 nl = texture(sampler2D(surface.material.slot[i].textureId), uv).rgb;
                         surface.normal = calcNormal(nl, TBN(wn, wt), surface.material.normalScale.xyz);
                     }
                 }
@@ -131,37 +131,37 @@ Surface makeSurface(vec2 uv, vec3 wv, vec3 wn, vec3 wt, vec3 wb)
                 {
                     if (!isZero(wt) && !isZero(wb))
                     {
-                        vec3 nl = texture(surface.material.slot[i].textureId, uv).rgb;
+                        vec3 nl = texture(sampler2D(surface.material.slot[i].textureId), uv).rgb;
                         surface.normal = calcNormal(nl, TBN(wn, wt, wb), surface.material.normalScale.xyz);
                     }
                 }
             }
             else if (hasFlag(surface.material.slot[i].flags, TEXTURE_FLAG_AO))
             {
-                surface.ao = texture(surface.material.slot[i].textureId, uv).r;
+                surface.ao = texture(sampler2D(surface.material.slot[i].textureId), uv).r;
             }
             else if (hasFlag(surface.material.slot[i].flags, TEXTURE_FLAG_SPECULAR))
             {
-                surface.material.specular *= texture(surface.material.slot[i].textureId, uv).r;
+                surface.material.specular *= texture(sampler2D(surface.material.slot[i].textureId), uv).r;
             }
             else if (hasFlag(surface.material.slot[i].flags, TEXTURE_FLAG_ROUGHNESS))
             {
-                surface.material.roughness *= texture(surface.material.slot[i].textureId, uv).r;
+                surface.material.roughness *= texture(sampler2D(surface.material.slot[i].textureId), uv).r;
             }
             else if (hasFlag(surface.material.slot[i].flags, TEXTURE_FLAG_METALLIC))
             {
-                surface.material.metallic *= texture(surface.material.slot[i].textureId, uv).r;
+                surface.material.metallic *= texture(sampler2D(surface.material.slot[i].textureId), uv).r;
             }
             else if (hasFlag(surface.material.slot[i].flags, TEXTURE_FLAG_SPECULAR_ROUGNESS_METALLIC))
             {
-                vec3 srm = texture(surface.material.slot[i].textureId, uv).rgb;
+                vec3 srm = texture(sampler2D(surface.material.slot[i].textureId), uv).rgb;
                 surface.material.specular *= srm.r;
                 surface.material.roughness *= srm.g;
                 surface.material.metallic *= srm.b;
             }
             else if (hasFlag(surface.material.slot[i].flags, TEXTURE_FLAG_ROUGNESS_METALLIC))
             {
-                vec2 rm = texture(surface.material.slot[i].textureId, uv).gb;
+                vec2 rm = texture(sampler2D(surface.material.slot[i].textureId), uv).gb;
                 surface.material.roughness *= rm.r;
                 surface.material.metallic *= rm.g;
             }
@@ -193,13 +193,13 @@ void surfaceAlphaClip(vec2 uv)
         {
             if (hasFlag(surface.material.slot[i].flags, TEXTURE_FLAG_ALBEDO))
             {
-                vec4 albedo = texture(surface.material.slot[i].textureId, uv);
+                vec4 albedo = texture(sampler2D(surface.material.slot[i].textureId), uv);
                 surface.material.albedo *= vec4(albedo.rgb, 1.0);
                 surface.material.alpha *= albedo.a;
             }
             else if (hasFlag(surface.material.slot[i].flags, TEXTURE_FLAG_ALPHA_MASK))
             {
-                surface.material.alpha *= texture(surface.material.slot[i].textureId, uv).r;
+                surface.material.alpha *= texture(sampler2D(surface.material.slot[i].textureId), uv).r;
             }
         }
         else
