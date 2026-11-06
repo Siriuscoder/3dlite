@@ -18,7 +18,7 @@ float getAmbientOcclusion(vec2 uv)
 void main()
 {
     Surface surface = makeSurface(iuv, iwv, iwn, vec3(0.0), vec3(0.0));
-    AngularInfo angular = AngularInfo(vec3(0), vec3(0), vec3(0), 0.0, false, 0.0, 0.0, 0.0, 0.0, 0.0);
+    AngularInfo angular;
     angularInfoInit(angular, surface);
     // Compute total illumination 
     fragColor = vec4(ComputeLighting(surface, angular), surface.material.alpha);

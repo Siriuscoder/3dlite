@@ -7,14 +7,14 @@ const uint totalSamples = 1024u;
 
 void main() 
 {
-    const ivec2 texCoord = ivec2(gl_GlobalInvocationID.xy);
+    const ivec2 pixelCoord = ivec2(gl_GlobalInvocationID.xy);
     const ivec2 bounds = ivec2(imageSize(BrdfLUT));
 
-    if (texCoord.x >= bounds.x || texCoord.y >= bounds.y)
+    if (any(greaterThanEqual(pixelCoord, bounds)))
         return;
 
-    const float NdotV = max(float(texCoord.x) / float(bounds.x), FLT_EPSILON);
-    const float roughness = max(float(texCoord.y) / float(bounds.y), LITE3D_MIN_ROUGHNESS);
+    const float NdotV = max(float(pixelCoord.x) / float(bounds.x), FLT_EPSILON);
+    const float roughness = max(float(pixelCoord.y) / float(bounds.y), LITE3D_MIN_ROUGHNESS);
 
     vec3 V;
     V.x = sqrt(1.0 - NdotV * NdotV);
@@ -53,5 +53,5 @@ void main()
     A /= float(totalSamples);
     B /= float(totalSamples);
 
-    imageStore(BrdfLUT, texCoord, vec4(A, B, 0.0, 0.0));
+    imageStore(BrdfLUT, pixelCoord, vec4(A, B, 0.0, 0.0));
 }

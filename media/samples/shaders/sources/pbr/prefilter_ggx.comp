@@ -15,21 +15,21 @@ const float invTotalSamples = 1.0 / float(totalSamples);
 
 void main() 
 {
-    const ivec3 texCoord = ivec3(gl_GlobalInvocationID.xyz);
+    const ivec3 pixelCoord = ivec3(gl_GlobalInvocationID.xyz);
     const ivec2 bounds = ivec2(imageSize(PrefilteredEnvironment).xy);
 
     // Skip unnecessary shader calls
-    if (texCoord.x >= bounds.x || texCoord.y >= bounds.y)
+    if (any(greaterThanEqual(pixelCoord.xy, bounds)))
         return;
 
     const vec2 originalSize = vec2(textureSize(EnvironmentProbe, 0).xy);
     const float originalSamples = originalSize.x * originalSize.y;
-    const int currentProbeNumberIndex = (texCoord.z / 6) + 1;
-    const int currentProbeFace = texCoord.z % 6;
+    const int currentProbeNumberIndex = (pixelCoord.z / 6) + 1;
+    const int currentProbeFace = pixelCoord.z % 6;
     const int currentProbeIndex = probesIndex[currentProbeNumberIndex/4][int(mod(currentProbeNumberIndex, 4))];
     const int dstIndex = (currentProbeIndex * 6) + currentProbeFace;
     const float roughness = max(Roughness, LITE3D_MIN_ROUGHNESS);
-    const vec3 baseVector = cubeTexelToDir(ivec3(texCoord.xy, currentProbeFace), bounds); 
+    const vec3 baseVector = cubeTexelToDir(ivec3(pixelCoord.xy, currentProbeFace), bounds); 
     // tagent space from origin point
     const vec3 N = normalize(baseVector);
     // assume view direction always equal to outgoing direction
@@ -65,5 +65,5 @@ void main()
     }
 
     prefilteredColor /= totalWeight;
-    imageStore(PrefilteredEnvironment, ivec3(texCoord.xy, dstIndex), vec4(prefilteredColor, 1.0));
+    imageStore(PrefilteredEnvironment, ivec3(pixelCoord.xy, dstIndex), vec4(prefilteredColor, 1.0));
 }

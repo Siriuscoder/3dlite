@@ -56,7 +56,7 @@ ChunkInvocationInfo getInvocationInfo()
     return chunksInvocationInfo[chunkIndex];
 }
 
-#elif defined(LITE3D_FRAGMENT_SHADER)
+#elif defined(LITE3D_FRAGMENT_SHADER) || defined(LITE3D_COMPUTE_SHADER)
 
 #ifndef LITE3D_DISABLE_INVOCATION_METHOD
 
@@ -216,13 +216,15 @@ void surfaceAlphaClip(vec2 uv)
 float getAmbientOcclusion(vec2 uv);
 uniform sampler2DArray GBuffer;
 
-Surface restoreSurface(vec2 uv)
+bool restoreSurface(vec2 uv, out Surface surface)
 {
     // sampling normal in world space from fullscreen normal map
     vec4 nw = texture(GBuffer, vec3(uv, 1));
     // Non shaded fragment
-    if (isZero(nw.xyz))
-        discard;
+    if (all(equal(nw.xyz, vec3(0.0))))
+    {
+        return false;
+    }
 
     // sampling fragment position in world space from fullscreen normal map
     vec4 wv = texture(GBuffer, vec3(uv, 0));
@@ -233,7 +235,6 @@ Surface restoreSurface(vec2 uv)
     // Emission
     vec3 emission = vec3(nw.a, albedo.a, specular.a);
 
-    Surface surface;
     // unpack material index and AO from wv.w
     unpackF8AndInt16(wv.w, surface.ao, surface.materialIndex);
 
@@ -250,7 +251,7 @@ Surface restoreSurface(vec2 uv)
     surface.F0 = modulateF0(surface.material);
     surface.bentNormal = surface.normal;
     
-    return surface;
+    return true;
 }
 
 void surfaceAlphaClip(in Material material)

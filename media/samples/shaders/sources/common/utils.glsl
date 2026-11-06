@@ -55,7 +55,7 @@ bool isNear(float a1, float a2)
 
 bool isNear(vec3 a1, vec3 a2)
 {
-    return isNear(a1.x, a2.x) && isNear(a1.y, a2.y) && isNear(a1.z, a2.z); 
+    return all(bvec3(isNear(a1.x, a2.x), isNear(a1.y, a2.y), isNear(a1.z, a2.z))); 
 }
 
 bool isZero(float a1)
@@ -162,6 +162,15 @@ vec2 viewPositionToUV(vec3 pos)
     vec4 uv = CameraProjection * vec4(pos, 1.0);
     uv /= uv.w;                 // perspective divide
     return uv.xy * 0.5 + 0.5;   // transform to range 0.0 - 1.0 
+}
+
+vec3 screenUVToEnvDir(vec2 uv)
+{
+    vec2 ndc = uv * 2.0 - 1.0;
+    mat4 inverseViewProjection = inverse(CameraProjection * CameraView);
+    vec4 worldFar = inverseViewProjection * vec4(ndc, 1.0, 1.0);
+
+    return normalize((worldFar.xyz / worldFar.w) - Eye);
 }
 
 float getZNear()
@@ -491,12 +500,19 @@ float calcAttenuation(in LightSource source, in AngularInfo angular)
     return factor;
 }
 
-void angularInfoInit(inout AngularInfo angular, in Surface surface)
+void angularInfoInit(out AngularInfo angular, in Surface surface)
 {
     // Eye direction to current fragment 
     angular.viewDir = normalize(Eye - surface.wv);
     angular.viewReflectDir = reflect(-angular.viewDir, surface.normal);
     angular.NdotV = doubleSidedNdotV(surface.normal, angular.viewDir);
+    angular.lightDir = vec3(0);
+    angular.lightDistance = 0.0;
+    angular.isOutside = false;
+    angular.NdotL = 0.0;
+    angular.HdotV = 0.0;
+    angular.NdotH = 0.0;
+    angular.LdotV = 0.0;
 }
 
 void angularInfoSetLightSource(inout AngularInfo angular, in Surface surface, in LightSource source)

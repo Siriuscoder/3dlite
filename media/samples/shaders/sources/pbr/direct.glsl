@@ -32,7 +32,7 @@ float SubsurfaceScattering(vec3 normal, vec3 lightDir)
     return max(NdotL + wrap, 0.0) / ((1.0 + wrap) * (1.0 + wrap) * M_PI);
 }
 
-SufraceLighting EvaluateDirect(in LightSource light, inout Surface surface, inout AngularInfo angular)
+SufraceLighting EvaluateDirectLight(in LightSource light, inout Surface surface, inout AngularInfo angular)
 {
     SufraceLighting sl = SufraceLighting(vec3(0.0), vec3(0.0), vec3(0.0));
 

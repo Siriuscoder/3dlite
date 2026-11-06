@@ -20,8 +20,8 @@ vec3 ComputeLighting(in Surface surface, in AngularInfo angular)
     int count = lightsIndexes[0].x;
     for (int i = 1; i <= count; ++i)
     {
-        int index = lightsIndexes[i/4][int(mod(i, 4))];
-        SufraceLighting sl = EvaluateDirect(lights[index], surface, angular);
+        int index = lightsIndexes[i / 4][i % 4];
+        SufraceLighting sl = EvaluateDirectLight(lights[index], surface, angular);
 
         direct.diffuse += sl.diffuse;
         direct.specular += sl.specular;

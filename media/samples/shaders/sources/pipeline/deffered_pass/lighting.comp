@@ -1,0 +1,108 @@
+#include "samples:shaders/sources/common/common_inc.glsl"
+
+layout(local_size_x = LITE3D_LIGHT_COMPUTE_THREADS) in;
+layout(binding = 0, rgba32f) uniform writeonly image2D outputImage;
+
+layout(std140) uniform LightSources
+{
+    LightSource lights[LITE3D_MAX_LIGHT_COUNT];
+};
+
+layout(std140) uniform LightIndexes
+{
+    ivec4 lightsIndexes[LITE3D_MAX_LIGHT_COUNT];
+};
+
+uniform samplerCube Skybox;
+uniform float EmissionStrength;
+
+shared Surface groupSurface;
+// True If current pixel is geometry, that was rendered to the G-buffer earlier, overwise current pixel is sky box 
+shared bool isGeometry; 
+shared AngularInfo groupAngular;
+shared SufraceLighting directSum[LITE3D_LIGHT_COMPUTE_THREADS];
+
+#include "samples:shaders/sources/pbr/direct.glsl"
+
+/* Indirect lighting */
+SufraceLighting EvaluateIBL(in Surface surface, in AngularInfo angular);
+
+void main()
+{
+    const int tid = int(gl_LocalInvocationID.x);
+    const ivec2 pixelCoord = ivec2(gl_WorkGroupID.xy);
+    const ivec2 bounds = ivec2(imageSize(outputImage).xy);
+
+    // Skip unnecessary shader calls
+    if (any(greaterThanEqual(pixelCoord, bounds)))
+        return;
+
+    // Load surface only once for zero thread
+    if (tid == 0)
+    {
+        const vec2 uv = (vec2(pixelCoord) + 0.5) / vec2(bounds);
+        isGeometry = restoreSurface(uv, groupSurface);
+        if (isGeometry)
+        {
+            // Часть значений полей groupAngular зависит от конкретного источника, angularInfoInit расчитывает только общие
+            // один раз на вычислительтную группу (пиксель). Далее в каждый истотчник света уже копия уходит
+            angularInfoInit(groupAngular, groupSurface);
+        }
+#ifdef LITE3D_LIGHT_PASS_SKYBOX
+        else // render sky
+        {
+            vec3 dir = screenUVToEnvDir(uv); 
+            vec3 sky = texture(Skybox, dir).rgb * EmissionStrength;
+            imageStore(outputImage, pixelCoord, vec4(sky, 1.0));
+        }
+#endif
+    }
+
+    barrier();
+
+    // local lighting is not matter for sky, break all threads here
+    if (!isGeometry)
+    {
+        return;
+    }
+
+    SufraceLighting lighting = SufraceLighting(vec3(0.0), vec3(0.0), vec3(0.0));
+    int lightCount = lightsIndexes[0].x;
+
+    // Each thread calculates its own light sources
+    for (int i = tid; i < lightCount; i += LITE3D_LIGHT_COMPUTE_THREADS)
+    {
+        int index = lightsIndexes[i / 4][i % 4];
+        SufraceLighting sl = EvaluateDirectLight(lights[index], groupSurface, groupAngular);
+        // accumulate radiance separately
+        lighting.diffuse += sl.diffuse;
+        lighting.specular += sl.specular;
+    }
+
+    directSum[tid] = lighting;
+
+    barrier();
+
+    // Reduction magic
+    for (int stride = LITE3D_LIGHT_COMPUTE_THREADS / 2; stride > 0; stride >>= 1)
+    {
+        if (tid < stride)
+        {
+            directSum[tid].diffuse += directSum[tid + stride].diffuse;
+            directSum[tid].specular += directSum[tid + stride].specular;
+        }
+
+        barrier();
+    }
+
+    if (tid == 0)
+    {
+        // Calculate indirect lighting, ambient, IBL .. 
+        SufraceLighting indirect = EvaluateIBL(groupSurface, groupAngular);
+        // Combine lighting
+        vec3 combined = directSum[0].diffuse + directSum[0].specular + indirect.diffuse + 
+            indirect.specular + surface.material.emission.rgb;
+
+        imageStore(outputImage, pixelCoord, vec4(combined, 1.0));
+    }
+}

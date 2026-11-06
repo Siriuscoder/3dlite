@@ -1,4 +1,4 @@
-#ifdef LITE3D_FRAGMENT_SHADER
+#if defined(LITE3D_FRAGMENT_SHADER) || defined(LITE3D_COMPUTE_SHADER)
 
 uniform sampler2DArray GBuffer;
 
@@ -66,13 +66,15 @@ Surface makeSurface(vec2 uv, vec3 wv, vec3 wn, vec3 wt, vec3 wb)
     return surface;
 }
 
-Surface restoreSurface(vec2 uv)
+bool restoreSurface(vec2 uv, out Surface surface)
 {
     // sampling normal in world space from fullscreen normal map
     vec4 nw = texture(GBuffer, vec3(uv, 1));
     // Non shaded fragment
-    if (isZero(nw.xyz))
-        discard;
+    if (all(equal(nw.xyz, vec3(0.0))))
+    {
+        return false;
+    }
 
     // sampling fragment position in world space from fullscreen normal map
     vec4 wv = texture(GBuffer, vec3(uv, 0));
@@ -83,7 +85,6 @@ Surface restoreSurface(vec2 uv)
     // Emission
     vec3 emission = vec3(nw.a, albedo.a, specular.a);
 
-    Surface surface;
     surface.materialIndex = 0u;
     surface.material.albedo = vec4(albedo.rgb, 1.0);
     surface.material.emission = vec4(emission, 1.0);
@@ -117,7 +118,7 @@ Surface restoreSurface(vec2 uv)
     surface.material.flags |= LITE3D_MATERIAL_ENVIRONMENT_MULTI_PROBE;
 #endif
 
-    return surface;
+    return true;
 }
 
 void surfaceAlphaClip(in Material material)

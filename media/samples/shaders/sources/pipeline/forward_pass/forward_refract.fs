@@ -24,7 +24,7 @@ void main()
 {
     Surface surface = makeSurface(iuv, iwv, iwn, iwt, iwb);
     // Compute refraction offset 
-    AngularInfo angular = AngularInfo(vec3(0), vec3(0), vec3(0), 0.0, false, 0.0, 0.0, 0.0, 0.0, 0.0);
+    AngularInfo angular;
     angularInfoInit(angular, surface);
 
     float eta = 1.0 / surface.material.ior;

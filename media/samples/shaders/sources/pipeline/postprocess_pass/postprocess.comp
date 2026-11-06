@@ -6,51 +6,6 @@ layout(binding = 0, rgba16f) uniform writeonly image2D PostProcessOutput;
 uniform sampler2D Combined;
 uniform sampler2D Bloom;
 
-#ifndef LITE3D_BLOOM_STRENGTH
-#define LITE3D_BLOOM_STRENGTH                           0.04
-#endif
-
-// 0.0f, 2.0f
-#ifndef LITE3D_LENSFLARE_GHOSTS_DISPERSAL
-#define LITE3D_LENSFLARE_GHOSTS_DISPERSAL               0.71
-#endif
-
-// -100.0f, 100.0f
-#ifndef LITE3D_LENSFLARE_CHROMATIC_DISTORTION
-#define LITE3D_LENSFLARE_CHROMATIC_DISTORTION           -6.5
-#endif
-
-#ifndef LITE3D_LENSFLARE_GHOSTS_COUNT
-#define LITE3D_LENSFLARE_GHOSTS_COUNT                   4
-#endif
-
-// -1.0f, 1.0f
-#ifndef LITE3D_LENSFLARE_THRESHOLD_BIAS
-#define LITE3D_LENSFLARE_THRESHOLD_BIAS                 -0.9
-#endif
-
-// 0.0f, 20.0f
-#ifndef LITE3D_LENSFLARE_THRESHOLD_SCALE
-#define LITE3D_LENSFLARE_THRESHOLD_SCALE                7.0
-#endif
-
-// 0.0f, 50.0f
-#ifndef LITE3D_LENSFLARE_GHOSTS_WEIGHT
-#define LITE3D_LENSFLARE_GHOSTS_WEIGHT                  27.5
-#endif
-
-#ifndef LITE3D_LENSFLARE_GHOSTS_ALPHA
-#define LITE3D_LENSFLARE_GHOSTS_ALPHA                   0.1
-#endif
-
-#ifndef LITE3D_CHROMATIC_ABERRATION_AMOUNT
-#define LITE3D_CHROMATIC_ABERRATION_AMOUNT              0.01
-#endif
-
-#ifndef LITE3D_CHROMATIC_ABERRATION_DISTORTION
-#define LITE3D_CHROMATIC_ABERRATION_DISTORTION          0.2
-#endif
-
 vec3 sampleBloomScaledBiased(vec2 uv, vec2 direction, vec3 distortion)
 {
     vec3 distoredSample = vec3(
@@ -118,15 +73,15 @@ vec3 lensFlare(vec2 uv, float aspectRatio, ivec2 bounds)
 
 void main()
 {
-    const ivec2 coord = ivec2(gl_GlobalInvocationID.xy);
+    const ivec2 pixelCoord = ivec2(gl_GlobalInvocationID.xy);
     const ivec2 bounds = ivec2(imageSize(PostProcessOutput).xy);
 
     // Skip unnecessary shader calls
-    if (coord.x >= bounds.x || coord.y >= bounds.y)
+    if (any(greaterThanEqual(pixelCoord, bounds)))
         return;
 
     float aspectRatio = float(bounds.x) / float(bounds.y);
-    vec2 uv = (vec2(coord) + 0.5) / vec2(bounds);
+    vec2 uv = (vec2(pixelCoord) + 0.5) / vec2(bounds);
     
 #ifdef LITE3D_CHROMATIC_ABERRATION_ENABLE
     vec3 hdr = chromaticAberration(uv);
@@ -150,5 +105,5 @@ void main()
     // compute luma
     float luma = dot(ldr, vec3(0.299, 0.587, 0.114));
     // Write to output
-    imageStore(PostProcessOutput, coord, vec4(ldr, luma));
+    imageStore(PostProcessOutput, pixelCoord, vec4(ldr, luma));
 }

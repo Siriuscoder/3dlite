@@ -254,6 +254,10 @@ namespace lite3dpp
         {
             result.append("#define LITE3D_GEOMETRY_SHADER\n");
         }
+        else if (shaderType == LITE3D_SHADER_TYPE_COMPUTE)
+        {
+            result.append("#define LITE3D_COMPUTE_SHADER\n");
+        }
 
         for (auto &d : mGlobalDefinitions)
         {

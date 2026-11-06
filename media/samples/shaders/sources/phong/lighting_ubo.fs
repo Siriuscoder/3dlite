@@ -27,7 +27,7 @@ vec3 calc_lighting(vec3 fragPos, vec3 fragNormal, vec3 eye, float specularFactor
     int count = lightsIndexes[0].x;
     for(int i = 1; i <= count; i++)
     {
-        int index = lightsIndexes[i/4][int(mod(i, 4))];
+        int index = lightsIndexes[i / 4][i % 4];
         LightSource light = lights[index];
 
         if (!hasFlag(light.flags, LITE3D_LIGHT_ENABLED))

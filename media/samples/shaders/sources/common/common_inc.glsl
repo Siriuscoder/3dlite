@@ -53,6 +53,7 @@ float Gaussian(float x, float sigma);
 vec3 worldToViewSpacePosition(vec3 vw);
 vec3 worldToViewSpaceDirection(vec3 dirw);
 vec2 viewPositionToUV(vec3 pos);
+vec3 screenUVToEnvDir(vec2 uv);
 float getZNear();
 float getZFar();
 
@@ -130,8 +131,8 @@ vec3 cubeTexelToDir(ivec3 cubeCoord, ivec2 cubemapSize);
 int cubeFaceFromDir(vec3 dir);
 //////////// Building structures
 Surface makeSurface(vec2 uv, vec3 wv, vec3 wn, vec3 wt, vec3 wb);
-Surface restoreSurface(vec2 uv);
-void angularInfoInit(inout AngularInfo angular, in Surface surface);
+bool restoreSurface(vec2 uv, out Surface surface);
+void angularInfoInit(out AngularInfo angular, in Surface surface);
 void angularInfoSetLightSource(inout AngularInfo angular, in Surface surface, in LightSource source);
 void angularInfoCalcAngles(inout AngularInfo angular, in Surface surface);
 //////////// Clip Functions

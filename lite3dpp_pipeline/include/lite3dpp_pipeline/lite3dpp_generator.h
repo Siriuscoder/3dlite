@@ -38,7 +38,7 @@ namespace lite3dpp_pipeline {
     enum class RenderPassStagePriority
     {
         DepthBuildStage = 0,
-        ShadowCleanStage = 1,
+        ShadowCleanStage = 1, // Obsolete
         ShadowBuildStage = 2,
         GIStage = 3,
         GBufferBuildStage = 4,

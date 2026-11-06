@@ -28,7 +28,6 @@ namespace lite3dpp_pipeline {
 // ---------------------|-----------------------|-------------------|---------------|
 // MainDepth            | DepthBuildStage       | DepthPass         | MainScene     |
 // ---------------------|-----------------------|-------------------|---------------|
-// ShadowMap            | ShadowCleanStage      | ShadowPass        | BigTri        |
 // ShadowMap            | ShadowBuildStage      | ShadowPass        | MainScene     |
 // ---------------------|-----------------------|-------------------|---------------|
 // GIProbe              | GIStage               | GIProbePass       | MainScene     |
