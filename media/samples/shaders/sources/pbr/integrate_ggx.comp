@@ -1,6 +1,6 @@
 #include "samples:shaders/sources/common/common_inc.glsl"
 
-layout(local_size_x = 16, local_size_y = 16) in;
+layout(local_size_x = LITE3D_FILTER_THREADS_X, local_size_y = LITE3D_FILTER_THREADS_Y) in;
 layout(binding = 0, rg16f) uniform writeonly image2D BrdfLUT;
 
 const uint totalSamples = 1024u;

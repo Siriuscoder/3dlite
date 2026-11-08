@@ -1,6 +1,6 @@
 #include "samples:shaders/sources/common/common_inc.glsl"
 
-layout(local_size_x = 16, local_size_y = 16, local_size_z = 1) in;
+layout(local_size_x = LITE3D_FILTER_THREADS_X, local_size_y = LITE3D_FILTER_THREADS_Y, local_size_z = 1) in;
 layout(binding = 0, rgba16f) uniform writeonly imageCubeArray PrefilteredEnvironment;
 uniform samplerCubeArray EnvironmentProbe;
 layout(std140) uniform EnvProbesIndex

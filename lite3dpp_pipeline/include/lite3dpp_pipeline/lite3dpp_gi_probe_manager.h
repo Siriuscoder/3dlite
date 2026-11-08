@@ -151,7 +151,9 @@ protected:
     stl<EnvProbe>::vector mProbes;
     stl<int32_t>::vector mProbesIndex;
     float mzNear = 0.0, mzFar = 1.0;
-    int32_t mSHMaxThreads = 256;
+    int32_t mMaxSHThreads = 256;
+    int32_t mMaxFilterThreadsX = 128;
+    int32_t mMaxFilterThreadsY = 128;
 };
 
 }}

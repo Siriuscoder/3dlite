@@ -88,10 +88,6 @@
 #define LITE3D_SUBSURFACE_SCATTERING                        0.0
 #endif
 
-#ifndef LITE3D_LIGHT_COMPUTE_THREADS
-#define LITE3D_LIGHT_COMPUTE_THREADS                        4
-#endif
-
 #ifndef LITE3D_BLOOM_STRENGTH
 #define LITE3D_BLOOM_STRENGTH                           0.04
 #endif

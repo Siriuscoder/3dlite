@@ -31,6 +31,7 @@ static int32_t gMaxGeometryOutputVertices = 0;
 static int32_t gMaxGeometryTotalOutputComponents = 0;
 static int32_t gMaxGeometryOutputComponents = 0;
 static int32_t gMaxComputeWorkGroupSize[3] = {0};
+static int32_t gMaxComputeWorkGroupInvocations = 0;
 static int32_t gMaxComputeStorageBlocks = 0;
 static int32_t gMaxComputeImageUniforms = 0;
 static int32_t gMaxComputeTextureImageUnits = 0;
@@ -80,6 +81,9 @@ int lite3d_shader_program_technique_init(void)
         SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "GL_MAX_COMPUTE_WORK_GROUP_SIZE: %d %d %d", gMaxComputeWorkGroupSize[0], 
             gMaxComputeWorkGroupSize[1], gMaxComputeWorkGroupSize[2]);
 
+        glGetIntegerv(GL_MAX_COMPUTE_WORK_GROUP_INVOCATIONS, &gMaxComputeWorkGroupInvocations);
+        SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "GL_MAX_COMPUTE_WORK_GROUP_INVOCATIONS: %d", gMaxComputeWorkGroupInvocations);
+
         glGetIntegerv(GL_MAX_COMPUTE_SHADER_STORAGE_BLOCKS, &gMaxComputeStorageBlocks);
         SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "GL_MAX_COMPUTE_SHADER_STORAGE_BLOCKS: %d", gMaxComputeStorageBlocks);
 
@@ -119,7 +123,7 @@ void lite3d_shader_program_get_limitations(int32_t *maxGeometryOutputVertices,
 }
 
 void lite3d_shader_program_get_workgroup_limits(int32_t *maxThreadsWorkGroupX, 
-    int32_t *maxThreadsWorkGroupY, int32_t *maxThreadsWorkGroupZ)
+    int32_t *maxThreadsWorkGroupY, int32_t *maxThreadsWorkGroupZ, int32_t *maxWorkGroupInvocations)
 {
     if (maxThreadsWorkGroupX)
     {
@@ -134,6 +138,11 @@ void lite3d_shader_program_get_workgroup_limits(int32_t *maxThreadsWorkGroupX,
     if (maxThreadsWorkGroupZ)
     {
         *maxThreadsWorkGroupZ = gMaxComputeWorkGroupSize[2];
+    }
+
+    if (maxWorkGroupInvocations)
+    {
+        *maxWorkGroupInvocations = gMaxComputeWorkGroupInvocations;
     }
 }
 

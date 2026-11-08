@@ -17,6 +17,8 @@
  *******************************************************************************/
 #pragma once
 
+#include <array>
+
 #include <lite3d/lite3d_shader_program.h>
 
 #include <lite3dpp/lite3dpp_common.h>
@@ -38,6 +40,14 @@ namespace lite3dpp
         static void setShaderVersion(const String &version);
         static void setFloatPrecision(const String &prec);
         static void addGlobalDefinition(const String &name, const String &value);
+        /**
+         * Choose balanced power-of-two local sizes within the resolution and GPU limits.
+         * Axes with resolution 1 stay at 1. The product never exceeds the invocation limit.
+         * This is a heuristic, not a performance guarantee; ceil-divide the resolution by
+         * the returned sizes for dispatch and guard out-of-bounds invocations in the shader.
+         * Requires initialized shader technique limits and nonzero resolution on all axes.
+         */
+        static std::array<uint32_t, 3> getOptimalWorkGroupSize(uint32_t width, uint32_t height = 1, uint32_t depth = 1);
         void addLocalDefinition(const String &name, const String &value);
 
     protected:
@@ -64,4 +74,3 @@ namespace lite3dpp
         static String mFloatPrecision;
     };
 }
-

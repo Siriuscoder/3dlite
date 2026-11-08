@@ -90,7 +90,9 @@ namespace lite3dpp_pipeline {
             mLightComputeShader->getShaderParameters().setFloatv3Parameter("ClearColor",
                 kmVec3 { background.x, background.y, background.z });
             // lighting.comp assigns one workgroup to each output pixel.
-            mLightComputeShader->dispatch(mCombinedTexture->getWidth(), mCombinedTexture->getHeight(), 1);
+            const uint32_t groupsXCount = (mCombinedTexture->getWidth() + lightComputeLocalThreadsX - 1) / lightComputeLocalThreadsX;
+            const uint32_t groupsYCount = (mCombinedTexture->getHeight() + lightComputeLocalThreadsY - 1) / lightComputeLocalThreadsY;
+            mLightComputeShader->dispatch(groupsXCount, groupsYCount, 1);
         }
 
         // Copy the opaque combined texture only after compute lighting has finished.
@@ -257,6 +259,14 @@ namespace lite3dpp_pipeline {
                 .set(L"Name", "LightCompute.program")
                 .set(L"Path", mShaderPackage + ":shaders/json/lightpass.json"))
             .set(L"Uniforms", lightComputeMaterialUniforms);
+
+        auto maxLightComputeThreads = ShaderProgram::getOptimalWorkGroupSize(mCombinedTexture->getWidth(), 
+            mCombinedTexture->getHeight());
+        lightComputeLocalThreadsX = maxLightComputeThreads[0];
+        lightComputeLocalThreadsY = maxLightComputeThreads[1];
+
+        ShaderProgram::addGlobalDefinition("LITE3D_LIGHT_COMPUTE_THREADS_X", std::to_string(lightComputeLocalThreadsX));
+        ShaderProgram::addGlobalDefinition("LITE3D_LIGHT_COMPUTE_THREADS_Y", std::to_string(lightComputeLocalThreadsY));
 
         mLightComputeShader = getMain().getResourceManager().queryResourceFromJson<ComputeShader>(
             getName() + "_LightCompute.comp", lightComputeConfig.write(), this);

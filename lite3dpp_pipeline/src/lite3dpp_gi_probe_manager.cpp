@@ -35,9 +35,17 @@ GIProbeManager::GIProbeManager(Main& mMain, PipelineBase &pipeline) :
     mProbes.reserve(MaxProbeCount);
     mMain.addObserver(this);
 
-    int32_t maxSupportedThreadsGroupX;
-    lite3d_shader_program_get_workgroup_limits(&maxSupportedThreadsGroupX, nullptr, nullptr);
-    mSHMaxThreads = std::min(256, maxSupportedThreadsGroupX);
+    int32_t maxInvocations;
+    lite3d_shader_program_get_workgroup_limits(nullptr, nullptr, nullptr, &maxInvocations);
+    mMaxSHThreads = std::min(mMaxSHThreads, maxInvocations);
+
+    auto maxFilterThreads = ShaderProgram::getOptimalWorkGroupSize(512, 512);
+    mMaxFilterThreadsX = maxFilterThreads[0];
+    mMaxFilterThreadsY = maxFilterThreads[1];
+
+    ShaderProgram::addGlobalDefinition("LITE3D_FILTER_THREADS_X", std::to_string(mMaxFilterThreadsX));
+    ShaderProgram::addGlobalDefinition("LITE3D_FILTER_THREADS_Y", std::to_string(mMaxFilterThreadsY));
+    ShaderProgram::addGlobalDefinition("LITE3D_SH_THREADS", std::to_string(mMaxSHThreads));
 }
 
 GIProbeManager::~GIProbeManager()
@@ -111,8 +119,9 @@ void GIProbeManager::integrateGGX()
         shaderParams.write(), &mPipeline);
 
     // 16 нитей в группе
-    const uint32_t groupsCount = (LUTSize + 16 - 1) / 16;
-    intergrateGGXShader->dispatch(groupsCount, groupsCount, 1);
+    const uint32_t groupsXCount = (LUTSize + mMaxFilterThreadsX - 1) / mMaxFilterThreadsX;
+    const uint32_t groupsYCount = (LUTSize + mMaxFilterThreadsX - 1) / mMaxFilterThreadsX;
+    intergrateGGXShader->dispatch(groupsXCount, groupsYCount, 1);
 
     // Освобождаем ресурсы, расчет GGX делается только однажды, более шейдер не требуется
     mMain.getResourceManager().releaseResource(intergrateGGXShader->getProgram()->getName());
@@ -251,7 +260,6 @@ void GIProbeManager::createDiffuseRadianceShader()
             .set(L"UBOName", getProbeIndexBufferName())
     });
 
-    ShaderProgram::addGlobalDefinition("LITE3D_SH_THREADS", std::to_string(mSHMaxThreads));
     mDiffuseRadianceSHShader = mMain.getResourceManager().queryResourceFromJson<ComputeShader>(
         mPipelineName + "_DiffuseRadianceSHEnvironment.comp", shaderParams.write(), &mPipeline);
 }
@@ -365,8 +373,9 @@ void GIProbeManager::postUpdate(RenderTarget *rt)
         mPrefilterEnvironmentShader->getShaderParameters().getParameter("PrefilteredEnvironment", 
             LITE3D_SHADER_PARAMETER_IMAGE_STORE)->imageMipLevel = level;
 
-        const uint32_t groupsCount = (levelSize + 16 - 1) / 16;
-        mPrefilterEnvironmentShader->dispatch(groupsCount, groupsCount, mProbesIndex[0] * 6);
+        const uint32_t groupsXCount = (levelSize + mMaxFilterThreadsX - 1) / mMaxFilterThreadsX;
+        const uint32_t groupsYCount = (levelSize + mMaxFilterThreadsY - 1) / mMaxFilterThreadsY;
+        mPrefilterEnvironmentShader->dispatch(groupsXCount, groupsYCount, mProbesIndex[0] * 6);
 
         // Shift to the next mip level
         levelSize >>= 1;
