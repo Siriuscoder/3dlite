@@ -24,7 +24,7 @@ namespace lite3dpp_pipeline {
 
 //- Deffered pipeline scenario ------------------------------------------------------
 // 
-// Render Target        | Stage                 | Matrerial Pass    | Scene         |
+// Render Target        | Stage                 | Material Pass    | Scene         |
 // ---------------------|-----------------------|-------------------|---------------|
 // MainDepth            | DepthBuildStage       | DepthPass         | MainScene     |
 // ---------------------|-----------------------|-------------------|---------------|
@@ -37,8 +37,7 @@ namespace lite3dpp_pipeline {
 // ---------------------|-----------------------|-------------------|---------------|
 // SSAO                 | SSAOBuildStage        | RenderPass        | BigTri        |
 // ---------------------|-----------------------|-------------------|---------------|
-// Combine              | LightComputeStage     | RenderPass        | BigTri        |
-// Combine              | SkyBoxStage           | RenderPass        | SkyBox        |
+// Combine              | BlendDecalStage       | Lighting (compute)| MainScene     |
 // Combine              | BlendDecalStage       | RenderPass        | MainScene     |
 // ---------------------|-----------------------|-------------------|---------------|
 // BLOOM                | BloomBuildStage       | RenderPass        | BigTri        |
@@ -53,12 +52,17 @@ namespace lite3dpp_pipeline {
         PipelineDeffered(const String &name, const String &path, Main &main);
 
         void enableSSAO(bool flag);
+        void setSkyBoxEmission(float emission) override;
 
     protected:
         
         void loadFromConfigImpl(const ConfigurationReader &pipelineConfig) override;
+        void unloadImpl() override;
+        bool beginSceneRender(Scene *scene, Camera *camera, const lite3d_scene_render_params *params) override;
         void constructCameraPipeline(const ConfigurationReader &pipelineConfig, const String &cameraName,
             SceneGenerator &sceneGenerator) override;
+        void constructSkyBoxPass(const ConfigurationReader &pipelineConfig, const String &cameraName,
+            const ConfigurationWriter &mainCameraConfig) override;
 
         virtual void constructGBufferPass(const ConfigurationReader &pipelineConfig, const String &cameraName,
             SceneGenerator &sceneGenerator);
@@ -70,8 +74,7 @@ namespace lite3dpp_pipeline {
     protected:
 
         Scene *mSSAOStage = nullptr;
-        Scene *mLightComputeStage = nullptr;
-        Material *mLightComputeStageMaterial = nullptr;
+        ComputeShader *mLightComputeShader = nullptr;
         Material *mSSAOStageMaterial = nullptr;
         Texture *mGBufferTexture = nullptr;
         Texture *mSSAOTexture = nullptr;

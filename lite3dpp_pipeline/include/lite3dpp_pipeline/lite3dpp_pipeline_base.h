@@ -44,7 +44,7 @@ namespace lite3dpp_pipeline {
         void setContrast(float contrast);
         void setSaturation(float saturation);
         void setBrightness(float brightness);
-        void setSkyBoxEmission(float emission);
+        virtual void setSkyBoxEmission(float emission);
         void clearScene();
         void loadScene(const String &path);
 
@@ -69,6 +69,8 @@ namespace lite3dpp_pipeline {
             SceneGenerator &sceneGenerator);
         
         void createSkyBoxMesh();
+        void createSkyBoxStage(const ConfigurationReader &pipelineConfig, const String &cameraName,
+            const ConfigurationWriter &mainCameraConfig, bool renderToCombine);
         void createCombined2Texture(const String &cameraName);
         void createLTCLutTextures();
         void createBigTriangleMesh();

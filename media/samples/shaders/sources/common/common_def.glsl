@@ -89,7 +89,7 @@
 #endif
 
 #ifndef LITE3D_LIGHT_COMPUTE_THREADS
-#define LITE3D_LIGHT_COMPUTE_THREADS                        8
+#define LITE3D_LIGHT_COMPUTE_THREADS                        4
 #endif
 
 #ifndef LITE3D_BLOOM_STRENGTH

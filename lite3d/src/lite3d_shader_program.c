@@ -446,7 +446,8 @@ static int lite3d_shader_program_image_store_set(
     if (p->parameter->direction == LITE3D_SHADER_PARAMETER_DIRECTION_OUTPUT || 
         p->parameter->direction == LITE3D_SHADER_PARAMETER_DIRECTION_INOUT)
     {
-        program->syncFlags |= GL_SHADER_IMAGE_ACCESS_BARRIER_BIT | GL_TEXTURE_FETCH_BARRIER_BIT;
+        program->syncFlags |= GL_SHADER_IMAGE_ACCESS_BARRIER_BIT | GL_TEXTURE_FETCH_BARRIER_BIT | GL_FRAMEBUFFER_BARRIER_BIT |
+            GL_TEXTURE_UPDATE_BARRIER_BIT;
     }
 
     glBindImageTexture(p->binding, p->parameter->parameter.texture->textureID, 

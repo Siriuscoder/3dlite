@@ -24,7 +24,7 @@ namespace lite3dpp_pipeline {
 
 //- Forward pipeline scenario ------------------------------------------------------
 // 
-// Render Target        | Stage                 | Matrerial Pass    | Scene         |
+// Render Target        | Stage                 | Material Pass    | Scene         |
 // ---------------------|-----------------------|-------------------|---------------|
 // MainDepth            | DepthBuildStage       | DepthPass         | MainScene     |
 // ---------------------|-----------------------|-------------------|---------------|
@@ -54,6 +54,8 @@ namespace lite3dpp_pipeline {
         
         void constructCameraPipeline(const ConfigurationReader &pipelineConfig, const String &cameraName,
             SceneGenerator &sceneGenerator) override;
+        void constructSkyBoxPass(const ConfigurationReader &pipelineConfig, const String &cameraName,
+            const ConfigurationWriter &mainCameraConfig) override;
 
         virtual void constructCombinedPass(const ConfigurationReader &pipelineConfig, const String &cameraName,
             SceneGenerator &sceneGenerator);

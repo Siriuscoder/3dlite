@@ -45,11 +45,56 @@ namespace lite3dpp_pipeline {
 
     void PipelineDeffered::enableSSAO(bool flag)
     {
-        if (mLightComputeStageMaterial && mSSAOPass)
+        if (mLightComputeShader && mSSAOPass)
         {
-            mLightComputeStageMaterial->setIntParameter(static_cast<uint16_t>(TexturePassTypes::RenderPass), "AOEnabled", flag);
+            mLightComputeShader->getShaderParameters().setIntParameter("AOEnabled", flag);
             flag ? mSSAOPass->enable() : mSSAOPass->disable();
         }
+    }
+
+    void PipelineDeffered::setSkyBoxEmission(float emission)
+    {
+        PipelineBase::setSkyBoxEmission(emission);
+        if (mLightComputeShader && getConfig().has(L"SkyBox"))
+        {
+            mLightComputeShader->getShaderParameters().setFloatParameter("EmissionStrength", emission);
+        }
+    }
+
+    void PipelineDeffered::constructSkyBoxPass(const ConfigurationReader &pipelineConfig, const String &cameraName,
+        const ConfigurationWriter &mainCameraConfig)
+    {
+        // The compute lighting pass draws the screen skybox; keep geometry only for GI captures.
+        createSkyBoxStage(pipelineConfig, cameraName, mainCameraConfig, false);
+    }
+
+    void PipelineDeffered::unloadImpl()
+    {
+        mLightComputeShader = nullptr;
+        PipelineBase::unloadImpl();
+        mCombinePass = nullptr;
+    }
+
+    bool PipelineDeffered::beginSceneRender(Scene *scene, Camera *camera, const lite3d_scene_render_params *params)
+    {
+        if (scene == mMainScene && params->priority == static_cast<int32_t>(RenderPassStagePriority::BlendDecalStage))
+        {
+            const auto &mainCamera = getMainCamera();
+            ShaderParameters::setFloatm4GlobalParameter("CameraView", mainCamera.getViewMatrix());
+            ShaderParameters::setFloatm4GlobalParameter("CameraProjection", mainCamera.getProjMatrix());
+            ShaderParameters::setFloatv3GlobalParameter("Eye", mainCamera.getWorldPosition());
+            ShaderParameters::setIntGlobalParameter("FrameNumber", static_cast<int32_t>(getMain().getRenderStats()->framesCount));
+
+            // The shader writes the background for pixels without geometry or skybox.
+            const auto &background = mCombinePass->getPtr()->cleanColor;
+            mLightComputeShader->getShaderParameters().setFloatv3Parameter("ClearColor",
+                kmVec3 { background.x, background.y, background.z });
+            // lighting.comp assigns one workgroup to each output pixel.
+            mLightComputeShader->dispatch(mCombinedTexture->getWidth(), mCombinedTexture->getHeight(), 1);
+        }
+
+        // Copy the opaque combined texture only after compute lighting has finished.
+        return PipelineBase::beginSceneRender(scene, camera, params);
     }
 
     void PipelineDeffered::constructLightComputePass(const ConfigurationReader &pipelineConfig)
@@ -57,30 +102,48 @@ namespace lite3dpp_pipeline {
         SDL_assert(mMainScene);
         SDL_assert(mCombinePass);
 
-        BigTriSceneGenerator stageGenerator;
-        stageGenerator.addRenderTarget(mCombinePass->getName(), ConfigurationWriter()
-            .set(L"Priority", static_cast<int>(RenderPassStagePriority::LightComputeStage))
-            .set(L"TexturePass", static_cast<int>(TexturePassTypes::RenderPass))
-            .set(L"DepthTest", false)
-            .set(L"ColorOutput", true)
-            .set(L"DepthOutput", false));
-            
-        mLightComputeStage = getMain().getResourceManager().queryResourceFromJson<Scene>(getName() + "_LightComputeStage",
-            stageGenerator.generate().write(), this);
-
-        ConfigurationWriter lightComputeMaterialConfig;
+        ConfigurationWriter lightComputeConfig;
         stl<ConfigurationWriter>::vector lightComputeMaterialUniforms;
 
         lightComputeMaterialUniforms.emplace_back(ConfigurationWriter()
-            .set(L"Name", "screenMatrix"));
+            .set(L"Name", "outputImage")
+            .set(L"Type", "imageStore")
+            .set(L"Direction", "output")
+            .set(L"TextureName", mCombinedTexture->getName()));
         lightComputeMaterialUniforms.emplace_back(ConfigurationWriter()
             .set(L"Name", "GBuffer")
             .set(L"TextureName", mGBufferTexture->getName())
             .set(L"Type", "sampler"));
         lightComputeMaterialUniforms.emplace_back(ConfigurationWriter()
+            .set(L"Name", "ClearColor")
+            .set(L"Type", "v3"));
+        lightComputeMaterialUniforms.emplace_back(ConfigurationWriter()
             .set(L"Name", "Eye")
             .set(L"Scope", "global")
             .set(L"Type", "v3"));
+        lightComputeMaterialUniforms.emplace_back(ConfigurationWriter()
+            .set(L"Name", "CameraView")
+            .set(L"Type", "m4")
+            .set(L"Scope", "global"));
+        lightComputeMaterialUniforms.emplace_back(ConfigurationWriter()
+            .set(L"Name", "CameraProjection")
+            .set(L"Type", "m4")
+            .set(L"Scope", "global"));
+
+        if (pipelineConfig.has(L"SkyBox"))
+        {
+            const auto skyBoxConfig = pipelineConfig.getObject(L"SkyBox");
+            lightComputeMaterialUniforms.emplace_back(ConfigurationWriter()
+                .set(L"Name", "Skybox")
+                .set(L"TextureName", getName() + "_skybox.texture")
+                .set(L"TexturePath", skyBoxConfig.getString(L"Texture"))
+                .set(L"Type", "sampler"));
+            lightComputeMaterialUniforms.emplace_back(ConfigurationWriter()
+                .set(L"Name", "EmissionStrength")
+                .set(L"Value", skyBoxConfig.getDouble(L"EmissionStrength"))
+                .set(L"Type", "float"));
+            ShaderProgram::addGlobalDefinition("LITE3D_LIGHT_PASS_SKYBOX", "1");
+        }
 
         /* IBL present, using env probe */
         if (mGIProbeManager)
@@ -153,15 +216,6 @@ namespace lite3dpp_pipeline {
                 .set(L"Name", "ShadowMatrix")
                 .set(L"UBOName", mShadowManager->getShadowMatrixBuffer()->getName())
                 .set(L"Type", "UBO"));
-                
-            lightComputeMaterialUniforms.emplace_back(ConfigurationWriter()
-                .set(L"Name", "CameraView")
-                .set(L"Type", "m4")
-                .set(L"Scope", "global"));
-            lightComputeMaterialUniforms.emplace_back(ConfigurationWriter()
-                .set(L"Name", "CameraProjection")
-                .set(L"Type", "m4")
-                .set(L"Scope", "global"));
         }
 
         if (mSSAOTexture)
@@ -199,21 +253,13 @@ namespace lite3dpp_pipeline {
                 .set(L"Type", "SSBO"));
         }
 
-        lightComputeMaterialConfig.set(L"Passes", stl<ConfigurationWriter>::vector {
-            ConfigurationWriter().set(L"Pass", static_cast<int>(TexturePassTypes::RenderPass))
-                .set(L"Program", ConfigurationWriter()
-                    .set(L"Name", "LightCompute.program")
-                    .set(L"Path", mShaderPackage + ":shaders/json/lightpass.json"))
-                .set(L"Uniforms", lightComputeMaterialUniforms)
-        });
-        
-        // Создаем служебный шейдер отвечающий за расчет освещения в экранном пространстве
-        mLightComputeStageMaterial = getMain().getResourceManager().queryResourceFromJson<Material>(
-            getName() + "_LightComputeStage.material", lightComputeMaterialConfig.write(), this);
+        lightComputeConfig.set(L"Program", ConfigurationWriter()
+                .set(L"Name", "LightCompute.program")
+                .set(L"Path", mShaderPackage + ":shaders/json/lightpass.json"))
+            .set(L"Uniforms", lightComputeMaterialUniforms);
 
-        // Добавляем шейдер расчета освещения в экранном пространстве
-        mLightComputeStage->addObject("LightComputeBigTri", 
-            BigTriObjectGenerator(mLightComputeStageMaterial->getName()).generate());
+        mLightComputeShader = getMain().getResourceManager().queryResourceFromJson<ComputeShader>(
+            getName() + "_LightCompute.comp", lightComputeConfig.write(), this);
     }
 
     void PipelineDeffered::constructGBufferPass(const ConfigurationReader &pipelineConfig, const String &cameraName,
@@ -279,8 +325,8 @@ namespace lite3dpp_pipeline {
             .set(L"Filtering", "None")
             .set(L"Wrapping", "ClampToEdge")
             .set(L"Compression", false)
-            .set(L"TextureFormat", "RGB")
-            .set(L"InternalFormat", "RGB32F");
+            .set(L"TextureFormat", "RGBA")
+            .set(L"InternalFormat", "RGBA32F");
 
         mCombinedTexture = getMain().getResourceManager().queryResourceFromJson<TextureImage>(
             getName() + "_" + cameraName + "_combined.texture", combinedTextureConfig.write(), this);
@@ -289,7 +335,7 @@ namespace lite3dpp_pipeline {
         ConfigurationWriter combinedTargetConfig;
         combinedTargetConfig.set(L"BackgroundColor", kmVec4 { 0.0f, 0.0f, 0.0f, 1.0f })
             .set(L"Priority", static_cast<int>(RenderPassPriority::Combine))
-            .set(L"CleanColorBuf", true)
+            .set(L"CleanColorBuf", false)
             .set(L"CleanDepthBuf", false)
             .set(L"CleanStencilBuf", false)
             .set(L"ColorAttachments", ConfigurationWriter()
@@ -315,11 +361,6 @@ namespace lite3dpp_pipeline {
 
     void PipelineDeffered::constructSSAOPass(const ConfigurationReader &pipelineConfig, const String &cameraName)
     {
-        if (!pipelineConfig.has(L"SSAO"))
-        {
-            return;
-        }
-
         // Создание SSAO текстуры
         ConfigurationWriter ssaoTextureConfig;
         ssaoTextureConfig.set(L"TextureType", "2D")

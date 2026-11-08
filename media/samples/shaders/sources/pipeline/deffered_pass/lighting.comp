@@ -15,6 +15,7 @@ layout(std140) uniform LightIndexes
 
 uniform samplerCube Skybox;
 uniform float EmissionStrength;
+uniform vec3 ClearColor;
 
 shared Surface groupSurface;
 // True If current pixel is geometry, that was rendered to the G-buffer earlier, overwise current pixel is sky box 
@@ -23,6 +24,7 @@ shared AngularInfo groupAngular;
 shared SufraceLighting directSum[LITE3D_LIGHT_COMPUTE_THREADS];
 
 #include "samples:shaders/sources/pbr/direct.glsl"
+#include "samples:shaders/sources/ssao/ssao_sample.glsl"
 
 /* Indirect lighting */
 SufraceLighting EvaluateIBL(in Surface surface, in AngularInfo angular);
@@ -54,6 +56,11 @@ void main()
             vec3 dir = screenUVToEnvDir(uv); 
             vec3 sky = texture(Skybox, dir).rgb * EmissionStrength;
             imageStore(outputImage, pixelCoord, vec4(sky, 1.0));
+        }
+#else
+        else 
+        {
+            imageStore(outputImage, pixelCoord, vec4(ClearColor, 1.0));
         }
 #endif
     }
@@ -101,7 +108,7 @@ void main()
         SufraceLighting indirect = EvaluateIBL(groupSurface, groupAngular);
         // Combine lighting
         vec3 combined = directSum[0].diffuse + directSum[0].specular + indirect.diffuse + 
-            indirect.specular + surface.material.emission.rgb;
+            indirect.specular + groupSurface.material.emission.rgb;
 
         imageStore(outputImage, pixelCoord, vec4(combined, 1.0));
     }

@@ -121,11 +121,13 @@ bool restoreSurface(vec2 uv, out Surface surface)
     return true;
 }
 
+#ifdef LITE3D_FRAGMENT_SHADER
 void surfaceAlphaClip(in Material material)
 {
     if (material.alpha < 0.1)
         discard;
 }
+#endif
 
 void surfaceAlphaClip(vec2 uv)
 {
