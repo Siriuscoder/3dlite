@@ -27,8 +27,8 @@
     },
     "GI":
     {
-        "ProbeResolution": 128,
-        "MaxCount": 33,
+        "ProbeResolution": 256,
+        "MaxCount": 35,
         "ProbeZNearClip": 0.01,
         "ProbeZFarClip": 40.0
     },

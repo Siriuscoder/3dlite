@@ -40,7 +40,7 @@ void main()
         vec3 sky = ClearColor;
 
 #ifdef LITE3D_LIGHT_PASS_SKYBOX
-        vec3 dir = screenUVToEnvDir(uv);
+        vec3 dir = screenUVToEnvDir(uv) * -1.0;
         sky = texture(Skybox, dir).rgb * EmissionStrength;
 #endif
         imageStore(outputImage, pixelCoord, vec4(sky, 1.0));

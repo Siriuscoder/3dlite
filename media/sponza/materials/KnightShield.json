@@ -37,9 +37,8 @@
     ]
   },
   "EnvironmentProbeTexture": {
-    "Name": "EnvironmentProbe",
-    "TextureName": "SponzaDeffered_PrefilteredEnvironmentProbes.texture",
-    "Type": "sampler"
+    "Probe": "SponzaDeffered_PrefilteredEnvironmentProbes.texture",
+    "ProbeDepth": "SponzaDeffered_EnvironmentProbesDepth.texture"
   },
   "Passes": [
     {
