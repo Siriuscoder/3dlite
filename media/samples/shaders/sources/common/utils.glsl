@@ -409,11 +409,11 @@ float NDF(float NdotH, float roughness)
 // Geometry function visibility (Schlick-Beckmann, Schlick-GGX) height-correlated 
 float SmithGGXCorrelatedVis(float NdotV, float NdotL, float roughness)
 {
-    const float alpha = roughness * roughness;
-    const float alpha2 = alpha * alpha;
+    float alpha = roughness * roughness;
+    float alpha2 = alpha * alpha;
 
-    const float gv = NdotL * sqrt(alpha2 + (1.0 - alpha2) * NdotV * NdotV);
-    const float gl = NdotV * sqrt(alpha2 + (1.0 - alpha2) * NdotL * NdotL);
+    float gv = NdotL * sqrt(alpha2 + (1.0 - alpha2) * NdotV * NdotV);
+    float gl = NdotV * sqrt(alpha2 + (1.0 - alpha2) * NdotL * NdotL);
 
     return 0.5 / max(gv + gl, 1e-6);
 }
@@ -479,7 +479,7 @@ float calcAttenuation(in LightSource source, in AngularInfo angular)
         if (hasFlag(source.flags, LITE3D_LIGHT_SPOT))
         {
             /* calculate spot cone attenuation */
-            const float cosSpotAngle = dot(-angular.lightDir, normalize(source.direction.xyz));
+            float cosSpotAngle = dot(-angular.lightDir, normalize(source.direction.xyz));
             float cosInner = cos(source.innerCone * 0.5);
             float cosOuter = cos(source.outerCone * 0.5);
 
@@ -673,9 +673,9 @@ void unpack2xF8(float pval, out float a, out float b)
 
 void evaluateSHBasisL2(vec3 dir, out float b[LITE3D_SH_COEFFS])
 {
-    const float x = dir.x;
-    const float y = dir.y;
-    const float z = dir.z;
+    float x = dir.x;
+    float y = dir.y;
+    float z = dir.z;
 
     b[0] =  0.28209479177387814;
     b[1] = -0.4886025119029199 * y;
@@ -694,18 +694,18 @@ vec3 irradianceSHL2(vec3 dir, vec4 L[LITE3D_SH_COEFFS], float visibility)
     float b[LITE3D_SH_COEFFS];
     evaluateSHBasisL2(dir, b);
 
-    const float sin2 = clamp(visibility, 0.0, 1.0);
-    const float cos2 = 1.0 - sin2;
-    const float cos3 = cos2 * sqrt(cos2);
+    float sin2 = visibility;
+    float cos2 = 1.0 - sin2;
+    float cos3 = cos2 * sqrt(cos2);
 
     // cosine lobe band factors for irradiance from radiance sh, ramamoorthi 2001
     const float sh_a0 = 3.14159265;
     const float sh_a1 = 2.09439510;
     const float sh_a2 = 0.78539816;
 
-    const float k0 = sh_a0 * sin2;
-    const float k1 = sh_a1 * (1.0 - cos3);
-    const float k2 = sh_a2 * sin2 * (1.0 + 3.0 * cos2);
+    float k0 = sh_a0 * sin2;
+    float k1 = sh_a1 * (1.0 - cos3);
+    float k2 = sh_a2 * sin2 * (1.0 + 3.0 * cos2);
 
     vec3 E = vec3(0.0);
 

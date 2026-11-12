@@ -41,8 +41,10 @@ float getEnvMaxLod(in Material material)
 {
 #ifdef LITE3D_BINDLESS_TEXTURE_PIPELINE
     return log2(float(textureSize(samplerCube(material.environment.textureId), 0).x));
-#else
+#elif defined(LITE3D_ENABLE_ENVIRONMENT_TEXTURE)
     return log2(float(textureSize(Environment, 0).x));
+#else
+    return 1.0;
 #endif
 }
 
@@ -50,17 +52,20 @@ vec3 sampleEnvLod(in Material material, vec3 uv, float lod)
 {
 #ifdef LITE3D_BINDLESS_TEXTURE_PIPELINE
     return textureLod(samplerCube(material.environment.textureId), uv * material.environmentUVScale, lod).rgb;
-#else
+#elif defined(LITE3D_ENABLE_ENVIRONMENT_TEXTURE)
     return textureLod(Environment, uv * material.environmentUVScale, lod).rgb;
+#else
+    return vec3(0.0);
 #endif
 }
 
 void getProbeMaxLodAndCount(in Material material, inout int count, inout float maxLod)
 {
+    ivec3 sizes;
 #ifdef LITE3D_BINDLESS_TEXTURE_PIPELINE
-    ivec3 sizes = textureSize(samplerCubeArray(material.environmentProbe.textureId), 0);
-#else
-    ivec3 sizes = textureSize(EnvironmentProbe, 0);
+    sizes = textureSize(samplerCubeArray(material.environmentProbe.textureId), 0);
+#elif defined(LITE3D_ENV_PROBE_MAX)
+    sizes = textureSize(EnvironmentProbe, 0);
 #endif
 
     count = sizes.z;
@@ -71,8 +76,10 @@ vec3 sampleProbeLod(in Material material, vec3 uv, int index, float lod)
 {
 #ifdef LITE3D_BINDLESS_TEXTURE_PIPELINE
     return textureLod(samplerCubeArray(material.environmentProbe.textureId), vec4(uv, index), lod).rgb;
-#else
+#elif defined(LITE3D_ENV_PROBE_MAX)
     return textureLod(EnvironmentProbe, vec4(uv, index), lod).rgb;
+#else 
+    return vec3(0.0);
 #endif
 }
 
@@ -80,8 +87,10 @@ float sampleProbeDepth(in Material material, vec3 uv, int index)
 {
 #ifdef LITE3D_BINDLESS_TEXTURE_PIPELINE
     return texture(samplerCubeArray(material.environmentProbeDepth.textureId), vec4(uv, index)).r;
-#else
+#elif defined(LITE3D_ENV_PROBE_MAX)
     return texture(EnvironmentProbeDepth, vec4(uv, index)).r;
+#else 
+    return 0.0;
 #endif
 }
 
@@ -120,7 +129,7 @@ SufraceLighting EvaluateIBL(in Surface surface, in AngularInfo angular)
     SufraceLighting result = SufraceLighting(vec3(0.0), vec3(0.0), vec3(0.0));
     float maxLod = 0.0;
     int probesCount = 0;
-    float visibility = max(surface.ao, 0.1); 
+    const float visibility = surface.ao;
 
     vec3 dominant = computeDominantSpecularDirection(surface, angular);
 // В случае если запущен bindless пайплайн всегда декларируем эту секцию так как ее использование зависит от 
@@ -136,7 +145,7 @@ SufraceLighting EvaluateIBL(in Surface surface, in AngularInfo angular)
             maxLod = getEnvMaxLod(surface.material);
 #ifdef LITE3D_EVALUATE_IBL_DIFFUSE
             // Duffuse irradiance 
-            result.diffuse = sampleEnvLod(surface.material, surface.normal, maxLod - 1.0);
+            result.diffuse = sampleEnvLod(surface.material, surface.bentNormal, maxLod - 1.0);
 #endif
 
 #ifdef LITE3D_EVALUATE_IBL_SPECULAR
@@ -161,7 +170,7 @@ SufraceLighting EvaluateIBL(in Surface surface, in AngularInfo angular)
 #ifdef LITE3D_EVALUATE_IBL_DIFFUSE
             if (hasFlag(probe.flags, LITE3D_ENV_PROBE_FLAG_IRRADIANCE))
             {
-                result.diffuse += irradianceSHL2(surface.normal, probe.sh, visibility);
+                result.diffuse += irradianceSHL2(surface.bentNormal, probe.sh, visibility);
             }
 #endif
 
@@ -237,7 +246,7 @@ SufraceLighting EvaluateIBL(in Surface surface, in AngularInfo angular)
                 radianceSH[ir] /= totalDWeight;
             }
 
-            result.diffuse += irradianceSHL2(surface.normal, radianceSH, visibility);
+            result.diffuse += irradianceSHL2(surface.bentNormal, radianceSH, visibility);
 #endif
 
 #ifdef LITE3D_EVALUATE_IBL_SPECULAR
@@ -251,7 +260,7 @@ SufraceLighting EvaluateIBL(in Surface surface, in AngularInfo angular)
     }
 #endif
 
-    vec3 bounceBoost = gtaoMultiBounce(visibility, surface.material.albedo.rgb) / visibility;
+    vec3 bounceBoost = gtaoMultiBounce(visibility, surface.material.albedo.rgb);
     float occlusion = computeSpecularOcclusion(surface, angular, dominant);
     vec3 F = fresnelSchlickRoughness(angular.NdotV, surface);
     vec3 specEnergy = IBLSpecularEnergy(F, angular.NdotV, surface);
