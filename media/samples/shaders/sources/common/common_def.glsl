@@ -80,6 +80,10 @@
 #define LITE3D_CUBE_MAP_UV_SCALE                            1.0
 #endif
 
+#ifndef LITE3D_SKYBOX_UV_SCALE
+#define LITE3D_SKYBOX_UV_SCALE                              1.0
+#endif
+
 #ifndef LITE3D_ENV_DIFFUSE_STRENGTH
 #define LITE3D_ENV_DIFFUSE_STRENGTH                         1.0
 #endif

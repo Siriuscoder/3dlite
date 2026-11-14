@@ -1,6 +1,6 @@
 #include "samples:shaders/sources/common/common_inc.glsl"
 
-layout(local_size_x = 16, local_size_y = 16) in;
+layout(local_size_x = LITE3D_POSTPROCESS_THREADS_X, local_size_y = LITE3D_POSTPROCESS_THREADS_Y) in;
 layout(binding = 0, rgba16f) uniform writeonly image2D PostProcessOutput;
 
 uniform sampler2D Combined;
@@ -23,18 +23,18 @@ vec3 chromaticAberration(vec2 uv)
     // apply lens distortion with zoom to avoid edge artifacts
     const vec2 center = vec2(0.5, 0.5); // center of the texture
     vec2 delta = uv - center;
-    float r = length(delta);
+    float r2 = dot(delta, delta);
 
     float maxR = 0.707; // max distance from center (corner of unit square)
     float maxDistortion = 1.0 + LITE3D_CHROMATIC_ABERRATION_DISTORTION * (maxR * maxR); // max distortion at edge
     float zoom = 1.0 / maxDistortion; // scale uvs to counteract max distortion
 
     // apply distortion with zoom
-    float distortionFactor = 1.0 + LITE3D_CHROMATIC_ABERRATION_DISTORTION * (r * r); // quadratic distortion
+    float distortionFactor = 1.0 + LITE3D_CHROMATIC_ABERRATION_DISTORTION * r2; // quadratic distortion
     vec2 distortedUV = center + delta * zoom * distortionFactor;
 
     // chromatic aberration: sample each color channel with a slight offset
-    vec2 offset = delta * LITE3D_CHROMATIC_ABERRATION_AMOUNT; // offset proportional to distance from center
+    vec2 offset = delta * LITE3D_CHROMATIC_ABERRATION_AMOUNT * r2; // offset quadratic proportional to distance from center
     
     float rS = texture(Combined, distortedUV + offset).r;
     float gS = texture(Combined, distortedUV).g; // green uses no offset

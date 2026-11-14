@@ -123,6 +123,14 @@ namespace lite3dpp_pipeline {
                 .set(L"Path", shaderPackage + ":shaders/json/postprocess.json"))
             .set(L"Uniforms", postProcessVariables);
 
+        auto postProcessThreads = ShaderProgram::getOptimalWorkGroupSize(combinedImage.getWidth(), 
+            combinedImage.getHeight());
+        computeLocalThreadsX = postProcessThreads[0];
+        computeLocalThreadsY = postProcessThreads[1];
+
+        ShaderProgram::addGlobalDefinition("LITE3D_POSTPROCESS_THREADS_X", std::to_string(computeLocalThreadsX));
+        ShaderProgram::addGlobalDefinition("LITE3D_POSTPROCESS_THREADS_Y", std::to_string(computeLocalThreadsY));
+
         mPostProcessShader = mMain.getResourceManager().queryResourceFromJson<ComputeShader>(
             mPipeline.getName() + "_PostProcess.comp", shaderParams.write(), &mPipeline);
 
@@ -221,9 +229,9 @@ namespace lite3dpp_pipeline {
         mPostProcessShader->getShaderParameters().setFloatParameter("Saturation", mSaturation);
         mPostProcessShader->getShaderParameters().setFloatParameter("Brightness", mBrightness);
 
-        const uint32_t groupsCountX = (mPostProcessOutput->getWidth() + 16 - 1) / 16;
-        const uint32_t groupsCountY = (mPostProcessOutput->getHeight() + 16 - 1) / 16;
-        mPostProcessShader->dispatch(groupsCountX, groupsCountY, 1);
+        const uint32_t groupsXCount = (mPostProcessOutput->getWidth() + computeLocalThreadsX - 1) / computeLocalThreadsX;
+        const uint32_t groupsYCount = (mPostProcessOutput->getHeight() + computeLocalThreadsY - 1) / computeLocalThreadsY;
+        mPostProcessShader->dispatch(groupsXCount, groupsYCount, 1);
 
         return true;
     }

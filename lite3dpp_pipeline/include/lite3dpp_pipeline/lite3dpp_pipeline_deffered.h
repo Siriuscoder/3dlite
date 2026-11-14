@@ -80,7 +80,7 @@ namespace lite3dpp_pipeline {
         Texture *mSSAOTexture = nullptr;
         RenderTarget *mGBufferPass = nullptr;
         RenderTarget *mSSAOPass = nullptr;
-        int32_t lightComputeLocalThreadsX = 16;
-        int32_t lightComputeLocalThreadsY = 16;
+        uint32_t lightComputeLocalThreadsX = 16;
+        uint32_t lightComputeLocalThreadsY = 16;
     };
 }}

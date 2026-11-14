@@ -13,8 +13,7 @@
     "ShadowMaps":
     {
         "Extent": 1024,
-        "CascadeShadowCacheMaxCount": 4,
-        "OmniShadowCacheMaxCount": 6
+        "CascadeShadowCacheMaxCount": 4
     },
     "SSAO": 
     {

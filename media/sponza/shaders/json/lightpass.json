@@ -2,7 +2,7 @@
     "Sources": 
     [
         // Standard shaders with params customization
-        "samples:shaders/sources/pipeline/deffered_pass/lighting.comp",
+        "samples:shaders/sources/pipeline/deffered_pass/lighting.comp,sponza:shaders/sources/inc/params.def",
         "samples:shaders/sources/pbr/brdf_oren_nayar_approx.comp",
         "samples:shaders/sources/gi/image_based_full.comp,sponza:shaders/sources/inc/params.def",
         "samples:shaders/sources/shadow/full.comp,sponza:shaders/sources/inc/params.def",

@@ -104,10 +104,11 @@ public:
             }
         }
 
-        for (auto lightNode : mSponzaScene->getLights())
-        {
-            mPipeline->getShadowManager()->registerEmitter(lightNode);
-        }
+        mPipeline->getShadowManager()->registerEmitter(mSUN);
+        //for (auto lightNode : mSponzaScene->getLights())
+        //{
+        //    mPipeline->getShadowManager()->registerEmitter(lightNode);
+        //}
     }
 
     void fixedUpdateTimerTick(int32_t firedPerRound, uint64_t deltaMcs, float deltaRetard) override
