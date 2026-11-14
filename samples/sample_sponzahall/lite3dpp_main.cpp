@@ -171,7 +171,7 @@ public:
             {
                 mDayNightMode = !mDayNightMode;
                 mSUN->getLight()->enabled(mDayNightMode);
-                mPipeline->setSkyBoxEmission(mDayNightMode ? 12.0f : 0.008f);
+                mPipeline->setSkyBoxEmission(mDayNightMode ? 4.2f : 0.008f);
                 mPipeline->getGIProbeManager()->rebuild();
             }
             else if (e->key.keysym.sym == SDLK_e)

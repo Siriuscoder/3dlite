@@ -14,6 +14,9 @@
   "EnvSpecular": {
     "Value": 1.0
   },
+  "Sheen": {
+    "Value": 0.95
+  },
   "NormalScale": {
     "Value": [1.0, -1.0, 1.0, 1.0]
   },

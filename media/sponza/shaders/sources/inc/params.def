@@ -1,5 +1,6 @@
 #define LITE3D_SKYBOX_UV_SCALE                              -1.0
 
+#define LITE3D_ENV_PROBE_MIN_SPACING                        3.2
 #define LITE3D_ENV_PROBE_RELATIVE_DISTANCE_THRESHOLD        0.05
 #define LITE3D_ENV_PROBE_DIFFUSE_POWER                      1.5
 #define LITE3D_ENV_PROBE_SPECULAR_POWER                     10.0

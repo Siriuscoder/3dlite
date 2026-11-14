@@ -86,9 +86,9 @@ vec3 sampleProbeLod(in Material material, vec3 uv, int index, float lod)
 float sampleProbeDepth(in Material material, vec3 uv, int index)
 {
 #ifdef LITE3D_BINDLESS_TEXTURE_PIPELINE
-    return texture(samplerCubeArray(material.environmentProbeDepth.textureId), vec4(uv, index)).r;
+    return textureLod(samplerCubeArray(material.environmentProbeDepth.textureId), vec4(uv, index), 0).r;
 #elif defined(LITE3D_ENV_PROBE_MAX)
-    return texture(EnvironmentProbeDepth, vec4(uv, index)).r;
+    return textureLod(EnvironmentProbeDepth, vec4(uv, index), 0).r;
 #else 
     return 0.0;
 #endif
@@ -122,6 +122,65 @@ vec3 gtaoMultiBounce(float visibility, vec3 albedo)
     vec3 c = 2.7552 * albedo + 0.6903;
     
     return max(vec3(visibility), ((visibility * a + b) * visibility + c) * visibility);
+}
+
+float distanceWeight(float dist, float nearestDistance)
+{
+    float scale = max(LITE3D_ENV_PROBE_MIN_SPACING, nearestDistance * 0.75);
+    float delta = max(dist - nearestDistance, 0.0);
+
+    float weight = exp(-delta / scale);
+
+    float fade = 1.0 - smoothstep(2.0 * scale, 3.0 * scale, delta);
+    return weight * fade;
+}
+
+float specularDistanceWeight(in Material material, float dist, float nearestDistance)
+{
+    float sharpness = mix(
+        12.0,  // smooth surfaces
+        3.0,   // rough surfaces
+        material.roughness);
+
+    float ratio = (nearestDistance + 0.1) /
+                  (dist + 0.1);
+
+    return pow(ratio, sharpness);
+}
+
+float normalWeight(vec3 N, vec3 toProbe)
+{
+    float NdotL = dot(N, toProbe);
+    float weight = smoothstep(-0.35, 0.5, NdotL);
+
+    return mix(0.1, 1.0, weight);
+}
+
+float visibilityWeight(in Material material, vec3 fragPos, vec3 fromProbeToFrag, vec3 fromProbeToFragDir, int probeIndex)
+{
+    // Глубина вдоль оптической оси cubemap-грани
+    float fragmentZ = max(
+        max(abs(fromProbeToFrag.x), abs(fromProbeToFrag.y)),
+        abs(fromProbeToFrag.z)
+    );
+
+    if (fragmentZ < LITE3D_ENV_PROBE_ZNEAR || fragmentZ > LITE3D_ENV_PROBE_ZFAR)
+        return 0.0;
+
+    // Sample depth cubemap
+    float storedDepth = sampleProbeDepth(material, fromProbeToFragDir, probeIndex);
+    // Both depths represent distances along the face forward axis
+    float storedZ = linearizeDepth(storedDepth, LITE3D_ENV_PROBE_ZNEAR, LITE3D_ENV_PROBE_ZFAR);
+
+    //float delta = fragmentZ - storedZ;
+//
+    float bias     = 2.2;
+    float softness = max(0.5, fragmentZ * 0.15);
+//
+    //return 1.0 - smoothstep(bias, bias + transition, delta);
+
+    float delta = max(fragmentZ - storedZ - bias, 0.0);
+    return exp(-delta / max(softness, 0.001));
 }
 
 SufraceLighting EvaluateIBL(in Surface surface, in AngularInfo angular)
@@ -184,73 +243,101 @@ SufraceLighting EvaluateIBL(in Surface surface, in AngularInfo angular)
         }
         else
         {
-            float nearProbeDistance = FLT_MAX;
-
-            for (int p = 0; p < probesCount; ++p)
-            {
-                if (hasFlag(probes[p].flags, LITE3D_ENV_PROBE_FLAG_REUSABLE)) // Empty probe, may be reused
-                    continue;
-
-                float probeDistance = distance(surface.wv, probes[p].position.xyz);
-                nearProbeDistance = min(nearProbeDistance, probeDistance);
-            }
-
+            float nearestProbeDistance = FLT_MAX;
             // Calc indirect light
             float totalDWeight = FLT_EPSILON;
             float totalSWeight = FLT_EPSILON;
             vec3 totalSpecular = vec3(0.0);
 
             vec4 radianceSH[LITE3D_SH_COEFFS] = {
-                vec4(0.0), vec4(0.0), vec4(0.0), vec4(0.0), vec4(0.0), vec4(0.0), vec4(0.0), vec4(0.0), vec4(0.0)
+                vec4(0.0), 
+                vec4(0.0), 
+                vec4(0.0), 
+                vec4(0.0), 
+                vec4(0.0), 
+                vec4(0.0), 
+                vec4(0.0), 
+                vec4(0.0), 
+                vec4(0.0)
             };
 
             for (int p = 0; p < probesCount; ++p)
             {
-                if (hasFlag(probes[p].flags, LITE3D_ENV_PROBE_FLAG_REUSABLE)) // Empty probe, may be reused
-                    continue;
-
                 EnvironmentProbeStruct probe = probes[p];
-                float probeDistance = distance(surface.wv, probe.position.xyz);
-                float relativeDistance = nearProbeDistance / max(probeDistance, FLT_EPSILON);
-
-                if (relativeDistance < LITE3D_ENV_PROBE_RELATIVE_DISTANCE_THRESHOLD)
+                if (hasFlag(probe.flags, LITE3D_ENV_PROBE_FLAG_REUSABLE)) // Empty probe, may be reused
                     continue;
+
+                float probeDistance = distance(surface.wv, probe.position.xyz);
+                nearestProbeDistance = min(nearestProbeDistance, probeDistance);
+            }
+
+            for (int p = 0; p < probesCount; ++p)
+            {
+                EnvironmentProbeStruct probe = probes[p];
+                if (hasFlag(probe.flags, LITE3D_ENV_PROBE_FLAG_REUSABLE)) // Empty probe, may be reused
+                    continue;
+
+                vec3 fromProbeToFrag = surface.wv - probe.position.xyz;
+                float probeDistance = length(fromProbeToFrag);
+
+                float dW = distanceWeight(probeDistance, nearestProbeDistance);
+                if (dW < LITE3D_ENV_PROBE_MIN_WEIGHT)
+                    continue;
+
+                vec3 fromProbeToFragDir = normalize(fromProbeToFrag);
+                float nW = normalWeight(surface.normal, -fromProbeToFragDir);
+                float vW = visibilityWeight(surface.material, surface.wv, fromProbeToFrag, fromProbeToFragDir, p);
 
 #ifdef LITE3D_EVALUATE_IBL_DIFFUSE
                 if (hasFlag(probe.flags, LITE3D_ENV_PROBE_FLAG_IRRADIANCE))
                 {
-                    float dW = 1.0 / max(pow(probeDistance, LITE3D_ENV_PROBE_DIFFUSE_POWER), FLT_EPSILON);
+                    float tW = dW * nW * vW;
+                    
+                    if (tW > LITE3D_ENV_PROBE_MIN_WEIGHT)
+                    {
                     // Interpolate SH coeffs between probes 
                     for (uint ir = 0; ir < LITE3D_SH_COEFFS; ++ir)
                     {
-                        radianceSH[ir] += probe.sh[ir] * dW;
-                    }
+                            radianceSH[ir] += probe.sh[ir] * tW;
+                        }
 
-                    totalDWeight += dW;
+                        totalDWeight += tW;
+                    }
                 }
 #endif
 
 #ifdef LITE3D_EVALUATE_IBL_SPECULAR
                 if (hasFlag(probe.flags, LITE3D_ENV_PROBE_FLAG_SPECULAR))
                 {
-                    float sW = 1.0 / max(pow(probeDistance, LITE3D_ENV_PROBE_SPECULAR_POWER), FLT_EPSILON);
-                    totalSpecular += sampleProbeLod(surface.material, dominant, p, specularLevel) * sW;
-                    totalSWeight += sW;
+                    float sW = specularDistanceWeight(surface.material, probeDistance, nearestProbeDistance);
+                    float tW = dW * nW * sW;
+
+                    if (tW > LITE3D_ENV_PROBE_MIN_WEIGHT)
+                    {
+                        totalSpecular += sampleProbeLod(surface.material, dominant, p, specularLevel) * tW;
+                        totalSWeight += tW;
+                    }
                 }
 #endif
             }
 
 #ifdef LITE3D_EVALUATE_IBL_DIFFUSE
-            for (uint ir = 0; ir < LITE3D_SH_COEFFS; ++ir)
+            if (totalDWeight > LITE3D_ENV_PROBE_MIN_WEIGHT)
+            {
+                for (uint ir = 0; ir < LITE3D_SH_COEFFS; ++ir)
             {
                 radianceSH[ir] /= totalDWeight;
             }
 
             result.diffuse += irradianceSHL2(surface.bentNormal, radianceSH, visibility);
+            }
 #endif
 
 #ifdef LITE3D_EVALUATE_IBL_SPECULAR
+            if (totalDWeight > LITE3D_ENV_PROBE_MIN_WEIGHT)
+            {
             result.specular += totalSpecular / totalSWeight;
+            }
 #endif
         }
 

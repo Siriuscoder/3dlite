@@ -1,4 +1,5 @@
 // Environment params
+#define LITE3D_ENV_PROBE_MIN_SPACING                        10.0
 #define LITE3D_ENV_DIFFUSE_STRENGTH                         1.0
 #define LITE3D_ENV_PROBE_RELATIVE_DISTANCE_THRESHOLD        0.05
 #define LITE3D_ENV_PROBE_DIFFUSE_POWER                      2.0

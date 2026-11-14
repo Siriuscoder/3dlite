@@ -72,6 +72,10 @@
 #define LITE3D_ENV_PROBE_RELATIVE_DISTANCE_THRESHOLD        0.04
 #endif
 
+#ifndef LITE3D_ENV_PROBE_MIN_WEIGHT
+#define LITE3D_ENV_PROBE_MIN_WEIGHT                         0.0001
+#endif
+
 #ifndef LITE3D_BASE_AMBIENT_LIGHT
 #define LITE3D_BASE_AMBIENT_LIGHT                           vec3(0.0)
 #endif

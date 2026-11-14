@@ -5491,7 +5491,7 @@
                 "SSS": true,
                 "NearClipPlane": 0.009999999776482582,
                 "FarClipPlane": 80.0,
-                "VSMBlurSigma": 0.800000011920929
+                "VSMBlurSigma": 1.7000000476837158
               }
             },
             "Position": [

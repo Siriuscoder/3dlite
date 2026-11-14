@@ -60,6 +60,9 @@ void GIProbeManager::initialize()
     mzNear = config.getDouble(L"ProbeZNearClip", 0.0f);
     mzFar = config.getDouble(L"ProbeZFarClip", 1.0f);
 
+    ShaderProgram::addGlobalDefinition("LITE3D_ENV_PROBE_ZNEAR", std::to_string(mzNear));
+    ShaderProgram::addGlobalDefinition("LITE3D_ENV_PROBE_ZFAR", std::to_string(mzFar));
+
     calculateProbeBatchCount();
 
     if (!mMain.getResourceManager().resourceExists(GGXLUTName))

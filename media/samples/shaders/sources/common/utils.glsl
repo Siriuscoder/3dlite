@@ -254,9 +254,7 @@ float doubleSidedNdotV(inout vec3 N, vec3 V)
 
 float linearizeDepth(float z, float near, float far)
 {
-    float zb = z;
-    float zn = 2.0 * zb - 1.0;
-    return 2.0 * far * near / (near + far - zn * (near - far));
+    return near * far / (far - z * (far - near));
 }
 
 // SRGB -> Linear gamma correction

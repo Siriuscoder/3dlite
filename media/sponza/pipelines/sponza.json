@@ -8,11 +8,11 @@
     "SkyBox": 
     {
         "Texture": "samples:textures/json/skybox.json",
-        "EmissionStrength": 3.8
+        "EmissionStrength": 4.2
     },
     "ShadowMaps":
     {
-        "Extent": 1024,
+        "Extent": 2048,
         "CascadeShadowCacheMaxCount": 4
     },
     "SSAO": 
