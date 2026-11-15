@@ -1,9 +1,7 @@
 #define LITE3D_SKYBOX_UV_SCALE                              -1.0
 
 #define LITE3D_ENV_PROBE_MIN_SPACING                        3.2
-#define LITE3D_ENV_PROBE_RELATIVE_DISTANCE_THRESHOLD        0.05
-#define LITE3D_ENV_PROBE_DIFFUSE_POWER                      1.5
-#define LITE3D_ENV_PROBE_SPECULAR_POWER                     10.0
+#define LITE3D_ENV_PROBE_VISIBILITY_BIAS                    2.2
 
 #define LITE3D_SHADOW_MIN_BIAS                              0.0008
 #define LITE3D_SHADOW_MAX_BIAS                              0.0028
@@ -14,16 +12,18 @@
 #define LITE3D_SHADOW_CSM_ENABLE
 #define LITE3D_SHADOW_VSM_ENABLE
 #define LITE3D_SSS_ENABLE
-#define LITE3D_SSS_MAX_ADAPTIVE_DEPTH_THRESHOLD             0.023   // Min Depth clipping to avoid accuracy artifacts
+#define LITE3D_SSS_MIN_DEPTH_THRESHOLD             0.023   // Min Depth clipping to avoid accuracy artifacts
 #define LITE3D_SSS_MAX_STEPS                                32      // Max ray steps, affects quality and performance.
 #define LITE3D_SSS_MAX_RAY_DISTANCE                         0.35    // Max shadow length, longer shadows are less accurate.
 #define LITE3D_SSS_MAX_DEPTH_THRESHOLD                      0.5     // Depth testing thickness.
+#define LITE3D_SSS_FADE_START                               5.0
+#define LITE3D_SSS_FADE_END                                 15.0
 
 #define LITE3D_SSAO_POWER                                   2.5
 #define LITE3D_SSAO_ADAPTIVE_BIAS_MIN                       0.01
 #define LITE3D_SSAO_ADAPTIVE_BIAS_MAX                       0.050
 
-#define LITE3D_CHROMATIC_ABERRATION_DISTORTION              0.002
+#define LITE3D_CHROMATIC_ABERRATION_DISTORTION              0.001
 #define LITE3D_CHROMATIC_ABERRATION_AMOUNT                  0.018
 #define LITE3D_LENSFLARE_GHOSTS_COUNT                       3
 #define LITE3D_LENSFLARE_GHOSTS_ALPHA                       0.005

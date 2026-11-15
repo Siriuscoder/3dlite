@@ -32,6 +32,6 @@ float Shadow(in LightSource source, in Surface surface, in AngularInfo angular)
         return 0.0;
 
     // Adaptive bias, filter size
-    vec3 adapt = CalcAdaptiveShadowParams(angular, 0);
+    vec2 adapt = CalcAdaptiveShadowParams(angular, 0);
     return EvaluateShadowSample(shadowPos, adapt, shadowIndex);
 }

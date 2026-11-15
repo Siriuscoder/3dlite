@@ -76,7 +76,7 @@ Surface makeSurface(vec2 uv, vec3 wv, vec3 wn, vec3 wt, vec3 wb)
     surface.materialIndex = materialIndex;
     surface.uv = uv;
     surface.wv = wv;
-    surface.normal = normalize(wn);
+    surface.normal = surface.geoNormal = normalize(wn);
     surface.ao = 1.0;
 
     for (int i = 0; i < 8; ++i)
@@ -176,7 +176,7 @@ Surface makeSurface(vec2 uv, vec3 wv, vec3 wn, vec3 wt, vec3 wb)
     surface.material.metallic = clamp(surface.material.metallic, 0.0, 1.0);
     surface.material.emission *= surface.material.emissionStrength;
     surface.F0 = modulateF0(surface.material);
-    surface.bentNormal = surface.normal;
+    surface.bentNormal = surface.geoNormal;
     
     return surface;
 }
@@ -218,38 +218,41 @@ uniform sampler2DArray GBuffer;
 
 bool restoreSurface(vec2 uv, out Surface surface)
 {
+    ivec2 pixelCoord = ivec2(textureSize(GBuffer, 0).xy * uv);
     // sampling normal in world space from fullscreen normal map
-    vec4 nw = texture(GBuffer, vec3(uv, 1));
+    vec4 channel02 = texelFetch(GBuffer, ivec3(pixelCoord, 1), 0);
     // Non shaded fragment
-    if (all(equal(nw.xyz, vec3(0.0))))
+    if (all(equal(channel02.xyz, vec3(0.0))))
     {
         return false;
     }
 
     // sampling fragment position in world space from fullscreen normal map
-    vec4 wv = texture(GBuffer, vec3(uv, 0));
+    vec4 channel01 = texelFetch(GBuffer, ivec3(pixelCoord, 0), 0);
     // sampling albedo from fullscreen map
-    vec4 albedo = texture(GBuffer, vec3(uv, 2));
+    vec4 channel03 = texelFetch(GBuffer, ivec3(pixelCoord, 2), 0);
     // sampling specular parameters from fullscreen map
-    vec4 specular = texture(GBuffer, vec3(uv, 3));
-    // Emission
-    vec3 emission = vec3(nw.a, albedo.a, specular.a);
+    vec4 channel04 = texelFetch(GBuffer, ivec3(pixelCoord, 3), 0);
 
-    // unpack material index and AO from wv.w
-    unpackF8AndInt16(wv.w, surface.ao, surface.materialIndex);
+    vec2 albedoRG = unpack2xF12(channel03.x);
+    vec2 albedoBandS = unpack2xF12(channel03.y);
+    vec2 RandM = unpack2xF12(channel04.x);
+
+    // unpack material index from channel01.w
+    surface.materialIndex = uint(channel01.w);
 
     surface.material = materials[surface.materialIndex];
-    surface.material.albedo = vec4(albedo.rgb, 1.0);
-    surface.material.emission = vec4(emission, 1.0);
-    surface.material.specular = specular.x;
-    surface.material.roughness = specular.y;
-    surface.material.metallic = specular.z;
-    surface.wv = wv.xyz;
+    surface.material.albedo = vec4(albedoRG, albedoBandS.x, 1.0);
+    surface.material.emission = vec4(channel02.w, channel03.w, channel04.w, 1.0);
+    surface.material.specular = albedoBandS.y;
+    surface.material.roughness = RandM.x;
+    surface.material.metallic = RandM.y;
+    surface.wv = channel01.xyz;
     surface.uv = uv;
-    surface.normal = nw.xyz;
-    surface.ao = min(surface.ao, getAmbientOcclusion(uv));
+    surface.normal = channel02.xyz;
+    surface.geoNormal = surface.bentNormal = unpackNormal2xF12(channel03.z);
+    surface.ao = min(channel04.y, getAmbientOcclusion(uv));
     surface.F0 = modulateF0(surface.material);
-    surface.bentNormal = surface.normal;
     
     return true;
 }

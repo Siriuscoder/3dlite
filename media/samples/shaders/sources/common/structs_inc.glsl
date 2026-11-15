@@ -170,6 +170,7 @@ struct Surface
     vec3 wv;
     vec2 uv;
     vec3 normal;
+    vec3 geoNormal;
     vec3 bentNormal;
     float ao;
     vec3 F0;

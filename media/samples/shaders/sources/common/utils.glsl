@@ -646,27 +646,75 @@ float packF8AndInt16(float a, uint b)
 
 void unpackF8AndInt16(float pval, out float a, out uint b)
 {
-    uint shifted = uint(pval + 0.5);
+    uint shifted = uint(pval);
     b = shifted >> 8;
     a = float(shifted & 0xFFu) / 255.0;
 }
 
-float pack2xF8(float a, float b)
+float pack2xF8(vec2 v)
 {
-    uint a8 = uint(round(clamp(a, 0.0, 1.0) * 255.0));
-    uint b8 = uint(round(clamp(b, 0.0, 1.0) * 255.0));
-    uint pval = a8 | (b8 << 8);
+    uvec2 q = uvec2(round(clamp(v, 0.0, 1.0) * 255.0));
+    uint pval = q.x | (q.y << 8);
     return float(pval);
 }
 
-void unpack2xF8(float pval, out float a, out float b)
+vec2 unpack2xF8(float pval)
 {
-    uint shifted = uint(pval + 0.5);
-    uint a8 = shifted & 0xFFu;
-    uint b8 = (shifted >> 8) & 0xFFu;
+    uint bits = uint(pval);
+    uint a8 = bits & 0xFFu;
+    uint b8 = (bits >> 8) & 0xFFu;
 
-    a = float(a8) / 255.0;
-    b = float(b8) / 255.0;
+    return vec2(float(a8), float(b8)) * (1.0 / 255.0);
+}
+
+float pack2xF12(vec2 v)
+{
+    uvec2 q = uvec2(round(clamp(v, 0.0, 1.0) * 4095.0));
+    uint pval = q.x | (q.y << 12);
+    return float(pval);
+}
+
+vec2 unpack2xF12(float pval)
+{
+    uint bits = uint(pval);
+    uint a12 = bits & 0xFFFu;
+    uint b12 = (bits >> 12) & 0xFFFu;
+
+    return vec2(float(a12), float(b12)) * (1.0 / 4095.0);
+}
+
+float packNormal2xF12(vec3 n)
+{
+    n /= abs(n.x) + abs(n.y) + abs(n.z);
+
+    vec2 p = n.xy;
+
+    if (n.z < 0.0)
+    {
+        p = (1.0 - abs(p.yx)) * sign(p);
+    }
+
+    uvec2 q = uvec2(round(clamp(p * 0.5 + 0.5, 0.0, 1.0) * 4095.0));
+
+    uint pval = q.x | (q.y << 12);
+    return float(pval);
+}
+
+vec3 unpackNormal2xF12(float pval)
+{
+    uint bits = uint(pval);
+    uint a12 = bits & 0xFFFu;
+    uint b12 = (bits >> 12) & 0xFFFu;
+    vec2 p = vec2(float(a12), float(b12)) * (1.0 / 4095.0) * 2.0 - 1.0;
+
+    vec3 n = vec3(p, 1.0 - abs(p.x) - abs(p.y));
+
+    if (n.z < 0.0)
+    {
+        n.xy = (1.0 - abs(n.yx)) * sign(n.xy);
+    }
+
+    return normalize(n);
 }
 
 void evaluateSHBasisL2(vec3 dir, out float b[LITE3D_SH_COEFFS])

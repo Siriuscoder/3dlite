@@ -16,6 +16,7 @@
  *	along with Lite3D.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
 #include <sample_common/lite3dpp_common.h>
+#include <lite3dpp/lite3dpp_material_pbr.h>
 #include <lite3dpp_pipeline/lite3dpp_pipeline.h>
 
 namespace lite3dpp {
@@ -72,6 +73,8 @@ public:
         setupShadowCasters();
         addFlashlight();
         initGIProbes();
+
+        lightBulb = getMain().getResourceManager().queryResource<PBRMaterial>("light_bulb.material");
 
         getMain().getResourceManager().warmUpMeshPartitions();
         //getMain().getResourceManager().dropFileCache();
@@ -193,6 +196,7 @@ public:
                     }
                 }
 
+                lightBulb->setEmissionStrength(20.0 * mLampsOn);
                 mPipeline->getGIProbeManager()->rebuild();
             }
             else if (e->key.keysym.sym == SDLK_KP_PLUS)
@@ -226,6 +230,7 @@ private:
     lite3dpp_pipeline::PipelineDeffered* mPipeline = nullptr;
     LightSceneNode* mFlashLight = nullptr;
     LightSceneNode* mSUN = nullptr;
+    PBRMaterial *lightBulb = nullptr;
     SceneNode* mSUNNode = nullptr;
     bool mDayNightMode = true;
     bool mSunRotation = false;

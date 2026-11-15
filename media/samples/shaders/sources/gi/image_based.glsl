@@ -124,6 +124,7 @@ vec3 gtaoMultiBounce(float visibility, vec3 albedo)
     return max(vec3(visibility), ((visibility * a + b) * visibility + c) * visibility);
 }
 
+#ifdef LITE3D_ENV_PROBE_MAX
 float distanceWeight(float dist, float nearestDistance)
 {
     float scale = max(LITE3D_ENV_PROBE_MIN_SPACING, nearestDistance * 0.75);
@@ -139,7 +140,7 @@ float specularDistanceWeight(in Material material, float dist, float nearestDist
 {
     float sharpness = mix(
         12.0,  // smooth surfaces
-        3.0,   // rough surfaces
+        4.0,   // rough surfaces
         material.roughness);
 
     float ratio = (nearestDistance + 0.1) /
@@ -172,16 +173,13 @@ float visibilityWeight(in Material material, vec3 fragPos, vec3 fromProbeToFrag,
     // Both depths represent distances along the face forward axis
     float storedZ = linearizeDepth(storedDepth, LITE3D_ENV_PROBE_ZNEAR, LITE3D_ENV_PROBE_ZFAR);
 
-    //float delta = fragmentZ - storedZ;
-//
-    float bias     = 2.2;
-    float softness = max(0.5, fragmentZ * 0.15);
-//
-    //return 1.0 - smoothstep(bias, bias + transition, delta);
+    float bias     = LITE3D_ENV_PROBE_VISIBILITY_BIAS;
+    float softness = max(LITE3D_ENV_PROBE_VISIBILITY_MAX_SOFTNESS, fragmentZ * 0.15);
 
     float delta = max(fragmentZ - storedZ - bias, 0.0);
     return exp(-delta / max(softness, 0.001));
 }
+#endif
 
 SufraceLighting EvaluateIBL(in Surface surface, in AngularInfo angular)
 {

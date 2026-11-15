@@ -1,5 +1,5 @@
-#ifndef LITE3D_SSS_MAX_ADAPTIVE_DEPTH_THRESHOLD
-#define LITE3D_SSS_MAX_ADAPTIVE_DEPTH_THRESHOLD             0.01    // Min Depth clipping to avoid accuracy artifacts
+#ifndef LITE3D_SSS_MIN_DEPTH_THRESHOLD
+#define LITE3D_SSS_MIN_DEPTH_THRESHOLD                      0.01    // Min Depth clipping to avoid accuracy artifacts
 #endif
 
 #ifndef LITE3D_SSS_MAX_STEPS
@@ -12,6 +12,14 @@
 
 #ifndef LITE3D_SSS_MAX_DEPTH_THRESHOLD
 #define LITE3D_SSS_MAX_DEPTH_THRESHOLD                      0.5     // Depth testing thickness.
+#endif
+
+#ifndef LITE3D_SSS_FADE_START
+#define LITE3D_SSS_FADE_START                               6.5
+#endif
+
+#ifndef LITE3D_SSS_FADE_END
+#define LITE3D_SSS_FADE_END                                 10.0
 #endif
 
 #define LITE3D_SSS_STEP_LENGTH                              (LITE3D_SSS_MAX_RAY_DISTANCE / float(LITE3D_SSS_MAX_STEPS))
@@ -60,20 +68,20 @@
 #define LITE3D_REFRACTION_THICKNESS                         10.0
 #endif
 
-#ifndef LITE3D_ENV_PROBE_DIFFUSE_POWER
-#define LITE3D_ENV_PROBE_DIFFUSE_POWER                      2.0
-#endif
-
-#ifndef LITE3D_ENV_PROBE_SPECULAR_POWER
-#define LITE3D_ENV_PROBE_SPECULAR_POWER                     10.0
-#endif
-
-#ifndef LITE3D_ENV_PROBE_RELATIVE_DISTANCE_THRESHOLD
-#define LITE3D_ENV_PROBE_RELATIVE_DISTANCE_THRESHOLD        0.04
-#endif
-
 #ifndef LITE3D_ENV_PROBE_MIN_WEIGHT
 #define LITE3D_ENV_PROBE_MIN_WEIGHT                         0.0001
+#endif
+
+#ifndef LITE3D_ENV_PROBE_MIN_SPACING
+#define LITE3D_ENV_PROBE_MIN_SPACING                        2.0
+#endif
+
+#ifndef LITE3D_ENV_PROBE_VISIBILITY_BIAS
+#define LITE3D_ENV_PROBE_VISIBILITY_BIAS                    1.0
+#endif
+
+#ifndef LITE3D_ENV_PROBE_VISIBILITY_MAX_SOFTNESS
+#define LITE3D_ENV_PROBE_VISIBILITY_MAX_SOFTNESS            0.5
 #endif
 
 #ifndef LITE3D_BASE_AMBIENT_LIGHT

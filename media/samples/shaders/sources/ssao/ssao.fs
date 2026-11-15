@@ -83,14 +83,16 @@ const vec3 SSAO_SAMPLES[LITE3D_SSAO_MAX_SAMPLES] = vec3[](
     vec3(-0.7528, -0.6465, 0.1231)
 );
 
-vec3 getViewSpacePosition(vec2 uv)
+vec3 getViewSpacePosition(ivec2 pixelCoord)
 {
-    return worldToViewSpacePosition(texture(GBuffer, vec3(uv, 0)).xyz);
+    vec3 pos = texelFetch(GBuffer, ivec3(pixelCoord, 0), 0).xyz;
+    return worldToViewSpacePosition(pos);
 }
 
-vec3 getViewSpaceNormal(vec2 uv)
+vec3 getViewSpaceNormal(ivec2 pixelCoord)
 {
-    vec3 nw = texture(GBuffer, vec3(uv, 1)).xyz;
+    // Unpack geo normal
+    vec3 nw = unpackNormal2xF12(texelFetch(GBuffer, ivec3(pixelCoord, 2), 0).z);
     // Non shaded fragment
     if (isZero(nw))
         discard;
@@ -101,10 +103,12 @@ vec3 getViewSpaceNormal(vec2 uv)
 void main()
 {
     float aoFactor = 0.0;
+    ivec2 bounds = textureSize(GBuffer, 0).xy;
+    ivec2 pixelCoord = ivec2(bounds * iuv);
     // sampling fragment normal in view space
-    vec3 nv = getViewSpaceNormal(iuv);
+    vec3 nv = getViewSpaceNormal(pixelCoord);
     // sampling fragment position in view space
-    vec3 vv = getViewSpacePosition(iuv);
+    vec3 vv = getViewSpacePosition(pixelCoord);
     // Adaptive sample bias
     float angleFactor = 1.0 - abs(dot(nv, normalize(-vv)));
     float bias = mix(LITE3D_SSAO_ADAPTIVE_BIAS_MIN, LITE3D_SSAO_ADAPTIVE_BIAS_MAX, angleFactor * angleFactor);
@@ -134,7 +138,7 @@ void main()
         // Convert sample view pos to clip-space
         vec2 offsetUV = viewPositionToUV(probeRay);
         // Get surface world position at sample from GBuffer and translate to view space
-        float probeDepth = getViewSpacePosition(offsetUV).z;
+        float probeDepth = getViewSpacePosition(ivec2(bounds * offsetUV)).z;
         // Check sample depth respect to surface depth in view-space with range check
         float rangeCheck = smoothstep(0.0, 1.0, AORadius / max(abs(vv.z - probeDepth), FLT_EPSILON));
         aoFactor += (probeDepth >= (probeRay.z + bias) ? 1.0 : 0.0) * rangeCheck;

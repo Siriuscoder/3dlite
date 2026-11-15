@@ -142,9 +142,12 @@ void surfaceAlphaClip(vec2 uv);
 //////////// Packing functions
 float packF8AndInt16(float a, uint b);
 void unpackF8AndInt16(float pval, out float a, out uint b);
-float pack2xF8(float a1, float b1);
-void unpack2xF8(float pval, out float a, out float b);
-
+float pack2xF8(vec2 v);
+vec2 unpack2xF8(float pval);
+float pack2xF12(vec2 v);
+vec2 unpack2xF12(float pval);
+float packNormal2xF12(vec3 n);
+vec3 unpackNormal2xF12(float pval);
 //////////// Spherical Harmonics
 void evaluateSHBasisL2(vec3 dir, out float b[LITE3D_SH_COEFFS]);
 // visibility means AO

@@ -275,8 +275,30 @@ namespace lite3dpp_pipeline {
     void PipelineDeffered::constructGBufferPass(const ConfigurationReader &pipelineConfig, const String &cameraName,
         SceneGenerator &sceneGenerator)
     {
-        // Создание GeometryBuffer
-        // Полноэкранная текстура состоязая из 4х слоев для записи данных о геометрии в каждой точке экрана
+        /*
+         * GBuffer layout: 4 x RGBA32F
+         *
+         * +-----------+-------------------+-------------------+-------------------+-------------------+
+         * | Channel   | X                 | Y                 | Z                 | W                 |
+         * +-----------+-------------------+-------------------+-------------------+-------------------+
+         * | channel01 | iwv.x             | iwv.y             | iwv.z             | MatID(24)         |
+         * | channel02 | normal.x          | normal.y          | normal.z          | emission.r        |
+         * | channel03 | albedo.rg (2x12)  | albedo.b(12)+S(12)| geoNormal (Oct24) | emission.g        |
+         * | channel04 | R(12)+M(12)       | AO / reserved     | reserved          | emission.b        |
+         * +-----------+-------------------+-------------------+-------------------+-------------------+
+         *
+         * Packing:
+         *   albedo.rg  : 2 x UNORM12 -> FP32
+         *   albedo.b/S : 2 x UNORM12 -> FP32
+         *   R/M        : 2 x UNORM12 -> FP32
+         *   geoNormal  : Octahedral 2 x UNORM12 -> FP32
+         *
+         * S = Specular, R = Roughness, M = Metallic
+         *
+         * All new packed values use numeric uint-to-float conversion (no NaN).
+         * Packed channels must be read without texture filtering.
+         */
+
         ConfigurationWriter gBufferTextureConfig;
         gBufferTextureConfig.set(L"TextureType", "2D_ARRAY")
             .set(L"Filtering", "None")

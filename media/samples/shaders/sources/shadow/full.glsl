@@ -16,7 +16,7 @@ layout(std140) uniform ShadowMatrix
 #include "samples:shaders/sources/shadow/vsm.glsl"
 #endif
 
-float EvaluateShadow(uint flags, int shadowIndex, vec3 adapt, vec3 pos, in AngularInfo angular, inout bool isValid)
+float EvaluateShadow(uint flags, int shadowIndex, vec2 adapt, vec3 pos, in AngularInfo angular, inout bool isValid)
 {
     isValid = true;
     // Shadow space NDC coordinates of current fragment
@@ -67,7 +67,7 @@ float Shadow(in LightSource source, in Surface surface, in AngularInfo angular)
 
     int shadowIndex = source.shadowIndex;
     float shadowVisibility = 0.0;
-    vec3 adapt = vec3(0.0);
+    vec2 adapt = vec2(0.0);
     bool isValidShadow = true;
 
     if (hasFlag(source.flags, LITE3D_LIGHT_POINT))
@@ -109,7 +109,7 @@ float Shadow(in LightSource source, in Surface surface, in AngularInfo angular)
 
             if (fadeFactor < blendThreshold)
             {
-                vec3 adaptNext = CalcAdaptiveShadowParams(angular, cascade + 1);
+                vec2 adaptNext = CalcAdaptiveShadowParams(angular, cascade + 1);
                 float nextCascadeVisibility = EvaluateShadow(source.flags, shadowIndex + 1, adaptNext, surface.wv, angular, isValidShadow);
 
                 if (isValidShadow)
@@ -133,7 +133,7 @@ float Shadow(in LightSource source, in Surface surface, in AngularInfo angular)
 #ifdef LITE3D_SSS_ENABLE
         if (hasFlag(source.flags, LITE3D_LIGHT_SHADOW_SSS))
         {
-            shadowVisibility = min(shadowVisibility, SSS(surface.wv, angular.lightDir, adapt.z));
+            shadowVisibility = min(shadowVisibility, SSS(surface.wv, angular));
         }
 #endif
     }

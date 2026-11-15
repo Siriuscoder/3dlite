@@ -4,7 +4,7 @@
         // Standard shaders with params customization
         "samples:shaders/sources/pipeline/v_tbn_inst.vs",
         "samples:shaders/sources/pipeline/deffered_pass/deffered.fs",
-        "samples:shaders/sources/common/common.fs",
+        "samples:shaders/sources/common/common.fs,vault_111:shaders/sources/inc/pbr_params.def",
         // Sample specific shaders
         "vault_111:shaders/sources/reactor_glow.fs"
     ]

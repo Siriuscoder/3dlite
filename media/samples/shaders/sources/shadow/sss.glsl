@@ -1,10 +1,18 @@
 uniform sampler2DArray GBuffer;
 
-float SSS(vec3 P, vec3 L, float minDepthThreshold)
+float SSS(vec3 P, in AngularInfo angular)
 {
     // Compute ray position and direction (in view-space)
     vec3 rayPos = worldToViewSpacePosition(P);
-    vec3 rayDir = worldToViewSpaceDirection(L);
+    vec3 rayDir = worldToViewSpaceDirection(angular.lightDir);
+
+    float distanceFade = 1.0 - smoothstep(LITE3D_SSS_FADE_START, LITE3D_SSS_FADE_END, length(rayPos));
+    if (isNear(distanceFade, 0.0))
+        return 1.0;
+
+    float grazing = 1.0 - angular.NdotV;
+    float minDepthThreshold = mix(LITE3D_SSS_MIN_DEPTH_THRESHOLD, LITE3D_SSS_MIN_DEPTH_THRESHOLD * 5.0, 
+        grazing * grazing);
     
     // Compute ray step
     vec3 rayStep = rayDir * LITE3D_SSS_STEP_LENGTH;
@@ -27,7 +35,7 @@ float SSS(vec3 P, vec3 L, float minDepthThreshold)
         if (depthDelta > minDepthThreshold && depthDelta < LITE3D_SSS_MAX_DEPTH_THRESHOLD)
         {
             // Mark as occluded
-            occlusion = fadeScreenEdge(rayUV);
+            occlusion = fadeScreenEdge(rayUV) * distanceFade;
             break;
         }
     }
