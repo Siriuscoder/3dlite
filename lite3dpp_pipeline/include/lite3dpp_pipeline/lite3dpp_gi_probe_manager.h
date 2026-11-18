@@ -27,7 +27,8 @@ enum class EnvProbeFlags : uint32_t
 {
     Irradiance = 1 << 0,
     Specular = 1 << 1,
-    Reusable = 1 << 2 // Inactive slot available for reuse.
+    Reusable = 1 << 2,              // Inactive slot available for reuse.
+    ParallaxCorrection = 1 << 3     // Enables parallax correction for better reflections
 };
 
 LITE3D_DECLARE_ENUM_OPERATORS(EnvProbeFlags);

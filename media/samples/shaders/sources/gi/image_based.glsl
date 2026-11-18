@@ -143,8 +143,7 @@ float specularDistanceWeight(in Material material, float dist, float nearestDist
         4.0,   // rough surfaces
         material.roughness);
 
-    float ratio = (nearestDistance + 0.1) /
-                  (dist + 0.1);
+    float ratio = nearestDistance / max(dist, FLT_EPSILON);
 
     return pow(ratio, sharpness);
 }
@@ -157,7 +156,7 @@ float normalWeight(vec3 N, vec3 toProbe)
     return mix(0.1, 1.0, weight);
 }
 
-float visibilityWeight(in Material material, vec3 fragPos, vec3 fromProbeToFrag, vec3 fromProbeToFragDir, int probeIndex)
+float visibilityWeight(in Material material, vec3 fragPos, vec3 fromProbeToFrag, int probeIndex)
 {
     // Глубина вдоль оптической оси cubemap-грани
     float fragmentZ = max(
@@ -169,7 +168,7 @@ float visibilityWeight(in Material material, vec3 fragPos, vec3 fromProbeToFrag,
         return 0.0;
 
     // Sample depth cubemap
-    float storedDepth = sampleProbeDepth(material, fromProbeToFragDir, probeIndex);
+    float storedDepth = sampleProbeDepth(material, fromProbeToFrag, probeIndex);
     // Both depths represent distances along the face forward axis
     float storedZ = linearizeDepth(storedDepth, LITE3D_ENV_PROBE_ZNEAR, LITE3D_ENV_PROBE_ZFAR);
 
@@ -179,6 +178,9 @@ float visibilityWeight(in Material material, vec3 fragPos, vec3 fromProbeToFrag,
     float delta = max(fragmentZ - storedZ - bias, 0.0);
     return exp(-delta / max(softness, 0.001));
 }
+
+#include "samples:shaders/sources/gi/paralax_correction.glsl"
+
 #endif
 
 SufraceLighting EvaluateIBL(in Surface surface, in AngularInfo angular)
@@ -207,7 +209,7 @@ SufraceLighting EvaluateIBL(in Surface surface, in AngularInfo angular)
 
 #ifdef LITE3D_EVALUATE_IBL_SPECULAR
             // Specular 
-            float specularLevel = surface.material.roughness * max(maxLod - 1.0, 0.0);
+            float specularLevel = surface.material.roughness * maxLod;
             result.specular = sampleEnvLod(surface.material, dominant, specularLevel);
 #endif
         }
@@ -218,7 +220,7 @@ SufraceLighting EvaluateIBL(in Surface surface, in AngularInfo angular)
     if (hasFlag(surface.material.flags, LITE3D_MATERIAL_ENVIRONMENT_MULTI_PROBE))
     {
         getProbeMaxLodAndCount(surface.material, probesCount, maxLod);
-        float specularLevel = surface.material.roughness * max(maxLod - 1.0, 0.0);
+        float specularLevel = surface.material.roughness * maxLod;
 
         if (surface.material.environmentSingleProbeIndex >= 0)
         {
@@ -284,7 +286,7 @@ SufraceLighting EvaluateIBL(in Surface surface, in AngularInfo angular)
 
                 vec3 fromProbeToFragDir = normalize(fromProbeToFrag);
                 float nW = normalWeight(surface.normal, -fromProbeToFragDir);
-                float vW = visibilityWeight(surface.material, surface.wv, fromProbeToFrag, fromProbeToFragDir, p);
+                float vW = visibilityWeight(surface.material, surface.wv, fromProbeToFrag, p);
 
 #ifdef LITE3D_EVALUATE_IBL_DIFFUSE
                 if (hasFlag(probe.flags, LITE3D_ENV_PROBE_FLAG_IRRADIANCE))
@@ -293,9 +295,9 @@ SufraceLighting EvaluateIBL(in Surface surface, in AngularInfo angular)
                     
                     if (tW > LITE3D_ENV_PROBE_MIN_WEIGHT)
                     {
-                    // Interpolate SH coeffs between probes 
-                    for (uint ir = 0; ir < LITE3D_SH_COEFFS; ++ir)
-                    {
+                        // Interpolate SH coeffs between probes 
+                        for (uint ir = 0; ir < LITE3D_SH_COEFFS; ++ir)
+                        {
                             radianceSH[ir] += probe.sh[ir] * tW;
                         }
 
@@ -308,12 +310,26 @@ SufraceLighting EvaluateIBL(in Surface surface, in AngularInfo angular)
                 if (hasFlag(probe.flags, LITE3D_ENV_PROBE_FLAG_SPECULAR))
                 {
                     float sW = specularDistanceWeight(surface.material, probeDistance, nearestProbeDistance);
-                    float tW = dW * nW * sW;
+                    float tW = sW * nW;
 
                     if (tW > LITE3D_ENV_PROBE_MIN_WEIGHT)
                     {
-                        totalSpecular += sampleProbeLod(surface.material, dominant, p, specularLevel) * tW;
-                        totalSWeight += tW;
+                        vec3 correctedDir = dominant;
+                        if (hasFlag(probe.flags, LITE3D_ENV_PROBE_FLAG_SPECULAR_PARALLAX_CORRECTION)
+                            && hasFlag(surface.material.flags, LITE3D_MATERIAL_SPECULAR_PARALLAX_CORRECTION)
+                            && surface.material.roughness < 0.6)
+                        {
+                            vec4 res = probeParallaxCorrect(surface, probe.position.xyz, dominant, probeDistance, p);
+                            correctedDir = res.xyz;
+                            // Apply correction confidence weight
+                            tW *= res.w;
+                        }
+
+                        if (tW > LITE3D_ENV_PROBE_MIN_WEIGHT)
+                        {
+                            totalSpecular += sampleProbeLod(surface.material, correctedDir, p, specularLevel) * tW;
+                            totalSWeight += tW;
+                        }
                     }
                 }
 #endif
@@ -323,18 +339,18 @@ SufraceLighting EvaluateIBL(in Surface surface, in AngularInfo angular)
             if (totalDWeight > LITE3D_ENV_PROBE_MIN_WEIGHT)
             {
                 for (uint ir = 0; ir < LITE3D_SH_COEFFS; ++ir)
-            {
-                radianceSH[ir] /= totalDWeight;
-            }
+                {
+                    radianceSH[ir] /= totalDWeight;
+                }
 
-            result.diffuse += irradianceSHL2(surface.bentNormal, radianceSH, visibility);
+                result.diffuse += irradianceSHL2(surface.bentNormal, radianceSH, visibility);
             }
 #endif
 
 #ifdef LITE3D_EVALUATE_IBL_SPECULAR
             if (totalDWeight > LITE3D_ENV_PROBE_MIN_WEIGHT)
             {
-            result.specular += totalSpecular / totalSWeight;
+                result.specular += totalSpecular / totalSWeight;
             }
 #endif
         }

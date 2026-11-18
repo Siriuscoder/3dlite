@@ -33,8 +33,8 @@
     },
     "PostProcess":
     {
-        "Contrast": 1.005,
-        "Saturation": 1.10,
+        "Contrast": 1.01,
+        "Saturation": 1.2,
         "Exposure": 2.0,
         "LensFlare": true,
         "ChromaticAberration": true,

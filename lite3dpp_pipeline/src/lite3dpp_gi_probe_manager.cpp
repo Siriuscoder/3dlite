@@ -370,7 +370,7 @@ void GIProbeManager::postUpdate(RenderTarget *rt)
     {
         // Calculate a roughness value in the range [0, 1] based on the
         // current mip level and the total number of mip levels.
-        const auto roughness = static_cast<float>(level) / static_cast<float>(totalLevels);
+        const auto roughness = static_cast<float>(level) / static_cast<float>(totalLevels - 1);
         mPrefilterEnvironmentShader->getShaderParameters().setFloatParameter("Roughness", roughness);
         // Bind the current mip level of the environment probe texture
         mPrefilterEnvironmentShader->getShaderParameters().getParameter("PrefilteredEnvironment", 

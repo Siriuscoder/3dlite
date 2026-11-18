@@ -25,7 +25,7 @@ vec3 chromaticAberration(vec2 uv)
     vec2 delta = uv - center;
     float r2 = dot(delta, delta);
 
-    float maxR = 0.707; // max distance from center (corner of unit square)
+    float maxR = 0.808; // max distance from center (corner of unit square)
     float maxDistortion = 1.0 + LITE3D_CHROMATIC_ABERRATION_DISTORTION * (maxR * maxR); // max distortion at edge
     float zoom = 1.0 / maxDistortion; // scale uvs to counteract max distortion
 

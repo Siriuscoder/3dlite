@@ -65,7 +65,7 @@ Surface makeSurface(vec2 uv, vec3 wv, vec3 wn, vec3 wt, vec3 wb)
 #endif
 
 #ifdef LITE3D_ENV_PROBE_MAX // Setup by the engine 
-    surface.material.flags |= LITE3D_MATERIAL_ENVIRONMENT_MULTI_PROBE;
+    surface.material.flags |= LITE3D_MATERIAL_ENVIRONMENT_MULTI_PROBE | LITE3D_MATERIAL_SPECULAR_PARALLAX_CORRECTION;
 #endif
 
     return surface;
@@ -124,7 +124,7 @@ bool restoreSurface(vec2 uv, out Surface surface)
 #endif
 
 #ifdef LITE3D_ENV_PROBE_MAX // Setup by the engine 
-    surface.material.flags |= LITE3D_MATERIAL_ENVIRONMENT_MULTI_PROBE;
+    surface.material.flags |= LITE3D_MATERIAL_ENVIRONMENT_MULTI_PROBE | LITE3D_MATERIAL_SPECULAR_PARALLAX_CORRECTION;
 #endif
 
     return true;

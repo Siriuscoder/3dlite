@@ -5484,7 +5484,7 @@
                 0.9999998211860657,
                 1.0
               ],
-              "Radiance": 4.599999904632568,
+              "Radiance": 5.5,
               "ShadowParams": {
                 "Dynamic": true,
                 "Type": "VSM",

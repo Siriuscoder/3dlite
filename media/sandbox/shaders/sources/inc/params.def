@@ -1,6 +1,6 @@
 // Environment params
 #define LITE3D_ENV_PROBE_MIN_SPACING                        2.0
-#define LITE3D_ENV_PROBE_VISIBILITY_BIAS                    1.5
+#define LITE3D_ENV_PROBE_VISIBILITY_BIAS                    0.5
 
 #define LITE3D_SHADOW_VSM_ENABLE
 // Shadow params

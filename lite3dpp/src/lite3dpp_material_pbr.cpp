@@ -50,6 +50,16 @@ namespace lite3dpp
         setSubSurfaceScattering(helper.getObject(L"SubSurfaceScattering").getDouble(L"Value", 0.0), false);
         setEnvironmentSingleProbeIndex(helper.getObject(L"EnvironmentSingleProbeIndex").getInt(L"Value", -1), false);
 
+        if (helper.getBool(L"SpecularParallaxCorrection", false))
+        {
+            mMaterialEntity.Flags = mMaterialEntity.Flags | PBRMaterialFlags::SPECULAR_PARALLAX_CORRECTION;
+        }
+        else
+        {
+            mMaterialEntity.Flags = mMaterialEntity.Flags & static_cast<PBRMaterialFlags>(
+                ~static_cast<uint32_t>(PBRMaterialFlags::SPECULAR_PARALLAX_CORRECTION));
+        }
+
         size_t index = 0;
         for (size_t i = 0; i < gTextureIds.size(); ++i)
         {

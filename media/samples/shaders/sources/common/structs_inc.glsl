@@ -17,9 +17,10 @@ struct EnvironmentProbeStruct
     uint flags;
 };
 
-#define LITE3D_ENV_PROBE_FLAG_IRRADIANCE                uint(1 << 0)
-#define LITE3D_ENV_PROBE_FLAG_SPECULAR                  uint(1 << 1)
-#define LITE3D_ENV_PROBE_FLAG_REUSABLE                  uint(1 << 2)
+#define LITE3D_ENV_PROBE_FLAG_IRRADIANCE                            uint(1 << 0)
+#define LITE3D_ENV_PROBE_FLAG_SPECULAR                              uint(1 << 1)
+#define LITE3D_ENV_PROBE_FLAG_REUSABLE                              uint(1 << 2)
+#define LITE3D_ENV_PROBE_FLAG_SPECULAR_PARALLAX_CORRECTION          uint(1 << 3)
 
 struct AngularInfo
 {
@@ -77,6 +78,7 @@ struct LightSource
 #define LITE3D_MATERIAL_NORMAL_MAPPING_TANGENT_BITANGENT    uint(1 << 1)
 #define LITE3D_MATERIAL_ENVIRONMENT_TEXTURE                 uint(1 << 2)
 #define LITE3D_MATERIAL_ENVIRONMENT_MULTI_PROBE             uint(1 << 3)
+#define LITE3D_MATERIAL_SPECULAR_PARALLAX_CORRECTION         uint(1 << 4)
 
 #define TEXTURE_FLAG_EMPTY                                  uint(0)
 #define TEXTURE_FLAG_LOADED                                 uint(1 << 0)

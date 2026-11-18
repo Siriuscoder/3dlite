@@ -138,9 +138,9 @@ public:
         auto flashLightObject = mSponzaScene->addObject("FlashLight", "samples:objects/flashlight.json", nullptr);
         mFlashLight = flashLightObject->getLightNode("FlashLight.node");
         mFlashLight->getLight()->setAttenuationConstant(1.0f);
-        mFlashLight->getLight()->setAttenuationLinear(15.23f);
-        mFlashLight->getLight()->setAttenuationQuadratic(35.23f);
-        mFlashLight->getLight()->setRadiance(160.0f);
+        mFlashLight->getLight()->setAttenuationLinear(0.0f);
+        mFlashLight->getLight()->setAttenuationQuadratic(1.0f);
+        mFlashLight->getLight()->setRadiance(20.0f);
         mFlashLight->getLight()->enabled(false);
     }
 
