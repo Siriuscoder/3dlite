@@ -59,6 +59,8 @@ protected:
     TextureImage *mPostProcessOutput;
     Scene *mFXAAStage = nullptr;
     Material *mFXAAStageMaterial = nullptr;
+    uint32_t computeLocalThreadsX = 16;
+    uint32_t computeLocalThreadsY = 16;
 };
 
 }}

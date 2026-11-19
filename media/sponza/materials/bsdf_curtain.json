@@ -14,13 +14,15 @@
   "EnvSpecular": {
     "Value": 1.0
   },
+  "Sheen": {
+    "Value": 0.95
+  },
   "NormalScale": {
     "Value": [1.0, -1.0, 1.0, 1.0]
   },
   "EnvironmentProbeTexture": {
-    "Name": "EnvironmentProbe",
-    "TextureName": "SponzaDeffered_PrefilteredEnvironmentMultiProbe.texture",
-    "Type": "sampler"
+    "Probe": "SponzaDeffered_PrefilteredEnvironmentProbes.texture",
+    "ProbeDepth": "SponzaDeffered_EnvironmentProbesDepth.texture"
   },
 
   "Passes":[
@@ -100,8 +102,8 @@
         },
         {
           "Name":"EnvProbesData",
-          "UBOName":"SponzaDeffered_EnvProbesData",
-          "Type":"UBO"
+          "SSBOName":"SponzaDeffered_EnvProbesData",
+          "Type":"SSBO"
         },
         {
           "Name":"EnvProbesIndex",

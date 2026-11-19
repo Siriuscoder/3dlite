@@ -2,13 +2,10 @@
     "Sources": 
     [
         // Standard shaders with params customization
-        "samples:shaders/sources/bigtriangle.vs",
-        "samples:shaders/sources/pipeline/light_pass/light.fs",
-        "samples:shaders/sources/pbr/pbr.fs",
-        "samples:shaders/sources/pbr/brdf_oren_nayar_approx.fs",
-        "samples:shaders/sources/pbr/brdf_indirect.fs,sponza:shaders/sources/inc/params.def",
-        "samples:shaders/sources/shadow/full.fs,sponza:shaders/sources/inc/params.def",
-        "samples:shaders/sources/ssao/ssao_sample.fs",
-        "samples:shaders/sources/common/common.fs,sponza:shaders/sources/inc/disable_invocation.def"
+        "samples:shaders/sources/pipeline/deffered_pass/lighting.comp,sponza:shaders/sources/inc/params.def",
+        "samples:shaders/sources/pbr/brdf_oren_nayar_approx.comp",
+        "samples:shaders/sources/gi/image_based_full.comp,sponza:shaders/sources/inc/params.def",
+        "samples:shaders/sources/shadow/full.comp,sponza:shaders/sources/inc/params.def",
+        "samples:shaders/sources/common/common.comp"
     ]
 }

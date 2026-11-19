@@ -254,6 +254,10 @@ namespace lite3dpp
         {
             result.append("#define LITE3D_GEOMETRY_SHADER\n");
         }
+        else if (shaderType == LITE3D_SHADER_TYPE_COMPUTE)
+        {
+            result.append("#define LITE3D_COMPUTE_SHADER\n");
+        }
 
         for (auto &d : mGlobalDefinitions)
         {
@@ -289,5 +293,48 @@ namespace lite3dpp
         mLocalDefinitions[name] = value;
         SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "GLSL: %s = %s", name.c_str(), value.c_str());
     }
-}
 
+    std::array<uint32_t, 3> ShaderProgram::getOptimalWorkGroupSize(uint32_t width, uint32_t height, uint32_t depth)
+    {
+        if (!width || !height || !depth)
+        {
+            LITE3D_THROW("Compute workgroup resolution must be nonzero on all axes");
+        }
+
+        std::array<int32_t, 3> axisLimits;
+        int32_t maxInvocations;
+        lite3d_shader_program_get_workgroup_limits(&axisLimits[0], &axisLimits[1], &axisLimits[2], &maxInvocations);
+        if (maxInvocations <= 0 || axisLimits[0] <= 0 || axisLimits[1] <= 0 || axisLimits[2] <= 0)
+        {
+            LITE3D_THROW("Compute workgroup limits are unavailable; initialize shader techniques first");
+        }
+
+        const std::array<uint32_t, 3> resolution { width, height, depth };
+        std::array<uint32_t, 3> sizes { 1, 1, 1 };
+        uint32_t invocations = 1;
+
+        // Grow the smallest eligible axis, preferring X on ties for contiguous image access.
+        while (invocations <= static_cast<uint32_t>(maxInvocations) / 2)
+        {
+            size_t selected = sizes.size();
+            for (size_t axis = 0; axis < sizes.size(); ++axis)
+            {
+                const auto limit = std::min(resolution[axis], static_cast<uint32_t>(axisLimits[axis]));
+                if (sizes[axis] <= limit / 2 && (selected == sizes.size() || sizes[axis] < sizes[selected]))
+                {
+                    selected = axis;
+                }
+            }
+
+            if (selected == sizes.size())
+            {
+                break;
+            }
+
+            sizes[selected] *= 2;
+            invocations *= 2;
+        }
+
+        return sizes;
+    }
+}

@@ -1,8 +1,3 @@
 #include "samples:shaders/sources/common/common_inc.glsl"
+#include "samples:shaders/sources/pbr/brdf_lambert.glsl"
 
-// Lambertian
-vec3 BRDF(in Surface surface, in AngularInfo angular)
-{
-    vec3 F = fresnelSchlickRoughness(angular.HdotV, surface.material);
-    return DiffuseLobeLambertian(F, surface.material);
-}

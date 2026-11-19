@@ -280,6 +280,7 @@ class Scene:
         settings = obj.lite3d_properties
         node["Static"] = settings.static or settings.physicsObjectType in ["Dynamic", "Kinematic"]
         node["CastShadow"] = settings.castShadow
+        node["GIVisible"] = settings.giVisible
         node["FrustumTest"] = settings.frustumTest
         if obj.type == "MESH":
             self.exportMesh(obj, node)

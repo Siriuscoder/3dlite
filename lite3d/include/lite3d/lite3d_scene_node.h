@@ -29,6 +29,7 @@
 #define LITE3D_SCENE_NODE_FRUSTUM_TEST        ((uint32_t)0x1 << 4)
 #define LITE3D_SCENE_NODE_STATIC              ((uint32_t)0x1 << 5)
 #define LITE3D_SCENE_NODE_CAST_SHADOW         ((uint32_t)0x1 << 6)
+#define LITE3D_SCENE_NODE_GI_VISIBLE          ((uint32_t)0x1 << 7)
 
 typedef struct  lite3d_scene_node
 {

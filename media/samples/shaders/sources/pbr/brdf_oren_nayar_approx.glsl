@@ -1,0 +1,25 @@
+float diffuseOrenNayarApprox(in AngularInfo angular, float roughness)
+{
+    float sigma2 = roughness * roughness;
+    float s = angular.LdotV - angular.NdotL * angular.NdotV;
+    float stinv = (s > 0.0) ? s / max(angular.NdotL, angular.NdotV) : 0.0;
+
+    float C1    = 1 - 0.5 * sigma2 / (sigma2 + 0.33);
+    float C2    = 0.45 * sigma2 / (sigma2 + 0.09);
+    return (C1 + C2 * stinv) * M_INV_PI;
+}
+
+// cook-torrance bidirectional reflective distribution function
+SufraceLighting BRDF(in Surface surface, in AngularInfo angular)
+{
+    vec3 F = fresnelSchlick(angular.HdotV, surface);
+    float d = diffuseOrenNayarApprox(angular, surface.material.roughness);
+    vec3 kD = diffuseFactor(F, surface.material.metallic);
+
+    SufraceLighting sl;
+    sl.diffuseEnergy = kD;
+    sl.diffuse = d * surface.material.albedo.rgb;
+    sl.specular = SpecularLobeGGX(F, surface.material, angular);
+
+    return sl;
+}

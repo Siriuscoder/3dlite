@@ -16,6 +16,7 @@
  *	along with Lite3D.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
 #include <sample_common/lite3dpp_common.h>
+#include <lite3dpp/lite3dpp_material_pbr.h>
 #include <lite3dpp_pipeline/lite3dpp_pipeline.h>
 
 namespace lite3dpp {
@@ -73,6 +74,8 @@ public:
         addFlashlight();
         initGIProbes();
 
+        lightBulb = getMain().getResourceManager().queryResource<PBRMaterial>("light_bulb.material");
+
         getMain().getResourceManager().warmUpMeshPartitions();
         //getMain().getResourceManager().dropFileCache();
     }
@@ -86,7 +89,7 @@ public:
         {
             if (node.first.starts_with("EnvProbe"))
             {
-                mPipeline->getIBL()->addProbe(node.second->getPosition());
+                mPipeline->getGIProbeManager()->addProbe(node.second->getPosition());
             }
         }
     }
@@ -104,10 +107,11 @@ public:
             }
         }
 
-        for (auto lightNode : mSponzaScene->getLights())
-        {
-            mPipeline->getShadowManager()->registerEmitter(lightNode);
-        }
+        mPipeline->getShadowManager()->registerEmitter(mSUN);
+        //for (auto lightNode : mSponzaScene->getLights())
+        //{
+        //    mPipeline->getShadowManager()->registerEmitter(lightNode);
+        //}
     }
 
     void fixedUpdateTimerTick(int32_t firedPerRound, uint64_t deltaMcs, float deltaRetard) override
@@ -116,7 +120,7 @@ public:
         {
             // Крутим источник света
             mSUNNode->rotateZ(0.0005f * deltaRetard);
-            //mPipeline->getIBL()->rebuild();
+            //mPipeline->getGIProbeManager()->rebuild();
         }
 
         auto sponzaStatic = mPipeline->getMainScene().getObject("Sponza");
@@ -134,9 +138,9 @@ public:
         auto flashLightObject = mSponzaScene->addObject("FlashLight", "samples:objects/flashlight.json", nullptr);
         mFlashLight = flashLightObject->getLightNode("FlashLight.node");
         mFlashLight->getLight()->setAttenuationConstant(1.0f);
-        mFlashLight->getLight()->setAttenuationLinear(15.23f);
-        mFlashLight->getLight()->setAttenuationQuadratic(35.23f);
-        mFlashLight->getLight()->setRadiance(160.0f);
+        mFlashLight->getLight()->setAttenuationLinear(0.0f);
+        mFlashLight->getLight()->setAttenuationQuadratic(1.0f);
+        mFlashLight->getLight()->setRadiance(20.0f);
         mFlashLight->getLight()->enabled(false);
     }
 
@@ -170,15 +174,15 @@ public:
             {
                 mDayNightMode = !mDayNightMode;
                 mSUN->getLight()->enabled(mDayNightMode);
-                mPipeline->setSkyBoxEmission(mDayNightMode ? 12.0f : 0.008f);
-                mPipeline->getIBL()->rebuild();
+                mPipeline->setSkyBoxEmission(mDayNightMode ? 4.2f : 0.008f);
+                mPipeline->getGIProbeManager()->rebuild();
             }
             else if (e->key.keysym.sym == SDLK_e)
             {
                 mSunRotation = !mSunRotation;
                 if (!mSunRotation)
                 {
-                    mPipeline->getIBL()->rebuild();
+                    mPipeline->getGIProbeManager()->rebuild();
                 }
             }
             else if (e->key.keysym.sym == SDLK_t)
@@ -192,7 +196,8 @@ public:
                     }
                 }
 
-                mPipeline->getIBL()->rebuild();
+                lightBulb->setEmissionStrength(20.0 * mLampsOn);
+                mPipeline->getGIProbeManager()->rebuild();
             }
             else if (e->key.keysym.sym == SDLK_KP_PLUS)
             {
@@ -225,6 +230,7 @@ private:
     lite3dpp_pipeline::PipelineDeffered* mPipeline = nullptr;
     LightSceneNode* mFlashLight = nullptr;
     LightSceneNode* mSUN = nullptr;
+    PBRMaterial *lightBulb = nullptr;
     SceneNode* mSUNNode = nullptr;
     bool mDayNightMode = true;
     bool mSunRotation = false;

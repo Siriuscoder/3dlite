@@ -39,6 +39,7 @@ class LITE3D_ObjectSettings(bpy.types.PropertyGroup):
     enabled: BoolProperty(name = "Enabled", default = True, description = "Enables or disables export of this object")
     static: BoolProperty(name = "Static", default = False, description = "Export as a static scene node; always enabled for Dynamic and Kinematic physics objects")
     castShadow: BoolProperty(name = "Cast Shadow", default = True, description = "Allow this scene node to cast shadows")
+    giVisible: BoolProperty(name = "Visible in GI Probes", default = True, description = "Include this scene node when capturing global illumination probes")
     frustumTest: BoolProperty(name = "Frustum Test", default = True, description = "Enable frustum culling for this scene node")
     physicsCalcCenterOfMass: BoolProperty(name = "Calculate center of mass", default = False, description = "Adjust center of mass for complex compound objects")
     physicsObjectType: EnumProperty(name = "Type", description="Type of the physics object in terms of Bullet. Must be EMPTY and root of the physics object", 

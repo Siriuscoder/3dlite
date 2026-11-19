@@ -19,7 +19,7 @@
 
 #include <lite3dpp_pipeline/lite3dpp_bloom.h>
 #include <lite3dpp_pipeline/lite3dpp_shadow_manager.h>
-#include <lite3dpp_pipeline/lite3dpp_IBL_multiprobe.h>
+#include <lite3dpp_pipeline/lite3dpp_gi_probe_manager.h>
 #include <lite3dpp_pipeline/lite3dpp_postprocess.h>
 #include <lite3dpp_pipeline/lite3dpp_generator.h>
 
@@ -37,14 +37,14 @@ namespace lite3dpp_pipeline {
         Scene &getMainScene();
         Scene *getSkyBoxScene();
         ShadowManager *getShadowManager();
-        IBLMultiProbePass *getIBL();
+        GIProbeManager *getGIProbeManager();
         Camera &getMainCamera();
 
         void setExposure(float exp);
         void setContrast(float contrast);
         void setSaturation(float saturation);
         void setBrightness(float brightness);
-        void setSkyBoxEmission(float emission);
+        virtual void setSkyBoxEmission(float emission);
         void clearScene();
         void loadScene(const String &path);
 
@@ -69,6 +69,8 @@ namespace lite3dpp_pipeline {
             SceneGenerator &sceneGenerator);
         
         void createSkyBoxMesh();
+        void createSkyBoxStage(const ConfigurationReader &pipelineConfig, const String &cameraName,
+            const ConfigurationWriter &mainCameraConfig, bool renderToCombine);
         void createCombined2Texture(const String &cameraName);
         void createLTCLutTextures();
         void createBigTriangleMesh();
@@ -80,7 +82,7 @@ namespace lite3dpp_pipeline {
         String mShaderPackage;
         std::unique_ptr<ShadowManager> mShadowManager;
         std::unique_ptr<BloomPass> mBloomPass;
-        std::unique_ptr<IBLMultiProbePass> mIBL;
+        std::unique_ptr<GIProbeManager> mGIProbeManager;
         std::unique_ptr<PostProcessPass> mPostProcessPass;
         String mMainCameraName;
         RenderTarget *mDepthPass = nullptr;

@@ -59,6 +59,8 @@ namespace lite3dpp
         bool isDynamic() const;
         void setCastShadow(bool flag);
         bool isCastShadow() const;
+        void setGIVisible(bool flag);
+        bool isGIVisible() const;
 
         void setPosition(const kmVec3 &position);
         const kmVec3& getPosition() const;

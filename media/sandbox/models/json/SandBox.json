@@ -4,6 +4,7 @@
   "MaterialMapping": [
     {
       "Material": {
+        "Type": "Default",
         "Name": "Wall01.material",
         "Material": "sandbox:materials/Wall01.json"
       },
@@ -11,6 +12,7 @@
     },
     {
       "Material": {
+        "Type": "Default",
         "Name": "Wall02.material",
         "Material": "sandbox:materials/Wall02.json"
       },
@@ -18,6 +20,7 @@
     },
     {
       "Material": {
+        "Type": "Default",
         "Name": "Wall03.material",
         "Material": "sandbox:materials/Wall03.json"
       },
@@ -25,6 +28,7 @@
     },
     {
       "Material": {
+        "Type": "Default",
         "Name": "Wall04.material",
         "Material": "sandbox:materials/Wall04.json"
       },
@@ -32,6 +36,7 @@
     },
     {
       "Material": {
+        "Type": "Default",
         "Name": "WallHalf.material",
         "Material": "sandbox:materials/WallHalf.json"
       },
@@ -39,6 +44,7 @@
     },
     {
       "Material": {
+        "Type": "Default",
         "Name": "Floor.material",
         "Material": "sandbox:materials/Floor.json"
       },
@@ -46,6 +52,7 @@
     },
     {
       "Material": {
+        "Type": "Default",
         "Name": "Ceil.material",
         "Material": "sandbox:materials/Ceil.json"
       },
@@ -53,6 +60,7 @@
     },
     {
       "Material": {
+        "Type": "Default",
         "Name": "Monkey.material",
         "Material": "sandbox:materials/Monkey.json"
       },
@@ -60,6 +68,7 @@
     },
     {
       "Material": {
+        "Type": "Default",
         "Name": "Sphere.material",
         "Material": "sandbox:materials/Sphere.json"
       },
