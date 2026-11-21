@@ -15,11 +15,6 @@
         "Extent": 2048,
         "CascadeShadowCacheMaxCount": 4
     },
-    "SSAO": 
-    {
-        "AORadius": 0.25,
-        "FramebufferScale": 2
-    },
     "BLOOM": 
     {
         "BloomRadius": 0.005

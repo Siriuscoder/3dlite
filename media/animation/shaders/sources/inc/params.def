@@ -11,8 +11,10 @@
 #define LITE3D_SHADOW_PCF_MAX_FILTER_SIZE                   5.0
 #define LITE3D_SHADOW_PCF_MIN_STEP                          0.5
 
-#define LITE3D_GTAO_INTENSITY                                   1.2
-#define LITE3D_SSAO_ADAPTIVE_BIAS_MAX                       0.1
-#define LITE3D_SSAO_ADAPTIVE_BIAS_MIN                       0.01
+#define LITE3D_GTAO_INTENSITY                               1.4
+#define LITE3D_GTAO_RADIUS                                  0.12
+#define LITE3D_GTAO_DIRECTIONS                              6
+#define LITE3D_GTAO_STEPS                                   4
+#define LITE3D_GTAO_FILTER_DEPTH_THRESHOLD                  (LITE3D_GTAO_RADIUS + 0.2)
 
 #define LITE3D_SHADOW_VSM_BIAS                              0.0001

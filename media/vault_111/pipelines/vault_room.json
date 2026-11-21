@@ -10,11 +10,6 @@
         "Extent": 512,
         "OmniShadowCacheMaxCount": 10
     },
-    "SSAO": 
-    {
-        "AORadius": 7.0,
-        "FramebufferScale": 2
-    },
     "BLOOM": 
     {
         "BloomRadius": 0.005

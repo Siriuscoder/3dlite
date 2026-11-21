@@ -23,7 +23,6 @@ void main()
     float centerDepth = centerData.w;
 
     float aoSum = centerAO;
-    vec3 normalSum = unpackNormal(centerData.xy);
     float weightSum = 1.0;
     ivec2 BlurDirection = Direction == 1 ? ivec2(1, 0) : ivec2(0, 1);
     const float sigma = 2.5;
@@ -45,14 +44,12 @@ void main()
 
             float weight = Gaussian(float(i), sigma) * depthWeight;
 
-            normalSum += unpackNormal(sampleData.xy) * weight;
             aoSum += ao * weight;
             weightSum += weight;
         }
     }
 
-    vec3 filteredNormal = normalize(normalSum / weightSum);
-    float filteredAO = aoSum / weightSum;
+    float filteredAO = aoSum / max(weightSum, FLT_EPSILON);
     // Глубину сохраняем без изменений!
-    imageStore(FilteredOutput, pixelCoord, vec4(packNormal(filteredNormal), filteredAO, centerDepth));
+    imageStore(FilteredOutput, pixelCoord, vec4(centerData.xy, filteredAO, centerDepth));
 }

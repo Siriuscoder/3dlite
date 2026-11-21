@@ -31,7 +31,7 @@ namespace lite3dpp_pipeline {
         SceneGenerator &sceneGenerator)
     {
         constructGBufferPass(pipelineConfig, cameraName, sceneGenerator);
-        constructSSAOPass(pipelineConfig, cameraName);
+        constructSSAOPass(cameraName);
         constructCombinedPass(pipelineConfig, cameraName, sceneGenerator);
         constructBloomPass(pipelineConfig, cameraName);
     }
@@ -127,7 +127,7 @@ namespace lite3dpp_pipeline {
     void PipelineDeffered::computeLighting()
     {
         SDL_assert(mLightComputeShader);
-        
+
         // The shader writes the background for pixels without geometry or skybox.
         const auto &background = mCombinePass->getPtr()->cleanColor;
         mLightComputeShader->getShaderParameters().setFloatv3Parameter("ClearColor",
@@ -431,7 +431,7 @@ namespace lite3dpp_pipeline {
             .set(L"RenderInstancing", pipelineConfig.getBool(L"Instancing", true)));
     }
 
-    void PipelineDeffered::constructSSAOPass(const ConfigurationReader &pipelineConfig, const String &cameraName)
+    void PipelineDeffered::constructSSAOPass(const String &cameraName)
     {
         // Создание SSAO текстуры
         ConfigurationWriter ssaoTextureConfig;
@@ -440,9 +440,7 @@ namespace lite3dpp_pipeline {
             .set(L"Wrapping", "ClampToEdge")
             .set(L"Compression", false)
             .set(L"TextureFormat", "RGBA")
-            .set(L"InternalFormat", "RGBA16F")
-            // SSAO всегда вычисляем в половинном разрешении, так устроен шейдер!
-            .set(L"Scale", 2);
+            .set(L"InternalFormat", "RGBA16F");
 
         mSSAOTexture = getMain().getResourceManager().queryResourceFromJson<TextureImage>(
             getName() + "_" + cameraName + "_SSAO.texture", ssaoTextureConfig.write(), this);

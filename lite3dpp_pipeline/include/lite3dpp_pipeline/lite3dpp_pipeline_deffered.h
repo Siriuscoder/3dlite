@@ -67,7 +67,7 @@ namespace lite3dpp_pipeline {
             SceneGenerator &sceneGenerator);
         virtual void constructCombinedPass(const ConfigurationReader &pipelineConfig, const String &cameraName,
             SceneGenerator &sceneGenerator);
-        virtual void constructSSAOPass(const ConfigurationReader &pipelineConfig, const String &cameraName);
+        virtual void constructSSAOPass(const String &cameraName);
         virtual void constructLightComputePass(const ConfigurationReader &pipelineConfig);
         void computeSSAO();
         void computeLighting();

@@ -57,44 +57,6 @@ bool getGBufferData(ivec2 pixelCoord, out vec3 viewPosition)
     return true;
 }
 
-// Select nearest visible surface from the 2x2 block.
-bool loadOrigins(ivec2 bounds, ivec2 halfPixel, out ivec2 fullPixel, out vec3 viewPosition, out vec3 viewOriginNormal)
-{
-    ivec2 base = halfPixel * 2;
-
-    bool found = false;
-    float nearestZ = -1e30;
-
-    for (int y = 0; y < 2; ++y)
-    {
-        for (int x = 0; x < 2; ++x)
-        {
-            ivec2 p = base + ivec2(x, y);
-
-            if (any(greaterThanEqual(p, bounds)))
-                continue;
-
-            vec3 sampleViewPosition, sampleViewNormal;
-            if (!getGBufferData(p, sampleViewPosition, sampleViewNormal))
-                continue;
-
-            float viewZ = sampleViewPosition.z;
-            // In OpenGL view space, visible geometry
-            // lies at negative Z. Larger Z = closer.
-            if (!found || viewZ > nearestZ)
-            {
-                found = true;
-                nearestZ = viewZ;
-                viewPosition = sampleViewPosition;
-                viewOriginNormal = sampleViewNormal;
-                fullPixel = p;
-            }
-        }
-    }
-
-    return found;
-}
-
 // Full-resolution point sampling, without interpolation.
 bool sampleViewPosition(ivec2 bounds, vec2 uv, out vec3 viewPosition)
 {
@@ -216,37 +178,35 @@ vec2 computeSliceBentT(float h0, float h1, float n)
 
 void main()
 {
-    ivec2 pos = ivec2(gl_GlobalInvocationID.xy);
-    ivec2 resolutionOut = imageSize(GTAOOutput);
+    ivec2 pixelCoord = ivec2(gl_GlobalInvocationID.xy);
+    ivec2 bounds = textureSize(GBuffer, 0).xy;
 
-    if (any(greaterThanEqual(pos, resolutionOut)))
+    if (any(greaterThanEqual(pixelCoord, bounds)))
         return;
 
     // ------------------------------------------------------
-    // Center surface
+    // Get surface
     // ------------------------------------------------------
 
-    ivec2 centerPixel;
-    ivec2 bounds = textureSize(GBuffer, 0).xy;
     vec3 viewOriginPosition, viewOriginNormal;
 
-    if (!loadOrigins(bounds, pos, centerPixel, viewOriginPosition, viewOriginNormal))
+    if (!getGBufferData(pixelCoord, viewOriginPosition, viewOriginNormal))
     {
-        imageStore(GTAOOutput, pos, vec4(0.0, 0.0, 1.0, 1.0));
+        imageStore(GTAOOutput, pixelCoord, vec4(0.0, 0.0, 1.0, 1.0));
         return;
     }
 
-    vec2 originUV = (vec2(centerPixel) + 0.5) / vec2(bounds);
+    vec2 originUV = (vec2(pixelCoord) + 0.5) / vec2(bounds);
     vec3 viewVec = normalize(-viewOriginPosition);
 
     // ------------------------------------------------------
-    // Screen-space radius in half-resolution pixels
+    // Screen-space radius
     // ------------------------------------------------------
-    float screenRadius = LITE3D_GTAO_RADIUS * abs(CameraProjection[0][0]) * float(resolutionOut.x) / 
+    float screenRadius = LITE3D_GTAO_RADIUS * abs(CameraProjection[0][0]) * float(bounds.x) / 
         (2.0 * max(abs(viewOriginPosition.z), FLT_EPSILON));
 
     float minS = 1.3 / max(screenRadius, FLT_EPSILON);
-    vec2 texelSize = 1.0 / vec2(resolutionOut);
+    vec2 texelSize = 1.0 / vec2(bounds);
 
     // ------------------------------------------------------
     // Distance falloff
@@ -259,7 +219,7 @@ void main()
     // ------------------------------------------------------
     // Static Halton noise
     // ------------------------------------------------------
-    vec2 noise = getSpatialNoise(pos);
+    vec2 noise = getSpatialNoise(pixelCoord);
 
     float noiseSlice = noise.x;
     float noiseSample = noise.y;
@@ -394,5 +354,5 @@ void main()
     // z  = visibility
     // w  = linear depth
     // ------------------------------------------------------
-    imageStore(GTAOOutput, pos, vec4(packedBent, visibility, -viewOriginPosition.z));
+    imageStore(GTAOOutput, pixelCoord, vec4(packedBent, visibility, -viewOriginPosition.z));
 }
