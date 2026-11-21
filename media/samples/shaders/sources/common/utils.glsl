@@ -145,16 +145,28 @@ float noiseInterleavedGradient(vec2 xy)
     return fract(magic.z * fract(dot(xy, magic.xy)));
 }
 
-vec3 worldToViewSpacePosition(vec3 posw)
+vec3 worldToView(vec3 p)
 {
-    vec4 pos = CameraView * vec4(posw, 1.0);
-    return pos.xyz / pos.w;
+    // Optimized approach
+    return mat3(CameraView) * (p - Eye);
 }
 
-vec3 worldToViewSpaceDirection(vec3 vw)
+vec3 viewToWorld(vec3 p)
 {
-    vec4 dir = CameraView * vec4(vw, 0.0);
-    return normalize(dir.xyz);
+    // Optimized approach
+    return mat3(transpose(CameraView)) * p + Eye;
+}
+
+vec3 viewToWorldDir(vec3 dir)
+{
+    dir = mat3(transpose(CameraView)) * dir;
+    return normalize(dir);
+}
+
+vec3 worldToViewDir(vec3 dir)
+{
+    dir = mat3(CameraView) * dir;
+    return normalize(dir);
 }
 
 vec2 viewPositionToUV(vec3 pos)
@@ -164,7 +176,7 @@ vec2 viewPositionToUV(vec3 pos)
     return uv.xy * 0.5 + 0.5;   // transform to range 0.0 - 1.0 
 }
 
-vec3 screenUVToEnvDir(vec2 uv)
+vec3 UVToEnvDir(vec2 uv)
 {
     vec2 ndc = uv * 2.0 - 1.0;
     mat4 inverseViewProjection = inverse(CameraProjection * CameraView);
@@ -683,30 +695,39 @@ vec2 unpack2xF12(float pval)
     return vec2(float(a12), float(b12)) * (1.0 / 4095.0);
 }
 
-float packNormal2xF12(vec3 n)
+float packNormalToF32(vec3 n)
 {
-    n /= abs(n.x) + abs(n.y) + abs(n.z);
-
-    vec2 p = n.xy;
-
-    if (n.z < 0.0)
-    {
-        p = (1.0 - abs(p.yx)) * sign(p);
-    }
-
+    vec2 p = packNormal(n);
     uvec2 q = uvec2(round(clamp(p * 0.5 + 0.5, 0.0, 1.0) * 4095.0));
 
     uint pval = q.x | (q.y << 12);
     return float(pval);
 }
 
-vec3 unpackNormal2xF12(float pval)
+vec3 unpackNormalFromF32(float pval)
 {
     uint bits = uint(pval);
     uint a12 = bits & 0xFFFu;
     uint b12 = (bits >> 12) & 0xFFFu;
     vec2 p = vec2(float(a12), float(b12)) * (1.0 / 4095.0) * 2.0 - 1.0;
 
+    return unpackNormal(p);
+}
+
+vec2 packNormal(vec3 n)
+{
+    n /= abs(n.x) + abs(n.y) + abs(n.z);
+
+    if (n.z < 0.0)
+    {
+        n.xy = (1.0 - abs(n.yx)) * sign(n.xy);
+    }
+
+    return n.xy;
+}
+
+vec3 unpackNormal(vec2 p)
+{
     vec3 n = vec3(p, 1.0 - abs(p.x) - abs(p.y));
 
     if (n.z < 0.0)

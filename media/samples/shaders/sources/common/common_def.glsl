@@ -164,3 +164,23 @@
 #ifndef LITE3D_CHROMATIC_ABERRATION_DISTORTION
 #define LITE3D_CHROMATIC_ABERRATION_DISTORTION          0.2
 #endif
+
+#ifndef LITE3D_GTAO_DIRECTIONS
+#define LITE3D_GTAO_DIRECTIONS                          4
+#endif
+
+#ifndef LITE3D_GTAO_STEPS
+#define LITE3D_GTAO_STEPS                               3
+#endif
+
+#ifndef LITE3D_GTAO_RADIUS
+#define LITE3D_GTAO_RADIUS                              1.5
+#endif
+
+#ifndef LITE3D_GTAO_INTENSITY
+#define LITE3D_GTAO_INTENSITY                           1.0
+#endif
+
+#ifndef LITE3D_GTAO_FILTER_DEPTH_THRESHOLD
+#define LITE3D_GTAO_FILTER_DEPTH_THRESHOLD              0.02
+#endif

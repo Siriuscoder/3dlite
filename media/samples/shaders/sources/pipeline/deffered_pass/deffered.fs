@@ -24,10 +24,10 @@ float getAmbientOcclusion(vec2 uv)
  * +-----------+-------------------+-------------------+-------------------+-------------------+
  * | Channel   | X                 | Y                 | Z                 | W                 |
  * +-----------+-------------------+-------------------+-------------------+-------------------+
- * | channel01 | iwv.x             | iwv.y             | iwv.z             | MatID(24)         |
- * | channel02 | normal.x          | normal.y          | normal.z          | emission.r        |
- * | channel03 | albedo.rg (2x12)  | albedo.b(12)+S(12)| geoNormal (Oct24) | emission.g        |
- * | channel04 | R(12)+M(12)       | AO / reserved     | reserved          | emission.b        |
+ * | channel01 | iwv.x             | iwv.y             | iwv.z             | geoNormal (Oct24) |
+ * | channel02 | normal.x          | normal.y          | normal.z          | MatID(24)         |
+ * | channel03 | albedo.rg (2x12)  | albedo.b(12)+S(12)| R(12)+M(12)       | AO                |
+ * | channel04 | emission.r        | emission.g        | emission.b        | reserved          |
  * +-----------+-------------------+-------------------+-------------------+-------------------+
  *
  * Packing:
@@ -48,29 +48,23 @@ void main()
     // Check for alpha clip 
     surfaceAlphaClip(surface.material);
 
-    // channel01 | iwv.x             | iwv.y             | iwv.z             | MatID(24) |
+    channel01 = vec4(iwv, packNormalToF32(surface.geoNormal));
+
 #ifdef LITE3D_BINDLESS_TEXTURE_PIPELINE
-    // pack AO and material index to the channel01.w. Material index is being clamped to int16 (65536 materials is limit)
-    channel01 = vec4(iwv, float(surface.materialIndex));
+    channel02 = vec4(surface.normal, float(surface.materialIndex));
 #else 
-    // pack environment diffuse factor and environment specular factor to the channel01.w. 
-    channel01 = vec4(iwv, pack2xF8(vec2(surface.material.envDiffuse, surface.material.envSpecular)));
+    // pack environment diffuse factor and environment specular factor to the channel02.w. 
+    channel02 = vec4(surface.normal, pack2xF8(vec2(surface.material.envDiffuse, surface.material.envSpecular)));
 #endif
 
-    // channel02 | normal.x          | normal.y          | normal.z          | emission.r        |
-    channel02 = vec4(surface.normal, surface.material.emission.r);
-
-    // channel03 | albedo.rg (2x12)  | albedo.b(12)+S(12)| geoNormal (Oct24) | emission.g        |
     channel03 = vec4(
         pack2xF12(surface.material.albedo.rg),
         pack2xF12(vec2(surface.material.albedo.b, surface.material.specular)),
-        packNormal2xF12(surface.geoNormal),
-        surface.material.emission.g);
-
-    // channel04 | R(12)+M(12)       | reserved          | reserved          | emission.b        |
-    channel04 = vec4(
         pack2xF12(vec2(surface.material.roughness, surface.material.metallic)),
-        surface.ao, 
-        0, // reserved 
-        surface.material.emission.b);
+        surface.ao);
+
+    channel04 = vec4(
+        surface.material.emission.rgb,
+        0.0 // reserved
+    );
 }

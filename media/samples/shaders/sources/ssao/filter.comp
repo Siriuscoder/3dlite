@@ -1,0 +1,58 @@
+
+#include "samples:shaders/sources/common/common_inc.glsl"
+
+#define BLUR_RADIUS 4
+
+layout(local_size_x = LITE3D_SSAO_COMPUTE_THREADS_X, local_size_y = LITE3D_SSAO_COMPUTE_THREADS_Y) in;
+layout(binding = 0, rgba16f) uniform writeonly image2D FilteredOutput;
+
+uniform sampler2D AOMap;
+uniform int Direction;
+
+void main()
+{
+    ivec2 pixelCoord = ivec2(gl_GlobalInvocationID.xy);
+    ivec2 bounds = textureSize(AOMap, 0);
+
+    if (any(greaterThanEqual(pixelCoord, bounds)))
+        return;
+
+    vec4 centerData = texelFetch(AOMap, pixelCoord, 0);
+
+    float centerAO = centerData.z;
+    float centerDepth = centerData.w;
+
+    float aoSum = centerAO;
+    vec3 normalSum = unpackNormal(centerData.xy);
+    float weightSum = 1.0;
+    ivec2 BlurDirection = Direction == 1 ? ivec2(1, 0) : ivec2(0, 1);
+    const float sigma = 2.5;
+
+    for (int i = 1; i <= BLUR_RADIUS; ++i)
+    {
+        for (int s = -1; s <= 1; s += 2)
+        {
+            ivec2 coord = clamp(pixelCoord + BlurDirection * (i * s), ivec2(0), bounds - 1);
+            vec4 sampleData = texelFetch(AOMap, coord, 0);
+
+            float ao = sampleData.z;
+            float depth = sampleData.w;
+
+            // Относительная разница глубины
+            float depthDiff = abs(depth - centerDepth) / max(centerDepth, FLT_EPSILON);
+            // Edge-preserving weight
+            float depthWeight = exp(-depthDiff / LITE3D_GTAO_FILTER_DEPTH_THRESHOLD);
+
+            float weight = Gaussian(float(i), sigma) * depthWeight;
+
+            normalSum += unpackNormal(sampleData.xy) * weight;
+            aoSum += ao * weight;
+            weightSum += weight;
+        }
+    }
+
+    vec3 filteredNormal = normalize(normalSum / weightSum);
+    float filteredAO = aoSum / weightSum;
+    // Глубину сохраняем без изменений!
+    imageStore(FilteredOutput, pixelCoord, vec4(packNormal(filteredNormal), filteredAO, centerDepth));
+}

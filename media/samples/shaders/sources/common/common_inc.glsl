@@ -21,6 +21,7 @@
 
 #define M_PI                                    3.14159265358979323846264
 #define M_INV_PI                                (1 / M_PI)
+#define M_HALF_PI                               (0.5 * M_PI)
 #define PHI                                     1.61803398874989484820459
 
 bool isNear(float a1, float a2);
@@ -50,10 +51,12 @@ float Gaussian(float x, float sigma);
 
 //////////// Transformations
 ////////////////////////////////////////////////////////////////////////////
-vec3 worldToViewSpacePosition(vec3 vw);
-vec3 worldToViewSpaceDirection(vec3 dirw);
+vec3 worldToView(vec3 p);
+vec3 viewToWorld(vec3 p);
+vec3 worldToViewDir(vec3 dir);
+vec3 viewToWorldDir(vec3 dir);
 vec2 viewPositionToUV(vec3 pos);
-vec3 screenUVToEnvDir(vec2 uv);
+vec3 UVToEnvDir(vec2 uv);
 float getZNear();
 float getZFar();
 
@@ -131,7 +134,7 @@ vec3 cubeTexelToDir(ivec3 cubeCoord, ivec2 cubemapSize);
 int cubeFaceFromDir(vec3 dir);
 //////////// Building structures
 Surface makeSurface(vec2 uv, vec3 wv, vec3 wn, vec3 wt, vec3 wb);
-bool restoreSurface(vec2 uv, out Surface surface);
+bool restoreSurface(ivec2 pixelCoord, out Surface surface);
 void angularInfoInit(out AngularInfo angular, in Surface surface);
 void angularInfoSetLightSource(inout AngularInfo angular, in Surface surface, in LightSource source);
 void angularInfoCalcAngles(inout AngularInfo angular, in Surface surface);
@@ -146,8 +149,10 @@ float pack2xF8(vec2 v);
 vec2 unpack2xF8(float pval);
 float pack2xF12(vec2 v);
 vec2 unpack2xF12(float pval);
-float packNormal2xF12(vec3 n);
-vec3 unpackNormal2xF12(float pval);
+float packNormalToF32(vec3 n);
+vec3 unpackNormalFromF32(float pval);
+vec2 packNormal(vec3 n);
+vec3 unpackNormal(vec2 p);
 //////////// Spherical Harmonics
 void evaluateSHBasisL2(vec3 dir, out float b[LITE3D_SH_COEFFS]);
 // visibility means AO

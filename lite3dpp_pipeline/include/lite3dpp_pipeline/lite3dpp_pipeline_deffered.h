@@ -35,8 +35,7 @@ namespace lite3dpp_pipeline {
 // ---------------------|-----------------------|-------------------|---------------|
 // GBuffer              | GBufferBuildStage     | RenderPass        | MainScene     |
 // ---------------------|-----------------------|-------------------|---------------|
-// SSAO                 | SSAOBuildStage        | RenderPass        | BigTri        |
-// ---------------------|-----------------------|-------------------|---------------|
+// Combine              | BlendDecalStage       | SSAO (compute)    | MainScene     |
 // Combine              | BlendDecalStage       | Lighting (compute)| MainScene     |
 // Combine              | BlendDecalStage       | RenderPass        | MainScene     |
 // ---------------------|-----------------------|-------------------|---------------|
@@ -70,16 +69,21 @@ namespace lite3dpp_pipeline {
             SceneGenerator &sceneGenerator);
         virtual void constructSSAOPass(const ConfigurationReader &pipelineConfig, const String &cameraName);
         virtual void constructLightComputePass(const ConfigurationReader &pipelineConfig);
+        void computeSSAO();
+        void computeLighting();
 
     protected:
 
-        Scene *mSSAOStage = nullptr;
+        ComputeShader *mSSAOComputeShader = nullptr;
+        ComputeShader *mSSAOFilterShader = nullptr;
         ComputeShader *mLightComputeShader = nullptr;
-        Material *mSSAOStageMaterial = nullptr;
         Texture *mGBufferTexture = nullptr;
-        Texture *mSSAOTexture = nullptr;
+        TextureImage *mSSAOTexture = nullptr;
+        TextureImage *mSSAOTexture2 = nullptr;
         RenderTarget *mGBufferPass = nullptr;
-        RenderTarget *mSSAOPass = nullptr;
+        bool mSSAOEnabled = true;
+        uint32_t ssaoComputeLocalThreadsX = 16;
+        uint32_t ssaoComputeLocalThreadsY = 16;
         uint32_t lightComputeLocalThreadsX = 16;
         uint32_t lightComputeLocalThreadsY = 16;
     };

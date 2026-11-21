@@ -1,3 +1,4 @@
-#define LITE3D_SSAO_ADAPTIVE_BIAS_MAX                       0.05
-#define LITE3D_SSAO_ADAPTIVE_BIAS_MIN                       0.01
-#define LITE3D_SSAO_POWER                                   1.85
+#define LITE3D_GTAO_INTENSITY                               2.2
+#define LITE3D_GTAO_RADIUS                                  14
+#define LITE3D_GTAO_DIRECTIONS                              8
+#define LITE3D_GTAO_STEPS                                   4

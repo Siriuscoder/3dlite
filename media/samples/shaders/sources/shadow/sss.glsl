@@ -3,8 +3,8 @@ uniform sampler2DArray GBuffer;
 float SSS(vec3 P, in AngularInfo angular)
 {
     // Compute ray position and direction (in view-space)
-    vec3 rayPos = worldToViewSpacePosition(P);
-    vec3 rayDir = worldToViewSpaceDirection(angular.lightDir);
+    vec3 rayPos = worldToView(P);
+    vec3 rayDir = worldToViewDir(angular.lightDir);
 
     float distanceFade = 1.0 - smoothstep(LITE3D_SSS_FADE_START, LITE3D_SSS_FADE_END, length(rayPos));
     if (isNear(distanceFade, 0.0))
@@ -29,7 +29,7 @@ float SSS(vec3 P, in AngularInfo angular)
             return 1.0;
         
         // Compute the difference between the ray's and the camera's depth
-        float depth = worldToViewSpacePosition(texture(GBuffer, vec3(rayUV, 0)).xyz).z;
+        float depth = worldToView(texture(GBuffer, vec3(rayUV, 0)).xyz).z;
         float depthDelta = depth - rayPos.z;
 
         if (depthDelta > minDepthThreshold && depthDelta < LITE3D_SSS_MAX_DEPTH_THRESHOLD)

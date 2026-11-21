@@ -76,7 +76,7 @@ Surface makeSurface(vec2 uv, vec3 wv, vec3 wn, vec3 wt, vec3 wb)
     surface.materialIndex = materialIndex;
     surface.uv = uv;
     surface.wv = wv;
-    surface.normal = surface.geoNormal = normalize(wn);
+    surface.normal = surface.geoNormal = surface.bentNormal = normalize(wn);
     surface.ao = 1.0;
 
     for (int i = 0; i < 8; ++i)
@@ -176,7 +176,6 @@ Surface makeSurface(vec2 uv, vec3 wv, vec3 wn, vec3 wt, vec3 wb)
     surface.material.metallic = clamp(surface.material.metallic, 0.0, 1.0);
     surface.material.emission *= surface.material.emissionStrength;
     surface.F0 = modulateF0(surface.material);
-    surface.bentNormal = surface.geoNormal;
     
     return surface;
 }
@@ -213,45 +212,48 @@ void surfaceAlphaClip(vec2 uv)
 
 #endif
 
-float getAmbientOcclusion(vec2 uv);
 uniform sampler2DArray GBuffer;
 
-bool restoreSurface(vec2 uv, out Surface surface)
+#include "samples:shaders/sources/ssao/resolve.glsl"
+
+bool restoreSurface(ivec2 pixelCoord, out Surface surface)
 {
-    ivec2 pixelCoord = ivec2(textureSize(GBuffer, 0).xy * uv);
-    // sampling normal in world space from fullscreen normal map
-    vec4 channel02 = texelFetch(GBuffer, ivec3(pixelCoord, 1), 0);
-    // Non shaded fragment
-    if (all(equal(channel02.xyz, vec3(0.0))))
+    // sampling fragment world position and world geo normal
+    vec4 channel01 = texelFetch(GBuffer, ivec3(pixelCoord, 0), 0);
+    // Geometry is missing
+    if (isnan(channel01.w))
     {
         return false;
     }
 
-    // sampling fragment position in world space from fullscreen normal map
-    vec4 channel01 = texelFetch(GBuffer, ivec3(pixelCoord, 0), 0);
-    // sampling albedo from fullscreen map
+    // sampling shading normal in world space
+    vec4 channel02 = texelFetch(GBuffer, ivec3(pixelCoord, 1), 0);
+    // sampling albedo and marterial params
     vec4 channel03 = texelFetch(GBuffer, ivec3(pixelCoord, 2), 0);
-    // sampling specular parameters from fullscreen map
+    // sampling emission
     vec4 channel04 = texelFetch(GBuffer, ivec3(pixelCoord, 3), 0);
 
     vec2 albedoRG = unpack2xF12(channel03.x);
     vec2 albedoBandS = unpack2xF12(channel03.y);
-    vec2 RandM = unpack2xF12(channel04.x);
+    vec2 RandM = unpack2xF12(channel03.z);
 
-    // unpack material index from channel01.w
-    surface.materialIndex = uint(channel01.w);
+    // unpack material index from channel02.w
+    surface.materialIndex = uint(channel02.w);
 
     surface.material = materials[surface.materialIndex];
     surface.material.albedo = vec4(albedoRG, albedoBandS.x, 1.0);
-    surface.material.emission = vec4(channel02.w, channel03.w, channel04.w, 1.0);
+    surface.material.emission = vec4(channel04.xyz, 1.0);
     surface.material.specular = albedoBandS.y;
     surface.material.roughness = RandM.x;
     surface.material.metallic = RandM.y;
     surface.wv = channel01.xyz;
-    surface.uv = uv;
+    surface.uv = vec2(0.0, 0.0);
     surface.normal = channel02.xyz;
-    surface.geoNormal = surface.bentNormal = unpackNormal2xF12(channel03.z);
-    surface.ao = min(channel04.y, getAmbientOcclusion(uv));
+    surface.geoNormal = unpackNormalFromF32(channel01.w);
+
+    vec4 aoAndBent = resolveAO(pixelCoord, surface.geoNormal, surface.wv);
+    surface.ao = channel03.w * aoAndBent.w;
+    surface.bentNormal = aoAndBent.xyz;
     surface.F0 = modulateF0(surface.material);
     
     return true;

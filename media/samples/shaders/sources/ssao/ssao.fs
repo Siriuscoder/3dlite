@@ -86,18 +86,18 @@ const vec3 SSAO_SAMPLES[LITE3D_SSAO_MAX_SAMPLES] = vec3[](
 vec3 getViewSpacePosition(ivec2 pixelCoord)
 {
     vec3 pos = texelFetch(GBuffer, ivec3(pixelCoord, 0), 0).xyz;
-    return worldToViewSpacePosition(pos);
+    return worldToView(pos);
 }
 
 vec3 getViewSpaceNormal(ivec2 pixelCoord)
 {
     // Unpack geo normal
-    vec3 nw = unpackNormal2xF12(texelFetch(GBuffer, ivec3(pixelCoord, 2), 0).z);
+    vec3 nw = unpackNormalFromF32(texelFetch(GBuffer, ivec3(pixelCoord, 2), 0).z);
     // Non shaded fragment
     if (isZero(nw))
         discard;
 
-    return worldToViewSpaceDirection(nw);
+    return worldToViewDir(nw);
 }
 
 void main()
@@ -144,6 +144,6 @@ void main()
         aoFactor += (probeDepth >= (probeRay.z + bias) ? 1.0 : 0.0) * rangeCheck;
     }
 
-    aoFactor = pow(1.0 - (aoFactor / float(LITE3D_SSAO_MAX_SAMPLES)), LITE3D_SSAO_POWER);
+    aoFactor = pow(1.0 - (aoFactor / float(LITE3D_SSAO_MAX_SAMPLES)), LITE3D_GTAO_INTENSITY);
     outColor = vec4(aoFactor, 0.0, 0.0, 1.0);
 }

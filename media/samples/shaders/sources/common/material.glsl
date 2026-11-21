@@ -71,19 +71,20 @@ Surface makeSurface(vec2 uv, vec3 wv, vec3 wn, vec3 wt, vec3 wb)
     return surface;
 }
 
-bool restoreSurface(vec2 uv, out Surface surface)
+#include "samples:shaders/sources/ssao/resolve.glsl"
+
+bool restoreSurface(ivec2 pixelCoord, out Surface surface)
 {
-    ivec2 pixelCoord = ivec2(textureSize(GBuffer, 0).xy * uv);
-    // sampling normal in world space from fullscreen normal map
-    vec4 channel02 = texelFetch(GBuffer, ivec3(pixelCoord, 1), 0);
-    // Non shaded fragment
-    if (all(equal(channel02.xyz, vec3(0.0))))
+    // sampling world position and world geo normal
+    vec4 channel01 = texelFetch(GBuffer, ivec3(pixelCoord, 0), 0);
+    // Geometry is missing
+    if (isnan(channel01.w))
     {
         return false;
     }
 
-    // sampling fragment position in world space from fullscreen normal map
-    vec4 channel01 = texelFetch(GBuffer, ivec3(pixelCoord, 0), 0);
+    // sampling normal
+    vec4 channel02 = texelFetch(GBuffer, ivec3(pixelCoord, 1), 0);
     // sampling albedo from fullscreen map
     vec4 channel03 = texelFetch(GBuffer, ivec3(pixelCoord, 2), 0);
     // sampling specular parameters from fullscreen map
@@ -91,11 +92,11 @@ bool restoreSurface(vec2 uv, out Surface surface)
 
     vec2 albedoRG = unpack2xF12(channel03.x);
     vec2 albedoBandS = unpack2xF12(channel03.y);
-    vec2 RandM = unpack2xF12(channel04.x);
+    vec2 RandM = unpack2xF12(channel03.z);
 
     surface.materialIndex = 0u;
     surface.material.albedo = vec4(albedoRG, albedoBandS.x, 1.0);
-    surface.material.emission = vec4(channel02.w, channel03.w, channel04.w, 1.0);
+    surface.material.emission = vec4(channel04.xyz, 1.0);
     surface.material.F0 = vec4(vec3(LITE3D_BASE_REFLECTION_AT_ZERO_INCIDENCE), 1.0);
     surface.material.normalScale = vec4(1.0, 1.0, 1.0, 1.0);
     surface.material.specular = albedoBandS.y;
@@ -109,14 +110,17 @@ bool restoreSurface(vec2 uv, out Surface surface)
     surface.material.sheen = 0.0;
     surface.material.subSurfaceScattering = LITE3D_SUBSURFACE_SCATTERING;
     surface.wv = channel01.xyz;
-    surface.uv = uv;
+    surface.uv = vec2(0.0, 0.0);
     surface.normal = channel02.xyz;
-    surface.geoNormal = surface.bentNormal = unpackNormal2xF12(channel03.z);
+    surface.geoNormal = unpackNormalFromF32(channel01.w);
 
-    vec2 envDandS = unpack2xF8(channel01.w);
+    vec4 aoAndBent = resolveAO(pixelCoord, surface.geoNormal, surface.wv);
+    surface.ao = channel03.w * aoAndBent.w;
+    surface.bentNormal = aoAndBent.xyz;
+
+    vec2 envDandS = unpack2xF8(channel02.w);
     surface.material.envDiffuse = envDandS.x;
     surface.material.envSpecular = envDandS.y;
-    surface.ao = min(channel04.y, getAmbientOcclusion(uv));
     surface.F0 = modulateF0(surface.material);
 
 #ifdef LITE3D_ENABLE_ENVIRONMENT_TEXTURE // Setup by the engine 

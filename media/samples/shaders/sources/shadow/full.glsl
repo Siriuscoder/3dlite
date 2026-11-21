@@ -78,7 +78,7 @@ float Shadow(in LightSource source, in Surface surface, in AngularInfo angular)
     if (hasFlag(source.flags, LITE3D_LIGHT_DIRECTIONAL))
     {
         int cascade = LITE3D_SHADOW_CSM_CASCADE_COUNT - 1;
-        vec3 viewPos = worldToViewSpacePosition(surface.wv);
+        vec3 viewPos = worldToView(surface.wv);
         float zNear = getZNear();
         float zFar = getZFar();
         float depth = -viewPos.z;
