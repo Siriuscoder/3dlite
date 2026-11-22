@@ -1,3 +1,13 @@
+// The Fresnel-Schlick approximation expects a F0 parameter which is known as the surface 
+// reflection at zero incidence or how much the surface reflects if looking directly at the surface. 
+// The F0 varies per material and is tinted on metals as we find in large material databases. 
+// In the PBR metallic workflow we make the simplifying assumption that most dielectric surfaces 
+// look visually correct with a constant F0 of 0.04, while we do specify F0 for metallic surfaces as then 
+// given by the albedo value. 
+#define LITE3D_BASE_REFLECTION_AT_ZERO_INCIDENCE            0.04
+#define LITE3D_MIN_ROUGHNESS                                0.01
+
+
 #ifndef LITE3D_SSS_MIN_DEPTH_THRESHOLD
 #define LITE3D_SSS_MIN_DEPTH_THRESHOLD                      0.01    // Min Depth clipping to avoid accuracy artifacts
 #endif

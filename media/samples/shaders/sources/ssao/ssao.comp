@@ -199,6 +199,11 @@ void main()
     vec2 originUV = (vec2(pixelCoord) + 0.5) / vec2(bounds);
     vec3 viewVec = normalize(-viewOriginPosition);
 
+    // Double sided materials support
+    if (dot(viewOriginNormal, viewVec) < -0.12)
+    {
+        viewOriginNormal = -viewOriginNormal;
+    }
     // ------------------------------------------------------
     // Screen-space radius
     // ------------------------------------------------------

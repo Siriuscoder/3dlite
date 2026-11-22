@@ -1,5 +1,3 @@
-#define LITE3D_DISABLE_INVOCATION_METHOD
-
 #include "samples:shaders/sources/common/common_inc.glsl"
 
 #ifdef LITE3D_BINDLESS_TEXTURE_PIPELINE

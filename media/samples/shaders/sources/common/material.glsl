@@ -1,6 +1,4 @@
-#if defined(LITE3D_FRAGMENT_SHADER) || defined(LITE3D_COMPUTE_SHADER)
-
-uniform sampler2DArray GBuffer;
+#if defined(LITE3D_FRAGMENT_SHADER)
 
 vec4 getAlbedo(vec2 uv);
 vec3 getEmission(vec2 uv);
@@ -9,7 +7,9 @@ vec3 getSpecular(vec2 uv);
 float getAmbientOcclusion(vec2 uv);
 float getSpecularAmbient(vec2 uv);
 float getIOR(vec2 uv); 
-float getSheen(vec2 uv); 
+float getSheen(vec2 uv);
+
+#include "samples:shaders/sources/pbr/roughness_filter.glsl"
 
 Surface makeSurface(vec2 uv, vec3 wv, vec3 wn, vec3 wt, vec3 wb)
 {
@@ -54,7 +54,7 @@ Surface makeSurface(vec2 uv, vec3 wv, vec3 wn, vec3 wt, vec3 wb)
 
     vec3 specular = getSpecular(uv);
     surface.material.specular = clamp(specular.x, 0.0, 1.0);
-    surface.material.roughness = clamp(specular.y, LITE3D_MIN_ROUGHNESS, 1.0);
+    surface.material.roughness = filterRoughness(surface.normal, specular.y);
     surface.material.metallic = clamp(specular.z, 0.0, 1.0);
     surface.material.ior = getIOR(uv);
     surface.F0 = modulateF0(surface.material);
@@ -70,6 +70,24 @@ Surface makeSurface(vec2 uv, vec3 wv, vec3 wn, vec3 wt, vec3 wb)
 
     return surface;
 }
+
+void surfaceAlphaClip(in Material material)
+{
+    if (material.alpha < 0.1)
+        discard;
+}
+
+void surfaceAlphaClip(vec2 uv)
+{
+    Material material;
+    material.albedo = getAlbedo(uv);
+    material.alpha = material.albedo.a;
+    surfaceAlphaClip(material);
+}
+
+#elif defined(LITE3D_COMPUTE_SHADER)
+
+uniform sampler2DArray GBuffer;
 
 #include "samples:shaders/sources/ssao/resolve.glsl"
 
@@ -132,22 +150,6 @@ bool restoreSurface(ivec2 pixelCoord, out Surface surface)
 #endif
 
     return true;
-}
-
-#ifdef LITE3D_FRAGMENT_SHADER
-void surfaceAlphaClip(in Material material)
-{
-    if (material.alpha < 0.1)
-        discard;
-}
-#endif
-
-void surfaceAlphaClip(vec2 uv)
-{
-    Material material;
-    material.albedo = getAlbedo(uv);
-    material.alpha = material.albedo.a;
-    surfaceAlphaClip(material);
 }
 
 #endif

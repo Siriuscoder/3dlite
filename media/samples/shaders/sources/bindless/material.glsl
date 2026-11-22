@@ -1,4 +1,4 @@
-#if defined(LITE3D_VERTEX_SHADER) || !defined(LITE3D_DISABLE_INVOCATION_METHOD)
+#if defined(LITE3D_VERTEX_SHADER) || defined(LITE3D_FRAGMENT_SHADER)
 layout(std430) readonly buffer MultiRenderChunkInvocationBuffer 
 {
     ChunkInvocationInfo chunksInvocationInfo[];
@@ -52,21 +52,21 @@ void skeletonDeform(inout ChunkInvocationInfo chunkInfo, ivec4 boneIndexes, vec4
 ChunkInvocationInfo getInvocationInfo()
 {
     drawID = gl_DrawIDARB + gl_InstanceID;
-    int chunkIndex = chunksIndexInvocationInfo[drawID/4][int(mod(drawID, 4))];
+    int chunkIndex = chunksIndexInvocationInfo[drawID/4][drawID % 4];
     return chunksInvocationInfo[chunkIndex];
 }
 
-#elif defined(LITE3D_FRAGMENT_SHADER) || defined(LITE3D_COMPUTE_SHADER)
-
-#ifndef LITE3D_DISABLE_INVOCATION_METHOD
+#elif defined(LITE3D_FRAGMENT_SHADER)
 
 layout(location = 1) flat in int drawID;
 
 ChunkInvocationInfo getInvocationInfo()
 {
-    int chunkIndex = chunksIndexInvocationInfo[drawID/4][int(mod(drawID, 4))];
+    int chunkIndex = chunksIndexInvocationInfo[drawID/4][drawID % 4];
     return chunksInvocationInfo[chunkIndex];
 }
+
+#include "samples:shaders/sources/pbr/roughness_filter.glsl"
 
 Surface makeSurface(vec2 uv, vec3 wv, vec3 wn, vec3 wt, vec3 wb)
 {
@@ -172,7 +172,7 @@ Surface makeSurface(vec2 uv, vec3 wv, vec3 wn, vec3 wt, vec3 wb)
     }
     
     surface.material.specular = clamp(surface.material.specular, 0.0, 1.0);
-    surface.material.roughness = clamp(surface.material.roughness, LITE3D_MIN_ROUGHNESS, 1.0);
+    surface.material.roughness = filterRoughness(surface.normal, surface.material.roughness);
     surface.material.metallic = clamp(surface.material.metallic, 0.0, 1.0);
     surface.material.emission *= surface.material.emissionStrength;
     surface.F0 = modulateF0(surface.material);
@@ -210,7 +210,13 @@ void surfaceAlphaClip(vec2 uv)
     surfaceAlphaClip(surface.material);
 }
 
-#endif
+void surfaceAlphaClip(in Material material)
+{
+    if (material.alpha < 0.1)
+        discard;
+}
+
+#elif defined(LITE3D_COMPUTE_SHADER)
 
 uniform sampler2DArray GBuffer;
 
@@ -258,13 +264,5 @@ bool restoreSurface(ivec2 pixelCoord, out Surface surface)
     
     return true;
 }
-
-#ifdef LITE3D_FRAGMENT_SHADER
-void surfaceAlphaClip(in Material material)
-{
-    if (material.alpha < 0.1)
-        discard;
-}
-#endif
 
 #endif
