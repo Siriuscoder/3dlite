@@ -40,7 +40,7 @@ void main()
             // Относительная разница глубины
             float depthDiff = abs(depth - centerDepth) / max(centerDepth, FLT_EPSILON);
             // Edge-preserving weight
-            float depthWeight = exp(-depthDiff / LITE3D_GTAO_FILTER_DEPTH_THRESHOLD);
+            float depthWeight = exp(-depthDiff);
 
             float weight = Gaussian(float(i), sigma) * depthWeight;
 

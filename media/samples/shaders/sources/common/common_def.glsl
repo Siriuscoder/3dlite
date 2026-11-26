@@ -190,7 +190,3 @@
 #ifndef LITE3D_GTAO_INTENSITY
 #define LITE3D_GTAO_INTENSITY                           1.0
 #endif
-
-#ifndef LITE3D_GTAO_FILTER_DEPTH_THRESHOLD
-#define LITE3D_GTAO_FILTER_DEPTH_THRESHOLD              0.02
-#endif

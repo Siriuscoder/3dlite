@@ -12,18 +12,17 @@
 #define LITE3D_SHADOW_CSM_ENABLE
 #define LITE3D_SHADOW_VSM_ENABLE
 #define LITE3D_SSS_ENABLE
-#define LITE3D_SSS_MIN_DEPTH_THRESHOLD             0.023   // Min Depth clipping to avoid accuracy artifacts
+#define LITE3D_SSS_MIN_DEPTH_THRESHOLD                      0.023   // Min Depth clipping to avoid accuracy artifacts
 #define LITE3D_SSS_MAX_STEPS                                32      // Max ray steps, affects quality and performance.
 #define LITE3D_SSS_MAX_RAY_DISTANCE                         0.35    // Max shadow length, longer shadows are less accurate.
 #define LITE3D_SSS_MAX_DEPTH_THRESHOLD                      0.5     // Depth testing thickness.
 #define LITE3D_SSS_FADE_START                               5.0
 #define LITE3D_SSS_FADE_END                                 15.0
 
-#define LITE3D_GTAO_INTENSITY                               2.1
-#define LITE3D_GTAO_RADIUS                                  0.4 
+#define LITE3D_GTAO_INTENSITY                               1.9
+#define LITE3D_GTAO_RADIUS                                  0.55
 #define LITE3D_GTAO_DIRECTIONS                              6
 #define LITE3D_GTAO_STEPS                                   4
-#define LITE3D_GTAO_FILTER_DEPTH_THRESHOLD                  (LITE3D_GTAO_RADIUS + 0.2)
 
 #define LITE3D_CHROMATIC_ABERRATION_DISTORTION              0.0001
 #define LITE3D_CHROMATIC_ABERRATION_AMOUNT                  0.018

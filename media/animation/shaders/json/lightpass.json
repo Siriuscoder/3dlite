@@ -6,6 +6,6 @@
         "samples:shaders/sources/pbr/brdf_oren_nayar_approx.comp",
         "samples:shaders/sources/gi/image_based_full.comp,animation:shaders/sources/inc/params.def",
         "samples:shaders/sources/shadow/full.comp,animation:shaders/sources/inc/params.def",
-        "samples:shaders/sources/common/common.comp"
+        "samples:shaders/sources/common/common.comp,animation:shaders/sources/inc/params.def"
     ]
 }

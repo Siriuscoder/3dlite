@@ -440,7 +440,9 @@ namespace lite3dpp_pipeline {
             .set(L"Wrapping", "ClampToEdge")
             .set(L"Compression", false)
             .set(L"TextureFormat", "RGBA")
-            .set(L"InternalFormat", "RGBA16F");
+            .set(L"InternalFormat", "RGBA16F")
+            // SSAO всегда вычисляем в половинном разрешении, так устроен шейдер!
+            .set(L"Scale", 2);
 
         mSSAOTexture = getMain().getResourceManager().queryResourceFromJson<TextureImage>(
             getName() + "_" + cameraName + "_SSAO.texture", ssaoTextureConfig.write(), this);

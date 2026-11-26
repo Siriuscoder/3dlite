@@ -66,5 +66,6 @@ void main()
     // Total sum
     vec3 total = direct.diffuse + direct.specular + indirect.diffuse + indirect.specular + surface.material.emission.rgb;
     //vec3 total = clamp(surface.bentNormal * 0.5 + 0.5, 0.0, 1.0);
+    //vec3 total = vec3(surface.ao);
     imageStore(outputImage, pixelCoord, vec4(total, 1.0));
 }

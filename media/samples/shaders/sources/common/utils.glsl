@@ -201,6 +201,11 @@ float getZFar()
     return B / (A + 1.0);
 }
 
+vec2 pixelWorldSize(float linearDepth, ivec2 screenSize)
+{
+    return 2.0 * linearDepth / (vec2(screenSize) * vec2(abs(CameraProjection[0][0]), abs(CameraProjection[1][1])));
+}
+
 mat3 TBN(vec3 normal, vec3 tangent)
 {
     normal = normalize(normal);

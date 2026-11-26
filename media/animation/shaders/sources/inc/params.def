@@ -15,6 +15,5 @@
 #define LITE3D_GTAO_RADIUS                                  0.12
 #define LITE3D_GTAO_DIRECTIONS                              6
 #define LITE3D_GTAO_STEPS                                   4
-#define LITE3D_GTAO_FILTER_DEPTH_THRESHOLD                  (LITE3D_GTAO_RADIUS + 0.2)
 
 #define LITE3D_SHADOW_VSM_BIAS                              0.0001

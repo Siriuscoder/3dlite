@@ -50,6 +50,7 @@ vec2 viewPositionToUV(vec3 pos);
 vec3 UVToEnvDir(vec2 uv);
 float getZNear();
 float getZFar();
+vec2 pixelWorldSize(float linearDepth, ivec2 screenSize);
 
 mat3 TBN(vec3 normal, vec3 tangent);
 mat3 TBN(vec3 normal, vec3 tangent, vec3 btangent);
