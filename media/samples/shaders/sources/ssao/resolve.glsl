@@ -1,11 +1,11 @@
 uniform sampler2D AOMap;
 uniform int AOEnabled;
 
-vec4 resolveBent(ivec2 pixelCoord, vec3 geoNormal, vec3 worldCoord)
+vec4 resolveBent(ivec2 pixelCoord, in Surface surface)
 {
     if (AOEnabled == 0)
     {
-        return vec4(geoNormal, 1.0);
+        return vec4(surface.geoNormal, 1.0);
     }
 
     ivec2 halfSize = textureSize(AOMap, 0);
@@ -13,7 +13,7 @@ vec4 resolveBent(ivec2 pixelCoord, vec3 geoNormal, vec3 worldCoord)
     vec2 halfPos = (vec2(pixelCoord) + 0.5) * 0.5 - 0.5;
     ivec2 base = ivec2(floor(halfPos));
     // Линейная глубина текущего пикселя
-    float currentDepth = -worldToView(worldCoord).z;
+    float currentDepth = -worldToView(surface.wv).z;
 
     vec2 f = fract(halfPos);
 
@@ -65,11 +65,11 @@ vec4 resolveBent(ivec2 pixelCoord, vec3 geoNormal, vec3 worldCoord)
 
         // Чем меньше затенение занимает пикселей на экране, тем грубее будет bentNormal, поэтому плавно подменяем ее на geoNormal
         float bentWeight = smoothstep(6.0, 50.0, gtaoRadiusPixels);
-        bentSum = normalize(mix(geoNormal, bentSum, bentWeight));
+        bentSum = normalize(mix(surface.geoNormal, bentSum, bentWeight));
     }
     else
     {
-        bentSum = geoNormal;
+        bentSum = surface.geoNormal;
     }
 
     return vec4(bentSum, bestAO);

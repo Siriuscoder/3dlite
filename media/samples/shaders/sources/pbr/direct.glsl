@@ -7,10 +7,16 @@ float Shadow(in LightSource source, in Surface surface, in AngularInfo angular);
 /* BRDF */
 SufraceLighting BRDF(in Surface surface, in AngularInfo angular);
 
-float MicrowShadowing(float NdotL, float visibility)
+float MicrowShadowing(in Surface surface, float NdotL)
 {
-    float aperture    = 2.0 * visibility;
-    return clamp(NdotL + aperture - 1.0, 0.0, 1.0);
+    float aperture    = 2.0 * surface.ao;
+    float shadow = clamp(NdotL + aperture - 1.0, 0.0, 1.0);
+
+    // Suppress microshadowing on smooth metallic surfaces (mirrors)
+    float mirrorWeight = surface.material.metallic * 
+        (1.0 - smoothstep(0.1, 0.3, surface.material.roughness));
+    
+    return mix(shadow, 1.0, mirrorWeight);
 }
 
 // A local diffuse approximation, not a volumetric thickness simulation. The wrap
@@ -48,7 +54,7 @@ SufraceLighting EvaluateDirectLight(in LightSource light, in Surface surface, in
     float shadowVisibility = Shadow(light, surface, angular);
 
     // Calc microshadow/AO
-    float microshadow = MicrowShadowing(angular.NdotL, surface.ao);
+    float microshadow = MicrowShadowing(surface, angular.NdotL);
 
     // Calc the the light source radiance
     vec3 radiance = light.diffuse.rgb * light.radiance * attenuationFactor * shadowVisibility * microshadow;

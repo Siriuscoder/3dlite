@@ -19,9 +19,9 @@
 #define LITE3D_SSS_FADE_START                               5.0
 #define LITE3D_SSS_FADE_END                                 15.0
 
-#define LITE3D_GTAO_INTENSITY                               1.9
-#define LITE3D_GTAO_RADIUS                                  0.55
-#define LITE3D_GTAO_DIRECTIONS                              6
+#define LITE3D_GTAO_INTENSITY                               2.0
+#define LITE3D_GTAO_RADIUS                                  0.6
+#define LITE3D_GTAO_DIRECTIONS                              8
 #define LITE3D_GTAO_STEPS                                   4
 
 #define LITE3D_CHROMATIC_ABERRATION_DISTORTION              0.0001

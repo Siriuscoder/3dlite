@@ -257,7 +257,7 @@ bool restoreSurface(ivec2 pixelCoord, out Surface surface)
     surface.normal = channel02.xyz;
     surface.geoNormal = unpackNormalFromF32(channel01.w);
 
-    vec4 aoAndBent = resolveBent(pixelCoord, surface.geoNormal, surface.wv);
+    vec4 aoAndBent = resolveBent(pixelCoord, surface);
     surface.ao = channel03.w * aoAndBent.w;
     surface.bentNormal = aoAndBent.xyz;
     surface.F0 = modulateF0(surface.material);
