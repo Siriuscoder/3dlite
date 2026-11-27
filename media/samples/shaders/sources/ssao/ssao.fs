@@ -144,6 +144,6 @@ void main()
         aoFactor += (probeDepth >= (probeRay.z + bias) ? 1.0 : 0.0) * rangeCheck;
     }
 
-    aoFactor = pow(1.0 - (aoFactor / float(LITE3D_SSAO_MAX_SAMPLES)), LITE3D_GTAO_INTENSITY);
+    aoFactor = pow(1.0 - (aoFactor / float(LITE3D_SSAO_MAX_SAMPLES)), LITE3D_SSAO_INTENSITY);
     outColor = vec4(aoFactor, 0.0, 0.0, 1.0);
 }

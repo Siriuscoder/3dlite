@@ -61,7 +61,7 @@ vec4 resolveBent(ivec2 pixelCoord, in Surface surface)
         bentSum /= weightSum;
         // Оценка сколько занимает пиксель AO текстуры по отношению к радиусу AO.
         vec2 gtaoPixelSize = pixelWorldSize(currentDepth, halfSize);
-        float gtaoRadiusPixels = LITE3D_GTAO_RADIUS / max(gtaoPixelSize.x, gtaoPixelSize.y);
+        float gtaoRadiusPixels = LITE3D_SSAO_RADIUS / max(gtaoPixelSize.x, gtaoPixelSize.y);
 
         // Чем меньше затенение занимает пикселей на экране, тем грубее будет bentNormal, поэтому плавно подменяем ее на geoNormal
         float bentWeight = smoothstep(6.0, 50.0, gtaoRadiusPixels);

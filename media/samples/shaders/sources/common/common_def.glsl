@@ -183,10 +183,14 @@
 #define LITE3D_GTAO_STEPS                               3
 #endif
 
-#ifndef LITE3D_GTAO_RADIUS
-#define LITE3D_GTAO_RADIUS                              1.5
+#ifndef LITE3D_SSAO_RADIUS
+#define LITE3D_SSAO_RADIUS                              1.5
 #endif
 
-#ifndef LITE3D_GTAO_INTENSITY
-#define LITE3D_GTAO_INTENSITY                           1.0
+#ifndef LITE3D_SSAO_INTENSITY
+#define LITE3D_SSAO_INTENSITY                           1.0
+#endif
+
+#ifndef LITE3D_SSAO_MAX_SAMPLES
+#define LITE3D_SSAO_MAX_SAMPLES                         36u
 #endif

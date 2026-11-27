@@ -6,26 +6,6 @@ layout(local_size_x = LITE3D_SSAO_COMPUTE_THREADS_X, local_size_y = LITE3D_SSAO_
 uniform sampler2DArray GBuffer;
 // Output BentNormal + AO + Linear Depth
 layout(binding = 0, rgba16f) uniform writeonly image2D GTAOOutput;
-// Main camera projection matrix
-uniform mat4 CameraProjection;
-
-// Deterministic spatial hash, used to decorrelate
-// Halton indices between neighboring pixels.
-uint hashPixel(uvec2 p)
-{
-    uint h = p.x * 0x8da6b343u;
-    h ^= p.y * 0xd8163841u;
-    h ^= h >> 13;
-    h *= 0x85ebca6bu;
-    h ^= h >> 16;
-    return h;
-}
-
-vec2 getSpatialNoise(ivec2 pixel)
-{
-    uint index = hashPixel(uvec2(pixel)) & 4095u;
-    return Halton2D(int(index) + 1);
-}
 
 // ----------------------------------------------------------
 // GBuffer helpers
@@ -58,7 +38,7 @@ bool getGBufferData(ivec2 pixelCoord, out vec3 viewPosition)
 }
 
 // Select nearest visible surface from the 2x2 block.
-bool loadOrigins(ivec2 bounds, ivec2 halfPixel, out ivec2 fullPixel, out vec3 viewPosition, out vec3 viewOriginNormal)
+bool loadOrigins(ivec2 bounds, ivec2 halfPixel, out vec3 viewPosition, out vec3 viewOriginNormal)
 {
     ivec2 base = halfPixel * 2;
 
@@ -87,7 +67,6 @@ bool loadOrigins(ivec2 bounds, ivec2 halfPixel, out ivec2 fullPixel, out vec3 vi
                 nearestZ = viewZ;
                 viewPosition = sampleViewPosition;
                 viewOriginNormal = sampleViewNormal;
-                fullPixel = p;
             }
         }
     }
@@ -107,111 +86,59 @@ bool sampleViewPosition(ivec2 bounds, vec2 uv, out vec3 viewPosition)
     return getGBufferData(pixel, viewPosition);
 }
 
-// ----------------------------------------------------------
-// Rotation from local +Z onto the view vector.
-// Local +Z points toward the camera.
-// ----------------------------------------------------------
-
-mat3 rotationFromTo(vec3 from, vec3 to)
+// ---------------------------------------------------------
+// Evaluate single SSAO sample
+// ---------------------------------------------------------
+float ssaoEvaluateSample(vec3 probeViewPos, vec3 originViewPos, vec3 originViewNormal, ivec2 bounds, float bias,
+    float invRadius, float invRadius2)
 {
-    float c = clamp(dot(from, to), -1.0, 1.0);
+    // Reject samples behind the camera
+    if (probeViewPos.z >= -FLT_EPSILON)
+        return 0.0;
 
-    if (c > 0.9999)
-        return mat3(1.0);
+    // Project sample into screen space
+    vec2 uv = viewPositionToUV(probeViewPos);
 
-    if (c < -0.9999)
-    {
-        return mat3(
-            vec3(1.0, 0.0, 0.0),
-            vec3(0.0,-1.0, 0.0),
-            vec3(0.0, 0.0,-1.0)
-        );
-    }
+    vec3 sampleVewPos;
+    if (!sampleViewPosition(bounds, uv, sampleVewPos))
+        return 0.0;
 
-    vec3 axis = normalize(cross(from, to));
+    // Depth test, assuming negative view-space Z
+    float occlusion = step(probeViewPos.z + bias, sampleVewPos.z);
 
-    float s = sqrt(max(0.0, 1.0 - c * c));
-    float t = 1.0 - c;
+    // Normalized squared spatial distance
+    vec3 delta = sampleVewPos - originViewPos;
+    float dist2 = dot(delta, delta) * invRadius2;
 
-    float x = axis.x;
-    float y = axis.y;
-    float z = axis.z;
+    // Spatial attenuation
+    float rangeWeight = 1.0 - smoothstep(0.25, 1.0, dist2);
 
-    // GLSL constructor takes COLUMNS.
-    return mat3(
-        vec3(c + x*x*t,
-             y*x*t + z*s,
-             z*x*t - y*s),
+    // Reject occluders below the surface plane
+    float height = dot(delta, originViewNormal) * invRadius;
+    float hemisphereWeight = smoothstep(0.0, 0.15, height);
 
-        vec3(x*y*t - z*s,
-             c + y*y*t,
-             z*y*t + x*s),
-
-        vec3(x*z*t + y*s,
-             y*z*t - x*s,
-             c + z*z*t)
-    );
+    return occlusion * rangeWeight * hemisphereWeight;
 }
 
-// ----------------------------------------------------------
-// Analytic GTAO slice visibility
-// Spartan / XeGTAO
-// ----------------------------------------------------------
-
-float computeSliceVisibility(
-    float horizonCos0,
-    float horizonCos1,
-    float cosNorm,
-    float n,
-    out float h0,
-    out float h1
-)
+// ---------------------------------------------------------
+// Construct randomized orthonormal basis
+// ---------------------------------------------------------
+mat3 buildBasis(vec3 n, float angle)
 {
-    h0 = -acos(clamp(horizonCos1, -1.0, 1.0));
-    h1 =  acos(clamp(horizonCos0, -1.0, 1.0));
+    vec3 up = abs(n.z) < 0.999
+        ? vec3(0.0, 0.0, 1.0)
+        : vec3(1.0, 0.0, 0.0);
 
-    h0 = n + clamp(h0 - n, -M_HALF_PI, M_HALF_PI);
-    h1 = n + clamp(h1 - n, -M_HALF_PI, M_HALF_PI);
+    vec3 t = normalize(cross(up, n));
+    vec3 b = cross(n, t);
 
-    float iarc0 = (
-        cosNorm
-        + 2.0 * h0 * sin(n)
-        - cos(2.0 * h0 - n)
-    ) * 0.25;
+    float s = sin(angle);
+    float c = cos(angle);
 
-    float iarc1 = (
-        cosNorm
-        + 2.0 * h1 * sin(n)
-        - cos(2.0 * h1 - n)
-    ) * 0.25;
+    vec3 tangent = t * c + b * s;
+    vec3 bitangent = cross(n, tangent);
 
-    return iarc0 + iarc1;
-}
-
-// ----------------------------------------------------------
-// Bent normal from slice horizon angles
-// Jimenez 2016 equations 20-21
-// ----------------------------------------------------------
-
-vec2 computeSliceBentT(float h0, float h1, float n)
-{
-    float t0 = (
-          6.0 * sin(h0 - n)
-        - sin(3.0 * h0 - n)
-        + 6.0 * sin(h1 - n)
-        - sin(3.0 * h1 - n)
-        + 16.0 * sin(n)
-        - 3.0 * (sin(h0 + n) + sin(h1 + n))
-    ) / 12.0;
-
-    float t1 = (
-        -cos(3.0 * h0 - n)
-        -cos(3.0 * h1 - n)
-        + 8.0 * cos(n)
-        - 3.0 * (cos(h0 + n) + cos(h1 + n))
-    ) / 12.0;
-
-    return vec2(t0, t1);
+    return mat3(tangent, bitangent, n);
 }
 
 void main()
@@ -226,180 +153,103 @@ void main()
     // Center surface
     // ------------------------------------------------------
 
-    ivec2 centerPixel;
     ivec2 boundsIn = textureSize(GBuffer, 0).xy;
     vec3 viewOriginPosition, viewOriginNormal;
 
-    if (!loadOrigins(boundsIn, pixelCoord, centerPixel, viewOriginPosition, viewOriginNormal))
+    if (!loadOrigins(boundsIn, pixelCoord, viewOriginPosition, viewOriginNormal))
     {
         imageStore(GTAOOutput, pixelCoord, vec4(0.0, 0.0, 1.0, 1.0));
         return;
     }
 
-    vec2 originUV = (vec2(centerPixel) + 0.5) / vec2(boundsIn);
     vec3 viewVec = normalize(-viewOriginPosition);
 
     // Double sided materials support
-    if (dot(viewOriginNormal, viewVec) < -0.12)
+    float NdotV = dot(viewOriginNormal, viewVec);
+    if (NdotV < -0.12)
     {
         viewOriginNormal = -viewOriginNormal;
     }
 
-    // ------------------------------------------------------
-    // Screen-space radius in half-resolution pixels
-    // ------------------------------------------------------
-    float screenRadius = LITE3D_GTAO_RADIUS * abs(CameraProjection[0][0]) * float(boundsOut.x) / 
-        (2.0 * max(abs(viewOriginPosition.z), FLT_EPSILON));
+    float angleFactor = 1.0 - abs(NdotV);
+    float bias = mix(0.01, 0.1, angleFactor * angleFactor);
 
-    float minS = 1.3 / max(screenRadius, FLT_EPSILON);
-    vec2 texelSize = 1.0 / vec2(boundsOut);
+    // Get pseudo-random angle
+    float noise = noiseInterleavedGradient(vec2(pixelCoord));
+    float angle = noise * 2.0 * M_PI;
 
-    // ------------------------------------------------------
-    // Distance falloff
-    // ------------------------------------------------------
-    float falloffRange = 0.6 * LITE3D_GTAO_RADIUS;
-    float falloffFrom = LITE3D_GTAO_RADIUS - falloffRange;
-    float falloffMul = -1.0 / max(falloffRange, FLT_EPSILON);
-    float falloffAdd = 1.0 + falloffFrom / max(falloffRange, FLT_EPSILON);
+    // Compute tangens-space to view-space basis based on random angle
+    mat3 TBN = buildBasis(viewOriginNormal, angle);
 
-    // ------------------------------------------------------
-    // Static Halton noise
-    // ------------------------------------------------------
-    vec2 noise = getSpatialNoise(pixelCoord);
+    float invRadius = 1.0 / LITE3D_SSAO_RADIUS;
+    float invRadius2 = invRadius * invRadius;
 
-    float noiseSlice = noise.x;
-    float noiseSample = noise.y;
+    // Precompute scaled view-space basis
+    mat3 sampleBasis = TBN * LITE3D_SSAO_RADIUS;
 
-    // Local +Z -> viewVec
-    mat3 localToView = rotationFromTo(vec3(0.0, 0.0, 1.0), viewVec);
-
-    float visibility = 0.0;
+    float aoFactor = 0.0;
+    // Bent normal accumulated in tangent space
     vec3 bentNormal = vec3(0.0);
+    const uint pairCount = LITE3D_SSAO_MAX_SAMPLES / 2u;
+    const float halfStep = 0.5 / float(pairCount);
 
-    // ------------------------------------------------------
-    // GTAO slices
-    // ------------------------------------------------------
-    for (int slice = 0; slice < LITE3D_GTAO_DIRECTIONS; ++slice)
+    for (uint i = 0u; i < pairCount; ++i)
     {
-        float sliceK = (float(slice) + noiseSlice) / float(LITE3D_GTAO_DIRECTIONS);
-        float phi = sliceK * M_PI;
+        vec2 xi = hammersleySequence(i, pairCount);
+        xi.x += halfStep;
+        // Cosine-weighted hemisphere direction
+        float phi = M_PI * xi.y;
 
-        float cosPhi = cos(phi);
-        float sinPhi = sin(phi);
+        float r = sqrt(xi.x);
+        float z = sqrt(1.0 - xi.x);
 
-        // OpenGL: UV Y grows upward.
-        vec2 omega = vec2(cosPhi, sinPhi) * screenRadius;
-        vec3 directionVec = vec3(cosPhi, sinPhi, 0.0);
-        vec3 orthoDirectionVec = directionVec - dot(directionVec, viewVec) * viewVec;
-        if (dot(orthoDirectionVec, orthoDirectionVec) < FLT_EPSILON)
-            continue;
+        vec2 xy = vec2(cos(phi), sin(phi)) * r;
 
-        vec3 axisVec = normalize(cross(orthoDirectionVec, viewVec));
-        vec3 projectedNormalVec = viewOriginNormal - axisVec * dot(viewOriginNormal, axisVec);
-        float projectedNormalLength = length(projectedNormalVec);
-        float cosNorm = clamp(dot(projectedNormalVec, viewVec) / max(projectedNormalLength, FLT_EPSILON), 0.0, 1.0);
-        float signNorm = sign(dot(orthoDirectionVec, projectedNormalVec));
-        float n = signNorm * acos(cosNorm);
+        vec3 dir1 = vec3( xy, z);
+        vec3 dir2 = vec3(-xy, z);
 
-        float lowHorizonCos0 = cos(n + M_HALF_PI);
-        float lowHorizonCos1 = cos(n - M_HALF_PI);
-        float horizonCos0 = lowHorizonCos0;
-        float horizonCos1 = lowHorizonCos1;
+        // Independent quasi-random radial distribution
+        float t = float(i) / pairCount;
+        float scale = mix(0.1, 1.0, t * t);
 
-        // --------------------------------------------------
-        // Horizon search in two directions
-        // --------------------------------------------------
-        for (int hstep = 0; hstep < LITE3D_GTAO_STEPS; ++hstep)
-        {
-            float stepBaseNoise = float(slice + hstep * LITE3D_GTAO_STEPS) * 0.6180339887498948482;
-            float stepNoise = fract(noiseSample + stepBaseNoise);
-            float s = (float(hstep) + stepNoise) / float(LITE3D_GTAO_STEPS);
+        // Transform directions into view space
+        vec3 probe1 = viewOriginPosition + sampleBasis * (dir1 * scale);
+        vec3 probe2 = viewOriginPosition + sampleBasis * (dir2 * scale);
 
-            s += minS;
+        float occlusion1 = ssaoEvaluateSample(probe1, viewOriginPosition, viewOriginNormal, boundsIn, bias,
+            invRadius, invRadius2);
 
-            vec2 sampleOffset = round(s * omega) * texelSize;
-            // Positive side
-            vec3 samplePos0;
+        float occlusion2 = ssaoEvaluateSample(probe2, viewOriginPosition, viewOriginNormal, boundsIn, bias,
+            invRadius, invRadius2);
 
-            if (sampleViewPosition(boundsIn, originUV + sampleOffset, samplePos0))
-            {
-                vec3 delta0 = samplePos0 - viewOriginPosition;
-                float dist0 = length(delta0);
+        aoFactor += occlusion1 + occlusion2;
 
-                if (dist0 > FLT_EPSILON)
-                {
-                    float weight0 = clamp(dist0 * falloffMul + falloffAdd, 0.0, 1.0);
-                    float shc0 = dot(delta0 / dist0, viewVec);
-
-                    shc0 = mix(lowHorizonCos0, shc0, weight0);
-                    horizonCos0 = max(horizonCos0, shc0);
-                }
-            }
-
-            // Negative side
-            vec3 samplePos1;
-
-            if (sampleViewPosition(boundsIn, originUV - sampleOffset, samplePos1))
-            {
-                vec3 delta1 = samplePos1 - viewOriginPosition;
-                float dist1 = length(delta1);
-
-                if (dist1 > FLT_EPSILON)
-                {
-                    float weight1 = clamp(dist1 * falloffMul + falloffAdd, 0.0, 1.0);
-                    float shc1 = dot(delta1 / dist1, viewVec);
-
-                    shc1 = mix(lowHorizonCos1, shc1, weight1);
-                    horizonCos1 = max(horizonCos1, shc1);
-                }
-            }
-        }
-
-        // --------------------------------------------------
-        // Analytic visibility
-        // --------------------------------------------------
-        float h0, h1;
-
-        float sliceVisibility = computeSliceVisibility( horizonCos0, horizonCos1, cosNorm, n, h0, h1);
-        visibility += sliceVisibility * projectedNormalLength;
-
-        // --------------------------------------------------
-        // Bent normal
-        // --------------------------------------------------
-        vec2 t = computeSliceBentT(h0, h1, n);
-
-        // OpenGL +Z local axis points toward camera.
-        vec3 localBent = vec3(directionVec.x * t.x, directionVec.y * t.x, t.y);
-        bentNormal += (localToView * localBent) * projectedNormalLength;
+        // Sum visible directions in tangent space
+        bentNormal += dir1 * (1.0 - occlusion1);
+        bentNormal += dir2 * (1.0 - occlusion2);
     }
 
-    // ------------------------------------------------------
-    // Final AO
-    // ------------------------------------------------------
-    visibility = clamp(visibility / float(LITE3D_GTAO_DIRECTIONS), 0.0, 1.0);
-    visibility = pow(visibility, LITE3D_GTAO_INTENSITY);
-    visibility = mix(0.08, 1.0, visibility);
+    // Raw ambient visibility
+    float visibility = clamp(1.0 - aoFactor / float(LITE3D_SSAO_MAX_SAMPLES), 0.0, 1.0);
 
-    if (isnan(visibility) || isinf(visibility))
-        visibility = 1.0;
+    // Normalize bent normal
+    bentNormal = dot(bentNormal, bentNormal) > FLT_EPSILON ? normalize(bentNormal) : vec3(0.0, 0.0, 1.0);
 
-    // ------------------------------------------------------
-    // Final bent normal (world space)
-    // ------------------------------------------------------
+    // Stabilize bent normal on weakly occluded surfaces
+    float bentWeight = smoothstep(0.0, 0.15, 1.0 - visibility);
+    bentNormal = normalize(mix(vec3(0.0, 0.0, 1.0), bentNormal, bentWeight));
 
-    vec3 bentWorld = viewOriginNormal;
-    if (dot(bentNormal, bentNormal) > 1e-8 && !any(isnan(bentNormal)) && !any(isinf(bentNormal)))
-    {
-        bentWorld = normalize(bentNormal);
-    }
+    // Tangent space -> world space
+    bentNormal = viewToWorldDir(TBN * bentNormal);
 
-    bentWorld = viewToWorldDir(bentWorld);
-    vec2 packedBent = packNormal(bentWorld);
+    // Artistic AO intensity
+    visibility = pow(visibility, LITE3D_SSAO_INTENSITY);
+    visibility = mix(0.1, 1.0, visibility);
     // ------------------------------------------------------
     // Output: RGBA16F
     // xy = packed world-space bent normal
     // z  = visibility
     // w  = linear depth
     // ------------------------------------------------------
-    imageStore(GTAOOutput, pixelCoord, vec4(packedBent, visibility, -viewOriginPosition.z));
+    imageStore(GTAOOutput, pixelCoord, vec4(packNormal(bentNormal), visibility, -viewOriginPosition.z));
 }
