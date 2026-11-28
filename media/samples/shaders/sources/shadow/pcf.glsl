@@ -1,4 +1,4 @@
-float EvaluateShadowPCF3x3(vec3 shadowPos, vec3 adaptive, int shadowIndex)
+float EvaluateShadowPCF3x3(vec3 shadowPos, vec2 adaptive, int shadowIndex)
 {
     float sampleDepth = shadowPos.z - adaptive.x; // Biasing
     vec2 kernelSize = adaptive.y / textureSize(ShadowMaps, 0).xy;
@@ -21,7 +21,7 @@ float EvaluateShadowPCF3x3(vec3 shadowPos, vec3 adaptive, int shadowIndex)
     return shadowFactor / max(samples, FLT_EPSILON);
 }
 
-float EvaluateShadowPCFAdaptive(vec3 shadowPos, vec3 adaptive, int shadowIndex)
+float EvaluateShadowPCFAdaptive(vec3 shadowPos, vec2 adaptive, int shadowIndex)
 {
     float sampleDepth = shadowPos.z - adaptive.x; // Biasing
     vec2 kernelSize = adaptive.y / textureSize(ShadowMaps, 0).xy;
@@ -44,7 +44,7 @@ float EvaluateShadowPCFAdaptive(vec3 shadowPos, vec3 adaptive, int shadowIndex)
     return shadowFactor / max(samples, FLT_EPSILON);
 }
 
-float EvaluateShadowPCFPoisson(vec3 shadowPos, vec3 adaptive, int shadowIndex)
+float EvaluateShadowPCFPoisson(vec3 shadowPos, vec2 adaptive, int shadowIndex)
 {
     float sampleDepth = shadowPos.z - adaptive.x; // Biasing
     vec2 kernelSize = adaptive.y / textureSize(ShadowMaps, 0).xy;
@@ -64,7 +64,7 @@ float EvaluateShadowPCFPoisson(vec3 shadowPos, vec3 adaptive, int shadowIndex)
     return shadowFactor / max(samples, FLT_EPSILON);
 }
 
-float EvaluateShadowSample(vec3 shadowPos, vec3 adaptive, int shadowIndex)
+float EvaluateShadowSample(vec3 shadowPos, vec2 adaptive, int shadowIndex)
 {
     float sampleDepth = shadowPos.z - adaptive.x; // Biasing
     return texture(ShadowMaps, vec4(shadowPos.xy, shadowIndex, sampleDepth));

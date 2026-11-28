@@ -1,0 +1,8 @@
+{
+    "Sources": 
+    [
+        // Standard shaders with params customization
+        "samples:shaders/sources/ssao/filter.comp,vault_111:shaders/sources/inc/pbr_params.def",
+        "samples:shaders/sources/common/utils.comp"
+    ]
+}

@@ -16,10 +16,10 @@
     },
     "GI":
     {
-        "ProbeResolution": 256,
-        "MaxCount": 13,
+        "ProbeResolution": 128,
+        "MaxCount": 12,
         "ProbeZNearClip": 0.01,
-        "ProbeZFarClip": 30.0
+        "ProbeZFarClip": 15.0
     },
     "PostProcess":
     {
@@ -27,9 +27,9 @@
         "Saturation": 1.05,
         "DynamicExposure":
         {
-            "ExposureMax": 5.0,
+            "ExposureMax": 6.0,
             "ExposureMin": 0.1,
-            "ExposureBase": 0.3
+            "ExposureBase": 1.0
         }
     }
 }

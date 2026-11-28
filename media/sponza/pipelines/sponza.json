@@ -8,18 +8,12 @@
     "SkyBox": 
     {
         "Texture": "samples:textures/json/skybox.json",
-        "EmissionStrength": 3.8
+        "EmissionStrength": 4.2
     },
     "ShadowMaps":
     {
-        "Extent": 1024,
-        "CascadeShadowCacheMaxCount": 4,
-        "OmniShadowCacheMaxCount": 6
-    },
-    "SSAO": 
-    {
-        "AORadius": 0.25,
-        "FramebufferScale": 2
+        "Extent": 2048,
+        "CascadeShadowCacheMaxCount": 4
     },
     "BLOOM": 
     {
@@ -27,15 +21,15 @@
     },
     "GI":
     {
-        "ProbeResolution": 128,
-        "MaxCount": 33,
+        "ProbeResolution": 256,
+        "MaxCount": 35,
         "ProbeZNearClip": 0.01,
         "ProbeZFarClip": 40.0
     },
     "PostProcess":
     {
-        "Contrast": 1.005,
-        "Saturation": 1.10,
+        "Contrast": 1.01,
+        "Saturation": 1.2,
         "Exposure": 2.0,
         "LensFlare": true,
         "ChromaticAberration": true,

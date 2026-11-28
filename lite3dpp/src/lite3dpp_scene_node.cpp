@@ -46,6 +46,7 @@ namespace lite3dpp
         setScale(json.getVec3(L"Scale", KM_VEC3_ONE));
         setStatic(json.getBool(L"Static", false));
         setCastShadow(json.getBool(L"CastShadow", true));
+        setGIVisible(json.getBool(L"GIVisible", true));
 
         for (auto &actionCfg : json.getObjects(L"Actions"))
         {

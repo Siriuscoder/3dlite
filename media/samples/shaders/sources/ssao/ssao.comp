@@ -1,0 +1,255 @@
+#include "samples:shaders/sources/common/common_inc.glsl"
+
+layout(local_size_x = LITE3D_SSAO_COMPUTE_THREADS_X, local_size_y = LITE3D_SSAO_COMPUTE_THREADS_Y, local_size_z = 1) in;
+
+// Full-resolution GBuffer
+uniform sampler2DArray GBuffer;
+// Output BentNormal + AO + Linear Depth
+layout(binding = 0, rgba16f) uniform writeonly image2D GTAOOutput;
+
+// ----------------------------------------------------------
+// GBuffer helpers
+// ----------------------------------------------------------
+bool getGBufferData(ivec2 pixelCoord, out vec3 viewPosition, out vec3 viewOriginNormal)
+{
+    vec4 data = texelFetch(GBuffer, ivec3(pixelCoord, 0), 0);
+    // check for geometry missing 
+    if (data.w == 0.0)
+    {
+        return false;
+    }
+
+    viewPosition = worldToView(data.xyz);
+    viewOriginNormal = worldToViewDir(unpackNormalFromF32(data.w));
+    return true;
+}
+
+bool getGBufferData(ivec2 pixelCoord, out vec3 viewPosition)
+{
+    vec4 data = texelFetch(GBuffer, ivec3(pixelCoord, 0), 0);
+    // check for geometry missing 
+    if (isnan(data.w))
+    {
+        return false;
+    }
+
+    viewPosition = worldToView(data.xyz);
+    return true;
+}
+
+// Select nearest visible surface from the 2x2 block.
+bool loadOrigins(ivec2 bounds, ivec2 halfPixel, out vec3 viewPosition, out vec3 viewOriginNormal)
+{
+    ivec2 base = halfPixel * 2;
+
+    bool found = false;
+    float nearestZ = -1e30;
+
+    for (int y = 0; y < 2; ++y)
+    {
+        for (int x = 0; x < 2; ++x)
+        {
+            ivec2 p = base + ivec2(x, y);
+
+            if (any(greaterThanEqual(p, bounds)))
+                continue;
+
+            vec3 sampleViewPosition, sampleViewNormal;
+            if (!getGBufferData(p, sampleViewPosition, sampleViewNormal))
+                continue;
+
+            float viewZ = sampleViewPosition.z;
+            // In OpenGL view space, visible geometry
+            // lies at negative Z. Larger Z = closer.
+            if (!found || viewZ > nearestZ)
+            {
+                found = true;
+                nearestZ = viewZ;
+                viewPosition = sampleViewPosition;
+                viewOriginNormal = sampleViewNormal;
+            }
+        }
+    }
+
+    return found;
+}
+
+// Full-resolution point sampling, without interpolation.
+bool sampleViewPosition(ivec2 bounds, vec2 uv, out vec3 viewPosition)
+{
+    if (any(lessThan(uv, vec2(0.0))) || any(greaterThanEqual(uv, vec2(1.0))))
+    {
+        return false;
+    }
+
+    ivec2 pixel = ivec2(floor(uv * vec2(bounds)));
+    return getGBufferData(pixel, viewPosition);
+}
+
+// ---------------------------------------------------------
+// Evaluate single SSAO sample
+// ---------------------------------------------------------
+float ssaoEvaluateSample(vec3 probeViewPos, vec3 originViewPos, vec3 originViewNormal, ivec2 bounds, float bias,
+    float invRadius, float invRadius2)
+{
+    // Reject samples behind the camera
+    if (probeViewPos.z >= -FLT_EPSILON)
+        return 0.0;
+
+    // Project sample into screen space
+    vec2 uv = viewPositionToUV(probeViewPos);
+
+    vec3 sampleVewPos;
+    if (!sampleViewPosition(bounds, uv, sampleVewPos))
+        return 0.0;
+
+    // Depth test, assuming negative view-space Z
+    float occlusion = step(probeViewPos.z + bias, sampleVewPos.z);
+
+    // Normalized squared spatial distance
+    vec3 delta = sampleVewPos - originViewPos;
+    float dist2 = dot(delta, delta) * invRadius2;
+
+    // Spatial attenuation
+    float rangeWeight = 1.0 - smoothstep(0.25, 1.0, dist2);
+
+    // Reject occluders below the surface plane
+    float height = dot(delta, originViewNormal) * invRadius;
+    float hemisphereWeight = smoothstep(0.0, 0.15, height);
+
+    return occlusion * rangeWeight * hemisphereWeight;
+}
+
+// ---------------------------------------------------------
+// Construct randomized orthonormal basis
+// ---------------------------------------------------------
+mat3 buildBasis(vec3 n, float angle)
+{
+    vec3 up = abs(n.z) < 0.999
+        ? vec3(0.0, 0.0, 1.0)
+        : vec3(1.0, 0.0, 0.0);
+
+    vec3 t = normalize(cross(up, n));
+    vec3 b = cross(n, t);
+
+    float s = sin(angle);
+    float c = cos(angle);
+
+    vec3 tangent = t * c + b * s;
+    vec3 bitangent = cross(n, tangent);
+
+    return mat3(tangent, bitangent, n);
+}
+
+void main()
+{
+    ivec2 pixelCoord = ivec2(gl_GlobalInvocationID.xy);
+    ivec2 boundsOut = imageSize(GTAOOutput);
+
+    if (any(greaterThanEqual(pixelCoord, boundsOut)))
+        return;
+
+    // ------------------------------------------------------
+    // Center surface
+    // ------------------------------------------------------
+
+    ivec2 boundsIn = textureSize(GBuffer, 0).xy;
+    vec3 viewOriginPosition, viewOriginNormal;
+
+    if (!loadOrigins(boundsIn, pixelCoord, viewOriginPosition, viewOriginNormal))
+    {
+        imageStore(GTAOOutput, pixelCoord, vec4(0.0, 0.0, 1.0, 1.0));
+        return;
+    }
+
+    vec3 viewVec = normalize(-viewOriginPosition);
+
+    // Double sided materials support
+    float NdotV = dot(viewOriginNormal, viewVec);
+    if (NdotV < -0.12)
+    {
+        viewOriginNormal = -viewOriginNormal;
+    }
+
+    float angleFactor = 1.0 - abs(NdotV);
+    float bias = mix(0.01, 0.1, angleFactor * angleFactor);
+
+    // Get pseudo-random angle
+    float noise = noiseInterleavedGradient(vec2(pixelCoord));
+    float angle = noise * 2.0 * M_PI;
+
+    // Compute tangens-space to view-space basis based on random angle
+    mat3 TBN = buildBasis(viewOriginNormal, angle);
+
+    float invRadius = 1.0 / LITE3D_SSAO_RADIUS;
+    float invRadius2 = invRadius * invRadius;
+
+    // Precompute scaled view-space basis
+    mat3 sampleBasis = TBN * LITE3D_SSAO_RADIUS;
+
+    float aoFactor = 0.0;
+    // Bent normal accumulated in tangent space
+    vec3 bentNormal = vec3(0.0);
+    const uint pairCount = LITE3D_SSAO_MAX_SAMPLES / 2u;
+    const float halfStep = 0.5 / float(pairCount);
+
+    for (uint i = 0u; i < pairCount; ++i)
+    {
+        vec2 xi = hammersleySequence(i, pairCount);
+        xi.x += halfStep;
+        // Cosine-weighted hemisphere direction
+        float phi = M_PI * xi.y;
+
+        float r = sqrt(xi.x);
+        float z = sqrt(1.0 - xi.x);
+
+        vec2 xy = vec2(cos(phi), sin(phi)) * r;
+
+        vec3 dir1 = vec3( xy, z);
+        vec3 dir2 = vec3(-xy, z);
+
+        // Independent quasi-random radial distribution
+        float t = float(i) / pairCount;
+        float scale = mix(0.1, 1.0, t * t);
+
+        // Transform directions into view space
+        vec3 probe1 = viewOriginPosition + sampleBasis * (dir1 * scale);
+        vec3 probe2 = viewOriginPosition + sampleBasis * (dir2 * scale);
+
+        float occlusion1 = ssaoEvaluateSample(probe1, viewOriginPosition, viewOriginNormal, boundsIn, bias,
+            invRadius, invRadius2);
+
+        float occlusion2 = ssaoEvaluateSample(probe2, viewOriginPosition, viewOriginNormal, boundsIn, bias,
+            invRadius, invRadius2);
+
+        aoFactor += occlusion1 + occlusion2;
+
+        // Sum visible directions in tangent space
+        bentNormal += dir1 * (1.0 - occlusion1);
+        bentNormal += dir2 * (1.0 - occlusion2);
+    }
+
+    // Raw ambient visibility
+    float visibility = clamp(1.0 - aoFactor / float(LITE3D_SSAO_MAX_SAMPLES), 0.0, 1.0);
+
+    // Normalize bent normal
+    bentNormal = dot(bentNormal, bentNormal) > FLT_EPSILON ? normalize(bentNormal) : vec3(0.0, 0.0, 1.0);
+
+    // Stabilize bent normal on weakly occluded surfaces
+    float bentWeight = smoothstep(0.0, 0.15, 1.0 - visibility);
+    bentNormal = normalize(mix(vec3(0.0, 0.0, 1.0), bentNormal, bentWeight));
+
+    // Tangent space -> world space
+    bentNormal = viewToWorldDir(TBN * bentNormal);
+
+    // Artistic AO intensity
+    visibility = pow(visibility, LITE3D_SSAO_INTENSITY);
+    visibility = mix(0.1, 1.0, visibility);
+    // ------------------------------------------------------
+    // Output: RGBA16F
+    // xy = packed world-space bent normal
+    // z  = visibility
+    // w  = linear depth
+    // ------------------------------------------------------
+    imageStore(GTAOOutput, pixelCoord, vec4(packNormal(bentNormal), visibility, -viewOriginPosition.z));
+}

@@ -1,6 +1,3 @@
-
-#include "samples:shaders/sources/common/common_inc.glsl"
-
 uniform sampler2D ltcLut1;
 uniform sampler2D ltcLut2;
 
@@ -8,13 +5,13 @@ const float LTC_LUT_SIZE  = 64.0;
 const float LTC_LUT_SCALE = (LTC_LUT_SIZE - 1.0)/LTC_LUT_SIZE;
 const float LTC_LUT_BIAS  = 0.5/LTC_LUT_SIZE;
 
-vec3 restoreFresnel(float magnitude, float power, Material material)
+vec3 fresnelLUT(float magnitude, float power, Surface surface)
 {
-    // Calculate F0 coeff
-    vec3 F0 = mix(material.f0.rgb, material.albedo.rgb, material.metallic);
+    vec3 F0 = surface.F0;
+    float F90 = clamp(50.0 * dot(F0, vec3(0.33333)), 0.0, 1.0);
     // Restore fresnel
-    vec3 F = F0 * magnitude + (max(vec3(1.0 - material.roughness), F0) - F0) * power;
-    return clamp(F * material.specular, 0.0, 1.0);
+    vec3 F = F0 * magnitude + (F90 - F0) * power;
+    return clamp(F * surface.material.specular, 0.0, 1.0);
 }
 
 // An extended version of the implementation from
@@ -394,8 +391,9 @@ vec3 LTC_EvaluateEllipce(vec3 N, vec3 V, vec3 P, mat3 Minv, vec3 points[4])
     return vec3(spec);
 }
 
-vec3 LTC(in LightSource source, in Surface surface, in AngularInfo angular)
+SufraceLighting LTC(in LightSource source, in Surface surface, in AngularInfo angular)
 {
+    SufraceLighting sl = SufraceLighting(vec3(0.0), vec3(0.0), vec3(0.0));
     // Calc the rect area of the light source
     vec3 directionX = cross(source.direction.xyz, source.directionUP.xyz);
     vec3 ex = source.areaWidth / 2.0 * directionX.xyz;
@@ -437,13 +435,14 @@ vec3 LTC(in LightSource source, in Surface surface, in AngularInfo angular)
     }
     else
     {
-        return vec3(0.0);
+        return sl;
     }
     
-    vec3 F = restoreFresnel(t2.x, t2.y, surface.material);
+    vec3 F = fresnelLUT(t2.x, t2.y, surface);
     vec3 kD = diffuseFactor(F, surface.material.metallic);
 
-    return diff * surface.material.albedo.rgb * kD +    // diffuse lobe
-        spec * F +                                      // specular lobe
-        Sheen(F, surface.material, angular);            // sheen
+    sl.diffuseEnergy = kD;
+    sl.diffuse = diff * surface.material.albedo.rgb; // diffuse lobe
+    sl.specular = spec * F;                               // specular lobe
+    return sl;
 }

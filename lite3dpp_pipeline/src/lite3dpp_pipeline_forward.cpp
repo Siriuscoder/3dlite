@@ -33,6 +33,12 @@ namespace lite3dpp_pipeline {
         constructBloomPass(pipelineConfig, cameraName);
     }
 
+    void PipelineForward::constructSkyBoxPass(const ConfigurationReader &pipelineConfig, const String &cameraName,
+        const ConfigurationWriter &mainCameraConfig)
+    {
+        createSkyBoxStage(pipelineConfig, cameraName, mainCameraConfig, true);
+    }
+
     void PipelineForward::constructCombinedPass(const ConfigurationReader &pipelineConfig, const String &cameraName,
         SceneGenerator &sceneGenerator)
     {

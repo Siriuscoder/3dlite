@@ -24,7 +24,7 @@ void main()
     int count = shadowIndex[0].x;
     for (int i = 1; i <= count; ++i)
     {
-        int index = shadowIndex[i/4][int(mod(i, 4))];
+        int index = shadowIndex[i / 4][i % 4];
         gl_Layer = index;
 
         for (int j = 0; j < 3; ++j)

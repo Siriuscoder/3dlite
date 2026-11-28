@@ -31,7 +31,7 @@ namespace lite3dpp_pipeline {
         SceneGenerator &sceneGenerator)
     {
         constructGBufferPass(pipelineConfig, cameraName, sceneGenerator);
-        constructSSAOPass(pipelineConfig, cameraName);
+        constructSSAOPass(cameraName);
         constructCombinedPass(pipelineConfig, cameraName, sceneGenerator);
         constructBloomPass(pipelineConfig, cameraName);
     }
@@ -45,11 +45,96 @@ namespace lite3dpp_pipeline {
 
     void PipelineDeffered::enableSSAO(bool flag)
     {
-        if (mLightComputeStageMaterial && mSSAOPass)
+        if (mLightComputeShader && mSSAOComputeShader)
         {
-            mLightComputeStageMaterial->setIntParameter(static_cast<uint16_t>(TexturePassTypes::RenderPass), "AOEnabled", flag);
-            flag ? mSSAOPass->enable() : mSSAOPass->disable();
+            mLightComputeShader->getShaderParameters().setIntParameter("AOEnabled", flag);
+            mSSAOEnabled = flag;
         }
+    }
+
+    void PipelineDeffered::setSkyBoxEmission(float emission)
+    {
+        PipelineBase::setSkyBoxEmission(emission);
+        if (mLightComputeShader && getConfig().has(L"SkyBox"))
+        {
+            mLightComputeShader->getShaderParameters().setFloatParameter("EmissionStrength", emission);
+        }
+    }
+
+    void PipelineDeffered::constructSkyBoxPass(const ConfigurationReader &pipelineConfig, const String &cameraName,
+        const ConfigurationWriter &mainCameraConfig)
+    {
+        // The compute lighting pass draws the screen skybox; keep geometry only for GI captures.
+        createSkyBoxStage(pipelineConfig, cameraName, mainCameraConfig, false);
+    }
+
+    void PipelineDeffered::unloadImpl()
+    {
+        mSSAOComputeShader = nullptr;
+        mSSAOFilterShader = nullptr;
+        mSSAOTexture = nullptr;
+        mSSAOTexture2 = nullptr;
+        mLightComputeShader = nullptr;
+        PipelineBase::unloadImpl();
+        mCombinePass = nullptr;
+    }
+
+    bool PipelineDeffered::beginSceneRender(Scene *scene, Camera *camera, const lite3d_scene_render_params *params)
+    {
+        if (scene == mMainScene && params->priority == static_cast<int32_t>(RenderPassStagePriority::BlendDecalStage))
+        {
+            const auto &mainCamera = getMainCamera();
+            ShaderParameters::setFloatm4GlobalParameter("CameraView", mainCamera.getViewMatrix());
+            ShaderParameters::setFloatm4GlobalParameter("CameraProjection", mainCamera.getProjMatrix());
+            ShaderParameters::setFloatv3GlobalParameter("Eye", mainCamera.getWorldPosition());
+            ShaderParameters::setIntGlobalParameter("FrameNumber", static_cast<int32_t>(getMain().getRenderStats()->framesCount));
+
+            computeSSAO();
+            computeLighting();
+        }
+
+        // Copy the opaque combined texture only after compute lighting has finished.
+        return PipelineBase::beginSceneRender(scene, camera, params);
+    }
+
+    void PipelineDeffered::computeSSAO()
+    {
+        if (!mSSAOEnabled)
+        {
+            return;
+        }
+
+        SDL_assert(mSSAOComputeShader);
+        SDL_assert(mSSAOFilterShader);
+
+        const uint32_t groupsXCount = (mSSAOTexture->getWidth() + ssaoComputeLocalThreadsX - 1) / ssaoComputeLocalThreadsX;
+        const uint32_t groupsYCount = (mSSAOTexture->getHeight() + ssaoComputeLocalThreadsY - 1) / ssaoComputeLocalThreadsY;
+        mSSAOComputeShader->dispatch(groupsXCount, groupsYCount, 1);
+
+        // Ping-pong filtering keeps each pass's input separate from its output.
+        auto &filterParameters = mSSAOFilterShader->getShaderParameters();
+        filterParameters.setIntParameter("Direction", 1);
+        filterParameters.setSamplerParameter("AOMap", *mSSAOTexture);
+        filterParameters.setImageStoreParameter("FilteredOutput", *mSSAOTexture2);
+        mSSAOFilterShader->dispatch(groupsXCount, groupsYCount, 1);
+
+        filterParameters.setIntParameter("Direction", 0);
+        filterParameters.setSamplerParameter("AOMap", *mSSAOTexture2);
+        filterParameters.setImageStoreParameter("FilteredOutput", *mSSAOTexture);
+        mSSAOFilterShader->dispatch(groupsXCount, groupsYCount, 1);
+    }
+
+    void PipelineDeffered::computeLighting()
+    {
+        SDL_assert(mLightComputeShader);
+
+        // The shader writes the background for pixels without geometry or skybox.
+        const auto &background = mCombinePass->getPtr()->cleanColor;
+        mLightComputeShader->getShaderParameters().setFloatv3Parameter("ClearColor",
+            kmVec3 { background.x, background.y, background.z });
+        const uint32_t groupsXCount = (mCombinedTexture->getWidth() + lightComputeLocalThreadsX - 1) / lightComputeLocalThreadsX;
+        const uint32_t groupsYCount = (mCombinedTexture->getHeight() + lightComputeLocalThreadsY - 1) / lightComputeLocalThreadsY;
+        mLightComputeShader->dispatch(groupsXCount, groupsYCount, 1);
     }
 
     void PipelineDeffered::constructLightComputePass(const ConfigurationReader &pipelineConfig)
@@ -57,50 +142,68 @@ namespace lite3dpp_pipeline {
         SDL_assert(mMainScene);
         SDL_assert(mCombinePass);
 
-        BigTriSceneGenerator stageGenerator;
-        stageGenerator.addRenderTarget(mCombinePass->getName(), ConfigurationWriter()
-            .set(L"Priority", static_cast<int>(RenderPassStagePriority::LightComputeStage))
-            .set(L"TexturePass", static_cast<int>(TexturePassTypes::RenderPass))
-            .set(L"DepthTest", false)
-            .set(L"ColorOutput", true)
-            .set(L"DepthOutput", false));
-            
-        mLightComputeStage = getMain().getResourceManager().queryResourceFromJson<Scene>(getName() + "_LightComputeStage",
-            stageGenerator.generate().write(), this);
-
-        ConfigurationWriter lightComputeMaterialConfig;
+        ConfigurationWriter lightComputeConfig;
         stl<ConfigurationWriter>::vector lightComputeMaterialUniforms;
 
         lightComputeMaterialUniforms.emplace_back(ConfigurationWriter()
-            .set(L"Name", "screenMatrix"));
+            .set(L"Name", "outputImage")
+            .set(L"Type", "imageStore")
+            .set(L"Direction", "output")
+            .set(L"TextureName", mCombinedTexture->getName()));
         lightComputeMaterialUniforms.emplace_back(ConfigurationWriter()
             .set(L"Name", "GBuffer")
             .set(L"TextureName", mGBufferTexture->getName())
             .set(L"Type", "sampler"));
         lightComputeMaterialUniforms.emplace_back(ConfigurationWriter()
+            .set(L"Name", "ClearColor")
+            .set(L"Type", "v3"));
+        lightComputeMaterialUniforms.emplace_back(ConfigurationWriter()
             .set(L"Name", "Eye")
             .set(L"Scope", "global")
             .set(L"Type", "v3"));
+        lightComputeMaterialUniforms.emplace_back(ConfigurationWriter()
+            .set(L"Name", "CameraView")
+            .set(L"Type", "m4")
+            .set(L"Scope", "global"));
+        lightComputeMaterialUniforms.emplace_back(ConfigurationWriter()
+            .set(L"Name", "CameraProjection")
+            .set(L"Type", "m4")
+            .set(L"Scope", "global"));
+
+        if (pipelineConfig.has(L"SkyBox"))
+        {
+            const auto skyBoxConfig = pipelineConfig.getObject(L"SkyBox");
+            lightComputeMaterialUniforms.emplace_back(ConfigurationWriter()
+                .set(L"Name", "Skybox")
+                .set(L"TextureName", getName() + "_skybox.texture")
+                .set(L"TexturePath", skyBoxConfig.getString(L"Texture"))
+                .set(L"Type", "sampler"));
+            lightComputeMaterialUniforms.emplace_back(ConfigurationWriter()
+                .set(L"Name", "EmissionStrength")
+                .set(L"Value", skyBoxConfig.getDouble(L"EmissionStrength"))
+                .set(L"Type", "float"));
+            ShaderProgram::addGlobalDefinition("LITE3D_LIGHT_PASS_SKYBOX", "1");
+        }
 
         /* IBL present, using env probe */
-        if (mIBL)
+        if (mGIProbeManager)
         {
             // according to MultiRender case EnvironmentProbe texture being declared as bindless texture
             if (!pipelineConfig.getBool(L"MultiRender", false))
             {
                 lightComputeMaterialUniforms.emplace_back(ConfigurationWriter()
                     .set(L"Name", "EnvironmentProbe")
-                    .set(L"TextureName", mIBL->getEnvProbeTexture()->getName())
+                    .set(L"TextureName", mGIProbeManager->getEnvProbeTexture()->getName())
                     .set(L"Type", "sampler"));
             }
 
             lightComputeMaterialUniforms.emplace_back(ConfigurationWriter()
                 .set(L"Name", "EnvProbesData")
-                .set(L"UBOName",  mIBL->getProbeBufferName())
-                .set(L"Type", "UBO"));
+                .set(L"SSBOName",  mGIProbeManager->getProbeBufferName())
+                .set(L"Type", "SSBO"));
             lightComputeMaterialUniforms.emplace_back(ConfigurationWriter()
                 .set(L"Name", "BrdfLUT")
-                .set(L"TextureName", mIBL->getBrdfLUTName())
+                .set(L"TextureName", mGIProbeManager->getBrdfLUTName())
                 .set(L"Type", "sampler"));
         }
         else
@@ -153,15 +256,6 @@ namespace lite3dpp_pipeline {
                 .set(L"Name", "ShadowMatrix")
                 .set(L"UBOName", mShadowManager->getShadowMatrixBuffer()->getName())
                 .set(L"Type", "UBO"));
-                
-            lightComputeMaterialUniforms.emplace_back(ConfigurationWriter()
-                .set(L"Name", "CameraView")
-                .set(L"Type", "m4")
-                .set(L"Scope", "global"));
-            lightComputeMaterialUniforms.emplace_back(ConfigurationWriter()
-                .set(L"Name", "CameraProjection")
-                .set(L"Type", "m4")
-                .set(L"Scope", "global"));
         }
 
         if (mSSAOTexture)
@@ -172,7 +266,7 @@ namespace lite3dpp_pipeline {
                 .set(L"Type", "sampler"));
             lightComputeMaterialUniforms.emplace_back(ConfigurationWriter()
                 .set(L"Name", "AOEnabled")
-                .set(L"Value", 1)
+                .set(L"Value", mSSAOEnabled ? 1 : 0)
                 .set(L"Type", "int"));
         }
 
@@ -199,28 +293,50 @@ namespace lite3dpp_pipeline {
                 .set(L"Type", "SSBO"));
         }
 
-        lightComputeMaterialConfig.set(L"Passes", stl<ConfigurationWriter>::vector {
-            ConfigurationWriter().set(L"Pass", static_cast<int>(TexturePassTypes::RenderPass))
-                .set(L"Program", ConfigurationWriter()
-                    .set(L"Name", "LightCompute.program")
-                    .set(L"Path", mShaderPackage + ":shaders/json/lightpass.json"))
-                .set(L"Uniforms", lightComputeMaterialUniforms)
-        });
-        
-        // Создаем служебный шейдер отвечающий за расчет освещения в экранном пространстве
-        mLightComputeStageMaterial = getMain().getResourceManager().queryResourceFromJson<Material>(
-            getName() + "_LightComputeStage.material", lightComputeMaterialConfig.write(), this);
+        lightComputeConfig.set(L"Program", ConfigurationWriter()
+                .set(L"Name", "LightCompute.program")
+                .set(L"Path", mShaderPackage + ":shaders/json/lightpass.json"))
+            .set(L"Uniforms", lightComputeMaterialUniforms);
 
-        // Добавляем шейдер расчета освещения в экранном пространстве
-        mLightComputeStage->addObject("LightComputeBigTri", 
-            BigTriObjectGenerator(mLightComputeStageMaterial->getName()).generate());
+        auto maxLightComputeThreads = ShaderProgram::getOptimalWorkGroupSize(mCombinedTexture->getWidth(), 
+            mCombinedTexture->getHeight());
+        lightComputeLocalThreadsX = maxLightComputeThreads[0];
+        lightComputeLocalThreadsY = maxLightComputeThreads[1];
+
+        ShaderProgram::addGlobalDefinition("LITE3D_LIGHT_COMPUTE_THREADS_X", std::to_string(lightComputeLocalThreadsX));
+        ShaderProgram::addGlobalDefinition("LITE3D_LIGHT_COMPUTE_THREADS_Y", std::to_string(lightComputeLocalThreadsY));
+
+        mLightComputeShader = getMain().getResourceManager().queryResourceFromJson<ComputeShader>(
+            getName() + "_LightCompute.comp", lightComputeConfig.write(), this);
     }
 
     void PipelineDeffered::constructGBufferPass(const ConfigurationReader &pipelineConfig, const String &cameraName,
         SceneGenerator &sceneGenerator)
     {
-        // Создание GeometryBuffer
-        // Полноэкранная текстура состоязая из 4х слоев для записи данных о геометрии в каждой точке экрана
+        /*
+         * GBuffer layout: 4 x RGBA32F
+         *
+         * +-----------+-------------------+-------------------+-------------------+-------------------+
+         * | Channel   | X                 | Y                 | Z                 | W                 |
+         * +-----------+-------------------+-------------------+-------------------+-------------------+
+         * | channel01 | iwv.x             | iwv.y             | iwv.z             | geoNormal (Oct24) |
+         * | channel02 | normal.x          | normal.y          | normal.z          | MatID(24)         |
+         * | channel03 | albedo.rg (2x12)  | albedo.b(12)+S(12)| R(12)+M(12)       | AO                |
+         * | channel04 | emission.r        | emission.g        | emission.b        | reserved          |
+         * +-----------+-------------------+-------------------+-------------------+-------------------+
+         *
+         * Packing:
+         *   albedo.rg  : 2 x UNORM12 -> FP32
+         *   albedo.b/S : 2 x UNORM12 -> FP32
+         *   R/M        : 2 x UNORM12 -> FP32
+         *   geoNormal  : Octahedral 2 x UNORM12 -> FP32
+         *
+         * S = Specular, R = Roughness, M = Metallic
+         *
+         * All new packed values use numeric uint-to-float conversion (no NaN).
+         * Packed channels must be read without texture filtering.
+         */
+
         ConfigurationWriter gBufferTextureConfig;
         gBufferTextureConfig.set(L"TextureType", "2D_ARRAY")
             .set(L"Filtering", "None")
@@ -235,8 +351,8 @@ namespace lite3dpp_pipeline {
 
         ConfigurationWriter gBufferTargetConfig;
         stl<ConfigurationWriter>::vector gBufferColorAttachmentsConfig;
-        gBufferTargetConfig.set(L"BackgroundColor", kmVec4 { 0.0f, 0.0f, 0.0f, 1.0f })
-            .set(L"Priority", static_cast<int>(RenderPassPriority::GBuffer))
+        // W всегда очищаем как NaN, для проверки валидности 
+        gBufferTargetConfig.set(L"Priority", static_cast<int>(RenderPassPriority::GBuffer))
             .set(L"CleanColorBuf", true)
             .set(L"CleanDepthBuf", false)
             .set(L"CleanStencilBuf", false);
@@ -256,6 +372,8 @@ namespace lite3dpp_pipeline {
 
         mGBufferPass = getMain().getResourceManager().queryResourceFromJson<TextureRenderTarget>(
             getName() + "_" + cameraName + "_GBufferPass", gBufferTargetConfig.write(), this);
+
+        mGBufferPass->setBackgroundColor(kmVec4 { 0.0f, 0.0f, 0.0f, std::numeric_limits<float>::quiet_NaN() });
 
         sceneGenerator.addRenderTarget(cameraName, mGBufferPass->getName(), ConfigurationWriter()
             .set(L"Priority", static_cast<int>(RenderPassStagePriority::GBufferBuildStage))
@@ -279,8 +397,8 @@ namespace lite3dpp_pipeline {
             .set(L"Filtering", "None")
             .set(L"Wrapping", "ClampToEdge")
             .set(L"Compression", false)
-            .set(L"TextureFormat", "RGB")
-            .set(L"InternalFormat", "RGB32F");
+            .set(L"TextureFormat", "RGBA")
+            .set(L"InternalFormat", "RGBA32F");
 
         mCombinedTexture = getMain().getResourceManager().queryResourceFromJson<TextureImage>(
             getName() + "_" + cameraName + "_combined.texture", combinedTextureConfig.write(), this);
@@ -289,7 +407,7 @@ namespace lite3dpp_pipeline {
         ConfigurationWriter combinedTargetConfig;
         combinedTargetConfig.set(L"BackgroundColor", kmVec4 { 0.0f, 0.0f, 0.0f, 1.0f })
             .set(L"Priority", static_cast<int>(RenderPassPriority::Combine))
-            .set(L"CleanColorBuf", true)
+            .set(L"CleanColorBuf", false)
             .set(L"CleanDepthBuf", false)
             .set(L"CleanStencilBuf", false)
             .set(L"ColorAttachments", ConfigurationWriter()
@@ -313,72 +431,42 @@ namespace lite3dpp_pipeline {
             .set(L"RenderInstancing", pipelineConfig.getBool(L"Instancing", true)));
     }
 
-    void PipelineDeffered::constructSSAOPass(const ConfigurationReader &pipelineConfig, const String &cameraName)
+    void PipelineDeffered::constructSSAOPass(const String &cameraName)
     {
-        if (!pipelineConfig.has(L"SSAO"))
-        {
-            return;
-        }
-
         // Создание SSAO текстуры
         ConfigurationWriter ssaoTextureConfig;
         ssaoTextureConfig.set(L"TextureType", "2D")
-            .set(L"Filtering", "Linear")
+            .set(L"Filtering", "None")
             .set(L"Wrapping", "ClampToEdge")
             .set(L"Compression", false)
-            .set(L"TextureFormat", "RED")
-            .set(L"InternalFormat", "R16F")
-            .set(L"Scale", pipelineConfig.getObject(L"SSAO").getInt(L"FramebufferScale", 4));
+            .set(L"TextureFormat", "RGBA")
+            .set(L"InternalFormat", "RGBA16F")
+            // SSAO всегда вычисляем в половинном разрешении, так устроен шейдер!
+            .set(L"Scale", 2);
 
         mSSAOTexture = getMain().getResourceManager().queryResourceFromJson<TextureImage>(
             getName() + "_" + cameraName + "_SSAO.texture", ssaoTextureConfig.write(), this);
-
-        ConfigurationWriter ssaoTargetConfig;
-        ssaoTargetConfig
-            .set(L"Scale", pipelineConfig.getObject(L"SSAO").getInt(L"FramebufferScale", 4))
-            .set(L"BackgroundColor", kmVec4 { 1.0f, 0.0f, 0.0f, 1.0f })
-            .set(L"Priority", static_cast<int>(RenderPassPriority::SSAO))
-            .set(L"CleanColorBuf", true)
-            .set(L"CleanDepthBuf", false)
-            .set(L"CleanStencilBuf", false)
-            .set(L"ColorAttachments", ConfigurationWriter()
-                .set(L"Attachments", stl<ConfigurationWriter>::vector {
-                    ConfigurationWriter().set(L"TextureName", mSSAOTexture->getName())
-                }));
-
-        mSSAOPass = getMain().getResourceManager().queryResourceFromJson<TextureRenderTarget>(
-            getName() + "_" + cameraName + "_SSAOPass", ssaoTargetConfig.write(), this);
-
-        BigTriSceneGenerator stageGenerator;
-        stageGenerator.addRenderTarget(mSSAOPass->getName(), ConfigurationWriter()
-            .set(L"Priority", static_cast<int>(RenderPassStagePriority::SSAOBuildStage))
-            .set(L"TexturePass", static_cast<int>(TexturePassTypes::RenderPass))
-            .set(L"DepthTest", false)
-            .set(L"ColorOutput", true)
-            .set(L"DepthOutput", false));
-            
-        mSSAOStage = getMain().getResourceManager().queryResourceFromJson<Scene>(cameraName + "_SSAOStage",
-            stageGenerator.generate().write(), this);
+        mSSAOTexture2 = getMain().getResourceManager().queryResourceFromJson<TextureImage>(
+            getName() + "_" + cameraName + "_SSAO2.texture", ssaoTextureConfig.write(), this);
 
         SDL_assert(mGBufferTexture);
 
-        ConfigurationWriter ssaoMaterialConfig;
-        ssaoMaterialConfig.set(L"Passes", stl<ConfigurationWriter>::vector {
-            ConfigurationWriter().set(L"Pass", static_cast<int>(TexturePassTypes::RenderPass))
-                .set(L"Program", ConfigurationWriter()
+        ConfigurationWriter ssaoComputeConfig;
+        ssaoComputeConfig.set(L"Program", ConfigurationWriter()
                     .set(L"Name", "SSAO.program")
                     .set(L"Path", mShaderPackage + ":shaders/json/ssao.json"))
                 .set(L"Uniforms", stl<ConfigurationWriter>::vector {
                     ConfigurationWriter()
                         .set(L"Name", "screenMatrix"),
                     ConfigurationWriter()
+                        .set(L"Name", "GTAOOutput")
+                        .set(L"Type", "imageStore")
+                        .set(L"Direction", "out")
+                        .set(L"TextureName", mSSAOTexture->getName()),
+                    ConfigurationWriter()
                         .set(L"Name", "GBuffer")
                         .set(L"TextureName", mGBufferTexture->getName())
                         .set(L"Type", "sampler"),
-                    ConfigurationWriter()
-                        .set(L"Name", "AORadius")
-                        .set(L"Value", pipelineConfig.getObject(L"SSAO").getDouble(L"AORadius"))
-                        .set(L"Type", "float"),
                     ConfigurationWriter()
                         .set(L"Name", "CameraView")
                         .set(L"Type", "m4")
@@ -386,15 +474,44 @@ namespace lite3dpp_pipeline {
                     ConfigurationWriter()
                         .set(L"Name", "CameraProjection")
                         .set(L"Type", "m4")
+                        .set(L"Scope", "global"),
+                    ConfigurationWriter()
+                        .set(L"Name", "Eye")
                         .set(L"Scope", "global")
-                })
-        });
+                        .set(L"Type", "v3")
+                });
 
-        // Создаем служебный шейдер отвечающий за расчет SSAO
-        mSSAOStageMaterial = getMain().getResourceManager().queryResourceFromJson<Material>(
-            getName() + "_" + cameraName + "_SSAOStage.material", ssaoMaterialConfig.write(), this);
+        const auto localThreads = ShaderProgram::getOptimalWorkGroupSize(mSSAOTexture->getWidth(), mSSAOTexture->getHeight());
+        ssaoComputeLocalThreadsX = localThreads[0];
+        ssaoComputeLocalThreadsY = localThreads[1];
+        ShaderProgram::addGlobalDefinition("LITE3D_SSAO_COMPUTE_THREADS_X", std::to_string(ssaoComputeLocalThreadsX));
+        ShaderProgram::addGlobalDefinition("LITE3D_SSAO_COMPUTE_THREADS_Y", std::to_string(ssaoComputeLocalThreadsY));
 
-        // Добавляем шейдер расчета SSAO
-        mSSAOStage->addObject("SSAOBigTri", BigTriObjectGenerator(mSSAOStageMaterial->getName()).generate());
+        mSSAOComputeShader = getMain().getResourceManager().queryResourceFromJson<ComputeShader>(
+            getName() + "_" + cameraName + "_SSAO.comp", ssaoComputeConfig.write(), this);
+
+        ConfigurationWriter ssaoFilterConfig;
+        ssaoFilterConfig.set(L"Program", ConfigurationWriter()
+                .set(L"Name", "SSAOFilter.program")
+                .set(L"Path", mShaderPackage + ":shaders/json/ssao_filter.json"))
+            .set(L"Uniforms", stl<ConfigurationWriter>::vector {
+                ConfigurationWriter()
+                    .set(L"Name", "Direction")
+                    .set(L"Type", "int")
+                    .set(L"Value", 1),
+                ConfigurationWriter()
+                    .set(L"Name", "AOMap")
+                    .set(L"Type", "sampler")
+                    .set(L"TextureName", mSSAOTexture->getName()),
+                ConfigurationWriter()
+                    .set(L"Name", "FilteredOutput")
+                    .set(L"Type", "imageStore")
+                    .set(L"Direction", "out")
+                    .set(L"TextureName", mSSAOTexture2->getName())
+            });
+
+        mSSAOFilterShader = getMain().getResourceManager().queryResourceFromJson<ComputeShader>(
+            getName() + "_" + cameraName + "_SSAOFilter.comp", ssaoFilterConfig.write(), this);
+        mSSAOEnabled = true;
     }
 }}

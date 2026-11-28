@@ -1,10 +1,2 @@
 #include "samples:shaders/sources/common/common_inc.glsl"
-
-// cook-torrance bidirectional reflective distribution function
-vec3 BRDF(in Surface surface, in AngularInfo angular);
-{
-    vec3 F = fresnelSchlickRoughness(angular.HdotV, surface.material);
-    return DiffuseLobeLambertian(F, surface.material) + 
-        SpecularLobeGGX(F, surface.material, angular) + 
-        Sheen(F, surface.material, angular);
-}
+#include "samples:shaders/sources/pbr/brdf.glsl"

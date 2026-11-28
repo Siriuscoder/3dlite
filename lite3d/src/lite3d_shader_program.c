@@ -27,15 +27,16 @@
 typedef int (*lite3d_uniform_set_func)(lite3d_shader_program *, lite3d_shader_parameter_container *);
 
 static lite3d_shader_program *gActProg = NULL;
-static int gMaxGeometryOutputVertices = 0;
-static int gMaxGeometryTotalOutputComponents = 0;
-static int gMaxGeometryOutputComponents = 0;
-static int gMaxComputeWorkGroupSize[3] = {0};
-static int gMaxComputeStorageBlocks = 0;
-static int gMaxComputeImageUniforms = 0;
-static int gMaxComputeTextureImageUnits = 0;
-static int gMaxComputeUniformBlocks = 0;
-static int gMaxComputeCombinedUniformComponents = 0;
+static int32_t gMaxGeometryOutputVertices = 0;
+static int32_t gMaxGeometryTotalOutputComponents = 0;
+static int32_t gMaxGeometryOutputComponents = 0;
+static int32_t gMaxComputeWorkGroupSize[3] = {0};
+static int32_t gMaxComputeWorkGroupInvocations = 0;
+static int32_t gMaxComputeStorageBlocks = 0;
+static int32_t gMaxComputeImageUniforms = 0;
+static int32_t gMaxComputeTextureImageUnits = 0;
+static int32_t gMaxComputeUniformBlocks = 0;
+static int32_t gMaxComputeCombinedUniformComponents = 0;
 
 static void lite3d_shader_program_get_log(struct lite3d_shader_program *program)
 {
@@ -80,6 +81,9 @@ int lite3d_shader_program_technique_init(void)
         SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "GL_MAX_COMPUTE_WORK_GROUP_SIZE: %d %d %d", gMaxComputeWorkGroupSize[0], 
             gMaxComputeWorkGroupSize[1], gMaxComputeWorkGroupSize[2]);
 
+        glGetIntegerv(GL_MAX_COMPUTE_WORK_GROUP_INVOCATIONS, &gMaxComputeWorkGroupInvocations);
+        SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "GL_MAX_COMPUTE_WORK_GROUP_INVOCATIONS: %d", gMaxComputeWorkGroupInvocations);
+
         glGetIntegerv(GL_MAX_COMPUTE_SHADER_STORAGE_BLOCKS, &gMaxComputeStorageBlocks);
         SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "GL_MAX_COMPUTE_SHADER_STORAGE_BLOCKS: %d", gMaxComputeStorageBlocks);
 
@@ -99,8 +103,8 @@ int lite3d_shader_program_technique_init(void)
     return LITE3D_TRUE;
 }
 
-void lite3d_shader_program_get_limitations(int *maxGeometryOutputVertices, 
-    int *maxGeometryOutputComponents, int *maxGeometryTotalOutputComponents)
+void lite3d_shader_program_get_limitations(int32_t *maxGeometryOutputVertices, 
+    int32_t *maxGeometryOutputComponents, int32_t *maxGeometryTotalOutputComponents)
 {
     if (maxGeometryOutputVertices)
     {
@@ -115,6 +119,30 @@ void lite3d_shader_program_get_limitations(int *maxGeometryOutputVertices,
     if (maxGeometryTotalOutputComponents)
     {
         *maxGeometryTotalOutputComponents = gMaxGeometryTotalOutputComponents;
+    }
+}
+
+void lite3d_shader_program_get_workgroup_limits(int32_t *maxThreadsWorkGroupX, 
+    int32_t *maxThreadsWorkGroupY, int32_t *maxThreadsWorkGroupZ, int32_t *maxWorkGroupInvocations)
+{
+    if (maxThreadsWorkGroupX)
+    {
+        *maxThreadsWorkGroupX = gMaxComputeWorkGroupSize[0];
+    }
+
+    if (maxThreadsWorkGroupY)
+    {
+        *maxThreadsWorkGroupY = gMaxComputeWorkGroupSize[1];
+    }
+
+    if (maxThreadsWorkGroupZ)
+    {
+        *maxThreadsWorkGroupZ = gMaxComputeWorkGroupSize[2];
+    }
+
+    if (maxWorkGroupInvocations)
+    {
+        *maxWorkGroupInvocations = gMaxComputeWorkGroupInvocations;
     }
 }
 
@@ -427,7 +455,8 @@ static int lite3d_shader_program_image_store_set(
     if (p->parameter->direction == LITE3D_SHADER_PARAMETER_DIRECTION_OUTPUT || 
         p->parameter->direction == LITE3D_SHADER_PARAMETER_DIRECTION_INOUT)
     {
-        program->syncFlags |= GL_SHADER_IMAGE_ACCESS_BARRIER_BIT | GL_TEXTURE_FETCH_BARRIER_BIT;
+        program->syncFlags |= GL_SHADER_IMAGE_ACCESS_BARRIER_BIT | GL_TEXTURE_FETCH_BARRIER_BIT | GL_FRAMEBUFFER_BARRIER_BIT |
+            GL_TEXTURE_UPDATE_BARRIER_BIT;
     }
 
     glBindImageTexture(p->binding, p->parameter->parameter.texture->textureID, 
